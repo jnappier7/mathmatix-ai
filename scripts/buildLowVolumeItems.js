@@ -25,6 +25,7 @@ const BANKS = [
   require('./lib/templatesGrade6'),
   require('./lib/templatesGrade8'),
   require('./lib/templatesGrade67'),
+  require('./lib/templatesAlgebra2'),
 ];
 
 const OUT = path.join(__dirname, '..', 'seeds', 'low-volume-items.generated.json');
@@ -146,7 +147,13 @@ function validate(items) {
     if (!it.prompt || it.prompt.length < 8) problems.push(`${it.problemId}: prompt too short`);
     if (!it.explanation || it.explanation.length < 25) problems.push(`${it.problemId}: explanation too short`);
     if (String(it.answer.value).trim() === '') problems.push(`${it.problemId}: empty answer`);
-    if (/undefined|NaN|\[object/.test(`${it.prompt}${it.answer.value}${it.explanation}`)) {
+    // A rendering hole shows up as a literal "undefined"/"NaN" where a value
+    // belongs. Checking the explanation too was a false positive: "the function
+    // is undefined at that point" is correct mathematical prose, not a bug. So
+    // scan the prompt and the ANSWER (an answer is never legitimately the word
+    // "undefined"), and keep the stricter markers everywhere.
+    if (/undefined|NaN|\[object/.test(`${it.prompt}${it.answer.value}`)
+        || /NaN|\[object/.test(String(it.explanation))) {
       problems.push(`${it.problemId}: rendering hole (undefined/NaN) — ${it.prompt}`);
     }
     // A float with a long tail means the numbers were drawn without checking the

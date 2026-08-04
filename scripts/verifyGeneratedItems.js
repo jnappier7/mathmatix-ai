@@ -530,6 +530,136 @@ for (const it of items) {
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 
+  // ── Algebra 2 ────────────────────────────────────────────────────────────
+  if ((m = p.match(/remainder when (\d+)x² \+ (\d+) is divided by \(x − (\d+)\)/))) {
+    const [a, b, c] = m.slice(1).map(Number);
+    const e = a * c * c + b;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/remainder when (\d*)x³ \+ (\d+)x \+ (\d+) is divided by \(x − (\d+)\)/))) {
+    const a = m[1] === '' ? 1 : Number(m[1]);
+    const [b, c, k] = m.slice(2).map(Number);
+    const e = a * k * k * k + b * k + c;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Is \(x − (\d+)\) a factor of x² ([−+]) (\d+)x ([−+]) (\d+)\?$/))) {
+    const root = Number(m[1]);
+    const b = (m[2] === '−' ? -1 : 1) * Number(m[3]);
+    const c = (m[4] === '−' ? -1 : 1) * Number(m[5]);
+    const e = root * root + b * root + c === 0 ? 'Yes' : 'No';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^P\(x\) = \(x − (\d+)\)\(x − (\d+)\)\. What is P\((\d+)\)\?$/))) {
+    const [r1, r2, x] = m.slice(1).map(Number);
+    const e = (x - r1) * (x - r2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/vertical asymptote of f\(x\) = 1\/\(x − (\d+)\)/))) {
+    const e = `x = ${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/f\(x\) = 1\/\(x \+ (\d+)\) has a vertical asymptote/))) {
+    const e = `x = ${-Number(m[1])}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/horizontal asymptote of f\(x\) = \((\d+)x \+ 1\)\/\((\d+)x − 3\)/))) {
+    const e = `y = ${reduceStr(Number(m[1]), Number(m[2]))}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/f\(x\) = \(\(x − (\d+)\)\(x \+ (\d+)\)\)\/\(x − \d+\)\. What is the y-value of the hole/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/At what x-value is there a HOLE/)) && (m = p.match(/\(\(x − (\d+)\)/))) {
+    const e = `x = ${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Simplify the complex fraction: {2}\(1\/(\d+)\) ÷ \(1\/(\d+)\)$/))) {
+    const e = reduceStr(Number(m[2]), Number(m[1]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Simplify: {2}\((\d+)\/x\) ÷ \((\d+)\/x\)$/))) {
+    const e = reduceStr(Number(m[1]), Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/AMPLITUDE of y = (\d+)sin\(x\)/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/MAXIMUM value of y = (\d+)sin\(x\) \+ (\d+)/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/MIDLINE of y = \d+sin\(x\) \+ (\d+)/))) {
+    const e = `y = ${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/coin is flipped (\d+) times\. How many possible outcome sequences/))) {
+    const e = Math.pow(2, Number(m[1]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/mean (\d+) and standard deviation (\d+)\. What is the z-score of the value (-?\d+)/))) {
+    const [mu, sd, x] = m.slice(1).map(Number);
+    const e = (x - mu) / sd;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/y-intercept of y = \(x − (\d+)\)\(x \+ (\d+)\)/))) {
+    const e = -Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/MAXIMUM number of x-intercepts a polynomial of degree (\d+)/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/maximum number of TURNING POINTS on the graph of a degree-(\d+)/))) {
+    const e = Number(m[1]) - 1;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/DOMAIN restriction of f\(x\) = 1\/\(x \+ (\d+)\)/))) {
+    const e = `x ≠ ${-Number(m[1])}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/x-intercept of f\(x\) = \(x − (\d+)\)\/\(x \+ 2\)/))) {
+    const e = `x = ${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/y-intercept of f\(x\) = \(x \+ (\d+)\)\/\(x \+ (\d+)\)/))) {
+    const e = reduceStr(Number(m[1]), Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/population of (\d+) multiplies by (\d+) each year.*after (\d+) years/))) {
+    const [p0, rate, t] = m.slice(1).map(Number);
+    const e = p0 * Math.pow(rate, t);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/tank starts with (\d+) litres and gains (\d+) litres per minute.*after (\d+) minutes/))) {
+    const [s0, mm, t] = m.slice(1).map(Number);
+    const e = s0 + mm * t;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/f\(x\) = (\d+)x² and g\(x\) = x \+ (\d+)\. What is f\(g\((\d+)\)\)/))) {
+    const [a, b, x] = m.slice(1).map(Number);
+    const e = a * Math.pow(x + b, 2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/plan costs \$(\d+) plus \$(\d+) per unit.*for (\d+) units/))) {
+    const [f0, per, n0] = m.slice(1).map(Number);
+    const e = f0 + per * n0;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/bill of \$(\d+) gets a (\d+)% tip/))) {
+    const [pr, pc] = m.slice(1).map(Number);
+    const e = pr + (pr * pc) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/car travels (\d+) miles at (\d+) miles per hour/))) {
+    const e = reduceStr(Number(m[1]), Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Evaluate (\d+)x² − (\d+) when x = (\d+)\.$/))) {
+    const [a, b, x] = m.slice(1).map(Number);
+    const e = a * x * x - b;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
   unchecked[it.skillId] = (unchecked[it.skillId] || 0) + 1;
 }
 

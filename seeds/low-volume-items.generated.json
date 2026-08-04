@@ -12817,5 +12817,4487 @@
    }
   ],
   "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-001",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "Use the Remainder Theorem: what is the remainder when 6x² + 3 is divided by (x − 3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "57",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The Remainder Theorem says the remainder equals P(3). P(3) = 6(3)² + 3 = 54 + 3 = 57. No long division needed — substitution is the whole method.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0a0eefd54e48c0ad69d7ec6f944109f19c3edce195f6613bed8490a2a0f861de",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-002",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "Use the Remainder Theorem: what is the remainder when 3x² + 7 is divided by (x − 4)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "55",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The Remainder Theorem says the remainder equals P(4). P(4) = 3(4)² + 7 = 48 + 7 = 55. No long division needed — substitution is the whole method.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "be6cca39c24ccd56a4c00c1686e0c5b93d779b59435297060199556c9744eef2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-003",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "Use the Remainder Theorem: what is the remainder when 3x² + 1 is divided by (x − 5)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "76",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The Remainder Theorem says the remainder equals P(5). P(5) = 3(5)² + 1 = 75 + 1 = 76. No long division needed — substitution is the whole method.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a7fd4983cafd318b286dd1eb9110c57adfa22f28d2af578ebc12da3f18ea9dc8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-004",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "Use the Remainder Theorem: what is the remainder when 2x² + 8 is divided by (x − 4)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "40",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The Remainder Theorem says the remainder equals P(4). P(4) = 2(4)² + 8 = 32 + 8 = 40. No long division needed — substitution is the whole method.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5b82f76b5caa08a23e7fd3351ce9e28bf72631af3ff3eccffa40e8c6f29a73cd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-005",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "Is (x − 3) a factor of x² − 5x + 6?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "By the Factor Theorem, (x − 3) is a factor exactly when P(3) = 0. Here P(3) = 0, so yes — the polynomial factors as (x − 3)(x − 2).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "79396680857d2ca8b519214dd2811b8642b9f61f549c3b8e86f8ce43d5354201",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is positive"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-006",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "Is (x − 5) a factor of x² − 10x + 24?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "By the Factor Theorem, check P(5): (5 − 6)(5 − 4) = -1. That is not 0, so (x − 5) is NOT a factor. It factors as (x − 6)(x − 4) instead.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4ebf8a14a4e821ff0549685edcad36c26c3c21830b471c694d905b955f63fe46",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is positive"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-007",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "Is (x − 1) a factor of x² − 7x + 6?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "By the Factor Theorem, (x − 1) is a factor exactly when P(1) = 0. Here P(1) = 0, so yes — the polynomial factors as (x − 1)(x − 6).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fadc4e5050082520705ba910c7d12b9cca03cf8c70be5245255cf334c605bceb",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is positive"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-008",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "Is (x − 3) a factor of x² − 10x + 25?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "By the Factor Theorem, check P(3): (3 − 5)(3 − 5) = 4. That is not 0, so (x − 3) is NOT a factor. It factors as (x − 5)(x − 5) instead.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f374e7d8be65d2375b4393c37f9d22fba92bfef8657fee34b9d319a57102a3be",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is positive"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-009",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "P(x) = (x − 5)(x − 1). What is P(4)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Substitute directly: (4 − 5)(4 − 1) = (-1)(3) = -3. Because this is not 0, (x − 4) is NOT a factor.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "528019f173d1679dbd4a7a8b3fc63d16a507301a281d856badbbf1324dd3dafb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-010",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "P(x) = (x − 5)(x − 2). What is P(4)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Substitute directly: (4 − 5)(4 − 2) = (-1)(2) = -2. Because this is not 0, (x − 4) is NOT a factor.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cc4aa01893f4d3d6a8d16232ea285f76cd179acd814284ffbaa50b6e4e1f5d2c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-011",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "P(x) = (x − 7)(x − 4). What is P(5)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Substitute directly: (5 − 7)(5 − 4) = (-2)(1) = -2. Because this is not 0, (x − 5) is NOT a factor.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c7baef32cd69f64c734752cea0a059907376ef47af8ac8259dd2a35098b03d07",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-012",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "P(x) = (x − 7)(x − 1). What is P(4)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Substitute directly: (4 − 7)(4 − 1) = (-3)(3) = -9. Because this is not 0, (x − 4) is NOT a factor.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "24f5bd15f0c4b65d53a694f057e55486abf9f5fa4678bd76080b8bdee1242d91",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-013",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "What is the remainder when 4x³ + 7x + 7 is divided by (x − 3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "136",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Remainder = P(3) = 4(3)³ + 7(3) + 7 = 108 + 21 + 7 = 136. Cubing before multiplying is where this usually goes wrong.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fce3e815308dbb0e4e41baba59e42d0b60f608d6abec8adbc521772bd26c0372",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-014",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "What is the remainder when 4x³ + 6x + 2 is divided by (x − 3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "128",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Remainder = P(3) = 4(3)³ + 6(3) + 2 = 108 + 18 + 2 = 128. Cubing before multiplying is where this usually goes wrong.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "41359ea4bd694a345001d8d4d6ae8a66c213d3a0af409b1a9e834809d498e551",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-015",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "What is the remainder when 3x³ + 3x + 4 is divided by (x − 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "34",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Remainder = P(2) = 3(2)³ + 3(2) + 4 = 24 + 6 + 4 = 34. Cubing before multiplying is where this usually goes wrong.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "775770f640118b287537fe3a78fda9ed6c267c7e16b4cc4b6b8b499972cb715d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-remainder-factor-theorems-016",
+  "skillId": "remainder-factor-theorems",
+  "prompt": "What is the remainder when 4x³ + 3x + 7 is divided by (x − 3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "124",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Remainder = P(3) = 4(3)³ + 3(3) + 7 = 108 + 9 + 7 = 124. Cubing before multiplying is where this usually goes wrong.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:remainder-factor-theorems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aba19dc595f8ba7be5868afa0f694a7ff7883178ff091248f0d3902ca59bc7c5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-001",
+  "skillId": "polynomial-graphing",
+  "prompt": "Describe the END BEHAVIOUR of the polynomial 4x³ + …",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Down on the left, up on the right",
+   "equivalents": [
+    "Downontheleft,upontheright"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Degree 3 is ODD and the leading coefficient is positive. Odd degree sends the ends in OPPOSITE directions, and the sign decides which: down on the left, up on the right.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "229d8b943396151ef6f747473c25020e530b06e6e015e2947f0c731d2bb93a60",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Up on both ends"
+   },
+   {
+    "label": "B",
+    "text": "Down on both ends"
+   },
+   {
+    "label": "C",
+    "text": "Down on the left, up on the right"
+   },
+   {
+    "label": "D",
+    "text": "Up on the left, down on the right"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-002",
+  "skillId": "polynomial-graphing",
+  "prompt": "Describe the END BEHAVIOUR of the polynomial -3x⁴ + …",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Down on both ends",
+   "equivalents": [
+    "Downonbothends"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Degree 4 is EVEN and the leading coefficient is negative. Even degree sends both ends the SAME way, and the sign decides which: down on both ends.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f609d61afc531f9d79fd924d4d4bdac19fe79a84dec896f55bb5f9f979991f10",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Up on both ends"
+   },
+   {
+    "label": "B",
+    "text": "Down on both ends"
+   },
+   {
+    "label": "C",
+    "text": "Down on the left, up on the right"
+   },
+   {
+    "label": "D",
+    "text": "Up on the left, down on the right"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-003",
+  "skillId": "polynomial-graphing",
+  "prompt": "Describe the END BEHAVIOUR of the polynomial 3x³ + …",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Down on the left, up on the right",
+   "equivalents": [
+    "Downontheleft,upontheright"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Degree 3 is ODD and the leading coefficient is positive. Odd degree sends the ends in OPPOSITE directions, and the sign decides which: down on the left, up on the right.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "473c795393f3e6120d53bbfaa3e857bb515a6b8debf42111cd16bbb80dda22ef",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Up on both ends"
+   },
+   {
+    "label": "B",
+    "text": "Down on both ends"
+   },
+   {
+    "label": "C",
+    "text": "Down on the left, up on the right"
+   },
+   {
+    "label": "D",
+    "text": "Up on the left, down on the right"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-004",
+  "skillId": "polynomial-graphing",
+  "prompt": "Describe the END BEHAVIOUR of the polynomial -2x⁴ + …",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Down on both ends",
+   "equivalents": [
+    "Downonbothends"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Degree 4 is EVEN and the leading coefficient is negative. Even degree sends both ends the SAME way, and the sign decides which: down on both ends.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1fe7d22bc80ec9b8d5c7f9e343a809919a18d7d9ebc797ddd8d1466b87037757",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Up on both ends"
+   },
+   {
+    "label": "B",
+    "text": "Down on both ends"
+   },
+   {
+    "label": "C",
+    "text": "Down on the left, up on the right"
+   },
+   {
+    "label": "D",
+    "text": "Up on the left, down on the right"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-005",
+  "skillId": "polynomial-graphing",
+  "prompt": "How many DISTINCT x-intercepts does y = (x − 1)(x + 4) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Set each factor to zero: x = 1 and x = −4. That is 2 distinct intercepts — a repeated factor does not add a new one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d014f318b911390c9e2868f9571c02e468b9c91a6722ea28b256941b7ca67a6d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-006",
+  "skillId": "polynomial-graphing",
+  "prompt": "How many DISTINCT x-intercepts does y = (x − 2)(x + 4)(x + 5) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Set each factor to zero: x = 2, x = −4 and x = −5. That is 3 distinct intercepts — a repeated factor does not add a new one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "916c1bb690cfd6cded1017eca7d761ca6a24d78e47ca823065df45a5830f8a3b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-007",
+  "skillId": "polynomial-graphing",
+  "prompt": "How many DISTINCT x-intercepts does y = (x − 4)² have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Set each factor to zero: x = 4 only — the repeated factor still meets the axis once. That is 1 distinct intercept — a repeated factor does not add a new one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ea7e929708f168d36615672061f32c9b88967520149d1d571ef82e2feac1e13d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-008",
+  "skillId": "polynomial-graphing",
+  "prompt": "How many DISTINCT x-intercepts does y = (x − 1)(x + 4)² have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Set each factor to zero: x = 1 and x = −4. That is 2 distinct intercepts — a repeated factor does not add a new one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c0c7304a4d3525e9314744df596ea9b04b5e2c252a3ddd6cf0b4e59ffb33652e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-009",
+  "skillId": "polynomial-graphing",
+  "prompt": "The factor (x − 2)³ appears in a polynomial. Does the graph CROSS or TOUCH the x-axis at x = 2?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Crosses",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiplicity 3 is ODD, so the graph passes through. Even multiplicity bounces; odd multiplicity crosses.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b9ac52c4a9f9fb46c080811aecb50132ceb2971e36882ce74fdce8eea6c6cba4",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Crosses"
+   },
+   {
+    "label": "B",
+    "text": "Touches (bounces off)"
+   },
+   {
+    "label": "C",
+    "text": "Neither"
+   },
+   {
+    "label": "D",
+    "text": "Both"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-010",
+  "skillId": "polynomial-graphing",
+  "prompt": "The factor (x − 5)³ appears in a polynomial. Does the graph CROSS or TOUCH the x-axis at x = 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Crosses",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiplicity 3 is ODD, so the graph passes through. Even multiplicity bounces; odd multiplicity crosses.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6ca84f75cfaefe50be0b0fc2a7db319b60554e1bf476a0078876837797ddc6e8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Crosses"
+   },
+   {
+    "label": "B",
+    "text": "Touches (bounces off)"
+   },
+   {
+    "label": "C",
+    "text": "Neither"
+   },
+   {
+    "label": "D",
+    "text": "Both"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-011",
+  "skillId": "polynomial-graphing",
+  "prompt": "The factor (x − 1)³ appears in a polynomial. Does the graph CROSS or TOUCH the x-axis at x = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Crosses",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiplicity 3 is ODD, so the graph passes through. Even multiplicity bounces; odd multiplicity crosses.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1bdb13c27f51c594fd312a92d41ec1b76be4c2a841f2532d4168e90896e41f50",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Crosses"
+   },
+   {
+    "label": "B",
+    "text": "Touches (bounces off)"
+   },
+   {
+    "label": "C",
+    "text": "Neither"
+   },
+   {
+    "label": "D",
+    "text": "Both"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-graphing-012",
+  "skillId": "polynomial-graphing",
+  "prompt": "The factor (x − 5)² appears in a polynomial. Does the graph CROSS or TOUCH the x-axis at x = 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Touches (bounces off)",
+   "equivalents": [
+    "Touches(bouncesoff)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiplicity 2 is EVEN, so the graph touches the axis and turns back. Even multiplicity bounces; odd multiplicity crosses.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0da0224d53fbe97f42d7d89946764f757af686a30b3ee679809130f3f579f003",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Crosses"
+   },
+   {
+    "label": "B",
+    "text": "Touches (bounces off)"
+   },
+   {
+    "label": "C",
+    "text": "Neither"
+   },
+   {
+    "label": "D",
+    "text": "Both"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-001",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the MAXIMUM number of x-intercepts a polynomial of degree 4 can have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A degree-4 polynomial has at most 4 real roots, so at most 4 x-intercepts. It may have fewer if some roots are repeated or complex.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7717df718285680960539d07f2319040cf8d753e4c16fbfd0601a8118a545b99",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-002",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the MAXIMUM number of x-intercepts a polynomial of degree 2 can have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A degree-2 polynomial has at most 2 real roots, so at most 2 x-intercepts. It may have fewer if some roots are repeated or complex.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4c6f1017ebfded8a4b4ed1b3e672d7c1b665128598629e4a7da8cdae7d280a50",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-003",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the MAXIMUM number of x-intercepts a polynomial of degree 5 can have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A degree-5 polynomial has at most 5 real roots, so at most 5 x-intercepts. It may have fewer if some roots are repeated or complex.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6dc68a304dd402ed186fb7846819db80d876d31c049e152447242e820eef28a7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-004",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the MAXIMUM number of x-intercepts a polynomial of degree 3 can have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A degree-3 polynomial has at most 3 real roots, so at most 3 x-intercepts. It may have fewer if some roots are repeated or complex.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ac4433c01e1a97b9ddffd89cb4dd1ae87e429fe40c69e7242541b898bad3e725",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-005",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the maximum number of TURNING POINTS on the graph of a degree-6 polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A polynomial of degree 6 turns at most 6 − 1 = 5 times. Answering 6 confuses turning points with the maximum number of roots.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3625207623e0ea4aee90884c804b18811fcd615525f44549e9161e592d36a088",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-006",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the maximum number of TURNING POINTS on the graph of a degree-4 polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A polynomial of degree 4 turns at most 4 − 1 = 3 times. Answering 4 confuses turning points with the maximum number of roots.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "88db944e893a65399b59285fd43d081bf1f7b3346c69a7eb93b6c66ce6181420",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-007",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the maximum number of TURNING POINTS on the graph of a degree-3 polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A polynomial of degree 3 turns at most 3 − 1 = 2 times. Answering 3 confuses turning points with the maximum number of roots.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f630d3da2239619abd47f3ad921c9be64b5e4faf37fa2f0078a4ba4993078b09",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-008",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the maximum number of TURNING POINTS on the graph of a degree-5 polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A polynomial of degree 5 turns at most 5 − 1 = 4 times. Answering 5 confuses turning points with the maximum number of roots.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9d8a9933145b187fbab4d9ef4a8ea8895749f7762de603df3ada4d40a4c0ac1d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-009",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the y-intercept of y = (x − 2)(x + 1)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The y-intercept is the value at x = 0: (0 − 2)(0 + 1) = (−2)(1) = -2. Set x to 0 — the y-intercept is never found by setting y to 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a8092681b03b25a87a6c9aec64d2330eea7cfa788bcf537298105eadea7f1418",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-010",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the y-intercept of y = (x − 3)(x + 3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The y-intercept is the value at x = 0: (0 − 3)(0 + 3) = (−3)(3) = -9. Set x to 0 — the y-intercept is never found by setting y to 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "87be15d77d5280bfbcf4523ae4d70907b384ce84e3d68cbde1bc65eb74a52308",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-011",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the y-intercept of y = (x − 1)(x + 5)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The y-intercept is the value at x = 0: (0 − 1)(0 + 5) = (−1)(5) = -5. Set x to 0 — the y-intercept is never found by setting y to 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "21abc300e484302971dcf176adf7029534d8e892eb372dced4a5721b89b8d5ad",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-polynomials-012",
+  "skillId": "graphing-polynomials",
+  "prompt": "What is the y-intercept of y = (x − 4)(x + 6)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The y-intercept is the value at x = 0: (0 − 4)(0 + 6) = (−4)(6) = -24. Set x to 0 — the y-intercept is never found by setting y to 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fd704a22308840de48df7bb87c5b58393ece3cfc6911532671b88e01fe8766a2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-001",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "What is the vertical asymptote of f(x) = 1/(x − 4)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 4",
+   "equivalents": [
+    "x=4"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A vertical asymptote occurs where the denominator is zero and the numerator is not: x − 4 = 0 gives x = 4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4fadb1a7df10f33a4d2b0111e9edb45bac43e9889e7d939f7f892395f217d276",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-002",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "What is the vertical asymptote of f(x) = 1/(x − 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 2",
+   "equivalents": [
+    "x=2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A vertical asymptote occurs where the denominator is zero and the numerator is not: x − 2 = 0 gives x = 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "77914c8a597cc2282ef9c2f3527848b7e06950a6fb5b7d6fed72bc69fe1e8cf5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-003",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "What is the vertical asymptote of f(x) = 1/(x − 3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 3",
+   "equivalents": [
+    "x=3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A vertical asymptote occurs where the denominator is zero and the numerator is not: x − 3 = 0 gives x = 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a3d8aa15673ce92c24f4e7411b5538f0c401b51971eace97953bcbf93317c08a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-004",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "What is the vertical asymptote of f(x) = 1/(x − 1)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 1",
+   "equivalents": [
+    "x=1"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A vertical asymptote occurs where the denominator is zero and the numerator is not: x − 1 = 0 gives x = 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e73ee8d8296910ea3295a2f0e376eef5079ac6af611779b49763fff6a1308733",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-005",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "What is the horizontal asymptote of f(x) = (2x + 1)/(4x − 3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 1/2",
+   "equivalents": [
+    "y=1/2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Numerator and denominator have the SAME degree, so the horizontal asymptote is the ratio of leading coefficients: y = 2/4 = 1/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "415087ce41ec4c1f6bedf962a61db4b1ad8758bcb92fd33bcb08f5e8215f966c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-006",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "What is the horizontal asymptote of f(x) = 4/(x² + 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 0",
+   "equivalents": [
+    "y=0"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The denominator has the HIGHER degree, so the fraction shrinks toward 0 as x grows: the horizontal asymptote is y = 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9a5c6ef8a83236d411c54dbe26db81fc3105a28f3c4eb63693b46c7229cc0536",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-007",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "What is the horizontal asymptote of f(x) = (6x + 1)/(5x − 3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 6/5",
+   "equivalents": [
+    "y=6/5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Numerator and denominator have the SAME degree, so the horizontal asymptote is the ratio of leading coefficients: y = 6/5 = 6/5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "beef31f3fdbf377a7fff8ebbbc5b563bc5bf4195a61614c9a98abcc09310347f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-008",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "What is the horizontal asymptote of f(x) = 6/(x² + 5)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 0",
+   "equivalents": [
+    "y=0"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The denominator has the HIGHER degree, so the fraction shrinks toward 0 as x grows: the horizontal asymptote is y = 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e2c91e5b744e0de22ea7a2c2a11e262e4068d0060c58dd7e9ea629c69b575152",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-009",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "Does f(x) = (5x² + 1)/(x + 2) have a horizontal asymptote?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No — the numerator has the higher degree",
+   "equivalents": [
+    "No—thenumeratorhasthehigherdegree"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The numerator's degree (2) beats the denominator's (1), so values grow without bound instead of levelling off — no horizontal asymptote. (There is a slant one instead.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "30b82391bbb66568641595dcd1cd0e4f93661cb22f1ae39d026065b0bffda6ee",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes, y = 0"
+   },
+   {
+    "label": "B",
+    "text": "Yes, y = 5"
+   },
+   {
+    "label": "C",
+    "text": "No — the numerator has the higher degree"
+   },
+   {
+    "label": "D",
+    "text": "Yes, y = 1"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-010",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "Does f(x) = (2x + 1)/(x + 6) have a horizontal asymptote?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes, y = 2",
+   "equivalents": [
+    "Yes,y=2"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Equal degrees (both 1), so the asymptote is the ratio of leading coefficients: y = 2/1 = 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ebf2fe997c9b46dbdd9d5ce40dcf7c9658902d01920ebf25706e46e2772cb144",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes, y = 0"
+   },
+   {
+    "label": "B",
+    "text": "Yes, y = 2"
+   },
+   {
+    "label": "C",
+    "text": "No — the numerator has the higher degree"
+   },
+   {
+    "label": "D",
+    "text": "Yes, y = 1"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-011",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "Does f(x) = (5x + 1)/(x² + 2) have a horizontal asymptote?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes, y = 0",
+   "equivalents": [
+    "Yes,y=0"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The denominator's degree (2) beats the numerator's (1), so the fraction shrinks toward zero: y = 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dfea127eac25f2c30853b717d75ac66f16953701a2f91effaba8029e36d0409a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes, y = 0"
+   },
+   {
+    "label": "B",
+    "text": "Yes, y = 5"
+   },
+   {
+    "label": "C",
+    "text": "No — the numerator has the higher degree"
+   },
+   {
+    "label": "D",
+    "text": "Yes, y = 1"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-vertical-horizontal-asymptotes-012",
+  "skillId": "vertical-horizontal-asymptotes",
+  "prompt": "Does f(x) = (5x² + 1)/(x + 6) have a horizontal asymptote?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No — the numerator has the higher degree",
+   "equivalents": [
+    "No—thenumeratorhasthehigherdegree"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The numerator's degree (2) beats the denominator's (1), so values grow without bound instead of levelling off — no horizontal asymptote. (There is a slant one instead.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vertical-horizontal-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "da62ad9161a767804c5eaec1298e06513ee775ea8caf3d2680e0db09999478a4",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes, y = 0"
+   },
+   {
+    "label": "B",
+    "text": "Yes, y = 5"
+   },
+   {
+    "label": "C",
+    "text": "No — the numerator has the higher degree"
+   },
+   {
+    "label": "D",
+    "text": "Yes, y = 1"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-001",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "f(x) = ((x − 2)(x + 2))/(x − 2). At what x-value is there a HOLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 2",
+   "equivalents": [
+    "x=2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The factor (x − 2) cancels from top and bottom, so the function is undefined at x = 2 but does not blow up there — that is a hole, not an asymptote.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d122869c93ec89652680758fae21ee12850f3c52a6f8cab5113e1a5ee1808d45",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-002",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "f(x) = ((x − 4)(x + 2))/(x − 4). At what x-value is there a HOLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 4",
+   "equivalents": [
+    "x=4"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The factor (x − 4) cancels from top and bottom, so the function is undefined at x = 4 but does not blow up there — that is a hole, not an asymptote.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9d4085b40115dbc1749ee3fccad962fd03ca9e927569ee36db1b8249be520bd4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-003",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "f(x) = ((x − 1)(x + 2))/(x − 1). At what x-value is there a HOLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 1",
+   "equivalents": [
+    "x=1"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The factor (x − 1) cancels from top and bottom, so the function is undefined at x = 1 but does not blow up there — that is a hole, not an asymptote.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "55df8d01b820acdf53bfea0834bc7ddd369aff53f505fdc26061e941db999dc2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-004",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "f(x) = ((x − 6)(x + 2))/(x − 6). At what x-value is there a HOLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 6",
+   "equivalents": [
+    "x=6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The factor (x − 6) cancels from top and bottom, so the function is undefined at x = 6 but does not blow up there — that is a hole, not an asymptote.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bd1be41bda38d1a1221ee91b393610bb617147605294779f64259c3bf2c279fc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-005",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "f(x) = ((x − 2)(x + 3))/(x − 2). What is the y-value of the hole?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "After cancelling, f(x) = x + 3 for x ≠ 2. The hole sits at the value that expression would take: 2 + 3 = 5. So the hole is at (2, 5).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f7efa818791807389af54a68fb6116444a1a30f5e61709704dbb021045491009",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-006",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "f(x) = ((x − 4)(x + 5))/(x − 4). What is the y-value of the hole?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "After cancelling, f(x) = x + 5 for x ≠ 4. The hole sits at the value that expression would take: 4 + 5 = 9. So the hole is at (4, 9).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4c21716368f9910c638e0ea4eb1140dc03381a6736f3fc4ae634a420ee3c8589",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-007",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "f(x) = ((x − 5)(x + 3))/(x − 5). What is the y-value of the hole?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "After cancelling, f(x) = x + 3 for x ≠ 5. The hole sits at the value that expression would take: 5 + 3 = 8. So the hole is at (5, 8).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "45055b0fb34fff6ea8ae94cc715901591b8890dfa1872c85ad4ca3fb46bd41a9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-008",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "f(x) = ((x − 6)(x + 2))/(x − 6). What is the y-value of the hole?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "After cancelling, f(x) = x + 2 for x ≠ 6. The hole sits at the value that expression would take: 6 + 2 = 8. So the hole is at (6, 8).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "da77c3aa8ada29e731f53fc9568ccd13bca25f26f2d3c1221ae72166053a235b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-009",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "In f(x) = ((x − 1)(x + 1))/(x − 1), what happens at x = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A hole",
+   "equivalents": [
+    "Ahole"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The (x − 1) cancels, so the function is merely undefined at that single point — a hole.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f9b914d71810df96219e8d6a6e8ac947680f333af735ce46ae97b8c9f8b72cd2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A hole"
+   },
+   {
+    "label": "B",
+    "text": "A vertical asymptote"
+   },
+   {
+    "label": "C",
+    "text": "An x-intercept"
+   },
+   {
+    "label": "D",
+    "text": "Nothing unusual"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-010",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "In f(x) = (x + 1)/(x − 6), what happens at x = 6?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A vertical asymptote",
+   "equivalents": [
+    "Averticalasymptote"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Nothing cancels, so the denominator goes to zero while the numerator does not: the values blow up. That is a vertical asymptote.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d53e11043aa1794d26dae63457e05ae9cdd5980b3f8f17c44facd331f9b72648",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A hole"
+   },
+   {
+    "label": "B",
+    "text": "A vertical asymptote"
+   },
+   {
+    "label": "C",
+    "text": "An x-intercept"
+   },
+   {
+    "label": "D",
+    "text": "Nothing unusual"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-011",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "In f(x) = ((x − 6)(x + 1))/(x − 6), what happens at x = 6?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A hole",
+   "equivalents": [
+    "Ahole"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The (x − 6) cancels, so the function is merely undefined at that single point — a hole.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1cc203a26dfcbcbbce32f720feb44a85c094b089d6165e04fd5ac6273b232564",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A hole"
+   },
+   {
+    "label": "B",
+    "text": "A vertical asymptote"
+   },
+   {
+    "label": "C",
+    "text": "An x-intercept"
+   },
+   {
+    "label": "D",
+    "text": "Nothing unusual"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-holes-in-rational-functions-012",
+  "skillId": "holes-in-rational-functions",
+  "prompt": "In f(x) = (x + 1)/(x − 3), what happens at x = 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A vertical asymptote",
+   "equivalents": [
+    "Averticalasymptote"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Nothing cancels, so the denominator goes to zero while the numerator does not: the values blow up. That is a vertical asymptote.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:holes-in-rational-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b151ffd74f1a58057234feb3a48b1d1fa8548b22c06b66b9108915beadc54cf2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A hole"
+   },
+   {
+    "label": "B",
+    "text": "A vertical asymptote"
+   },
+   {
+    "label": "C",
+    "text": "An x-intercept"
+   },
+   {
+    "label": "D",
+    "text": "Nothing unusual"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-001",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the DOMAIN restriction of f(x) = 1/(x + 7)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x ≠ -7",
+   "equivalents": [
+    "x≠-7"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The denominator cannot be zero: x + 7 ≠ 0, so x ≠ -7. Everything else is allowed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0375fef06961c0fda1c3149a315c5b90ad319d2025602a62de301fdade10e75c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-002",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the DOMAIN restriction of f(x) = 1/(x + 1)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x ≠ -1",
+   "equivalents": [
+    "x≠-1"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The denominator cannot be zero: x + 1 ≠ 0, so x ≠ -1. Everything else is allowed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8dd07aa6d0a014caba643a971d81ef47bfcb28c75280c3b8295b5f79411e57dd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-003",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the DOMAIN restriction of f(x) = 1/(x + 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x ≠ -2",
+   "equivalents": [
+    "x≠-2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The denominator cannot be zero: x + 2 ≠ 0, so x ≠ -2. Everything else is allowed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e18f4b0f4606fb8fad1f9eea8c4f4931787935ff47afcb51061dc5defd29ece5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-004",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the DOMAIN restriction of f(x) = 1/(x + 3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x ≠ -3",
+   "equivalents": [
+    "x≠-3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The denominator cannot be zero: x + 3 ≠ 0, so x ≠ -3. Everything else is allowed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e5113f6f6174dedeb3660e9048cb39bd7d2281319065db871d1193c6caedb250",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-005",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the x-intercept of f(x) = (x − 6)/(x + 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 6",
+   "equivalents": [
+    "x=6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A fraction is zero exactly when its NUMERATOR is zero: x − 6 = 0 gives x = 6. (The denominator controls asymptotes, never intercepts.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aaaf13c8043933c710e98b1f3ebf69c16be10c1c48436542d0c8b3e4e6ef0313",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-006",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the x-intercept of f(x) = (x − 3)/(x + 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 3",
+   "equivalents": [
+    "x=3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A fraction is zero exactly when its NUMERATOR is zero: x − 3 = 0 gives x = 3. (The denominator controls asymptotes, never intercepts.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bd62e1f2b5d95e7a1c1dd2a4f38c35b19a98a2640ea60a62313dfa46f080e198",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-007",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the x-intercept of f(x) = (x − 2)/(x + 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 2",
+   "equivalents": [
+    "x=2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A fraction is zero exactly when its NUMERATOR is zero: x − 2 = 0 gives x = 2. (The denominator controls asymptotes, never intercepts.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a50c965c7fb994e78437831efe98a008d3b0df23d05b09bc12f33971236edc0a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-008",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the x-intercept of f(x) = (x − 5)/(x + 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = 5",
+   "equivalents": [
+    "x=5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A fraction is zero exactly when its NUMERATOR is zero: x − 5 = 0 gives x = 5. (The denominator controls asymptotes, never intercepts.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "df0e3d2284448976871f76a95a7da718d3b1b39cfb1de4b8845b5198716bac00",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-009",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the y-intercept of f(x) = (x + 1)/(x + 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Substitute x = 0: (0 + 1)/(0 + 2) = 1/2 = 1/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1929400c8c54875fce03718d19be0bb4310753743b6b4b81d9381e0cd7862445",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-010",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the y-intercept of f(x) = (x + 4)/(x + 1)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Substitute x = 0: (0 + 4)/(0 + 1) = 4/1 = 4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7e5f5a68333042d1e41c8fc65f0260e1088290316237bbb33e4a79f5eb1eb294",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-011",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the y-intercept of f(x) = (x + 5)/(x + 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Substitute x = 0: (0 + 5)/(0 + 2) = 5/2 = 5/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "55f755781012036577ba29c64f8497b317ac2df20e80a8ce1d6ee7e7c6d175db",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-function-graphing-012",
+  "skillId": "rational-function-graphing",
+  "prompt": "What is the y-intercept of f(x) = (x + 3)/(x + 2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Substitute x = 0: (0 + 3)/(0 + 2) = 3/2 = 3/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-function-graphing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d4814eb9da7e701340b4444ef3f19ca09e1fd7f4a30ec4fc8e23bb42708315f8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-001",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "f(x) = 1/(x + 2) has a vertical asymptote at which x-value?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = -2",
+   "equivalents": [
+    "x=-2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Set the denominator to zero: x + 2 = 0, so x = -2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e108a1097ebc3288c695fdc7fd9a524c7e6699272d3a571931309dbdf5a742f7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-002",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "f(x) = 1/(x + 1) has a vertical asymptote at which x-value?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = -1",
+   "equivalents": [
+    "x=-1"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Set the denominator to zero: x + 1 = 0, so x = -1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "18ebfe5d9069c54e57361aae890776ce7bb524addeafe31766a8df6dc3517ff3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-003",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "f(x) = 1/(x + 6) has a vertical asymptote at which x-value?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = -6",
+   "equivalents": [
+    "x=-6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Set the denominator to zero: x + 6 = 0, so x = -6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "07a0354a944c8f983a438beac6f7c2636fd6742e472d394645ec2c8feb0ad9cb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-004",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "f(x) = 1/(x + 3) has a vertical asymptote at which x-value?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = -3",
+   "equivalents": [
+    "x=-3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Set the denominator to zero: x + 3 = 0, so x = -3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "212e6f4963335472cf2bb44f1c8b4f6854d7e9d7355a77a1eeeeb3a11b353958",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-005",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "How many VERTICAL asymptotes does f(x) = 1/((x − 4)(x + 2)) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Vertical asymptotes sit where the denominator is zero and nothing cancels: x = 4 and x = -2. That is 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "68dac1c9ba9fe28b618b50fe62f250592cc4d513d3081e486fb81cb3fe24ecf3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-006",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "How many VERTICAL asymptotes does f(x) = 1/(x − 2) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Vertical asymptotes sit where the denominator is zero and nothing cancels: x = 2. That is 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "76e5e6b09115aae0381d285be570af5e4409518919b6f1ca3c8dd742d6e042bd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-007",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "How many VERTICAL asymptotes does f(x) = 1/((x − 4)(x + 2)(x + 5)) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Vertical asymptotes sit where the denominator is zero and nothing cancels: x = 4, x = -2 and x = -5. That is 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f68a9fc924083219d0af1f1f11b744e3b9f537628a71f3277f14ed0a015fa3b8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-008",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "How many VERTICAL asymptotes does f(x) = 1/(x² + 5) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Vertical asymptotes sit where the denominator is zero and nothing cancels: nowhere — x² + 5 is never zero for real x. That is 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8dad14e1fa769040e691ce6397e7b0229830b44fefe85d52c21927a240546d7d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-009",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "State the horizontal asymptote of f(x) = (2x² + 1)/(3x² − 4).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 2/3",
+   "equivalents": [
+    "y=2/3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Equal degrees (both 2), so the horizontal asymptote is the ratio of the leading coefficients: y = 2/3 = 2/3. The constants never affect it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7902f0d24a90406acf86c1d8ecf3de5cac67cf0036a37e87abc5f870da919fa8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-010",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "State the horizontal asymptote of f(x) = (4x² + 1)/(3x² − 4).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 4/3",
+   "equivalents": [
+    "y=4/3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Equal degrees (both 2), so the horizontal asymptote is the ratio of the leading coefficients: y = 4/3 = 4/3. The constants never affect it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6818b71caf53aea9528770dddfcfb53f09ed69e6db6596f7df22b4f4b08c32b1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-011",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "State the horizontal asymptote of f(x) = (4x² + 1)/(6x² − 4).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 2/3",
+   "equivalents": [
+    "y=2/3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Equal degrees (both 2), so the horizontal asymptote is the ratio of the leading coefficients: y = 4/6 = 2/3. The constants never affect it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1df6b15113a8db865d93b4b17ffd633d65e12ea1b22997c306b1c71dfaa4d77f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-rational-graphing-asymptotes-012",
+  "skillId": "rational-graphing-asymptotes",
+  "prompt": "State the horizontal asymptote of f(x) = (4x² + 1)/(2x² − 4).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 2",
+   "equivalents": [
+    "y=2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Equal degrees (both 2), so the horizontal asymptote is the ratio of the leading coefficients: y = 4/2 = 2. The constants never affect it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:rational-graphing-asymptotes"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b1d6dfa96ba8967712fdf388daf0d1d9aedd280a7e8e32e016f199e8b202db72",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-001",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify the complex fraction:  (1/2) ÷ (1/4)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: (1/2) × (4/1) = 4/2 = 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b139279dcc0568d242759da9044ccff37228b0a7152ba7bdeab745dc650f967d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-002",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify the complex fraction:  (1/4) ÷ (1/3)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: (1/4) × (3/1) = 3/4 = 3/4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "910f60e8807f56332b66a75a7eaa437b67959240eb0bee7c76c4aebcf8b050c6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-003",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify the complex fraction:  (1/2) ÷ (1/5)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: (1/2) × (5/1) = 5/2 = 5/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "07788ea7d7e98bc05af69a38f065b9450ff6e42a1f0b6e680a2bd226acd47d70",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-004",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify the complex fraction:  (1/3) ÷ (1/5)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: (1/3) × (5/1) = 5/3 = 5/3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "31a098917da037603eb08fba95aac7c492bc08045ba618ae7fa5b1fa523b9d64",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-005",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify:  (4/x) ÷ (7/x)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply by the reciprocal: (4/x) × (x/7) = 4x/(7x) = 4/7. The x cancels because it appears in both a numerator and a denominator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "51acfbecaa77e6d9397d6e276f55192d9704c7c06022a3039d4c4dbf89b0aa34",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-006",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify:  (5/x) ÷ (6/x)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply by the reciprocal: (5/x) × (x/6) = 5x/(6x) = 5/6. The x cancels because it appears in both a numerator and a denominator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "824f9e66c76222dba29f5ee9df459d95dabf4a0aadd10f0014c773c6bc263106",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-007",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify:  (5/x) ÷ (2/x)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply by the reciprocal: (5/x) × (x/2) = 5x/(2x) = 5/2. The x cancels because it appears in both a numerator and a denominator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e8f8d65f2f9c8d46eeda868574edea69a771763da3d4f17107f561b50a89cc77",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-008",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify:  (4/x) ÷ (5/x)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply by the reciprocal: (4/x) × (x/5) = 4x/(5x) = 4/5. The x cancels because it appears in both a numerator and a denominator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7b2f7fa7e9672e4e938064323eaf8e683330291aaefaa754f134e168fb1ae33f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-009",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify:  (1/4 + 1/2) ÷ (1/(8))",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Combine the top over 8: 1/4 + 1/2 = 2/8 + 4/8 = 6/8. Dividing by 1/8 multiplies by 8, leaving 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d46ffe2a174836aa6efa6e534750b5f22b86fd826cebadeab8f9f419de69c628",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-010",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify:  (1/5 + 1/4) ÷ (1/(20))",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Combine the top over 20: 1/5 + 1/4 = 4/20 + 5/20 = 9/20. Dividing by 1/20 multiplies by 20, leaving 9.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1931c66a449ef80d59dc73d93ae95ff359417efad2f5fde410993bddeced1861",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-011",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify:  (1/4 + 1/3) ÷ (1/(12))",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Combine the top over 12: 1/4 + 1/3 = 3/12 + 4/12 = 7/12. Dividing by 1/12 multiplies by 12, leaving 7.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e5a6dc9cfed841e927d189fb933da2b604052f07d7d3b3b0c9c04d768509b501",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-fractions-012",
+  "skillId": "complex-fractions",
+  "prompt": "Simplify:  (1/2 + 1/5) ÷ (1/(10))",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Combine the top over 10: 1/2 + 1/5 = 5/10 + 2/10 = 7/10. Dividing by 1/10 multiplies by 10, leaving 7.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6bd2887758b92ee306f24fdd7d0dc27f5076bf29c2ad792e2f8e516beec31e13",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-001",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate sin⁻¹(0) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "sin 0 = 0, and 0 lies in the range of inverse sine.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9be6de5cb5ed34583858da6b922ca39280eb7364924425339a4d7a27ecdafa6f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/2"
+   },
+   {
+    "label": "C",
+    "text": "π/4"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-002",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate sin⁻¹(1) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π/2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "sin(π/2) = 1, and π/2 is within [−π/2, π/2].",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c796be468f02a52b4fdb76579b68e9bf069d6ad7b0596b706077a07fda3507f8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/2"
+   },
+   {
+    "label": "C",
+    "text": "π/4"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-003",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate cos⁻¹(1) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "cos 0 = 1, and 0 lies in the range [0, π] of inverse cosine.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7c0a41c0d05805185ae39c4c455c172d48d662fcbf030778fcd6332bc6e06baf",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/2"
+   },
+   {
+    "label": "C",
+    "text": "π/4"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-004",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate cos⁻¹(0) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π/2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "cos(π/2) = 0, and π/2 lies in [0, π].",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7928b6fc7525f02f76371617a8eb7e1960a29d0ffbe9e07445bd8a31115cbd5c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/2"
+   },
+   {
+    "label": "C",
+    "text": "π/4"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-005",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate tan⁻¹(0) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "tan 0 = 0, and 0 is within the range of inverse tangent.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "456571317705234cb93106530af3005b6f60cd455c885f8f488610f7eaf1cd85",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/2"
+   },
+   {
+    "label": "C",
+    "text": "π/4"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-006",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate tan⁻¹(1) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π/4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "tan(π/4) = 1, and π/4 lies in (−π/2, π/2).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "386cacb0ae524706fb1a6667ef072a1b364eafe14e1829447d91bcb8cd17aa90",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/2"
+   },
+   {
+    "label": "C",
+    "text": "π/4"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-007",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate sin⁻¹(−1) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−π/2",
+   "equivalents": [
+    "-π/2"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "sin(−π/2) = −1, the lower end of the inverse-sine range.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2871897c355988bf9aaec3f24af1070b869215ed96994d4fa5c92526f2702505",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "−π/2"
+   },
+   {
+    "label": "B",
+    "text": "0"
+   },
+   {
+    "label": "C",
+    "text": "π/2"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-008",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate cos⁻¹(−1) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "cos π = −1, the upper end of the inverse-cosine range.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aeb7f097eed2f6a1ce335ab778e560cd716aae70fda132f69858580ac2e7e1d6",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/2"
+   },
+   {
+    "label": "C",
+    "text": "π/4"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-009",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate sin⁻¹(1/2) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π/6",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "sin(π/6) = 1/2, and π/6 lies in [−π/2, π/2].",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4cbd4b9345383b79f814474fc7a5c193703771edfec75df96a6a9d3dbc652c33",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "π/6"
+   },
+   {
+    "label": "B",
+    "text": "0"
+   },
+   {
+    "label": "C",
+    "text": "π/2"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-010",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate cos⁻¹(1/2) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π/3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "cos(π/3) = 1/2, and π/3 lies in [0, π].",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b4609d4ffc42c0d40d468b65288d2f80be3107cd289772f3ef596af0fe76b90c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "π/3"
+   },
+   {
+    "label": "B",
+    "text": "0"
+   },
+   {
+    "label": "C",
+    "text": "π/2"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-011",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate tan⁻¹(−1) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−π/4",
+   "equivalents": [
+    "-π/4"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "tan(−π/4) = −1, within the inverse-tangent range.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "88e5be7be65a03ef3859eab948ff0fc4c218631f825bd07ecf138310f357b2ac",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "−π/4"
+   },
+   {
+    "label": "B",
+    "text": "0"
+   },
+   {
+    "label": "C",
+    "text": "π/2"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-functions-012",
+  "skillId": "inverse-trig-functions",
+  "prompt": "Evaluate cos⁻¹(√3/2) in radians.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π/6",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "cos(π/6) = √3/2, and π/6 lies in [0, π].",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "30123ceb0c04963edd9f0f399f3ccf2974c9e14d11bd8a8e2ff14da2958986c1",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "π/6"
+   },
+   {
+    "label": "B",
+    "text": "0"
+   },
+   {
+    "label": "C",
+    "text": "π/2"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-001",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the AMPLITUDE of y = 8sin(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Amplitude is the absolute value of the coefficient in front of the sine: |8| = 8. It is the height from the midline to a peak.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "527dcb39d13db93fa236408d925524f2ba5a450fc4b80e62896e8b03bca22af1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-002",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the AMPLITUDE of y = 2sin(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Amplitude is the absolute value of the coefficient in front of the sine: |2| = 2. It is the height from the midline to a peak.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "35721f1f58c6b8604d776c600fce27232874e29f638454b35873aded1ef45941",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-003",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the AMPLITUDE of y = 9sin(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Amplitude is the absolute value of the coefficient in front of the sine: |9| = 9. It is the height from the midline to a peak.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "248e7ff8d4ffc5032065ff9326862f4c253f55a2bed1252315e80499b0ebe376",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-004",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the AMPLITUDE of y = 5sin(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Amplitude is the absolute value of the coefficient in front of the sine: |5| = 5. It is the height from the midline to a peak.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "799d4e94a2c80d9fda07739cc04c2e86538685b3e928066aaa849342deb72097",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-005",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the PERIOD of y = sin(3x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2π/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Period = 2π ÷ |b| = 2π/3 = 2π/3. A larger b squeezes the wave into a shorter period.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "50d80f961812f309d53ccd09688da41898447b51686183d8c29c24f072b7ad11",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-006",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the PERIOD of y = sin(4x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2π/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Period = 2π ÷ |b| = 2π/4 = 2π/4. A larger b squeezes the wave into a shorter period.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "df46e3fcd915e62062bd41ff494c2db89cdae19f8abb6e73702df21c89eeaff4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-007",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the PERIOD of y = sin(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2π",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Period = 2π ÷ |b| = 2π/1 = 2π. A larger b squeezes the wave into a shorter period.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3b741ed41518cde9ba21585a83e4a629a9275a0eae11df707d9587eb7777455f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-008",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the PERIOD of y = sin(2x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1π",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Period = 2π ÷ |b| = 2π/2 = 1π. A larger b squeezes the wave into a shorter period.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b0875501b42fd92c482958310ccd366711061bd3b0ccc2a9d05f64b600a68a8d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-009",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the MIDLINE of y = 4sin(x) + 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 5",
+   "equivalents": [
+    "y=5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The vertical shift moves the midline from y = 0 to y = 5. The 4 sets the amplitude and does not move the midline.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "670449825a742c638eebbec6b98484be58b96cf8bf23742b413cd5bdb91e851b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-010",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the MAXIMUM value of y = 2sin(x) + 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Sine peaks at 1, so the maximum is 2(1) + 1 = 3. The minimum would be −2 + 1 = -1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0f92220e42d5b392818e1e5ea054aefa86c1d0fe5519540b37970b341d3fab3e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-011",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the MIDLINE of y = 5sin(x) + 2?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 2",
+   "equivalents": [
+    "y=2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The vertical shift moves the midline from y = 0 to y = 2. The 5 sets the amplitude and does not move the midline.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "69b61719cb70351b492c954f5d84a0bffabec6658abce36b6ba49ffced143d70",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-sinusoidal-012",
+  "skillId": "graphing-sinusoidal",
+  "prompt": "What is the MAXIMUM value of y = 2sin(x) + 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Sine peaks at 1, so the maximum is 2(1) + 3 = 5. The minimum would be −2 + 3 = 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-sinusoidal"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f49a0d7081ff2d7f1467db223da99326fae8b48ab05b121424082970ca51d20a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-001",
+  "skillId": "binomial-probability",
+  "prompt": "A fair coin is flipped 6 times. How many possible outcome sequences are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "64",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Each flip has 2 outcomes and the flips are independent, so there are 2^6 = 64 sequences in total.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e21def93dd3721885e67d80c89c0acea3b024747a6505dfef83d77d3546dc526",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-002",
+  "skillId": "binomial-probability",
+  "prompt": "A fair coin is flipped 5 times. How many possible outcome sequences are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "32",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Each flip has 2 outcomes and the flips are independent, so there are 2^5 = 32 sequences in total.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0c13c8044a554be3c419ce16aad9cb04673c269fbb74641f3fca423d6a908030",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-003",
+  "skillId": "binomial-probability",
+  "prompt": "A fair coin is flipped 4 times. How many possible outcome sequences are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Each flip has 2 outcomes and the flips are independent, so there are 2^4 = 16 sequences in total.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "60bf15cfe7db7cc06919527d46339566669485d871b69aa8756edbd12f176653",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-004",
+  "skillId": "binomial-probability",
+  "prompt": "A fair coin is flipped 3 times. How many possible outcome sequences are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Each flip has 2 outcomes and the flips are independent, so there are 2^3 = 8 sequences in total.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "550d3aa0b36f66157e0e64aa5fc1e5d18fd8d78bed35dee1f62fee05249088fc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-005",
+  "skillId": "binomial-probability",
+  "prompt": "In how many ways can exactly 3 heads occur in 6 coin flips?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "This is the binomial coefficient C(6, 3) = 20 — the number of ways to choose which 3 of the 6 flips are heads.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "55fe6a2d656dd155103f206f05c59f855c71ef19b3a573d66de39ba8d80903d0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-006",
+  "skillId": "binomial-probability",
+  "prompt": "In how many ways can exactly 2 heads occur in 5 coin flips?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "This is the binomial coefficient C(5, 2) = 10 — the number of ways to choose which 2 of the 5 flips are heads.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "215d97f67c201fcb17a7260ab057a62d27cce1b43fc4e76c212a0071377ac82b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-007",
+  "skillId": "binomial-probability",
+  "prompt": "In how many ways can exactly 1 heads occur in 5 coin flips?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "This is the binomial coefficient C(5, 1) = 5 — the number of ways to choose which 1 of the 5 flips are heads.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b64170361d1e2fae76948ebaf48e5a8e8beada02292b3e868fca720e1b894343",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-008",
+  "skillId": "binomial-probability",
+  "prompt": "In how many ways can exactly 2 heads occur in 4 coin flips?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "This is the binomial coefficient C(4, 2) = 6 — the number of ways to choose which 2 of the 4 flips are heads.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "00d3df21143ff44f8354c0efca2ade504614f65f7ac0d2e0365a72cd83a34cbe",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-009",
+  "skillId": "binomial-probability",
+  "prompt": "A fair coin is flipped 3 times. What is the probability of exactly 1 heads? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Favourable outcomes: C(3, 1) = 3. Total outcomes: 2^3 = 8. Probability = 3/8 = 3/8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f3880ae2ad577d6896821f42b69ffe42555b24db29d6dc2f5ffa4974c7009c81",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-010",
+  "skillId": "binomial-probability",
+  "prompt": "A fair coin is flipped 4 times. What is the probability of exactly 2 heads? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Favourable outcomes: C(4, 2) = 6. Total outcomes: 2^4 = 16. Probability = 6/16 = 3/8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ac5309db2c683bd0ac04411d7a4e9154ba8292e65ec8008ee92121e50433cad4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-011",
+  "skillId": "binomial-probability",
+  "prompt": "A fair coin is flipped 3 times. What is the probability of exactly 2 heads? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Favourable outcomes: C(3, 2) = 3. Total outcomes: 2^3 = 8. Probability = 3/8 = 3/8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "07b21599c3ecf117b207bc3fb99af8de17f2c039f58b5c5eeb67c87aee8b8d93",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-binomial-probability-012",
+  "skillId": "binomial-probability",
+  "prompt": "A fair coin is flipped 4 times. What is the probability of exactly 1 heads? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Favourable outcomes: C(4, 1) = 4. Total outcomes: 2^4 = 16. Probability = 4/16 = 1/4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:binomial-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f7a5cf059f874ec458f5899808c11202f840e784043dd29b1e58d2fd04c3d918",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-001",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "A normal distribution has mean 90 and standard deviation 4. About what percent of data lies within 1 standard deviation of the mean?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "68",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The empirical rule gives 68% within 1 SD, 95% within 2 and 99.7% within 3. For 1 that is 68% — between 86 and 94.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0a16bba4a332b781d5fdf95393bbb760f59955534816c9e5cc3659c0ce5acb93",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-002",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "A normal distribution has mean 90 and standard deviation 7. About what percent of data lies within 2 standard deviations of the mean?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "95",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The empirical rule gives 68% within 1 SD, 95% within 2 and 99.7% within 3. For 2 that is 95% — between 76 and 104.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "73118e0b9faa856f4cddbe3cb60dd52c8200ee98a68d8bbb5646ee9e22b4fccd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-003",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "A normal distribution has mean 90 and standard deviation 2. About what percent of data lies within 3 standard deviations of the mean?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "99.7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The empirical rule gives 68% within 1 SD, 95% within 2 and 99.7% within 3. For 3 that is 99.7% — between 84 and 96.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b02b31d1a37f9cbf8aa8fd3b576e972014498a05c46f8690dc1af1e6fb68b650",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-004",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "A normal distribution has mean 90 and standard deviation 3. About what percent of data lies within 1 standard deviation of the mean?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "68",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The empirical rule gives 68% within 1 SD, 95% within 2 and 99.7% within 3. For 1 that is 68% — between 87 and 93.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7cd8293e8b7ec946c5b88624b7530a73b872e1235daa4d842a5f3a36bd13ac91",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-005",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "For a normal distribution with mean 60 and standard deviation 3, about what percent of data lies within 2 standard deviations of the mean?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "95",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The empirical rule gives 68% within 1 SD, 95% within 2, and 99.7% within 3. For 2 SD that is 95% — between 54 and 66.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2389cd57ce1180e84d2bebc49e061e8a4fc67494bf907f9d4b98f8de86d4201f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-006",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "For a normal distribution with mean 90 and standard deviation 4, about what percent of data lies within 3 standard deviations of the mean?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "99.7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The empirical rule gives 68% within 1 SD, 95% within 2, and 99.7% within 3. For 3 SD that is 99.7% — between 78 and 102.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6d50ce142d13f77e81be2587389f0d772cd6638e8ed2d9dc70ae1fea999a134c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-007",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "For a normal distribution with mean 60 and standard deviation 8, about what percent of data lies within 2 standard deviations of the mean?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "95",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The empirical rule gives 68% within 1 SD, 95% within 2, and 99.7% within 3. For 2 SD that is 95% — between 44 and 76.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fb1a3d55a18b6efc1dc8ffcbd4bbbd17496fe6903e6335d13ff9a380e7bd8af2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-008",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "For a normal distribution with mean 50 and standard deviation 8, about what percent of data lies within 3 standard deviations of the mean?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "99.7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The empirical rule gives 68% within 1 SD, 95% within 2, and 99.7% within 3. For 3 SD that is 99.7% — between 26 and 74.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a16634a80cb5b33addbfc63e6ce1ebb9902bd4724200a10fcb2c7d488005ddd5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-009",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "A normal distribution has mean 90 and standard deviation 2. What is the z-score of the value 92?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "z = (x − mean)/SD = (92 − 90)/2 = 2/2 = 1. A z-score counts how many standard deviations a value sits from the mean.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "127a83b2ca2b04648c11eba878ab8b6bead6ddafee60b074155ae9666af38f2b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-010",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "A normal distribution has mean 70 and standard deviation 7. What is the z-score of the value 63?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "z = (x − mean)/SD = (63 − 70)/7 = -7/7 = -1. A z-score counts how many standard deviations a value sits from the mean.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1001e76dae7bb6232978774461a472eb2f7dd7cd57a61f8b717732681f106b51",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-011",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "A normal distribution has mean 80 and standard deviation 3. What is the z-score of the value 86?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "z = (x − mean)/SD = (86 − 80)/3 = 6/3 = 2. A z-score counts how many standard deviations a value sits from the mean.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "46fe89c1b79cfcfb7571beff15f85a4d179aedd67fdb1036569663922ea4aba7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-data-analysis-normal-distribution-012",
+  "skillId": "data-analysis-normal-distribution",
+  "prompt": "A normal distribution has mean 70 and standard deviation 2. What is the z-score of the value 66?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "z = (x − mean)/SD = (66 − 70)/2 = -4/2 = -2. A z-score counts how many standard deviations a value sits from the mean.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:data-analysis-normal-distribution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cbe5d45e02372a22baa9e5f4e0acf6adc816e5361fd70195c22d52bb436ada2d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-domain-modeling-001",
+  "skillId": "multi-domain-modeling",
+  "prompt": "A population of 814 multiplies by 3 each year. What is the population after 3 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "21978",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Exponential growth: 814 × 3^3 = 814 × 27 = 21978.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-domain-modeling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1aeadd76c4477d8fc37120cef3c82db135ac1738c4c4b0806f35b3b760cc4ed9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-domain-modeling-002",
+  "skillId": "multi-domain-modeling",
+  "prompt": "A tank starts with 54 litres and gains 5 litres per minute. How much is in it after 8 minutes?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "94",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Linear growth: 54 + 5(8) = 54 + 40 = 94 litres. A constant rate per minute makes this linear, not exponential.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-domain-modeling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "07eca0109258b2d3744d68e73809ff610c97fe18218dbc78cf72c668bfb06e86",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-domain-modeling-003",
+  "skillId": "multi-domain-modeling",
+  "prompt": "A population of 316 multiplies by 4 each year. What is the population after 4 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "80896",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Exponential growth: 316 × 4^4 = 316 × 256 = 80896.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-domain-modeling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9a70e4ccfccab2edae2ebb312b8207dc1b386b34fec7460ebe5f47f32bcb09e1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-domain-modeling-004",
+  "skillId": "multi-domain-modeling",
+  "prompt": "A tank starts with 54 litres and gains 3 litres per minute. How much is in it after 5 minutes?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "69",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Linear growth: 54 + 3(5) = 54 + 15 = 69 litres. A constant rate per minute makes this linear, not exponential.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-domain-modeling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fda5441486dbeb4c40dcf2ff5ea0bb27a92efe2b99d9f9f8567e2782ed21c0b1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-domain-modeling-005",
+  "skillId": "multi-domain-modeling",
+  "prompt": "f(x) = 2x² and g(x) = x + 5. What is f(g(5))?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "200",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Work inside out: g(5) = 5 + 5 = 10. Then f(10) = 2(10)² = 2 × 100 = 200.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-domain-modeling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2f6fa5bc6b3b69083b34aa360f95fed36f37ff54daedbe0dcd67ad6613cae5b7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-domain-modeling-006",
+  "skillId": "multi-domain-modeling",
+  "prompt": "f(x) = 3x² and g(x) = x + 2. What is f(g(2))?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "48",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Work inside out: g(2) = 2 + 2 = 4. Then f(4) = 3(4)² = 3 × 16 = 48.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-domain-modeling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b713820b9e19a70ee00bb2f5743cfbef1e6165968f4376fdd999d33320566b45",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-domain-modeling-007",
+  "skillId": "multi-domain-modeling",
+  "prompt": "f(x) = 3x² and g(x) = x + 4. What is f(g(2))?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "108",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Work inside out: g(2) = 2 + 4 = 6. Then f(6) = 3(6)² = 3 × 36 = 108.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-domain-modeling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "12b40d06c7cbd58cbd759c234e5e0bbcfe6ff3d47bdff0054d199f295c25a6bc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-domain-modeling-008",
+  "skillId": "multi-domain-modeling",
+  "prompt": "f(x) = 5x² and g(x) = x + 5. What is f(g(2))?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "245",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Work inside out: g(2) = 2 + 5 = 7. Then f(7) = 5(7)² = 5 × 49 = 245.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-domain-modeling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2681a1cbf19f70b6dc6fad58263c4116475fbc35966db33d3a49662d1ef11045",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-real-world-problem-solving-001",
+  "skillId": "real-world-problem-solving",
+  "prompt": "A plan costs $20 plus $2 per unit. What is the total cost for 6 units, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "32",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total = fixed + variable: 20 + 2(6) = 20 + 12 = 32 dollars.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:real-world-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b1d4869b9e198fe990dea343fd7ef72f02133203a48b92cf32ce9261d57491c2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-real-world-problem-solving-002",
+  "skillId": "real-world-problem-solving",
+  "prompt": "A bill of $24 gets a 15% tip. What is the total, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "27.6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Tip: 15% of 24 = 3.6. Total: 24 + 3.6 = 27.6 dollars.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:real-world-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "812428567f41e23224e86b0662df804d1c7bdc97fd92c235f4ef4fe667ccb393",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-real-world-problem-solving-003",
+  "skillId": "real-world-problem-solving",
+  "prompt": "A plan costs $71 plus $2 per unit. What is the total cost for 7 units, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "85",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total = fixed + variable: 71 + 2(7) = 71 + 14 = 85 dollars.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:real-world-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6cdc965a917701d2011bf368a8d26b16355eed04eac9663e507faee2277ff8fe",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-real-world-problem-solving-004",
+  "skillId": "real-world-problem-solving",
+  "prompt": "A bill of $79 gets a 25% tip. What is the total, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "98.75",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Tip: 25% of 79 = 19.75. Total: 79 + 19.75 = 98.75 dollars.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:real-world-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dfbc580416cbff4bf0cf1f8484f89d71a39817e9e40d7c4826742ca4efbed996",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-real-world-problem-solving-005",
+  "skillId": "real-world-problem-solving",
+  "prompt": "A car travels 254 miles at 30 miles per hour. How many hours does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "127/15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Time = distance ÷ speed = 254 ÷ 30 = 127/15 hours.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:real-world-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f4b5c9a5164f854b45e182a492b84b05ab25fc762b64774f981d5025811d59e6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-real-world-problem-solving-006",
+  "skillId": "real-world-problem-solving",
+  "prompt": "A car travels 211 miles at 20 miles per hour. How many hours does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "211/20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Time = distance ÷ speed = 211 ÷ 20 = 211/20 hours.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:real-world-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1b5383512653c0243c5c2a2f5371b1398bc913986d16bce21577907bccbe9aa3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-real-world-problem-solving-007",
+  "skillId": "real-world-problem-solving",
+  "prompt": "A car travels 121 miles at 60 miles per hour. How many hours does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "121/60",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Time = distance ÷ speed = 121 ÷ 60 = 121/60 hours.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:real-world-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3e548c5218f436cf20a7785021c9fe1f11546a6c7167d3df1882d15509339c82",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-real-world-problem-solving-008",
+  "skillId": "real-world-problem-solving",
+  "prompt": "A car travels 244 miles at 60 miles per hour. How many hours does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "61/15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Time = distance ÷ speed = 244 ÷ 60 = 61/15 hours.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:real-world-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b821fc0adf5ac9f1af0d1d3dc2f970b9a820e4a681295ff3375a5d68fb9a37a6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-course-synthesis-001",
+  "skillId": "course-synthesis",
+  "prompt": "Evaluate 3x² − 6 when x = 4.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "42",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Exponent first: 4² = 16. Then 3(16) = 48, and 48 − 6 = 42.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:course-synthesis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "828551d64d25936483ad566410194cee815f04df1daf11c51a396ba3795260ea",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-course-synthesis-002",
+  "skillId": "course-synthesis",
+  "prompt": "What are the solutions of (x − 1)(x + 6) = 0? Give the positive solution.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The zero-product property: either x − 1 = 0 giving x = 1, or x + 6 = 0 giving x = -6. The positive solution is 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:course-synthesis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b3053d731825c893dcd8836d020c13948b7293091817b4a45827dea074379c4e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-course-synthesis-003",
+  "skillId": "course-synthesis",
+  "prompt": "Evaluate 6x² − 4 when x = 6.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "212",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Exponent first: 6² = 36. Then 6(36) = 216, and 216 − 4 = 212.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:course-synthesis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1939249041fd78f6f591bb307ad5e7331c68578f7469274a2c9bcd58ae5d9678",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-course-synthesis-004",
+  "skillId": "course-synthesis",
+  "prompt": "What are the solutions of (x − 6)(x + 3) = 0? Give the positive solution.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The zero-product property: either x − 6 = 0 giving x = 6, or x + 3 = 0 giving x = -3. The positive solution is 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:course-synthesis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f98273510a523d869209a785dc568abcd6fa2b6fb299bb24ad4f599445bd0928",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-course-synthesis-005",
+  "skillId": "course-synthesis",
+  "prompt": "Solve for x:  3x² = 108",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Divide both sides by 3: x² = 36. Take the positive square root: x = 6. (Formally x = ±6; the positive root is asked for here.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:course-synthesis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6ec2c3ee9267adc2d8b8f72bed85b8d00c24b598da6643cea0d825ad7b52551f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-course-synthesis-006",
+  "skillId": "course-synthesis",
+  "prompt": "Simplify: 3^3 × 3^2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3^5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiplying powers with the same base ADDS the exponents: 3^(3+2) = 3^5. Multiplying the exponents is the usual error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:course-synthesis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d4f8d01b11c047dc73f3900df1d8960c035fdc321a3c69426ff1c07be52bfdd4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-course-synthesis-007",
+  "skillId": "course-synthesis",
+  "prompt": "Solve for x:  4x² = 64",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Divide both sides by 4: x² = 16. Take the positive square root: x = 4. (Formally x = ±4; the positive root is asked for here.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:course-synthesis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bd283196d8b92c2fa39d5d35049787f15c2dfff2728b1e6c953e0eee86863cfa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-course-synthesis-008",
+  "skillId": "course-synthesis",
+  "prompt": "Simplify: 4^5 × 4^2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4^7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiplying powers with the same base ADDS the exponents: 4^(5+2) = 4^7. Multiplying the exponents is the usual error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:course-synthesis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "981bd2eb42c80912c35e63b743b70ec730986776237c275a15a90052c1f9a8e5",
+  "isActive": true
  }
 ]
