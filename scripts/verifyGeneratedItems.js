@@ -1177,6 +1177,160 @@ for (const it of items) {
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 
+  // ── Calculus BC (series, parametric, polar, DE methods) ──────────────────
+  if ((m = p.match(/^Decompose into partial fractions: (\d+)\/\(x\(x \+ (\d+)\)\)\.$/))) {
+    if (m[1] !== m[2]) { fail(it, `numerator ${m[1]} must equal the root gap ${m[2]}`); continue; }
+    const e = `1/x − 1/(x + ${m[2]})`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^In the decomposition \(x( [−+] \d+)?\)\/\(\(x − (\d+)\)\(x − (\d+)\)\) = A\/\(x − \d+\) \+ B\/\(x − \d+\), find (A|B)\.$/))) {
+    const c0 = m[1] ? Number(m[1].replace(' − ', '-').replace(' + ', '')) : 0;
+    const p1 = Number(m[2]), q1 = Number(m[3]);
+    const e = m[4] === 'A' ? (p1 + c0) / (p1 - q1) : (q1 + c0) / (q1 - p1);
+    if (!Number.isInteger(e)) { fail(it, `non-integer residue ${e}`); continue; }
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Does ∫₁\^∞ 1\/x([²³⁴⁵]?) dx converge or diverge\?$/))) {
+    const p1 = m[1] === '' ? 1 : { '²': 2, '³': 3, '⁴': 4, '⁵': 5 }[m[1]];
+    const e = p1 > 1 ? 'Converges' : 'Diverges';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Evaluate: ∫₁\^∞ 1\/x([²³⁵]) dx\.$/))) {
+    const p1 = { '²': 2, '³': 3, '⁵': 5 }[m[1]];
+    const e = reduceStr(1, p1 - 1);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if (/^Evaluate: ∫₀¹ 1\/√x dx/.test(p)) {
+    checked++; if (!eq(it.answer.value, 2)) fail(it, 2); continue;
+  }
+  if ((m = p.match(/^dy\/dx = x \+ y with y\(0\) = (\d+)\. Using Euler's method with step size h = 1, estimate y\(1\)\.$/))) {
+    const e = 2 * Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^dy\/dx = x \+ y with y\(0\) = (\d+)\. Using Euler's method with TWO steps of h = 1, estimate y\(2\)\.$/))) {
+    const y0 = Number(m[1]);
+    const y1 = y0 + (0 + y0);
+    const e = y1 + (1 + y1);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A population follows dP\/dt = kP\(1 − P\/(\d+)\) with 0 < P\(0\) < \d+\. What is the limit/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/^A population follows the logistic equation dP\/dt = kP\(1 − P\/(\d+)\)\. At what population is it growing FASTEST\?$/))) {
+    const e = Number(m[1]) / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^dP\/dt = (\d+)P\(1 − P\/(\d+)\)\. Compute dP\/dt when P = (\d+)\.$/))) {
+    const [k, L, P] = m.slice(1).map(Number);
+    const e = k * P * (1 - P / L);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^x = (\d+)t, y = (\d*)t²\. Find dy\/dx at t = (\d+)\.$/))) {
+    const a = Number(m[1]), b = m[2] === '' ? 1 : Number(m[2]), t0 = Number(m[3]);
+    const e = reduceStr(2 * b * t0, a);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^x = t², y = t³\. Find the slope of the tangent line at t = (\d+)\.$/))) {
+    const e = reduceStr(3 * Number(m[1]), 2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^x = (\d+)t, y = (\d+)t for 0 ≤ t ≤ (\d+)\. Find the length of the curve\.$/))) {
+    const c0 = Math.sqrt(Number(m[1]) ** 2 + Number(m[2]) ** 2);
+    if (!Number.isInteger(c0)) { fail(it, 'non-integer speed'); continue; }
+    const e = c0 * Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A particle moves along x = (\d+)t, y = (\d+)t \+ \d+\. What is its SPEED/))) {
+    const e = Math.sqrt(Number(m[1]) ** 2 + Number(m[2]) ** 2);
+    if (!Number.isInteger(e)) { fail(it, 'non-integer speed'); continue; }
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/find the area enclosed by the circle r = (\d+)\.$/))) {
+    const e = `${Number(m[1]) ** 2}π`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Find the area enclosed by the cardioid r = (\d+)\(1 \+ cos θ\)\.$/))) {
+    const a = Number(m[1]);
+    const e = `${(3 * a * a) / 2}π`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^r\(t\) = ⟨(\d+)t, (\d*)t²⟩\. Find the velocity vector r′\((\d+)\)\.$/))) {
+    const a = Number(m[1]), b = m[2] === '' ? 1 : Number(m[2]), t0 = Number(m[3]);
+    const e = `⟨${a}, ${2 * b * t0}⟩`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^r\(t\) = ⟨(\d+)t, (\d+)t⟩ \+ ⟨\d+, \d+⟩ \(a constant shift\)\. What is the particle's SPEED/))) {
+    const e = Math.sqrt(Number(m[1]) ** 2 + Number(m[2]) ** 2);
+    if (!Number.isInteger(e)) { fail(it, 'non-integer speed'); continue; }
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A particle has velocity r′\(t\) = ⟨(\d+)t, (\d+)⟩\. Find its acceleration vector\.$/))) {
+    const e = `⟨${m[1]}, 0⟩`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Find the limit of the sequence aₙ = \((\d+)n \+ \d+\)\/\((\d+)n \+ \d+\)\.$/))) {
+    const e = reduceStr(Number(m[1]), Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if (/^Find the limit of the sequence aₙ = \d+\/n[²³]?\.$/.test(p)) {
+    checked++; if (!eq(it.answer.value, 0)) fail(it, 0); continue;
+  }
+  if (/^Does the p-series Σ 1\/n[²³⁴] converge or diverge\?$/.test(p)) {
+    checked++; if (!eq(it.answer.value, 'Converges')) fail(it, 'Converges'); continue;
+  }
+  if (/^Does the harmonic series Σ 1\/n converge or diverge\?$/.test(p)) {
+    checked++; if (!eq(it.answer.value, 'Diverges')) fail(it, 'Diverges'); continue;
+  }
+  if ((m = p.match(/^Evaluate the geometric series: Σₙ₌₀\^∞ (?:(\d+)·)?\(1\/(\d+)\)ⁿ\.$/))) {
+    const a0 = m[1] ? Number(m[1]) : 1, denom = Number(m[2]);
+    const e = (a0 * denom) / (denom - 1);
+    if (!Number.isInteger(e)) { fail(it, `non-integer sum ${e}`); continue; }
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/approximated by its first (\d+) terms\. What is the alternating series error bound\?$/))) {
+    const e = `1/${Number(m[1]) + 1}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^How many terms of Σ \(−1\)ⁿ⁺¹\/n guarantee .* an error less than 1\/(\d+)\?$/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/approximated by its terms through n = (\d+)\. What is the alternating series error bound\?$/))) {
+    const n0 = Number(m[1]);
+    const e = `1/${[1, 1, 2, 6, 24, 120][n0 + 1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f\(0\) = \d+, f′\(0\) = \d+, f″\(0\) = (\d+)\. What is the coefficient of x²/))) {
+    const e = Number(m[1]) / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A Maclaurin polynomial has x³ coefficient equal to (\d+)\. What is f‴\(0\)\?$/))) {
+    const e = 6 * Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Using the series for eˣ, what is the coefficient of x² in the Maclaurin series of e\^\((\d+)x\)\?$/))) {
+    const e = Number(m[1]) ** 2 / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^What is the radius of convergence of Σₙ₌₀\^∞ xⁿ\/(\d+)ⁿ\?$/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/^The series Σₙ₌₀\^∞ \(x − (\d+)\)ⁿ\/(\d+)ⁿ converges on which interval\?$/))) {
+    const a = Number(m[1]), k = Number(m[2]);
+    const e = `(${a - k}, ${a + k})`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^sin\(1\) is approximated by its degree-(\d+) Maclaurin polynomial\./))) {
+    const n0 = Number(m[1]);
+    const e = `1/${[1, 1, 2, 6, 24, 120][n0 + 1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^\|f⁽(\d+)⁾\(x\)\| ≤ (\d+) on the interval, and f is approximated at x with \|x − a\| = 1 by its degree-(\d+) Taylor polynomial/))) {
+    const ord = Number(m[1]), M = Number(m[2]), n0 = Number(m[3]);
+    if (ord !== n0 + 1) { fail(it, `bound uses f⁽${ord}⁾ but degree is ${n0} — mismatch`); continue; }
+    const e = reduceStr(M, [1, 1, 2, 6, 24, 120][n0 + 1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
   unchecked[it.skillId] = (unchecked[it.skillId] || 0) + 1;
 }
 

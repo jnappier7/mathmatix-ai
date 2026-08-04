@@ -30181,5 +30181,3259 @@
    }
   ],
   "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-integration-by-parts-001",
+  "skillId": "integration-by-parts",
+  "prompt": "∫ x·eˣ dx = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(x − 1)eˣ + C",
+   "equivalents": [
+    "(x - 1)eˣ + C",
+    "(x−1)eˣ+C",
+    "(x-1)eˣ+C"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Parts with u = x, dv = eˣ dx: uv − ∫v du = x·eˣ − ∫eˣ dx = x·eˣ − eˣ + C = (x − 1)eˣ + C. Check by differentiating: eˣ + (x − 1)eˣ = x·eˣ ✓.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:integration-by-parts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "066a5cf140c9ad0d6dd7bdeeb4ede65d122cd8179c1eae11ffd78ff0868c8c04",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "(x − 1)eˣ + C"
+   },
+   {
+    "label": "B",
+    "text": "x·eˣ + C"
+   },
+   {
+    "label": "C",
+    "text": "(x + 1)eˣ + C"
+   },
+   {
+    "label": "D",
+    "text": "x²eˣ/2 + C"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-integration-by-parts-002",
+  "skillId": "integration-by-parts",
+  "prompt": "∫ x·cos(x) dx = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x·sin(x) + cos(x) + C",
+   "equivalents": [
+    "x·sin(x)+cos(x)+C"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Parts with u = x, dv = cos(x) dx: x·sin(x) − ∫sin(x) dx = x·sin(x) + cos(x) + C. The polynomial factor is u so that differentiating it SIMPLIFIES the next integral.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:integration-by-parts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bca12353d188456c6ed7e9f97d82d102841d0f0fe9e7105e1ed268bba4becf9d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "x·sin(x) + cos(x) + C"
+   },
+   {
+    "label": "B",
+    "text": "x·sin(x) − cos(x) + C"
+   },
+   {
+    "label": "C",
+    "text": "−x·sin(x) + cos(x) + C"
+   },
+   {
+    "label": "D",
+    "text": "x²sin(x)/2 + C"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-integration-by-parts-003",
+  "skillId": "integration-by-parts",
+  "prompt": "∫ x·sin(x) dx = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−x·cos(x) + sin(x) + C",
+   "equivalents": [
+    "-x·cos(x) + sin(x) + C",
+    "−x·cos(x)+sin(x)+C",
+    "-x·cos(x)+sin(x)+C"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Parts with u = x, dv = sin(x) dx: −x·cos(x) + ∫cos(x) dx = −x·cos(x) + sin(x) + C. Differentiate to check: −cos x + x·sin x + cos x = x·sin x ✓.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:integration-by-parts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6d49dcd60c8455adf75c01ac26c29755f0390d996855ecfb62af99e383063b0a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "−x·cos(x) + sin(x) + C"
+   },
+   {
+    "label": "B",
+    "text": "x·cos(x) − sin(x) + C"
+   },
+   {
+    "label": "C",
+    "text": "−x·cos(x) − sin(x) + C"
+   },
+   {
+    "label": "D",
+    "text": "x²cos(x)/2 + C"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-integration-by-parts-004",
+  "skillId": "integration-by-parts",
+  "prompt": "∫ ln(x) dx = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x·ln(x) − x + C",
+   "equivalents": [
+    "x·ln(x) - x + C",
+    "x·ln(x)−x+C",
+    "x·ln(x)-x+C"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The classic trick: u = ln(x), dv = dx. Then x·ln(x) − ∫x·(1/x) dx = x·ln(x) − x + C. Integration by parts handles ln even with no visible product.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:integration-by-parts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "40462447fdbf46fabcaf8671b111a888260f802600f81fa99226a3ca8018dbc7",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "x·ln(x) − x + C"
+   },
+   {
+    "label": "B",
+    "text": "x·ln(x) + C"
+   },
+   {
+    "label": "C",
+    "text": "1/x + C"
+   },
+   {
+    "label": "D",
+    "text": "ln(x)²/2 + C"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-integration-by-parts-005",
+  "skillId": "integration-by-parts",
+  "prompt": "For ∫ x²·ln(x) dx by parts, which choice of u follows LIATE (and why)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "u = ln(x) — logs come first in LIATE",
+   "equivalents": [
+    "u=ln(x)—logscomefirstinLIATE"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "LIATE (Log, Inverse trig, Algebraic, Trig, Exponential) ranks u candidates: ln(x) differentiates into the simpler 1/x, while its antiderivative is the harder x·ln(x) − x. u = ln(x), dv = x² dx makes ∫v du a plain power integral.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:integration-by-parts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8850115eed1f398af47259cd7a65e5ec545398d5fd9d6c14e9c17c6b945133f3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "u = ln(x) — logs come first in LIATE"
+   },
+   {
+    "label": "B",
+    "text": "u = x² — pick the polynomial"
+   },
+   {
+    "label": "C",
+    "text": "u = x²·ln(x) — the whole integrand"
+   },
+   {
+    "label": "D",
+    "text": "dv = ln(x) dx — logs are easy to integrate"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-integration-by-parts-006",
+  "skillId": "integration-by-parts",
+  "prompt": "∫ x·eˣ dx evaluated from 0 to 1 equals:",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The antiderivative is (x − 1)eˣ. At 1: (0)e = 0. At 0: (−1)e⁰ = −1. So the integral is 0 − (−1) = 1. Neat cancellations like this are why the AP exam loves this integrand.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:integration-by-parts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b2263147748a04cd14837442fedd13b9a3f3cf4be5ca0e0fbd683ae74a9a8a42",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "e − 1"
+   },
+   {
+    "label": "C",
+    "text": "e"
+   },
+   {
+    "label": "D",
+    "text": "e + 1"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-fractions-001",
+  "skillId": "partial-fractions",
+  "prompt": "Decompose into partial fractions: 5/(x(x + 5)).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/x − 1/(x + 5)",
+   "equivalents": [
+    "1/x - 1/(x + 5)",
+    "1/x−1/(x+5)",
+    "1/x-1/(x+5)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Write 5/(x(x + 5)) = A/x + B/(x + 5). Multiply out: 5 = A(x + 5) + Bx. At x = 0: A = 1. At x = −5: B·(−5) = 5, so B = −1. The numerator matching the root gap is what makes both coefficients ±1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d87f3acf7ac7d95f3161e9f1d25470d404c55c3c02305bc5a6e2f1c454907130",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-fractions-002",
+  "skillId": "partial-fractions",
+  "prompt": "Decompose into partial fractions: 6/(x(x + 6)).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/x − 1/(x + 6)",
+   "equivalents": [
+    "1/x - 1/(x + 6)",
+    "1/x−1/(x+6)",
+    "1/x-1/(x+6)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Write 6/(x(x + 6)) = A/x + B/(x + 6). Multiply out: 6 = A(x + 6) + Bx. At x = 0: A = 1. At x = −6: B·(−6) = 6, so B = −1. The numerator matching the root gap is what makes both coefficients ±1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ad3a9aa236e776b5b524c3b7bc16684b792dfa8002d4398b354a05d2a6a5f70d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-fractions-003",
+  "skillId": "partial-fractions",
+  "prompt": "Decompose into partial fractions: 3/(x(x + 3)).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/x − 1/(x + 3)",
+   "equivalents": [
+    "1/x - 1/(x + 3)",
+    "1/x−1/(x+3)",
+    "1/x-1/(x+3)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Write 3/(x(x + 3)) = A/x + B/(x + 3). Multiply out: 3 = A(x + 3) + Bx. At x = 0: A = 1. At x = −3: B·(−3) = 3, so B = −1. The numerator matching the root gap is what makes both coefficients ±1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "61050af3e50b2dfc34f6942123cbbfabbf18b2b718c84fb46226dd11680c85fa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-fractions-004",
+  "skillId": "partial-fractions",
+  "prompt": "Decompose into partial fractions: 2/(x(x + 2)).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/x − 1/(x + 2)",
+   "equivalents": [
+    "1/x - 1/(x + 2)",
+    "1/x−1/(x+2)",
+    "1/x-1/(x+2)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Write 2/(x(x + 2)) = A/x + B/(x + 2). Multiply out: 2 = A(x + 2) + Bx. At x = 0: A = 1. At x = −2: B·(−2) = 2, so B = −1. The numerator matching the root gap is what makes both coefficients ±1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e4b9a879d50edf477f0526c9a35ee7c23231be3a60763a9deab3f9b56744eae4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-fractions-005",
+  "skillId": "partial-fractions",
+  "prompt": "In the decomposition (x − 1)/((x − 3)(x − 5)) = A/(x − 3) + B/(x − 5), find A.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Cover-up method: A = (value of (x − 1)/(x − 5) at x = 3) = 2/(3 − 5) = 2/(−2) = -1. Evaluate the rest of the fraction at the root the factor hides.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "696cf6cfe2f444aaed8af227a08220729e7e86f4097cf2478dbf384398ab82ae",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-fractions-006",
+  "skillId": "partial-fractions",
+  "prompt": "In the decomposition (x + 4)/((x − 5)(x − 6)) = A/(x − 5) + B/(x − 6), find B.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Cover-up method: B = (value of (x + 4)/(x − 5) at x = 6) = 10/(6 − 5) = 10/1 = 10. The two residues always differ because the numerator is evaluated at different roots.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5bfe9d686cdf421453da34ec3252b05cf915ada86fc6e1eb58fcdb59e6f2ae22",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-fractions-007",
+  "skillId": "partial-fractions",
+  "prompt": "In the decomposition (x)/((x − 2)(x − 4)) = A/(x − 2) + B/(x − 4), find A.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Cover-up method: A = (value of (x)/(x − 4) at x = 2) = 2/(2 − 4) = 2/(−2) = -1. Evaluate the rest of the fraction at the root the factor hides.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8bcb550e6ff5457040c5cd00e386ebd2db71cf10c7ef1f3dd4b30adf244047d4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-fractions-008",
+  "skillId": "partial-fractions",
+  "prompt": "In the decomposition (x + 4)/((x − 3)(x − 4)) = A/(x − 3) + B/(x − 4), find B.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Cover-up method: B = (value of (x + 4)/(x − 3) at x = 4) = 8/(4 − 3) = 8/1 = 8. The two residues always differ because the numerator is evaluated at different roots.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-fractions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "957513e977e568b7ac01579b5d17427a557cd76ed04d48bd87136f9669d64b97",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-improper-integrals-001",
+  "skillId": "improper-integrals",
+  "prompt": "Does ∫₁^∞ 1/x³ dx converge or diverge?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Converges",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A p-integral ∫₁^∞ 1/xᵖ dx converges exactly when p > 1. Here p = 3 > 1 — the tail shrinks fast enough for the area to stay finite (its value is 1/(3 − 1) = 1/2).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:improper-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b97e3d37dd64b72ce9ab7c038d022283aba5421052e957b2fef96544c9083754",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Converges"
+   },
+   {
+    "label": "B",
+    "text": "Diverges"
+   },
+   {
+    "label": "C",
+    "text": "Converges only on [1, 2]"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-improper-integrals-002",
+  "skillId": "improper-integrals",
+  "prompt": "Does ∫₁^∞ 1/x dx converge or diverge?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Diverges",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "p = 1 is the boundary case and it FAILS: ∫₁^b dx/x = ln(b) → ∞. The area under 1/x thins out, but not fast enough — the p > 1 threshold is strict.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:improper-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0458d08c74a95b91b658512dc306ea2ce0a5fb1ab246553193626bc89e061b4b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Diverges"
+   },
+   {
+    "label": "B",
+    "text": "Converges to 1"
+   },
+   {
+    "label": "C",
+    "text": "Converges to 0"
+   },
+   {
+    "label": "D",
+    "text": "Converges to e"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-improper-integrals-003",
+  "skillId": "improper-integrals",
+  "prompt": "Does ∫₁^∞ 1/x² dx converge or diverge?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Converges",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A p-integral ∫₁^∞ 1/xᵖ dx converges exactly when p > 1. Here p = 2 > 1 — the tail shrinks fast enough for the area to stay finite (its value is 1/(2 − 1) = 1).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:improper-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e434e083f64352a12dc3ea2edd2ec0912e6850fc023a1cebf3dda9cc013cb16a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Converges"
+   },
+   {
+    "label": "B",
+    "text": "Diverges"
+   },
+   {
+    "label": "C",
+    "text": "Converges only on [1, 2]"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-improper-integrals-004",
+  "skillId": "improper-integrals",
+  "prompt": "Evaluate: ∫₁^∞ 1/x⁵ dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "∫₁^b x^(−5) dx = [x^(−4)/(−4)]₁^b = (1 − b^(−4))/4 → 1/4 as b → ∞. Improper integrals are limits of proper ones — compute, then let the bound run off.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:improper-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "171f3ab08f70085987bcd04b731a4ffa5ec83ff83a4bf705281cb5206c482fbf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-improper-integrals-005",
+  "skillId": "improper-integrals",
+  "prompt": "Evaluate: ∫₀¹ 1/√x dx (improper at 0).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "∫ x^(−1/2) dx = 2√x. As the lower limit a → 0⁺: 2√1 − 2√a → 2. The integrand blows up at 0, but like a p-integral with p = 1/2 < 1 at a finite endpoint, the area is finite.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:improper-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fdb2f0c2dedc86e63f605cc3593487bc6d0660cb73155057ecd5294dc9239021",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-improper-integrals-006",
+  "skillId": "improper-integrals",
+  "prompt": "Evaluate: ∫₁^∞ 1/x² dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "∫₁^b x^(−2) dx = [x^(−1)/(−1)]₁^b = (1 − b^(−1))/1 → 1/1 as b → ∞. Improper integrals are limits of proper ones — compute, then let the bound run off.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:improper-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4b658b20b050cbb2f8482e690da9ced6208340903e9e4c139953573323f6fa2d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-euler-method-001",
+  "skillId": "euler-method",
+  "prompt": "dy/dx = x + y with y(0) = 5. Using Euler's method with step size h = 1, estimate y(1).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "One Euler step: y(1) ≈ y(0) + h·(slope at (0, 5)) = 5 + 1·(0 + 5) = 10. Euler's method walks along the tangent line the slope field gives at the current point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:euler-method"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "634be7caa9602e823c314521718e3400c14fa40d54d457de11a46b3d5dfeb248",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-euler-method-002",
+  "skillId": "euler-method",
+  "prompt": "dy/dx = x + y with y(0) = 2. Using Euler's method with step size h = 1, estimate y(1).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "One Euler step: y(1) ≈ y(0) + h·(slope at (0, 2)) = 2 + 1·(0 + 2) = 4. Euler's method walks along the tangent line the slope field gives at the current point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:euler-method"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d7fff41d71045704b49c4e408849df3896455fa422f6e2d85f26d8342cdc9708",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-euler-method-003",
+  "skillId": "euler-method",
+  "prompt": "dy/dx = x + y with y(0) = 1. Using Euler's method with step size h = 1, estimate y(1).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "One Euler step: y(1) ≈ y(0) + h·(slope at (0, 1)) = 1 + 1·(0 + 1) = 2. Euler's method walks along the tangent line the slope field gives at the current point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:euler-method"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "63ccad91409513dff96491f8fd1288d21be5e8e9be807b5a9e9e76ceaca3e7b5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-euler-method-004",
+  "skillId": "euler-method",
+  "prompt": "dy/dx = x + y with y(0) = 4. Using Euler's method with step size h = 1, estimate y(1).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "One Euler step: y(1) ≈ y(0) + h·(slope at (0, 4)) = 4 + 1·(0 + 4) = 8. Euler's method walks along the tangent line the slope field gives at the current point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:euler-method"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8e57c67556e993d4a3357e077c12ececd6875e4ec18cf652968eece90dd703a6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-euler-method-005",
+  "skillId": "euler-method",
+  "prompt": "dy/dx = x + y with y(0) = 4. Using Euler's method with TWO steps of h = 1, estimate y(2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "17",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Step 1: y(1) ≈ 4 + 1·(0 + 4) = 8. Step 2: y(2) ≈ 8 + 1·(1 + 8) = 17. Each step re-reads the slope at the NEW point — using the old slope twice is the classic Euler error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:euler-method"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ed810188cecd989947b943752f1f0f44e64792a24ed7995852b7b5477305c39f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-euler-method-006",
+  "skillId": "euler-method",
+  "prompt": "dy/dx = x + y with y(0) = 3. Using Euler's method with TWO steps of h = 1, estimate y(2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Step 1: y(1) ≈ 3 + 1·(0 + 3) = 6. Step 2: y(2) ≈ 6 + 1·(1 + 6) = 13. Each step re-reads the slope at the NEW point — using the old slope twice is the classic Euler error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:euler-method"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3fe65e923936fd1d5171cdc45d3135c67c0e7ceb6128c1e326c09f8d95eafc0e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-euler-method-007",
+  "skillId": "euler-method",
+  "prompt": "dy/dx = x + y with y(0) = 1. Using Euler's method with TWO steps of h = 1, estimate y(2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Step 1: y(1) ≈ 1 + 1·(0 + 1) = 2. Step 2: y(2) ≈ 2 + 1·(1 + 2) = 5. Each step re-reads the slope at the NEW point — using the old slope twice is the classic Euler error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:euler-method"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0df749ea609c1d8157daa3191c855430de4183ab59d31021a3c25991fe17643e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-euler-method-008",
+  "skillId": "euler-method",
+  "prompt": "dy/dx = x + y with y(0) = 2. Using Euler's method with TWO steps of h = 1, estimate y(2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Step 1: y(1) ≈ 2 + 1·(0 + 2) = 4. Step 2: y(2) ≈ 4 + 1·(1 + 4) = 9. Each step re-reads the slope at the NEW point — using the old slope twice is the classic Euler error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:euler-method"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "de6232312827f73e6afa54e3c298066002d686d8dafc8ba0ef8b9edfcb567696",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-logistic-growth-001",
+  "skillId": "logistic-growth",
+  "prompt": "A population follows dP/dt = kP(1 − P/500) with 0 < P(0) < 500. What is the limit of P as t → ∞?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "500",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "500 is the carrying capacity: growth is positive below it, zero at it. Every logistic solution starting between 0 and 500 rises toward the horizontal asymptote P = 500 without crossing it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:logistic-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "93ffa9a4c276c02e04ee08f34dcc5862da042f3d1c8fc05ac6efe88d848a07b0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-logistic-growth-002",
+  "skillId": "logistic-growth",
+  "prompt": "A population follows the logistic equation dP/dt = kP(1 − P/400). At what population is it growing FASTEST?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "200",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "dP/dt = kP(1 − P/400) is a downward parabola in P, maximized halfway between its zeros 0 and 400: at P = 200. On the S-curve this is the inflection point — steepest climb at half capacity.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:logistic-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b3c968529d3f50904c7b50fc132e05587e0bf1f101b3fa6cde604b2bf434f743",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-logistic-growth-003",
+  "skillId": "logistic-growth",
+  "prompt": "A population follows dP/dt = kP(1 − P/800) with 0 < P(0) < 800. What is the limit of P as t → ∞?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "800",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "800 is the carrying capacity: growth is positive below it, zero at it. Every logistic solution starting between 0 and 800 rises toward the horizontal asymptote P = 800 without crossing it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:logistic-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c61007461893cabd8bfc20f701e71734d8d5d12cf1da66bd7363c4fc84c7ecb5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-logistic-growth-004",
+  "skillId": "logistic-growth",
+  "prompt": "A population follows the logistic equation dP/dt = kP(1 − P/100). At what population is it growing FASTEST?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "dP/dt = kP(1 − P/100) is a downward parabola in P, maximized halfway between its zeros 0 and 100: at P = 50. On the S-curve this is the inflection point — steepest climb at half capacity.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:logistic-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6c622420973252d36cfd2c3416750ca1633b510e6a28c501d95549dd1faba3b6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-logistic-growth-005",
+  "skillId": "logistic-growth",
+  "prompt": "dP/dt = 2P(1 − P/400). Compute dP/dt when P = 200.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "200",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Substitute: dP/dt = 2 · 200 · (1 − 200/400) = 2 · 200 · 0.5 = 200. (P = 200 is half of the carrying capacity 400, so this is also the maximum possible growth rate.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:logistic-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7274fc6b919416754f8f2de57273acf4c2d676d13a1d4bc5f22f13b4af2c486e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-logistic-growth-006",
+  "skillId": "logistic-growth",
+  "prompt": "dP/dt = 4P(1 − P/400). Compute dP/dt when P = 200.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "400",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Substitute: dP/dt = 4 · 200 · (1 − 200/400) = 4 · 200 · 0.5 = 400. (P = 200 is half of the carrying capacity 400, so this is also the maximum possible growth rate.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:logistic-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "004b7a98fb65e36ce1698cdda6fcc34c80770df362a6ba38eb16981eca208c7f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-logistic-growth-007",
+  "skillId": "logistic-growth",
+  "prompt": "dP/dt = 2P(1 − P/100). Compute dP/dt when P = 50.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Substitute: dP/dt = 2 · 50 · (1 − 50/100) = 2 · 50 · 0.5 = 50. (P = 50 is half of the carrying capacity 100, so this is also the maximum possible growth rate.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:logistic-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b9e1dfd410ba274303034a6ec8f7537a0e184354f4369c3941c34fae160f4d78",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-logistic-growth-008",
+  "skillId": "logistic-growth",
+  "prompt": "dP/dt = 2P(1 − P/200). Compute dP/dt when P = 100.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "100",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Substitute: dP/dt = 2 · 100 · (1 − 100/200) = 2 · 100 · 0.5 = 100. (P = 100 is half of the carrying capacity 200, so this is also the maximum possible growth rate.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:logistic-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5377f305daaa30d1b2dae799b29ea3f4459e473b479e0aaf67fea8ecc711f974",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-derivatives-001",
+  "skillId": "parametric-derivatives",
+  "prompt": "x = 2t, y = t². Find dy/dx at t = 3.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "For parametric curves, dy/dx = (dy/dt)/(dx/dt) = 2t/2. At t = 3: 6/2 = 3. Divide the rates — never differentiate y with respect to x directly.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c30955dd6de33279261e3040d1f5ccc85af2a8925b6aaf12c24e51a466e709ac",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-derivatives-002",
+  "skillId": "parametric-derivatives",
+  "prompt": "x = 4t, y = t². Find dy/dx at t = 2.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "For parametric curves, dy/dx = (dy/dt)/(dx/dt) = 2t/4. At t = 2: 4/4 = 1. Divide the rates — never differentiate y with respect to x directly.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e485aa139f4a0679b808cf58bab6bb9384dbf55835383a4ecc21b746b7552129",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-derivatives-003",
+  "skillId": "parametric-derivatives",
+  "prompt": "x = 6t, y = t². Find dy/dx at t = 4.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "For parametric curves, dy/dx = (dy/dt)/(dx/dt) = 2t/6. At t = 4: 8/6 = 4/3. Divide the rates — never differentiate y with respect to x directly.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5a5073422fd4ccbb025d647a8233dd48f57ade164703bddc4a716cab7d7d0b32",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-derivatives-004",
+  "skillId": "parametric-derivatives",
+  "prompt": "x = 4t, y = 4t². Find dy/dx at t = 2.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "For parametric curves, dy/dx = (dy/dt)/(dx/dt) = 8t/4. At t = 2: 16/4 = 4. Divide the rates — never differentiate y with respect to x directly.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "49fa9512bd0db5af162ec63109c906c549d9e87016c7aa67f2c6f17962b6a9f1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-derivatives-005",
+  "skillId": "parametric-derivatives",
+  "prompt": "x = t², y = t³. Find the slope of the tangent line at t = 1.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "dy/dx = (dy/dt)/(dx/dt) = 3t²/(2t) = 3t/2 for t ≠ 0. At t = 1: 3/2 = 3/2. The t cancels only away from t = 0 — at the origin this curve has a cusp.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4284fc2fdc980cd8e3e342091a7735990d1dfad7b332c281670ba1bd89adef92",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-derivatives-006",
+  "skillId": "parametric-derivatives",
+  "prompt": "x = t², y = t³. Find the slope of the tangent line at t = 3.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "dy/dx = (dy/dt)/(dx/dt) = 3t²/(2t) = 3t/2 for t ≠ 0. At t = 3: 9/2 = 9/2. The t cancels only away from t = 0 — at the origin this curve has a cusp.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fd572629d47be939ea64d26ef86a4181c2be1cbbd8369e93cc37bf3afef0e1db",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-derivatives-007",
+  "skillId": "parametric-derivatives",
+  "prompt": "x = t², y = t³. Find the slope of the tangent line at t = 2.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "dy/dx = (dy/dt)/(dx/dt) = 3t²/(2t) = 3t/2 for t ≠ 0. At t = 2: 6/2 = 3. The t cancels only away from t = 0 — at the origin this curve has a cusp.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "30accad18192f769950c173844d3df0ce6700e7d325080ff73f2940c7c46b46a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-derivatives-008",
+  "skillId": "parametric-derivatives",
+  "prompt": "x = t², y = t³. Find the slope of the tangent line at t = 4.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "dy/dx = (dy/dt)/(dx/dt) = 3t²/(2t) = 3t/2 for t ≠ 0. At t = 4: 12/2 = 6. The t cancels only away from t = 0 — at the origin this curve has a cusp.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ea58e11a5d5d6113e9b4bff5438194b3fa431cf568a9d27423a69a18a4eee142",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-arc-length-001",
+  "skillId": "parametric-arc-length",
+  "prompt": "Which integral gives the arc length of the parametric curve x = f(t), y = g(t) for a ≤ t ≤ b?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "∫ₐᵇ √((dx/dt)² + (dy/dt)²) dt",
+   "equivalents": [
+    "∫ₐᵇ√((dx/dt)²+(dy/dt)²)dt"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Arc length integrates SPEED: √((dx/dt)² + (dy/dt)²) is the speed along the curve, and distance is speed integrated over time. (Choice C is the arc-length form for y = f(x), a different setup.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-arc-length"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3c9bc615f22960957423db7c05033c668ef8031c37615f0613519a52990d47e9",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "∫ₐᵇ √((dx/dt)² + (dy/dt)²) dt"
+   },
+   {
+    "label": "B",
+    "text": "∫ₐᵇ ((dx/dt)² + (dy/dt)²) dt"
+   },
+   {
+    "label": "C",
+    "text": "∫ₐᵇ √(1 + (dy/dx)²) dx"
+   },
+   {
+    "label": "D",
+    "text": "∫ₐᵇ (dy/dt)/(dx/dt) dt"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-arc-length-002",
+  "skillId": "parametric-arc-length",
+  "prompt": "x = 3t, y = 4t for 0 ≤ t ≤ 1. Find the length of the curve.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Speed = √(3² + 4²) = 5 (the 3-4-5 triple), constant. Length = ∫₀^1 5 dt = 5. A straight line traced at constant speed — the integral is just speed × time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-arc-length"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dd93052249b628accbe22caff205f5f235f8e8de9620b5e6c107ed027d176c1f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-arc-length-003",
+  "skillId": "parametric-arc-length",
+  "prompt": "A particle moves along x = 3t, y = 4t + 3. What is its SPEED at t = 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Speed = √((dx/dt)² + (dy/dt)²) = √(3² + 4²) = 5 — the 3-4-5 triple, and constant in t because both rates are constant. The +constant in y shifts the path, not the speed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-arc-length"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b75084fe635b3dec8694d787b4f53c111b40ca874eed4fb7f606871335a7e786",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-arc-length-004",
+  "skillId": "parametric-arc-length",
+  "prompt": "A particle moves along x = 8t, y = 15t + 3. What is its SPEED at t = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "17",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Speed = √((dx/dt)² + (dy/dt)²) = √(8² + 15²) = 17 — the 8-15-17 triple, and constant in t because both rates are constant. The +constant in y shifts the path, not the speed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-arc-length"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0fada2e19dbefdecf026eb506654dca5741acea480d7c4e077698253f3580e8d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-arc-length-005",
+  "skillId": "parametric-arc-length",
+  "prompt": "A particle moves along x = 5t, y = 12t + 5. What is its SPEED at t = 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Speed = √((dx/dt)² + (dy/dt)²) = √(5² + 12²) = 13 — the 5-12-13 triple, and constant in t because both rates are constant. The +constant in y shifts the path, not the speed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-arc-length"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6602d03dcb35e9957011cfd5d1d3558a4dd659b4738fbc6f4486ca8091c8e0b0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-arc-length-006",
+  "skillId": "parametric-arc-length",
+  "prompt": "A particle moves along x = 5t, y = 12t + 8. What is its SPEED at t = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Speed = √((dx/dt)² + (dy/dt)²) = √(5² + 12²) = 13 — the 5-12-13 triple, and constant in t because both rates are constant. The +constant in y shifts the path, not the speed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-arc-length"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "649b1e7d054ef9db1f2d48b4459e8178c3468d496977fdd60fc10bb66f13d588",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-graphing-area-001",
+  "skillId": "polar-graphing-area",
+  "prompt": "Using the polar area formula A = (1/2)∫r² dθ over [0, 2π], find the area enclosed by the circle r = 3.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9π",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A = (1/2)∫₀^{2π} 3² dθ = (1/2)(9)(2π) = 9π — matching πr² for a circle of radius 3, as it must. The polar formula sweeps out triangular slivers (1/2)r²dθ.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-graphing-area"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "933726968cb040acfadfb9859544d96eeedb7d4b7593383b2fc70c98e6fc35a7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-graphing-area-002",
+  "skillId": "polar-graphing-area",
+  "prompt": "Which integral gives the area enclosed by the polar curve r = f(θ) for α ≤ θ ≤ β?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(1/2)∫ᵅᵝ r² dθ",
+   "equivalents": [
+    "(1/2)∫ᵅᵝr²dθ"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Each sliver of angle dθ is approximately a thin triangle with area (1/2)r·(r dθ) = (1/2)r² dθ. Summing gives A = (1/2)∫r² dθ. Forgetting the 1/2 or the square are the two standard errors.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-graphing-area"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b74226753652e75c15d4b89619a6c30964239e3212a613b2a4c8fbbc97e61dd2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "(1/2)∫ᵅᵝ r² dθ"
+   },
+   {
+    "label": "B",
+    "text": "∫ᵅᵝ r dθ"
+   },
+   {
+    "label": "C",
+    "text": "(1/2)∫ᵅᵝ r dθ"
+   },
+   {
+    "label": "D",
+    "text": "∫ᵅᵝ r² dθ"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-graphing-area-003",
+  "skillId": "polar-graphing-area",
+  "prompt": "Using the polar area formula A = (1/2)∫r² dθ over [0, 2π], find the area enclosed by the circle r = 6.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "36π",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A = (1/2)∫₀^{2π} 6² dθ = (1/2)(36)(2π) = 36π — matching πr² for a circle of radius 6, as it must. The polar formula sweeps out triangular slivers (1/2)r²dθ.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-graphing-area"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c31976855228fd9f624242743df188a2b02cdd7a9c6fdb68bcb14aa19705e52f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-graphing-area-004",
+  "skillId": "polar-graphing-area",
+  "prompt": "Find the area enclosed by the cardioid r = 2(1 + cos θ).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6π",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "A = (1/2)∫₀^{2π} 2²(1 + cos θ)² dθ. Expanding, (1 + cos θ)² averages to 3/2 over a full period (1 + 2·0 + 1/2), so A = (1/2)(4)(3/2)(2π) = 6π. The cardioid's area is always (3/2)π·a².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-graphing-area"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0e295e22128091b7354bf4b8ea959243dd859d273042c2e767394175b9a673bd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-graphing-area-005",
+  "skillId": "polar-graphing-area",
+  "prompt": "Over which θ-interval is ONE petal of the rose r = 4cos(2θ) traced (starting from its tip at θ = 0)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "[−π/4, π/4]",
+   "equivalents": [
+    "[-π/4, π/4]",
+    "[−π/4,π/4]",
+    "[-π/4,π/4]"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "A petal lives where r ≥ 0: cos(2θ) ≥ 0 for −π/4 ≤ θ ≤ π/4. Integrating the area formula outside the petal's own interval double-counts other petals — finding the right bounds IS the problem on the AP exam.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-graphing-area"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7e4ee25f7eeee520530c849512e97fe8071695eacf5fcff6718c90b1a205f111",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "[−π/4, π/4]"
+   },
+   {
+    "label": "B",
+    "text": "[0, 2π]"
+   },
+   {
+    "label": "C",
+    "text": "[0, π]"
+   },
+   {
+    "label": "D",
+    "text": "[−π/2, π/2]"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-graphing-area-006",
+  "skillId": "polar-graphing-area",
+  "prompt": "Find the area enclosed by the cardioid r = 6(1 + cos θ).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "54π",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "A = (1/2)∫₀^{2π} 6²(1 + cos θ)² dθ. Expanding, (1 + cos θ)² averages to 3/2 over a full period (1 + 2·0 + 1/2), so A = (1/2)(36)(3/2)(2π) = 54π. The cardioid's area is always (3/2)π·a².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-graphing-area"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a7fba998d80ef664e5c25115d47ecf26ed7e74dee04b50193f02710db33d3903",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-graphing-area-007",
+  "skillId": "polar-graphing-area",
+  "prompt": "Over which θ-interval is ONE petal of the rose r = 6cos(2θ) traced (starting from its tip at θ = 0)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "[−π/4, π/4]",
+   "equivalents": [
+    "[-π/4, π/4]",
+    "[−π/4,π/4]",
+    "[-π/4,π/4]"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "A petal lives where r ≥ 0: cos(2θ) ≥ 0 for −π/4 ≤ θ ≤ π/4. Integrating the area formula outside the petal's own interval double-counts other petals — finding the right bounds IS the problem on the AP exam.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-graphing-area"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "55706bfc80fc5096b86a9cbfa4a83e132a28b50075d9dbfc6dad7df60f99f2c7",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "[−π/4, π/4]"
+   },
+   {
+    "label": "B",
+    "text": "[0, 2π]"
+   },
+   {
+    "label": "C",
+    "text": "[0, π]"
+   },
+   {
+    "label": "D",
+    "text": "[−π/2, π/2]"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-valued-functions-001",
+  "skillId": "vector-valued-functions",
+  "prompt": "r(t) = ⟨7t, 4t²⟩. Find the velocity vector r′(3).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨7, 24⟩",
+   "equivalents": [
+    "⟨7,24⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate each component: r′(t) = ⟨7, 8t⟩. At t = 3: ⟨7, 24⟩. Vector-valued calculus is component-wise calculus.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-valued-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "84301600785cb03a00be76ebc6df303b79c73ff536a048cf9b2ee4a953cd6f86",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-valued-functions-002",
+  "skillId": "vector-valued-functions",
+  "prompt": "r(t) = ⟨2t, 2t²⟩. Find the velocity vector r′(1).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨2, 4⟩",
+   "equivalents": [
+    "⟨2,4⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate each component: r′(t) = ⟨2, 4t⟩. At t = 1: ⟨2, 4⟩. Vector-valued calculus is component-wise calculus.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-valued-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8cdd4417ccb16e036539a070a08c9d4f9cd50265a43037f407288ec76393e8e4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-valued-functions-003",
+  "skillId": "vector-valued-functions",
+  "prompt": "r(t) = ⟨2t, 2t²⟩. Find the velocity vector r′(2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨2, 8⟩",
+   "equivalents": [
+    "⟨2,8⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate each component: r′(t) = ⟨2, 4t⟩. At t = 2: ⟨2, 8⟩. Vector-valued calculus is component-wise calculus.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-valued-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "abd5e11a375925cbb4b39820fa38cdbf391bbe3b6e002b7a8c5e4b713891b82b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-valued-functions-004",
+  "skillId": "vector-valued-functions",
+  "prompt": "r(t) = ⟨5t, t²⟩. Find the velocity vector r′(4).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨5, 8⟩",
+   "equivalents": [
+    "⟨5,8⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate each component: r′(t) = ⟨5, 2t⟩. At t = 4: ⟨5, 8⟩. Vector-valued calculus is component-wise calculus.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-valued-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "837ba3f2e93ba1bd8a15eaa0788d09d992f8621b25aa08cd45c9c344fed512aa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-valued-functions-005",
+  "skillId": "vector-valued-functions",
+  "prompt": "r(t) = ⟨3t, 4t⟩ + ⟨5, 2⟩ (a constant shift). What is the particle's SPEED at t = 2?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "r′(t) = ⟨3, 4⟩ — the constant shift differentiates away. Speed = |r′| = √(3² + 4²) = 5, the 3-4-5 triple. Speed is the magnitude of velocity, never a component.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-valued-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1aa006c111785f4bd20dff5d441b0cf245b7a1be904707442dbe543c22deba21",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-valued-functions-006",
+  "skillId": "vector-valued-functions",
+  "prompt": "A particle has velocity r′(t) = ⟨6t, 15⟩. Find its acceleration vector.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨6, 0⟩",
+   "equivalents": [
+    "⟨6,0⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate the velocity component-wise: a(t) = ⟨6, 0⟩ — constant. The 15 in the y-velocity is constant, so no y-acceleration; only the x-motion accelerates.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-valued-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a07e84942a1093f2c0e0b62fbc32bc72093eb1c9f59a50d357cef3dad718275f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-valued-functions-007",
+  "skillId": "vector-valued-functions",
+  "prompt": "r(t) = ⟨6t, 8t⟩ + ⟨1, 1⟩ (a constant shift). What is the particle's SPEED at t = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "r′(t) = ⟨6, 8⟩ — the constant shift differentiates away. Speed = |r′| = √(6² + 8²) = 10, the 6-8-10 triple. Speed is the magnitude of velocity, never a component.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-valued-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "29b166b16a1b31ce5c1c336f9f14d9610c6f17a0f687b3b9e1cdc922b1b1966b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-valued-functions-008",
+  "skillId": "vector-valued-functions",
+  "prompt": "A particle has velocity r′(t) = ⟨4t, 8⟩. Find its acceleration vector.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨4, 0⟩",
+   "equivalents": [
+    "⟨4,0⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate the velocity component-wise: a(t) = ⟨4, 0⟩ — constant. The 8 in the y-velocity is constant, so no y-acceleration; only the x-motion accelerates.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-valued-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7ea3c041e6ce00e192ecbfe5e60cd2cf5a78552cde0ae3a69a05d5697ba99053",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sequences-convergence-001",
+  "skillId": "sequences-convergence",
+  "prompt": "Find the limit of the sequence aₙ = (7n + 9)/(6n + 8).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Divide top and bottom by n: (7 + 9/n)/(6 + 8/n) → 7/6 = 7/6. Sequence limits at ∞ follow the same leading-term logic as function limits.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sequences-convergence"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b75b3da37584f5eb4852542f927406a74809fa8943c1351082399d6501670c7f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sequences-convergence-002",
+  "skillId": "sequences-convergence",
+  "prompt": "Find the limit of the sequence aₙ = 3/n².",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A constant over a growing power of n shrinks to 0: 3/n^2 → 0. Any sequence c/nᵖ with p > 0 converges to 0 — the constant only scales the approach, never the destination.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sequences-convergence"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0efc3c5a437f66575b2c4f99bd2e077fa2f8f3e53beedac2625b55ba3b72601a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sequences-convergence-003",
+  "skillId": "sequences-convergence",
+  "prompt": "Find the limit of the sequence aₙ = (5n + 9)/(6n + 3).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Divide top and bottom by n: (5 + 9/n)/(6 + 3/n) → 5/6 = 5/6. Sequence limits at ∞ follow the same leading-term logic as function limits.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sequences-convergence"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "72d08038068c2ed0220b3c9f0a7c4b3527900ac4b6c89a1536d12c63d8018b3c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sequences-convergence-004",
+  "skillId": "sequences-convergence",
+  "prompt": "Find the limit of the sequence aₙ = 8/n³.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A constant over a growing power of n shrinks to 0: 8/n^3 → 0. Any sequence c/nᵖ with p > 0 converges to 0 — the constant only scales the approach, never the destination.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sequences-convergence"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "75f75315c0fa4d98411e38769393c967cc22178038ba849114c37139526c22a1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sequences-convergence-005",
+  "skillId": "sequences-convergence",
+  "prompt": "Does the sequence aₙ = (1/2)ⁿ converge or diverge (and to what)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Converges to 0",
+   "equivalents": [
+    "Convergesto0"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "|1/2| < 1, so (1/2)ⁿ halves forever toward 0. Geometric sequences rⁿ converge exactly when −1 < r ≤ 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sequences-convergence"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f4b79072574c13edeb54a52b986c652423da950120603af63ee6e04865740d80",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Converges to 0"
+   },
+   {
+    "label": "B",
+    "text": "Converges to 1"
+   },
+   {
+    "label": "C",
+    "text": "Diverges"
+   },
+   {
+    "label": "D",
+    "text": "Converges to the ratio"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-sequences-convergence-006",
+  "skillId": "sequences-convergence",
+  "prompt": "Does the sequence aₙ = (3/2)ⁿ converge or diverge (and to what)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Diverges",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "|3/2| > 1, so each term is 1.5× the last — the sequence grows without bound. Geometric growth beyond ratio 1 never settles.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sequences-convergence"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "20206e4209ef79c3c8fffdc1140d73466bef49c61c221dbdd945367ef048bbc4",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Converges to 0"
+   },
+   {
+    "label": "B",
+    "text": "Converges to 1"
+   },
+   {
+    "label": "C",
+    "text": "Diverges"
+   },
+   {
+    "label": "D",
+    "text": "Converges to the ratio"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-sequences-convergence-007",
+  "skillId": "sequences-convergence",
+  "prompt": "Does the sequence aₙ = (1)ⁿ converge or diverge (and to what)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Converges to 1",
+   "equivalents": [
+    "Convergesto1"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "1ⁿ = 1 for every n — constant, hence convergent to 1. r = 1 is the one boundary ratio that converges (to 1); r = −1 oscillates and does not.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sequences-convergence"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "00c0df24b9bdd5e38aaaefb8ef3ecd5e587f9881b3cfa65b74499769437bc22c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Converges to 0"
+   },
+   {
+    "label": "B",
+    "text": "Converges to 1"
+   },
+   {
+    "label": "C",
+    "text": "Diverges"
+   },
+   {
+    "label": "D",
+    "text": "Converges to the ratio"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-sequences-convergence-008",
+  "skillId": "sequences-convergence",
+  "prompt": "Does the sequence aₙ = (−1)ⁿ converge or diverge (and to what)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Diverges",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "(−1)ⁿ alternates 1, −1, 1, −1, … forever — it never settles on a single value, so it diverges (by oscillation, not by growing).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sequences-convergence"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "74fe3a6824e84b43e915590c0acd71f644c71e714892f5559223978fe4a8509a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Converges to 0"
+   },
+   {
+    "label": "B",
+    "text": "Converges to 1"
+   },
+   {
+    "label": "C",
+    "text": "Diverges"
+   },
+   {
+    "label": "D",
+    "text": "Converges to the ratio"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-convergence-tests-001",
+  "skillId": "convergence-tests",
+  "prompt": "Does the p-series Σ 1/n⁴ converge or diverge?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Converges",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A p-series Σ 1/nᵖ converges exactly when p > 1. Here p = 4 > 1 ✓. (Compare: p = 1 is the harmonic series, which diverges — the threshold is strict.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:convergence-tests"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "abd36a6f692aea3d47df72bc02720a4f941e5191a96c210d9ab94f07d90e03a2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Converges"
+   },
+   {
+    "label": "B",
+    "text": "Diverges"
+   },
+   {
+    "label": "C",
+    "text": "Converges only for even n"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-convergence-tests-002",
+  "skillId": "convergence-tests",
+  "prompt": "Does the harmonic series Σ 1/n converge or diverge?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Diverges",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The terms shrink to 0, yet the SUM still grows without bound (group terms: 1/3 + 1/4 > 1/2, 1/5 + … + 1/8 > 1/2, forever). Terms → 0 is necessary but never sufficient — the harmonic series is the canonical counterexample.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:convergence-tests"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "26832298fd1fe4de72ebafee76f66160fd85de145d56acdaff13f422d307224a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Diverges"
+   },
+   {
+    "label": "B",
+    "text": "Converges to 1"
+   },
+   {
+    "label": "C",
+    "text": "Converges to e"
+   },
+   {
+    "label": "D",
+    "text": "Converges to 0"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-convergence-tests-003",
+  "skillId": "convergence-tests",
+  "prompt": "Does the p-series Σ 1/n² converge or diverge?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Converges",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A p-series Σ 1/nᵖ converges exactly when p > 1. Here p = 2 > 1 ✓. (Compare: p = 1 is the harmonic series, which diverges — the threshold is strict.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:convergence-tests"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "23f240b9b3f4873020b54a7a0111e166a6bd56a6da2e2a3633dc2d5f0ddb68ac",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Converges"
+   },
+   {
+    "label": "B",
+    "text": "Diverges"
+   },
+   {
+    "label": "C",
+    "text": "Converges only for even n"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-convergence-tests-004",
+  "skillId": "convergence-tests",
+  "prompt": "Evaluate the geometric series: Σₙ₌₀^∞ (1/2)ⁿ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "|r| = 1/2 < 1, so the series converges to a/(1 − r) = 1/(1 − 1/2) = 1/(1/2) = 2. First term over one-minus-ratio — but only when |r| < 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:convergence-tests"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "450a13723f7ba6bbbd86b8d0a0d5792ddb250b5fba0d3e54269e0d9f994153e7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-convergence-tests-005",
+  "skillId": "convergence-tests",
+  "prompt": "For which values of r does Σₙ₌₀^∞ 4·rⁿ converge?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "|r| < 1",
+   "equivalents": [
+    "|r|<1"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "A geometric series converges exactly when |r| < 1 — strictly. At r = 1 the terms are all 4; at r = −1 they alternate ±4; both diverge. The constant 4 scales the sum but never changes convergence.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:convergence-tests"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "35fd6c79495f94edb16eed7377a4464966eba5684dc5e18463eaaadff667a42f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "|r| < 1"
+   },
+   {
+    "label": "B",
+    "text": "All r"
+   },
+   {
+    "label": "C",
+    "text": "r < 1"
+   },
+   {
+    "label": "D",
+    "text": "|r| ≤ 1"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-convergence-tests-006",
+  "skillId": "convergence-tests",
+  "prompt": "Evaluate the geometric series: Σₙ₌₀^∞ 3·(1/4)ⁿ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "|r| = 1/4 < 1, so the series converges to a/(1 − r) = 3/(1 − 1/4) = 3/(3/4) = 4. First term over one-minus-ratio — but only when |r| < 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:convergence-tests"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f53a74f23adba260d15c39b7be19d9c13973814afac1aac8f853819b5299c833",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-convergence-tests-007",
+  "skillId": "convergence-tests",
+  "prompt": "For which values of r does Σₙ₌₀^∞ 3·rⁿ converge?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "|r| < 1",
+   "equivalents": [
+    "|r|<1"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "A geometric series converges exactly when |r| < 1 — strictly. At r = 1 the terms are all 3; at r = −1 they alternate ±3; both diverge. The constant 3 scales the sum but never changes convergence.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:convergence-tests"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a9c35b1807f90bc524732d9f1842e23755ab62e157a4ebfd21c80cd98b7329df",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "|r| < 1"
+   },
+   {
+    "label": "B",
+    "text": "All r"
+   },
+   {
+    "label": "C",
+    "text": "r < 1"
+   },
+   {
+    "label": "D",
+    "text": "|r| ≤ 1"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-alternating-series-error-001",
+  "skillId": "alternating-series-error",
+  "prompt": "The alternating series Σ (−1)ⁿ⁺¹/n is approximated by its first 3 terms. What is the alternating series error bound?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "For a convergent alternating series with decreasing terms, the error is at most the FIRST OMITTED TERM: |error| ≤ a_{4} = 1/4. The partial sums straddle the true value, so the next term brackets the miss.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:alternating-series-error"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9085867976473c6b88e9fb61c0bc2324d3df5650188d1b37913ae6b62b87ebf5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-alternating-series-error-002",
+  "skillId": "alternating-series-error",
+  "prompt": "The alternating series Σ (−1)ⁿ⁺¹/n is approximated by its first 5 terms. What is the alternating series error bound?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "For a convergent alternating series with decreasing terms, the error is at most the FIRST OMITTED TERM: |error| ≤ a_{6} = 1/6. The partial sums straddle the true value, so the next term brackets the miss.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:alternating-series-error"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c52cdbbcfa520c00d1f7432772a6c97ceffff57c8ab647c8f9fa307dd45162df",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-alternating-series-error-003",
+  "skillId": "alternating-series-error",
+  "prompt": "The alternating series Σ (−1)ⁿ⁺¹/n is approximated by its first 4 terms. What is the alternating series error bound?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "For a convergent alternating series with decreasing terms, the error is at most the FIRST OMITTED TERM: |error| ≤ a_{5} = 1/5. The partial sums straddle the true value, so the next term brackets the miss.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:alternating-series-error"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2d97829863a2691a4c63f01f58883e50fea89cf87e97c57e1bf270d6294abd93",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-alternating-series-error-004",
+  "skillId": "alternating-series-error",
+  "prompt": "The alternating series Σ (−1)ⁿ⁺¹/n is approximated by its first 9 terms. What is the alternating series error bound?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "For a convergent alternating series with decreasing terms, the error is at most the FIRST OMITTED TERM: |error| ≤ a_{10} = 1/10. The partial sums straddle the true value, so the next term brackets the miss.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:alternating-series-error"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ee805a961d57562628ee5793d87cf7ce246772cecf795ab0f3c2c345435f39b4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-alternating-series-error-005",
+  "skillId": "alternating-series-error",
+  "prompt": "How many terms of Σ (−1)ⁿ⁺¹/n guarantee (by the alternating series bound) an error less than 1/100?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "100",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Need the first omitted term below 1/100: a_{N+1} = 1/(N + 1) < 1/100 requires N + 1 > 100, i.e. N = 100 terms. The bound is about the NEXT term, hence the off-by-one that catches so many students.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:alternating-series-error"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3dec2e3a62d3b469e6cfa753a15338521d67c65850aaacec56f49759143aa65d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-alternating-series-error-006",
+  "skillId": "alternating-series-error",
+  "prompt": "Σ (−1)ⁿ/n! (n from 0) is approximated by its terms through n = 2. What is the alternating series error bound?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The first omitted term is 1/(3)! = 1/6, and for a decreasing alternating series that term bounds the error. Factorial denominators shrink fast — this series (which sums to 1/e) needs very few terms.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:alternating-series-error"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "36c46589ed2b1926b9477095c1a5840e5f13228808b536ef876b95221923c539",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-alternating-series-error-007",
+  "skillId": "alternating-series-error",
+  "prompt": "How many terms of Σ (−1)ⁿ⁺¹/n guarantee (by the alternating series bound) an error less than 1/50?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Need the first omitted term below 1/50: a_{N+1} = 1/(N + 1) < 1/50 requires N + 1 > 50, i.e. N = 50 terms. The bound is about the NEXT term, hence the off-by-one that catches so many students.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:alternating-series-error"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5eb48df25120a190b2646eb50eb20037afc02f630cdafa4d633ab59d99dce936",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-alternating-series-error-008",
+  "skillId": "alternating-series-error",
+  "prompt": "Σ (−1)ⁿ/n! (n from 0) is approximated by its terms through n = 3. What is the alternating series error bound?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The first omitted term is 1/(4)! = 1/24, and for a decreasing alternating series that term bounds the error. Factorial denominators shrink fast — this series (which sums to 1/e) needs very few terms.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:alternating-series-error"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8b895c7cbe748d3d8901e63ba1b5a934f2d8c59d1d80b4f0c08023a4c217f8b9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-maclaurin-polynomials-001",
+  "skillId": "taylor-maclaurin-polynomials",
+  "prompt": "What is the 2nd-degree Maclaurin polynomial of eˣ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1 + x + x²/2",
+   "equivalents": [
+    "1+x+x²/2"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Every derivative of eˣ is eˣ, so f⁽ⁿ⁾(0) = 1 and each coefficient is 1/n!: P₂(x) = 1 + x + x²/2. The n! in the denominator is the whole story of Taylor coefficients.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-maclaurin-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "01214aa344e679142b583cb139861a4861da486cbdd3da5758ad0d7c83004c9d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1 + x + x²/2"
+   },
+   {
+    "label": "B",
+    "text": "1 + x + x²"
+   },
+   {
+    "label": "C",
+    "text": "x + x²/2"
+   },
+   {
+    "label": "D",
+    "text": "1 + x²/2"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-maclaurin-polynomials-002",
+  "skillId": "taylor-maclaurin-polynomials",
+  "prompt": "What is the 3rd-degree Maclaurin polynomial of sin(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x − x³/6",
+   "equivalents": [
+    "x - x³/6",
+    "x−x³/6",
+    "x-x³/6"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "sin has derivatives cycling sin, cos, −sin, −cos, giving f(0) = 0, f′(0) = 1, f″(0) = 0, f‴(0) = −1: P₃(x) = x − x³/3! = x − x³/6. Only odd powers survive — sin is odd.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-maclaurin-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "697d18fd08fda2db53c4bdf940a5074c6fb59a1de74313bbb1d3d6e037f5aae7",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "x − x³/6"
+   },
+   {
+    "label": "B",
+    "text": "x + x³/6"
+   },
+   {
+    "label": "C",
+    "text": "x − x³/3"
+   },
+   {
+    "label": "D",
+    "text": "1 − x²/2"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-maclaurin-polynomials-003",
+  "skillId": "taylor-maclaurin-polynomials",
+  "prompt": "What is the 2nd-degree Maclaurin polynomial of cos(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1 − x²/2",
+   "equivalents": [
+    "1 - x²/2",
+    "1−x²/2",
+    "1-x²/2"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "cos(0) = 1, cos′(0) = −sin(0) = 0, cos″(0) = −cos(0) = −1: P₂(x) = 1 − x²/2!. Only even powers survive — cos is even. This is the small-angle approximation behind physics pendulums.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-maclaurin-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "60c428483929378c1a79250e0bac132570ba6a75fa99473f62da552faad624b2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1 − x²/2"
+   },
+   {
+    "label": "B",
+    "text": "1 + x²/2"
+   },
+   {
+    "label": "C",
+    "text": "x − x²/2"
+   },
+   {
+    "label": "D",
+    "text": "1 − x²"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-maclaurin-polynomials-004",
+  "skillId": "taylor-maclaurin-polynomials",
+  "prompt": "What is the 2nd-degree Maclaurin polynomial of 1/(1 − x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1 + x + x²",
+   "equivalents": [
+    "1+x+x²"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "1/(1 − x) is the geometric series 1 + x + x² + … for |x| < 1, so the Taylor coefficients are all EXACTLY 1 (no n! here — the derivatives grow like n! and cancel it). P₂(x) = 1 + x + x².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-maclaurin-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3f308aee2afa76d1b44e6e19cbdee827d3d6150e7af933b7986c0bf2bbb72262",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1 + x + x²"
+   },
+   {
+    "label": "B",
+    "text": "1 − x + x²"
+   },
+   {
+    "label": "C",
+    "text": "1 + x + x²/2"
+   },
+   {
+    "label": "D",
+    "text": "x + x² + x³"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-maclaurin-polynomials-005",
+  "skillId": "taylor-maclaurin-polynomials",
+  "prompt": "f(0) = 2, f′(0) = 3, f″(0) = 4. What is the coefficient of x² in f's Maclaurin polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The x² coefficient is f″(0)/2! = 4/2 = 2. Taylor coefficients are cₙ = f⁽ⁿ⁾(0)/n! — dividing by n! is the step the AP exam checks; the f(0) and f′(0) values are bait for the wrong slot.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-maclaurin-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c7bae648cfdd1cb851abebfeff71d338111f6757157851ab1507ad85221e199d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-maclaurin-polynomials-006",
+  "skillId": "taylor-maclaurin-polynomials",
+  "prompt": "A Maclaurin polynomial has x³ coefficient equal to 2. What is f‴(0)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "c₃ = f‴(0)/3! = f‴(0)/6, so f‴(0) = 6 · 2 = 12. Reading derivative values OFF a given polynomial reverses the coefficient formula — multiply back by n!.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-maclaurin-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c24e548160de0506474deb2012b891aa5b1f973e4e33a88f5a063954f32126a9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-maclaurin-polynomials-007",
+  "skillId": "taylor-maclaurin-polynomials",
+  "prompt": "f(0) = 2, f′(0) = 3, f″(0) = 10. What is the coefficient of x² in f's Maclaurin polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The x² coefficient is f″(0)/2! = 10/2 = 5. Taylor coefficients are cₙ = f⁽ⁿ⁾(0)/n! — dividing by n! is the step the AP exam checks; the f(0) and f′(0) values are bait for the wrong slot.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-maclaurin-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6390c30dcd6560238af98f18d8077dc62215588ad686a8508b1065f09ab5a5ba",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-maclaurin-polynomials-008",
+  "skillId": "taylor-maclaurin-polynomials",
+  "prompt": "A Maclaurin polynomial has x³ coefficient equal to 4. What is f‴(0)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "c₃ = f‴(0)/3! = f‴(0)/6, so f‴(0) = 6 · 4 = 24. Reading derivative values OFF a given polynomial reverses the coefficient formula — multiply back by n!.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-maclaurin-polynomials"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1d2359cef0ff96c732d494e4f7eadee90ec44684bdb60099e6a317351e0ac1e8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-series-known-001",
+  "skillId": "taylor-series-known",
+  "prompt": "The series Σₙ₌₀^∞ xⁿ/n! is the Maclaurin series of which function?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "eˣ",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "All derivatives of eˣ equal 1 at 0, giving coefficients 1/n!: eˣ = 1 + x + x²/2! + x³/3! + … for all x. The factorial denominators with EVERY power of x present is the eˣ signature.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-series-known"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0690ec87335b3d711b0fe6291ba89c5e544283d2f71a27298d6e0035760f78a4",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "eˣ"
+   },
+   {
+    "label": "B",
+    "text": "sin(x)"
+   },
+   {
+    "label": "C",
+    "text": "cos(x)"
+   },
+   {
+    "label": "D",
+    "text": "1/(1 − x)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-series-known-002",
+  "skillId": "taylor-series-known",
+  "prompt": "The series Σₙ₌₀^∞ (−1)ⁿ x²ⁿ⁺¹/(2n+1)! is the Maclaurin series of which function?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "sin(x)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Odd powers only, alternating signs, factorial denominators: x − x³/3! + x⁵/5! − … = sin(x). Odd powers ↔ odd function; the (2n+1)! factorials distinguish it from arctan (which has plain 2n+1 denominators).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-series-known"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "56ffe5c2e2e4c6ed32888ceda3dc28f2d35b08cfd7343d15fad8d13ba62c0178",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "sin(x)"
+   },
+   {
+    "label": "B",
+    "text": "cos(x)"
+   },
+   {
+    "label": "C",
+    "text": "eˣ"
+   },
+   {
+    "label": "D",
+    "text": "arctan(x)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-series-known-003",
+  "skillId": "taylor-series-known",
+  "prompt": "The series Σₙ₌₀^∞ (−1)ⁿ x²ⁿ/(2n)! is the Maclaurin series of which function?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "cos(x)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Even powers only, alternating signs, factorial denominators: 1 − x²/2! + x⁴/4! − … = cos(x). Even powers ↔ even function.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-series-known"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "294b353c96ab2c3783691084ebe0817df4526f436834f0b9d4529c46c1024e65",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "cos(x)"
+   },
+   {
+    "label": "B",
+    "text": "sin(x)"
+   },
+   {
+    "label": "C",
+    "text": "e⁻ˣ"
+   },
+   {
+    "label": "D",
+    "text": "1/(1 + x²)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-series-known-004",
+  "skillId": "taylor-series-known",
+  "prompt": "The series Σₙ₌₀^∞ xⁿ (for |x| < 1) sums to which function?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/(1 − x)",
+   "equivalents": [
+    "1/(1 - x)",
+    "1/(1−x)",
+    "1/(1-x)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The geometric series: 1 + x + x² + … = 1/(1 − x) for |x| < 1. No factorials — a giveaway that this is geometric, not exponential. Substituting into it generates many other series (e.g. −x² gives 1/(1 + x²)).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-series-known"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5cb5ebf8c7842ded97ba0e443a5a49d25d0ad9c1420c0a9293b79394c0bfdb1d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1/(1 − x)"
+   },
+   {
+    "label": "B",
+    "text": "1/(1 + x)"
+   },
+   {
+    "label": "C",
+    "text": "ln(1 + x)"
+   },
+   {
+    "label": "D",
+    "text": "eˣ"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-series-known-005",
+  "skillId": "taylor-series-known",
+  "prompt": "Using the series for eˣ, what is the coefficient of x² in the Maclaurin series of e^(2x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Substitute 2x into eˣ = Σ xⁿ/n!: the x² term is (2x)²/2! = 4x²/2, so the coefficient is 2. Substitution into a known series beats differentiating from scratch every time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-series-known"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "41fad9742593b47afa614f8a68a0a60ea3b6c3a6dec07a91f4089c61bac8c59a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-series-known-006",
+  "skillId": "taylor-series-known",
+  "prompt": "Using the series for eˣ, what is the coefficient of x² in the Maclaurin series of e^(6x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Substitute 6x into eˣ = Σ xⁿ/n!: the x² term is (6x)²/2! = 36x²/2, so the coefficient is 18. Substitution into a known series beats differentiating from scratch every time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-series-known"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b042e6c0d6aaa3cec0b9e6f5e27ee286934668c5cd121b694735ca81d5642ff8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-taylor-series-known-007",
+  "skillId": "taylor-series-known",
+  "prompt": "Using the series for eˣ, what is the coefficient of x² in the Maclaurin series of e^(4x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Substitute 4x into eˣ = Σ xⁿ/n!: the x² term is (4x)²/2! = 16x²/2, so the coefficient is 8. Substitution into a known series beats differentiating from scratch every time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:taylor-series-known"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "89a0adbad8686c8a37830023388ee75c7b01cd43b6350ff7edb059670967109f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-power-series-interval-001",
+  "skillId": "power-series-interval",
+  "prompt": "What is the radius of convergence of Σₙ₌₀^∞ xⁿ/3ⁿ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "This is geometric with ratio x/3: it converges when |x/3| < 1, i.e. |x| < 3. Radius R = 3. (The ratio test gives the same: |x|/3 < 1.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:power-series-interval"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8993d1edcb49cee9182cc8ceba4e0e58a0d3d8cbd920c64a04c65ca451f4a942",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-power-series-interval-002",
+  "skillId": "power-series-interval",
+  "prompt": "What is the radius of convergence of Σₙ₌₀^∞ xⁿ/4ⁿ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "This is geometric with ratio x/4: it converges when |x/4| < 1, i.e. |x| < 4. Radius R = 4. (The ratio test gives the same: |x|/4 < 1.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:power-series-interval"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "efe2084ab49ec2e0a7fade04b7ad37f7065569fd80d8049a63ab46377aeb6fb6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-power-series-interval-003",
+  "skillId": "power-series-interval",
+  "prompt": "What is the radius of convergence of Σₙ₌₀^∞ xⁿ/2ⁿ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "This is geometric with ratio x/2: it converges when |x/2| < 1, i.e. |x| < 2. Radius R = 2. (The ratio test gives the same: |x|/2 < 1.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:power-series-interval"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a6106d7d19cbbd33ccfcbfbd657f8aa7847d2b4525621f2c5360577b18757545",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-power-series-interval-004",
+  "skillId": "power-series-interval",
+  "prompt": "What is the radius of convergence of Σₙ₌₀^∞ xⁿ/5ⁿ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "This is geometric with ratio x/5: it converges when |x/5| < 1, i.e. |x| < 5. Radius R = 5. (The ratio test gives the same: |x|/5 < 1.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:power-series-interval"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d74c053524312273752c05b2a637ceb1bb41307242aefde32ec362c0a3560c9f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-power-series-interval-005",
+  "skillId": "power-series-interval",
+  "prompt": "The series Σₙ₌₀^∞ (x − 1)ⁿ/5ⁿ converges on which interval?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(-4, 6)",
+   "equivalents": [
+    "(-4,6)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Geometric with ratio (x − 1)/5: need |x − 1| < 5, giving 1 − 5 < x < 1 + 5, i.e. (-4, 6). Both endpoints FAIL here (the terms become ±1, not shrinking), so the interval stays open — endpoint checks are always a separate step.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:power-series-interval"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "29107f4046d7d85214696c4b017c11c6557b911c7f4d5fdcda78bad5408f8d3b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-power-series-interval-006",
+  "skillId": "power-series-interval",
+  "prompt": "The series Σₙ₌₀^∞ (x − 4)ⁿ/3ⁿ converges on which interval?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(1, 7)",
+   "equivalents": [
+    "(1,7)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Geometric with ratio (x − 4)/3: need |x − 4| < 3, giving 4 − 3 < x < 4 + 3, i.e. (1, 7). Both endpoints FAIL here (the terms become ±1, not shrinking), so the interval stays open — endpoint checks are always a separate step.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:power-series-interval"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "952ef614b586fec04288c5212c66dd7e551fe310d636ad7433b226d109276576",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-power-series-interval-007",
+  "skillId": "power-series-interval",
+  "prompt": "The series Σₙ₌₀^∞ (x − 4)ⁿ/4ⁿ converges on which interval?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(0, 8)",
+   "equivalents": [
+    "(0,8)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Geometric with ratio (x − 4)/4: need |x − 4| < 4, giving 4 − 4 < x < 4 + 4, i.e. (0, 8). Both endpoints FAIL here (the terms become ±1, not shrinking), so the interval stays open — endpoint checks are always a separate step.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:power-series-interval"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "798e731f6525171342e2a331b0071beec1a4781f78154271a056581e49c048da",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-power-series-interval-008",
+  "skillId": "power-series-interval",
+  "prompt": "The series Σₙ₌₀^∞ (x − 1)ⁿ/2ⁿ converges on which interval?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(-1, 3)",
+   "equivalents": [
+    "(-1,3)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Geometric with ratio (x − 1)/2: need |x − 1| < 2, giving 1 − 2 < x < 1 + 2, i.e. (-1, 3). Both endpoints FAIL here (the terms become ±1, not shrinking), so the interval stays open — endpoint checks are always a separate step.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:power-series-interval"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bfa9ba59c8630514708640e5f1fbd1977f0ed5686433f7d2a29e3bda4e0eaae8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-lagrange-error-bound-001",
+  "skillId": "lagrange-error-bound",
+  "prompt": "sin(1) is approximated by its degree-4 Maclaurin polynomial. Every derivative of sin is bounded by 1. What is the Lagrange error bound?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/120",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "|Rₙ| ≤ M·|x − a|ⁿ⁺¹/(n+1)! with M = 1 (sine's derivatives never exceed 1) and |x| = 1: bound = 1/(5)! = 1/120. The factorial denominator is why low-degree polynomials already nail sine so accurately.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:lagrange-error-bound"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "de5544fce08f923051c939b245389af70ebfe2836e11b42cb46f6bfbccc5acaf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-lagrange-error-bound-002",
+  "skillId": "lagrange-error-bound",
+  "prompt": "sin(1) is approximated by its degree-3 Maclaurin polynomial. Every derivative of sin is bounded by 1. What is the Lagrange error bound?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "|Rₙ| ≤ M·|x − a|ⁿ⁺¹/(n+1)! with M = 1 (sine's derivatives never exceed 1) and |x| = 1: bound = 1/(4)! = 1/24. The factorial denominator is why low-degree polynomials already nail sine so accurately.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:lagrange-error-bound"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e74eacf78e09c32ed86bfdd1e3a666cfb0f5dee8194a89f780acf8dac8e98ea5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-lagrange-error-bound-003",
+  "skillId": "lagrange-error-bound",
+  "prompt": "sin(1) is approximated by its degree-2 Maclaurin polynomial. Every derivative of sin is bounded by 1. What is the Lagrange error bound?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "|Rₙ| ≤ M·|x − a|ⁿ⁺¹/(n+1)! with M = 1 (sine's derivatives never exceed 1) and |x| = 1: bound = 1/(3)! = 1/6. The factorial denominator is why low-degree polynomials already nail sine so accurately.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:lagrange-error-bound"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6f7b238971cf530e16b34c7133e42a198e910dc39d04bb8d7f074e707e4d354c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-lagrange-error-bound-004",
+  "skillId": "lagrange-error-bound",
+  "prompt": "|f⁽4⁾(x)| ≤ 6 on the interval, and f is approximated at x with |x − a| = 1 by its degree-3 Taylor polynomial. State the Lagrange error bound.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "|Rₙ| ≤ M·|x − a|ⁿ⁺¹/(n+1)! = 6 · 1/24 = 1/4. Three ingredients — a derivative bound M, the distance |x − a|, and the factorial — and the bound assembles itself.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:lagrange-error-bound"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "56b32127bee6d68ad864f106fa43af70bd7fd3bed9104d6cceee86cff78ca3d0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-lagrange-error-bound-005",
+  "skillId": "lagrange-error-bound",
+  "prompt": "|f⁽3⁾(x)| ≤ 2 on the interval, and f is approximated at x with |x − a| = 1 by its degree-2 Taylor polynomial. State the Lagrange error bound.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "|Rₙ| ≤ M·|x − a|ⁿ⁺¹/(n+1)! = 2 · 1/6 = 1/3. Three ingredients — a derivative bound M, the distance |x − a|, and the factorial — and the bound assembles itself.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:lagrange-error-bound"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cdfaef20c4d999ce298a7d72eb451971965cbb6e79ec3eaa1a3c9a2961365512",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-lagrange-error-bound-006",
+  "skillId": "lagrange-error-bound",
+  "prompt": "|f⁽3⁾(x)| ≤ 4 on the interval, and f is approximated at x with |x − a| = 1 by its degree-2 Taylor polynomial. State the Lagrange error bound.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "|Rₙ| ≤ M·|x − a|ⁿ⁺¹/(n+1)! = 4 · 1/6 = 2/3. Three ingredients — a derivative bound M, the distance |x − a|, and the factorial — and the bound assembles itself.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:lagrange-error-bound"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "10fd3afa427f9c6b0ebca82f70e09af3a417b4d43368f397ef9a8840823228da",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-lagrange-error-bound-007",
+  "skillId": "lagrange-error-bound",
+  "prompt": "|f⁽3⁾(x)| ≤ 12 on the interval, and f is approximated at x with |x − a| = 1 by its degree-2 Taylor polynomial. State the Lagrange error bound.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "|Rₙ| ≤ M·|x − a|ⁿ⁺¹/(n+1)! = 12 · 1/6 = 2. Three ingredients — a derivative bound M, the distance |x − a|, and the factorial — and the bound assembles itself.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:lagrange-error-bound"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9aecfd2610c1983fda83cf7129745096dd4442767d880f14f61a71c85c1d0334",
+  "isActive": true
  }
 ]
