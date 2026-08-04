@@ -1,1127 +1,1652 @@
 {
-  "source": "hand-authored (domain judgment), 2026-08-01",
-  "note": "pathway skill ids -> BANK skill ids, same contract as pathway-crosswalk.json. Read by utils/skillCanonicalizer.js buildPathway() for CONTENT LOOKUP ONLY — never by canonicalSkillId (mastery keying). Kept in a SEPARATE file because scripts/proposePathwayCrosswalk.js overwrites pathway-crosswalk.json wholesale; manual rows here win on collision. Filename deliberately does NOT end in '-crosswalk.json' so the canonicalization glob cannot sweep it up. Covers geometry, algebra-2, precalculus, act-prep, algebra-1 and 6th-grade-math.",
-  "why": "The fuzzy matcher (auditCourseProblemCoverage.js --suggest) is unreliable in geometry: it proposed geometric-mean -> mean (the arithmetic average), trigonometric-ratios-intro -> ratios, and circle-basics -> trig-unit-circle-evaluation. Those would serve a geometry student the wrong topic entirely. The rows below are matched by mathematical MEANING instead. Skills with no honest bank match (points-lines-planes, polygon-angle-sum, quadrilateral-properties, trapezoid-properties, geometric-mean) are deliberately ABSENT — they are real content gaps and must stay visible as such. 2026-08-02: 28 rows added after comparing a full DB export against the generated bank — 21 of 35 skills that the audit reported EMPTY already had content under another name. The audit measures REACHABILITY, not existence: an unmapped skill reads empty whether or not problems exist for it. Always diff against the bank before generating.",
-  "rows": [
-    {
-      "legacyId": "angle-measurement",
-      "unifiedId": "act-basic-geometry-measures",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "angle-pair-relationships",
-      "unifiedId": "act-angles-parallel-lines",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "parallel-lines-transversals",
-      "unifiedId": "act-angles-parallel-lines",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "triangle-angle-sum",
-      "unifiedId": "act-triangles-angle-relationships",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "exterior-angle-theorem",
-      "unifiedId": "act-triangles-angle-relationships",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "triangle-classification",
-      "unifiedId": "act-triangles-angle-relationships",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "triangle-congruence-sss-sas-asa",
-      "unifiedId": "congruence",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "triangle-congruence-aas-hl",
-      "unifiedId": "congruence",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "cpctc",
-      "unifiedId": "congruence",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "congruence-proofs",
-      "unifiedId": "geometric-proofs",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "parallelogram-proofs",
-      "unifiedId": "geometric-proofs",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "similarity-proofs",
-      "unifiedId": "geometric-proofs",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "pythagorean-converse",
-      "unifiedId": "act-triangles-pythagorean-theorem",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "special-right-triangles",
-      "unifiedId": "act-triangles-pythagorean-theorem",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "trigonometric-ratios-intro",
-      "unifiedId": "trig-right-triangle-ratios",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "circle-basics",
-      "unifiedId": "circles-circumference-area",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "circle-area",
-      "unifiedId": "circles-circumference-area",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "arc-length",
-      "unifiedId": "act-circles",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "sector-area",
-      "unifiedId": "act-circles",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "inscribed-angles",
-      "unifiedId": "act-circles",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "circle-theorems",
-      "unifiedId": "act-circles",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "similarity-ratios",
-      "unifiedId": "similarity",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "similar-triangle-theorems",
-      "unifiedId": "act-similar-congruent-figures",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "volume-prisms-cylinders",
-      "unifiedId": "act-volume-surface-area",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "volume-pyramids-cones-spheres",
-      "unifiedId": "act-volume-surface-area",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "surface-area-prisms-cylinders",
-      "unifiedId": "act-volume-surface-area",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "surface-area-pyramids-cones-spheres",
-      "unifiedId": "act-volume-surface-area",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "3d-geometry-mixed",
-      "unifiedId": "act-volume-surface-area",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "coordinate-geometry-distance-midpoint",
-      "unifiedId": "distance-formula",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "coordinate-proofs",
-      "unifiedId": "act-coordinate-geometry",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "equation-of-circle",
-      "unifiedId": "act-coordinate-geometry",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "parallel-perpendicular-slopes",
-      "unifiedId": "parallel-perpendicular-lines",
-      "course": "geometry"
-    },
-    {
-      "legacyId": "function-basics",
-      "unifiedId": "identifying-functions",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "exponent-rules-radicals",
-      "unifiedId": "exponent-properties",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "graphing-lines",
-      "unifiedId": "graph-linear-equations",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "systems-substitution-elimination",
-      "unifiedId": "systems-substitution",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "systems-linear-inequalities",
-      "unifiedId": "systems-of-inequalities",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "mathematical-modeling-systems",
-      "unifiedId": "systems-application-modeling",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "matrices-operations",
-      "unifiedId": "act-matrices-vectors",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "matrices-solving-systems",
-      "unifiedId": "act-matrices-vectors",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "quadratic-forms-converting",
-      "unifiedId": "quadratic-functions",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "quadratic-solving-all-methods",
-      "unifiedId": "choosing-quadratic-method",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "discriminant-analysis",
-      "unifiedId": "discriminant-number-of-solutions",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "parabola-transformations",
-      "unifiedId": "act-quadratic-functions-parabolas",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "factoring-advanced",
-      "unifiedId": "factoring-trinomials",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "polynomial-division",
-      "unifiedId": "act-polynomial-expressions",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "multiply-divide-rational-expressions",
-      "unifiedId": "multiply-rational-expressions",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "extraneous-solutions",
-      "unifiedId": "act-radical-rational-equations",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "compound-interest-modeling",
-      "unifiedId": "act-exponential-models",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "financial-applications",
-      "unifiedId": "act-exponential-models",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "logarithm-evaluation-conversion",
-      "unifiedId": "act-logarithms",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "logarithm-properties",
-      "unifiedId": "act-logarithms",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "exponential-logarithmic-equations",
-      "unifiedId": "act-logarithms",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "domain-analysis-logarithms",
-      "unifiedId": "domain-and-range",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "rational-exponents-radicals",
-      "unifiedId": "act-radicals-roots",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "simplifying-radicals-variables",
-      "unifiedId": "act-radicals-roots",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "radical-applications",
-      "unifiedId": "act-radical-rational-equations",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "recursive-explicit-formulas",
-      "unifiedId": "arithmetic-sequences",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "angle-measure-radians",
-      "unifiedId": "trig-degree-radian-conversion",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "permutations-combinations",
-      "unifiedId": "permutations",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "probability-rules",
-      "unifiedId": "act-probability",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "function-analysis-comparison",
-      "unifiedId": "function-families",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "exponential-growth-decay",
-      "unifiedId": "exponential-growth",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "function-notation-domain-range",
-      "unifiedId": "function-notation-evaluation",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "factoring-simplification-fluency",
-      "unifiedId": "factoring-trinomials",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "graphing-transformations-review",
-      "unifiedId": "function-transformations",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "transformations-toolkit",
-      "unifiedId": "function-transformations",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "combining-functions",
-      "unifiedId": "function-composition",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "domain-range-analysis",
-      "unifiedId": "domain-and-range",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "exponential-functions-properties",
-      "unifiedId": "exponential-functions",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "logarithmic-functions-properties",
-      "unifiedId": "act-logarithms",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "logarithm-rules-expansion",
-      "unifiedId": "act-logarithms",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "solving-exponential-equations",
-      "unifiedId": "act-logarithms",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "solving-logarithmic-equations",
-      "unifiedId": "act-logarithms",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "exponential-logarithmic-modeling",
-      "unifiedId": "act-exponential-models",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "radian-measure-arc-length",
-      "unifiedId": "trig-degree-radian-conversion",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "unit-circle-trig-values",
-      "unifiedId": "trig-unit-circle-evaluation",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "fundamental-trig-identities",
-      "unifiedId": "trig-identities-basic",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "solving-trig-equations",
-      "unifiedId": "trig-solve-equations-special",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "parabola-analysis",
-      "unifiedId": "act-quadratic-functions-parabolas",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "series-sigma-notation",
-      "unifiedId": "sigma-notation",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "limits-continuity-infinity",
-      "unifiedId": "limits",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "act-real-complex-numbers",
-      "unifiedId": "act-complex-numbers",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-exponents-roots",
-      "unifiedId": "act-exponent-rules",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-ratios-proportions-percents",
-      "unifiedId": "act-ratios-proportions",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-radical-rational-expressions",
-      "unifiedId": "act-radical-rational-equations",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-quadratic-functions",
-      "unifiedId": "act-quadratic-functions-parabolas",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-polynomial-exponential-log",
-      "unifiedId": "act-polynomial-expressions",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-trig-functions",
-      "unifiedId": "act-trigonometric-functions",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-angles-lines-triangles",
-      "unifiedId": "act-angles-parallel-lines",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-polygons-circles",
-      "unifiedId": "act-circles",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-right-triangle-trig",
-      "unifiedId": "act-right-triangle-trigonometry",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-congruence-similarity",
-      "unifiedId": "act-similar-congruent-figures",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-data-representations",
-      "unifiedId": "act-center-spread",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-two-way-tables",
-      "unifiedId": "act-conditional-probability",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-counting-techniques",
-      "unifiedId": "act-counting-arrangements",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-multi-step-rate-proportion",
-      "unifiedId": "act-rates-unit-conversion",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-measurement-unit-conversion",
-      "unifiedId": "act-rates-unit-conversion",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-area-perimeter-composite",
-      "unifiedId": "act-area-perimeter",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-algebraic-reasoning-context",
-      "unifiedId": "act-word-problems-modeling",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-percent-applications",
-      "unifiedId": "act-percentages",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "act-model-interpretation",
-      "unifiedId": "act-linear-functions-models",
-      "course": "act-prep"
-    },
-    {
-      "legacyId": "g6-one-two-step-equations",
-      "unifiedId": "one-step-equations",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-percent-intro",
-      "unifiedId": "percent-of-a-number",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-combine-like-terms",
-      "unifiedId": "combining-like-terms",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-equivalent-ratios",
-      "unifiedId": "ratios",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-ratio-language",
-      "unifiedId": "ratios",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-measures-center-variability",
-      "unifiedId": "measures-of-center",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-integer-basics",
-      "unifiedId": "adding-subtracting-integers",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-fraction-add-subtract",
-      "unifiedId": "add-fractions",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-fraction-multiply-divide",
-      "unifiedId": "multiply-fractions",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-decimal-division",
-      "unifiedId": "decimals-divide",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-write-expressions",
-      "unifiedId": "writing-algebraic-expressions",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-compare-order-rationals",
-      "unifiedId": "ordering-numbers",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-distance-coordinate-plane",
-      "unifiedId": "coordinate-plane",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-area-triangles-parallelograms",
-      "unifiedId": "area-triangles",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-unit-conversions",
-      "unifiedId": "act-rates-unit-conversion",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "discriminant",
-      "unifiedId": "discriminant-number-of-solutions",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "solving-literal-equations",
-      "unifiedId": "literal-equations",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "writing-linear-equations-point-slope",
-      "unifiedId": "point-slope-form",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "intro-probability",
-      "unifiedId": "probability-basics",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "measures-of-central-tendency",
-      "unifiedId": "mean",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "variable-expressions",
-      "unifiedId": "evaluate-expressions",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "polynomial-multiplication",
-      "unifiedId": "polynomial-multiplication-monomial",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "multiplying-dividing-rationals",
-      "unifiedId": "multiply-rational-expressions",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "solving-rational-equations",
-      "unifiedId": "act-radical-rational-equations",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "simplifying-radicals",
-      "unifiedId": "act-radicals-roots",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "operations-with-radicals",
-      "unifiedId": "act-radicals-roots",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "systems-word-problems",
-      "unifiedId": "systems-application-modeling",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "algebraic-properties",
-      "unifiedId": "distributive-property",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "exponent-rules-multiplication",
-      "unifiedId": "exponent-properties",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "exponent-rules-division",
-      "unifiedId": "exponent-properties",
-      "course": "algebra-1"
-    },
-    {
-      "legacyId": "g6-ratio-problem-solving",
-      "unifiedId": "solve-proportions",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-fraction-ops-review",
-      "unifiedId": "multiply-fractions",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-expression-writing-intro",
-      "unifiedId": "writing-algebraic-expressions",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-inequalities",
-      "unifiedId": "one-step-inequalities",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-mult-div-fluency",
-      "unifiedId": "multiplication-basics",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-formulas-area-volume",
-      "unifiedId": "area-rectangles",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g7-one-two-step-equations",
-      "unifiedId": "one-step-equations",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-inequalities",
-      "unifiedId": "one-step-inequalities",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-proportions",
-      "unifiedId": "solve-proportions",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-identify-proportional",
-      "unifiedId": "solve-proportions",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-proportional-equations",
-      "unifiedId": "solve-proportions",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-percent-applications",
-      "unifiedId": "percent-of-a-number",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-add-subtract-rationals",
-      "unifiedId": "add-fractions",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-multiply-divide-rationals",
-      "unifiedId": "multiply-fractions",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-verbal-to-algebraic",
-      "unifiedId": "writing-algebraic-expressions",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-area-circumference",
-      "unifiedId": "circles-circumference-area",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-scale-drawings",
-      "unifiedId": "scale-factor",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-fraction-decimal-fluency",
-      "unifiedId": "equivalent-fractions",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-integer-operations",
-      "unifiedId": "integer-operations",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "basic-equations",
-      "unifiedId": "one-step-equations",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "linear-inequalities",
-      "unifiedId": "solving-inequalities",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "slope-rate-of-change",
-      "unifiedId": "slope",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "slope-from-representations",
-      "unifiedId": "slope-from-two-points",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "interpret-slope-intercept",
-      "unifiedId": "writing-linear-equations-slope-intercept",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "y-intercept-context",
-      "unifiedId": "writing-linear-equations-slope-intercept",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "compare-linear-models",
-      "unifiedId": "act-linear-functions-models",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "function-definition",
-      "unifiedId": "identifying-functions",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "identify-functions",
-      "unifiedId": "identifying-functions",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "compare-functions",
-      "unifiedId": "function-families",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "function-modeling",
-      "unifiedId": "act-linear-functions-models",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "distance-coordinate",
-      "unifiedId": "coordinate-plane",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "fraction-decimal-fluency",
-      "unifiedId": "equivalent-fractions",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "rational-irrational",
-      "unifiedId": "irrational-numbers",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "real-number-ordering",
-      "unifiedId": "ordering-numbers",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "congruence-similarity",
-      "unifiedId": "act-similar-congruent-figures",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "systems-interpretation",
-      "unifiedId": "act-systems-of-equations",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "volume-cylinders",
-      "unifiedId": "act-volume-surface-area",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "volume-cones",
-      "unifiedId": "act-volume-surface-area",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "volume-spheres",
-      "unifiedId": "act-volume-surface-area",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "volume-word-problems",
-      "unifiedId": "act-volume-surface-area",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "equation-word-problems",
-      "unifiedId": "linear-word-problems",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "scatter-plots",
-      "unifiedId": "scatter-plots-correlation",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "correlation-causation",
-      "unifiedId": "scatter-plots-correlation",
-      "course": "grade-8-math"
-    },
-    {
-      "legacyId": "g6-measurement-conversions",
-      "unifiedId": "g6-unit-conversions",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-word-problem-equations",
-      "unifiedId": "writing-solving-equations-context",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-nets-surface-area",
-      "unifiedId": "act-volume-surface-area",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-geometry-applications",
-      "unifiedId": "area-perimeter-word-problems",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-statistical-questions",
-      "unifiedId": "statistics",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-compare-distributions",
-      "unifiedId": "act-center-spread",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g6-positive-negative-context",
-      "unifiedId": "g6-integer-basics",
-      "course": "6th-grade-math"
-    },
-    {
-      "legacyId": "g7-absolute-value",
-      "unifiedId": "g6-absolute-value-opposites",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-constant-of-proportionality",
-      "unifiedId": "proportional-relationships",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-graph-proportional",
-      "unifiedId": "proportional-relationships",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-surface-area",
-      "unifiedId": "act-volume-surface-area",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-volume",
-      "unifiedId": "volume-rectangular-prisms",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-compare-data-sets",
-      "unifiedId": "act-center-spread",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-compound-events",
-      "unifiedId": "compound-probability",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-equation-word-problems",
-      "unifiedId": "writing-solving-equations-context",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-function-input-output",
-      "unifiedId": "function-notation-evaluation",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "g7-patterns-sequences",
-      "unifiedId": "sequence-patterns",
-      "course": "7th-grade-math"
-    },
-    {
-      "legacyId": "advanced-factoring",
-      "unifiedId": "factoring-trinomials",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "exponent-rules-review",
-      "unifiedId": "exponent-properties",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "function-notation-review",
-      "unifiedId": "function-notation-evaluation",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "graphing-lines-review",
-      "unifiedId": "graph-linear-equations",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "linear-equations-review",
-      "unifiedId": "linear-equations",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "matrix-operations",
-      "unifiedId": "act-matrices-vectors",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "inverse-matrices",
-      "unifiedId": "act-matrices-vectors",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "quadratic-discriminant",
-      "unifiedId": "discriminant-number-of-solutions",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "quadratic-forms",
-      "unifiedId": "quadratic-functions",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "quadratic-transformations",
-      "unifiedId": "act-quadratic-functions-parabolas",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "rational-exponents",
-      "unifiedId": "act-radicals-roots",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "rational-operations",
-      "unifiedId": "multiply-rational-expressions",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "simplifying-rational",
-      "unifiedId": "simplify-rational-expressions",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "solving-quadratics-all-methods",
-      "unifiedId": "choosing-quadratic-method",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "systems-inequalities",
-      "unifiedId": "systems-of-inequalities",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "systems-modeling",
-      "unifiedId": "systems-application-modeling",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "infinite-geometric-series",
-      "unifiedId": "geometric-series",
-      "course": "algebra-2"
-    },
-    {
-      "legacyId": "algebraic-fluency-review",
-      "unifiedId": "simplify-expressions",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "exponential-log-review",
-      "unifiedId": "act-logarithms",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "quadratic-mastery-review",
-      "unifiedId": "quadratic-functions",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "trig-readiness-review",
-      "unifiedId": "trig-unit-circle-evaluation",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "function-analysis-review",
-      "unifiedId": "function-families",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "comprehensive-function-review",
-      "unifiedId": "function-notation-evaluation",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "comprehensive-analytic-review",
-      "unifiedId": "act-coordinate-geometry",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "comprehensive-limits-series-review",
-      "unifiedId": "limits",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "polynomial-end-behavior",
-      "unifiedId": "polynomial-graphing",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "polynomial-zeros-multiplicity",
-      "unifiedId": "polynomial-graphing",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "rational-function-analysis",
-      "unifiedId": "rational-function-graphing",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "asymptote-analysis",
-      "unifiedId": "vertical-horizontal-asymptotes",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "sinusoidal-modeling",
-      "unifiedId": "graphing-sinusoidal",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "trig-function-graphs",
-      "unifiedId": "graphing-sinusoidal",
-      "course": "precalculus"
-    },
-    {
-      "legacyId": "triangle-area-applications",
-      "unifiedId": "trig-law-of-sines",
-      "course": "precalculus"
-    }
-  ]
+ "source": "hand-authored (domain judgment), 2026-08-01",
+ "note": "pathway skill ids -> BANK skill ids, same contract as pathway-crosswalk.json. Read by utils/skillCanonicalizer.js buildPathway() for CONTENT LOOKUP ONLY — never by canonicalSkillId (mastery keying). Kept in a SEPARATE file because scripts/proposePathwayCrosswalk.js overwrites pathway-crosswalk.json wholesale; manual rows here win on collision. Filename deliberately does NOT end in '-crosswalk.json' so the canonicalization glob cannot sweep it up. Covers geometry, algebra-2, precalculus, act-prep, algebra-1 and 6th-grade-math.",
+ "why": "The fuzzy matcher (auditCourseProblemCoverage.js --suggest) is unreliable in geometry: it proposed geometric-mean -> mean (the arithmetic average), trigonometric-ratios-intro -> ratios, and circle-basics -> trig-unit-circle-evaluation. Those would serve a geometry student the wrong topic entirely. The rows below are matched by mathematical MEANING instead. Skills with no honest bank match (points-lines-planes, polygon-angle-sum, quadrilateral-properties, trapezoid-properties, geometric-mean) are deliberately ABSENT — they are real content gaps and must stay visible as such. 2026-08-02: 28 rows added after comparing a full DB export against the generated bank — 21 of 35 skills that the audit reported EMPTY already had content under another name. The audit measures REACHABILITY, not existence: an unmapped skill reads empty whether or not problems exist for it. Always diff against the bank before generating. 2026-08-03 (calculus): AB/BC review skills map to the precalc/trig banks they revise; AB/BC calc skills map to the existing calc bank ids (limits, derivatives, ftc, ...) whose thin families the low-volume templates now top up. The cumulative/AP-practice-mode rows (cumulative-mcq-practice, ap-frq-*, calculator-active-fluency) map MODE to mixed CONTENT — the mode itself is the tutor's job; the rows only give it material to run.",
+ "rows": [
+  {
+   "legacyId": "angle-measurement",
+   "unifiedId": "act-basic-geometry-measures",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "angle-pair-relationships",
+   "unifiedId": "act-angles-parallel-lines",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "parallel-lines-transversals",
+   "unifiedId": "act-angles-parallel-lines",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "triangle-angle-sum",
+   "unifiedId": "act-triangles-angle-relationships",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "exterior-angle-theorem",
+   "unifiedId": "act-triangles-angle-relationships",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "triangle-classification",
+   "unifiedId": "act-triangles-angle-relationships",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "triangle-congruence-sss-sas-asa",
+   "unifiedId": "congruence",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "triangle-congruence-aas-hl",
+   "unifiedId": "congruence",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "cpctc",
+   "unifiedId": "congruence",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "congruence-proofs",
+   "unifiedId": "geometric-proofs",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "parallelogram-proofs",
+   "unifiedId": "geometric-proofs",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "similarity-proofs",
+   "unifiedId": "geometric-proofs",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "pythagorean-converse",
+   "unifiedId": "act-triangles-pythagorean-theorem",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "special-right-triangles",
+   "unifiedId": "act-triangles-pythagorean-theorem",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "trigonometric-ratios-intro",
+   "unifiedId": "trig-right-triangle-ratios",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "circle-basics",
+   "unifiedId": "circles-circumference-area",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "circle-area",
+   "unifiedId": "circles-circumference-area",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "arc-length",
+   "unifiedId": "act-circles",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "sector-area",
+   "unifiedId": "act-circles",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "inscribed-angles",
+   "unifiedId": "act-circles",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "circle-theorems",
+   "unifiedId": "act-circles",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "similarity-ratios",
+   "unifiedId": "similarity",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "similar-triangle-theorems",
+   "unifiedId": "act-similar-congruent-figures",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "volume-prisms-cylinders",
+   "unifiedId": "act-volume-surface-area",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "volume-pyramids-cones-spheres",
+   "unifiedId": "act-volume-surface-area",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "surface-area-prisms-cylinders",
+   "unifiedId": "act-volume-surface-area",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "surface-area-pyramids-cones-spheres",
+   "unifiedId": "act-volume-surface-area",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "3d-geometry-mixed",
+   "unifiedId": "act-volume-surface-area",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "coordinate-geometry-distance-midpoint",
+   "unifiedId": "distance-formula",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "coordinate-proofs",
+   "unifiedId": "act-coordinate-geometry",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "equation-of-circle",
+   "unifiedId": "act-coordinate-geometry",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "parallel-perpendicular-slopes",
+   "unifiedId": "parallel-perpendicular-lines",
+   "course": "geometry"
+  },
+  {
+   "legacyId": "function-basics",
+   "unifiedId": "identifying-functions",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "exponent-rules-radicals",
+   "unifiedId": "exponent-properties",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "graphing-lines",
+   "unifiedId": "graph-linear-equations",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "systems-substitution-elimination",
+   "unifiedId": "systems-substitution",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "systems-linear-inequalities",
+   "unifiedId": "systems-of-inequalities",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "mathematical-modeling-systems",
+   "unifiedId": "systems-application-modeling",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "matrices-operations",
+   "unifiedId": "act-matrices-vectors",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "matrices-solving-systems",
+   "unifiedId": "act-matrices-vectors",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "quadratic-forms-converting",
+   "unifiedId": "quadratic-functions",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "quadratic-solving-all-methods",
+   "unifiedId": "choosing-quadratic-method",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "discriminant-analysis",
+   "unifiedId": "discriminant-number-of-solutions",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "parabola-transformations",
+   "unifiedId": "act-quadratic-functions-parabolas",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "factoring-advanced",
+   "unifiedId": "factoring-trinomials",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "polynomial-division",
+   "unifiedId": "act-polynomial-expressions",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "multiply-divide-rational-expressions",
+   "unifiedId": "multiply-rational-expressions",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "extraneous-solutions",
+   "unifiedId": "act-radical-rational-equations",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "compound-interest-modeling",
+   "unifiedId": "act-exponential-models",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "financial-applications",
+   "unifiedId": "act-exponential-models",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "logarithm-evaluation-conversion",
+   "unifiedId": "act-logarithms",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "logarithm-properties",
+   "unifiedId": "act-logarithms",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "exponential-logarithmic-equations",
+   "unifiedId": "act-logarithms",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "domain-analysis-logarithms",
+   "unifiedId": "domain-and-range",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "rational-exponents-radicals",
+   "unifiedId": "act-radicals-roots",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "simplifying-radicals-variables",
+   "unifiedId": "act-radicals-roots",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "radical-applications",
+   "unifiedId": "act-radical-rational-equations",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "recursive-explicit-formulas",
+   "unifiedId": "arithmetic-sequences",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "angle-measure-radians",
+   "unifiedId": "trig-degree-radian-conversion",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "permutations-combinations",
+   "unifiedId": "permutations",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "probability-rules",
+   "unifiedId": "act-probability",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "function-analysis-comparison",
+   "unifiedId": "function-families",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "exponential-growth-decay",
+   "unifiedId": "exponential-growth",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "function-notation-domain-range",
+   "unifiedId": "function-notation-evaluation",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "factoring-simplification-fluency",
+   "unifiedId": "factoring-trinomials",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "graphing-transformations-review",
+   "unifiedId": "function-transformations",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "transformations-toolkit",
+   "unifiedId": "function-transformations",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "combining-functions",
+   "unifiedId": "function-composition",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "domain-range-analysis",
+   "unifiedId": "domain-and-range",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "exponential-functions-properties",
+   "unifiedId": "exponential-functions",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "logarithmic-functions-properties",
+   "unifiedId": "act-logarithms",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "logarithm-rules-expansion",
+   "unifiedId": "act-logarithms",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "solving-exponential-equations",
+   "unifiedId": "act-logarithms",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "solving-logarithmic-equations",
+   "unifiedId": "act-logarithms",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "exponential-logarithmic-modeling",
+   "unifiedId": "act-exponential-models",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "radian-measure-arc-length",
+   "unifiedId": "trig-degree-radian-conversion",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "unit-circle-trig-values",
+   "unifiedId": "trig-unit-circle-evaluation",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "fundamental-trig-identities",
+   "unifiedId": "trig-identities-basic",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "solving-trig-equations",
+   "unifiedId": "trig-solve-equations-special",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "parabola-analysis",
+   "unifiedId": "act-quadratic-functions-parabolas",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "series-sigma-notation",
+   "unifiedId": "sigma-notation",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "limits-continuity-infinity",
+   "unifiedId": "limits",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "act-real-complex-numbers",
+   "unifiedId": "act-complex-numbers",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-exponents-roots",
+   "unifiedId": "act-exponent-rules",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-ratios-proportions-percents",
+   "unifiedId": "act-ratios-proportions",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-radical-rational-expressions",
+   "unifiedId": "act-radical-rational-equations",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-quadratic-functions",
+   "unifiedId": "act-quadratic-functions-parabolas",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-polynomial-exponential-log",
+   "unifiedId": "act-polynomial-expressions",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-trig-functions",
+   "unifiedId": "act-trigonometric-functions",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-angles-lines-triangles",
+   "unifiedId": "act-angles-parallel-lines",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-polygons-circles",
+   "unifiedId": "act-circles",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-right-triangle-trig",
+   "unifiedId": "act-right-triangle-trigonometry",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-congruence-similarity",
+   "unifiedId": "act-similar-congruent-figures",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-data-representations",
+   "unifiedId": "act-center-spread",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-two-way-tables",
+   "unifiedId": "act-conditional-probability",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-counting-techniques",
+   "unifiedId": "act-counting-arrangements",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-multi-step-rate-proportion",
+   "unifiedId": "act-rates-unit-conversion",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-measurement-unit-conversion",
+   "unifiedId": "act-rates-unit-conversion",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-area-perimeter-composite",
+   "unifiedId": "act-area-perimeter",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-algebraic-reasoning-context",
+   "unifiedId": "act-word-problems-modeling",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-percent-applications",
+   "unifiedId": "act-percentages",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "act-model-interpretation",
+   "unifiedId": "act-linear-functions-models",
+   "course": "act-prep"
+  },
+  {
+   "legacyId": "g6-one-two-step-equations",
+   "unifiedId": "one-step-equations",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-percent-intro",
+   "unifiedId": "percent-of-a-number",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-combine-like-terms",
+   "unifiedId": "combining-like-terms",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-equivalent-ratios",
+   "unifiedId": "ratios",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-ratio-language",
+   "unifiedId": "ratios",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-measures-center-variability",
+   "unifiedId": "measures-of-center",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-integer-basics",
+   "unifiedId": "adding-subtracting-integers",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-fraction-add-subtract",
+   "unifiedId": "add-fractions",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-fraction-multiply-divide",
+   "unifiedId": "multiply-fractions",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-decimal-division",
+   "unifiedId": "decimals-divide",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-write-expressions",
+   "unifiedId": "writing-algebraic-expressions",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-compare-order-rationals",
+   "unifiedId": "ordering-numbers",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-distance-coordinate-plane",
+   "unifiedId": "coordinate-plane",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-area-triangles-parallelograms",
+   "unifiedId": "area-triangles",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-unit-conversions",
+   "unifiedId": "act-rates-unit-conversion",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "discriminant",
+   "unifiedId": "discriminant-number-of-solutions",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "solving-literal-equations",
+   "unifiedId": "literal-equations",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "writing-linear-equations-point-slope",
+   "unifiedId": "point-slope-form",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "intro-probability",
+   "unifiedId": "probability-basics",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "measures-of-central-tendency",
+   "unifiedId": "mean",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "variable-expressions",
+   "unifiedId": "evaluate-expressions",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "polynomial-multiplication",
+   "unifiedId": "polynomial-multiplication-monomial",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "multiplying-dividing-rationals",
+   "unifiedId": "multiply-rational-expressions",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "solving-rational-equations",
+   "unifiedId": "act-radical-rational-equations",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "simplifying-radicals",
+   "unifiedId": "act-radicals-roots",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "operations-with-radicals",
+   "unifiedId": "act-radicals-roots",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "systems-word-problems",
+   "unifiedId": "systems-application-modeling",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "algebraic-properties",
+   "unifiedId": "distributive-property",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "exponent-rules-multiplication",
+   "unifiedId": "exponent-properties",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "exponent-rules-division",
+   "unifiedId": "exponent-properties",
+   "course": "algebra-1"
+  },
+  {
+   "legacyId": "g6-ratio-problem-solving",
+   "unifiedId": "solve-proportions",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-fraction-ops-review",
+   "unifiedId": "multiply-fractions",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-expression-writing-intro",
+   "unifiedId": "writing-algebraic-expressions",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-inequalities",
+   "unifiedId": "one-step-inequalities",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-mult-div-fluency",
+   "unifiedId": "multiplication-basics",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-formulas-area-volume",
+   "unifiedId": "area-rectangles",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g7-one-two-step-equations",
+   "unifiedId": "one-step-equations",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-inequalities",
+   "unifiedId": "one-step-inequalities",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-proportions",
+   "unifiedId": "solve-proportions",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-identify-proportional",
+   "unifiedId": "solve-proportions",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-proportional-equations",
+   "unifiedId": "solve-proportions",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-percent-applications",
+   "unifiedId": "percent-of-a-number",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-add-subtract-rationals",
+   "unifiedId": "add-fractions",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-multiply-divide-rationals",
+   "unifiedId": "multiply-fractions",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-verbal-to-algebraic",
+   "unifiedId": "writing-algebraic-expressions",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-area-circumference",
+   "unifiedId": "circles-circumference-area",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-scale-drawings",
+   "unifiedId": "scale-factor",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-fraction-decimal-fluency",
+   "unifiedId": "equivalent-fractions",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-integer-operations",
+   "unifiedId": "integer-operations",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "basic-equations",
+   "unifiedId": "one-step-equations",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "linear-inequalities",
+   "unifiedId": "solving-inequalities",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "slope-rate-of-change",
+   "unifiedId": "slope",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "slope-from-representations",
+   "unifiedId": "slope-from-two-points",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "interpret-slope-intercept",
+   "unifiedId": "writing-linear-equations-slope-intercept",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "y-intercept-context",
+   "unifiedId": "writing-linear-equations-slope-intercept",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "compare-linear-models",
+   "unifiedId": "act-linear-functions-models",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "function-definition",
+   "unifiedId": "identifying-functions",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "identify-functions",
+   "unifiedId": "identifying-functions",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "compare-functions",
+   "unifiedId": "function-families",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "function-modeling",
+   "unifiedId": "act-linear-functions-models",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "distance-coordinate",
+   "unifiedId": "coordinate-plane",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "fraction-decimal-fluency",
+   "unifiedId": "equivalent-fractions",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "rational-irrational",
+   "unifiedId": "irrational-numbers",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "real-number-ordering",
+   "unifiedId": "ordering-numbers",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "congruence-similarity",
+   "unifiedId": "act-similar-congruent-figures",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "systems-interpretation",
+   "unifiedId": "act-systems-of-equations",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "volume-cylinders",
+   "unifiedId": "act-volume-surface-area",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "volume-cones",
+   "unifiedId": "act-volume-surface-area",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "volume-spheres",
+   "unifiedId": "act-volume-surface-area",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "volume-word-problems",
+   "unifiedId": "act-volume-surface-area",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "equation-word-problems",
+   "unifiedId": "linear-word-problems",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "scatter-plots",
+   "unifiedId": "scatter-plots-correlation",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "correlation-causation",
+   "unifiedId": "scatter-plots-correlation",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "g6-measurement-conversions",
+   "unifiedId": "g6-unit-conversions",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-word-problem-equations",
+   "unifiedId": "writing-solving-equations-context",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-nets-surface-area",
+   "unifiedId": "act-volume-surface-area",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-geometry-applications",
+   "unifiedId": "area-perimeter-word-problems",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-statistical-questions",
+   "unifiedId": "statistics",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-compare-distributions",
+   "unifiedId": "act-center-spread",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g6-positive-negative-context",
+   "unifiedId": "g6-integer-basics",
+   "course": "6th-grade-math"
+  },
+  {
+   "legacyId": "g7-absolute-value",
+   "unifiedId": "g6-absolute-value-opposites",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-constant-of-proportionality",
+   "unifiedId": "proportional-relationships",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-graph-proportional",
+   "unifiedId": "proportional-relationships",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-surface-area",
+   "unifiedId": "act-volume-surface-area",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-volume",
+   "unifiedId": "volume-rectangular-prisms",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-compare-data-sets",
+   "unifiedId": "act-center-spread",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-compound-events",
+   "unifiedId": "compound-probability",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-equation-word-problems",
+   "unifiedId": "writing-solving-equations-context",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-function-input-output",
+   "unifiedId": "function-notation-evaluation",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "g7-patterns-sequences",
+   "unifiedId": "sequence-patterns",
+   "course": "7th-grade-math"
+  },
+  {
+   "legacyId": "advanced-factoring",
+   "unifiedId": "factoring-trinomials",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "exponent-rules-review",
+   "unifiedId": "exponent-properties",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "function-notation-review",
+   "unifiedId": "function-notation-evaluation",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "graphing-lines-review",
+   "unifiedId": "graph-linear-equations",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "linear-equations-review",
+   "unifiedId": "linear-equations",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "matrix-operations",
+   "unifiedId": "act-matrices-vectors",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "inverse-matrices",
+   "unifiedId": "act-matrices-vectors",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "quadratic-discriminant",
+   "unifiedId": "discriminant-number-of-solutions",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "quadratic-forms",
+   "unifiedId": "quadratic-functions",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "quadratic-transformations",
+   "unifiedId": "act-quadratic-functions-parabolas",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "rational-exponents",
+   "unifiedId": "act-radicals-roots",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "rational-operations",
+   "unifiedId": "multiply-rational-expressions",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "simplifying-rational",
+   "unifiedId": "simplify-rational-expressions",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "solving-quadratics-all-methods",
+   "unifiedId": "choosing-quadratic-method",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "systems-inequalities",
+   "unifiedId": "systems-of-inequalities",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "systems-modeling",
+   "unifiedId": "systems-application-modeling",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "infinite-geometric-series",
+   "unifiedId": "geometric-series",
+   "course": "algebra-2"
+  },
+  {
+   "legacyId": "algebraic-fluency-review",
+   "unifiedId": "simplify-expressions",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "exponential-log-review",
+   "unifiedId": "act-logarithms",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "quadratic-mastery-review",
+   "unifiedId": "quadratic-functions",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "trig-readiness-review",
+   "unifiedId": "trig-unit-circle-evaluation",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "function-analysis-review",
+   "unifiedId": "function-families",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "comprehensive-function-review",
+   "unifiedId": "function-notation-evaluation",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "comprehensive-analytic-review",
+   "unifiedId": "act-coordinate-geometry",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "comprehensive-limits-series-review",
+   "unifiedId": "limits",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "polynomial-end-behavior",
+   "unifiedId": "polynomial-graphing",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "polynomial-zeros-multiplicity",
+   "unifiedId": "polynomial-graphing",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "rational-function-analysis",
+   "unifiedId": "rational-function-graphing",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "asymptote-analysis",
+   "unifiedId": "vertical-horizontal-asymptotes",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "sinusoidal-modeling",
+   "unifiedId": "graphing-sinusoidal",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "trig-function-graphs",
+   "unifiedId": "graphing-sinusoidal",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "triangle-area-applications",
+   "unifiedId": "trig-law-of-sines",
+   "course": "precalculus"
+  },
+  {
+   "legacyId": "function-behavior-review",
+   "unifiedId": "quadratic-functions",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "function-behavior-review",
+   "unifiedId": "function-notation-evaluation",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "function-behavior-review",
+   "unifiedId": "polynomial-graphing",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "rational-functions-review",
+   "unifiedId": "rational-function-graphing",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "rational-functions-review",
+   "unifiedId": "vertical-horizontal-asymptotes",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "rational-functions-review",
+   "unifiedId": "holes-in-rational-functions",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "exponent-log-rules-review",
+   "unifiedId": "exponent-properties",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "exponent-log-rules-review",
+   "unifiedId": "act-exponent-rules",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "exponent-log-rules-review",
+   "unifiedId": "act-logarithms",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "trig-fluency-review",
+   "unifiedId": "trig-unit-circle-evaluation",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "trig-fluency-review",
+   "unifiedId": "trig-degree-radian-conversion",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "trig-fluency-review",
+   "unifiedId": "trig-identities-basic",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "radian-measure-conversion",
+   "unifiedId": "trig-degree-radian-conversion",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "unit-circle-derivation",
+   "unifiedId": "trig-unit-circle-evaluation",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "unit-circle-derivation",
+   "unifiedId": "trig-tan-unit-circle",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "graph-reading-modeling",
+   "unifiedId": "act-exponential-models",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "graph-reading-modeling",
+   "unifiedId": "comparing-linear-exponential",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "graph-reading-modeling",
+   "unifiedId": "interpreting-graphs-stories",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "limits-graphical-numerical",
+   "unifiedId": "limits",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "limits-at-infinity-asymptotes",
+   "unifiedId": "limits-at-infinity",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "limits-at-infinity-asymptotes",
+   "unifiedId": "vertical-horizontal-asymptotes",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "ivt-squeeze-theorem",
+   "unifiedId": "ivt-squeeze",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "derivative-definition-difference-quotient",
+   "unifiedId": "derivative-definition",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "derivative-as-rate-of-change",
+   "unifiedId": "derivatives",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "chain-rule-composite",
+   "unifiedId": "chain-rule",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "related-rates-setup-solve",
+   "unifiedId": "related-rates",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "motion-position-velocity-acceleration",
+   "unifiedId": "motion",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "local-linearization-differentials",
+   "unifiedId": "linearization",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "mvt-evt-theorems",
+   "unifiedId": "mvt-evt",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "concavity-inflection-points",
+   "unifiedId": "concavity-inflection",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "first-second-derivative-tests",
+   "unifiedId": "increasing-decreasing-extrema",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "first-second-derivative-tests",
+   "unifiedId": "concavity-inflection",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "curve-sketching-from-derivatives",
+   "unifiedId": "increasing-decreasing-extrema",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "curve-sketching-from-derivatives",
+   "unifiedId": "concavity-inflection",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "optimization-problems",
+   "unifiedId": "optimization",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "definite-integral-as-accumulation",
+   "unifiedId": "definite-integrals",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "riemann-sums-approximation",
+   "unifiedId": "riemann-sums",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "ftc-part-1",
+   "unifiedId": "ftc",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "ftc-part-2",
+   "unifiedId": "ftc",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "antiderivatives-indefinite-integrals",
+   "unifiedId": "antiderivatives",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "integral-properties-techniques",
+   "unifiedId": "u-substitution",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "integral-properties-techniques",
+   "unifiedId": "definite-integrals",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "slope-fields-solution-curves",
+   "unifiedId": "slope-fields",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "separable-differential-equations",
+   "unifiedId": "separable-des",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "exponential-growth-decay-models",
+   "unifiedId": "exponential-growth",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "exponential-growth-decay-models",
+   "unifiedId": "exponential-decay",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "exponential-growth-decay-models",
+   "unifiedId": "exponential-growth-decay",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "average-value-function",
+   "unifiedId": "average-value",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "motion-via-integrals-net-change",
+   "unifiedId": "motion-integrals",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "cumulative-mcq-practice",
+   "unifiedId": "limits",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "cumulative-mcq-practice",
+   "unifiedId": "derivatives",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "cumulative-mcq-practice",
+   "unifiedId": "definite-integrals",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "cumulative-mcq-practice",
+   "unifiedId": "ftc",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "cumulative-frq-practice",
+   "unifiedId": "limits",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "cumulative-frq-practice",
+   "unifiedId": "derivatives",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "cumulative-frq-practice",
+   "unifiedId": "definite-integrals",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "cumulative-frq-practice",
+   "unifiedId": "ftc",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "calculator-active-fluency",
+   "unifiedId": "limits",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "calculator-active-fluency",
+   "unifiedId": "derivatives",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "calculator-active-fluency",
+   "unifiedId": "definite-integrals",
+   "course": "ap-calculus-ab"
+  },
+  {
+   "legacyId": "function-fluency",
+   "unifiedId": "function-notation-evaluation",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "function-fluency",
+   "unifiedId": "quadratic-functions",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "algebra-cleanup",
+   "unifiedId": "exponent-properties",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "algebra-cleanup",
+   "unifiedId": "act-exponent-rules",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "trig-essentials",
+   "unifiedId": "trig-unit-circle-evaluation",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "trig-essentials",
+   "unifiedId": "trig-degree-radian-conversion",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "trig-essentials",
+   "unifiedId": "trig-identities-basic",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "graph-literacy",
+   "unifiedId": "act-exponential-models",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "graph-literacy",
+   "unifiedId": "comparing-linear-exponential",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "graph-literacy",
+   "unifiedId": "interpreting-graphs-stories",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "continuity-ivt",
+   "unifiedId": "continuity-types",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "continuity-ivt",
+   "unifiedId": "ivt-squeeze",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "squeeze-theorem",
+   "unifiedId": "ivt-squeeze",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "derivative-interpretation",
+   "unifiedId": "derivatives",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "product-quotient-rules",
+   "unifiedId": "basic-differentiation-rules",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "product-quotient-rules",
+   "unifiedId": "common-derivatives",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "motion-problems",
+   "unifiedId": "motion",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "linearization-differentials",
+   "unifiedId": "linearization",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "curve-sketching",
+   "unifiedId": "increasing-decreasing-extrema",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "curve-sketching",
+   "unifiedId": "concavity-inflection",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "evt-mvt",
+   "unifiedId": "mvt-evt",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "definite-integral-properties",
+   "unifiedId": "definite-integrals",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ftc-part1",
+   "unifiedId": "ftc",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ftc-part2",
+   "unifiedId": "ftc",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "accumulation-functions",
+   "unifiedId": "ftc",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "accumulation-functions",
+   "unifiedId": "definite-integrals",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "separation-of-variables",
+   "unifiedId": "separable-des",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "particular-solutions",
+   "unifiedId": "separable-des",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "motion-accumulation",
+   "unifiedId": "motion-integrals",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-mc-no-calculator",
+   "unifiedId": "limits",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-mc-no-calculator",
+   "unifiedId": "derivatives",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-mc-no-calculator",
+   "unifiedId": "definite-integrals",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-mc-no-calculator",
+   "unifiedId": "ftc",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-mc-calculator",
+   "unifiedId": "limits",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-mc-calculator",
+   "unifiedId": "derivatives",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-mc-calculator",
+   "unifiedId": "definite-integrals",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-mc-calculator",
+   "unifiedId": "ftc",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-frq-calculator",
+   "unifiedId": "limits",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-frq-calculator",
+   "unifiedId": "derivatives",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-frq-calculator",
+   "unifiedId": "definite-integrals",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-frq-calculator",
+   "unifiedId": "ftc",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-frq-no-calculator",
+   "unifiedId": "limits",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-frq-no-calculator",
+   "unifiedId": "derivatives",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-frq-no-calculator",
+   "unifiedId": "definite-integrals",
+   "course": "calculus-bc"
+  },
+  {
+   "legacyId": "ap-frq-no-calculator",
+   "unifiedId": "ftc",
+   "course": "calculus-bc"
+  }
+ ]
 }

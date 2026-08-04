@@ -25543,5 +25543,4643 @@
    }
   ],
   "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-limits-at-infinity-001",
+  "skillId": "limits-at-infinity",
+  "prompt": "Evaluate: the limit as x → ∞ of (9x² + 3x)/(4x² + 6).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Same degree top and bottom, so the limit is the ratio of leading coefficients: 9/4 = 9/4. The lower-order terms vanish relative to x².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:limits-at-infinity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6f30f84cf58c87f22de15fdff6a6e505dbb3dd622ae427b88438d0ad9e49bffb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-limits-at-infinity-002",
+  "skillId": "limits-at-infinity",
+  "prompt": "Evaluate: the limit as x → ∞ of (5x + 1)/(3x² + 4x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The denominator's degree (2) beats the numerator's (1), so the fraction is squeezed to 0: dividing top and bottom by x² leaves 5/x → 0 over 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:limits-at-infinity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5783970b2d7d206a8a76045dd7d4ee8deb925bfcfa50858fe5666ae03b10bc13",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-limits-at-infinity-003",
+  "skillId": "limits-at-infinity",
+  "prompt": "Evaluate: the limit as x → ∞ of (5x² + 8x)/(4x² + 9).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Same degree top and bottom, so the limit is the ratio of leading coefficients: 5/4 = 5/4. The lower-order terms vanish relative to x².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:limits-at-infinity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "90d23a88d112dd616d983f33effe12b158800d68af68152f841fabed3f73960c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-limits-at-infinity-004",
+  "skillId": "limits-at-infinity",
+  "prompt": "Evaluate: the limit as x → ∞ of (5x + 1)/(5x² + 6x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The denominator's degree (2) beats the numerator's (1), so the fraction is squeezed to 0: dividing top and bottom by x² leaves 5/x → 0 over 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:limits-at-infinity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d5bfe8813c9cad9232a4e76ecf12e90c126a4b6555eda66741fab4a98672a0cf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-limits-at-infinity-005",
+  "skillId": "limits-at-infinity",
+  "prompt": "The function f(x) = (2x² + 1)/(5x + 4) — as x → ∞, does f(x) approach a finite limit?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The numerator's degree (2) beats the denominator's (1), so f grows without bound — the limit is ∞, not a finite number. Degree comparison decides every rational limit at infinity.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:limits-at-infinity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b22077442354a9a2bf96ba7500a5eaf1cee144cd0da4afc95a004a1f0e1057af",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "No"
+   },
+   {
+    "label": "B",
+    "text": "Yes"
+   },
+   {
+    "label": "C",
+    "text": "Only from the left"
+   },
+   {
+    "label": "D",
+    "text": "Only for x < 0"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-limits-at-infinity-006",
+  "skillId": "limits-at-infinity",
+  "prompt": "What is the horizontal asymptote of y = (3x² − 8)/(5x² + 3x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 3/5",
+   "equivalents": [
+    "y=3/5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Equal degrees give a horizontal asymptote at the ratio of leading coefficients: y = 3/5 = 3/5. The limit at ∞ and the horizontal asymptote are the same fact.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:limits-at-infinity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "edeca37caf5c70bbe100a9f28b120df1a60bd28489da141ed203656cd7830c60",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-limits-at-infinity-007",
+  "skillId": "limits-at-infinity",
+  "prompt": "The function f(x) = (2x² + 1)/(5x + 3) — as x → ∞, does f(x) approach a finite limit?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The numerator's degree (2) beats the denominator's (1), so f grows without bound — the limit is ∞, not a finite number. Degree comparison decides every rational limit at infinity.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:limits-at-infinity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "116c6b048f642c1f305b2baf690016388764fdf63d6679aaad38e7dcb4b4fb4b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "No"
+   },
+   {
+    "label": "B",
+    "text": "Yes"
+   },
+   {
+    "label": "C",
+    "text": "Only from the left"
+   },
+   {
+    "label": "D",
+    "text": "Only for x < 0"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-limits-at-infinity-008",
+  "skillId": "limits-at-infinity",
+  "prompt": "What is the horizontal asymptote of y = (3x² − 1)/(5x² + 5x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 3/5",
+   "equivalents": [
+    "y=3/5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Equal degrees give a horizontal asymptote at the ratio of leading coefficients: y = 3/5 = 3/5. The limit at ∞ and the horizontal asymptote are the same fact.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:limits-at-infinity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c834f92710e9fddea0b4afbdb03546c9694c3eaa2735da2ea81c2ea6ed4e9d42",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ivt-squeeze-001",
+  "skillId": "ivt-squeeze",
+  "prompt": "f is continuous on [2, 4] with f(2) = -2 and f(4) = 3. Must f have a zero in (2, 4)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The Intermediate Value Theorem: a continuous function that goes from -2 (negative) to 3 (positive) must pass through every value between — including 0. Continuity is the only hypothesis needed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ivt-squeeze"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "667d3cafa6d6908ce0327bd56a1dd6349bb050743d80bf889df5faa7095f95a1",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if f is increasing"
+   },
+   {
+    "label": "D",
+    "text": "Only if f is a polynomial"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-ivt-squeeze-002",
+  "skillId": "ivt-squeeze",
+  "prompt": "f is continuous on [1, 4] with f(1) = 5 and f(4) = 2. Does the IVT guarantee a zero of f in (1, 4)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Both endpoint values (5 and 2) are positive, so 0 is not BETWEEN them — the IVT guarantees only the values between f(1) and f(4). A zero may still exist, but nothing forces one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ivt-squeeze"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "14c97c63ce676e67213b4a4a1e2a60ba4edd83a2b2de06dcedfe92747efc83f0",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "No"
+   },
+   {
+    "label": "B",
+    "text": "Yes"
+   },
+   {
+    "label": "C",
+    "text": "Only at the midpoint"
+   },
+   {
+    "label": "D",
+    "text": "The IVT never applies on closed intervals"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-ivt-squeeze-003",
+  "skillId": "ivt-squeeze",
+  "prompt": "f is continuous on [1, 5] with f(1) = -6 and f(5) = 9. Must f have a zero in (1, 5)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The Intermediate Value Theorem: a continuous function that goes from -6 (negative) to 9 (positive) must pass through every value between — including 0. Continuity is the only hypothesis needed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ivt-squeeze"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b3956dcee2225f4e08092fd8c17b6b50a8c57c106b66e427eba13f88521d56ce",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if f is increasing"
+   },
+   {
+    "label": "D",
+    "text": "Only if f is a polynomial"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-ivt-squeeze-004",
+  "skillId": "ivt-squeeze",
+  "prompt": "f is continuous on [2, 6] with f(2) = 6 and f(6) = 5. Does the IVT guarantee a zero of f in (2, 6)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Both endpoint values (6 and 5) are positive, so 0 is not BETWEEN them — the IVT guarantees only the values between f(2) and f(6). A zero may still exist, but nothing forces one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ivt-squeeze"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3a3021a5b36db8934d3de9f798f46521d72cd37faa4bbfdf9dd9958d97fdf217",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "No"
+   },
+   {
+    "label": "B",
+    "text": "Yes"
+   },
+   {
+    "label": "C",
+    "text": "Only at the midpoint"
+   },
+   {
+    "label": "D",
+    "text": "The IVT never applies on closed intervals"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-ivt-squeeze-005",
+  "skillId": "ivt-squeeze",
+  "prompt": "For x near 0, g satisfies 5 − x² ≤ g(x) ≤ 5 + x². What is the limit of g(x) as x → 0?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Both bounds approach 5 as x → 0, and g is trapped between them — the Squeeze Theorem forces g to the same limit: 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ivt-squeeze"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "605d211d4a769ddbbcb96b433f6d601f48bf7ad3445f31432e495410394d119f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ivt-squeeze-006",
+  "skillId": "ivt-squeeze",
+  "prompt": "Evaluate the limit as x → 0 of x² · sin(3/x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "sin(3/x) oscillates but stays in [−1, 1], so −x² ≤ x²sin(3/x) ≤ x². Both bounds go to 0, and the Squeeze Theorem drags the product to 0 with them — even though sin(3/x) itself has no limit.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ivt-squeeze"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c7a3943d9b7184c0b5ee5eb36e39444ea8b37402a9a9a23636a09fceb4e02d0a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ivt-squeeze-007",
+  "skillId": "ivt-squeeze",
+  "prompt": "For x near 0, g satisfies 3 − x² ≤ g(x) ≤ 3 + x². What is the limit of g(x) as x → 0?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Both bounds approach 3 as x → 0, and g is trapped between them — the Squeeze Theorem forces g to the same limit: 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ivt-squeeze"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f13a61a3ec22c90553afbf1cb6d4e5c2852ff1736335818c42395fb7167a6aa3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ivt-squeeze-008",
+  "skillId": "ivt-squeeze",
+  "prompt": "Evaluate the limit as x → 0 of x² · sin(2/x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "sin(2/x) oscillates but stays in [−1, 1], so −x² ≤ x²sin(2/x) ≤ x². Both bounds go to 0, and the Squeeze Theorem drags the product to 0 with them — even though sin(2/x) itself has no limit.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ivt-squeeze"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a604aa7a4526e59bb805990893368c6096c64bf3c9d050b07c55568ac0e33570",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivative-definition-001",
+  "skillId": "derivative-definition",
+  "prompt": "Using the limit definition, the difference quotient for f(x) = x² at x = 4 simplifies to 8 + h. What is f′(4)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f′(4) is the limit of the difference quotient as h → 0: (8 + h) → 8. The definition and the power rule agree: f′(x) = 2x gives 2 · 4 = 8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivative-definition"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ccef7076d1aa94ad5c8091a694cb91afa9489fc4bcdbe79c73cd89ba27581a74",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivative-definition-002",
+  "skillId": "derivative-definition",
+  "prompt": "Using the limit definition, the difference quotient for f(x) = x² at x = 2 simplifies to 4 + h. What is f′(2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f′(2) is the limit of the difference quotient as h → 0: (4 + h) → 4. The definition and the power rule agree: f′(x) = 2x gives 2 · 2 = 4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivative-definition"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3f7b1bea1cfcd8d0cdade7848fb7ee0dead6a972163db6cc120feb1b91ddc3b2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivative-definition-003",
+  "skillId": "derivative-definition",
+  "prompt": "Using the limit definition, the difference quotient for f(x) = x² at x = 5 simplifies to 10 + h. What is f′(5)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f′(5) is the limit of the difference quotient as h → 0: (10 + h) → 10. The definition and the power rule agree: f′(x) = 2x gives 2 · 5 = 10.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivative-definition"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9b214be125c1f3e8eee18087d02a1388963aec1b4c75c127607459431dcc467f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivative-definition-004",
+  "skillId": "derivative-definition",
+  "prompt": "Using the limit definition, the difference quotient for f(x) = x² at x = 3 simplifies to 6 + h. What is f′(3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f′(3) is the limit of the difference quotient as h → 0: (6 + h) → 6. The definition and the power rule agree: f′(x) = 2x gives 2 · 3 = 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivative-definition"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2b1cfec58fc5cab17046505e6103aa270d4cc1fe6c15431dd595b14f0b430d39",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivative-definition-005",
+  "skillId": "derivative-definition",
+  "prompt": "Simplify the difference quotient [f(x + h) − f(x)]/h for f(x) = 6x + 3.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "f(x + h) − f(x) = 6(x + h) + 3 − (6x + 3) = 6h. Dividing by h leaves 6 — constant, because a line's slope is the same everywhere. No limit is even needed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivative-definition"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dfc2a9168928309e5423d8cd4c7bd45c69883744d9bdf2f13f2f9d64bea41232",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivative-definition-006",
+  "skillId": "derivative-definition",
+  "prompt": "The limit as h → 0 of [(4 + h)² − 16]/h is the derivative of which function, at which point?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x² at x = 4",
+   "equivalents": [
+    "x²atx=4"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Match the pattern [f(a + h) − f(a)]/h: here f(x) = x² and a = 4, so this limit IS f′(4) = 8. Recognizing the definition in disguise is a standard AP move.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivative-definition"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "625b7ff758106ae2b770ba5f4166214545c47631671208a2ccdedbd0413a28d8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "x² at x = 4"
+   },
+   {
+    "label": "B",
+    "text": "x² at x = 16"
+   },
+   {
+    "label": "C",
+    "text": "2x at x = 4"
+   },
+   {
+    "label": "D",
+    "text": "x² at x = h"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-derivative-definition-007",
+  "skillId": "derivative-definition",
+  "prompt": "Simplify the difference quotient [f(x + h) − f(x)]/h for f(x) = 7x + 5.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "f(x + h) − f(x) = 7(x + h) + 5 − (7x + 5) = 7h. Dividing by h leaves 7 — constant, because a line's slope is the same everywhere. No limit is even needed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivative-definition"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c9696d0067872da8b49b31981f79e89055efa3ad489e31dacaf73b971a80432e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivative-definition-008",
+  "skillId": "derivative-definition",
+  "prompt": "The limit as h → 0 of [(5 + h)² − 25]/h is the derivative of which function, at which point?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x² at x = 5",
+   "equivalents": [
+    "x²atx=5"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Match the pattern [f(a + h) − f(a)]/h: here f(x) = x² and a = 5, so this limit IS f′(5) = 10. Recognizing the definition in disguise is a standard AP move.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivative-definition"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e887c2e75a3ababd4435b5027a2991d477921799c2d1202bb83603fa2e1f0cf2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "x² at x = 5"
+   },
+   {
+    "label": "B",
+    "text": "x² at x = 25"
+   },
+   {
+    "label": "C",
+    "text": "2x at x = 5"
+   },
+   {
+    "label": "D",
+    "text": "x² at x = h"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-chain-rule-001",
+  "skillId": "chain-rule",
+  "prompt": "Differentiate: y = (3x + 7)⁵.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15(3x + 7)⁴",
+   "equivalents": [
+    "15(3x+7)⁴"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Chain rule: bring down the exponent, lower it by one, then multiply by the INNER derivative 3: 5(3x + 7)^4 · 3 = 15(3x + 7)^4. Forgetting the inner 3 is the classic error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chain-rule"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9cfa94a3b126fb48ba34edca9375e9d4602f114c1c7c4b9a6db2569243c716ab",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chain-rule-002",
+  "skillId": "chain-rule",
+  "prompt": "Differentiate: y = (4x + 2)⁴.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16(4x + 2)³",
+   "equivalents": [
+    "16(4x+2)³"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Chain rule: bring down the exponent, lower it by one, then multiply by the INNER derivative 4: 4(4x + 2)^3 · 4 = 16(4x + 2)^3. Forgetting the inner 4 is the classic error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chain-rule"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d0936b423e46e35af2613c5c039f584d6436ad16c4839de02aea97d6278110f1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chain-rule-003",
+  "skillId": "chain-rule",
+  "prompt": "Differentiate: y = (4x + 6)⁵.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20(4x + 6)⁴",
+   "equivalents": [
+    "20(4x+6)⁴"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Chain rule: bring down the exponent, lower it by one, then multiply by the INNER derivative 4: 5(4x + 6)^4 · 4 = 20(4x + 6)^4. Forgetting the inner 4 is the classic error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chain-rule"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ace9d0380848d8f0d4c25d8f5750a84908b2df86e12ba5e2a86570ad8ce4e44b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chain-rule-004",
+  "skillId": "chain-rule",
+  "prompt": "Differentiate: y = (4x + 6)⁴.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16(4x + 6)³",
+   "equivalents": [
+    "16(4x+6)³"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Chain rule: bring down the exponent, lower it by one, then multiply by the INNER derivative 4: 4(4x + 6)^3 · 4 = 16(4x + 6)^3. Forgetting the inner 4 is the classic error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chain-rule"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d253f489a3b5f3bbb39de49d0c4ebf31c80034f69d6d4d5976efc1af387cc184",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chain-rule-005",
+  "skillId": "chain-rule",
+  "prompt": "Differentiate: y = sin(4x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4cos(4x)",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The outer function sin becomes cos, and the chain rule multiplies by the inner derivative 4: y′ = cos(4x) · 4 = 4cos(4x).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chain-rule"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b78588bd2b697592506ee7f0e060ff597acc818a9cbcc3a3ebf344558f1c4f17",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chain-rule-006",
+  "skillId": "chain-rule",
+  "prompt": "g(x) = f(2x) where f′(6) = 3. Using the chain rule, what is g′(3)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "g′(x) = f′(2x) · 2. At x = 3: g′(3) = f′(6) · 2 = 3 · 2 = 6. The chain rule evaluates the outer derivative at the INNER value 2·3 = 6, then multiplies by the inner rate 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chain-rule"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d76c33d5f08309dfc7ab88e1e30c12ac09c638f4d24977432138bf9265773030",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chain-rule-007",
+  "skillId": "chain-rule",
+  "prompt": "Differentiate: y = sin(2x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2cos(2x)",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The outer function sin becomes cos, and the chain rule multiplies by the inner derivative 2: y′ = cos(2x) · 2 = 2cos(2x).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chain-rule"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "78bb5379938d0c0ed9caa3a1c98098e8a63663121f034d142eef6c3c8b7c4d89",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chain-rule-008",
+  "skillId": "chain-rule",
+  "prompt": "g(x) = f(5x) where f′(10) = 2. Using the chain rule, what is g′(2)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "g′(x) = f′(5x) · 5. At x = 2: g′(2) = f′(10) · 5 = 2 · 5 = 10. The chain rule evaluates the outer derivative at the INNER value 5·2 = 10, then multiplies by the inner rate 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chain-rule"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ee46bdce94f116ac366cac8ff444c1362275ce25a8625665ce8010d94ae4a4f7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-related-rates-001",
+  "skillId": "related-rates",
+  "prompt": "Each side of a square is growing at 3 cm/s. How fast is the AREA growing when the side is 3 cm? (cm²/s)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A = s², so dA/dt = 2s · ds/dt. At s = 3 with ds/dt = 3: dA/dt = 2 · 3 · 3 = 18 cm²/s. Differentiate the RELATION first, then substitute the moment's values.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:related-rates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3eebb1b6b38c33d48efeef03eea7db77b522dc02f61cf058b3d2a6ce6c6890d2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-related-rates-002",
+  "skillId": "related-rates",
+  "prompt": "Each side of a square is growing at 3 cm/s. How fast is the AREA growing when the side is 5 cm? (cm²/s)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A = s², so dA/dt = 2s · ds/dt. At s = 5 with ds/dt = 3: dA/dt = 2 · 5 · 3 = 30 cm²/s. Differentiate the RELATION first, then substitute the moment's values.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:related-rates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7c40adae6ee076806643c113f563284cc557d2236cd7b2b3742c5e47935cd9ea",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-related-rates-003",
+  "skillId": "related-rates",
+  "prompt": "Each side of a square is growing at 4 cm/s. How fast is the AREA growing when the side is 9 cm? (cm²/s)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "72",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A = s², so dA/dt = 2s · ds/dt. At s = 9 with ds/dt = 4: dA/dt = 2 · 9 · 4 = 72 cm²/s. Differentiate the RELATION first, then substitute the moment's values.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:related-rates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a0f56939c5ef8fad02b7d9e8fcc59198e9eeea401cdc6622925815fc176f8d24",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-related-rates-004",
+  "skillId": "related-rates",
+  "prompt": "Each side of a square is growing at 5 cm/s. How fast is the AREA growing when the side is 9 cm? (cm²/s)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "90",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A = s², so dA/dt = 2s · ds/dt. At s = 9 with ds/dt = 5: dA/dt = 2 · 9 · 5 = 90 cm²/s. Differentiate the RELATION first, then substitute the moment's values.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:related-rates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "871f6d5f21912fa8d6994c1ccab3a099c02c0f23d12d8934171e978261269310",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-related-rates-005",
+  "skillId": "related-rates",
+  "prompt": "A 10 m ladder leans against a wall. Its base, 6 m from the wall, slides away at 2 m/s. How fast is the top sliding DOWN the wall at that moment? (m/s)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "x² + y² = 10², so 2x·dx/dt + 2y·dy/dt = 0, giving dy/dt = −(x/y)·dx/dt. With x = 6, y = √(10² − 6²) = 8 (the 6-8-10 triple): dy/dt = −(6/8) · 2 → sliding down at 3/2 m/s.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:related-rates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e54e2ae8e68b6311a9fbc992deafd8070b680ec2d59fe31e7f620ee58de52e36",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-related-rates-006",
+  "skillId": "related-rates",
+  "prompt": "A cube's volume grows at 12 cm³/s. How fast is its side length growing when the side is 2 cm? (cm/s)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "V = s³, so dV/dt = 3s² · ds/dt. Solve for ds/dt = 12/(3 · 2²) = 12/12 = 1 cm/s. The same relation-first, substitute-second discipline as every related-rates problem.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:related-rates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "73435b6c05ef32d4353ad83bf6f1d92a6568622fae63eaf97ea6537a17e66d15",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-related-rates-007",
+  "skillId": "related-rates",
+  "prompt": "A 13 m ladder leans against a wall. Its base, 5 m from the wall, slides away at 3 m/s. How fast is the top sliding DOWN the wall at that moment? (m/s)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "x² + y² = 13², so 2x·dx/dt + 2y·dy/dt = 0, giving dy/dt = −(x/y)·dx/dt. With x = 5, y = √(13² − 5²) = 12 (the 5-12-13 triple): dy/dt = −(5/12) · 3 → sliding down at 5/4 m/s.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:related-rates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3af4dd8b03a0f07173ab9693f19bce088da664642293e44a4e8f00c1fcb7d022",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-related-rates-008",
+  "skillId": "related-rates",
+  "prompt": "A cube's volume grows at 20 cm³/s. How fast is its side length growing when the side is 2 cm? (cm/s)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "V = s³, so dV/dt = 3s² · ds/dt. Solve for ds/dt = 20/(3 · 2²) = 20/12 = 5/3 cm/s. The same relation-first, substitute-second discipline as every related-rates problem.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:related-rates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "512a3102f4251553d33160c9389e340016ff508de8ac152969c1fab9666e4469",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-001",
+  "skillId": "motion",
+  "prompt": "A particle's position is s(t) = 3t² + 2t (meters, seconds). What is its velocity at t = 2?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Velocity is the derivative of position: v(t) = 6t + 2. At t = 2: v = 6 · 2 + 2 = 14 m/s.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "08b0ae702bb8787fc9600a5e25b6742b1c4ee263a3d9b7f40fc4cee86cb286e7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-002",
+  "skillId": "motion",
+  "prompt": "A particle's position is s(t) = t² + 4t (meters, seconds). What is its velocity at t = 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Velocity is the derivative of position: v(t) = 2t + 4. At t = 3: v = 2 · 3 + 4 = 10 m/s.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d5293772e7d5c1ce28967ec2f71c1d4fd137b4afd19bcd1e5af1c67e532ce622",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-003",
+  "skillId": "motion",
+  "prompt": "A particle's position is s(t) = 4t² + 3t (meters, seconds). What is its velocity at t = 4?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "35",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Velocity is the derivative of position: v(t) = 8t + 3. At t = 4: v = 8 · 4 + 3 = 35 m/s.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8e7b6a2842a09953ed5116e7978228ea17a706047f2dc748b967b66620e4fa47",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-004",
+  "skillId": "motion",
+  "prompt": "A particle's position is s(t) = t² + 7t (meters, seconds). What is its velocity at t = 4?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Velocity is the derivative of position: v(t) = 2t + 7. At t = 4: v = 2 · 4 + 7 = 15 m/s.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "44828d9c7764116e752eb631c5392646894072e1193bf8e441faf5f628d58911",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-005",
+  "skillId": "motion",
+  "prompt": "A particle moves with velocity v(t) = 3t² − 48. At what positive time t is the particle AT REST?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "At rest means v = 0: 3t² = 48, so t² = 16 and t = 4 (taking the positive root). Setting velocity to zero is the first step of nearly every AP motion part.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "81e7b4c71df3e92a192663a7d0d465b42bd6006d90e76dabb160d33c848ccc95",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-006",
+  "skillId": "motion",
+  "prompt": "A particle's velocity is v(t) = 3t² (m/s). What is its ACCELERATION at t = 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Acceleration is the derivative of velocity: a(t) = 6t, so at t = 3 it is 6 · 3 = 18 m/s². Position → velocity → acceleration is one derivative each.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1c1384229ff3c5f5e172f74671a3b7ec996e687a81bc8ae0b34f9005bed79270",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-007",
+  "skillId": "motion",
+  "prompt": "A particle moves with velocity v(t) = 6t² − 24. At what positive time t is the particle AT REST?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "At rest means v = 0: 6t² = 24, so t² = 4 and t = 2 (taking the positive root). Setting velocity to zero is the first step of nearly every AP motion part.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "33ca7eceb780bf24d0873e8a5dd124771b88c2f609bcf2686ae45ebebb2d55ae",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-008",
+  "skillId": "motion",
+  "prompt": "A particle's velocity is v(t) = t² (m/s). What is its ACCELERATION at t = 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Acceleration is the derivative of velocity: a(t) = 2t, so at t = 3 it is 2 · 3 = 6 m/s². Position → velocity → acceleration is one derivative each.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aef3526870d87e83bc6cad9956a0f4dabe47d9e5539f2a4275c264029f2253e7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-linearization-001",
+  "skillId": "linearization",
+  "prompt": "Use the linearization of f(x) = √x at x = 64 to estimate √66. Give your answer as a whole number plus a fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8 + 1/8",
+   "equivalents": [
+    "8+1/8"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "L(x) = f(64) + f′(64)(x − 64) = 8 + (x − 64)/(2·8). At x = 66: 8 + 2/16 = 8 + 1/8. The tangent line stands in for the curve close to the point of tangency.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:linearization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bff9f224e891dbf941ef7170d57da153c8b79f42e62ca7fb381bd54516e26005",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-linearization-002",
+  "skillId": "linearization",
+  "prompt": "Use the linearization of f(x) = √x at x = 36 to estimate √37. Give your answer as a whole number plus a fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6 + 1/12",
+   "equivalents": [
+    "6+1/12"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "L(x) = f(36) + f′(36)(x − 36) = 6 + (x − 36)/(2·6). At x = 37: 6 + 1/12 = 6 + 1/12. The tangent line stands in for the curve close to the point of tangency.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:linearization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fe6c23d1fbf5248d0e3b43b68f4e9b30247c919bc0387f51d41e288704714230",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-linearization-003",
+  "skillId": "linearization",
+  "prompt": "Use the linearization of f(x) = √x at x = 64 to estimate √65. Give your answer as a whole number plus a fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8 + 1/16",
+   "equivalents": [
+    "8+1/16"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "L(x) = f(64) + f′(64)(x − 64) = 8 + (x − 64)/(2·8). At x = 65: 8 + 1/16 = 8 + 1/16. The tangent line stands in for the curve close to the point of tangency.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:linearization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e51d7a97fa2873bf4bdb9b01027a2ecfa6b77a62b0a6ded9ef121284d998ba7e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-linearization-004",
+  "skillId": "linearization",
+  "prompt": "Use the linearization of f(x) = √x at x = 49 to estimate √50. Give your answer as a whole number plus a fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7 + 1/14",
+   "equivalents": [
+    "7+1/14"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "L(x) = f(49) + f′(49)(x − 49) = 7 + (x − 49)/(2·7). At x = 50: 7 + 1/14 = 7 + 1/14. The tangent line stands in for the curve close to the point of tangency.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:linearization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c8156ab47ddcb59ae9ccb5ecd6ed88d9d25a2e02ab66b1e8cdc44734142ed1e6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-linearization-005",
+  "skillId": "linearization",
+  "prompt": "Find the equation of the tangent line to y = x² + 4 at x = 4.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 8x − 12",
+   "equivalents": [
+    "y = 8x - 12",
+    "y=8x−12",
+    "y=8x-12"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Point: (4, 20). Slope: y′ = 2x gives 8 at x = 4. Point-slope: y − 20 = 8(x − 4), which simplifies to y = 8x − 12. The tangent line IS the linearization.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:linearization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1740d752c1a6840c81e8ccf8acef8382addd0a735fdfae951c5d220534b58828",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-linearization-006",
+  "skillId": "linearization",
+  "prompt": "Find the equation of the tangent line to y = 2x² + 2 at x = 4.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 16x − 30",
+   "equivalents": [
+    "y = 16x - 30",
+    "y=16x−30",
+    "y=16x-30"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Point: (4, 34). Slope: y′ = 4x gives 16 at x = 4. Point-slope: y − 34 = 16(x − 4), which simplifies to y = 16x − 30. The tangent line IS the linearization.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:linearization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "acd8ba4a0346ae8c367c36c2f08f4515bc7624d99adc37dc3e08dbaeff3b954a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-linearization-007",
+  "skillId": "linearization",
+  "prompt": "Find the equation of the tangent line to y = 4x² + 3 at x = 4.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 32x − 61",
+   "equivalents": [
+    "y = 32x - 61",
+    "y=32x−61",
+    "y=32x-61"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Point: (4, 67). Slope: y′ = 8x gives 32 at x = 4. Point-slope: y − 67 = 32(x − 4), which simplifies to y = 32x − 61. The tangent line IS the linearization.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:linearization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "04fe31c7d33030c0e65b99a8049da32cf2bad040f7130d4fac950a9f569181f5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-linearization-008",
+  "skillId": "linearization",
+  "prompt": "Find the equation of the tangent line to y = x² + 6 at x = 1.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 2x + 5",
+   "equivalents": [
+    "y=2x+5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Point: (1, 7). Slope: y′ = 2x gives 2 at x = 1. Point-slope: y − 7 = 2(x − 1), which simplifies to y = 2x + 5. The tangent line IS the linearization.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:linearization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "70188d4b8f8a0dab68880067bb377fb03c66ec2c8bfead25f5b715da362b512f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mvt-evt-001",
+  "skillId": "mvt-evt",
+  "prompt": "f(x) = x² on [0, 5]. The Mean Value Theorem guarantees a c where f′(c) equals the average rate of change. Find c.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Average rate: (f(5) − f(0))/(5 − 0) = 25/5 = 5. Set f′(c) = 2c = 5: c = 5/2. For a parabola the MVT point always lands at the interval's midpoint.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mvt-evt"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "31bae54d1d0b2c76e594d24642954e801d9b0362532563b2817d3563c516a6d4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mvt-evt-002",
+  "skillId": "mvt-evt",
+  "prompt": "f(x) = x² on [0, 6]. The Mean Value Theorem guarantees a c where f′(c) equals the average rate of change. Find c.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Average rate: (f(6) − f(0))/(6 − 0) = 36/6 = 6. Set f′(c) = 2c = 6: c = 3. For a parabola the MVT point always lands at the interval's midpoint.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mvt-evt"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5cde79b69917d95e4c17a9a15a8adf772964c17f745e164e02cb23e6bf14e400",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mvt-evt-003",
+  "skillId": "mvt-evt",
+  "prompt": "f(x) = x² on [0, 2]. The Mean Value Theorem guarantees a c where f′(c) equals the average rate of change. Find c.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Average rate: (f(2) − f(0))/(2 − 0) = 4/2 = 2. Set f′(c) = 2c = 2: c = 1. For a parabola the MVT point always lands at the interval's midpoint.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mvt-evt"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4493f7b55ea584e4a5dda8ccf2a7284f70dcb5e3726e25e8922ea7f0b7d19c8c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mvt-evt-004",
+  "skillId": "mvt-evt",
+  "prompt": "f(x) = x² on [0, 3]. The Mean Value Theorem guarantees a c where f′(c) equals the average rate of change. Find c.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Average rate: (f(3) − f(0))/(3 − 0) = 9/3 = 3. Set f′(c) = 2c = 3: c = 3/2. For a parabola the MVT point always lands at the interval's midpoint.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mvt-evt"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "789ffaa9546928f3ab4288937113e36b83fe7734d5e7ca01c4f53a3fe3b92ab4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mvt-evt-005",
+  "skillId": "mvt-evt",
+  "prompt": "The Extreme Value Theorem guarantees a continuous function on a CLOSED interval [a, b] attains what?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Both an absolute maximum and an absolute minimum",
+   "equivalents": [
+    "Bothanabsolutemaximumandanabsoluteminimum"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Continuity on a closed, bounded interval forces both extremes to be attained — the function cannot run off to infinity or leave a gap. Open intervals lose the guarantee: y = 1/x on (0, 1) has neither.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mvt-evt"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b546f799898f73a465b4c0e625085823ad4843dedc7f6e1f8ea62f0fef5e4f8e",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Both an absolute maximum and an absolute minimum"
+   },
+   {
+    "label": "B",
+    "text": "Only an absolute maximum"
+   },
+   {
+    "label": "C",
+    "text": "A zero somewhere in (a, b)"
+   },
+   {
+    "label": "D",
+    "text": "A horizontal tangent somewhere in (a, b)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-mvt-evt-006",
+  "skillId": "mvt-evt",
+  "prompt": "Which hypothesis of the Mean Value Theorem does f(x) = |x| fail on [−1, 1]?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Differentiability on the open interval",
+   "equivalents": [
+    "Differentiabilityontheopeninterval"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "|x| is continuous everywhere but has a corner at x = 0 — no derivative there. And indeed no c satisfies f′(c) = (f(1) − f(−1))/2 = 0, since the slope is ±1 everywhere else. The hypotheses are not decorative.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mvt-evt"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3519f4b1b2f4ae532e2926097c94df4e9ff01239f7776912f74300cccd55e684",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Differentiability on the open interval"
+   },
+   {
+    "label": "B",
+    "text": "Continuity on the closed interval"
+   },
+   {
+    "label": "C",
+    "text": "f(−1) = f(1)"
+   },
+   {
+    "label": "D",
+    "text": "Boundedness"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-concavity-inflection-001",
+  "skillId": "concavity-inflection",
+  "prompt": "f(x) = x³ − 3x² + 6x. At what x-value does f have an inflection point?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f″(x) = 6x − 6, which is zero at x = 1 and CHANGES SIGN there (negative before, positive after) — so concavity flips from down to up at x = 1. A zero of f″ alone is not enough; the sign change is what makes it an inflection point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:concavity-inflection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8aeae0d12c4ddc045d0004bf1ae2b08d41709707809d5a9ff69f07cbd8eec676",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-concavity-inflection-002",
+  "skillId": "concavity-inflection",
+  "prompt": "f(x) = 2x³ − 6x² + 9x. At what x-value does f have an inflection point?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f″(x) = 12x − 12, which is zero at x = 1 and CHANGES SIGN there (negative before, positive after) — so concavity flips from down to up at x = 1. A zero of f″ alone is not enough; the sign change is what makes it an inflection point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:concavity-inflection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a2bd696f8eaf35ce4c48cedc3030aeb7ca303d87e82eac49d48b287c875b5c6e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-concavity-inflection-003",
+  "skillId": "concavity-inflection",
+  "prompt": "f(x) = 3x³ − 18x² + 8x. At what x-value does f have an inflection point?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f″(x) = 18x − 36, which is zero at x = 2 and CHANGES SIGN there (negative before, positive after) — so concavity flips from down to up at x = 2. A zero of f″ alone is not enough; the sign change is what makes it an inflection point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:concavity-inflection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "700bb7d803f534807a9daa64cda4bb465f6cf10cd69a1adc78411e90696001be",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-concavity-inflection-004",
+  "skillId": "concavity-inflection",
+  "prompt": "f(x) = 2x³ − 6x² + 8x. At what x-value does f have an inflection point?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f″(x) = 12x − 12, which is zero at x = 1 and CHANGES SIGN there (negative before, positive after) — so concavity flips from down to up at x = 1. A zero of f″ alone is not enough; the sign change is what makes it an inflection point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:concavity-inflection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5e777ddec5219bbcac3f8f78972ac5bfddce3d9743769008a256f7bd1bc935dd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-concavity-inflection-005",
+  "skillId": "concavity-inflection",
+  "prompt": "f″(x) = 8 for all x (a positive constant). What is the concavity of f?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Concave up everywhere",
+   "equivalents": [
+    "Concaveupeverywhere"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "f″ > 0 everywhere means the slope f′ is always increasing — the graph bends upward everywhere, like a cup. No sign change in f″ means no inflection point anywhere.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:concavity-inflection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b988c48d03322a9737186b10472f5aeb29a191419b34e1bdfe10ffdaf119c5f0",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Concave up everywhere"
+   },
+   {
+    "label": "B",
+    "text": "Concave down everywhere"
+   },
+   {
+    "label": "C",
+    "text": "Concave up only for x > 0"
+   },
+   {
+    "label": "D",
+    "text": "f has an inflection point at 0"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-concavity-inflection-006",
+  "skillId": "concavity-inflection",
+  "prompt": "f″(x) = −4 for all x. What is the concavity of f?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Concave down everywhere",
+   "equivalents": [
+    "Concavedowneverywhere"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "f″ < 0 everywhere means the slope is always decreasing — the graph bends downward everywhere, like a dome. Constant-sign f″ rules out inflection points entirely.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:concavity-inflection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "008a6c686248aacce8c994f1118fb7280c19adc48792b2e15ff86213906889fb",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Concave down everywhere"
+   },
+   {
+    "label": "B",
+    "text": "Concave up everywhere"
+   },
+   {
+    "label": "C",
+    "text": "Concave down only for x > 0"
+   },
+   {
+    "label": "D",
+    "text": "f has an inflection point at 0"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-concavity-inflection-007",
+  "skillId": "concavity-inflection",
+  "prompt": "f″(x) = 6 for all x (a positive constant). What is the concavity of f?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Concave up everywhere",
+   "equivalents": [
+    "Concaveupeverywhere"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "f″ > 0 everywhere means the slope f′ is always increasing — the graph bends upward everywhere, like a cup. No sign change in f″ means no inflection point anywhere.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:concavity-inflection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "df712187277428beeae22d55e5d328fd89544444307d65ce2fe3c000010bd13d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Concave up everywhere"
+   },
+   {
+    "label": "B",
+    "text": "Concave down everywhere"
+   },
+   {
+    "label": "C",
+    "text": "Concave up only for x > 0"
+   },
+   {
+    "label": "D",
+    "text": "f has an inflection point at 0"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-concavity-inflection-008",
+  "skillId": "concavity-inflection",
+  "prompt": "f″(x) = −8 for all x. What is the concavity of f?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Concave down everywhere",
+   "equivalents": [
+    "Concavedowneverywhere"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "f″ < 0 everywhere means the slope is always decreasing — the graph bends downward everywhere, like a dome. Constant-sign f″ rules out inflection points entirely.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:concavity-inflection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e66823e1744de93a8b8ce0730c4f39716868b02addd5bf8f4116b26ba99f891f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Concave down everywhere"
+   },
+   {
+    "label": "B",
+    "text": "Concave up everywhere"
+   },
+   {
+    "label": "C",
+    "text": "Concave down only for x > 0"
+   },
+   {
+    "label": "D",
+    "text": "f has an inflection point at 0"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-optimization-001",
+  "skillId": "optimization",
+  "prompt": "Two positive numbers add to 26. What is the LARGEST their product can be?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "169",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Maximize P = x(26 − x) = 26x − x². P′ = 26 − 2x = 0 at x = 13, and P″ = −2 < 0 confirms a maximum: P = 13 · 13 = 169. Splitting evenly always maximizes a fixed-sum product.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:optimization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9b2a39936e34740610905e98ab49dc8c3efe58faccffbdb7e5839d12856260e8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-optimization-002",
+  "skillId": "optimization",
+  "prompt": "Two positive numbers add to 14. What is the LARGEST their product can be?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "49",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Maximize P = x(14 − x) = 14x − x². P′ = 14 − 2x = 0 at x = 7, and P″ = −2 < 0 confirms a maximum: P = 7 · 7 = 49. Splitting evenly always maximizes a fixed-sum product.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:optimization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "597fa14cccae3ed290e9d554e2b832d1cb9091f1a661a5b9c3f406142ccfbb4b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-optimization-003",
+  "skillId": "optimization",
+  "prompt": "Two positive numbers add to 28. What is the LARGEST their product can be?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "196",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Maximize P = x(28 − x) = 28x − x². P′ = 28 − 2x = 0 at x = 14, and P″ = −2 < 0 confirms a maximum: P = 14 · 14 = 196. Splitting evenly always maximizes a fixed-sum product.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:optimization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0fe84aa547e0ce2b47afd0dca5c3b3b1de4a2530bff21f1eae7b447ac7c83be6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-optimization-004",
+  "skillId": "optimization",
+  "prompt": "Two positive numbers add to 18. What is the LARGEST their product can be?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "81",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Maximize P = x(18 − x) = 18x − x². P′ = 18 − 2x = 0 at x = 9, and P″ = −2 < 0 confirms a maximum: P = 9 · 9 = 81. Splitting evenly always maximizes a fixed-sum product.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:optimization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "38e1f9360267f5af1503439b016ad0d8163cd1893b57784eca66ee4e2dfb8650",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-optimization-005",
+  "skillId": "optimization",
+  "prompt": "A rectangle has perimeter 48. What dimensions maximize its area, and what is that area?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12 by 12, area 144",
+   "equivalents": [
+    "12by12,area144"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "With w + l = 24, area A = w(24 − w). A′ = 24 − 2w = 0 at w = 12, so l = 12 too — the square wins, with area 144. (Note 13 × 11 = 143, strictly less — nudging away from square always loses area.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:optimization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3e08943083011d5f78c4cc399347c475297ef6027d68e024779bd901abc884ec",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "12 by 12, area 144"
+   },
+   {
+    "label": "B",
+    "text": "13 by 11, area 143"
+   },
+   {
+    "label": "C",
+    "text": "24 by 12, area 288"
+   },
+   {
+    "label": "D",
+    "text": "6 by 12, area 72"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-optimization-006",
+  "skillId": "optimization",
+  "prompt": "A rectangle has perimeter 16. What dimensions maximize its area, and what is that area?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4 by 4, area 16",
+   "equivalents": [
+    "4by4,area16"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "With w + l = 8, area A = w(8 − w). A′ = 8 − 2w = 0 at w = 4, so l = 4 too — the square wins, with area 16. (Note 5 × 3 = 15, strictly less — nudging away from square always loses area.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:optimization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7bed92c51a20dab2e87ef3b1476fb22b6918381d0c7aa8e749614d3a3e98a672",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "4 by 4, area 16"
+   },
+   {
+    "label": "B",
+    "text": "5 by 3, area 15"
+   },
+   {
+    "label": "C",
+    "text": "8 by 4, area 32"
+   },
+   {
+    "label": "D",
+    "text": "2 by 4, area 8"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-optimization-007",
+  "skillId": "optimization",
+  "prompt": "A rectangle has perimeter 24. What dimensions maximize its area, and what is that area?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6 by 6, area 36",
+   "equivalents": [
+    "6by6,area36"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "With w + l = 12, area A = w(12 − w). A′ = 12 − 2w = 0 at w = 6, so l = 6 too — the square wins, with area 36. (Note 7 × 5 = 35, strictly less — nudging away from square always loses area.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:optimization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "68850734f7954949c07eb24ce392f9dca5b44d188b6f20a06ebe7b4eea181f32",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "6 by 6, area 36"
+   },
+   {
+    "label": "B",
+    "text": "7 by 5, area 35"
+   },
+   {
+    "label": "C",
+    "text": "12 by 6, area 72"
+   },
+   {
+    "label": "D",
+    "text": "3 by 6, area 18"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-optimization-008",
+  "skillId": "optimization",
+  "prompt": "A rectangle has perimeter 40. What dimensions maximize its area, and what is that area?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10 by 10, area 100",
+   "equivalents": [
+    "10by10,area100"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "With w + l = 20, area A = w(20 − w). A′ = 20 − 2w = 0 at w = 10, so l = 10 too — the square wins, with area 100. (Note 11 × 9 = 99, strictly less — nudging away from square always loses area.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:optimization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "601c5d3de13aedd553c8d5793daeb45f891d5a1cbd7ee8426226f33b7f016dd6",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "10 by 10, area 100"
+   },
+   {
+    "label": "B",
+    "text": "11 by 9, area 99"
+   },
+   {
+    "label": "C",
+    "text": "20 by 10, area 200"
+   },
+   {
+    "label": "D",
+    "text": "5 by 10, area 50"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-u-substitution-001",
+  "skillId": "u-substitution",
+  "prompt": "Evaluate the indefinite integral: ∫ 3(3x + 5)² dx (in terms of u = 3x + 5).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(3x + 5)³/3 + C",
+   "equivalents": [
+    "(3x+5)³/3+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Let u = 3x + 5, so du = 3 dx — the 3 in front is exactly du's factor. The integral becomes ∫ u^2 du = u^3/3 + C = (3x + 5)^3/3 + C.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:u-substitution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eef80d69cfbbc24eb474f0ced486907b80e0208a1d319fa6525402902f57ffa4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-u-substitution-002",
+  "skillId": "u-substitution",
+  "prompt": "Evaluate the indefinite integral: ∫ 3(3x + 2)³ dx (in terms of u = 3x + 2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(3x + 2)⁴/4 + C",
+   "equivalents": [
+    "(3x+2)⁴/4+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Let u = 3x + 2, so du = 3 dx — the 3 in front is exactly du's factor. The integral becomes ∫ u^3 du = u^4/4 + C = (3x + 2)^4/4 + C.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:u-substitution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "66f64e6bac5f7f686804cf3c5a675d870666b0e6cdcff6ed28082302d8ae00a9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-u-substitution-003",
+  "skillId": "u-substitution",
+  "prompt": "Evaluate the indefinite integral: ∫ 4(4x + 5)² dx (in terms of u = 4x + 5).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(4x + 5)³/3 + C",
+   "equivalents": [
+    "(4x+5)³/3+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Let u = 4x + 5, so du = 4 dx — the 4 in front is exactly du's factor. The integral becomes ∫ u^2 du = u^3/3 + C = (4x + 5)^3/3 + C.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:u-substitution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9e5fb1e4885db5cf15e15559ddb9abf4a26ca96d37af922ba549f47df67a93a5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-u-substitution-004",
+  "skillId": "u-substitution",
+  "prompt": "Evaluate the indefinite integral: ∫ 2(2x + 1)³ dx (in terms of u = 2x + 1).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(2x + 1)⁴/4 + C",
+   "equivalents": [
+    "(2x+1)⁴/4+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Let u = 2x + 1, so du = 2 dx — the 2 in front is exactly du's factor. The integral becomes ∫ u^3 du = u^4/4 + C = (2x + 1)^4/4 + C.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:u-substitution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "73dcef8ec9a0884602da6201f1587a0b613c6f818f54dfb84995ec3a571bc545",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-u-substitution-005",
+  "skillId": "u-substitution",
+  "prompt": "Evaluate: ∫ 2x·cos(x² + 4) dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "sin(x² + 4) + C",
+   "equivalents": [
+    "sin(x²+4)+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Let u = x² + 4: du = 2x dx, and the 2x is sitting right there. The integral becomes ∫ cos(u) du = sin(u) + C = sin(x² + 4) + C. Spotting the inner function's derivative as a factor is the whole art of u-substitution.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:u-substitution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0d497a317825de5d387a656a526a440823b213f1fbd8f9efdb4243954fdd0464",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-u-substitution-006",
+  "skillId": "u-substitution",
+  "prompt": "Evaluate: ∫ 2x·cos(x² + 6) dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "sin(x² + 6) + C",
+   "equivalents": [
+    "sin(x²+6)+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Let u = x² + 6: du = 2x dx, and the 2x is sitting right there. The integral becomes ∫ cos(u) du = sin(u) + C = sin(x² + 6) + C. Spotting the inner function's derivative as a factor is the whole art of u-substitution.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:u-substitution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "31e814b571c67fed4a57201bc287686140779c045f860780878d74d101db87eb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-u-substitution-007",
+  "skillId": "u-substitution",
+  "prompt": "Evaluate: ∫ 2x·cos(x² + 3) dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "sin(x² + 3) + C",
+   "equivalents": [
+    "sin(x²+3)+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Let u = x² + 3: du = 2x dx, and the 2x is sitting right there. The integral becomes ∫ cos(u) du = sin(u) + C = sin(x² + 3) + C. Spotting the inner function's derivative as a factor is the whole art of u-substitution.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:u-substitution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7e07314d42a0ab4149a5cb2b3085c153f11b0959c6f12b3f8ec9ba22a6123c77",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-u-substitution-008",
+  "skillId": "u-substitution",
+  "prompt": "Evaluate: ∫ 2x·cos(x² + 2) dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "sin(x² + 2) + C",
+   "equivalents": [
+    "sin(x²+2)+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Let u = x² + 2: du = 2x dx, and the 2x is sitting right there. The integral becomes ∫ cos(u) du = sin(u) + C = sin(x² + 2) + C. Spotting the inner function's derivative as a factor is the whole art of u-substitution.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:u-substitution"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c5a947edfa78d4d5757617d16783b91990aac74c734ccc01a334d1a0c3e277bc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-slope-fields-001",
+  "skillId": "slope-fields",
+  "prompt": "A slope field is drawn for dy/dx = x + y. What slope does the segment at the point (2, 3) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A slope field just evaluates the differential equation at each point: at (2, 3), dy/dx = 2 + 3 = 5. Every little segment is the tangent slope a solution curve would have passing through that point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:slope-fields"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c91539d5a3e0094e30cbb17d2617646fcb60b412c58ae28ec618fa5f78d63b8d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-slope-fields-002",
+  "skillId": "slope-fields",
+  "prompt": "A slope field is drawn for dy/dx = x + y. What slope does the segment at the point (1, 4) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A slope field just evaluates the differential equation at each point: at (1, 4), dy/dx = 1 + 4 = 5. Every little segment is the tangent slope a solution curve would have passing through that point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:slope-fields"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "758ee61c40fe1324e80f895482eb61d7064e8873988547214e1741bc78956007",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-slope-fields-003",
+  "skillId": "slope-fields",
+  "prompt": "A slope field is drawn for dy/dx = x + y. What slope does the segment at the point (4, 4) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A slope field just evaluates the differential equation at each point: at (4, 4), dy/dx = 4 + 4 = 8. Every little segment is the tangent slope a solution curve would have passing through that point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:slope-fields"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f2f7a6a934512b56ffc1b8ec2e3abf3a14a584fe60e9fcb5a56613051cd4cc85",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-slope-fields-004",
+  "skillId": "slope-fields",
+  "prompt": "A slope field is drawn for dy/dx = x + y. What slope does the segment at the point (3, 4) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A slope field just evaluates the differential equation at each point: at (3, 4), dy/dx = 3 + 4 = 7. Every little segment is the tangent slope a solution curve would have passing through that point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:slope-fields"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c76bce2fd122550dd3c8ea273f2ad4744637d1a80319efd2b3ed747277c4ea0e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-slope-fields-005",
+  "skillId": "slope-fields",
+  "prompt": "In a slope field for dy/dx = y, every segment along the x-axis (where y = 0) is ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Horizontal",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "On the x-axis, y = 0, so dy/dx = 0 — flat segments all along it. In fact y = 0 is itself an equilibrium solution: a curve starting there never leaves.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:slope-fields"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "104084003a583bb54e5e29abe2a98a472f47091956108f38d8a29e11bb49c386",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Horizontal"
+   },
+   {
+    "label": "B",
+    "text": "Vertical"
+   },
+   {
+    "label": "C",
+    "text": "Slope 1"
+   },
+   {
+    "label": "D",
+    "text": "Undefined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-slope-fields-006",
+  "skillId": "slope-fields",
+  "prompt": "In a slope field for dy/dx = 5x, where are the segments HORIZONTAL?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Along the y-axis (x = 0)",
+   "equivalents": [
+    "Alongthey-axis(x=0)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Horizontal means dy/dx = 0: here 5x = 0 exactly when x = 0, the y-axis. The slope depends only on x, so segments are identical up and down every vertical line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:slope-fields"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ce8181215028f673ee64eedc84180430ad2bca701b6b82442ad1e5e52df94b43",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Along the y-axis (x = 0)"
+   },
+   {
+    "label": "B",
+    "text": "Along the x-axis (y = 0)"
+   },
+   {
+    "label": "C",
+    "text": "Along the line y = x"
+   },
+   {
+    "label": "D",
+    "text": "Nowhere"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-separable-des-001",
+  "skillId": "separable-des",
+  "prompt": "Solve the initial value problem: dy/dx = 2y, y(0) = 4.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 4e^(2x)",
+   "equivalents": [
+    "y=4e^(2x)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Separate: dy/y = 2 dx. Integrate: ln|y| = 2x + C, so y = Ae^(2x). The initial condition y(0) = 4 pins A = 4: y = 4e^(2x). Proportional growth is always an exponential.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:separable-des"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b97b430193aebaf3883a3aa76a044b14c3bbf78caf881a854e6b0dd68e2fe7a8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-separable-des-002",
+  "skillId": "separable-des",
+  "prompt": "Solve the initial value problem: dy/dx = 3y, y(0) = 6.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 6e^(3x)",
+   "equivalents": [
+    "y=6e^(3x)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Separate: dy/y = 3 dx. Integrate: ln|y| = 3x + C, so y = Ae^(3x). The initial condition y(0) = 6 pins A = 6: y = 6e^(3x). Proportional growth is always an exponential.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:separable-des"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b6711494570291657765b67f57b971f4854bb85da35670e8275b2e1ca87ad0dd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-separable-des-003",
+  "skillId": "separable-des",
+  "prompt": "Solve the initial value problem: dy/dx = 3y, y(0) = 3.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 3e^(3x)",
+   "equivalents": [
+    "y=3e^(3x)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Separate: dy/y = 3 dx. Integrate: ln|y| = 3x + C, so y = Ae^(3x). The initial condition y(0) = 3 pins A = 3: y = 3e^(3x). Proportional growth is always an exponential.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:separable-des"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9b5df31c98ceb4b4d1b82e580df1ea73a6cfe984acaa110257c1291c27c8c2b9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-separable-des-004",
+  "skillId": "separable-des",
+  "prompt": "Solve the initial value problem: dy/dx = 4y, y(0) = 6.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 6e^(4x)",
+   "equivalents": [
+    "y=6e^(4x)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Separate: dy/y = 4 dx. Integrate: ln|y| = 4x + C, so y = Ae^(4x). The initial condition y(0) = 6 pins A = 6: y = 6e^(4x). Proportional growth is always an exponential.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:separable-des"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "75c1a765e4e8a9e494af064792af1dd30693d5d8753351cb7d917d77f25c6974",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-separable-des-005",
+  "skillId": "separable-des",
+  "prompt": "Solve: dy/dx = 6x/y with y(0) = 3 (take y > 0).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = √(6x² + 9)",
+   "equivalents": [
+    "y=√(6x²+9)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Separate: y dy = 6x dx. Integrate both sides: y²/2 = 3x² + C₁, so y² = 6x² + C. From y(0) = 3: C = 9. Then y = √(6x² + 9), keeping the positive root to match the initial condition.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:separable-des"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2ae4c5dbc6acce5ff27c27d5f56665ab3e3bdd360306d91a543fc54fe8791e87",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-separable-des-006",
+  "skillId": "separable-des",
+  "prompt": "Solve: dy/dx = 6x/y with y(0) = 5 (take y > 0).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = √(6x² + 25)",
+   "equivalents": [
+    "y=√(6x²+25)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Separate: y dy = 6x dx. Integrate both sides: y²/2 = 3x² + C₁, so y² = 6x² + C. From y(0) = 5: C = 25. Then y = √(6x² + 25), keeping the positive root to match the initial condition.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:separable-des"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bba112bb2f1b4dc4aaed92892aa1f09eb8d9317f09fe863444ea1df9669708d7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-separable-des-007",
+  "skillId": "separable-des",
+  "prompt": "Solve: dy/dx = 2x/y with y(0) = 2 (take y > 0).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = √(2x² + 4)",
+   "equivalents": [
+    "y=√(2x²+4)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Separate: y dy = 2x dx. Integrate both sides: y²/2 = 1x² + C₁, so y² = 2x² + C. From y(0) = 2: C = 4. Then y = √(2x² + 4), keeping the positive root to match the initial condition.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:separable-des"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "67197bcb30b3e067ca7f944fb59e5bc009120f3f6b1113d6c01f82d59fb5602c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-separable-des-008",
+  "skillId": "separable-des",
+  "prompt": "Solve: dy/dx = 8x/y with y(0) = 4 (take y > 0).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = √(8x² + 16)",
+   "equivalents": [
+    "y=√(8x²+16)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Separate: y dy = 8x dx. Integrate both sides: y²/2 = 4x² + C₁, so y² = 8x² + C. From y(0) = 4: C = 16. Then y = √(8x² + 16), keeping the positive root to match the initial condition.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:separable-des"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7465760916c7858fd38f87c8749666478f5b1acd0771f6cd7373f847c7dfb12e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-average-value-001",
+  "skillId": "average-value",
+  "prompt": "Find the average value of f(x) = 8x + 1 on [0, 2].",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Average value = (1/2) ∫₀^2 (8x + 1) dx = (1/2)(4·2² + 1·2) = 9. For a LINE this is just the average of the endpoint values: (f(0) + f(2))/2 = (1 + 17)/2 = 9.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:average-value"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "89f3ae004dbe7f347214e33b7908eff1a449944399b3eb34cbfb8321fae19823",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-average-value-002",
+  "skillId": "average-value",
+  "prompt": "Find the average value of f(x) = 6x + 4 on [0, 4].",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Average value = (1/4) ∫₀^4 (6x + 4) dx = (1/4)(3·4² + 4·4) = 16. For a LINE this is just the average of the endpoint values: (f(0) + f(4))/2 = (4 + 28)/2 = 16.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:average-value"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3c6a5466de734c7f1bb0f48aeb9dd5131c99190f0fddc73925f4ac1425e83060",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-average-value-003",
+  "skillId": "average-value",
+  "prompt": "Find the average value of f(x) = 8x + 1 on [0, 6].",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "25",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Average value = (1/6) ∫₀^6 (8x + 1) dx = (1/6)(4·6² + 1·6) = 25. For a LINE this is just the average of the endpoint values: (f(0) + f(6))/2 = (1 + 49)/2 = 25.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:average-value"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eaf9d41de2bee1728a34685a4523027a194c8f0a788eba1019aebe88f9063744",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-average-value-004",
+  "skillId": "average-value",
+  "prompt": "Find the average value of f(x) = 8x + 6 on [0, 5].",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "26",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Average value = (1/5) ∫₀^5 (8x + 6) dx = (1/5)(4·5² + 6·5) = 26. For a LINE this is just the average of the endpoint values: (f(0) + f(5))/2 = (6 + 46)/2 = 26.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:average-value"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a701a50a124055d5894b1bafabab3521a14bb50ea5993ab770d4994ef5df71e5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-average-value-005",
+  "skillId": "average-value",
+  "prompt": "Find the average value of f(x) = x² on [0, 6].",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Average value = (1/6) ∫₀^6 x² dx = (1/6) · 6³/3 = 6²/3 = 12. Note it is NOT f at the midpoint (9) — a curve's average weights its values differently than a line's.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:average-value"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f55eaa1e88e632eb40a2ef8836ec619b8d0550de6fde63d2d50109fe8f332789",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-average-value-006",
+  "skillId": "average-value",
+  "prompt": "Find the average value of f(x) = x² on [0, 9].",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "27",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Average value = (1/9) ∫₀^9 x² dx = (1/9) · 9³/3 = 9²/3 = 27. Note it is NOT f at the midpoint (20.25) — a curve's average weights its values differently than a line's.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:average-value"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d3443d3a62029a127d6b409022df036265fe0abffa4984af109f7e09bbea231d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-average-value-007",
+  "skillId": "average-value",
+  "prompt": "Find the average value of f(x) = x² on [0, 3].",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Average value = (1/3) ∫₀^3 x² dx = (1/3) · 3³/3 = 3²/3 = 3. Note it is NOT f at the midpoint (2.25) — a curve's average weights its values differently than a line's.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:average-value"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ca0043592739de3a2df7ddae290944edf0da616c9178f6788f89e783c2e51467",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-average-value-008",
+  "skillId": "average-value",
+  "prompt": "Find the average value of f(x) = x² on [0, 12].",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "48",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Average value = (1/12) ∫₀^12 x² dx = (1/12) · 12³/3 = 12²/3 = 48. Note it is NOT f at the midpoint (36) — a curve's average weights its values differently than a line's.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:average-value"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8aec827ad415c00da433006b2b59b8026e960ab8c512b5ca8d340ad9be9c97c1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-integrals-001",
+  "skillId": "motion-integrals",
+  "prompt": "A particle's velocity is v(t) = 8t (m/s). What is its DISPLACEMENT from t = 0 to t = 2?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Displacement is the integral of velocity: ∫₀^2 8t dt = 4t² │₀^2 = 16 m. Geometrically it is the area of the triangle under v(t).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "03a741743e08080ab84cbb52b3b20e92d210ece26e35e35b152b50849a4c7540",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-integrals-002",
+  "skillId": "motion-integrals",
+  "prompt": "A particle's velocity is v(t) = 4t (m/s). What is its DISPLACEMENT from t = 0 to t = 4?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "32",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Displacement is the integral of velocity: ∫₀^4 4t dt = 2t² │₀^4 = 32 m. Geometrically it is the area of the triangle under v(t).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e5463f2576db570a1b619fdcc0b5b655e899e5faf84d2905a7a7ea410052960a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-integrals-003",
+  "skillId": "motion-integrals",
+  "prompt": "A particle's velocity is v(t) = 4t (m/s). What is its DISPLACEMENT from t = 0 to t = 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Displacement is the integral of velocity: ∫₀^5 4t dt = 2t² │₀^5 = 50 m. Geometrically it is the area of the triangle under v(t).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a0b4f0e3429778bfedb514dbd705da70754d3f6a96c3f3eb8744fe67d0b2482c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-integrals-004",
+  "skillId": "motion-integrals",
+  "prompt": "A particle's velocity is v(t) = 6t (m/s). What is its DISPLACEMENT from t = 0 to t = 4?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "48",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Displacement is the integral of velocity: ∫₀^4 6t dt = 3t² │₀^4 = 48 m. Geometrically it is the area of the triangle under v(t).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4a5f208b1a3813976a7ad0e71baa623005c2721138eb9ec0d93418a2aecebedf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-integrals-005",
+  "skillId": "motion-integrals",
+  "prompt": "v(t) = 2(t − 2) on [0, 4]. The particle's displacement over the interval is 0. What TOTAL DISTANCE does it travel?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Distance integrates |v|: the particle moves backward on [0, 2] and forward on [2, 4], each leg covering 2·2²/2 = 4. Total distance = 8, even though the trips cancel to displacement 0. Distance uses |v|; displacement uses v.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "66428bb11ace42e97b311f71ae5301e7ac303aa1e772daf9a468012614481dec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-integrals-006",
+  "skillId": "motion-integrals",
+  "prompt": "v(t) = 2(t − 1) on [0, 2]. The particle's displacement over the interval is 0. What TOTAL DISTANCE does it travel?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Distance integrates |v|: the particle moves backward on [0, 1] and forward on [1, 2], each leg covering 2·1²/2 = 1. Total distance = 2, even though the trips cancel to displacement 0. Distance uses |v|; displacement uses v.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a27f9a444dfd2607a16f34ee960e0a8fece8a0970b37f4880440d42a8b5c046f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-integrals-007",
+  "skillId": "motion-integrals",
+  "prompt": "v(t) = (t − 2) on [0, 4]. The particle's displacement over the interval is 0. What TOTAL DISTANCE does it travel?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Distance integrates |v|: the particle moves backward on [0, 2] and forward on [2, 4], each leg covering 1·2²/2 = 2. Total distance = 4, even though the trips cancel to displacement 0. Distance uses |v|; displacement uses v.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7911cb50bfe1c9c4d91625089aee690e6f638c362c8b479db510d03e4f18cb8b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-motion-integrals-008",
+  "skillId": "motion-integrals",
+  "prompt": "v(t) = 3(t − 1) on [0, 2]. The particle's displacement over the interval is 0. What TOTAL DISTANCE does it travel?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Distance integrates |v|: the particle moves backward on [0, 1] and forward on [1, 2], each leg covering 3·1²/2 = 1.5. Total distance = 3, even though the trips cancel to displacement 0. Distance uses |v|; displacement uses v.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:motion-integrals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "13ce8f64615840c599f581a35b1d1a28a6f16520c4ed46ba398191f8a2bdf142",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-reference-angles-quadrants-001",
+  "skillId": "reference-angles-quadrants",
+  "prompt": "What is the reference angle of 150°?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "11-12",
+  "explanation": "150° lands in Quadrant II. The reference angle is the acute angle to the x-axis: 180 − 150 = 30°. Every trig value of 150° is ±(the same value at 30°).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:reference-angles-quadrants"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f47cdb0f16cf17dfc779cb54bb828fdbc8ae935db45577963faecf26978cb613",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-reference-angles-quadrants-002",
+  "skillId": "reference-angles-quadrants",
+  "prompt": "In which quadrant does an angle of 210° (standard position) terminate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "III",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "11-12",
+  "explanation": "Quadrant I is 0–90°, II is 90–180°, III is 180–270°, IV is 270–360°. 210° falls in Quadrant III.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:reference-angles-quadrants"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ff2a4030b4933c45f8bc72cfe60a18850642e7f7aa3b42999de6f793370041dd",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "I"
+   },
+   {
+    "label": "B",
+    "text": "II"
+   },
+   {
+    "label": "C",
+    "text": "III"
+   },
+   {
+    "label": "D",
+    "text": "IV"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-reference-angles-quadrants-003",
+  "skillId": "reference-angles-quadrants",
+  "prompt": "What is the reference angle of 330°?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "11-12",
+  "explanation": "330° lands in Quadrant IV. The reference angle is the acute angle to the x-axis: 360 − 330 = 30°. Every trig value of 330° is ±(the same value at 30°).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:reference-angles-quadrants"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cac1633b2ba7c98781ac78a7b9518da22487efe32f8ae47a557a117fa746c916",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-reference-angles-quadrants-004",
+  "skillId": "reference-angles-quadrants",
+  "prompt": "In which quadrant does an angle of 135° (standard position) terminate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "II",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "11-12",
+  "explanation": "Quadrant I is 0–90°, II is 90–180°, III is 180–270°, IV is 270–360°. 135° falls in Quadrant II.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:reference-angles-quadrants"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "03be93338a6e5d74bbb195c58946e78674a7bfb80f7d153183d1891451a7c7c1",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "I"
+   },
+   {
+    "label": "B",
+    "text": "II"
+   },
+   {
+    "label": "C",
+    "text": "III"
+   },
+   {
+    "label": "D",
+    "text": "IV"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-reference-angles-quadrants-005",
+  "skillId": "reference-angles-quadrants",
+  "prompt": "Is sin θ positive or negative for an angle θ in Quadrant II?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Positive",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "ASTC (\"All Students Take Calculus\"): Quadrant I — all positive; II — sin only; III — tan only; IV — cos only. In Quadrant II, sin is positive. The reference angle sets the VALUE; the quadrant sets the SIGN.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:reference-angles-quadrants"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e632b107e8dabf14f73c6133d7857b28bd81b1104719bcae5ab9b716e47cbe2a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "Zero"
+   },
+   {
+    "label": "D",
+    "text": "It depends on the reference angle"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-reference-angles-quadrants-006",
+  "skillId": "reference-angles-quadrants",
+  "prompt": "Is cos θ positive or negative for an angle θ in Quadrant II?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Negative",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "ASTC (\"All Students Take Calculus\"): Quadrant I — all positive; II — sin only; III — tan only; IV — cos only. In Quadrant II, cos is negative. The reference angle sets the VALUE; the quadrant sets the SIGN.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:reference-angles-quadrants"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9f1d69afad29d000494dbc24b69584874717ff55b6360c5336e95bb3d5ba5c21",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "Zero"
+   },
+   {
+    "label": "D",
+    "text": "It depends on the reference angle"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-reference-angles-quadrants-007",
+  "skillId": "reference-angles-quadrants",
+  "prompt": "Is tan θ positive or negative for an angle θ in Quadrant III?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Positive",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "ASTC (\"All Students Take Calculus\"): Quadrant I — all positive; II — sin only; III — tan only; IV — cos only. In Quadrant III, tan is positive. The reference angle sets the VALUE; the quadrant sets the SIGN.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:reference-angles-quadrants"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bcca7eb19a419f2d2465cb1764ed5f959985630ea1293ce7ecfe9f6ac1210c36",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "Zero"
+   },
+   {
+    "label": "D",
+    "text": "It depends on the reference angle"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-reference-angles-quadrants-008",
+  "skillId": "reference-angles-quadrants",
+  "prompt": "Is sin θ positive or negative for an angle θ in Quadrant III?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Negative",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "ASTC (\"All Students Take Calculus\"): Quadrant I — all positive; II — sin only; III — tan only; IV — cos only. In Quadrant III, sin is negative. The reference angle sets the VALUE; the quadrant sets the SIGN.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:reference-angles-quadrants"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f69b5fecb57a0a4347b3835dca2e4c5c4accc9f58a72ffb8a44c3decf014b266",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "Zero"
+   },
+   {
+    "label": "D",
+    "text": "It depends on the reference angle"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-differentiability-vs-continuity-001",
+  "skillId": "differentiability-vs-continuity",
+  "prompt": "f(x) = |x| at x = 0 is ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Continuous but not differentiable",
+   "equivalents": [
+    "Continuousbutnotdifferentiable"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The graph connects (continuous) but has a CORNER at 0 — the slope jumps from −1 to +1, so no single tangent slope exists. Corners break differentiability, not continuity.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:differentiability-vs-continuity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8aa30fd8fc676abdd562cbc49c4898054913b60cd7235a2f6d9da552f5c8f3d5",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Continuous but not differentiable"
+   },
+   {
+    "label": "B",
+    "text": "Differentiable but not continuous"
+   },
+   {
+    "label": "C",
+    "text": "Continuous"
+   },
+   {
+    "label": "D",
+    "text": "Neither continuous nor differentiable"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-differentiability-vs-continuity-002",
+  "skillId": "differentiability-vs-continuity",
+  "prompt": "If f is differentiable at x = a, then f must be ___ at a.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Continuous",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Differentiability is the stronger condition: a function with a derivative at a point cannot jump there. The converse fails — |x| is continuous at 0 without being differentiable.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:differentiability-vs-continuity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d51cc438249e7bc8919650ca98933c5f5a4ff054523aa62e7cb3ad8275649b7e",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Continuous"
+   },
+   {
+    "label": "B",
+    "text": "Discontinuous"
+   },
+   {
+    "label": "C",
+    "text": "Non-differentiable somewhere else"
+   },
+   {
+    "label": "D",
+    "text": "Constant"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-differentiability-vs-continuity-003",
+  "skillId": "differentiability-vs-continuity",
+  "prompt": "f(x) = x^(1/3) (cube root) at x = 0 is ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Continuous but not differentiable",
+   "equivalents": [
+    "Continuousbutnotdifferentiable"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The cube-root curve passes smoothly THROUGH 0 (continuous), but its tangent there is VERTICAL — the slope grows without bound, so f′(0) does not exist. Vertical tangents break differentiability too.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:differentiability-vs-continuity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7da9b6786ed251110b123b63f01a31805cb7f31131fce754a9ea86bea0f9bb08",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Continuous but not differentiable"
+   },
+   {
+    "label": "B",
+    "text": "Differentiable but not continuous"
+   },
+   {
+    "label": "C",
+    "text": "Continuous"
+   },
+   {
+    "label": "D",
+    "text": "Neither continuous nor differentiable"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-differentiability-vs-continuity-004",
+  "skillId": "differentiability-vs-continuity",
+  "prompt": "A function with a jump discontinuity at x = a is ___ at a.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Neither continuous nor differentiable",
+   "equivalents": [
+    "Neithercontinuousnordifferentiable"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "A jump breaks continuity outright, and differentiability requires continuity — so both fail. Every differentiable point is continuous; every discontinuous point is non-differentiable.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:differentiability-vs-continuity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3e1186a18de5a92357a439c0c85e57a1611b1794f7394c1bc8c761e8478d4db3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Continuous but not differentiable"
+   },
+   {
+    "label": "B",
+    "text": "Differentiable but not continuous"
+   },
+   {
+    "label": "C",
+    "text": "Continuous"
+   },
+   {
+    "label": "D",
+    "text": "Neither continuous nor differentiable"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-differentiability-vs-continuity-005",
+  "skillId": "differentiability-vs-continuity",
+  "prompt": "True or false: there exists a function that is differentiable at a point but not continuous there.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "False",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Impossible: the limit defining f′(a) forces f(x) → f(a). Differentiable ⟹ continuous, always. The one-way arrow (and |x| as the counterexample to the converse) is a favorite AP conceptual question.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:differentiability-vs-continuity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "afd39946ce7546737ee2b36fe71d2714645250e5d38002b70838f5df58acd34b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "False"
+   },
+   {
+    "label": "B",
+    "text": "True"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-differentiability-vs-continuity-006",
+  "skillId": "differentiability-vs-continuity",
+  "prompt": "A graph has a sharp corner at x = 2 but no break. At x = 2 the function is:",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Continuous but not differentiable",
+   "equivalents": [
+    "Continuousbutnotdifferentiable"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "No break means continuous. A corner means the left and right slopes disagree, so the two-sided derivative limit does not exist. Corner, cusp, vertical tangent, discontinuity — the four ways differentiability dies.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:differentiability-vs-continuity"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6a2cbdd0b30f4ecab152c9ac9d9d656192a217cb8c0af7f06ae1d992dbf65559",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Continuous but not differentiable"
+   },
+   {
+    "label": "B",
+    "text": "Differentiable but not continuous"
+   },
+   {
+    "label": "C",
+    "text": "Neither"
+   },
+   {
+    "label": "D",
+    "text": "Both"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-derivatives-from-graphs-tables-001",
+  "skillId": "derivatives-from-graphs-tables",
+  "prompt": "A table gives f(3) = 5 and f(4) = 10. Use the values to estimate f′(3) with a difference quotient.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f′(3) ≈ [f(4) − f(3)]/(4 − 3) = (10 − 5)/1 = 5. With only a table, the difference quotient over the smallest available interval is the estimate.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivatives-from-graphs-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "83a6f44fbb83f4e65caeb145b64c35d67d4f00a2cb9a3a7379612b92b10255d3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivatives-from-graphs-tables-002",
+  "skillId": "derivatives-from-graphs-tables",
+  "prompt": "A table gives f(2) = 8 and f(4) = 12. Use the values to estimate f′(2) with a difference quotient.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f′(2) ≈ [f(4) − f(2)]/(4 − 2) = (12 − 8)/2 = 2. With only a table, the difference quotient over the smallest available interval is the estimate.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivatives-from-graphs-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4afbf72f56493778bd5624e157aece96919d9d12611534f7b73383bc3614a832",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivatives-from-graphs-tables-003",
+  "skillId": "derivatives-from-graphs-tables",
+  "prompt": "A table gives f(4) = 5 and f(5) = 7. Use the values to estimate f′(4) with a difference quotient.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f′(4) ≈ [f(5) − f(4)]/(5 − 4) = (7 − 5)/1 = 2. With only a table, the difference quotient over the smallest available interval is the estimate.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivatives-from-graphs-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bd97c3591680590152893fc6161360a64bd574394243154f1079b7166ccd49fd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivatives-from-graphs-tables-004",
+  "skillId": "derivatives-from-graphs-tables",
+  "prompt": "A table gives f(4) = 4 and f(5) = 6. Use the values to estimate f′(4) with a difference quotient.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f′(4) ≈ [f(5) − f(4)]/(5 − 4) = (6 − 4)/1 = 2. With only a table, the difference quotient over the smallest available interval is the estimate.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivatives-from-graphs-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7bc7ed553e11a502ecf0f4987bc97eced6c4e774613642aea8d517551487c0d1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivatives-from-graphs-tables-005",
+  "skillId": "derivatives-from-graphs-tables",
+  "prompt": "A table gives f(2) = 4, and f(4) = 6. Estimate f′(3) using the symmetric (centered) difference quotient.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Centered estimate: [f(4) − f(2)]/[(4) − (2)] = (6 − 4)/2 = 1. Straddling the point usually beats a one-sided quotient — the AP exam expects the centered form when both neighbors are given.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivatives-from-graphs-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3d4e33de9fe39bbd725ef35eee34006938174f1155fcaad8567842d67b5cf7ae",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivatives-from-graphs-tables-006",
+  "skillId": "derivatives-from-graphs-tables",
+  "prompt": "A table gives f(2) = 8, and f(4) = 18. Estimate f′(3) using the symmetric (centered) difference quotient.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Centered estimate: [f(4) − f(2)]/[(4) − (2)] = (18 − 8)/2 = 5. Straddling the point usually beats a one-sided quotient — the AP exam expects the centered form when both neighbors are given.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivatives-from-graphs-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8e4071b6df2f7e9a3ca04747b39705bcffc11bea8200e66421793795dd8dcbc4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivatives-from-graphs-tables-007",
+  "skillId": "derivatives-from-graphs-tables",
+  "prompt": "A table gives f(4) = 6, and f(6) = 12. Estimate f′(5) using the symmetric (centered) difference quotient.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Centered estimate: [f(6) − f(4)]/[(6) − (4)] = (12 − 6)/2 = 3. Straddling the point usually beats a one-sided quotient — the AP exam expects the centered form when both neighbors are given.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivatives-from-graphs-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7607661e4b4e242dc61b472c2fc389c1e5e418a3453d6d2f33ed67d95f0b097a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-derivatives-from-graphs-tables-008",
+  "skillId": "derivatives-from-graphs-tables",
+  "prompt": "A table gives f(1) = 7, and f(3) = 13. Estimate f′(2) using the symmetric (centered) difference quotient.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Centered estimate: [f(3) − f(1)]/[(3) − (1)] = (13 − 7)/2 = 3. Straddling the point usually beats a one-sided quotient — the AP exam expects the centered form when both neighbors are given.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:derivatives-from-graphs-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0469ff69729369162011581054f75ef8ec10f2538cfef67e9fb49f3a280d4e83",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-derivatives-001",
+  "skillId": "inverse-trig-derivatives",
+  "prompt": "What is the derivative of arcsin(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/√(1 − x²)",
+   "equivalents": [
+    "1/√(1 - x²)",
+    "1/√(1−x²)",
+    "1/√(1-x²)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "d/dx arcsin(x) = 1/√(1 − x²). Its graph has vertical tangents at x = ±1, which is exactly where the formula blows up.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6c24489835521c72ea13b6de6824e22b08ca4b74c09e1a67bdb3c9ba4f6b091a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1/√(1 − x²)"
+   },
+   {
+    "label": "B",
+    "text": "−1/√(1 − x²)"
+   },
+   {
+    "label": "C",
+    "text": "1/(1 + x²)"
+   },
+   {
+    "label": "D",
+    "text": "1/√(x² − 1)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-derivatives-002",
+  "skillId": "inverse-trig-derivatives",
+  "prompt": "What is the derivative of arctan(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/(1 + x²)",
+   "equivalents": [
+    "1/(1+x²)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "d/dx arctan(x) = 1/(1 + x²) — always positive (arctan always increases) and approaching 0 as x → ±∞ (the curve flattens toward its horizontal asymptotes).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6f553435d05ebbc6400b5854936965a1f62d4ad3abc185bac9e969d68d18b4b5",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1/(1 + x²)"
+   },
+   {
+    "label": "B",
+    "text": "1/√(1 − x²)"
+   },
+   {
+    "label": "C",
+    "text": "−1/(1 + x²)"
+   },
+   {
+    "label": "D",
+    "text": "sec²(x)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-derivatives-003",
+  "skillId": "inverse-trig-derivatives",
+  "prompt": "What is the derivative of arccos(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−1/√(1 − x²)",
+   "equivalents": [
+    "-1/√(1 - x²)",
+    "−1/√(1−x²)",
+    "-1/√(1-x²)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "d/dx arccos(x) = −1/√(1 − x²) — the negative of arcsin′, because arccos(x) = π/2 − arcsin(x). Arccos always decreases, hence the sign.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ecf7f5f16ba5c3d5686d9835c73a75def45049ccb37cc81bfa30dd8bf5079eec",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "−1/√(1 − x²)"
+   },
+   {
+    "label": "B",
+    "text": "1/√(1 − x²)"
+   },
+   {
+    "label": "C",
+    "text": "−1/(1 + x²)"
+   },
+   {
+    "label": "D",
+    "text": "−sin(x)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-derivatives-004",
+  "skillId": "inverse-trig-derivatives",
+  "prompt": "Evaluate the derivative of arctan(x) at x = 3.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "d/dx arctan(x) = 1/(1 + x²). At x = 3: 1/(1 + 9) = 1/10.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ce9eff1d7b4d3ec816f8e3242541f05b6289de23b09811b1d3bd148e564e41ec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-derivatives-005",
+  "skillId": "inverse-trig-derivatives",
+  "prompt": "Differentiate y = arctan(2x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2/(1 + 4x²)",
+   "equivalents": [
+    "2/(1+4x²)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Chain rule on arctan: y′ = 1/(1 + (2x)²) · 2 = 2/(1 + 4x²). The inner derivative 2 multiplies, and the inner function gets squared inside the denominator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3dfdf2381afffae097c74d59fe2e25b820d907323e79f8a5f085a709c68af67b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-derivatives-006",
+  "skillId": "inverse-trig-derivatives",
+  "prompt": "Evaluate the derivative of arctan(x) at x = 1.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "d/dx arctan(x) = 1/(1 + x²). At x = 1: 1/(1 + 1) = 1/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "28aec39ebe567816e4c15026e90267823cc59ea2a239f6f0db63bb36511f27b9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-trig-derivatives-007",
+  "skillId": "inverse-trig-derivatives",
+  "prompt": "Differentiate y = arctan(3x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/(1 + 9x²)",
+   "equivalents": [
+    "3/(1+9x²)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Chain rule on arctan: y′ = 1/(1 + (3x)²) · 3 = 3/(1 + 9x²). The inner derivative 3 multiplies, and the inner function gets squared inside the denominator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-trig-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4775646c46c3aa381424923263e3d3cb9312be91cc4a6c2250c2507aa3964487",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-higher-order-derivatives-001",
+  "skillId": "higher-order-derivatives",
+  "prompt": "f(x) = 3x³ + 3x² + 7x. Find f″(x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18x + 6",
+   "equivalents": [
+    "18x+6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate twice: f′(x) = 9x² + 6x + 7, then f″(x) = 18x + 6. Each pass drops the degree by one; the linear term's constant 7 dies on the second pass.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:higher-order-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c2a5ceb0c38b001c11e41d160ed1959dcfafbdc5dab34f670cb11f290b807a1a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-higher-order-derivatives-002",
+  "skillId": "higher-order-derivatives",
+  "prompt": "f(x) = 3x³ + x² + 8x. Find f″(x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18x + 2",
+   "equivalents": [
+    "18x+2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate twice: f′(x) = 9x² + 2x + 8, then f″(x) = 18x + 2. Each pass drops the degree by one; the linear term's constant 8 dies on the second pass.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:higher-order-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "691a23d846feac7f9f02c1041360ea9375161b74e2d009956f9f7be2738d0804",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-higher-order-derivatives-003",
+  "skillId": "higher-order-derivatives",
+  "prompt": "f(x) = 3x³ + 2x² + 4x. Find f″(x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18x + 4",
+   "equivalents": [
+    "18x+4"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate twice: f′(x) = 9x² + 4x + 4, then f″(x) = 18x + 4. Each pass drops the degree by one; the linear term's constant 4 dies on the second pass.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:higher-order-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d9a36a70a441d7b4a76920f797308e3ba117da265e423e8752151d624e96f27a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-higher-order-derivatives-004",
+  "skillId": "higher-order-derivatives",
+  "prompt": "f(x) = x³ + 3x² + 7x. Find f″(x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6x + 6",
+   "equivalents": [
+    "6x+6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate twice: f′(x) = 3x² + 6x + 7, then f″(x) = 6x + 6. Each pass drops the degree by one; the linear term's constant 7 dies on the second pass.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:higher-order-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fd7d6c8402591c18cb2118d61023a3eacd9cd7b663179aa97a405f09c0b6c156",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-higher-order-derivatives-005",
+  "skillId": "higher-order-derivatives",
+  "prompt": "f(x) = x⁴. Evaluate f‴(2) (the third derivative at x = 2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "48",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate three times: f′ = 4x³, f″ = 12x², f‴ = 24x. At x = 2: 24 · 2 = 48.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:higher-order-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "58dd151997934099c1032406f9fac138e2eebf9b6fc562375d3ca6f8fc0133e5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-higher-order-derivatives-006",
+  "skillId": "higher-order-derivatives",
+  "prompt": "What is the third derivative of f(x) = x³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Each differentiation multiplies by the current exponent and lowers it: x^3 → 3x^2 → … → 3! = 6. Differentiating x^n exactly n times leaves the constant n-factorial; one more pass would give 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:higher-order-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d58b2596af14d88d804140d769f13377d4d095d899f41bf2ae82c96a0bb1f203",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-higher-order-derivatives-007",
+  "skillId": "higher-order-derivatives",
+  "prompt": "f(x) = 2x⁴. Evaluate f‴(2) (the third derivative at x = 2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "96",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Differentiate three times: f′ = 8x³, f″ = 24x², f‴ = 48x. At x = 2: 48 · 2 = 96.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:higher-order-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "83bcea15be49880a8961dce1ea267a876e9509c300b4c4b1d59f0666c4440536",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-higher-order-derivatives-008",
+  "skillId": "higher-order-derivatives",
+  "prompt": "What is the fifth derivative of f(x) = x⁵?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "120",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Each differentiation multiplies by the current exponent and lowers it: x^5 → 5x^4 → … → 5! = 120. Differentiating x^n exactly n times leaves the constant n-factorial; one more pass would give 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:higher-order-derivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1328bc971602eab3854f3ee7dcb0fc3f48d0af52417b20dbf5d48bfdb36d8f37",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-antiderivatives-001",
+  "skillId": "antiderivatives",
+  "prompt": "Find the general antiderivative: ∫ 8x³ dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2x⁴ + C",
+   "equivalents": [
+    "2x⁴+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Power rule in reverse: raise the exponent to 4, divide by it: 8x^3 → 8/4 · x^4 = 2x^4, plus C — every antiderivative family differs by a constant. Check by differentiating: d/dx[2x^4] = 8x^3 ✓.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:antiderivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f7ff3c5403bbb86893dc3423a74d1aeaf699c872076d28ee493ebbc881ccbfc3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-antiderivatives-002",
+  "skillId": "antiderivatives",
+  "prompt": "Find the general antiderivative: ∫ 4x³ dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x⁴ + C",
+   "equivalents": [
+    "x⁴+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Power rule in reverse: raise the exponent to 4, divide by it: 4x^3 → 4/4 · x^4 = 1x^4, plus C — every antiderivative family differs by a constant. Check by differentiating: d/dx[1x^4] = 4x^3 ✓.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:antiderivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d66b49b693e8a623dd8ccecb4163a1815bcdcd6949f0fce0747dd634286498ae",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-antiderivatives-003",
+  "skillId": "antiderivatives",
+  "prompt": "Find the general antiderivative: ∫ 9x² dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3x³ + C",
+   "equivalents": [
+    "3x³+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Power rule in reverse: raise the exponent to 3, divide by it: 9x^2 → 9/3 · x^3 = 3x^3, plus C — every antiderivative family differs by a constant. Check by differentiating: d/dx[3x^3] = 9x^2 ✓.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:antiderivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "17e357d8277a9c8f4941adee3ae93d3afce53d1ecc69893606a1e5eb9daf20f1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-antiderivatives-004",
+  "skillId": "antiderivatives",
+  "prompt": "Find the general antiderivative: ∫ 3x² dx.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x³ + C",
+   "equivalents": [
+    "x³+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "Power rule in reverse: raise the exponent to 3, divide by it: 3x^2 → 3/3 · x^3 = 1x^3, plus C — every antiderivative family differs by a constant. Check by differentiating: d/dx[1x^3] = 3x^2 ✓.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:antiderivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fd02462931bf6dd88eb11371a51755d9c67fd39be03ee3a7bebbe3fab0498acf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-antiderivatives-005",
+  "skillId": "antiderivatives",
+  "prompt": "∫ (8x + 4) dx = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4x² + 4x + C",
+   "equivalents": [
+    "4x²+4x+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Integrate term by term: 8x → 4x², and 4 → 4x, giving 4x² + 4x + C. Differentiating the answer recovers the integrand exactly — the fundamental self-check.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:antiderivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e2fdd123a724a035148f7e13d3fc2e7b6911d07cdf692dcc41af05098afbd67f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-antiderivatives-006",
+  "skillId": "antiderivatives",
+  "prompt": "f′(x) = 4x and f(0) = 3. Find f(x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "f(x) = 2x² + 3",
+   "equivalents": [
+    "f(x)=2x²+3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Antidifferentiate: f(x) = 2x² + C. The initial condition picks the one member of the family: f(0) = C = 3, so f(x) = 2x² + 3. An initial condition is exactly what turns +C into a single curve.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:antiderivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "817b96cdf10f3941390d8a9a67a6686e611f466ef7403750017f1b4344cb11a7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-antiderivatives-007",
+  "skillId": "antiderivatives",
+  "prompt": "∫ (8x + 5) dx = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4x² + 5x + C",
+   "equivalents": [
+    "4x²+5x+C"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Integrate term by term: 8x → 4x², and 5 → 5x, giving 4x² + 5x + C. Differentiating the answer recovers the integrand exactly — the fundamental self-check.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:antiderivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eed690c4e4b0ac3abb4b61601f8f98cd14501fc00217c7a685d05dd5ea18fae4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-antiderivatives-008",
+  "skillId": "antiderivatives",
+  "prompt": "f′(x) = 10x and f(0) = 3. Find f(x).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "f(x) = 5x² + 3",
+   "equivalents": [
+    "f(x)=5x²+3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "Antidifferentiate: f(x) = 5x² + C. The initial condition picks the one member of the family: f(0) = C = 3, so f(x) = 5x² + 3. An initial condition is exactly what turns +C into a single curve.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:antiderivatives"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9f6b1f90e9c01bdd2fe01da86df7bac3a2176161ad36b56a28733e8e51938959",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-error-analysis-correction-001",
+  "skillId": "error-analysis-correction",
+  "prompt": "A student writes: d/dx (x³ · x²) = 3x² · 2x = 6x³. What went wrong?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "They differentiated each factor and multiplied — that is not the product rule",
+   "equivalents": [
+    "Theydifferentiatedeachfactorandmultiplied—thatisnottheproductrule"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "The derivative of a product is NOT the product of derivatives. Either simplify first (x⁵ → 5x⁴) or apply the product rule: 3x²·x² + x³·2x = 5x⁴. Note choice B diagnoses a fix but not the ERROR — the question asks what went wrong.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:error-analysis-correction"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b9499bf6df3a956f8a09739d27a18c1d68ea75c12e9e02f1b041b937c0cf7b70",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "They differentiated each factor and multiplied — that is not the product rule"
+   },
+   {
+    "label": "B",
+    "text": "They should have added the exponents first: the answer 5x⁴ needs no product rule"
+   },
+   {
+    "label": "C",
+    "text": "Nothing — the work is correct"
+   },
+   {
+    "label": "D",
+    "text": "The power rule does not apply to products"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-error-analysis-correction-002",
+  "skillId": "error-analysis-correction",
+  "prompt": "A student writes: d/dx sin(3x) = cos(3x). What is missing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "The chain rule factor 3",
+   "equivalents": [
+    "Thechainrulefactor3"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "sin(3x) is a composite: the outer derivative cos(3x) must be multiplied by the inner derivative 3, giving 3cos(3x). Dropping the inner factor is the single most common chain-rule error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:error-analysis-correction"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "68f4e0582c289518ac1ee844dbf2e0119188397aabe1ca592bb7dd8216b890ad",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "The chain rule factor 3"
+   },
+   {
+    "label": "B",
+    "text": "A negative sign"
+   },
+   {
+    "label": "C",
+    "text": "Nothing — the work is correct"
+   },
+   {
+    "label": "D",
+    "text": "The answer should be −3sin(3x)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-error-analysis-correction-003",
+  "skillId": "error-analysis-correction",
+  "prompt": "A student writes: ∫ x³ dx = 3x². What did they do?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "They differentiated instead of integrating",
+   "equivalents": [
+    "Theydifferentiatedinsteadofintegrating"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "3x² is the DERIVATIVE of x³. Integration goes the other way: raise the exponent, divide by it — x⁴/4 + C. (The missing + C is a second error, but the direction is the fatal one.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:error-analysis-correction"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c25325244a24050b6f1371561ebb3f8d88fd070aef2a7bbd30aa537889c60468",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "They differentiated instead of integrating"
+   },
+   {
+    "label": "B",
+    "text": "They forgot only the + C"
+   },
+   {
+    "label": "C",
+    "text": "They used the wrong exponent but right coefficient"
+   },
+   {
+    "label": "D",
+    "text": "Nothing — the work is correct"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-error-analysis-correction-004",
+  "skillId": "error-analysis-correction",
+  "prompt": "A student claims: since f′(c) = 0 at c = 2, f has a local extremum at 2. What is the flaw?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A critical point need not be an extremum — f′ must change sign",
+   "equivalents": [
+    "Acriticalpointneednotbeanextremum—f′mustchangesign"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "11-12",
+  "explanation": "f(x) = x³ at 0 has f′ = 0 but no extremum — the slope touches zero and keeps the same sign. A zero derivative locates CANDIDATES; the first-derivative test (sign change) or second-derivative test must confirm.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:error-analysis-correction"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "20c21598e1d44b6e316f3b6e9187c2442d5592f2b69607a50334c9a8c9bd6e33",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A critical point need not be an extremum — f′ must change sign"
+   },
+   {
+    "label": "B",
+    "text": "f′(c) = 0 never happens at extrema"
+   },
+   {
+    "label": "C",
+    "text": "Extrema require f″(c) = 0"
+   },
+   {
+    "label": "D",
+    "text": "There is no flaw"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-error-analysis-correction-005",
+  "skillId": "error-analysis-correction",
+  "prompt": "A student evaluates the limit of (x² − 1)/(x − 1) as x → 1 by plugging in and gets 0/0, then concludes the limit does not exist. What should they have done, and what is the limit?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Factor and cancel; the limit is 2",
+   "equivalents": [
+    "Factorandcancel;thelimitis2"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "0/0 is INDETERMINATE, not nonexistent: (x² − 1)/(x − 1) = (x − 1)(x + 1)/(x − 1) = x + 1 away from 1, so the limit is 1 + 1 = 2. Concluding \"DNE\" from 0/0 is the classic limit error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:error-analysis-correction"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "762a10810fb3884ef5e668c287a67bb8221505f4c1e9aed8aa8d72691ab730de",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Factor and cancel; the limit is 2"
+   },
+   {
+    "label": "B",
+    "text": "Nothing — 0/0 means the limit does not exist"
+   },
+   {
+    "label": "C",
+    "text": "L'Hôpital is required; the limit is 10"
+   },
+   {
+    "label": "D",
+    "text": "The limit is 16"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-error-analysis-correction-006",
+  "skillId": "error-analysis-correction",
+  "prompt": "A student \"verifies\" that F(x) = x·ln(x) is an antiderivative of ln(x) by noting both involve ln. What is the correct check, and does F pass?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Differentiate F; it fails — F′(x) = ln(x) + 1, not ln(x)",
+   "equivalents": [
+    "DifferentiateF;itfails—F′(x)=ln(x)+1,notln(x)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "The only test of an antiderivative is differentiation: (x·ln x)′ = ln x + x·(1/x) = ln x + 1 by the product rule — off by 1. (The true antiderivative is x·ln x − x + C.) \"Looks related\" is never verification.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:error-analysis-correction"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a7d6c43d02f0f4d702f7c4fd8afd94a39a33774ab720a1692cf3ba0121e0935c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Differentiate F; it fails — F′(x) = ln(x) + 1, not ln(x)"
+   },
+   {
+    "label": "B",
+    "text": "Differentiate F; it passes"
+   },
+   {
+    "label": "C",
+    "text": "Integrate ln(x) numerically"
+   },
+   {
+    "label": "D",
+    "text": "Compare graphs of F and ln"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-error-analysis-correction-007",
+  "skillId": "error-analysis-correction",
+  "prompt": "A student evaluates the limit of (x² − 4)/(x − 2) as x → 2 by plugging in and gets 0/0, then concludes the limit does not exist. What should they have done, and what is the limit?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Factor and cancel; the limit is 4",
+   "equivalents": [
+    "Factorandcancel;thelimitis4"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "11-12",
+  "explanation": "0/0 is INDETERMINATE, not nonexistent: (x² − 4)/(x − 2) = (x − 2)(x + 2)/(x − 2) = x + 2 away from 2, so the limit is 2 + 2 = 4. Concluding \"DNE\" from 0/0 is the classic limit error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:error-analysis-correction"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a23e14d8ea4ec1cdf37135870ab76e6a763608c8f084c03e5e2ebb3cc7734c04",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Factor and cancel; the limit is 4"
+   },
+   {
+    "label": "B",
+    "text": "Nothing — 0/0 means the limit does not exist"
+   },
+   {
+    "label": "C",
+    "text": "L'Hôpital is required; the limit is 13"
+   },
+   {
+    "label": "D",
+    "text": "The limit is 25"
+   }
+  ],
+  "correctOption": "A"
  }
 ]

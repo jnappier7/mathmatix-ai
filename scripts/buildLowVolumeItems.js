@@ -29,6 +29,7 @@ const BANKS = [
   require('./lib/templatesPrecalc'),
   require('./lib/templatesGeometry'),
   require('./lib/templatesActStrategy'),
+  require('./lib/templatesCalcAB'),
 ];
 
 const OUT = path.join(__dirname, '..', 'seeds', 'low-volume-items.generated.json');

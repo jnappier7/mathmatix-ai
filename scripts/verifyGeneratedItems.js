@@ -940,6 +940,243 @@ for (const it of items) {
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 
+  // ── Calculus (AB top-ups + new families) ─────────────────────────────────
+  if ((m = p.match(/^Evaluate: the limit as x → ∞ of \((\d+)x² \+ \d+x\)\/\((\d+)x² \+ \d+\)\.$/))) {
+    const e = reduceStr(Number(m[1]), Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if (/^Evaluate: the limit as x → ∞ of \(\d+x \+ \d+\)\/\(\d+x² \+ \d+x\)\.$/.test(p)) {
+    checked++; if (!eq(it.answer.value, 0)) fail(it, 0); continue;
+  }
+  if ((m = p.match(/^What is the horizontal asymptote of y = \((\d+)x² − \d+\)\/\((\d+)x² \+ \d+x\)\?$/))) {
+    const e = `y = ${reduceStr(Number(m[1]), Number(m[2]))}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f is continuous on \[\d+, \d+\] with f\(\d+\) = (-?\d+) and f\(\d+\) = (-?\d+)\./))) {
+    const e = Number(m[1]) < 0 !== Number(m[2]) < 0 ? 'Yes' : 'No';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^For x near 0, g satisfies (\d+) − x² ≤ g\(x\) ≤ \d+ \+ x²\./))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if (/^Evaluate the limit as x → 0 of x² · sin\(\d+\/x\)\.$/.test(p)) {
+    checked++; if (!eq(it.answer.value, 0)) fail(it, 0); continue;
+  }
+  if ((m = p.match(/difference quotient for f\(x\) = x² at x = (\d+) simplifies/))) {
+    const e = 2 * Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Simplify the difference quotient \[f\(x \+ h\) − f\(x\)\]\/h for f\(x\) = (\d+)x \+ \d+\.$/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/^The limit as h → 0 of \[\((\d+) \+ h\)² − (\d+)\]\/h/))) {
+    if (Number(m[1]) ** 2 !== Number(m[2])) { fail(it, `inconsistent: ${m[1]}² ≠ ${m[2]}`); continue; }
+    const e = `x² at x = ${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Differentiate: y = \((\d+)x \+ (\d+)\)([³⁴⁵])\.$/))) {
+    const a = Number(m[1]), b = Number(m[2]);
+    const n0 = { '³': 3, '⁴': 4, '⁵': 5 }[m[3]];
+    const down = { 3: '²', 4: '³', 5: '⁴' }[n0];
+    const e = `${n0 * a}(${a}x + ${b})${down}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Differentiate: y = sin\((\d+)x\)\.$/))) {
+    const e = `${m[1]}cos(${m[1]}x)`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^g\(x\) = f\((\d+)x\) where f′\((\d+)\) = (\d+)\. Using the chain rule, what is g′\((\d+)\)\?$/))) {
+    const [a, arg, f1, x0] = m.slice(1).map(Number);
+    if (a * x0 !== arg) { fail(it, `f′ evaluated at ${arg} but inner value is ${a * x0}`); continue; }
+    const e = f1 * a;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Each side of a square is growing at (\d+) cm\/s\. How fast is the AREA growing when the side is (\d+) cm/))) {
+    const e = 2 * Number(m[2]) * Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A (\d+) m ladder leans against a wall\. Its base, (\d+) m from the wall, slides away at (\d+) m\/s/))) {
+    const c0 = Number(m[1]), x = Number(m[2]), rate = Number(m[3]);
+    const y = Math.sqrt(c0 * c0 - x * x);
+    if (!Number.isInteger(y)) { fail(it, `non-integer wall height √(${c0}² − ${x}²)`); continue; }
+    const e = reduceStr(x * rate, y);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A cube's volume grows at (\d+) cm³\/s\. How fast is its side length growing when the side is (\d+) cm/))) {
+    const e = reduceStr(Number(m[1]), 3 * Number(m[2]) ** 2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A particle's position is s\(t\) = (\d*)t² \+ (\d+)t \(meters, seconds\)\. What is its velocity at t = (\d+)\?$/))) {
+    const a = m[1] === '' ? 1 : Number(m[1]);
+    const e = 2 * a * Number(m[3]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A particle moves with velocity v\(t\) = (\d+)t² − (\d+)\. At what positive time t is the particle AT REST\?$/))) {
+    const t0 = Math.sqrt(Number(m[2]) / Number(m[1]));
+    if (!Number.isInteger(t0)) { fail(it, `non-integer rest time √(${m[2]}/${m[1]})`); continue; }
+    checked++; if (!eq(it.answer.value, t0)) fail(it, t0); continue;
+  }
+  if ((m = p.match(/^A particle's velocity is v\(t\) = (\d*)t² \(m\/s\)\. What is its ACCELERATION at t = (\d+)\?$/))) {
+    const a = m[1] === '' ? 1 : Number(m[1]);
+    const e = 2 * a * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Use the linearization of f\(x\) = √x at x = (\d+) to estimate √(\d+)\./))) {
+    const k = Number(m[1]), root = Math.sqrt(k), dx = Number(m[2]) - k;
+    if (!Number.isInteger(root)) { fail(it, `${k} is not a perfect square`); continue; }
+    const e = `${root} + ${reduceStr(dx, 2 * root)}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Find the equation of the tangent line to y = (\d*)x² \+ (\d+) at x = (\d+)\.$/))) {
+    const a = m[1] === '' ? 1 : Number(m[1]);
+    const b = Number(m[2]), x0 = Number(m[3]);
+    const slope = 2 * a * x0, icept = a * x0 * x0 + b - slope * x0;
+    const e = `y = ${slope}x ${icept >= 0 ? '+' : '−'} ${Math.abs(icept)}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f\(x\) = x² on \[0, (\d+)\]\. The Mean Value Theorem/))) {
+    const e = reduceStr(Number(m[1]), 2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f\(x\) = (\d*)x³ − (\d+)x² \+ \d+x\. At what x-value does f have an inflection point\?$/))) {
+    const a = m[1] === '' ? 1 : Number(m[1]);
+    const e = Number(m[2]) / (3 * a);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f″\(x\) = (−?)(\d+) for all x/))) {
+    const e = m[1] === '−' ? 'Concave down everywhere' : 'Concave up everywhere';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Two positive numbers add to (\d+)\. What is the LARGEST their product can be\?$/))) {
+    const e = (Number(m[1]) / 2) ** 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A rectangle has perimeter (\d+)\. What dimensions maximize its area/))) {
+    const side = Number(m[1]) / 4;
+    const e = `${side} by ${side}, area ${side * side}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Evaluate the indefinite integral: ∫ (\d+)\((\d+)x \+ (\d+)\)([²³]) dx/))) {
+    const outer = Number(m[1]), a = Number(m[2]), b = Number(m[3]);
+    const n0 = m[4] === '²' ? 2 : 3;
+    if (outer !== a) { fail(it, `outer factor ${outer} must equal du's factor ${a}`); continue; }
+    const e = `(${a}x + ${b})${n0 === 2 ? '³' : '⁴'}/${n0 + 1} + C`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Evaluate: ∫ 2x·cos\(x² \+ (\d+)\) dx\.$/))) {
+    const e = `sin(x² + ${m[1]}) + C`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A slope field is drawn for dy\/dx = x \+ y\. What slope does the segment at the point \((\d+), (\d+)\) have\?$/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Solve the initial value problem: dy\/dx = (\d+)y, y\(0\) = (\d+)\.$/))) {
+    const e = `y = ${m[2]}e^(${m[1]}x)`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Solve: dy\/dx = (\d+)x\/y with y\(0\) = (\d+)/))) {
+    const e = `y = √(${m[1]}x² + ${Number(m[2]) ** 2})`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Find the average value of f\(x\) = (\d+)x \+ (\d+) on \[0, (\d+)\]\.$/))) {
+    const e = (Number(m[1]) * Number(m[3])) / 2 + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Find the average value of f\(x\) = x² on \[0, (\d+)\]\.$/))) {
+    const e = Number(m[1]) ** 2 / 3;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A particle's velocity is v\(t\) = (\d+)t \(m\/s\)\. What is its DISPLACEMENT from t = 0 to t = (\d+)\?$/))) {
+    const e = (Number(m[1]) / 2) * Number(m[2]) ** 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^v\(t\) = (\d*)\(t − (\d+)\) on \[0, (\d+)\]\./))) {
+    const k = m[1] === '' ? 1 : Number(m[1]);
+    const t0 = Number(m[2]), T = Number(m[3]);
+    if (T !== 2 * t0) { fail(it, `interval [0, ${T}] is not symmetric about ${t0}`); continue; }
+    const e = k * t0 * t0;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^What is the reference angle of (\d+)°\?$/))) {
+    const th = Number(m[1]);
+    const e = th <= 90 ? th : th <= 180 ? 180 - th : th <= 270 ? th - 180 : 360 - th;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^In which quadrant does an angle of (\d+)° \(standard position\) terminate\?$/))) {
+    const th = Number(m[1]);
+    const e = th < 90 ? 'I' : th < 180 ? 'II' : th < 270 ? 'III' : 'IV';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Is (sin|cos|tan) θ positive or negative for an angle θ in Quadrant (II|III|IV)\?$/))) {
+    const pos = { II: ['sin'], III: ['tan'], IV: ['cos'] };
+    const e = pos[m[2]].includes(m[1]) ? 'Positive' : 'Negative';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A table gives f\((\d+)\) = (\d+) and f\((\d+)\) = (\d+)\. Use the values to estimate f′\(\d+\) with a difference quotient\.$/))) {
+    const e = (Number(m[4]) - Number(m[2])) / (Number(m[3]) - Number(m[1]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A table gives f\((\d+)\) = (\d+), and f\((\d+)\) = (\d+)\. Estimate f′\((\d+)\) using the symmetric/))) {
+    const x1 = Number(m[1]), x2 = Number(m[3]), mid = Number(m[5]);
+    if (x2 - mid !== mid - x1) { fail(it, `${mid} is not centered between ${x1} and ${x2}`); continue; }
+    const e = (Number(m[4]) - Number(m[2])) / (x2 - x1);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Evaluate the derivative of arctan\(x\) at x = (\d+)\.$/))) {
+    const e = `1/${1 + Number(m[1]) ** 2}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Differentiate y = arctan\((\d+)x\)\.$/))) {
+    const k = Number(m[1]);
+    const e = `${k}/(1 + ${k * k}x²)`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f\(x\) = (\d*)x³ \+ (\d*)x² \+ \d+x\. Find f″\(x\)\.$/))) {
+    const a = m[1] === '' ? 1 : Number(m[1]);
+    const b = m[2] === '' ? 1 : Number(m[2]);
+    const e = `${6 * a}x + ${2 * b}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f\(x\) = (\d*)x⁴\. Evaluate f‴\((\d+)\)/))) {
+    const a = m[1] === '' ? 1 : Number(m[1]);
+    const e = 24 * a * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^What is the (third|fourth|fifth) derivative of f\(x\) = x([³⁴⁵])\?$/))) {
+    const n0 = { '³': 3, '⁴': 4, '⁵': 5 }[m[2]];
+    const ord = { third: 3, fourth: 4, fifth: 5 }[m[1]];
+    if (n0 !== ord) { fail(it, `order ${ord} ≠ degree ${n0}`); continue; }
+    const e = [1, 1, 2, 6, 24, 120][n0];
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Find the general antiderivative: ∫ (\d+)x([²³⁴]) dx\.$/))) {
+    const a = Number(m[1]);
+    const n0 = { '²': 2, '³': 3, '⁴': 4 }[m[2]];
+    if (a % (n0 + 1) !== 0) { fail(it, `${a} not divisible by ${n0 + 1}`); continue; }
+    const cNew = a / (n0 + 1);
+    const e = `${cNew === 1 ? '' : cNew}x${{ 2: '³', 3: '⁴', 4: '⁵' }[n0]} + C`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^∫ \((\d+)x \+ (\d+)\) dx = \?$/))) {
+    const a = Number(m[1]);
+    if (a % 2 !== 0) { fail(it, `${a} odd — half-coefficient not whole`); continue; }
+    const e = `${a / 2}x² + ${m[2]}x + C`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f′\(x\) = (\d+)x and f\(0\) = (\d+)\. Find f\(x\)\.$/))) {
+    const a = Number(m[1]);
+    if (a % 2 !== 0) { fail(it, `${a} odd`); continue; }
+    const e = `f(x) = ${a / 2}x² + ${m[2]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A student evaluates the limit of \(x² − (\d+)\)\/\(x − (\d+)\) as x → (\d+)/))) {
+    const sq = Number(m[1]), a = Number(m[2]);
+    if (a * a !== sq || Number(m[3]) !== a) { fail(it, `inconsistent limit setup`); continue; }
+    const e = `Factor and cancel; the limit is ${2 * a}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
   unchecked[it.skillId] = (unchecked[it.skillId] || 0) + 1;
 }
 
