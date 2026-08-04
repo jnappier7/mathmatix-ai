@@ -34,6 +34,8 @@ const BANKS = [
   require('./lib/templatesEarlyMath'),
   require('./lib/templatesParentModels'),
   require('./lib/templatesConsumerMath'),
+  require('./lib/templatesStatistics'),
+  require('./lib/templatesCatalogGaps'),
 ];
 
 const OUT = path.join(__dirname, '..', 'seeds', 'low-volume-items.generated.json');

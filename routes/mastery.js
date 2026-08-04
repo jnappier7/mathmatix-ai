@@ -2770,8 +2770,12 @@ router.get('/challenge/:skillId', isAuthenticated, async (req, res) => {
       return res.status(409).json({ error: 'Already proved', reason: 'you already own this one' });
     }
 
+    // Sample across EVERY id this skill's content lives under, exactly like the
+    // Skill lookup above. Matching the single canonical id denied test-outs on
+    // any skill whose items live under a crosswalked bank id — the student got
+    // "Not enough problems" while hundreds of items sat one alias away.
     const problems = await Problem.aggregate([
-      { $match: { skillId, isActive: { $ne: false } } },
+      { $match: { skillId: { $in: skillLookupCandidates(req.params.skillId) }, isActive: { $ne: false } } },
       { $sample: { size: CHALLENGE_SIZE } }
     ]);
     if (problems.length < MIN_ITEMS) {
@@ -2822,10 +2826,14 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
     // Re-fetch the served problems by id so grading uses stored answers, never
     // anything the client sent about correctness.
     const ids = submissions.map((s) => s.problemId).filter(Boolean);
-    // Filter by the RESOLVED catalog doc's own key: the GET serves problems
-    // whose skillId is the bank id, which the canonical `skillId` var may not
-    // equal — filtering by it graded an empty set (#1333 follow-through).
-    const problems = await Problem.find({ _id: { $in: ids }, skillId: skill.skillId }).lean();
+    // Filter by the SAME candidate set the GET samples from, so the two ends
+    // agree by construction. Filtering by any single id has broken this twice:
+    // the canonical id graded an empty set (#1333), and the catalog doc's key
+    // rejects items served from a different crosswalked bank id.
+    const problems = await Problem.find({
+      _id: { $in: ids },
+      skillId: { $in: skillLookupCandidates(req.params.skillId) }
+    }).lean();
     const result = gradeChallenge(problems, submissions);
 
     const user = await User.findById(req.user._id);

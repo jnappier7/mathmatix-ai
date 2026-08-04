@@ -94,6 +94,45 @@ describe('GET /challenge/:skillId', () => {
   });
 });
 
+describe('a skill whose items live under a crosswalked bank id', () => {
+  // The owner's line: "I don't want students to be denied a test out on a
+  // ladder skill because no items exist." Items often DO exist — under the
+  // bank id a crosswalk row points to. The GET once sampled by the single
+  // canonical id and 409'd ("Not enough problems") while hundreds of items
+  // sat one alias away; the POST then filtered by the catalog doc's key and
+  // would have graded an empty set. Both ends must use the candidate set.
+  const COURSE_SKILL = 'g6-percent-intro';   // manual crosswalk → percent-of-a-number
+  const BANK_ID = 'percent-of-a-number';
+
+  beforeAll(async () => {
+    await Skill.create({ skillId: COURSE_SKILL, displayName: 'Percent Intro', description: 'intro to percent', category: 'ratios-proportions' });
+    await Problem.insertMany(
+      [1, 2, 3, 4, 5].map((n) => ({
+        problemId: `xwalk-${n}`,
+        skillId: BANK_ID,
+        prompt: `What is ${n * 10}% of 100?`,
+        answer: { type: 'exact', value: String(n * 10) },
+        difficulty: 2
+      }))
+    );
+  });
+
+  test('the test-out is served from the crosswalked bank and grades a pass', async () => {
+    const got = await supertest(app).get(`/api/mastery/challenge/${COURSE_SKILL}`);
+    expect(got.status).toBe(200);
+    expect(got.body.problems.length).toBeGreaterThanOrEqual(4);
+
+    const submissions = [];
+    for (const p of got.body.problems) {
+      const doc = await Problem.findById(p.problemId).lean();
+      submissions.push({ problemId: p.problemId, answer: doc.answer.value });
+    }
+    const res = await supertest(app).post(`/api/mastery/challenge/${COURSE_SKILL}`).send({ submissions });
+    expect(res.body.passed).toBe(true);
+    expect(res.body.correct).toBe(submissions.length);
+  });
+});
+
 describe('POST /challenge/:skillId', () => {
   const answersFor = (problems, fn) => problems.map((p) => ({
     problemId: p.problemId,
