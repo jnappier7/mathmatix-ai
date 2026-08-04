@@ -721,6 +721,11 @@ function registerHtmlRoutes(app) {
   // buttons: /quiz?a=14 · /quiz?a=2 · /quiz?a=other. Public, works whether
   // or not the visitor is signed in.
   app.get('/quiz', sendHtml('quiz.html'));
+  // Readable answer aliases for organic posts, where the raw URL is the link
+  // text: /quiz/14 · /quiz/2 · /quiz/other → /quiz?a=<answer>. The quiz page
+  // validates the value and just ignores anything that isn't a real option.
+  app.get('/quiz/:answer', (req, res) =>
+    res.redirect(302, '/quiz?a=' + encodeURIComponent(String(req.params.answer).slice(0, 24))));
   app.get('/pricing.html', sendHtml('pricing.html'));
   // Phone upload landing page — public; the page itself is inert until a valid
   // token + PIN are supplied, and all enforcement is server-side.
