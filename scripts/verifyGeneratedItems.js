@@ -1773,6 +1773,220 @@ for (const it of items) {
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 
+  // ── Statistics ───────────────────────────────────────────────────────────
+  if ((m = p.match(/^A least-squares line is ŷ = (\d+) \+ (\d+)x\. Predict y when x = (\d+)\.$/))) {
+    const e = Number(m[1]) + Number(m[2]) * Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^The line ŷ = (\d+) \+ (\d+)x predicts ŷ = (\d+) at x = (\d+), but the actual observation there is y = (\d+)\./))) {
+    if (Number(m[1]) + Number(m[2]) * Number(m[4]) !== Number(m[3])) { fail(it, 'stated prediction inconsistent with line'); continue; }
+    const e = Number(m[5]) - Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^X takes the value (\d+) with probability 0\.(\d), (\d+) with probability 0\.(\d), and (\d+) with probability 0\.(\d)\./))) {
+    const [x1, p1, x2, p2, x3, p3] = m.slice(1).map(Number);
+    if (p1 + p2 + p3 !== 10) { fail(it, `probabilities sum to ${(p1 + p2 + p3) / 10}, not 1`); continue; }
+    const e = (x1 * p1 + x2 * p2 + x3 * p3) / 10;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^X has mean (\d+)\. What is the mean of (\d+)X \+ (\d+)\?$/))) {
+    const e = Number(m[2]) * Number(m[1]) + Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^X counts successes in (\d+) independent trials, each with success probability 0\.(\d)\. What is the mean of X\?$/))) {
+    const e = (Number(m[1]) * Number(m[2])) / 10;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/where each trial succeeds with probability 1\/(\d+)\. What is the mean of Y\?$/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/^Scores are normal with mean (\d+) and standard deviation (\d+)\. Find the z-score of an observation at (\d+)\.$/))) {
+    const e = (Number(m[3]) - Number(m[1])) / Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/what percent of scores fall within (\d) standard deviations? of the mean/))) {
+    const e = `${Number(m[1]) === 1 ? 68 : 95}%`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A population has standard deviation (\d+)\. What is the standard deviation of the sample mean for samples of size (\d+)\?$/))) {
+    const e = Number(m[1]) / Math.sqrt(Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A poll reports p̂ = 0\.(\d+) with margin of error ±0\.0(\d) at 95% confidence\. What is the confidence interval\?$/))) {
+    const e = `(0.${Number(m[1]) - Number(m[2])}, 0.${Number(m[1]) + Number(m[2])})`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A test yields P-value (0\.\d+)\. At significance level α = (0\.\d+), what is the decision\?$/))) {
+    const e = Number(m[1]) < Number(m[2]) ? 'Reject the null hypothesis' : 'Fail to reject the null hypothesis';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A significance test uses α = (0\.\d+)\. What is the probability of a Type I error\?$/))) {
+    checked++; if (!eq(it.answer.value, m[1])) fail(it, m[1]); continue;
+  }
+  if ((m = p.match(/^Group A has sample mean (\d+) and Group B has sample mean (\d+)\. What is the point estimate/))) {
+    const e = Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/grand total (\d+), one cell's row total is (\d+) and its column total is (\d+)\. What is that cell's EXPECTED count/))) {
+    const e = (Number(m[2]) * Number(m[3])) / Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/table with (\d+) rows and (\d+) columns\. How many degrees of freedom\?$/))) {
+    const e = (Number(m[1]) - 1) * (Number(m[2]) - 1);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/observed counts across (\d+) categories to a hypothesized distribution\. How many degrees of freedom\?$/))) {
+    const e = Number(m[1]) - 1;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^To test a claim, (\d+) simulated samples are generated under the null model\. (\d+) of them are at least as extreme/))) {
+    const e = Number(m[2]) / Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A properly randomized poll of (\d+) people has margin of error roughly 1\/√n\. About what is it\?$/))) {
+    const e = `About ${Math.round(100 / Math.sqrt(Number(m[1])))}%`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  // ── Early years ──────────────────────────────────────────────────────────
+  if ((m = p.match(/^Toys are sorted by color: (\d+) red toys and (\d+) blue toys\. How many toys/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Write the numeral for the word "(\w+)"\.$/))) {
+    const W = { zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20 };
+    if (!(m[1] in W)) { fail(it, `unknown number word ${m[1]}`); continue; }
+    checked++; if (!eq(it.answer.value, W[m[1]])) fail(it, W[m[1]]); continue;
+  }
+  if ((m = p.match(/^A pencil is (\d+) cubes long\. A crayon is (\d+) cubes long\. How much longer/))) {
+    const e = Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^On a clock, the hour hand points at (\d+) and the minute hand points straight up at 12/))) {
+    checked++; if (!eq(it.answer.value, `${m[1]}:00`)) fail(it, `${m[1]}:00`); continue;
+  }
+  if ((m = p.match(/^The hour hand is just past (\d+) and the minute hand points straight down at 6/))) {
+    checked++; if (!eq(it.answer.value, `${m[1]}:30`)) fail(it, `${m[1]}:30`); continue;
+  }
+  if ((m = p.match(/minute hand points at the (\d+) on the clock face\. How many minutes past the hour/))) {
+    const e = Number(m[1]) * 5;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^How many cents are (\d+) (penn|nickel|dime|quarter)/))) {
+    const V = { penn: 1, nickel: 5, dime: 10, quarter: 25 };
+    const e = Number(m[1]) * V[m[2]];
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Count the money: (\d+) quarters?, (\d+) dimes?, (\d+) nickels?, and (\d+) penn/))) {
+    const e = Number(m[1]) * 25 + Number(m[2]) * 10 + Number(m[3]) * 5 + Number(m[4]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  // ── Geometry gaps ────────────────────────────────────────────────────────
+  if ((m = p.match(/^Ray BD bisects angle ABC, which measures (\d+)°\. What is the measure of angle ABD\?$/))) {
+    const e = Number(m[1]) / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/perpendicular bisector of segment AB, and PA = (\d+)\. What is PB\?$/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/If the short piece \(centroid to midpoint\) is (\d+), how long is the whole median\?$/))) {
+    const e = 3 * Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A 45-45-90 triangle has legs of length (\d+)\. What is the exact length of the hypotenuse\?$/))) {
+    checked++; if (!eq(it.answer.value, `${m[1]}√2`)) fail(it, `${m[1]}√2`); continue;
+  }
+  if ((m = p.match(/^A 30-60-90 triangle has a SHORT leg of length (\d+)\. What is the length of the hypotenuse\?$/))) {
+    const e = 2 * Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A 30-60-90 triangle has a short leg of length (\d+)\. What is the exact length of the LONGER leg\?$/))) {
+    checked++; if (!eq(it.answer.value, `${m[1]}√3`)) fail(it, `${m[1]}√3`); continue;
+  }
+  if ((m = p.match(/^A square has sides of length (\d+)\. What is the exact length of its diagonal\?$/))) {
+    checked++; if (!eq(it.answer.value, `${m[1]}√2`)) fail(it, `${m[1]}√2`); continue;
+  }
+  if ((m = p.match(/^A central angle of a circle measures (\d+)°\. What is the measure of the arc/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/^An INSCRIBED angle intercepts an arc of (\d+)°\. What is the measure of the inscribed angle\?$/))) {
+    const e = Number(m[1]) / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^From external point Q, two tangent segments touch a circle\. One has length (\d+)/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/^A tangent touches a circle of radius (\d+)\. The center is (\d+) units from an external point/))) {
+    const e = Math.sqrt(Number(m[2]) ** 2 - Number(m[1]) ** 2);
+    if (!Number.isInteger(e)) { fail(it, 'non-integer tangent length'); continue; }
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A circle has radius (\d+)\. Find the length of an arc with central angle (\d+)°/))) {
+    const coeff = (2 * Number(m[1]) * Number(m[2])) / 360;
+    const e = `${coeff === 1 ? '' : coeff}π`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A circle has radius (\d+)\. Find the area of a sector with central angle (\d+)°/))) {
+    const coeff = (Number(m[1]) ** 2 * Number(m[2])) / 360;
+    const e = `${coeff}π`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A point is chosen at random on a segment of length (\d+)\. What is the probability it lands on a marked piece of length (\d+)\?$/))) {
+    const e = reduceStr(Number(m[2]), Number(m[1]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A dart lands at random inside a (\d+)-by-\d+ square\. A (\d+)-by-\d+ target square sits inside/))) {
+    const e = reduceStr(Number(m[2]) ** 2, Number(m[1]) ** 2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  // ── Algebra 2 / Precalc gaps ─────────────────────────────────────────────
+  if ((m = p.match(/^Solve: √\(x \+ (\d+)\) = (\d+)$/))) {
+    const e = Number(m[2]) ** 2 - Number(m[1]);
+    if (e < 0) { fail(it, 'negative solution under the radical'); continue; }
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Solve: √\((\d+)x\) = (\d+)$/))) {
+    const e = Number(m[2]) ** 2 / Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Add: (\d+)\/x \+ (\d+)\/x$/))) {
+    const e = `${Number(m[1]) + Number(m[2])}/x`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Add: 1\/x \+ 1\/\((\d+)x\)$/))) {
+    const e = `${Number(m[1]) + 1}/(${m[1]}x)`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Subtract: (\d+)\/\(x \+ 1\) − (\d+)\/\(x \+ 1\)$/))) {
+    const e = `${Number(m[1]) - Number(m[2])}/(x + 1)`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^The parabola x² = (\d+)y opens upward from the origin\. What are the coordinates of its FOCUS\?$/))) {
+    const e = `(0, ${Number(m[1]) / 4})`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^The parabola x² = (\d+)y has focus \(0, (\d+)\)\. What is the equation of its DIRECTRIX\?$/))) {
+    if (Number(m[1]) !== 4 * Number(m[2])) { fail(it, 'focus inconsistent with equation'); continue; }
+    const e = `y = −${m[2]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/equidistant from the focus \(0, (\d+)\) and the directrix y = −\d+\. What is its equation\?$/))) {
+    const e = `x² = ${4 * Number(m[1])}y`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A wheel of radius (\d+) m spins at (\d+) radians per second\. What is the linear speed/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A turntable spins at (\d+) revolutions per minute\. What is its angular speed in radians per minute/))) {
+    const e = `${2 * Number(m[1])}π`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^What is the period of y = tan\((\d*)x\)\?$/))) {
+    const b = m[1] === '' ? 1 : Number(m[1]);
+    const e = b === 1 ? 'π' : `π/${b}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
   unchecked[it.skillId] = (unchecked[it.skillId] || 0) + 1;
 }
 

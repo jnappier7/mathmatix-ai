@@ -1,7 +1,7 @@
 {
  "source": "hand-authored (domain judgment), 2026-08-01",
  "note": "pathway skill ids -> BANK skill ids, same contract as pathway-crosswalk.json. Read by utils/skillCanonicalizer.js buildPathway() for CONTENT LOOKUP ONLY — never by canonicalSkillId (mastery keying). Kept in a SEPARATE file because scripts/proposePathwayCrosswalk.js overwrites pathway-crosswalk.json wholesale; manual rows here win on collision. Filename deliberately does NOT end in '-crosswalk.json' so the canonicalization glob cannot sweep it up. Covers geometry, algebra-2, precalculus, act-prep, algebra-1 and 6th-grade-math.",
- "why": "The fuzzy matcher (auditCourseProblemCoverage.js --suggest) is unreliable in geometry: it proposed geometric-mean -> mean (the arithmetic average), trigonometric-ratios-intro -> ratios, and circle-basics -> trig-unit-circle-evaluation. Those would serve a geometry student the wrong topic entirely. The rows below are matched by mathematical MEANING instead. Skills with no honest bank match (points-lines-planes, polygon-angle-sum, quadrilateral-properties, trapezoid-properties, geometric-mean) are deliberately ABSENT — they are real content gaps and must stay visible as such. 2026-08-02: 28 rows added after comparing a full DB export against the generated bank — 21 of 35 skills that the audit reported EMPTY already had content under another name. The audit measures REACHABILITY, not existence: an unmapped skill reads empty whether or not problems exist for it. Always diff against the bank before generating. 2026-08-03 (calculus): AB/BC review skills map to the precalc/trig banks they revise; AB/BC calc skills map to the existing calc bank ids (limits, derivatives, ftc, ...) whose thin families the low-volume templates now top up. The cumulative/AP-practice-mode rows (cumulative-mcq-practice, ap-frq-*, calculator-active-fluency) map MODE to mixed CONTENT — the mode itself is the tutor's job; the rows only give it material to run. 2026-08-03 (early-math + parents): the emf-* prefix is pure vocabulary seam — 24 of 31 skills map onto the elementary banks (rounding 274, compare-numbers 347, the one-step fact/CGI-unknown families, the fraction-operation banks). The parent-course model skills (ten frames, bar models, algebra tiles, chip model, ...) are authored in templatesParentModels.js under their own ids because the MODELS are the content; emf-mental-math-strategies crosswalks to that shared mental-math-strategies family rather than duplicating it.",
+ "why": "The fuzzy matcher (auditCourseProblemCoverage.js --suggest) is unreliable in geometry: it proposed geometric-mean -> mean (the arithmetic average), trigonometric-ratios-intro -> ratios, and circle-basics -> trig-unit-circle-evaluation. Those would serve a geometry student the wrong topic entirely. The rows below are matched by mathematical MEANING instead. Skills with no honest bank match (points-lines-planes, polygon-angle-sum, quadrilateral-properties, trapezoid-properties, geometric-mean) are deliberately ABSENT — they are real content gaps and must stay visible as such. 2026-08-02: 28 rows added after comparing a full DB export against the generated bank — 21 of 35 skills that the audit reported EMPTY already had content under another name. The audit measures REACHABILITY, not existence: an unmapped skill reads empty whether or not problems exist for it. Always diff against the bank before generating. 2026-08-03 (calculus): AB/BC review skills map to the precalc/trig banks they revise; AB/BC calc skills map to the existing calc bank ids (limits, derivatives, ftc, ...) whose thin families the low-volume templates now top up. The cumulative/AP-practice-mode rows (cumulative-mcq-practice, ap-frq-*, calculator-active-fluency) map MODE to mixed CONTENT — the mode itself is the tutor's job; the rows only give it material to run. 2026-08-03 (early-math + parents): the emf-* prefix is pure vocabulary seam — 24 of 31 skills map onto the elementary banks (rounding 274, compare-numbers 347, the one-step fact/CGI-unknown families, the fraction-operation banks). The parent-course model skills (ten frames, bar models, algebra tiles, chip model, ...) are authored in templatesParentModels.js under their own ids because the MODELS are the content; emf-mental-math-strategies crosswalks to that shared mental-math-strategies family rather than duplicating it. 2026-08-04 (ladder test-outs): the owner's requirement is that no ladder skill denies a test-out for lack of items. The pattern-ladder (skills-unified) ids and the legacy catalog duplicates are mapped here by MEANING onto the content banks; routes/mastery.js now samples challenges across skillLookupCandidates, so these rows are what makes a test-out servable. Matcher traps rejected during review: mode->modeling, regrouping->factoring, ratio-tables->frequency-tables. Calc-3 rows map to the calc3-* family banks; triple/cylindrical map to the nearest family (calc3-double-integrals) deliberately, noted as family-level coverage.",
  "rows": [
   {
    "legacyId": "angle-measurement",
@@ -1962,6 +1962,4141 @@
    "legacyId": "cm-unit-price-comparisons",
    "unifiedId": "act-rates-unit-conversion",
    "course": "consumer-math"
+  },
+  {
+   "legacyId": "prek-count-0-10",
+   "unifiedId": "counting-up",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "prek-count-0-10",
+   "unifiedId": "counting",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "prek-count-0-5",
+   "unifiedId": "counting-up",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "prek-count-0-5",
+   "unifiedId": "counting",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "prek-patterns",
+   "unifiedId": "sequence-patterns",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "prek-shapes-basic",
+   "unifiedId": "identify-shapes",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "prek-shapes-basic",
+   "unifiedId": "2d-shapes",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "prek-compare-sets",
+   "unifiedId": "comparing-numbers",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "prek-compare-sets",
+   "unifiedId": "compare-numbers",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "counting-to-20",
+   "unifiedId": "counting-up",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "counting-to-20",
+   "unifiedId": "counting",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "counting-to-20",
+   "unifiedId": "counting-down",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "comparing-numbers-k",
+   "unifiedId": "comparing-numbers",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "comparing-numbers-k",
+   "unifiedId": "compare-numbers",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "addition-within-5",
+   "unifiedId": "addition-within-10",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "addition-within-5",
+   "unifiedId": "counting-up",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "subtraction-within-5",
+   "unifiedId": "subtraction",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "subtraction-within-5",
+   "unifiedId": "counting-down",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "shapes-2d-k",
+   "unifiedId": "2d-shapes",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "shapes-2d-k",
+   "unifiedId": "identify-shapes",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "shapes-3d-k",
+   "unifiedId": "3d-shapes",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "addition-within-20",
+   "unifiedId": "addition",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "addition-within-20",
+   "unifiedId": "make-ten",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "addition-within-20",
+   "unifiedId": "addition-within-10",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "subtraction-within-20",
+   "unifiedId": "subtraction",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "subtraction-within-20",
+   "unifiedId": "subtraction-within-100",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "place-value-tens-ones",
+   "unifiedId": "place-value",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "place-value-tens-ones",
+   "unifiedId": "expanded-form",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "data-graphs-1st",
+   "unifiedId": "data-displays",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "data-graphs-1st",
+   "unifiedId": "tally-charts",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "place-value-to-1000",
+   "unifiedId": "place-value",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "place-value-to-1000",
+   "unifiedId": "expanded-form",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "arrays-intro",
+   "unifiedId": "repeated-addition",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "arrays-intro",
+   "unifiedId": "multiplication-as-groups",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "multiplication-facts",
+   "unifiedId": "multiplication-basics",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "multiplication-facts",
+   "unifiedId": "fact-families",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "division-basics",
+   "unifiedId": "one-step-division",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "division-basics",
+   "unifiedId": "related-facts",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "division-basics",
+   "unifiedId": "fact-families",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "fractions-unit-fractions",
+   "unifiedId": "fractions-as-parts",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "fractions-unit-fractions",
+   "unifiedId": "fraction-concepts",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "fractions-unit-fractions",
+   "unifiedId": "fractions-basics",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "multi-digit-multiplication",
+   "unifiedId": "emf-multi-digit-multiplication",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "multi-digit-multiplication",
+   "unifiedId": "multiplication-basics",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "multi-digit-multiplication",
+   "unifiedId": "partial-products",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "division-multi-digit",
+   "unifiedId": "g6-multi-digit-division",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "division-multi-digit",
+   "unifiedId": "emf-long-division",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "division-multi-digit",
+   "unifiedId": "partial-quotients-division",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "fractions-equivalent",
+   "unifiedId": "equivalent-fractions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "factors-multiples",
+   "unifiedId": "emf-factors-multiples",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "factors-multiples",
+   "unifiedId": "g6-gcf-lcm",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "angles",
+   "unifiedId": "emf-angles-basics",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "angles",
+   "unifiedId": "act-triangles-angle-relationships",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "place-value-millions",
+   "unifiedId": "place-value",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "place-value-millions",
+   "unifiedId": "expanded-form",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "decimal-operations",
+   "unifiedId": "decimals-add-subtract",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "decimal-operations",
+   "unifiedId": "decimals-multiply",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "decimal-operations",
+   "unifiedId": "decimals-divide",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "adding-subtracting-fractions",
+   "unifiedId": "add-fractions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "adding-subtracting-fractions",
+   "unifiedId": "subtract-fractions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "multiplying-fractions",
+   "unifiedId": "multiply-fractions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "volume-rectangular-prisms-5th",
+   "unifiedId": "volume-rectangular-prisms",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "coordinate-plane-5th",
+   "unifiedId": "coordinate-plane",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "coordinate-plane-5th",
+   "unifiedId": "plotting-points",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "data-collection",
+   "unifiedId": "data-displays",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "data-collection",
+   "unifiedId": "tally-charts",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "frequency-tables",
+   "unifiedId": "tally-charts",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "frequency-tables",
+   "unifiedId": "data-displays",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "ratios-intro",
+   "unifiedId": "ratios",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "ratios-intro",
+   "unifiedId": "ratio-concepts",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "percent-basics",
+   "unifiedId": "percent-of-a-number",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "percent-basics",
+   "unifiedId": "percent-problems",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "dividing-fractions",
+   "unifiedId": "divide-fractions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "decimals-operations",
+   "unifiedId": "decimals-add-subtract",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "decimals-operations",
+   "unifiedId": "decimals-multiply",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "decimals-operations",
+   "unifiedId": "decimals-divide",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "negative-numbers-intro",
+   "unifiedId": "g6-integer-basics",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "negative-numbers-intro",
+   "unifiedId": "g6-absolute-value-opposites",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "negative-numbers-intro",
+   "unifiedId": "adding-subtracting-integers",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "expressions-writing",
+   "unifiedId": "writing-algebraic-expressions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "expressions-writing",
+   "unifiedId": "writing-expressions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "solving-equations-6th",
+   "unifiedId": "one-step-equations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "solving-equations-6th",
+   "unifiedId": "solving-one-step-equations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "area-composite-figures",
+   "unifiedId": "g6-area-composite-figures",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "area-composite-figures",
+   "unifiedId": "g7-composite-figures",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "statistics-mean-median",
+   "unifiedId": "mean",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "statistics-mean-median",
+   "unifiedId": "median",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "statistics-mean-median",
+   "unifiedId": "mode",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "statistics-mean-median",
+   "unifiedId": "range",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "one-step-equations-multiplication",
+   "unifiedId": "one-step-equations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "one-step-equations-multiplication",
+   "unifiedId": "one-step-multiplication",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "percent-applications",
+   "unifiedId": "percent-of-a-number",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "percent-applications",
+   "unifiedId": "percent-problems",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "percent-applications",
+   "unifiedId": "percent-change",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "rational-number-operations",
+   "unifiedId": "g7-rational-word-problems",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "rational-number-operations",
+   "unifiedId": "adding-subtracting-integers",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "rational-number-operations",
+   "unifiedId": "add-fractions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "solving-equations-7th",
+   "unifiedId": "two-step-equations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "solving-equations-7th",
+   "unifiedId": "multi-step-equations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "solving-inequalities-7th",
+   "unifiedId": "solving-inequalities",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "solving-inequalities-7th",
+   "unifiedId": "two-step-inequalities",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "scale-drawings",
+   "unifiedId": "scale-factor",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "probability-simple",
+   "unifiedId": "simple-probability",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "probability-simple",
+   "unifiedId": "probability-basics",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "probability-simple",
+   "unifiedId": "intro-probability",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "proportions",
+   "unifiedId": "solve-proportions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "proportions",
+   "unifiedId": "solving-proportions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "integer-addition",
+   "unifiedId": "g6-integer-basics",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "integer-addition",
+   "unifiedId": "adding-subtracting-integers",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "integer-subtraction",
+   "unifiedId": "g6-integer-basics",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "integer-subtraction",
+   "unifiedId": "adding-subtracting-integers",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "integer-exponents",
+   "unifiedId": "exponent-properties",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "integer-exponents",
+   "unifiedId": "act-exponent-rules",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "linear-equations-slope-intercept",
+   "unifiedId": "writing-linear-equations-slope-intercept",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "linear-equations-slope-intercept",
+   "unifiedId": "slope-intercept-from-equation",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "linear-equations-slope-intercept",
+   "unifiedId": "standard-to-slope-intercept",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "slope-intercept-form",
+   "unifiedId": "slope-intercept-from-equation",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "slope-intercept-form",
+   "unifiedId": "standard-to-slope-intercept",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "slope-intercept-form",
+   "unifiedId": "slope",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "graphing-linear-equations",
+   "unifiedId": "graph-linear-equations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "systems-8th",
+   "unifiedId": "systems-substitution",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "systems-8th",
+   "unifiedId": "systems-graphing",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "systems-8th",
+   "unifiedId": "act-systems-of-equations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "function-concept",
+   "unifiedId": "function-notation-evaluation",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "function-concept",
+   "unifiedId": "identifying-functions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "linear-vs-nonlinear",
+   "unifiedId": "comparing-linear-exponential",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "linear-vs-nonlinear",
+   "unifiedId": "identifying-functions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "pythagorean-theorem-8th",
+   "unifiedId": "pythagorean-theorem",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "pythagorean-theorem-8th",
+   "unifiedId": "act-triangles-pythagorean-theorem",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "volume-cylinders-cones-spheres",
+   "unifiedId": "act-volume-surface-area",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "volume-cylinders-cones-spheres",
+   "unifiedId": "volume-scaling",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "scatter-plots-lines-of-fit",
+   "unifiedId": "line-of-best-fit",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "scatter-plots-lines-of-fit",
+   "unifiedId": "scatter-plots-correlation",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "parent-functions",
+   "unifiedId": "function-families",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "parent-functions",
+   "unifiedId": "function-transformations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "linear-programming",
+   "unifiedId": "systems-of-inequalities",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "linear-programming",
+   "unifiedId": "graphing-systems-inequalities",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "function-notation-composition",
+   "unifiedId": "function-composition",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "function-notation-composition",
+   "unifiedId": "function-notation-evaluation",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "function-notation-composition",
+   "unifiedId": "act-function-composition",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "quadratic-completing-square",
+   "unifiedId": "completing-the-square",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "quadratic-completing-square",
+   "unifiedId": "solving-quadratics-square-roots",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "quadratic-completing-square",
+   "unifiedId": "factoring-quadratics",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "rational-expressions",
+   "unifiedId": "simplify-rational-expressions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "rational-expressions",
+   "unifiedId": "multiply-rational-expressions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "rational-expressions",
+   "unifiedId": "divide-rational-expressions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "radical-expressions",
+   "unifiedId": "simplifying-radicals",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "radical-expressions",
+   "unifiedId": "act-radicals-roots",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "exponential-equations-logarithms",
+   "unifiedId": "act-logarithms",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "sequences-series-arithmetic",
+   "unifiedId": "arithmetic-sequences",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "sequences-series-arithmetic",
+   "unifiedId": "arithmetic-series",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "sequences-series-geometric",
+   "unifiedId": "geometric-sequences",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "sequences-series-geometric",
+   "unifiedId": "geometric-series",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "conic-sections-circles",
+   "unifiedId": "act-circles",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "probability-counting",
+   "unifiedId": "counting-methods",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "probability-counting",
+   "unifiedId": "permutations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "probability-counting",
+   "unifiedId": "combinations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "trig-unit-circle",
+   "unifiedId": "trig-unit-circle-evaluation",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "trig-unit-circle",
+   "unifiedId": "trig-tan-unit-circle",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "trig-graphs",
+   "unifiedId": "graphing-sinusoidal",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "trig-graphs",
+   "unifiedId": "act-trigonometric-functions",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "trig-identities",
+   "unifiedId": "trig-identities-basic",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "vectors",
+   "unifiedId": "vector-operations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "vectors",
+   "unifiedId": "vector-representation",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "vectors",
+   "unifiedId": "dot-product",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "area-approximation",
+   "unifiedId": "riemann-sums",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "area-approximation",
+   "unifiedId": "definite-integrals",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "differentiability",
+   "unifiedId": "differentiability-vs-continuity",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "derivatives-graphs-tables",
+   "unifiedId": "derivatives-from-graphs-tables",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "derivatives-graphs-tables",
+   "unifiedId": "derivative-definition",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "continuity",
+   "unifiedId": "continuity-types",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "continuity",
+   "unifiedId": "differentiability-vs-continuity",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "derivatives-definition",
+   "unifiedId": "derivative-definition",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "derivatives-definition",
+   "unifiedId": "derivatives",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "power-rule",
+   "unifiedId": "basic-differentiation-rules",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "power-rule",
+   "unifiedId": "derivatives",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "indefinite-integrals",
+   "unifiedId": "antiderivatives",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "indefinite-integrals",
+   "unifiedId": "u-substitution",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "definite-integrals-ftc",
+   "unifiedId": "definite-integrals",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "definite-integrals-ftc",
+   "unifiedId": "ftc",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "volume-disks-washers",
+   "unifiedId": "volume-disk-washer",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "volume-disks-washers",
+   "unifiedId": "volume-cross-sections",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "trig-substitution",
+   "unifiedId": "u-substitution",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "trig-substitution",
+   "unifiedId": "trig-identities-basic",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "sequences",
+   "unifiedId": "sequences-convergence",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "sequences",
+   "unifiedId": "arithmetic-sequences",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "sequences",
+   "unifiedId": "geometric-sequences",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "series-tests",
+   "unifiedId": "convergence-tests",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "series-tests",
+   "unifiedId": "series-formulas",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "power-series",
+   "unifiedId": "power-series-interval",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "power-series",
+   "unifiedId": "taylor-series-known",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "taylor-series",
+   "unifiedId": "taylor-maclaurin-polynomials",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "taylor-series",
+   "unifiedId": "taylor-series-known",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "parametric-calculus",
+   "unifiedId": "parametric-derivatives",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "parametric-calculus",
+   "unifiedId": "parametric-arc-length",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "parametric-calculus",
+   "unifiedId": "parametric-equations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "polar-calculus",
+   "unifiedId": "polar-graphing-area",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "polar-calculus",
+   "unifiedId": "polar-coordinates",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "polar-calculus",
+   "unifiedId": "polar-curves",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "differential-equations-intro",
+   "unifiedId": "separable-des",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "differential-equations-intro",
+   "unifiedId": "slope-fields",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "differential-equations-intro",
+   "unifiedId": "euler-method",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "vectors-3d",
+   "unifiedId": "vector-representation",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "vectors-3d",
+   "unifiedId": "vector-operations",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "vectors-3d",
+   "unifiedId": "calc3-dot-cross",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "cross-product",
+   "unifiedId": "calc3-dot-cross",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "cross-product",
+   "unifiedId": "dot-product",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "partial-derivatives",
+   "unifiedId": "calc3-partial-derivatives",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "gradient",
+   "unifiedId": "calc3-gradient",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "double-integrals",
+   "unifiedId": "calc3-double-integrals",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "triple-integrals",
+   "unifiedId": "calc3-double-integrals",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "cylindrical-spherical",
+   "unifiedId": "polar-coordinates",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "cylindrical-spherical",
+   "unifiedId": "calc3-double-integrals",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "line-integrals",
+   "unifiedId": "calc3-greens-theorem",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "greens-theorem",
+   "unifiedId": "calc3-greens-theorem",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "surface-integrals",
+   "unifiedId": "calc3-stokes-theorem",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "surface-integrals",
+   "unifiedId": "calc3-divergence-theorem",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "stokes-theorem",
+   "unifiedId": "calc3-stokes-theorem",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "divergence-theorem",
+   "unifiedId": "calc3-divergence-theorem",
+   "course": "catalog"
+  },
+  {
+   "legacyId": "ELEM.QNT.1",
+   "unifiedId": "place-value",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.1",
+   "unifiedId": "expanded-form",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.1",
+   "unifiedId": "compare-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.2",
+   "unifiedId": "rounding",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.2",
+   "unifiedId": "estimate-sums",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.3",
+   "unifiedId": "multi-digit-addition",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.3",
+   "unifiedId": "addition",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.3",
+   "unifiedId": "subtraction",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.3",
+   "unifiedId": "regrouping",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.4",
+   "unifiedId": "multiplication-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.4",
+   "unifiedId": "multiplication-concepts",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.4",
+   "unifiedId": "fact-families",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.5",
+   "unifiedId": "one-step-division",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.5",
+   "unifiedId": "fact-families",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.5",
+   "unifiedId": "related-facts",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.6",
+   "unifiedId": "emf-multi-digit-multiplication",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.6",
+   "unifiedId": "partial-products",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.6",
+   "unifiedId": "area-model-multiplication",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.7",
+   "unifiedId": "g6-multi-digit-division",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.7",
+   "unifiedId": "emf-long-division",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.7",
+   "unifiedId": "emf-interpreting-remainders",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.7",
+   "unifiedId": "partial-quotients-division",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.8",
+   "unifiedId": "emf-factors-multiples",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.8",
+   "unifiedId": "g6-gcf-lcm",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.9",
+   "unifiedId": "fractions-as-parts",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.9",
+   "unifiedId": "fraction-concepts",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.9",
+   "unifiedId": "part-part-whole",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.10",
+   "unifiedId": "decimals-place-value",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.10",
+   "unifiedId": "decimals-rounding",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.11",
+   "unifiedId": "add-fractions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.11",
+   "unifiedId": "subtract-fractions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.11",
+   "unifiedId": "adding-fractions-different-denominators",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.12",
+   "unifiedId": "multiply-fractions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.13",
+   "unifiedId": "divide-fractions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.14",
+   "unifiedId": "decimals-add-subtract",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.14",
+   "unifiedId": "decimals-multiply",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.QNT.14",
+   "unifiedId": "decimals-divide",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.PRP.1",
+   "unifiedId": "equivalent-fractions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.PRP.2",
+   "unifiedId": "comparing-fractions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.PRP.2",
+   "unifiedId": "equivalent-fractions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.PRP.3",
+   "unifiedId": "bar-models",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.PRP.3",
+   "unifiedId": "one-step-multiplication",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.PRP.4",
+   "unifiedId": "emf-decimals-fractions-connection",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.PRP.5",
+   "unifiedId": "multiply-fractions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.PRP.5",
+   "unifiedId": "fraction-operations-visual",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.PRP.6",
+   "unifiedId": "g6-unit-conversions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.1",
+   "unifiedId": "equal-to",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.1",
+   "unifiedId": "balance-model",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.1",
+   "unifiedId": "unknown-addend",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.2",
+   "unifiedId": "algebraic-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.2",
+   "unifiedId": "distributive-property",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.3",
+   "unifiedId": "unknown-addend",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.3",
+   "unifiedId": "result-unknown",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.3",
+   "unifiedId": "change-unknown",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.3",
+   "unifiedId": "missing-addend",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.4",
+   "unifiedId": "multi-step-word-problems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.4",
+   "unifiedId": "addition-subtraction-word-problems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.5",
+   "unifiedId": "order-of-operations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.5",
+   "unifiedId": "nested-operations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.6",
+   "unifiedId": "writing-algebraic-expressions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.6",
+   "unifiedId": "numerical-expressions-exponents",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.EQV.6",
+   "unifiedId": "evaluating-expressions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.1",
+   "unifiedId": "sequence-patterns",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.1",
+   "unifiedId": "skip-counting",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.1",
+   "unifiedId": "fact-families",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.2",
+   "unifiedId": "sequence-patterns",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.3",
+   "unifiedId": "sequence-patterns",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.3",
+   "unifiedId": "ratio-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.4",
+   "unifiedId": "sequence-patterns",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.5",
+   "unifiedId": "plotting-points",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.5",
+   "unifiedId": "quadrants",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.FNC.5",
+   "unifiedId": "coordinate-plane",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.1",
+   "unifiedId": "classify-shapes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.1",
+   "unifiedId": "2d-shapes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.1",
+   "unifiedId": "quadrilateral-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.2",
+   "unifiedId": "perimeter",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.3",
+   "unifiedId": "area-rectangles",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.4",
+   "unifiedId": "points-lines-planes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.4",
+   "unifiedId": "emf-angles-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.4",
+   "unifiedId": "parallel-perpendicular-lines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.5",
+   "unifiedId": "emf-angles-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.6",
+   "unifiedId": "line-symmetry",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.6",
+   "unifiedId": "symmetry-shapes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.7",
+   "unifiedId": "classify-shapes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.7",
+   "unifiedId": "quadrilateral-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.8",
+   "unifiedId": "volume-rectangular-prisms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.9",
+   "unifiedId": "coordinate-plane",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.9",
+   "unifiedId": "plotting-points",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.SPC.9",
+   "unifiedId": "quadrants",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.DTA.1",
+   "unifiedId": "data-displays",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.DTA.1",
+   "unifiedId": "tally-charts",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.DTA.2",
+   "unifiedId": "data-displays",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.DTA.3",
+   "unifiedId": "data-displays",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.DTA.3",
+   "unifiedId": "interpreting-graphs-stories",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ELEM.DTA.4",
+   "unifiedId": "likely-unlikely",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.1",
+   "unifiedId": "decimals-add-subtract",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.1",
+   "unifiedId": "decimals-multiply",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.1",
+   "unifiedId": "decimals-divide",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.1",
+   "unifiedId": "g6-decimal-division",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.2",
+   "unifiedId": "divide-fractions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.3",
+   "unifiedId": "g6-gcf-lcm",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.3",
+   "unifiedId": "emf-factors-multiples",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.4",
+   "unifiedId": "g6-integer-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.4",
+   "unifiedId": "g6-absolute-value-opposites",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.5",
+   "unifiedId": "ordering-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.5",
+   "unifiedId": "compare-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.6",
+   "unifiedId": "adding-subtracting-integers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.6",
+   "unifiedId": "chip-model",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.6",
+   "unifiedId": "g6-integer-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.7",
+   "unifiedId": "multiplying-dividing-integers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.9",
+   "unifiedId": "exponent-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.9",
+   "unifiedId": "act-exponent-rules",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.10",
+   "unifiedId": "act-scientific-notation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.11",
+   "unifiedId": "square-cube-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.QNT.11",
+   "unifiedId": "irrational-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.1",
+   "unifiedId": "ratios",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.1",
+   "unifiedId": "ratio-concepts",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.2",
+   "unifiedId": "ratios",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.2",
+   "unifiedId": "ratio-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.2",
+   "unifiedId": "tape-diagrams",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.2",
+   "unifiedId": "double-number-lines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.3",
+   "unifiedId": "unit-rates",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.3",
+   "unifiedId": "rate-problems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.4",
+   "unifiedId": "percent-of-a-number",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.4",
+   "unifiedId": "part-part-whole",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.5",
+   "unifiedId": "proportional-relationships",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.5",
+   "unifiedId": "solve-proportions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.PRP.8",
+   "unifiedId": "scale-factor",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.2",
+   "unifiedId": "combining-like-terms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.2",
+   "unifiedId": "equivalent-expressions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.2",
+   "unifiedId": "evaluate-expressions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.3",
+   "unifiedId": "one-step-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.3",
+   "unifiedId": "solving-one-step-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.4",
+   "unifiedId": "one-step-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.4",
+   "unifiedId": "graphing-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.5",
+   "unifiedId": "two-step-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.6",
+   "unifiedId": "distributive-property",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.6",
+   "unifiedId": "expanding-expressions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.6",
+   "unifiedId": "combining-like-terms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.7",
+   "unifiedId": "two-step-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.8",
+   "unifiedId": "multi-step-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.8",
+   "unifiedId": "equations-with-variables-both-sides",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.9",
+   "unifiedId": "systems-substitution",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.9",
+   "unifiedId": "systems-graphing",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.EQV.9",
+   "unifiedId": "act-systems-of-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.1",
+   "unifiedId": "ratio-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.1",
+   "unifiedId": "graph-linear-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.1",
+   "unifiedId": "proportional-relationships",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.2",
+   "unifiedId": "function-notation-evaluation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.2",
+   "unifiedId": "identifying-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.3",
+   "unifiedId": "slope",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.3",
+   "unifiedId": "slope-from-two-points",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.3",
+   "unifiedId": "slope-concepts",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.4",
+   "unifiedId": "graph-linear-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.4",
+   "unifiedId": "slope-intercept-from-equation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.5",
+   "unifiedId": "comparing-linear-exponential",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.5",
+   "unifiedId": "identifying-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.6",
+   "unifiedId": "comparing-linear-exponential",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.FNC.6",
+   "unifiedId": "identifying-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.1",
+   "unifiedId": "area-triangles",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.1",
+   "unifiedId": "g6-area-triangles-parallelograms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.1",
+   "unifiedId": "g6-area-composite-figures",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.2",
+   "unifiedId": "act-volume-surface-area",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.3",
+   "unifiedId": "volume-rectangular-prisms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.4",
+   "unifiedId": "coordinate-plane",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.4",
+   "unifiedId": "quadrants",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.4",
+   "unifiedId": "plotting-points",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.5",
+   "unifiedId": "act-angles-parallel-lines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.5",
+   "unifiedId": "act-triangles-angle-relationships",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.5",
+   "unifiedId": "emf-angles-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.6",
+   "unifiedId": "circles-circumference-area",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.7",
+   "unifiedId": "translations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.7",
+   "unifiedId": "reflections",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.7",
+   "unifiedId": "rotations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.7",
+   "unifiedId": "dilations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.8",
+   "unifiedId": "pythagorean-theorem",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.8",
+   "unifiedId": "act-triangles-pythagorean-theorem",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.8",
+   "unifiedId": "distance-formula",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.9",
+   "unifiedId": "act-volume-surface-area",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.SPC.9",
+   "unifiedId": "volume-scaling",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.1",
+   "unifiedId": "act-center-spread",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.1",
+   "unifiedId": "data-displays",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.1",
+   "unifiedId": "mean",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.2",
+   "unifiedId": "data-displays",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.2",
+   "unifiedId": "box-plots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.2",
+   "unifiedId": "histograms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.3",
+   "unifiedId": "mean",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.3",
+   "unifiedId": "median",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.3",
+   "unifiedId": "range",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.3",
+   "unifiedId": "g6-measures-center-variability",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.4",
+   "unifiedId": "g7-populations-samples",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.4",
+   "unifiedId": "g7-random-sampling",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.4",
+   "unifiedId": "g7-informal-inferences",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.5",
+   "unifiedId": "simple-probability",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.5",
+   "unifiedId": "probability-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.5",
+   "unifiedId": "g7-experimental-theoretical",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.6",
+   "unifiedId": "compound-probability",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.6",
+   "unifiedId": "g7-probability-simulations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.7",
+   "unifiedId": "two-way-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.7",
+   "unifiedId": "line-of-best-fit",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.7",
+   "unifiedId": "scatter-plots-correlation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.8",
+   "unifiedId": "probability-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.8",
+   "unifiedId": "g7-experimental-theoretical",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "MS.DTA.8",
+   "unifiedId": "simple-probability",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.QNT.1",
+   "unifiedId": "irrational-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.QNT.1",
+   "unifiedId": "square-cube-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.QNT.2",
+   "unifiedId": "exponent-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.QNT.2",
+   "unifiedId": "act-exponent-rules",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.QNT.3",
+   "unifiedId": "simplifying-radicals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.QNT.3",
+   "unifiedId": "act-radicals-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.QNT.4",
+   "unifiedId": "simplifying-radicals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.QNT.4",
+   "unifiedId": "act-radicals-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.PRP.1",
+   "unifiedId": "act-rates-unit-conversion",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.PRP.1",
+   "unifiedId": "g6-unit-conversions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.PRP.3",
+   "unifiedId": "act-variation-direct-inverse",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.PRP.3",
+   "unifiedId": "proportional-relationships",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.PRP.4",
+   "unifiedId": "percent-change",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.PRP.4",
+   "unifiedId": "exponential-growth",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.PRP.4",
+   "unifiedId": "exponential-decay",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.EQV.5",
+   "unifiedId": "act-absolute-value-equations-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.EQV.13",
+   "unifiedId": "factoring-trinomials",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.EQV.14",
+   "unifiedId": "factoring-difference-squares",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.EQV.14",
+   "unifiedId": "factoring-trinomials",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.EQV.16",
+   "unifiedId": "completing-the-square",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.EQV.16",
+   "unifiedId": "solving-quadratics-square-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.5",
+   "unifiedId": "graphing-linear-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.5",
+   "unifiedId": "graphing-systems-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.5",
+   "unifiedId": "systems-of-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.6",
+   "unifiedId": "arithmetic-sequences",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.6",
+   "unifiedId": "arithmetic-series",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.7",
+   "unifiedId": "geometric-sequences",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.7",
+   "unifiedId": "geometric-series",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.9",
+   "unifiedId": "exponential-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.9",
+   "unifiedId": "exponential-growth",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.9",
+   "unifiedId": "exponential-decay",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.12",
+   "unifiedId": "average-rate-of-change",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.FNC.12",
+   "unifiedId": "rate-of-change-problems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.SPC.1",
+   "unifiedId": "distance-formula",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.SPC.1",
+   "unifiedId": "midpoint-formula",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.DTA.2",
+   "unifiedId": "two-way-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.DTA.2",
+   "unifiedId": "conditional-probability",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.DTA.3",
+   "unifiedId": "line-of-best-fit",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.DTA.3",
+   "unifiedId": "scatter-plots-correlation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.DTA.4",
+   "unifiedId": "scatter-plots-correlation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.DTA.4",
+   "unifiedId": "line-of-best-fit",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.DTA.5",
+   "unifiedId": "act-exponential-models",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG1.DTA.5",
+   "unifiedId": "line-of-best-fit",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.QNT.1",
+   "unifiedId": "act-radicals-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.QNT.1",
+   "unifiedId": "simplifying-radicals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.QNT.1",
+   "unifiedId": "act-basic-geometry-measures",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.QNT.2",
+   "unifiedId": "g6-unit-conversions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.QNT.2",
+   "unifiedId": "act-rates-unit-conversion",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.1",
+   "unifiedId": "dilations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.1",
+   "unifiedId": "scale-factor",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.2",
+   "unifiedId": "similar-figures",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.2",
+   "unifiedId": "similarity",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.2",
+   "unifiedId": "act-similar-congruent-figures",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.3",
+   "unifiedId": "similarity",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.3",
+   "unifiedId": "act-similar-congruent-figures",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.4",
+   "unifiedId": "geometric-mean",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.4",
+   "unifiedId": "similar-figures",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.6",
+   "unifiedId": "trig-solve-right-triangles",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.6",
+   "unifiedId": "trig-elevation-depression",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.6",
+   "unifiedId": "act-right-triangle-trigonometry",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.7",
+   "unifiedId": "scale-factor",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.7",
+   "unifiedId": "volume-scaling",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.PRP.7",
+   "unifiedId": "act-area-perimeter",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.1",
+   "unifiedId": "geometric-proofs",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.2",
+   "unifiedId": "geometric-proofs",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.2",
+   "unifiedId": "sequence-patterns",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.3",
+   "unifiedId": "geometric-proofs",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.3",
+   "unifiedId": "algebraic-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.4",
+   "unifiedId": "geometric-proofs",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.5",
+   "unifiedId": "geometric-proofs",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.5",
+   "unifiedId": "act-angles-parallel-lines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.6",
+   "unifiedId": "congruence",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.6",
+   "unifiedId": "act-similar-congruent-figures",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.7",
+   "unifiedId": "geometric-proofs",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.7",
+   "unifiedId": "congruence",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.8",
+   "unifiedId": "geometric-proofs",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.8",
+   "unifiedId": "quadrilateral-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.9",
+   "unifiedId": "coordinate-plane",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.9",
+   "unifiedId": "distance-formula",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.EQV.9",
+   "unifiedId": "midpoint-formula",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.FNC.1",
+   "unifiedId": "translations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.FNC.1",
+   "unifiedId": "reflections",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.FNC.1",
+   "unifiedId": "rotations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.FNC.1",
+   "unifiedId": "dilations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.FNC.2",
+   "unifiedId": "function-application-modeling",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.FNC.2",
+   "unifiedId": "area-perimeter-word-problems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.1",
+   "unifiedId": "act-basic-geometry-measures",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.1",
+   "unifiedId": "points-lines-planes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.1",
+   "unifiedId": "emf-angles-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.2",
+   "unifiedId": "emf-angles-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.2",
+   "unifiedId": "act-triangles-angle-relationships",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.3",
+   "unifiedId": "act-angles-parallel-lines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.3",
+   "unifiedId": "parallel-perpendicular-lines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.5",
+   "unifiedId": "triangle-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.7",
+   "unifiedId": "translations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.7",
+   "unifiedId": "reflections",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.7",
+   "unifiedId": "rotations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.8",
+   "unifiedId": "line-symmetry",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.8",
+   "unifiedId": "symmetry-shapes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.8",
+   "unifiedId": "rotations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.9",
+   "unifiedId": "polygon-angle-sum",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.10",
+   "unifiedId": "quadrilateral-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.10",
+   "unifiedId": "trapezoid-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.11",
+   "unifiedId": "pythagorean-theorem",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.11",
+   "unifiedId": "act-triangles-pythagorean-theorem",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.16",
+   "unifiedId": "act-circles",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.17",
+   "unifiedId": "area-triangles",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.17",
+   "unifiedId": "g6-area-composite-figures",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.17",
+   "unifiedId": "act-area-perimeter",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.19",
+   "unifiedId": "act-volume-surface-area",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.20",
+   "unifiedId": "g7-cross-sections",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.SPC.20",
+   "unifiedId": "volume-cross-sections",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.DTA.1",
+   "unifiedId": "probability-basics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.DTA.1",
+   "unifiedId": "g7-experimental-theoretical",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.DTA.1",
+   "unifiedId": "simple-probability",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.DTA.2",
+   "unifiedId": "compound-probability",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.DTA.3",
+   "unifiedId": "conditional-probability",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "GEO.DTA.3",
+   "unifiedId": "two-way-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.1",
+   "unifiedId": "simplifying-radicals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.1",
+   "unifiedId": "act-radicals-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.1",
+   "unifiedId": "square-cube-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.2",
+   "unifiedId": "exponent-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.2",
+   "unifiedId": "act-exponent-rules",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.3",
+   "unifiedId": "simplifying-radicals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.3",
+   "unifiedId": "act-radicals-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.4",
+   "unifiedId": "act-complex-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.5",
+   "unifiedId": "act-complex-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.QNT.5",
+   "unifiedId": "complex-polar-form",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.PRP.1",
+   "unifiedId": "act-variation-direct-inverse",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.PRP.2",
+   "unifiedId": "cm-compound-interest",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.PRP.2",
+   "unifiedId": "cm-compound-growth",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.PRP.2",
+   "unifiedId": "exponential-growth",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.PRP.3",
+   "unifiedId": "rate-problems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.PRP.3",
+   "unifiedId": "solving-rational-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.1",
+   "unifiedId": "absolute-value-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.1",
+   "unifiedId": "act-absolute-value-equations-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.2",
+   "unifiedId": "systems-elimination",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.2",
+   "unifiedId": "systems-substitution",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.3",
+   "unifiedId": "completing-the-square",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.3",
+   "unifiedId": "solving-quadratics-square-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.4",
+   "unifiedId": "discriminant",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.4",
+   "unifiedId": "act-complex-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.5",
+   "unifiedId": "polynomial-rational-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.7",
+   "unifiedId": "polynomial-addition-subtraction",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.7",
+   "unifiedId": "polynomial-multiplication",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.7",
+   "unifiedId": "multiplying-binomials",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.8",
+   "unifiedId": "synthetic-division-remainder",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.8",
+   "unifiedId": "remainder-factor-theorems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.9",
+   "unifiedId": "remainder-factor-theorems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.9",
+   "unifiedId": "synthetic-division-remainder",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.10",
+   "unifiedId": "factoring-quadratics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.10",
+   "unifiedId": "factoring-difference-squares",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.11",
+   "unifiedId": "remainder-factor-theorems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.11",
+   "unifiedId": "factoring-quadratics",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.13",
+   "unifiedId": "simplify-rational-expressions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.13",
+   "unifiedId": "multiply-rational-expressions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.13",
+   "unifiedId": "divide-rational-expressions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.15",
+   "unifiedId": "solving-rational-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.16",
+   "unifiedId": "act-logarithms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.17",
+   "unifiedId": "act-logarithms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.EQV.18",
+   "unifiedId": "act-logarithms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.1",
+   "unifiedId": "function-composition",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.1",
+   "unifiedId": "function-notation-evaluation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.2",
+   "unifiedId": "function-composition",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.2",
+   "unifiedId": "act-function-composition",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.3",
+   "unifiedId": "inverse-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.4",
+   "unifiedId": "function-transformations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.4",
+   "unifiedId": "function-families",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.4",
+   "unifiedId": "act-graph-transformations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.5",
+   "unifiedId": "absolute-value-graphs-transformations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.6",
+   "unifiedId": "polynomial-graphing",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.6",
+   "unifiedId": "graphing-polynomials",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.7",
+   "unifiedId": "polynomial-graphing",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.7",
+   "unifiedId": "graphing-polynomials",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.8",
+   "unifiedId": "function-transformations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.8",
+   "unifiedId": "square-cube-roots",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.9",
+   "unifiedId": "rational-function-graphing",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.9",
+   "unifiedId": "vertical-horizontal-asymptotes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.9",
+   "unifiedId": "holes-in-rational-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.10",
+   "unifiedId": "exponential-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.10",
+   "unifiedId": "exponential-growth",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.10",
+   "unifiedId": "exponential-decay",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.11",
+   "unifiedId": "act-logarithms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.11",
+   "unifiedId": "inverse-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.12",
+   "unifiedId": "exponential-growth",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.12",
+   "unifiedId": "exponential-decay",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.12",
+   "unifiedId": "cm-compound-growth",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.13",
+   "unifiedId": "sigma-notation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.13",
+   "unifiedId": "finite-series",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.13",
+   "unifiedId": "arithmetic-series",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.13",
+   "unifiedId": "geometric-series",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.14",
+   "unifiedId": "trig-degree-radian-conversion",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.14",
+   "unifiedId": "trig-unit-circle-evaluation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.15",
+   "unifiedId": "graphing-sinusoidal",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.FNC.16",
+   "unifiedId": "graphing-sinusoidal",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.SPC.2",
+   "unifiedId": "ellipse-analysis",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.SPC.2",
+   "unifiedId": "hyperbola-analysis",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.SPC.2",
+   "unifiedId": "act-circles",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.DTA.4",
+   "unifiedId": "permutations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.DTA.4",
+   "unifiedId": "combinations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.DTA.4",
+   "unifiedId": "counting-methods",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.DTA.5",
+   "unifiedId": "binomial-probability",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.DTA.5",
+   "unifiedId": "combinations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.DTA.8",
+   "unifiedId": "act-expected-value",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "ALG2.DTA.9",
+   "unifiedId": "act-expected-value",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.QNT.1",
+   "unifiedId": "act-complex-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.QNT.1",
+   "unifiedId": "complex-polar-form",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.QNT.2",
+   "unifiedId": "complex-polar-form",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.QNT.3",
+   "unifiedId": "complex-polar-form",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.PRP.1",
+   "unifiedId": "trig-degree-radian-conversion",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.PRP.3",
+   "unifiedId": "trig-law-of-sines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.PRP.3",
+   "unifiedId": "act-law-of-sines-cosines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.PRP.4",
+   "unifiedId": "trig-law-of-cosines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.PRP.4",
+   "unifiedId": "act-law-of-sines-cosines",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.1",
+   "unifiedId": "synthetic-division-remainder",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.1",
+   "unifiedId": "remainder-factor-theorems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.2",
+   "unifiedId": "remainder-factor-theorems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.2",
+   "unifiedId": "act-complex-numbers",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.3",
+   "unifiedId": "polynomial-rational-inequalities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.4",
+   "unifiedId": "act-logarithms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.5",
+   "unifiedId": "act-logarithms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.6",
+   "unifiedId": "trig-identities-basic",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.7",
+   "unifiedId": "sum-difference-identities",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.7",
+   "unifiedId": "double-half-angle-formulas",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.8",
+   "unifiedId": "trig-solve-equations-special",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.9",
+   "unifiedId": "act-matrices-vectors",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.EQV.10",
+   "unifiedId": "act-matrices-vectors",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.1",
+   "unifiedId": "average-rate-of-change",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.1",
+   "unifiedId": "rate-of-change-problems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.2",
+   "unifiedId": "function-transformations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.2",
+   "unifiedId": "act-graph-transformations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.2",
+   "unifiedId": "function-families",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.3",
+   "unifiedId": "function-composition",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.3",
+   "unifiedId": "act-function-composition",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.4",
+   "unifiedId": "inverse-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.5",
+   "unifiedId": "polynomial-graphing",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.5",
+   "unifiedId": "graphing-polynomials",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.6",
+   "unifiedId": "rational-function-graphing",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.6",
+   "unifiedId": "vertical-horizontal-asymptotes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.6",
+   "unifiedId": "holes-in-rational-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.7",
+   "unifiedId": "act-variation-direct-inverse",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.7",
+   "unifiedId": "exponent-properties",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.8",
+   "unifiedId": "exponential-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.8",
+   "unifiedId": "exponential-growth",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.8",
+   "unifiedId": "exponential-decay",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.9",
+   "unifiedId": "act-logarithms",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.9",
+   "unifiedId": "inverse-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.10",
+   "unifiedId": "arithmetic-sequences",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.10",
+   "unifiedId": "geometric-sequences",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.11",
+   "unifiedId": "graphing-sinusoidal",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.13",
+   "unifiedId": "inverse-trig-functions",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.14",
+   "unifiedId": "parametric-equations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.14",
+   "unifiedId": "parametric-derivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.15",
+   "unifiedId": "polar-curves",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.FNC.15",
+   "unifiedId": "polar-graphing-area",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.1",
+   "unifiedId": "trig-unit-circle-evaluation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.1",
+   "unifiedId": "trig-tan-unit-circle",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.2",
+   "unifiedId": "polar-coordinates",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.2",
+   "unifiedId": "complex-polar-form",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.3",
+   "unifiedId": "vector-representation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.3",
+   "unifiedId": "vector-operations",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.4",
+   "unifiedId": "vector-applications",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.4",
+   "unifiedId": "dot-product",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.4",
+   "unifiedId": "vector-projections",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.5",
+   "unifiedId": "act-matrices-vectors",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.6",
+   "unifiedId": "ellipse-analysis",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.6",
+   "unifiedId": "hyperbola-analysis",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.SPC.6",
+   "unifiedId": "act-circles",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.DTA.1",
+   "unifiedId": "function-application-modeling",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.DTA.1",
+   "unifiedId": "multi-domain-modeling",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.DTA.2",
+   "unifiedId": "act-exponential-models",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.DTA.2",
+   "unifiedId": "line-of-best-fit",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "PREC.DTA.3",
+   "unifiedId": "graphing-sinusoidal",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.QNT.1",
+   "unifiedId": "limits-at-infinity",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.QNT.1",
+   "unifiedId": "limits",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.QNT.2",
+   "unifiedId": "lhopitals-rule",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.QNT.2",
+   "unifiedId": "limits",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.PRP.1",
+   "unifiedId": "derivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.PRP.1",
+   "unifiedId": "rate-of-change-problems",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.PRP.2",
+   "unifiedId": "related-rates",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.PRP.3",
+   "unifiedId": "linearization",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.EQV.1",
+   "unifiedId": "limits",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.EQV.1",
+   "unifiedId": "limits-algebraic-techniques",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.EQV.2",
+   "unifiedId": "continuity-types",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.EQV.2",
+   "unifiedId": "differentiability-vs-continuity",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.EQV.3",
+   "unifiedId": "implicit-differentiation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.EQV.3",
+   "unifiedId": "chain-rule",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.EQV.4",
+   "unifiedId": "u-substitution",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.EQV.4",
+   "unifiedId": "antiderivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.1",
+   "unifiedId": "limits",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.1",
+   "unifiedId": "one-sided-infinite-limits",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.1",
+   "unifiedId": "derivatives-from-graphs-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.2",
+   "unifiedId": "limits",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.2",
+   "unifiedId": "limits-algebraic-techniques",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.3",
+   "unifiedId": "ivt-squeeze",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.4",
+   "unifiedId": "limits-at-infinity",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.4",
+   "unifiedId": "one-sided-infinite-limits",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.4",
+   "unifiedId": "vertical-horizontal-asymptotes",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.5",
+   "unifiedId": "continuity-types",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.5",
+   "unifiedId": "ivt-squeeze",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.6",
+   "unifiedId": "ivt-squeeze",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.7",
+   "unifiedId": "derivative-definition",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.7",
+   "unifiedId": "derivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.8",
+   "unifiedId": "differentiability-vs-continuity",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.8",
+   "unifiedId": "derivatives-from-graphs-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.9",
+   "unifiedId": "basic-differentiation-rules",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.9",
+   "unifiedId": "common-derivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.9",
+   "unifiedId": "derivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.10",
+   "unifiedId": "basic-differentiation-rules",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.10",
+   "unifiedId": "common-derivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.11",
+   "unifiedId": "chain-rule",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.12",
+   "unifiedId": "inverse-function-derivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.12",
+   "unifiedId": "inverse-trig-derivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.13",
+   "unifiedId": "higher-order-derivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.14",
+   "unifiedId": "motion",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.15",
+   "unifiedId": "mvt-evt",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.16",
+   "unifiedId": "mvt-evt",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.16",
+   "unifiedId": "optimization",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.16",
+   "unifiedId": "increasing-decreasing-extrema",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.17",
+   "unifiedId": "increasing-decreasing-extrema",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.18",
+   "unifiedId": "concavity-inflection",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.19",
+   "unifiedId": "increasing-decreasing-extrema",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.19",
+   "unifiedId": "concavity-inflection",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.19",
+   "unifiedId": "derivatives-from-graphs-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.20",
+   "unifiedId": "optimization",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.21",
+   "unifiedId": "antiderivatives",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.22",
+   "unifiedId": "riemann-sums",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.22",
+   "unifiedId": "definite-integrals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.23",
+   "unifiedId": "ftc",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.23",
+   "unifiedId": "definite-integrals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.24",
+   "unifiedId": "ftc",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.24",
+   "unifiedId": "definite-integrals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.25",
+   "unifiedId": "u-substitution",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.26",
+   "unifiedId": "average-value",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.27",
+   "unifiedId": "slope-fields",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.FNC.28",
+   "unifiedId": "separable-des",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.SPC.1",
+   "unifiedId": "motion-integrals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.SPC.1",
+   "unifiedId": "definite-integrals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.SPC.2",
+   "unifiedId": "motion-integrals",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.SPC.2",
+   "unifiedId": "motion",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.SPC.3",
+   "unifiedId": "area-between-curves",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.SPC.4",
+   "unifiedId": "volume-cross-sections",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.SPC.5",
+   "unifiedId": "volume-disk-washer",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.SPC.5",
+   "unifiedId": "volume-cross-sections",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.DTA.1",
+   "unifiedId": "derivatives-from-graphs-tables",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "CALC.DTA.2",
+   "unifiedId": "riemann-sums",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "STAT.DTA.3",
+   "unifiedId": "line-of-best-fit",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "STAT.DTA.3",
+   "unifiedId": "scatter-plots-correlation",
+   "course": "pattern-ladder"
+  },
+  {
+   "legacyId": "position-words",
+   "unifiedId": "position-words-basics",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "prek-position-words",
+   "unifiedId": "position-words-basics",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "spatial-relationships",
+   "unifiedId": "position-words-basics",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "prek-sort-attributes",
+   "unifiedId": "sorting-attributes",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "prek-number-words",
+   "unifiedId": "number-words-basics",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "number-recognition-0-10",
+   "unifiedId": "number-words-basics",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "number-recognition-0-10",
+   "unifiedId": "counting-up",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "measuring-length",
+   "unifiedId": "measuring-length-basics",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "telling-time-hour-half",
+   "unifiedId": "telling-time-basics",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "telling-time-5-minutes",
+   "unifiedId": "telling-time-basics",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "money-counting",
+   "unifiedId": "money-counting-basics",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "GEO.SPC.6",
+   "unifiedId": "geo-bisectors-centers",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "GEO.SPC.12",
+   "unifiedId": "special-right-triangles",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "GEO.SPC.13",
+   "unifiedId": "circle-arcs-chords",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "GEO.SPC.14",
+   "unifiedId": "circle-tangents-secants",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "GEO.SPC.15",
+   "unifiedId": "arc-length-sectors",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "GEO.DTA.4",
+   "unifiedId": "geometric-probability",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.EQV.12",
+   "unifiedId": "radical-equations",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.EQV.14",
+   "unifiedId": "adding-rational-expressions",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.EQV.14",
+   "unifiedId": "simplify-rational-expressions",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.SPC.1",
+   "unifiedId": "parabola-focus-directrix",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "PREC.PRP.2",
+   "unifiedId": "angular-linear-speed",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "PREC.FNC.12",
+   "unifiedId": "tangent-secant-graphs",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.1",
+   "unifiedId": "stat-study-design",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.2",
+   "unifiedId": "stat-study-design",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.4",
+   "unifiedId": "stat-regression",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.4",
+   "unifiedId": "act-exponential-models",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.5",
+   "unifiedId": "stat-random-variables",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.6",
+   "unifiedId": "stat-random-variables",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.7",
+   "unifiedId": "stat-binomial-geometric",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.8",
+   "unifiedId": "stat-normal-distribution",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.9",
+   "unifiedId": "stat-sampling-distributions",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.10",
+   "unifiedId": "stat-sampling-distributions",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.11",
+   "unifiedId": "stat-sampling-distributions",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.12",
+   "unifiedId": "stat-sampling-distributions",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.12",
+   "unifiedId": "stat-two-sample-inference",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.13",
+   "unifiedId": "stat-confidence-intervals",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.14",
+   "unifiedId": "stat-confidence-intervals",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.15",
+   "unifiedId": "stat-confidence-intervals",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.16",
+   "unifiedId": "stat-simulation-inference",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.17",
+   "unifiedId": "stat-significance-tests",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.18",
+   "unifiedId": "stat-significance-tests",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.19",
+   "unifiedId": "stat-significance-tests",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.20",
+   "unifiedId": "stat-errors-power",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.21",
+   "unifiedId": "stat-two-sample-inference",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.22",
+   "unifiedId": "stat-two-sample-inference",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.23",
+   "unifiedId": "stat-two-sample-inference",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.24",
+   "unifiedId": "stat-chi-square",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.25",
+   "unifiedId": "stat-chi-square",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "STAT.DTA.26",
+   "unifiedId": "stat-regression",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.DTA.1",
+   "unifiedId": "stat-study-design",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.DTA.2",
+   "unifiedId": "stat-normal-distribution",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.DTA.3",
+   "unifiedId": "stat-simulation-inference",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.DTA.6",
+   "unifiedId": "stat-random-variables",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.DTA.7",
+   "unifiedId": "stat-random-variables",
+   "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "ALG2.DTA.10",
+   "unifiedId": "stat-evaluating-reports",
+   "course": "catalog-gaps"
   }
  ]
 }
