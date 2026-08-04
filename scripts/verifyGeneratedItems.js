@@ -807,6 +807,139 @@ for (const it of items) {
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 
+  // ── Geometry ─────────────────────────────────────────────────────────────
+  if ((m = p.match(/^(\d+) points are drawn so that NO three are collinear\. How many distinct lines/))) {
+    const n0 = Number(m[1]);
+    const e = (n0 * (n0 - 1)) / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Can segments of length (\d+), (\d+), and (\d+) form a triangle\?$/))) {
+    const sides = m.slice(1).map(Number).sort((x, y) => x - y);
+    const e = sides[0] + sides[1] > sides[2] ? 'Yes' : 'No';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Two sides of a triangle measure (\d+) and (\d+)\. What is the (SMALLEST|LARGEST) whole number/))) {
+    const a = Number(m[1]), b = Number(m[2]);
+    const e = m[3] === 'SMALLEST' ? Math.abs(a - b) + 1 : a + b - 1;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^In triangle ABC, BC = (\d+), CA = (\d+), and AB = (\d+)\. Which angle is the (LARGEST|SMALLEST)\?$/))) {
+    // Side BC is opposite angle A, CA opposite B, AB opposite C.
+    const sides = [['Angle A', Number(m[1])], ['Angle B', Number(m[2])], ['Angle C', Number(m[3])]];
+    sides.sort((x, y) => x[1] - y[1]);
+    const e = m[4] === 'LARGEST' ? sides[2][0] : sides[0][0];
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/sum of the interior angles of an? [\w-]+ \((\d+) sides\)/))) {
+    const e = (Number(m[1]) - 2) * 180;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Each interior angle of a REGULAR (\d+)-gon/))) {
+    const n0 = Number(m[1]);
+    const e = ((n0 - 2) * 180) / n0;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Each EXTERIOR angle of a regular (\d+)-gon/))) {
+    const e = 360 / Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^The interior angles of a polygon add up to (\d+)°\. How many sides/))) {
+    const e = Number(m[1]) / 180 + 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Each exterior angle of a regular polygon measures (\d+)°\. How many sides/))) {
+    const e = 360 / Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^In parallelogram ABCD, angle A measures (\d+)°\. What is the measure of the (OPPOSITE|CONSECUTIVE) angle/))) {
+    const e = m[2] === 'OPPOSITE' ? Number(m[1]) : 180 - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/diagonals of parallelogram ABCD intersect at P\. If AC = (\d+), what is AP\?$/))) {
+    const e = Number(m[1]) / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A trapezoid has parallel bases of length (\d+) and (\d+)\. How long is its MIDSEGMENT\?$/))) {
+    const e = (Number(m[1]) + Number(m[2])) / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A trapezoid's midsegment measures (\d+), and one base measures (\d+)\. How long is the other base\?$/))) {
+    const e = 2 * Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^In an ISOSCELES trapezoid, one base angle measures (\d+)°\. What is the measure of the other angle on the SAME base\?$/))) {
+    checked++; if (!eq(it.answer.value, Number(m[1]))) fail(it, Number(m[1])); continue;
+  }
+  if ((m = p.match(/Angle A \(at base AB\) measures (\d+)°\. What is the measure of angle D/))) {
+    const e = 180 - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Find the geometric mean of (\d+) and (\d+)\.$/))) {
+    const e = Math.sqrt(Number(m[1]) * Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/altitude to the hypotenuse splits the hypotenuse into segments of length (\d+) and (\d+)\. How long is the altitude\?$/))) {
+    const e = Math.sqrt(Number(m[1]) * Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/segments of length (\d+) and (\d+), with the segment of length (\d+) adjacent to leg L\. How long is leg L\?$/))) {
+    const pSeg = Number(m[3]), whole = Number(m[1]) + Number(m[2]);
+    if (pSeg !== Number(m[1])) { fail(it, `adjacent segment ${pSeg} should be the first-listed segment ${m[1]}`); continue; }
+    const e = Math.sqrt(pSeg * whole);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
+  // ── ACT strategies ───────────────────────────────────────────────────────
+  if ((m = p.match(/^Backsolve from the answer choices: if (\d+)x \+ (\d+) = (\d+), which value of x works\?$/))) {
+    const [a, b, rhs] = m.slice(1).map(Number);
+    if ((rhs - b) % a !== 0) { fail(it, `non-integer solution (${rhs} − ${b})/${a}`); continue; }
+    const e = (rhs - b) / a;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Backsolve: which value of n satisfies n\(n − 1\) = (\d+)\?$/))) {
+    const v = Number(m[1]);
+    const e = Math.round((1 + Math.sqrt(1 + 4 * v)) / 2);
+    if (e * (e - 1) !== v) { fail(it, `no integer solves n(n−1) = ${v}`); continue; }
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/test the middle one, x = (\d+)\. The result comes out too (SMALL|LARGE)\./))) {
+    const e = m[2] === 'SMALL' ? `${m[1]} and every choice smaller` : `${m[1]} and every choice larger`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^(\d+)% of (\d+)% of a number x is what percent of x\?$/))) {
+    const e = `${(Number(m[1]) * Number(m[2])) / 100}%`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Without a calculator: √(\d+) is between which two consecutive integers\?$/))) {
+    const k = Math.floor(Math.sqrt(Number(m[1])));
+    if (k * k === Number(m[1])) { fail(it, `${m[1]} is a perfect square — nothing to bracket`); continue; }
+    const e = `${k} and ${k + 1}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Estimate without computing exactly: ([\d.]+)% of (\d+) is closest to which value\?$/))) {
+    const exact = (Number(m[1]) / 100) * Number(m[2]);
+    const stated = Number(it.answer.value);
+    // The estimate must be the closest option to the true value.
+    const opts = (it.options || []).map((o) => Number(o.text));
+    const best = opts.reduce((x, y) => (Math.abs(y - exact) < Math.abs(x - exact) ? y : x));
+    checked++; if (stated !== best) fail(it, `closest option to ${exact.toFixed(1)} is ${best}`); continue;
+  }
+  if ((m = p.match(/Which is the best estimate of 13\/25 of (\d+)\?$/))) {
+    const exact = (13 * Number(m[1])) / 25;
+    const opts = (it.options || []).map((o) => Number(o.text));
+    const best = opts.reduce((x, y) => (Math.abs(y - exact) < Math.abs(x - exact) ? y : x));
+    checked++; if (Number(it.answer.value) !== best) fail(it, `closest option to ${exact} is ${best}`); continue;
+  }
+  if ((m = p.match(/you spend (\d+) seconds on each of the first (\d+) questions\. How many minutes remain/))) {
+    const e = 60 - (Number(m[1]) * Number(m[2])) / 60;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/you have finished (\d+) questions after (\d+) minutes\. Are you ahead of pace or behind/))) {
+    const q = Number(m[1]), t = Number(m[2]);
+    const e = q > t ? `Ahead by ${q - t} minutes` : `Behind by ${t - q} minutes`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
   unchecked[it.skillId] = (unchecked[it.skillId] || 0) + 1;
 }
 
