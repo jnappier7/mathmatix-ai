@@ -26,6 +26,14 @@ const BANKS = [
   require('./lib/templatesGrade8'),
   require('./lib/templatesGrade67'),
   require('./lib/templatesAlgebra2'),
+  require('./lib/templatesPrecalc'),
+  require('./lib/templatesGeometry'),
+  require('./lib/templatesActStrategy'),
+  require('./lib/templatesCalcAB'),
+  require('./lib/templatesCalcBC'),
+  require('./lib/templatesEarlyMath'),
+  require('./lib/templatesParentModels'),
+  require('./lib/templatesConsumerMath'),
 ];
 
 const OUT = path.join(__dirname, '..', 'seeds', 'low-volume-items.generated.json');
@@ -89,7 +97,7 @@ function expand(template) {
       try {
         out = tier.gen(rng, made);
       } catch (err) {
-        throw new Error(`${template.skillId} d${tier.difficulty}: generator threw — ${err.message}`);
+        throw new Error(`${template.skillId} d${tier.difficulty}: generator threw — ${err.message}`, { cause: err });
       }
       if (!out || !out.prompt || out.value === undefined || out.value === null) {
         throw new Error(`${template.skillId} d${tier.difficulty}: generator returned no prompt/value`);
