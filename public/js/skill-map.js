@@ -499,6 +499,14 @@
     if (Array.isArray(problem.options) && problem.options.length) {
       var wrap = el('div', 'q-options');
       problem.options.forEach(function (opt, i) {
+        // Options arrive as { label: 'A', text: '...' } objects (the Problem
+        // schema shape); rendering `opt` directly painted "[object Object]"
+        // on every choice — owner-hit on the live skill map. Grading compares
+        // the submission against correctOption, a LETTER, so the radio must
+        // carry the label while the student sees the text.
+        var isObj = opt && typeof opt === 'object';
+        var optLabel = isObj ? opt.label : String.fromCharCode(65 + i);
+        var optText = isObj ? opt.text : String(opt);
         var id = 'opt-' + problem.problemId + '-' + i;
         var label = document.createElement('label');
         label.className = 'q-option';
@@ -507,10 +515,10 @@
         radio.type = 'radio';
         radio.id = id;
         radio.name = 'q-' + problem.problemId;
-        radio.value = opt;
+        radio.value = optLabel;
         radio.dataset.problemId = problem.problemId;
         label.appendChild(radio);
-        label.appendChild(document.createTextNode(' ' + opt));
+        label.appendChild(document.createTextNode(' ' + optLabel + '. ' + optText));
         wrap.appendChild(label);
       });
       return wrap;
