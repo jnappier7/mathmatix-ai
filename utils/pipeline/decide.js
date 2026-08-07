@@ -323,31 +323,38 @@ function decideCore(observation, diagnosis, context) {
     // ── Frustration Recovery Protocol (adaptive based on severity) ──
     const frustrationDepth = (streaks.recentWrongCount || 0) + (streaks.idkCount || 0);
 
+    // All three tiers share one hard rule: the acknowledgment reply carries
+    // ZERO math work. Live evals showed both providers stacking a new problem
+    // or a demanded step into the same reply as the acknowledgment (toneSupport
+    // judge, 6/6 failures) — which reads as ignoring the feeling. Recovery
+    // (different angle, easier problem, quick win) happens on the NEXT turn,
+    // after the student responds to an opt-in offer.
     if (frustrationDepth >= 5) {
       // SEVERE: student is in a frustration spiral — reset completely
       decision.directives.push(
-        'FRUSTRATION RECOVERY — SEVERE. Student has hit a wall (5+ wrong/IDK).',
-        'Step 1: Validate the emotion genuinely. "Yeah, this is legitimately hard. I get it."',
-        'Step 2: Offer CHOICE — "Want to try a completely different approach, switch to something easier, or take a quick break?"',
-        'Step 3: If they continue, give them a QUICK WIN — a problem you KNOW they can solve to rebuild momentum.',
-        'Do NOT push the current problem. Do NOT re-explain the same way. Their working memory is flooded.',
+        'FRUSTRATION RECOVERY — SEVERE. Student has hit a wall (5+ wrong/IDK). This reply is emotional first aid, not teaching.',
+        'Validate the emotion genuinely, in your own words. "Yeah, this is legitimately hard. I get it."',
+        'HARD RULE: do NOT pose any problem, demand any step, or re-explain the math in THIS reply. Their working memory is flooded — any task right now reads as not listening.',
+        'End with CHOICE, offered not assigned — "Want to try a completely different approach, switch to something easier, or take a quick break?" Whatever they pick happens NEXT turn.',
+        'If they re-engage next turn, START with a quick win — a problem you KNOW they can solve. Not now.',
         'Keep your response to 1-2 sentences. Less is more right now.'
       );
     } else if (frustrationDepth >= 3) {
       // MODERATE: struggling but still engaged
       decision.directives.push(
-        'FRUSTRATION RECOVERY — MODERATE. Student is struggling but still here.',
-        'Acknowledge briefly: "This one is tricky — let me try a different angle."',
-        'SWITCH REPRESENTATION: If you were using algebra, try a visual. If verbal, try concrete numbers. If abstract, try a real-world story.',
-        'Lower the barrier: break the problem into the smallest possible piece.',
-        'Then check: "Does THAT part make more sense?"'
+        'FRUSTRATION RECOVERY — MODERATE. Student is struggling but still here. Emotion first, math second — and "second" means the NEXT message, not later in this one.',
+        'Acknowledge briefly and genuinely: "This one is tricky."',
+        'HARD RULE: do NOT pose a new problem, restate the current one, or demand a step in THIS reply.',
+        'Offer a different way in as ONE opt-in question they can decline — e.g. seeing it with concrete numbers, a picture, or a much smaller piece. No problem text, no numbers in the offer.',
+        'If they say yes next turn, THEN switch representation and break the problem into the smallest possible piece.'
       );
     } else {
       // MILD: just venting
       decision.directives.push(
-        'Acknowledge the frustration briefly and genuinely.',
-        'Then offer a concrete next step (easier problem, different approach, or break).',
-        'Do NOT be condescending or use banned phrases.'
+        'The student is frustrated or down on themselves. Acknowledging the feeling IS the job of this reply — briefly, genuinely, without judgment.',
+        'HARD RULE: do NOT pose a new problem, assign an easier one, demand a step, or re-explain the math in THIS same reply. Stacking work onto frustration reads as ignoring the feeling, even when kindly worded.',
+        'You MAY end with ONE small opt-in question offering a choice (a tiny piece together, a different angle, or a short break). An offer, not an assignment — no problem text, no numbers, no "what\'s the first step".',
+        'Do NOT be condescending or use banned phrases. 1-2 sentences total.'
       );
     }
     return decision;
@@ -438,13 +445,41 @@ function decideCore(observation, diagnosis, context) {
       return decision;
     }
 
+    // A SURRENDER give-up ("i give up", "i'm done", "idk. i give up") is an
+    // emotional statement before it is a math statement — launching straight
+    // into a parallel problem in the same reply reads as ignoring it (live
+    // toneSupport judge: pushesNewProblem, 6/6 failures on both providers).
+    // This reply is the off-ramp OFFER; the ramp itself runs next turn if
+    // they opt in. An answer-DEMAND give-up ("just tell me the answer") is
+    // negotiating, not deflated — it keeps the classic ramp below. So does a
+    // repeated give-up (streak >= 2): the offer already happened, work the
+    // parallel problem or offer to skip.
+    const surrenderGiveUp =
+      msgType === MESSAGE_TYPES.GIVE_UP &&
+      (streaks.giveUpCount || 0) < 2 &&
+      /\b(i\s*give\s*up|i'?m\s*done|i\s*quit|forget\s*it)\b/i.test(observation.raw || '') &&
+      !/\b(just\s*tell\s*me|(?:give|tell|show)\s*me\s*the\s*answer|what(?:'?s|\s+is)\s*the\s*answer|show\s*(?:me\s*)?the\s*steps|just\s*solve|solve\s*it|do\s*it\s*for\s*me)\b/i.test(observation.raw || '');
+
     decision.action = ACTIONS.EXIT_RAMP;
-    decision.directives.push(
-      'NEVER reveal the answer.',
-      'Work through a PARALLEL problem (same skill, different numbers).',
-      'Then have them try their original problem.',
-      'If still stuck, offer to skip and move on.'
-    );
+    if (surrenderGiveUp) {
+      decision.gentleRamp = true;
+      decision.scaffoldLevel = 5;
+      decision.directives.push(
+        'The student just gave up. That is a feeling first and a stuck-point second. This reply is the off-ramp OFFER, not the ramp itself.',
+        'Acknowledge the give-up genuinely and without judgment — wanting to quit after a hard stretch is normal.',
+        'HARD RULE: do NOT pose, restate, or start working ANY problem in this reply — not theirs, not a parallel one. No steps, no numbers.',
+        'Offer ONE opt-in way forward as a question: you walk through a similar one first, or shrink it to a tiny piece, or set it aside for now. Their call.',
+        'NEVER reveal the answer — not in this reply, not later.',
+        '1-2 sentences. Warm and brief.'
+      );
+    } else {
+      decision.directives.push(
+        'NEVER reveal the answer.',
+        'Work through a PARALLEL problem (same skill, different numbers).',
+        'Then have them try their original problem.',
+        'If still stuck, offer to skip and move on.'
+      );
+    }
     return decision;
   }
 

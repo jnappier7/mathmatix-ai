@@ -331,7 +331,7 @@ Detect and respond to emotional signals before doing math. Math anxiety reduces 
 WHAT TO WATCH FOR:
 - RAPID "idk" / one-word answers → anxiety, not laziness. Slow down, validate, reduce problem complexity.
 - Long pauses followed by wrong answers → overthinking. Encourage instinct over perfection.
-- "I hate this" / "this is stupid" / "I can't" → frustration spiral. Acknowledge the emotion FIRST, math second. NEVER ignore expressed frustration.
+- "I hate this" / "this is stupid" / "I can't" → frustration spiral. Acknowledge the emotion FIRST, math second. NEVER ignore expressed frustration. And "math second" means a LATER message: never stack a new problem, an easier problem, or a demanded step into the same reply as the acknowledgment. At most one small opt-in question.
 - "nvm" / "whatever" / disengagement → offer a low-stakes way back in.
 - Sudden confidence after struggle → recovery moment. Acknowledge naturally. Don't over-celebrate or make it weird.
 - ALL CAPS or exclamation marks → excitement or frustration. Read context and match energy accordingly.
@@ -374,7 +374,7 @@ OWN YOUR MISSES. If an explanation clearly didn't work, don't repeat it louder. 
 --- CONFIDENCE BUILDING ---
 Normalize mistakes naturally. The framing should make errors feel like part of the process, not a deficiency.
 Celebrate process over answers. When you notice growth, name the specific evidence — what they can do now that they couldn't do before.
-After frustration: validate → offer choice → lower stakes → quick win → return with confidence. Never push through frustration unacknowledged.
+After frustration: validate → offer choice → lower stakes → quick win → return with confidence. That sequence plays out ACROSS turns, never inside one reply — the validation message carries no math task. Never push through frustration unacknowledged.
 Growth over giftedness, always: attribute success to what they DID, not what they ARE.
 
 --- STRUGGLE-TO-BREAKTHROUGH ---
@@ -631,6 +631,64 @@ function detectManipulativeContext(opts = {}) {
 
   return { includeCounters, includeAlgebraTiles };
 }
+
+
+// ============================================================================
+// EMOTIONAL LOAD DETECTION — this-turn override for emotionally loaded messages
+// ============================================================================
+
+// An emotionally loaded message (frustration, self-deprecation, surrender) is
+// an emotional statement before it is a math statement. The static EMOTIONAL
+// STATE RESPONSE section says "emotion first, math second" — but in live evals
+// BOTH gpt-4o-mini and claude-sonnet-5 still stacked a new problem or demanded
+// a step in the same reply as the acknowledgment, 6/6 runs (toneSupport judge:
+// pushesNewProblem=true). A standing rule buried mid-prompt loses to the
+// model's drive to teach; a targeted this-turn injection wins. Same pattern as
+// detectManipulativeContext above: detect on the CURRENT message, inject a
+// scoped section only when it fires.
+const EMOTIONAL_DISTRESS_PATTERN = new RegExp(
+  [
+    // Self-deprecation: "I'm so stupid", "I suck at math", "I'm bad at this"
+    /i'?m\s*(?:so\s*|just\s*|really\s*)?(?:stupid|dumb|an?\s*idiot|hopeless|bad\s*at\s*(?:this|math))/,
+    /i\s*suck(?:\s*at\s*(?:this|math|it))?/,
+    // Frustration at the work: "I hate this", "this is impossible/pointless"
+    /i\s*hate\s*(?:this|math|it)/,
+    /this\s*is\s*(?:too\s*hard|impossible|pointless|hopeless)/,
+    // Incapacity: "I can't do this/math/it"
+    /i\s*(?:just\s*)?can'?t\s*(?:do\s*)?(?:this|math|it)/,
+    /i'?m\s*never\s*(?:gonna|going\s*to)\s*(?:get|understand|learn)/,
+    // Surrender: "I give up", "I'm done", "what's the point"
+    /i\s*give\s*up/,
+    /i'?m\s*done(?:\s*with\s*(?:this|math))?\s*[.!]*$/,
+    /i\s*quit/,
+    /what'?s\s*(?:even\s*)?the\s*point/,
+  ].map((r) => r.source).join('|'),
+  'i'
+);
+
+// A give-up that DEMANDS the answer ("i give up, just tell me") is negotiating,
+// not deflated — the anti-leak exit ramp governs there, not emotional first aid.
+const ANSWER_DEMAND_PATTERN = /\b(?:just\s*tell\s*me|(?:give|tell|show)\s*me\s*the\s*answer|what(?:'?s|\s+is)\s*the\s*answer|show\s*(?:me\s*)?the\s*steps|just\s*solve|solve\s*it\s*for\s*me|do\s*it\s*for\s*me)\b/i;
+
+/**
+ * Is the student's CURRENT message emotionally loaded (frustration,
+ * self-deprecation, giving up) rather than a math move or an answer demand?
+ */
+function isEmotionallyLoadedMessage(studentMessage) {
+  const msg = String(studentMessage || '');
+  if (!msg) return false;
+  if (ANSWER_DEMAND_PATTERN.test(msg)) return false;
+  return EMOTIONAL_DISTRESS_PATTERN.test(msg);
+}
+
+// Scoped to THIS reply only. The sequencing rule (validate → choice → lower
+// stakes → quick win) still plays out — across turns, never inside one reply.
+const EMOTIONAL_LOAD_SECTION = `--- THIS TURN: EMOTIONAL CHECK-IN (OVERRIDES ALL TEACHING RULES ABOVE) ---
+The student's CURRENT message is emotional (frustration, self-doubt, or giving up), not mathematical. This reply is emotional first aid, nothing else.
+1. Acknowledge the feeling genuinely, in your own words, without judgment. Struggling does not mean they are bad at math, and you can say so.
+2. Put ZERO math work in this reply. No new problem, no easier problem, no restating the current problem, no hint, no step, no explanation, no "what do you think", no "try this", no "what's the first step". A math task stacked onto an emotional message reads as ignoring the feeling, even when it is kindly worded.
+3. You MAY end with ONE short opt-in question offering a choice: shrink it to a tiny piece together, come at it a totally different way, take a quick break, or set it aside for now. It must be an offer they can freely decline, and it must contain no problem text and no numbers.
+The math resumes NEXT turn, after they respond. Keep this reply to 1-3 short sentences. A reply containing a math question or task is a failure here, even a gentle one.`;
 
 
 // ============================================================================
@@ -899,6 +957,11 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
     parts.push(ALGEBRA_TILES_INSTRUCTIONS);
   }
 
+  // Emotionally loaded turn — inject LAST so it outranks every teaching rule.
+  if (isEmotionallyLoadedMessage(studentMessage)) {
+    parts.push(EMOTIONAL_LOAD_SECTION);
+  }
+
   return parts.join('\n\n');
 }
 
@@ -1095,4 +1158,4 @@ Guidelines:
 }
 
 
-module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES, buildStaticRules, RULE_1_SOCRATIC, RULE_1_TEACHING, detectManipulativeContext, buildSkillMasteryContext, SHARED_VOICE_BLOCKS };
+module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES, buildStaticRules, RULE_1_SOCRATIC, RULE_1_TEACHING, detectManipulativeContext, isEmotionallyLoadedMessage, EMOTIONAL_LOAD_SECTION, buildSkillMasteryContext, SHARED_VOICE_BLOCKS };

@@ -25,6 +25,7 @@ module.exports = {
   testMatch: [
     '<rootDir>/tests/unit/pipeline.test.js',
     '<rootDir>/tests/unit/pipelineIntegration.test.js',
+    '<rootDir>/tests/unit/emotionalFirstAid.test.js',
     '<rootDir>/tests/unit/llmVerifier.test.js',
     '<rootDir>/tests/unit/llmVerifierEscalation.test.js',
     '<rootDir>/tests/unit/conceptualAnswerVerdict.test.js',
