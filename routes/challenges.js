@@ -27,6 +27,7 @@ const User = require('../models/user');
 const logger = require('../utils/catLogger');
 
 const { anyRole } = require('../utils/roleQuery');
+const { normalizeOptions } = require('../utils/mcOptions');
 // Number of problems per challenge
 const PROBLEMS_PER_CHALLENGE = 5;
 
@@ -411,7 +412,9 @@ router.get('/:id/play', isAuthenticated, async (req, res) => {
         problemId: problem.problemId,
         prompt: problem.prompt,
         answerType: problem.answerType,
-        options: problem.options || [],
+        // { label, text } only — the legacy banks carry `isCorrect` on every
+        // option, and positional labels are what checkAnswer resolves against.
+        options: normalizeOptions(problem.options),
         svg: problem.svg || null
       },
       score: attempt.score,

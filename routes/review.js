@@ -27,6 +27,7 @@ const { buildSmartQueue, getReviewSummary } = require('../utils/smartReviewQueue
 const { initializeCard, updateCard, rateAttempt } = require('../utils/fsrsScheduler');
 const { resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
 const logger = require('../utils/catLogger');
+const { normalizeOptions } = require('../utils/mcOptions');
 
 // ===========================================================================
 // SMART REVIEW QUEUE (FSRS-driven)
@@ -91,7 +92,8 @@ router.get('/smart-queue', isAuthenticated, async (req, res) => {
           prompt: problemDoc.prompt,
           svg: problemDoc.svg,
           answerType: problemDoc.answerType,
-          options: problemDoc.options,
+          // Same projection as /due below — never the stored array.
+          options: normalizeOptions(problemDoc.options),
           difficulty: problemDoc.difficulty,
           skillId: item.skillId,
           skillName: item.displayName,
@@ -194,7 +196,9 @@ router.get('/due', isAuthenticated, async (req, res) => {
         prompt: problem.prompt,
         svg: problem.svg,
         answerType: problem.answerType,
-        options: problem.options,
+        // { label, text } only — the legacy banks carry `isCorrect` on every
+        // option, and positional labels are what checkAnswer resolves against.
+        options: normalizeOptions(problem.options),
         difficulty: problem.difficulty,
         skillId: topSkill.skillId,
         skillName: topSkill.displayName

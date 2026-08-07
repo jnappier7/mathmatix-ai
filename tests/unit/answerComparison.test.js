@@ -135,6 +135,48 @@ describe('compareAnswer (the problem.checkAnswer engine)', () => {
     expect(compareAnswer('B', spec)).toBe(true);
   });
 
+  test('MC: options keyed `id` instead of `label` still grade', () => {
+    // scripts/convertToMC.js wrote `{ id, text, isCorrect }` straight into the
+    // bank via $set, which Mongoose does not strip. Every surface serving those
+    // items now labels them positionally, so the engine has to read them too.
+    const spec = {
+      ...mcSpec,
+      options: [{ id: 'A', text: '30', isCorrect: false }, { id: 'B', text: '35', isCorrect: true },
+        { id: 'C', text: '40', isCorrect: false }, { id: 'D', text: '45', isCorrect: false }],
+    };
+    expect(compareAnswer('B', spec)).toBe(true);
+    expect(compareAnswer('C', spec)).toBe(false);
+  });
+
+  test('MC: a shuffled stored letter resolves to the slot the student saw', () => {
+    // generate-all-pattern-problems.js shuffles options with their labels
+    // attached, so correctOption:'C' here means SLOT A. Comparing the submitted
+    // letter to the raw stored letter would mark slot C correct and slot A
+    // wrong — both verdicts backwards.
+    const spec = {
+      value: '100',
+      answerType: 'multiple-choice',
+      options: [{ label: 'C', text: '100' }, { label: 'A', text: '102' }, { label: 'B', text: '99' }],
+      correctOption: 'C',
+    };
+    expect(compareAnswer('A', spec)).toBe(true);
+    expect(compareAnswer('C', spec)).toBe(false);
+  });
+
+  test('MC: a typed value is graded against the CORRECT option, not a mis-indexed one', () => {
+    // The old `correctOption.charCodeAt(0) - 65` index read slot C's text ('99')
+    // on the spec above and pushed it into the acceptable set — so a student
+    // typing the wrong number graded correct.
+    const spec = {
+      value: '100',
+      answerType: 'multiple-choice',
+      options: [{ label: 'C', text: '100' }, { label: 'A', text: '102' }, { label: 'B', text: '99' }],
+      correctOption: 'C',
+    };
+    expect(compareAnswer('100', spec)).toBe(true);
+    expect(compareAnswer('99', spec)).toBe(false);
+  });
+
   test('MC: comparison-symbol options', () => {
     const spec = {
       value: 'greater than',

@@ -14,6 +14,7 @@ const CalcBootcampSession = require('../models/calcBootcampSession');
 const {
   weeklyComposite, projectBand, rankWeakSkills, buildWeeklyPlan,
 } = require('../utils/calcBootcamp');
+const { normalizeOptions, correctLabelOf } = require('../utils/mcOptions');
 
 const ASSESSMENT_MAP = require('../seeds/calc-assessment-map.json');
 
@@ -56,7 +57,10 @@ router.post('/start-week', async (req, res) => {
         n: m.n, problemId: m.problemId, unit: m.unit, skill: m.skill, skillId: m.skillId,
         practice: m.practice, calc: m.calc,
         content: p.prompt, svg: p.svg || undefined,
-        options: p.options || [],
+        // { label, text } only — the legacy banks carry `isCorrect` on every
+        // option, and this array is echoed back to the browser via
+        // clientSession(), which would ship the answer key with the questions.
+        options: normalizeOptions(p.options),
       };
     });
 
@@ -95,7 +99,10 @@ router.post('/submit-mc', async (req, res) => {
 
     const Problem = require('../models/problem');
     const pids = session.mcItems.map(i => i.problemId);
-    const keyDocs = await Problem.find({ problemId: { $in: pids } }, 'problemId correctOption explanation').lean();
+    // `options` is part of the key here: the label the student sees is the
+    // option's POSITION, which correctLabelOf translates the stored letter into.
+    const keyDocs = await Problem.find({ problemId: { $in: pids } },
+      'problemId correctOption explanation options').lean();
     const keyById = Object.fromEntries(keyDocs.map(p => [p.problemId, p]));
 
     const responses = [];
@@ -103,14 +110,23 @@ router.post('/submit-mc', async (req, res) => {
     for (const item of session.mcItems) {
       const answer = picks[item.problemId] || null;
       const key = keyById[item.problemId] || {};
-      const correct = !!answer && answer === key.correctOption;
+      // Was `answer === key.correctOption`, a hand-rolled compare against the
+      // STORED letter (CLAUDE.md §12 says not to hand-roll these). That is only
+      // right while the client happens to echo stored labels back; the moment a
+      // surface serves positional labels — as they all now do — a stale stored
+      // letter marks a wrong pick correct.
+      // With no options to position against, the stored letter stands — never
+      // fall through to "no correct label", which would mark a right pick wrong.
+      const correctLabel = correctLabelOf(key)
+        || (key.correctOption ? String(key.correctOption).trim().toUpperCase() : null);
+      const correct = !!answer && !!correctLabel && String(answer).trim().toUpperCase() === correctLabel;
       responses.push({
         problemId: item.problemId, n: item.n, unit: item.unit, skillId: item.skillId,
         practice: item.practice, calc: item.calc, answer, correct,
       });
       results.push({
         problemId: item.problemId, n: item.n, answer, correct,
-        correctOption: key.correctOption,
+        correctOption: correctLabel,   // the label the student saw, not the stored one
         explanation: correct ? undefined : key.explanation, // teach only on a miss
       });
     }

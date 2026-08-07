@@ -23,6 +23,7 @@ const { skillLookupCandidates } = require('../utils/skillCanonicalizer');
 const { normalizedMasteryScore } = require('../utils/masteryScore');
 
 const { anyRole, userHasRole } = require('../utils/roleQuery');
+const { normalizeOptions } = require('../utils/mcOptions');
 // Puppeteer for HTML → PDF rendering
 let puppeteer;
 try {
@@ -418,11 +419,13 @@ async function generateWorksheetHTML(user, problems, options = {}) {
 
     for (const p of probs) {
       const hasSVG = p.svg ? `<div class="problem-svg">${p.svg}</div>` : '';
-      const hasOptions = (p.answerType === 'multiple-choice' && p.options?.length > 0)
-        ? `<div class="problem-options">${p.options.map((o, oi) =>
-            // Some banks store options without a label — fall back to A/B/C/D
-            // by position instead of printing the literal string "undefined".
-            `<span class="option-item"><span class="option-letter">${o.label || String.fromCharCode(65 + oi)}</span> ${o.text != null ? o.text : o}</span>`
+      // Labels come from normalizeOptions, which assigns them by position for
+      // every stored shape — the inline `o.label ||` fallback this replaces
+      // still printed a shuffled bank's letters out of order (C, A, B, D).
+      const packOptions = p.answerType === 'multiple-choice' ? normalizeOptions(p.options) : [];
+      const hasOptions = packOptions.length > 0
+        ? `<div class="problem-options">${packOptions.map((o) =>
+            `<span class="option-item"><span class="option-letter">${o.label}</span> ${o.text}</span>`
           ).join('')}</div>`
         : '';
 
@@ -739,7 +742,9 @@ router.get('/preview', isAuthenticated, async (req, res) => {
         skillId: p.skillId,
         difficulty: p.difficulty,
         answerType: p.answerType,
-        options: p.options || [],
+        // { label, text } only — the legacy banks carry `isCorrect` on every
+        // option, which would ship the answer key with the worksheet.
+        options: normalizeOptions(p.options),
         svg: p.svg || null,
       }))
     });

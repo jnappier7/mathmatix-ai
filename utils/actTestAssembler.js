@@ -22,6 +22,7 @@
  */
 
 const DEFAULT_BLUEPRINT = require('../seeds/act-math-blueprint.json');
+const { normalizeOptions } = require('./mcOptions');
 // models/problem (mongoose) is required lazily inside assembleForm so the pure
 // helpers (buildSlots / skillPool / rawToScaled) load without a DB connection.
 
@@ -103,7 +104,11 @@ function toClientItem(slot, problem) {
     content: problem.prompt,               // field is `prompt`; screener sends it as `content`
     svg: problem.svg || undefined,         // optional figure
     answerType: problem.answerType,
-    options: problem.answerType === 'multiple-choice' ? (problem.options || []) : undefined,
+    // { label, text } only. These items are stored on the session and echoed to
+    // the browser by routes/actTest.js, so the stored shapes' `isCorrect` flag
+    // would ride along as an answer key; the labels also have to be positional
+    // to agree with how compareAnswer resolves the pick on submit.
+    options: problem.answerType === 'multiple-choice' ? normalizeOptions(problem.options) : undefined,
     difficulty: problem.difficulty,
   };
 }

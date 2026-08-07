@@ -90,11 +90,19 @@
       var field;
       if (Array.isArray(p.options) && p.options.length) {
         field = p.options.map(function (opt, j) {
+          // Options are { label, text }. Rendering `opt` directly painted
+          // "[object Object]" on every choice and submitted that string as the
+          // answer — the same bug already fixed on the skill map. The label is
+          // taken POSITIONALLY, matching how the server normalizes on serve and
+          // resolves on grade; a letter read off the option can be stale from a
+          // shuffle, and a wrong one here is silent.
           var id = 'cpa-' + i + '-' + j;
+          var lab = String.fromCharCode(65 + j);
+          var text = (opt && typeof opt === 'object') ? String(opt.text != null ? opt.text : '') : String(opt);
           return '<label for="' + id + '" style="display:flex; gap:8px; align-items:center; margin:4px 0; cursor:pointer;">'
             + '<input type="radio" id="' + id + '" name="cpa-q-' + esc(p.problemId) + '"'
-            + ' data-problem-id="' + esc(p.problemId) + '" value="' + esc(opt) + '">'
-            + '<span>' + esc(opt) + '</span></label>';
+            + ' data-problem-id="' + esc(p.problemId) + '" value="' + esc(lab) + '">'
+            + '<span>' + esc(lab) + '. ' + esc(text) + '</span></label>';
         }).join('');
       } else {
         field = '<input type="text" class="cpa-answer" data-problem-id="' + esc(p.problemId) + '"'

@@ -51,6 +51,108 @@ describe('gradeOne', () => {
   });
 });
 
+describe('gradeOne on the legacy multiple-choice banks', () => {
+  // The shapes below are verbatim from the generators that populated the bank.
+  // Each one graded a correct pick as wrong before the option seam was shared.
+
+  test('grades the convertToMC shape — options keyed `id`, no correctOption', () => {
+    // scripts/convertToMC.js: `{ id, text, isCorrect }` and the key left in
+    // `answer`. This is the population that scored a perfect run 0 of 5.
+    const mc = {
+      _id: '1',
+      answer: { value: '100', equivalents: [] },
+      answerType: 'multiple-choice',
+      options: [
+        { id: 'A', text: '102', isCorrect: false },
+        { id: 'B', text: '101', isCorrect: false },
+        { id: 'C', text: '100', isCorrect: true },
+        { id: 'D', text: '99', isCorrect: false }
+      ]
+    };
+    expect(gradeOne(mc, 'C').correct).toBe(true);
+    expect(gradeOne(mc, 'A').correct).toBe(false);
+  });
+
+  test('grades the generateProblems shape — answer holds the LETTER', () => {
+    // createMCProblem stores answer.value = the correct letter, equivalents =
+    // [letter, text]. Comparing the picked text alone would miss it.
+    const mc = {
+      _id: '1',
+      answer: { value: 'B', equivalents: ['B', '700'] },
+      answerType: 'multiple-choice',
+      options: [
+        { letter: 'A', text: '701', isCorrect: false },
+        { letter: 'B', text: '700', isCorrect: true }
+      ]
+    };
+    expect(gradeOne(mc, 'B').correct).toBe(true);
+    expect(gradeOne(mc, 'A').correct).toBe(false);
+  });
+
+  test('a letter-keyed item whose options are themselves letters is not confused', () => {
+    // The reason the two readings are decided rather than both attempted: here
+    // the key '  C' is an option TEXT, so slot D must not pass on its label.
+    const mc = {
+      _id: '1',
+      answer: { value: 'C', equivalents: [] },
+      answerType: 'multiple-choice',
+      options: [{ text: 'P' }, { text: 'Q' }, { text: 'R' }, { text: 'C' }]
+    };
+    expect(gradeOne(mc, 'D').correct).toBe(true);   // slot D holds the text 'C'
+    expect(gradeOne(mc, 'C').correct).toBe(false);  // slot C holds 'R'
+  });
+
+  test('follows the stored letter when a shuffle left it out of position', () => {
+    const mc = {
+      _id: '1',
+      correctOption: 'C',
+      answerType: 'multiple-choice',
+      options: [
+        { label: 'C', text: '100' },
+        { label: 'A', text: '102' },
+        { label: 'B', text: '99' }
+      ]
+    };
+    expect(gradeOne(mc, 'A').correct).toBe(true);   // slot A is the '100' card
+    expect(gradeOne(mc, 'C').correct).toBe(false);
+  });
+
+  test('a pick that is not on the card is ungradable, never wrong', () => {
+    // What the broken client actually submitted. Counting it wrong is what
+    // turned a render bug into a failed test-out; it must not cost the attempt.
+    const mc = {
+      _id: '1',
+      answer: { value: '100', equivalents: [] },
+      options: [{ id: 'A', text: '102' }, { id: 'B', text: '100' }]
+    };
+    expect(gradeOne(mc, 'undefined')).toMatchObject({ correct: false, reason: 'ungradable' });
+  });
+
+  test('the reported run: five correct picks score five, not zero', () => {
+    const round = (prompt, answer, opts) => ({
+      _id: prompt,
+      skillId: 'rounding',
+      prompt,
+      answerType: 'multiple-choice',
+      answer: { value: answer, equivalents: [] },
+      options: opts.map((text, i) => ({ id: 'ABCD'[i], text, isCorrect: text === answer }))
+    });
+    const problems = [
+      round('Round 137 to the nearest 100', '100', ['102', '101', '100', '99']),
+      round('Round 211 to the nearest 100', '200', ['201', '202', '200', '199']),
+      round('Round 659 to the nearest 100', '700', ['701', '699', '700', '702']),
+      round('Round 109 to the nearest 100', '100', ['99', '101', '102', '100']),
+      round('About how much is 20 + 22? (Round to nearest 10)', '40', ['39', '41', '40', '42'])
+    ];
+    // The labels the student's radios carry, now that they are positional.
+    const picks = ['C', 'C', 'C', 'D', 'C'];
+    const r = gradeChallenge(problems, problems.map((prob, i) => ({
+      problemId: prob._id, answer: picks[i]
+    })));
+    expect(r).toMatchObject({ correct: 5, total: 5, passed: true });
+  });
+});
+
 describe('gradeChallenge', () => {
   const five = ['1', '2', '3', '4', '5'].map((id) => p(id, id));
   const answerAll = (vals) => five.map((prob, i) => ({ problemId: prob._id, answer: vals[i] }));
