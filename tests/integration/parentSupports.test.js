@@ -49,20 +49,23 @@ beforeEach(async () => {
   await EducationRecordAccessLog.deleteMany({});
 
   const child = await User.create({
-    firstName: 'Maya', lastName: 'R', email: 'maya@test.dev',
+    firstName: 'Maya', lastName: 'R',
+    username: 'maya', email: 'maya@test.dev', passwordHash: 'x'.repeat(20),
     role: 'student', roles: ['student'],
     iepPlan: { accommodations: { extendedTime: true } }   // school owns extendedTime
   });
   childId = child._id;
 
   const other = await User.create({
-    firstName: 'Sam', lastName: 'T', email: 'sam@test.dev',
+    firstName: 'Sam', lastName: 'T',
+    username: 'sam', email: 'sam@test.dev', passwordHash: 'x'.repeat(20),
     role: 'student', roles: ['student']
   });
   otherChildId = other._id;
 
   const parent = await User.create({
-    firstName: 'Dana', lastName: 'R', email: 'dana@test.dev',
+    firstName: 'Dana', lastName: 'R',
+    username: 'dana', email: 'dana@test.dev', passwordHash: 'x'.repeat(20),
     role: 'parent', roles: ['parent'],
     children: [child._id]
   });
