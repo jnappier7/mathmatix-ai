@@ -23,12 +23,27 @@ const norm = (s) => String(s || '').toLowerCase();
 // ── Rejecting a correct answer ──────────────────────────────────────────────
 // The cardinal sin behind most of this session's transcripts: the student is
 // right and the tutor hedges/denies ("not quite", "almost", "you're close",
-// "let's double-check", "not correct"). Only a violation when the student WAS right.
-const REJECTION_MARKERS = /\b(not quite|almost(?!\s+there,\s+you'?re\s+right)|you'?re close|close,?\s+but|not (?:quite )?right|that'?s not (?:it|right|correct)|not correct|incorrect|try (?:that )?again|let'?s (?:double[-\s]?)?check|let'?s re[-\s]?check|hmm,?\s+not|isn'?t (?:quite )?right|(?:gone|went)\s+off\s+track|went\s+wrong|where\s+(?:things|it|we)\s+(?:went|might have gone)|pinpoint\s+where|where things might have gone|re-?add|sum them again|add (?:those|them)(?:\s+numbers)? again|where it slipped)\b/i;
+// "not correct"). Only a violation when the student WAS right.
+//
+// Markers come in two tiers. HARD denials always count. SOFT probes ("let's
+// check", "let's double-check") count only when the reply never affirmed the
+// answer first — "10/24 is right! Let's check the method behind it" is the
+// affirm-then-probe move the fast-correct policy *requires* (affirm + XP, then
+// gather data / teach-back), while "Hold up, let's check that first" with no
+// confirmation still reads to the student as doubt.
+const HARD_REJECTION_MARKERS = /\b(not quite|almost(?!\s+there,\s+you'?re\s+right)|you'?re close|close,?\s+but|not (?:quite )?right|that'?s not (?:it|right|correct)|not correct|incorrect|try (?:that )?again|hmm,?\s+not|isn'?t (?:quite )?right|(?:gone|went)\s+off\s+track|went\s+wrong|where\s+(?:things|it|we)\s+(?:went|might have gone)|pinpoint\s+where|where things might have gone|re-?add|sum them again|add (?:those|them)(?:\s+numbers)? again|where it slipped)\b/i;
+const SOFT_CHECK_MARKERS = /\blet'?s (?:double[-\s]?|re[-\s]?)?check\b/i;
+const AFFIRMATION_MARKERS = /\b(?:(?:that'?s|that is|you'?re|you are|is)\s+(?:exactly\s+|absolutely\s+|totally\s+)?(?:right|correct)\b(?!\s+there)|you (?:got|nailed) (?:it|this)|nailed it|spot[-\s]?on|exactly[.!]|that'?s it\b|well done|nice (?:work|job)|great (?:work|job)|perfect)/i;
 function rejectedCorrectAnswer(reply, ctx = {}) {
   if (!ctx.studentWasCorrect) return { violated: false };
-  const m = norm(reply).match(REJECTION_MARKERS);
-  return m ? { violated: true, evidence: `rejected a correct answer: "${m[0]}"` } : { violated: false };
+  const text = norm(reply);
+  const hard = text.match(HARD_REJECTION_MARKERS);
+  if (hard) return { violated: true, evidence: `rejected a correct answer: "${hard[0]}"` };
+  const soft = text.match(SOFT_CHECK_MARKERS);
+  if (!soft) return { violated: false };
+  const affirm = text.match(AFFIRMATION_MARKERS);
+  if (affirm && affirm.index < soft.index) return { violated: false };
+  return { violated: true, evidence: `rejected a correct answer: "${soft[0]}"` };
 }
 
 // ── Asserting a false non-equivalence ───────────────────────────────────────

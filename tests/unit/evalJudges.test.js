@@ -15,6 +15,15 @@ describe('rejectedCorrectAnswer', () => {
   test('does not flag a genuine confirmation', () => {
     expect(flags('Exactly right! Nice work.', ['rejectedCorrectAnswer'], { studentWasCorrect: true })).toEqual([]);
   });
+  test('affirm-then-probe is the fast-correct policy, not a rejection (2026-08-07 eval matrix)', () => {
+    expect(flags("10/24 is right! Let's check the method behind it, though", ['rejectedCorrectAnswer'], { studentWasCorrect: true })).toEqual([]);
+  });
+  test('flags "let\'s check" with NO confirmation first (2026-08-07 eval matrix)', () => {
+    expect(flags("Hold up, let's check the method behind that first", ['rejectedCorrectAnswer'], { studentWasCorrect: true })).toEqual(['rejectedCorrectAnswer']);
+  });
+  test('a hard denial always counts, even after an affirmation', () => {
+    expect(flags("That's right... wait, actually that's not correct.", ['rejectedCorrectAnswer'], { studentWasCorrect: true })).toEqual(['rejectedCorrectAnswer']);
+  });
   test('does not fire when the student was wrong (hedging is appropriate)', () => {
     expect(flags('Not quite — try adding 6 to both sides.', ['rejectedCorrectAnswer'], { studentWasCorrect: false })).toEqual([]);
   });
