@@ -7,7 +7,7 @@
   /* Brand teal (#12b3b3) measures 2.58:1 against white, so it fails WCAG AA
      (4.5:1) wherever it is used for small text. This darker variant is for
      small type only — fills, borders, icons and large display type keep the
-     brand colour, so the identity is unchanged. */
+     brand color, so the identity is unchanged. */
   --clr-teal-text: #0c7575;
 }
 
@@ -52,7 +52,7 @@
   }
 
   /* Same accent as the desktop nav CTA. This used to be teal, so the primary
-     call to action changed colour between breakpoints. */
+     call to action changed color between breakpoints. */
   .lp-mobile-topbar-btn {
     display: inline-block;
     background: linear-gradient(135deg, #db2b6a 0%, #c92260 100%);
@@ -2563,7 +2563,7 @@
   gap: 8px;
   border: none;
   border-radius: 999px;
-  /* The accent colour marks the page's primary action, and this is it — the
+  /* The accent color marks the page's primary action, and this is it — the
      composer is the conversion event, not the nav button. It was teal, which
      ranked it below the smaller pink CTA in the corner. */
   background: linear-gradient(135deg, #db2b6a 0%, #c92260 100%);
