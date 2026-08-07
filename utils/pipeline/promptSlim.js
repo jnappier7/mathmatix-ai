@@ -179,6 +179,14 @@ const ACTION_RULES = {
     CONVERSATIONAL_CONTINUITY_RULES,
     MICRO_ADAPTATION_RULES,
   ],
+  // Correct answer, suspect rule: same verification/continuity posture as a
+  // confirm turn — the probe comes from the decide directives, not extra rules.
+  [ACTIONS.AFFIRM_THEN_PROBE]: [
+    ANSWER_VERIFICATION_RULES,
+    MASTERY_CHECK_RULES,
+    CONVERSATIONAL_CONTINUITY_RULES,
+    MICRO_ADAPTATION_RULES,
+  ],
   [ACTIONS.GUIDE_INCORRECT]: [
     ANSWER_VERIFICATION_RULES,
     ANSWER_PERSISTENCE_RULES,

@@ -393,6 +393,130 @@ async function verifyWithEscalation(problemText, studentAnswer, options = {}) {
   };
 }
 
+// ── Method audit — right answer, suspect rule ───────────────────────────────
+// The gap between "the answer is correct" and "the method is sound": a student
+// who adds 1/4 + 1/6, announces 10/24, and explains "you add the denominators
+// for the numerator and multiply them for the denominator" got the right value
+// from a rule that isn't generally valid. Verification (all of the above) can
+// only bless the VALUE; nothing audited the articulated rule, so the tutor
+// either let a wrong generalization walk or — worse — led with doubt about a
+// verified-correct answer while it groped at the method. This call audits the
+// METHOD alone, so decide can affirm the answer first and then probe the rule
+// (the fast-correct policy) with a concrete counterexample in hand.
+
+// Cheap gate so the audit only fires when there is actually a method to audit:
+// the message must carry prose (not just a value) AND articulate a procedure —
+// a first-person/second-person operation verb or an explicit rule framing.
+const METHOD_ARTICULATION_RX = /\b(?:i|you|we)\s+(?:just\s+)?(?:add(?:ed)?|subtract(?:ed)?|multipl(?:y|ied)|divid(?:e|ed)|took|take|move(?:d)?|flip(?:ped)?|cross(?:ed)?|cancel(?:ed|led)?|combine(?:d)?|switch(?:ed)?|swap(?:ped)?)\b|\bmy\s+(?:rule|trick|method|way|shortcut)\b|\bthe\s+(?:rule|trick|shortcut)\s+is\b|\byou\s+(?:just\s+)?(?:always|simply)\b|\ball\s+you\s+(?:do|have\s+to\s+do)\b/i;
+
+/**
+ * Does this message articulate a METHOD (a rule or procedure), beyond stating
+ * an answer? Gate for llmVerifyMethod — keeps the audit off bare answers.
+ *
+ * @param {string} text - the student's raw message
+ * @returns {boolean}
+ */
+function articulatesMethod(text) {
+  if (!text || typeof text !== 'string') return false;
+  const t = text.trim();
+  if (!t || t.length > 1500) return false;
+  const proseWords = t.split(/\s+/).filter((w) => /^[a-z][a-z']*$/i.test(w));
+  if (proseWords.length < 4) return false;
+  return METHOD_ARTICULATION_RX.test(t);
+}
+
+/**
+ * Audit the METHOD a student articulated alongside a verified-CORRECT answer.
+ *
+ * Fresh context, no persona, temperature 0 — same hallucination posture as the
+ * answer verifier. The answer's correctness is a settled input, never re-judged:
+ * the only question is whether the described rule is generally valid or a wrong
+ * generalization that happened to work on these numbers.
+ *
+ * Asymmetric like every verdict in this pipeline: flagging a method needs HIGH
+ * confidence (a false flag costs an unnecessary probe on a succeeding student),
+ * while "method fine / can't tell" costs nothing — decide just confirms as usual.
+ *
+ * @param {string} problemText - the problem as posed
+ * @param {string} studentMessage - the student's full reply (answer + method)
+ * @param {Object} [options] - { model, negativeConfidenceThreshold }
+ * @returns {Promise<Object>} audit
+ *   - suspect {boolean}: true only on a high-confidence invalid-rule verdict
+ *   - flaw {string|null}: one-line description of why the rule fails in general
+ *   - counterexample {string|null}: an input where the rule breaks (for the probe)
+ *   - confidence {number}
+ *   - error {string|null}
+ */
+async function llmVerifyMethod(problemText, studentMessage, options = {}) {
+  const clean = { suspect: false, flaw: null, counterexample: null, confidence: 0, error: null };
+  if (!problemText || !studentMessage) return { ...clean, error: 'missing_input' };
+
+  // The STRONGER judge by default, unlike the answer verifier. This audit is
+  // rare (gated on correct-answer + articulated-method turns) so the cost is
+  // bounded, and its counterexample may be handed to a student — measured on
+  // the butterfly rule, gpt-4o-mini produced a counterexample the bad rule
+  // actually SATISFIES (unit fractions) 3 runs out of 3, which would have
+  // reinforced the misconception it exists to catch.
+  const model = options.model || ESCALATION_MODEL;
+  const negativeThreshold = options.negativeConfidenceThreshold != null
+    ? options.negativeConfidenceThreshold
+    : NEGATIVE_CONFIDENCE_THRESHOLD;
+
+  try {
+    const messages = [
+      {
+        role: 'system',
+        content:
+          'You audit the METHOD a math student described. Their final ANSWER has already been independently verified as CORRECT — do not re-judge it. ' +
+          'Judge ONLY the rule or procedure they articulated: is it a generally valid method, or a wrong generalization that merely produced the right value on these particular numbers? ' +
+          'Informal wording, missing vocabulary, and shorthand are FINE — a valid method sloppily described is VALID. Only the mathematics of the rule matters. ' +
+          'If they described no real method, or you cannot tell what rule they used, the verdict is "unclear" — never guess. ' +
+          'If the rule is invalid, give a counterexample: a SIMPLE concrete input of the same kind where their rule produces a wrong result, stated as a short problem (never solve it). ' +
+          'TEST the counterexample before returning it: apply the student\'s stated rule to it, compute the true answer, and confirm they DISAGREE. A counterexample their rule gets RIGHT would reinforce the bad rule — e.g. "add the denominators for the numerator, multiply them for the denominator" happens to WORK on every pair of unit fractions like 1/2 + 1/3 (rule: 5/6, true: 5/6), so a breaking input must use non-unit fractions like 2/3 + 3/4 (rule: 7/12, true: 17/12). ' +
+          'If every input you try agrees with the rule, the verdict is "valid", not "invalid". ' +
+          'Respond with JSON ONLY: {"verdict":"valid"|"invalid"|"unclear","confidence":<0.0-1.0>,"flaw":"<one line: why the rule fails in general, empty if valid/unclear>","counterexample":"<short problem where it breaks — tested, empty if valid/unclear>"}.',
+      },
+      {
+        role: 'user',
+        content: `Problem:\n${String(problemText).slice(0, MAX_PROBLEM_CHARS)}\n\nStudent's reply (answer verified correct; judge only the described method):\n${String(studentMessage).slice(0, MAX_ANSWER_CHARS * 4)}`,
+      },
+    ];
+
+    const res = await callLLM(model, messages, {
+      temperature: 0,
+      max_tokens: 250,
+      response_format: { type: 'json_object' },
+    });
+
+    const raw = res?.choices?.[0]?.message?.content?.trim() || '';
+    let judged;
+    try {
+      judged = JSON.parse(raw);
+    } catch (_) {
+      return { ...clean, error: 'method_parse_failed' };
+    }
+
+    const verdict = typeof judged.verdict === 'string' ? judged.verdict.toLowerCase() : null;
+    const rawConfidence = typeof judged.confidence === 'number' ? judged.confidence : 0;
+    const confidence = Math.max(0, Math.min(1, rawConfidence));
+    if (verdict !== 'invalid' || confidence < negativeThreshold) {
+      return { ...clean, confidence };
+    }
+    return {
+      suspect: true,
+      flaw: typeof judged.flaw === 'string' && judged.flaw.trim() ? judged.flaw.slice(0, 300) : null,
+      counterexample: typeof judged.counterexample === 'string' && judged.counterexample.trim()
+        ? judged.counterexample.slice(0, 200)
+        : null,
+      confidence,
+      error: null,
+    };
+  } catch (err) {
+    console.error('[LLMVerifier] Method audit failed:', err.message);
+    return { ...clean, error: err.message || 'llm_error' };
+  }
+}
+
 const hasContent = (m) => typeof m?.content === 'string' && m.content.trim().length > 0;
 const hasProblemInfo = (m) => hasContent(m) && m.problemInfo && m.problemInfo.correctAnswer != null;
 const looksMathy = (m) => hasContent(m) && (
@@ -532,6 +656,8 @@ function isPolarityAnswer(text) {
 module.exports = {
   llmVerifyAnswer,
   llmVerifyConceptual,
+  llmVerifyMethod,
+  articulatesMethod,
   isConceptualQuestion,
   isProseAnswer,
   isPolarityQuestion,

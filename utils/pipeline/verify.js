@@ -760,9 +760,15 @@ async function verify(responseText, context = {}) {
 
   // ── 2d. False-rejection guard (CRITICAL — protects correct answers) ──
   // When the pipeline has VERIFIED the student's answer is correct
-  // (action === CONFIRM_CORRECT) but the LLM's response implies the
-  // answer is wrong, flag it for regeneration.
-  if (!regeneratedThisPass && context.action === ACTIONS.CONFIRM_CORRECT) {
+  // (action === CONFIRM_CORRECT, or AFFIRM_THEN_PROBE — correct answer with a
+  // suspect method, which must STILL open by affirming) but the LLM's response
+  // implies the answer is wrong, flag it for regeneration. The affirm-first
+  // check is compatible with a probe: leadsWithDoubtOnCorrect only requires the
+  // OPENING clause to affirm, so "That's right! Try your rule on 1/2 + 1/4"
+  // passes while "Hold on, let's check that logic" regenerates.
+  const verifiedCorrectAction = context.action === ACTIONS.CONFIRM_CORRECT
+    || context.action === ACTIONS.AFFIRM_THEN_PROBE;
+  if (!regeneratedThisPass && verifiedCorrectAction) {
     if (falseRejectionOpener.test(text.trim()) || leadsWithDoubtOnCorrect(text)) {
       flags.push('false_rejection_detected');
       console.log(`[Verify] FALSE REJECTION detected on verified-correct answer — regenerating`);
@@ -770,7 +776,10 @@ async function verify(responseText, context = {}) {
       // Regenerate with an explicit correction directive.
       // The LLM speaks naturally, but now KNOWS the answer is correct.
       try {
-        const correctionPrompt = `The student's answer has been mathematically verified as CORRECT by our answer engine. Your previous response incorrectly implied it was wrong. Respond naturally to the student — confirm their answer is correct and continue the lesson. Do not use scripted language; just be a natural, encouraging tutor who knows this answer is right.`;
+        const probeSuffix = context.action === ACTIONS.AFFIRM_THEN_PROBE
+          ? ' After affirming, you may keep ONE curiosity-framed question inviting them to test the method they described on a different example — their rule is not generally valid — but the affirmation always comes first and the question must carry no doubt about THIS answer.'
+          : '';
+        const correctionPrompt = `The student's answer has been mathematically verified as CORRECT by our answer engine. Your previous response incorrectly implied it was wrong. Respond naturally to the student — confirm their answer is correct and continue the lesson. Do not use scripted language; just be a natural, encouraging tutor who knows this answer is right.${probeSuffix}`;
         const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
           [{ role: 'system', content: correctionPrompt },
            { role: 'assistant', content: text },
@@ -851,7 +860,8 @@ async function verify(responseText, context = {}) {
     // Don't double-act if the action-based guard already gated on the same
     // info (i.e. action already reflected the LLM verdict via diagnose's
     // fallback path).
-    const alreadyGatedCorrect = context.action === ACTIONS.CONFIRM_CORRECT;
+    const alreadyGatedCorrect = context.action === ACTIONS.CONFIRM_CORRECT
+      || context.action === ACTIONS.AFFIRM_THEN_PROBE;
     const alreadyGatedIncorrect = context.action === ACTIONS.GUIDE_INCORRECT || context.action === ACTIONS.RETEACH_MISCONCEPTION;
 
     // LLM says WRONG, response is affirming → regenerate as correction.

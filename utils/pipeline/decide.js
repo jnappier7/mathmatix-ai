@@ -30,6 +30,10 @@ const { getSkillMasteryEntry } = require('../masteryGuard');
 // ── Tutoring actions the engine can choose ──
 const ACTIONS = {
   CONFIRM_CORRECT: 'confirm_correct',
+  // Right answer, suspect rule: affirm the verified-correct answer FIRST, then
+  // probe the invalid method with a counterexample. The tension the LLM kept
+  // resolving as doubt-first, decided in code instead.
+  AFFIRM_THEN_PROBE: 'affirm_then_probe',
   GUIDE_INCORRECT: 'guide_incorrect',
   HINT: 'hint',
   WORKED_EXAMPLE: 'worked_example',
@@ -589,6 +593,41 @@ function decideCore(observation, diagnosis, context) {
     }
 
     if (diagnosis.isCorrect) {
+      // ── Right answer, suspect rule → AFFIRM THEN PROBE ──
+      // The diagnose-stage method audit found the answer correct but the
+      // articulated rule invalid (a wrong generalization that happened to work,
+      // or shown work that breaks mid-chain). This is the one correct-answer
+      // case where a probe IS the right move — but the ORDER is everything:
+      // affirmation first, always. Left to improvise this tension, the model
+      // kept leading with doubt ("Whoa, hold on, let's check that logic") about
+      // an answer the pipeline had already verified. So the order is decided
+      // here, not hoped for in the prompt.
+      if (diagnosis.methodAudit && diagnosis.methodAudit.suspect) {
+        const audit = diagnosis.methodAudit;
+        decision.action = ACTIONS.AFFIRM_THEN_PROBE;
+        decision.directives.push(
+          'AFFIRM THEN PROBE: the student\'s ANSWER is verified CORRECT, but the METHOD they described is not a generally valid rule — it produced the right value on these numbers and will fail on others.',
+          'Your FIRST sentence must plainly affirm that their answer is right (with the XP that goes with it). The answer is settled; nothing you say may cast doubt on it.',
+          'BANNED before the affirmation: "hold on", "wait", "hmm", "let\'s check", "are you sure", or any doubt-toned opener. Affirm FIRST — only then bring up the method.'
+        );
+        if (audit.flaw) {
+          decision.directives.push(`What the audit found: ${audit.flaw}`);
+        }
+        if (audit.counterexample) {
+          decision.directives.push(
+            `Then pose ONE curiosity-framed probe: invite them to try their rule on a counterexample and see what it gives. Candidate from the audit: ${audit.counterexample}. VERIFY it first — apply THEIR stated rule to it and compute the true answer yourself; use it only if the two DISAGREE. If their rule happens to work on the candidate, choose a different case where it fails. Let the counterexample do the teaching.`
+          );
+        } else {
+          decision.directives.push(
+            'Then pose ONE curiosity-framed probe of the rule they described — e.g. ask them to try their same rule on a nearby case where it breaks, or to walk you through why the rule works. Curiosity, never correction.'
+          );
+        }
+        decision.directives.push(
+          'Do NOT lecture the correct method and do NOT say their rule is wrong outright — let them discover the break themselves. One probe, then follow their lead.'
+        );
+        return decision;
+      }
+
       decision.action = ACTIONS.CONFIRM_CORRECT;
       decision.directives.push(
         'Confirm immediately. Do NOT hedge.',
@@ -1258,7 +1297,7 @@ function applyMoodModifiers(decision, sessionMood) {
       );
     }
     // Keep praise brief in flow — don't slow them down
-    if (decision.action === ACTIONS.CONFIRM_CORRECT) {
+    if (decision.action === ACTIONS.CONFIRM_CORRECT || decision.action === ACTIONS.AFFIRM_THEN_PROBE) {
       decision.directives.push('Brief confirmation only — student is in flow. Keep pace up.');
     }
   }
@@ -1284,7 +1323,7 @@ function applyMoodModifiers(decision, sessionMood) {
 
   // ── Recovered: acknowledge the turnaround ──
   if (sessionMood.trajectory === 'recovered') {
-    if (decision.action === ACTIONS.CONFIRM_CORRECT) {
+    if (decision.action === ACTIONS.CONFIRM_CORRECT || decision.action === ACTIONS.AFFIRM_THEN_PROBE) {
       decision.directives.push(
         'Student was struggling earlier but is now getting it. Acknowledge the turnaround naturally (not patronizingly).'
       );

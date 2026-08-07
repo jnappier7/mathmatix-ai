@@ -98,6 +98,11 @@ function buildActionPrompt(decision) {
       }
       break;
 
+    case ACTIONS.AFFIRM_THEN_PROBE:
+      parts.push(`The student answered "${observation.answer?.value}" and it is CORRECT (verified by our math engine) — but the METHOD they described is not a generally valid rule; it happened to work on these numbers.`);
+      parts.push('Reply in exactly this order: (1) affirm plainly that their answer is right — first sentence, no hedging; (2) ONE curiosity-framed probe of their rule, ideally inviting them to try it on the counterexample from the directives. Never doubt-toned, never a lecture, never "but actually".');
+      break;
+
     case ACTIONS.GUIDE_INCORRECT:
       parts.push(`The student answered "${observation.answer?.value}" but the correct answer is "${diagnosis.correctAnswer}".`);
       parts.push('Do NOT reveal the correct answer. Ask a question that exposes why their approach went wrong.');

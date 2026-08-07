@@ -454,3 +454,94 @@ describe('LLMVerifier: pickProblemContext recency', () => {
     expect(pickPosedQuestion([])).toBeNull();
   });
 });
+
+// ── Method audit: right answer, suspect rule ─────────────────────────────────
+// The answer is a settled CORRECT input; the audit judges only the articulated
+// rule. Asymmetric like every verdict here: "invalid" needs high confidence,
+// everything else returns suspect=false and the pipeline confirms as usual.
+describe('LLMVerifier: llmVerifyMethod', () => {
+  const { llmVerifyMethod } = require('../../utils/pipeline/llmVerifier');
+
+  beforeEach(() => {
+    callLLM.mockReset();
+  });
+
+  test('missing input never calls the LLM', async () => {
+    expect((await llmVerifyMethod('', 'i added the tops')).error).toBe('missing_input');
+    expect((await llmVerifyMethod('1/4 + 1/6', '')).error).toBe('missing_input');
+    expect(callLLM).not.toHaveBeenCalled();
+  });
+
+  test('a high-confidence invalid rule is suspect, with flaw and counterexample', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({
+      verdict: 'invalid',
+      confidence: 0.95,
+      flaw: 'adding denominators for the numerator is not fraction addition',
+      counterexample: '1/2 + 1/2',
+    }));
+    const audit = await llmVerifyMethod('1/4 + 1/6', 'I got 10/24. You add the denominators for the numerator and multiply them for the denominator.');
+    expect(audit.suspect).toBe(true);
+    expect(audit.flaw).toMatch(/denominators/);
+    expect(audit.counterexample).toBe('1/2 + 1/2');
+    expect(audit.error).toBeNull();
+    // The audit runs on the STRONGER judge by default — gpt-4o-mini's
+    // counterexamples satisfied the bad rule they were meant to break.
+    expect(callLLM.mock.calls[0][0]).toBe('gpt-4o');
+  });
+
+  test('an invalid verdict below the negative bar is NOT suspect', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ verdict: 'invalid', confidence: 0.6, flaw: 'maybe', counterexample: '' }));
+    const audit = await llmVerifyMethod('1/4 + 1/6', 'I crossed things and got 10/24');
+    expect(audit.suspect).toBe(false);
+    expect(audit.confidence).toBe(0.6);
+  });
+
+  test('valid and unclear verdicts are never suspect', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ verdict: 'valid', confidence: 0.99 }));
+    expect((await llmVerifyMethod('1/4 + 1/6', 'i found a common denominator of 12')).suspect).toBe(false);
+    callLLM.mockResolvedValueOnce(fakeCompletion({ verdict: 'unclear', confidence: 0.9 }));
+    expect((await llmVerifyMethod('1/4 + 1/6', 'i just did it in my head')).suspect).toBe(false);
+  });
+
+  test('malformed JSON and thrown errors fail closed (not suspect)', async () => {
+    callLLM.mockResolvedValueOnce({ choices: [{ message: { content: 'not json' } }] });
+    const parseFail = await llmVerifyMethod('1/4 + 1/6', 'i added the bottoms');
+    expect(parseFail.suspect).toBe(false);
+    expect(parseFail.error).toBe('method_parse_failed');
+
+    callLLM.mockRejectedValueOnce(new Error('boom'));
+    const errFail = await llmVerifyMethod('1/4 + 1/6', 'i added the bottoms');
+    expect(errFail.suspect).toBe(false);
+    expect(errFail.error).toBe('boom');
+  });
+
+  test('empty flaw/counterexample strings and a non-string verdict normalize to null/false', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ verdict: 'invalid', confidence: 0.9, flaw: '  ', counterexample: '' }));
+    const audit = await llmVerifyMethod('1/4 + 1/6', 'i added the bottoms and tops');
+    expect(audit.suspect).toBe(true);
+    expect(audit.flaw).toBeNull();
+    expect(audit.counterexample).toBeNull();
+
+    callLLM.mockResolvedValueOnce(fakeCompletion({ verdict: 42, confidence: 'high' }));
+    expect((await llmVerifyMethod('1/4 + 1/6', 'i multiplied across')).suspect).toBe(false);
+  });
+});
+
+describe('LLMVerifier: articulatesMethod gate', () => {
+  const { articulatesMethod } = require('../../utils/pipeline/llmVerifier');
+
+  test('fires on articulated procedures', () => {
+    expect(articulatesMethod('I added the denominators for the numerator and multiplied them for the denominator')).toBe(true);
+    expect(articulatesMethod('my trick is you flip the second one and multiply')).toBe(true);
+    expect(articulatesMethod('all you have to do is cross out the sevens')).toBe(true);
+  });
+
+  test('stays quiet on bare answers, short prose, and non-method chatter', () => {
+    expect(articulatesMethod('10/24')).toBe(false);
+    expect(articulatesMethod('i added them')).toBe(false); // < 4 prose words
+    expect(articulatesMethod('this one was pretty easy for me honestly')).toBe(false); // prose, no method
+    expect(articulatesMethod('')).toBe(false);
+    expect(articulatesMethod(null)).toBe(false);
+    expect(articulatesMethod('x'.repeat(1600))).toBe(false); // over length cap
+  });
+});
