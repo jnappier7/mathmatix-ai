@@ -1,0 +1,52 @@
+# Nightly tutor-quality eval — the live LLM tier the PR gate can't run.
+#
+# 10 live-suite runs per evening (5 × the prod model, 5 × the fallback the
+# students get on transient errors), aggregated into a pass-rate table in the
+# job summary. Fails only on STABLE regressions (a test failing a majority of
+# its runs for a model) — single-run flakes are listed but don't page.
+#
+# Needs repo secrets: OPENAI_API_KEY (replies for the fallback model + all
+# LLM judges) and ANTHROPIC_API_KEY (replies for the prod claude model).
+name: Nightly tutor eval
+
+on:
+  schedule:
+    - cron: '30 1 * * *' # 01:30 UTC ≈ 9:30 PM ET (8:30 PM during EST)
+  workflow_dispatch:
+    inputs:
+      runs_per_model:
+        description: 'Live-suite runs per model'
+        default: '5'
+        required: false
+
+jobs:
+  live-eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: Run live eval matrix
+        run: bash scripts/nightly-tutor-eval.sh
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          RUNS_PER_MODEL: ${{ github.event.inputs.runs_per_model || '5' }}
+
+      - name: Upload per-run logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-nightly-logs
+          path: eval-nightly-logs/
+          retention-days: 30
