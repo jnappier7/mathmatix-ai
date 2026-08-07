@@ -21,6 +21,7 @@ const ActTestSession = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { assembleForm, rawToScaled, getBlueprint } = require('../utils/actTestAssembler');
 const { buildActPlan, planStartModule, planSummary } = require('../utils/actBootcampPlan');
+const { normalizeOptions } = require('../utils/mcOptions');
 const CourseSession = require('../models/courseSession');
 
 // skillId → human-readable name, so the report can name EXACT weak skills
@@ -172,7 +173,10 @@ router.get('/next-problem', async (req, res) => {
         skillId: item.skillId,
         category: item.category,
         answerType: item.answerType,
-        options: item.options,
+        // The assembler already normalizes, but sessions started before it did
+        // hold raw options — and serving those stored labels while compareAnswer
+        // resolves positionally is exactly the disagreement that misgrades.
+        options: normalizeOptions(item.options),
         questionNumber: item.position,
         progress: {
           current: session.currentIndex + 1,

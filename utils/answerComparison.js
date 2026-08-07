@@ -10,6 +10,8 @@
 // equivalence of expressions. This module judges a student's literal answer
 // against a known answer key.
 
+const { normalizeOptions, correctLabelOf } = require('./mcOptions');
+
 /**
  * Parse a string as either a fraction or decimal number.
  * Handles: "2/3", "0.666", ".5", "1 1/2" (mixed), "-3/4"
@@ -216,20 +218,28 @@ function compareAnswer(userAnswer, spec = {}) {
   // MULTIPLE CHOICE: handle first since user sends letters (A, B, C, D)
   if (spec.answerType === 'multiple-choice') {
     const userUpper = userStr.toUpperCase();
+    // Labels are POSITIONAL — the slot the student actually read, which is what
+    // every surface now serves. `correctOption` names an option's STORED
+    // letter, and the two disagree on the pattern-problem bank, which shuffles
+    // options with their labels attached (correctOption:'C' can mean slot 0).
+    // normalizeOptions/correctLabelOf translate between the two; comparing the
+    // submission to the raw stored letter instead would pass a wrong pick.
+    const mcOptions = normalizeOptions(spec.options);
+    const correctLabel = mcOptions.length ? correctLabelOf(spec) : null;
 
     // Method 1: direct correctOption comparison
-    if (spec.correctOption && userUpper === String(spec.correctOption).toUpperCase()) {
+    if (mcOptions.length ? (correctLabel && userUpper === correctLabel)
+      : (spec.correctOption && userUpper === String(spec.correctOption).toUpperCase())) {
       return true;
     }
 
     // Method 2: user sent a letter (A–F) — look up that option's text and
     // compare to the correct answer value
-    if (/^[A-F]$/.test(userUpper) && spec.options && spec.options.length > 0) {
+    if (/^[A-F]$/.test(userUpper) && mcOptions.length > 0) {
       const optionIndex = userUpper.charCodeAt(0) - 65; // A=0, B=1, …
 
-      if (optionIndex >= 0 && optionIndex < spec.options.length) {
-        const selectedOption = spec.options[optionIndex];
-        const selectedText = (selectedOption?.text ?? selectedOption ?? '').toString().trim().toLowerCase();
+      if (optionIndex >= 0 && optionIndex < mcOptions.length) {
+        const selectedText = mcOptions[optionIndex].text.trim().toLowerCase();
         const correctStr = String(correctValue).trim().toLowerCase();
 
         if (selectedText === correctStr) return true;
@@ -257,10 +267,11 @@ function compareAnswer(userAnswer, spec = {}) {
       return false;
     }
 
-    if (spec.correctOption && spec.options && spec.options.length > 0) {
-      const correctIdx = String(spec.correctOption).toUpperCase().charCodeAt(0) - 65;
-      const correctOpt = spec.options[correctIdx];
-      const correctOptText = correctOpt?.text ?? correctOpt;
+    // Resolve the correct option through its POSITIONAL label. Indexing the raw
+    // stored letter (charCodeAt - 65) reads the wrong option's text on the
+    // shuffled bank, which then makes a wrong typed value grade correct.
+    if (correctLabel) {
+      const correctOptText = mcOptions[correctLabel.charCodeAt(0) - 65]?.text;
       if (correctOptText != null && String(correctOptText).trim() !== '') {
         extraAcceptable.push(String(correctOptText));
       }

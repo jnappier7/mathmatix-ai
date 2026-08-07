@@ -56,6 +56,35 @@ describe('buildReviewQueue', () => {
     expect(q.map((m) => m.problemId)).toEqual(['c', 'b', 'a']); // numbered first, then leverage
   });
 
+  test('names the choice a label-less bank stores, instead of "undefined"', () => {
+    // convertToMC items key the letter as `id`, so the old
+    // `find(x => x.label === label)` lookup returned null and the tutor's
+    // coaching prompt read "They chose B (undefined)".
+    const s = {
+      items: [{
+        position: 1, problemId: 'z1', category: 'algebra', content: 'Solve 2x+3=11',
+        options: [{ id: 'A', text: '4', isCorrect: true }, { id: 'B', text: '5', isCorrect: false }],
+      }],
+      responses: [{ position: 1, problemId: 'z1', answer: 'B', correct: false }],
+    };
+    const q = buildReviewQueue(s, { z1: { correctOption: 'A', answer: { value: '4' } } });
+    expect(q[0].theirAnswerText).toBe('5');
+    expect(q[0].correctOption).toBe('A');
+    expect(q[0].options).toEqual([{ label: 'A', text: '4' }, { label: 'B', text: '5' }]);
+  });
+
+  test('resolves a shuffled stored letter to the slot the student saw', () => {
+    const s = {
+      items: [{
+        position: 1, problemId: 'z2', category: 'algebra', content: 'Round 137 to the nearest 100',
+        options: [{ label: 'C', text: '100' }, { label: 'A', text: '102' }],
+      }],
+      responses: [{ position: 1, problemId: 'z2', answer: 'B', correct: false }],
+    };
+    const q = buildReviewQueue(s, { z2: { correctOption: 'C', answer: { value: '100' } } });
+    expect(q[0].correctOption).toBe('A');   // stored 'C' sits in slot A
+  });
+
   test('carries what the tutor needs: their answer, correct answer, explanation', () => {
     const q1 = queue.find((m) => m.problemId === 'q1');
     expect(q1.theirAnswer).toBe('B');

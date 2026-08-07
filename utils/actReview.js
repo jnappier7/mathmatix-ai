@@ -9,6 +9,7 @@
 // prompt path (present + advance).
 
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
+const { normalizeOptions, resolveChoice, correctLabelOf } = require('./mcOptions');
 
 // Higher category exam-weight => higher-leverage miss => reviewed first.
 const DEFAULT_CATEGORY_WEIGHTS = {
@@ -17,7 +18,11 @@ const DEFAULT_CATEGORY_WEIGHTS = {
 };
 
 function optionText(options, label) {
-  const o = (options || []).find((x) => x && x.label === label);
+  // Was `find(x => x.label === label)`, which returned null on every bank that
+  // stores the letter as `id`/`letter` or not at all — so the tutor's review
+  // prompt named the choice as "undefined". resolveChoice reads the letter
+  // positionally, the way the student saw it.
+  const o = resolveChoice(options, label);
   return o ? o.text : null;
 }
 
@@ -41,7 +46,12 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
       const it = itemsById[r.problemId] || {};
       const p = problemsById[r.problemId] || {};
       const category = it.category || r.category || 'unknown';
-      const options = it.options || p.options || [];
+      // Normalized so the letters in the review prompt are the ones the student
+      // read on the test, and so nothing downstream sees a label-less option.
+      // Keep the RAW array too: it still carries the stored letters, which is
+      // what correctOption is named against.
+      const rawOptions = (it.options && it.options.length) ? it.options : (p.options || []);
+      const options = normalizeOptions(rawOptions);
       return {
         // The question number on THEIR test ("you missed #12") — drives the
         // on-screen number rail and the default review order.
@@ -54,7 +64,13 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
         skipped: !!r.skipped,
         theirAnswer: r.skipped ? null : (r.answer || null),
         theirAnswerText: r.skipped ? null : optionText(options, r.answer),
-        correctOption: p.correctOption || null,
+        // The POSITIONAL label — `p.correctOption` is the stored letter, which
+        // is a different slot on the bank that shuffles labels with options.
+        // The options come off the session item, so pair them with the key
+        // explicitly. With no options at all there is nothing to reposition
+        // against, so the stored letter stands.
+        correctOption: correctLabelOf({ correctOption: p.correctOption, options: rawOptions })
+          || p.correctOption || null,
         correctAnswer: (p.answer && p.answer.value) || null,
         explanation: p.explanation || '',
         leverage: weights[category] || 5,

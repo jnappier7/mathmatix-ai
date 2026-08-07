@@ -45,10 +45,13 @@
       var wrap = el('div', 'mm-ch-options');
       problem.options.forEach(function (opt, i) {
         // Same fix as skill-map.js: options are { label, text } objects, the
-        // student sees the text, and grading expects the LETTER back.
+        // student sees the text, and grading expects the LETTER back. The label
+        // is POSITIONAL — the older banks key it as `id`/`letter` or omit it, and
+        // trusting opt.label put the string "undefined" in the radio. The server
+        // normalizes on serve now; this stays because a wrong label is silent.
         var isObj = opt && typeof opt === 'object';
-        var optLabel = isObj ? opt.label : String.fromCharCode(65 + i);
-        var optText = isObj ? opt.text : String(opt);
+        var optLabel = String.fromCharCode(65 + i);
+        var optText = isObj ? String(opt.text != null ? opt.text : '') : String(opt);
         var id = 'mmch-' + problem.problemId + '-' + i;
         var label = el('label', 'mm-ch-option');
         label.htmlFor = id;
