@@ -63,10 +63,13 @@ const educationRecordAccessLogSchema = new Schema({
         required: true
     },
 
-    // How/why it was accessed
+    // How/why it was accessed.
+    // 'modify' covers writes to a student's record — e.g. a parent setting
+    // learning supports. Logging those as 'api_read' would have made the audit
+    // trail say a record was read when it was changed.
     accessType: {
         type: String,
-        enum: ['view', 'export', 'api_read', 'impersonation', 'report_generation'],
+        enum: ['view', 'export', 'api_read', 'impersonation', 'report_generation', 'modify'],
         default: 'view'
     },
 

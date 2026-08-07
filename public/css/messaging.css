@@ -198,3 +198,78 @@
 [data-theme="dark"] .mm-msg-form textarea {
   background: #1e293b; color: #e2e8f0; border-color: #334155;
 }
+
+/* =============================================================
+   Parent learning supports (public/js/modules/learningSupports.js)
+   ============================================================= */
+
+.mm-ls-intro { margin: 0 0 1rem; color: #5b6876; font-size: 0.92rem; line-height: 1.5; }
+
+.mm-ls-kids { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.mm-ls-kid {
+  border: 1px solid rgba(0, 0, 0, 0.12); background: #fff; cursor: pointer;
+  border-radius: 999px; padding: 0.35rem 0.9rem; font: inherit; font-size: 0.88rem;
+}
+.mm-ls-kid.is-active {
+  border-color: #12b3b3; background: rgba(18, 179, 179, 0.1);
+  color: #0c7575; font-weight: 600;
+}
+
+.mm-ls-schoolnote {
+  margin: 0 0 0.9rem; padding: 0.6rem 0.8rem;
+  background: rgba(18, 179, 179, 0.07);
+  border-left: 3px solid #12b3b3; border-radius: 6px;
+  font-size: 0.85rem; color: #5b6876; line-height: 1.45;
+}
+
+.mm-ls-rows { display: grid; gap: 0.15rem; }
+
+.mm-ls-row {
+  display: flex; gap: 0.7rem; align-items: flex-start;
+  padding: 0.6rem 0.5rem; border-radius: 8px;
+}
+.mm-ls-row:hover { background: rgba(18, 179, 179, 0.05); }
+.mm-ls-row.is-locked { opacity: 0.72; }
+
+.mm-ls-row input[type="checkbox"] {
+  margin-top: 0.15rem; width: 18px; height: 18px;
+  accent-color: #12b3b3; flex-shrink: 0; cursor: pointer;
+}
+.mm-ls-row.is-locked input[type="checkbox"] { cursor: not-allowed; }
+
+.mm-ls-row label { cursor: pointer; display: block; }
+.mm-ls-row.is-locked label { cursor: default; }
+
+.mm-ls-label { display: block; font-weight: 600; font-size: 0.92rem; }
+.mm-ls-hint { display: block; font-size: 0.8rem; color: #5b6876; margin-top: 1px; line-height: 1.4; }
+
+.mm-ls-tag {
+  display: inline-block; margin-left: 0.5rem;
+  background: rgba(18, 179, 179, 0.15); color: #0c7575;
+  border-radius: 999px; padding: 1px 8px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em;
+  text-transform: uppercase; vertical-align: middle;
+}
+
+.mm-ls-notelabel {
+  display: block; margin: 1.1rem 0 0.35rem;
+  font-size: 0.88rem; font-weight: 600;
+}
+.mm-ls-note {
+  width: 100%; resize: vertical; font: inherit; font-size: 0.9rem;
+  border: 1px solid rgba(0, 0, 0, 0.14); border-radius: 10px; padding: 0.55rem 0.7rem;
+}
+.mm-ls-note:focus {
+  outline: none; border-color: #12b3b3;
+  box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.15);
+}
+
+.mm-ls-saved { min-height: 1.2em; margin: 0.4rem 0 0; font-size: 0.8rem; color: #0c7575; }
+.mm-ls-status { color: #5b6876; font-size: 0.9rem; padding: 0.75rem 0; }
+
+[data-theme="dark"] .mm-ls-kid { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+[data-theme="dark"] .mm-ls-note { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+[data-theme="dark"] .mm-ls-intro,
+[data-theme="dark"] .mm-ls-hint,
+[data-theme="dark"] .mm-ls-status,
+[data-theme="dark"] .mm-ls-schoolnote { color: #9aa3b8; }
