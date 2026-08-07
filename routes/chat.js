@@ -3265,7 +3265,10 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
 
 The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier work due for a quick spaced-review refresher (~${estMinutes} min, e.g. ${firstSkillName}). A button labeled "${greetingInlineCta.label}" is rendered below your greeting — they tap it to start a short warm-up with real problems. Offer it in ONE low-pressure sentence in your own voice (e.g., "before we dive in — want a quick ${estMinutes}-minute warm-up on ${firstSkillName}? Tap below, or just tell me what you're working on"). This REPLACES any warm-up question of your own: do NOT invent one inline — the button runs the real thing. Never make it feel mandatory; if they ignore it and ask about something else, follow their lead and don't mention it again.`;
 
-                        User.findByIdAndUpdate(userId, { reviewWarmupOfferedAt: new Date() })
+                        // Awaited so the throttle stamp is durable before the
+                        // response — fire-and-forget here let a second greeting
+                        // land before the write and double-offer the warm-up.
+                        await User.findByIdAndUpdate(userId, { reviewWarmupOfferedAt: new Date() })
                             .catch(err => logger.warn('Could not stamp review warm-up offer time', { error: err.message }));
                     }
                 }
