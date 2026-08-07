@@ -17,6 +17,7 @@ const Skill = require('../models/skill');
 const { configCache } = require('../utils/cache');
 const { courseSkills, buildBlueprint, scoreBySkill, recommendedStart } = require('../utils/coursePreAssessment');
 const { gradeOne } = require('../utils/skillChallenge');
+const { normalizeOptions } = require('../utils/mcOptions');
 const { resolveGradeNumber } = require('../utils/gradeLevel');
 const { advanceRung } = require('../utils/skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
@@ -788,13 +789,21 @@ router.get('/:id/preassessment', isAuthenticated, async (req, res) => {
         { $match: { skillId: s.skillId, isActive: { $ne: false } } },
         { $sample: { size: blueprint.itemsPerSkill } }
       ]);
-      items.forEach(p => problems.push({
-        problemId: String(p._id),
-        skillId: s.skillId,
-        prompt: p.prompt,
-        answerType: p.answerType,
-        options: p.options || undefined      // never p.answer / p.correctOption
-      }));
+      items.forEach(p => {
+        // Project to { label, text }. This shares gradeOne with the skill-map
+        // challenge, and gradeOne resolves the pick POSITIONALLY — so the labels
+        // served have to be positional too or the two ends disagree. It also
+        // keeps `isCorrect` out of the payload: the legacy banks carry it on
+        // every option, which would ship the answer key to the browser.
+        const options = normalizeOptions(p.options);
+        problems.push({
+          problemId: String(p._id),
+          skillId: s.skillId,
+          prompt: p.prompt,
+          answerType: p.answerType,
+          options: options.length ? options : undefined   // never p.answer / p.correctOption
+        });
+      });
     }
 
     res.json({

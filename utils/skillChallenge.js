@@ -17,12 +17,18 @@
 
 const { verifyAnswer } = require('./mathSolver');
 const { GATES } = require('./skillRung');
+const { normalizeOptions, resolveChoice, correctLabelOf } = require('./mcOptions');
 
 // A challenge is a controlled, opt-in demonstration: fewer problems than ambient
 // practice needs, because the conditions are strict (no hints, one shot).
 const CHALLENGE_SIZE = 5;
 const MIN_ACCURACY = GATES.PROVE_MIN_ACCURACY;   // 0.90 — 5/5 or a clean 9/10
 const MIN_ITEMS = GATES.PROVE_MIN_ATTEMPTS;      // 4
+
+/** Value-equality through the shared comparator, never throwing on odd input. */
+function same(submitted, candidate) {
+  try { return verifyAnswer(submitted, candidate).isCorrect; } catch { return false; }
+}
 
 /**
  * Grade one submitted answer against a problem.
@@ -34,11 +40,25 @@ function gradeOne(problem, submitted) {
   if (submitted === undefined || submitted === null || String(submitted).trim() === '') {
     return { correct: false, reason: 'blank' };
   }
-  // Multiple choice: the correct option index/value is authoritative.
-  if (problem.correctOption !== undefined && problem.correctOption !== null) {
-    const chosen = String(submitted).trim();
-    const correct = String(problem.correctOption).trim();
-    return { correct: chosen === correct, reason: null };
+
+  // Multiple choice. The submission is a label ('C') or the option text; both
+  // resolve to the same option, so a client that sends either grades the same.
+  const options = normalizeOptions(problem.options);
+  const chosen = options.length ? resolveChoice(problem.options, submitted) : null;
+
+  if (options.length && !chosen) {
+    // The student picked something that is not on the card. That is a broken
+    // render, not a wrong answer — this is exactly how a bank whose options
+    // carried no label submitted the literal string "undefined" and scored a
+    // correct run 0 of 5. Excluded from the denominator rather than counted
+    // against them.
+    return { correct: false, reason: 'ungradable' };
+  }
+
+  // `correctOption` is authoritative when the item has one.
+  const correctLabel = correctLabelOf(problem);
+  if (correctLabel && chosen) {
+    return { correct: chosen.label === correctLabel, reason: null };
   }
 
   const answer = problem.answer || {};
@@ -50,10 +70,20 @@ function gradeOne(problem, submitted) {
     // cannot silently count against the student.
     return { correct: false, reason: 'ungradable' };
   }
-  const hit = candidates.some((c) => {
-    try { return verifyAnswer(submitted, c).isCorrect; } catch { return false; }
-  });
-  return { correct: hit, reason: null };
+
+  // An MC item with no `correctOption` — the whole convertToMC population —
+  // keeps its key in `answer`, and which field it means varies by generator:
+  // some wrote the option TEXT, some wrote the LETTER. Decide from the item
+  // rather than trying both readings, because on an item whose options are
+  // themselves letters ("which point is C?") accepting both would mark a wrong
+  // pick correct.
+  let attempt = submitted;
+  if (chosen) {
+    const keyIsLetter = !candidates.some((c) => options.some((o) => same(o.text, c)))
+      && candidates.some((c) => options.some((o) => o.label === String(c).trim().toUpperCase()));
+    attempt = keyIsLetter ? chosen.label : chosen.text;
+  }
+  return { correct: candidates.some((c) => same(attempt, c)), reason: null };
 }
 
 /**

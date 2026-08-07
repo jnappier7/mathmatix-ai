@@ -504,9 +504,16 @@
         // on every choice — owner-hit on the live skill map. Grading compares
         // the submission against correctOption, a LETTER, so the radio must
         // carry the label while the student sees the text.
+        //
+        // The label is derived POSITIONALLY, never read off the option. The
+        // older banks key the letter as `id` or `letter` or omit it entirely,
+        // and trusting `opt.label` painted "undefined. 100" and put the string
+        // "undefined" in the radio — a run with every correct choice picked came
+        // back 0 of 5. The server now normalizes on serve; this stays as the
+        // belt to that suspenders, because a wrong label here is silent.
         var isObj = opt && typeof opt === 'object';
-        var optLabel = isObj ? opt.label : String.fromCharCode(65 + i);
-        var optText = isObj ? opt.text : String(opt);
+        var optLabel = String.fromCharCode(65 + i);
+        var optText = isObj ? String(opt.text != null ? opt.text : '') : String(opt);
         var id = 'opt-' + problem.problemId + '-' + i;
         var label = document.createElement('label');
         label.className = 'q-option';

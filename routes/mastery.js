@@ -25,6 +25,7 @@ const { confusedStudentOpener, scoreTeachBack } = require('../utils/teachBack');
 const Problem = require('../models/problem');
 const { initializeSkillMastery: initializeSkillMasteryEntry } = require('../utils/masteryEngine');
 const { CHALLENGE_SIZE, MIN_ITEMS, gradeChallenge, toRungEvidence } = require('../utils/skillChallenge');
+const { normalizeOptions } = require('../utils/mcOptions');
 const { resolveGradeNumber } = require('../utils/gradeLevel');
 
 // Read a mastery entry from a Map|object by canonical (unified) skill id, falling
@@ -2791,12 +2792,21 @@ router.get('/challenge/:skillId', isAuthenticated, async (req, res) => {
       skillId,
       label: skill.studentLabel || skill.displayName,
       instructions: 'Five problems, no hints, one shot. Miss it and we find the gap — nothing lost.',
-      problems: problems.map((p) => ({
-        problemId: String(p._id),
-        prompt: p.prompt,
-        answerType: p.answerType,
-        options: p.options || undefined   // never p.answer / p.correctOption
-      }))
+      problems: problems.map((p) => {
+        // Project to { label, text } — never the stored array. Two reasons, both
+        // owner-hit: the legacy banks carry `isCorrect` on every option (serving
+        // them raw hands the browser the answer key), and they key the letter as
+        // `id`/`letter`/nothing, so a client reading `label` rendered
+        // "undefined. 100" and submitted "undefined" — a run with every correct
+        // option picked scored 0 of 5.
+        const options = normalizeOptions(p.options);
+        return {
+          problemId: String(p._id),
+          prompt: p.prompt,
+          answerType: p.answerType,
+          options: options.length ? options : undefined   // never p.answer / p.correctOption
+        };
+      })
     });
   } catch (err) {
     console.error('[mastery/challenge GET] failed:', err);
