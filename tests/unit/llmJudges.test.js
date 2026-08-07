@@ -7,7 +7,7 @@ jest.mock('../../utils/llmGateway', () => ({
 }));
 
 const { callLLMStructured } = require('../../utils/llmGateway');
-const { judgeAnswerLeak, judgeScaffoldVsTell, judgeToneSupport } = require('../../tests/eval/llmJudges');
+const { judgeAnswerLeak, judgeScaffoldVsTell, judgeToneSupport, judgeVisualPedagogy, judgeRepresentationShift } = require('../../tests/eval/llmJudges');
 
 beforeEach(() => callLLMStructured.mockReset());
 
@@ -41,5 +41,28 @@ describe('llmJudges wiring', () => {
     callLLMStructured.mockResolvedValue({ acknowledgesFeeling: true, pushesNewProblem: false, uncertain: false });
     const verdict = await judgeToneSupport({ studentMessage: 'i hate this', tutorReply: 'That sounds rough.' });
     expect(verdict).toMatchObject({ judge: 'tone_support', acknowledgesFeeling: true, pushesNewProblem: false });
+  });
+
+  test('judgeVisualPedagogy sends the concept and returns the visual fields', async () => {
+    callLLMStructured.mockResolvedValue({ usedOrOfferedVisual: true, matchesConcept: true, notOverkill: true, uncertain: false, reasoning: 'bar model fits' });
+    const verdict = await judgeVisualPedagogy({
+      concept: 'comparing 2/3 and 3/4', studentMessage: 'which is bigger?', tutorReply: 'Picture two same-size bars…',
+    });
+    expect(verdict).toMatchObject({ judge: 'visual_pedagogy', usedOrOfferedVisual: true, matchesConcept: true, notOverkill: true });
+    const [, messages, responseFormat] = callLLMStructured.mock.calls[0];
+    expect(JSON.parse(messages[1].content).concept).toBe('comparing 2/3 and 3/4');
+    expect(responseFormat.json_schema.name).toBe('VisualPedagogyVerdict');
+    expect(responseFormat.json_schema.schema.required).toEqual(['usedOrOfferedVisual', 'matchesConcept', 'notOverkill', 'uncertain', 'reasoning']);
+  });
+
+  test('judgeRepresentationShift sends the prior explanation and returns the shift verdict', async () => {
+    callLLMStructured.mockResolvedValue({ usedDifferentRepresentation: false, uncertain: false, reasoning: 'same symbols again' });
+    const verdict = await judgeRepresentationShift({
+      firstExplanation: 'Rewrite with a common denominator…', studentMessage: 'is it 2/5?', tutorReply: 'Again: common denominators…',
+    });
+    expect(verdict).toMatchObject({ judge: 'representation_shift', usedDifferentRepresentation: false });
+    const [, messages, responseFormat] = callLLMStructured.mock.calls[0];
+    expect(JSON.parse(messages[1].content).firstExplanation).toMatch(/common denominator/);
+    expect(responseFormat.json_schema.name).toBe('RepresentationShiftVerdict');
   });
 });

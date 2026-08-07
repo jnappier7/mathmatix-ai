@@ -53,6 +53,23 @@ function judgeInputs(name, spec, scenario, turnRecord) {
     return {
       problem: spec.problem || scenario.focus || '',
       expectedAnswer: spec.expectedAnswer || scenario.answer || '',
+      // The leak judge scores the prose the student READS. Board cards are
+      // deterministically leak-checked by the guard (boardJudge) — leaving
+      // them in makes the judge flag guard-legal empty-blank scaffolds.
+      tutorReply: turnRecord.cleanedReply ?? turnRecord.reply,
+    };
+  }
+  if (name === 'visualPedagogy') {
+    return {
+      concept: spec.concept || scenario.focus || '',
+      studentMessage: turnRecord.student,
+      tutorReply: turnRecord.reply,
+    };
+  }
+  if (name === 'representationShift') {
+    return {
+      firstExplanation: spec.firstExplanation || '',
+      studentMessage: turnRecord.student,
       tutorReply: turnRecord.reply,
     };
   }
@@ -82,6 +99,8 @@ function checkVerdict(name, spec, verdict) {
     scaffoldVsTell: llmJudges.judgeScaffoldVsTell,
     toneSupport: llmJudges.judgeToneSupport,
     newSkillIntro: llmJudges.judgeNewSkillIntro,
+    visualPedagogy: llmJudges.judgeVisualPedagogy,
+    representationShift: llmJudges.judgeRepresentationShift,
   } : {};
 
   for (const persona of personas) {

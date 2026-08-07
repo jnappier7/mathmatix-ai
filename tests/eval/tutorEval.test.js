@@ -47,8 +47,11 @@ const GOOD_REPLIES = {
     'Exactly right - 10/24 works. Can you simplify it to lowest terms?',
   "graph: don't lose the y=x^3 context":
     'Right! As x increases, y increases; as x decreases, y decreases. Why does the left side dive so fast?',
+  // The pose tag is deliberate: prose judges score the CLEANED text, so tag
+  // attribute `=` signs must not read as worked solution steps (live false
+  // positive, 2026-08-07).
   'bare mixed-number drop is elicited, not solved':
-    'Good one to practice. What is your first move here?',
+    'Good one to practice. What is your first move here? <BOARD action="pose" tex="12\\frac{2}{3} - 4\\frac{1}{4}" />',
   "order of operations: 16/4 x 2 = 8 is correct; no PEMDAS 'M before D'":
     'Exactly, 8 is right. Multiply and divide left to right.',
   'negative answer -28 is correct, not rejected':

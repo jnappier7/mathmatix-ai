@@ -15,6 +15,7 @@ const { diagnose } = require('../../utils/pipeline/diagnose');
 const { decide } = require('../../utils/pipeline/decide');
 const { deriveVerificationState, hasMathematicalContent } = require('../../utils/pipeline/verificationState');
 const { judgeReply } = require('./judges');
+const { judgeBoardIntegrity } = require('./boardJudge');
 
 function classify(studentMsg, history, scenario) {
   return observe(studentMsg, {
@@ -88,6 +89,19 @@ function checkDecideExpectations(expect, decision, checks) {
       want: expect.diagnosisType,
       ok: (decision.diagnosis && decision.diagnosis.type) === expect.diagnosisType,
     };
+  }
+  // Pin that decide ORDERED something (e.g. the representation-switch cue on a
+  // repeat miss) without pinning the exact directive wording — each needle
+  // must appear somewhere in the joined directive text.
+  if (Array.isArray(expect.directivesContain)) {
+    const joined = (decision.directives || []).join('\n');
+    for (const needle of expect.directivesContain) {
+      checks[`directivesContain(${needle})`] = {
+        got: joined.includes(needle) ? 'present' : 'absent',
+        want: 'present',
+        ok: joined.includes(needle),
+      };
+    }
   }
 }
 
@@ -173,8 +187,24 @@ async function runScenario(scenario, opts = {}) {
     let reply = null;
     let violations = [];
     const wantsReply = (Array.isArray(turn.judge) && turn.judge.length) || turn.judgeLlm;
+    let cleanedReply = null;
     if (generateReply && wantsReply) {
       reply = await generateReply({ scenario, turn, turnIndex: i, history, student });
+      // Board-tag integrity runs on EVERY generated reply — no opt-in. Any
+      // reply can carry <BOARD> tags (the tag protocol is always in the live
+      // prompt), and a dead or guard-dropped tag is a defect wherever it
+      // appears. Deterministic (the real parser/schema/guard), so it is safe
+      // in the keyless tier too.
+      const board = judgeBoardIntegrity(reply, {
+        studentMessage: student,
+        // history already holds the current student message — the guard wants
+        // the turns BEFORE it (it reads the immediate predecessor).
+        priorUserMessages: history.filter((m) => m.role === 'user').slice(0, -1),
+        // On a verified-correct turn production synthesizes the verify card
+        // from the diagnosis, so mirror-rule drops there aren't a bare board.
+        studentWasCorrect: !!(turn.ctx && turn.ctx.studentWasCorrect),
+      });
+      cleanedReply = board.cleanedText;
       if (Array.isArray(turn.judge) && turn.judge.length) {
         const ctx = {
           ...(turn.ctx || {}),
@@ -182,9 +212,16 @@ async function runScenario(scenario, opts = {}) {
           hasFocus: turn.ctx?.hasFocus ?? !!scenario.focus,
           focusTerms: scenario.focusTerms || [],
         };
-        violations = judgeReply(reply, turn.judge, ctx).violations;
+        // Heuristic prose judges score what the student READS — the cleaned
+        // bubble text. Tag markup is UI (attribute `=` signs read as worked
+        // steps, tex payloads read as revealed values); card content is
+        // boardJudge's jurisdiction above.
+        violations = judgeReply(cleanedReply, turn.judge, ctx).violations;
       }
-      history.push({ role: 'assistant', content: reply });
+      violations.push(...board.violations);
+      // Production stores the cleaned text on the conversation — later turns
+      // build on that, so the eval history mirrors it.
+      history.push({ role: 'assistant', content: cleanedReply });
     }
 
     turns.push({
@@ -194,6 +231,7 @@ async function runScenario(scenario, opts = {}) {
       judgeLlm: turn.judgeLlm || null,
       checks,
       reply,
+      cleanedReply,
       violations,
     });
   }
