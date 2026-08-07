@@ -1484,6 +1484,113 @@ router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
 });
 
 /**
+ * @route   GET /api/admin/tutor-quality-report
+ * @desc    Latest transcript-mining run (utils/transcriptMiner.js): the tutor-
+ *          reply judges from the eval harness run over recent production
+ *          conversations. Per-judge violation counts ranked by absolute count
+ *          (the work-list order), the specific transcript moments, and
+ *          scenarios.json-shaped stubs — each hit a CANDIDATE eval scenario
+ *          for human review, never auto-actioned (judges are a net, not
+ *          ground truth). ?runId=<id> for a specific run, ?list=1 for run
+ *          history headlines.
+ * @access  Private (Admin)
+ */
+router.get('/tutor-quality-report', isAdmin, async (req, res) => {
+  try {
+    const TutorQualityReport = require('../models/tutorQualityReport');
+
+    if (req.query.list) {
+      const runs = await TutorQualityReport.find({})
+        .select('runAt trigger windowHours stats.conversationsScanned stats.turnsJudged stats.totalViolations durationMs error')
+        .sort({ runAt: -1 })
+        .limit(30)
+        .lean();
+      return res.json({ runs });
+    }
+
+    const report = req.query.runId
+      ? await TutorQualityReport.findById(req.query.runId).lean()
+      : await TutorQualityReport.findOne({}).sort({ runAt: -1 }).lean();
+    if (!report) {
+      return res.status(404).json({
+        message: 'No transcript-mining runs yet. Trigger one with POST /api/admin/tutor-quality-report/run, or schedule `npm run cron:mine-transcripts` (Render cron).',
+      });
+    }
+
+    // FERPA § 99.32: findings embed (anonymized) transcript excerpts, which
+    // are still education records tied to identifiable conversationIds — log
+    // the access per student surfaced in the served report. Fire-and-forget,
+    // same convention as middleware/ferpaAccessLog.
+    const { logAccess } = require('../middleware/ferpaAccessLog');
+    const studentIds = [...new Set((report.findings || [])
+      .map(f => f && f.userId && String(f.userId))
+      .filter(Boolean))].slice(0, 200);
+    for (const studentId of studentIds) {
+      logAccess({
+        studentId,
+        accessedBy: req.user._id,
+        accessedByRole: 'admin',
+        recordType: 'conversations',
+        accessType: 'api_read',
+        legitimateInterest: 'administrative_function',
+        metadata: { endpoint: 'GET /api/admin/tutor-quality-report', ipAddress: req.ip, userAgent: req.get('User-Agent') },
+      });
+    }
+
+    res.json(report);
+  } catch (err) {
+    console.error('Error fetching tutor quality report:', err);
+    res.status(500).json({ message: 'Server error fetching tutor quality report.' });
+  }
+});
+
+// One sweep at a time — a run walks up to 500 conversations and may spend the
+// LLM-judge budget; a double-click must not double either.
+let tutorQualityRunInFlight = false;
+
+/**
+ * @route   POST /api/admin/tutor-quality-report/run
+ * @desc    Kick off a transcript-mining sweep now (async — poll the GET for
+ *          the finished report). Body: { windowHours?, maxConversations?,
+ *          llmBudget?, llmEnabled? }.
+ * @access  Private (Admin)
+ */
+router.post('/tutor-quality-report/run', isAdmin, (req, res) => {
+  if (tutorQualityRunInFlight) {
+    return res.status(409).json({ message: 'A transcript-mining run is already in progress.' });
+  }
+  tutorQualityRunInFlight = true;
+
+  const body = req.body || {};
+  const options = { trigger: 'admin' };
+  if (Number(body.windowHours) > 0) options.windowHours = Number(body.windowHours);
+  if (Number(body.maxConversations) > 0) options.maxConversations = Number(body.maxConversations);
+  if (Number.isFinite(Number(body.llmBudget))) options.llmBudget = Number(body.llmBudget);
+  if (body.llmEnabled === false) options.llmEnabled = false;
+
+  const { runSweepAndSave } = require('../utils/transcriptMiner');
+  runSweepAndSave(options)
+    .then((report) => {
+      console.log(`[TutorQuality] Admin-triggered mining run ${report._id} finished: ${report.stats?.totalViolations ?? 0} violations across ${report.stats?.turnsJudged ?? 0} turns.`);
+    })
+    .catch((err) => {
+      console.error('[TutorQuality] Admin-triggered mining run failed:', err);
+      // Leave a tombstone so the failure is visible on the GET, not just in logs.
+      require('../models/tutorQualityReport').create({
+        trigger: 'admin',
+        windowHours: options.windowHours || 24,
+        error: err.message,
+      }).catch(() => {});
+    })
+    .finally(() => { tutorQualityRunInFlight = false; });
+
+  res.status(202).json({
+    message: 'Transcript-mining run started. Poll GET /api/admin/tutor-quality-report for the result.',
+    options,
+  });
+});
+
+/**
  * @route   GET /api/admin/visual-gate-decisions
  * @desc    Observability for the Visual Gate (VISUAL_GATE_MODE). Aggregates the
  *          VisualDecision corpus — decision/reasonCode/risk/mode/action
