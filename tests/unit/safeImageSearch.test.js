@@ -104,16 +104,26 @@ describe('isValidCategory', () => {
 });
 
 describe('getStaticConceptImage', () => {
-  test('matches concepts case-insensitively', () => {
-    expect(getStaticConceptImage('Pythagorean Theorem')).toMatchObject({
-      url: expect.stringContaining('pythagorean'),
-      source: 'Mathmatix'
-    });
-  });
+  const fs = require('fs');
+  const path = require('path');
 
-  test('matches partial keywords (slope, factoring, etc.)', () => {
-    expect(getStaticConceptImage('slope-intercept form')).not.toBeNull();
-    expect(getStaticConceptImage('factoring quadratics')).not.toBeNull();
+  test('never returns a file that does not exist on disk (the "Couldn\'t load that picture" bug)', () => {
+    // Every concept keyword must either miss or point at a real file under public/.
+    // Before this guard, "exterior angle of a triangle" matched 'angle' →
+    // /images/concepts/angle-types.png → 404 → broken board card for ANY query
+    // containing angle/triangle/circle/fraction/slope/… while real search never ran.
+    const concepts = [
+      'pythagorean', 'triangle', 'circle', 'angle', 'slope', 'quadratic',
+      'factoring', 'exponents', 'fractions', 'decimals', 'percent', 'mean',
+      'histogram', 'probability', 'exterior angle of a triangle'
+    ];
+    for (const c of concepts) {
+      const img = getStaticConceptImage(c);
+      if (img) {
+        const onDisk = path.join(__dirname, '..', '..', 'public', ...img.url.split('/').filter(Boolean));
+        expect(fs.existsSync(onDisk)).toBe(true);
+      }
+    }
   });
 
   test('returns null when no concept matches', () => {
@@ -123,6 +133,37 @@ describe('getStaticConceptImage', () => {
   test('handles empty/null input', () => {
     expect(getStaticConceptImage('')).toBeNull();
     expect(getStaticConceptImage(null)).toBeNull();
+  });
+});
+
+describe('searchWikimediaCommons query scoping', () => {
+  const axios = require('axios');
+  const { searchWikimediaCommons } = require('../../utils/safeImageSearch');
+
+  afterEach(() => jest.restoreAllMocks());
+
+  test('does not stack "mathematics" on a query sanitize already prefixed with "math"', async () => {
+    // "mathematics math X" ranks scanned PDF textbooks over diagrams, which the
+    // mime filter then drops — the fallback returned zero images for most queries.
+    const spy = jest.spyOn(axios, 'get').mockResolvedValue({ data: { query: { pages: {} } } });
+    await searchWikimediaCommons('exterior angle of a triangle', {});
+    const gsrsearch = spy.mock.calls[0][1].params.gsrsearch;
+    expect(gsrsearch).not.toMatch(/mathematics\s+math\b/i);
+    expect(gsrsearch).toMatch(/^math /);
+  });
+
+  test('restricts results to bitmap/drawing files (a PDF in results 400s the whole API call)', async () => {
+    const spy = jest.spyOn(axios, 'get').mockResolvedValue({ data: { query: { pages: {} } } });
+    await searchWikimediaCommons('exterior angle of a triangle', {});
+    expect(spy.mock.calls[0][1].params.gsrsearch).toContain('filetype:bitmap|drawing');
+  });
+
+  test('degrades to empty results when the API returns a top-level error payload', async () => {
+    jest.spyOn(axios, 'get').mockResolvedValue({
+      data: { error: { code: 'urlparamnormal', info: 'Could not normalize image parameters' } }
+    });
+    const r = await searchWikimediaCommons('triangle angles', {});
+    expect(r.results).toEqual([]);
   });
 });
 

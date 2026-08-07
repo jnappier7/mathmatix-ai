@@ -15,6 +15,8 @@
 // ============================================
 
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
 // Education-only domain whitelist
 const ALLOWED_DOMAINS = [
@@ -269,9 +271,15 @@ async function searchWikimediaCommons(query, opts = {}) {
     return { results: [], query, cached: false, error: reason };
   }
 
-  // Scope to math/science by prepending "mathematics"
+  // Scope to math/science — but don't stack a second prefix on top of the
+  // "math" that sanitizeQuery already guarantees. "mathematics math X" ranks
+  // scanned PDF textbooks above diagrams, and a PDF in the generator results
+  // makes the thumbnailer 400 the ENTIRE API call (urlparamnormal), so the
+  // fallback returned nothing at all. filetype:bitmap|drawing keeps results
+  // to renderable images and keeps PDFs out of the generator entirely.
   const mathQuery = sanitized.replace(/\beducational diagram\b/i, '').trim();
-  const scopedQuery = `mathematics ${mathQuery}`;
+  const scoped = /\bmath/i.test(mathQuery) ? mathQuery : `mathematics ${mathQuery}`;
+  const scopedQuery = `${scoped} filetype:bitmap|drawing`;
 
   const maxResults = Math.min(Math.max(opts.maxResults || 3, 1), 5);
 
@@ -299,7 +307,7 @@ async function searchWikimediaCommons(query, opts = {}) {
 
     const pages = response.data?.query?.pages;
     if (!pages) {
-      return { results: [], query: scopedQuery, cached: false, source: 'wikimedia' };
+      return { results: [], query: scoped, cached: false, source: 'wikimedia' };
     }
 
     // Filter and transform results with COPPA safeguards
@@ -344,12 +352,25 @@ async function searchWikimediaCommons(query, opts = {}) {
 
     console.log(`[WikimediaSearch] Query: "${scopedQuery}" → ${results.length} results`);
 
-    return { results, query: scopedQuery, cached: false, source: 'wikimedia' };
+    return { results, query: scoped, cached: false, source: 'wikimedia' };
 
   } catch (error) {
     console.error('[WikimediaSearch] Search failed:', error.message);
-    return { results: [], query: scopedQuery, cached: false, error: 'Search failed', source: 'wikimedia' };
+    return { results: [], query: scoped, cached: false, error: 'Search failed', source: 'wikimedia' };
   }
+}
+
+// The static map below is aspirational — the files under public/images/concepts/
+// are not all shipped (at one point NONE were, and because the route consults this
+// map BEFORE any real search, every query containing "angle"/"triangle"/etc.
+// short-circuited to a 404 and the board showed "Couldn't load that picture").
+// Only ever return an entry whose file actually exists on disk.
+const conceptImageExists = new Map(); // url → boolean, cached for the process lifetime
+function staticImageOnDisk(url) {
+  if (!conceptImageExists.has(url)) {
+    conceptImageExists.set(url, fs.existsSync(path.join(__dirname, '..', 'public', ...url.split('/').filter(Boolean))));
+  }
+  return conceptImageExists.get(url);
 }
 
 /**
@@ -378,7 +399,7 @@ function getStaticConceptImage(concept) {
   };
 
   for (const [key, img] of Object.entries(staticImages)) {
-    if (lower.includes(key)) return img;
+    if (lower.includes(key) && staticImageOnDisk(img.url)) return img;
   }
 
   return null;
