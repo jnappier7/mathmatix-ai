@@ -129,9 +129,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </a>
     </div>
     <nav class="landing-nav">
-      <a href="/pricing.html" class="btn btn-primary-outline" style="border-color: transparent; color: var(--clr-text-dim); font-weight: 500;">Pricing</a>
-      <a href="/login.html" class="btn btn-primary-outline" style="font-weight: 500;">Log In</a>
-      <a href="/signup.html" class="btn btn-primary" style="font-weight: 600; letter-spacing: 0.01em;">Start Free Now</a>
+      <!-- One CTA in the nav. Pricing and Log In are secondary destinations for
+           people who already know the product; styling Log In as a pink button
+           gave it the same weight as signing up. -->
+      <a href="/pricing.html" class="lp-nav-link">Pricing</a>
+      <a href="/login.html" class="lp-nav-link">Log In</a>
+      <a href="/signup.html" class="btn btn-primary lp-nav-cta">Start Free Now</a>
     </nav>
   </header>
 
@@ -381,7 +384,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </section>
 
     <!-- ── Features — Bento Grid ──────────────────────────── -->
-    <section class="lp-features lp-reveal">
+    <section class="lp-features lp-reveal lp-section-alt">
       <div class="lp-inner">
         <!-- Audience pivot. Everything above speaks to the student typing in
              the composer; everything below speaks to the parent deciding.
@@ -485,7 +488,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </section>
 
     <!-- ── Role Selector (interactive tabs) ───────────────── -->
-    <section class="lp-roles lp-reveal lp-section-alt">
+    <section class="lp-roles lp-reveal">
       <div class="lp-inner">
         <h2 class="lp-section-heading">Built for Your Whole Family&rsquo;s Math Journey</h2>
         <p class="lp-section-sub">See what Mathmatix offers parents, students, and teachers.</p>
@@ -743,25 +746,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>
     </section>
 
-    <!-- ── Spotlight: Always Available ──────────────────── -->
-    <section class="lp-spotlight lp-reveal">
-      <div class="lp-spotlight-layout lp-inner">
-        <div class="lp-spotlight-photo">
-          <picture>
-            <source srcset="/images/tabletBoy.webp" type="image/webp" sizes="(max-width: 768px) 100vw, 50vw" />
-            <img src="/images/tabletBoy.png" alt="Student using a tablet to learn math with Mathmatix AI" style="object-position: center 40%;" loading="lazy" width="1200" height="1600" />
-          </picture>
-        </div>
-        <div class="lp-spotlight-content">
-          <h2>It&rsquo;s 9pm and Your Child Is Stuck</h2>
-          <p>The tutor went home hours ago. You don&rsquo;t remember how to factor. Your child is frustrated and shutting down. Mathmatix is the patient, always-available tutor that steps in exactly when your family needs it most.</p>
-          <p class="lp-spotlight-accent">Available 24/7. No appointments. No $80/hour invoices.</p>
-        </div>
-      </div>
-    </section>
+    <!-- The "9pm" spotlight lives earlier in the page now, merged with the two
+         other sections that made the same argument. -->
 
     <!-- ── FAQ ────────────────────────────────────────────── -->
-    <section class="lp-faq lp-reveal lp-section-alt">
+    <section class="lp-faq lp-reveal">
       <div class="lp-inner">
         <h2 class="lp-section-heading">Common Questions</h2>
         <p class="lp-section-sub">Everything you need to know before getting started.</p>
@@ -837,16 +826,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <section class="lp-final-cta lp-reveal">
       <div class="lp-inner">
         <h2>Your child deserves a math tutor who never gives up on them.</h2>
-        <p>30 free AI minutes every month &mdash; no credit card, no commitment. Mathmatix+ unlocks everything for $9.95/mo. <a href="/pricing.html" style="color:#fff;font-weight:600;text-decoration:underline;">See plans &rarr;</a></p>
+        <p>30 free AI minutes every month &mdash; no credit card, no commitment. Mathmatix+ unlocks everything for $9.95/mo. <a href="/pricing.html" class="lp-final-cta-link">See plans &rarr;</a></p>
         <a href="/signup.html" class="btn btn-primary btn-lg lp-final-cta-btn">Start Free Now</a>
-        <p class="lp-cta-note">Free for every student. Upgrade to Mathmatix+ anytime.</p>
+        <p class="lp-cta-note">No credit card to start. Cancel Mathmatix+ anytime.</p>
       </div>
     </section>
   </main>
 
   <!-- Sticky CTA bar -->
   <div class="lp-sticky-cta" id="lp-sticky-cta">
-    <p>Free math tutoring for your child</p>
+    <p>Start free &mdash; no card needed</p>
     <a href="/signup.html" class="btn btn-primary">Start Free Now</a>
   </div>
 
