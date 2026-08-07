@@ -134,6 +134,19 @@ function buildActionPrompt(decision) {
     }
 
     case ACTIONS.EXIT_RAMP: {
+      // Gentle variant (decision.gentleRamp): the student SURRENDERED
+      // ("i give up") — that's emotional before it's mathematical. This reply
+      // offers the ramp; it never starts it. Working a parallel problem in
+      // the same breath as the acknowledgment reads as ignoring the feeling.
+      if (decision.gentleRamp) {
+        parts.push('The student just gave up. Acknowledge that genuinely FIRST — this reply is emotional support plus one opt-in offer, not teaching.');
+        parts.push('Do NOT pose, restate, or start working any problem in this reply — not theirs, not a parallel one. No steps, no numbers, no explanations.');
+        parts.push('End with ONE short question offering a way forward they can decline: you show a similar one first, shrink it to a tiny piece, or set it aside for now.');
+        parts.push('NEVER reveal the answer. The answer stays hidden. Always.');
+        parts.push('Do NOT say "That\'s right", "Correct", or any affirmation — the student did not answer correctly.');
+        parts.push('1-2 sentences. Warm and brief.');
+        break;
+      }
       const twinBlock = decision.verifiedTwin ? formatVerifiedTwinInstruction(decision.verifiedTwin) : '';
       parts.push('Student is stuck and has tried multiple times. Use the EXIT RAMP:');
       if (twinBlock) {
@@ -173,8 +186,10 @@ function buildActionPrompt(decision) {
       break;
 
     case ACTIONS.ACKNOWLEDGE_FRUSTRATION:
-      parts.push('Student is frustrated. Acknowledge it briefly and genuinely (1 sentence).');
-      parts.push('Then offer a concrete next step: easier problem, different approach, or short break.');
+      parts.push('Student is frustrated. Acknowledging the feeling briefly and genuinely IS this reply\'s job.');
+      parts.push('Do NOT pose a new problem, assign an easier one, demand a step, or re-explain the math in this same reply — stacked-on work reads as ignoring the feeling.');
+      parts.push('At most, end with ONE small opt-in question offering a choice (tiny piece together, different angle, or short break) — an offer with no problem text and no numbers.');
+      parts.push('The math resumes next turn, after they respond. 1-2 sentences.');
       break;
 
     case ACTIONS.REDIRECT_TO_MATH:
