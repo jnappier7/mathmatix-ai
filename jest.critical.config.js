@@ -28,6 +28,7 @@ module.exports = {
     '<rootDir>/tests/unit/emotionalFirstAid.test.js',
     '<rootDir>/tests/unit/llmVerifier.test.js',
     '<rootDir>/tests/unit/llmVerifierEscalation.test.js',
+    '<rootDir>/tests/unit/affirmThenProbe.test.js',
     '<rootDir>/tests/unit/conceptualAnswerVerdict.test.js',
     '<rootDir>/tests/unit/verifyMetrics.test.js',
     '<rootDir>/tests/unit/verifyTopic.test.js',
@@ -62,12 +63,14 @@ module.exports = {
     './utils/knowledgeTracer.js': { statements: 83, branches: 78, functions: 95, lines: 83 },
     // Measured 100/94.9/100/100 after the mathType + resolvedBy tests — ratcheted.
     './utils/verifyMetrics.js': { statements: 99, branches: 92, functions: 100, lines: 99 },
-    './utils/pipeline/llmVerifier.js': { statements: 95, branches: 85, functions: 100, lines: 96 },
+    // Measured 98.2/89.3/100/99.3 after the llmVerifyMethod/articulatesMethod tests — ratcheted.
+    './utils/pipeline/llmVerifier.js': { statements: 96, branches: 87, functions: 100, lines: 97 },
     // Measured 100 across the board. It is a pure, bounded label function with no
     // I/O, so full coverage is the steady state, not an aspiration.
     './utils/pipeline/verifyTopic.js': { statements: 98, branches: 96, functions: 100, lines: 98 },
     './utils/pipeline/observe.js': { statements: 80, branches: 76, functions: 95, lines: 87 },
-    './utils/pipeline/decide.js': { statements: 54, branches: 55, functions: 75, lines: 54 },
+    // Measured 58.2/59.1/81.3/58.0 after the affirmThenProbe tests — ratcheted.
+    './utils/pipeline/decide.js': { statements: 56, branches: 57, functions: 78, lines: 56 },
     './utils/pipeline/diagnose.js': { statements: 62, branches: 57, functions: 68, lines: 62 },
   },
 };

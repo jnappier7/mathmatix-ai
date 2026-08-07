@@ -27,6 +27,12 @@ const ACTION_SUGGESTIONS = {
     { text: 'Why does that work?', message: 'Why does that answer work? Can you explain the concept?' },
     { text: 'Different topic', message: 'Can we work on a different topic?' },
   ],
+  [ACTIONS.AFFIRM_THEN_PROBE]: [
+    { text: 'Let me test my rule', message: "Let me try my method on that example and see what happens." },
+    { text: 'Why does it break?', message: 'Why does my method work here but not on other problems?' },
+    { text: "What's the real rule?", message: 'Can you help me figure out the rule that always works?' },
+    { text: 'Next problem', message: "I'm ready for the next problem!" },
+  ],
   [ACTIONS.GUIDE_INCORRECT]: [
     { text: 'Help me start', message: 'Can you help me figure out the first step?' },
     { text: 'Where did I go wrong?', message: 'Where did I go wrong in my thinking?' },

@@ -15,6 +15,7 @@ const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer } =
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 const { hasMathematicalContent } = require('./verificationState');
 const { verifyDerivation } = require('../derivationVerifier');
+const { llmVerifyMethod, articulatesMethod } = require('./llmVerifier');
 
 /**
  * Strip LaTeX delimiters from text so regex-based math detection works.
@@ -201,6 +202,16 @@ async function diagnoseTransformation(observation, context) {
       verificationSource: 'derivation',
       demonstratedReasoning: chain.valid === true,
       derivation: { valid: chain.valid, firstBadStep: chain.firstBadStep, finalAnswer: chain.finalAnswer },
+      // Right answer via broken work — same signal Step 2c derives on the
+      // answer-attempt path, so decide can affirm-then-probe here too.
+      methodAudit: chain.answerCorrect && chain.valid === false
+        ? {
+          suspect: true,
+          source: 'derivation',
+          flaw: `the shown work breaks at "${chain.firstBadStep}" even though the final answer is right`,
+          counterexample: null,
+        }
+        : null,
       isTransformation: true,
     };
   }
@@ -682,6 +693,54 @@ async function diagnose(observation, context = {}) {
     }
   }
 
+  // ── Step 2c: Method audit — right answer, suspect rule ──
+  // Correctness verification blesses the VALUE; nothing above audits the RULE
+  // the student says they used. The butterfly-method failure (production eval
+  // matrix, 2026-08-07): "10/24" is a verified-correct sum, but "add the
+  // denominators for the numerator, multiply them for the denominator" is a
+  // wrong generalization that happened to work — and with no audited signal,
+  // the tutor was left to improvise the tension between affirming the answer
+  // and heading off the bad rule, which it kept resolving as doubt-first.
+  //
+  // Two signals, deterministic first:
+  //   a) shown symbolic work whose chain BROKE while the final answer is right
+  //      (verifyDerivation already computed this — free), or
+  //   b) a prose-articulated method on a correct answer, audited by a small
+  //      fresh-context LLM call (gated by articulatesMethod, so bare answers
+  //      never pay the latency; suspect only at high confidence).
+  // decide() turns a suspect method into AFFIRM_THEN_PROBE: confirm the answer
+  // FIRST (fast-correct policy), then probe the rule with the counterexample.
+  let methodAudit = null;
+  if (isCorrect === true) {
+    if (derivation && derivation.verifiable && derivation.valid === false) {
+      methodAudit = {
+        suspect: true,
+        source: 'derivation',
+        flaw: `the shown work breaks at "${derivation.firstBadStep}" even though the final answer is right`,
+        counterexample: null,
+      };
+    } else if (articulatesMethod(rawText)) {
+      const problemText = problemInfo?.content || context.pinnedProblemTex || null;
+      if (problemText) {
+        try {
+          const audit = await llmVerifyMethod(problemText, rawText);
+          if (audit.suspect) {
+            methodAudit = {
+              suspect: true,
+              source: 'llm',
+              flaw: audit.flaw,
+              counterexample: audit.counterexample,
+              confidence: audit.confidence,
+            };
+            console.log(`[Diagnose] Method audit: correct answer, SUSPECT rule (${audit.confidence.toFixed(2)}) — ${audit.flaw || 'no flaw text'}`);
+          }
+        } catch (err) {
+          console.error('[Diagnose] Method audit failed (non-fatal):', err.message);
+        }
+      }
+    }
+  }
+
   // ── Step 3: If incorrect, detect misconception ──
   let misconception = null;
 
@@ -748,7 +807,13 @@ async function diagnose(observation, context = {}) {
   // laid out every step and each one checks out. So it counts as demonstrated
   // reasoning even if the observe stage didn't separately flag it. This is what
   // tells decide to affirm the work and move on — NOT ask "how did you do it?"
+  // A suspect method vetoes the flag: observe's demonstratedReasoning is a
+  // surface read ("they wrote prose alongside the answer"), and the audit just
+  // determined that prose describes an invalid rule. Without the veto, decide
+  // would stack "valid reasoning — affirm and advance, never probe" on the
+  // exact turn the method needs probing.
   const demonstratedReasoning = isCorrect === true
+    && !(methodAudit && methodAudit.suspect)
     && (observation.demonstratedReasoning === true || (derivation != null && derivation.valid === true));
   const hasExplanation = observation.answer?.hasExplanation === true;
 
@@ -771,6 +836,10 @@ async function diagnose(observation, context = {}) {
     demonstratedReasoning,  // true = student gave correct answer + valid reasoning
     hasExplanation,         // true = answer was embedded in explanatory text
     verificationSource,     // 'solver' | 'arithmetic_override' | 'derivation' | 'llm' | 'root_set' | null
+    // Right answer, suspect rule — present only when the answer verified correct
+    // AND the articulated method was judged an invalid generalization. decide()
+    // routes this to AFFIRM_THEN_PROBE (confirm first, then probe the rule).
+    methodAudit,
     // Multi-step chain result — present only when the student showed their work.
     // firstBadStep is the exact line the reasoning broke on (null when valid), so
     // decide/generate can point right at it instead of grading the whole thing wrong.
