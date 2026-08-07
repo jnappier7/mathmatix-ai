@@ -188,6 +188,60 @@ describe('compareAnswer (the problem.checkAnswer engine)', () => {
     expect(compareAnswer('A', spec)).toBe(false);
   });
 
+  describe('items that carry options but are not DECLARED multiple-choice', () => {
+    // ~774 items in the bank. Every MC-rendering client draws radio buttons from
+    // options being present and never looks at answerType, so the student clicks
+    // a letter — but this branch used to be gated on answerType, so "C" was
+    // compared against the answer value as a raw string and always lost.
+    // gradeOne never had the gate, which is why the skill-map challenge graded
+    // these fine while review / challenges / actTest did not.
+    const undeclared = {
+      value: '100',
+      equivalents: [],
+      answerType: 'constructed-response',
+      options: [{ label: 'A', text: '102' }, { label: 'B', text: '101' },
+        { label: 'C', text: '100' }, { label: 'D', text: '99' }],
+    };
+
+    test('clicking the correct option now grades correct', () => {
+      expect(compareAnswer('C', undeclared)).toBe(true);
+    });
+
+    test('clicking a wrong option still grades wrong', () => {
+      expect(compareAnswer('A', undeclared)).toBe(false);
+      expect(compareAnswer('D', undeclared)).toBe(false);
+    });
+
+    test('typing the value still works — the change only adds verdicts', () => {
+      expect(compareAnswer('100', undeclared)).toBe(true);
+      expect(compareAnswer('99', undeclared)).toBe(false);
+    });
+
+    test('a letter that is a legitimate free-response ANSWER is not stolen', () => {
+      // This is why the "explicit letter is wrong, no fall-through" rule stays
+      // scoped to declared MC. Here 'A' is the answer, not a choice — applying
+      // that rule would take away a verdict value comparison gets right today.
+      const pointLabel = {
+        value: 'A', equivalents: [], answerType: 'constructed-response',
+        options: [{ label: 'A', text: 'P' }, { label: 'B', text: 'Q' }],
+      };
+      expect(compareAnswer('A', pointLabel)).toBe(true);
+    });
+
+    test('declared multiple-choice behaviour is untouched', () => {
+      // The rule still bites where it was designed to: a stray letter must
+      // never be salvaged by value matching on a real MC item.
+      expect(compareAnswer('C', mcSpec)).toBe(false);   // 'C' is '40', not 35
+      expect(compareAnswer('B', mcSpec)).toBe(true);
+    });
+
+    test('an item with no options at all is unaffected', () => {
+      const plain = { value: '42', equivalents: [], answerType: 'constructed-response' };
+      expect(compareAnswer('42', plain)).toBe(true);
+      expect(compareAnswer('A', plain)).toBe(false);
+    });
+  });
+
   test('free response: value, equivalents, fractions, decimals', () => {
     const spec = { value: '1/2', equivalents: ['0.5', '2/4'] };
     expect(compareAnswer('1/2', spec)).toBe(true);

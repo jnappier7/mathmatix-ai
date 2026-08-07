@@ -216,7 +216,18 @@ function compareAnswer(userAnswer, spec = {}) {
   const extraAcceptable = [];
 
   // MULTIPLE CHOICE: handle first since user sends letters (A, B, C, D)
-  if (spec.answerType === 'multiple-choice') {
+  //
+  // Entered when the item is DECLARED multiple-choice, or simply carries
+  // options. The second case matters because the clients decide to draw radio
+  // buttons from options being present and never look at answerType — so ~774
+  // items in the bank render as multiple choice, the student clicks a letter,
+  // and this gated straight past MC handling and compared "C" against the
+  // answer value as a raw string. Every one of those graded wrong. gradeOne
+  // (utils/skillChallenge.js) never had the gate, which is why the skill-map
+  // challenge handled them and review/challenges/actTest did not.
+  const mcOptions = normalizeOptions(spec.options);
+  const declaredMC = spec.answerType === 'multiple-choice';
+  if (declaredMC || mcOptions.length > 0) {
     const userUpper = userStr.toUpperCase();
     // Labels are POSITIONAL — the slot the student actually read, which is what
     // every surface now serves. `correctOption` names an option's STORED
@@ -224,7 +235,6 @@ function compareAnswer(userAnswer, spec = {}) {
     // options with their labels attached (correctOption:'C' can mean slot 0).
     // normalizeOptions/correctLabelOf translate between the two; comparing the
     // submission to the raw stored letter instead would pass a wrong pick.
-    const mcOptions = normalizeOptions(spec.options);
     const correctLabel = mcOptions.length ? correctLabelOf(spec) : null;
 
     // Method 1: direct correctOption comparison
@@ -263,7 +273,14 @@ function compareAnswer(userAnswer, spec = {}) {
     //     chat-rendered screener, which shows the question text but not the
     //     A–D labels. Fall through to value comparison, after adding the
     //     correct option's text to the acceptable set.
-    if (/^[A-F]$/.test(userUpper)) {
+    //
+    // Scoped to DECLARED multiple-choice on purpose. On an item that merely
+    // carries options, "A" may be a legitimate free-response answer ("which
+    // point is A?"), and returning false here would take away a verdict that
+    // value comparison gets right today. Undeclared items therefore fall
+    // through, which makes this change strictly additive for them: a letter
+    // can start grading correct, but nothing that graded correct can stop.
+    if (declaredMC && /^[A-F]$/.test(userUpper)) {
       return false;
     }
 
