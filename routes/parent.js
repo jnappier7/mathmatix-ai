@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const User = require('../models/user');
+const { applyFamilySupportsUpdate, readFamilySupports, lockedBySchool } = require('../utils/familySupports');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
 const Skill = require('../models/skill');
 const { isParent, isAuthenticated } = require('../middleware/auth');
@@ -1005,5 +1006,78 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
         res.status(500).json({ message: 'Error generating learning report.' });
     }
 });
+
+// =====================================================
+// LEARNING SUPPORTS
+//
+// Accommodations a parent asks for, stored separately from iepPlan, which is a
+// school-authored legal record only a teacher may write. A school IEP always
+// wins on conflict; these fill the gaps it leaves. See utils/promptHelpers.js
+// for how precedence is applied to the tutor prompt.
+// =====================================================
+
+
+router.get('/child/:childId/supports', isAuthenticated, isParent,
+    logRecordAccess('learning_profile', 'parental_right_of_access', { getStudentId: req => req.params.childId }),
+    async (req, res) => {
+        try {
+            const child = await verifyParentChildAccess(req.user._id, req.params.childId);
+            if (!child) return res.status(403).json({ message: 'Not authorized to view this child.' });
+
+            const family = child.learningProfile?.familySupports || {};
+            const iepAccom = child.iepPlan?.accommodations || {};
+
+            // Report which switches the school already owns so the UI can lock
+            // them rather than letting a parent think they changed something.
+            const supports = readFamilySupports(family);
+            const locked = lockedBySchool(child.iepPlan);
+
+            res.json({
+                success: true,
+                childName: child.firstName,
+                supports,
+                lockedBySchool: locked,
+                hasSchoolIep: Object.values(iepAccom).some(v => v === true),
+                note: family.note || '',
+                updatedAt: family.updatedAt || null
+            });
+        } catch (error) {
+            console.error('Error fetching learning supports:', error);
+            res.status(500).json({ message: 'Could not load learning supports.' });
+        }
+    });
+
+router.put('/child/:childId/supports', isAuthenticated, isParent,
+    logRecordAccess('learning_profile', 'parental_right_of_access', {
+        getStudentId: req => req.params.childId,
+        accessType: 'modify'   // a write, not a read — keep the audit trail honest
+    }),
+    async (req, res) => {
+        try {
+            const child = await verifyParentChildAccess(req.user._id, req.params.childId);
+            if (!child) return res.status(403).json({ message: 'Not authorized to update this child.' });
+
+            const student = await User.findById(req.params.childId);
+            if (!student) return res.status(404).json({ message: 'Child not found.' });
+
+            if (!student.learningProfile) student.learningProfile = {};
+            if (!student.learningProfile.familySupports) student.learningProfile.familySupports = {};
+            const target = student.learningProfile.familySupports;
+
+            // Whitelisted update — see utils/familySupports.js. A parent
+            // cannot reach iepPlan or anything else on the user document here.
+            applyFamilySupportsUpdate(target, req.body, { updatedBy: req.user._id });
+
+            student.markModified('learningProfile.familySupports');
+            await student.save();
+
+            const supports = readFamilySupports(target);
+
+            res.json({ success: true, supports, note: target.note || '', updatedAt: target.updatedAt });
+        } catch (error) {
+            console.error('Error updating learning supports:', error);
+            res.status(500).json({ message: 'Could not save learning supports.' });
+        }
+    });
 
 module.exports = router;

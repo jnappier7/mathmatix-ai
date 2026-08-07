@@ -1907,6 +1907,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </div>
         </div>
 
+        <!-- Learning supports. The tutor already honours a school-set IEP;
+             this lets a parent add supports of their own for the (common) case
+             where no school plan exists. School-set switches render locked. -->
+        <div class="dashboard-panel">
+          <h2 class="dashboard-panel-header">How Your Child Learns Best</h2>
+          <div id="learning-supports-root" role="region" aria-label="Learning supports"></div>
+        </div>
+
         <!-- Teacher messaging. The API and the teacher-side UI already existed;
              parents could receive a message by email but had no way to read it
              in the app or reply. -->
@@ -2469,11 +2477,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/avatarFullBody.js"></script>
   <script src="/js/parent-dashboard.js"></script>
   <script src="/js/modules/messaging.js"></script>
+  <script src="/js/modules/learningSupports.js"></script>
   <script>
     // Mount once the dashboard script has established the session.
     document.addEventListener('DOMContentLoaded', function () {
       var root = document.getElementById('parent-messaging-root');
       if (root && window.MMMessaging) window.MMMessaging.mount(root);
+      var ls = document.getElementById('learning-supports-root');
+      if (ls && window.MMLearningSupports) window.MMLearningSupports.mount(ls);
     });
   </script>
   <script src="/js/guided-tour.js?v=20260728"></script>
