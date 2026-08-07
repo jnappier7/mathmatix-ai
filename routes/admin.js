@@ -1459,6 +1459,17 @@ router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
       aggregate: verifyMetrics.aggregate(),
       recent: verifyMetrics.snapshot(50),
     },
+    // Reply-judge health (pipeline Stage 5g): every persisted tutor turn is
+    // scored against the eval harness's reply judges — the failure classes the
+    // scenarios pin (rejected-correct-answer, false non-equivalence, imprecise
+    // terms, bad order-of-operations). `violationRate` is the headline;
+    // `rejectedCorrectRate` is the worst class against its own denominator
+    // (turns where the student actually was correct). A model/prompt change
+    // that moves these rates shows up here before anyone reads a transcript.
+    replyJudges: {
+      aggregate: require('../utils/judgeMetrics').aggregate(),
+      recentViolations: require('../utils/judgeMetrics').snapshot(50, { violationsOnly: true }),
+    },
     // Course progression health. `advanceRate` is the headline: of the turns
     // where progression was evaluated, what share actually moved the lesson.
     // `stalled: true` (evaluations piling up, nothing advancing) is the exact
