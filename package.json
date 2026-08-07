@@ -51,6 +51,8 @@
     "check:skill-units": "node scripts/check-skill-units.js",
     "fix:skill-units": "node scripts/fix-pattern-skills-unit.js",
     "fix:correct-option": "node scripts/fix-missing-correctOption.js",
+    "migrate:mc-options": "node scripts/normalizeProblemOptions.js",
+    "migrate:mc-options:write": "node scripts/normalizeProblemOptions.js --write",
     "fix:remove-duplicates": "node scripts/remove-duplicate-problems.js",
     "analyze:date-issues": "node scripts/find-date-issues.js",
     "analyze:decimal-conversions": "node scripts/check-decimal-conversions.js",
