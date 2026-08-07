@@ -12913,18 +12913,10 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
   background: var(--accent-hover, #4f46e5);
 }
 
-/* ── Overlay backdrop ── */
-
-.floating-checkpoint.active::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: -1;
-}
+/* NOTE: no ::before page-dim backdrop here. The container's translate(-50%,-50%)
+   makes it a stacking context and overflow:hidden clips the fixed pseudo-element,
+   so a z-index:-1 ::before never dims the page — it just tints the card interior
+   gray. A backdrop would need a sibling element outside this container. */
 
 /* ── Mobile ── */
 
