@@ -127,6 +127,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        Loads AFTER workspace.css/avatar-fullbody.css so .psc-* rules win. -->
   <link rel="stylesheet" href="/css/player-stats-card.css?v=20260726a" />
   <link rel="stylesheet" href="/css/challenge-card.css?v=20260725f" />
+  <link rel="stylesheet" href="/css/floating-review.css?v=20260807" />
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
   <link rel="stylesheet" href="/css/adjustable-panels.css?v=20260721" />
   <!-- Voice mode (layout mode of the chat stage) -->
@@ -1998,6 +1999,96 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
+  <!-- Floating Review (spaced-repetition warm-up, offered by the greeting) -->
+  <div id="floating-review" class="floating-review">
+    <div class="review-header-bar">
+      <div class="review-title">
+        <i class="fas fa-fire"></i> <span>Warm-Up</span>
+      </div>
+      <div class="review-header-controls">
+        <button class="review-collapse-btn" title="Collapse"><i class="fas fa-minus"></i></button>
+        <button class="review-close-btn" title="Close">&times;</button>
+      </div>
+    </div>
+
+    <div class="review-body">
+      <!-- Intro Screen -->
+      <div id="review-intro-screen" class="review-screen">
+        <h2>Quick Warm-Up</h2>
+        <p class="subtitle">A few skills you've learned are due for a refresher.</p>
+        <div class="review-info-card">
+          <p>Reviewing right before you'd forget is what locks skills in for good. Today's warm-up:</p>
+          <ul class="review-skill-list" id="review-skill-list"></ul>
+          <div class="duration">
+            <i class="fas fa-clock"></i>
+            <span id="review-duration">About 2 minutes</span>
+          </div>
+        </div>
+        <div class="review-intro-actions">
+          <button class="review-start-btn" id="review-start-btn">
+            <i class="fas fa-play"></i> Let's Go
+          </button>
+          <button class="review-later-btn" id="review-later-btn">Not Today</button>
+        </div>
+      </div>
+
+      <!-- Question Screen -->
+      <div id="review-question-screen" class="review-screen">
+        <div class="review-progress">
+          <div class="review-progress-fill" id="review-progress-fill"></div>
+        </div>
+        <div class="review-question-card">
+          <div class="review-question-header">
+            <span class="review-question-num" id="review-question-num">Problem 1 of 3</span>
+          </div>
+          <div class="review-question-skill" id="review-question-skill"></div>
+          <div class="review-question-content" id="review-question-content"></div>
+          <div class="review-mc-options" id="review-mc-options" style="display:none"></div>
+          <div class="review-answer-area">
+            <label for="review-answer-input">Your answer:</label>
+            <input type="text" id="review-answer-input" placeholder="Type your answer..." autocomplete="off" />
+          </div>
+          <div id="review-feedback"></div>
+          <div class="review-actions">
+            <button id="review-submit-btn" disabled>Submit <i class="fas fa-arrow-right"></i></button>
+            <button id="review-skip-btn"><i class="fas fa-forward"></i> Skip</button>
+            <button id="review-next-btn" style="display:none">Next Problem</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Screen -->
+      <div id="review-loading-screen" class="review-screen">
+        <i class="fas fa-spinner fa-spin spinner"></i>
+        <p id="review-loading-text">Loading...</p>
+      </div>
+
+      <!-- Empty Screen (nothing due / load failed) -->
+      <div id="review-empty-screen" class="review-screen">
+        <div class="all-clear-icon">🎉</div>
+        <h2>All caught up!</h2>
+        <p>Nothing needs a refresher right now — your memory's holding strong.</p>
+        <button id="review-empty-close-btn">Back to Tutoring</button>
+      </div>
+
+      <!-- Results Screen -->
+      <div id="review-results-screen" class="review-screen">
+        <div class="review-results-hero">
+          <div class="streak-icon">🧠</div>
+          <h2>Warm-Up Complete!</h2>
+          <p class="results-sub" id="review-results-sub"></p>
+        </div>
+        <div class="review-score-display">
+          <div class="review-score-value" id="review-result-score">--</div>
+        </div>
+        <div id="review-result-breakdown"></div>
+        <button id="review-done-btn">
+          <i class="fas fa-arrow-right"></i> Back to Tutoring
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Intelligent Whiteboard Panel (Phase 0 wire-up — hidden by default) -->
   <div id="mathmatix-whiteboard-panel" class="is-hidden" style="display:none; position:fixed; top:80px; left:80px; width:900px; height:600px; background:#fff; border:1px solid #ccc; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,0.2); z-index:9000;">
     <div class="whiteboard-header" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-bottom:1px solid #eee; background:#f7f7f7; border-radius:8px 8px 0 0; cursor:move;">
@@ -2387,7 +2478,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      window.PlayerStatsCard.init(currentUser) once the user doc is fetched. -->
 <script defer src="/js/modules/playerStatsCard.js?v=20260724b"></script>
 <script src="/js/challengeCard.js?v=20260804a"></script>
-<script src="/js/script.js?v=20260801a" type="module"></script>
+<script defer src="/js/floating-review.js?v=20260807"></script>
+<script src="/js/script.js?v=20260807a" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.6c1f45bc.js"></script>
   <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->

@@ -974,6 +974,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.openStartingPoint();
                 }
                 break;
+            case 'start-review-warmup':
+                if (window.floatingReview) {
+                    Promise.resolve(window.floatingReview.open())
+                        .catch(err => console.error('[InlineCta] warm-up open failed', err));
+                }
+                break;
             default:
                 console.warn('[InlineCta] unknown action type', cta.type);
         }
