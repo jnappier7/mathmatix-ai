@@ -34,6 +34,10 @@ beforeAll(async () => {
   app.use(express.json());
   app.use(async (req, _res, next) => {
     req.user = await User.findById(currentUserId);
+    // isAuthenticated/isParent both call req.isAuthenticated(), which passport
+    // normally adds. Without it every request throws a TypeError and 500s
+    // before reaching the handler.
+    req.isAuthenticated = () => true;
     next();
   });
   app.use('/api/parent', router);
