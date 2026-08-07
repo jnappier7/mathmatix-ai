@@ -23,6 +23,8 @@ const { generate, assemblePrompt } = require('./generate');
 const { attachVerifiedTwin } = require('../twinGenerator');
 const { verify } = require('./verify');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
+const { judgeReply, PROD_JUDGES } = require('../replyJudges');
+const judgeMetrics = require('../judgeMetrics');
 const { persist } = require('./persist');
 const {
   verifyWithEscalation,
@@ -1477,6 +1479,33 @@ async function runPipeline(message, ctx) {
   // Unbalanced \( / \[ delimiters render as raw source in the bubble —
   // drop the orphans (balanced math is untouched). Cheap, so unconditional.
   verified.text = stripOrphanMathDelims(verified.text);
+
+  // ── Stage 5g: REPLY-JUDGE TELEMETRY ──
+  // Score the final student-facing text against the eval harness's reply
+  // judges (utils/replyJudges.js) — the same pure regex detectors CI runs on
+  // scenarios, here running on every real turn. This is measurement, not
+  // enforcement: the verify-stage guards above already regenerate the worst
+  // cases; this records what actually SHIPPED, so the production rate of each
+  // failure class (doubting a verified-correct answer, claiming equal forms
+  // unequal, "reduce"/"improper", false precedence rules) is a trended number
+  // on the admin metrics endpoint instead of a transcript anecdote. Pure
+  // string checks — no LLM call, no latency, and never allowed to break a turn.
+  try {
+    const judged = judgeReply(verified.text, PROD_JUDGES, {
+      studentWasCorrect: diagnosis?.isCorrect === true,
+    });
+    judgeMetrics.recordJudgedTurn({
+      violations: judged.violations,
+      studentWasCorrect: diagnosis?.isCorrect === true,
+      action: decision?.action || null,
+      skillId: ctx.activeSkill?.skillId || null,
+    });
+    if (!judged.passed) {
+      console.warn(`[Pipeline] Reply judge violation: ${judged.violations.map(v => `${v.judge} (${v.evidence})`).join('; ')}`);
+    }
+  } catch (judgeErr) {
+    console.error('[Pipeline] Reply-judge telemetry failed (non-fatal):', judgeErr.message);
+  }
 
   // ── Evidence gate on a course scaffold advance ──
   //
