@@ -378,9 +378,38 @@ const skillMasterySchema = new Schema({
 }, { _id: false });
 
 /* ---------- LEARNING PROFILE ---------- */
+/* ---------- FAMILY SUPPORTS ----------
+ * Accommodations a PARENT has asked for, kept deliberately separate from
+ * iepPlan.accommodations, which is a school-authored legal record that only a
+ * teacher may write (routes/iepTemplates.js is isTeacher-gated).
+ *
+ * Same nine switch names as iepAccommodationsSchema on purpose, so nothing
+ * downstream has to learn a second vocabulary — but provenance stays explicit
+ * so the tutor prompt can frame a parent's request as a family preference
+ * rather than as an IDEA-mandated accommodation. A school IEP always wins;
+ * family supports only fill gaps it leaves. See utils/promptHelpers.js.
+ */
+const familySupportsSchema = new Schema({
+  extendedTime:              { type: Boolean, default: false },
+  reducedDistraction:        { type: Boolean, default: false },
+  calculatorAllowed:         { type: Boolean, default: false },
+  audioReadAloud:            { type: Boolean, default: false },
+  chunkedAssignments:        { type: Boolean, default: false },
+  breaksAsNeeded:            { type: Boolean, default: false },
+  digitalMultiplicationChart:{ type: Boolean, default: false },
+  largePrintHighContrast:    { type: Boolean, default: false },
+  mathAnxietySupport:        { type: Boolean, default: false },
+  note:                      { type: String, trim: true, maxlength: 500, default: '' },
+  updatedAt:                 { type: Date },
+  updatedBy:                 { type: Schema.Types.ObjectId, ref: 'User' }
+}, { _id: false });
+
 const learningProfileSchema = new Schema({
   // Student interests for personalized examples
   interests: [String],  // e.g., ['skateboarding', 'video games', 'basketball']
+
+  // Parent-set learning supports (see familySupportsSchema above)
+  familySupports: { type: familySupportsSchema, default: () => ({}) },
 
   // Learning style preferences (AI-detected)
   learningStyle: {

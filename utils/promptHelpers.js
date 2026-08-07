@@ -112,4 +112,64 @@ function buildIepAccommodationsPrompt(iepPlan, firstName) {
   return prompt;
 }
 
-module.exports = { buildIepAccommodationsPrompt };
+/**
+ * The nine switches shared by iepAccommodationsSchema and familySupportsSchema,
+ * with the tutor-facing instruction each one implies.
+ *
+ * Phrased more softly than the IEP block on purpose: a parent asking for
+ * chunked work is a family preference, not an IDEA-mandated accommodation, and
+ * the model should not be told otherwise.
+ */
+const FAMILY_SUPPORT_LINES = {
+  extendedTime: 'Never rush {name}. Give extra time on every activity.',
+  audioReadAloud: 'Read problems aloud where you can. Keep the language plain.',
+  calculatorAllowed: 'Do not restrict calculator use. Focus on strategy, not arithmetic.',
+  chunkedAssignments: 'Present 3-5 problems at a time, then check in.',
+  breaksAsNeeded: 'Offer breaks proactively when energy dips.',
+  digitalMultiplicationChart: 'A multiplication chart is fine. Do not penalise using one.',
+  reducedDistraction: 'Keep visuals clean and uncluttered. One concept at a time.',
+  largePrintHighContrast: 'Use clear, large, high-contrast visuals.',
+  mathAnxietySupport: 'Extra encouragement. Normalise mistakes and celebrate effort.'
+};
+
+/**
+ * Build the family-supports block for the tutor prompt.
+ *
+ * Precedence: the school IEP wins. Any switch the IEP already turns on is
+ * skipped here, so the model never receives the same instruction twice under
+ * two different authorities — and a parent can never soften or override
+ * something a school put in a legal document. Family supports only fill gaps
+ * the IEP leaves (including the common case of no IEP at all).
+ *
+ * @param {Object|null} familySupports - learningProfile.familySupports
+ * @param {Object|null} iepPlan        - the school IEP, for precedence
+ * @param {string} firstName
+ * @returns {string} prompt fragment, or '' when there is nothing to say
+ */
+function buildFamilySupportsPrompt(familySupports, iepPlan, firstName) {
+  if (!familySupports) return '';
+
+  const iepAccom = (iepPlan && iepPlan.accommodations) || {};
+  const active = Object.keys(FAMILY_SUPPORT_LINES).filter(
+    key => familySupports[key] === true && iepAccom[key] !== true
+  );
+
+  const note = typeof familySupports.note === 'string' ? familySupports.note.trim() : '';
+  if (active.length === 0 && !note) return '';
+
+  let prompt = `\n--- FAMILY-REQUESTED SUPPORTS ---\n`;
+  prompt += `${firstName}'s parent or guardian asked for these. They are not part of a school IEP, `;
+  prompt += `but follow them unless an accommodation above already says otherwise.\n\n`;
+
+  active.forEach(key => {
+    prompt += `• ${FAMILY_SUPPORT_LINES[key].replace('{name}', firstName)}\n`;
+  });
+
+  if (note) {
+    prompt += `• From the family: ${note}\n`;
+  }
+
+  return prompt;
+}
+
+module.exports = { buildIepAccommodationsPrompt, buildFamilySupportsPrompt, FAMILY_SUPPORT_LINES };
