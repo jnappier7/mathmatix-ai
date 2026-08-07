@@ -1766,6 +1766,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .no-children-empty .steps { grid-template-columns: 1fr; }
     }
   </style>
+  <link rel="stylesheet" href="/css/messaging.css" />
   <link rel="stylesheet" href="/css/dashboard-mobile.css" />
   <link rel="stylesheet" href="/css/demo-mode.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
@@ -1904,6 +1905,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               <div class="skeleton skeleton-card" style="height: 180px;"></div>
             </div>
           </div>
+        </div>
+
+        <!-- Teacher messaging. The API and the teacher-side UI already existed;
+             parents could receive a message by email but had no way to read it
+             in the app or reply. -->
+        <div class="dashboard-panel">
+          <h2 class="dashboard-panel-header">Messages with Your Child&rsquo;s Teacher</h2>
+          <div id="parent-messaging-root" role="region" aria-label="Messages with your child's teacher"></div>
         </div>
 
         <div class="dashboard-panel parent-chat-widget">
@@ -2459,6 +2468,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/auto-logout.js"></script>
   <script src="/js/avatarFullBody.js"></script>
   <script src="/js/parent-dashboard.js"></script>
+  <script src="/js/modules/messaging.js"></script>
+  <script>
+    // Mount once the dashboard script has established the session.
+    document.addEventListener('DOMContentLoaded', function () {
+      var root = document.getElementById('parent-messaging-root');
+      if (root && window.MMMessaging) window.MMMessaging.mount(root);
+    });
+  </script>
   <script src="/js/guided-tour.js?v=20260728"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="/js/sessionManager.js"></script>

@@ -18,12 +18,15 @@ const { isAuthenticated } = require('../middleware/auth');
 const { sendMessageNotification } = require('../utils/emailService');
 
 const { anyRole, userHasRole } = require('../utils/roleQuery');
+const { canUseMessaging, messagingViewRole } = require('../utils/messagingAccess');
 /**
  * Middleware to check if user can message
  * Only teachers and parents can use messaging
  */
 function canMessage(req, res, next) {
-    if (!req.user || !['teacher', 'parent'].includes(req.user.role)) {
+    // Authorization reads roles[] (roles held), not role (the dashboard the user
+    // happens to be viewing). See utils/messagingAccess.js and CLAUDE.md §12.
+    if (!canUseMessaging(req.user)) {
         return res.status(403).json({
             success: false,
             message: 'Only teachers and parents can use messaging'
@@ -479,7 +482,9 @@ router.get('/contacts', isAuthenticated, canMessage, async (req, res) => {
     try {
         let contacts = [];
 
-        if (req.user.role === 'teacher') {
+        const viewRole = messagingViewRole(req.user);
+
+        if (viewRole === 'teacher') {
             // Get all parents of students assigned to this teacher
             const students = await User.find(
                 { teacherId: req.user._id, ...anyRole('student') },
@@ -512,7 +517,7 @@ router.get('/contacts', isAuthenticated, canMessage, async (req, res) => {
 
             contacts = Array.from(parentMap.values());
 
-        } else if (req.user.role === 'parent') {
+        } else if (viewRole === 'parent') {
             // Get teachers of all children
             const parent = await User.findById(req.user._id, 'children').populate('children', 'firstName lastName teacherId');
 
