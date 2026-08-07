@@ -35,6 +35,8 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { computeNudges, NUDGE_TYPES } = require('../utils/userNudges');
+const { buildSmartQueue } = require('../utils/smartReviewQueue');
+const { studentLabel } = require('../utils/studentLabels');
 const { detectGrowthCheckAcceptance, detectStartingPointAcceptance } = require('../utils/growthCheckIntent');
 const { buildDebriefInstruction, fallbackDebriefText } = require('../utils/growthSummary');
 const { buildCourseSystemPrompt, buildActPracticeGuidance, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
@@ -3236,6 +3238,39 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
                 }
             } catch (err) {
                 logger.warn('Greeting nudge check error (non-fatal)', { error: err.message });
+            }
+
+            // Offer a spaced-review warm-up when the FSRS queue says earlier
+            // skills are fading. Lowest CTA priority — a first session or an
+            // overdue growth check owns the greeting instead. Throttled to
+            // once per ~20h so a student who declines isn't nagged on every
+            // login. Like the growth check, the real problems run in a
+            // structured widget (FloatingReview) — the AI only sets up the
+            // moment in its own voice, and the student is free to ignore it.
+            try {
+                const lastWarmupOfferMs = user.reviewWarmupOfferedAt
+                    ? Date.now() - new Date(user.reviewWarmupOfferedAt).getTime()
+                    : Infinity;
+                if (!greetingInlineCta && !debriefPending && lastWarmupOfferMs > 20 * 60 * 60 * 1000) {
+                    const { queue, stats, sessionPlan } = buildSmartQueue(user, { maxSkills: 3 });
+                    if (stats.dueNow > 0 && queue.length > 0) {
+                        const firstSkillName = studentLabel(queue[0].skillId);
+                        const estMinutes = Math.max(1, sessionPlan.estimatedMinutes || 2);
+                        greetingInlineCta = {
+                            type: 'start-review-warmup',
+                            label: 'Start Warm-Up',
+                            emoji: '🧠',
+                        };
+                        greetingInstruction += `
+
+The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier work due for a quick spaced-review refresher (~${estMinutes} min, e.g. ${firstSkillName}). A button labeled "${greetingInlineCta.label}" is rendered below your greeting — they tap it to start a short warm-up with real problems. Offer it in ONE low-pressure sentence in your own voice (e.g., "before we dive in — want a quick ${estMinutes}-minute warm-up on ${firstSkillName}? Tap below, or just tell me what you're working on"). This REPLACES any warm-up question of your own: do NOT invent one inline — the button runs the real thing. Never make it feel mandatory; if they ignore it and ask about something else, follow their lead and don't mention it again.`;
+
+                        User.findByIdAndUpdate(userId, { reviewWarmupOfferedAt: new Date() })
+                            .catch(err => logger.warn('Could not stamp review warm-up offer time', { error: err.message }));
+                    }
+                }
+            } catch (err) {
+                logger.warn('Greeting review warm-up check error (non-fatal)', { error: err.message });
             }
         }
 

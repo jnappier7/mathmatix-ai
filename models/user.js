@@ -966,6 +966,7 @@ const userSchema = new Schema({
   /* CAT Screener (Starting Point) Tracking */
   startingPointOffered: { type: Boolean, default: false },  // True after AI offers in chat (never ask again)
   startingPointOfferedAt: { type: Date },  // When it was first offered
+  reviewWarmupOfferedAt: { type: Date },  // Last greeting that offered a spaced-review warm-up (~20h throttle)
   assessmentCompleted: { type: Boolean, default: false },  // True after Starting Point is completed
   assessmentDate: { type: Date },  // When the assessment was completed
   initialPlacement: { type: String },  // Grade-level placement from assessment (e.g., "5th Grade")

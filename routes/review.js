@@ -11,7 +11,7 @@
  */
 
 const express = require('express');
-const { expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
+const { canonicalSkillId, skillLookupCandidates, expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
@@ -24,6 +24,7 @@ const {
   assessQuality
 } = require('../utils/spacedRepetition');
 const { buildSmartQueue, getReviewSummary } = require('../utils/smartReviewQueue');
+const { initializeCard, updateCard, rateAttempt } = require('../utils/fsrsScheduler');
 const { resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
 const logger = require('../utils/catLogger');
 
@@ -51,6 +52,7 @@ router.get('/smart-queue', isAuthenticated, async (req, res) => {
 
     const maxSkills = Math.min(parseInt(req.query.max) || 10, 20);
     const lookaheadDays = Math.min(parseInt(req.query.lookahead) || 1, 7);
+    const includeProblems = req.query.includeProblems === 'true';
 
     const { queue, stats, sessionPlan } = buildSmartQueue(user, {
       maxSkills,
@@ -70,28 +72,32 @@ router.get('/smart-queue', isAuthenticated, async (req, res) => {
       }
     }
 
-    // Find a problem for the first skill in the queue
+    // Attach problems: one for the top skill (legacy `problem` field), or one
+    // per queue skill when includeProblems=true (lets the warm-up UI fetch the
+    // whole session in a single round-trip). Skills with no bank problems keep
+    // item.problem null — the client should skip them rather than dead-end.
     let problem = null;
     if (queue.length > 0) {
-      const topSkill = queue[0];
-      const problemDoc = await Problem.findNearDifficulty(
-        topSkill.skillId,
-        user.learningProfile?.currentTheta || 0,
-        [],
-        { preferMultipleChoice: false }
-      );
+      const wanted = includeProblems ? queue.length : 1;
+      const usedProblemIds = [];
 
-      if (problemDoc) {
-        problem = {
+      for (const item of queue.slice(0, wanted)) {
+        const problemDoc = await findProblemForSkill(item.skillId, user, usedProblemIds);
+        if (!problemDoc) continue;
+
+        usedProblemIds.push(problemDoc.problemId);
+        const payload = {
           problemId: problemDoc.problemId,
           prompt: problemDoc.prompt,
           svg: problemDoc.svg,
           answerType: problemDoc.answerType,
           options: problemDoc.options,
           difficulty: problemDoc.difficulty,
-          skillId: topSkill.skillId,
-          skillName: topSkill.displayName,
+          skillId: item.skillId,
+          skillName: item.displayName,
         };
+        if (includeProblems) item.problem = payload;
+        if (!problem) problem = payload;
       }
     }
 
@@ -178,12 +184,7 @@ router.get('/due', isAuthenticated, async (req, res) => {
 
     // Find a problem for the most urgent skill
     const topSkill = enrichedSkills[0];
-    const problem = await Problem.findNearDifficulty(
-      topSkill.skillId,
-      user.learningProfile?.currentTheta || 0,
-      [], // no exclusions for reviews
-      { preferMultipleChoice: false }
-    );
+    const problem = await findProblemForSkill(topSkill.skillId, user, []);
 
     res.json({
       due: enrichedSkills,
@@ -307,6 +308,17 @@ router.post('/submit', isAuthenticated, async (req, res) => {
 
     setSkillMasteryEntry(user, masteryKey, skillData);
     user.markModified('skillMastery');
+
+    // Mirror the outcome into the FSRS card. The smart queue reads
+    // learningEngines.fsrs — without this write a finished review never
+    // leaves the queue, so the same skills get re-offered every session.
+    syncFsrsCard(user, skillId, {
+      correct,
+      hintUsed: hintUsed || false,
+      responseTime: responseTimeMs,
+      expectedTime: expectedTimeMs,
+    });
+
     await user.save();
 
     res.json({
@@ -382,6 +394,62 @@ router.post('/skip', isAuthenticated, async (req, res) => {
 // ===========================================================================
 // HELPERS
 // ===========================================================================
+
+/**
+ * Find a practice problem for a mastery-side skill key.
+ *
+ * Queue/mastery keys may be canonical unified ids while the problem bank is
+ * bank-keyed, so a direct findNearDifficulty(skillId) can miss real content.
+ * Walk the candidate ids (canonical, raw, legacy, bank) until one hits.
+ *
+ * @param {string} skillId - Mastery-side skill id
+ * @param {Object} user - User doc (for theta)
+ * @param {string[]} excludeIds - problemIds already used this session
+ * @returns {Promise<Object|null>} Problem doc or null
+ */
+async function findProblemForSkill(skillId, user, excludeIds) {
+  const theta = user.learningProfile?.currentTheta || 0;
+  for (const candidate of skillLookupCandidates(skillId)) {
+    const doc = await Problem.findNearDifficulty(candidate, theta, excludeIds, { preferMultipleChoice: false });
+    if (doc) return doc;
+  }
+  return null;
+}
+
+/**
+ * Update the FSRS card for a reviewed skill.
+ *
+ * Cards are keyed canonical-first with a legacy-key fallback (matching the
+ * pipeline's readEngine) — write back to the key the card lives under so
+ * memory state never splits across two keys.
+ *
+ * @param {Object} user - Hydrated user doc
+ * @param {string} skillId - Skill id as submitted by the client
+ * @param {Object} attempt - { correct, hintUsed, responseTime, expectedTime }
+ */
+function syncFsrsCard(user, skillId, attempt) {
+  if (!user.learningEngines) {
+    user.learningEngines = { bkt: new Map(), fsrs: new Map(), consistency: new Map() };
+  }
+  const store = user.learningEngines.fsrs;
+  const get = (k) => (typeof store?.get === 'function' ? store.get(k) : store?.[k]);
+
+  const canon = canonicalSkillId(skillId) || skillId;
+  const key = get(canon) != null ? canon
+    : get(skillId) != null ? skillId
+    : canon;
+
+  const existing = get(key);
+  const rating = rateAttempt(attempt);
+  const card = existing ? updateCard(existing, rating) : initializeCard(rating);
+
+  if (typeof store?.set === 'function') {
+    store.set(key, card);
+  } else {
+    user.learningEngines.fsrs = { ...(store || {}), [key]: card };
+  }
+  user.markModified('learningEngines');
+}
 
 /**
  * Get expected response time based on problem difficulty
