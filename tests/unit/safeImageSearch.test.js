@@ -165,6 +165,60 @@ describe('searchWikimediaCommons query scoping', () => {
     const r = await searchWikimediaCommons('triangle angles', {});
     expect(r.results).toEqual([]);
   });
+
+  test('relaxes an over-specific query until Commons returns results', async () => {
+    // Live failure: "exterior angle of a triangle labeled diagram straight line"
+    // AND-matches nothing on Commons; the core noun phrase has 9 diagrams.
+    const hit = {
+      data: { query: { pages: { 1: {
+        title: 'File:Aussenwinkelsatz.JPG',
+        imageinfo: [{ mime: 'image/jpeg', width: 800, height: 600, url: 'https://upload.wikimedia.org/a.jpg', thumburl: 'https://upload.wikimedia.org/a_t.jpg' }]
+      } } } }
+    };
+    const miss = { data: { query: { pages: null } } };
+    const spy = jest.spyOn(axios, 'get')
+      .mockResolvedValueOnce(miss)   // full query
+      .mockResolvedValueOnce(miss)   // presentation words stripped
+      .mockResolvedValue(hit);       // trailing words dropped
+    const r = await searchWikimediaCommons('exterior angle of a triangle labeled diagram straight line', {});
+    expect(r.results).toHaveLength(1);
+    expect(r.results[0].title).toContain('Aussenwinkelsatz');
+    expect(spy.mock.calls.length).toBeGreaterThan(2);
+    // Every attempted variant stays scoped and PDF-proof
+    for (const call of spy.mock.calls) {
+      expect(call[1].params.gsrsearch).toMatch(/^math(ematics)? /);
+      expect(call[1].params.gsrsearch).toContain('filetype:bitmap|drawing');
+    }
+  });
+});
+
+describe('relaxedQueryVariants', () => {
+  const { relaxedQueryVariants } = require('../../utils/safeImageSearch');
+
+  test('orders variants most-specific first and strips presentation words', () => {
+    const v = relaxedQueryVariants('math exterior angle of a triangle labeled diagram straight line');
+    expect(v[0]).toBe('math exterior angle of a triangle labeled diagram straight line');
+    expect(v[1]).toBe('math exterior angle of a triangle straight line');
+    // trailing-word drops follow, never below three words, capped at 4 variants
+    expect(v.length).toBeLessThanOrEqual(4);
+    expect(v.every(q => q.split(' ').length >= 3)).toBe(true);
+    expect(v.every(q => q.startsWith('math'))).toBe(true);
+  });
+
+  test('keeps content words like "number line" (only presentation words strip)', () => {
+    const v = relaxedQueryVariants('math number line with negative integers');
+    expect(v[0]).toContain('number line');
+    expect(v[1] || v[0]).toContain('number line');
+  });
+
+  test('returns a short query unchanged as its only variant', () => {
+    expect(relaxedQueryVariants('mathematics triangle')).toEqual(['mathematics triangle']);
+  });
+
+  test('dedupes when stripping changes nothing', () => {
+    const v = relaxedQueryVariants('math exterior angle');
+    expect(v).toEqual(['math exterior angle']);
+  });
 });
 
 describe('ALLOWED_DOMAINS', () => {

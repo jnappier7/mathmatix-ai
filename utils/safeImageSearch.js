@@ -185,7 +185,10 @@ async function searchEducationalImages(query, opts = {}) {
     });
 
     if (!response.data?.items?.length) {
-      return { results: [], query: sanitized, cached: false };
+      // Zero raw hits deserves the same Wikimedia fallback as zero *filtered*
+      // hits below — the board already promised a visual either way.
+      console.log('[SafeImageSearch] CSE returned no items; falling back to Wikimedia Commons');
+      return searchWikimediaCommons(query, opts);
     }
 
     // Filter and transform results
@@ -238,6 +241,39 @@ async function searchEducationalImages(query, opts = {}) {
 // Free, no API key needed, with COPPA safeguards
 // ============================================
 
+// Presentation words describe the PICTURE the tutor wants, not the math in it.
+// Commons full-text search ANDs every term against file pages, so a query like
+// "exterior angle of a triangle labeled diagram straight line" matches nothing
+// while "exterior angle of a triangle" returns nine perfect diagrams. These are
+// safe to strip when relaxing; content words ("number line", "straight line" as
+// a topic) are deliberately NOT here — relaxation drops trailing words instead.
+const PRESENTATION_WORDS = /\b(labell?ed|diagram|diagrams|picture|pictures|image|images|illustration|illustrations|example|examples|figure|figures|visual|visuals|showing|shown|clearly|simple|basic|drawing|drawings|photo|photos)\b/gi;
+
+/**
+ * Ordered search-query variants, most specific first: the query as given, then
+ * with presentation words stripped, then progressively dropping trailing words
+ * (never below minWords, so the leading math-scope term survives).
+ * @param {string} q
+ * @param {{max?: number, minWords?: number}} [opts]
+ * @returns {string[]}
+ */
+function relaxedQueryVariants(q, { max = 4, minWords = 3 } = {}) {
+  const out = [];
+  const push = (s) => {
+    s = String(s || '').replace(/\s+/g, ' ').trim();
+    if (s && !out.includes(s)) out.push(s);
+  };
+  push(q);
+  const stripped = String(q || '').replace(PRESENTATION_WORDS, ' ');
+  push(stripped);
+  let words = stripped.replace(/\s+/g, ' ').trim().split(' ');
+  while (words.length > minWords && out.length < max) {
+    words = words.slice(0, -1);
+    push(words.join(' '));
+  }
+  return out.slice(0, max);
+}
+
 // Additional blocked terms for Wikimedia (which has no built-in SafeSearch)
 const WIKIMEDIA_BLOCKED_TITLE_TERMS = [
   /\banatomy\b/i, /\bnude\b/i, /\bnaked\b/i, /\bbody\b/i,
@@ -279,17 +315,16 @@ async function searchWikimediaCommons(query, opts = {}) {
   // to renderable images and keeps PDFs out of the generator entirely.
   const mathQuery = sanitized.replace(/\beducational diagram\b/i, '').trim();
   const scoped = /\bmath/i.test(mathQuery) ? mathQuery : `mathematics ${mathQuery}`;
-  const scopedQuery = `${scoped} filetype:bitmap|drawing`;
 
   const maxResults = Math.min(Math.max(opts.maxResults || 3, 1), 5);
 
-  try {
-    // MediaWiki API: search for files in Commons
+  // Runs ONE Commons query; returns the filtered results, or null on error.
+  async function runCommonsQuery(gsrsearch) {
     const response = await axios.get('https://commons.wikimedia.org/w/api.php', {
       params: {
         action: 'query',
         generator: 'search',
-        gsrsearch: scopedQuery,
+        gsrsearch,
         gsrnamespace: 6,           // File namespace only
         gsrlimit: maxResults * 3,  // Fetch extra to filter
         prop: 'imageinfo',
@@ -306,12 +341,10 @@ async function searchWikimediaCommons(query, opts = {}) {
     });
 
     const pages = response.data?.query?.pages;
-    if (!pages) {
-      return { results: [], query: scoped, cached: false, source: 'wikimedia' };
-    }
+    if (!pages) return [];
 
     // Filter and transform results with COPPA safeguards
-    const results = Object.values(pages)
+    return Object.values(pages)
       .filter(page => {
         // Must have image info
         if (!page.imageinfo?.length) return false;
@@ -349,15 +382,31 @@ async function searchWikimediaCommons(query, opts = {}) {
           height: info.height,
         };
       });
-
-    console.log(`[WikimediaSearch] Query: "${scopedQuery}" → ${results.length} results`);
-
-    return { results, query: scoped, cached: false, source: 'wikimedia' };
-
-  } catch (error) {
-    console.error('[WikimediaSearch] Search failed:', error.message);
-    return { results: [], query: scoped, cached: false, error: 'Search failed', source: 'wikimedia' };
   }
+
+  // Tutor-generated queries pack in presentation words ("… labeled diagram
+  // straight line") that Commons ANDs against file pages — the full query often
+  // matches nothing while its core noun phrase has plenty of diagrams. Try the
+  // most specific variant first and relax until something renders.
+  let lastError = false;
+  for (const variant of relaxedQueryVariants(scoped)) {
+    try {
+      const results = await runCommonsQuery(`${variant} filetype:bitmap|drawing`);
+      console.log(`[WikimediaSearch] Query: "${variant}" → ${results.length} results`);
+      if (results.length) {
+        return { results, query: variant, cached: false, source: 'wikimedia' };
+      }
+      lastError = false;
+    } catch (error) {
+      console.error('[WikimediaSearch] Search failed:', error.message);
+      lastError = true;
+    }
+  }
+
+  return {
+    results: [], query: scoped, cached: false, source: 'wikimedia',
+    ...(lastError ? { error: 'Search failed' } : {})
+  };
 }
 
 // The static map below is aspirational — the files under public/images/concepts/
@@ -432,6 +481,7 @@ function isProxyableImageUrl(raw) {
 module.exports = {
   searchEducationalImages,
   searchWikimediaCommons,
+  relaxedQueryVariants,
   sanitizeQuery,
   isValidCategory,
   getStaticConceptImage,
