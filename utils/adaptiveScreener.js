@@ -583,8 +583,16 @@ function categorizeSkills(theta, responses) {
   const frontier = [];
 
   for (const [skillId, perf] of Object.entries(skillPerformance)) {
-    // Mastered: High accuracy AND difficulty well below theta
-    if (perf.accuracy >= 0.8 && perf.avgDifficulty < theta - 0.5) {
+    // Mastered: the student DEMONSTRATED the skill. Two ways in:
+    //  - every attempt correct, with either repeated evidence (2+ items) or a
+    //    single item at/below their final ability. A CAT administers items AT
+    //    theta by design, so "aced at level" is the common case — the old rule
+    //    (difficulty well below theta) filed exactly those skills under
+    //    `frontier`, which /complete silently dropped. The visible symptom: a
+    //    student finished a Starting Point and the ladder still read 0 proved.
+    //  - the original rule stays for mixed-but-strong runs on easy material.
+    if ((perf.correct === perf.attempts && (perf.attempts >= 2 || perf.avgDifficulty <= theta))
+        || (perf.accuracy >= 0.8 && perf.avgDifficulty < theta - 0.5)) {
       mastered.push(skillId);
     }
     // Frontier: Mixed performance at theta level

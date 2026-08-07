@@ -363,3 +363,109 @@ describe('POST /api/screener/complete — starting point is unchanged', () => {
     expect(user.learningProfile.pendingGrowthCheckDebrief).toBeUndefined();
   });
 });
+
+describe('POST /api/screener/complete — placement evidence closes the ladder', () => {
+  let app;
+
+  // A catalog with a real prerequisite chain, so the cascade has a graph to
+  // walk: proving ms-ratios implies elem-fractions-intro implies elem-counting.
+  const CATALOG = [
+    { skillId: 'ms-ratios', displayName: 'Ratios', studentLabel: 'ratios', prerequisites: ['elem-fractions-intro'] },
+    { skillId: 'elem-fractions-intro', displayName: 'Fractions Intro', studentLabel: 'fractions', prerequisites: ['elem-counting'] },
+    { skillId: 'elem-counting', displayName: 'Counting', studentLabel: 'counting', prerequisites: [] },
+    { skillId: 'ms-fractions', displayName: 'Adding Fractions', studentLabel: 'adding fractions', prerequisites: [] },
+  ];
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    app = buildApp();
+    stubSkillCatalog(CATALOG);
+  });
+
+  test('a growth check cascades: untested prerequisites of a demonstrated skill land proved-by-inference', async () => {
+    const user = placedStudent({ skillMastery: new Map() });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession());
+
+    const res = await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    // The skill the student actually demonstrated: proved via placement.
+    const ratios = user.skillMastery.get('ms-ratios');
+    expect(ratios.rung).toBe('proved');
+    expect(ratios.provenBy).toBe('placement');
+
+    // The prerequisites the screener never asked about: cleared from above,
+    // recorded honestly as inference — cleared, not achieved.
+    for (const id of ['elem-fractions-intro', 'elem-counting']) {
+      const entry = user.skillMastery.get(id);
+      expect(entry).toBeTruthy();
+      expect(entry.rung).toBe('proved');
+      expect(entry.provenBy).toBe('inference');
+    }
+    expect(res.body.report.clearedFromPlacement.sort())
+      .toEqual(['elem-counting', 'elem-fractions-intro']);
+  });
+
+  test('a Starting Point cascades exactly the same way', async () => {
+    const user = placedStudent({ initialPlacement: null, skillMastery: new Map() });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession({ sessionType: 'starting-point' }));
+
+    await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    expect(user.skillMastery.get('elem-counting').provenBy).toBe('inference');
+    expect(user.skillMastery.get('elem-fractions-intro').provenBy).toBe('inference');
+  });
+
+  test('the cascade never overrides a skill the student explicitly failed', async () => {
+    const user = placedStudent({
+      skillMastery: new Map([
+        ['elem-counting', { rung: 'none', explicitlyFailed: true, failureDate: new Date() }],
+      ]),
+    });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession());
+
+    await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    // We watched them miss this; the graph implying it is weaker evidence.
+    expect(user.skillMastery.get('elem-counting').rung).toBe('none');
+    // The intermediate prerequisite still clears.
+    expect(user.skillMastery.get('elem-fractions-intro').provenBy).toBe('inference');
+  });
+
+  test('a re-measurement never downgrades demonstrated work', async () => {
+    const taughtHistory = [{ from: 'proved', to: 'taught', via: 'teachback', at: new Date() }];
+    const user = placedStudent({
+      skillMastery: new Map([
+        // The student TAUGHT ratios back; a growth check re-proving it must not
+        // demote the rung or wipe the history (the old loops replaced the entry).
+        ['ms-ratios', { rung: 'taught', provenBy: 'teachback', status: 'mastered', rungHistory: taughtHistory }],
+        // ms-fractions grades 1-of-2 in this session (the "learning" bucket) —
+        // partial evidence in a 6-item check must not stomp a proved rung.
+        ['ms-fractions', { rung: 'proved', provenBy: 'challenge', status: 'mastered' }],
+      ]),
+    });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession());
+
+    await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    const ratios = user.skillMastery.get('ms-ratios');
+    expect(ratios.rung).toBe('taught');
+    expect(ratios.provenBy).toBe('teachback');
+    expect(ratios.rungHistory).toBe(taughtHistory);
+
+    const fractions = user.skillMastery.get('ms-fractions');
+    expect(fractions.rung).toBe('proved');
+    expect(fractions.provenBy).toBe('challenge');
+  });
+});
