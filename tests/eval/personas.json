@@ -1,6 +1,8 @@
 {
  "_comment": "Behavioral PERSONAS \u2014 forward-looking multi-turn trajectories, complementing the replayed-regression scenarios in scenarios.json. Same runner, three assertion layers per student turn: `expect` (observe, deterministic), `expectDecide` (real diagnose\u2192decide with the LLM boundary empty, deterministic), `expectPrompt` (assembled prompt must-not-contain, deterministic), plus `judge` (heuristic reply judges) and `judgeLlm` (LLM judges, live tier only). Expectations pin pedagogical INVARIANTS (action families, never-do actions), not exact single actions, so legitimate decide-stage tuning doesn't flake the suite. Where current behavior looked wrong during calibration it is documented in _knownIssues and deliberately NOT pinned.",
- "_knownIssues": [],
+ "_knownIssues": [
+  "2026-08-07 (board-tag calibration, claude-sonnet-5): on a CONFIRMED-CORRECT turn the model likes to recap the solve as apply/resolve cards ('add 6 to both sides' / 'x = -28') that fail the student-text mirror rule and get guard-dropped. Production backfills the verify card from the verified diagnosis (boardSynthesizer), so the student's board is not left empty — the ghostBoardStep check therefore EXEMPTS mirror-rule drops on studentWasCorrect turns instead of pinning this. The better model habit is a single verify card in the student's stated form; teach that, then remove the exemption."
+ ],
  "_fixedByHarness": [
   "2026-07-29: three calibration findings fixed and now PINNED below \u2014 (1) observe recognizes the x= form in self-checks ('is it x = 8?'); (2) an affect/hedge prefix no longer swallows an embedded attempt ('ugh fine. is it x = 8?' grades, with frustration kept as a context signal); (3) a VERIFIED attempt outranks a lingering give-up streak in decide (redemption confirms/guides instead of exit_ramp; unverifiable attempts keep the ramp)."
  ],
@@ -325,6 +327,309 @@
        "guide_incorrect",
        "reteach_misconception"
       ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "visual-apt: comparing 2/3 vs 3/4 begs a fraction model",
+   "focus": "comparing fractions",
+   "turns": [
+    {
+     "student": "which is bigger, 2/3 or 3/4? i can never tell",
+     "expect": {
+      "notAnswerAttempt": true
+     },
+     "expectDecide": {
+      "actionNotIn": [
+       "confirm_correct",
+       "guide_incorrect",
+       "reteach_misconception",
+       "redirect_to_math",
+       "present_problem"
+      ]
+     }
+    },
+    {
+     "assistant": "Good question — these two trip people up because the pieces are different sizes. Before any tricks: which one *feels* bigger to you?"
+    },
+    {
+     "student": "idk they honestly feel like the same size to me",
+     "expectDecide": {
+      "actionNotIn": [
+       "confirm_correct",
+       "guide_incorrect",
+       "reteach_misconception",
+       "redirect_to_math"
+      ]
+     },
+     "judgeLlm": {
+      "visualPedagogy": {
+       "concept": "comparing the fractions 2/3 and 3/4 (which is bigger) for a student whose intuition has run out — the second exchange, where a fantastic tutor reaches for a representation (same-size bars/circles shaded 2/3 vs 3/4, a number line, or a same-whole picture)",
+       "expect": {
+        "usedOrOfferedVisual": true,
+        "matchesConcept": true
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "visual-apt: negative times negative asks for a pattern or model, not a rule restated",
+   "focus": "multiplying negative numbers",
+   "turns": [
+    {
+     "student": "why does a negative times a negative make a positive?? that makes no sense",
+     "expect": {
+      "notAnswerAttempt": true
+     },
+     "expectDecide": {
+      "actionNotIn": [
+       "confirm_correct",
+       "guide_incorrect",
+       "reteach_misconception",
+       "redirect_to_math",
+       "present_problem"
+      ]
+     }
+    },
+    {
+     "assistant": "Fair thing to question — let's build it instead of memorizing it. Quick check first: do you buy that a positive times a negative is negative, like 3 × (−2) = −6?"
+    },
+    {
+     "student": "yeah that part makes sense. its the negative times negative thing thats weird",
+     "expectDecide": {
+      "actionNotIn": [
+       "confirm_correct",
+       "redirect_to_math"
+      ]
+     },
+     "judgeLlm": {
+      "visualPedagogy": {
+       "concept": "why a negative times a negative is positive, for a student who already accepts positive×negative — the second exchange, where a fantastic tutor shows it rather than restates the rule (a descending products pattern like 3×(−2), 2×(−2), 1×(−2), 0×(−2), −1×(−2); a number line; or a real-world reversal story)",
+       "expect": {
+        "usedOrOfferedVisual": true,
+        "matchesConcept": true
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "visual-apt: slope-as-meaning wants the picture, not another formula",
+   "focus": "slope of a line",
+   "turns": [
+    {
+     "assistant": "Nice — you found the slope of y = 2x + 1 is 2."
+    },
+    {
+     "student": "ok but what does slope actually MEAN? like i can calculate it but i dont get what it is",
+     "expect": {
+      "notAnswerAttempt": true
+     },
+     "expectDecide": {
+      "actionNotIn": [
+       "confirm_correct",
+       "guide_incorrect",
+       "reteach_misconception",
+       "redirect_to_math",
+       "present_problem"
+      ]
+     }
+    },
+    {
+     "assistant": "Great question — a lot of people can compute slope without ever *seeing* it. The short version: slope is how steep the line is and which way it leans. That 2 you found is telling you something specific."
+    },
+    {
+     "student": "steep how?? i still dont see what the 2 actually does",
+     "expectDecide": {
+      "actionNotIn": [
+       "confirm_correct",
+       "guide_incorrect",
+       "reteach_misconception",
+       "redirect_to_math"
+      ]
+     },
+     "judgeLlm": {
+      "visualPedagogy": {
+       "concept": "what the slope 2 of y = 2x + 1 means, for a student who says words aren't landing — the second exchange, where a fantastic tutor shows the picture (a graph card, rise-over-run steps drawn on the line, 'right 1, up 2', or a real-world steepness image)",
+       "expect": {
+        "usedOrOfferedVisual": true,
+        "matchesConcept": true
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "visual-apt: distribution begs the area model",
+   "focus": "distributive property",
+   "turns": [
+    {
+     "student": "why does 3(x + 4) equal 3x + 12? why not 3x + 4",
+     "expect": {
+      "notAnswerAttempt": true
+     },
+     "expectDecide": {
+      "actionNotIn": [
+       "confirm_correct",
+       "redirect_to_math",
+       "present_problem"
+      ]
+     }
+    },
+    {
+     "assistant": "Good question — that \"why not just 3x + 4\" instinct is exactly the right thing to poke at. What does multiplying something by 3 actually mean, in your own words?"
+    },
+    {
+     "student": "like 3 groups of the thing?? but i still dont get why the 4 gets multiplied too",
+     "expectDecide": {
+      "actionNotIn": [
+       "confirm_correct",
+       "redirect_to_math"
+      ]
+     }
+    },
+    {
+     "assistant": "Right — 3 groups of the WHOLE thing, the x and the 4 together. That's exactly the point the shortcut skips over."
+    },
+    {
+     "student": "ok i get that its the whole thing but i cant picture it. can you show me?",
+     "expectDecide": {
+      "actionNotIn": [
+       "confirm_correct",
+       "redirect_to_math"
+      ]
+     },
+     "judgeLlm": {
+      "visualPedagogy": {
+       "concept": "why the distributive property multiplies BOTH terms in 3(x + 4) = 3x + 12, for a student who explicitly asked to be SHOWN because they can't picture it — a fantastic tutor now draws it (an area model / rectangle, three drawn groups of (x + 4), tiles, or a concrete-number picture like 3(2 + 4)); another purely verbal question is a miss",
+       "expect": {
+        "usedOrOfferedVisual": true,
+        "matchesConcept": true
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "visual-noise: a quick quotient check needs no manipulatives",
+   "focus": "3x - 6 = 9",
+   "turns": [
+    {
+     "assistant": "Try this one: 3x - 6 = 9. What's your first move?"
+    },
+    {
+     "student": "add 6 to both sides so 3x = 15"
+    },
+    {
+     "assistant": "Good move. So what is x?"
+    },
+    {
+     "student": "wait what is 15/3 again lol",
+     "expectDecide": {
+      "actionNotIn": [
+       "reteach_misconception",
+       "worked_example",
+       "switch_representation",
+       "exit_ramp"
+      ]
+     },
+     "judgeLlm": {
+      "visualPedagogy": {
+       "concept": "a momentary basic-fact check (15 divided by 3) from a secondary student mid-equation — a quick answer keeps momentum; drawing out manipulatives would be noise",
+       "expect": {
+        "notOverkill": true
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "representation-switch: a repeat miss forces a different lens, never the same explanation louder",
+   "focus": "1/2 + 1/3",
+   "answer": "5/6",
+   "turns": [
+    {
+     "assistant": "Let's try this one: what is 1/2 + 1/3?"
+    },
+    {
+     "student": "2/5",
+     "expect": {
+      "messageType": "answer_attempt",
+      "answerValue": "2/5"
+     },
+     "expectDecide": {
+      "diagnosisType": "incorrect",
+      "actionOneOf": [
+       "guide_incorrect",
+       "reteach_misconception",
+       "scaffold_down",
+       "hint"
+      ]
+     }
+    },
+    {
+     "assistant": "Not quite — here's the key: the denominators are different, so we rewrite both fractions with a common denominator. 1/2 = 3/6 and 1/3 = 2/6. So the sum is 3/6 + 2/6. What do you get?",
+     "problemResult": "incorrect"
+    },
+    {
+     "student": "is it 5/12?",
+     "expect": {
+      "messageType": "answer_attempt",
+      "answerValue": "5/12"
+     },
+     "expectDecide": {
+      "diagnosisType": "incorrect",
+      "actionOneOf": [
+       "guide_incorrect",
+       "reteach_misconception",
+       "scaffold_down",
+       "worked_example"
+      ]
+     }
+    },
+    {
+     "assistant": "We already turned both pieces into sixths: 3/6 + 2/6. When the denominators match, we only add the tops. Try once more: what is 3/6 + 2/6?",
+     "problemResult": "incorrect"
+    },
+    {
+     "student": "is it 2/5?",
+     "expect": {
+      "messageType": "answer_attempt",
+      "answerValue": "2/5"
+     },
+     "expectDecide": {
+      "diagnosisType": "incorrect",
+      "actionOneOf": [
+       "guide_incorrect",
+       "reteach_misconception",
+       "worked_example",
+       "switch_representation"
+      ],
+      "directivesContain": [
+       "DIFFERENT"
+      ]
+     },
+     "judgeLlm": {
+      "representationShift": {
+       "firstExplanation": "The denominators are different, so we rewrite both fractions with a common denominator. 1/2 = 3/6 and 1/3 = 2/6. So the sum is 3/6 + 2/6. When the denominators match, we only add the tops.",
+       "expect": {
+        "usedDifferentRepresentation": true
+       }
+      },
+      "answerLeak": {
+       "problem": "1/2 + 1/3",
+       "expectedAnswer": "5/6",
+       "expect": {
+        "leaked": false
+       }
+      }
      }
     }
    ]

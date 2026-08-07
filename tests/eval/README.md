@@ -45,6 +45,39 @@ all drawn from real transcripts:
 - **badOrderOfOperations** — asserted "multiplication comes before division" as a rule.
 - **revealedAnswer** — leaked a withheld answer.
 
+## Board-tag integrity (`boardJudge.js`) — automatic, no opt-in
+
+The live prompt always carries the WORKBOARD TAG PROTOCOL, so any live reply can
+carry `<BOARD .../>` tags. The runner pushes EVERY generated reply through the
+REAL board pipeline — `utils/boardTagParser` → `utils/boardResponseSchema` →
+`utils/boardCommandGuard.enforcePedagogyRule` — and reports two failure classes
+alongside the heuristic judges:
+
+- **deadBoardTag** — the tag is schema-invalid (bad action, missing tex/op/fn/query):
+  it gets stripped from the text and the student sees *nothing* where the tutor
+  believes a card landed.
+- **ghostBoardStep** — the tag parses but the guard drops it: an apply/resolve/verify
+  that doesn't trace to the student's words (the anti-cheat #1 rule), a blank-less
+  scaffold, an unlicensed clear. The tutor keeps narrating board work the student
+  never sees.
+
+This is not a simulation of the guard — it *is* the guard, so a violation here is
+exactly what production would drop. Pinned by `tests/unit/evalBoardJudge.test.js`.
+
+Jurisdiction matters: the heuristic prose judges and the `answerLeak` LLM judge
+score the **cleaned** reply (what the student reads in the bubble — tag markup's
+`=` signs read as worked steps, and guard-legal empty-blank scaffolds read as
+leaks otherwise), while `visualPedagogy`/`representationShift` see the raw reply
+(a graph/scaffold card IS the visual). One deliberate exemption: on a verified-
+correct turn, guard-dropped apply/resolve/verify recaps are NOT ghost violations,
+because production synthesizes the verify card from the diagnosis — see
+`personas.json` `_knownIssues`.
+
+Visual-apt personas judge the **second** exchange, not the first reply: the
+model legitimately opens with a gut-check or prerequisite probe (commit-then-
+reveal), and the representation is expected once the student's intuition runs
+out. A model that still hasn't reached for one by then is the real finding.
+
 ## Add a scenario — edit `scenarios.json`, no code
 
 Each scenario is a real transcript. Turns are either a pre-seeded `assistant`
@@ -82,8 +115,17 @@ oddly-phrased-correct student, the quietly lost one — and asserts pedagogical
   prompt on a non-attempt turn).
 - `judgeLlm` — live tier only (`npm run test:eval:live`): LLM judges in
   `llmJudges.js` score the real model's reply — `answerLeak` (strict: any
-  wording counts), `scaffoldVsTell`, `toneSupport`. A judge reporting
+  wording counts), `scaffoldVsTell`, `toneSupport`, `newSkillIntro`,
+  `visualPedagogy` (did the tutor reach for the right representation at a
+  visual-apt moment — and skip manipulatives where they'd be noise),
+  `representationShift` (after a repeat miss, is the new explanation a
+  genuinely different lens, not the same one louder). A judge reporting
   `uncertain` is logged, never counted as a pass or a fail.
+
+`expectDecide` also supports `directivesContain` — substring pins on the
+decision's directives (e.g. the repeat-miss turn must carry a "DIFFERENT"
+approach/representation order), for invariants that live in directives rather
+than the action name.
 
 Deterministic layers run in `personaEval.test.js` (keyless CI); live judges in
 `livePersonaEval.test.js` (`RUN_LLM_EVAL=1`). Calibration findings that

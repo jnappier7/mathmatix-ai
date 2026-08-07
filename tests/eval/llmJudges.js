@@ -73,7 +73,11 @@ async function judgeAnswerLeak({ problem, expectedAnswer, tutorReply }) {
       'final step for the student, or worked steps on THE STUDENT\'S OWN problem',
       'that arrive at the final value. Do NOT count: hints, definitions, scaffolds',
       'with empty blanks (\\boxed{}), Socratic questions, or worked examples on a',
-      'DIFFERENT problem with different numbers. Be strict: when the reply',
+      'DIFFERENT problem with different numbers. The reply may contain raw',
+      '<BOARD .../> or [TYPE:...] markup — that is UI the student sees RENDERED,',
+      'not prose; judge its content by the same rules. In particular a',
+      '<BOARD action="scaffold" tex="... \\boxed{} ..."> card whose box is EMPTY is',
+      'a fill-in-the-blank hint, never a leak. Be strict: when the reply',
       'effectively hands over the answer, leaked=true even if phrased as a hint.',
       'If you genuinely cannot tell, set uncertain=true (and leaked=false).',
     ].join(' '),
@@ -180,10 +184,91 @@ async function judgeNewSkillIntro({ studentMessage, tutorReply }) {
   );
 }
 
+/**
+ * Did the tutor use a REPRESENTATION as pedagogy at a moment that begs for
+ * one — and was it the right one, at the right weight? A fantastic tutor
+ * reaches for fraction bars when comparing 2/3 vs 3/4, an area model for
+ * distribution, a number-line/pattern for negative×negative, rise-over-run
+ * on a graph for slope. The tutor's visual surfaces are <BOARD> tags
+ * (graph/image/scaffold), inline [TYPE:params] visuals, or a concrete visual
+ * model described in words — all count. The inverse also matters: a visual
+ * where none is needed (counting blocks for a basic fact to a secondary
+ * student) is noise, not teaching.
+ */
+async function judgeVisualPedagogy({ concept, studentMessage, tutorReply }) {
+  return runJudge(
+    'visual_pedagogy',
+    [
+      'You are auditing an AI math tutor for K-12 students. The `concept` field',
+      'names the mathematical moment. Judge how the tutor reply used visual or',
+      'concrete representations as pedagogy.',
+      'usedOrOfferedVisual = the reply renders, describes, offers, or STARTS ANY',
+      'visual/concrete representation: a <BOARD action="graph|image|scaffold"...> tag,',
+      'an inline [FRACTION:...]/[NUMBER_LINE:...]-style visual, a drawn-in-words model',
+      '(fraction bars, area model, number line, tiles, a real-world picture), an',
+      'explicit offer to show one, or the opening move of a concrete pattern build',
+      '(e.g. "let\'s build it — what is 3 × (-2)?" stepping toward the target).',
+      'Purely symbolic re-statement of the rule = false.',
+      'matchesConcept = the representation chosen actually illuminates THIS concept',
+      '(e.g. same-size bars shaded 2/3 vs 3/4 for comparing fractions; an area model',
+      'for distribution; a pattern/number-line for negative times negative; rise and',
+      'run on a graphed line for slope). If NO visual was used, set true (vacuous).',
+      'notOverkill = false ONLY when a visual/manipulative was used on something',
+      'this student clearly commands (e.g. counting objects for a one-step basic',
+      'fact with a secondary student) so it adds noise, not insight. If no visual',
+      'was used, or the visual pulls real weight, set true.',
+      'If you cannot tell, set uncertain=true.',
+    ].join(' '),
+    { concept, studentMessage, tutorReply },
+    schema('VisualPedagogyVerdict', {
+      usedOrOfferedVisual: { type: 'boolean' },
+      matchesConcept: { type: 'boolean' },
+      notOverkill: { type: 'boolean' },
+      uncertain: { type: 'boolean' },
+      reasoning: { type: 'string' },
+    }, ['usedOrOfferedVisual', 'matchesConcept', 'notOverkill', 'uncertain', 'reasoning'])
+  );
+}
+
+/**
+ * The student has missed the same idea repeatedly and `firstExplanation` is
+ * how the tutor already explained it. Did the new reply CHANGE representation
+ * (symbols → visual/diagram → concrete numbers → real-world story), or is it
+ * the same lens said again louder? Mirrors decide.js's representation-switch
+ * order: "The same explanation said louder is NOT a different approach."
+ */
+async function judgeRepresentationShift({ firstExplanation, studentMessage, tutorReply }) {
+  return runJudge(
+    'representation_shift',
+    [
+      'You are auditing an AI math tutor for K-12 students. The student has missed',
+      'the same concept repeatedly. `firstExplanation` is how the tutor explained it',
+      'before (it did not land). Judge the new tutorReply:',
+      'usedDifferentRepresentation = the new explanation approaches the idea through',
+      'a genuinely DIFFERENT representation than firstExplanation — e.g. symbolic',
+      'algebra vs a visual model (bars, area, number line, tiles, a drawing or',
+      '<BOARD> graph/image card) vs concrete plugged-in numbers vs a real-world',
+      'story. Restating the same symbolic procedure with new wording, smaller',
+      'steps, or more enthusiasm is NOT a different representation — set false.',
+      'Judge the representation, not the quality: a clumsy but genuinely different',
+      'lens still counts as true.',
+      'If you cannot tell, set uncertain=true.',
+    ].join(' '),
+    { firstExplanation, studentMessage, tutorReply },
+    schema('RepresentationShiftVerdict', {
+      usedDifferentRepresentation: { type: 'boolean' },
+      uncertain: { type: 'boolean' },
+      reasoning: { type: 'string' },
+    }, ['usedDifferentRepresentation', 'uncertain', 'reasoning'])
+  );
+}
+
 module.exports = {
   JUDGE_MODEL,
   judgeAnswerLeak,
   judgeScaffoldVsTell,
   judgeToneSupport,
   judgeNewSkillIntro,
+  judgeVisualPedagogy,
+  judgeRepresentationShift,
 };

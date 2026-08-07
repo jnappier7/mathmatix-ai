@@ -52,7 +52,7 @@ describe('persona suite integrity', () => {
   });
 
   test('live-tier judgeLlm specs only reference known judges', () => {
-    const known = new Set(['answerLeak', 'scaffoldVsTell', 'toneSupport', 'newSkillIntro']);
+    const known = new Set(['answerLeak', 'scaffoldVsTell', 'toneSupport', 'newSkillIntro', 'visualPedagogy', 'representationShift']);
     for (const p of personas) {
       for (const t of p.turns) {
         for (const name of Object.keys(t.judgeLlm || {})) {
