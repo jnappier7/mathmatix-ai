@@ -46,7 +46,6 @@ async function liveGenerateReply({ scenario, turn, history }) {
   const { generateSystemPrompt } = require('../../utils/promptCompact');
   const { callLLM } = require('../../utils/llmGateway');
 
-  const recent = history.filter((m) => m.role === 'user').slice(-6).map((m) => m.content);
   const systemPrompt = generateSystemPrompt(
     TEST_PROFILE, TEST_TUTOR, null, 'student',
     null, null, null, [], null,
@@ -60,11 +59,15 @@ async function liveGenerateReply({ scenario, turn, history }) {
     messages.push({ role: m.role, content: isLastUser ? m.content + verifiedAnswerHint(turn, scenario) : m.content });
   });
 
-  const completion = await callLLM('gpt-4o-mini', messages, { temperature: 0.5, max_tokens: 400 });
-  return (completion && (completion.content || completion.text || completion)) || '';
+  const completion = await callLLM(process.env.TUTOR_MODEL || 'gpt-4o-mini', messages, { temperature: 0.5, max_tokens: 400 });
+  // callLLM returns the full completion object (OpenAI shape for both
+  // providers — anthropicClient normalizes). Anything else stringifies to
+  // "[object Object]" and the judges silently score that instead of the reply.
+  const msg = completion?.choices?.[0]?.message;
+  return (msg && msg.content) || '';
 }
 
-(RUN ? describe : describe.skip)('LIVE tutor eval (real gpt-4o-mini)', () => {
+(RUN ? describe : describe.skip)(`LIVE tutor eval (real ${process.env.TUTOR_MODEL || 'gpt-4o-mini'})`, () => {
   jest.setTimeout(120000);
 
   for (const s of scenarios) {
