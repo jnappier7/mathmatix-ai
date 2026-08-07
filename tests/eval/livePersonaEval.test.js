@@ -43,7 +43,7 @@ async function liveGenerateReply({ scenario, turn, history }) {
   );
 
   const messages = [{ role: 'system', content: systemPrompt }, ...history];
-  const completion = await callLLM('gpt-4o-mini', messages, { temperature: 0.5, max_tokens: 400 });
+  const completion = await callLLM(process.env.TUTOR_MODEL || 'gpt-4o-mini', messages, { temperature: 0.5, max_tokens: 400 });
   const msg = completion?.choices?.[0]?.message;
   return (msg && msg.content) || '';
 }
@@ -81,6 +81,7 @@ function checkVerdict(name, spec, verdict) {
     answerLeak: llmJudges.judgeAnswerLeak,
     scaffoldVsTell: llmJudges.judgeScaffoldVsTell,
     toneSupport: llmJudges.judgeToneSupport,
+    newSkillIntro: llmJudges.judgeNewSkillIntro,
   } : {};
 
   for (const persona of personas) {

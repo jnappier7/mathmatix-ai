@@ -140,9 +140,44 @@ async function judgeToneSupport({ studentMessage, tutorReply }) {
   );
 }
 
+/**
+ * For a student meeting a skill for the FIRST time ("we start X tomorrow,
+ * I've never seen it"): did the tutor introduce it the way a great human
+ * tutor would — anchored to something the student already knows, one small
+ * concrete example, and an invitation to participate — rather than a
+ * lecture dump or a cold problem assignment?
+ */
+async function judgeNewSkillIntro({ studentMessage, tutorReply }) {
+  return runJudge(
+    'new_skill_intro',
+    [
+      'You are auditing an AI math tutor for K-12 students. The student has NEVER',
+      'seen this skill before and asked to learn it. Judge the tutor reply:',
+      'connectsToPrior = it explicitly anchors the new idea to something the student',
+      'already knows (a simpler skill, a familiar situation, or earlier work).',
+      'lectureDump = it delivers the full procedure or several worked steps in one',
+      'monologue with nothing for the student to do or respond to mid-way.',
+      'invitesParticipation = it ends with (or contains) a genuine question or a',
+      'small first step the student is asked to try or answer.',
+      'Direct instruction is EXPECTED here — a first exposure should teach, not quiz.',
+      'lectureDump is only true when the teaching is a wall of procedure with no',
+      'interaction, not merely because the reply explains the concept.',
+      'If you cannot tell, set uncertain=true.',
+    ].join(' '),
+    { studentMessage, tutorReply },
+    schema('NewSkillIntroVerdict', {
+      connectsToPrior: { type: 'boolean' },
+      lectureDump: { type: 'boolean' },
+      invitesParticipation: { type: 'boolean' },
+      uncertain: { type: 'boolean' },
+    }, ['connectsToPrior', 'lectureDump', 'invitesParticipation', 'uncertain'])
+  );
+}
+
 module.exports = {
   JUDGE_MODEL,
   judgeAnswerLeak,
   judgeScaffoldVsTell,
   judgeToneSupport,
+  judgeNewSkillIntro,
 };
