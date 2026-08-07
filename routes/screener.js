@@ -33,7 +33,15 @@ const { getSkillSelectionData, warmupCache } = require('../utils/catCache');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 const { resolveTheta } = require('../utils/theta');
 const { assessedLevel } = require('../utils/gradeLevel');
-const { setSkillMasteryEntry } = require('../utils/masteryGuard');
+const { setSkillMasteryEntry, getSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
+// Placement evidence closes the ladder beneath it: proving a skill in the
+// screener cascades through the prerequisite graph exactly like proving it in
+// a challenge run does (routes/mastery.js). clearsPrerequisites also guards
+// the mastery writes below from DOWNGRADING demonstrated work — a quarterly
+// growth check must never replace 'taught' with 'proved' or stomp a proved
+// rung down to 'learning'.
+const { clearsPrerequisites } = require('../utils/skillRung');
+const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
 // The Growth Check's completion moment (previous vs new level, skills
 // confirmed / needing review / newly reachable, ONE suggested next step).
 // This is now the ONLY growth-check flow — routes/growthCheck.js was a second,
@@ -837,9 +845,20 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     }
 
     // Update user's skill mastery based on screener results (keyed on the
-    // canonical unified skill id so placement shares the tutor's mastery keys)
+    // canonical unified skill id so placement shares the tutor's mastery keys).
+    //
+    // Each write is an UPGRADE, never a replacement: these loops used to
+    // overwrite whatever entry existed, so a growth check could demote a
+    // 'taught' skill to 'proved', stomp a proved rung down to 'learning', or
+    // wipe the rung entirely with a bare 'ready' record — erasing the pillars
+    // and rung history the student had earned. A re-measurement adds evidence;
+    // it does not take demonstrated work off the board.
+    const asPlain = (e) => (e && typeof e.toObject === 'function' ? e.toObject() : e || {});
     for (const rawId of report.masteredSkills) {
+      const existing = getSkillMasteryEntry(user, rawId);
+      if (clearsPrerequisites(existing)) continue; // already proved or taught
       setSkillMasteryEntry(user, rawId, {
+        ...asPlain(existing),
         status: 'mastered',
         // The adaptive screener is a real demonstration, so placement lands as a
         // proved rung (provenBy 'placement') rather than an un-evidenced status.
@@ -852,21 +871,62 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     }
 
     for (const rawId of report.learningSkills) {
+      const existing = getSkillMasteryEntry(user, rawId);
+      if (clearsPrerequisites(existing)) continue; // partial evidence never demotes a proved skill
       setSkillMasteryEntry(user, rawId, {
+        ...asPlain(existing),
         status: 'learning',
         rung: 'learned',
         masteryScore: 50,
-        learningStarted: new Date(),
+        learningStarted: asPlain(existing).learningStarted || new Date(),
         notes: 'Partial mastery in screener'
       });
     }
 
     for (const rawId of report.readySkills) {
+      // 'ready' is the weakest claim there is — only record it where nothing
+      // stronger exists at all.
+      if (getSkillMasteryEntry(user, rawId)) continue;
       setSkillMasteryEntry(user, rawId, {
         status: 'ready',
         masteryScore: 0,
         notes: 'Ready to learn based on screener'
       });
+    }
+
+    // ★ CASCADE ★ Starting Point and Growth Check evidence closes the ladder
+    // beneath it. The challenge path has cascaded since the ladder shipped;
+    // the screener proved only the skills it TESTED, so a student who placed
+    // at grade 8 still saw every untested K-7 skill sitting locked on "Your
+    // climb" — and was offered test-outs for work the placement already
+    // demonstrated. Cascaded skills land as provenBy 'inference' (cleared, not
+    // achieved), skip anything already owned, and never override an explicit
+    // failure — all enforced inside applyProofCascade.
+    let clearedFromPlacement = [];
+    try {
+      if (report.masteredSkills.length) {
+        const allSkills = await Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean();
+        if (allSkills && allSkills.length) {
+          const graph = buildGraph(allSkills);
+          const decoded = decodedMasteryMap(user);
+          for (const rawId of report.masteredSkills) {
+            const canon = canonicalSkillId(rawId);
+            if (!graph.has(canon)) continue;
+            const { cleared } = applyProofCascade(graph, decoded, canon);
+            for (const id of cleared) {
+              setSkillMasteryEntry(user, id, decoded.get(id));
+              clearedFromPlacement.push(id);
+            }
+          }
+        }
+      }
+    } catch (cascadeError) {
+      // A cascade failure must not cost the student their completion.
+      console.error('[Screener] placement cascade failed:', cascadeError);
+    }
+    report.clearedFromPlacement = clearedFromPlacement;
+    if (clearedFromPlacement.length) {
+      console.log(`[Screener] placement cascade cleared ${clearedFromPlacement.length} prerequisite skill(s) for user ${userId}`);
     }
 
     // 🎖️ AUTO-AWARD BADGES (Like ALEKS: fill in the pie with what they already know)
