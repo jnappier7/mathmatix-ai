@@ -124,8 +124,20 @@ function planOptionMigration(doc) {
 async function main() {
   await mongoose.connect(process.env.MONGO_URI);
 
-  // Every doc that carries options, whatever its answerType.
-  const query = { options: { $exists: true, $ne: [] } };
+  // Every doc that carries a NON-EMPTY options ARRAY, whatever its answerType.
+  //
+  // `{ options: { $exists: true, $ne: [] } }` looks equivalent and is not: it
+  // also matches `options: null`, because null exists and null !== []. On the
+  // production bank that pulled in 774 free-response items with a stray
+  // `options: null` and counted them as options-carrying — which then made the
+  // answerType tally below report 774 items that "carry options but are not
+  // declared multiple-choice". No such item exists; every doc with real options
+  // is already declared MC. That miscount was read as a live grading bug and
+  // chased into a PR before the data was checked.
+  //
+  // `"options.0": { $exists: true }` has no such hole: an array with a 0th
+  // element is a non-empty array, and nothing else matches.
+  const query = { 'options.0': { $exists: true } };
   const cursor = Problem.find(query).limit(LIMIT || 0).lean().cursor();
 
   let scanned = 0, changed = 0, derived = 0, unplaceable = 0, mismatched = 0, typeMismatch = 0;
@@ -160,12 +172,22 @@ async function main() {
     }
   }
 
-  console.log(`options-carrying problems scanned: ${scanned}`);
+  // Shape census of everything the scan did NOT look at, so an item can never
+  // go missing silently — and so "not scanned" is never mistaken for "scanned
+  // and fine", which is the error this whole report line caused once already.
+  const emptyArray = await Problem.countDocuments({ options: { $size: 0 } });
+  const nullOptions = await Problem.countDocuments({ options: null });
+
+  console.log(`problems with a non-empty options array (scanned): ${scanned}`);
   console.log(`${WRITE ? 'updated' : 'would update'}: ${changed}`);
   console.log(`correctOption derived from isCorrect (corroborated): ${derived}`);
   console.log(`left unset — isCorrect disagrees with answer: ${mismatched}`);
   console.log(`correctOption naming an option that does not exist: ${unplaceable}`);
-  console.log(`carry options but answerType !== 'multiple-choice' (untouched): ${typeMismatch}`);
+  // Of the SCANNED docs only — i.e. items with real choices that are not
+  // declared multiple-choice. Not skipped items, which are counted separately.
+  console.log(`scanned, but answerType !== 'multiple-choice' (untouched): ${typeMismatch}`);
+  console.log(`not scanned — options: [] (no choices): ${emptyArray}`);
+  console.log(`not scanned — options: null (no choices): ${nullOptions}`);
   if (samples.length) console.log(`\nsamples:\n${samples.join('\n')}`);
   if (!WRITE) console.log('\n(dry run — pass --write to apply)');
 
