@@ -1,7 +1,7 @@
 {
   "css": [
     {
-      "href": "/dist/css/chat-css0.7608f8a0.css",
+      "href": "/dist/css/chat-css0.4489a879.css",
       "files": [
         "/css/file-upload.css",
         "/css/responsive-resources.css",
@@ -18,7 +18,6 @@
         "/css/iep-accommodations.css",
         "/css/age-adaptive.css",
         "/css/floating-screener.css",
-        "/css/resume-card.css",
         "/css/mobile-ux-overhaul.css",
         "/css/floating-checkpoint.css",
         "/css/show-your-work.css",
@@ -118,7 +117,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js8.274c9444.js",
+      "src": "/dist/js/chat-js8.85ca98e2.js",
       "files": [
         "/js/student-resources.js",
         "/js/settings.js",
@@ -126,8 +125,7 @@
         "/js/unified-upload.js",
         "/js/ghostTimer.js",
         "/js/badgeProgress.js",
-        "/js/mobile-stats-bar.js",
-        "/js/resume-card.js"
+        "/js/mobile-stats-bar.js"
       ]
     },
     {
