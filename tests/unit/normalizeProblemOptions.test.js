@@ -149,6 +149,24 @@ describe('planOptionMigration', () => {
     expect(planOptionMigration({ problemId: 'x' }).changed).toBe(false);
   });
 
+  test('treats options: null as no options, not as an options-carrying item', () => {
+    // 774 free-response problems in the bank carry a stray `options: null`.
+    // They are ordinary text-input items — every client checks Array.isArray,
+    // which null fails — and the planner must not touch them.
+    //
+    // This case is why the scan query is `"options.0": { $exists: true }` and
+    // not `{ $exists: true, $ne: [] }`: null EXISTS and null !== [], so the old
+    // idiom pulled all 774 in, and the answerType tally then reported them as
+    // items carrying options that were not declared multiple-choice. They carry
+    // no options at all. That miscount was read as a live grading bug.
+    const plan = planOptionMigration({
+      problemId: 'n1', answerType: 'constructed-response',
+      answer: { value: '42', equivalents: [] }, options: null,
+    });
+    expect(plan.changed).toBe(false);
+    expect(plan.set).toEqual({});
+  });
+
   test('keeps a correctOption that names no option, rather than inventing a slot', () => {
     const doc = {
       problemId: 'y', answerType: 'multiple-choice',
