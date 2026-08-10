@@ -109,8 +109,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     // -------------------------------------------------------------------------
     // --- State Management ---
     // -------------------------------------------------------------------------
+    // `students` holds ONE PAGE of the directory, not the whole thing. Search,
+    // role filter and sort are applied by the server (GET /api/admin/users), so
+    // nothing here may assume it can see a user that isn't on screen.
     let students = [];
     let teacherMap = new Map(); // Use a Map for efficient O(1) teacher lookups.
+
+    // The query that produced `students`. Every control that narrows the list
+    // writes here and calls fetchUsers() — there is no client-side filtering.
+    const userQuery = { page: 1, limit: 50, search: '', role: '', sort: 'newest' };
+    // Server-reported totals for the CURRENT query, plus whole-directory role
+    // counts for the stat cards.
+    let userPageInfo = { total: 0, totalPages: 1, counts: null };
+    // Guards against an older, slower response overwriting a newer one when an
+    // admin types faster than the network answers.
+    let userFetchSeq = 0;
+
+    // The user table's header "select all" checkbox. This was looked up as
+    // 'selectAllStudents' while the markup has always called it
+    // 'selectAllCheckbox', so getElementById returned null, the change listener
+    // never bound, and the header checkbox did nothing at all. Named once here
+    // so the id has a single source of truth.
+    const SELECT_ALL_ID = 'selectAllCheckbox';
+
+    // Bulk selection: id -> the user record, NOT just the id. Selection now
+    // outlives the page it was made on (select five on page 1, page forward,
+    // select three more, export all eight), and the CSV export used to rebuild
+    // rows by looking ids up in the loaded array — which no longer holds
+    // everything selected. Declared up here with the rest of the state because
+    // renderStudents() reads it on first paint.
+    const selectedUsers = new Map();
 
     // -------------------------------------------------------------------------
     // --- Modal Control ---
@@ -369,37 +397,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function initializeDashboard() {
         showUserTableSkeleton();
         try {
-            const [usersRes, teachersRes] = await Promise.all([
-                fetch('/api/admin/users', { credentials: 'include' }),
-                fetch('/api/admin/teachers', { credentials: 'include' })
-            ]);
-
-            if (!usersRes.ok || !teachersRes.ok) {
-                throw new Error('Failed to load initial user and teacher data.');
-            }
-
-            const allUsers = await usersRes.json();
+            const teachersRes = await fetch('/api/admin/teachers', { credentials: 'include' });
+            if (!teachersRes.ok) throw new Error('Failed to load teacher data.');
             const teachers = await teachersRes.json();
-
-            students = allUsers; // Show all users (filtered by role dropdown in renderStudents)
 
             // Create a teacher lookup map for efficient name retrieval.
             teacherMap = new Map(teachers.map(t => [t._id, `${t.firstName} ${t.lastName}`]));
-
             renderTeacherOptions();
-            renderStudents();
-            updateUserStatCards();
+
+            // First page of the directory. Throws on failure so the catch below
+            // shows the error row rather than an empty table.
+            await fetchUsers({ throwOnError: true });
+
             hideUserTableSkeleton();
             fetchAndDisplayLeaderboard();
             fetchSystemStatus();
 
-            // Deep-link: if the URL carries ?user=<id> AND that user is
-            // in the loaded set, auto-open the detail modal. Lets admins
-            // share or bookmark a link straight to a user's profile.
+            // Deep-link: ?user=<id> opens that user's detail modal. The user may
+            // not be on the page we just loaded, so fall back to fetching the
+            // single record — before paging, "is it in the loaded set?" was the
+            // same question as "does it exist?", and it no longer is.
             const params = new URLSearchParams(window.location.search);
             const deepLinkUserId = params.get('user');
-            if (deepLinkUserId && students.some(s => s._id === deepLinkUserId)) {
-                populateModal(deepLinkUserId);
+            if (deepLinkUserId) {
+                const known = students.some(s => s._id === deepLinkUserId);
+                if (known || await loadUserIntoCache(deepLinkUserId)) {
+                    populateModal(deepLinkUserId);
+                }
             }
             // Parallel deep-link for the teacher drill-down. The teacher modal
             // fetches its own data, so we don't gate on whether the teacher
@@ -418,29 +442,187 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /**
-     * Updates the user count stat cards based on current student data.
+     * Fetch the current page of the directory and repaint the table.
+     *
+     * All narrowing (search / role / sort / page) lives in `userQuery` and is
+     * resolved by the server. Stale responses are dropped by sequence number.
+     */
+    async function fetchUsers({ throwOnError = false } = {}) {
+        const seq = ++userFetchSeq;
+        const params = new URLSearchParams({
+            page: String(userQuery.page),
+            limit: String(userQuery.limit),
+            sort: userQuery.sort,
+        });
+        if (userQuery.search) params.set('search', userQuery.search);
+        if (userQuery.role) params.set('role', userQuery.role);
+
+        setUserTableBusy(true);
+        try {
+            const res = await fetch(`/api/admin/users?${params.toString()}`, { credentials: 'include' });
+            if (!res.ok) throw new Error(`Failed to load users (${res.status})`);
+            const data = await res.json();
+
+            // A newer request already landed — this response is history.
+            if (seq !== userFetchSeq) return;
+
+            students = data.users || [];
+            userPageInfo = {
+                total: data.total || 0,
+                totalPages: data.totalPages || 1,
+                counts: data.counts || null,
+            };
+
+            // A filter change can leave us past the end of the result set.
+            if (userQuery.page > userPageInfo.totalPages) {
+                userQuery.page = userPageInfo.totalPages;
+                return fetchUsers();
+            }
+
+            renderStudents();
+            renderUserPagination();
+            updateUserStatCards();
+        } catch (error) {
+            if (seq !== userFetchSeq) return;
+            console.error('Error fetching users:', error);
+            if (throwOnError) throw error;
+            if (userTableBody) {
+                userTableBody.innerHTML = `<tr><td colspan="8" class="text-center">Could not load users. <button type="button" class="btn btn-tertiary" id="retryUserFetch">Retry</button></td></tr>`;
+                document.getElementById('retryUserFetch')?.addEventListener('click', () => fetchUsers());
+            }
+        } finally {
+            if (seq === userFetchSeq) setUserTableBusy(false);
+        }
+    }
+
+    /** Reset to page 1 and refetch — for any control that changes the result set. */
+    function refetchUsersFromFirstPage() {
+        userQuery.page = 1;
+        fetchUsers();
+    }
+
+    function setUserTableBusy(busy) {
+        const container = document.getElementById('userTableContainer');
+        if (container) container.setAttribute('aria-busy', busy ? 'true' : 'false');
+    }
+
+    /**
+     * Slim user records for a <select>, from GET /api/admin/users/lookup.
+     *
+     * The endpoint caps what it returns, so a directory larger than the cap
+     * yields a partial list. Callers get `truncated` alongside the rows and are
+     * expected to say so — a picker that silently omits people is how an admin
+     * concludes an account doesn't exist.
+     */
+    async function fetchUserLookup({ role = '', search = '' } = {}) {
+        const params = new URLSearchParams();
+        if (role) params.set('role', role);
+        if (search) params.set('search', search);
+        const res = await fetch(`/api/admin/users/lookup?${params.toString()}`, { credentials: 'include' });
+        if (!res.ok) throw new Error(`Lookup failed (${res.status})`);
+        const data = await res.json();
+        const users = data.users || [];
+        users.truncated = Boolean(data.truncated);
+        users.total = data.total || users.length;
+        return users;
+    }
+
+    /** A trailing "…and N more" option, so a capped picker admits it's capped. */
+    function truncationNotice(list) {
+        if (!list.truncated) return '';
+        const hidden = list.total - list.length;
+        return `<option value="" disabled>— ${hidden} more not shown; use the user table to find them —</option>`;
+    }
+
+    /**
+     * Pull one user into the page cache by id, for the ?user=<id> deep link when
+     * that user isn't in the current page. Returns whether it landed.
+     */
+    async function loadUserIntoCache(userId) {
+        try {
+            const res = await fetch(`/api/admin/users/lookup?id=${encodeURIComponent(userId)}`, { credentials: 'include' });
+            if (!res.ok) return false;
+            const data = await res.json();
+            const user = (data.users || [])[0];
+            if (!user) return false;
+            students = students.concat([user]);
+            return true;
+        } catch (err) {
+            console.error('Deep-link user fetch failed:', err);
+            return false;
+        }
+    }
+
+    /**
+     * Updates the user count stat cards.
+     *
+     * Counts come from the server and describe the whole directory — they used
+     * to be derived from the loaded array, which now holds a single page and
+     * would report "50 users" no matter how many exist. A multi-role account is
+     * counted under every role it holds, so the role cards can sum past the total.
      */
     function updateUserStatCards() {
-        const total = students.length;
-        const counts = { student: 0, teacher: 0, parent: 0, admin: 0 };
-
-        students.forEach(s => {
-            const roles = (s.roles && s.roles.length > 0) ? s.roles : [s.role];
-            roles.forEach(r => {
-                if (counts.hasOwnProperty(r)) counts[r]++;
-            });
-        });
+        const counts = userPageInfo.counts;
+        if (!counts) return;
 
         const el = (id, val) => {
             const node = document.getElementById(id);
             if (node) node.textContent = val;
         };
 
-        el('statTotal', total);
-        el('statStudents', counts.student);
-        el('statTeachers', counts.teacher);
-        el('statParents', counts.parent);
-        el('statAdmins', counts.admin);
+        el('statTotal', counts.total ?? 0);
+        el('statStudents', counts.student ?? 0);
+        el('statTeachers', counts.teacher ?? 0);
+        el('statParents', counts.parent ?? 0);
+        el('statAdmins', counts.admin ?? 0);
+    }
+
+    /** Page indicator + prev/next, rendered under the user table. */
+    function renderUserPagination() {
+        const host = document.getElementById('userPagination');
+        if (!host) return;
+
+        const { total, totalPages } = userPageInfo;
+        if (!total) { host.innerHTML = ''; return; }
+
+        const first = (userQuery.page - 1) * userQuery.limit + 1;
+        const last = Math.min(total, first + students.length - 1);
+
+        host.innerHTML = `
+            <div class="pagination-status" role="status" aria-live="polite">
+                Showing <strong>${first}–${last}</strong> of <strong>${total}</strong>${userQuery.search || userQuery.role ? ' matching' : ''}
+            </div>
+            <div class="pagination-controls">
+                <button type="button" class="btn btn-tertiary" id="userPagePrev" ${userQuery.page <= 1 ? 'disabled' : ''} aria-label="Previous page">
+                    <i class="fas fa-chevron-left"></i> Prev
+                </button>
+                <span class="pagination-page">Page ${userQuery.page} of ${totalPages}</span>
+                <button type="button" class="btn btn-tertiary" id="userPageNext" ${userQuery.page >= totalPages ? 'disabled' : ''} aria-label="Next page">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+                <label class="pagination-size">
+                    <span>Per page</span>
+                    <select id="userPageSize" aria-label="Users per page">
+                        ${[25, 50, 100, 200].map(n => `<option value="${n}" ${n === userQuery.limit ? 'selected' : ''}>${n}</option>`).join('')}
+                    </select>
+                </label>
+            </div>
+        `;
+
+        document.getElementById('userPagePrev')?.addEventListener('click', () => {
+            if (userQuery.page <= 1) return;
+            userQuery.page -= 1;
+            fetchUsers();
+        });
+        document.getElementById('userPageNext')?.addEventListener('click', () => {
+            if (userQuery.page >= userPageInfo.totalPages) return;
+            userQuery.page += 1;
+            fetchUsers();
+        });
+        document.getElementById('userPageSize')?.addEventListener('change', (e) => {
+            userQuery.limit = parseInt(e.target.value, 10) || 50;
+            refetchUsersFromFirstPage();
+        });
     }
     
     /**
@@ -516,90 +698,67 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    function sortStudents(list, sortBy) {
-        return list.slice().sort((a, b) => {
-            switch (sortBy) {
-                case 'newest':
-                    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-                case 'oldest':
-                    return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-                case 'name-asc': {
-                    const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
-                    const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
-                    return nameA.localeCompare(nameB);
-                }
-                case 'name-desc': {
-                    const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
-                    const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
-                    return nameB.localeCompare(nameA);
-                }
-                case 'last-login':
-                    return new Date(b.lastLogin || 0) - new Date(a.lastLogin || 0);
-                case 'grade': {
-                    const gradeA = parseInt(a.gradeLevel) || 0;
-                    const gradeB = parseInt(b.gradeLevel) || 0;
-                    return gradeA - gradeB;
-                }
-                default:
-                    return 0;
-            }
-        });
-    }
+    // sortStudents() lived here. Sorting is a database concern now — the same
+    // six keys are whitelisted server-side in routes/admin.js (USER_SORTS), so
+    // ordering holds across the whole directory rather than within one page.
 
+    /**
+     * Paint the current page. No filtering or sorting happens here — `students`
+     * is already the exact set the server was asked for.
+     *
+     * Every user-controlled field goes through escapeHtml: names and emails are
+     * attacker-supplied at signup and land in both text and attribute position.
+     */
     function renderStudents() {
         if (!userTableBody) return;
-        const query = studentSearch ? studentSearch.value.toLowerCase().trim() : "";
-        const roleFilter = document.getElementById('userRoleFilter')?.value || "";
-        const sortBy = document.getElementById('userSortSelect')?.value || "newest";
-        userTableBody.innerHTML = "";
 
-        let filteredStudents = students.filter(s =>
-            `${s.firstName || ''} ${s.lastName || ''}`.toLowerCase().includes(query) ||
-            (s.email || '').toLowerCase().includes(query) ||
-            (s.username || '').toLowerCase().includes(query)
-        );
-
-        if (roleFilter) {
-            filteredStudents = filteredStudents.filter(s => userHasRole(s, roleFilter));
-        }
-
-        filteredStudents = sortStudents(filteredStudents, sortBy);
-
-        if (filteredStudents.length === 0) {
-            userTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No users found.</td></tr>`;
+        if (students.length === 0) {
+            const narrowed = userQuery.search || userQuery.role;
+            userTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center;">${
+                narrowed ? 'No users match this search.' : 'No users found.'
+            }</td></tr>`;
             return;
         }
 
-        const rowsHtml = filteredStudents.map(s => `
-            <tr data-studentid="${s._id}">
-                <td><input type="checkbox" class="select-student" value="${s._id}"></td>
-                <td><a href="#" class="student-name-link">${s.firstName} ${s.lastName}</a></td>
-                <td>${s.email || 'N/A'}</td>
-                <td>${(s.roles && s.roles.length > 1) ? s.roles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ') : (s.role || 'N/A')}</td>
-                <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
+        userTableBody.innerHTML = students.map(s => {
+            const id = escapeHtml(s._id);
+            const name = escapeHtml(`${s.firstName || ''} ${s.lastName || ''}`.trim());
+            const rolesHeld = (s.roles && s.roles.length > 0) ? s.roles : [s.role];
+            const rolesLabel = (s.roles && s.roles.length > 1)
+                ? s.roles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ')
+                : (s.role || 'N/A');
+            const checked = selectedUsers.has(s._id) ? ' checked' : '';
+            return `
+            <tr data-studentid="${id}">
+                <td><input type="checkbox" class="select-student" value="${id}"${checked} aria-label="Select ${name}"></td>
+                <td><a href="#" class="student-name-link">${name}</a></td>
+                <td>${escapeHtml(s.email || 'N/A')}</td>
+                <td>${escapeHtml(rolesLabel)}</td>
+                <td>${escapeHtml(teacherMap.get(s.teacherId) || 'N/A')}</td>
                 <td>${formatDate(s.createdAt)}</td>
                 <td>${formatDate(s.lastLogin)}</td>
                 <td>
-                    <button class="btn-icon edit-roles-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-roles="${(s.roles && s.roles.length > 0 ? s.roles : [s.role]).join(',')}" title="Edit Roles" aria-label="Edit roles for ${s.firstName} ${s.lastName}">
+                    <button class="btn-icon edit-roles-btn" data-userid="${id}" data-username="${name}" data-roles="${escapeHtml(rolesHeld.join(','))}" title="Edit Roles" aria-label="Edit roles for ${name}">
                         <i class="fas fa-user-tag"></i>
                     </button>
-                    <button class="btn-icon view-as-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-role="${s.role}" title="View as ${s.firstName}" aria-label="View as ${s.firstName} ${s.lastName}">
+                    <button class="btn-icon view-as-user-btn" data-userid="${id}" data-username="${name}" data-role="${escapeHtml(s.role || '')}" title="View as ${name}" aria-label="View as ${name}">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-icon send-credentials-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-email="${s.email || ''}" title="Send login credentials email" aria-label="Send credentials to ${s.firstName} ${s.lastName}">
+                    <button class="btn-icon send-credentials-btn" data-userid="${id}" data-username="${name}" data-email="${escapeHtml(s.email || '')}" title="Send login credentials email" aria-label="Send credentials to ${name}">
                         <i class="fas fa-envelope"></i>
                     </button>
-                    <button class="btn-icon reset-screener-btn" data-studentid="${s._id}" data-studentname="${s.firstName} ${s.lastName}" title="Reset Screener" aria-label="Reset screener for ${s.firstName} ${s.lastName}">
+                    <button class="btn-icon reset-screener-btn" data-studentid="${id}" data-studentname="${name}" title="Reset Screener" aria-label="Reset screener for ${name}">
                         <i class="fas fa-redo"></i>
                     </button>
-                    <button class="btn-icon btn-danger delete-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" title="Delete User" aria-label="Delete ${s.firstName} ${s.lastName}">
+                    <button class="btn-icon btn-danger delete-user-btn" data-userid="${id}" data-username="${name}" title="Delete User" aria-label="Delete ${name}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
 
-        userTableBody.innerHTML = rowsHtml;
+        syncSelectAllCheckbox();
     }
     
     function formatDate(dateString) {
@@ -1018,23 +1177,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    if (studentSearch) studentSearch.addEventListener("input", debounce(renderStudents, 300));
+    // Each control writes its value into `userQuery` and refetches from page 1 —
+    // the result set is the server's answer, so narrowing it is a round trip.
+    if (studentSearch) studentSearch.addEventListener("input", debounce(() => {
+        userQuery.search = studentSearch.value.trim();
+        refetchUsersFromFirstPage();
+    }, 300));
     const userRoleFilter = document.getElementById('userRoleFilter');
-    if (userRoleFilter) userRoleFilter.addEventListener("change", renderStudents);
+    if (userRoleFilter) userRoleFilter.addEventListener("change", () => {
+        userQuery.role = userRoleFilter.value || '';
+        refetchUsersFromFirstPage();
+    });
     const userSortSelect = document.getElementById('userSortSelect');
     if (userSortSelect) userSortSelect.addEventListener("change", () => {
         // When the dropdown changes, sync the column-header indicators
         // so the visual state matches whichever control the user used.
         syncSortHeaderState(userSortSelect.value);
-        renderStudents();
+        userQuery.sort = userSortSelect.value;
+        refetchUsersFromFirstPage();
     });
 
     // --- Clickable column-header sort ---
     // Each .th-sortable in #userListTable carries a data-sort-key.
     // Click cycles ascending → descending; setting #userSortSelect to
-    // the corresponding option keeps the existing dropdown in sync
-    // and the existing renderStudents/sortStudents pipeline does the
-    // actual ordering. No new sort engine.
+    // the corresponding option keeps the existing dropdown in sync and
+    // the value is sent to the server, which does the actual ordering.
+    // No new sort engine.
     const SORT_HEADER_MAP = {
         // headerKey: { asc: <userSortSelect value>, desc: <userSortSelect value> }
         name:      { asc: 'name-asc',  desc: 'name-desc' },
@@ -1071,7 +1239,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             else next = (key === 'name') ? dirs.asc : dirs.desc;
             userSortSelect.value = next;
             syncSortHeaderState(next);
-            renderStudents();
+            userQuery.sort = next;
+            refetchUsersFromFirstPage();
         };
         th.addEventListener('click', handler);
         th.addEventListener('keydown', (e) => {
@@ -1917,26 +2086,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Helper to populate follow-up selects with users by role
+    // Helper to populate follow-up selects with users by role.
+    // Each role is fetched separately through /users/lookup so the server does
+    // the role matching and returns a slim projection — this used to pull the
+    // entire directory with every listed field and filter it three times here.
     async function populateFollowUpSelects() {
         try {
-            const response = await fetch('/api/admin/users', { credentials: 'include' });
-            if (!response.ok) return;
-            const users = await response.json();
+            const [students, parents, teachers] = await Promise.all([
+                fetchUserLookup({ role: 'student' }),
+                fetchUserLookup({ role: 'parent' }),
+                fetchUserLookup({ role: 'teacher' }),
+            ]);
 
-            const students = users.filter(u => userHasRole(u, 'student'));
-            const parents = users.filter(u => userHasRole(u, 'parent'));
-            const teachers = users.filter(u => userHasRole(u, 'teacher'));
-
-            const studentOptions = students.map(s =>
-                `<option value="${s._id}">${s.firstName} ${s.lastName} (${s.email})</option>`
-            ).join('');
-            const parentOptions = parents.map(p =>
-                `<option value="${p._id}">${p.firstName} ${p.lastName} (${p.email})</option>`
-            ).join('');
-            const teacherOptions = teachers.map(t =>
-                `<option value="${t._id}">${t.firstName} ${t.lastName} (${t.email})</option>`
-            ).join('');
+            const toOptions = (list) => list.map(u =>
+                `<option value="${escapeHtml(u._id)}">${escapeHtml(`${u.firstName} ${u.lastName}`)} (${escapeHtml(u.email || '')})</option>`
+            ).join('') + truncationNotice(list);
+            const studentOptions = toOptions(students);
+            const parentOptions = toOptions(parents);
+            const teacherOptions = toOptions(teachers);
 
             // Parent follow-up: pick a student
             const followUpParentStudentSelect = document.getElementById('followUpParentStudentSelect');
@@ -2788,10 +2955,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- ENHANCED BULK OPERATIONS ---
     // -------------------------------------------------------------------------
 
-    let selectedUserIds = new Set();
+    // Selection state (`selectedUsers`) is declared with the rest of the user-
+    // directory state near the top of this file.
 
     function updateBulkSelectionUI() {
-        const count = selectedUserIds.size;
+        const count = selectedUsers.size;
         let bulkBar = document.getElementById('admin-bulk-bar');
 
         if (!bulkBar) {
@@ -2838,8 +3006,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     window.clearBulkSelection = function() {
-        selectedUserIds.clear();
+        selectedUsers.clear();
         document.querySelectorAll('.select-student:checked').forEach(cb => cb.checked = false);
+        syncSelectAllCheckbox();
         updateBulkSelectionUI();
     };
 
@@ -2847,7 +3016,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const teacherId = prompt('Enter teacher ID or leave blank to unassign:');
         if (teacherId === null) return; // Cancelled
 
-        const ids = Array.from(selectedUserIds);
+        const ids = Array.from(selectedUsers.keys());
         try {
             const res = await csrfFetch("/api/admin/assign-teacher", {
                 method: "PATCH",
@@ -2870,7 +3039,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     window.bulkExportUsers = function() {
-        const selected = students.filter(s => selectedUserIds.has(s._id));
+        // Straight from the selection map — `students` is one page, and a
+        // selection may span several.
+        const selected = Array.from(selectedUsers.values());
         if (selected.length === 0) return;
 
         logAdminAction('BULK_EXPORT', `Exported ${selected.length} users`);
@@ -2900,10 +3071,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     window.bulkResetScreeners = async function() {
-        const count = selectedUserIds.size;
+        const count = selectedUsers.size;
         if (!confirm(`Reset placement screeners for ${count} selected users?`)) return;
 
-        const ids = Array.from(selectedUserIds);
+        const ids = Array.from(selectedUsers.keys());
         let successCount = 0;
 
         for (const studentId of ids) {
@@ -2926,34 +3097,52 @@ document.addEventListener("DOMContentLoaded", async () => {
         await initializeDashboard();
     };
 
+    /** Remember the whole record, so an export can rebuild the row off-page. */
+    function selectUser(id) {
+        const record = students.find(s => s._id === id) || selectedUsers.get(id);
+        if (record) selectedUsers.set(id, record);
+    }
+
+    /**
+     * Reflect the page's selection state on the header checkbox: checked when
+     * every row on this page is selected, indeterminate when only some are.
+     * Without this, paging away and back showed an unchecked "select all" above
+     * a page of checked rows.
+     */
+    function syncSelectAllCheckbox() {
+        const box = document.getElementById(SELECT_ALL_ID);
+        if (!box) return;
+        const onPage = students.length;
+        const picked = students.filter(s => selectedUsers.has(s._id)).length;
+        box.checked = onPage > 0 && picked === onPage;
+        box.indeterminate = picked > 0 && picked < onPage;
+    }
+
     // Listen for checkbox changes
     if (userTableBody) {
         userTableBody.addEventListener('change', (e) => {
             if (e.target.classList.contains('select-student')) {
                 const studentId = e.target.value;
-                if (e.target.checked) {
-                    selectedUserIds.add(studentId);
-                } else {
-                    selectedUserIds.delete(studentId);
-                }
+                if (e.target.checked) selectUser(studentId);
+                else selectedUsers.delete(studentId);
+                syncSelectAllCheckbox();
                 updateBulkSelectionUI();
             }
         });
     }
 
-    // Select all checkbox
-    const selectAllCheckbox = document.getElementById('selectAllStudents');
+    // Select all checkbox — scoped to the rows on THIS page, which is what the
+    // checkbox sits above. Selections on other pages are left alone.
+    const selectAllCheckbox = document.getElementById(SELECT_ALL_ID);
     if (selectAllCheckbox) {
         selectAllCheckbox.addEventListener('change', () => {
             const checkboxes = document.querySelectorAll('.select-student');
             checkboxes.forEach(cb => {
                 cb.checked = selectAllCheckbox.checked;
-                if (selectAllCheckbox.checked) {
-                    selectedUserIds.add(cb.value);
-                } else {
-                    selectedUserIds.delete(cb.value);
-                }
+                if (selectAllCheckbox.checked) selectUser(cb.value);
+                else selectedUsers.delete(cb.value);
             });
+            selectAllCheckbox.indeterminate = false;
             updateBulkSelectionUI();
         });
     }
@@ -3161,16 +3350,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function populateMergeSelects() {
         try {
-            const response = await fetch('/api/admin/users', { credentials: 'include' });
-            if (!response.ok) return;
-            const data = await response.json();
-            const users = data.users || data;
-            const options = users
-                .sort((a, b) => (a.lastName || '').localeCompare(b.lastName || ''))
-                .map(u => {
-                    const roles = (u.roles || [u.role]).join(', ');
-                    return `<option value="${u._id}">${u.lastName}, ${u.firstName} (${u.email}) — ${roles}</option>`;
-                }).join('');
+            // Already sorted by last name server-side.
+            const users = await fetchUserLookup({});
+            const options = users.map(u => {
+                const roles = (u.roles && u.roles.length ? u.roles : [u.role]).filter(Boolean).join(', ');
+                const label = `${u.lastName}, ${u.firstName} (${u.email || 'no email'}) — ${roles}`;
+                return `<option value="${escapeHtml(u._id)}">${escapeHtml(label)}</option>`;
+            }).join('') + truncationNotice(users);
             const sourceSelect = document.getElementById('mergeSourceSelect');
             const targetSelect = document.getElementById('mergeTargetSelect');
             if (sourceSelect) sourceSelect.innerHTML = '<option value="">Select source account...</option>' + options;

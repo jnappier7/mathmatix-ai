@@ -119,7 +119,7 @@ function configureMiddleware(app) {
     },
   }));
 
-  // Built bundles (scripts/buildChatBundles.js) — content-hashed filenames, so
+  // Built bundles (scripts/buildPageBundles.js) — content-hashed filenames, so
   // the bytes for a given URL never change: cache hard and forever.
   app.use('/dist', express.static(path.join(publicDir, 'dist'), {
     index: false,

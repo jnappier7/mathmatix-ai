@@ -1,0 +1,297 @@
+{
+  "chat.html": {
+    "css": [
+      {
+        "href": "/dist/css/chat-css0.4489a879.css",
+        "files": [
+          "/css/file-upload.css",
+          "/css/responsive-resources.css",
+          "/css/mobile-fixes.css",
+          "/css/ghostTimer.css",
+          "/css/browser-lock.css",
+          "/css/badgeProgress.css",
+          "/css/sidebar-layout.css",
+          "/css/dark-mode.css",
+          "/css/ux-enhancements.css",
+          "/css/lessonTracker.css",
+          "/css/tour-survey.css",
+          "/css/impersonation-banner.css",
+          "/css/iep-accommodations.css",
+          "/css/age-adaptive.css",
+          "/css/floating-screener.css",
+          "/css/mobile-ux-overhaul.css",
+          "/css/floating-checkpoint.css",
+          "/css/show-your-work.css",
+          "/css/courseCatalog.css",
+          "/css/graphTool.css",
+          "/css/mathGraph.css"
+        ]
+      },
+      {
+        "href": "/dist/css/chat-css1.dae1c280.css",
+        "files": [
+          "/css/mobile-redesign.css",
+          "/css/mathmatix-keyboard.css"
+        ]
+      },
+      {
+        "href": "/dist/css/chat-css2.af655f61.css",
+        "files": [
+          "/css/cosmetics.css",
+          "/css/shop.css"
+        ]
+      }
+    ],
+    "js": [
+      {
+        "src": "/dist/js/chat-js0.95d0ddca.js",
+        "files": [
+          "/js/impersonationBanner.js",
+          "/js/storage-utils.js",
+          "/js/sanitize-util.js"
+        ]
+      },
+      {
+        "src": "/dist/js/chat-js1.b97aead7.js",
+        "files": [
+          "/js/mathDelimiters.js",
+          "/js/logout.js",
+          "/js/role-switcher.js",
+          "/js/auto-logout.js"
+        ]
+      },
+      {
+        "src": "/dist/js/chat-js2.dcc6e004.js",
+        "files": [
+          "/js/voice-stream-client.js?v=3",
+          "/js/voice-controller.js"
+        ]
+      },
+      {
+        "src": "/dist/js/chat-js3.99ddc84a.js",
+        "files": [
+          "/js/chat-board-integration.js",
+          "/js/floating-screener.js",
+          "/js/floating-checkpoint.js",
+          "/js/sidebar.js",
+          "/js/courseCatalog.js",
+          "/js/lessonTracker.js"
+        ]
+      },
+      {
+        "src": "/dist/js/chat-js4.56a45792.js",
+        "files": [
+          "/js/diagram-display.js",
+          "/js/inlineChatVisuals.js"
+        ]
+      },
+      {
+        "src": "/dist/js/chat-js5.c6527a5d.js",
+        "files": [
+          "/js/visualTabTagHandler.js",
+          "/js/dailyQuests.js",
+          "/js/weeklyChallenges.js",
+          "/js/engagement-widgets.js"
+        ]
+      },
+      {
+        "src": "/dist/js/chat-js6.43429f6a.js",
+        "files": [
+          "/js/debug-buttons.js",
+          "/js/orientation-fix.js",
+          "/js/mobile-touch-fix.js",
+          "/js/mobile-drawer.js",
+          "/js/mobile-more-tools.js"
+        ]
+      },
+      {
+        "src": "/dist/js/chat-js7.32c7f748.js",
+        "files": [
+          "/js/mobile-poster-chat.js",
+          "/js/inlineEquationBox.js",
+          "/js/mathmatixKeyboard.js",
+          "/js/auto-expand-textarea.js",
+          "/js/chat-pinch-zoom.js",
+          "/js/file-upload.js",
+          "/js/phone-link.js",
+          "/js/theme-toggle.js"
+        ]
+      },
+      {
+        "src": "/dist/js/chat-js8.85ca98e2.js",
+        "files": [
+          "/js/student-resources.js",
+          "/js/settings.js",
+          "/js/show-your-work.js",
+          "/js/unified-upload.js",
+          "/js/ghostTimer.js",
+          "/js/badgeProgress.js",
+          "/js/mobile-stats-bar.js"
+        ]
+      },
+      {
+        "src": "/dist/js/chat-js9.6c1f45bc.js",
+        "files": [
+          "/js/sessionManager.js",
+          "/js/feedback.js",
+          "/js/tour.js",
+          "/js/survey.js",
+          "/js/student-announcements.js",
+          "/js/guided-tour.js",
+          "/js/ux-enhancements.js",
+          "/js/demo-banner.js",
+          "/js/browser-lock.js"
+        ]
+      }
+    ]
+  },
+  "admin-dashboard.html": {
+    "css": [
+      {
+        "href": "/dist/css/admin-css0.fc6354dd.css",
+        "files": [
+          "/css/design-system.css",
+          "/css/impersonation-banner.css",
+          "/css/transcript-viewer.css"
+        ]
+      }
+    ],
+    "js": [
+      {
+        "src": "/dist/js/admin-js0.5662b4aa.js",
+        "files": [
+          "/js/analyticsCharts.js",
+          "/js/admin-analytics.js",
+          "/js/csrf.js",
+          "/js/impersonationBanner.js",
+          "/js/logout.js",
+          "/js/role-switcher.js",
+          "/js/storage-utils.js",
+          "/js/auto-logout.js",
+          "/js/admin-dashboard.js?v=2.4",
+          "/js/teacher-transcripts.js",
+          "/js/admin-transcript-flags.js",
+          "/js/admin-bulk-email.js",
+          "/js/admin-manage-classes.js",
+          "/js/guided-tour.js?v=20260728",
+          "/js/sessionManager.js"
+        ]
+      }
+    ]
+  },
+  "parent-dashboard.html": {
+    "css": [
+      {
+        "href": "/dist/css/parent-css0.afdbcf11.css",
+        "files": [
+          "/css/design-system.css",
+          "/css/impersonation-banner.css",
+          "/css/practice-pack.css",
+          "/css/avatar-fullbody.css"
+        ]
+      },
+      {
+        "href": "/dist/css/parent-css1.f9f23586.css",
+        "files": [
+          "/css/messaging.css",
+          "/css/dashboard-mobile.css",
+          "/css/demo-mode.css"
+        ]
+      }
+    ],
+    "js": [
+      {
+        "src": "/dist/js/parent-js0.795abd79.js",
+        "files": [
+          "/js/i18n-translations.js",
+          "/js/i18n.js"
+        ]
+      },
+      {
+        "src": "/dist/js/parent-js1.638baa1e.js",
+        "files": [
+          "/js/analyticsCharts.js",
+          "/js/parent-analytics.js",
+          "/js/csrf.js",
+          "/js/impersonationBanner.js",
+          "/js/logout.js",
+          "/js/role-switcher.js",
+          "/js/storage-utils.js",
+          "/js/auto-logout.js",
+          "/js/avatarFullBody.js",
+          "/js/parent-dashboard.js",
+          "/js/modules/messaging.js",
+          "/js/modules/learningSupports.js"
+        ]
+      },
+      {
+        "src": "/dist/js/parent-js2.4e586f35.js",
+        "files": [
+          "/js/guided-tour.js?v=20260728",
+          "/js/sessionManager.js",
+          "/js/demo-banner.js"
+        ]
+      }
+    ]
+  },
+  "teacher-dashboard.html": {
+    "css": [
+      {
+        "href": "/dist/css/teacher-css0.1c4bbcd1.css",
+        "files": [
+          "/css/design-system.css",
+          "/css/teacher-live-feed.css",
+          "/css/teacher-live-monitor.css",
+          "/css/impersonation-banner.css",
+          "/css/transcript-viewer.css"
+        ]
+      },
+      {
+        "href": "/dist/css/teacher-css1.94ad845e.css",
+        "files": [
+          "/css/dashboard-mobile.css",
+          "/css/demo-mode.css"
+        ]
+      }
+    ],
+    "js": [
+      {
+        "src": "/dist/js/teacher-js0.795abd79.js",
+        "files": [
+          "/js/i18n-translations.js",
+          "/js/i18n.js"
+        ]
+      },
+      {
+        "src": "/dist/js/teacher-js1.f49d4013.js",
+        "files": [
+          "/js/analyticsCharts.js",
+          "/js/teacher-analytics.js",
+          "/js/csrf.js",
+          "/js/impersonationBanner.js",
+          "/js/logout.js",
+          "/js/role-switcher.js",
+          "/js/storage-utils.js"
+        ]
+      },
+      {
+        "src": "/dist/js/teacher-js2.79516728.js",
+        "files": [
+          "/js/auto-logout.js",
+          "/js/teacher-live-feed.js",
+          "/js/teacher-live-monitor.js",
+          "/js/teacher-dashboard.js?v=2.3",
+          "/js/teacher-transcripts.js",
+          "/js/teacher-curriculum.js",
+          "/js/teacher-resources.js",
+          "/js/teacher-ai-settings.js",
+          "/js/teacher-announcements.js",
+          "/js/teacher-messaging.js",
+          "/js/guided-tour.js?v=20260728",
+          "/js/sessionManager.js",
+          "/js/demo-banner.js"
+        ]
+      }
+    ]
+  }
+}
