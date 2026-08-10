@@ -12,6 +12,7 @@
 //   2. Dynamic context (student-specific) → appended per request
 
 const { buildIepAccommodationsPrompt, buildFamilySupportsPrompt, buildStudentSupportsPrompt } = require('./promptHelpers');
+const { buildIntentPrompt } = require('./onboardingIntent');
 // Sync + model-free by design: this module builds the prompt on every turn and
 // must not reach the database. See utils/studentLabels.js.
 const { studentLabel } = require('./studentLabels');
@@ -820,6 +821,11 @@ Respond primarily in ${preferredLanguage}. Use ${preferredLanguage} mathematical
   // Learning profile
   const learningProfileCtx = buildLearningProfileCompact(userProfile);
   if (learningProfileCtx) parts.push(learningProfileCtx);
+
+  // Why they said they came. Category only — see utils/onboardingIntent.js for
+  // why intentText is deliberately not used.
+  const intentCtx = buildIntentPrompt(userProfile.onboarding, firstName);
+  if (intentCtx) parts.push(intentCtx);
 
   // Curriculum context
   if (curriculumContext) {
