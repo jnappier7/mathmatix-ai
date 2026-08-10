@@ -2121,6 +2121,22 @@ function generateParentTeacherPrompt(child, recentSessions, curriculumContext, p
     const tutorName = tutor?.name || 'Mr. Nappier';
     const tutorPersonality = tutor?.personality || '';
 
+    // The parent dashboard translates its own chrome from this same setting, so
+    // without this the UI comes back in Spanish and the tutor answers in English.
+    // Deliberately NOT "reply in whatever language they wrote in": the quick-question
+    // buttons post fixed English prompts, so mirroring the incoming message would
+    // pin every one of those replies back to English. The stored setting wins.
+    const parentLanguage = (parent.parentLanguage || 'English').trim();
+    const languageSection = parentLanguage && parentLanguage !== 'English'
+        ? `
+LANGUAGE (NON-NEGOTIABLE):
+Write every reply to ${parentName} in ${parentLanguage}. They chose ${parentLanguage}, so answer in it even when their message arrives in English — several of the dashboard's quick-question buttons send fixed English text.
+- Keep math in standard notation (2/3 × 1/4 = 2/12). Translate the words around it, never the notation itself.
+- Leave ${childName}'s and ${tutorName}'s names exactly as written.
+- Write natural ${parentLanguage}, not a word-for-word rendering of English phrasing.
+`
+        : '';
+
     // Build session summaries section - this is the CORE data the AI must reference
     let sessionData = '';
     let hasRealData = false;
@@ -2239,7 +2255,8 @@ TONE:
 - Give specific, actionable suggestions for home practice
 - Sound like a real teacher at a conference, not a generated report
 
-Chat naturally with ${parentName} about ${childName}'s ACTUAL progress based on the session data above.`;
+${languageSection}
+Chat naturally with ${parentName} about ${childName}'s ACTUAL progress based on the session data above.${parentLanguage && parentLanguage !== 'English' ? ` Remember: reply in ${parentLanguage}.` : ''}`;
 
     return prompt;
 }
@@ -3485,3 +3502,6 @@ module.exports.isInProgressSession = isInProgressSession;
 // Exported so POST /api/student-moves can delegate a normalized tile move
 // through the SAME lock + pipeline (see docs/BOARD_STUDENT_MOVES_INTEGRATION.md).
 module.exports.runStudentTurn = runStudentTurn;
+// Exported for unit testing the parent's language directive, which is otherwise
+// only observable by reading the model's reply.
+module.exports.generateParentTeacherPrompt = generateParentTeacherPrompt;
