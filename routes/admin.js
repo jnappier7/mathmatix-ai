@@ -8,6 +8,7 @@
  * @author Senior Developer
  */
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
@@ -28,7 +29,16 @@ const { sendWelcomeEmail } = require('../utils/emailService');
 const csv = require('csv-parser');
 const { Readable } = require('stream');
 
-const { anyRole, withoutRoles, rolesOf } = require('../utils/roleQuery');
+const { anyRole, withoutRoles, rolesOf, ROLE_NAMES } = require('../utils/roleQuery');
+const {
+  USER_PAGE_SIZE_DEFAULT,
+  USER_PAGE_SIZE_MAX,
+  USER_LOOKUP_LIMIT_MAX,
+  buildUserDirectoryFilter,
+  resolveSort,
+  resolvePaging,
+  clearStaleWeeklyMinutes,
+} = require('../utils/adminUserQuery');
 // Configure multer for CSV uploads (in-memory)
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -46,6 +56,28 @@ const upload = multer({
 // Using constants improves readability and makes queries easier to manage.
 const USER_LIST_FIELDS = 'firstName lastName email username role roles gradeLevel teacherId mathCourse tonePreference learningStyle interests totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastLogin createdAt xp level';
 const TEACHER_LIST_FIELDS = 'firstName lastName _id';
+// Just enough to render a picker row. The full USER_LIST_FIELDS projection
+// carries interests[], learningStyle, xp and friends that no <select> reads.
+const USER_LOOKUP_FIELDS = 'firstName lastName email username role roles';
+
+/**
+ * Per-role headcount for the whole directory, plus the grand total.
+ *
+ * Counted with one countDocuments per role rather than an aggregation over
+ * `roles[]`, because a multi-role account belongs in every bucket it holds and
+ * `anyRole()` already encodes the roles-vs-role fallback. The buckets therefore
+ * sum to more than `total`, which is correct: an admin who is also a parent is
+ * one user and two rows of headcount.
+ */
+async function countUsersByRole() {
+  const [total, ...perRole] = await Promise.all([
+    User.countDocuments({}),
+    ...ROLE_NAMES.map((role) => User.countDocuments(anyRole(role))),
+  ]);
+  const counts = { total };
+  ROLE_NAMES.forEach((role, i) => { counts[role] = perRole[i]; });
+  return counts;
+}
 
 // -----------------------------------------------------------------------------
 // --- Item Bank Import Routes (CSV Upload) ---
@@ -59,29 +91,96 @@ router.use('/', adminImportRoutes);
 
 /**
  * @route   GET /api/admin/users
- * @desc    Get a list of all users with essential profile data.
+ * @desc    One page of the user directory, with search/role/sort applied in the
+ *          database. Also returns whole-directory role counts so the stat cards
+ *          describe the directory rather than the page you happen to be on.
+ * @query   page, limit, search, role, sort
  * @access  Private (Admin)
+ *
+ * This used to be `User.find({})` with no bound: every user, every listed
+ * field, rendered as one <tr> each, with search/sort/filter running in the
+ * browser over the whole array. That is fine at a few hundred users and a
+ * multi-megabyte response with a DOM to match at a few thousand. Paging,
+ * searching and sorting all moved server-side; the client now holds one page.
  */
 router.get('/users', isAdmin, async (req, res) => {
   try {
-    // .lean() provides a significant performance boost for read-only operations.
-    const users = await User.find({}, USER_LIST_FIELDS + ' lastWeeklyReset').lean();
+    const { page, limit, skip } = resolvePaging(req.query, {
+      max: USER_PAGE_SIZE_MAX,
+      fallback: USER_PAGE_SIZE_DEFAULT,
+    });
+    const sort = resolveSort(req.query.sort);
+    const filter = buildUserDirectoryFilter({ search: req.query.search, role: req.query.role });
 
-    // Fix stale weekly minutes: the weekly reset only triggers on user activity
-    // (in track-time), so inactive users retain inflated values from their last
-    // active week. Zero them out for accurate dashboard display.
-    const now = new Date();
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    for (const user of users) {
-      const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
-      if ((now - lastReset) >= sevenDaysMs) {
-        user.weeklyActiveTutoringMinutes = 0;
-      }
-    }
+    // The page, the size of the filtered set, and the role counts for the whole
+    // directory. The counts deliberately ignore `filter` — the stat cards are a
+    // "what's in the system" readout, not a description of the current search.
+    const [users, total, roleCounts] = await Promise.all([
+      User.find(filter, USER_LIST_FIELDS + ' lastWeeklyReset')
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      User.countDocuments(filter),
+      countUsersByRole(),
+    ]);
 
-    res.json(users);
+    clearStaleWeeklyMinutes(users);
+
+    res.json({
+      users,
+      total,
+      page,
+      limit,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+      counts: roleCounts,
+    });
   } catch (err) {
     console.error('Error fetching users for admin:', err);
+    res.status(500).json({ message: 'Server error fetching user data.' });
+  }
+});
+
+/**
+ * @route   GET /api/admin/users/lookup
+ * @desc    Slim user records for populating pickers (link-parent, merge, class
+ *          rostering). Same search/role semantics as /users, a lighter
+ *          projection, and a hard cap — these feed <select>s, not tables.
+ * @query   search, role, limit, id
+ * @access  Private (Admin)
+ *
+ * Registered before the /users/:userId routes so "lookup" is never read as an id.
+ */
+router.get('/users/lookup', isAdmin, async (req, res) => {
+  try {
+    // Single-record fetch: the dashboard's ?user=<id> deep link needs the row
+    // even when that user isn't on the page currently loaded.
+    if (req.query.id) {
+      if (!mongoose.Types.ObjectId.isValid(req.query.id)) {
+        return res.status(400).json({ message: 'Invalid user id.' });
+      }
+      const one = await User.findById(req.query.id, USER_LIST_FIELDS + ' lastWeeklyReset').lean();
+      if (!one) return res.status(404).json({ message: 'User not found.' });
+      clearStaleWeeklyMinutes([one]);
+      return res.json({ users: [one], total: 1, truncated: false });
+    }
+
+    const { limit } = resolvePaging(req.query, {
+      max: USER_LOOKUP_LIMIT_MAX,
+      fallback: USER_LOOKUP_LIMIT_MAX,
+    });
+    const filter = buildUserDirectoryFilter({ search: req.query.search, role: req.query.role });
+
+    const [users, total] = await Promise.all([
+      User.find(filter, USER_LOOKUP_FIELDS).sort({ lastName: 1, firstName: 1 }).limit(limit).lean(),
+      User.countDocuments(filter),
+    ]);
+
+    // `truncated` lets the caller tell the admin their picker isn't showing
+    // everything, instead of silently offering a partial list.
+    res.json({ users, total, truncated: total > users.length });
+  } catch (err) {
+    console.error('Error fetching user lookup for admin:', err);
     res.status(500).json({ message: 'Server error fetching user data.' });
   }
 });
@@ -2810,8 +2909,6 @@ router.post('/merge-accounts', isAdmin, async (req, res) => {
 // teacher-side equivalents live in routes/teacher.js (GET /api/teacher/classes
 // and GET /api/teacher/classes/:codeId/students); these mirror them scoped by
 // the requested teacherId so the existing client formatters still work.
-
-const mongoose = require('mongoose');
 
 // Mirror of the client getStudentStatus in public/js/teacher-dashboard.js so the
 // admin and teacher dashboards label students identically. Backend returns the

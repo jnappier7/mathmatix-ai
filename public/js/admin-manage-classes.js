@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentClassId = null;
     let currentClassStudents = new Set();
-    let allStudents = []; // All students loaded from API
+    let allStudents = []; // Students loaded from API (capped — see allStudentsTruncated)
+    let allStudentsTruncated = false; // True when the directory is larger than the lookup cap
     let selectedStudentIds = new Set(); // Students checked for adding
 
     // Open modal
@@ -60,17 +61,25 @@ document.addEventListener('DOMContentLoaded', () => {
         addSelectedStudentsBtn.addEventListener('click', addSelectedStudentsToClass);
     }
 
-    // Load all students from API (once on modal open)
+    // Load students for the roster picker (once on modal open).
+    //
+    // Role matching moved to the server: this filtered on `u.role === 'student'`,
+    // the role a user is CURRENTLY VIEWING, so a student who also holds another
+    // role and happened to be on that dashboard was missing from the picker with
+    // no error — the roles-vs-role trap in CLAUDE.md §12. /users/lookup?role=
+    // matches roles HELD via anyRole().
     async function loadAllStudents() {
         try {
-            const response = await fetch('/api/admin/users', { credentials: 'include' });
+            const response = await fetch('/api/admin/users/lookup?role=student', { credentials: 'include' });
             if (!response.ok) throw new Error('Failed to load users');
 
-            const users = await response.json();
-            allStudents = users.filter(u => u.role === 'student');
+            const data = await response.json();
+            allStudents = data.users || [];
+            allStudentsTruncated = Boolean(data.truncated);
         } catch (error) {
             console.error('[ManageClasses] Load all students error:', error);
             allStudents = [];
+            allStudentsTruncated = false;
         }
     }
 
@@ -240,7 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        availableStudentsList.innerHTML = available.map(student => `
+        // Say so when the list is capped, rather than letting an admin read a
+        // partial roster as "this student doesn't exist".
+        const truncationNote = allStudentsTruncated
+            ? '<p style="padding: 8px 10px; color: #8a6d3b; background: #fcf8e3; font-size: 0.85em; margin: 0;">Showing the first 500 students. Narrow the search to find others.</p>'
+            : '';
+
+        availableStudentsList.innerHTML = truncationNote + available.map(student => `
             <label class="available-student-item" data-student-id="${student._id}"
                  style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; gap: 10px; margin: 0;">
                 <input type="checkbox" class="add-student-checkbox" value="${student._id}"
