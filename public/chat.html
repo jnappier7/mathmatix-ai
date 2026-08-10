@@ -206,6 +206,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/mobile-light-theme.css" />
   <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->
   <link rel="stylesheet" href="/css/mobile-companion-home.css" />
+  <link rel="stylesheet" href="/css/student-supports.css" />
   <!-- Docked tutor cam + typing pill (phones only; AFTER poster + light re-skin) -->
   <link rel="stylesheet" href="/css/mobile-tutor-cam.css?v=20260718" />
   <script defer src="/js/i18n-translations.js"></script>
@@ -1484,6 +1485,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <hr style="margin: 25px 0; border: none; border-top: 1px solid #ddd;">
 
         <!-- Subscription Management (visible to subscribers) -->
+        <!-- Student self-report. Third tier under a school IEP and a parent's
+             requests; anything already granted above shows as read-only. -->
+        <div class="form-group">
+          <label>How I learn best</label>
+          <div id="student-supports-root"></div>
+        </div>
+
         <div class="form-group" id="settings-subscription-section" style="display: none;">
           <label><i class="fas fa-credit-card"></i> Subscription</label>
           <div id="settings-subscription-info" style="padding: 12px; background: #f0f7ff; border-radius: 8px; border-left: 4px solid #7b2ff7; margin-top: 8px;">
@@ -2477,6 +2485,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- Player stats card: window-global, loaded before script.js which calls
      window.PlayerStatsCard.init(currentUser) once the user doc is fetched. -->
 <script defer src="/js/modules/playerStatsCard.js?v=20260724b"></script>
+<script defer src="/js/modules/studentSupports.js"></script>
+<script>
+  // Mount lazily when Settings is opened — the panel is behind a modal, so
+  // there is no reason to fetch on page load.
+  document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('open-settings-modal-btn');
+    var mounted = false;
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      if (mounted || !window.MMStudentSupports) return;
+      var root = document.getElementById('student-supports-root');
+      if (root) { window.MMStudentSupports.mount(root); mounted = true; }
+    });
+  });
+</script>
 <script src="/js/challengeCard.js?v=20260804a"></script>
 <script defer src="/js/floating-review.js?v=20260807"></script>
 <script src="/js/script.js?v=20260807a" type="module"></script>

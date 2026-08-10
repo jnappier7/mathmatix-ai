@@ -11,7 +11,7 @@
 //   1. Static rules (identical across all students) → cached after first call
 //   2. Dynamic context (student-specific) → appended per request
 
-const { buildIepAccommodationsPrompt, buildFamilySupportsPrompt } = require('./promptHelpers');
+const { buildIepAccommodationsPrompt, buildFamilySupportsPrompt, buildStudentSupportsPrompt } = require('./promptHelpers');
 // Sync + model-free by design: this module builds the prompt on every turn and
 // must not reach the database. See utils/studentLabels.js.
 const { studentLabel } = require('./studentLabels');
@@ -802,6 +802,16 @@ Respond primarily in ${preferredLanguage}. Use ${preferredLanguage} mathematical
     firstName
   );
   if (familyPrompt) parts.push(familyPrompt);
+
+  // What the student asked for themselves. Lowest tier — deduped against both
+  // the IEP and the parent's requests.
+  const studentPrompt = buildStudentSupportsPrompt(
+    userProfile.learningProfile?.studentSupports,
+    userProfile.learningProfile?.familySupports,
+    iepPlan,
+    firstName
+  );
+  if (studentPrompt) parts.push(studentPrompt);
 
   // Skill mastery context
   const skillContext = buildSkillMasteryContext(userProfile, masteryContext?.skillId || null);
