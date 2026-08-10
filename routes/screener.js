@@ -42,6 +42,10 @@ const { setSkillMasteryEntry, getSkillMasteryEntry, decodedMasteryMap } = requir
 // rung down to 'learning'.
 const { clearsPrerequisites } = require('../utils/skillRung');
 const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
+// The results screen leads with the lit ladder — everything the student owns —
+// instead of a grade level. See utils/placementLadder.js for why that number
+// was the worst thing we could have put in front of a kid who just finished.
+const { buildPlacementLadder } = require('../utils/placementLadder');
 // The Growth Check's completion moment (previous vs new level, skills
 // confirmed / needing review / newly reachable, ONE suggested next step).
 // This is now the ONLY growth-check flow — routes/growthCheck.js was a second,
@@ -902,10 +906,28 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     // demonstrated. Cascaded skills land as provenBy 'inference' (cleared, not
     // achieved), skip anything already owned, and never override an explicit
     // failure — all enforced inside applyProofCascade.
+    //
+    // The catalog fetch is hoisted because the ladder built at the end of this
+    // handler needs the same docs. Deliberately NOT read through configCache
+    // the way GET /api/mastery/map does: that is a read-only view and can
+    // tolerate an hour-stale catalog, whereas the cascade below WRITES mastery
+    // off this array. A skill seeded within the TTL would be silently skipped
+    // by the closure and the student would never be granted it.
+    //
+    // It now runs even when nothing was mastered — one extra query on a path
+    // that used to skip it — because a student who proved nothing still gets a
+    // ladder, drawn at the ground floor.
+    let unifiedSkills = [];
+    try {
+      unifiedSkills = await Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean();
+    } catch (catalogError) {
+      console.error('[Screener] unified catalog fetch failed:', catalogError);
+    }
+
     let clearedFromPlacement = [];
     try {
       if (report.masteredSkills.length) {
-        const allSkills = await Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean();
+        const allSkills = unifiedSkills;
         if (allSkills && allSkills.length) {
           const graph = buildGraph(allSkills);
           const decoded = decodedMasteryMap(user);
@@ -1049,10 +1071,28 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     session.endTime = new Date();
     await session.save();
 
+    // ★ THE LADDER ★ Built AFTER the save, from the mastery map the writes and
+    // the cascade above just produced — so what the student is shown is the
+    // state the system actually holds, not a projection of it. This is what the
+    // results screen leads with now instead of `report.gradeLevel`: the grade
+    // level is still computed and still drives mathCourse and every staff-facing
+    // view, it simply is not the thing we hand a student as a verdict.
+    //
+    // Failure here is cosmetic and must never cost a completion, exactly like
+    // the cascade above: the clients fall back to the old placement card when
+    // `ladder` is absent or unseeded.
+    let ladder = null;
+    try {
+      ladder = buildPlacementLadder(unifiedSkills, decodedMasteryMap(user));
+    } catch (ladderError) {
+      console.error('[Screener] placement ladder build failed:', ladderError);
+    }
+
     res.json({
       success: true,
       report,
       sessionType: session.sessionType || 'starting-point',
+      ...(ladder ? { ladder } : {}),
       ...(growthSummary ? { growthSummary } : {}),
       message: isGrowth
         ? 'Growth Check complete! Here’s how you’ve grown.'

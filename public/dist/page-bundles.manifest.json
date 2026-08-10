@@ -2,7 +2,7 @@
   "chat.html": {
     "css": [
       {
-        "href": "/dist/css/chat-css0.4489a879.css",
+        "href": "/dist/css/chat-css0.75127141.css",
         "files": [
           "/css/file-upload.css",
           "/css/responsive-resources.css",
@@ -19,6 +19,7 @@
           "/css/iep-accommodations.css",
           "/css/age-adaptive.css",
           "/css/floating-screener.css",
+          "/css/placement-ladder.css",
           "/css/mobile-ux-overhaul.css",
           "/css/floating-checkpoint.css",
           "/css/show-your-work.css",
@@ -68,9 +69,10 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js3.99ddc84a.js",
+        "src": "/dist/js/chat-js3.b79c4946.js",
         "files": [
           "/js/chat-board-integration.js",
+          "/js/placementLadder.js",
           "/js/floating-screener.js",
           "/js/floating-checkpoint.js",
           "/js/sidebar.js",

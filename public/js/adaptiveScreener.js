@@ -66,8 +66,12 @@ const elements = {
   questionCount: document.getElementById('question-count'),
   thetaDisplay: document.getElementById('theta-display'),
 
-  // Results — student-facing placement (QA P0-4). Raw theta/percentile/
-  // accuracy are internal analytics and no longer displayed to students.
+  // Results. The hero is the lit ladder; the grade-level card below it is a
+  // fallback for environments where the ladder cannot be built at all.
+  // Raw theta/percentile/accuracy stay internal (QA P0-4).
+  placementLadder: document.getElementById('placement-ladder'),
+  placementLadderCard: document.getElementById('placement-ladder-card'),
+  placementFallback: document.getElementById('placement-fallback'),
   finalGrade: document.getElementById('final-grade'),
   finalGradeDesc: document.getElementById('final-grade-desc'),
   finalDuration: document.getElementById('final-duration'),
@@ -382,8 +386,10 @@ async function handleCompletion(data) {
       ? StorageUtils.session.getItem('masteryModeActive')
       : null;
 
-    // Display results to user
-    displayResults(report);
+    // Display results to user. The ladder rides along on the /complete
+    // response — it is built from the mastery state that call just wrote, so
+    // it cannot disagree with the skill map the student lands on next.
+    displayResults(report, completeData.ladder);
     switchScreen('results');
 
     // Update continue button text to indicate interview phase
@@ -869,17 +875,27 @@ function showFeedback(correct, feedbackText) {
 /**
  * Display final results
  */
-function displayResults(report) {
-  // QA P0-4: show the student their actual starting point (grade / course
-  // + a friendly description), never a raw θ. `placement` is computed
-  // server-side via thetaToGradeLevel; fall back gracefully if absent.
-  const placement = report.placement || {};
-  if (elements.finalGrade) {
-    elements.finalGrade.textContent = placement.gradeLevel || 'Your level';
-  }
-  if (elements.finalGradeDesc) {
-    elements.finalGradeDesc.textContent =
-      placement.description || 'We\'ve mapped out where to begin.';
+function displayResults(report, ladder) {
+  // The hero: everything the student owns, lit rung by rung. The grade level
+  // is still computed server-side and still drives mathCourse and the
+  // staff-facing views — it is simply no longer the thing we hand a student.
+  const painted = window.PlacementLadder
+    && window.PlacementLadder.render(elements.placementLadder, ladder);
+
+  if (!painted) {
+    // Nothing honest to draw (catalog unseeded, or the build threw). Show the
+    // old placement card rather than an empty hero.
+    if (elements.placementLadderCard) elements.placementLadderCard.hidden = true;
+    if (elements.placementFallback) elements.placementFallback.hidden = false;
+
+    const placement = report.placement || {};
+    if (elements.finalGrade) {
+      elements.finalGrade.textContent = placement.gradeLevel || report.gradeLevel || 'Your level';
+    }
+    if (elements.finalGradeDesc) {
+      elements.finalGradeDesc.textContent =
+        placement.description || report.gradeLevelDescription || 'We\'ve mapped out where to begin.';
+    }
   }
 
   const durationMinutes = Math.floor(report.duration / 60000);

@@ -103,7 +103,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     })();
   </script>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="/dist/css/chat-css0.4489a879.css" />
+  <link rel="stylesheet" href="/dist/css/chat-css0.75127141.css" />
 <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
   <link rel="stylesheet" href="/dist/css/chat-css1.dae1c280.css" />
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
@@ -1878,7 +1878,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
 
-        <!-- Grade Level Result (like STAR testing) -->
+        <!-- THE LADDER, LIT — the Starting Point hero. Everything the student
+             already owns, rung by rung, in place of the grade level that used
+             to headline this card. See utils/placementLadder.js. -->
+        <div class="screener-ladder" id="screener-placement-ladder-card" style="display: none;">
+          <div id="screener-placement-ladder"></div>
+        </div>
+
+        <!-- Grade Level Result (like STAR testing). Fallback only: shown when
+             the ladder cannot be built (catalog not seeded, or the build
+             threw). An empty hero is worse than the old card. -->
         <div class="grade-level-result" id="screener-grade-level-result">
           <div class="grade-level-label">Your Math Level</div>
           <div class="grade-level-value" id="screener-result-grade-level">--</div>
@@ -2420,7 +2429,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script defer src="/js/voice-subtitles.js?v=20260718b"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
-  <script src="/dist/js/chat-js3.99ddc84a.js"></script>
+  <script src="/dist/js/chat-js3.b79c4946.js"></script>
 <!-- returningUserModal.js removed — no longer used -->
   <script src="/dist/js/chat-js4.56a45792.js"></script>
 <link rel="stylesheet" href="/css/algebra-tiles.css">
