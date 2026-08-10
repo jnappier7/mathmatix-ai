@@ -11,12 +11,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Parent Dashboard - MATHMATIX AI</title>
+  <!-- Font Awesome, loaded once as CSS. The SVG-with-JS kit (js/all.min.js)
+       used to be loaded at the end of <body> as well: ~1.3MB of script that
+       re-renders every <i> as an <svg>, on top of an icon font that had
+       already painted them. Two copies of the same icon set, plus a visible
+       reflow as the second replaced the first. chat.html has always used this
+       stylesheet alone; keep it that way. -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="/css/design-system.css" />
-  <link rel="stylesheet" href="/css/impersonation-banner.css" />
-  <link rel="stylesheet" href="/css/practice-pack.css" />
-  <link rel="stylesheet" href="/css/avatar-fullbody.css" />
-  <style>
+  <link rel="stylesheet" href="/dist/css/parent-css0.afdbcf11.css" />
+<style>
     /* ============================================
        MATHMATIX AI - PARENT DASHBOARD
        Fixed 3-Column Layout with Parent Branding
@@ -1766,10 +1769,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .no-children-empty .steps { grid-template-columns: 1fr; }
     }
   </style>
-  <link rel="stylesheet" href="/css/messaging.css" />
-  <link rel="stylesheet" href="/css/dashboard-mobile.css" />
-  <link rel="stylesheet" href="/css/demo-mode.css" />
-  <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+  <link rel="stylesheet" href="/dist/css/parent-css1.f9f23586.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <script defer src="/vendor/dompurify/purify.min.js?v=3.3.1"></script>
   <script>
     window.MathJax = {
@@ -1791,8 +1792,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
     };
   </script>
-  <script src="/js/i18n-translations.js"></script>
-  <script src="/js/i18n.js"></script>
+  <script src="/dist/js/parent-js0.795abd79.js"></script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -2466,19 +2466,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-  <script src="/js/analyticsCharts.js"></script>
-  <script src="/js/parent-analytics.js"></script>
-  <script src="/js/csrf.js"></script>
-  <script src="/js/impersonationBanner.js"></script>
-  <script src="/js/logout.js"></script>
-  <script src="/js/role-switcher.js"></script>
-  <script src="/js/storage-utils.js"></script>
-  <script src="/js/auto-logout.js"></script>
-  <script src="/js/avatarFullBody.js"></script>
-  <script src="/js/parent-dashboard.js"></script>
-  <script src="/js/modules/messaging.js"></script>
-  <script src="/js/modules/learningSupports.js"></script>
-  <script>
+  <script src="/dist/js/parent-js1.638baa1e.js"></script>
+<script>
     // Mount once the dashboard script has established the session.
     document.addEventListener('DOMContentLoaded', function () {
       var root = document.getElementById('parent-messaging-root');
@@ -2487,9 +2476,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       if (ls && window.MMLearningSupports) window.MMLearningSupports.mount(ls);
     });
   </script>
-  <script src="/js/guided-tour.js?v=20260728"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="/js/sessionManager.js"></script>
-  <script src="/js/demo-banner.js"></script>
+  <script src="/dist/js/parent-js2.4e586f35.js"></script>
 </body>
 </html>

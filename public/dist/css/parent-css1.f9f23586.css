@@ -1,0 +1,1210 @@
+/* --- /css/messaging.css --- */
+/* =============================================================
+   Teacher <-> Parent messaging widget (public/js/modules/messaging.js)
+   Shared by the parent and teacher dashboards.
+   ============================================================= */
+
+.mm-msg {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) 1fr;
+  min-height: 420px;
+  max-height: 620px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+/* ── Thread list ───────────────────────────────────────── */
+.mm-msg-list {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fafbfc;
+  min-width: 0;
+}
+
+.mm-msg-list-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mm-msg-list-head h3 { margin: 0; font-size: 1rem; font-weight: 700; }
+
+.mm-msg-new {
+  border: none; background: transparent; cursor: pointer;
+  color: #12b3b3; font-size: 1rem; padding: 6px 8px; border-radius: 8px;
+}
+.mm-msg-new:hover { background: rgba(18, 179, 179, 0.1); }
+
+.mm-msg-threads { overflow-y: auto; flex: 1; }
+
+.mm-msg-thread {
+  display: flex; gap: 0.7rem; align-items: flex-start;
+  width: 100%; padding: 0.8rem 1rem;
+  border: none; border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: transparent; cursor: pointer; text-align: left;
+  font: inherit; color: inherit;
+}
+.mm-msg-thread:hover { background: rgba(18, 179, 179, 0.06); }
+.mm-msg-thread.is-active { background: rgba(18, 179, 179, 0.11); }
+
+.mm-msg-avatar {
+  flex-shrink: 0;
+  width: 34px; height: 34px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #12b3b3; color: #fff;
+  font-size: 0.75rem; font-weight: 700;
+}
+
+.mm-msg-thread-body { min-width: 0; flex: 1; display: block; }
+
+.mm-msg-thread-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+}
+
+.mm-msg-badge {
+  flex-shrink: 0;
+  background: #c92260; color: #fff;
+  border-radius: 999px; padding: 1px 7px;
+  font-size: 0.7rem; font-weight: 700;
+}
+
+.mm-msg-snippet,
+.mm-msg-when {
+  display: block;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: #5b6876;
+}
+.mm-msg-snippet { font-size: 0.85rem; margin-top: 1px; }
+.mm-msg-when { font-size: 0.72rem; margin-top: 2px; opacity: 0.8; }
+
+.mm-msg-none { padding: 1.5rem 1rem; color: #5b6876; font-size: 0.9rem; text-align: center; }
+.mm-msg-startlink {
+  margin-top: 0.5rem; border: none; background: none; cursor: pointer;
+  color: #0c7575; font-weight: 600; text-decoration: underline; font: inherit;
+}
+
+/* ── Conversation pane ─────────────────────────────────── */
+.mm-msg-pane { display: flex; flex-direction: column; min-width: 0; }
+
+.mm-msg-pane-head {
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.mm-msg-pane-head h4 { margin: 0; font-size: 1rem; font-weight: 700; }
+
+.mm-msg-empty {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: #5b6876; padding: 2rem 1rem; text-align: center;
+}
+
+.mm-msg-scroll {
+  flex: 1; overflow-y: auto;
+  padding: 1rem 1.1rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
+}
+
+.mm-msg-bubble {
+  max-width: 78%; align-self: flex-start;
+  background: #f1f4f7; border-radius: 14px 14px 14px 4px;
+  padding: 0.6rem 0.85rem;
+}
+.mm-msg-bubble.is-mine {
+  align-self: flex-end;
+  background: rgba(18, 179, 179, 0.14);
+  border-radius: 14px 14px 4px 14px;
+}
+.mm-msg-bubble p { margin: 0; line-height: 1.5; overflow-wrap: anywhere; }
+.mm-msg-bubble time { display: block; margin-top: 4px; font-size: 0.7rem; color: #5b6876; }
+
+.mm-msg-subject { display: block; font-weight: 700; margin-bottom: 2px; }
+.mm-msg-about {
+  display: block; font-size: 0.72rem; color: #0c7575;
+  font-weight: 600; margin-bottom: 4px;
+}
+
+/* ── Composer ──────────────────────────────────────────── */
+.mm-msg-form {
+  display: flex; gap: 0.6rem; align-items: flex-end;
+  padding: 0.75rem 1.1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+.mm-msg-form textarea {
+  flex: 1; resize: vertical; min-height: 42px; max-height: 160px;
+  border: 1px solid rgba(0, 0, 0, 0.14); border-radius: 10px;
+  padding: 0.55rem 0.7rem; font: inherit;
+}
+.mm-msg-form textarea:focus {
+  outline: none; border-color: #12b3b3;
+  box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.15);
+}
+
+.mm-msg-send {
+  border: none; border-radius: 10px; cursor: pointer;
+  background: linear-gradient(135deg, #db2b6a 0%, #c92260 100%);
+  color: #fff; font-weight: 600; font: inherit;
+  padding: 0.6rem 1.1rem; white-space: nowrap;
+}
+.mm-msg-send:disabled { opacity: 0.6; cursor: default; }
+
+/* ── Contact picker ────────────────────────────────────── */
+.mm-msg-contacts { overflow-y: auto; padding: 0.5rem; }
+.mm-msg-contact {
+  display: flex; gap: 0.7rem; align-items: center; width: 100%;
+  padding: 0.7rem 0.8rem; border: none; background: transparent;
+  cursor: pointer; text-align: left; font: inherit; border-radius: 10px;
+}
+.mm-msg-contact:hover { background: rgba(18, 179, 179, 0.08); }
+.mm-msg-contact small { display: block; color: #5b6876; font-size: 0.78rem; }
+
+/* Screen-reader-only helper, in case the host page has not defined one. */
+.mm-msg .sr-only,
+.mm-msg-form .sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* ── Mobile ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .mm-msg {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+  .mm-msg-list {
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .mm-msg-threads { max-height: 240px; }
+  .mm-msg-bubble { max-width: 88%; }
+}
+
+/* ── Dark mode ─────────────────────────────────────────── */
+[data-theme="dark"] .mm-msg { background: #0f172a; border-color: #334155; }
+[data-theme="dark"] .mm-msg-list { background: #111c33; border-color: #334155; }
+[data-theme="dark"] .mm-msg-list-head,
+[data-theme="dark"] .mm-msg-pane-head,
+[data-theme="dark"] .mm-msg-form,
+[data-theme="dark"] .mm-msg-thread { border-color: #334155; }
+[data-theme="dark"] .mm-msg-bubble { background: #1e293b; color: #e2e8f0; }
+[data-theme="dark"] .mm-msg-bubble.is-mine { background: rgba(18, 179, 179, 0.22); }
+[data-theme="dark"] .mm-msg-snippet,
+[data-theme="dark"] .mm-msg-when,
+[data-theme="dark"] .mm-msg-empty,
+[data-theme="dark"] .mm-msg-bubble time { color: #9aa3b8; }
+[data-theme="dark"] .mm-msg-form textarea {
+  background: #1e293b; color: #e2e8f0; border-color: #334155;
+}
+
+/* =============================================================
+   Parent learning supports (public/js/modules/learningSupports.js)
+   ============================================================= */
+
+.mm-ls-intro { margin: 0 0 1rem; color: #5b6876; font-size: 0.92rem; line-height: 1.5; }
+
+.mm-ls-kids { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.mm-ls-kid {
+  border: 1px solid rgba(0, 0, 0, 0.12); background: #fff; cursor: pointer;
+  border-radius: 999px; padding: 0.35rem 0.9rem; font: inherit; font-size: 0.88rem;
+}
+.mm-ls-kid.is-active {
+  border-color: #12b3b3; background: rgba(18, 179, 179, 0.1);
+  color: #0c7575; font-weight: 600;
+}
+
+.mm-ls-schoolnote {
+  margin: 0 0 0.9rem; padding: 0.6rem 0.8rem;
+  background: rgba(18, 179, 179, 0.07);
+  border-left: 3px solid #12b3b3; border-radius: 6px;
+  font-size: 0.85rem; color: #5b6876; line-height: 1.45;
+}
+
+.mm-ls-rows { display: grid; gap: 0.15rem; }
+
+.mm-ls-row {
+  display: flex; gap: 0.7rem; align-items: flex-start;
+  padding: 0.6rem 0.5rem; border-radius: 8px;
+}
+.mm-ls-row:hover { background: rgba(18, 179, 179, 0.05); }
+.mm-ls-row.is-locked { opacity: 0.72; }
+
+.mm-ls-row input[type="checkbox"] {
+  margin-top: 0.15rem; width: 18px; height: 18px;
+  accent-color: #12b3b3; flex-shrink: 0; cursor: pointer;
+}
+.mm-ls-row.is-locked input[type="checkbox"] { cursor: not-allowed; }
+
+.mm-ls-row label { cursor: pointer; display: block; }
+.mm-ls-row.is-locked label { cursor: default; }
+
+.mm-ls-label { display: block; font-weight: 600; font-size: 0.92rem; }
+.mm-ls-hint { display: block; font-size: 0.8rem; color: #5b6876; margin-top: 1px; line-height: 1.4; }
+
+.mm-ls-tag {
+  display: inline-block; margin-left: 0.5rem;
+  background: rgba(18, 179, 179, 0.15); color: #0c7575;
+  border-radius: 999px; padding: 1px 8px;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em;
+  text-transform: uppercase; vertical-align: middle;
+}
+
+.mm-ls-notelabel {
+  display: block; margin: 1.1rem 0 0.35rem;
+  font-size: 0.88rem; font-weight: 600;
+}
+.mm-ls-note {
+  width: 100%; resize: vertical; font: inherit; font-size: 0.9rem;
+  border: 1px solid rgba(0, 0, 0, 0.14); border-radius: 10px; padding: 0.55rem 0.7rem;
+}
+.mm-ls-note:focus {
+  outline: none; border-color: #12b3b3;
+  box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.15);
+}
+
+.mm-ls-saved { min-height: 1.2em; margin: 0.4rem 0 0; font-size: 0.8rem; color: #0c7575; }
+.mm-ls-status { color: #5b6876; font-size: 0.9rem; padding: 0.75rem 0; }
+
+[data-theme="dark"] .mm-ls-kid { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+[data-theme="dark"] .mm-ls-note { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+[data-theme="dark"] .mm-ls-intro,
+[data-theme="dark"] .mm-ls-hint,
+[data-theme="dark"] .mm-ls-status,
+[data-theme="dark"] .mm-ls-schoolnote { color: #9aa3b8; }
+
+/* ── First-run quick start ─────────────────────────────── */
+.mm-ls-quickstart {
+  border: 1px solid rgba(18, 179, 179, 0.28);
+  background: rgba(18, 179, 179, 0.05);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+}
+
+.mm-ls-qs-lead {
+  margin: 0 0 0.7rem;
+  font-size: 0.92rem; line-height: 1.5; color: #3c4653;
+}
+.mm-ls-qs-lead strong { color: #14213d; }
+
+.mm-ls-quickstart .mm-ls-row { padding: 0.45rem 0.25rem; }
+.mm-ls-quickstart .mm-ls-label { font-weight: 600; font-size: 0.9rem; }
+
+.mm-ls-qs-actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.mm-ls-qs-save {
+  border: none; border-radius: 10px; cursor: pointer; font: inherit;
+  background: linear-gradient(135deg, #db2b6a 0%, #c92260 100%);
+  color: #fff; font-weight: 600; padding: 0.5rem 1rem;
+}
+
+.mm-ls-qs-all {
+  border: none; background: none; cursor: pointer; font: inherit;
+  color: #0c7575; font-weight: 600; font-size: 0.85rem;
+  text-decoration: underline; text-underline-offset: 2px;
+  padding: 0.5rem 0;
+}
+
+/* Brief highlight when the panel is brought to the parent after they link a
+   child, so the scroll lands on something that reads as "this is for you". */
+@keyframes mm-ls-flash {
+  0%   { box-shadow: 0 0 0 0 rgba(18, 179, 179, 0); }
+  25%  { box-shadow: 0 0 0 6px rgba(18, 179, 179, 0.22); }
+  100% { box-shadow: 0 0 0 0 rgba(18, 179, 179, 0); }
+}
+.mm-ls-flash { animation: mm-ls-flash 2.2s ease-out; border-radius: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-ls-flash { animation: none; }
+}
+
+[data-theme="dark"] .mm-ls-quickstart {
+  background: rgba(18, 179, 179, 0.1);
+  border-color: rgba(18, 179, 179, 0.35);
+}
+[data-theme="dark"] .mm-ls-qs-lead { color: #cbd5e1; }
+[data-theme="dark"] .mm-ls-qs-lead strong { color: #e2e8f0; }
+.mm-ls-first-run .mm-ls-intro { display: none; }
+
+/* --- /css/dashboard-mobile.css --- */
+/* ============================================
+   DASHBOARD MOBILE POLISH — MATHMATIX AI
+   Shared mobile improvements for Parent, Teacher, and Admin dashboards.
+   Link this AFTER the embedded <style> block in each dashboard page.
+   ============================================ */
+
+/* --- 1. GLOBAL TOUCH & INTERACTION --- */
+
+button,
+.btn,
+.tab-btn,
+.nav-btn,
+a {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+    touch-action: manipulation;
+}
+
+/* Note: touch-action: manipulation is applied only to interactive elements
+   (buttons, links, tabs) above — NOT to * wildcard, which blocks scrolling
+   on nested containers and causes "stuck scroll" on mobile. */
+
+/* --- 2. SAFE AREA INSETS (notched devices) --- */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+    body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+/* --- 3. HEADER REFINEMENTS (<=968px) --- */
+
+@media (max-width: 968px) {
+    .main-header {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-header-content {
+        padding: 10px 16px;
+        gap: 12px;
+    }
+
+    /* Compact logo */
+    .logo-container {
+        width: 36px;
+        height: 36px;
+    }
+
+    .main-logo {
+        height: 36px;
+    }
+
+    .brand-name {
+        font-size: 1.15em;
+        letter-spacing: 0.5px;
+    }
+
+    .brand-tagline {
+        display: none;
+    }
+
+    /* Hide mode indicator on mobile — role is obvious from the page */
+    .mode-indicator {
+        display: none;
+    }
+
+    /* Compact nav buttons */
+    .main-header-nav {
+        gap: 8px;
+    }
+
+    .nav-btn {
+        padding: 8px 14px;
+        font-size: 0.85em;
+        border-radius: 10px;
+        transition: transform 100ms ease, background 150ms ease;
+    }
+
+    .nav-btn:hover {
+        transform: none;
+    }
+
+    .nav-btn:active {
+        transform: scale(0.95);
+    }
+}
+
+@media (max-width: 768px) {
+    .main-header-content {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .logo-container {
+        width: 32px;
+        height: 32px;
+    }
+
+    .main-logo {
+        height: 32px;
+    }
+
+    .brand-name {
+        font-size: 1.05em;
+    }
+
+    .brand-section {
+        gap: 10px;
+    }
+
+    .nav-btn {
+        padding: 7px 12px;
+        font-size: 0.8em;
+        border-radius: 8px;
+    }
+
+    /* Hide logout text, show icon only */
+    .nav-btn .fa-sign-out-alt {
+        margin-right: 0;
+    }
+}
+
+/* --- 4. CONTENT AREA REFINEMENTS (<=968px) --- */
+
+@media (max-width: 968px) {
+    /* Single-column content with better padding */
+    .center-content {
+        padding: 16px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Prevent scroll chaining on nested scrollable containers */
+    .table-scroll-container,
+    .chat-display-widget,
+    .smart-alerts-container,
+    .drawer-content,
+    .modal-content {
+        overscroll-behavior: contain;
+    }
+
+    /* Hide footer on mobile — saves space */
+    .main-footer {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .center-content {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .center-content {
+        padding: 8px;
+    }
+}
+
+/* --- 5. PANEL / CARD REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .dashboard-panel {
+        padding: 16px;
+        margin-bottom: 14px;
+        border-radius: 14px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        border-color: rgba(0, 0, 0, 0.06);
+    }
+
+    .dashboard-panel-header {
+        font-size: 1em;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-panel {
+        padding: 14px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+    }
+}
+
+/* --- 6. BUTTON REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .btn {
+        padding: 10px 18px;
+        font-size: 0.9em;
+        border-radius: 10px;
+        min-height: 44px;
+        transition: transform 100ms ease, background 200ms ease;
+    }
+
+    .btn:hover {
+        transform: none;
+    }
+
+    .btn:active {
+        transform: scale(0.97);
+    }
+
+    .main-action-btn {
+        border-radius: 12px;
+        min-height: 46px;
+        font-size: 0.9em;
+    }
+}
+
+/* --- 7. FORM REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .form-group input,
+    .form-group select,
+    .form-group textarea,
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 12px 14px;
+        border-radius: 10px;
+        min-height: 44px;
+        border-width: 1.5px;
+        transition: border-color 200ms ease, box-shadow 200ms ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus,
+    input:focus,
+    select:focus,
+    textarea:focus {
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .form-group label {
+        font-size: 0.85em;
+        margin-bottom: 6px;
+    }
+}
+
+/* --- 8. TABLE REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .table-scroll-container {
+        border-radius: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .user-table th,
+    .user-table td {
+        padding: 10px 8px;
+        font-size: 0.85em;
+    }
+
+    .user-table th {
+        font-size: 0.75em;
+        letter-spacing: 0.3px;
+    }
+}
+
+/* --- 9. TAB REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .dashboard-tabs {
+        gap: 6px;
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+        border-bottom-width: 1px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .dashboard-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-btn {
+        padding: 10px 16px;
+        font-size: 0.85em;
+        border-radius: 10px 10px 0 0;
+        min-height: 40px;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: color 150ms ease, background 150ms ease;
+    }
+
+    .tab-btn:active {
+        transform: scale(0.97);
+    }
+}
+
+/* --- 10. MODAL REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95% !important;
+        max-width: 95% !important;
+        margin: 10px auto;
+        padding: 20px 16px;
+        border-radius: 16px;
+        max-height: 88vh;
+    }
+
+    .modal-close-button {
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        font-size: 1.2em;
+    }
+
+    .modal-section h3 {
+        font-size: 1.05em;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* --- 11. CHILD CARD REFINEMENTS (Parent Dashboard) --- */
+
+@media (max-width: 768px) {
+    .child-card {
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+    }
+
+    .child-card:hover {
+        transform: none;
+    }
+
+    .child-card:active {
+        transform: scale(0.99);
+    }
+}
+
+/* --- 12. CHAT WIDGET REFINEMENTS (Parent Dashboard) --- */
+
+@media (max-width: 768px) {
+    .parent-chat-widget {
+        padding: 16px !important;
+        border-width: 2px !important;
+        border-radius: 14px;
+    }
+
+    .chat-display-widget {
+        min-height: 200px;
+        max-height: 300px;
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .chat-input-widget textarea {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 12px;
+        border-radius: 10px;
+        min-height: 80px;
+    }
+
+    .helper-btn {
+        padding: 8px 12px;
+        font-size: 0.8em;
+        border-radius: 18px;
+    }
+
+    .helper-btn:hover {
+        transform: none;
+    }
+
+    .helper-btn:active {
+        transform: scale(0.95);
+    }
+}
+
+/* --- 13. RESOURCE CARD REFINEMENTS (Teacher Dashboard) --- */
+
+@media (max-width: 768px) {
+    .resource-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .resource-card:hover {
+        transform: none;
+    }
+
+    .resource-icon {
+        font-size: 36px;
+        width: 44px;
+    }
+
+    .resource-info h4 {
+        font-size: 1em;
+    }
+}
+
+/* --- 14. STAT CARD REFINEMENTS --- */
+
+@media (max-width: 768px) {
+    .stat-card {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .stat-value,
+    .stat-number {
+        font-size: 1.3em;
+    }
+
+    .stat-label {
+        font-size: 0.78em;
+    }
+}
+
+/* --- 15. MOBILE BOTTOM NAV (shared across all dashboards) --- */
+
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    z-index: 200;
+    padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+    justify-content: space-around;
+}
+
+.mobile-nav-btn {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: #7f8c8d;
+    font-size: 0.65em;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.mobile-nav-btn i {
+    font-size: 1.6em;
+}
+
+.mobile-nav-btn.active {
+    color: #7f8c8d; /* overridden per-dashboard via theme color */
+}
+
+.mobile-badge {
+    position: absolute;
+    top: 0;
+    right: 4px;
+    background: #e74c3c;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 10px;
+    min-width: 16px;
+    text-align: center;
+}
+
+@media (max-width: 968px) {
+    .mobile-bottom-nav {
+        display: flex;
+        box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.06);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.97);
+    }
+
+    /* Add bottom padding to body so content isn't hidden behind bottom nav */
+    .center-content {
+        padding-bottom: 80px;
+    }
+
+    .mobile-nav-btn {
+        font-size: 0.6em;
+        padding: 8px 12px;
+        transition: color 150ms ease;
+        min-height: 44px;
+    }
+
+    .mobile-nav-btn i {
+        font-size: 1.5em;
+    }
+
+    .mobile-nav-btn:active {
+        transform: scale(0.92);
+    }
+}
+
+/* --- 16. MOBILE DRAWERS (shared across all dashboards) --- */
+
+.mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 60px;
+    background: white;
+    z-index: 300;
+    flex-direction: column;
+    animation: mobileDrawerSlideUp 0.3s ease;
+}
+
+.mobile-drawer.open {
+    display: flex;
+}
+
+/* Legacy class support for teacher dashboard */
+.mobile-alerts-drawer,
+.mobile-actions-drawer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 60px;
+    background: white;
+    z-index: 300;
+    flex-direction: column;
+    animation: mobileDrawerSlideUp 0.3s ease;
+}
+
+.mobile-alerts-drawer.open,
+.mobile-actions-drawer.open {
+    display: flex;
+}
+
+@keyframes mobileDrawerSlideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
+    flex-shrink: 0;
+}
+
+.drawer-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+    color: #2c3e50;
+}
+
+.drawer-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    color: #7f8c8d;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mobile-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.mobile-action-btn {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: #2c3e50;
+    transition: all 0.2s;
+}
+
+.mobile-action-btn i {
+    font-size: 1.5em;
+}
+
+@media (max-width: 968px) {
+    .mobile-drawer,
+    .mobile-alerts-drawer,
+    .mobile-actions-drawer {
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .mobile-actions-grid {
+        gap: 10px;
+    }
+
+    .mobile-action-btn {
+        border-radius: 12px;
+        min-height: 48px;
+        font-size: 0.9em;
+        transition: transform 100ms ease;
+    }
+
+    .mobile-action-btn:active {
+        transform: scale(0.97);
+    }
+}
+
+/* --- Drawer section styling (for settings/forms inside drawers) --- */
+
+.drawer-section {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.drawer-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.drawer-section-title {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.drawer-section-title i {
+    font-size: 1.1em;
+}
+
+/* --- 17. ROLE SWITCHER --- */
+
+@media (max-width: 768px) {
+    .role-switcher-select {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 6px 8px;
+        border-radius: 8px;
+        min-height: 36px;
+    }
+}
+
+/* --- 18. INVITE CODE & LINK CODE (Parent Dashboard) --- */
+
+@media (max-width: 768px) {
+    #invite-code-output {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    #invite-code-output .code-display {
+        font-size: 1.1em;
+        padding: 10px;
+        border-radius: 8px;
+    }
+}
+
+/* --- 19. ACCESSIBILITY — FOCUS STATES --- */
+
+*:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+button:focus-visible,
+.btn:focus-visible,
+.tab-btn:focus-visible,
+.nav-btn:focus-visible,
+a:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+}
+
+/* --- 20. PRINT — HIDE MOBILE-ONLY ELEMENTS --- */
+
+@media print {
+    .main-header,
+    .main-footer,
+    .mobile-bottom-nav,
+    .mobile-drawer,
+    .mobile-alerts-drawer,
+    .mobile-actions-drawer,
+    .modal-overlay {
+        display: none !important;
+    }
+}
+
+/* --- /css/demo-mode.css --- */
+/* css/demo-mode.css — Persistent demo mode banner and protections */
+
+/* Demo mode banner — fixed at top of viewport */
+.demo-banner {
+  display: none; /* Hidden by default, shown via JS when in demo mode */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+  line-height: 1.4;
+}
+
+.demo-banner.visible {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.demo-banner-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.demo-banner-text i {
+  font-size: 0.875rem;
+  opacity: 0.85;
+}
+
+.demo-banner-label {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.demo-banner-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.demo-banner-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.demo-banner-btn.reset {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+.demo-banner-btn.reset:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.demo-banner-btn.exit {
+  background: rgba(255, 255, 255, 0.9);
+  color: #6D28D9;
+}
+.demo-banner-btn.exit:hover {
+  background: #fff;
+}
+
+.demo-banner-btn.switch {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+.demo-banner-btn.switch:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Push page content down when banner is visible */
+body.demo-mode {
+  padding-top: 40px;
+}
+
+/* Adjust sticky header when demo banner is showing */
+body.demo-mode .landing-header,
+body.demo-mode .dashboard-header,
+body.demo-mode .chat-header {
+  top: 40px;
+}
+
+/* Disable certain actions for demo accounts */
+body.demo-mode .settings-password-section,
+body.demo-mode .settings-email-section,
+body.demo-mode .settings-delete-account {
+  opacity: 0.5;
+  pointer-events: none;
+  position: relative;
+}
+
+body.demo-mode .settings-password-section::after,
+body.demo-mode .settings-email-section::after,
+body.demo-mode .settings-delete-account::after {
+  content: 'Not available in demo mode';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 0.8rem;
+  color: var(--clr-text-dim, #5B6876);
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .demo-banner {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+
+  .demo-banner-actions {
+    gap: 4px;
+  }
+
+  .demo-banner-btn {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+
+  body.demo-mode {
+    padding-top: 36px;
+  }
+}

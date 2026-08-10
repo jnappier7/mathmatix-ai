@@ -1,0 +1,1753 @@
+/* --- /css/design-system.css --- */
+/* ============================================================
+   design-system.css — Mathmatix design tokens (single source of truth)
+
+   The canonical palette, spacing, radius, shadow and motion scale
+   for the product. Born from the chat redesign (`cr-mode`); now the
+   shared foundation every page is being migrated onto.
+
+   Tokens keep the `--cr-` prefix for continuity with the chat code
+   that already consumes them. Linking this file on a page is inert
+   until those variables are referenced — safe to add anywhere.
+
+   Load order: link this BEFORE chat-redesign.css / page styles.
+   ============================================================ */
+
+:root {
+  /* ---- Background layers (darkest → lightest) ---- */
+  --cr-bg-0: #0B0F1A;          /* app backdrop / stage */
+  --cr-bg-1: #121829;          /* raised surface */
+  --cr-bg-2: #1B2238;          /* input wells, inset surfaces */
+  --cr-bg-panel: #161B2C;      /* cards / panels */
+
+  /* ---- Surface gradient (hero / feature panels) ---- */
+  --cr-panel-grad-from: #1A1F35;
+  --cr-panel-grad-to:   #0E1322;
+
+  /* ---- Chat bubbles ---- */
+  --cr-bubble-ai: #1F2742;
+  --cr-bubble-user: #2A2255;
+  --cr-bubble-user-accent: #7C6BFF;
+
+  /* ---- Text ---- */
+  --cr-text: #E6E9F2;          /* primary */
+  --cr-text-dim: #9AA3B8;      /* secondary / captions */
+
+  /* ---- Accent (purple) ---- */
+  --cr-accent: #8B7BFF;
+  --cr-accent-strong: #6C5CE7;
+  --cr-accent-grad: linear-gradient(135deg, var(--cr-accent), var(--cr-accent-strong));
+
+  /* ---- Semantic status ---- */
+  --cr-success: #2ECC71;       /* live dot, correct, positive */
+  --cr-warning: #FFD66B;       /* encouragement, caution */
+  --cr-danger:  #FF5C7A;       /* errors, end-session */
+  --cr-info:    #5BA8FF;       /* neutral callouts */
+  --cr-heart:   #E879F9;       /* delight / affection accent */
+
+  /* ---- Lines & frosted fills ---- */
+  --cr-border: rgba(255, 255, 255, 0.08);
+  --cr-border-strong: rgba(255, 255, 255, 0.18);
+  --cr-pill-bg: rgba(255, 255, 255, 0.06);
+  --cr-pill-bg-hover: rgba(255, 255, 255, 0.10);
+  --cr-scrim: rgba(11, 15, 26, 0.92);
+
+  /* ---- Radius scale ---- */
+  --cr-radius-sm: 10px;
+  --cr-radius-md: 14px;
+  --cr-radius-lg: 18px;
+  --cr-radius-xl: 22px;
+  --cr-radius-pill: 999px;
+
+  /* ---- Spacing scale (4px base) ---- */
+  --cr-space-1: 4px;
+  --cr-space-2: 8px;
+  --cr-space-3: 12px;
+  --cr-space-4: 16px;
+  --cr-space-5: 24px;
+  --cr-space-6: 32px;
+
+  /* ---- Elevation ---- */
+  --cr-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.30);
+  --cr-shadow-md: 0 8px 20px rgba(0, 0, 0, 0.38);
+  --cr-shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.45);
+
+  /* ---- Motion ---- */
+  --cr-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --cr-transition-fast: 0.15s var(--cr-ease);
+  --cr-transition: 0.25s var(--cr-ease);
+
+  /* ---- Layout widths (chat stage) ---- */
+  --cr-hero-w: 320px;
+  --cr-hint-w: 260px;          /* legacy alias of the right slot */
+  --cr-side-w: 320px;          /* workspace / transcript slot */
+}
+
+/* ============================================================
+   Shared celebration primitives (Phase C).
+
+   Any element can opt into a brief shake by toggling
+   .cr-streak-shake. engagement-widgets.js applies this to all
+   visible streak chips (#streak-counter, .mpc-streak,
+   #cr-streak-pill) whenever the streak goes up, then removes the
+   class after the animation completes. Respects reduced-motion.
+   ============================================================ */
+.cr-streak-shake {
+  animation: cr-streak-shake 0.6s var(--cr-ease) 1;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+@keyframes cr-streak-shake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  12%      { transform: translateX(-3px) rotate(-3deg); }
+  28%      { transform: translateX(3px)  rotate(3deg);  }
+  44%      { transform: translateX(-2px) rotate(-2deg); }
+  60%      { transform: translateX(2px)  rotate(2deg);  }
+  76%      { transform: translateX(-1px) rotate(-1deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cr-streak-shake { animation: none; }
+}
+
+/* ----- <XP> ceremony caption (Phase C) -----
+   xpTagHandler.js floats this over the chat when the tutor emits an
+   <XP reason="..."/> tag. Pure ceremony — does not award XP. Sized
+   variants nudge the type-scale; the gold gradient + glow matches the
+   verify-card CLEAN SOLUTION! eyebrow so the two celebrations read as
+   one visual family. */
+.cr-xp-caption {
+  position: fixed;
+  left: 50%;
+  top: 28%;
+  transform: translate(-50%, -8px);
+  z-index: 10001;
+  padding: 10px 22px;
+  border-radius: var(--cr-radius-pill);
+  background: linear-gradient(135deg, #FFD66B 0%, #F0A800 100%);
+  color: #1B2238;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-align: center;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32),
+              0 0 0 1px rgba(255, 214, 107, 0.5),
+              0 0 28px 4px rgba(255, 214, 107, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s var(--cr-ease), transform 0.28s var(--cr-ease);
+  max-width: 85vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cr-xp-caption--small  { font-size: 13px; padding: 7px 16px; }
+.cr-xp-caption--medium { font-size: 15px; }
+.cr-xp-caption--large  { font-size: 17px; padding: 12px 26px; }
+.cr-xp-caption--enter {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.cr-xp-caption--exit {
+  opacity: 0;
+  transform: translate(-50%, -6px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cr-xp-caption { transition: opacity 0.2s linear; }
+  .cr-xp-caption--enter, .cr-xp-caption--exit { transform: translate(-50%, 0); }
+}
+
+/* ============================================================
+   Light theme — opt-in via <html data-theme="light"> on pages
+   that want a daylight surface (login, dashboards, marketing).
+   Chat keeps the dark default; this override never reaches it
+   unless data-theme="light" is set on the document.
+
+   Token NAMES stay the same so components are theme-agnostic.
+   ============================================================ */
+[data-theme="light"] {
+  /* Surfaces shift from deep navy → paper-warm whites. The
+     ramp keeps the same relationship (0 darkest stage → panel
+     raised) but inverted: 0 is now the page backdrop, panel
+     is the elevated card. */
+  --cr-bg-0: #F5F7FB;
+  --cr-bg-1: #FFFFFF;
+  --cr-bg-2: #EEF1F7;
+  --cr-bg-panel: #FFFFFF;
+
+  --cr-panel-grad-from: #FFFFFF;
+  --cr-panel-grad-to:   #F2F4FA;
+
+  /* Bubbles tuned for light: AI gets a soft neutral, the user
+     keeps the brand purple but at a tint that reads on white. */
+  --cr-bubble-ai: #F1F3F9;
+  --cr-bubble-user: #EDE9FF;
+  --cr-bubble-user-accent: #6C5CE7;
+
+  /* Text inverts. Dim is a true mid-gray, not a washed purple. */
+  --cr-text: #18202B;
+  --cr-text-dim: #5B6876;
+
+  /* Accent darkens just enough to keep AA contrast on white.
+     The gradient also rotates slightly so it doesn't look flat. */
+  --cr-accent: #6C5CE7;
+  --cr-accent-strong: #4D3DD1;
+  --cr-accent-grad: linear-gradient(135deg, var(--cr-accent), var(--cr-accent-strong));
+
+  /* Semantic colors get richer saturation since they're sitting
+     on white instead of glowing on black. */
+  --cr-success: #16A34A;
+  --cr-warning: #D97706;
+  --cr-danger:  #DC2626;
+  --cr-info:    #2563EB;
+  --cr-heart:   #C026D3;
+
+  /* Lines on light pages: subtle gray, not translucent white. */
+  --cr-border: rgba(15, 23, 42, 0.08);
+  --cr-border-strong: rgba(15, 23, 42, 0.16);
+  --cr-pill-bg: rgba(15, 23, 42, 0.04);
+  --cr-pill-bg-hover: rgba(15, 23, 42, 0.07);
+  --cr-scrim: rgba(245, 247, 251, 0.92);
+
+  /* Shadows step down to a soft architectural ramp — heavy
+     drop-shadows from the dark theme would look bruised on
+     white. */
+  --cr-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --cr-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --cr-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.06);
+}
+
+/* --- /css/teacher-live-feed.css --- */
+/* ============================================
+   TEACHER LIVE FEED - Modern Activity Monitor
+   Matches Mathmatix brand: Teal #12B3B3
+   ============================================ */
+
+/* Smart Alerts Panel */
+#smart-alerts-panel {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    max-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Live Feed Container */
+#live-feed-panel {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    max-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+}
+
+.live-feed-header {
+    background: linear-gradient(135deg, #12B3B3 0%, #0d8888 100%);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.live-feed-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.live-indicator {
+    width: 8px;
+    height: 8px;
+    background: #16C86D;
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.feed-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.feed-control-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.feed-control-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.feed-control-btn.active {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Filter Bar */
+.feed-filter-bar {
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: white;
+    border: 1px solid #dee2e6;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    background: #f1f3f5;
+}
+
+.filter-btn.active {
+    background: #12B3B3;
+    color: white;
+    border-color: #12B3B3;
+}
+
+/* Activity Feed */
+.activity-feed-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.activity-item {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.activity-item:hover {
+    border-color: #12B3B3;
+    box-shadow: 0 2px 8px rgba(18, 179, 179, 0.1);
+    transform: translateY(-1px);
+}
+
+.activity-item.struggling {
+    border-left: 4px solid #FFC24B;
+    background: #fffbf5;
+}
+
+.activity-item.alert-high {
+    border-left: 4px solid #FF4E4E;
+    background: #fff5f5;
+}
+
+.activity-item.milestone {
+    border-left: 4px solid #16C86D;
+    background: #f0fdf4;
+}
+
+.activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.student-name {
+    font-weight: 600;
+    color: #18202B;
+    font-size: 15px;
+}
+
+.activity-time {
+    font-size: 12px;
+    color: #5B6876;
+}
+
+.activity-summary {
+    color: #18202B;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.activity-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #5B6876;
+}
+
+.meta-badge.topic {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.meta-badge.problems {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.meta-badge.accuracy {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.meta-badge.struggling {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.meta-badge i {
+    font-size: 11px;
+}
+
+/* Alert Badge */
+.alert-badge {
+    background: #FF4E4E;
+    color: white;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+/* Empty State */
+.feed-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #5B6876;
+}
+
+.feed-empty-state i {
+    font-size: 48px;
+    color: #dee2e6;
+    margin-bottom: 16px;
+}
+
+/* Loading State */
+.feed-loading {
+    text-align: center;
+    padding: 20px;
+    color: #5B6876;
+}
+
+.feed-loading::before {
+    content: "⟳";
+    display: block;
+    font-size: 32px;
+    color: #12B3B3;
+    animation: spin 1s linear infinite;
+    margin-bottom: 8px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Status indicators */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.status-dot.active {
+    background: #16C86D;
+}
+
+.status-dot.idle {
+    background: #FFC24B;
+}
+
+.status-dot.completed {
+    background: #5B6876;
+}
+
+/* Scrollbar Styling */
+.activity-feed-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.activity-feed-container::-webkit-scrollbar-track {
+    background: #f1f3f5;
+}
+
+.activity-feed-container::-webkit-scrollbar-thumb {
+    background: #12B3B3;
+    border-radius: 3px;
+}
+
+.activity-feed-container::-webkit-scrollbar-thumb:hover {
+    background: #0d8888;
+}
+
+/* Alert Details Section */
+.alert-details {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+}
+
+.alert-details-header {
+    margin-bottom: 10px;
+    color: #18202B;
+    font-size: 14px;
+}
+
+.alert-details-header i {
+    color: #12B3B3;
+    margin-right: 6px;
+}
+
+.alert-detail-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border-left: 3px solid transparent;
+}
+
+.alert-detail-item.alert-struggle {
+    border-left-color: #FFC24B;
+    background: #fffbf5;
+}
+
+.alert-detail-item.alert-milestone {
+    border-left-color: #16C86D;
+    background: #f0fdf4;
+}
+
+.alert-detail-item.alert-info {
+    border-left-color: #1976d2;
+    background: #e3f2fd;
+}
+
+.alert-detail-item.acknowledged {
+    opacity: 0.6;
+    background: #f1f3f5;
+}
+
+.alert-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    font-size: 13px;
+    color: #18202B;
+}
+
+.alert-content i {
+    font-size: 14px;
+    color: #5B6876;
+}
+
+.acknowledge-btn {
+    background: #12B3B3;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+
+.acknowledge-btn:hover {
+    background: #0d8888;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(18, 179, 179, 0.2);
+}
+
+.acknowledged-label {
+    font-size: 12px;
+    color: #16C86D;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.activity-item.expanded {
+    background: #fafbfc;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .feed-filter-bar {
+        flex-direction: column;
+    }
+
+    .activity-meta {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .alert-detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .acknowledge-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* --- /css/teacher-live-monitor.css --- */
+/* ============================================
+   LIVE CLASS MONITOR - Teacher dashboard styles
+   Real-time student grid + spy modal
+   ============================================ */
+
+/* ─── MONITOR TAB LAYOUT ─────────────────────────────────────────────────── */
+
+.monitor-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.monitor-controls select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.monitor-controls .btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.monitor-controls .btn-activate {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #fff;
+}
+.monitor-controls .btn-activate:hover {
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  transform: translateY(-1px);
+}
+
+.monitor-controls .btn-deactivate {
+  background: linear-gradient(135deg, #27ae60, #16a085);
+  color: #fff;
+}
+.monitor-controls .btn-deactivate:hover {
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Lock Status Indicator */
+.monitor-lock-status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.monitor-lock-status.active {
+  background: #fce4e4;
+  color: #e74c3c;
+  animation: pulse-glow 2s infinite;
+}
+.monitor-lock-status.inactive {
+  background: #e8f5e9;
+  color: #27ae60;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(231, 76, 60, 0); }
+}
+
+/* ─── LOCK SETTINGS PANEL ─────────────────────────────────────────────────── */
+
+.lock-settings-panel {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.lock-settings-panel h4 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.lock-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.lock-setting-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #5b6876;
+}
+
+.lock-setting-item input[type="checkbox"] {
+  accent-color: #27ae60;
+  width: 16px;
+  height: 16px;
+}
+
+.lock-setting-item input[type="text"],
+.lock-setting-item input[type="number"] {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  width: 60px;
+}
+
+.lock-setting-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.lock-setting-item.full-width input[type="text"] {
+  flex: 1;
+  width: auto;
+}
+
+/* ─── COUNTERS ROW ────────────────────────────────────────────────────────── */
+
+#monitor-counters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.counter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.counter-chip.active { background: #e8f5e9; color: #27ae60; }
+.counter-chip.away { background: #fce4e4; color: #e74c3c; }
+.counter-chip.offline { background: #f5f5f5; color: #95a5a6; }
+.counter-chip.violations { background: #fff3cd; color: #856404; }
+
+.counter-chip i { font-size: 10px; }
+
+/* ─── STUDENT GRID ────────────────────────────────────────────────────────── */
+
+#monitor-student-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.monitor-student-card {
+  background: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.monitor-student-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Status-based border colors */
+.monitor-student-card.status-active { border-color: #16C86D; }
+.monitor-student-card.status-idle { border-color: #f39c12; }
+.monitor-student-card.status-tab-away { border-color: #e74c3c; border-style: dashed; }
+.monitor-student-card.status-off-task { border-color: #e74c3c; background: #fff5f5; }
+.monitor-student-card.status-disconnected { border-color: #bdc3c7; opacity: 0.7; }
+.monitor-student-card.status-offline { border-color: #ecf0f1; opacity: 0.5; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #27ae60, #16a085);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.student-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.student-status {
+  font-size: 12px;
+  color: #7f8c8d;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.student-status i { font-size: 8px; }
+
+.card-body {
+  font-size: 12px;
+  color: #5b6876;
+}
+
+.activity-label,
+.message-preview,
+.progress-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.activity-label i,
+.message-preview i,
+.progress-label i {
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+}
+
+.activity-label.muted { color: #bdc3c7; }
+
+.message-preview {
+  font-style: italic;
+  color: #7f8c8d;
+}
+
+.card-violation {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: #fff3cd;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #856404;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.violation-badge {
+  background: #f39c12;
+  color: #fff;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.violation-badge.critical {
+  background: #e74c3c;
+  animation: pulse-glow 1.5s infinite;
+}
+
+/* Empty state */
+.monitor-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #95a5a6;
+}
+
+.monitor-empty i {
+  font-size: 48px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* ─── SPY MODAL ───────────────────────────────────────────────────────────── */
+
+#spy-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.6);
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.spy-modal-inner {
+  background: #fff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: scaleIn 0.2s ease;
+}
+
+.spy-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #7f8c8d;
+  cursor: pointer;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.spy-close:hover {
+  background: #f0f0f0;
+  color: #2c3e50;
+}
+
+.spy-content {
+  padding: 24px;
+}
+
+.spy-loading {
+  text-align: center;
+  padding: 60px;
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+.spy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.spy-student-info h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.spy-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #7f8c8d;
+}
+
+.spy-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.spy-status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.spy-status-badge.status-active { background: #e8f5e9; color: #27ae60; }
+.spy-status-badge.status-tab-away { background: #fce4e4; color: #e74c3c; }
+.spy-status-badge.status-idle { background: #fff8e1; color: #f39c12; }
+.spy-status-badge.status-disconnected,
+.spy-status-badge.status-offline { background: #f5f5f5; color: #95a5a6; }
+
+.spy-session-info {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
+.spy-session-info h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.spy-session-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #5b6876;
+  flex-wrap: wrap;
+}
+
+.spy-summary {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #5b6876;
+  line-height: 1.5;
+  border-left: 3px solid #27ae60;
+}
+
+.spy-no-session {
+  padding: 16px;
+  text-align: center;
+  color: #95a5a6;
+  font-size: 14px;
+}
+
+/* Live Chat Feed */
+.spy-chat-feed {
+  margin-bottom: 16px;
+}
+
+.spy-chat-feed h4 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.spy-messages {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fafafa;
+}
+
+.spy-message {
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.spy-message.user {
+  background: #e3f2fd;
+  margin-left: 20px;
+}
+
+.spy-message.assistant {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  margin-right: 20px;
+}
+
+.spy-message-role {
+  font-weight: 600;
+  font-size: 11px;
+  color: #7f8c8d;
+  text-transform: uppercase;
+}
+
+.spy-message-time {
+  float: right;
+  font-size: 11px;
+  color: #bdc3c7;
+}
+
+.spy-message-text {
+  margin-top: 4px;
+  line-height: 1.4;
+  color: #2c3e50;
+  word-break: break-word;
+}
+
+.spy-empty {
+  text-align: center;
+  padding: 24px;
+  color: #bdc3c7;
+}
+
+/* Violations List */
+.spy-violations {
+  margin-top: 16px;
+}
+
+.spy-violations h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #e74c3c;
+}
+
+.spy-violations-list {
+  border: 1px solid #fce4e4;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.spy-violation-item {
+  padding: 8px 14px;
+  border-bottom: 1px solid #fce4e4;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+}
+
+.spy-violation-item:last-child { border-bottom: none; }
+
+.violation-type {
+  background: #fff3cd;
+  color: #856404;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.violation-time {
+  color: #95a5a6;
+  font-size: 11px;
+}
+
+.violation-detail {
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+/* ─── TOAST ───────────────────────────────────────────────────────────────── */
+
+.monitor-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10005;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideInRight 0.3s ease;
+}
+
+.monitor-toast.success { background: #e8f5e9; color: #27ae60; border: 1px solid #c8e6c9; }
+.monitor-toast.error { background: #fce4e4; color: #e74c3c; border: 1px solid #f8d7d7; }
+.monitor-toast.warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+.monitor-toast.info { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
+
+.monitor-toast.fade-out {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .monitor-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .monitor-controls select {
+    min-width: unset;
+    width: 100%;
+  }
+
+  #monitor-student-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .spy-modal-inner {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .spy-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .spy-session-meta {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  #monitor-counters {
+    flex-direction: column;
+  }
+}
+
+/* --- /css/impersonation-banner.css --- */
+/* Impersonation Indicator Styles
+ * Subtle teal glow + small floating pill when viewing as another user
+ */
+
+/* Teal glow effect on body when impersonating */
+body.impersonation-active {
+  box-shadow: inset 0 0 0 3px rgba(18, 179, 179, 0.6);
+}
+
+/* Target common chat containers for the glow effect */
+body.impersonation-active .chat-container,
+body.impersonation-active .main-content,
+body.impersonation-active #chat-area,
+body.impersonation-active .page-layout {
+  box-shadow: inset 0 0 20px rgba(18, 179, 179, 0.15);
+}
+
+/* Small floating pill indicator */
+.impersonation-pill {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  background: linear-gradient(135deg, #12B3B3 0%, #0d9999 100%);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 12px rgba(18, 179, 179, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: impersonation-fade-in 0.3s ease-out;
+}
+
+.impersonation-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(18, 179, 179, 0.5);
+}
+
+@keyframes impersonation-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.impersonation-pill__icon {
+  font-size: 14px;
+}
+
+.impersonation-pill__text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.impersonation-pill__name {
+  font-weight: 600;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.impersonation-pill__exit {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.impersonation-pill__exit:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Expanded state on hover - show more details */
+.impersonation-pill__details {
+  display: none;
+  font-size: 11px;
+  opacity: 0.85;
+  margin-left: 4px;
+}
+
+.impersonation-pill:hover .impersonation-pill__details {
+  display: inline;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .impersonation-pill {
+    bottom: 80px; /* Above mobile nav */
+    left: 10px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .impersonation-pill__name {
+    max-width: 80px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .impersonation-pill {
+    animation: none;
+  }
+}
+
+/* --- /css/transcript-viewer.css --- */
+/* public/css/transcript-viewer.css
+   Transcript viewer modal: Messages-app-style timeline that teachers can use
+   to audit a tutor session turn-by-turn. Styled to match the existing teacher
+   dashboard tokens (green primary, soft shadows, 8–12px radii). */
+
+.transcript-viewer-modal .modal-content {
+  max-width: 960px;
+  width: calc(100vw - 40px);
+  max-height: 90vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.transcript-viewer-header {
+  padding: 20px 48px 16px 24px;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #e8f5e9 0%, #f0fdf4 100%);
+}
+
+.transcript-viewer-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.25em;
+  color: #16a085;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.transcript-viewer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 0.85em;
+  color: #5B6876;
+}
+
+.transcript-viewer-meta span i {
+  margin-right: 4px;
+  color: #27ae60;
+}
+
+.transcript-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  border-bottom: 1px solid #f1f1f1;
+  background: #fafbfc;
+  font-size: 0.85em;
+  color: #5B6876;
+}
+
+.transcript-viewer-toolbar .transcript-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.transcript-viewer-toolbar .transcript-toggle:hover {
+  background: #eef7f1;
+}
+
+.transcript-viewer-toolbar input[type="checkbox"] {
+  accent-color: #27ae60;
+  cursor: pointer;
+}
+
+.transcript-viewer-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 20px 24px 24px 24px;
+  background: #f8f9fa;
+}
+
+.transcript-empty {
+  text-align: center;
+  color: #95a5a6;
+  font-style: italic;
+  padding: 40px 20px;
+}
+
+.transcript-loading {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 40px 20px;
+}
+
+.transcript-loading i {
+  margin-right: 6px;
+}
+
+.transcript-error {
+  text-align: center;
+  color: #c0392b;
+  padding: 20px;
+  background: #fdecea;
+  border-radius: 8px;
+}
+
+/* Timeline layout
+   Each turn is a row with a bubble column and a reasoning column. The
+   reasoning column renders only when the toggle is on and only for tutor
+   turns; student turns never have reasoning. */
+
+.transcript-turn {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.transcript-turn.with-reasoning {
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 12px;
+}
+
+.transcript-bubble {
+  max-width: 78%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  line-height: 1.45;
+  font-size: 0.95em;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.transcript-bubble.student {
+  background: #27ae60;
+  color: white;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+
+.transcript-bubble.tutor {
+  background: #ffffff;
+  color: #2c3e50;
+  margin-right: auto;
+  border: 1px solid #e9ecef;
+  border-bottom-left-radius: 4px;
+}
+
+.transcript-bubble.system {
+  background: #fff7e6;
+  color: #8a6d3b;
+  border: 1px solid #ffe5b4;
+  margin: 0 auto;
+  max-width: 90%;
+  font-style: italic;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+.transcript-bubble-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 0.72em;
+  opacity: 0.8;
+}
+
+.transcript-bubble.student .transcript-bubble-meta {
+  color: rgba(255, 255, 255, 0.9);
+  justify-content: flex-end;
+}
+
+.transcript-bubble.tutor .transcript-bubble-meta {
+  color: #7f8c8d;
+}
+
+.transcript-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92em;
+}
+
+.transcript-chip.correct {
+  background: rgba(22, 200, 109, 0.15);
+  color: #16a085;
+}
+
+.transcript-chip.incorrect {
+  background: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+.transcript-chip.skipped {
+  background: rgba(149, 165, 166, 0.2);
+  color: #5B6876;
+}
+
+.transcript-chip.reaction {
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+}
+
+.transcript-bubble.student .transcript-chip {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+/* Flag button on tutor turns. Muted by default so it doesn't fight the
+   transcript; emerges on hover/focus so reviewers know it's interactive. */
+
+.transcript-flag-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(231, 76, 60, 0.25);
+  background: rgba(231, 76, 60, 0.06);
+  color: #c0392b;
+  font: inherit;
+  font-size: 0.92em;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.transcript-flag-btn:hover:not(:disabled) {
+  background: rgba(231, 76, 60, 0.15);
+  border-color: rgba(231, 76, 60, 0.45);
+}
+
+.transcript-flag-btn:focus-visible {
+  outline: 2px solid #e74c3c;
+  outline-offset: 2px;
+}
+
+.transcript-flag-btn.is-flagged,
+.transcript-flag-btn:disabled {
+  background: rgba(0, 0, 0, 0.04);
+  color: #7f8c8d;
+  border-color: rgba(0, 0, 0, 0.08);
+  cursor: default;
+}
+
+.transcript-flag-btn.is-flagged {
+  color: #16a085;
+  border-color: rgba(22, 160, 133, 0.35);
+  background: rgba(22, 160, 133, 0.08);
+}
+
+.transcript-flag-btn.is-submitting {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.transcript-flag-btn i {
+  font-size: 0.92em;
+}
+
+/* Brief highlight when the viewer is opened with scrollToTurnIndex (e.g.
+   admin clicked a flag row). The bubble pulses once so the reviewer's eye
+   lands on the flagged turn. */
+@keyframes transcript-turn-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.55); }
+  60%  { box-shadow: 0 0 0 8px rgba(231, 76, 60, 0.00); }
+  100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.00); }
+}
+
+.transcript-turn-highlight .transcript-bubble {
+  animation: transcript-turn-pulse 1.6s ease-out 2;
+  border-color: rgba(231, 76, 60, 0.55);
+}
+
+/* Reasoning column: the visible seam between tutor voice and pipeline
+   intent. Designed to be readable at a glance, not verbose. Shows a
+   placeholder when no reasoning data has been written yet (pre-permission-
+   architecture rollout); shows structured fields once the pipeline populates
+   conversation.reasoningTrace[] per spec §6. */
+
+.transcript-reasoning {
+  background: #ffffff;
+  border: 1px dashed #c9d2d8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.8em;
+  color: #5B6876;
+  align-self: start;
+}
+
+.transcript-reasoning-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #16a085;
+  margin-bottom: 6px;
+  font-size: 0.95em;
+}
+
+.transcript-reasoning-row {
+  display: flex;
+  gap: 6px;
+  padding: 3px 0;
+}
+
+.transcript-reasoning-row strong {
+  color: #2c3e50;
+  min-width: 64px;
+  font-weight: 600;
+}
+
+.transcript-reasoning-placeholder {
+  color: #95a5a6;
+  font-style: italic;
+}
+
+/* Conversation cards in the existing student detail modal: make them feel
+   clickable now that they open the transcript viewer. */
+
+.profile-conv-item[data-conversation-id] {
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.profile-conv-item[data-conversation-id]:hover {
+  background: #eef7f1;
+  transform: translateX(2px);
+}
+
+.profile-conv-item[data-conversation-id]:focus-visible {
+  outline: 2px solid #27ae60;
+  outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+  .transcript-turn.with-reasoning {
+    grid-template-columns: 1fr;
+  }
+  .transcript-reasoning {
+    margin-left: 0;
+  }
+  .transcript-viewer-modal .modal-content {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+  }
+}
