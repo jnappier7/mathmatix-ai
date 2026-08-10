@@ -18,6 +18,12 @@ const { getReviewSummary } = require('../utils/smartReviewQueue');
 const { resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
 
 const { anyRole } = require('../utils/roleQuery');
+const {
+    applyStudentSupportsUpdate,
+    anxietyLevelFromReport,
+    readStudentSupports,
+    grantedAbove
+} = require('../utils/studentSupports');
 // Helper function to generate a unique short code for student-to-parent linking
 async function generateUniqueStudentLinkCode() {
     let code;
@@ -966,6 +972,65 @@ router.get('/preview-class/:code', isAuthenticated, isStudent, async (req, res) 
     } catch (error) {
         console.error('Error previewing class:', error);
         res.status(500).json({ success: false, message: 'Server error.' });
+    }
+});
+
+// =====================================================
+// SELF-REPORTED LEARNING SUPPORTS
+//
+// The student's own account of what they need. Lowest tier: a school IEP wins,
+// then a parent's request, then this. Only accessibility switches are
+// self-reportable — utils/studentSupports.js is the whitelist and excludes the
+// two that change rigor rather than access.
+// =====================================================
+
+router.get('/supports', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const me = await User.findById(req.user._id)
+            .select('firstName learningProfile iepPlan').lean();
+        if (!me) return res.status(404).json({ message: 'Not found.' });
+
+        res.json({
+            success: true,
+            supports: readStudentSupports(me.learningProfile?.studentSupports),
+            alreadyGranted: grantedAbove(me.iepPlan, me.learningProfile?.familySupports),
+            updatedAt: me.learningProfile?.studentSupports?.updatedAt || null
+        });
+    } catch (error) {
+        console.error('Error fetching student supports:', error);
+        res.status(500).json({ message: 'Could not load your settings.' });
+    }
+});
+
+router.put('/supports', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const me = await User.findById(req.user._id);
+        if (!me) return res.status(404).json({ message: 'Not found.' });
+
+        if (!me.learningProfile) me.learningProfile = {};
+        if (!me.learningProfile.studentSupports) me.learningProfile.studentSupports = {};
+
+        applyStudentSupportsUpdate(me.learningProfile.studentSupports, req.body);
+
+        // Closes a dead path: learningProfile.mathAnxietyLevel is read by
+        // promptCompact, pipeline/suggestions, the teacher dashboard and the
+        // IEP recommender, but nothing outside demo seed data has ever written
+        // it — so it sat at its default of 5 and the "HIGH" branch could never
+        // fire for a real student. They are the right author for it.
+        const level = anxietyLevelFromReport(req.body);
+        if (level !== null) me.learningProfile.mathAnxietyLevel = level;
+
+        me.markModified('learningProfile');
+        await me.save();
+
+        res.json({
+            success: true,
+            supports: readStudentSupports(me.learningProfile.studentSupports),
+            updatedAt: me.learningProfile.studentSupports.updatedAt
+        });
+    } catch (error) {
+        console.error('Error saving student supports:', error);
+        res.status(500).json({ message: 'Could not save your settings.' });
     }
 });
 

@@ -45,11 +45,24 @@
     return fetch(url, Object.assign({ credentials: 'same-origin' }, opts || {}));
   }
 
+  // The three a parent can answer without a diagnosis, and the three that
+  // change the tutoring most visibly. Asked on first run so a new family gets
+  // a tutor tuned to their child in session one rather than whenever somebody
+  // happens to find this panel.
+  var QUICK_START = ['extendedTime', 'chunkedAssignments', 'mathAnxietySupport'];
+
+  var QUICK_QUESTIONS = {
+    extendedTime:       'Does it help if nobody rushes them?',
+    chunkedAssignments: 'Do they do better with a few problems at a time?',
+    mathAnxietySupport: 'Does math stress them out?'
+  };
+
   function Supports(root) {
     this.root = root;
     this.children = [];
     this.activeChildId = null;
     this.saveTimer = null;
+    this.showAllFor = {};   // childId -> skip the quick start for this child
   }
 
   Supports.prototype.mount = function () {
@@ -122,10 +135,68 @@
       });
   };
 
+  /* First run — three questions instead of nine switches.
+     updatedAt is null until a parent has saved something, which is the only
+     honest signal we have that this child was never set up. */
+  Supports.prototype.renderQuickStart = function () {
+    var self = this;
+    var d = this.state;
+    var body = this.root.querySelector('.mm-ls-body');
+    var name = esc(d.childName || 'your child');
+    // The quick start carries its own lead; the standing intro would just
+    // repeat it.
+    this.root.classList.add('mm-ls-first-run');
+
+    var rows = QUICK_START.map(function (key) {
+      // A switch the school already set is not a question — it is settled.
+      if (d.lockedBySchool[key] === true) return '';
+      var id = 'mm-qs-' + key;
+      return '' +
+        '<div class="mm-ls-row">' +
+          '<input type="checkbox" id="' + id + '" data-key="' + key + '" />' +
+          '<label for="' + id + '"><span class="mm-ls-label">' + esc(QUICK_QUESTIONS[key]) + '</span></label>' +
+        '</div>';
+    }).join('');
+
+    body.innerHTML =
+      '<div class="mm-ls-quickstart">' +
+        '<p class="mm-ls-qs-lead"><strong>Help ' + name + '&rsquo;s tutor start strong.</strong> ' +
+          'Three quick questions &mdash; they change how every session runs.</p>' +
+        '<div class="mm-ls-rows">' + rows + '</div>' +
+        '<div class="mm-ls-qs-actions">' +
+          '<button type="button" class="mm-ls-qs-save">Save &amp; start</button>' +
+          '<button type="button" class="mm-ls-qs-all">See all options</button>' +
+        '</div>' +
+        '<p class="mm-ls-saved" role="status" aria-live="polite"></p>' +
+      '</div>';
+
+    body.querySelector('.mm-ls-qs-save').addEventListener('click', function () {
+      var payload = {};
+      Array.prototype.forEach.call(body.querySelectorAll('input[type="checkbox"]'), function (cb) {
+        payload[cb.dataset.key] = cb.checked === true;
+      });
+      self.persist(payload, body.querySelector('.mm-ls-saved'), function () {
+        // Saving is what retires the quick start — updatedAt is now set.
+        self.showAllFor[self.activeChildId] = true;
+        self.loadChild();
+      });
+    });
+
+    body.querySelector('.mm-ls-qs-all').addEventListener('click', function () {
+      self.showAllFor[self.activeChildId] = true;
+      self.renderSwitches();
+    });
+  };
+
   Supports.prototype.renderSwitches = function () {
     var self = this;
     var d = this.state;
     var body = this.root.querySelector('.mm-ls-body');
+
+    if (!d.updatedAt && !this.showAllFor[this.activeChildId]) {
+      return this.renderQuickStart();
+    }
+    this.root.classList.remove('mm-ls-first-run');
 
     var rows = SWITCHES.map(function (s) {
       var locked = d.lockedBySchool[s.key] === true;
@@ -167,10 +238,28 @@
     });
   };
 
+  /* One write path for both the quick start and the full panel. */
+  Supports.prototype.persist = function (payload, status, onSaved) {
+    if (status) status.textContent = 'Saving…';
+    return req('/api/parent/child/' + encodeURIComponent(this.activeChildId) + '/supports', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (r) { return r.json().catch(function () { return null; }); })
+      .then(function (d) {
+        var ok = !!(d && d.success);
+        if (status) {
+          status.textContent = ok ? 'Saved' : 'Could not save';
+          if (ok) setTimeout(function () { status.textContent = ''; }, 2000);
+        }
+        if (ok && onSaved) onSaved(d);
+      })
+      .catch(function () { if (status) status.textContent = 'Could not save'; });
+  };
+
   Supports.prototype.save = function () {
-    var self = this;
     var body = this.root.querySelector('.mm-ls-body');
-    var status = body.querySelector('.mm-ls-saved');
     var payload = {};
 
     Array.prototype.forEach.call(body.querySelectorAll('input[type="checkbox"]'), function (cb) {
@@ -179,25 +268,30 @@
     });
     payload.note = body.querySelector('.mm-ls-note').value;
 
-    status.textContent = 'Saving…';
-    req('/api/parent/child/' + encodeURIComponent(this.activeChildId) + '/supports', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-      .then(function (r) { return r.json().catch(function () { return null; }); })
-      .then(function (d) {
-        status.textContent = (d && d.success) ? 'Saved' : 'Could not save';
-        if (d && d.success) setTimeout(function () { status.textContent = ''; }, 2000);
-      })
-      .catch(function () { status.textContent = 'Could not save'; });
-    void self;
+    this.persist(payload, body.querySelector('.mm-ls-saved'));
   };
+
+  /* Called after a child is linked, so the setup prompt is where the parent is
+     already looking instead of somewhere further down the page. */
+  Supports.prototype.focus = function () {
+    var self = this;
+    this.mount();
+    setTimeout(function () {
+      self.root.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      self.root.classList.add('mm-ls-flash');
+      setTimeout(function () { self.root.classList.remove('mm-ls-flash'); }, 2200);
+    }, 400);
+  };
+
+  var instance = null;
 
   window.MMLearningSupports = {
     mount: function (root) {
       if (!root) return null;
-      return new Supports(root).mount();
-    }
+      instance = new Supports(root);
+      return instance.mount();
+    },
+    /* Bring the setup prompt to the parent after they link a child. */
+    focusSetup: function () { if (instance) instance.focus(); }
   };
 })();

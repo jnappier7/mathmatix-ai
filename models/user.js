@@ -404,12 +404,40 @@ const familySupportsSchema = new Schema({
   updatedBy:                 { type: Schema.Types.ObjectId, ref: 'User' }
 }, { _id: false });
 
+/* ---------- STUDENT SELF-REPORT ----------
+ * What the student says they need. Third and lowest tier: a school IEP wins,
+ * then a parent's request, then this.
+ *
+ * Only ACCESSIBILITY switches are self-reportable. calculatorAllowed and
+ * digitalMultiplicationChart are deliberately absent — those change how hard
+ * the work is rather than how reachable it is, and a student granting
+ * themselves a calculator is a different thing from a student saying they need
+ * the problem read aloud. See utils/studentSupports.js.
+ *
+ * This exists because the student is often the only person who can answer.
+ * A kid with no engaged parent and a school that has never heard of us is
+ * exactly the case the product is for.
+ */
+const studentSupportsSchema = new Schema({
+  extendedTime:           { type: Boolean, default: false },
+  reducedDistraction:     { type: Boolean, default: false },
+  audioReadAloud:         { type: Boolean, default: false },
+  chunkedAssignments:     { type: Boolean, default: false },
+  breaksAsNeeded:         { type: Boolean, default: false },
+  largePrintHighContrast: { type: Boolean, default: false },
+  mathAnxietySupport:     { type: Boolean, default: false },
+  updatedAt:              { type: Date }
+}, { _id: false });
+
 const learningProfileSchema = new Schema({
   // Student interests for personalized examples
   interests: [String],  // e.g., ['skateboarding', 'video games', 'basketball']
 
   // Parent-set learning supports (see familySupportsSchema above)
   familySupports: { type: familySupportsSchema, default: () => ({}) },
+
+  // Student-set learning supports (see studentSupportsSchema above)
+  studentSupports: { type: studentSupportsSchema, default: () => ({}) },
 
   // Learning style preferences (AI-detected)
   learningStyle: {

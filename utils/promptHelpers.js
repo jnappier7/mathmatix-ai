@@ -172,4 +172,51 @@ function buildFamilySupportsPrompt(familySupports, iepPlan, firstName) {
   return prompt;
 }
 
-module.exports = { buildIepAccommodationsPrompt, buildFamilySupportsPrompt, FAMILY_SUPPORT_LINES };
+/**
+ * Build the student self-report block.
+ *
+ * Third tier, so it dedupes against BOTH higher ones: anything the school IEP
+ * or the parent already set is not restated here. What is left is the student
+ * speaking for themselves, and it is framed that way — the tutor should know
+ * the difference between "the school requires this" and "this kid told me
+ * they need it", even though it follows both.
+ *
+ * Only accessibility switches ever reach this function; utils/studentSupports.js
+ * is the whitelist and excludes the rigor ones.
+ *
+ * @param {Object|null} studentSupports - learningProfile.studentSupports
+ * @param {Object|null} familySupports  - learningProfile.familySupports
+ * @param {Object|null} iepPlan         - the school IEP
+ * @param {string} firstName
+ * @returns {string} prompt fragment, or '' when there is nothing left to say
+ */
+function buildStudentSupportsPrompt(studentSupports, familySupports, iepPlan, firstName) {
+  if (!studentSupports) return '';
+
+  const iepAccom = (iepPlan && iepPlan.accommodations) || {};
+  const family = familySupports || {};
+
+  const active = Object.keys(FAMILY_SUPPORT_LINES).filter(key => (
+    studentSupports[key] === true &&
+    iepAccom[key] !== true &&
+    family[key] !== true
+  ));
+
+  if (active.length === 0) return '';
+
+  let prompt = `\n--- WHAT ${firstName.toUpperCase()} TOLD US THEY NEED ---\n`;
+  prompt += `${firstName} asked for these themselves. Follow them, and don't make a point of it.\n\n`;
+
+  active.forEach(key => {
+    prompt += `• ${FAMILY_SUPPORT_LINES[key].replace('{name}', firstName)}\n`;
+  });
+
+  return prompt;
+}
+
+module.exports = {
+  buildIepAccommodationsPrompt,
+  buildFamilySupportsPrompt,
+  buildStudentSupportsPrompt,
+  FAMILY_SUPPORT_LINES
+};

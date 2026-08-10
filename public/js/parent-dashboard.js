@@ -1397,6 +1397,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     studentLinkCodeInput.value = '';
                     showToast(data.message, "success");
                     loadChildren(); // Reload children list after successful link
+                    // A newly linked child has no supports yet — put the setup
+                    // prompt in front of the parent while they are still here,
+                    // instead of leaving it to be discovered later.
+                    if (window.MMLearningSupports) window.MMLearningSupports.focusSetup();
                 } else {
                     linkStudentMessage.className = "mt-2 text-sm text-red-600";
                     linkStudentMessage.textContent = data.message;

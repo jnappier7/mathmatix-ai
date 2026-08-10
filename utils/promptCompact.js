@@ -11,7 +11,8 @@
 //   1. Static rules (identical across all students) → cached after first call
 //   2. Dynamic context (student-specific) → appended per request
 
-const { buildIepAccommodationsPrompt, buildFamilySupportsPrompt } = require('./promptHelpers');
+const { buildIepAccommodationsPrompt, buildFamilySupportsPrompt, buildStudentSupportsPrompt } = require('./promptHelpers');
+const { buildIntentPrompt } = require('./onboardingIntent');
 // Sync + model-free by design: this module builds the prompt on every turn and
 // must not reach the database. See utils/studentLabels.js.
 const { studentLabel } = require('./studentLabels');
@@ -803,6 +804,16 @@ Respond primarily in ${preferredLanguage}. Use ${preferredLanguage} mathematical
   );
   if (familyPrompt) parts.push(familyPrompt);
 
+  // What the student asked for themselves. Lowest tier — deduped against both
+  // the IEP and the parent's requests.
+  const studentPrompt = buildStudentSupportsPrompt(
+    userProfile.learningProfile?.studentSupports,
+    userProfile.learningProfile?.familySupports,
+    iepPlan,
+    firstName
+  );
+  if (studentPrompt) parts.push(studentPrompt);
+
   // Skill mastery context
   const skillContext = buildSkillMasteryContext(userProfile, masteryContext?.skillId || null);
   if (skillContext) parts.push(skillContext);
@@ -810,6 +821,11 @@ Respond primarily in ${preferredLanguage}. Use ${preferredLanguage} mathematical
   // Learning profile
   const learningProfileCtx = buildLearningProfileCompact(userProfile);
   if (learningProfileCtx) parts.push(learningProfileCtx);
+
+  // Why they said they came. Category only — see utils/onboardingIntent.js for
+  // why intentText is deliberately not used.
+  const intentCtx = buildIntentPrompt(userProfile.onboarding, firstName);
+  if (intentCtx) parts.push(intentCtx);
 
   // Curriculum context
   if (curriculumContext) {
