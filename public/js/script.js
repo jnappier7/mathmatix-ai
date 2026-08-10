@@ -561,11 +561,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return; // Skip the rest of initializeApp
             }
 
-            // Show resume card (streak, XP, last session) while welcome loads.
-            // Fires in parallel with getWelcomeMessage — non-blocking.
-            if (window.showResumeCard) {
-                window.showResumeCard();
-            }
+            // The resume card ("What do you want to work on today?") used to be
+            // injected here, above the welcome. It made the student pick from a
+            // menu before the tutor had said anything; the AI welcome already
+            // opens the session. Chat now starts with the welcome itself.
 
             // Always start with a fresh AI welcome. Returning users get a
             // context-aware greeting that references their last session.
