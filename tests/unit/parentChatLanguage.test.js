@@ -81,7 +81,8 @@ describe('parent-teacher prompt — language directive', () => {
     // The directive is additive — it must not displace the anti-hallucination
     // rules that keep the tutor from inventing progress it has no data for.
     const prompt = build({ parentLanguage: 'Spanish' });
-    expect(prompt).toMatch(/ONLY discuss topics, performance, and struggles that appear in the SESSION DATA/);
+    expect(prompt).toMatch(/must be grounded in the SESSION DATA above/);
+    expect(prompt).toMatch(/DO NOT invent or assume topics the student worked on/);
     expect(prompt).toMatch(/CONVERSATIONAL TURN-TAKING/);
   });
 });

@@ -2083,8 +2083,12 @@ async function handleParentChat(req, res, parentId, childId, message) {
 
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessages];
 
+        // The system prompt travels as messagesForAI[0]. It used to ALSO be passed
+        // as options.system, which reads load-bearing but never was: openaiClient
+        // has no such option, and anthropicClient's buildBody derives system purely
+        // from splitSystemAndMessages(messages). The danger of leaving it was that
+        // the next reader deletes the "duplicate" — and picks the working one.
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, {
-            system: systemPrompt,
             temperature: 0.7,
             max_tokens: 800
         });
@@ -2237,11 +2241,13 @@ ${curriculumContext ? `\nCURRICULUM CONTEXT:\n${curriculumContext}` : ''}
 ${hasRealData ? sessionData : 'No session data available yet.'}
 === END SESSION DATA ===
 
-CRITICAL RULES:
-1. ONLY discuss topics, performance, and struggles that appear in the SESSION DATA above
+CRITICAL RULES — WHAT YOU MAY CLAIM ABOUT ${childName}:
+These rules govern statements ABOUT ${childName}: what they studied, how they performed, what they find hard. They do NOT restrict teaching math itself. Explaining a concept, working an example, or suggesting a home activity draws on your own math knowledge and is expected of you — see SPECIAL REQUESTS below.
+
+1. Every claim about ${childName}'s topics, performance, or struggles must be grounded in the SESSION DATA above
 2. DO NOT invent or assume topics the student worked on - if it's not in the data, don't mention it
 3. DO NOT make up generic claims about "algebra" or "geometry" unless those words appear in the session data
-4. If the parent asks about something not in the data, say you'd need to check or that you haven't covered that topic yet
+4. If the parent asks what ${childName} has DONE with a topic that isn't in the data, say you'd need to check or that you haven't covered it yet. You may still teach that topic if they want to understand it — just don't claim ${childName} has worked on it.
 5. Reference SPECIFIC sessions, dates, accuracy rates, and summaries from the data above
 6. If there's no session data, be honest: "${childName} and I haven't had many sessions yet"
 7. NEVER interpret missing problem statistics as a lack of effort, motivation, or engagement. If a session has no Performance line, it means our tracking system didn't capture the data — the student was still learning and working. Do NOT suggest the student is unmotivated, disengaged, or needs intervention based on missing stats.

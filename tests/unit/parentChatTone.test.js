@@ -106,7 +106,8 @@ describe('parent-teacher prompt — tone directive', () => {
     '%s: leaves the accuracy rules and turn-taking intact',
     (stored) => {
       const prompt = build({ parentTone: stored });
-      expect(prompt).toMatch(/ONLY discuss topics, performance, and struggles that appear in the SESSION DATA/);
+      expect(prompt).toMatch(/must be grounded in the SESSION DATA above/);
+      expect(prompt).toMatch(/DO NOT invent or assume topics the student worked on/);
       expect(prompt).toMatch(/CONVERSATIONAL TURN-TAKING/);
       expect(prompt).toMatch(/NEVER interpret missing problem statistics as a lack of effort/);
     }
