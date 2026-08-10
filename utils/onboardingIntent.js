@@ -22,6 +22,83 @@
  * @module utils/onboardingIntent
  */
 
+const ALLOWED_CATEGORIES = [
+  'student_homework',
+  'student_test_prep',
+  'act_sat_prep',
+  'parent_support',
+  'teacher_exploring',
+  'general_math_help',
+  'just_exploring',
+  'unknown'
+];
+
+/* ── Classification ──────────────────────────────────────────────────────
+ * Two copies of this used to exist — one in public/js/onboarding.js and one
+ * in routes/onboarding.js — and the route only used its own as a fallback,
+ * otherwise trusting whatever category the client sent. This is now the single
+ * implementation and the server classifies from the text itself.
+ *
+ * The ordering bug it replaces: the old chain tested speaker identity FIRST
+ * (teacher, then parent) and subject matter afterwards, so a mention of a
+ * family member outranked the actual topic:
+ *
+ *   "my mom said I should try this for my ACT"  -> parent_support
+ *   "my dad thinks I am bad at math"            -> parent_support
+ *
+ * Both are students, and in both the actionable word was ignored. Subject
+ * matter now wins; speaker identity is only consulted when the text says
+ * nothing about what they want to work on.
+ */
+
+// First person — the speaker IS a teacher/parent. "I teach", "I'm a parent".
+const FIRST_PERSON_TEACHER = /\b(i teach|i'?m a teacher|i am a teacher|my class(room)?|my students)\b/;
+const FIRST_PERSON_PARENT = /\b(i'?m a parent|i am a parent|i'?m a (mom|dad|mother|father)|i am a (mom|dad|mother|father)|my (kid|son|daughter|child|children)\b)/;
+
+// Third person — the speaker MENTIONS a parent/teacher but is not one.
+// "my mom said", "my teacher told me". Not an identity signal.
+const MENTIONS_ADULT = /\b(my (mom|dad|mother|father|parents?|teacher))\b/;
+
+const TOPIC_TESTS = [
+  ['act_sat_prep',      /\b(act|sat|psat)\b|\b(act|sat) prep\b|standardized test|admissions test/],
+  ['student_test_prep', /\b(test|quiz|exam|final|finals|midterm|state test|benchmark)\b/],
+  ['student_homework',  /\b(homework|assignment|problem set|worksheet|due tomorrow|due tonight|due friday)\b/],
+  ['general_math_help', /(bad at math|failing|struggling|confused|don'?t (get|understand)|stuck on|hate math|behind in math|rusty|catch up)/]
+];
+
+// Not subject matter — the absence of it. "Just looking around" says what they
+// AREN'T here for, so it ranks below both topic and identity: a parent who says
+// they're browsing is still most usefully a parent.
+const NO_STATED_PURPOSE = /(check(ing)? (it|this) out|just (looking|curious|exploring|seeing|trying|browsing)|see what (this|it) is|trying it out|poke around)/;
+
+/**
+ * Classify an open-ended onboarding answer.
+ *
+ * @param {string} rawText
+ * @returns {string} one of ALLOWED_CATEGORIES
+ */
+function inferIntent(rawText) {
+  if (!rawText || typeof rawText !== 'string') return 'unknown';
+  const t = rawText.toLowerCase();
+
+  // A first-person teacher is not a student under any topic, so it still wins.
+  if (FIRST_PERSON_TEACHER.test(t)) return 'teacher_exploring';
+
+  // Subject matter beats speaker identity. "help my daughter with her ACT" is
+  // a parent, but ACT is the part that says how to teach.
+  for (const [category, re] of TOPIC_TESTS) {
+    if (re.test(t)) return category;
+  }
+
+  // Only now does identity matter — the text said nothing about the work.
+  if (FIRST_PERSON_PARENT.test(t)) return 'parent_support';
+
+  if (NO_STATED_PURPOSE.test(t)) return 'just_exploring';
+  if (MENTIONS_ADULT.test(t)) return 'unknown';  // a mention is not an identity
+
+  return 'unknown';
+}
+
 /**
  * Category -> one line of tutoring guidance.
  *
@@ -63,4 +140,96 @@ function buildIntentPrompt(onboarding, firstName) {
   return `When ${firstName} signed up they ${guidance} Treat it as context, not as a rule — it may be out of date.`;
 }
 
-module.exports = { buildIntentPrompt, INTENT_GUIDANCE };
+/* ── Staleness ───────────────────────────────────────────────────────────
+ * A signup answer is the weakest evidence about a student that will ever
+ * exist. Once the tutor has watched them work, tutorPlan and skillMastery are
+ * strictly better, and a kid who arrived in September for one homework problem
+ * should not still be treated as homework-only in March.
+ *
+ * So the stated intent expires. Not as a hedge in the prompt text — it stops
+ * being sent.
+ */
+const INTENT_FADES_AFTER_SESSIONS = 5;
+const INTENT_FADES_AFTER_DAYS = 30;
+
+/**
+ * Is the signup answer still the best thing we know?
+ *
+ * @param {Object|null} onboarding - user.onboarding
+ * @param {Object} [signals] - { sessionCount, now }
+ * @returns {boolean}
+ */
+function intentStillUseful(onboarding, signals = {}) {
+  if (!onboarding || !onboarding.intentCategory) return false;
+
+  const sessions = Number(signals.sessionCount) || 0;
+  if (sessions >= INTENT_FADES_AFTER_SESSIONS) return false;
+
+  if (onboarding.completedAt) {
+    const now = signals.now instanceof Date ? signals.now : new Date();
+    const days = (now - new Date(onboarding.completedAt)) / 86400000;
+    if (days >= INTENT_FADES_AFTER_DAYS) return false;
+  }
+
+  return true;
+}
+
+/* ── Observed intent ─────────────────────────────────────────────────────
+ * What the student actually does, which beats what they said at signup.
+ * A kid who uploads a worksheet is doing homework whatever they typed in
+ * September; a kid asking how long they have is test-prepping.
+ *
+ * Deliberately conservative: it only fires on unambiguous behaviour, because a
+ * wrong observation is worse than none — it would override a stated intent that
+ * might be right.
+ */
+const OBSERVED_SIGNALS = [
+  ['student_homework', s => s.uploadedWorksheet === true],
+  ['act_sat_prep',     s => /\b(act|sat|psat)\b/i.test(s.recentText || '')],
+  ['student_test_prep', s => /\b(test|quiz|exam|midterm|finals?)\b.*\b(tomorrow|friday|monday|next week|on \w+day)\b/i.test(s.recentText || '')]
+];
+
+/**
+ * Derive intent from behaviour, or null when nothing is unambiguous.
+ *
+ * @param {Object} signals - { uploadedWorksheet, recentText }
+ * @returns {string|null}
+ */
+function deriveObservedIntent(signals = {}) {
+  for (const [category, test] of OBSERVED_SIGNALS) {
+    try {
+      if (test(signals)) return category;
+    } catch { /* a malformed signal is not an observation */ }
+  }
+  return null;
+}
+
+/**
+ * The line the tutor actually gets — observation first, stated intent second,
+ * and nothing once the stated intent has gone stale.
+ *
+ * @param {Object|null} onboarding
+ * @param {string} firstName
+ * @param {Object} [signals] - { sessionCount, now, uploadedWorksheet, recentText }
+ * @returns {string}
+ */
+function buildIntentContext(onboarding, firstName, signals = {}) {
+  const observed = deriveObservedIntent(signals);
+  if (observed && INTENT_GUIDANCE[observed]) {
+    return `Right now ${firstName} ${INTENT_GUIDANCE[observed]}`;
+  }
+  if (!intentStillUseful(onboarding, signals)) return '';
+  return buildIntentPrompt(onboarding, firstName);
+}
+
+module.exports = {
+  ALLOWED_CATEGORIES,
+  inferIntent,
+  buildIntentPrompt,
+  buildIntentContext,
+  intentStillUseful,
+  deriveObservedIntent,
+  INTENT_GUIDANCE,
+  INTENT_FADES_AFTER_SESSIONS,
+  INTENT_FADES_AFTER_DAYS
+};

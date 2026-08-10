@@ -1480,6 +1480,20 @@ router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
       aggregate: require('../utils/courseProgressMetrics').aggregate(),
       recent: require('../utils/courseProgressMetrics').snapshot(50),
     },
+    // Onboarding-intent classifier health (utils/onboardingIntent.js). There is
+    // no labelled ground truth, so read these as coverage and drift, not
+    // accuracy: `classification.unknownRate` is the share of signup answers the
+    // regexes couldn't place at all (every one is a student we asked a question
+    // and learned nothing from), `neverProduced` names enum categories the
+    // classifier has never once emitted, and `agreement.topMismatches` ranks
+    // what students SAID against what they later DID — `just_exploring ->
+    // student_homework` at the top of that list is a specific, fixable claim
+    // about the regexes.
+    onboardingIntent: {
+      aggregate: require('../utils/intentMetrics').aggregate(),
+      recent: require('../utils/intentMetrics').snapshot(50),
+      recentObservations: require('../utils/intentMetrics').snapshotObservations(50),
+    },
   });
 });
 

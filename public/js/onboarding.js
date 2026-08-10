@@ -16,20 +16,11 @@
 
   const STORAGE_KEY = 'mathmatix.pendingOnboardingIntent';
 
-  // --- Intent inference (mirrors server-side logic in routes/onboarding.js) ---
-  function inferIntent(rawText) {
-    if (!rawText) return 'unknown';
-    const t = String(rawText).toLowerCase();
-
-    if (/\b(teacher|teach my|my class|my students|classroom|professor|educator|i teach)\b/.test(t)) return 'teacher_exploring';
-    if (/\b(parent|mom|dad|mother|father|my (kid|son|daughter|child|children))\b|\bhelp my (kid|son|daughter|child)\b/.test(t)) return 'parent_support';
-    if (/\b(act\b|\bsat\b|act prep|sat prep|standardized test|admissions test)\b/.test(t)) return 'act_sat_prep';
-    if (/\b(test|quiz|exam|final|midterm|state test|benchmark)\b/.test(t)) return 'student_test_prep';
-    if (/\b(homework|assignment|problem set|worksheet|due tomorrow|due tonight)\b/.test(t)) return 'student_homework';
-    if (/(bad at math|failing|struggling|confused|don'?t (get|understand)|stuck on|hate math|behind in math|rusty)/.test(t)) return 'general_math_help';
-    if (/(check(ing)? (it|this) out|just (looking|curious|exploring|seeing|trying|browsing)|see what (this|it) is|trying it out|poke around)/.test(t)) return 'just_exploring';
-    return 'unknown';
-  }
+  // --- Intent inference ---
+  // Classification is server-side only (utils/onboardingIntent.js).
+  // A second copy lived here and drifted from it — and because the route
+  // trusted whichever category the browser sent, the browser copy was the
+  // one that actually decided. The server classifies from the text now.
 
   const WARM_RESPONSES = {
     teacher_exploring:  "Perfect. I’ll show you what the student experience feels like first.",
@@ -218,7 +209,6 @@
     }
     stopListening();
 
-    const intentCategory = inferIntent(intentText);
     const capturedVia = isRecognizing || finalText.trim().length > 0 ? 'voice' : 'text';
 
     submitBtn.disabled = true;
@@ -230,14 +220,13 @@
     try {
       const res = await postJson('/api/onboarding/intent', {
         intentText,
-        intentCategory,
         capturedVia
       });
 
       if (res.status === 401) {
         // Anonymous flow — save locally and route to signup.
-        saveLocally({ intentText, intentCategory, capturedVia });
-        showWarmResponse(intentCategory, /* anon */ true);
+        saveLocally({ intentText, capturedVia });
+        showWarmResponse('unknown', /* anon */ true);
         return;
       }
 
@@ -247,13 +236,13 @@
       serverResponse = await res.json();
     } catch (err) {
       console.warn('[onboarding] save error, falling back to local:', err);
-      saveLocally({ intentText, intentCategory, capturedVia });
-      showWarmResponse(intentCategory, /* anon */ true);
+      saveLocally({ intentText, capturedVia });
+      showWarmResponse('unknown', /* anon */ true);
       return;
     }
 
     // Server returns the authoritative category + next redirect.
-    pendingCategory = serverResponse.intentCategory || intentCategory;
+    pendingCategory = serverResponse.intentCategory || 'unknown';
     pendingRedirect = serverResponse.redirect || '/chat.html';
     advanceStage(serverResponse);
   }
@@ -354,7 +343,6 @@
     try {
       const res = await postJson('/api/onboarding/intent', {
         intentText: (textarea.value || '').trim(),
-        intentCategory: pendingCategory,
         capturedVia: 'text',
         dateOfBirth: value
       });
@@ -505,7 +493,6 @@
         textarea.value = '';
         const res = await postJson('/api/onboarding/intent', {
           intentText: '',
-          intentCategory: 'unknown',
           capturedVia: 'text'
         }).catch(() => null);
 
@@ -546,13 +533,12 @@
             try {
               const res = await postJson('/api/onboarding/intent', {
                 intentText:     pending.intentText,
-                intentCategory: pending.intentCategory,
                 capturedVia:    pending.capturedVia || 'text'
               });
               if (res.ok) {
                 const json = await res.json().catch(() => ({}));
                 clearPendingIntent();
-                showWarmResponse(json.intentCategory || pending.intentCategory, false, json.redirect);
+                showWarmResponse(json.intentCategory || 'unknown', false, json.redirect);
               }
             } catch (err) {
               console.warn('[onboarding] attach pending intent failed:', err);

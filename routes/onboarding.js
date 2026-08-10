@@ -7,49 +7,8 @@ const router = express.Router();
 const User = require('../models/user');
 const logger = require('../utils/logger');
 
-const ALLOWED_CATEGORIES = [
-  'student_homework',
-  'student_test_prep',
-  'act_sat_prep',
-  'parent_support',
-  'teacher_exploring',
-  'general_math_help',
-  'just_exploring',
-  'unknown'
-];
-
-/**
- * Server-side intent classifier — keyword based.
- * Mirrors the client-side logic so anonymous answers attached after signup
- * still get a category even if the client didn't send one.
- */
-function inferIntent(rawText) {
-  if (!rawText || typeof rawText !== 'string') return 'unknown';
-  const t = rawText.toLowerCase();
-
-  if (/\b(teacher|teach my|my class|my students|classroom|professor|educator|i teach)\b/.test(t)) {
-    return 'teacher_exploring';
-  }
-  if (/\b(parent|mom|dad|mother|father|my (kid|son|daughter|child|children))\b|\bhelp my (kid|son|daughter|child)\b/.test(t)) {
-    return 'parent_support';
-  }
-  if (/\b(act\b|\bsat\b|act prep|sat prep|standardized test|admissions test)\b/.test(t)) {
-    return 'act_sat_prep';
-  }
-  if (/\b(test|quiz|exam|final|midterm|state test|benchmark)\b/.test(t)) {
-    return 'student_test_prep';
-  }
-  if (/\b(homework|assignment|problem set|worksheet|due tomorrow|due tonight)\b/.test(t)) {
-    return 'student_homework';
-  }
-  if (/(bad at math|failing|struggling|confused|don'?t (get|understand)|stuck on|hate math|behind in math|rusty)/.test(t)) {
-    return 'general_math_help';
-  }
-  if (/(check(ing)? (it|this) out|just (looking|curious|exploring|seeing|trying|browsing)|see what (this|it) is|trying it out|poke around)/.test(t)) {
-    return 'just_exploring';
-  }
-  return 'unknown';
-}
+const { inferIntent } = require('../utils/onboardingIntent');
+const { recordClassification } = require('../utils/intentMetrics');
 
 /**
  * Compute age in whole years from a Date of birth.
@@ -135,7 +94,6 @@ router.get('/status', (req, res) => {
     hasParentalConsent: !!u.hasParentalConsent,
     onboarding: {
       completed:      !!ob.completed,
-      intentText:     ob.intentText || null,
       intentCategory: ob.intentCategory || null,
       capturedVia:    ob.capturedVia || null,
       completedAt:    ob.completedAt || null
@@ -150,8 +108,7 @@ router.get('/status', (req, res) => {
  * once DOB + (if needed) parental-consent prerequisites are satisfied.
  *
  * Body: {
- *   intentText:     string,
- *   intentCategory: ?string,
+ *   intentText:     string (classified server-side, not stored),
  *   capturedVia:    ?'voice' | 'text',
  *   dateOfBirth:    ?string (YYYY-MM-DD)
  * }
@@ -164,13 +121,15 @@ router.post('/intent', async (req, res) => {
 
   try {
     const rawText = (req.body?.intentText || '').toString().trim().slice(0, 2000);
-    let category = (req.body?.intentCategory || '').toString().trim();
     const capturedVia = ['voice', 'text'].includes(req.body?.capturedVia) ? req.body.capturedVia : 'text';
     const dobInput = req.body?.dateOfBirth;
 
-    if (!ALLOWED_CATEGORIES.includes(category)) {
-      category = inferIntent(rawText);
-    }
+    // Classified here and only here. The client used to send its own category
+    // (from a duplicate copy of these rules) and the server took it on trust,
+    // so a caller could name any enum value regardless of what they typed. The
+    // text is the only input; `intentCategory` in the body is ignored.
+    const category = inferIntent(rawText);
+    recordClassification({ category, capturedVia, textLength: rawText.length });
 
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
@@ -189,9 +148,13 @@ router.post('/intent', async (req, res) => {
       user.dateOfBirth = d;
     }
 
+    // intentText is deliberately NOT persisted. It was stored for months and
+    // read by nothing; it is up to 2000 characters of free-form voice input
+    // from a minor, and keeping data we never look at is a minimisation
+    // problem rather than a tidiness one. The classification it produces is
+    // kept — that is the part with a consumer.
     user.onboarding = {
       completed:      true,
-      intentText:     rawText || null,
       intentCategory: category,
       capturedVia,
       completedAt:    new Date()
@@ -272,7 +235,6 @@ router.post('/finalize', async (req, res) => {
 });
 
 module.exports = router;
-module.exports.inferIntent = inferIntent;
 module.exports.computeNextUrl = computeNextUrl;
 module.exports.computeAge = computeAge;
 module.exports.shouldStillBlockOnProfile = shouldStillBlockOnProfile;
