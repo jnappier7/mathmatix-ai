@@ -1792,7 +1792,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
     };
   </script>
-  <script src="/dist/js/parent-js0.795abd79.js"></script>
+  <script src="/dist/js/parent-js0.f9d859f2.js"></script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -1824,7 +1824,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <h1 class="brand-name">MATHMATIX AI</h1>
             <p class="brand-tagline">Unlock the Pattern. Learn for Life.</p>
           </div>
-          <div class="mode-indicator">
+          <div class="mode-indicator" data-i18n="parent.modeIndicator">
             <i class="fas fa-heart"></i> Parent Dashboard
           </div>
         </div>
@@ -1832,7 +1832,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div id="roleSwitcher" class="role-switcher" style="display: none;">
             <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role"></select>
           </div>
-          <button id="logoutBtn" class="nav-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          <button id="logoutBtn" class="nav-btn" data-i18n="nav.logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </nav>
       </div>
     </header>
@@ -1844,37 +1844,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <!-- LEFT SIDEBAR - Invite & Link Students -->
       <aside class="left-sidebar">
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">Your Parent Account</div>
-          <p>Manage your children's learning progress and communicate with their AI tutors.</p>
+          <div class="dashboard-panel-header" data-i18n="parent.yourAccount">Your Parent Account</div>
+          <p data-i18n="parent.yourAccountDesc">Manage your children's learning progress and communicate with their AI tutors.</p>
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">Invite a Child</div>
-          <p class="panel-helper">Generate a code, then have your child enter it when they sign up. Best when your child doesn't have a Mathmatix account yet.</p>
-          <button id="generate-code-btn" class="btn btn-primary main-action-btn">
+          <div class="dashboard-panel-header" data-i18n="parent.inviteChild">Invite a Child</div>
+          <p class="panel-helper" data-i18n="parent.inviteChildHelp">Generate a code, then have your child enter it when they sign up. Best when your child doesn't have a Mathmatix account yet.</p>
+          <button id="generate-code-btn" class="btn btn-primary main-action-btn" data-i18n="parent.generateCode">
             <i class="fas fa-user-plus"></i> Generate Invite Code
           </button>
           <div id="invite-code-output" style="display:none;">
-            <p class="text-sm font-semibold text-gray-700 mb-2">Share this code with your child:</p>
+            <p class="text-sm font-semibold text-gray-700 mb-2" data-i18n="parent.shareCodeWithChild">Share this code with your child:</p>
             <div class="code-display">
               <span id="generated-code-value" aria-label="Invite code"></span>
-              <button class="copy-code-btn" id="copy-code-btn" aria-label="Copy invite code to clipboard" title="Copy to clipboard">
+              <button class="copy-code-btn" id="copy-code-btn" aria-label="Copy invite code to clipboard" title="Copy to clipboard"
+                      data-i18n="parent.copy" data-i18n-title="parent.copyToClipboard" data-i18n-aria="parent.copyToClipboard">
                 <i class="fas fa-copy"></i> Copy
               </button>
             </div>
-            <p class="text-xs text-gray-500 mt-2">Expires: <span id="code-expires-at"></span></p>
+            <p class="text-xs text-gray-500 mt-2"><span data-i18n="parent.expires">Expires:</span> <span id="code-expires-at"></span></p>
           </div>
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">Link to Existing Student</div>
-          <p class="panel-helper">Already have a child using Mathmatix? Ask them for their 6-character link code (Profile → Family) and enter it below.</p>
+          <div class="dashboard-panel-header" data-i18n="parent.linkExisting">Link to Existing Student</div>
+          <p class="panel-helper" data-i18n="parent.linkExistingHelp">Already have a child using Mathmatix? Ask them for their 6-character link code (Profile → Family) and enter it below.</p>
           <form id="link-student-form">
             <div class="form-group">
-              <label for="studentLinkCode">Student's Link Code</label>
-              <input type="text" id="studentLinkCode" name="studentLinkCode" placeholder="Enter 6-character code" required>
+              <label for="studentLinkCode" data-i18n="parent.studentLinkCode">Student's Link Code</label>
+              <input type="text" id="studentLinkCode" name="studentLinkCode" placeholder="Enter 6-character code" data-i18n-placeholder="parent.linkCodePlaceholder" required>
             </div>
-            <button type="submit" class="btn btn-primary main-action-btn">
+            <button type="submit" class="btn btn-primary main-action-btn" data-i18n="parent.linkStudent">
               <i class="fas fa-link"></i> Link Student
             </button>
             <div id="link-student-message" class="mt-2 text-sm text-center"></div>
@@ -1883,13 +1884,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         <div class="dashboard-panel" id="parent-learning-center">
           <div class="dashboard-panel-header">
-            <span><i class="fas fa-graduation-cap"></i> Parent Learning Center</span>
+            <span data-i18n="parent.learningCenter"><i class="fas fa-graduation-cap"></i> Parent Learning Center</span>
           </div>
-          <p style="font-size: 0.85em; color: #666; margin-bottom: 15px;">
+          <p style="font-size: 0.85em; color: #666; margin-bottom: 15px;" data-i18n="parent.learningCenterDesc">
             Mini-courses to help you understand today's math methods and support your child at home.
           </p>
           <div id="parent-courses-list">
-            <p class="text-sm text-gray-500 text-center" id="loading-parent-courses">Loading courses...</p>
+            <p class="text-sm text-gray-500 text-center" id="loading-parent-courses" data-i18n="parent.loadingCourses">Loading courses...</p>
           </div>
         </div>
       </aside>
@@ -1897,7 +1898,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <!-- CENTER CONTENT - Children & AI Chat -->
       <section class="center-content">
         <div class="dashboard-panel">
-          <h2 class="dashboard-panel-header">Your Linked Children</h2>
+          <h2 class="dashboard-panel-header" data-i18n="parent.linkedChildren">Your Linked Children</h2>
           <div id="children-list-container" role="region" aria-label="Linked children list">
             <!-- Skeleton loading (replaced by JS) -->
             <div id="loading-children" class="children-skeleton">
@@ -1911,7 +1912,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
              this lets a parent add supports of their own for the (common) case
              where no school plan exists. School-set switches render locked. -->
         <div class="dashboard-panel">
-          <h2 class="dashboard-panel-header">How Your Child Learns Best</h2>
+          <h2 class="dashboard-panel-header" data-i18n="parent.learnsBest">How Your Child Learns Best</h2>
           <div id="learning-supports-root" role="region" aria-label="Learning supports"></div>
         </div>
 
@@ -1919,21 +1920,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
              parents could receive a message by email but had no way to read it
              in the app or reply. -->
         <div class="dashboard-panel">
-          <h2 class="dashboard-panel-header">Messages with Your Child&rsquo;s Teacher</h2>
+          <h2 class="dashboard-panel-header" data-i18n="parent.teacherMessages">Messages with Your Child&rsquo;s Teacher</h2>
           <div id="parent-messaging-root" role="region" aria-label="Messages with your child's teacher"></div>
         </div>
 
         <div class="dashboard-panel parent-chat-widget">
-          <div class="dashboard-panel-header" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 15px; margin: -25px -25px 15px -25px; border-radius: 12px 12px 0 0;">
+          <div class="dashboard-panel-header" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 15px; margin: -25px -25px 15px -25px; border-radius: 12px 12px 0 0;" data-i18n="parent.conference">
             <i class="fas fa-comments"></i> Parent-Tutor Conference
           </div>
           <div class="chat-header-widget">
             <div style="display: flex; align-items: center; gap: 15px;">
               <div style="flex: 1;">
-                <label for="childSelector" class="text-sm font-semibold" style="color: #21618c; display: block; margin-bottom: 5px;">
+                <label for="childSelector" class="text-sm font-semibold" style="color: #21618c; display: block; margin-bottom: 5px;" data-i18n="parent.discussingStudent">
                   <i class="fas fa-user-graduate"></i> Discussing Student:
                 </label>
-                <select id="childSelector" class="text-sm p-2 border rounded" style="width: 100%; border: 2px solid var(--color-primary); border-radius: 6px;" aria-label="Select child to discuss"></select>
+                <select id="childSelector" class="text-sm p-2 border rounded" style="width: 100%; border: 2px solid var(--color-primary); border-radius: 6px;" aria-label="Select child to discuss" data-i18n-aria="parent.selectChildAria"></select>
               </div>
               <div id="tutor-avatar-container" style="display: none; flex-shrink: 0; text-align: center;">
                 <div style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; border: 3px solid #3498db; box-shadow: 0 2px 8px rgba(52,152,219,0.3); margin: 0 auto 5px;">
@@ -1944,35 +1945,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
           </div>
           <div id="parent-chat-container-inner" class="chat-display-widget" role="log" aria-label="Chat conversation" aria-live="polite">
-            <p class="text-gray-500 text-center py-2"><i class="fas fa-comments"></i> Select a child to discuss their learning progress.</p>
+            <p class="text-gray-500 text-center py-2" data-i18n="parent.selectChildPrompt"><i class="fas fa-comments"></i> Select a child to discuss their learning progress.</p>
           </div>
           <div id="parent-thinking-indicator" role="status" aria-live="polite" aria-label="AI tutor is thinking">
             <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-            <span><i class="fas fa-spinner fa-spin"></i> AI Tutor is thinking...</span>
+            <span data-i18n="parent.tutorThinking"><i class="fas fa-spinner fa-spin"></i> AI Tutor is thinking...</span>
           </div>
 
           <!-- Quick Action Helper Buttons -->
           <div id="parent-helper-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-            <span style="width: 100%; font-size: 0.8em; color: #666; margin-bottom: 5px;"><i class="fas fa-lightbulb"></i> Quick Questions:</span>
-            <button class="helper-btn" data-message="Tell me about my child's recent progress. What topics have they been working on and how are they doing?">
+            <span style="width: 100%; font-size: 0.8em; color: #666; margin-bottom: 5px;" data-i18n="parent.quickQuestions"><i class="fas fa-lightbulb"></i> Quick Questions:</span>
+            <button class="helper-btn" data-i18n="parent.qProgress" data-message="Tell me about my child's recent progress. What topics have they been working on and how are they doing?">
               <i class="fas fa-chart-line"></i> Progress Report
             </button>
-            <button class="helper-btn" data-message="What math concepts is my child currently learning? Show me what topics they've been working on.">
+            <button class="helper-btn" data-i18n="parent.qTopics" data-message="What math concepts is my child currently learning? Show me what topics they've been working on.">
               <i class="fas fa-book-open"></i> Current Topics
             </button>
-            <button class="helper-btn" data-message="Can you teach me the math concept my child is learning right now? Explain it like I'm learning it for the first time so I can help them at home." title="Learn the concept your child is studying so you can help at home">
+            <button class="helper-btn" data-i18n="parent.qTeachMe" data-i18n-title="parent.qTeachMeTitle" data-message="Can you teach me the math concept my child is learning right now? Explain it like I'm learning it for the first time so I can help them at home." title="Learn the concept your child is studying so you can help at home">
               <i class="fas fa-graduation-cap"></i> Teach Me
             </button>
-            <button class="helper-btn" data-message="What specific things can I do at home to help my child with the math they're learning? Give me practical activities or practice tips.">
+            <button class="helper-btn" data-i18n="parent.qHelpHome" data-message="What specific things can I do at home to help my child with the math they're learning? Give me practical activities or practice tips.">
               <i class="fas fa-home"></i> Help at Home
             </button>
-            <button class="helper-btn" data-message="What areas is my child struggling with? What concepts need more practice?">
+            <button class="helper-btn" data-i18n="parent.qStruggles" data-message="What areas is my child struggling with? What concepts need more practice?">
               <i class="fas fa-exclamation-triangle"></i> Struggles
             </button>
-            <button class="helper-btn" data-message="What are my child's strengths in math? What are they doing well?">
+            <button class="helper-btn" data-i18n="parent.qStrengths" data-message="What are my child's strengths in math? What are they doing well?">
               <i class="fas fa-star"></i> Strengths
             </button>
-            <button class="helper-btn" data-message="Explain the math concept my child is working on right now like I'm in 3rd grade. Use simple words, fun examples, and make it really easy to understand.">
+            <button class="helper-btn" data-i18n="parent.qExplainSimple" data-message="Explain the math concept my child is working on right now like I'm in 3rd grade. Use simple words, fun examples, and make it really easy to understand.">
               <i class="fas fa-child"></i> Explain Like I'm in 3rd Grade
             </button>
           </div>
@@ -2007,8 +2008,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </style>
 
           <div class="chat-input-widget">
-            <textarea id="parent-user-input" placeholder="Ask about your child's learning progress, strengths, areas for improvement..." rows="3" aria-label="Type your message to the AI tutor"></textarea>
-            <button id="parent-send-button" class="submit-btn send-button-widget" style="width: 100%; margin-top: 10px;" aria-label="Send message">
+            <textarea id="parent-user-input" placeholder="Ask about your child's learning progress, strengths, areas for improvement..." data-i18n-placeholder="parent.chatPlaceholder" rows="3" aria-label="Type your message to the AI tutor"></textarea>
+            <button id="parent-send-button" class="submit-btn send-button-widget" style="width: 100%; margin-top: 10px;" aria-label="Send message" data-i18n="parent.sendMessage" data-i18n-aria="parent.sendMessage">
               <i class="fas fa-paper-plane"></i> Send Message
             </button>
           </div>
@@ -2018,53 +2019,55 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <!-- RIGHT SIDEBAR - Settings & Preferences -->
       <aside class="right-sidebar">
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">Settings & Notifications</div>
+          <div class="dashboard-panel-header" data-i18n="parent.settingsTitle">Settings & Notifications</div>
 
           <form id="parent-settings-form">
             <!-- Report Frequency -->
             <div class="form-group">
-              <label for="reportFrequency">
+              <label for="reportFrequency" data-i18n="parent.reportFrequency">
                 <i class="fas fa-calendar-alt"></i> Report Frequency
               </label>
               <select id="reportFrequency" name="reportFrequency">
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="biweekly">Bi-weekly</option>
-                <option value="monthly">Monthly</option>
+                <option value="daily" data-i18n="parent.daily">Daily</option>
+                <option value="weekly" data-i18n="parent.weekly">Weekly</option>
+                <option value="biweekly" data-i18n="parent.biweekly">Bi-weekly</option>
+                <option value="monthly" data-i18n="parent.monthly">Monthly</option>
               </select>
-              <p class="text-xs text-gray-500 mt-2">How often you receive progress reports</p>
+              <p class="text-xs text-gray-500 mt-2" data-i18n="parent.reportFrequencyHelp">How often you receive progress reports</p>
             </div>
 
             <!-- Goal View Preference -->
             <div class="form-group">
-              <label for="goalViewPreference">
+              <label for="goalViewPreference" data-i18n="parent.dashboardView">
                 <i class="fas fa-chart-line"></i> Dashboard View
               </label>
               <select id="goalViewPreference" name="goalViewPreference">
-                <option value="progress">Progress Overview</option>
-                <option value="gaps">Learning Gaps</option>
-                <option value="goals">IEP Goals</option>
+                <option value="progress" data-i18n="parent.viewProgress">Progress Overview</option>
+                <option value="gaps" data-i18n="parent.viewGaps">Learning Gaps</option>
+                <option value="goals" data-i18n="parent.viewGoals">IEP Goals</option>
               </select>
-              <p class="text-xs text-gray-500 mt-2">What you see first when viewing child progress</p>
+              <p class="text-xs text-gray-500 mt-2" data-i18n="parent.dashboardViewHelp">What you see first when viewing child progress</p>
             </div>
 
             <!-- Communication Tone -->
             <div class="form-group">
-              <label for="parentTone">
+              <label for="parentTone" data-i18n="parent.tone">
                 <i class="fas fa-comments"></i> Communication Tone
               </label>
               <select id="parentTone" name="parentTone">
-                <option value="">Standard (default)</option>
-                <option value="detailed">Detailed & Technical</option>
-                <option value="simple">Simple & Concise</option>
-                <option value="encouraging">Encouraging & Positive</option>
+                <option value="" data-i18n="parent.toneStandard">Standard (default)</option>
+                <option value="detailed" data-i18n="parent.toneDetailed">Detailed & Technical</option>
+                <option value="simple" data-i18n="parent.toneSimple">Simple & Concise</option>
+                <option value="encouraging" data-i18n="parent.toneEncouraging">Encouraging & Positive</option>
               </select>
-              <p class="text-xs text-gray-500 mt-2">How the AI communicates with you</p>
+              <p class="text-xs text-gray-500 mt-2" data-i18n="parent.toneHelp">How the AI communicates with you</p>
             </div>
 
-            <!-- Language Preference -->
+            <!-- Language Preference. The <option> labels stay untranslated on
+                 purpose — each language is named in its own script, so a parent
+                 can find their language whatever the UI is currently set to. -->
             <div class="form-group">
-              <label for="parentLanguage">
+              <label for="parentLanguage" data-i18n="parent.language">
                 <i class="fas fa-language"></i> Language
               </label>
               <select id="parentLanguage" name="parentLanguage">
@@ -2078,11 +2081,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <option value="French">French (Français)</option>
                 <option value="German">German (Deutsch)</option>
               </select>
-              <p class="text-xs text-gray-500 mt-2">Preferred language for reports and dashboard</p>
+              <p class="text-xs text-gray-500 mt-2" data-i18n="parent.languageHelp">Preferred language for reports and dashboard</p>
             </div>
 
             <!-- Save Button -->
-            <button type="submit" class="btn btn-primary main-action-btn">
+            <button type="submit" class="btn btn-primary main-action-btn" data-i18n="parent.saveSettings">
               <i class="fas fa-save"></i> Save Settings
             </button>
             <div id="settings-save-message" class="mt-2 text-sm text-center"></div>
@@ -2090,24 +2093,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">
+          <div class="dashboard-panel-header" data-i18n="parent.emailReports">
             <i class="fas fa-envelope"></i> Email Reports
           </div>
-          <p style="font-size: 0.85em; color: #666; margin-bottom: 15px;">
+          <p style="font-size: 0.85em; color: #666; margin-bottom: 15px;" data-i18n="parent.emailReportsDesc">
             Get weekly progress reports delivered to your inbox.
           </p>
 
-          <button id="test-email-btn" class="btn btn-secondary main-action-btn">
+          <button id="test-email-btn" class="btn btn-secondary main-action-btn" data-i18n="parent.sendTestEmail">
             <i class="fas fa-paper-plane"></i> Send Test Email
           </button>
 
-          <button id="send-weekly-report-btn" class="btn btn-primary main-action-btn" style="margin-top: 10px;">
+          <button id="send-weekly-report-btn" class="btn btn-primary main-action-btn" style="margin-top: 10px;" data-i18n="parent.sendWeeklyNow">
             <i class="fas fa-chart-line"></i> Send Weekly Report Now
           </button>
 
           <div id="email-status-message" class="mt-2 text-sm text-center" style="margin-top: 10px;"></div>
 
-          <p style="font-size: 0.75em; color: #999; margin-top: 15px; text-align: center;">
+          <p style="font-size: 0.75em; color: #999; margin-top: 15px; text-align: center;" data-i18n="parent.emailConfigNote">
             <i class="fas fa-info-circle"></i> Email must be configured in server settings
           </p>
         </div>
@@ -2118,29 +2121,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
          FOOTER
          ============================================ -->
     <footer class="main-footer">
-      © 2026 MATHMATIX AI. All rights reserved. | <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a>
+      © 2026 MATHMATIX AI. <span data-i18n="footer.rights">All rights reserved.</span> | <a href="/privacy.html" data-i18n="footer.privacy">Privacy Policy</a> | <a href="/terms.html" data-i18n="footer.terms">Terms of Use</a>
     </footer>
   </div>
 
   <!-- Mobile Bottom Nav (visible < 968px) -->
   <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
-    <button class="mobile-nav-btn active" data-mobile-tab="children">
+    <button class="mobile-nav-btn active" data-mobile-tab="children" data-i18n="parent.navChildren">
       <i class="fas fa-child"></i>
       <span>Children</span>
     </button>
-    <button class="mobile-nav-btn" data-mobile-tab="actions">
+    <button class="mobile-nav-btn" data-mobile-tab="actions" data-i18n="parent.navAddChild">
       <i class="fas fa-user-plus"></i>
       <span>Add Child</span>
     </button>
-    <button class="mobile-nav-btn" data-mobile-tab="learn">
+    <button class="mobile-nav-btn" data-mobile-tab="learn" data-i18n="parent.navLearn">
       <i class="fas fa-graduation-cap"></i>
       <span>Learn</span>
     </button>
-    <button class="mobile-nav-btn" data-mobile-tab="settings">
+    <button class="mobile-nav-btn" data-mobile-tab="settings" data-i18n="nav.settings">
       <i class="fas fa-cog"></i>
       <span>Settings</span>
     </button>
-    <button class="mobile-nav-btn" data-mobile-tab="email">
+    <button class="mobile-nav-btn" data-mobile-tab="email" data-i18n="parent.navReports">
       <i class="fas fa-envelope"></i>
       <span>Reports</span>
     </button>
@@ -2149,36 +2152,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- Mobile Add Child Drawer -->
   <div class="mobile-drawer" id="mobile-actions-drawer">
     <div class="drawer-header">
-      <h3><i class="fas fa-user-plus" style="color: #3498db;"></i> Add Child</h3>
+      <h3 data-i18n="parent.navAddChild"><i class="fas fa-user-plus" style="color: #3498db;"></i> Add Child</h3>
       <button class="drawer-close-btn" data-close-drawer="mobile-actions-drawer"><i class="fas fa-times"></i></button>
     </div>
     <div class="drawer-content">
       <div class="drawer-section">
-        <div class="drawer-section-title"><i class="fas fa-key" style="color: #3498db;"></i> Generate Invite Code</div>
-        <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;">Create a code for your child to link their account to yours.</p>
-        <button id="mobile-generate-code-btn" class="btn btn-primary main-action-btn" style="width: 100%;">
+        <div class="drawer-section-title" data-i18n="parent.generateCode"><i class="fas fa-key" style="color: #3498db;"></i> Generate Invite Code</div>
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;" data-i18n="parent.mobileInviteHelp">Create a code for your child to link their account to yours.</p>
+        <button id="mobile-generate-code-btn" class="btn btn-primary main-action-btn" style="width: 100%;" data-i18n="parent.generateCode">
           <i class="fas fa-user-plus"></i> Generate Invite Code
         </button>
         <div id="mobile-invite-code-output" style="display:none; margin-top: 12px; text-align: center; padding: 15px; background: #ebf5fb; border-radius: 8px; border: 2px solid #3498db;">
-          <p style="font-size: 0.85em; font-weight: 600; color: #4a5568; margin-bottom: 8px;">Share this code with your child:</p>
+          <p style="font-size: 0.85em; font-weight: 600; color: #4a5568; margin-bottom: 8px;" data-i18n="parent.shareCodeWithChild">Share this code with your child:</p>
           <div style="display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--color-primary-bg); color: var(--color-primary-deeper); font-weight: bold; font-size: 1.3em; padding: 12px; border-radius: 8px; border: 2px solid var(--color-primary);">
             <span id="mobile-generated-code-value" style="user-select: all;"></span>
-            <button class="copy-code-btn" id="mobile-copy-code-btn" aria-label="Copy invite code" title="Copy">
+            <button class="copy-code-btn" id="mobile-copy-code-btn" aria-label="Copy invite code" title="Copy"
+                    data-i18n-title="parent.copy" data-i18n-aria="parent.copyToClipboard">
               <i class="fas fa-copy"></i>
             </button>
           </div>
-          <p style="font-size: 0.75em; color: #999; margin-top: 8px;">Expires: <span id="mobile-code-expires-at"></span></p>
+          <p style="font-size: 0.75em; color: #999; margin-top: 8px;"><span data-i18n="parent.expires">Expires:</span> <span id="mobile-code-expires-at"></span></p>
         </div>
       </div>
 
       <div class="drawer-section">
-        <div class="drawer-section-title"><i class="fas fa-link" style="color: #3498db;"></i> Link Existing Student</div>
-        <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;">Enter your child's link code to connect their account.</p>
+        <div class="drawer-section-title" data-i18n="parent.linkExistingShort"><i class="fas fa-link" style="color: #3498db;"></i> Link Existing Student</div>
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;" data-i18n="parent.mobileLinkHelp">Enter your child's link code to connect their account.</p>
         <form id="mobile-link-student-form">
           <div class="form-group" style="margin-bottom: 12px;">
-            <input type="text" id="mobile-studentLinkCode" placeholder="Enter 6-character code" required style="width: 100%;">
+            <input type="text" id="mobile-studentLinkCode" placeholder="Enter 6-character code" data-i18n-placeholder="parent.linkCodePlaceholder" required style="width: 100%;">
           </div>
-          <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;">
+          <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;" data-i18n="parent.linkStudent">
             <i class="fas fa-link"></i> Link Student
           </button>
           <div id="mobile-link-student-message" style="margin-top: 8px; font-size: 0.85em; text-align: center;"></div>
@@ -2190,45 +2194,45 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- Mobile Settings Drawer -->
   <div class="mobile-drawer" id="mobile-settings-drawer">
     <div class="drawer-header">
-      <h3><i class="fas fa-cog" style="color: #3498db;"></i> Settings</h3>
+      <h3 data-i18n="nav.settings"><i class="fas fa-cog" style="color: #3498db;"></i> Settings</h3>
       <button class="drawer-close-btn" data-close-drawer="mobile-settings-drawer"><i class="fas fa-times"></i></button>
     </div>
     <div class="drawer-content">
       <form id="mobile-parent-settings-form">
         <div class="drawer-section">
-          <div class="drawer-section-title"><i class="fas fa-calendar-alt" style="color: #3498db;"></i> Report Frequency</div>
+          <div class="drawer-section-title" data-i18n="parent.reportFrequency"><i class="fas fa-calendar-alt" style="color: #3498db;"></i> Report Frequency</div>
           <select id="mobile-reportFrequency" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="biweekly">Bi-weekly</option>
-            <option value="monthly">Monthly</option>
+            <option value="daily" data-i18n="parent.daily">Daily</option>
+            <option value="weekly" data-i18n="parent.weekly">Weekly</option>
+            <option value="biweekly" data-i18n="parent.biweekly">Bi-weekly</option>
+            <option value="monthly" data-i18n="parent.monthly">Monthly</option>
           </select>
-          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">How often you receive progress reports</p>
+          <p style="font-size: 0.75em; color: #999; margin-top: 6px;" data-i18n="parent.reportFrequencyHelp">How often you receive progress reports</p>
         </div>
 
         <div class="drawer-section">
-          <div class="drawer-section-title"><i class="fas fa-chart-line" style="color: #3498db;"></i> Dashboard View</div>
+          <div class="drawer-section-title" data-i18n="parent.dashboardView"><i class="fas fa-chart-line" style="color: #3498db;"></i> Dashboard View</div>
           <select id="mobile-goalViewPreference" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
-            <option value="progress">Progress Overview</option>
-            <option value="gaps">Learning Gaps</option>
-            <option value="goals">IEP Goals</option>
+            <option value="progress" data-i18n="parent.viewProgress">Progress Overview</option>
+            <option value="gaps" data-i18n="parent.viewGaps">Learning Gaps</option>
+            <option value="goals" data-i18n="parent.viewGoals">IEP Goals</option>
           </select>
-          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">What you see first when viewing child progress</p>
+          <p style="font-size: 0.75em; color: #999; margin-top: 6px;" data-i18n="parent.dashboardViewHelp">What you see first when viewing child progress</p>
         </div>
 
         <div class="drawer-section">
-          <div class="drawer-section-title"><i class="fas fa-comments" style="color: #3498db;"></i> Communication Tone</div>
+          <div class="drawer-section-title" data-i18n="parent.tone"><i class="fas fa-comments" style="color: #3498db;"></i> Communication Tone</div>
           <select id="mobile-parentTone" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
-            <option value="">Standard (default)</option>
-            <option value="detailed">Detailed & Technical</option>
-            <option value="simple">Simple & Concise</option>
-            <option value="encouraging">Encouraging & Positive</option>
+            <option value="" data-i18n="parent.toneStandard">Standard (default)</option>
+            <option value="detailed" data-i18n="parent.toneDetailed">Detailed & Technical</option>
+            <option value="simple" data-i18n="parent.toneSimple">Simple & Concise</option>
+            <option value="encouraging" data-i18n="parent.toneEncouraging">Encouraging & Positive</option>
           </select>
-          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">How the AI communicates with you</p>
+          <p style="font-size: 0.75em; color: #999; margin-top: 6px;" data-i18n="parent.toneHelp">How the AI communicates with you</p>
         </div>
 
         <div class="drawer-section">
-          <div class="drawer-section-title"><i class="fas fa-language" style="color: #3498db;"></i> Language</div>
+          <div class="drawer-section-title" data-i18n="parent.language"><i class="fas fa-language" style="color: #3498db;"></i> Language</div>
           <select id="mobile-parentLanguage" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
             <option value="English">English</option>
             <option value="Spanish">Spanish (Español)</option>
@@ -2240,10 +2244,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <option value="French">French (Français)</option>
             <option value="German">German (Deutsch)</option>
           </select>
-          <p style="font-size: 0.75em; color: #999; margin-top: 6px;">Preferred language for reports and dashboard</p>
+          <p style="font-size: 0.75em; color: #999; margin-top: 6px;" data-i18n="parent.languageHelp">Preferred language for reports and dashboard</p>
         </div>
 
-        <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;">
+        <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;" data-i18n="parent.saveSettings">
           <i class="fas fa-save"></i> Save Settings
         </button>
         <div id="mobile-settings-save-message" style="margin-top: 8px; font-size: 0.85em; text-align: center;"></div>
@@ -2254,26 +2258,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- Mobile Email Reports Drawer -->
   <div class="mobile-drawer" id="mobile-email-drawer">
     <div class="drawer-header">
-      <h3><i class="fas fa-envelope" style="color: #3498db;"></i> Email Reports</h3>
+      <h3 data-i18n="parent.emailReports"><i class="fas fa-envelope" style="color: #3498db;"></i> Email Reports</h3>
       <button class="drawer-close-btn" data-close-drawer="mobile-email-drawer"><i class="fas fa-times"></i></button>
     </div>
     <div class="drawer-content">
       <div class="drawer-section">
-        <p style="font-size: 0.85em; color: #666; margin-bottom: 16px;">
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 16px;" data-i18n="parent.emailReportsDesc">
           Get weekly progress reports delivered to your inbox.
         </p>
         <div class="mobile-actions-grid">
-          <button class="mobile-action-btn" id="mobile-test-email-btn">
+          <button class="mobile-action-btn" id="mobile-test-email-btn" data-i18n="parent.sendTestEmail">
             <i class="fas fa-paper-plane" style="color: #3498db;"></i>
             Send Test Email
           </button>
-          <button class="mobile-action-btn" id="mobile-weekly-report-btn">
+          <button class="mobile-action-btn" id="mobile-weekly-report-btn" data-i18n="parent.weeklyReportNow">
             <i class="fas fa-chart-line" style="color: #3498db;"></i>
             Weekly Report Now
           </button>
         </div>
         <div id="mobile-email-status-message" style="margin-top: 12px; font-size: 0.85em; text-align: center;"></div>
-        <p style="font-size: 0.75em; color: #999; margin-top: 16px; text-align: center;">
+        <p style="font-size: 0.75em; color: #999; margin-top: 16px; text-align: center;" data-i18n="parent.emailConfigNote">
           <i class="fas fa-info-circle"></i> Email must be configured in server settings
         </p>
       </div>
@@ -2283,16 +2287,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- Mobile Learn Drawer -->
   <div class="mobile-drawer" id="mobile-learn-drawer">
     <div class="drawer-header">
-      <h3><i class="fas fa-graduation-cap" style="color: #f39c12;"></i> Parent Learning Center</h3>
+      <h3 data-i18n="parent.learningCenter"><i class="fas fa-graduation-cap" style="color: #f39c12;"></i> Parent Learning Center</h3>
       <button class="drawer-close-btn" data-close-drawer="mobile-learn-drawer"><i class="fas fa-times"></i></button>
     </div>
     <div class="drawer-content">
       <div class="drawer-section">
-        <p style="font-size: 0.85em; color: #666; margin-bottom: 16px;">
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 16px;" data-i18n="parent.learningCenterDesc">
           Mini-courses to help you understand today's math methods and support your child at home.
         </p>
         <div id="mobile-parent-courses-list">
-          <p class="text-sm text-gray-500 text-center">Loading courses...</p>
+          <p class="text-sm text-gray-500 text-center" data-i18n="parent.loadingCourses">Loading courses...</p>
         </div>
       </div>
     </div>
@@ -2466,7 +2470,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-  <script src="/dist/js/parent-js1.638baa1e.js"></script>
+  <script src="/dist/js/parent-js1.5aa7725f.js"></script>
 <script>
     // Mount once the dashboard script has established the session.
     document.addEventListener('DOMContentLoaded', function () {

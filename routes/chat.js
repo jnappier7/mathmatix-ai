@@ -2083,8 +2083,12 @@ async function handleParentChat(req, res, parentId, childId, message) {
 
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessages];
 
+        // The system prompt travels as messagesForAI[0]. It used to ALSO be passed
+        // as options.system, which reads load-bearing but never was: openaiClient
+        // has no such option, and anthropicClient's buildBody derives system purely
+        // from splitSystemAndMessages(messages). The danger of leaving it was that
+        // the next reader deletes the "duplicate" — and picks the working one.
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, {
-            system: systemPrompt,
             temperature: 0.7,
             max_tokens: 800
         });
@@ -2120,6 +2124,47 @@ function generateParentTeacherPrompt(child, recentSessions, curriculumContext, p
     const parentName = parent.firstName;
     const tutorName = tutor?.name || 'Mr. Nappier';
     const tutorPersonality = tutor?.personality || '';
+
+    // The parent dashboard translates its own chrome from this same setting, so
+    // without this the UI comes back in Spanish and the tutor answers in English.
+    // Deliberately NOT "reply in whatever language they wrote in": the quick-question
+    // buttons post fixed English prompts, so mirroring the incoming message would
+    // pin every one of those replies back to English. The stored setting wins.
+    // parentTone is a free-text column (models/user.js declares no enum) and
+    // PUT /api/parent/settings stores whatever it is handed, so the stored value
+    // is user-controlled. Map the four settings the dashboard offers onto fixed
+    // text rather than interpolating the column: an arbitrary string reaching a
+    // system prompt is an injection vector, and an unrecognised value should
+    // mean "use the default", not "follow whatever this says".
+    const TONE_DIRECTIVES = {
+        detailed: `
+${parentName.toUpperCase()}'S PREFERRED TONE — DETAILED & TECHNICAL:
+They asked for depth. Name the actual mathematical concepts and skills instead of talking around them ("multiplying fractions with unlike denominators", not "some fraction work"), and explain WHY a method works or why a step is where students slip. Precise vocabulary is welcome — define a term the first time you use it, then use it.
+This changes your register, NOT your message length. The turn-taking rules above still hold: depth comes from going further across several short exchanges, never from one long message.
+`,
+        simple: `
+${parentName.toUpperCase()}'S PREFERRED TONE — SIMPLE & CONCISE:
+They asked for plain language. Everyday words, no math jargon, and the shortest reply that actually answers the question — often one or two sentences. If a technical term is unavoidable, define it in a handful of words right where you use it.
+Shorter must not mean vaguer. Keep the specifics from the session data — topics, dates, accuracy. Cut the words, not the substance.
+`,
+        encouraging: `
+${parentName.toUpperCase()}'S PREFERRED TONE — ENCOURAGING & POSITIVE:
+They asked for a warm, encouraging register. Lead with what ${childName} is doing well, treat difficulty as normal and workable, and pair any concern with a concrete next step they can take at home.
+This changes HOW you say things, never WHAT you report. Do NOT soften, delay, or omit a real struggle in order to stay positive — a parent who asked for encouragement still needs to know when their child is stuck, and hiding it costs them the chance to help. Honest and warm, not cheerful and vague.
+`
+    };
+    const toneSection = TONE_DIRECTIVES[(parent.parentTone || '').trim().toLowerCase()] || '';
+
+    const parentLanguage = (parent.parentLanguage || 'English').trim();
+    const languageSection = parentLanguage && parentLanguage !== 'English'
+        ? `
+LANGUAGE (NON-NEGOTIABLE):
+Write every reply to ${parentName} in ${parentLanguage}. They chose ${parentLanguage}, so answer in it even when their message arrives in English — several of the dashboard's quick-question buttons send fixed English text.
+- Keep math in standard notation (2/3 × 1/4 = 2/12). Translate the words around it, never the notation itself.
+- Leave ${childName}'s and ${tutorName}'s names exactly as written.
+- Write natural ${parentLanguage}, not a word-for-word rendering of English phrasing.
+`
+        : '';
 
     // Build session summaries section - this is the CORE data the AI must reference
     let sessionData = '';
@@ -2196,11 +2241,13 @@ ${curriculumContext ? `\nCURRICULUM CONTEXT:\n${curriculumContext}` : ''}
 ${hasRealData ? sessionData : 'No session data available yet.'}
 === END SESSION DATA ===
 
-CRITICAL RULES:
-1. ONLY discuss topics, performance, and struggles that appear in the SESSION DATA above
+CRITICAL RULES — WHAT YOU MAY CLAIM ABOUT ${childName}:
+These rules govern statements ABOUT ${childName}: what they studied, how they performed, what they find hard. They do NOT restrict teaching math itself. Explaining a concept, working an example, or suggesting a home activity draws on your own math knowledge and is expected of you — see SPECIAL REQUESTS below.
+
+1. Every claim about ${childName}'s topics, performance, or struggles must be grounded in the SESSION DATA above
 2. DO NOT invent or assume topics the student worked on - if it's not in the data, don't mention it
 3. DO NOT make up generic claims about "algebra" or "geometry" unless those words appear in the session data
-4. If the parent asks about something not in the data, say you'd need to check or that you haven't covered that topic yet
+4. If the parent asks what ${childName} has DONE with a topic that isn't in the data, say you'd need to check or that you haven't covered it yet. You may still teach that topic if they want to understand it — just don't claim ${childName} has worked on it.
 5. Reference SPECIFIC sessions, dates, accuracy rates, and summaries from the data above
 6. If there's no session data, be honest: "${childName} and I haven't had many sessions yet"
 7. NEVER interpret missing problem statistics as a lack of effort, motivation, or engagement. If a session has no Performance line, it means our tracking system didn't capture the data — the student was still learning and working. Do NOT suggest the student is unmotivated, disengaged, or needs intervention based on missing stats.
@@ -2238,8 +2285,9 @@ TONE:
 - Be honest about challenges while staying encouraging
 - Give specific, actionable suggestions for home practice
 - Sound like a real teacher at a conference, not a generated report
-
-Chat naturally with ${parentName} about ${childName}'s ACTUAL progress based on the session data above.`;
+${toneSection}
+${languageSection}
+Chat naturally with ${parentName} about ${childName}'s ACTUAL progress based on the session data above.${parentLanguage && parentLanguage !== 'English' ? ` Remember: reply in ${parentLanguage}.` : ''}`;
 
     return prompt;
 }
@@ -3485,3 +3533,6 @@ module.exports.isInProgressSession = isInProgressSession;
 // Exported so POST /api/student-moves can delegate a normalized tile move
 // through the SAME lock + pipeline (see docs/BOARD_STUDENT_MOVES_INTEGRATION.md).
 module.exports.runStudentTurn = runStudentTurn;
+// Exported for unit testing the parent's language directive, which is otherwise
+// only observable by reading the model's reply.
+module.exports.generateParentTeacherPrompt = generateParentTeacherPrompt;

@@ -431,6 +431,437 @@ window.I18N_TRANSLATIONS = {
     Vietnamese: 'Hủy', Arabic: 'إلغاء', Somali: 'Jooji', French: 'Annuler', German: 'Abbrechen'
   },
 
+  /* ─── Parent Dashboard ─── */
+  'parent.modeIndicator': {
+    English: 'Parent Dashboard', Spanish: 'Panel para padres', Russian: 'Панель родителя', Chinese: '家长面板',
+    Vietnamese: 'Bảng điều khiển phụ huynh', Arabic: 'لوحة ولي الأمر', Somali: 'Shaashadda waalidka', French: 'Espace parent', German: 'Eltern-Dashboard'
+  },
+  'parent.yourAccount': {
+    English: 'Your Parent Account', Spanish: 'Su cuenta de padre/madre', Russian: 'Ваш родительский аккаунт', Chinese: '您的家长账户',
+    Vietnamese: 'Tài khoản phụ huynh của bạn', Arabic: 'حساب ولي الأمر الخاص بك', Somali: 'Akoonkaaga waalidka', French: 'Votre compte parent', German: 'Ihr Elternkonto'
+  },
+  'parent.yourAccountDesc': {
+    English: 'Manage your children\'s learning progress and communicate with their AI tutors.',
+    Spanish: 'Administre el progreso de aprendizaje de sus hijos y comuníquese con sus tutores de IA.',
+    Russian: 'Управляйте успеваемостью своих детей и общайтесь с их ИИ-репетиторами.',
+    Chinese: '管理孩子的学习进度，并与他们的 AI 导师交流。',
+    Vietnamese: 'Quản lý tiến trình học tập của con bạn và trao đổi với gia sư AI của các em.',
+    Arabic: 'تابع تقدّم أبنائك في التعلّم وتواصل مع معلّميهم بالذكاء الاصطناعي.',
+    Somali: 'Maamul horumarka waxbarasho ee carruurtaada oo la xiriir macallimiintooda AI-ga.',
+    French: 'Gérez les progrès d\'apprentissage de vos enfants et échangez avec leurs tuteurs IA.',
+    German: 'Verwalten Sie den Lernfortschritt Ihrer Kinder und kommunizieren Sie mit ihren KI-Tutoren.'
+  },
+  'parent.inviteChild': {
+    English: 'Invite a Child', Spanish: 'Invitar a un hijo', Russian: 'Пригласить ребёнка', Chinese: '邀请孩子',
+    Vietnamese: 'Mời một trẻ', Arabic: 'دعوة طفل', Somali: 'Ku casuun ilma', French: 'Inviter un enfant', German: 'Kind einladen'
+  },
+  'parent.inviteChildHelp': {
+    English: 'Generate a code, then have your child enter it when they sign up. Best when your child doesn\'t have a Mathmatix account yet.',
+    Spanish: 'Genere un código y pida a su hijo que lo introduzca al registrarse. Ideal si su hijo aún no tiene una cuenta de Mathmatix.',
+    Russian: 'Создайте код и попросите ребёнка ввести его при регистрации. Подходит, если у ребёнка ещё нет аккаунта Mathmatix.',
+    Chinese: '生成一个代码，让孩子在注册时输入。适用于孩子还没有 Mathmatix 账户的情况。',
+    Vietnamese: 'Tạo một mã, sau đó cho con bạn nhập mã khi đăng ký. Phù hợp nhất khi con bạn chưa có tài khoản Mathmatix.',
+    Arabic: 'أنشئ رمزًا، ثم اطلب من طفلك إدخاله عند التسجيل. الأفضل عندما لا يملك طفلك حساب Mathmatix بعد.',
+    Somali: 'Samee koodh, ka dibna ilmahaagu ha geliyo markuu isdiiwaangelinayo. Ugu wanaagsan marka ilmahaagu weli aanu lahayn akoon Mathmatix.',
+    French: 'Générez un code, puis demandez à votre enfant de le saisir lors de son inscription. Idéal si votre enfant n\'a pas encore de compte Mathmatix.',
+    German: 'Erstellen Sie einen Code, den Ihr Kind bei der Registrierung eingibt. Ideal, wenn Ihr Kind noch kein Mathmatix-Konto hat.'
+  },
+  'parent.generateCode': {
+    English: 'Generate Invite Code', Spanish: 'Generar código de invitación', Russian: 'Создать код приглашения', Chinese: '生成邀请码',
+    Vietnamese: 'Tạo mã mời', Arabic: 'إنشاء رمز دعوة', Somali: 'Samee koodhka casuumaadda', French: 'Générer un code d\'invitation', German: 'Einladungscode erstellen'
+  },
+  'parent.shareCodeWithChild': {
+    English: 'Share this code with your child:', Spanish: 'Comparta este código con su hijo:', Russian: 'Поделитесь этим кодом с ребёнком:', Chinese: '把这个代码分享给您的孩子：',
+    Vietnamese: 'Chia sẻ mã này với con bạn:', Arabic: 'شارك هذا الرمز مع طفلك:', Somali: 'La wadaag koodhkan ilmahaaga:', French: 'Partagez ce code avec votre enfant :', German: 'Teilen Sie diesen Code mit Ihrem Kind:'
+  },
+  'parent.copy': {
+    English: 'Copy', Spanish: 'Copiar', Russian: 'Копировать', Chinese: '复制',
+    Vietnamese: 'Sao chép', Arabic: 'نسخ', Somali: 'Koobi', French: 'Copier', German: 'Kopieren'
+  },
+  'parent.copyToClipboard': {
+    English: 'Copy to clipboard', Spanish: 'Copiar al portapapeles', Russian: 'Копировать в буфер обмена', Chinese: '复制到剪贴板',
+    Vietnamese: 'Sao chép vào bộ nhớ tạm', Arabic: 'نسخ إلى الحافظة', Somali: 'Ku koobi meesha wax lagu kaydiyo', French: 'Copier dans le presse-papiers', German: 'In die Zwischenablage kopieren'
+  },
+  'parent.expires': {
+    English: 'Expires:', Spanish: 'Vence:', Russian: 'Истекает:', Chinese: '过期时间：',
+    Vietnamese: 'Hết hạn:', Arabic: 'ينتهي في:', Somali: 'Wuxuu dhacayaa:', French: 'Expire le :', German: 'Läuft ab:'
+  },
+  'parent.linkExisting': {
+    English: 'Link to Existing Student', Spanish: 'Vincular con un estudiante existente', Russian: 'Привязать существующего ученика', Chinese: '关联现有学生',
+    Vietnamese: 'Liên kết với học sinh hiện có', Arabic: 'الربط بطالب موجود', Somali: 'Ku xir arday hore u jira', French: 'Associer un élève existant', German: 'Mit vorhandenem Schüler verknüpfen'
+  },
+  'parent.linkExistingHelp': {
+    English: 'Already have a child using Mathmatix? Ask them for their 6-character link code (Profile → Family) and enter it below.',
+    Spanish: '¿Su hijo ya usa Mathmatix? Pídale su código de vinculación de 6 caracteres (Perfil → Familia) e introdúzcalo a continuación.',
+    Russian: 'Ваш ребёнок уже пользуется Mathmatix? Попросите у него 6-значный код привязки (Профиль → Семья) и введите его ниже.',
+    Chinese: '孩子已经在使用 Mathmatix 了吗？向他们索取 6 位关联代码（个人资料 → 家庭），然后在下方输入。',
+    Vietnamese: 'Con bạn đã dùng Mathmatix? Hãy hỏi mã liên kết 6 ký tự của con (Hồ sơ → Gia đình) và nhập vào bên dưới.',
+    Arabic: 'هل يستخدم طفلك Mathmatix بالفعل؟ اطلب منه رمز الربط المكوّن من 6 أحرف (الملف الشخصي ← العائلة) وأدخله أدناه.',
+    Somali: 'Ilmahaagu horey ma u isticmaalaa Mathmatix? Weydii koodhka xiriirinta ee 6-xaraf ah (Profile → Family) oo hoos geli.',
+    French: 'Votre enfant utilise déjà Mathmatix ? Demandez-lui son code de liaison à 6 caractères (Profil → Famille) et saisissez-le ci-dessous.',
+    German: 'Nutzt Ihr Kind Mathmatix bereits? Fragen Sie nach dem 6-stelligen Verknüpfungscode (Profil → Familie) und geben Sie ihn unten ein.'
+  },
+  'parent.studentLinkCode': {
+    English: 'Student\'s Link Code', Spanish: 'Código de vinculación del estudiante', Russian: 'Код привязки ученика', Chinese: '学生关联代码',
+    Vietnamese: 'Mã liên kết của học sinh', Arabic: 'رمز ربط الطالب', Somali: 'Koodhka xiriirinta ardayga', French: 'Code de liaison de l\'élève', German: 'Verknüpfungscode des Schülers'
+  },
+  'parent.linkCodePlaceholder': {
+    English: 'Enter 6-character code', Spanish: 'Introduzca el código de 6 caracteres', Russian: 'Введите 6-значный код', Chinese: '输入 6 位代码',
+    Vietnamese: 'Nhập mã 6 ký tự', Arabic: 'أدخل الرمز المكوّن من 6 أحرف', Somali: 'Geli koodhka 6-xaraf ah', French: 'Saisissez le code à 6 caractères', German: '6-stelligen Code eingeben'
+  },
+  'parent.linkStudent': {
+    English: 'Link Student', Spanish: 'Vincular estudiante', Russian: 'Привязать ученика', Chinese: '关联学生',
+    Vietnamese: 'Liên kết học sinh', Arabic: 'ربط الطالب', Somali: 'Ku xir ardayga', French: 'Associer l\'élève', German: 'Schüler verknüpfen'
+  },
+  'parent.learningCenter': {
+    English: 'Parent Learning Center', Spanish: 'Centro de aprendizaje para padres', Russian: 'Учебный центр для родителей', Chinese: '家长学习中心',
+    Vietnamese: 'Trung tâm học tập dành cho phụ huynh', Arabic: 'مركز تعلّم أولياء الأمور', Somali: 'Xarunta Waxbarashada Waalidka', French: 'Centre d\'apprentissage pour les parents', German: 'Lernzentrum für Eltern'
+  },
+  'parent.learningCenterDesc': {
+    English: 'Mini-courses to help you understand today\'s math methods and support your child at home.',
+    Spanish: 'Minicursos para ayudarle a entender los métodos matemáticos actuales y apoyar a su hijo en casa.',
+    Russian: 'Мини-курсы, которые помогут вам понять современные методы математики и помогать ребёнку дома.',
+    Chinese: '迷你课程，帮助您了解当今的数学教学方法，在家中支持孩子。',
+    Vietnamese: 'Các khóa học ngắn giúp bạn hiểu phương pháp toán học ngày nay và hỗ trợ con tại nhà.',
+    Arabic: 'دورات قصيرة تساعدك على فهم طرق تدريس الرياضيات اليوم ودعم طفلك في المنزل.',
+    Somali: 'Koorsooyin kooban oo kaa caawinaya inaad fahamto hababka xisaabta ee maanta oo aad guriga kaga taageerto ilmahaaga.',
+    French: 'Des mini-cours pour comprendre les méthodes mathématiques actuelles et aider votre enfant à la maison.',
+    German: 'Mini-Kurse, die Ihnen helfen, die heutigen Mathematik-Methoden zu verstehen und Ihr Kind zu Hause zu unterstützen.'
+  },
+  'parent.loadingCourses': {
+    English: 'Loading courses...', Spanish: 'Cargando cursos...', Russian: 'Загрузка курсов...', Chinese: '正在加载课程…',
+    Vietnamese: 'Đang tải khóa học...', Arabic: 'جارٍ تحميل الدورات...', Somali: 'Waxaa la soo rarayaa koorsooyinka...', French: 'Chargement des cours...', German: 'Kurse werden geladen …'
+  },
+  'parent.linkedChildren': {
+    English: 'Your Linked Children', Spanish: 'Sus hijos vinculados', Russian: 'Ваши привязанные дети', Chinese: '已关联的孩子',
+    Vietnamese: 'Các con đã liên kết', Arabic: 'أبناؤك المرتبطون', Somali: 'Carruurtaada la xiriiriyay', French: 'Vos enfants associés', German: 'Ihre verknüpften Kinder'
+  },
+  'parent.learnsBest': {
+    English: 'How Your Child Learns Best', Spanish: 'Cómo aprende mejor su hijo', Russian: 'Как ваш ребёнок учится лучше всего', Chinese: '您的孩子如何学得最好',
+    Vietnamese: 'Con bạn học tốt nhất bằng cách nào', Arabic: 'كيف يتعلّم طفلك على أفضل وجه', Somali: 'Sida ilmahaagu ugu fiican wax u barto', French: 'Comment votre enfant apprend le mieux', German: 'Wie Ihr Kind am besten lernt'
+  },
+  'parent.teacherMessages': {
+    English: 'Messages with Your Child\'s Teacher', Spanish: 'Mensajes con el maestro de su hijo', Russian: 'Переписка с учителем вашего ребёнка', Chinese: '与孩子老师的消息',
+    Vietnamese: 'Tin nhắn với giáo viên của con bạn', Arabic: 'الرسائل مع معلّم طفلك', Somali: 'Farriimaha macallinka ilmahaaga', French: 'Messages avec l\'enseignant de votre enfant', German: 'Nachrichten mit der Lehrkraft Ihres Kindes'
+  },
+  'parent.conference': {
+    English: 'Parent-Tutor Conference', Spanish: 'Reunión entre padres y tutor', Russian: 'Беседа родителя с репетитором', Chinese: '家长与导师会谈',
+    Vietnamese: 'Trao đổi giữa phụ huynh và gia sư', Arabic: 'لقاء ولي الأمر مع المعلّم', Somali: 'Kulanka Waalidka iyo Macallinka', French: 'Entretien parent-tuteur', German: 'Eltern-Tutor-Gespräch'
+  },
+  'parent.discussingStudent': {
+    English: 'Discussing Student:', Spanish: 'Estudiante en cuestión:', Russian: 'Обсуждаемый ученик:', Chinese: '讨论的学生：',
+    Vietnamese: 'Học sinh đang trao đổi:', Arabic: 'الطالب قيد المناقشة:', Somali: 'Ardayga laga hadlayo:', French: 'Élève concerné :', German: 'Besprochener Schüler:'
+  },
+  'parent.selectChildAria': {
+    English: 'Select child to discuss', Spanish: 'Seleccionar hijo para hablar', Russian: 'Выберите ребёнка для обсуждения', Chinese: '选择要讨论的孩子',
+    Vietnamese: 'Chọn trẻ để trao đổi', Arabic: 'اختر الطفل للمناقشة', Somali: 'Dooro ilmaha laga hadlayo', French: 'Sélectionner l\'enfant à discuter', German: 'Kind zum Besprechen auswählen'
+  },
+  'parent.selectChildPrompt': {
+    English: 'Select a child to discuss their learning progress.',
+    Spanish: 'Seleccione un hijo para hablar sobre su progreso de aprendizaje.',
+    Russian: 'Выберите ребёнка, чтобы обсудить его успехи.',
+    Chinese: '选择一个孩子，讨论他们的学习进度。',
+    Vietnamese: 'Chọn một trẻ để trao đổi về tiến trình học tập.',
+    Arabic: 'اختر طفلًا لمناقشة تقدّمه في التعلّم.',
+    Somali: 'Dooro ilmo si aad uga wada hadashaan horumarkiisa waxbarasho.',
+    French: 'Sélectionnez un enfant pour discuter de ses progrès.',
+    German: 'Wählen Sie ein Kind aus, um seinen Lernfortschritt zu besprechen.'
+  },
+  'parent.tutorThinking': {
+    English: 'AI Tutor is thinking...', Spanish: 'El tutor de IA está pensando...', Russian: 'ИИ-репетитор думает...', Chinese: 'AI 导师正在思考…',
+    Vietnamese: 'Gia sư AI đang suy nghĩ...', Arabic: 'المعلّم الذكي يفكّر...', Somali: 'Macallinka AI-ga wuu fekerayaa...', French: 'Le tuteur IA réfléchit...', German: 'Der KI-Tutor denkt nach …'
+  },
+  'parent.quickQuestions': {
+    English: 'Quick Questions:', Spanish: 'Preguntas rápidas:', Russian: 'Быстрые вопросы:', Chinese: '快捷提问：',
+    Vietnamese: 'Câu hỏi nhanh:', Arabic: 'أسئلة سريعة:', Somali: 'Su\'aalo degdeg ah:', French: 'Questions rapides :', German: 'Schnelle Fragen:'
+  },
+  'parent.qProgress': {
+    English: 'Progress Report', Spanish: 'Informe de progreso', Russian: 'Отчёт об успеваемости', Chinese: '进度报告',
+    Vietnamese: 'Báo cáo tiến trình', Arabic: 'تقرير التقدّم', Somali: 'Warbixinta horumarka', French: 'Rapport de progrès', German: 'Fortschrittsbericht'
+  },
+  'parent.qTopics': {
+    English: 'Current Topics', Spanish: 'Temas actuales', Russian: 'Текущие темы', Chinese: '当前主题',
+    Vietnamese: 'Chủ đề hiện tại', Arabic: 'الموضوعات الحالية', Somali: 'Mowduucyada hadda', French: 'Sujets actuels', German: 'Aktuelle Themen'
+  },
+  'parent.qTeachMe': {
+    English: 'Teach Me', Spanish: 'Enséñeme', Russian: 'Научите меня', Chinese: '教教我',
+    Vietnamese: 'Dạy tôi', Arabic: 'علّمني', Somali: 'I bar', French: 'Apprenez-moi', German: 'Erklär es mir'
+  },
+  'parent.qTeachMeTitle': {
+    English: 'Learn the concept your child is studying so you can help at home',
+    Spanish: 'Aprenda el concepto que estudia su hijo para poder ayudarle en casa',
+    Russian: 'Изучите тему, которую проходит ваш ребёнок, чтобы помогать дома',
+    Chinese: '学习孩子正在学的概念，以便在家辅导',
+    Vietnamese: 'Học khái niệm con bạn đang học để có thể hỗ trợ tại nhà',
+    Arabic: 'تعلّم المفهوم الذي يدرسه طفلك لتتمكّن من مساعدته في المنزل',
+    Somali: 'Baro fikradda uu ilmahaagu baranayo si aad guriga uga caawiso',
+    French: 'Apprenez la notion étudiée par votre enfant pour l\'aider à la maison',
+    German: 'Lernen Sie das Konzept Ihres Kindes, um zu Hause helfen zu können'
+  },
+  'parent.qHelpHome': {
+    English: 'Help at Home', Spanish: 'Ayuda en casa', Russian: 'Помощь дома', Chinese: '在家辅导',
+    Vietnamese: 'Hỗ trợ tại nhà', Arabic: 'المساعدة في المنزل', Somali: 'Caawimo guriga', French: 'Aide à la maison', German: 'Hilfe zu Hause'
+  },
+  'parent.qStruggles': {
+    English: 'Struggles', Spanish: 'Dificultades', Russian: 'Трудности', Chinese: '薄弱环节',
+    Vietnamese: 'Khó khăn', Arabic: 'الصعوبات', Somali: 'Dhibaatooyinka', French: 'Difficultés', German: 'Schwierigkeiten'
+  },
+  'parent.qStrengths': {
+    English: 'Strengths', Spanish: 'Fortalezas', Russian: 'Сильные стороны', Chinese: '优势',
+    Vietnamese: 'Điểm mạnh', Arabic: 'نقاط القوة', Somali: 'Xoogagga', French: 'Points forts', German: 'Stärken'
+  },
+  'parent.qExplainSimple': {
+    English: 'Explain Very Simply', Spanish: 'Explíquemelo de forma muy sencilla', Russian: 'Объясните совсем просто', Chinese: '用最简单的方式解释',
+    Vietnamese: 'Giải thích thật đơn giản', Arabic: 'اشرح لي ببساطة شديدة', Somali: 'Ii sharax si aad u fudud', French: 'Expliquez très simplement', German: 'Ganz einfach erklären'
+  },
+  'parent.chatPlaceholder': {
+    English: 'Ask about your child\'s learning progress, strengths, areas for improvement...',
+    Spanish: 'Pregunte sobre el progreso, las fortalezas y las áreas de mejora de su hijo...',
+    Russian: 'Спросите об успехах, сильных сторонах и зонах роста вашего ребёнка...',
+    Chinese: '询问孩子的学习进度、优势和需要改进的方面…',
+    Vietnamese: 'Hỏi về tiến trình học tập, điểm mạnh và điểm cần cải thiện của con bạn...',
+    Arabic: 'اسأل عن تقدّم طفلك ونقاط قوّته والجوانب التي تحتاج إلى تحسين...',
+    Somali: 'Wax ka weydii horumarka waxbarasho ee ilmahaaga, xoogagga, iyo meelaha u baahan hagaajin...',
+    French: 'Posez des questions sur les progrès, les points forts et les axes d\'amélioration de votre enfant...',
+    German: 'Fragen Sie nach Lernfortschritt, Stärken und Verbesserungsbereichen Ihres Kindes …'
+  },
+  'parent.sendMessage': {
+    English: 'Send Message', Spanish: 'Enviar mensaje', Russian: 'Отправить сообщение', Chinese: '发送消息',
+    Vietnamese: 'Gửi tin nhắn', Arabic: 'إرسال الرسالة', Somali: 'Dir farriinta', French: 'Envoyer le message', German: 'Nachricht senden'
+  },
+  'parent.settingsTitle': {
+    English: 'Settings & Notifications', Spanish: 'Configuración y notificaciones', Russian: 'Настройки и уведомления', Chinese: '设置与通知',
+    Vietnamese: 'Cài đặt và thông báo', Arabic: 'الإعدادات والإشعارات', Somali: 'Dejinta iyo Ogeysiisyada', French: 'Paramètres et notifications', German: 'Einstellungen und Benachrichtigungen'
+  },
+  'parent.reportFrequency': {
+    English: 'Report Frequency', Spanish: 'Frecuencia de informes', Russian: 'Частота отчётов', Chinese: '报告频率',
+    Vietnamese: 'Tần suất báo cáo', Arabic: 'تكرار التقارير', Somali: 'Inta jeer ee warbixinta', French: 'Fréquence des rapports', German: 'Berichtshäufigkeit'
+  },
+  'parent.daily': {
+    English: 'Daily', Spanish: 'Diario', Russian: 'Ежедневно', Chinese: '每天',
+    Vietnamese: 'Hằng ngày', Arabic: 'يوميًا', Somali: 'Maalin kasta', French: 'Quotidien', German: 'Täglich'
+  },
+  'parent.weekly': {
+    English: 'Weekly', Spanish: 'Semanal', Russian: 'Еженедельно', Chinese: '每周',
+    Vietnamese: 'Hằng tuần', Arabic: 'أسبوعيًا', Somali: 'Toddobaad kasta', French: 'Hebdomadaire', German: 'Wöchentlich'
+  },
+  'parent.biweekly': {
+    English: 'Bi-weekly', Spanish: 'Quincenal', Russian: 'Раз в две недели', Chinese: '每两周',
+    Vietnamese: 'Hai tuần một lần', Arabic: 'كل أسبوعين', Somali: 'Laba toddobaad kasta', French: 'Toutes les deux semaines', German: 'Zweiwöchentlich'
+  },
+  'parent.monthly': {
+    English: 'Monthly', Spanish: 'Mensual', Russian: 'Ежемесячно', Chinese: '每月',
+    Vietnamese: 'Hằng tháng', Arabic: 'شهريًا', Somali: 'Bil kasta', French: 'Mensuel', German: 'Monatlich'
+  },
+  'parent.reportFrequencyHelp': {
+    English: 'How often you receive progress reports',
+    Spanish: 'Con qué frecuencia recibe informes de progreso',
+    Russian: 'Как часто вы получаете отчёты об успеваемости',
+    Chinese: '您接收进度报告的频率',
+    Vietnamese: 'Tần suất bạn nhận báo cáo tiến trình',
+    Arabic: 'عدد مرات تلقّيك تقارير التقدّم',
+    Somali: 'Inta jeer ee aad hesho warbixinnada horumarka',
+    French: 'À quelle fréquence vous recevez les rapports de progrès',
+    German: 'Wie oft Sie Fortschrittsberichte erhalten'
+  },
+  'parent.dashboardView': {
+    English: 'Dashboard View', Spanish: 'Vista del panel', Russian: 'Вид панели', Chinese: '面板视图',
+    Vietnamese: 'Chế độ xem bảng điều khiển', Arabic: 'عرض اللوحة', Somali: 'Muuqaalka shaashadda', French: 'Affichage du tableau de bord', German: 'Dashboard-Ansicht'
+  },
+  'parent.viewProgress': {
+    English: 'Progress Overview', Spanish: 'Resumen de progreso', Russian: 'Обзор успеваемости', Chinese: '进度概览',
+    Vietnamese: 'Tổng quan tiến trình', Arabic: 'نظرة عامة على التقدّم', Somali: 'Guudmarka horumarka', French: 'Aperçu des progrès', German: 'Fortschrittsübersicht'
+  },
+  'parent.viewGaps': {
+    English: 'Learning Gaps', Spanish: 'Lagunas de aprendizaje', Russian: 'Пробелы в знаниях', Chinese: '学习差距',
+    Vietnamese: 'Lỗ hổng kiến thức', Arabic: 'الفجوات التعليمية', Somali: 'Farqiga waxbarashada', French: 'Lacunes d\'apprentissage', German: 'Lernlücken'
+  },
+  'parent.viewGoals': {
+    English: 'IEP Goals', Spanish: 'Objetivos del IEP', Russian: 'Цели IEP', Chinese: 'IEP 目标',
+    Vietnamese: 'Mục tiêu IEP', Arabic: 'أهداف الخطة التعليمية الفردية', Somali: 'Yoolalka IEP', French: 'Objectifs du PEI', German: 'IEP-Ziele'
+  },
+  'parent.dashboardViewHelp': {
+    English: 'What you see first when viewing child progress',
+    Spanish: 'Lo que ve primero al consultar el progreso de su hijo',
+    Russian: 'Что вы видите первым при просмотре успеваемости ребёнка',
+    Chinese: '查看孩子进度时首先看到的内容',
+    Vietnamese: 'Nội dung bạn thấy đầu tiên khi xem tiến trình của con',
+    Arabic: 'ما تراه أولًا عند الاطّلاع على تقدّم طفلك',
+    Somali: 'Waxa ugu horreeya ee aad aragto marka aad eegto horumarka ilmaha',
+    French: 'Ce que vous voyez en premier lors de la consultation des progrès',
+    German: 'Was Sie zuerst sehen, wenn Sie den Fortschritt ansehen'
+  },
+  'parent.tone': {
+    English: 'Communication Tone', Spanish: 'Tono de comunicación', Russian: 'Тон общения', Chinese: '沟通语气',
+    Vietnamese: 'Giọng điệu giao tiếp', Arabic: 'أسلوب التواصل', Somali: 'Qaabka isgaarsiinta', French: 'Ton de communication', German: 'Kommunikationston'
+  },
+  'parent.toneStandard': {
+    English: 'Standard (default)', Spanish: 'Estándar (predeterminado)', Russian: 'Стандартный (по умолчанию)', Chinese: '标准（默认）',
+    Vietnamese: 'Tiêu chuẩn (mặc định)', Arabic: 'قياسي (افتراضي)', Somali: 'Caadi (asal ahaan)', French: 'Standard (par défaut)', German: 'Standard (Voreinstellung)'
+  },
+  'parent.toneDetailed': {
+    English: 'Detailed & Technical', Spanish: 'Detallado y técnico', Russian: 'Подробный и технический', Chinese: '详细且专业',
+    Vietnamese: 'Chi tiết và kỹ thuật', Arabic: 'مفصّل وتقني', Somali: 'Faahfaahsan oo farsamaysan', French: 'Détaillé et technique', German: 'Ausführlich und technisch'
+  },
+  'parent.toneSimple': {
+    English: 'Simple & Concise', Spanish: 'Sencillo y conciso', Russian: 'Простой и краткий', Chinese: '简单扼要',
+    Vietnamese: 'Đơn giản và ngắn gọn', Arabic: 'بسيط وموجز', Somali: 'Fudud oo kooban', French: 'Simple et concis', German: 'Einfach und knapp'
+  },
+  'parent.toneEncouraging': {
+    English: 'Encouraging & Positive', Spanish: 'Alentador y positivo', Russian: 'Ободряющий и позитивный', Chinese: '鼓励且积极',
+    Vietnamese: 'Khích lệ và tích cực', Arabic: 'مشجّع وإيجابي', Somali: 'Dhiirrigelin leh oo togan', French: 'Encourageant et positif', German: 'Ermutigend und positiv'
+  },
+  'parent.toneHelp': {
+    English: 'How the AI communicates with you',
+    Spanish: 'Cómo se comunica la IA con usted',
+    Russian: 'Как ИИ общается с вами',
+    Chinese: 'AI 与您沟通的方式',
+    Vietnamese: 'Cách AI giao tiếp với bạn',
+    Arabic: 'كيف يتواصل الذكاء الاصطناعي معك',
+    Somali: 'Sida AI-gu kuula xiriirayo',
+    French: 'La manière dont l\'IA communique avec vous',
+    German: 'Wie die KI mit Ihnen kommuniziert'
+  },
+  'parent.language': {
+    English: 'Language', Spanish: 'Idioma', Russian: 'Язык', Chinese: '语言',
+    Vietnamese: 'Ngôn ngữ', Arabic: 'اللغة', Somali: 'Luqadda', French: 'Langue', German: 'Sprache'
+  },
+  'parent.languageHelp': {
+    English: 'Preferred language for reports and dashboard',
+    Spanish: 'Idioma preferido para los informes y el panel',
+    Russian: 'Предпочитаемый язык для отчётов и панели',
+    Chinese: '报告和面板的首选语言',
+    Vietnamese: 'Ngôn ngữ ưu tiên cho báo cáo và bảng điều khiển',
+    Arabic: 'اللغة المفضّلة للتقارير واللوحة',
+    Somali: 'Luqadda aad doorbidayso ee warbixinnada iyo shaashadda',
+    French: 'Langue préférée pour les rapports et le tableau de bord',
+    German: 'Bevorzugte Sprache für Berichte und Dashboard'
+  },
+  'parent.saveSettings': {
+    English: 'Save Settings', Spanish: 'Guardar configuración', Russian: 'Сохранить настройки', Chinese: '保存设置',
+    Vietnamese: 'Lưu cài đặt', Arabic: 'حفظ الإعدادات', Somali: 'Kaydi dejinta', French: 'Enregistrer les paramètres', German: 'Einstellungen speichern'
+  },
+  'parent.emailReports': {
+    English: 'Email Reports', Spanish: 'Informes por correo electrónico', Russian: 'Отчёты по эл. почте', Chinese: '邮件报告',
+    Vietnamese: 'Báo cáo qua email', Arabic: 'التقارير عبر البريد الإلكتروني', Somali: 'Warbixinnada iimaylka', French: 'Rapports par e-mail', German: 'E-Mail-Berichte'
+  },
+  'parent.emailReportsDesc': {
+    English: 'Get weekly progress reports delivered to your inbox.',
+    Spanish: 'Reciba informes semanales de progreso en su bandeja de entrada.',
+    Russian: 'Получайте еженедельные отчёты об успеваемости на почту.',
+    Chinese: '每周将进度报告发送到您的邮箱。',
+    Vietnamese: 'Nhận báo cáo tiến trình hằng tuần qua hộp thư của bạn.',
+    Arabic: 'احصل على تقارير التقدّم الأسبوعية في بريدك الإلكتروني.',
+    Somali: 'Ku hel warbixinnada horumarka toddobaadlaha ah sanduuqaaga iimaylka.',
+    French: 'Recevez chaque semaine les rapports de progrès dans votre boîte mail.',
+    German: 'Erhalten Sie wöchentliche Fortschrittsberichte in Ihrem Posteingang.'
+  },
+  'parent.sendTestEmail': {
+    English: 'Send Test Email', Spanish: 'Enviar correo de prueba', Russian: 'Отправить тестовое письмо', Chinese: '发送测试邮件',
+    Vietnamese: 'Gửi email thử', Arabic: 'إرسال بريد تجريبي', Somali: 'Dir iimayl tijaabo ah', French: 'Envoyer un e-mail de test', German: 'Test-E-Mail senden'
+  },
+  'parent.sendWeeklyNow': {
+    English: 'Send Weekly Report Now', Spanish: 'Enviar informe semanal ahora', Russian: 'Отправить недельный отчёт сейчас', Chinese: '立即发送周报',
+    Vietnamese: 'Gửi báo cáo tuần ngay', Arabic: 'إرسال التقرير الأسبوعي الآن', Somali: 'Hadda dir warbixinta toddobaadlaha', French: 'Envoyer le rapport hebdomadaire maintenant', German: 'Wochenbericht jetzt senden'
+  },
+  'parent.weeklyReportNow': {
+    English: 'Weekly Report Now', Spanish: 'Informe semanal ahora', Russian: 'Недельный отчёт сейчас', Chinese: '立即发送周报',
+    Vietnamese: 'Báo cáo tuần ngay', Arabic: 'التقرير الأسبوعي الآن', Somali: 'Warbixinta toddobaadlaha hadda', French: 'Rapport hebdomadaire', German: 'Wochenbericht jetzt'
+  },
+  'parent.emailConfigNote': {
+    English: 'Email must be configured in server settings',
+    Spanish: 'El correo debe estar configurado en los ajustes del servidor',
+    Russian: 'Электронная почта должна быть настроена в параметрах сервера',
+    Chinese: '必须在服务器设置中配置邮件',
+    Vietnamese: 'Email phải được cấu hình trong cài đặt máy chủ',
+    Arabic: 'يجب تهيئة البريد الإلكتروني في إعدادات الخادم',
+    Somali: 'Iimaylka waa in lagu habeeyaa dejinta serverka',
+    French: 'L\'e-mail doit être configuré dans les paramètres du serveur',
+    German: 'E-Mail muss in den Servereinstellungen konfiguriert sein'
+  },
+  'parent.navChildren': {
+    English: 'Children', Spanish: 'Hijos', Russian: 'Дети', Chinese: '孩子',
+    Vietnamese: 'Các con', Arabic: 'الأبناء', Somali: 'Carruurta', French: 'Enfants', German: 'Kinder'
+  },
+  'parent.navAddChild': {
+    English: 'Add Child', Spanish: 'Añadir hijo', Russian: 'Добавить ребёнка', Chinese: '添加孩子',
+    Vietnamese: 'Thêm trẻ', Arabic: 'إضافة طفل', Somali: 'Ku dar ilmo', French: 'Ajouter un enfant', German: 'Kind hinzufügen'
+  },
+  'parent.navLearn': {
+    English: 'Learn', Spanish: 'Aprender', Russian: 'Обучение', Chinese: '学习',
+    Vietnamese: 'Học', Arabic: 'تعلّم', Somali: 'Baro', French: 'Apprendre', German: 'Lernen'
+  },
+  'parent.navReports': {
+    English: 'Reports', Spanish: 'Informes', Russian: 'Отчёты', Chinese: '报告',
+    Vietnamese: 'Báo cáo', Arabic: 'التقارير', Somali: 'Warbixinno', French: 'Rapports', German: 'Berichte'
+  },
+  'parent.mobileInviteHelp': {
+    English: 'Create a code for your child to link their account to yours.',
+    Spanish: 'Cree un código para que su hijo vincule su cuenta con la suya.',
+    Russian: 'Создайте код, чтобы ребёнок привязал свой аккаунт к вашему.',
+    Chinese: '创建一个代码，让孩子将其账户关联到您的账户。',
+    Vietnamese: 'Tạo mã để con bạn liên kết tài khoản của con với tài khoản của bạn.',
+    Arabic: 'أنشئ رمزًا ليربط طفلك حسابه بحسابك.',
+    Somali: 'Samee koodh si ilmahaagu akoonkiisa ugu xiro kaaga.',
+    French: 'Créez un code pour que votre enfant associe son compte au vôtre.',
+    German: 'Erstellen Sie einen Code, mit dem Ihr Kind sein Konto mit Ihrem verknüpft.'
+  },
+  'parent.linkExistingShort': {
+    English: 'Link Existing Student', Spanish: 'Vincular estudiante existente', Russian: 'Привязать существующего ученика', Chinese: '关联现有学生',
+    Vietnamese: 'Liên kết học sinh hiện có', Arabic: 'ربط طالب موجود', Somali: 'Ku xir arday hore u jira', French: 'Associer un élève existant', German: 'Vorhandenen Schüler verknüpfen'
+  },
+  'parent.mobileLinkHelp': {
+    English: 'Enter your child\'s link code to connect their account.',
+    Spanish: 'Introduzca el código de vinculación de su hijo para conectar su cuenta.',
+    Russian: 'Введите код привязки ребёнка, чтобы подключить его аккаунт.',
+    Chinese: '输入孩子的关联代码以连接其账户。',
+    Vietnamese: 'Nhập mã liên kết của con bạn để kết nối tài khoản.',
+    Arabic: 'أدخل رمز ربط طفلك لتوصيل حسابه.',
+    Somali: 'Geli koodhka xiriirinta ee ilmahaaga si aad akoonkiisa ugu xirto.',
+    French: 'Saisissez le code de liaison de votre enfant pour connecter son compte.',
+    German: 'Geben Sie den Verknüpfungscode Ihres Kindes ein, um sein Konto zu verbinden.'
+  },
+
+  /* Injected by parent-dashboard.js at runtime, after apply() has already run.
+     The first two overwrite the tagged placeholder in the chat panel. */
+  'parent.askAboutProgress': {
+    English: 'Select a child and ask a question about their progress.',
+    Spanish: 'Seleccione un hijo y haga una pregunta sobre su progreso.',
+    Russian: 'Выберите ребёнка и задайте вопрос о его успехах.',
+    Chinese: '选择一个孩子，并提出关于他们学习进度的问题。',
+    Vietnamese: 'Chọn một trẻ và đặt câu hỏi về tiến trình học tập của trẻ.',
+    Arabic: 'اختر طفلًا واطرح سؤالًا عن تقدّمه.',
+    Somali: 'Dooro ilmo oo weydii su\'aal ku saabsan horumarkiisa.',
+    French: 'Sélectionnez un enfant et posez une question sur ses progrès.',
+    German: 'Wählen Sie ein Kind aus und stellen Sie eine Frage zu seinem Fortschritt.'
+  },
+  'parent.chatAboutProgress': {
+    English: 'Chat about your child\'s progress.',
+    Spanish: 'Converse sobre el progreso de su hijo.',
+    Russian: 'Обсудите успехи вашего ребёнка.',
+    Chinese: '聊聊孩子的学习进度。',
+    Vietnamese: 'Trò chuyện về tiến trình học tập của con bạn.',
+    Arabic: 'تحدّث عن تقدّم طفلك.',
+    Somali: 'Ka sheekayso horumarka ilmahaaga.',
+    French: 'Discutez des progrès de votre enfant.',
+    German: 'Sprechen Sie über den Fortschritt Ihres Kindes.'
+  },
+  'parent.noResponse': {
+    English: 'No response from tutor.', Spanish: 'El tutor no respondió.', Russian: 'Репетитор не ответил.', Chinese: '导师没有回应。',
+    Vietnamese: 'Gia sư không phản hồi.', Arabic: 'لا يوجد ردّ من المعلّم.', Somali: 'Macallinku ma jawaabin.', French: 'Aucune réponse du tuteur.', German: 'Keine Antwort vom Tutor.'
+  },
+  'parent.chatError': {
+    English: 'Error connecting to the tutor. Please try again.',
+    Spanish: 'Error al conectar con el tutor. Inténtelo de nuevo.',
+    Russian: 'Не удалось связаться с репетитором. Попробуйте ещё раз.',
+    Chinese: '连接导师时出错。请重试。',
+    Vietnamese: 'Lỗi kết nối với gia sư. Vui lòng thử lại.',
+    Arabic: 'تعذّر الاتصال بالمعلّم. حاول مرة أخرى.',
+    Somali: 'Khalad ayaa dhacay markii lala xiriirayay macallinka. Fadlan mar kale isku day.',
+    French: 'Erreur de connexion au tuteur. Veuillez réessayer.',
+    German: 'Verbindung zum Tutor fehlgeschlagen. Bitte erneut versuchen.'
+  },
+
   /* ─── Settings modal ─── */
   'settings.title': {
     English: 'Settings', Spanish: 'Configuración', Russian: 'Настройки', Chinese: '设置',
