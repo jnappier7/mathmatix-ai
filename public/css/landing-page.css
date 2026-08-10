@@ -2816,3 +2816,161 @@
 [data-theme="dark"] .lp-trial-xp-pop { background: #0f172a; }
 [data-theme="dark"] .lp-trial-gate-xp { color: #ffd98a; }
 @media (max-width: 600px) { .lp-xp-reason { display: none; } }
+
+/* =============================================================
+   TRIAL CHAT — three-column stage
+   Mirrors .cr-stage in chat.html (tutor hero | chat | workspace) so the
+   landing trial looks like the product it is, rather than a chat box.
+   ============================================================= */
+
+.lp-trial-chat { max-width: 1240px; }
+
+/* Column widths track --cr-hero-w / --cr-side-w (320px) from design-system.css
+   so the trial reads at the same proportions as chat.html. */
+.lp-trial-stage {
+  display: grid;
+  grid-template-columns: var(--cr-hero-w, 320px) minmax(0, 1fr) 300px;
+  align-items: stretch;
+  min-height: 520px;
+  text-align: left;
+}
+
+/* ── Left: tutor hero ─────────────────────────────────── */
+.lp-trial-hero {
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid rgba(0, 0, 0, 0.07);
+  background: linear-gradient(160deg, #eefafa, #e3f3f6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.lp-trial-hero-backdrop {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; opacity: 0.55;
+  transform: scale(1.12);   /* same subtle zoom as .cr-tutor-backdrop */
+}
+
+/* Sized by HEIGHT, not width — exactly how .cr-tutor-portrait works in the
+   product. The source frames are 1536x1024 with the character occupying a
+   fraction of that, so fitting the whole frame to the column width (what this
+   did first) rendered the tutor about a quarter of the intended size. Filling
+   the column height and letting the width overflow (clipped by the hero's
+   overflow:hidden) is what makes the character read at full size. */
+.lp-trial-hero-portrait {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  width: auto;
+  max-width: none;
+  z-index: 1;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+}
+
+.lp-trial-hero-name {
+  position: absolute; left: 50%; bottom: 12px; z-index: 2;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 999px; padding: 3px 12px;
+  font-size: 0.78rem; font-weight: 700; color: #14213d;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* ── Middle: conversation ─────────────────────────────── */
+.lp-trial-main { display: flex; flex-direction: column; min-width: 0; }
+.lp-trial-main .lp-trial-messages { max-height: none; flex: 1; }
+
+/* The tutor identity lives in the hero column now, so the header only
+   carries navigation on wide screens. */
+@media (min-width: 981px) {
+  .lp-trial-main .lp-trial-tutor-info { display: none; }
+  /* With the tutor identity gone from the header, the CTA would otherwise sit
+     next to the back arrow instead of anchoring the right edge. */
+  .lp-trial-main .lp-trial-signup-btn { margin-left: auto; }
+}
+
+/* ── Right: living workspace ──────────────────────────── */
+.lp-trial-workspace {
+  display: flex; flex-direction: column; min-width: 0;
+  border-left: 1px solid rgba(0, 0, 0, 0.07);
+  background: #f7f9fb;
+}
+
+.lp-trial-ws-tabs {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.lp-trial-ws-tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: none; background: rgba(18, 179, 179, 0.12);
+  color: #0c7575; font: inherit; font-size: 0.8rem; font-weight: 700;
+  border-radius: 8px; padding: 4px 10px; cursor: default;
+}
+
+/* Graph / Tiles / Calc are real tools in the product; naming them here shows
+   what a free account opens up without pretending they work in the trial. */
+.lp-trial-ws-more {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.7rem; font-weight: 600; color: #7c8794;
+  white-space: nowrap;
+}
+.lp-trial-ws-more i { font-size: 0.65rem; opacity: 0.7; }
+
+.lp-trial-ws-body {
+  flex: 1; min-height: 0; overflow-y: auto;
+  padding: 0.7rem;
+  display: flex; flex-direction: column;
+}
+
+/* In a column of its own the notebook fills the rail instead of being a
+   230px strip wedged above the messages. */
+.lp-trial-workspace .lp-trial-notebook {
+  margin: 0; max-height: none; flex: 1; min-height: 180px;
+}
+
+.lp-trial-ws-empty {
+  margin: 0.75rem 0.25rem 0;
+  font-size: 0.78rem; line-height: 1.45; color: #7c8794;
+}
+
+.lp-trial-player {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.65rem 0.8rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+.lp-trial-player-meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.lp-trial-player-name { font-size: 0.8rem; font-weight: 700; color: #14213d; }
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 1080px) {
+  /* Drop the hero first — the workspace is the thing worth keeping. */
+  .lp-trial-stage { grid-template-columns: minmax(0, 1fr) 280px; }
+  .lp-trial-hero { display: none; }
+}
+
+@media (max-width: 780px) {
+  /* Stack: chat first, board beneath it, same order as the mobile product. */
+  .lp-trial-stage { grid-template-columns: 1fr; min-height: 0; }
+  .lp-trial-workspace {
+    border-left: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
+  }
+  .lp-trial-ws-body { max-height: 260px; }
+  .lp-trial-workspace .lp-trial-notebook { min-height: 140px; }
+}
+
+/* ── Dark mode ────────────────────────────────────────── */
+[data-theme="dark"] .lp-trial-hero { background: linear-gradient(160deg, #16283a, #101c2c); }
+[data-theme="dark"] .lp-trial-workspace { background: #111c33; border-color: #334155; }
+[data-theme="dark"] .lp-trial-ws-tabs,
+[data-theme="dark"] .lp-trial-player { border-color: #334155; }
+[data-theme="dark"] .lp-trial-player-name { color: #e2e8f0; }
+[data-theme="dark"] .lp-trial-hero-name { background: rgba(15, 23, 42, 0.9); color: #e2e8f0; }
