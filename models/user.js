@@ -842,6 +842,13 @@ const userSchema = new Schema({
   /* Voice-first intent onboarding (Speak-style open-ended prompt) */
   onboarding: {
     completed:      { type: Boolean, default: false },
+    // NO LONGER WRITTEN. Up to 2000 characters of free-form voice/typed input
+    // from a minor, stored for months and read by nothing — routes/onboarding.js
+    // now classifies it and discards the text (see utils/onboardingIntent.js for
+    // why only the category is used). The field stays declared so historical
+    // values remain visible to the privacy export and to the purge that clears
+    // them (scripts/purgeOnboardingIntentText.js); removing it from the schema
+    // would hide the data in Mongo rather than delete it.
     intentText:     { type: String, trim: true, maxlength: 2000 },
     intentCategory: {
       type: String,

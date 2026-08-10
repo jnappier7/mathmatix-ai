@@ -62,6 +62,8 @@
     "cron:archive": "node scripts/archiveOldConversations.js",
     "cron:mine-transcripts": "node scripts/mineTranscripts.js",
     "migrate:parent-teacher": "node scripts/migrateParentTeacherBug.js",
+    "purge:intent-text": "node scripts/purgeOnboardingIntentText.js",
+    "purge:intent-text:dry": "node scripts/purgeOnboardingIntentText.js --dry",
     "check:virustotal": "node scripts/check-virustotal.js",
     "seed:loadtest": "node scripts/seedLoadTestAccounts.js",
     "seed:loadtest:clear": "node scripts/seedLoadTestAccounts.js --clear",

@@ -12,7 +12,8 @@
 //   2. Dynamic context (student-specific) → appended per request
 
 const { buildIepAccommodationsPrompt, buildFamilySupportsPrompt, buildStudentSupportsPrompt } = require('./promptHelpers');
-const { buildIntentPrompt } = require('./onboardingIntent');
+const { buildIntentContext, deriveObservedIntent } = require('./onboardingIntent');
+const { recordObservation } = require('./intentMetrics');
 // Sync + model-free by design: this module builds the prompt on every turn and
 // must not reach the database. See utils/studentLabels.js.
 const { studentLabel } = require('./studentLabels');
@@ -822,10 +823,35 @@ Respond primarily in ${preferredLanguage}. Use ${preferredLanguage} mathematical
   const learningProfileCtx = buildLearningProfileCompact(userProfile);
   if (learningProfileCtx) parts.push(learningProfileCtx);
 
-  // Why they said they came. Category only — see utils/onboardingIntent.js for
-  // why intentText is deliberately not used.
-  const intentCtx = buildIntentPrompt(userProfile.onboarding, firstName);
+  // Why they came. Category only — see utils/onboardingIntent.js for why
+  // intentText is deliberately not used.
+  //
+  // What they DO outranks what they said at signup, and what they said expires:
+  // a signup answer is the weakest evidence about a student that will ever
+  // exist, and once tutorPlan and skillMastery have watched them work it stops
+  // being sent at all.
+  const intentSignals = {
+    sessionCount: userProfile.learningProfile?.stats?.totalSessions || 0,
+    uploadedWorksheet: !!(activeWorksheet && activeWorksheet.text),
+    recentText: typeof studentMessage === 'string' ? studentMessage : ''
+  };
+  const intentCtx = buildIntentContext(userProfile.onboarding, firstName, intentSignals);
   if (intentCtx) parts.push(intentCtx);
+
+  // Whenever behaviour says something, compare it to what they said at signup.
+  // That comparison is the only accuracy signal the classifier will ever get —
+  // nobody is going to hand-label what a kid meant — so it is recorded here and
+  // read off the admin metrics endpoint. Deduped per student per pair inside
+  // intentMetrics; this runs on every turn.
+  const observedIntent = deriveObservedIntent(intentSignals);
+  if (observedIntent && userProfile.onboarding?.intentCategory) {
+    recordObservation({
+      stated:   userProfile.onboarding.intentCategory,
+      observed: observedIntent,
+      userKey:  userProfile._id ? String(userProfile._id) : null,
+      sessionCount: intentSignals.sessionCount
+    });
+  }
 
   // Curriculum context
   if (curriculumContext) {
