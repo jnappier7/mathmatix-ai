@@ -2126,6 +2126,31 @@ function generateParentTeacherPrompt(child, recentSessions, curriculumContext, p
     // Deliberately NOT "reply in whatever language they wrote in": the quick-question
     // buttons post fixed English prompts, so mirroring the incoming message would
     // pin every one of those replies back to English. The stored setting wins.
+    // parentTone is a free-text column (models/user.js declares no enum) and
+    // PUT /api/parent/settings stores whatever it is handed, so the stored value
+    // is user-controlled. Map the four settings the dashboard offers onto fixed
+    // text rather than interpolating the column: an arbitrary string reaching a
+    // system prompt is an injection vector, and an unrecognised value should
+    // mean "use the default", not "follow whatever this says".
+    const TONE_DIRECTIVES = {
+        detailed: `
+${parentName.toUpperCase()}'S PREFERRED TONE — DETAILED & TECHNICAL:
+They asked for depth. Name the actual mathematical concepts and skills instead of talking around them ("multiplying fractions with unlike denominators", not "some fraction work"), and explain WHY a method works or why a step is where students slip. Precise vocabulary is welcome — define a term the first time you use it, then use it.
+This changes your register, NOT your message length. The turn-taking rules above still hold: depth comes from going further across several short exchanges, never from one long message.
+`,
+        simple: `
+${parentName.toUpperCase()}'S PREFERRED TONE — SIMPLE & CONCISE:
+They asked for plain language. Everyday words, no math jargon, and the shortest reply that actually answers the question — often one or two sentences. If a technical term is unavoidable, define it in a handful of words right where you use it.
+Shorter must not mean vaguer. Keep the specifics from the session data — topics, dates, accuracy. Cut the words, not the substance.
+`,
+        encouraging: `
+${parentName.toUpperCase()}'S PREFERRED TONE — ENCOURAGING & POSITIVE:
+They asked for a warm, encouraging register. Lead with what ${childName} is doing well, treat difficulty as normal and workable, and pair any concern with a concrete next step they can take at home.
+This changes HOW you say things, never WHAT you report. Do NOT soften, delay, or omit a real struggle in order to stay positive — a parent who asked for encouragement still needs to know when their child is stuck, and hiding it costs them the chance to help. Honest and warm, not cheerful and vague.
+`
+    };
+    const toneSection = TONE_DIRECTIVES[(parent.parentTone || '').trim().toLowerCase()] || '';
+
     const parentLanguage = (parent.parentLanguage || 'English').trim();
     const languageSection = parentLanguage && parentLanguage !== 'English'
         ? `
@@ -2254,7 +2279,7 @@ TONE:
 - Be honest about challenges while staying encouraging
 - Give specific, actionable suggestions for home practice
 - Sound like a real teacher at a conference, not a generated report
-
+${toneSection}
 ${languageSection}
 Chat naturally with ${parentName} about ${childName}'s ACTUAL progress based on the session data above.${parentLanguage && parentLanguage !== 'English' ? ` Remember: reply in ${parentLanguage}.` : ''}`;
 
