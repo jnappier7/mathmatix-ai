@@ -121,11 +121,13 @@
      ══════════════════════════════════════════════════════ */
 
   // Tutor metadata (names for gate messages, images)
+  // hero/backdrop mirror the frames .cr-tutor-hero uses on chat.html, so the
+  // trial and the real product show the same character art.
   var TUTOR_META = {
-    'mr-nappier': { name: 'Mr. Nappier', img: '/images/tutor_avatars/mr-nappier.png' },
-    'bob':        { name: 'Bob',         img: '/images/tutor_avatars/bob.png' },
-    'maya':       { name: 'Maya',        img: '/images/tutor_avatars/maya.png' },
-    'ms-maria':   { name: 'Ms. Maria',   img: '/images/tutor_avatars/ms-maria.png' }
+    'mr-nappier': { name: 'Mr. Nappier', img: '/images/tutor_avatars/mr-nappier.png', hero: '/images/tutor_avatars/mr-nappier-new2.png', backdrop: '/images/tutor_avatars/mr-nappier-backdrop.png' },
+    'bob':        { name: 'Bob',         img: '/images/tutor_avatars/bob.png',        hero: '/images/tutor_avatars/bob-new2.png',        backdrop: '/images/tutor_avatars/bob-backdrop.png' },
+    'maya':       { name: 'Maya',        img: '/images/tutor_avatars/maya.png',       hero: '/images/tutor_avatars/maya-new2.png',       backdrop: '/images/tutor_avatars/maya-backdrop.png' },
+    'ms-maria':   { name: 'Ms. Maria',   img: '/images/tutor_avatars/ms-maria.png',   hero: '/images/tutor_avatars/ms-maria-new2.png',   backdrop: '/images/tutor_avatars/ms-maria-backdrop.png' }
   };
 
   // Personalized soft-gate messages — written in each tutor's voice
@@ -152,6 +154,10 @@
 
   var trialMessages    = document.getElementById('lp-trial-messages');
   var trialNotebook    = document.getElementById('lp-trial-notebook');
+  var trialHeroPortrait = document.getElementById('lp-trial-hero-portrait');
+  var trialHeroBackdrop = document.getElementById('lp-trial-hero-backdrop');
+  var trialHeroName     = document.getElementById('lp-trial-hero-name');
+  var trialWsEmpty      = document.getElementById('lp-trial-ws-empty');
   var trialTyping      = document.getElementById('lp-trial-typing');
   var trialInput       = document.getElementById('lp-trial-input');
   var trialSend        = document.getElementById('lp-trial-send');
@@ -335,9 +341,17 @@
     trialTutorImg.alt = meta.name;
     trialTutorName.textContent = meta.name;
 
+    // Hero column (left) — same art the real chat stage uses.
+    if (trialHeroPortrait) { trialHeroPortrait.src = meta.hero || meta.img; trialHeroPortrait.alt = meta.name; }
+    if (trialHeroBackdrop && meta.backdrop) trialHeroBackdrop.src = meta.backdrop;
+    if (trialHeroName) trialHeroName.textContent = meta.name;
+
     // Reset chat UI
     trialMessages.innerHTML = '';
-    if (trialNotebook) { trialNotebook.innerHTML = ''; trialNotebook.style.display = 'none'; nbLastPose = null; }
+    // The board is its own column now, so it stays visible and shows an
+    // empty-state instead of appearing out of nowhere on the first step.
+    if (trialNotebook) { trialNotebook.innerHTML = ''; nbLastPose = null; }
+    if (trialWsEmpty) trialWsEmpty.style.display = '';
     trialXpTotal = 0; if (trialXpTotalEl) trialXpTotalEl.textContent = '0';
     trialInput.value = '';
     trialSuggestions.style.display = 'none'; // Hide suggestions until greeting loads
@@ -766,7 +780,9 @@
   function renderTrialBoard(ops) {
     if (!trialNotebook) return;
     ops.forEach(appendNotebookStep);
-    if (trialNotebook.children.length) trialNotebook.style.display = '';
+    // The board column is always present; the empty-state steps aside as soon
+    // as there is real work on the page.
+    if (trialNotebook.children.length && trialWsEmpty) trialWsEmpty.style.display = 'none';
     trialNotebook.scrollTop = trialNotebook.scrollHeight;
   }
 
@@ -955,145 +971,7 @@
     clearTrialState();
   };
 
-  /* ── Animated Chat Preview (below fold) ──────────────── */
-  var chatContainer = document.getElementById('lp-chat');
-  var typingEl = document.getElementById('lp-typing');
-  var tutorNameEl = document.getElementById('lp-tutor-name');
-
-  if (chatContainer && typingEl) {
-    var conversations = [
-      {
-        tutor: 'Mr. Nappier',
-        studentAvatar: '/images/avatars/astronaut.png',
-        tutorAvatar: '/images/tutor_avatars/mr-nappier.png',
-        messages: [
-          { from: 'student', text: 'How do I add \u2153 + \u00BC?' },
-          { from: 'tutor', text: 'Great question! Let\u2019s figure it out together. First \u2014 can you think of a number that both 3 and 4 divide into evenly?' },
-          { from: 'student', text: '12?' },
-          { from: 'tutor', text: 'That\u2019s it! Now we can rewrite both fractions with 12 as the denominator. What would \u2153 become?' }
-        ]
-      },
-      {
-        tutor: 'Ms. Maria',
-        studentAvatar: '/images/avatars/dragon.png',
-        tutorAvatar: '/images/tutor_avatars/ms-maria.png',
-        messages: [
-          { from: 'student', text: 'I don\u2019t get how to solve 3x + 7 = 22' },
-          { from: 'tutor', text: 'No worries! Our goal is to get x all by itself. What do you think we should do to both sides first?' },
-          { from: 'student', text: 'Subtract 7?' },
-          { from: 'tutor', text: 'Exactly! 22 \u2013 7 = 15, so now we have 3x = 15. What\u2019s the last step?' }
-        ]
-      },
-      {
-        tutor: 'Maya',
-        studentAvatar: '/images/avatars/alien.png',
-        tutorAvatar: '/images/tutor_avatars/maya.png',
-        messages: [
-          { from: 'student', text: 'Can you check my homework? I got 0.5 \u00D7 0.3 = 1.5' },
-          { from: 'tutor', text: 'Hmm, let\u2019s look at that together! When you multiply decimals, how many total decimal places should the answer have?' },
-          { from: 'student', text: 'Oh wait\u2026 two places? So it\u2019s 0.15?' },
-          { from: 'tutor', text: 'There you go! 0.5 has one decimal place, 0.3 has one, so the answer needs two. Nice catch!' }
-        ]
-      },
-      {
-        tutor: 'Bob',
-        studentAvatar: '/images/avatars/dragon.png',
-        tutorAvatar: '/images/tutor_avatars/bob.png',
-        messages: [
-          { from: 'student', text: 'What\u2019s the answer to number 5? It\u2019s 4x \u2013 10 = 14' },
-          { from: 'tutor', text: 'I can\u2019t just give you the answer \u2014 but I can help you figure it out! What\u2019s the first step to isolate the x term?' },
-          { from: 'student', text: 'Ugh fine\u2026 add 10 to both sides?' },
-          { from: 'tutor', text: 'See, you DO know this! Now you\u2019ve got 4x = 24. One more step and you\u2019ve got it.' }
-        ]
-      }
-    ];
-
-    var convoIndex = 0;
-
-    function playConversation() {
-      var convo = conversations[convoIndex % conversations.length];
-      convoIndex++;
-
-      if (tutorNameEl) tutorNameEl.textContent = convo.tutor;
-      chatContainer.innerHTML = '';
-      typingEl.style.display = 'none';
-
-      var msgIdx = 0;
-
-      function showNextMessage() {
-        if (msgIdx >= convo.messages.length) {
-          setTimeout(function () {
-            var allRows = chatContainer.querySelectorAll('.lp-chat-row');
-            allRows.forEach(function (r) { r.style.opacity = '0'; r.style.transform = 'translateY(-8px)'; });
-            setTimeout(playConversation, 400);
-          }, 3000);
-          return;
-        }
-
-        var msg = convo.messages[msgIdx];
-        var isStudent = msg.from === 'student';
-
-        if (!isStudent) {
-          typingEl.style.display = 'flex';
-          setTimeout(function () {
-            typingEl.style.display = 'none';
-            appendPreviewMessage(msg, isStudent, convo);
-            msgIdx++;
-            setTimeout(showNextMessage, 900);
-          }, 1100);
-        } else {
-          appendPreviewMessage(msg, isStudent, convo);
-          msgIdx++;
-          setTimeout(showNextMessage, 800);
-        }
-      }
-
-      function appendPreviewMessage(msg, isStudent, c) {
-        var row = document.createElement('div');
-        row.className = 'lp-chat-row' + (isStudent ? ' lp-chat-row--student' : '');
-
-        var avatar = document.createElement('div');
-        avatar.className = 'lp-chat-avatar';
-        var avatarImg = document.createElement('img');
-        avatarImg.src = isStudent ? c.studentAvatar : c.tutorAvatar;
-        avatarImg.alt = isStudent ? 'Student' : c.tutor;
-        avatarImg.loading = 'lazy';
-        avatar.appendChild(avatarImg);
-
-        var bubble = document.createElement('div');
-        bubble.className = 'lp-chat-bubble ' + (isStudent ? 'lp-chat-student' : 'lp-chat-tutor');
-        bubble.textContent = msg.text;
-
-        row.appendChild(avatar);
-        row.appendChild(bubble);
-        chatContainer.appendChild(row);
-
-        requestAnimationFrame(function () {
-          row.classList.add('lp-chat-visible');
-          chatContainer.scrollTop = chatContainer.scrollHeight;
-        });
-      }
-
-      setTimeout(showNextMessage, 600);
-    }
-
-    // Only start playing when the section scrolls into view
-    if ('IntersectionObserver' in window) {
-      var chatPreviewStarted = false;
-      var chatObs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting && !chatPreviewStarted) {
-            chatPreviewStarted = true;
-            setTimeout(playConversation, 700);
-            chatObs.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.3 });
-      chatObs.observe(chatContainer.closest('section') || chatContainer);
-    } else {
-      setTimeout(playConversation, 700);
-    }
-  }
+  /* The animated chat preview was removed with its section. */
 
   /* ── Role Selector Tabs ────────────────────────────── */
   var roleTabs = document.querySelectorAll('.lp-role-tab');

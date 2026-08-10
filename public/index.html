@@ -233,22 +233,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
       <!-- PHASE 3: Trial chat -->
       <div class="lp-trial-chat" id="lp-trial-chat" style="display:none;">
-        <div class="lp-trial-chat-inner">
+        <!-- Three-column stage, mirroring .cr-stage in the real product:
+             tutor hero | chat | living workspace. The trial is the actual
+             tutor, so it should look like the actual tutor. -->
+        <div class="lp-trial-chat-inner lp-trial-stage">
+
+          <!-- LEFT — tutor hero. Same backdrop + portrait treatment as
+               .cr-tutor-hero on chat.html. -->
+          <aside class="lp-trial-hero" aria-hidden="true">
+            <img id="lp-trial-hero-backdrop" class="lp-trial-hero-backdrop" src="" alt="" />
+            <img id="lp-trial-hero-portrait" class="lp-trial-hero-portrait" src="" alt="" />
+            <span class="lp-trial-hero-name" id="lp-trial-hero-name"></span>
+          </aside>
+
+          <!-- MIDDLE — the conversation. -->
+          <div class="lp-trial-main">
           <div class="lp-trial-header">
             <button class="lp-trial-back" id="lp-trial-back" title="Pick a different tutor"><i class="fas fa-arrow-left"></i></button>
             <div class="lp-trial-tutor-info">
               <img id="lp-trial-tutor-img" src="" alt="" class="lp-trial-tutor-avatar" />
               <span id="lp-trial-tutor-name"></span>
             </div>
-            <!-- Engagement XP earned this session (ephemeral; a conversion hook). -->
-            <span class="lp-trial-xp" id="lp-trial-xp" title="XP earned this session">
-              <span class="lp-trial-xp-bolt" aria-hidden="true">⚡</span><span id="lp-trial-xp-total">0</span> XP
-            </span>
             <a href="/signup.html" class="btn btn-primary btn-sm lp-trial-signup-btn">Sign Up Free</a>
           </div>
-          <!-- Living board: the tutor's earned steps write here (server-gated,
-               only steps the student has stated). Hidden until the first step. -->
-          <div class="lp-trial-notebook" id="lp-trial-notebook" style="display:none;" aria-label="Tutoring workspace"></div>
           <div class="lp-trial-messages" id="lp-trial-messages"></div>
           <div class="lp-trial-typing" id="lp-trial-typing" style="display:none;">
             <div class="lp-typing-dot"></div>
@@ -296,6 +303,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               <span class="lp-trial-gate-note">No credit card required &middot; Your conversation continues right where you left off</span>
             </div>
           </div>
+          </div><!-- /.lp-trial-main -->
+
+          <!-- RIGHT — living workspace. Mirrors .cr-workspace: the board is
+               home base, with the player card pinned to the bottom of the rail.
+               Anti-cheat is server-side; only steps the student has already
+               stated ever arrive here, so this is display only. -->
+          <aside class="lp-trial-workspace" aria-label="Math workspace">
+            <div class="lp-trial-ws-tabs" role="tablist" aria-label="Workspace tools">
+              <button class="lp-trial-ws-tab is-active" type="button" role="tab" aria-selected="true" disabled>
+                <i class="fas fa-pen" aria-hidden="true"></i> Board
+              </button>
+              <span class="lp-trial-ws-more" title="Graphing, algebra tiles and a calculator are available with a free account">
+                Graph &middot; Tiles &middot; Calc
+                <i class="fas fa-lock" aria-hidden="true"></i>
+              </span>
+            </div>
+            <div class="lp-trial-ws-body">
+              <div class="lp-trial-notebook" id="lp-trial-notebook" aria-label="Tutoring workspace"></div>
+              <p class="lp-trial-ws-empty" id="lp-trial-ws-empty">
+                Your work shows up here, step by step, as you and your tutor solve it together.
+              </p>
+            </div>
+            <div class="lp-trial-player">
+              <div class="lp-trial-player-meta">
+                <span class="lp-trial-player-name" id="lp-trial-player-name">You</span>
+                <!-- Engagement XP earned this session (ephemeral; a conversion hook). -->
+                <span class="lp-trial-xp" id="lp-trial-xp" title="XP earned this session">
+                  <span class="lp-trial-xp-bolt" aria-hidden="true">⚡</span><span id="lp-trial-xp-total">0</span> XP
+                </span>
+              </div>
+            </div>
+          </aside>
+
         </div>
       </div>
 
@@ -318,42 +358,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
          imagery between the live composer and the strongest proof on the page
          ("What a Real Session Looks Like"). The product now speaks first. -->
 
-    <!-- ── Chat Preview (mirrors the real cr-mode chat) ────────── -->
-    <section class="lp-chat-preview-section lp-reveal lp-section-alt">
-      <div class="lp-inner">
-        <h2 class="lp-section-heading">What a Real Session Looks Like</h2>
-        <p class="lp-section-sub">A recorded example of how our tutors teach &mdash; your <strong>live</strong> session is up top. Notice they never just hand over the answer.</p>
-        <!-- Branded as a window into the actual product: dark navy panel,
-             "Example" pill (NOT "Live" — this is a scripted recording, and must
-             read as clearly distinct from the live composer in the hero). -->
-        <div class="lp-hero-preview lp-preview-chat" aria-label="Example tutoring session">
-          <div class="lp-preview-header">
-            <div class="lp-preview-live-pill lp-preview-example-pill">
-              <span>Example with <span id="lp-tutor-name">Mr. Nappier</span></span>
-            </div>
-            <div class="lp-preview-header-right">
-              <span class="lp-preview-streak-pill" title="Daily streak">
-                <span class="lp-preview-flame" aria-hidden="true">🔥</span>
-                <span>2</span>
-              </span>
-              <span class="lp-preview-menu-btn" aria-hidden="true">
-                <i class="fas fa-bars"></i>
-              </span>
-            </div>
-          </div>
-          <div class="lp-preview-stage">
-            <img id="lp-preview-backdrop" class="lp-preview-backdrop" src="/images/tutor_avatars/mr-nappier.png" alt="" aria-hidden="true" />
-            <div class="lp-preview-scrim" aria-hidden="true"></div>
-            <div class="lp-chat-messages" id="lp-chat"></div>
-            <div class="lp-typing" id="lp-typing">
-              <div class="lp-typing-dot"></div>
-              <div class="lp-typing-dot"></div>
-              <div class="lp-typing-dot"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- The recorded "What a Real Session Looks Like" example was removed:
+         the hero now runs the actual tutor in the real three-column
+         layout, so a scripted recording of it added length without
+         adding proof. -->
 
     <!-- ── How It Works (moved up — reduce friction) ──────── -->
     <section id="how-it-works" class="lp-steps lp-reveal">
@@ -951,194 +959,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
       }
 
-      /* ── Animated Chat Preview — Cycling Topics ─────────── */
-      var chatContainer = document.getElementById('lp-chat');
-      var typingEl = document.getElementById('lp-typing');
-      var tutorNameEl = document.getElementById('lp-tutor-name');
-      var backdropEl = document.getElementById('lp-preview-backdrop');
-
-      if (chatContainer && typingEl) {
-        var conversations = [
-          {
-            tutor: 'Mr. Nappier',
-            studentAvatar: '/images/avatars/astronaut.png',
-            tutorAvatar: '/images/tutor_avatars/mr-nappier.png',
-            messages: [
-              { from: 'student', text: 'How do I add \u2153 + \u00BC?' },
-              { from: 'tutor', text: 'Great question! Let\u2019s figure it out together. First \u2014 can you think of a number that both 3 and 4 divide into evenly?' },
-              { from: 'student', text: '12?' },
-              { from: 'tutor', text: 'That\u2019s it! Now we can rewrite both fractions with 12 as the denominator. What would \u2153 become?' }
-            ]
-          },
-          {
-            tutor: 'Mr. Nappier',
-            studentAvatar: '/images/avatars/astronaut.png',
-            tutorAvatar: '/images/tutor_avatars/mr-nappier.png',
-            // Misconception-detection moment \u2014 names the underlying error,
-            // not just "you got it wrong." This is the pedagogy hook.
-            messages: [
-              { from: 'student', text: 'I got 1/2 + 1/3 = 2/5' },
-              { from: 'tutor', text: 'I see exactly what happened \u2014 you added the tops, then added the bottoms. That\u2019s a really common spot to slip! The catch: fractions need to be cut into the same-size pieces first. Halves and thirds are different sizes. Can you think of a size that works for both?' },
-              { from: 'student', text: 'Sixths?' },
-              { from: 'tutor', text: 'Exactly. So 1/2 becomes 3/6 and 1/3 becomes 2/6. Now we\u2019re adding pieces that are actually the same size. What do you get?' }
-            ]
-          },
-          {
-            tutor: 'Ms. Maria',
-            studentAvatar: '/images/avatars/dragon.png',
-            tutorAvatar: '/images/tutor_avatars/ms-maria.png',
-            messages: [
-              { from: 'student', text: 'I don\u2019t get how to solve 3x + 7 = 22' },
-              { from: 'tutor', text: 'No worries! Our goal is to get x all by itself. What do you think we should do to both sides first?' },
-              { from: 'student', text: 'Subtract 7?' },
-              { from: 'tutor', text: 'Exactly! 22 \u2013 7 = 15, so now we have 3x = 15. What\u2019s the last step?' }
-            ]
-          },
-          {
-            tutor: 'Maya',
-            studentAvatar: '/images/avatars/alien.png',
-            tutorAvatar: '/images/tutor_avatars/maya.png',
-            messages: [
-              { from: 'student', text: 'Can you check my homework? I got 0.5 \u00D7 0.3 = 1.5' },
-              { from: 'tutor', text: 'Hmm, let\u2019s look at that together! When you multiply decimals, how many total decimal places should the answer have?' },
-              { from: 'student', text: 'Oh wait\u2026 two places? So it\u2019s 0.15?' },
-              { from: 'tutor', text: 'There you go! 0.5 has one decimal place, 0.3 has one, so the answer needs two. Nice catch!' }
-            ]
-          },
-          {
-            tutor: 'Bob',
-            studentAvatar: '/images/avatars/dragon.png',
-            tutorAvatar: '/images/tutor_avatars/bob.png',
-            messages: [
-              { from: 'student', text: 'What\u2019s the answer to number 5? It\u2019s 4x \u2013 10 = 14' },
-              { from: 'tutor', text: 'I can\u2019t just give you the answer \u2014 but I can help you figure it out! What\u2019s the first step to isolate the x term?' },
-              { from: 'student', text: 'Ugh fine\u2026 add 10 to both sides?' },
-              { from: 'tutor', text: 'See, you DO know this! Now you\u2019ve got 4x = 24. One more step and you\u2019ve got it.' }
-            ]
-          }
-        ];
-
-        var convoIndex = 0;
-        // Generation token — every playConversation() increments it; every
-        // setTimeout callback below stamps the gen it was scheduled in and
-        // bails out if a newer generation has started.
-        var convoGen = 0;
-        // Track every pending timeout so a new conversation can cancel
-        // them outright instead of relying on gen-guards alone. Without
-        // this, throttled tabs could fire a stale typing-finish callback
-        // that appends a duplicate of the message just rendered.
-        var pendingTimers = [];
-        function schedule(fn, ms) {
-          var id = setTimeout(function () {
-            // Remove ourselves from the list before running.
-            var i = pendingTimers.indexOf(id);
-            if (i !== -1) pendingTimers.splice(i, 1);
-            fn();
-          }, ms);
-          pendingTimers.push(id);
-          return id;
-        }
-        function cancelAllTimers() {
-          for (var i = 0; i < pendingTimers.length; i++) clearTimeout(pendingTimers[i]);
-          pendingTimers.length = 0;
-        }
-
-        function playConversation() {
-          var convo = conversations[convoIndex % conversations.length];
-          convoIndex++;
-          var gen = ++convoGen;
-
-          // Cancel any timers from the previous cycle BEFORE clearing the
-          // DOM. Otherwise a stale typing-finish callback could fire after
-          // the new conversation starts and re-render a message that's
-          // already on screen (the duplicate-bubble bug).
-          cancelAllTimers();
-
-          if (tutorNameEl) tutorNameEl.textContent = convo.tutor;
-          if (backdropEl && convo.tutorAvatar) backdropEl.src = convo.tutorAvatar;
-
-          chatContainer.innerHTML = '';
-          typingEl.style.display = 'none';
-
-          var msgIdx = 0;
-
-          function showNextMessage() {
-            if (gen !== convoGen) return; // stale — a newer conversation owns the stage
-            if (msgIdx >= convo.messages.length) {
-              schedule(function () {
-                if (gen !== convoGen) return;
-                var allRows = chatContainer.querySelectorAll('.lp-chat-row');
-                allRows.forEach(function (r) { r.style.opacity = '0'; r.style.transform = 'translateY(-8px)'; });
-                schedule(function () {
-                  if (gen !== convoGen) return;
-                  playConversation();
-                }, 400);
-              }, 3000);
-              return;
-            }
-
-            var msg = convo.messages[msgIdx];
-            var isStudent = msg.from === 'student';
-
-            if (!isStudent) {
-              typingEl.style.display = 'flex';
-              schedule(function () {
-                if (gen !== convoGen) return;
-                typingEl.style.display = 'none';
-                appendMessage(msg, isStudent, convo);
-                msgIdx++;
-                schedule(showNextMessage, 900);
-              }, 1100);
-            } else {
-              appendMessage(msg, isStudent, convo);
-              msgIdx++;
-              schedule(showNextMessage, 800);
-            }
-          }
-
-          function appendMessage(msg, isStudent, c) {
-            // Dedup guard: if the last row already shows this exact (from + text),
-            // skip. Belt-and-suspenders against any race that slipped past the
-            // timer cancel.
-            var lastRow = chatContainer.lastElementChild;
-            if (lastRow && lastRow.classList && lastRow.classList.contains('lp-chat-row')) {
-              var lastIsStudent = lastRow.classList.contains('lp-chat-row--student');
-              var lastBubble = lastRow.querySelector('.lp-chat-bubble');
-              if (lastIsStudent === isStudent && lastBubble && lastBubble.textContent === msg.text) {
-                return;
-              }
-            }
-            var row = document.createElement('div');
-            row.className = 'lp-chat-row' + (isStudent ? ' lp-chat-row--student' : '');
-
-            var avatar = document.createElement('div');
-            avatar.className = 'lp-chat-avatar';
-            var avatarImg = document.createElement('img');
-            avatarImg.src = isStudent ? c.studentAvatar : c.tutorAvatar;
-            avatarImg.alt = isStudent ? 'Student' : c.tutor;
-            avatarImg.loading = 'lazy';
-            avatar.appendChild(avatarImg);
-
-            var bubble = document.createElement('div');
-            bubble.className = 'lp-chat-bubble ' + (isStudent ? 'lp-chat-student' : 'lp-chat-tutor');
-            bubble.textContent = msg.text;
-
-            row.appendChild(avatar);
-            row.appendChild(bubble);
-            chatContainer.appendChild(row);
-
-            // Trigger animation and scroll to bottom
-            requestAnimationFrame(function () {
-              row.classList.add('lp-chat-visible');
-              chatContainer.scrollTop = chatContainer.scrollHeight;
-            });
-          }
-
-          schedule(showNextMessage, 600);
-        }
-
-        setTimeout(playConversation, 700);
-      }
+      /* The animated chat preview was removed with its section: the hero now
+         runs the real tutor in the real three-column layout. */
 
       /* ── Role Selector Tabs ────────────────────────────── */
       var roleTabs = document.querySelectorAll('.lp-role-tab');
