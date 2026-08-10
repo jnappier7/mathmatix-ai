@@ -42,9 +42,39 @@ const TRANSLATIONS = (() => {
 
 const KEY_ATTR_RE = /data-i18n(?:-placeholder|-title|-aria)?="([^"]+)"/g;
 
+// Runtime lookups: t('parent.chatError', '…'), and helpers that take a key the
+// same way — setChatPlaceholder('parent.chatAboutProgress', '…'). Matching any
+// call whose first argument is a namespaced key keeps this honest as new
+// helpers appear; anchoring on the namespace list keeps unrelated single-arg
+// calls from being mistaken for lookups.
+const NAMESPACES = 'nav|parent|dash|chat|login|signup|settings|feedback|footer|misc';
+const JS_KEY_RE = new RegExp(
+  `\\b[A-Za-z_$][\\w$]*\\(\\s*'((?:${NAMESPACES})\\.[A-Za-z0-9_]+)'`,
+  'g'
+);
+
 function keysUsedIn(page) {
   const html = fs.readFileSync(path.join(PUB, page), 'utf8');
   return [...html.matchAll(KEY_ATTR_RE)].map((m) => m[1]);
+}
+
+function jsFilesUnder(dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) return jsFilesUnder(full);
+    return e.isFile() && e.name.endsWith('.js') ? [full] : [];
+  });
+}
+
+// `path.includes('chat.html')` parses as namespace + suffix and is a filename,
+// not a lookup. Every real key uses a camelCase suffix, so dropping anything
+// that ends in an asset extension is enough to tell them apart.
+const FILE_EXT_RE = /\.(html?|js|css|json|png|jpe?g|svg|gif|webp|md|txt)$/i;
+
+function keysLookedUpIn(file) {
+  return [...fs.readFileSync(file, 'utf8').matchAll(JS_KEY_RE)]
+    .map((m) => m[1])
+    .filter((key) => !FILE_EXT_RE.test(key));
 }
 
 const htmlPages = fs
@@ -80,6 +110,28 @@ describe('data-i18n keys used in markup', () => {
   test.each(htmlPages)('%s references only keys that exist', (page) => {
     const missing = [...new Set(keysUsedIn(page))].filter((k) => !TRANSLATIONS[k]);
     expect(missing).toEqual([]);
+  });
+
+  // Strings a script injects after apply() has run can't be caught by the
+  // markup scan, and several of them overwrite a tagged element — a typo there
+  // silently reverts part of a translated page to English.
+  test('runtime t() lookups reference only keys that exist', () => {
+    const missing = [];
+    for (const file of jsFilesUnder(path.join(PUB, 'js'))) {
+      for (const key of keysLookedUpIn(file)) {
+        if (!TRANSLATIONS[key]) missing.push(`${path.relative(PUB, file)} → ${key}`);
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  test('finds the parent dashboard runtime lookups (sanity: the scan works)', () => {
+    const keys = keysLookedUpIn(path.join(PUB, 'js/parent-dashboard.js'));
+    expect(keys).toEqual(expect.arrayContaining([
+      'parent.askAboutProgress',
+      'parent.chatAboutProgress',
+      'parent.chatError'
+    ]));
   });
 
   // Regression: the language setting was wired end-to-end — select, save,

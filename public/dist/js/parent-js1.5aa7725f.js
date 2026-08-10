@@ -2393,6 +2393,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     })();
 
     // ============================================
+    // TRANSLATION LOOKUP
+    // For strings this file injects at runtime. The static markup carries
+    // data-i18n attributes, but anything written here lands after apply() has
+    // already run — and several of these overwrite a tagged element, so without
+    // the lookup they quietly revert a translated page to English.
+    // Falls back to the English literal: a missing key must never blank the UI.
+    // ============================================
+
+    function t(key, fallback) {
+        const translated = window.MathmatixI18n && window.MathmatixI18n.t(key);
+        return translated || fallback;
+    }
+
+    // Built as a node rather than an HTML string: these are translated strings,
+    // and apostrophes/ampersands in them have no business being parsed as markup.
+    function setChatPlaceholder(key, fallback) {
+        if (!parentChatContainer) return;
+        const p = document.createElement('p');
+        p.className = 'text-gray-500 text-center py-2';
+        p.textContent = t(key, fallback);
+        parentChatContainer.replaceChildren(p);
+    }
+
+    // ============================================
     // TOAST NOTIFICATION SYSTEM
     // ============================================
 
@@ -2924,7 +2948,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (childSelector) childSelector.disabled = false;
             if (parentUserInput) parentUserInput.disabled = false;
             if (parentSendButton) parentSendButton.disabled = false;
-            if (parentChatContainer) parentChatContainer.innerHTML = '<p class="text-gray-500 text-center py-2">Select a child and ask a question about their progress.</p>';
+            setChatPlaceholder('parent.askAboutProgress', 'Select a child and ask a question about their progress.');
 
             // Step 3: PARALLEL fetch — progress + growth for all children at once
             childrenListContainer.innerHTML = '';
@@ -3577,7 +3601,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (childSelector) {
         childSelector.addEventListener("change", () => {
             selectedChild = children.find(c => c._id === childSelector.value);
-            if (parentChatContainer) parentChatContainer.innerHTML = '<p class="text-gray-500 text-center py-2">Chat about your child\'s progress.</p>';
+            setChatPlaceholder('parent.chatAboutProgress', 'Chat about your child\'s progress.');
             updateTutorAvatar(selectedChild);
         });
     }
@@ -3624,13 +3648,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(`Chat error: ${res.status} - ${errorText}`);
                 }
                 const data = await res.json();
-                appendParentMessage("ai", data.text || "No response from tutor.", {
+                appendParentMessage("ai", data.text || t('parent.noResponse', 'No response from tutor.'), {
                     tutorName: data.tutorName,
                     tutorImage: data.tutorImage
                 });
             } catch (err) {
                 console.error("Parent chat error:", err);
-                appendParentMessage("ai", "Error connecting to the tutor. Please try again.");
+                appendParentMessage("ai", t('parent.chatError', 'Error connecting to the tutor. Please try again.'));
             } finally {
                 if (parentThinkingIndicator) parentThinkingIndicator.style.display = "none";
             }
@@ -3677,13 +3701,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(`Chat error: ${res.status} - ${errorText}`);
                 }
                 const data = await res.json();
-                appendParentMessage("ai", data.text || "No response from tutor.", {
+                appendParentMessage("ai", data.text || t('parent.noResponse', 'No response from tutor.'), {
                     tutorName: data.tutorName,
                     tutorImage: data.tutorImage
                 });
             } catch (err) {
                 console.error("Parent chat error:", err);
-                appendParentMessage("ai", "Error connecting to the tutor. Please try again.");
+                appendParentMessage("ai", t('parent.chatError', 'Error connecting to the tutor. Please try again.'));
             } finally {
                 if (parentThinkingIndicator) parentThinkingIndicator.style.display = "none";
             }

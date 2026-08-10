@@ -822,6 +822,46 @@ window.I18N_TRANSLATIONS = {
     German: 'Geben Sie den Verknüpfungscode Ihres Kindes ein, um sein Konto zu verbinden.'
   },
 
+  /* Injected by parent-dashboard.js at runtime, after apply() has already run.
+     The first two overwrite the tagged placeholder in the chat panel. */
+  'parent.askAboutProgress': {
+    English: 'Select a child and ask a question about their progress.',
+    Spanish: 'Seleccione un hijo y haga una pregunta sobre su progreso.',
+    Russian: 'Выберите ребёнка и задайте вопрос о его успехах.',
+    Chinese: '选择一个孩子，并提出关于他们学习进度的问题。',
+    Vietnamese: 'Chọn một trẻ và đặt câu hỏi về tiến trình học tập của trẻ.',
+    Arabic: 'اختر طفلًا واطرح سؤالًا عن تقدّمه.',
+    Somali: 'Dooro ilmo oo weydii su\'aal ku saabsan horumarkiisa.',
+    French: 'Sélectionnez un enfant et posez une question sur ses progrès.',
+    German: 'Wählen Sie ein Kind aus und stellen Sie eine Frage zu seinem Fortschritt.'
+  },
+  'parent.chatAboutProgress': {
+    English: 'Chat about your child\'s progress.',
+    Spanish: 'Converse sobre el progreso de su hijo.',
+    Russian: 'Обсудите успехи вашего ребёнка.',
+    Chinese: '聊聊孩子的学习进度。',
+    Vietnamese: 'Trò chuyện về tiến trình học tập của con bạn.',
+    Arabic: 'تحدّث عن تقدّم طفلك.',
+    Somali: 'Ka sheekayso horumarka ilmahaaga.',
+    French: 'Discutez des progrès de votre enfant.',
+    German: 'Sprechen Sie über den Fortschritt Ihres Kindes.'
+  },
+  'parent.noResponse': {
+    English: 'No response from tutor.', Spanish: 'El tutor no respondió.', Russian: 'Репетитор не ответил.', Chinese: '导师没有回应。',
+    Vietnamese: 'Gia sư không phản hồi.', Arabic: 'لا يوجد ردّ من المعلّم.', Somali: 'Macallinku ma jawaabin.', French: 'Aucune réponse du tuteur.', German: 'Keine Antwort vom Tutor.'
+  },
+  'parent.chatError': {
+    English: 'Error connecting to the tutor. Please try again.',
+    Spanish: 'Error al conectar con el tutor. Inténtelo de nuevo.',
+    Russian: 'Не удалось связаться с репетитором. Попробуйте ещё раз.',
+    Chinese: '连接导师时出错。请重试。',
+    Vietnamese: 'Lỗi kết nối với gia sư. Vui lòng thử lại.',
+    Arabic: 'تعذّر الاتصال بالمعلّم. حاول مرة أخرى.',
+    Somali: 'Khalad ayaa dhacay markii lala xiriirayay macallinka. Fadlan mar kale isku day.',
+    French: 'Erreur de connexion au tuteur. Veuillez réessayer.',
+    German: 'Verbindung zum Tutor fehlgeschlagen. Bitte erneut versuchen.'
+  },
+
   /* ─── Settings modal ─── */
   'settings.title': {
     English: 'Settings', Spanish: 'Configuración', Russian: 'Настройки', Chinese: '设置',
