@@ -34,6 +34,12 @@ const User = require('../../models/user');
 let mem;
 let app;
 
+// Every case here does real database work. Jest's 10s default is tight enough
+// on a cold runner that a slow case fails as a timeout — and a timed-out test
+// keeps inserting into the next one's collection, so the failure lands
+// somewhere other than the cause.
+jest.setTimeout(30000);
+
 beforeAll(async () => {
   mem = await MongoMemoryServer.create();
   await mongoose.connect(mem.getUri());
@@ -53,7 +59,7 @@ afterEach(async () => {
 });
 
 let seq = 0;
-async function makeUser({ firstName = 'Test', lastName, role = 'student', roles, email, createdAt } = {}) {
+async function makeUser({ firstName = 'Test', lastName, role = 'student', roles, email } = {}) {
   seq += 1;
   return User.create({
     firstName,
@@ -63,20 +69,42 @@ async function makeUser({ firstName = 'Test', lastName, role = 'student', roles,
     passwordHash: 'x'.repeat(20),
     role,
     ...(roles ? { roles } : {}),
-    ...(createdAt ? { createdAt } : {}),
   });
 }
 
-/** N students, created oldest-first so `newest` ordering is predictable. */
+/**
+ * N students, oldest-first, so `newest`/`oldest` ordering is predictable.
+ *
+ * Inserted through the raw driver rather than User.create() for two reasons,
+ * both of which broke this file first time out:
+ *
+ *   - Speed. A hundred-odd sequential create() round trips blew Jest's 10s
+ *     timeout, and a timed-out test doesn't stop its own inserts — they kept
+ *     landing during the NEXT test, which then counted 11 users where it had
+ *     seeded 5. One insertMany instead of N creates.
+ *   - Control of createdAt. The schema sets { timestamps: true }, so Mongoose
+ *     overwrites any createdAt handed to create(); the explicit values here
+ *     were being silently ignored. The raw driver leaves them alone, which is
+ *     what makes date ordering deterministic instead of a race between
+ *     documents written in the same millisecond.
+ *
+ * Bypassing the schema also skips its defaults, so these documents carry a
+ * legacy `role` string and no `roles[]` — which anyRole() is meant to match
+ * via its fallback, and does.
+ */
 async function seedStudents(n) {
   const base = Date.UTC(2026, 0, 1);
-  for (let i = 0; i < n; i += 1) {
-    await makeUser({
-      firstName: 'Seed',
-      lastName: `Student${String(i).padStart(3, '0')}`,
-      createdAt: new Date(base + i * 60_000),
-    });
-  }
+  const docs = Array.from({ length: n }, (_, i) => ({
+    firstName: 'Seed',
+    lastName: `Student${String(i).padStart(3, '0')}`,
+    username: `seed${i}`,
+    email: `seed${i}@example.com`,
+    passwordHash: 'x'.repeat(20),
+    role: 'student',
+    createdAt: new Date(base + i * 60_000),
+    updatedAt: new Date(base + i * 60_000),
+  }));
+  await User.collection.insertMany(docs);
 }
 
 describe('GET /api/admin/users — paging', () => {
