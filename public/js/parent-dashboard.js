@@ -1222,6 +1222,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (document.getElementById('parentLanguage')) {
                 document.getElementById('parentLanguage').value = settings.parentLanguage || 'English';
             }
+
+            // parentLanguage is the setting this page actually exposes, so it wins here.
+            // i18n.js boots off preferredLanguage (the student-side field); saving syncs the
+            // two, but an account that set a language before that sync existed still has them
+            // out of step, and then the dashboard renders in the wrong language with no clue why.
+            if (window.MathmatixI18n && settings.parentLanguage &&
+                settings.parentLanguage !== window.MathmatixI18n.getLanguage()) {
+                window.MathmatixI18n.setLanguage(settings.parentLanguage);
+            }
         } catch (error) {
             console.error("ERROR: Failed to load parent settings:", error);
         }
