@@ -14,6 +14,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/tutor-picker.css?v=20260713" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <!-- Font Awesome, loaded once as CSS. The SVG-with-JS kit (js/all.min.js)
+       used to be loaded alongside it: ~1.3MB of script that re-renders every
+       <i> as an <svg>, on top of an icon font that had already painted them.
+       Two copies of the same icon set, plus a visible reflow as the second
+       replaced the first. Nothing in the codebase reads the injected SVG DOM. -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
 </head>
 <body class="landing-page-body">
@@ -80,6 +85,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/tutor-config-data.js"></script>
   <script type="module" src="/js/pick-tutor.js"></script>
   <script src="/js/ux-enhancements.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
