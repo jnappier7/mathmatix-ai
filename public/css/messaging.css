@@ -273,3 +273,59 @@
 [data-theme="dark"] .mm-ls-hint,
 [data-theme="dark"] .mm-ls-status,
 [data-theme="dark"] .mm-ls-schoolnote { color: #9aa3b8; }
+
+/* ── First-run quick start ─────────────────────────────── */
+.mm-ls-quickstart {
+  border: 1px solid rgba(18, 179, 179, 0.28);
+  background: rgba(18, 179, 179, 0.05);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+}
+
+.mm-ls-qs-lead {
+  margin: 0 0 0.7rem;
+  font-size: 0.92rem; line-height: 1.5; color: #3c4653;
+}
+.mm-ls-qs-lead strong { color: #14213d; }
+
+.mm-ls-quickstart .mm-ls-row { padding: 0.45rem 0.25rem; }
+.mm-ls-quickstart .mm-ls-label { font-weight: 600; font-size: 0.9rem; }
+
+.mm-ls-qs-actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.mm-ls-qs-save {
+  border: none; border-radius: 10px; cursor: pointer; font: inherit;
+  background: linear-gradient(135deg, #db2b6a 0%, #c92260 100%);
+  color: #fff; font-weight: 600; padding: 0.5rem 1rem;
+}
+
+.mm-ls-qs-all {
+  border: none; background: none; cursor: pointer; font: inherit;
+  color: #0c7575; font-weight: 600; font-size: 0.85rem;
+  text-decoration: underline; text-underline-offset: 2px;
+  padding: 0.5rem 0;
+}
+
+/* Brief highlight when the panel is brought to the parent after they link a
+   child, so the scroll lands on something that reads as "this is for you". */
+@keyframes mm-ls-flash {
+  0%   { box-shadow: 0 0 0 0 rgba(18, 179, 179, 0); }
+  25%  { box-shadow: 0 0 0 6px rgba(18, 179, 179, 0.22); }
+  100% { box-shadow: 0 0 0 0 rgba(18, 179, 179, 0); }
+}
+.mm-ls-flash { animation: mm-ls-flash 2.2s ease-out; border-radius: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-ls-flash { animation: none; }
+}
+
+[data-theme="dark"] .mm-ls-quickstart {
+  background: rgba(18, 179, 179, 0.1);
+  border-color: rgba(18, 179, 179, 0.35);
+}
+[data-theme="dark"] .mm-ls-qs-lead { color: #cbd5e1; }
+[data-theme="dark"] .mm-ls-qs-lead strong { color: #e2e8f0; }
+.mm-ls-first-run .mm-ls-intro { display: none; }
