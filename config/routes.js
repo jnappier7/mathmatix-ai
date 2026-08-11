@@ -50,6 +50,9 @@ const {
 } = require('../middleware/auth');
 
 const { errorMetricsHandler } = require('../middleware/errorTracking');
+// Own-consent gate for AI endpoints (COPPA point of collection/disclosure).
+// Staged rollout via CONSENT_ENFORCEMENT=off|log|enforce, default log.
+const { requireOwnConsent, consentMetricsHandler } = require('../middleware/consentGate');
 const { usageGate, usageGateAllMethods, premiumFeatureGate } = require('../middleware/usageGate');
 const { uploadRateLimiter, scheduleCleanup, getRetentionDays } = require('../middleware/uploadSecurity');
 const { scheduleDemoCleanup } = require('../utils/demoClone');
@@ -196,6 +199,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // --- API Routes ---
   app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);
   app.get('/api/admin/error-metrics', isAuthenticated, isAdmin, errorMetricsHandler);
+  app.get('/api/admin/consent-metrics', isAuthenticated, isAdmin, consentMetricsHandler);
   app.use('/api/teacher', isAuthenticated, isTeacher, teacherRoutes);
   app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
   app.use('/api/analytics', isAuthenticated, analyticsRoutes);
@@ -205,17 +209,21 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/affiliate', affiliateRoutes);
   app.use('/api/privacy', isAuthenticated, dataPrivacyRoutes);
   app.use('/api/consent', isAuthenticated, consentRoutes);
-  app.use('/api/chat', isAuthenticated, aiEndpointLimiter, usageGate, chatRoutes);
+  // requireOwnConsent sits on every endpoint that collects student input for,
+  // or discloses student context to, a third-party AI provider. It must NOT
+  // go on /api/consent or /api/onboarding — a blocked student has to be able
+  // to reach the consent flow to unblock themselves.
+  app.use('/api/chat', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, usageGate, chatRoutes);
   // Living Workspace: gesture-derived student moves. Student-only, and it can
   // delegate into the shared chat turn (?tutor=true), so it carries the SAME
   // gates as /api/chat plus isStudent. See docs/BOARD_STUDENT_MOVES_INTEGRATION.md.
-  app.use('/api/student-moves', isAuthenticated, isStudent, aiEndpointLimiter, usageGate, studentMovesRoutes);
+  app.use('/api/student-moves', isAuthenticated, isStudent, requireOwnConsent(), aiEndpointLimiter, usageGate, studentMovesRoutes);
   app.use('/api/conversations', isAuthenticated, conversationsRoutes);
-  app.use('/api/speak', isAuthenticated, speakRoutes);
-  app.use('/api/animation-studio', isAuthenticated, aiEndpointLimiter, animationStudioRoutes);
-  app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes);
-  app.use('/api/voice', isAuthenticated, voiceTestRoutes);
-  app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
+  app.use('/api/speak', isAuthenticated, requireOwnConsent(), speakRoutes);
+  app.use('/api/animation-studio', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, animationStudioRoutes);
+  app.use('/api/voice', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes);
+  app.use('/api/voice', isAuthenticated, requireOwnConsent(), voiceTestRoutes);
+  app.use('/api/voice-tutor', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
   // These routes accept base64 image data — larger JSON body limit
   const largeJsonParser = express.json({ limit: '10mb' });
   // Unified-upload classifier: cheap "is this worked or blank?" check that
@@ -223,14 +231,14 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // /api/upload (more specific path first) and intentionally NOT premium-gated
   // so the suggestion works for every signed-in student — the paywall stays on
   // the grade/tutoring action the chip actually triggers.
-  app.use('/api/upload/classify', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, uploadClassifyRoutes);
-  app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
+  app.use('/api/upload/classify', isAuthenticated, requireOwnConsent(), uploadRateLimiter, aiEndpointLimiter, uploadClassifyRoutes);
+  app.use('/api/upload', isAuthenticated, requireOwnConsent(), uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
   // chatWithFile route REMOVED — file uploads consolidated into /api/chat
   // welcome-message generates an LLM greeting on GET, so it needs the
   // all-methods gate (plain usageGate only inspects POSTs). rapport's
   // /respond is a chat-style AI turn — meter it like /api/chat.
-  app.use('/api/welcome-message', isAuthenticated, aiEndpointLimiter, usageGateAllMethods, welcomeRoutes);
-  app.use('/api/rapport', isAuthenticated, aiEndpointLimiter, usageGate, rapportBuildingRoutes);
+  app.use('/api/welcome-message', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, usageGateAllMethods, welcomeRoutes);
+  app.use('/api/rapport', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, usageGate, rapportBuildingRoutes);
   app.use('/api/memory', isAuthenticated, memoryRouter);
   app.use('/api/summary', isAuthenticated, summaryGeneratorRouter);
   app.use('/api/avatars', isAuthenticated, avatarRoutes);
@@ -255,9 +263,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // free-minute cap, not a paywall, is the conversion lever to Mathmatix+.
   app.use('/api/courses', isAuthenticated, courseRoutes);
   app.use('/api/course-sessions', isAuthenticated, courseSessionRoutes);
-  app.use('/api/course-chat', isAuthenticated, aiEndpointLimiter, usageGate, courseChatRoutes);
+  app.use('/api/course-chat', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, usageGate, courseChatRoutes);
   app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes);
-  app.use('/api/guidedLesson', isAuthenticated, aiEndpointLimiter, guidedLessonRoutes);
+  app.use('/api/guidedLesson', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, guidedLessonRoutes);
   app.use('/api/assessment', isAuthenticated, assessmentRoutes);
   app.use('/api/screener', isAuthenticated, screenerRoutes);
   app.use('/api/checkpoint', isAuthenticated, checkpointRoutes);

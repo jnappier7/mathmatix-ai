@@ -80,7 +80,8 @@ const consentRecordSchema = new Schema({
       'school_official',     // School/district consented via DPA (COPPA school exception)
       'student_self',        // Student 13+ consented for themselves
       'parent_revoked',      // Parent revoked consent
-      'school_revoked'       // School/district contract ended
+      'school_revoked',      // School/district contract ended
+      'legacy_migration'     // Backfill of a pre-privacyConsent hasParentalConsent grant
     ],
     required: true
   },
