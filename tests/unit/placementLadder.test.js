@@ -14,7 +14,7 @@
 
 const { buildPlacementLadder, LADDER_BANDS } = require('../../utils/placementLadder');
 const {
-  canRender, fillWidths, showPips, lede, rungSentence
+  canRender, fillWidths, showPips, startable, lede, rungSentence
 } = require('../../public/js/placementLadder');
 
 // A tiny two-band catalog: MS.PRP.1 -> ALG1.PRP.2 -> ALG1.FNC.1
@@ -274,6 +274,79 @@ describe('renderer decisions', () => {
       const ladder = buildPlacementLadder(CATALOG, new Map());
       expect(showPips(rungFor(ladder, 'MS'))).toBe(true);
       expect(showPips(rungFor(ladder, 'ALG1'))).toBe(false);
+    });
+  });
+
+  // The ladder is a chooser, so what it offers has to be startable in fact —
+  // a locked skill in a "pick your next one" list is a wall dressed as a
+  // choice, and the server will refuse it anyway (POST /api/mastery/start-skill
+  // 409s on locked and on already-owned).
+  describe('which skills the student may pick', () => {
+    test('offers open skills — every prerequisite is already done', () => {
+      const ladder = buildPlacementLadder(CATALOG, new Map());
+      expect(startable(rungFor(ladder, 'MS')).map((s) => s.skillId).sort())
+        .toEqual(['MS.PRP.1', 'MS.QNT.1']);
+    });
+
+    test('offers a skill already underway, so it can be resumed', () => {
+      const ladder = buildPlacementLadder(CATALOG, masteryOf({
+        'MS.PRP.1': { rung: 'learned' }
+      }));
+      expect(startable(rungFor(ladder, 'MS')).map((s) => s.state)).toContain('learned');
+    });
+
+    test('never offers a locked skill', () => {
+      const ladder = buildPlacementLadder(CATALOG, new Map());
+      // ALG1.FNC.1 sits behind ALG1.PRP.2, which sits behind MS.PRP.1.
+      expect(startable(rungFor(ladder, 'ALG1')).map((s) => s.skillId))
+        .not.toContain('ALG1.FNC.1');
+    });
+
+    test('never offers what the student already owns', () => {
+      const ladder = buildPlacementLadder(CATALOG, masteryOf({
+        'MS.PRP.1': proved, 'MS.QNT.1': cleared
+      }));
+      const ids = startable(rungFor(ladder, 'MS')).map((s) => s.skillId);
+      expect(ids).not.toContain('MS.PRP.1');
+      expect(ids).not.toContain('MS.QNT.1');
+    });
+
+    test('cleared-from-above skills are left out — hundreds of them would swamp the frontier', () => {
+      const ladder = buildPlacementLadder(CATALOG, masteryOf({ 'MS.QNT.1': cleared }));
+      expect(startable(rungFor(ladder, 'MS')).map((s) => s.state)).not.toContain('above');
+    });
+
+    test('proving a skill opens the next one for choosing', () => {
+      const before = buildPlacementLadder(CATALOG, new Map());
+      expect(startable(rungFor(before, 'ALG1'))).toHaveLength(0);
+
+      const after = buildPlacementLadder(CATALOG, masteryOf({ 'MS.PRP.1': proved }));
+      expect(startable(rungFor(after, 'ALG1')).map((s) => s.skillId)).toEqual(['ALG1.PRP.2']);
+    });
+
+    test('survives a rung with no skills', () => {
+      expect(startable({ skills: [] })).toEqual([]);
+      expect(startable(null)).toEqual([]);
+    });
+
+    // Gating picks on "reached bands plus the edge" (the rule the PIPS use)
+    // strands exactly the student who is doing well: clear every skill in your
+    // top band and the band above is neither reached nor the edge, so the
+    // ladder would offer nothing at the moment you earned the next step.
+    test('a student who cleared their whole band is still offered the next one', () => {
+      const ladder = buildPlacementLadder(CATALOG, masteryOf({
+        'MS.PRP.1': proved,
+        'MS.QNT.1': proved
+      }));
+
+      // MS is finished; the edge sits there and ALG1 is owned-nothing.
+      expect(rungFor(ladder, 'MS').state).toBe('cleared');
+      expect(startable(rungFor(ladder, 'MS'))).toHaveLength(0);
+      expect(rungFor(ladder, 'ALG1').owned).toBe(0);
+      expect(showPips(rungFor(ladder, 'ALG1'))).toBe(false);
+
+      // …and there is still somewhere to go.
+      expect(startable(rungFor(ladder, 'ALG1')).map((s) => s.skillId)).toEqual(['ALG1.PRP.2']);
     });
   });
 });

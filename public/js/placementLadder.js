@@ -97,28 +97,61 @@
   }
 
   /**
+   * The skills on this rung the student can actually start right now.
+   *
+   * `open` means every prerequisite is done, `learned` means it is already
+   * underway — both are genuinely startable. Nothing aspirational: a locked
+   * skill in a "pick your next one" list is a wall dressed as a choice.
+   *
+   * Skills cleared from above are deliberately absent. There are hundreds of
+   * them after a placement cascade, they would swamp the frontier, and their
+   * only honest action is proving out — which the note at the bottom already
+   * offers for anything on the board.
+   */
+  function startable(rung) {
+    return ((rung && rung.skills) || []).filter(function (s) {
+      return s.state === 'open' || s.state === 'learned';
+    });
+  }
+
+  /**
    * Paint the ladder into `host`.
    *
    * @param {HTMLElement} host
    * @param {Object} ladder  payload from POST /api/screener/complete
+   * @param {Object} [handlers]
+   * @param {Function} [handlers.onLearn]  (skill) => void — student picked it to learn
+   * @param {Function} [handlers.onProve]  (skill) => void — student says they know it
    * @returns {boolean} false when there was nothing honest to draw, so the
    *                    caller can fall back rather than leave a blank hero.
    */
-  function render(host, ladder) {
+  function render(host, ladder, handlers) {
     if (!host || !canRender(ladder)) return false;
+
+    const acts = handlers || {};
+    const pickable = !!acts.onLearn;
 
     host.textContent = '';
     host.classList.add('pl');
+    // Hosts that pass no handlers stay a pure display, which is what the
+    // fallback and any read-only embed want.
+    host.classList.toggle('pl-pickable', pickable);
 
     const intro = el('p', 'pl-lede');
     intro.textContent = lede(ladder.totals);
     host.appendChild(intro);
 
+    if (pickable) {
+      const ask = el('p', 'pl-ask');
+      ask.textContent = 'Pick where you go next — anything highlighted is ready for you now.';
+      host.appendChild(ask);
+    }
+
     const list = el('ol', 'pl-rungs');
     list.setAttribute('aria-label', 'What you already know, by course band');
 
     ladder.rungs.slice().reverse().forEach(function (rung) {
-      list.appendChild(renderRung(rung));
+      list.appendChild(renderRung(rung, acts));
     });
     host.appendChild(list);
 
@@ -138,7 +171,7 @@
     return true;
   }
 
-  function renderRung(rung) {
+  function renderRung(rung, acts) {
     const li = el('li', 'pl-rung is-' + rung.state + (rung.isEdge ? ' is-edge' : ''));
 
     const head = el('div', 'pl-rung-head');
@@ -191,8 +224,98 @@
       head.appendChild(here);
     }
 
+    // Picks follow the WORK, not the pip rule.
+    //
+    // Tying them to reached-bands-plus-edge looked tidier and stranded people:
+    // a student who finishes every skill in their top band owns nothing in the
+    // band above, so it is neither reached nor the edge, and the ladder would
+    // offer them nothing at all at the exact moment they earned the next step.
+    // An open skill has all its prerequisites done by definition — if a band
+    // holds one, it is reachable and worth offering.
+    const picks = acts && acts.onLearn ? startable(rung) : [];
+    if (picks.length) {
+      // …and a band with work waiting in it is not "ahead" of the student, so
+      // it does not get dimmed like the untouched climb above.
+      li.classList.add('has-picks');
+      li.appendChild(renderPicks(picks, acts));
+    }
+
     li.setAttribute('aria-label', rungSentence(rung));
     return li;
+  }
+
+  /**
+   * The choosing part: every startable skill on this rung, by name.
+   *
+   * Named buttons, not the pips. A pip is 8px — fine as a unit of "how much do
+   * I own", useless as a tap target on the Chromebooks and phones this runs on,
+   * and it does not say what the skill IS. A student choosing their next step
+   * needs to read the choice.
+   *
+   * Two actions per skill, mirroring the skill map's rungs: start the lesson,
+   * or claim you already know it and prove out. The second is the one that
+   * makes the placement note true rather than decorative.
+   */
+  // How many choices a rung shows before folding the rest behind a toggle.
+  //
+  // Every open skill at once is 28 buttons and a card five screens tall — that
+  // is not a chooser, it is a menu you close. The cap is per rung so the
+  // frontier and the foundations each keep a visible handful, and the toggle
+  // means nothing is more than one tap away.
+  const PICK_PREVIEW = 3;
+
+  function renderPicks(picks, acts, expanded) {
+    const wrap = el('div', 'pl-picks');
+    const shown = expanded ? picks : picks.slice(0, PICK_PREVIEW);
+
+    const heading = el('p', 'pl-picks-head');
+    heading.textContent = picks.length === 1
+      ? 'Ready for you now'
+      : 'Ready for you now — ' + picks.length + ' to choose from';
+    wrap.appendChild(heading);
+
+    const ul = el('ul', 'pl-pick-list');
+    shown.forEach(function (skill) {
+      const item = el('li', 'pl-pick');
+
+      const go = document.createElement('button');
+      go.type = 'button';
+      go.className = 'pl-pick-go';
+      go.innerHTML = '<span class="pl-pick-label"></span>'
+        + '<span class="pl-pick-sub">' + (skill.state === 'learned' ? 'Keep going' : 'Learn it') + '</span>';
+      go.querySelector('.pl-pick-label').textContent = skill.label;
+      go.addEventListener('click', function () { acts.onLearn(skill); });
+      item.appendChild(go);
+
+      if (acts.onProve) {
+        const prove = document.createElement('button');
+        prove.type = 'button';
+        prove.className = 'pl-pick-prove';
+        prove.innerHTML = '<b>I know this</b><span>Prove it</span>';
+        prove.setAttribute('aria-label', 'I already know ' + skill.label + ' — prove it and skip past it');
+        prove.addEventListener('click', function () { acts.onProve(skill); });
+        item.appendChild(prove);
+      }
+
+      ul.appendChild(item);
+    });
+
+    wrap.appendChild(ul);
+
+    if (picks.length > PICK_PREVIEW) {
+      const more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'pl-pick-more';
+      more.textContent = expanded
+        ? 'Show fewer'
+        : 'Show all ' + picks.length + ' ready here';
+      more.addEventListener('click', function () {
+        wrap.replaceWith(renderPicks(picks, acts, !expanded));
+      });
+      wrap.appendChild(more);
+    }
+
+    return wrap;
   }
 
   /** What a rung says out loud, for screen readers and for the pip tooltips. */
@@ -241,6 +364,7 @@
     render: render,
     canRender: canRender,
     showPips: showPips,
+    startable: startable,
     fillWidths: fillWidths,
     lede: lede,
     rungSentence: rungSentence

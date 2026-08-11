@@ -735,12 +735,117 @@ document.addEventListener("DOMContentLoaded", () => {
         return null;
     }
 
+    /**
+     * The student arrived having already chosen what to work on.
+     *
+     * `?skill=<id>` has been written by the skill map's "Learn it" rung and its
+     * available-now list since the board shipped — and until now NOTHING read
+     * it, here or on the server. Choosing a skill dropped you into a generic
+     * greeting and the tutor never knew what you picked. This is that wire.
+     *
+     * `?prove=1` is the test-out path: hand straight to the challenge card
+     * rather than starting a lesson on something they think they already know.
+     *
+     * The parameter is consumed once — stripped from the URL before anything
+     * async runs, so a refresh (or the back button) does not silently restart
+     * the skill a second time.
+     */
+    function takeChosenSkillFromUrl() {
+        var params = new URLSearchParams(window.location.search);
+        var skillId = params.get('skill');
+        if (!skillId) return null;
+        var prove = params.get('prove') === '1';
+
+        params.delete('skill');
+        params.delete('prove');
+        var qs = params.toString();
+        window.history.replaceState({}, '', window.location.pathname + (qs ? '?' + qs : ''));
+
+        return { skillId: skillId, prove: prove };
+    }
+
+    /**
+     * Put the tutor on the chosen skill, then let the student open the lesson.
+     *
+     * The opening line is sent AS THE STUDENT because that is what happened —
+     * they tapped a skill and asked for it. Faking a tutor monologue instead
+     * would leave the transcript claiming the tutor volunteered a topic the
+     * student actually picked. It also means this rides the ordinary pipeline,
+     * so the turn is taught and assessed like any other.
+     */
+    async function startChosenSkill(choice) {
+        try {
+            var res = await csrfFetch('/api/mastery/start-skill', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ skillId: choice.skillId })
+            });
+            var data = await res.json();
+
+            if (!res.ok) {
+                // A skill cleared from above can only be proved, not taught —
+                // the server says so rather than walking them through work it
+                // already credited. Hand them to the challenge instead.
+                if (data.proveInstead && window.MMChallengeCard) {
+                    window.MMChallengeCard.launch(choice.skillId);
+                    return true;
+                }
+                appendMessage(data.reason || "I couldn't open that one just now — pick another and we'll go.", 'ai');
+                return true;
+            }
+
+            var label = data.label || choice.skillId;
+            if (userInput) {
+                userInput.textContent = "Let's work on " + label + '.';
+                sendMessage();
+            }
+            return true;
+        } catch (error) {
+            console.error('[Chat] Could not start the chosen skill', error);
+            return false;
+        }
+    }
+
+    /**
+     * The same two choices, for surfaces already inside chat.
+     *
+     * The placement ladder in the FloatingScreener has no page to navigate to —
+     * the student is standing in the conversation the lesson would open in. It
+     * closes its panel and calls this instead of round-tripping through
+     * `?skill=`, which would reload chat out from under them.
+     */
+    window.MMStartSkill = {
+        learn: function (skillId) { return startChosenSkill({ skillId: skillId }); },
+        prove: function (skillId) {
+            if (window.MMChallengeCard) window.MMChallengeCard.launch(skillId);
+        }
+    };
+
     async function getWelcomeMessage() {
         try {
             // New logins always start in general chat with a fresh session.
             // Clear any pending session from sidebar — users can click sidebar
             // to resume old conversations manually.
             window.pendingActiveSession = null;
+
+            // The student picked a skill on the way in (skill map, or the
+            // placement ladder). That IS the opener — a generic "what do you
+            // want to work on?" over a choice they just made reads as the
+            // tutor not listening.
+            var chosen = takeChosenSkillFromUrl();
+            if (chosen) {
+                if (chosen.prove) {
+                    if (window.MMChallengeCard) {
+                        window.MMChallengeCard.launch(chosen.skillId);
+                        return;
+                    }
+                } else if (await startChosenSkill(chosen)) {
+                    return;
+                }
+                // Fall through to the normal greeting only if the hand-off
+                // failed outright — better a generic hello than a blank screen.
+            }
 
             // Check if session messages were already loaded from sidebar
             // Skip welcome message if we restored an existing session

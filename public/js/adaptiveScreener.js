@@ -879,8 +879,18 @@ function displayResults(report, ladder) {
   // The hero: everything the student owns, lit rung by rung. The grade level
   // is still computed server-side and still drives mathCourse and the
   // staff-facing views — it is simply no longer the thing we hand a student.
+  // The ladder is the chooser: picking a skill hands straight to the tutor
+  // (or to the test-out) via chat.html's `?skill=` reader. No intermediate
+  // screen — a student who just sat a 20-minute test has one tap left in them.
   const painted = window.PlacementLadder
-    && window.PlacementLadder.render(elements.placementLadder, ladder);
+    && window.PlacementLadder.render(elements.placementLadder, ladder, {
+      onLearn: (skill) => {
+        window.location.href = '/chat.html?skill=' + encodeURIComponent(skill.skillId);
+      },
+      onProve: (skill) => {
+        window.location.href = '/chat.html?skill=' + encodeURIComponent(skill.skillId) + '&prove=1';
+      }
+    });
 
   if (!painted) {
     // Nothing honest to draw (catalog unseeded, or the build threw). Show the
