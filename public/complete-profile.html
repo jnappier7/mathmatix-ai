@@ -78,13 +78,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <p id="linkParentMessage" style="margin-top: 10px; font-size: 0.9rem;"></p>
           </div>
 
-          <!-- Ages 13-17: Parent email confirmation required (OpenAI terms) -->
+          <!-- Ages 13-17: self-certification (COPPA requires parental consent
+               only under 13); parent email / invite code kept as options -->
           <div id="teenConsentSection" style="display: none; background: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 8px; margin: 15px 0;">
-            <p style="margin: 0 0 10px 0; color: #0c5460; font-weight: bold;">Parent/Guardian Verification</p>
+            <p style="margin: 0 0 10px 0; color: #0c5460; font-weight: bold;">Your Agreement</p>
             <p style="margin: 0 0 10px 0; color: #0c5460; font-size: 0.9rem;">
-              Students under 18 need a parent or guardian's permission. Enter your parent's email and we'll send a confirmation.
-              You can also use a parent invite code if your parent already has an account.
+              Mathmatix is an AI tutor. Your practice and progress are saved so it can teach you better, handled as described in our
+              <a href="/privacy.html" target="_blank" rel="noopener">privacy policy</a>. Since you're 13 or older, you can agree for yourself.
             </p>
+            <button type="button" id="teenSelfConsentBtn" class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">I agree — continue</button>
+            <p style="margin: 0 0 6px 0; color: #0c5460; font-size: 0.9rem;">Want a parent or guardian in the loop? (optional)</p>
             <label for="teenParentEmail" style="color: #0c5460;">Parent/Guardian Email:</label>
             <input type="email" id="teenParentEmail" name="teenParentEmail" placeholder="parent@email.com" style="margin-bottom: 10px;" />
             <button type="button" id="sendParentConsentBtn" class="btn btn-secondary" style="width: 100%;">Send Verification Email</button>
@@ -218,7 +221,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <script src="/js/logout.js"></script>
   <script src="/js/csrf.js"></script>
-  <script src="/js/complete-profile.js"></script>
+  <script src="/js/complete-profile.js?v=20260811"></script>
   <script src="/js/ux-enhancements.js"></script>
 </body>
 </html>

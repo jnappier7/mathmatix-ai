@@ -1007,6 +1007,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
             showThinkingIndicator(false);
 
+            // Consent gate: an unconsented account gets 403d on its very first
+            // greeting call — route to the consent flow instead of erroring.
+            if (res.status === 403 && data.consentRequired) {
+                showConsentRequiredPrompt(data);
+                return;
+            }
+
             // Continuation from the voice tutor: instead of a fresh greeting, the
             // server returns the in-progress conversation. Paint its recent tail
             // (chat + voice turns, interleaved) into the transcript so the just-
@@ -3018,6 +3025,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * Consent gate (403 { consentRequired }) — the server blocked this account
+     * pending consent (CONSENT_ENFORCEMENT=enforce). Explain gently, route to
+     * the onboarding consent flow, and disable input so the student doesn't
+     * loop sending messages that will keep 403ing.
+     */
+    function showConsentRequiredPrompt(errorData) {
+        const container = chatBox;
+        if (!container) return;
+        if (container.querySelector('.consent-required-banner')) return;
+
+        const banner = document.createElement('div');
+        banner.className = 'message-container system-error consent-required-banner';
+        const msg = (errorData && errorData.message) ||
+            'A parent or guardian needs to approve Mathmatix AI before tutoring can continue.';
+        banner.innerHTML = `<div class="message system-error" style="text-align:center;">
+            <i class="fas fa-user-shield" style="margin-right:6px;"></i>
+            <span></span><br>
+            <a href="/onboarding.html" class="btn btn-primary" style="display:inline-block; margin-top:10px;">Finish setting up</a>
+        </div>`;
+        banner.querySelector('span').textContent = msg;
+        container.appendChild(banner);
+        container.scrollTop = container.scrollHeight;
+
+        const sendBtn = document.getElementById('send-button');
+        const chatInput = document.getElementById('chat-input');
+        if (sendBtn) {
+            sendBtn.disabled = true;
+            sendBtn.title = 'Approval needed to continue';
+        }
+        if (chatInput) {
+            chatInput.disabled = true;
+            chatInput.placeholder = 'Approval needed to continue';
+        }
+    }
+
+    /**
      * Show a user-friendly rate-limit countdown instead of raw "Too many requests" error.
      * Displays a single message with a live countdown timer and auto-removes when done.
      */
@@ -3343,6 +3386,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         chatInput.placeholder = 'Free time used up — upgrade to Mathmatix+ to continue';
                         chatInput.disabled = true;
                     }
+                    return;
+                }
+
+                // Handle consent gate (403) — CONSENT_ENFORCEMENT=enforce blocked
+                // this account. Route to the consent flow instead of a raw error.
+                if (response.status === 403 && errorData.consentRequired) {
+                    showThinkingIndicator(false);
+                    showConsentRequiredPrompt(errorData);
                     return;
                 }
 

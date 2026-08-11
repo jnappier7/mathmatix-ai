@@ -9,6 +9,26 @@ const logger = require('../utils/logger');
 
 const { inferIntent } = require('../utils/onboardingIntent');
 const { recordClassification } = require('../utils/intentMetrics');
+const { COPPA_AGE } = require('../utils/consentManager');
+
+/**
+ * The two consent gates a student can still owe, split by COPPA semantics:
+ *  - needsParentalConsent — under 13: verifiable PARENTAL consent is a legal
+ *    requirement (invite-code link to a parent account).
+ *  - needsSelfConsent — 13-17: COPPA does not require parental consent; the
+ *    student self-certifies (POST /api/consent/grant/self), with parent
+ *    email/link kept as optional extras.
+ * Both derive from hasParentalConsent because every grant pathway (parent,
+ * school DPA, self) sets that legacy flag alongside privacyConsent.
+ */
+function consentFlagsFor(user, age) {
+  const isStudent = user.role === 'student';
+  const unconsented = isStudent && age !== null && !user.hasParentalConsent;
+  return {
+    needsParentalConsent: unconsented && age < COPPA_AGE,
+    needsSelfConsent: unconsented && age >= COPPA_AGE && age < 18,
+  };
+}
 
 /**
  * Compute age in whole years from a Date of birth.
@@ -90,7 +110,7 @@ router.get('/status', (req, res) => {
     selectedTutorId: u.selectedTutorId || null,
     age,
     needsDob: u.role === 'student' && age === null,
-    needsParentalConsent: u.role === 'student' && age !== null && age < 18 && !u.hasParentalConsent,
+    ...consentFlagsFor(u, age),
     hasParentalConsent: !!u.hasParentalConsent,
     onboarding: {
       completed:      !!ob.completed,
@@ -174,7 +194,7 @@ router.post('/intent', async (req, res) => {
 
     const age = computeAge(user.dateOfBirth);
     const needsDob = user.role === 'student' && age === null;
-    const needsParentalConsent = user.role === 'student' && age !== null && age < 18 && !user.hasParentalConsent;
+    const { needsParentalConsent, needsSelfConsent } = consentFlagsFor(user, age);
     const redirect = computeNextUrl(user);
 
     logger.info('Onboarding intent captured', {
@@ -185,7 +205,8 @@ router.post('/intent', async (req, res) => {
       textLength: rawText.length,
       profileGateCleared: !user.needsProfileCompletion,
       needsDob,
-      needsParentalConsent
+      needsParentalConsent,
+      needsSelfConsent
     });
 
     return res.json({
@@ -195,6 +216,7 @@ router.post('/intent', async (req, res) => {
       age,
       needsDob,
       needsParentalConsent,
+      needsSelfConsent,
       needsProfileCompletion: !!user.needsProfileCompletion,
       redirect
     });
@@ -238,3 +260,4 @@ module.exports = router;
 module.exports.computeNextUrl = computeNextUrl;
 module.exports.computeAge = computeAge;
 module.exports.shouldStillBlockOnProfile = shouldStillBlockOnProfile;
+module.exports.consentFlagsFor = consentFlagsFor;
