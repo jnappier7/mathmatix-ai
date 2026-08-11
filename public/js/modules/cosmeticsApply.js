@@ -6,7 +6,7 @@
 //
 // Precedence note: base modes (user.theme light/dark/high-contrast) and IEP /
 // reduced-motion overrides must win over cosmetics — cosmetics.css is loaded
-// before those so they cascade last. See COSMETICS_SHOP_DESIGN.md §6.
+// before those so they cascade last.
 
 const SLOT_ATTR = {
     theme: 'data-theme-skin',      // avoid clashing with the base `theme` mode

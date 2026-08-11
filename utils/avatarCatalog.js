@@ -9,7 +9,7 @@
  * renders; otherwise the DiceBear avatar (or initial) is used.
  *
  * Gating: characters/sports/styles are free (level 1); creatures unlock by level
- * per docs/AVATAR_IMAGES_NEEDED.md — the progression reward.
+ * — the progression reward.
  *
  * @module avatarCatalog
  */
