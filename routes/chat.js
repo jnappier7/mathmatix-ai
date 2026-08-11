@@ -18,6 +18,15 @@ const StudentUpload = require('../models/studentUpload');
 const Skill = require('../models/skill');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM, callLLMStream } = require("../utils/llmGateway");
+// Outbound PII (PII_STRIP_OUTBOUND): every direct callLLM* on a student-facing
+// path passes an anonContext so the choke point can strip the student's name,
+// and every reply is rehydrated before it is streamed, persisted, or returned.
+// Flag off → all three helpers are pass-throughs.
+const { createAnonymizationContext, createStreamRehydrator, rehydrateResponse } = require('../utils/piiAnonymizer');
+const piiStripOn = () => process.env.PII_STRIP_OUTBOUND === 'true';
+const withAnonContext = (user, options) => ({ ...options, anonContext: createAnonymizationContext(user) });
+const rehydrateFor = (user, text) =>
+    (text && piiStripOn()) ? rehydrateResponse(text, user?.firstName || 'Student') : text;
 const { createPerUserLock } = require("../utils/perUserLock");
 const { createKeepalive } = require('../utils/sseKeepalive');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
@@ -1585,11 +1594,11 @@ async function runStudentTurn(req, res) {
 
             let fallbackText;
             try {
-                const completion = await callLLM(PRIMARY_CHAT_MODEL, fallbackMessages, {
+                const completion = await callLLM(PRIMARY_CHAT_MODEL, fallbackMessages, withAnonContext(user, {
                     temperature: 0.5,
                     max_tokens: 1200,
-                });
-                fallbackText = completion.choices[0]?.message?.content?.trim()
+                }));
+                fallbackText = rehydrateFor(user, completion.choices[0]?.message?.content?.trim())
                     || "I'm sorry, I had a hiccup! Could you say that again?";
             } catch (llmError) {
                 logger.error('Pipeline fallback LLM also failed', { error: llmError.message });
@@ -2647,8 +2656,8 @@ async function handleGrowthCheckDebrief(req, res, userId) {
                 { role: 'system', content: systemPrompt },
                 { role: 'system', content: buildDebriefInstruction(summary) },
                 { role: 'user', content: '[The student just finished their Growth Check and is back in chat.]' }
-            ], { temperature: 0.6, max_tokens: 300 });
-            debriefText = completion.choices?.[0]?.message?.content?.trim() || '';
+            ], withAnonContext(user, { temperature: 0.6, max_tokens: 300 }));
+            debriefText = rehydrateFor(user, completion.choices?.[0]?.message?.content?.trim()) || '';
         } catch (llmErr) {
             logger.warn('Growth check debrief generation failed, using fallback', { error: llmErr.message });
         }
@@ -2665,8 +2674,8 @@ async function handleGrowthCheckDebrief(req, res, userId) {
                 if (!readCheck.passes) {
                     const simplified = await callLLM(PRIMARY_CHAT_MODEL, [
                         { role: 'system', content: buildSimplificationPrompt(debriefText, readCheck.targetGrade, user.firstName || 'the student') }
-                    ], { temperature: 0.3, max_tokens: 300 });
-                    const simplifiedText = simplified.choices?.[0]?.message?.content?.trim();
+                    ], withAnonContext(user, { temperature: 0.3, max_tokens: 300 }));
+                    const simplifiedText = rehydrateFor(user, simplified.choices?.[0]?.message?.content?.trim());
                     if (simplifiedText && simplifiedText.length > 20) debriefText = simplifiedText;
                 }
             } catch (err) {
@@ -3352,8 +3361,14 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
             req.on('close', () => greetingKeepalive.stop());
 
             try {
-                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.55, max_tokens: maxTokens });
+                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI,
+                    withAnonContext(user, { temperature: 0.55, max_tokens: maxTokens }));
                 let fullResponse = '';
+                // Stream-safe placeholder rehydration — "[Student]" can arrive
+                // split across chunks. Pass-through when the flag is off.
+                const greetingRehydrator = piiStripOn()
+                    ? createStreamRehydrator({ student: user.firstName || 'Student' })
+                    : null;
 
                 for await (const chunk of stream) {
                     let content = '';
@@ -3362,8 +3377,13 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
                     }
                     if (content) {
                         fullResponse += content;
-                        res.write(`data: ${JSON.stringify({ chunk: content })}\n\n`);
+                        const out = greetingRehydrator ? greetingRehydrator.push(content) : content;
+                        if (out) res.write(`data: ${JSON.stringify({ chunk: out })}\n\n`);
                     }
+                }
+                if (greetingRehydrator) {
+                    const heldBack = greetingRehydrator.flush();
+                    if (heldBack) res.write(`data: ${JSON.stringify({ chunk: heldBack })}\n\n`);
                 }
 
                 // Track AI processing time
@@ -3373,7 +3393,7 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
                 }).catch(err => logger.error('Greeting AI time tracking error', err));
 
                 // IEP reading level enforcement (post-stream)
-                let greetingText = fullResponse.trim();
+                let greetingText = rehydrateFor(user, fullResponse.trim());
                 const greetingIepLevel = user.iepPlan?.readingLevel || null;
                 if (greetingIepLevel) {
                     const readCheck = checkReadingLevel(greetingText, greetingIepLevel);
@@ -3381,10 +3401,10 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
                         logger.info('Greeting reading level violation', { responseGrade: readCheck.responseGrade, targetGrade: readCheck.targetGrade });
                         try {
                             const simplifyPrompt = buildSimplificationPrompt(greetingText, readCheck.targetGrade, user.firstName || 'the student');
-                            const simplified = await callLLM(PRIMARY_CHAT_MODEL, [{ role: 'system', content: simplifyPrompt }], {
+                            const simplified = await callLLM(PRIMARY_CHAT_MODEL, [{ role: 'system', content: simplifyPrompt }], withAnonContext(user, {
                                 temperature: 0.3, max_tokens: maxTokens
-                            });
-                            const simplifiedText = simplified.choices[0]?.message?.content?.trim();
+                            }));
+                            const simplifiedText = rehydrateFor(user, simplified.choices[0]?.message?.content?.trim());
                             if (simplifiedText && simplifiedText.length > 20) {
                                 greetingText = simplifiedText;
                                 res.write(`data: ${JSON.stringify({ type: 'replacement', content: greetingText })}\n\n`);
@@ -3440,8 +3460,9 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
 
         } else {
             // NON-STREAMING MODE
-            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: maxTokens });
-            let greetingText = completion.choices[0].message.content.trim();
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI,
+                withAnonContext(user, { temperature: 0.8, max_tokens: maxTokens }));
+            let greetingText = rehydrateFor(user, completion.choices[0].message.content.trim());
 
             // IEP reading level enforcement
             const nsGreetingIepLevel = user.iepPlan?.readingLevel || null;
@@ -3451,10 +3472,10 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
                     logger.info('Greeting reading level violation', { responseGrade: readCheck.responseGrade, targetGrade: readCheck.targetGrade });
                     try {
                         const simplifyPrompt = buildSimplificationPrompt(greetingText, readCheck.targetGrade, user.firstName || 'the student');
-                        const simplified = await callLLM(PRIMARY_CHAT_MODEL, [{ role: 'system', content: simplifyPrompt }], {
+                        const simplified = await callLLM(PRIMARY_CHAT_MODEL, [{ role: 'system', content: simplifyPrompt }], withAnonContext(user, {
                             temperature: 0.3, max_tokens: maxTokens
-                        });
-                        const simplifiedText = simplified.choices[0]?.message?.content?.trim();
+                        }));
+                        const simplifiedText = rehydrateFor(user, simplified.choices[0]?.message?.content?.trim());
                         if (simplifiedText && simplifiedText.length > 20) {
                             greetingText = simplifiedText;
                             logger.info('Greeting response simplified', { targetGrade: readCheck.targetGrade });

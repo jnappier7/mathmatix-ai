@@ -675,6 +675,18 @@ async function runPipeline(message, ctx) {
     suppressSocratic,
   });
 
+  // Outbound PII: attach the name map so the callLLM* choke point can swap
+  // the student's name for [Student] when PII_STRIP_OUTBOUND is on, and the
+  // generate stage can put it back in everything student-facing. Attached
+  // unconditionally (cheap); the flag decides whether anything happens.
+  try {
+    const { createAnonymizationContext } = require('../piiAnonymizer');
+    assembled.options = assembled.options || {};
+    assembled.options.anonContext = createAnonymizationContext(ctx.user);
+  } catch (anonErr) {
+    console.error('[Pipeline] anonContext build failed (non-fatal):', anonErr.message);
+  }
+
   let generatedResult;
   if (ctx.stream && ctx.res) {
     emitStatus('writing');

@@ -24,6 +24,7 @@ const { createBoardTagStreamFilter } = require('../boardTagStreamFilter');
 const { createXpTagStreamFilter } = require('../xpTagStreamFilter');
 const { createVisualTabTagStreamFilter } = require('../visualTabTagStreamFilter');
 const { createStructuredChatStreamExtractor, deEnvelope } = require('../structuredChatStreamExtractor');
+const { createStreamRehydrator } = require('../piiAnonymizer');
 const {
   OPENAI_RESPONSE_FORMAT,
   normalizeStructuredResponse,
@@ -564,6 +565,32 @@ function assemblePrompt(decision, promptContext) {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Placeholder rehydration for the outbound-PII path.
+//
+// When PII_STRIP_OUTBOUND is on and the pipeline attached an anonContext,
+// the callLLM* choke point swaps the student's name for [Student] on the way
+// OUT — so the model's reply can echo the placeholder back. Everything a
+// student sees or that gets persisted must have the name put back: streamed
+// chunks (via createStreamRehydrator, because "[Student]" can arrive split
+// across chunks), and every returned `text`. Flag off or no context → both
+// helpers are pass-throughs, so the default deploy changes nothing.
+// ---------------------------------------------------------------------------
+function piiRehydrationActive(llmOptions) {
+  return process.env.PII_STRIP_OUTBOUND === 'true'
+    && !!(llmOptions && llmOptions.anonContext);
+}
+
+function rehydrateText(text, llmOptions) {
+  if (!text || !piiRehydrationActive(llmOptions)) return text;
+  return llmOptions.anonContext.rehydrate(text);
+}
+
+function makeChunkRehydrator(llmOptions) {
+  if (!piiRehydrationActive(llmOptions)) return null;
+  return createStreamRehydrator({ student: llmOptions.anonContext.firstName });
+}
+
 /**
  * Call the LLM and return the response text.
  *
@@ -617,7 +644,7 @@ async function generate(assembled, options = {}) {
         llmOptions,
       );
       const { turn_type, chat_message, board_commands } = normalizeStructuredResponse(parsed);
-      const text = chat_message.trim() || "I'm not sure how to respond.";
+      const text = rehydrateText(chat_message.trim(), llmOptions) || "I'm not sure how to respond.";
       return {
         text,
         toolCalls: [],
@@ -658,7 +685,7 @@ async function generate(assembled, options = {}) {
       ? await generateToolNarration(model, messages, message, llmOptions)
       : '';
     return {
-      text: [priorText, narrationText].filter(Boolean).join('\n\n'),
+      text: rehydrateText([priorText, narrationText].filter(Boolean).join('\n\n'), llmOptions),
       toolCalls: visualCalls,
       resolvedTools: resolved,
       ...(boardCommands.length > 0 ? { structuredBoardCommands: boardCommands } : {}),
@@ -670,7 +697,10 @@ async function generate(assembled, options = {}) {
   // envelope, so message.content can be a raw `{ "chat_message": ... }` blob.
   // Strip it to its chat text before it is returned (and later persisted).
   // No-op for ordinary prose.
-  const text = deEnvelope(message.content?.trim() || "I'm not sure how to respond.");
+  const text = rehydrateText(
+    deEnvelope(message.content?.trim() || "I'm not sure how to respond."),
+    llmOptions
+  );
   return { text, toolCalls: [], resolvedTools: null };
 }
 
@@ -758,6 +788,9 @@ async function generateStreaming(model, messages, llmOptions, res) {
   const boardFilter = createBoardTagStreamFilter();
   const xpFilter = createXpTagStreamFilter();
   const visualTabFilter = createVisualTabTagStreamFilter();
+  // Runs LAST in the chain, on text already cleared of tag protocols, so the
+  // only brackets it ever holds back are potential [Student] placeholders.
+  const piiRehydrator = makeChunkRehydrator(llmOptions);
 
   try {
     const stream = await callLLMStream(model, messages, llmOptions);
@@ -776,7 +809,8 @@ async function generateStreaming(model, messages, llmOptions, res) {
         fullResponse += delta.content;
         const afterBoard = boardFilter.push(delta.content);
         const afterXp = afterBoard ? xpFilter.push(afterBoard) : '';
-        const safe = afterXp ? visualTabFilter.push(afterXp) : '';
+        const filtered = afterXp ? visualTabFilter.push(afterXp) : '';
+        const safe = (filtered && piiRehydrator) ? piiRehydrator.push(filtered) : filtered;
         if (safe) {
           res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(safe) })}\n\n`);
         }
@@ -796,7 +830,10 @@ async function generateStreaming(model, messages, llmOptions, res) {
       const xpDrained = xpHead + xpTail;
       const tabHead = xpDrained ? visualTabFilter.push(xpDrained) : '';
       const tabTail = visualTabFilter.flush();
-      const tail = tabHead + tabTail;
+      const filteredTail = tabHead + tabTail;
+      const tail = piiRehydrator
+        ? (piiRehydrator.push(filteredTail) + piiRehydrator.flush())
+        : filteredTail;
       if (tail && !clientDisconnected) {
         res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(tail) })}\n\n`);
       }
@@ -843,19 +880,19 @@ async function generateStreaming(model, messages, llmOptions, res) {
         : '';
 
       if (narration && !clientDisconnected) {
-        const safeNarration = stripBoardTagsForStream(narration);
+        const safeNarration = rehydrateText(stripBoardTagsForStream(narration), llmOptions);
         res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(safeNarration) })}\n\n`);
       }
 
       return {
-        text: (fullResponse + (narration ? (fullResponse ? '\n\n' : '') + narration : '')).trim() || '',
+        text: rehydrateText((fullResponse + (narration ? (fullResponse ? '\n\n' : '') + narration : '')).trim(), llmOptions) || '',
         toolCalls: visualCalls,
         resolvedTools: resolved,
         ...(boardCommands.length > 0 ? { structuredBoardCommands: boardCommands } : {}),
       };
     }
 
-    const finalText = fullResponse.trim() || "I'm not sure how to respond.";
+    const finalText = rehydrateText(fullResponse.trim(), llmOptions) || "I'm not sure how to respond.";
     return { text: finalText, toolCalls: [], resolvedTools: null };
   } catch (streamError) {
     console.error('[Generate] Streaming failed, falling back:', streamError.message);
@@ -864,7 +901,10 @@ async function generateStreaming(model, messages, llmOptions, res) {
     // so the client replaces the partial with the full response.
     // If nothing was streamed yet, send as a normal chunk.
     const completion = await callLLM(model, messages, llmOptions);
-    const text = deEnvelope(completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.");
+    const text = rehydrateText(
+      deEnvelope(completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond."),
+      llmOptions
+    );
 
     const safeText = stripBoardTagsForStream(text);
     if (fullResponse.length > 0) {
@@ -909,6 +949,7 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
   const xpFilter = createXpTagStreamFilter();
   const visualTabFilter = createVisualTabTagStreamFilter();
   const extractor = createStructuredChatStreamExtractor();
+  const piiRehydrator = makeChunkRehydrator(llmOptions);
 
   const structuredOptions = { ...llmOptions, response_format: OPENAI_RESPONSE_FORMAT };
 
@@ -928,7 +969,8 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
         if (newChat) {
           extractedChatSoFar += newChat;
           const afterXp = xpFilter.push(newChat);
-          const safe = afterXp ? visualTabFilter.push(afterXp) : '';
+          const filtered = afterXp ? visualTabFilter.push(afterXp) : '';
+          const safe = (filtered && piiRehydrator) ? piiRehydrator.push(filtered) : filtered;
           if (safe) {
             res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(safe) })}\n\n`);
           }
@@ -943,7 +985,10 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
       const xpTail = xpFilter.flush();
       const tabHead = xpTail ? visualTabFilter.push(xpTail) : '';
       const tabTail = visualTabFilter.flush();
-      const tail = tabHead + tabTail;
+      const filteredTail = tabHead + tabTail;
+      const tail = piiRehydrator
+        ? (piiRehydrator.push(filteredTail) + piiRehydrator.flush())
+        : filteredTail;
       if (tail && !clientDisconnected) {
         res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(tail) })}\n\n`);
       }
@@ -965,7 +1010,8 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
     // Prefer the schema-parsed chat_message over our extractor's
     // running buffer — the JSON.parse decode is authoritative for
     // anything we forwarded with escape edge cases.
-    const finalText = (chat_message || extractedChatSoFar).trim() || "I'm not sure how to respond.";
+    const finalText = rehydrateText((chat_message || extractedChatSoFar).trim(), llmOptions)
+      || "I'm not sure how to respond.";
     return {
       text: finalText,
       toolCalls: [],
@@ -989,7 +1035,7 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
       // `{ "chat_message": ... }` blob. deEnvelope strips it to the chat text
       // before it is streamed OR persisted; without this the whole envelope
       // leaked into the student's bubble and saved to history (QA P0-1).
-      const text = deEnvelope(rawText);
+      const text = rehydrateText(deEnvelope(rawText), llmOptions);
       const safeText = stripBoardTagsForStream(text);
       if (!clientDisconnected) {
         if (extractedChatSoFar.length > 0) {
