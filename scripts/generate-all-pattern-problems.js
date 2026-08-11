@@ -28,6 +28,69 @@ function shuffle(array) {
 }
 
 // ============================================================================
+// FORMATTING HELPERS
+//
+// Every math string a student sees must come through one of these. The 2026-08
+// item-bank audit traced ~640 LOW/HIGH defects to inline template strings:
+// "y = 4x + -4", "1x", "8x^1", "-1/-4", "1 apples". Inline `${n}` interpolation
+// of a possibly-negative or possibly-1 value is the bug; don't reintroduce it.
+// ============================================================================
+
+// "3x" / "x" / "-x" — never "1x" or "-1x"
+function coeffTerm(coeff, variable = 'x') {
+  if (coeff === 1) return variable;
+  if (coeff === -1) return `-${variable}`;
+  return `${coeff}${variable}`;
+}
+
+// "+ 4" / "- 4" / "" (for 0) as a trailing term — never "+ -4"
+function signedTerm(n) {
+  if (n === 0) return '';
+  return n > 0 ? ` + ${n}` : ` - ${Math.abs(n)}`;
+}
+
+// "3x + 2" / "x - 4" / "2x" — a full linear expression
+function linearExpr(coeff, constant, variable = 'x') {
+  return `${coeffTerm(coeff, variable)}${signedTerm(constant)}`;
+}
+
+// Canonical fraction string: sign on the numerator only, always reduced,
+// integers rendered bare — never "-1/-4", "7/-1", "0/-1", or "6/1"
+function canonicalFraction(num, den) {
+  if (den === 0) return null;
+  if (num === 0) return '0';
+  if (den < 0) { num = -num; den = -den; }
+  const g = Math.abs(gcdInt(num, den));
+  num /= g; den /= g;
+  return den === 1 ? String(num) : `${num}/${den}`;
+}
+
+function gcdInt(a, b) {
+  a = Math.abs(a); b = Math.abs(b);
+  return b === 0 ? a : gcdInt(b, a % b);
+}
+
+// "8x^3" / "8x" / "8" — never "8x^1" or "8x^0"
+function powerTerm(coeff, exp, variable = 'x') {
+  if (exp === 0) return String(coeff);
+  if (exp === 1) return coeffTerm(coeff, variable);
+  return `${coeffTerm(coeff, variable)}^${exp}`;
+}
+
+// Vertex form "y = 2(x - 3)² - 1" with (h, k) handled sign-correctly:
+// h negative → "(x + 3)", k negative → "- 1", a = ±1 → "(x…)" / "-(x…)"
+function vertexForm(a, h, k, squareGlyph = '²') {
+  const inner = h === 0 ? 'x' : h > 0 ? `x - ${h}` : `x + ${Math.abs(h)}`;
+  const aStr = a === 1 ? '' : a === -1 ? '-' : String(a);
+  return `y = ${aStr}(${inner})${squareGlyph}${signedTerm(k)}`;
+}
+
+// "1 apple" / "3 apples"
+function pluralize(n, singular, plural = `${singular}s`) {
+  return `${n} ${n === 1 ? singular : plural}`;
+}
+
+// ============================================================================
 // SVG HELPER FUNCTIONS FOR VISUAL DIAGRAMS
 // ============================================================================
 
@@ -1163,16 +1226,32 @@ function generateMean(difficulty) {
   const count = difficulty < 0 ? 3 : 5;
   let sum = 0;
 
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count - 1; i++) {
     const n = randomInt(1, 20);
     nums.push(n);
     sum += n;
   }
 
-  const answer = (sum / count).toFixed(1);
-  const wrong1 = (sum / (count + 1)).toFixed(1);
-  const wrong2 = String(Math.max(...nums));
-  const wrong3 = String(sum);
+  // Choose the last value so the sum divides evenly: the mean must be exact,
+  // never a rounded decimal stored as if it were the true answer.
+  const remainder = sum % count;
+  const last = remainder === 0 ? count : count - remainder;
+  nums.push(last);
+  sum += last;
+
+  const mean = sum / count;
+  const answer = String(mean);
+  const candidates = [
+    String(Math.round(sum / (count + 1))), // divided by the wrong count
+    String(Math.max(...nums)),
+    String(sum)                            // forgot to divide
+  ];
+  const wrongs = [...new Set(candidates.filter(c => c !== answer))];
+  for (let filler = mean + 1; wrongs.length < 3; filler++) {
+    const f = String(filler);
+    if (f !== answer && !wrongs.includes(f)) wrongs.push(f);
+  }
+  const [wrong1, wrong2, wrong3] = wrongs;
 
   const options = shuffle([
     { label: 'A', text: String(answer) },
@@ -1263,10 +1342,14 @@ function generateMode(difficulty) {
   const value = randomInt(1, 15);
   const nums = [value, value]; // Mode appears twice
 
+  // The other values must be distinct from the mode AND from each other —
+  // a repeated "other" value makes the data bimodal with no single answer.
   const count = difficulty < 0 ? 3 : 5;
+  const used = new Set([value]);
   for (let i = 0; i < count - 2; i++) {
     let other = randomInt(1, 15);
-    while (other === value) other = randomInt(1, 15);
+    while (used.has(other)) other = randomInt(1, 15);
+    used.add(other);
     nums.push(other);
   }
 
@@ -1333,15 +1416,17 @@ function generateOneStepEquation(difficulty) {
     x = randomInt(2, 10);
     a = x * b;
   } else { // ÷
+    // x ÷ b = a, so the solution is x = a·b (a is the displayed quotient).
+    // Keying the quotient itself was the audit's "answered b instead of a·b" bug.
     b = randomInt(2, 12);
-    x = randomInt(2, 10);
-    a = x * b; // ensure clean division
+    a = randomInt(2, 10);
+    x = a * b;
   }
 
   const answer = x;
   const wrong1 = answer + randomInt(1, 5);
-  const wrong2 = answer - randomInt(1, 5);
-  const wrong3 = op === '+' ? a - b : op === '-' ? a + b : op === '×' ? a / b : a * b;
+  const wrong2 = op === '÷' ? Math.max(2, answer - randomInt(1, 5)) : answer - randomInt(1, 5);
+  const wrong3 = op === '+' ? a - b : op === '-' ? a + b : op === '×' ? a / b : a;
 
   const options = shuffle([
     { label: 'A', text: String(answer) },
@@ -1356,7 +1441,7 @@ function generateOneStepEquation(difficulty) {
   const equation = op === '+' ? `x + ${b} = ${a}` :
                    op === '-' ? `x - ${b} = ${a}` :
                    op === '×' ? `${b}x = ${a}` :
-                   `x ÷ ${b} = ${x}`;
+                   `x ÷ ${b} = ${a}`;
 
   return {
     problemId: `prob_1step_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -1469,21 +1554,27 @@ function generateSlope(difficulty) {
 
   const rise = y2 - y1;
   const run = x2 - x1;
-  const gcdVal = Math.abs(gcd(rise, run));
-  const simplifiedRise = rise / gcdVal;
-  const simplifiedRun = run / gcdVal;
+  const answer = canonicalFraction(rise, run);
 
-  const answer = simplifiedRun === 1 ? String(simplifiedRise) : `${simplifiedRise}/${simplifiedRun}`;
-
-  const wrong1 = `${y2}/${x2}`;
-  const wrong2 = `${run}/${rise}`;  // Inverted
-  const wrong3 = String(simplifiedRise + simplifiedRun);
+  // Candidate distractors, each canonicalized the same way as the answer;
+  // null (undefined ratio) and collisions with the answer are filtered out.
+  const candidates = [
+    canonicalFraction(run, rise),   // inverted rise/run
+    canonicalFraction(-rise, run),  // sign error
+    x2 !== 0 ? canonicalFraction(y2, x2) : null, // used endpoint instead of difference
+    String(rise + run)              // added instead of divided
+  ];
+  const wrongs = [...new Set(candidates.filter(c => c !== null && c !== answer))];
+  for (let filler = rise + run + 2; wrongs.length < 3; filler++) {
+    const f = String(filler);
+    if (f !== answer && !wrongs.includes(f)) wrongs.push(f);
+  }
 
   const options = shuffle([
     { label: 'A', text: String(answer) },
-    { label: 'B', text: String(wrong1) },
-    { label: 'C', text: String(wrong2) },
-    { label: 'D', text: String(wrong3) }
+    { label: 'B', text: String(wrongs[0]) },
+    { label: 'C', text: String(wrongs[1]) },
+    { label: 'D', text: String(wrongs[2]) }
   ]);
 
   const correctLabel = options.find(o => o.text === String(answer)).label;
@@ -1508,11 +1599,17 @@ function gcd(a, b) {
 }
 
 function generateRatios(difficulty) {
-  const a = randomInt(1, 12);
-  const b = randomInt(1, 12);
-  const gcdVal = gcd(a, b);
-  const simplified_a = a / gcdVal;
-  const simplified_b = b / gcdVal;
+  // Build a:b from a reduced pair times a shared factor ≥ 2 — "Simplify 5:7"
+  // is already simplified (and makes the a:b distractor equal the answer).
+  let simplified_a = randomInt(1, 6);
+  let simplified_b = randomInt(1, 6);
+  while (simplified_b === simplified_a) simplified_b = randomInt(1, 6);
+  const reduce = gcd(simplified_a, simplified_b);
+  simplified_a /= reduce;
+  simplified_b /= reduce;
+  const factor = randomInt(2, 4);
+  const a = simplified_a * factor;
+  const b = simplified_b * factor;
 
   const answer = `${simplified_a}:${simplified_b}`;
   const wrong1 = `${a}:${b}`;
@@ -1614,19 +1711,28 @@ function generateQuadraticFunctions(difficulty) {
   const h = randomInt(-3, 3);
   const k = randomInt(-5, 5);
 
-  const answer = `y = ${a}(x - ${h})² + ${k}`;
-  const wrong1 = `y = ${a}(x + ${h})² + ${k}`;
-  const wrong2 = `y = ${a}(x - ${h})² - ${k}`;
-  const wrong3 = `y = ${-a}(x - ${h})² + ${k}`;
+  // vertexForm() renders signs properly — the old inline templates emitted
+  // "y = 2(x - -3)² + -5" and stored the un-hacked string as the answer key.
+  const answer = vertexForm(a, h, k);
+  const candidates = [
+    vertexForm(a, -h, k),  // sign error on h
+    vertexForm(a, h, -k),  // sign error on k
+    vertexForm(-a, h, k)   // sign error on a
+  ];
+  const wrongs = [...new Set(candidates.filter(w => w !== answer))];
+  for (let filler = 1; wrongs.length < 3; filler++) {
+    const f = vertexForm(a, h, k + filler);
+    if (f !== answer && !wrongs.includes(f)) wrongs.push(f);
+  }
 
   const options = shuffle([
-    { label: 'A', text: String(answer).replace('--', '+').replace('- -', '+ ') },
-    { label: 'B', text: String(wrong1).replace('--', '+').replace('- -', '+ ') },
-    { label: 'C', text: String(wrong2).replace('--', '+').replace('- -', '+ ') },
-    { label: 'D', text: String(wrong3).replace('--', '+').replace('- -', '+ ') }
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrongs[0]) },
+    { label: 'C', text: String(wrongs[1]) },
+    { label: 'D', text: String(wrongs[2]) }
   ]);
 
-  const correctLabel = options.find(o => o.text === String(answer).replace('--', '+').replace('- -', '+ ')).label;
+  const correctLabel = options.find(o => o.text === String(answer)).label;
 
   return {
     problemId: `prob_quad_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -1976,7 +2082,7 @@ function generateLimits(difficulty) {
   return {
     problemId: `prob_lim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     skillId: 'limits',
-    content: `lim(x→${c}) [${a}x + ${c}] = ?`,
+    content: `lim(x→${c}) [${linearExpr(a, c)}] = ?`,
     answer: String(answer),
     correctOption: correctLabel,
     answerType: 'multiple-choice',
@@ -1991,11 +2097,12 @@ function generateLimits(difficulty) {
 function generateDerivatives(difficulty) {
   const a = randomInt(2, 8);
   const n = randomInt(2, 4);
-  const answer = `${a * n}x^${n - 1}`;
+  // powerTerm renders x^1 as "x" — n = 2 used to key answers like "8x^1"
+  const answer = powerTerm(a * n, n - 1);
 
-  const wrong1 = `${a}x^${n}`;  // Forgot to take derivative
-  const wrong2 = `${a}x^${n - 1}`;  // Forgot coefficient
-  const wrong3 = `${a * n}x^${n}`;  // Forgot to reduce power
+  const wrong1 = powerTerm(a, n);          // Forgot to take derivative
+  const wrong2 = powerTerm(a, n - 1);      // Forgot coefficient
+  const wrong3 = powerTerm(a * n, n);      // Forgot to reduce power
 
   const options = shuffle([
     { label: 'A', text: String(answer) },
@@ -2846,9 +2953,10 @@ function generateOneStepInequality(difficulty) {
     x = randomInt(2, 10);
     a = x * b;
   } else { // ÷
+    // x ÷ b ineq a → boundary is x = a·b, not the displayed quotient a.
     b = randomInt(2, 12);
-    x = randomInt(2, 10);
-    a = x * b;
+    a = randomInt(2, 10);
+    x = a * b;
   }
 
   const answer = `x ${ineq} ${x}`;
@@ -2869,7 +2977,7 @@ function generateOneStepInequality(difficulty) {
   const equation = op === '+' ? `x + ${b} ${ineq} ${a}` :
                    op === '-' ? `x - ${b} ${ineq} ${a}` :
                    op === '×' ? `${b}x ${ineq} ${a}` :
-                   `x ÷ ${b} ${ineq} ${x}`;
+                   `x ÷ ${b} ${ineq} ${a}`;
 
   return {
     problemId: `prob_1stepineq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -3178,7 +3286,10 @@ function generateMultiStepEquations(difficulty) {
   };
 }
 
-function generateDistributiveProperty(difficulty) {
+// Was also named generateDistributiveProperty — a second function with that
+// name (the expand-a(b+c) one, further down) shadowed this one, so the
+// 'equations-with-distribution' registry key silently served expand items.
+function generateEquationsWithDistribution(difficulty) {
   const a = randomInt(2, 6);
   const b = randomInt(1, 10);
   const c = randomInt(1, 8);
@@ -3186,9 +3297,16 @@ function generateDistributiveProperty(difficulty) {
   const result = a * (x + b) + c;
 
   const answer = x;
-  const wrong1 = Math.round((result - c) / a - b);
-  const wrong2 = Math.round((result - a * b) / a - c);
-  const wrong3 = Math.round(result / a - b - c);
+  const candidates = [
+    Math.round(result / a - b),        // forgot to subtract c first
+    Math.round((result - c) / a),      // forgot to subtract b
+    Math.round(result / a - b - c)     // subtracted everything after dividing
+  ];
+  const wrongs = [...new Set(candidates.filter(w => w !== answer))];
+  for (let filler = x + 1; wrongs.length < 3; filler++) {
+    if (filler !== answer && !wrongs.includes(filler)) wrongs.push(filler);
+  }
+  const [wrong1, wrong2, wrong3] = wrongs;
 
   const options = shuffle([
     { label: 'A', text: String(answer) },
@@ -3224,19 +3342,29 @@ function generateDistributiveProperty(difficulty) {
 }
 
 function generateVariablesBothSides(difficulty) {
+  // Build the equation FROM an integer solution so ax + c = bx + d is exactly
+  // satisfied — rounding (d-c)/(a-b) after the fact produced equations whose
+  // printed constants contradicted the keyed answer.
   const a = randomInt(3, 8);
   const b = randomInt(1, a - 1);
-  const c = randomInt(5, 20);
-  const d = randomInt(1, c - 1);
-
-  // (a-b)x = d - c, so x = (d-c)/(a-b)
-  const x = Math.round((d - c) / (a - b));
+  const c = randomInt(a - b + 1, 20); // guarantees x = -1 keeps d ≥ 1
+  const minX = Math.ceil((1 - c) / (a - b));
+  const x = randomInt(minX, -1);
+  const d = c + (a - b) * x;
   const leftSide = a * x + c;
 
   const answer = x;
-  const wrong1 = -x;
-  const wrong2 = Math.round((c - d) / (a - b));
-  const wrong3 = Math.round(leftSide / a);
+  const candidates = [
+    String(-x),                              // sign error
+    String(Math.round((d - c) / (a + b))),   // added coefficients instead of subtracting
+    String(Math.round(leftSide / a))         // ignored the right-hand x term
+  ];
+  const wrongs = [...new Set(candidates.filter(w => w !== String(answer)))];
+  for (let filler = x - 1; wrongs.length < 3; filler--) {
+    const f = String(filler);
+    if (f !== String(answer) && !wrongs.includes(f)) wrongs.push(f);
+  }
+  const [wrong1, wrong2, wrong3] = wrongs;
 
   const options = shuffle([
     { label: 'A', text: String(answer) },
@@ -3250,7 +3378,7 @@ function generateVariablesBothSides(difficulty) {
   return {
     problemId: `prob_bothsides_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     skillId: 'equations-with-variables-both-sides',
-    content: `Solve for x: ${a}x + ${c} = ${b}x + ${d}`,
+    content: `Solve for x: ${linearExpr(a, c)} = ${linearExpr(b, d)}`,
     answer: String(answer),
     correctOption: correctLabel,
     answerType: 'multiple-choice',
@@ -3277,15 +3405,16 @@ function generateVariablesBothSides(difficulty) {
 
 function generateSystemsSubstitution(difficulty) {
   const x = randomInt(2, 8);
-  const y = randomInt(2, 8);
   const a = randomInt(2, 5);
   const b = randomInt(2, 5);
 
-  // y = ax + b format
+  // y = ax + b format; y is DERIVED from eq1 — both equations must be built
+  // from the same (x, y) pair or eq2 contradicts the keyed answer (this
+  // exact bug shipped 146 broken items).
   const eq1b = a * x + b;
   const c = randomInt(2, 4);
   const d = randomInt(2, 4);
-  const eq2result = c * x + d * y;
+  const eq2result = c * x + d * eq1b;
 
   const answer = `x = ${x}, y = ${eq1b}`;
   const wrong1 = `x = ${eq1b}, y = ${x}`;
@@ -3379,8 +3508,11 @@ function generateSystemsElimination(difficulty) {
 // ============================================================================
 
 function generateCoordinatePlane(difficulty) {
-  const x = randomInt(-8, 8);
-  const y = randomInt(-8, 8);
+  // Both coordinates must be nonzero: an on-axis point is in NO quadrant, and
+  // the prompt asserts one ("0 units left … in quadrant IV" shipped 15 times).
+  const nonzero = () => randomChoice([-1, 1]) * randomInt(1, 8);
+  const x = nonzero();
+  const y = nonzero();
 
   const answer = `(${x}, ${y})`;
   const wrong1 = `(${y}, ${x})`;
@@ -3600,9 +3732,11 @@ function generateOneStepDivision(difficulty) {
 // ============================================================================
 
 function generateAddFractions(difficulty) {
-  const denom = randomChoice([2, 3, 4, 5, 6, 8, 10, 12]);
-  const num1 = randomInt(1, denom - 1);
-  const num2 = randomInt(1, denom - num1);
+  // Proper operands AND a proper sum: allowing num1 + num2 = denom produced
+  // degenerate answers like 6/6.
+  const denom = randomChoice([3, 4, 5, 6, 8, 10, 12]);
+  const num1 = randomInt(1, denom - 2);
+  const num2 = randomInt(1, denom - num1 - 1);
   const answer = num1 + num2;
 
   const wrong1 = num1 * num2; // Common error: multiply numerators
@@ -3643,8 +3777,10 @@ function generateAddFractions(difficulty) {
 }
 
 function generateSubtractFractions(difficulty) {
-  const denom = randomChoice([2, 3, 4, 5, 6, 8, 10, 12]);
-  const num1 = randomInt(3, denom);
+  // num1 capped at denom - 1: an operand of denom/denom (e.g. "6/6 - 2/6")
+  // is a degenerate fraction that reads as a typo.
+  const denom = randomChoice([4, 5, 6, 8, 10, 12]);
+  const num1 = randomInt(2, denom - 1);
   const num2 = randomInt(1, num1 - 1);
   const answer = num1 - num2;
 
@@ -4072,14 +4208,16 @@ function generateUnknownAddend(difficulty) {
 }
 
 function generateSolvingInequalities(difficulty) {
+  // Pick the boundary first and derive b = a·answer: flooring b/a keyed
+  // "x < 4" onto 5x < 21, whose true solution is x < 21/5.
   const a = randomInt(2, 8);
-  const b = randomInt(5, 25);
-  const answer = Math.floor(b / a);
+  const answer = randomInt(2, 9);
+  const b = a * answer;
 
   const content = `Solve: ${a}x < ${b}`;
 
   const wrong1 = answer + 1;
-  const wrong2 = b - a;
+  const wrong2 = b - a === answer ? b + a : b - a; // subtracted instead of divided
   const wrong3 = answer - 1;
 
   const options = shuffle([
@@ -6625,7 +6763,7 @@ function generateGraphLinearEquations(difficulty) {
   const x = randomInt(1, 4);
   const y = slope * x + yIntercept;
 
-  const content = `For the line y = ${slope}x + ${yIntercept}, what is y when x = ${x}?`;
+  const content = `For the line y = ${linearExpr(slope, yIntercept)}, what is y when x = ${x}?`;
   const answer = y;
 
   const wrong1 = slope * x;
@@ -7402,9 +7540,9 @@ function generateBoxPlots(difficulty) {
 
 function generateVertexForm(difficulty) {
   const h = randomInt(1, 5);
-  const k = randomInt(-5, 5);
+  const k = randomChoice([-1, 1]) * randomInt(1, 5); // nonzero: (h, -k) must differ from (h, k)
 
-  const content = `What is the vertex of the parabola y = (x - ${h})² + ${k}?`;
+  const content = `What is the vertex of the parabola y = (x - ${h})²${signedTerm(k)}?`;
   const answer = `(${h}, ${k})`;
 
   const wrong1 = `(${-h}, ${k})`;
@@ -9258,7 +9396,7 @@ function generateAdditionAsJoining(difficulty) {
   const b = randomInt(1, 5);
   const sum = a + b;
 
-  const content = `Sara has ${a} apples. She gets ${b} more apples. How many apples does she have now?`;
+  const content = `Sara has ${pluralize(a, 'apple')}. She gets ${b} more ${b === 1 ? 'apple' : 'apples'}. How many apples does she have now?`;
   const answer = sum;
 
   const wrong1 = a;
@@ -9349,7 +9487,11 @@ function generateCheckReasonableness(difficulty) {
   const correctAnswer = a + b;
   const wrongAnswer = a + b + 10;
 
-  const content = `${a} + ${b} = ?. Which answer is more reasonable?`;
+  // The two candidates must live IN the stem: "Which answer is more
+  // reasonable?" with the candidates only in `options` is unanswerable when
+  // the item is served constructed-response (options are stripped in the bank).
+  const [first, second] = shuffle([correctAnswer, wrongAnswer]);
+  const content = `Two students solved ${a} + ${b}. One got ${first}, the other got ${second}. Which answer is reasonable?`;
   const answer = correctAnswer;
 
   const wrong1 = wrongAnswer;
@@ -9739,17 +9881,21 @@ function generateEqualTo(difficulty) {
 }
 
 function generateEstimateSums(difficulty) {
+  // One explicit convention: round EACH addend to the nearest ten, then add —
+  // and the key follows it. Rounding the exact sum instead disagrees with the
+  // round-first reading for addends like 24 + 24 (50 vs 40), which shipped
+  // items where the natural student answer was marked wrong.
   const a = randomInt(15, 25);
   const b = randomInt(15, 25);
   const exactSum = a + b;
-  const estimate = Math.round(exactSum / 10) * 10;
+  const estimate = Math.round(a / 10) * 10 + Math.round(b / 10) * 10;
 
-  const content = `About how much is ${a} + ${b}? (Round to nearest 10)`;
+  const content = `Estimate ${a} + ${b} by rounding each number to the nearest ten.`;
   const answer = estimate;
 
-  const wrong1 = exactSum;
-  const wrong2 = estimate + 10;
-  const wrong3 = estimate - 10;
+  const candidates = [exactSum, estimate + 10, estimate - 10, exactSum + 1];
+  const wrongs = [...new Set(candidates.filter(w => w !== answer))].slice(0, 3);
+  const [wrong1, wrong2, wrong3] = wrongs;
 
   const options = shuffle([
     { label: 'A', text: String(answer) },
@@ -9785,9 +9931,11 @@ function generateEstimateSums(difficulty) {
 }
 
 function generateExpandedForm(difficulty) {
-  const num = randomInt(10, 99);
-  const tens = Math.floor(num / 10) * 10;
-  const ones = num % 10;
+  // Nonzero ones digit: a multiple of 10 expands to "70 + 0", which is
+  // degenerate and identical to the "num + 0" distractor.
+  const tens = randomInt(1, 9) * 10;
+  const ones = randomInt(1, 9);
+  const num = tens + ones;
 
   const content = `What is ${num} in expanded form?`;
   const answer = `${tens} + ${ones}`;
@@ -10640,9 +10788,11 @@ function generateRateOfChangeProblems(difficulty) {
 }
 
 function generateRateProblems(difficulty) {
-  const miles = randomInt(50, 200);
+  // Derive miles from a whole-number rate — dividing two raw randoms stored
+  // non-terminating decimals as "exact" answers.
   const hours = randomInt(2, 5);
-  const rate = miles / hours;
+  const rate = randomInt(25, 75);
+  const miles = rate * hours;
   const content = `A train travels ${miles} miles in ${hours} hours. What is the rate in miles per hour?`;
   const answer = rate;
   const options = shuffle([
@@ -10795,16 +10945,32 @@ function generateSlopeConcepts(difficulty) {
 }
 
 function generateSlopeFromTwoPoints(difficulty) {
+  // Build the points FROM a reduced fraction rise/run so the slope is exact —
+  // .toFixed(1) stored rounded decimals (e.g. 0.7 for 5/7) as if exact.
+  let rise = randomInt(1, 8), run = randomInt(1, 4);
+  const g = gcdInt(rise, run);
+  rise /= g; run /= g;
+  const k = randomInt(1, 2);
   const x1 = randomInt(1, 5), y1 = randomInt(2, 8);
-  const x2 = randomInt(6, 10), y2 = y1 + randomInt(3, 8);
-  const slope = (y2 - y1) / (x2 - x1);
+  const x2 = x1 + run * k, y2 = y1 + rise * k;
+  const answer = canonicalFraction(rise, run);
   const content = `Find the slope between (${x1}, ${y1}) and (${x2}, ${y2})`;
-  const answer = slope.toFixed(1);
+  const candidates = [
+    canonicalFraction(run, rise),      // inverted
+    String(y2 - y1),                   // rise alone
+    String(x2 - x1),                   // run alone
+    canonicalFraction(2 * rise, run)   // doubled
+  ];
+  const wrongs = [...new Set(candidates.filter(c => c !== null && c !== answer))];
+  for (let filler = rise + run + 1; wrongs.length < 3; filler++) {
+    const f = String(filler);
+    if (f !== answer && !wrongs.includes(f)) wrongs.push(f);
+  }
   const options = shuffle([
     { label: 'A', text: String(answer) },
-    { label: 'B', text: String((y2 - y1).toFixed(1)) },
-    { label: 'C', text: String((x2 - x1).toFixed(1)) },
-    { label: 'D', text: String((slope * 2).toFixed(1)) }
+    { label: 'B', text: String(wrongs[0]) },
+    { label: 'C', text: String(wrongs[1]) },
+    { label: 'D', text: String(wrongs[2]) }
   ]);
   const correctLabel = options.find(o => o.text === String(answer)).label;
   return {
@@ -10819,8 +10985,10 @@ function generateSlopeFromTwoPoints(difficulty) {
 }
 
 function generateSolveProportions(difficulty) {
+  // b is a multiple of a so x = bc/a is a whole number — raw randoms stored
+  // values like 8.4 (or worse) as exact answers.
   const a = randomInt(2, 5);
-  const b = randomInt(6, 12);
+  const b = a * randomInt(2, 4);
   const c = randomInt(2, 5);
   const x = (b * c) / a;
   const content = `Solve the proportion: ${a}/${b} = ${c}/x`;
@@ -12148,7 +12316,7 @@ const GENERATORS = {
 
   // 9-12 (Tier 3) - High School
   'multi-step-equations': generateMultiStepEquations,
-  'equations-with-distribution': generateDistributiveProperty,
+  'equations-with-distribution': generateEquationsWithDistribution,
   'equations-with-variables-both-sides': generateVariablesBothSides,
   'solving-inequalities': generateSolvingInequalities,
   'systems-substitution': generateSystemsSubstitution,
@@ -12362,4 +12530,19 @@ async function generateAllProblems() {
   }
 }
 
-generateAllProblems();
+// Only run (and connect to Mongo) when invoked directly — tests require this
+// file to exercise the generators without touching a database.
+if (require.main === module) {
+  generateAllProblems();
+}
+
+module.exports = {
+  GENERATORS,
+  coeffTerm,
+  signedTerm,
+  linearExpr,
+  canonicalFraction,
+  powerTerm,
+  vertexForm,
+  pluralize
+};
