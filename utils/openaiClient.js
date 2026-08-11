@@ -96,7 +96,40 @@ async function* claudeStreamWithFallback(model, messages, options) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Outbound PII stripping — the chokepoint.
+//
+// Every LLM call in the app funnels through callLLM / callLLMStructured /
+// callLLMStream, and BOTH provider paths dispatch from inside them, so this is
+// the one place a strip cannot be bypassed by a new call site forgetting to opt
+// in. The previous arrangement put anonymization inside llmGateway's chat()
+// wrappers while re-exporting these functions unwrapped — so 68 call sites
+// reached the providers with names and emails intact, and nothing outside
+// llmGateway ever called anonymizeMessages.
+//
+// Pattern-based stripping (email, phone, SSN, ObjectId, address, IEP specifics)
+// needs no user context and covers every caller. NAME stripping does need
+// context — you cannot spot "Ray" without being told to look for him — so a
+// caller wanting it passes options.anonContext and owns rehydrating the reply.
+// Prompts we author should emit [Student] rather than lean on a blind
+// search-and-replace at all; see piiAnonymizer's PROTECTED_VOCABULARY for why.
+//
+// Off unless PII_STRIP_OUTBOUND=true, read per-call so it can be flipped per
+// environment and reverted without a deploy.
+// ---------------------------------------------------------------------------
+function stripOutboundPII(messages, options = {}) {
+    if (process.env.PII_STRIP_OUTBOUND !== 'true') return messages;
+    if (!Array.isArray(messages)) return messages;
+
+    const { anonymizeMessages, createAnonymizationContext } = require('./piiAnonymizer');
+    // No context => pattern-only pass. anonymizeMessages copies rather than
+    // mutating, and leaves image parts of vision payloads untouched.
+    const context = options.anonContext || createAnonymizationContext(null);
+    return anonymizeMessages(messages, context);
+}
+
 async function callLLM(model, messages, options = {}) {
+    messages = stripOutboundPII(messages, options);
     // Provider dispatch: claude-* models route to the Anthropic adapter. On a
     // *transient* Claude failure, fall through to OpenAI with the fallback
     // model. Refusals (HTTP 200) don't throw, so they never fall back.
@@ -200,6 +233,7 @@ async function callLLM(model, messages, options = {}) {
  * @returns {Promise<Object>} Parsed JSON content.
  */
 async function callLLMStructured(model, messages, responseFormat, options = {}) {
+    messages = stripOutboundPII(messages, options);
     if (require('./anthropicClient').isClaudeModel(model)) {
         try {
             return await require('./anthropicClient').callLLMStructured(model, messages, responseFormat, options);
@@ -247,6 +281,7 @@ async function callLLMStructured(model, messages, responseFormat, options = {}) 
  * @returns {Promise<Stream>} The stream object
  */
 async function callLLMStream(model, messages, options = {}) {
+    messages = stripOutboundPII(messages, options);
     // Provider dispatch: claude-* models stream via the Anthropic adapter,
     // wrapped so a pre-first-token transient failure fails over to OpenAI.
     if (require('./anthropicClient').isClaudeModel(model)) {
@@ -412,5 +447,7 @@ module.exports = {
     callLLMStream,
     generateEmbedding,
     moderateText,
-    moderateImage
+    moderateImage,
+    // Exported for unit testing the chokepoint without standing up the provider SDKs.
+    stripOutboundPII
 };

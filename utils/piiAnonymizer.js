@@ -44,14 +44,18 @@ const PII_PATTERNS = {
     // Email addresses (most specific, match first)
     email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
 
-    // Phone numbers (various formats including +1, parenthesized area codes)
-    phone: /(?:\+?1[-.\s]?)?(?:\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}/g,
+    // Phone numbers. A separator or parenthesised area code is REQUIRED: the
+    // old pattern allowed every separator to be empty, so it swallowed any bare
+    // ten-digit run — and "The product is 1234567890" became "[phone]", hiding
+    // the student's answer from the model that has to grade it.
+    phone: /(?:\+?1[-.\s])?(?:\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]\d{4}\b/g,
 
     // MongoDB ObjectIds (24 hex chars)
     objectId: /\b[0-9a-fA-F]{24}\b/g,
 
-    // SSN patterns
-    ssn: /\b\d{3}[-.\s]?\d{2}[-.\s]?\d{4}\b/g,
+    // SSN. Separators are likewise required — the old pattern matched a bare
+    // nine-digit run, which is an ordinary answer to a multiplication problem.
+    ssn: /\b\d{3}[-.]\d{2}[-.]\d{4}\b/g,
 
     // Date of birth patterns (MM/DD/YYYY, YYYY-MM-DD, etc.)
     dateOfBirth: /\b(?:born|dob|birthday|date of birth)[:\s]*\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/gi,
@@ -59,6 +63,41 @@ const PII_PATTERNS = {
     // Street addresses (number + street name pattern)
     address: /\b\d{1,5}\s+(?:[A-Z][a-z]+\s+){1,3}(?:St|Street|Ave|Avenue|Blvd|Boulevard|Dr|Drive|Ln|Lane|Rd|Road|Ct|Court|Way|Pl|Place)\.?\b/gi,
 };
+
+/**
+ * Names we refuse to strip because they are also ordinary math or English words.
+ *
+ * Replacement is a whole-word, case-insensitive substitution, so a student named
+ * Ray turns "draw a ray from point A" into "draw a [Student] from point A" — in
+ * the tutor's own teaching text, in the student's answers, and in anything the
+ * model is asked to grade. Max, Mark, Sum and Grace fail the same way, and
+ * sentence-initial capitals ("Mark the point") defeat any case-based heuristic.
+ *
+ * So for these, the bare given/family name is left alone. The full name is still
+ * stripped — "Ray Patel" is unambiguous in a way "ray" is not — along with every
+ * pattern-matched identifier. This trades the weakest PII (a first name with no
+ * surname attached) for not corrupting the instruction the product exists to give.
+ *
+ * A denylist is inherently incomplete. It covers the collisions that actually
+ * occur in K-12 math; add to it rather than removing the guard.
+ */
+const PROTECTED_VOCABULARY = new Set([
+  // Geometry / algebra terms that are also given names
+  'ray', 'angle', 'point', 'line', 'base', 'prime', 'root', 'mean', 'mode',
+  'range', 'set', 'order', 'degree', 'power', 'square', 'unit', 'sum', 'max',
+  'min', 'pi', 'sine', 'chord', 'arc', 'solid', 'plane', 'axis', 'graph',
+  // Common verbs/nouns in problem statements that are also given names
+  'mark', 'add', 'count', 'sketch', 'match', 'guess', 'chance', 'even', 'odd',
+  // Everyday words that are also common given names
+  'grace', 'hope', 'faith', 'joy', 'will', 'bill', 'rose', 'dawn', 'art',
+  'may', 'june', 'april', 'august', 'summer', 'autumn', 'sunny', 'star',
+  'al', 'ana', 'ed', 'jo', 'van', 'so', 'an', 'in', 'on', 'or', 'is', 'it'
+]);
+
+/** True when a bare name is too collision-prone to substitute safely. */
+function isProtectedName(name) {
+  return PROTECTED_VOCABULARY.has(String(name || '').trim().toLowerCase());
+}
 
 // Placeholder tokens used in anonymized text
 const PLACEHOLDERS = {
@@ -95,32 +134,42 @@ function createAnonymizationContext(userProfile, options = {}) {
     // Build name replacement map (longest names first to avoid partial matches)
     const nameMap = new Map();
 
+    // Names skipped as too collision-prone, so callers can see it happened
+    // rather than wondering why a name survived.
+    const skipped = [];
+
     if (userProfile) {
         const firstName = userProfile.firstName || '';
         const lastName = userProfile.lastName || '';
         const fullName = `${firstName} ${lastName}`.trim();
 
-        // Always replace full name
-        if (fullName.length > 1) {
+        // Full name is unambiguous — always replace, even when either half on
+        // its own is a word we protect.
+        if (firstName && lastName && fullName.length > 1) {
             nameMap.set(fullName.toLowerCase(), PLACEHOLDERS.student);
         }
 
-        // Replace last name always
         if (lastName && lastName.length > 1) {
-            nameMap.set(lastName.toLowerCase(), PLACEHOLDERS.student);
+            if (isProtectedName(lastName)) skipped.push(lastName);
+            else nameMap.set(lastName.toLowerCase(), PLACEHOLDERS.student);
         }
 
-        // Replace first name unless explicitly allowed
         if (!allowFirstName && firstName && firstName.length > 1) {
-            nameMap.set(firstName.toLowerCase(), PLACEHOLDERS.student);
+            if (isProtectedName(firstName)) skipped.push(firstName);
+            else nameMap.set(firstName.toLowerCase(), PLACEHOLDERS.student);
         }
     }
 
     // Add any additional names (teacher, parent, school, etc.)
     for (const [name, placeholder] of Object.entries(additionalNames)) {
-        if (name && name.length > 1) {
-            nameMap.set(name.toLowerCase(), placeholder);
+        if (!name || name.length <= 1) continue;
+        // A multi-word value (e.g. "Ms Rose Carter") is unambiguous; only a
+        // single bare token can collide with vocabulary.
+        if (!name.includes(' ') && isProtectedName(name)) {
+            skipped.push(name);
+            continue;
         }
+        nameMap.set(name.toLowerCase(), placeholder);
     }
 
     return {
@@ -326,15 +375,68 @@ function anonymizeSystemPrompt(systemPrompt, anonContext) {
  * @param {string} firstName - The student's real first name
  * @returns {string} Response with placeholders replaced
  */
-function rehydrateResponse(responseText, firstName) {
+function rehydrateResponse(responseText, firstNameOrNames) {
     if (!responseText || typeof responseText !== 'string') return responseText;
-    if (!firstName) return responseText;
+    if (!firstNameOrNames) return responseText;
 
-    // Replace all variations of the student placeholder
-    return responseText
-        .replace(/\[Student\]/g, firstName)
-        .replace(/\[student\]/g, firstName)
-        .replace(/\[STUDENT\]/g, firstName);
+    // Back-compat: a bare string still means "the student's first name".
+    const names = typeof firstNameOrNames === 'string'
+        ? { student: firstNameOrNames }
+        : firstNameOrNames;
+
+    let result = responseText;
+    // Every placeholder we can put in, we have to be able to take back out.
+    // Restoring only [Student] is why a parent-facing reply could reach the
+    // parent reading "Hi [Parent]".
+    for (const key of ['student', 'parent', 'teacher', 'school']) {
+        const value = names[key];
+        if (!value) continue;
+        result = result.replace(new RegExp(`\\[${key}\\]`, 'gi'), value);
+    }
+    return result;
+}
+
+/** Longest placeholder token we might have to reassemble across chunks. */
+const MAX_PLACEHOLDER_LENGTH = 12;
+
+/**
+ * Streaming-safe rehydration.
+ *
+ * Providers split tokens wherever they like, so "[Student]" can arrive as
+ * "[Stu" + "dent]". Rehydrating each chunk independently misses it and the
+ * placeholder reaches the reader verbatim. This holds back a trailing partial
+ * placeholder until it either completes or grows too long to be one.
+ *
+ * @param {string|Object} firstNameOrNames - as rehydrateResponse
+ * @returns {{push: (chunk: string) => string, flush: () => string}}
+ */
+function createStreamRehydrator(firstNameOrNames) {
+    let pending = '';
+
+    return {
+        push(chunk) {
+            if (!chunk) return '';
+            const buffer = pending + chunk;
+
+            // An unclosed '[' near the end may be the start of a placeholder.
+            const open = buffer.lastIndexOf('[');
+            const holdFrom = (open !== -1 &&
+                !buffer.slice(open).includes(']') &&
+                buffer.length - open <= MAX_PLACEHOLDER_LENGTH)
+                ? open
+                : buffer.length;
+
+            pending = buffer.slice(holdFrom);
+            return rehydrateResponse(buffer.slice(0, holdFrom), firstNameOrNames);
+        },
+
+        /** Emit whatever is still held once the stream ends. */
+        flush() {
+            const rest = rehydrateResponse(pending, firstNameOrNames);
+            pending = '';
+            return rest;
+        }
+    };
 }
 
 // ============================================================================
@@ -402,6 +504,8 @@ module.exports = {
     anonymizeMessages,
     anonymizeSystemPrompt,
     rehydrateResponse,
+    createStreamRehydrator,
+    isProtectedName,
 
     // Educational data sanitization
     sanitizeEducationalData,
@@ -414,4 +518,5 @@ module.exports = {
     PII_PATTERNS,
     EDUCATIONAL_DATA_PATTERNS,
     PLACEHOLDERS,
+    PROTECTED_VOCABULARY,
 };

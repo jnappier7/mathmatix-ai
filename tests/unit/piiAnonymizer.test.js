@@ -9,6 +9,8 @@ const {
     anonymizeMessages,
     anonymizeSystemPrompt,
     rehydrateResponse,
+    createStreamRehydrator,
+    isProtectedName,
     sanitizeEducationalData,
     PII_PATTERNS,
     EDUCATIONAL_DATA_PATTERNS,
@@ -473,5 +475,145 @@ Generate problems at **HIGHER DIFFICULTY** (DOK 3)`;
             expect(rehydrated).toContain('Marcus');
             expect(rehydrated).toContain('great progress on fractions');
         });
+    });
+});
+
+// ============================================================================
+// Anonymizing without corrupting the maths
+// ============================================================================
+//
+// Substitution is a blind whole-word find-and-replace over free text. Knowing
+// the student is called Ray does not tell you which occurrences of "ray" mean
+// him — so before this guard, "draw a ray from point A" became "draw a
+// [Student] from point A" in the tutor's own teaching text, and a ten-digit
+// product was hidden from the model that had to grade it.
+//
+// The existing math-safety tests above pass an EMPTY name map and check
+// `3x + 5 = 20`, so they never exercised any of this.
+describe('anonymization vs. mathematical content', () => {
+    const ctxFor = (firstName, lastName) =>
+        createAnonymizationContext({ firstName, lastName });
+
+    describe('names that are also math vocabulary', () => {
+        test.each([
+            ['Ray', 'Patel', 'Draw a ray from point A through point B.'],
+            ['Mark', 'Chen', 'Mark the point on the number line.'],
+            ['Max', 'Owusu', 'Find the max of f(x) on the interval.'],
+            ['Sum', 'Nguyen', 'The sum of the interior angles is 180 degrees.'],
+            ['Grace', 'Lin', 'Round to the nearest degree.']
+        ])('%s %s: the bare name is left alone in teaching text', (first, last, text) => {
+            expect(anonymizeText(text, ctxFor(first, last).nameMap)).toBe(text);
+        });
+
+        test('the full name is still stripped even when the first name is protected', () => {
+            // "Ray Patel" is unambiguous in a way "ray" is not.
+            const result = anonymizeText('Ray Patel solved it.', ctxFor('Ray', 'Patel').nameMap);
+            expect(result).toBe('[Student] solved it.');
+        });
+
+        test('a protected surname does not disable stripping of the given name', () => {
+            const result = anonymizeText('Priya asked a question.', ctxFor('Priya', 'Ray').nameMap);
+            expect(result).toBe('[Student] asked a question.');
+        });
+
+        test('a non-colliding name is still stripped on its own', () => {
+            const result = anonymizeText('Zoe asked a question.', ctxFor('Zoe', 'Quill').nameMap);
+            expect(result).toBe('[Student] asked a question.');
+        });
+
+        test('isProtectedName is case- and whitespace-insensitive', () => {
+            expect(isProtectedName(' RAY ')).toBe(true);
+            expect(isProtectedName('Zoe')).toBe(false);
+        });
+    });
+
+    describe('numeric answers that resemble identifiers', () => {
+        const plain = createAnonymizationContext(null).nameMap;
+
+        test('a bare ten-digit product is not mistaken for a phone number', () => {
+            expect(anonymizeText('The product is 1234567890.', plain))
+                .toBe('The product is 1234567890.');
+        });
+
+        test('a bare nine-digit answer is not mistaken for an SSN', () => {
+            expect(anonymizeText('The answer is 123456789.', plain))
+                .toBe('The answer is 123456789.');
+        });
+
+        test.each([
+            '(555) 123-4567',
+            '555-123-4567',
+            '+1 555.123.4567'
+        ])('a genuinely formatted phone number is still stripped: %s', (phone) => {
+            expect(anonymizeText(`Call ${phone} today.`, plain)).toContain('[phone]');
+        });
+
+        test('a genuinely formatted SSN is still stripped', () => {
+            expect(anonymizeText('SSN 123-45-6789 on file.', plain)).toContain('[redacted]');
+        });
+
+        test('email addresses and ObjectIds are untouched by the loosening', () => {
+            const result = anonymizeText('ray@school.org id 507f1f77bcf86cd799439011', plain);
+            expect(result).toContain('[email]');
+            expect(result).toContain('[id]');
+        });
+    });
+});
+
+// ============================================================================
+// Rehydration
+// ============================================================================
+describe('rehydrateResponse — every placeholder we insert', () => {
+    test('restores parent, teacher and school, not just student', () => {
+        // Restoring only [Student] is how a parent-facing reply could reach the
+        // parent reading "Hi [Parent],".
+        const result = rehydrateResponse(
+            'Hi [Parent], [Student] did well. Ask [Teacher] at [School].',
+            { student: 'Ana', parent: 'Elena', teacher: 'Mr Diaz', school: 'Lincoln Middle' }
+        );
+        expect(result).toBe('Hi Elena, Ana did well. Ask Mr Diaz at Lincoln Middle.');
+    });
+
+    test('still accepts a bare first name (back-compat with existing callers)', () => {
+        expect(rehydrateResponse('Nice work [Student]!', 'Ana')).toBe('Nice work Ana!');
+    });
+
+    test('leaves a placeholder alone when no value is supplied for it', () => {
+        expect(rehydrateResponse('Hi [Parent], [Student]!', { student: 'Ana' }))
+            .toBe('Hi [Parent], Ana!');
+    });
+});
+
+describe('createStreamRehydrator — placeholders split across chunks', () => {
+    const drain = (chunks, names) => {
+        const r = createStreamRehydrator(names);
+        return chunks.map((c) => r.push(c)).join('') + r.flush();
+    };
+
+    test('reassembles a placeholder broken over two chunks', () => {
+        // The failure this exists for: rehydrating each chunk alone misses it
+        // and "[Student]" reaches the reader verbatim.
+        expect(drain(['Great work [Stu', 'dent]! Nice.'], 'Ana')).toBe('Great work Ana! Nice.');
+    });
+
+    test('reassembles a placeholder broken one character at a time', () => {
+        expect(drain('Hi [Student]!'.split(''), 'Ana')).toBe('Hi Ana!');
+    });
+
+    test('passes through text with no placeholders unchanged', () => {
+        expect(drain(['Solve 3x + 5 ', '= 20 for x'], 'Ana')).toBe('Solve 3x + 5 = 20 for x');
+    });
+
+    test('does not hold a bracket that cannot be a placeholder', () => {
+        // An interval like [0, 12] must not be buffered to the end of the stream.
+        expect(drain(['The domain is [0, 12] here.'], 'Ana')).toBe('The domain is [0, 12] here.');
+    });
+
+    test('flush emits an unterminated bracket rather than swallowing it', () => {
+        expect(drain(['All done ['], 'Ana')).toBe('All done [');
+    });
+
+    test('handles a placeholder arriving whole', () => {
+        expect(drain(['Hi [Student]', ' and welcome'], 'Ana')).toBe('Hi Ana and welcome');
     });
 });
