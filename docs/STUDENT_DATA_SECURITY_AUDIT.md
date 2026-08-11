@@ -22,7 +22,7 @@ Mathmatix AI has a **solid security foundation** with meaningful protections in 
 |----------|--------|-------|
 | Authentication & Session | Strong | Bcrypt, secure sessions, OAuth, brute-force protection |
 | Authorization & RBAC | Strong | Role-based access, teacher-student boundaries enforced |
-| Data Privacy (PII) | Strong | PII anonymizer strips data before AI API calls |
+| Data Privacy (PII) | Good | PII anonymizer on AI grading/analysis paths; tutoring context disclosed in the privacy policy and sent under provider no-training API terms |
 | CSRF Protection | Strong | Double-submit cookie with timing-safe comparison |
 | Input Validation | Good | express-validator on auth routes; not applied to all routes |
 | Upload Security | Good | Type/size validation, rate limiting, access control |
@@ -45,11 +45,11 @@ Mathmatix AI has a **solid security foundation** with meaningful protections in 
 - **Brute-force protection**: Login rate limited to 5 attempts per 15 minutes (`server.js:313-325`)
 - **Session destruction on logout** with cookie clearing (`middleware/auth.js:139-144`)
 
-### 2. PII Anonymization Before AI Calls
-- **Dedicated PII anonymizer** (`utils/piiAnonymizer.js`) strips names, emails, phone numbers, SSNs, addresses, and MongoDB ObjectIds before sending data to OpenAI/Anthropic
+### 2. PII Anonymization on AI Grading and Analysis Paths
+- **Dedicated PII anonymizer** (`utils/piiAnonymizer.js`) strips names, emails, phone numbers, SSNs, addresses, and MongoDB ObjectIds on the vision-grading and reasoning paths of the LLM gateway (`utils/llmGateway.js`)
 - **Educational data sanitization**: IEP goals, z-scores, and progress percentages are abstracted to prevent re-identification
 - **Rehydration**: Student first names are restored in AI responses after anonymization
-- This is a notably strong privacy measure that many EdTech platforms lack
+- **Tutoring chat** sends the personalization context disclosed in the privacy policy (student first name, grade level, learning preferences, applicable accommodations) under provider business API terms that exclude model training; an outbound pattern-based stripper (`PII_STRIP_OUTBOUND` in `utils/openaiClient.js`) is available for broader coverage
 
 ### 3. Role-Based Access Control
 - **Four-role system**: student, teacher, parent, admin (`middleware/auth.js`)
