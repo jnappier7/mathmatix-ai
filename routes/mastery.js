@@ -27,6 +27,9 @@ const { initializeSkillMastery: initializeSkillMasteryEntry } = require('../util
 const { CHALLENGE_SIZE, MIN_ITEMS, gradeChallenge, toRungEvidence } = require('../utils/skillChallenge');
 const { normalizeOptions } = require('../utils/mcOptions');
 const { resolveGradeNumber } = require('../utils/gradeLevel');
+// POST /start-skill seeds the tutor's plan directly — the light "the student
+// picked this" path, as opposed to starting a whole badge run.
+const { loadOrCreatePlan, addSkillToFocus } = require('../utils/tutorPlanManager');
 
 // Read a mastery entry from a Map|object by canonical (unified) skill id, falling
 // back to a legacy key so historical data still resolves during the migration.
@@ -2742,6 +2745,120 @@ router.get('/map', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('[mastery/map] failed:', error);
     res.status(500).json({ error: 'Failed to load skill map' });
+  }
+});
+
+// ============================================================================
+// START A SKILL — "I pick this one"
+// ============================================================================
+
+/**
+ * Put the tutor on a skill the student chose.
+ * POST /api/mastery/start-skill  { skillId }
+ *
+ * WHY THIS EXISTS
+ * ---------------
+ * The product had every piece of "student picks their next skill" except the
+ * wire between them. The skill map's "Learn it" rung and its available-now list
+ * both navigated to `/chat.html?skill=<id>` — and NOTHING read that parameter,
+ * on the client or the server. A student chose a skill, landed in chat, and got
+ * a generic greeting; the tutor never knew what they picked. Meanwhile
+ * `resolveCurrentTarget` (utils/tutorPlanManager.js) has always been able to
+ * hold a target, and POST /start-skill-practice has always been able to set
+ * one — with zero callers, and only by starting a full badge run.
+ *
+ * This is the light path: it seeds the tutor's plan and nothing else. No badge,
+ * no problem quota, no mastery-mode framing. "Learn it" means the tutor teaches
+ * it and assesses as it goes, which is what the pipeline already does once
+ * `tutorPlan.currentTarget` names a skill.
+ *
+ * currentTarget is set EXPLICITLY rather than relying on the priority queue: a
+ * stale target from a previous session outranks a new focus entry no matter how
+ * high its priority (tutorPlanManager.js:94), so seeding only the queue would
+ * leave the student on last week's skill.
+ *
+ * Proving out is deliberately NOT here — that is the challenge route below.
+ */
+router.post('/start-skill', isAuthenticated, async (req, res) => {
+  try {
+    const requestedId = req.body?.skillId;
+    if (!requestedId || typeof requestedId !== 'string') {
+      return res.status(400).json({ error: 'skillId is required' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const skills = await configCache.getOrSet(
+      'skills:unified',
+      () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
+      3600
+    );
+    if (!skills.length) {
+      return res.status(503).json({ error: 'The skill catalog is not set up in this environment yet.' });
+    }
+
+    const skillId = canonicalSkillId(requestedId);
+    const graph = buildGraph(skills);
+    if (!graph.has(skillId)) return res.status(404).json({ error: 'Skill not found' });
+
+    const skill = graph.byId.get(skillId);
+    const state = boardStates(graph, decodedMasteryMap(user)).get(skillId) || 'locked';
+
+    // Mirror SkillMapModel.rungOptions exactly, so no surface can offer a route
+    // this route then refuses. A locked skill still has prerequisites in the
+    // way; one cleared from above was never demonstrated, so its only honest
+    // next step is proving it directly — teaching it again would walk a student
+    // through work the system already credited them for.
+    if (state === 'locked') {
+      const gaps = graph.parentsOf(skillId)
+        .filter((p) => graph.has(p))
+        .map((p) => (graph.byId.get(p) || {}).studentLabel || p);
+      return res.status(409).json({
+        error: 'Locked',
+        reason: 'Some of what this builds on is still open.',
+        prerequisites: gaps
+      });
+    }
+    if (state === 'proved' || state === 'taught' || state === 'above') {
+      return res.status(409).json({
+        error: 'Already owned',
+        reason: state === 'above'
+          ? 'You were cleared on this from above — prove it directly instead.'
+          : 'You already own this one.',
+        proveInstead: true
+      });
+    }
+
+    const displayName = skill.studentLabel || skill.displayName || skillId;
+
+    const plan = await loadOrCreatePlan(user._id);
+    addSkillToFocus(plan, {
+      skillId,
+      displayName,
+      reason: 'The student chose this one.',
+      // Let resolveCurrentTarget compute the real familiarity on the next turn;
+      // an open skill has no evidence behind it yet by definition.
+      familiarity: state === 'learned' ? 'introduced' : 'never-seen',
+      // Top of the queue. A skill the student asked for outranks anything the
+      // system inferred they should do.
+      priority: 10
+    });
+    plan.currentTarget = {
+      skillId,
+      displayName,
+      instructionalMode: null,
+      startedAt: new Date(),
+      instructionPhase: null
+    };
+    await plan.save();
+
+    console.log(`[mastery/start-skill] user ${user._id} chose ${skillId} (${state})`);
+
+    res.json({ ok: true, skillId, label: displayName, state });
+  } catch (error) {
+    console.error('[mastery/start-skill] failed:', error);
+    res.status(500).json({ error: 'Could not start that skill' });
   }
 });
 

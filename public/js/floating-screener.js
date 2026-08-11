@@ -914,7 +914,22 @@ class FloatingScreener {
     const host = document.getElementById('screener-placement-ladder');
     const placement = document.getElementById('screener-grade-level-result');
 
-    const painted = window.PlacementLadder && window.PlacementLadder.render(host, ladder);
+    // In chat the ladder is a chooser with nowhere to navigate — the student is
+    // already standing in the conversation the lesson opens in. Close the panel
+    // and hand the skill to the tutor in place; reloading chat through
+    // `?skill=` would throw away the session they just finished the check in.
+    // Picking a skill IS finishing — it goes through the same wind-down the
+    // Continue button runs (state reset, notification, confetti, close), then
+    // opens the lesson. Closing the panel directly would skip all of it and
+    // leave the sidebar still offering an assessment they just completed.
+    const pick = (fn) => async (skill) => {
+      await this.finishAssessment();
+      if (window.MMStartSkill) window.MMStartSkill[fn](skill.skillId);
+    };
+    const painted = window.PlacementLadder && window.PlacementLadder.render(host, ladder, {
+      onLearn: pick('learn'),
+      onProve: pick('prove')
+    });
 
     if (card) card.style.display = painted ? '' : 'none';
     if (placement) placement.style.display = painted ? 'none' : '';

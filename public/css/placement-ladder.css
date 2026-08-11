@@ -98,6 +98,14 @@
   padding: 7px 0 8px;
 }
 
+/* A band holding work the student can start today is not ahead of them, even
+   if they own none of it yet — dimming it would grey out the very thing the
+   ladder is asking them to pick. */
+.pl-rung.is-ahead.has-picks {
+  opacity: 1;
+  padding: 10px 0 12px;
+}
+
 .pl-rung.is-ahead .pl-rung-label {
   font-weight: 600;
 }
@@ -204,6 +212,134 @@
 
 .pl-pip.s-taught {
   background: radial-gradient(circle at 50% 50%, #fff 0 22%, var(--pl-hue) 24% 100%);
+}
+
+/* ── the chooser ─────────────────────────────────────────── */
+.pl-ask {
+  margin: -8px 0 16px;
+  font-size: 0.88rem;
+  color: var(--pl-muted);
+}
+
+.pl-picks {
+  margin-top: 11px;
+}
+
+.pl-picks-head {
+  margin: 0 0 7px;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--pl-muted);
+}
+
+.pl-pick-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Row = the lesson; the trailing button = prove-out. Same split as the skill
+   map's available-now list, so the two surfaces do not teach two grammars for
+   the same pair of choices. */
+.pl-pick {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.pl-pick-go,
+.pl-pick-prove {
+  font: inherit;
+  border-radius: 9px;
+  cursor: pointer;
+  border: 1px solid var(--pl-line);
+  background: var(--pl-surface);
+  transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+}
+
+.pl-pick-go {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  /* Comfortably past the 44px minimum: these are tapped by 8-year-olds on
+     school Chromebook trackpads and cracked phone screens. */
+  padding: 9px 12px;
+  text-align: left;
+}
+
+.pl-pick-label {
+  font-weight: 650;
+  font-size: 0.92rem;
+  color: var(--pl-ink);
+  line-height: 1.25;
+}
+
+.pl-pick-sub {
+  font-size: 0.74rem;
+  color: var(--pl-hue);
+  font-weight: 600;
+}
+
+.pl-pick-prove {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 11px;
+  line-height: 1.2;
+}
+
+.pl-pick-prove b {
+  font-size: 0.76rem;
+  color: var(--pl-ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pl-pick-prove span {
+  font-size: 0.68rem;
+  color: var(--pl-muted);
+}
+
+.pl-pick-go:hover,
+.pl-pick-prove:hover {
+  border-color: var(--pl-hue);
+  background: rgba(102, 126, 234, 0.06);
+}
+
+.pl-pick-go:active,
+.pl-pick-prove:active {
+  transform: translateY(1px);
+}
+
+.pl-pick-go:focus-visible,
+.pl-pick-prove:focus-visible,
+.pl-pick-more:focus-visible {
+  outline: 2px solid var(--pl-hue);
+  outline-offset: 2px;
+}
+
+.pl-pick-more {
+  font: inherit;
+  margin-top: 6px;
+  padding: 5px 2px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--pl-hue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ── legend + the note ───────────────────────────────────── */
