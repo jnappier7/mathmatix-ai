@@ -53,6 +53,7 @@ const { errorMetricsHandler } = require('../middleware/errorTracking');
 // Own-consent gate for AI endpoints (COPPA point of collection/disclosure).
 // Staged rollout via CONSENT_ENFORCEMENT=off|log|enforce, default log.
 const { requireOwnConsent, consentMetricsHandler } = require('../middleware/consentGate');
+const { requireThirteenPlus } = require('../middleware/ageGate');
 const { usageGate, usageGateAllMethods, premiumFeatureGate } = require('../middleware/usageGate');
 const { uploadRateLimiter, scheduleCleanup, getRetentionDays } = require('../middleware/uploadSecurity');
 const { scheduleDemoCleanup } = require('../utils/demoClone');
@@ -219,10 +220,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // gates as /api/chat plus isStudent. See docs/BOARD_STUDENT_MOVES_INTEGRATION.md.
   app.use('/api/student-moves', isAuthenticated, isStudent, requireOwnConsent(), aiEndpointLimiter, usageGate, studentMovesRoutes);
   app.use('/api/conversations', isAuthenticated, conversationsRoutes);
-  app.use('/api/speak', isAuthenticated, requireOwnConsent(), speakRoutes);
+  app.use('/api/speak', isAuthenticated, requireOwnConsent(), requireThirteenPlus, speakRoutes);
   app.use('/api/animation-studio', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, animationStudioRoutes);
-  app.use('/api/voice', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes);
-  app.use('/api/voice', isAuthenticated, requireOwnConsent(), voiceTestRoutes);
+  app.use('/api/voice', isAuthenticated, requireOwnConsent(), requireThirteenPlus, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes);
+  app.use('/api/voice', isAuthenticated, requireOwnConsent(), requireThirteenPlus, voiceTestRoutes);
   app.use('/api/voice-tutor', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
   // These routes accept base64 image data — larger JSON body limit
   const largeJsonParser = express.json({ limit: '10mb' });
