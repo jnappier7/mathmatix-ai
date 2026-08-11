@@ -64,6 +64,7 @@
 
   // Teen (13-17) stage
   const teenEmail     = $('onboarding-teen-email');
+  const teenSelfBtn   = $('onboarding-teen-self');
   const teenSendBtn   = $('onboarding-teen-send');
   const teenCode      = $('onboarding-teen-code');
   const teenLinkBtn   = $('onboarding-teen-link');
@@ -286,13 +287,16 @@
     }
 
     if (s.needsParentalConsent) {
-      // Under-13 → COPPA invite code only (legally required, email alone is not
-      // verifiable parental consent). 13-17 → parent email OR invite code.
-      if (typeof s.age === 'number' && s.age < 13) {
-        showStage(stageCoppa);
-      } else {
-        showStage(stageTeen);
-      }
+      // Under-13 → COPPA invite code only (legally required, email alone is
+      // not verifiable parental consent).
+      showStage(stageCoppa);
+      return;
+    }
+
+    if (s.needsSelfConsent) {
+      // 13-17 → self-certification (COPPA doesn't require parental consent
+      // at 13+); parent email / invite code are optional extras in the stage.
+      showStage(stageTeen);
       return;
     }
 
@@ -393,11 +397,32 @@
     }
   }
 
-  // ---- 13-17 — parent email OR invite code ----
+  // ---- 13-17 — self-certification (primary), parent email/code optional ----
   function setTeenStatus(msg, isError) {
     if (!teenStatus) return;
     teenStatus.textContent = msg || '';
     teenStatus.classList.toggle('error', !!isError);
+  }
+  async function submitTeenSelfConsent() {
+    teenSelfBtn.disabled = true;
+    teenSelfBtn.textContent = 'One sec…';
+    try {
+      const res = await postJson('/api/consent/grant/self', {});
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        return setTeenStatus(data.message || 'Couldn’t save that — try again.', true);
+      }
+      const fin = await postJson('/api/onboarding/finalize', {});
+      const finData = await fin.json().catch(() => ({}));
+      pendingRedirect = finData.redirect || pendingRedirect;
+      advanceStage({ needsDob: false, needsParentalConsent: false, needsSelfConsent: false });
+    } catch (err) {
+      console.warn('[onboarding] teen self-consent error:', err);
+      setTeenStatus('Network hiccup — try again.', true);
+    } finally {
+      teenSelfBtn.disabled = false;
+      teenSelfBtn.textContent = 'I agree — let’s go';
+    }
   }
   async function submitTeenEmail() {
     const email = (teenEmail.value || '').trim();
@@ -484,6 +509,7 @@
     // DOB + consent stage wiring (students only, gated by server response).
     if (dobSubmitBtn) dobSubmitBtn.addEventListener('click', submitDob);
     if (coppaLinkBtn) coppaLinkBtn.addEventListener('click', submitCoppaCode);
+    if (teenSelfBtn)  teenSelfBtn.addEventListener('click', submitTeenSelfConsent);
     if (teenSendBtn)  teenSendBtn.addEventListener('click', submitTeenEmail);
     if (teenLinkBtn)  teenLinkBtn.addEventListener('click', submitTeenCode);
 

@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Teen consent section elements
     const teenConsentSection = document.getElementById('teenConsentSection');
+    const teenSelfConsentBtn = document.getElementById('teenSelfConsentBtn');
     const teenParentEmailInput = document.getElementById('teenParentEmail');
     const sendParentConsentBtn = document.getElementById('sendParentConsentBtn');
     const teenParentInviteCodeInput = document.getElementById('teenParentInviteCode');
@@ -106,6 +107,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         } finally {
             linkParentBtn.disabled = false;
             linkParentBtn.textContent = 'Link to Parent';
+        }
+    }
+
+    // Handle 13-17 self-certification — grants real consent server-side
+    // (POST /api/consent/grant/self → grantSelfConsent), unlike the parent
+    // email path, which stays pending until the parent verifies.
+    async function teenSelfConsent() {
+        if (teenSelfConsentBtn) {
+            teenSelfConsentBtn.disabled = true;
+            teenSelfConsentBtn.textContent = 'Saving…';
+        }
+        if (teenConsentMessage) teenConsentMessage.textContent = '';
+        try {
+            const res = await csrfFetch('/api/consent/grant/self', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                currentUser.hasParentalConsent = true;
+                if (teenConsentMessage) {
+                    teenConsentMessage.textContent = 'All set! You can finish your profile now.';
+                    teenConsentMessage.style.color = '#28a745';
+                }
+                if (teenConsentSection) teenConsentSection.style.display = 'none';
+            } else if (teenConsentMessage) {
+                teenConsentMessage.textContent = data.message || 'Could not save your agreement. Try again.';
+                teenConsentMessage.style.color = '#dc3545';
+            }
+        } catch (error) {
+            console.error('Teen self-consent error:', error);
+            if (teenConsentMessage) {
+                teenConsentMessage.textContent = 'Network error. Please try again.';
+                teenConsentMessage.style.color = '#dc3545';
+            }
+        } finally {
+            if (teenSelfConsentBtn) {
+                teenSelfConsentBtn.disabled = false;
+                teenSelfConsentBtn.textContent = 'I agree — continue';
+            }
         }
     }
 
@@ -225,6 +267,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (sendParentConsentBtn) {
         sendParentConsentBtn.addEventListener('click', sendTeenParentConsent);
+    }
+    if (teenSelfConsentBtn) {
+        teenSelfConsentBtn.addEventListener('click', teenSelfConsent);
     }
     if (teenLinkParentBtn) {
         teenLinkParentBtn.addEventListener('click', teenLinkToParent);

@@ -160,7 +160,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/admin-js0.5662b4aa.js",
+        "src": "/dist/js/admin-js0.92cb8a37.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/admin-analytics.js",
@@ -277,7 +277,7 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.79516728.js",
+        "src": "/dist/js/teacher-js2.63fba5bf.js",
         "files": [
           "/js/auto-logout.js",
           "/js/teacher-live-feed.js",
