@@ -364,10 +364,11 @@ const uploadRateLimiter = rateLimit({
    - Parents can request deletion
    - 30-day automatic deletion of uploads
 
-4. ⚠️ **Privacy Policy** (TODO)
-   - Clear, readable privacy policy
+4. ✅ **Privacy Policy**
+   - Clear, readable privacy policy at `/privacy.html` (terms at `/terms.html`)
    - Prominent link in footer
-   - Explains data collection practices
+   - Explains data collection practices, third-party processors used for AI, OCR
+     and voice, retention periods, and parental/eligible-student rights
 
 ### FERPA (Family Educational Rights and Privacy Act)
 

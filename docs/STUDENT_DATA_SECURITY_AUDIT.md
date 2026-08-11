@@ -1,14 +1,20 @@
 # Student Data Security Audit
 
-**Date:** March 17, 2026
+**Original review:** March 17, 2026
+**Last updated:** August 11, 2026 — findings re-verified against the current codebase
 **Scope:** Full codebase review of Mathmatix AI student data handling
 **Auditor:** Automated security review
+
+> **Read this as a point-in-time review with remediation status, not a list of live
+> weaknesses.** Findings marked ✅ RESOLVED have been fixed and verified in the current
+> codebase; the original description is kept for audit history. Open items are tracked
+> internally and are not enumerated here.
 
 ---
 
 ## Executive Summary
 
-Mathmatix AI has a **solid security foundation** with meaningful protections in place for student data. The application demonstrates security-conscious design across authentication, authorization, data privacy, and compliance. However, there are several areas requiring attention before the platform could be considered fully production-hardened for handling children's educational data at scale.
+Mathmatix AI has a **solid security foundation** with meaningful protections in place for student data. The application demonstrates security-conscious design across authentication, authorization, data privacy, and compliance. The original review identified several areas requiring attention; the items flagged as immediate priorities have since been remediated and verified (see status markers below).
 
 **Overall Assessment: GOOD with notable gaps to address**
 
@@ -88,15 +94,14 @@ Mathmatix AI has a **solid security foundation** with meaningful protections in 
 
 **Resolution (March 2026):** AES-256-GCM field-level encryption (`utils/fieldEncryption.js`) applied via Mongoose plugin to PII fields across 10 models: User (firstName, lastName), IEPPlan (templateApplied), Conversation (summary, liveSummary, strugglingWith), GradingResult (overallFeedback, whatWentWell, imageFilename), Message (subject, body), StudentUpload (originalFilename, extractedText, notes), SupportTicket (description), ImpersonationLog (actorEmail, targetEmail, ipAddress, userAgent), Affiliate (paypalEmail), TeacherResource (extractedText). Encryption is activated when `FIELD_ENCRYPTION_KEY` is set in `.env`. Fields used in MongoDB indexes/queries (email, username) are excluded to preserve lookup functionality.
 
-#### C2. Image EXIF Metadata Not Stripped
-Student homework photo uploads retain GPS coordinates, device info, and timestamps in EXIF metadata (`SECURITY.md:117-119` acknowledges this as planned).
+#### C2. Image EXIF Metadata Not Stripped — ✅ RESOLVED
+Student homework photo uploads retained GPS coordinates, device info, and timestamps in EXIF metadata.
 
 **Risk:** Student physical location could be exposed from uploaded homework photos.
 
-**Recommendation:** Install `sharp` and strip metadata on upload:
+**Resolution:** Uploads are normalized through `sharp` in `routes/chat.js` before any further processing, discarding EXIF while preserving orientation:
 ```javascript
-const sharp = require('sharp');
-const cleaned = await sharp(buffer).rotate().withMetadata(false).toBuffer();
+fileBuffer = await sharp(fileBuffer).rotate().withMetadata({}).toBuffer();
 ```
 
 #### C3. Content Moderation Not Implemented for Uploads
@@ -117,12 +122,12 @@ The Content Security Policy allows `'unsafe-inline'` for scripts and styles, and
 
 **Recommendation:** Migrate inline scripts to external files with nonces or hashes. Evaluate if MathLive can work without `unsafe-eval` in newer versions.
 
-#### H2. Deletion Audit Trail Stored Only in Logs
-Data deletion audit records are written to the logger, not to a persistent, append-only database collection (`routes/dataPrivacy.js:57-68`). Log files can be rotated out or lost.
+#### H2. Deletion Audit Trail Stored Only in Logs — ✅ RESOLVED
+Data deletion audit records were written to the logger only, and log files can be rotated out or lost.
 
 **Risk:** Compliance audit trail for FERPA/COPPA data deletions could be lost.
 
-**Recommendation:** Create a dedicated `DeletionAudit` MongoDB collection with write-only permissions. This is also noted as a TODO in the code.
+**Resolution:** A dedicated `DeletionAudit` collection (`models/deletionAudit.js`) now persists each deletion; `routes/dataPrivacy.js` writes to it on every deletion, alongside the existing log line.
 
 #### H3. Rate Limiter Uses In-Memory Store
 The upload rate limiter uses the default in-memory store (`middleware/uploadSecurity.js:129`). In a multi-instance deployment, rate limits aren't shared across instances.
@@ -152,22 +157,18 @@ Several routes return `error.message` or `error.stack` when `NODE_ENV === 'devel
 
 **Recommendation:** Ensure `NODE_ENV` is always set to `production` in deployed environments. Consider removing stack traces from responses entirely.
 
-#### M3. Consent Token Bypass Concern
-When a teen student requests parent email consent, `hasParentalConsent` is set to `true` immediately before the parent actually verifies (`routes/consent.js:349`).
+#### M3. Consent Token Bypass Concern — ✅ RESOLVED
+The teen parental-consent request set the legacy consent flag before the parent completed email verification.
 
-**Risk:** Students can self-grant effective consent by entering any email address, as the legacy consent flag is set before email verification completes.
-
-**Recommendation:** Keep `hasParentalConsent` as `false` until the parent actually clicks the verification link. Use a separate `pendingConsent` flag if the student needs limited access during the waiting period.
+**Resolution:** `routes/consent.js` now records the request as `status: 'pending'` with a hashed, 7-day-expiry token and leaves `hasParentalConsent` unchanged; the flag is set only when the parent follows the verification link.
 
 #### M4. No Two-Factor Authentication
 2FA is listed as planned in SECURITY.md but not implemented.
 
 **Recommendation:** Implement TOTP-based 2FA for teacher and admin accounts, which have access to student records across multiple students.
 
-#### M5. Privacy Policy and Terms of Service Pages Missing
-SECURITY.md acknowledges these are TODO items (`SECURITY.md:367-370`).
-
-**Recommendation:** Required for COPPA compliance. Prioritize creating clear, accessible privacy policy and terms of service pages.
+#### M5. Privacy Policy and Terms of Service Pages Missing — ✅ RESOLVED
+**Resolution:** `public/privacy.html` and `public/terms.html` are published, covering FERPA rights (inspect/amend/consent-to-disclosure), COPPA parental rights, directory-information opt-out, retention, and the third-party processors used for AI, OCR, and voice.
 
 ---
 
@@ -192,21 +193,23 @@ Upload validation logs include the original filename and file size (`middleware/
 
 ## Compliance Summary
 
-| Regulation | Status | Key Gap |
-|------------|--------|---------|
-| **COPPA** | Partial | Consent flow exists but has bypass concern (M3); missing privacy policy (M5) |
-| **FERPA** | Good | Data access controls, export, and deletion implemented; audit trail needs persistence (H2) |
-| **GDPR** | Partial | Right to deletion implemented; data portability exists; missing formal DPO and DPA templates |
+*Updated August 11, 2026 to reflect remediation since the original review.*
+
+| Regulation | Status | Notes |
+|------------|--------|-------|
+| **COPPA** | Implemented | Verifiable parental-consent flow with pending-until-verified email confirmation (M3 resolved), school-DPA and self-certification pathways, published privacy policy (M5 resolved), retention limits, and parental access/deletion rights |
+| **FERPA** | Implemented | Data access controls, export, amendment, and deletion; access logging; directory-information opt-out; persistent deletion audit trail (H2 resolved) |
+| **GDPR** | Partial | Right to deletion and data portability implemented; no formal DPO appointed |
 
 ---
 
 ## Recommendations Priority
 
-1. **Immediate** (before production with real student data):
-   - Strip EXIF metadata from uploads (C2)
-   - Fix consent token bypass (M3)
-   - Persist deletion audit trail to database (H2)
-   - Create privacy policy and terms of service (M5)
+1. **Immediate** (before production with real student data) — ✅ all complete:
+   - ~~Strip EXIF metadata from uploads (C2)~~ — done
+   - ~~Fix consent token bypass (M3)~~ — done
+   - ~~Persist deletion audit trail to database (H2)~~ — done
+   - ~~Create privacy policy and terms of service (M5)~~ — done
 
 2. **Short-term** (within 30 days):
    - Implement content moderation for uploads (C3)
