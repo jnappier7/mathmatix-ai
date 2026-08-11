@@ -14,6 +14,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/css/adaptiveScreener.css">
   <link rel="stylesheet" href="/css/aperture.css">
+  <link rel="stylesheet" href="/css/placement-ladder.css?v=20260810">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 </head>
@@ -169,12 +170,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <p class="results-subtitle">Here's where we'll start</p>
         </div>
 
-        <!-- QA P0-4: lead with the student's actual starting point (grade /
-             course), not a raw IRT theta. Percentile and accuracy are
-             internal analytics (adaptive accuracy hovers ~50-75% by design,
-             so it misleads students) and are intentionally not shown here. -->
+        <!-- THE LADDER, LIT. Leads with everything the student already owns
+             rather than the grade level that used to sit here. The number was
+             accurate and useless: a 9th grader reading "5th Grade" over their
+             own work has been handed a verdict with nothing to argue with,
+             while the same run proves dozens of skills and clears hundreds
+             beneath them. See utils/placementLadder.js.
+
+             Percentile and accuracy stay hidden — adaptive accuracy hovers
+             ~50-75% by design, so it misleads students (QA P0-4). -->
+        <div class="results-ladder" id="placement-ladder-card">
+          <h3><i class="fas fa-layer-group"></i> What you already know</h3>
+          <div id="placement-ladder"></div>
+        </div>
+
         <div class="results-stats">
-          <div class="result-stat result-stat--placement">
+          <!-- Fallback only: unhidden when the ladder cannot be built (catalog
+               not seeded in this environment, or the build threw). A results
+               screen with an empty hero is worse than the old card. -->
+          <div class="result-stat result-stat--placement" id="placement-fallback" hidden>
             <div class="stat-icon"><i class="fas fa-map-signs"></i></div>
             <div class="stat-content">
               <div class="stat-label">Your Starting Point</div>
@@ -257,6 +271,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/csrf.js"></script>
-  <script src="/js/adaptiveScreener.js?v=20260728"></script>
+  <script src="/js/placementLadder.js?v=20260810"></script>
+  <script src="/js/adaptiveScreener.js?v=20260810"></script>
 </body>
 </html>

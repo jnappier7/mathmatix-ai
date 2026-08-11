@@ -329,6 +329,37 @@
   color: #7f8c8d;
 }
 
+/* The lit ladder — the results hero. Card shell only; everything inside is
+   styled by css/placement-ladder.css, which is shared with the in-chat
+   FloatingScreener so both surfaces speak one visual language. */
+.results-ladder {
+  background: white;
+  border-radius: 15px;
+  padding: 28px 30px;
+  margin: 32px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: left;
+}
+
+.results-ladder h3 {
+  font-size: 1.3rem;
+  margin: 0;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.results-ladder h3 i {
+  color: var(--screener-accent, #667eea);
+}
+
+@media (max-width: 600px) {
+  .results-ladder {
+    padding: 20px 18px;
+  }
+}
+
 /* Results Stats */
 .results-stats {
   display: grid;

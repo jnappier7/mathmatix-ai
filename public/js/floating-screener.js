@@ -38,6 +38,12 @@ class FloatingScreener {
     // Assessment completed state
     this.assessmentCompleted = false;
 
+    // The /complete response, and the in-flight promise for it. The save now
+    // happens when the results paint rather than when Continue is pressed —
+    // see persistCompletion() for both reasons.
+    this.completionResult = null;
+    this.completionPromise = null;
+
     this.init();
   }
 
@@ -488,6 +494,10 @@ class FloatingScreener {
       }
 
       this.sessionId = data.sessionId;
+      // A retake is a new session, so last run's completion must not be
+      // reported as this one's.
+      this.completionResult = null;
+      this.completionPromise = null;
       console.log('[FloatingScreener] Assessment started, sessionId:', this.sessionId);
 
       // Get first problem (loading spinner is already visible)
@@ -801,25 +811,124 @@ class FloatingScreener {
   async showResults(data) {
     this.showScreen('results');
 
+    this.lastGrowthSummary = data.growthSummary || null;
+    this.renderResultStats(data);
+
+    // Hold the hero until the save lands rather than painting a grade level
+    // and swapping it for the ladder a beat later.
+    this.showLadderPlaceholder();
+
+    // Persist NOW. The ladder is built server-side from the mastery this call
+    // writes, so it cannot be drawn before the response comes back.
+    let completion = null;
+    try {
+      completion = await this.persistCompletion();
+    } catch (error) {
+      // Not fatal here: the Continue button retries, and the fallback card
+      // below still gives the student a real result to look at.
+      console.error('[FloatingScreener] Could not save results yet:', error);
+    }
+
     // A Growth Check earns a different ending than a placement: the comparison
     // to last time, what it confirmed, and one suggested next step. The server
     // computes it (utils/growthSummary.js) so the tutor's debrief in chat and
-    // this card can never tell two different stories.
-    this.lastGrowthSummary = data.growthSummary || null;
+    // this card can never tell two different stories. /complete recomputes it
+    // against the pre-check theta, so prefer it over the submit-answer copy.
+    this.lastGrowthSummary = completion?.growthSummary || this.lastGrowthSummary || null;
     this.renderGrowthResult(this.lastGrowthSummary);
 
-    // Update grade level display (like STAR testing)
+    if (!this.lastGrowthSummary) {
+      this.renderPlacementResult(completion?.ladder, data.report);
+    }
+  }
+
+  /**
+   * POST /complete — the moment a placement actually lands.
+   *
+   * Moved off the Continue button, for two reasons:
+   *   1. The ladder that now headlines this card is built from the mastery
+   *      state this call writes. It cannot be drawn before the save.
+   *   2. A student who closed the panel from the results screen never pressed
+   *      Continue, and their entire Starting Point was silently discarded —
+   *      nothing was written, the session just aged out. Saving when the
+   *      results appear makes that unreachable.
+   *
+   * Memoised on the promise so showResults and Continue can both ask and the
+   * POST happens once; a failure clears the memo so Continue still retries.
+   */
+  async persistCompletion() {
+    if (this.completionResult) return this.completionResult;
+
+    if (!this.completionPromise) {
+      this.completionPromise = (async () => {
+        const response = await window.csrfFetch('/api/screener/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ sessionId: this.sessionId })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to complete assessment');
+
+        console.log('[FloatingScreener] Assessment completed');
+        this.completionResult = data;
+
+        // The placement is on disk now, so the sidebar must stop advertising
+        // it. Without this, a student who closes the panel from the results
+        // screen instead of pressing Continue is left with a glowing "find
+        // your level" button for work they just finished — and clicking it
+        // gets a 403. finishAssessment still owns the rest of the wind-down
+        // (growth-check flags, the tutor debrief, the confetti).
+        this.assessmentCompleted = true;
+        this.assessmentExpired = false;
+        this.updateSidebarButton();
+
+        return data;
+      })().catch((error) => {
+        this.completionPromise = null;
+        throw error;
+      });
+    }
+
+    return this.completionPromise;
+  }
+
+  showLadderPlaceholder() {
+    const card = document.getElementById('screener-placement-ladder-card');
+    const placement = document.getElementById('screener-grade-level-result');
+    const host = document.getElementById('screener-placement-ladder');
+    if (!card || !host) return;
+    if (placement) placement.style.display = 'none';
+    card.style.display = '';
+    host.textContent = 'Adding up everything you already know…';
+  }
+
+  /**
+   * The Starting Point hero: the lit ladder, or the old grade-level card when
+   * there is nothing honest to draw (catalog unseeded, or the save failed).
+   * An empty hero would be worse than the number this replaces.
+   */
+  renderPlacementResult(ladder, report) {
+    const card = document.getElementById('screener-placement-ladder-card');
+    const host = document.getElementById('screener-placement-ladder');
+    const placement = document.getElementById('screener-grade-level-result');
+
+    const painted = window.PlacementLadder && window.PlacementLadder.render(host, ladder);
+
+    if (card) card.style.display = painted ? '' : 'none';
+    if (placement) placement.style.display = painted ? 'none' : '';
+    if (painted) return;
+
     const gradeLevelEl = document.getElementById('screener-result-grade-level');
     const descriptionEl = document.getElementById('screener-result-description');
-
-    if (gradeLevelEl && data.report?.gradeLevel) {
-      gradeLevelEl.textContent = data.report.gradeLevel;
+    if (gradeLevelEl && report?.gradeLevel) gradeLevelEl.textContent = report.gradeLevel;
+    if (descriptionEl && report?.gradeLevelDescription) {
+      descriptionEl.textContent = report.gradeLevelDescription;
     }
+  }
 
-    if (descriptionEl && data.report?.gradeLevelDescription) {
-      descriptionEl.textContent = data.report.gradeLevelDescription;
-    }
-
+  renderResultStats(data) {
     // Update result stats
     const accuracyEl = document.getElementById('screener-result-accuracy');
     const questionsEl = document.getElementById('screener-result-questions');
@@ -852,17 +961,18 @@ class FloatingScreener {
   renderGrowthResult(summary) {
     const block = document.getElementById('screener-growth-result');
     const placement = document.getElementById('screener-grade-level-result');
+    const ladderCard = document.getElementById('screener-placement-ladder-card');
     const title = document.getElementById('screener-results-title');
     const subtitle = document.getElementById('screener-results-subtitle');
     const icon = document.getElementById('screener-results-icon');
 
     if (!summary) {
-      // Starting Point (or a growth check whose summary failed to build) —
-      // fall back to the placement card rather than showing nothing.
+      // Starting Point (or a growth check whose summary failed to build).
+      // Which hero to show is renderPlacementResult's call — it knows whether
+      // the ladder could be drawn — so this path deliberately touches neither.
       if (block) block.style.display = 'none';
-      if (placement) placement.style.display = '';
       if (title) title.textContent = 'Assessment Complete!';
-      if (subtitle) subtitle.textContent = "We've found your starting point";
+      if (subtitle) subtitle.textContent = "Here's what you already know";
       if (icon) icon.innerHTML = '<i class="fas fa-trophy"></i>';
       return;
     }
@@ -888,9 +998,10 @@ class FloatingScreener {
     }
     if (icon) icon.textContent = statusIcon;
 
-    // The growth story replaces the placement card — this student already has
-    // a starting point; what they want now is the delta.
+    // The growth story replaces both placement heroes — this student already
+    // has a starting point; what they want now is the delta.
     if (placement) placement.style.display = 'none';
+    if (ladderCard) ladderCard.style.display = 'none';
     if (block) block.style.display = '';
 
     const prevEl = document.getElementById('screener-growth-previous-level');
@@ -919,23 +1030,12 @@ class FloatingScreener {
   }
 
   async finishAssessment() {
-    this.showLoading('Saving results...');
+    // Normally already saved — the results screen persisted on the way in. The
+    // spinner and the POST below are the retry path for when that failed.
+    if (!this.completionResult) this.showLoading('Saving results...');
 
     try {
-      const response = await window.csrfFetch('/api/screener/complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ sessionId: this.sessionId })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to complete assessment');
-      }
-
-      console.log('[FloatingScreener] Assessment completed');
+      const data = await this.persistCompletion();
 
       const wasGrowthCheck = this.isGrowthCheck;
       // /complete recomputes the summary against the pre-check theta, so

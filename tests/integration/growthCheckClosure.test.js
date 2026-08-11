@@ -469,3 +469,125 @@ describe('POST /api/screener/complete — placement evidence closes the ladder',
     expect(fractions.provenBy).toBe('challenge');
   });
 });
+
+/**
+ * The results screen leads with the lit ladder instead of a grade level, and
+ * the ladder rides on THIS response — there is no second endpoint. So the
+ * contract is pinned here: /complete must carry it, it must be built from the
+ * mastery this same call just wrote (including the cascade above it), and a
+ * failure to build it must never cost the student their completion.
+ */
+describe('POST /api/screener/complete — the placement ladder', () => {
+  let app;
+
+  // Same prerequisite chain as the cascade suite, plus the strand/courseLevel
+  // the ladder bands on. ms-ratios (MS) is what the session demonstrates;
+  // elem-* (ELEM) is what the cascade clears beneath it.
+  const BANDED_CATALOG = [
+    { skillId: 'ms-ratios', displayName: 'Ratios', studentLabel: 'ratios', strand: 'PRP', courseLevel: 'MS', prerequisites: ['elem-fractions-intro'] },
+    { skillId: 'ms-fractions', displayName: 'Adding Fractions', studentLabel: 'adding fractions', strand: 'QNT', courseLevel: 'MS', prerequisites: [] },
+    { skillId: 'elem-fractions-intro', displayName: 'Fractions Intro', studentLabel: 'fractions', strand: 'QNT', courseLevel: 'ELEM', prerequisites: ['elem-counting'] },
+    { skillId: 'elem-counting', displayName: 'Counting', studentLabel: 'counting', strand: 'QNT', courseLevel: 'ELEM', prerequisites: [] },
+  ];
+
+  const rungFor = (body, level) => body.ladder.rungs.find((r) => r.level === level);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    app = buildApp();
+    stubSkillCatalog(BANDED_CATALOG);
+  });
+
+  test('ships a ladder built from the mastery this call just wrote', async () => {
+    placedStudent({ skillMastery: new Map() });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession({ sessionType: 'starting-point' }));
+
+    const res = await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    expect(res.body.ladder.seeded).toBe(true);
+    // Bottom-up, and only bands the catalog can fill.
+    expect(res.body.ladder.rungs.map((r) => r.level)).toEqual(['ELEM', 'MS']);
+    expect(res.body.ladder.totals.total).toBe(4);
+  });
+
+  test('counts what the student demonstrated apart from what cleared beneath it', async () => {
+    placedStudent({ skillMastery: new Map() });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession({ sessionType: 'starting-point' }));
+
+    const res = await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    // Demonstrated in the session.
+    expect(rungFor(res.body, 'MS').proved).toBe(1);
+    expect(rungFor(res.body, 'MS').assumed).toBe(0);
+    // Granted by the cascade — never reported as proved.
+    expect(rungFor(res.body, 'ELEM').assumed).toBe(2);
+    expect(rungFor(res.body, 'ELEM').proved).toBe(0);
+    expect(res.body.ladder.totals.owned).toBe(3);
+  });
+
+  test('the edge sits on the highest band the student owns anything in', async () => {
+    placedStudent({ skillMastery: new Map() });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession({ sessionType: 'starting-point' }));
+
+    const res = await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    expect(res.body.ladder.rungs[res.body.ladder.edgeIndex].level).toBe('MS');
+    // ELEM is fully cleared by the cascade, so it reads as finished.
+    expect(rungFor(res.body, 'ELEM').state).toBe('cleared');
+  });
+
+  test('an unseeded catalog omits the ladder instead of shipping an empty one', async () => {
+    stubSkillCatalog([]);
+    placedStudent({ skillMastery: new Map() });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession({ sessionType: 'starting-point' }));
+
+    const res = await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    // The clients read `seeded` and fall back to the old grade-level card. An
+    // empty hero would be worse than the number the ladder replaced.
+    expect(res.body.ladder.seeded).toBe(false);
+    expect(res.body.report.gradeLevel).toBeTruthy();
+  });
+
+  test('a catalog read that throws still completes the assessment', async () => {
+    Skill.find.mockImplementation(() => { throw new Error('mongo is down'); });
+    const user = placedStudent({ skillMastery: new Map() });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession({ sessionType: 'starting-point' }));
+
+    const res = await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    // Cosmetic failure, exactly like the cascade above it: the placement is
+    // still written and the student is still done.
+    expect(res.body.success).toBe(true);
+    expect(user.assessmentCompleted).toBe(true);
+    expect(res.body.ladder.seeded).toBe(false);
+  });
+
+  test('a growth check gets a ladder too — the delta card is the client\'s choice, not the server\'s', async () => {
+    placedStudent({ skillMastery: new Map() });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession());
+
+    const res = await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    expect(res.body.ladder.seeded).toBe(true);
+    expect(res.body.growthSummary).toBeTruthy();
+  });
+});
