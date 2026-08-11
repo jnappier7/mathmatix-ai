@@ -7,8 +7,6 @@
  * coins / mutates ownership + loadout. Logic is pure and testable; routes are a
  * thin wrapper. Callers are responsible for user.save().
  *
- * See docs/COSMETICS_SHOP_DESIGN.md.
- *
  * @module cosmeticsCatalog
  */
 

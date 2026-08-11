@@ -52,13 +52,28 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  // Let any in-flight rate-limiter/session writes settle before closing, then
-  // treat interrupted-connection errors as expected teardown noise.
-  await new Promise((resolve) => setTimeout(resolve, 250));
+  // connect-mongo closes the underlying driver client on a promise it never
+  // hands back (MongoStore's close path), so a connection interrupted
+  // mid-close surfaces as an *unhandled* rejection rather than one we can
+  // await. The try/catch below cannot see it, and Jest reports the whole suite
+  // as "failed to run" even when every test in it passed. Swallow that one
+  // error for the duration of teardown, and only that one.
+  const swallowClosedClient = (err) => {
+    if (err?.name === 'MongoClientClosedError') return; // expected teardown noise
+    console.error('Unexpected unhandled rejection during teardown:', err);
+  };
+  process.on('unhandledRejection', swallowClosedClient);
+
   try {
-    if (app?.locals?.sessionStore) await app.locals.sessionStore.close();
-  } catch { /* MongoClientClosedError — connections interrupted mid-close */ }
-  if (mem) await mem.stop();
+    // Let any in-flight rate-limiter/session writes settle before closing.
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    try {
+      if (app?.locals?.sessionStore) await app.locals.sessionStore.close();
+    } catch { /* interrupted mid-close — same cause, awaited path */ }
+    if (mem) await mem.stop();
+  } finally {
+    process.off('unhandledRejection', swallowClosedClient);
+  }
 });
 
 describe('GET *.html — must reach the CSP pipeline, not express.static', () => {

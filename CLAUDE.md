@@ -84,15 +84,15 @@ config/                database.js · middleware.js · routes.js · sentry.js
 auth/                  passport-config.js (Google/Microsoft/Clever/local strategies)
 middleware/  (12)      auth · csrf · impersonation · usageGate · consentGate ·
                        promptInjection · uploadSecurity · ferpaAccessLog · errorTracking · …
-models/      (34)      Mongoose schemas — see §6
-routes/      (77)      HTTP surface, grouped by domain — see §5
+models/      (41)      Mongoose schemas — see §6
+routes/      (85)      HTTP surface, grouped by domain — see §5
 services/    (7)       chatService · sessionService · assessmentService · userService ·
                        aiService(legacy) · cleverApi · cleverSync
-utils/       (160)     The brains: pipeline/, prompts, learning engines, voice, OCR — see §7
+utils/       (240)     The brains: pipeline/, prompts, learning engines, voice, OCR — see §7
 public/      (~1220)   Vanilla-JS + Vite frontend — see §8
-scripts/     (85)      Seeding, data migration, problem/skill gen & QA, crons — see §10
+scripts/     (118)     Seeding, data migration, problem/skill gen & QA, crons — see §10
 seeds/                 Skill/problem/curriculum seed JSON (incl. pattern skills)
-docs/        (65)      Design docs + data dumps (skills.json, problems.json)
+docs/        (51)      Design docs + data dumps (skills.json, problems.json)
 tests/                 unit/ · integration/ (supertest) · load/ (k6)
 Dockerfile render.yaml .puppeteerrc.cjs   Deploy
 ```
@@ -101,7 +101,7 @@ Dockerfile render.yaml .puppeteerrc.cjs   Deploy
 
 ## 5. HTTP API surface (`routes/`, registered in `config/routes.js`)
 
-77 files, ~270 endpoints. Guards: `isAuthenticated`, `isAdmin/isTeacher/isParent/isStudent`,
+85 files, ~270 endpoints. Guards: `isAuthenticated`, `isAdmin/isTeacher/isParent/isStudent`,
 `aiEndpointLimiter`, `usageGate`, `premiumFeatureGate`. Roles checked via `user.roles[]` (array,
 preferred) with fallback to legacy `user.role` (string).
 

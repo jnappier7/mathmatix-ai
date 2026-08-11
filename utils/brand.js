@@ -171,7 +171,7 @@ const BRAND_CONFIG = {
     // 12. Coin Economy (earned soft currency for cosmetics)
     // Coins drip from completion + consistency events (NOT per-turn, to avoid a
     // grind vector). All awards route through utils/coinEngine.awardCoins, which
-    // enforces the daily cap. See docs/COSMETICS_SHOP_DESIGN.md.
+    // enforces the daily cap.
     coinRewards: {
         dailyCap: 500,            // max coins earnable per UTC day (anti-abuse)
         welcomeBonus: 100,        // one-time starter grant so students begin with a spendable balance (day 1)

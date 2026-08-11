@@ -4,8 +4,8 @@
  * Opens a read-only, Messages-app-style transcript viewer for a single
  * conversation. Teachers can audit tutor turns turn-by-turn. Each tutor turn
  * can render an adjacent "reasoning trace" column once the permission
- * architecture (see docs/PERMISSION_ARCHITECTURE_SPEC.md §6) populates
- * conversation.reasoningTrace[]. Until then, the column renders a placeholder.
+ * architecture populates conversation.reasoningTrace[]. Until then, the column
+ * renders a placeholder.
  *
  * Entry point: window.TranscriptViewer.open(studentId, conversationId, opts)
  *
