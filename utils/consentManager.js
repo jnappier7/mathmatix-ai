@@ -33,6 +33,22 @@ const FULL_CONSENT_SCOPE = [
     'iep_data_processing'
 ];
 
+// COPPA's verifiable-parental-consent requirement applies under this age.
+// 13-17 self-certify (self_13_plus pathway); 18+ need nothing.
+const COPPA_AGE = 13;
+
+/**
+ * Age in whole years from a date of birth, or null when unknown/invalid.
+ * The single shared implementation — the consent gate and the audit script
+ * import this rather than growing their own drift-prone copies.
+ */
+function computeAge(dateOfBirth) {
+    if (!dateOfBirth) return null;
+    const dob = new Date(dateOfBirth);
+    if (Number.isNaN(dob.getTime())) return null;
+    return Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+}
+
 // ============================================================================
 // GRANT CONSENT
 // ============================================================================
@@ -156,12 +172,15 @@ async function grantSelfConsent(studentId, metadata = {}) {
     const student = await User.findById(studentId);
     if (!student) throw new Error('Student not found');
 
-    // Verify age >= 13
-    if (student.dateOfBirth) {
-        const age = Math.floor((new Date() - new Date(student.dateOfBirth)) / (365.25 * 24 * 60 * 60 * 1000));
-        if (age < 13) {
-            throw new Error('Student must be 13 or older for self-consent');
-        }
+    // Verify age >= 13. A date of birth is REQUIRED here: without one we
+    // cannot tell a 12-year-old from a 16-year-old, and self-certification
+    // is exactly the pathway an under-13 must not be able to take.
+    const age = computeAge(student.dateOfBirth);
+    if (age === null) {
+        throw new Error('Date of birth required for self-consent');
+    }
+    if (age < COPPA_AGE) {
+        throw new Error('Student must be 13 or older for self-consent');
     }
 
     const consentRecord = {
@@ -375,6 +394,8 @@ module.exports = {
     // Batch operations
     grantBatchSchoolConsent,
 
-    // Constants
-    FULL_CONSENT_SCOPE
+    // Constants + shared helpers
+    FULL_CONSENT_SCOPE,
+    COPPA_AGE,
+    computeAge
 };

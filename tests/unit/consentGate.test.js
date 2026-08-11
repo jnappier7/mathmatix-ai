@@ -6,7 +6,16 @@ jest.mock('../../models/user', () => ({
 }));
 
 const User = require('../../models/user');
-const { requireActiveConsent } = require('../../middleware/consentGate');
+const {
+    requireActiveConsent,
+    requireOwnConsent,
+    evaluateOwnConsent,
+    getEnforcementMode,
+} = require('../../middleware/consentGate');
+
+function yearsAgo(n) {
+    return new Date(Date.now() - n * 365.25 * 24 * 60 * 60 * 1000);
+}
 
 function makeCtx({ params = {}, body = {} } = {}) {
     const req = { params, body };
@@ -104,5 +113,165 @@ describe('requireActiveConsent middleware', () => {
 
         expect(User.findById).toHaveBeenCalledWith(STUDENT_ID, expect.any(String));
         expect(next).toHaveBeenCalledWith();
+    });
+});
+
+// ============================================================================
+// evaluateOwnConsent — the requesting user's own consent (decision table)
+// ============================================================================
+
+describe('evaluateOwnConsent', () => {
+    const student = (over = {}) => ({ _id: 's1', role: 'student', ...over });
+
+    test('no user passes (unauthenticated surfaces are not this gate\'s job)', () => {
+        expect(evaluateOwnConsent(null)).toMatchObject({ allow: true, bucket: 'no_user' });
+    });
+
+    test('adult roles pass, including multi-role accounts by roles HELD', () => {
+        expect(evaluateOwnConsent({ role: 'teacher' })).toMatchObject({ allow: true, bucket: 'non_student' });
+        // Active role says student (dashboard view), but the account holds parent.
+        expect(evaluateOwnConsent({ role: 'student', roles: ['student', 'parent'] }))
+            .toMatchObject({ allow: true, bucket: 'non_student' });
+    });
+
+    test('active consent passes on any pathway', () => {
+        expect(evaluateOwnConsent(student({
+            privacyConsent: { status: 'active', consentPathway: 'school_dpa', history: [{}] },
+        }))).toMatchObject({ allow: true, bucket: 'active' });
+    });
+
+    test('legacy .lean() shape (no privacyConsent at all) passes via checkConsent fallback', () => {
+        expect(evaluateOwnConsent(student({ hasParentalConsent: true })))
+            .toMatchObject({ allow: true });
+    });
+
+    test('legacy HYDRATED shape (schema-defaulted pending + flag + empty history) passes', () => {
+        // A hydrated mongoose doc defaults privacyConsent.status to 'pending',
+        // masking checkConsent's legacy branch. The gate must catch this shape
+        // or every legacy-consented student misclassifies as pending.
+        expect(evaluateOwnConsent(student({
+            hasParentalConsent: true,
+            privacyConsent: { status: 'pending', history: [] },
+        }))).toMatchObject({ allow: true, bucket: 'legacy' });
+    });
+
+    test('revoked blocks with CONSENT_REVOKED', () => {
+        expect(evaluateOwnConsent(student({
+            privacyConsent: { status: 'revoked', consentPathway: 'individual_parent', history: [] },
+        }))).toMatchObject({ allow: false, code: 'CONSENT_REVOKED' });
+    });
+
+    test('expired DPA blocks with CONSENT_EXPIRED', () => {
+        expect(evaluateOwnConsent(student({
+            privacyConsent: {
+                status: 'active',
+                consentPathway: 'school_dpa',
+                history: [{ consentType: 'school_official', grantedAt: yearsAgo(2), expiresAt: yearsAgo(1) }],
+            },
+        }))).toMatchObject({ allow: false, code: 'CONSENT_EXPIRED' });
+    });
+
+    test('pending under-13 blocks with CONSENT_REQUIRED_PARENT', () => {
+        expect(evaluateOwnConsent(student({
+            dateOfBirth: yearsAgo(10),
+            privacyConsent: { status: 'pending', history: [{ consentType: 'parent_individual' }] },
+        }))).toMatchObject({ allow: false, code: 'CONSENT_REQUIRED_PARENT', bucket: 'under13_pending' });
+    });
+
+    test('pending teen (13-17) passes, tagged for telemetry', () => {
+        expect(evaluateOwnConsent(student({
+            dateOfBirth: yearsAgo(15),
+            privacyConsent: { status: 'pending', history: [{ consentType: 'parent_individual' }] },
+        }))).toMatchObject({ allow: true, code: 'CONSENT_SELF_CERT_PENDING', bucket: 'teen_pending' });
+    });
+
+    test('pending with null DOB passes on the grace path, tagged', () => {
+        expect(evaluateOwnConsent(student({
+            privacyConsent: { status: 'pending', history: [{ consentType: 'parent_individual' }] },
+        }))).toMatchObject({ allow: true, code: 'CONSENT_UNKNOWN_DOB', bucket: 'null_dob' });
+    });
+});
+
+// ============================================================================
+// requireOwnConsent — mode behavior (off | log | enforce)
+// ============================================================================
+
+describe('requireOwnConsent middleware', () => {
+    const ORIGINAL_MODE = process.env.CONSENT_ENFORCEMENT;
+    afterEach(() => {
+        if (ORIGINAL_MODE === undefined) delete process.env.CONSENT_ENFORCEMENT;
+        else process.env.CONSENT_ENFORCEMENT = ORIGINAL_MODE;
+    });
+
+    const blockedUser = {
+        _id: 'u1',
+        role: 'student',
+        dateOfBirth: yearsAgo(10),
+        privacyConsent: { status: 'pending', history: [{ consentType: 'parent_individual' }] },
+    };
+
+    function ownCtx(user) {
+        const req = { user, path: '/api/chat' };
+        const res = { status: jest.fn().mockReturnThis(), json: jest.fn().mockReturnThis() };
+        const next = jest.fn();
+        return { req, res, next };
+    }
+
+    test('defaults to log mode, and unknown values fall back to log', () => {
+        delete process.env.CONSENT_ENFORCEMENT;
+        expect(getEnforcementMode()).toBe('log');
+        process.env.CONSENT_ENFORCEMENT = 'bogus';
+        expect(getEnforcementMode()).toBe('log');
+    });
+
+    test('log mode never blocks, even an unconsented under-13', () => {
+        process.env.CONSENT_ENFORCEMENT = 'log';
+        const { req, res, next } = ownCtx(blockedUser);
+        requireOwnConsent()(req, res, next);
+        expect(next).toHaveBeenCalledWith();
+        expect(res.status).not.toHaveBeenCalled();
+    });
+
+    test('enforce mode blocks the unconsented under-13 with a routable code', () => {
+        process.env.CONSENT_ENFORCEMENT = 'enforce';
+        const { req, res, next } = ownCtx(blockedUser);
+        requireOwnConsent()(req, res, next);
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+            consentRequired: true,
+            consentCode: 'CONSENT_REQUIRED_PARENT',
+        }));
+        expect(next).not.toHaveBeenCalled();
+    });
+
+    test('enforce mode passes an actively consented student', () => {
+        process.env.CONSENT_ENFORCEMENT = 'enforce';
+        const { req, res, next } = ownCtx({
+            _id: 'u2', role: 'student',
+            privacyConsent: { status: 'active', consentPathway: 'individual_parent', history: [{}] },
+        });
+        requireOwnConsent()(req, res, next);
+        expect(next).toHaveBeenCalledWith();
+        expect(res.status).not.toHaveBeenCalled();
+    });
+
+    test('off mode is a no-op', () => {
+        process.env.CONSENT_ENFORCEMENT = 'off';
+        const { req, res, next } = ownCtx(blockedUser);
+        requireOwnConsent()(req, res, next);
+        expect(next).toHaveBeenCalledWith();
+    });
+
+    test('fails open when evaluation throws', () => {
+        process.env.CONSENT_ENFORCEMENT = 'enforce';
+        // rolesOf tolerates junk, so poison privacyConsent access instead.
+        const poisoned = { role: 'student' };
+        Object.defineProperty(poisoned, 'privacyConsent', {
+            get() { throw new Error('boom'); },
+        });
+        const { req, res, next } = ownCtx(poisoned);
+        requireOwnConsent()(req, res, next);
+        expect(next).toHaveBeenCalledWith();
+        expect(res.status).not.toHaveBeenCalled();
     });
 });

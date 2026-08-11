@@ -9,6 +9,7 @@ const logger = require('./logger').child({ module: 'voiceUpgrade' });
 const sttStream = require('./sttStream');
 const ttsProvider = require('./ttsProvider');
 const { hasPremiumAccess } = require('../middleware/usageGate');
+const { evaluateOwnConsent, getEnforcementMode } = require('../middleware/consentGate');
 
 const ALLOWED_ORIGINS = (process.env.VOICE_WS_ALLOWED_ORIGINS || '')
     .split(',')
@@ -112,6 +113,26 @@ function handleUpgrade({ request, socket, head, app, wss, streamPath }) {
                     socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
                     socket.destroy();
                     return;
+                }
+                // Own-consent gate — a raw upgrade never runs the Express
+                // chain, so requireOwnConsent on the HTTP mounts does not
+                // cover this path. Same decision function, same staged
+                // CONSENT_ENFORCEMENT rollout (log observes, enforce blocks).
+                const consentMode = getEnforcementMode();
+                if (consentMode !== 'off') {
+                    const decision = evaluateOwnConsent(request.user);
+                    if (!decision.allow) {
+                        logger.warn(`voice ws upgrade: consent ${consentMode === 'enforce' ? 'blocked' : 'would block'}`, {
+                            userId: String(request.user._id),
+                            code: decision.code,
+                            path: streamPath,
+                        });
+                        if (consentMode === 'enforce') {
+                            socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
+                            socket.destroy();
+                            return;
+                        }
+                    }
                 }
                 // Premium-tier paywall — mirrors premiumFeatureGate('Voice chat')
                 // on the HTTP routes (config/routes.js). Without this, a logged-in

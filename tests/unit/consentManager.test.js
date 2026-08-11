@@ -324,11 +324,13 @@ describe('Consent Manager', () => {
             expect(old.privacyConsent.history[0].consentType).toBe('student_self');
         });
 
-        test('allows when no DOB present (skip age check)', async () => {
+        test('rejects when no DOB present — self-certification requires a provable age', async () => {
+            // Previously this silently skipped the age check, which let a
+            // possibly-under-13 account take the 13+ pathway.
             const student = fakeStudent();
             User.findById.mockResolvedValue(student);
-            const r = await cm.grantSelfConsent('s1');
-            expect(r.status).toBe('active');
+            await expect(cm.grantSelfConsent('s1')).rejects.toThrow(/Date of birth/i);
+            expect(student.save).not.toHaveBeenCalled();
         });
     });
 
