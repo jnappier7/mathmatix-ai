@@ -62,16 +62,11 @@ const sttStream = require('../utils/sttStream');
 const { createVoiceSession } = require('../utils/voiceSession');
 const logger = require('../utils/logger').child({ route: 'voice' });
 
-/**
- * Check if user is under 13 based on dateOfBirth.
- * Third-party TTS terms prohibit use by children under 13.
- * Under-13 users get a flag to use browser-native WebSpeech API instead.
- */
-function isUnder13(user) {
-    if (!user || !user.dateOfBirth) return false; // If no DOB, can't enforce — defaults to allowing
-    const age = (Date.now() - new Date(user.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000);
-    return age < 13;
-}
+// Age gating lives in middleware/ageGate.js — one implementation, shared with
+// /api/speak and the voice-tutor WebSocket. `requireThirteenPlus` is mounted on
+// this router in config/routes.js; the inline check below stays as a second
+// line of defence for the endpoint that actually ships audio to a vendor.
+const { isUnder13 } = require('../middleware/ageGate');
 
 // ============================================
 // VOICE PROCESSING ENDPOINT

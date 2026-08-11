@@ -41,11 +41,10 @@ function originAllowed(request) {
     return originHost === request.headers.host;
 }
 
-function isUnder13(user) {
-    if (!user || !user.dateOfBirth) return false;
-    const age = (Date.now() - new Date(user.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000);
-    return age < 13;
-}
+// Age gating lives in middleware/ageGate.js — one implementation, shared with
+// the HTTP voice endpoints. This path needs the raw function rather than the
+// Express middleware: a WS upgrade never runs the Express chain.
+const { isUnder13 } = require('../middleware/ageGate');
 
 /**
  * Run an HTTP upgrade through the given app's session+passport middleware
