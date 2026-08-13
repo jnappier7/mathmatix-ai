@@ -29,6 +29,8 @@ const actResponseSchema = new Schema({
   answer: { type: String },
   correct: { type: Boolean },
   skipped: { type: Boolean, default: false },
+  flagged: { type: Boolean, default: false },   // marked for review mid-test
+
   responseTime: { type: Number },            // ms
   answeredAt: { type: Date, default: Date.now },
 }, { _id: false });

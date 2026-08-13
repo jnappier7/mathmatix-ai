@@ -3,7 +3,12 @@
  *
  * Self-contained: builds its own DOM + styles on first open, so it has no
  * dependency on pre-existing markup. Drives the /api/act-test rail
- * (start → next-problem → submit-answer → complete) built in routes/actTest.js.
+ * (start → problem → save-answer → complete) built in routes/actTest.js.
+ *
+ * Navigation matches the real ACT: within the timed section the student moves
+ * freely (Back/Next + a question palette), changes answers, and flags
+ * questions for review; nothing is graded until the test is submitted or time
+ * expires. Answers save on click, so navigation never loses work.
  *
  * Open with window.openActTest(). Timed (60 min), 60 items, results screen
  * shows the scaled 1–36 estimate + a per-category breakdown (the diagnostic
@@ -39,6 +44,15 @@
   .actt-next{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
   .actt-next:disabled{opacity:.5;cursor:not-allowed}
   .actt-skip{background:#f1f0f7;color:#666}
+  .actt-skip:disabled{opacity:.45;cursor:not-allowed}
+  .actt-flagbtn.on{background:#fdeaea;color:#c0392b}
+  .actt-pal{display:none;flex-wrap:wrap;gap:6px;padding:12px 18px 2px;max-height:132px;overflow-y:auto}
+  .actt-pal.open{display:flex}
+  .actt-cell{position:relative;width:36px;height:32px;border:2px solid #e7e4f1;border-radius:8px;background:#fff;font-size:12px;font-weight:700;color:#666;cursor:pointer;padding:0}
+  .actt-cell.ans{background:#f3efff;border-color:#a58fd8;color:#4d3577}
+  .actt-cell.cur{border-color:#764ba2;box-shadow:0 0 0 3px rgba(118,75,162,.25)}
+  .actt-cell.flag::after{content:"⚑";position:absolute;top:-8px;right:-4px;font-size:11px;color:#e5484d}
+  .actt-legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:#888;margin:10px 0 2px}
   .actt-center{padding:40px 18px;text-align:center;color:#555}
   .actt-score{font-size:64px;font-weight:800;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
   .actt-scorelab{font-size:13px;color:#888;letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
@@ -65,6 +79,10 @@
     .actt-optlab{background:#302c45;color:#cbc7e0}
     .actt-foot{border-color:#2d2a40}
     .actt-skip{background:#26233a;color:#cbc7e0}
+    .actt-flagbtn.on{background:#3a1c1c;color:#ff8a8a}
+    .actt-cell{background:#211e32;border-color:#302c45;color:#cbc7e0}
+    .actt-cell.ans{background:#2b2547;border-color:#9a80ff;color:#d9d2f5}
+    .actt-cell.cur{border-color:#9a80ff;box-shadow:0 0 0 3px rgba(154,128,255,.3)}
     .actt-bar,.actt-catbar{background:#2d2a40}
     .actt-catname{color:#b7b3cc}
     .actt-cmpname{color:#b7b3cc}.actt-cmpval{color:#d7d3ea}
@@ -93,6 +111,8 @@
       this.current = null;
       this.selected = null;
       this.total = 60;
+      this.pos = 1;                 // 1-based position of the question on screen
+      this.state = new Map();       // position → {answer, flagged} (mirror of server)
       this.itemStart = 0;
       this.deadline = 0;
       this.timerId = null;
@@ -125,17 +145,25 @@
             <div class="actt-progrow"><span id="actt-qnum"></span><span id="actt-qpct"></span></div>
             <div class="actt-bar"><div class="actt-fill" id="actt-fill"></div></div>
           </div>
+          <div class="actt-pal" id="actt-pal"></div>
           <div class="actt-body" id="actt-body"></div>
           <div class="actt-foot" id="actt-foot" style="display:none">
-            <button class="actt-btn actt-skip" id="actt-skip">Skip</button>
-            <button class="actt-btn actt-next" id="actt-next" disabled>Next</button>
+            <button class="actt-btn actt-skip" id="actt-back">◀ Back</button>
+            <button class="actt-btn actt-skip actt-flagbtn" id="actt-flag" title="Flag this question to come back to it">🚩 Flag</button>
+            <span style="flex:1"></span>
+            <button class="actt-btn actt-skip" id="actt-map" title="Jump to any question">Questions</button>
+            <button class="actt-btn actt-next" id="actt-next">Next ▶</button>
           </div>
         </div>
         `;
       document.body.appendChild(this.overlay);
       this.overlay.querySelector('#actt-close').addEventListener('click', () => this.close());
-      this.overlay.querySelector('#actt-skip').addEventListener('click', () => this.submit(true));
-      this.overlay.querySelector('#actt-next').addEventListener('click', () => this.submit(false));
+      this.overlay.querySelector('#actt-back').addEventListener('click', () => this.goTo(this.pos - 1));
+      this.overlay.querySelector('#actt-flag').addEventListener('click', () => this.toggleFlag());
+      this.overlay.querySelector('#actt-map').addEventListener('click', () => this.el('actt-pal').classList.toggle('open'));
+      this.overlay.querySelector('#actt-next').addEventListener('click', () => {
+        if (this.pos >= this.total) this.showReview(); else this.goTo(this.pos + 1);
+      });
       this.overlay.querySelector('#actt-calc').addEventListener('click', () => this._toggleCalc());
       this.el = (id) => this.overlay.querySelector('#' + id);
 
@@ -176,7 +204,8 @@
           <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
             <li><strong>It's timed and can't be paused</strong> — just like the real ACT. Pacing is part of the score.</li>
             <li>Do it in <strong>one sitting</strong>. Find a quiet spot and grab scratch paper first.</li>
-            <li>Don't stress any single question — answer, move on, keep the clock moving.</li>
+            <li><strong>Move freely</strong> — go back, change answers, and 🚩 flag anything you want to revisit, just like the real ACT. Nothing is locked in until time's up.</li>
+            <li>Don't stress any single question — answer (or flag it), move on, keep the clock moving.</li>
           </ul>
           <button id="actt-begin" style="width:100%;padding:13px 16px;font-size:16px;font-weight:700;border:0;border-radius:12px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6)">Begin when ready</button>
         </div>`;
@@ -199,12 +228,33 @@
         if (!data || !data.sessionId) throw new Error((data && data.message) || 'Could not start.');
         this.sessionId = data.sessionId;
         this.total = data.totalItems || 60;
-        const mins = data.timeLimitMinutes || 60;
-        this.deadline = Date.now() + mins * 60000;
+        this.state = new Map();
+
+        // On a resume, rebuild the palette state and land on the first
+        // unanswered question rather than question 1.
+        let startPos = 1;
+        if (data.resumed) {
+          const ov = await api(`/api/act-test/overview?sessionId=${encodeURIComponent(this.sessionId)}`);
+          (ov && ov.items || []).forEach((it) => {
+            if (it.answered || it.flagged) this.state.set(it.position, { answered: !!it.answered, flagged: !!it.flagged });
+          });
+          const firstUnanswered = (ov && ov.items || []).find((it) => !it.answered);
+          startPos = firstUnanswered ? firstUnanswered.position : 1;
+          if (ov && ov.remainingSeconds != null) data.remainingSeconds = ov.remainingSeconds;
+        }
+
+        // The server anchors the clock to startedAt — resuming never restarts
+        // the hour. (Fallback covers an old server during a deploy window.)
+        const remainSecs = (data.remainingSeconds != null)
+          ? data.remainingSeconds
+          : (data.timeLimitMinutes || 60) * 60;
+        this._buildPalette();
+        if (data.resumed && remainSecs <= 0) return this.complete();
+        this.deadline = Date.now() + remainSecs * 1000;
         this._startTimer();
         this.el('actt-progwrap').style.display = '';
         this.el('actt-foot').style.display = 'flex';
-        await this.fetchNext();
+        await this.goTo(startPos);
       } catch (e) {
         this.el('actt-body').innerHTML = `<div class="actt-err">${e.message || 'Something went wrong.'}</div>`;
       }
@@ -241,22 +291,47 @@
     }
     _stopTimer() { if (this.timerId) { clearInterval(this.timerId); this.timerId = null; } }
 
-    async fetchNext() {
-      const data = await api(`/api/act-test/next-problem?sessionId=${encodeURIComponent(this.sessionId)}`);
-      if (!data || data.nextAction === 'complete' || !data.problem) { return this.complete(); }
+    _answeredCount() {
+      let n = 0;
+      this.state.forEach((s) => { if (s.answer != null || s.answered) n += 1; });
+      return n;
+    }
+
+    // Jump to any question (Back, Next, palette, review screen). Answers save
+    // on click, so navigating away never loses work.
+    async goTo(pos) {
+      pos = Math.min(Math.max(1, pos), this.total);
+      const data = await api(`/api/act-test/problem?sessionId=${encodeURIComponent(this.sessionId)}&position=${pos}`);
+      if (!data || !data.problem) {
+        this.el('actt-body').innerHTML = `<div class="actt-err">${(data && data.message) || 'Could not load that question.'}</div>`;
+        return;
+      }
+      this.pos = pos;
       this.current = data.problem;
-      this.selected = null;
+      // Merge server truth with local state; local wins (it has in-flight edits).
+      const remote = data.response || {};
+      const local = this.state.get(pos) || {};
+      const st = {
+        answer: local.answer !== undefined ? local.answer : (remote.answer != null ? remote.answer : null),
+        flagged: local.flagged !== undefined ? local.flagged : !!remote.flagged,
+      };
+      this.state.set(pos, st);
+      this.selected = st.answer;
       this.itemStart = Date.now();
+      // Re-entering from the review screen: restore the test chrome.
+      this.el('actt-progwrap').style.display = '';
+      this.el('actt-foot').style.display = 'flex';
       this.render();
     }
 
     render() {
       const p = this.current;
-      this.el('actt-qnum').textContent = `Question ${p.progress.current} of ${p.progress.total}`;
-      this.el('actt-qpct').textContent = `${p.progress.percentComplete || 0}%`;
-      this.el('actt-fill').style.width = `${p.progress.percentComplete || 0}%`;
+      const answered = this._answeredCount();
+      this.el('actt-qnum').textContent = `Question ${this.pos} of ${this.total}`;
+      this.el('actt-qpct').textContent = `${answered}/${this.total} answered`;
+      this.el('actt-fill').style.width = `${Math.round((answered / this.total) * 100)}%`;
       const opts = (p.options || []).map(o =>
-        `<button class="actt-opt" data-label="${o.label}"><span class="actt-optlab">${o.label}</span><span>${escapeHtml(o.text)}</span></button>`
+        `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}"><span class="actt-optlab">${o.label}</span><span>${escapeHtml(o.text)}</span></button>`
       ).join('');
       // Figure is our own generated SVG (from the item bank), not user input.
       // Guard: only render a bare <svg> with no scripts.
@@ -267,38 +342,133 @@
         btn.addEventListener('click', () => {
           this.selected = btn.getAttribute('data-label');
           this.el('actt-body').querySelectorAll('.actt-opt').forEach(b => b.classList.toggle('sel', b === btn));
-          this.el('actt-next').disabled = false;
+          const st = this.state.get(this.pos) || {};
+          st.answer = this.selected;
+          this.state.set(this.pos, st);
+          this._save();
+          this._syncPalette();
+          const n = this._answeredCount();
+          this.el('actt-qpct').textContent = `${n}/${this.total} answered`;
+          this.el('actt-fill').style.width = `${Math.round((n / this.total) * 100)}%`;
         });
       });
-      this.el('actt-next').disabled = true;
-      this.el('actt-next').textContent = (p.progress.current >= p.progress.total) ? 'Finish' : 'Next';
+      this.el('actt-back').disabled = this.pos <= 1;
+      this.el('actt-next').textContent = (this.pos >= this.total) ? 'Review ▶' : 'Next ▶';
+      this._syncFlagBtn();
+      this._syncPalette();
     }
 
-    async submit(skipped) {
-      if (!skipped && !this.selected) return;
-      const btn = this.el('actt-next'); if (btn) btn.disabled = true;
-      try {
-        await api('/api/act-test/submit-answer', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sessionId: this.sessionId,
-            problemId: this.current.problemId,
-            answer: skipped ? null : this.selected,
-            skipped: !!skipped,
-            responseTime: Date.now() - this.itemStart,
-          }),
-        });
-        await this.fetchNext();
-      } catch (e) {
-        this.el('actt-body').innerHTML = `<div class="actt-err">${e.message || 'Could not submit.'}</div>`;
+    // Persist the current question's answer/flag. Fire-and-forget: a transient
+    // failure must not eject the student from a timed test — the final state is
+    // whatever /complete finds on the server, and re-touching the question
+    // re-saves it.
+    _save() {
+      const st = this.state.get(this.pos) || {};
+      return api('/api/act-test/save-answer', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: this.sessionId,
+          problemId: this.current.problemId,
+          position: this.pos,
+          answer: st.answer != null ? st.answer : null,
+          flagged: !!st.flagged,
+          responseTime: Date.now() - this.itemStart,
+        }),
+      }).then((d) => { if (d && d.timeUp) this.complete(); })
+        .catch((e) => console.error('[act-test] save failed (will re-save on revisit):', e));
+    }
+
+    toggleFlag() {
+      const st = this.state.get(this.pos) || {};
+      st.flagged = !st.flagged;
+      this.state.set(this.pos, st);
+      this._save();
+      this._syncFlagBtn();
+      this._syncPalette();
+    }
+
+    _syncFlagBtn() {
+      const st = this.state.get(this.pos) || {};
+      const btn = this.el('actt-flag');
+      if (btn) {
+        btn.classList.toggle('on', !!st.flagged);
+        btn.textContent = st.flagged ? '🚩 Flagged' : '🚩 Flag';
       }
+    }
+
+    // ── Question palette — the "go anywhere" map, like the real ACT's ──
+    _buildPalette() {
+      const pal = this.el('actt-pal');
+      pal.classList.remove('open');
+      let cells = '';
+      for (let i = 1; i <= this.total; i++) cells += `<button class="actt-cell" data-pos="${i}">${i}</button>`;
+      pal.innerHTML = cells;
+      pal.querySelectorAll('.actt-cell').forEach((c) => {
+        c.addEventListener('click', () => this.goTo(parseInt(c.getAttribute('data-pos'), 10)));
+      });
+      this._syncPalette();
+    }
+
+    _syncPalette() {
+      const paint = (root) => {
+        if (!root) return;
+        root.querySelectorAll('.actt-cell').forEach((c) => {
+          const pos = parseInt(c.getAttribute('data-pos'), 10);
+          const st = this.state.get(pos) || {};
+          c.classList.toggle('ans', st.answer != null || !!st.answered);
+          c.classList.toggle('flag', !!st.flagged);
+          c.classList.toggle('cur', pos === this.pos);
+        });
+      };
+      paint(this.el('actt-pal'));
+      paint(this.el('actt-body'));   // review screen embeds its own palette
+    }
+
+    // ── Review screen — shown before submitting, like the online ACT ──
+    showReview() {
+      const answered = this._answeredCount();
+      const unanswered = this.total - answered;
+      let flagged = 0;
+      this.state.forEach((s) => { if (s.flagged) flagged += 1; });
+      let cells = '';
+      for (let i = 1; i <= this.total; i++) cells += `<button class="actt-cell" data-pos="${i}">${i}</button>`;
+      this.el('actt-foot').style.display = 'none';
+      this.el('actt-pal').classList.remove('open');
+      this.el('actt-body').innerHTML = `
+        <div class="actt-center" style="padding:14px 4px 4px">
+          <h2 style="margin:0 0 8px;font-size:20px">Review before you submit</h2>
+          <div class="actt-sub">${answered} answered · ${unanswered} unanswered${flagged ? ` · ${flagged} flagged 🚩` : ''}</div>
+          ${unanswered ? '<div style="font-size:13px;color:#c0392b;margin-bottom:6px">Unanswered questions count as wrong — on the real ACT there’s no penalty for guessing.</div>' : ''}
+          <div class="actt-legend"><span>▢ unanswered</span><span style="color:#764ba2">▣ answered</span><span>⚑ flagged</span></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:540px;margin:0 auto">${cells}</div>
+        <div style="text-align:center;margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="actt-btn actt-skip" id="actt-keepgoing">◀ Keep working</button>
+          <button class="actt-btn actt-next" id="actt-submit-test">Submit test</button>
+        </div>`;
+      this.el('actt-body').querySelectorAll('.actt-cell').forEach((c) => {
+        c.addEventListener('click', () => this.goTo(parseInt(c.getAttribute('data-pos'), 10)));
+      });
+      this.el('actt-keepgoing').addEventListener('click', () => {
+        let firstUn = 0;
+        for (let i = 1; i <= this.total; i++) {
+          const st = this.state.get(i) || {};
+          if (st.answer == null && !st.answered) { firstUn = i; break; }
+        }
+        this.goTo(firstUn || this.pos);
+      });
+      this.el('actt-submit-test').addEventListener('click', () => this.complete());
+      this._syncPalette();
     }
 
     async complete() {
       this._stopTimer();
       this._hideCalc();   // done answering — the calc has no place on the results screen
+      this.el('actt-timer').style.display = 'none';
       this.el('actt-progwrap').style.display = 'none';
       this.el('actt-foot').style.display = 'none';
+      const pal = this.el('actt-pal');
+      if (pal) { pal.classList.remove('open'); pal.innerHTML = ''; }
       this.el('actt-body').innerHTML = '<div class="actt-center">Scoring…</div>';
       try {
         const data = await api('/api/act-test/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: this.sessionId }) });
