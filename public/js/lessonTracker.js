@@ -196,6 +196,7 @@ class LessonTracker {
               <div style="display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:14px;font-weight:600;margin-bottom:8px"><span>Going over what you missed</span><span style="font-weight:500;font-size:12.5px;opacity:.85">${reviewed} of ${total} done</span></div>
               <div style="height:7px;background:rgba(255,255,255,.22);border-radius:5px;overflow:hidden;margin-bottom:10px"><div style="width:${pct}%;height:100%;background:#fff;border-radius:5px"></div></div>
               ${this._numberRailHtml(bc)}
+              ${this._missPreviewHtml(cur, label)}
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
                 <span style="color:rgba(255,255,255,.9);font-size:12.5px">Up next: <strong>${cur && cur.position != null ? `#${cur.position} · ` : ''}${cur ? label(cur.category) : '—'}</strong></span>
                 <button id="lt-bc-continue" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Continue in chat</button>
@@ -240,17 +241,57 @@ class LessonTracker {
             if (q.position == null) return '';
             const isCur = i === idx;
             const done = q.status === 'reviewed';
+            // Reviewed = checked off: a ✓ beside the number, green-tinted. It
+            // stays clickable — revisiting a reviewed miss is legitimate.
             const style = isCur
                 ? 'background:#fff;color:#5b3ea8;font-weight:700'
                 : done
-                    ? 'background:rgba(255,255,255,.08);color:rgba(255,255,255,.55);text-decoration:line-through'
+                    ? 'background:rgba(88,214,141,.28);color:#eafff2;cursor:pointer'
                     : 'background:rgba(255,255,255,.2);color:#fff;cursor:pointer';
-            const title = done ? 'Reviewed — click to revisit' : (isCur ? 'Up next' : 'Click to work this one next');
-            return `<button data-bc-jump="${i}" title="${title}" style="border:0;border-radius:8px;min-width:30px;padding:4px 7px;font-size:12px;cursor:pointer;${style}">${q.position}</button>`;
+            const title = done ? 'Reviewed ✓ — click to revisit' : (isCur ? 'Up next' : 'Click to work this one next');
+            return `<button data-bc-jump="${i}" title="${title}" style="border:0;border-radius:8px;min-width:30px;padding:4px 7px;font-size:12px;cursor:pointer;${style}">${done ? '✓ ' : ''}${q.position}</button>`;
         };
         return `<div style="margin-bottom:10px">
             <div style="color:rgba(255,255,255,.8);font-size:11.5px;margin-bottom:5px">Questions you missed — tap one to jump, or just keep going in order:</div>
             <div id="lt-bc-numbers" style="display:flex;flex-wrap:wrap;gap:5px">${queue.map(chip).join('')}</div>
+          </div>`;
+    }
+
+    _esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    /**
+     * The current missed question, verbatim: exact prompt + the answer choices
+     * as the student saw them, with THEIR pick marked (or a skipped note).
+     * Deliberately does NOT mark the correct answer — the tutor's review flow
+     * has them re-try before revealing, and the card must not undercut that.
+     * Renders nothing for queues that predate prompt/options stamping.
+     */
+    _missPreviewHtml(cur, label) {
+        if (!cur || !cur.prompt) return '';
+        const esc = this._esc;
+        // Figure is our own generated SVG from the item bank — same guard as
+        // the test runner: bare <svg>, no scripts.
+        const fig = (cur.svg && /^<svg[\s>]/.test(cur.svg) && !/<script/i.test(cur.svg))
+            ? `<div style="display:flex;justify-content:center;margin:2px 0 8px">${cur.svg}</div>` : '';
+        const rows = (cur.options || []).map((o) => {
+            const mine = !cur.skipped && cur.theirAnswer != null && o.label === cur.theirAnswer;
+            const rowStyle = mine
+                ? 'background:#fdecec;border:1px solid #f0b4b4'
+                : 'background:#f7f6fb;border:1px solid #eceaf4';
+            return `<div style="display:flex;align-items:baseline;gap:8px;padding:5px 9px;border-radius:8px;${rowStyle}">
+                <span style="font-weight:700;font-size:12px;color:#5b3ea8;flex:0 0 14px">${esc(o.label)}</span>
+                <span style="font-size:13px;color:#2a2440">${esc(o.text)}</span>
+                ${mine ? '<span style="margin-left:auto;font-size:11px;font-weight:600;color:#c0392b;white-space:nowrap">your answer</span>' : ''}
+              </div>`;
+        }).join('');
+        return `<div style="background:rgba(255,255,255,.96);border-radius:10px;padding:11px 13px;margin-bottom:10px">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">Question ${cur.position != null ? '#' + cur.position : ''} · ${esc(label(cur.category))}</div>
+            ${fig}
+            <div style="font-size:13.5px;line-height:1.5;color:#1f1a33;white-space:pre-wrap;margin-bottom:${rows ? '8px' : '0'}">${esc(cur.prompt)}</div>
+            ${rows ? `<div style="display:flex;flex-direction:column;gap:5px">${rows}</div>` : ''}
+            ${cur.skipped ? '<div style="margin-top:7px;font-size:11.5px;font-weight:600;color:#b26a00">You skipped this one on the test.</div>' : ''}
           </div>`;
     }
 

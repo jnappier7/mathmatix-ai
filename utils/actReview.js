@@ -60,6 +60,7 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
         skillId: it.skillId || r.skillId || null,
         category,
         prompt: it.content || p.prompt || '',
+        svg: it.svg || null,               // figure, when the item has one (card preview)
         options,
         skipped: !!r.skipped,
         theirAnswer: r.skipped ? null : (r.answer || null),
