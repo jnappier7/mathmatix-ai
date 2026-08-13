@@ -23,6 +23,12 @@ class LessonTracker {
      */
     update(progressUpdate) {
         if (!progressUpdate) return;
+        // Every progressUpdate carries the course-session id (progressState.js).
+        // Capture it here, not just in rehydrate(): when the page renders the
+        // tracker from a chat-turn payload before (or instead of) rehydration,
+        // the bootcamp jump/continue actions still need the id — without this
+        // they silently no-oped.
+        if (progressUpdate.sessionId) this._sessionId = progressUpdate.sessionId;
         this._lastUpdate = progressUpdate;
         this._render(progressUpdate);
     }
@@ -144,6 +150,7 @@ class LessonTracker {
             panel.style.padding = '4px 0';
             wrapper.appendChild(panel);
         }
+        this._bc = pu.bootcamp || null;   // continue-button needs the current queue item
         panel.innerHTML = this._bootcampHtml(pu.bootcamp, pu.diagnosticPlan);
         panel.style.display = 'block';
         wrapper.style.display = 'block';
@@ -157,7 +164,11 @@ class LessonTracker {
         const label = (c) => CAT[c] || String(c || '').replace(/-/g, ' ');
         const hasBaseline = !!bc.phase;   // bootcamp state only exists once a test is scored
         const total = Array.isArray(bc.queue) ? bc.queue.length : 0;
-        const reviewed = Math.min(bc.index || 0, total);
+        // Count actual reviewed items, not the queue index — jumping around
+        // (now possible from the number rail) makes index ≠ progress.
+        const reviewed = Array.isArray(bc.queue)
+            ? bc.queue.filter((q) => q && q.status === 'reviewed').length
+            : 0;
         const pct = total ? Math.round((100 * reviewed) / total) : 0;
         const round = bc.round || 1;
         const isReview = bc.phase === 'review' && total > 0;
@@ -251,17 +262,26 @@ class LessonTracker {
     }
 
     async _jumpTo(i) {
-        if (!this._sessionId) return;
+        // Last-resort fallback: the course catalog tracks the active session too.
+        const sessionId = this._sessionId
+            || (window.courseManager && window.courseManager.activeCourseSessionId);
+        if (!sessionId) {
+            console.warn('[LessonTracker] Jump skipped: no course-session id available');
+            return;
+        }
         try {
             const fetcher = window.csrfFetch || window.fetch;
-            const res = await fetcher(`/api/course-sessions/${this._sessionId}/bootcamp/jump`, {
+            const res = await fetcher(`/api/course-sessions/${sessionId}/bootcamp/jump`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify({ index: i })
             });
             const data = await res.json();
-            if (!data.success) return;
+            if (!data.success) {
+                console.warn('[LessonTracker] Jump rejected:', data && data.message);
+                return;
+            }
             this.updateBootcamp(data.bootcamp);
             const q = (data.bootcamp.queue || [])[i];
             // Pull the question into the conversation so the tutor presents it
@@ -280,8 +300,20 @@ class LessonTracker {
         });
         const cont = document.getElementById('lt-bc-continue');
         if (cont) cont.addEventListener('click', () => {
-            const input = document.getElementById('user-input') || document.getElementById('chat-input');
-            if (input) input.focus();
+            // "Continue" must actually continue: ask the tutor to present the
+            // next missed question. (It used to only focus the input box, which
+            // reads as a dead button.) The typed-message path is the designed
+            // way review advances; focusing is only the no-send fallback.
+            const bc = this._bc || {};
+            const cur = Array.isArray(bc.queue) ? bc.queue[bc.index || 0] : null;
+            const msg = (cur && cur.position != null)
+                ? `Let's go over question ${cur.position}.`
+                : "I'm ready to review my missed questions.";
+            const sent = (typeof window.mmSendChatMessage === 'function') && window.mmSendChatMessage(msg);
+            if (!sent) {
+                const input = document.getElementById('user-input') || document.getElementById('chat-input');
+                if (input) input.focus();
+            }
         });
         const retest = document.getElementById('lt-bc-retest');
         if (retest) retest.addEventListener('click', () => { if (window.openActTest) window.openActTest(); });
