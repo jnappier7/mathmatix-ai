@@ -10,9 +10,18 @@
 //
 // Endpoints (all /api/act-test):
 //   POST /start            → assemble + freeze a form, return sessionId + meta
-//   GET  /next-problem      → serve the current item
-//   POST /submit-answer     → grade one item, advance
-//   POST /complete          → raw→scaled score + per-category breakdown
+//   GET  /problem           → serve the item at any position (free navigation)
+//   POST /save-answer       → record/replace an answer or flag — NOT graded
+//   GET  /overview          → per-question answered/flagged state (palette, resume)
+//   POST /complete          → grade everything, raw→scaled score + breakdown
+//   GET  /next-problem      → legacy one-way rail (stale cached clients only)
+//   POST /submit-answer     → legacy one-way rail (stale cached clients only)
+//
+// Navigation matches the real ACT: within the timed section a student can move
+// back and forth, change answers, and flag questions for review — so grading
+// happens ONCE, at /complete, never mid-test. Mid-test responses store only the
+// answer; returning correctness from save-answer would put the answer key one
+// network-tab peek away from a student who can still change their answer.
 
 const express = require('express');
 const router = express.Router();
@@ -71,6 +80,14 @@ async function seenProblemIdsForUser(userId) {
   }
 }
 
+// Seconds left on the section clock, anchored to startedAt — NOT to whenever
+// the client happened to reopen the page. The real ACT has no pause; without
+// this anchor, closing the tab and resuming restarted the full hour.
+function secondsRemaining(session) {
+  const elapsedMs = Date.now() - new Date(session.startedAt).getTime();
+  return Math.max(0, Math.round((session.timeLimitMinutes * 60000 - elapsedMs) / 1000));
+}
+
 // ── POST /start ─────────────────────────────────────────────
 router.post('/', async (req, res) => {
   return res.status(404).json({ message: 'Use POST /api/act-test/start' });
@@ -91,6 +108,7 @@ router.post('/start', async (req, res) => {
           totalItems: active.items.length,
           answered: active.responses.length,
           timeLimitMinutes: active.timeLimitMinutes,
+          remainingSeconds: secondsRemaining(active),
         });
       }
     }
@@ -145,6 +163,7 @@ router.post('/start', async (req, res) => {
       started: true,
       totalItems: form.items.length,
       timeLimitMinutes: blueprint.timeLimitMinutes,
+      remainingSeconds: blueprint.timeLimitMinutes * 60,
       coverage: form.coverage,           // surfaces partial coverage honestly
     });
   } catch (err) {
@@ -188,6 +207,129 @@ router.get('/next-problem', async (req, res) => {
   } catch (err) {
     console.error('[actTest] next-problem error:', err.message);
     return res.status(500).json({ message: 'Could not load the next question.' });
+  }
+});
+
+// ── GET /problem?sessionId=&position= ───────────────────────
+// Serve the item at ANY position (1-based), plus the student's saved response
+// for it, so revisiting a question shows their current selection. This is what
+// makes back-navigation and answer review possible.
+router.get('/problem', async (req, res) => {
+  try {
+    const { sessionId } = req.query;
+    const session = await loadOwnedSession(sessionId, req.user._id, res);
+    if (!session) return;
+
+    const position = parseInt(req.query.position, 10);
+    if (!Number.isInteger(position) || position < 1 || position > session.items.length) {
+      return res.status(400).json({ message: 'position must be between 1 and ' + session.items.length + '.' });
+    }
+    const item = session.items.find((it) => it.position === position) || session.items[position - 1];
+    const saved = session.responses.find((r) => r.position === item.position);
+
+    return res.json({
+      problem: {
+        problemId: item.problemId,
+        content: item.content,
+        svg: item.svg,
+        skillId: item.skillId,
+        category: item.category,
+        answerType: item.answerType,
+        options: normalizeOptions(item.options),
+        questionNumber: item.position,
+      },
+      response: saved ? { answer: saved.answer || null, flagged: !!saved.flagged } : null,
+      total: session.items.length,
+      remainingSeconds: secondsRemaining(session),
+    });
+  } catch (err) {
+    console.error('[actTest] problem error:', err.message);
+    return res.status(500).json({ message: 'Could not load that question.' });
+  }
+});
+
+// ── POST /save-answer ───────────────────────────────────────
+// Record (or replace) an answer and/or flag for one question. Deliberately
+// ungraded — see the header note. Answers stay editable until time is called
+// or the test is submitted, exactly like the real ACT within a section.
+router.post('/save-answer', async (req, res) => {
+  try {
+    const { sessionId, problemId, position, answer, flagged, responseTime } = req.body || {};
+    const session = await loadOwnedSession(sessionId, req.user._id, res);
+    if (!session) return;
+
+    if (session.status !== 'in_progress') {
+      return res.status(409).json({ message: 'This test is already finished.' });
+    }
+    // Pencils down: once the section clock runs out no answer may change.
+    // 10s grace absorbs client-tick vs server-clock skew on the final answer.
+    if (secondsRemaining(session) === 0) {
+      const overMs = Date.now() - new Date(session.startedAt).getTime() - session.timeLimitMinutes * 60000;
+      if (overMs > 10000) return res.status(409).json({ message: 'Time is up.', timeUp: true });
+    }
+
+    const pos = parseInt(position, 10);
+    const item = session.items.find((it) => it.position === pos);
+    if (!item || item.problemId !== problemId) {
+      return res.status(409).json({ message: 'Question mismatch; refetch the question.' });
+    }
+
+    const existing = session.responses.find((r) => r.position === item.position);
+    const row = existing || {
+      position: item.position,
+      problemId: item.problemId,
+      skillId: item.skillId,
+      category: item.category,
+    };
+    row.answer = (answer === null || answer === undefined || answer === '') ? null : String(answer);
+    row.flagged = !!flagged;
+    row.skipped = row.answer === null;
+    if (responseTime) row.responseTime = responseTime;
+    row.answeredAt = new Date();
+    if (!existing) session.responses.push(row);
+    session.markModified('responses');
+    await session.save();
+
+    return res.json({
+      saved: true,
+      answered: session.responses.filter((r) => r.answer != null).length,
+      total: session.items.length,
+      remainingSeconds: secondsRemaining(session),
+    });
+  } catch (err) {
+    console.error('[actTest] save-answer error:', err.message);
+    return res.status(500).json({ message: 'Could not save your answer.' });
+  }
+});
+
+// ── GET /overview?sessionId= ────────────────────────────────
+// Answered/flagged state for every question — drives the question palette and
+// lets a resumed session pick up exactly where it left off. Never includes
+// correctness (nothing is graded yet).
+router.get('/overview', async (req, res) => {
+  try {
+    const { sessionId } = req.query;
+    const session = await loadOwnedSession(sessionId, req.user._id, res);
+    if (!session) return;
+
+    const byPos = new Map(session.responses.map((r) => [r.position, r]));
+    return res.json({
+      total: session.items.length,
+      status: session.status,
+      timeLimitMinutes: session.timeLimitMinutes,
+      remainingSeconds: secondsRemaining(session),
+      items: session.items.map((it) => {
+        const r = byPos.get(it.position);
+        return {
+          position: it.position,
+          answered: !!(r && r.answer != null),
+          flagged: !!(r && r.flagged),
+        };
+      }),
+    });
+  } catch (err) {
+    console.error('[actTest] overview error:', err.message);
+    return res.status(500).json({ message: 'Could not load the test overview.' });
   }
 });
 
@@ -245,6 +387,45 @@ router.post('/complete', async (req, res) => {
     const { sessionId } = req.body || {};
     const session = await loadOwnedSession(sessionId, req.user._id, res);
     if (!session) return;
+
+    // ── Final grading pass — the ONE place correctness is decided ──
+    // Free navigation means an answer can change right up to submission, so
+    // grade the final state here in a single batch. Legacy sessions (graded at
+    // submit time) regrade to the identical verdict, so both rails share this.
+    const answeredRows = session.responses.filter((r) => r.answer != null && r.answer !== '');
+    const keyByProblemId = new Map();
+    if (answeredRows.length) {
+      const probs = await Problem.find({ problemId: { $in: answeredRows.map((r) => r.problemId) } });
+      probs.forEach((p) => keyByProblemId.set(p.problemId, p));
+    }
+    for (const r of session.responses) {
+      if (r.answer != null && r.answer !== '') {
+        const p = keyByProblemId.get(r.problemId);
+        r.correct = p ? !!p.checkAnswer(r.answer) : false;
+        r.skipped = false;
+      } else {
+        r.correct = false;
+        r.skipped = true;
+      }
+    }
+    // A question never visited is wrong on the real ACT too — synthesize its
+    // row so the per-skill diagnostics and the review queue can see it.
+    const respondedPositions = new Set(session.responses.map((r) => r.position));
+    for (const item of session.items) {
+      if (!respondedPositions.has(item.position)) {
+        session.responses.push({
+          position: item.position,
+          problemId: item.problemId,
+          skillId: item.skillId,
+          category: item.category,
+          answer: null,
+          correct: false,
+          skipped: true,
+        });
+      }
+    }
+    session.responses.sort((a, b) => (a.position || 0) - (b.position || 0));
+    session.markModified('responses');
 
     const raw = session.responses.filter(r => r.correct).length;
     const total = session.items.length;
