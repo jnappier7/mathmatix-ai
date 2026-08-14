@@ -10,7 +10,7 @@ import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbea
 import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js?v=20260731b';
 import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
 import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
-import './modules/statusCard.js'; // registers window.openStatusCard (Progress button)
+import './modules/statusCard.js?v=2'; // registers window.openStatusCard (Progress button)
 // Versioned specifier — see the note on the billing.js import below. Without
 // it the try-on preview fix below would not reach a returning student for a
 // week: /js/** is served max-age=604800, and bumping script.js's own ?v= does
