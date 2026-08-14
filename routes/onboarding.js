@@ -10,6 +10,7 @@ const logger = require('../utils/logger');
 const { inferIntent } = require('../utils/onboardingIntent');
 const { recordClassification } = require('../utils/intentMetrics');
 const { COPPA_AGE } = require('../utils/consentManager');
+const { parseDateOfBirth } = require('../utils/dob');
 
 /**
  * The two consent gates a student can still owe, split by COPPA semantics:
@@ -154,18 +155,15 @@ router.post('/intent', async (req, res) => {
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
 
-    // Optional DOB update. Reject implausible dates (in the future / >120y old).
-    if (dobInput) {
-      const d = new Date(dobInput);
-      if (Number.isNaN(d.getTime())) {
-        return res.status(400).json({ success: false, message: 'That birth date didn’t look right — try again.' });
+    // Optional DOB update via the shared validator (utils/dob.js) — same
+    // rules as signup and /api/user/settings, and write-once like them:
+    // only sets when absent, so a re-visit can't overwrite a recorded DOB.
+    if (dobInput && !user.dateOfBirth) {
+      const parsed = parseDateOfBirth(dobInput);
+      if (parsed.error) {
+        return res.status(400).json({ success: false, message: parsed.error });
       }
-      const now = new Date();
-      const minBirth = new Date(now.getFullYear() - 120, 0, 1);
-      if (d > now || d < minBirth) {
-        return res.status(400).json({ success: false, message: 'That birth date didn’t look right — try again.' });
-      }
-      user.dateOfBirth = d;
+      user.dateOfBirth = parsed.date;
     }
 
     // intentText is deliberately NOT persisted. It was stored for months and

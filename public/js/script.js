@@ -509,6 +509,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // WHITEBOARD SHELVED FOR BETA
             // initializeWhiteboard();
             setupChatUI();
+            // One-time DOB collection for existing students (age gates ran
+            // blind while the DOB writers were broken — see utils/dob.js).
+            maybeShowDobPrompt();
             updateChatWatermark(); // Initialize watermark state (chat starts empty)
             await fetchAndDisplayParentCode();
 
@@ -3022,6 +3025,79 @@ document.addEventListener("DOMContentLoaded", () => {
             writing: `${name} is writing back…`,
         };
         textEl.textContent = labels[stage] || `${name} is thinking...`;
+    }
+
+    /**
+     * One-time date-of-birth prompt for students whose accounts predate the
+     * fixed DOB writers. Non-blocking: "Later" snoozes it for this session,
+     * and it disappears forever once a DOB is saved (write-once server-side).
+     * If the saved DOB reveals an under-13 without parental consent, the card
+     * routes to complete-profile.html, which shows the parent-link flow.
+     */
+    function maybeShowDobPrompt() {
+        if (!currentUser || currentUser.role !== 'student') return;
+        if (currentUser.dateOfBirth) return;
+        try { if (sessionStorage.getItem('mmDobPromptLater')) return; } catch (_) {}
+        if (!chatBox || chatBox.querySelector('.dob-prompt-card')) return;
+
+        const card = document.createElement('div');
+        card.className = 'message-container dob-prompt-card';
+        const today = new Date().toISOString().slice(0, 10);
+        card.innerHTML = `<div class="message" style="text-align:center; max-width:420px; margin:10px auto; padding:16px; border:1px solid var(--clr-border,#e2e8f0); border-radius:12px; background:var(--clr-bg-subtle,#f8fafb);">
+            <div style="font-weight:600; margin-bottom:4px;">Quick one — when's your birthday? 🎂</div>
+            <div style="font-size:.9rem; color:var(--clr-text-dim,#5b6876); margin-bottom:10px;">It helps us keep Mathmatix safe and age-appropriate. We never show it to anyone.</div>
+            <input type="date" class="dob-prompt-input" max="${today}" style="padding:8px 12px; font-size:1rem; border:1px solid var(--clr-border,#e2e8f0); border-radius:8px; margin-bottom:10px;">
+            <div class="dob-prompt-status" style="font-size:.85rem; color:#dc3545; min-height:1em; margin-bottom:6px;"></div>
+            <div style="display:flex; gap:8px; justify-content:center;">
+                <button type="button" class="btn btn-primary dob-prompt-save">Save</button>
+                <button type="button" class="btn btn-secondary dob-prompt-later">Later</button>
+            </div>
+        </div>`;
+        chatBox.appendChild(card);
+
+        const input = card.querySelector('.dob-prompt-input');
+        const statusEl = card.querySelector('.dob-prompt-status');
+        const saveBtn = card.querySelector('.dob-prompt-save');
+
+        card.querySelector('.dob-prompt-later').addEventListener('click', () => {
+            try { sessionStorage.setItem('mmDobPromptLater', '1'); } catch (_) {}
+            card.remove();
+        });
+
+        saveBtn.addEventListener('click', async () => {
+            const value = (input.value || '').trim();
+            if (!value) { statusEl.textContent = 'Pick your birthday first.'; return; }
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving…';
+            try {
+                const res = await csrfFetch('/api/user/settings', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dateOfBirth: value }),
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    statusEl.textContent = data.message || 'Couldn’t save that — try again.';
+                    return;
+                }
+                currentUser.dateOfBirth = value;
+                const age = Math.floor((Date.now() - new Date(value).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+                const msgEl = card.querySelector('.message');
+                if (age < 13 && !currentUser.hasParentalConsent) {
+                    msgEl.innerHTML = `<div style="font-weight:600; margin-bottom:6px;">Thanks! One more step — a grown-up's okay.</div>
+                        <div style="font-size:.9rem; color:var(--clr-text-dim,#5b6876); margin-bottom:10px;">A parent or guardian needs to approve Mathmatix for you.</div>
+                        <a href="/complete-profile.html" class="btn btn-primary" style="display:inline-block;">Set that up</a>`;
+                } else {
+                    msgEl.textContent = 'Thanks — all set! 🎉';
+                    setTimeout(() => card.remove(), 3000);
+                }
+            } catch (err) {
+                statusEl.textContent = 'Network hiccup — try again.';
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save';
+            }
+        });
     }
 
     /**

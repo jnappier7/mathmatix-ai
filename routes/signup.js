@@ -14,6 +14,7 @@ const TUTOR_CONFIG = require('../utils/tutorConfig');
 const { generateUniqueUsername } = require('../auth/passport-config');
 
 const { anyRole } = require('../utils/roleQuery');
+const { parseDateOfBirth } = require('../utils/dob');
 // Roles that can be self-assigned during public signup.
 // 'admin' and 'teacher' are intentionally excluded — these accounts must be created by existing admins.
 const SELF_REGISTERABLE_ROLES = ['student', 'parent'];
@@ -172,6 +173,13 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
         // DOB (and, if minor, parental consent) are captured on onboarding.
         const skipProfileGate = (role !== 'student');
 
+        // Persist a plausible DOB when supplied. This field was destructured
+        // from the body and then silently discarded — every downstream age
+        // gate (COPPA consent, under-13 voice block) ran blind because of it.
+        // Invalid values are ignored rather than failing signup; the in-chat
+        // DOB prompt re-collects later.
+        const parsedDob = dateOfBirth ? parseDateOfBirth(dateOfBirth) : null;
+
         const newUser = new User({
             firstName,
             lastName,
@@ -181,6 +189,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             role,
             needsProfileCompletion: !skipProfileGate,
             termsAcceptedAt: new Date(),
+            ...(parsedDob && parsedDob.date ? { dateOfBirth: parsedDob.date } : {}),
             // Email verification
             emailVerified: false,
             emailVerificationToken: hashedToken,

@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const Sentry = require('@sentry/node');
 
 const logger = require('../utils/logger');
+const { applyDobToUser } = require('../utils/dob');
 const User = require('../models/user');
 
 // Stricter rate limiter for unauthenticated AI endpoints (trial chat)
@@ -622,6 +623,17 @@ function registerUserRoutes(app) {
       ];
 
       let hasChanges = false;
+      // dateOfBirth is deliberately NOT in the allowlist loop: it is validated
+      // and write-once (set when absent, never changed self-serve — otherwise
+      // an age-gated under-13 could age themselves up here). Before this,
+      // complete-profile.html sent it here and it was silently dropped.
+      if (req.body.dateOfBirth !== undefined) {
+        const result = applyDobToUser(user, req.body.dateOfBirth);
+        if (!result.ok) {
+          return res.status(result.status).json({ message: result.message });
+        }
+        hasChanges = true;
+      }
       for (const key in req.body) {
         if (allowedUpdates.includes(key)) {
           user[key] = req.body[key];
