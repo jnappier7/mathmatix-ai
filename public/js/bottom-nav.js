@@ -23,13 +23,6 @@
   'use strict';
 
   if (!window.MM_FEATURES || !window.MM_FEATURES.bottomNav) return;
-  // The shelved Companion-HOME experiment ships its own bottom nav — never
-  // run both. That flag also honors localStorage/URL switches, so mirror them.
-  try {
-    if ((window.MM_FEATURES && window.MM_FEATURES.companionHome) ||
-        localStorage.getItem('mm_companion_home') === '1' ||
-        /[?&]companionHome=1/.test(location.search)) return;
-  } catch (e) { /* localStorage blocked — flag checks above suffice */ }
 
   var CSS = [
     '.mbn{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:flex;',

@@ -69,6 +69,82 @@ async function loadQuests(mount) {
     }
 }
 
+function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+const STRAND_LABEL = {
+    'number-operations': 'Number & operations',
+    'algebra': 'Algebra',
+    'geometry': 'Geometry',
+    'measurement-data': 'Measurement & data',
+    'statistics-probability': 'Statistics & probability',
+    'functions': 'Functions',
+};
+const strandLabel = (s) => STRAND_LABEL[s] || String(s || '').replace(/-/g, ' ');
+
+// The climb card: the student's current band as a short ladder of SKILLS
+// (owner: rungs are skills with learn/prove/teach stages, never grade levels).
+// Reads the same /api/mastery/map the full skill-map page uses; cached for the
+// session — the map moves at most a few times a day.
+let mapCache = null;
+
+function rungHTML(skill, kind) {
+    const tag = kind === 'current'
+        ? (skill.state === 'learned' ? 'proving it · you are here' : 'learning it · you are here')
+        : skill.state === 'taught' ? '✓ taught'
+        : (skill.state === 'proved' || skill.state === 'above') ? '✓ proved'
+        : '';
+    return `<div class="sc-rung is-${kind}">
+        <span class="sc-rung-name">${esc(skill.label || skill.skillId)}</span>
+        ${tag ? `<span class="sc-rung-tag">${tag}</span>` : ''}
+      </div>`;
+}
+
+async function loadLadder(block) {
+    const mount = block.querySelector('#sc-ladder-mount');
+    try {
+        if (!mapCache) {
+            const res = await fetch('/api/mastery/map', { credentials: 'include' });
+            if (!res.ok) throw new Error(`map ${res.status}`);
+            mapCache = await res.json();
+        }
+        const data = mapCache;
+        if (!data.seeded || !Array.isArray(data.skills) || !data.skills.length) { block.hidden = true; return; }
+
+        // The band to show: the one the map engine says is nearest to closable;
+        // fall back to the band with the most progress still in flight.
+        let strand = data.nearest?.strand, level = data.nearest?.courseLevel;
+        if (!strand) {
+            const inFlight = (data.bands || []).filter((b) => b.owned > 0 && b.owned < b.total)
+                .sort((a, b) => b.pct - a.pct)[0];
+            if (!inFlight) { block.hidden = true; return; }
+            strand = inFlight.strand; level = inFlight.courseLevel;
+        }
+        const band = data.skills.filter((s) => s.strand === strand && s.courseLevel === level);
+        const done = band.filter((s) => s.state === 'taught' || s.state === 'proved' || s.state === 'above');
+        const current = band.find((s) => s.skillId === data.nearest?.nextSkillId)
+            || band.find((s) => s.canAttempt)
+            || band.find((s) => s.state === 'open' || s.state === 'learned');
+        const ahead = band.filter((s) => s !== current && !done.includes(s)
+            && (s.state === 'locked' || s.state === 'open' || s.state === 'learned'));
+        if (!current && !done.length) { block.hidden = true; return; }
+
+        // Top-to-bottom: what's ahead, where they stand, what's already earned.
+        const rows = []
+            .concat(ahead.slice(0, 2).reverse().map((s) => rungHTML(s, 'ahead')))
+            .concat(current ? [rungHTML(current, 'current')] : [])
+            .concat(done.slice(-2).reverse().map((s) => rungHTML(s, 'done')));
+        mount.innerHTML = rows.join('');
+        block.querySelector('.sc-ladder-sub').textContent =
+            `${strandLabel(strand)} · learn it, prove it, teach it`;
+        block.hidden = false;
+    } catch (e) {
+        block.hidden = true;   // no ladder beats a broken ladder
+        console.warn('Status card ladder failed', e);
+    }
+}
+
 function buildModal() {
     let modal = document.getElementById(MODAL_ID);
     if (modal) return modal;
@@ -98,7 +174,6 @@ function buildModal() {
             <div class="sc-name"></div>
             <div class="sc-rank"></div>
             <a class="sc-lab-cta" href="/pick-avatar.html">🎨 Choose your character</a>
-            <button type="button" class="sc-shop-cta">🛍️ Open Shop</button>
           </div>
         </div>
 
@@ -111,6 +186,22 @@ function buildModal() {
 
         <div class="sc-progress-row">
           <div class="sc-progress-bar"><div class="sc-progress-fill"></div></div>
+        </div>
+
+        <div class="sc-ladder-block" hidden>
+          <div class="sc-block-head">🪜 Your climb
+            <a class="sc-map-link" href="/skill-map.html">See the whole map →</a>
+          </div>
+          <div class="sc-ladder-sub"></div>
+          <div class="sc-ladder" id="sc-ladder-mount"></div>
+        </div>
+
+        <div class="sc-store-block">
+          <div class="sc-store-info">
+            <div class="sc-store-title">🛍️ Store</div>
+            <div class="sc-store-sub">Board skins, avatar gear</div>
+          </div>
+          <button type="button" class="sc-store-btn">Shop</button>
         </div>
 
         <div class="sc-tutor" hidden>
@@ -127,7 +218,7 @@ function buildModal() {
     document.body.appendChild(modal);
     modal.querySelectorAll('[data-sc-close]').forEach(el =>
         el.addEventListener('click', closeStatusCard));
-    modal.querySelector('.sc-shop-cta')?.addEventListener('click', () => {
+    modal.querySelector('.sc-store-btn')?.addEventListener('click', () => {
         closeStatusCard();
         if (typeof window.openShop === 'function') window.openShop();
     });
@@ -177,6 +268,8 @@ function populate(modal, user) {
     if (coins != null) {
         q('.sc-coins').textContent = String(coins);
         q('.sc-coins-stat').hidden = false;
+        q('.sc-store-sub').textContent =
+            `${coins} coin${coins === 1 ? '' : 's'} to spend — board skins, avatar gear`;
     }
 
     // Tutor message.
@@ -198,6 +291,7 @@ export function openStatusCard() {
     const modal = buildModal();
     populate(modal, user);
     loadQuests(modal.querySelector('#sc-quests-mount'));
+    loadLadder(modal.querySelector('.sc-ladder-block'));
     modal.hidden = false;
     void modal.offsetWidth; // reflow so the open transition runs
     modal.classList.add('sc-open');

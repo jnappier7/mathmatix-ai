@@ -112,6 +112,55 @@
 .sc-tutor-name { font-weight: 800; color: #12b3b3; margin-right: 6px; }
 .sc-tutor-text { color: #18202b; }
 
+/* Your climb — current band as a short ladder of skills (rungs are SKILLS
+   with learn/prove/teach stages, never grade levels). */
+.sc-ladder-block { margin-bottom: 16px; }
+.sc-ladder-block[hidden] { display: none; }
+.sc-block-head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  font-size: 0.9rem; font-weight: 800; color: #18202b;
+}
+.sc-map-link { font-size: 0.74rem; font-weight: 700; color: #12b3b3; text-decoration: none; white-space: nowrap; }
+.sc-map-link:hover { text-decoration: underline; }
+.sc-ladder-sub { font-size: 0.72rem; color: #5b6876; margin: 2px 0 8px; }
+.sc-ladder { display: flex; flex-direction: column; }
+.sc-rung {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 7px 10px;
+  border-left: 3px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.84rem; font-weight: 700;
+}
+.sc-rung-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-rung-tag { margin-left: auto; font-size: 0.68rem; font-weight: 800; white-space: nowrap; }
+.sc-rung.is-ahead { color: #8a94a3; }
+.sc-rung.is-current {
+  color: #18202b;
+  border-left-color: #12b3b3;
+  background: linear-gradient(90deg, rgba(18, 179, 179, 0.10), transparent);
+  border-radius: 0 10px 10px 0;
+}
+.sc-rung.is-current .sc-rung-tag { color: #12b3b3; }
+.sc-rung.is-done { color: #5b6876; border-left-color: #16c86d; }
+.sc-rung.is-done .sc-rung-tag { color: #16c86d; }
+
+/* Store */
+.sc-store-block {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: rgba(255, 194, 75, 0.14);
+  border-radius: 14px; padding: 12px 14px; margin-bottom: 16px;
+}
+.sc-store-title { font-size: 0.9rem; font-weight: 800; color: #18202b; }
+.sc-store-sub { font-size: 0.74rem; color: #5b6876; margin-top: 1px; }
+.sc-store-btn {
+  border: none; cursor: pointer;
+  background: linear-gradient(135deg, #ffc24b, #ff9d3b);
+  color: #4a3208; font-family: Inter, sans-serif;
+  font-size: 0.82rem; font-weight: 800;
+  border-radius: 10px; padding: 9px 18px;
+  white-space: nowrap;
+}
+.sc-store-btn:hover { filter: brightness(1.05); }
+
 /* Quests */
 .sc-quests-head { font-size: 0.9rem; font-weight: 800; color: #18202b; margin-bottom: 8px; }
 .sc-quests { display: flex; flex-direction: column; gap: 10px; }
