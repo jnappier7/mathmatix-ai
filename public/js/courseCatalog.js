@@ -738,8 +738,11 @@ class CourseManager {
 
         grid.innerHTML = '';
 
-        // Build a set of already-enrolled courseIds
+        // Build a set of already-enrolled courseIds, and courseId → sessionId so
+        // an enrolled card can RESUME the course (on mobile the catalog is the
+        // only courses surface, so a dead "Enrolled" button strands the student).
         const enrolled = new Set(this.courseSessions.map(s => s.courseId));
+        const sessionByCourse = new Map(this.courseSessions.map(s => [s.courseId, s._id]));
 
         if (catalog.length === 0) {
             grid.innerHTML = `
@@ -811,18 +814,23 @@ class CourseManager {
                     <button class="catalog-enroll-btn" data-course-id="${course.courseId}"
                         style="padding:8px 18px; border:none; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap;
                         ${isEnrolled
-                            ? 'background:#f0f0f0; color:#888; cursor:default;'
+                            ? 'background:#f3efff; color:#5b3ea8; border:1px solid #c9bcf0;'
                             : 'background:linear-gradient(135deg, #667eea, #764ba2); color:white;'
-                        }"
-                        ${isEnrolled ? 'disabled' : ''}>
-                        ${isEnrolled ? '<i class="fas fa-check" style="margin-right:4px;"></i>Enrolled' : 'Enroll'}
+                        }">
+                        ${isEnrolled ? '<i class="fas fa-play" style="margin-right:4px; font-size:11px;"></i>Continue' : 'Enroll'}
                     </button>
                 </div>
             `;
 
-            // Wire up enroll button
-            if (!isEnrolled) {
-                const btn = card.querySelector('.catalog-enroll-btn');
+            // Enrolled → Continue resumes the course; otherwise Enroll.
+            const btn = card.querySelector('.catalog-enroll-btn');
+            if (isEnrolled) {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.closeCatalog();
+                    this.activateCourse(sessionByCourse.get(course.courseId));
+                });
+            } else {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     this.enrollInCourse(course.courseId, btn);
