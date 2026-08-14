@@ -36,7 +36,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     // from the dashboard, no code change needed. Editing here still works too.
     // courses: true — the "My Courses" sidebar entry point is live (structure-everywhere).
     // Kill switch: set courses:false here, or load with ?courses=0 to hide it for a session.
-    window.MM_FEATURES = Object.assign({ boardPanel: true, livingWorkspace: 'live', courses: true }, window.MM_FEATURES || {});
+    // bottomNav: phone-only (≤900px) tab bar — Tutor/Courses/Practice/Progress/More.
+    // Kill switch: set bottomNav:false here (desktop is untouched either way).
+    window.MM_FEATURES = Object.assign({ boardPanel: true, livingWorkspace: 'live', courses: true, bottomNav: true }, window.MM_FEATURES || {});
     if (window.MM_FEATURES.boardPanel === false) {
       document.documentElement.classList.add('mm-board-hidden');
     }
@@ -2524,6 +2526,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/dist/js/chat-js9.6c1f45bc.js"></script>
   <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->
   <script defer src="/js/mobile-companion-home.js"></script>
+  <!-- Bottom tab bar (phones only; MM_FEATURES.bottomNav) -->
+  <script defer src="/js/bottom-nav.js?v=1"></script>
 <!-- Intelligent Whiteboard init (Phase 0 wire-up) -->
 <script>
   (function initMathmatixWhiteboard() {
