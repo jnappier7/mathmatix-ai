@@ -2381,6 +2381,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </button>
     </div>
     <div class="more-tools-grid">
+      <!-- Courses entry point that survives mobile: the sidebar courses card is
+           display:none ≤900px, so without this the catalog is unreachable on
+           phones. browse-courses-btn lives in that hidden card — a programmatic
+           click still opens the catalog modal. -->
+      <button class="more-tool-item" data-trigger="browse-courses-btn">
+        <i class="fas fa-graduation-cap"></i>
+        <span>My Courses</span>
+      </button>
       <button class="more-tool-item" data-trigger="open-settings-modal-btn">
         <i class="fas fa-cog"></i>
         <span>Settings</span>
@@ -2429,7 +2437,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script defer src="/js/voice-subtitles.js?v=20260718b"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
-  <script src="/dist/js/chat-js3.d21352d7.js"></script>
+  <script src="/dist/js/chat-js3.0514356e.js"></script>
 <!-- returningUserModal.js removed — no longer used -->
   <script src="/dist/js/chat-js4.56a45792.js"></script>
 <link rel="stylesheet" href="/css/algebra-tiles.css">

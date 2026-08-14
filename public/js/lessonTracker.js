@@ -11,6 +11,13 @@ class LessonTracker {
         this._lastUpdate = null;
         this._devMode = false; // Toggle via LessonTracker.dev()
         this._initialized = false;
+        // Bootcamp card collapse: sticky per student; defaults collapsed on
+        // small screens (the card would otherwise crowd out the chat itself).
+        let saved = null;
+        try { saved = localStorage.getItem('mm-bc-collapsed'); } catch (e) { /* private mode */ }
+        this._bcCollapsed = saved != null
+            ? saved === '1'
+            : !!(window.matchMedia && window.matchMedia('(max-width: 900px)').matches);
     }
 
     // --------------------------------------------------
@@ -213,16 +220,30 @@ class LessonTracker {
               ${(dp.masteredCategories || []).map((c) => `<span style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);font-size:11.5px;padding:3px 9px;border-radius:20px"><i class="fas fa-check" style="font-size:10px"></i> ${label(c)}</span>`).join('')}
             </div>` : '';
 
+        // Collapsed: one slim row that still says where the student is, so the
+        // chat gets its screen back (this is the default on phones).
+        const collapsed = !!this._bcCollapsed;
+        const compact = !hasBaseline
+            ? 'Start your baseline'
+            : isReview
+                ? `${reviewed} of ${total} reviewed${cur && cur.position != null ? ` · next #${cur.position}` : ''}`
+                : 'Ready to re-test';
+
         return `
-          <div style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;padding:14px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-              <span style="color:#fff;font-size:15px;font-weight:700">🎯 ACT bootcamp <span style="font-weight:500;font-size:12px;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:20px;margin-left:4px">Round ${round}</span></span>
-              <span id="lt-bc-score" style="color:#fff;font-size:13px;opacity:.9"></span>
-            </div>
+          <div style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;padding:${collapsed ? '10px 16px' : '14px 16px'};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+            <button id="lt-bc-head" aria-expanded="${!collapsed}" title="${collapsed ? 'Expand' : 'Collapse'}"
+              style="background:transparent;border:0;padding:0;width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer;text-align:left;font:inherit">
+              <span style="color:#fff;font-size:15px;font-weight:700">🎯 ACT bootcamp <span style="font-weight:500;font-size:12px;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:20px;margin-left:4px">Round ${round}</span>${collapsed ? `<span style="font-weight:500;font-size:12.5px;color:rgba(255,255,255,.85);margin-left:10px">${compact}</span>` : ''}</span>
+              <span style="display:flex;align-items:center;gap:10px">
+                <span id="lt-bc-score" style="color:#fff;font-size:13px;opacity:.9"></span>
+                <i class="fas fa-chevron-${collapsed ? 'down' : 'up'}" style="color:rgba(255,255,255,.75);font-size:12px"></i>
+              </span>
+            </button>
+            ${collapsed ? '' : `
             ${loop}
             ${phaseCard}
             ${chips}
-            ${hasBaseline ? `<div style="margin-top:12px;text-align:right"><a id="lt-bc-progress" href="#" style="color:#fff;font-size:12px;opacity:.9;text-decoration:none"><i class="fas fa-chart-line"></i> See your progress</a></div>` : ''}
+            ${hasBaseline ? `<div style="margin-top:12px;text-align:right"><a id="lt-bc-progress" href="#" style="color:#fff;font-size:12px;opacity:.9;text-decoration:none"><i class="fas fa-chart-line"></i> See your progress</a></div>` : ''}`}
           </div>`;
     }
 
@@ -334,6 +355,12 @@ class LessonTracker {
     }
 
     _wireBootcamp() {
+        const head = document.getElementById('lt-bc-head');
+        if (head) head.addEventListener('click', () => {
+            this._bcCollapsed = !this._bcCollapsed;
+            try { localStorage.setItem('mm-bc-collapsed', this._bcCollapsed ? '1' : '0'); } catch (e) { /* private mode */ }
+            if (this._lastUpdate) this._renderBootcamp(this._lastUpdate);
+        });
         const rail = document.getElementById('lt-bc-numbers');
         if (rail) rail.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-bc-jump]');
