@@ -687,17 +687,26 @@
     align-items: center;
 }
 
+/* Filter pills: white-on-white with a #e2e8f0 hairline and grey text read as
+   disabled rather than tappable. A tinted ground, a darker label and a little
+   lift make the unselected state look like a control you can press. */
 .catalog-filter-pill {
-    padding: 6px 14px;
-    border: 1px solid #e2e8f0;
+    padding: 7px 15px;
+    border: 1px solid #dcdff0;
     border-radius: 20px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    background: #fff;
-    color: #64748b;
+    background: #F4F5FB;
+    color: #4A5163;
+    box-shadow: 0 1px 2px rgba(60, 50, 120, 0.07);
     transition: all 0.15s;
     white-space: nowrap;
+}
+
+.catalog-filter-pill:active {
+    transform: scale(0.95);
+    box-shadow: none;
 }
 
 .catalog-filter-pill:hover {

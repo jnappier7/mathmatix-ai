@@ -33,15 +33,27 @@
     'body.cr-voice .mbn{display:none}',
     '@media (min-width:901px){.mbn{display:none}}',
     '@media (prefers-reduced-motion:reduce){.mbn{transition:none}}',
-    '.mbn-tab{flex:1;border:0;background:transparent;color:#7B729D;font-family:inherit;',
+    // Inactive tabs were #7B729D label text on a transparent ground, which is
+    // low enough contrast that the row read as decoration. Darker ink, and the
+    // press/active states get a real surface so a tap lands somewhere visible.
+    '.mbn-tab{flex:1;border:0;background:transparent;color:#635B87;font-family:inherit;',
     'font-size:10.5px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:2px;',
-    'padding:5px 0 3px;cursor:pointer;border-radius:12px;position:relative;min-height:48px}',
-    '.mbn-tab .mbn-ico{font-size:20px;line-height:1.15}',
-    '.mbn-tab.on{color:#6a5acd;background:rgba(106,90,205,.10)}',
+    'padding:5px 0 3px;cursor:pointer;border-radius:12px;position:relative;min-height:48px;',
+    // overflow:hidden clips the .on marker to the pill's rounded top edge —
+    // without it the bar floats free above the tint and reads as a stray line.
+    'overflow:hidden;transition:background-color .12s ease,color .12s ease,transform .12s ease}',
+    '.mbn-tab .mbn-ico{font-size:21px;line-height:1.15}',
+    '.mbn-tab:active{transform:scale(.94);background:rgba(106,90,205,.09)}',
+    // Active tab: stronger tint + a top marker so the current surface is
+    // readable at a glance rather than a faint wash behind one label.
+    '.mbn-tab.on{color:#5A49C4;background:rgba(106,90,205,.14)}',
+    '.mbn-tab.on::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);',
+    'width:22px;height:3px;border-radius:0 0 3px 3px;background:#6a5acd}',
     '.mbn-tab:focus-visible{outline:2px solid #667eea;outline-offset:1px}',
     '[data-theme="dark"] .mbn{background:#1C1A2B;border-top-color:rgba(236,233,247,.10)}',
-    '[data-theme="dark"] .mbn-tab{color:#9A93B8}',
-    '[data-theme="dark"] .mbn-tab.on{color:#b9a8ff;background:rgba(154,128,255,.14)}',
+    '[data-theme="dark"] .mbn-tab{color:#A7A0C4}',
+    '[data-theme="dark"] .mbn-tab.on{color:#c4b5ff;background:rgba(154,128,255,.18)}',
+    '[data-theme="dark"] .mbn-tab.on::before{background:#b9a8ff}',
     // Make room above the nav so the composer is never covered. --mm-nav-h is
     // the nav's MEASURED height (see publishNavHeight), so this reserves exactly
     // what the nav occupies and nothing more — and collapses to 0 on its own
