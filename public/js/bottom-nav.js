@@ -31,7 +31,7 @@
     'transition:transform .22s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}',
     '.mbn.mbn-away{transform:translateY(110%)}',
     'body.cr-voice .mbn{display:none}',
-    '@media (min-width:901px){.mbn{display:none}body.mbn-space #chat-container{margin-bottom:60px !important}}',
+    '@media (min-width:901px){.mbn{display:none}}',
     '@media (prefers-reduced-motion:reduce){.mbn{transition:none}}',
     '.mbn-tab{flex:1;border:0;background:transparent;color:#7B729D;font-family:inherit;',
     'font-size:10.5px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:2px;',
@@ -42,10 +42,24 @@
     '[data-theme="dark"] .mbn{background:#1C1A2B;border-top-color:rgba(236,233,247,.10)}',
     '[data-theme="dark"] .mbn-tab{color:#9A93B8}',
     '[data-theme="dark"] .mbn-tab.on{color:#b9a8ff;background:rgba(154,128,255,.14)}',
-    // Make room above the nav so the composer is never covered (phone only).
+    // Make room above the nav so the composer is never covered. --mm-nav-h is
+    // the nav's MEASURED height (see publishNavHeight), so this reserves exactly
+    // what the nav occupies and nothing more — and collapses to 0 on its own
+    // wherever the nav isn't rendered (desktop, voice mode, keyboard-up).
+    //
+    // It used to reserve two different amounts at once: margin-bottom said 64px,
+    // max-height said 130px. max-height won, so the composer floated 130px up
+    // from the bottom edge over a nav only ~60px tall, leaving a ~70px dead band
+    // across the bottom of every phone.
+    //
+    // Phone-scoped on purpose: above 900px the nav is display:none and
+    // chat-redesign.css's own `margin-bottom:60px` clears the fixed desktop
+    // footer, so this must not reach that far. The `.cr-mode` in the selector
+    // is also load-bearing — it outranks mobile-poster-chat.css's
+    // `body.cr-mode #chat-container { margin: 0 !important }`, which would
+    // otherwise tie and cancel the reservation.
     '@media (max-width:900px){body.mbn-space.cr-mode #chat-container{',
-    'margin-bottom:calc(64px + env(safe-area-inset-bottom,0px)) !important;',
-    'max-height:calc(100vh - 130px - env(safe-area-inset-bottom,0px)) !important}}',
+    'margin-bottom:var(--mm-nav-h,0px) !important}}',
     // Practice sheet
     '.mbn-sheet{position:fixed;left:0;right:0;bottom:0;z-index:8999;background:var(--cr-bg-panel,#fff);',
     'border-radius:16px 16px 0 0;box-shadow:0 -12px 40px rgba(20,15,45,.25);',
@@ -173,9 +187,38 @@
       });
     }
 
+    publishNavHeight();
+    if (window.ResizeObserver) new ResizeObserver(publishNavHeight).observe(nav);
+    window.addEventListener('resize', publishNavHeight);
+    window.addEventListener('orientationchange', publishNavHeight);
+
     // Active-tab poll (see header note for why not MutationObserver).
     setInterval(syncActive, 400);
     syncActive();
+  }
+
+  /**
+   * Publish the nav's occupied height as --mm-nav-h on <html>.
+   *
+   * Everything that has to sit above the nav — the chat container, the
+   * workspace FAB, the idle greeting — reads this instead of carrying its own
+   * hardcoded guess at the nav's height. Those guesses (60px / 64px / 130px /
+   * 92px, across four files) are what drifted apart into the overlap and
+   * dead-space bugs; one measured value cannot drift from itself.
+   *
+   * The border box is what's measured, so the safe-area padding is already
+   * inside the number — callers must NOT add env(safe-area-inset-bottom) on
+   * top. Where the nav is display:none (desktop >900px, voice mode) the rect
+   * collapses to 0 and every consumer reverts to no reservation on its own.
+   *
+   * .mbn-away is deliberately NOT treated as zero. The nav only slides out
+   * while the on-screen keyboard is up, and a fixed-position composer doesn't
+   * move with the iOS keyboard anyway — releasing the space there would push
+   * the composer 60px further under it for no gain.
+   */
+  function publishNavHeight() {
+    var h = nav ? nav.getBoundingClientRect().height : 0;
+    document.documentElement.style.setProperty('--mm-nav-h', h + 'px');
   }
 
   function surfaceOpen() {

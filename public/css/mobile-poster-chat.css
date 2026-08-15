@@ -134,6 +134,20 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
+    /* chat-redesign.css caps this at `calc(100vh - 124px)` so the three DESKTOP
+       stage columns end on one line above the fixed footer. On a phone there is
+       no footer (hidden above) and no stage — the container is a fixed,
+       full-height flex column whose bottom edge is set by inset + the nav
+       reservation. Left in place the cap simply held the composer 124px off the
+       bottom of the screen, which is the dead band under the composer. Height
+       here comes from the insets, so the cap has to go. */
+    max-height: none !important;
+    /* And `height` must stay auto for the insets to mean anything: style.css
+       gives #chat-container `height: 100%`, which over-constrains a fixed box
+       that also has top, bottom and a bottom margin — the margin is then
+       dropped and the composer sits behind the bottom nav. Auto lets
+       `inset: 0` + the nav reservation resolve the height. */
+    height: auto !important;
   }
 
   /* scrolling message list */
@@ -246,10 +260,17 @@
     display: block;
     position: fixed;
     left: 0; right: 0;
-    /* Clear the composer (toolbar row + input row + safe-area home indicator)
-       so the "I'll help you step by step." subtitle doesn't collide with the
-       √x / 📎 / 📷 / 🎤 toolbar icons. */
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 195px);
+    /* Sit above the whole bottom stack: nav + composer + the workspace FAB
+       that floats over the composer.
+         --mm-nav-h      measured by bottom-nav.js       (0 when no nav)
+         --mm-composer-h measured by mobile-poster-chat.js
+         58px            FAB (38px) + its 10px offset + 10px breathing room
+       This was a flat `safe-area + 195px`, which is what put the "I'll help you
+       step by step." line across the √x / camera / mic / calculator icons: the
+       composer's real top edge moved when the bottom nav landed, and a literal
+       cannot follow it. The fallbacks reproduce the old spacing if either
+       script is absent, so the greeting degrades rather than dropping. */
+    bottom: calc(var(--mm-nav-h, 0px) + var(--mm-composer-h, 122px) + 58px);
     z-index: 3;
     padding: 0 22px;
     pointer-events: none;
@@ -396,7 +417,30 @@
     color: #9aa3b8 !important;
   }
 
+  /* Workspace pill: float it just above the composer.
+     workspace.css anchors it at `safe-area + 92px`, which was measured against
+     the old phone layout where the composer stopped ~130px up the screen — the
+     pill sat in the dead band between the composer and the bottom nav. With the
+     composer now flush on the nav, that literal would land the pill on top of
+     it. Derive from the same measured chrome the greeting uses; the safe-area
+     inset is already inside the measured nav box, so it isn't re-added. */
+  body.cr-mode .cr-ws-fab {
+    bottom: calc(var(--mm-nav-h, 0px) + var(--mm-composer-h, 122px) + 10px);
+  }
+
   /* ---- 7. COMPOSER (last flex child, sticky bottom) ------------------ */
+
+  /* #toggle-calculator-btn is a legacy, contentless alias that chat.html ships
+     as `style="display:none"` purely so chatCalculator.js can wire it as an
+     extra entry point; the calculator the student actually taps is
+     #calculator-toolbar-btn inside the toolbar row. Something on the page
+     clears that inline `display:none` after load, and the global mobile touch
+     rule (`button { min-height: 44px }`) then rendered the empty button as a
+     44px blank row across the top of the composer. Re-assert what the markup
+     already says. :empty keeps this honest — give the button real content one
+     day and it shows up again rather than silently staying hidden. */
+  body.cr-mode #toggle-calculator-btn:empty { display: none !important; }
+
   body.cr-mode #input-container {
     flex: 0 0 auto !important;
     background: linear-gradient(180deg, rgba(7,9,15,0) 0%, rgba(7,9,15,.6) 22%, rgba(7,9,15,.92) 100%) !important;
