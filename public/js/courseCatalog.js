@@ -620,10 +620,17 @@ class CourseManager {
         if (grid) grid.innerHTML = '<div style="text-align:center; padding:40px; color:#aaa;">Loading courses...</div>';
 
         try {
-            const res = await csrfFetch('/api/course-sessions/catalog', {
-                method: 'GET',
-                credentials: 'include'
-            });
+            // Re-sync enrolments alongside the catalog fetch. The Enrolled /
+            // Leave state on each card is derived from this.courseSessions, and
+            // it can be stale (enrolled on another device, dropped elsewhere in
+            // this session) if we only ever loaded it at init.
+            const [res] = await Promise.all([
+                csrfFetch('/api/course-sessions/catalog', {
+                    method: 'GET',
+                    credentials: 'include'
+                }),
+                this.loadMySessions().catch(() => {})
+            ]);
             const data = await res.json();
             if (data.success) {
                 this._catalogCache = data.catalog;
@@ -732,17 +739,31 @@ class CourseManager {
         this.renderCatalog(filtered, this._catalogRecommended);
     }
 
+    // What a catalog card's action column should offer for one course.
+    // Pure, static and exported so the policy can be tested without a DOM
+    // (see tests/unit/courseCatalogUnenroll.test.js).
+    //
+    //   isEnrolled  the student has a live (active/paused) session for it
+    //   sessionId   the COURSE SESSION id — what /api/course-sessions/:id/drop
+    //               and activate take. Never the catalog's courseId.
+    //   canLeave    render the Leave (unenroll) button. Requires a session id:
+    //               a card with no resolvable session has nothing to drop.
+    //
+    // `canLeave` tracking `isEnrolled` is what makes unenroll reachable on a
+    // phone at all — below 900px the My Courses list is display:none, so the
+    // catalog is the student's ONLY courses surface.
+    static resolveCardActions(courseId, courseSessions) {
+        const session = (courseSessions || []).find(s => s.courseId === courseId);
+        const sessionId = session ? session._id : null;
+        const isEnrolled = !!session;
+        return { isEnrolled, sessionId, canLeave: isEnrolled && !!sessionId };
+    }
+
     renderCatalog(catalog, recommended) {
         const grid = document.getElementById('catalog-grid');
         if (!grid) return;
 
         grid.innerHTML = '';
-
-        // Build a set of already-enrolled courseIds, and courseId → sessionId so
-        // an enrolled card can RESUME the course (on mobile the catalog is the
-        // only courses surface, so a dead "Enrolled" button strands the student).
-        const enrolled = new Set(this.courseSessions.map(s => s.courseId));
-        const sessionByCourse = new Map(this.courseSessions.map(s => [s.courseId, s._id]));
 
         if (catalog.length === 0) {
             grid.innerHTML = `
@@ -782,7 +803,8 @@ class CourseManager {
             card.onmouseover = () => { card.style.boxShadow = '0 4px 12px rgba(102,126,234,0.15)'; };
             card.onmouseout = () => { card.style.boxShadow = 'none'; };
 
-            const isEnrolled = enrolled.has(course.courseId);
+            const actions = CourseManager.resolveCardActions(course.courseId, this.courseSessions);
+            const isEnrolled = actions.isEnrolled;
             const diff = diffColors[course.difficulty] || { bg: '#f1f5f9', text: '#64748b' };
 
             // Estimate total time for the course
@@ -810,7 +832,7 @@ class CourseManager {
                         ${course.prerequisites.length > 0 ? `<span style="color:#ddd;">&middot;</span><span>Prereq: ${course.prerequisites.join(', ')}</span>` : ''}
                     </div>
                 </div>
-                <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:4px;">
+                <div class="catalog-card-actions" style="display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:6px;">
                     <button class="catalog-enroll-btn" data-course-id="${course.courseId}"
                         style="padding:8px 18px; border:none; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap;
                         ${isEnrolled
@@ -819,6 +841,11 @@ class CourseManager {
                         }">
                         ${isEnrolled ? '<i class="fas fa-play" style="margin-right:4px; font-size:11px;"></i>Continue' : 'Enroll'}
                     </button>
+                    ${actions.canLeave ? `
+                    <button class="catalog-drop-btn" data-course-id="${course.courseId}"
+                        title="Leave this course" aria-label="Leave ${this.escapeHtml(course.title)}">
+                        <i class="fas fa-sign-out-alt" style="margin-right:4px; font-size:11px;"></i>Leave
+                    </button>` : ''}
                 </div>
             `;
 
@@ -828,12 +855,24 @@ class CourseManager {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     this.closeCatalog();
-                    this.activateCourse(sessionByCourse.get(course.courseId));
+                    this.activateCourse(actions.sessionId);
                 });
             } else {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     this.enrollInCourse(course.courseId, btn);
+                });
+            }
+
+            // Leave → unenroll without leaving the catalog. On mobile the
+            // catalog IS the courses surface: the My Courses list (and its
+            // drop-X) is display:none below 900px, so without this there is no
+            // reachable way off a course at all on a phone.
+            const dropBtn = card.querySelector('.catalog-drop-btn');
+            if (dropBtn) {
+                dropBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.dropCourse(actions.sessionId);
                 });
             }
 
@@ -1175,6 +1214,14 @@ class CourseManager {
     // Drop Course (remove from My Courses via X button)
     // --------------------------------------------------
     async dropCourse(sessionId) {
+        if (!sessionId) {
+            // Stale card (enrolment changed in another tab). Re-sync rather
+            // than firing a request at an id we don't have.
+            await this.loadMySessions();
+            this.refreshCatalogIfOpen();
+            return;
+        }
+
         const session = this.courseSessions.find(s => s._id === sessionId);
         const name = this.formatCourseName(session?.courseName || 'this course');
 
@@ -1212,11 +1259,26 @@ class CourseManager {
             // Refresh sidebar courses
             await this.loadMySessions();
 
+            // The catalog can be the surface the drop was issued from (it is
+            // the only one on mobile) — repaint it so the card flips back to
+            // Enroll instead of still offering Continue/Leave.
+            this.refreshCatalogIfOpen();
+
             this.showToast(`Left "${name}"`);
         } catch (err) {
             console.error('[CourseManager] Failed to drop course:', err);
             this.showToast('Something went wrong');
         }
+    }
+
+    /**
+     * Repaint the catalog grid from cache if the modal is currently open.
+     * Preserves the active search query and difficulty filter.
+     */
+    refreshCatalogIfOpen() {
+        const modal = document.getElementById('course-catalog-modal');
+        if (!modal?.classList.contains('is-visible') || !this._catalogCache) return;
+        this._filterCatalog();
     }
 
     // --------------------------------------------------
