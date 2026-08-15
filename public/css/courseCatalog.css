@@ -220,6 +220,72 @@
     color: #ef4444;
 }
 
+/* Reveal-on-hover is a desktop affordance. A touch device has no hover state,
+   so the X stayed at opacity:0 forever and dropping a course was impossible —
+   the control was in the DOM, just permanently invisible. Pin it visible (and
+   give it a real 44px tap target) wherever the primary pointer is coarse. */
+@media (hover: none), (pointer: coarse) {
+    .course-drop-x {
+        opacity: 1;
+        color: #94a3b8;
+        font-size: 13px;
+        padding: 10px;
+        margin-top: -4px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* Keyboard users need it too — it is focusable, so it must be visible when
+   focused rather than only while the mouse happens to be over the row. */
+.course-drop-x:focus-visible {
+    opacity: 1;
+    color: #ef4444;
+    outline: 2px solid #667eea;
+    outline-offset: 1px;
+    border-radius: 6px;
+}
+
+/* ----- Catalog card: Leave (unenroll) ----- */
+/* Below 900px the My Courses card (.cr-courses-card) is display:none, which
+   makes the catalog the ONLY courses surface on a phone. Without this button
+   an enrolled student had no reachable way to unenroll there at all. */
+.catalog-drop-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: transparent;
+    color: #94a3b8;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.catalog-drop-btn:hover {
+    color: #ef4444;
+    border-color: #fecaca;
+    background: #fef2f2;
+}
+
+.catalog-drop-btn:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 1px;
+}
+
+[data-theme="dark"] .catalog-drop-btn {
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .catalog-drop-btn:hover {
+    color: #f87171;
+    border-color: #7f1d1d;
+    background: rgba(127, 29, 29, 0.2);
+}
+
 /* Dark mode overrides */
 [data-theme="dark"] .course-sidebar-item {
     border-left-color: #8b9cf7;
@@ -1217,6 +1283,21 @@
     /* Full-width enroll button on mobile */
     .catalog-enroll-btn {
         width: 100% !important;
+    }
+
+    /* The actions column is `align-items: flex-end` for the desktop side-rail
+       layout; once the card stacks, that pins a 100%-wide button's own box to
+       the right and leaves the Leave button hugging the edge at its intrinsic
+       width. Stretch the column so both buttons span the card. */
+    .catalog-card-actions {
+        align-items: stretch !important;
+        width: 100%;
+    }
+
+    .catalog-drop-btn {
+        width: 100%;
+        padding: 11px 14px;
+        font-size: 13px;
     }
 }
 
