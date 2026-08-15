@@ -296,6 +296,11 @@
     gap: 7px;
     position: fixed;
     right: 14px;
+    /* Tablet widths (769–1200px) keep the desktop stage: #chat-container is a
+       grid column that stops 60px short of the viewport for the fixed footer,
+       and 92px clears its composer. The phone shell puts the composer flush on
+       the bottom nav instead, so mobile-poster-chat.css re-anchors this from the
+       measured chrome heights — see the note there. */
     bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
     height: 38px;
     padding: 0 14px 0 12px;

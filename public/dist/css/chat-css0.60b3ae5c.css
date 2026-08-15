@@ -14203,6 +14203,18 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
     color: #333;
 }
 
+/* The magnifier icon is absolutely positioned over the field's left inset, so
+   the input needs room for it. `.catalog-search-input`'s own padding shorthand
+   above loses that inset to the app-wide form rules in style.css
+   (`input[type="text"], … { padding: 12px 14px }`) and its <=767px companion
+   (`padding: 12px 15px`) — both land later in the cascade at equal-or-higher
+   specificity, so the 36px inset was reset to 14/15px and the icon printed on
+   top of the placeholder ("🔍Search courses…"). Two classes outrank a
+   class+element selector, so this restores the inset without an !important. */
+.catalog-search-wrapper .catalog-search-input {
+    padding-left: 38px;
+}
+
 .catalog-search-input:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -14211,6 +14223,9 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
 .catalog-search-wrapper {
     position: relative;
     flex: 1;
+    /* min-width floors this at 180px in the desktop row layout; min-width:auto
+       would otherwise let a long placeholder set the floor. Paired with the
+       nowrap fix in the <=768px block — see the note there. */
     min-width: 180px;
 }
 
@@ -14701,10 +14716,40 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
         bottom: 0;
         left: 0;
         right: 0;
+        /* `left:0; right:0` alone does NOT make this a full-width sheet:
+           .modal-content also picks up `width: 90%` from style.css, and a fixed
+           box with left, right AND a definite width is over-constrained, so
+           `right` is dropped. The sheet rendered 90% wide pinned to the left
+           edge with a 10% dead gutter down the right side. Re-state the width
+           instead of fighting the over-constraint. */
+        width: 100% !important;
+        /* Belt-and-braces: the element carries an inline `overflow-y: auto`, and
+           a box with one axis scrollable and the other `visible` computes the
+           visible axis to `auto` — so any child that overflows turns the whole
+           sheet into a horizontally pannable surface. Pin the x axis closed so a
+           future overflow clips instead of sliding the sheet off-screen. */
+        overflow-x: hidden;
     }
 
     .catalog-search-bar {
         flex-direction: column;
+        /* Must accompany the column switch. The base rule sets
+           `flex-wrap: wrap`, and column + wrap is a MULTI-COLUMN flex container:
+           with the height indefinite both children land on one flex line whose
+           cross size is the widest child's max-content width, and `align-items:
+           stretch` then sized BOTH children to that — 530px inside a 247px
+           modal. The search field and the filter row hung off the right edge and
+           the sheet gained a horizontal scroll. In a single-line column
+           container the line's cross size is the container's own width, so the
+           children stretch to the modal instead. */
+        flex-wrap: nowrap;
+    }
+
+    /* Stacked, so the desktop 180px floor is meaningless here and only serves to
+       stop the field shrinking with the sheet on a narrow phone. */
+    .catalog-search-wrapper,
+    .catalog-search-input {
+        min-width: 0;
     }
 
     .catalog-filter-pills {

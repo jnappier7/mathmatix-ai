@@ -220,6 +220,36 @@
     update();
   }
 
+  /* ---- composer height tracker --------------------------------------- */
+  // Publish the composer's measured height as --mm-composer-h on <html>.
+  //
+  // The idle greeting and the workspace FAB both have to sit ABOVE the
+  // composer, and both used to encode its height as a literal (195px and 92px).
+  // The composer is not a fixed height — the toolbar row, the math strip, the
+  // equation palette and a wrapped multi-line input all change it, and the
+  // bottom nav shifted the whole stack again — so those literals fell inside
+  // the composer and the greeting's subtitle printed across the √x / camera /
+  // mic / calculator icons. Measuring removes the guess: paired with
+  // --mm-nav-h (bottom-nav.js), `nav + composer` is exactly the height of the
+  // bottom chrome, whatever is currently in it.
+  function trackComposer() {
+    var ic = document.getElementById('input-container');
+    if (!ic) return;
+    var publish = function () {
+      var h = ic.getBoundingClientRect().height;
+      // A zero height means the composer is swapped out (voice mode) rather
+      // than genuinely flat — keep the last good value so the greeting doesn't
+      // snap to the bottom edge mid-transition.
+      if (h > 0) {
+        document.documentElement.style.setProperty('--mm-composer-h', h + 'px');
+      }
+    };
+    publish();
+    if (window.ResizeObserver) new ResizeObserver(publish).observe(ic);
+    window.addEventListener('resize', publish);
+    window.addEventListener('orientationchange', publish);
+  }
+
   /* ---- idle <-> conversation state ----------------------------------- */
   // The greeting is a FIXED overlay, so anything rendered into the message
   // container paints underneath it. "Idle" therefore has to mean the container
@@ -249,6 +279,7 @@
     buildGreeting();
     buildSheet();
     watchMessages();
+    trackComposer();
     trackViewport();
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') closeSheet();

@@ -2,7 +2,7 @@
   "chat.html": {
     "css": [
       {
-        "href": "/dist/css/chat-css0.98db61de.css",
+        "href": "/dist/css/chat-css0.60b3ae5c.css",
         "files": [
           "/css/file-upload.css",
           "/css/responsive-resources.css",
@@ -107,7 +107,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js7.32c7f748.js",
+        "src": "/dist/js/chat-js7.fde8642f.js",
         "files": [
           "/js/mobile-poster-chat.js",
           "/js/inlineEquationBox.js",
