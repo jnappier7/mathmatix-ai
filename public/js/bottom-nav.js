@@ -1,7 +1,7 @@
 /**
  * Mobile bottom navigation — 💬 Tutor · 🎓 Courses · 🎯 Practice · 📈 Progress · ☰ More.
  *
- * Phone-only (≤900px; desktop hides it in CSS) and flag-gated via
+ * Phone-only (≤768px; wider viewports hide it in CSS) and flag-gated via
  * MM_FEATURES.bottomNav. Owner-approved design (2026-08-13 mockup): tabs are
  * LAUNCHERS for surfaces chat.html already has, not SPA routes —
  *   Tutor    → home: closes whatever surface is open, back to the conversation
@@ -31,7 +31,7 @@
     'transition:transform .22s ease;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}',
     '.mbn.mbn-away{transform:translateY(110%)}',
     'body.cr-voice .mbn{display:none}',
-    '@media (min-width:901px){.mbn{display:none}}',
+    '@media (min-width:769px){.mbn{display:none}}',
     '@media (prefers-reduced-motion:reduce){.mbn{transition:none}}',
     // Inactive tabs were #7B729D label text on a transparent ground, which is
     // low enough contrast that the row read as decoration. Darker ink, and the
@@ -64,20 +64,20 @@
     // from the bottom edge over a nav only ~60px tall, leaving a ~70px dead band
     // across the bottom of every phone.
     //
-    // Phone-scoped on purpose: above 900px the nav is display:none and
+    // Phone-scoped on purpose: above the breakpoint the nav is display:none and
     // chat-redesign.css's own `margin-bottom:60px` clears the fixed desktop
     // footer, so this must not reach that far. The `.cr-mode` in the selector
     // is also load-bearing — it outranks mobile-poster-chat.css's
     // `body.cr-mode #chat-container { margin: 0 !important }`, which would
     // otherwise tie and cancel the reservation.
-    '@media (max-width:900px){body.mbn-space.cr-mode #chat-container{',
+    '@media (max-width:768px){body.mbn-space.cr-mode #chat-container{',
     'margin-bottom:var(--mm-nav-h,0px) !important}}',
     // Practice sheet
     '.mbn-sheet{position:fixed;left:0;right:0;bottom:0;z-index:8999;background:var(--cr-bg-panel,#fff);',
     'border-radius:16px 16px 0 0;box-shadow:0 -12px 40px rgba(20,15,45,.25);',
     'padding:14px 16px calc(72px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .25s ease}',
     '.mbn-sheet.open{transform:none}',
-    '@media (min-width:901px){.mbn-sheet{display:none}}',
+    '@media (min-width:769px){.mbn-sheet{display:none}}',
     '@media (prefers-reduced-motion:reduce){.mbn-sheet{transition:none}}',
     '[data-theme="dark"] .mbn-sheet{background:#1C1A2B;color:#ECE9F7}',
     '.mbn-sheet h3{margin:2px 2px 10px;font-size:16px}',
@@ -88,6 +88,19 @@
     '.mbn-act .d{display:block;font-size:11.5px;font-weight:500;color:#7B729D;margin-top:2px}',
   ].join('');
 
+  // BREAKPOINT: 768px, matching the mobile poster shell (mobile-poster-chat.css
+  // and mobile-light-theme.css are both `max-width: 768px`).
+  //
+  // It used to be 900px, which put this phone nav on top of the DESKTOP stage
+  // for 769–900px — iPad portrait is 820px, squarely inside that band. The stage
+  // is not a fixed-height shell, and body/#app-layout-wrapper are overflow:hidden,
+  // so the fixed nav simply covered the bottom of the composer with no way to
+  // scroll to it: measured at 820x1180, the composer ran 1038→1192 under a nav
+  // starting at 1121. Part of the input was unreachable.
+  //
+  // Aligning the two means a viewport either gets the phone shell AND the phone
+  // nav, or neither. If the nav is ever wanted back on tablets, the fix is to
+  // extend the mobile shell to the same width — not to widen this alone.
   var TABS = [
     { key: 'tutor', ico: '💬', label: 'Tutor' },
     { key: 'courses', ico: '🎓', label: 'Courses' },
@@ -220,7 +233,7 @@
    *
    * The border box is what's measured, so the safe-area padding is already
    * inside the number — callers must NOT add env(safe-area-inset-bottom) on
-   * top. Where the nav is display:none (desktop >900px, voice mode) the rect
+   * top. Where the nav is display:none (>768px, voice mode) the rect
    * collapses to 0 and every consumer reverts to no reservation on its own.
    *
    * .mbn-away is deliberately NOT treated as zero. The nav only slides out

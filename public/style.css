@@ -73,7 +73,16 @@
 .landing-nav {
     display: flex;
     gap: var(--space-3);
-    flex-shrink: 0;
+    /* Shrinkable, so the `overflow-x: auto` below can actually engage.
+       With flex-shrink:0 the nav held its full content width no matter how
+       narrow the viewport got, so it never scrolled internally — it pushed the
+       header wider than the page instead, and the whole document gained a
+       horizontal scroll. Measured at 900px: .landing-nav ran to right=917 in a
+       900px viewport, and the page scrolled sideways by those 17px.
+       min-width:0 is required with it: a flex item's automatic minimum size is
+       its content, which would silently cancel the shrink. */
+    flex-shrink: 1;
+    min-width: 0;
     align-items: center;
     flex-wrap: nowrap;
     overflow-x: auto;

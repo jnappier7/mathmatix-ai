@@ -200,6 +200,19 @@ body.cr-mode .sidebar-ctx-general { display: none !important; }
 /* ----- Stage: 3 column grid hero | chat | workspace ----- */
 body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
 
+/* Tablet band: let the stage scroll rather than be guillotined.
+   The stage is content-sized (the hero alone has min-height:520px), but body and
+   #app-layout-wrapper are both overflow:hidden, so on a viewport too short to
+   hold hero + chat the excess is not scrolled — it is silently cut off. Measured
+   at 820x1180 (iPad portrait): the stage ran to 1193 in a 1180 viewport, putting
+   the bottom of the composer past the fold with no way to reach it.
+   Only the wrapper is opened up, and only below the desktop width where the
+   three columns stop fitting side by side; a scrollbar appears solely when the
+   content genuinely does not fit. */
+@media (min-width: 769px) and (max-width: 1200px) {
+  body.cr-mode #app-layout-wrapper { overflow-y: auto; }
+}
+
 .cr-stage {
   display: grid;
   grid-template-columns: var(--cr-hero-w) minmax(0, 1fr) var(--cr-side-w);
