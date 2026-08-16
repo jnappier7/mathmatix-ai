@@ -12,7 +12,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
   <meta name="theme-color" content="#12B3B3" />
   <!-- Warm up connections to third-party origins used below (marked/dompurify,
-       fabric, font-awesome, GTM) so their TLS handshake overlaps HTML parse. -->
+       fabric, GTM) so their TLS handshake overlaps HTML parse. Font Awesome is
+       NO LONGER among them — it is served from /vendor, so icons no longer
+       depend on cdnjs being reachable. cdnjs stays warmed for fabric, which is
+       lazy-loaded with the board tools. -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://www.googletagmanager.com" />
@@ -139,7 +142,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- DNS prefetch & preconnect for CDN domains -->
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
   <!-- KaTeX CSS — loaded eagerly so math never flashes unstyled (served locally for reliability) -->
