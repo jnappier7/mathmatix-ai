@@ -130,14 +130,63 @@
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
-  body.cr-mode .imessage-tool-btn { color: var(--mlt-ink-dim) !important; }
-  body.cr-mode #insert-equation-btn { color: var(--mlt-accent) !important; }
+  /* Composer tool buttons — give them a surface.
+     chat-redesign.css/mobile-poster-chat.css leave these fully transparent with
+     a dim icon and no border, so on the white composer they read as four faint
+     marks rather than as controls: nothing says "tappable". Put each on its own
+     tinted chip with a hairline edge, a real shadow and darker ink, and give
+     the press state something to do. 42px also lifts the target closer to the
+     44px touch minimum (they were 38px). */
+  body.cr-mode .imessage-tool-btn {
+    background: #F0EFF9 !important;
+    border: 1px solid rgba(35,39,65,.09) !important;
+    color: #4A4F6B !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 13px !important;
+    box-shadow: 0 1px 2px rgba(60,50,120,.10) !important;
+    transition: transform .12s ease, background-color .12s ease, box-shadow .12s ease;
+  }
+  body.cr-mode .imessage-tool-btn:active {
+    background: #E4E1F5 !important;
+    box-shadow: 0 0 0 rgba(60,50,120,0) !important;
+    transform: scale(.93);
+  }
+  /* The equation key is the primary math affordance in this row — carry the
+     brand accent so it leads the group instead of sitting level with it. */
+  body.cr-mode #insert-equation-btn {
+    background: rgba(124,107,255,.13) !important;
+    border-color: rgba(124,107,255,.30) !important;
+    color: #5B4BD6 !important;
+  }
+  body.cr-mode #insert-equation-btn:active {
+    background: rgba(124,107,255,.24) !important;
+  }
+  /* The row's own padding was tuned for borderless icons; the chips need a
+     little more air so they don't touch the compose bar's edge. */
+  body.cr-mode .imessage-tool-btns {
+    gap: 8px !important;
+    padding: 6px 4px 2px !important;
+  }
   body.cr-mode #user-input {
     color: var(--mlt-ink) !important;
     caret-color: var(--mlt-accent) !important;
   }
   body.cr-mode #user-input:empty::before { color: #9AA0B0 !important; }
-  /* send button keeps the purple gradient — already on-brand */
+
+  /* Send / voice keep the purple gradient — already on-brand — but they sat
+     flat under the finger: the send button had no :active state at all, so a
+     tap gave no feedback. Deepen the lift and let both respond to touch. */
+  body.cr-mode .imessage-send-btn,
+  body.cr-mode .imessage-voice-btn {
+    box-shadow: 0 5px 16px rgba(108,92,231,.42) !important;
+    transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  }
+  body.cr-mode .imessage-send-btn:active,
+  body.cr-mode .imessage-voice-btn:active {
+    transform: scale(.94);
+    box-shadow: 0 2px 7px rgba(108,92,231,.34) !important;
+  }
 
   /* ---- 6. MATH SYMBOL STRIP: dark -> light -------------------------- */
   body.cr-mode .mobile-math-strip {
