@@ -393,6 +393,18 @@ npm run seed:all:dry   # preflight + plan, no writes
   uncommitted still passes locally while the committed branch is broken. When a test fails and then
   "goes away", don't call it flaky — `git stash -u` and run against the branch as committed before
   concluding anything.
+- **Editing a bundled `public/js` or `public/css` file changes NOTHING until you run
+  `npm run build:bundles`.** `chat.html`, both dashboards and `admin-dashboard.html` do not load their
+  own sources — `scripts/buildPageBundles.js` concatenates them into content-hashed bundles under
+  `public/dist`, and the page links only the bundle. `npm run build` does **not** cover this: vite's
+  only entry points are `js/script.js` and `css/main.css`, so it never touches the dashboards.
+  The failure is silent in every check you'd normally trust — the diff looks right, jest passes
+  (it `require`s the source directly), the vite build is clean — and the browser still serves the
+  pre-edit bundle. A course-unenroll fix merged green this way and did nothing in production:
+  `chat.html` was still pointing at a `chat-js3` built before the fix existed. Check
+  `dist/page-bundles.manifest.json` for whether the file you touched is bundled, then rebuild and
+  commit the regenerated `public/dist/*` alongside the source edit. Pinned by
+  `tests/unit/pageBundlesFresh.test.js`, which re-derives each bundle's hash from its sources.
 
 ---
 

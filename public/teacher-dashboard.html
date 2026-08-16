@@ -5464,6 +5464,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <button class="mobile-action-btn" id="mobile-upload"><i class="fas fa-upload"></i> Upload Resources</button>
         <button class="mobile-action-btn" id="mobile-refresh"><i class="fas fa-sync-alt"></i> Refresh Data</button>
         <button class="mobile-action-btn" id="mobile-messages"><i class="fas fa-envelope"></i> Messages</button>
+        <!-- Practice Packs has no tab and no other launcher: #qa-practice-packs
+             in .right-sidebar was the modal's ONLY opener, and that sidebar is
+             display:none below 768px. Without this button the feature does not
+             exist on a phone. -->
+        <button class="mobile-action-btn" id="mobile-practice-packs"><i class="fas fa-print"></i> Practice Packs</button>
       </div>
     </div>
   </div>
@@ -6021,6 +6026,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   })();
   </script>
 
-  <script src="/dist/js/teacher-js2.63fba5bf.js"></script>
+  <script src="/dist/js/teacher-js2.b938126d.js"></script>
 </body>
 </html>

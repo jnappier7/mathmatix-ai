@@ -3688,7 +3688,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.querySelector('[data-tab="students"]')?.click();
                 } else if (tab === 'alerts') {
                     if (alertsDrawer) alertsDrawer.classList.add('open');
-                    // Copy alert content to mobile drawer
+                    // Copy alert content to mobile drawer.
+                    //
+                    // innerHTML clones MARKUP ONLY — the per-button listeners
+                    // renderSmartAlerts() attaches to the desktop feed do not
+                    // come across, so every action in this drawer (Send
+                    // encouragement / reminder / Congratulate / Profile) used to
+                    // render perfectly and do nothing when tapped. The drawer is
+                    // the only alerts surface on a phone, so that was the whole
+                    // feature. Delegation on the container survives the copy —
+                    // see the listener wired once in initializeMobileNav below.
                     const mobileContent = document.getElementById('mobile-alerts-content');
                     const desktopAlerts = document.getElementById('smart-alerts-feed');
                     if (mobileContent && desktopAlerts) {
@@ -3734,6 +3743,36 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.querySelector('[data-tab="messages"]')?.click();
             actionsDrawer?.classList.remove('open');
         });
+        // Practice Packs: #qa-practice-packs (in the display:none right sidebar)
+        // is the practice-pack modal's only opener, and unlike Insights and My
+        // Classes it has no tab to fall back on — so on a phone the feature was
+        // unreachable. .click() fires on a hidden element, which is the same
+        // mechanism mobile-ai-settings already relies on.
+        document.getElementById('mobile-practice-packs')?.addEventListener('click', () => {
+            document.getElementById('qa-practice-packs')?.click();
+            actionsDrawer?.classList.remove('open');
+        });
+
+        // Smart-alert actions inside the mobile drawer. Delegated on the
+        // container rather than bound per button, because the drawer's content
+        // is an innerHTML copy of the desktop feed — cloned nodes carry no
+        // listeners, and the copy is remade every time the Alerts tab is
+        // tapped, so anything bound to the buttons themselves would be
+        // discarded on the next open anyway.
+        //
+        // handleSmartAlertAction already resolves its own target via
+        // closest('.smart-alert-action') and returns when there is none, so it
+        // works unchanged as a delegated handler.
+        const mobileAlertsContent = document.getElementById('mobile-alerts-content');
+        if (mobileAlertsContent) {
+            mobileAlertsContent.addEventListener('click', (e) => {
+                if (!e.target.closest('.smart-alert-action')) return;
+                handleSmartAlertAction(e);
+                // Every action lands somewhere else — a tab or the profile
+                // modal. Leaving the full-screen drawer open would cover it.
+                alertsDrawer?.classList.remove('open');
+            });
+        }
     }
 
     // ============================================
