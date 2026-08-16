@@ -281,10 +281,16 @@ function configureMiddleware(app) {
           "'unsafe-eval'",
           'https://cdnjs.cloudflare.com',
           'https://cdn.jsdelivr.net',
-          'https://unpkg.com',
           'https://www.googletagmanager.com',
           'https://connect.facebook.net',
         ],
+        // unpkg.com was removed: it appeared exactly once in the whole repo —
+        // this line — and a runtime sweep of 12 pages (including the lazy
+        // board-tools path that pulls fabric) issued zero requests to it. An
+        // npm CDN left in script-src is a standing XSS amplifier: anyone who
+        // lands an injected <script> gets to serve arbitrary package code from
+        // an allowed origin. If something ever legitimately needs it, add it
+        // back with a note naming what.
         scriptSrcAttr: ["'unsafe-inline'"],
         // cdnjs is deliberately absent from styleSrc/fontSrc: it served ONLY
         // Font Awesome, which is now self-hosted under /vendor. It stays in
