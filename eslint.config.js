@@ -137,4 +137,17 @@ module.exports = [
       },
     },
   },
+
+  // Mobile verification harness — a Node script that also contains callbacks
+  // serialized into the browser by page.evaluate(), so it legitimately needs
+  // both sets of globals in one file.
+  {
+    files: ['tests/mobile/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
+    },
+  },
 ];

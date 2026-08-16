@@ -69,6 +69,17 @@ const teacherResourceSchema = new mongoose.Schema({
         type: Boolean,
         default: true // New resources are published by default
     },
+    // Which classes (enrollment codes) this resource is shared with.
+    //
+    // EMPTY MEANS EVERY STUDENT LINKED TO THIS TEACHER. That is not a
+    // placeholder — it is the pre-existing behaviour of this model, which had
+    // no class concept at all, so every resource uploaded before this field
+    // existed keeps working untouched and a teacher who ignores the picker
+    // gets exactly what they got before. "Share with one class" is the opt-in.
+    sharedWithClassIds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'EnrollmentCode'
+    }],
     // Extracted text content (for searchability and AI context)
     extractedText: {
         type: String,
@@ -106,17 +117,51 @@ teacherResourceSchema.index({ teacherId: 1, displayName: 1 });
 // Index for keyword search
 teacherResourceSchema.index({ teacherId: 1, keywords: 1 });
 
+// Class-scoped student lookups
+teacherResourceSchema.index({ teacherId: 1, isPublished: 1, sharedWithClassIds: 1 });
+
+/**
+ * THE one rule for "may this student see this resource".
+ *
+ * Every student-facing path composes this instead of hand-rolling its own
+ * filter: the resources list, the download endpoint, and — the one that is
+ * easy to forget — the AI tutor's resource lookup, which pulls a resource's
+ * extracted TEXT into the prompt. A class filter enforced on the download
+ * button but not on the tutor would still hand Class B the contents of Class
+ * A's test the moment a student named it in chat.
+ *
+ * `classIds` is the set of classes the student belongs to. A resource is
+ * visible when it is targeted at no class at all (teacher-wide, the legacy
+ * and default shape) or at one of the student's classes.
+ *
+ * Passing classIds = null/undefined means "do not scope by class" and is for
+ * the TEACHER's own views only — never for a student request.
+ */
+teacherResourceSchema.statics.visibleToStudentFilter = function(teacherId, classIds) {
+    const base = { teacherId, isPublished: true };
+    if (!Array.isArray(classIds)) return base;
+    return {
+        ...base,
+        $or: [
+            { sharedWithClassIds: { $size: 0 } },
+            { sharedWithClassIds: { $exists: false } },
+            { sharedWithClassIds: { $in: classIds } }
+        ]
+    };
+};
+
 // Method to find resource by fuzzy name matching
-teacherResourceSchema.statics.findByName = async function(teacherId, searchText) {
+teacherResourceSchema.statics.findByName = async function(teacherId, searchText, classIds) {
     // Normalize search text
     const normalized = searchText.toLowerCase().trim();
     // Escape special regex characters (e.g. parentheses in "Module 8 Test PRACTICE (A)")
     const escaped = normalized.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+    const visible = this.visibleToStudentFilter(teacherId, classIds);
+
     // Try exact match first
     let resource = await this.findOne({
-        teacherId,
-        isPublished: true,
+        ...visible,
         displayName: { $regex: new RegExp(`^${escaped}$`, 'i') }
     });
 
@@ -124,8 +169,7 @@ teacherResourceSchema.statics.findByName = async function(teacherId, searchText)
 
     // Try partial match
     resource = await this.findOne({
-        teacherId,
-        isPublished: true,
+        ...visible,
         displayName: { $regex: new RegExp(escaped, 'i') }
     });
 
@@ -133,8 +177,7 @@ teacherResourceSchema.statics.findByName = async function(teacherId, searchText)
 
     // Try keyword match
     resource = await this.findOne({
-        teacherId,
-        isPublished: true,
+        ...visible,
         keywords: { $in: normalized.split(/\s+/) }
     });
 
@@ -142,19 +185,26 @@ teacherResourceSchema.statics.findByName = async function(teacherId, searchText)
 };
 
 // Method to search for resources
-teacherResourceSchema.statics.search = async function(teacherId, query) {
+teacherResourceSchema.statics.search = async function(teacherId, query, classIds) {
     const normalized = query.toLowerCase().trim();
     const escaped = normalized.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const keywords = normalized.split(/\s+/);
 
-    return this.find({
-        teacherId,
-        isPublished: true,
+    // The visibility filter carries its own $or, and so does the text match.
+    // Spreading both onto one object would silently drop the first — put them
+    // under $and so a class-scoped search cannot widen into every resource.
+    const { $or: visibilityOr, ...visible } = this.visibleToStudentFilter(teacherId, classIds);
+    const textMatch = {
         $or: [
             { displayName: { $regex: new RegExp(escaped, 'i') } },
             { keywords: { $in: keywords } },
             { description: { $regex: new RegExp(escaped, 'i') } }
         ]
+    };
+
+    return this.find({
+        ...visible,
+        ...(visibilityOr ? { $and: [{ $or: visibilityOr }, textMatch] } : textMatch)
     }).sort({ accessCount: -1, uploadedAt: -1 });
 };
 
@@ -192,11 +242,10 @@ function cosineSimilarity(vecA, vecB) {
 }
 
 // DIRECTIVE 3: Vector similarity search method
-teacherResourceSchema.statics.vectorSearch = async function(teacherId, queryEmbedding, limit = 5) {
+teacherResourceSchema.statics.vectorSearch = async function(teacherId, queryEmbedding, limit = 5, classIds) {
     // Get all resources for this teacher that have embeddings
     const resources = await this.find({
-        teacherId,
-        isPublished: true,
+        ...this.visibleToStudentFilter(teacherId, classIds),
         embedding: { $exists: true, $ne: null, $not: { $size: 0 } }
     }).lean();
 

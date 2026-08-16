@@ -559,6 +559,12 @@ class TeacherLiveFeed {
 let liveFeed;
 document.addEventListener('DOMContentLoaded', () => {
     liveFeed = new TeacherLiveFeed();
+    // Published deliberately: the mobile alerts drawer mirrors this feed's
+    // markup and needs the instance to expand an item or acknowledge an alert.
+    // The drawer could otherwise only reach `liveFeed` through the shared
+    // classic-script scope, which happens to work but silently depends on
+    // these files staying non-modules and in their current bundle order.
+    window.teacherLiveFeed = liveFeed;
 });
 
 // Clean up on page unload
@@ -3669,6 +3675,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     // MOBILE NAVIGATION
     // ============================================
 
+    // Which half of the left sidebar the mobile drawer is mirroring.
+    // 'alerts' = #smart-alerts-feed, 'activity' = #live-feed-panel's raw feed.
+    let mobileFeedView = 'alerts';
+
+    /**
+     * Repaint the mobile drawer from whichever desktop panel is selected.
+     *
+     * Both panels live in .left-sidebar, which is display:none below 968px —
+     * but display:none does not stop their renderers from writing to them, so
+     * they stay populated and can be mirrored here. This copies MARKUP ONLY;
+     * every interaction in the drawer is delegated (see wireMobileFeed) because
+     * innerHTML does not carry the listeners the renderers attached.
+     */
+    function paintMobileFeed() {
+        const target = document.getElementById('mobile-alerts-content');
+        if (!target) return;
+
+        const sourceId = mobileFeedView === 'activity' ? 'activity-feed' : 'smart-alerts-feed';
+        const source = document.getElementById(sourceId);
+        const title = document.getElementById('mobile-alerts-title');
+        if (title) {
+            title.textContent = mobileFeedView === 'activity' ? 'Live Activity' : 'Smart Alerts';
+        }
+
+        if (!source) {
+            target.innerHTML = '<div class="feed-loading">Nothing to show yet.</div>';
+            return;
+        }
+        target.innerHTML = source.innerHTML;
+    }
+
     function initializeMobileNav() {
         const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
         const alertsDrawer = document.getElementById('mobile-alerts-drawer');
@@ -3688,21 +3725,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.querySelector('[data-tab="students"]')?.click();
                 } else if (tab === 'alerts') {
                     if (alertsDrawer) alertsDrawer.classList.add('open');
-                    // Copy alert content to mobile drawer.
-                    //
-                    // innerHTML clones MARKUP ONLY — the per-button listeners
-                    // renderSmartAlerts() attaches to the desktop feed do not
-                    // come across, so every action in this drawer (Send
-                    // encouragement / reminder / Congratulate / Profile) used to
-                    // render perfectly and do nothing when tapped. The drawer is
-                    // the only alerts surface on a phone, so that was the whole
-                    // feature. Delegation on the container survives the copy —
-                    // see the listener wired once in initializeMobileNav below.
-                    const mobileContent = document.getElementById('mobile-alerts-content');
-                    const desktopAlerts = document.getElementById('smart-alerts-feed');
-                    if (mobileContent && desktopAlerts) {
-                        mobileContent.innerHTML = desktopAlerts.innerHTML;
-                    }
+                    paintMobileFeed();
                 } else if (tab === 'curriculum') {
                     document.querySelector('[data-tab="curriculum"]')?.click();
                 } else if (tab === 'actions') {
@@ -3766,13 +3789,56 @@ document.addEventListener("DOMContentLoaded", async () => {
         const mobileAlertsContent = document.getElementById('mobile-alerts-content');
         if (mobileAlertsContent) {
             mobileAlertsContent.addEventListener('click', (e) => {
-                if (!e.target.closest('.smart-alert-action')) return;
-                handleSmartAlertAction(e);
-                // Every action lands somewhere else — a tab or the profile
-                // modal. Leaving the full-screen drawer open would cover it.
-                alertsDrawer?.classList.remove('open');
+                // --- Smart Alerts view ---
+                if (e.target.closest('.smart-alert-action')) {
+                    handleSmartAlertAction(e);
+                    // Every action lands somewhere else — a tab or the profile
+                    // modal. Leaving the full-screen drawer open would cover it.
+                    alertsDrawer?.classList.remove('open');
+                    return;
+                }
+
+                // --- Live Activity view ---
+                // Same cloned-markup problem, same fix. The feed's own handlers
+                // were bound to the desktop nodes, so acknowledging an alert or
+                // expanding an item did nothing here.
+                const feed = window.teacherLiveFeed;
+                if (!feed) return;
+
+                const ackBtn = e.target.closest('.acknowledge-btn');
+                if (ackBtn) {
+                    e.stopPropagation();
+                    Promise.resolve(
+                        feed.acknowledgeAlert(ackBtn.dataset.conversationId, ackBtn.dataset.alertIndex)
+                    )
+                        // The feed re-renders the desktop panel on success; mirror
+                        // it so the drawer reflects the acknowledgement too.
+                        .then(() => paintMobileFeed())
+                        .catch(err => console.error('[MobileFeed] acknowledge failed', err));
+                    return;
+                }
+
+                const item = e.target.closest('.activity-item');
+                if (item) feed.toggleAlertDetails(item);
             });
         }
+
+        // Feed view toggle — the phone's stand-in for the sidebar's
+        // "Switch to Live Feed" / "Back to Smart Alerts" buttons.
+        const viewButtons = [
+            [document.getElementById('mobile-view-alerts'), 'alerts'],
+            [document.getElementById('mobile-view-activity'), 'activity'],
+        ];
+        viewButtons.forEach(([btn, view]) => {
+            btn?.addEventListener('click', () => {
+                mobileFeedView = view;
+                viewButtons.forEach(([b, v]) => {
+                    b?.classList.toggle('active', v === view);
+                    b?.setAttribute('aria-selected', String(v === view));
+                });
+                paintMobileFeed();
+            });
+        });
     }
 
     // ============================================
@@ -5754,11 +5820,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadForm = document.getElementById('upload-resource-form');
     const resourcesList = document.getElementById('resources-list');
 
+    // Classes available for targeting, refreshed whenever the list loads.
+    let teacherClasses = [];
+
     // Open upload modal
     if (uploadBtn) {
         uploadBtn.addEventListener('click', () => {
             uploadModal.classList.add('is-visible');
+            renderClassPicker();
         });
+    }
+
+    // --------------------------------------------------
+    // Class targeting
+    // --------------------------------------------------
+    const scopeRadios = () => document.querySelectorAll('input[name="shareScope"]');
+    const classListEl = () => document.getElementById('resource-class-list');
+
+    /**
+     * Paint the checkbox list of classes. Called on modal open rather than at
+     * init because a teacher can create a class and upload in the same sitting,
+     * and a picker built once at page load would not know about it.
+     */
+    function renderClassPicker() {
+        const list = classListEl();
+        if (!list) return;
+
+        if (teacherClasses.length === 0) {
+            list.innerHTML = `<p class="resource-class-empty">
+                No classes yet — this will be shared with all your students.
+                Create a class in the Classes tab to target one.
+            </p>`;
+            return;
+        }
+
+        list.innerHTML = teacherClasses.map(c => `
+            <label class="resource-class-option">
+                <input type="checkbox" name="classTarget" value="${c._id}">
+                <span>${escapeHtml(c.className)}</span>
+            </label>
+        `).join('');
+    }
+
+    // Reveal the class list only when "specific classes" is chosen, so the
+    // default path (all students) stays a single click.
+    scopeRadios().forEach(radio => {
+        radio.addEventListener('change', () => {
+            const list = classListEl();
+            if (list) list.hidden = radio.value !== 'classes' || !radio.checked;
+        });
+    });
+
+    /**
+     * The class ids to submit, as a JSON string (multipart sends strings).
+     * Returns '[]' — meaning all students — for the "all" scope, and also when
+     * "specific classes" is selected but nothing is ticked: silently sharing
+     * with everyone is wrong there, so the caller treats that as an error.
+     */
+    function selectedClassIds() {
+        const scope = document.querySelector('input[name="shareScope"]:checked')?.value;
+        if (scope !== 'classes') return [];
+        return [...document.querySelectorAll('input[name="classTarget"]:checked')].map(cb => cb.value);
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text == null ? '' : text;
+        return div.innerHTML;
     }
 
     // Close modal
@@ -5794,6 +5922,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(uploadForm);
             const submitBtn = uploadForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
+
+            const scope = document.querySelector('input[name="shareScope"]:checked')?.value;
+            const classIds = selectedClassIds();
+            if (scope === 'classes' && classIds.length === 0 && teacherClasses.length > 0) {
+                alert('Pick at least one class, or choose "All my students".');
+                return;
+            }
+            // The radios are form inputs too — strip them so only the resolved
+            // targeting reaches the server.
+            formData.delete('shareScope');
+            formData.set('sharedWithClassIds', JSON.stringify(classIds));
 
             try {
                 submitBtn.disabled = true;
@@ -5840,6 +5979,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const resources = data.resources || [];
+            teacherClasses = data.classes || [];
 
             if (resources.length === 0) {
                 resourcesList.innerHTML = `
@@ -5878,6 +6018,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${resource.description ? `<p class="resource-description">${resource.description}</p>` : ''}
                                 <p class="resource-stats">
                                     <i class="fas fa-chart-bar"></i> Accessed ${resource.accessCount} times
+                                </p>
+                                <p class="resource-audience" title="Who can see this resource">
+                                    <i class="fas fa-users"></i>
+                                    ${(resource.sharedWithClassNames || []).length > 0
+                                        ? escapeHtml(resource.sharedWithClassNames.join(', '))
+                                        : 'All my students'}
                                 </p>
                                 ${resource.keywords && resource.keywords.length > 0 ? `
                                     <div class="resource-keywords">

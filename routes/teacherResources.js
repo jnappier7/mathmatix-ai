@@ -8,12 +8,55 @@ const User = require('../models/user');
 const { isAuthenticated, isTeacher } = require('../middleware/auth');
 const { validateObjectId } = require('../middleware/validateObjectId');
 const multer = require('multer');
+const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
 const { extractTextFromPDF } = require('../utils/pdfOcr');
 const { performOCR } = require('../utils/ocr');
 const { generateEmbedding } = require('../utils/llmGateway'); // DIRECTIVE 3 + CTO REVIEW FIX
 const cloudStorage = require('../utils/cloudStorage');
+const EnrollmentCode = require('../models/enrollmentCode');
+const { getStudentClassIds, resourceVisibleToStudent } = require('../utils/resourceVisibility');
+const { userHasRole } = require('../utils/roleQuery');
+
+/**
+ * Normalize a class-targeting payload and verify every class belongs to the
+ * caller. Returns the validated ids, or throws with a message safe to relay.
+ *
+ * A teacher must not be able to share into someone else's roster by posting a
+ * foreign enrollment-code id, so ownership is checked against the DB rather
+ * than trusted from the client. An empty/absent selection is legal and means
+ * "all my students" — the model's documented default.
+ */
+async function resolveSharedClassIds(raw, teacherId) {
+    if (raw === undefined || raw === null || raw === '') return [];
+    let ids = raw;
+    if (typeof ids === 'string') {
+        // multipart/form-data sends this as a string; accept JSON or CSV.
+        try {
+            ids = JSON.parse(ids);
+        } catch {
+            ids = ids.split(',');
+        }
+    }
+    if (!Array.isArray(ids)) ids = [ids];
+    ids = ids.map(id => String(id).trim()).filter(Boolean);
+    if (ids.length === 0) return [];
+
+    if (!ids.every(id => mongoose.Types.ObjectId.isValid(id))) {
+        throw new Error('Invalid class id');
+    }
+
+    const owned = await EnrollmentCode.find({
+        _id: { $in: ids },
+        teacherId
+    }).select('_id').lean();
+
+    if (owned.length !== ids.length) {
+        throw new Error('One or more selected classes are not yours');
+    }
+    return owned.map(c => c._id);
+}
 
 // Ensure upload directory exists
 const uploadDir = 'uploads/teacher-resources';
@@ -77,12 +120,23 @@ router.post('/upload', isAuthenticated, isTeacher, upload.single('file'), async 
             return res.status(400).json({ message: 'No file uploaded' });
         }
 
-        const { displayName, description, keywords, category } = req.body;
+        const { displayName, description, keywords, category, sharedWithClassIds } = req.body;
 
         if (!displayName) {
             // Clean up uploaded file
             fs.unlinkSync(req.file.path);
             return res.status(400).json({ message: 'Display name is required' });
+        }
+
+        // Validate class targeting BEFORE any expensive work (OCR, embeddings,
+        // S3) — a rejected share should not cost an embedding call, and must
+        // not leave the uploaded file behind.
+        let classTargets;
+        try {
+            classTargets = await resolveSharedClassIds(sharedWithClassIds, req.user._id);
+        } catch (err) {
+            fs.unlinkSync(req.file.path);
+            return res.status(400).json({ message: err.message });
         }
 
         const fileExt = path.extname(req.file.originalname).toLowerCase().replace('.', '');
@@ -158,7 +212,8 @@ router.post('/upload', isAuthenticated, isTeacher, upload.single('file'), async 
             category: category || 'other',
             extractedText: extractedText.slice(0, 5000), // Store first 5000 chars
             embedding: embedding, // DIRECTIVE 3: Store embedding vector
-            publicUrl: publicUrl || null
+            publicUrl: publicUrl || null,
+            sharedWithClassIds: classTargets
         });
 
         await resource.save();
@@ -171,7 +226,8 @@ router.post('/upload', isAuthenticated, isTeacher, upload.single('file'), async 
                 displayName: resource.displayName,
                 fileType: resource.fileType,
                 fileSize: resource.fileSize,
-                uploadedAt: resource.uploadedAt
+                uploadedAt: resource.uploadedAt,
+                sharedWithClassIds: resource.sharedWithClassIds
             }
         });
 
@@ -192,22 +248,45 @@ router.get('/list', isAuthenticated, isTeacher, async (req, res) => {
             .sort({ uploadedAt: -1 })
             .select('-extractedText'); // Don't send full extracted text
 
+        // Resolve class names once for the whole list so each card can say who
+        // it actually reaches, rather than showing an opaque ObjectId.
+        const classes = await EnrollmentCode.find({ teacherId: req.user._id })
+            .select('_id className code').lean();
+        const classNameById = new Map(
+            classes.map(c => [String(c._id), c.className || c.code])
+        );
+
         res.json({
             success: true,
-            resources: resources.map(r => ({
-                id: r._id,
-                displayName: r.displayName,
-                originalFilename: r.originalFilename,
-                fileType: r.fileType,
-                fileSize: r.fileSize,
-                category: r.category,
-                description: r.description,
-                keywords: r.keywords,
-                uploadedAt: r.uploadedAt,
-                accessCount: r.accessCount,
-                publicUrl: r.publicUrl,
-                isPublished: r.isPublished !== false // Default true for backwards compatibility
-            }))
+            classes: classes.map(c => ({
+                _id: c._id,
+                className: c.className || c.code,
+                code: c.code
+            })),
+            resources: resources.map(r => {
+                const targets = r.sharedWithClassIds || [];
+                return {
+                    id: r._id,
+                    displayName: r.displayName,
+                    originalFilename: r.originalFilename,
+                    fileType: r.fileType,
+                    fileSize: r.fileSize,
+                    category: r.category,
+                    description: r.description,
+                    keywords: r.keywords,
+                    uploadedAt: r.uploadedAt,
+                    accessCount: r.accessCount,
+                    publicUrl: r.publicUrl,
+                    isPublished: r.isPublished !== false, // Default true for backwards compatibility
+                    sharedWithClassIds: targets,
+                    // Empty list = every student of this teacher (see the model).
+                    // Names are resolved through the map so a class deleted after
+                    // sharing degrades to nothing rather than a dangling id.
+                    sharedWithClassNames: targets
+                        .map(id => classNameById.get(String(id)))
+                        .filter(Boolean)
+                };
+            })
         });
 
     } catch (error) {
@@ -244,11 +323,52 @@ router.patch('/:id/toggle-publish', isAuthenticated, isTeacher, validateObjectId
     }
 });
 
+// Re-target an existing resource at a different set of classes.
+// Separate from upload so a teacher can fix the audience without re-uploading
+// the file (and losing its extracted text, embedding and access count).
+router.patch('/:id/share', isAuthenticated, isTeacher, validateObjectId('id'), async (req, res) => {
+    try {
+        const resource = await TeacherResource.findOne({
+            _id: req.params.id,
+            teacherId: req.user._id
+        });
+
+        if (!resource) {
+            return res.status(404).json({ message: 'Resource not found' });
+        }
+
+        let classTargets;
+        try {
+            classTargets = await resolveSharedClassIds(req.body.sharedWithClassIds, req.user._id);
+        } catch (err) {
+            return res.status(400).json({ message: err.message });
+        }
+
+        resource.sharedWithClassIds = classTargets;
+        await resource.save();
+
+        res.json({
+            success: true,
+            message: classTargets.length === 0
+                ? 'Shared with all your students'
+                : `Shared with ${classTargets.length} class${classTargets.length === 1 ? '' : 'es'}`,
+            sharedWithClassIds: resource.sharedWithClassIds
+        });
+
+    } catch (error) {
+        console.error('Error updating resource sharing:', error);
+        res.status(500).json({ message: 'Failed to update sharing' });
+    }
+});
+
 // STUDENT ACCESS: Get resources from student's connected teacher
 router.get('/my-teacher-resources', isAuthenticated, async (req, res) => {
     try {
-        // Check if user is a student and has a connected teacher
-        if (req.user.role !== 'student') {
+        // Check the roles the user HOLDS, not the dashboard they happen to be
+        // viewing. `req.user.role` is the active role — a student who also
+        // holds another role and switched views was told this endpoint wasn't
+        // for them and saw an empty resource list (CLAUDE.md §12).
+        if (!userHasRole(req.user, 'student')) {
             return res.status(403).json({ message: 'This endpoint is for students only' });
         }
 
@@ -259,11 +379,13 @@ router.get('/my-teacher-resources', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Fetch ONLY PUBLISHED resources from the student's teacher
-        const resources = await TeacherResource.find({
-            teacherId: req.user.teacherId,
-            isPublished: true  // Only show published resources to students
-        })
+        // Fetch ONLY PUBLISHED resources from the student's teacher, and only
+        // those shared with a class this student is actually in (or with no
+        // class at all, which means all of the teacher's students).
+        const classIds = await getStudentClassIds(req.user._id);
+        const resources = await TeacherResource.find(
+            TeacherResource.visibleToStudentFilter(req.user.teacherId, classIds)
+        )
             .sort({ uploadedAt: -1 })
             .select('-extractedText'); // Don't send full extracted text
 
@@ -400,13 +522,25 @@ router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req,
             return res.status(404).json({ message: 'Resource not found' });
         }
 
-        // Authorization check: Allow teachers to access their own resources, students to access their teacher's PUBLISHED resources
-        const isResourceOwner = req.user.role === 'teacher' && resource.teacherId.toString() === req.user._id.toString();
-        const isStudentOfTeacher = req.user.role === 'student' && req.user.teacherId && resource.teacherId.toString() === req.user.teacherId.toString();
+        // Authorization: teachers reach their own resources; students reach
+        // their teacher's published ones that are shared with a class they are
+        // in. Both tests read the roles the user HOLDS — `req.user.role` is the
+        // active dashboard, so a teacher who had switched views could not
+        // download their own file (CLAUDE.md §12).
+        const isResourceOwner = userHasRole(req.user, 'teacher') &&
+            resource.teacherId.toString() === req.user._id.toString();
+        const isStudentOfTeacher = userHasRole(req.user, 'student') && req.user.teacherId &&
+            resource.teacherId.toString() === req.user.teacherId.toString();
 
-        // Students can only access published resources
-        if (isStudentOfTeacher && resource.isPublished === false) {
-            return res.status(403).json({ message: 'This resource is not currently available' });
+        if (isStudentOfTeacher && !isResourceOwner) {
+            // Covers unpublished AND class-targeted-at-someone-else. This is the
+            // endpoint that hands over the actual bytes, so the class check has
+            // to live here too — filtering only the list would leave the file
+            // one guessed id away.
+            const classIds = await getStudentClassIds(req.user._id);
+            if (!resourceVisibleToStudent(resource, classIds)) {
+                return res.status(403).json({ message: 'This resource is not currently available' });
+            }
         }
 
         if (!isResourceOwner && !isStudentOfTeacher) {

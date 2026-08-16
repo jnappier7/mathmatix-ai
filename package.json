@@ -72,7 +72,8 @@
     "loadtest:chat:peak": "k6 run -e PROFILE=peak tests/load/chat.test.js",
     "loadtest:screener": "k6 run tests/load/screener.test.js",
     "loadtest:auth": "k6 run tests/load/auth.test.js",
-    "loadtest:stress": "k6 run -e PROFILE=stress tests/load/chat.test.js"
+    "loadtest:stress": "k6 run -e PROFILE=stress tests/load/chat.test.js",
+    "test:mobile": "node tests/mobile/verifyMobileControls.js"
   },
   "author": "Jason Nappier",
   "license": "MIT",
