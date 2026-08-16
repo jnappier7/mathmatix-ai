@@ -127,13 +127,55 @@ describe('Data Retention Policy Engine', () => {
                 deleteMany: jest.fn().mockResolvedValue({ deletedCount: 0 })
             }));
 
+            // Override the period, keep the rest of the spec. The sweep is
+            // driven by this object, so an override that drops `model` would
+            // mean that category stops being swept — see the next test.
             const customPolicy = {
                 ...DEFAULT_RETENTION_POLICY,
-                studentUploads: { days: 7, description: 'Short retention' }
+                studentUploads: { ...DEFAULT_RETENTION_POLICY.studentUploads, days: 7 }
             };
 
             const summary = await runRetentionSweep(customPolicy);
             expect(summary.errors.length).toBe(0);
+        });
+
+        test('a category with no model is reported as an error, never silently skipped', async () => {
+            mongoose.model.mockImplementation(() => ({
+                deleteMany: jest.fn().mockResolvedValue({ deletedCount: 0 }),
+                countDocuments: jest.fn().mockResolvedValue(0)
+            }));
+
+            // This is the shape that caused completedAssessments, gradingResults
+            // and impersonationLogs to retain forever: declared with a period,
+            // wired to nothing. It must surface, not pass quietly.
+            const brokenPolicy = {
+                orphanCategory: { days: 30, description: 'Declared but not wired up' }
+            };
+
+            const summary = await runRetentionSweep(brokenPolicy);
+            expect(summary.errors).toHaveLength(1);
+            expect(summary.errors[0].collection).toBe('orphanCategory');
+            expect(summary.errors[0].error).toMatch(/no model/i);
+        });
+
+        test('sweeps every declared category, not a hand-picked subset', async () => {
+            const swept = [];
+            mongoose.model.mockImplementation((name) => {
+                swept.push(name);
+                return {
+                    deleteMany: jest.fn().mockResolvedValue({ deletedCount: 0 }),
+                    countDocuments: jest.fn().mockResolvedValue(0)
+                };
+            });
+
+            await runRetentionSweep();
+
+            // The old implementation touched only 4 of the 7 declared categories.
+            expect(swept).toEqual(expect.arrayContaining([
+                'Conversation', 'StudentUpload', 'ScreenerSession',
+                'GradingResult', 'Feedback', 'ImpersonationLog', 'Message'
+            ]));
+            expect(swept).toHaveLength(Object.keys(DEFAULT_RETENTION_POLICY).length);
         });
     });
 

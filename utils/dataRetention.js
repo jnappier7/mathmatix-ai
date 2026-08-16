@@ -29,50 +29,107 @@ const logger = require('./logger');
 // ============================================================================
 
 /**
- * Default retention periods (in days).
+ * Default retention periods.
+ *
+ * This object is the SINGLE SOURCE OF TRUTH for three things that used to be
+ * maintained separately and drifted apart:
+ *
+ *   1. what the sweep actually deletes  (runRetentionSweep iterates this object)
+ *   2. what we publish in the privacy policy  (public/privacy.html §7)
+ *   3. what the amended COPPA Rule requires us to be able to state — the
+ *      categories collected, the business purpose for retaining each, and a
+ *      specific deletion timeframe. Indefinite retention is prohibited.
+ *
+ * The sweep was previously hand-written per collection while this object was a
+ * separate declaration, so three categories — completedAssessments,
+ * gradingResults and impersonationLogs — were declared here with a stated
+ * retention period and then never swept at all. They retained forever while the
+ * policy claimed 3 years. Driving the sweep from this object makes that class
+ * of bug structural rather than a matter of remembering: adding an entry adds
+ * a sweep, and tests/unit/dataRetention.test.js fails on an entry that has no
+ * model wired up.
+ *
+ * Per-entry fields:
+ *   days        - retention period; the deletion timeframe we publish
+ *   description - internal description
+ *   publicLabel - the category name as published to parents
+ *   purpose     - the business purpose for retaining it, as published
+ *   model       - mongoose model name the sweep deletes from
+ *   dateField   - the field compared against the cutoff
+ *   filter      - extra query conditions ANDed with the cutoff (optional)
+ *
  * These can be overridden per-district via school DPA agreements.
  */
 const DEFAULT_RETENTION_POLICY = {
     // Conversation history for inactive students
     inactiveConversations: {
         days: 365,           // 12 months
-        description: 'Conversations from students inactive for 12+ months'
+        description: 'Conversations from students inactive for 12+ months',
+        publicLabel: 'Tutoring conversations',
+        purpose: 'Continuity of tutoring and progress review by the student, their parent and their teacher',
+        model: 'Conversation',
+        dateField: 'lastActivity',
+        filter: { isActive: false }
     },
 
     // Student file uploads (homework photos, etc.)
     studentUploads: {
         days: 30,            // 30 days
-        description: 'Uploaded files (homework photos, documents)'
+        description: 'Uploaded files (homework photos, documents)',
+        publicLabel: 'Uploaded photos and documents',
+        purpose: 'Reading the student\'s written work so the tutor can respond to it',
+        model: 'StudentUpload',
+        dateField: 'createdAt'
     },
 
     // Completed screener/assessment sessions
     completedAssessments: {
         days: 1095,          // 3 years (standard educational record retention)
-        description: 'Completed placement tests and assessments'
+        description: 'Completed placement tests and assessments',
+        publicLabel: 'Placement tests and growth checks',
+        purpose: 'Measuring growth over time against a baseline; educational record retention',
+        model: 'ScreenerSession',
+        dateField: 'createdAt'
     },
 
     // Grading results
     gradingResults: {
         days: 1095,          // 3 years
-        description: 'AI-graded homework results'
+        description: 'AI-graded homework results',
+        publicLabel: 'Graded work',
+        purpose: 'Showing progress on graded assignments to the student, parent and teacher',
+        model: 'GradingResult',
+        dateField: 'createdAt'
     },
 
     // Feedback submissions
     feedback: {
         days: 365,           // 1 year
-        description: 'Student feedback and bug reports'
+        description: 'Student feedback and bug reports',
+        publicLabel: 'Feedback and bug reports',
+        purpose: 'Diagnosing and fixing reported problems with the service',
+        model: 'Feedback',
+        dateField: 'createdAt'
     },
 
     // Impersonation audit logs
     impersonationLogs: {
         days: 1095,          // 3 years (compliance audit trail)
-        description: 'Admin/teacher impersonation audit logs'
+        description: 'Admin/teacher impersonation audit logs',
+        publicLabel: 'Staff account-access audit logs',
+        purpose: 'Security and compliance audit trail of staff access to student accounts',
+        model: 'ImpersonationLog',
+        dateField: 'createdAt'
     },
 
     // Direct messages
     messages: {
         days: 365,           // 1 year
-        description: 'Teacher-parent and system messages'
+        description: 'Teacher-parent and system messages',
+        publicLabel: 'Teacher and parent messages',
+        purpose: 'Continuity of communication between teachers and parents',
+        model: 'Message',
+        dateField: 'createdAt'
     }
 };
 
@@ -101,90 +158,40 @@ async function runRetentionSweep(customPolicy = null, dryRun = false) {
 
     logger.info(`[DataRetention] Starting retention sweep (dryRun: ${dryRun})`);
 
-    // --- 1. Inactive conversations ---
-    try {
-        const cutoffDate = new Date(now - policy.inactiveConversations.days * 24 * 60 * 60 * 1000);
-        const Conversation = mongoose.model('Conversation');
-
-        if (dryRun) {
-            const count = await Conversation.countDocuments({
-                lastActivity: { $lt: cutoffDate },
-                isActive: false
+    // Every declared category is swept. There is deliberately no hand-written
+    // per-collection block here any more: the previous version implemented four
+    // of the seven declared categories, and the three it skipped
+    // (completedAssessments, gradingResults, impersonationLogs) retained
+    // forever while the policy advertised a 3-year period. A category with no
+    // `model` is a policy bug, so it is recorded as an error rather than
+    // silently skipped.
+    for (const [key, spec] of Object.entries(policy)) {
+        if (!spec || !spec.model) {
+            summary.errors.push({
+                collection: key,
+                error: 'Retention policy entry has no model — nothing was deleted for this category'
             });
-            summary.collections.inactiveConversations = { wouldDelete: count };
-        } else {
-            const result = await Conversation.deleteMany({
-                lastActivity: { $lt: cutoffDate },
-                isActive: false
-            });
-            summary.collections.inactiveConversations = { deleted: result.deletedCount };
-            summary.totalDocumentsAffected += result.deletedCount;
+            continue;
         }
-    } catch (err) {
-        summary.errors.push({ collection: 'inactiveConversations', error: err.message });
-    }
 
-    // --- 2. Student uploads ---
-    try {
-        const cutoffDate = new Date(now - policy.studentUploads.days * 24 * 60 * 60 * 1000);
-        const StudentUpload = mongoose.model('StudentUpload');
+        try {
+            const cutoffDate = new Date(now - spec.days * 24 * 60 * 60 * 1000);
+            const Model = mongoose.model(spec.model);
+            const query = {
+                [spec.dateField || 'createdAt']: { $lt: cutoffDate },
+                ...(spec.filter || {})
+            };
 
-        if (dryRun) {
-            const count = await StudentUpload.countDocuments({
-                createdAt: { $lt: cutoffDate }
-            });
-            summary.collections.studentUploads = { wouldDelete: count };
-        } else {
-            const result = await StudentUpload.deleteMany({
-                createdAt: { $lt: cutoffDate }
-            });
-            summary.collections.studentUploads = { deleted: result.deletedCount };
-            summary.totalDocumentsAffected += result.deletedCount;
+            if (dryRun) {
+                summary.collections[key] = { wouldDelete: await Model.countDocuments(query) };
+            } else {
+                const result = await Model.deleteMany(query);
+                summary.collections[key] = { deleted: result.deletedCount };
+                summary.totalDocumentsAffected += result.deletedCount;
+            }
+        } catch (err) {
+            summary.errors.push({ collection: key, error: err.message });
         }
-    } catch (err) {
-        summary.errors.push({ collection: 'studentUploads', error: err.message });
-    }
-
-    // --- 3. Old feedback ---
-    try {
-        const cutoffDate = new Date(now - policy.feedback.days * 24 * 60 * 60 * 1000);
-        const Feedback = mongoose.model('Feedback');
-
-        if (dryRun) {
-            const count = await Feedback.countDocuments({
-                createdAt: { $lt: cutoffDate }
-            });
-            summary.collections.feedback = { wouldDelete: count };
-        } else {
-            const result = await Feedback.deleteMany({
-                createdAt: { $lt: cutoffDate }
-            });
-            summary.collections.feedback = { deleted: result.deletedCount };
-            summary.totalDocumentsAffected += result.deletedCount;
-        }
-    } catch (err) {
-        summary.errors.push({ collection: 'feedback', error: err.message });
-    }
-
-    // --- 4. Old messages ---
-    try {
-        const cutoffDate = new Date(now - policy.messages.days * 24 * 60 * 60 * 1000);
-        const Message = mongoose.model('Message');
-
-        if (dryRun) {
-            const count = await Message.countDocuments({
-                createdAt: { $lt: cutoffDate }
-            });
-            summary.collections.messages = { wouldDelete: count };
-        } else {
-            const result = await Message.deleteMany({
-                createdAt: { $lt: cutoffDate }
-            });
-            summary.collections.messages = { deleted: result.deletedCount };
-            summary.totalDocumentsAffected += result.deletedCount;
-        }
-    } catch (err) {
-        summary.errors.push({ collection: 'messages', error: err.message });
     }
 
     summary.completedAt = new Date();
@@ -258,8 +265,41 @@ function stopRetentionSchedule() {
 // EXPORTS
 // ============================================================================
 
+/**
+ * The retention policy as published to parents.
+ *
+ * The amended COPPA Rule requires the written retention policy to appear in the
+ * online privacy notice, stating for each category what is retained, why, and
+ * for how long. Deriving that table from the same object the sweep runs on is
+ * what keeps the published promise and the actual behaviour in step —
+ * tests/unit/retentionPolicyPublished.test.js fails if public/privacy.html
+ * stops matching this.
+ *
+ * @param {Object} [policy] - defaults to DEFAULT_RETENTION_POLICY
+ * @returns {Array<{key, category, purpose, days, humanPeriod}>}
+ */
+function getPublishedRetentionPolicy(policy = DEFAULT_RETENTION_POLICY) {
+    return Object.entries(policy).map(([key, spec]) => ({
+        key,
+        category: spec.publicLabel || spec.description,
+        purpose: spec.purpose || '',
+        days: spec.days,
+        humanPeriod: humanPeriod(spec.days)
+    }));
+}
+
+/** "30 days" / "1 year" / "3 years" — the phrasing used in the notice. */
+function humanPeriod(days) {
+    if (days >= 365 && days % 365 === 0) {
+        const years = days / 365;
+        return years === 1 ? '1 year' : `${years} years`;
+    }
+    return `${days} days`;
+}
+
 module.exports = {
     DEFAULT_RETENTION_POLICY,
+    getPublishedRetentionPolicy,
     runRetentionSweep,
     startRetentionSchedule,
     stopRetentionSchedule
