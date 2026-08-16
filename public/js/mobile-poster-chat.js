@@ -232,22 +232,38 @@
   // mic / calculator icons. Measuring removes the guess: paired with
   // --mm-nav-h (bottom-nav.js), `nav + composer` is exactly the height of the
   // bottom chrome, whatever is currently in it.
+  // Also publishes --mm-composer-top: how far the composer's TOP edge sits above
+  // the viewport bottom. That is what anything floating over the composer
+  // actually needs, and unlike `nav + composer height` it holds at every width.
+  //
+  // On a phone the two agree, because the chat container is fixed and the nav is
+  // the only thing below the composer. From 769–1200px the layout is the desktop
+  // stage — the composer ends part-way up the screen for the footer, and no sum
+  // of nav+composer describes that — which is why the workspace pill, anchored
+  // at a flat 92px, sat ON the composer at every tablet width measured (820,
+  // 900, 1024, 1100). One measured edge covers both layouts.
   function trackComposer() {
     var ic = document.getElementById('input-container');
     if (!ic) return;
     var publish = function () {
-      var h = ic.getBoundingClientRect().height;
+      var r = ic.getBoundingClientRect();
       // A zero height means the composer is swapped out (voice mode) rather
       // than genuinely flat — keep the last good value so the greeting doesn't
       // snap to the bottom edge mid-transition.
-      if (h > 0) {
-        document.documentElement.style.setProperty('--mm-composer-h', h + 'px');
-      }
+      if (r.height <= 0) return;
+      var st = document.documentElement.style;
+      st.setProperty('--mm-composer-h', r.height + 'px');
+      // Clamped at 0: if the composer is scrolled below the fold the distance
+      // goes negative, which would drag the pill off-screen entirely.
+      st.setProperty('--mm-composer-top', Math.max(0, window.innerHeight - r.top) + 'px');
     };
     publish();
     if (window.ResizeObserver) new ResizeObserver(publish).observe(ic);
     window.addEventListener('resize', publish);
     window.addEventListener('orientationchange', publish);
+    // The desktop stage lays out after fonts/images settle, so the first read
+    // can predate the composer's final position.
+    window.addEventListener('load', publish);
   }
 
   /* ---- idle <-> conversation state ----------------------------------- */

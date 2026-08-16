@@ -433,16 +433,9 @@
     color: #9aa3b8 !important;
   }
 
-  /* Workspace pill: float it just above the composer.
-     workspace.css anchors it at `safe-area + 92px`, which was measured against
-     the old phone layout where the composer stopped ~130px up the screen — the
-     pill sat in the dead band between the composer and the bottom nav. With the
-     composer now flush on the nav, that literal would land the pill on top of
-     it. Derive from the same measured chrome the greeting uses; the safe-area
-     inset is already inside the measured nav box, so it isn't re-added. */
-  body.cr-mode .cr-ws-fab {
-    bottom: calc(var(--mm-nav-h, 0px) + var(--mm-composer-h, 122px) + 10px);
-  }
+  /* The phone-specific override this used to carry is gone: workspace.css now
+     anchors the pill off --mm-composer-top, which on a phone equals
+     nav + composer height anyway. One rule, both layouts. */
 
   /* ---- 7. COMPOSER (last flex child, sticky bottom) ------------------ */
 

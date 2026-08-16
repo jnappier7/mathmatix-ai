@@ -296,12 +296,14 @@
     gap: 7px;
     position: fixed;
     right: 14px;
-    /* Tablet widths (769–1200px) keep the desktop stage: #chat-container is a
-       grid column that stops 60px short of the viewport for the fixed footer,
-       and 92px clears its composer. The phone shell puts the composer flush on
-       the bottom nav instead, so mobile-poster-chat.css re-anchors this from the
-       measured chrome heights — see the note there. */
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+    /* Float clear of the composer, wherever the composer actually ends.
+       --mm-composer-top is its top edge measured from the viewport bottom
+       (mobile-poster-chat.js), which is the only value that holds across both
+       layouts this block covers. The old flat 92px was wrong at EVERY tablet
+       width — measured at 820/900/1024/1100, the pill overlapped the composer
+       every time, because on the desktop stage the composer ends part-way up
+       the screen and no literal can track that. */
+    bottom: calc(var(--mm-composer-top, 122px) + 10px);
     height: 38px;
     padding: 0 14px 0 12px;
     border: 1px solid rgba(255, 255, 255, 0.18);
