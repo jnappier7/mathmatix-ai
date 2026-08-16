@@ -286,8 +286,19 @@ function configureMiddleware(app) {
           'https://connect.facebook.net',
         ],
         scriptSrcAttr: ["'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com', 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com'],
-        fontSrc: ["'self'", 'https://cdnjs.cloudflare.com', 'https://cdn.jsdelivr.net', 'https://fonts.gstatic.com', 'data:'],
+        // cdnjs is deliberately absent from styleSrc/fontSrc: it served ONLY
+        // Font Awesome, which is now self-hosted under /vendor. It stays in
+        // scriptSrc because fabric.js still loads from there.
+        //   jsdelivr    — still serves a stylesheet (jsxgraph.css), so it stays
+        //                 in styleSrc, and in fontSrc for anything that sheet
+        //                 pulls in.
+        //   googleapis  — Google Fonts CSS (Inter / Caveat / Patrick Hand).
+        //   gstatic     — the font files that Google Fonts CSS points at.
+        // Re-adding cdnjs here would silently re-enable loading fonts from a CDN
+        // we no longer depend on; if a future stylesheet needs it, add it back
+        // deliberately with a note saying why.
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://cdn.jsdelivr.net', 'https://fonts.gstatic.com', 'data:'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
         // www.facebook.com: Meta Pixel event beacons (fbevents.js sendBeacon → /tr).
         // The pixel itself lives ONLY on public marketing pages (quiz.html).
