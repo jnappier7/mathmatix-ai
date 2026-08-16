@@ -89,6 +89,33 @@ body[data-theme-skin="theme.gold"] {
   --cr-pill-bg: rgba(184, 134, 11, 0.12); --cr-pill-bg-hover: rgba(184, 134, 11, 0.22);
 }
 
+/* ---- Mobile backdrop per theme -------------------------------------------
+ * The phone shell paints its page backdrop from --mlt-bg (mobile-light-theme.css)
+ * rather than --cr-bg-0, so without these a theme was near-invisible on a
+ * phone: measured, Bubblegum changed 1 of 5 surfaces on mobile vs 2 of 5 on
+ * desktop, and the backdrop — the biggest area on the screen — was not one of
+ * them. --mlt-scrim-rgb is the same colour as an "R, G, B" triple, because the
+ * composer and header-band gradients fade to rgba(var(--mlt-scrim-rgb), a);
+ * leave it behind and the composer keeps a lavender wash over a themed page.
+ *
+ * ⚠️ Adding a theme? Add its pair here too, or it will not show on mobile.
+ *
+ * Light themes reuse their own --cr-bg-0. Neon and Galaxy deliberately do NOT:
+ * their backdrops (#071018 / #0e0a22) are near-black, chosen for desktop where
+ * --cr-bg-0 only paints the gutter *between* panels and carries no text. On
+ * mobile the backdrop sits directly behind the idle greeting, which is near-black
+ * ink (--mlt-ink #232741) — so those two get pale counterparts in the same hue
+ * and keep the theme legible instead of printing black on black. */
+@media (max-width: 768px) {
+  body.cr-mode[data-theme-skin="theme.bubblegum"] { --mlt-bg: #f9c1e0; --mlt-scrim-rgb: 249, 193, 224; }
+  body.cr-mode[data-theme-skin="theme.forest"]    { --mlt-bg: #a8d5ba; --mlt-scrim-rgb: 168, 213, 186; }
+  body.cr-mode[data-theme-skin="theme.sunset"]    { --mlt-bg: #ffc9a3; --mlt-scrim-rgb: 255, 201, 163; }
+  body.cr-mode[data-theme-skin="theme.ocean"]     { --mlt-bg: #a9d6f0; --mlt-scrim-rgb: 169, 214, 240; }
+  body.cr-mode[data-theme-skin="theme.gold"]      { --mlt-bg: #f0d98a; --mlt-scrim-rgb: 240, 217, 138; }
+  body.cr-mode[data-theme-skin="theme.neon"]      { --mlt-bg: #d7f7fd; --mlt-scrim-rgb: 215, 247, 253; }
+  body.cr-mode[data-theme-skin="theme.galaxy"]    { --mlt-bg: #e5dcf9; --mlt-scrim-rgb: 229, 220, 249; }
+}
+
 /* =========================================================================
  * THEME WASH — a light, subtle tint on the chat window and the tutor's bubbles,
  * so the equipped theme carries into them too. color-mix blends a little of the

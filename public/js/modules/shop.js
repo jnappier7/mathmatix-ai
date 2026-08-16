@@ -16,6 +16,16 @@ const SLOT_LABELS = {
 };
 const SLOT_ORDER = ['theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'header'];
 
+// Slots whose surface does not exist on a phone. The shop opens from the mobile
+// chat, so without this a student browsing on their phone can spend 200 earned
+// coins on a header skin that paints correctly and is then never visible —
+// the header is display:none below 768px. The note is CSS-gated to that same
+// breakpoint in shop.css: on desktop the slot works fine and the warning would
+// be wrong. Prefer giving a slot a mobile surface over listing it here.
+const SLOT_NOTES = {
+    header: 'Headers show on desktop only — the header is hidden on phones.',
+};
+
 let state = { catalog: {}, coins: 0, owned: [], equipped: {} };
 let preview = null; // { slot, id } while a "try-on" is active, else null
 let undoTimer = null; // auto-hide timer for the post-purchase Undo bar
@@ -196,8 +206,11 @@ function render() {
         const items = bySlot[slot]
             .sort((a, b) => a[1].price - b[1].price)
             .map(([id, item]) => itemCardHTML(id, item)).join('');
+        const note = SLOT_NOTES[slot]
+            ? `<p class="shop-section-note">${esc(SLOT_NOTES[slot])}</p>` : '';
         return `<section class="shop-section">
                   <h3 class="shop-section-head">${esc(SLOT_LABELS[slot] || slot)}</h3>
+                  ${note}
                   <div class="shop-grid">${items}</div>
                 </section>`;
     }).join('');
