@@ -119,6 +119,47 @@ async function sendParentalConsentRequest(parentEmail, studentName, consentToken
 }
 
 /**
+ * Send a pre-composed notification.
+ *
+ * Unlike the rest of this module, the body is supplied by the caller rather
+ * than built from a template here. That is what the FERPA annual notification
+ * needs: utils/ferpaCompliance.js owns the legally-specified wording (34 CFR
+ * § 99.7) and hands it over already rendered, so the notice text lives with the
+ * compliance logic instead of drifting in a second copy.
+ *
+ * Signature matches the `sendEmailFn` contract sendAnnualNotifications expects.
+ *
+ * @param {String} to
+ * @param {String} subject
+ * @param {String} htmlContent
+ * @param {String} [textContent]
+ * @returns {Promise<{success:Boolean, messageId?:String, error?:String}>}
+ */
+async function sendComposedNotification(to, subject, htmlContent, textContent) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping notification');
+    return { success: false, error: 'Email not configured' };
+  }
+
+  try {
+    const emailConfig = getEmailConfig();
+    const info = await transport.sendMail({
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to,
+      subject,
+      html: htmlContent,
+      text: textContent
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending notification email:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Student-initiated parent invite. The kid enters a parent's email; the parent
  * gets a link to either create a free parent account (new) or confirm the link
  * (existing account). Either way they end up linked to the child.
@@ -1834,6 +1875,7 @@ module.exports = {
   sendCancellationConfirmation,
   sendTrialEndingReminder,
   sendParentUpgradeRequest,
+  sendComposedNotification,
   initializeTransporter,
   getEmailConfig
 };

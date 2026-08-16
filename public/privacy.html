@@ -31,6 +31,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="twitter:description" content="How Mathmatix AI protects your privacy and handles your data." />
 
   <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Retention policy table (§7). The amended COPPA Rule requires this to be
+       readable in the notice itself, so it must stay legible on a phone —
+       hence the horizontal scroll container rather than a squeezed layout. */
+    .retention-policy-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0 22px;
+      font-size: 15px;
+      display: block;
+      overflow-x: auto;
+      white-space: normal;
+    }
+    .retention-policy-table th,
+    .retention-policy-table td {
+      border: 1px solid #d9dde3;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .retention-policy-table thead th {
+      background: #f4f6f9;
+      font-weight: 600;
+    }
+    .retention-policy-table tbody tr:nth-child(even) { background: #fafbfc; }
+    .retention-policy-table td:last-child { white-space: nowrap; font-weight: 600; }
+  </style>
 </head>
 <body class="landing-page-body">
 <!-- Google Tag Manager (noscript) -->
@@ -47,7 +74,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </header>
 
   <main class="content-page-wrapper"> <h1>Privacy Policy</h1>
-    <p>Last updated: May 31, 2025</p>
+    <p>Last updated: August 16, 2026</p>
 
     <p>At M∆THM∆TIΧ AI, we respect your privacy and are deeply committed to protecting your personal data, especially as an educational service. This Privacy Policy explains how we collect, use, disclose, and protect information submitted by users of our platform ("Service").</p>
 
@@ -124,7 +151,60 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </ul>
 
     <h2>7. Data Retention</h2>
-    <p>We retain your personal data for as long as necessary to provide the Service, fulfill the purposes outlined in this Privacy Policy, comply with our legal obligations (e.g., tax, accounting, or audit), and resolve disputes. Upon account termination or request for deletion, we will securely delete or anonymize your data, unless retention is required by law.</p>
+    <p><strong>We do not retain children's personal information indefinitely.</strong> We keep each category of data only for as long as it is reasonably necessary for the purpose it was collected for, and then we delete it. An automated sweep runs daily and removes data that has passed the period stated below.</p>
+
+    <p>This is our written data retention policy, published here as required by the Children's Online Privacy Protection Rule:</p>
+
+    <table class="retention-policy-table">
+      <thead>
+        <tr>
+          <th scope="col">Category of information</th>
+          <th scope="col">Why we retain it</th>
+          <th scope="col">Deleted after</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tutoring conversations</td>
+          <td>Continuity of tutoring and progress review by the student, their parent and their teacher</td>
+          <td>1 year</td>
+        </tr>
+        <tr>
+          <td>Uploaded photos and documents</td>
+          <td>Reading the student's written work so the tutor can respond to it</td>
+          <td>30 days</td>
+        </tr>
+        <tr>
+          <td>Placement tests and growth checks</td>
+          <td>Measuring growth over time against a baseline; educational record retention</td>
+          <td>3 years</td>
+        </tr>
+        <tr>
+          <td>Graded work</td>
+          <td>Showing progress on graded assignments to the student, parent and teacher</td>
+          <td>3 years</td>
+        </tr>
+        <tr>
+          <td>Feedback and bug reports</td>
+          <td>Diagnosing and fixing reported problems with the service</td>
+          <td>1 year</td>
+        </tr>
+        <tr>
+          <td>Staff account-access audit logs</td>
+          <td>Security and compliance audit trail of staff access to student accounts</td>
+          <td>3 years</td>
+        </tr>
+        <tr>
+          <td>Teacher and parent messages</td>
+          <td>Continuity of communication between teachers and parents</td>
+          <td>1 year</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Account information (name, email, login credentials) is retained while the account is active. When an account is deleted, or when a parent withdraws consent and requests deletion, we delete the associated data promptly rather than waiting for the periods above. Retention periods may be set differently for a school or district under a signed Data Processing Agreement.</p>
+
+    <p>We may retain records longer only where the law requires it (for example tax or accounting records), or where we must preserve information to resolve a dispute.</p>
 
     <h2>8. Changes to This Privacy Policy</h2>
     <p>We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting the new Privacy Policy on this page and updating the "Last updated" date. We encourage you to review this Privacy Policy periodically for any changes.</p>

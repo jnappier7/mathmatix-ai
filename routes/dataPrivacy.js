@@ -31,6 +31,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const { isAuthenticated, isAdmin, isParent } = require('../middleware/auth');
+const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const logger = require('../utils/logger');
 
 // Models
@@ -438,7 +439,13 @@ router.post('/delete-child/:studentId', isAuthenticated, isParent, async (req, r
  * GET /api/privacy/export/:studentId
  * Admin or parent (of linked child): Export all student data as JSON.
  */
-router.get('/export/:studentId', isAuthenticated, async (req, res) => {
+router.get('/export/:studentId', isAuthenticated,
+    // FERPA 34 CFR § 99.32 requires a record of each disclosure. This endpoint
+    // hands over the student's ENTIRE education record in one response, so of
+    // everything under /api/privacy it is the one that most needs logging — and
+    // it was the only student-data route in this file with none at all.
+    logRecordAccess('full_export', 'data_export_request', { accessType: 'export' }),
+    async (req, res) => {
     try {
         const { studentId } = req.params;
 
