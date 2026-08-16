@@ -85,5 +85,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # scripts/buildPageBundles.js concatenates each page's CSS/JS into
+      # content-hashed bundles, and the PAGES it covers load ONLY those bundles.
+      # Editing a bundled source without re-running it is therefore silent: the
+      # source is correct, review passes, and the change is simply never served.
+      #
+      # That is not hypothetical. `.catalog-drop-btn` — the only way to unenroll
+      # from a course on a phone — shipped with zero of its six rules in the
+      # served bundle, because the CSS was merged without a rebuild. It was found
+      # by accident, weeks later.
+      #
+      # The bundler is a deterministic content hash over the same input, so a
+      # clean tree in, clean tree out. Any diff here means a source file moved and
+      # its bundle did not.
+      - name: Page bundles match their sources
+        run: |
+          npm run build:bundles
+          # Scope to public/ — `npm run build` (vite) writes to the gitignored
+          # root /dist, so it can never make this dirty. --porcelain catches the
+          # newly-hashed bundle files too, which `git diff` alone would miss
+          # because they are untracked.
+          if [ -n "$(git status --porcelain -- public)" ]; then
+            echo "::error::Page bundles are stale — a bundled source was edited without rebuilding, so that change is NOT being served. Run 'npm run build:bundles' and commit the result."
+            echo ""
+            echo "Files the bundler changed:"
+            git --no-pager status --porcelain -- public
+            exit 1
+          fi
+          echo "Page bundles are in sync with their sources."
+
       - name: Build frontend
         run: npm run build
