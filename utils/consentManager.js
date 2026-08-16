@@ -17,6 +17,7 @@
  * @module utils/consentManager
  */
 
+const crypto = require('crypto');
 const logger = require('./logger');
 const User = require('../models/user');
 
@@ -220,6 +221,41 @@ async function grantSelfConsent(studentId, metadata = {}) {
 // ============================================================================
 // EMAIL-VERIFIED PARENT CONSENT (token pathway)
 // ============================================================================
+
+/**
+ * Issue a single-use parental-consent request against a student.
+ *
+ * Stores the SHA-256 HASH of the token and returns the RAW token, which the
+ * caller puts in the emailed link and must not persist anywhere else.
+ *
+ * Deliberately does NOT write a history record: history is the audit trail of
+ * consent acts, and asking is not consenting. The record is written when the
+ * parent actually responds (grantParentConsentByEmail / declineParentConsentByEmail).
+ *
+ * @param {Object} student - Hydrated student user document
+ * @param {string} parentEmail - Where the request is being sent
+ * @param {number} [ttlMs] - Link lifetime, default 7 days
+ * @returns {Promise<string>} The raw token for the emailed URL
+ */
+async function issueParentConsentRequest(student, parentEmail, ttlMs = 7 * 24 * 60 * 60 * 1000) {
+    if (!student) throw new Error('Student not found');
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+    if (!student.privacyConsent) student.privacyConsent = {};
+    if (!student.privacyConsent.history) student.privacyConsent.history = [];
+
+    student.privacyConsent.status = 'pending';
+    student.privacyConsent.consentPathway = 'individual_parent';
+    student.privacyConsent.consentToken = hashedToken;
+    student.privacyConsent.consentTokenExpires = new Date(Date.now() + ttlMs);
+    student.privacyConsent.pendingParentEmail = parentEmail;
+
+    await student.save();
+
+    return rawToken;
+}
 
 /**
  * Grant consent from a parent who arrived via an emailed verification link.
@@ -493,6 +529,7 @@ async function grantBatchSchoolConsent(studentIds, schoolInfo, metadata = {}) {
 module.exports = {
     // Consent lifecycle
     grantParentConsent,
+    issueParentConsentRequest,
     grantParentConsentByEmail,
     declineParentConsentByEmail,
     grantSchoolConsent,
