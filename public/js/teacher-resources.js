@@ -9,11 +9,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadForm = document.getElementById('upload-resource-form');
     const resourcesList = document.getElementById('resources-list');
 
+    // Classes available for targeting, refreshed whenever the list loads.
+    let teacherClasses = [];
+
     // Open upload modal
     if (uploadBtn) {
         uploadBtn.addEventListener('click', () => {
             uploadModal.classList.add('is-visible');
+            renderClassPicker();
         });
+    }
+
+    // --------------------------------------------------
+    // Class targeting
+    // --------------------------------------------------
+    const scopeRadios = () => document.querySelectorAll('input[name="shareScope"]');
+    const classListEl = () => document.getElementById('resource-class-list');
+
+    /**
+     * Paint the checkbox list of classes. Called on modal open rather than at
+     * init because a teacher can create a class and upload in the same sitting,
+     * and a picker built once at page load would not know about it.
+     */
+    function renderClassPicker() {
+        const list = classListEl();
+        if (!list) return;
+
+        if (teacherClasses.length === 0) {
+            list.innerHTML = `<p class="resource-class-empty">
+                No classes yet — this will be shared with all your students.
+                Create a class in the Classes tab to target one.
+            </p>`;
+            return;
+        }
+
+        list.innerHTML = teacherClasses.map(c => `
+            <label class="resource-class-option">
+                <input type="checkbox" name="classTarget" value="${c._id}">
+                <span>${escapeHtml(c.className)}</span>
+            </label>
+        `).join('');
+    }
+
+    // Reveal the class list only when "specific classes" is chosen, so the
+    // default path (all students) stays a single click.
+    scopeRadios().forEach(radio => {
+        radio.addEventListener('change', () => {
+            const list = classListEl();
+            if (list) list.hidden = radio.value !== 'classes' || !radio.checked;
+        });
+    });
+
+    /**
+     * The class ids to submit, as a JSON string (multipart sends strings).
+     * Returns '[]' — meaning all students — for the "all" scope, and also when
+     * "specific classes" is selected but nothing is ticked: silently sharing
+     * with everyone is wrong there, so the caller treats that as an error.
+     */
+    function selectedClassIds() {
+        const scope = document.querySelector('input[name="shareScope"]:checked')?.value;
+        if (scope !== 'classes') return [];
+        return [...document.querySelectorAll('input[name="classTarget"]:checked')].map(cb => cb.value);
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text == null ? '' : text;
+        return div.innerHTML;
     }
 
     // Close modal
@@ -49,6 +111,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(uploadForm);
             const submitBtn = uploadForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
+
+            const scope = document.querySelector('input[name="shareScope"]:checked')?.value;
+            const classIds = selectedClassIds();
+            if (scope === 'classes' && classIds.length === 0 && teacherClasses.length > 0) {
+                alert('Pick at least one class, or choose "All my students".');
+                return;
+            }
+            // The radios are form inputs too — strip them so only the resolved
+            // targeting reaches the server.
+            formData.delete('shareScope');
+            formData.set('sharedWithClassIds', JSON.stringify(classIds));
 
             try {
                 submitBtn.disabled = true;
@@ -95,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const resources = data.resources || [];
+            teacherClasses = data.classes || [];
 
             if (resources.length === 0) {
                 resourcesList.innerHTML = `
@@ -133,6 +207,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${resource.description ? `<p class="resource-description">${resource.description}</p>` : ''}
                                 <p class="resource-stats">
                                     <i class="fas fa-chart-bar"></i> Accessed ${resource.accessCount} times
+                                </p>
+                                <p class="resource-audience" title="Who can see this resource">
+                                    <i class="fas fa-users"></i>
+                                    ${(resource.sharedWithClassNames || []).length > 0
+                                        ? escapeHtml(resource.sharedWithClassNames.join(', '))
+                                        : 'All my students'}
                                 </p>
                                 ${resource.keywords && resource.keywords.length > 0 ? `
                                     <div class="resource-keywords">

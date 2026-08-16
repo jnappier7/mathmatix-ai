@@ -45,9 +45,14 @@ function detectResourceMention(message) {
  * DIRECTIVE 3: Uses vector similarity search for semantic matching
  * @param {string} teacherId - The teacher's ID
  * @param {string} message - The student's message
+ * @param {Array} classIds - The classes the ASKING student belongs to. Every
+ *   lookup below is scoped by it, because a match here puts the resource's
+ *   extracted text straight into the tutor's prompt — an unscoped lookup would
+ *   read Class A's test aloud to Class B on request. Pass the student's real
+ *   class list; omitting it disables class scoping entirely.
  * @returns {Promise<Object|null>} - The resource object or null
  */
-async function findResourceInMessage(teacherId, message) {
+async function findResourceInMessage(teacherId, message, classIds) {
     if (!teacherId) return null;
 
     // HIGHEST CONFIDENCE: Check for explicitly quoted resource names first
@@ -59,7 +64,7 @@ async function findResourceInMessage(teacherId, message) {
     if (quotedMatch) {
         const quotedName = quotedMatch[1].trim();
         console.log(`🔍 [Quoted Name] Trying exact match for: "${quotedName}"`);
-        const resource = await TeacherResource.findByName(teacherId, quotedName);
+        const resource = await TeacherResource.findByName(teacherId, quotedName, classIds);
         if (resource) {
             console.log(`✅ [Quoted Name] Found resource: ${resource.displayName}`);
             return resource;
@@ -75,7 +80,7 @@ async function findResourceInMessage(teacherId, message) {
         const queryEmbedding = await generateEmbedding(message);
 
         // Find top matches using cosine similarity
-        const vectorResults = await TeacherResource.vectorSearch(teacherId, queryEmbedding, 3);
+        const vectorResults = await TeacherResource.vectorSearch(teacherId, queryEmbedding, 3, classIds);
 
         if (vectorResults && vectorResults.length > 0) {
             // Check if top match has good similarity (> 0.7)
@@ -105,7 +110,7 @@ async function findResourceInMessage(teacherId, message) {
 
         // Try to find a matching resource by name
         for (const mention of mentions) {
-            const resource = await TeacherResource.findByName(teacherId, mention);
+            const resource = await TeacherResource.findByName(teacherId, mention, classIds);
             if (resource) {
                 console.log(`✅ [Keyword Fallback] Found resource: ${resource.displayName}`);
                 return resource;
@@ -120,7 +125,7 @@ async function findResourceInMessage(teacherId, message) {
 
     if (meaningfulKeywords.length > 0) {
         const searchQuery = meaningfulKeywords.join(' ');
-        const results = await TeacherResource.search(teacherId, searchQuery);
+        const results = await TeacherResource.search(teacherId, searchQuery, classIds);
         if (results && results.length > 0) {
             console.log(`✅ [Keyword Fallback] Found resource via search: ${results[0].displayName}`);
             return results[0];
@@ -209,11 +214,11 @@ async function fetchAndProcessResource(resource) {
  * @param {string} message - The student's message
  * @returns {Promise<Object|null>} - Resource data or null
  */
-async function detectAndFetchResource(teacherId, message) {
+async function detectAndFetchResource(teacherId, message, classIds) {
     try {
         console.log(`[ResourceDetector] Entry — teacherId=${teacherId}, messageLen=${message?.length}`);
 
-        const resource = await findResourceInMessage(teacherId, message);
+        const resource = await findResourceInMessage(teacherId, message, classIds);
         if (!resource) {
             console.log(`[ResourceDetector] No matching resource found for message: "${message?.substring(0, 80)}..."`);
             return null;

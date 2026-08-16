@@ -38,6 +38,7 @@ const { parseVisualTeaching } = require('../utils/visualTeachingParser');
 const { enforceVisualTeaching } = require('../utils/visualCommandEnforcer');
 const { injectFewShotExamples } = require('../utils/visualCommandExamples');
 const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
+const { getStudentClassIds } = require('../utils/resourceVisibility');
 const GradingResult = require('../models/gradingResult');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 const { processAIResponse } = require('../utils/chatBoardParser');
@@ -726,8 +727,13 @@ async function runStudentTurn(req, res) {
 
         // 3. Resource detection
         if (user.teacherId) {
+            // Scoped to the classes this student is in: a matched resource has
+            // its extracted text injected into the tutor's context, so an
+            // unscoped lookup would let a student pull a resource their teacher
+            // shared with a different class just by naming it.
             contextPromises.push(
-                detectAndFetchResource(user.teacherId, message)
+                getStudentClassIds(user._id)
+                    .then(classIds => detectAndFetchResource(user.teacherId, message, classIds))
                     .catch(err => { logger.error('Resource detection error', { error: err.message }); return null; })
             );
         } else {

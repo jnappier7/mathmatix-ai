@@ -328,6 +328,12 @@ class TeacherLiveFeed {
 let liveFeed;
 document.addEventListener('DOMContentLoaded', () => {
     liveFeed = new TeacherLiveFeed();
+    // Published deliberately: the mobile alerts drawer mirrors this feed's
+    // markup and needs the instance to expand an item or acknowledge an alert.
+    // The drawer could otherwise only reach `liveFeed` through the shared
+    // classic-script scope, which happens to work but silently depends on
+    // these files staying non-modules and in their current bundle order.
+    window.teacherLiveFeed = liveFeed;
 });
 
 // Clean up on page unload

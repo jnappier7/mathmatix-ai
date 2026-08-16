@@ -2597,6 +2597,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     // MOBILE NAVIGATION
     // ============================================
 
+    // Which half of the left sidebar the mobile drawer is mirroring.
+    // 'alerts' = #smart-alerts-feed, 'activity' = #live-feed-panel's raw feed.
+    let mobileFeedView = 'alerts';
+
+    /**
+     * Repaint the mobile drawer from whichever desktop panel is selected.
+     *
+     * Both panels live in .left-sidebar, which is display:none below 968px —
+     * but display:none does not stop their renderers from writing to them, so
+     * they stay populated and can be mirrored here. This copies MARKUP ONLY;
+     * every interaction in the drawer is delegated (see wireMobileFeed) because
+     * innerHTML does not carry the listeners the renderers attached.
+     */
+    function paintMobileFeed() {
+        const target = document.getElementById('mobile-alerts-content');
+        if (!target) return;
+
+        const sourceId = mobileFeedView === 'activity' ? 'activity-feed' : 'smart-alerts-feed';
+        const source = document.getElementById(sourceId);
+        const title = document.getElementById('mobile-alerts-title');
+        if (title) {
+            title.textContent = mobileFeedView === 'activity' ? 'Live Activity' : 'Smart Alerts';
+        }
+
+        if (!source) {
+            target.innerHTML = '<div class="feed-loading">Nothing to show yet.</div>';
+            return;
+        }
+        target.innerHTML = source.innerHTML;
+    }
+
     function initializeMobileNav() {
         const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
         const alertsDrawer = document.getElementById('mobile-alerts-drawer');
@@ -2616,21 +2647,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.querySelector('[data-tab="students"]')?.click();
                 } else if (tab === 'alerts') {
                     if (alertsDrawer) alertsDrawer.classList.add('open');
-                    // Copy alert content to mobile drawer.
-                    //
-                    // innerHTML clones MARKUP ONLY — the per-button listeners
-                    // renderSmartAlerts() attaches to the desktop feed do not
-                    // come across, so every action in this drawer (Send
-                    // encouragement / reminder / Congratulate / Profile) used to
-                    // render perfectly and do nothing when tapped. The drawer is
-                    // the only alerts surface on a phone, so that was the whole
-                    // feature. Delegation on the container survives the copy —
-                    // see the listener wired once in initializeMobileNav below.
-                    const mobileContent = document.getElementById('mobile-alerts-content');
-                    const desktopAlerts = document.getElementById('smart-alerts-feed');
-                    if (mobileContent && desktopAlerts) {
-                        mobileContent.innerHTML = desktopAlerts.innerHTML;
-                    }
+                    paintMobileFeed();
                 } else if (tab === 'curriculum') {
                     document.querySelector('[data-tab="curriculum"]')?.click();
                 } else if (tab === 'actions') {
@@ -2694,13 +2711,56 @@ document.addEventListener("DOMContentLoaded", async () => {
         const mobileAlertsContent = document.getElementById('mobile-alerts-content');
         if (mobileAlertsContent) {
             mobileAlertsContent.addEventListener('click', (e) => {
-                if (!e.target.closest('.smart-alert-action')) return;
-                handleSmartAlertAction(e);
-                // Every action lands somewhere else — a tab or the profile
-                // modal. Leaving the full-screen drawer open would cover it.
-                alertsDrawer?.classList.remove('open');
+                // --- Smart Alerts view ---
+                if (e.target.closest('.smart-alert-action')) {
+                    handleSmartAlertAction(e);
+                    // Every action lands somewhere else — a tab or the profile
+                    // modal. Leaving the full-screen drawer open would cover it.
+                    alertsDrawer?.classList.remove('open');
+                    return;
+                }
+
+                // --- Live Activity view ---
+                // Same cloned-markup problem, same fix. The feed's own handlers
+                // were bound to the desktop nodes, so acknowledging an alert or
+                // expanding an item did nothing here.
+                const feed = window.teacherLiveFeed;
+                if (!feed) return;
+
+                const ackBtn = e.target.closest('.acknowledge-btn');
+                if (ackBtn) {
+                    e.stopPropagation();
+                    Promise.resolve(
+                        feed.acknowledgeAlert(ackBtn.dataset.conversationId, ackBtn.dataset.alertIndex)
+                    )
+                        // The feed re-renders the desktop panel on success; mirror
+                        // it so the drawer reflects the acknowledgement too.
+                        .then(() => paintMobileFeed())
+                        .catch(err => console.error('[MobileFeed] acknowledge failed', err));
+                    return;
+                }
+
+                const item = e.target.closest('.activity-item');
+                if (item) feed.toggleAlertDetails(item);
             });
         }
+
+        // Feed view toggle — the phone's stand-in for the sidebar's
+        // "Switch to Live Feed" / "Back to Smart Alerts" buttons.
+        const viewButtons = [
+            [document.getElementById('mobile-view-alerts'), 'alerts'],
+            [document.getElementById('mobile-view-activity'), 'activity'],
+        ];
+        viewButtons.forEach(([btn, view]) => {
+            btn?.addEventListener('click', () => {
+                mobileFeedView = view;
+                viewButtons.forEach(([b, v]) => {
+                    b?.classList.toggle('active', v === view);
+                    b?.setAttribute('aria-selected', String(v === view));
+                });
+                paintMobileFeed();
+            });
+        });
     }
 
     // ============================================

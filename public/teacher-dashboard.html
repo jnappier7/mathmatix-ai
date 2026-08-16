@@ -847,6 +847,69 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       margin: 8px 0;
     }
 
+    /* Who a resource actually reaches. Always rendered — "All my students" is
+       a real answer, not a missing value, and a teacher scanning the list needs
+       to tell the two apart at a glance. */
+    .resource-audience {
+      font-size: 0.85em;
+      color: #27ae60;
+      margin: 4px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-wrap: anywhere;
+    }
+
+    .resource-audience i {
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+
+    /* ----- Class targeting picker (upload modal) ----- */
+    .resource-class-picker {
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+
+    .resource-class-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 2px;
+      font-weight: 500;
+      cursor: pointer;
+      /* 44px touch target — this modal is reachable on a phone through the
+         Actions drawer's Upload Resources button. */
+      min-height: 44px;
+    }
+
+    .resource-class-option input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .resource-class-list {
+      margin-top: 6px;
+      padding-left: 24px;
+      border-left: 2px solid #e9ecef;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .resource-class-list[hidden] {
+      display: none;
+    }
+
+    .resource-class-empty {
+      font-size: 0.85em;
+      color: #888;
+      margin: 6px 0;
+    }
+
     .resource-keywords {
       margin-top: 8px;
       display: flex;
@@ -3254,6 +3317,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       gap: 12px;
     }
 
+    /* Smart Alerts ⇄ Live Activity switch inside the mobile alerts drawer. */
+    .mobile-feed-switch {
+      display: flex;
+      gap: 6px;
+      padding: 10px 16px 0;
+      flex-shrink: 0;
+    }
+
+    .mobile-feed-tab {
+      flex: 1;
+      min-height: 44px;
+      border: 1px solid #e9ecef;
+      background: #f8f9fa;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .mobile-feed-tab.active {
+      background: #e8f5e9;
+      border-color: #27ae60;
+      color: #27ae60;
+    }
+
+    .mobile-feed-tab:focus-visible {
+      outline: 2px solid #27ae60;
+      outline-offset: 1px;
+    }
+
     .mobile-action-btn {
       background: #f8f9fa;
       border: 1px solid #e9ecef;
@@ -5443,8 +5542,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- Mobile Alerts Drawer -->
   <div class="mobile-alerts-drawer" id="mobile-alerts-drawer">
     <div class="drawer-header">
-      <h3><i class="fas fa-bell"></i> Smart Alerts</h3>
+      <h3><i class="fas fa-bell"></i> <span id="mobile-alerts-title">Smart Alerts</span></h3>
       <button class="drawer-close-btn" id="close-alerts-drawer"><i class="fas fa-times"></i></button>
+    </div>
+    <!-- Both halves of the desktop left sidebar. Smart Alerts had a mobile
+         mirror; Live Activity did not, and its only switches
+         (#view-all-activity-btn / #back-to-alerts-btn) live in that sidebar,
+         which is display:none below 968px — so the raw feed was unreachable on
+         a phone entirely. This toggle is the phone's version of that switch. -->
+    <div class="mobile-feed-switch" role="tablist" aria-label="Feed view">
+      <button class="mobile-feed-tab active" id="mobile-view-alerts" role="tab" aria-selected="true">
+        <i class="fas fa-bell"></i> Smart Alerts
+      </button>
+      <button class="mobile-feed-tab" id="mobile-view-activity" role="tab" aria-selected="false">
+        <i class="fas fa-stream"></i> Live Activity
+      </button>
     </div>
     <div class="drawer-content" id="mobile-alerts-content">
       Loading alerts...
@@ -5855,6 +5967,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <option value="other">Other</option>
           </select>
 
+          <!-- Class targeting. Nothing checked = all of this teacher's
+               students, which is what sharing did before classes existed, so
+               a teacher who ignores this box gets the old behaviour. -->
+          <label>Share with</label>
+          <div id="resource-class-picker" class="resource-class-picker">
+            <label class="resource-class-option">
+              <input type="radio" name="shareScope" value="all" checked>
+              <span>All my students</span>
+            </label>
+            <label class="resource-class-option">
+              <input type="radio" name="shareScope" value="classes">
+              <span>Only specific classes</span>
+            </label>
+            <div id="resource-class-list" class="resource-class-list" hidden>
+              <p class="resource-class-empty">Loading your classes…</p>
+            </div>
+          </div>
+
           <div class="form-buttons">
             <button type="submit" class="btn btn-primary">
               <i class="fas fa-upload"></i> Upload Resource
@@ -6026,6 +6156,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   })();
   </script>
 
-  <script src="/dist/js/teacher-js2.b938126d.js"></script>
+  <script src="/dist/js/teacher-js2.7c13c05e.js"></script>
 </body>
 </html>
