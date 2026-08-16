@@ -33,6 +33,30 @@
   body.cr-mode.landing-page-body { background: var(--mlt-bg) !important; }
   body.cr-mode .cr-tutor-hero    { background: var(--mlt-bg) !important; }
 
+  /* ---- 0b. EQUIPPED THEME (data-theme-skin) -------------------------
+     An equipped cosmetic theme retints --cr-* tokens, but this sheet paints the
+     phone from its own --mlt-* literals, so almost none of it reached mobile.
+     Point the accent token at the theme's accent (the backdrop pair lives with
+     the theme definitions in cosmetics.css) and carry the theme wash onto the
+     tutor's cards, which --mlt-surface was otherwise flattening back to white.
+     The wash mixes into #FFF rather than the dark base token so the card stays
+     light and text contrast is unchanged. */
+  body.cr-mode[data-theme-skin] { --mlt-accent: var(--cr-accent); }
+  body.cr-mode[data-theme-skin] #chat-messages-container .message.ai {
+    background: color-mix(in srgb, var(--cr-accent) 7%, #FFFFFF) !important;
+  }
+  /* The equation key is the one accent-coloured chip in the composer, so left
+     literal it stayed brand-purple inside an otherwise fully retinted screen —
+     the single most obvious "this theme didn't apply" tell. The three neutral
+     chips beside it stay neutral by design. The attribute makes this a more
+     specific selector than the default chip rule in section 5, so it wins even
+     though it is declared earlier in the file. */
+  body.cr-mode[data-theme-skin] #insert-equation-btn {
+    background: color-mix(in srgb, var(--cr-accent) 13%, #FFFFFF) !important;
+    border-color: color-mix(in srgb, var(--cr-accent) 32%, #FFFFFF) !important;
+    color: var(--cr-accent-strong, var(--cr-accent)) !important;
+  }
+
   /* ---- 1. SCRIM: dark gradient -> warm fade to the light backdrop ----
      Idle keeps the tutor bright up top and fades to the app colour at
      the bottom so the greeting + composer read as dark-on-light. */

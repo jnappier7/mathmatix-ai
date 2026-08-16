@@ -330,6 +330,13 @@
     border-radius: 50%;
     object-fit: cover;
     object-position: center top;
+  }
+  /* The hairline is the DEFAULT ring only. An equipped avatar frame draws its
+     own border + glow (cosmetics.css), and this rule was quietly winning, so
+     frames rendered nothing on mobile — 0 of 2 properties changed. Stand aside
+     when one is equipped; the sizing above still applies either way. */
+  body.cr-mode:not([data-skin-avatarframe]) #chat-messages-container .message-avatar img,
+  body.cr-mode:not([data-skin-avatarframe]) #chat-messages-container .message-avatar > div {
     border: 1px solid rgba(255,255,255,.16);
   }
   /* Bubble: drop inherited margins and let it shrink within the row. */
@@ -337,16 +344,25 @@
     margin: 0 !important;
     min-width: 0;
   }
-  /* student bubble */
+  /* student bubble — geometry is unconditional, colour is not.
+     The colour block below is gated on :not([data-skin-bubble]) because these
+     !important declarations outranked cosmetics.css (which loads earlier and
+     uses no !important), so an equipped bubble skin changed nothing at all on a
+     phone — measured 0 of 3 properties, against 3 of 3 on desktop. Students were
+     buying skins up to 450 coins that could not render on the surface they use
+     most. Ceding just the paint lets the skin land while the phone keeps its own
+     sizing and radius. */
   body.cr-mode #chat-messages-container .message.user {
     max-width: 80% !important;
-    background: #7C6BFF !important;
-    color: #fff !important;
-    border: none !important;
     border-radius: 18px 18px 5px 18px !important;
     padding: 10px 14px !important;
     font-size: calc(14.5px * var(--chat-font-scale, 1)) !important;
     line-height: 1.5 !important;
+  }
+  body.cr-mode:not([data-skin-bubble]) #chat-messages-container .message.user {
+    background: #7C6BFF !important;
+    color: #fff !important;
+    border: none !important;
     box-shadow: 0 4px 14px rgba(108,92,231,.32);
   }
   /* assistant = lesson card */
@@ -478,10 +494,18 @@
   }
   body.cr-mode #user-input:empty::before { color: #7e879b; }
   body.cr-mode .imessage-send-btn {
-    background: linear-gradient(135deg,#8B7BFF,#6C5CE7) !important;
     color: #fff !important;
     border: none !important;
     box-shadow: 0 4px 13px rgba(108,92,231,.5);
+  }
+  /* Default purple only when no theme is equipped — this literal was painting
+     over --cr-accent-grad, so the send button (the most-looked-at control on the
+     screen) stayed brand-purple under every theme. */
+  body.cr-mode:not([data-theme-skin]) .imessage-send-btn {
+    background: linear-gradient(135deg,#8B7BFF,#6C5CE7) !important;
+  }
+  body.cr-mode[data-theme-skin] .imessage-send-btn {
+    background: var(--cr-accent-grad) !important;
   }
 
   /* Math symbol strip — its dark styling is gated behind [data-theme=dark],

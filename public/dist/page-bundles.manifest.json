@@ -2,7 +2,7 @@
   "chat.html": {
     "css": [
       {
-        "href": "/dist/css/chat-css0.cc6ab9e8.css",
+        "href": "/dist/css/chat-css0.2282a585.css",
         "files": [
           "/css/file-upload.css",
           "/css/responsive-resources.css",
@@ -36,7 +36,7 @@
         ]
       },
       {
-        "href": "/dist/css/chat-css2.af655f61.css",
+        "href": "/dist/css/chat-css2.de89fb55.css",
         "files": [
           "/css/cosmetics.css",
           "/css/shop.css"
@@ -69,7 +69,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js3.0514356e.js",
+        "src": "/dist/js/chat-js3.bed3df2b.js",
         "files": [
           "/js/chat-board-integration.js",
           "/js/placementLadder.js",
