@@ -16,17 +16,115 @@
 
 @media (max-width: 768px) {
 
-  /* ---- palette (mobile-only custom props) --------------------------- */
+  /* ---- palette (mobile-only custom props) ---------------------------
+     Every colour the phone paints goes through a token here. That is not
+     tidiness for its own sake: the dark cosmetic themes (section 0c) work
+     purely by redefining this block, so a literal left inline anywhere below
+     is a light-coloured surface that survives into a dark theme. If you add a
+     surface, add a token for it. */
   body.cr-mode {
     --mlt-bg:        #F5F3FB;   /* warm lavender-white app backdrop   */
     --mlt-scrim-rgb: 245, 243, 251;  /* scrim/fade tint = the bg, as rgb */
     --mlt-surface:   #FFFFFF;   /* cards, composer, sheet             */
+    --mlt-on-surface:#FFFFFF;   /* base the accent wash mixes INTO    */
     --mlt-ink:       #232741;   /* primary text (near-black navy)     */
-    --mlt-ink-dim:   #6C7386;   /* secondary text                     */
-    --mlt-line:      rgba(35, 39, 65, 0.10);   /* hairline borders    */
+    --mlt-ink-dim:   #5F6577;   /* secondary text (AA on --mlt-bg)    */
+    /* Ink as an rgb triple. Every ink-derived translucency (hairlines, press
+       washes, the sheet grabber) is expressed as rgba(var(--mlt-ink-rgb), a),
+       so a dark theme flips all of them by flipping this one token. */
+    --mlt-ink-rgb:   35, 39, 65;
+    --mlt-line:      rgba(var(--mlt-ink-rgb), 0.10);   /* hairline borders */
     --mlt-accent:    #7C6BFF;   /* purple (kept from brand)           */
     --mlt-accent-2:  #14B8A6;   /* teal secondary (from the mockup)   */
     --mlt-card-shadow: 0 6px 22px rgba(60, 50, 120, 0.13);
+    /* surfaces that are not simply "the card colour" */
+    --mlt-glass:     rgba(255, 255, 255, 0.80); /* floating pill / menu btn */
+    --mlt-halo:      rgba(245, 243, 251, 0.9);  /* text-shadow behind greeting */
+    --mlt-inset:     #F3F1FB;   /* display-math pad inside a card      */
+    --mlt-key:       #F1F0F7;   /* math symbol strip key               */
+    --mlt-chip:      #F0EFF9;   /* composer tool chip                  */
+    --mlt-chip-press:#E4E1F5;   /* …pressed                            */
+    --mlt-chip-ink:  #4A4F6B;   /* …icon                               */
+    --mlt-eq-ink:    #5B4BD6;   /* equation key icon (accent chip)     */
+    --mlt-placeholder: #9AA0B0;
+    --mlt-chevron:   #B4B9C6;
+    --mlt-streak:    #E8912B;   /* amber, darkened for a light bg      */
+    --mlt-streak-shadow: rgba(255, 255, 255, 0.6);
+    /* Three colour families that appear only inside rgba(): the brand accent
+       used as a low-alpha tint, the soft lilac drop shadow, and the stronger
+       glow under the send/voice buttons. As triples so a theme can retint them
+       without restating every alpha. */
+    --mlt-accent-rgb: 124, 107, 255;
+    --mlt-shadow-rgb: 60, 50, 120;
+    --mlt-glow-rgb:   108, 92, 231;
+  }
+
+  /* ---- 0c. DARK COSMETIC THEMES ------------------------------------
+     Neon Night and Galaxy are the only two themes whose --cr-bg-0 is dark
+     (#071018 / #0e0a22). On desktop that is safe, because --cr-bg-0 paints
+     only the gutter BETWEEN panels and carries no text. On a phone the
+     backdrop sits directly behind the idle greeting, so shipping the real
+     colour means shipping the whole phone surface dark — ink, cards, chips,
+     composer and all — not just the backdrop.
+
+     They previously got pale stand-ins for exactly that reason. This is the
+     real thing: redefine the palette, and every rule below follows because
+     they all read tokens.
+
+     Values are explicit hex per theme rather than color-mix() off --mlt-bg.
+     A color-mix fallback failing would leave light surfaces paired with light
+     ink — unreadable text — whereas a plain hex cannot fail. It also lets each
+     theme keep its own hue in the lifted surfaces: Neon's cards lean cyan,
+     Galaxy's lean violet, instead of both going neutral navy. */
+  body.cr-mode[data-theme-skin="theme.neon"] {
+    --mlt-bg:        #071018;
+    --mlt-scrim-rgb: 7, 16, 24;
+    --mlt-surface:   #0E1A24;
+    --mlt-on-surface:#0E1A24;
+    --mlt-ink:       #E6F6FB;
+    --mlt-ink-dim:   #93AEBB;
+    --mlt-ink-rgb:   230, 246, 251;
+    --mlt-glass:     rgba(14, 26, 36, 0.85);
+    --mlt-halo:      rgba(3, 8, 12, 0.9);
+    --mlt-inset:     #050C12;
+    --mlt-key:       #14212B;
+    --mlt-chip:      #16242F;
+    --mlt-chip-press:#1E3140;
+    --mlt-chip-ink:  #BFD6DF;
+    --mlt-eq-ink:    #7FE9FF;
+    --mlt-placeholder: #6E8794;
+    --mlt-chevron:   #5E7480;
+    --mlt-streak:    #FFC24B;
+    --mlt-streak-shadow: rgba(0, 0, 0, 0.55);
+    --mlt-card-shadow: 0 8px 26px rgba(0, 0, 0, 0.6);
+    --mlt-accent-rgb: 0, 229, 255;
+    --mlt-shadow-rgb: 0, 0, 0;
+    --mlt-glow-rgb:   0, 0, 0;
+  }
+  body.cr-mode[data-theme-skin="theme.galaxy"] {
+    --mlt-bg:        #0E0A22;
+    --mlt-scrim-rgb: 14, 10, 34;
+    --mlt-surface:   #191333;
+    --mlt-on-surface:#191333;
+    --mlt-ink:       #EFE9FF;
+    --mlt-ink-dim:   #A99EC6;
+    --mlt-ink-rgb:   239, 233, 255;
+    --mlt-glass:     rgba(25, 19, 51, 0.85);
+    --mlt-halo:      rgba(5, 3, 13, 0.9);
+    --mlt-inset:     #0A0719;
+    --mlt-key:       #1E1738;
+    --mlt-chip:      #221A42;
+    --mlt-chip-press:#2E2356;
+    --mlt-chip-ink:  #CBC0E8;
+    --mlt-eq-ink:    #C9B6FF;
+    --mlt-placeholder: #7D7099;
+    --mlt-chevron:   #6B6088;
+    --mlt-streak:    #FFC24B;
+    --mlt-streak-shadow: rgba(0, 0, 0, 0.55);
+    --mlt-card-shadow: 0 8px 26px rgba(0, 0, 0, 0.6);
+    --mlt-accent-rgb: 167, 139, 250;
+    --mlt-shadow-rgb: 0, 0, 0;
+    --mlt-glow-rgb:   0, 0, 0;
   }
 
   /* ---- 0. page base + poster fill ----------------------------------- */
@@ -39,11 +137,12 @@
      Point the accent token at the theme's accent (the backdrop pair lives with
      the theme definitions in cosmetics.css) and carry the theme wash onto the
      tutor's cards, which --mlt-surface was otherwise flattening back to white.
-     The wash mixes into #FFF rather than the dark base token so the card stays
-     light and text contrast is unchanged. */
+     The wash mixes into --mlt-on-surface, i.e. whatever the card colour actually
+     is — white under the light themes, the lifted dark card under Neon/Galaxy —
+     so the tint lands on the real surface instead of forcing it back to white. */
   body.cr-mode[data-theme-skin] { --mlt-accent: var(--cr-accent); }
   body.cr-mode[data-theme-skin] #chat-messages-container .message.ai {
-    background: color-mix(in srgb, var(--cr-accent) 7%, #FFFFFF) !important;
+    background: color-mix(in srgb, var(--cr-accent) 7%, var(--mlt-on-surface)) !important;
   }
   /* The equation key is the one accent-coloured chip in the composer, so left
      literal it stayed brand-purple inside an otherwise fully retinted screen —
@@ -52,9 +151,9 @@
      specific selector than the default chip rule in section 5, so it wins even
      though it is declared earlier in the file. */
   body.cr-mode[data-theme-skin] #insert-equation-btn {
-    background: color-mix(in srgb, var(--cr-accent) 13%, #FFFFFF) !important;
-    border-color: color-mix(in srgb, var(--cr-accent) 32%, #FFFFFF) !important;
-    color: var(--cr-accent-strong, var(--cr-accent)) !important;
+    background: color-mix(in srgb, var(--cr-accent) 13%, var(--mlt-on-surface)) !important;
+    border-color: color-mix(in srgb, var(--cr-accent) 32%, var(--mlt-on-surface)) !important;
+    color: color-mix(in srgb, var(--cr-accent-strong, var(--cr-accent)) 72%, var(--mlt-ink)) !important;
   }
 
   /* ---- 1. SCRIM: dark gradient -> warm fade to the light backdrop ----
@@ -78,14 +177,14 @@
   /* ---- 2. TOP CHROME: dark glass -> light glass --------------------- */
   body.cr-mode .mpc-live-pill,
   body.cr-mode .mpc-menu-btn {
-    background: rgba(255,255,255,.80) !important;
+    background: var(--mlt-glass) !important;
     border: 1px solid var(--mlt-line) !important;
     color: var(--mlt-ink) !important;
-    box-shadow: 0 2px 10px rgba(60,50,120,.10);
+    box-shadow: 0 2px 10px rgba(var(--mlt-shadow-rgb),.10);
   }
   body.cr-mode .mpc-streak {
-    color: #E8912B !important;                     /* amber, darker for light bg */
-    text-shadow: 0 1px 2px rgba(255,255,255,.6) !important;
+    color: var(--mlt-streak) !important;                     /* amber, darker for light bg */
+    text-shadow: 0 1px 2px var(--mlt-streak-shadow) !important;
   }
 
   /* ---- header logo: cr-mode inverts the mark to WHITE for the dark
@@ -96,11 +195,11 @@
   /* ---- 3. GREETING: light text -> dark ink -------------------------- */
   body.cr-mode #mpc-greeting h2 {
     color: var(--mlt-ink) !important;
-    text-shadow: 0 1px 10px rgba(245,243,251,.9) !important;
+    text-shadow: 0 1px 10px var(--mlt-halo) !important;
   }
   body.cr-mode #mpc-greeting p {
     color: var(--mlt-ink-dim) !important;
-    text-shadow: 0 1px 8px rgba(245,243,251,.9) !important;
+    text-shadow: 0 1px 8px var(--mlt-halo) !important;
   }
 
   /* ---- 4. MESSAGES ------------------------------------------------- */
@@ -108,7 +207,7 @@
   body.cr-mode #chat-messages-container .message.ai {
     background: var(--mlt-surface) !important;
     color: var(--mlt-ink) !important;
-    border: 1px solid rgba(124,107,255,.22) !important;
+    border: 1px solid rgba(var(--mlt-accent-rgb),.22) !important;
     box-shadow: var(--mlt-card-shadow) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -117,13 +216,13 @@
   body.cr-mode #chat-messages-container .message.ai .katex { color: var(--mlt-ink) !important; }
   /* display math pad: dark inset -> soft lavender inset */
   body.cr-mode #chat-messages-container .message.ai .katex-display {
-    background: #F3F1FB !important;
+    background: var(--mlt-inset) !important;
     border: 1px solid var(--mlt-line) !important;
     border-left: 3px solid var(--mlt-accent) !important;
   }
   /* student bubble stays purple (reads great on light) — just soften shadow */
   body.cr-mode #chat-messages-container .message.user {
-    box-shadow: 0 4px 14px rgba(108,92,231,.22) !important;
+    box-shadow: 0 4px 14px rgba(var(--mlt-glow-rgb),.22) !important;
   }
   body.cr-mode #chat-messages-container .message-timestamp {
     color: var(--mlt-ink-dim) !important;
@@ -132,11 +231,11 @@
   body.cr-mode #chat-messages-container .message.ai .message-timestamp { color: var(--mlt-ink-dim) !important; }
   /* per-message TTS button: was themed light-on-dark; restore dark-on-light */
   body.cr-mode #chat-messages-container .play-audio-btn {
-    background-color: rgba(35,39,65,.06) !important;
+    background-color: rgba(var(--mlt-ink-rgb), .06) !important;
     color: var(--mlt-ink) !important;
   }
   body.cr-mode #chat-messages-container .play-audio-btn:active {
-    background-color: rgba(124,107,255,.16) !important;
+    background-color: rgba(var(--mlt-accent-rgb),.16) !important;
   }
   body.cr-mode #thinking-indicator { color: var(--mlt-ink-dim) !important; }
 
@@ -150,7 +249,7 @@
   body.cr-mode .imessage-compose-bar {
     background: var(--mlt-surface) !important;
     border: 1px solid var(--mlt-line) !important;
-    box-shadow: 0 4px 16px rgba(60,50,120,.12) !important;
+    box-shadow: 0 4px 16px rgba(var(--mlt-shadow-rgb),.12) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
@@ -162,29 +261,29 @@
      the press state something to do. 42px also lifts the target closer to the
      44px touch minimum (they were 38px). */
   body.cr-mode .imessage-tool-btn {
-    background: #F0EFF9 !important;
-    border: 1px solid rgba(35,39,65,.09) !important;
-    color: #4A4F6B !important;
+    background: var(--mlt-chip) !important;
+    border: 1px solid rgba(var(--mlt-ink-rgb), .09) !important;
+    color: var(--mlt-chip-ink) !important;
     width: 42px !important;
     height: 42px !important;
     border-radius: 13px !important;
-    box-shadow: 0 1px 2px rgba(60,50,120,.10) !important;
+    box-shadow: 0 1px 2px rgba(var(--mlt-shadow-rgb),.10) !important;
     transition: transform .12s ease, background-color .12s ease, box-shadow .12s ease;
   }
   body.cr-mode .imessage-tool-btn:active {
-    background: #E4E1F5 !important;
-    box-shadow: 0 0 0 rgba(60,50,120,0) !important;
+    background: var(--mlt-chip-press) !important;
+    box-shadow: 0 0 0 rgba(var(--mlt-shadow-rgb),0) !important;
     transform: scale(.93);
   }
   /* The equation key is the primary math affordance in this row — carry the
      brand accent so it leads the group instead of sitting level with it. */
   body.cr-mode #insert-equation-btn {
-    background: rgba(124,107,255,.13) !important;
-    border-color: rgba(124,107,255,.30) !important;
-    color: #5B4BD6 !important;
+    background: rgba(var(--mlt-accent-rgb),.13) !important;
+    border-color: rgba(var(--mlt-accent-rgb),.30) !important;
+    color: var(--mlt-eq-ink) !important;
   }
   body.cr-mode #insert-equation-btn:active {
-    background: rgba(124,107,255,.24) !important;
+    background: rgba(var(--mlt-accent-rgb),.24) !important;
   }
   /* The row's own padding was tuned for borderless icons; the chips need a
      little more air so they don't touch the compose bar's edge. */
@@ -196,20 +295,20 @@
     color: var(--mlt-ink) !important;
     caret-color: var(--mlt-accent) !important;
   }
-  body.cr-mode #user-input:empty::before { color: #9AA0B0 !important; }
+  body.cr-mode #user-input:empty::before { color: var(--mlt-placeholder) !important; }
 
   /* Send / voice keep the purple gradient — already on-brand — but they sat
      flat under the finger: the send button had no :active state at all, so a
      tap gave no feedback. Deepen the lift and let both respond to touch. */
   body.cr-mode .imessage-send-btn,
   body.cr-mode .imessage-voice-btn {
-    box-shadow: 0 5px 16px rgba(108,92,231,.42) !important;
+    box-shadow: 0 5px 16px rgba(var(--mlt-glow-rgb),.42) !important;
     transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
   }
   body.cr-mode .imessage-send-btn:active,
   body.cr-mode .imessage-voice-btn:active {
     transform: scale(.94);
-    box-shadow: 0 2px 7px rgba(108,92,231,.34) !important;
+    box-shadow: 0 2px 7px rgba(var(--mlt-glow-rgb),.34) !important;
   }
 
   /* ---- 6. MATH SYMBOL STRIP: dark -> light -------------------------- */
@@ -219,23 +318,60 @@
     border-bottom-color: var(--mlt-line) !important;
   }
   body.cr-mode .mms-key {
-    background: #F1F0F7 !important;
+    background: var(--mlt-key) !important;
     border-color: var(--mlt-line) !important;
     color: var(--mlt-ink) !important;
   }
-  body.cr-mode .mms-key:active { background: rgba(124,107,255,.16) !important; }
+  body.cr-mode .mms-key:active { background: rgba(var(--mlt-accent-rgb),.16) !important; }
 
   /* ---- 7. BOTTOM SHEET MENU: dark -> white -------------------------- */
   body.cr-mode #mpc-sheet {
     background: var(--mlt-surface) !important;
     border-top: 1px solid var(--mlt-line) !important;
   }
-  body.cr-mode .mpc-sheet-grabber { background: rgba(35,39,65,.18) !important; }
+  body.cr-mode .mpc-sheet-grabber { background: rgba(var(--mlt-ink-rgb), .18) !important; }
   body.cr-mode .mpc-sheet-item {
     color: var(--mlt-ink) !important;
     border-bottom: 1px solid var(--mlt-line) !important;
   }
-  body.cr-mode .mpc-sheet-item:active { background: rgba(35,39,65,.04) !important; }
+  body.cr-mode .mpc-sheet-item:active { background: rgba(var(--mlt-ink-rgb), .04) !important; }
   body.cr-mode .mpc-sheet-label span { color: var(--mlt-ink-dim) !important; }
-  body.cr-mode .mpc-sheet-chevron { color: #B4B9C6 !important; }
+  body.cr-mode .mpc-sheet-chevron { color: var(--mlt-chevron) !important; }
+
+  /* ---- 8. DARK-THEME STRAGGLERS -------------------------------------
+     Two surfaces that do not read the --mlt-* palette, so flipping tokens
+     alone leaves them light. Both are scoped to the two dark themes only. */
+
+  /* The bottom nav is styled from JS-injected CSS (bottom-nav.js) off
+     --cr-bg-panel, and its dark variant keys off the APP's dark mode
+     ([data-theme="dark"]) — not the cosmetic theme. A student on the light app
+     theme wearing Neon therefore kept a white nav bar glued under a black page.
+     Two classes + an attribute outrank the injected `.mbn`, so no !important. */
+  body.cr-mode[data-theme-skin="theme.neon"] .mbn,
+  body.cr-mode[data-theme-skin="theme.galaxy"] .mbn {
+    background: var(--mlt-surface);
+    border-top-color: rgba(var(--mlt-ink-rgb), 0.12);
+  }
+  body.cr-mode[data-theme-skin="theme.neon"] .mbn-tab,
+  body.cr-mode[data-theme-skin="theme.galaxy"] .mbn-tab {
+    color: var(--mlt-ink-dim);
+  }
+  body.cr-mode[data-theme-skin="theme.neon"] .mbn-tab.on,
+  body.cr-mode[data-theme-skin="theme.galaxy"] .mbn-tab.on {
+    color: var(--mlt-eq-ink);
+    background: rgba(var(--mlt-accent-rgb), 0.16);
+  }
+  body.cr-mode[data-theme-skin="theme.neon"] .mbn-tab.on::before,
+  body.cr-mode[data-theme-skin="theme.galaxy"] .mbn-tab.on::before {
+    background: var(--mlt-eq-ink);
+  }
+
+  /* Section 0b paints the equation key with --cr-accent-strong, which is the
+     DARKENED end of each theme's accent — chosen to sit on a white chip. On the
+     dark chip it lands too close to the background, so these two use the
+     brightened --mlt-eq-ink instead. */
+  body.cr-mode[data-theme-skin="theme.neon"] #insert-equation-btn,
+  body.cr-mode[data-theme-skin="theme.galaxy"] #insert-equation-btn {
+    color: var(--mlt-eq-ink) !important;
+  }
 }

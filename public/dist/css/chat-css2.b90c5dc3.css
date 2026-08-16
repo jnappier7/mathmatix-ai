@@ -101,21 +101,31 @@ body[data-theme-skin="theme.gold"] {
  *
  * ⚠️ Adding a theme? Add its pair here too, or it will not show on mobile.
  *
- * Light themes reuse their own --cr-bg-0. Neon and Galaxy deliberately do NOT:
- * their backdrops (#071018 / #0e0a22) are near-black, chosen for desktop where
- * --cr-bg-0 only paints the gutter *between* panels and carries no text. On
- * mobile the backdrop sits directly behind the idle greeting, which is near-black
- * ink (--mlt-ink #232741) — so those two get pale counterparts in the same hue
- * and keep the theme legible instead of printing black on black. */
+ * These are the LIGHT themes, which can reuse their own --cr-bg-0 directly: a
+ * pale backdrop takes the phone's near-black ink without further work.
+ *
+ * Neon and Galaxy are NOT here. Their backdrops are near-black, so on mobile —
+ * where the backdrop sits directly behind the idle greeting, unlike desktop
+ * where --cr-bg-0 only paints the gutter between panels — retinting the
+ * backdrop alone would print black ink on a black page. They instead redefine
+ * the whole phone palette (ink, cards, chips, composer) in
+ * mobile-light-theme.css section 0c. Setting --mlt-bg for them here would be
+ * dead weight at best and would fight that block at worst. */
 @media (max-width: 768px) {
-  body.cr-mode[data-theme-skin="theme.bubblegum"] { --mlt-bg: #f9c1e0; --mlt-scrim-rgb: 249, 193, 224; }
-  body.cr-mode[data-theme-skin="theme.forest"]    { --mlt-bg: #a8d5ba; --mlt-scrim-rgb: 168, 213, 186; }
-  body.cr-mode[data-theme-skin="theme.sunset"]    { --mlt-bg: #ffc9a3; --mlt-scrim-rgb: 255, 201, 163; }
-  body.cr-mode[data-theme-skin="theme.ocean"]     { --mlt-bg: #a9d6f0; --mlt-scrim-rgb: 169, 214, 240; }
-  body.cr-mode[data-theme-skin="theme.gold"]      { --mlt-bg: #f0d98a; --mlt-scrim-rgb: 240, 217, 138; }
-  body.cr-mode[data-theme-skin="theme.neon"]      { --mlt-bg: #d7f7fd; --mlt-scrim-rgb: 215, 247, 253; }
-  body.cr-mode[data-theme-skin="theme.galaxy"]    { --mlt-bg: #e5dcf9; --mlt-scrim-rgb: 229, 220, 249; }
+  body.cr-mode[data-theme-skin="theme.bubblegum"] { --mlt-bg: #f9c1e0; --mlt-scrim-rgb: 249, 193, 224; --mlt-ink-dim: #4A5163; }
+  body.cr-mode[data-theme-skin="theme.forest"]    { --mlt-bg: #a8d5ba; --mlt-scrim-rgb: 168, 213, 186; --mlt-ink-dim: #4A5163; }
+  body.cr-mode[data-theme-skin="theme.sunset"]    { --mlt-bg: #ffc9a3; --mlt-scrim-rgb: 255, 201, 163; --mlt-ink-dim: #4A5163; }
+  body.cr-mode[data-theme-skin="theme.ocean"]     { --mlt-bg: #a9d6f0; --mlt-scrim-rgb: 169, 214, 240; --mlt-ink-dim: #4A5163; }
+  body.cr-mode[data-theme-skin="theme.gold"]      { --mlt-bg: #f0d98a; --mlt-scrim-rgb: 240, 217, 138; --mlt-ink-dim: #4A5163; }
 }
+/* Why each light theme also darkens --mlt-ink-dim: these backdrops are pale but
+ * SATURATED, so they carry far more luminance than the near-white default, and
+ * the stock secondary ink (#6C7386) fell under WCAG AA against them — measured
+ * 2.9:1 on Deep Forest for the greeting's subtitle, which is normal-size text.
+ * Retinting the backdrop without this is how a cosmetic quietly becomes an
+ * accessibility regression. Deliberately per-theme rather than a shared
+ * [data-theme-skin] rule: that would tie on specificity with the Neon/Galaxy
+ * dark palettes in mobile-light-theme.css and override their (light) ink. */
 
 /* =========================================================================
  * THEME WASH — a light, subtle tint on the chat window and the tutor's bubbles,

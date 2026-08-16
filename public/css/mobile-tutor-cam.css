@@ -66,7 +66,11 @@
     min-height: 0 !important;
     border-radius: 18px !important;
     border: 1px solid var(--mlt-line, rgba(35, 39, 65, 0.10)) !important;
-    background: #FFFFFF !important;
+    /* The card colour, not white: under the Neon/Galaxy dark themes
+       --mlt-surface is a dark lifted panel, and a hardcoded white here left a
+       glaring white slab behind the tutor video and, in the collapsed pill
+       state, a white pill on a dark page. */
+    background: var(--mlt-surface, #FFFFFF) !important;
     box-shadow: var(--mlt-card-shadow, 0 6px 22px rgba(60, 50, 120, 0.13)) !important;
     z-index: 3 !important;
     overflow: hidden !important;
@@ -108,7 +112,7 @@
     transform: none;
     padding: 5px 9px;
     font-size: 11px;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--mlt-glass, rgba(255, 255, 255, 0.9));
     border: 1px solid var(--mlt-line, rgba(35, 39, 65, 0.10));
     color: var(--mlt-ink, #232741);
   }
