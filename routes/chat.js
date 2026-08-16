@@ -38,7 +38,7 @@ const { parseVisualTeaching } = require('../utils/visualTeachingParser');
 const { enforceVisualTeaching } = require('../utils/visualCommandEnforcer');
 const { injectFewShotExamples } = require('../utils/visualCommandExamples');
 const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
-const { getStudentClassIds } = require('../utils/resourceVisibility');
+const { getStudentScope } = require('../utils/resourceVisibility');
 const GradingResult = require('../models/gradingResult');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 const { processAIResponse } = require('../utils/chatBoardParser');
@@ -726,14 +726,20 @@ async function runStudentTurn(req, res) {
         }
 
         // 3. Resource detection
+        // The guard stays on user.teacherId: every path that enrolls a student
+        // in a class also sets it, so a null there means no teachers at all and
+        // there is nothing to look up. The SCOPE inside is the multi-teacher
+        // part — it adds the teachers that pointer dropped.
         if (user.teacherId) {
-            // Scoped to the classes this student is in: a matched resource has
-            // its extracted text injected into the tutor's context, so an
-            // unscoped lookup would let a student pull a resource their teacher
-            // shared with a different class just by naming it.
+            // Scoped to ALL this student's teachers and the classes they are
+            // in: a matched resource has its extracted text injected into the
+            // tutor's context, so an unscoped lookup would let a student pull a
+            // resource shared with a different class just by naming it — while
+            // scoping to user.teacherId alone would hide their second teacher's
+            // materials from the tutor entirely.
             contextPromises.push(
-                getStudentClassIds(user._id)
-                    .then(classIds => detectAndFetchResource(user.teacherId, message, classIds))
+                getStudentScope(user)
+                    .then(scope => detectAndFetchResource(scope.teacherIds, message, scope.classIds))
                     .catch(err => { logger.error('Resource detection error', { error: err.message }); return null; })
             );
         } else {

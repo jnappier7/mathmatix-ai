@@ -16,7 +16,7 @@ const { performOCR } = require('../utils/ocr');
 const { generateEmbedding } = require('../utils/llmGateway'); // DIRECTIVE 3 + CTO REVIEW FIX
 const cloudStorage = require('../utils/cloudStorage');
 const EnrollmentCode = require('../models/enrollmentCode');
-const { getStudentClassIds, resourceVisibleToStudent } = require('../utils/resourceVisibility');
+const { getStudentScope, resourceVisibleToStudent } = require('../utils/resourceVisibility');
 const { userHasRole } = require('../utils/roleQuery');
 
 /**
@@ -372,26 +372,43 @@ router.get('/my-teacher-resources', isAuthenticated, async (req, res) => {
             return res.status(403).json({ message: 'This endpoint is for students only' });
         }
 
-        if (!req.user.teacherId) {
+        // ALL of the student's teachers, not just req.user.teacherId. That
+        // field holds whichever teacher was joined last, so a student taught by
+        // two teachers used to see one set of materials and silently lose the
+        // other's the moment they joined a new class.
+        const scope = await getStudentScope(req.user);
+
+        if (scope.teacherIds.length === 0) {
             return res.status(404).json({
                 message: 'You are not connected to a teacher yet',
                 resources: []
             });
         }
 
-        // Fetch ONLY PUBLISHED resources from the student's teacher, and only
-        // those shared with a class this student is actually in (or with no
-        // class at all, which means all of the teacher's students).
-        const classIds = await getStudentClassIds(req.user._id);
+        // Fetch ONLY PUBLISHED resources from those teachers, and only those
+        // shared with a class this student is actually in (or with no class at
+        // all, which means all of that teacher's students).
         const resources = await TeacherResource.find(
-            TeacherResource.visibleToStudentFilter(req.user.teacherId, classIds)
+            TeacherResource.visibleToStudentFilter(scope.teacherIds, scope.classIds)
         )
             .sort({ uploadedAt: -1 })
             .select('-extractedText'); // Don't send full extracted text
 
+        // Attribute each resource to the teacher who shared it. With one
+        // teacher this is redundant; with two it is the difference between a
+        // usable list and an unexplained pile of files from nowhere.
+        const teachers = await User.find({ _id: { $in: scope.teacherIds } })
+            .select('_id firstName lastName').lean();
+        const teacherNameById = new Map(teachers.map(t => [
+            String(t._id),
+            `${t.firstName || ''} ${t.lastName || ''}`.trim() || 'Your teacher'
+        ]));
+
         res.json({
             success: true,
+            // Kept for existing consumers; teacherIds is the accurate one.
             teacherId: req.user.teacherId,
+            teacherIds: scope.teacherIds,
             resources: resources.map(r => ({
                 id: r._id,
                 displayName: r.displayName,
@@ -402,7 +419,9 @@ router.get('/my-teacher-resources', isAuthenticated, async (req, res) => {
                 description: r.description,
                 keywords: r.keywords,
                 uploadedAt: r.uploadedAt,
-                publicUrl: r.publicUrl
+                publicUrl: r.publicUrl,
+                teacherId: r.teacherId,
+                teacherName: teacherNameById.get(String(r.teacherId)) || 'Your teacher'
             }))
         });
 
@@ -529,21 +548,29 @@ router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req,
         // download their own file (CLAUDE.md §12).
         const isResourceOwner = userHasRole(req.user, 'teacher') &&
             resource.teacherId.toString() === req.user._id.toString();
-        const isStudentOfTeacher = userHasRole(req.user, 'student') && req.user.teacherId &&
-            resource.teacherId.toString() === req.user.teacherId.toString();
 
-        if (isStudentOfTeacher && !isResourceOwner) {
-            // Covers unpublished AND class-targeted-at-someone-else. This is the
-            // endpoint that hands over the actual bytes, so the class check has
-            // to live here too — filtering only the list would leave the file
+        let studentAllowed = false;
+        if (!isResourceOwner && userHasRole(req.user, 'student')) {
+            // Resolved against ALL the student's teachers. Comparing to
+            // req.user.teacherId alone denied a student their second teacher's
+            // files, since that field only holds whichever teacher was joined
+            // most recently.
+            //
+            // resourceVisibleToStudent covers teacher membership, unpublished,
+            // and class-targeted-at-someone-else in one rule. This is the
+            // endpoint that hands over the actual bytes, so it has to be
+            // checked here too — filtering only the list would leave the file
             // one guessed id away.
-            const classIds = await getStudentClassIds(req.user._id);
-            if (!resourceVisibleToStudent(resource, classIds)) {
+            const scope = await getStudentScope(req.user);
+            studentAllowed = resourceVisibleToStudent(resource, scope);
+
+            if (!studentAllowed && scope.teacherIds.some(t => String(t) === String(resource.teacherId))) {
+                // Their teacher's file, but not for them — say so specifically.
                 return res.status(403).json({ message: 'This resource is not currently available' });
             }
         }
 
-        if (!isResourceOwner && !isStudentOfTeacher) {
+        if (!isResourceOwner && !studentAllowed) {
             return res.status(403).json({ message: 'You do not have permission to access this resource' });
         }
 

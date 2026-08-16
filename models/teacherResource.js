@@ -130,6 +130,12 @@ teacherResourceSchema.index({ teacherId: 1, isPublished: 1, sharedWithClassIds: 
  * button but not on the tutor would still hand Class B the contents of Class
  * A's test the moment a student named it in chat.
  *
+ * `teacherId` accepts a SINGLE id or an ARRAY. A student can have more than
+ * one teacher — the relationship is many-to-many through EnrollmentCode, and
+ * `user.teacherId` is only the most recent one — so the student path passes
+ * the whole set from getStudentScope(). Passing one id still works and is what
+ * the teacher's own views do.
+ *
  * `classIds` is the set of classes the student belongs to. A resource is
  * visible when it is targeted at no class at all (teacher-wide, the legacy
  * and default shape) or at one of the student's classes.
@@ -138,7 +144,10 @@ teacherResourceSchema.index({ teacherId: 1, isPublished: 1, sharedWithClassIds: 
  * the TEACHER's own views only — never for a student request.
  */
 teacherResourceSchema.statics.visibleToStudentFilter = function(teacherId, classIds) {
-    const base = { teacherId, isPublished: true };
+    const base = {
+        teacherId: Array.isArray(teacherId) ? { $in: teacherId } : teacherId,
+        isPublished: true
+    };
     if (!Array.isArray(classIds)) return base;
     return {
         ...base,
