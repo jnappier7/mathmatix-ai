@@ -12,7 +12,22 @@
  */
 
 const EducationRecordAccessLog = require('../models/educationRecordAccessLog');
+const { rolesOf } = require('../utils/roleQuery');
 const logger = require('../utils/logger');
+
+// Most-privileged first: an account holding several roles is recorded by the
+// strongest access it could have used, which is the honest answer to "who read
+// this record". Matches the accessedByRole enum on the model.
+const ROLE_PRECEDENCE = ['admin', 'teacher', 'parent', 'student'];
+
+/**
+ * The role to attribute an access to, chosen from the roles the user HOLDS.
+ * Falls back to 'student' so the required field is always populated.
+ */
+function mostPrivilegedRole(user) {
+    const held = rolesOf(user);
+    return ROLE_PRECEDENCE.find((r) => held.includes(r)) || 'student';
+}
 
 /**
  * Creates middleware that logs education record access after the response is sent.
@@ -38,7 +53,12 @@ function logRecordAccess(recordType, legitimateInterest, options = {}) {
 
             if (!studentId || !req.user) return;
 
-            const accessedByRole = req.user.role || 'student';
+            // Label the accessor by the most privileged role they HOLD, not by
+            // req.user.role — that is the dashboard they happen to be viewing.
+            // An admin who had switched to their parent view logged as 'parent',
+            // so the audit trail understated who actually read the record. See
+            // the role vs roles[] note in CLAUDE.md.
+            const accessedByRole = mostPrivilegedRole(req.user);
 
             // Determine FERPA exemption status
             const isSelfAccess = req.user._id.toString() === studentId.toString();
@@ -105,4 +125,4 @@ async function logAccess(params) {
     }
 }
 
-module.exports = { logRecordAccess, logAccess };
+module.exports = { logRecordAccess, logAccess, mostPrivilegedRole };

@@ -62,6 +62,7 @@
     "cron:weekly-digest": "node scripts/weeklyDigest.js",
     "cron:archive": "node scripts/archiveOldConversations.js",
     "cron:mine-transcripts": "node scripts/mineTranscripts.js",
+    "cron:ferpa-notice": "node scripts/ferpaAnnualNotification.js",
     "migrate:parent-teacher": "node scripts/migrateParentTeacherBug.js",
     "purge:intent-text": "node scripts/purgeOnboardingIntentText.js",
     "purge:intent-text:dry": "node scripts/purgeOnboardingIntentText.js --dry",

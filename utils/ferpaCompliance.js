@@ -230,6 +230,29 @@ ${displaySchool} Privacy Team`;
  * @param {Function} sendEmailFn - Email sending function (parentEmail, subject, html, text)
  * @returns {Object} Summary of notifications sent
  */
+/**
+ * Start of the school year currently in progress (August 1 boundary).
+ *
+ * @param {Date} [now]
+ * @returns {Date}
+ */
+function schoolYearStart(now = new Date()) {
+    const AUGUST = 7; // month index
+    const year = now.getMonth() >= AUGUST ? now.getFullYear() : now.getFullYear() - 1;
+    return new Date(year, AUGUST, 1);
+}
+
+/**
+ * Label for the school year in progress, e.g. '2026-2027'.
+ *
+ * @param {Date} [now]
+ * @returns {string}
+ */
+function schoolYearLabel(now = new Date()) {
+    const start = schoolYearStart(now).getFullYear();
+    return `${start}-${start + 1}`;
+}
+
 async function sendAnnualNotifications(sendEmailFn) {
     const summary = { sent: 0, failed: 0, skipped: 0, errors: [] };
 
@@ -247,10 +270,14 @@ async function sendAnnualNotifications(sendEmailFn) {
                     continue;
                 }
 
-                // Check if already notified this school year
-                const currentYear = new Date().getFullYear();
-                const schoolYearStart = new Date(currentYear, 7, 1); // August 1
-                if (parent.ferpaSettings?.lastAnnualNotification >= schoolYearStart) {
+                // Check if already notified this school year.
+                // The school year starts August 1, so from January to July the
+                // current school year began in the PREVIOUS calendar year.
+                // Anchoring on the current calendar year put the boundary in the
+                // future for those seven months, making every past notification
+                // compare as "before this school year" — so a parent notified in
+                // September would be notified again every run from January on.
+                if (parent.ferpaSettings?.lastAnnualNotification >= schoolYearStart()) {
                     summary.skipped++;
                     continue;
                 }
@@ -273,9 +300,15 @@ async function sendAnnualNotifications(sendEmailFn) {
                     notification.textContent
                 );
 
-                // Record that we sent the notification
+                // Record that we sent the notification. The school-year label
+                // is declared on the schema (ferpaSettings) and was never
+                // written; it is what makes "did we notify for 2026-2027?"
+                // answerable without date arithmetic during an audit.
                 await User.findByIdAndUpdate(parent._id, {
-                    $set: { 'ferpaSettings.lastAnnualNotification': new Date() }
+                    $set: {
+                        'ferpaSettings.lastAnnualNotification': new Date(),
+                        'ferpaSettings.lastAnnualNotificationSchoolYear': schoolYearLabel()
+                    }
                 });
 
                 summary.sent++;
@@ -369,6 +402,8 @@ module.exports = {
     generateAnnualNotification,
     sendAnnualNotifications,
     sendEnrollmentNotification,
+    schoolYearStart,
+    schoolYearLabel,
 
     // Disclosure checks
     requiresConsentForDisclosure

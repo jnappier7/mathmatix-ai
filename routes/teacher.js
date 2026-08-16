@@ -108,7 +108,7 @@ router.put('/students/:studentId/iep', isTeacher, async (req, res) => {
 });
 
 // Fetches a student's IEP goal progress history (timeline data)
-router.get('/students/:studentId/iep/goal-history', isTeacher, requireActiveConsent(), async (req, res) => {
+router.get('/students/:studentId/iep/goal-history', isTeacher, requireActiveConsent(), logRecordAccess('iep_plan', 'academic_support'), async (req, res) => {
   try {
     const { studentId } = req.params;
     const teacherId = req.user._id;
@@ -551,7 +551,7 @@ router.post('/students/:studentId/reset-assessment', isTeacher, async (req, res)
  * - Badge progress
  * - Recent activity
  */
-router.get('/students/:studentId/skill-report', isTeacher, requireActiveConsent(), async (req, res) => {
+router.get('/students/:studentId/skill-report', isTeacher, requireActiveConsent(), logRecordAccess('skill_mastery', 'teaching_instruction'), async (req, res) => {
   try {
     const { studentId } = req.params;
     const teacherId = req.user._id;
@@ -666,7 +666,7 @@ router.get('/students/:studentId/skill-report', isTeacher, requireActiveConsent(
  * Returns all growth check results for a student
  * Useful for tracking progress over time
  */
-router.get('/students/:studentId/growth-history', isTeacher, requireActiveConsent(), async (req, res) => {
+router.get('/students/:studentId/growth-history', isTeacher, requireActiveConsent(), logRecordAccess('assessment_results', 'teaching_instruction'), async (req, res) => {
   try {
     const { studentId } = req.params;
     const teacherId = req.user._id;
@@ -922,7 +922,7 @@ router.get('/my-calculator-access', isAuthenticated, async (req, res) => {
 // =====================================================
 // LEARNING CURVE: View student's skill progression over time
 // =====================================================
-router.get('/students/:studentId/learning-curve', isTeacher, requireActiveConsent(), async (req, res) => {
+router.get('/students/:studentId/learning-curve', isTeacher, requireActiveConsent(), logRecordAccess('progress_data', 'teaching_instruction'), async (req, res) => {
   try {
     const { studentId } = req.params;
     const teacherId = req.user._id;
@@ -983,7 +983,7 @@ router.get('/students/:studentId/learning-curve', isTeacher, requireActiveConsen
 // =====================================================
 // PLACEMENT RESULTS: View student's screener/placement details
 // =====================================================
-router.get('/students/:studentId/placement-results', isTeacher, requireActiveConsent(), async (req, res) => {
+router.get('/students/:studentId/placement-results', isTeacher, requireActiveConsent(), logRecordAccess('assessment_results', 'teaching_instruction'), async (req, res) => {
   try {
     const { studentId } = req.params;
     const teacherId = req.user._id;
