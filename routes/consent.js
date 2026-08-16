@@ -329,21 +329,19 @@ router.post('/request-parent-email', isAuthenticated, async (req, res) => {
         const consentToken = crypto.randomBytes(32).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(consentToken).digest('hex');
 
-        // Record the consent request — status is pending until parent clicks through
+        // Record the consent REQUEST — status stays pending until the parent
+        // clicks through. Deliberately no history record here: history is the
+        // COPPA audit trail of consent ACTS, and the only actor so far is the
+        // child typing an address. Writing a 'parent_individual' grant record
+        // at request time (as this route used to) put a full-scope grant,
+        // stamped with the student's own IP, into the trail for a parent who
+        // had not yet been asked. The real record is written by
+        // grantParentConsentByEmail when the parent actually responds.
         student.privacyConsent.status = 'pending';
         student.privacyConsent.consentPathway = 'individual_parent';
         student.privacyConsent.consentToken = hashedToken;
         student.privacyConsent.consentTokenExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-        student.privacyConsent.history.push({
-            consentType: 'parent_individual',
-            grantedByRole: 'parent',
-            grantedByName: parentEmail,
-            grantedAt: new Date(),
-            scope: ['data_collection', 'ai_processing', 'progress_tracking', 'teacher_visibility', 'parent_visibility'],
-            verificationMethod: 'email_link',
-            ipAddress: req.ip,
-            userAgent: req.get('User-Agent')
-        });
+        student.privacyConsent.pendingParentEmail = parentEmail;
 
         // Do NOT set hasParentalConsent = true until the parent actually verifies
         // via the email link. Setting it prematurely would let students bypass

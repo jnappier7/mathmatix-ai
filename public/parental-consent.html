@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Parental Consent - M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css" />
+  <!-- No analytics tag on this page: the visitor is an unauthenticated parent
+       arriving from a child-directed service, and the whole point of the page
+       is that no third party has been authorised yet. -->
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+    </div>
+  </header>
+
+  <main class="login-page-wrapper">
+    <div class="login-container" style="max-width: 640px;">
+
+      <!-- Loading -->
+      <div id="verifying" style="text-align: center; padding: 30px 0;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: #667eea;"></i>
+        <p style="margin-top: 15px; color: #666;">Checking this link…</p>
+      </div>
+
+      <!-- Invalid / expired -->
+      <div id="link-invalid" style="display: none; text-align: center;">
+        <div style="background: #fff5f5; border-left: 4px solid #e74c3c; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <i class="fas fa-times-circle" style="font-size: 48px; color: #e74c3c; margin-bottom: 15px;"></i>
+          <h2 style="margin: 0 0 10px 0; color: #2c3e50;">This link isn't valid</h2>
+          <p style="margin: 0; color: #555;" id="invalid-detail">
+            It may have already been used, or it may have expired. Consent links are valid for 7 days.
+          </p>
+        </div>
+        <p style="color: #666; font-size: 14px;">
+          Ask your child to request a new link from their account, or contact us at
+          <a href="mailto:support@mathmatix.ai">support@mathmatix.ai</a>.
+        </p>
+      </div>
+
+      <!-- Consent form -->
+      <div id="consent-form-container" style="display: none;">
+        <h1 style="margin-bottom: 6px;">Permission for <span id="student-name">your child</span></h1>
+        <p class="subtitle" id="intro-line" style="margin-bottom: 22px;"></p>
+
+        <div style="background: #f8f9ff; border-left: 4px solid #667eea; padding: 18px 20px; border-radius: 8px; margin-bottom: 20px;">
+          <h3 style="margin: 0 0 12px 0; font-size: 16px; color: #2c3e50;">What you're approving</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #444; line-height: 1.7; font-size: 15px;">
+            <li>We collect your child's name, grade level, and learning preferences to personalize tutoring.</li>
+            <li>Their typed math questions and work are sent to our AI providers (OpenAI, Anthropic, and Mathpix for reading photos of math) to generate tutoring responses. These providers do not use the data to train their models.</li>
+            <li>We keep a record of their progress — skills practiced, assessment results, and session summaries.</li>
+            <li>If your child is linked to a teacher or school, that teacher can see their progress and session summaries.</li>
+          </ul>
+        </div>
+
+        <div style="background: #f7fdf9; border-left: 4px solid #27ae60; padding: 18px 20px; border-radius: 8px; margin-bottom: 22px;">
+          <h3 style="margin: 0 0 12px 0; font-size: 16px; color: #2c3e50;">Your rights</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #444; line-height: 1.7; font-size: 15px;">
+            <li>You can withdraw this consent at any time, which stops AI tutoring for your child.</li>
+            <li>You can request a copy of your child's data, ask us to correct it, or ask us to delete it.</li>
+            <li>You can review what we collect in our <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</li>
+          </ul>
+        </div>
+
+        <p style="font-size: 14px; color: #666; margin-bottom: 18px;">
+          By choosing <strong>I give permission</strong> you confirm that you are
+          <span id="guardian-phrase">this child's parent or legal guardian</span>.
+        </p>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button type="button" class="submit-btn" id="grantBtn" style="flex: 1 1 220px; margin: 0;">
+            <span class="btn-label">I give permission</span>
+            <span class="btn-spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Saving…</span>
+          </button>
+          <button type="button" id="declineBtn" style="flex: 1 1 160px; background: #fff; color: #c0392b; border: 1px solid #e0b4ae; border-radius: 8px; padding: 12px 18px; cursor: pointer; font-size: 15px; font-weight: 600;">
+            <span class="btn-label">No, decline</span>
+            <span class="btn-spinner" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Saving…</span>
+          </button>
+        </div>
+
+        <div id="error-message" class="error-message" style="display: none; text-align: center; margin-top: 16px;"></div>
+      </div>
+
+      <!-- Granted -->
+      <div id="granted" style="display: none; text-align: center;">
+        <div style="background: #f0fdf4; border-left: 4px solid #27ae60; padding: 24px; border-radius: 8px;">
+          <i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60; margin-bottom: 15px;"></i>
+          <h2 style="margin: 0 0 10px 0; color: #2c3e50;">Thank you — permission granted</h2>
+          <p style="margin: 0; color: #555;" id="granted-detail">Your child can now use Mathmatix AI.</p>
+        </div>
+        <p style="color: #666; font-size: 14px; margin-top: 18px;">
+          You can withdraw permission at any time by contacting
+          <a href="mailto:support@mathmatix.ai">support@mathmatix.ai</a>.
+        </p>
+      </div>
+
+      <!-- Declined -->
+      <div id="declined" style="display: none; text-align: center;">
+        <div style="background: #fffdf5; border-left: 4px solid #f39c12; padding: 24px; border-radius: 8px;">
+          <i class="fas fa-circle-info" style="font-size: 48px; color: #f39c12; margin-bottom: 15px;"></i>
+          <h2 style="margin: 0 0 10px 0; color: #2c3e50;">Your decision has been recorded</h2>
+          <p style="margin: 0; color: #555;">Your child will not be able to use AI tutoring. No further action is needed.</p>
+        </div>
+        <p style="color: #666; font-size: 14px; margin-top: 18px;">
+          Changed your mind? Contact <a href="mailto:support@mathmatix.ai">support@mathmatix.ai</a>.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </p>
+  </footer>
+
+  <script>
+    (function () {
+      var token = new URLSearchParams(window.location.search).get('token');
+
+      var verifying = document.getElementById('verifying');
+      var invalid = document.getElementById('link-invalid');
+      var formContainer = document.getElementById('consent-form-container');
+      var granted = document.getElementById('granted');
+      var declined = document.getElementById('declined');
+      var errorMessage = document.getElementById('error-message');
+      var grantBtn = document.getElementById('grantBtn');
+      var declineBtn = document.getElementById('declineBtn');
+
+      function show(el) {
+        [verifying, invalid, formContainer, granted, declined].forEach(function (n) {
+          n.style.display = 'none';
+        });
+        el.style.display = 'block';
+      }
+
+      function setBusy(btn, busy) {
+        btn.disabled = busy;
+        btn.querySelector('.btn-label').style.display = busy ? 'none' : 'inline';
+        btn.querySelector('.btn-spinner').style.display = busy ? 'inline' : 'none';
+        // Never let one choice be submitted while the other is in flight.
+        (btn === grantBtn ? declineBtn : grantBtn).disabled = busy;
+      }
+
+      async function verify() {
+        if (!token) return show(invalid);
+        try {
+          var res = await fetch('/api/consent-verify/' + encodeURIComponent(token));
+          var data = await res.json();
+          if (!res.ok || !data.success) return show(invalid);
+
+          document.getElementById('student-name').textContent = data.studentFirstName;
+
+          var coppa = !!data.requiresCoppaConsent;
+          document.getElementById('intro-line').textContent = coppa
+            ? data.studentFirstName + ' is under 13, so the law requires us to get your permission before they can use Mathmatix AI.'
+            : data.studentFirstName + ' asked us to check with you before they start using Mathmatix AI.';
+          document.getElementById('guardian-phrase').textContent = coppa
+            ? "this child's parent or legal guardian"
+            : "this student's parent or legal guardian";
+
+          show(formContainer);
+        } catch (err) {
+          console.error('[parental-consent] verify failed:', err);
+          show(invalid);
+        }
+      }
+
+      async function respond(action, btn) {
+        errorMessage.style.display = 'none';
+        setBusy(btn, true);
+        try {
+          var res = await csrfFetch('/api/consent-verify/' + action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+          });
+          var data = await res.json();
+
+          if (!res.ok || !data.success) {
+            setBusy(btn, false);
+            errorMessage.textContent = (data && data.message) || 'Something went wrong. Please try again.';
+            errorMessage.style.display = 'block';
+            return;
+          }
+
+          if (action === 'grant') {
+            document.getElementById('granted-detail').textContent =
+              (data.studentFirstName || 'Your child') + ' can now use Mathmatix AI.';
+            show(granted);
+          } else {
+            show(declined);
+          }
+        } catch (err) {
+          console.error('[parental-consent] ' + action + ' failed:', err);
+          setBusy(btn, false);
+          errorMessage.textContent = 'Network error. Please try again.';
+          errorMessage.style.display = 'block';
+        }
+      }
+
+      grantBtn.addEventListener('click', function () { respond('grant', grantBtn); });
+      declineBtn.addEventListener('click', function () { respond('decline', declineBtn); });
+
+      verify();
+    })();
+  </script>
+  <script src="/js/csrf.js"></script>
+</body>
+</html>

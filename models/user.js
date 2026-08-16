@@ -80,6 +80,7 @@ const consentRecordSchema = new Schema({
       'school_official',     // School/district consented via DPA (COPPA school exception)
       'student_self',        // Student 13+ consented for themselves
       'parent_revoked',      // Parent revoked consent
+      'parent_declined',     // Parent was asked via email link and refused
       'school_revoked',      // School/district contract ended
       'legacy_migration'     // Backfill of a pre-privacyConsent hasParentalConsent grant
     ],
@@ -691,7 +692,17 @@ const userSchema = new Schema({
     activeConsentDate: { type: Date },
     // School/district info (if consented via DPA)
     schoolId: { type: String, trim: true },
-    districtId: { type: String, trim: true }
+    districtId: { type: String, trim: true },
+
+    /* Pending parent email-verification (COPPA verifiable parental consent).
+       These three MUST stay declared here: the schema is strict, so an
+       undeclared path is silently dropped on save — which is exactly how the
+       emailed consent link came to reference a token that was never stored.
+       consentToken holds the SHA-256 HASH; the raw token exists only in the
+       emailed URL, so a database read cannot forge a consent link. */
+    consentToken:        { type: String, default: null },
+    consentTokenExpires: { type: Date,   default: null },
+    pendingParentEmail:  { type: String, trim: true, lowercase: true, default: null }
   },
 
   /* FERPA Settings (34 CFR § 99.37 directory info opt-out, annual notification tracking) */

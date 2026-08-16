@@ -128,6 +128,7 @@ const courseChatRoutes = require('../routes/courseChat');
 const waitlistRoutes = require('../routes/waitlist');
 const { router: dataPrivacyRoutes } = require('../routes/dataPrivacy');
 const consentRoutes = require('../routes/consent');
+const consentVerifyRoutes = require('../routes/consentVerify');
 const demoRoutes = require('../routes/demo');
 const trialChatRoutes = require('../routes/trialChat');
 const quizRoutes = require('../routes/quiz');
@@ -211,6 +212,13 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/affiliate', affiliateRoutes);
   app.use('/api/privacy', isAuthenticated, dataPrivacyRoutes);
   app.use('/api/consent', isAuthenticated, consentRoutes);
+  // Parent-facing consent verification. Mounted OUTSIDE the isAuthenticated
+  // guard above: the parent clicking the emailed link is not logged in and
+  // usually has no account. The single-use token IS the authentication.
+  // Path is '/api/consent-verify', which Express does NOT match against the
+  // '/api/consent' mount (prefix matching requires a '/' or end-of-string
+  // boundary), so it stays public. authLimiter throttles token guessing.
+  app.use('/api/consent-verify', authLimiter, consentVerifyRoutes);
   // requireOwnConsent sits on every endpoint that collects student input for,
   // or discloses student context to, a third-party AI provider. It must NOT
   // go on /api/consent or /api/onboarding — a blocked student has to be able
@@ -734,6 +742,10 @@ function registerHtmlRoutes(app) {
   app.get('/signup.html', ensureNotAuthenticated, sendHtml('signup.html'));
   app.get('/forgot-password.html', sendHtml('forgot-password.html'));
   app.get('/reset-password.html', sendHtml('reset-password.html'));
+  // Parental consent landing page — MUST be public. The recipient is a parent
+  // arriving from an emailed link; most have no account at all. The page is
+  // inert until the token in the query string validates server-side.
+  app.get('/parental-consent.html', sendHtml('parental-consent.html'));
   app.get('/privacy.html', sendHtml('privacy.html'));
   app.get('/terms.html', sendHtml('terms.html'));
   app.get('/onboarding.html', sendHtml('onboarding.html'));
