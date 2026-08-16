@@ -43,7 +43,10 @@ function detectResourceMention(message) {
 /**
  * Find a teacher resource by searching for mentions in the message
  * DIRECTIVE 3: Uses vector similarity search for semantic matching
- * @param {string} teacherId - The teacher's ID
+ * @param {string|Array} teacherId - The student's teacher(s). A student can
+ *   have more than one, so this accepts an array; the model turns it into an
+ *   $in. Passing only user.teacherId would make the tutor blind to everything
+ *   the student's other teachers shared.
  * @param {string} message - The student's message
  * @param {Array} classIds - The classes the ASKING student belongs to. Every
  *   lookup below is scoped by it, because a match here puts the resource's
@@ -53,7 +56,10 @@ function detectResourceMention(message) {
  * @returns {Promise<Object|null>} - The resource object or null
  */
 async function findResourceInMessage(teacherId, message, classIds) {
-    if (!teacherId) return null;
+    // An empty ARRAY is as much "no teachers" as a null id — without this the
+    // model would build a `{ $in: [] }` query on every turn for an unlinked
+    // student and pay a round trip to match nothing.
+    if (!teacherId || (Array.isArray(teacherId) && teacherId.length === 0)) return null;
 
     // HIGHEST CONFIDENCE: Check for explicitly quoted resource names first
     // Handles: "Module 8 Test PRACTICE (A)", 'Module 8 Test PRACTICE (A)', curly quotes
@@ -210,7 +216,7 @@ async function fetchAndProcessResource(resource) {
 
 /**
  * Main function to detect and fetch resource mentioned in a student's message
- * @param {string} teacherId - The teacher's ID
+ * @param {string|Array} teacherId - The student's teacher(s); array supported.
  * @param {string} message - The student's message
  * @returns {Promise<Object|null>} - Resource data or null
  */

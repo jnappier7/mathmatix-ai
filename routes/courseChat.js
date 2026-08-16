@@ -19,7 +19,7 @@ const { callLLM } = require('../utils/llmGateway');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
-const { getStudentClassIds } = require('../utils/resourceVisibility');
+const { getStudentScope } = require('../utils/resourceVisibility');
 const { buildProgressUpdate } = require('../utils/progressState');
 const { isRequiredBaselinePending } = require('../utils/courseDiagnostic');
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
@@ -149,9 +149,10 @@ router.post('/', async (req, res) => {
         let resourceContext = null;
         if (user.teacherId) {
             try {
-                // Class-scoped — see the matching call in routes/chat.js.
-                const classIds = await getStudentClassIds(user._id);
-                resourceContext = await detectAndFetchResource(user.teacherId, messageText, classIds);
+                // Scoped to every teacher and class this student has — see the
+                // matching call in routes/chat.js.
+                const scope = await getStudentScope(user);
+                resourceContext = await detectAndFetchResource(scope.teacherIds, messageText, scope.classIds);
             } catch (err) {
                 console.error('[CourseChat] Resource detection error:', err.message);
             }
