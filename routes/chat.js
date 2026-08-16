@@ -698,15 +698,37 @@ async function runStudentTurn(req, res) {
         // Build parallel fetch promises
         const contextPromises = [];
 
+        // A student can have more than one teacher. Resources UNION across all
+        // of them (below); curriculum and classAISettings cannot — they are one
+        // coherent set of teaching instructions each, and merging two teachers
+        // produces contradictions rather than a stricter result. Both resolve to
+        // the most recently joined teacher. See pickPrimaryTeacher for why that
+        // beats a "strictest wins" merge.
+        //
+        // Resolved once and shared: the resource lookup needs the same scope,
+        // and this is one query for all three.
+        const scopePromise = user.teacherId
+            ? getStudentScope(user).catch(err => {
+                logger.error('Student scope error', { error: err.message });
+                // Degrade to the pointer rather than dropping teacher context
+                // entirely — a failed lookup should cost the second teacher's
+                // materials, not the first teacher's settings.
+                return { teacherIds: [user.teacherId], classIds: [], primaryTeacherId: user.teacherId };
+            })
+            : Promise.resolve({ teacherIds: [], classIds: [], primaryTeacherId: null });
+
         // 1. Curriculum context (with caching)
         if (user.teacherId) {
             contextPromises.push(
-                contextCache.getOrFetch('curriculum', user.teacherId.toString(), async () => {
-                    const curriculum = await Curriculum.getActiveCurriculum(user.teacherId);
-                    if (curriculum && curriculum.autoSyncWithAI) {
-                        return curriculum.getAIContext();
-                    }
-                    return null;
+                scopePromise.then(scope => {
+                    if (!scope.primaryTeacherId) return null;
+                    return contextCache.getOrFetch('curriculum', scope.primaryTeacherId.toString(), async () => {
+                        const curriculum = await Curriculum.getActiveCurriculum(scope.primaryTeacherId);
+                        if (curriculum && curriculum.autoSyncWithAI) {
+                            return curriculum.getAIContext();
+                        }
+                        return null;
+                    });
                 }).catch(err => { logger.error('Error fetching curriculum', { error: err.message }); return null; })
             );
         } else {
@@ -716,9 +738,12 @@ async function runStudentTurn(req, res) {
         // 2. Teacher AI settings (with caching)
         if (user.teacherId) {
             contextPromises.push(
-                contextCache.getOrFetch('teacherSettings', user.teacherId.toString(), async () => {
-                    const teacher = await User.findById(user.teacherId).select('classAISettings').lean();
-                    return teacher?.classAISettings || null;
+                scopePromise.then(scope => {
+                    if (!scope.primaryTeacherId) return null;
+                    return contextCache.getOrFetch('teacherSettings', scope.primaryTeacherId.toString(), async () => {
+                        const teacher = await User.findById(scope.primaryTeacherId).select('classAISettings').lean();
+                        return teacher?.classAISettings || null;
+                    });
                 }).catch(err => { logger.error('Error fetching teacher settings', { error: err.message }); return null; })
             );
         } else {
@@ -738,7 +763,7 @@ async function runStudentTurn(req, res) {
             // scoping to user.teacherId alone would hide their second teacher's
             // materials from the tutor entirely.
             contextPromises.push(
-                getStudentScope(user)
+                scopePromise
                     .then(scope => detectAndFetchResource(scope.teacherIds, message, scope.classIds))
                     .catch(err => { logger.error('Resource detection error', { error: err.message }); return null; })
             );

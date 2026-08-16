@@ -28,29 +28,35 @@
 const EnrollmentCode = require('../models/enrollmentCode');
 
 /**
- * Everything a student's resource visibility depends on, in one query.
+ * Everything a student's teacher context depends on, in one query.
  *
- * Returns { teacherIds, classIds }, both always ARRAYS, never null. That
- * matters: the model's visibleToStudentFilter treats a non-array classIds as
- * "do not scope by class" (the teacher's own view), so returning null on the
- * student path would silently unscope every query — the exact failure this
- * module exists to prevent. A student in no classes gets [], which still
- * matches teacher-wide resources and nothing else.
+ * Returns { teacherIds, classIds, primaryTeacherId }.
+ *
+ * teacherIds/classIds are always ARRAYS, never null. That matters: the model's
+ * visibleToStudentFilter treats a non-array classIds as "do not scope by class"
+ * (the teacher's own view), so returning null on the student path would
+ * silently unscope every query — the exact failure this module exists to
+ * prevent. A student in no classes gets [], which still matches teacher-wide
+ * resources and nothing else.
  *
  * `user.teacherId` is folded in rather than replaced. It is lossy, but it is
  * not wrong — a student assigned to a teacher directly (Clever roster, admin
  * assignment) may have no EnrollmentCode at all, and dropping it would strip
  * those students of every resource they can currently see.
  *
+ * primaryTeacherId is the MOST RECENTLY JOINED teacher — see the note on
+ * pickPrimaryTeacher below for why single-teacher settings resolve that way
+ * instead of merging.
+ *
  * @param {Object} user  the student (needs _id and teacherId)
- * @returns {Promise<{teacherIds: Array, classIds: Array}>}
+ * @returns {Promise<{teacherIds: Array, classIds: Array, primaryTeacherId: *}>}
  */
 async function getStudentScope(user) {
-    if (!user || !user._id) return { teacherIds: [], classIds: [] };
+    if (!user || !user._id) return { teacherIds: [], classIds: [], primaryTeacherId: null };
 
     const codes = await EnrollmentCode.find({
         'enrolledStudents.studentId': user._id
-    }).select('_id teacherId').lean();
+    }).select('_id teacherId enrolledStudents').lean();
 
     const classIds = codes.map(c => c._id);
 
@@ -66,7 +72,60 @@ async function getStudentScope(user) {
         teacherIds.push(id);
     }
 
-    return { teacherIds, classIds };
+    return {
+        teacherIds,
+        classIds,
+        primaryTeacherId: pickPrimaryTeacher(user, codes)
+    };
+}
+
+/**
+ * The ONE teacher whose class settings apply, when only one can.
+ *
+ * Some teacher context cannot be unioned the way resources can — the active
+ * curriculum, and classAISettings. Those resolve to the MOST RECENTLY JOINED
+ * teacher, deliberately, rather than to some "strictest" merge:
+ *
+ *   - Most of classAISettings has no strictness axis at all. PEMDAS vs GEMS,
+ *     butterfly vs traditional-LCD, socratic vs direct are competing
+ *     conventions, not points on a severity scale — there is no max() to take.
+ *   - Where an axis does exist it usually runs the wrong way. The "strict" end
+ *     of scaffoldingLevel is 1 (minimal hints) and of manipulatives is
+ *     `allowed: false` — exactly the supports an IEP student depends on.
+ *     Strictest-wins would quietly strip help from the students who need it.
+ *   - These settings render as prose instructions (promptCompact). Merging two
+ *     teachers stacks contradictions into one block — "use the balance method"
+ *     next to "use opposite operations", two different "class is currently
+ *     learning" lines — which is not stricter, just incoherent.
+ *
+ * Recency is DERIVED from enrolledAt rather than read off user.teacherId.
+ * That field is only most-recent by accident: routes/student.js overwrites it
+ * on every class join, but admin.js sets it just `if (!student.teacherId)` and
+ * cleverSync assigns whichever section it happened to process last. The
+ * pointer remains the fallback for students who have no EnrollmentCode.
+ *
+ * @param {Object} user   the student
+ * @param {Array} codes   their EnrollmentCode docs (need enrolledStudents)
+ */
+function pickPrimaryTeacher(user, codes) {
+    let newest = null;
+    let newestAt = -Infinity;
+
+    for (const code of codes || []) {
+        if (!code.teacherId) continue;
+        const entry = (code.enrolledStudents || []).find(
+            e => e.studentId && String(e.studentId) === String(user._id)
+        );
+        // A missing enrolledAt is older than any real timestamp, so a class
+        // with one never displaces a class that has one.
+        const at = entry && entry.enrolledAt ? new Date(entry.enrolledAt).getTime() : 0;
+        if (at > newestAt) {
+            newestAt = at;
+            newest = code.teacherId;
+        }
+    }
+
+    return newest || user.teacherId || null;
 }
 
 /**
@@ -115,4 +174,4 @@ function resourceVisibleToStudent(resource, scope) {
     return targets.some(id => mineClasses.has(String(id)));
 }
 
-module.exports = { getStudentScope, getStudentClassIds, resourceVisibleToStudent };
+module.exports = { getStudentScope, getStudentClassIds, resourceVisibleToStudent, pickPrimaryTeacher };
