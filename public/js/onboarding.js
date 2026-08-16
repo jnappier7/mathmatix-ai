@@ -383,7 +383,13 @@
       if (!res.ok || !data.success) {
         return setCoppaStatus(data.message || 'That code didn’t work — double-check with your parent.', true);
       }
-      setCoppaStatus('Linked! One sec…', false);
+      // Linking is not consent — the parent still has to approve by email
+      // (routes/student.js issues the request). Say so, rather than implying
+      // the student is cleared.
+      setCoppaStatus(
+        data.consentMessage || 'Linked! We\'ve emailed your parent for permission.',
+        false
+      );
       const fin = await postJson('/api/onboarding/finalize', {});
       const finData = await fin.json().catch(() => ({}));
       pendingRedirect = finData.redirect || pendingRedirect;

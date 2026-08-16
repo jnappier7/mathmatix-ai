@@ -41,8 +41,19 @@ describe('consent enforcement on /api/chat', () => {
         else process.env.CONSENT_ENFORCEMENT = ORIGINAL;
     });
 
-    test('default (log) mode: unconsented under-13 still gets through — deploy is inert', async () => {
+    // The default used to be 'log', which made the whole gate inert: mounted on
+    // every AI endpoint, blocking nothing, while an unconsented under-13's
+    // messages went to OpenAI/Anthropic/Mathpix. It is 'enforce' now that the
+    // parental consent flow actually works end to end.
+    test('default (no env var): unconsented under-13 is blocked', async () => {
         delete process.env.CONSENT_ENFORCEMENT;
+        const res = await request(appFor(unconsentedUnder13)).post('/api/chat');
+        expect(res.status).toBe(403);
+        expect(res.body).toMatchObject({ consentRequired: true });
+    });
+
+    test('log mode remains available as a rollback', async () => {
+        process.env.CONSENT_ENFORCEMENT = 'log';
         const res = await request(appFor(unconsentedUnder13)).post('/api/chat');
         expect(res.status).toBe(200);
         expect(res.body).toEqual({ ok: true });

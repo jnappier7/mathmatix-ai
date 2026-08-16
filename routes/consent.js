@@ -18,13 +18,13 @@ const router = express.Router();
 const { isAuthenticated, isAdmin, isParent } = require('../middleware/auth');
 const {
     grantParentConsent,
+    issueParentConsentRequest,
     grantSchoolConsent,
     grantSelfConsent,
     revokeConsent,
     checkConsent,
     grantBatchSchoolConsent
 } = require('../utils/consentManager');
-const crypto = require('crypto');
 const User = require('../models/user');
 const EnrollmentCode = require('../models/enrollmentCode');
 const logger = require('../utils/logger');
@@ -317,42 +317,16 @@ router.post('/request-parent-email', isAuthenticated, async (req, res) => {
             return res.status(404).json({ success: false, message: 'Student not found' });
         }
 
-        // Initialize privacyConsent if needed
-        if (!student.privacyConsent) {
-            student.privacyConsent = { history: [] };
-        }
-        if (!student.privacyConsent.history) {
-            student.privacyConsent.history = [];
-        }
-
-        // Generate a consent verification token
-        const consentToken = crypto.randomBytes(32).toString('hex');
-        const hashedToken = crypto.createHash('sha256').update(consentToken).digest('hex');
-
-        // Record the consent request — status is pending until parent clicks through
-        student.privacyConsent.status = 'pending';
-        student.privacyConsent.consentPathway = 'individual_parent';
-        student.privacyConsent.consentToken = hashedToken;
-        student.privacyConsent.consentTokenExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-        student.privacyConsent.history.push({
-            consentType: 'parent_individual',
-            grantedByRole: 'parent',
-            grantedByName: parentEmail,
-            grantedAt: new Date(),
-            scope: ['data_collection', 'ai_processing', 'progress_tracking', 'teacher_visibility', 'parent_visibility'],
-            verificationMethod: 'email_link',
-            ipAddress: req.ip,
-            userAgent: req.get('User-Agent')
-        });
-
-        // Do NOT set hasParentalConsent = true until the parent actually verifies
-        // via the email link. Setting it prematurely would let students bypass
-        // COPPA consent by entering any email address. The student gets limited
-        // access while consent is pending; full access is granted only after the
-        // parent clicks the verification link (handled by the verify-consent route).
-        // student.hasParentalConsent remains false/unchanged here.
-
-        await student.save();
+        // Issue the request. Status stays 'pending' and hasParentalConsent is
+        // left alone — setting it here would let a student self-consent by
+        // typing any address. Deliberately no history record either: history is
+        // the COPPA audit trail of consent ACTS, and the only actor so far is
+        // the child. Writing a 'parent_individual' grant record at request time
+        // (as this route used to) put a full-scope grant, stamped with the
+        // student's own IP, into the trail for a parent who had not yet been
+        // asked. The real record is written when the parent responds, by
+        // grantParentConsentByEmail in routes/consentVerify.js.
+        const consentToken = await issueParentConsentRequest(student, parentEmail);
 
         // Send the consent email to the parent
         const studentName = student.firstName || student.name || 'Your child';

@@ -217,11 +217,30 @@ describe('requireOwnConsent middleware', () => {
         return { req, res, next };
     }
 
-    test('defaults to log mode, and unknown values fall back to log', () => {
+    // The default is 'enforce'. It was 'log' during the staged rollout, which
+    // meant the gate was mounted everywhere and blocked nothing. A typo'd env
+    // var must fail closed for the same reason.
+    test('defaults to enforce mode, and unknown values fall back to enforce', () => {
         delete process.env.CONSENT_ENFORCEMENT;
-        expect(getEnforcementMode()).toBe('log');
+        expect(getEnforcementMode()).toBe('enforce');
         process.env.CONSENT_ENFORCEMENT = 'bogus';
-        expect(getEnforcementMode()).toBe('log');
+        expect(getEnforcementMode()).toBe('enforce');
+    });
+
+    test('an unconsented under-13 is blocked with no env var set at all', () => {
+        delete process.env.CONSENT_ENFORCEMENT;
+        const { req, res, next } = ownCtx(blockedUser);
+        requireOwnConsent()(req, res, next);
+        expect(res.status).toHaveBeenCalledWith(403);
+        expect(next).not.toHaveBeenCalled();
+    });
+
+    test('CONSENT_ENFORCEMENT=log is still an available rollback', () => {
+        process.env.CONSENT_ENFORCEMENT = 'log';
+        const { req, res, next } = ownCtx(blockedUser);
+        requireOwnConsent()(req, res, next);
+        expect(next).toHaveBeenCalledWith();
+        expect(res.status).not.toHaveBeenCalled();
     });
 
     test('log mode never blocks, even an unconsented under-13', () => {

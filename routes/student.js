@@ -18,6 +18,9 @@ const { getReviewSummary } = require('../utils/smartReviewQueue');
 const { resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
 
 const { anyRole } = require('../utils/roleQuery');
+const logger = require('../utils/logger');
+const { issueParentConsentRequest } = require('../utils/consentManager');
+const { sendParentalConsentRequest } = require('../utils/emailService');
 const {
     applyStudentSupportsUpdate,
     anxietyLevelFromReport,
@@ -155,17 +158,48 @@ router.post('/link-to-parent', isAuthenticated, isStudent, async (req, res) => {
             student.parentIds.push(parent._id);
         }
 
-        // Grant parental consent (COPPA compliance)
-        student.hasParentalConsent = true;
-
         await parent.save();
         await student.save();
+
+        // Linking is NOT consent. This route previously set
+        // hasParentalConsent = true right here, which meant the CHILD granted
+        // their own parental consent by typing a code — no parent action, no
+        // record of what was disclosed, no audit entry, and checkConsent()
+        // then fell through to its legacy branch and reported full scope.
+        // Instead, ask the parent properly: issue a single-use token and email
+        // them the same consent page the 13-17 pathway uses. Consent turns on
+        // only when they respond (routes/consentVerify.js).
+        let consentRequested = false;
+        try {
+            const rawToken = await issueParentConsentRequest(student, parent.email);
+            const emailResult = await sendParentalConsentRequest(
+                parent.email,
+                student.firstName || student.username,
+                rawToken,
+                student._id.toString()
+            );
+            consentRequested = !!emailResult.success;
+        } catch (consentErr) {
+            // Never fail the link on a consent-email problem — the accounts are
+            // already linked and the parent can still consent from the link we
+            // retry, but do surface it: a silent failure here is what leaves a
+            // child sitting at 'pending' forever.
+            logger.error('[Student] Failed to issue parental consent request on link', {
+                studentId: student._id.toString(),
+                error: consentErr.message
+            });
+        }
 
         console.log(`LOG: Student ${student.username} linked to parent ${parent.username} via parent invite code.`);
         res.status(200).json({
             success: true,
             message: `Successfully linked to parent ${parent.firstName} ${parent.lastName}!`,
-            hasParentalConsent: true
+            hasParentalConsent: false,
+            consentPending: true,
+            consentRequested,
+            consentMessage: consentRequested
+                ? `We've emailed ${parent.firstName} to ask for permission. Some features unlock once they approve.`
+                : `Ask ${parent.firstName} to approve Mathmatix from their email so you can get started.`
         });
 
     } catch (error) {

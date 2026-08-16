@@ -71,19 +71,36 @@ function requireActiveConsent(options = {}) {
  *
  * requireActiveConsent (above) gates an adult reading a student's records.
  * This gates the student's own AI usage — the point of collection and
- * third-party disclosure under COPPA. Staged rollout via CONSENT_ENFORCEMENT:
+ * third-party disclosure under COPPA. Modes via CONSENT_ENFORCEMENT:
  *   off      — no-op
- *   log      — evaluate + record would-blocks, never block  (DEFAULT)
- *   enforce  — actually 403
+ *   log      — evaluate + record would-blocks, never block
+ *   enforce  — actually 403                                  (DEFAULT)
  * The env var is read per-request so a Render env flip takes effect without
  * coordinating a restart with a deploy.
+ *
+ * The default was 'log' through the staged rollout, which meant the gate was
+ * mounted on every AI endpoint and blocked nothing: an under-13 student with
+ * pending consent got full tutoring, and their messages went to OpenAI,
+ * Anthropic and Mathpix. It defaults to 'enforce' now that there is a working
+ * way to obtain consent — before, blocking would have been a dead end, because
+ * the emailed consent link 404'd and no UI could grant parental consent at all.
+ *
+ * Blast radius is narrower than it looks. enforce only blocks three buckets:
+ * revoked, expired, and under13_pending. Accounts carrying the legacy
+ * hasParentalConsent flag are treated as active, students with no date of birth
+ * are allowed through as 'null_dob', and 13+ pending is allowed as
+ * teen_pending. Size the real population against the database with
+ * `node scripts/auditConsentGaps.js` before deploying; set
+ * CONSENT_ENFORCEMENT=log to roll back without a code change.
  * ------------------------------------------------------------------------- */
 
 const CONSENT_MODES = ['off', 'log', 'enforce'];
 
 function getEnforcementMode() {
-    const m = (process.env.CONSENT_ENFORCEMENT || 'log').toLowerCase();
-    return CONSENT_MODES.includes(m) ? m : 'log';
+    const m = (process.env.CONSENT_ENFORCEMENT || 'enforce').toLowerCase();
+    // An unrecognised value falls back to 'enforce', not 'log'. A typo in a
+    // Render env var must not silently disable a compliance gate.
+    return CONSENT_MODES.includes(m) ? m : 'enforce';
 }
 
 const ADULT_ROLES = ['teacher', 'parent', 'admin'];

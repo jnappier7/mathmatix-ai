@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WDF79L47');</script>
-<!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
   <meta name="theme-color" content="#12B3B3" />
   <!-- Warm up connections to third-party origins used below (marked/dompurify,
-       fabric, GTM) so their TLS handshake overlaps HTML parse. Font Awesome is
+       fabric) so their TLS handshake overlaps HTML parse. Font Awesome is
        NO LONGER among them — it is served from /vendor, so icons no longer
        depend on cdnjs being reachable. cdnjs stays warmed for fabric, which is
-       lazy-loaded with the board tools. -->
+       lazy-loaded with the board tools. Google Tag Manager is deliberately
+       absent: no third-party analytics on authenticated pages (pinned by
+       tests/unit/noAnalyticsOnAuthedPages.test.js). Not even a preconnect —
+       that alone would send a signed-in child's browser to the tag host. -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
-  <link rel="preconnect" href="https://www.googletagmanager.com" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -249,10 +244,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       } catch (e) { /* localStorage unavailable — fall back to defaults */ }
     })();
   </script>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
   <a href="#chat-messages-container" class="skip-to-content" data-i18n="misc.skipToChat">Skip to chat</a>
   <canvas id="confetti-canvas"></canvas>
   <header class="landing-header">
