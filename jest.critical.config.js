@@ -30,6 +30,7 @@ module.exports = {
     '<rootDir>/tests/unit/llmVerifier.test.js',
     '<rootDir>/tests/unit/llmVerifierEscalation.test.js',
     '<rootDir>/tests/unit/affirmThenProbe.test.js',
+    '<rootDir>/tests/unit/decideInstructionalMode.test.js',
     '<rootDir>/tests/unit/conceptualAnswerVerdict.test.js',
     '<rootDir>/tests/unit/verifyMetrics.test.js',
     '<rootDir>/tests/unit/verifyTopic.test.js',
@@ -70,8 +71,12 @@ module.exports = {
     // I/O, so full coverage is the steady state, not an aspiration.
     './utils/pipeline/verifyTopic.js': { statements: 98, branches: 96, functions: 100, lines: 98 },
     './utils/pipeline/observe.js': { statements: 80, branches: 76, functions: 95, lines: 87 },
-    // Measured 58.2/59.1/81.3/58.0 after the affirmThenProbe tests — ratcheted.
-    './utils/pipeline/decide.js': { statements: 56, branches: 57, functions: 78, lines: 56 },
+    // Measured 64.4/65.3/100/63.8 after the decideInstructionalMode tests — ratcheted.
+    // functions:100 is deliberate and is the lesson from the drop that turned this
+    // gate red (81.3% → 77.77% against a 78% floor, from three helpers landing
+    // untested). decide.js is where the tutor picks its move; a new decision
+    // helper here arrives with a test or it doesn't arrive.
+    './utils/pipeline/decide.js': { statements: 62, branches: 63, functions: 100, lines: 62 },
     './utils/pipeline/diagnose.js': { statements: 62, branches: 57, functions: 68, lines: 62 },
   },
 };
