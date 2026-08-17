@@ -3,13 +3,23 @@
 
    Renders a turn's board_commands (already run through the P5 adapter,
    `adaptBoardCommands`) as a single FOCUSED DERIVATION rather than free-
-   floating cards on a canvas:
+   floating cards on a canvas.
 
-     • the PROBLEM (pose) is pinned at the top and stays in view,
-     • each step flows beneath it as a connected column — resolve/scaffold/
-       example lines, with the operation (apply) shown as a small label,
-     • the solution (verify) lands as the closing line,
-     • graph / image / geometry render as blocks inline in the same flow.
+   The derivation is ONE WORK CARD that grows as the turn's steps arrive:
+
+     • the PROBLEM (pose) is the card's HEAD — sticky, so the question stays
+       in view while the work scrolls beneath it,
+     • each step lands in the card's BODY on a numbered spine, so the
+       sequence is countable and "step 3" points at something real,
+     • the operation (apply) is a LABEL ON the step it produced rather than
+       a row of its own — the equation column then reads straight down,
+     • the solution (verify) closes the card as a marked answer panel,
+     • graph / image / geometry render as framed, captioned blocks in the
+       same spine,
+     • the FOOT reports how the problem went (step count / solved).
+
+   The card replaces a pinned header with loose rows beneath it: the work
+   now reads as one object instead of a title with debris under it.
 
    This replaces the card-flow placement (fixed world coords that piled up
    / drifted off-screen). A document-style column auto-fits and always keeps
@@ -164,6 +174,52 @@
     return after.filter(function (n) { return before.indexOf(n) === -1; });
   }
 
+  // Group a batch of adapted elements into RENDER ROWS.
+  //
+  // An `operation` (apply) describes the move that produced the next line, so
+  // it becomes a label ON that line's row instead of consuming a row of its
+  // own. Two things keep that safe:
+  //   • an operation the batch never resolves (the tutor emitted `apply` this
+  //     turn and `resolve` next turn) keeps its own row, so a move is never
+  //     silently dropped;
+  //   • every row records the 1-based BOARD-STATE ORDINALS it now covers.
+  //     boardStateBlock.js numbers every non-pose card, including apply, and
+  //     the tutor points with <BOARD_POINT step="N"/> against that numbering.
+  //     Folding two cards into one row would otherwise shift every later
+  //     number and make the tutor point at the wrong line.
+  //
+  // `startOrdinal` is how many non-pose elements the derivation already holds,
+  // so ordinals stay continuous across turns. Pure; exported for tests.
+  function groupRows(elements, startOrdinal) {
+    var rows = [];
+    var n = typeof startOrdinal === 'number' ? startOrdinal : 0;
+    var pending = null;   // { element, ordinal } — an operation awaiting its line
+
+    function flushPending() {
+      if (!pending) return;
+      rows.push({ kind: 'operation', element: pending.element, opElement: null, ordinals: [pending.ordinal] });
+      pending = null;
+    }
+
+    (Array.isArray(elements) ? elements : []).forEach(function (el) {
+      var kind = classify(el);
+      if (!kind || kind === 'problem') return;   // pose is the card head, not a row
+      n += 1;
+      if (kind === 'operation') {
+        flushPending();                          // back-to-back applies each keep a line
+        pending = { element: el, ordinal: n };
+        return;
+      }
+      var ordinals = [];
+      var opElement = null;
+      if (pending) { ordinals.push(pending.ordinal); opElement = pending.element; pending = null; }
+      ordinals.push(n);
+      rows.push({ kind: kind, element: el, opElement: opElement, ordinals: ordinals });
+    });
+    flushPending();
+    return rows;
+  }
+
   // How many finished problems stay reachable from the rail. Older ones fall
   // off the left: the rail is a session's worth of recent work, not an archive.
   var MAX_ARCHIVE = 12;
@@ -208,6 +264,8 @@
     this._archive = [];       // [{ problemTex, elements, solved }] — oldest first
     this._seq = 0;
     this._overlayBlocks = [];
+    this._ordinal = 0;        // non-pose cards rendered so far (board-state numbering)
+    this._stepNo = 0;         // numbered steps on the spine (excludes scaffolds/visuals)
 
     var d = this.doc;
     var rootEl = d.createElement('div');
@@ -224,9 +282,14 @@
       '<div class="lws-dv-empty-t">Ready to work it out?</div>' +
       '<div class="lws-dv-empty-s">Your problem and each step show up here as you and your tutor work through it.</div>';
     var inner = d.createElement('div'); inner.className = 'lws-dv-inner';
-    var problem = d.createElement('div'); problem.className = 'lws-dv-problem'; problem.style.display = 'none';
-    var lines = d.createElement('div'); lines.className = 'lws-dv-lines';
-    inner.appendChild(problem); inner.appendChild(lines);
+    // ONE work card: head = the problem, body = the steps, foot = how it went.
+    // The card grows downward as steps arrive; the head stays sticky.
+    var card = d.createElement('div'); card.className = 'lws-card'; card.style.display = 'none';
+    var problem = d.createElement('div'); problem.className = 'lws-card-head';
+    var lines = d.createElement('div'); lines.className = 'lws-card-body';
+    var foot = d.createElement('div'); foot.className = 'lws-card-foot'; foot.hidden = true;
+    card.appendChild(problem); card.appendChild(lines); card.appendChild(foot);
+    inner.appendChild(card);
     scroll.appendChild(empty); scroll.appendChild(inner);
     rootEl.appendChild(rail);
     rootEl.appendChild(scroll);
@@ -243,7 +306,7 @@
     caption.hidden = true;
     rootEl.appendChild(caption);
 
-    this.el = { root: rootEl, scroll: scroll, empty: empty, inner: inner, problem: problem, lines: lines, caption: caption, rail: rail };
+    this.el = { root: rootEl, scroll: scroll, empty: empty, inner: inner, card: card, problem: problem, lines: lines, foot: foot, caption: caption, rail: rail };
     this._mountTextScale(rootEl);
     this._refreshEmpty();
   }
@@ -316,11 +379,14 @@
     this._destroyBlocks();
     this.el.lines.textContent = '';
     this.el.problem.textContent = '';
-    this.el.problem.style.display = 'none';
+    this.el.card.style.display = 'none';
+    this.el.foot.hidden = true;
     this._problemTex = null;
     this._problemSource = null;
     this._elements = [];
-    this.el.root.classList.remove('is-solved-current');
+    this._ordinal = 0;
+    this._stepNo = 0;
+    this.el.card.classList.remove('is-solved');
     this._refreshEmpty();
   };
 
@@ -372,7 +438,8 @@
     this._problemSource = (ref && ref.uploadId) ? ref : null;
     var old = this.el.problem.querySelector('.lws-dv-srcchip');
     if (old) old.parentNode.removeChild(old);
-    if (!this._problemSource || this.el.problem.style.display === 'none') return;
+    var eyebrow = this.el.problem.querySelector('.lws-card-eyebrow');
+    if (!this._problemSource || !eyebrow || this.el.card.style.display === 'none') return;
     var self = this;
     var chip = this.doc.createElement('button');
     chip.type = 'button';
@@ -382,7 +449,9 @@
     chip.addEventListener('click', function () {
       if (self.onOpenSource) { try { self.onOpenSource(self._problemSource); } catch (e) { console.error('[LWS] open source failed', e); } }
     });
-    this.el.problem.appendChild(chip);
+    // Before the state chip, which is pushed to the far end of the eyebrow.
+    var state = eyebrow.querySelector('.lws-card-state');
+    if (state) eyebrow.insertBefore(chip, state); else eyebrow.appendChild(chip);
   };
 
   DerivationView.prototype._renderRail = function () {
@@ -479,22 +548,26 @@
 
     var body = d.createElement('div'); body.className = 'lws-dv-ov-body';
     var inner = d.createElement('div'); inner.className = 'lws-dv-inner';
-    var problem = d.createElement('div'); problem.className = 'lws-dv-problem';
-    var plab = d.createElement('div'); plab.className = 'lws-dv-plabel'; plab.textContent = 'Problem';
-    var ptex = d.createElement('div'); ptex.className = 'lws-dv-ptex';
+    // Same card the live board uses, so a look-back reads identically.
+    var card = d.createElement('div'); card.className = 'lws-card' + (entry.solved ? ' is-solved' : '');
+    var problem = d.createElement('div'); problem.className = 'lws-card-head';
+    var eyebrow = d.createElement('div'); eyebrow.className = 'lws-card-eyebrow';
+    var plab = d.createElement('span'); plab.className = 'lws-card-lbl'; plab.textContent = 'Problem';
+    var pstate = d.createElement('span'); pstate.className = 'lws-card-state'; pstate.textContent = '✓ Solved';
+    eyebrow.appendChild(plab); eyebrow.appendChild(pstate);
+    var ptex = d.createElement('div'); ptex.className = 'lws-card-problem';
     typeset(ptex, entry.problemTex);
-    problem.appendChild(plab); problem.appendChild(ptex);
-    var lines = d.createElement('div'); lines.className = 'lws-dv-lines';
-    inner.appendChild(problem); inner.appendChild(lines);
+    problem.appendChild(eyebrow); problem.appendChild(ptex);
+    var lines = d.createElement('div'); lines.className = 'lws-card-body';
+    card.appendChild(problem); card.appendChild(lines);
+    inner.appendChild(card);
     body.appendChild(inner);
 
     // Rebuild the steps from the archived elements. Blocks get fresh renderers
     // (tracked separately so closing the overlay disposes them).
-    entry.elements.forEach(function (el) {
-      var kind = classify(el);
-      if (!kind || kind === 'problem') return;
-      if (kind === 'block') self._addBlock(el, lines, self._overlayBlocks);
-      else self._addLine(el, kind, lines);
+    var ovCtx = { stepNo: 0 };
+    groupRows(entry.elements, 0).forEach(function (row) {
+      self._addRow(row, lines, ovCtx, self._overlayBlocks);
     });
 
     ov.appendChild(bar); ov.appendChild(sum); ov.appendChild(body);
@@ -548,34 +621,90 @@
       this._destroyBlocks();
       this.el.lines.textContent = '';
       this._elements = [];
+      this._ordinal = 0;            // a new problem restarts both numberings
+      this._stepNo = 0;
       this._problemSource = null;   // a new problem starts unlinked
     }
     this._problemTex = latex;
+    var d = this.doc;
     this.el.problem.textContent = '';
-    var lab = this.doc.createElement('div'); lab.className = 'lws-dv-plabel'; lab.textContent = 'Problem';
-    var body = this.doc.createElement('div'); body.className = 'lws-dv-ptex';
+    var eyebrow = d.createElement('div'); eyebrow.className = 'lws-card-eyebrow';
+    var lab = d.createElement('span'); lab.className = 'lws-card-lbl'; lab.textContent = 'Problem';
+    // Always present; CSS reveals it only once the card carries .is-solved, so
+    // reaching the answer costs no layout shift.
+    var state = d.createElement('span'); state.className = 'lws-card-state'; state.textContent = '✓ Solved';
+    eyebrow.appendChild(lab); eyebrow.appendChild(state);
+    var body = d.createElement('div'); body.className = 'lws-card-problem';
     typeset(body, latex);
-    this.el.problem.appendChild(lab);
+    this.el.problem.appendChild(eyebrow);
     this.el.problem.appendChild(body);
-    this.el.problem.style.display = '';
+    this.el.card.style.display = '';
     // Re-poses rebuild the header from scratch — repaint a surviving link.
     if (this._problemSource) this.setProblemSource(this._problemSource);
   };
 
-  // `target` defaults to the live line stack; the archive overlay passes its
-  // own container so a reopened problem renders through the same code path.
-  DerivationView.prototype._addLine = function (element, kind, target) {
+  // The readable text of an `apply` card. Prefers the plain-language op the
+  // adapter carried; falls back to typesetting the latex and reading it back.
+  DerivationView.prototype._opText = function (element) {
+    var op = (element && element.semantic && (element.semantic.op || element.semantic.plain)) || '';
+    if (op) return op;
+    var probe = this.doc.createElement('span');
+    typeset(probe, element && element.semantic && element.semantic.latex);
+    return probe.textContent || '';
+  };
+
+  // Render ONE row of the card body: a numbered spine node on the left, the
+  // step itself on the right (with its operation label above it, if the move
+  // that produced it arrived in the same batch).
+  //
+  // `ctx` carries the step counter so the live board and a reopened archive
+  // number independently. `target` defaults to the live body; the overlay
+  // passes its own container so a look-back renders through this same path.
+  DerivationView.prototype._addRow = function (row, target, ctx, blockSink) {
     var d = this.doc;
-    var row = d.createElement('div');
-    row.className = 'lws-dv-line lws-dv-' + kind;
+    var element = row.element;
+    var kind = row.kind === 'block' ? 'visual' : row.kind;
+
+    var wrap = d.createElement('div');
+    wrap.className = 'lws-step is-' + kind;
     // The adapter synthesises a per-element id (e.g. lgc3-1-resolve); keep it
     // so a line stays addressable after render.
-    if (element && element.id) row.setAttribute('data-lws-id', element.id);
+    if (element && element.id) wrap.setAttribute('data-lws-id', element.id);
+    // Board-state ordinals this row covers — how <BOARD_POINT step="N"/> finds
+    // its line now that an operation shares a row with the step it produced.
+    if (row.ordinals && row.ordinals.length) wrap.setAttribute('data-lws-ord', row.ordinals.join(' '));
+
+    var spine = d.createElement('div'); spine.className = 'lws-step-spine';
+    var node = d.createElement('span'); node.className = 'lws-step-node';
+    node.setAttribute('aria-hidden', 'true');
+    if (kind === 'solution') { node.textContent = '✓'; node.className += ' is-answer'; }
+    else if (kind === 'visual') node.textContent = '◈';
+    else if (kind === 'scaffold') node.textContent = '?';
+    else if (kind === 'example') node.textContent = '↗';
+    else if (kind === 'operation') node.textContent = '↳';
+    else node.textContent = String(++ctx.stepNo);   // an actual worked step
+    spine.appendChild(node);
+    wrap.appendChild(spine);
+
+    var main = d.createElement('div'); main.className = 'lws-step-main';
+
+    // The move rides ON the line it produced, as a caption above the result.
+    if (row.opElement) {
+      var op = d.createElement('div'); op.className = 'lws-step-op';
+      var ic = d.createElement('span'); ic.className = 'lws-step-op-ic'; ic.setAttribute('aria-hidden', 'true'); ic.textContent = '↳';
+      op.appendChild(ic);
+      op.appendChild(d.createTextNode(this._opText(row.opElement)));
+      main.appendChild(op);
+    }
+
     if (kind === 'operation') {
-      var op = (element.semantic && (element.semantic.op || element.semantic.plain)) || '';
-      if (!op) { var probe = d.createElement('span'); typeset(probe, element.semantic && element.semantic.latex); op = probe.textContent || ''; }
-      var tag = d.createElement('span'); tag.className = 'lws-dv-op'; tag.textContent = op;
-      row.appendChild(tag);
+      // An apply whose line has not arrived yet — keep the move visible on its
+      // own rather than dropping it.
+      var solo = d.createElement('div'); solo.className = 'lws-step-op is-solo';
+      solo.textContent = this._opText(element);
+      main.appendChild(solo);
+    } else if (kind === 'visual') {
+      this._addBlock(element, main, blockSink);
     } else {
       // Scaffold blanks (\boxed{}) are tappable (owner call, 2026-07-28 —
       // interactive again, but through the StudentMove contract this time:
@@ -583,13 +712,24 @@
       // /api/student-moves?tutor=true, the SAME pipe as a typed answer. The
       // 2026-07-25 removal was of inputs that submitted through a side door
       // chat had no concept of; this lane the tutor fully understands.)
-      var tex = d.createElement('div'); tex.className = 'lws-dv-tex';
+      var tex = d.createElement('div'); tex.className = 'lws-step-tex';
       var latex = element.semantic && element.semantic.latex;
       typeset(tex, latex);
-      row.appendChild(tex);
-      if (latex && /\\boxed/.test(String(latex))) this._wireBlanks(row, tex, String(latex));
+      main.appendChild(tex);
+      var caption = element.semantic && element.semantic.caption;
+      if (caption) {
+        var cap = d.createElement('div'); cap.className = 'lws-step-cap'; cap.textContent = caption;
+        main.appendChild(cap);
+      }
+      if (kind === 'solution') {
+        var badge = d.createElement('span'); badge.className = 'lws-step-answer-badge'; badge.textContent = 'Answer';
+        main.appendChild(badge);
+      }
+      if (latex && /\\boxed/.test(String(latex))) this._wireBlanks(wrap, tex, String(latex));
     }
-    (target || this.el.lines).appendChild(row);
+
+    wrap.appendChild(main);
+    (target || this.el.lines).appendChild(wrap);
   };
 
   // Make each rendered \boxed{} in a scaffold line a real input affordance.
@@ -678,64 +818,117 @@
     row.appendChild(chip);
   };
 
+  // A graph / image / geometry block, framed and captioned so it reads as a
+  // deliberate teaching aid rather than a stray picture in the column.
+  // Appends into the row's main column (`target`).
   DerivationView.prototype._addBlock = function (element, target, blockSink) {
     var d = this.doc;
-    var wrap = d.createElement('div'); wrap.className = 'lws-dv-line lws-dv-block';
+    var fig = d.createElement('figure'); fig.className = 'lws-step-visual';
+    var canvas = d.createElement('div'); canvas.className = 'lws-step-visual-canvas';
     var factory = this.renderers[element.type];
     if (typeof factory === 'function') {
       try {
-        var r = factory(element, { host: wrap, viewport: null });
-        if (r && r.node) { wrap.appendChild(r.node); (blockSink || this._blocks).push(r); }
-        else { wrap.textContent = '[' + element.type + ']'; }
-      } catch (_) { wrap.textContent = '[' + element.type + ']'; }
-    } else { wrap.textContent = '[' + element.type + ']'; }
-    (target || this.el.lines).appendChild(wrap);
+        var r = factory(element, { host: canvas, viewport: null });
+        if (r && r.node) { canvas.appendChild(r.node); (blockSink || this._blocks).push(r); }
+        else { canvas.textContent = '[' + element.type + ']'; }
+      } catch (_) { canvas.textContent = '[' + element.type + ']'; }
+    } else { canvas.textContent = '[' + element.type + ']'; }
+    fig.appendChild(canvas);
+    var caption = element.semantic && element.semantic.caption;
+    if (caption) {
+      var cap = d.createElement('figcaption'); cap.className = 'lws-step-visual-cap'; cap.textContent = caption;
+      fig.appendChild(cap);
+    }
+    target.appendChild(fig);
   };
 
   // Render one turn's adapted elements. `clear` wipes the board first.
+  //
+  // A pose is handled first and separately — it can archive the outgoing
+  // derivation and reset the numbering, so the rows that follow must be
+  // grouped against the state it leaves behind, not the state before it.
   DerivationView.prototype.apply = function (elements, clear) {
     if (clear) this.clear();
     if (!Array.isArray(elements)) { this._refreshEmpty(); return; }
     var self = this;
     this._clearFresh();
     var seen = toArray(this.el.lines.childNodes);
+
+    var rest = [];
     elements.forEach(function (el) {
       var kind = classify(el);
       if (!kind) return;
-      if (kind === 'problem') self._setProblem(el);        // may archive + reset _elements
-      else if (kind === 'block') self._addBlock(el);
-      else self._addLine(el, kind);
+      if (kind === 'problem') self._setProblem(el);   // may archive + reset _elements/_ordinal
+      else rest.push(el);
       // Keep the data behind the current derivation so it can be archived and
       // re-rendered later. Recorded AFTER _setProblem so a pose that starts a
       // new problem lands in the new list, not the one just archived.
       self._elements.push(el);
     });
+
+    var ctx = { stepNo: this._stepNo };
+    groupRows(rest, this._ordinal).forEach(function (row) { self._addRow(row, null, ctx); });
+    this._stepNo = ctx.stepNo;
+    this._ordinal += rest.length;
+
     freshNodes(seen, toArray(this.el.lines.childNodes)).forEach(function (n) {
       if (n.classList) n.classList.add('lws-dv-fresh');
     });
     // §4.4 card state, kept deliberately subtle: once the derivation in focus
-    // reaches its solution, the pinned problem header shows a "Solved ✓" chip
-    // (CSS reads this class). Cleared by _wipeCurrent with everything else.
-    this.el.root.classList.toggle('is-solved-current', hasSolution(this._elements));
+    // reaches its solution, the card's head shows a "Solved ✓" chip and its
+    // tint goes green (CSS reads this class). Cleared by _wipeCurrent.
+    this.el.card.classList.toggle('is-solved', hasSolution(this._elements));
+    this._refreshFoot();
     this._refreshEmpty();
     this._scrollToEnd();
   };
 
+  // The card's foot: how much work this problem has taken, and whether it
+  // landed. Assistance wording is deliberately NOT shown here — the level is
+  // server-side and only known for a FINISHED problem, so it belongs to the
+  // archive summary (assistanceSummary), not to work still in progress.
+  DerivationView.prototype._refreshFoot = function () {
+    var d = this.doc;
+    // Counted the way the archive summary counts (openArchived): a bare
+    // operation is a move, not a step. Otherwise the same work reads as one
+    // step longer live than it does when reopened from the rail.
+    var steps = this.el.lines.querySelectorAll('.lws-step:not(.is-operation)').length;
+    var foot = this.el.foot;
+    if (!steps) { foot.hidden = true; foot.textContent = ''; return; }
+    foot.textContent = '';
+    var n = d.createElement('span');
+    n.className = 'lws-card-foot-n';
+    n.textContent = steps + (steps === 1 ? ' step' : ' steps');
+    foot.appendChild(n);
+    if (this.el.card.classList.contains('is-solved')) {
+      var sep = d.createElement('span'); sep.className = 'lws-card-foot-sep'; sep.textContent = '·';
+      var s = d.createElement('span'); s.className = 'lws-card-foot-a'; s.textContent = 'Answer found';
+      foot.appendChild(sep); foot.appendChild(s);
+    }
+    foot.hidden = false;
+  };
+
   // Tutor pointing (spec §8): make the exact line the tutor is discussing
-  // glow. `ref` is {step: N} (1-based, the board-state block's numbering —
-  // both count the same rendered rows in the same order) or {target:
-  // 'problem'|'solution'|'last'}. Out-of-range steps fall back to the newest
-  // line rather than pointing at nothing. The glow self-clears.
+  // glow. `ref` is {step: N} (1-based, the board-state block's numbering) or
+  // {target: 'problem'|'solution'|'last'}. Out-of-range steps fall back to the
+  // newest line rather than pointing at nothing. The glow self-clears.
+  //
+  // N resolves through data-lws-ord, NOT through child position: an operation
+  // shares a row with the step it produced, so the two numberings stopped
+  // being 1:1 the moment the fold landed.
   DerivationView.prototype.pointAt = function (ref) {
     if (!ref || typeof ref !== 'object') return;
     var rows = this.el.lines.children;
     var node = null;
-    if (ref.target === 'problem') node = this.el.problem.style.display === 'none' ? null : this.el.problem;
+    if (ref.target === 'problem') node = this.el.card.style.display === 'none' ? null : this.el.problem;
     else if (ref.target === 'solution') {
-      var sols = this.el.lines.querySelectorAll('.lws-dv-solution');
+      var sols = this.el.lines.querySelectorAll('.lws-step.is-solution');
       node = sols.length ? sols[sols.length - 1] : null;
     } else if (ref.target === 'last') node = rows.length ? rows[rows.length - 1] : null;
-    else if (ref.step >= 1) node = rows[ref.step - 1] || (rows.length ? rows[rows.length - 1] : null);
+    else if (ref.step >= 1) {
+      node = this.el.lines.querySelector('[data-lws-ord~="' + ref.step + '"]')
+        || (rows.length ? rows[rows.length - 1] : null);
+    }
     if (!node) return;
 
     var prev = this.el.root.querySelectorAll('.lws-dv-pointed');
@@ -762,6 +955,7 @@
   };
 
   DerivationView.classify = classify;
+  DerivationView.groupRows = groupRows;
   DerivationView.cleanLatex = cleanLatex;
   DerivationView.looksLikeProse = looksLikeProse;
   DerivationView.unwrapText = unwrapText;
@@ -770,5 +964,5 @@
   DerivationView.assistanceSummary = assistanceSummary;
   DerivationView.MAX_ARCHIVE = MAX_ARCHIVE;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, assistanceSummary: assistanceSummary, MAX_ARCHIVE: MAX_ARCHIVE };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, groupRows: groupRows, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, assistanceSummary: assistanceSummary, MAX_ARCHIVE: MAX_ARCHIVE };
 })(typeof self !== 'undefined' ? self : this);

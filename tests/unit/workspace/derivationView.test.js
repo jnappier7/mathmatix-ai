@@ -116,3 +116,69 @@ describe('derivationView.freshNodes', () => {
     expect(freshNodes([], [a])).toEqual([a]);
   });
 });
+
+// ── groupRows: the operation fold, and the numbering it must not break ──
+//
+// An `apply` card became a LABEL on the line it produced instead of a row of
+// its own. That is a rendering win and a numbering hazard: boardStateBlock.js
+// numbers every non-pose card (apply included) and the tutor points with
+// <BOARD_POINT step="N"/> against THAT numbering. Every row therefore records
+// the ordinals it absorbed, so pointing still lands on the right line.
+const { groupRows } = require('../../../public/js/living-workspace/dom/derivationView.js');
+
+const eq = (latex, role) => ({ type: 'equation', semantic: { latex, role } });
+const op = (text) => ({ type: 'equation', semantic: { latex: text, role: 'operation', op: text } });
+
+describe('derivationView.groupRows', () => {
+  it('folds an operation into the line it produced, keeping both ordinals', () => {
+    const rows = groupRows([op('square both sides'), eq('x+10 = (x-2)^2', 'step')], 0);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].kind).toBe('step');
+    expect(rows[0].opElement.semantic.op).toBe('square both sides');
+    // 1 = the apply, 2 = the resolve — pointing at EITHER hits this row.
+    expect(rows[0].ordinals).toEqual([1, 2]);
+  });
+
+  it('never drops an operation whose line has not arrived yet', () => {
+    // The tutor emitted `apply` this turn and `resolve` next turn. Holding the
+    // op pending past the end of the batch would lose the move entirely.
+    const rows = groupRows([op('take the reciprocal')], 0);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].kind).toBe('operation');
+    expect(rows[0].ordinals).toEqual([1]);
+  });
+
+  it('gives back-to-back operations a row each', () => {
+    const rows = groupRows([op('distribute'), op('then combine'), eq('2x = 8', 'step')], 0);
+    expect(rows.map(r => r.kind)).toEqual(['operation', 'step']);
+    expect(rows[0].ordinals).toEqual([1]);
+    expect(rows[1].ordinals).toEqual([2, 3]);   // second op folds into the step
+  });
+
+  it('continues numbering across turns via startOrdinal', () => {
+    // Turn 2 of a derivation that already holds 4 cards.
+    const rows = groupRows([op('divide by 2'), eq('x = 4', 'step')], 4);
+    expect(rows[0].ordinals).toEqual([5, 6]);
+  });
+
+  it('excludes the pose — the problem is the card head, not a row', () => {
+    const rows = groupRows([eq('2x = 8', 'problem'), eq('x = 4', 'step')], 0);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].ordinals).toEqual([1]);   // the pose consumed no ordinal
+  });
+
+  it('keeps blocks and solutions in the flow with their own ordinals', () => {
+    const rows = groupRows([
+      { type: 'graph', semantic: { fn: 'x^2' } },
+      eq('x = 6', 'solution'),
+    ], 2);
+    expect(rows.map(r => r.kind)).toEqual(['block', 'solution']);
+    expect(rows[0].ordinals).toEqual([3]);
+    expect(rows[1].ordinals).toEqual([4]);
+  });
+
+  it('survives junk without throwing', () => {
+    expect(groupRows(null, 0)).toEqual([]);
+    expect(groupRows([null, undefined, 'nope'], 0)).toEqual([]);
+  });
+});

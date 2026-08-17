@@ -83,7 +83,8 @@ html[data-theme="dark"] .lws-root {
     linear-gradient(90deg, var(--lws-grid-minor) 1px, transparent 1px);
   background-size: 34px 34px;
 }
-.lws-dv-inner { max-width: 560px; margin: 0 auto; }
+/* Wider than the old loose column: the work card carries its own padding. */
+.lws-dv-inner { max-width: 620px; margin: 0 auto; }
 
 /* ── finished-problem rail ──────────────────────────────────────
    A problem that ends (verify + clear, or a new pose) shrinks to a
@@ -190,7 +191,7 @@ html[data-theme="dark"] .lws-root {
   padding: 18px clamp(14px, 5%, 42px) 32px;
 }
 /* Nothing in a look-back is live: no spotlight, no fill-in-the-blank. */
-.lws-dv-ov .lws-dv-line { animation: none; }
+.lws-dv-ov .lws-step { animation: none; }
 
 .lws-dv-empty {
   position: absolute; inset: 0; display: flex; flex-direction: column;
@@ -201,63 +202,202 @@ html[data-theme="dark"] .lws-root {
 .lws-dv-empty-t { font: 600 15px/1.3 system-ui, sans-serif; font-size: calc(15px * var(--lws-dv-scale)); opacity: .8; }
 .lws-dv-empty-s { font: 13px/1.45 system-ui, sans-serif; font-size: calc(13px * var(--lws-dv-scale)); opacity: .55; max-width: 280px; }
 
-.lws-dv-problem {
-  position: sticky; top: -20px; z-index: 3;
-  background: linear-gradient(180deg, var(--lws-card-bg), color-mix(in srgb, var(--lws-card-bg) 88%, var(--lws-grid-bg)));
-  border: 1px solid var(--lws-card-border); border-left: 3px solid var(--lws-accent);
-  border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
+/* ── the work card ───────────────────────────────────────────────
+   ONE card per derivation: the problem is its head, every step lands in
+   its body, and the card grows downward as the work arrives. This
+   replaced a pinned problem header with loose rows beneath it, which
+   read as a title with debris under it rather than as one piece of work. */
+.lws-card {
+  border: 1px solid var(--lws-card-border);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--lws-card-bg) 100%, transparent),
+      color-mix(in srgb, var(--lws-card-bg) 82%, var(--lws-grid-bg)));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .24);
+  /* NO overflow:hidden — it would make the sticky head scroll away with the
+     card. The head and foot clip their own corners instead. */
+  transition: box-shadow .3s ease, border-color .3s ease;
+}
+.lws-card.is-solved { border-color: color-mix(in srgb, #35c98a 45%, var(--lws-card-border)); }
+
+/* Head — the problem, sticky so the question never leaves the screen while
+   the work scrolls beneath it. top:0 is measured from the scroller's CONTENT
+   edge, so .lws-dv's own padding-top does the placing: 20px normally, clear
+   of the thumbnail rail (60px) when one is showing. */
+.lws-card-head {
+  position: sticky; top: 0; z-index: 4;
+  border-radius: 15px 15px 0 0;
+  padding: 13px 18px 14px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--lws-accent) 13%, var(--lws-card-bg)),
+    color-mix(in srgb, var(--lws-accent) 6%, var(--lws-card-bg)));
+  border-bottom: 1px solid var(--lws-card-border);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
 }
 /* §4.4 card state, subtle by design: once the derivation in focus reaches its
-   solution the pinned problem shows a quiet "Solved ✓" chip and its accent
-   edge turns green. No layout shift — just the state made visible. */
-.lws-dv-root.is-solved-current .lws-dv-problem { border-left-color: #35c98a; }
-.lws-dv-root.is-solved-current .lws-dv-plabel::after {
-  content: 'Solved ✓';
-  margin-left: 10px; padding: 2px 7px; border-radius: 999px;
-  background: color-mix(in srgb, #35c98a 18%, transparent);
-  color: #35c98a; letter-spacing: .06em;
+   solution the head goes green and its "✓ Solved" chip appears. The chip is
+   always in the DOM, so there is no layout shift — just state made visible. */
+.lws-card.is-solved .lws-card-head {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, #35c98a 14%, var(--lws-card-bg)),
+    color-mix(in srgb, #35c98a 6%, var(--lws-card-bg)));
 }
-.lws-dv-plabel { font: 10px system-ui, sans-serif; font-size: calc(10px * var(--lws-dv-scale)); letter-spacing: .16em; text-transform: uppercase; color: var(--lws-accent); margin-bottom: 6px; }
-.lws-dv-ptex { font-size: calc(21px * var(--lws-dv-scale)); color: var(--lws-card-ink); }
+/* The right padding reserves the A−/A+ text-size control's corner (.lws-dv-az,
+   absolutely positioned top-right over the board). Without it the "✓ Solved"
+   chip lands underneath it. Only the eyebrow pays — the problem itself keeps
+   the card's full width for long equations. */
+.lws-card-eyebrow { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; padding-right: 118px; }
+.lws-card-lbl {
+  font: 700 10px/1 system-ui, sans-serif; font-size: calc(10px * var(--lws-dv-scale));
+  letter-spacing: .17em; text-transform: uppercase; color: var(--lws-accent);
+}
+.lws-card.is-solved .lws-card-lbl { color: #35c98a; }
+.lws-card-state {
+  margin-left: auto;
+  font: 700 10.5px/1 system-ui, sans-serif; letter-spacing: .07em;
+  padding: 4px 9px; border-radius: 999px;
+  background: color-mix(in srgb, #35c98a 20%, transparent); color: #35c98a;
+}
+.lws-card:not(.is-solved) .lws-card-state { display: none; }
+.lws-card-problem { font-size: calc(23px * var(--lws-dv-scale)); color: var(--lws-card-ink); }
+
 /* Never let a card run off the board: prose wraps; a genuinely wide equation
    scrolls within its own line instead of clipping past the right edge. */
-.lws-dv-ptex, .lws-dv-tex { max-width: 100%; overflow-x: auto; overflow-y: hidden; overflow-wrap: anywhere; }
-.lws-dv-ptex::-webkit-scrollbar, .lws-dv-tex::-webkit-scrollbar { height: 4px; }
+.lws-card-problem, .lws-step-tex { max-width: 100%; overflow-x: auto; overflow-y: hidden; overflow-wrap: anywhere; }
+.lws-card-problem::-webkit-scrollbar, .lws-step-tex::-webkit-scrollbar { height: 4px; }
 .lws-dv-prose { white-space: normal; font-size: calc(15px * var(--lws-dv-scale)); line-height: 1.45; overflow-x: hidden; }
-.lws-dv-ptex.lws-dv-prose { font-size: calc(16px * var(--lws-dv-scale)); }
+.lws-card-problem.lws-dv-prose { font-size: calc(17px * var(--lws-dv-scale)); }
 
-.lws-dv-lines { display: flex; flex-direction: column; }
-.lws-dv-line { padding: 7px 4px; animation: lws-dv-in .34s cubic-bezier(.2, 1, .3, 1) both; }
+.lws-card-body { padding: 6px 18px 8px; }
+
+/* ── one step, on a numbered spine ──────────────────────────────
+   The spine makes the sequence countable, which is also what gives the
+   tutor's <BOARD_POINT step="N"/> something a student can actually find. */
+.lws-step {
+  display: grid; grid-template-columns: 26px 1fr; gap: 12px;
+  padding: 3px 0;
+  animation: lws-dv-in .34s cubic-bezier(.2, 1, .3, 1) both;
+}
 @keyframes lws-dv-in { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
-.lws-dv-tex { font-size: calc(20px * var(--lws-dv-scale)); color: var(--lws-card-ink); }
-.lws-dv-operation { padding: 4px 4px 0; }
-.lws-dv-op {
-  font: 12.5px ui-monospace, "SF Mono", Menlo, monospace; font-size: calc(12.5px * var(--lws-dv-scale)); color: var(--lws-accent);
-  background: color-mix(in srgb, var(--lws-accent) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--lws-accent) 30%, transparent);
-  border-radius: 7px; padding: 2px 8px; opacity: .95;
+.lws-step-spine { position: relative; display: flex; justify-content: center; padding-top: 9px; }
+.lws-step-spine::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 50%;
+  width: 2px; transform: translateX(-50%);
+  background: color-mix(in srgb, var(--lws-card-ink) 13%, transparent);
 }
-.lws-dv-scaffold .lws-dv-tex, .lws-dv-example .lws-dv-tex { opacity: .82; font-size: calc(18px * var(--lws-dv-scale)); }
-.lws-dv-solution {
-  margin-top: 4px; padding-top: 10px; border-top: 1px dashed var(--lws-card-border);
+.lws-step:first-child .lws-step-spine::before { top: 9px; }
+.lws-step:last-child  .lws-step-spine::before { bottom: calc(100% - 26px); }
+.lws-step-node {
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 8px;
+  background: color-mix(in srgb, var(--lws-accent) 18%, var(--lws-card-bg));
+  border: 1px solid color-mix(in srgb, var(--lws-accent) 34%, transparent);
+  color: var(--lws-accent);
+  font: 700 11px/1 system-ui, sans-serif; font-variant-numeric: tabular-nums;
 }
-.lws-dv-solution .lws-dv-tex { font-weight: 700; }
-.lws-dv-block { padding: 10px 0; }
-.lws-dv-block > * { max-width: 100%; }
+.lws-step-node.is-answer {
+  background: color-mix(in srgb, #35c98a 24%, var(--lws-card-bg));
+  border-color: color-mix(in srgb, #35c98a 50%, transparent); color: #35c98a;
+}
+.lws-step.is-scaffold .lws-step-node {
+  background: color-mix(in srgb, #e8b64c 22%, var(--lws-card-bg));
+  border-color: color-mix(in srgb, #e8b64c 46%, transparent); color: #e8b64c;
+}
+.lws-step.is-visual .lws-step-node {
+  background: color-mix(in srgb, #4fb6e8 20%, var(--lws-card-bg));
+  border-color: color-mix(in srgb, #4fb6e8 44%, transparent); color: #4fb6e8;
+}
+.lws-step.is-example .lws-step-node, .lws-step.is-operation .lws-step-node {
+  background: color-mix(in srgb, var(--lws-card-ink) 10%, var(--lws-card-bg));
+  border-color: color-mix(in srgb, var(--lws-card-ink) 20%, transparent);
+  color: var(--lws-card-ink); opacity: .7;
+}
+
+.lws-step-main { min-width: 0; padding: 4px 0 6px; }
+.lws-step-tex { font-size: calc(20px * var(--lws-dv-scale)); color: var(--lws-card-ink); }
+
+/* The operation rides ON the step it produced, as a caption above the result,
+   instead of consuming a row of its own between two equations — that is what
+   let the equation column read straight down. `.is-solo` is the fallback for
+   an apply whose line has not arrived yet. */
+.lws-step-op {
+  display: flex; align-items: baseline; gap: 5px;
+  font: 600 11.5px/1.3 system-ui, sans-serif; font-size: calc(11.5px * var(--lws-dv-scale));
+  color: var(--lws-accent); opacity: .92; margin-bottom: 3px;
+}
+.lws-step-op-ic { opacity: .7; }
+.lws-step-op.is-solo { opacity: .78; }
+
+/* Step types read differently at a glance. */
+.lws-step.is-scaffold .lws-step-main {
+  border-left: 2px dashed color-mix(in srgb, #e8b64c 55%, transparent);
+  padding-left: 11px; margin-left: -2px;
+  background: color-mix(in srgb, #e8b64c 7%, transparent);
+  border-radius: 0 9px 9px 0;
+}
+.lws-step.is-example .lws-step-tex { opacity: .78; font-size: calc(18px * var(--lws-dv-scale)); }
+.lws-step-cap {
+  margin-top: 5px; font: 12px/1.4 system-ui, sans-serif; font-size: calc(12px * var(--lws-dv-scale));
+  color: var(--lws-card-ink); opacity: .68;
+}
+.lws-step.is-solution .lws-step-main {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  margin-top: 5px; padding: 9px 12px;
+  background: color-mix(in srgb, #35c98a 11%, transparent);
+  border: 1px solid color-mix(in srgb, #35c98a 26%, transparent);
+  border-radius: 11px;
+}
+.lws-step.is-solution .lws-step-tex { font-weight: 700; }
+.lws-step-answer-badge {
+  font: 700 9.5px/1 system-ui, sans-serif; letter-spacing: .15em; text-transform: uppercase;
+  color: #35c98a; opacity: .9;
+}
+
+/* ── visual block: framed, captioned, first-class ────────────────
+   Capped so a graph illustrates the step it belongs to instead of
+   swallowing the card and pushing the rest of the work off-screen. */
+.lws-step-visual { margin: 2px 0 4px; max-width: 400px; }
+.lws-step-visual-canvas {
+  border: 1px solid color-mix(in srgb, #4fb6e8 30%, var(--lws-card-border));
+  border-radius: 12px; overflow: hidden; padding: 8px;
+  background: color-mix(in srgb, var(--lws-grid-bg) 60%, var(--lws-card-bg));
+  color: var(--lws-card-ink);
+}
+.lws-step-visual-canvas > * { max-width: 100%; display: block; }
+.lws-step-visual-cap {
+  margin: 6px 0 0; font: 12px/1.4 system-ui, sans-serif; font-size: calc(12px * var(--lws-dv-scale));
+  color: var(--lws-card-ink); opacity: .7;
+}
+
+/* ── foot: how this one is going ─────────────────────────────── */
+.lws-card-foot {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 18px; border-top: 1px solid var(--lws-card-border);
+  border-radius: 0 0 15px 15px;
+  background: color-mix(in srgb, var(--lws-card-ink) 4%, transparent);
+  font: 600 11.5px/1 system-ui, sans-serif; color: var(--lws-card-ink); opacity: .78;
+}
+.lws-card-foot[hidden] { display: none; }
+.lws-card.is-solved .lws-card-foot { background: color-mix(in srgb, #35c98a 8%, transparent); }
+.lws-card-foot-sep { opacity: .45; }
+.lws-card-foot-n { font-variant-numeric: tabular-nums; }
 
 /* Spoken-step spotlight. Voice ships the board cumulatively, so the step that
    arrived this turn IS the step being talked about — it lights up while the
    tutor speaks and settles into the stack when they stop. Attention direction
    only: it never adds or hides information. */
-.lws-dv-line { border-left: 2px solid transparent; padding-left: 4px; transition: border-color .25s ease, background-color .25s ease; }
+.lws-step { transition: background-color .25s ease; border-radius: 9px; }
 .lws-dv-root.is-speaking .lws-dv-fresh {
-  border-left-color: var(--lws-accent);
-  background: color-mix(in srgb, var(--lws-accent) 7%, transparent);
-  border-radius: 0 7px 7px 0;
+  background: color-mix(in srgb, var(--lws-accent) 8%, transparent);
+}
+.lws-dv-root.is-speaking .lws-dv-fresh .lws-step-node {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--lws-accent) 26%, transparent);
 }
 @media (prefers-reduced-motion: reduce) {
-  .lws-dv-line { transition: none; }
+  .lws-step { transition: none; animation: none; }
+  .lws-card { transition: none; }
 }
 
 /* Caption strip — the tutor's karaoke line, docked under the derivation so
@@ -858,7 +998,7 @@ html[data-theme="dark"] .lws-root {
    Tall, unmissable slots (owner report, 2026-07-29: "fill-ins should be
    taller and more obvious"). An empty blank breathes gently until touched;
    reduced-motion users get the static form. */
-.lws-dv-line .lws-blank {
+.lws-step .lws-blank {
   cursor: pointer;
   border: 2px dashed var(--cr-accent, #6d5ef0) !important;
   border-radius: 8px;
@@ -877,18 +1017,18 @@ html[data-theme="dark"] .lws-root {
   50%      { box-shadow: 0 0 0 4px color-mix(in srgb, var(--cr-accent, #6d5ef0) 22%, transparent); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lws-dv-line .lws-blank { animation: none; }
+  .lws-step .lws-blank { animation: none; }
 }
 /* Once the student engages (typing, submitted, judged) the pulse stops. */
-.lws-dv-line .lws-blank:hover,
-.lws-dv-line .lws-blank:focus-visible,
-.lws-dv-line .lws-blank-pending,
-.lws-dv-line .lws-blank-ok,
-.lws-dv-line .lws-blank-bad,
-.lws-dv-line .lws-blank-open,
-.lws-dv-line .lws-blank:has(.lws-blank-input) { animation: none; }
-.lws-dv-line .lws-blank:hover,
-.lws-dv-line .lws-blank:focus-visible { background: color-mix(in srgb, var(--cr-accent, #6d5ef0) 16%, transparent); outline: none; }
+.lws-step .lws-blank:hover,
+.lws-step .lws-blank:focus-visible,
+.lws-step .lws-blank-pending,
+.lws-step .lws-blank-ok,
+.lws-step .lws-blank-bad,
+.lws-step .lws-blank-open,
+.lws-step .lws-blank:has(.lws-blank-input) { animation: none; }
+.lws-step .lws-blank:hover,
+.lws-step .lws-blank:focus-visible { background: color-mix(in srgb, var(--cr-accent, #6d5ef0) 16%, transparent); outline: none; }
 .lws-blank-input {
   width: 84px; height: 34px; font: inherit; font-size: 1.05em; text-align: center;
   border: 2px solid var(--cr-accent, #6d5ef0); border-radius: 7px;
