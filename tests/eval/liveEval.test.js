@@ -41,17 +41,18 @@ function verifiedAnswerHint(turn, scenario) {
   return `\n\n[MATH_VERIFICATION — INTERNAL GRADING ONLY: the student's answer is CORRECT (equivalent to ${ans}). Confirm it's correct. NEVER reveal or restate ${ans} as the answer; guide from here.]`;
 }
 
-async function liveGenerateReply({ scenario, turn, history }) {
+async function liveGenerateReply({ scenario, turn, history, decision }) {
   // Lazy-require so the keyless suite never loads the OpenAI client.
   const { generateSystemPrompt } = require('../../utils/promptCompact');
   const { callLLM } = require('../../utils/llmGateway');
+  const { withActionBlock } = require('./livePrompt');
 
-  const systemPrompt = generateSystemPrompt(
+  const systemPrompt = withActionBlock(generateSystemPrompt(
     TEST_PROFILE, TEST_TUTOR, null, 'student',
     null, null, null, [], null,
     { topicName: scenario.focus || undefined }, null, null, null, null,
     turn.student, history.slice(-8),
-  );
+  ), decision);
 
   const messages = [{ role: 'system', content: systemPrompt }];
   history.forEach((m, idx) => {

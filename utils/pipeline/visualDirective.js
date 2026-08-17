@@ -56,6 +56,22 @@ const NEVER_VISUAL = new Set([
   'check_understanding',
 ]);
 
+// The student ASKING to be shown outranks every silence above. "I can't
+// picture it, can you show me?" reads as frustration to the decide stage
+// (acknowledge_frustration), which is in NEVER_VISUAL — so the one turn where
+// the student has explicitly requested a picture was the one turn guaranteed
+// not to get one. Nobody has to infer the moment when the student names it.
+// Deliberately narrow. A bare /\bshow me\b/ fires on "my teacher will show me
+// the test on friday" — so the ask has to be aimed AT THE TUTOR (a modal with
+// "you"), or stand as an imperative at the start of a clause, or say outright
+// that picturing it is what failed.
+const ASKED_TO_SEE = new RegExp([
+  /\b(?:can|could|would|will)\s+you\s+(?:please\s+)?(?:show|draw|graph|sketch)\b/,
+  /(?:^|[.!?;]\s*)(?:please\s+)?(?:show|draw|graph|sketch)\s+(?:me|it|that|this)\b/,
+  /\bcan'?(?:no)?t\s+(?:picture|visualize|see)\s+(?:it|this|that)\b/,
+  /\bwhat\s+(?:would|does)\s+(?:it|that|this)\s+look\s+like\b/,
+].map((r) => r.source).join('|'), 'i');
+
 // ── Topics that are visual by nature ──────────────────────────────────────
 // Each names the tool to reach for, because "use a visual" against a menu of
 // forty tags reliably produces nothing. Order matters: the first match wins,
@@ -141,7 +157,8 @@ function matchTopic(text) {
  */
 function buildVisualDirective(input = {}) {
   const action = input.action || '';
-  if (NEVER_VISUAL.has(action)) return null;
+  const asked = ASKED_TO_SEE.test(input.studentText || '');
+  if (NEVER_VISUAL.has(action) && !asked) return null;
   // Already drawn for this problem — refer to it, don't produce another.
   if (input.boardHasVisual) return null;
 
@@ -151,13 +168,15 @@ function buildVisualDirective(input = {}) {
 
   // Neither the moment nor the math calls for one. Say nothing — silence here
   // is what keeps this from becoming decoration.
-  if (!isMoment && !topic && !struggling) return null;
+  if (!isMoment && !topic && !struggling && !asked) return null;
 
-  const why = isMoment
-    ? 'This is a teaching turn — the kind where a good tutor reaches for paper.'
-    : struggling
-      ? 'Words have missed twice on this. Change the channel: show it.'
-      : 'This topic is spatial by nature — a picture is the normal way to teach it, not a bonus.';
+  const why = asked
+    ? 'The student ASKED to see it — that request outranks every other read of this turn.'
+    : isMoment
+      ? 'This is a teaching turn — the kind where a good tutor reaches for paper.'
+      : struggling
+        ? 'Words have missed twice on this. Change the channel: show it.'
+        : 'This topic is spatial by nature — a picture is the normal way to teach it, not a bonus.';
 
   const how = topic
     ? `Reach for: ${topic.tool}.`

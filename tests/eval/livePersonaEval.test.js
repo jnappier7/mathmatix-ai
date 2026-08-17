@@ -30,17 +30,20 @@ const TEST_TUTOR = {
   personality: 'Warm, encouraging middle-school math teacher who guides with questions.',
 };
 
-async function liveGenerateReply({ scenario, turn, history }) {
+async function liveGenerateReply({ scenario, turn, history, decision }) {
   // Lazy-require so the keyless suite never loads the OpenAI client.
   const { generateSystemPrompt } = require('../../utils/promptCompact');
   const { callLLM } = require('../../utils/llmGateway');
+  const { withActionBlock } = require('./livePrompt');
 
-  const systemPrompt = generateSystemPrompt(
+  // The decide stage's directives are half of what production sends — without
+  // them these personas judge a tutor that was never given its instructions.
+  const systemPrompt = withActionBlock(generateSystemPrompt(
     TEST_PROFILE, TEST_TUTOR, null, 'student',
     null, null, null, [], null,
     { topicName: scenario.focus || undefined }, null, null, null, null,
     turn.student, history.slice(-8),
-  );
+  ), decision);
 
   const messages = [{ role: 'system', content: systemPrompt }, ...history];
   const completion = await callLLM(process.env.TUTOR_MODEL || 'gpt-4o-mini', messages, { temperature: 0.5, max_tokens: 400 });

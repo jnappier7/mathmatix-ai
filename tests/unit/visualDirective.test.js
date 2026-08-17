@@ -91,6 +91,54 @@ describe('buildVisualDirective — the silences', () => {
   });
 });
 
+describe('buildVisualDirective — the student asking outranks the silences', () => {
+  // "I can't picture it, can you show me?" reads as frustration to the decide
+  // stage, and acknowledge_frustration is a NEVER_VISUAL silence — so the one
+  // turn where the student explicitly asked for a picture was the one turn
+  // guaranteed not to get one.
+  it('asks when a "feelings" turn is actually a request to be shown', () => {
+    const d = buildVisualDirective({
+      action: 'acknowledge_frustration',
+      skillName: 'Distributive Property',
+      studentText: "i get that its the whole thing but i cant picture it. can you show me?",
+    });
+    expect(d).toBeTruthy();
+    expect(d).toMatch(/ASKED to see it/);
+  });
+
+  it('asks on a plain conversational turn when the student says "draw it"', () => {
+    expect(buildVisualDirective({
+      action: 'continue_conversation',
+      studentText: 'wait can you draw that for me',
+    })).toBeTruthy();
+  });
+
+  it('still names the right tool when the ask arrives on a known topic', () => {
+    const d = buildVisualDirective({
+      action: 'check_understanding',
+      skillName: 'Slope of a Line',
+      studentText: 'show me what that looks like',
+    });
+    expect(d).toMatch(/FUNCTION_GRAPH|SLIDER_GRAPH/);
+  });
+
+  it('a board that already has the visual still wins — point, do not redraw', () => {
+    expect(buildVisualDirective({
+      action: 'acknowledge_frustration',
+      skillName: 'Slope',
+      studentText: 'can you show me?',
+      boardHasVisual: true,
+    })).toBeNull();
+  });
+
+  it('does not fire on prose that merely contains the words', () => {
+    expect(buildVisualDirective({
+      action: 'confirm_correct',
+      studentText: 'my teacher will show me the test on friday i think',
+    })).toBeNull();
+  });
+});
+
 describe('buildVisualDirective — the anti-cheat carve-out', () => {
   it('always warns off plotting the student\'s own unsolved expression', () => {
     // The visual gate strips these server-side; saying so up front saves the
