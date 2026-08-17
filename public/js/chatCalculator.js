@@ -63,8 +63,18 @@
     const title = TITLES[access] || 'Calculator';
 
     for (const el of entryPoints()) {
-      el.style.display = allowed ? '' : 'none';
-      if (allowed) el.title = title;
+      if (allowed) {
+        el.title = title;
+        // #toggle-calculator-btn is a contentless legacy alias that chat.html
+        // ships as style="display:none" purely so it can be wired here. Clearing
+        // its display "un-hid" an empty button, which the global mobile
+        // `button { min-height }` rule then rendered as a blank strip in the
+        // composer (visible in voice mode, where the compose bar is gone).
+        // Only ever REVEAL something that has content to show.
+        if (el.textContent.trim() || el.children.length) el.style.display = '';
+      } else {
+        el.style.display = 'none';
+      }
     }
 
     // The Workspace's Calc tab is a third entry point, and it used to survive

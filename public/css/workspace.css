@@ -16,6 +16,16 @@
   display: flex;
   flex-direction: column;
   align-self: stretch;
+  /* Positioned so the rail is the containing block for its own absolute
+     children — #lws-chat-mount (inset:0 above the card) and #cr-player-card
+     (pinned bottom), both below. Without it those two escaped to the nearest
+     positioned ancestor, which is the whole stage: the Living Workspace board
+     rendered full-page-wide UNDER the tutor cam and the transcript (its empty
+     state centred on the window, not on the board), and the Board / My
+     Progress switcher stretched across the entire viewport bottom. In chat
+     mode the composer hid the damage; voice mode hides the composer, which is
+     where it surfaced. */
+  position: relative;
   margin-bottom: 60px;
   max-height: calc(100vh - 124px);
   background: var(--cr-bg-panel);

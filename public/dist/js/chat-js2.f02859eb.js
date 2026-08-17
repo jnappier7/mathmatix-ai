@@ -553,6 +553,7 @@ class VoiceController {
         this.isAISpeaking = false;
         this.mode = 'idle'; // 'idle', 'listening', 'thinking', 'speaking'
         this.handsFreeMode = false; // Push-to-talk mode by default (user can enable hands-free)
+        this._userMuted = false; // true once the student deliberately closes the mic
         this.currentAudio = null; // Track current playing audio for interruption
         this.speechStartTime = null; // Track when user started speaking
 
@@ -565,9 +566,14 @@ class VoiceController {
         this.config = {
             sampleRate: 16000,
             channels: 1,
-            vadThreshold: -50, // dB
+            // Absolute gate: nothing quieter than this counts as speech no
+            // matter what the room floor is (keeps digital-silence jitter from
+            // reading as talking). The live gate is this OR the learned room
+            // floor + VAD_SPEECH_MARGIN_DB, whichever is higher — see setupVAD.
+            vadThreshold: -70, // dB
             enableBoardCommands: true // Allow voice commands for board actions
         };
+        this._vadFloorDb = null; // learned room noise floor, per listening session
 
         console.log('🎙️ Voice Controller initializing...');
         this.init();
@@ -745,7 +751,11 @@ class VoiceController {
 
             case 'ai_speaking_ended':
                 this.isAISpeaking = false;
-                this.updateUI('idle');
+                // The streaming mic stays open across turns, so "idle" was a
+                // lie: the orb read "Click to start voice chat" while it was
+                // already listening, and clicking it actually CLOSED the mic.
+                this.updateUI(this.isListening ? 'listening' : 'idle');
+                this._resumeListeningIfHandsFree();
                 break;
 
             case 'barge_in':
@@ -754,7 +764,8 @@ class VoiceController {
 
             case 'interrupted':
                 this.isAISpeaking = false;
-                this.updateUI('idle');
+                this.updateUI(this.isListening ? 'listening' : 'idle');
+                this._resumeListeningIfHandsFree();
                 break;
 
             case 'turn_end':
@@ -1077,15 +1088,20 @@ class VoiceController {
 
             // If AI is speaking, interrupt it and start listening
             if (this.isAISpeaking) {
+                this._userMuted = false;
                 this.stopSpeaking();
                 this.startListening();
             }
-            // If already listening in hands-free mode, stop
+            // If already listening, the orb is the mute — and a deliberate mute
+            // must stick, so hands-free won't re-open the mic behind the
+            // student's back at the end of the next turn.
             else if (this.isListening) {
+                this._userMuted = true;
                 this.stopListening();
             }
             // Otherwise, start listening
             else {
+                this._userMuted = false;
                 this.startListening();
             }
         });
@@ -1095,6 +1111,7 @@ class VoiceController {
             // ESC to stop voice (works anytime - listening or speaking)
             if (e.code === 'Escape') {
                 if (this.isListening) {
+                    this._userMuted = true;   // deliberate: don't auto-resume
                     this.stopListening();
                 } else if (this.isAISpeaking) {
                     this.stopSpeaking();
@@ -1179,6 +1196,9 @@ class VoiceController {
 
     async startListening() {
         console.log('🎙️ [Voice] startListening() called');
+        // Opening the mic — by tap, by entering voice mode, or by the
+        // hands-free loop — always clears a previous mute.
+        this._userMuted = false;
 
         // ── Streaming pipeline path (Phase 2) ──
         if (this.useStreamingPipeline && this.streamClient) {
@@ -1288,6 +1308,8 @@ class VoiceController {
         this.isListening = false;
         this.isSpeaking = false;
         this.speechStartTime = null;
+        this._cancelSilenceCountdown();
+        this._stopVadLoop();
         this.updateUI('thinking');
 
         if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
@@ -1312,65 +1334,144 @@ class VoiceController {
 
         const bufferLength = analyzer.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
+        this._vadFloorDb = null;   // relearn the room every time the mic opens
+
+        // How far above the room's own noise floor a frame has to sit before we
+        // call it speech. The gate has to be RELATIVE: getByteFrequencyData is
+        // already dB-mapped (bin 0 ≈ -100dBFS, 255 ≈ -30dBFS), so the old fixed
+        // `20*log10(avg/255) > -50 dB` gate tripped at an average bin of 0.8 out
+        // of 255 — below the noise floor of any real room, and far below it with
+        // autoGainControl on. isSpeakingNow was therefore permanently true, the
+        // silence branch never ran even once, and hands-free could never commit
+        // a turn: the student had to tap the orb to advance every single time.
+        const VAD_SPEECH_MARGIN_DB = 8;
+        const VAD_FRAME_MS = 50;
+
+        // Voiced time ACCUMULATED across this utterance, not time since the last
+        // onset. Students don't speak in one clean run — "um… nine… I think" is
+        // three short bursts, and timing each burst from its own onset meant
+        // every one of them measured shorter than minSpeechDuration and was
+        // written off as noise, so the utterance was never real enough to commit
+        // and the mic just stayed open until someone tapped. Gaps decay the
+        // accumulator at the same rate speech builds it, so stray blips still
+        // never add up to a turn.
+        let voicedMs = 0;
 
         const checkVolume = () => {
-            if (!this.isListening) return;
+            if (!this.isListening) { this._stopVadLoop(); return; }  // mic closed — loop retires with it
 
             analyzer.getByteFrequencyData(dataArray);
 
             // Calculate average volume
             const average = dataArray.reduce((a, b) => a + b) / bufferLength;
-            const db = 20 * Math.log10(average / 255);
+            const db = 20 * Math.log10((average || 0.0001) / 255);
 
-            const isSpeakingNow = db > this.config.vadThreshold;
+            if (this._vadFloorDb === null) this._vadFloorDb = db;
+            const gate = Math.max(this._vadFloorDb + VAD_SPEECH_MARGIN_DB, this.config.vadThreshold);
+            const isSpeakingNow = db > gate;
 
-            if (isSpeakingNow && !this.isSpeaking) {
-                // Started speaking
-                this.isSpeaking = true;
-                this.speechStartTime = Date.now();
-                console.log('🗣️ Voice detected');
-                clearTimeout(this.silenceTimeout);
+            // Chase the quietest thing we've heard: fast down, very slow up. Run
+            // on every frame, including while speaking — that's what makes the
+            // floor self-correcting when the mic opens on a student who is
+            // ALREADY talking (it seeds high, then the natural gaps between
+            // words pull it down within a second). Rising at 0.1%/frame, a long
+            // utterance can't drag the floor up over the student's own voice.
+            const rate = db < this._vadFloorDb ? 0.15 : 0.001;
+            this._vadFloorDb += rate * (db - this._vadFloorDb);
 
-                // Update status
-                if (this.statusText) {
-                    this.statusText.textContent = 'Listening...';
-                }
-            } else if (!isSpeakingNow && this.isSpeaking) {
-                // Silence detected - check if user spoke long enough before auto-stopping
-                const speechDuration = Date.now() - this.speechStartTime;
-
-                if (speechDuration < this.minSpeechDuration) {
-                    // Too brief - probably background noise, ignore it
-                    console.log(`⚠️ Speech too brief (${speechDuration}ms), ignoring...`);
-                    this.isSpeaking = false;
-                    this.speechStartTime = null;
-                    return;
-                }
-
-                // Real speech detected, start silence countdown
-                clearTimeout(this.silenceTimeout);
-                this.silenceTimeout = setTimeout(() => {
-                    this.isSpeaking = false;
-                    this.speechStartTime = null;
-                    console.log(`🤫 Silence detected after ${speechDuration}ms of speech - auto-sending`);
-
-                    // Auto-stop after silence (works in all modes now, not just hands-free)
-                    if (this.isListening) {
-                        this.stopListening();
+            if (isSpeakingNow) {
+                // Voice: any speech cancels a pending auto-send. The student
+                // paused to think mid-sentence; they haven't finished a turn.
+                this._cancelSilenceCountdown();
+                voicedMs += VAD_FRAME_MS;
+                if (!this.isSpeaking && voicedMs >= this.minSpeechDuration) {
+                    this.isSpeaking = true;
+                    this.speechStartTime = Date.now() - voicedMs;
+                    console.log('🗣️ Voice detected');
+                    if (this.statusText) {
+                        this.statusText.textContent = 'Listening...';
                     }
-                }, this.silenceThreshold);
-
-                // Show countdown in status
-                if (this.statusText) {
-                    this.statusText.textContent = 'Processing...';
                 }
-            }
+            } else if (this.isSpeaking) {
+                if (!this.silenceTimeout) {
+                    // First silent frame after a real utterance: arm the
+                    // countdown ONCE. The old code cleared and re-armed it on
+                    // every frame while the silence continued (~60×/s), so the
+                    // 2.5s timer never got to elapse and the turn was never
+                    // committed without a tap.
+                    const spokenMs = voicedMs;
+                    this.silenceTimeout = setTimeout(() => {
+                        this.silenceTimeout = null;
+                        this.isSpeaking = false;
+                        this.speechStartTime = null;
+                        voicedMs = 0;
+                        console.log(`🤫 Silence detected after ${spokenMs}ms of speech - auto-sending`);
 
-            requestAnimationFrame(checkVolume);
+                        // Auto-stop after silence (works in all modes now, not just hands-free)
+                        if (this.isListening) {
+                            this.stopListening();
+                        }
+                    }, this.silenceThreshold);
+
+                    // Show countdown in status
+                    if (this.statusText) {
+                        this.statusText.textContent = 'Processing...';
+                    }
+                }
+            } else {
+                // Quiet, and nothing worth committing yet — bleed the
+                // accumulator so a cough here and a chair there can never add
+                // up to an "utterance" and send an empty turn.
+                voicedMs = Math.max(0, voicedMs - VAD_FRAME_MS);
+            }
         };
 
+        // A timer, not requestAnimationFrame. rAF does not fire at all while the
+        // tab is hidden, so the detector froze the moment the student switched
+        // tabs or the phone browser backgrounded the page: mid-turn, hands-free
+        // simply stopped hearing them and the only way forward was a tap. A
+        // background interval is throttled (~1s) but never stops, which is
+        // plenty for an end-of-utterance decision.
+        this._stopVadLoop();
+        this.vadInterval = setInterval(checkVolume, VAD_FRAME_MS);
         checkVolume();
         this.vadAnalyzer = analyzer;
+    }
+
+    _stopVadLoop() {
+        if (this.vadInterval) {
+            clearInterval(this.vadInterval);
+            this.vadInterval = null;
+        }
+    }
+
+    _cancelSilenceCountdown() {
+        if (this.silenceTimeout) {
+            clearTimeout(this.silenceTimeout);
+            this.silenceTimeout = null;
+        }
+    }
+
+    /**
+     * Close the hands-free loop: re-open the mic after the tutor's turn so the
+     * conversation continues without a tap. playAIResponse's onended covers the
+     * turns that END IN AUDIO; this covers every other terminal state (TTS
+     * returned no url, text-only turn, streaming playback finished), which used
+     * to leave the student parked on "Click to start voice chat".
+     * Never fights a deliberate mute — see _userMuted.
+     */
+    _resumeListeningIfHandsFree(delay = 500) {
+        if (!this.handsFreeMode || this._userMuted) return;
+        if (this.isListening || this.isAISpeaking) return;
+        setTimeout(() => {
+            if (!this.handsFreeMode || this._userMuted) return;
+            if (this.isListening || this.isAISpeaking) return;
+            console.log('🔄 [Voice] Auto-restarting listening (hands-free mode)');
+            try {
+                const p = this.startListening();
+                if (p && typeof p.catch === 'function') p.catch(() => {});
+            } catch (_) { /* mic unavailable — the orb is still there to tap */ }
+        }, delay);
     }
 
     async sendAudioToBackend(audioBlob) {
@@ -1492,14 +1593,7 @@ class VoiceController {
                 this.updateUI('idle');
 
                 // Auto-restart listening in hands-free mode
-                if (this.handsFreeMode && !this.isListening) {
-                    console.log('🔄 [Voice] Auto-restarting listening (hands-free mode)');
-                    setTimeout(() => {
-                        if (!this.isListening) {
-                            this.startListening();
-                        }
-                    }, 500); // Small delay before restarting
-                }
+                this._resumeListeningIfHandsFree();
             };
 
             audio.onerror = () => {
@@ -1596,7 +1690,11 @@ class VoiceController {
                     if (phase.audioUrl) {
                         await this.playAIResponse(phase.audioUrl);
                     } else {
+                        // TTS produced nothing to play. The turn is still over,
+                        // so hands-free has to re-open the mic here too or the
+                        // conversation dead-ends on a silent tutor.
                         this.updateUI('idle');
+                        this._resumeListeningIfHandsFree();
                     }
 
                 } else if (phase.phase === 'error') {
@@ -1607,6 +1705,7 @@ class VoiceController {
 
         if (!gotAudio) {
             this.updateUI('idle');
+            this._resumeListeningIfHandsFree();
         }
     }
 
@@ -1647,6 +1746,7 @@ class VoiceController {
             }
         }
         this.updateUI('idle');
+        this._resumeListeningIfHandsFree();
     }
 
     // Stop AI speaking (for interruption)
@@ -1784,7 +1884,12 @@ class VoiceController {
                 this.voiceButton.classList.add('active');
                 this.statusText.classList.add('active');
                 this.statusText.textContent = 'Listening...';
-                icon.className = 'fas fa-microphone-slash';
+                // A live mic, not a slashed one. The slash reads as "muted" —
+                // students saw it mid-conversation and tapped the orb to "turn
+                // the mic on", which closed the mic that was already open. The
+                // pulsing teal orb is what signals "live"; ending the call is
+                // the separate red control.
+                icon.className = 'fas fa-microphone';
                 break;
 
             case 'thinking':
@@ -1821,6 +1926,8 @@ class VoiceController {
 
     destroy() {
         this.stopListening();
+        this._stopVadLoop();
+        this._cancelSilenceCountdown();
 
         if (this.audioContext) {
             this.audioContext.close();
