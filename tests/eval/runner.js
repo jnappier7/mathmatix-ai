@@ -25,6 +25,20 @@ function classify(studentMsg, history, scenario) {
   });
 }
 
+// The topic under discussion. Personas carry it as `focus` ("multiplying
+// negative numbers", "slope of a line"), and the live prompt already receives
+// it as topicName — but decide/diagnose were handed activeSkill:null, so
+// anything keyed to the SKILL NAME could never fire in the harness.
+// visualDirective's topic regexes are the live example: they match
+// "multiplying negative numbers" exactly as designed and miss the student's
+// "its the negative times negative thing thats weird", which is why the
+// visual-apt personas failed the nightly while the same turn in production —
+// where activeSkill is populated — gets the ask.
+function activeSkillFor(scenario) {
+  if (scenario.activeSkill) return scenario.activeSkill;
+  return scenario.focus ? { displayName: scenario.focus } : null;
+}
+
 // Run the REAL diagnose → decide stages, deterministically: the LLM
 // verification promises are omitted, so grading falls to mathSolver /
 // symbolicVerifier exactly as it does for the ~30% solver-covered topics.
@@ -34,7 +48,7 @@ async function runDecideLayer(obs, student, history, scenario) {
   const diagnosis = await diagnose(obs, {
     recentAssistantMessages: history.filter((m) => m.role === 'assistant').slice(-6),
     recentUserMessages: history.filter((m) => m.role === 'user').slice(-6),
-    activeSkill: scenario.activeSkill || null,
+    activeSkill: activeSkillFor(scenario),
     user: null,
     lastProblemState: null,
     pinnedProblemTex: scenario.pinnedProblemTex || null,
@@ -48,7 +62,7 @@ async function runDecideLayer(obs, student, history, scenario) {
 
   const decision = decide(obs, diagnosis, {
     phaseState: null,
-    activeSkill: scenario.activeSkill || null,
+    activeSkill: activeSkillFor(scenario),
     sessionMood: null,
     evidence: null,
     tutorPlan: null,
@@ -127,8 +141,11 @@ function checkExpectations(expect, obs) {
 /**
  * @param {object} scenario  one entry from scenarios.json / personas.json
  * @param {object} [opts]
- * @param {(args:{scenario,turnIndex,history,student})=>Promise<string>|string} [opts.generateReply]
+ * @param {(args:{scenario,turnIndex,history,student,decision})=>Promise<string>|string} [opts.generateReply]
  *        Produce the tutor's reply for this turn. Omit to run classification-only.
+ *        `decision` is the real decide-stage output for this turn — a live reply
+ *        builder MUST feed it to the model the way production does, or it is
+ *        scoring a tutor that never received its instructions.
  * @param {(args:{scenario,turn,decision,history})=>object} [opts.assemblePrompt]
  *        Assemble the real prompt for `expectPrompt` checks. Injected (not
  *        required here) because generate.js pulls in the OpenAI client at
@@ -160,11 +177,19 @@ async function runScenario(scenario, opts = {}) {
     const obs = classify(student, history, scenario);
     const checks = checkExpectations(turn.expect, obs);
 
-    // Decide layer — opt-in per turn. Runs the real diagnose → decide with
-    // the LLM boundary empty (deterministic), then asserts on the chosen
-    // instructional action and, optionally, the assembled prompt.
+    // Decide layer — runs the real diagnose → decide with the LLM boundary
+    // empty (deterministic), then asserts on the chosen instructional action
+    // and, optionally, the assembled prompt.
+    //
+    // It also runs for any turn that will GENERATE a reply, even with nothing
+    // to assert: production's reply is written against decide's directives
+    // (generate.js → buildActionPrompt), so a harness that skips this stage
+    // hands the model a bare system prompt and then judges it for behavior the
+    // directives were the ones asking for. That is why every visual-apt
+    // persona failed the nightly from the day the "draw it" directive shipped.
+    const wantsReply = (Array.isArray(turn.judge) && turn.judge.length) || turn.judgeLlm;
     let decision = null;
-    if (turn.expectDecide || turn.expectPrompt) {
+    if (turn.expectDecide || turn.expectPrompt || (wantsReply && generateReply)) {
       const layer = await runDecideLayer(obs, student, history, scenario);
       decision = layer.decision;
       checkDecideExpectations(turn.expectDecide, decision, checks);
@@ -186,10 +211,9 @@ async function runScenario(scenario, opts = {}) {
 
     let reply = null;
     let violations = [];
-    const wantsReply = (Array.isArray(turn.judge) && turn.judge.length) || turn.judgeLlm;
     let cleanedReply = null;
     if (generateReply && wantsReply) {
-      reply = await generateReply({ scenario, turn, turnIndex: i, history, student });
+      reply = await generateReply({ scenario, turn, turnIndex: i, history, student, decision });
       // Board-tag integrity runs on EVERY generated reply — no opt-in. Any
       // reply can carry <BOARD> tags (the tag protocol is always in the live
       // prompt), and a dead or guard-dropped tag is a defect wherever it
