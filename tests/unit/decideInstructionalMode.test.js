@@ -103,7 +103,7 @@ describe('the "draw it" ask reads the board before asking', () => {
     tutorPlan: planFor([], { instructionPhase: 'concept-intro' }),
     activeSkill: { displayName: 'Graphing Linear Functions' },
   };
-  const drawAsk = /\[GRAPH:|draw|picture|visual/i;
+  const drawAsk = /^DRAW IT:/m;
 
   test('an empty board on a teaching turn still gets the ask', () => {
     const d = decideWithPlan({ ...visualTurn, ...ledgerWith([]) });
@@ -127,7 +127,8 @@ describe('the "draw it" ask reads the board before asking', () => {
     const withoutGraph = decideWithPlan({ ...visualTurn, ...ledgerWith([{ action: 'write' }]) });
     // Same turn, same action — the only difference is what's on the board.
     expect(withGraph.action).toBe(withoutGraph.action);
-    expect(withGraph.directives.length).toBeLessThan(withoutGraph.directives.length);
+    expect(withoutGraph.directives.join('\n')).toMatch(drawAsk);
+    expect(withGraph.directives.join('\n')).not.toMatch(drawAsk);
   });
 });
 
