@@ -670,6 +670,10 @@ async function runPipeline(message, ctx) {
 
   const assembled = assemblePrompt(decision, {
     systemPrompt: enrichedSystemPrompt,
+    // The cacheable prefix survives everything above: the plan layer, the
+    // board block and the action directives are all APPENDED, so the stable
+    // head of the prompt is still a byte-identical prefix of the final string.
+    cacheableSystemChars: ctx.cacheableSystemChars || 0,
     messages: ctx.formattedMessages,
     moodDirective,
     suppressSocratic,

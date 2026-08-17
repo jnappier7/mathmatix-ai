@@ -558,6 +558,16 @@ function assemblePrompt(decision, promptContext) {
     fullSystemPrompt += '\n\n' + buildBoardToolInstructions();
   }
 
+  // Carry the cache boundary to the provider layer. Everything this function
+  // appended — phase prompt, action directives, verification, mood, board
+  // tools — lands AFTER the stable head, so the offset the caller measured is
+  // still valid against the assembled string. anthropicClient turns it into a
+  // prompt-cache breakpoint; the OpenAI path ignores it (that provider caches
+  // automatically and takes no parameter).
+  if (promptContext.cacheableSystemChars > 0) {
+    options.cacheableSystemChars = promptContext.cacheableSystemChars;
+  }
+
   return {
     messages: [{ role: 'system', content: fullSystemPrompt }, ...messages],
     model: PRIMARY_CHAT_MODEL,
