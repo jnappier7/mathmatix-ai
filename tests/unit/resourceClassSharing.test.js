@@ -154,7 +154,94 @@ describe('getStudentScope — deriving the teacher set from enrolment', () => {
 
   test('always returns arrays, never null — a non-array unscopes the query', async () => {
     const s = await getStudentScope(null);
-    expect(s).toEqual({ teacherIds: [], classIds: [] });
+    expect(s).toEqual({ teacherIds: [], classIds: [], primaryTeacherId: null });
+  });
+});
+
+describe('pickPrimaryTeacher — most recent wins, not "strictest"', () => {
+  // Resources UNION across a student's teachers. Curriculum and
+  // classAISettings cannot: each is one coherent set of teaching instructions,
+  // rendered into the prompt as prose, so merging two teachers stacks
+  // contradictions ("use the balance method" beside "use opposite operations")
+  // rather than producing a stricter result. And most of classAISettings has no
+  // strictness axis to merge along — PEMDAS vs GEMS is a convention, not a
+  // severity — while the axes that do exist run the wrong way: the "strict" end
+  // of scaffoldingLevel is 1 (minimal hints) and of manipulatives is
+  // allowed:false, which are the supports IEP students depend on.
+  const { pickPrimaryTeacher } = require('../../utils/resourceVisibility');
+
+  const STUDENT = oid();
+  const enrolled = (teacherId, enrolledAt) => ({
+    teacherId,
+    enrolledStudents: [{ studentId: STUDENT, enrolledAt }],
+  });
+
+  test('the most recently joined class decides', () => {
+    const codes = [
+      enrolled(TEACHER, new Date('2026-01-10')),
+      enrolled(OTHER_TEACHER, new Date('2026-03-02')),
+    ];
+    expect(String(pickPrimaryTeacher({ _id: STUDENT }, codes))).toBe(String(OTHER_TEACHER));
+  });
+
+  test('order in the array does not decide — the timestamp does', () => {
+    // Guard against "last document Mongo returned" masquerading as recency.
+    const codes = [
+      enrolled(OTHER_TEACHER, new Date('2026-03-02')),
+      enrolled(TEACHER, new Date('2026-01-10')),
+    ];
+    expect(String(pickPrimaryTeacher({ _id: STUDENT }, codes))).toBe(String(OTHER_TEACHER));
+  });
+
+  test('recency is read from THIS student\'s enrolment, not the class\'s', () => {
+    // Two students in one class join at different times; the other student's
+    // row must not be what we time.
+    const codes = [
+      {
+        teacherId: TEACHER,
+        enrolledStudents: [
+          { studentId: oid(), enrolledAt: new Date('2027-01-01') }, // someone else, newer
+          { studentId: STUDENT, enrolledAt: new Date('2026-01-01') },
+        ],
+      },
+      enrolled(OTHER_TEACHER, new Date('2026-06-01')),
+    ];
+    expect(String(pickPrimaryTeacher({ _id: STUDENT }, codes))).toBe(String(OTHER_TEACHER));
+  });
+
+  test('a class with no enrolledAt never displaces one that has it', () => {
+    const codes = [
+      enrolled(TEACHER, new Date('2026-01-10')),
+      { teacherId: OTHER_TEACHER, enrolledStudents: [{ studentId: STUDENT }] },
+    ];
+    expect(String(pickPrimaryTeacher({ _id: STUDENT }, codes))).toBe(String(TEACHER));
+  });
+
+  test('falls back to user.teacherId when there are no classes', () => {
+    // Clever- and admin-assigned students have no EnrollmentCode at all.
+    expect(String(pickPrimaryTeacher({ _id: STUDENT, teacherId: TEACHER }, []))).toBe(String(TEACHER));
+    expect(String(pickPrimaryTeacher({ _id: STUDENT, teacherId: TEACHER }, undefined))).toBe(String(TEACHER));
+  });
+
+  test('enrolment BEATS the stale pointer', () => {
+    // The whole point: user.teacherId is only most-recent by accident —
+    // admin.js sets it just `if (!student.teacherId)` and cleverSync assigns
+    // whichever section it processed last.
+    const codes = [enrolled(OTHER_TEACHER, new Date('2026-05-01'))];
+    expect(String(pickPrimaryTeacher({ _id: STUDENT, teacherId: TEACHER }, codes)))
+      .toBe(String(OTHER_TEACHER));
+  });
+
+  test('no classes and no pointer resolves to null, not undefined', () => {
+    expect(pickPrimaryTeacher({ _id: STUDENT }, [])).toBeNull();
+  });
+
+  test('a class with no teacher is skipped rather than winning as null', () => {
+    const codes = [
+      { teacherId: null, enrolledStudents: [{ studentId: STUDENT, enrolledAt: new Date('2027-01-01') }] },
+      enrolled(TEACHER, new Date('2026-01-01')),
+    ];
+    expect(String(pickPrimaryTeacher({ _id: STUDENT }, codes))).toBe(String(TEACHER));
   });
 });
 
