@@ -26,6 +26,7 @@ const {
 const { MESSAGE_TYPES, messageStatesProblem } = require('./observe');
 const { VERIFICATION_STATES } = require('./verificationState');
 const { getSkillMasteryEntry } = require('../masteryGuard');
+const { buildVisualDirective } = require('./visualDirective');
 
 // ── Tutoring actions the engine can choose ──
 const ACTIONS = {
@@ -175,7 +176,35 @@ function decide(observation, diagnosis, context = {}) {
   // session — always heralded by a filler "Sure!" opener).
   applyOneAskGuard(decision, context);
 
+  // "Draw it" runs last, on the FINAL action — the post-passes above can
+  // change which action this turn is, and whether a picture is the right move
+  // depends on that final answer, not the core branch's first guess.
+  applyVisualDirective(decision, observation, context);
+
   return decision;
+}
+
+// Ask for a visual on the turns that earn one. The tutor has the whole
+// toolkit and knows it; what it lacked was anything asking it to draw, so it
+// defaulted to prose. See utils/pipeline/visualDirective.js for the two
+// grounds (the moment / the math) and the silences.
+function applyVisualDirective(decision, observation, context) {
+  const ledger = context.conversation?.boardLedger;
+  const steps = Array.isArray(ledger?.current?.steps) ? ledger.current.steps : [];
+  const VISUAL_ACTIONS = new Set(['graph', 'image', 'diagram', 'model']);
+
+  const directive = buildVisualDirective({
+    action: decision.action,
+    // Matched against a regex only — NEVER emitted into the directive text, so
+    // this is not a skill-label surface (no studentLabel() needed here).
+    skillName: context.activeSkill?.displayName
+      || context.tutorPlan?.currentTarget?.displayName
+      || '',
+    studentText: observation?.raw || '',
+    boardHasVisual: steps.some((c) => c && VISUAL_ACTIONS.has(c.action)),
+    recentWrongCount: observation?.streaks?.recentWrongCount || 0,
+  });
+  if (directive) decision.directives.push(directive);
 }
 
 // A topicless session start in FREE chat: nothing on the board, no problem
