@@ -9,13 +9,35 @@
  * stale builds. So the greeting must be refused server-side too, where no missing
  * script or second tab can leak a premature "let's learn about real numbers".
  *
- * ONE definition, shared: the diagnostic-card endpoints and the greeting gate
- * must never disagree about whether a baseline is pending — that drift is the
- * exact bug class this codebase keeps hitting.
+ * ONE definition, shared: the diagnostic-card endpoints, the greeting gate and
+ * the every-turn teaching gate must never disagree about whether a baseline is
+ * pending — that drift is the exact bug class this codebase keeps hitting, and
+ * it is what broke the Consumer Math / Financial Literacy course. See
+ * BLOCKING_DIAGNOSTIC_TYPES below for the rule they now all read.
  */
 
 const CourseSession = require('../models/courseSession');
 const ActTestSession = require('../models/actTestSession');
+
+// Which diagnostics may HOLD the tutor, as opposed to merely nudging.
+//
+// A card is `required` when the course wants the student to take it. That is NOT
+// the same as being allowed to stop the lesson from ever starting: only the ACT
+// practice runner is verified working end to end, so only it may block. Every
+// other course's baseline shows its card and the lesson starts anyway.
+//
+// This set exists because the two gates had drifted apart. routes/chat.js
+// (typing inside a course) had already narrowed itself to 'act-practice' in
+// code, while the greeting gate in routes/courseChat.js and the client gate in
+// courseCatalog.js still blocked on `required`. Every course NOT listed in
+// COURSE_DIAGNOSTICS below falls through to the required PRE_ASSESSMENT_CARD —
+// consumer-math, 6th/7th/8th grade, geometry, early-math-foundations, the parent
+// guides — so those courses opened with their greeting withheld but their
+// teaching ungated. The student got a modal and silence where the lesson should
+// have been, and the free-chat opener ("what do you want to work on today?")
+// filled the gap. One rule, one place: widen this set only when a diagnostic's
+// runner is confirmed working end to end.
+const BLOCKING_DIAGNOSTIC_TYPES = new Set(['act-practice']);
 
 const STARTING_POINT_CARD = {
   type: 'starting-point',
@@ -73,7 +95,11 @@ async function buildCourseDiagnostic(user, courseId) {
       console.error('[courseDiagnostic] pre-assessment check failed (non-fatal):', err.message);
       return null;
     }
-    return { type: card.type, title: card.title, body: card.body, cta: card.cta, courseId, required: true };
+    return {
+      type: card.type, title: card.title, body: card.body, cta: card.cta, courseId,
+      required: true,
+      blocking: BLOCKING_DIAGNOSTIC_TYPES.has(card.type),
+    };
   }
 
   try {
@@ -89,22 +115,32 @@ async function buildCourseDiagnostic(user, courseId) {
     return null;
   }
 
+  const required = !!card.required;
   return {
     type: card.type, title: card.title, body: card.body, cta: card.cta,
-    required: !!card.required
+    required,
+    // Required AND verified end to end — see BLOCKING_DIAGNOSTIC_TYPES.
+    blocking: required && BLOCKING_DIAGNOSTIC_TYPES.has(card.type),
   };
 }
 
 /**
- * Is a REQUIRED baseline still pending for this course? The server greeting path
- * uses this to refuse teaching until the baseline is done.
+ * Is a BLOCKING baseline still pending for this course? Both server gates — the
+ * greeting path (routes/courseChat.js) and the every-turn teaching gate
+ * (routes/chat.js) — use this, so they can no longer disagree about whether a
+ * course is allowed to start.
+ *
+ * `pending` answers "must the tutor stay silent?", which is narrower than "does
+ * this course have a baseline the student still owes us". The diagnostic itself
+ * is returned either way so the caller can still surface the card as a nudge.
  */
 async function isRequiredBaselinePending(user, courseId) {
   const diagnostic = await buildCourseDiagnostic(user, courseId);
-  return { pending: !!(diagnostic && diagnostic.required), diagnostic };
+  return { pending: !!(diagnostic && diagnostic.blocking), diagnostic };
 }
 
 module.exports = {
+  BLOCKING_DIAGNOSTIC_TYPES,
   STARTING_POINT_CARD,
   PRE_ASSESSMENT_CARD,
   COURSE_DIAGNOSTICS,

@@ -408,18 +408,26 @@ async function handleCourseGreeting(req, res, userId) {
         }
 
         // ── BASELINE GATE ───────────────────────────────────────────────────
-        // The tutor must not start teaching until a REQUIRED baseline (the full
-        // ACT practice test, a course pre-assessment) is done — the baseline is
-        // what adapts the plan to the student. This is enforced here, on the
-        // server, because the client-side gate cannot be trusted: production has
-        // shipped a chat bundle that 404s, and a stale tab or a second client
-        // path would otherwise leak a premature "let's learn what a real number
-        // is" and PERSIST it into the conversation. Refusing here means no
-        // premature greeting is ever generated or saved, whatever the client does.
+        // The tutor must not start teaching until a BLOCKING baseline (today: the
+        // full ACT practice test) is done — that baseline is what adapts the plan
+        // to the student. This is enforced here, on the server, because the
+        // client-side gate cannot be trusted: production has shipped a chat bundle
+        // that 404s, and a stale tab or a second client path would otherwise leak a
+        // premature "let's learn what a real number is" and PERSIST it into the
+        // conversation. Refusing here means no premature greeting is ever generated
+        // or saved, whatever the client does.
+        //
+        // "Blocking" is deliberately narrower than "required" — see
+        // utils/courseDiagnostic.js. This used to withhold the greeting for every
+        // course with a required card, which is every course NOT in
+        // COURSE_DIAGNOSTICS: Consumer Math / Financial Literacy, the grade-level
+        // courses, geometry, early-math-foundations and the parent guides. Their
+        // pre-assessment card still shows as a nudge; it no longer silences the
+        // tutor, and /api/chat has never gated them either.
         try {
             const { pending, diagnostic } = await isRequiredBaselinePending(user, courseSession.courseId);
             if (pending) {
-                console.log(`📚 [CourseGreeting] ${user.firstName} → baseline pending for ${courseSession.courseId}, withholding greeting`);
+                console.log(`📚 [CourseGreeting] ${user.firstName} → blocking baseline pending for ${courseSession.courseId}, withholding greeting`);
                 return res.json({
                     baselineRequired: true,
                     diagnostic,

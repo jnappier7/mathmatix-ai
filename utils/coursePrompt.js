@@ -84,7 +84,9 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
   const firstName = userProfile.firstName || 'Student';
   const courseName = pathway.track || courseSession.courseName || courseSession.courseId;
   const moduleTitle = currentModule?.title || courseSession.currentModuleId || 'Current Module';
-  const unit = currentModule?.unit || '';
+  // `?? ''`, not `|| ''`: unit 0 is a real unit (every course's launch/boot-camp
+  // module sits there) and `||` erased it, so the course map read "Unit ?".
+  const unit = currentModule?.unit ?? '';
   const progress = courseSession.overallProgress || 0;
 
   // Determine scaffold position from session's currentScaffoldIndex (the step counter)
@@ -97,7 +99,7 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
     const pw = (pathway.modules || []).find(pm => pm.moduleId === m.moduleId);
     const label = pw?.title || m.moduleId;
     const status = m.status === 'completed' ? '✓' : m.status === 'in_progress' ? '►' : m.status === 'available' ? '○' : '🔒';
-    return `  ${status} Unit ${pw?.unit || '?'}: ${label}`;
+    return `  ${status} Unit ${pw?.unit ?? '?'}: ${label}`;
   }).join('\n');
 
   // Format the current scaffold step in detail
@@ -207,7 +209,7 @@ COURSE MAP:
 ${moduleMap}
 
 ====================================================================
-CURRENT MODULE: ${moduleTitle}${unit ? ` (Unit ${unit})` : ''}
+CURRENT MODULE: ${moduleTitle}${unit !== '' ? ` (Unit ${unit})` : ''}
 ====================================================================
 
 ${goals ? `MODULE GOALS:\n${goals}\n` : ''}
@@ -991,7 +993,9 @@ function buildParentCourseSystemPrompt({ userProfile, tutorProfile, courseSessio
   const firstName = userProfile.firstName || 'there';
   const courseName = pathway.track || courseSession.courseName || courseSession.courseId;
   const moduleTitle = currentModule?.title || courseSession.currentModuleId || 'Current Topic';
-  const unit = currentModule?.unit || '';
+  // `?? ''`, not `|| ''`: unit 0 is a real unit (every course's launch/boot-camp
+  // module sits there) and `||` erased it, so the course map read "Unit ?".
+  const unit = currentModule?.unit ?? '';
   const progress = courseSession.overallProgress || 0;
 
   const scaffoldIndex = courseSession.currentScaffoldIndex || 0;
@@ -1053,7 +1057,7 @@ COURSE MAP:
 ${moduleMap}
 
 ====================================================================
-CURRENT TOPIC: ${moduleTitle}${unit ? ` (Unit ${unit})` : ''}
+CURRENT TOPIC: ${moduleTitle}${unit !== '' ? ` (Unit ${unit})` : ''}
 ====================================================================
 
 ${goals ? `TOPIC GOALS:\n${goals}\n` : ''}

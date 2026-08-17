@@ -1005,17 +1005,27 @@ class CourseManager {
 
     // --------------------------------------------------
     // --------------------------------------------------
-    // Begin teaching, unless a required baseline is still pending.
+    // Begin teaching, unless a BLOCKING baseline is still pending.
     //
     // The tutor greeting introduces module 1 and starts teaching. It must NOT
-    // fire while a `required` diagnostic (ACT practice test, course
-    // pre-assessment) is unanswered — the whole point of the baseline is to run
+    // fire while a diagnostic that is allowed to hold the tutor (today: the ACT
+    // practice test) is unanswered — the whole point of that baseline is to run
     // FIRST and adapt the plan. When one is pending we stay quiet and let the
     // diagnostic card lead; onBaselineComplete() fires the greeting afterward,
     // by which time the course has been retargeted to the student's real level.
+    //
+    // `blocking`, not `required`: a required card the student still owes us is a
+    // nudge, and holding the whole course behind one is how Consumer Math /
+    // Financial Literacy (and every other course missing from COURSE_DIAGNOSTICS)
+    // opened to a modal and silence instead of a lesson. The server decides which
+    // is which — utils/courseDiagnostic.js — and both server gates read the same
+    // flag. Older servers do not send `blocking`; falling back to `required` there
+    // keeps the ACT baseline held rather than leaking a premature lesson.
     // --------------------------------------------------
     beginTeachingUnlessBaselinePending(diagnostic) {
-        if (diagnostic && diagnostic.required) {
+        const blocks = diagnostic
+            && (diagnostic.blocking !== undefined ? diagnostic.blocking : diagnostic.required);
+        if (blocks) {
             this._baselinePending = true;
             // Registration step: for the ACT baseline, take the student straight
             // INTO the runner (which now lands on its Begin screen — no auto-timer)

@@ -72,7 +72,31 @@ describe('one lesson, one greeting', () => {
     const idx = src.indexOf('activeCourseSessionId) {\n                console.log(\'[Chat] Course lesson active');
     expect(idx).toBeGreaterThan(-1);
     // The bail-out must come BEFORE the generic greeting request fires.
-    const greetingCall = src.indexOf("JSON.stringify({ isGreeting: true, skipCourse: true })");
+    const greetingCall = src.indexOf("JSON.stringify({ isGreeting: true })");
     expect(greetingCall).toBeGreaterThan(idx);
+  });
+
+  // That bail-out is a RACE, not a guarantee: courseManager sets
+  // activeCourseSessionId only after /api/course-sessions returns, and clears it
+  // whenever the view is on a non-course conversation. When it loses, the request
+  // still goes out — and it must not tell the server to ignore the student's
+  // course, or the answer is the free-chat opener inside a lesson.
+  test('the welcome request no longer claims skipCourse', () => {
+    expect(src).not.toMatch(/isGreeting: true, skipCourse: true/);
+  });
+
+  test('a course greeting served by /api/chat is reconciled, not blindly appended', () => {
+    expect(src).toMatch(/data\.isCourseGreeting && data\.conversationId/);
+    expect(src).toMatch(/data\.sessionRolled/);
+  });
+});
+
+describe('the server still owns which greeting a course student gets', () => {
+  const src = read('routes/chat.js');
+
+  test('the course greeting reports its conversation and whether the sitting rolled', () => {
+    expect(src).toMatch(/greetingResponse\.isCourseGreeting = true/);
+    expect(src).toMatch(/streamDonePayload\.isCourseGreeting = true/);
+    expect(src).toMatch(/courseGreetingRolled/);
   });
 });

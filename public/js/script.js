@@ -1001,10 +1001,19 @@ document.addEventListener("DOMContentLoaded", () => {
             // The AI "initiates" the conversation using context about the student
             showThinkingIndicator(true);
 
+            // NOTE: no `skipCourse` here. The guard above is a race — courseManager
+            // sets activeCourseSessionId only after /api/course-sessions returns,
+            // and it clears the id whenever the view is on some other conversation,
+            // so a student sitting in a course routinely reaches this line. Telling
+            // the server to ignore their course made it answer with the free-chat
+            // opener ("what do you want to work on today?") inside a lesson — the
+            // Financial Literacy report. The server owns the answer: it greets in
+            // course mode off user.activeCourseSessionId, and skipCourse stays for
+            // callers that genuinely want a fresh general session.
             const res = await csrfFetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ isGreeting: true, skipCourse: true })
+                body: JSON.stringify({ isGreeting: true })
             });
 
             const data = await res.json();
@@ -1029,6 +1038,28 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
                 }
                 return;
+            }
+
+            // The server answered in COURSE mode, which means the greeting was
+            // written into the course conversation — not necessarily the one on
+            // screen. Reconcile before painting, exactly as CourseManager does for
+            // /api/course-chat: a rolled sitting gets a blank view, a mismatched
+            // one gets a real switch (which replays the persisted greeting, so we
+            // must not append it again), and a match just appends.
+            if (data.isCourseGreeting && data.conversationId) {
+                const showing = window.currentConversationId;
+                if (data.sessionRolled && typeof window.updateChatForSession === 'function') {
+                    window.updateChatForSession({
+                        _id: data.conversationId,
+                        conversationType: 'topic',
+                        topic: (data.courseContext && data.courseContext.courseName) || null,
+                        topicEmoji: '📚',
+                    }, []);
+                } else if (String(data.conversationId) !== String(showing)
+                    && window.sidebar && typeof window.sidebar.switchSession === 'function') {
+                    await window.sidebar.switchSession(data.conversationId);
+                    return;   // switchSession replayed the greeting already
+                }
             }
 
             if (data.text) {

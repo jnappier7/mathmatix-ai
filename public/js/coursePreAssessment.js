@@ -29,6 +29,19 @@
     if (el) el.remove();
   }
 
+  // Leaving the check without a score still has to hand control back to the
+  // course. beginTeachingUnlessBaselinePending() parks the greeting behind
+  // `_baselinePending` and only onBaselineComplete() releases it, so every exit
+  // from this modal — submitted, skipped, unavailable, dismissed — must call it.
+  // Without this, closing the modal left the student in a course that had never
+  // said a word, which is where the free-chat opener came from.
+  function closeAndResume() {
+    close();
+    if (window.courseManager && typeof window.courseManager.onBaselineComplete === 'function') {
+      window.courseManager.onBaselineComplete();
+    }
+  }
+
   function shell(title, bodyHtml, opts) {
     close();
     var wrap = document.createElement('div');
@@ -50,7 +63,7 @@
     // A required check is not dismissible by clicking away — that is the whole
     // point of it being required.
     if (!opts || !opts.required) {
-      wrap.addEventListener('click', function (e) { if (e.target === wrap) close(); });
+      wrap.addEventListener('click', function (e) { if (e.target === wrap) closeAndResume(); });
     }
     return wrap;
   }
@@ -82,7 +95,7 @@
       + '<button id="cpa-close" style="padding:10px 18px; border:none; border-radius:8px;'
       + 'background:#4f46e5; color:#fff; font-weight:700; cursor:pointer;">Continue to the course</button>',
       Object.assign({}, opts, { required: false }));
-    wrap.querySelector('#cpa-close').addEventListener('click', close);
+    wrap.querySelector('#cpa-close').addEventListener('click', closeAndResume);
   }
 
   function renderForm(sessionId, data, opts) {
@@ -134,7 +147,7 @@
       + coverage, opts);
 
     var skip = wrap.querySelector('#cpa-skip');
-    if (skip) skip.addEventListener('click', close);
+    if (skip) skip.addEventListener('click', closeAndResume);
     wrap.querySelector('#cpa-submit').addEventListener('click', function () {
       submit(sessionId, wrap);
     });
@@ -182,14 +195,14 @@
         done.style.cssText = 'padding:11px 20px; border:none; border-radius:8px; background:#2e9268;'
           + 'color:#fff; font-weight:700; cursor:pointer; margin-top:12px;';
         done.addEventListener('click', function () {
-          close();
           // The pre-assessment just retargeted the course (credited skills,
           // moved the start module). Begin teaching now — the greeting the enroll
           // flow held back fires here, adapted. Reload only as a fallback if the
           // course manager is not on the page.
           if (window.courseManager && typeof window.courseManager.onBaselineComplete === 'function') {
-            window.courseManager.onBaselineComplete();
+            closeAndResume();
           } else {
+            close();
             window.location.reload();
           }
         });
