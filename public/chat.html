@@ -94,7 +94,7 @@
     // loads on its own. mmCalculator (the shared component) must precede
     // chatCalculator (chat's host for it).
     (function () {
-      ['/js/mmCalculator.js?v=20260801a', '/js/chatCalculator.js?v=20260801a'].forEach(function (src) {
+      ['/js/mmCalculator.js?v=20260801a', '/js/chatCalculator.js?v=20260817a'].forEach(function (src) {
         var s = document.createElement('script');
         s.src = src;
         s.async = false; // preserve order: the host needs the component
@@ -122,7 +122,7 @@
   <!-- Full-body student character render -->
   <link rel="stylesheet" href="/css/avatar-fullbody.css" />
 <!-- Interactive math workspace (chat right slot) -->
-  <link rel="stylesheet" href="/css/workspace.css?v=20260723" />
+  <link rel="stylesheet" href="/css/workspace.css?v=20260817a" />
   <!-- Enriched right-rail player card (stats band + expand-up progress panel).
        Loads AFTER workspace.css/avatar-fullbody.css so .psc-* rules win. -->
   <link rel="stylesheet" href="/css/player-stats-card.css?v=20260726a" />
@@ -131,7 +131,7 @@
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
   <link rel="stylesheet" href="/css/adjustable-panels.css?v=20260721" />
   <!-- Voice mode (layout mode of the chat stage) -->
-  <link rel="stylesheet" href="/css/voice-mode.css?v=3" />
+  <link rel="stylesheet" href="/css/voice-mode.css?v=4" />
   <!-- Fresh styling for rendered math (equation cards) -->
   <link rel="stylesheet" href="/css/math-style.css" />
   <!-- DNS prefetch & preconnect for CDN domains -->
@@ -2425,7 +2425,7 @@
   <script defer src="/js/adjustable-panels.js?v=20260721"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
   <script type="module" src="/js/chat-voice-meter.js"></script>
-  <script src="/dist/js/chat-js2.dcc6e004.js"></script>
+  <script src="/dist/js/chat-js2.f02859eb.js"></script>
 <!-- Voice as a layout mode of the chat stage -->
   <script src="/js/voice-mode.js?v=3"></script>
   <!-- Voice-mode captions: karaoke subtitles + student STT echo + replay/history -->
