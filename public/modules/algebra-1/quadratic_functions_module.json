@@ -79,7 +79,7 @@
         }
       ],
       "initialPrompt": "In the first example, the vertex was at (2, -1). Why is this the lowest point of the parabola and not the highest?",
-      "lessonId": "quadratics-intro"
+      "lessonId": "graphing-quadratics"
     },
     {
       "type": "guided_practice",
@@ -119,16 +119,175 @@
         }
       ],
       "initialPrompt": "Let's work through these together. For the first problem, what are the values of a, b, and c? What formula will you use to find the vertex?",
-      "lessonId": "quadratics-intro"
+      "lessonId": "graphing-quadratics"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "quadratic-equations-graphing",
+      "title": "Vertex Form: Reading a Parabola at a Glance",
+      "content": "Standard form f(x) = ax² + bx + c hides the vertex — you have to compute x = -b/(2a) to find it. **Vertex form** hands it to you:\n\n**f(x) = a(x - h)² + k**, with vertex **(h, k)**\n\n**h is the horizontal shift, and the form's minus sign flips how you read it.** In f(x) = (x - 4)², h = 4 and the vertex is 4 units RIGHT. In f(x) = (x + 3)², rewrite it as (x - (-3))²: h = -3 and the vertex is 3 units LEFT. Read the sign off the rewritten form, not off the page.\n\n**k is the vertical shift**, and it behaves: +5 moves the vertex up 5.\n\n**a does the same job it does in standard form.** a > 0 opens upward so the vertex is a minimum; a < 0 opens downward so it is a maximum. |a| > 1 narrows the parabola, 0 < |a| < 1 widens it. Notice a is the SAME number in both forms — converting never changes it.\n\n**The axis of symmetry is x = h**, straight from the vertex.\n\n**Converting standard → vertex form is completing the square.** Take f(x) = x² - 6x + 11. Half of -6 is -3 and (-3)² = 9, so add and subtract 9: x² - 6x + 9 - 9 + 11 = (x - 3)² + 2. Vertex (3, 2). Adding and subtracting the same number changes nothing about the function — only how it is written.\n\n**Converting vertex → standard form is just expanding.** Square the binomial, distribute a, combine.\n\n**Which form for which job:** vertex form for the vertex, the axis and max/min problems; standard form for the y-intercept (it is c) and for the quadratic formula; factored form for the x-intercepts.",
+      "initialPrompt": "Two ways to write the same parabola: f(x) = x² - 6x + 11 and f(x) = (x - 3)² + 2. Which one tells you the vertex without any work — and what is it?",
+      "lessonId": "vertex-form"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "quadratic-equations-graphing",
+      "title": "I-Do: Working in Vertex Form",
+      "examples": [
+        {
+          "problem": "For f(x) = -2(x + 3)² + 8, state the vertex, the axis of symmetry, the direction of opening, and the maximum or minimum value.",
+          "solution": "**Match the template** f(x) = a(x - h)² + k: a = -2, and x + 3 must be rewritten as x - (-3), so h = -3. k = 8.\n\n**Vertex:** (h, k) = **(-3, 8)**.\n**Axis of symmetry:** x = h → **x = -3**.\n**Direction:** a = -2 < 0, so it opens **downward**, and |a| = 2 > 1 so it is narrower than y = x².\n**Extreme value:** opening downward makes the vertex the highest point, so the **maximum is 8**, reached at x = -3.\n\n**Check by expanding:** -2(x + 3)² + 8 = -2(x² + 6x + 9) + 8 = -2x² - 12x - 10. Then x = -b/(2a) = 12/(-4) = -3 ✓.",
+          "commonMistake": "Reading x + 3 as a shift right. The template subtracts h, so x + 3 means h = -3 and the vertex is to the LEFT."
+        },
+        {
+          "problem": "Convert f(x) = x² - 6x + 11 to vertex form and state the vertex.",
+          "solution": "**Complete the square on the x terms.** Half of -6 is -3, and (-3)² = 9.\n\n**Add and subtract 9 inside the expression** — this keeps the function identical:\nf(x) = x² - 6x + 9 - 9 + 11\nf(x) = (x² - 6x + 9) + 2\nf(x) = **(x - 3)² + 2**\n\n**Vertex: (3, 2).**\n\n**Check two ways.** Expand back: (x - 3)² + 2 = x² - 6x + 9 + 2 = x² - 6x + 11 ✓. Or use the standard-form formula: x = -b/(2a) = 6/2 = 3, and f(3) = 9 - 18 + 11 = 2 ✓.",
+          "tip": "Adding AND subtracting the same number is the trick. You are not changing the function, only regrouping it."
+        },
+        {
+          "problem": "Write the equation in vertex form of the parabola with vertex (2, -5) that passes through the point (4, 3).",
+          "solution": "**Start from the template with the vertex filled in:** f(x) = a(x - 2)² - 5. Only a is unknown.\n\n**Use the extra point to solve for a.** The parabola passes through (4, 3), so f(4) = 3:\n3 = a(4 - 2)² - 5 → 3 = 4a - 5 → 8 = 4a → a = 2.\n\n**Equation:** f(x) = **2(x - 2)² - 5**.\n\n**Check:** f(4) = 2(2)² - 5 = 8 - 5 = 3 ✓, and f(2) = -5 puts the vertex where it belongs ✓.\n\nA vertex alone does not determine a parabola — infinitely many pass through one point. The second point is what pins down the width."
+        }
+      ],
+      "initialPrompt": "Take f(x) = -2(x + 3)² + 8. Before anything else — what are a, h and k? Be careful with the sign on h.",
+      "lessonId": "vertex-form"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "quadratic-equations-graphing",
+      "title": "We-Do: Vertex Form Practice",
+      "problems": [
+        {
+          "id": "qf-vf1",
+          "question": "For y = 3(x - 1)² - 7, state the vertex, the axis of symmetry, the direction of opening, and the minimum or maximum value.",
+          "answer": "a = 3, h = 1, k = -7. Vertex (1, -7); axis of symmetry x = 1; a > 0 so it opens upward and is narrower than y = x²; the vertex is the lowest point, so the minimum value is -7 at x = 1.",
+          "hints": [
+            "Match it to y = a(x - h)² + k and read a, h and k before interpreting anything.",
+            "a = 3, h = 1, k = -7. The vertex is (h, k) and the axis is x = h.",
+            "a is positive, so the parabola opens upward — which means the vertex is a minimum, not a maximum."
+          ]
+        },
+        {
+          "id": "qf-vf2",
+          "question": "Convert y = x² + 8x + 10 to vertex form and state the vertex.",
+          "answer": "Half of 8 is 4, and 4² = 16. Add and subtract 16: y = x² + 8x + 16 - 16 + 10 = (x + 4)² - 6. Vertex (-4, -6). Check by expanding: (x + 4)² - 6 = x² + 8x + 16 - 6 = x² + 8x + 10 ✓.",
+          "hints": [
+            "Complete the square on the x terms. Take half of the coefficient of x, then square it.",
+            "Half of 8 is 4, and 4² = 16. Add 16 and subtract 16 so the expression is unchanged.",
+            "Group the perfect square: (x² + 8x + 16) - 16 + 10 = (x + 4)² - 6. Remember x + 4 means h = -4."
+          ]
+        },
+        {
+          "id": "qf-vf3",
+          "question": "Convert y = 2x² - 12x + 13 to vertex form.",
+          "answer": "Factor 2 out of the x terms first: y = 2(x² - 6x) + 13. Half of -6 is -3 and (-3)² = 9, so y = 2(x² - 6x + 9) - 2(9) + 13 = 2(x - 3)² - 18 + 13 = 2(x - 3)² - 5. Vertex (3, -5). Check: 2(x - 3)² - 5 = 2x² - 12x + 18 - 5 = 2x² - 12x + 13 ✓.",
+          "hints": [
+            "The leading coefficient is not 1, so factor it out of the x terms BEFORE completing the square. Leave the constant outside.",
+            "y = 2(x² - 6x) + 13. Now complete the square inside the bracket: half of -6 is -3, squared is 9.",
+            "Adding 9 inside a bracket multiplied by 2 really adds 18, so you must subtract 18 outside — not 9. That is the step people miss."
+          ]
+        },
+        {
+          "id": "qf-vf4",
+          "question": "A parabola has vertex (-1, 4) and passes through (1, 12). Write its equation in vertex form.",
+          "answer": "Start with y = a(x + 1)² + 4, since h = -1 and k = 4. Substitute the point (1, 12): 12 = a(1 + 1)² + 4 → 12 = 4a + 4 → 4a = 8 → a = 2. Equation: y = 2(x + 1)² + 4. Check: at x = 1, 2(4) + 4 = 12 ✓.",
+          "hints": [
+            "Fill in h and k from the vertex first. Watch the sign: a vertex at x = -1 gives (x - (-1)) = (x + 1).",
+            "y = a(x + 1)² + 4 with only a unknown. Substitute the point (1, 12) and solve.",
+            "12 = a(2)² + 4 → 4a = 8 → a = 2. Check by putting x = 1 back in — you should get 12."
+          ]
+        }
+      ],
+      "initialPrompt": "For y = 3(x - 1)² - 7, call out a, h and k. Then tell me whether that vertex is a high point or a low point, and how you know.",
+      "lessonId": "vertex-form"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "solving-quadratics-factoring",
-      "title": "Solving Quadratics by Factoring and by Square Roots",
-      "content": "Now that we can graph quadratic functions, let’s focus on **finding the x-intercepts algebraically** — that is, solving ax² + bx + c = 0.\n\n**Method 1: Factoring (Zero Product Property)**\nThe **zero product property** states: if A · B = 0, then A = 0 or B = 0. So if we can factor ax² + bx + c into two binomials, we set each factor equal to zero and solve.\n\nFor **x² + bx + c = 0** (leading coefficient 1): find two numbers that **multiply to c** and **add to b**.\nExample: x² + 5x + 6 = 0 → find numbers that multiply to 6 and add to 5 → 2 and 3 → (x + 2)(x + 3) = 0 → x = -2 or x = -3.\n\n**Method 2: Taking Square Roots**\nWhen the equation has **no linear term** (no bx) or can be written as **(something)² = number**, isolate the squared expression and take the square root of both sides. Always include **±** (plus or minus).\nExample: 3x² = 48 → x² = 16 → x = ±4.\n\n**Method 3: Completing the Square**\nRewrite ax² + bx + c = 0 so the left side becomes a perfect square trinomial, then take the square root.\nExample: x² + 6x + 5 = 0 → x² + 6x = -5 → x² + 6x + 9 = -5 + 9 → (x + 3)² = 4 → x + 3 = ±2 → x = -1 or x = -5.\n\n**Choosing a method:** Factor if the equation factors nicely. Use square roots if there is no bx term. Use completing the square when factoring is difficult or when you need vertex form.",
-      "initialPrompt": "For x² + 5x + 6 = 0, what two numbers multiply to 6 and add to 5? How does that help us factor?",
-      "lessonId": "graphing-quadratics"
+      "title": "Solving by Factoring: the Zero Product Property",
+      "content": "Solving ax² + bx + c = 0 means finding the x-intercepts algebraically. The first method rests on one idea:\n\n**Zero Product Property:** if A · B = 0, then A = 0 or B = 0.\n\nZero is the only number with this property — knowing two things multiply to 12 tells you almost nothing, but knowing they multiply to 0 forces one of them to BE 0. That is why the equation must be set equal to zero before you factor. Factoring x² + 5x + 6 = 2 and setting each factor to 2 is meaningless.\n\n**When the leading coefficient is 1:** find two numbers that **multiply to c** and **add to b**.\nx² + 5x + 6 = 0 → two numbers multiplying to 6 and adding to 5 → 2 and 3 → (x + 2)(x + 3) = 0 → x = -2 or x = -3.\n\n**When the leading coefficient is not 1**, the two binomials must also produce the leading coefficient. For 2x² - 7x + 3, try (2x - ?)(x - ?) with constants multiplying to 3, then check the middle term by expanding.\n\n**The procedure:**\n1. Set the equation equal to 0 — move everything to one side.\n2. Factor the quadratic completely.\n3. Set EACH factor equal to 0.\n4. Solve each small equation, and check both answers in the original.\n\n**Factoring is the fastest method when it works, and it does not always work.** Plenty of quadratics have irrational or non-real solutions and no integer factorisation. The next lessons give you methods that never fail, and the discriminant will eventually tell you in advance whether factoring is even worth attempting.",
+      "initialPrompt": "For x² + 5x + 6 = 0, what two numbers multiply to 6 and add to 5? And why does the equation have to equal ZERO before that helps?",
+      "lessonId": "solving-by-factoring"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "solving-quadratics-factoring",
+      "title": "I-Do: Solving by Factoring",
+      "examples": [
+        {
+          "problem": "Solve x² + 5x + 6 = 0 by factoring.",
+          "solution": "**Step 1: Find two numbers that multiply to 6 and add to 5.**\nFactors of 6: 1 × 6, 2 × 3.\nWhich pair adds to 5? **2 and 3** (2 + 3 = 5 and 2 × 3 = 6).\n\n**Step 2: Write the factored form.**\nx² + 5x + 6 = (x + 2)(x + 3) = 0\n\n**Step 3: Apply the zero product property.**\nx + 2 = 0 → **x = -2**\nx + 3 = 0 → **x = -3**\n\n**Step 4: Verify.**\nx = -2: (-2)² + 5(-2) + 6 = 4 - 10 + 6 = 0 ✓\nx = -3: (-3)² + 5(-3) + 6 = 9 - 15 + 6 = 0 ✓\n\n**Solutions: x = -2 or x = -3**",
+          "tip": "When the leading coefficient is 1, factoring comes down to one question: what two numbers multiply to c and add to b?",
+          "thinkAloud": "I need to solve x² + 5x + 6 = 0. Let me think about what method to use. The leading coefficient is 1, and the numbers are small, so factoring is my first choice. I need two numbers that multiply to 6 and add to 5. Let me list factor pairs of 6: 1 and 6 (sum = 7, nope), 2 and 3 (sum = 5, yes!). Both positive since c is positive and b is positive. So it factors as (x + 2)(x + 3). Then I apply the zero product property — if the product is zero, one of the factors must be zero.",
+          "commonMistake": "A frequent error is getting the signs wrong in the solutions. Students correctly factor to (x + 2)(x + 3) = 0 but then write x = 2 and x = 3 instead of x = -2 and x = -3. Remember: if x + 2 = 0, then x = -2, not +2. The signs flip when you solve each factor.",
+          "decisionPoint": "I could use the quadratic formula or completing the square here, but since the leading coefficient is 1 and the numbers are small, factoring is the fastest approach. I'll save the quadratic formula for equations that don't factor cleanly.",
+          "interpretation": "The solutions x = -2 and x = -3 are the x-intercepts of the parabola y = x² + 5x + 6. Graphically, the parabola crosses the x-axis at these two points. Since both solutions are negative, the entire parabola's intersection with the x-axis is to the left of the origin."
+        }
+      ],
+      "initialPrompt": "Walk me into x² + 5x + 6 = 0 — what pair of numbers are we hunting for, and what two conditions must they satisfy?",
+      "lessonId": "solving-by-factoring"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "solving-quadratics-factoring",
+      "title": "We-Do: Solving by Factoring",
+      "problems": [
+        {
+          "id": "qf-wp4",
+          "question": "Solve x² - 7x + 12 = 0 by factoring.",
+          "answer": "(x - 3)(x - 4) = 0. x = 3 or x = 4. Verify: 9 - 21 + 12 = 0 ✓ and 16 - 28 + 12 = 0 ✓.",
+          "hints": [
+            "Find two numbers that multiply to 12 and add to -7.",
+            "The numbers are -3 and -4 because (-3)(-4) = 12 and (-3) + (-4) = -7.",
+            "Factor: (x - 3)(x - 4) = 0. Set each factor to zero: x = 3 or x = 4."
+          ]
+        },
+        {
+          "id": "qf-wp5",
+          "question": "Solve 2x² - 7x + 3 = 0 by factoring.",
+          "answer": "(2x - 1)(x - 3) = 0. x = 1/2 or x = 3. Verify: 2(1/4) - 7(1/2) + 3 = 1/2 - 7/2 + 3 = 0 ✓ and 2(9) - 7(3) + 3 = 18 - 21 + 3 = 0 ✓.",
+          "hints": [
+            "The leading coefficient is 2, so we need factors of 2x² and factors of 3 that combine to give -7x in the middle.",
+            "Try (2x - ?)(x - ?). We need the two constants to multiply to 3: possibilities are 1 and 3.",
+            "Check: (2x - 1)(x - 3) = 2x² - 6x - x + 3 = 2x² - 7x + 3. That works! Set each factor to zero."
+          ]
+        }
+      ],
+      "initialPrompt": "Solve x² - 7x + 12 = 0. What two numbers multiply to 12 and add to -7 — and what does the sign pattern tell you before you start?",
+      "lessonId": "solving-by-factoring"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "solving-quadratics-square-roots",
+      "title": "Solving by Taking Square Roots",
+      "content": "When a quadratic has **no linear term**, or when it is already written as **(something)² = number**, factoring is the long way round. Take the square root instead.\n\n**The procedure:**\n1. Isolate the squared quantity — get x² or (x - h)² alone on one side.\n2. Take the square root of BOTH sides.\n3. Write **±** in front of the root. This is the step everyone forgets.\n4. Finish solving, and simplify any radical.\n\n**Why the ±.** The equation x² = 16 asks which numbers square to 16, and both 4 and (-4) do. Writing only x = 4 throws away half the answer. A quadratic has two solutions unless they happen to coincide.\n\n**Example:** 3x² = 48 → x² = 16 → x = ±4.\n**With a binomial:** (x - 5)² = 9 → x - 5 = ±3 → x = 8 or x = 2. Do NOT expand first — expanding a squared binomial turns a two-step problem into a factoring problem.\n\n**Answers are not always whole numbers.** 2x² - 24 = 0 → x² = 12 → x = ±√12 = ±2√3. Leave it as a simplified radical; that is the exact answer, and a decimal is only an approximation.\n\n**When the square equals a negative number** — say x² = -9 — there is no real solution, because no real number squares to a negative. The parabola never crosses the x-axis.\n\n**Spotting it:** if you can see the equation in the shape (expression)² = number, this method is almost always the shortest route.",
+      "initialPrompt": "Look at 3x² = 48. What is missing from this equation compared with x² + 5x + 6 = 0 — and what does that missing piece let you do?",
+      "lessonId": "solving-square-roots"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "solving-quadratics-square-roots",
+      "title": "I-Do: Solving by Taking Square Roots",
+      "examples": [
+        {
+          "problem": "Solve 3x² = 48 by taking square roots.",
+          "solution": "**Step 1: Isolate x².**\n3x² = 48\nx² = 48 / 3\nx² = 16\n\n**Step 2: Take the square root of both sides.**\nx = ±√16\nx = ±4\n\n**Step 3: Verify.**\nx = 4: 3(4)² = 3(16) = 48 ✓\nx = -4: 3(-4)² = 3(16) = 48 ✓\n\n**Solutions: x = 4 or x = -4**\n\nWhy ±? Because both 4² and (-4)² equal 16. Squaring erases the sign, so we must consider both the positive and negative root.",
+          "tip": "Always remember the ± when taking a square root during equation solving. This is different from the expression √16, which refers only to the positive root 4.",
+          "thinkAloud": "I see 3x² = 48. There's no x term (no bx), just x² and a constant. That's my signal to use the square root method — it's the simplest approach when there's no linear term. My plan: isolate x² first by dividing both sides by 3, then take the square root. And I must remember to write ± because both a positive and negative value will satisfy x² = 16.",
+          "commonMistake": "The most common mistake is forgetting the ± and writing only x = 4. Students get x² = 16 and write x = √16 = 4, losing the solution x = -4. Always remember: when you solve an equation by taking a square root, you must include both the positive and negative root. There are TWO solutions, not one.",
+          "interpretation": "The solutions x = 4 and x = -4 tell us that the parabola y = 3x² - 48 crosses the x-axis at two points equidistant from the origin. This symmetry happens because there's no bx term — the axis of symmetry is x = 0 (the y-axis itself)."
+        }
+      ],
+      "initialPrompt": "For 3x² = 48 — what has to happen to the 3 before we can take a square root of anything?",
+      "lessonId": "solving-square-roots"
     },
     {
       "type": "guided_practice",
@@ -175,72 +334,6 @@
             "80 - 16t² = 0 has no t term, so isolate t²: 16t² = 80, then t² = 5.",
             "t = ±√5, but one of those answers is impossible here — a ball cannot land at a negative time. Keep t = √5 ≈ 2.24 s."
           ]
-        }
-      ],
-      "lessonId": "graphing-quadratics",
-      "initialPrompt": "Let's solve some quadratics without factoring. Look at 3x² - 75 = 0 — what is different about this equation compared to the ones we factored, and what does that tell you about which method to use?"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "solving-quadratics-factoring",
-      "title": "I-Do: Solving by Factoring, Square Roots, and Completing the Square",
-      "examples": [
-        {
-          "problem": "Solve x² + 5x + 6 = 0 by factoring.",
-          "solution": "**Step 1: Find two numbers that multiply to 6 and add to 5.**\nFactors of 6: 1 × 6, 2 × 3.\nWhich pair adds to 5? **2 and 3** (2 + 3 = 5 and 2 × 3 = 6).\n\n**Step 2: Write the factored form.**\nx² + 5x + 6 = (x + 2)(x + 3) = 0\n\n**Step 3: Apply the zero product property.**\nx + 2 = 0 → **x = -2**\nx + 3 = 0 → **x = -3**\n\n**Step 4: Verify.**\nx = -2: (-2)² + 5(-2) + 6 = 4 - 10 + 6 = 0 ✓\nx = -3: (-3)² + 5(-3) + 6 = 9 - 15 + 6 = 0 ✓\n\n**Solutions: x = -2 or x = -3**",
-          "tip": "When the leading coefficient is 1, factoring comes down to one question: what two numbers multiply to c and add to b?",
-          "thinkAloud": "I need to solve x² + 5x + 6 = 0. Let me think about what method to use. The leading coefficient is 1, and the numbers are small, so factoring is my first choice. I need two numbers that multiply to 6 and add to 5. Let me list factor pairs of 6: 1 and 6 (sum = 7, nope), 2 and 3 (sum = 5, yes!). Both positive since c is positive and b is positive. So it factors as (x + 2)(x + 3). Then I apply the zero product property — if the product is zero, one of the factors must be zero.",
-          "commonMistake": "A frequent error is getting the signs wrong in the solutions. Students correctly factor to (x + 2)(x + 3) = 0 but then write x = 2 and x = 3 instead of x = -2 and x = -3. Remember: if x + 2 = 0, then x = -2, not +2. The signs flip when you solve each factor.",
-          "decisionPoint": "I could use the quadratic formula or completing the square here, but since the leading coefficient is 1 and the numbers are small, factoring is the fastest approach. I'll save the quadratic formula for equations that don't factor cleanly.",
-          "interpretation": "The solutions x = -2 and x = -3 are the x-intercepts of the parabola y = x² + 5x + 6. Graphically, the parabola crosses the x-axis at these two points. Since both solutions are negative, the entire parabola's intersection with the x-axis is to the left of the origin."
-        },
-        {
-          "problem": "Solve 3x² = 48 by taking square roots.",
-          "solution": "**Step 1: Isolate x².**\n3x² = 48\nx² = 48 / 3\nx² = 16\n\n**Step 2: Take the square root of both sides.**\nx = ±√16\nx = ±4\n\n**Step 3: Verify.**\nx = 4: 3(4)² = 3(16) = 48 ✓\nx = -4: 3(-4)² = 3(16) = 48 ✓\n\n**Solutions: x = 4 or x = -4**\n\nWhy ±? Because both 4² and (-4)² equal 16. Squaring erases the sign, so we must consider both the positive and negative root.",
-          "tip": "Always remember the ± when taking a square root during equation solving. This is different from the expression √16, which refers only to the positive root 4.",
-          "thinkAloud": "I see 3x² = 48. There's no x term (no bx), just x² and a constant. That's my signal to use the square root method — it's the simplest approach when there's no linear term. My plan: isolate x² first by dividing both sides by 3, then take the square root. And I must remember to write ± because both a positive and negative value will satisfy x² = 16.",
-          "commonMistake": "The most common mistake is forgetting the ± and writing only x = 4. Students get x² = 16 and write x = √16 = 4, losing the solution x = -4. Always remember: when you solve an equation by taking a square root, you must include both the positive and negative root. There are TWO solutions, not one.",
-          "interpretation": "The solutions x = 4 and x = -4 tell us that the parabola y = 3x² - 48 crosses the x-axis at two points equidistant from the origin. This symmetry happens because there's no bx term — the axis of symmetry is x = 0 (the y-axis itself)."
-        },
-        {
-          "problem": "Solve x² + 6x + 5 = 0 by completing the square.",
-          "solution": "**Step 1: Move the constant to the right side.**\nx² + 6x = -5\n\n**Step 2: Complete the square.**\nTake half of the coefficient of x: 6/2 = 3.\nSquare it: 3² = 9.\nAdd 9 to both sides:\nx² + 6x + 9 = -5 + 9\n(x + 3)² = 4\n\n**Step 3: Take the square root of both sides.**\nx + 3 = ±√4\nx + 3 = ±2\n\n**Step 4: Solve for x.**\nx + 3 = 2 → **x = -1**\nx + 3 = -2 → **x = -5**\n\n**Step 5: Verify.**\nx = -1: (-1)² + 6(-1) + 5 = 1 - 6 + 5 = 0 ✓\nx = -5: (-5)² + 6(-5) + 5 = 25 - 30 + 5 = 0 ✓\n\n**Solutions: x = -1 or x = -5**\n\nNote: this equation also factors as (x + 1)(x + 5) = 0, giving the same answers. Completing the square is especially useful when the equation does NOT factor nicely.",
-          "tip": "The key step is: take half of b, square it, add to both sides. This creates a perfect square trinomial on the left.",
-          "thinkAloud": "I have x² + 6x + 5 = 0. Could I factor this? Let me check: I need two numbers that multiply to 5 and add to 6. The factor pairs of 5 are just 1 and 5, and 1 + 5 = 6 — so yes, it actually factors as (x + 1)(x + 5). But the problem asks me to complete the square, so let me demonstrate that method. I'll move the constant to the right side, then take half of 6 (that's 3), square it (that's 9), and add 9 to both sides. This turns the left side into a perfect square trinomial.",
-          "commonMistake": "A common error is forgetting to add the completing-the-square number to BOTH sides. Students write x² + 6x + 9 = -5, adding 9 only to the left side. The correct step is x² + 6x + 9 = -5 + 9 = 4. If you only add to one side, you get (x + 3)² = -5, which gives no real solutions — a completely wrong answer for an equation that actually has two real solutions (x = -1 and x = -5).",
-          "decisionPoint": "This equation actually factors nicely as (x + 1)(x + 5) = 0, which would be faster. But completing the square is a critical skill for equations that don't factor, and it's also how we derive vertex form and the quadratic formula itself. So it's worth practicing even when factoring works.",
-          "interpretation": "The solutions x = -1 and x = -5 are the x-intercepts of y = x² + 6x + 5. Completing the square also revealed that (x + 3)² = 4, which means the vertex form is y = (x + 3)² - 4, so the vertex is at (-3, -4). This is a bonus of completing the square — you get the vertex for free."
-        }
-      ],
-      "initialPrompt": "In the first example, we found that 2 and 3 multiply to 6 and add to 5. Why does knowing these two numbers let us factor the whole expression?",
-      "lessonId": "graphing-quadratics"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "solving-quadratics-factoring",
-      "title": "We-Do: Solving Quadratic Equations",
-      "problems": [
-        {
-          "id": "qf-wp4",
-          "question": "Solve x² - 7x + 12 = 0 by factoring.",
-          "answer": "(x - 3)(x - 4) = 0. x = 3 or x = 4. Verify: 9 - 21 + 12 = 0 ✓ and 16 - 28 + 12 = 0 ✓.",
-          "hints": [
-            "Find two numbers that multiply to 12 and add to -7.",
-            "The numbers are -3 and -4 because (-3)(-4) = 12 and (-3) + (-4) = -7.",
-            "Factor: (x - 3)(x - 4) = 0. Set each factor to zero: x = 3 or x = 4."
-          ]
-        },
-        {
-          "id": "qf-wp5",
-          "question": "Solve 2x² - 7x + 3 = 0 by factoring.",
-          "answer": "(2x - 1)(x - 3) = 0. x = 1/2 or x = 3. Verify: 2(1/4) - 7(1/2) + 3 = 1/2 - 7/2 + 3 = 0 ✓ and 2(9) - 7(3) + 3 = 18 - 21 + 3 = 0 ✓.",
-          "hints": [
-            "The leading coefficient is 2, so we need factors of 2x² and factors of 3 that combine to give -7x in the middle.",
-            "Try (2x - ?)(x - ?). We need the two constants to multiply to 3: possibilities are 1 and 3.",
-            "Check: (2x - 1)(x - 3) = 2x² - 6x - x + 3 = 2x² - 7x + 3. That works! Set each factor to zero."
-          ]
         },
         {
           "id": "qf-wp6",
@@ -251,7 +344,45 @@
             "x² = 80/5 = 16. Now take the square root of both sides.",
             "x = ±√16 = ±4. Don't forget both the positive and negative roots."
           ]
-        },
+        }
+      ],
+      "lessonId": "solving-square-roots",
+      "initialPrompt": "Let's solve some quadratics without factoring. Look at 3x² - 75 = 0 — what is different about this equation compared to the ones we factored, and what does that tell you about which method to use?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "solving-quadratics-factoring",
+      "title": "Completing the Square",
+      "content": "Factoring only works when the quadratic factors. **Completing the square always works** — it rewrites any quadratic so the square-root method applies.\n\n**The idea:** x² + bx is two thirds of a perfect square. The missing piece is always **(b/2)²**, because\nx² + bx + (b/2)² = (x + b/2)².\n\n**The procedure (leading coefficient 1):**\n1. Move the constant to the right side.\n2. Take half the coefficient of x, square it, and add that to BOTH sides.\n3. Factor the left side as a perfect square.\n4. Take square roots of both sides, keeping the ±.\n5. Solve for x.\n\n**Example:** x² + 6x + 5 = 0 → x² + 6x = -5 → half of 6 is 3, and 3² = 9 → x² + 6x + 9 = -5 + 9 → (x + 3)² = 4 → x + 3 = ±2 → x = -1 or x = -5.\n\n**When the leading coefficient is not 1**, factor it out of the x terms first: 2x² - 8x + 2 = 0 becomes 2(x² - 4x) + 2 = 0. Complete the square inside the bracket, and remember that adding a number INSIDE a bracket multiplied by 2 really adds twice that much — compensate on the other side.\n\n**Why learn it when the quadratic formula also always works?** Two reasons. It produces **vertex form** as a by-product, so it is how you find a vertex from standard form. And the quadratic formula is *derived* by completing the square on ax² + bx + c = 0 — this method is where the formula comes from.",
+      "initialPrompt": "For x² + 6x = -5, what single number would you add to the left side to turn it into a perfect square — and where does that number come from?",
+      "lessonId": "completing-the-square"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "solving-quadratics-factoring",
+      "title": "I-Do: Completing the Square",
+      "examples": [
+        {
+          "problem": "Solve x² + 6x + 5 = 0 by completing the square.",
+          "solution": "**Step 1: Move the constant to the right side.**\nx² + 6x = -5\n\n**Step 2: Complete the square.**\nTake half of the coefficient of x: 6/2 = 3.\nSquare it: 3² = 9.\nAdd 9 to both sides:\nx² + 6x + 9 = -5 + 9\n(x + 3)² = 4\n\n**Step 3: Take the square root of both sides.**\nx + 3 = ±√4\nx + 3 = ±2\n\n**Step 4: Solve for x.**\nx + 3 = 2 → **x = -1**\nx + 3 = -2 → **x = -5**\n\n**Step 5: Verify.**\nx = -1: (-1)² + 6(-1) + 5 = 1 - 6 + 5 = 0 ✓\nx = -5: (-5)² + 6(-5) + 5 = 25 - 30 + 5 = 0 ✓\n\n**Solutions: x = -1 or x = -5**\n\nNote: this equation also factors as (x + 1)(x + 5) = 0, giving the same answers. Completing the square is especially useful when the equation does NOT factor nicely.",
+          "tip": "The key step is: take half of b, square it, add to both sides. This creates a perfect square trinomial on the left.",
+          "thinkAloud": "I have x² + 6x + 5 = 0. Could I factor this? Let me check: I need two numbers that multiply to 5 and add to 6. The factor pairs of 5 are just 1 and 5, and 1 + 5 = 6 — so yes, it actually factors as (x + 1)(x + 5). But the problem asks me to complete the square, so let me demonstrate that method. I'll move the constant to the right side, then take half of 6 (that's 3), square it (that's 9), and add 9 to both sides. This turns the left side into a perfect square trinomial.",
+          "commonMistake": "A common error is forgetting to add the completing-the-square number to BOTH sides. Students write x² + 6x + 9 = -5, adding 9 only to the left side. The correct step is x² + 6x + 9 = -5 + 9 = 4. If you only add to one side, you get (x + 3)² = -5, which gives no real solutions — a completely wrong answer for an equation that actually has two real solutions (x = -1 and x = -5).",
+          "decisionPoint": "This equation actually factors nicely as (x + 1)(x + 5) = 0, which would be faster. But completing the square is a critical skill for equations that don't factor, and it's also how we derive vertex form and the quadratic formula itself. So it's worth practicing even when factoring works.",
+          "interpretation": "The solutions x = -1 and x = -5 are the x-intercepts of y = x² + 6x + 5. Completing the square also revealed that (x + 3)² = 4, which means the vertex form is y = (x + 3)² - 4, so the vertex is at (-3, -4). This is a bonus of completing the square — you get the vertex for free."
+        }
+      ],
+      "initialPrompt": "x² + 6x + 5 = 0. First move — which term leaves the left side, and why that one?",
+      "lessonId": "completing-the-square"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "solving-quadratics-factoring",
+      "title": "We-Do: Completing the Square",
+      "problems": [
         {
           "id": "qf-wp7",
           "question": "Solve x² - 10x + 21 = 0 by completing the square.",
@@ -261,19 +392,124 @@
             "Take half of -10: that's -5. Square it: 25. Add 25 to both sides: (x - 5)² = 4.",
             "Take the square root: x - 5 = ±2. Solve: x = 5 + 2 = 7 or x = 5 - 2 = 3."
           ]
+        },
+        {
+          "id": "qf-cs1",
+          "question": "Solve x² + 4x - 12 = 0 by completing the square.",
+          "answer": "Move the constant: x² + 4x = 12. Half of 4 is 2, and 2² = 4, so add 4 to both sides: x² + 4x + 4 = 16, giving (x + 2)² = 16. Take roots: x + 2 = ±4, so x = 2 or x = -6. Check: 4 + 8 - 12 = 0 ✓ and 36 - 24 - 12 = 0 ✓.",
+          "hints": [
+            "Move the -12 to the right side first so only the x terms remain on the left.",
+            "x² + 4x = 12. Half of 4 is 2; squaring gives 4. Add 4 to BOTH sides, not just the left.",
+            "(x + 2)² = 16, so x + 2 = ±4. That is two equations — solve each."
+          ]
+        },
+        {
+          "id": "qf-cs2",
+          "question": "Solve 2x² - 8x + 2 = 0 by completing the square. Leave your answer in exact form.",
+          "answer": "Divide the whole equation by 2 first: x² - 4x + 1 = 0. Move the constant: x² - 4x = -1. Half of -4 is -2 and (-2)² = 4, so x² - 4x + 4 = 3, giving (x - 2)² = 3. Take roots: x - 2 = ±√3, so x = 2 ± √3 (about 3.73 and 0.27). Three is not a perfect square, so the answer stays a radical.",
+          "hints": [
+            "The leading coefficient is 2. Dividing the whole equation by 2 is cleaner here than factoring it out, because every term is even.",
+            "x² - 4x + 1 = 0 → x² - 4x = -1. Now half of -4 is -2, and (-2)² = 4.",
+            "(x - 2)² = 3 gives x - 2 = ±√3. Leave √3 exact — a decimal would only be an approximation."
+          ]
         }
       ],
-      "initialPrompt": "Let's practice solving quadratics. For the first problem, x² - 7x + 12 = 0, what two numbers multiply to 12 and add to -7?",
-      "lessonId": "graphing-quadratics"
+      "initialPrompt": "Solve x² - 10x + 21 = 0 by completing the square. Start me off: what leaves the left side first, and what is half of -10?",
+      "lessonId": "completing-the-square"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "quadratic-formula",
-      "title": "The Quadratic Formula and the Discriminant",
-      "content": "Not every quadratic factors neatly. The **quadratic formula** works for ALL quadratic equations ax² + bx + c = 0:\n\n**x = (-b ± √(b² - 4ac)) / (2a)**\n\nThis formula is derived by completing the square on the general equation ax² + bx + c = 0. It always works, regardless of whether the equation factors.\n\n**The discriminant** is the expression under the square root: **D = b² - 4ac**. It tells you the number and type of solutions before you finish solving:\n\n- **D > 0** (positive): **Two distinct real solutions.** The parabola crosses the x-axis at two points.\n- **D = 0** (zero): **One repeated real solution** (a double root). The parabola touches the x-axis at exactly one point (the vertex is on the x-axis).\n- **D < 0** (negative): **No real solutions.** The square root of a negative number is not real. The parabola does not cross the x-axis at all.\n\n**Tip:** Calculate the discriminant first. It tells you what kind of answers to expect and helps you avoid errors. If D is a perfect square, the equation could have been factored.",
-      "initialPrompt": "For the equation 2x² - 5x - 3 = 0, identify a, b, and c. Then compute the discriminant b² - 4ac. What does the value tell you about the solutions?",
-      "lessonId": "solving-by-factoring"
+      "title": "The Quadratic Formula",
+      "content": "Factoring fails on plenty of quadratics, and completing the square gets messy when the numbers are awkward. The **quadratic formula** solves every quadratic equation, always:\n\n**x = (-b ± √(b² - 4ac)) / (2a)**   for ax² + bx + c = 0\n\n**Where it comes from:** it is completing the square carried out once, symbolically, on the general equation. Everything you would do with numbers has already been done with letters, so you can substitute and finish.\n\n**Using it without errors:**\n1. Write the equation in standard form ax² + bx + c = 0 first. If it is not equal to zero, the a, b and c you read off are wrong.\n2. Identify a, b and c **with their signs**. In 3x² - 5x - 2 = 0, b = -5 and c = -2, not 5 and 2.\n3. Substitute into the formula, using brackets around negative values. -b when b = -5 is +5, and (-5)² is positive 25 — two sign traps in the same expression.\n4. Simplify under the radical first, then take the root, then split into the two answers.\n5. Simplify the fraction, including any radical.\n\n**The ± is what produces two solutions**, exactly as in the square-root method — the formula is that method wearing a disguise.\n\n**The expression under the radical, b² - 4ac, has a name and a job of its own.** It is the discriminant, and it can tell you what kind of answer to expect before you finish. That is the next lesson.",
+      "initialPrompt": "In 3x² - 5x - 2 = 0, what are a, b and c? Say them with their signs — that is where most quadratic-formula mistakes are born.",
+      "lessonId": "quadratic-formula"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "quadratic-formula",
+      "title": "I-Do: Using the Quadratic Formula",
+      "examples": [
+        {
+          "problem": "Solve 2x² - 5x - 3 = 0 using the quadratic formula.",
+          "solution": "**Step 1: Identify a, b, c.**\na = 2, b = -5, c = -3\n\n**Step 2: Compute the discriminant.**\nD = b² - 4ac = (-5)² - 4(2)(-3) = 25 + 24 = **49**\nSince D = 49 > 0, there are **two distinct real solutions**.\nSince 49 is a perfect square, this equation could also have been factored.\n\n**Step 3: Apply the quadratic formula.**\nx = (-b ± √D) / (2a)\nx = (-(-5) ± √49) / (2 · 2)\nx = (5 ± 7) / 4\n\n**Step 4: Find both solutions.**\nx = (5 + 7) / 4 = 12 / 4 = **3**\nx = (5 - 7) / 4 = -2 / 4 = **-1/2**\n\n**Step 5: Verify.**\nx = 3: 2(9) - 5(3) - 3 = 18 - 15 - 3 = 0 ✓\nx = -1/2: 2(1/4) - 5(-1/2) - 3 = 1/2 + 5/2 - 3 = 6/2 - 3 = 0 ✓\n\n**Solutions: x = 3 or x = -1/2**",
+          "tip": "Be extra careful with signs. Here b = -5, so -b = -(-5) = +5. Also c = -3, so -4ac = -4(2)(-3) = +24. Double-check the discriminant before proceeding.",
+          "thinkAloud": "Alright, 2x² - 5x - 3 = 0. The leading coefficient isn't 1, and the constant is negative — let me think about whether this factors before jumping to the formula. I'd need factors of 2·(-3) = -6 that add to -5... that would be -6 and 1. So it could factor, but let me use the quadratic formula since that's what we're practicing. First, I'll carefully identify a = 2, b = -5, c = -3. I need to be extra cautious with the signs since b is negative and c is negative — that's two negatives that could trip me up. Let me compute the discriminant first to see what I'm dealing with.",
+          "commonMistake": "The most common error is mishandling the signs in the formula. Students write b² - 4ac = (-5)² - 4(2)(-3) and then compute 25 - 24 = 1 instead of 25 + 24 = 49. The mistake: they treat -4(2)(-3) as -24 instead of +24. Remember, negative times negative is positive: -4 × 2 × (-3) = +24, so D = 25 + 24 = 49.",
+          "decisionPoint": "I could try to factor this since the discriminant is a perfect square (49). In fact, 2x² - 5x - 3 = (2x + 1)(x - 3). But the quadratic formula is guaranteed to work for any quadratic, so it's a reliable all-purpose method when factoring isn't obvious.",
+          "interpretation": "The solutions x = 3 and x = -1/2 are where the parabola y = 2x² - 5x - 3 crosses the x-axis. Since a = 2 > 0, the parabola opens upward, meaning y is negative between the roots (for -1/2 < x < 3) and positive outside them. The fact that D = 49 is a perfect square tells us the solutions are rational numbers."
+        },
+        {
+          "problem": "A ball is thrown upward from a platform 5 feet high with an initial velocity of 48 ft/s. Its height is h = -16t² + 48t + 5. When does the ball hit the ground?",
+          "solution": "**Step 1: Set h = 0 (ground level).**\n-16t² + 48t + 5 = 0\n\n**Step 2: Identify a, b, c.**\na = -16, b = 48, c = 5\n\n**Step 3: Compute the discriminant.**\nD = 48² - 4(-16)(5) = 2304 + 320 = **2624**\nD > 0: two real solutions (one will be negative and physically meaningless).\n\n**Step 4: Apply the quadratic formula.**\nt = (-48 ± √2624) / (2 · -16)\nt = (-48 ± √2624) / (-32)\n\n√2624 = √(16 · 164) = 4√164 = 4√(4 · 41) = 8√41 ≈ 8 × 6.403 ≈ 51.22\n\nt = (-48 ± 51.22) / (-32)\n\nt = (-48 + 51.22) / (-32) = 3.22 / (-32) ≈ -0.10 (negative — discard)\nt = (-48 - 51.22) / (-32) = -99.22 / (-32) ≈ **3.10 seconds**\n\n**Step 5: Interpret.**\nThe ball hits the ground approximately **3.10 seconds** after being thrown.\n\nVerify: h(3.10) = -16(9.61) + 48(3.10) + 5 = -153.76 + 148.8 + 5 = 0.04 ≈ 0 ✓",
+          "tip": "In projectile problems, always discard the negative time solution — time cannot be negative. The positive solution is the physically meaningful answer.",
+          "thinkAloud": "This is a real-world projectile problem. The equation h = -16t² + 48t + 5 models height over time. To find when the ball hits the ground, I set h = 0 and solve. The -16 coefficient comes from gravity (in feet), 48 is the initial velocity, and 5 is the starting height. Since a = -16 is negative, the parabola opens downward — that makes sense for something going up and then coming back down. The discriminant probably won't be a perfect square since the numbers are messier, so I'll expect irrational answers and need to use a calculator for the approximation.",
+          "commonMistake": "Students often set up the equation correctly but then make an error simplifying √2624. They might write √2624 = 52 (because 52² = 2704, which is close but wrong). Always check: does your answer² give back the discriminant? Another common mistake is discarding the wrong solution — keeping the negative time instead of the positive one, or rounding too early in the calculation and getting an inaccurate final answer.",
+          "decisionPoint": "Could I factor -16t² + 48t + 5 = 0? The discriminant is 2624, which is not a perfect square, so factoring with integers is impossible. The quadratic formula is the only way to get exact answers here. For a real-world problem like this, a decimal approximation is also appropriate.",
+          "interpretation": "The answer t ≈ 3.10 seconds means the ball is in the air for about 3.10 seconds after being thrown. The negative solution (t ≈ -0.10) would represent a time before the throw — it has no physical meaning but mathematically represents when the parabola would have crossed h = 0 if extended backward. The starting height of 5 feet (the platform) is why the ball takes slightly longer to land than it would if thrown from ground level."
+        }
+      ],
+      "initialPrompt": "For 2x² - 5x - 3 = 0, read me a, b and c with their signs before we substitute anything.",
+      "lessonId": "quadratic-formula"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "quadratic-formula",
+      "title": "We-Do: The Quadratic Formula",
+      "problems": [
+        {
+          "id": "qf-wp8",
+          "question": "Solve 3x² + 2x - 5 = 0 using the quadratic formula.",
+          "answer": "a = 3, b = 2, c = -5. D = 4 + 60 = 64. x = (-2 ± 8)/6. x = (-2+8)/6 = 1 or x = (-2-8)/6 = -10/6 = -5/3. Solutions: x = 1 or x = -5/3. Verify: 3(1)+2(1)-5 = 0 ✓ and 3(25/9)+2(-5/3)-5 = 75/9 - 10/3 - 5 = 25/3 - 10/3 - 15/3 = 0 ✓.",
+          "hints": [
+            "Identify a = 3, b = 2, c = -5. Compute D = b² - 4ac = 4 - 4(3)(-5) = 4 + 60 = 64.",
+            "√64 = 8. Apply the formula: x = (-2 ± 8) / (2 · 3) = (-2 ± 8) / 6.",
+            "Two solutions: x = (-2 + 8)/6 = 6/6 = 1, and x = (-2 - 8)/6 = -10/6 = -5/3."
+          ]
+        },
+        {
+          "id": "qf-wp10",
+          "question": "A toy rocket’s height is modeled by h(t) = -16t² + 40t + 6. When does the rocket reach a height of 30 feet? Use the quadratic formula.",
+          "answer": "Set h(t) = 30: -16t² + 40t + 6 = 30 → -16t² + 40t - 24 = 0 → divide by -8: 2t² - 5t + 3 = 0. a = 2, b = -5, c = 3. D = 25 - 24 = 1. t = (5 ± 1)/4. t = 6/4 = 3/2 = 1.5 seconds or t = 4/4 = 1 second. The rocket is at 30 feet at t = 1 second (going up) and t = 1.5 seconds (coming down). Verify: h(1) = -16 + 40 + 6 = 30 ✓ and h(1.5) = -16(2.25) + 40(1.5) + 6 = -36 + 60 + 6 = 30 ✓.",
+          "hints": [
+            "Set h(t) = 30: -16t² + 40t + 6 = 30. Rearrange to standard form: -16t² + 40t - 24 = 0.",
+            "Simplify by dividing all terms by -8: 2t² - 5t + 3 = 0. Now use the quadratic formula with a = 2, b = -5, c = 3.",
+            "D = 25 - 24 = 1. t = (5 ± 1)/4. Both solutions t = 1 and t = 1.5 are positive — the rocket passes 30 feet twice (once on the way up, once on the way down)."
+          ]
+        }
+      ],
+      "initialPrompt": "Solve 3x² + 2x - 5 = 0 with the formula. First: a, b and c, signs included.",
+      "lessonId": "quadratic-formula"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "discriminant",
+      "title": "The Discriminant",
+      "content": "The expression under the radical in the quadratic formula has its own name and its own job:\n\n**D = b² - 4ac**\n\nComputing it costs one line and tells you the number and type of solutions **before** you solve.\n\n- **D > 0** → **two distinct real solutions.** The parabola crosses the x-axis twice.\n- **D = 0** → **one repeated real solution** (a double root). The parabola touches the x-axis exactly once, at its vertex.\n- **D < 0** → **no real solutions.** The formula would ask for the square root of a negative number. The parabola never reaches the x-axis.\n\n**A second signal, easy to miss:** if D is positive AND a **perfect square**, the solutions are rational and the quadratic factors over the integers — so factoring will work and is faster. If D is positive but not a perfect square, the solutions are irrational and factoring was never going to succeed.\n\n**Read it as a graph statement.** D counts x-intercepts: two, one, or none. If you have sketched the parabola and it clearly misses the x-axis, you already know D < 0 without computing it.\n\n**Working backwards.** Because D is an expression, you can set it to a value and solve for an unknown coefficient — \"for what k does x² + kx + 9 = 0 have exactly one solution?\" becomes k² - 36 = 0.\n\n**Habit worth forming:** compute D first, every time. It costs one line and tells you which method to use and what shape the answer will take.",
+      "initialPrompt": "Before solving x² - 6x + 4 = 0 — compute b² - 4ac. What do you think that single number is about to tell us?",
+      "lessonId": "discriminant"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "discriminant",
+      "title": "I-Do: Reading the Discriminant",
+      "examples": [
+        {
+          "problem": "Use the discriminant to determine how many real solutions each equation has: (a) x² + 4x + 4 = 0, (b) x² + 2x + 5 = 0, (c) 3x² - x - 2 = 0.",
+          "solution": "**(a) x² + 4x + 4 = 0**\na = 1, b = 4, c = 4\nD = 4² - 4(1)(4) = 16 - 16 = **0**\nOne repeated real solution. The parabola touches the x-axis at its vertex.\nSolving: x = -4 / (2 · 1) = -2. Double root: **x = -2**.\n\n**(b) x² + 2x + 5 = 0**\na = 1, b = 2, c = 5\nD = 2² - 4(1)(5) = 4 - 20 = **-16**\nD < 0: **no real solutions**. The parabola y = x² + 2x + 5 sits entirely above the x-axis.\n\n**(c) 3x² - x - 2 = 0**\na = 3, b = -1, c = -2\nD = (-1)² - 4(3)(-2) = 1 + 24 = **25**\nD > 0: **two distinct real solutions**. Since 25 is a perfect square, the equation factors.\nx = (1 ± 5) / 6 → x = 1 or x = -2/3.",
+          "tip": "The discriminant is your diagnostic tool. Compute D = b² - 4ac FIRST to know what to expect before you invest time in the full formula.",
+          "thinkAloud": "This problem gives me three equations and asks me to classify them by their discriminant. My approach: for each equation, I'll identify a, b, c, compute D = b² - 4ac, and then interpret the sign of D. I'm hoping to get one of each case — positive, zero, and negative — to show students all three possibilities. Let me be careful with the arithmetic, especially signs. For part (a), I notice b = 4 and c = 4, and 4² = 16 while 4ac = 4(1)(4) = 16... that looks like D = 0, a perfect square touching the axis.",
+          "commonMistake": "For part (b), students sometimes compute D = 2² - 4(1)(5) = 4 - 20 = -16 but then proceed to write √(-16) = -4 and claim x = (-2 ± (-4))/2. This is wrong — you cannot take the real square root of a negative number. When D < 0, you stop and conclude: no real solutions. Don't force an answer that doesn't exist.",
+          "interpretation": "The three cases show a direct visual connection: (a) D = 0 means the vertex sits exactly on the x-axis — the parabola just 'kisses' it at one point (x = -2). (b) D < 0 means the entire parabola floats above the x-axis (since a > 0) — it never touches. (c) D > 0 means the parabola punches through the x-axis at two points. Before solving any quadratic, the discriminant tells you which picture to expect."
+        }
+      ],
+      "initialPrompt": "We have three equations to classify. For the first, x² + 4x + 4 = 0, what are a, b and c — and what is D?",
+      "lessonId": "discriminant"
     },
     {
       "type": "guided_practice",
@@ -320,62 +556,6 @@
             "Write D with k in it: D = k² - 4(1)(9) = k² - 36. Now set that equal to 0.",
             "k² = 36 has two answers, not one — k = 6 and k = -6. Both make the trinomial a perfect square."
           ]
-        }
-      ],
-      "lessonId": "solving-by-factoring",
-      "initialPrompt": "Before we solve anything, let's read the equation. For x² - 6x + 4 = 0, what are a, b, and c — and be careful with the sign on b."
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "quadratic-formula",
-      "title": "I-Do: Quadratic Formula and Discriminant Analysis",
-      "examples": [
-        {
-          "problem": "Solve 2x² - 5x - 3 = 0 using the quadratic formula.",
-          "solution": "**Step 1: Identify a, b, c.**\na = 2, b = -5, c = -3\n\n**Step 2: Compute the discriminant.**\nD = b² - 4ac = (-5)² - 4(2)(-3) = 25 + 24 = **49**\nSince D = 49 > 0, there are **two distinct real solutions**.\nSince 49 is a perfect square, this equation could also have been factored.\n\n**Step 3: Apply the quadratic formula.**\nx = (-b ± √D) / (2a)\nx = (-(-5) ± √49) / (2 · 2)\nx = (5 ± 7) / 4\n\n**Step 4: Find both solutions.**\nx = (5 + 7) / 4 = 12 / 4 = **3**\nx = (5 - 7) / 4 = -2 / 4 = **-1/2**\n\n**Step 5: Verify.**\nx = 3: 2(9) - 5(3) - 3 = 18 - 15 - 3 = 0 ✓\nx = -1/2: 2(1/4) - 5(-1/2) - 3 = 1/2 + 5/2 - 3 = 6/2 - 3 = 0 ✓\n\n**Solutions: x = 3 or x = -1/2**",
-          "tip": "Be extra careful with signs. Here b = -5, so -b = -(-5) = +5. Also c = -3, so -4ac = -4(2)(-3) = +24. Double-check the discriminant before proceeding.",
-          "thinkAloud": "Alright, 2x² - 5x - 3 = 0. The leading coefficient isn't 1, and the constant is negative — let me think about whether this factors before jumping to the formula. I'd need factors of 2·(-3) = -6 that add to -5... that would be -6 and 1. So it could factor, but let me use the quadratic formula since that's what we're practicing. First, I'll carefully identify a = 2, b = -5, c = -3. I need to be extra cautious with the signs since b is negative and c is negative — that's two negatives that could trip me up. Let me compute the discriminant first to see what I'm dealing with.",
-          "commonMistake": "The most common error is mishandling the signs in the formula. Students write b² - 4ac = (-5)² - 4(2)(-3) and then compute 25 - 24 = 1 instead of 25 + 24 = 49. The mistake: they treat -4(2)(-3) as -24 instead of +24. Remember, negative times negative is positive: -4 × 2 × (-3) = +24, so D = 25 + 24 = 49.",
-          "decisionPoint": "I could try to factor this since the discriminant is a perfect square (49). In fact, 2x² - 5x - 3 = (2x + 1)(x - 3). But the quadratic formula is guaranteed to work for any quadratic, so it's a reliable all-purpose method when factoring isn't obvious.",
-          "interpretation": "The solutions x = 3 and x = -1/2 are where the parabola y = 2x² - 5x - 3 crosses the x-axis. Since a = 2 > 0, the parabola opens upward, meaning y is negative between the roots (for -1/2 < x < 3) and positive outside them. The fact that D = 49 is a perfect square tells us the solutions are rational numbers."
-        },
-        {
-          "problem": "Use the discriminant to determine how many real solutions each equation has: (a) x² + 4x + 4 = 0, (b) x² + 2x + 5 = 0, (c) 3x² - x - 2 = 0.",
-          "solution": "**(a) x² + 4x + 4 = 0**\na = 1, b = 4, c = 4\nD = 4² - 4(1)(4) = 16 - 16 = **0**\nOne repeated real solution. The parabola touches the x-axis at its vertex.\nSolving: x = -4 / (2 · 1) = -2. Double root: **x = -2**.\n\n**(b) x² + 2x + 5 = 0**\na = 1, b = 2, c = 5\nD = 2² - 4(1)(5) = 4 - 20 = **-16**\nD < 0: **no real solutions**. The parabola y = x² + 2x + 5 sits entirely above the x-axis.\n\n**(c) 3x² - x - 2 = 0**\na = 3, b = -1, c = -2\nD = (-1)² - 4(3)(-2) = 1 + 24 = **25**\nD > 0: **two distinct real solutions**. Since 25 is a perfect square, the equation factors.\nx = (1 ± 5) / 6 → x = 1 or x = -2/3.",
-          "tip": "The discriminant is your diagnostic tool. Compute D = b² - 4ac FIRST to know what to expect before you invest time in the full formula.",
-          "thinkAloud": "This problem gives me three equations and asks me to classify them by their discriminant. My approach: for each equation, I'll identify a, b, c, compute D = b² - 4ac, and then interpret the sign of D. I'm hoping to get one of each case — positive, zero, and negative — to show students all three possibilities. Let me be careful with the arithmetic, especially signs. For part (a), I notice b = 4 and c = 4, and 4² = 16 while 4ac = 4(1)(4) = 16... that looks like D = 0, a perfect square touching the axis.",
-          "commonMistake": "For part (b), students sometimes compute D = 2² - 4(1)(5) = 4 - 20 = -16 but then proceed to write √(-16) = -4 and claim x = (-2 ± (-4))/2. This is wrong — you cannot take the real square root of a negative number. When D < 0, you stop and conclude: no real solutions. Don't force an answer that doesn't exist.",
-          "interpretation": "The three cases show a direct visual connection: (a) D = 0 means the vertex sits exactly on the x-axis — the parabola just 'kisses' it at one point (x = -2). (b) D < 0 means the entire parabola floats above the x-axis (since a > 0) — it never touches. (c) D > 0 means the parabola punches through the x-axis at two points. Before solving any quadratic, the discriminant tells you which picture to expect."
-        },
-        {
-          "problem": "A ball is thrown upward from a platform 5 feet high with an initial velocity of 48 ft/s. Its height is h = -16t² + 48t + 5. When does the ball hit the ground?",
-          "solution": "**Step 1: Set h = 0 (ground level).**\n-16t² + 48t + 5 = 0\n\n**Step 2: Identify a, b, c.**\na = -16, b = 48, c = 5\n\n**Step 3: Compute the discriminant.**\nD = 48² - 4(-16)(5) = 2304 + 320 = **2624**\nD > 0: two real solutions (one will be negative and physically meaningless).\n\n**Step 4: Apply the quadratic formula.**\nt = (-48 ± √2624) / (2 · -16)\nt = (-48 ± √2624) / (-32)\n\n√2624 = √(16 · 164) = 4√164 = 4√(4 · 41) = 8√41 ≈ 8 × 6.403 ≈ 51.22\n\nt = (-48 ± 51.22) / (-32)\n\nt = (-48 + 51.22) / (-32) = 3.22 / (-32) ≈ -0.10 (negative — discard)\nt = (-48 - 51.22) / (-32) = -99.22 / (-32) ≈ **3.10 seconds**\n\n**Step 5: Interpret.**\nThe ball hits the ground approximately **3.10 seconds** after being thrown.\n\nVerify: h(3.10) = -16(9.61) + 48(3.10) + 5 = -153.76 + 148.8 + 5 = 0.04 ≈ 0 ✓",
-          "tip": "In projectile problems, always discard the negative time solution — time cannot be negative. The positive solution is the physically meaningful answer.",
-          "thinkAloud": "This is a real-world projectile problem. The equation h = -16t² + 48t + 5 models height over time. To find when the ball hits the ground, I set h = 0 and solve. The -16 coefficient comes from gravity (in feet), 48 is the initial velocity, and 5 is the starting height. Since a = -16 is negative, the parabola opens downward — that makes sense for something going up and then coming back down. The discriminant probably won't be a perfect square since the numbers are messier, so I'll expect irrational answers and need to use a calculator for the approximation.",
-          "commonMistake": "Students often set up the equation correctly but then make an error simplifying √2624. They might write √2624 = 52 (because 52² = 2704, which is close but wrong). Always check: does your answer² give back the discriminant? Another common mistake is discarding the wrong solution — keeping the negative time instead of the positive one, or rounding too early in the calculation and getting an inaccurate final answer.",
-          "decisionPoint": "Could I factor -16t² + 48t + 5 = 0? The discriminant is 2624, which is not a perfect square, so factoring with integers is impossible. The quadratic formula is the only way to get exact answers here. For a real-world problem like this, a decimal approximation is also appropriate.",
-          "interpretation": "The answer t ≈ 3.10 seconds means the ball is in the air for about 3.10 seconds after being thrown. The negative solution (t ≈ -0.10) would represent a time before the throw — it has no physical meaning but mathematically represents when the parabola would have crossed h = 0 if extended backward. The starting height of 5 feet (the platform) is why the ball takes slightly longer to land than it would if thrown from ground level."
-        }
-      ],
-      "initialPrompt": "In the first example, the discriminant was 49. Since √49 = 7 (a whole number), the arithmetic works out cleanly. What would change if the discriminant were not a perfect square?",
-      "lessonId": "solving-by-factoring"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "quadratic-formula",
-      "title": "We-Do: Quadratic Formula and Discriminant",
-      "problems": [
-        {
-          "id": "qf-wp8",
-          "question": "Solve 3x² + 2x - 5 = 0 using the quadratic formula.",
-          "answer": "a = 3, b = 2, c = -5. D = 4 + 60 = 64. x = (-2 ± 8)/6. x = (-2+8)/6 = 1 or x = (-2-8)/6 = -10/6 = -5/3. Solutions: x = 1 or x = -5/3. Verify: 3(1)+2(1)-5 = 0 ✓ and 3(25/9)+2(-5/3)-5 = 75/9 - 10/3 - 5 = 25/3 - 10/3 - 15/3 = 0 ✓.",
-          "hints": [
-            "Identify a = 3, b = 2, c = -5. Compute D = b² - 4ac = 4 - 4(3)(-5) = 4 + 60 = 64.",
-            "√64 = 8. Apply the formula: x = (-2 ± 8) / (2 · 3) = (-2 ± 8) / 6.",
-            "Two solutions: x = (-2 + 8)/6 = 6/6 = 1, and x = (-2 - 8)/6 = -10/6 = -5/3."
-          ]
         },
         {
           "id": "qf-wp9",
@@ -386,20 +566,10 @@
             "D = 0 means one repeated real solution (a double root). The vertex touches the x-axis.",
             "x = -(-12) / (2 · 4) = 12/8 = 3/2. This is the only solution."
           ]
-        },
-        {
-          "id": "qf-wp10",
-          "question": "A toy rocket’s height is modeled by h(t) = -16t² + 40t + 6. When does the rocket reach a height of 30 feet? Use the quadratic formula.",
-          "answer": "Set h(t) = 30: -16t² + 40t + 6 = 30 → -16t² + 40t - 24 = 0 → divide by -8: 2t² - 5t + 3 = 0. a = 2, b = -5, c = 3. D = 25 - 24 = 1. t = (5 ± 1)/4. t = 6/4 = 3/2 = 1.5 seconds or t = 4/4 = 1 second. The rocket is at 30 feet at t = 1 second (going up) and t = 1.5 seconds (coming down). Verify: h(1) = -16 + 40 + 6 = 30 ✓ and h(1.5) = -16(2.25) + 40(1.5) + 6 = -36 + 60 + 6 = 30 ✓.",
-          "hints": [
-            "Set h(t) = 30: -16t² + 40t + 6 = 30. Rearrange to standard form: -16t² + 40t - 24 = 0.",
-            "Simplify by dividing all terms by -8: 2t² - 5t + 3 = 0. Now use the quadratic formula with a = 2, b = -5, c = 3.",
-            "D = 25 - 24 = 1. t = (5 ± 1)/4. Both solutions t = 1 and t = 1.5 are positive — the rocket passes 30 feet twice (once on the way up, once on the way down)."
-          ]
         }
       ],
-      "initialPrompt": "For the first problem, 3x² + 2x - 5 = 0, what are a, b, and c? Let's compute the discriminant first to see what kind of solutions we'll get.",
-      "lessonId": "solving-by-factoring"
+      "lessonId": "discriminant",
+      "initialPrompt": "Before we solve anything, let's read the equation. For x² - 6x + 4 = 0, what are a, b, and c — and be careful with the sign on b."
     },
     {
       "type": "independent_practice",
@@ -510,7 +680,13 @@
     "qf-ds1": "D = 20 > 0: two distinct real (irrational) solutions, x = 3 ± √5.",
     "qf-ds2": "D = 0: one repeated real solution, x = 3/2. The trinomial is (2x - 3)².",
     "qf-ds3": "D = -31 < 0: no real solutions; the upward parabola never crosses the x-axis.",
-    "qf-ds4": "k = ±6. Set D = k² - 36 = 0."
+    "qf-ds4": "k = ±6. Set D = k² - 36 = 0.",
+    "qf-vf1": "Vertex (1, -7); axis x = 1; opens upward; minimum -7.",
+    "qf-vf2": "y = (x + 4)² - 6; vertex (-4, -6).",
+    "qf-vf3": "y = 2(x - 3)² - 5; vertex (3, -5).",
+    "qf-vf4": "y = 2(x + 1)² + 4.",
+    "qf-cs1": "x = 2 or x = -6, from (x + 2)² = 16.",
+    "qf-cs2": "x = 2 ± √3, from (x - 2)² = 3."
   },
   "lessons": [
     {
