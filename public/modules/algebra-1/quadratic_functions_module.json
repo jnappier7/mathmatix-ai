@@ -137,12 +137,48 @@
       "title": "We-Do: Solving Quadratics Square Roots — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for solving quadratics square roots.",
-          "hint": "Apply the concepts of solving quadratics square roots.",
-          "solution": "Step-by-step solution for solving quadratics square roots."
+          "id": "qf-sr1",
+          "question": "Solve 3x² - 75 = 0 by taking square roots.",
+          "answer": "3x² = 75, so x² = 25 and x = ±5. Verify: 3(25) - 75 = 75 - 75 = 0 ✓ for both x = 5 and x = -5.",
+          "hints": [
+            "There is no x term here — only x² and a constant. That is the signal to isolate x² and take square roots instead of factoring.",
+            "Add 75 to both sides, then divide by 3: x² = 25.",
+            "Take the square root of both sides. Because both 5² and (-5)² equal 25, write x = ±5 — two solutions, not one."
+          ]
+        },
+        {
+          "id": "qf-sr2",
+          "question": "Solve (x - 4)² = 49.",
+          "answer": "x - 4 = ±7, so x = 4 + 7 = 11 or x = 4 - 7 = -3. Verify: (11 - 4)² = 7² = 49 ✓ and (-3 - 4)² = (-7)² = 49 ✓.",
+          "hints": [
+            "The squared expression is already isolated. Do not expand it — expanding turns a one-step problem into a three-step one.",
+            "Take the square root of both sides: x - 4 = ±7.",
+            "That is two equations, not one: x - 4 = 7 and x - 4 = -7. Solve each for x."
+          ]
+        },
+        {
+          "id": "qf-sr3",
+          "question": "Solve 2x² - 24 = 0. Leave your answer in simplified radical form.",
+          "answer": "2x² = 24, so x² = 12 and x = ±√12. Simplify: √12 = √(4·3) = 2√3, so x = ±2√3 (about ±3.46). Verify: 2(2√3)² - 24 = 2(4·3) - 24 = 24 - 24 = 0 ✓.",
+          "hints": [
+            "Isolate x² first: add 24 to both sides, then divide by 2.",
+            "x² = 12, so x = ±√12. Twelve is not a perfect square, so the answer stays a radical — that is fine.",
+            "Simplify √12 by pulling out the largest perfect-square factor: 12 = 4 · 3, and √4 = 2, so √12 = 2√3."
+          ]
+        },
+        {
+          "id": "qf-sr4",
+          "question": "A ball is dropped from a window 80 feet up. Its height in feet after t seconds is h = 80 - 16t². How long until it hits the ground? Round to the nearest hundredth of a second.",
+          "answer": "Hitting the ground means h = 0: 80 - 16t² = 0, so 16t² = 80 and t² = 5, giving t = ±√5. Time cannot be negative, so t = √5 ≈ 2.24 seconds. Verify: 80 - 16(5) = 80 - 80 = 0 ✓.",
+          "hints": [
+            "\"Hits the ground\" means the height is 0. Set h = 0 and solve for t.",
+            "80 - 16t² = 0 has no t term, so isolate t²: 16t² = 80, then t² = 5.",
+            "t = ±√5, but one of those answers is impossible here — a ball cannot land at a negative time. Keep t = √5 ≈ 2.24 s."
+          ]
         }
       ],
-      "lessonId": "vertex-form"
+      "lessonId": "vertex-form",
+      "initialPrompt": "Let's solve some quadratics without factoring. Look at 3x² - 75 = 0 — what is different about this equation compared to the ones we factored, and what does that tell you about which method to use?"
     },
     {
       "type": "model",
@@ -246,12 +282,48 @@
       "title": "We-Do: Discriminant — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for discriminant.",
-          "hint": "Apply the concepts of discriminant.",
-          "solution": "Step-by-step solution for discriminant."
+          "id": "qf-ds1",
+          "question": "Find the discriminant of x² - 6x + 4 = 0 and say how many real solutions it has.",
+          "answer": "a = 1, b = -6, c = 4. D = (-6)² - 4(1)(4) = 36 - 16 = 20. Since D > 0, there are two distinct real solutions. And because 20 is not a perfect square, those solutions are irrational — the quadratic formula gives x = (6 ± √20)/2 = 3 ± √5 (about 5.24 and 0.76), which is why this one would not have factored.",
+          "hints": [
+            "Match the equation to ax² + bx + c = 0 first. Watch the sign: b is -6, not 6.",
+            "D = b² - 4ac = (-6)² - 4(1)(4). Remember (-6)² is positive 36.",
+            "D = 20. Positive means two distinct real solutions — the parabola crosses the x-axis twice. Not a perfect square means those crossings are at irrational values."
+          ]
+        },
+        {
+          "id": "qf-ds2",
+          "question": "Find the discriminant of 4x² - 12x + 9 = 0 and say how many real solutions it has.",
+          "answer": "a = 4, b = -12, c = 9. D = (-12)² - 4(4)(9) = 144 - 144 = 0. D = 0 means exactly one repeated real solution: x = 3/2. That matches the factoring, since 4x² - 12x + 9 = (2x - 3)². The parabola touches the x-axis at its vertex instead of crossing it.",
+          "hints": [
+            "a = 4 here, not 1 — the 4 goes into the 4ac part of the formula.",
+            "D = (-12)² - 4(4)(9) = 144 - 144.",
+            "D = 0 is the special case: one repeated solution. Solve for it with x = -b/(2a) = 12/8 = 3/2."
+          ]
+        },
+        {
+          "id": "qf-ds3",
+          "question": "Find the discriminant of 2x² + 3x + 5 = 0. How many real solutions does it have, and what does the graph look like?",
+          "answer": "a = 2, b = 3, c = 5. D = 3² - 4(2)(5) = 9 - 40 = -31. Since D < 0, there are no real solutions — the quadratic formula would ask for √(-31), which is not a real number. The parabola opens upward (a > 0) and its vertex sits above the x-axis, so it never crosses.",
+          "hints": [
+            "Compute D = b² - 4ac before trying to solve. It tells you whether solving is even worth it.",
+            "D = 9 - 40. A discriminant is allowed to be negative — that is information, not a mistake.",
+            "D = -31 < 0, so no real solutions. Since a = 2 is positive the parabola opens up, so the whole curve sits above the x-axis."
+          ]
+        },
+        {
+          "id": "qf-ds4",
+          "question": "For what value(s) of k does x² + kx + 9 = 0 have exactly one real solution?",
+          "answer": "\"Exactly one real solution\" means D = 0. Here a = 1, b = k, c = 9, so D = k² - 4(1)(9) = k² - 36. Set k² - 36 = 0, giving k = ±6. Verify: k = 6 gives x² + 6x + 9 = (x + 3)², a double root at x = -3 ✓; k = -6 gives x² - 6x + 9 = (x - 3)², a double root at x = 3 ✓.",
+          "hints": [
+            "Translate the words into a condition on the discriminant. Two solutions means D > 0, none means D < 0, so exactly one means D = ___?",
+            "Write D with k in it: D = k² - 4(1)(9) = k² - 36. Now set that equal to 0.",
+            "k² = 36 has two answers, not one — k = 6 and k = -6. Both make the trinomial a perfect square."
+          ]
         }
       ],
-      "lessonId": "solving-square-roots"
+      "lessonId": "solving-square-roots",
+      "initialPrompt": "Before we solve anything, let's read the equation. For x² - 6x + 4 = 0, what are a, b, and c — and be careful with the sign on b."
     },
     {
       "type": "model",
@@ -430,7 +502,15 @@
     "qf-yp5": "x = ±5. Isolate x² = 25, take square root.",
     "qf-yp6": "x = (-3 ± √37)/2. D = 37 (irrational roots).",
     "qf-yp7": "No real solutions. D = -16 < 0. Parabola does not cross x-axis.",
-    "qf-yp8": "t ≈ 1.75 seconds. D = 209, discard negative root."
+    "qf-yp8": "t ≈ 1.75 seconds. D = 209, discard negative root.",
+    "qf-sr1": "x = ±5. Isolate x² = 25, then take square roots.",
+    "qf-sr2": "x = 11 or x = -3. Take square roots: x - 4 = ±7.",
+    "qf-sr3": "x = ±2√3 (about ±3.46). x² = 12, and √12 = 2√3.",
+    "qf-sr4": "t = √5 ≈ 2.24 seconds. Set 80 - 16t² = 0, so t² = 5; reject the negative root.",
+    "qf-ds1": "D = 20 > 0: two distinct real (irrational) solutions, x = 3 ± √5.",
+    "qf-ds2": "D = 0: one repeated real solution, x = 3/2. The trinomial is (2x - 3)².",
+    "qf-ds3": "D = -31 < 0: no real solutions; the upward parabola never crosses the x-axis.",
+    "qf-ds4": "k = ±6. Set D = k² - 36 = 0."
   },
   "lessons": [
     {

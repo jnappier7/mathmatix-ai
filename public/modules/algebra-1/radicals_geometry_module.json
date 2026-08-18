@@ -51,12 +51,48 @@
       "title": "We-Do: Operations With Radicals — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for operations with radicals.",
-          "hint": "Apply the concepts of operations with radicals.",
-          "solution": "Step-by-step solution for operations with radicals."
+          "id": "rg-op1",
+          "question": "Simplify √18 + √50.",
+          "answer": "Neither radical is in simplest form, so simplify first: √18 = √(9·2) = 3√2 and √50 = √(25·2) = 5√2. Now the radicands match, so add the coefficients: 3√2 + 5√2 = 8√2 (about 11.31). Check with decimals: 4.243 + 7.071 = 11.314 ✓.",
+          "hints": [
+            "You can only add radicals that have the same radicand — the number under the √. Right now 18 and 50 look different, so simplify each one before deciding.",
+            "Pull out the largest perfect square: 18 = 9 · 2, so √18 = 3√2. Do the same with 50 = 25 · 2.",
+            "Both became something times √2. Add the coefficients only — 3 + 5 = 8 — and keep the √2 unchanged, exactly like combining 3x + 5x."
+          ]
+        },
+        {
+          "id": "rg-op2",
+          "question": "Simplify 7√3 - √27.",
+          "answer": "√27 = √(9·3) = 3√3, so the expression becomes 7√3 - 3√3 = 4√3 (about 6.93). Check with decimals: 7(1.732) - 5.196 = 12.124 - 5.196 = 6.928 ✓.",
+          "hints": [
+            "Only one term needs work. Is 27 hiding a perfect square factor?",
+            "27 = 9 · 3, so √27 = √9 · √3 = 3√3. Rewrite the expression with that substitution.",
+            "7√3 - 3√3: subtract the coefficients (7 - 3 = 4) and keep √3. The radical never gets subtracted — only the numbers in front of it."
+          ]
+        },
+        {
+          "id": "rg-op3",
+          "question": "Multiply and simplify: (2√6)(5√3).",
+          "answer": "Multiply the outside numbers together and the radicals together: (2·5)(√6·√3) = 10√18. That is not finished — √18 = √(9·2) = 3√2, so 10√18 = 10·3√2 = 30√2 (about 42.43). Check with decimals: 4.899 × 8.660 = 42.43 ✓.",
+          "hints": [
+            "Multiplying is different from adding: here the radicands do NOT have to match. Use the product property √a · √b = √(ab).",
+            "Group them: (2 · 5) for the coefficients and (√6 · √3) = √18 for the radicals. That gives 10√18.",
+            "You are not done — always check whether the new radicand simplifies. 18 = 9 · 2, so √18 = 3√2, and 10 · 3√2 = 30√2."
+          ]
+        },
+        {
+          "id": "rg-op4",
+          "question": "A rectangle has length 3√5 units and width √5 units. Find its area and its perimeter, both in simplest form.",
+          "answer": "Area = length × width = (3√5)(√5) = 3(√5 · √5) = 3(5) = 15 square units — the radical disappears completely, because √5 · √5 = 5. Perimeter = 2(3√5) + 2(√5) = 6√5 + 2√5 = 8√5 ≈ 17.89 units. Notice the two results behave differently: multiplying radicals can produce a whole number, while adding them usually leaves a radical.",
+          "hints": [
+            "Area multiplies the sides, perimeter adds them — and radicals behave very differently under those two operations. Do them separately.",
+            "For area: (3√5)(√5) = 3(√5 · √5). What is √5 · √5? A square root times itself undoes the root.",
+            "For perimeter: 2(3√5) + 2(√5) = 6√5 + 2√5. Same radicand, so add the coefficients: 8√5. Leave it as a radical — it is not a whole number."
+          ]
         }
       ],
-      "lessonId": "operations-radicals"
+      "lessonId": "operations-radicals",
+      "initialPrompt": "Take a look at √18 + √50. Can we just add 18 and 50 under one radical? Before you answer, what has to be true about two radicals before we're allowed to combine them?"
     },
     {
       "type": "model",
@@ -303,7 +339,11 @@
     "rg-yp3": "41. Pythagorean triple 9-40-41. 81 + 1600 = 1681 = 41².",
     "rg-yp4": "17 miles. Right triangle: 8² + 15² = 289, √289 = 17. Triple: 8-15-17.",
     "rg-yp5": "10 units. d = √(36 + 64) = √100 = 10.",
-    "rg-yp6": "Midpoint: (5, 3). Distance: 10 units. d = √(36 + 64) = √100 = 10."
+    "rg-yp6": "Midpoint: (5, 3). Distance: 10 units. d = √(36 + 64) = √100 = 10.",
+    "rg-op1": "8√2 ≈ 11.31. Simplify to 3√2 + 5√2 first.",
+    "rg-op2": "4√3 ≈ 6.93. √27 = 3√3, then 7√3 - 3√3.",
+    "rg-op3": "30√2 ≈ 42.43. (2·5)(√6·√3) = 10√18 = 10(3√2).",
+    "rg-op4": "Area = 15 square units; perimeter = 8√5 ≈ 17.89 units."
   },
   "lessons": [
     {
