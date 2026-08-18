@@ -40,9 +40,87 @@
       "lessonPhase": "concept-intro",
       "skill": "simplifying-radicals",
       "title": "Introduction to Radicals and Simplifying Square Roots",
-      "content": "A **radical expression** contains a root symbol (√). The most common radical is the **square root**.\n\n**Square root definition:** √a is the non-negative number whose square is a. That is, if √a = b, then b² = a and b ≥ 0.\n\n**Perfect squares** are numbers whose square roots are whole numbers:\n√1 = 1, √4 = 2, √9 = 3, √16 = 4, √25 = 5, √36 = 6, √49 = 7, √64 = 8, √81 = 9, √100 = 10, √121 = 11, √144 = 12, √169 = 13, √196 = 14, √225 = 15.\n\n**Product Property of Square Roots:** For a ≥ 0 and b ≥ 0:\n**√(ab) = √a · √b**\n\nThis property lets us simplify radicals by factoring out perfect squares:\n1. Find the **largest perfect square factor** of the number under the radical.\n2. Rewrite the radical as a product of two square roots.\n3. Simplify the perfect square root.\n\n**Example:** √72 = √(36 · 2) = √36 · √2 = 6√2\n\n**Variables under radicals:** For variables with even exponents, use √(x²) = |x| (or simply x when x ≥ 0):\n√(x⁴) = x², √(x⁶) = x³, √(25x²) = 5x (assuming x ≥ 0).\n\n**Adding and subtracting radicals:** You can only combine radicals with the **same radicand** (the expression under the radical sign). These are called **like radicals**, similar to like terms:\n3√5 + 7√5 = 10√5 (same radicand √5)\n4√2 − √2 = 3√2 (same radicand √2)\n3√2 + 4√3 cannot be combined (different radicands)",
-      "initialPrompt": "What is the largest perfect square that divides evenly into 50? Once you find it, how would you use the product property to simplify √50?",
+      "content": "A **radical expression** contains a root symbol (√). The most common radical is the **square root**.\n\n**Square root definition:** √a is the non-negative number whose square is a. That is, if √a = b, then b² = a and b ≥ 0.\n\nThe √ symbol means the **principal** (non-negative) root. That's why √9 is 3, not ±3 — the ± appears only when *you* take the square root of both sides of an equation.\n\n**Perfect squares** are numbers whose square roots are whole numbers:\n√1 = 1, √4 = 2, √9 = 3, √16 = 4, √25 = 5, √36 = 6, √49 = 7, √64 = 8, √81 = 9, √100 = 10, √121 = 11, √144 = 12, √169 = 13, √196 = 14, √225 = 15.\n\nKnowing these on sight is what makes the rest of the lesson fast.\n\n**Product Property of Square Roots:** for a ≥ 0 and b ≥ 0:\n\n**√(ab) = √a · √b**\n\nThis property lets us simplify radicals by factoring out perfect squares:\n1. Find the **largest perfect square factor** of the number under the radical.\n2. Rewrite the radical as a product of two square roots.\n3. Simplify the perfect square root.\n\n**Example:** √72 = √(36 · 2) = √36 · √2 = 6√2\n\n**Use the largest perfect square you can find.** √72 = √(4·18) = 2√18 is true but not finished — √18 still hides a perfect square. If your answer still simplifies, you didn't take the largest factor.\n\n**A radical is fully simplified when** the radicand has no perfect-square factors left.\n\n**Variables under radicals:** for variables with even exponents, √(x²) = |x| (or simply x when x ≥ 0):\n√(x⁴) = x², √(x⁶) = x³, √(25x²) = 5x (assuming x ≥ 0).\n\nThe pattern is halving the exponent — which makes sense, since (x³)² = x⁶.",
+      "initialPrompt": "√72 — what is the largest perfect square that divides 72? What does that let you pull out from under the radical?",
       "lessonId": "simplifying-radicals"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "simplifying-radicals",
+      "title": "I-Do: Simplifying Radical Expressions",
+      "examples": [
+        {
+          "problem": "Simplify √72.",
+          "solution": "**Step 1: Find the largest perfect square factor of 72.**\nList factors of 72: 1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72.\nPerfect square factors: 1, 4, 9, 36.\nLargest perfect square factor: **36**.\n\n**Step 2: Rewrite using the product property.**\n√72 = √(36 · 2)\n\n**Step 3: Apply the product property √(ab) = √a · √b.**\n√(36 · 2) = √36 · √2\n\n**Step 4: Simplify the perfect square root.**\n√36 · √2 = **6√2**\n\n**Verify:** (6√2)² = 36 · 2 = 72 ✓\n\n**Why choose 36 and not 4 or 9?** Using the largest perfect square factor gives the simplest answer in one step. If we used 4: √72 = √(4·18) = 2√18, but √18 can still be simplified (√18 = √(9·2) = 3√2), so we would get 2·3√2 = 6√2 — the same answer, but in more steps.",
+          "tip": "Always look for the LARGEST perfect square factor. It saves steps. If you are unsure, start dividing by perfect squares: is 72 divisible by 4? Yes (72 = 4·18). By 9? Yes (72 = 9·8). By 16? No. By 25? No. By 36? Yes (72 = 36·2). Use 36."
+        },
+        {
+          "problem": "Simplify √(50x²), assuming x ≥ 0.",
+          "solution": "**Step 1: Factor the number and the variable separately.**\n50 = 25 · 2 (25 is the largest perfect square factor of 50)\nx² is already a perfect square.\n\n**Step 2: Rewrite.**\n√(50x²) = √(25 · 2 · x²)\n\n**Step 3: Apply the product property.**\n√(25 · 2 · x²) = √25 · √2 · √(x²)\n\n**Step 4: Simplify each part.**\n√25 = 5\n√(x²) = x (since x ≥ 0)\n\n**Result:** 5 · x · √2 = **5x√2**\n\n**Verify:** (5x√2)² = 25x² · 2 = 50x² ✓\n\n**Key insight:** When simplifying radicals with variables, separate the coefficient (number) and the variable parts. Simplify each independently, then combine.",
+          "tip": "For variables under a radical, pair up the exponents: √(x²) = x, √(x⁴) = x², √(x⁶) = x³. An odd exponent leaves one factor inside: √(x³) = √(x²·x) = x√x."
+        }
+      ],
+      "initialPrompt": "In the first example, we found that 36 was the largest perfect square factor of 72. What are the perfect square factors of 48? What is the largest one, and how would you use it to simplify √48?",
+      "lessonId": "simplifying-radicals"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "simplifying-radicals",
+      "title": "We-Do: Simplifying Radicals",
+      "problems": [
+        {
+          "id": "rg-wp1",
+          "question": "Simplify √98.",
+          "answer": "98 = 49 · 2. √98 = √(49 · 2) = √49 · √2 = 7√2. Verify: (7√2)² = 49 · 2 = 98 ✓.",
+          "hints": [
+            "Find the largest perfect square factor of 98. Is 98 divisible by 4? 98/4 = 24.5 — no. By 9? 98/9 ≈ 10.9 — no. By 25? 98/25 = 3.92 — no. By 49? 98/49 = 2 — yes!",
+            "Rewrite: √98 = √(49 · 2). Apply the product property: √49 · √2.",
+            "√49 = 7. Final answer: 7√2. Check: 7² · 2 = 49 · 2 = 98 ✓."
+          ]
+        },
+        {
+          "id": "rg-wp2",
+          "question": "Simplify √(75y⁴), assuming y ≥ 0.",
+          "answer": "75 = 25 · 3. y⁴ = (y²)². √(75y⁴) = √(25 · 3 · y⁴) = √25 · √3 · √(y⁴) = 5 · √3 · y² = 5y²√3.",
+          "hints": [
+            "Factor the number: 75 = 25 · 3 (25 is the largest perfect square factor). Factor the variable: y⁴ is a perfect square since y⁴ = (y²)².",
+            "Apply the product property: √(25 · 3 · y⁴) = √25 · √3 · √(y⁴).",
+            "Simplify: √25 = 5, √(y⁴) = y². Combine: 5y²√3."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's simplify these radicals together. For the first problem, you need to find the largest perfect square that divides 98. Start by testing perfect squares: is 98 divisible by 4? By 9? By 25? By 49?",
+      "lessonId": "simplifying-radicals"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "operations-with-radicals",
+      "title": "Operations with Radicals",
+      "content": "Radicals add like **terms** and multiply like **factors** — two different rules, and mixing them up is where most errors come from.\n\n**Adding and subtracting: the radicands must MATCH.**\n\nYou can only combine radicals with the same **radicand** (the expression under the radical sign). These are **like radicals**, and they behave exactly like like terms:\n\n3√5 + 7√5 = 10√5  (same radicand — add the coefficients, keep the radical)\n4√2 − √2 = 3√2  (√2 has an unwritten coefficient of 1)\n3√2 + 4√3 **cannot be combined** (different radicands)\n\nThink of √5 as if it were the variable x: 3x + 7x = 10x, and 3x + 4y stays as it is.\n\n**Simplify FIRST, then look for like radicals.** This is the step that makes the lesson work. √18 + √50 looks uncombinable until you simplify:\n\n√18 + √50 = 3√2 + 5√2 = **8√2**\n\nTwo radicals that look different can become like radicals once each is reduced. Never conclude \"can't be combined\" before simplifying both.\n\n**Never add the radicands.** √9 + √16 = 3 + 4 = 7, but √(9 + 16) = √25 = 5. So √a + √b ≠ √(a + b) — there is no sum property for radicals, only a product property.\n\n**Multiplying: the radicands DON'T have to match.**\n\n**√a · √b = √(ab)**, and coefficients multiply with coefficients:\n\n(3√2)(4√6) = (3·4)√(2·6) = 12√12 = 12·2√3 = **24√3**\n\nMultiply straight across, then simplify the result — a product often produces a new perfect-square factor, as √12 did here.\n\n**A useful special case:** √a · √a = a. So (√7)² = 7, with the radical gone entirely.\n\n**In geometry problems**, area is a product (multiply, radicands may differ) and perimeter is a sum (add, radicands must match). A rectangle 3√5 by √5 has area 3·5 = 15 — no radical at all — and perimeter 2(3√5) + 2(√5) = 8√5. Same two numbers, two completely different rules.",
+      "initialPrompt": "Can you combine √18 + √50 as written? Simplify each one first, then look again — what changed?",
+      "lessonId": "operations-radicals"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "operations-with-radicals",
+      "title": "I-Do: Operations with Radicals",
+      "examples": [
+        {
+          "problem": "Simplify 3√18 + 2√8.",
+          "solution": "**Step 1: Simplify each radical individually first.**\n√18 = √(9 · 2) = √9 · √2 = 3√2\n√8 = √(4 · 2) = √4 · √2 = 2√2\n\n**Step 2: Substitute back into the expression.**\n3√18 + 2√8 = 3(3√2) + 2(2√2)\n= 9√2 + 4√2\n\n**Step 3: Combine like radicals (same radicand √2).**\n9√2 + 4√2 = **(9 + 4)√2 = 13√2**\n\n**Verify the approach:** The key is that √18 and √8, while looking different, both simplify to multiples of √2. Once simplified, they become like radicals and can be combined — just like combining like terms 9x + 4x = 13x.\n\n**Common mistake:** Students sometimes try to add √18 + √8 = √26. This is WRONG. You cannot add radicands. √18 + √8 ≠ √26. You must simplify each radical first, then combine if they have the same radicand.",
+          "tip": "Think of radicals like variables: 9√2 + 4√2 = 13√2, just like 9x + 4x = 13x. You can only combine terms with the SAME radical part."
+        },
+        {
+          "problem": "Multiply and simplify: (3√2)(4√6).",
+          "solution": "**Multiply coefficients with coefficients, radicands with radicands:**\n\n(3√2)(4√6) = (3 · 4)√(2 · 6) = 12√12\n\nNote that the radicands did **not** have to match — that requirement belongs to addition, not multiplication.\n\n**Now simplify √12.** The largest perfect-square factor of 12 is 4:\n√12 = √(4 · 3) = √4 · √3 = 2√3\n\n**Put it back together:**\n12√12 = 12 · 2√3 = **24√3**\n\n**The step people skip:** stopping at 12√12. Multiplying almost always creates a new perfect-square factor, so plan on simplifying afterwards — the answer isn't finished until the radicand has no perfect squares left.\n\n**Check it numerically:** 3√2 ≈ 4.243 and 4√6 ≈ 9.798, and 4.243 × 9.798 ≈ 41.57. Meanwhile 24√3 ≈ 24 × 1.732 ≈ 41.57 ✓"
+        }
+      ],
+      "initialPrompt": "In example 1, why did we simplify √18 and √8 before trying to add them?",
+      "lessonId": "operations-radicals"
     },
     {
       "type": "guided_practice",
@@ -89,61 +167,6 @@
             "For area: (3√5)(√5) = 3(√5 · √5). What is √5 · √5? A square root times itself undoes the root.",
             "For perimeter: 2(3√5) + 2(√5) = 6√5 + 2√5. Same radicand, so add the coefficients: 8√5. Leave it as a radical — it is not a whole number."
           ]
-        }
-      ],
-      "lessonId": "simplifying-radicals",
-      "initialPrompt": "Take a look at √18 + √50. Can we just add 18 and 50 under one radical? Before you answer, what has to be true about two radicals before we're allowed to combine them?"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "simplifying-radicals",
-      "title": "I-Do: Simplifying Radical Expressions",
-      "examples": [
-        {
-          "problem": "Simplify √72.",
-          "solution": "**Step 1: Find the largest perfect square factor of 72.**\nList factors of 72: 1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72.\nPerfect square factors: 1, 4, 9, 36.\nLargest perfect square factor: **36**.\n\n**Step 2: Rewrite using the product property.**\n√72 = √(36 · 2)\n\n**Step 3: Apply the product property √(ab) = √a · √b.**\n√(36 · 2) = √36 · √2\n\n**Step 4: Simplify the perfect square root.**\n√36 · √2 = **6√2**\n\n**Verify:** (6√2)² = 36 · 2 = 72 ✓\n\n**Why choose 36 and not 4 or 9?** Using the largest perfect square factor gives the simplest answer in one step. If we used 4: √72 = √(4·18) = 2√18, but √18 can still be simplified (√18 = √(9·2) = 3√2), so we would get 2·3√2 = 6√2 — the same answer, but in more steps.",
-          "tip": "Always look for the LARGEST perfect square factor. It saves steps. If you are unsure, start dividing by perfect squares: is 72 divisible by 4? Yes (72 = 4·18). By 9? Yes (72 = 9·8). By 16? No. By 25? No. By 36? Yes (72 = 36·2). Use 36."
-        },
-        {
-          "problem": "Simplify √(50x²), assuming x ≥ 0.",
-          "solution": "**Step 1: Factor the number and the variable separately.**\n50 = 25 · 2 (25 is the largest perfect square factor of 50)\nx² is already a perfect square.\n\n**Step 2: Rewrite.**\n√(50x²) = √(25 · 2 · x²)\n\n**Step 3: Apply the product property.**\n√(25 · 2 · x²) = √25 · √2 · √(x²)\n\n**Step 4: Simplify each part.**\n√25 = 5\n√(x²) = x (since x ≥ 0)\n\n**Result:** 5 · x · √2 = **5x√2**\n\n**Verify:** (5x√2)² = 25x² · 2 = 50x² ✓\n\n**Key insight:** When simplifying radicals with variables, separate the coefficient (number) and the variable parts. Simplify each independently, then combine.",
-          "tip": "For variables under a radical, pair up the exponents: √(x²) = x, √(x⁴) = x², √(x⁶) = x³. An odd exponent leaves one factor inside: √(x³) = √(x²·x) = x√x."
-        },
-        {
-          "problem": "Simplify 3√18 + 2√8.",
-          "solution": "**Step 1: Simplify each radical individually first.**\n√18 = √(9 · 2) = √9 · √2 = 3√2\n√8 = √(4 · 2) = √4 · √2 = 2√2\n\n**Step 2: Substitute back into the expression.**\n3√18 + 2√8 = 3(3√2) + 2(2√2)\n= 9√2 + 4√2\n\n**Step 3: Combine like radicals (same radicand √2).**\n9√2 + 4√2 = **(9 + 4)√2 = 13√2**\n\n**Verify the approach:** The key is that √18 and √8, while looking different, both simplify to multiples of √2. Once simplified, they become like radicals and can be combined — just like combining like terms 9x + 4x = 13x.\n\n**Common mistake:** Students sometimes try to add √18 + √8 = √26. This is WRONG. You cannot add radicands. √18 + √8 ≠ √26. You must simplify each radical first, then combine if they have the same radicand.",
-          "tip": "Think of radicals like variables: 9√2 + 4√2 = 13√2, just like 9x + 4x = 13x. You can only combine terms with the SAME radical part."
-        }
-      ],
-      "initialPrompt": "In the first example, we found that 36 was the largest perfect square factor of 72. What are the perfect square factors of 48? What is the largest one, and how would you use it to simplify √48?",
-      "lessonId": "simplifying-radicals"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "simplifying-radicals",
-      "title": "We-Do: Simplifying Radicals and Radical Operations",
-      "problems": [
-        {
-          "id": "rg-wp1",
-          "question": "Simplify √98.",
-          "answer": "98 = 49 · 2. √98 = √(49 · 2) = √49 · √2 = 7√2. Verify: (7√2)² = 49 · 2 = 98 ✓.",
-          "hints": [
-            "Find the largest perfect square factor of 98. Is 98 divisible by 4? 98/4 = 24.5 — no. By 9? 98/9 ≈ 10.9 — no. By 25? 98/25 = 3.92 — no. By 49? 98/49 = 2 — yes!",
-            "Rewrite: √98 = √(49 · 2). Apply the product property: √49 · √2.",
-            "√49 = 7. Final answer: 7√2. Check: 7² · 2 = 49 · 2 = 98 ✓."
-          ]
-        },
-        {
-          "id": "rg-wp2",
-          "question": "Simplify √(75y⁴), assuming y ≥ 0.",
-          "answer": "75 = 25 · 3. y⁴ = (y²)². √(75y⁴) = √(25 · 3 · y⁴) = √25 · √3 · √(y⁴) = 5 · √3 · y² = 5y²√3.",
-          "hints": [
-            "Factor the number: 75 = 25 · 3 (25 is the largest perfect square factor). Factor the variable: y⁴ is a perfect square since y⁴ = (y²)².",
-            "Apply the product property: √(25 · 3 · y⁴) = √25 · √3 · √(y⁴).",
-            "Simplify: √25 = 5, √(y⁴) = y². Combine: 5y²√3."
-          ]
         },
         {
           "id": "rg-wp3",
@@ -156,8 +179,8 @@
           ]
         }
       ],
-      "initialPrompt": "Let's simplify these radicals together. For the first problem, you need to find the largest perfect square that divides 98. Start by testing perfect squares: is 98 divisible by 4? By 9? By 25? By 49?",
-      "lessonId": "simplifying-radicals"
+      "lessonId": "operations-radicals",
+      "initialPrompt": "Take a look at √18 + √50. Can we just add 18 and 50 under one radical? Before you answer, what has to be true about two radicals before we're allowed to combine them?"
     },
     {
       "type": "explanation",
@@ -263,6 +286,83 @@
       "lessonId": "distance-formula"
     },
     {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "solving-radical-equations",
+      "title": "Solving Radical Equations",
+      "content": "A **radical equation** has the variable under a radical sign, like √(x + 5) = 4. To solve one, you undo the square root by **squaring both sides** — and then you check, because squaring can manufacture answers that don't work.\n\n**The procedure:**\n1. **Isolate the radical** on one side. Nothing else may be attached to it.\n2. **Square both sides.** (√expression)² = expression — the radical disappears.\n3. **Solve** the resulting equation. If it's quadratic, get everything on one side and factor.\n4. **CHECK every solution in the ORIGINAL equation.** This step is not optional.\n\n**Step 1 comes first, always.** For √x + 3 = 7, squaring immediately gives x + 6√x + 9 = 49 — worse than what you started with. Subtract the 3 first: √x = 4, then square: x = 16.\n\n**Why checking is mandatory: extraneous solutions.**\n\nSquaring is not a reversible move. It erases sign information, because both 3 and −3 square to 9. So the squared equation can have solutions the original never had — **extraneous solutions**, which are not answers at all.\n\n**Example:** √(2x − 1) = x − 2\n\nSquare both sides: 2x − 1 = x² − 4x + 4\nRearrange: x² − 6x + 5 = 0\nFactor: (x − 1)(x − 5) = 0, so x = 1 or x = 5\n\n**Check x = 1:** left is √(2·1 − 1) = √1 = 1; right is 1 − 2 = **−1**. Since 1 ≠ −1, **x = 1 is extraneous — reject it.**\n\n**Check x = 5:** left is √(2·5 − 1) = √9 = 3; right is 5 − 2 = 3 ✓ **Keep it.**\n\nThe answer is **x = 5 only**. A student who skips the check reports two solutions, one of which is wrong.\n\n**What gave x = 1 away:** the right side came out negative. A principal square root is never negative, so any solution making the non-radical side negative fails immediately. That's the fastest extraneous-root detector you have.\n\n**Some radical equations have no solution at all.** √x = −4 is impossible from the start — squaring gives x = 16, and checking gives √16 = 4 ≠ −4. \"No solution\" is a legitimate final answer.\n\n**Write the check as part of the work.** It is where the credit is, and it is the only thing standing between the algebra and a wrong answer.",
+      "initialPrompt": "For √x + 3 = 7, what has to happen before you square both sides? What goes wrong if you square right away?",
+      "lessonId": "solving-radical-equations"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "solving-radical-equations",
+      "title": "I-Do: Solving Radical Equations",
+      "examples": [
+        {
+          "problem": "Solve: √(x + 5) = 4",
+          "solution": "**Step 1 — is the radical isolated?** Yes, it stands alone on the left. Nothing to do.\n\n**Step 2 — square both sides:**\n(√(x + 5))² = 4²\nx + 5 = 16\n\nSquaring undoes the square root exactly — that's the whole point of the move.\n\n**Step 3 — solve:**\nx = 16 − 5 = **11**\n\n**Step 4 — check in the ORIGINAL equation:**\n√(11 + 5) = √16 = 4 ✓\n\nIt matches the right side, so **x = 11** is a genuine solution.\n\n**Why it worked out cleanly:** the right side was 4, a positive number, so there was no sign conflict waiting to appear. The check is still worth writing down — it takes one line, and the next example shows what happens when it's skipped."
+        },
+        {
+          "problem": "Solve: √(2x − 1) = x − 2",
+          "solution": "**Step 1 — the radical is already isolated.**\n\n**Step 2 — square both sides.** The right side is a binomial, so square it properly:\n2x − 1 = (x − 2)² = x² − 4x + 4\n\n(Writing x² + 4 here — squaring each term separately — is the classic error. (x − 2)² means (x − 2)(x − 2).)\n\n**Step 3 — solve the quadratic.** Move everything to one side:\n0 = x² − 4x + 4 − 2x + 1\n0 = x² − 6x + 5\n0 = (x − 1)(x − 5)\n\nSo x = 1 or x = 5.\n\n**Step 4 — check BOTH in the original.**\n\n**x = 1:** left = √(2·1 − 1) = √1 = 1. Right = 1 − 2 = **−1**.\n1 ≠ −1, so **x = 1 is extraneous. Reject it.**\n\n**x = 5:** left = √(2·5 − 1) = √9 = 3. Right = 5 − 2 = 3.\n3 = 3 ✓ **Keep it.**\n\n**The answer is x = 5 only.**\n\n**Where x = 1 came from.** Squaring turned the equation into one that also covers √(2x − 1) = −(x − 2), and x = 1 solves *that* one. It was never a solution of the problem we were asked — it was created by the squaring step, which is exactly why checking is required rather than optional."
+        },
+        {
+          "problem": "Solve: √x + 3 = 7",
+          "solution": "**Step 1 — isolate the radical first.** The +3 is outside the radical, so subtract it from both sides:\n√x = 7 − 3 = 4\n\n**This step is what makes the problem easy.** Squaring the original would give x + 6√x + 9 = 49 — a radical still in the equation, and a harder one.\n\n**Step 2 — square both sides:**\n(√x)² = 4²\nx = **16**\n\n**Step 3 — check in the original equation:**\n√16 + 3 = 4 + 3 = 7 ✓\n\n**x = 16.**\n\n**Compare the two starting forms:** √(x + 3) = 7 and √x + 3 = 7 look almost identical but are different equations with different answers (46 and 16). Read carefully whether the +3 is under the radical or outside it."
+        }
+      ],
+      "initialPrompt": "In example 2 we found two values of x but only one was a solution. What test told us to throw the other one out?",
+      "lessonId": "solving-radical-equations"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "solving-radical-equations",
+      "title": "We-Do: Solving Radical Equations",
+      "problems": [
+        {
+          "id": "rg-re1",
+          "question": "Solve: √(3x + 1) = 5. Show your check.",
+          "answer": "x = 8",
+          "hints": [
+            "The radical is already isolated, so square both sides: 3x + 1 = 25.",
+            "3x = 24, so x = 8. Check in the original: √(3·8 + 1) = √25 = 5 ✓ — a genuine solution."
+          ]
+        },
+        {
+          "id": "rg-re2",
+          "question": "Solve: 2√x − 6 = 0.",
+          "answer": "x = 9",
+          "hints": [
+            "Isolate the radical before squaring. Add 6: 2√x = 6, then divide by 2: √x = 3. Squaring before isolating would be much messier.",
+            "Square both sides: x = 9. Check: 2√9 − 6 = 2(3) − 6 = 0 ✓"
+          ]
+        },
+        {
+          "id": "rg-re3",
+          "question": "Solve: √(x + 7) = x − 5. Check both candidate solutions and say which (if either) is extraneous.",
+          "answer": "x = 9 only; x = 2 is extraneous",
+          "hints": [
+            "Square both sides, expanding (x − 5)² as (x − 5)(x − 5): x + 7 = x² − 10x + 25. Rearranged: x² − 11x + 18 = 0, which factors as (x − 2)(x − 9) = 0. So the candidates are x = 2 and x = 9.",
+            "Check x = 2: left = √9 = 3, right = 2 − 5 = −3. Since 3 ≠ −3, x = 2 is extraneous — a principal square root is never negative. Check x = 9: left = √16 = 4, right = 9 − 5 = 4 ✓. The answer is x = 9 only."
+          ]
+        },
+        {
+          "id": "rg-re4",
+          "question": "Solve: √(x − 2) = −3, or explain why there is no solution.",
+          "answer": "No solution",
+          "hints": [
+            "Look at the right side before doing any algebra. A principal square root is never negative, so no value of x can make √(x − 2) equal −3.",
+            "Squaring anyway gives x − 2 = 9, so x = 11 — but checking gives √(11 − 2) = √9 = 3, not −3. x = 11 is extraneous, and the equation has no solution."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, is the radical already by itself? If so, what's your first move?",
+      "lessonId": "solving-radical-equations"
+    },
+    {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "You-Do: Independent Practice — Radicals and Geometry",
@@ -323,8 +423,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "simplifying-radicals",
-      "lessonId": "simplifying-radicals"
+      "skill": "solving-radical-equations",
+      "lessonId": "solving-radical-equations"
     }
   ],
   "answerKeys": {
@@ -343,7 +443,11 @@
     "rg-op1": "8√2 ≈ 11.31. Simplify to 3√2 + 5√2 first.",
     "rg-op2": "4√3 ≈ 6.93. √27 = 3√3, then 7√3 - 3√3.",
     "rg-op3": "30√2 ≈ 42.43. (2·5)(√6·√3) = 10√18 = 10(3√2).",
-    "rg-op4": "Area = 15 square units; perimeter = 8√5 ≈ 17.89 units."
+    "rg-op4": "Area = 15 square units; perimeter = 8√5 ≈ 17.89 units.",
+    "rg-re1": "x = 8 (check: √25 = 5 ✓).",
+    "rg-re2": "x = 9 (check: 2√9 − 6 = 0 ✓).",
+    "rg-re3": "x = 9 only; x = 2 is extraneous because it makes the right side negative.",
+    "rg-re4": "No solution — a principal square root cannot equal −3 (x = 11 is extraneous)."
   },
   "lessons": [
     {
