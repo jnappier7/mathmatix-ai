@@ -24,9 +24,9 @@ const proto = CourseManager.prototype;
 const makeCtx = () => ({ sendCourseGreeting: jest.fn() });
 
 describe('beginTeachingUnlessBaselinePending', () => {
-  test('a required baseline holds the greeting', () => {
+  test('a blocking baseline holds the greeting', () => {
     const ctx = makeCtx();
-    proto.beginTeachingUnlessBaselinePending.call(ctx, { type: 'act-practice', required: true });
+    proto.beginTeachingUnlessBaselinePending.call(ctx, { type: 'act-practice', required: true, blocking: true });
     expect(ctx.sendCourseGreeting).not.toHaveBeenCalled();
     expect(ctx._baselinePending).toBe(true);
   });
@@ -40,15 +40,36 @@ describe('beginTeachingUnlessBaselinePending', () => {
 
   test('a non-required (optional) diagnostic does not block teaching', () => {
     const ctx = makeCtx();
-    proto.beginTeachingUnlessBaselinePending.call(ctx, { type: 'starting-point', required: false });
+    proto.beginTeachingUnlessBaselinePending.call(ctx, { type: 'starting-point', required: false, blocking: false });
     expect(ctx.sendCourseGreeting).toHaveBeenCalledTimes(1);
+  });
+
+  // The Financial Literacy report. consumer-math is not in COURSE_DIAGNOSTICS, so
+  // it falls through to the required course pre-assessment — required, but NOT
+  // blocking, because /api/chat has never gated it either. It must open with a
+  // lesson and a nudge card, not a modal and silence.
+  test('a required-but-not-blocking baseline still starts the lesson', () => {
+    const ctx = makeCtx();
+    proto.beginTeachingUnlessBaselinePending.call(ctx, {
+      type: 'course-preassessment', courseId: 'consumer-math', required: true, blocking: false,
+    });
+    expect(ctx.sendCourseGreeting).toHaveBeenCalledTimes(1);
+    expect(ctx._baselinePending).toBe(false);
+  });
+
+  // An older server that predates `blocking` must not leak a premature lesson
+  // ahead of the ACT baseline — fall back to `required` when the field is absent.
+  test('a server that sends no `blocking` field falls back to `required`', () => {
+    const ctx = makeCtx();
+    proto.beginTeachingUnlessBaselinePending.call(ctx, { type: 'act-practice', required: true });
+    expect(ctx.sendCourseGreeting).not.toHaveBeenCalled();
   });
 });
 
 describe('onBaselineComplete', () => {
   test('fires the greeting that was held back — exactly once', () => {
     const ctx = makeCtx();
-    proto.beginTeachingUnlessBaselinePending.call(ctx, { required: true });
+    proto.beginTeachingUnlessBaselinePending.call(ctx, { required: true, blocking: true });
     expect(ctx.sendCourseGreeting).not.toHaveBeenCalled();
 
     proto.onBaselineComplete.call(ctx);
@@ -67,7 +88,7 @@ describe('onBaselineComplete', () => {
 
   test('a second completion call does not re-greet', () => {
     const ctx = makeCtx();
-    proto.beginTeachingUnlessBaselinePending.call(ctx, { required: true });
+    proto.beginTeachingUnlessBaselinePending.call(ctx, { required: true, blocking: true });
     proto.onBaselineComplete.call(ctx);
     proto.onBaselineComplete.call(ctx);
     expect(ctx.sendCourseGreeting).toHaveBeenCalledTimes(1);
@@ -78,7 +99,7 @@ describe('the enroll/activate sequence a student actually hits', () => {
   test('ACT prep: card shown, no teaching, then the test finishes and teaching begins', () => {
     const ctx = makeCtx();
     // enroll returns a required act-practice diagnostic
-    proto.beginTeachingUnlessBaselinePending.call(ctx, { type: 'act-practice', required: true });
+    proto.beginTeachingUnlessBaselinePending.call(ctx, { type: 'act-practice', required: true, blocking: true });
     expect(ctx.sendCourseGreeting).not.toHaveBeenCalled(); // the reported bug is gone
 
     // student takes the baseline; act-test.close() calls this on completion

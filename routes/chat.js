@@ -1156,15 +1156,16 @@ async function runStudentTurn(req, res) {
                 if (gateSession && gateSession.status === 'active') {
                     const { isRequiredBaselinePending } = require('../utils/courseDiagnostic');
                     const { pending, diagnostic } = await isRequiredBaselinePending(user, gateSession.courseId);
-                    // SCOPED TO ACT-ONLY for now. isRequiredBaselinePending is true for
-                    // act-prep AND every unlisted course (they fall through to a required
-                    // pre-assessment), but only the ACT baseline runner is verified working
-                    // end-to-end. Hard-blocking a course behind an unverified pre-assessment
-                    // is exactly the half-working flow we keep getting burned by — so gate
-                    // only act-practice here. Widen to `pending` once each course's
-                    // pre-assessment is confirmed; the other courses keep their existing
-                    // (non-blocking) entry-card nudge until then.
-                    if (pending && diagnostic?.type === 'act-practice') {
+                    // `pending` now means "a diagnostic that is allowed to hold the
+                    // tutor is still owed" — today only the ACT practice test, which is
+                    // the one baseline runner verified working end to end. That
+                    // narrowing used to live here as a hand-rolled `diagnostic?.type ===
+                    // 'act-practice'` check while the greeting gate still blocked on
+                    // `required`, so the two disagreed and every unlisted course
+                    // (consumer-math, the grade-level courses, geometry, the parent
+                    // guides) opened with teaching allowed but the greeting withheld.
+                    // The rule lives in utils/courseDiagnostic.js now — one place.
+                    if (pending) {
                         const gateText = "Before we dig into any lessons, let's lock in your baseline. Take the full practice ACT so I can see exactly where you're starting and aim your prep at what you actually need — tap **Take the Practice ACT** below to begin. Once it's done, we'll build your plan around your results.";
                         logger.info('Baseline gate: withholding course teaching until baseline complete', { userId, courseId: gateSession.courseId });
                         return res.json({
@@ -3113,6 +3114,20 @@ async function handleGreetingRequest(req, res, userId) {
         const skipCourse = req.body?.skipCourse === true;
         let courseContext = null;
         let isCourseGreeting = false;
+        // Whether this greeting opened a NEW course sitting. The client paints the
+        // transcript before this request lands, so it can be showing a sitting the
+        // server has since rolled away from — same contract /api/course-chat's
+        // greeting already returns, so the client can reconcile instead of
+        // appending the opener under stale bubbles.
+        let courseGreetingRolled = false;
+        // Same shape /api/course-chat returns, so the client can label the course
+        // banner from either greeting path without a second round-trip.
+        const courseGreetingContext = () => (courseContext ? {
+            courseId: courseContext.courseSession.courseId,
+            courseName: courseContext.courseSession.courseName,
+            currentModuleId: courseContext.courseSession.currentModuleId,
+            overallProgress: courseContext.courseSession.overallProgress,
+        } : null);
         if (user.activeCourseSessionId && !skipCourse) {
             try {
                 const CourseSession = require('../models/courseSession');
@@ -3129,7 +3144,7 @@ async function handleGreetingRequest(req, res, userId) {
                         // does — it used to load courseSession.conversationId
                         // raw, which is how a course view ended up holding
                         // several sittings at once.
-                        const { conversation: courseConv } = await resolveCourseConversation({
+                        const { conversation: courseConv, rolled } = await resolveCourseConversation({
                             user,
                             courseSession,
                             loginSessionId,
@@ -3137,6 +3152,7 @@ async function handleGreetingRequest(req, res, userId) {
                         });
                         if (courseConv) {
                             activeConversation = courseConv;
+                            courseGreetingRolled = !!rolled;
                             if (user.activeConversationId?.toString() !== courseConv._id.toString()) {
                                 user.activeConversationId = courseConv._id;
                                 await user.save();
@@ -3478,6 +3494,12 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
                     voiceId: currentTutor.cartesiaVoiceId,
                     isGreeting: true,
                 };
+                if (isCourseGreeting) {
+                    streamDonePayload.isCourseGreeting = true;
+                    streamDonePayload.conversationId = String(activeConversation._id);
+                    streamDonePayload.sessionRolled = courseGreetingRolled;
+                    streamDonePayload.courseContext = courseGreetingContext();
+                }
                 if (openerResult?.suggestionChips) {
                     streamDonePayload.suggestionChips = openerResult.suggestionChips;
                 }
@@ -3556,6 +3578,12 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
                 userLevel: user.level || 1,
                 xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1),
             };
+            if (isCourseGreeting) {
+                greetingResponse.isCourseGreeting = true;
+                greetingResponse.conversationId = String(activeConversation._id);
+                greetingResponse.sessionRolled = courseGreetingRolled;
+                greetingResponse.courseContext = courseGreetingContext();
+            }
             if (openerResult?.suggestionChips) {
                 greetingResponse.suggestionChips = openerResult.suggestionChips;
             }
