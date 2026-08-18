@@ -175,44 +175,16 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "implicit-differentiation",
-      "title": "Implicit Differentiation & Inverse Function Derivatives",
-      "content": "**Implicit Differentiation — When y Isn't Isolated:**\n\nSome curves (circles, ellipses, the folium of Descartes) can't be written as y = f(x). For these, differentiate both sides with respect to x, treating y as a function of x.\n\n**Key rule:** Every time you differentiate a term involving y, attach dy/dx (by the chain rule — y is the inner function).\n\nExample setup: x² + y² = 25\n→ 2x + 2y(dy/dx) = 0\n→ dy/dx = −x/y\n\n**Inverse Function Derivatives:**\n\nIf g = f⁻¹, then:\ng'(a) = 1 / f'(g(a))\n\nEquivalently: (f⁻¹)'(a) = 1 / f'(f⁻¹(a))\n\n**Inverse Trig Derivatives (memorize):**\n• d/dx[arcsin x] = 1/√(1 − x²)\n• d/dx[arccos x] = −1/√(1 − x²)\n• d/dx[arctan x] = 1/(1 + x²)\n\nThese combine with the chain rule: d/dx[arctan(3x)] = [1/(1 + 9x²)] · 3 = 3/(1 + 9x²).",
+      "title": "Implicit Differentiation",
+      "content": "**Implicit Differentiation — When y Isn't Isolated:**\n\nSome curves (circles, ellipses, the folium of Descartes) can't be written as y = f(x) — a vertical line crosses them more than once, so no single function describes the whole curve. For these, differentiate both sides with respect to x, treating y as a function of x.\n\n**Key rule:** every time you differentiate a term involving y, attach dy/dx. This is the chain rule — y is the inner function, so d/dx[y²] = 2y · dy/dx, exactly as d/dx[u²] = 2u · u'.\n\nExample setup: x² + y² = 25\n→ 2x + 2y(dy/dx) = 0\n→ dy/dx = −x/y\n\n**The procedure:**\n1. Differentiate both sides with respect to x, attaching dy/dx to every y-term.\n2. Collect every term containing dy/dx on one side, everything else on the other.\n3. Factor out dy/dx and divide.\n\n**Terms with both x and y need the product rule.** d/dx[xy] = 1·y + x·(dy/dx) = y + x(dy/dx). Forgetting this is the most common error in the whole topic.\n\n**Expect dy/dx to depend on both x and y.** That's not a mistake — it's the point. A curve like x² + y² = 25 has two different slopes above a given x, and the y in the answer is what distinguishes them. To get a numeric slope you need a full point (x, y), not just an x.\n\n**Vertical and horizontal tangents fall right out:** the tangent is horizontal where the numerator of dy/dx is 0, and vertical where the denominator is 0 (with the numerator nonzero).",
       "initialPrompt": "For x² + y² = 25, why does differentiating y² give 2y(dy/dx) instead of just 2y? What rule is at work?",
-      "lessonId": "implicit-diff"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "inverse-function-derivatives",
-      "title": "We-Do: Inverse Function Derivatives — Guided Practice",
-      "problems": [
-        {
-          "id": "ad-wp10",
-          "question": "Find d/dx[arcsin(2x)].",
-          "answer": "2/√(1 − 4x²)",
-          "hints": [
-            "d/dx[arcsin(u)] = 1/√(1 − u²) · u'. Here u = 2x, so u' = 2.",
-            "d/dx[arcsin(2x)] = 2/√(1 − (2x)²) = 2/√(1 − 4x²)."
-          ]
-        },
-        {
-          "id": "ad-wp11",
-          "question": "Given: f(2) = 5, f'(2) = 4, f(5) = 2. Find (f⁻¹)'(5).",
-          "answer": "1/4",
-          "hints": [
-            "Use (f⁻¹)'(a) = 1/f'(f⁻¹(a)). We need (f⁻¹)'(5). Since f(2) = 5, f⁻¹(5) = 2.",
-            "(f⁻¹)'(5) = 1/f'(f⁻¹(5)) = 1/f'(2) = 1/4."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, identify the chain rule setup: the outer function is arcsin(□) and the inner function is 2x. What is d/dx[arcsin(u)]?",
       "lessonId": "implicit-diff"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "implicit-differentiation",
-      "title": "I-Do: Implicit Differentiation & Inverse Derivatives",
+      "title": "I-Do: Implicit Differentiation",
       "examples": [
         {
           "problem": "Find dy/dx for the circle x² + y² = 25. Then find the slope at (3, 4).",
@@ -221,10 +193,6 @@
         {
           "problem": "Find dy/dx for the folium of Descartes: x³ + y³ = 6xy.",
           "solution": "**Differentiate both sides:**\n3x² + 3y²(dy/dx) = 6y + 6x(dy/dx)\n\n**Note:** The right side uses the product rule on 6xy: d/dx[6xy] = 6y + 6x(dy/dx).\n\n**Collect dy/dx terms on one side:**\n3y²(dy/dx) − 6x(dy/dx) = 6y − 3x²\n(3y² − 6x)(dy/dx) = 6y − 3x²\n\n**Solve:**\ndy/dx = (6y − 3x²)/(3y² − 6x)\n\n**Simplify (factor 3):**\n**dy/dx = (2y − x²)/(y² − 2x)**"
-        },
-        {
-          "problem": "Given: f(1) = 4, f'(1) = 5, f(4) = 1. Find (f⁻¹)'(4).",
-          "solution": "**Formula:** (f⁻¹)'(a) = 1 / f'(f⁻¹(a))\n\nWe need (f⁻¹)'(4).\n\n**Step 1 — Find f⁻¹(4):**\nSince f(1) = 4, we know f⁻¹(4) = 1.\n\n**Step 2 — Apply the formula:**\n(f⁻¹)'(4) = 1 / f'(f⁻¹(4)) = 1 / f'(1) = **1/5**\n\n**This exact pattern — table of f values and f' values, find (f⁻¹)' — appears on nearly every AP Calculus exam.**"
         }
       ],
       "initialPrompt": "In example 2, why did differentiating 6xy require the product rule? What are the two 'factors' being multiplied?",
@@ -234,7 +202,7 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "implicit-differentiation",
-      "title": "We-Do: Implicit Differentiation & Inverse Derivatives",
+      "title": "We-Do: Implicit Differentiation",
       "problems": [
         {
           "id": "ad-wp7",
@@ -253,6 +221,61 @@
             "Differentiate: 2x + [y + x(dy/dx)] + 2y(dy/dx) = 0. Collect dy/dx terms: (x + 2y)(dy/dx) = −2x − y.",
             "dy/dx = −(2x + y)/(x + 2y). At (1, 2): dy/dx = −(2 + 2)/(1 + 4) = −4/5."
           ]
+        }
+      ],
+      "initialPrompt": "For the first problem, d/dx[x²y] requires the product rule because x² and y are both functions of x. What are the two pieces?",
+      "lessonId": "implicit-diff"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "inverse-function-derivatives",
+      "title": "Derivatives of Inverse Functions",
+      "content": "A function and its inverse are reflections across y = x — and reflecting a line across y = x turns a slope of m into a slope of 1/m. That geometric fact **is** the whole formula.\n\n**The Inverse Function Derivative Formula:**\n\nIf g = f⁻¹, then\n\ng'(a) = 1 / f'(g(a))\n\nEquivalently: (f⁻¹)'(a) = 1 / f'(f⁻¹(a))\n\n**Read the formula carefully — the inputs are different.** You want the derivative of the inverse *at a*, and that equals the reciprocal of f' evaluated **not at a**, but at the point g(a) that f sends to a. Plugging a into f' is the near-universal mistake.\n\n**How these problems are handed to you:** a table or a few facts like f(2) = 5, f'(2) = 4. To find (f⁻¹)'(5), ask: *which input does f send to 5?* That's x = 2, so f⁻¹(5) = 2 and\n\n(f⁻¹)'(5) = 1/f'(2) = 1/4\n\nThe two-step habit — first find the matching input, then take the reciprocal of f' there — handles every version of this question. Note you never need a formula for f⁻¹ itself, which is the point: the formula exists precisely because inverses are usually impossible to write down.\n\n**Inverse Trig Derivatives (memorize):**\n• d/dx[arcsin x] = 1/√(1 − x²)\n• d/dx[arccos x] = −1/√(1 − x²)\n• d/dx[arctan x] = 1/(1 + x²)\n\nNotice arccos is just the negative of arcsin — one fact, not two. None of these have any trig left in them: differentiating an inverse trig function lands you in algebra, which is exactly why arctan shows up in integration.\n\n**These combine with the chain rule:**\nd/dx[arctan(3x)] = [1/(1 + (3x)²)] · 3 = 3/(1 + 9x²)\n\nSquare the *whole* inner function, then multiply by its derivative.",
+      "initialPrompt": "If f(2) = 5 and f'(2) = 4, what is (f⁻¹)'(5)? Which input do you feed into f', and why isn't it 5?",
+      "lessonId": "inverse-derivatives"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "inverse-function-derivatives",
+      "title": "I-Do: Derivatives of Inverse Functions",
+      "examples": [
+        {
+          "problem": "Given: f(1) = 4, f'(1) = 5, f(4) = 1. Find (f⁻¹)'(4).",
+          "solution": "**Formula:** (f⁻¹)'(a) = 1 / f'(f⁻¹(a))\n\nWe need (f⁻¹)'(4).\n\n**Step 1 — Find f⁻¹(4):**\nSince f(1) = 4, we know f⁻¹(4) = 1.\n\n**Step 2 — Apply the formula:**\n(f⁻¹)'(4) = 1 / f'(f⁻¹(4)) = 1 / f'(1) = **1/5**\n\n**This exact pattern — table of f values and f' values, find (f⁻¹)' — appears on nearly every AP Calculus exam.**"
+        },
+        {
+          "problem": "Find d/dx[arctan(x²)] and d/dx[arcsin(x/3)].",
+          "solution": "**Part 1 — arctan with an inner function:**\n\nThe rule is d/dx[arctan u] = u'/(1 + u²). Here u = x², so u' = 2x:\n\nd/dx[arctan(x²)] = (2x)/(1 + (x²)²) = **2x/(1 + x⁴)**\n\nNote (x²)² = x⁴, not x². Squaring the *whole* inner function is where this goes wrong.\n\n**Part 2 — arcsin with an inner function:**\n\nThe rule is d/dx[arcsin u] = u'/√(1 − u²). Here u = x/3, so u' = 1/3:\n\nd/dx[arcsin(x/3)] = (1/3)/√(1 − x²/9)\n\n**Simplify** by pulling 1/9 out of the radical: √(1 − x²/9) = √((9 − x²)/9) = √(9 − x²)/3.\n\n= (1/3) · 3/√(9 − x²) = **1/√(9 − x²)**\n\n**Worth filing away:** d/dx[arcsin(x/a)] = 1/√(a² − x²). That pattern read backwards is an integration formula you'll want later."
+        }
+      ],
+      "initialPrompt": "In example 1, we're given f(1) = 4 and asked for (f⁻¹)'(4). Which value of x do we need f' at, and how did the given information tell you?",
+      "lessonId": "inverse-derivatives"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "inverse-function-derivatives",
+      "title": "We-Do: Derivatives of Inverse Functions",
+      "problems": [
+        {
+          "id": "ad-wp10",
+          "question": "Find d/dx[arcsin(2x)].",
+          "answer": "2/√(1 − 4x²)",
+          "hints": [
+            "d/dx[arcsin(u)] = 1/√(1 − u²) · u'. Here u = 2x, so u' = 2.",
+            "d/dx[arcsin(2x)] = 2/√(1 − (2x)²) = 2/√(1 − 4x²)."
+          ]
+        },
+        {
+          "id": "ad-wp11",
+          "question": "Given: f(2) = 5, f'(2) = 4, f(5) = 2. Find (f⁻¹)'(5).",
+          "answer": "1/4",
+          "hints": [
+            "Use (f⁻¹)'(a) = 1/f'(f⁻¹(a)). We need (f⁻¹)'(5). Since f(2) = 5, f⁻¹(5) = 2.",
+            "(f⁻¹)'(5) = 1/f'(f⁻¹(5)) = 1/f'(2) = 1/4."
+          ]
         },
         {
           "id": "ad-wp9",
@@ -264,8 +287,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, d/dx[x²y] requires the product rule because x² and y are both functions of x. What are the two pieces?",
-      "lessonId": "implicit-diff"
+      "initialPrompt": "For the first problem, identify the chain rule setup: the outer function is arcsin(□) and the inner function is 2x. What is d/dx[arcsin(u)]?",
+      "lessonId": "inverse-derivatives"
     },
     {
       "type": "independent_practice",
@@ -328,8 +351,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "product-quotient-rules",
-      "lessonId": "product-quotient"
+      "skill": "inverse-function-derivatives",
+      "lessonId": "inverse-derivatives"
     }
   ],
   "answerKeys": {

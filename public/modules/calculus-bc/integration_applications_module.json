@@ -114,44 +114,16 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "volume-disk-washer",
-      "title": "Volumes of Revolution & Known Cross-Sections",
-      "content": "**Volumes of Solids of Revolution:**\n\nWhen a region is revolved around an axis, the cross-section at each x-value is a circle (or washer). Integrate the cross-sectional area to get volume.\n\n**Disk Method (solid cross-section, no hole):**\nRevolving y = f(x) around the x-axis on [a, b]:\nV = π ∫ₐᵇ [f(x)]² dx = π ∫ₐᵇ R² dx\nwhere R = f(x) is the radius.\n\n**Washer Method (hollow cross-section):**\nRevolving a region between y = f(x) and y = g(x) around the x-axis, where f(x) ≥ g(x) ≥ 0:\nV = π ∫ₐᵇ [R² − r²] dx\nwhere R = f(x) (outer radius) and r = g(x) (inner radius).\n\n**Volumes with Known Cross-Sections:**\n\nIf cross-sections perpendicular to the x-axis have known shape and the side length s(x) is determined by the bounding curves:\n• **Squares:** A(x) = [s(x)]²\n• **Equilateral triangles:** A(x) = (√3/4)[s(x)]²\n• **Semicircles:** A(x) = (π/8)[s(x)]² (diameter = s(x))\n• **Isosceles right triangles (leg = s):** A(x) = (1/2)[s(x)]²\n\nIn all cases: V = ∫ₐᵇ A(x) dx\n\n**The key to every volume problem:** Identify the cross-sectional area A(x) as a function of x, then integrate.",
+      "title": "Volume: Disk & Washer Methods",
+      "content": "**Volumes of Solids of Revolution:**\n\nWhen a region is revolved around an axis, the cross-section at each x-value is a circle (or a washer). Find that cross-sectional area as a function of x, then integrate it along the axis. Every volume formula in this unit is that one idea.\n\n**Disk Method (solid cross-section, no hole):**\n\nRevolving y = f(x) around the x-axis on [a, b]:\n\nV = π ∫ₐᵇ [f(x)]² dx = π ∫ₐᵇ R² dx\n\nwhere R = f(x) is the radius. The πR² is just the area of one circular slice; dx is its thickness.\n\n**Washer Method (hollow cross-section):**\n\nRevolving the region between y = f(x) and y = g(x) around the x-axis, where f(x) ≥ g(x) ≥ 0:\n\nV = π ∫ₐᵇ [R² − r²] dx\n\nwhere R = f(x) (outer radius) and r = g(x) (inner radius).\n\n**Square first, then subtract.** ∫(R² − r²) is not ∫(R − r)² — that error is the single most common one in this lesson. Subtract the *areas*, not the radii.\n\n**Radius is a distance from the axis of rotation.** When the axis isn't the x-axis, adjust:\n• around y = c (below the region): R = f(x) − c\n• around the y-axis: rewrite the curves as x = f(y) and integrate dy\n\n**Which variable?** Slice perpendicular to the axis of rotation. Rotating around a horizontal axis → slices are vertical → integrate dx. Around a vertical axis → integrate dy, and every function must be written in terms of y.\n\n**Finding the limits:** they're where the region begins and ends — usually the intersection points of the bounding curves. Set the curves equal and solve.",
       "initialPrompt": "If you revolve the region under y = √x from x = 0 to x = 4 around the x-axis, what shape is each cross-section? What is the radius as a function of x?",
-      "lessonId": "volume-revolution"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "volume-cross-sections",
-      "title": "We-Do: Volume Cross Sections — Guided Practice",
-      "problems": [
-        {
-          "id": "iap-wp10",
-          "question": "A solid has its base bounded by y = √x, y = 0, and x = 4. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
-          "answer": "8",
-          "hints": [
-            "Side length: s(x) = √x. Area of square cross-section: A(x) = (√x)² = x.",
-            "V = ∫₀⁴ x dx = [x²/2]₀⁴ = 16/2 = 8."
-          ]
-        },
-        {
-          "id": "iap-wp11",
-          "question": "A solid has its base bounded by y = 1 − x² and y = 0. Cross-sections perpendicular to the x-axis are semicircles with diameter equal to the base width. Find the volume.",
-          "answer": "π/2 · ∫₋₁¹ (1 − x²)²/4 dx = π(8/15)/2 = 4π/15",
-          "hints": [
-            "Diameter = 1 − x², so radius = (1 − x²)/2. Area of semicircle: A = (π/2)r² = (π/2)(1 − x²)²/4 = π(1 − x²)²/8.",
-            "V = ∫₋₁¹ π(1 − x²)²/8 dx = (π/4)∫₀¹ (1 − 2x² + x⁴) dx = (π/4)(1 − 2/3 + 1/5) = (π/4)(8/15) = 2π/15."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, the cross-section at position x is a square with side length s(x) = √x. What is the area A(x) of each square?",
       "lessonId": "volume-revolution"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "volume-disk-washer",
-      "title": "I-Do: Volumes of Revolution & Cross-Sections",
+      "title": "I-Do: Disk & Washer Methods",
       "examples": [
         {
           "problem": "Find the volume when the region under y = √x, from x = 0 to x = 4, is revolved about the x-axis.",
@@ -160,10 +132,6 @@
         {
           "problem": "Find the volume when the region between y = x and y = x² (on [0, 1]) is revolved about the x-axis.",
           "solution": "**Method:** Washer (there's a gap between the curves and the axis).\n\n**Outer radius:** R = x (the farther curve from the axis)\n**Inner radius:** r = x² (the closer curve)\n\n**Volume:**\nV = π ∫₀¹ (R² − r²) dx = π ∫₀¹ (x² − x⁴) dx\n= π [x³/3 − x⁵/5]₀¹\n= π (1/3 − 1/5) = π (2/15) = **2π/15**\n\n**Check:** 2π/15 ≈ 0.419. The solid is a thin ring-like shape, so a small volume makes sense."
-        },
-        {
-          "problem": "A solid has its base in the region bounded by y = √x, y = 0, and x = 1. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
-          "solution": "**Side length:** The base at position x extends from y = 0 to y = √x, so s(x) = √x.\n\n**Cross-sectional area (square):**\nA(x) = [s(x)]² = (√x)² = x\n\n**Volume:**\nV = ∫₀¹ x dx = [x²/2]₀¹ = **1/2**\n\n**Contrast with revolution:** If we had revolved the same region, we'd get V = π∫₀¹ x dx = π/2 ≈ 1.571. The square cross-sections give a different (smaller) volume because squares are smaller than circles with the same 'diameter.'"
         }
       ],
       "initialPrompt": "In the washer example, what happens to the inner radius if the region started at y = 0 instead of y = x²? How does the setup change?",
@@ -173,7 +141,7 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "volume-disk-washer",
-      "title": "We-Do: Volumes of Revolution & Cross-Sections",
+      "title": "We-Do: Disk & Washer Methods",
       "problems": [
         {
           "id": "iap-wp4",
@@ -192,6 +160,61 @@
             "Intersections: √x = x → x = x² → x = 0, 1. For 0 < x < 1: √x > x, so outer R = √x, inner r = x.",
             "V = π ∫₀¹ [(√x)² − x²] dx = π ∫₀¹ (x − x²) dx = π[x²/2 − x³/3]₀¹ = π(1/2 − 1/3) = π/6."
           ]
+        }
+      ],
+      "initialPrompt": "For the first problem, since the region is revolved around the x-axis and there is no hole, use the disk method. What is the radius R(x)?",
+      "lessonId": "volume-revolution"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "volume-cross-sections",
+      "title": "Volume by Cross-Sections",
+      "content": "Not every solid comes from revolving a region. A solid with **known cross-sections** is built by standing a shape — a square, a triangle, a semicircle — on every slice of a flat base region.\n\nThe method is the same one disks and washers used, minus the circles:\n\n**V = ∫ₐᵇ A(x) dx**\n\nwhere A(x) is the area of the cross-section at x. There is no π unless the shape itself has one.\n\n**The two-step procedure:**\n\n**Step 1 — find s(x), the side length**, from the base region. For cross-sections perpendicular to the x-axis, s(x) is the *vertical* width of the base at x:\n• base between a curve and the x-axis → s(x) = f(x)\n• base between two curves → s(x) = f(x) − g(x) (top minus bottom)\n\n**Step 2 — convert s(x) to area** using the shape's own formula:\n\n| Cross-section | A(x) |\n|---|---|\n| **Square** (side s) | s² |\n| **Equilateral triangle** (side s) | (√3/4)s² |\n| **Semicircle** (diameter s) | (π/8)s² |\n| **Isosceles right triangle** (leg s) | ½s² |\n| **Isosceles right triangle** (hypotenuse s) | ¼s² |\n\n**Watch the semicircle.** s is the *diameter*, so the radius is s/2 and the area is ½π(s/2)² = πs²/8. Using πs²/2 is the standard mistake — read whether the problem gives you a diameter or a radius.\n\n**Read the triangle wording too:** \"legs\" and \"hypotenuse\" give different formulas for the same shape.\n\n**The limits come from the base region**, exactly as before — where it starts and ends, or where the bounding curves intersect.\n\n**Why no π in most of these:** π appears only because circles have it in their area formula. A solid whose slices are squares has no circles anywhere, so a π in your answer is a signal to go back and check.",
+      "initialPrompt": "A solid's base is the region under y = √x from 0 to 4, and its cross-sections perpendicular to the x-axis are squares. What is the side length of the square at x = 1? At x = 4?",
+      "lessonId": "volume-cross-sections"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "volume-cross-sections",
+      "title": "I-Do: Volume by Cross-Sections",
+      "examples": [
+        {
+          "problem": "A solid has its base in the region bounded by y = √x, y = 0, and x = 1. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
+          "solution": "**Side length:** The base at position x extends from y = 0 to y = √x, so s(x) = √x.\n\n**Cross-sectional area (square):**\nA(x) = [s(x)]² = (√x)² = x\n\n**Volume:**\nV = ∫₀¹ x dx = [x²/2]₀¹ = **1/2**\n\n**Contrast with revolution:** If we had revolved the same region, we'd get V = π∫₀¹ x dx = π/2 ≈ 1.571. The square cross-sections give a different (smaller) volume because squares are smaller than circles with the same 'diameter.'"
+        },
+        {
+          "problem": "A solid has its base bounded by y = 4 − x² and y = 0. Cross-sections perpendicular to the x-axis are equilateral triangles. Find the volume.",
+          "solution": "**Step 1 — find the limits from the base region.** The parabola meets y = 0 where 4 − x² = 0, so x = −2 and x = 2.\n\n**Step 2 — find s(x).** The base's vertical width at x runs from the x-axis up to the parabola:\ns(x) = 4 − x²\n\n**Step 3 — convert to area.** For an equilateral triangle of side s, A = (√3/4)s²:\nA(x) = (√3/4)(4 − x²)²\n\n**Step 4 — integrate over the base.**\nV = ∫₋₂² (√3/4)(4 − x²)² dx = (√3/4) ∫₋₂² (16 − 8x² + x⁴) dx\n\nExpand first — squaring inside the integral is not optional.\n\n= (√3/4) [16x − (8/3)x³ + x⁵/5]₋₂²\n\nThe integrand is even, so integrate from 0 to 2 and double:\n= (√3/4) · 2 · [32 − 64/3 + 32/5]\n= (√3/4) · 2 · [(480 − 320 + 96)/15]\n= (√3/4) · 2 · (256/15) = (√3/4)(512/15)\n\n**V = 128√3/15 ≈ 14.78**\n\n**Sanity check:** no π in the answer — correct, since equilateral triangles contain no circles."
+        }
+      ],
+      "initialPrompt": "In example 1, where did the side length of each square come from? What would change if the cross-sections were semicircles instead?",
+      "lessonId": "volume-cross-sections"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "volume-cross-sections",
+      "title": "We-Do: Volume by Cross-Sections",
+      "problems": [
+        {
+          "id": "iap-wp10",
+          "question": "A solid has its base bounded by y = √x, y = 0, and x = 4. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
+          "answer": "8",
+          "hints": [
+            "Side length: s(x) = √x. Area of square cross-section: A(x) = (√x)² = x.",
+            "V = ∫₀⁴ x dx = [x²/2]₀⁴ = 16/2 = 8."
+          ]
+        },
+        {
+          "id": "iap-wp11",
+          "question": "A solid has its base bounded by y = 1 − x² and y = 0. Cross-sections perpendicular to the x-axis are semicircles with diameter equal to the base width. Find the volume.",
+          "answer": "π/2 · ∫₋₁¹ (1 − x²)²/4 dx = π(8/15)/2 = 4π/15",
+          "hints": [
+            "Diameter = 1 − x², so radius = (1 − x²)/2. Area of semicircle: A = (π/2)r² = (π/2)(1 − x²)²/4 = π(1 − x²)²/8.",
+            "V = ∫₋₁¹ π(1 − x²)²/8 dx = (π/4)∫₀¹ (1 − 2x² + x⁴) dx = (π/4)(1 − 2/3 + 1/5) = (π/4)(8/15) = 2π/15."
+          ]
         },
         {
           "id": "iap-wp6",
@@ -203,8 +226,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, since the region is revolved around the x-axis and there is no hole, use the disk method. What is the radius R(x)?",
-      "lessonId": "volume-revolution"
+      "initialPrompt": "For the first problem, the cross-section at position x is a square with side length s(x) = √x. What is the area A(x) of each square?",
+      "lessonId": "volume-cross-sections"
     },
     {
       "type": "explanation",
@@ -213,6 +236,28 @@
       "title": "Average Value of a Function & Motion/Accumulation",
       "content": "**Average Value of a Function:**\n\nThe average value of f on [a, b] is:\n\nf_avg = (1/(b − a)) ∫ₐᵇ f(x) dx\n\n**Interpretation:** f_avg is the height of a rectangle with base (b − a) that has the same area as the region under f. The Mean Value Theorem for Integrals guarantees that if f is continuous, there exists some c in [a, b] where f(c) = f_avg.\n\n**Motion Applications:**\n\nGiven velocity v(t):\n\n• **Displacement** (net change in position) on [a, b]:\n  Δs = ∫ₐᵇ v(t) dt\n  This can be positive, negative, or zero.\n\n• **Total distance traveled** on [a, b]:\n  D = ∫ₐᵇ |v(t)| dt\n  Always non-negative. Split the integral at points where v(t) = 0.\n\n• **Position function** from acceleration:\n  v(t) = v(0) + ∫₀ᵗ a(τ) dτ\n  s(t) = s(0) + ∫₀ᵗ v(τ) dτ\n\n**General Accumulation:**\n\nIf R(t) is a rate of change, then ∫ₐᵇ R(t) dt gives the total accumulated quantity over [a, b]. This applies to water flow, population change, cost, and any rate-to-total conversion.",
       "initialPrompt": "If a car has velocity v(t) = t² − 4t + 3 m/s, at what times is the car momentarily stopped? Why does finding these times matter for computing total distance?",
+      "lessonId": "average-value-motion"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "average-value",
+      "title": "I-Do: Average Value & Motion Applications",
+      "examples": [
+        {
+          "problem": "Find the average value of f(x) = x² on [0, 3].",
+          "solution": "**Formula:** f_avg = (1/(b − a)) ∫ₐᵇ f(x) dx\n\n**Compute the integral:**\n∫₀³ x² dx = [x³/3]₀³ = 9\n\n**Divide by interval length:**\nf_avg = (1/3)(9) = **3**\n\n**Interpretation:** A horizontal line at y = 3 on [0, 3] encloses the same area (9 square units) as the parabola y = x²."
+        },
+        {
+          "problem": "A particle moves with velocity v(t) = t² − 4t + 3 on [0, 4]. Find the displacement and total distance traveled.",
+          "solution": "**Displacement:**\n∫₀⁴ (t² − 4t + 3) dt = [t³/3 − 2t² + 3t]₀⁴\n= (64/3 − 32 + 12) − 0 = 64/3 − 20 = **4/3**\n\n**Find where v = 0:** t² − 4t + 3 = (t − 1)(t − 3) = 0 → t = 1, t = 3.\nSign analysis: v > 0 on [0,1], v < 0 on [1,3], v > 0 on [3,4].\n\n**Total distance (split at zeros):**\n∫₀¹ v dt = [t³/3 − 2t² + 3t]₀¹ = 1/3 − 2 + 3 = 4/3\n∫₁³ v dt = [t³/3 − 2t² + 3t]₁³ = (9 − 18 + 9) − (4/3) = 0 − 4/3 = −4/3\n∫₃⁴ v dt = [t³/3 − 2t² + 3t]₃⁴ = (64/3 − 32 + 12) − (0) = 4/3\n\nTotal distance = |4/3| + |−4/3| + |4/3| = 4/3 + 4/3 + 4/3 = **4**"
+        },
+        {
+          "problem": "Given a(t) = 6t with v(0) = −5 and s(0) = 2, find s(t) and the position at t = 3.",
+          "solution": "**Find velocity:**\nv(t) = ∫ 6t dt = 3t² + C₁\nv(0) = −5 → C₁ = −5\nv(t) = 3t² − 5\n\n**Find position:**\ns(t) = ∫ (3t² − 5) dt = t³ − 5t + C₂\ns(0) = 2 → C₂ = 2\ns(t) = t³ − 5t + 2\n\n**Position at t = 3:**\ns(3) = 27 − 15 + 2 = **14**"
+        }
+      ],
+      "initialPrompt": "In example 2, the displacement was 4/3 but the total distance was 4. Why are these different? What does the difference tell you about the particle's motion?",
       "lessonId": "average-value-motion"
     },
     {
@@ -241,28 +286,6 @@
         }
       ],
       "initialPrompt": "For the first problem, first find where v(t) = 0 to split the interval. Remember: total distance = ∫|v(t)| dt, which requires splitting at direction changes.",
-      "lessonId": "average-value-motion"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "average-value",
-      "title": "I-Do: Average Value & Motion Applications",
-      "examples": [
-        {
-          "problem": "Find the average value of f(x) = x² on [0, 3].",
-          "solution": "**Formula:** f_avg = (1/(b − a)) ∫ₐᵇ f(x) dx\n\n**Compute the integral:**\n∫₀³ x² dx = [x³/3]₀³ = 9\n\n**Divide by interval length:**\nf_avg = (1/3)(9) = **3**\n\n**Interpretation:** A horizontal line at y = 3 on [0, 3] encloses the same area (9 square units) as the parabola y = x²."
-        },
-        {
-          "problem": "A particle moves with velocity v(t) = t² − 4t + 3 on [0, 4]. Find the displacement and total distance traveled.",
-          "solution": "**Displacement:**\n∫₀⁴ (t² − 4t + 3) dt = [t³/3 − 2t² + 3t]₀⁴\n= (64/3 − 32 + 12) − 0 = 64/3 − 20 = **4/3**\n\n**Find where v = 0:** t² − 4t + 3 = (t − 1)(t − 3) = 0 → t = 1, t = 3.\nSign analysis: v > 0 on [0,1], v < 0 on [1,3], v > 0 on [3,4].\n\n**Total distance (split at zeros):**\n∫₀¹ v dt = [t³/3 − 2t² + 3t]₀¹ = 1/3 − 2 + 3 = 4/3\n∫₁³ v dt = [t³/3 − 2t² + 3t]₁³ = (9 − 18 + 9) − (4/3) = 0 − 4/3 = −4/3\n∫₃⁴ v dt = [t³/3 − 2t² + 3t]₃⁴ = (64/3 − 32 + 12) − (0) = 4/3\n\nTotal distance = |4/3| + |−4/3| + |4/3| = 4/3 + 4/3 + 4/3 = **4**"
-        },
-        {
-          "problem": "Given a(t) = 6t with v(0) = −5 and s(0) = 2, find s(t) and the position at t = 3.",
-          "solution": "**Find velocity:**\nv(t) = ∫ 6t dt = 3t² + C₁\nv(0) = −5 → C₁ = −5\nv(t) = 3t² − 5\n\n**Find position:**\ns(t) = ∫ (3t² − 5) dt = t³ − 5t + C₂\ns(0) = 2 → C₂ = 2\ns(t) = t³ − 5t + 2\n\n**Position at t = 3:**\ns(3) = 27 − 15 + 2 = **14**"
-        }
-      ],
-      "initialPrompt": "In example 2, the displacement was 4/3 but the total distance was 4. Why are these different? What does the difference tell you about the particle's motion?",
       "lessonId": "average-value-motion"
     },
     {

@@ -175,16 +175,85 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "linearization-differentials",
-      "title": "Linearization, Differentials & L'Hôpital's Rule",
-      "content": "**Linearization (Tangent-Line Approximation):**\n\nThe tangent line at x = a gives the best linear approximation to f near a:\n\n**L(x) = f(a) + f'(a)(x − a)**\n\nThis is the same as the tangent line equation! Use it to estimate function values without a calculator.\n\n**Differentials:**\ndy = f'(x) dx\nThe differential dy approximates the actual change Δy for small dx.\n\n**L'Hôpital's Rule — Resolving Indeterminate Limits:**\n\nIf lim[x→c] f(x)/g(x) gives 0/0 or ∞/∞, then:\nlim[x→c] f(x)/g(x) = lim[x→c] f'(x)/g'(x)\n(provided the right-side limit exists or is ±∞)\n\n**Critical requirements:**\n1. VERIFY the indeterminate form FIRST — if it's not 0/0 or ∞/∞, L'Hôpital does NOT apply\n2. Differentiate numerator and denominator SEPARATELY (this is NOT the quotient rule)\n3. You may need to apply L'Hôpital more than once\n4. Other forms (0·∞, ∞−∞, 0⁰, 1^∞, ∞⁰) must be rewritten as 0/0 or ∞/∞ first",
+      "title": "Linearization and Differentials",
+      "content": "**Linearization (Tangent-Line Approximation):**\n\nZoom in far enough on a differentiable curve and it looks straight. The tangent line at x = a is that straight thing, so it gives the best linear approximation to f near a:\n\n**L(x) = f(a) + f'(a)(x − a)**\n\nThis is exactly the point-slope form of the tangent line — nothing new, just used as a computing tool. Use it to estimate function values without a calculator.\n\n**Choosing a.** Pick the nearest point where f and f' are both easy to evaluate. To estimate √26, take a = 25 (a perfect square). To estimate (2.01)³, take a = 2. The whole method rests on |x − a| being small.\n\n**Over- or under-estimate?** The tangent line lies below a concave-up curve and above a concave-down one. So:\n• f'' > 0 near a (concave up) → L(x) **under**estimates\n• f'' < 0 near a (concave down) → L(x) **over**estimates\n\nThat's a standard follow-up question, and it's answered by the sign of f''(a) alone — no computation of the true value needed.\n\n**Differentials:**\n\ndy = f'(x) dx\n\nThe differential dy approximates the actual change Δy = f(x + dx) − f(x) for small dx. It's linearization written in terms of changes rather than positions: instead of \"what is f at 26?\", it asks \"how much does f change when x moves from 25 to 26?\"\n\n**Where differentials get used:** propagating a measurement error. If a sphere's radius is measured as 5 cm with a possible error of 0.1 cm, then V = (4/3)πr³ gives dV = 4πr² dr = 4π(25)(0.1) = 10π cm³ — the resulting uncertainty in the volume.",
       "initialPrompt": "Use the tangent line to √x at x = 25 to estimate √26. Why is the tangent line a good approximation for values close to 25?",
+      "lessonId": "linearization"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "linearization-differentials",
+      "title": "I-Do: Linearization",
+      "examples": [
+        {
+          "problem": "Use linearization of f(x) = √x at a = 25 to estimate √26.",
+          "solution": "**Step 1 — Find f(a) and f'(a):**\nf(x) = √x = x^(1/2)\nf(25) = 5\nf'(x) = 1/(2√x)\nf'(25) = 1/(2·5) = 1/10\n\n**Step 2 — Write L(x):**\nL(x) = f(25) + f'(25)(x − 25)\nL(x) = 5 + (1/10)(x − 25)\n\n**Step 3 — Estimate:**\nL(26) = 5 + (1/10)(1) = **5.1**\n\n**Check:** √26 ≈ 5.0990. Our estimate of 5.1 has error of about 0.001 — excellent for a no-calculator approximation.\n\n**Note:** Since f is concave down (f'' = −1/(4x^(3/2)) < 0), the tangent line lies ABOVE the curve, so 5.1 is an overestimate."
+        }
+      ],
+      "initialPrompt": "In example 1, we said the linearization overestimates because f is concave down. If f were concave up, would the tangent line overestimate or underestimate?",
       "lessonId": "linearization"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "linearization-differentials",
+      "title": "We-Do: Linearization",
+      "problems": [
+        {
+          "id": "cd-wp7",
+          "question": "Use linearization of f(x) = x³ at a = 2 to estimate (2.01)³.",
+          "answer": "8.12",
+          "hints": [
+            "f(2) = 8, f'(x) = 3x², f'(2) = 12. L(x) = 8 + 12(x − 2).",
+            "L(2.01) = 8 + 12(0.01) = 8 + 0.12 = 8.12. (Actual: 8.120601, so very accurate.)"
+          ]
+        },
+        {
+          "id": "cd-wp12",
+          "question": "Use linearization of f(x) = √x at a = 100 to estimate √102. Is your estimate an over- or under-estimate?",
+          "answer": "≈ 10.1; an overestimate",
+          "hints": [
+            "f(100) = 10 and f'(x) = 1/(2√x), so f'(100) = 1/20. Then L(x) = 10 + (1/20)(x − 100).",
+            "L(102) = 10 + (1/20)(2) = 10.1. Since f''(x) = −1/(4x^{3/2}) < 0, the curve is concave down and the tangent line sits above it — so 10.1 is an overestimate. (True value ≈ 10.0995.)"
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, find f(2) and f'(2) first. Then build the linearization L(x) = f(2) + f'(2)(x − 2).",
+      "lessonId": "linearization"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
       "skill": "lhopitals-rule",
-      "title": "We-Do: Lhopitals Rule — Guided Practice",
+      "title": "L'Hôpital's Rule",
+      "content": "Some limits refuse to be evaluated by substitution because they come out as **0/0** or **∞/∞** — forms that could equal anything depending on how fast the top and bottom are moving. L'Hôpital's Rule compares those speeds directly.\n\n**L'Hôpital's Rule:**\n\nIf lim[x→c] f(x)/g(x) gives **0/0** or **∞/∞**, then\n\nlim[x→c] f(x)/g(x) = lim[x→c] f'(x)/g'(x)\n\nprovided the right-hand limit exists or is ±∞.\n\n**Why it works:** near c, f and g are each approximately their own tangent lines. If both hit zero at c, the ratio of the functions is approximately the ratio of their slopes — and that's f'(c)/g'(c).\n\n**Critical requirements — all four are graded:**\n\n1. **VERIFY the indeterminate form FIRST.** Substitute and show you got 0/0 or ∞/∞. If the limit is 3/0 or 0/5, L'Hôpital does **not** apply and using it produces a wrong answer. On the AP exam, unstated verification loses the point even when the number is right.\n2. **Differentiate numerator and denominator SEPARATELY.** This is *not* the quotient rule — there is no denominator-squared, no subtraction. Just f' over g'.\n3. **You may need to apply it more than once.** If f'/g' is still 0/0 or ∞/∞, verify again and repeat. But if it isn't indeterminate any more, stop — applying the rule to a determinate form is how a correct answer becomes wrong.\n4. **Other indeterminate forms must be rewritten first.** L'Hôpital only accepts a quotient.\n\n**Converting the other forms:**\n• **0 · ∞** → move one factor into the denominator as its reciprocal. x·e⁻ˣ becomes x/eˣ, which is ∞/∞.\n• **∞ − ∞** → combine into a single fraction (common denominator).\n• **1^∞, 0⁰, ∞⁰** → take ln of the expression, find the limit of that, then exponentiate the result.\n\n**Know when not to reach for it.** For a rational function as x → ∞, comparing leading terms is faster and always works. And lim[x→0] sin x/x = 1 is the limit used to *prove* that (sin x)' = cos x — quoting L'Hôpital for it is circular, though the AP exam accepts it.",
+      "initialPrompt": "Check whether L'Hôpital applies to lim[x→0] sin(x)/x. What do you get when you substitute x = 0 into the numerator and denominator?",
+      "lessonId": "lhopitals-rule"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "linearization-differentials",
+      "title": "I-Do: L'Hôpital's Rule",
+      "examples": [
+        {
+          "problem": "Evaluate: lim[x→0] sin(x)/x.",
+          "solution": "**Step 1 — Check the form:**\nDirect substitution: sin(0)/0 = 0/0 ✓ Indeterminate.\n\n**Step 2 — Apply L'Hôpital's Rule:**\nlim[x→0] sin(x)/x = lim[x→0] (d/dx[sin x])/(d/dx[x])\n= lim[x→0] cos(x)/1\n= cos(0)/1\n= **1**\n\n**Note:** This is one of the most famous limits in calculus. We proved it using L'Hôpital, but it can also be proven geometrically (the squeeze theorem approach from Unit 1)."
+        },
+        {
+          "problem": "Evaluate: lim[x→∞] (3x² + 2x)/(5x² − 1).",
+          "solution": "**Step 1 — Check the form:**\nAs x → ∞: numerator → ∞, denominator → ∞ → **∞/∞** ✓ Indeterminate.\n\n**Step 2 — Apply L'Hôpital:**\nlim[x→∞] (3x² + 2x)/(5x² − 1) = lim[x→∞] (6x + 2)/(10x)\n\n**Step 3 — Check again:** Still ∞/∞. Apply L'Hôpital a second time:\n= lim[x→∞] 6/10 = **3/5**\n\n**Alternative (often faster for rational functions):** Divide top and bottom by x²:\nlim (3 + 2/x)/(5 − 1/x²) = 3/5 as x → ∞.\n\nBoth methods give 3/5. For rational functions at infinity, dividing by the highest power is usually faster."
+        }
+      ],
+      "initialPrompt": "In both examples, what was the very first thing we did before differentiating anything?",
+      "lessonId": "lhopitals-rule"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "lhopitals-rule",
+      "title": "We-Do: L'Hôpital's Rule",
       "problems": [
         {
           "id": "cd-wp10",
@@ -202,47 +271,6 @@
           "hints": [
             "Form: ∞/∞. Apply L'Hôpital: lim 2x/eˣ. Still ∞/∞.",
             "Apply L'Hôpital again: lim 2/eˣ = 0. Exponentials always beat polynomials."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, try direct substitution first. What form do you get? Is it indeterminate? If so, what does L'Hôpital's Rule say to do?",
-      "lessonId": "linearization"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "linearization-differentials",
-      "title": "I-Do: Linearization & L'Hôpital's Rule",
-      "examples": [
-        {
-          "problem": "Use linearization of f(x) = √x at a = 25 to estimate √26.",
-          "solution": "**Step 1 — Find f(a) and f'(a):**\nf(x) = √x = x^(1/2)\nf(25) = 5\nf'(x) = 1/(2√x)\nf'(25) = 1/(2·5) = 1/10\n\n**Step 2 — Write L(x):**\nL(x) = f(25) + f'(25)(x − 25)\nL(x) = 5 + (1/10)(x − 25)\n\n**Step 3 — Estimate:**\nL(26) = 5 + (1/10)(1) = **5.1**\n\n**Check:** √26 ≈ 5.0990. Our estimate of 5.1 has error of about 0.001 — excellent for a no-calculator approximation.\n\n**Note:** Since f is concave down (f'' = −1/(4x^(3/2)) < 0), the tangent line lies ABOVE the curve, so 5.1 is an overestimate."
-        },
-        {
-          "problem": "Evaluate: lim[x→0] sin(x)/x.",
-          "solution": "**Step 1 — Check the form:**\nDirect substitution: sin(0)/0 = 0/0 ✓ Indeterminate.\n\n**Step 2 — Apply L'Hôpital's Rule:**\nlim[x→0] sin(x)/x = lim[x→0] (d/dx[sin x])/(d/dx[x])\n= lim[x→0] cos(x)/1\n= cos(0)/1\n= **1**\n\n**Note:** This is one of the most famous limits in calculus. We proved it using L'Hôpital, but it can also be proven geometrically (the squeeze theorem approach from Unit 1)."
-        },
-        {
-          "problem": "Evaluate: lim[x→∞] (3x² + 2x)/(5x² − 1).",
-          "solution": "**Step 1 — Check the form:**\nAs x → ∞: numerator → ∞, denominator → ∞ → **∞/∞** ✓ Indeterminate.\n\n**Step 2 — Apply L'Hôpital:**\nlim[x→∞] (3x² + 2x)/(5x² − 1) = lim[x→∞] (6x + 2)/(10x)\n\n**Step 3 — Check again:** Still ∞/∞. Apply L'Hôpital a second time:\n= lim[x→∞] 6/10 = **3/5**\n\n**Alternative (often faster for rational functions):** Divide top and bottom by x²:\nlim (3 + 2/x)/(5 − 1/x²) = 3/5 as x → ∞.\n\nBoth methods give 3/5. For rational functions at infinity, dividing by the highest power is usually faster."
-        }
-      ],
-      "initialPrompt": "In example 1, we said the linearization overestimates because f is concave down. If f were concave up, would the tangent line overestimate or underestimate?",
-      "lessonId": "linearization"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "linearization-differentials",
-      "title": "We-Do: Linearization & L'Hôpital's Rule",
-      "problems": [
-        {
-          "id": "cd-wp7",
-          "question": "Use linearization of f(x) = x³ at a = 2 to estimate (2.01)³.",
-          "answer": "8.12",
-          "hints": [
-            "f(2) = 8, f'(x) = 3x², f'(2) = 12. L(x) = 8 + 12(x − 2).",
-            "L(2.01) = 8 + 12(0.01) = 8 + 0.12 = 8.12. (Actual: 8.120601, so very accurate.)"
           ]
         },
         {
@@ -264,8 +292,8 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, find f(2) and f'(2) first. Then build the linearization L(x) = f(2) + f'(2)(x − 2).",
-      "lessonId": "linearization"
+      "initialPrompt": "For the first problem, try direct substitution first. What form do you get? Is it indeterminate? If so, what does L'Hôpital's Rule say to do?",
+      "lessonId": "lhopitals-rule"
     },
     {
       "type": "independent_practice",
@@ -328,8 +356,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "related-rates",
-      "lessonId": "related-rates"
+      "skill": "lhopitals-rule",
+      "lessonId": "lhopitals-rule"
     }
   ],
   "answerKeys": {
@@ -349,7 +377,8 @@
     "cd-yp5": "4.",
     "cd-yp6": "0.",
     "cd-wp10": "1/2.",
-    "cd-wp11": "0."
+    "cd-wp11": "0.",
+    "cd-wp12": "≈ 10.1, an overestimate (f is concave down, so the tangent line lies above the curve)."
   },
   "lessons": [
     {
