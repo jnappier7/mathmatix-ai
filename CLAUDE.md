@@ -31,7 +31,7 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 |-------|------|
 | Backend | Node.js ≥20.14 (pinned 20.11.1) / Express 4 |
 | DB | MongoDB + Mongoose 8 (`connect-mongo` session store) |
-| **LLM (runtime)** | **Dual-provider.** OpenAI by default (`gpt-4o-mini` chat, `gpt-4o` vision grading, `text-embedding-3-small`); the tutor's generate stage runs **Claude** when `TUTOR_MODEL` is set — production currently runs `claude-sonnet-5`. See §7. |
+| **LLM (runtime)** | **Provider-agnostic, currently all OpenAI** (`gpt-4o-mini` chat, `gpt-4o` vision grading, `text-embedding-3-small`). The tutor's generate stage is env-switchable via `TUTOR_MODEL`; as of **2026-08-18 production runs `gpt-4o-mini`** — the Claude path is wired but dormant. See §7. |
 | Voice STT | Deepgram (`nova-2`/`nova-3`), Whisper-1 fallback |
 | Voice TTS | Cartesia (`sonic-3.5`), streaming over WebSocket |
 | Math OCR | Mathpix (`/v3/text`, `/v3/pdf`) |
@@ -44,18 +44,32 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 | Frontend | **Vanilla JS + Vite** (multi-page, no SPA framework) |
 | Hosting | Render (Docker); Puppeteer headless-shell + Python3/matplotlib in image |
 
-> **Claude IS wired in at runtime** (this note previously said the opposite — it was stale, and it
-> misleads anyone reasoning about the pipeline). `utils/pipeline/generate.js` reads
-> `PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini'`, and `utils/openaiClient.js`
-> dispatches to `utils/anthropicClient.js` whenever the model id starts with `claude`. That adapter is
-> a full drop-in for `callLLM` / `callLLMStream` / `callLLMStructured` and normalizes Claude's
-> request/response/stream shapes into the OpenAI ones the rest of the app consumes, so the pipeline
-> stays provider-agnostic. It also prepends a **child-safety system prompt** on every Claude call
-> (Anthropic requires it for products serving minors) — provider-scoped, the OpenAI path is unchanged.
+> **`TUTOR_MODEL` is the one switch, and it is currently unset / `gpt-4o-mini`.** Which means: every
+> LLM call in the app is OpenAI today. Don't read the Claude machinery below as describing a live code
+> path — it's a dormant capability. (This note has been wrong in *both* directions historically; check
+> the Render env before trusting any statement about which model prod runs.)
 >
-> Still OpenAI regardless of `TUTOR_MODEL`: **vision grading** (deliberately — `llmGateway` calls the
-> OpenAI SDK directly for it), **embeddings**, and `llmGateway`'s `DEFAULT_MODELS` for any caller that
-> doesn't pass a model explicitly.
+> `utils/pipeline/generate.js` reads `PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini'`,
+> and `utils/openaiClient.js` dispatches to `utils/anthropicClient.js` whenever the model id starts with
+> `claude`. That adapter is a full drop-in for `callLLM` / `callLLMStream` / `callLLMStructured` and
+> normalizes Claude's request/response/stream shapes into the OpenAI ones the rest of the app consumes,
+> so the pipeline stays provider-agnostic and the switch is a one-env-var flip in either direction. It
+> also prepends a **child-safety system prompt** on every Claude call (Anthropic requires it for
+> products serving minors) — provider-scoped, the OpenAI path is unchanged. Also dormant while
+> `TUTOR_MODEL` is OpenAI: the Claude prompt-cache breakpoint in `promptCompact.js`, and the
+> `TUTOR_FALLBACK_MODEL` cross-provider failover (there's no second provider to fail over *to*).
+>
+> Always OpenAI regardless of `TUTOR_MODEL`: **vision grading** (deliberately — `llmGateway` calls the
+> OpenAI SDK directly for it), **embeddings**, `llmGateway`'s `DEFAULT_MODELS` for any caller that
+> doesn't pass a model explicitly, and every hard-coded `PRIMARY_CHAT_MODEL = 'gpt-4o-mini'` outside
+> generate.js (`pipeline/verify.js`, `routes/chat.js`, `routes/courseChat.js`).
+>
+> ⚠️ **`TUTOR_MODEL` cannot take an o-series id as-is.** `utils/openaiClient.js` maps to
+> `max_completion_tokens` only when the id contains `gpt-4o`/`gpt-5`, and drops `temperature` only when
+> it contains `nano`. So `o4-mini` (or any `o1`/`o3`/`o4` reasoning model) is sent `max_tokens` +
+> `temperature` and 400s — and 4xx is **terminal by design** in `isTransientError`, so there is no
+> fallback and every tutor turn fails. Widen the param logic before pointing `TUTOR_MODEL` at a
+> reasoning model.
 
 ---
 

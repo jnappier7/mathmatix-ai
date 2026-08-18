@@ -27,13 +27,17 @@
 const { callLLM } = require('../llmGateway');
 const { symbolicVerify } = require('./symbolicVerifier');
 
-// Small, fast model, held on OpenAI deliberately. openaiClient now routes any
-// `claude*` id to anthropicClient, so a swap to Claude Haiku is a one-line
-// change here rather than new plumbing — but the verifier is the second opinion
-// that checks the tutor's own answer, and the tutor generate stage already runs
-// Claude in production (TUTOR_MODEL). Keeping the verifier on a different
-// provider is the point: two independent models are a real cross-check, one
-// model grading itself is not.
+// Small, fast model. The verifier is the second opinion that checks the tutor's
+// own answer, so it wants to be a DIFFERENT model from the generate stage: two
+// independent models are a real cross-check, one model grading itself is not.
+//
+// Heads-up — that separation is currently NOT in effect. This was pinned to
+// OpenAI while generate ran Claude (TUTOR_MODEL=claude-sonnet-5); as of
+// 2026-08-18 TUTOR_MODEL is gpt-4o-mini, so generate and the verifier are the
+// same model and the cross-check is nominal. openaiClient routes any `claude*`
+// id to anthropicClient, so restoring real independence is a one-line change
+// here (e.g. claude-haiku) rather than new plumbing — but it costs a second
+// provider key, so it's a deliberate call, not a drive-by fix.
 const VERIFIER_MODEL = 'gpt-4o-mini';
 
 // If the equivalence judge returns below this confidence, we treat the
