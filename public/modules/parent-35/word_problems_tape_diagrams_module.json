@@ -80,8 +80,8 @@
         },
         {
           "id": "td-p2",
-          "question": "'Ava has 56 beads. She has 3 times as many beads as Mia. How many beads does Mia have?' Watch out—this one tricks many students.",
-          "answer": "Ava's bar is 3 times as long as Mia's. So Ava (56) = 3 × Mia. Mia = 56 ÷ 3 ≈ 18 R2. Actually... let me recheck. If the problem gives a clean answer: Mia has 56 ÷ 3. But tape diagram shows: Mia = 1 unit, Ava = 3 units = 56. One unit = 56 ÷ 3.",
+          "question": "'Ava has 57 beads. She has 3 times as many beads as Mia. How many beads does Mia have?' Watch out—this one tricks many students.",
+          "answer": "Mia has 19 beads. Draw Mia as ONE unit and Ava as THREE units of the same size. Ava's three units together are the 57 we were given, so one unit = 57 ÷ 3 = 19 — and that one unit IS Mia. The trap is the phrase “3 times as many”: it sits in the sentence right after Ava, so students multiply 57 × 3 = 171 and end up giving Mia MORE beads than Ava. The diagram makes that impossible to miss — Mia's bar is the short one, so her number has to be the smaller one. Check: 19 × 3 = 57 ✓",
           "hints": [
             "Draw Mia as one bar. Draw Ava as 3 bars the same size (3 times as many).",
             "The 3 bars together equal 56: 56 ÷ 3. The tape diagram prevents the common error of multiplying 56 × 3."

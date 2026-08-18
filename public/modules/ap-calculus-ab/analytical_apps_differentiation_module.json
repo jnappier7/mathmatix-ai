@@ -226,7 +226,7 @@
       "examples": [
         {
           "problem": "The graph of f'(x) is a parabola opening upward with x-intercepts at x = 1 and x = 5, and vertex at (3, -4). Determine: (a) where f is increasing/decreasing, (b) local extrema of f, (c) concavity of f, (d) inflection points of f.",
-          "solution": "(a) f' < 0 on (1, 5): f is decreasing. f' > 0 on (-inf, 1) and (5, inf): f is increasing. (b) At x = 1: f' changes from + to - ... wait, f' goes from + to - at x = 1? Let me re-read: f' has x-intercepts at 1 and 5, opens upward. So f' > 0 for x < 1, f' < 0 for 1 < x < 5, f' > 0 for x > 5. At x = 1: f' changes from + to - -> local MAX of f. At x = 5: f' changes from - to + -> local MIN of f. (c) f' is a parabola with vertex at x = 3. f' is decreasing on (-inf, 3) and increasing on (3, inf). Since f'' = slope of f', we have f'' < 0 on (-inf, 3) (concave down) and f'' > 0 on (3, inf) (concave up). (d) f'' changes sign at x = 3: inflection point of f at x = 3."
+          "solution": "**Start by reading the SIGN of f' off the description.** f' is a parabola opening upward with x-intercepts at 1 and 5, so f' > 0 for x < 1, f' < 0 on (1, 5), and f' > 0 for x > 5.\n\n(a) f is **increasing** on (−∞, 1) and (5, ∞), and **decreasing** on (1, 5).\n\n(b) At x = 1, f' changes from + to − → **local MAXIMUM** of f. At x = 5, f' changes from − to + → **local MINIMUM** of f.\n\n(c) Concavity comes from f'', which is the **slope** of f'. The parabola f' has its vertex at x = 3, so f' is decreasing on (−∞, 3) and increasing on (3, ∞). Therefore f'' < 0 on (−∞, 3) — f is **concave down** — and f'' > 0 on (3, ∞) — f is **concave up**.\n\n(d) f'' changes sign at x = 3, so f has an **inflection point at x = 3**.\n\n**Note what the vertex value −4 did NOT do.** It says how steeply f is falling at its steepest, not where f turns. The low point of the f' graph marks an inflection point of f, never an extremum — that is the trap this question is built around."
         },
         {
           "problem": "Perform a complete analysis and sketch f(x) = x^3 - 3x^2 - 9x + 5. Find intercepts, critical points, extrema, concavity, and inflection points.",
@@ -284,13 +284,13 @@
       "problems": [
         {
           "id": "aad-wp5",
-          "problem": "The graph of f'(x) is a line passing through (-2, 0) and (4, 0) with f'(x) > 0 on (-2, 4) and f'(x) < 0 outside that interval. Determine all local extrema and inflection points of f.",
+          "problem": "The graph of f'(x) is a downward-opening parabola with x-intercepts at (-2, 0) and (4, 0), so f'(x) > 0 on (-2, 4) and f'(x) < 0 outside that interval. Determine all local extrema and inflection points of f.",
           "hints": [
             "Where does f' change from negative to positive? From positive to negative?",
-            "f' is a downward-opening parabola (or at least changes sign this way). Where is f' increasing/decreasing?",
-            "The vertex of the f' line/curve tells you where f'' = 0"
+            "Concavity comes from f'', which is the SLOPE of f'. Where is the parabola f' increasing, and where is it decreasing?",
+            "The vertex of the parabola f' is where its slope is zero — that is where f'' = 0. For a parabola it sits midway between the two x-intercepts."
           ],
-          "answer": "At x = -2: f' changes from - to + -> local minimum of f. At x = 4: f' changes from + to - -> local maximum of f. Since f' is a line through (-2, 0) and (4, 0), it's actually... re-reading: f' is a line? A line can only cross zero once. If f' > 0 on (-2, 4) and < 0 outside, f' must be a curve (parabola). f' has max at x = 1 (midpoint). f' is increasing on (-inf, 1) and decreasing on (1, inf), so f'' > 0 on (-inf, 1) and f'' < 0 on (1, inf). Inflection point of f at x = 1."
+          "answer": "Local minimum at x = -2, local maximum at x = 4, inflection point at x = 1.\n\nExtrema come from the SIGN of f'. At x = -2, f' changes from - to + → local MINIMUM of f. At x = 4, f' changes from + to - → local MAXIMUM of f.\n\nInflection points come from the SLOPE of f', which is f''. The parabola's vertex sits midway between its intercepts, at x = (-2 + 4)/2 = 1. To the left of x = 1 the parabola is rising, so f'' > 0 and f is concave up; to the right it is falling, so f'' < 0 and f is concave down. The concavity switches at x = 1, giving an inflection point of f there.\n\nNote that x = 1 is where f' is at its LARGEST — f is climbing at its steepest there. A high point on the f' graph is an inflection point of f, never an extremum of f."
         },
         {
           "id": "aad-wp6",

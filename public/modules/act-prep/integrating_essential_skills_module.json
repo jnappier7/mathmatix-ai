@@ -61,7 +61,7 @@
       "examples": [
         {
           "problem": "A car drives 120 miles at 40 mph, then 180 miles at 60 mph. What is the average speed for the entire trip?\n(A) 48 mph  (B) 50 mph  (C) 52 mph  (D) 55 mph  (E) 60 mph",
-          "solution": "Total distance = 120 + 180 = 300 miles.\nTime for leg 1 = 120/40 = 3 hours.\nTime for leg 2 = 180/60 = 3 hours.\nTotal time = 6 hours.\nAverage speed = 300/6 = 50 mph.\nAnswer: (B) 50 mph\n\nTrap: (D) 55 mph is the simple average of 40 and 60, but that's WRONG because the time on each leg was different... wait, actually the times were equal here (both 3 hours), but the distances were different. The simple average of speeds would be 50 which happens to be correct here. But the method is: total distance / total time."
+          "solution": "Total distance = 120 + 180 = 300 miles.\nTime for leg 1 = 120/40 = 3 hours.\nTime for leg 2 = 180/60 = 3 hours.\nTotal time = 6 hours.\nAverage speed = 300/6 = 50 mph.\nAnswer: (B) 50 mph\n\nTrap: averaging the two speeds — (40 + 60)/2 = 50 — gives the right number here, but only by coincidence: the two legs happened to take the same time (3 hours each), and that is the one case where the simple average is correct. Change the trip to 120 miles at 40 mph and 120 miles at 60 mph and the times become 3 and 2 hours, so the true average is 240/5 = 48 mph while the simple average still says 50. Always use total distance ÷ total time."
         },
         {
           "problem": "Pipe A can fill a tank in 6 hours. Pipe B can fill it in 4 hours. How long does it take both pipes together?\n(A) 2 hours  (B) 2.4 hours  (C) 3 hours  (D) 5 hours  (E) 10 hours",
@@ -133,7 +133,7 @@
             "Outer rectangle: (20+6) × (40+6) = 26 × 46",
             "Pool area: 20 × 40 = 800. Walkway = outer − pool."
           ],
-          "answer": "(B) 408. Outer: 26 × 46 = 1,196. Pool: 800. Walkway: 1,196 − 800 = 396. Wait: 26 × 46 = 1196. 1196 − 800 = 396. Answer: (A) 396."
+          "answer": "(A) 396. The walkway runs along both sides of each dimension, so it adds 3 + 3 = 6 feet to each: the outer rectangle is 26 × 46 = 1,196 sq ft. The pool itself is 20 × 40 = 800 sq ft. The walkway is what's left over: 1,196 − 800 = 396 sq ft. Adding 3 rather than 6 to each dimension is the classic error here. Note (D) 800 is the pool alone and (E) 1,196 is the whole outer rectangle — both are distractors for stopping one step early."
         },
         {
           "id": "ies-wp3",
