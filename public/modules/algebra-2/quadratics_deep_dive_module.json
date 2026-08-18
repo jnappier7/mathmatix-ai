@@ -64,6 +64,45 @@
       "lessonId": "quadratic-forms"
     },
     {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "quadratic-solving-all-methods",
+      "title": "Concept: Four Ways to Solve a Quadratic — and How to Choose",
+      "content": "Every quadratic can be solved four ways. They all reach the same answers, so the real skill is picking the one that costs you the least work.\n\n**1. Square roots** — use when there is no linear term, or when the equation is already a squared expression equal to a number. Isolate the square, then take the root of both sides and keep the ±.\n  3(x - 2)² = 48 → (x - 2)² = 16 → x - 2 = ±4 → x = 6 or x = -2\n\n**2. Factoring** — use when the trinomial factors over the integers. Set each factor to zero (Zero Product Property).\n  x² + 7x + 12 = 0 → (x + 3)(x + 4) = 0 → x = -3 or x = -4\n\n**3. Completing the square** — always works, and it is the method that produces vertex form, so reach for it when you want the vertex as well as the roots.\n  x² - 8x + 11 = 0 → x² - 8x = -11 → x² - 8x + 16 = 5 → (x - 4)² = 5 → x = 4 ± √5\n\n**4. The quadratic formula** — always works, no exceptions:\n  **x = (-b ± √(b² - 4ac)) / (2a)**\n\n**The discriminant tells you what to expect BEFORE you commit.** The expression under the radical, **D = b² - 4ac**, decides the number and type of solutions:\n- **D > 0** → two distinct real solutions. If D is also a **perfect square**, the quadratic factors over the integers, so factoring is the fast route.\n- **D = 0** → one repeated real solution (a double root); the parabola touches the x-axis at its vertex.\n- **D < 0** → no real solutions: two **complex conjugate** solutions of the form p ± qi.\n\n**A decision procedure that will not let you down:**\n1. Is there no bx term, or is one side already a perfect square? → **square roots**.\n2. Otherwise compute D. Is it a perfect square? → **factoring** will work; use it.\n3. Do you also need the vertex? → **completing the square**.\n4. Anything else → **quadratic formula**. It never fails, and D has already told you what shape the answer will take.\n\nComputing the discriminant first costs one line and saves you from starting a factorisation that was never going to work.",
+      "initialPrompt": "Look at 3(x - 2)² = 48 and x² + 7x + 12 = 0. One of these would be silly to run through the quadratic formula. Which one, and what is it about its shape that gives it away?",
+      "lessonId": "solving-all-methods"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "quadratic-solving-all-methods",
+      "title": "I-Do: Choosing a Method — Worked Examples",
+      "examples": [
+        {
+          "problem": "Solve 3(x - 2)² = 48.",
+          "solution": "**Read the shape first.** The left side is already a perfect square times a constant, and there is no loose x term. That is the square-root signal.\n\n**Isolate the square:** divide by 3 → (x - 2)² = 16.\n**Take the root of both sides, with ±:** x - 2 = ±4.\n**Solve both:** x = 2 + 4 = 6 and x = 2 - 4 = -2.\n\n**Check:** 3(6 - 2)² = 3(16) = 48 ✓ and 3(-2 - 2)² = 3(16) = 48 ✓.\n\nExpanding this into standard form first would have created a trinomial to factor — more work for the same two answers.",
+          "commonMistake": "Dropping the ± and reporting only x = 6. The square root step always produces two branches."
+        },
+        {
+          "problem": "Solve x² + 7x + 12 = 0.",
+          "solution": "**Check the discriminant first:** D = 7² - 4(1)(12) = 49 - 48 = 1. That is positive AND a perfect square, so the quadratic factors over the integers — factoring is the cheapest route.\n\n**Factor:** find two numbers multiplying to 12 and adding to 7 → 3 and 4, so (x + 3)(x + 4) = 0.\n**Zero Product Property:** x + 3 = 0 or x + 4 = 0 → x = -3 or x = -4.\n\n**Check:** 9 - 21 + 12 = 0 ✓ and 16 - 28 + 12 = 0 ✓.",
+          "tip": "D being a perfect square is the reliable test for 'will this factor?' — much faster than trying pairs and hoping."
+        },
+        {
+          "problem": "Solve x² - 8x + 11 = 0 by completing the square, and state the vertex of y = x² - 8x + 11.",
+          "solution": "**Move the constant:** x² - 8x = -11.\n**Complete the square:** half of -8 is -4, and (-4)² = 16. Add 16 to both sides:\nx² - 8x + 16 = -11 + 16 → (x - 4)² = 5.\n**Take roots:** x - 4 = ±√5 → x = 4 ± √5 (about 6.24 and 1.76).\n\n**The bonus:** the same work hands you vertex form. y = (x - 4)² - 5, so the vertex is (4, -5).\n\nD = 64 - 44 = 20 — positive but NOT a perfect square, which is exactly why factoring was never going to work here.",
+          "interpretation": "Completing the square is the only method that gives the roots and the vertex in one pass."
+        },
+        {
+          "problem": "Solve 2x² + x + 3 = 0.",
+          "solution": "**Discriminant first:** D = 1² - 4(2)(3) = 1 - 24 = -23. Negative, so there are NO real solutions — two complex conjugates instead. Do not waste time hunting for factors.\n\n**Quadratic formula:**\nx = (-1 ± √(-23)) / (2·2) = (-1 ± i√23) / 4\n\nSo x = -1/4 + (√23/4)i and x = -1/4 - (√23/4)i — a conjugate pair, as D < 0 promised.\n\n**Graph reading:** the parabola opens upward (a = 2 > 0) and never crosses the x-axis.",
+          "commonMistake": "Writing '√-23 is undefined' and stopping. It is undefined over the REALS; over the complex numbers it is i√23."
+        }
+      ],
+      "initialPrompt": "Before we solve 2x² + x + 3 = 0 — compute D. What does its sign tell you about the answer you are about to get?",
+      "lessonId": "solving-all-methods"
+    },
+    {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "quadratic-solving-all-methods",
@@ -103,8 +142,8 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "skill": "discriminant-analysis",
-      "title": "Concept: Discriminant Analysis",
+      "skill": "complex-numbers",
+      "title": "Concept: Complex Numbers",
       "initialPrompt": "What is i⁷³? (Hint: divide 73 by 4 and look at the remainder.)",
       "content": "**Complex Numbers:**\n\nThe imaginary unit **i** is defined so that **i² = -1** (equivalently, i = √(-1)).\n\n**Standard form:** a + bi, where a is the real part and b is the imaginary part.\n\n**Operations:**\n• Add/Subtract: combine real parts and imaginary parts separately\n  (3 + 2i) + (1 - 5i) = 4 - 3i\n• Multiply: use FOIL, remembering i² = -1\n  (2 + 3i)(4 - i) = 8 - 2i + 12i - 3i² = 8 + 10i + 3 = 11 + 10i\n• Divide: multiply by the **conjugate** of the denominator\n  (3 + i)/(2 - i) × (2 + i)/(2 + i) = (6 + 3i + 2i + i²)/(4 + 1) = (5 + 5i)/5 = 1 + i\n\n**Powers of i cycle every 4:**\ni¹ = i, i² = -1, i³ = -i, i⁴ = 1, i⁵ = i, ...\n\n**Complex Conjugate:** The conjugate of a + bi is a - bi. Their product is always REAL: (a+bi)(a-bi) = a² + b².",
       "lessonId": "complex-numbers-intro"
@@ -113,7 +152,7 @@
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "discriminant-analysis",
-      "title": "I-Do: Discriminant Analysis — Worked Examples",
+      "title": "I-Do: The Discriminant & Complex Solutions — Worked Examples",
       "initialPrompt": "Could we have used completing the square instead? Try it: x² + 4x + 13 = 0 → (x+2)² = ? What happens when the right side is negative?",
       "examples": [
         {
@@ -126,8 +165,8 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "skill": "parabola-transformations",
-      "title": "We-Do: Parabola Transformations — Guided Practice",
+      "skill": "complex-numbers",
+      "title": "We-Do: Complex Number Arithmetic — Guided Practice",
       "problems": [
         {
           "question": "Simplify: (5 - 2i)(3 + 4i).",
@@ -145,7 +184,49 @@
             "Top: (4+i)(2+3i) = 8+12i+2i+3i² = 8+14i-3 = 5+14i.",
             "Bottom: (2-3i)(2+3i) = 4+9 = 13. Result: (5+14i)/13."
           ]
+        }
+      ],
+      "initialPrompt": "Start with (5 - 2i)(3 + 4i). FOIL it as if i were a variable — then deal with the i² term at the end.",
+      "lessonId": "complex-numbers-intro"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "parabola-transformations",
+      "title": "Concept: Graphing Parabolas by Transformation",
+      "content": "Vertex form is built for graphing:\n\n**y = a(x - h)² + k**\n\nEvery parabola is the parent y = x² moved and reshaped, and each letter controls exactly one thing.\n\n**h — horizontal shift, and it lies about its sign.** The graph moves h units right. Because the form has a MINUS, y = (x - 3)² shifts right 3, while y = (x + 2)² shifts LEFT 2 — read x + 2 as x - (-2).\n\n**k — vertical shift.** Up k units, and this one behaves: +5 means up 5.\n\n**a — vertical stretch, compression, and reflection.**\n- |a| > 1: stretched vertically — narrower than the parent.\n- 0 < |a| < 1: compressed vertically — wider than the parent.\n- a < 0: reflected across the x-axis, so the parabola opens downward.\n\n**The vertex is (h, k)**, read straight off with the sign flip on h. Since a controls only the steepness and the direction, it never moves the vertex.\n\n**Order matters when you describe the moves.** Stretch and reflect first, then shift. Doing it the other way around lands the graph somewhere else, because multiplying by a would scale the shift too.\n\n**Going backwards.** Given a description — \"reflected across the x-axis, stretched by 4, shifted left 5 and up 2\" — write it straight into the template: a = -4, h = -5, k = 2, so y = -4(x + 5)² + 2. Reading the transformations off a graph and writing the equation is the same skill run in reverse.",
+      "initialPrompt": "Here are two: y = (x - 3)² and y = (x + 2)². One shifts right and one shifts left. Which is which — and why does that feel backwards?",
+      "lessonId": "quadratic-transformations-modeling"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "parabola-transformations",
+      "title": "I-Do: Parabola Transformations — Worked Examples",
+      "examples": [
+        {
+          "problem": "Describe how y = 2(x - 3)² - 5 transforms the parent y = x², and state its vertex.",
+          "solution": "**Match the template** y = a(x - h)² + k: a = 2, h = 3, k = -5.\n\n**a = 2** → vertical stretch by a factor of 2; positive, so it still opens upward and there is no reflection.\n**h = 3** → shift RIGHT 3 (the form already has the minus sign).\n**k = -5** → shift DOWN 5.\n\n**Vertex: (3, -5).** Order: stretch by 2 first, then move right 3 and down 5."
         },
+        {
+          "problem": "Describe the transformations in y = -(1/2)(x + 1)² + 4 and state the vertex.",
+          "solution": "**Match the template:** a = -1/2, h = -1 (because x + 1 is x - (-1)), k = 4.\n\n**a = -1/2** → two things at once: the negative reflects it across the x-axis so it opens DOWNWARD, and the 1/2 compresses it vertically, making it wider than the parent.\n**h = -1** → shift LEFT 1.\n**k = 4** → shift UP 4.\n\n**Vertex: (-1, 4)** — and because the parabola opens downward, that vertex is a MAXIMUM.",
+          "commonMistake": "Reading x + 1 as a shift right. The template subtracts h, so x + 1 means h = -1 and the graph goes left."
+        },
+        {
+          "problem": "Write the equation of the parabola obtained from y = x² by reflecting across the x-axis, stretching vertically by 4, then shifting left 5 and up 2.",
+          "solution": "**Take the description one letter at a time.**\nReflected across the x-axis and stretched by 4 → a = -4 (the minus is the reflection, the 4 is the stretch).\nShifted left 5 → h = -5.\nShifted up 2 → k = 2.\n\n**Substitute into y = a(x - h)² + k:**\ny = -4(x - (-5))² + 2 = **-4(x + 5)² + 2**\n\n**Check the vertex:** it should be at (-5, 2). Substituting x = -5 gives y = -4(0) + 2 = 2 ✓."
+        }
+      ],
+      "initialPrompt": "For y = 2(x - 3)² - 5, call out a, h and k before we interpret any of them.",
+      "lessonId": "quadratic-transformations-modeling"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "parabola-transformations",
+      "title": "We-Do: Parabola Transformations — Guided Practice",
+      "problems": [
         {
           "question": "Describe the graph transformations: y = -3(x + 2)² + 5 compared to y = x².",
           "answer": "Reflect over x-axis, vertical stretch by 3, shift left 2, shift up 5. Vertex at (-2, 5), opens down.",
@@ -154,6 +235,33 @@
             "h = -2: shift left 2. k = 5: shift up 5.",
             "Vertex: (-2, 5). Maximum value is 5."
           ]
+        },
+        {
+          "question": "Identify the vertex of y = (1/2)(x - 4)² - 3 and describe every transformation from the parent y = x².",
+          "hints": [
+            "Match it to y = a(x - h)² + k and read off a, h and k before interpreting anything.",
+            "a = 1/2, h = 4, k = -3. A positive a less than 1 does something specific to the width.",
+            "The vertex is (h, k) = (4, -3). |a| < 1 compresses vertically, so the parabola is WIDER than the parent, and it still opens upward."
+          ],
+          "answer": "a = 1/2, h = 4, k = -3. Vertical compression by a factor of 1/2 (wider than the parent), shifted right 4 and down 3. Vertex (4, -3), opening upward since a > 0."
+        },
+        {
+          "question": "Write the equation of the parabola formed by reflecting y = x² across the x-axis, stretching it vertically by a factor of 4, then shifting it left 5 and up 2.",
+          "hints": [
+            "Translate each phrase into one of a, h or k. Reflection and stretch both live in a.",
+            "Reflection makes a negative and the stretch makes it 4, so a = -4. Left 5 means h = -5, not +5.",
+            "Substitute into y = a(x - h)² + k: y = -4(x - (-5))² + 2. Simplify the double negative."
+          ],
+          "answer": "y = -4(x + 5)² + 2. Check the vertex: at x = -5, y = -4(0) + 2 = 2, so the vertex is (-5, 2) ✓."
+        },
+        {
+          "question": "Convert y = 2(x - 1)² - 8 to standard form, then find its x-intercepts.",
+          "hints": [
+            "Expand (x - 1)² first, then distribute the 2 and combine with the -8.",
+            "(x - 1)² = x² - 2x + 1, so 2(x² - 2x + 1) - 8 = 2x² - 4x + 2 - 8.",
+            "For the x-intercepts, vertex form is actually easier: set 2(x - 1)² - 8 = 0 and use square roots."
+          ],
+          "answer": "Standard form: y = 2x² - 4x - 6. X-intercepts from vertex form: 2(x - 1)² = 8 → (x - 1)² = 4 → x - 1 = ±2 → x = 3 and x = -1. Check in standard form: 2(9) - 12 - 6 = 0 ✓ and 2(1) + 4 - 6 = 0 ✓."
         }
       ],
       "initialPrompt": "For the first multiplication, remember FOIL: First, Outside, Inside, Last. What is the First terms product?",
