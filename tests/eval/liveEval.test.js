@@ -3,11 +3,17 @@
  * tutor's actual replies with the judges. This is the piece the old golden suite
  * couldn't do (it mocks the LLM): it catches the tutor's WORDS regressing.
  *
- * OPT-IN ONLY. It needs an OpenAI key and makes real calls, so it is skipped
+ * OPT-IN ONLY. It needs a real provider key and makes real calls, so it is skipped
  * unless RUN_LLM_EVAL=1. Wire it as a nightly / pre-release job, not the keyless
  * PR gate — the model is nondeterministic and would flake normal CI.
  *
- *   RUN_LLM_EVAL=1 OPENAI_API_KEY=sk-... npm run test:eval:live
+ *   RUN_LLM_EVAL=1 npm run test:eval:live
+ *
+ * The key is read from .env, which tests/setup.js loads for live runs only. It is
+ * checked against the placeholders setup.js stamps, so a missing key SKIPS with a
+ * reason instead of 401-ing every scenario and reporting it as nine tutor-quality
+ * failures. Set TUTOR_MODEL to eval a different model; the guard then checks that
+ * model's provider key.
  *
  * The reply is generated the way production does for a correctness turn: the real
  * compact system prompt + the scenario history, plus the same verified-answer hint
@@ -16,7 +22,11 @@
  */
 'use strict';
 
-const RUN = process.env.RUN_LLM_EVAL === '1' && !!process.env.OPENAI_API_KEY;
+const { liveEvalGate, warnIfBlocked, asInfraError } = require('./liveCreds');
+
+const GATE = liveEvalGate();
+warnIfBlocked(GATE);
+const RUN = GATE.run;
 
 const scenarios = require('./scenarios.json').scenarios;
 const { runScenario, formatFailures } = require('./runner');
@@ -60,7 +70,14 @@ async function liveGenerateReply({ scenario, turn, history, decision }) {
     messages.push({ role: m.role, content: isLastUser ? m.content + verifiedAnswerHint(turn, scenario) : m.content });
   });
 
-  const completion = await callLLM(process.env.TUTOR_MODEL || 'gpt-4o-mini', messages, { temperature: 0.5, max_tokens: 400 });
+  const model = process.env.TUTOR_MODEL || 'gpt-4o-mini';
+  let completion;
+  try {
+    completion = await callLLM(model, messages, { temperature: 0.5, max_tokens: 400 });
+  } catch (err) {
+    // A provider failure is not a tutor failure — relabel it as such.
+    throw asInfraError(err, model);
+  }
   // callLLM returns the full completion object (OpenAI shape for both
   // providers — anthropicClient normalizes). Anything else stringifies to
   // "[object Object]" and the judges silently score that instead of the reply.

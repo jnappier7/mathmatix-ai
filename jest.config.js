@@ -59,9 +59,29 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'html'],
 
   // Ignore patterns
+  //
+  // `.claude/worktrees/` is load-bearing, not tidiness. Sibling git worktrees used
+  // to live outside the repo, but the agent harness now creates them *inside* it —
+  // so jest's `**/tests/**` glob walked into every one and ran that branch's tests
+  // too. Observed: one `npm run test:eval:live` executed FOUR copies of the suite,
+  // three of them from other sessions' branches, with stack traces pointing at
+  // different line numbers in their older copies of utils/openaiClient.js.
+  //
+  // That means a local pass or fail was partly decided by unrelated in-flight code
+  // in someone else's worktree — the exact hazard CLAUDE.md's one-worktree-per-session
+  // rule exists to prevent, leaking in through the test runner. It also quadrupled
+  // every run and caused the "Haste module naming collision: mathmatix-ai" warning
+  // (four package.json files claiming one module name).
   testPathIgnorePatterns: [
     '/node_modules/',
     '/coverage/',
-    '/tests/load/'
+    '/tests/load/',
+    '/\\.claude/worktrees/'
+  ],
+
+  // Stops the duplicate-package.json haste collision at the source: don't crawl
+  // nested worktrees for modules either, not just for tests.
+  modulePathIgnorePatterns: [
+    '/\\.claude/worktrees/'
   ]
 };
