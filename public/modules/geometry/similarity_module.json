@@ -43,20 +43,6 @@
       "lessonId": "triangle-similarity-theorems"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "similarity-proofs",
-      "title": "We-Do: Similarity Proofs — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for similarity proofs.",
-          "hint": "Apply the concepts of similarity proofs.",
-          "solution": "Step-by-step solution for similarity proofs."
-        }
-      ],
-      "lessonId": "similarity-applications"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "similar-triangle-theorems",
@@ -114,6 +100,56 @@
       ],
       "initialPrompt": "For the first problem, what does SSS~ require? Compare each pair of corresponding sides.",
       "lessonId": "triangle-similarity-theorems"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "similarity-proofs",
+      "title": "We-Do: Similarity Proofs — Guided Practice",
+      "problems": [
+        {
+          "id": "si-pr1",
+          "question": "In triangle ABC, point D lies on AB and point E lies on AC, with DE ∥ BC. Prove that △ADE ~ △ABC, and name the theorem you used.",
+          "answer": "Because DE ∥ BC and AB is a transversal, ∠ADE ≅ ∠ABC (corresponding angles). The two triangles also share ∠A, since it is literally the same angle in both. That is two pairs of congruent angles, so △ADE ~ △ABC by AA. (A third pair, ∠AED ≅ ∠ACB, follows from AC as a transversal — but AA only needs two, so stating it is optional.)",
+          "hints": [
+            "Two of the three similarity criteria need side lengths, and you were given none. That leaves only one criterion available.",
+            "AA needs two pairs of congruent angles. The parallel lines give you one pair through corresponding angles — which pair?",
+            "∠ADE ≅ ∠ABC from DE ∥ BC. For the second pair, look for something the two triangles share: ∠A belongs to both. Two pairs is enough — name AA and stop."
+          ]
+        },
+        {
+          "id": "si-pr2",
+          "question": "Triangle one has sides 6, 9, and 12. Triangle two has sides 10, 15, and 20. Are they similar? Justify with a theorem and give the scale factor.",
+          "answer": "Pair the sides smallest-to-smallest: 6/10 = 3/5, 9/15 = 3/5, and 12/20 = 3/5. All three ratios are equal, so the triangles are similar by SSS~, with a scale factor of 3/5 going from the first triangle to the second (or 5/3 the other way).",
+          "hints": [
+            "No angles are given, so AA is out and SAS~ needs an angle too. That leaves the criterion that uses all three sides.",
+            "Sort each triangle's sides and match them in order — smallest with smallest. Then compute all three ratios.",
+            "6/10, 9/15, 12/20 all reduce to 3/5. Equal ratios across all three pairs is SSS~. State the scale factor with a direction, since it inverts depending on which triangle you start from."
+          ]
+        },
+        {
+          "id": "si-pr3",
+          "question": "In △PQR and △XYZ, PQ = 8, QR = 10, XY = 12, and YZ = 15, and ∠Q ≅ ∠Y. Are the triangles similar? Would your answer change if the congruent pair were ∠P ≅ ∠X instead?",
+          "answer": "Yes as stated. PQ/XY = 8/12 = 2/3 and QR/YZ = 10/15 = 2/3, so two pairs of sides are proportional. ∠Q is the angle between sides PQ and QR, and ∠Y is between XY and YZ — the INCLUDED angles. So the triangles are similar by SAS~. If instead ∠P ≅ ∠X, the criterion would NOT apply: ∠P is not between PQ and QR, and SAS~ requires the congruent angle to be the included one. The triangles might still happen to be similar, but this information would not prove it.",
+          "hints": [
+            "Check the two side ratios first: 8/12 and 10/15. Do they match?",
+            "Both are 2/3, so two pairs are proportional. Now the deciding question for SAS~: is the congruent angle BETWEEN those two sides in each triangle?",
+            "∠Q sits between PQ and QR, so yes — SAS~ applies. For the second part, locate ∠P: it is at the end of PQ, not between the two given sides, so SAS~ cannot be used."
+          ]
+        },
+        {
+          "id": "si-pr4",
+          "question": "A person 6 feet tall casts a 4-foot shadow at the same moment a flagpole casts a 26-foot shadow. Prove the two triangles are similar, then find the height of the flagpole.",
+          "answer": "Each triangle is formed by an upright object, its shadow, and the sun's ray. Both objects stand perpendicular to the ground, so each triangle has a right angle. The sun's rays arrive at the same angle for both, since the measurements are taken at the same moment. Two pairs of congruent angles gives similarity by AA. Now set up proportional corresponding sides: height/shadow = 6/4 = h/26. Cross-multiply: 4h = 156, so h = 39 feet. Check: 6/4 = 1.5 and 39/26 = 1.5 ✓.",
+          "hints": [
+            "Sketch each situation as a triangle: the object is one leg, its shadow is the other, and the sun's ray is the hypotenuse. What angle do both triangles have in common at the ground?",
+            "Both objects are vertical, so both triangles have a right angle; and because it is the same moment, the sun's ray makes the same angle in both. That is AA — say so before computing anything.",
+            "Now write matching parts as a proportion: 6/4 = h/26. Cross-multiply to get 4h = 156, so h = 39 ft. Verify both ratios reduce to 1.5."
+          ]
+        }
+      ],
+      "lessonId": "triangle-similarity-theorems",
+      "initialPrompt": "Here's a triangle ABC with a segment DE drawn inside it, parallel to BC. You're given no side lengths at all — only that DE ∥ BC. Which of our three similarity criteria could even be used here, and why are the other two off the table?"
     },
     {
       "type": "explanation",
@@ -330,7 +366,11 @@
     "si-yp3": "20 feet.",
     "si-yp4": "16.",
     "si-yp5": "6.",
-    "si-yp6": "3√5."
+    "si-yp6": "3√5.",
+    "si-pr1": "△ADE ~ △ABC by AA (corresponding angles from DE ∥ BC, plus the shared ∠A).",
+    "si-pr2": "Yes, by SSS~; every ratio is 3/5.",
+    "si-pr3": "Yes by SAS~ (∠Q and ∠Y are included). With ∠P ≅ ∠X instead, SAS~ would not apply.",
+    "si-pr4": "Similar by AA; the flagpole is 39 feet tall."
   },
   "lessons": [
     {
