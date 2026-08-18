@@ -62,20 +62,6 @@
       "lessonId": "volume-cones-spheres"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "volume-spheres",
-      "title": "We-Do: Volume Spheres — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for volume spheres.",
-          "hint": "Apply the concepts of volume spheres.",
-          "solution": "Step-by-step solution for volume spheres."
-        }
-      ],
-      "lessonId": "volume-scaling"
-    },
-    {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Volume Scaling & Composite Figures",
@@ -87,20 +73,6 @@
         "Composite figures: break into cylinders, cones, spheres, hemispheres",
         "Add volumes for joined parts; subtract for removed parts",
         "Always use the same units for all parts before combining"
-      ],
-      "lessonId": "volume-cylinders"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "volume-word-problems",
-      "title": "We-Do: Volume Word Problems — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for volume word problems.",
-          "hint": "Apply the concepts of volume word problems.",
-          "solution": "Step-by-step solution for volume word problems."
-        }
       ],
       "lessonId": "volume-cylinders"
     },
@@ -242,6 +214,56 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "volume-spheres",
+      "title": "We-Do: Volume Spheres — Guided Practice",
+      "problems": [
+        {
+          "id": "vs-sp1",
+          "question": "A basketball has a diameter of 24 cm. Find its volume in terms of π and to the nearest tenth.",
+          "answer": "The formula needs the radius: r = 24 ÷ 2 = 12 cm. V = (4/3)πr³ = (4/3)π(12)³ = (4/3)π(1728) = 2304π ≈ 7238.2 cm³. Substituting 24 straight in would give 8 times too much, because the radius is cubed and 2³ = 8.",
+          "hints": [
+            "Check what you were given before substituting. The formula V = (4/3)πr³ takes the radius; 24 is the diameter.",
+            "r = 12. Now cube it first: 12³ = 1728. Cubing before multiplying keeps the arithmetic manageable.",
+            "V = (4/3)π(1728). Note 1728 ÷ 3 = 576, and 576 × 4 = 2304, so V = 2304π ≈ 7238.2 cm³."
+          ]
+        },
+        {
+          "id": "vs-sp2",
+          "question": "A hemispherical bowl has a radius of 6 inches. Find its volume in terms of π and to the nearest tenth.",
+          "answer": "A hemisphere is exactly half a sphere. Full sphere: V = (4/3)π(6)³ = (4/3)π(216) = 288π. Half of that: 144π ≈ 452.4 in³. There is no separate hemisphere formula to memorise — compute the sphere and halve it.",
+          "hints": [
+            "\"Hemi\" means half. Find the volume of the whole sphere first, then deal with the half.",
+            "Full sphere: (4/3)π(6)³ = (4/3)π(216) = 288π.",
+            "Halve it: 144π ≈ 452.4 in³. Keep the units cubic — volume is always in³ here, not in²."
+          ]
+        },
+        {
+          "id": "vs-sp3",
+          "question": "A sphere has a volume of 972π cm³. Find its radius.",
+          "answer": "Set the formula equal to the given volume: (4/3)πr³ = 972π. Divide both sides by π: (4/3)r³ = 972. Multiply by 3/4: r³ = 729. Take the cube root: r = 9 cm, since 9 × 9 × 9 = 729. Check: (4/3)π(729) = 972π ✓.",
+          "hints": [
+            "Write the formula with the unknown in it and set it equal to 972π. The π appears on both sides — divide it out first.",
+            "(4/3)r³ = 972. To undo multiplying by 4/3, multiply by its reciprocal 3/4.",
+            "r³ = 729, so you need a cube root, not a square root. What number times itself three times gives 729?"
+          ]
+        },
+        {
+          "id": "vs-sp4",
+          "question": "A ball with radius 5 cm fits exactly inside a cylindrical can of radius 5 cm and height 10 cm. Find the volume of each, then the empty space around the ball. What fraction of the can does the ball fill?",
+          "answer": "Sphere: V = (4/3)π(5)³ = (4/3)π(125) = 500π/3 ≈ 523.6 cm³. Cylinder: V = π(5)²(10) = 250π ≈ 785.4 cm³. Empty space = 250π - 500π/3 = (750π - 500π)/3 = 250π/3 ≈ 261.8 cm³. The ball fills (500π/3) ÷ (250π) = 2/3 of the can — exactly two thirds, which is true for ANY sphere in its snuggest cylinder, not just these numbers.",
+          "hints": [
+            "The can's height is 10 = 2 × 5, which is exactly what \"fits perfectly\" means: the height equals the diameter of the ball.",
+            "Compute both volumes separately: sphere (4/3)π(125) and cylinder π(25)(10). Subtract for the empty space.",
+            "For the fraction, divide sphere by cylinder and let the π cancel. You should get exactly 2/3 — the fact the lesson mentions."
+          ]
+        }
+      ],
+      "lessonId": "volume-scaling",
+      "initialPrompt": "A basketball has a diameter of 24 cm. Before we substitute anything into V = (4/3)πr³ — what do we have to do to that 24 first, and what happens to the answer if we forget?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
       "title": "Scaling & Composite Volume Practice",
       "skill": "volume-scaling",
       "problems": [
@@ -274,6 +296,56 @@
         }
       ],
       "lessonId": "volume-cylinders"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "volume-word-problems",
+      "title": "We-Do: Volume Word Problems — Guided Practice",
+      "problems": [
+        {
+          "id": "vs-wq1",
+          "question": "A cinema sells popcorn in two containers of the same height, 20 cm: a cylinder with radius 5 cm, and a cone with radius 10 cm. Which holds more, and by how much?",
+          "answer": "Cylinder: V = π(5)²(20) = π(25)(20) = 500π ≈ 1570.8 cm³. Cone: V = (1/3)π(10)²(20) = (1/3)π(100)(20) = 2000π/3 ≈ 2094.4 cm³. The CONE holds more, by 2000π/3 - 500π = (2000π - 1500π)/3 = 500π/3 ≈ 523.6 cm³. The cone loses a factor of 1/3 but gains a factor of 4 from doubling the radius (since the radius is squared), and 4/3 > 1.",
+          "hints": [
+            "Different formulas — the cone carries a 1/3 that the cylinder does not. Compute each volume separately before comparing.",
+            "Cylinder: π(25)(20). Cone: (1/3)π(100)(20). Keep π symbolic so the comparison stays exact.",
+            "500π versus 2000π/3. Put them over a common denominator to subtract. Then explain why the wider cone wins despite the 1/3."
+          ]
+        },
+        {
+          "id": "vs-wq2",
+          "question": "A cylindrical tank has a radius of 3 feet and a height of 8 feet. Water flows in at 5 cubic feet per minute. How long does it take to fill? Round to the nearest tenth of a minute.",
+          "answer": "Volume: V = π(3)²(8) = π(9)(8) = 72π ≈ 226.19 ft³. Time = volume ÷ rate = 226.19 ÷ 5 ≈ 45.2 minutes. Watch the units: cubic feet divided by cubic feet per minute leaves minutes, which is what the question asked for.",
+          "hints": [
+            "Two steps: find how much the tank holds, then work out how long that takes at the given rate.",
+            "V = π(9)(8) = 72π ft³. Convert to a decimal here, since the rate is a decimal quantity.",
+            "Divide the volume by 5 ft³ per minute. Check the units cancel to minutes — that confirms you divided the right way round."
+          ]
+        },
+        {
+          "id": "vs-wq3",
+          "question": "A cylindrical water tank has a diameter of 2 metres and a height of 3 metres. Find its volume in cubic metres, then convert to litres (1 m³ = 1000 L). Round to the nearest litre.",
+          "answer": "Radius = 2 ÷ 2 = 1 m. V = π(1)²(3) = 3π ≈ 9.42 m³. Converting: 9.42 m³ × 1000 L/m³ ≈ 9425 litres. The radius being 1 makes the arithmetic easy, but the halving step still has to happen — the diameter is 2, not the radius.",
+          "hints": [
+            "Diameter 2 means radius 1. Do that first even though it looks trivial; skipping it is the most common error in these.",
+            "V = π(1)²(3) = 3π m³. Now get a decimal before converting.",
+            "Multiply by 1000 to convert cubic metres to litres. Round only at the very end, not before the conversion."
+          ]
+        },
+        {
+          "id": "vs-wq4",
+          "question": "A cube-shaped gift box measures 20 cm on each edge. A spherical ball of radius 10 cm sits inside it. How much packing material is needed to fill the remaining space? Round to the nearest tenth.",
+          "answer": "Cube: V = 20³ = 8000 cm³. Sphere: V = (4/3)π(10)³ = (4/3)π(1000) = 4000π/3 ≈ 4188.8 cm³. Packing material = 8000 - 4188.8 ≈ 3811.2 cm³. Note the ball has diameter 20, exactly matching the cube's edge — it touches all six faces, which is why this is the largest sphere the box could hold.",
+          "hints": [
+            "This is a subtraction problem: the space left over is the container minus what is already inside it.",
+            "Cube: 20³ = 8000 cm³. Sphere: (4/3)π(10)³ — cube the 10 first, giving 1000.",
+            "Subtract the sphere's volume from the cube's. Sanity check: the leftover should be less than half the box, since a sphere fills about 52% of its circumscribing cube."
+          ]
+        }
+      ],
+      "lessonId": "volume-cylinders",
+      "initialPrompt": "Two popcorn containers, both 20 cm tall: a cylinder of radius 5, and a cone of radius 10. The cone is only a third of its cylinder — but it's twice as wide. Which do you think holds more before we compute it?"
     },
     {
       "type": "independent_practice",
@@ -354,7 +426,15 @@
     "vs-yp3": "972π ≈ 3053.63 cm³",
     "vs-yp4": "180π ≈ 565 mL",
     "vs-yp5": "176π ≈ 552.92 m³",
-    "vs-yp6": "27 times larger"
+    "vs-yp6": "27 times larger",
+    "vs-sp1": "r = 12, V = 2304π ≈ 7238.2 cm³.",
+    "vs-sp2": "144π ≈ 452.4 in³ (half of 288π).",
+    "vs-sp3": "r = 9 cm, from r³ = 729.",
+    "vs-sp4": "Sphere 500π/3 ≈ 523.6; cylinder 250π ≈ 785.4; empty 250π/3 ≈ 261.8; the ball fills exactly 2/3.",
+    "vs-wq1": "Cone holds more: 2000π/3 ≈ 2094.4 vs 500π ≈ 1570.8, by 500π/3 ≈ 523.6 cm³.",
+    "vs-wq2": "72π ≈ 226.19 ft³; about 45.2 minutes.",
+    "vs-wq3": "3π ≈ 9.42 m³ ≈ 9425 litres.",
+    "vs-wq4": "8000 - 4000π/3 ≈ 3811.2 cm³ of packing material."
   },
   "lessons": [
     {
