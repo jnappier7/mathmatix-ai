@@ -25,20 +25,36 @@
  */
 
 const { callLLM } = require('../llmGateway');
+// Pure predicate, not a call path — the gateway stays the only way we reach a
+// provider. Imported rather than re-implemented so the `claude*` test has one
+// definition.
+const { isClaudeModel } = require('../anthropicClient');
 const { symbolicVerify } = require('./symbolicVerifier');
 
-// Small, fast model. The verifier is the second opinion that checks the tutor's
-// own answer, so it wants to be a DIFFERENT model from the generate stage: two
-// independent models are a real cross-check, one model grading itself is not.
+// Small, fast model, deliberately on a DIFFERENT provider from the generate
+// stage. The verifier is the second opinion that checks the tutor's own answer:
+// two independent models are a real cross-check, one model grading itself is
+// not. Generate runs gpt-4o-mini (TUTOR_MODEL, as of 2026-08-18), so the
+// verifier runs Claude Haiku — openaiClient routes any `claude*` id through
+// anthropicClient, so this is a model-id change, not new plumbing.
 //
-// Heads-up — that separation is currently NOT in effect. This was pinned to
-// OpenAI while generate ran Claude (TUTOR_MODEL=claude-sonnet-5); as of
-// 2026-08-18 TUTOR_MODEL is gpt-4o-mini, so generate and the verifier are the
-// same model and the cross-check is nominal. openaiClient routes any `claude*`
-// id to anthropicClient, so restoring real independence is a one-line change
-// here (e.g. claude-haiku) rather than new plumbing — but it costs a second
-// provider key, so it's a deliberate call, not a drive-by fix.
-const VERIFIER_MODEL = 'gpt-4o-mini';
+// Two things this crossing depends on, both load-bearing:
+//   1. These calls pass `response_format: {type:'json_object'}` — bare JSON mode
+//      with no schema, which has no Claude analogue. anthropicClient translates
+//      it into a system-prompt instruction; before that translation existed the
+//      constraint was dropped silently and every verdict came back
+//      `*_parse_failed`. parseVerdict below is the second layer of that defense.
+//   2. Anthropic is now a hard dependency of grading. An unfunded balance or a
+//      bad key is a terminal 4xx (isTransientError treats 4xx as terminal on
+//      purpose), so openaiClient's cross-provider fallback does NOT cover it.
+//      verifierCall does — see the fallback note there.
+const VERIFIER_MODEL = 'claude-haiku-4-5';
+
+// The OpenAI model to fall back to when the Claude verifier is unreachable.
+// Same id as generate's, which costs us the independence above — but a nominal
+// cross-check still grades, and returning `unverifiable` for every attempt does
+// not.
+const VERIFIER_FALLBACK_MODEL = 'gpt-4o-mini';
 
 // If the equivalence judge returns below this confidence, we treat the
 // verdict as unverifiable rather than acting on a weak signal.
@@ -56,10 +72,78 @@ const MAX_PROBLEM_CHARS = 2000;
 const MAX_ANSWER_CHARS = 500;
 
 // Stronger judge for the minority of attempts the fast model can't resolve.
-// gpt-4o is already used for vision grading, so it stays within the OpenAI-only
-// contract. Escalation only fires on uncertain cases, so the cost/latency hit is
-// bounded to a small fraction of answer attempts.
+// gpt-4o is already used for vision grading, so it needs no extra provider.
+// Escalation only fires on uncertain cases, so the cost/latency hit is bounded
+// to a small fraction of answer attempts. Keeping tier 2 on OpenAI while tier 1
+// is Claude is a feature, not an oversight: an attempt Haiku can't resolve gets
+// a genuinely different model rather than a bigger version of the same one.
 const ESCALATION_MODEL = 'gpt-4o';
+
+// ── JSON-mode plumbing for the cross-provider verifier ──────────────────────
+// Every call below asks for bare JSON mode. On the Claude path that constraint
+// is a system-prompt instruction rather than a decode-time guarantee (see the
+// VERIFIER_MODEL note), so a stray ``` fence or a leading "Here's the JSON:" is
+// possible in a way it isn't with OpenAI's json_object. A fence must not read as
+// "unverifiable" — that silently downgrades grading to mathSolver-only, with no
+// error anywhere. Strip the fence and take the outermost object.
+function parseVerdict(raw) {
+  if (!raw) return null;
+  let text = raw.trim();
+  // ```json ... ``` or ``` ... ```
+  const fenced = text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+  if (fenced) text = fenced[1].trim();
+  try {
+    return JSON.parse(text);
+  } catch (_) { /* fall through to brace extraction */ }
+  // Prose around the object: take the first { through the last }.
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start === -1 || end <= start) return null;
+  try {
+    return JSON.parse(text.slice(start, end + 1));
+  } catch (_) {
+    return null;
+  }
+}
+
+// One chokepoint for the verifier's LLM calls, so the Anthropic dependency can
+// fail without taking grading down with it.
+//
+// Deliberately NARROW. openaiClient already fails 429s, 5xx, and network errors
+// over to OpenAI, so covering those again here would be redundant — and worse
+// than redundant: a second attempt that returns something unparseable rewrites
+// the caller's error from `rate limited` to `step1_parse_failed`, which is the
+// one string a human would have used to diagnose it.
+//
+// What openaiClient deliberately does NOT cover is a terminal 4xx — 401 (bad
+// key), 403, 404 (bad model id), and the 400 an exhausted Anthropic balance
+// returns. Those are treated as terminal so real misconfiguration surfaces
+// instead of hiding, which is right for the tutor's generate stage (the student
+// sees an error) and wrong for the verifier (nothing surfaces at all — every
+// attempt just stamps `unverifiable` and grading silently degrades to
+// mathSolver's ~30% topic coverage). Those, and only those, fall back here.
+function isTerminalConfigError(err) {
+  const status = err?.status ?? err?.response?.status;
+  return typeof status === 'number' && status >= 400 && status < 500 && status !== 429;
+}
+
+async function verifierCall(model, messages, options) {
+  try {
+    return await callLLM(model, messages, options);
+  } catch (err) {
+    if (!isClaudeModel(model) || !isTerminalConfigError(err)) throw err;
+    console.error(
+      `[LLMVerifier] ${model} rejected the call (${err.status}: ${err.message}) — check `
+      + `ANTHROPIC_API_KEY and the account balance. Falling back to `
+      + `${VERIFIER_FALLBACK_MODEL}; the cross-provider check is degraded until this is fixed.`,
+    );
+    try {
+      return await callLLM(VERIFIER_FALLBACK_MODEL, messages, options);
+    } catch (_) {
+      throw err;   // surface the Claude cause, not the fallback's symptom
+    }
+  }
+}
 
 /**
  * Run two-step LLM verification on a student's answer.
@@ -120,7 +204,7 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
       },
     ];
 
-    const step1 = await callLLM(model, step1Messages, {
+    const step1 = await verifierCall(model, step1Messages, {
       temperature: 0,
       max_tokens: 300,
       response_format: { type: 'json_object' },
@@ -128,11 +212,9 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
 
     const step1Raw = step1?.choices?.[0]?.message?.content?.trim() || '';
     let modelAnswer = null;
-    try {
-      const parsed = JSON.parse(step1Raw);
+    const parsed = parseVerdict(step1Raw);
+    if (parsed) {
       modelAnswer = typeof parsed.answer === 'string' ? parsed.answer.trim() : null;
-    } catch (_) {
-      // Non-JSON reply — fall through
     }
 
     if (!modelAnswer) {
@@ -188,17 +270,15 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
       },
     ];
 
-    const step2 = await callLLM(model, step2Messages, {
+    const step2 = await verifierCall(model, step2Messages, {
       temperature: 0,
       max_tokens: 200,
       response_format: { type: 'json_object' },
     });
 
     const step2Raw = step2?.choices?.[0]?.message?.content?.trim() || '';
-    let judged;
-    try {
-      judged = JSON.parse(step2Raw);
-    } catch (_) {
+    const judged = parseVerdict(step2Raw);
+    if (!judged) {
       return { ...unverifiable, modelAnswer, error: 'step2_parse_failed' };
     }
 
@@ -310,17 +390,15 @@ async function llmVerifyConceptual(questionText, studentAnswer, options = {}) {
       },
     ];
 
-    const res = await callLLM(model, messages, {
+    const res = await verifierCall(model, messages, {
       temperature: 0,
       max_tokens: 250,
       response_format: { type: 'json_object' },
     });
 
     const raw = res?.choices?.[0]?.message?.content?.trim() || '';
-    let judged;
-    try {
-      judged = JSON.parse(raw);
-    } catch (_) {
+    const judged = parseVerdict(raw);
+    if (!judged) {
       return { ...unverifiable, error: 'conceptual_parse_failed' };
     }
 
@@ -486,17 +564,15 @@ async function llmVerifyMethod(problemText, studentMessage, options = {}) {
       },
     ];
 
-    const res = await callLLM(model, messages, {
+    const res = await verifierCall(model, messages, {
       temperature: 0,
       max_tokens: 250,
       response_format: { type: 'json_object' },
     });
 
     const raw = res?.choices?.[0]?.message?.content?.trim() || '';
-    let judged;
-    try {
-      judged = JSON.parse(raw);
-    } catch (_) {
+    const judged = parseVerdict(raw);
+    if (!judged) {
       return { ...clean, error: 'method_parse_failed' };
     }
 
@@ -670,7 +746,11 @@ module.exports = {
   pickProblemContext,
   pickPosedQuestion,
   VERIFIER_MODEL,
+  VERIFIER_FALLBACK_MODEL,
   ESCALATION_MODEL,
   CONFIDENCE_THRESHOLD,
   NEGATIVE_CONFIDENCE_THRESHOLD,
+  // exposed for unit tests
+  parseVerdict,
+  verifierCall,
 };

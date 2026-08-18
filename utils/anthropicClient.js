@@ -211,6 +211,31 @@ function toClaudeOutputConfig(responseFormat) {
   return { format: { type: 'json_schema', schema: sanitizeSchema(schema) } };
 }
 
+// OpenAI's *bare* `response_format: { type:'json_object' }` — JSON mode with no
+// schema — has no Claude analogue: output_config.format requires an actual
+// schema, so toClaudeOutputConfig returns null and the constraint used to be
+// dropped on the floor. That is the worst available outcome, because it fails
+// where nobody is looking: Claude answers with prose around the JSON or wraps
+// it in a ``` fence, the caller's JSON.parse throws, and the call is recorded
+// as a *parse failure* rather than as the config gap it is. Nine call sites in
+// this app use the bare form (llmVerifier alone has four).
+//
+// Claude complies reliably when the constraint is stated in the system prompt,
+// so translate it into one. Appended AFTER buildSystemField so it lands outside
+// the cache breakpoint and can't shift a caller's cacheableSystemChars offsets.
+const JSON_ONLY_INSTRUCTION = 'Respond with a single raw JSON object and nothing '
+  + 'else: no prose before or after it, and no markdown code fences.';
+
+function isBareJsonMode(responseFormat) {
+  return responseFormat?.type === 'json_object' && !responseFormat?.json_schema?.schema;
+}
+
+// `system` is either a string or an array of text blocks (the cached form).
+function appendSystemInstruction(system, instruction) {
+  if (Array.isArray(system)) return [...system, { type: 'text', text: instruction }];
+  return system ? `${system}\n\n${instruction}` : instruction;
+}
+
 // ── Tool translation ────────────────────────────────────────────────
 // OpenAI tools [{type:'function', function:{name, description, parameters}}]
 // → Claude tools [{name, description, input_schema}]. Schemas share the same
@@ -341,6 +366,10 @@ function buildBody(model, messages, options) {
   if (options.response_format) {
     const oc = toClaudeOutputConfig(options.response_format);
     if (oc) body.output_config = oc;
+    // Schema-less JSON mode: no output_config to set, so state it in the prompt.
+    else if (isBareJsonMode(options.response_format)) {
+      body.system = appendSystemInstruction(body.system, JSON_ONLY_INSTRUCTION);
+    }
   }
   const claudeTools = toClaudeTools(options.tools);
   if (claudeTools) {
