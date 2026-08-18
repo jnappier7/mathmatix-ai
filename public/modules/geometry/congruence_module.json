@@ -65,37 +65,6 @@
       "lessonId": "congruence-intro"
     },
     {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "skill": "triangle-congruence-aas-hl",
-      "title": "AAS and HL Theorems",
-      "content": "Two more congruence shortcuts complete the Big 5:\n\n**AAS (Angle-Angle-Side):** Two pairs of congruent angles and one pair of congruent NON-included sides. Why does this work? If two angles match, the third angle is forced (angle sum = 180°), effectively giving you ASA.\n\n**HL (Hypotenuse-Leg):** For RIGHT triangles only: if the hypotenuses are congruent and one pair of legs is congruent, the triangles are congruent. Always verify the right angle first!\n\nRemember: **SSA is NOT valid** (the ambiguous case). But HL works for right triangles because the right angle eliminates the ambiguity.",
-      "initialPrompt": "Why does HL only work for right triangles? Why can't we use it for any triangle?",
-      "lessonId": "sss-sas"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "triangle-congruence-aas-hl",
-      "title": "I-Do: AAS, HL, and Identifying the Correct Postulate",
-      "examples": [
-        {
-          "problem": "Given: ∠A ≅ ∠D, ∠B ≅ ∠E, and BC ≅ EF (where BC and EF are NOT between the congruent angles). Name the theorem.",
-          "solution": "We have:\n1. ∠A ≅ ∠D (an angle)\n2. ∠B ≅ ∠E (another angle)\n3. BC ≅ EF (a side that is NOT included between the two angles)\n\nTwo angles and a non-included side → **AAS (Angle-Angle-Side) Theorem**.\n\nWhy it works: since ∠A ≅ ∠D and ∠B ≅ ∠E, we know ∠C ≅ ∠F (angle sum forces it). So we actually have all three angles and a side matched."
-        },
-        {
-          "problem": "In right triangles △PQR and △STU (right angles at R and U), PR ≅ SU = 10 and PQ ≅ ST = 26. Prove congruence.",
-          "solution": "Check requirements for HL:\n1. Both are right triangles? ✓ (right angles at R and U)\n2. Hypotenuses congruent? PQ and ST are opposite the right angles, so PQ = ST = 26 ✓\n3. One pair of legs congruent? PR = SU = 10 ✓\n\nBy the **HL (Hypotenuse-Leg) Theorem**, △PQR ≅ △STU.\n\n(We could also find the other leg: √(26²-10²) = √(676-100) = √576 = 24. But we don't need to — HL is sufficient!)"
-        },
-        {
-          "problem": "Given three facts about two triangles: side AB ≅ DE, side BC ≅ EF, and ∠A ≅ ∠D (where ∠A is NOT between AB and BC). Can we prove congruence?",
-          "solution": "Let's check what we have:\n1. AB ≅ DE (side)\n2. BC ≅ EF (side)\n3. ∠A ≅ ∠D (angle NOT between the two sides)\n\nThis is **SSA** (Side-Side-Angle with the angle not included). SSA is **NOT a valid congruence shortcut!**\n\nWhy? The angle and two sides can create two possible triangles (the 'swinging door' effect). Unless we know these are right triangles (which would make it HL), we **cannot** prove congruence."
-        }
-      ],
-      "initialPrompt": "Can you think of why SSA doesn't work? Imagine you have two sticks and an angle at one end—could you create two different triangles?",
-      "lessonId": "sss-sas"
-    },
-    {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "triangle-congruence-sss-sas-asa",
@@ -135,50 +104,63 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
+      "skill": "triangle-congruence-aas-hl",
+      "title": "AAS and HL Theorems",
+      "content": "Two more congruence shortcuts complete the Big 5:\n\n**AAS (Angle-Angle-Side):** Two pairs of congruent angles and one pair of congruent NON-included sides. Why does this work? If two angles match, the third angle is forced (angle sum = 180°), effectively giving you ASA.\n\n**HL (Hypotenuse-Leg):** For RIGHT triangles only: if the hypotenuses are congruent and one pair of legs is congruent, the triangles are congruent. Always verify the right angle first!\n\nRemember: **SSA is NOT valid** (the ambiguous case). But HL works for right triangles because the right angle eliminates the ambiguity.",
+      "initialPrompt": "Why does HL only work for right triangles? Why can't we use it for any triangle?",
+      "lessonId": "sss-sas"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "triangle-congruence-aas-hl",
+      "title": "I-Do: AAS, HL, and Identifying the Correct Postulate",
+      "examples": [
+        {
+          "problem": "Given: ∠A ≅ ∠D, ∠B ≅ ∠E, and BC ≅ EF (where BC and EF are NOT between the congruent angles). Name the theorem.",
+          "solution": "We have:\n1. ∠A ≅ ∠D (an angle)\n2. ∠B ≅ ∠E (another angle)\n3. BC ≅ EF (a side that is NOT included between the two angles)\n\nTwo angles and a non-included side → **AAS (Angle-Angle-Side) Theorem**.\n\nWhy it works: since ∠A ≅ ∠D and ∠B ≅ ∠E, we know ∠C ≅ ∠F (angle sum forces it). So we actually have all three angles and a side matched."
+        },
+        {
+          "problem": "In right triangles △PQR and △STU (right angles at R and U), PR ≅ SU = 10 and PQ ≅ ST = 26. Prove congruence.",
+          "solution": "Check requirements for HL:\n1. Both are right triangles? ✓ (right angles at R and U)\n2. Hypotenuses congruent? PQ and ST are opposite the right angles, so PQ = ST = 26 ✓\n3. One pair of legs congruent? PR = SU = 10 ✓\n\nBy the **HL (Hypotenuse-Leg) Theorem**, △PQR ≅ △STU.\n\n(We could also find the other leg: √(26²-10²) = √(676-100) = √576 = 24. But we don't need to — HL is sufficient!)"
+        },
+        {
+          "problem": "Given three facts about two triangles: side AB ≅ DE, side BC ≅ EF, and ∠A ≅ ∠D (where ∠A is NOT between AB and BC). Can we prove congruence?",
+          "solution": "Let's check what we have:\n1. AB ≅ DE (side)\n2. BC ≅ EF (side)\n3. ∠A ≅ ∠D (angle NOT between the two sides)\n\nThis is **SSA** (Side-Side-Angle with the angle not included). SSA is **NOT a valid congruence shortcut!**\n\nWhy? The angle and two sides can create two possible triangles (the 'swinging door' effect). Unless we know these are right triangles (which would make it HL), we **cannot** prove congruence."
+        }
+      ],
+      "initialPrompt": "Can you think of why SSA doesn't work? Imagine you have two sticks and an angle at one end—could you create two different triangles?",
+      "lessonId": "asa-aas-hl"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
       "skill": "cpctc",
       "title": "CPCTC: The Payoff of Proving Congruence",
       "content": "**CPCTC** stands for \"Corresponding Parts of Congruent Triangles are Congruent.\" This is the payoff of proving triangles congruent—once you know two triangles are congruent, ALL their corresponding parts are congruent.\n\nThe typical proof flow is:\n1. Prove the triangles congruent (using SSS, SAS, ASA, AAS, or HL)\n2. THEN conclude that specific corresponding parts are congruent (using CPCTC)\n\nCPCTC is never used to PROVE triangles congruent—it's used AFTER you've already proven congruence.",
       "initialPrompt": "Why can't we use CPCTC as the very first step? What has to happen before we can use it?",
-      "lessonId": "asa-aas-hl"
+      "lessonId": "cpctc"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "congruence-proofs",
-      "title": "I-Do: CPCTC Proofs",
+      "title": "I-Do: Applying CPCTC",
       "examples": [
-        {
-          "problem": "Given: M is the midpoint of AB and CD. Prove: AC ≅ BD.",
-          "solution": "**Two-column proof:**\n\n| Statement | Reason |\n|-----------|--------|\n| 1. M is the midpoint of AB and CD | Given |\n| 2. AM ≅ MB | Definition of midpoint |\n| 3. CM ≅ MD | Definition of midpoint |\n| 4. ∠AMC ≅ ∠BMD | Vertical angles are congruent |\n| 5. △AMC ≅ △BMD | SAS (steps 2, 4, 3) |\n| 6. AC ≅ BD | CPCTC |\n\nThe flow: gather evidence (steps 2-4) → prove congruence (step 5) → CPCTC (step 6)."
-        },
-        {
-          "problem": "Given: AB ≅ CB and DB bisects ∠ABC. Prove: ∠A ≅ ∠C.",
-          "solution": "**Two-column proof:**\n\n| Statement | Reason |\n|-----------|--------|\n| 1. AB ≅ CB | Given |\n| 2. DB bisects ∠ABC | Given |\n| 3. ∠ABD ≅ ∠CBD | Definition of angle bisector |\n| 4. BD ≅ BD | Reflexive Property |\n| 5. △ABD ≅ △CBD | SAS (steps 1, 3, 4) |\n| 6. ∠A ≅ ∠C | CPCTC |\n\nKey techniques used: angle bisector definition, reflexive property, and SAS."
-        },
         {
           "problem": "△PQR ≅ △STU. If PQ = 8, QR = 12, and ∠Q = 65°, find ST, TU, and ∠T.",
           "solution": "From the congruence statement △PQR ≅ △STU, the correspondence is:\nP↔S, Q↔T, R↔U\n\nUsing CPCTC:\n• PQ ↔ ST → **ST = 8**\n• QR ↔ TU → **TU = 12**\n• ∠Q ↔ ∠T → **∠T = 65°**\n\nThe order of vertices in the congruence statement directly tells you which parts correspond."
         }
       ],
-      "initialPrompt": "In the first proof, why are ∠AMC and ∠BMD congruent? What kind of angles are they?",
+      "initialPrompt": "△PQR ≅ △STU. Before finding anything — which side of △STU corresponds to PQ, and how do the letters tell you?",
       "lessonId": "cpctc"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "congruence-proofs",
-      "title": "We-Do: Proof Practice and CPCTC Application",
+      "title": "We-Do: Applying CPCTC",
       "problems": [
-        {
-          "id": "cg-wp4",
-          "question": "Given: AB ∥ CD and AB ≅ CD. E is the intersection of diagonals AC and BD. Name the postulate that proves △ABE ≅ △CDE and explain why.",
-          "answer": "ASA. AB∥CD creates alternate interior angles: ∠BAE ≅ ∠DCE and ∠ABE ≅ ∠CDE. The included side AB ≅ CD is given.",
-          "hints": [
-            "Parallel lines cut by transversals create alternate interior angles.",
-            "∠BAE ≅ ∠DCE (alt int angles, transversal AC) and ∠ABE ≅ ∠CDE (alt int angles, transversal BD).",
-            "AB ≅ CD is included between the angle pairs → ASA."
-          ]
-        },
         {
           "id": "cg-wp5",
           "question": "△XYZ ≅ △MNO. If XY = 15, ∠Y = 43°, and YZ = 22, find MN, ∠N, and NO.",
@@ -191,6 +173,62 @@
       ],
       "initialPrompt": "For the first problem, let's start by identifying what parallel lines give us. What angle pairs are created?",
       "lessonId": "cpctc"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "congruence-proofs",
+      "title": "Writing Congruence Proofs",
+      "content": "A **two-column proof** is an argument written so that every claim has a reason. The left column says *what* is true; the right column says *why you are allowed to say it*.\n\n**The structure:**\n\n| Statements | Reasons |\n|---|---|\n| 1. (a given, or something you can see) | 1. Given / a definition / a theorem |\n| 2. … | 2. … |\n| n. △ABC ≅ △DEF | n. SSS, SAS, ASA, AAS, or HL |\n| n+1. (the corresponding parts) | n+1. CPCTC |\n\n**Start from the Given, end at the Prove.** Read what you're given, mark it on the diagram, and ask which congruence shortcut is within reach. Then work backwards from the Prove statement: if the goal is a pair of segments, you almost certainly need CPCTC, which means you first need the triangles congruent.\n\n**The order is fixed and it matters:** prove triangles congruent **first**, then use CPCTC. CPCTC is never a step toward proving congruence — it is what congruence buys you.\n\n**Reasons you'll use constantly:**\n• **Given** — stated in the problem\n• **Reflexive Property** — a shared side or angle is congruent to itself. Two triangles sharing a side is a free congruent pair, and forgetting to claim it is why proofs stall one step short.\n• **Vertical Angles Theorem** — when two segments cross, the opposite angles are congruent\n• **Alternate Interior Angles** — when parallel lines are cut by a transversal\n• **Definition of midpoint** — a midpoint splits a segment into two congruent halves\n• **Definition of an angle bisector** — a bisector splits an angle into two congruent halves\n• **Definition of perpendicular** — perpendicular lines meet at right angles, and all right angles are congruent\n\n**Definitions do work.** \"M is the midpoint of AB\" is not itself a congruence statement — it becomes AM ≅ MB *by the definition of midpoint*, and that line belongs in the proof.\n\n**A checklist for the congruence step.** Before writing SAS or ASA, confirm you have three marked pairs and that they're in the right arrangement:\n• **SAS** needs the angle *between* the two sides — an angle off to the side is SSA, which proves nothing.\n• **ASA** needs the side *between* the two angles; **AAS** has it outside. Both are valid; name the right one.\n• **HL** is right triangles only.\n\n**Name the triangles in corresponding order.** Writing △ABC ≅ △DEF claims A↔D, B↔E, C↔F. Every CPCTC line you write afterwards is read off that pairing, so a scrambled order makes the conclusion wrong even when the reasoning was right.",
+      "initialPrompt": "In a proof, what is the Reflexive Property good for? When two triangles share a side, what does it let you write — and why is that a free congruent pair?",
+      "lessonId": "congruence-proofs"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "congruence-proofs",
+      "title": "I-Do: Writing Congruence Proofs",
+      "examples": [
+        {
+          "problem": "Given: M is the midpoint of AB and CD. Prove: AC ≅ BD.",
+          "solution": "**Two-column proof:**\n\n| Statement | Reason |\n|-----------|--------|\n| 1. M is the midpoint of AB and CD | Given |\n| 2. AM ≅ MB | Definition of midpoint |\n| 3. CM ≅ MD | Definition of midpoint |\n| 4. ∠AMC ≅ ∠BMD | Vertical angles are congruent |\n| 5. △AMC ≅ △BMD | SAS (steps 2, 4, 3) |\n| 6. AC ≅ BD | CPCTC |\n\nThe flow: gather evidence (steps 2-4) → prove congruence (step 5) → CPCTC (step 6)."
+        },
+        {
+          "problem": "Given: AB ≅ CB and DB bisects ∠ABC. Prove: ∠A ≅ ∠C.",
+          "solution": "**Two-column proof:**\n\n| Statement | Reason |\n|-----------|--------|\n| 1. AB ≅ CB | Given |\n| 2. DB bisects ∠ABC | Given |\n| 3. ∠ABD ≅ ∠CBD | Definition of angle bisector |\n| 4. BD ≅ BD | Reflexive Property |\n| 5. △ABD ≅ △CBD | SAS (steps 1, 3, 4) |\n| 6. ∠A ≅ ∠C | CPCTC |\n\nKey techniques used: angle bisector definition, reflexive property, and SAS."
+        }
+      ],
+      "initialPrompt": "In example 1, the Given is about midpoints. What congruence statements does the definition of a midpoint let you write?",
+      "lessonId": "congruence-proofs"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "congruence-proofs",
+      "title": "We-Do: Writing Congruence Proofs",
+      "problems": [
+        {
+          "id": "cg-wp4",
+          "question": "Given: AB ∥ CD and AB ≅ CD. E is the intersection of diagonals AC and BD. Name the postulate that proves △ABE ≅ △CDE and explain why.",
+          "answer": "ASA. AB∥CD creates alternate interior angles: ∠BAE ≅ ∠DCE and ∠ABE ≅ ∠CDE. The included side AB ≅ CD is given.",
+          "hints": [
+            "Parallel lines cut by transversals create alternate interior angles.",
+            "∠BAE ≅ ∠DCE (alt int angles, transversal AC) and ∠ABE ≅ ∠CDE (alt int angles, transversal BD).",
+            "AB ≅ CD is included between the angle pairs → ASA."
+          ]
+        },
+        {
+          "id": "cg-wp6",
+          "question": "Given: BD bisects ∠ABC, and AB ≅ CB. Prove: △ABD ≅ △CBD. Name every reason you use.",
+          "answer": "SAS — AB ≅ CB (Given), ∠ABD ≅ ∠CBD (definition of angle bisector), BD ≅ BD (Reflexive Property)",
+          "hints": [
+            "List what you have. AB ≅ CB is Given. 'BD bisects ∠ABC' is not itself a congruence — by the definition of an angle bisector it gives ∠ABD ≅ ∠CBD. That's two pairs; you need a third.",
+            "The two triangles share side BD, so BD ≅ BD by the Reflexive Property. Now check the arrangement: the congruent angle sits between the two congruent sides in each triangle, so this is SAS — not SSA."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, AB ∥ CD gives you congruent angles — which angle pair, and by which theorem?",
+      "lessonId": "congruence-proofs"
     },
     {
       "type": "independent_practice",
@@ -244,8 +282,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "triangle-congruence-sss-sas-asa",
-      "lessonId": "congruence-intro"
+      "skill": "congruence-proofs",
+      "lessonId": "congruence-proofs"
     }
   ],
   "answerKeys": {
@@ -258,7 +296,8 @@
     "cg-yp2": "Yes, HL.",
     "cg-yp3": "No (ambiguous case).",
     "cg-yp4": "SAS (midpoint + reflexive).",
-    "cg-yp5": "WX=11, XY=14, WY=9, ∠X=72°."
+    "cg-yp5": "WX=11, XY=14, WY=9, ∠X=72°.",
+    "cg-wp6": "SAS: AB ≅ CB (Given), ∠ABD ≅ ∠CBD (definition of angle bisector), BD ≅ BD (Reflexive Property)."
   },
   "lessons": [
     {

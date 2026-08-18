@@ -71,35 +71,6 @@
       "lessonId": "central-tendency"
     },
     {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "skill": "data-displays",
-      "title": "Data Displays: Histograms, Box Plots, and Dot Plots",
-      "content": "Data displays are visual tools that help us understand the shape, center, and spread of a data set at a glance.\n\n**Dot Plot:**\nA number line with a dot (or X) for each data value. Simple and great for small data sets. You can easily see clusters, gaps, and outliers.\n\n**Histogram:**\nA bar graph that groups data into **intervals** (called bins). The height of each bar shows the **frequency** (how many values fall in that interval). Histograms show the overall shape of the distribution:\n- **Symmetric:** roughly the same on both sides of the center (bell-shaped).\n- **Skewed left:** tail extends to the left (most data on the right).\n- **Skewed right:** tail extends to the right (most data on the left).\n\n**Box Plot (Box-and-Whisker Plot):**\nA box plot displays the **five-number summary**:\n1. **Minimum** — the smallest value\n2. **Q1 (first quartile)** — the median of the lower half (25th percentile)\n3. **Median (Q2)** — the middle value (50th percentile)\n4. **Q3 (third quartile)** — the median of the upper half (75th percentile)\n5. **Maximum** — the largest value\n\nThe **box** spans from Q1 to Q3, and the line inside the box marks the median. The **whiskers** extend from the box to the minimum and maximum. The length of the box (Q3 − Q1) is the **interquartile range (IQR)**, which measures the spread of the middle 50% of the data.\n\n**Choosing a display:**\n- Dot plot: best for small data sets (under ~25 values).\n- Histogram: best for large data sets to see the overall shape.\n- Box plot: best for comparing two or more data sets side by side, and for spotting outliers and seeing spread.",
-      "initialPrompt": "If you wanted to compare test score distributions between two different classes, which display would be best — a dot plot, histogram, or box plot? Why?",
-      "lessonId": "data-displays"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "data-displays",
-      "title": "I-Do: Reading and Interpreting Data Displays",
-      "examples": [
-        {
-          "problem": "A box plot of daily temperatures (°F) has the following five-number summary: min = 58, Q1 = 65, median = 72, Q3 = 78, max = 85. Find the IQR and describe what the box plot tells us about the data.",
-          "solution": "**Step 1: Identify the five-number summary.**\n- Minimum = 58\n- Q1 = 65\n- Median = 72\n- Q3 = 78\n- Maximum = 85\n\n**Step 2: Calculate the IQR.**\nIQR = Q3 − Q1 = 78 − 65 = **13°F**\nThe middle 50% of temperatures span 13 degrees.\n\n**Step 3: Calculate the range.**\nRange = Max − Min = 85 − 58 = **27°F**\n\n**Step 4: Interpret the box plot.**\n- The **box** spans from 65 to 78, with the median line at 72.\n- The median (72) is roughly centered within the box: 72 − 65 = 7 on the left, 78 − 72 = 6 on the right. The middle 50% is approximately symmetric.\n- The **left whisker** (58 to 65) has length 7.\n- The **right whisker** (78 to 85) has length 7.\n- Since both whiskers are the same length and the median is near the center of the box, the distribution is roughly **symmetric**.\n\n**Step 5: What each part tells us.**\n- 25% of days had temperatures below 65°F (below Q1).\n- 50% of days had temperatures between 65°F and 78°F (the box).\n- 25% of days had temperatures above 78°F (above Q3).\n- The typical day was about 72°F (the median).",
-          "tip": "The IQR measures the spread of the middle 50% of data. Compare IQR to the range: here IQR (13) is about half the range (27), meaning the data is moderately concentrated in the middle."
-        },
-        {
-          "problem": "Two classes took the same test. Class A histogram: 50-59 (3), 60-69 (5), 70-79 (12), 80-89 (7), 90-100 (3). Class B histogram: 50-59 (1), 60-69 (2), 70-79 (6), 80-89 (10), 90-100 (11). Compare the two distributions.",
-          "solution": "**Step 1: Summarize each distribution.**\nClass A: Total = 3 + 5 + 12 + 7 + 3 = 30 students.\nPeak interval: 70-79 (12 students). Shape: roughly symmetric with center around 70-79.\n\nClass B: Total = 1 + 2 + 6 + 10 + 11 = 30 students.\nPeak interval: 90-100 (11 students). Shape: skewed left (long tail toward lower scores, bulk of data on the right).\n\n**Step 2: Estimate the centers.**\nClass A: The 15th and 16th values fall in the 70-79 interval. Estimated median ≈ 75.\nClass B: Counting from the left — 1 + 2 + 6 = 9 values through 70-79, then 80-89 covers values 10-19. The 15th value is in 80-89. Estimated median ≈ 84.\n\n**Step 3: Compare spreads.**\nClass A has its data more evenly distributed across all intervals, while Class B is heavily concentrated in the 80-100 range (21 out of 30 students, or 70%).\n\n**Step 4: Summary.**\n- Class B performed significantly better overall (estimated median 84 vs. 75).\n- Class B is left-skewed (most students scored high); Class A is roughly symmetric.\n- Class A has more students in the low-scoring intervals (8 students below 70 vs. only 3 for Class B).\n- Both classes have 30 students, making direct comparison straightforward.",
-          "tip": "When comparing histograms, focus on three things: (1) Where is the center of each? (2) What is the shape? (3) How spread out are the data values?"
-        }
-      ],
-      "initialPrompt": "In the box plot example, the IQR was 13 and the range was 27. What does it tell us that the IQR is about half the range? If the IQR were much smaller than half the range, what would that mean?",
-      "lessonId": "data-displays"
-    },
-    {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "measures-of-central-tendency",
@@ -152,11 +123,143 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
+      "skill": "data-displays",
+      "title": "Data Displays: Histograms, Box Plots, and Dot Plots",
+      "content": "Data displays are visual tools that help us understand the shape, center, and spread of a data set at a glance.\n\n**Dot Plot:**\nA number line with a dot (or X) for each data value. Simple and great for small data sets. You can easily see clusters, gaps, and outliers.\n\n**Histogram:**\nA bar graph that groups data into **intervals** (called bins). The height of each bar shows the **frequency** (how many values fall in that interval). Histograms show the overall shape of the distribution:\n- **Symmetric:** roughly the same on both sides of the center (bell-shaped).\n- **Skewed left:** tail extends to the left (most data on the right).\n- **Skewed right:** tail extends to the right (most data on the left).\n\n**Box Plot (Box-and-Whisker Plot):**\nA box plot displays the **five-number summary**:\n1. **Minimum** — the smallest value\n2. **Q1 (first quartile)** — the median of the lower half (25th percentile)\n3. **Median (Q2)** — the middle value (50th percentile)\n4. **Q3 (third quartile)** — the median of the upper half (75th percentile)\n5. **Maximum** — the largest value\n\nThe **box** spans from Q1 to Q3, and the line inside the box marks the median. The **whiskers** extend from the box to the minimum and maximum. The length of the box (Q3 − Q1) is the **interquartile range (IQR)**, which measures the spread of the middle 50% of the data.\n\n**Choosing a display:**\n- Dot plot: best for small data sets (under ~25 values).\n- Histogram: best for large data sets to see the overall shape.\n- Box plot: best for comparing two or more data sets side by side, and for spotting outliers and seeing spread.",
+      "initialPrompt": "If you wanted to compare test score distributions between two different classes, which display would be best — a dot plot, histogram, or box plot? Why?",
+      "lessonId": "data-displays"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "data-displays",
+      "title": "I-Do: Reading and Interpreting Data Displays",
+      "examples": [
+        {
+          "problem": "A box plot of daily temperatures (°F) has the following five-number summary: min = 58, Q1 = 65, median = 72, Q3 = 78, max = 85. Find the IQR and describe what the box plot tells us about the data.",
+          "solution": "**Step 1: Identify the five-number summary.**\n- Minimum = 58\n- Q1 = 65\n- Median = 72\n- Q3 = 78\n- Maximum = 85\n\n**Step 2: Calculate the IQR.**\nIQR = Q3 − Q1 = 78 − 65 = **13°F**\nThe middle 50% of temperatures span 13 degrees.\n\n**Step 3: Calculate the range.**\nRange = Max − Min = 85 − 58 = **27°F**\n\n**Step 4: Interpret the box plot.**\n- The **box** spans from 65 to 78, with the median line at 72.\n- The median (72) is roughly centered within the box: 72 − 65 = 7 on the left, 78 − 72 = 6 on the right. The middle 50% is approximately symmetric.\n- The **left whisker** (58 to 65) has length 7.\n- The **right whisker** (78 to 85) has length 7.\n- Since both whiskers are the same length and the median is near the center of the box, the distribution is roughly **symmetric**.\n\n**Step 5: What each part tells us.**\n- 25% of days had temperatures below 65°F (below Q1).\n- 50% of days had temperatures between 65°F and 78°F (the box).\n- 25% of days had temperatures above 78°F (above Q3).\n- The typical day was about 72°F (the median).",
+          "tip": "The IQR measures the spread of the middle 50% of data. Compare IQR to the range: here IQR (13) is about half the range (27), meaning the data is moderately concentrated in the middle."
+        },
+        {
+          "problem": "Two classes took the same test. Class A histogram: 50-59 (3), 60-69 (5), 70-79 (12), 80-89 (7), 90-100 (3). Class B histogram: 50-59 (1), 60-69 (2), 70-79 (6), 80-89 (10), 90-100 (11). Compare the two distributions.",
+          "solution": "**Step 1: Summarize each distribution.**\nClass A: Total = 3 + 5 + 12 + 7 + 3 = 30 students.\nPeak interval: 70-79 (12 students). Shape: roughly symmetric with center around 70-79.\n\nClass B: Total = 1 + 2 + 6 + 10 + 11 = 30 students.\nPeak interval: 90-100 (11 students). Shape: skewed left (long tail toward lower scores, bulk of data on the right).\n\n**Step 2: Estimate the centers.**\nClass A: The 15th and 16th values fall in the 70-79 interval. Estimated median ≈ 75.\nClass B: Counting from the left — 1 + 2 + 6 = 9 values through 70-79, then 80-89 covers values 10-19. The 15th value is in 80-89. Estimated median ≈ 84.\n\n**Step 3: Compare spreads.**\nClass A has its data more evenly distributed across all intervals, while Class B is heavily concentrated in the 80-100 range (21 out of 30 students, or 70%).\n\n**Step 4: Summary.**\n- Class B performed significantly better overall (estimated median 84 vs. 75).\n- Class B is left-skewed (most students scored high); Class A is roughly symmetric.\n- Class A has more students in the low-scoring intervals (8 students below 70 vs. only 3 for Class B).\n- Both classes have 30 students, making direct comparison straightforward.",
+          "tip": "When comparing histograms, focus on three things: (1) Where is the center of each? (2) What is the shape? (3) How spread out are the data values?"
+        }
+      ],
+      "initialPrompt": "In the box plot example, the IQR was 13 and the range was 27. What does it tell us that the IQR is about half the range? If the IQR were much smaller than half the range, what would that mean?",
+      "lessonId": "data-displays"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
       "skill": "scatter-plots-correlation",
-      "title": "Scatter Plots, Correlation, and Lines of Best Fit",
-      "content": "A **scatter plot** displays two related variables as points on a coordinate plane. Each point represents one data pair (x, y). Scatter plots help us see whether there is a **relationship** (called a **correlation** or **association**) between two variables.\n\n**Types of correlation:**\n- **Positive correlation:** As x increases, y tends to increase. The points slope upward from left to right. Example: study hours vs. test score.\n- **Negative correlation:** As x increases, y tends to decrease. The points slope downward from left to right. Example: hours of TV vs. test score.\n- **No correlation:** No clear pattern. The points are randomly scattered. Example: shoe size vs. test score.\n\n**Strength of correlation:**\n- **Strong:** Points are tightly clustered along a line.\n- **Weak:** Points follow a general trend but are widely scattered.\n\n**Correlation vs. Causation:**\nJust because two variables are correlated does NOT mean one **causes** the other. This is a critical distinction:\n- Correlation means the variables move together (a statistical relationship).\n- Causation means one variable directly influences the other.\n- Example: Ice cream sales and drowning rates are positively correlated, but ice cream does not cause drowning. Both increase because of a **lurking variable** — hot weather.\n\n**Line of Best Fit (Trend Line):**\nA line of best fit is a straight line drawn through a scatter plot that best represents the overall trend. It should:\n- Follow the direction of the data\n- Have roughly equal numbers of points above and below\n- Pass through or near the center of the data cloud\n\nThe equation of the line (y = mx + b) can be used to **make predictions**:\n- **Interpolation**: predicting within the data range (more reliable)\n- **Extrapolation**: predicting beyond the data range (less reliable)",
+      "title": "Scatter Plots and Correlation",
+      "content": "A **scatter plot** displays two related variables as points on a coordinate plane. Each point represents one data pair (x, y). Scatter plots help us see whether there is a **relationship** (called a **correlation** or **association**) between two variables.\n\n**Types of correlation:**\n- **Positive correlation:** As x increases, y tends to increase. The points slope upward from left to right. Example: study hours vs. test score.\n- **Negative correlation:** As x increases, y tends to decrease. The points slope downward from left to right. Example: hours of TV vs. test score.\n- **No correlation:** No clear pattern. The points are randomly scattered. Example: shoe size vs. test score.\n\n**Strength of correlation:**\n- **Strong:** points are tightly clustered along a line.\n- **Weak:** points follow a general trend but are widely scattered.\n\nDirection and strength are two separate descriptions, and a full answer gives both — \"strong negative,\" \"weak positive.\"\n\n**Not every association is linear.** Points can follow a clear curve, which is a real relationship but not one a straight line describes well. Look at the shape before reaching for a trend line.\n\n**Clusters, gaps and outliers** are worth naming too. An outlier — one point far from the pattern — can drag a trend line noticeably, so identify it before you draw anything.\n\n**Correlation vs. Causation:**\n\nJust because two variables are correlated does NOT mean one **causes** the other. This is the most important idea in the lesson:\n- Correlation means the variables move together (a statistical relationship).\n- Causation means one variable directly influences the other.\n- Example: ice cream sales and drowning rates are positively correlated, but ice cream does not cause drowning. Both increase because of a **lurking variable** — hot weather.\n\n**The three explanations for any correlation**, and you have to rule out the last two before claiming the first:\n1. x really does cause y\n2. y actually causes x (the arrow points the other way)\n3. a lurking variable causes both\n\nA controlled experiment with random assignment is what separates these. Observational data alone almost never can.",
       "initialPrompt": "Think of two variables you encounter in daily life that might have a positive correlation, and two that might have a negative correlation. Can you also think of two variables that probably have no correlation at all?",
       "lessonId": "scatter-plots"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "scatter-plots-correlation",
+      "title": "I-Do: Scatter Plot Analysis",
+      "examples": [
+        {
+          "problem": "A teacher collected data on hours studied and test scores for 8 students: (1, 55), (2, 60), (3, 68), (3, 65), (4, 72), (5, 80), (6, 85), (7, 92). Identify the type and strength of correlation.",
+          "solution": "**Step 1: Plot the points mentally or on a graph.**\nAs hours studied (x) increases from 1 to 7, test scores (y) generally increase from 55 to 92.\n\n**Step 2: Identify the direction.**\nThe points slope **upward** from left to right. This is a **positive correlation** — more study hours are associated with higher test scores.\n\n**Step 3: Assess the strength.**\nThe points follow the upward trend very closely with little scatter. This is a **strong positive correlation**.\n\n**Step 4: Consider causation.**\nIt is reasonable (and supported by research) that studying more **causes** higher test scores. However, other factors also contribute (prior knowledge, sleep, test difficulty), so we should say studying more is **associated with** higher scores, and likely contributes to them.\n\n**Conclusion: Strong positive correlation.** Students who studied more hours tended to score higher on the test.",
+          "tip": "To identify correlation, ask: 'As x goes up, does y go up (positive), go down (negative), or show no pattern (none)?' Then check how tightly the points follow that trend (strong vs. weak)."
+        }
+      ],
+      "initialPrompt": "In the first example, we said there was a strong positive correlation. If the points were more spread out — say (1, 55), (2, 75), (3, 50), (4, 72), (5, 60), (6, 85), (7, 68) — would we still say there is a strong correlation?",
+      "lessonId": "scatter-plots"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "scatter-plots-correlation",
+      "title": "We-Do: Scatter Plots and Correlation",
+      "problems": [
+        {
+          "id": "da-wp5",
+          "question": "A scatter plot shows the relationship between outdoor temperature (°F) and hot chocolate sales (cups per day): (30, 52), (35, 48), (40, 40), (45, 35), (50, 30), (55, 22), (60, 18), (65, 10). Identify the type and strength of correlation. Does temperature cause hot chocolate sales to change?",
+          "answer": "As temperature increases (30→65), hot chocolate sales decrease (52→10). This is a **strong negative correlation** — the points follow a clear downward trend with minimal scatter. Temperature likely has a **causal** influence on hot chocolate sales (colder weather drives people to buy warm drinks), though other factors also play a role (marketing, season, location). It is reasonable to say higher temperatures cause a decrease in hot chocolate purchases.",
+          "hints": [
+            "Look at the trend: as x (temperature) goes up, what happens to y (sales)? Sales go down — that's a negative correlation.",
+            "The values decrease consistently from 52 to 10 as temperature rises from 30 to 65. Very little scatter — this is a strong correlation.",
+            "For causation: think about whether temperature directly influences the desire for hot chocolate. Yes — cold weather makes people want warm drinks. This is one case where correlation likely reflects causation."
+          ]
+        },
+        {
+          "id": "da-wp7",
+          "question": "A news headline states: 'Students who eat breakfast score 15% higher on standardized tests.' Does eating breakfast cause higher test scores? Explain using the concepts of correlation vs. causation.",
+          "answer": "The headline describes a **correlation** — students who eat breakfast tend to score higher. However, this does not necessarily mean breakfast **causes** higher scores. There may be **lurking variables**: families that provide breakfast may also provide a more structured home environment, more sleep, tutoring, or greater emphasis on education. These factors could independently boost test scores. To establish causation, a controlled experiment would be needed (randomly assign students to eat/skip breakfast and compare scores while controlling other variables). The correct interpretation is: eating breakfast is **associated with** higher test scores, but we cannot conclude from this data alone that it **causes** them.",
+          "hints": [
+            "The headline shows a correlation: breakfast is associated with higher scores. But does breakfast directly cause the improvement?",
+            "Think about lurking variables. What other factors might differ between students who eat breakfast and those who don't? (Home stability, sleep habits, parental involvement, etc.)",
+            "Correlation ≠ causation. To prove causation, you would need a controlled experiment. The data only shows an association."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's work through these problems together. For the first one, look at the data pairs. As temperature goes from 30 to 65, what happens to the number of cups sold? What type of correlation is this?",
+      "lessonId": "scatter-plots"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "scatter-plots-correlation",
+      "title": "Lines of Best Fit",
+      "content": "Once a scatter plot shows a linear pattern, a **line of best fit** (or trend line) turns that pattern into an equation you can actually compute with.\n\n**Drawing one by eye.** A good trend line:\n- follows the direction of the data\n- has roughly equal numbers of points above and below it\n- passes through or near the center of the data cloud\n\nIt does **not** have to touch any of the actual data points, and it should not be drawn to connect the first point to the last one — that ignores everything in between.\n\n**Writing its equation.** Pick two convenient points **on your line** (not necessarily data points), then:\n1. m = (y₂ − y₁)/(x₂ − x₁)\n2. Substitute one point into y = mx + b and solve for b\n3. Write y = mx + b\n\n**Interpreting the equation in context — this is what the question usually asks:**\n- **The slope is a rate**, with units of *y-units per x-unit*. \"Each additional hour of study is associated with about 6.2 more points.\"\n- **The y-intercept is the predicted y when x = 0.** Sometimes that's meaningful (a starting fee, a baseline score); often it is not (nobody has a shoe size of 0). Say which, rather than reporting a number that describes an impossible situation.\n\n**Say \"is associated with,\" not \"causes.\"** A trend line is a description of a pattern, not evidence that x drives y.\n\n**Making predictions:**\n- **Interpolation** — predicting *within* the range of the collected data. Reasonably reliable, because the pattern is supported by actual observations there.\n- **Extrapolation** — predicting *beyond* the data range. Much less reliable: the trend that held for 1–6 hours of study may flatten or reverse at 15 hours, and nothing in the data says otherwise.\n\nExtrapolate far enough and a model gives nonsense — a negative test score, a person of negative height. When that happens, the model hasn't malfunctioned; it has been used outside where it applies.",
+      "initialPrompt": "You have a line of best fit y = 6.2x + 48.8 for study hours vs. test score. What does the 6.2 mean in plain language? What about the 48.8 — and is it meaningful here?",
+      "lessonId": "lines-of-best-fit"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "scatter-plots-correlation",
+      "title": "I-Do: Lines of Best Fit",
+      "examples": [
+        {
+          "problem": "Using the study hours vs. test scores data, estimate a line of best fit and write its equation.",
+          "solution": "**Step 1: Choose two representative points on the trend.**\nLooking at the data, the points (1, 55) and (7, 92) are near the edges of the data and fall close to the overall trend.\n\n**Step 2: Calculate the slope.**\nm = (y₂ − y₁) / (x₂ − x₁) = (92 − 55) / (7 − 1) = 37 / 6 ≈ **6.2**\n\nThis means test scores increase by about 6.2 points for each additional hour studied.\n\n**Step 3: Find the y-intercept.**\nUsing point (1, 55): y = mx + b → 55 = 6.2(1) + b → b = 55 − 6.2 = **48.8**\n\n**Step 4: Write the equation.**\n**y = 6.2x + 48.8**\n\n**Step 5: Check reasonableness.**\n- At x = 3: y = 6.2(3) + 48.8 = 18.6 + 48.8 = 67.4 (actual values: 68 and 65 — close!)\n- At x = 5: y = 6.2(5) + 48.8 = 31 + 48.8 = 79.8 (actual: 80 — very close!)\n\nThe line fits the data well.",
+          "tip": "A line of best fit is an estimate — slightly different point choices will give slightly different equations, and that's okay. The goal is a line that captures the overall trend, not one that hits every point."
+        },
+        {
+          "problem": "Using the line of best fit y = 6.2x + 48.8, predict the test score for a student who studies 4.5 hours. Then predict for a student who studies 12 hours. Which prediction is more reliable?",
+          "solution": "**Prediction 1: x = 4.5 hours (interpolation)**\ny = 6.2(4.5) + 48.8 = 27.9 + 48.8 = **76.7 ≈ 77**\nThis is **interpolation** because 4.5 is within the data range (1 to 7 hours). This prediction is **reliable** — we have data surrounding this value.\n\n**Prediction 2: x = 12 hours (extrapolation)**\ny = 6.2(12) + 48.8 = 74.4 + 48.8 = **123.2**\nThis is **extrapolation** because 12 is far beyond the data range (1 to 7 hours). This prediction is **unreliable** — a score of 123 is impossible on a 100-point test!\n\n**Why extrapolation is risky:**\nThe linear trend may not continue indefinitely. In reality, test scores have a ceiling (100), and the relationship between study hours and scores likely levels off at some point (diminishing returns). The line of best fit is only trustworthy **within or near** the range of the original data.\n\n**Conclusion:** The prediction of 77 for 4.5 hours is reasonable. The prediction of 123.2 for 12 hours is not — it shows the danger of extrapolating too far.",
+          "tip": "Always check whether your prediction is interpolation (within the data range — more trustworthy) or extrapolation (beyond the data range — use with caution)."
+        }
+      ],
+      "initialPrompt": "In the prediction example, which of the two predictions was interpolation and which was extrapolation? Which would you trust more?",
+      "lessonId": "lines-of-best-fit"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "scatter-plots-correlation",
+      "title": "We-Do: Lines of Best Fit",
+      "problems": [
+        {
+          "id": "da-wp6",
+          "question": "Using the hot chocolate data from the previous problem, estimate a line of best fit by using the points (30, 52) and (65, 10). Write the equation and predict sales when the temperature is 48°F.",
+          "answer": "Slope: m = (10 − 52)/(65 − 30) = −42/35 = −1.2. Using (30, 52): 52 = −1.2(30) + b → 52 = −36 + b → b = 88. Equation: y = −1.2x + 88. Prediction at 48°F: y = −1.2(48) + 88 = −57.6 + 88 = 30.4 ≈ **30 cups**. This is interpolation (48 is between 30 and 65), so the prediction is reasonable.",
+          "hints": [
+            "Slope = (10 − 52)/(65 − 30) = −42/35 = −1.2. The negative slope confirms the negative correlation.",
+            "Use point (30, 52) to find b: 52 = −1.2(30) + b → b = 52 + 36 = 88. The equation is y = −1.2x + 88.",
+            "At 48°F: y = −1.2(48) + 88 = 30.4 ≈ 30 cups. Since 48 is within the data range (30 to 65), this is interpolation and is a reliable estimate."
+          ]
+        },
+        {
+          "id": "da-wp9",
+          "question": "A gym's monthly cost is modelled by the line of best fit y = 12x + 30, where x is the number of classes attended and y is the total cost in dollars. (a) Interpret the slope. (b) Interpret the y-intercept. (c) Predict the cost of attending 7 classes. Is that interpolation or extrapolation if the data covered 2 to 10 classes?",
+          "answer": "(a) $12 per class; (b) a $30 base fee even with 0 classes; (c) $114, interpolation",
+          "hints": [
+            "The slope carries the units y-per-x: dollars per class. The y-intercept is the predicted cost when x = 0 — here that is a meaningful value, unlike a shoe size of 0.",
+            "y = 12(7) + 30 = 84 + 30 = $114. Since 7 falls inside the collected range of 2 to 10 classes, this is interpolation — the more trustworthy kind of prediction."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, you're given two points on the line. What do you do with them first, and what do you need after that to write y = mx + b?",
+      "lessonId": "lines-of-best-fit"
     },
     {
       "type": "explanation",
@@ -234,71 +337,6 @@
             "15 of the 60 are cherry, so P(cherry) = 15/60. Reduce it — the 60 cancels out to give a clean fraction.",
             "For (b), multiply the probability by the number of trials: 0.25 × 200. And say \"about\" — you would not expect exactly 50 every time."
           ]
-        }
-      ],
-      "lessonId": "probability-intro",
-      "initialPrompt": "Let's start probability with a die roll. If you roll a fair six-sided die once, how many outcomes are possible, and how many of them are greater than 4?"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "scatter-plots-correlation",
-      "title": "I-Do: Scatter Plot Analysis and Lines of Best Fit",
-      "examples": [
-        {
-          "problem": "A teacher collected data on hours studied and test scores for 8 students: (1, 55), (2, 60), (3, 68), (3, 65), (4, 72), (5, 80), (6, 85), (7, 92). Identify the type and strength of correlation.",
-          "solution": "**Step 1: Plot the points mentally or on a graph.**\nAs hours studied (x) increases from 1 to 7, test scores (y) generally increase from 55 to 92.\n\n**Step 2: Identify the direction.**\nThe points slope **upward** from left to right. This is a **positive correlation** — more study hours are associated with higher test scores.\n\n**Step 3: Assess the strength.**\nThe points follow the upward trend very closely with little scatter. This is a **strong positive correlation**.\n\n**Step 4: Consider causation.**\nIt is reasonable (and supported by research) that studying more **causes** higher test scores. However, other factors also contribute (prior knowledge, sleep, test difficulty), so we should say studying more is **associated with** higher scores, and likely contributes to them.\n\n**Conclusion: Strong positive correlation.** Students who studied more hours tended to score higher on the test.",
-          "tip": "To identify correlation, ask: 'As x goes up, does y go up (positive), go down (negative), or show no pattern (none)?' Then check how tightly the points follow that trend (strong vs. weak)."
-        },
-        {
-          "problem": "Using the study hours vs. test scores data, estimate a line of best fit and write its equation.",
-          "solution": "**Step 1: Choose two representative points on the trend.**\nLooking at the data, the points (1, 55) and (7, 92) are near the edges of the data and fall close to the overall trend.\n\n**Step 2: Calculate the slope.**\nm = (y₂ − y₁) / (x₂ − x₁) = (92 − 55) / (7 − 1) = 37 / 6 ≈ **6.2**\n\nThis means test scores increase by about 6.2 points for each additional hour studied.\n\n**Step 3: Find the y-intercept.**\nUsing point (1, 55): y = mx + b → 55 = 6.2(1) + b → b = 55 − 6.2 = **48.8**\n\n**Step 4: Write the equation.**\n**y = 6.2x + 48.8**\n\n**Step 5: Check reasonableness.**\n- At x = 3: y = 6.2(3) + 48.8 = 18.6 + 48.8 = 67.4 (actual values: 68 and 65 — close!)\n- At x = 5: y = 6.2(5) + 48.8 = 31 + 48.8 = 79.8 (actual: 80 — very close!)\n\nThe line fits the data well.",
-          "tip": "A line of best fit is an estimate — slightly different point choices will give slightly different equations, and that's okay. The goal is a line that captures the overall trend, not one that hits every point."
-        },
-        {
-          "problem": "Using the line of best fit y = 6.2x + 48.8, predict the test score for a student who studies 4.5 hours. Then predict for a student who studies 12 hours. Which prediction is more reliable?",
-          "solution": "**Prediction 1: x = 4.5 hours (interpolation)**\ny = 6.2(4.5) + 48.8 = 27.9 + 48.8 = **76.7 ≈ 77**\nThis is **interpolation** because 4.5 is within the data range (1 to 7 hours). This prediction is **reliable** — we have data surrounding this value.\n\n**Prediction 2: x = 12 hours (extrapolation)**\ny = 6.2(12) + 48.8 = 74.4 + 48.8 = **123.2**\nThis is **extrapolation** because 12 is far beyond the data range (1 to 7 hours). This prediction is **unreliable** — a score of 123 is impossible on a 100-point test!\n\n**Why extrapolation is risky:**\nThe linear trend may not continue indefinitely. In reality, test scores have a ceiling (100), and the relationship between study hours and scores likely levels off at some point (diminishing returns). The line of best fit is only trustworthy **within or near** the range of the original data.\n\n**Conclusion:** The prediction of 77 for 4.5 hours is reasonable. The prediction of 123.2 for 12 hours is not — it shows the danger of extrapolating too far.",
-          "tip": "Always check whether your prediction is interpolation (within the data range — more trustworthy) or extrapolation (beyond the data range — use with caution)."
-        }
-      ],
-      "initialPrompt": "In the first example, we said there was a strong positive correlation. If the points were more spread out — say (1, 55), (2, 75), (3, 50), (4, 72), (5, 60), (6, 85), (7, 68) — would we still say there is a strong correlation?",
-      "lessonId": "scatter-plots"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "scatter-plots-correlation",
-      "title": "We-Do: Scatter Plots, Correlation, and Probability",
-      "problems": [
-        {
-          "id": "da-wp5",
-          "question": "A scatter plot shows the relationship between outdoor temperature (°F) and hot chocolate sales (cups per day): (30, 52), (35, 48), (40, 40), (45, 35), (50, 30), (55, 22), (60, 18), (65, 10). Identify the type and strength of correlation. Does temperature cause hot chocolate sales to change?",
-          "answer": "As temperature increases (30→65), hot chocolate sales decrease (52→10). This is a **strong negative correlation** — the points follow a clear downward trend with minimal scatter. Temperature likely has a **causal** influence on hot chocolate sales (colder weather drives people to buy warm drinks), though other factors also play a role (marketing, season, location). It is reasonable to say higher temperatures cause a decrease in hot chocolate purchases.",
-          "hints": [
-            "Look at the trend: as x (temperature) goes up, what happens to y (sales)? Sales go down — that's a negative correlation.",
-            "The values decrease consistently from 52 to 10 as temperature rises from 30 to 65. Very little scatter — this is a strong correlation.",
-            "For causation: think about whether temperature directly influences the desire for hot chocolate. Yes — cold weather makes people want warm drinks. This is one case where correlation likely reflects causation."
-          ]
-        },
-        {
-          "id": "da-wp6",
-          "question": "Using the hot chocolate data from the previous problem, estimate a line of best fit by using the points (30, 52) and (65, 10). Write the equation and predict sales when the temperature is 48°F.",
-          "answer": "Slope: m = (10 − 52)/(65 − 30) = −42/35 = −1.2. Using (30, 52): 52 = −1.2(30) + b → 52 = −36 + b → b = 88. Equation: y = −1.2x + 88. Prediction at 48°F: y = −1.2(48) + 88 = −57.6 + 88 = 30.4 ≈ **30 cups**. This is interpolation (48 is between 30 and 65), so the prediction is reasonable.",
-          "hints": [
-            "Slope = (10 − 52)/(65 − 30) = −42/35 = −1.2. The negative slope confirms the negative correlation.",
-            "Use point (30, 52) to find b: 52 = −1.2(30) + b → b = 52 + 36 = 88. The equation is y = −1.2x + 88.",
-            "At 48°F: y = −1.2(48) + 88 = 30.4 ≈ 30 cups. Since 48 is within the data range (30 to 65), this is interpolation and is a reliable estimate."
-          ]
-        },
-        {
-          "id": "da-wp7",
-          "question": "A news headline states: 'Students who eat breakfast score 15% higher on standardized tests.' Does eating breakfast cause higher test scores? Explain using the concepts of correlation vs. causation.",
-          "answer": "The headline describes a **correlation** — students who eat breakfast tend to score higher. However, this does not necessarily mean breakfast **causes** higher scores. There may be **lurking variables**: families that provide breakfast may also provide a more structured home environment, more sleep, tutoring, or greater emphasis on education. These factors could independently boost test scores. To establish causation, a controlled experiment would be needed (randomly assign students to eat/skip breakfast and compare scores while controlling other variables). The correct interpretation is: eating breakfast is **associated with** higher test scores, but we cannot conclude from this data alone that it **causes** them.",
-          "hints": [
-            "The headline shows a correlation: breakfast is associated with higher scores. But does breakfast directly cause the improvement?",
-            "Think about lurking variables. What other factors might differ between students who eat breakfast and those who don't? (Home stability, sleep habits, parental involvement, etc.)",
-            "Correlation ≠ causation. To prove causation, you would need a controlled experiment. The data only shows an association."
-          ]
         },
         {
           "id": "da-wp8",
@@ -311,8 +349,8 @@
           ]
         }
       ],
-      "initialPrompt": "Let's work through these problems together. For the first one, look at the data pairs. As temperature goes from 30 to 65, what happens to the number of cups sold? What type of correlation is this?",
-      "lessonId": "scatter-plots"
+      "lessonId": "probability-intro",
+      "initialPrompt": "Let's start probability with a die roll. If you roll a fair six-sided die once, how many outcomes are possible, and how many of them are greater than 4?"
     },
     {
       "type": "independent_practice",
@@ -375,8 +413,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "measures-of-central-tendency",
-      "lessonId": "central-tendency"
+      "skill": "intro-probability",
+      "lessonId": "probability-intro"
     }
   ],
   "answerKeys": {
@@ -397,7 +435,8 @@
     "da-pr1": "P = 2/6 = 1/3 ≈ 0.33 ≈ 33.3% (the outcomes 5 and 6).",
     "da-pr2": "P(not a multiple of 3) = 1 - 2/8 = 3/4 = 0.75 = 75%.",
     "da-pr3": "P = 1/2 × 1/6 = 1/12 ≈ 8.3% (independent events, so multiply).",
-    "da-pr4": "(a) 15/60 = 1/4 = 25%. (b) about 0.25 × 200 = 50 students."
+    "da-pr4": "(a) 15/60 = 1/4 = 25%. (b) about 0.25 × 200 = 50 students.",
+    "da-wp9": "(a) $12 per class; (b) a $30 base fee charged even with 0 classes; (c) $114 — interpolation."
   },
   "lessons": [
     {
