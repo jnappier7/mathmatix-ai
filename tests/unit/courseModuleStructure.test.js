@@ -62,6 +62,10 @@ describe('the specific defects this was built to catch', () => {
     expect(flat((f) => f.includes('has no answer'))).toEqual([]);
   });
 
+  test('no module reuses a problem id', () => {
+    expect(flat((f) => f.includes('is used more than once'))).toEqual([]);
+  });
+
   test('every scaffold step has a type coursePrompt can render', () => {
     expect(flat((f) => f.includes('unrenderable type'))).toEqual([]);
     // The renderable set must stay in step with formatScaffoldStep's switch.
@@ -95,6 +99,19 @@ describe('the checker itself still has teeth', () => {
     const { failures } = checkModule({ ...base,
       scaffold: [step(), step({ type: 'guided_practice', problems: [{ id: 'p', question: 'q' }] })] });
     expect(failures.join(' ')).toMatch(/has no answer/);
+  });
+
+  test('catches a problem id used twice in one module', () => {
+    // answerKeys is a flat map keyed by id and attempts are recorded by id, so
+    // a duplicate silently shares both. Splitting a step into two lessons is
+    // exactly when this happens.
+    const { failures } = checkModule({ ...base,
+      scaffold: [
+        step(),
+        step({ type: 'guided_practice', problems: [{ id: 'p1', answer: '1' }] }),
+        step({ type: 'guided_practice', problems: [{ id: 'p1', answer: '2' }] }),
+      ] });
+    expect(failures.join(' ')).toMatch(/"p1" is used more than once/);
   });
 
   test('accepts an answer supplied inline OR via answerKeys', () => {

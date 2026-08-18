@@ -28,6 +28,8 @@
  *   unhandled step type  formatScaffoldStep has no case for it, so the step
  *                        renders as an empty teaching block
  *   missing answer key   a problem the checkpoint grader cannot mark
+ *   duplicate problem id two problems sharing one id, so they share an answer
+ *                        key and a progress record
  *
  * Anything a module can legitimately choose is a WARNING, not a failure:
  * declared-but-unbuilt lessons, and modules with no independent practice.
@@ -112,6 +114,7 @@ function checkModule(md, label) {
   // for problems that were perfectly well answered inline.
   const keys = md.answerKeys || {};
   let problems = 0;
+  const seenIds = new Set();
   for (const step of scaffold) {
     for (const p of step.problems || []) {
       problems += 1;
@@ -119,6 +122,15 @@ function checkModule(md, label) {
         .some((v) => v !== undefined && v !== null && v !== '');
       if (!answered) {
         failures.push(`problem "${p.id || (p.question || p.problem || '?').slice(0, 40)}" has no answer`);
+      }
+      // A problem id must be unique within its module: answerKeys is a flat map
+      // keyed by id, and courseSession records attempts by id, so two problems
+      // sharing one id silently share an answer key and a progress record.
+      if (p.id) {
+        if (seenIds.has(p.id)) {
+          failures.push(`problem id "${p.id}" is used more than once in this module`);
+        }
+        seenIds.add(p.id);
       }
     }
   }
