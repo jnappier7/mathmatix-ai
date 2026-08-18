@@ -805,6 +805,20 @@ function registerHtmlRoutes(app) {
 function registerStaticRoutes(app) {
   const publicDir = path.join(__dirname, '..', 'public');
 
+  // Course-site directory URLs. express.static runs with `index: false` and the
+  // HTML handler below requires a literal `.html`, so `/courses/algebra/` would
+  // 404 even though `/courses/algebra/index.html` exists. The generated course
+  // pages link to bare directories, so map them to index.html.
+  app.use((req, res, next) => {
+    if ((req.method !== 'GET' && req.method !== 'HEAD') || !req.path.startsWith('/courses/')) {
+      return next();
+    }
+    if (!req.path.endsWith('/')) return next();
+    const filePath = path.resolve(publicDir, req.path.replace(/^\/+/, '') + 'index.html');
+    if (!filePath.startsWith(publicDir + path.sep)) return next();
+    fs.access(filePath, fs.constants.F_OK, (err) => (err ? next() : res.sendFile(filePath)));
+  });
+
   // Serve HTML via sendFile for CSP nonce injection
   // (Static assets are already served by middleware.js before session/CSRF pipeline)
   app.use((req, res, next) => {

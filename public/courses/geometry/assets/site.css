@@ -1,0 +1,267 @@
+
+/* Palette lifted from public/css/design-system.css so the course site and the
+   tutor read as one product. Dark is the default, as it is in the app. */
+:root{
+  --bg:#0B0F1A; --panel:#161B2C; --panel-2:#1B2238;
+  --ink:#E6E9F2; --muted:#9AA3B8;
+  --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.18);
+  --accent:#8B7BFF; --accent-strong:#6C5CE7; --accent-soft:rgba(139,123,255,.14);
+  --ok:#2ECC71; --ok-soft:rgba(46,204,113,.14);
+  --warn:#FFD66B; --warn-soft:rgba(255,214,107,.14);
+  --radius:18px;
+  --shadow:0 8px 20px rgba(0,0,0,.38);
+}
+@media (prefers-color-scheme:light){
+  :root{
+    --bg:#F5F7FB; --panel:#FFFFFF; --panel-2:#EEF1F7;
+    --ink:#18202B; --muted:#5B6876;
+    --line:rgba(16,24,40,.10); --line-strong:rgba(16,24,40,.18);
+    --accent:#6C5CE7; --accent-strong:#5A4BD1; --accent-soft:#EDE9FF;
+    --ok:#1a8f5a; --ok-soft:#E3F5EC;
+    --warn:#B45309; --warn-soft:#FDF0DC;
+    --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 20px rgba(16,24,40,.07);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.55 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-text-size-adjust:100%}
+a{color:inherit}
+.wrap{max-width:940px;margin:0 auto;padding:28px 20px 72px}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;padding:10px 20px;
+  background:color-mix(in srgb,var(--panel) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand-logo{height:30px;width:auto;display:block}
+@media(max-width:520px){.brand-logo{height:26px}}
+.brand span span,.brand>span{display:flex;flex-direction:column;line-height:1.15}
+.brand em{font-style:normal;font-size:12px;color:var(--muted)}
+.chip{font-size:13px;color:var(--muted);border:1px solid var(--line);
+  padding:4px 10px;border-radius:999px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.syl-top{font-size:13.5px;font-weight:600;text-decoration:none;color:var(--accent);
+  padding:7px 12px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.syl-top:hover{border-color:var(--accent)}
+@media(max-width:600px){.syl-top{display:none}}
+.tutor-top{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;
+  text-decoration:none;color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));padding:7px 14px;border-radius:999px;
+  white-space:nowrap;transition:.15s}
+.tutor-top:hover{filter:brightness(1.08)}
+@media(max-width:520px){.chip{display:none}}
+
+/* per-lesson tutor hand-off */
+.tutor-cta{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;
+  border-radius:11px;text-decoration:none;color:inherit;background:var(--accent-soft);
+  border:1px solid transparent;transition:.15s}
+.tutor-cta:hover{border-color:var(--accent)}
+.tutor-ic{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));color:#fff;font-size:15px}
+.tutor-txt{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.tutor-txt b{font-size:14.5px;color:var(--accent)}
+.tutor-txt em{font-style:normal;font-size:12.5px;color:var(--muted)}
+.tutor-go{margin-left:auto;color:var(--accent);font-size:18px}
+
+/* hero */
+.hero{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:30px;box-shadow:var(--shadow);margin-bottom:30px}
+.hero h1{margin:0 0 8px;font-size:clamp(28px,5vw,40px);letter-spacing:-.02em}
+.lede{margin:0 0 22px;color:var(--muted);max-width:60ch}
+.stats{display:flex;flex-wrap:wrap;gap:26px;padding-top:20px;border-top:1px solid var(--line)}
+.stats div{display:flex;flex-direction:column}
+.stats b{font-size:24px;letter-spacing:-.02em}
+.stats span{font-size:13px;color:var(--muted)}
+.overall{margin-top:20px}
+
+/* progress bars */
+.bar{height:7px;border-radius:99px;background:var(--line);overflow:hidden;margin:10px 0 6px}
+.bar.big{height:9px}
+.bar-fill{display:block;height:100%;width:0;border-radius:99px;background:var(--ok);
+  transition:width .35s ease}
+.ch-prog{margin:0;font-size:12.5px;color:var(--muted)}
+
+/* Canvas embed mode: no chrome, tighter padding, no page background so it
+   blends into whatever Canvas page it is dropped into. */
+html.embed body{background:transparent}
+html.embed .topbar,html.embed .foot{display:none}
+html.embed .wrap{padding:0 0 8px;max-width:none}
+html.embed .crumb{display:none}
+/* Canvas supplies its own page padding, so everything here tightens up. */
+html.embed .ch-head{margin-bottom:12px}
+html.embed .ch-head h1{margin-bottom:2px;font-size:clamp(20px,3vw,26px)}
+html.embed .hero{padding:16px 18px;margin-bottom:16px}
+html.embed .hero h1{font-size:clamp(22px,4vw,30px)}
+html.embed .lede{margin-bottom:14px}
+html.embed .stats{padding-top:12px;gap:18px}
+html.embed .toc{padding:12px 14px;margin-bottom:14px}
+html.embed .toc-links a{padding:3px 7px}
+html.embed .lesson{padding:14px;margin-bottom:10px}
+html.embed .lesson-title h3{margin:2px 0 6px;font-size:17px}
+html.embed .lesson-body{padding-left:34px}
+html.embed .videos,html.embed .filegroup{margin:10px 0}
+html.embed .hw,html.embed .tutor-cta{margin-top:10px}
+html.embed .weeknav{margin-bottom:12px}
+html.embed .weekgrid{gap:9px}
+html.embed .wday{padding:11px}
+html.embed .nextup{margin-bottom:12px;padding:11px 14px}
+html.embed .resources{padding:14px 16px;margin-bottom:16px}
+html.embed .ch-grid{gap:10px}
+html.embed .ch-card{padding:14px}
+html.embed .pagers{margin-top:16px}
+@media(max-width:860px){html.embed .lesson-body{padding-left:0}}
+
+/* week view */
+.weekcta{margin:0 0 26px}
+.weeknav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px}
+.weeknav button{font:inherit;padding:8px 14px;border-radius:9px;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);cursor:pointer}
+.weeknav button:hover{border-color:var(--accent);color:var(--accent)}
+.weeknav b{font-size:15px;margin-left:6px}
+.weekgrid{display:grid;gap:12px;grid-template-columns:repeat(5,1fr)}
+@media(max-width:860px){.weekgrid{grid-template-columns:1fr}}
+.wday{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px;box-shadow:var(--shadow);min-height:120px}
+.wday.off{opacity:.6;background:var(--panel-2)}
+.wday.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
+.wday h4{margin:0 0 2px;font-size:13px}
+.wday .dt{font-size:11.5px;color:var(--muted)}
+.wday .off-label{margin-top:10px;font-size:12px;color:var(--warn);text-transform:uppercase;
+  letter-spacing:.06em}
+.witem{margin-top:11px;padding-top:11px;border-top:1px solid var(--line)}
+.wday .witem:first-of-type{border-top:0;padding-top:0}
+.witem .wt{font-size:14px;font-weight:600;line-height:1.35}
+.witem .wd{margin-top:5px;font-size:12.5px;color:var(--muted)}
+.witem .wdue{display:inline-block;margin-top:6px;font-size:11.5px;padding:2px 9px;
+  border-radius:999px;background:var(--ok-soft);color:var(--ok)}
+.nextup{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 16px;
+  border-radius:var(--radius);background:var(--warn-soft);border:1px solid transparent}
+.nextup b{color:var(--warn)}
+.nextup span{font-size:14px}
+.empty{color:var(--muted);font-size:13px;margin-top:10px}
+
+/* course-level reference (syllabus etc.) — applies to the whole year */
+.resources{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px 20px;margin-bottom:30px;box-shadow:var(--shadow)}
+.resources h4{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted)}
+
+/* chapter grid */
+.section-head{font-size:14px;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--muted);margin:0 0 14px}
+.ch-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.ch-card{display:flex;gap:16px;text-decoration:none;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:18px;
+  box-shadow:var(--shadow);transition:transform .15s ease,border-color .15s ease}
+.ch-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.ch-num{flex:none;width:42px;height:42px;border-radius:11px;display:grid;place-items:center;
+  background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:17px}
+.ch-body{min-width:0;flex:1}
+.ch-body h3{margin:2px 0 4px;font-size:16.5px;letter-spacing:-.01em}
+.ch-meta{margin:0;font-size:13px;color:var(--muted)}
+
+/* chapter page */
+.ch-head{margin-bottom:24px}
+.crumb{margin:0 0 10px;font-size:13px}
+.crumb a{color:var(--accent);text-decoration:none}
+.ch-head h1{display:flex;align-items:center;gap:14px;margin:0 0 6px;
+  font-size:clamp(23px,4vw,32px);letter-spacing:-.02em}
+.big-num{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));color:#fff;font-size:20px}
+.toc{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px 18px;margin-bottom:26px;box-shadow:var(--shadow)}
+.toc h4{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted)}
+.toc-links{display:grid;gap:2px}
+.toc-links a{display:flex;gap:10px;padding:5px 8px;border-radius:8px;font-size:14px;
+  text-decoration:none;color:var(--ink)}
+.toc-links a:hover{background:var(--accent-soft);color:var(--accent)}
+.toc-links span{color:var(--muted);min-width:20px;font-variant-numeric:tabular-nums}
+
+/* lesson */
+.lesson{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;margin-bottom:16px;box-shadow:var(--shadow);scroll-margin-top:76px}
+.lesson.done{border-color:var(--ok)}
+.lesson.done .lesson-title h3{color:var(--muted);text-decoration:line-through}
+.lesson-head{display:flex;gap:14px;align-items:flex-start}
+.lesson-title{min-width:0}
+.daynum{margin:0;font-size:12px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.07em}
+.lesson-title h3{margin:3px 0 8px;font-size:19px;letter-spacing:-.01em}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badge{font-size:11.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);
+  color:var(--muted);white-space:nowrap}
+.badge.k-test{background:var(--warn-soft);color:var(--warn);border-color:transparent;font-weight:600}
+.badge.k-quiz{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.badge.k-review{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.badge.sec{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+.badge.due{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+
+/* checkbox */
+.check{flex:none;cursor:pointer;position:relative;width:26px;height:26px;margin-top:3px}
+.check input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
+.check span{position:relative;display:block;width:26px;height:26px;border-radius:8px;
+  border:2px solid var(--line);transition:.15s}
+.check input:checked+span{background:var(--ok);border-color:var(--ok)}
+.check input:checked+span::after{content:"";position:absolute;left:7px;top:2px;width:6px;
+  height:12px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(42deg)}
+/* On touch, grow the hit area to the 44px minimum without moving the visual
+   box — otherwise the check is a 26px target and a thumb misses it. */
+@media(pointer:coarse){
+  .check input{inset:auto;left:-9px;top:-9px;width:44px;height:44px}
+}
+.check input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+
+.lesson-body{padding-left:40px}
+@media(max-width:560px){.lesson-body{padding-left:0}}
+
+/* media */
+.videos{display:grid;gap:14px;margin:14px 0}
+.video{margin:0}
+.video video{width:100%;border-radius:10px;background:#000;display:block;aspect-ratio:16/10}
+.video figcaption{font-size:12.5px;color:var(--muted);margin-top:6px}
+.pending-box{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  min-height:64px;border-radius:10px;border:1px dashed var(--line-strong);background:var(--panel-2);
+  text-align:center;padding:14px 16px}
+.pending-box span{font-size:14px;color:var(--muted)}
+.pending-box em{font-style:normal;font-size:12px;color:var(--muted);opacity:.75}
+
+.filegroup{margin:14px 0}
+.filegroup h4,.hw h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted)}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+.files a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:14px;
+  padding:8px 13px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);
+  transition:.15s}
+.files a:hover{border-color:var(--accent);color:var(--accent)}
+.files a.ext{border-style:dashed}
+.ic{opacity:.6}
+.notes .files a{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+
+.hw{margin-top:14px;padding:14px 16px;background:var(--panel-2);border-radius:10px;
+  border:1px solid var(--line)}
+.hw ul{margin:0;padding-left:18px}
+.hw li{margin:3px 0;font-size:14.5px}
+
+/* school closure between two lessons */
+.brk{display:flex;align-items:center;gap:14px;margin:20px 4px}
+.brk::before,.brk::after{content:"";flex:1;height:1px;background:var(--line)}
+.brk span{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);
+  white-space:nowrap}
+
+/* pagers */
+.pagers{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.pager{flex:1;min-width:220px;display:flex;flex-direction:column;gap:2px;padding:14px 16px;
+  border-radius:var(--radius);border:1px solid var(--line);background:var(--panel);
+  text-decoration:none;box-shadow:var(--shadow)}
+.pager:hover{border-color:var(--accent)}
+.pager em{font-style:normal;font-size:12px;color:var(--muted)}
+.pager.next{text-align:right}
+
+.foot{max-width:940px;margin:0 auto;padding:20px;display:flex;justify-content:space-between;
+  gap:12px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
+.linkish{background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;
+  text-decoration:underline;padding:0}
+.linkish:hover{color:var(--accent)}
