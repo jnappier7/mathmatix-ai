@@ -99,7 +99,12 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
     const pw = (pathway.modules || []).find(pm => pm.moduleId === m.moduleId);
     const label = pw?.title || m.moduleId;
     const status = m.status === 'completed' ? '✓' : m.status === 'in_progress' ? '►' : m.status === 'available' ? '○' : '🔒';
-    return `  ${status} Unit ${pw?.unit ?? '?'}: ${label}`;
+    // Quarter checkpoints and final assessments span units rather than belonging
+    // to one, so they legitimately carry no `unit`. Printing "Unit ?" for them
+    // read like missing data; drop the prefix instead. (`??`, not `||`: unit 0 is
+    // a real unit — it is the launch/boot-camp module of most courses.)
+    const unitLabel = (pw?.unit ?? null) === null ? '' : `Unit ${pw.unit}: `;
+    return `  ${status} ${unitLabel}${label}`;
   }).join('\n');
 
   // Format the current scaffold step in detail
@@ -642,6 +647,52 @@ Acknowledge it by name, ask which specific problem they are on, then guide them 
 }
 
 /**
+ * READING A SCAFFOLD STEP.
+ *
+ * The module banks were generated over time by different scripts, and they do not
+ * agree on field names. The builders used to read exactly one name per field and
+ * interpolate it raw, so a bank that chose the other name produced a prompt line
+ * reading literally "Answer: undefined" — or, for a `model` step, no examples at
+ * all. The content was sitting right there in the JSON; the tutor never saw it.
+ * Found by auditing every course: geometry's 3d_geometry shipped nine worked
+ * solutions under `explanation`, and the 6th-grade / early-math `final_review`
+ * modules shipped ten steps' worth of worked examples under `problems`.
+ *
+ * These readers are the one place that knows the aliases. Add a name here rather
+ * than teaching another call site a new `||` chain — and never interpolate a raw
+ * field again: a missing value drops its line instead of printing "undefined".
+ * tests/unit/courseContentRenders.test.js renders every module of every course
+ * through these and fails on either failure mode.
+ */
+
+// Worked examples for an I-do step. Some banks store them under `problems`.
+function stepExamples(step) {
+  const list = (step.examples && step.examples.length) ? step.examples : step.problems;
+  return Array.isArray(list) ? list : [];
+}
+
+// The prompt/question text of an example or a practice problem.
+function itemText(item) {
+  return item.problem || item.question || '';
+}
+
+// The answer key. `solution` is the alias the newer generators emit; `explanation`
+// is what geometry's worked examples use.
+function itemAnswer(item) {
+  const a = item.answer != null && item.answer !== '' ? item.answer
+    : item.solution != null && item.solution !== '' ? item.solution
+      : item.explanation;
+  return (a == null || a === '') ? null : a;
+}
+
+// Hints, whether stored as a list or a single `hint` string.
+function itemHints(item) {
+  if (Array.isArray(item.hints) && item.hints.length) return item.hints;
+  if (item.hint) return [item.hint];
+  return [];
+}
+
+/**
  * Format a single scaffold step into detailed teaching instructions
  */
 function formatScaffoldStep(step, index, total) {
@@ -731,17 +782,18 @@ function formatScaffoldStep(step, index, total) {
       detail += `  • What would CHANGE if the problem were slightly different?\n\n`;
       detail += `Walk through ONE example at a time, check in, then do the next.\n`;
       detail += `Do NOT dump all examples in one message.\n\n`;
-      if (step.examples && step.examples.length > 0) {
-        step.examples.forEach((ex, i) => {
-          detail += `\nExample ${i + 1}: ${ex.problem}\n`;
-          detail += `Solution: ${ex.solution}\n`;
-          if (ex.thinkAloud) detail += `Think-aloud notes: ${ex.thinkAloud}\n`;
-          if (ex.commonMistake) detail += `⚠️ Common mistake to call out: ${ex.commonMistake}\n`;
-          if (ex.decisionPoint) detail += `🔀 Decision point to highlight: ${ex.decisionPoint}\n`;
-          if (ex.interpretation) detail += `💡 Interpret the answer: ${ex.interpretation}\n`;
-          if (ex.tip) detail += `Teaching tip: ${ex.tip}\n`;
-        });
-      }
+      stepExamples(step).forEach((ex, i) => {
+        const text = itemText(ex);
+        const solution = itemAnswer(ex);
+        if (!text) return;                     // nothing to model — say nothing
+        detail += `\nExample ${i + 1}: ${text}\n`;
+        if (solution) detail += `Solution: ${solution}\n`;
+        if (ex.thinkAloud) detail += `Think-aloud notes: ${ex.thinkAloud}\n`;
+        if (ex.commonMistake) detail += `⚠️ Common mistake to call out: ${ex.commonMistake}\n`;
+        if (ex.decisionPoint) detail += `🔀 Decision point to highlight: ${ex.decisionPoint}\n`;
+        if (ex.interpretation) detail += `💡 Interpret the answer: ${ex.interpretation}\n`;
+        if (ex.tip) detail += `Teaching tip: ${ex.tip}\n`;
+      });
       if (step.initialPrompt) {
         detail += `\nAfter modeling, ask: "${step.initialPrompt}"\n`;
       }
@@ -760,15 +812,15 @@ function formatScaffoldStep(step, index, total) {
       detail += `  • Only supply a step if the student is genuinely stuck — and even then,\n`;
       detail += `    give a hint, not the answer.\n`;
       detail += `The student's hands should be on the wheel. You are the GPS.\n\n`;
-      if (step.problems && step.problems.length > 0) {
-        step.problems.forEach((p, i) => {
-          detail += `\n  Problem ${i + 1}: ${p.problem || p.question}\n`;
-          detail += `  Answer: ${p.answer}\n`;
-          if (p.hints && p.hints.length > 0) {
-            detail += `  Hints (use if stuck): ${p.hints.join(' → ')}\n`;
-          }
-        });
-      }
+      (step.problems || []).forEach((p, i) => {
+        const text = itemText(p);
+        if (!text) return;
+        const answer = itemAnswer(p);
+        const hints = itemHints(p);
+        detail += `\n  Problem ${i + 1}: ${text}\n`;
+        if (answer) detail += `  Answer: ${answer}\n`;
+        if (hints.length) detail += `  Hints (use if stuck): ${hints.join(' → ')}\n`;
+      });
       detail += `\nPresent ONE problem at a time. Wait for the student's response at EACH step.\n`;
       if (step.initialPrompt) {
         detail += `Start with: "${step.initialPrompt}"\n`;
@@ -790,15 +842,15 @@ function formatScaffoldStep(step, index, total) {
       detail += `If they get it right, acknowledge and move to the next one.\n`;
       detail += `If they get stuck, give a small nudge — not a walkthrough.\n`;
       detail += `If they get it wrong, ask them to find their own mistake first.\n\n`;
-      if (step.problems && step.problems.length > 0) {
-        step.problems.forEach((p, i) => {
-          detail += `\n  Problem ${i + 1}: ${p.problem || p.question}\n`;
-          detail += `  Answer: ${p.answer}\n`;
-          if (p.hints && p.hints.length > 0) {
-            detail += `  Hints (ONLY if truly stuck): ${p.hints.join(' → ')}\n`;
-          }
-        });
-      }
+      (step.problems || []).forEach((p, i) => {
+        const text = itemText(p);
+        if (!text) return;
+        const answer = itemAnswer(p);
+        const hints = itemHints(p);
+        detail += `\n  Problem ${i + 1}: ${text}\n`;
+        if (answer) detail += `  Answer: ${answer}\n`;
+        if (hints.length) detail += `  Hints (ONLY if truly stuck): ${hints.join(' → ')}\n`;
+      });
       detail += `\nPresent ONE problem at a time. Wait for the student's full answer before responding.\n`;
       detail += `\n⚡ STEP COMPLETE WHEN: The student has independently solved at least 2 ` +
                 `problems correctly with no help. The backend tracks correct answers and advances ` +
@@ -1224,13 +1276,14 @@ function formatParentScaffoldStep(step, index, total) {
       detail += `example — the kind their child would see on homework. Walk through\n`;
       detail += `it slowly, explaining each step. Then show the traditional method\n`;
       detail += `side by side so they can see how both approaches reach the same answer.\n\n`;
-      if (step.examples && step.examples.length > 0) {
-        step.examples.forEach((ex, i) => {
-          detail += `\nExample ${i + 1}: ${ex.problem}\n`;
-          detail += `Solution: ${ex.solution}\n`;
-          if (ex.tip) detail += `Parent tip: ${ex.tip}\n`;
-        });
-      }
+      stepExamples(step).forEach((ex, i) => {
+        const text = itemText(ex);
+        const solution = itemAnswer(ex);
+        if (!text) return;
+        detail += `\nExample ${i + 1}: ${text}\n`;
+        if (solution) detail += `Solution: ${solution}\n`;
+        if (ex.tip) detail += `Parent tip: ${ex.tip}\n`;
+      });
       if (step.initialPrompt) {
         detail += `\nAfter walking through, ask: "${step.initialPrompt}"\n`;
       }
@@ -1242,15 +1295,15 @@ function formatParentScaffoldStep(step, index, total) {
       detail += `a test — it's practice to build confidence. If they get it wrong,\n`;
       detail += `gently guide them. If they get it right, celebrate naturally.\n`;
       detail += `"Want to give one a shot? Here's a simple one..."\n\n`;
-      if (step.problems && step.problems.length > 0) {
-        step.problems.forEach((p, i) => {
-          detail += `\n  Example ${i + 1}: ${p.question}\n`;
-          detail += `  Answer: ${p.answer}\n`;
-          if (p.hints && p.hints.length > 0) {
-            detail += `  Gentle hints: ${p.hints.join(' → ')}\n`;
-          }
-        });
-      }
+      (step.problems || []).forEach((p, i) => {
+        const text = itemText(p);
+        if (!text) return;
+        const answer = itemAnswer(p);
+        const hints = itemHints(p);
+        detail += `\n  Example ${i + 1}: ${text}\n`;
+        if (answer) detail += `  Answer: ${answer}\n`;
+        if (hints.length) detail += `  Gentle hints: ${hints.join(' → ')}\n`;
+      });
       detail += `\nPresent ONE example at a time. Keep it encouraging and low-stakes.\n`;
       if (step.initialPrompt) {
         detail += `Start with: "${step.initialPrompt}"\n`;
@@ -1262,12 +1315,13 @@ function formatParentScaffoldStep(step, index, total) {
       detail += `Give the parent a chance to try one completely on their own.\n`;
       detail += `Frame it as optional: "If you want to try one more before we move on..."\n`;
       detail += `No pressure. If they'd rather just hear more tips, that's fine too.\n\n`;
-      if (step.problems && step.problems.length > 0) {
-        step.problems.forEach((p, i) => {
-          detail += `\n  Example ${i + 1}: ${p.question}\n`;
-          detail += `  Answer: ${p.answer}\n`;
-        });
-      }
+      (step.problems || []).forEach((p, i) => {
+        const text = itemText(p);
+        if (!text) return;
+        const answer = itemAnswer(p);
+        detail += `\n  Example ${i + 1}: ${text}\n`;
+        if (answer) detail += `  Answer: ${answer}\n`;
+      });
       break;
 
     default:
