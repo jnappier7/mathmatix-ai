@@ -35,8 +35,8 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "polygon-angle-sum",
-      "title": "Polygon Interior and Exterior Angle Sums",
-      "content": "The **Polygon Interior Angle Sum Theorem** gives us a formula for the total degrees inside any convex polygon:\n\n**Sum of interior angles = (n - 2) × 180°**\n\nwhere n = number of sides.\n\n**Why does this work?** From one vertex, you can draw diagonals to create (n - 2) triangles. Each triangle has 180°, so the total is (n - 2) × 180°.\n\nExamples:\n• Triangle (n=3): (3-2) × 180° = 180°\n• Quadrilateral (n=4): (4-2) × 180° = 360°\n• Pentagon (n=5): (5-2) × 180° = 540°\n• Hexagon (n=6): (6-2) × 180° = 720°\n\nFor a **regular polygon** (all sides and angles equal), each angle = (n-2) × 180° / n.\n\n**Exterior Angle Sum:** The sum of exterior angles of ANY convex polygon is always **360°**. For a regular polygon, each exterior angle = 360° / n.",
+      "title": "Polygon Interior Angle Sum",
+      "content": "The **Polygon Interior Angle Sum Theorem** gives us a formula for the total degrees inside any convex polygon:\n\n**Sum of interior angles = (n − 2) × 180°**\n\nwhere n = number of sides.\n\n**Why does this work?** From one vertex, you can draw diagonals to create (n − 2) triangles. Each triangle has 180°, so the total is (n − 2) × 180°. The formula isn't memorized magic — it's triangles all the way down.\n\nExamples:\n• Triangle (n=3): (3−2) × 180° = 180°\n• Quadrilateral (n=4): (4−2) × 180° = 360°\n• Pentagon (n=5): (5−2) × 180° = 540°\n• Hexagon (n=6): (6−2) × 180° = 720°\n\nFor a **regular polygon** (all sides and angles equal), the sum splits evenly:\n\n**each interior angle = (n − 2) × 180° / n**\n\n**The two directions this gets asked:**\n• *Given n, find the sum or each angle* → substitute straight into the formula.\n• *Given the sum (or one angle of a regular polygon), find n* → set the formula equal to what you're given and solve for n. Since n counts sides, your answer must be a whole number ≥ 3 — a fractional n means an arithmetic slip.\n\n**For irregular polygons** the individual angles differ, but the total is still (n − 2) × 180°. So if you know all but one angle, subtract the known ones from the total.",
       "initialPrompt": "A stop sign is a regular octagon (8 sides). Can you calculate the sum of its interior angles and the measure of each individual angle?",
       "lessonId": "polygon-angle-sums"
     },
@@ -102,29 +102,85 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
+      "skill": "exterior-angle-sums",
+      "title": "Polygon Exterior Angle Sum",
+      "content": "An **exterior angle** of a polygon is formed by extending one side — it sits next to the interior angle at that vertex and forms a straight line with it.\n\n**So at every vertex:  interior angle + exterior angle = 180°.**\n\n**Polygon Exterior Angle Sum Theorem:** the exterior angles of *any* convex polygon (one at each vertex) sum to **360°** — no matter how many sides.\n\nRead that again: 360°, always. Triangle, hexagon, 100-gon — same total. The interior sum grows without limit as n grows; the exterior sum never budges.\n\n**Why?** Imagine walking all the way around the polygon along its edges. At each corner you turn by exactly the exterior angle. When you arrive back at your starting point facing your original direction, you have turned one complete revolution — 360°.\n\n**For a regular polygon**, the 360° splits evenly:\n\n**each exterior angle = 360° / n**   and   **n = 360° / (each exterior angle)**\n\nThat second form is why exterior angles are so useful: finding n from an exterior angle is one division, while finding n from an interior angle takes solving (n − 2)·180/n = angle.\n\n**The standard shortcut.** Given each interior angle of a regular polygon:\n1. exterior = 180° − interior\n2. n = 360° / exterior\n\nFor a regular polygon with 150° interior angles: exterior = 30°, so n = 360/30 = **12 sides**. Much faster than the algebra.\n\n**For irregular polygons:** the individual exterior angles differ, but they still total 360°. Know all but one, and you subtract.\n\n**Check your answers:** interior and exterior must be supplementary, and (n − 2)·180/n must reproduce the interior angle. Two independent routes to the same number — use them.",
+      "initialPrompt": "A regular polygon has each exterior angle measuring 45°. How many sides does it have, and what is each interior angle?",
+      "lessonId": "exterior-angle-sums"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "exterior-angle-sums",
+      "title": "I-Do: Exterior Angle Calculations",
+      "examples": [
+        {
+          "problem": "Each exterior angle of a regular polygon measures 24°. Find the number of sides and each interior angle.",
+          "solution": "**Find n from the exterior angle — one division:**\n\nThe exterior angles total 360°, and in a regular polygon they're all equal:\nn = 360° / 24° = **15 sides**\n\n**Find the interior angle — supplementary at each vertex:**\ninterior = 180° − 24° = **156°**\n\n**Check with the interior-angle formula:**\n(n − 2) × 180° / n = (15 − 2) × 180° / 15 = 13 × 180° / 15 = 2340° / 15 = 156° ✓\n\n**Notice how much work the exterior route saved.** Going the other way would have meant solving (n − 2)·180/n = 156 for n. Same answer, much more algebra."
+        },
+        {
+          "problem": "A regular nonagon has 9 sides. Find each exterior angle and each interior angle.",
+          "solution": "**Each exterior angle:**\n360° / 9 = **40°**\n\n**Each interior angle (supplementary):**\n180° − 40° = **140°**\n\n**Check with the interior-angle formula:**\n(9 − 2) × 180° / 9 = 7 × 180° / 9 = 1260° / 9 = 140° ✓\n\n**Worth noticing:** the interior angle sum here is 1260°, but the exterior angle sum is still 360° — the same as for a triangle or a 50-gon. The exterior total is the one number in this unit that never changes."
+        }
+      ],
+      "initialPrompt": "In example 1, we found n by dividing 360 by the exterior angle. Why does that work — what does the 360 represent?",
+      "lessonId": "exterior-angle-sums"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "exterior-angle-sums",
+      "title": "We-Do: Exterior Angle Problems",
+      "problems": [
+        {
+          "id": "pq-ea1",
+          "question": "Each exterior angle of a regular polygon measures 30°. How many sides does it have?",
+          "answer": "12 sides",
+          "hints": [
+            "The exterior angles of any convex polygon sum to 360°, and in a regular polygon they're all equal, so n = 360° / (each exterior angle).",
+            "n = 360° / 30° = 12 sides. (Check: each interior angle is 180° − 30° = 150°, and (12−2)·180/12 = 150° ✓)"
+          ]
+        },
+        {
+          "id": "pq-ea2",
+          "question": "A regular polygon has 20 sides. Find each exterior angle and each interior angle.",
+          "answer": "Exterior 18°, interior 162°",
+          "hints": [
+            "Each exterior angle = 360° / n = 360° / 20 = 18°.",
+            "Interior and exterior are supplementary at each vertex: 180° − 18° = 162°. (Check: (20−2)·180/20 = 3240/20 = 162° ✓)"
+          ]
+        },
+        {
+          "id": "pq-ea3",
+          "question": "A convex pentagon has exterior angles measuring 60°, 80°, 75°, and 90°. Find the measure of the fifth exterior angle.",
+          "answer": "55°",
+          "hints": [
+            "The polygon isn't regular, so the exterior angles are not all equal — but they still total 360°.",
+            "60 + 80 + 75 + 90 = 305, so the fifth exterior angle is 360° − 305° = 55°."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, what do all the exterior angles of a convex polygon add up to? Once you know that, how do you get n from one of them?",
+      "lessonId": "exterior-angle-sums"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
       "skill": "quadrilateral-properties",
-      "title": "The Quadrilateral Family Hierarchy",
-      "content": "**The Quadrilateral Family** (each type inherits all properties of its parent):\n\n**Parallelogram** — both pairs of opposite sides parallel:\n• Opposite sides are congruent\n• Opposite angles are congruent\n• Consecutive angles are supplementary\n• Diagonals bisect each other\n\n**Rectangle** — parallelogram with 4 right angles:\n• All parallelogram properties PLUS\n• Diagonals are congruent\n\n**Rhombus** — parallelogram with 4 congruent sides:\n• All parallelogram properties PLUS\n• Diagonals are perpendicular\n• Diagonals bisect the angles\n\n**Square** — a rectangle AND a rhombus:\n• ALL properties of parallelogram, rectangle, AND rhombus",
-      "initialPrompt": "Is every square a rectangle? Is every rectangle a square? Explain the difference.",
+      "title": "Properties of Parallelograms",
+      "content": "A **parallelogram** is a quadrilateral with both pairs of opposite sides parallel. That single definition forces four properties — and every one of them shows up as a \"solve for x\" problem.\n\n**Properties of a parallelogram:**\n• **Opposite sides are congruent** (AB = CD and BC = AD)\n• **Opposite angles are congruent** (∠A = ∠C and ∠B = ∠D)\n• **Consecutive angles are supplementary** (∠A + ∠B = 180°)\n• **Diagonals bisect each other** — they cut each other in half at their intersection\n\n**Where the properties come from:** a diagonal splits the parallelogram into two triangles that are congruent by ASA (the parallel sides give congruent alternate interior angles, and the diagonal is shared). Corresponding parts of those triangles give you the congruent opposite sides and angles.\n\n**Consecutive angles are supplementary** because two consecutive angles are co-interior angles on a transversal cutting parallel lines.\n\n**The two setups to recognize:**\n• Two expressions for **opposite** parts → set them **equal** (2x + 3 = 4x − 9)\n• Two expressions for **consecutive** angles → set the sum to **180°** ((3x + 10) + (5x − 30) = 180)\n\nPicking the wrong one is the most common error here, and it comes from not checking whether the two parts are across from each other or next to each other. Label the vertices in order — A, B, C, D around the shape — and A is opposite C, B is opposite D.\n\n**Careful with the diagonals:** they bisect each other, but in a general parallelogram they are *not* congruent and *not* perpendicular. Those extra properties belong to the special parallelograms in the next lesson.",
+      "initialPrompt": "In parallelogram ABCD, ∠A and ∠C are opposite while ∠A and ∠B are consecutive. Which pair is congruent, and which pair sums to 180°?",
       "lessonId": "parallelogram-properties"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "quadrilateral-properties",
-      "title": "I-Do: Quadrilateral Property Applications",
+      "title": "I-Do: Parallelogram Properties",
       "examples": [
         {
           "problem": "In parallelogram ABCD, ∠A = (3x + 10)° and ∠B = (5x - 30)°. Find all four angles.",
           "solution": "Consecutive angles are supplementary:\n(3x + 10) + (5x - 30) = 180\n8x - 20 = 180\n8x = 200 → x = 25\n\n∠A = 3(25) + 10 = **85°**, ∠B = 5(25) - 30 = **95°**\nOpposite angles congruent: ∠C = ∠A = **85°**, ∠D = ∠B = **95°**\n\nCheck: 85 + 95 + 85 + 95 = 360° ✓"
-        },
-        {
-          "problem": "In rectangle EFGH, the diagonals intersect at M. If EG = 26, find EM, MG, and FH.",
-          "solution": "Rectangle diagonals bisect each other:\nEM = MG = 26 ÷ 2 = **13**\n\nRectangle diagonals are congruent:\nFH = EG = **26**\n\nSo FM = MH = 13 as well."
-        },
-        {
-          "problem": "Rhombus JKLM has ∠J = 60° and each side = 10. Find all angles and both diagonal lengths.",
-          "solution": "Opposite angles: ∠L = ∠J = **60°**. Consecutive supplementary: ∠K = ∠M = **120°**.\n\nDiagonals bisect angles and are perpendicular. Let O be the intersection.\nIn right triangle JOK: ∠OJK = 60°/2 = 30°, JK = 10 (hypotenuse of the right triangle at O).\n\nThis is a 30-60-90 triangle:\nJO = 10 × cos(30°) = 10 × (√3/2) = 5√3\nKO = 10 × sin(30°) = 10 × (1/2) = 5\n\nDiagonals: JL = 2 × 5√3 = **10√3 ≈ 17.3**, KM = 2 × 5 = **10**\nVerify: (5√3)² + 5² = 75 + 25 = 100 = 10² ✓"
         }
       ],
       "initialPrompt": "What if this were a rectangle instead of just a parallelogram—what would all four angles have to be?",
@@ -134,27 +190,8 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "quadrilateral-properties",
-      "title": "We-Do: Quadrilateral Properties",
+      "title": "We-Do: Parallelogram Properties",
       "problems": [
-        {
-          "id": "pq-wp4",
-          "question": "In rhombus PQRS, the diagonals intersect at point T. If PR = 24 and QS = 10, find the length of each side of the rhombus.",
-          "answer": "13",
-          "hints": [
-            "Diagonals of a rhombus bisect each other AND are perpendicular.",
-            "So PT = 12, QT = 5, and angle PTQ = 90°. Use Pythagorean Theorem: PQ² = 12² + 5².",
-            "PQ² = 144 + 25 = 169. PQ = 13."
-          ]
-        },
-        {
-          "id": "pq-wp5",
-          "question": "In rectangle EFGH, diagonal EG = 3x + 7 and diagonal FH = 5x - 9. Find x and the length of each diagonal.",
-          "answer": "x = 8, diagonal = 31",
-          "hints": [
-            "In a rectangle, diagonals are congruent: EG = FH.",
-            "3x + 7 = 5x - 9. Solve: 16 = 2x, so x = 8. Each diagonal = 3(8) + 7 = 31."
-          ]
-        },
         {
           "id": "pq-wp6",
           "question": "In parallelogram ABCD, AB = 2x + 3 and CD = 4x - 9. Also, BC = x + 8. Find x, AB, CD, and BC.",
@@ -163,9 +200,27 @@
             "Opposite sides of a parallelogram are congruent: AB = CD → 2x + 3 = 4x - 9.",
             "12 = 2x → x = 6. AB = CD = 2(6)+3 = 15. BC = AD = 6+8 = 14."
           ]
+        },
+        {
+          "id": "pq-pp1",
+          "question": "In parallelogram ABCD, ∠A = (4x + 12)° and ∠B = (6x − 2)°. Find x and all four angles.",
+          "answer": "x = 17; ∠A = ∠C = 80°, ∠B = ∠D = 100°",
+          "hints": [
+            "∠A and ∠B are consecutive angles of a parallelogram, so they are supplementary: (4x + 12) + (6x − 2) = 180.",
+            "10x + 10 = 180, so x = 17. Then ∠A = 4(17) + 12 = 80° and ∠B = 6(17) − 2 = 100°. Opposite angles are congruent, so ∠C = 80° and ∠D = 100°. Check: 80 + 100 = 180 ✓"
+          ]
+        },
+        {
+          "id": "pq-pp2",
+          "question": "In parallelogram JKLM, the diagonals intersect at P. If JP = 3x − 4 and PL = x + 8, find x and the length of diagonal JL.",
+          "answer": "x = 6; JL = 28",
+          "hints": [
+            "The diagonals of a parallelogram bisect each other, so P is the midpoint of JL: JP = PL.",
+            "3x − 4 = x + 8 gives 2x = 12, x = 6. Then JP = PL = 14, so JL = 14 + 14 = 28."
+          ]
         }
       ],
-      "initialPrompt": "In the rhombus problem, what special properties do rhombus diagonals have that we can use?",
+      "initialPrompt": "For the first problem, AB and CD are opposite sides of the parallelogram. What does that tell you to do with the two expressions?",
       "lessonId": "parallelogram-properties"
     },
     {
@@ -226,6 +281,71 @@
       ],
       "lessonId": "parallelogram-properties",
       "initialPrompt": "You're told a quadrilateral has AB ∥ CD and AB = CD — nothing else. Before we check the list: do you think that's enough to guarantee a parallelogram, and which pair of sides are those two?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "rectangles-rhombi-squares",
+      "title": "Rectangles, Rhombi, and Squares",
+      "content": "Rectangles, rhombi and squares are all **parallelograms with something extra**. Each one keeps every parallelogram property and adds its own.\n\n**Rectangle — a parallelogram with 4 right angles:**\n• All parallelogram properties, PLUS\n• **Diagonals are congruent** (AC = BD)\n• (Combined with bisecting each other, this means all four half-diagonals are equal — so the diagonals' intersection is equidistant from all four vertices.)\n\n**Rhombus — a parallelogram with 4 congruent sides:**\n• All parallelogram properties, PLUS\n• **Diagonals are perpendicular**\n• **Diagonals bisect the angles** of the rhombus\n\n**Square — a rectangle AND a rhombus:**\n• 4 right angles and 4 congruent sides\n• ALL properties of parallelogram, rectangle, and rhombus: diagonals are congruent, perpendicular, bisect each other, and bisect the angles (into 45° halves)\n\n**The family hierarchy:**\n\nquadrilateral → parallelogram → rectangle ↘\n                              → rhombus  ↗ square\n\nProperties flow **downward**: a square inherits everything above it. Names do **not** flow upward: every square is a rectangle, but most rectangles are not squares. \"Always/sometimes/never\" questions are testing exactly this direction.\n\n**The right-triangle trick for rhombi.** In a rhombus the diagonals are perpendicular *and* bisect each other, so they cut the rhombus into four congruent right triangles whose legs are the half-diagonals and whose hypotenuse is a side:\n\n**side² = (d₁/2)² + (d₂/2)²**\n\nThat one relationship answers most rhombus problems — side from diagonals, or a missing diagonal from the side.\n\n**Diagonals as a classifier.** Given a parallelogram, its diagonals tell you which one it is:\n• congruent → rectangle\n• perpendicular → rhombus\n• both → square",
+      "initialPrompt": "Is every square a rectangle? Is every rectangle a square? Explain the difference in terms of what each one requires.",
+      "lessonId": "rectangles-rhombi-squares"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "quadrilateral-properties",
+      "title": "I-Do: Rectangle, Rhombus, and Square Properties",
+      "examples": [
+        {
+          "problem": "In rectangle EFGH, the diagonals intersect at M. If EG = 26, find EM, MG, and FH.",
+          "solution": "Rectangle diagonals bisect each other:\nEM = MG = 26 ÷ 2 = **13**\n\nRectangle diagonals are congruent:\nFH = EG = **26**\n\nSo FM = MH = 13 as well."
+        },
+        {
+          "problem": "Rhombus JKLM has ∠J = 60° and each side = 10. Find all angles and both diagonal lengths.",
+          "solution": "Opposite angles: ∠L = ∠J = **60°**. Consecutive supplementary: ∠K = ∠M = **120°**.\n\nDiagonals bisect angles and are perpendicular. Let O be the intersection.\nIn right triangle JOK: ∠OJK = 60°/2 = 30°, JK = 10 (hypotenuse of the right triangle at O).\n\nThis is a 30-60-90 triangle:\nJO = 10 × cos(30°) = 10 × (√3/2) = 5√3\nKO = 10 × sin(30°) = 10 × (1/2) = 5\n\nDiagonals: JL = 2 × 5√3 = **10√3 ≈ 17.3**, KM = 2 × 5 = **10**\nVerify: (5√3)² + 5² = 75 + 25 = 100 = 10² ✓"
+        }
+      ],
+      "initialPrompt": "In example 1, why does knowing one diagonal of a rectangle immediately give you the other?",
+      "lessonId": "rectangles-rhombi-squares"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "quadrilateral-properties",
+      "title": "We-Do: Rectangles, Rhombi, and Squares",
+      "problems": [
+        {
+          "id": "pq-wp4",
+          "question": "In rhombus PQRS, the diagonals intersect at point T. If PR = 24 and QS = 10, find the length of each side of the rhombus.",
+          "answer": "13",
+          "hints": [
+            "Diagonals of a rhombus bisect each other AND are perpendicular.",
+            "So PT = 12, QT = 5, and angle PTQ = 90°. Use Pythagorean Theorem: PQ² = 12² + 5².",
+            "PQ² = 144 + 25 = 169. PQ = 13."
+          ]
+        },
+        {
+          "id": "pq-wp5",
+          "question": "In rectangle EFGH, diagonal EG = 3x + 7 and diagonal FH = 5x - 9. Find x and the length of each diagonal.",
+          "answer": "x = 8, diagonal = 31",
+          "hints": [
+            "In a rectangle, diagonals are congruent: EG = FH.",
+            "3x + 7 = 5x - 9. Solve: 16 = 2x, so x = 8. Each diagonal = 3(8) + 7 = 31."
+          ]
+        },
+        {
+          "id": "pq-rs1",
+          "question": "Square ABCD has sides of length 6. Find the length of each diagonal, and the measure of the angle a diagonal makes with a side.",
+          "answer": "Diagonal = 6√2 ≈ 8.49; angle = 45°",
+          "hints": [
+            "A diagonal splits the square into two right triangles with legs 6 and 6. By the Pythagorean Theorem, d² = 36 + 36 = 72, so d = √72 = 6√2 ≈ 8.49.",
+            "A square is also a rhombus, so its diagonals bisect the angles. Each 90° corner is cut in half, giving 45°."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, the diagonals of a rhombus are perpendicular and bisect each other. What right triangle does that create, and what are its legs?",
+      "lessonId": "rectangles-rhombi-squares"
     },
     {
       "type": "explanation",
@@ -347,8 +467,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "polygon-angle-sum",
-      "lessonId": "polygon-angle-sums"
+      "skill": "trapezoids-kites",
+      "lessonId": "trapezoids-kites"
     }
   ],
   "answerKeys": {
@@ -369,7 +489,13 @@
     "pq-pf1": "Yes — one pair of opposite sides both parallel and congruent.",
     "pq-pf2": "x = 5, y = 3; halves are 11/11 and 7/7, so the diagonals bisect each other.",
     "pq-pf3": "No — the parallel pair and the congruent pair are different pairs (isosceles trapezoid).",
-    "pq-pf4": "Slopes: AB = DC = 2/5 and BC = AD = -2, so both pairs of opposite sides are parallel."
+    "pq-pf4": "Slopes: AB = DC = 2/5 and BC = AD = -2, so both pairs of opposite sides are parallel.",
+    "pq-ea1": "12 sides.",
+    "pq-ea2": "Each exterior angle 18°, each interior angle 162°.",
+    "pq-ea3": "55°.",
+    "pq-pp1": "x = 17; ∠A = ∠C = 80°, ∠B = ∠D = 100°.",
+    "pq-pp2": "x = 6; JL = 28.",
+    "pq-rs1": "Diagonal 6√2 ≈ 8.49; the diagonal makes a 45° angle with each side."
   },
   "lessons": [
     {
