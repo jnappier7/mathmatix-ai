@@ -79,12 +79,48 @@
       "title": "We-Do: Exterior Angle Theorem — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for exterior angle theorem.",
-          "hint": "Apply the concepts of exterior angle theorem.",
-          "solution": "Step-by-step solution for exterior angle theorem."
+          "id": "tb-ea1",
+          "question": "In a triangle, the two remote interior angles measure 42° and 65°. Find the measure of the exterior angle, and then find the interior angle adjacent to it.",
+          "answer": "Exterior angle = sum of the two remote interior angles = 42° + 65° = 107°. The adjacent interior angle forms a linear pair with it, so it measures 180° - 107° = 73°. Check with the Angle Sum Theorem: 42 + 65 + 73 = 180 ✓.",
+          "hints": [
+            "\"Remote\" interior angles are the two that are NOT touching the exterior angle. The theorem says the exterior angle equals their sum — no subtraction needed.",
+            "Exterior = 42 + 65. Add them directly.",
+            "For the adjacent interior angle, use the straight line: the interior angle and the exterior angle together make 180°, so subtract."
+          ]
+        },
+        {
+          "id": "tb-ea2",
+          "question": "An exterior angle of a triangle measures (5x - 10)°, and its two remote interior angles measure (2x + 15)° and (x + 35)°. Find x and the measure of the exterior angle.",
+          "answer": "Set the exterior angle equal to the sum of the remote interiors: 5x - 10 = (2x + 15) + (x + 35) = 3x + 50. Then 2x = 60, so x = 30. Exterior angle = 5(30) - 10 = 140°. Check: the remote interiors are 2(30) + 15 = 75° and 30 + 35 = 65°, and 75 + 65 = 140 ✓. The adjacent interior angle is 180 - 140 = 40°, and 75 + 65 + 40 = 180 ✓.",
+          "hints": [
+            "The theorem is an equation waiting to be written: exterior = remote + remote. Substitute the expressions in.",
+            "5x - 10 = (2x + 15) + (x + 35). Combine the right side first: 2x + x = 3x, and 15 + 35 = 50.",
+            "5x - 10 = 3x + 50. Get the x terms on one side: 2x = 60, so x = 30. Then substitute back to find the actual angle — the question asks for degrees, not just x."
+          ]
+        },
+        {
+          "id": "tb-ea3",
+          "question": "An exterior angle of an isosceles triangle measures 125°, and the two remote interior angles are congruent. Find the measure of each remote interior angle.",
+          "answer": "Let each remote interior angle be y. The exterior angle equals their sum, so y + y = 125, giving 2y = 125 and y = 62.5°. Each remote interior angle measures 62.5°. Check: the interior angle adjacent to the exterior is 180 - 125 = 55°, and 62.5 + 62.5 + 55 = 180 ✓.",
+          "hints": [
+            "\"Congruent\" means equal, so call them both y instead of using two different variables.",
+            "The theorem gives y + y = 125, which is 2y = 125.",
+            "y = 62.5°. A non-whole number of degrees is perfectly fine — verify it by checking that all three interior angles still add to 180."
+          ]
+        },
+        {
+          "id": "tb-ea4",
+          "question": "In triangle ABC, angle A = 38°. The exterior angle at vertex B measures 104°. Find angle C and angle B.",
+          "answer": "The exterior angle at B has remote interior angles A and C, so 104 = 38 + C, giving C = 66°. Angle B is adjacent to that exterior angle, forming a linear pair: B = 180 - 104 = 76°. Check: 38 + 76 + 66 = 180 ✓.",
+          "hints": [
+            "First decide which two angles are 'remote' to the exterior angle at B. It is the two that do not touch vertex B — that is A and C, not B itself.",
+            "So 104 = angle A + angle C = 38 + C. Solve for C.",
+            "Angle B is the one that shares the vertex with the exterior angle, so they form a linear pair: B = 180 - 104. Finish by checking all three add to 180."
+          ]
         }
       ],
-      "lessonId": "exterior-angle-theorem"
+      "lessonId": "exterior-angle-theorem",
+      "initialPrompt": "Picture a triangle with one side extended to form an exterior angle. If the two remote interior angles are 42° and 65°, what do you think the exterior angle measures — and which two angles does the theorem tell us to use?"
     },
     {
       "type": "model",
@@ -284,7 +320,11 @@
     "tb-yp3": "70° each.",
     "tb-yp4": "No (5+5=10, not >10).",
     "tb-yp5": "x=19; angles 71°, 53°, 56°; acute.",
-    "tb-yp6": "6 < x < 24."
+    "tb-yp6": "6 < x < 24.",
+    "tb-ea1": "Exterior = 107°; adjacent interior = 73°.",
+    "tb-ea2": "x = 30; exterior angle = 140°.",
+    "tb-ea3": "Each remote interior angle = 62.5°.",
+    "tb-ea4": "Angle C = 66°; angle B = 76°."
   },
   "lessons": [
     {

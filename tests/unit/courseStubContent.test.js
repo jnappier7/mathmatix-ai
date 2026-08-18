@@ -36,7 +36,6 @@ const isStub = (v) => typeof v === 'string' && STUB_PATTERNS.some((r) => r.test(
 // Known-bad, as of the all-courses audit. Shrink this list; never extend it.
 // Each entry is a lesson step whose practice content is placeholder text.
 const KNOWN_STUB_STEPS = [
-  'geometry/triangles_basics[3]',
   'geometry/right_triangles[1]',
   'geometry/polygons_quadrilaterals[4]',
   'geometry/circles[1]',
