@@ -90,7 +90,7 @@
         "Memorize: sin/cos for 0, π/6, π/4, π/3, π/2 (0, 1/2, √2/2, √3/2, 1)",
         "Special triangles: 30-60-90 (1, √3, 2) and 45-45-90 (1, 1, √2)"
       ],
-      "lessonId": "trig-graphs"
+      "lessonId": "radians-unit-circle"
     },
     {
       "type": "model",
@@ -111,7 +111,7 @@
           "solution": "tan θ = √3 when reference angle = π/3 (since tan(π/3) = √3). Tangent is positive in Q1 and Q3. θ = π/3 or θ = π + π/3 = 4π/3. Solutions: {π/3, 4π/3}."
         }
       ],
-      "lessonId": "trig-graphs"
+      "lessonId": "radians-unit-circle"
     },
     {
       "type": "guided_practice",
@@ -146,7 +146,7 @@
         }
       ],
       "skill": "unit-circle-trig-values",
-      "lessonId": "trig-graphs"
+      "lessonId": "radians-unit-circle"
     },
     {
       "type": "explanation",
@@ -163,7 +163,7 @@
         "Tangent: period π, VA at x = π/2 + nπ, passes through origin",
         "Secant/cosecant: reciprocal graphs of cos/sin, U-shaped branches between asymptotes"
       ],
-      "lessonId": "identities-equations"
+      "lessonId": "trig-graphs"
     },
     {
       "type": "model",
@@ -184,7 +184,7 @@
           "solution": "Rewrite: y = -2·tan((1/2)(x - π/2)) + 1. Period: π/(1/2) = 2π. Phase shift: π/2 right. Vertical shift: up 1. Reflection (negative). VAs: (1/2)(x - π/2) = π/2 + nπ → x - π/2 = π + 2nπ → x = 3π/2 + 2nπ. Two consecutive VAs: x = -π/2 and x = 3π/2. Center between VAs: x = π/2, y = 1 (midpoint on graph due to shift)."
         }
       ],
-      "lessonId": "identities-equations"
+      "lessonId": "trig-graphs"
     },
     {
       "type": "guided_practice",
@@ -223,7 +223,53 @@
           "answer": "Midline: D = 3. Amplitude: A = 4. B = 2. Since (0, 3) is on the midline and we want it going up: y = 4·sin(2x) + 3."
         }
       ],
-      "lessonId": "identities-equations"
+      "lessonId": "trig-graphs"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "sinusoidal-modeling",
+      "title": "We-Do: Sinusoidal Modeling — Guided Practice",
+      "problems": [
+        {
+          "problem": "A Ferris wheel has a diameter of 40 m and its lowest point sits 2 m above the ground. It completes one rotation every 80 seconds, and a rider boards at the lowest point. Write a function h(t) for the rider's height above the ground t seconds after boarding.",
+          "hints": [
+            "Pull the four parameters out one at a time. Amplitude is half the diameter; the midline is the height of the CENTRE of the wheel, not the lowest point.",
+            "A = 20 and the centre sits at 2 + 20 = 22, so D = 22. Period 80 gives B = 2π/80 = π/40.",
+            "The rider starts at the MINIMUM. Plain cosine starts at a maximum, so use a negative cosine — that flips the start to the minimum with no phase shift needed."
+          ],
+          "answer": "Amplitude A = 40/2 = 20. The centre of the wheel is 20 m above the lowest point, so the midline is D = 2 + 20 = 22. Period 80 gives B = 2π/80 = π/40. Boarding at the lowest point means starting at the minimum, which is what -cos does: h(t) = -20·cos((π/40)t) + 22. Check: h(0) = -20(1) + 22 = 2 m ✓ (lowest point), h(40) = -20(-1) + 22 = 42 m ✓ (top, which is 2 + 40), and h(80) = 2 ✓ (back to the bottom after one rotation)."
+        },
+        {
+          "problem": "At a harbour, high tide is 5.2 m at 3:00 and the next low tide is 1.4 m at 9:00. Model the water depth d(t) as a sinusoidal function of t, the number of hours after midnight.",
+          "hints": [
+            "Amplitude is half the DIFFERENCE between high and low; the midline is their average. Compute both before worrying about the period.",
+            "High to the next low is half a period, and that gap is 9 - 3 = 6 hours. So the full period is 12 hours, giving B = 2π/12 = π/6.",
+            "The maximum occurs at t = 3, and cosine peaks at its start — so shift cosine to start at t = 3 rather than 0."
+          ],
+          "answer": "Amplitude A = (5.2 - 1.4)/2 = 1.9 m. Midline D = (5.2 + 1.4)/2 = 3.3 m. High tide to the following low tide is half a period: 9 - 3 = 6 hours, so the period is 12 hours and B = 2π/12 = π/6. The maximum is at t = 3, so use cosine with a phase shift of 3: d(t) = 1.9·cos((π/6)(t - 3)) + 3.3. Check: d(3) = 1.9(1) + 3.3 = 5.2 ✓, d(9) = 1.9(-1) + 3.3 = 1.4 ✓, and d(15) = 5.2 ✓ — the next high tide, 12 hours after the first."
+        },
+        {
+          "problem": "Using the Ferris wheel model h(t) = -20·cos((π/40)t) + 22, find every time during the first full rotation when the rider is exactly 32 m above the ground.",
+          "hints": [
+            "Set the model equal to 32 and isolate the cosine before doing anything trigonometric.",
+            "-20·cos((π/40)t) = 10, so cos((π/40)t) = -1/2. Now ask where cosine equals -1/2.",
+            "Within one rotation the argument (π/40)t runs from 0 to 2π, and cos = -1/2 twice there: at 2π/3 and 4π/3. Solve each for t."
+          ],
+          "answer": "Set h(t) = 32: -20·cos((π/40)t) + 22 = 32, so -20·cos((π/40)t) = 10 and cos((π/40)t) = -1/2. Over one rotation the argument (π/40)t ranges across [0, 2π], and cosine equals -1/2 at 2π/3 and 4π/3. Solving: (π/40)t = 2π/3 gives t = 80/3 ≈ 26.7 s, and (π/40)t = 4π/3 gives t = 160/3 ≈ 53.3 s. Both check: h(80/3) = h(160/3) = 32 ✓. Two answers is exactly right — the rider passes 32 m once going up and once coming down."
+        },
+        {
+          "problem": "A sinusoidal function has midline y = 12, amplitude 5, period 8, and a minimum at x = 2. Write an equation for it.",
+          "hints": [
+            "Three of the four parameters read straight off: A = 5, D = 12, and B comes from the period via B = 2π/period.",
+            "B = 2π/8 = π/4. That leaves only the horizontal placement to settle.",
+            "You are given a MINIMUM location, not a maximum. Negative cosine starts at a minimum, so shift -cos so that its start lands at x = 2."
+          ],
+          "answer": "A = 5, D = 12, and B = 2π/8 = π/4. A minimum at x = 2 is exactly where -cos begins, so shift it there: y = -5·cos((π/4)(x - 2)) + 12. Check: at x = 2, y = -5(1) + 12 = 7, which is 12 - 5, the minimum ✓. Half a period later at x = 6, y = -5(-1) + 12 = 17 = 12 + 5, the maximum ✓. (An equivalent answer using sine would need a different shift — there is more than one correct equation.)"
+        }
+      ],
+      "lessonId": "trig-graphs",
+      "initialPrompt": "A Ferris wheel, 40 m across, lowest point 2 m off the ground, one rotation every 80 seconds, and you board at the bottom. Before writing anything: which of A, B, C, D does the 40 give you, and which one does the 2 help with?"
     },
     {
       "type": "explanation",
@@ -239,7 +285,7 @@
         "Cofunction: sin(π/2 - θ) = cos θ, tan(π/2 - θ) = cot θ, sec(π/2 - θ) = csc θ",
         "Verifying identities: work one side only, transform to match the other. Common strategies: convert to sin/cos, factor, find common denominator, multiply by conjugate"
       ],
-      "lessonId": "trig-graphs"
+      "lessonId": "identities-equations"
     },
     {
       "type": "model",
@@ -264,7 +310,7 @@
           "solution": "cot²θ · sin²θ = (cos²θ/sin²θ) · sin²θ = cos²θ. tan²θ · cos²θ = (sin²θ/cos²θ) · cos²θ = sin²θ. Sum: cos²θ + sin²θ = 1."
         }
       ],
-      "lessonId": "trig-graphs"
+      "lessonId": "identities-equations"
     },
     {
       "type": "guided_practice",
@@ -300,7 +346,7 @@
           "answer": "sec²θ/csc²θ = sin²θ/cos²θ = tan²θ."
         }
       ],
-      "lessonId": "trig-graphs"
+      "lessonId": "identities-equations"
     },
     {
       "type": "explanation",
@@ -316,20 +362,6 @@
         "General solution: add + 2nπ (for sin/cos) or + nπ (for tan) where n is any integer",
         "Quadratic trig equations: factor or use quadratic formula with u-substitution",
         "Always check for extraneous solutions when squaring was used"
-      ],
-      "lessonId": "trig-graphs"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "sinusoidal-modeling",
-      "title": "We-Do: Sinusoidal Modeling — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for sinusoidal modeling.",
-          "hint": "Apply the concepts of sinusoidal modeling.",
-          "solution": "Step-by-step solution for sinusoidal modeling."
-        }
       ],
       "lessonId": "identities-equations"
     },
@@ -356,7 +388,7 @@
           "solution": "Let u = sin(x): 2u² + 3u + 1 = 0 → (2u + 1)(u + 1) = 0. u = -1/2 or u = -1. sin(x) = -1/2: ref angle π/6, sin negative in Q3, Q4 → x = 7π/6, 11π/6. sin(x) = -1: x = 3π/2. Solutions: {7π/6, 3π/2, 11π/6}."
         }
       ],
-      "lessonId": "trig-graphs"
+      "lessonId": "identities-equations"
     },
     {
       "type": "guided_practice",
@@ -393,7 +425,7 @@
           "answer": "sin(x)(2sin(x) - 1) = 0. sin(x) = 0: x = 0, π. sin(x) = 1/2: x = π/6, 5π/6. Solutions: {0, π/6, 5π/6, π}."
         }
       ],
-      "lessonId": "trig-graphs"
+      "lessonId": "identities-equations"
     },
     {
       "type": "independent_practice",
@@ -464,7 +496,11 @@
     "ip-graph-params": "Amp 4, period 6, left 1, midline 2, max 6, min -2.",
     "ip-identity": "(sinθ+cosθ)²=1+2sinθcosθ. ✓",
     "ip-solve": "{π/6, 5π/6, 7π/6, 11π/6}.",
-    "ip-ferris": "Diameter 36m. h(2.5)=20m. Period 10min. At 30m: t≈3.20 and 6.80 min."
+    "ip-ferris": "Diameter 36m. h(2.5)=20m. Period 10min. At 30m: t≈3.20 and 6.80 min.",
+    "sinusoid-ferris": "h(t) = -20cos((π/40)t) + 22. A=20, D=22, period 80; -cos starts at the minimum.",
+    "sinusoid-tides": "d(t) = 1.9cos((π/6)(t-3)) + 3.3. A=1.9, D=3.3, period 12.",
+    "sinusoid-solve": "t = 80/3 ≈ 26.7 s and 160/3 ≈ 53.3 s (cos = -1/2 twice per rotation).",
+    "sinusoid-from-features": "y = -5cos((π/4)(x-2)) + 12."
   },
   "lessons": [
     {
