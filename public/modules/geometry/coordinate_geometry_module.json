@@ -104,76 +104,35 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "skill": "equation-of-circle",
-      "title": "Equation of a Circle and Slope Relationships",
-      "content": "**Equation of a Circle** in standard form:\n\n**(x - h)² + (y - k)² = r²**\n\nwhere (h, k) is the center and r is the radius.\n\nExamples:\n• Center (0, 0), radius 5: x² + y² = 25\n• Center (3, -2), radius 4: (x - 3)² + (y + 2)² = 16\n\nNotice: the signs in the equation are OPPOSITE the coordinates of the center (because of the subtraction). And the right side is r², not r.\n\n**Slope Relationships:**\n• **Parallel lines:** m₁ = m₂ (equal slopes)\n• **Perpendicular lines:** m₁ × m₂ = -1 (negative reciprocal slopes)\n  Example: if m₁ = 2/3, then m₂ = -3/2",
-      "initialPrompt": "Write the equation of a circle with center (−1, 4) and radius 6. Be careful with the signs!",
-      "lessonId": "equation-of-circle"
+      "skill": "parallel-perpendicular-slopes",
+      "title": "Parallel and Perpendicular Slopes",
+      "content": "Slope is what lets coordinates answer questions about *direction* — whether two lines run alongside each other or meet at a right angle.\n\n**Parallel lines:** m₁ = m₂\n\nEqual slopes, different y-intercepts. (Equal slopes *and* equal intercepts is the same line, not a parallel pair.)\n\n**Perpendicular lines:** m₁ × m₂ = −1\n\nEquivalently, each slope is the **negative reciprocal** of the other: flip the fraction and change the sign.\n\n• m₁ = 2/3 → m₂ = −3/2\n• m₁ = 4 → m₂ = −1/4\n• m₁ = −5/2 → m₂ = 2/5\n\n**Both steps, every time.** Flipping without negating (2/3 → 3/2) or negating without flipping (2/3 → −2/3) are the two ways this goes wrong, and both produce a line that is neither parallel nor perpendicular.\n\n**The one exception:** a horizontal line (m = 0) and a vertical line (undefined slope) are perpendicular, but the product rule can't show it — you can't multiply by an undefined slope. Handle that pair by recognizing it.\n\n**Writing the equation of a parallel or perpendicular line through a given point:**\n1. Find the slope of the given line (put it in y = mx + b form if it isn't already).\n2. Keep that slope for parallel; take the negative reciprocal for perpendicular.\n3. Use point-slope form with the given point: y − y₁ = m(x − x₁).\n4. Simplify to the form the question asks for.\n\nThe given point is used **only in step 3** — it never affects the slope. Students often try to average the point into the slope somehow; it plays no part until the line's direction is already fixed.\n\n**Classifying two lines from four points:** compute both slopes with m = (y₂ − y₁)/(x₂ − x₁), then compare. Equal → parallel. Product −1 → perpendicular. Neither → neither, which is a legitimate answer.\n\n**Proving a shape with slopes.** This is how coordinate geometry identifies quadrilaterals: two pairs of parallel sides make a parallelogram; adjacent sides with perpendicular slopes make it a rectangle. To go further and show a *square*, slopes aren't enough — you also need the distance formula to show the sides are equal.",
+      "initialPrompt": "Line A has slope 3/5. What is the slope of a line perpendicular to it — and what are the two separate things you had to do to 3/5?",
+      "lessonId": "parallel-perpendicular-slopes"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "skill": "equation-of-circle",
-      "title": "I-Do: Circle Equations",
+      "skill": "parallel-perpendicular-slopes",
+      "title": "I-Do: Parallel and Perpendicular Slopes",
       "examples": [
         {
-          "problem": "A circle has endpoints of a diameter at (2, -3) and (8, 5). Find the equation of the circle.",
-          "solution": "**Step 1: Find the center** (midpoint of the diameter):\nCenter = ((2+8)/2, (-3+5)/2) = (5, 1)\n\n**Step 2: Find the radius** (distance from center to either endpoint):\nr = √[(8-5)² + (5-1)²] = √[9 + 16] = √25 = 5\n\n**Step 3: Write the equation:**\n(x - 5)² + (y - 1)² = 25\n\nVerify: Point (2, -3) should satisfy: (2-5)² + (-3-1)² = 9 + 16 = 25 ✓"
+          "problem": "Line A passes through (1, 2) and (4, 8). Line B passes through (0, −1) and (2, 3). Are the lines parallel, perpendicular, or neither?",
+          "solution": "**Find each slope with m = (y₂ − y₁)/(x₂ − x₁).**\n\nLine A: m_A = (8 − 2)/(4 − 1) = 6/3 = **2**\nLine B: m_B = (3 − (−1))/(2 − 0) = 4/2 = **2**\n\nWatch the double negative in Line B: 3 − (−1) = 4, not 2.\n\n**Compare:**\n• Equal? m_A = m_B = 2 ✓ → the lines are **parallel**\n• (No need to test perpendicular: their product is 4, not −1.)\n\n**The lines are parallel.**\n\n**Worth confirming they're distinct.** Line A through (1, 2) with slope 2 gives y = 2x; Line B through (0, −1) gives y = 2x − 1. Different intercepts, so they're genuinely two parallel lines rather than one line described twice."
         },
         {
-          "problem": "Convert the circle equation x² + y² - 6x + 4y - 12 = 0 to standard form. Identify the center and radius.",
-          "solution": "**Step 1: Group x-terms and y-terms, move the constant:**\n(x² - 6x) + (y² + 4y) = 12\n\n**Step 2: Complete the square for each group:**\nFor x: half of -6 is -3, and (-3)² = 9. Add 9.\nFor y: half of 4 is 2, and (2)² = 4. Add 4.\n\n(x² - 6x + 9) + (y² + 4y + 4) = 12 + 9 + 4\n\n**Step 3: Write as perfect squares:**\n**(x - 3)² + (y + 2)² = 25**\n\n**Center:** (3, -2)\n**Radius:** √25 = **5**"
-        },
-        {
-          "problem": "Determine whether the point (7, 1) lies on the circle (x - 3)² + (y + 2)² = 25.",
-          "solution": "**Substitute (7, 1) into the equation:**\n(7 - 3)² + (1 + 2)² = ?\n(4)² + (3)² = ?\n16 + 9 = 25\n\n**25 = 25 ✓**\n\nYes, the point (7, 1) lies on the circle. If the result were less than 25, the point would be inside the circle; if greater than 25, it would be outside."
+          "problem": "Write the equation of the line through (6, −2) that is perpendicular to y = (2/3)x + 1.",
+          "solution": "**Step 1 — read the given slope.** The line is already in y = mx + b form, so m = 2/3.\n\n**Step 2 — take the negative reciprocal.** Flip 2/3 to 3/2, then change the sign:\nm_perpendicular = **−3/2**\n\n**Step 3 — use point-slope form with the given point (6, −2):**\ny − (−2) = −3/2 (x − 6)\ny + 2 = −3/2 (x − 6)\n\n**Step 4 — simplify to slope-intercept form:**\ny + 2 = −3/2 x + 9\ny = −3/2 x + 7\n\n**Check that the point is on it:** at x = 6, y = −3/2(6) + 7 = −9 + 7 = −2 ✓ — which matches (6, −2).\n\n**Notice what the point did and didn't do.** It never touched the slope; it only pinned down which of the infinitely many lines with slope −3/2 we wanted."
         }
       ],
-      "initialPrompt": "Could we have used the other endpoint (2, -3) instead of (8, 5) to find the radius? Would we get the same answer?",
-      "lessonId": "equation-of-circle"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "equation-of-circle",
-      "title": "We-Do: Circle Equations and Slopes",
-      "problems": [
-        {
-          "id": "cg-wp4",
-          "question": "Write the equation of a circle with center (-3, 7) and radius 10.",
-          "answer": "(x + 3)² + (y - 7)² = 100",
-          "hints": [
-            "Standard form: (x - h)² + (y - k)² = r². Center is (-3, 7), so h = -3, k = 7.",
-            "(x - (-3))² + (y - 7)² = 10². That simplifies to (x + 3)² + (y - 7)² = 100."
-          ]
-        },
-        {
-          "id": "cg-wp5",
-          "question": "A circle has equation (x - 4)² + (y + 1)² = 49. What is the center and radius?",
-          "answer": "Center (4, -1), radius 7",
-          "hints": [
-            "Compare to (x - h)² + (y - k)² = r².",
-            "h = 4, k = -1 (note: y + 1 means k = -1). r² = 49, so r = 7."
-          ]
-        },
-        {
-          "id": "cg-wp6",
-          "question": "Line A has slope 3/5. Line B is perpendicular to Line A. What is the slope of Line B?",
-          "answer": "-5/3",
-          "hints": [
-            "Perpendicular lines have slopes that are negative reciprocals.",
-            "Flip 3/5 to 5/3 and negate: -5/3."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, remember that the equation uses subtraction. What happens to h = -3 when you write (x - h)²?",
-      "lessonId": "equation-of-circle"
+      "initialPrompt": "In example 2, the given line's slope was 2/3. What are the two separate operations that turn it into the perpendicular slope?",
+      "lessonId": "parallel-perpendicular-slopes"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "parallel-perpendicular-slopes",
-      "title": "We-Do: Parallel Perpendicular Slopes — Guided Practice",
+      "title": "We-Do: Parallel and Perpendicular Slopes",
       "problems": [
         {
           "id": "cg-pp1",
@@ -214,10 +173,78 @@
             "Compute all four slopes in order around the shape: AB, BC, CD, DA. Compare opposite pairs for equality, then multiply an adjacent pair.",
             "Opposite slopes match (1/2 and -2), and (1/2)(-2) = -1 gives right angles — a rectangle. For the square question you need lengths, not slopes: compare AB and BC with the distance formula."
           ]
+        },
+        {
+          "id": "cg-wp6",
+          "question": "Line A has slope 3/5. Line B is perpendicular to Line A. What is the slope of Line B?",
+          "answer": "-5/3",
+          "hints": [
+            "Perpendicular lines have slopes that are negative reciprocals.",
+            "Flip 3/5 to 5/3 and negate: -5/3."
+          ]
         }
       ],
       "lessonId": "parallel-perpendicular-slopes",
       "initialPrompt": "Two lines: one through (-3, 2) and (1, 10), the other through (0, -4) and (2, 0). What single number do we need for each line before we can say anything about whether they're parallel?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "equation-of-circle",
+      "title": "Equation of a Circle",
+      "content": "**Equation of a Circle** in standard form:\n\n**(x − h)² + (y − k)² = r²**\n\nwhere (h, k) is the center and r is the radius.\n\n**Why this is the equation:** it's the distance formula. Every point (x, y) on the circle is exactly r away from the center (h, k), so √((x − h)² + (y − k)²) = r. Square both sides and you have it.\n\nExamples:\n• Center (0, 0), radius 5: x² + y² = 25\n• Center (3, −2), radius 4: (x − 3)² + (y + 2)² = 16\n\n**Two things to be careful about:**\n• The signs in the equation are **opposite** the coordinates of the center, because of the subtraction. (x + 2)² means h = −2.\n• The right side is **r², not r**. A circle of radius 7 has 49 on the right; an equation with 49 on the right has radius 7, not 49.\n\n**Completing the square** converts a general equation like x² + y² − 6x + 4y − 12 = 0 into standard form: group the x-terms and the y-terms, complete the square on each, and move the constants to the right. Only then can you read off the center and radius.\n\n**Testing whether a point is on the circle:** substitute it in. If the left side equals r², the point is on the circle; less than r² means inside, greater means outside.",
+      "initialPrompt": "Write the equation of a circle with center (−1, 4) and radius 6. Be careful with the signs!",
+      "lessonId": "equation-of-circle"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "equation-of-circle",
+      "title": "I-Do: Circle Equations",
+      "examples": [
+        {
+          "problem": "A circle has endpoints of a diameter at (2, -3) and (8, 5). Find the equation of the circle.",
+          "solution": "**Step 1: Find the center** (midpoint of the diameter):\nCenter = ((2+8)/2, (-3+5)/2) = (5, 1)\n\n**Step 2: Find the radius** (distance from center to either endpoint):\nr = √[(8-5)² + (5-1)²] = √[9 + 16] = √25 = 5\n\n**Step 3: Write the equation:**\n(x - 5)² + (y - 1)² = 25\n\nVerify: Point (2, -3) should satisfy: (2-5)² + (-3-1)² = 9 + 16 = 25 ✓"
+        },
+        {
+          "problem": "Convert the circle equation x² + y² - 6x + 4y - 12 = 0 to standard form. Identify the center and radius.",
+          "solution": "**Step 1: Group x-terms and y-terms, move the constant:**\n(x² - 6x) + (y² + 4y) = 12\n\n**Step 2: Complete the square for each group:**\nFor x: half of -6 is -3, and (-3)² = 9. Add 9.\nFor y: half of 4 is 2, and (2)² = 4. Add 4.\n\n(x² - 6x + 9) + (y² + 4y + 4) = 12 + 9 + 4\n\n**Step 3: Write as perfect squares:**\n**(x - 3)² + (y + 2)² = 25**\n\n**Center:** (3, -2)\n**Radius:** √25 = **5**"
+        },
+        {
+          "problem": "Determine whether the point (7, 1) lies on the circle (x - 3)² + (y + 2)² = 25.",
+          "solution": "**Substitute (7, 1) into the equation:**\n(7 - 3)² + (1 + 2)² = ?\n(4)² + (3)² = ?\n16 + 9 = 25\n\n**25 = 25 ✓**\n\nYes, the point (7, 1) lies on the circle. If the result were less than 25, the point would be inside the circle; if greater than 25, it would be outside."
+        }
+      ],
+      "initialPrompt": "Could we have used the other endpoint (2, -3) instead of (8, 5) to find the radius? Would we get the same answer?",
+      "lessonId": "equation-of-circle"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "equation-of-circle",
+      "title": "We-Do: Circle Equations",
+      "problems": [
+        {
+          "id": "cg-wp4",
+          "question": "Write the equation of a circle with center (-3, 7) and radius 10.",
+          "answer": "(x + 3)² + (y - 7)² = 100",
+          "hints": [
+            "Standard form: (x - h)² + (y - k)² = r². Center is (-3, 7), so h = -3, k = 7.",
+            "(x - (-3))² + (y - 7)² = 10². That simplifies to (x + 3)² + (y - 7)² = 100."
+          ]
+        },
+        {
+          "id": "cg-wp5",
+          "question": "A circle has equation (x - 4)² + (y + 1)² = 49. What is the center and radius?",
+          "answer": "Center (4, -1), radius 7",
+          "hints": [
+            "Compare to (x - h)² + (y - k)² = r².",
+            "h = 4, k = -1 (note: y + 1 means k = -1). r² = 49, so r = 7."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, remember that the equation uses subtraction. What happens to h = -3 when you write (x - h)²?",
+      "lessonId": "equation-of-circle"
     },
     {
       "type": "explanation",
@@ -330,8 +357,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "coordinate-geometry-distance-midpoint",
-      "lessonId": "distance-midpoint"
+      "skill": "coordinate-proofs",
+      "lessonId": "coordinate-proofs"
     }
   ],
   "answerKeys": {

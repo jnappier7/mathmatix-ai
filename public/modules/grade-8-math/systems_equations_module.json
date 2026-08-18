@@ -48,50 +48,6 @@
       "lessonId": "systems-graphing"
     },
     {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "title": "Solving Systems by Substitution",
-      "skill": "systems-substitution",
-      "content": "Graphing shows the big picture, but reading exact coordinates from a graph can be imprecise. Substitution gives you the EXACT answer every time.\n\n**Steps:**\n1. Isolate one variable in one equation (pick the equation where a variable already has coefficient 1 or is already solved).\n2. Substitute that expression into the OTHER equation.\n3. Solve the resulting one-variable equation.\n4. Back-substitute to find the other variable.\n5. CHECK in both original equations.\n\n**Example setup:** If y = 3x − 5 and 2x + y = 15, replace y in the second equation with (3x − 5). Now you have one equation with one unknown: 2x + (3x − 5) = 15.\n\n**When to use substitution:** Whenever one variable is already isolated (y = ... or x = ...) or has a coefficient of 1 (like x + 2y = 10 → x = 10 − 2y).",
-      "keyPoints": [
-        "Substitution gives exact answers — no graph-reading errors",
-        "Step 1: Isolate a variable in one equation",
-        "Step 2: Substitute into the other equation to get one variable",
-        "Step 3: Solve, then back-substitute for the second variable",
-        "Always check the solution in BOTH original equations"
-      ],
-      "lessonId": "systems-substitution"
-    },
-    {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "title": "Interpreting Solutions & Special Cases",
-      "skill": "systems-special-cases",
-      "content": "Not every system has exactly one solution. The geometry of two lines tells the whole story:\n\n**One solution (intersecting lines):** The lines cross at exactly one point. Different slopes guarantee this. Most systems you'll see have one solution.\n\n**No solution (parallel lines):** The lines never cross. Same slope, different y-intercepts. In the algebra, you'll get a contradiction like 5 = −2. Example: y = 2x + 3 and y = 2x − 1. Both have slope 2 but different intercepts — parallel.\n\n**Infinitely many solutions (same line):** The equations describe the SAME line. Same slope AND same y-intercept (or one equation is a multiple of the other). In the algebra, you'll get a tautology like 8 = 8. Example: 2x + 4y = 8 and x + 2y = 4 are the same line.\n\n**Interpreting in context:** If two phone plans never cost the same → no solution (one is always cheaper). If two plans always cost the same → infinitely many solutions (they're the same plan).",
-      "keyPoints": [
-        "One solution: lines have different slopes → they intersect once",
-        "No solution: same slope, different intercepts → parallel lines → contradiction in algebra",
-        "Infinitely many solutions: same line → tautology in algebra (like 0 = 0)",
-        "In context: no solution means the plans never match; infinite means they always match",
-        "Quick check: compare slopes first to predict the number of solutions"
-      ],
-      "lessonId": "systems-graphing"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "systems-interpretation",
-      "title": "We-Do: Systems Interpretation — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for systems interpretation.",
-          "hint": "Apply the concepts of systems interpretation.",
-          "solution": "Step-by-step solution for systems interpretation."
-        }
-      ],
-      "lessonId": "systems-context-special"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Solving Systems by Graphing: Worked Examples",
@@ -108,48 +64,6 @@
         {
           "problem": "Two phone plans: Plan A charges $20/month plus $0.10/minute. Plan B charges $30/month plus $0.05/minute. After how many minutes do they cost the same?\n\nSystem: y = 0.10x + 20 and y = 0.05x + 30",
           "solution": "Graph both lines (y = total cost, x = minutes).\nLine 1: slope 0.10, y-intercept 20.\nLine 2: slope 0.05, y-intercept 30.\n\nSet equal:\n0.10x + 20 = 0.05x + 30\n0.05x = 10\nx = 200\ny = 0.10(200) + 20 = 20 + 20 = 40\n\nCheck in equation 2: y = 0.05(200) + 30 = 10 + 30 = 40 ✓\nSolution: (200, 40).\n\nInterpretation: At 200 minutes, both plans cost $40. Below 200 min, Plan A is cheaper. Above 200 min, Plan B is cheaper."
-        }
-      ],
-      "lessonId": "systems-graphing"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "title": "Solving Systems by Substitution: Worked Examples",
-      "skill": "systems-substitution",
-      "examples": [
-        {
-          "problem": "Solve by substitution: y = 3x − 5 and 2x + y = 15",
-          "solution": "Step 1: y is already isolated in equation 1: y = 3x − 5.\nStep 2: Substitute into equation 2:\n2x + (3x − 5) = 15\n5x − 5 = 15\n5x = 20\nx = 4\n\nStep 3: Back-substitute: y = 3(4) − 5 = 12 − 5 = 7.\n\nCheck equation 1: 7 = 3(4) − 5 = 7 ✓\nCheck equation 2: 2(4) + 7 = 8 + 7 = 15 ✓\nSolution: (4, 7)."
-        },
-        {
-          "problem": "Solve by substitution: x + 2y = 8 and 3x − y = 3",
-          "solution": "Step 1: Isolate x in equation 1 (coefficient of x is 1):\nx = 8 − 2y\n\nStep 2: Substitute into equation 2:\n3(8 − 2y) − y = 3\n24 − 6y − y = 3\n24 − 7y = 3\n−7y = −21\ny = 3\n\nStep 3: Back-substitute: x = 8 − 2(3) = 8 − 6 = 2.\n\nCheck equation 1: 2 + 2(3) = 2 + 6 = 8 ✓\nCheck equation 2: 3(2) − 3 = 6 − 3 = 3 ✓\nSolution: (2, 3)."
-        },
-        {
-          "problem": "Two gyms: Gym A charges a $50 sign-up fee plus $25/month. Gym B charges a $25 sign-up fee plus $30/month. After how many months do they cost the same?\n\nSystem: y = 25x + 50 and y = 30x + 25",
-          "solution": "Step 1: Both equations have y isolated.\nStep 2: Set equal (substitute):\n25x + 50 = 30x + 25\n50 − 25 = 30x − 25x\n25 = 5x\nx = 5\n\nStep 3: y = 25(5) + 50 = 125 + 50 = 175.\n\nCheck equation 2: y = 30(5) + 25 = 150 + 25 = 175 ✓\nSolution: (5, 175).\n\nInterpretation: After 5 months, both gyms cost $175 total. Before 5 months, Gym B is cheaper. After 5 months, Gym A is cheaper."
-        }
-      ],
-      "lessonId": "systems-substitution"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "title": "Special Cases & Interpreting Solutions: Worked Examples",
-      "skill": "systems-special-cases",
-      "examples": [
-        {
-          "problem": "Solve: y = 2x + 3 and y = 2x − 1",
-          "solution": "Set equal:\n2x + 3 = 2x − 1\n3 = −1\n\nThis is a contradiction — it's NEVER true.\n\nConclusion: No solution. The lines are parallel (both have slope 2 but different y-intercepts: 3 and −1). They never intersect.\n\nOn a graph: two parallel lines going in the same direction, always 4 units apart vertically."
-        },
-        {
-          "problem": "Solve: 2x + 4y = 8 and x + 2y = 4",
-          "solution": "Isolate x in equation 2: x = 4 − 2y.\nSubstitute into equation 1:\n2(4 − 2y) + 4y = 8\n8 − 4y + 4y = 8\n8 = 8\n\nThis is always true — a tautology.\n\nConclusion: Infinitely many solutions. The equations describe the same line (equation 1 is just 2 times equation 2). Every point on the line x + 2y = 4 is a solution."
-        },
-        {
-          "problem": "A school sold 120 tickets for a concert. Student tickets cost $5 and adult tickets cost $8. Total revenue was $780. How many of each type were sold?\n\nSystem: s + a = 120 and 5s + 8a = 780",
-          "solution": "Step 1: Isolate s in equation 1: s = 120 − a.\nStep 2: Substitute into equation 2:\n5(120 − a) + 8a = 780\n600 − 5a + 8a = 780\n600 + 3a = 780\n3a = 180\na = 60\n\nStep 3: s = 120 − 60 = 60.\n\nCheck equation 2: 5(60) + 8(60) = 300 + 480 = 780 ✓\nSolution: 60 student tickets and 60 adult tickets.\n\nInterpretation: The solution makes sense — 60 + 60 = 120 total tickets, and the revenue checks out."
         }
       ],
       "lessonId": "systems-graphing"
@@ -191,6 +105,42 @@
       "lessonId": "systems-graphing"
     },
     {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Solving Systems by Substitution",
+      "skill": "systems-substitution",
+      "content": "Graphing shows the big picture, but reading exact coordinates from a graph can be imprecise. Substitution gives you the EXACT answer every time.\n\n**Steps:**\n1. Isolate one variable in one equation (pick the equation where a variable already has coefficient 1 or is already solved).\n2. Substitute that expression into the OTHER equation.\n3. Solve the resulting one-variable equation.\n4. Back-substitute to find the other variable.\n5. CHECK in both original equations.\n\n**Example setup:** If y = 3x − 5 and 2x + y = 15, replace y in the second equation with (3x − 5). Now you have one equation with one unknown: 2x + (3x − 5) = 15.\n\n**When to use substitution:** Whenever one variable is already isolated (y = ... or x = ...) or has a coefficient of 1 (like x + 2y = 10 → x = 10 − 2y).",
+      "keyPoints": [
+        "Substitution gives exact answers — no graph-reading errors",
+        "Step 1: Isolate a variable in one equation",
+        "Step 2: Substitute into the other equation to get one variable",
+        "Step 3: Solve, then back-substitute for the second variable",
+        "Always check the solution in BOTH original equations"
+      ],
+      "lessonId": "systems-substitution"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Solving Systems by Substitution: Worked Examples",
+      "skill": "systems-substitution",
+      "examples": [
+        {
+          "problem": "Solve by substitution: y = 3x − 5 and 2x + y = 15",
+          "solution": "Step 1: y is already isolated in equation 1: y = 3x − 5.\nStep 2: Substitute into equation 2:\n2x + (3x − 5) = 15\n5x − 5 = 15\n5x = 20\nx = 4\n\nStep 3: Back-substitute: y = 3(4) − 5 = 12 − 5 = 7.\n\nCheck equation 1: 7 = 3(4) − 5 = 7 ✓\nCheck equation 2: 2(4) + 7 = 8 + 7 = 15 ✓\nSolution: (4, 7)."
+        },
+        {
+          "problem": "Solve by substitution: x + 2y = 8 and 3x − y = 3",
+          "solution": "Step 1: Isolate x in equation 1 (coefficient of x is 1):\nx = 8 − 2y\n\nStep 2: Substitute into equation 2:\n3(8 − 2y) − y = 3\n24 − 6y − y = 3\n24 − 7y = 3\n−7y = −21\ny = 3\n\nStep 3: Back-substitute: x = 8 − 2(3) = 8 − 6 = 2.\n\nCheck equation 1: 2 + 2(3) = 2 + 6 = 8 ✓\nCheck equation 2: 3(2) − 3 = 6 − 3 = 3 ✓\nSolution: (2, 3)."
+        },
+        {
+          "problem": "Two gyms: Gym A charges a $50 sign-up fee plus $25/month. Gym B charges a $25 sign-up fee plus $30/month. After how many months do they cost the same?\n\nSystem: y = 25x + 50 and y = 30x + 25",
+          "solution": "Step 1: Both equations have y isolated.\nStep 2: Set equal (substitute):\n25x + 50 = 30x + 25\n50 − 25 = 30x − 25x\n25 = 5x\nx = 5\n\nStep 3: y = 25(5) + 50 = 125 + 50 = 175.\n\nCheck equation 2: y = 30(5) + 25 = 150 + 25 = 175 ✓\nSolution: (5, 175).\n\nInterpretation: After 5 months, both gyms cost $175 total. Before 5 months, Gym B is cheaper. After 5 months, Gym A is cheaper."
+        }
+      ],
+      "lessonId": "systems-substitution"
+    },
+    {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Systems by Substitution Practice",
@@ -227,6 +177,42 @@
       "lessonId": "systems-substitution"
     },
     {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Interpreting Solutions & Special Cases",
+      "skill": "systems-special-cases",
+      "content": "Not every system has exactly one solution. The geometry of two lines tells the whole story:\n\n**One solution (intersecting lines):** The lines cross at exactly one point. Different slopes guarantee this. Most systems you'll see have one solution.\n\n**No solution (parallel lines):** The lines never cross. Same slope, different y-intercepts. In the algebra, you'll get a contradiction like 5 = −2. Example: y = 2x + 3 and y = 2x − 1. Both have slope 2 but different intercepts — parallel.\n\n**Infinitely many solutions (same line):** The equations describe the SAME line. Same slope AND same y-intercept (or one equation is a multiple of the other). In the algebra, you'll get a tautology like 8 = 8. Example: 2x + 4y = 8 and x + 2y = 4 are the same line.\n\n**Interpreting in context:** If two phone plans never cost the same → no solution (one is always cheaper). If two plans always cost the same → infinitely many solutions (they're the same plan).",
+      "keyPoints": [
+        "One solution: lines have different slopes → they intersect once",
+        "No solution: same slope, different intercepts → parallel lines → contradiction in algebra",
+        "Infinitely many solutions: same line → tautology in algebra (like 0 = 0)",
+        "In context: no solution means the plans never match; infinite means they always match",
+        "Quick check: compare slopes first to predict the number of solutions"
+      ],
+      "lessonId": "systems-context-special"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Special Cases & Interpreting Solutions: Worked Examples",
+      "skill": "systems-special-cases",
+      "examples": [
+        {
+          "problem": "Solve: y = 2x + 3 and y = 2x − 1",
+          "solution": "Set equal:\n2x + 3 = 2x − 1\n3 = −1\n\nThis is a contradiction — it's NEVER true.\n\nConclusion: No solution. The lines are parallel (both have slope 2 but different y-intercepts: 3 and −1). They never intersect.\n\nOn a graph: two parallel lines going in the same direction, always 4 units apart vertically."
+        },
+        {
+          "problem": "Solve: 2x + 4y = 8 and x + 2y = 4",
+          "solution": "Isolate x in equation 2: x = 4 − 2y.\nSubstitute into equation 1:\n2(4 − 2y) + 4y = 8\n8 − 4y + 4y = 8\n8 = 8\n\nThis is always true — a tautology.\n\nConclusion: Infinitely many solutions. The equations describe the same line (equation 1 is just 2 times equation 2). Every point on the line x + 2y = 4 is a solution."
+        },
+        {
+          "problem": "A school sold 120 tickets for a concert. Student tickets cost $5 and adult tickets cost $8. Total revenue was $780. How many of each type were sold?\n\nSystem: s + a = 120 and 5s + 8a = 780",
+          "solution": "Step 1: Isolate s in equation 1: s = 120 − a.\nStep 2: Substitute into equation 2:\n5(120 − a) + 8a = 780\n600 − 5a + 8a = 780\n600 + 3a = 780\n3a = 180\na = 60\n\nStep 3: s = 120 − 60 = 60.\n\nCheck equation 2: 5(60) + 8(60) = 300 + 480 = 780 ✓\nSolution: 60 student tickets and 60 adult tickets.\n\nInterpretation: The solution makes sense — 60 + 60 = 120 total tickets, and the revenue checks out."
+        }
+      ],
+      "lessonId": "systems-context-special"
+    },
+    {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Special Cases & Interpretation Practice",
@@ -260,13 +246,63 @@
           ]
         }
       ],
-      "lessonId": "systems-graphing"
+      "lessonId": "systems-context-special"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "systems-interpretation",
+      "title": "We-Do: Systems Interpretation — Guided Practice",
+      "problems": [
+        {
+          "id": "se-in1",
+          "question": "Rental Company A charges a $60 fee plus $30 per day. Company B charges $45 per day with no fee. The system's solution is (4, 180). Say what that point means in this situation, then decide which company is cheaper for a 2-day rental and for a 7-day rental.",
+          "answer": "The solution (4, 180) means: at 4 days, both companies cost the same — $180. That is the break-even point, not \"the answer\" to which company is better. For 2 days: A = 30(2) + 60 = $120, B = 45(2) = $90, so B is cheaper. For 7 days: A = 30(7) + 60 = $270, B = 45(7) = $315, so A is cheaper. B wins short rentals because it has no fee; A wins long ones because its daily rate is lower. The solution is the day the advantage flips.",
+          "hints": [
+            "The solution is an ordered pair, so it carries two pieces of information. What does the 4 measure, and what does the 180 measure?",
+            "At 4 days both cost $180. That does not say which is better — it says where they are equal. Test a value on each side of 4.",
+            "Plug 2 and 7 into both cost expressions. Then explain WHY the winner changes: compare the fee against the daily rate."
+          ]
+        },
+        {
+          "id": "se-in2",
+          "question": "Without solving either system, decide how many solutions each has and explain how you know. (a) y = -3x + 7 and 6x + 2y = 14   (b) y = (1/2)x - 4 and x - 2y = 10",
+          "answer": "(a) Rewrite the second: 6x + 2y = 14 → 2y = -6x + 14 → y = -3x + 7. Identical to the first equation — same slope AND same intercept, so it is the same line: INFINITELY MANY solutions. (b) Rewrite: x - 2y = 10 → -2y = -x + 10 → y = (1/2)x - 5. Same slope 1/2 as the first, but intercept -5 versus -4 — parallel lines that never meet: NO SOLUTION.",
+          "hints": [
+            "Put both equations into y = mx + b form first. You cannot compare slopes and intercepts while one equation is in standard form.",
+            "For (a), solve 6x + 2y = 14 for y by subtracting 6x and dividing by 2. Compare what you get with the first equation.",
+            "Then use the rule: different slopes → one solution; same slope and same intercept → the same line; same slope but different intercepts → parallel, no solution."
+          ]
+        },
+        {
+          "id": "se-in3",
+          "question": "Sales job A pays $500 per week plus $20 per sale. Job B pays $650 per week plus $20 per sale. Will the two jobs ever pay the same amount in a week? Explain what that means for someone choosing between them.",
+          "answer": "Set them equal: 500 + 20s = 650 + 20s. Subtract 20s: 500 = 650, which is false, so the system has NO SOLUTION — the lines are parallel (same slope 20, different intercepts). In context: the two jobs never pay the same, because B pays exactly $150 more every week no matter how many sales you make. The per-sale rate is identical, so nothing you do at work closes that gap. Job B is always better.",
+          "hints": [
+            "Write an expression for each week's pay and set them equal, as usual. Watch what happens to the variable.",
+            "The 20s terms cancel, leaving 500 = 650. That statement is false — what does the lesson say a contradiction means?",
+            "No solution means parallel lines. Now translate that back into the story: the same per-sale rate means the $150 head start never closes."
+          ]
+        },
+        {
+          "id": "se-in4",
+          "question": "Tank A holds 300 litres and drains at 12 L/min. Tank B holds 250 litres and drains at 8 L/min. When do the tanks hold the same amount, and how much is in each? Is your answer reasonable in this context?",
+          "answer": "Set the volumes equal: 300 - 12t = 250 - 8t. Add 12t to both sides: 300 = 250 + 4t. Subtract 250: 50 = 4t, so t = 12.5 minutes. Volume then: 300 - 12(12.5) = 300 - 150 = 150 litres, and 250 - 8(12.5) = 250 - 100 = 150 ✓. The answer is reasonable: time is continuous, so 12.5 minutes is a perfectly real moment. Compare this with a problem counting cars or people, where a fractional answer would signal a mistake — whether a non-whole solution makes sense depends entirely on what the variable measures.",
+          "hints": [
+            "Write a volume expression for each tank as a function of time, with the drain rate as a negative change.",
+            "300 - 12t = 250 - 8t. Collect the t terms on one side; adding 12t to both sides avoids negatives.",
+            "t = 12.5 minutes. Substitute back into BOTH expressions to check you get the same volume — then ask whether a half-minute makes sense for this quantity."
+          ]
+        }
+      ],
+      "lessonId": "systems-context-special",
+      "initialPrompt": "A system comparing two rental companies has the solution (4, 180). Before we work out anything: what do the 4 and the 180 each measure — and does that point tell us which company to choose?"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Systems of Equations: Independent Practice",
-      "skill": "systems-graphing",
+      "skill": "systems-special-cases",
       "problems": [
         {
           "id": "se-yp1",
@@ -323,7 +359,7 @@
           ]
         }
       ],
-      "lessonId": "systems-graphing"
+      "lessonId": "systems-context-special"
     }
   ],
   "answerKeys": {
@@ -341,7 +377,11 @@
     "se-yp3": "(3, 2)",
     "se-yp4": "No solution (parallel lines, slope −1)",
     "se-yp5": "(100, 45) — at 100 songs, both cost $45",
-    "se-yp6": "80 adult tickets, 120 student tickets"
+    "se-yp6": "80 adult tickets, 120 student tickets",
+    "se-in1": "(4, 180) = break-even at 4 days, $180. B cheaper at 2 days ($90 vs $120); A cheaper at 7 ($270 vs $315).",
+    "se-in2": "(a) infinitely many — the same line; (b) no solution — parallel (intercepts -4 vs -5).",
+    "se-in3": "No solution: 500 = 650 is false. B always pays $150 more.",
+    "se-in4": "t = 12.5 min, both at 150 L; reasonable because time is continuous."
   },
   "lessons": [
     {

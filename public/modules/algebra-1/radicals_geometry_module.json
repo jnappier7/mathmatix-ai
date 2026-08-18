@@ -91,7 +91,7 @@
           ]
         }
       ],
-      "lessonId": "operations-radicals",
+      "lessonId": "simplifying-radicals",
       "initialPrompt": "Take a look at √18 + √50. Can we just add 18 and 50 under one radical? Before you answer, what has to be true about two radicals before we're allowed to combine them?"
     },
     {

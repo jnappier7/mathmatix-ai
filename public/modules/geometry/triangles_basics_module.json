@@ -67,16 +67,87 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "triangle-angle-sum",
-      "title": "Triangle Angle Sum and Exterior Angle Theorems",
-      "content": "The **Triangle Angle Sum Theorem** states that the sum of the three interior angles of any triangle is always 180°. This means if you know two angles, you can always find the third.\n\nThe **Exterior Angle Theorem** is related: an exterior angle of a triangle equals the sum of the two non-adjacent interior angles (called remote interior angles). If an exterior angle is at vertex C, then the exterior angle = angle A + angle B.\n\nWhy does this work? The interior angle at C plus the exterior angle = 180° (linear pair). But angle A + angle B + angle C = 180° too. So the exterior angle = angle A + angle B.",
-      "initialPrompt": "Why do you think the exterior angle equals the sum of the two remote interior angles? Can you connect this to the Angle Sum Theorem and the idea that a straight angle is 180°?",
+      "title": "Triangle Angle Sum Theorem",
+      "content": "The **Triangle Angle Sum Theorem** states that the sum of the three interior angles of any triangle is always **180°**. Any triangle — big, small, stretched, right, obtuse. If you know two angles, you can always find the third.\n\n**Why it's true:** draw a line through one vertex parallel to the opposite side. The two outer angles formed there are alternate interior angles with two of the triangle's angles, so they're congruent to them — and the three angles along that straight line sum to 180°.\n\n**Setting up problems:** write the equation before you compute anything.\n• Two angles known → third = 180° − (sum of the two)\n• All three given as expressions → add them, set the sum equal to 180, solve for x, then substitute back for each angle\n\n**Substitute back for every angle**, even when the question only asks for x — and then check that your three answers actually add to 180°. That check catches nearly every arithmetic slip in this topic.\n\n**Useful consequences:**\n• A triangle can have at most **one** right angle or **one** obtuse angle — two would already reach or exceed 180°.\n• Each angle of an **equilateral** triangle is 180/3 = 60°.\n• In an **isosceles** triangle the two base angles are congruent, so a known vertex angle v gives base angles of (180 − v)/2 each.\n\nThat isosceles relationship turns one given angle into all three, and it shows up constantly.",
+      "initialPrompt": "A triangle has angles of 45° and 72°. What is the third angle? Then check: do your three angles add to 180°?",
+      "lessonId": "triangle-angle-sum"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "triangle-angle-sum",
+      "title": "I-Do: Triangle Angle Sum",
+      "examples": [
+        {
+          "problem": "In triangle ABC, angle A = 45° and angle B = 72°. Find angle C and the exterior angle at vertex C.",
+          "solution": "**Finding angle C:**\nAngle A + Angle B + Angle C = 180°\n45° + 72° + Angle C = 180°\n117° + Angle C = 180°\nAngle C = 63°\n\n**Finding the exterior angle at C:**\nMethod 1 (Exterior Angle Theorem): Exterior angle = Angle A + Angle B = 45° + 72° = 117°\nMethod 2 (Linear pair): Exterior angle + Angle C = 180°, so Exterior angle = 180° - 63° = 117° ✓\n\nBoth methods give 117°, confirming the Exterior Angle Theorem works!"
+        },
+        {
+          "problem": "The angles of a triangle are (2x + 5)°, (3x - 10)°, and (x + 35)°. Find x and all three angle measures.",
+          "solution": "Using Triangle Angle Sum:\n(2x + 5) + (3x - 10) + (x + 35) = 180\n6x + 30 = 180\n6x = 150\nx = 25\n\nAngle measures:\n• 2(25) + 5 = 55°\n• 3(25) - 10 = 65°\n• 25 + 35 = 60°\n\nCheck: 55 + 65 + 60 = 180° ✓\n\nClassification: all angles < 90°, so this is an acute triangle."
+        }
+      ],
+      "initialPrompt": "Notice that the exterior angle (117°) is larger than either remote interior angle alone. Will this always be true? Why?",
       "lessonId": "triangle-angle-sum"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "triangle-angle-sum",
+      "title": "We-Do: Triangle Angle Sum",
+      "problems": [
+        {
+          "id": "tb-wp1",
+          "question": "A triangle has angles measuring (2x + 10)°, (3x)°, and (x + 20)°. Find x and all three angle measures.",
+          "answer": "x = 25; angles are 60°, 75°, 45°",
+          "hints": [
+            "Use the Triangle Angle Sum Theorem: all three angles sum to 180°.",
+            "Set up: (2x + 10) + (3x) + (x + 20) = 180. Combine like terms: 6x + 30 = 180.",
+            "Solve: 6x = 150, so x = 25. Then substitute back to find each angle."
+          ]
+        },
+        {
+          "id": "tb-wp3",
+          "question": "An isosceles triangle has a vertex angle of 50°. Find the base angles and classify the triangle by its angles.",
+          "answer": "base angles = 65° each; acute triangle",
+          "hints": [
+            "In an isosceles triangle, the base angles are congruent (equal).",
+            "50 + 2x = 180 → 2x = 130 → x = 65°.",
+            "Since all angles (50°, 65°, 65°) are less than 90°, it's acute."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice finding missing angles. For the first problem, what theorem tells us about the three interior angles?",
+      "lessonId": "triangle-angle-sum"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
       "skill": "exterior-angle-theorem",
-      "title": "We-Do: Exterior Angle Theorem — Guided Practice",
+      "title": "Exterior Angle Theorem",
+      "content": "An **exterior angle** of a triangle is formed by extending one side. It sits next to one interior angle and forms a straight line with it.\n\n**Exterior Angle Theorem:** an exterior angle of a triangle equals the **sum of the two non-adjacent interior angles** — the ones called the **remote interior angles**.\n\nIf the exterior angle is at vertex C, then\n\nexterior angle at C = ∠A + ∠B\n\n**Why does this work?** Two facts, combined:\n• The interior angle at C plus the exterior angle at C = 180° (they're a linear pair).\n• ∠A + ∠B + ∠C = 180° (Triangle Angle Sum).\n\nBoth equal 180°, so ∠C + exterior = ∠A + ∠B + ∠C. Cancel ∠C from both sides and the exterior angle = ∠A + ∠B.\n\n**Which angles are 'remote'?** The two that do **not** touch the exterior angle — they're across the triangle from it. The interior angle right beside the exterior angle is *not* one of them; it's the supplement.\n\n**The two routes to the same answer.** You can always get there the long way: find the adjacent interior angle, then subtract from 180°. The theorem is the shortcut that skips a step. Use whichever the given information makes easier — and use the other one as a check.\n\n**A useful consequence:** since the remote interior angles are both positive, an exterior angle is always **larger than either** remote interior angle. If your exterior angle comes out smaller than one of them, something is wrong.\n\n**With an isosceles triangle**, congruent remote interior angles mean each is exactly half the exterior angle — a one-step answer.",
+      "initialPrompt": "Why do you think the exterior angle equals the sum of the two remote interior angles? Can you connect this to the Angle Sum Theorem and the idea that a straight angle is 180°?",
+      "lessonId": "exterior-angle-theorem"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "exterior-angle-theorem",
+      "title": "I-Do: The Exterior Angle Theorem",
+      "examples": [
+        {
+          "problem": "An exterior angle of a triangle measures (5x + 15)°. The two remote interior angles are (2x + 10)° and (x + 25)°. Find x and all angle measures.",
+          "solution": "By the Exterior Angle Theorem:\nExterior = sum of remote interiors\n5x + 15 = (2x + 10) + (x + 25)\n5x + 15 = 3x + 35\n2x = 20\nx = 10\n\nRemote interiors: 2(10) + 10 = 30° and 10 + 25 = 35°\nExterior angle: 5(10) + 15 = 65°\nCheck: 30 + 35 = 65° ✓\n\nThe interior angle adjacent to the exterior: 180° - 65° = 115°\nVerify angle sum: 30 + 35 + 115 = 180° ✓"
+        }
+      ],
+      "initialPrompt": "Which two angles in this problem are the remote interior ones, and how did you tell them apart from the adjacent interior angle?",
+      "lessonId": "exterior-angle-theorem"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "exterior-angle-theorem",
+      "title": "We-Do: The Exterior Angle Theorem",
       "problems": [
         {
           "id": "tb-ea1",
@@ -117,48 +188,6 @@
             "So 104 = angle A + angle C = 38 + C. Solve for C.",
             "Angle B is the one that shares the vertex with the exterior angle, so they form a linear pair: B = 180 - 104. Finish by checking all three add to 180."
           ]
-        }
-      ],
-      "lessonId": "exterior-angle-theorem",
-      "initialPrompt": "Picture a triangle with one side extended to form an exterior angle. If the two remote interior angles are 42° and 65°, what do you think the exterior angle measures — and which two angles does the theorem tell us to use?"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "triangle-angle-sum",
-      "title": "I-Do: Angle Sum and Exterior Angle Theorem",
-      "examples": [
-        {
-          "problem": "In triangle ABC, angle A = 45° and angle B = 72°. Find angle C and the exterior angle at vertex C.",
-          "solution": "**Finding angle C:**\nAngle A + Angle B + Angle C = 180°\n45° + 72° + Angle C = 180°\n117° + Angle C = 180°\nAngle C = 63°\n\n**Finding the exterior angle at C:**\nMethod 1 (Exterior Angle Theorem): Exterior angle = Angle A + Angle B = 45° + 72° = 117°\nMethod 2 (Linear pair): Exterior angle + Angle C = 180°, so Exterior angle = 180° - 63° = 117° ✓\n\nBoth methods give 117°, confirming the Exterior Angle Theorem works!"
-        },
-        {
-          "problem": "The angles of a triangle are (2x + 5)°, (3x - 10)°, and (x + 35)°. Find x and all three angle measures.",
-          "solution": "Using Triangle Angle Sum:\n(2x + 5) + (3x - 10) + (x + 35) = 180\n6x + 30 = 180\n6x = 150\nx = 25\n\nAngle measures:\n• 2(25) + 5 = 55°\n• 3(25) - 10 = 65°\n• 25 + 35 = 60°\n\nCheck: 55 + 65 + 60 = 180° ✓\n\nClassification: all angles < 90°, so this is an acute triangle."
-        },
-        {
-          "problem": "An exterior angle of a triangle measures (5x + 15)°. The two remote interior angles are (2x + 10)° and (x + 25)°. Find x and all angle measures.",
-          "solution": "By the Exterior Angle Theorem:\nExterior = sum of remote interiors\n5x + 15 = (2x + 10) + (x + 25)\n5x + 15 = 3x + 35\n2x = 20\nx = 10\n\nRemote interiors: 2(10) + 10 = 30° and 10 + 25 = 35°\nExterior angle: 5(10) + 15 = 65°\nCheck: 30 + 35 = 65° ✓\n\nThe interior angle adjacent to the exterior: 180° - 65° = 115°\nVerify angle sum: 30 + 35 + 115 = 180° ✓"
-        }
-      ],
-      "initialPrompt": "Notice that the exterior angle (117°) is larger than either remote interior angle alone. Will this always be true? Why?",
-      "lessonId": "triangle-angle-sum"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "triangle-angle-sum",
-      "title": "We-Do: Angle Sum and Exterior Angles",
-      "problems": [
-        {
-          "id": "tb-wp1",
-          "question": "A triangle has angles measuring (2x + 10)°, (3x)°, and (x + 20)°. Find x and all three angle measures.",
-          "answer": "x = 25; angles are 60°, 75°, 45°",
-          "hints": [
-            "Use the Triangle Angle Sum Theorem: all three angles sum to 180°.",
-            "Set up: (2x + 10) + (3x) + (x + 20) = 180. Combine like terms: 6x + 30 = 180.",
-            "Solve: 6x = 150, so x = 25. Then substitute back to find each angle."
-          ]
         },
         {
           "id": "tb-wp2",
@@ -169,20 +198,10 @@
             "So 130° = 55° + other remote interior. That gives 75°.",
             "The interior angle adjacent to the exterior angle forms a linear pair: 180° - 130° = 50°."
           ]
-        },
-        {
-          "id": "tb-wp3",
-          "question": "An isosceles triangle has a vertex angle of 50°. Find the base angles and classify the triangle by its angles.",
-          "answer": "base angles = 65° each; acute triangle",
-          "hints": [
-            "In an isosceles triangle, the base angles are congruent (equal).",
-            "50 + 2x = 180 → 2x = 130 → x = 65°.",
-            "Since all angles (50°, 65°, 65°) are less than 90°, it's acute."
-          ]
         }
       ],
-      "initialPrompt": "Let's practice finding missing angles. For the first problem, what theorem tells us about the three interior angles?",
-      "lessonId": "triangle-angle-sum"
+      "lessonId": "exterior-angle-theorem",
+      "initialPrompt": "Picture a triangle with one side extended to form an exterior angle. If the two remote interior angles are 42° and 65°, what do you think the exterior angle measures — and which two angles does the theorem tell us to use?"
     },
     {
       "type": "explanation",
@@ -305,8 +324,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "triangle-classification",
-      "lessonId": "triangle-classification"
+      "skill": "triangle-inequalities",
+      "lessonId": "triangle-inequality"
     }
   ],
   "answerKeys": {

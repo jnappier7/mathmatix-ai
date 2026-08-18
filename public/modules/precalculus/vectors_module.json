@@ -90,7 +90,7 @@
         "Triangle inequality: ||u + v|| ≤ ||u|| + ||v||.",
         "Geometric: tip-to-tail for addition; parallelogram rule for resultant."
       ],
-      "lessonId": "dot-product-projections"
+      "lessonId": "vector-fundamentals"
     },
     {
       "type": "model",
@@ -111,7 +111,7 @@
           "solution": "Need c₁⟨2,1⟩ + c₂⟨1,-1⟩ = ⟨7,-3⟩. System: 2c₁+c₂=7 and c₁-c₂=-3. Add: 3c₁=4 → c₁=4/3. c₂=7-8/3=13/3. v = (4/3)u₁ + (13/3)u₂. Check: (4/3)⟨2,1⟩ + (13/3)⟨1,-1⟩ = ⟨8/3,4/3⟩+⟨13/3,-13/3⟩ = ⟨21/3,-9/3⟩ = ⟨7,-3⟩ ✓."
         }
       ],
-      "lessonId": "dot-product-projections"
+      "lessonId": "vector-fundamentals"
     },
     {
       "type": "explanation",
@@ -127,21 +127,7 @@
         "Properties: commutative, distributive, u · u = ||u||².",
         "Sign: positive → acute angle, negative → obtuse angle, zero → right angle."
       ],
-      "lessonId": "applications-complex"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "vector-projections",
-      "title": "We-Do: Vector Projections — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for vector projections.",
-          "hint": "Apply the concepts of vector projections.",
-          "solution": "Step-by-step solution for vector projections."
-        }
-      ],
-      "lessonId": "vector-fundamentals"
+      "lessonId": "dot-product-projections"
     },
     {
       "type": "model",
@@ -162,7 +148,7 @@
         }
       ],
       "skill": "dot-product",
-      "lessonId": "applications-complex"
+      "lessonId": "dot-product-projections"
     },
     {
       "type": "guided_practice",
@@ -197,7 +183,53 @@
         }
       ],
       "skill": "dot-product",
-      "lessonId": "applications-complex"
+      "lessonId": "dot-product-projections"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "vector-projections",
+      "title": "We-Do: Vector Projections — Guided Practice",
+      "problems": [
+        {
+          "problem": "Find the scalar projection and the vector projection of v = ⟨7, 4⟩ onto u = ⟨2, 1⟩.",
+          "hints": [
+            "Both formulas start from the same dot product. Compute v·u and ||u||² once and reuse them.",
+            "v·u = 7(2) + 4(1) = 18, and ||u||² = 2² + 1² = 5, so ||u|| = √5.",
+            "Scalar projection divides by ||u|| and gives a NUMBER; vector projection divides by ||u||² and then multiplies by u, giving a VECTOR. The extra factor of u is the whole difference."
+          ],
+          "answer": "v·u = 7(2) + 4(1) = 14 + 4 = 18. ||u||² = 4 + 1 = 5, so ||u|| = √5. Scalar projection: comp_u(v) = (v·u)/||u|| = 18/√5 = 18√5/5 ≈ 8.05 — a number, the length of the shadow v casts on u. Vector projection: proj_u(v) = ((v·u)/||u||²)u = (18/5)⟨2, 1⟩ = ⟨36/5, 18/5⟩ — a vector pointing along u. Note the vector projection points in the direction of u, not v."
+        },
+        {
+          "problem": "Decompose v = ⟨5, 2⟩ into a component parallel to u = ⟨3, -1⟩ and a component perpendicular to u. Verify the perpendicular part really is perpendicular.",
+          "hints": [
+            "The parallel component IS the vector projection. Compute proj_u(v) first.",
+            "v·u = 15 - 2 = 13 and ||u||² = 9 + 1 = 10, so proj_u(v) = (13/10)⟨3, -1⟩.",
+            "The perpendicular part is whatever is left over: v - proj_u(v). To verify, take its dot product with u — perpendicular vectors have dot product 0."
+          ],
+          "answer": "v·u = 5(3) + 2(-1) = 15 - 2 = 13. ||u||² = 9 + 1 = 10. Parallel component: proj_u(v) = (13/10)⟨3, -1⟩ = ⟨39/10, -13/10⟩. Perpendicular component: v - proj_u(v) = ⟨5 - 39/10, 2 + 13/10⟩ = ⟨11/10, 33/10⟩. Verify: ⟨11/10, 33/10⟩ · ⟨3, -1⟩ = 33/10 - 33/10 = 0 ✓, so it is genuinely perpendicular to u. And the two pieces add back to v: ⟨39/10 + 11/10, -13/10 + 33/10⟩ = ⟨5, 2⟩ ✓."
+        },
+        {
+          "problem": "A force F = ⟨40, 30⟩ newtons acts on a crate while it is dragged along the displacement d = ⟨10, 0⟩ metres. Find the work done. Why does only part of the force contribute?",
+          "hints": [
+            "Work is the dot product of force and displacement: W = F · d. That is one calculation.",
+            "F · d = 40(10) + 30(0). The vertical part of the force multiplies the vertical displacement, which is zero here.",
+            "The dot product is secretly a projection: it measures how much of F points along d. The 30 N acting straight up is perpendicular to the motion, so it does no work at all."
+          ],
+          "answer": "W = F · d = 40(10) + 30(0) = 400 joules. Only the horizontal part of the force does work: the crate moves purely horizontally, so the component of F along d is 40 N, and 40 N × 10 m = 400 J. The 30 N vertical component is perpendicular to the displacement, and a perpendicular force does zero work no matter how large it is — this is why the dot product, which projects one vector onto the other, is the right tool for work rather than plain multiplication of magnitudes."
+        },
+        {
+          "problem": "Using u = ⟨4, 0⟩ and v = ⟨3, 3⟩, compute proj_u(v) and proj_v(u). Are they the same? What does that tell you about the projection operation?",
+          "hints": [
+            "Compute each separately. The dot product v·u is the same both times — it is the denominator and the trailing vector that change.",
+            "proj_u(v) uses ||u||² = 16 and multiplies by u; proj_v(u) uses ||v||² = 18 and multiplies by v.",
+            "Compare the two results, and notice which vector each answer points along."
+          ],
+          "answer": "v·u = 3(4) + 3(0) = 12, the same for both. proj_u(v) = (12/16)⟨4, 0⟩ = (3/4)⟨4, 0⟩ = ⟨3, 0⟩. proj_v(u) = (12/18)⟨3, 3⟩ = (2/3)⟨3, 3⟩ = ⟨2, 2⟩. They are NOT the same, so projection is not commutative — the order matters. Each result points along the vector being projected ONTO, so proj_u(v) lies along u while proj_v(u) lies along v. \"Project v onto u\" and \"project u onto v\" are different questions, even though they share a dot product."
+        }
+      ],
+      "lessonId": "dot-product-projections",
+      "initialPrompt": "Project v = ⟨7, 4⟩ onto u = ⟨2, 1⟩. There are two things called a projection here — one is a number and one is a vector. Which quantity would you expect to be a length, and which one has a direction?"
     },
     {
       "type": "explanation",
@@ -213,7 +245,7 @@
         "Bearing: measured clockwise from north. Convert: N θ° E → standard angle = 90° - θ.",
         "Inclined plane: weight components parallel and perpendicular to slope."
       ],
-      "lessonId": "vector-fundamentals"
+      "lessonId": "applications-complex"
     },
     {
       "type": "model",
@@ -234,7 +266,7 @@
           "solution": "Weight vector: 200 lb straight down. Parallel component (along ramp, pulling it down): F_∥ = 200 sin25° ≈ 200(0.4226) ≈ 84.5 lb. Perpendicular component (into ramp): F_⊥ = 200 cos25° ≈ 200(0.9063) ≈ 181.3 lb. Check: √(84.5²+181.3²) ≈ √(7140+32870) ≈ √40010 ≈ 200 ✓."
         }
       ],
-      "lessonId": "vector-fundamentals"
+      "lessonId": "applications-complex"
     },
     {
       "type": "explanation",
@@ -331,7 +363,11 @@
     "ip-proj": "proj_u(v)=⟨1/5,3/5⟩. perp=⟨24/5,-8/5⟩.",
     "ip-work": "W=240 ft-lb.",
     "ip-demoivre": "z=2√2·cis(5π/4). z⁴=-64.",
-    "ip-roots": "Fourth roots of 16: {2, 2i, -2, -2i}."
+    "ip-roots": "Fourth roots of 16: {2, 2i, -2, -2i}.",
+    "proj-scalar-vs-vector": "comp_u(v) = 18√5/5 ≈ 8.05; proj_u(v) = ⟨36/5, 18/5⟩.",
+    "proj-decompose": "Parallel ⟨39/10, -13/10⟩, perpendicular ⟨11/10, 33/10⟩; their dot with u is 0 and they sum to v.",
+    "proj-work": "W = F·d = 400 J; the 30 N vertical component is perpendicular to the motion and does no work.",
+    "proj-not-commutative": "proj_u(v) = ⟨3, 0⟩ but proj_v(u) = ⟨2, 2⟩ — projection is not commutative."
   },
   "lessons": [
     {

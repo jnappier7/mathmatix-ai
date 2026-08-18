@@ -79,51 +79,6 @@
       "lessonId": "linear-equations-review"
     },
     {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "function-basics",
-      "title": "I-Do: Function Notation — Evaluation, Domain, and Range",
-      "initialPrompt": "What is the domain of g(x) = (x + 3)/(x - 2)? Why is x = 2 excluded?",
-      "examples": [
-        {
-          "problem": "(a) Given g(x) = (x + 3)/(x - 2), find g(5), g(0), and the value of x where g(x) = 4.\n(b) Find the domain of h(x) = sqrt(2x - 6).\n(c) For f(x) = x² - 6x + 5, find the vertex, domain, and range.",
-          "solution": "**(a) Evaluate g(x) = (x + 3)/(x - 2):**\ng(5) = (5 + 3)/(5 - 2) = 8/3\ng(0) = (0 + 3)/(0 - 2) = 3/(-2) = **-3/2**\n\nSolve g(x) = 4:\n(x + 3)/(x - 2) = 4\nx + 3 = 4(x - 2)\nx + 3 = 4x - 8\n11 = 3x\n**x = 11/3**\n\nCheck: g(11/3) = (11/3 + 3)/(11/3 - 2) = (20/3)/(5/3) = 20/5 = 4 ✓\n\n**(b) Domain of h(x) = sqrt(2x - 6):**\nThe expression under the square root must be ≥ 0:\n2x - 6 ≥ 0\n2x ≥ 6\nx ≥ 3\n\n**Domain: [3, ∞)**\n\n**(c) f(x) = x² - 6x + 5:**\nVertex: x = -b/(2a) = 6/2 = 3, f(3) = 9 - 18 + 5 = -4\n**Vertex: (3, -4)**\n\nSince a = 1 > 0, the parabola opens upward.\n**Domain: all real numbers, (-∞, ∞)**\n**Range: y ≥ -4, or [-4, ∞)**",
-          "tip": "Common domain restrictions: (1) denominators cannot be zero, (2) square roots require non-negative radicands, (3) logarithm arguments must be positive. Always check for these."
-        }
-      ],
-      "lessonId": "exponent-factoring-review"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "exponent-rules-radicals",
-      "title": "I-Do: Exponent Rules & Radical Simplification",
-      "initialPrompt": "Simplify (x^(2/3) · x^(1/2))^6 using exponent rules. Add the exponents first: 2/3 + 1/2 = ?",
-      "examples": [
-        {
-          "problem": "(a) Simplify: (2x³y⁻²)⁴ · (x⁻¹y)³\n(b) Rewrite with rational exponents and simplify: ³√(x⁶y⁹) / √(x⁴)\n(c) Simplify: √(72) + 3√(50) - 2√(18)",
-          "solution": "**(a) (2x³y⁻²)⁴ · (x⁻¹y)³:**\nApply power rule to each factor:\n= 2⁴ · x¹² · y⁻⁸ · x⁻³ · y³\n= 16 · x^(12-3) · y^(-8+3)\n= **16x⁹y⁻⁵ = 16x⁹/y⁵**\n\n**(b) ³√(x⁶y⁹) / √(x⁴):**\nRewrite with rational exponents:\n= (x⁶y⁹)^(1/3) / (x⁴)^(1/2)\n= x² · y³ / x²\n= **y³**\n\nCheck: (x⁶)^(1/3) = x², (y⁹)^(1/3) = y³, (x⁴)^(1/2) = x². Then x²y³/x² = y³.\n\n**(c) Simplify √(72) + 3√(50) - 2√(18):**\n√(72) = √(36·2) = 6√2\n√(50) = √(25·2) = 5√2\n√(18) = √(9·2) = 3√2\n\n= 6√2 + 3(5√2) - 2(3√2)\n= 6√2 + 15√2 - 6√2\n= **15√2**\n\nThe key step is simplifying each radical by extracting perfect square factors, then combining like radicals (same radicand).",
-          "tip": "Radicals and rational exponents are two notations for the same thing. Use whichever is more convenient: rational exponents are better for algebra (product/quotient rules apply directly), while radical form is better for the final answer."
-        }
-      ],
-      "lessonId": "graphing-lines-review"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "graphing-lines",
-      "title": "I-Do: Perpendicular Lines & Standard Form",
-      "initialPrompt": "What is the slope of a line perpendicular to a horizontal line (slope = 0)? What about perpendicular to a vertical line (undefined slope)?",
-      "examples": [
-        {
-          "problem": "(a) Write the equation of the line perpendicular to y = (2/3)x + 1 that passes through (4, -2).\n(b) Convert 3x - 5y = 15 to slope-intercept form. Identify slope, y-intercept, and x-intercept.",
-          "solution": "**(a) Perpendicular line:**\nThe given line has slope m₁ = 2/3.\nPerpendicular slopes are negative reciprocals: m₂ = **-3/2**\n\nUsing point-slope form with (4, -2):\ny - (-2) = -3/2(x - 4)\ny + 2 = -3/2 · x + 6\ny = -3/2 · x + 4\n\n**Equation: y = -(3/2)x + 4**\n\nCheck: passes through (4, -2): -(3/2)(4) + 4 = -6 + 4 = -2 ✓\nSlope product: (2/3)(-3/2) = -1 ✓ (perpendicular confirmation)\n\n**(b) Convert 3x - 5y = 15:**\n-5y = -3x + 15\ny = (3/5)x - 3\n\n**Slope: 3/5**\n**y-intercept: (0, -3)** (set x = 0)\n**x-intercept: (5, 0)** (set y = 0: 3x = 15, x = 5)\n\nStandard form Ax + By = C is useful for quickly finding both intercepts: set x = 0 to get the y-intercept, set y = 0 to get the x-intercept.",
-          "tip": "Perpendicular lines have slopes that are negative reciprocals: m₁ × m₂ = -1. If one slope is 2/3, the perpendicular slope is -3/2. Parallel lines have equal slopes."
-        }
-      ],
-      "lessonId": "graphing-lines-review"
-    },
-    {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "compound-inequalities",
@@ -155,7 +110,7 @@
         }
       ],
       "initialPrompt": "For the first problem, distribute on the left side first. What do you get?",
-      "lessonId": "function-notation-review"
+      "lessonId": "linear-equations-review"
     },
     {
       "type": "explanation",
@@ -164,6 +119,82 @@
       "title": "Concept: Function Basics",
       "initialPrompt": "Quick check: Simplify (2x³y⁻²)⁴. Apply the power rule to EACH factor inside.",
       "content": "**Exponent Rules Refresh:**\n\n| Rule | Example |\n|------|--------|\n| Product: aᵐ · aⁿ = aᵐ⁺ⁿ | x³ · x⁵ = x⁸ |\n| Quotient: aᵐ/aⁿ = aᵐ⁻ⁿ | x⁷/x² = x⁵ |\n| Power: (aᵐ)ⁿ = aᵐⁿ | (x³)⁴ = x¹² |\n| Zero: a⁰ = 1 | 5⁰ = 1 |\n| Negative: a⁻ⁿ = 1/aⁿ | x⁻³ = 1/x³ |\n| Product Power: (ab)ⁿ = aⁿbⁿ | (2x)³ = 8x³ |\n\n**Radical Basics:**\n• √a = a^(1/2)\n• ⁿ√a = a^(1/n)\n• √(ab) = √a · √b (product property)\n• √(a/b) = √a/√b (quotient property)\n• √(a+b) ≠ √a + √b ← THE mistake",
+      "lessonId": "function-notation-review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "function-basics",
+      "title": "I-Do: Function Notation — Evaluation, Domain, and Range",
+      "initialPrompt": "What is the domain of g(x) = (x + 3)/(x - 2)? Why is x = 2 excluded?",
+      "examples": [
+        {
+          "problem": "(a) Given g(x) = (x + 3)/(x - 2), find g(5), g(0), and the value of x where g(x) = 4.\n(b) Find the domain of h(x) = sqrt(2x - 6).\n(c) For f(x) = x² - 6x + 5, find the vertex, domain, and range.",
+          "solution": "**(a) Evaluate g(x) = (x + 3)/(x - 2):**\ng(5) = (5 + 3)/(5 - 2) = 8/3\ng(0) = (0 + 3)/(0 - 2) = 3/(-2) = **-3/2**\n\nSolve g(x) = 4:\n(x + 3)/(x - 2) = 4\nx + 3 = 4(x - 2)\nx + 3 = 4x - 8\n11 = 3x\n**x = 11/3**\n\nCheck: g(11/3) = (11/3 + 3)/(11/3 - 2) = (20/3)/(5/3) = 20/5 = 4 ✓\n\n**(b) Domain of h(x) = sqrt(2x - 6):**\nThe expression under the square root must be ≥ 0:\n2x - 6 ≥ 0\n2x ≥ 6\nx ≥ 3\n\n**Domain: [3, ∞)**\n\n**(c) f(x) = x² - 6x + 5:**\nVertex: x = -b/(2a) = 6/2 = 3, f(3) = 9 - 18 + 5 = -4\n**Vertex: (3, -4)**\n\nSince a = 1 > 0, the parabola opens upward.\n**Domain: all real numbers, (-∞, ∞)**\n**Range: y ≥ -4, or [-4, ∞)**",
+          "tip": "Common domain restrictions: (1) denominators cannot be zero, (2) square roots require non-negative radicands, (3) logarithm arguments must be positive. Always check for these."
+        }
+      ],
+      "lessonId": "function-notation-review"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "function-basics",
+      "title": "We-Do: Function Notation — Guided Practice",
+      "problems": [
+        {
+          "id": "br-fn1",
+          "question": "If f(x) = 3x − 5, find f(4) and f(−2).",
+          "answer": "f(4) = 7, f(−2) = −11",
+          "hints": [
+            "f(4) means substitute 4 everywhere x appears — the notation is an instruction, not multiplication.",
+            "f(4) = 3(4) − 5 = 12 − 5 = 7. f(−2) = 3(−2) − 5 = −6 − 5 = −11. Keep the parentheses around −2 so the sign survives."
+          ]
+        },
+        {
+          "id": "br-fn2",
+          "question": "If g(x) = x² + 2x, find g(3) and g(−1).",
+          "answer": "g(3) = 15, g(−1) = −1",
+          "hints": [
+            "g(3) = 3² + 2(3) = 9 + 6 = 15.",
+            "g(−1) = (−1)² + 2(−1) = 1 − 2 = −1. Note (−1)² = +1 — squaring a negative gives a positive, which is where this one usually goes wrong."
+          ]
+        },
+        {
+          "id": "br-fn3",
+          "question": "If f(x) = 2x + 1 and f(a) = 9, find a.",
+          "answer": "a = 4",
+          "hints": [
+            "This runs the function backwards: you know the output and want the input. Set the rule equal to the output: 2a + 1 = 9.",
+            "2a = 8, so a = 4. Check: f(4) = 2(4) + 1 = 9 ✓"
+          ]
+        },
+        {
+          "id": "br-fn4",
+          "question": "State the domain of f(x) = √(x − 3), and explain your reasoning.",
+          "answer": "x ≥ 3",
+          "hints": [
+            "The domain is every input the rule allows. A square root of a negative number isn't a real number, so whatever is under the radical must be ≥ 0.",
+            "x − 3 ≥ 0 gives x ≥ 3. In interval notation, [3, ∞)."
+          ]
+        }
+      ],
+      "initialPrompt": "f(4) does not mean f times 4. What does the notation actually tell you to do?",
+      "lessonId": "function-notation-review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "exponent-rules-radicals",
+      "title": "I-Do: Exponent Rules & Radical Simplification",
+      "initialPrompt": "Simplify (x^(2/3) · x^(1/2))^6 using exponent rules. Add the exponents first: 2/3 + 1/2 = ?",
+      "examples": [
+        {
+          "problem": "(a) Simplify: (2x³y⁻²)⁴ · (x⁻¹y)³\n(b) Rewrite with rational exponents and simplify: ³√(x⁶y⁹) / √(x⁴)\n(c) Simplify: √(72) + 3√(50) - 2√(18)",
+          "solution": "**(a) (2x³y⁻²)⁴ · (x⁻¹y)³:**\nApply power rule to each factor:\n= 2⁴ · x¹² · y⁻⁸ · x⁻³ · y³\n= 16 · x^(12-3) · y^(-8+3)\n= **16x⁹y⁻⁵ = 16x⁹/y⁵**\n\n**(b) ³√(x⁶y⁹) / √(x⁴):**\nRewrite with rational exponents:\n= (x⁶y⁹)^(1/3) / (x⁴)^(1/2)\n= x² · y³ / x²\n= **y³**\n\nCheck: (x⁶)^(1/3) = x², (y⁹)^(1/3) = y³, (x⁴)^(1/2) = x². Then x²y³/x² = y³.\n\n**(c) Simplify √(72) + 3√(50) - 2√(18):**\n√(72) = √(36·2) = 6√2\n√(50) = √(25·2) = 5√2\n√(18) = √(9·2) = 3√2\n\n= 6√2 + 3(5√2) - 2(3√2)\n= 6√2 + 15√2 - 6√2\n= **15√2**\n\nThe key step is simplifying each radical by extracting perfect square factors, then combining like radicals (same radicand).",
+          "tip": "Radicals and rational exponents are two notations for the same thing. Use whichever is more convenient: rational exponents are better for algebra (product/quotient rules apply directly), while radical form is better for the final answer."
+        }
+      ],
       "lessonId": "exponent-factoring-review"
     },
     {
@@ -178,7 +209,7 @@
           "solution": "**Four factoring types you must have on autopilot:**\n\n**(a) GCF:** 6x³ - 15x² = **3x²(2x - 5)**\nAlways check GCF first!\n\n**(b) Simple trinomial (a = 1):** x² - 7x + 12\nFind two numbers that multiply to 12 and add to -7: (-3)(-4) = 12, (-3)+(-4) = -7\n= **(x - 3)(x - 4)**\n\n**(c) Difference of squares:** 4x² - 25 = (2x)² - 5²\n= **(2x + 5)(2x - 5)**\nRemember: a² - b² = (a+b)(a-b). Sum of squares does NOT factor over the reals.\n\n**(d) Trinomial with a ≠ 1:** 2x² + 5x - 3\nMultiply a·c = 2(-3) = -6. Find factors of -6 that add to 5: 6 and -1.\nRewrite: 2x² + 6x - x - 3 = 2x(x + 3) - 1(x + 3) = **(2x - 1)(x + 3)**"
         }
       ],
-      "lessonId": "graphing-lines-review"
+      "lessonId": "exponent-factoring-review"
     },
     {
       "type": "guided_practice",
@@ -210,7 +241,7 @@
         }
       ],
       "initialPrompt": "For the exponent simplification, apply the power rule to the numerator first: what is (3x⁻²y⁴)²?",
-      "lessonId": "graphing-lines-review"
+      "lessonId": "exponent-factoring-review"
     },
     {
       "type": "model",
@@ -224,7 +255,22 @@
           "solution": "**Step 1: Find slope.**\nm = (y₂ - y₁)/(x₂ - x₁) = (5 - (-1))/(7 - 3) = 6/4 = **3/2**\n\n**Step 2: Use point-slope form.**\ny - y₁ = m(x - x₁)\ny - (-1) = (3/2)(x - 3)\ny + 1 = (3/2)x - 9/2\n\n**Step 3: Convert to slope-intercept.**\ny = (3/2)x - 9/2 - 1\ny = (3/2)x - 11/2\n\n**Check:** Plug in (3, -1): (3/2)(3) - 11/2 = 9/2 - 11/2 = -2/2 = -1 ✓\nPlug in (7, 5): (3/2)(7) - 11/2 = 21/2 - 11/2 = 10/2 = 5 ✓"
         }
       ],
-      "lessonId": "linear-equations-review"
+      "lessonId": "exponent-factoring-review"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "graphing-lines",
+      "title": "I-Do: Perpendicular Lines & Standard Form",
+      "initialPrompt": "What is the slope of a line perpendicular to a horizontal line (slope = 0)? What about perpendicular to a vertical line (undefined slope)?",
+      "examples": [
+        {
+          "problem": "(a) Write the equation of the line perpendicular to y = (2/3)x + 1 that passes through (4, -2).\n(b) Convert 3x - 5y = 15 to slope-intercept form. Identify slope, y-intercept, and x-intercept.",
+          "solution": "**(a) Perpendicular line:**\nThe given line has slope m₁ = 2/3.\nPerpendicular slopes are negative reciprocals: m₂ = **-3/2**\n\nUsing point-slope form with (4, -2):\ny - (-2) = -3/2(x - 4)\ny + 2 = -3/2 · x + 6\ny = -3/2 · x + 4\n\n**Equation: y = -(3/2)x + 4**\n\nCheck: passes through (4, -2): -(3/2)(4) + 4 = -6 + 4 = -2 ✓\nSlope product: (2/3)(-3/2) = -1 ✓ (perpendicular confirmation)\n\n**(b) Convert 3x - 5y = 15:**\n-5y = -3x + 15\ny = (3/5)x - 3\n\n**Slope: 3/5**\n**y-intercept: (0, -3)** (set x = 0)\n**x-intercept: (5, 0)** (set y = 0: 3x = 15, x = 5)\n\nStandard form Ax + By = C is useful for quickly finding both intercepts: set x = 0 to get the y-intercept, set y = 0 to get the x-intercept.",
+          "tip": "Perpendicular lines have slopes that are negative reciprocals: m₁ × m₂ = -1. If one slope is 2/3, the perpendicular slope is -3/2. Parallel lines have equal slopes."
+        }
+      ],
+      "lessonId": "graphing-lines-review"
     },
     {
       "type": "independent_practice",
@@ -307,7 +353,11 @@
     "cbrt(x⁶y⁹)/sqrt(x⁴)": "y³",
     "√72+3√50-2√18": "15√2",
     "perp to y=(2/3)x+1 through (4,-2)": "y=-(3/2)x+4",
-    "3x-5y=15 to slope-intercept": "y=(3/5)x-3"
+    "3x-5y=15 to slope-intercept": "y=(3/5)x-3",
+    "br-fn1": "f(4) = 7, f(−2) = −11.",
+    "br-fn2": "g(3) = 15, g(−1) = −1.",
+    "br-fn3": "a = 4.",
+    "br-fn4": "x ≥ 3, i.e. [3, ∞) — the expression under the radical must be non-negative."
   },
   "lessons": [
     {

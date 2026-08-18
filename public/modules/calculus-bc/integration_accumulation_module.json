@@ -52,72 +52,16 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "riemann-sums",
-      "title": "Riemann Sums & the Definite Integral as Accumulation",
+      "title": "Riemann Sums & the Definite Integral",
       "content": "**The Big Idea:**\n\nHow do we find the exact area under a curve? Start with rectangles and take a limit.\n\n**Riemann Sums:**\nPartition [a, b] into n equal subintervals of width Δx = (b − a)/n. Choose a sample point xᵢ* in each subinterval and form the sum:\n\nSₙ = Σᵢ₌₁ⁿ f(xᵢ*)Δx\n\n**Three common choices for xᵢ*:**\n• **Left Riemann sum:** xᵢ* = a + (i−1)Δx (use the left endpoint of each subinterval)\n• **Right Riemann sum:** xᵢ* = a + iΔx (use the right endpoint)\n• **Midpoint Riemann sum:** xᵢ* = a + (i − ½)Δx (use the midpoint)\n\n**Over- and Under-estimates:**\n• If f is increasing: left sum underestimates, right sum overestimates.\n• If f is decreasing: left sum overestimates, right sum underestimates.\n• Midpoint sums are generally more accurate than left or right.\n\n**The Definite Integral:**\nAs n → ∞, all three Riemann sums converge to the same value (for continuous f):\n\n∫ₐᵇ f(x) dx = lim_{n→∞} Σᵢ₌₁ⁿ f(xᵢ*)Δx\n\nThis limit — the definite integral — gives the exact signed area between f and the x-axis on [a, b].",
       "initialPrompt": "If f(x) = x² on [0, 2] with n = 4, what is Δx? List the four right endpoints and compute the right Riemann sum.",
       "lessonId": "riemann-sums"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "accumulation-functions",
-      "title": "We-Do: Accumulation Functions — Guided Practice",
-      "problems": [
-        {
-          "id": "ia-wp10",
-          "question": "Let g(x) = \u222b\u2080\u02e3 (t\u00b2 \u2212 4) dt. Find g'(x), and determine where g has a local minimum.",
-          "answer": "g'(x) = x\u00b2 \u2212 4. Local minimum at x = 2.",
-          "hints": [
-            "By FTC Part 1: g'(x) = x\u00b2 \u2212 4. Set g' = 0: x\u00b2 = 4, x = \u00b12. Since domain starts at 0, consider x = 2.",
-            "g'(x) < 0 for 0 < x < 2, g'(x) > 0 for x > 2. Sign change \u2212 to + at x = 2 \u2192 local minimum."
-          ]
-        },
-        {
-          "id": "ia-wp11",
-          "question": "Find d/dx \u222b\u2080^{x\u00b3} cos(t) dt.",
-          "answer": "3x\u00b2 cos(x\u00b3)",
-          "hints": [
-            "FTC Part 1 with chain rule: d/dx \u222b\u2080^{u} f(t) dt = f(u) \u00b7 u'. Here u = x\u00b3, u' = 3x\u00b2, f(t) = cos(t).",
-            "So d/dx = cos(x\u00b3) \u00b7 3x\u00b2 = 3x\u00b2 cos(x\u00b3)."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, apply FTC Part 1 directly to find g'(x). Then analyze g' like any first-derivative problem \u2014 set g' = 0 and check sign changes.",
-      "lessonId": "accumulation-functions"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "ftc-part1",
-      "title": "We-Do: Ftc Part1 — Guided Practice",
-      "problems": [
-        {
-          "id": "ia-wp12",
-          "question": "Find d/dx \u222b\u2081^{x\u00b2} \u221a(t + 1) dt.",
-          "answer": "2x\u221a(x\u00b2 + 1)",
-          "hints": [
-            "FTC Part 1 with chain rule: d/dx \u222b\u2081^{u(x)} f(t) dt = f(u(x)) \u00b7 u'(x). Here u = x\u00b2, so u' = 2x.",
-            "f(t) = \u221a(t + 1), so f(x\u00b2) = \u221a(x\u00b2 + 1). Answer: 2x\u221a(x\u00b2 + 1)."
-          ]
-        },
-        {
-          "id": "ia-wp13",
-          "question": "Evaluate \u222b\u2080\u00b2 (x\u00b3 \u2212 x) dx using FTC Part 2.",
-          "answer": "2",
-          "hints": [
-            "Antiderivative: F(x) = x\u2074/4 \u2212 x\u00b2/2.",
-            "F(2) \u2212 F(0) = (16/4 \u2212 4/2) \u2212 0 = 4 \u2212 2 = 2."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, the upper limit is x\u00b2 (not just x), so you need the chain rule extension of FTC Part 1. What is u(x) and u'(x)?",
-      "lessonId": "definite-integral-ftc"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "riemann-sums",
-      "title": "I-Do: Riemann Sums & Accumulation",
+      "title": "I-Do: Riemann Sums",
       "examples": [
         {
           "problem": "Estimate ∫₀² x² dx using a right Riemann sum with n = 4.",
@@ -139,7 +83,7 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "riemann-sums",
-      "title": "We-Do: Riemann Sums & Accumulation",
+      "title": "We-Do: Riemann Sums",
       "problems": [
         {
           "id": "ia-wp1",
@@ -176,44 +120,16 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "ftc-part2",
-      "title": "The Fundamental Theorem of Calculus (Parts 1 & 2) and u-Substitution",
-      "content": "**FTC Part 1 — Differentiating an Integral:**\n\nIf f is continuous on [a, b] and g(x) = ∫ₐˣ f(t) dt, then:\n\ng'(x) = f(x)\n\nIn words: the derivative of the accumulation function equals the integrand evaluated at the upper limit.\n\n**Chain rule extension:** If the upper limit is a function u(x):\nd/dx ∫ₐ^{u(x)} f(t) dt = f(u(x)) · u'(x)\n\n**FTC Part 2 — Evaluating a Definite Integral:**\n\nIf F is any antiderivative of f (i.e., F' = f), then:\n\n∫ₐᵇ f(x) dx = F(b) − F(a)\n\nThis connects the two main branches of calculus: differentiation and integration are inverse operations.\n\n**u-Substitution (Reverse Chain Rule):**\n\nWhen the integrand contains a composite function and its derivative:\n∫ f(g(x)) · g'(x) dx → let u = g(x), du = g'(x) dx → ∫ f(u) du\n\nFor definite integrals, convert the limits: when x = a, u = g(a); when x = b, u = g(b).\n\n**Common patterns to recognize:**\n• ∫ 2x · cos(x²) dx → u = x², du = 2x dx\n• ∫ eˣ/(1 + eˣ) dx → u = 1 + eˣ, du = eˣ dx\n• ∫ sin(x) cos(x) dx → u = sin(x), du = cos(x) dx",
+      "title": "The Fundamental Theorem of Calculus (Parts 1 & 2)",
+      "content": "Riemann sums define the definite integral, but computing one as a limit of sums is brutal. The Fundamental Theorem gives you a shortcut — and reveals that differentiation and integration are inverse operations.\n\n**FTC Part 1 — Differentiating an Integral:**\n\nIf f is continuous on [a, b] and g(x) = ∫ₐˣ f(t) dt, then:\n\ng'(x) = f(x)\n\nIn words: the derivative of the accumulation function equals the integrand evaluated at the upper limit. The lower limit a doesn't matter — changing it shifts g by a constant, and constants vanish under differentiation.\n\n**Chain rule extension:** If the upper limit is a function u(x):\n\nd/dx ∫ₐ^{u(x)} f(t) dt = f(u(x)) · u'(x)\n\nThis is where most FTC Part 1 mistakes happen — students evaluate f at u(x) but forget to multiply by u'(x).\n\n**FTC Part 2 — Evaluating a Definite Integral:**\n\nIf F is any antiderivative of f (i.e. F' = f), then:\n\n∫ₐᵇ f(x) dx = F(b) − F(a)\n\nAny antiderivative works — the +C cancels in the subtraction, which is why definite integrals never carry a constant.\n\n**Why the two parts are the same theorem:** Part 1 says accumulating then differentiating gets you back where you started. Part 2 says differentiating then accumulating does too. They are the two directions of one inverse relationship.\n\n**A warning about Part 1:** d/dx ∫₁ˣ sin(t²) dt = sin(x²), even though sin(t²) has no elementary antiderivative. Part 1 does not require you to be able to integrate f — that is exactly what makes it powerful.",
       "initialPrompt": "If g(x) = ∫₀ˣ cos(t²) dt, what is g'(x)? What if the upper limit were x³ instead of x?",
       "lessonId": "definite-integral-ftc"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "u-substitution",
-      "title": "We-Do: U Substitution — Guided Practice",
-      "problems": [
-        {
-          "id": "ia-wp14",
-          "question": "Evaluate \u222b (3x\u00b2)/(x\u00b3 + 1)\u00b2 dx.",
-          "answer": "\u22121/(x\u00b3 + 1) + C",
-          "hints": [
-            "Let u = x\u00b3 + 1, du = 3x\u00b2 dx. The integral becomes \u222b 1/u\u00b2 du = \u222b u\u207b\u00b2 du.",
-            "\u222b u\u207b\u00b2 du = \u2212u\u207b\u00b9 + C = \u22121/(x\u00b3 + 1) + C."
-          ]
-        },
-        {
-          "id": "ia-wp15",
-          "question": "Evaluate \u222b\u2080\u00b9 x\u00b7e^{x\u00b2} dx.",
-          "answer": "(e \u2212 1)/2",
-          "hints": [
-            "Let u = x\u00b2, du = 2x dx, so x dx = du/2. When x = 0, u = 0; when x = 1, u = 1.",
-            "\u222b\u2080\u00b9 (1/2)e\u1d58 du = (1/2)[e\u1d58]\u2080\u00b9 = (1/2)(e \u2212 1) = (e \u2212 1)/2."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, look at the denominator (x\u00b3 + 1)\u00b2. What is the derivative of x\u00b3 + 1? Do you see it (or a constant multiple) in the numerator?",
-      "lessonId": "antiderivatives-u-sub"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "ftc-part2",
-      "title": "I-Do: FTC & u-Substitution",
+      "title": "I-Do: Applying FTC Parts 1 & 2",
       "examples": [
         {
           "problem": "Find d/dx ∫₁ˣ (t³ + 2t) dt.",
@@ -222,20 +138,16 @@
         {
           "problem": "Evaluate ∫₀³ (x² + 1) dx.",
           "solution": "**Find an antiderivative:** F(x) = x³/3 + x\n\n**Apply FTC Part 2:**\n∫₀³ (x² + 1) dx = F(3) − F(0)\n= (27/3 + 3) − (0 + 0)\n= 9 + 3 = **12**\n\n**Verify with geometry (rough check):** The function ranges from f(0) = 1 to f(3) = 10 over an interval of length 3. Average value is somewhere around 4, so area ≈ 3 × 4 = 12. Checks out."
-        },
-        {
-          "problem": "Evaluate ∫ 2x cos(x²) dx.",
-          "solution": "**Recognize the pattern:** The integrand has cos(x²) (composite) and 2x (derivative of x²). This is a reverse chain rule situation.\n\n**Substitute:** Let u = x², then du = 2x dx.\n\n∫ 2x cos(x²) dx = ∫ cos(u) du = sin(u) + C = **sin(x²) + C**\n\n**Check by differentiating:** d/dx[sin(x²)] = cos(x²) · 2x ✓"
         }
       ],
-      "initialPrompt": "In example 3, what would change if the integral were ∫ x cos(x²) dx (missing the factor of 2)? How would you handle it?",
+      "initialPrompt": "In example 1, we never found an antiderivative of t³ + 2t. Why does FTC Part 1 let us skip that step entirely?",
       "lessonId": "definite-integral-ftc"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "ftc-part2",
-      "title": "We-Do: FTC & u-Substitution",
+      "title": "We-Do: FTC Parts 1 & 2",
       "problems": [
         {
           "id": "ia-wp4",
@@ -256,12 +168,21 @@
           ]
         },
         {
-          "id": "ia-wp6",
-          "question": "Evaluate ∫₀^{π/2} sin(2x) dx using u-substitution.",
-          "answer": "1",
+          "id": "ia-wp12",
+          "question": "Find d/dx ∫₁^{x²} √(t + 1) dt.",
+          "answer": "2x√(x² + 1)",
           "hints": [
-            "Let u = 2x, du = 2 dx, so dx = du/2. Convert limits: x = 0 → u = 0, x = π/2 → u = π.",
-            "∫₀^π sin(u) · (du/2) = (1/2)[−cos(u)]₀^π = (1/2)(−cos π + cos 0) = (1/2)(1 + 1) = 1."
+            "FTC Part 1 with chain rule: d/dx ∫₁^{u(x)} f(t) dt = f(u(x)) · u'(x). Here u = x², so u' = 2x.",
+            "f(t) = √(t + 1), so f(x²) = √(x² + 1). Answer: 2x√(x² + 1)."
+          ]
+        },
+        {
+          "id": "ia-wp13",
+          "question": "Evaluate ∫₀² (x³ − x) dx using FTC Part 2.",
+          "answer": "2",
+          "hints": [
+            "Antiderivative: F(x) = x⁴/4 − x²/2.",
+            "F(2) − F(0) = (16/4 − 4/2) − 0 = 4 − 2 = 2."
           ]
         }
       ],
@@ -271,95 +192,99 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
+      "skill": "u-substitution",
+      "title": "Antiderivatives & u-Substitution",
+      "content": "FTC Part 2 turns every definite integral into an antiderivative problem. So the real work is: given f, find F with F' = f.\n\n**The basic antiderivatives** (each is just a derivative rule read backwards):\n\n• ∫ xⁿ dx = xⁿ⁺¹/(n + 1) + C   (n ≠ −1)\n• ∫ 1/x dx = ln|x| + C\n• ∫ eˣ dx = eˣ + C\n• ∫ sin x dx = −cos x + C\n• ∫ cos x dx = sin x + C\n• ∫ sec²x dx = tan x + C\n\nThe **+C** is not decoration: any two antiderivatives of the same function differ by a constant, so the answer to an indefinite integral is a whole family of functions.\n\n**u-Substitution (the reverse chain rule):**\n\nThe chain rule says d/dx[F(g(x))] = f(g(x)) · g'(x). Read that backwards:\n\n∫ f(g(x)) · g'(x) dx → let u = g(x), du = g'(x) dx → ∫ f(u) du\n\n**The procedure:**\n1. Pick u = the inside of a composite function.\n2. Compute du = g'(x) dx.\n3. Check that du (or a constant multiple of it) is available in the integrand.\n4. Rewrite the whole integral in u — no x may survive.\n5. Integrate, then substitute back.\n\n**For definite integrals, convert the limits** instead of substituting back: when x = a, u = g(a); when x = b, u = g(b). Then evaluate in u directly.\n\n**Common patterns to recognize:**\n• ∫ 2x · cos(x²) dx → u = x², du = 2x dx\n• ∫ eˣ/(1 + eˣ) dx → u = 1 + eˣ, du = eˣ dx\n• ∫ sin(x) cos(x) dx → u = sin(x), du = cos(x) dx\n\n**Missing constants are fine, missing variables are not.** If the integrand has x dx and you need 2x dx, multiply by 1 = (1/2)(2) and pull the 1/2 out. But if you need x dx and there is no x anywhere, u-substitution is the wrong tool.",
+      "initialPrompt": "In ∫ 2x cos(x²) dx, what should u be, and where do you see du already sitting in the integrand?",
+      "lessonId": "antiderivatives-u-sub"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "u-substitution",
+      "title": "I-Do: u-Substitution",
+      "examples": [
+        {
+          "problem": "Evaluate ∫ 2x cos(x²) dx.",
+          "solution": "**Recognize the pattern:** The integrand has cos(x²) (composite) and 2x (derivative of x²). This is a reverse chain rule situation.\n\n**Substitute:** Let u = x², then du = 2x dx.\n\n∫ 2x cos(x²) dx = ∫ cos(u) du = sin(u) + C = **sin(x²) + C**\n\n**Check by differentiating:** d/dx[sin(x²)] = cos(x²) · 2x ✓"
+        },
+        {
+          "problem": "Evaluate ∫ x/√(x² + 9) dx.",
+          "solution": "**Spot the composite:** √(x² + 9) has x² + 9 inside. Its derivative is 2x — and there is an x in the numerator, so we are one constant away.\n\n**Substitute:** Let u = x² + 9, then du = 2x dx, so x dx = du/2.\n\n∫ x/√(x² + 9) dx = ∫ (1/√u)(du/2) = (1/2) ∫ u^(−1/2) du\n\n**Integrate:**\n= (1/2) · 2u^(1/2) + C = √u + C = **√(x² + 9) + C**\n\n**Check by differentiating:** d/dx[(x² + 9)^(1/2)] = (1/2)(x² + 9)^(−1/2) · 2x = x/√(x² + 9) ✓"
+        }
+      ],
+      "initialPrompt": "In example 1, what would change if the integral were ∫ x cos(x²) dx (missing the factor of 2)? How would you handle it?",
+      "lessonId": "antiderivatives-u-sub"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "u-substitution",
+      "title": "We-Do: u-Substitution",
+      "problems": [
+        {
+          "id": "ia-wp14",
+          "question": "Evaluate ∫ (3x²)/(x³ + 1)² dx.",
+          "answer": "−1/(x³ + 1) + C",
+          "hints": [
+            "Let u = x³ + 1, du = 3x² dx. The integral becomes ∫ 1/u² du = ∫ u⁻² du.",
+            "∫ u⁻² du = −u⁻¹ + C = −1/(x³ + 1) + C."
+          ]
+        },
+        {
+          "id": "ia-wp15",
+          "question": "Evaluate ∫₀¹ x·e^{x²} dx.",
+          "answer": "(e − 1)/2",
+          "hints": [
+            "Let u = x², du = 2x dx, so x dx = du/2. When x = 0, u = 0; when x = 1, u = 1.",
+            "∫₀¹ (1/2)eᵘ du = (1/2)[eᵘ]₀¹ = (1/2)(e − 1) = (e − 1)/2."
+          ]
+        },
+        {
+          "id": "ia-wp6",
+          "question": "Evaluate ∫₀^{π/2} sin(2x) dx using u-substitution.",
+          "answer": "1",
+          "hints": [
+            "Let u = 2x, du = 2 dx, so dx = du/2. Convert limits: x = 0 → u = 0, x = π/2 → u = π.",
+            "∫₀^π sin(u) · (du/2) = (1/2)[−cos(u)]₀^π = (1/2)(−cos π + cos 0) = (1/2)(1 + 1) = 1."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, look at the denominator (x³ + 1)². What is the derivative of x³ + 1? Do you see it (or a constant multiple) in the numerator?",
+      "lessonId": "antiderivatives-u-sub"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
       "skill": "integration-by-parts",
-      "title": "Advanced Integration: By Parts, Partial Fractions & Improper Integrals",
-      "content": "**Integration by Parts (BC Topic):**\n\nUsed when the integrand is a product that doesn't yield to u-substitution.\n\n**Formula:** ∫ u dv = uv − ∫ v du\n\n**LIATE rule** for choosing u (in order of priority):\nL — Logarithmic (ln x)\nI — Inverse trig (arctan x, arcsin x)\nA — Algebraic (x², x, polynomials)\nT — Trigonometric (sin x, cos x)\nE — Exponential (eˣ)\n\nChoose u from highest priority. The rest is dv.\n\n**Partial Fractions (BC Topic):**\n\nDecompose a rational function into simpler fractions before integrating.\n\nFor distinct linear factors:\nP(x)/[(x − a)(x − b)] = A/(x − a) + B/(x − b)\n\nSolve for A and B by plugging in x = a and x = b (cover-up method).\n\n**Improper Integrals (BC Topic):**\n\nIntegrals with infinite bounds or discontinuous integrands.\n\n∫ₐ^∞ f(x) dx = lim_{b→∞} ∫ₐᵇ f(x) dx\n\nIf the limit exists and is finite, the integral **converges**. Otherwise, it **diverges**.\n\n**p-test:** ∫₁^∞ 1/xᵖ dx converges if p > 1, diverges if p ≤ 1.",
+      "title": "Integration by Parts (BC)",
+      "content": "u-Substitution undoes the chain rule. **Integration by parts undoes the product rule** — it is the tool for integrands that are a product of two unrelated functions, where nothing inside is the derivative of anything else.\n\n**Where the formula comes from:** the product rule says (uv)' = u'v + uv'. Integrate both sides and rearrange:\n\n∫ u dv = uv − ∫ v du\n\n**The trade:** you swap the integral you can't do for a different one you hope you can. Choosing u badly makes the new integral *worse*, so the choice matters.\n\n**LIATE rule** for choosing u (in order of priority):\n\nL — Logarithmic (ln x)\nI — Inverse trig (arctan x, arcsin x)\nA — Algebraic (x², x, polynomials)\nT — Trigonometric (sin x, cos x)\nE — Exponential (eˣ)\n\nChoose u from the highest priority present; everything left over is dv. The logic: u gets differentiated, so pick the thing that gets *simpler* when you differentiate it. dv gets integrated, so pick the thing you can actually antidifferentiate.\n\n**When to repeat:** if u is xⁿ, each pass drops the power by one. ∫ x²eˣ dx needs two passes; ∫ x³ sin x dx needs three.\n\n**The classic edge case:** ∫ ln x dx looks like it has no product at all. Take u = ln x and dv = dx (so v = x). Then ∫ ln x dx = x ln x − ∫ x · (1/x) dx = x ln x − x + C.",
       "initialPrompt": "For ∫ x eˣ dx, LIATE says choose u = x (algebraic) and dv = eˣ dx (exponential). Find du and v. What integral remains after applying the formula?",
       "lessonId": "integration-by-parts"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "improper-integrals",
-      "title": "We-Do: Improper Integrals — Guided Practice",
-      "problems": [
-        {
-          "id": "ia-wp16",
-          "question": "Determine whether \u222b\u2081^\u221e 1/x^(3/2) dx converges or diverges. If it converges, find its value.",
-          "answer": "Converges to 2",
-          "hints": [
-            "p-test: p = 3/2 > 1, so it converges. Compute: lim_{b\u2192\u221e} \u222b\u2081\u1d47 x^(\u22123/2) dx = lim_{b\u2192\u221e} [\u22122x^(\u22121/2)]\u2081\u1d47.",
-            "= lim_{b\u2192\u221e} (\u22122/\u221ab + 2) = 0 + 2 = 2."
-          ]
-        },
-        {
-          "id": "ia-wp17",
-          "question": "Determine whether \u222b\u2081^\u221e 1/\u221ax dx converges or diverges.",
-          "answer": "Diverges",
-          "hints": [
-            "p-test: p = 1/2 < 1, so it diverges. Verify: lim_{b\u2192\u221e} \u222b\u2081\u1d47 x^(\u22121/2) dx = lim_{b\u2192\u221e} [2\u221ax]\u2081\u1d47.",
-            "= lim_{b\u2192\u221e} (2\u221ab \u2212 2) = \u221e. The integral diverges."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, which p-test applies? Write 1/x^(3/2) = x^(\u22123/2) and recall: \u222b\u2081^\u221e 1/x\u1d56 dx converges when p > 1.",
-      "lessonId": "improper-integrals"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "partial-fractions",
-      "title": "We-Do: Partial Fractions — Guided Practice",
-      "problems": [
-        {
-          "id": "ia-wp18",
-          "question": "Evaluate \u222b (4x + 3)/[(x + 1)(x \u2212 2)] dx using partial fractions.",
-          "answer": "(1/3) ln|x + 1| + (11/3) ln|x \u2212 2| + C",
-          "hints": [
-            "Decompose: (4x+3)/[(x+1)(x\u22122)] = A/(x+1) + B/(x\u22122). Multiply through: 4x+3 = A(x\u22122) + B(x+1). Set x = \u22121: \u22121 = \u22123A, A = 1/3. Set x = 2: 11 = 3B, B = 11/3.",
-            "\u222b [1/(3(x+1)) + 11/(3(x\u22122))] dx = (1/3) ln|x+1| + (11/3) ln|x\u22122| + C."
-          ]
-        },
-        {
-          "id": "ia-wp19",
-          "question": "Evaluate \u222b 1/[(x)(x + 1)] dx using partial fractions.",
-          "answer": "ln|x| \u2212 ln|x + 1| + C = ln|x/(x + 1)| + C",
-          "hints": [
-            "Decompose: 1/[x(x+1)] = A/x + B/(x+1). Multiply: 1 = A(x+1) + Bx. Set x = 0: A = 1. Set x = \u22121: B = \u22121.",
-            "\u222b [1/x \u2212 1/(x+1)] dx = ln|x| \u2212 ln|x+1| + C = ln|x/(x+1)| + C."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, factor the denominator (it's already factored), then set up A/(x+1) + B/(x\u22122). Use the cover-up method: plug in x = \u22121 and x = 2.",
-      "lessonId": "partial-fractions"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "integration-by-parts",
-      "title": "I-Do: Advanced Integration Techniques",
+      "title": "I-Do: Integration by Parts",
       "examples": [
         {
           "problem": "Evaluate ∫ x eˣ dx using integration by parts.",
           "solution": "**Choose u and dv (LIATE → u = algebraic, dv = exponential):**\nu = x → du = dx\ndv = eˣ dx → v = eˣ\n\n**Apply the formula:** ∫ u dv = uv − ∫ v du\n= x · eˣ − ∫ eˣ dx\n= xeˣ − eˣ + C\n\n**= eˣ(x − 1) + C**\n\n**Check:** d/dx[eˣ(x − 1)] = eˣ(x − 1) + eˣ = eˣ · x − eˣ + eˣ = xeˣ ✓"
         },
         {
-          "problem": "Evaluate ∫ (3x + 5)/[(x + 1)(x + 2)] dx using partial fractions.",
-          "solution": "**Decompose:**\n(3x + 5)/[(x + 1)(x + 2)] = A/(x + 1) + B/(x + 2)\n\nMultiply both sides by (x + 1)(x + 2):\n3x + 5 = A(x + 2) + B(x + 1)\n\n**Cover-up method:**\n• Set x = −1: 3(−1) + 5 = A(1) → A = 2\n• Set x = −2: 3(−2) + 5 = B(−1) → −1 = −B → B = 1\n\n**Integrate:**\n∫ [2/(x + 1) + 1/(x + 2)] dx = **2 ln|x + 1| + ln|x + 2| + C**\n\n**Check:** Differentiate: 2/(x + 1) + 1/(x + 2) = [2(x + 2) + (x + 1)]/[(x + 1)(x + 2)] = (3x + 5)/[(x + 1)(x + 2)] ✓"
-        },
-        {
-          "problem": "Evaluate ∫₁^∞ 1/x² dx.",
-          "solution": "**Rewrite as a limit:**\n∫₁^∞ x⁻² dx = lim_{b→∞} ∫₁ᵇ x⁻² dx\n\n**Antidifferentiate:**\n= lim_{b→∞} [−x⁻¹]₁ᵇ = lim_{b→∞} (−1/b + 1)\n\n**Evaluate the limit:**\nAs b → ∞, −1/b → 0, so the limit is 0 + 1 = **1**.\n\n**The integral converges to 1.** This also follows from the p-test: p = 2 > 1, so it converges.\n\n**Conceptual note:** Even though the region extends infinitely to the right, the area is finite because 1/x² shrinks fast enough."
+          "problem": "Evaluate ∫ x² ln x dx.",
+          "solution": "**Choose u and dv (LIATE — L beats A, so the logarithm is u):**\nu = ln x → du = (1/x) dx\ndv = x² dx → v = x³/3\n\n**Apply the formula:** ∫ u dv = uv − ∫ v du\n= (ln x)(x³/3) − ∫ (x³/3)(1/x) dx\n= (x³ ln x)/3 − (1/3) ∫ x² dx\n= (x³ ln x)/3 − x³/9 + C\n\n**Why this choice worked:** the remaining integral ∫ x² dx is easy. Had we picked u = x² instead, we would need v = ∫ ln x dx — a harder problem than the one we started with. That is LIATE earning its keep.\n\n**Check:** d/dx[(x³ ln x)/3 − x³/9] = x² ln x + (x³/3)(1/x) − x²/3 = x² ln x ✓"
         }
       ],
-      "initialPrompt": "In example 2, what would happen if the denominator were x² + 3x + 2 and you forgot to factor it first? Why is factoring the essential first step for partial fractions?",
+      "initialPrompt": "In example 2, what goes wrong if you choose u = x² and dv = ln x dx instead? Work out what v would have to be.",
       "lessonId": "integration-by-parts"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "integration-by-parts",
-      "title": "We-Do: Advanced Integration Techniques",
+      "title": "We-Do: Integration by Parts",
       "problems": [
         {
           "id": "ia-wp7",
@@ -371,12 +296,140 @@
           ]
         },
         {
+          "id": "ia-wp20",
+          "question": "Evaluate ∫ x e^{2x} dx using integration by parts.",
+          "answer": "(x e^{2x})/2 − e^{2x}/4 + C",
+          "hints": [
+            "LIATE: u = x (algebraic), dv = e^{2x} dx. So du = dx and v = e^{2x}/2 — don't forget the 1/2 from integrating e^{2x}.",
+            "∫ x e^{2x} dx = x · e^{2x}/2 − ∫ e^{2x}/2 dx = (x e^{2x})/2 − e^{2x}/4 + C."
+          ]
+        },
+        {
+          "id": "ia-wp21",
+          "question": "Evaluate ∫₁^e ln x dx.",
+          "answer": "1",
+          "hints": [
+            "There is no visible product, so take u = ln x and dv = dx. Then du = (1/x) dx and v = x.",
+            "∫ ln x dx = x ln x − ∫ x · (1/x) dx = x ln x − x. Evaluate from 1 to e: (e · 1 − e) − (1 · 0 − 1) = 0 + 1 = 1."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, identify u and dv using the LIATE rule. Then find du and v before applying the formula ∫ u dv = uv − ∫ v du.",
+      "lessonId": "integration-by-parts"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "partial-fractions",
+      "title": "Partial Fraction Decomposition (BC)",
+      "content": "You can integrate 1/(x − 3) instantly — it's ln|x − 3| + C. You cannot integrate (4x + 3)/[(x + 1)(x − 2)] by inspection. **Partial fractions is the algebra that turns the second into a sum of the first.**\n\n**The setup (distinct linear factors):**\n\nP(x)/[(x − a)(x − b)] = A/(x − a) + B/(x − b)\n\nMultiply both sides by the full denominator to clear fractions, then solve for A and B.\n\n**The cover-up method** is the fast way: multiply through, then substitute the values that kill one term at a time. Setting x = a makes the B term vanish and hands you A directly; x = b hands you B.\n\n**Then integrate term by term:**\n\n∫ [A/(x − a) + B/(x − b)] dx = A ln|x − a| + B ln|x − b| + C\n\nThe absolute values matter — the domain of a rational function includes x-values on both sides of each vertical asymptote.\n\n**Two preconditions AP problems test:**\n\n1. **Factor the denominator first.** x² + 3x + 2 must become (x + 1)(x + 2) before you can decompose anything.\n2. **The fraction must be proper** — degree of numerator < degree of denominator. If it isn't, do polynomial long division first and decompose only the remainder.\n\n**On the AP exam** the denominator is always a product of *distinct linear* factors, which is exactly the case above. (Repeated factors need A/(x − a) + B/(x − a)², and irreducible quadratics need (Ax + B)/(x² + c) — useful to recognize, but not tested.)",
+      "initialPrompt": "Set up the decomposition for (3x + 5)/[(x + 1)(x + 2)] — just the A/... + B/... form. Then multiply through by the denominator. What equation do you get?",
+      "lessonId": "partial-fractions"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "partial-fractions",
+      "title": "I-Do: Partial Fractions",
+      "examples": [
+        {
+          "problem": "Evaluate ∫ (3x + 5)/[(x + 1)(x + 2)] dx using partial fractions.",
+          "solution": "**Decompose:**\n(3x + 5)/[(x + 1)(x + 2)] = A/(x + 1) + B/(x + 2)\n\nMultiply both sides by (x + 1)(x + 2):\n3x + 5 = A(x + 2) + B(x + 1)\n\n**Cover-up method:**\n• Set x = −1: 3(−1) + 5 = A(1) → A = 2\n• Set x = −2: 3(−2) + 5 = B(−1) → −1 = −B → B = 1\n\n**Integrate:**\n∫ [2/(x + 1) + 1/(x + 2)] dx = **2 ln|x + 1| + ln|x + 2| + C**\n\n**Check:** Differentiate: 2/(x + 1) + 1/(x + 2) = [2(x + 2) + (x + 1)]/[(x + 1)(x + 2)] = (3x + 5)/[(x + 1)(x + 2)] ✓"
+        },
+        {
+          "problem": "Evaluate ∫ 1/(x² − 9) dx using partial fractions.",
+          "solution": "**Factor the denominator first — nothing can happen until you do:**\nx² − 9 = (x − 3)(x + 3)\n\n**Decompose:**\n1/[(x − 3)(x + 3)] = A/(x − 3) + B/(x + 3)\n\nMultiply both sides by (x − 3)(x + 3):\n1 = A(x + 3) + B(x − 3)\n\n**Cover-up method:**\n• Set x = 3: 1 = A(6) → A = 1/6\n• Set x = −3: 1 = B(−6) → B = −1/6\n\n**Integrate:**\n∫ [1/(6(x − 3)) − 1/(6(x + 3))] dx = **(1/6) ln|x − 3| − (1/6) ln|x + 3| + C**\n\nwhich can be written (1/6) ln|(x − 3)/(x + 3)| + C.\n\n**Check:** (1/6)[1/(x − 3) − 1/(x + 3)] = (1/6) · [(x + 3) − (x − 3)]/(x² − 9) = (1/6)(6)/(x² − 9) = 1/(x² − 9) ✓"
+        }
+      ],
+      "initialPrompt": "In example 2, what would happen if you skipped the factoring step and tried to decompose 1/(x² − 9) directly? Why is factoring the essential first move?",
+      "lessonId": "partial-fractions"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "partial-fractions",
+      "title": "We-Do: Partial Fractions",
+      "problems": [
+        {
+          "id": "ia-wp18",
+          "question": "Evaluate ∫ (4x + 3)/[(x + 1)(x − 2)] dx using partial fractions.",
+          "answer": "(1/3) ln|x + 1| + (11/3) ln|x − 2| + C",
+          "hints": [
+            "Decompose: (4x+3)/[(x+1)(x−2)] = A/(x+1) + B/(x−2). Multiply through: 4x+3 = A(x−2) + B(x+1). Set x = −1: −1 = −3A, A = 1/3. Set x = 2: 11 = 3B, B = 11/3.",
+            "∫ [1/(3(x+1)) + 11/(3(x−2))] dx = (1/3) ln|x+1| + (11/3) ln|x−2| + C."
+          ]
+        },
+        {
+          "id": "ia-wp19",
+          "question": "Evaluate ∫ 1/[(x)(x + 1)] dx using partial fractions.",
+          "answer": "ln|x| − ln|x + 1| + C = ln|x/(x + 1)| + C",
+          "hints": [
+            "Decompose: 1/[x(x+1)] = A/x + B/(x+1). Multiply: 1 = A(x+1) + Bx. Set x = 0: A = 1. Set x = −1: B = −1.",
+            "∫ [1/x − 1/(x+1)] dx = ln|x| − ln|x+1| + C = ln|x/(x+1)| + C."
+          ]
+        },
+        {
           "id": "ia-wp8",
           "question": "Evaluate ∫ (5x + 1)/[(x − 1)(x + 2)] dx using partial fractions.",
           "answer": "2 ln|x − 1| + 3 ln|x + 2| + C",
           "hints": [
             "Decompose: (5x + 1)/[(x−1)(x+2)] = A/(x−1) + B/(x+2). Multiply through: 5x+1 = A(x+2) + B(x−1). Set x=1: 6=3A, A=2. Set x=−2: −9=−3B, B=3.",
             "∫ [2/(x−1) + 3/(x+2)] dx = 2 ln|x−1| + 3 ln|x+2| + C."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, factor the denominator (it's already factored), then set up A/(x+1) + B/(x−2). Use the cover-up method: plug in x = −1 and x = 2.",
+      "lessonId": "partial-fractions"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "improper-integrals",
+      "title": "Improper Integrals (BC)",
+      "content": "Every definite integral so far had finite limits and a continuous integrand. An **improper integral** breaks one of those conditions — and the fix in both cases is the same: replace the offending endpoint with a limit.\n\n**Type 1 — infinite bound:**\n\n∫ₐ^∞ f(x) dx = lim_{b→∞} ∫ₐᵇ f(x) dx\n\n**Type 2 — the integrand blows up at an endpoint:** if f has a vertical asymptote at x = b,\n\n∫ₐᵇ f(x) dx = lim_{c→b⁻} ∫ₐᶜ f(x) dx\n\n**Converges or diverges:** if the limit exists and is finite, the integral **converges** to that value. If the limit is infinite or does not exist, it **diverges**. \"Diverges\" is a complete answer — there is no number to report.\n\n**The p-test** (worth memorizing):\n\n∫₁^∞ 1/xᵖ dx converges if p > 1, diverges if p ≤ 1\n\nThe boundary case p = 1 diverges: ∫₁^∞ (1/x) dx = lim_{b→∞} ln b = ∞.\n\n**The surprise worth sitting with:** ∫₁^∞ 1/x² dx = 1. The region is infinitely long, yet its area is finite — because 1/x² shrinks fast enough that the tail contributes almost nothing. 1/x does not shrink fast enough, and its region has infinite area.\n\n**Always write the limit.** Answers that jump straight to [−x⁻¹]₁^∞ lose credit on the AP exam even when the number is right — ∞ is not a value you may substitute into an antiderivative.",
+      "initialPrompt": "Rewrite ∫₁^∞ 1/x³ dx as a limit. What does the p-test predict before you compute anything?",
+      "lessonId": "improper-integrals"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "improper-integrals",
+      "title": "I-Do: Improper Integrals",
+      "examples": [
+        {
+          "problem": "Evaluate ∫₁^∞ 1/x² dx.",
+          "solution": "**Rewrite as a limit:**\n∫₁^∞ x⁻² dx = lim_{b→∞} ∫₁ᵇ x⁻² dx\n\n**Antidifferentiate:**\n= lim_{b→∞} [−x⁻¹]₁ᵇ = lim_{b→∞} (−1/b + 1)\n\n**Evaluate the limit:**\nAs b → ∞, −1/b → 0, so the limit is 0 + 1 = **1**.\n\n**The integral converges to 1.** This also follows from the p-test: p = 2 > 1, so it converges.\n\n**Conceptual note:** Even though the region extends infinitely to the right, the area is finite because 1/x² shrinks fast enough."
+        },
+        {
+          "problem": "Determine whether ∫₁^∞ (1/x) dx converges or diverges.",
+          "solution": "**Rewrite as a limit:**\n∫₁^∞ (1/x) dx = lim_{b→∞} ∫₁ᵇ (1/x) dx\n\n**Antidifferentiate:**\n= lim_{b→∞} [ln|x|]₁ᵇ = lim_{b→∞} (ln b − ln 1) = lim_{b→∞} ln b\n\n**Evaluate the limit:** ln b → ∞ as b → ∞.\n\n**The integral diverges.** By the p-test this was predictable: p = 1, and the test requires p > 1 strictly.\n\n**Compare with ∫₁^∞ 1/x² dx = 1 from example 1.** Both integrands go to 0, but only one encloses finite area. Going to zero is not enough — the *rate* decides."
+        }
+      ],
+      "initialPrompt": "Example 1 converges and example 2 diverges, yet both integrands approach 0 as x → ∞. What distinguishes them?",
+      "lessonId": "improper-integrals"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "improper-integrals",
+      "title": "We-Do: Improper Integrals",
+      "problems": [
+        {
+          "id": "ia-wp16",
+          "question": "Determine whether ∫₁^∞ 1/x^(3/2) dx converges or diverges. If it converges, find its value.",
+          "answer": "Converges to 2",
+          "hints": [
+            "p-test: p = 3/2 > 1, so it converges. Compute: lim_{b→∞} ∫₁ᵇ x^(−3/2) dx = lim_{b→∞} [−2x^(−1/2)]₁ᵇ.",
+            "= lim_{b→∞} (−2/√b + 2) = 0 + 2 = 2."
+          ]
+        },
+        {
+          "id": "ia-wp17",
+          "question": "Determine whether ∫₁^∞ 1/√x dx converges or diverges.",
+          "answer": "Diverges",
+          "hints": [
+            "p-test: p = 1/2 < 1, so it diverges. Verify: lim_{b→∞} ∫₁ᵇ x^(−1/2) dx = lim_{b→∞} [2√x]₁ᵇ.",
+            "= lim_{b→∞} (2√b − 2) = ∞. The integral diverges."
           ]
         },
         {
@@ -389,8 +442,63 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, identify u and dv using the LIATE rule. Then find du and v before applying the formula ∫ u dv = uv − ∫ v du.",
-      "lessonId": "integration-by-parts"
+      "initialPrompt": "For the first problem, which p-test applies? Write 1/x^(3/2) = x^(−3/2) and recall: ∫₁^∞ 1/xᵖ dx converges when p > 1.",
+      "lessonId": "improper-integrals"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "accumulation-functions",
+      "title": "Accumulation Functions",
+      "content": "An **accumulation function** has the variable in its limit of integration:\n\ng(x) = ∫ₐˣ f(t) dt\n\nRead it as a running total: g(x) is how much of f has piled up between a and x. Note that t is a dummy variable — it disappears once you integrate — while x is the actual input to g.\n\n**Everything you know about g comes from f, via FTC Part 1:** g'(x) = f(x).\n\n| To find out about g | Look at |\n|---|---|\n| g increasing / decreasing | sign of f |\n| g has a local max / min | where f changes sign (+ → − is a max, − → + is a min) |\n| g concave up / down | whether f is increasing / decreasing |\n| g has an inflection point | where f changes from increasing to decreasing (or back) |\n| g(a) | always 0 — no width, no accumulation |\n\nThis is the same first- and second-derivative analysis you already do, run one level down: f plays the role of g', and f' plays the role of g″.\n\n**Reading g from a graph of f:** when f is given as a graph (very common on the AP exam), g(x) is the *signed* area from a to x. Area above the axis adds, area below subtracts. Use geometry — triangles, rectangles, quarter-circles — rather than antiderivatives.\n\n**The Net Change Theorem** is the same idea in applied clothing: if f(t) is a *rate* of change, then\n\n∫ₐᵇ f(t) dt = (total change in the quantity from t = a to t = b)\n\nSo if water flows in at r(t) liters per minute, ∫₀⁴ r(t) dt is the liters added over those four minutes — not the amount in the tank, unless it started empty. Watch the units: a rate in liters/min integrated against dt in minutes gives liters.",
+      "initialPrompt": "If g(x) = ∫₀ˣ f(t) dt and f is negative on the whole interval [0, 5], what can you say about whether g is increasing or decreasing there? What is g(0)?",
+      "lessonId": "accumulation-functions"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "accumulation-functions",
+      "title": "I-Do: Accumulation Functions",
+      "examples": [
+        {
+          "problem": "Water flows into a tank at a rate of r(t) = 3 + 2t liters per minute. How much water enters the tank during the first 4 minutes?",
+          "solution": "**Recognize the structure:** r(t) is a *rate* (liters per minute), so the total accumulated amount is its integral — this is the Net Change Theorem.\n\n**Set up:**\nTotal = ∫₀⁴ (3 + 2t) dt\n\n**Antidifferentiate and apply FTC Part 2:**\nR(t) = 3t + t²\nR(4) − R(0) = (12 + 16) − 0 = **28 liters**\n\n**Check the units:** (liters/min) · (min) = liters ✓\n\n**Read the question carefully:** this is how much water *entered*, not how much is in the tank. Those agree only if the tank started empty."
+        },
+        {
+          "problem": "Let g(x) = ∫₁ˣ (t² − 3t + 2) dt. Find the intervals where g is increasing and decreasing, and classify any local extrema.",
+          "solution": "**Do not integrate.** FTC Part 1 gives g' for free:\n\ng'(x) = x² − 3x + 2 = (x − 1)(x − 2)\n\n**Find critical points:** g'(x) = 0 at x = 1 and x = 2.\n\n**Sign chart for g':**\n• x < 1: both factors negative → g' > 0, so g is **increasing**\n• 1 < x < 2: (x−1) > 0, (x−2) < 0 → g' < 0, so g is **decreasing**\n• x > 2: both factors positive → g' > 0, so g is **increasing**\n\n**Classify:**\n• At x = 1, g' changes + → −: **local maximum**\n• At x = 2, g' changes − → +: **local minimum**\n\n**One value you get for free:** g(1) = ∫₁¹ (…) dt = 0, since the interval has no width. So the local maximum value is exactly 0, and g is negative just to the right of it."
+        }
+      ],
+      "initialPrompt": "In example 2, we analyzed g without ever finding a formula for g. Which theorem made that possible, and what would have been the cost of integrating first?",
+      "lessonId": "accumulation-functions"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "accumulation-functions",
+      "title": "We-Do: Accumulation Functions — Guided Practice",
+      "problems": [
+        {
+          "id": "ia-wp10",
+          "question": "Let g(x) = ∫₀ˣ (t² − 4) dt. Find g'(x), and determine where g has a local minimum.",
+          "answer": "g'(x) = x² − 4. Local minimum at x = 2.",
+          "hints": [
+            "By FTC Part 1: g'(x) = x² − 4. Set g' = 0: x² = 4, x = ±2. Since domain starts at 0, consider x = 2.",
+            "g'(x) < 0 for 0 < x < 2, g'(x) > 0 for x > 2. Sign change − to + at x = 2 → local minimum."
+          ]
+        },
+        {
+          "id": "ia-wp11",
+          "question": "Find d/dx ∫₀^{x³} cos(t) dt.",
+          "answer": "3x² cos(x³)",
+          "hints": [
+            "FTC Part 1 with chain rule: d/dx ∫₀^{u} f(t) dt = f(u) · u'. Here u = x³, u' = 3x², f(t) = cos(t).",
+            "So d/dx = cos(x³) · 3x² = 3x² cos(x³)."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, apply FTC Part 1 directly to find g'(x). Then analyze g' like any first-derivative problem — set g' = 0 and check sign changes.",
+      "lessonId": "accumulation-functions"
     },
     {
       "type": "independent_practice",
@@ -453,8 +561,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "riemann-sums",
-      "lessonId": "riemann-sums"
+      "skill": "accumulation-functions",
+      "lessonId": "accumulation-functions"
     }
   ],
   "answerKeys": {
@@ -482,7 +590,9 @@
     "ia-wp16": "Converges to 2.",
     "ia-wp17": "Diverges.",
     "ia-wp18": "(1/3) ln|x+1| + (11/3) ln|x−2| + C.",
-    "ia-wp19": "ln|x/(x+1)| + C."
+    "ia-wp19": "ln|x/(x+1)| + C.",
+    "ia-wp20": "(x e^{2x})/2 − e^{2x}/4 + C.",
+    "ia-wp21": "1."
   },
   "lessons": [
     {

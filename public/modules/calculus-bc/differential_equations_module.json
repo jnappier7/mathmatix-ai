@@ -179,45 +179,90 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "skill": "euler-method",
-      "title": "Euler's Method & Logistic Growth",
-      "content": "**Euler's Method (BC Only):**\n\nWhen a DE cannot be solved analytically, we approximate the solution numerically.\n\n**The idea:** Start at a known point (x₀, y₀). Use the slope dy/dx = f(x₀, y₀) to take a small step forward:\n\ny_{n+1} = yₙ + f(xₙ, yₙ) · Δx\nx_{n+1} = xₙ + Δx\n\nRepeat to march along the solution curve.\n\n**Accuracy:** Smaller Δx → more steps → better approximation. Euler's method is a first-order method: halving Δx roughly halves the error.\n\n**Over/under-estimation:** If the solution is concave up, Euler underestimates. If concave down, Euler overestimates. (The linear step misses the curve's bend.)\n\n**Logistic Growth Model (BC Only):**\n\nPopulations don't grow exponentially forever — resources limit them.\n\ndP/dt = kP(1 − P/L)\n\nwhere k = intrinsic growth rate and L = carrying capacity.\n\n**Key features:**\n• **Equilibrium solutions:** P = 0 (unstable) and P = L (stable).\n• **Fastest growth at P = L/2** — this is the inflection point of the logistic curve.\n• **Maximum growth rate:** dP/dt|_{max} = kL/4 (occurs when P = L/2).\n• **Solution shape:** S-curve (sigmoid) starting slow, accelerating, then decelerating toward L.\n• This DE is separable — the solution is P(t) = L/(1 + Ae^(−kt)) where A depends on the initial condition.",
-      "initialPrompt": "If dP/dt = 0.5P(1 − P/1000) and P(0) = 100, what is the carrying capacity? At what population does the growth rate peak?",
-      "lessonId": "euler-method"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
       "skill": "logistic-growth",
-      "title": "We-Do: Logistic Growth — Guided Practice",
-      "problems": [
-        {
-          "id": "de-wp10",
-          "question": "A population follows dP/dt = 0.3P(1 \u2212 P/800), P(0) = 50. Find the carrying capacity, the population at which growth is fastest, and the maximum growth rate.",
-          "answer": "Carrying capacity = 800. Fastest growth at P = 400. Maximum rate = 60.",
-          "hints": [
-            "Logistic model dP/dt = kP(1 \u2212 P/L). Identify: k = 0.3, L = 800.",
-            "Carrying capacity = L = 800. Fastest at P = L/2 = 400. Max rate = kL/4 = 0.3(800)/4 = 60."
-          ]
-        },
-        {
-          "id": "de-wp11",
-          "question": "For dP/dt = 2P(1 \u2212 P/100), what are the equilibrium solutions? Classify each as stable or unstable.",
-          "answer": "P = 0 (unstable) and P = 100 (stable).",
-          "hints": [
-            "Equilibrium: dP/dt = 0 when 2P(1 \u2212 P/100) = 0 \u2192 P = 0 or P = 100.",
-            "For 0 < P < 100: dP/dt > 0 (solutions increase toward 100). For P > 100: dP/dt < 0 (solutions decrease toward 100). So P = 0 is unstable, P = 100 is stable."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, identify k and L in the logistic model dP/dt = kP(1 \u2212 P/L). The carrying capacity is L, fastest growth occurs at P = L/2.",
+      "title": "Exponential Growth/Decay & Logistic Growth (BC)",
+      "content": "Two differential equations describe most population and decay models you'll meet. Both are separable — you already have the technique; this lesson is about recognizing them and reading their behavior.\n\n**Exponential Growth and Decay:**\n\n**dy/dt = ky**  —  \"the rate of change is proportional to the amount present.\"\n\nSeparating variables gives the solution you should know on sight:\n\n**y = y₀e^{kt}**\n\nwhere y₀ is the initial amount. k > 0 is growth; k < 0 is decay.\n\n• **Doubling time:** set e^{kt} = 2 → t = ln 2 / k\n• **Half-life:** set e^{kt} = 1/2 → t = ln(1/2)/k = −ln 2/k (positive, since k < 0 for decay)\n\nUnlimited exponential growth is the model's weakness: it predicts a population that grows forever, which no real environment allows.\n\n**Logistic Growth Model (BC Only):**\n\nPopulations don't grow exponentially forever — resources limit them.\n\n**dP/dt = kP(1 − P/L)**\n\nwhere k = intrinsic growth rate and L = **carrying capacity**.\n\n**Read the equation as exponential growth with a brake.** When P is small, P/L ≈ 0 and the factor (1 − P/L) ≈ 1, so it behaves like dP/dt = kP. As P approaches L, that factor shrinks toward 0 and growth stalls.\n\n**Key features:**\n• **Equilibrium solutions:** P = 0 (unstable) and P = L (stable). These are where dP/dt = 0 — set each factor to zero. A population near L is pulled toward L; a population near 0 moves away from it.\n• **Fastest growth at P = L/2** — the inflection point of the logistic curve, halfway to capacity.\n• **Maximum growth rate:** dP/dt|max = kL/4, which occurs when P = L/2.\n• **Solution shape:** an S-curve (sigmoid) — slow, then accelerating, then decelerating toward L.\n• **Long-run behavior:** for any P(0) > 0, P → L as t → ∞, regardless of the starting value.\n• The DE is separable, and its solution is P(t) = L/(1 + Ae^{−kt}), where A comes from the initial condition.\n\n**How these questions are usually asked:** you're given the DE and asked for the carrying capacity, the population at fastest growth, and the maximum growth rate. All three are read off k and L directly — L from the equation, then L/2 and kL/4. No solving required.",
+      "initialPrompt": "If dP/dt = 0.5P(1 − P/1000) and P(0) = 100, what is the carrying capacity? At what population does the growth rate peak?",
       "lessonId": "exponential-logistic"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
+      "skill": "logistic-growth",
+      "title": "I-Do: Exponential & Logistic Growth",
+      "examples": [
+        {
+          "problem": "A bacteria culture grows so that dP/dt = 0.4P, with P(0) = 200. Find P(t), and find how long it takes the culture to double.",
+          "solution": "**Recognize the form:** dP/dt = kP is exponential growth with k = 0.4. Its solution is P = P₀e^{kt} — but let's separate variables to see why.\n\n**Separate and integrate:**\ndP/P = 0.4 dt\n∫dP/P = ∫0.4 dt\nln|P| = 0.4t + C\nP = e^{0.4t + C} = Ae^{0.4t}\n\n**Apply the initial condition:** P(0) = 200 gives A = 200.\n\n**P(t) = 200e^{0.4t}**\n\n**Doubling time — set P = 400:**\n400 = 200e^{0.4t}\n2 = e^{0.4t}\nln 2 = 0.4t\nt = ln 2 / 0.4 ≈ **1.73 time units**\n\n**Note the initial amount cancelled out.** Doubling time is ln2/k no matter where you start — a culture of 200 and a culture of 2,000,000 both double in 1.73. That is exactly the property real populations lose once resources run short, which is what the logistic model fixes."
+        },
+        {
+          "problem": "A population follows dP/dt = 0.5P(1 − P/1000), P(0) = 100. Find the carrying capacity, the population at which growth is fastest, and the maximum growth rate.",
+          "solution": "**Identify parameters:**\nThis is the logistic model dP/dt = kP(1 − P/L) with k = 0.5 and L = 1000.\n\n**Carrying capacity:** L = **1000**\n\n**Fastest growth occurs at P = L/2:**\nP = 1000/2 = **500**\n\n**Maximum growth rate (at P = 500):**\ndP/dt = 0.5(500)(1 − 500/1000) = 0.5(500)(0.5) = **125**\n\n**Alternatively:** dP/dt|_{max} = kL/4 = 0.5(1000)/4 = 125 ✓\n\n**Interpretation:** At P = 500, the population adds 125 individuals per unit time — the fastest rate possible under this model. After P exceeds 500, growth decelerates as the population approaches the carrying capacity of 1000."
+        }
+      ],
+      "initialPrompt": "In example 1, the doubling time didn't depend on the starting population. Is that realistic for a bacteria culture in a petri dish? What eventually breaks it?",
+      "lessonId": "exponential-logistic"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "logistic-growth",
+      "title": "We-Do: Exponential & Logistic Growth",
+      "problems": [
+        {
+          "id": "de-wp10",
+          "question": "A population follows dP/dt = 0.3P(1 − P/800), P(0) = 50. Find the carrying capacity, the population at which growth is fastest, and the maximum growth rate.",
+          "answer": "Carrying capacity = 800. Fastest growth at P = 400. Maximum rate = 60.",
+          "hints": [
+            "Logistic model dP/dt = kP(1 − P/L). Identify: k = 0.3, L = 800.",
+            "Carrying capacity = L = 800. Fastest at P = L/2 = 400. Max rate = kL/4 = 0.3(800)/4 = 60."
+          ]
+        },
+        {
+          "id": "de-wp11",
+          "question": "For dP/dt = 2P(1 − P/100), what are the equilibrium solutions? Classify each as stable or unstable.",
+          "answer": "P = 0 (unstable) and P = 100 (stable).",
+          "hints": [
+            "Equilibrium: dP/dt = 0 when 2P(1 − P/100) = 0 → P = 0 or P = 100.",
+            "For 0 < P < 100: dP/dt > 0 (solutions increase toward 100). For P > 100: dP/dt < 0 (solutions decrease toward 100). So P = 0 is unstable, P = 100 is stable."
+          ]
+        },
+        {
+          "id": "de-wp9",
+          "question": "A population follows dP/dt = 0.2P(1 − P/500), P(0) = 50. Find the carrying capacity and the population at which growth is fastest. What is the maximum growth rate?",
+          "answer": "Carrying capacity = 500. Fastest growth at P = 250. Maximum rate = 25.",
+          "hints": [
+            "Logistic model: k = 0.2, L = 500. Carrying capacity: L = 500. Fastest growth at P = L/2 = 250.",
+            "Max rate: dP/dt = 0.2(250)(1 − 250/500) = 0.2(250)(0.5) = 25. Or use kL/4 = 0.2(500)/4 = 25."
+          ]
+        },
+        {
+          "id": "de-wp12",
+          "question": "A radioactive sample decays according to dy/dt = −0.05y with y(0) = 80 grams. Find y(t) and the half-life of the sample.",
+          "answer": "y(t) = 80e^{−0.05t}; half-life = ln2/0.05 ≈ 13.86 time units",
+          "hints": [
+            "dy/dt = ky with k = −0.05, so y = y₀e^{kt} = 80e^{−0.05t}.",
+            "Half-life: set y = 40. 40 = 80e^{−0.05t} → 1/2 = e^{−0.05t} → −ln 2 = −0.05t → t = ln2/0.05 ≈ 13.86. Note the 80 cancels — half-life doesn't depend on how much you start with."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, identify k and L in the logistic model dP/dt = kP(1 − P/L). The carrying capacity is L, fastest growth occurs at P = L/2.",
+      "lessonId": "exponential-logistic"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
       "skill": "euler-method",
-      "title": "I-Do: Euler's Method & Logistic Growth",
+      "title": "Euler's Method (BC)",
+      "content": "**Euler's Method (BC Only):**\n\nMost differential equations cannot be solved in closed form — separation of variables works on a narrow class, and the rest need a numerical approach. Euler's method is the simplest one: follow the slope field in small straight steps.\n\n**The idea:** start at a known point (x₀, y₀). The DE tells you the slope right there. Use it to take a small step forward along the tangent line:\n\n**y_{n+1} = yₙ + f(xₙ, yₙ) · Δx**\n**x_{n+1} = xₙ + Δx**\n\nThen recompute the slope at the new point and repeat, marching along the solution curve one tangent segment at a time.\n\n**Organize the work in a table** — columns for xₙ, yₙ, the slope f(xₙ, yₙ), and the change Δy = slope · Δx. The most common error isn't the calculus, it's bookkeeping: using the *old* slope after updating y, or forgetting to update x.\n\n**How many steps?** From x = 1 to x = 2 with Δx = 0.5 is **two** steps, not one — count (end − start)/Δx.\n\n**Accuracy:** smaller Δx → more steps → better approximation. Euler's method is first-order: halving Δx roughly halves the error.\n\n**Over- or under-estimation:** each step follows a straight tangent line while the true solution curves away from it.\n• Solution **concave up** → Euler **under**estimates (the curve bends up away from the tangent)\n• Solution **concave down** → Euler **over**estimates\n\nThis is the same tangent-line reasoning as linearization — Euler's method is just linearization applied repeatedly.",
+      "initialPrompt": "Given dy/dx = x + y with y(1) = 0, what is the slope at the starting point? If Δx = 0.5, what is your estimate for y(1.5)?",
+      "lessonId": "euler-method"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "euler-method",
+      "title": "I-Do: Euler's Method",
       "examples": [
         {
           "problem": "Use Euler's method with Δx = 0.5 to approximate y(2) given dy/dx = x + y, y(1) = 0.",
@@ -226,10 +271,6 @@
         {
           "problem": "Use Euler's method with Δx = 0.1 to approximate y(0.3) given dy/dx = y, y(0) = 1.",
           "solution": "**Step 1:** x₀ = 0, y₀ = 1\nSlope: f(0, 1) = 1\ny₁ = 1 + 1(0.1) = 1.1, x₁ = 0.1\n\n**Step 2:** x₁ = 0.1, y₁ = 1.1\nSlope: f(0.1, 1.1) = 1.1\ny₂ = 1.1 + 1.1(0.1) = 1.21, x₂ = 0.2\n\n**Step 3:** x₂ = 0.2, y₂ = 1.21\nSlope: f(0.2, 1.21) = 1.21\ny₃ = 1.21 + 1.21(0.1) = 1.331, x₃ = 0.3\n\n**Approximation: y(0.3) ≈ 1.331**\n\n**Compare to exact:** The exact solution is y = eˣ, so y(0.3) = e^(0.3) ≈ 1.3499. Euler underestimates because the solution eˣ is concave up."
-        },
-        {
-          "problem": "A population follows dP/dt = 0.5P(1 − P/1000), P(0) = 100. Find the carrying capacity, the population at which growth is fastest, and the maximum growth rate.",
-          "solution": "**Identify parameters:**\nThis is the logistic model dP/dt = kP(1 − P/L) with k = 0.5 and L = 1000.\n\n**Carrying capacity:** L = **1000**\n\n**Fastest growth occurs at P = L/2:**\nP = 1000/2 = **500**\n\n**Maximum growth rate (at P = 500):**\ndP/dt = 0.5(500)(1 − 500/1000) = 0.5(500)(0.5) = **125**\n\n**Alternatively:** dP/dt|_{max} = kL/4 = 0.5(1000)/4 = 125 ✓\n\n**Interpretation:** At P = 500, the population adds 125 individuals per unit time — the fastest rate possible under this model. After P exceeds 500, growth decelerates as the population approaches the carrying capacity of 1000."
         }
       ],
       "initialPrompt": "In example 2, Euler's method gave 1.331 while the exact answer is about 1.35. If you halved the step size to Δx = 0.05, would the approximation improve? Why?",
@@ -239,7 +280,7 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "euler-method",
-      "title": "We-Do: Euler's Method & Logistic Growth",
+      "title": "We-Do: Euler's Method",
       "problems": [
         {
           "id": "de-wp7",
@@ -257,15 +298,6 @@
           "hints": [
             "Step 1: (0, 4), slope = −4, y₁ = 4 + (−4)(0.5) = 2, x₁ = 0.5.",
             "Step 2: (0.5, 2), slope = −2, y₂ = 2 + (−2)(0.5) = 1, x₂ = 1. Approximation: y(1) ≈ 1. (Exact: y = 4e⁻ˣ, y(1) = 4/e ≈ 1.472.)"
-          ]
-        },
-        {
-          "id": "de-wp9",
-          "question": "A population follows dP/dt = 0.2P(1 − P/500), P(0) = 50. Find the carrying capacity and the population at which growth is fastest. What is the maximum growth rate?",
-          "answer": "Carrying capacity = 500. Fastest growth at P = 250. Maximum rate = 25.",
-          "hints": [
-            "Logistic model: k = 0.2, L = 500. Carrying capacity: L = 500. Fastest growth at P = L/2 = 250.",
-            "Max rate: dP/dt = 0.2(250)(1 − 250/500) = 0.2(250)(0.5) = 25. Or use kL/4 = 0.2(500)/4 = 25."
           ]
         }
       ],
@@ -354,7 +386,8 @@
     "de-yp5": "Carrying capacity = 2000. Fastest at P = 1000. Maximum rate = 200.",
     "de-yp6": "y = −ln(2 − eˣ).",
     "de-wp10": "L = 800. Fastest at P = 400. Max rate = 60.",
-    "de-wp11": "P = 0 (unstable), P = 100 (stable)."
+    "de-wp11": "P = 0 (unstable), P = 100 (stable).",
+    "de-wp12": "y(t) = 80e^{−0.05t}; half-life = ln2/0.05 ≈ 13.86 time units."
   },
   "lessons": [
     {

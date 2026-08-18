@@ -50,64 +50,6 @@
       "lessonId": "scatter-plots"
     },
     {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "title": "Line of Best Fit: Modeling Trends",
-      "skill": "line-of-best-fit",
-      "content": "When a scatter plot shows a linear association, we draw a line of best fit (trend line) to model the relationship.\n\n**How to draw it:**\n1. Look at the overall direction of the data.\n2. Draw a straight line that follows the trend — roughly equal numbers of points above and below.\n3. The line does NOT need to pass through any actual data points (though it might).\n\n**Writing the equation:**\n1. Pick two points ON the line (not necessarily data points — points on the line itself).\n2. Calculate slope: m = (y₂ − y₁)/(x₂ − x₁).\n3. Use point-slope or plug into y = mx + b to find b.\n\n**Making predictions:**\n- Interpolation: predicting within the range of your data. More reliable.\n- Extrapolation: predicting outside the range. Less reliable — the trend may not continue.\n\n**Interpreting slope and y-intercept:**\n- Slope: 'For each additional unit of x, y changes by m units.'\n- Y-intercept: 'When x = 0, the predicted y is b.' (May or may not make sense in context.)",
-      "keyPoints": [
-        "A line of best fit captures the overall linear trend in a scatter plot",
-        "Draw the line with roughly equal points above and below",
-        "Use two points ON the line to write its equation in y = mx + b form",
-        "Slope tells the rate of change in context; y-intercept is the starting value",
-        "Interpolation (within data range) is more reliable than extrapolation (outside)"
-      ],
-      "lessonId": "line-of-best-fit"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "interpret-slope-intercept",
-      "title": "We-Do: Interpret Slope Intercept — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for interpret slope intercept.",
-          "hint": "Apply the concepts of interpret slope intercept.",
-          "solution": "Step-by-step solution for interpret slope intercept."
-        }
-      ],
-      "lessonId": "interpret-data"
-    },
-    {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "title": "Two-Way Tables & Correlation vs. Causation",
-      "skill": "two-way-tables",
-      "content": "**Two-Way Frequency Tables:** When both variables are categorical (not numerical), we use a two-way table instead of a scatter plot.\n\nThe table shows counts for every combination of the two categories. Row and column totals help us calculate relative frequencies (percentages).\n\n**Finding associations:**\nCompare conditional relative frequencies. Example: If 75% of boys like dogs but only 58% of girls do, there's an association between gender and dog preference.\n\n**Correlation vs. Causation — CRITICAL DISTINCTION:**\n- **Correlation:** Two variables are associated — they change together. (Observable in data.)\n- **Causation:** One variable CAUSES the other to change. (Much harder to prove.)\n\n**Correlation does NOT imply causation!**\nExample: Ice cream sales and drowning incidents both increase in summer. Correlation? Yes. Does ice cream cause drowning? No! The confounding variable is hot weather — it causes BOTH.\n\n**Confounding variable:** A hidden third variable that influences both variables, creating a misleading association.",
-      "keyPoints": [
-        "Two-way tables organize categorical data into rows and columns with totals",
-        "Compare conditional relative frequencies to identify associations",
-        "Correlation = two variables change together; causation = one causes the other",
-        "Correlation does NOT imply causation — always look for confounding variables",
-        "Confounding variable: a hidden factor that affects both measured variables"
-      ],
-      "lessonId": "two-way-tables-correlation"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "correlation-causation",
-      "title": "We-Do: Correlation Causation — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for correlation causation.",
-          "hint": "Apply the concepts of correlation causation.",
-          "solution": "Step-by-step solution for correlation causation."
-        }
-      ],
-      "lessonId": "two-way-tables-correlation"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Describing Scatter Plots: Worked Examples",
@@ -127,48 +69,6 @@
         }
       ],
       "lessonId": "scatter-plots"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "title": "Line of Best Fit: Worked Examples",
-      "skill": "line-of-best-fit",
-      "examples": [
-        {
-          "problem": "Using the study hours vs. test score data, draw a line of best fit and write its equation.\nData: (1,55), (2,60), (3,72), (4,78), (5,85), (6,90)",
-          "solution": "Draw a line through the data. Two points on the line (choosing representative points): (1, 55) and (6, 90).\n\nSlope: m = (90 − 55)/(6 − 1) = 35/5 = 7.\nY-intercept: 55 = 7(1) + b → b = 48.\nEquation: y = 7x + 48.\n\nInterpretation:\n- Slope: Each additional hour of studying is associated with a 7-point increase in test score.\n- Y-intercept: A student who studies 0 hours would score about 48 (just an estimate).\n\nPredict for 8 hours: y = 7(8) + 48 = 104. But 100 is the max score — this is extrapolation beyond the data range, so interpret cautiously."
-        },
-        {
-          "problem": "Temperature (°F) vs. lemonade stand sales:\nTemp: 60, 65, 70, 75, 80, 85\nSales ($): 100, 130, 175, 210, 250, 280\n\nWrite the equation of the line of best fit using (60, 100) and (80, 250).",
-          "solution": "Slope: m = (250 − 100)/(80 − 60) = 150/20 = 7.5.\nY-intercept: 100 = 7.5(60) + b → 100 = 450 + b → b = −350.\nEquation: y = 7.5x − 350.\n\nInterpretation:\n- Slope: Each 1°F increase in temperature is associated with $7.50 more in sales.\n- Y-intercept: At 0°F, the model predicts −$350 (nonsensical — don't extrapolate that far!).\n\nPredict at 90°F: y = 7.5(90) − 350 = 675 − 350 = $325."
-        },
-        {
-          "problem": "Data on shoe size vs. math test score:\nShoe size: 6, 7, 8, 9, 10, 11\nMath score: 82, 75, 91, 68, 85, 78\n\nShould we draw a line of best fit?",
-          "solution": "Plot the points: (6,82), (7,75), (8,91), (9,68), (10,85), (11,78).\n\nThe points are scattered randomly — no clear linear pattern. Scores go up, down, up, down with no consistent direction.\n\nConclusion: There is NO association between shoe size and math score. A line of best fit would not be meaningful here.\n\nThis makes sense: shoe size has no logical connection to math ability. Any apparent pattern would be coincidence."
-        }
-      ],
-      "lessonId": "line-of-best-fit"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "title": "Two-Way Tables & Correlation vs. Causation: Worked Examples",
-      "skill": "two-way-tables",
-      "examples": [
-        {
-          "problem": "A survey of 120 students asked about pet preference:\n\n| | Likes Dogs | Doesn't Like Dogs | Total |\n|---|---|---|---|\n| Boys | 45 | 15 | 60 |\n| Girls | 35 | 25 | 60 |\n| Total | 80 | 40 | 120 |\n\nIs there an association between gender and liking dogs?",
-          "solution": "Calculate conditional relative frequencies:\nBoys who like dogs: 45/60 = 75%.\nGirls who like dogs: 35/60 ≈ 58.3%.\n\nCompare: 75% vs. 58.3%. Boys are more likely to like dogs than girls in this sample.\n\nConclusion: There IS an association between gender and liking dogs — boys show a stronger preference for dogs.\n\nNote: This doesn't prove gender CAUSES the difference. Other factors could be involved."
-        },
-        {
-          "problem": "Research shows that as ice cream sales increase, drowning incidents also increase. Does ice cream cause drowning?",
-          "solution": "Correlation: Yes — ice cream sales and drowning rates are positively correlated. They increase together.\n\nCausation: Absolutely NOT. Eating ice cream does not cause drowning.\n\nConfounding variable: TEMPERATURE (hot weather). In summer, it's hot → people buy more ice cream AND people swim more → more drownings.\n\nBoth variables are driven by the same hidden cause. Removing the confounding variable would eliminate the apparent relationship.\n\nLesson: Correlation does NOT imply causation. Always ask: 'Could a third variable explain BOTH?'"
-        },
-        {
-          "problem": "A survey of 130 students on phone ownership:\n\n| | Has Phone | No Phone | Total |\n|---|---|---|---|\n| Grade 7 | 42 | 18 | 60 |\n| Grade 8 | 56 | 14 | 70 |\n| Total | 98 | 32 | 130 |\n\nIs there an association between grade and phone ownership?",
-          "solution": "Conditional relative frequencies:\nGrade 7 with phone: 42/60 = 70%.\nGrade 8 with phone: 56/70 = 80%.\n\nCompare: 80% vs. 70%. Grade 8 students are more likely to have phones.\n\nAssociation: Yes, there appears to be an association between being in 8th grade and phone ownership. This makes intuitive sense — older students are more likely to have phones.\n\nNote: The percentages are fairly close (70% vs. 80%), so the association is moderate, not overwhelming."
-        }
-      ],
-      "lessonId": "two-way-tables-correlation"
     },
     {
       "type": "guided_practice",
@@ -207,6 +107,39 @@
       "lessonId": "scatter-plots"
     },
     {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Line of Best Fit: Modeling Trends",
+      "skill": "line-of-best-fit",
+      "content": "When a scatter plot shows a linear association, we draw a **line of best fit** (trend line) to model the relationship.\n\n**How to draw it:**\n1. Look at the overall direction of the data.\n2. Draw a straight line that follows the trend — roughly equal numbers of points above and below.\n3. The line does NOT need to pass through any actual data points (though it might).\n\nDon't just connect the first point to the last one — that ignores everything in between, and one unusual endpoint would swing the whole line.\n\n**Draw one only if a line fits.** If the points show no association, or follow an obvious curve, a trend line describes something that isn't there. Deciding *whether* to draw one is part of the work.\n\n**Writing the equation:**\n1. Pick two points **ON the line** — not necessarily data points, points on the line itself.\n2. Calculate the slope: m = (y₂ − y₁)/(x₂ − x₁).\n3. Substitute one of those points into y = mx + b and solve for b.\n4. Write the equation as y = mx + b.\n\nDifferent people drawing by hand get slightly different lines, and that's expected — a trend line is a reasonable model, not a unique right answer.\n\n**Making predictions:**\n- **Interpolation:** predicting *within* the range of your data. More reliable — real observations support the pattern there.\n- **Extrapolation:** predicting *outside* the range. Less reliable — the trend may not continue, and far enough out a model produces impossible values like a negative test score.\n\nSubstitute the x-value into your equation to predict y; substitute a y-value and solve for x to answer the reverse question.",
+      "keyPoints": [
+        "A line of best fit captures the overall linear trend in a scatter plot",
+        "Draw the line with roughly equal points above and below",
+        "Use two points ON the line to write its equation in y = mx + b form",
+        "Slope tells the rate of change in context; y-intercept is the starting value",
+        "Interpolation (within data range) is more reliable than extrapolation (outside)"
+      ],
+      "lessonId": "line-of-best-fit",
+      "initialPrompt": "You've drawn a trend line through a scatter plot. Why do you pick two points that lie ON your line rather than two of the original data points?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Line of Best Fit: Worked Examples",
+      "skill": "line-of-best-fit",
+      "examples": [
+        {
+          "problem": "Using the study hours vs. test score data, draw a line of best fit and write its equation.\nData: (1,55), (2,60), (3,72), (4,78), (5,85), (6,90)",
+          "solution": "Draw a line through the data. Two points on the line (choosing representative points): (1, 55) and (6, 90).\n\nSlope: m = (90 − 55)/(6 − 1) = 35/5 = 7.\nY-intercept: 55 = 7(1) + b → b = 48.\nEquation: y = 7x + 48.\n\nInterpretation:\n- Slope: Each additional hour of studying is associated with a 7-point increase in test score.\n- Y-intercept: A student who studies 0 hours would score about 48 (just an estimate).\n\nPredict for 8 hours: y = 7(8) + 48 = 104. But 100 is the max score — this is extrapolation beyond the data range, so interpret cautiously."
+        },
+        {
+          "problem": "Temperature (°F) vs. lemonade stand sales:\nTemp: 60, 65, 70, 75, 80, 85\nSales ($): 100, 130, 175, 210, 250, 280\n\nWrite the equation of the line of best fit using (60, 100) and (80, 250).",
+          "solution": "Slope: m = (250 − 100)/(80 − 60) = 150/20 = 7.5.\nY-intercept: 100 = 7.5(60) + b → 100 = 450 + b → b = −350.\nEquation: y = 7.5x − 350.\n\nInterpretation:\n- Slope: Each 1°F increase in temperature is associated with $7.50 more in sales.\n- Y-intercept: At 0°F, the model predicts −$350 (nonsensical — don't extrapolate that far!).\n\nPredict at 90°F: y = 7.5(90) − 350 = 675 − 350 = $325."
+        }
+      ],
+      "lessonId": "line-of-best-fit"
+    },
+    {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "title": "Line of Best Fit Practice",
@@ -229,6 +162,82 @@
             "Slope = (50 − 10)/(90 − 70). Then use one point to find b.",
             "Prediction at 95°F is slight extrapolation — just one step beyond the data."
           ]
+        }
+      ],
+      "lessonId": "line-of-best-fit"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "interpret-slope-intercept",
+      "title": "Interpreting the Model in Context",
+      "content": "An equation like y = −3x + 95 is not the answer to a real question — it's a tool. This lesson is about saying what its numbers **mean**, in the units of the situation.\n\n**Interpreting the slope.** The slope is a **rate of change**, and its units are *y-units per x-unit*:\n\n\"For each additional unit of x, y changes by about m units.\"\n\nFor y = −3x + 95 modelling absences (x) against final grade (y): each additional absence is associated with about **3 points lower** on the final grade. Note that a negative slope means a decrease — say \"lower,\" not just \"−3.\"\n\n**Interpreting the y-intercept.** The y-intercept is the predicted y **when x = 0**:\n\n\"With zero absences, the predicted final grade is 95.\"\n\n**Sometimes the intercept is meaningless.** For a trend line relating shoe size to height, y = 3.5x + 120 predicts a height of 120 cm for someone with **shoe size 0** — a person who doesn't exist. The number is real; the situation is not. Saying so is the correct answer, not a dodge. The intercept is meaningful when x = 0 is a real possibility (zero absences, zero months of membership, day zero) and meaningless when it isn't.\n\n**Say \"is associated with,\" not \"causes.\"** A trend line describes a pattern in data. It is not evidence that x drives y — a lurking variable, or the reverse arrow, would produce the same line.\n\n**Know where the model stops applying.** The equation was built from data over a particular range. Push far outside it and the prediction stops being trustworthy long before it becomes obviously absurd — the used car worth −$5,000, the test score of 130. When a prediction comes out impossible, the model hasn't broken; it's being used where it doesn't apply.\n\n**A checklist for any \"interpret\" question:**\n1. What does the slope mean, **with units** and a direction (increase or decrease)?\n2. What does the intercept mean — and **is x = 0 possible** here?\n3. Is the prediction interpolation or extrapolation, and how much should we trust it?",
+      "initialPrompt": "A trend line for used cars is y = −1500x + 22000, where x is age in years and y is value in dollars. What do the −1500 and the 22000 each mean in plain language?",
+      "lessonId": "interpret-data"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "interpret-slope-intercept",
+      "title": "Interpreting the Model: Worked Examples",
+      "examples": [
+        {
+          "problem": "A trend line for a seedling's growth is y = 0.8x + 5, where x is days since planting and y is height in centimetres. Interpret the slope and the y-intercept. Then predict the height at 30 days, given that the data covered days 0 through 20, and comment on the prediction.",
+          "solution": "**Slope — a rate, with units.** The slope is 0.8, and the units are y-units per x-unit: **centimetres per day**.\n\n\"The seedling grows about **0.8 cm per day**.\" Positive slope, so it's growing, not shrinking.\n\n**Y-intercept — the value at x = 0.** Here x = 0 is the day of planting, which is a perfectly real moment.\n\n\"At planting, the seedling was about **5 cm tall**.\" **This intercept is meaningful** — unlike, say, a shoe size of 0.\n\n**Prediction at 30 days:**\ny = 0.8(30) + 5 = 24 + 5 = **29 cm**\n\n**Comment — this is extrapolation.** The data only covered days 0 to 20, and 30 is outside that. Trust it less than a prediction inside the range.\n\nAnd there's a reason specific to this situation: plants don't grow at a constant rate forever. Run the model to day 400 and it predicts a 325 cm seedling. The linear trend describes the early growth we measured, not the plant's whole life."
+        },
+        {
+          "problem": "A gym's total cost is modelled by y = 25x + 40, where x is the number of months and y is the total paid in dollars. Interpret both numbers, and find the total cost after 6 months.",
+          "solution": "**Slope:** 25, in dollars per month.\n\n\"The membership costs **$25 per month**.\"\n\n**Y-intercept:** 40, the predicted total when x = 0 months.\n\n\"There is a **$40 joining fee** charged before any months are paid for.\" **Meaningful** — zero months is a real situation (the moment you sign up), and the $40 is what you'd have paid.\n\n**Total after 6 months:**\ny = 25(6) + 40 = 150 + 40 = **$190**\n\n**Compare the two intercepts across these examples.** Both were numbers; only some are meaningful. A $40 joining fee describes something that really happens at x = 0. A height of 120 cm at shoe size 0 does not, because nobody has shoe size 0. Deciding which kind you have is the interpretation."
+        }
+      ],
+      "initialPrompt": "In example 1, the intercept was meaningful and in the shoe-size model it wasn't. What decides which one you have?",
+      "lessonId": "interpret-data"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "interpret-slope-intercept",
+      "title": "We-Do: Interpret Slope Intercept — Guided Practice",
+      "problems": [
+        {
+          "id": "sb-si1",
+          "question": "A trend line for used cars is y = -1500x + 22000, where x is the car's age in years and y is its value in dollars. Interpret the slope and the y-intercept, then predict the value of a 6-year-old car.",
+          "answer": "Slope -1500: the car loses about $1,500 in value for each additional year of age — negative because value is falling. Y-intercept 22000: at x = 0 years old, the predicted value is $22,000, which is the price when new. Prediction at 6 years: y = -1500(6) + 22000 = -9000 + 22000 = $13,000.",
+          "hints": [
+            "Interpret each number with its units attached: the slope is dollars per year, the intercept is dollars.",
+            "The slope is negative — say what that means about the value as the car ages, not just \"it goes down by 1500\".",
+            "For the prediction, substitute x = 6. Multiply before adding, and keep the sign on the 1500."
+          ]
+        },
+        {
+          "id": "sb-si2",
+          "question": "A trend line relating adult shoe size (x) to height in centimetres (y) is y = 3.5x + 120. Interpret both the slope and the y-intercept. Does the y-intercept make sense here?",
+          "answer": "Slope 3.5: for each increase of one shoe size, predicted height rises by about 3.5 cm. Y-intercept 120: the model predicts a height of 120 cm for someone with shoe size 0. That does NOT make sense — nobody has shoe size 0, so x = 0 sits far outside the real data and the intercept is just where the line happens to cross the axis. The intercept is mathematically necessary but has no meaning in this context.",
+          "hints": [
+            "Interpret the slope first — it is the reliable one. What does one extra shoe size predict about height?",
+            "The intercept always answers \"what does the model predict when x = 0?\" So ask: what is shoe size 0?",
+            "There is no such shoe size, so x = 0 is outside any real data. A y-intercept can be meaningless in context and the model still be useful — that is the point here."
+          ]
+        },
+        {
+          "id": "sb-si3",
+          "question": "A line of best fit for hours of TV per day (x) versus test score (y) passes through the points (2, 46) and (8, 28). Write its equation, then interpret the slope and y-intercept.",
+          "answer": "Slope: m = (28 - 46)/(8 - 2) = -18/6 = -3. Find b using (2, 46): 46 = -3(2) + b, so 46 = -6 + b and b = 52. Equation: y = -3x + 52. Check with the other point: -3(8) + 52 = 28 ✓. Slope -3: each additional hour of daily TV is associated with a test score about 3 points lower. Y-intercept 52: a student watching no TV is predicted to score 52.",
+          "hints": [
+            "These are points ON the line, not raw data points — which is exactly what you want for finding its equation.",
+            "m = (28 - 46)/(8 - 2). Watch the order: keep the same point first in both the numerator and the denominator.",
+            "With m = -3, substitute one point into y = mx + b to find b, then verify with the OTHER point. Interpret both numbers with units."
+          ]
+        },
+        {
+          "id": "sb-si4",
+          "question": "Using y = -3x + 52 from the previous problem, where the data covered 0 to 8 hours of TV: predict the score for a student who watches 5 hours, and for one who watches 20 hours. Which prediction should you trust, and why?",
+          "answer": "At 5 hours: y = -3(5) + 52 = 37. At 20 hours: y = -3(20) + 52 = -8. The 5-hour prediction is INTERPOLATION — 5 sits inside the 0-to-8 range the data covered — so it is reasonably trustworthy. The 20-hour prediction is EXTRAPOLATION, far outside that range, and the answer proves the model has broken down: a test score of -8 is impossible. A linear model only describes the region where you actually collected data.",
+          "hints": [
+            "Substitute both values first, then compare each x against the range of the original data (0 to 8 hours).",
+            "One prediction lands inside that range and one lands far outside. There are names for these: interpolation and extrapolation.",
+            "Look hard at the second answer. A negative test score cannot happen — that impossible result is the evidence that extrapolating this far is not valid."
+          ]
         },
         {
           "id": "sb-wp6",
@@ -240,7 +249,44 @@
           ]
         }
       ],
-      "lessonId": "line-of-best-fit"
+      "lessonId": "interpret-data",
+      "initialPrompt": "A used-car trend line is y = -1500x + 22000, with x in years and y in dollars. Take the -1500 first: what does it mean in this situation, and why is it negative?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Two-Way Tables & Correlation vs. Causation",
+      "skill": "two-way-tables",
+      "content": "**Two-Way Frequency Tables:** When both variables are categorical (not numerical), we use a two-way table instead of a scatter plot.\n\nThe table shows counts for every combination of the two categories. Row and column totals help us calculate relative frequencies (percentages).\n\n**Finding associations:**\nCompare conditional relative frequencies. Example: If 75% of boys like dogs but only 58% of girls do, there's an association between gender and dog preference.\n\n**Correlation vs. Causation — CRITICAL DISTINCTION:**\n- **Correlation:** Two variables are associated — they change together. (Observable in data.)\n- **Causation:** One variable CAUSES the other to change. (Much harder to prove.)\n\n**Correlation does NOT imply causation!**\nExample: Ice cream sales and drowning incidents both increase in summer. Correlation? Yes. Does ice cream cause drowning? No! The confounding variable is hot weather — it causes BOTH.\n\n**Confounding variable:** A hidden third variable that influences both variables, creating a misleading association.",
+      "keyPoints": [
+        "Two-way tables organize categorical data into rows and columns with totals",
+        "Compare conditional relative frequencies to identify associations",
+        "Correlation = two variables change together; causation = one causes the other",
+        "Correlation does NOT imply causation — always look for confounding variables",
+        "Confounding variable: a hidden factor that affects both measured variables"
+      ],
+      "lessonId": "two-way-tables-correlation"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Two-Way Tables & Correlation vs. Causation: Worked Examples",
+      "skill": "two-way-tables",
+      "examples": [
+        {
+          "problem": "A survey of 120 students asked about pet preference:\n\n| | Likes Dogs | Doesn't Like Dogs | Total |\n|---|---|---|---|\n| Boys | 45 | 15 | 60 |\n| Girls | 35 | 25 | 60 |\n| Total | 80 | 40 | 120 |\n\nIs there an association between gender and liking dogs?",
+          "solution": "Calculate conditional relative frequencies:\nBoys who like dogs: 45/60 = 75%.\nGirls who like dogs: 35/60 ≈ 58.3%.\n\nCompare: 75% vs. 58.3%. Boys are more likely to like dogs than girls in this sample.\n\nConclusion: There IS an association between gender and liking dogs — boys show a stronger preference for dogs.\n\nNote: This doesn't prove gender CAUSES the difference. Other factors could be involved."
+        },
+        {
+          "problem": "Research shows that as ice cream sales increase, drowning incidents also increase. Does ice cream cause drowning?",
+          "solution": "Correlation: Yes — ice cream sales and drowning rates are positively correlated. They increase together.\n\nCausation: Absolutely NOT. Eating ice cream does not cause drowning.\n\nConfounding variable: TEMPERATURE (hot weather). In summer, it's hot → people buy more ice cream AND people swim more → more drownings.\n\nBoth variables are driven by the same hidden cause. Removing the confounding variable would eliminate the apparent relationship.\n\nLesson: Correlation does NOT imply causation. Always ask: 'Could a third variable explain BOTH?'"
+        },
+        {
+          "problem": "A survey of 130 students on phone ownership:\n\n| | Has Phone | No Phone | Total |\n|---|---|---|---|\n| Grade 7 | 42 | 18 | 60 |\n| Grade 8 | 56 | 14 | 70 |\n| Total | 98 | 32 | 130 |\n\nIs there an association between grade and phone ownership?",
+          "solution": "Conditional relative frequencies:\nGrade 7 with phone: 42/60 = 70%.\nGrade 8 with phone: 56/70 = 80%.\n\nCompare: 80% vs. 70%. Grade 8 students are more likely to have phones.\n\nAssociation: Yes, there appears to be an association between being in 8th grade and phone ownership. This makes intuitive sense — older students are more likely to have phones.\n\nNote: The percentages are fairly close (70% vs. 80%), so the association is moderate, not overwhelming."
+        }
+      ],
+      "lessonId": "two-way-tables-correlation"
     },
     {
       "type": "guided_practice",
@@ -279,10 +325,60 @@
       "lessonId": "two-way-tables-correlation"
     },
     {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "correlation-causation",
+      "title": "We-Do: Correlation Causation — Guided Practice",
+      "problems": [
+        {
+          "id": "sb-cc1",
+          "question": "Data shows that fires attended by more firefighters cause more property damage. Does sending more firefighters cause more damage? Explain, and name the confounding variable.",
+          "answer": "No. The correlation is real but the causal story is backwards-looking: the confounding variable is the SIZE of the fire. Big fires cause a lot of damage AND require more firefighters. The fire's size drives both variables, which is exactly what a confounding variable does. Sending fewer firefighters would not reduce damage — it would increase it.",
+          "hints": [
+            "The two variables really do rise together, so the correlation is genuine. The question is whether one causes the other.",
+            "Ask what a third factor could be that makes BOTH numbers large at the same time.",
+            "The size of the fire drives both. Test your answer by asking what would happen if you deliberately sent fewer firefighters — if the claim were causal, damage should fall."
+          ]
+        },
+        {
+          "id": "sb-cc2",
+          "question": "A survey finds that people who use sunscreen get more sunburns than people who do not. Should you conclude sunscreen causes sunburn? Explain what is really going on.",
+          "answer": "No. The confounding variable is sun exposure: people who spend hours in strong sun are far more likely both to apply sunscreen AND to get burned, while people who stay indoors do neither. The two groups are not comparable to begin with. To test sunscreen properly you would have to compare people with similar sun exposure — some using sunscreen and some not — rather than comparing self-selected groups.",
+          "hints": [
+            "Think about who chooses to put sunscreen on in the first place. Are the two groups similar in every other way?",
+            "People heading into strong sun use sunscreen; people staying indoors do not. That difference in exposure affects the burn rate directly.",
+            "Name the confounder (sun exposure), then say what a fair comparison would need: two groups with similar exposure differing only in sunscreen use."
+          ]
+        },
+        {
+          "id": "sb-cc3",
+          "question": "Smoking and lung cancer are strongly correlated. Scientists DO claim smoking causes lung cancer. What kind of evidence is needed to justify a causal claim like that, beyond the correlation alone?",
+          "answer": "Correlation alone is never enough, but causation can be established with more evidence: controlled experiments (in animals, since deliberately assigning people to smoke would be unethical), a dose-response relationship (more smoking means more risk), a biological mechanism explaining HOW tobacco damages lung cells, consistency across many independent studies and populations, and correct time order (smoking comes before the cancer). Note this problem is the counterweight to the others: \"correlation does not imply causation\" does not mean causation is never real — it means it has to be earned with evidence beyond the correlation.",
+          "hints": [
+            "This one is different from the others: the causal claim here is actually correct. So the question is what makes it justified.",
+            "List the kinds of evidence that could rule out a confounder — experiments, a mechanism, a dose-response pattern, replication.",
+            "Also check the time order: the suspected cause has to come before the effect. And remember the slogan is about proof, not about causation being impossible."
+          ]
+        },
+        {
+          "id": "sb-cc4",
+          "question": "A school notices that students who attend the after-school tutoring program have higher grades. The principal wants to claim the program causes the improvement. Design a study that could actually support that claim.",
+          "answer": "The problem with the current evidence is self-selection: students who choose tutoring may already be more motivated, better supported at home, or already stronger — any of which could raise grades on its own. A study that could support causation is a randomized controlled experiment: take a group of similar students, RANDOMLY assign half to tutoring and half to a control group with no tutoring, and compare grades afterwards. Random assignment is what matters — it makes the groups comparable on every other factor, including ones nobody thought to measure, so a difference in grades can be attributed to the tutoring.",
+          "hints": [
+            "Start by naming what is wrong with the current comparison. Who decides whether a student attends tutoring?",
+            "Students choose for themselves, so the two groups may differ in motivation or support before any tutoring happens. That is a confounder.",
+            "The fix is to remove the choice: assign students to the groups at RANDOM. Explain what random assignment buys you — comparable groups, including on factors you never measured."
+          ]
+        }
+      ],
+      "lessonId": "two-way-tables-correlation",
+      "initialPrompt": "Here's a real finding: fires attended by more firefighters have more property damage. So — do firefighters cause damage? If not, what else could be making both of those numbers big at the same time?"
+    },
+    {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Bivariate Data: Independent Practice",
-      "skill": "scatter-plots",
+      "skill": "two-way-tables",
       "problems": [
         {
           "id": "sb-yp1",
@@ -339,7 +435,7 @@
           ]
         }
       ],
-      "lessonId": "scatter-plots"
+      "lessonId": "two-way-tables-correlation"
     }
   ],
   "answerKeys": {
@@ -357,7 +453,15 @@
     "sb-yp3": "95",
     "sb-yp4": "Slope: −2.5 points per absence; y-intercept: 100",
     "sb-yp5": "Yes; 8th graders walk more (58.3% vs. 40%)",
-    "sb-yp6": "Correlation, not causation; city size is the confounding variable"
+    "sb-yp6": "Correlation, not causation; city size is the confounding variable",
+    "sb-si1": "Loses $1,500/year; $22,000 when new; a 6-year-old car is worth $13,000.",
+    "sb-si2": "3.5 cm taller per shoe size; the 120 cm intercept is meaningless (no shoe size 0).",
+    "sb-si3": "y = -3x + 52; about 3 points lower per extra TV hour; 52 predicted at 0 hours.",
+    "sb-si4": "37 (interpolation, trustworthy) and -8 (extrapolation, impossible — the model has broken down).",
+    "sb-cc1": "No — the confounder is the size of the fire, which drives both.",
+    "sb-cc2": "No — the confounder is sun exposure; the two groups were never comparable.",
+    "sb-cc3": "Controlled experiments, dose-response, a mechanism, replication, and correct time order.",
+    "sb-cc4": "A randomized controlled experiment; random assignment removes self-selection."
   },
   "lessons": [
     {

@@ -251,7 +251,7 @@
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "trigonometric-ratios-intro",
-      "title": "I-Do: Trig Ratios and Applications",
+      "title": "I-Do: Trig Ratios",
       "examples": [
         {
           "problem": "In a right triangle, the side opposite angle A is 5 and the hypotenuse is 13. Find all three trig ratios for angle A.",
@@ -260,10 +260,6 @@
         {
           "problem": "A right triangle has a 35° angle and hypotenuse of 20. Find the side opposite 35°.",
           "solution": "sin(35°) = opposite / 20\nopposite = 20 × sin(35°) = 20 × 0.5736 ≈ **11.5**"
-        },
-        {
-          "problem": "From a point 50 feet from a building, the angle of elevation to the top is 40°. How tall is the building?",
-          "solution": "tan(40°) = height / 50\nheight = 50 × tan(40°) = 50 × 0.8391 ≈ **42.0 feet**\n\nWe used tangent because we had the adjacent side (50 ft) and needed the opposite side (height)."
         }
       ],
       "initialPrompt": "Which trig ratio uses opposite and hypotenuse?",
@@ -273,7 +269,7 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "trigonometric-ratios-intro",
-      "title": "We-Do: Trig Ratio Applications",
+      "title": "We-Do: Trig Ratios",
       "problems": [
         {
           "id": "rt-wp6",
@@ -283,7 +279,44 @@
             "cos(B) = adj/hyp = 8/17.",
             "8² + opp² = 17² → opp² = 225 → opp = 15."
           ]
+        }
+      ],
+      "initialPrompt": "Which trig ratio relates adjacent and hypotenuse?",
+      "lessonId": "trig-ratios-intro"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "trigonometric-ratios-intro",
+      "title": "Trig Applications: Angles of Elevation and Depression",
+      "content": "SOH-CAH-TOA becomes a measuring tool the moment you can turn a real situation into a right triangle. That translation is the actual skill here — the trig is the easy part.\n\n**Angle of elevation:** the angle measured **upward** from the horizontal to your line of sight. Looking up at the top of a building from the ground.\n\n**Angle of depression:** the angle measured **downward** from the horizontal to your line of sight. Looking down from a cliff at a boat.\n\n**Both are measured from the HORIZONTAL, never from the vertical.** Marking a depression angle from the side of a lighthouse instead of from a horizontal line at its top is the most common error in this lesson, and it produces the complement of the right answer.\n\n**Elevation and depression are equal** for the same pair of points. If you look down at a boat with a 22° angle of depression, someone on the boat looks up at you with a 22° angle of elevation — the two horizontals are parallel, so those are alternate interior angles. This is useful: a depression angle at the top of the triangle can be moved to the bottom, where it's inside the triangle you're working with.\n\n**The procedure:**\n1. **Draw the right triangle.** The vertical leg is a height, the horizontal leg is a ground distance, and the line of sight is the hypotenuse.\n2. **Label** the known angle, the known side, and the side you want with a variable.\n3. **Pick the ratio** that uses exactly those two sides relative to your angle — that's what SOH-CAH-TOA is for.\n4. **Solve**, keeping the variable out of the denominator when you can.\n5. **Check that the answer is reasonable** — a building shouldn't come out shorter than the person looking at it.\n\n**Finding an angle instead of a side:** when both sides are known and the *angle* is missing, use the inverse function: θ = tan⁻¹(opposite/adjacent), and likewise sin⁻¹ and cos⁻¹. Make sure your calculator is in **degree** mode.\n\n**Watch what the height is measured from.** If the angle of elevation is taken from a person's eyes at 5 ft, the trig gives the height *above eye level* — you add the 5 ft back at the end. Problems say \"from eye level\" precisely to test that.",
+      "initialPrompt": "You stand 50 feet from a building and look up at the top with a 40° angle of elevation. Sketch the right triangle: which side is 50 feet, which side is the building's height, and where is the 40° angle?",
+      "lessonId": "trig-applications"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "trigonometric-ratios-intro",
+      "title": "I-Do: Elevation and Depression",
+      "examples": [
+        {
+          "problem": "From a point 50 feet from a building, the angle of elevation to the top is 40°. How tall is the building?",
+          "solution": "tan(40°) = height / 50\nheight = 50 × tan(40°) = 50 × 0.8391 ≈ **42.0 feet**\n\nWe used tangent because we had the adjacent side (50 ft) and needed the opposite side (height)."
         },
+        {
+          "problem": "From the top of a 150-foot lighthouse, the angle of depression to a boat is 22°. How far is the boat from the base of the lighthouse?",
+          "solution": "**Draw it.** The lighthouse is the vertical leg (150 ft), the water is the horizontal leg (the distance d we want), and the line of sight from the top down to the boat is the hypotenuse.\n\n**Place the angle correctly.** The 22° angle of depression is measured from a **horizontal line at the top** of the lighthouse, down to the line of sight — so it is *not* inside the triangle as drawn.\n\n**Move it.** That horizontal line is parallel to the water, so the angle of depression at the top and the angle of elevation at the boat are alternate interior angles: both 22°. Now use the 22° angle at the boat, which *is* inside the triangle.\n\n**Choose the ratio.** From the boat's 22° angle: the lighthouse (150) is **opposite**, and the distance d is **adjacent**. Opposite over adjacent is tangent.\n\ntan(22°) = 150/d\n\n**Solve** — the variable is in the denominator, so multiply up and divide:\nd = 150/tan(22°) ≈ 150/0.4040 ≈ **371.3 feet**\n\n**Is it reasonable?** A shallow 22° sight line should reach far out — the boat is more than twice the lighthouse's height away. If you had used tan(22°) = d/150 instead, you'd get about 61 feet, which would mean a steep look almost straight down. That check catches a flipped ratio every time."
+        }
+      ],
+      "initialPrompt": "In example 2, why couldn't we use the 22° angle where it was originally drawn? What let us move it into the triangle?",
+      "lessonId": "trig-applications"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "trigonometric-ratios-intro",
+      "title": "We-Do: Elevation and Depression",
+      "problems": [
         {
           "id": "rt-wp7",
           "question": "A tree casts a 24-foot shadow. The angle of elevation from the tip of the shadow to the top is 55°. How tall is the tree?",
@@ -292,10 +325,28 @@
             "tan(55°) = height / 24.",
             "height = 24 × tan(55°) ≈ 24 × 1.4281 ≈ 34.3 feet."
           ]
+        },
+        {
+          "id": "rt-wp8",
+          "question": "A ladder leans against a wall, reaching 12 feet up the wall, with its foot 5 feet from the base of the wall. Find the angle of elevation the ladder makes with the ground.",
+          "answer": "≈ 67.4°",
+          "hints": [
+            "Sketch it: the wall (12) is opposite the ground angle, and the distance from the wall (5) is adjacent. Opposite over adjacent means tangent.",
+            "tan θ = 12/5 = 2.4, so θ = tan⁻¹(2.4) ≈ 67.4°. Both sides were known and the angle was missing — that's when you use the inverse function. Check your calculator is in degree mode."
+          ]
+        },
+        {
+          "id": "rt-wp9",
+          "question": "A wheelchair ramp rises 3 feet over a horizontal run of 20 feet. Find the angle of elevation of the ramp.",
+          "answer": "≈ 8.5°",
+          "hints": [
+            "The rise (3) is opposite the angle and the run (20) is adjacent, so use tangent: tan θ = 3/20 = 0.15.",
+            "θ = tan⁻¹(0.15) ≈ 8.5°. A gentle angle is exactly what you'd expect for a ramp — a 67° ramp would be unusable."
+          ]
         }
       ],
-      "initialPrompt": "Which trig ratio relates adjacent and hypotenuse?",
-      "lessonId": "trig-ratios-intro"
+      "initialPrompt": "For the first problem, the shadow is on the ground and the tree is vertical. Relative to the 55° angle, which side is opposite and which is adjacent?",
+      "lessonId": "trig-applications"
     },
     {
       "type": "independent_practice",
@@ -349,8 +400,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "pythagorean-theorem",
-      "lessonId": "pythagorean-theorem"
+      "skill": "trigonometric-ratios-intro",
+      "lessonId": "trig-applications"
     }
   ],
   "answerKeys": {
@@ -369,7 +420,9 @@
     "rt-cv1": "Yes — right triangle. 20² + 21² = 841 = 29².",
     "rt-cv2": "Not right; obtuse. 6² + 8² = 100 < 121 = 11².",
     "rt-cv3": "Acute, barely. 10² + 15² = 325 > 324 = 18².",
-    "rt-cv4": "Yes — a true right angle. 12² + 16² = 400 = 20² (a 3-4-5 triple scaled by 4)."
+    "rt-cv4": "Yes — a true right angle. 12² + 16² = 400 = 20² (a 3-4-5 triple scaled by 4).",
+    "rt-wp8": "≈ 67.4°.",
+    "rt-wp9": "≈ 8.5°."
   },
   "lessons": [
     {

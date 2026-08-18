@@ -80,6 +80,52 @@
       "lessonId": "parent-functions"
     },
     {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "domain-range-analysis",
+      "title": "We-Do: Domain Range Analysis — Guided Practice",
+      "problems": [
+        {
+          "problem": "Find the domain and range of f(x) = √(x - 3) - 2. Give both in interval notation.",
+          "hints": [
+            "The radicand cannot be negative: solve x - 3 ≥ 0 for the domain.",
+            "For the range, ask what √(x - 3) itself can be — it is 0 at x = 3 and grows without bound.",
+            "√(x - 3) ranges over [0, ∞), and the -2 shifts every output down by 2."
+          ],
+          "answer": "Domain: x - 3 ≥ 0, so x ≥ 3, giving [3, ∞). Range: √(x - 3) takes every value in [0, ∞), and subtracting 2 shifts that down, giving [-2, ∞). The minimum occurs at x = 3, where f(3) = √0 - 2 = -2 — an endpoint that IS attained, so the bracket is square."
+        },
+        {
+          "problem": "Find the domain and range of f(x) = (x² - 9)/(x - 3). Be precise about what happens at x = 3.",
+          "hints": [
+            "Domain first, from the ORIGINAL expression: the denominator cannot be zero.",
+            "Now factor the numerator. x² - 9 is a difference of squares.",
+            "The (x - 3) cancels, leaving x + 3 — but only for x ≠ 3. Cancelling creates a hole, not an asymptote, and the hole removes one value from the range."
+          ],
+          "answer": "Domain: the denominator is zero at x = 3, so the domain is (-∞, 3) ∪ (3, ∞). Factoring: (x² - 9)/(x - 3) = (x - 3)(x + 3)/(x - 3) = x + 3 for every x ≠ 3. So the graph is the line y = x + 3 with a HOLE at (3, 6) — not a vertical asymptote, because the factor cancelled. Range: the line would take every real value, but y = 6 is missed at the hole, so the range is (-∞, 6) ∪ (6, ∞)."
+        },
+        {
+          "problem": "Find the domain and range of f(x) = -2(x - 1)² + 5.",
+          "hints": [
+            "This is in vertex form, a(x - h)² + k. Read the vertex straight off — mind the signs.",
+            "A polynomial has no denominators and no radicals, so ask whether anything could restrict the domain at all.",
+            "The leading coefficient is negative, so the parabola opens downward and the vertex is a maximum, not a minimum."
+          ],
+          "answer": "Domain: all real numbers, (-∞, ∞) — a polynomial is defined everywhere. Range: vertex form gives vertex (1, 5), and a = -2 < 0 means the parabola opens downward, so 5 is the maximum output and every value below it is attained. Range: (-∞, 5]. The bracket is square because f(1) = 5 exactly."
+        },
+        {
+          "problem": "Find the domain and range of f(x) = 1/√(4 - x²). Give both in interval notation and explain why the radicand needs a STRICT inequality here.",
+          "hints": [
+            "Two restrictions stack: the radicand cannot be negative, and the denominator cannot be zero. The square root sits in the denominator, so both apply to the same expression.",
+            "That forces 4 - x² > 0 — strictly greater, not ≥, because a zero radicand would make the denominator zero.",
+            "For the range, track what 4 - x² can be on that domain, then what happens through the square root and finally the reciprocal."
+          ],
+          "answer": "Domain: 4 - x² > 0, so x² < 4 and -2 < x < 2, giving (-2, 2). The inequality is strict because x = ±2 would make the radicand 0, and then the denominator would be √0 = 0 — undefined. Range: on (-2, 2), 4 - x² takes values in (0, 4], maximised at x = 0. Then √(4 - x²) lands in (0, 2], and taking the reciprocal flips and reverses that to [1/2, ∞). The minimum 1/2 is attained at x = 0, and the outputs grow without bound as x approaches ±2."
+        }
+      ],
+      "lessonId": "parent-functions",
+      "initialPrompt": "Start with f(x) = √(x - 3) - 2. Domain first: what does the expression under the radical refuse to be, and what inequality does that give you?"
+    },
+    {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "The Transformation Template",
@@ -251,20 +297,6 @@
         "Graphs of f and f⁻¹ are reflections over y = x; (a, b) on f ↔ (b, a) on f⁻¹",
         "Rational function inverses: HA of f becomes VA of f⁻¹ and vice versa"
       ],
-      "lessonId": "parent-functions"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "domain-range-analysis",
-      "title": "We-Do: Domain Range Analysis — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for domain range analysis.",
-          "hint": "Apply the concepts of domain range analysis.",
-          "solution": "Step-by-step solution for domain range analysis."
-        }
-      ],
       "lessonId": "composition-inverses"
     },
     {
@@ -286,7 +318,7 @@
           "solution": "Complete the square: f(x) = (x - 3)² + 2. Swap: x = (y - 3)² + 2 → (y - 3)² = x - 2 → y - 3 = √(x - 2) (positive root since y ≥ 3) → y = √(x - 2) + 3. So f⁻¹(x) = √(x - 2) + 3. Domain of f: [3, ∞), Range of f: [2, ∞). Domain of f⁻¹: [2, ∞), Range of f⁻¹: [3, ∞). Verification: f(f⁻¹(x)) = (√(x-2) + 3 - 3)² + 2 = (√(x-2))² + 2 = x - 2 + 2 = x. ✓"
         }
       ],
-      "lessonId": "parent-functions"
+      "lessonId": "composition-inverses"
     },
     {
       "type": "guided_practice",
@@ -325,7 +357,7 @@
           "answer": "f is not one-to-one on (-∞, ∞). Evidence: f(0) = 0, f(1) = 0, and f(-1) = 0. The function has a local max at x = -1/√3 and local min at x = 1/√3. Restrict domain to [1/√3, ∞) (or (-∞, -1/√3]) to make it one-to-one."
         }
       ],
-      "lessonId": "parent-functions"
+      "lessonId": "composition-inverses"
     },
     {
       "type": "independent_practice",
@@ -389,7 +421,11 @@
     "ip-inverse-rational2": "f⁻¹(x)=(-3x-1)/(2(x-2)). Dom f: x≠-3/2. Range f: y≠2.",
     "ip-compose-rational2": "f(g(x))=(x-1)/(5x-2). Domain: x≠1 and x≠2/5.",
     "ip-cuberoot-transform": "g(x)=2∛(5-x)-3. Domain: (-∞,∞). Range: (-∞,∞).",
-    "ip-profit-analysis": "P(x)=-0.1x²+19.5x-80. Break-even: x≈4.2 and x≈190.8. Max profit at x=97.5 units, P≈$870.63."
+    "ip-profit-analysis": "P(x)=-0.1x²+19.5x-80. Break-even: x≈4.2 and x≈190.8. Max profit at x=97.5 units, P≈$870.63.",
+    "domain-radical-shift": "f(x)=√(x-3)-2. Domain [3,∞); range [-2,∞).",
+    "domain-removable-hole": "(x²-9)/(x-3) = x+3 with a hole at (3,6). Domain (-∞,3)∪(3,∞); range (-∞,6)∪(6,∞).",
+    "domain-quadratic-vertex": "f(x)=-2(x-1)²+5. Domain ℝ; range (-∞,5] (vertex (1,5), opens down).",
+    "domain-radical-denominator": "f(x)=1/√(4-x²). Domain (-2,2) — strict, since a zero radicand zeroes the denominator; range [1/2,∞)."
   },
   "lessons": [
     {

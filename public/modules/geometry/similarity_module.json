@@ -36,6 +36,57 @@
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
+      "skill": "similarity-ratios",
+      "title": "Similar Figures and Scale Factors",
+      "content": "Two figures are **similar** when they have the same shape but not necessarily the same size: corresponding angles are congruent, and corresponding sides are **proportional**.\n\nIf △ABC ~ △DEF with scale factor k, then\n\nAB/DE = BC/EF = AC/DF = k\n\n**The order of the letters carries the information.** Writing △ABC ~ △DEF says A matches D, B matches E, and C matches F. Read off corresponding sides from that pairing rather than from how the triangles happen to be drawn — a rotated or flipped triangle looks nothing like its twin on the page.\n\n**Cross-multiplication** solves proportions: if a/b = c/d, then ad = bc.\n\n**Set up every ratio the same way.** If your first ratio is small/large, keep **all** of them small/large. Flipping halfway through is the error that makes an answer come out as the reciprocal of the truth — and it usually looks plausible, so check the direction: the image of a bigger figure should be bigger.\n\n**Scale factor, both directions.** Going from the small figure to the large one multiplies by k; going back divides by k. So a 2:5 scale factor means the small side times 5/2 gives the large side.\n\n**Perimeter, area and volume don't scale the same way.** If the scale factor is k, then:\n• perimeters scale by **k**\n• areas scale by **k²**\n• volumes scale by **k³**\n\nDoubling every side of a figure doubles its perimeter but **quadruples** its area. This is worth a moment — it's the single most counter-intuitive fact about similarity, and it's tested constantly.",
+      "initialPrompt": "△PQR ~ △STU. Which side of △STU corresponds to PQ, and how do the letters tell you?",
+      "lessonId": "similarity-intro"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "similarity-ratios",
+      "title": "I-Do: Scale Factor and Proportions",
+      "examples": [
+        {
+          "problem": "△PQR ~ △STU with scale factor 3:5. If PQ = 9 and QR = 12, find ST and TU.",
+          "solution": "Scale factor from △PQR to △STU is 3:5, so multiply by 5/3.\n\nST (corresponds to PQ): 9/ST = 3/5 → ST = 9 × 5/3 = **15**\nTU (corresponds to QR): 12/TU = 3/5 → TU = 12 × 5/3 = **20**\n\nVerify: 9/15 = 3/5 ✓, 12/20 = 3/5 ✓"
+        }
+      ],
+      "initialPrompt": "If we know PR = 15 in the smaller triangle, what would SU be in the larger triangle?",
+      "lessonId": "similarity-intro"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "similarity-ratios",
+      "title": "We-Do: Scale Factor and Proportions",
+      "problems": [
+        {
+          "id": "si-wp4",
+          "question": "△ABC ~ △DEF. AB = 8, BC = 12, and DE = 14. Find EF.",
+          "answer": "21",
+          "hints": [
+            "Scale factor: AB/DE = 8/14 = 4/7.",
+            "BC/EF = 4/7 → 12/EF = 4/7 → EF = 12 × 7/4 = 21."
+          ]
+        },
+        {
+          "id": "si-wp6",
+          "question": "Two similar polygons have a scale factor of 2:5. If a side of the smaller polygon is 6, what is the corresponding side of the larger polygon? If the perimeter of the smaller is 30, what is the perimeter of the larger?",
+          "answer": "side = 15, perimeter = 75",
+          "hints": [
+            "Side: 6 × 5/2 = 15.",
+            "Perimeters are in the same ratio as sides: 30 × 5/2 = 75."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, what is the scale factor from △ABC to △DEF?",
+      "lessonId": "similarity-intro"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
       "skill": "similar-triangle-theorems",
       "title": "Similarity and Triangle Similarity Theorems",
       "content": "Two figures are **similar** (symbol: ~) if:\n1. All corresponding angles are congruent\n2. All corresponding sides are proportional\n\nThe **scale factor** is the ratio of corresponding sides. If △ABC ~ △DEF with sides 3, 4, 5 and 6, 8, 10, the scale factor is 1:2 (or 2:1 depending on direction).\n\n**Three ways to prove triangles similar:**\n• **AA (Angle-Angle)** — two pairs of congruent angles (the third is automatic)\n• **SSS~ (Side-Side-Side)** — all three pairs of sides proportional\n• **SAS~ (Side-Angle-Side)** — two pairs of sides proportional AND the included angle congruent",
@@ -155,21 +206,17 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "similarity-ratios",
-      "title": "Proportions and Scale Factor Applications",
-      "content": "When triangles are similar, corresponding sides are **proportional**. Set up a proportion to find missing sides:\n\nIf △ABC ~ △DEF with scale factor k, then:\nAB/DE = BC/EF = AC/DF = k\n\n**Cross-multiplication** solves proportions: if a/b = c/d, then ad = bc.\n\n**Real-world applications:**\n• Shadow problems (sun creates similar triangles)\n• Map scales (small:large ratio)\n• Indirect measurement (mirror method, similar triangle method)\n\nKey rule: always match corresponding sides consistently. If the first ratio is small/large, keep ALL ratios small/large.",
-      "initialPrompt": "A map has a scale of 1 inch = 3 miles. If two cities are 4.5 inches apart on the map, how far apart are they in real life?",
-      "lessonId": "similarity-intro"
+      "title": "Similarity in the Real World",
+      "content": "Similar triangles are how you measure things you can't reach. You measure what you *can* reach, set up a proportion, and let the algebra cover the rest.\n\n**Shadow problems.** At any one moment, the sun's rays hit everything at the same angle. A person and a tree standing on level ground both make right triangles with the ground and with congruent sun angles — so by AA, the triangles are **similar**:\n\nperson's height / person's shadow = tree's height / tree's shadow\n\n**\"At the same time of day\" is the load-bearing phrase** — it's what makes the sun angles equal. Without it there is no similarity and no proportion.\n\n**Map and blueprint scales.** A scale like \"1 inch = 3 miles\" or \"1:150\" is just a ratio. Write it as a fraction and match units carefully:\n\nmap distance / real distance = 1 / 3\n\n**Scales are unitless when written like 1:150** — the model and the real object are in the *same* unit, so a 1:150 model that is 8 cm tall represents 1200 cm = 12 m. Converting at the end, not in the middle, keeps this clean.\n\n**The mirror method.** Put a mirror flat on the ground between you and a tall object and step back until you see the top in it. Light reflects at equal angles, so your eye-height triangle and the object's triangle are similar:\n\nyour eye height / your distance to mirror = object height / mirror's distance to object\n\n**Setting up any of these — one rule:** write the proportion so that the two known quantities of the *same kind* sit across from each other. Heights on top and shadows on the bottom, or the small triangle's two sides on the left and the large one's on the right. Both arrangements work; mixing them does not.\n\n**Then check that the answer is physically sensible.** A tree that comes out shorter than the person casting a shorter shadow means the proportion got inverted.",
+      "initialPrompt": "A 6-foot person casts a 4-foot shadow while a tree casts a 20-foot shadow. Before computing — is the tree taller or shorter than 20 feet, and how can you tell?",
+      "lessonId": "similarity-applications"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "similarity-ratios",
-      "title": "I-Do: Proportion and Scale Factor Problems",
+      "title": "I-Do: Similarity Applications",
       "examples": [
-        {
-          "problem": "△PQR ~ △STU with scale factor 3:5. If PQ = 9 and QR = 12, find ST and TU.",
-          "solution": "Scale factor from △PQR to △STU is 3:5, so multiply by 5/3.\n\nST (corresponds to PQ): 9/ST = 3/5 → ST = 9 × 5/3 = **15**\nTU (corresponds to QR): 12/TU = 3/5 → TU = 12 × 5/3 = **20**\n\nVerify: 9/15 = 3/5 ✓, 12/20 = 3/5 ✓"
-        },
         {
           "problem": "A 6-foot person casts a 4-foot shadow. A tree casts a 20-foot shadow at the same time. How tall is the tree?",
           "solution": "The sun creates similar triangles (same angle of elevation).\n\nperson height / person shadow = tree height / tree shadow\n6/4 = x/20\n\nCross multiply: 4x = 120 → x = **30 feet**\n\nVerify: 6/4 = 1.5, 30/20 = 1.5 ✓"
@@ -179,24 +226,15 @@
           "solution": "Set up proportion: 2 cm / 15 km = 7 cm / x km\n\nCross multiply: 2x = 105 → x = **52.5 km**\n\nVerify: 2/15 = 7/52.5 = 0.1333... ✓"
         }
       ],
-      "initialPrompt": "If we know PR = 15 in the smaller triangle, what would SU be in the larger triangle?",
-      "lessonId": "similarity-intro"
+      "initialPrompt": "In example 1, what made the person's triangle and the tree's triangle similar in the first place?",
+      "lessonId": "similarity-applications"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "similarity-ratios",
-      "title": "We-Do: Proportion Applications",
+      "title": "We-Do: Similarity Applications",
       "problems": [
-        {
-          "id": "si-wp4",
-          "question": "△ABC ~ △DEF. AB = 8, BC = 12, and DE = 14. Find EF.",
-          "answer": "21",
-          "hints": [
-            "Scale factor: AB/DE = 8/14 = 4/7.",
-            "BC/EF = 4/7 → 12/EF = 4/7 → EF = 12 × 7/4 = 21."
-          ]
-        },
         {
           "id": "si-wp5",
           "question": "A flagpole casts a 12-foot shadow. At the same time, a 5-foot person casts a 3-foot shadow. How tall is the flagpole?",
@@ -207,17 +245,17 @@
           ]
         },
         {
-          "id": "si-wp6",
-          "question": "Two similar polygons have a scale factor of 2:5. If a side of the smaller polygon is 6, what is the corresponding side of the larger polygon? If the perimeter of the smaller is 30, what is the perimeter of the larger?",
-          "answer": "side = 15, perimeter = 75",
+          "id": "si-ap1",
+          "question": "A scale model of a building is built at a scale of 1:150. If the model is 8 cm tall, how tall is the actual building in metres?",
+          "answer": "12 m",
           "hints": [
-            "Side: 6 × 5/2 = 15.",
-            "Perimeters are in the same ratio as sides: 30 × 5/2 = 75."
+            "A 1:150 scale means every 1 unit on the model is 150 of the same units on the building. Keep both in centimetres for now: 8 × 150 = 1200 cm.",
+            "Convert at the end: 1200 cm = 12 m. Converting mid-problem is where these go wrong — do the scaling first, the unit change last."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, what is the scale factor from △ABC to △DEF?",
-      "lessonId": "similarity-intro"
+      "initialPrompt": "For the first problem, which two lengths belong to the person's triangle and which two to the flagpole's? Write the proportion before substituting.",
+      "lessonId": "similarity-applications"
     },
     {
       "type": "explanation",
@@ -347,8 +385,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "similarity-ratios",
-      "lessonId": "similarity-intro"
+      "skill": "geometric-mean",
+      "lessonId": "geometric-mean"
     }
   ],
   "answerKeys": {
@@ -358,7 +396,6 @@
     "si-wp4": "EF=21.",
     "si-wp5": "20 feet.",
     "si-wp6": "Side=15, perimeter=75.",
-    "si-wp7": "10.",
     "si-wp8": "6.",
     "si-wp9": "6√5.",
     "si-yp1": "QR=21, PR=12.",
@@ -370,7 +407,8 @@
     "si-pr1": "△ADE ~ △ABC by AA (corresponding angles from DE ∥ BC, plus the shared ∠A).",
     "si-pr2": "Yes, by SSS~; every ratio is 3/5.",
     "si-pr3": "Yes by SAS~ (∠Q and ∠Y are included). With ∠P ≅ ∠X instead, SAS~ would not apply.",
-    "si-pr4": "Similar by AA; the flagpole is 39 feet tall."
+    "si-pr4": "Similar by AA; the flagpole is 39 feet tall.",
+    "si-ap1": "12 m (8 cm × 150 = 1200 cm)."
   },
   "lessons": [
     {

@@ -164,7 +164,7 @@
         }
       ],
       "skill": "ftc-part-1",
-      "lessonId": "antiderivatives"
+      "lessonId": "ftc"
     },
     {
       "type": "explanation",
@@ -204,6 +204,33 @@
       "lessonId": "antiderivatives"
     },
     {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Antiderivatives Practice",
+      "problems": [
+        {
+          "problem": "Evaluate: integral of (6x^2 - 4/x + sec^2(x)) dx.",
+          "hints": [
+            "Apply power rule to x^2, recall integral of 1/x = ln|x|, and integral of sec^2(x) = tan(x)",
+            "Combine term by term and add +C"
+          ],
+          "answer": "integral of 6x^2 dx = 2x^3. integral of -4/x dx = -4ln|x|. integral of sec^2(x)dx = tan(x). Result: 2x^3 - 4ln|x| + tan(x) + C.",
+          "id": "wp-antideriv-mixed"
+        },
+        {
+          "problem": "Evaluate the definite integral: integral from 1 to e of (3/x) dx.",
+          "hints": [
+            "integral of 3/x dx = 3ln|x|",
+            "Evaluate from 1 to e: 3ln(e) - 3ln(1)"
+          ],
+          "answer": "3ln|x| from 1 to e = 3ln(e) - 3ln(1) = 3(1) - 3(0) = 3.",
+          "id": "wp-definite-ln"
+        }
+      ],
+      "skill": "integral-properties-techniques",
+      "lessonId": "antiderivatives"
+    },
+    {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Integration by u-Substitution",
@@ -217,7 +244,8 @@
         "If du is off by a constant factor, adjust: e.g., if you need 3x^2 dx but only have x^2 dx, write x^2 dx = (1/3)du.",
         "Always check your answer by differentiating the result -- you should recover the original integrand."
       ],
-      "lessonId": "integral-properties"
+      "lessonId": "u-substitution",
+      "initialPrompt": "In ∫ cos(3x + 1) dx, what is the inner function? What is its derivative, and where do you see it (or a constant multiple of it) in the integrand?"
     },
     {
       "type": "model",
@@ -238,7 +266,36 @@
           "solution": "Let u = x^2 + 1. Then du = 2x dx, so x dx = du/2. Change bounds: when x = 0, u = 1; when x = 2, u = 5. Integral becomes: integral from 1 to 5 of sqrt(u) * (du/2) = (1/2) * integral from 1 to 5 of u^(1/2) du = (1/2) * [u^(3/2)/(3/2)] from 1 to 5 = (1/2)(2/3)[u^(3/2)] from 1 to 5 = (1/3)[5^(3/2) - 1^(3/2)] = (1/3)(5*sqrt(5) - 1) = (5*sqrt(5) - 1)/3."
         }
       ],
-      "lessonId": "integral-properties"
+      "lessonId": "u-substitution"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "u-Substitution Practice",
+      "problems": [
+        {
+          "problem": "Evaluate: integral of sin(x) * cos^3(x) dx using u-substitution.",
+          "hints": [
+            "Let u = cos(x), then du = -sin(x)dx",
+            "sin(x)dx = -du, and cos^3(x) = u^3",
+            "Integrate u^3 and substitute back"
+          ],
+          "answer": "Let u = cos(x), du = -sin(x)dx. Integral becomes: integral of u^3 * (-du) = -u^4/4 + C = -cos^4(x)/4 + C.",
+          "id": "wp-usub-trig"
+        },
+        {
+          "id": "wp-usub-log",
+          "problem": "Evaluate: integral of (2x)/(x^2 + 4) dx.",
+          "hints": [
+            "Let u = x^2 + 4. Then du = 2x dx — the numerator is exactly du.",
+            "The integral becomes integral of (1/u) du = ln|u| + C."
+          ],
+          "answer": "Let u = x^2 + 4, du = 2x dx. Integral of (1/u) du = ln|u| + C = ln|x^2 + 4| + C. (No absolute value is strictly needed since x^2 + 4 > 0 always.)"
+        }
+      ],
+      "skill": "integral-properties-techniques",
+      "lessonId": "u-substitution",
+      "initialPrompt": "For the first problem, sin(x) and cos(x) are both present. Which one should be u, and how does the other one help?"
     },
     {
       "type": "explanation",
@@ -276,44 +333,30 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Antiderivatives, u-Substitution & Properties Practice",
+      "title": "Properties of Integrals Practice",
       "problems": [
-        {
-          "problem": "Evaluate: integral of (6x^2 - 4/x + sec^2(x)) dx.",
-          "hints": [
-            "Apply power rule to x^2, recall integral of 1/x = ln|x|, and integral of sec^2(x) = tan(x)",
-            "Combine term by term and add +C"
-          ],
-          "answer": "integral of 6x^2 dx = 2x^3. integral of -4/x dx = -4ln|x|. integral of sec^2(x)dx = tan(x). Result: 2x^3 - 4ln|x| + tan(x) + C."
-        },
-        {
-          "problem": "Evaluate: integral of sin(x) * cos^3(x) dx using u-substitution.",
-          "hints": [
-            "Let u = cos(x), then du = -sin(x)dx",
-            "sin(x)dx = -du, and cos^3(x) = u^3",
-            "Integrate u^3 and substitute back"
-          ],
-          "answer": "Let u = cos(x), du = -sin(x)dx. Integral becomes: integral of u^3 * (-du) = -u^4/4 + C = -cos^4(x)/4 + C."
-        },
-        {
-          "problem": "Evaluate the definite integral: integral from 1 to e of (3/x) dx.",
-          "hints": [
-            "integral of 3/x dx = 3ln|x|",
-            "Evaluate from 1 to e: 3ln(e) - 3ln(1)"
-          ],
-          "answer": "3ln|x| from 1 to e = 3ln(e) - 3ln(1) = 3(1) - 3(0) = 3."
-        },
         {
           "problem": "Given: integral from 2 to 6 of f(x)dx = 12, integral from 6 to 9 of f(x)dx = 7, and integral from 2 to 9 of g(x)dx = -5. Find: integral from 2 to 9 of [f(x) + 3g(x)] dx.",
           "hints": [
             "First find integral from 2 to 9 of f(x)dx using additivity",
             "Then apply linearity: integral of [f + 3g] = integral of f + 3*integral of g"
           ],
-          "answer": "By additivity: integral from 2 to 9 of f(x)dx = 12 + 7 = 19. By linearity: integral from 2 to 9 of [f(x) + 3g(x)]dx = 19 + 3(-5) = 19 - 15 = 4."
+          "answer": "By additivity: integral from 2 to 9 of f(x)dx = 12 + 7 = 19. By linearity: integral from 2 to 9 of [f(x) + 3g(x)]dx = 19 + 3(-5) = 19 - 15 = 4.",
+          "id": "wp-properties-combined"
+        },
+        {
+          "id": "wp-properties-split",
+          "problem": "Given: integral from 0 to 5 of f(x)dx = 9 and integral from 0 to 3 of f(x)dx = 4. Find integral from 3 to 5 of f(x)dx.",
+          "hints": [
+            "Additivity over intervals: integral from 0 to 3 plus integral from 3 to 5 equals integral from 0 to 5.",
+            "So 4 + (integral from 3 to 5) = 9."
+          ],
+          "answer": "By additivity, integral from 0 to 5 = integral from 0 to 3 + integral from 3 to 5, so 9 = 4 + I and I = 5."
         }
       ],
       "skill": "integral-properties-techniques",
-      "lessonId": "integral-properties"
+      "lessonId": "integral-properties",
+      "initialPrompt": "For the first problem, which property lets you pull the 3 out of the integral of 3g(x), and which lets you split the sum into two integrals?"
     },
     {
       "type": "independent_practice",
@@ -322,31 +365,37 @@
       "problems": [
         {
           "problem": "A particle moves along the x-axis with velocity v(t) = t^2 - 4t + 3 for 0 <= t <= 5. (a) Find the net displacement from t = 0 to t = 5. (b) Is the particle moving left or right at t = 1?",
-          "answer": "(a) Net displacement = integral from 0 to 5 of (t^2 - 4t + 3)dt = [t^3/3 - 2t^2 + 3t] from 0 to 5 = (125/3 - 50 + 15) - 0 = 125/3 - 35 = 125/3 - 105/3 = 20/3. (b) v(1) = 1 - 4 + 3 = 0. At t = 1 the particle is momentarily at rest (neither left nor right)."
+          "answer": "(a) Net displacement = integral from 0 to 5 of (t^2 - 4t + 3)dt = [t^3/3 - 2t^2 + 3t] from 0 to 5 = (125/3 - 50 + 15) - 0 = 125/3 - 35 = 125/3 - 105/3 = 20/3. (b) v(1) = 1 - 4 + 3 = 0. At t = 1 the particle is momentarily at rest (neither left nor right).",
+          "id": "ip-displacement"
         },
         {
           "problem": "The table gives the rate of water flow R(t) in gallons per minute into a tank.\n\n| t (min) | 0  | 3  | 6  | 9  | 12 |\n| R(t)    | 10 | 18 | 24 | 20 | 14 |\n\nUse a right Riemann sum with the four subintervals to approximate the total gallons of water that entered the tank from t = 0 to t = 12. Is R(t) increasing on the entire interval?",
-          "answer": "Delta_t = 3 for all subintervals. RRS = R(3)*3 + R(6)*3 + R(9)*3 + R(12)*3 = 18*3 + 24*3 + 20*3 + 14*3 = 54 + 72 + 60 + 42 = 228 gallons. R(t) is NOT increasing on the entire interval -- it increases from t = 0 to t = 6 then decreases from t = 6 to t = 12, so we cannot make a blanket over/underestimate conclusion for the full interval."
+          "answer": "Delta_t = 3 for all subintervals. RRS = R(3)*3 + R(6)*3 + R(9)*3 + R(12)*3 = 18*3 + 24*3 + 20*3 + 14*3 = 54 + 72 + 60 + 42 = 228 gallons. R(t) is NOT increasing on the entire interval -- it increases from t = 0 to t = 6 then decreases from t = 6 to t = 12, so we cannot make a blanket over/underestimate conclusion for the full interval.",
+          "id": "ip-riemann-table-rate"
         },
         {
           "problem": "Let F(x) = integral from 1 to x^2 of (1/(1 + t^2)) dt. Find F'(x) and evaluate F'(1).",
-          "answer": "By FTC Part 1 with chain rule: F'(x) = 1/(1 + (x^2)^2) * d/dx(x^2) = 2x/(1 + x^4). F'(1) = 2(1)/(1 + 1) = 2/2 = 1."
+          "answer": "By FTC Part 1 with chain rule: F'(x) = 1/(1 + (x^2)^2) * d/dx(x^2) = 2x/(1 + x^4). F'(1) = 2(1)/(1 + 1) = 2/2 = 1.",
+          "id": "ip-ftc1-chain-arctan"
         },
         {
           "problem": "Evaluate: integral from 0 to 3 of (4x - e^x) dx.",
-          "answer": "Antiderivative: F(x) = 2x^2 - e^x. F(3) - F(0) = (18 - e^3) - (0 - 1) = 18 - e^3 + 1 = 19 - e^3. (Approximately 19 - 20.086 = -1.086.)"
+          "answer": "Antiderivative: F(x) = 2x^2 - e^x. F(3) - F(0) = (18 - e^3) - (0 - 1) = 18 - e^3 + 1 = 19 - e^3. (Approximately 19 - 20.086 = -1.086.)",
+          "id": "ip-ftc2-exponential"
         },
         {
           "problem": "Evaluate: integral from 0 to pi/6 of sec^2(2x) dx using u-substitution.",
-          "answer": "Let u = 2x, du = 2dx, dx = du/2. Bounds: x = 0 -> u = 0; x = pi/6 -> u = pi/3. Integral becomes: (1/2) integral from 0 to pi/3 of sec^2(u) du = (1/2)[tan(u)] from 0 to pi/3 = (1/2)(tan(pi/3) - tan(0)) = (1/2)(sqrt(3) - 0) = sqrt(3)/2."
+          "answer": "Let u = 2x, du = 2dx, dx = du/2. Bounds: x = 0 -> u = 0; x = pi/6 -> u = pi/3. Integral becomes: (1/2) integral from 0 to pi/3 of sec^2(u) du = (1/2)[tan(u)] from 0 to pi/3 = (1/2)(tan(pi/3) - tan(0)) = (1/2)(sqrt(3) - 0) = sqrt(3)/2.",
+          "id": "ip-usub-definite-sec2"
         },
         {
           "problem": "Given that integral from 0 to 4 of f(x)dx = 10, integral from 4 to 7 of f(x)dx = -2, and integral from 0 to 7 of g(x)dx = 6, find: (a) integral from 0 to 7 of f(x)dx, (b) integral from 7 to 0 of f(x)dx, (c) integral from 0 to 7 of [3f(x) - 2g(x)]dx.",
-          "answer": "(a) Additivity: integral from 0 to 7 of f(x)dx = 10 + (-2) = 8. (b) Reversing limits: integral from 7 to 0 of f(x)dx = -8. (c) Linearity: 3*integral of f - 2*integral of g = 3(8) - 2(6) = 24 - 12 = 12."
+          "answer": "(a) Additivity: integral from 0 to 7 of f(x)dx = 10 + (-2) = 8. (b) Reversing limits: integral from 7 to 0 of f(x)dx = -8. (c) Linearity: 3*integral of f - 2*integral of g = 3(8) - 2(6) = 24 - 12 = 12.",
+          "id": "ip-properties-all"
         }
       ],
       "skill": "definite-integral-as-accumulation",
-      "lessonId": "accumulation-riemann"
+      "lessonId": "integral-properties"
     }
   ],
   "answerKeys": {
@@ -377,7 +426,9 @@
     "ip-ftc1-chain-arctan": "F'(x) = 2x/(1+x^4). F'(1) = 1.",
     "ip-ftc2-exponential": "19 - e^3.",
     "ip-usub-definite-sec2": "sqrt(3)/2.",
-    "ip-properties-all": "(a) 8. (b) -8. (c) 12."
+    "ip-properties-all": "(a) 8. (b) -8. (c) 12.",
+    "wp-usub-log": "ln|x^2 + 4| + C.",
+    "wp-properties-split": "5."
   },
   "lessons": [
     {

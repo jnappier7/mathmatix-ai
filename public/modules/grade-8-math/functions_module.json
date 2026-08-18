@@ -121,20 +121,6 @@
       "lessonId": "comparing-functions"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "function-modeling",
-      "title": "We-Do: Function Modeling — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for function modeling.",
-          "hint": "Apply the concepts of function modeling.",
-          "solution": "Step-by-step solution for function modeling."
-        }
-      ],
-      "lessonId": "function-concept"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Comparing Functions & Modeling: Worked Examples",
@@ -154,6 +140,56 @@
         }
       ],
       "lessonId": "comparing-functions"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "function-modeling",
+      "title": "We-Do: Function Modeling — Guided Practice",
+      "problems": [
+        {
+          "id": "fn-md1",
+          "question": "Jada has $120 saved and adds $18 every week. Write a function for her savings after w weeks, then find how many weeks until she has $300.",
+          "answer": "Rate of change: $18 per week. Initial value (w = 0): $120. So f(w) = 18w + 120. For $300: 18w + 120 = 300, so 18w = 180 and w = 10 weeks. Check: 18(10) + 120 = 180 + 120 = 300 ✓.",
+          "hints": [
+            "Two numbers, two jobs. One is the rate of change (per week) and one is the value before any weeks pass — decide which is which.",
+            "The $120 is already there at w = 0, so it is the initial value. The $18 repeats, so it multiplies w: f(w) = 18w + 120.",
+            "Set f(w) = 300 and solve. Subtract the starting amount first, then divide by the weekly rate."
+          ]
+        },
+        {
+          "id": "fn-md2",
+          "question": "A candle burns at a constant rate. After 2 hours it is 21 cm tall; after 5 hours it is 15 cm tall. Write a function h(t) for its height, find its original height, and find when it burns out.",
+          "answer": "Rate of change: (15 - 21)/(5 - 2) = -6/3 = -2 cm per hour — negative because the candle is shrinking. Now find the initial value using either point: 21 = -2(2) + b, so 21 = -4 + b and b = 25. Function: h(t) = -2t + 25, so the candle started at 25 cm. It burns out when h = 0: 0 = -2t + 25, giving t = 12.5 hours. Check the other point: -2(5) + 25 = 15 ✓.",
+          "hints": [
+            "You are not handed the starting height — you have to work back to it. Find the rate of change first, from the two given points.",
+            "(15 - 21)/(5 - 2) = -2 cm/hr. The sign matters: the candle is getting shorter.",
+            "Substitute one point into h(t) = -2t + b to find b. Then \"burns out\" means height 0 — solve h(t) = 0, and verify with the point you did not use."
+          ]
+        },
+        {
+          "id": "fn-md3",
+          "question": "A taxi's fare is shown in this table. miles: 0, 1, 2, 3 and fare: $3.50, $5.75, $8.00, $10.25. Write a function for the fare, explain what each number means, and find the cost of a 12-mile trip.",
+          "answer": "The fare rises by the same $2.25 for each additional mile (5.75 - 3.50 = 2.25, 8.00 - 5.75 = 2.25, 10.25 - 8.00 = 2.25), so the rate of change is $2.25 per mile. The table gives the initial value directly: at 0 miles the fare is $3.50 — a flat pick-up charge you pay before travelling anywhere. So f(m) = 2.25m + 3.50. For 12 miles: 2.25(12) + 3.50 = 27 + 3.50 = $30.50.",
+          "hints": [
+            "Check that the rate really is constant before assuming a linear model — compute the difference between every pair of consecutive fares.",
+            "Each mile adds $2.25. The x = 0 row hands you the initial value with no work: $3.50.",
+            "f(m) = 2.25m + 3.50. Say what the $3.50 means in the story — it is charged before the taxi moves. Then substitute m = 12."
+          ]
+        },
+        {
+          "id": "fn-md4",
+          "question": "The area of a square is a function of its side length: A(s) = s². Make a table for s = 1, 2, 3, 4, then explain why this is NOT a linear model.",
+          "answer": "The table is s: 1, 2, 3, 4 and A: 1, 4, 9, 16. Look at the differences between consecutive areas: 4 - 1 = 3, 9 - 4 = 5, 16 - 9 = 7. They are 3, 5, 7 — not constant, so there is no single rate of change and the model cannot be written as f(s) = ms + b. A linear function adds the same amount for every step of 1 in the input; this one adds more each time, so its graph curves upward instead of forming a straight line.",
+          "hints": [
+            "Fill in the table first by squaring each side length. Then do not look at the areas themselves — look at how much they change from one row to the next.",
+            "The areas are 1, 4, 9, 16. Subtract each from the next: what do you get?",
+            "The differences are 3, 5, 7 — increasing, not constant. A constant rate of change is exactly what makes a function linear, so this one is not."
+          ]
+        }
+      ],
+      "lessonId": "function-concept",
+      "initialPrompt": "Jada has $120 saved and adds $18 each week. Two numbers, two different jobs in the function — which one is the rate of change, and which is the value before any weeks have passed?"
     },
     {
       "type": "guided_practice",
@@ -342,7 +378,11 @@
     "fn-yp3": "Yes, it is a function",
     "fn-yp4": "f grows faster (5 vs 3); g starts higher (1 vs −2)",
     "fn-yp5": "h(w) = 4 + 1.5w; height at 6 weeks = 13 cm",
-    "fn-yp6": "Increasing from start to peak; decreasing from peak to ground"
+    "fn-yp6": "Increasing from start to peak; decreasing from peak to ground",
+    "fn-md1": "f(w) = 18w + 120; $300 at w = 10 weeks.",
+    "fn-md2": "h(t) = -2t + 25; started at 25 cm; burns out at t = 12.5 hours.",
+    "fn-md3": "f(m) = 2.25m + 3.50 ($3.50 flat pick-up charge); 12 miles costs $30.50.",
+    "fn-md4": "A: 1, 4, 9, 16. Differences 3, 5, 7 are not constant, so it is nonlinear."
   },
   "lessons": [
     {

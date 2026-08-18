@@ -54,64 +54,6 @@
       "lessonId": "transformations"
     },
     {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "title": "Congruence, Similarity & Angle Relationships",
-      "skill": "congruence-similarity",
-      "content": "**Congruence through transformations:** Two figures are congruent if one can be mapped onto the other using a sequence of rigid motions (translations, reflections, rotations). Congruent figures have the same size and shape.\n\n**Similarity through transformations:** Two figures are similar if one can be mapped onto the other using rigid motions AND a dilation. Similar figures have the same shape but may differ in size. The scale factor tells you how much bigger or smaller.\n\n**Angle relationships with parallel lines:**\nWhen a transversal crosses two parallel lines, it creates 8 angles with special relationships:\n- **Corresponding angles** are equal (same position at each intersection).\n- **Alternate interior angles** are equal (opposite sides of transversal, between the parallels).\n- **Alternate exterior angles** are equal (opposite sides, outside the parallels).\n- **Co-interior (same-side interior) angles** are supplementary (add to 180°).\n\n**Triangle angle sum:** The three angles of any triangle add to 180°. If two triangles have two pairs of equal angles (AA), they are similar.",
-      "keyPoints": [
-        "Congruent = same size and shape; mapped by rigid motions only",
-        "Similar = same shape, possibly different size; mapped by rigid motions + dilation",
-        "Corresponding angles are equal when parallel lines are cut by a transversal",
-        "Alternate interior angles are equal; co-interior angles sum to 180°",
-        "AA similarity: two pairs of equal angles guarantee similar triangles"
-      ],
-      "lessonId": "congruence-similarity"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "angle-relationships",
-      "title": "We-Do: Angle Relationships — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for angle relationships.",
-          "hint": "Apply the concepts of angle relationships.",
-          "solution": "Step-by-step solution for angle relationships."
-        }
-      ],
-      "lessonId": "angle-relationships"
-    },
-    {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "title": "The Pythagorean Theorem & Coordinate Distance",
-      "skill": "pythagorean-theorem",
-      "content": "**The Pythagorean Theorem:** In a right triangle with legs a and b and hypotenuse c:\na² + b² = c²\n\nThe hypotenuse is always the longest side, opposite the right angle.\n\n**Using it to find a missing side:**\n- Find hypotenuse: c = √(a² + b²)\n- Find a leg: a = √(c² − b²)\n\n**Common Pythagorean triples** (memorize these — they save time):\n3-4-5, 5-12-13, 8-15-17, 7-24-25\nAnd their multiples: 6-8-10, 9-12-15, 10-24-26\n\n**Distance on the coordinate plane:**\nThe distance between (x₁, y₁) and (x₂, y₂) IS the Pythagorean theorem:\nd = √((x₂ − x₁)² + (y₂ − y₁)²)\n\nThe horizontal distance |x₂ − x₁| and vertical distance |y₂ − y₁| form the two legs of a right triangle. The distance between the points is the hypotenuse.",
-      "keyPoints": [
-        "a² + b² = c² where c is the hypotenuse (longest side, opposite the right angle)",
-        "To find hypotenuse: c = √(a² + b²); to find a leg: a = √(c² − b²)",
-        "Common triples: 3-4-5, 5-12-13, 8-15-17 and their multiples",
-        "Distance formula: d = √((x₂ − x₁)² + (y₂ − y₁)²)",
-        "The distance formula IS the Pythagorean theorem on the coordinate plane"
-      ],
-      "lessonId": "pythagorean-theorem"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "distance-coordinate",
-      "title": "We-Do: Distance Coordinate — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for distance coordinate.",
-          "hint": "Apply the concepts of distance coordinate.",
-          "solution": "Step-by-step solution for distance coordinate."
-        }
-      ],
-      "lessonId": "pythagorean-theorem"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Transformations: Worked Examples",
@@ -131,48 +73,6 @@
         }
       ],
       "lessonId": "transformations"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "title": "Congruence, Similarity & Angles: Worked Examples",
-      "skill": "congruence-similarity",
-      "examples": [
-        {
-          "problem": "Triangle ABC has sides 3, 4, 5. Triangle DEF has sides 9, 12, 15. Are they congruent? Are they similar? If similar, what is the scale factor?",
-          "solution": "Compare corresponding sides:\n9/3 = 3, 12/4 = 3, 15/5 = 3.\n\nAll ratios are equal (3), so the triangles are similar with scale factor 3.\n\nAre they congruent? No — congruent means same size. DEF is 3 times larger than ABC.\n\nNote: You can also verify both are right triangles: 3² + 4² = 9 + 16 = 25 = 5² ✓ and 9² + 12² = 81 + 144 = 225 = 15² ✓."
-        },
-        {
-          "problem": "Two parallel lines are cut by a transversal. One of the eight angles measures 65°. Find all eight angle measures.",
-          "solution": "At intersection 1: The 65° angle and its vertical angle are both 65°. The two supplementary angles are 180° − 65° = 115°.\nSo intersection 1 has: 65°, 115°, 65°, 115°.\n\nAt intersection 2: Corresponding angles are equal to intersection 1.\nSo intersection 2 also has: 65°, 115°, 65°, 115°.\n\nAll eight angles: four angles of 65° and four angles of 115°.\n\nRelationships: corresponding = 65°, alternate interior = 65°, co-interior = 65° + 115° = 180° ✓."
-        },
-        {
-          "problem": "A triangle has angles 55° and 65°. Find the missing angle. Another triangle has angles 55° and 60°. Are the two triangles similar?",
-          "solution": "Triangle 1: missing angle = 180° − 55° − 65° = 60°. Angles: 55°, 65°, 60°.\nTriangle 2: angles given are 55° and 60°, so third angle = 180° − 55° − 60° = 65°. Angles: 55°, 60°, 65°.\n\nBoth triangles have the same three angles: 55°, 60°, 65°.\nBy AA similarity (actually all three angles match), the triangles ARE similar.\n\nNote: Similar does NOT mean congruent — they could be different sizes."
-        }
-      ],
-      "lessonId": "congruence-similarity"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "title": "Pythagorean Theorem & Distance: Worked Examples",
-      "skill": "pythagorean-theorem",
-      "examples": [
-        {
-          "problem": "A right triangle has legs 6 cm and 8 cm. Find the hypotenuse.",
-          "solution": "a² + b² = c²\n6² + 8² = c²\n36 + 64 = c²\n100 = c²\nc = √100 = 10 cm.\n\nThis is a 6-8-10 triple (double the 3-4-5 triple)."
-        },
-        {
-          "problem": "A 13-foot ladder leans against a wall. The base of the ladder is 5 feet from the wall. How high does the ladder reach?",
-          "solution": "The ladder, wall, and ground form a right triangle.\nHypotenuse = 13 ft (ladder). One leg = 5 ft (ground). Find the other leg (height on wall).\n\na² + 5² = 13²\na² + 25 = 169\na² = 144\na = √144 = 12 ft.\n\nThe ladder reaches 12 feet up the wall. (This is the 5-12-13 triple.)"
-        },
-        {
-          "problem": "Find the distance between the points (1, 2) and (4, 6).",
-          "solution": "Horizontal distance: |4 − 1| = 3.\nVertical distance: |6 − 2| = 4.\n\nThese form the legs of a right triangle. The distance is the hypotenuse:\nd = √(3² + 4²) = √(9 + 16) = √25 = 5.\n\nThe distance is 5 units. (3-4-5 triple!)"
-        }
-      ],
-      "lessonId": "pythagorean-theorem"
     },
     {
       "type": "guided_practice",
@@ -211,20 +111,44 @@
       "lessonId": "transformations"
     },
     {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Congruence and Similarity",
+      "skill": "congruence-similarity",
+      "content": "**Congruence through transformations:** two figures are congruent if one can be mapped onto the other using a sequence of **rigid motions** — translations, reflections, rotations. Rigid motions move a figure without changing it, so congruent figures have the same size *and* the same shape.\n\n**Similarity through transformations:** two figures are similar if one can be mapped onto the other using rigid motions **AND a dilation**. A dilation resizes, so similar figures have the same shape but may differ in size. The **scale factor** tells you how much bigger or smaller.\n\n**The relationship between them:** congruence is the special case of similarity with scale factor 1. Every congruent pair is similar; most similar pairs are not congruent.\n\n**Deciding from side lengths:** compare corresponding sides as ratios.\n• All ratios equal to 1 → **congruent**\n• All ratios equal to each other but not 1 → **similar**, and that common ratio is the scale factor\n• Ratios not all equal → **neither**\n\nFor triangles with sides 3, 4, 5 and 9, 12, 15: the ratios are 9/3 = 3, 12/4 = 3, 15/5 = 3. All equal, so the triangles are similar with scale factor 3 — and not congruent, since 3 ≠ 1.\n\n**Deciding from angles — the AA shortcut:** if two triangles have two pairs of equal angles, they are **similar**. (The third pair must match too, since all three angles sum to 180°.) Equal angles alone never prove congruence — they say nothing about size.\n\n**Triangle angle sum:** the three angles of any triangle add to 180°. That's what lets two known angles give you the third, and it's what makes AA work.\n\n**Order the letters correctly.** Writing △ABC ~ △DEF claims A↔D, B↔E, C↔F, and every ratio you write afterwards is read off that pairing.",
+      "keyPoints": [
+        "Congruent = same size and shape; mapped by rigid motions only",
+        "Similar = same shape, possibly different size; mapped by rigid motions + dilation",
+        "Corresponding angles are equal when parallel lines are cut by a transversal",
+        "Alternate interior angles are equal; co-interior angles sum to 180°",
+        "AA similarity: two pairs of equal angles guarantee similar triangles"
+      ],
+      "lessonId": "congruence-similarity",
+      "initialPrompt": "Triangle ABC has sides 3, 4, 5 and triangle DEF has sides 9, 12, 15. Compute the three ratios of corresponding sides. What do they tell you?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Congruence and Similarity: Worked Examples",
+      "skill": "congruence-similarity",
+      "examples": [
+        {
+          "problem": "Triangle ABC has sides 3, 4, 5. Triangle DEF has sides 9, 12, 15. Are they congruent? Are they similar? If similar, what is the scale factor?",
+          "solution": "Compare corresponding sides:\n9/3 = 3, 12/4 = 3, 15/5 = 3.\n\nAll ratios are equal (3), so the triangles are similar with scale factor 3.\n\nAre they congruent? No — congruent means same size. DEF is 3 times larger than ABC.\n\nNote: You can also verify both are right triangles: 3² + 4² = 9 + 16 = 25 = 5² ✓ and 9² + 12² = 81 + 144 = 225 = 15² ✓."
+        },
+        {
+          "problem": "A triangle has angles 55° and 65°. Find the missing angle. Another triangle has angles 55° and 60°. Are the two triangles similar?",
+          "solution": "Triangle 1: missing angle = 180° − 55° − 65° = 60°. Angles: 55°, 65°, 60°.\nTriangle 2: angles given are 55° and 60°, so third angle = 180° − 55° − 60° = 65°. Angles: 55°, 60°, 65°.\n\nBoth triangles have the same three angles: 55°, 60°, 65°.\nBy AA similarity (actually all three angles match), the triangles ARE similar.\n\nNote: Similar does NOT mean congruent — they could be different sizes."
+        }
+      ],
+      "lessonId": "congruence-similarity"
+    },
+    {
       "type": "guided_practice",
       "lessonPhase": "we-do",
-      "title": "Angles & Similarity Practice",
+      "title": "Congruence and Similarity Practice",
       "skill": "congruence-similarity",
       "problems": [
-        {
-          "id": "gt-wp4",
-          "question": "Two parallel lines are cut by a transversal. Angle 1 measures 72°. Find the measure of its corresponding angle (Angle 2) and its co-interior angle (Angle 3).",
-          "answer": "Angle 2 (corresponding) = 72°. Angle 3 (co-interior) = 180° − 72° = 108°.",
-          "hints": [
-            "Corresponding angles are equal when lines are parallel.",
-            "Co-interior (same-side interior) angles are supplementary — they add to 180°."
-          ]
-        },
         {
           "id": "gt-wp5",
           "question": "Triangle ABC has sides 3, 4, 5. Triangle DEF has sides 9, 12, 15. Are they similar? What is the scale factor? Are they congruent?",
@@ -245,6 +169,128 @@
         }
       ],
       "lessonId": "congruence-similarity"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "angle-relationships",
+      "title": "Angle Relationships with Parallel Lines",
+      "content": "When a **transversal** crosses two parallel lines, it creates 8 angles — but only **two distinct measures** among them, and those two are supplementary. Every rule below is a way of saying which angles get which measure.\n\n**Congruent pairs:**\n- **Corresponding angles** are equal — same position at each intersection (the F-pattern).\n- **Alternate interior angles** are equal — opposite sides of the transversal, between the parallels (the Z-pattern).\n- **Alternate exterior angles** are equal — opposite sides, outside the parallels.\n- **Vertical angles** are equal — directly across from each other at one intersection. (This one doesn't even need the lines to be parallel.)\n\n**Supplementary pairs (adding to 180°):**\n- **Co-interior (same-side interior) angles** — same side of the transversal, between the parallels (the C-pattern).\n- Any **linear pair** — two angles side by side on a straight line.\n\n**Find one angle and you have all eight.** Every angle in the diagram is either equal to the one you know or supplementary to it. If one angle is 115°, the other four measure 65°, and that's the whole picture.\n\n**These rules require the lines to be PARALLEL.** With non-parallel lines, corresponding angles are simply unequal. Read the diagram for the parallel marks before applying anything here.\n\n**Turning the rules into equations.** When the angles are algebraic expressions, first decide which relationship the pair has, then:\n• congruent pair → set the two expressions **equal**\n• supplementary pair → set their **sum to 180°**\n\nSolve for x, then substitute back to get the actual angle — most questions want the degrees, not x.\n\n**The rules run backwards too.** If corresponding angles turn out to be congruent, that *proves* the two lines are parallel. Some problems give you the angle relationship and ask for the value of x that makes the lines parallel.",
+      "initialPrompt": "Two parallel lines are cut by a transversal and one angle measures 115°. How many different angle measures appear in the whole diagram, and what are they?",
+      "lessonId": "angle-relationships"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "angle-relationships",
+      "title": "Angle Relationships: Worked Examples",
+      "examples": [
+        {
+          "problem": "Two parallel lines are cut by a transversal. One of the eight angles measures 65°. Find all eight angle measures.",
+          "solution": "At intersection 1: The 65° angle and its vertical angle are both 65°. The two supplementary angles are 180° − 65° = 115°.\nSo intersection 1 has: 65°, 115°, 65°, 115°.\n\nAt intersection 2: Corresponding angles are equal to intersection 1.\nSo intersection 2 also has: 65°, 115°, 65°, 115°.\n\nAll eight angles: four angles of 65° and four angles of 115°.\n\nRelationships: corresponding = 65°, alternate interior = 65°, co-interior = 65° + 115° = 180° ✓."
+        },
+        {
+          "problem": "Two parallel lines are cut by a transversal. A pair of alternate interior angles measure (4x − 15)° and (2x + 35)°. Find x and the measure of each angle.",
+          "solution": "**Step 1 — decide what the relationship means.** Alternate interior angles formed by a transversal crossing **parallel** lines are **congruent**, so the two expressions are equal.\n\n**Step 2 — write the equation:**\n4x − 15 = 2x + 35\n\n**Step 3 — solve.** Subtract 2x from both sides:\n2x − 15 = 35\nAdd 15:\n2x = 50\nx = **25**\n\n**Step 4 — answer what was asked.** The question wants the angles, so substitute back into **both** expressions:\n• 4(25) − 15 = 100 − 15 = 85°\n• 2(25) + 35 = 50 + 35 = 85°\n\n**Both angles measure 85°**, and the agreement confirms the setup.\n\n**Check against the diagram:** if one angle is 85°, the other distinct measure in the figure is 180° − 85° = 95°. Every one of the eight angles is 85° or 95°.\n\n**What if they'd been co-interior instead?** Then the equation would have been (4x − 15) + (2x + 35) = 180 — a different equation with a different answer. Identifying the relationship first is the whole game."
+        }
+      ],
+      "initialPrompt": "In example 2, what told us to set the expressions equal rather than add them to 180°?",
+      "lessonId": "angle-relationships"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "angle-relationships",
+      "title": "We-Do: Angle Relationships — Guided Practice",
+      "problems": [
+        {
+          "id": "gt-ar1",
+          "question": "Two parallel lines are cut by a transversal, and ∠1 measures 115°. Find the measure of (a) the angle alternate interior to ∠1, (b) the co-interior (same-side interior) angle with ∠1, and (c) the angle vertical to ∠1.",
+          "answer": "(a) Alternate interior angles are equal, so that angle is 115°. (b) Co-interior angles are supplementary, so it is 180 - 115 = 65°. (c) Vertical angles are always equal — parallel lines are not even needed for that one — so it is 115°. Notice only one of the three relationships subtracts; the equal-pairs are the default and supplementary is the exception worth memorising.",
+          "hints": [
+            "Sort the three relationships into two groups first: which ones give EQUAL angles, and which give angles that add to 180°?",
+            "Alternate interior and vertical angles are equal. Co-interior (same-side interior) angles are supplementary.",
+            "So (a) and (c) are both 115°, and (b) is 180 - 115. Vertical angles are equal whether or not the lines are parallel — the others need the parallel condition."
+          ]
+        },
+        {
+          "id": "gt-ar2",
+          "question": "Two parallel lines are cut by a transversal. One angle measures (3x + 10)° and its co-interior partner measures (2x + 20)°. Find x and both angle measures.",
+          "answer": "Co-interior angles are supplementary, so set their sum to 180: (3x + 10) + (2x + 20) = 180. Combine: 5x + 30 = 180, so 5x = 150 and x = 30. The angles are 3(30) + 10 = 100° and 2(30) + 20 = 80°. Check: 100 + 80 = 180 ✓.",
+          "hints": [
+            "Decide the relationship BEFORE writing an equation. Co-interior angles are supplementary — so do you set the expressions equal, or set their sum to 180?",
+            "Sum to 180: (3x + 10) + (2x + 20) = 180. Combine like terms carefully.",
+            "5x + 30 = 180 gives x = 30. Substitute back to get both angles, and check they really add to 180."
+          ]
+        },
+        {
+          "id": "gt-ar3",
+          "question": "Alternate interior angles formed by two parallel lines and a transversal measure (4x - 15)° and (2x + 35)°. Find x and the measure of each angle.",
+          "answer": "Alternate interior angles are equal, so 4x - 15 = 2x + 35. Subtract 2x: 2x - 15 = 35. Add 15: 2x = 50, so x = 25. Each angle measures 4(25) - 15 = 85° and 2(25) + 35 = 85° ✓ — they must come out the same, which is the built-in check.",
+          "hints": [
+            "This is the other relationship type from the previous problem. Alternate interior angles are equal, not supplementary.",
+            "Set the expressions equal: 4x - 15 = 2x + 35. Move the variable terms to one side.",
+            "x = 25. Substitute into BOTH expressions — if they do not match, you either solved wrong or used the wrong relationship."
+          ]
+        },
+        {
+          "id": "gt-ar4",
+          "question": "Two lines are cut by a transversal. The corresponding angles measure (5x)° and (3x + 40)°. If the lines are parallel, find x and the angle measures. Then explain what you would conclude if the two angles had instead measured 100° and 105°.",
+          "answer": "If the lines are parallel, corresponding angles are equal: 5x = 3x + 40, so 2x = 40 and x = 20. Both angles measure 5(20) = 100° and 3(20) + 40 = 100° ✓. If instead they measured 100° and 105°, the corresponding angles would NOT be equal — and since parallel lines force corresponding angles to be equal, the lines could not be parallel. This is the converse: equal corresponding angles prove lines parallel, and unequal ones prove they are not.",
+          "hints": [
+            "Corresponding angles are the equal kind, so start by setting the two expressions equal — but notice the problem says \"IF the lines are parallel\", which is a condition, not a given fact.",
+            "5x = 3x + 40 gives x = 20, and both angles are 100°.",
+            "For the second part, run the rule backwards: parallel lines guarantee equal corresponding angles, so unequal corresponding angles rule parallelism out."
+          ]
+        },
+        {
+          "id": "gt-wp4",
+          "question": "Two parallel lines are cut by a transversal. Angle 1 measures 72°. Find the measure of its corresponding angle (Angle 2) and its co-interior angle (Angle 3).",
+          "answer": "Angle 2 (corresponding) = 72°. Angle 3 (co-interior) = 180° − 72° = 108°.",
+          "hints": [
+            "Corresponding angles are equal when lines are parallel.",
+            "Co-interior (same-side interior) angles are supplementary — they add to 180°."
+          ]
+        }
+      ],
+      "lessonId": "angle-relationships",
+      "initialPrompt": "Two parallel lines cut by a transversal, and one angle is 115°. Of the relationships we listed — corresponding, alternate interior, alternate exterior, co-interior — which give you 115° straight away, and which one needs a subtraction?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "The Pythagorean Theorem & Coordinate Distance",
+      "skill": "pythagorean-theorem",
+      "content": "**The Pythagorean Theorem:** In a right triangle with legs a and b and hypotenuse c:\na² + b² = c²\n\nThe hypotenuse is always the longest side, opposite the right angle.\n\n**Using it to find a missing side:**\n- Find hypotenuse: c = √(a² + b²)\n- Find a leg: a = √(c² − b²)\n\n**Common Pythagorean triples** (memorize these — they save time):\n3-4-5, 5-12-13, 8-15-17, 7-24-25\nAnd their multiples: 6-8-10, 9-12-15, 10-24-26\n\n**Distance on the coordinate plane:**\nThe distance between (x₁, y₁) and (x₂, y₂) IS the Pythagorean theorem:\nd = √((x₂ − x₁)² + (y₂ − y₁)²)\n\nThe horizontal distance |x₂ − x₁| and vertical distance |y₂ − y₁| form the two legs of a right triangle. The distance between the points is the hypotenuse.",
+      "keyPoints": [
+        "a² + b² = c² where c is the hypotenuse (longest side, opposite the right angle)",
+        "To find hypotenuse: c = √(a² + b²); to find a leg: a = √(c² − b²)",
+        "Common triples: 3-4-5, 5-12-13, 8-15-17 and their multiples",
+        "Distance formula: d = √((x₂ − x₁)² + (y₂ − y₁)²)",
+        "The distance formula IS the Pythagorean theorem on the coordinate plane"
+      ],
+      "lessonId": "pythagorean-theorem"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Pythagorean Theorem & Distance: Worked Examples",
+      "skill": "pythagorean-theorem",
+      "examples": [
+        {
+          "problem": "A right triangle has legs 6 cm and 8 cm. Find the hypotenuse.",
+          "solution": "a² + b² = c²\n6² + 8² = c²\n36 + 64 = c²\n100 = c²\nc = √100 = 10 cm.\n\nThis is a 6-8-10 triple (double the 3-4-5 triple)."
+        },
+        {
+          "problem": "A 13-foot ladder leans against a wall. The base of the ladder is 5 feet from the wall. How high does the ladder reach?",
+          "solution": "The ladder, wall, and ground form a right triangle.\nHypotenuse = 13 ft (ladder). One leg = 5 ft (ground). Find the other leg (height on wall).\n\na² + 5² = 13²\na² + 25 = 169\na² = 144\na = √144 = 12 ft.\n\nThe ladder reaches 12 feet up the wall. (This is the 5-12-13 triple.)"
+        },
+        {
+          "problem": "Find the distance between the points (1, 2) and (4, 6).",
+          "solution": "Horizontal distance: |4 − 1| = 3.\nVertical distance: |6 − 2| = 4.\n\nThese form the legs of a right triangle. The distance is the hypotenuse:\nd = √(3² + 4²) = √(9 + 16) = √25 = 5.\n\nThe distance is 5 units. (3-4-5 triple!)"
+        }
+      ],
+      "lessonId": "pythagorean-theorem"
     },
     {
       "type": "guided_practice",
@@ -283,10 +329,60 @@
       "lessonId": "pythagorean-theorem"
     },
     {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "distance-coordinate",
+      "title": "We-Do: Distance Coordinate — Guided Practice",
+      "problems": [
+        {
+          "id": "gt-dc1",
+          "question": "Find the distance between (1, 2) and (13, 7).",
+          "answer": "Horizontal leg: 13 - 1 = 12. Vertical leg: 7 - 2 = 5. Distance = √(12² + 5²) = √(144 + 25) = √169 = 13. That is the 5-12-13 triple — spotting it lets you skip the square root entirely.",
+          "hints": [
+            "The distance formula IS the Pythagorean theorem. Find the horizontal and vertical gaps first — those are your two legs.",
+            "Legs are 12 and 5. Square each, add, then take the square root.",
+            "√(144 + 25) = √169 = 13. If 12 and 5 looked familiar, that is because 5-12-13 is one of the triples worth memorising."
+          ]
+        },
+        {
+          "id": "gt-dc2",
+          "question": "Find the distance between (-3, 4) and (2, -1). Give the exact answer in simplest radical form and a decimal to the nearest hundredth.",
+          "answer": "Horizontal: 2 - (-3) = 5. Vertical: -1 - 4 = -5. Squaring removes the sign, so distance = √(5² + (-5)²) = √(25 + 25) = √50. Simplify: √50 = √(25·2) = 5√2 ≈ 7.07. Not every distance is a whole number — a radical answer is exact, and the decimal is the approximation.",
+          "hints": [
+            "Careful with the double negative: 2 - (-3) is 5, not -1.",
+            "The legs are 5 and -5. Do not worry about the negative — squaring makes both 25.",
+            "√50 is not a whole number, so simplify it: 50 = 25 · 2, and √25 = 5, giving 5√2 ≈ 7.07."
+          ]
+        },
+        {
+          "id": "gt-dc3",
+          "question": "Triangle ABC has vertices A(0, 0), B(6, 0), and C(6, 8). Find the length of each side and the perimeter. Is it a right triangle?",
+          "answer": "AB runs horizontally: 6 - 0 = 6. BC runs vertically: 8 - 0 = 8. AC needs the formula: √((6 - 0)² + (8 - 0)²) = √(36 + 64) = √100 = 10. Perimeter = 6 + 8 + 10 = 24 units. It is a right triangle: 6² + 8² = 36 + 64 = 100 = 10² ✓, and you can see it directly — AB is horizontal and BC is vertical, so they meet at a right angle at B. (6-8-10 is 3-4-5 doubled.)",
+          "hints": [
+            "Two of these sides do not need the distance formula at all. Look at which coordinates stay the same between the endpoints.",
+            "AB is horizontal (same y) so its length is just 6; BC is vertical (same x) so its length is 8. Only AC needs the full formula.",
+            "AC = √(36 + 64) = 10. Add for the perimeter, then confirm the right angle either with the converse or by noticing one side is horizontal and the other vertical."
+          ]
+        },
+        {
+          "id": "gt-dc4",
+          "question": "A football field is marked as a grid where each unit is one yard. A player runs from (0, 0) to (30, 40). How far did they run? How much farther would it have been to run 30 yards along one sideline and then 40 yards across?",
+          "answer": "Straight-line distance = √(30² + 40²) = √(900 + 1600) = √2500 = 50 yards. The two-leg route covers 30 + 40 = 70 yards. So the diagonal saves 70 - 50 = 20 yards. This is why the hypotenuse is always shorter than the two legs combined — going direct beats going around the corner, every time.",
+          "hints": [
+            "Set the run up as a right triangle: the horizontal leg is 30, the vertical leg is 40, and the actual run is the hypotenuse.",
+            "√(900 + 1600) = √2500. That is a perfect square — 30-40-50 is 3-4-5 scaled by 10.",
+            "The alternative route is just the two legs added: 30 + 40. Subtract to find the saving, and notice it must always be positive."
+          ]
+        }
+      ],
+      "lessonId": "pythagorean-theorem",
+      "initialPrompt": "Find the distance between (1, 2) and (13, 7). Before reaching for the formula — how far apart are they horizontally, and how far vertically? Those two numbers are the whole problem."
+    },
+    {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Geometry Transformations & Pythagorean Theorem: Independent Practice",
-      "skill": "transformations",
+      "skill": "pythagorean-theorem",
       "problems": [
         {
           "id": "gt-yp1",
@@ -343,7 +439,7 @@
           ]
         }
       ],
-      "lessonId": "transformations"
+      "lessonId": "pythagorean-theorem"
     }
   ],
   "answerKeys": {
@@ -361,7 +457,15 @@
     "gt-yp3": "Four 130° angles and four 50° angles",
     "gt-yp4": "13 cm",
     "gt-yp5": "45 inches",
-    "gt-yp6": "10 units"
+    "gt-yp6": "10 units",
+    "gt-ar1": "115°, 65°, 115°.",
+    "gt-ar2": "x = 30; angles 100° and 80°.",
+    "gt-ar3": "x = 25; both angles 85°.",
+    "gt-ar4": "x = 20, both 100°. At 100° and 105° the lines could not be parallel.",
+    "gt-dc1": "13 (a 5-12-13 triple).",
+    "gt-dc2": "√50 = 5√2 ≈ 7.07.",
+    "gt-dc3": "AB = 6, BC = 8, AC = 10; perimeter 24; right triangle.",
+    "gt-dc4": "50 yards; the two-leg route is 70, so the diagonal saves 20."
   },
   "lessons": [
     {
