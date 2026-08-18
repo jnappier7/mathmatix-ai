@@ -77,7 +77,7 @@
       "title": "Data Displays: Histograms, Box Plots, and Dot Plots",
       "content": "Data displays are visual tools that help us understand the shape, center, and spread of a data set at a glance.\n\n**Dot Plot:**\nA number line with a dot (or X) for each data value. Simple and great for small data sets. You can easily see clusters, gaps, and outliers.\n\n**Histogram:**\nA bar graph that groups data into **intervals** (called bins). The height of each bar shows the **frequency** (how many values fall in that interval). Histograms show the overall shape of the distribution:\n- **Symmetric:** roughly the same on both sides of the center (bell-shaped).\n- **Skewed left:** tail extends to the left (most data on the right).\n- **Skewed right:** tail extends to the right (most data on the left).\n\n**Box Plot (Box-and-Whisker Plot):**\nA box plot displays the **five-number summary**:\n1. **Minimum** — the smallest value\n2. **Q1 (first quartile)** — the median of the lower half (25th percentile)\n3. **Median (Q2)** — the middle value (50th percentile)\n4. **Q3 (third quartile)** — the median of the upper half (75th percentile)\n5. **Maximum** — the largest value\n\nThe **box** spans from Q1 to Q3, and the line inside the box marks the median. The **whiskers** extend from the box to the minimum and maximum. The length of the box (Q3 − Q1) is the **interquartile range (IQR)**, which measures the spread of the middle 50% of the data.\n\n**Choosing a display:**\n- Dot plot: best for small data sets (under ~25 values).\n- Histogram: best for large data sets to see the overall shape.\n- Box plot: best for comparing two or more data sets side by side, and for spotting outliers and seeing spread.",
       "initialPrompt": "If you wanted to compare test score distributions between two different classes, which display would be best — a dot plot, histogram, or box plot? Why?",
-      "lessonId": "scatter-plots"
+      "lessonId": "data-displays"
     },
     {
       "type": "model",
@@ -97,7 +97,7 @@
         }
       ],
       "initialPrompt": "In the box plot example, the IQR was 13 and the range was 27. What does it tell us that the IQR is about half the range? If the IQR were much smaller than half the range, what would that mean?",
-      "lessonId": "scatter-plots"
+      "lessonId": "data-displays"
     },
     {
       "type": "guided_practice",
@@ -156,7 +156,38 @@
       "title": "Scatter Plots, Correlation, and Lines of Best Fit",
       "content": "A **scatter plot** displays two related variables as points on a coordinate plane. Each point represents one data pair (x, y). Scatter plots help us see whether there is a **relationship** (called a **correlation** or **association**) between two variables.\n\n**Types of correlation:**\n- **Positive correlation:** As x increases, y tends to increase. The points slope upward from left to right. Example: study hours vs. test score.\n- **Negative correlation:** As x increases, y tends to decrease. The points slope downward from left to right. Example: hours of TV vs. test score.\n- **No correlation:** No clear pattern. The points are randomly scattered. Example: shoe size vs. test score.\n\n**Strength of correlation:**\n- **Strong:** Points are tightly clustered along a line.\n- **Weak:** Points follow a general trend but are widely scattered.\n\n**Correlation vs. Causation:**\nJust because two variables are correlated does NOT mean one **causes** the other. This is a critical distinction:\n- Correlation means the variables move together (a statistical relationship).\n- Causation means one variable directly influences the other.\n- Example: Ice cream sales and drowning rates are positively correlated, but ice cream does not cause drowning. Both increase because of a **lurking variable** — hot weather.\n\n**Line of Best Fit (Trend Line):**\nA line of best fit is a straight line drawn through a scatter plot that best represents the overall trend. It should:\n- Follow the direction of the data\n- Have roughly equal numbers of points above and below\n- Pass through or near the center of the data cloud\n\nThe equation of the line (y = mx + b) can be used to **make predictions**:\n- **Interpolation**: predicting within the data range (more reliable)\n- **Extrapolation**: predicting beyond the data range (less reliable)",
       "initialPrompt": "Think of two variables you encounter in daily life that might have a positive correlation, and two that might have a negative correlation. Can you also think of two variables that probably have no correlation at all?",
-      "lessonId": "data-displays"
+      "lessonId": "scatter-plots"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "intro-probability",
+      "title": "Introduction to Probability",
+      "content": "Statistics describes data you already collected. **Probability** goes the other way: it measures how likely something is *before* it happens, so you can predict what a data set will look like.\n\n**The basic definition.** When every outcome is equally likely,\n\n**P(event) = (number of favorable outcomes) / (total number of equally likely outcomes)**\n\nRolling a fair die, the six outcomes 1–6 are equally likely. P(rolling a 2) = 1/6. The words *fair* and *equally likely* matter — this formula does not apply to a weighted die or a bag you can peek into.\n\n**Probability lives between 0 and 1.**\n- **P = 0** means impossible (rolling a 7 on a standard die).\n- **P = 1** means certain (rolling a number less than 7).\n- Everything else falls in between. A probability can never be negative or greater than 1 — if you compute 5/3, you made an arithmetic error.\n\n**Three ways to write the same number.** A probability of 1/4 is also 0.25 and 25%. Convert by dividing (1 ÷ 4 = 0.25) and then multiplying by 100 for the percent. Use whichever form communicates best: fractions are exact, percentages are easiest to talk about.\n\n**The complement rule.** The complement of an event is everything *except* that event, and the two must together account for everything:\n\n**P(not A) = 1 − P(A)**\n\nThis is a shortcut, not a new idea. If 4 of 20 marbles are blue, you can count the 16 non-blue marbles (16/20), or subtract: 1 − 4/20 = 16/20. Same answer, less counting — and much less counting when the \"not\" case has many more outcomes than the event itself.\n\n**Independent events.** Two events are **independent** when one happening does not change the chance of the other. A coin flip and a die roll are independent; the coin has no memory and no influence. For independent events joined by **AND**, multiply:\n\n**P(A and B) = P(A) × P(B)**\n\nP(heads and a 3) = 1/2 × 1/6 = 1/12. You can always check a multiplication by listing: there are 2 × 6 = 12 equally likely (coin, die) pairs, and exactly one is (heads, 3).\n\n**Theoretical vs. experimental probability.** *Theoretical* probability is what the math predicts (a fair coin: 0.5 heads). *Experimental* probability is what actually happened (28 heads in 50 flips: 28/50 = 0.56). They rarely match exactly, and that is not a contradiction. The more trials you run, the closer the experimental value tends to drift toward the theoretical one.\n\n**What a probability predicts.** P = 0.25 does not promise 1 hit in every 4 tries. It says that over many trials, about a quarter will be hits. That is what makes probability useful for data: multiply it by the number of trials to get an **expected count**. If 25% of candies are cherry and 200 students each draw one, expect *about* 50 cherries — not exactly 50.",
+      "initialPrompt": "Quick gut check before we do any math: if you roll a fair six-sided die, which is more likely — rolling a 3, or rolling an even number? What made you say that?",
+      "lessonId": "probability-intro"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "intro-probability",
+      "title": "I-Do: Probability Calculations",
+      "examples": [
+        {
+          "problem": "A standard deck has 52 cards, 13 of each suit. Find P(drawing a heart) and P(NOT drawing a heart). Give each as a fraction, decimal, and percentage.",
+          "solution": "**Step 1: Identify total outcomes.**\nOne card is drawn from 52, and each card is equally likely. Total = 52.\n\n**Step 2: Count favorable outcomes.**\nThere are 13 hearts.\n\n**Step 3: Compute P(heart).**\nP(heart) = 13/52 = **1/4 = 0.25 = 25%**\n\n**Step 4: Use the complement for \"not\".**\nP(not a heart) = 1 − 1/4 = **3/4 = 0.75 = 75%**\n\n**Check it the long way.** The non-hearts are 39 cards, and 39/52 = 3/4 ✓. Both routes agree, which is the point of the complement rule — it is a shortcut, not a different rule.\n\n**Interpret it.** 25% does not mean 1 heart in every 4 draws. It means that over many draws (replacing the card each time), about a quarter come up hearts."
+        },
+        {
+          "problem": "A jar holds 5 red, 7 yellow, and 8 green candies. (a) Find P(yellow). (b) Find P(not yellow). (c) If 60 people each draw one candy at random and put it back, about how many yellows would you expect?",
+          "solution": "**Step 1: Find the total.**\n5 + 7 + 8 = 20 candies.\n\n**(a) P(yellow).**\nP(yellow) = 7/20 = **0.35 = 35%**\n\n**(b) P(not yellow).**\nComplement: P(not yellow) = 1 − 7/20 = **13/20 = 0.65 = 65%**\nCheck by counting: 5 red + 8 green = 13 non-yellow, and 13/20 ✓.\n\n**(c) Expected count.**\nExpected = probability × number of trials = 0.35 × 60 = **21 yellows**.\n\n**Watch the wording.** The answer is \"about 21.\" Getting 19 or 24 would not mean the probability was wrong — it means 60 trials is a small sample. This is the bridge from probability back to data: a probability predicts the shape of a data set you have not collected yet."
+        },
+        {
+          "problem": "A spinner has 4 equal sections colored red, blue, green, and yellow. You spin it once and flip a fair coin. Find P(blue AND tails).",
+          "solution": "**Step 1: Are the events independent?**\nSpinning the spinner does not change the coin, and flipping the coin does not change the spinner. They are **independent**, so we may multiply.\n\n**Step 2: Find each probability separately.**\nP(blue) = 1/4 (four equal sections).\nP(tails) = 1/2.\n\n**Step 3: Multiply.**\nP(blue and tails) = 1/4 × 1/2 = **1/8 = 0.125 = 12.5%**\n\n**Check by listing.** There are 4 × 2 = 8 equally likely (color, coin) pairs: red-H, red-T, blue-H, blue-T, green-H, green-T, yellow-H, yellow-T. Exactly one is blue-T, so 1/8 ✓.\n\n**The trap to avoid.** AND means multiply, and the answer gets *smaller* — 12.5% is less likely than either 25% or 50% on its own. Requiring two things at once is always harder than requiring one."
+        }
+      ],
+      "initialPrompt": "Let's start with the deck of cards. Before I compute anything — how many cards total, and how many of them are hearts?",
+      "lessonId": "probability-intro"
     },
     {
       "type": "guided_practice",
@@ -205,7 +236,7 @@
           ]
         }
       ],
-      "lessonId": "lines-of-best-fit",
+      "lessonId": "probability-intro",
       "initialPrompt": "Let's start probability with a die roll. If you roll a fair six-sided die once, how many outcomes are possible, and how many of them are greater than 4?"
     },
     {
@@ -231,7 +262,7 @@
         }
       ],
       "initialPrompt": "In the first example, we said there was a strong positive correlation. If the points were more spread out — say (1, 55), (2, 75), (3, 50), (4, 72), (5, 60), (6, 85), (7, 68) — would we still say there is a strong correlation?",
-      "lessonId": "data-displays"
+      "lessonId": "scatter-plots"
     },
     {
       "type": "guided_practice",
@@ -281,7 +312,7 @@
         }
       ],
       "initialPrompt": "Let's work through these problems together. For the first one, look at the data pairs. As temperature goes from 30 to 65, what happens to the number of cups sold? What type of correlation is this?",
-      "lessonId": "data-displays"
+      "lessonId": "scatter-plots"
     },
     {
       "type": "independent_practice",
