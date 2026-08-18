@@ -36,8 +36,6 @@ const isStub = (v) => typeof v === 'string' && STUB_PATTERNS.some((r) => r.test(
 // Known-bad, as of the all-courses audit. Shrink this list; never extend it.
 // Each entry is a lesson step whose practice content is placeholder text.
 const KNOWN_STUB_STEPS = [
-  'grade-8-math/statistics_bivariate[2]',
-  'grade-8-math/statistics_bivariate[4]',
   'precalculus/function_toolkit[9]',
   'precalculus/trigonometry_foundations[12]',
   'precalculus/vectors[5]',

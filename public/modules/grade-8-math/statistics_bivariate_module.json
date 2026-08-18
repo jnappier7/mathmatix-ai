@@ -65,20 +65,6 @@
       "lessonId": "line-of-best-fit"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "interpret-slope-intercept",
-      "title": "We-Do: Interpret Slope Intercept — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for interpret slope intercept.",
-          "hint": "Apply the concepts of interpret slope intercept.",
-          "solution": "Step-by-step solution for interpret slope intercept."
-        }
-      ],
-      "lessonId": "interpret-data"
-    },
-    {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Two-Way Tables & Correlation vs. Causation",
@@ -90,20 +76,6 @@
         "Correlation = two variables change together; causation = one causes the other",
         "Correlation does NOT imply causation — always look for confounding variables",
         "Confounding variable: a hidden factor that affects both measured variables"
-      ],
-      "lessonId": "two-way-tables-correlation"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "correlation-causation",
-      "title": "We-Do: Correlation Causation — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for correlation causation.",
-          "hint": "Apply the concepts of correlation causation.",
-          "solution": "Step-by-step solution for correlation causation."
-        }
       ],
       "lessonId": "two-way-tables-correlation"
     },
@@ -245,6 +217,56 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "interpret-slope-intercept",
+      "title": "We-Do: Interpret Slope Intercept — Guided Practice",
+      "problems": [
+        {
+          "id": "sb-si1",
+          "question": "A trend line for used cars is y = -1500x + 22000, where x is the car's age in years and y is its value in dollars. Interpret the slope and the y-intercept, then predict the value of a 6-year-old car.",
+          "answer": "Slope -1500: the car loses about $1,500 in value for each additional year of age — negative because value is falling. Y-intercept 22000: at x = 0 years old, the predicted value is $22,000, which is the price when new. Prediction at 6 years: y = -1500(6) + 22000 = -9000 + 22000 = $13,000.",
+          "hints": [
+            "Interpret each number with its units attached: the slope is dollars per year, the intercept is dollars.",
+            "The slope is negative — say what that means about the value as the car ages, not just \"it goes down by 1500\".",
+            "For the prediction, substitute x = 6. Multiply before adding, and keep the sign on the 1500."
+          ]
+        },
+        {
+          "id": "sb-si2",
+          "question": "A trend line relating adult shoe size (x) to height in centimetres (y) is y = 3.5x + 120. Interpret both the slope and the y-intercept. Does the y-intercept make sense here?",
+          "answer": "Slope 3.5: for each increase of one shoe size, predicted height rises by about 3.5 cm. Y-intercept 120: the model predicts a height of 120 cm for someone with shoe size 0. That does NOT make sense — nobody has shoe size 0, so x = 0 sits far outside the real data and the intercept is just where the line happens to cross the axis. The intercept is mathematically necessary but has no meaning in this context.",
+          "hints": [
+            "Interpret the slope first — it is the reliable one. What does one extra shoe size predict about height?",
+            "The intercept always answers \"what does the model predict when x = 0?\" So ask: what is shoe size 0?",
+            "There is no such shoe size, so x = 0 is outside any real data. A y-intercept can be meaningless in context and the model still be useful — that is the point here."
+          ]
+        },
+        {
+          "id": "sb-si3",
+          "question": "A line of best fit for hours of TV per day (x) versus test score (y) passes through the points (2, 46) and (8, 28). Write its equation, then interpret the slope and y-intercept.",
+          "answer": "Slope: m = (28 - 46)/(8 - 2) = -18/6 = -3. Find b using (2, 46): 46 = -3(2) + b, so 46 = -6 + b and b = 52. Equation: y = -3x + 52. Check with the other point: -3(8) + 52 = 28 ✓. Slope -3: each additional hour of daily TV is associated with a test score about 3 points lower. Y-intercept 52: a student watching no TV is predicted to score 52.",
+          "hints": [
+            "These are points ON the line, not raw data points — which is exactly what you want for finding its equation.",
+            "m = (28 - 46)/(8 - 2). Watch the order: keep the same point first in both the numerator and the denominator.",
+            "With m = -3, substitute one point into y = mx + b to find b, then verify with the OTHER point. Interpret both numbers with units."
+          ]
+        },
+        {
+          "id": "sb-si4",
+          "question": "Using y = -3x + 52 from the previous problem, where the data covered 0 to 8 hours of TV: predict the score for a student who watches 5 hours, and for one who watches 20 hours. Which prediction should you trust, and why?",
+          "answer": "At 5 hours: y = -3(5) + 52 = 37. At 20 hours: y = -3(20) + 52 = -8. The 5-hour prediction is INTERPOLATION — 5 sits inside the 0-to-8 range the data covered — so it is reasonably trustworthy. The 20-hour prediction is EXTRAPOLATION, far outside that range, and the answer proves the model has broken down: a test score of -8 is impossible. A linear model only describes the region where you actually collected data.",
+          "hints": [
+            "Substitute both values first, then compare each x against the range of the original data (0 to 8 hours).",
+            "One prediction lands inside that range and one lands far outside. There are names for these: interpolation and extrapolation.",
+            "Look hard at the second answer. A negative test score cannot happen — that impossible result is the evidence that extrapolating this far is not valid."
+          ]
+        }
+      ],
+      "lessonId": "interpret-data",
+      "initialPrompt": "A used-car trend line is y = -1500x + 22000, with x in years and y in dollars. Take the -1500 first: what does it mean in this situation, and why is it negative?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
       "title": "Two-Way Tables & Correlation Practice",
       "skill": "two-way-tables",
       "problems": [
@@ -277,6 +299,56 @@
         }
       ],
       "lessonId": "two-way-tables-correlation"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "correlation-causation",
+      "title": "We-Do: Correlation Causation — Guided Practice",
+      "problems": [
+        {
+          "id": "sb-cc1",
+          "question": "Data shows that fires attended by more firefighters cause more property damage. Does sending more firefighters cause more damage? Explain, and name the confounding variable.",
+          "answer": "No. The correlation is real but the causal story is backwards-looking: the confounding variable is the SIZE of the fire. Big fires cause a lot of damage AND require more firefighters. The fire's size drives both variables, which is exactly what a confounding variable does. Sending fewer firefighters would not reduce damage — it would increase it.",
+          "hints": [
+            "The two variables really do rise together, so the correlation is genuine. The question is whether one causes the other.",
+            "Ask what a third factor could be that makes BOTH numbers large at the same time.",
+            "The size of the fire drives both. Test your answer by asking what would happen if you deliberately sent fewer firefighters — if the claim were causal, damage should fall."
+          ]
+        },
+        {
+          "id": "sb-cc2",
+          "question": "A survey finds that people who use sunscreen get more sunburns than people who do not. Should you conclude sunscreen causes sunburn? Explain what is really going on.",
+          "answer": "No. The confounding variable is sun exposure: people who spend hours in strong sun are far more likely both to apply sunscreen AND to get burned, while people who stay indoors do neither. The two groups are not comparable to begin with. To test sunscreen properly you would have to compare people with similar sun exposure — some using sunscreen and some not — rather than comparing self-selected groups.",
+          "hints": [
+            "Think about who chooses to put sunscreen on in the first place. Are the two groups similar in every other way?",
+            "People heading into strong sun use sunscreen; people staying indoors do not. That difference in exposure affects the burn rate directly.",
+            "Name the confounder (sun exposure), then say what a fair comparison would need: two groups with similar exposure differing only in sunscreen use."
+          ]
+        },
+        {
+          "id": "sb-cc3",
+          "question": "Smoking and lung cancer are strongly correlated. Scientists DO claim smoking causes lung cancer. What kind of evidence is needed to justify a causal claim like that, beyond the correlation alone?",
+          "answer": "Correlation alone is never enough, but causation can be established with more evidence: controlled experiments (in animals, since deliberately assigning people to smoke would be unethical), a dose-response relationship (more smoking means more risk), a biological mechanism explaining HOW tobacco damages lung cells, consistency across many independent studies and populations, and correct time order (smoking comes before the cancer). Note this problem is the counterweight to the others: \"correlation does not imply causation\" does not mean causation is never real — it means it has to be earned with evidence beyond the correlation.",
+          "hints": [
+            "This one is different from the others: the causal claim here is actually correct. So the question is what makes it justified.",
+            "List the kinds of evidence that could rule out a confounder — experiments, a mechanism, a dose-response pattern, replication.",
+            "Also check the time order: the suspected cause has to come before the effect. And remember the slogan is about proof, not about causation being impossible."
+          ]
+        },
+        {
+          "id": "sb-cc4",
+          "question": "A school notices that students who attend the after-school tutoring program have higher grades. The principal wants to claim the program causes the improvement. Design a study that could actually support that claim.",
+          "answer": "The problem with the current evidence is self-selection: students who choose tutoring may already be more motivated, better supported at home, or already stronger — any of which could raise grades on its own. A study that could support causation is a randomized controlled experiment: take a group of similar students, RANDOMLY assign half to tutoring and half to a control group with no tutoring, and compare grades afterwards. Random assignment is what matters — it makes the groups comparable on every other factor, including ones nobody thought to measure, so a difference in grades can be attributed to the tutoring.",
+          "hints": [
+            "Start by naming what is wrong with the current comparison. Who decides whether a student attends tutoring?",
+            "Students choose for themselves, so the two groups may differ in motivation or support before any tutoring happens. That is a confounder.",
+            "The fix is to remove the choice: assign students to the groups at RANDOM. Explain what random assignment buys you — comparable groups, including on factors you never measured."
+          ]
+        }
+      ],
+      "lessonId": "two-way-tables-correlation",
+      "initialPrompt": "Here's a real finding: fires attended by more firefighters have more property damage. So — do firefighters cause damage? If not, what else could be making both of those numbers big at the same time?"
     },
     {
       "type": "independent_practice",
@@ -357,7 +429,15 @@
     "sb-yp3": "95",
     "sb-yp4": "Slope: −2.5 points per absence; y-intercept: 100",
     "sb-yp5": "Yes; 8th graders walk more (58.3% vs. 40%)",
-    "sb-yp6": "Correlation, not causation; city size is the confounding variable"
+    "sb-yp6": "Correlation, not causation; city size is the confounding variable",
+    "sb-si1": "Loses $1,500/year; $22,000 when new; a 6-year-old car is worth $13,000.",
+    "sb-si2": "3.5 cm taller per shoe size; the 120 cm intercept is meaningless (no shoe size 0).",
+    "sb-si3": "y = -3x + 52; about 3 points lower per extra TV hour; 52 predicted at 0 hours.",
+    "sb-si4": "37 (interpolation, trustworthy) and -8 (extrapolation, impossible — the model has broken down).",
+    "sb-cc1": "No — the confounder is the size of the fire, which drives both.",
+    "sb-cc2": "No — the confounder is sun exposure; the two groups were never comparable.",
+    "sb-cc3": "Controlled experiments, dose-response, a mechanism, replication, and correct time order.",
+    "sb-cc4": "A randomized controlled experiment; random assignment removes self-selection."
   },
   "lessons": [
     {
