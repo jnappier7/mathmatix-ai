@@ -216,7 +216,7 @@
           ]
         }
       ],
-      "lessonId": "parallel-perpendicular-slopes",
+      "lessonId": "equation-of-circle",
       "initialPrompt": "Two lines: one through (-3, 2) and (1, 10), the other through (0, -4) and (2, 0). What single number do we need for each line before we can say anything about whether they're parallel?"
     },
     {

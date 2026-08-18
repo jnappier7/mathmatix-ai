@@ -188,25 +188,25 @@
       "problems": [
         {
           "id": "cd-wp10",
-          "question": "Evaluate: lim_{x\u21920} (e\u02e3 \u2212 1 \u2212 x)/x\u00b2.",
+          "question": "Evaluate: lim_{x→0} (eˣ − 1 − x)/x².",
           "answer": "1/2",
           "hints": [
-            "Direct substitution: (1 \u2212 1 \u2212 0)/0 = 0/0 \u2192 indeterminate. Apply L'H\u00f4pital: lim (e\u02e3 \u2212 1)/(2x). Still 0/0.",
-            "Apply L'H\u00f4pital again: lim e\u02e3/2 = 1/2."
+            "Direct substitution: (1 − 1 − 0)/0 = 0/0 → indeterminate. Apply L'Hôpital: lim (eˣ − 1)/(2x). Still 0/0.",
+            "Apply L'Hôpital again: lim eˣ/2 = 1/2."
           ]
         },
         {
           "id": "cd-wp11",
-          "question": "Evaluate: lim_{x\u2192\u221e} x\u00b2/e\u02e3.",
+          "question": "Evaluate: lim_{x→∞} x²/eˣ.",
           "answer": "0",
           "hints": [
-            "Form: \u221e/\u221e. Apply L'H\u00f4pital: lim 2x/e\u02e3. Still \u221e/\u221e.",
-            "Apply L'H\u00f4pital again: lim 2/e\u02e3 = 0. Exponentials always beat polynomials."
+            "Form: ∞/∞. Apply L'Hôpital: lim 2x/eˣ. Still ∞/∞.",
+            "Apply L'Hôpital again: lim 2/eˣ = 0. Exponentials always beat polynomials."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, try direct substitution first. What form do you get? Is it indeterminate? If so, what does L'H\u00f4pital's Rule say to do?",
-      "lessonId": "lhopitals-rule"
+      "initialPrompt": "For the first problem, try direct substitution first. What form do you get? Is it indeterminate? If so, what does L'Hôpital's Rule say to do?",
+      "lessonId": "linearization"
     },
     {
       "type": "model",

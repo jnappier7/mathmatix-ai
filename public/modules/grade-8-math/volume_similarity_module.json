@@ -258,7 +258,7 @@
           ]
         }
       ],
-      "lessonId": "volume-scaling",
+      "lessonId": "volume-cones-spheres",
       "initialPrompt": "A basketball has a diameter of 24 cm. Before we substitute anything into V = (4/3)πr³ — what do we have to do to that 24 first, and what happens to the answer if we forget?"
     },
     {

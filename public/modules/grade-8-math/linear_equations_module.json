@@ -151,7 +151,7 @@
           ]
         }
       ],
-      "lessonId": "special-cases",
+      "lessonId": "variables-both-sides",
       "initialPrompt": "Solve 3(2x - 5) = 6x + 4 with me. Distribute first — and when the x terms vanish from both sides, don't panic. What's left, and is it a true statement or a false one?"
     },
     {

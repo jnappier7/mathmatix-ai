@@ -189,24 +189,24 @@
         {
           "id": "ad-wp10",
           "question": "Find d/dx[arcsin(2x)].",
-          "answer": "2/\u221a(1 \u2212 4x\u00b2)",
+          "answer": "2/√(1 − 4x²)",
           "hints": [
-            "d/dx[arcsin(u)] = 1/\u221a(1 \u2212 u\u00b2) \u00b7 u'. Here u = 2x, so u' = 2.",
-            "d/dx[arcsin(2x)] = 2/\u221a(1 \u2212 (2x)\u00b2) = 2/\u221a(1 \u2212 4x\u00b2)."
+            "d/dx[arcsin(u)] = 1/√(1 − u²) · u'. Here u = 2x, so u' = 2.",
+            "d/dx[arcsin(2x)] = 2/√(1 − (2x)²) = 2/√(1 − 4x²)."
           ]
         },
         {
           "id": "ad-wp11",
-          "question": "Given: f(2) = 5, f'(2) = 4, f(5) = 2. Find (f\u207b\u00b9)'(5).",
+          "question": "Given: f(2) = 5, f'(2) = 4, f(5) = 2. Find (f⁻¹)'(5).",
           "answer": "1/4",
           "hints": [
-            "Use (f\u207b\u00b9)'(a) = 1/f'(f\u207b\u00b9(a)). We need (f\u207b\u00b9)'(5). Since f(2) = 5, f\u207b\u00b9(5) = 2.",
-            "(f\u207b\u00b9)'(5) = 1/f'(f\u207b\u00b9(5)) = 1/f'(2) = 1/4."
+            "Use (f⁻¹)'(a) = 1/f'(f⁻¹(a)). We need (f⁻¹)'(5). Since f(2) = 5, f⁻¹(5) = 2.",
+            "(f⁻¹)'(5) = 1/f'(f⁻¹(5)) = 1/f'(2) = 1/4."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, identify the chain rule setup: the outer function is arcsin(\u25a1) and the inner function is 2x. What is d/dx[arcsin(u)]?",
-      "lessonId": "inverse-derivatives"
+      "initialPrompt": "For the first problem, identify the chain rule setup: the outer function is arcsin(□) and the inner function is 2x. What is d/dx[arcsin(u)]?",
+      "lessonId": "implicit-diff"
     },
     {
       "type": "model",

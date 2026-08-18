@@ -234,7 +234,7 @@
         }
       ],
       "initialPrompt": "For the first problem, why can't you use the given height directly in the surface area formula for a cone?",
-      "lessonId": "surface-area-pyramids-cones-spheres"
+      "lessonId": "surface-area-prisms-cylinders"
     },
     {
       "type": "independent_practice",
@@ -284,7 +284,7 @@
         }
       ],
       "attemptsRequired": 3,
-      "lessonId": "3d-applications"
+      "lessonId": "volume-prisms-cylinders"
     }
   ],
   "answerKeys": {

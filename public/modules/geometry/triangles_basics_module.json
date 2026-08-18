@@ -119,7 +119,7 @@
           ]
         }
       ],
-      "lessonId": "exterior-angle-theorem",
+      "lessonId": "triangle-angle-sum",
       "initialPrompt": "Picture a triangle with one side extended to form an exterior angle. If the two remote interior angles are 42° and 65°, what do you think the exterior angle measures — and which two angles does the theorem tell us to use?"
     },
     {

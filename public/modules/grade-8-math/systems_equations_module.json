@@ -295,7 +295,7 @@
           ]
         }
       ],
-      "lessonId": "systems-context-special",
+      "lessonId": "systems-graphing",
       "initialPrompt": "A system comparing two rental companies has the solution (4, 180). Before we work out anything: what do the 4 and the 180 each measure — and does that point tell us which company to choose?"
     },
     {

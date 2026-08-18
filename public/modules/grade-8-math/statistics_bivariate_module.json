@@ -261,7 +261,7 @@
           ]
         }
       ],
-      "lessonId": "interpret-data",
+      "lessonId": "line-of-best-fit",
       "initialPrompt": "A used-car trend line is y = -1500x + 22000, with x in years and y in dollars. Take the -1500 first: what does it mean in this situation, and why is it negative?"
     },
     {

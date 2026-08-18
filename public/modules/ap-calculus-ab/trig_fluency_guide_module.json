@@ -402,61 +402,77 @@
           "question": "Convert 150° to radians.",
           "answer": "150 × π/180 = 5π/6.",
           "skill": "radian-measure-conversion",
-          "hints": ["Multiply by π/180 and simplify."]
+          "hints": [
+            "Multiply by π/180 and simplify."
+          ]
         },
         {
           "id": "tf-yp2",
           "question": "Evaluate sin(π/3) without a calculator. Explain how you got it.",
           "answer": "sin(π/3) = √3/2. From the 30-60-90 triangle: the side opposite 60° = √3/2 when hypotenuse = 1.",
           "skill": "unit-circle-values",
-          "hints": ["Use the 30-60-90 triangle. Which side is opposite 60°?"]
+          "hints": [
+            "Use the 30-60-90 triangle. Which side is opposite 60°?"
+          ]
         },
         {
           "id": "tf-yp3",
           "question": "Evaluate cos(5π/3). State quadrant, reference angle, and sign reasoning.",
           "answer": "Q4 (5π/3 = 300°). Reference angle: 2π - 5π/3 = π/3. cos(π/3) = 1/2. In Q4, cos positive. Answer: 1/2.",
           "skill": "reference-angles-quadrants",
-          "hints": ["5π/3 = 300°. Which quadrant? What's the reference angle?"]
+          "hints": [
+            "5π/3 = 300°. Which quadrant? What's the reference angle?"
+          ]
         },
         {
           "id": "tf-yp4",
           "question": "Evaluate sin(3π/4).",
           "answer": "Q2. Reference angle: π - 3π/4 = π/4. sin(π/4) = √2/2. In Q2, sin positive. Answer: √2/2.",
           "skill": "reference-angles-quadrants",
-          "hints": ["3π/4 = 135° → Q2. Reference angle = π/4."]
+          "hints": [
+            "3π/4 = 135° → Q2. Reference angle = π/4."
+          ]
         },
         {
           "id": "tf-yp5",
           "question": "Evaluate tan(7π/6).",
           "answer": "Q3 (7π/6 = 210°). Reference angle: 7π/6 - π = π/6. tan(π/6) = (1/2)/(√3/2) = 1/√3 = √3/3. In Q3, tan positive. Answer: √3/3.",
           "skill": "reference-angles-quadrants",
-          "hints": ["Q3: tan = sin/cos. Both negative → tan positive."]
+          "hints": [
+            "Q3: tan = sin/cos. Both negative → tan positive."
+          ]
         },
         {
           "id": "tf-yp6",
           "question": "Simplify: (1 - sin²x) / cos x",
           "answer": "1 - sin²x = cos²x (Pythagorean). cos²x / cos x = cos x. Answer: cos x.",
           "skill": "trig-identities-fluency",
-          "hints": ["Pythagorean identity: 1 - sin²x = ?"]
+          "hints": [
+            "Pythagorean identity: 1 - sin²x = ?"
+          ]
         },
         {
           "id": "tf-yp7",
           "question": "If cos θ = -3/5 and θ is in Q3, find sin θ.",
           "answer": "sin²θ = 1 - cos²θ = 1 - 9/25 = 16/25. sin θ = ±4/5. In Q3, sin is negative. Answer: -4/5.",
           "skill": "trig-identities-fluency",
-          "hints": ["Use sin²θ + cos²θ = 1. In Q3, is sin positive or negative?"]
+          "hints": [
+            "Use sin²θ + cos²θ = 1. In Q3, is sin positive or negative?"
+          ]
         },
         {
           "id": "tf-yp8",
           "question": "Simplify sin(2x) · csc(x). Use the double-angle formula.",
           "answer": "sin(2x) = 2 sin x cos x. csc x = 1/sin x. So: 2 sin x cos x · (1/sin x) = 2 cos x.",
           "skill": "trig-identities-fluency",
-          "hints": ["Expand sin(2x) and rewrite csc(x)."]
+          "hints": [
+            "Expand sin(2x) and rewrite csc(x)."
+          ]
         }
       ],
       "attemptsRequired": 4,
       "skill": "trig-fluency-review",
-      "lessonId": "trig-fluency"
+      "lessonId": "trig-foundations"
     }
   ],
   "answerKeys": {

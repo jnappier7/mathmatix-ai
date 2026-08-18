@@ -296,7 +296,7 @@
           ]
         }
       ],
-      "lessonId": "slope-intercept-form",
+      "lessonId": "comparing-linear",
       "initialPrompt": "A pool drains according to V = 5000 - 250t. Before we compute anything: what is happening at t = 0, and which number in that equation tells you about that moment?"
     },
     {
