@@ -46,16 +46,94 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "increasing-decreasing-extrema",
-      "title": "First & Second Derivative Analysis",
-      "content": "**First Derivative Test (FDT):**\n\nThe sign of f'(x) tells us whether f is going up or down:\n• f'(x) > 0 on an interval → f is **increasing** there\n• f'(x) < 0 on an interval → f is **decreasing** there\n\n**Critical points:** where f'(x) = 0 or f'(x) does not exist (and f is defined).\n\n**Classifying critical points with FDT:**\n• f' changes from + to − → **local maximum**\n• f' changes from − to + → **local minimum**\n• f' does NOT change sign → **neither** (e.g., x³ at x = 0)\n\n**Second Derivative Test (SDT):**\n\nThe sign of f''(x) tells us the shape (concavity) of f:\n• f''(x) > 0 → **concave up** (cup shape, opens upward)\n• f''(x) < 0 → **concave down** (cap shape, opens downward)\n• **Inflection point:** where f'' changes sign (concavity switches)\n\n**SDT for extrema:** At a critical point c where f'(c) = 0:\n• f''(c) > 0 → **local minimum** (concave up = cup = catches a min)\n• f''(c) < 0 → **local maximum** (concave down = cap = holds a max)\n• f''(c) = 0 → **inconclusive** (use FDT instead)",
-      "initialPrompt": "If f'(2) = 0 and f''(2) = −5, what can you conclude about x = 2? Is it a max, min, or neither? Which test tells you?",
+      "title": "Increasing/Decreasing & Extrema",
+      "content": "**The First Derivative Test (FDT)** reads the shape of f off the sign of f'.\n\nThe sign of f'(x) tells us whether f is going up or down:\n• f'(x) > 0 on an interval → f is **increasing** there\n• f'(x) < 0 on an interval → f is **decreasing** there\n\n**Critical points:** where f'(x) = 0 **or** f'(x) does not exist — and f itself is defined there. Both cases matter: a corner or a vertical tangent is a critical point even though the derivative never equals zero.\n\n**Classifying critical points with the FDT:**\n• f' changes from + to − → **local maximum**\n• f' changes from − to + → **local minimum**\n• f' does NOT change sign → **neither** (e.g. x³ at x = 0, where f' = 3x² ≥ 0 on both sides)\n\n**The procedure — a sign chart:**\n1. Find f'(x) and factor it.\n2. Find every critical point, plus any x where f is undefined.\n3. Mark them on a number line; they split it into intervals.\n4. Test one convenient x in each interval and record the **sign** of f' — not its value.\n5. Read increasing/decreasing off the signs, and classify each critical point by whether the sign flipped.\n\n**Two habits the AP exam rewards:**\n• **Justify with the sign change**, not with a picture. \"f' changes from positive to negative at x = 3, so f has a local maximum there\" is the sentence that earns the point.\n• **Answer in the right currency.** \"Where is the local max?\" wants an x-value; \"what is the local max?\" wants f at that x. Read which one is asked.\n\n**Include points where f is undefined** in the sign chart even though they aren't critical points — the sign of f' can flip across a vertical asymptote, and the intervals have to break there.",
+      "initialPrompt": "If f'(x) = 3x(x − 2), where are the critical points, and what does the sign of f' do on either side of each one?",
+      "lessonId": "first-derivative-test"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "increasing-decreasing-extrema",
+      "title": "I-Do: The First Derivative Test",
+      "examples": [
+        {
+          "problem": "f(x) = x³ − 3x² − 9x + 5. Find intervals of increase/decrease and local extrema using FDT.",
+          "solution": "**Step 1 — Find f'(x):**\nf'(x) = 3x² − 6x − 9 = 3(x² − 2x − 3) = 3(x − 3)(x + 1)\n\n**Step 2 — Critical points:** f' = 0 at x = −1 and x = 3.\n\n**Step 3 — Sign chart for f':**\n\n| Interval | Test value | f'(x) sign | f behavior |\n|---|---|---|---|\n| x < −1 | x = −2 | 3(−5)(−3) = + | Increasing |\n| −1 < x < 3 | x = 0 | 3(−3)(1) = − | Decreasing |\n| x > 3 | x = 4 | 3(1)(5) = + | Increasing |\n\n**Step 4 — Classify:**\n• At x = −1: f' changes + to − → **local max**\n  f(−1) = −1 − 3 + 9 + 5 = **10**\n• At x = 3: f' changes − to + → **local min**\n  f(3) = 27 − 27 − 27 + 5 = **−22**\n\n**Local max: (−1, 10). Local min: (3, −22).**"
+        }
+      ],
+      "initialPrompt": "In example 1, why do we test points in each interval rather than just plugging in the critical points? What does the sign between critical points tell us?",
       "lessonId": "first-derivative-test"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "increasing-decreasing-extrema",
+      "title": "We-Do: Increasing/Decreasing & Extrema",
+      "problems": [
+        {
+          "id": "fa-wp1",
+          "question": "f(x) = 2x³ + 3x² − 12x. Find critical points and classify using FDT.",
+          "answer": "Local max at x = −2, f(−2) = 20. Local min at x = 1, f(1) = −7.",
+          "hints": [
+            "f'(x) = 6x² + 6x − 12 = 6(x² + x − 2) = 6(x + 2)(x − 1). CP: x = −2, x = 1.",
+            "Sign chart: f' > 0 for x < −2, f' < 0 for −2 < x < 1, f' > 0 for x > 1. So local max at x = −2: f(−2) = −16 + 12 + 24 = 20. Local min at x = 1: f(1) = 2 + 3 − 12 = −7."
+          ]
+        },
+        {
+          "id": "fa-wp14",
+          "question": "f(x) = x³ − 3x² + 4. Find the critical points, the intervals of increase and decrease, and classify each critical point with the FDT.",
+          "answer": "Critical points x = 0 and x = 2; increasing on (−∞, 0) and (2, ∞), decreasing on (0, 2); local max (0, 4), local min (2, 0)",
+          "hints": [
+            "f'(x) = 3x² − 6x = 3x(x − 2), so the critical points are x = 0 and x = 2. Build a sign chart with those two values.",
+            "Test points: f'(−1) = 9 > 0, f'(1) = −3 < 0, f'(3) = 9 > 0. So f increases, then decreases, then increases. The + → − change at x = 0 gives a local max f(0) = 4; the − → + change at x = 2 gives a local min f(2) = 0."
+          ]
+        },
+        {
+          "id": "fa-wp15",
+          "question": "f(x) = x/(x² + 1). Find the intervals where f is increasing and decreasing, and classify the extrema.",
+          "answer": "Increasing on (−1, 1), decreasing on (−∞, −1) and (1, ∞); local min (−1, −1/2), local max (1, 1/2)",
+          "hints": [
+            "Quotient rule: f'(x) = [(x²+1)(1) − x(2x)]/(x²+1)² = (1 − x²)/(x²+1)². The denominator is always positive, so only the numerator controls the sign.",
+            "1 − x² = 0 at x = ±1, and 1 − x² > 0 exactly on (−1, 1). So f decreases, increases, decreases: local min at (−1, −1/2) and local max at (1, 1/2)."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, find f'(x) and factor it completely. Setting each factor to zero gives the critical points.",
+      "lessonId": "first-derivative-test"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
       "skill": "concavity-inflection",
-      "title": "We-Do: Concavity Inflection — Guided Practice",
+      "title": "Concavity & Inflection Points",
+      "content": "The first derivative says which way f is going. **The second derivative says which way it's bending.**\n\n**Concavity from the sign of f'':**\n• f''(x) > 0 → **concave up** (cup shape, opens upward)\n• f''(x) < 0 → **concave down** (cap shape, opens downward)\n\n**What that means in terms of f':** concave up means f' is *increasing* — the slopes are getting bigger, whether or not they're positive. A function can be decreasing and concave up at the same time (falling, but levelling off).\n\n**Inflection point:** a point where f'' **changes sign** — the concavity switches.\n\nf''(x) = 0 is **not enough**. For f(x) = x⁴, f''(0) = 0, but f'' = 12x² is positive on both sides, so the concavity never switches and there is no inflection point. Always check the sign on both sides — the same way you check a first-derivative sign change. And an inflection point must be a point *on the graph*, so f has to be defined there.\n\n**The Second Derivative Test (SDT) for extrema.** At a critical point c where f'(c) = 0:\n• f''(c) > 0 → **local minimum** (concave up = cup = catches a min)\n• f''(c) < 0 → **local maximum** (concave down = cap = holds a max)\n• f''(c) = 0 → **inconclusive** — fall back to the FDT\n\n**Which test should you use?** The SDT is faster when f'' is easy to compute and you only need to classify one point — no sign chart required, just one substitution. The FDT is more informative and never fails: it also gives you the intervals of increase and decrease, and it still works when f''(c) = 0 or f'' doesn't exist. When a problem asks for intervals, you were going to build the sign chart anyway.\n\n**Two sign charts, two purposes.** The f' chart gives increasing/decreasing and extrema; the f'' chart gives concavity and inflection points. They are separate charts with separate cut points — don't merge them.",
+      "initialPrompt": "If f'(2) = 0 and f''(2) = −5, what can you conclude about x = 2? Is it a max, min, or neither? Which test tells you?",
+      "lessonId": "second-derivative-test"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "increasing-decreasing-extrema",
+      "title": "I-Do: Concavity, Inflection Points & the SDT",
+      "examples": [
+        {
+          "problem": "f(x) = x⁴ − 4x³ + 6. Find intervals of concavity and inflection points.",
+          "solution": "**Step 1 — Find f''(x):**\nf'(x) = 4x³ − 12x²\nf''(x) = 12x² − 24x = 12x(x − 2)\n\n**Step 2 — f'' = 0 at x = 0 and x = 2.**\n\n**Step 3 — Sign chart for f'':**\n\n| Interval | Test value | f''(x) sign | Concavity |\n|---|---|---|---|\n| x < 0 | x = −1 | 12(−1)(−3) = + | Concave up |\n| 0 < x < 2 | x = 1 | 12(1)(−1) = − | Concave down |\n| x > 2 | x = 3 | 12(3)(1) = + | Concave up |\n\n**Step 4 — Inflection points (f'' changes sign at both):**\n• f(0) = 6 → inflection at **(0, 6)**\n• f(2) = 16 − 32 + 6 = −10 → inflection at **(2, −10)**"
+        },
+        {
+          "problem": "f(x) = x³ − 6x² + 9x + 1. Use SDT to classify critical points.",
+          "solution": "**Step 1 — Critical points:**\nf'(x) = 3x² − 12x + 9 = 3(x² − 4x + 3) = 3(x − 1)(x − 3)\nf' = 0 at x = 1 and x = 3.\n\n**Step 2 — Second derivative:**\nf''(x) = 6x − 12\n\n**Step 3 — Apply SDT:**\n• f''(1) = 6 − 12 = −6 < 0 → **local maximum** at x = 1\n  f(1) = 1 − 6 + 9 + 1 = **5**\n• f''(3) = 18 − 12 = 6 > 0 → **local minimum** at x = 3\n  f(3) = 27 − 54 + 27 + 1 = **1**\n\n**Local max: (1, 5). Local min: (3, 1).**\n\n**When to use FDT vs SDT:** SDT is faster when f'' is easy to compute. But if f''(c) = 0, SDT is inconclusive and you must fall back to FDT."
+        }
+      ],
+      "initialPrompt": "In example 2, why isn't it enough to solve f''(x) = 0 — what extra check does an inflection point require?",
+      "lessonId": "second-derivative-test"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "concavity-inflection",
+      "title": "We-Do: Concavity, Inflection Points & the SDT",
       "problems": [
         {
           "id": "fa-wp10",
@@ -73,75 +151,6 @@
           "hints": [
             "g'(x) = 4x³ − 12x² = 4x²(x − 3). CP: x = 0, x = 3. g''(x) = 12x² − 24x.",
             "g''(0) = 0 → inconclusive. g''(3) = 108 − 72 = 36 > 0 → local min. g(3) = 81 − 108 = −27. At x = 0: FDT shows g' < 0 on both sides → no extremum."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, start by finding f''(x). Setting f'' = 0 finds possible inflection points — but you must verify f'' changes sign there.",
-      "lessonId": "first-derivative-test"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "evt-mvt",
-      "title": "We-Do: Evt Mvt — Guided Practice",
-      "problems": [
-        {
-          "id": "fa-wp12",
-          "question": "f(x) = x³ − 3x + 1 on [−2, 2]. Find the absolute maximum and minimum (EVT).",
-          "answer": "Absolute max = 3 at x = −1. Absolute min = −1 at x = 1.",
-          "hints": [
-            "f'(x) = 3x² − 3 = 3(x − 1)(x + 1). CP: x = −1, x = 1 (both in [−2, 2]).",
-            "Candidates: f(−2) = −1, f(−1) = 3, f(1) = −1, f(2) = 3. Max = 3 at x = −1 and x = 2. Min = −1 at x = −2 and x = 1."
-          ]
-        },
-        {
-          "id": "fa-wp13",
-          "question": "Verify MVT for f(x) = ln x on [1, e]. Find the value of c.",
-          "answer": "c = e − 1 ≈ 1.718",
-          "hints": [
-            "f continuous on [1, e], differentiable on (1, e). Average rate: [ln(e) − ln(1)]/(e − 1) = 1/(e − 1).",
-            "f'(x) = 1/x. Set 1/c = 1/(e − 1): c = e − 1 ≈ 1.718. Check: c ∈ (1, e) ✓."
-          ]
-        }
-      ],
-      "initialPrompt": "For the first problem, the EVT guarantees absolute extrema on a closed interval. Find critical points, then evaluate f at all critical points AND endpoints.",
-      "lessonId": "curve-sketching"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "skill": "increasing-decreasing-extrema",
-      "title": "I-Do: First & Second Derivative Analysis",
-      "examples": [
-        {
-          "problem": "f(x) = x³ − 3x² − 9x + 5. Find intervals of increase/decrease and local extrema using FDT.",
-          "solution": "**Step 1 — Find f'(x):**\nf'(x) = 3x² − 6x − 9 = 3(x² − 2x − 3) = 3(x − 3)(x + 1)\n\n**Step 2 — Critical points:** f' = 0 at x = −1 and x = 3.\n\n**Step 3 — Sign chart for f':**\n\n| Interval | Test value | f'(x) sign | f behavior |\n|---|---|---|---|\n| x < −1 | x = −2 | 3(−5)(−3) = + | Increasing |\n| −1 < x < 3 | x = 0 | 3(−3)(1) = − | Decreasing |\n| x > 3 | x = 4 | 3(1)(5) = + | Increasing |\n\n**Step 4 — Classify:**\n• At x = −1: f' changes + to − → **local max**\n  f(−1) = −1 − 3 + 9 + 5 = **10**\n• At x = 3: f' changes − to + → **local min**\n  f(3) = 27 − 27 − 27 + 5 = **−22**\n\n**Local max: (−1, 10). Local min: (3, −22).**"
-        },
-        {
-          "problem": "f(x) = x⁴ − 4x³ + 6. Find intervals of concavity and inflection points.",
-          "solution": "**Step 1 — Find f''(x):**\nf'(x) = 4x³ − 12x²\nf''(x) = 12x² − 24x = 12x(x − 2)\n\n**Step 2 — f'' = 0 at x = 0 and x = 2.**\n\n**Step 3 — Sign chart for f'':**\n\n| Interval | Test value | f''(x) sign | Concavity |\n|---|---|---|---|\n| x < 0 | x = −1 | 12(−1)(−3) = + | Concave up |\n| 0 < x < 2 | x = 1 | 12(1)(−1) = − | Concave down |\n| x > 2 | x = 3 | 12(3)(1) = + | Concave up |\n\n**Step 4 — Inflection points (f'' changes sign at both):**\n• f(0) = 6 → inflection at **(0, 6)**\n• f(2) = 16 − 32 + 6 = −10 → inflection at **(2, −10)**"
-        },
-        {
-          "problem": "f(x) = x³ − 6x² + 9x + 1. Use SDT to classify critical points.",
-          "solution": "**Step 1 — Critical points:**\nf'(x) = 3x² − 12x + 9 = 3(x² − 4x + 3) = 3(x − 1)(x − 3)\nf' = 0 at x = 1 and x = 3.\n\n**Step 2 — Second derivative:**\nf''(x) = 6x − 12\n\n**Step 3 — Apply SDT:**\n• f''(1) = 6 − 12 = −6 < 0 → **local maximum** at x = 1\n  f(1) = 1 − 6 + 9 + 1 = **5**\n• f''(3) = 18 − 12 = 6 > 0 → **local minimum** at x = 3\n  f(3) = 27 − 54 + 27 + 1 = **1**\n\n**Local max: (1, 5). Local min: (3, 1).**\n\n**When to use FDT vs SDT:** SDT is faster when f'' is easy to compute. But if f''(c) = 0, SDT is inconclusive and you must fall back to FDT."
-        }
-      ],
-      "initialPrompt": "In example 1, why do we test points in each interval rather than just plugging in the critical points? What does the sign between critical points tell us?",
-      "lessonId": "first-derivative-test"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "increasing-decreasing-extrema",
-      "title": "We-Do: First & Second Derivative Analysis",
-      "problems": [
-        {
-          "id": "fa-wp1",
-          "question": "f(x) = 2x³ + 3x² − 12x. Find critical points and classify using FDT.",
-          "answer": "Local max at x = −2, f(−2) = 20. Local min at x = 1, f(1) = −7.",
-          "hints": [
-            "f'(x) = 6x² + 6x − 12 = 6(x² + x − 2) = 6(x + 2)(x − 1). CP: x = −2, x = 1.",
-            "Sign chart: f' > 0 for x < −2, f' < 0 for −2 < x < 1, f' > 0 for x > 1. So local max at x = −2: f(−2) = −16 + 12 + 24 = 20. Local min at x = 1: f(1) = 2 + 3 − 12 = −7."
           ]
         },
         {
@@ -163,15 +172,15 @@
           ]
         }
       ],
-      "initialPrompt": "For the first problem, find f'(x) and factor it completely. Setting each factor to zero gives the critical points.",
-      "lessonId": "first-derivative-test"
+      "initialPrompt": "For the first problem, start by finding f''(x). Setting f'' = 0 finds possible inflection points — but you must verify f'' changes sign there.",
+      "lessonId": "second-derivative-test"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "curve-sketching",
-      "title": "Curve Sketching & the EVT/MVT Theorems",
-      "content": "**Curve Sketching from Derivative Information:**\n\nOn the AP exam, you'll often be given the graph of f' (not f!) and asked to describe f.\n\n**Reading f from f':**\n• f' > 0 → f increasing\n• f' < 0 → f decreasing\n• f' = 0 and changes sign → f has local extremum\n• f' increasing → f concave up (because f'' > 0)\n• f' decreasing → f concave down (because f'' < 0)\n• f' has a local extremum → f has an inflection point\n\n**Extreme Value Theorem (EVT):**\nIf f is continuous on [a, b], then f attains an absolute maximum and an absolute minimum on [a, b].\n\n**Candidates test:** Evaluate f at critical points in (a, b) AND at the endpoints a and b. The largest value is the absolute max; the smallest is the absolute min.\n\n**Mean Value Theorem (MVT):**\nIf f is continuous on [a, b] and differentiable on (a, b), then there exists c in (a, b) such that:\nf'(c) = [f(b) − f(a)] / (b − a)\n\n**Geometric meaning:** There's a tangent line parallel to the secant line connecting (a, f(a)) and (b, f(b)).\n\n**AP requirement:** When applying MVT, you MUST state that f is continuous on [a, b] and differentiable on (a, b).",
+      "title": "Curve Sketching from Derivative Information",
+      "content": "**On the AP exam, you'll often be given the graph of f' (not f!) and asked to describe f.** This is the single most common way derivative analysis is tested, and it trips people up because every question is one level removed from the graph in front of them.\n\n**Reading f from the graph of f':**\n\n| On the f' graph | About f |\n|---|---|\n| f' > 0 (above the axis) | f **increasing** |\n| f' < 0 (below the axis) | f **decreasing** |\n| f' crosses the axis, + → − | f has a **local max** |\n| f' crosses the axis, − → + | f has a **local min** |\n| f' *touches* the axis without crossing | f has **neither** — it just levels off |\n| f' increasing (rising) | f **concave up** (f'' > 0) |\n| f' decreasing (falling) | f **concave down** (f'' < 0) |\n| f' has a local max or min | f has an **inflection point** |\n\n**The trap:** a *high point on the f' graph* is not a maximum of f — it's an inflection point of f, where the slope is steepest. Ask yourself every time: is this question about the height of f', or about its sign, or about whether it's rising?\n\n**Working from a factored f' instead of a graph** is the same job. Each factor tells you where a sign change can happen, and the *power* on the factor tells you whether it actually does:\n• odd power (like (x + 2)) → f' changes sign there\n• even power (like (x − 1)²) → f' touches zero and keeps its sign — no extremum\n\n**Sketching a curve from scratch — the checklist:**\n1. Domain, and any vertical asymptotes (where f is undefined)\n2. Intercepts, if they're easy\n3. End behavior / horizontal asymptotes\n4. f' sign chart → increasing/decreasing, local extrema\n5. f'' sign chart → concavity, inflection points\n6. Plot the critical and inflection points, then connect them respecting the shape information\n\nSteps 4 and 5 are the ones being graded. A sketch that shows a local max where your own sign chart says f is increasing loses the point no matter how neat the drawing is.",
       "initialPrompt": "If the graph of f' is a downward-opening parabola that crosses the x-axis at x = 1 and x = 5, describe the behavior of f. Where is f increasing? Decreasing? Where are the extrema?",
       "lessonId": "curve-sketching"
     },
@@ -179,19 +188,11 @@
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "curve-sketching",
-      "title": "I-Do: Curve Sketching & EVT/MVT",
+      "title": "I-Do: Curve Sketching from f′",
       "examples": [
         {
           "problem": "Given f'(x) = (x + 2)(x − 1)², describe the graph of f.",
           "solution": "**Step 1 — Zeros of f':** x = −2 and x = 1.\n\n**Step 2 — Sign chart for f':**\n\n| Interval | Test value | f'(x) | f behavior |\n|---|---|---|---|\n| x < −2 | x = −3 | (−1)(16) = − | Decreasing |\n| −2 < x < 1 | x = 0 | (2)(1) = + | Increasing |\n| x > 1 | x = 2 | (4)(1) = + | Increasing |\n\n**Step 3 — Classify critical points:**\n• At x = −2: f' changes − to + → **local minimum**\n• At x = 1: f' does NOT change sign (+ to +) → **no extremum**\n\n**Step 4 — Concavity (from f' behavior):**\nSince f' goes from decreasing to increasing near x = 1 (f' has a local min at x = 1), **f has an inflection point at x = 1**.\n\n**Summary:** f decreases on (−∞, −2), has local min at x = −2, increases on (−2, ∞), with an inflection point at x = 1."
-        },
-        {
-          "problem": "f(x) = x³ − x on [0, 2]. Verify MVT hypotheses and find all values of c.",
-          "solution": "**Step 1 — Verify hypotheses:**\nf(x) = x³ − x is a polynomial → continuous on [0, 2] ✓ and differentiable on (0, 2) ✓.\n\n**Step 2 — Compute the average rate of change:**\nf(0) = 0, f(2) = 8 − 2 = 6\n[f(2) − f(0)] / (2 − 0) = 6/2 = 3\n\n**Step 3 — Find c where f'(c) = 3:**\nf'(x) = 3x² − 1\n3x² − 1 = 3\n3x² = 4\nx² = 4/3\nx = 2√3/3 ≈ 1.155\n\n**Step 4 — Verify c ∈ (0, 2):**\n2√3/3 ≈ 1.155 ∈ (0, 2) ✓\n\n**c = 2√3/3.** At this point, the tangent line has the same slope (3) as the secant line from (0, 0) to (2, 6)."
-        },
-        {
-          "problem": "f(x) = x³ − 12x + 1 on [−3, 4]. Find absolute maximum and minimum (EVT).",
-          "solution": "**Step 1 — f is continuous on [−3, 4] → EVT applies.**\n\n**Step 2 — Find critical points:**\nf'(x) = 3x² − 12 = 3(x² − 4) = 3(x − 2)(x + 2)\nf' = 0 at x = −2 and x = 2 (both in [−3, 4]).\n\n**Step 3 — Candidates test:**\n\n| x | f(x) | |\n|---|---|---|\n| −3 | (−27) − (−36) + 1 = **10** | Endpoint |\n| −2 | (−8) − (−24) + 1 = **17** | Critical |\n| 2 | 8 − 24 + 1 = **−15** | Critical |\n| 4 | 64 − 48 + 1 = **17** | Endpoint |\n\n**Absolute maximum = 17** at x = −2 and x = 4.\n**Absolute minimum = −15** at x = 2."
         }
       ],
       "initialPrompt": "In example 1, x = 1 is a zero of f' but f has no extremum there. What feature does f have at x = 1 instead, and how can you tell from the sign chart?",
@@ -201,7 +202,7 @@
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "curve-sketching",
-      "title": "We-Do: Curve Sketching & EVT/MVT",
+      "title": "We-Do: Curve Sketching from f′",
       "problems": [
         {
           "id": "fa-wp4",
@@ -210,15 +211,6 @@
           "hints": [
             "f'(x) = 12x³ − 12x² = 12x²(x − 1). CP at x = 0, x = 1. Sign chart: f' < 0 for x < 0 (test x = −1: 12(1)(−2) = −), f' < 0 for 0 < x < 1 (test x = 0.5: 12(0.25)(−0.5) = −), f' > 0 for x > 1.",
             "At x = 0: no sign change → no extremum. At x = 1: − to + → local min. f(1) = 3 − 4 = −1."
-          ]
-        },
-        {
-          "id": "fa-wp5",
-          "question": "Verify MVT for f(x) = √x on [1, 9]. Find c.",
-          "answer": "c = 4",
-          "hints": [
-            "f continuous on [1, 9], differentiable on (1, 9). Average rate: (3 − 1)/(9 − 1) = 2/8 = 1/4.",
-            "f'(x) = 1/(2√x) = 1/4. So 2√x = 4, √x = 2, x = 4. c = 4 ∈ (1, 9) ✓."
           ]
         },
         {
@@ -233,6 +225,70 @@
       ],
       "initialPrompt": "For the first problem, factor f'(x) completely. Remember that a repeated factor like x² means f' touches zero but may not change sign.",
       "lessonId": "curve-sketching"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "evt-mvt",
+      "title": "Extreme Value Theorem & Mean Value Theorem",
+      "content": "These two theorems are *existence* results: they don't compute anything, they guarantee that something is there. On the AP exam they are graded on whether you **verified the hypotheses**, so the conditions are not fine print — they're the answer.\n\n**Extreme Value Theorem (EVT):**\n\nIf f is **continuous** on a **closed** interval [a, b], then f attains an absolute maximum and an absolute minimum on [a, b].\n\nBoth conditions are load-bearing. On the *open* interval (0, 1), f(x) = x has no maximum — it gets arbitrarily close to 1 and never reaches it. Drop continuity and the guarantee dies too.\n\n**The Candidates Test** — how EVT gets used:\n1. Find every critical point in the open interval (a, b).\n2. Evaluate f at those critical points **and at both endpoints** a and b.\n3. The largest of those values is the absolute maximum; the smallest is the absolute minimum.\n\nNo sign chart, no classification — just a list of values and a comparison. **Forgetting the endpoints is the classic error**, and the endpoint often wins: an absolute extremum on a closed interval doesn't have to be a local extremum at all.\n\n**Mean Value Theorem (MVT):**\n\nIf f is **continuous on [a, b]** and **differentiable on (a, b)**, then there exists at least one c in (a, b) such that\n\nf'(c) = [f(b) − f(a)] / (b − a)\n\n**Geometric meaning:** somewhere in the interval, the tangent line is parallel to the secant line joining (a, f(a)) and (b, f(b)).\n\n**Physical meaning:** if you average 60 mph over a trip, at some instant your speedometer read exactly 60.\n\n**How MVT problems are graded:** state that f is continuous on [a, b] and differentiable on (a, b) *and say why* (\"f is a polynomial, so it is continuous and differentiable everywhere\"). Then compute the secant slope, set f'(c) equal to it, and solve for c. **Discard any solution outside (a, b)** — the theorem promises a c strictly between the endpoints.\n\n**Rolle's Theorem** is the special case where f(a) = f(b): the secant slope is 0, so there is a c with f'(c) = 0.\n\n**Don't confuse the two.** EVT is about *values* of f (where is the biggest output?). MVT is about a *slope* of f. Both need continuity on the closed interval; only MVT additionally needs differentiability on the open one.",
+      "initialPrompt": "For f(x) = x³ − 3x + 1 on [−2, 2], which points are the 'candidates' for the absolute maximum? How many values do you have to compare?",
+      "lessonId": "evt-mvt"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "curve-sketching",
+      "title": "I-Do: EVT & MVT",
+      "examples": [
+        {
+          "problem": "f(x) = x³ − x on [0, 2]. Verify MVT hypotheses and find all values of c.",
+          "solution": "**Step 1 — Verify hypotheses:**\nf(x) = x³ − x is a polynomial → continuous on [0, 2] ✓ and differentiable on (0, 2) ✓.\n\n**Step 2 — Compute the average rate of change:**\nf(0) = 0, f(2) = 8 − 2 = 6\n[f(2) − f(0)] / (2 − 0) = 6/2 = 3\n\n**Step 3 — Find c where f'(c) = 3:**\nf'(x) = 3x² − 1\n3x² − 1 = 3\n3x² = 4\nx² = 4/3\nx = 2√3/3 ≈ 1.155\n\n**Step 4 — Verify c ∈ (0, 2):**\n2√3/3 ≈ 1.155 ∈ (0, 2) ✓\n\n**c = 2√3/3.** At this point, the tangent line has the same slope (3) as the secant line from (0, 0) to (2, 6)."
+        },
+        {
+          "problem": "f(x) = x³ − 12x + 1 on [−3, 4]. Find absolute maximum and minimum (EVT).",
+          "solution": "**Step 1 — f is continuous on [−3, 4] → EVT applies.**\n\n**Step 2 — Find critical points:**\nf'(x) = 3x² − 12 = 3(x² − 4) = 3(x − 2)(x + 2)\nf' = 0 at x = −2 and x = 2 (both in [−3, 4]).\n\n**Step 3 — Candidates test:**\n\n| x | f(x) | |\n|---|---|---|\n| −3 | (−27) − (−36) + 1 = **10** | Endpoint |\n| −2 | (−8) − (−24) + 1 = **17** | Critical |\n| 2 | 8 − 24 + 1 = **−15** | Critical |\n| 4 | 64 − 48 + 1 = **17** | Endpoint |\n\n**Absolute maximum = 17** at x = −2 and x = 4.\n**Absolute minimum = −15** at x = 2."
+        }
+      ],
+      "initialPrompt": "In example 1, what did we have to say about f before applying the MVT, and why does the AP exam require it?",
+      "lessonId": "evt-mvt"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "evt-mvt",
+      "title": "We-Do: EVT & MVT",
+      "problems": [
+        {
+          "id": "fa-wp12",
+          "question": "f(x) = x³ − 3x + 1 on [−2, 2]. Find the absolute maximum and minimum (EVT).",
+          "answer": "Absolute max = 3 at x = −1. Absolute min = −1 at x = 1.",
+          "hints": [
+            "f'(x) = 3x² − 3 = 3(x − 1)(x + 1). CP: x = −1, x = 1 (both in [−2, 2]).",
+            "Candidates: f(−2) = −1, f(−1) = 3, f(1) = −1, f(2) = 3. Max = 3 at x = −1 and x = 2. Min = −1 at x = −2 and x = 1."
+          ]
+        },
+        {
+          "id": "fa-wp13",
+          "question": "Verify MVT for f(x) = ln x on [1, e]. Find the value of c.",
+          "answer": "c = e − 1 ≈ 1.718",
+          "hints": [
+            "f continuous on [1, e], differentiable on (1, e). Average rate: [ln(e) − ln(1)]/(e − 1) = 1/(e − 1).",
+            "f'(x) = 1/x. Set 1/c = 1/(e − 1): c = e − 1 ≈ 1.718. Check: c ∈ (1, e) ✓."
+          ]
+        },
+        {
+          "id": "fa-wp5",
+          "question": "Verify MVT for f(x) = √x on [1, 9]. Find c.",
+          "answer": "c = 4",
+          "hints": [
+            "f continuous on [1, 9], differentiable on (1, 9). Average rate: (3 − 1)/(9 − 1) = 2/8 = 1/4.",
+            "f'(x) = 1/(2√x) = 1/4. So 2√x = 4, √x = 2, x = 4. c = 4 ∈ (1, 9) ✓."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, the EVT guarantees absolute extrema on a closed interval. Find critical points, then evaluate f at all critical points AND endpoints.",
+      "lessonId": "evt-mvt"
     },
     {
       "type": "explanation",
@@ -363,8 +419,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "increasing-decreasing-extrema",
-      "lessonId": "first-derivative-test"
+      "skill": "optimization",
+      "lessonId": "optimization"
     }
   ],
   "answerKeys": {
@@ -386,7 +442,9 @@
     "fa-wp10": "Inflection point at (2, 4).",
     "fa-wp11": "Local min at (3, −27). SDT inconclusive at x = 0 (no extremum by FDT).",
     "fa-wp12": "Max = 3 at x = −1 and x = 2. Min = −1 at x = −2 and x = 1.",
-    "fa-wp13": "c = e − 1 ≈ 1.718."
+    "fa-wp13": "c = e − 1 ≈ 1.718.",
+    "fa-wp14": "Critical points x = 0, x = 2; increasing on (−∞, 0) and (2, ∞), decreasing on (0, 2); local max (0, 4), local min (2, 0).",
+    "fa-wp15": "Increasing on (−1, 1), decreasing on (−∞, −1) and (1, ∞); local min (−1, −1/2), local max (1, 1/2)."
   },
   "lessons": [
     {
