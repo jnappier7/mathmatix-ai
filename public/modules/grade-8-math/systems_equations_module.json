@@ -78,20 +78,6 @@
       "lessonId": "systems-graphing"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "systems-interpretation",
-      "title": "We-Do: Systems Interpretation — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for systems interpretation.",
-          "hint": "Apply the concepts of systems interpretation.",
-          "solution": "Step-by-step solution for systems interpretation."
-        }
-      ],
-      "lessonId": "systems-context-special"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Solving Systems by Graphing: Worked Examples",
@@ -263,6 +249,56 @@
       "lessonId": "systems-graphing"
     },
     {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "systems-interpretation",
+      "title": "We-Do: Systems Interpretation — Guided Practice",
+      "problems": [
+        {
+          "id": "se-in1",
+          "question": "Rental Company A charges a $60 fee plus $30 per day. Company B charges $45 per day with no fee. The system's solution is (4, 180). Say what that point means in this situation, then decide which company is cheaper for a 2-day rental and for a 7-day rental.",
+          "answer": "The solution (4, 180) means: at 4 days, both companies cost the same — $180. That is the break-even point, not \"the answer\" to which company is better. For 2 days: A = 30(2) + 60 = $120, B = 45(2) = $90, so B is cheaper. For 7 days: A = 30(7) + 60 = $270, B = 45(7) = $315, so A is cheaper. B wins short rentals because it has no fee; A wins long ones because its daily rate is lower. The solution is the day the advantage flips.",
+          "hints": [
+            "The solution is an ordered pair, so it carries two pieces of information. What does the 4 measure, and what does the 180 measure?",
+            "At 4 days both cost $180. That does not say which is better — it says where they are equal. Test a value on each side of 4.",
+            "Plug 2 and 7 into both cost expressions. Then explain WHY the winner changes: compare the fee against the daily rate."
+          ]
+        },
+        {
+          "id": "se-in2",
+          "question": "Without solving either system, decide how many solutions each has and explain how you know. (a) y = -3x + 7 and 6x + 2y = 14   (b) y = (1/2)x - 4 and x - 2y = 10",
+          "answer": "(a) Rewrite the second: 6x + 2y = 14 → 2y = -6x + 14 → y = -3x + 7. Identical to the first equation — same slope AND same intercept, so it is the same line: INFINITELY MANY solutions. (b) Rewrite: x - 2y = 10 → -2y = -x + 10 → y = (1/2)x - 5. Same slope 1/2 as the first, but intercept -5 versus -4 — parallel lines that never meet: NO SOLUTION.",
+          "hints": [
+            "Put both equations into y = mx + b form first. You cannot compare slopes and intercepts while one equation is in standard form.",
+            "For (a), solve 6x + 2y = 14 for y by subtracting 6x and dividing by 2. Compare what you get with the first equation.",
+            "Then use the rule: different slopes → one solution; same slope and same intercept → the same line; same slope but different intercepts → parallel, no solution."
+          ]
+        },
+        {
+          "id": "se-in3",
+          "question": "Sales job A pays $500 per week plus $20 per sale. Job B pays $650 per week plus $20 per sale. Will the two jobs ever pay the same amount in a week? Explain what that means for someone choosing between them.",
+          "answer": "Set them equal: 500 + 20s = 650 + 20s. Subtract 20s: 500 = 650, which is false, so the system has NO SOLUTION — the lines are parallel (same slope 20, different intercepts). In context: the two jobs never pay the same, because B pays exactly $150 more every week no matter how many sales you make. The per-sale rate is identical, so nothing you do at work closes that gap. Job B is always better.",
+          "hints": [
+            "Write an expression for each week's pay and set them equal, as usual. Watch what happens to the variable.",
+            "The 20s terms cancel, leaving 500 = 650. That statement is false — what does the lesson say a contradiction means?",
+            "No solution means parallel lines. Now translate that back into the story: the same per-sale rate means the $150 head start never closes."
+          ]
+        },
+        {
+          "id": "se-in4",
+          "question": "Tank A holds 300 litres and drains at 12 L/min. Tank B holds 250 litres and drains at 8 L/min. When do the tanks hold the same amount, and how much is in each? Is your answer reasonable in this context?",
+          "answer": "Set the volumes equal: 300 - 12t = 250 - 8t. Add 12t to both sides: 300 = 250 + 4t. Subtract 250: 50 = 4t, so t = 12.5 minutes. Volume then: 300 - 12(12.5) = 300 - 150 = 150 litres, and 250 - 8(12.5) = 250 - 100 = 150 ✓. The answer is reasonable: time is continuous, so 12.5 minutes is a perfectly real moment. Compare this with a problem counting cars or people, where a fractional answer would signal a mistake — whether a non-whole solution makes sense depends entirely on what the variable measures.",
+          "hints": [
+            "Write a volume expression for each tank as a function of time, with the drain rate as a negative change.",
+            "300 - 12t = 250 - 8t. Collect the t terms on one side; adding 12t to both sides avoids negatives.",
+            "t = 12.5 minutes. Substitute back into BOTH expressions to check you get the same volume — then ask whether a half-minute makes sense for this quantity."
+          ]
+        }
+      ],
+      "lessonId": "systems-context-special",
+      "initialPrompt": "A system comparing two rental companies has the solution (4, 180). Before we work out anything: what do the 4 and the 180 each measure — and does that point tell us which company to choose?"
+    },
+    {
       "type": "independent_practice",
       "lessonPhase": "you-do",
       "title": "Systems of Equations: Independent Practice",
@@ -341,7 +377,11 @@
     "se-yp3": "(3, 2)",
     "se-yp4": "No solution (parallel lines, slope −1)",
     "se-yp5": "(100, 45) — at 100 songs, both cost $45",
-    "se-yp6": "80 adult tickets, 120 student tickets"
+    "se-yp6": "80 adult tickets, 120 student tickets",
+    "se-in1": "(4, 180) = break-even at 4 days, $180. B cheaper at 2 days ($90 vs $120); A cheaper at 7 ($270 vs $315).",
+    "se-in2": "(a) infinitely many — the same line; (b) no solution — parallel (intercepts -4 vs -5).",
+    "se-in3": "No solution: 500 = 650 is false. B always pays $150 more.",
+    "se-in4": "t = 12.5 min, both at 150 L; reasonable because time is continuous."
   },
   "lessons": [
     {
