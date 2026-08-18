@@ -129,6 +129,7 @@
       "title": "Limits Practice: Graphical & Algebraic",
       "problems": [
         {
+          "id": "lc-wp1",
           "problem": "Evaluate: lim(x→5) (x² - 3x - 10)/(x² - 25).",
           "hints": [
             "Try substitution: 0/0",
@@ -138,6 +139,7 @@
           "answer": "Factor: (x-5)(x+2)/((x-5)(x+5)) = (x+2)/(x+5). At x=5: 7/10."
         },
         {
+          "id": "lc-wp2",
           "problem": "Evaluate: lim(x→9) (3 - √x)/(9 - x).",
           "hints": [
             "0/0 form. Rationalize or factor the denominator",
@@ -147,6 +149,7 @@
           "answer": "9-x = (3-√x)(3+√x). So (3-√x)/((3-√x)(3+√x)) = 1/(3+√x). At x=9: 1/6."
         },
         {
+          "id": "lc-wp3",
           "problem": "Evaluate: lim(x→0) tan(2x)/sin(3x).",
           "hints": [
             "tan(2x) = sin(2x)/cos(2x)",
@@ -156,6 +159,7 @@
           "answer": "Rewrite: [sin(2x)/cos(2x)]/sin(3x) = sin(2x)/(cos(2x)·sin(3x)). Multiply by (2x·3x)/(2x·3x): [sin(2x)/(2x)]·[3x/sin(3x)]·2/(3cos(2x)). As x→0: 1·1·2/(3·1) = 2/3."
         },
         {
+          "id": "lc-wp4",
           "problem": "Given the table: t = 2.9, 2.99, 2.999, 3.001, 3.01, 3.1 and g(t) = 4.71, 4.9701, 4.997, 5.003, 5.0301, 5.31. Estimate lim(t→3) g(t). If g(3) = 7, is g continuous at t=3?",
           "hints": [
             "Watch what g(t) approaches from both sides",
@@ -248,6 +252,7 @@
       "title": "One-Sided, Infinite & Limits at Infinity Practice",
       "problems": [
         {
+          "id": "lc-wp5",
           "problem": "Evaluate: lim(x→3⁺) (x - 5)/(x - 3) and lim(x→3⁻) (x - 5)/(x - 3).",
           "hints": [
             "At x=3: numerator = -2. Denominator → 0.",
@@ -257,6 +262,7 @@
           "answer": "lim(x→3⁺): -2/(0⁺) = -∞. lim(x→3⁻): -2/(0⁻) = +∞."
         },
         {
+          "id": "lc-wp6",
           "problem": "Find all horizontal and vertical asymptotes of f(x) = (3x - 1)/(x² - 4).",
           "hints": [
             "Factor denominator: (x-2)(x+2)",
@@ -266,6 +272,7 @@
           "answer": "VA: x=2 and x=-2 (denominator zeros, numerator nonzero). HA: y=0 (degree numerator < degree denominator)."
         },
         {
+          "id": "lc-wp7",
           "problem": "Evaluate: lim(x→∞) (5x³ - 2x)/(3x³ + x² - 7).",
           "hints": [
             "Same degree (3)",
@@ -274,6 +281,7 @@
           "answer": "5/3."
         },
         {
+          "id": "lc-wp8",
           "problem": "Evaluate: lim(x→∞) (√(9x² + 2) - 3x).",
           "hints": [
             "Multiply by conjugate (√(9x²+2)+3x)/(√(9x²+2)+3x)",
@@ -366,6 +374,7 @@
       "title": "Continuity, IVT & Squeeze Practice",
       "problems": [
         {
+          "id": "lc-wp9",
           "problem": "For f(x) = {(x²-4)/(x-2), x ≠ 2; k, x = 2}, find k that makes f continuous at x = 2.",
           "hints": [
             "Find lim(x→2) by factoring",
@@ -374,6 +383,7 @@
           "answer": "lim(x→2) (x-2)(x+2)/(x-2) = x+2 → 4. Set k = 4. Then f(2) = lim = 4, so f is continuous."
         },
         {
+          "id": "lc-wp10",
           "problem": "Show that eˣ = 3 - x has at least one solution.",
           "hints": [
             "Let h(x) = eˣ - 3 + x",
@@ -383,6 +393,7 @@
           "answer": "h(x) = eˣ + x - 3. h(0) = 1+0-3 = -2 < 0. h(1) = e+1-3 ≈ 0.718 > 0. Since h is continuous on [0,1] and h(0)<0<h(1), by IVT there exists c in (0,1) where h(c) = 0, i.e., eᶜ = 3-c."
         },
         {
+          "id": "lc-wp11",
           "problem": "Evaluate: lim(x→0) (x·cos(1/x)).",
           "hints": [
             "-1 ≤ cos(1/x) ≤ 1",
@@ -401,26 +412,32 @@
       "title": "Limits & Continuity Mastery Practice",
       "problems": [
         {
+          "id": "lc-yp1",
           "problem": "Evaluate: lim(x→-2) (x² + 5x + 6)/(x² + 3x + 2).",
           "answer": "0/0. Factor: (x+2)(x+3)/((x+2)(x+1)) = (x+3)/(x+1). At x=-2: (-2+3)/(-2+1) = 1/(-1) = -1."
         },
         {
+          "id": "lc-yp2",
           "problem": "Evaluate: lim(x→0) (1 - cos(2x))/(x·sin(x)).",
           "answer": "Use identities: 1-cos(2x) = 2sin²(x). So 2sin²(x)/(x·sin(x)) = 2sin(x)/x. As x→0: 2·1 = 2."
         },
         {
+          "id": "lc-yp3",
           "problem": "Find all asymptotes of f(x) = (x² + 1)/(x² - 4x + 3) and evaluate lim(x→1⁺) f(x).",
           "answer": "Factor denominator: (x-1)(x-3). VA: x=1, x=3. HA: y=1 (same degree). At x=1: numerator=2>0. lim(x→1⁺): 2/((0⁺)(-2)) = 2/(0⁻) = -∞."
         },
         {
+          "id": "lc-yp4",
           "problem": "Evaluate: lim(x→∞) (x + sin x)/x.",
           "answer": "= 1 + sin(x)/x. Since -1/x ≤ sin(x)/x ≤ 1/x and both → 0, by Squeeze: sin(x)/x → 0. Limit = 1."
         },
         {
+          "id": "lc-yp5",
           "problem": "For f(x) = {ax + b, x < 1; x², 1 ≤ x ≤ 3; bx + a, x > 3}, find a and b so that f is continuous everywhere.",
           "answer": "At x=1: lim left = a+b, f(1)=1. So a+b=1. At x=3: f(3)=9, lim right = 3b+a. So 3b+a=9. System: a+b=1, a+3b=9. Subtract: 2b=8 → b=4, a=-3."
         },
         {
+          "id": "lc-yp6",
           "problem": "The temperature T(t) is continuous on [0, 10] with T(0)=45°F and T(10)=72°F. A student claims there must be a time when T(t)=60°F. Is this claim justified? Explain using a theorem.",
           "answer": "Yes. Since T is continuous on [0,10] and 60 is between T(0)=45 and T(10)=72, by IVT there exists some c in (0,10) where T(c)=60°F."
         }

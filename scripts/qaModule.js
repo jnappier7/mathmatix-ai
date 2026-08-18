@@ -28,6 +28,10 @@
  *   unhandled step type  formatScaffoldStep has no case for it, so the step
  *                        renders as an empty teaching block
  *   missing answer key   a problem the checkpoint grader cannot mark
+ *   unfinished answer   an answer or worked solution that still contains the
+ *                        author's scratchpad — a false start or a self-
+ *                        correction, sometimes contradicting its own stated answer
+ *   missing problem id  a problem no answer key or progress record can name
  *   duplicate problem id two problems sharing one id, so they share an answer
  *                        key and a progress record
  *
@@ -42,6 +46,14 @@ const path = require('path');
 const RENDERABLE_TYPES = new Set([
   'explanation', 'model', 'guided_practice', 'independent_practice',
 ]);
+
+// Answers and worked solutions are handed to the tutor verbatim and shown to
+// students as the model of how to think. Eleven of them shipped with the
+// author's scratchpad still attached — false starts, self-corrections, and in
+// four cases a stated answer that the working underneath then contradicts
+// ("(C) 5 … → x = 3. Wait — let me recheck. Answer: (A) 3."). Deliberately
+// narrow: these phrases mean someone is arguing with themselves mid-answer.
+const SCRATCHPAD = /\b(wait[,—-]|hmm[.,]|let me (?:recheck|reconsider|re-read|recalculate|try)|actually\.\.\.|oops|scratch that)/i;
 
 /**
  * Check one already-parsed module. Returns { failures, warnings, stats }.
@@ -123,14 +135,34 @@ function checkModule(md, label) {
       if (!answered) {
         failures.push(`problem "${p.id || (p.question || p.problem || '?').slice(0, 40)}" has no answer`);
       }
-      // A problem id must be unique within its module: answerKeys is a flat map
-      // keyed by id, and courseSession records attempts by id, so two problems
-      // sharing one id silently share an answer key and a progress record.
-      if (p.id) {
+      // Every problem needs an id, and it must be unique within its module:
+      // answerKeys is a flat map keyed by id and courseSession records attempts
+      // by id, so a missing id can never be looked up and a shared one silently
+      // shares an answer key and a progress record.
+      for (const field of ['answer', 'solution', 'explanation']) {
+        if (p[field] && SCRATCHPAD.test(String(p[field]))) {
+          failures.push(`problem "${p.id || '?'}" has an unfinished ${field} `
+            + '(reads as the author\'s scratchpad, not a student-facing answer)');
+        }
+      }
+      if (!p.id) {
+        failures.push(`problem "${(p.question || p.problem || '?').slice(0, 40)}" has no id`);
+      } else {
         if (seenIds.has(p.id)) {
           failures.push(`problem id "${p.id}" is used more than once in this module`);
         }
         seenIds.add(p.id);
+      }
+    }
+  }
+
+  for (const step of scaffold) {
+    for (const e of step.examples || []) {
+      for (const field of ['solution', 'answer']) {
+        if (e[field] && SCRATCHPAD.test(String(e[field]))) {
+          failures.push(`worked example "${String(e.problem || '?').slice(0, 40)}" has an `
+            + `unfinished ${field} (reads as the author's scratchpad)`);
+        }
       }
     }
   }

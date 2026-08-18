@@ -66,6 +66,16 @@ describe('the specific defects this was built to catch', () => {
     expect(flat((f) => f.includes('is used more than once'))).toEqual([]);
   });
 
+  test('every problem has an id', () => {
+    expect(flat((f) => f.includes('has no id'))).toEqual([]);
+  });
+
+  test('no answer or worked solution still carries the author\'s scratchpad', () => {
+    // Twelve shipped this way, four of them stating an answer the working
+    // underneath then contradicted — students were shown the wrong letter.
+    expect(flat((f) => f.includes('scratchpad'))).toEqual([]);
+  });
+
   test('every scaffold step has a type coursePrompt can render', () => {
     expect(flat((f) => f.includes('unrenderable type'))).toEqual([]);
     // The renderable set must stay in step with formatScaffoldStep's switch.
@@ -99,6 +109,35 @@ describe('the checker itself still has teeth', () => {
     const { failures } = checkModule({ ...base,
       scaffold: [step(), step({ type: 'guided_practice', problems: [{ id: 'p', question: 'q' }] })] });
     expect(failures.join(' ')).toMatch(/has no answer/);
+  });
+
+  test('catches an answer that still contains the author\'s scratchpad', () => {
+    const { failures } = checkModule({ ...base,
+      scaffold: [step(), step({ type: 'guided_practice', problems: [
+        { id: 'p1', question: 'q', answer: '(C) 5. Working: x = 3. Wait — let me recheck. Answer: (A) 3.' },
+      ] })] });
+    expect(failures.join(' ')).toMatch(/unfinished answer/);
+  });
+
+  test('catches a worked solution that still contains the author\'s scratchpad', () => {
+    const { failures } = checkModule({ ...base,
+      scaffold: [step({ type: 'model', examples: [{ problem: 'p', solution: 'Hmm, let me reconsider.' }] }),
+        step({ type: 'guided_practice', problems: [{ id: 'p1', answer: '1' }] })] });
+    expect(failures.join(' ')).toMatch(/unfinished solution/);
+  });
+
+  test('does not flag an answer that merely uses the word wait', () => {
+    const { failures } = checkModule({ ...base,
+      scaffold: [step(), step({ type: 'guided_practice', problems: [
+        { id: 'p1', answer: 'The queue means you wait 12 minutes in total.' },
+      ] })] });
+    expect(failures).toEqual([]);
+  });
+
+  test('catches a problem with no id at all', () => {
+    const { failures } = checkModule({ ...base,
+      scaffold: [step(), step({ type: 'guided_practice', problems: [{ question: 'q', answer: '1' }] })] });
+    expect(failures.join(' ')).toMatch(/has no id/);
   });
 
   test('catches a problem id used twice in one module', () => {

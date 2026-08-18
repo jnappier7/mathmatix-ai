@@ -101,6 +101,7 @@
       "title": "We-Do: Factoring Advanced — Guided Practice",
       "problems": [
         {
+          "id": "pf-wp1",
           "question": "Factor by grouping: x³ + 2x² - 9x - 18.",
           "answer": "(x + 2)(x + 3)(x - 3)",
           "hints": [
@@ -109,6 +110,7 @@
           ]
         },
         {
+          "id": "pf-wp2",
           "question": "Factor completely: 2x⁴ - 32.",
           "answer": "2(x² + 4)(x + 2)(x - 2)",
           "hints": [
@@ -118,6 +120,7 @@
           ]
         },
         {
+          "id": "pf-wp3",
           "question": "Multiply: (x - 2)(x + 1)(x + 3). Give the result in standard form.",
           "answer": "x³ + 2x² - 5x - 6",
           "hints": [
@@ -193,6 +196,7 @@
       "title": "We-Do: Remainder Factor Theorems — Guided Practice",
       "problems": [
         {
+          "id": "pf-wp4",
           "question": "Divide (2x³ - 5x² + 3x + 7) by (x - 2) using synthetic division. State the quotient and remainder.",
           "answer": "Quotient: 2x² - x + 1, Remainder: 9. So f(2) = 9.",
           "hints": [
@@ -202,6 +206,7 @@
           ]
         },
         {
+          "id": "pf-wp5",
           "question": "Use the Remainder Theorem to evaluate f(-1) for f(x) = x⁴ + 3x³ - x² + 5.",
           "answer": "f(-1) = 2",
           "hints": [
@@ -254,6 +259,7 @@
       "title": "You-Do: Graphing Polynomials — Independent Practice",
       "problems": [
         {
+          "id": "pf-yp1",
           "question": "Factor completely: 27x³ + 64.",
           "answer": "(3x + 4)(9x² - 12x + 16)",
           "hints": [
@@ -261,6 +267,7 @@
           ]
         },
         {
+          "id": "pf-yp2",
           "question": "Factor by grouping: 2x³ - x² - 18x + 9.",
           "answer": "(2x - 1)(x + 3)(x - 3)",
           "hints": [
@@ -268,6 +275,7 @@
           ]
         },
         {
+          "id": "pf-yp3",
           "question": "Find all zeros of f(x) = x³ - 4x² - 7x + 10. (Try x = 1 first.)",
           "answer": "x = 1, 5, -2",
           "hints": [
@@ -275,6 +283,7 @@
           ]
         },
         {
+          "id": "pf-yp4",
           "question": "Describe the end behavior and sketch: f(x) = 2x⁴ - 3x³ - x² + 1.",
           "answer": "Even degree (4), positive leading coefficient (2): both ends up. At most 3 turning points.",
           "hints": [
@@ -282,6 +291,7 @@
           ]
         },
         {
+          "id": "pf-yp5",
           "question": "At which zeros does f(x) = (x - 1)³(x + 2)² cross vs bounce?",
           "answer": "x = 1: crosses (odd mult 3). x = -2: bounces (even mult 2).",
           "hints": [
@@ -289,6 +299,7 @@
           ]
         },
         {
+          "id": "pf-yp6",
           "question": "Divide (x⁴ + 2x³ - x - 2) by (x + 2) using synthetic division. Factor the quotient completely.",
           "answer": "Quotient: x³ - 1 = (x - 1)(x² + x + 1). Zeros: x = -2, 1.",
           "hints": [

@@ -137,6 +137,7 @@
       "title": "We-Do: Logarithm Evaluation Conversion — Guided Practice",
       "problems": [
         {
+          "id": "elu-wp1",
           "question": "Evaluate: log_6(216)",
           "answer": "3",
           "hints": [
@@ -145,6 +146,7 @@
           ]
         },
         {
+          "id": "elu-wp2",
           "question": "Solve: 2^(3x - 1) = 16",
           "answer": "x = 5/3",
           "hints": [
@@ -154,6 +156,7 @@
           ]
         },
         {
+          "id": "elu-wp3",
           "question": "Convert between forms: (a) Write log_7(343) = 3 in exponential form. (b) Write 2^5 = 32 in logarithmic form.",
           "answer": "(a) 7^3 = 343. (b) log_2(32) = 5.",
           "hints": [
@@ -196,6 +199,7 @@
       "title": "We-Do: Exponential Logarithmic Equations — Guided Practice",
       "problems": [
         {
+          "id": "elu-wp4",
           "question": "Expand: log_3(27x^2 / y^4)",
           "answer": "3 + 2*log_3(x) - 4*log_3(y)",
           "hints": [
@@ -205,6 +209,7 @@
           ]
         },
         {
+          "id": "elu-wp5",
           "question": "Condense into a single logarithm: 2*ln(x) + (1/2)*ln(y) - 3*ln(z)",
           "answer": "ln(x^2 * sqrt(y) / z^3)",
           "hints": [
@@ -214,6 +219,7 @@
           ]
         },
         {
+          "id": "elu-wp6",
           "question": "Solve: log_2(x + 3) + log_2(x - 1) = 5. Check your solution against the domain.",
           "answer": "x = 5 (x = -7 is extraneous)",
           "hints": [
@@ -235,6 +241,7 @@
       "title": "You-Do: Domain Analysis Logarithms — Independent Practice",
       "problems": [
         {
+          "id": "elu-yp1",
           "question": "Evaluate: log_4(1/64)",
           "answer": "-3",
           "hints": [
@@ -243,6 +250,7 @@
           ]
         },
         {
+          "id": "elu-yp2",
           "question": "Solve using common bases: 9^(x + 1) = 27^x",
           "answer": "x = 2",
           "hints": [
@@ -252,6 +260,7 @@
           ]
         },
         {
+          "id": "elu-yp3",
           "question": "Expand: log_2(32x^5 / y^3)",
           "answer": "5 + 5*log_2(x) - 3*log_2(y)",
           "hints": [
@@ -261,6 +270,7 @@
           ]
         },
         {
+          "id": "elu-yp4",
           "question": "Solve and check domain: log_5(x - 2) + log_5(x + 2) = 1",
           "answer": "x = 3 (x = -3 is extraneous)",
           "hints": [
@@ -270,6 +280,7 @@
           ]
         },
         {
+          "id": "elu-yp5",
           "question": "An account starts with $5,000 and earns 6% annual interest compounded monthly. Find the balance after 5 years. Use A = P(1 + r/n)^(nt).",
           "answer": "$6,744.25",
           "hints": [
@@ -279,6 +290,7 @@
           ]
         },
         {
+          "id": "elu-yp6",
           "question": "Carbon-14 has a half-life of 5,730 years. A fossil contains 12.5% of its original Carbon-14. How old is the fossil? Use A = A_0(1/2)^(t/h).",
           "answer": "17,190 years",
           "hints": [

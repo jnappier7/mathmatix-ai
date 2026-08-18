@@ -86,6 +86,7 @@
       "title": "We-Do: Domain Range Analysis — Guided Practice",
       "problems": [
         {
+          "id": "ftt-wp1",
           "problem": "Find the domain and range of f(x) = √(x - 3) - 2. Give both in interval notation.",
           "hints": [
             "The radicand cannot be negative: solve x - 3 ≥ 0 for the domain.",
@@ -95,6 +96,7 @@
           "answer": "Domain: x - 3 ≥ 0, so x ≥ 3, giving [3, ∞). Range: √(x - 3) takes every value in [0, ∞), and subtracting 2 shifts that down, giving [-2, ∞). The minimum occurs at x = 3, where f(3) = √0 - 2 = -2 — an endpoint that IS attained, so the bracket is square."
         },
         {
+          "id": "ftt-wp2",
           "problem": "Find the domain and range of f(x) = (x² - 9)/(x - 3). Be precise about what happens at x = 3.",
           "hints": [
             "Domain first, from the ORIGINAL expression: the denominator cannot be zero.",
@@ -104,6 +106,7 @@
           "answer": "Domain: the denominator is zero at x = 3, so the domain is (-∞, 3) ∪ (3, ∞). Factoring: (x² - 9)/(x - 3) = (x - 3)(x + 3)/(x - 3) = x + 3 for every x ≠ 3. So the graph is the line y = x + 3 with a HOLE at (3, 6) — not a vertical asymptote, because the factor cancelled. Range: the line would take every real value, but y = 6 is missed at the hole, so the range is (-∞, 6) ∪ (6, ∞)."
         },
         {
+          "id": "ftt-wp3",
           "problem": "Find the domain and range of f(x) = -2(x - 1)² + 5.",
           "hints": [
             "This is in vertex form, a(x - h)² + k. Read the vertex straight off — mind the signs.",
@@ -113,6 +116,7 @@
           "answer": "Domain: all real numbers, (-∞, ∞) — a polynomial is defined everywhere. Range: vertex form gives vertex (1, 5), and a = -2 < 0 means the parabola opens downward, so 5 is the maximum output and every value below it is attained. Range: (-∞, 5]. The bracket is square because f(1) = 5 exactly."
         },
         {
+          "id": "ftt-wp4",
           "problem": "Find the domain and range of f(x) = 1/√(4 - x²). Give both in interval notation and explain why the radicand needs a STRICT inequality here.",
           "hints": [
             "Two restrictions stack: the radicand cannot be negative, and the denominator cannot be zero. The square root sits in the denominator, so both apply to the same expression.",
@@ -171,6 +175,7 @@
       "skill": "transformations-toolkit",
       "problems": [
         {
+          "id": "ftt-wp5",
           "problem": "For g(x) = 3|2x - 6| - 1, rewrite in transformation form, identify the parent, list all transformations, and find the vertex, domain, and range.",
           "hints": [
             "Factor inside: 3|2(x - 3)| - 1",
@@ -181,6 +186,7 @@
           "answer": "g(x) = 3|2(x - 3)| - 1. Parent: f(x) = |x|. Transformations: horizontal compression by factor 1/2, shift right 3, vertical stretch by factor 3, shift down 1. Vertex: (3, -1). Domain: (-∞, ∞). Range: [-1, ∞)."
         },
         {
+          "id": "ftt-wp6",
           "problem": "Write the equation of the function obtained from f(x) = 1/x by: reflecting over the x-axis, shifting left 4, shifting up 2. State domain, range, and asymptotes.",
           "hints": [
             "Reflect: -1/x",
@@ -191,6 +197,7 @@
           "answer": "g(x) = -1/(x + 4) + 2. Domain: (-∞, -4) ∪ (-4, ∞). Range: (-∞, 2) ∪ (2, ∞). Vertical asymptote: x = -4. Horizontal asymptote: y = 2."
         },
         {
+          "id": "ftt-wp7",
           "problem": "The function g(x) = -√(x + 5) + 3 is a transformation of f(x) = √x. (a) List the transformations. (b) Find the endpoint. (c) Find the x-intercept. (d) State domain and range.",
           "hints": [
             "Shift left 5, reflect over x-axis, shift up 3",
@@ -252,6 +259,7 @@
       "skill": "function-composition",
       "problems": [
         {
+          "id": "ftt-wp8",
           "problem": "For f(x) = x/(x + 1) and g(x) = 1/x, find f(g(x)). Simplify completely and state the domain.",
           "hints": [
             "Substitute: f(1/x) = (1/x)/((1/x) + 1)",
@@ -261,6 +269,7 @@
           "answer": "f(g(x)) = (1/x)/((1/x) + 1) = (1/x)/((1 + x)/x) = 1/(1 + x). Domain: x ≠ 0 and x ≠ -1, so (-∞, -1) ∪ (-1, 0) ∪ (0, ∞)."
         },
         {
+          "id": "ftt-wp9",
           "problem": "For f(x) = x² + 1 and g(x) = √(x - 2), find: (a) f(g(x)), (b) g(f(x)), (c) the domain of each composition.",
           "hints": [
             "(a) f(√(x-2)) = (√(x-2))² + 1 = x - 2 + 1 = x - 1",
@@ -271,6 +280,7 @@
           "answer": "(a) f(g(x)) = (x - 2) + 1 = x - 1. Domain: x ≥ 2, so [2, ∞). (b) g(f(x)) = √(x² - 1). Domain: x² ≥ 1 → x ≤ -1 or x ≥ 1, so (-∞, -1] ∪ [1, ∞)."
         },
         {
+          "id": "ftt-wp10",
           "problem": "Express h(x) = |3x - 6|² as a composition of three functions f(g(k(x))).",
           "hints": [
             "Innermost: k(x) = 3x - 6 (linear)",
@@ -327,6 +337,7 @@
       "skill": "inverse-functions",
       "problems": [
         {
+          "id": "ftt-wp11",
           "problem": "Find the inverse of f(x) = (3x + 7)/(x - 2). State the domain and range of both f and f⁻¹.",
           "hints": [
             "Swap x and y: x = (3y + 7)/(y - 2)",
@@ -337,6 +348,7 @@
           "answer": "f⁻¹(x) = (2x + 7)/(x - 3). Domain of f: x ≠ 2, Range of f: y ≠ 3. Domain of f⁻¹: x ≠ 3, Range of f⁻¹: y ≠ 2."
         },
         {
+          "id": "ftt-wp12",
           "problem": "Find the inverse of f(x) = 4x² - 8x + 5 restricted to x ≥ 1. Verify f(f⁻¹(x)) = x.",
           "hints": [
             "Complete the square: 4(x² - 2x) + 5 = 4(x - 1)² + 1",
@@ -347,6 +359,7 @@
           "answer": "f(x) = 4(x - 1)² + 1. f⁻¹(x) = (1/2)√(x - 1) + 1. Domain of f⁻¹: [1, ∞). Verification: f(f⁻¹(x)) = 4((1/2)√(x-1) + 1 - 1)² + 1 = 4 · (1/4)(x - 1) + 1 = (x - 1) + 1 = x. ✓"
         },
         {
+          "id": "ftt-wp13",
           "problem": "Determine whether f(x) = x³ - x is one-to-one on (-∞, ∞). If not, suggest a domain restriction that makes it one-to-one.",
           "hints": [
             "Check: f(0) = 0 and f(-1) = -1 + 1 = 0 and f(1) = 0 — wait, f(0)=0, f(1)=0, so not one-to-one",
@@ -365,26 +378,32 @@
       "title": "Function Toolkit Mastery Practice",
       "problems": [
         {
+          "id": "ftt-yp1",
           "problem": "For f(x) = -log₂(x - 4) + 3, identify the parent function, list all transformations, and find: domain, range, asymptote, x-intercept, and y-intercept (if any).",
           "answer": "Parent: f(x) = log₂(x). Transformations: shift right 4, reflect over x-axis, shift up 3. Domain: (4, ∞). Range: (-∞, ∞). Vertical asymptote: x = 4. x-intercept: -log₂(x-4) + 3 = 0 → log₂(x-4) = 3 → x - 4 = 8 → x = 12, so (12, 0). No y-intercept (x = 0 is not in domain)."
         },
         {
+          "id": "ftt-yp2",
           "problem": "Given f(x) = 2x² - 3 and g(x) = √(x + 3), find (a) (f ∘ g)(x), (b) the domain of (f ∘ g), (c) (g ∘ f)(x), (d) the domain of (g ∘ f).",
           "answer": "(a) f(g(x)) = 2(√(x+3))² - 3 = 2(x + 3) - 3 = 2x + 3. (b) Domain: need x + 3 ≥ 0, so x ≥ -3; domain = [-3, ∞). (c) g(f(x)) = √(2x² - 3 + 3) = √(2x²) = |x|√2. (d) Domain: 2x² ≥ 0 is true for all x, so domain = (-∞, ∞)."
         },
         {
+          "id": "ftt-yp3",
           "problem": "Find the inverse of f(x) = (4x - 1)/(2x + 3). Verify that f(f⁻¹(x)) = x. State domain and range of both functions.",
           "answer": "Swap: x = (4y - 1)/(2y + 3). Solve: 2xy + 3x = 4y - 1 → 2xy - 4y = -3x - 1 → y(2x - 4) = -(3x + 1) → y = -(3x + 1)/(2x - 4) = (-3x - 1)/(2(x - 2)). So f⁻¹(x) = (-3x - 1)/(2(x - 2)). Domain of f: x ≠ -3/2, Range of f: y ≠ 2 (HA at y = 4/2 = 2). Domain of f⁻¹: x ≠ 2, Range of f⁻¹: y ≠ -3/2. Verification: f(f⁻¹(x)) = (4·(-3x-1)/(2(x-2)) - 1)/(2·(-3x-1)/(2(x-2)) + 3) = ((-12x-4-2(x-2))/(2(x-2)))/((-6x-2+6(x-2))/(2(x-2))) = (-12x-4-2x+4)/(-6x-2+6x-12) = -14x/(-14) = x. ✓"
         },
         {
+          "id": "ftt-yp4",
           "problem": "For f(x) = 1/(x + 2) and g(x) = 3x/(x - 1), find f(g(x)). Simplify completely and state the domain.",
           "answer": "f(g(x)) = 1/(g(x) + 2) = 1/((3x/(x-1)) + 2) = 1/((3x + 2(x-1))/(x-1)) = (x - 1)/(3x + 2x - 2) = (x - 1)/(5x - 2). Domain: x ≠ 1 (for g) and x ≠ 2/5 (denominator of result), so (-∞, 2/5) ∪ (2/5, 1) ∪ (1, ∞)."
         },
         {
+          "id": "ftt-yp5",
           "problem": "Write the equation of the function obtained from f(x) = ∛x by applying: vertical stretch by 2, reflect over y-axis, shift right 5, shift down 3. State domain and range.",
           "answer": "Step by step: (1) Vertical stretch by 2: 2∛x. (2) Reflect over y-axis (replace x with -x): 2∛(-x). (3) Shift right 5 (replace x with x-5): 2∛(-(x-5)) = 2∛(5-x). (4) Shift down 3: g(x) = 2∛(5-x) - 3. Domain: (-∞, ∞) (cube root accepts all reals). Range: (-∞, ∞)."
         },
         {
+          "id": "ftt-yp6",
           "problem": "A company finds that its daily cost is C(x) = 0.5x + 80 and its revenue is R(x) = x·p(x), where the price function is p(x) = 20 - 0.1x (x = number of units). (a) Find P(x) = R(x) - C(x). (b) Find the break-even points. (c) Find the number of units that maximizes profit.",
           "answer": "(a) R(x) = x(20 - 0.1x) = 20x - 0.1x². P(x) = (20x - 0.1x²) - (0.5x + 80) = -0.1x² + 19.5x - 80. (b) -0.1x² + 19.5x - 80 = 0 → x² - 195x + 800 = 0. Quadratic formula: x = (195 ± √(38025 - 3200))/2 = (195 ± √34825)/2 = (195 ± 5√1393)/2. Approximation: √1393 ≈ 37.32, so 5√1393 ≈ 186.6. x ≈ (195 - 186.6)/2 ≈ 4.2 or x ≈ (195 + 186.6)/2 ≈ 190.8. (c) Vertex: x = -19.5/(2·(-0.1)) = 19.5/0.2 = 97.5 units. Max profit: P(97.5) = -0.1(97.5)² + 19.5(97.5) - 80 = -950.625 + 1901.25 - 80 = 870.625."
         }

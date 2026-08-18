@@ -118,6 +118,7 @@
       "title": "Statistics & Data Practice",
       "problems": [
         {
+          "id": "sp-wp1",
           "problem": "The median of {3, 7, 12, 15, x, 25, 30} (already sorted) is 15. What are the possible values of x?\n(A) x = 15  (B) x ≥ 15  (C) x ≤ 15  (D) 15 ≤ x ≤ 25  (E) Any value",
           "hints": [
             "With 7 values, the median is the 4th value",
@@ -126,6 +127,7 @@
           "answer": "(B) x ≥ 15. The 4th value in sorted order must be 15. If x < 15, x goes before 15 and shifts 15 to 5th position, making median = x or 15 depending on x. Actually: {3, 7, 12, 15, x, 25, 30} sorted — if x ≥ 15, median is 15. Answer: (D) 15 ≤ x ≤ 25."
         },
         {
+          "id": "sp-wp2",
           "problem": "A class of 30 students has a mean test score of 82. If the teacher removes the lowest score of 40, what is the new mean?\n(A) 82  (B) 83.0  (C) 83.4  (D) 84.0  (E) 84.6",
           "hints": [
             "Total = 30 × 82 = 2460",
@@ -135,6 +137,7 @@
           "answer": "(C) 83.4. Total = 2460. Remove 40: 2420/29 ≈ 83.45."
         },
         {
+          "id": "sp-wp3",
           "problem": "Using the two-way table:\n\n              | Yes | No | Total\n    Seniors   |  25 | 15 |   40\n    Juniors   |  30 | 30 |   60\n    Total     |  55 | 45 |  100\n\nWhat percent of Juniors said Yes?\n(A) 30%  (B) 50%  (C) 55%  (D) 60%  (E) 75%",
           "hints": [
             "Focus on the Juniors row",
@@ -195,6 +198,7 @@
       "title": "Probability & Counting Practice",
       "problems": [
         {
+          "id": "sp-wp4",
           "problem": "A coin is flipped 3 times. What is the probability of getting at least one head?\n(A) 1/8  (B) 3/8  (C) 1/2  (D) 7/8  (E) 1",
           "hints": [
             "Use complementary probability: P(at least 1 head) = 1 − P(no heads)",
@@ -203,6 +207,7 @@
           "answer": "(D) 7/8. P(at least 1 head) = 1 − P(TTT) = 1 − 1/8 = 7/8."
         },
         {
+          "id": "sp-wp5",
           "problem": "A jar has 5 red and 3 blue marbles. Two marbles are drawn without replacement. What is the probability both are red?\n(A) 5/14  (B) 25/64  (C) 5/8  (D) 10/28  (E) 15/56",
           "hints": [
             "First draw: P(red) = 5/8",
@@ -212,6 +217,7 @@
           "answer": "(A) 5/14. (5/8)(4/7) = 20/56 = 5/14."
         },
         {
+          "id": "sp-wp6",
           "problem": "In how many ways can 5 runners finish in first, second, and third place?\n(A) 10  (B) 15  (C) 60  (D) 120  (E) 125",
           "hints": [
             "Order matters → permutation",
@@ -229,26 +235,32 @@
       "title": "Statistics & Probability — ACT-Style Practice Set",
       "problems": [
         {
+          "id": "sp-yp1",
           "problem": "The mean of 5 numbers is 24. If one number (30) is removed, what is the mean of the remaining 4 numbers?\n(A) 20  (B) 22.5  (C) 23.5  (D) 24  (E) 25.5",
           "answer": "(B) 22.5. Total = 5 × 24 = 120. Remove 30: 90/4 = 22.5."
         },
         {
+          "id": "sp-yp2",
           "problem": "A histogram shows the following frequencies for test score ranges:\n60-69: 3 students, 70-79: 7 students, 80-89: 12 students, 90-99: 8 students.\nWhat percent of students scored 80 or above?\n(A) 40%  (B) 60%  (C) 66.7%  (D) 73.3%  (E) 80%",
           "answer": "(C) 66.7%. 80+: 12 + 8 = 20. Total: 3+7+12+8 = 30. 20/30 = 66.7%."
         },
         {
+          "id": "sp-yp3",
           "problem": "From a standard deck of 52 cards, what is the probability of drawing a heart or a face card?\n(A) 11/26  (B) 25/52  (C) 22/52  (D) 16/52  (E) 13/52",
           "answer": "(C) 22/52. Hearts = 13. Face cards = 12. Heart face cards = 3. P = (13 + 12 − 3)/52 = 22/52 = 11/26."
         },
         {
+          "id": "sp-yp4",
           "problem": "A 4-digit PIN uses digits 0-9. If no digit can be repeated, how many PINs are possible?\n(A) 5,040  (B) 10,000  (C) 6,561  (D) 3,024  (E) 720",
           "answer": "(A) 5,040. 10 × 9 × 8 × 7 = 5,040."
         },
         {
+          "id": "sp-yp5",
           "problem": "A box plot shows Q1 = 30, median = 45, Q3 = 60. Which statement MUST be true?\n(A) The mean is 45  (B) 50% of data is between 30 and 60  (C) The range is 30  (D) No outliers exist  (E) The mode is 45",
           "answer": "(B) 50% of data is between 30 and 60. By definition, Q1 to Q3 contains the middle 50% (IQR)."
         },
         {
+          "id": "sp-yp6",
           "problem": "In a survey, 60% of respondents like pizza, 40% like sushi, and 25% like both. What percent like pizza or sushi?\n(A) 65%  (B) 75%  (C) 85%  (D) 100%  (E) 125%",
           "answer": "(B) 75%. P(pizza or sushi) = 60% + 40% − 25% = 75%."
         }

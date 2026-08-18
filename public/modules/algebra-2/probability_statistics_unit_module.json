@@ -71,6 +71,7 @@
       "title": "We-Do: Counting Principles — Guided Practice",
       "problems": [
         {
+          "id": "psu-wp1",
           "question": "A license plate has 3 letters followed by 4 digits. Letters and digits can repeat. How many plates are possible?",
           "answer": "26³ × 10⁴ = 17,576 × 10,000 = 175,760,000",
           "hints": [
@@ -80,6 +81,7 @@
           ]
         },
         {
+          "id": "psu-wp2",
           "question": "How many ways can 8 runners finish a race (all finish, no ties)?",
           "answer": "8! = 40,320",
           "hints": [
@@ -88,6 +90,7 @@
           ]
         },
         {
+          "id": "psu-wp3",
           "question": "From a standard 52-card deck, how many 5-card hands are possible?",
           "answer": "C(52, 5) = 2,598,960",
           "hints": [
@@ -189,6 +192,7 @@
       "title": "We-Do: Probability Rules — Guided Practice",
       "problems": [
         {
+          "id": "psu-wp4",
           "question": "A coin is flipped 3 times. Find P(at least one head).",
           "answer": "7/8",
           "hints": [
@@ -198,6 +202,7 @@
           ]
         },
         {
+          "id": "psu-wp5",
           "question": "P(A) = 0.4, P(B) = 0.3, and A and B are independent. Find P(A and B) and P(A or B).",
           "answer": "P(A and B) = 0.12, P(A or B) = 0.58",
           "hints": [
@@ -206,6 +211,7 @@
           ]
         },
         {
+          "id": "psu-wp6",
           "question": "In a survey, 60% of students like pizza, 45% like tacos, and 25% like both. What is the probability a student likes pizza given that they like tacos?",
           "answer": "P(pizza | tacos) = 25/45 = 5/9 ≈ 0.556",
           "hints": [
@@ -247,6 +253,7 @@
       "title": "We-Do: Conditional Probability — Guided Practice",
       "problems": [
         {
+          "id": "psu-wp7",
           "question": "A coin is flipped 6 times. Find P(exactly 2 heads).",
           "answer": "C(6,2) × (0.5)² × (0.5)⁴ = 15 × 1/64 = 15/64 ≈ 0.2344",
           "hints": [
@@ -256,6 +263,7 @@
           ]
         },
         {
+          "id": "psu-wp8",
           "question": "A factory produces items with a 5% defect rate. In a batch of 10, find P(exactly 1 defective).",
           "answer": "C(10,1) × (0.05)¹ × (0.95)⁹ = 10 × 0.05 × 0.6302 ≈ 0.3151",
           "hints": [
@@ -265,6 +273,7 @@
           ]
         },
         {
+          "id": "psu-wp9",
           "question": "70% of students pass a driving test on their first try. Out of 5 students, find P(at least 4 pass).",
           "answer": "P(4) + P(5) = 0.36015 + 0.16807 ≈ 0.5282",
           "hints": [
@@ -307,6 +316,7 @@
       "title": "We-Do: Data Analysis Normal Distribution — Guided Practice",
       "problems": [
         {
+          "id": "psu-wp10",
           "question": "SAT scores are normally distributed with μ = 1060 and σ = 195. Using the Empirical Rule, between what two scores do the middle 68% of students fall?",
           "answer": "Between 865 and 1255 (1060 ± 195)",
           "hints": [
@@ -315,6 +325,7 @@
           ]
         },
         {
+          "id": "psu-wp11",
           "question": "Using the same SAT distribution: (a) What percent score above 1450? (b) Find the z-score for a student who scored 1350.",
           "answer": "(a) About 2.5%. (b) z ≈ 1.49.",
           "hints": [
@@ -323,6 +334,7 @@
           ]
         },
         {
+          "id": "psu-wp12",
           "question": "Machine parts have mean weight 50g with σ = 0.8g. Parts more than 3σ from the mean are rejected. What weight range is acceptable?",
           "answer": "47.6g to 52.4g (only 0.3% rejected)",
           "hints": [
@@ -342,6 +354,7 @@
       "title": "You-Do: Data Analysis Normal Distribution — Independent Practice",
       "problems": [
         {
+          "id": "psu-yp1",
           "question": "A locker combination uses 3 numbers from 0-39 (repetition allowed). How many combinations are possible?",
           "answer": "40³ = 64,000",
           "hints": [
@@ -350,6 +363,7 @@
           ]
         },
         {
+          "id": "psu-yp2",
           "question": "From 15 students, a teacher selects 4 for a study group. How many ways?",
           "answer": "C(15, 4) = 1,365",
           "hints": [
@@ -358,6 +372,7 @@
           ]
         },
         {
+          "id": "psu-yp3",
           "question": "Two dice are rolled. Find P(sum is 7 or sum is 11).",
           "answer": "8/36 = 2/9 ≈ 0.222",
           "hints": [
@@ -367,6 +382,7 @@
           ]
         },
         {
+          "id": "psu-yp4",
           "question": "A basketball player has a 75% free throw rate. She shoots 6 free throws. Find P(exactly 5 makes).",
           "answer": "C(6,5)(0.75)⁵(0.25)¹ = 6 × 0.2373 × 0.25 ≈ 0.3560",
           "hints": [
@@ -376,6 +392,7 @@
           ]
         },
         {
+          "id": "psu-yp5",
           "question": "Light bulb lifetimes are normally distributed with μ = 1200 hours and σ = 100 hours. (a) What percent last between 1000 and 1400 hours? (b) What percent last more than 1300 hours? (c) Find the z-score for a bulb that lasted 1050 hours.",
           "answer": "(a) 95%. (b) About 16%. (c) z = -1.5.",
           "hints": [
@@ -385,6 +402,7 @@
           ]
         },
         {
+          "id": "psu-yp6",
           "question": "A card is drawn from a standard deck. Given that the card is red, what is the probability it's a heart?",
           "answer": "P(heart | red) = P(heart and red)/P(red) = (13/52)/(26/52) = 13/26 = 1/2",
           "hints": [

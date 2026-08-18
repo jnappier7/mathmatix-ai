@@ -140,6 +140,7 @@
       "title": "We-Do: Systems Linear Inequalities — Guided Practice",
       "problems": [
         {
+          "id": "ls-wp1",
           "question": "Solve using substitution: y = 2x - 1 and 3x + 4y = 21.",
           "answer": "x = 25/11, y = 39/11",
           "hints": [
@@ -148,6 +149,7 @@
           ]
         },
         {
+          "id": "ls-wp2",
           "question": "Solve: 4x - 6y = 10 and -2x + 3y = -5. Classify the system.",
           "answer": "Infinitely many solutions (dependent system). The second equation is the first divided by -2.",
           "hints": [
@@ -156,6 +158,7 @@
           ]
         },
         {
+          "id": "ls-wp3",
           "question": "Graph the system of inequalities: y > 2x - 3 and y ≤ -x + 4. Where is the solution region?",
           "answer": "The solution region is above the line y = 2x - 3 (dashed) AND below/on the line y = -x + 4 (solid). The region is the overlap.",
           "hints": [
@@ -198,6 +201,7 @@
       "title": "We-Do: Matrices Operations — Guided Practice",
       "problems": [
         {
+          "id": "ls-wp4",
           "question": "Multiply: [2 -1; 3 4] · [5; 2].",
           "answer": "[8; 23]",
           "hints": [
@@ -206,6 +210,7 @@
           ]
         },
         {
+          "id": "ls-wp5",
           "question": "Find the inverse of [4 1; 7 2].",
           "answer": "[2 -1; -7 4]",
           "hints": [
@@ -214,6 +219,7 @@
           ]
         },
         {
+          "id": "ls-wp6",
           "question": "Use the inverse matrix to solve: 4x + y = 10 and 7x + 2y = 19.",
           "answer": "x = 1, y = 6",
           "hints": [
@@ -232,6 +238,7 @@
       "title": "You-Do: Matrices Solving Systems — Independent Practice",
       "problems": [
         {
+          "id": "ls-yp1",
           "question": "Solve by elimination: 5x + 3y = 11 and 2x + y = 4.",
           "answer": "x = 1, y = 2",
           "hints": [
@@ -240,6 +247,7 @@
           ]
         },
         {
+          "id": "ls-yp2",
           "question": "A store sells pens for $2 and notebooks for $5. A customer buys 8 items for $25. How many pens and notebooks?",
           "answer": "5 pens and 3 notebooks",
           "hints": [
@@ -247,6 +255,7 @@
           ]
         },
         {
+          "id": "ls-yp3",
           "question": "Graph the solution region: x + y ≤ 6, x ≥ 0, y ≥ 0. What shape is the solution region?",
           "answer": "A triangle with vertices at (0,0), (6,0), and (0,6).",
           "hints": [
@@ -254,6 +263,7 @@
           ]
         },
         {
+          "id": "ls-yp4",
           "question": "Find the determinant of [6 -2; 9 -3]. What does this tell you?",
           "answer": "det = 6(-3) - (-2)(9) = -18 + 18 = 0. The matrix is singular (no inverse). The corresponding system would have no unique solution.",
           "hints": [
@@ -261,6 +271,7 @@
           ]
         },
         {
+          "id": "ls-yp5",
           "question": "Use inverse matrices to solve: x + 3y = 7 and 2x + 5y = 12.",
           "answer": "x = 1, y = 2",
           "hints": [

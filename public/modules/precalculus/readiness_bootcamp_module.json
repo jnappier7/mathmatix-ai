@@ -64,6 +64,7 @@
       "lessonPhase": "we-do",
       "problems": [
         {
+          "id": "rb-wp1",
           "question": "Find the domain of h(x) = ln(x - 5) + √(10 - x) in interval notation.",
           "answer": "(5, 10]",
           "hints": [
@@ -73,6 +74,7 @@
           ]
         },
         {
+          "id": "rb-wp2",
           "question": "For f(x) = x³ - 4x, determine if f is even, odd, or neither.",
           "answer": "Odd: f(-x) = -x³ + 4x = -(x³ - 4x) = -f(x)",
           "hints": [
@@ -82,6 +84,7 @@
           ]
         },
         {
+          "id": "rb-wp3",
           "question": "Given f(x) = 3/(x - 2) and g(x) = x + 5, find f(g(x)) and its domain.",
           "answer": "f(g(x)) = 3/((x+5)-2) = 3/(x+3). Domain: (-∞, -3) ∪ (-3, ∞).",
           "hints": [
@@ -123,6 +126,7 @@
       "lessonPhase": "we-do",
       "problems": [
         {
+          "id": "rb-wp4",
           "question": "Solve: √(2x + 3) = x.",
           "answer": "x = 3 (x = -1 is extraneous)",
           "hints": [
@@ -132,6 +136,7 @@
           ]
         },
         {
+          "id": "rb-wp5",
           "question": "Solve: log₂(x + 3) + log₂(x - 1) = 5.",
           "answer": "x = 5 (x = -7 is extraneous)",
           "hints": [
@@ -141,6 +146,7 @@
           ]
         },
         {
+          "id": "rb-wp6",
           "question": "Solve: (x² - x - 6)/(x - 3) ≥ 0. Express in interval notation.",
           "answer": "[-2, 3) ∪ (3, ∞)",
           "hints": [
@@ -183,6 +189,7 @@
       "lessonPhase": "we-do",
       "problems": [
         {
+          "id": "rb-wp7",
           "question": "Factor completely: 3x³ + 24.",
           "answer": "3(x + 2)(x² - 2x + 4)",
           "hints": [
@@ -192,6 +199,7 @@
           ]
         },
         {
+          "id": "rb-wp8",
           "question": "Simplify: 1/(x+1) - 1/(x-1).",
           "answer": "-2/(x² - 1)",
           "hints": [
@@ -201,6 +209,7 @@
           ]
         },
         {
+          "id": "rb-wp9",
           "question": "Simplify: (x^(-1) + y^(-1)) / (x^(-1) - y^(-1)).",
           "answer": "(y + x)/(y - x), equivalently -(x + y)/(x - y)",
           "hints": [
@@ -243,6 +252,7 @@
       "lessonPhase": "you-do",
       "problems": [
         {
+          "id": "rb-yp1",
           "question": "Find the domain of f(x) = √(x + 4) / (x² - 9) in interval notation.",
           "answer": "[-4, 3) ∪ (3, ∞)",
           "hints": [
@@ -252,6 +262,7 @@
           ]
         },
         {
+          "id": "rb-yp2",
           "question": "Solve: 5^(x + 1) = 25^(2x - 3).",
           "answer": "x = 7/3",
           "hints": [
@@ -261,6 +272,7 @@
           ]
         },
         {
+          "id": "rb-yp3",
           "question": "Factor completely: 8x³ - 27y³.",
           "answer": "(2x - 3y)(4x² + 6xy + 9y²)",
           "hints": [
@@ -270,6 +282,7 @@
           ]
         },
         {
+          "id": "rb-yp4",
           "question": "Solve and express in interval notation: (x + 2)/(x - 1) < 0.",
           "answer": "(-2, 1)",
           "hints": [
@@ -279,6 +292,7 @@
           ]
         },
         {
+          "id": "rb-yp5",
           "question": "For g(x) = 2(x + 1)³ - 4, identify the parent function, list transformations, and find the y-intercept.",
           "answer": "Parent: f(x) = x³. Left 1, vertical stretch by 2, down 4. y-intercept: g(0) = 2(1)³ - 4 = -2.",
           "hints": [
@@ -287,8 +301,9 @@
           ]
         },
         {
+          "id": "rb-yp6",
           "question": "Simplify: (2x² - 5x - 3)/(x² - 9) ÷ (2x + 1)/(x + 3).",
-          "answer": "(x - 3)/(x - 3) · ... = 1. Wait — let me factor: (2x+1)(x-3)/((x-3)(x+3)) · (x+3)/(2x+1) = 1. Restrictions: x ≠ 3, -3, -1/2.",
+          "answer": "1, with restrictions x ≠ 3, −3, −1/2. Dividing means multiplying by the reciprocal: [(2x² − 5x − 3)/(x² − 9)] · [(x + 3)/(2x + 1)]. Factor everything first: 2x² − 5x − 3 = (2x + 1)(x − 3) and x² − 9 = (x − 3)(x + 3), giving [(2x + 1)(x − 3)] / [(x − 3)(x + 3)] · (x + 3)/(2x + 1). Every factor cancels, so the expression simplifies to 1. The restrictions come from the ORIGINAL expression and from the divisor: x ≠ 3 and x ≠ −3 make the first denominator zero, and x ≠ −1/2 because (2x + 1) becomes a denominator once the second fraction is flipped. The cancelling hides all three, but they still apply.",
           "hints": [
             "Factor: 2x²-5x-3 = (2x+1)(x-3). x²-9 = (x-3)(x+3).",
             "Flip and multiply: ((2x+1)(x-3))/((x-3)(x+3)) × (x+3)/(2x+1).",

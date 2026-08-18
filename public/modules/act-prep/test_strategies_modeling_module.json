@@ -91,6 +91,7 @@
       "title": "Problem Diagnosis Practice — Classify Before You Solve",
       "problems": [
         {
+          "id": "tsm-wp1",
           "problem": "DIAGNOSIS EXERCISE: Before solving, classify this problem and name your approach.\n\nA rectangular garden is 3 feet longer than it is wide. If the perimeter is 42 feet, what is the width?\n(A) 7  (B) 9  (C) 10.5  (D) 12  (E) 18",
           "hints": [
             "SKIM: asks for 'the width' — not length, not area, not perimeter.",
@@ -101,6 +102,7 @@
           "answer": "(B) 9. Backsolve: width=9, length=9+3=12. Perimeter = 2(9+12) = 42. ✓\nOr algebra: 2(w + w+3) = 42 → 4w+6 = 42 → w = 9."
         },
         {
+          "id": "tsm-wp2",
           "problem": "DIAGNOSIS EXERCISE: Before solving, analyze the answer choices for traps.\n\nA circle has a diameter of 10 cm. What is its area?\n(A) 10π  (B) 25π  (C) 50π  (D) 100π  (E) 31.4",
           "hints": [
             "SKIM: 'area' of a circle given 'diameter'.",
@@ -111,6 +113,7 @@
           "answer": "(B) 25π. Diameter = 10, so radius = 5. A = π(5²) = 25π. Three traps avoided: diameter-as-radius, circumference formula, decimal conversion."
         },
         {
+          "id": "tsm-wp3",
           "problem": "DIAGNOSIS EXERCISE: Without solving, which approach is FASTEST for this problem?\n\nIf f(x) = 2x − 3, for what value of x does f(x) = f⁻¹(x)?\n(A) 1  (B) 2  (C) 3  (D) 4  (E) 5",
           "hints": [
             "SKIM: 'for what value of x does f(x) = f⁻¹(x)' — find where a function equals its inverse.",
@@ -121,6 +124,7 @@
           "answer": "(C) 3. f(x) = f⁻¹(x) occurs where both equal x. So 2x−3 = x → x = 3. Backsolving also works instantly."
         },
         {
+          "id": "tsm-wp4",
           "problem": "DIAGNOSIS EXERCISE: Read the choices, then decide — estimate or calculate?\n\nThe area of a square with diagonal 8 is:\n(A) 16  (B) 32  (C) 64  (D) 32√2  (E) 128",
           "hints": [
             "SKIM: area of a square, given the diagonal (not the side!).",
@@ -217,6 +221,7 @@
       "title": "Strategy Practice: Backsolving, Picking Numbers, Estimation",
       "problems": [
         {
+          "id": "tsm-wp5",
           "problem": "If 2^x = 32, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 16",
           "hints": [
             "Backsolve: try (C) x = 5. 2⁵ = 32. ✓"
@@ -224,6 +229,7 @@
           "answer": "(C) 5. 2⁵ = 32."
         },
         {
+          "id": "tsm-wp6",
           "problem": "For all a ≠ 0, which is equivalent to (3a²)³ / a⁴?\n(A) 3a²  (B) 9a²  (C) 27a²  (D) 27a  (E) 9a⁶",
           "hints": [
             "Pick a = 2: (3·4)³ / 16 = 12³/16 = 1728/16 = 108",
@@ -232,6 +238,7 @@
           "answer": "(C) 27a². (3a²)³ = 27a⁶. 27a⁶/a⁴ = 27a². Or pick a=2: 12³/16 = 108 = 27(4)."
         },
         {
+          "id": "tsm-wp7",
           "problem": "A rectangular field has area 2,400 square meters and length 80 meters. What is the perimeter?\n(A) 110 m  (B) 190 m  (C) 220 m  (D) 2,560 m  (E) 4,800 m",
           "hints": [
             "Width = 2400/80 = 30 m",
@@ -240,6 +247,7 @@
           "answer": "(C) 220 m. Width = 30. Perimeter = 2(80+30) = 220."
         },
         {
+          "id": "tsm-wp8",
           "problem": "The volume of a sphere is approximately 904.8 cubic inches. What is the radius? (Use π ≈ 3.14)\n(A) 4  (B) 6  (C) 8  (D) 10  (E) 12",
           "hints": [
             "Backsolve with (B) r=6: V = (4/3)(3.14)(216) = 904.3 ≈ 904.8 ✓"
@@ -297,6 +305,7 @@
       "title": "Modeling & Strategy Practice",
       "problems": [
         {
+          "id": "tsm-wp9",
           "problem": "A car depreciates from $25,000 to $16,000 in 3 years. Which model type best fits this situation?\n(A) Linear  (B) Quadratic  (C) Exponential decay  (D) Exponential growth  (E) Logarithmic",
           "hints": [
             "Depreciation is a percentage loss each year → multiplicative",
@@ -305,6 +314,7 @@
           "answer": "(C) Exponential decay. Depreciation is typically a constant percentage per year → exponential."
         },
         {
+          "id": "tsm-wp10",
           "problem": "The equation h = −16t² + 48t + 5 models the height (in feet) of a ball t seconds after being thrown. What is the maximum height?\n(A) 5 ft  (B) 41 ft  (C) 48 ft  (D) 53 ft  (E) 64 ft",
           "hints": [
             "Maximum occurs at vertex: t = −b/(2a) = −48/(2(−16)) = 1.5",
@@ -313,6 +323,7 @@
           "answer": "(B) 41 ft. t = 1.5. h = −16(2.25) + 72 + 5 = −36 + 72 + 5 = 41."
         },
         {
+          "id": "tsm-wp11",
           "problem": "A linear model predicts that a factory produces 200 widgets on day 1 and 215 widgets on day 2. According to this model, how many widgets will be produced on day 10?\n(A) 335  (B) 345  (C) 350  (D) 400  (E) 2,150",
           "hints": [
             "Rate = 215 − 200 = 15 widgets/day",
@@ -330,34 +341,42 @@
       "title": "Test Strategies & Modeling — ACT-Style Practice Set",
       "problems": [
         {
+          "id": "tsm-yp1",
           "problem": "Three times a number, decreased by 7, is 29. What is the number? (Use backsolving)\n(A) 8  (B) 10  (C) 12  (D) 14  (E) 22",
           "answer": "(C) 12. Backsolve: 3(12) − 7 = 36 − 7 = 29. ✓"
         },
         {
+          "id": "tsm-yp2",
           "problem": "For all x > 0, which expression equals (√x)³ · √x?\n(A) x  (B) x²  (C) x³  (D) x⁴  (E) x^(3/2)",
           "answer": "(B) x². Pick x = 4: (√4)³ · √4 = 8 · 2 = 16. Check: (B) 4² = 16. ✓ Or algebraically: x^(3/2) · x^(1/2) = x²."
         },
         {
+          "id": "tsm-yp3",
           "problem": "π² is approximately:\n(A) 3.14  (B) 6.28  (C) 9.87  (D) 12.56  (E) 31.4",
           "answer": "(C) 9.87. π ≈ 3.14. π² ≈ 3.14² ≈ 9.87. Estimation: 3² = 9, 3.2² = 10.24. π² is between 9 and 10."
         },
         {
+          "id": "tsm-yp4",
           "problem": "A company's revenue R (in thousands) is modeled by R = 2.5x + 10, where x is months since launch. After how many months will revenue reach $35,000?\n(A) 5  (B) 10  (C) 14  (D) 18  (E) 25",
           "answer": "(B) 10. Set R = 35: 2.5x + 10 = 35 → 2.5x = 25 → x = 10 months."
         },
         {
+          "id": "tsm-yp5",
           "problem": "The number of bacteria doubles every 4 hours. Starting with 500, which expression gives the count after t hours?\n(A) 500 + 2t  (B) 500(2)^t  (C) 500(2)^(t/4)  (D) 1000^t  (E) 500(4)^t",
           "answer": "(C) 500(2)^(t/4). Doubling every 4 hours: after t hours, there have been t/4 doubling periods."
         },
         {
+          "id": "tsm-yp6",
           "problem": "A graph shows data that starts low, increases rapidly, then levels off. Which function type best models this?\n(A) Linear  (B) Quadratic  (C) Exponential growth  (D) Logarithmic  (E) Cubic",
           "answer": "(D) Logarithmic. Rapid initial growth that slows down is characteristic of logarithmic behavior (or logistic, but log is the ACT answer)."
         },
         {
+          "id": "tsm-yp7",
           "problem": "If a problem has answer choices $2.40, $12.00, $24.00, $120.00, $240.00, and you estimate the answer should be around $10-$15, which should you try first?\n(A) $2.40  (B) $12.00  (C) $24.00  (D) $120.00  (E) $240.00",
           "answer": "(B) $12.00. Always start with the choice closest to your estimate."
         },
         {
+          "id": "tsm-yp8",
           "problem": "The equation T = −0.005a² + 0.4a + 50 models temperature T based on altitude a (in thousands of feet). At what altitude is the temperature highest?\n(A) 10,000 ft  (B) 20,000 ft  (C) 40,000 ft  (D) 50,000 ft  (E) 80,000 ft",
           "answer": "(C) 40,000 ft. Vertex at a = −0.4/(2(−0.005)) = −0.4/(−0.01) = 40. Since a is in thousands, that's 40,000 ft."
         }

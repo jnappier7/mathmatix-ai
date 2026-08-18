@@ -115,6 +115,7 @@
       "title": "Sequences & Series Practice",
       "problems": [
         {
+          "id": "lss-wp1",
           "problem": "Find the sum of the first 30 terms of the arithmetic sequence 7, 12, 17, 22, ...",
           "hints": [
             "a₁=7, d=5",
@@ -124,6 +125,7 @@
           "answer": "a₃₀ = 7+29(5) = 152. S₃₀ = 15·159 = 2385."
         },
         {
+          "id": "lss-wp2",
           "problem": "Determine whether the infinite geometric series 12 - 8 + 16/3 - 32/9 + ··· converges. If so, find the sum.",
           "hints": [
             "r = -8/12 = -2/3",
@@ -133,6 +135,7 @@
           "answer": "r = -2/3, |r| < 1 → converges. S = 12/(5/3) = 36/5 = 7.2."
         },
         {
+          "id": "lss-wp3",
           "problem": "Evaluate Σₖ₌₁²⁰ k².",
           "hints": [
             "Use formula: Σk² = n(n+1)(2n+1)/6",
@@ -261,26 +264,32 @@
       "title": "Sequences, Series & Limits Mastery Practice",
       "problems": [
         {
+          "id": "lss-yp1",
           "problem": "An arithmetic sequence has a₁ = -5 and d = 3. Find a₁₅ and S₁₅.",
           "answer": "a₁₅ = -5+14(3) = 37. S₁₅ = 15/2·(-5+37) = 15/2·32 = 240."
         },
         {
+          "id": "lss-yp2",
           "problem": "Find the sum of the infinite geometric series: 18 - 6 + 2 - 2/3 + ···",
           "answer": "r = -6/18 = -1/3. |r|<1 → converges. S = 18/(1-(-1/3)) = 18/(4/3) = 27/2 = 13.5."
         },
         {
+          "id": "lss-yp3",
           "problem": "Evaluate Σₖ₌₁⁶ (k³ - k).",
           "answer": "Σ(k³-k) = Σk³-Σk = [6·7/2]²-6·7/2 = 441-21 = 420."
         },
         {
+          "id": "lss-yp4",
           "problem": "Evaluate lim(x→-1) (x²+3x+2)/(x+1).",
           "answer": "Direct sub: 0/0. Factor: (x+1)(x+2)/(x+1) = x+2. lim(x→-1)(x+2) = 1."
         },
         {
+          "id": "lss-yp5",
           "problem": "Evaluate lim(x→9) (3-√x)/(9-x).",
           "answer": "Direct sub: 0/0. Factor denominator: 9-x = (3-√x)(3+√x). So (3-√x)/((3-√x)(3+√x)) = 1/(3+√x). lim(x→9) = 1/(3+3) = 1/6."
         },
         {
+          "id": "lss-yp6",
           "problem": "Find lim(x→∞) (4x² - 7)/(6x² + 5x).",
           "answer": "Equal degrees (both 2). Limit = 4/6 = 2/3. (Divide by x²: (4-7/x²)/(6+5/x) → 4/6.)"
         }

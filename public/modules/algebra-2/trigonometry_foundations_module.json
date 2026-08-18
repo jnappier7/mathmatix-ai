@@ -93,6 +93,7 @@
       "title": "We-Do: Unit Circle Values — Guided Practice",
       "problems": [
         {
+          "id": "tf-wp1",
           "question": "Convert 7π/6 to degrees and identify its quadrant.",
           "answer": "210°, Quadrant III",
           "hints": [
@@ -101,6 +102,7 @@
           ]
         },
         {
+          "id": "tf-wp2",
           "question": "Evaluate cos(2π/3) without a calculator.",
           "answer": "-1/2",
           "hints": [
@@ -110,6 +112,7 @@
           ]
         },
         {
+          "id": "tf-wp3",
           "question": "A circle has radius 8 inches. Find the arc length subtended by a central angle of 150°.",
           "answer": "20π/3 ≈ 20.94 inches",
           "hints": [
@@ -118,6 +121,7 @@
           ]
         },
         {
+          "id": "tf-wp4",
           "question": "Evaluate sin(330°) and tan(330°).",
           "answer": "sin(330°) = -1/2, tan(330°) = -√3/3",
           "hints": [
@@ -160,6 +164,7 @@
       "title": "We-Do: Right Triangle Trig — Guided Practice",
       "problems": [
         {
+          "id": "tf-wp5",
           "question": "Evaluate: (a) sin⁻¹(√2/2), (b) tan⁻¹(-1).",
           "answer": "(a) π/4 (45°). (b) -π/4 (-45°).",
           "hints": [
@@ -168,6 +173,7 @@
           ]
         },
         {
+          "id": "tf-wp6",
           "question": "A ramp rises 6 feet over a horizontal distance of 24 feet. Find the angle of incline.",
           "answer": "θ = tan⁻¹(6/24) = tan⁻¹(1/4) ≈ 14.04°",
           "hints": [
@@ -176,6 +182,7 @@
           ]
         },
         {
+          "id": "tf-wp7",
           "question": "In a right triangle, the hypotenuse is 13 and one leg is 5. Find all missing sides and angles.",
           "answer": "Other leg = 12, angles ≈ 22.62° and 67.38°",
           "hints": [
@@ -217,6 +224,7 @@
       "title": "We-Do: Graphing Sinusoidal — Guided Practice",
       "problems": [
         {
+          "id": "tf-wp8",
           "question": "Identify amplitude, period, phase shift, and midline for y = -4cos(3x - π/2) + 2.",
           "answer": "Amplitude = 4, Period = 2π/3, Phase shift = π/6 right, Midline y = 2",
           "hints": [
@@ -226,6 +234,7 @@
           ]
         },
         {
+          "id": "tf-wp9",
           "question": "Write an equation for a sinusoidal function with amplitude 5, period π, shifted up 1, and no phase shift.",
           "answer": "y = 5sin(2x) + 1 (or y = 5cos(2x) + 1)",
           "hints": [
@@ -236,6 +245,7 @@
           ]
         },
         {
+          "id": "tf-wp10",
           "question": "A Ferris wheel has diameter 40 meters, its center is 25 meters above the ground, and it completes one revolution every 3 minutes. A rider starts at the bottom. Write a function h(t) for the rider's height above the ground after t minutes.",
           "answer": "h(t) = -20cos(2πt/3) + 25",
           "hints": [
@@ -279,6 +289,7 @@
       "title": "We-Do: Trig Equations Basic — Guided Practice",
       "problems": [
         {
+          "id": "tf-wp11",
           "question": "Solve for θ in [0, 2π): 2sin θ - √3 = 0.",
           "answer": "θ = π/3 and θ = 2π/3",
           "hints": [
@@ -288,6 +299,7 @@
           ]
         },
         {
+          "id": "tf-wp12",
           "question": "Solve for θ in [0, 2π): cos²θ = 3/4.",
           "answer": "θ = π/6, 5π/6, 7π/6, 11π/6",
           "hints": [
@@ -297,6 +309,7 @@
           ]
         },
         {
+          "id": "tf-wp13",
           "question": "Solve for θ in [0, 2π): 2cos²θ - cos θ = 0.",
           "answer": "θ = π/3, π/2, 3π/2, 5π/3",
           "hints": [
@@ -316,6 +329,7 @@
       "title": "You-Do: Trig Equations Basic — Independent Practice",
       "problems": [
         {
+          "id": "tf-yp1",
           "question": "Convert 315° to radians and find the reference angle.",
           "answer": "7π/4 radians, reference angle = π/4 (45°)",
           "hints": [
@@ -324,6 +338,7 @@
           ]
         },
         {
+          "id": "tf-yp2",
           "question": "Evaluate without a calculator: sin(5π/3), cos(3π/4), tan(7π/6).",
           "answer": "sin(5π/3) = -√3/2, cos(3π/4) = -√2/2, tan(7π/6) = √3/3",
           "hints": [
@@ -333,6 +348,7 @@
           ]
         },
         {
+          "id": "tf-yp3",
           "question": "A tree casts a shadow 40 feet long when the angle of elevation of the sun is 35°. How tall is the tree?",
           "answer": "40 tan(35°) ≈ 28.01 feet",
           "hints": [
@@ -341,6 +357,7 @@
           ]
         },
         {
+          "id": "tf-yp4",
           "question": "For y = 3cos(πx/2) - 1, find the amplitude, period, midline, and the coordinates of the first maximum and first minimum for x ≥ 0.",
           "answer": "Amplitude = 3, Period = 4, Midline y = -1. First max at (0, 2), first min at (2, -4).",
           "hints": [
@@ -350,6 +367,7 @@
           ]
         },
         {
+          "id": "tf-yp5",
           "question": "Solve for θ in [0, 2π): 2sin²θ - 3sin θ + 1 = 0.",
           "answer": "θ = π/6, π/2, 5π/6",
           "hints": [
@@ -358,6 +376,7 @@
           ]
         },
         {
+          "id": "tf-yp6",
           "question": "A Ferris wheel has a radius of 30 meters, its center is 35 meters above the ground, and it takes 4 minutes for one revolution. A rider starts at the 3 o'clock position (at the center height, going up). Write a function h(t) for height after t minutes, and find when the rider first reaches the top.",
           "answer": "h(t) = 30sin(πt/2) + 35. First reaches top at t = 1 minute.",
           "hints": [

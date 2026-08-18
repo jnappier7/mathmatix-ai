@@ -116,6 +116,7 @@
       "title": "Number Operations & Exponents Practice",
       "problems": [
         {
+          "id": "nq-wp1",
           "problem": "What is the value of |−7| + |3 − 10|?\n(A) 0  (B) 4  (C) 10  (D) 14  (E) 20",
           "hints": [
             "Calculate each absolute value separately",
@@ -124,6 +125,7 @@
           "answer": "(D) 14. |−7| = 7, |3 − 10| = |−7| = 7. Sum = 7 + 7 = 14."
         },
         {
+          "id": "nq-wp2",
           "problem": "If x⁻² = 1/25, what is x?\n(A) −5 only  (B) 5 only  (C) ±5  (D) 1/5  (E) ±1/5",
           "hints": [
             "x⁻² means 1/x²",
@@ -132,6 +134,7 @@
           "answer": "(C) ±5. Since x⁻² = 1/x² = 1/25, we get x² = 25, so x = ±5."
         },
         {
+          "id": "nq-wp3",
           "problem": "Simplify: (3√5)²\n(A) 9√5  (B) 15  (C) 45  (D) 3√25  (E) 75",
           "hints": [
             "Square each part: 3² and (√5)²",
@@ -140,6 +143,7 @@
           "answer": "(C) 45. (3√5)² = 3² · (√5)² = 9 · 5 = 45."
         },
         {
+          "id": "nq-wp4",
           "problem": "A store marks up the wholesale price of a jacket by 60%, then offers a 25% discount. If the wholesale price is $50, what is the final selling price?\n(A) $50.00  (B) $55.00  (C) $57.50  (D) $60.00  (E) $67.50",
           "hints": [
             "First calculate the marked-up price: $50 × 1.60",
@@ -232,6 +236,7 @@
       "title": "Ratios, Complex Numbers & Matrices Practice",
       "problems": [
         {
+          "id": "nq-wp5",
           "problem": "A recipe calls for flour and sugar in a 5:2 ratio. If you use 3 cups of sugar, how many cups of flour do you need?\n(A) 1.2  (B) 6  (C) 7.5  (D) 10  (E) 15",
           "hints": [
             "Set up the proportion: 5/2 = x/3",
@@ -240,6 +245,7 @@
           "answer": "(C) 7.5. 5/2 = x/3 → x = 15/2 = 7.5 cups of flour."
         },
         {
+          "id": "nq-wp6",
           "problem": "The price of gas increased from $3.20 to $3.60 per gallon. What is the percent increase, to the nearest tenth?\n(A) 10.0%  (B) 11.1%  (C) 12.5%  (D) 14.3%  (E) 40.0%",
           "hints": [
             "Use percent change formula: (new - old)/old × 100",
@@ -248,6 +254,7 @@
           "answer": "(C) 12.5%. Change = 3.60 - 3.20 = 0.40. Percent = 0.40/3.20 × 100 = 12.5%."
         },
         {
+          "id": "nq-wp7",
           "problem": "What is (2 − 3i)²?\n(A) 4 − 9i  (B) −5 − 12i  (C) 13 − 12i  (D) 4 + 9  (E) −5 + 12i",
           "hints": [
             "Expand using FOIL: (2-3i)(2-3i)",
@@ -256,6 +263,7 @@
           "answer": "(B) −5 − 12i. (2-3i)² = 4 - 12i + 9i² = 4 - 12i + 9(-1) = -5 - 12i."
         },
         {
+          "id": "nq-wp8",
           "problem": "If M = [4 2; −1 3], what is 3M?\n(A) [12 6; −3 9]  (B) [7 5; 2 6]  (C) [12 2; −1 9]  (D) [4 6; −3 3]  (E) [12 6; −1 3]",
           "hints": [
             "Multiply every entry by 3",
@@ -273,34 +281,42 @@
       "title": "Number & Quantity — ACT-Style Practice Set",
       "problems": [
         {
+          "id": "nq-yp1",
           "problem": "What is the value of (−2)³ + (−3)²?\n(A) −17  (B) −1  (C) 1  (D) 5  (E) 17",
           "answer": "(C) 1. (−2)³ = −8. (−3)² = 9. −8 + 9 = 1."
         },
         {
+          "id": "nq-yp2",
           "problem": "Simplify: √(50) + √(18)\n(A) √68  (B) 8√2  (C) 4√17  (D) 5√2 + 3√2  (E) 68",
           "answer": "(B) 8√2. √50 = 5√2, √18 = 3√2. Sum = 5√2 + 3√2 = 8√2. Note: (D) is the same answer written differently."
         },
         {
+          "id": "nq-yp3",
           "problem": "If 15 is 30% of x, what is x?\n(A) 4.5  (B) 20  (C) 45  (D) 50  (E) 200",
           "answer": "(D) 50. 15 = 0.30 × x → x = 15/0.30 = 50."
         },
         {
+          "id": "nq-yp4",
           "problem": "A map has a scale of 1 inch : 25 miles. Two cities are 3.5 inches apart on the map. What is the actual distance between them?\n(A) 7.14 miles  (B) 28.5 miles  (C) 75 miles  (D) 87.5 miles  (E) 125 miles",
           "answer": "(D) 87.5 miles. 3.5 × 25 = 87.5 miles."
         },
         {
+          "id": "nq-yp5",
           "problem": "What is i² + i⁴ + i⁶ + i⁸?\n(A) −4  (B) −2  (C) 0  (D) 2  (E) 4",
           "answer": "(C) 0. i² = −1, i⁴ = 1, i⁶ = (i²)³ = (−1)³ = −1, i⁸ = (i⁴)² = 1. Sum = −1 + 1 + (−1) + 1 = 0."
         },
         {
+          "id": "nq-yp6",
           "problem": "An item's price is increased by 20%, then increased again by 10%. What is the total percent increase from the original price?\n(A) 28%  (B) 30%  (C) 32%  (D) 33%  (E) 120%",
           "answer": "(C) 32%. Multiply multipliers: 1.20 × 1.10 = 1.32 → 32% total increase."
         },
         {
+          "id": "nq-yp7",
           "problem": "What is the determinant of the matrix [5 3; 2 −1]?\n(A) −11  (B) −8  (C) −1  (D) 1  (E) 11",
           "answer": "(A) −11. det = (5)(−1) − (3)(2) = −5 − 6 = −11."
         },
         {
+          "id": "nq-yp8",
           "problem": "Which expression is equivalent to x^(3/2)?\n(A) x√x  (B) (√x)³  (C) x · √x  (D) All of the above  (E) None of the above",
           "answer": "(D) All of the above. x^(3/2) = x^1 · x^(1/2) = x√x = (√x)³ = x · √x. All equivalent."
         }

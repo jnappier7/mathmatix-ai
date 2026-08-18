@@ -153,6 +153,7 @@
       "title": "We-Do: Add Subtract Rational Expressions — Guided Practice",
       "problems": [
         {
+          "id": "rfu-wp1",
           "question": "Simplify: (x² - 5x + 6)/(x² - 4). State all restrictions.",
           "answer": "(x - 3)/(x + 2), x ≠ 2 and x ≠ -2",
           "hints": [
@@ -163,6 +164,7 @@
           ]
         },
         {
+          "id": "rfu-wp2",
           "question": "Add: 2/(x - 3) + 5/(x + 1). Express with a single denominator.",
           "answer": "(7x - 13)/((x - 3)(x + 1))",
           "hints": [
@@ -173,6 +175,7 @@
           ]
         },
         {
+          "id": "rfu-wp3",
           "question": "Simplify the complex fraction: (1/x - 1/y) / (1/x + 1/y).",
           "answer": "(y - x)/(y + x)",
           "hints": [
@@ -331,6 +334,7 @@
       "title": "We-Do: Vertical Horizontal Asymptotes — Guided Practice",
       "problems": [
         {
+          "id": "rfu-wp4",
           "question": "Solve: 4/(x - 3) + x/(x + 3) = 24/(x² - 9). Check for extraneous solutions.",
           "answer": "x = -4 (x = 3 is extraneous)",
           "hints": [
@@ -342,6 +346,7 @@
           ]
         },
         {
+          "id": "rfu-wp5",
           "question": "Find the vertical asymptote, horizontal asymptote, x-intercept, and y-intercept of f(x) = (2x + 1)/(x - 3).",
           "answer": "VA: x = 3; HA: y = 2; x-intercept: (-1/2, 0); y-intercept: (0, -1/3)",
           "hints": [
@@ -352,6 +357,7 @@
           ]
         },
         {
+          "id": "rfu-wp6",
           "question": "For f(x) = (x² - 4)/(x² - x - 2), identify the hole (with coordinates), vertical asymptote, and horizontal asymptote.",
           "answer": "Hole at (2, 4/3); VA: x = -1; HA: y = 1",
           "hints": [
@@ -373,6 +379,7 @@
       "title": "You-Do: Holes In Rational Functions — Independent Practice",
       "problems": [
         {
+          "id": "rfu-yp1",
           "question": "Simplify: (3x² - 12)/(x² + 4x + 4). State all domain restrictions.",
           "answer": "3(x - 2)/(x + 2), x ≠ -2",
           "hints": [
@@ -382,6 +389,7 @@
           ]
         },
         {
+          "id": "rfu-yp2",
           "question": "Multiply: ((x² - 1)/(x² + 2x)) · (x/(x + 1)). Simplify completely and state restrictions.",
           "answer": "(x - 1)/(x + 2), x ≠ 0, x ≠ -1, x ≠ -2",
           "hints": [
@@ -391,6 +399,7 @@
           ]
         },
         {
+          "id": "rfu-yp3",
           "question": "Subtract: 5/(x - 2) - 3/(x + 1). Express as a single simplified fraction.",
           "answer": "(2x + 11)/((x - 2)(x + 1))",
           "hints": [
@@ -401,6 +410,7 @@
           ]
         },
         {
+          "id": "rfu-yp4",
           "question": "Solve: 2/(x + 1) + 1/(x - 2) = 3/((x + 1)(x - 2)). Check for extraneous solutions.",
           "answer": "No solution (x = 2 is extraneous)",
           "hints": [
@@ -411,6 +421,7 @@
           ]
         },
         {
+          "id": "rfu-yp5",
           "question": "For f(x) = 3x/(x² - 4), find all vertical asymptotes, the horizontal asymptote, and all intercepts.",
           "answer": "VA: x = 2 and x = -2; HA: y = 0; x-intercept: (0, 0); y-intercept: (0, 0)",
           "hints": [
@@ -421,6 +432,7 @@
           ]
         },
         {
+          "id": "rfu-yp6",
           "question": "For f(x) = (x² - x - 6)/(x² - 9), find the hole (with coordinates), vertical asymptote, horizontal asymptote, x-intercept, and y-intercept.",
           "answer": "Hole at (3, 5/6); VA: x = -3; HA: y = 1; x-intercept: (-2, 0); y-intercept: (0, 2/3)",
           "hints": [
