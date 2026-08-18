@@ -84,20 +84,6 @@
       "lessonId": "variables-both-sides"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "special-cases",
-      "title": "We-Do: Special Cases — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for special cases.",
-          "hint": "Apply the concepts of special cases.",
-          "solution": "Step-by-step solution for special cases."
-        }
-      ],
-      "lessonId": "special-cases"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Variables on Both Sides & Special Cases: Worked Examples",
@@ -119,6 +105,56 @@
       "lessonId": "variables-both-sides"
     },
     {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "special-cases",
+      "title": "We-Do: Special Cases — Guided Practice",
+      "problems": [
+        {
+          "id": "le-sc1",
+          "question": "Solve: 3(2x - 5) = 6x + 4. If there is no solution or infinitely many, say which and explain why.",
+          "answer": "Distribute the left side: 6x - 15 = 6x + 4. Subtract 6x from both sides: -15 = 4. That is false — no number makes -15 equal 4 — so the equation has NO SOLUTION. The x terms cancelled because both sides had the same coefficient (6x), but the constants disagree.",
+          "hints": [
+            "Distribute first. Do not judge the equation before both sides are simplified.",
+            "You get 6x - 15 = 6x + 4. Now subtract 6x from both sides and see what is left.",
+            "-15 = 4 is a false statement, and no value of x can fix it — that means no solution. Notice you never actually solved for x; the x disappeared."
+          ]
+        },
+        {
+          "id": "le-sc2",
+          "question": "Solve: 4x + 8 - x = 3(x + 2) + 2. If there is no solution or infinitely many, say which and explain why.",
+          "answer": "Left side: 4x - x + 8 = 3x + 8. Right side: 3(x + 2) + 2 = 3x + 6 + 2 = 3x + 8. So the equation is 3x + 8 = 3x + 8. Subtract 3x: 8 = 8, which is true for every x. The equation has INFINITELY MANY SOLUTIONS — it is an identity, the same expression written two ways.",
+          "hints": [
+            "Simplify each side completely and separately before comparing them. Combine like terms on the left; distribute on the right.",
+            "Left becomes 3x + 8. Right becomes 3x + 6 + 2 = 3x + 8. Look at what you have now.",
+            "Both sides are identical, so subtracting 3x leaves 8 = 8 — true no matter what x is. Every number is a solution."
+          ]
+        },
+        {
+          "id": "le-sc3",
+          "question": "Without solving all the way, predict whether each equation has one solution, no solution, or infinitely many. Then justify. (a) 7x + 2 = 7x - 5   (b) 2(3x + 4) = 6x + 8",
+          "answer": "(a) Both sides have the same coefficient on x (7x) but different constants (2 and -5), so the x terms cancel and leave a false statement: NO SOLUTION. (b) Distributing the left gives 6x + 8, exactly matching the right, so same coefficient AND same constant: INFINITELY MANY SOLUTIONS. The shortcut: match the x-coefficients first — if they differ, there is exactly one solution; if they match, the constants decide between none and infinitely many.",
+          "hints": [
+            "Compare the coefficient of x on each side first. For (b) you have to distribute before you can compare fairly.",
+            "(a) has 7x on both sides but 2 versus -5. (b) becomes 6x + 8 on both sides.",
+            "Same coefficient with different constants → no solution. Same coefficient with the same constant → infinitely many. Different coefficients would have meant exactly one solution."
+          ]
+        },
+        {
+          "id": "le-sc4",
+          "question": "For what value of c does 5x + 3 = 5x + c have infinitely many solutions? For which values of c does it have no solution? Can it ever have exactly one solution?",
+          "answer": "The x terms already match (5x on both sides), so the constants alone decide. Infinitely many solutions when c = 3, since both sides become identical. No solution for every other value of c — any c ≠ 3 leaves a false statement like 3 = 8 after the x terms cancel. It can NEVER have exactly one solution: getting a single solution requires the x-coefficients to differ, and here they are both 5 no matter what c is.",
+          "hints": [
+            "Subtract 5x from both sides first and see what the equation reduces to. What is left depends only on c.",
+            "You are left with 3 = c. For that to be true for every x, what must c be?",
+            "c = 3 makes it an identity. Any other c gives a false statement, so no solution. For the last part, ask what would have to be different for exactly one solution — and notice the x-coefficients cannot change."
+          ]
+        }
+      ],
+      "lessonId": "special-cases",
+      "initialPrompt": "Solve 3(2x - 5) = 6x + 4 with me. Distribute first — and when the x terms vanish from both sides, don't panic. What's left, and is it a true statement or a false one?"
+    },
+    {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "Linear Inequalities & Word Problems",
@@ -130,20 +166,6 @@
         "'At least' = ≥, 'at most' = ≤, 'more than' = >, 'fewer than' = <",
         "Always interpret the solution in context for word problems",
         "Check that the answer makes sense (no negative quantities for real-world scenarios)"
-      ],
-      "lessonId": "inequalities-and-word-problems"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "equation-word-problems",
-      "title": "We-Do: Equation Word Problems — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for equation word problems.",
-          "hint": "Apply the concepts of equation word problems.",
-          "solution": "Step-by-step solution for equation word problems."
-        }
       ],
       "lessonId": "inequalities-and-word-problems"
     },
@@ -167,6 +189,56 @@
         }
       ],
       "lessonId": "inequalities-and-word-problems"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "equation-word-problems",
+      "title": "We-Do: Equation Word Problems — Guided Practice",
+      "problems": [
+        {
+          "id": "le-wq1",
+          "question": "A gym charges a one-time $30 joining fee plus $22 per month. Marcus has paid $206 in total. How many months has he been a member?",
+          "answer": "Let m = the number of months. The joining fee is paid once and the monthly charge repeats, so: 30 + 22m = 206. Subtract 30: 22m = 176. Divide by 22: m = 8 months. Check: 30 + 22(8) = 30 + 176 = 206 ✓. Interpretation check: 8 is a whole number of months, which makes sense here.",
+          "hints": [
+            "Start by defining the variable in words — \"let m = the number of months\" — before writing anything else.",
+            "One charge happens once and one repeats. The $30 is not multiplied by anything; the $22 is multiplied by m.",
+            "30 + 22m = 206. Undo the addition first, then the multiplication. Finish by checking the answer makes sense as a number of months."
+          ]
+        },
+        {
+          "id": "le-wq2",
+          "question": "Studio A charges $40 up front plus $5 per class. Studio B charges $10 up front plus $11 per class. After how many classes do the two studios cost the same? What is that cost?",
+          "answer": "Let c = the number of classes. Set the two total costs equal: 40 + 5c = 10 + 11c. Subtract 5c from both sides: 40 = 10 + 6c. Subtract 10: 30 = 6c, so c = 5 classes. Cost at that point: Studio A = 40 + 5(5) = $65 and Studio B = 10 + 11(5) = $65 ✓. Beyond 5 classes Studio A is cheaper, because its per-class rate is lower.",
+          "hints": [
+            "Write an expression for each studio's total cost separately first. \"Cost the same\" tells you what to do with those two expressions.",
+            "40 + 5c = 10 + 11c. This has variables on both sides — move the smaller variable term over first.",
+            "Subtracting 5c gives 40 = 10 + 6c, so c = 5. Then substitute back into BOTH expressions; getting the same number is your check."
+          ]
+        },
+        {
+          "id": "le-wq3",
+          "question": "The sum of three consecutive integers is 84. Find the three integers.",
+          "answer": "Let n = the smallest integer. Consecutive integers go up by one each time, so the three are n, n + 1, and n + 2. Their sum: n + (n + 1) + (n + 2) = 84, which simplifies to 3n + 3 = 84. Subtract 3: 3n = 81, so n = 27. The integers are 27, 28, 29. Check: 27 + 28 + 29 = 84 ✓.",
+          "hints": [
+            "Only name ONE variable. If the smallest is n, how do you write the next two in terms of n?",
+            "They are n, n + 1, and n + 2. Add all three expressions and set the total equal to 84.",
+            "Combine like terms: 3n + 3 = 84. Solve for n, then remember the question asks for all three integers, not just n."
+          ]
+        },
+        {
+          "id": "le-wq4",
+          "question": "The length of a rectangle is 3 cm more than twice its width. The perimeter is 54 cm. Find the length and the width.",
+          "answer": "Let w = the width. Then the length is 2w + 3. Perimeter = 2(length + width), so 2((2w + 3) + w) = 54, which is 2(3w + 3) = 54, or 6w + 6 = 54. Subtract 6: 6w = 48, so w = 8 cm, and the length is 2(8) + 3 = 19 cm. Check the perimeter: 2(19 + 8) = 2(27) = 54 ✓.",
+          "hints": [
+            "Two unknowns, one variable. Define w for the width, then translate \"3 more than twice the width\" into an expression using w.",
+            "Length = 2w + 3. Now use the perimeter formula P = 2(length + width) and set it equal to 54.",
+            "2(3w + 3) = 54. Distribute or divide by 2 first — either works. After finding w, do not stop: the question asks for the length too."
+          ]
+        }
+      ],
+      "lessonId": "inequalities-and-word-problems",
+      "initialPrompt": "A gym charges $30 to join plus $22 a month, and Marcus has paid $206 altogether. Before any equation: which of those charges happens once, and which one repeats? That distinction decides where the variable goes."
     },
     {
       "type": "guided_practice",
@@ -360,7 +432,15 @@
     "le-yp3": "No solution",
     "le-yp4": "x < −4",
     "le-yp5": "Infinitely many solutions",
-    "le-yp6": "m ≤ 7 months"
+    "le-yp6": "m ≤ 7 months",
+    "le-sc1": "No solution — reduces to -15 = 4.",
+    "le-sc2": "Infinitely many — both sides are 3x + 8.",
+    "le-sc3": "(a) no solution; (b) infinitely many.",
+    "le-sc4": "c = 3 gives infinitely many; every other c gives none; exactly one is impossible.",
+    "le-wq1": "8 months. 30 + 22m = 206.",
+    "le-wq2": "5 classes, $65 at both studios.",
+    "le-wq3": "27, 28, 29. From 3n + 3 = 84.",
+    "le-wq4": "Width 8 cm, length 19 cm. From 2(3w + 3) = 54."
   },
   "lessons": [
     {

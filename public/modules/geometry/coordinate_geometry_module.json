@@ -170,26 +170,62 @@
       "lessonId": "equation-of-circle"
     },
     {
-      "type": "explanation",
-      "lessonPhase": "concept-intro",
-      "skill": "coordinate-proofs",
-      "title": "Coordinate Proofs",
-      "content": "**Coordinate Proofs** use algebra to prove geometric properties. The main tools are:\n\n• **Distance formula** → proves sides are congruent\n• **Slope formula** → proves lines are parallel (equal slopes) or perpendicular (negative reciprocal slopes)\n• **Midpoint formula** → proves a point bisects a segment\n\n**Common coordinate proof strategies:**\n1. To prove a quadrilateral is a parallelogram: show both pairs of opposite sides have equal slopes (parallel)\n2. To prove a quadrilateral is a rectangle: show it's a parallelogram with perpendicular adjacent sides\n3. To prove a triangle is isosceles: show two sides have equal length\n4. To prove lines are perpendicular: show the product of their slopes is -1",
-      "initialPrompt": "If you have a quadrilateral with vertices at specific coordinates, what's the minimum you'd need to calculate to prove it's a rectangle?",
-      "lessonId": "parallel-perpendicular-slopes"
-    },
-    {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "parallel-perpendicular-slopes",
       "title": "We-Do: Parallel Perpendicular Slopes — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for parallel perpendicular slopes.",
-          "hint": "Apply the concepts of parallel perpendicular slopes.",
-          "solution": "Step-by-step solution for parallel perpendicular slopes."
+          "id": "cg-pp1",
+          "question": "Line 1 passes through A(-3, 2) and B(1, 10). Line 2 passes through C(0, -4) and D(2, 0). Are the lines parallel?",
+          "answer": "Slope of Line 1 = (10 - 2)/(1 - (-3)) = 8/4 = 2. Slope of Line 2 = (0 - (-4))/(2 - 0) = 4/2 = 2. The slopes are equal, so the lines are parallel. (They are distinct lines, not the same line — C(0, -4) does not satisfy Line 1, whose equation is y = 2x + 8.)",
+          "hints": [
+            "Parallel means equal slopes. Compute each slope with (y₂ - y₁)/(x₂ - x₁).",
+            "Watch the double negative in Line 1: 1 - (-3) = 4, not -2.",
+            "Both slopes come out 2, so the lines are parallel. Worth a glance: they are genuinely different lines, not the same line written twice."
+          ]
+        },
+        {
+          "id": "cg-pp2",
+          "question": "Line PQ passes through P(-2, 5) and Q(4, 1). Line RS passes through R(1, -1) and S(5, 5). Are these lines parallel, perpendicular, or neither?",
+          "answer": "Slope of PQ = (1 - 5)/(4 - (-2)) = -4/6 = -2/3. Slope of RS = (5 - (-1))/(5 - 1) = 6/4 = 3/2. They are not equal, so not parallel. Multiply them: (-2/3)(3/2) = -1, so the lines ARE perpendicular. Notice 3/2 is the negative reciprocal of -2/3: flip it and change the sign.",
+          "hints": [
+            "Three possible answers means two tests. Equal slopes → parallel; slopes multiplying to -1 → perpendicular; neither → neither.",
+            "PQ has slope -4/6 = -2/3, and RS has slope 6/4 = 3/2. Reduce both before comparing.",
+            "They are not equal, so try the product: (-2/3)(3/2). The 3s and 2s cancel, leaving -1 — perpendicular."
+          ]
+        },
+        {
+          "id": "cg-pp3",
+          "question": "Write the equation of the line passing through (4, -1) that is perpendicular to y = (1/2)x + 3.",
+          "answer": "The given line has slope 1/2, so a perpendicular line has slope -2 (negative reciprocal: flip 1/2 to 2/1, then negate). Use point-slope form with (4, -1): y - (-1) = -2(x - 4), so y + 1 = -2x + 8, giving y = -2x + 7. Check the point: -2(4) + 7 = -8 + 7 = -1 ✓, and the slope -2 times 1/2 = -1 ✓.",
+          "hints": [
+            "Read the slope straight off y = mx + b: here m = 1/2. Then find the perpendicular slope before touching the point.",
+            "Negative reciprocal of 1/2: flip to 2, negate to -2.",
+            "Point-slope: y - y₁ = m(x - x₁) with m = -2 and (4, -1). Mind the sign — y - (-1) is y + 1. Then check by substituting x = 4 back in."
+          ]
+        },
+        {
+          "id": "cg-pp4",
+          "question": "Quadrilateral ABCD has vertices A(0, 0), B(6, 3), C(8, -1), and D(2, -4). Use slopes to show it is a rectangle. Is it also a square?",
+          "answer": "Slopes: AB = 3/6 = 1/2, BC = (-1 - 3)/(8 - 6) = -2, CD = (-4 - (-1))/(2 - 8) = -3/-6 = 1/2, DA = (0 - (-4))/(0 - 2) = -2. Opposite sides have equal slopes (AB ∥ CD and BC ∥ DA), so it is a parallelogram. Adjacent sides multiply to (1/2)(-2) = -1, so consecutive sides are perpendicular — every angle is 90°, making it a rectangle. It is NOT a square: AB = √(6² + 3²) = √45 = 3√5 while BC = √(2² + 4²) = √20 = 2√5, so adjacent sides are unequal.",
+          "hints": [
+            "A rectangle needs two things: both pairs of opposite sides parallel, and the corners at 90°. Slopes can show both.",
+            "Compute all four slopes in order around the shape: AB, BC, CD, DA. Compare opposite pairs for equality, then multiply an adjacent pair.",
+            "Opposite slopes match (1/2 and -2), and (1/2)(-2) = -1 gives right angles — a rectangle. For the square question you need lengths, not slopes: compare AB and BC with the distance formula."
+          ]
         }
       ],
+      "lessonId": "parallel-perpendicular-slopes",
+      "initialPrompt": "Two lines: one through (-3, 2) and (1, 10), the other through (0, -4) and (2, 0). What single number do we need for each line before we can say anything about whether they're parallel?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "coordinate-proofs",
+      "title": "Coordinate Proofs",
+      "content": "**Coordinate Proofs** use algebra to prove geometric properties. The main tools are:\n\n• **Distance formula** → proves sides are congruent\n• **Slope formula** → proves lines are parallel (equal slopes) or perpendicular (negative reciprocal slopes)\n• **Midpoint formula** → proves a point bisects a segment\n\n**Common coordinate proof strategies:**\n1. To prove a quadrilateral is a parallelogram: show both pairs of opposite sides have equal slopes (parallel)\n2. To prove a quadrilateral is a rectangle: show it's a parallelogram with perpendicular adjacent sides\n3. To prove a triangle is isosceles: show two sides have equal length\n4. To prove lines are perpendicular: show the product of their slopes is -1",
+      "initialPrompt": "If you have a quadrilateral with vertices at specific coordinates, what's the minimum you'd need to calculate to prove it's a rectangle?",
       "lessonId": "coordinate-proofs"
     },
     {
@@ -212,7 +248,7 @@
         }
       ],
       "initialPrompt": "In the first example, we used slopes to prove perpendicularity. What other method could we have used?",
-      "lessonId": "parallel-perpendicular-slopes"
+      "lessonId": "coordinate-proofs"
     },
     {
       "type": "guided_practice",
@@ -240,7 +276,7 @@
         }
       ],
       "initialPrompt": "For the first problem, start by finding the slope of Line B. Then test the perpendicularity condition.",
-      "lessonId": "parallel-perpendicular-slopes"
+      "lessonId": "coordinate-proofs"
     },
     {
       "type": "independent_practice",
@@ -311,7 +347,11 @@
     "cg-yp2": "(2, 2)",
     "cg-yp3": "x² + (y+5)² = 64",
     "cg-yp4": "n = -2, p = 1/2",
-    "cg-yp5": "AB = BC = AC = 6"
+    "cg-yp5": "AB = BC = AC = 6",
+    "cg-pp1": "Parallel — both slopes are 2.",
+    "cg-pp2": "Perpendicular — slopes -2/3 and 3/2 multiply to -1.",
+    "cg-pp3": "y = -2x + 7.",
+    "cg-pp4": "Rectangle (opposite slopes equal, adjacent product -1) but not a square: 3√5 vs 2√5."
   },
   "lessons": [
     {

@@ -106,20 +106,6 @@
       "title": "The Quadrilateral Family Hierarchy",
       "content": "**The Quadrilateral Family** (each type inherits all properties of its parent):\n\n**Parallelogram** — both pairs of opposite sides parallel:\n• Opposite sides are congruent\n• Opposite angles are congruent\n• Consecutive angles are supplementary\n• Diagonals bisect each other\n\n**Rectangle** — parallelogram with 4 right angles:\n• All parallelogram properties PLUS\n• Diagonals are congruent\n\n**Rhombus** — parallelogram with 4 congruent sides:\n• All parallelogram properties PLUS\n• Diagonals are perpendicular\n• Diagonals bisect the angles\n\n**Square** — a rectangle AND a rhombus:\n• ALL properties of parallelogram, rectangle, AND rhombus",
       "initialPrompt": "Is every square a rectangle? Is every rectangle a square? Explain the difference.",
-      "lessonId": "exterior-angle-sums"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "parallelogram-proofs",
-      "title": "We-Do: Parallelogram Proofs — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for parallelogram proofs.",
-          "hint": "Apply the concepts of parallelogram proofs.",
-          "solution": "Step-by-step solution for parallelogram proofs."
-        }
-      ],
       "lessonId": "parallelogram-properties"
     },
     {
@@ -142,7 +128,7 @@
         }
       ],
       "initialPrompt": "What if this were a rectangle instead of just a parallelogram—what would all four angles have to be?",
-      "lessonId": "exterior-angle-sums"
+      "lessonId": "parallelogram-properties"
     },
     {
       "type": "guided_practice",
@@ -180,7 +166,66 @@
         }
       ],
       "initialPrompt": "In the rhombus problem, what special properties do rhombus diagonals have that we can use?",
-      "lessonId": "exterior-angle-sums"
+      "lessonId": "parallelogram-properties"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "parallelogram-proofs",
+      "title": "Proving a Quadrilateral Is a Parallelogram",
+      "content": "So far the properties have run one direction: *if* a shape is a parallelogram, *then* its opposite sides are congruent, its opposite angles are congruent, and its diagonals bisect each other. Proofs run the other direction. You are handed a quadrilateral and some facts, and you have to decide whether those facts force it to be a parallelogram.\n\n**The five ways to prove it.** A quadrilateral is a parallelogram if ANY ONE of these is true:\n1. **Both pairs of opposite sides are parallel** — this is the definition.\n2. **Both pairs of opposite sides are congruent.**\n3. **Both pairs of opposite angles are congruent.**\n4. **The diagonals bisect each other** (they cut each other exactly in half).\n5. **One pair of opposite sides is both parallel AND congruent.**\n\nAny single one of the five is enough. You do not need to show all of them — pick whichever matches the facts you were given, prove that one, and name it.\n\n**Condition 5 is the efficient one.** It needs facts about only one pair of sides, where the others need facts about two pairs. If a problem hands you one pair that is both parallel and congruent, stop there.\n\n**The trap: the two facts must describe the SAME pair.** \"One pair parallel and one pair congruent\" is not condition 5 unless it is the *same* pair. If PQ ∥ SR but the congruent sides are PS and QR — the other pair — you have described an isosceles trapezoid just as well as a parallelogram, so nothing is proven. Always check which sides each given fact is actually about.\n\n**Proving it with coordinates.** When you have vertices instead of a diagram, each condition becomes arithmetic:\n- **Parallel** → equal **slopes**.\n- **Congruent** → equal lengths by the **distance formula**.\n- **Diagonals bisect each other** → both diagonals share the same **midpoint**.\n\nThe midpoint route is often the fastest, because one midpoint calculation per diagonal settles it — no slopes, no radicals to compare.\n\n**Finish by naming the condition.** Computing that two slopes match is not yet a proof. The proof is the computation plus the sentence \"both pairs of opposite sides are parallel, so ABCD is a parallelogram by definition.\" The named condition is what turns arithmetic into an argument.",
+      "initialPrompt": "Here's the reversal we're about to make. You already know that in a parallelogram the diagonals bisect each other. Now flip it: if I tell you a quadrilateral's diagonals bisect each other, does it HAVE to be a parallelogram? What's your instinct?",
+      "lessonId": "parallelogram-properties"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "parallelogram-proofs",
+      "title": "We-Do: Parallelogram Proofs — Guided Practice",
+      "problems": [
+        {
+          "id": "pq-pf1",
+          "question": "In quadrilateral ABCD, you are told that AB ∥ CD and AB = CD. Is ABCD necessarily a parallelogram? Name the theorem that justifies your answer.",
+          "answer": "Yes. If ONE pair of opposite sides is both parallel AND congruent, the quadrilateral is a parallelogram. Here AB and CD are opposite sides, and they are given as both parallel and congruent, so ABCD is a parallelogram. This is the most efficient of the five conditions — it needs facts about only one pair of sides instead of two.",
+          "hints": [
+            "List what you are given, then check it against the five ways to prove a parallelogram. Are AB and CD opposite sides or adjacent ones?",
+            "AB and CD are opposite sides, and you have TWO facts about that same pair: parallel and congruent.",
+            "That is exactly the fifth condition — one pair of opposite sides both parallel and congruent is enough on its own."
+          ]
+        },
+        {
+          "id": "pq-pf2",
+          "question": "The diagonals of quadrilateral WXYZ meet at point M. WM = 3x - 4, MY = x + 6, XM = 2y + 1, and MZ = 5y - 8. Find x and y, and explain why WXYZ must be a parallelogram.",
+          "answer": "For the diagonals to bisect each other, M must be the midpoint of both. Set the halves of each diagonal equal. Diagonal WY: 3x - 4 = x + 6 → 2x = 10 → x = 5, giving WM = MY = 11. Diagonal XZ: 2y + 1 = 5y - 8 → 9 = 3y → y = 3, giving XM = MZ = 7. Both diagonals are cut into two equal pieces, so the diagonals bisect each other, and therefore WXYZ is a parallelogram.",
+          "hints": [
+            "Which condition involves the diagonals meeting at a point? \"Diagonals bisect each other\" — meaning M is the midpoint of both.",
+            "Being the midpoint of WY means WM = MY. Set 3x - 4 = x + 6 and solve. Do the same for the other diagonal.",
+            "x = 5 and y = 3. Substitute back to confirm both halves match (11 and 11, 7 and 7), then name the condition — that verification IS the proof."
+          ]
+        },
+        {
+          "id": "pq-pf3",
+          "question": "In quadrilateral PQRS, PQ ∥ SR and PS = QR. Must PQRS be a parallelogram? Explain.",
+          "answer": "No. The parallel pair is PQ and SR, but the congruent pair is PS and QR — a DIFFERENT pair of sides. None of the five conditions covers that combination. An isosceles trapezoid fits this description exactly: one pair of parallel sides, and the two non-parallel legs congruent, with no second pair of parallel sides. So PQRS could be a parallelogram, but it does not have to be.",
+          "hints": [
+            "Check carefully which sides each fact is about. Is the parallel pair the same pair as the congruent pair?",
+            "The fifth condition requires ONE pair that is both parallel and congruent. Here the parallel pair and the congruent pair are different pairs — so that condition does not apply.",
+            "Try to draw a counterexample: a shape with one pair of parallel sides and congruent legs. That is an isosceles trapezoid, and it is not a parallelogram."
+          ]
+        },
+        {
+          "id": "pq-pf4",
+          "question": "Quadrilateral ABCD has vertices A(-2, 1), B(3, 3), C(5, -1), and D(0, -3). Prove that ABCD is a parallelogram using coordinates.",
+          "answer": "Compare opposite sides. Slope of AB = (3 - 1)/(3 - (-2)) = 2/5; slope of DC = (-1 - (-3))/(5 - 0) = 2/5 — equal, so AB ∥ DC. Slope of BC = (-1 - 3)/(5 - 3) = -2; slope of AD = (-3 - 1)/(0 - (-2)) = -2 — equal, so BC ∥ AD. Both pairs of opposite sides are parallel, which is the definition of a parallelogram. As a second confirmation, AB = √(5² + 2²) = √29 and DC = √29, while BC = √(2² + 4²) = 2√5 and AD = 2√5, so both pairs are congruent too. (A third route: both diagonals have midpoint (3/2, 0), so they bisect each other.)",
+          "hints": [
+            "A coordinate proof turns a geometry claim into arithmetic. Pick a condition you can compute — slopes prove parallel, the distance formula proves congruent.",
+            "Find the slope of AB and the slope of DC. Careful with the order of the points on DC: going D → C keeps it as the side opposite AB.",
+            "Both come out 2/5, so AB ∥ DC. Do the same for BC and AD — both give -2. Both pairs parallel is the definition, so the proof is complete. Naming the condition at the end is what makes it a proof."
+          ]
+        }
+      ],
+      "lessonId": "parallelogram-properties",
+      "initialPrompt": "You're told a quadrilateral has AB ∥ CD and AB = CD — nothing else. Before we check the list: do you think that's enough to guarantee a parallelogram, and which pair of sides are those two?"
     },
     {
       "type": "explanation",
@@ -189,7 +234,7 @@
       "title": "Trapezoids and Kites",
       "content": "**Trapezoids** have exactly one pair of parallel sides (called **bases**). The non-parallel sides are called **legs**.\n\n**Isosceles Trapezoid** (congruent legs):\n• Base angles are congruent\n• Diagonals are congruent\n• Legs are congruent\n• Same-side angles between a base and leg are supplementary\n\n**Midsegment of a Trapezoid:**\nThe segment connecting the midpoints of the legs is called the midsegment. Its length = (base₁ + base₂) / 2 (the average of the two bases).\n\n**Kites** have two pairs of consecutive congruent sides (not opposite):\n• One pair of opposite angles is congruent (between the non-equal sides)\n• Diagonals are perpendicular\n• One diagonal bisects the other\n• Area = (d₁ × d₂) / 2",
       "initialPrompt": "A trapezoid has bases of 8 and 14. What is the length of the midsegment? Can you see why it's called the 'average' of the bases?",
-      "lessonId": "rectangles-rhombi-squares"
+      "lessonId": "trapezoids-kites"
     },
     {
       "type": "model",
@@ -211,7 +256,7 @@
         }
       ],
       "initialPrompt": "In an isosceles trapezoid, which pairs of angles are congruent and which are supplementary?",
-      "lessonId": "rectangles-rhombi-squares"
+      "lessonId": "trapezoids-kites"
     },
     {
       "type": "guided_practice",
@@ -239,7 +284,7 @@
         }
       ],
       "initialPrompt": "For the first problem, what is the formula for the midsegment of a trapezoid?",
-      "lessonId": "rectangles-rhombi-squares"
+      "lessonId": "trapezoids-kites"
     },
     {
       "type": "independent_practice",
@@ -320,7 +365,11 @@
     "pq-yp3": "a=6, WX=23.",
     "pq-yp4": "Square→always rhombus. Rhombus→not always square.",
     "pq-yp5": "16.",
-    "pq-yp6": "Side=17, perimeter=68."
+    "pq-yp6": "Side=17, perimeter=68.",
+    "pq-pf1": "Yes — one pair of opposite sides both parallel and congruent.",
+    "pq-pf2": "x = 5, y = 3; halves are 11/11 and 7/7, so the diagonals bisect each other.",
+    "pq-pf3": "No — the parallel pair and the congruent pair are different pairs (isosceles trapezoid).",
+    "pq-pf4": "Slopes: AB = DC = 2/5 and BC = AD = -2, so both pairs of opposite sides are parallel."
   },
   "lessons": [
     {

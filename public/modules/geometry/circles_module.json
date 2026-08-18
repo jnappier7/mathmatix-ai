@@ -50,12 +50,48 @@
       "title": "We-Do: Circle Area — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for circle area.",
-          "hint": "Apply the concepts of circle area.",
-          "solution": "Step-by-step solution for circle area."
+          "id": "ci-ar1",
+          "question": "A circle has a radius of 7 cm. Find its area, both in terms of π and rounded to the nearest tenth.",
+          "answer": "A = πr² = π(7)² = 49π cm², which is about 153.9 cm². Keep the units squared — area is measured in square centimetres, not centimetres.",
+          "hints": [
+            "The area formula is A = πr². You are given r directly, so this is a straight substitution.",
+            "Square the radius FIRST, then multiply by π: 7² = 49, so A = 49π.",
+            "For the decimal, multiply 49 × 3.14159 ≈ 153.9. Leaving the answer as 49π is exact; the decimal is a rounded approximation."
+          ]
+        },
+        {
+          "id": "ci-ar2",
+          "question": "A circular tabletop has a diameter of 18 inches. Find its area in terms of π and to the nearest tenth.",
+          "answer": "The formula needs the radius, not the diameter: r = 18 ÷ 2 = 9 inches. A = π(9)² = 81π ≈ 254.5 square inches. Substituting 18 straight into the formula would give 324π — four times too big, because squaring doubles the effect of the doubled length.",
+          "hints": [
+            "Read what you were given carefully. The formula A = πr² takes the radius, and 18 is the diameter.",
+            "Halve it first: r = 9. Only then square.",
+            "A = π(9)² = 81π ≈ 254.5 in². Notice the size of the mistake if you skip the halving: you get 324π, which is 4 times too large, not 2 times."
+          ]
+        },
+        {
+          "id": "ci-ar3",
+          "question": "A circle has a circumference of 20π units. Find its area.",
+          "answer": "Work backwards to the radius first. C = 2πr, so 20π = 2πr, and dividing both sides by 2π gives r = 10. Then A = π(10)² = 100π square units (about 314.2). Notice the π cancels cleanly in the first step — there is no need to approximate until the very end, if at all.",
+          "hints": [
+            "You cannot get from circumference to area in one step. The radius is the bridge between them — find r first.",
+            "Set 20π = 2πr and solve for r. The π appears on both sides, so it divides out.",
+            "r = 10, so A = π(10)² = 100π. Leaving π symbolic throughout keeps the answer exact."
+          ]
+        },
+        {
+          "id": "ci-ar4",
+          "question": "A pizza shop sells a 10-inch pizza and a 20-inch pizza, sizes measured by diameter. The 20-inch costs exactly twice as much. Is it twice as much pizza? Justify with area.",
+          "answer": "10-inch: r = 5, so A = 25π ≈ 78.5 square inches. 20-inch: r = 10, so A = 100π ≈ 314.2 square inches. The ratio is 100π ÷ 25π = 4, so the large pizza is FOUR times the food for twice the price — a much better deal. The reason: doubling a length multiplies area by 2² = 4, because the radius gets squared. Area always grows by the square of the scale factor.",
+          "hints": [
+            "Both sizes are given as diameters, so halve each one before using A = πr².",
+            "Compute both areas: r = 5 gives 25π, and r = 10 gives 100π. Now compare them as a ratio.",
+            "100π ÷ 25π = 4, not 2. Doubling the diameter squares into 4× the area — that is why the big pizza is the better buy."
+          ]
         }
       ],
-      "lessonId": "arc-length-sector-area"
+      "lessonId": "circle-fundamentals",
+      "initialPrompt": "Let's start simple: a circle with radius 7 cm. Which formula gives area — and what's the one step people most often do in the wrong order?"
     },
     {
       "type": "model",
@@ -123,7 +159,7 @@
       "title": "Arc Length and Sector Area",
       "content": "**Arc Length** and **Sector Area** are fractions of the whole circle, controlled by the central angle:\n\n**Arc Length** = (θ/360°) × 2πr\nThis is the fraction (θ/360°) of the full circumference.\n\n**Sector Area** = (θ/360°) × πr²\nThis is the fraction (θ/360°) of the full area.\n\nThink of it like a pizza: the central angle determines what fraction of the pizza (circle) you're taking. A 90° slice is 90/360 = 1/4 of the pizza.",
       "initialPrompt": "A pizza has a 12-inch diameter. If you cut a slice with a 60° central angle, what fraction of the whole pizza is that slice?",
-      "lessonId": "inscribed-angles"
+      "lessonId": "arc-length-sector-area"
     },
     {
       "type": "guided_practice",
@@ -132,12 +168,48 @@
       "title": "We-Do: Sector Area — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for sector area.",
-          "hint": "Apply the concepts of sector area.",
-          "solution": "Step-by-step solution for sector area."
+          "id": "ci-se1",
+          "question": "A circle has radius 12 cm. Find the area of a sector with a central angle of 60°.",
+          "answer": "The sector is the fraction 60/360 = 1/6 of the circle. Whole circle area = π(12)² = 144π cm². Sector area = (1/6)(144π) = 24π ≈ 75.4 cm². Sanity check: six of these 60° sectors would rebuild the full 144π circle ✓.",
+          "hints": [
+            "A sector is just a fraction of the whole circle. What fraction does a 60° central angle cut off?",
+            "60/360 reduces to 1/6. Now find the area of the WHOLE circle first: A = π(12)².",
+            "Take one sixth of 144π: 24π ≈ 75.4 cm². Check yourself by asking whether six copies would make the whole circle."
+          ]
+        },
+        {
+          "id": "ci-se2",
+          "question": "Find the area of a sector with radius 6 m and central angle 135°. Give the exact answer and a decimal to the nearest tenth.",
+          "answer": "Fraction = 135/360 = 3/8. Whole circle = π(6)² = 36π m². Sector = (3/8)(36π) = 27π/2 = 13.5π ≈ 42.4 m². The fraction does not have to be a unit fraction like 1/6 — 3/8 works exactly the same way.",
+          "hints": [
+            "Reduce 135/360 before multiplying — it makes the arithmetic much easier. Both divide by 45.",
+            "135/360 = 3/8, and the whole circle is π(6)² = 36π.",
+            "(3/8) × 36π: 36 ÷ 8 = 4.5, and 4.5 × 3 = 13.5, so the sector is 13.5π ≈ 42.4 m²."
+          ]
+        },
+        {
+          "id": "ci-se3",
+          "question": "A sector with a central angle of 72° has an area of 20π square units. Find the radius of the circle.",
+          "answer": "Set up the formula and solve for r. (72/360)πr² = 20π, and 72/360 = 1/5, so (1/5)πr² = 20π. Multiply both sides by 5: πr² = 100π, so r² = 100 and r = 10 (radius is a length, so reject -10). Check: (1/5)π(10)² = (1/5)(100π) = 20π ✓.",
+          "hints": [
+            "Write the sector-area formula with the unknown in it: (θ/360)πr² = 20π, and substitute θ = 72.",
+            "72/360 = 1/5, so the equation is (1/5)πr² = 20π. Multiply both sides by 5 to clear the fraction.",
+            "πr² = 100π gives r² = 100, so r = 10. Discard the negative root — a radius cannot be negative."
+          ]
+        },
+        {
+          "id": "ci-se4",
+          "question": "A lawn sprinkler sprays water 15 feet and rotates back and forth through 240°. How much lawn does it water? How much of the circle it sits in does it miss?",
+          "answer": "Watered region: fraction 240/360 = 2/3 of the circle of radius 15. Whole circle = π(15)² = 225π ft². Watered = (2/3)(225π) = 150π ≈ 471.2 ft². The missed part is the remaining 120°, which is 1/3 of the circle: 225π - 150π = 75π ≈ 235.6 ft². Check: 150π + 75π = 225π, the whole circle ✓.",
+          "hints": [
+            "The sprinkler sweeps a sector of radius 15 with a central angle of 240°. What fraction of a full turn is that?",
+            "240/360 = 2/3, and the whole circle is π(15)² = 225π ft². Take two thirds of it.",
+            "Watered = 150π ≈ 471.2 ft². For the missed part, either take the leftover 120° (1/3) or subtract from the whole — both give 75π ≈ 235.6 ft²."
+          ]
         }
       ],
-      "lessonId": "tangent-chord-angles"
+      "lessonId": "arc-length-sector-area",
+      "initialPrompt": "Think of a pizza with radius 12 cm, and we take a 60° slice. Before any formula — what fraction of the whole pizza is that slice, and how did you get it?"
     },
     {
       "type": "model",
@@ -159,7 +231,7 @@
         }
       ],
       "initialPrompt": "If the central angle were 144° instead of 72° (double), would the arc length and sector area also exactly double?",
-      "lessonId": "inscribed-angles"
+      "lessonId": "arc-length-sector-area"
     },
     {
       "type": "guided_practice",
@@ -196,7 +268,7 @@
         }
       ],
       "initialPrompt": "For the first problem, what fraction of the whole circle does a 120° angle represent?",
-      "lessonId": "inscribed-angles"
+      "lessonId": "arc-length-sector-area"
     },
     {
       "type": "explanation",
@@ -205,7 +277,7 @@
       "title": "Inscribed Angle Theorem and Circle Theorems",
       "content": "**Inscribed Angle Theorem:** An inscribed angle (vertex on the circle) is **half** the central angle that intercepts the same arc.\n\nIf a central angle = 80°, an inscribed angle intercepting the same arc = 40°.\n\n**Key Corollaries:**\n• Inscribed angles that intercept the SAME arc are congruent\n• An inscribed angle that intercepts a semicircle (diameter) = 90°\n• Opposite angles of an inscribed quadrilateral are supplementary (sum to 180°)\n\n**Tangent-Radius Relationship:** A tangent line is always **perpendicular** to the radius drawn to the point of tangency.\n\n**Tangent-Chord Angle:** The angle between a tangent and a chord = half the intercepted arc.",
       "initialPrompt": "If a triangle is inscribed in a circle and one side is a diameter, what must the angle opposite that diameter be? Why?",
-      "lessonId": "chord-segment-relationships"
+      "lessonId": "inscribed-angles"
     },
     {
       "type": "guided_practice",
@@ -214,12 +286,48 @@
       "title": "We-Do: Circle Theorems — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for circle theorems.",
-          "hint": "Apply the concepts of circle theorems.",
-          "solution": "Step-by-step solution for circle theorems."
+          "id": "ci-ct1",
+          "question": "BD is a diameter of circle O, and point A lies on the circle. Find ∠BAD. If ∠ABD = 35°, find ∠ADB as well.",
+          "answer": "∠BAD is an inscribed angle intercepting a semicircle, so it measures 90° — this is true for ANY point A on the circle, no matter where it sits. Triangle ABD is therefore a right triangle, and its angles sum to 180°: ∠ADB = 180 - 90 - 35 = 55°.",
+          "hints": [
+            "BD is a diameter, so the arc from B to D is half the circle. What does the inscribed angle theorem say about an angle intercepting a semicircle?",
+            "An inscribed angle on a diameter is always 90°, wherever A sits on the circle. So ∠BAD = 90°.",
+            "That makes ABD a right triangle. Use the angle sum: 180 - 90 - 35."
+          ]
+        },
+        {
+          "id": "ci-ct2",
+          "question": "Line PQ is tangent to circle O at point P. The radius OP = 9 and OQ = 15. Find the length PQ.",
+          "answer": "A tangent is perpendicular to the radius drawn to the point of tangency, so ∠OPQ = 90° and triangle OPQ is a right triangle with legs OP and PQ and hypotenuse OQ. Then PQ² = OQ² - OP² = 15² - 9² = 225 - 81 = 144, so PQ = 12. (9-12-15 is the 3-4-5 triple tripled.)",
+          "hints": [
+            "The tangent-radius relationship gives you an angle for free. What is the angle between a tangent and the radius at the point where they meet?",
+            "It is 90°, so OPQ is a right triangle. Which side is the hypotenuse — OQ or PQ? The hypotenuse is opposite the right angle, so it is OQ.",
+            "PQ² = 15² - 9² = 144, so PQ = 12. Notice 9-12-15 is just 3-4-5 scaled by 3."
+          ]
+        },
+        {
+          "id": "ci-ct3",
+          "question": "A tangent line and a chord meet at a point on a circle. The arc intercepted by that angle measures 130°. Find the angle between the tangent and the chord, and then find the angle on the other side of the chord.",
+          "answer": "The tangent-chord angle equals half the intercepted arc: 130 ÷ 2 = 65°. On the other side of the chord, the intercepted arc is the rest of the circle: 360 - 130 = 230°, so that angle is 230 ÷ 2 = 115°. Check: 65° + 115° = 180°, which is right, because the two angles sit on a straight line — the tangent.",
+          "hints": [
+            "The tangent-chord angle is half its intercepted arc — the same halving that the inscribed angle theorem uses.",
+            "First angle = 130 ÷ 2 = 65°. For the other side, ask what arc THAT angle intercepts: the rest of the circle.",
+            "The remaining arc is 360 - 130 = 230°, so the second angle is 115°. The two should add to 180° because the tangent is a straight line — use that as your check."
+          ]
+        },
+        {
+          "id": "ci-ct4",
+          "question": "Points C and D both lie on a circle on the same side of chord AB. Inscribed angles ∠ACB and ∠ADB both intercept arc AB. If ∠ACB = 42°, find ∠ADB, the measure of arc AB, and the central angle ∠AOB.",
+          "answer": "Inscribed angles that intercept the same arc are congruent, so ∠ADB = 42° — the position of D on that arc does not matter. An inscribed angle is half its intercepted arc, so arc AB = 2(42) = 84°. The central angle intercepting the same arc equals the arc itself, so ∠AOB = 84°, which is also twice the inscribed angle.",
+          "hints": [
+            "Both angles intercept the SAME arc AB. There is a corollary about exactly that situation.",
+            "Inscribed angles on the same arc are congruent, so ∠ADB = 42° without any calculation.",
+            "To get the arc, undo the halving: arc AB = 2 × 42 = 84°. The central angle on that arc has the same measure as the arc, so ∠AOB = 84° too."
+          ]
         }
       ],
-      "lessonId": "circle-fundamentals"
+      "lessonId": "inscribed-angles",
+      "initialPrompt": "Draw a diameter BD, then put a point A anywhere else on the circle and join it to B and D. What do you predict about ∠BAD — and does your answer change if you slide A around?"
     },
     {
       "type": "model",
@@ -241,7 +349,7 @@
         }
       ],
       "initialPrompt": "In the inscribed quadrilateral, why must opposite angles be supplementary?",
-      "lessonId": "chord-segment-relationships"
+      "lessonId": "inscribed-angles"
     },
     {
       "type": "guided_practice",
@@ -278,7 +386,7 @@
         }
       ],
       "initialPrompt": "For the first problem, what is the relationship between a central angle and an inscribed angle that intercept the same arc?",
-      "lessonId": "chord-segment-relationships"
+      "lessonId": "inscribed-angles"
     },
     {
       "type": "independent_practice",
@@ -360,7 +468,19 @@
     "ci-yp3": "90°.",
     "ci-yp4": "90°.",
     "ci-yp5": "70°.",
-    "ci-yp6": "x=30, ∠P=80°, ∠R=100°."
+    "ci-yp6": "x=30, ∠P=80°, ∠R=100°.",
+    "ci-ar1": "A = 49π ≈ 153.9 cm².",
+    "ci-ar2": "r = 9, so A = 81π ≈ 254.5 in² (halve the diameter first).",
+    "ci-ar3": "r = 10 from C = 2πr, so A = 100π ≈ 314.2.",
+    "ci-ar4": "No — 25π vs 100π, so it is 4 times the pizza, not 2. Area scales by the square of the length.",
+    "ci-se1": "24π ≈ 75.4 cm² (one sixth of 144π).",
+    "ci-se2": "13.5π ≈ 42.4 m² (three eighths of 36π).",
+    "ci-se3": "r = 10. From (1/5)πr² = 20π.",
+    "ci-se4": "Waters 150π ≈ 471.2 ft²; misses 75π ≈ 235.6 ft².",
+    "ci-ct1": "∠BAD = 90° (inscribed in a semicircle); ∠ADB = 55°.",
+    "ci-ct2": "PQ = 12 (tangent ⊥ radius, so 15² - 9² = 144).",
+    "ci-ct3": "65° and 115° (half of 130° and half of 230°); they sum to 180°.",
+    "ci-ct4": "∠ADB = 42°; arc AB = 84°; ∠AOB = 84°."
   },
   "lessons": [
     {
