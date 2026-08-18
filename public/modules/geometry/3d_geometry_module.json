@@ -172,21 +172,81 @@
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "skill": "surface-area-prisms-cylinders",
-      "title": "Surface Area Formulas",
-      "content": "**Surface Area** (total area of all outer faces):\n\n**Prism:** SA = 2B + Ph (2 bases + lateral area)\n• Rectangular: SA = 2(lw + lh + wh)\n\n**Cylinder:** SA = 2πr² + 2πrh (2 circles + rectangle that wraps around)\n\n**Pyramid:** SA = B + (½)Pl (base + lateral faces)\n• l = slant height (not vertical height!)\n\n**Cone:** SA = πr² + πrl (base circle + lateral surface)\n• l = slant height\n\n**Sphere:** SA = 4πr²\n\nThe slant height (l) is different from the vertical height (h). For cones and pyramids, use the Pythagorean Theorem: l² = r² + h² (cone) or l² = h² + (half base)² (pyramid).",
-      "initialPrompt": "Why do you think we need the slant height for surface area but the vertical height for volume? Think about what each formula is actually measuring.",
+      "title": "Surface Area of Prisms and Cylinders",
+      "content": "**Surface area** is the total area of every outer face — the amount of material it would take to wrap the solid, or paint it.\n\nVolume is measured in cubic units (cm³); surface area is measured in **square units** (cm²). Getting the units right is half of knowing which one a word problem wants.\n\n**Prism:** SA = 2B + Ph\n• B = area of one base, P = perimeter of the base, h = height\n• The 2B is the two bases; the Ph is the lateral area — the band that wraps around the sides\n• Rectangular prism shortcut: SA = 2(lw + lh + wh)\n\n**Cylinder:** SA = 2πr² + 2πrh\n• 2πr² = the two circular ends\n• 2πrh = the lateral surface. Unroll a can's label and you get a rectangle: its height is h and its width is the circumference 2πr, so its area is 2πrh.\n\n**Where the formulas come from — the net.** Cut a solid along its edges and flatten it. A prism's net is two copies of the base plus a rectangle of length P and height h. Every surface-area formula on this page is the area of that flat net. If you forget a formula, draw the net and add up the pieces.\n\n**Lateral vs total surface area.** \"Lateral\" means the sides only, no bases. A label on a can, or paint on the walls of a room, is lateral area. Read the problem for which one it wants — and for real objects, whether a face is even there (an open-top tank has one base, not two).",
+      "initialPrompt": "Picture the label peeled off a soup can and laid flat. What shape is it, and what are its two dimensions in terms of r and h?",
       "lessonId": "surface-area-prisms-cylinders"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "surface-area-prisms-cylinders",
-      "title": "Surface Area — Worked Examples",
+      "title": "Surface Area of Prisms and Cylinders — Worked Examples",
       "examples": [
         {
           "problem": "A cylinder has radius 4 and height 9. Find the surface area in terms of π.",
           "explanation": "**Identify the formula:** Cylinder → SA = 2πr² + 2πrh\n\n**Substitute:**\nSA = 2π(4²) + 2π(4)(9)\nSA = 2π(16) + 2π(36)\nSA = 32π + 72π\nSA = 104π\n\n**Think about it:** The two circular bases contribute 32π, and the curved lateral surface (which unrolls into a rectangle of width 2πr and height h) contributes 72π."
         },
+        {
+          "problem": "A rectangular prism has dimensions 5 cm by 3 cm by 2 cm. Find the surface area.",
+          "solution": "**Identify the three distinct face pairs:** a box has 6 faces in 3 matching pairs.\n\n| Pair | Area of one | Two of them |\n|---|---|---|\n| l × w | 5 × 3 = 15 | 30 |\n| l × h | 5 × 2 = 10 | 20 |\n| w × h | 3 × 2 = 6 | 12 |\n\n**Add them up:**\nSA = 2(lw + lh + wh) = 2(15 + 10 + 6) = 2(31) = **62 cm²**\n\n**Check the units:** we multiplied two lengths at a time, so the answer is in cm² — square units, as surface area always is. (The volume of this same box would be 5 · 3 · 2 = 30 cm³ — a different number *and* a different kind of unit.)"
+        }
+      ],
+      "initialPrompt": "In example 1, which part of the calculation is the two circular ends, and which part is the wrap-around?",
+      "lessonId": "surface-area-prisms-cylinders"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "surface-area-pyramids-cones-spheres",
+      "title": "Surface Area of Prisms and Cylinders — Guided Practice",
+      "problems": [
+        {
+          "id": "td-wp8",
+          "question": "A rectangular prism has dimensions 4 by 6 by 8. Find the surface area.",
+          "answer": "208",
+          "hints": [
+            "SA = 2(lw + lh + wh) = 2(4×6 + 6×8 + 4×8).",
+            "SA = 2(24 + 48 + 32) = 2(104) = 208 square units."
+          ]
+        },
+        {
+          "id": "td-sa1",
+          "question": "A cylinder has radius 3 and height 10. Find the total surface area in terms of π.",
+          "answer": "78π",
+          "hints": [
+            "SA = 2πr² + 2πrh. The first term is the two circular ends, the second is the wrap-around.",
+            "2π(3)² + 2π(3)(10) = 18π + 60π = 78π."
+          ]
+        },
+        {
+          "id": "td-sa2",
+          "question": "An open-top rectangular box is 6 in long, 4 in wide, and 5 in tall. Find the surface area of the material needed to make it.",
+          "answer": "124 in²",
+          "hints": [
+            "Open-top means there is no lid — one base instead of two. Count the faces you actually have: the bottom, plus four walls.",
+            "Bottom = 6 · 4 = 24. Two walls of 6 × 5 = 30 each, two walls of 4 × 5 = 20 each. Total = 24 + 60 + 40 = 124 in²."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, sketch the box and count how many faces of each size it has. Which pairs match?",
+      "lessonId": "surface-area-prisms-cylinders"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "surface-area-pyramids-cones-spheres",
+      "title": "Surface Area of Pyramids, Cones, and Spheres",
+      "content": "Pyramids and cones come to a point, so their sides are slanted — and that changes which height the formula wants.\n\n**Pyramid:** SA = B + ½Pl\n• B = area of the base, P = perimeter of the base, **l = slant height**\n• The ½Pl is the lateral area: a pyramid's sides are triangles, each with area ½(base edge)(l), and adding them all up gives ½Pl.\n\n**Cone:** SA = πr² + πrl\n• πr² = the circular base, πrl = the lateral (curved) surface\n• **l = slant height** here too\n\n**Sphere:** SA = 4πr²\n• No base, no height — one radius is all a sphere has. (Worth noticing: this is exactly 4 times the area of the circle you'd get by slicing the sphere through its center.)\n\n**Slant height is not vertical height.** This is the single biggest source of wrong answers in this lesson. The vertical height h runs from the apex straight down to the center of the base. The slant height l runs from the apex down the *outside* of the solid to the edge of the base. Since l is the hypotenuse of a right triangle, **l is always longer than h**.\n\n**Getting l from h with the Pythagorean Theorem:**\n• **Cone:** l² = r² + h²  (legs: the radius and the vertical height)\n• **Pyramid:** l² = h² + (half the base edge)²  (for a square pyramid)\n\n**So a typical problem is two steps:** the problem gives you h, you compute l, *then* you use the surface-area formula. If a problem gives you both h and l, use l for surface area and h for volume.\n\n**Quick check on your answer:** l > h and l > r always. If your slant height comes out smaller than either, you subtracted where you should have added.",
+      "initialPrompt": "A cone has radius 6 and vertical height 8. Before finding any area — what is the slant height, and which right triangle did you use?",
+      "lessonId": "surface-area-pyramids-cones-spheres"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "surface-area-pyramids-cones-spheres",
+      "title": "Surface Area of Pyramids, Cones, and Spheres — Worked Examples",
+      "examples": [
         {
           "problem": "A cone has radius 3 and slant height 5. Find the surface area in terms of π.",
           "explanation": "**Identify the formula:** Cone → SA = πr² + πrl\n\n**Substitute:**\nSA = π(3²) + π(3)(5)\nSA = 9π + 15π\nSA = 24π\n\n**Think about it:** The base circle has area 9π. The lateral surface unrolls into a sector of a circle with radius l = 5 and arc length 2πr = 6π, giving lateral area πrl = 15π."
@@ -194,16 +254,20 @@
         {
           "problem": "A sphere has diameter 14 cm. Find the surface area in terms of π.",
           "explanation": "**Step 1 — Find the radius:**\nr = 14 ÷ 2 = 7 cm\n\n**Step 2 — Apply SA = 4πr²:**\nSA = 4π(7²)\nSA = 4π(49)\nSA = 196π cm²\n\n**Think about it:** The surface area of a sphere equals exactly 4 times the area of a great circle (πr²). So SA = 4 × 49π = 196π."
+        },
+        {
+          "problem": "A square pyramid has a base edge of 6 cm and a vertical height of 4 cm. Find the total surface area.",
+          "solution": "**Step 1 — the formula needs slant height, not vertical height.** We were given h = 4, so we have to find l first.\n\nThe right triangle runs from the apex, straight down the axis (leg = h = 4), then out to the middle of a base edge (leg = half the base edge = 3):\n\nl² = h² + (half base edge)² = 4² + 3² = 16 + 9 = 25\nl = **5 cm**\n\n(That's a 3-4-5 triangle — and note l = 5 > h = 4, as slant height always is.)\n\n**Step 2 — base area and perimeter:**\nB = 6 × 6 = 36 cm²\nP = 4 × 6 = 24 cm\n\n**Step 3 — apply SA = B + ½Pl:**\nSA = 36 + ½(24)(5) = 36 + 60 = **96 cm²**\n\n**Reading the two pieces:** 36 cm² is the square base, and 60 cm² is the four triangular faces — each is ½(6)(5) = 15 cm², and 4 × 15 = 60 ✓"
         }
       ],
-      "initialPrompt": "For the cylinder, what are the three 'pieces' of its surface: two _____ and one _____?",
-      "lessonId": "surface-area-prisms-cylinders"
+      "initialPrompt": "In example 1 we were handed the slant height directly. In example 3 we had to compute it. How do you tell which one a problem has given you?",
+      "lessonId": "surface-area-pyramids-cones-spheres"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
       "skill": "surface-area-pyramids-cones-spheres",
-      "title": "Surface Area — Guided Practice",
+      "title": "Surface Area of Pyramids, Cones, and Spheres — Guided Practice",
       "problems": [
         {
           "id": "td-wp7",
@@ -215,15 +279,6 @@
           ]
         },
         {
-          "id": "td-wp8",
-          "question": "A rectangular prism has dimensions 4 by 6 by 8. Find the surface area.",
-          "answer": "208",
-          "hints": [
-            "SA = 2(lw + lh + wh) = 2(4×6 + 6×8 + 4×8).",
-            "SA = 2(24 + 48 + 32) = 2(104) = 208 square units."
-          ]
-        },
-        {
           "id": "td-wp9",
           "question": "A sphere has radius 10. Find the surface area in terms of π.",
           "answer": "400π",
@@ -231,15 +286,92 @@
             "SA = 4πr² for a sphere.",
             "SA = 4π(10²) = 4π(100) = 400π square units."
           ]
+        },
+        {
+          "id": "td-sa3",
+          "question": "A square pyramid has a base edge of 10 in and a slant height of 13 in. Find the total surface area.",
+          "answer": "360 in²",
+          "hints": [
+            "The slant height is given, so no Pythagorean step is needed. Find B = 10 · 10 = 100 and P = 4 · 10 = 40.",
+            "SA = B + ½Pl = 100 + ½(40)(13) = 100 + 260 = 360 in²."
+          ]
         }
       ],
-      "initialPrompt": "For the first problem, why can't you use the given height directly in the surface area formula for a cone?",
-      "lessonId": "surface-area-prisms-cylinders"
+      "initialPrompt": "For the first problem, you're given the radius and the vertical height — but the surface-area formula wants the slant height. What has to happen first?",
+      "lessonId": "surface-area-pyramids-cones-spheres"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "3d-applications",
+      "title": "3D Geometry Applications",
+      "content": "Real objects are rarely one clean solid, and real questions rarely say \"find the volume.\" This lesson is about deciding *what to compute* before computing it.\n\n**Volume or surface area? Read what the object is doing.**\n\n| The question is about | You want | Units |\n|---|---|---|\n| filling, holding, capacity, how much is inside, weight of contents | **volume** | cubic (cm³, ft³) |\n| covering, painting, wrapping, labeling, how much material to build it | **surface area** | square (cm², ft²) |\n\nIf you can't tell, ask whether the answer would change if the object were hollow. Capacity doesn't care about the walls; paint doesn't care about the inside.\n\n**Composite solids** are two or more shapes joined together — a silo (cylinder + hemisphere), a pencil (cylinder + cone), a house (prism + triangular prism).\n\n**For volume: break it apart, compute each piece, add.** Volumes always add.\n\n**For surface area: be careful — you do NOT just add.** Where two pieces join, the shared faces are hidden inside and are not part of the surface. A cone sitting on a cylinder hides the cone's circular base *and* the cylinder's top. Sketch the solid and ask which faces you could actually touch.\n\n**Hollowed solids** (a pipe, a washer, a cored-out block) are subtraction: outer volume − inner volume.\n\n**Units and conversions.** Converting length scales the *cube* for volume: 1 ft = 12 in, so 1 ft³ = 12³ = 1728 in³ — not 12. Common capacity conversions:\n• 1 ft³ ≈ 7.48 gallons\n• 1 m³ = 1000 liters\n• 1 cm³ = 1 milliliter (exactly — that one is a definition)\n\n**Rounding:** keep π exact through the whole calculation and round only at the very end, then round the way the *situation* demands. Paint that covers 1.3 gallons' worth of wall means buying 2 gallons — you can't buy 1.3.\n\n**The habit that catches most errors:** state what you're finding and in what units *before* you pick a formula. \"I need the volume of the tank, in gallons\" tells you to compute ft³ and then convert — and it makes an answer in square feet obviously wrong.",
+      "initialPrompt": "A cylindrical water tank needs its outside painted, and you also want to know how much water it holds. Which calculation is which — and would either answer change if the tank's walls got thicker?",
+      "lessonId": "3d-applications"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "3d-applications",
+      "title": "3D Geometry Applications — Worked Examples",
+      "examples": [
+        {
+          "problem": "A grain silo is a cylinder of radius 4 m and height 10 m, topped by a hemisphere of radius 4 m. Find the total volume in terms of π.",
+          "solution": "**Break the composite solid into its pieces:** one cylinder + one hemisphere. Volume is additive, so we compute each and add.\n\n**Cylinder:**\nV = πr²h = π(4)²(10) = 160π m³\n\n**Hemisphere** — half a sphere, so half of (4/3)πr³:\nV = ½ · (4/3)π(4)³ = (2/3)π(64) = 128π/3 m³\n\n**Add, using a common denominator:**\nV = 160π + 128π/3 = 480π/3 + 128π/3 = **608π/3 m³**\n\n**Decimal check:** 608π/3 ≈ 636.7 m³. The cylinder alone is 160π ≈ 502.7, and the dome adds about 134 — a sensible fraction of the whole ✓\n\n**Note what we did NOT do:** the flat circle where the dome meets the cylinder is inside the silo. It matters for surface area, not for volume — volumes just add."
+        },
+        {
+          "problem": "A rectangular water tank measures 2 ft by 3 ft by 4 ft. How many gallons of water does it hold? (1 ft³ ≈ 7.48 gallons)",
+          "solution": "**Decide what's being asked:** \"how many gallons does it hold\" is capacity — that's **volume**.\n\n**Compute the volume in cubic feet:**\nV = lwh = 2 × 3 × 4 = 24 ft³\n\n**Convert to gallons:**\n24 ft³ × 7.48 gallons/ft³ ≈ **179.5 gallons**\n\n**Check the units cancel:** ft³ × (gallons/ft³) = gallons ✓ — if the units don't cancel, you've multiplied when you should have divided.\n\n**A trap worth naming:** if the tank's dimensions had been in *inches* and you wanted cubic feet, you could not divide by 12. Volume conversions cube the length factor: 1 ft³ = 12³ = 1728 in³."
+        },
+        {
+          "problem": "A cylindrical storage tank has radius 5 ft and height 12 ft. Its curved side and flat top need painting (the bottom sits on the ground). One gallon of paint covers 350 ft². How many gallons must be bought?",
+          "solution": "**Decide what's being asked:** painting → **surface area**, not volume. And only *part* of the surface.\n\n**Which faces are actually painted?**\n• Lateral (curved) surface: 2πrh = 2π(5)(12) = 120π ft²\n• Top circle: πr² = π(5)² = 25π ft²\n• Bottom circle: **not painted** — it's on the ground\n\nThis is why the full formula SA = 2πr² + 2πrh would be wrong here: it counts two circles when the situation has one.\n\n**Total area to paint:**\n120π + 25π = 145π ≈ 455.5 ft²\n\n**Convert to gallons:**\n455.5 ÷ 350 ≈ 1.30 gallons\n\n**Round the way the situation demands:** paint is sold by the gallon, so 1.3 gallons means buying **2 gallons**. Rounding to 1 would leave part of the tank bare."
+        }
+      ],
+      "initialPrompt": "In example 3, why did we deliberately leave one circle out of the surface-area calculation? What in the problem told us to?",
+      "lessonId": "3d-applications"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "3d-applications",
+      "title": "3D Geometry Applications — Guided Practice",
+      "problems": [
+        {
+          "id": "td-ap1",
+          "question": "A solid consists of a cone of radius 6 and height 8 sitting on top of a cylinder of radius 6 and height 15. Find the total volume in terms of π.",
+          "answer": "636π",
+          "hints": [
+            "Composite solid — find each volume separately and add. Cone: V = (1/3)πr²h = (1/3)π(36)(8) = 96π.",
+            "Cylinder: V = πr²h = π(36)(15) = 540π. Total = 96π + 540π = 636π."
+          ]
+        },
+        {
+          "id": "td-ap2",
+          "question": "A rectangular swimming pool is 25 m long, 10 m wide, and a uniform 2 m deep. How many liters of water does it hold? (1 m³ = 1000 L)",
+          "answer": "500,000 liters",
+          "hints": [
+            "\"How much water does it hold\" is capacity, so compute volume: V = 25 × 10 × 2 = 500 m³.",
+            "Convert: 500 m³ × 1000 L/m³ = 500,000 liters."
+          ]
+        },
+        {
+          "id": "td-ap3",
+          "question": "A gift box is a cube with edges of 8 inches. Find (a) the wrapping paper needed to cover it, and (b) how much space it has inside. State the units for each.",
+          "answer": "(a) 384 in² of paper; (b) 512 in³ of space",
+          "hints": [
+            "Covering is surface area. A cube has 6 identical square faces: SA = 6s² = 6(8)² = 6(64) = 384 in² — square units.",
+            "Space inside is volume: V = s³ = 8³ = 512 in³ — cubic units. Same solid, two different questions, two different kinds of unit."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, is volume something you add across the pieces, or is there overlap to worry about? Why?",
+      "lessonId": "3d-applications"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
-      "skill": "3d-geometry-mixed",
+      "skill": "3d-applications",
       "title": "3D Geometry — Independent Practice",
       "problems": [
         {
@@ -284,7 +416,7 @@
         }
       ],
       "attemptsRequired": 3,
-      "lessonId": "volume-prisms-cylinders"
+      "lessonId": "3d-applications"
     }
   ],
   "answerKeys": {
@@ -301,7 +433,13 @@
     "td-yp2": "320π cm³",
     "td-yp3": "6 cm",
     "td-yp4": "l = 13, SA = 90π",
-    "td-yp5": "72π ft³"
+    "td-yp5": "72π ft³",
+    "td-sa1": "78π.",
+    "td-sa2": "124 in².",
+    "td-sa3": "360 in².",
+    "td-ap1": "636π.",
+    "td-ap2": "500,000 liters.",
+    "td-ap3": "(a) 384 in² of wrapping paper; (b) 512 in³ of space inside."
   },
   "lessons": [
     {
