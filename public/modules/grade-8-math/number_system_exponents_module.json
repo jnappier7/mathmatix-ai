@@ -49,20 +49,6 @@
       "lessonId": "rational-irrational"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "real-number-ordering",
-      "title": "We-Do: Real Number Ordering — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for real number ordering.",
-          "hint": "Apply the concepts of real number ordering.",
-          "solution": "Step-by-step solution for real number ordering."
-        }
-      ],
-      "lessonId": "exponent-rules"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "title": "Rational vs. Irrational: Worked Examples",
@@ -96,7 +82,7 @@
         "Zero exponent: a⁰ = 1 (any nonzero base to the zero power equals 1)",
         "Negative exponent: a⁻ⁿ = 1/aⁿ (flip to the denominator)"
       ],
-      "lessonId": "scientific-notation"
+      "lessonId": "exponent-rules"
     },
     {
       "type": "model",
@@ -117,7 +103,7 @@
           "solution": "5⁰ = 1 (any nonzero base to the zero power is 1).\n3⁻² = 1/3² = 1/9.\n1 + 1/9 = 9/9 + 1/9 = 10/9.\nAnswer: 10/9."
         }
       ],
-      "lessonId": "scientific-notation"
+      "lessonId": "exponent-rules"
     },
     {
       "type": "explanation",
@@ -195,6 +181,56 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "real-number-ordering",
+      "title": "We-Do: Real Number Ordering — Guided Practice",
+      "problems": [
+        {
+          "id": "ns-or1",
+          "question": "Which is greater, √17 or 4.2? Explain how you know without a calculator.",
+          "answer": "Square both to compare them as whole-ish numbers: (√17)² = 17, and 4.2² = 17.64. Since 17.64 > 17, we get 4.2 > √17. (For a check, √17 ≈ 4.123.) Squaring is safe here because both numbers are positive — squaring keeps the order the same for positives.",
+          "hints": [
+            "Comparing a square root to a decimal is awkward directly. Is there an operation you can do to BOTH that removes the radical?",
+            "Square them both: (√17)² is just 17, and 4.2² = 17.64.",
+            "17.64 is bigger, so 4.2 > √17. This trick only preserves the order because both numbers are positive — be careful with negatives."
+          ]
+        },
+        {
+          "id": "ns-or2",
+          "question": "Between which two consecutive tenths does √30 lie, and which one is it closer to?",
+          "answer": "First bracket it with whole numbers: 5² = 25 and 6² = 36, so 5 < √30 < 6. Now squeeze with tenths: 5.4² = 29.16 (too small) and 5.5² = 30.25 (too big), so 5.4 < √30 < 5.5. Since 30 is much nearer to 30.25 than to 29.16, √30 is closer to 5.5. (√30 ≈ 5.477.)",
+          "hints": [
+            "Use the squeeze technique from the lesson: find whole numbers first, then narrow to tenths.",
+            "5² = 25 and 6² = 36, so the answer starts with 5. Now test tenths: what are 5.4² and 5.5²?",
+            "29.16 < 30 < 30.25, so √30 is between 5.4 and 5.5. To decide which is closer, see which square 30 sits nearer to — it is much nearer 30.25."
+          ]
+        },
+        {
+          "id": "ns-or3",
+          "question": "Order from least to greatest: 3/2, √3, 1.7, -√2, 1.75",
+          "answer": "Convert everything to decimals: 3/2 = 1.5, √3 ≈ 1.732, 1.7 stays 1.7, -√2 ≈ -1.414, and 1.75 stays 1.75. Ordered: -√2, 3/2, 1.7, √3, 1.75. The close call is √3 ≈ 1.732 sitting between 1.7 and 1.75 — one decimal place is not enough to place it, so carry three.",
+          "hints": [
+            "Put every number into the same form before comparing. Decimals are easiest here.",
+            "The negative one is automatically smallest — only one number here is below zero.",
+            "The tight spot is √3 ≈ 1.732 against 1.7 and 1.75. Round to three decimal places, not one, or you cannot tell them apart."
+          ]
+        },
+        {
+          "id": "ns-or4",
+          "question": "A square garden has an area of 40 square metres. Between which two whole numbers is the length of one side? Then narrow it to the nearest tenth.",
+          "answer": "The side length is √40. Since 6² = 36 and 7² = 49, the side is between 6 and 7 metres. Narrowing: 6.3² = 39.69 (just under 40) and 6.4² = 40.96 (over), so the side is between 6.3 and 6.4 m, and closer to 6.3 since 40 is nearer 39.69 than 40.96. (√40 ≈ 6.325 m.) Note the side length is irrational — this is a real garden with a length no decimal can write exactly.",
+          "hints": [
+            "Area of a square is side², so the side is the square root of the area. You need √40.",
+            "Bracket it: which two perfect squares does 40 fall between? 36 and 49.",
+            "So the side is between 6 and 7. Now test tenths — 6.3² and 6.4² — and see which side of 40 each lands on."
+          ]
+        }
+      ],
+      "lessonId": "rational-irrational",
+      "initialPrompt": "Here's one to reason through, no calculator: which is bigger, √17 or 4.2? What could you do to both numbers to make them easy to compare?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
       "title": "Exponent Rules Practice",
       "skill": "exponent-rules",
       "problems": [
@@ -226,7 +262,7 @@
           ]
         }
       ],
-      "lessonId": "scientific-notation"
+      "lessonId": "exponent-rules"
     },
     {
       "type": "guided_practice",
@@ -343,7 +379,11 @@
     "ns-yp3": "27",
     "ns-yp4": "13/16",
     "ns-yp5": "8.2 × 10⁻⁶",
-    "ns-yp6": "4.2 × 10³"
+    "ns-yp6": "4.2 × 10³",
+    "ns-or1": "4.2 > √17 (17.64 > 17 after squaring both).",
+    "ns-or2": "Between 5.4 and 5.5, closer to 5.5 (29.16 < 30 < 30.25).",
+    "ns-or3": "-√2, 3/2, 1.7, √3, 1.75.",
+    "ns-or4": "Between 6 and 7 m; then between 6.3 and 6.4, closer to 6.3 (√40 ≈ 6.325)."
   },
   "lessons": [
     {
