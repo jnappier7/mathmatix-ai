@@ -69,20 +69,6 @@
       "lessonId": "congruence-similarity"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "angle-relationships",
-      "title": "We-Do: Angle Relationships — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for angle relationships.",
-          "hint": "Apply the concepts of angle relationships.",
-          "solution": "Step-by-step solution for angle relationships."
-        }
-      ],
-      "lessonId": "angle-relationships"
-    },
-    {
       "type": "explanation",
       "lessonPhase": "concept-intro",
       "title": "The Pythagorean Theorem & Coordinate Distance",
@@ -94,20 +80,6 @@
         "Common triples: 3-4-5, 5-12-13, 8-15-17 and their multiples",
         "Distance formula: d = √((x₂ − x₁)² + (y₂ − y₁)²)",
         "The distance formula IS the Pythagorean theorem on the coordinate plane"
-      ],
-      "lessonId": "pythagorean-theorem"
-    },
-    {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "distance-coordinate",
-      "title": "We-Do: Distance Coordinate — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for distance coordinate.",
-          "hint": "Apply the concepts of distance coordinate.",
-          "solution": "Step-by-step solution for distance coordinate."
-        }
       ],
       "lessonId": "pythagorean-theorem"
     },
@@ -249,6 +221,56 @@
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "angle-relationships",
+      "title": "We-Do: Angle Relationships — Guided Practice",
+      "problems": [
+        {
+          "id": "gt-ar1",
+          "question": "Two parallel lines are cut by a transversal, and ∠1 measures 115°. Find the measure of (a) the angle alternate interior to ∠1, (b) the co-interior (same-side interior) angle with ∠1, and (c) the angle vertical to ∠1.",
+          "answer": "(a) Alternate interior angles are equal, so that angle is 115°. (b) Co-interior angles are supplementary, so it is 180 - 115 = 65°. (c) Vertical angles are always equal — parallel lines are not even needed for that one — so it is 115°. Notice only one of the three relationships subtracts; the equal-pairs are the default and supplementary is the exception worth memorising.",
+          "hints": [
+            "Sort the three relationships into two groups first: which ones give EQUAL angles, and which give angles that add to 180°?",
+            "Alternate interior and vertical angles are equal. Co-interior (same-side interior) angles are supplementary.",
+            "So (a) and (c) are both 115°, and (b) is 180 - 115. Vertical angles are equal whether or not the lines are parallel — the others need the parallel condition."
+          ]
+        },
+        {
+          "id": "gt-ar2",
+          "question": "Two parallel lines are cut by a transversal. One angle measures (3x + 10)° and its co-interior partner measures (2x + 20)°. Find x and both angle measures.",
+          "answer": "Co-interior angles are supplementary, so set their sum to 180: (3x + 10) + (2x + 20) = 180. Combine: 5x + 30 = 180, so 5x = 150 and x = 30. The angles are 3(30) + 10 = 100° and 2(30) + 20 = 80°. Check: 100 + 80 = 180 ✓.",
+          "hints": [
+            "Decide the relationship BEFORE writing an equation. Co-interior angles are supplementary — so do you set the expressions equal, or set their sum to 180?",
+            "Sum to 180: (3x + 10) + (2x + 20) = 180. Combine like terms carefully.",
+            "5x + 30 = 180 gives x = 30. Substitute back to get both angles, and check they really add to 180."
+          ]
+        },
+        {
+          "id": "gt-ar3",
+          "question": "Alternate interior angles formed by two parallel lines and a transversal measure (4x - 15)° and (2x + 35)°. Find x and the measure of each angle.",
+          "answer": "Alternate interior angles are equal, so 4x - 15 = 2x + 35. Subtract 2x: 2x - 15 = 35. Add 15: 2x = 50, so x = 25. Each angle measures 4(25) - 15 = 85° and 2(25) + 35 = 85° ✓ — they must come out the same, which is the built-in check.",
+          "hints": [
+            "This is the other relationship type from the previous problem. Alternate interior angles are equal, not supplementary.",
+            "Set the expressions equal: 4x - 15 = 2x + 35. Move the variable terms to one side.",
+            "x = 25. Substitute into BOTH expressions — if they do not match, you either solved wrong or used the wrong relationship."
+          ]
+        },
+        {
+          "id": "gt-ar4",
+          "question": "Two lines are cut by a transversal. The corresponding angles measure (5x)° and (3x + 40)°. If the lines are parallel, find x and the angle measures. Then explain what you would conclude if the two angles had instead measured 100° and 105°.",
+          "answer": "If the lines are parallel, corresponding angles are equal: 5x = 3x + 40, so 2x = 40 and x = 20. Both angles measure 5(20) = 100° and 3(20) + 40 = 100° ✓. If instead they measured 100° and 105°, the corresponding angles would NOT be equal — and since parallel lines force corresponding angles to be equal, the lines could not be parallel. This is the converse: equal corresponding angles prove lines parallel, and unequal ones prove they are not.",
+          "hints": [
+            "Corresponding angles are the equal kind, so start by setting the two expressions equal — but notice the problem says \"IF the lines are parallel\", which is a condition, not a given fact.",
+            "5x = 3x + 40 gives x = 20, and both angles are 100°.",
+            "For the second part, run the rule backwards: parallel lines guarantee equal corresponding angles, so unequal corresponding angles rule parallelism out."
+          ]
+        }
+      ],
+      "lessonId": "angle-relationships",
+      "initialPrompt": "Two parallel lines cut by a transversal, and one angle is 115°. Of the relationships we listed — corresponding, alternate interior, alternate exterior, co-interior — which give you 115° straight away, and which one needs a subtraction?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
       "title": "Pythagorean Theorem & Distance Practice",
       "skill": "pythagorean-theorem",
       "problems": [
@@ -281,6 +303,56 @@
         }
       ],
       "lessonId": "pythagorean-theorem"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "distance-coordinate",
+      "title": "We-Do: Distance Coordinate — Guided Practice",
+      "problems": [
+        {
+          "id": "gt-dc1",
+          "question": "Find the distance between (1, 2) and (13, 7).",
+          "answer": "Horizontal leg: 13 - 1 = 12. Vertical leg: 7 - 2 = 5. Distance = √(12² + 5²) = √(144 + 25) = √169 = 13. That is the 5-12-13 triple — spotting it lets you skip the square root entirely.",
+          "hints": [
+            "The distance formula IS the Pythagorean theorem. Find the horizontal and vertical gaps first — those are your two legs.",
+            "Legs are 12 and 5. Square each, add, then take the square root.",
+            "√(144 + 25) = √169 = 13. If 12 and 5 looked familiar, that is because 5-12-13 is one of the triples worth memorising."
+          ]
+        },
+        {
+          "id": "gt-dc2",
+          "question": "Find the distance between (-3, 4) and (2, -1). Give the exact answer in simplest radical form and a decimal to the nearest hundredth.",
+          "answer": "Horizontal: 2 - (-3) = 5. Vertical: -1 - 4 = -5. Squaring removes the sign, so distance = √(5² + (-5)²) = √(25 + 25) = √50. Simplify: √50 = √(25·2) = 5√2 ≈ 7.07. Not every distance is a whole number — a radical answer is exact, and the decimal is the approximation.",
+          "hints": [
+            "Careful with the double negative: 2 - (-3) is 5, not -1.",
+            "The legs are 5 and -5. Do not worry about the negative — squaring makes both 25.",
+            "√50 is not a whole number, so simplify it: 50 = 25 · 2, and √25 = 5, giving 5√2 ≈ 7.07."
+          ]
+        },
+        {
+          "id": "gt-dc3",
+          "question": "Triangle ABC has vertices A(0, 0), B(6, 0), and C(6, 8). Find the length of each side and the perimeter. Is it a right triangle?",
+          "answer": "AB runs horizontally: 6 - 0 = 6. BC runs vertically: 8 - 0 = 8. AC needs the formula: √((6 - 0)² + (8 - 0)²) = √(36 + 64) = √100 = 10. Perimeter = 6 + 8 + 10 = 24 units. It is a right triangle: 6² + 8² = 36 + 64 = 100 = 10² ✓, and you can see it directly — AB is horizontal and BC is vertical, so they meet at a right angle at B. (6-8-10 is 3-4-5 doubled.)",
+          "hints": [
+            "Two of these sides do not need the distance formula at all. Look at which coordinates stay the same between the endpoints.",
+            "AB is horizontal (same y) so its length is just 6; BC is vertical (same x) so its length is 8. Only AC needs the full formula.",
+            "AC = √(36 + 64) = 10. Add for the perimeter, then confirm the right angle either with the converse or by noticing one side is horizontal and the other vertical."
+          ]
+        },
+        {
+          "id": "gt-dc4",
+          "question": "A football field is marked as a grid where each unit is one yard. A player runs from (0, 0) to (30, 40). How far did they run? How much farther would it have been to run 30 yards along one sideline and then 40 yards across?",
+          "answer": "Straight-line distance = √(30² + 40²) = √(900 + 1600) = √2500 = 50 yards. The two-leg route covers 30 + 40 = 70 yards. So the diagonal saves 70 - 50 = 20 yards. This is why the hypotenuse is always shorter than the two legs combined — going direct beats going around the corner, every time.",
+          "hints": [
+            "Set the run up as a right triangle: the horizontal leg is 30, the vertical leg is 40, and the actual run is the hypotenuse.",
+            "√(900 + 1600) = √2500. That is a perfect square — 30-40-50 is 3-4-5 scaled by 10.",
+            "The alternative route is just the two legs added: 30 + 40. Subtract to find the saving, and notice it must always be positive."
+          ]
+        }
+      ],
+      "lessonId": "pythagorean-theorem",
+      "initialPrompt": "Find the distance between (1, 2) and (13, 7). Before reaching for the formula — how far apart are they horizontally, and how far vertically? Those two numbers are the whole problem."
     },
     {
       "type": "independent_practice",
@@ -361,7 +433,15 @@
     "gt-yp3": "Four 130° angles and four 50° angles",
     "gt-yp4": "13 cm",
     "gt-yp5": "45 inches",
-    "gt-yp6": "10 units"
+    "gt-yp6": "10 units",
+    "gt-ar1": "115°, 65°, 115°.",
+    "gt-ar2": "x = 30; angles 100° and 80°.",
+    "gt-ar3": "x = 25; both angles 85°.",
+    "gt-ar4": "x = 20, both 100°. At 100° and 105° the lines could not be parallel.",
+    "gt-dc1": "13 (a 5-12-13 triple).",
+    "gt-dc2": "√50 = 5√2 ≈ 7.07.",
+    "gt-dc3": "AB = 6, BC = 8, AC = 10; perimeter 24; right triangle.",
+    "gt-dc4": "50 yards; the two-leg route is 70, so the diagonal saves 20."
   },
   "lessons": [
     {
