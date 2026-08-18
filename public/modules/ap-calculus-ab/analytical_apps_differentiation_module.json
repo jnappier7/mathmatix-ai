@@ -159,6 +159,7 @@
       "title": "MVT, Increasing/Decreasing & Concavity Practice",
       "problems": [
         {
+          "id": "aad-wp1",
           "problem": "Let f(x) = x^2 - 4x + 3 on [1, 3]. Verify the hypotheses of the MVT, then find all values of c.",
           "hints": [
             "f is a polynomial — what does that guarantee about continuity and differentiability?",
@@ -168,6 +169,7 @@
           "answer": "f is a polynomial: continuous on [1, 3] and differentiable on (1, 3). f(1) = 0, f(3) = 0. Average rate = (0 - 0)/2 = 0. f'(x) = 2x - 4. Set 2c - 4 = 0: c = 2. Since 2 is in (1, 3), c = 2. (Note: f(1) = f(3), so this is also Rolle's Theorem.)"
         },
         {
+          "id": "aad-wp2",
           "problem": "Find the intervals of increase and decrease, and all local extrema for f(x) = xe^(-x).",
           "hints": [
             "Use the product rule: f'(x) = e^(-x) + x(-e^(-x)) = e^(-x)(1 - x)",
@@ -177,6 +179,7 @@
           "answer": "f'(x) = e^(-x)(1 - x). Since e^(-x) > 0 always, the sign depends on (1 - x). f'(x) > 0 when x < 1 (increasing). f'(x) < 0 when x > 1 (decreasing). f' changes from + to - at x = 1: local maximum. f(1) = 1/e. Local max: (1, 1/e)."
         },
         {
+          "id": "aad-wp3",
           "problem": "Find the intervals of concavity and inflection points for g(x) = x^3 - 6x^2 + 9x + 2.",
           "hints": [
             "Compute g''(x)",
@@ -186,6 +189,7 @@
           "answer": "g'(x) = 3x^2 - 12x + 9. g''(x) = 6x - 12 = 6(x - 2). g''(x) = 0 at x = 2. For x < 2: g''(1) = -6 < 0 (concave down). For x > 2: g''(3) = 6 > 0 (concave up). Sign change at x = 2: inflection point. g(2) = 8 - 24 + 18 + 2 = 4. Inflection point: (2, 4)."
         },
         {
+          "id": "aad-wp4",
           "problem": "The function h is continuous on [-3, 5] and differentiable on (-3, 5) with h(-3) = 7 and h(5) = 7. A student says: 'By the MVT, there exists a c in (-3, 5) where h'(c) = 0.' Is this correct? Which theorem is actually being applied?",
           "hints": [
             "What is the average rate of change here?",
@@ -279,6 +283,7 @@
       "title": "Curve Sketching & Optimization Practice",
       "problems": [
         {
+          "id": "aad-wp5",
           "problem": "The graph of f'(x) is a line passing through (-2, 0) and (4, 0) with f'(x) > 0 on (-2, 4) and f'(x) < 0 outside that interval. Determine all local extrema and inflection points of f.",
           "hints": [
             "Where does f' change from negative to positive? From positive to negative?",
@@ -288,6 +293,7 @@
           "answer": "At x = -2: f' changes from - to + -> local minimum of f. At x = 4: f' changes from + to - -> local maximum of f. Since f' is a line through (-2, 0) and (4, 0), it's actually... re-reading: f' is a line? A line can only cross zero once. If f' > 0 on (-2, 4) and < 0 outside, f' must be a curve (parabola). f' has max at x = 1 (midpoint). f' is increasing on (-inf, 1) and decreasing on (1, inf), so f'' > 0 on (-inf, 1) and f'' < 0 on (1, inf). Inflection point of f at x = 1."
         },
         {
+          "id": "aad-wp6",
           "problem": "Sketch the general shape of f(x) given: f'(x) > 0 for all x, f''(x) > 0 for x < 2, f''(x) < 0 for x > 2.",
           "hints": [
             "f' > 0 everywhere: what does this say about the direction of f?",
@@ -297,6 +303,7 @@
           "answer": "f is always increasing (f' > 0). For x < 2: concave up (increasing at an increasing rate — like the left half of a hill). For x > 2: concave down (increasing at a decreasing rate — like approaching a plateau). At x = 2: inflection point where the curve changes from concave up to concave down. Shape: like the graph of ln(x) shifted — starts curving up, then bends to curve up more gradually."
         },
         {
+          "id": "aad-wp7",
           "problem": "A rectangle is inscribed under the parabola y = 12 - x^2 with its base on the x-axis. Find the dimensions that maximize the area of the rectangle.",
           "hints": [
             "By symmetry, let the rectangle extend from -x to x along the x-axis. Height = 12 - x^2.",
@@ -306,6 +313,7 @@
           "answer": "A(x) = 2x(12 - x^2) = 24x - 2x^3. Domain: 0 < x < sqrt(12) = 2sqrt(3). A'(x) = 24 - 6x^2. Set 24 - 6x^2 = 0: x^2 = 4, x = 2. A''(x) = -12x. A''(2) = -24 < 0: maximum. Width = 2(2) = 4. Height = 12 - 4 = 8. Maximum area = 4 * 8 = 32."
         },
         {
+          "id": "aad-wp8",
           "problem": "A company needs to build a cylindrical can with volume 500 cubic cm. Find the radius and height that minimize the total surface area (top, bottom, and side).",
           "hints": [
             "Volume constraint: pi*r^2*h = 500, so h = 500/(pi*r^2)",
@@ -324,26 +332,32 @@
       "title": "Analytical Applications of Differentiation — Mastery Practice",
       "problems": [
         {
+          "id": "aad-yp1",
           "problem": "Let f(x) = ln(x) on [1, e^2]. (a) Verify the MVT hypotheses. (b) Find the value of c guaranteed by the MVT. (c) Interpret the result geometrically.",
           "answer": "f(x) = ln(x) is continuous on [1, e^2] and differentiable on (1, e^2). Average rate: [ln(e^2) - ln(1)] / (e^2 - 1) = 2 / (e^2 - 1). f'(x) = 1/x. Set 1/c = 2/(e^2 - 1): c = (e^2 - 1)/2 ≈ 3.195. Check: 1 < 3.195 < e^2 ≈ 7.389. Geometrically: the tangent line at x = c is parallel to the secant line connecting (1, 0) and (e^2, 2)."
         },
         {
+          "id": "aad-yp2",
           "problem": "Find the absolute extrema of f(x) = x^(2/3)(x - 5) on [-1, 5]. Note: check differentiability carefully.",
           "answer": "Expand: f(x) = x^(5/3) - 5x^(2/3). f'(x) = (5/3)x^(2/3) - (10/3)x^(-1/3) = (5/3)x^(-1/3)(x - 2) = 5(x - 2) / (3x^(1/3)). f'(x) = 0 when x = 2. f'(x) DNE when x = 0. Both are critical points in [-1, 5]. Candidates: f(-1) = (-1)^(2/3)(-6) = 1(-6) = -6. f(0) = 0. f(2) = 2^(2/3)(2 - 5) = 2^(2/3)(-3) = -3*cbrt(4) ≈ -4.76. f(5) = 5^(2/3)(0) = 0. Absolute max: 0 at x = 0 and x = 5. Absolute min: -6 at x = -1."
         },
         {
+          "id": "aad-yp3",
           "problem": "The function f is twice differentiable with f(3) = 2, f'(3) = 0, and f''(3) = -5. (a) Does f have a local max, local min, or neither at x = 3? Justify. (b) Is the graph of f concave up or concave down near x = 3? (c) Is the linear approximation of f at x = 3 an overestimate or underestimate for values near x = 3?",
           "answer": "(a) By the Second Derivative Test: f'(3) = 0 and f''(3) = -5 < 0, so f has a local MAXIMUM at x = 3. (b) f''(3) = -5 < 0: concave DOWN near x = 3. (c) When f is concave down, the tangent line lies ABOVE the curve, so the linear approximation is an OVERESTIMATE."
         },
         {
+          "id": "aad-yp4",
           "problem": "(FRQ-style) The graph of f', the derivative of a continuous function f, is shown. f' has x-intercepts at x = -1, x = 2, and x = 5. f'(x) > 0 on (-1, 2) and (5, inf). f'(x) < 0 on (-inf, -1) and (2, 5). f' has a local max at x = 0.5 and a local min at x = 3.5. Given f(2) = 4. (a) Find all x where f has a local maximum. Justify. (b) Find all x where f has an inflection point. Justify. (c) On what intervals is f both increasing and concave down?",
           "answer": "(a) f has a local maximum at x = 2 because f' changes from positive to negative at x = 2. f does NOT have a local max at x = -1 (f' changes - to +, so that's a local min) or x = 5 (f' changes - to +, local min). (b) Inflection points where f' changes from increasing to decreasing or vice versa: at x = 0.5 (f' changes from increasing to decreasing, so f'' changes sign from + to -) and at x = 3.5 (f' changes from decreasing to increasing, so f'' changes sign from - to +). (c) f is increasing where f' > 0: (-1, 2) and (5, inf). f is concave down where f' is decreasing: (0.5, 3.5). Intersection: f is increasing AND concave down on (0.5, 2)."
         },
         {
+          "id": "aad-yp5",
           "problem": "A window is in the shape of a rectangle topped by a semicircle. The perimeter of the window is 20 feet. Find the dimensions that maximize the total area (rectangle plus semicircle).",
           "answer": "Let w = width (also the diameter of the semicircle) and h = height of the rectangular part. Perimeter: w + 2h + (pi*w/2) = 20. So 2h = 20 - w - pi*w/2, giving h = 10 - w/2 - pi*w/4. Area: A = w*h + (1/2)*pi*(w/2)^2 = w*h + pi*w^2/8. Substitute h: A = w(10 - w/2 - pi*w/4) + pi*w^2/8 = 10w - w^2/2 - pi*w^2/4 + pi*w^2/8 = 10w - w^2/2 - pi*w^2/8. A'(w) = 10 - w - pi*w/4 = 10 - w(1 + pi/4). Set A'(w) = 0: w = 10/(1 + pi/4) = 40/(4 + pi). A''(w) = -(1 + pi/4) < 0: confirmed maximum. w = 40/(4 + pi) ≈ 5.60 ft. h = 10 - 20/(4 + pi) - 10*pi/(4 + pi) = (40 + 10*pi - 20 - 10*pi)/(4 + pi) = 20/(4 + pi) ≈ 2.80 ft. Note: h = w/2, so the rectangle is half as tall as it is wide."
         },
         {
+          "id": "aad-yp6",
           "problem": "(FRQ-style) The table gives selected values of a twice-differentiable function g.\n\nx:    0    1    2    3    4    5\ng(x): 8    6    5    5    6    10\n\n(a) Estimate g'(2.5). Show your computation. (b) Does the MVT guarantee a value c in (0, 5) where g'(c) = 2/5? Explain. (c) Is there a value c in (0, 5) where g'(c) = 0? Justify using a theorem. (d) Based on the data, on what interval(s) is g likely concave up?",
           "answer": "(a) g'(2.5) ≈ [g(3) - g(2)] / (3 - 2) = (5 - 5)/1 = 0. (b) Average rate on [0, 5]: [g(5) - g(0)]/(5 - 0) = (10 - 8)/5 = 2/5. Since g is continuous on [0, 5] and differentiable on (0, 5), by the MVT there exists c in (0, 5) with g'(c) = 2/5. YES. (c) On [0, 3]: g(0) = 8, g(3) = 5. Average rate = (5-8)/3 = -1 < 0. On [3, 5]: g(3) = 5, g(5) = 10. Average rate = (10-5)/2 = 5/2 > 0. By MVT, there exists c1 in (0, 3) with g'(c1) = -1 and c2 in (3, 5) with g'(c2) = 5/2. Since g' is continuous (g is twice differentiable) and g'(c1) < 0 < g'(c2), by IVT there exists c between c1 and c2 where g'(c) = 0. (d) Average rates: [0,1]: -2, [1,2]: -1, [2,3]: 0, [3,4]: 1, [4,5]: 4. The average rate of change is increasing throughout, suggesting g' is increasing, meaning g'' > 0. g appears concave up on approximately (1, 5) (the rate of decrease slows, stops, then the rate of increase accelerates)."
         }

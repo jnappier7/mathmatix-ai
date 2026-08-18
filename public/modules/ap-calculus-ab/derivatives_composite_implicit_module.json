@@ -157,6 +157,7 @@
       "title": "Chain Rule, Implicit & Inverse Derivatives Practice",
       "problems": [
         {
+          "id": "dci-wp1",
           "problem": "Find d/dx[e^(sin(x^2))].",
           "hints": [
             "Three layers: outer = e^u, middle = sin(v), inner = x^2",
@@ -166,6 +167,7 @@
           "answer": "e^(sin(x^2)) * cos(x^2) * 2x = 2x cos(x^2) e^(sin(x^2))."
         },
         {
+          "id": "dci-wp2",
           "problem": "Find dy/dx for x*sin(y) + y*cos(x) = 1.",
           "hints": [
             "Differentiate each term: d/dx[x sin(y)] needs the product rule, and differentiating sin(y) requires dy/dx",
@@ -175,6 +177,7 @@
           "answer": "sin(y) + x cos(y)(dy/dx) + cos(x)(dy/dx) - y sin(x) = 0. Factor: (x cos(y) + cos(x))(dy/dx) = y sin(x) - sin(y). So dy/dx = (y sin(x) - sin(y))/(x cos(y) + cos(x))."
         },
         {
+          "id": "dci-wp3",
           "problem": "Let g(x) = 2x^3 + 3x - 5. Given that g(1) = 0, find (g^{-1})'(0).",
           "hints": [
             "Use (g^{-1})'(a) = 1/g'(g^{-1}(a)) with a = 0",
@@ -184,6 +187,7 @@
           "answer": "g'(x) = 6x^2 + 3. g'(1) = 9. So (g^{-1})'(0) = 1/9."
         },
         {
+          "id": "dci-wp4",
           "problem": "Find d/dx[x * arctan(x)].",
           "hints": [
             "This is a product: u = x, v = arctan(x)",
@@ -239,26 +243,32 @@
       "title": "Composite, Implicit & Inverse Derivatives Mastery Practice",
       "problems": [
         {
+          "id": "dci-yp1",
           "problem": "No calculator. Find d/dx[cos^3(2x)] (i.e., d/dx[(cos(2x))^3]).",
           "answer": "Outer = u^3, inner = cos(2x). Chain rule: 3[cos(2x)]^2 * d/dx[cos(2x)] = 3cos^2(2x) * (-sin(2x)) * 2 = -6 sin(2x) cos^2(2x)."
         },
         {
+          "id": "dci-yp2",
           "problem": "No calculator. Find dy/dx for y^3 + xy - x^3 = 7.",
           "answer": "Differentiate: 3y^2(dy/dx) + y + x(dy/dx) - 3x^2 = 0. Collect: (3y^2 + x)(dy/dx) = 3x^2 - y. So dy/dx = (3x^2 - y)/(3y^2 + x)."
         },
         {
+          "id": "dci-yp3",
           "problem": "No calculator. Let f(x) = x^5 + 3x^3 + 2x. Given that f(1) = 6, find (f^{-1})'(6).",
           "answer": "f^{-1}(6) = 1. f'(x) = 5x^4 + 9x^2 + 2. f'(1) = 5 + 9 + 2 = 16. (f^{-1})'(6) = 1/16."
         },
         {
+          "id": "dci-yp4",
           "problem": "No calculator. Find d/dx[arcsin(3x) + arctan(x/2)].",
           "answer": "d/dx[arcsin(3x)] = 3/sqrt(1 - 9x^2). d/dx[arctan(x/2)] = (1/2)/(1 + x^2/4) = 2/(4 + x^2). Sum: 3/sqrt(1 - 9x^2) + 2/(4 + x^2)."
         },
         {
+          "id": "dci-yp5",
           "problem": "No calculator. A particle's position is s(t) = e^(-t) sin(t). Find s'(t) and s''(t). What is the acceleration at t = 0?",
           "answer": "s'(t) = -e^(-t) sin(t) + e^(-t) cos(t) = e^(-t)(cos(t) - sin(t)). s''(t) = -e^(-t)(cos(t) - sin(t)) + e^(-t)(-sin(t) - cos(t)) = e^(-t)(-cos(t) + sin(t) - sin(t) - cos(t)) = -2e^(-t) cos(t). At t = 0: s''(0) = -2e^0 cos(0) = -2."
         },
         {
+          "id": "dci-yp6",
           "problem": "No calculator. Find dy/dx for e^(xy) = x + y. Then evaluate dy/dx at the point (0, 1).",
           "answer": "Differentiate: e^(xy)(y + x(dy/dx)) = 1 + dy/dx. Expand: ye^(xy) + xe^(xy)(dy/dx) = 1 + dy/dx. Collect: (xe^(xy) - 1)(dy/dx) = 1 - ye^(xy). So dy/dx = (1 - ye^(xy))/(xe^(xy) - 1). At (0, 1): e^(0) = 1. dy/dx = (1 - 1*1)/(0*1 - 1) = 0/(-1) = 0."
         }

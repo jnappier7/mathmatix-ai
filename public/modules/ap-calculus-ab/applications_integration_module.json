@@ -120,6 +120,7 @@
       "title": "Average Value & Motion/Net Change Practice",
       "problems": [
         {
+          "id": "ai-wp1",
           "problem": "Find the average value of f(x) = 6x - x² on [0, 6] and find all values c in (0, 6) where f(c) equals the average value.",
           "hints": [
             "Use f_avg = (1/(b-a)) ∫ₐᵇ f(x) dx with a=0, b=6",
@@ -129,6 +130,7 @@
           "answer": "f_avg = (1/6)(36) = 6. Solve 6c - c² = 6 → c² - 6c + 6 = 0 → c = (6 ± √12)/2 = 3 ± √3. Both values 3-√3 ≈ 1.27 and 3+√3 ≈ 4.73 are in (0, 6)."
         },
         {
+          "id": "ai-wp2",
           "problem": "A particle moves with velocity v(t) = t - 3 for 0 ≤ t ≤ 5. Find the displacement and total distance traveled.",
           "hints": [
             "Displacement = ∫₀⁵ (t - 3) dt",
@@ -138,6 +140,7 @@
           "answer": "Displacement = [t²/2 - 3t]₀⁵ = (25/2 - 15) - 0 = -5/2. Total distance: ∫₀³ |t-3| dt + ∫₃⁵ (t-3) dt = ∫₀³ (3-t) dt + ∫₃⁵ (t-3) dt = [3t - t²/2]₀³ + [t²/2 - 3t]₃⁵ = (9 - 9/2) + (25/2 - 15 - 9/2 + 9) = 9/2 + 2 = 13/2."
         },
         {
+          "id": "ai-wp3",
           "problem": "Oil leaks from a tanker at a rate of r(t) = 75e^(-0.03t) gallons per hour. How many gallons leak during the first 10 hours? What is the average rate of leakage over [0, 10]?",
           "hints": [
             "Total leakage = ∫₀¹⁰ 75e^(-0.03t) dt",
@@ -264,6 +267,7 @@
       "title": "Area & Volume Practice",
       "problems": [
         {
+          "id": "ai-wp4",
           "problem": "Find the area enclosed by y = x³ - x and y = 3x. Sketch the region first.",
           "hints": [
             "Set x³ - x = 3x → x³ - 4x = 0 → x(x² - 4) = 0 → x = -2, 0, 2",
@@ -273,6 +277,7 @@
           "answer": "On [-2, 0]: x³ - x ≥ 3x (test x = -1: -1+1 = 0 > -3). On [0, 2]: 3x ≥ x³ - x. By odd symmetry, both integrals are equal. Area = 2 ∫₀² [3x - (x³ - x)] dx = 2 ∫₀² (4x - x³) dx = 2[2x² - x⁴/4]₀² = 2(8 - 4) = 8."
         },
         {
+          "id": "ai-wp5",
           "problem": "A solid has a base bounded by the circle x² + y² = 9. Cross-sections perpendicular to the x-axis are equilateral triangles. Find the volume.",
           "hints": [
             "From the circle: y = ±√(9 - x²). Side length s(x) = 2√(9 - x²)",
@@ -282,6 +287,7 @@
           "answer": "s(x) = 2√(9-x²). A(x) = (√3/4)(2√(9-x²))² = (√3/4)·4(9-x²) = √3(9-x²). V = √3 ∫₋₃³ (9 - x²) dx = 2√3 ∫₀³ (9-x²) dx = 2√3 [9x - x³/3]₀³ = 2√3(27-9) = 36√3."
         },
         {
+          "id": "ai-wp6",
           "problem": "Find the volume of the solid formed by revolving the region bounded by y = eˣ, y = 1, and x = ln 3 about the x-axis.",
           "hints": [
             "Sketch: eˣ ≥ 1 for x ≥ 0. Region from x = 0 to x = ln 3 between y = eˣ (top) and y = 1 (bottom)",
@@ -291,6 +297,7 @@
           "answer": "Bounds: eˣ = 1 at x = 0, and x = ln 3. V = π ∫₀^(ln3) [(eˣ)² - 1²] dx = π ∫₀^(ln3) (e²ˣ - 1) dx = π[e²ˣ/2 - x]₀^(ln3) = π[(e^(2ln3))/2 - ln 3 - 1/2 + 0] = π[(9/2) - ln 3 - 1/2] = π(4 - ln 3)."
         },
         {
+          "id": "ai-wp7",
           "problem": "Find the volume of the solid formed by revolving y = 4 - x² (for y ≥ 0) about the line y = -1.",
           "hints": [
             "4 - x² = 0 → x = ±2. Region from x = -2 to x = 2 above x-axis",
@@ -309,26 +316,32 @@
       "title": "Applications of Integration Mastery Practice",
       "problems": [
         {
+          "id": "ai-yp1",
           "problem": "Find the average value of g(x) = sin(x) on [0, π]. Then find the value c in (0, π) guaranteed by the MVT for Integrals where g(c) = g_avg.",
           "answer": "g_avg = (1/π) ∫₀π sin(x) dx = (1/π)[-cos(x)]₀π = (1/π)(1 + 1) = 2/π. Solve sin(c) = 2/π → c = arcsin(2/π) ≈ 0.690. Since 2/π ≈ 0.637 < 1, c exists in (0, π)."
         },
         {
+          "id": "ai-yp2",
           "problem": "A particle moves along a line with velocity v(t) = sin(πt) - 1/2 for 0 ≤ t ≤ 2. Find the displacement and the total distance traveled.",
           "answer": "Displacement = ∫₀² [sin(πt) - 1/2] dt = [-cos(πt)/π - t/2]₀² = (-cos(2π)/π - 1) - (-cos(0)/π - 0) = (-1/π - 1) - (-1/π) = -1. Find v(t) = 0: sin(πt) = 1/2 → πt = π/6, 5π/6 → t = 1/6, 5/6. Sign: v > 0 on (1/6, 5/6), v < 0 on [0, 1/6] ∪ [5/6, 2]. Total distance = |∫₀^(1/6)| + |∫_(1/6)^(5/6)| + |∫_(5/6)^2|. ∫₀^(1/6) = [-cos(π/6)/π - 1/12] - [-1/π] = [-√3/(2π) - 1/12 + 1/π] = (2-√3)/(2π) - 1/12. ∫_(1/6)^(5/6) = [-cos(5π/6)/π - 5/12] - [-cos(π/6)/π - 1/12] = [√3/(2π) - 5/12] - [-√3/(2π) - 1/12] = √3/π - 1/3. ∫_(5/6)^2 = [-1/π - 1] - [√3/(2π) - 5/12] = -1/π - 1 - √3/(2π) + 5/12 = -(2+√3)/(2π) - 7/12. Total distance = |(2-√3)/(2π) - 1/12| + |√3/π - 1/3| + |(2+√3)/(2π) + 7/12| ≈ 0.0443 + 0.218 + 0.826 ≈ 1.088."
         },
         {
+          "id": "ai-yp3",
           "problem": "Find the area of the region enclosed by y = x² - 2x and y = -x² + 4.",
           "answer": "Set x² - 2x = -x² + 4 → 2x² - 2x - 4 = 0 → x² - x - 2 = 0 → (x-2)(x+1) = 0 → x = -1, 2. On [-1, 2]: top is -x²+4, bottom is x²-2x (test x=0: 4 > 0). Area = ∫₋₁² [(-x²+4)-(x²-2x)] dx = ∫₋₁² (-2x²+2x+4) dx = [-2x³/3 + x² + 4x]₋₁² = (-16/3 + 4 + 8) - (2/3 + 1 - 4) = 20/3 - (-7/3) = 27/3 = 9."
         },
         {
+          "id": "ai-yp4",
           "problem": "A solid has a base bounded by y = x and y = x² (for 0 ≤ x ≤ 1). Cross-sections perpendicular to the x-axis are squares with sides running from y = x² to y = x. Find the volume.",
           "answer": "Side length: s(x) = x - x². Area: A(x) = (x - x²)² = x² - 2x³ + x⁴. Volume = ∫₀¹ (x² - 2x³ + x⁴) dx = [x³/3 - x⁴/2 + x⁵/5]₀¹ = 1/3 - 1/2 + 1/5 = (10 - 15 + 6)/30 = 1/30."
         },
         {
+          "id": "ai-yp5",
           "problem": "Find the volume of the solid formed by revolving the region bounded by y = x² and y = 4 about (a) the x-axis, and (b) the line x = 3.",
           "answer": "(a) Intersections: x² = 4 → x = ±2. Washer: R = 4, r = x². V = π ∫₋₂² (16 - x⁴) dx = 2π ∫₀² (16 - x⁴) dx = 2π[16x - x⁵/5]₀² = 2π(32 - 32/5) = 2π(128/5) = 256π/5. (b) Rewrite as x = √y (right half by symmetry, then double for both sides). Using washers with respect to y from y = 0 to y = 4: R(y) = 3 - (-√y) = 3 + √y, r(y) = 3 - √y. V = π ∫₀⁴ [(3+√y)² - (3-√y)²] dx. Expand: (3+√y)² - (3-√y)² = 12√y. V = π ∫₀⁴ 12√y dy = 12π[2y^(3/2)/3]₀⁴ = 12π(16/3) = 64π."
         },
         {
+          "id": "ai-yp6",
           "problem": "(FRQ-style) Water flows into a reservoir at a rate of R(t) = 100e^(-0.1t) cubic feet per hour and flows out at a constant rate of 40 cubic feet per hour. At t = 0, the reservoir holds 800 cubic feet. (a) Is the amount of water increasing or decreasing at t = 5? (b) Find the average rate of net inflow on [0, 10]. (c) At what time t does the reservoir reach its maximum volume? (d) What is the maximum volume?",
           "answer": "(a) Net rate at t=5: R(5) - 40 = 100e^(-0.5) - 40 ≈ 60.65 - 40 = 20.65 > 0. Increasing. (b) Net inflow rate: R(t) - 40. Average = (1/10)∫₀¹⁰ (100e^(-0.1t) - 40) dt = (1/10)[-1000e^(-0.1t) - 40t]₀¹⁰ = (1/10)[(-1000e^(-1) - 400) - (-1000)] = (1/10)(600 - 1000e^(-1)) ≈ (1/10)(600 - 367.88) = 23.21 ft³/hr. (c) Max when R(t) = 40: 100e^(-0.1t) = 40 → e^(-0.1t) = 0.4 → -0.1t = ln(0.4) → t = -10ln(0.4) = 10ln(2.5) ≈ 9.16 hours. (d) V(t*) = 800 + ∫₀^(10ln2.5) (100e^(-0.1t) - 40) dt = 800 + [-1000e^(-0.1t) - 40t]₀^(10ln2.5). At t*: -1000(0.4) - 40(10ln2.5) = -400 - 400ln(2.5). At 0: -1000. Net change: -400 - 400ln(2.5) + 1000 = 600 - 400ln(2.5) ≈ 600 - 366.5 = 233.5. V_max = 800 + 233.5 ≈ 1033.5 ft³."
         }

@@ -126,6 +126,7 @@
       "title": "Riemann Sums & FTC Practice",
       "problems": [
         {
+          "id": "ia-wp1",
           "problem": "Approximate the integral from 0 to 6 of f(x)dx using a midpoint Riemann sum with 3 equal subintervals, given f(x) = 2x + 3.",
           "hints": [
             "Delta_x = (6-0)/3 = 2",
@@ -135,6 +136,7 @@
           "answer": "Delta_x = 2. Midpoints: 1, 3, 5. MRS = f(1)*2 + f(3)*2 + f(5)*2 = 5*2 + 9*2 + 13*2 = 10 + 18 + 26 = 54. Since f(x) = 2x + 3 is linear, the midpoint sum gives the EXACT value. (Check: integral of (2x+3) from 0 to 6 = [x^2 + 3x] from 0 to 6 = 36 + 18 = 54.)"
         },
         {
+          "id": "ia-wp2",
           "problem": "The table gives selected values of a continuous function f.\n\n| x    | 0  | 3  | 7  | 10 |\n| f(x) | 2  | 5  | 3  | 6  |\n\nUse a left Riemann sum with the three subintervals indicated to approximate the integral from 0 to 10 of f(x)dx. Is this an overestimate or underestimate?",
           "hints": [
             "Subintervals: [0,3], [3,7], [7,10] with widths 3, 4, 3",
@@ -145,6 +147,7 @@
           "answer": "LRS = 2*3 + 5*4 + 3*3 = 6 + 20 + 9 = 35. Since f is neither purely increasing nor purely decreasing over [0, 10], we cannot determine from the given information alone whether this is an overestimate or underestimate."
         },
         {
+          "id": "ia-wp3",
           "problem": "Find d/dx[integral from 0 to x^3 of cos(t^2) dt].",
           "hints": [
             "Upper limit is u(x) = x^3 -- use FTC Part 1 with chain rule",
@@ -154,6 +157,7 @@
           "answer": "By FTC Part 1 with chain rule: cos((x^3)^2) * 3x^2 = 3x^2 * cos(x^6)."
         },
         {
+          "id": "ia-wp4",
           "problem": "Evaluate: integral from 0 to pi of (2cos(x) + 3) dx.",
           "hints": [
             "Antiderivative of cos(x) is sin(x)",

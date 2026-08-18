@@ -155,6 +155,7 @@
       "title": "Polynomial Analysis Practice",
       "problems": [
         {
+          "id": "prf-wp1",
           "problem": "For f(x) = −x⁴ + 6x³ − 9x², find all zeros with multiplicities and describe end behavior and graph behavior at each zero.",
           "hints": [
             "Factor out −x²: f(x) = −x²(x² − 6x + 9)",
@@ -165,6 +166,7 @@
           "answer": "f(x) = −x²(x − 3)². Zeros: x = 0 (multiplicity 2, graph bounces), x = 3 (multiplicity 2, graph bounces). End behavior: degree 4 with leading coefficient −1 < 0 → both ends fall (as x → ±∞, f(x) → −∞). The graph bounces at x = 0 and x = 3, staying at or below the x-axis."
         },
         {
+          "id": "prf-wp2",
           "problem": "Find all zeros of f(x) = 2x³ + x² − 13x + 6 using the Rational Root Theorem and synthetic division.",
           "hints": [
             "Possible rational roots: ±{1, 2, 3, 6, 1/2, 3/2}",
@@ -175,6 +177,7 @@
           "answer": "Possible rational roots: ±{1, 2, 3, 6, 1/2, 3/2}. f(2) = 16 + 4 − 26 + 6 = 0. Synthetic division: [2, 1, −13, 6] ÷ (x − 2) → [2, 5, −3, 0]. Quotient: 2x² + 5x − 3 = (2x − 1)(x + 3). Zeros: x = 2, x = 1/2, x = −3, all multiplicity 1."
         },
         {
+          "id": "prf-wp3",
           "problem": "Use synthetic division to divide f(x) = 2x⁴ − x³ + 3x − 5 by (x + 2). State the quotient, remainder, and f(−2).",
           "hints": [
             "Include 0 for missing x² term: [2, −1, 0, 3, −5]",
@@ -236,6 +239,7 @@
       "title": "Rational Function Practice",
       "problems": [
         {
+          "id": "prf-wp4",
           "problem": "Fully analyze f(x) = (x² + x − 6)/(x² − 9): domain, VA, HA, holes, intercepts.",
           "hints": [
             "Factor: num = (x+3)(x−2), den = (x−3)(x+3)",
@@ -246,6 +250,7 @@
           "answer": "f(x) = (x+3)(x−2)/((x−3)(x+3)). Hole at x = −3, y = (−3−2)/(−3−3) = 5/6, so hole at (−3, 5/6). Simplified: (x−2)/(x−3). VA: x = 3. HA: y = 1 (equal degrees, ratio 1/1). x-int: x = 2, so (2,0). y-int: f(0) = (−2)/(−3) = 2/3, so (0, 2/3). Domain: x ≠ −3 and x ≠ 3."
         },
         {
+          "id": "prf-wp5",
           "problem": "For g(x) = (x³ − x)/(x² − 1), simplify and find domain, asymptotes, holes, intercepts.",
           "hints": [
             "Factor: num = x(x²−1) = x(x−1)(x+1), den = (x−1)(x+1)",
@@ -256,6 +261,7 @@
           "answer": "g(x) = x(x−1)(x+1)/((x−1)(x+1)) = x, with x ≠ 1 and x ≠ −1. Holes at (1, 1) and (−1, −1). The simplified function is the line y = x. No VA, no HA. Domain: (−∞,−1)∪(−1,1)∪(1,∞). x-int: (0,0). y-int: (0,0)."
         },
         {
+          "id": "prf-wp6",
           "problem": "For h(x) = (x² + 2x + 1)/(x + 3), find the oblique asymptote and all key features.",
           "hints": [
             "Degree 2 over degree 1 → oblique asymptote exists",
@@ -315,6 +321,7 @@
       "skill": "polynomial-rational-inequalities",
       "problems": [
         {
+          "id": "prf-wp7",
           "problem": "Solve x⁴ − 5x² + 4 ≤ 0.",
           "hints": [
             "Factor: (x²−4)(x²−1) = (x−2)(x+2)(x−1)(x+1)",
@@ -325,6 +332,7 @@
           "answer": "(x−2)(x+2)(x−1)(x+1) ≤ 0. Intervals: (−∞,−2): + . (−2,−1): − . (−1,1): + . (1,2): − . (2,∞): + . Need ≤ 0: include negative intervals and zeros. Solution: [−2, −1] ∪ [1, 2]."
         },
         {
+          "id": "prf-wp8",
           "problem": "Solve (2x − 1)/(x + 4) > 3.",
           "hints": [
             "Subtract 3: (2x−1)/(x+4) − 3 > 0",
@@ -335,6 +343,7 @@
           "answer": "(2x−1)/(x+4) − 3 > 0 → (−x−13)/(x+4) > 0. Critical values: x = −13 (zero), x = −4 (undefined). Sign analysis: (−∞,−13): (positive)/(negative) = negative. (−13,−4): (negative)/(negative) = positive. (−4,∞): (negative)/(positive) = negative. Solution: (−13, −4). Strict inequality, so endpoints excluded."
         },
         {
+          "id": "prf-wp9",
           "problem": "Solve x³ − x² − 6x ≥ 0.",
           "hints": [
             "Factor: x(x² − x − 6) = x(x − 3)(x + 2)",
@@ -353,26 +362,32 @@
       "title": "Polynomial & Rational Functions Mastery Practice",
       "problems": [
         {
+          "id": "prf-yp1",
           "problem": "For f(x) = −3x⁵ + 7x⁴ − 2x + 9, determine the end behavior, maximum number of turning points, and maximum number of real zeros.",
           "answer": "Degree 5 (odd), leading coefficient −3 (negative). End behavior: as x → −∞, f(x) → +∞; as x → +∞, f(x) → −∞. Maximum turning points: 4. Maximum real zeros: 5."
         },
         {
+          "id": "prf-yp2",
           "problem": "Find all zeros (real and complex) of f(x) = x⁴ − 2x³ − 3x² + 8x − 4. (Hint: x = 1 is a zero.)",
           "answer": "Synthetic division by (x−1): [1,−2,−3,8,−4] → [1,−1,−4,4,0]. Quotient: x³−x²−4x+4. Test x = 1 again: 1−1−4+4 = 0. Synthetic division: [1,−1,−4,4] → [1,0,−4,0]. Quotient: x²−4 = (x−2)(x+2). All zeros: x = 1 (multiplicity 2), x = 2, x = −2. All real, all multiplicity 1 except x = 1."
         },
         {
+          "id": "prf-yp3",
           "problem": "Divide f(x) = 4x³ − 7x + 3 by (x + 2) using synthetic division. State quotient, remainder, and verify f(−2).",
           "answer": "Coefficients (include 0 for x²): [4, 0, −7, 3], c = −2. Bring down 4. 4(−2)=−8, 0+(−8)=−8. −8(−2)=16, −7+16=9. 9(−2)=−18, 3+(−18)=−15. Quotient: 4x² − 8x + 9, Remainder: −15. f(−2) = 4(−8) − 7(−2) + 3 = −32 + 14 + 3 = −15. ✓"
         },
         {
+          "id": "prf-yp4",
           "problem": "Fully analyze f(x) = (2x² − 8)/(x² − 5x + 6): domain, VA, HA, holes, intercepts.",
           "answer": "Factor: num = 2(x²−4) = 2(x−2)(x+2), den = (x−2)(x−3). Common factor (x−2) → hole at x = 2. Simplified: 2(x+2)/(x−3), x ≠ 2. Hole y-value: 2(2+2)/(2−3) = 8/(−1) = −8, hole at (2,−8). VA: x = 3. HA: degrees equal → y = 2/1 = 2. x-int: x+2 = 0 → x = −2, so (−2,0). y-int: f(0) = 2(2)/(−3) = −4/3, so (0,−4/3). Domain: x ≠ 2, x ≠ 3."
         },
         {
+          "id": "prf-yp5",
           "problem": "For g(x) = (x³ + 2x² − x + 6)/(x + 3), find the oblique asymptote and determine if there's a hole or a VA at x = −3.",
           "answer": "Test if (x+3) is a factor: synthetic division with c = −3. [1, 2, −1, 6]. Bring down 1. 1(−3)=−3, 2+(−3)=−1. −1(−3)=3, −1+3=2. 2(−3)=−6, 6+(−6)=0. Remainder = 0, so (x+3) IS a factor → hole at x = −3, NOT a VA. g(x) = x² − x + 2, x ≠ −3. This is a parabola with a hole at x = −3, y = 9+3+2 = 14, hole at (−3, 14). No VA, no HA, no oblique asymptote (the function reduces to a polynomial)."
         },
         {
+          "id": "prf-yp6",
           "problem": "Solve (x − 1)/(x + 2) ≤ (x + 3)/(x − 4).",
           "answer": "Subtract: (x−1)/(x+2) − (x+3)/(x−4) ≤ 0. Common denominator (x+2)(x−4): ((x−1)(x−4) − (x+3)(x+2))/((x+2)(x−4)) ≤ 0. Expand numerator: (x²−5x+4) − (x²+5x+6) = −10x − 2. So (−10x−2)/((x+2)(x−4)) ≤ 0. Factor numerator: −2(5x+1). Critical values: x = −1/5 (zero), x = −2 (undefined), x = 4 (undefined). Sign analysis: (−∞,−2): test x=−3: −2(−14)/((−1)(−7)) = 28/7 > 0. (−2,−1/5): test x=−1: −2(−4)/((1)(−5)) = 8/(−5) < 0. (−1/5,4): test x=0: −2(1)/((2)(−4)) = −2/(−8) > 0. (4,∞): test x=5: −2(26)/((7)(1)) = −52/7 < 0. Need ≤ 0. Include x = −1/5 (zero); exclude −2, 4 (undefined). Solution: (−2, −1/5] ∪ (4, ∞)."
         }

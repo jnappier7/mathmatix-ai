@@ -119,6 +119,7 @@
       "title": "Radians & Unit Circle Practice",
       "problems": [
         {
+          "id": "tf-wp1",
           "problem": "A sprinkler rotates through 3π/4 radians. If the water reaches 20 feet, find: (a) the arc length of the watered area boundary, (b) the total area watered.",
           "hints": [
             "s = rθ = 20(3π/4)",
@@ -127,6 +128,7 @@
           "answer": "(a) s = 20(3π/4) = 15π ≈ 47.12 feet. (b) A = (1/2)(400)(3π/4) = 150π ≈ 471.24 sq ft."
         },
         {
+          "id": "tf-wp2",
           "problem": "Evaluate without a calculator: (a) sin(4π/3), (b) cos(-3π/4), (c) tan(11π/6), (d) sec(2π/3).",
           "hints": [
             "4π/3: Q3, ref π/3",
@@ -137,6 +139,7 @@
           "answer": "(a) sin(4π/3) = -√3/2 (Q3, ref π/3). (b) cos(-3π/4) = cos(5π/4) = -√2/2 (Q3, ref π/4). (c) tan(11π/6) = -tan(π/6) = -√3/3 (Q4, ref π/6). (d) sec(2π/3) = 1/cos(2π/3) = 1/(-1/2) = -2 (Q2, ref π/3)."
         },
         {
+          "id": "tf-wp3",
           "problem": "Find all angles θ in [0, 2π) satisfying: (a) cos θ = -1/2, (b) sin θ = -√2/2.",
           "hints": [
             "(a) cos = -1/2: ref angle π/3, cos negative in Q2 and Q3",
@@ -193,6 +196,7 @@
       "skill": "trig-function-graphs",
       "problems": [
         {
+          "id": "tf-wp4",
           "problem": "For y = -2·cos(3x - π) + 4, rewrite in standard form and find all key features.",
           "hints": [
             "Factor: -2·cos(3(x - π/3)) + 4",
@@ -203,6 +207,7 @@
           "answer": "y = -2·cos(3(x - π/3)) + 4. Amplitude: 2. Period: 2π/3. Phase shift: π/3 right. Midline: y = 4. Max: 6. Min: 2. Since A < 0, starts at minimum (y = 2) at x = π/3."
         },
         {
+          "id": "tf-wp5",
           "problem": "A temperature model is T(t) = 15·sin(π/12·(t - 8)) + 65, where t is hours past midnight. Find: (a) max/min temperatures and when they occur, (b) the period, (c) T(14).",
           "hints": [
             "Amplitude 15, midline 65",
@@ -213,6 +218,7 @@
           "answer": "(a) Max: 80°F at t=14 (2:00 PM). Min: 50°F at t=2 (2:00 AM). (b) Period: 24 hours. (c) T(14) = 15·sin(π/12·6) + 65 = 15·sin(π/2) + 65 = 15(1) + 65 = 80°F."
         },
         {
+          "id": "tf-wp6",
           "problem": "Write the equation of a sinusoidal function that passes through (0, 3), has maximum value 7, minimum value -1, and period π.",
           "hints": [
             "Midline: (7+(-1))/2 = 3, Amplitude: (7-(-1))/2 = 4",
@@ -232,6 +238,7 @@
       "title": "We-Do: Sinusoidal Modeling — Guided Practice",
       "problems": [
         {
+          "id": "tf-wp7",
           "problem": "A Ferris wheel has a diameter of 40 m and its lowest point sits 2 m above the ground. It completes one rotation every 80 seconds, and a rider boards at the lowest point. Write a function h(t) for the rider's height above the ground t seconds after boarding.",
           "hints": [
             "Pull the four parameters out one at a time. Amplitude is half the diameter; the midline is the height of the CENTRE of the wheel, not the lowest point.",
@@ -241,6 +248,7 @@
           "answer": "Amplitude A = 40/2 = 20. The centre of the wheel is 20 m above the lowest point, so the midline is D = 2 + 20 = 22. Period 80 gives B = 2π/80 = π/40. Boarding at the lowest point means starting at the minimum, which is what -cos does: h(t) = -20·cos((π/40)t) + 22. Check: h(0) = -20(1) + 22 = 2 m ✓ (lowest point), h(40) = -20(-1) + 22 = 42 m ✓ (top, which is 2 + 40), and h(80) = 2 ✓ (back to the bottom after one rotation)."
         },
         {
+          "id": "tf-wp8",
           "problem": "At a harbour, high tide is 5.2 m at 3:00 and the next low tide is 1.4 m at 9:00. Model the water depth d(t) as a sinusoidal function of t, the number of hours after midnight.",
           "hints": [
             "Amplitude is half the DIFFERENCE between high and low; the midline is their average. Compute both before worrying about the period.",
@@ -250,6 +258,7 @@
           "answer": "Amplitude A = (5.2 - 1.4)/2 = 1.9 m. Midline D = (5.2 + 1.4)/2 = 3.3 m. High tide to the following low tide is half a period: 9 - 3 = 6 hours, so the period is 12 hours and B = 2π/12 = π/6. The maximum is at t = 3, so use cosine with a phase shift of 3: d(t) = 1.9·cos((π/6)(t - 3)) + 3.3. Check: d(3) = 1.9(1) + 3.3 = 5.2 ✓, d(9) = 1.9(-1) + 3.3 = 1.4 ✓, and d(15) = 5.2 ✓ — the next high tide, 12 hours after the first."
         },
         {
+          "id": "tf-wp9",
           "problem": "Using the Ferris wheel model h(t) = -20·cos((π/40)t) + 22, find every time during the first full rotation when the rider is exactly 32 m above the ground.",
           "hints": [
             "Set the model equal to 32 and isolate the cosine before doing anything trigonometric.",
@@ -259,6 +268,7 @@
           "answer": "Set h(t) = 32: -20·cos((π/40)t) + 22 = 32, so -20·cos((π/40)t) = 10 and cos((π/40)t) = -1/2. Over one rotation the argument (π/40)t ranges across [0, 2π], and cosine equals -1/2 at 2π/3 and 4π/3. Solving: (π/40)t = 2π/3 gives t = 80/3 ≈ 26.7 s, and (π/40)t = 4π/3 gives t = 160/3 ≈ 53.3 s. Both check: h(80/3) = h(160/3) = 32 ✓. Two answers is exactly right — the rider passes 32 m once going up and once coming down."
         },
         {
+          "id": "tf-wp10",
           "problem": "A sinusoidal function has midline y = 12, amplitude 5, period 8, and a minimum at x = 2. Write an equation for it.",
           "hints": [
             "Three of the four parameters read straight off: A = 5, D = 12, and B comes from the period via B = 2π/period.",
@@ -319,6 +329,7 @@
       "skill": "fundamental-trig-identities",
       "problems": [
         {
+          "id": "tf-wp11",
           "problem": "Simplify: (sec²θ - 1)/sec²θ.",
           "hints": [
             "sec²θ - 1 = tan²θ (Pythagorean)",
@@ -328,6 +339,7 @@
           "answer": "(sec²θ - 1)/sec²θ = tan²θ/sec²θ = (sin²θ/cos²θ) · cos²θ = sin²θ."
         },
         {
+          "id": "tf-wp12",
           "problem": "Verify: csc θ - sin θ = cos θ · cot θ.",
           "hints": [
             "LHS: 1/sin θ - sin θ = (1 - sin²θ)/sin θ",
@@ -337,6 +349,7 @@
           "answer": "LHS: csc θ - sin θ = (1 - sin²θ)/sin θ = cos²θ/sin θ = cos θ · (cos θ/sin θ) = cos θ · cot θ = RHS. ✓"
         },
         {
+          "id": "tf-wp13",
           "problem": "Simplify: (1 + tan²θ)/(1 + cot²θ).",
           "hints": [
             "1 + tan²θ = sec²θ",
@@ -397,6 +410,7 @@
       "skill": "solving-trig-equations",
       "problems": [
         {
+          "id": "tf-wp14",
           "problem": "Solve on [0, 2π): 2·cos(x) + √3 = 0.",
           "hints": [
             "cos(x) = -√3/2",
@@ -406,6 +420,7 @@
           "answer": "cos(x) = -√3/2. Ref angle: π/6. Q2: x = π - π/6 = 5π/6. Q3: x = π + π/6 = 7π/6. Solutions: {5π/6, 7π/6}."
         },
         {
+          "id": "tf-wp15",
           "problem": "Solve on [0, 2π): sin(2x) = √3/2.",
           "hints": [
             "Let u = 2x, solve sin(u) = √3/2 first",
@@ -416,6 +431,7 @@
           "answer": "sin(2x) = √3/2. 2x = π/3, 2π/3, 7π/3, 8π/3 (all in [0, 4π)). x = π/6, π/3, 7π/6, 4π/3. Solutions: {π/6, π/3, 7π/6, 4π/3}."
         },
         {
+          "id": "tf-wp16",
           "problem": "Solve on [0, 2π): 2·sin²(x) - sin(x) = 0.",
           "hints": [
             "Factor: sin(x)(2sin(x) - 1) = 0",
@@ -433,26 +449,32 @@
       "title": "Trigonometry Foundations Mastery Practice",
       "problems": [
         {
+          "id": "tf-yp1",
           "problem": "A pendulum swings through an angle of 5π/12 radians. If the pendulum is 80 cm long, find the arc length of the swing.",
           "answer": "s = rθ = 80(5π/12) = 400π/12 = 100π/3 ≈ 104.72 cm."
         },
         {
+          "id": "tf-yp2",
           "problem": "Evaluate without a calculator: sin(7π/6) + cos(5π/3) - tan(3π/4).",
           "answer": "sin(7π/6) = -1/2 (Q3, ref π/6). cos(5π/3) = 1/2 (Q4, ref π/3). tan(3π/4) = -1 (Q2, ref π/4). Sum: -1/2 + 1/2 - (-1) = 0 + 1 = 1."
         },
         {
+          "id": "tf-yp3",
           "problem": "For y = -4·cos(π/3·(x + 1)) + 2, find amplitude, period, phase shift, midline, max, and min.",
           "answer": "Amplitude: 4. Period: 2π/(π/3) = 6. Phase shift: 1 unit left. Midline: y = 2. Max: 2 + 4 = 6. Min: 2 - 4 = -2. Since A < 0, graph starts at minimum at x = -1."
         },
         {
+          "id": "tf-yp4",
           "problem": "Verify: (sin θ + cos θ)² = 1 + 2·sin θ·cos θ.",
           "answer": "LHS: sin²θ + 2·sin θ·cos θ + cos²θ = (sin²θ + cos²θ) + 2·sin θ·cos θ = 1 + 2·sin θ·cos θ = RHS. ✓"
         },
         {
+          "id": "tf-yp5",
           "problem": "Solve on [0, 2π): 4·cos²(x) - 3 = 0.",
           "answer": "cos²(x) = 3/4 → cos(x) = ±√3/2. cos(x) = √3/2: x = π/6, 11π/6. cos(x) = -√3/2: x = 5π/6, 7π/6. Solutions: {π/6, 5π/6, 7π/6, 11π/6}."
         },
         {
+          "id": "tf-yp6",
           "problem": "The height (in meters) of a Ferris wheel seat is modeled by h(t) = -18·cos(πt/5) + 20, where t is in minutes. (a) Find the diameter and the height of the center. (b) Find h(2.5). (c) How long for one revolution? (d) At what times in the first revolution is the seat at 30 m?",
           "answer": "(a) Amplitude = 18 → radius = 18 m → diameter = 36 m. Center height = midline = 20 m. Min height = 20 - 18 = 2 m (platform height). (b) h(2.5) = -18cos(π(2.5)/5) + 20 = -18cos(π/2) + 20 = -18(0) + 20 = 20 m. (c) Period = 2π/(π/5) = 10 minutes. (d) 30 = -18cos(πt/5) + 20 → cos(πt/5) = -10/18 = -5/9. πt/5 = arccos(-5/9) ≈ 2.0137. t = 5(2.0137)/π ≈ 3.204 min. Also πt/5 = 2π - 2.0137 ≈ 4.2695. t ≈ 5(4.2695)/π ≈ 6.796 min. Seat is at 30 m at t ≈ 3.20 min and t ≈ 6.80 min."
         }

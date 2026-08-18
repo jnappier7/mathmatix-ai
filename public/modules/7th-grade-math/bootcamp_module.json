@@ -239,6 +239,7 @@
       "title": "Boot Camp Guided Practice — Integers, Fractions, and Expressions",
       "problems": [
         {
+          "id": "boo-wp1",
           "problem": "At 6 AM the temperature was -8 degrees F. By noon it rose 15 degrees, and by midnight it dropped 22 degrees from the noon temperature. What was the midnight temperature?",
           "hints": [
             "Start at -8. Rising 15 degrees means ADD 15.",
@@ -248,6 +249,7 @@
           "answer": "-15 degrees F"
         },
         {
+          "id": "boo-wp2",
           "problem": "Simplify: (-3)(5) + (-4)^2 - 12 / (-3)",
           "hints": [
             "Follow order of operations: exponents and multiply/divide before adding.",
@@ -257,6 +259,7 @@
           "answer": "5"
         },
         {
+          "id": "boo-wp3",
           "problem": "A water tank is 3/4 full. After using 2/5 of the water in the tank, what fraction of the FULL tank remains?",
           "hints": [
             "You are using 2/5 OF the 3/4 that is in the tank. 'Of' means multiply.",
@@ -266,6 +269,7 @@
           "answer": "9/20"
         },
         {
+          "id": "boo-wp4",
           "problem": "Compute: 3.5 - (-2.75) + 0.8",
           "hints": [
             "Subtracting a negative: 3.5 - (-2.75) = 3.5 + 2.75.",
@@ -275,6 +279,7 @@
           "answer": "7.05"
         },
         {
+          "id": "boo-wp5",
           "problem": "Simplify: 3(2x - 4) + 5x - 2(x + 6)",
           "hints": [
             "Distribute 3: 6x - 12. Distribute -2: -2x - 12.",
@@ -284,6 +289,7 @@
           "answer": "9x - 24"
         },
         {
+          "id": "boo-wp6",
           "problem": "Write and simplify an expression: Carlos buys x packs of baseball cards at $3 each and 4 binders at $5 each. He uses a $7 coupon. Write an expression for his total cost.",
           "hints": [
             "Cards cost: 3x. Binders cost: 4(5) = 20.",
@@ -302,6 +308,7 @@
       "title": "Boot Camp Guided Practice — Equations and Coordinate Plane",
       "problems": [
         {
+          "id": "boo-wp7",
           "problem": "Solve and check: 5x - 8 = 22",
           "hints": [
             "Add 8 to both sides: 5x = 30.",
@@ -311,6 +318,7 @@
           "answer": "x = 6"
         },
         {
+          "id": "boo-wp8",
           "problem": "Solve: -3x + 4 = -11",
           "hints": [
             "Subtract 4 from both sides: -3x = -15.",
@@ -320,6 +328,7 @@
           "answer": "x = 5"
         },
         {
+          "id": "boo-wp9",
           "problem": "Solve: x/3 + 7 = 2",
           "hints": [
             "Subtract 7 from both sides: x/3 = -5.",
@@ -329,6 +338,7 @@
           "answer": "x = -15"
         },
         {
+          "id": "boo-wp10",
           "problem": "A gym charges a $25 registration fee plus $10 per month. Jada has paid $85 total. How many months has she been a member? Write and solve an equation.",
           "hints": [
             "Let m = number of months. Equation: 10m + 25 = 85.",
@@ -338,6 +348,7 @@
           "answer": "m = 6"
         },
         {
+          "id": "boo-wp11",
           "problem": "Point M is at (5, -3). (a) What quadrant is M in? (b) Reflect M over the y-axis and name the new point. (c) Find the distance between M and the point (5, 4).",
           "hints": [
             "(a) x is positive, y is negative → Quadrant IV.",
@@ -347,6 +358,7 @@
           "answer": "(a) Quadrant IV, (b) (-5, -3), (c) 7 units"
         },
         {
+          "id": "boo-wp12",
           "problem": "A triangle has vertices at A(-3, 1), B(4, 1), and C(4, -5). Find the lengths of sides AB and BC.",
           "hints": [
             "A and B share y = 1. AB = |(-3) - 4| = |-7| = 7 units.",
@@ -365,62 +377,77 @@
       "title": "Boot Camp Mastery Practice",
       "problems": [
         {
+          "id": "boo-yp1",
           "problem": "Simplify: -6 + (-4) - (-10) + 3 - 8",
           "answer": "-5"
         },
         {
+          "id": "boo-yp2",
           "problem": "Evaluate: (-2)^3 + 5(-3) - (-18)/6",
           "answer": "-20"
         },
         {
+          "id": "boo-yp3",
           "problem": "A diver is 40 feet below sea level and ascends 18 feet, then descends 9 feet. Write an integer expression and find the diver's final position.",
           "answer": "-40 + 18 + (-9) = -31 feet (31 feet below sea level)"
         },
         {
+          "id": "boo-yp4",
           "problem": "Compute: 5/6 - 1/4 + 2/3",
           "answer": "5/4 or 1 1/4"
         },
         {
+          "id": "boo-yp5",
           "problem": "Mia has 2 1/4 pounds of trail mix. She gives 3/8 of a pound to each of 4 friends. How much trail mix does she have left?",
           "answer": "2 1/4 - 4(3/8) = 9/4 - 12/8 = 9/4 - 3/2 = 9/4 - 6/4 = 3/4 pound"
         },
         {
+          "id": "boo-yp6",
           "problem": "Compute: 12.5 - 8.73 + (-3.2)",
           "answer": "0.57"
         },
         {
+          "id": "boo-yp7",
           "problem": "Simplify: 7x - 3 + 2x - 8 + x",
           "answer": "10x - 11"
         },
         {
+          "id": "boo-yp8",
           "problem": "Simplify: -2(4x - 5) + 3(x + 2)",
           "answer": "-5x + 16"
         },
         {
+          "id": "boo-yp9",
           "problem": "Simplify: 6 - 3(2x - 1) + 4x",
           "answer": "-2x + 9"
         },
         {
+          "id": "boo-yp10",
           "problem": "Solve: 4x + 7 = -9",
           "answer": "x = -4"
         },
         {
+          "id": "boo-yp11",
           "problem": "Solve: -x/5 + 3 = 7",
           "answer": "x = -20"
         },
         {
+          "id": "boo-yp12",
           "problem": "Marcus has $54 in his savings account. He saves $8 per week from his allowance. After how many weeks will he have $102? Write and solve an equation.",
           "answer": "8w + 54 = 102 → 8w = 48 → w = 6 weeks"
         },
         {
+          "id": "boo-yp13",
           "problem": "Name the quadrant or axis for each point: (a) (-7, 2), (b) (4, 0), (c) (1, -9), (d) (0, -3).",
           "answer": "(a) Quadrant II, (b) x-axis, (c) Quadrant IV, (d) y-axis"
         },
         {
+          "id": "boo-yp14",
           "problem": "Point P is at (-2, 6). Reflect P over the x-axis to get point Q. What are the coordinates of Q? What is the distance from P to Q?",
           "answer": "Q = (-2, -6). Distance = |6 - (-6)| = 12 units"
         },
         {
+          "id": "boo-yp15",
           "problem": "A rectangle has vertices at (-3, -1), (-3, 5), (4, 5), and (4, -1). What are the length and width? What is the area?",
           "answer": "Length = |4 - (-3)| = 7 units, Width = |5 - (-1)| = 6 units, Area = 42 square units"
         }

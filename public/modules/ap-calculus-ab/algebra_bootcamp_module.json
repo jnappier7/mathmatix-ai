@@ -147,6 +147,7 @@
       "title": "Function Behavior & Algebra Repair Practice",
       "problems": [
         {
+          "id": "ab-wp1",
           "problem": "For f(x) = (2x² + 3x - 5)/(x² - 1), find: (a) vertical asymptotes and holes, (b) horizontal asymptote, (c) behavior near each VA.",
           "hints": [
             "Factor numerator and denominator",
@@ -156,6 +157,7 @@
           "answer": "Factor: (2x+5)(x-1)/((x-1)(x+1)). Hole at x=1: f(1) = 7/2. VA at x=-1. HA: y=2 (same degree). Near x=-1: from left, f→+∞; from right, f→-∞."
         },
         {
+          "id": "ab-wp2",
           "problem": "Rewrite for power rule and state the derivative (preview): f(x) = 3/x² + 5√x - 1/∛x.",
           "hints": [
             "3/x² = 3x⁻²",
@@ -165,6 +167,7 @@
           "answer": "f(x) = 3x⁻² + 5x^(1/2) - x^(-1/3). [Derivative preview: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (1/3)x^(-4/3)]."
         },
         {
+          "id": "ab-wp3",
           "problem": "Evaluate all six trig functions at θ = 5π/4.",
           "hints": [
             "Q3: sin and cos both negative, tan positive",
@@ -174,6 +177,7 @@
           "answer": "sin(5π/4) = -√2/2. cos(5π/4) = -√2/2. tan(5π/4) = 1. csc = -√2. sec = -√2. cot = 1."
         },
         {
+          "id": "ab-wp4",
           "problem": "Solve: ln(x²) - ln(x + 3) = ln(4). Check your answer.",
           "hints": [
             "Condense left side",
@@ -225,26 +229,32 @@
       "title": "Bootcamp Mastery Practice",
       "problems": [
         {
+          "id": "ab-yp1",
           "problem": "For g(x) = (x³ - 8)/(x² - 4), simplify, find all asymptotes and holes, and state end behavior.",
           "answer": "Factor: (x-2)(x²+2x+4)/((x-2)(x+2)). Hole at x=2: g(2) = (4+4+4)/(4) = 3. Simplified: (x²+2x+4)/(x+2). VA: x = -2. No HA (degree numerator > denominator). Oblique asymptote: long division gives y = x. End behavior: g(x) → ±∞ as x → ±∞."
         },
         {
+          "id": "ab-yp2",
           "problem": "Simplify to a single value or expression: (a) e^(3ln2 - ln4), (b) ln(e²·e⁵)/ln(e³), (c) 8^(2/3)·27^(-1/3).",
           "answer": "(a) e^(ln(8/4)) = e^(ln2) = 2. (b) ln(e⁷)/ln(e³) = 7/3. (c) (∛8)²·(1/∛27) = 4·(1/3) = 4/3."
         },
         {
+          "id": "ab-yp3",
           "problem": "Without a calculator, evaluate: (a) cos(11π/6), (b) sin(3π/4), (c) tan(-π/6), (d) csc(2π/3), (e) sin²(5π/4) + cos²(5π/4).",
           "answer": "(a) √3/2. (b) √2/2. (c) -√3/3 (or -1/√3). (d) 2√3/3 (or 2/√3). (e) 1 (Pythagorean identity, always)."
         },
         {
+          "id": "ab-yp4",
           "problem": "The amount of a medication in the bloodstream (mg) is modeled by A(t) = 200·(0.85)ᵗ where t is hours. (a) What is the initial dose? (b) What percentage is eliminated per hour? (c) Estimate the average rate of change from t=0 to t=3. (d) Will A(t) ever reach 0?",
           "answer": "(a) A(0) = 200 mg. (b) 15% eliminated per hour (decay factor 0.85). (c) A(3) = 200·(0.85)³ = 200·0.614125 = 122.825. Average rate = (122.825-200)/3 ≈ -25.7 mg/hr. (d) No — exponential decay approaches 0 but never reaches it (horizontal asymptote y=0)."
         },
         {
+          "id": "ab-yp5",
           "problem": "Verify the identity: (sin x + cos x)² = 1 + sin(2x).",
           "answer": "LHS: sin²x + 2sin x cos x + cos²x = (sin²x + cos²x) + 2sin x cos x = 1 + 2sin x cos x. Since sin(2x) = 2sin x cos x, LHS = 1 + sin(2x) = RHS ✓."
         },
         {
+          "id": "ab-yp6",
           "problem": "The graph of f shows f(0)=2, f(2)=6, f(4)=6, f(6)=2. The graph increases on [0,2], is flat on [2,4], and decreases on [4,6]. (a) Find the average rate of change on [0,6]. (b) On which interval is the average rate of change greatest? (c) Describe what the graph of f' would look like.",
           "answer": "(a) (f(6)-f(0))/(6-0) = (2-2)/6 = 0. (b) [0,2]: (6-2)/2 = 2. [2,4]: 0. [4,6]: (2-6)/2 = -2. Greatest: [0,2] with rate 2. (c) f' > 0 on (0,2) (positive), f' = 0 on (2,4) (zero), f' < 0 on (4,6) (negative). f' starts positive, reaches zero, stays zero, then goes negative."
         }

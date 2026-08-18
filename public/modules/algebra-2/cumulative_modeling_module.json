@@ -69,6 +69,7 @@
       "title": "We-Do: Function Analysis Comparison — Guided Practice",
       "problems": [
         {
+          "id": "cm-wp1",
           "question": "The Richter scale: an earthquake of magnitude M releases energy E where log(E) = 11.8 + 1.5M. (a) Find the energy released by a magnitude 6.0 earthquake. (b) How many times more energy does a magnitude 7 release than a magnitude 6?",
           "answer": "(a) log(E) = 11.8 + 1.5(6) = 20.8. E = 10^20.8 ≈ 6.31 × 10²⁰ ergs. (b) E₇/E₆ = 10^(1.5(7) - 1.5(6)) = 10^1.5 ≈ 31.6 times more energy.",
           "hints": [
@@ -77,6 +78,7 @@
           ]
         },
         {
+          "id": "cm-wp2",
           "question": "A company's revenue R (thousands) depends on price p: R(p) = -2p² + 80p - 200. (a) Find the price that maximizes revenue. (b) What is the maximum revenue? (c) For what prices is revenue at least $400,000?",
           "answer": "(a) p = -80/(2(-2)) = 20. Price = $20. (b) R(20) = -2(400) + 80(20) - 200 = -800 + 1600 - 200 = 600. Max revenue = $600,000. (c) -2p²+80p-200 ≥ 400 → -2p²+80p-600 ≥ 0 → p²-40p+300 ≤ 0 → (p-10)(p-30) ≤ 0 → 10 ≤ p ≤ 30.",
           "hints": [
@@ -86,6 +88,7 @@
           ]
         },
         {
+          "id": "cm-wp3",
           "question": "Data shows these populations: Year 0: 500, Year 2: 620, Year 4: 769, Year 6: 954. (a) Show this is exponential by checking ratios. (b) Find the annual growth rate. (c) Write the model and predict Year 10.",
           "answer": "(a) 620/500 = 1.24, 769/620 = 1.24, 954/769 = 1.24. Constant ratio over 2-year intervals. (b) 2-year ratio = 1.24, so annual ratio = √1.24 ≈ 1.1136. Growth rate ≈ 11.36% per year. (c) P(t) = 500(1.1136)^t. P(10) = 500(1.1136)^10 ≈ 500(2.932) ≈ 1466.",
           "hints": [
@@ -188,6 +191,7 @@
       "title": "We-Do: Real World Problem Solving — Guided Practice",
       "problems": [
         {
+          "id": "cm-wp4",
           "question": "A farmer has 200 meters of fencing to enclose a rectangular pen against a barn (only 3 sides need fencing). (a) Express the area as a function of the width x. (b) Find the dimensions that maximize the area. (c) What is the maximum area?",
           "answer": "(a) Length = 200 - 2x, so A(x) = x(200 - 2x) = -2x² + 200x. (b) x = -200/(2(-2)) = 50 meters. Length = 200 - 100 = 100 meters. (c) A = 50 × 100 = 5,000 m².",
           "hints": [
@@ -197,6 +201,7 @@
           ]
         },
         {
+          "id": "cm-wp5",
           "question": "An investment of $10,000 grows at 6% compounded annually. A second account starts at $15,000 growing at 3% compounded annually. When will the first account overtake the second?",
           "answer": "10000(1.06)^t = 15000(1.03)^t → (1.06/1.03)^t = 1.5 → t·ln(1.06/1.03) = ln(1.5) → t = ln(1.5)/ln(1.06/1.03) ≈ 0.4055/0.02871 ≈ 14.12. After about 14 years.",
           "hints": [
@@ -206,6 +211,7 @@
           ]
         },
         {
+          "id": "cm-wp6",
           "question": "A town's average monthly temperature follows T(m) = 22sin(π(m-4)/6) + 58 where m is the month (1 = Jan). (a) What are the hottest and coldest average temperatures? (b) During which months is the average temperature above 70°F?",
           "answer": "(a) Amplitude = 22, midline = 58. Max = 80°F, Min = 36°F. (b) 22sin(π(m-4)/6) + 58 > 70 → sin(π(m-4)/6) > 12/22 = 6/11 ≈ 0.5455. sin⁻¹(0.5455) ≈ 0.577 rad. Solutions: π(m-4)/6 is between 0.577 and π-0.577 = 2.565. So m-4 is between 1.10 and 4.90, meaning m is between 5.1 and 8.9. Temperature is above 70°F during months 6, 7, 8 (June through August).",
           "hints": [
@@ -225,6 +231,7 @@
       "title": "You-Do: Course Synthesis — Independent Practice",
       "problems": [
         {
+          "id": "cm-yp1",
           "question": "MODELING: Classify each situation and write an appropriate function. (a) A radioactive substance has a half-life of 30 days, starting with 200g. (b) A pendulum completes a full swing every 2 seconds, with max displacement of 15 cm. (c) A taxi charges $3.50 plus $2.75 per mile.",
           "answer": "(a) Exponential decay: A(t) = 200(1/2)^(t/30). (b) Trigonometric: d(t) = 15cos(πt) [period = 2, so B = 2π/2 = π]. (c) Linear: C(m) = 2.75m + 3.50.",
           "hints": [
@@ -234,6 +241,7 @@
           ]
         },
         {
+          "id": "cm-yp2",
           "question": "MULTI-STEP: A ball is launched upward from a 96-foot building at 80 ft/s. h(t) = -16t² + 80t + 96. (a) When does it hit the ground? (b) During what time interval is it above 200 feet?",
           "answer": "(a) -16t² + 80t + 96 = 0 → t² - 5t - 6 = 0 → (t-6)(t+1) = 0 → t = 6 seconds (t = -1 rejected). (b) -16t² + 80t + 96 > 200 → -16t² + 80t - 104 > 0 → 2t² - 10t + 13 < 0. Discriminant: 100-104 = -4 < 0. Since a > 0 and discriminant < 0, 2t² - 10t + 13 > 0 always. The ball NEVER reaches 200 feet. Max height = h(2.5) = -16(6.25) + 200 + 96 = 196 ft.",
           "hints": [
@@ -243,6 +251,7 @@
           ]
         },
         {
+          "id": "cm-yp3",
           "question": "INTEGRATION: A bacteria population doubles every 3 hours starting from 1000. Simultaneously, an antibiotic kills bacteria at a constant rate of 100 per hour after being administered at t = 6 hours. (a) Write the population model for 0 ≤ t < 6. (b) Find the population at t = 6. (c) Write a recursive model for t ≥ 6 (per hour).",
           "answer": "(a) P(t) = 1000 · 2^(t/3) for 0 ≤ t < 6. (b) P(6) = 1000 · 2² = 4000. (c) For each hour after t = 6: hourly growth factor = 2^(1/3) ≈ 1.26. P(n+1) = 1.26 · P(n) - 100 where P(6) = 4000.",
           "hints": [
@@ -252,6 +261,7 @@
           ]
         },
         {
+          "id": "cm-yp4",
           "question": "DATA ANALYSIS: Test scores: 72, 85, 90, 68, 92, 78, 88, 95, 82, 76. (a) Find the mean and standard deviation. (b) If scores are approximately normal, what range contains about 68% of students? (c) What z-score corresponds to the student who scored 95?",
           "answer": "(a) Mean = 826/10 = 82.6. Deviations²: 112.36, 5.76, 54.76, 212.96, 88.36, 21.16, 29.16, 153.76, 0.36, 43.56. Variance = 722.2/10 = 72.22. σ ≈ 8.50. (b) 68% range: 82.6 ± 8.50 → 74.1 to 91.1. (c) z = (95 - 82.6)/8.50 ≈ 1.46.",
           "hints": [

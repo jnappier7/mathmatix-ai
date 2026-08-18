@@ -148,6 +148,7 @@
       "title": "Conic Sections Practice",
       "problems": [
         {
+          "id": "agpp-wp1",
           "problem": "Identify the conic and find all features: 9x²+4y²-36x+8y-104=0.",
           "hints": [
             "Group: 9(x²-4x)+4(y²+2y)=104",
@@ -158,6 +159,7 @@
           "answer": "Ellipse. (x-2)²/16+(y+1)²/36=1. Center (2,-1). a=6, b=4 (vertical major). Vertices: (2,-7) and (2,5). Co-vertices: (-2,-1) and (6,-1). c²=36-16=20→c=2√5. Foci: (2,-1±2√5). e=2√5/6≈0.745."
         },
         {
+          "id": "agpp-wp2",
           "problem": "Write the equation of a parabola with vertex at (-1, 4) and focus at (-1, 2).",
           "hints": [
             "Vertical axis, p = 2-4 = -2 (opens down)",
@@ -166,6 +168,7 @@
           "answer": "(x+1)² = -8(y-4). Focus: (-1,2). Directrix: y=6."
         },
         {
+          "id": "agpp-wp3",
           "problem": "For x²/4 - y²/12 = 1, find foci, asymptotes, and eccentricity.",
           "hints": [
             "a²=4, b²=12. Horizontal transverse.",
@@ -273,6 +276,7 @@
       "title": "Parametric & Polar Practice",
       "problems": [
         {
+          "id": "agpp-wp4",
           "problem": "Eliminate the parameter: x = 2sec(t), y = 3tan(t).",
           "hints": [
             "sec²t - tan²t = 1",
@@ -282,6 +286,7 @@
           "answer": "x²/4 - y²/9 = 1. Hyperbola."
         },
         {
+          "id": "agpp-wp5",
           "problem": "Convert the polar equation r = 6sin θ to rectangular form and identify the curve.",
           "hints": [
             "Multiply both sides by r: r² = 6r sin θ",
@@ -291,6 +296,7 @@
           "answer": "x² + (y-3)² = 9. Circle centered at (0, 3) with radius 3."
         },
         {
+          "id": "agpp-wp6",
           "problem": "Describe the polar curve r = 2 + 3cos θ. What type is it? Any special features?",
           "hints": [
             "Form r = a + b cos θ with a=2, b=3",
@@ -309,26 +315,32 @@
       "title": "Analytic Geometry Mastery Practice",
       "problems": [
         {
+          "id": "agpp-yp1",
           "problem": "Find the equation of a parabola with focus (4, -1) and directrix x = -2. Identify vertex and axis of symmetry.",
           "answer": "Horizontal axis. Vertex: midpoint of focus and directrix point → ((4+(-2))/2, -1) = (1, -1). p = 4-1 = 3. Equation: (y+1)² = 12(x-1). Axis: y = -1."
         },
         {
+          "id": "agpp-yp2",
           "problem": "For 9x² + 25y² = 225, find center, vertices, foci, and eccentricity.",
           "answer": "Divide by 225: x²/25 + y²/9 = 1. Center (0,0). a=5, b=3 (horizontal major). Vertices: (±5, 0). Co-vertices: (0, ±3). c²=25-9=16→c=4. Foci: (±4, 0). e = 4/5 = 0.8."
         },
         {
+          "id": "agpp-yp3",
           "problem": "For y²/9 - x²/16 = 1, find vertices, foci, asymptotes.",
           "answer": "Vertical transverse. a²=9→a=3, b²=16→b=4. Vertices: (0, ±3). c²=9+16=25→c=5. Foci: (0, ±5). Asymptotes: y = ±(3/4)x."
         },
         {
+          "id": "agpp-yp4",
           "problem": "Eliminate the parameter: x = 4cos(t) + 1, y = 4sin(t) - 2.",
           "answer": "cos(t) = (x-1)/4, sin(t) = (y+2)/4. sin²t + cos²t = 1: ((x-1)/4)² + ((y+2)/4)² = 1 → (x-1)² + (y+2)² = 16. Circle centered at (1, -2) with radius 4."
         },
         {
+          "id": "agpp-yp5",
           "problem": "Convert the rectangular equation x² + y² = 6x to polar form.",
           "answer": "r² = 6r cos θ → r = 6cos θ. Circle with diameter 6, centered at (3, 0)."
         },
         {
+          "id": "agpp-yp6",
           "problem": "For the polar curve r = 4cos(3θ), identify the type of curve and find the number of petals.",
           "answer": "Rose curve with n = 3 (odd). Number of petals = 3. Each petal has length 4. Petals at θ = 0, 2π/3, 4π/3."
         }

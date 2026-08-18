@@ -117,6 +117,7 @@
       "title": "Slope Fields & Separable DEs Practice",
       "problems": [
         {
+          "id": "de-wp1",
           "problem": "For dy/dx = y/x, determine the slopes at (1,1), (1,2), (2,1), (-1,1), and (1,-1). What do the solution curves look like?",
           "hints": [
             "Plug each point into dy/dx = y/x",
@@ -126,6 +127,7 @@
           "answer": "Slopes: (1,1)→1, (1,2)→2, (2,1)→1/2, (-1,1)→-1, (1,-1)→-1. Solution curves are lines through the origin: separate (1/y)dy = (1/x)dx → ln|y| = ln|x| + C → y = Kx. Each solution curve is a straight line through the origin with slope K."
         },
         {
+          "id": "de-wp2",
           "problem": "Solve dy/dx = 6x²/(2y + cos y). Find the general solution.",
           "hints": [
             "Separate: (2y + cos y) dy = 6x² dx",
@@ -135,6 +137,7 @@
           "answer": "Separate: (2y + cos y) dy = 6x² dx. Integrate: y² + sin y = 2x³ + C. This is the general solution in implicit form (cannot be solved for y explicitly)."
         },
         {
+          "id": "de-wp3",
           "problem": "Solve dy/dx = (1 + y²) with y(0) = 1.",
           "hints": [
             "Separate: dy/(1+y²) = dx",
@@ -144,6 +147,7 @@
           "answer": "Separate: dy/(1+y²) = dx. Integrate: arctan(y) = x + C. IC y(0) = 1: arctan(1) = 0 + C → C = π/4. So arctan(y) = x + π/4, hence y = tan(x + π/4). Domain: -3π/4 < x < π/4."
         },
         {
+          "id": "de-wp4",
           "problem": "A slope field has horizontal segments along the line y = 3, positive slopes below y = 3, and negative slopes above y = 3. The slopes do not depend on x. Which DE fits: (A) dy/dx = 3 - y, (B) dy/dx = y - 3, (C) dy/dx = 3y, (D) dy/dx = x - 3? Solve the DE with y(0) = 1.",
           "hints": [
             "Horizontal segments where dy/dx = 0 → check which option gives 0 at y = 3",
@@ -200,6 +204,7 @@
       "title": "Exponential Growth & Decay Practice",
       "problems": [
         {
+          "id": "de-wp5",
           "problem": "A population of fish grows according to dP/dt = 0.15P. If there are 2000 fish initially, (a) find P(t), (b) find the population after 10 years, (c) find the doubling time.",
           "hints": [
             "This is dy/dt = ky with k = 0.15 and y₀ = 2000",
@@ -209,6 +214,7 @@
           "answer": "(a) P(t) = 2000e^(0.15t). (b) P(10) = 2000e^(1.5) ≈ 2000·4.4817 ≈ 8963 fish. (c) t_double = ln(2)/0.15 ≈ 0.693/0.15 ≈ 4.62 years."
         },
         {
+          "id": "de-wp6",
           "problem": "A radioactive isotope decays so that after 20 years, only 30% of the original amount remains. Find the half-life.",
           "hints": [
             "Set up: y(20) = 0.30·y₀",
@@ -218,6 +224,7 @@
           "answer": "0.30·y₀ = y₀·e^(20k) → e^(20k) = 0.30 → 20k = ln(0.30) ≈ -1.204 → k ≈ -0.0602. Half-life = ln(2)/|k| = 0.693/0.0602 ≈ 11.51 years."
         },
         {
+          "id": "de-wp7",
           "problem": "An investment earns interest continuously at rate r, modeled by dA/dt = 0.06A. If $5000 is invested, how long until the investment reaches $12000?",
           "hints": [
             "A(t) = 5000e^(0.06t)",
@@ -236,22 +243,27 @@
       "title": "Differential Equations Mastery Practice",
       "problems": [
         {
+          "id": "de-yp1",
           "problem": "For dy/dx = x/y with y > 0, (a) solve the separable DE, (b) find the particular solution with y(0) = 4, (c) describe what the solution curves look like geometrically.",
           "answer": "Separate: y dy = x dx. Integrate: y²/2 = x²/2 + C → y² - x² = K. (a) General solution: y² = x² + K (y > 0 so y = √(x²+K)). (b) y(0) = 4: 16 = 0 + K → K = 16, so y = √(x²+16). (c) The solution curves are the upper halves of hyperbolas (y > 0) centered at the origin with transverse axis along the y-axis."
         },
         {
+          "id": "de-yp2",
           "problem": "A slope field is given for dy/dx = y(2 - y). (a) Find all equilibrium solutions (where dy/dx = 0 for all x). (b) For what values of y is dy/dx > 0? dy/dx < 0? (c) Sketch the solution curve through (0, 1) and describe its long-term behavior.",
           "answer": "(a) dy/dx = 0 when y = 0 or y = 2. Equilibrium solutions: y = 0 and y = 2. (b) dy/dx > 0 when 0 < y < 2 (both factors positive). dy/dx < 0 when y > 2 (y positive, 2-y negative) or y < 0 (y negative, 2-y positive). (c) Starting at (0,1): 0 < 1 < 2 so dy/dx > 0 — the curve increases. As y approaches 2, dy/dx → 0, so the curve levels off and approaches y = 2 asymptotically. Long-term behavior: y → 2."
         },
         {
+          "id": "de-yp3",
           "problem": "(FRQ-style) Let dy/dx = 2x·e^(-y). (a) Sketch the slope field at the six points where x = -1, 0, 1 and y = 0, 1. (b) Find the particular solution with y(0) = 0.",
           "answer": "(a) Slopes: (-1,0): 2(-1)e⁰ = -2, (0,0): 0, (1,0): 2, (-1,1): -2e⁻¹ ≈ -0.74, (0,1): 0, (1,1): 2e⁻¹ ≈ 0.74. Draw segments at these points. (b) Separate: e^y dy = 2x dx. Integrate: e^y = x² + C. IC y(0)=0: e⁰ = 0 + C → C = 1. So e^y = x² + 1 → y = ln(x² + 1)."
         },
         {
+          "id": "de-yp4",
           "problem": "A 50-gram sample of a substance decays at a rate proportional to its mass. After 8 hours, 32 grams remain. (a) Find the decay model. (b) What is the half-life? (c) When will only 10 grams remain?",
           "answer": "(a) dM/dt = kM → M(t) = 50e^(kt). At t=8: 32 = 50e^(8k) → e^(8k) = 0.64 → k = ln(0.64)/8 ≈ -0.0558. M(t) = 50e^(-0.0558t). (b) Half-life = ln(2)/0.0558 ≈ 12.42 hours. (c) 10 = 50e^(-0.0558t) → e^(-0.0558t) = 0.2 → t = ln(0.2)/(-0.0558) ≈ 28.83 hours."
         },
         {
+          "id": "de-yp5",
           "problem": "(FRQ-style) At time t = 0, a tank contains 150 liters of a solution. Fresh solution flows in and the well-mixed solution flows out such that the amount of solute S(t) satisfies dS/dt = -S/50. (a) Find S(t) given S(0) = 90 grams. (b) Find lim(t→∞) S(t) and interpret in context. (c) At what time is S(t) = 15 grams?",
           "answer": "(a) Separate: dS/S = -dt/50. Integrate: ln|S| = -t/50 + C. S(0)=90: ln(90)=C. So S(t) = 90e^(-t/50). (b) lim(t→∞) S(t) = lim(t→∞) 90e^(-t/50) = 0. In context: over time, the solute is completely flushed from the tank. (c) 15 = 90e^(-t/50) → e^(-t/50) = 1/6 → -t/50 = ln(1/6) = -ln 6 → t = 50·ln 6 ≈ 89.59 minutes."
         }

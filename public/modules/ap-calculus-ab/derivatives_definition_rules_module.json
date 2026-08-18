@@ -307,6 +307,7 @@
       "title": "Derivatives Practice: Definition, Rules & Common Functions",
       "problems": [
         {
+          "id": "ddr-wp1",
           "problem": "Use the limit definition to find f'(x) for f(x) = 3x² - x + 4.",
           "hints": [
             "Compute f(x+h) = 3(x+h)² - (x+h) + 4",
@@ -316,6 +317,7 @@
           "answer": "f(x+h) - f(x) = 6xh + 3h² - h. Divide by h: 6x + 3h - 1. As h→0: f'(x) = 6x - 1."
         },
         {
+          "id": "ddr-wp2",
           "problem": "For f(x) = {2x², x ≤ 1; 4x - 2, x > 1}, determine if f is differentiable at x = 1.",
           "hints": [
             "First check continuity: do both pieces give the same value at x = 1?",
@@ -325,6 +327,7 @@
           "answer": "Continuity: lim(x→1⁻) 2(1)² = 2. lim(x→1⁺) 4(1)-2 = 2. f(1) = 2. Continuous. Left derivative: d/dx(2x²) at x=1 = 4(1) = 4. Right derivative: d/dx(4x-2) = 4. Left = right = 4. Differentiable, f'(1) = 4."
         },
         {
+          "id": "ddr-wp3",
           "problem": "Differentiate: y = (x³ + 2x)/(sin x).",
           "hints": [
             "Use the quotient rule",
@@ -334,6 +337,7 @@
           "answer": "Quotient rule: y' = [(3x² + 2)sin x - (x³ + 2x)cos x] / sin²x."
         },
         {
+          "id": "ddr-wp4",
           "problem": "A company's revenue is R(t) = 120t - 3t² thousand dollars, where t is months after launch. Find and interpret R'(10).",
           "hints": [
             "Differentiate: R'(t) = 120 - 6t",
@@ -399,26 +403,32 @@
       "title": "Derivatives: Definition & Basic Rules Mastery Practice",
       "problems": [
         {
+          "id": "ddr-yp1",
           "problem": "Use the limit definition to find f'(x) for f(x) = 1/(2x + 1).",
           "answer": "f'(x) = lim(h→0) [1/(2(x+h)+1) - 1/(2x+1)] / h. Common denominator: [(2x+1) - (2x+2h+1)] / [h(2x+2h+1)(2x+1)] = -2h / [h(2x+2h+1)(2x+1)] = -2/[(2x+2h+1)(2x+1)]. As h→0: f'(x) = -2/(2x+1)²."
         },
         {
+          "id": "ddr-yp2",
           "problem": "Differentiate: g(x) = x⁴·cos x + 3eˣ.",
           "answer": "Product rule on first term: g'(x) = 4x³·cos x + x⁴·(-sin x) + 3eˣ = 4x³cos x - x⁴sin x + 3eˣ."
         },
         {
+          "id": "ddr-yp3",
           "problem": "For f(x) = {x³, x ≤ 0; x², x > 0}, is f differentiable at x = 0? Justify completely.",
           "answer": "Continuity: lim(x→0⁻) 0³ = 0, lim(x→0⁺) 0² = 0, f(0) = 0. Continuous. Left derivative: d/dx(x³) at 0 = 3(0)² = 0. Right derivative: d/dx(x²) at 0 = 2(0) = 0. Left = right = 0. Differentiable, f'(0) = 0."
         },
         {
+          "id": "ddr-yp4",
           "problem": "Differentiate: y = (sin x + eˣ)/(x² + 1).",
           "answer": "Quotient rule: y' = [(cos x + eˣ)(x² + 1) - (sin x + eˣ)(2x)] / (x² + 1)²."
         },
         {
+          "id": "ddr-yp5",
           "problem": "The population of a city (thousands) is given in a table: t (years since 2000) = 0, 5, 10, 15, 20 with P(t) = 85, 102, 126, 143, 155. Estimate P'(10) and interpret in context.",
           "answer": "P'(10) ≈ [P(15) - P(5)] / (15 - 5) = (143 - 102)/10 = 4.1 thousand people per year. At the year 2010, the city's population was increasing at approximately 4,100 people per year."
         },
         {
+          "id": "ddr-yp6",
           "problem": "A graph of a function f is described: f passes through (0, 1), increases steeply to (1, 4) with slope ≈ 4, levels off with a horizontal tangent at (2, 5), then decreases through (3, 3) with slope ≈ -3, and has a corner at x = 4. State: (a) f'(0), (b) f'(2), (c) f'(3), (d) f'(4).",
           "answer": "(a) f'(0): the graph increases through (0,1); estimate from the described steepness — f'(0) ≈ 2 (initial slope before the steep part). (b) f'(2) = 0 (horizontal tangent). (c) f'(3) ≈ -3 (slope of tangent at that point, given as ≈ -3). (d) f'(4) does not exist (corner)."
         }

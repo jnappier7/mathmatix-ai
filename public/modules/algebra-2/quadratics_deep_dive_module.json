@@ -109,6 +109,7 @@
       "title": "We-Do: Quadratic Solving All Methods — Guided Practice",
       "problems": [
         {
+          "id": "qdd-wp1",
           "question": "Solve x² - 6x + 5 = 0 using ALL four methods.",
           "answer": "x = 1 and x = 5 (all methods give the same answer)",
           "hints": [
@@ -119,6 +120,7 @@
           ]
         },
         {
+          "id": "qdd-wp2",
           "question": "Solve by completing the square: 2x² + 8x - 3 = 0.",
           "answer": "x = -2 ± √(22)/2 (or equivalently x = (-4 ± √22)/2)",
           "hints": [
@@ -128,6 +130,7 @@
           ]
         },
         {
+          "id": "qdd-wp3",
           "question": "Without solving, how many real solutions does 3x² - 2x + 5 = 0 have? What type are the solutions?",
           "answer": "No real solutions (two complex conjugate solutions). D = 4 - 60 = -56 < 0.",
           "hints": [
@@ -169,6 +172,7 @@
       "title": "We-Do: Complex Number Arithmetic — Guided Practice",
       "problems": [
         {
+          "id": "qdd-wp4",
           "question": "Simplify: (5 - 2i)(3 + 4i).",
           "answer": "23 + 14i",
           "hints": [
@@ -177,6 +181,7 @@
           ]
         },
         {
+          "id": "qdd-wp5",
           "question": "Simplify: (4 + i)/(2 - 3i).",
           "answer": "(5 + 14i)/13",
           "hints": [
@@ -228,6 +233,7 @@
       "title": "We-Do: Parabola Transformations — Guided Practice",
       "problems": [
         {
+          "id": "qdd-wp6",
           "question": "Describe the graph transformations: y = -3(x + 2)² + 5 compared to y = x².",
           "answer": "Reflect over x-axis, vertical stretch by 3, shift left 2, shift up 5. Vertex at (-2, 5), opens down.",
           "hints": [
@@ -237,6 +243,7 @@
           ]
         },
         {
+          "id": "qdd-wp7",
           "question": "Identify the vertex of y = (1/2)(x - 4)² - 3 and describe every transformation from the parent y = x².",
           "hints": [
             "Match it to y = a(x - h)² + k and read off a, h and k before interpreting anything.",
@@ -246,6 +253,7 @@
           "answer": "a = 1/2, h = 4, k = -3. Vertical compression by a factor of 1/2 (wider than the parent), shifted right 4 and down 3. Vertex (4, -3), opening upward since a > 0."
         },
         {
+          "id": "qdd-wp8",
           "question": "Write the equation of the parabola formed by reflecting y = x² across the x-axis, stretching it vertically by a factor of 4, then shifting it left 5 and up 2.",
           "hints": [
             "Translate each phrase into one of a, h or k. Reflection and stretch both live in a.",
@@ -255,6 +263,7 @@
           "answer": "y = -4(x + 5)² + 2. Check the vertex: at x = -5, y = -4(0) + 2 = 2, so the vertex is (-5, 2) ✓."
         },
         {
+          "id": "qdd-wp9",
           "question": "Convert y = 2(x - 1)² - 8 to standard form, then find its x-intercepts.",
           "hints": [
             "Expand (x - 1)² first, then distribute the 2 and combine with the -8.",
@@ -274,6 +283,7 @@
       "title": "You-Do: Complex Numbers — Independent Practice",
       "problems": [
         {
+          "id": "qdd-yp1",
           "question": "Convert y = -x² + 8x - 12 to vertex form and factored form.",
           "answer": "Vertex: y = -(x - 4)² + 4. Factored: y = -(x - 2)(x - 6).",
           "hints": [
@@ -282,6 +292,7 @@
           ]
         },
         {
+          "id": "qdd-yp2",
           "question": "Which solving method is most efficient? Solve: (3x - 1)² = 20.",
           "answer": "Square root method. x = (1 ± 2√5)/3.",
           "hints": [
@@ -290,6 +301,7 @@
           ]
         },
         {
+          "id": "qdd-yp3",
           "question": "Use the discriminant to match: (a) x²+6x+9=0, (b) x²+2x+5=0, (c) x²-5x+2=0. Which has 1 repeated real, 2 complex, or 2 distinct real solutions?",
           "answer": "(a) D=0 → 1 repeated real. (b) D=-16 → 2 complex. (c) D=17 → 2 distinct real.",
           "hints": [
@@ -297,6 +309,7 @@
           ]
         },
         {
+          "id": "qdd-yp4",
           "question": "Simplify i⁴⁵ + i¹⁰⁰ + i²³.",
           "answer": "1",
           "hints": [
@@ -307,6 +320,7 @@
           ]
         },
         {
+          "id": "qdd-yp5",
           "question": "Solve: 2x² - 3x + 5 = 0. Express answers in a + bi form.",
           "answer": "x = (3 ± i√31)/4",
           "hints": [

@@ -28,6 +28,7 @@
  *   unhandled step type  formatScaffoldStep has no case for it, so the step
  *                        renders as an empty teaching block
  *   missing answer key   a problem the checkpoint grader cannot mark
+ *   missing problem id  a problem no answer key or progress record can name
  *   duplicate problem id two problems sharing one id, so they share an answer
  *                        key and a progress record
  *
@@ -123,10 +124,13 @@ function checkModule(md, label) {
       if (!answered) {
         failures.push(`problem "${p.id || (p.question || p.problem || '?').slice(0, 40)}" has no answer`);
       }
-      // A problem id must be unique within its module: answerKeys is a flat map
-      // keyed by id, and courseSession records attempts by id, so two problems
-      // sharing one id silently share an answer key and a progress record.
-      if (p.id) {
+      // Every problem needs an id, and it must be unique within its module:
+      // answerKeys is a flat map keyed by id and courseSession records attempts
+      // by id, so a missing id can never be looked up and a shared one silently
+      // shares an answer key and a progress record.
+      if (!p.id) {
+        failures.push(`problem "${(p.question || p.problem || '?').slice(0, 40)}" has no id`);
+      } else {
         if (seenIds.has(p.id)) {
           failures.push(`problem id "${p.id}" is used more than once in this module`);
         }

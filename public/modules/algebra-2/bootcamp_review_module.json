@@ -85,6 +85,7 @@
       "title": "We-Do: Compound Inequalities — Guided Practice",
       "problems": [
         {
+          "id": "br-wp1",
           "question": "Solve: 5(x - 2) - 3(x + 1) = 2x - 13. Classify as one solution, no solution, or infinitely many.",
           "answer": "0 = 0 → infinitely many solutions (identity)",
           "hints": [
@@ -93,6 +94,7 @@
           ]
         },
         {
+          "id": "br-wp2",
           "question": "Solve and graph: |2x - 3| > 5.",
           "answer": "x < -1 or x > 4",
           "hints": [
@@ -101,6 +103,7 @@
           ]
         },
         {
+          "id": "br-wp3",
           "question": "Given f(x) = 3x² - 2x + 1, find f(-2) and f(a + 1).",
           "answer": "f(-2) = 17; f(a+1) = 3a² + 4a + 2",
           "hints": [
@@ -218,6 +221,7 @@
       "title": "We-Do: Exponent Rules Radicals — Guided Practice",
       "problems": [
         {
+          "id": "br-wp4",
           "question": "Simplify: (3x⁻²y⁴)² / (9x³y⁻¹)",
           "answer": "y⁹ / x⁷",
           "hints": [
@@ -225,6 +229,7 @@
           ]
         },
         {
+          "id": "br-wp5",
           "question": "Factor completely: 3x³ - 12x² - 15x.",
           "answer": "3x(x - 5)(x + 1)",
           "hints": [
@@ -232,6 +237,7 @@
           ]
         },
         {
+          "id": "br-wp6",
           "question": "Factor: x⁴ - 16.",
           "answer": "(x² + 4)(x + 2)(x - 2)",
           "hints": [
@@ -279,6 +285,7 @@
       "title": "You-Do: Graphing Lines — Independent Practice",
       "problems": [
         {
+          "id": "br-yp1",
           "question": "Solve: 4(2x - 1) + 3 = 2(3x + 5) - 1.",
           "answer": "x = 5",
           "hints": [
@@ -286,6 +293,7 @@
           ]
         },
         {
+          "id": "br-yp2",
           "question": "Solve: -3 ≤ 2x + 5 < 11.",
           "answer": "-4 ≤ x < 3",
           "hints": [
@@ -293,6 +301,7 @@
           ]
         },
         {
+          "id": "br-yp3",
           "question": "If f(x) = x² - 4x + 3, find the domain and range. Where does f(x) = 0?",
           "answer": "Domain: all reals. Range: y ≥ -1 (vertex at (2,-1)). f(x) = 0 at x = 1, 3.",
           "hints": [
@@ -300,6 +309,7 @@
           ]
         },
         {
+          "id": "br-yp4",
           "question": "Simplify: (4x⁵y⁻³)³ / (8x⁻¹y²)²",
           "answer": "x¹⁷ / y¹³",
           "hints": [
@@ -307,6 +317,7 @@
           ]
         },
         {
+          "id": "br-yp5",
           "question": "Factor completely: 2x³ + 16.",
           "answer": "2(x + 2)(x² - 2x + 4)",
           "hints": [
@@ -314,6 +325,7 @@
           ]
         },
         {
+          "id": "br-yp6",
           "question": "Write the equation of the line parallel to y = -2x + 5 that passes through (1, 4).",
           "answer": "y = -2x + 6",
           "hints": [

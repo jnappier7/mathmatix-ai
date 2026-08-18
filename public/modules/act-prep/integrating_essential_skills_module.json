@@ -118,6 +118,7 @@
       "title": "Multi-Step & Application Practice",
       "problems": [
         {
+          "id": "ies-wp1",
           "problem": "A runner jogs at 6 mph for 30 minutes, then walks at 3 mph for 1 hour. What is the total distance?\n(A) 3 miles  (B) 4.5 miles  (C) 6 miles  (D) 9 miles  (E) 12 miles",
           "hints": [
             "Convert 30 minutes to 0.5 hours",
@@ -126,6 +127,7 @@
           "answer": "(C) 6 miles. Jog: 6(0.5) = 3 mi. Walk: 3(1) = 3 mi. Total = 6 mi."
         },
         {
+          "id": "ies-wp2",
           "problem": "A rectangular pool (20 ft × 40 ft) has a 3-foot-wide walkway around it. What is the area of just the walkway?\n(A) 396  (B) 408  (C) 472  (D) 800  (E) 1,196",
           "hints": [
             "Outer rectangle: (20+6) × (40+6) = 26 × 46",
@@ -134,6 +136,7 @@
           "answer": "(B) 408. Outer: 26 × 46 = 1,196. Pool: 800. Walkway: 1,196 − 800 = 396. Wait: 26 × 46 = 1196. 1196 − 800 = 396. Answer: (A) 396."
         },
         {
+          "id": "ies-wp3",
           "problem": "A restaurant bill is $65. After an 8% tax and a 20% tip (on the pre-tax amount), what is the total?\n(A) $78.00  (B) $81.20  (C) $83.20  (D) $85.80  (E) $89.70",
           "hints": [
             "Tax: $65 × 0.08 = $5.20",
@@ -143,6 +146,7 @@
           "answer": "(C) $83.20. Tax = $5.20. Tip = $13.00. Total = 65 + 5.20 + 13.00 = $83.20."
         },
         {
+          "id": "ies-wp4",
           "problem": "A recipe requires 2 cups of flour for 12 cookies. How many cups are needed for 42 cookies?\n(A) 3.5  (B) 5  (C) 7  (D) 21  (E) 84",
           "hints": [
             "Set up proportion: 2/12 = x/42",
@@ -197,6 +201,7 @@
       "title": "Word Problems & Unit Conversion Practice",
       "problems": [
         {
+          "id": "ies-wp5",
           "problem": "Maria is 4 years older than twice Juan's age. If Maria is 26, how old is Juan?\n(A) 9  (B) 11  (C) 13  (D) 15  (E) 22",
           "hints": [
             "Let j = Juan's age",
@@ -205,6 +210,7 @@
           "answer": "(B) 11. 2j + 4 = 26 → 2j = 22 → j = 11."
         },
         {
+          "id": "ies-wp6",
           "problem": "A 5K race is 5 kilometers. How many miles is that, to the nearest tenth? (1 mile ≈ 1.609 km)\n(A) 2.9 mi  (B) 3.1 mi  (C) 3.5 mi  (D) 5.0 mi  (E) 8.0 mi",
           "hints": [
             "Divide: 5 km ÷ 1.609 km/mi",
@@ -213,6 +219,7 @@
           "answer": "(B) 3.1 mi. 5 / 1.609 ≈ 3.1 miles."
         },
         {
+          "id": "ies-wp7",
           "problem": "A company's profit is modeled by P = 15x − 200, where x is the number of items sold. How many items must be sold to earn a profit of at least $700?\n(A) 46  (B) 50  (C) 58  (D) 60  (E) 67",
           "hints": [
             "Set 15x − 200 ≥ 700",
@@ -230,34 +237,42 @@
       "title": "Integrating Essential Skills — ACT-Style Practice Set",
       "problems": [
         {
+          "id": "ies-yp1",
           "problem": "Machine A produces 30 widgets per hour. Machine B produces 45 widgets per hour. How many hours will it take both machines working together to produce 600 widgets?\n(A) 6  (B) 8  (C) 10  (D) 13.3  (E) 20",
           "answer": "(B) 8. Combined rate: 30 + 45 = 75 per hour. Time: 600/75 = 8 hours."
         },
         {
+          "id": "ies-yp2",
           "problem": "A circular garden (radius 10 ft) has a square fountain (side 4 ft) in the center. What is the area of the garden not covered by the fountain?\n(A) 100π − 16  (B) 100π − 8  (C) 96π  (D) 20π − 16  (E) 300",
           "answer": "(A) 100π − 16. Circle area: π(10²) = 100π. Square area: 4² = 16. Garden area: 100π − 16."
         },
         {
+          "id": "ies-yp3",
           "problem": "A store offers 'buy 2, get 1 free' on shirts that cost $25 each. What is the effective price per shirt if you buy 3?\n(A) $8.33  (B) $12.50  (C) $16.67  (D) $18.75  (E) $25.00",
           "answer": "(C) $16.67. Pay for 2: 2 × $25 = $50. Get 3 shirts. $50/3 ≈ $16.67."
         },
         {
+          "id": "ies-yp4",
           "problem": "A painter can paint a room in 5 hours. Her apprentice can paint the same room in 8 hours. If they start together but the painter leaves after 2 hours, how much longer must the apprentice work alone to finish?\n(A) 2.0 hours  (B) 2.5 hours  (C) 3.0 hours  (D) 3.5 hours  (E) 4.0 hours",
           "answer": "(C) 3.0 hours. Together for 2 hours: (1/5 + 1/8)(2) = (13/40)(2) = 26/40 = 13/20 done. Remaining: 7/20. Apprentice alone: (7/20) ÷ (1/8) = (7/20)(8) = 56/20 = 2.8 hours. Approximately (B) 2.5... Actually: 7/20 ÷ 1/8 = 7×8/20 = 56/20 = 2.8 hours. Closest answer: (C) 3.0."
         },
         {
+          "id": "ies-yp5",
           "problem": "A $2,000 computer depreciates 15% per year. What is its value after 2 years?\n(A) $1,400  (B) $1,445  (C) $1,500  (D) $1,700  (E) $1,785",
           "answer": "(B) $1,445. Year 1: 2000 × 0.85 = $1,700. Year 2: 1700 × 0.85 = $1,445."
         },
         {
+          "id": "ies-yp6",
           "problem": "A swimming pool holds 15,000 gallons. If a hose fills it at 500 gallons per hour, and water evaporates at 20 gallons per hour, how long does it take to fill the pool?\n(A) 28.8 hours  (B) 30 hours  (C) 31.25 hours  (D) 33.3 hours  (E) 750 hours",
           "answer": "(C) 31.25 hours. Net rate: 500 − 20 = 480 gal/hr. Time: 15,000/480 = 31.25 hours."
         },
         {
+          "id": "ies-yp7",
           "problem": "A recipe calls for 3/4 cup of sugar to make 2 dozen cookies. How much sugar is needed for 5 dozen cookies?\n(A) 15/8 cups  (B) 2 cups  (C) 3 cups  (D) 3.75 cups  (E) 7.5 cups",
           "answer": "(A) 15/8 cups (= 1 7/8 cups). Proportion: (3/4)/2 = x/5. x = (3/4)(5/2) = 15/8."
         },
         {
+          "id": "ies-yp8",
           "problem": "A tank holds 240 gallons. How many liters is this? (1 gallon ≈ 3.785 liters)\n(A) 63.4  (B) 236.2  (C) 480  (D) 908.4  (E) 960",
           "answer": "(D) 908.4. 240 × 3.785 = 908.4 liters."
         }

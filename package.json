@@ -13,6 +13,7 @@
     "test": "jest --coverage --verbose",
     "lint": "eslint .",
     "qa:modules": "node scripts/qaModule.js --all",
+    "backfill:problem-ids": "node scripts/backfillProblemIds.js",
     "test:watch": "jest --watch",
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:integration": "jest --testPathPattern=tests/integration",

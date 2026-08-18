@@ -154,6 +154,7 @@
       "title": "We-Do: Recursive Explicit Formulas — Guided Practice",
       "problems": [
         {
+          "id": "ssu-wp1",
           "question": "Write in sigma notation: 2 + 5 + 8 + 11 + 14 + 17.",
           "answer": "Σ from k=1 to 6 of (3k - 1). Or equivalently: Σ from k=0 to 5 of (3k + 2).",
           "hints": [
@@ -162,6 +163,7 @@
           ]
         },
         {
+          "id": "ssu-wp2",
           "question": "Does the infinite series 24 + 12 + 6 + 3 + ... converge? If so, find the sum.",
           "answer": "Yes, converges. r = 1/2, |r| < 1. S∞ = 24/(1 - 1/2) = 48.",
           "hints": [
@@ -170,6 +172,7 @@
           ]
         },
         {
+          "id": "ssu-wp3",
           "question": "Express the repeating decimal 0.454545... as a fraction.",
           "answer": "5/11",
           "hints": [
@@ -197,6 +200,7 @@
       "title": "You-Do: Financial Applications — Independent Practice",
       "problems": [
         {
+          "id": "ssu-yp1",
           "question": "Find the 15th term of the arithmetic sequence: 50, 43, 36, 29, ...",
           "answer": "-48",
           "hints": [
@@ -204,6 +208,7 @@
           ]
         },
         {
+          "id": "ssu-yp2",
           "question": "Write explicit and recursive formulas for: 3, 12, 48, 192, ...",
           "answer": "Explicit: aₙ = 3 · 4^(n-1). Recursive: a₁ = 3, aₙ = 4aₙ₋₁.",
           "hints": [
@@ -211,6 +216,7 @@
           ]
         },
         {
+          "id": "ssu-yp3",
           "question": "Evaluate: Σ from k=1 to 5 of 2(3)^(k-1).",
           "answer": "242",
           "hints": [
@@ -219,6 +225,7 @@
           ]
         },
         {
+          "id": "ssu-yp4",
           "question": "Find the sum of the infinite series: 100 + 80 + 64 + 51.2 + ...",
           "answer": "500",
           "hints": [
@@ -227,6 +234,7 @@
           ]
         },
         {
+          "id": "ssu-yp5",
           "question": "You deposit $200/month into an account earning 5% annual interest compounded monthly for 20 years. Find the future value.",
           "answer": "≈ $82,207.10",
           "hints": [

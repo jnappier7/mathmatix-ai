@@ -192,6 +192,7 @@
       "title": "Adding, Subtracting, Multiplying & Dividing Practice",
       "problems": [
         {
+          "id": "rn-wp1",
           "problem": "Compute: −9 + 3",
           "hints": [
             "The signs are different, so subtract the smaller absolute value from the larger.",
@@ -200,6 +201,7 @@
           "answer": "−6. Different signs: 9 − 3 = 6, and the larger absolute value belongs to −9, so the answer is −6."
         },
         {
+          "id": "rn-wp2",
           "problem": "Compute: 4 − (−7)",
           "hints": [
             "Subtracting a negative is the same as adding a positive.",
@@ -208,6 +210,7 @@
           "answer": "11. Rewrite as 4 + 7 = 11."
         },
         {
+          "id": "rn-wp3",
           "problem": "Compute: (−8) × (−3)",
           "hints": [
             "Both numbers are negative — same signs.",
@@ -216,6 +219,7 @@
           "answer": "24. Same signs (negative × negative) → positive. 8 × 3 = 24."
         },
         {
+          "id": "rn-wp4",
           "problem": "Compute: (−3/4) ÷ (1/2)",
           "hints": [
             "To divide by a fraction, multiply by its reciprocal. The reciprocal of 1/2 is 2/1.",
@@ -233,6 +237,7 @@
       "title": "Word Problems & Absolute Value Practice",
       "problems": [
         {
+          "id": "rn-wp5",
           "problem": "A scuba diver is at −30 feet. She descends another 18 feet. What is her new depth?",
           "hints": [
             "Descending means going deeper — that is adding a negative.",
@@ -241,6 +246,7 @@
           "answer": "−48 feet. −30 + (−18) = −48. She is now 48 feet below sea level."
         },
         {
+          "id": "rn-wp6",
           "problem": "The high temperature on Monday was 3°C and the low was −11°C. What is the difference between the high and the low?",
           "hints": [
             "Difference means subtract: high − low = 3 − (−11).",
@@ -249,6 +255,7 @@
           "answer": "14°C. 3 − (−11) = 3 + 11 = 14."
         },
         {
+          "id": "rn-wp7",
           "problem": "Marcus has $52 in his checking account. He uses his debit card to buy headphones for $67. What is his account balance now?",
           "hints": [
             "Spending $67 means subtracting: 52 − 67.",
@@ -257,6 +264,7 @@
           "answer": "−$15. 52 − 67 = −15. His account is overdrawn by $15."
         },
         {
+          "id": "rn-wp8",
           "problem": "Find the distance between −7 and 5 on the number line.",
           "hints": [
             "Distance = |a − b|. Plug in: |−7 − 5|.",
@@ -274,42 +282,52 @@
       "title": "Rational Numbers — Practice Set",
       "problems": [
         {
+          "id": "rn-yp1",
           "problem": "Compute: −12 + 7",
           "answer": "−5. Different signs: 12 − 7 = 5, and the larger absolute value belongs to −12, so the answer is −5."
         },
         {
+          "id": "rn-yp2",
           "problem": "Compute: 5 − (−9)",
           "answer": "14. Subtracting a negative = adding a positive: 5 + 9 = 14."
         },
         {
+          "id": "rn-yp3",
           "problem": "Compute: −1/2 + 3/4",
           "answer": "1/4. Common denominator is 4: −2/4 + 3/4 = 1/4."
         },
         {
+          "id": "rn-yp4",
           "problem": "Compute: (−6) × (−9)",
           "answer": "54. Same signs → positive. 6 × 9 = 54."
         },
         {
+          "id": "rn-yp5",
           "problem": "Compute: (−2/5) × (15/4)",
           "answer": "−3/2 (or −1 1/2). Different signs → negative. (2 × 15)/(5 × 4) = 30/20 = 3/2. Apply sign: −3/2."
         },
         {
+          "id": "rn-yp6",
           "problem": "Compute: (−4/3) ÷ (−2/9)",
           "answer": "6. Rewrite as (−4/3) × (−9/2). Same signs → positive. (4 × 9)/(3 × 2) = 36/6 = 6."
         },
         {
+          "id": "rn-yp7",
           "problem": "At midnight the temperature was −5°F. By 3 PM it rose 22°F, then dropped 8°F by evening. What was the evening temperature?",
           "answer": "9°F. −5 + 22 − 8 = 17 − 8 = 9."
         },
         {
+          "id": "rn-yp8",
           "problem": "Evaluate: |−13| − |4|",
           "answer": "9. |−13| = 13 and |4| = 4. 13 − 4 = 9."
         },
         {
+          "id": "rn-yp9",
           "problem": "What is the distance between −8 and −3 on the number line?",
           "answer": "5 units. |−8 − (−3)| = |−8 + 3| = |−5| = 5."
         },
         {
+          "id": "rn-yp10",
           "problem": "Jaylen has $210 in his account. He writes checks for $85.50 and $137.25. What is his new balance?",
           "answer": "−$12.75. 210 − 85.50 − 137.25 = 124.50 − 137.25 = −12.75. His account is overdrawn by $12.75."
         }
