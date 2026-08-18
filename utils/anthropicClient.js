@@ -285,6 +285,42 @@ function extractText(contentBlocks) {
     .join('');
 }
 
+// Anthropic bills a cached prefix at ~0.1x the input rate and a cache WRITE at
+// ~1.25x, so a breakpoint pays for itself on the second turn of a session and
+// is close to free thereafter. The tutor's system prompt is ~12.7K tokens and
+// was being re-bought in full on every single turn.
+//
+// Two rules make or break this:
+//   1. A cache entry is a PREFIX match. One byte different anywhere before the
+//      breakpoint and the whole entry misses. The caller therefore reports the
+//      length of the genuinely stable prefix (promptCompact's cacheableChars);
+//      the adapter never tries to guess it from the text.
+//   2. The prefix must clear the model's minimum or it silently doesn't cache
+//      at all — no error, just a permanent zero on cache_read_input_tokens.
+//      The floor is model-dependent (1024 tokens on Sonnet 5, 4096 on Haiku
+//      4.5 and Opus 4.6), so we require the larger one and stay correct
+//      whichever model TUTOR_MODEL names.
+const CACHE_MIN_CHARS = 4096 * 4;   // ~4096 tokens, the highest per-model floor
+
+// The child-safety preamble is a constant, so it belongs INSIDE the cached
+// block — putting it outside would leave the cheapest possible tokens at full
+// price and buy nothing.
+function buildSystemField(system, cacheableChars) {
+  const full = system ? `${CHILD_SAFETY_PROMPT}\n\n${system}` : CHILD_SAFETY_PROMPT;
+  const n = Number(cacheableChars) || 0;
+  if (!system || n <= 0) return full;
+
+  // Offsets arrive relative to the app's prompt; the preamble shifts them.
+  const cut = CHILD_SAFETY_PROMPT.length + 2 + Math.min(n, system.length);
+  const stable = full.slice(0, cut);
+  const perTurn = full.slice(cut);
+  if (stable.length < CACHE_MIN_CHARS) return full;   // too short to cache — don't pay the write
+
+  const blocks = [{ type: 'text', text: stable, cache_control: { type: 'ephemeral' } }];
+  if (perTurn) blocks.push({ type: 'text', text: perTurn });
+  return blocks;
+}
+
 // Build the Claude request body shared by stream and non-stream paths.
 // Notes:
 //  - temperature is intentionally omitted — Sonnet 5 rejects non-default
@@ -301,7 +337,7 @@ function buildBody(model, messages, options) {
     thinking: { type: 'disabled' },
   };
   // Child-safety prompt leads; the app's tutor system prompt follows.
-  body.system = system ? `${CHILD_SAFETY_PROMPT}\n\n${system}` : CHILD_SAFETY_PROMPT;
+  body.system = buildSystemField(system, options.cacheableSystemChars);
   if (options.response_format) {
     const oc = toClaudeOutputConfig(options.response_format);
     if (oc) body.output_config = oc;
@@ -436,6 +472,8 @@ module.exports = {
   callLLMStructured,
   callLLMStream,
   // exposed for unit tests
+  buildBody,
+  buildSystemField,
   splitSystemAndMessages,
   toAnthropicContent,
   sanitizeSchema,

@@ -697,7 +697,24 @@ The math resumes NEXT turn, after they respond. Keep this reply to 1-3 short sen
 // DYNAMIC PROMPT BUILDER — per-student, per-request context
 // ============================================================================
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null, studentMessage = null, recentMessages = null, activeWorksheet = null) {
+/**
+ * The system prompt AND the length of its stable prefix.
+ *
+ * ~93% of this prompt is byte-identical for the life of a session — the rules,
+ * the tutor's identity, the tool protocols, the student's profile. The last
+ * ~7% is per-session and per-turn: the topic, the worksheet, the mastery
+ * snapshot, whatever the student just said. That split is worth reporting
+ * because Anthropic bills a cached prefix at a tenth of the input rate, and
+ * this prompt is ~12.7K tokens that we were re-buying on every single turn.
+ *
+ * `cacheableChars` is the offset where per-session content begins. It is a
+ * PREFIX length, not a section count, because a cache breakpoint is only ever
+ * valid as a prefix — one byte different anywhere before it and the whole
+ * entry misses (see utils/anthropicClient.js).
+ *
+ * @returns {{prompt: string, cacheableChars: number}}
+ */
+function buildSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null, studentMessage = null, recentMessages = null, activeWorksheet = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -705,7 +722,8 @@ function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, cu
 
   // ── PARENT ROLE ──
   if (currentRole === 'parent' && childProfile) {
-    return buildParentPrompt(tutorProfile, firstName, parentTone, childProfile);
+    // Parent prompts are short and one-shot — nothing worth a breakpoint.
+    return { prompt: buildParentPrompt(tutorProfile, firstName, parentTone, childProfile), cacheableChars: 0 };
   }
 
   // ── STUDENT ROLE ──
@@ -830,6 +848,19 @@ Respond primarily in ${preferredLanguage}. Use ${preferredLanguage} mathematical
   // a signup answer is the weakest evidence about a student that will ever
   // exist, and once tutorPlan and skillMastery have watched them work it stops
   // being sent at all.
+  // ── CACHE BREAKPOINT ───────────────────────────────────────────────────
+  // Everything above this line is derived from the student's profile, the
+  // tutor's persona, and the static rules — identical on every turn of a
+  // session. Everything below reads the CURRENT turn (the message, the topic,
+  // the worksheet, the mastery snapshot), so it changes constantly.
+  //
+  // The boundary sits here, before the intent block, rather than at the first
+  // literally-varying section: the intent signals include `recentText`
+  // (the student's message), so anything from here down can move turn to turn.
+  // A cache prefix has to be byte-identical, and being one section early costs
+  // ~800 tokens of coverage while being one section late costs every hit.
+  const cacheableChars = parts.join('\n\n').length;
+
   const intentSignals = {
     sessionCount: userProfile.learningProfile?.stats?.totalSessions || 0,
     uploadedWorksheet: !!(activeWorksheet && activeWorksheet.text),
@@ -1013,7 +1044,16 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
     parts.push(EMOTIONAL_LOAD_SECTION);
   }
 
-  return parts.join('\n\n');
+  return { prompt: parts.join('\n\n'), cacheableChars };
+}
+
+/**
+ * The system prompt alone. Every caller that doesn't care about caching (the
+ * welcome line, trial chat, voice, guided lessons) keeps using this — the
+ * signature and the returned text are unchanged.
+ */
+function generateSystemPrompt(...args) {
+  return buildSystemPrompt(...args).prompt;
 }
 
 
@@ -1209,4 +1249,4 @@ Guidelines:
 }
 
 
-module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES, buildStaticRules, RULE_1_SOCRATIC, RULE_1_TEACHING, detectManipulativeContext, isEmotionallyLoadedMessage, EMOTIONAL_LOAD_SECTION, buildSkillMasteryContext, SHARED_VOICE_BLOCKS };
+module.exports = { generateSystemPrompt, buildSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES, buildStaticRules, RULE_1_SOCRATIC, RULE_1_TEACHING, detectManipulativeContext, isEmotionallyLoadedMessage, EMOTIONAL_LOAD_SECTION, buildSkillMasteryContext, SHARED_VOICE_BLOCKS };

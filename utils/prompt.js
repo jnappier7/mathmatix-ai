@@ -6,7 +6,7 @@
 // The original full prompt is preserved as generateSystemPromptFull() below
 // for reference/rollback. To revert, swap the export back.
 
-const { generateSystemPrompt: generateSystemPromptCompact, buildIepAccommodationsPrompt: buildIepAccommodationsPromptCompact } = require('./promptCompact');
+const { generateSystemPrompt: generateSystemPromptCompact, buildSystemPrompt: buildSystemPromptCompact, buildIepAccommodationsPrompt: buildIepAccommodationsPromptCompact } = require('./promptCompact');
 
 // Re-export the compact version as the default
 const generateSystemPrompt = generateSystemPromptCompact;
@@ -3035,4 +3035,4 @@ You are discussing **${childProfile.firstName || 'A child'}**.
   return prompt;
 }
 
-module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt: buildIepAccommodationsPromptCompact, generateSystemPromptFull };
+module.exports = { generateSystemPrompt, buildSystemPrompt: buildSystemPromptCompact, buildIepAccommodationsPrompt: buildIepAccommodationsPromptCompact, generateSystemPromptFull };

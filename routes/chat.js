@@ -16,7 +16,7 @@ const { resolveCourseConversation } = require('../utils/courseConversation');
 const Curriculum = require('../models/curriculum');
 const StudentUpload = require('../models/studentUpload');
 const Skill = require('../models/skill');
-const { generateSystemPrompt } = require('../utils/prompt');
+const { generateSystemPrompt, buildSystemPrompt } = require('../utils/prompt');
 const { callLLM, callLLMStream } = require("../utils/llmGateway");
 // Outbound PII (PII_STRIP_OUTBOUND): every direct callLLM* on a student-facing
 // path passes an anonContext so the choke point can strip the student's name,
@@ -1219,6 +1219,7 @@ async function runStudentTurn(req, res) {
 
         // Use dedicated course prompt when in course mode, generic prompt otherwise
         let systemPrompt;
+        let cacheableSystemChars = 0;
         let courseScaffoldCtx = null; // Captured for step-context reminder below
         // True once the course prompt is actually in play. chat.html sends
         // course turns HERE (not /api/course-chat), so this is what tells the
@@ -1268,12 +1269,14 @@ async function runStudentTurn(req, res) {
                     scaffoldIndex: courseSessionDoc.currentScaffoldIndex || 0,
                 });
             } else {
-                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
+                ({ prompt: systemPrompt, cacheableChars: cacheableSystemChars } =
+                    buildSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet));
             }
         }
 
         if (!systemPrompt) {
-            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
+            ({ prompt: systemPrompt, cacheableChars: cacheableSystemChars } =
+                buildSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet));
         }
 
         // Guarantee the ACT-prep "use the REAL practice test" directive is present
@@ -1603,6 +1606,10 @@ async function runStudentTurn(req, res) {
                 user,
                 conversation: activeConversation,
                 systemPrompt,
+                // Length of the system prompt's byte-stable prefix — the Claude
+                // adapter turns this into a cache breakpoint. Only set on the
+                // buildSystemPrompt paths; course/mastery prompts leave it 0.
+                cacheableSystemChars,
                 formattedMessages: formattedMessagesForLLM,
                 activeSkill,
                 tutorPlan: preloadedTutorPlan, // Pre-loaded — avoids duplicate DB query
