@@ -163,14 +163,37 @@
         {
           "problem": "Two parallel lines are cut by a transversal. An angle at the top-left of the first intersection measures 70°. Name the angle at the bottom-right of the second intersection, identify the angle pair type, and state its measure.",
           "solution": "The angle at the top-left of intersection 1 and the bottom-right of intersection 2 are on opposite sides of the transversal and between the parallel lines. This makes them **alternate interior angles**.\n\nSince the lines are parallel, alternate interior angles are **congruent**.\n\nThe angle at the bottom-right of intersection 2 = **70°**."
-        },
-        {
-          "problem": "Corresponding angles formed by a transversal and two parallel lines measure (4x + 15)° and (7x - 30)°. Find x and the angle measures.",
-          "solution": "Corresponding angles are congruent when lines are parallel, so set them equal:\n4x + 15 = 7x - 30\n15 + 30 = 7x - 4x\n45 = 3x\nx = 15\n\nAngle measures: 4(15) + 15 = 75° and 7(15) - 30 = 75° ✓\n\nBoth angles are 75°, confirming they're congruent as expected."
         }
       ],
       "initialPrompt": "Why do you think all 8 angles ended up being just two different measures? What's special about parallel lines that causes this?",
       "lessonId": "parallel-lines-transversals"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "parallel-lines-transversals",
+      "title": "Solving with Transversal Angle Relationships",
+      "content": "Knowing that alternate interior angles are congruent is only half the skill. The other half is turning that fact into an **equation** when the angles are written as algebraic expressions.\n\n**The whole method is two questions:**\n\n**1. Which relationship do these two angles have?** Corresponding, alternate interior, alternate exterior, same-side interior, vertical, or linear pair.\n\n**2. Does that relationship make them congruent or supplementary?**\n\n| Congruent — set the expressions EQUAL | Supplementary — set the sum to 180° |\n|---|---|\n| Corresponding | Same-side interior |\n| Alternate interior | Same-side exterior |\n| Alternate exterior | Linear pair (adjacent on a line) |\n| Vertical | |\n\n**Then solve, and go back for what was asked.** Almost every problem here has two parts: find x, then find the angle. x is a bookkeeping value, not an angle measure — substitute it back into the expression to get the degrees.\n\n**Example of the setup:**\nAlternate interior angles (3x + 10)° and (5x − 20)° are congruent, so\n3x + 10 = 5x − 20 → 30 = 2x → x = 15\nand the angle is 3(15) + 10 = **55°**.\n\nSame two expressions as *same-side interior* angles would instead give (3x + 10) + (5x − 20) = 180, a completely different equation — which is why identifying the relationship comes first.\n\n**Always check your answer.** Substitute x into *both* expressions. Congruent angles must come out equal; supplementary ones must sum to 180°. A pair that comes out as 55° and 62° means the relationship was misidentified or the algebra slipped.\n\n**A sanity check on the picture:** in a transversal diagram there are only two distinct angle measures, and they are supplementary (unless the transversal is perpendicular, making all eight 90°). So every angle you find should be one of those two numbers.",
+      "initialPrompt": "Two same-side interior angles are (2x + 15)° and (4x + 15)°. Before solving — does that relationship make them equal, or make them add to 180°?",
+      "lessonId": "transversal-algebra"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "parallel-lines-transversals",
+      "title": "I-Do: Transversal Algebra",
+      "examples": [
+        {
+          "problem": "Corresponding angles formed by a transversal and two parallel lines measure (4x + 15)° and (7x - 30)°. Find x and the angle measures.",
+          "solution": "Corresponding angles are congruent when lines are parallel, so set them equal:\n4x + 15 = 7x - 30\n15 + 30 = 7x - 4x\n45 = 3x\nx = 15\n\nAngle measures: 4(15) + 15 = 75° and 7(15) - 30 = 75° ✓\n\nBoth angles are 75°, confirming they're congruent as expected."
+        },
+        {
+          "problem": "Two parallel lines are cut by a transversal. A pair of alternate exterior angles measure (6x − 5)° and (4x + 25)°. Find x and the measure of each angle.",
+          "solution": "**Step 1 — identify the relationship.** Alternate exterior angles, formed by a transversal crossing parallel lines, are **congruent**.\n\n**Step 2 — set the expressions equal:**\n6x − 5 = 4x + 25\n\n**Step 3 — solve:**\n2x − 5 = 25\n2x = 30\nx = **15**\n\n**Step 4 — answer what was asked.** The question wants the angle measures, not just x. Substitute back into **both** expressions:\n• 6(15) − 5 = 90 − 5 = 85°\n• 4(15) + 25 = 60 + 25 = 85°\n\n**Both angles measure 85°**, and the fact that the two expressions agree confirms the setup was right.\n\n**One more check against the picture:** if one angle is 85°, the other distinct angle in the diagram must be 180° − 85° = 95°. Every one of the eight angles is either 85° or 95°."
+        }
+      ],
+      "initialPrompt": "In example 2, why did we substitute x back into both expressions instead of just one?",
+      "lessonId": "transversal-algebra"
     },
     {
       "type": "guided_practice",
@@ -200,7 +223,7 @@
         }
       ],
       "initialPrompt": "Now let's apply transversal angle relationships with algebra. For the first problem, what kind of angles are alternate interior angles?",
-      "lessonId": "parallel-lines-transversals"
+      "lessonId": "transversal-algebra"
     },
     {
       "type": "independent_practice",
@@ -266,8 +289,8 @@
         }
       ],
       "attemptsRequired": 3,
-      "skill": "points-lines-planes",
-      "lessonId": "points-lines-planes"
+      "skill": "parallel-lines-transversals",
+      "lessonId": "transversal-algebra"
     }
   ],
   "answerKeys": {
