@@ -1,22 +1,22 @@
 /**
- * GENERATOR STUBS MUST NOT GROW.
+ * NO COURSE MAY SHIP PLACEHOLDER LESSON CONTENT.
  *
- * Some lesson steps shipped with the content-generator's placeholder text still
- * in them — a practice problem that reads "Practice problem for real number
+ * The content generator used to leave its own scaffolding behind in place of
+ * math — a practice problem reading "Practice problem for real number
  * ordering.", answered by "Step-by-step solution for real number ordering.",
- * hinted by "Apply the concepts of real number ordering." There is no math in
- * any of it. The step renders, the tutor dutifully presents it, and the student
- * gets a lesson made of nothing.
+ * hinted by "Apply the concepts of real number ordering." There was no math in
+ * any of it. The step rendered, the tutor dutifully presented it, and the
+ * student got a lesson made of nothing.
  *
- * They were invisible until now for a second reason: these steps store the key
- * under `solution`, which the prompt builder did not read, so the prompt said
- * "Answer: undefined" and looked like a field-name bug rather than missing
- * content. utils/coursePrompt.js reads the alias now, which makes the stubs show
- * up as what they are.
+ * 27 such steps shipped across four courses (grade-8-math 12, geometry 8,
+ * algebra-1 4, precalculus 3). They were invisible for a second reason: they
+ * stored the key under `solution`, which the prompt builder did not read, so the
+ * prompt said "Answer: undefined" and looked like a field-name bug rather than
+ * missing content.
  *
- * Writing real content for 27 lessons is a curriculum job, not a code change, so
- * this test does not demand they be gone. It pins the exact inventory: a NEW stub
- * cannot ship, and fixing one shows up here as a diff that shrinks the list.
+ * All 27 now have real, verified problems. This file started as a ratchet on a
+ * known-bad list; with the list empty it becomes the simpler assertion — zero,
+ * anywhere, ever. A regenerated bank that reintroduces the pattern fails here.
  */
 
 const fs = require('fs');
@@ -24,8 +24,8 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '../..');
 
-// The generator's three placeholder sentences, anchored so real prose that merely
-// starts similarly does not trip them.
+// The generator's three placeholder sentences, anchored so real prose that
+// merely starts similarly does not trip them.
 const STUB_PATTERNS = [
   /^Practice problem for .+\.$/i,
   /^Step-by-step solution for .+\.$/i,
@@ -33,57 +33,57 @@ const STUB_PATTERNS = [
 ];
 const isStub = (v) => typeof v === 'string' && STUB_PATTERNS.some((r) => r.test(v.trim()));
 
-// Known-bad, as of the all-courses audit. Shrink this list; never extend it.
-// Each entry is a lesson step whose practice content is placeholder text.
-const KNOWN_STUB_STEPS = [
-  'precalculus/vectors[5]',
-];
-
-function findStubSteps() {
+function scanCourses() {
   const resources = path.join(ROOT, 'public/resources');
   const found = [];
+  let stepsScanned = 0;
+  const courses = new Set();
+
   for (const file of fs.readdirSync(resources).filter((f) => f.endsWith('-pathway.json'))) {
     const pathway = JSON.parse(fs.readFileSync(path.join(resources, file), 'utf8'));
     const courseId = pathway.courseId || file.replace('-pathway.json', '');
+    courses.add(courseId);
     for (const m of pathway.modules || []) {
       if (!m.moduleFile) continue;
       const modulePath = path.join(ROOT, 'public', m.moduleFile);
       if (!fs.existsSync(modulePath)) continue;
       const md = JSON.parse(fs.readFileSync(modulePath, 'utf8'));
       (md.scaffold || []).forEach((step, i) => {
+        stepsScanned += 1;
         const values = [step.content, step.text];
         (step.problems || []).forEach((p) => values.push(
           p.question, p.problem, p.answer, p.solution, p.hint, ...(p.hints || [])));
         (step.examples || []).forEach((e) => values.push(e.problem, e.solution, e.explanation));
         if (values.some(isStub)) found.push(`${courseId}/${m.moduleId}[${i}]`);
       });
+      (md.assessmentProblems || []).forEach((p, i) => {
+        if (isStub(p.question) || isStub(p.answer)) found.push(`${courseId}/${m.moduleId} assessment[${i}]`);
+      });
     }
   }
-  return found;
+  return { found, stepsScanned, courses };
 }
 
 describe('placeholder lesson content', () => {
-  const found = findStubSteps();
+  const { found, stepsScanned, courses } = scanCourses();
 
-  test('no course has gained a new generator stub', () => {
-    const added = found.filter((s) => !KNOWN_STUB_STEPS.includes(s));
-    expect(added).toEqual([]);
+  test('the scan actually reached every course', () => {
+    expect(courses.size).toBeGreaterThanOrEqual(15);
+    expect(stepsScanned).toBeGreaterThan(1000);
   });
 
-  test('the inventory is accurate — a fixed step must be removed from the list', () => {
-    const stale = KNOWN_STUB_STEPS.filter((s) => !found.includes(s));
-    expect(stale).toEqual([]);
+  test('no scaffold step anywhere contains generator placeholder text', () => {
+    expect(found).toEqual([]);
   });
 
-  test('the debt is bounded and shrinking, never growing', () => {
-    expect(found.length).toBeLessThanOrEqual(KNOWN_STUB_STEPS.length);
-  });
-
-  test('the courses that were clean stay clean', () => {
-    const tainted = new Set(found.map((s) => s.split('/')[0]));
-    ['consumer-math', '6th-grade-math', '7th-grade-math', 'act-prep',
-      'algebra-2', 'ap-calculus-ab', 'calculus-bc', 'early-math-foundations',
-      'parent-math-k2', 'parent-math-35', 'parent-math-68',
-    ].forEach((c) => expect([...tainted]).not.toContain(c));
+  test('the detector still recognises the pattern it is guarding against', () => {
+    // Without this, a broken regex would make the suite pass vacuously.
+    expect(isStub('Practice problem for real number ordering.')).toBe(true);
+    expect(isStub('Step-by-step solution for exterior angle theorem.')).toBe(true);
+    expect(isStub('Apply the concepts of sector area.')).toBe(true);
+    // And does not fire on real content that happens to start similarly.
+    expect(isStub('Practice problems like this one appear on every exam, so work carefully.')).toBe(false);
+    expect(isStub('Apply the concepts you just learned to the triangle below, then check your work.')).toBe(false);
+    expect(isStub('Solve 3x² - 75 = 0 by taking square roots.')).toBe(false);
   });
 });
