@@ -165,12 +165,48 @@
       "title": "We-Do: Intro Probability — Guided Practice",
       "problems": [
         {
-          "question": "Practice problem for intro probability.",
-          "hint": "Apply the concepts of intro probability.",
-          "solution": "Step-by-step solution for intro probability."
+          "id": "da-pr1",
+          "question": "You roll a fair six-sided die once. What is the probability of rolling a number greater than 4? Express your answer as a fraction, a decimal, and a percentage.",
+          "answer": "The equally likely outcomes are 1, 2, 3, 4, 5, 6 — six of them. The favorable ones are 5 and 6, so there are 2. P(greater than 4) = 2/6 = 1/3 ≈ 0.33 ≈ 33.3%. Read it in context: over many rolls, about a third of them land above 4.",
+          "hints": [
+            "Probability = (number of favorable outcomes) / (total number of equally likely outcomes). Start by listing the total outcomes for one die roll.",
+            "\"Greater than 4\" means 5 and 6 — that is 2 favorable outcomes, not 3. Four itself does not count.",
+            "P = 2/6. Reduce to 1/3, then divide 1 ÷ 3 = 0.333... to get the decimal, and multiply by 100 for the percent."
+          ]
+        },
+        {
+          "id": "da-pr2",
+          "question": "A spinner has 8 equal sections numbered 1 through 8. What is the probability of NOT landing on a multiple of 3?",
+          "answer": "Multiples of 3 from 1 to 8 are 3 and 6, so P(multiple of 3) = 2/8 = 1/4. Using the complement rule, P(not a multiple of 3) = 1 - 1/4 = 3/4 = 0.75 = 75%. Check by counting directly: the non-multiples are 1, 2, 4, 5, 7, 8 — six of them, and 6/8 = 3/4 ✓.",
+          "hints": [
+            "A \"not\" question is usually easier through the complement: P(not A) = 1 - P(A). So first find P(landing on a multiple of 3).",
+            "Multiples of 3 between 1 and 8: 3 and 6. That is 2 out of 8 sections, or 1/4.",
+            "Subtract from 1: P(not) = 1 - 1/4 = 3/4. You can check by counting the six non-multiples directly — both routes must agree."
+          ]
+        },
+        {
+          "id": "da-pr3",
+          "question": "You flip a fair coin and roll a fair six-sided die. What is the probability of getting heads AND rolling a 5?",
+          "answer": "The two actions are independent — the coin does not affect the die — so multiply: P(heads and 5) = P(heads) × P(5) = 1/2 × 1/6 = 1/12 ≈ 0.083 ≈ 8.3%. Check by listing: there are 2 × 6 = 12 equally likely (coin, die) pairs, and exactly one of them is (heads, 5).",
+          "hints": [
+            "These are two separate actions, and neither one changes the other — that makes them independent events.",
+            "For independent events joined by AND, multiply the probabilities: P(A and B) = P(A) × P(B).",
+            "1/2 × 1/6 = 1/12. Sanity-check it by counting all 12 coin-and-die combinations and seeing how many are (heads, 5)."
+          ]
+        },
+        {
+          "id": "da-pr4",
+          "question": "A bag holds 60 candies and 25% of them are cherry. (a) If you draw one candy at random, what is the probability it is cherry? (b) If 200 students each draw one candy at random and put it back, about how many would you expect to draw cherry?",
+          "answer": "(a) 25% of 60 is 15 cherry candies, so P(cherry) = 15/60 = 1/4 = 0.25 = 25%. (b) Expected count = probability × number of trials = 0.25 × 200 = 50 students. \"About 50\" is the right way to say it — probability predicts the long-run pattern, not the exact result of any one set of draws.",
+          "hints": [
+            "For (a), first turn the percent into a count: what is 25% of 60 candies?",
+            "15 of the 60 are cherry, so P(cherry) = 15/60. Reduce it — the 60 cancels out to give a clean fraction.",
+            "For (b), multiply the probability by the number of trials: 0.25 × 200. And say \"about\" — you would not expect exactly 50 every time."
+          ]
         }
       ],
-      "lessonId": "lines-of-best-fit"
+      "lessonId": "lines-of-best-fit",
+      "initialPrompt": "Let's start probability with a die roll. If you roll a fair six-sided die once, how many outcomes are possible, and how many of them are greater than 4?"
     },
     {
       "type": "model",
@@ -326,7 +362,11 @@
     "da-yp3": "(a) Negative. (b) None. (c) Negative.",
     "da-yp4": "y = −2.71x + 30.71. Predicted value at 5 years ≈ $17,160. Actual = $16,000. Close estimate.",
     "da-yp5": "(a) P(green) = 3/10 = 30%. (b) P(red or blue) = 7/10 = 70%. (c) P(two reds) = 9/100 = 9%.",
-    "da-yp6": "Correlation ≠ causation. Lurking variable: city size. Larger cities have more fires AND more fire stations."
+    "da-yp6": "Correlation ≠ causation. Lurking variable: city size. Larger cities have more fires AND more fire stations.",
+    "da-pr1": "P = 2/6 = 1/3 ≈ 0.33 ≈ 33.3% (the outcomes 5 and 6).",
+    "da-pr2": "P(not a multiple of 3) = 1 - 2/8 = 3/4 = 0.75 = 75%.",
+    "da-pr3": "P = 1/2 × 1/6 = 1/12 ≈ 8.3% (independent events, so multiply).",
+    "da-pr4": "(a) 15/60 = 1/4 = 25%. (b) about 0.25 × 200 = 50 students."
   },
   "lessons": [
     {
