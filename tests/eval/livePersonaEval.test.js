@@ -4,10 +4,11 @@
  * answer-leak detection in any wording, scaffold-vs-tell classification, tone
  * on emotionally loaded turns.
  *
- * OPT-IN ONLY (same contract as liveEval.test.js): needs RUN_LLM_EVAL=1 and an
- * API key; wire as a nightly / pre-release job, never the keyless PR gate.
+ * OPT-IN ONLY (same contract as liveEval.test.js): needs RUN_LLM_EVAL=1 and a real
+ * provider key from .env; wire as a nightly / pre-release job, never the keyless
+ * PR gate.
  *
- *   RUN_LLM_EVAL=1 OPENAI_API_KEY=sk-... npm run test:eval:live
+ *   RUN_LLM_EVAL=1 npm run test:eval:live
  *
  * A judge that reports uncertain=true is logged and NOT counted as a failure —
  * uncertainty is surfaced, not swallowed (same asymmetry as the pipeline's
@@ -15,7 +16,11 @@
  */
 'use strict';
 
-const RUN = process.env.RUN_LLM_EVAL === '1' && !!process.env.OPENAI_API_KEY;
+const { liveEvalGate, warnIfBlocked, asInfraError } = require('./liveCreds');
+
+const GATE = liveEvalGate();
+warnIfBlocked(GATE);
+const RUN = GATE.run;
 
 const personas = require('./personas.json').personas;
 const { runScenario, formatFailures } = require('./runner');
@@ -46,7 +51,14 @@ async function liveGenerateReply({ scenario, turn, history, decision }) {
   ), decision);
 
   const messages = [{ role: 'system', content: systemPrompt }, ...history];
-  const completion = await callLLM(process.env.TUTOR_MODEL || 'gpt-4o-mini', messages, { temperature: 0.5, max_tokens: 400 });
+  const model = process.env.TUTOR_MODEL || 'gpt-4o-mini';
+  let completion;
+  try {
+    completion = await callLLM(model, messages, { temperature: 0.5, max_tokens: 400 });
+  } catch (err) {
+    // A provider failure is not a tutor failure — relabel it as such.
+    throw asInfraError(err, model);
+  }
   const msg = completion?.choices?.[0]?.message;
   return (msg && msg.content) || '';
 }
