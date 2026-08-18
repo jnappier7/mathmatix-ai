@@ -29,6 +29,7 @@ module.exports = {
     '<rootDir>/tests/unit/emotionalFirstAid.test.js',
     '<rootDir>/tests/unit/llmVerifier.test.js',
     '<rootDir>/tests/unit/llmVerifierEscalation.test.js',
+    '<rootDir>/tests/unit/verifierCrossProvider.test.js',
     '<rootDir>/tests/unit/affirmThenProbe.test.js',
     '<rootDir>/tests/unit/decideInstructionalMode.test.js',
     '<rootDir>/tests/unit/conceptualAnswerVerdict.test.js',
@@ -65,8 +66,12 @@ module.exports = {
     './utils/knowledgeTracer.js': { statements: 83, branches: 78, functions: 95, lines: 83 },
     // Measured 100/94.9/100/100 after the mathType + resolvedBy tests — ratcheted.
     './utils/verifyMetrics.js': { statements: 99, branches: 92, functions: 100, lines: 99 },
-    // Measured 98.2/89.3/100/99.3 after the llmVerifyMethod/articulatesMethod tests — ratcheted.
-    './utils/pipeline/llmVerifier.js': { statements: 96, branches: 87, functions: 100, lines: 97 },
+    // Measured 97.9/90.7/100/98.8 after the cross-provider tests (parseVerdict +
+    // verifierCall) — ratcheted. The verifier now depends on a second provider, so
+    // its JSON-mode translation and its reachability fallback are exactly the code
+    // whose failures are invisible: a regression there returns `unverifiable` for
+    // every attempt rather than throwing. Coverage is the only alarm.
+    './utils/pipeline/llmVerifier.js': { statements: 97, branches: 90, functions: 100, lines: 98 },
     // Measured 100 across the board. It is a pure, bounded label function with no
     // I/O, so full coverage is the steady state, not an aspiration.
     './utils/pipeline/verifyTopic.js': { statements: 98, branches: 96, functions: 100, lines: 98 },

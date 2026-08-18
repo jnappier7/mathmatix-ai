@@ -31,7 +31,7 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 |-------|------|
 | Backend | Node.js ≥20.14 (pinned 20.11.1) / Express 4 |
 | DB | MongoDB + Mongoose 8 (`connect-mongo` session store) |
-| **LLM (runtime)** | **Provider-agnostic, currently all OpenAI** (`gpt-4o-mini` chat, `gpt-4o` vision grading, `text-embedding-3-small`). The tutor's generate stage is env-switchable via `TUTOR_MODEL`; as of **2026-08-18 production runs `gpt-4o-mini`** — the Claude path is wired but dormant. See §7. |
+| **LLM (runtime)** | **Dual-provider, split by role.** OpenAI for the tutor's generate stage (`TUTOR_MODEL`, **`gpt-4o-mini` as of 2026-08-18**), vision grading (`gpt-4o`), and embeddings; **Anthropic for the answer verifier** (`claude-haiku-4-5`) so the model checking the tutor's answer isn't the model that wrote it. Both keys are required in prod. See §7. |
 | Voice STT | Deepgram (`nova-2`/`nova-3`), Whisper-1 fallback |
 | Voice TTS | Cartesia (`sonic-3.5`), streaming over WebSocket |
 | Math OCR | Mathpix (`/v3/text`, `/v3/pdf`) |
@@ -44,10 +44,12 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 | Frontend | **Vanilla JS + Vite** (multi-page, no SPA framework) |
 | Hosting | Render (Docker); Puppeteer headless-shell + Python3/matplotlib in image |
 
-> **`TUTOR_MODEL` is the one switch, and it is currently unset / `gpt-4o-mini`.** Which means: every
-> LLM call in the app is OpenAI today. Don't read the Claude machinery below as describing a live code
-> path — it's a dormant capability. (This note has been wrong in *both* directions historically; check
-> the Render env before trusting any statement about which model prod runs.)
+> **`TUTOR_MODEL` is `gpt-4o-mini` (the default), and the Claude path is live anyway — via the
+> verifier.** The tutor generates on OpenAI; `utils/pipeline/llmVerifier.js` grades on
+> `claude-haiku-4-5`. So **`ANTHROPIC_API_KEY` is a production dependency even though `TUTOR_MODEL`
+> names an OpenAI model** — an unfunded balance degrades grading rather than tutoring, which is quieter
+> and easier to miss (see §7 diagnose). (This note has been wrong in *both* directions historically;
+> check the Render env before trusting any statement about which model runs where.)
 >
 > `utils/pipeline/generate.js` reads `PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini'`,
 > and `utils/openaiClient.js` dispatches to `utils/anthropicClient.js` whenever the model id starts with
@@ -55,14 +57,18 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 > normalizes Claude's request/response/stream shapes into the OpenAI ones the rest of the app consumes,
 > so the pipeline stays provider-agnostic and the switch is a one-env-var flip in either direction. It
 > also prepends a **child-safety system prompt** on every Claude call (Anthropic requires it for
-> products serving minors) — provider-scoped, the OpenAI path is unchanged. Also dormant while
-> `TUTOR_MODEL` is OpenAI: the Claude prompt-cache breakpoint in `promptCompact.js`, and the
-> `TUTOR_FALLBACK_MODEL` cross-provider failover (there's no second provider to fail over *to*).
+> products serving minors) — provider-scoped, the OpenAI path is unchanged. Still dormant while
+> `TUTOR_MODEL` is OpenAI: the Claude prompt-cache breakpoint in `promptCompact.js` (verifier prompts are
+> far below `anthropicClient`'s 4096-token cache floor, so nothing caches on the Claude path today) and
+> `TUTOR_FALLBACK_MODEL` (the *generate* stage has no Claude call to fail over from — the verifier's own
+> fallback is separate, in `llmVerifier.verifierCall`).
 >
-> Always OpenAI regardless of `TUTOR_MODEL`: **vision grading** (deliberately — `llmGateway` calls the
+> OpenAI regardless of `TUTOR_MODEL`: **vision grading** (deliberately — `llmGateway` calls the
 > OpenAI SDK directly for it), **embeddings**, `llmGateway`'s `DEFAULT_MODELS` for any caller that
 > doesn't pass a model explicitly, and every hard-coded `PRIMARY_CHAT_MODEL = 'gpt-4o-mini'` outside
-> generate.js (`pipeline/verify.js`, `routes/chat.js`, `routes/courseChat.js`).
+> generate.js (`pipeline/verify.js`, `routes/chat.js`, `routes/courseChat.js`). The one hard-coded
+> **Claude** constant is `llmVerifier`'s `VERIFIER_MODEL` — it does not read `TUTOR_MODEL` and is not
+> affected by changing it.
 >
 > ⚠️ **`TUTOR_MODEL` cannot take an o-series id as-is.** `utils/openaiClient.js` maps to
 > `max_completion_tokens` only when the id contains `gpt-4o`/`gpt-5`, and drops `temperature` only when
@@ -168,9 +174,19 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
 1. **observe** — classify the message (answer attempt / question / confusion / off-topic / …).
 2. **diagnose** — verify the student's answer two ways in parallel: deterministic `utils/mathSolver.js`
    (~30% of topics, fast/exact) **and** an LLM verifier (`pipeline/llmVerifier.js`). The verifier is
-   **tiered**: `gpt-4o-mini` first, escalating to `gpt-4o` when it can't resolve (low confidence / parse
-   fail) instead of silently giving up. Outcomes (incl. the `unverifiableRate`) are tracked in
-   `utils/verifyMetrics.js`, surfaced on `GET /api/admin/structured-tutor-metrics`.
+   **tiered and cross-provider**: `claude-haiku-4-5` first, escalating to `gpt-4o` when it can't resolve
+   (low confidence / parse fail) instead of silently giving up. The provider split is the point — the
+   verifier checks the tutor's *own* answer, so tier 1 must not be the model that produced it
+   (`TUTOR_MODEL`, currently `gpt-4o-mini`); one model grading itself is not a cross-check. Two things
+   that crossing depends on, both of which fail *silently* (every verdict → `unverifiable`, grading
+   quietly degrades to mathSolver's ~30% coverage, nothing throws): (a) these calls use bare
+   `response_format: {type:'json_object'}`, which has no Claude analogue — `anthropicClient` translates
+   it to a system-prompt instruction and `parseVerdict` tolerates a stray fence; (b) an unfunded
+   Anthropic balance or bad key is a **terminal 4xx**, which `openaiClient` deliberately won't fail over,
+   so `verifierCall` covers that gap (and only that gap — a 429 re-throws). Pinned by
+   `tests/unit/verifierCrossProvider.test.js`. Outcomes (incl. the `unverifiableRate`) are tracked in
+   `utils/verifyMetrics.js`, surfaced on `GET /api/admin/structured-tutor-metrics` — watch it after any
+   provider change; a spike there is the symptom this whole seam produces.
    A **conceptual** question ("what distinguishes an asymptote from a hole?") answered in words has no
    value to compare, so it routes to `llmVerifyConceptual` instead — the math verifier can only report
    NO MATCH on prose, which is how correct ideas got rejected. Verdicts are asymmetric throughout: a
