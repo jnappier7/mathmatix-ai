@@ -44,20 +44,6 @@
       "lessonId": "pythagorean-theorem"
     },
     {
-      "type": "guided_practice",
-      "lessonPhase": "we-do",
-      "skill": "pythagorean-converse",
-      "title": "We-Do: Pythagorean Converse — Guided Practice",
-      "problems": [
-        {
-          "question": "Practice problem for pythagorean converse.",
-          "hint": "Apply the concepts of pythagorean converse.",
-          "solution": "Step-by-step solution for pythagorean converse."
-        }
-      ],
-      "lessonId": "pythagorean-converse"
-    },
-    {
       "type": "model",
       "lessonPhase": "i-do",
       "skill": "pythagorean-theorem",
@@ -112,6 +98,88 @@
       ],
       "initialPrompt": "Which side is the hypotenuse—the 9 or the 15? How do you know?",
       "lessonId": "pythagorean-theorem"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "pythagorean-converse",
+      "title": "The Converse of the Pythagorean Theorem",
+      "content": "The Pythagorean Theorem starts from a right triangle and gives you a side. Its **converse** runs the other way: it starts from three side lengths and tells you whether the triangle is right.\n\n**Converse of the Pythagorean Theorem:** If the sides of a triangle satisfy **a² + b² = c²**, where c is the **longest** side, then the triangle **is** a right triangle, and the right angle is the one opposite side c.\n\nThat word *longest* is not optional. The hypotenuse of a right triangle is always its longest side, so before you test anything, sort the three lengths and put the biggest one in the c slot. Testing 20² + 29² against 21² answers a question nobody asked.\n\n**Why the converse is useful.** You cannot always measure an angle — but you can almost always measure lengths. A carpenter checking whether a deck frame is square measures two sides and the diagonal and does this arithmetic. The 3-4-5 rule on a job site is exactly this converse.\n\n**When it is not equal, the comparison still tells you something.** Set the longest side as c and compare a² + b² with c²:\n- **a² + b² = c²** → the triangle is **right**.\n- **a² + b² > c²** → the angle opposite c is smaller than 90°, so the triangle is **acute**.\n- **a² + b² < c²** → that angle is larger than 90°, so the triangle is **obtuse**.\n\nA way to keep the direction straight: hold two legs fixed and stretch the third side. Making c longer opens the angle across from it. So a too-big c means an obtuse triangle, and a too-small c means an acute one.\n\n**One check before you start.** Three lengths only form a triangle at all if the two shorter ones add to more than the longest (the Triangle Inequality). Sides of 2, 3, and 9 classify as nothing, because no such triangle exists.\n\n**Do not eyeball it.** Sides of 10, 15, 18 give 325 versus 324 — acute by a single unit. Nothing about that triangle looks non-right. Compute.",
+      "initialPrompt": "Suppose I hand you three sticks — 12, 35, and 37 inches — and ask whether they make a right triangle, but you have no protractor. What could you do with just those three numbers?",
+      "lessonId": "pythagorean-converse"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "pythagorean-converse",
+      "title": "I-Do: Classifying Triangles by Their Sides",
+      "examples": [
+        {
+          "problem": "Determine whether a triangle with sides 9, 40, and 41 is a right triangle.",
+          "solution": "**Step 1: Identify the longest side.**\nSorted: 9, 40, 41. The longest is 41, so c = 41 and the legs are a = 9, b = 40.\n\n**Step 2: Compute a² + b².**\n9² + 40² = 81 + 1600 = 1681\n\n**Step 3: Compute c².**\n41² = 1681\n\n**Step 4: Compare.**\n1681 = 1681, so a² + b² = c².\n\n**Conclusion:** By the converse of the Pythagorean Theorem, this **is** a right triangle, with the right angle opposite the side of length 41.\n\n**Worth remembering:** 9-40-41 is a Pythagorean triple, like 3-4-5 and 5-12-13. Recognizing them saves you the arithmetic next time.",
+          "commonMistake": "Squaring the wrong pair — testing 9² + 41² against 40². Sort the sides first, every time."
+        },
+        {
+          "problem": "Classify a triangle with sides 7, 9, and 11 as right, acute, or obtuse.",
+          "solution": "**Step 1: Longest side.**\nc = 11, legs 7 and 9.\n\n**Step 2: Compare.**\n7² + 9² = 49 + 81 = 130, and 11² = 121.\n\n**Step 3: Read the inequality.**\n130 > 121, so a² + b² > c².\n\n**Conclusion:** The triangle is **acute** — every angle is less than 90°.\n\n**Why that direction:** c² came out smaller than the legs' squares, meaning the side across from the biggest angle is shorter than a right triangle would need. A shorter c means a tighter angle."
+        },
+        {
+          "problem": "Classify a triangle with sides 5, 12, and 14.",
+          "solution": "**Step 1: Longest side.**\nc = 14, legs 5 and 12.\n\n**Step 2: Compare.**\n5² + 12² = 25 + 144 = 169, and 14² = 196.\n\n**Step 3: Read the inequality.**\n169 < 196, so a² + b² < c².\n\n**Conclusion:** The triangle is **obtuse**.\n\n**Compare it to a triple you know.** 5-12-13 is a right triangle, since 169 = 169. Here the longest side got stretched from 13 to 14 while the legs stayed put, and that opened the angle opposite it past 90°. Same legs, longer c, wider angle."
+        }
+      ],
+      "initialPrompt": "Start me off on the first one: sides 9, 40, 41 — which one is c, and why that one?",
+      "lessonId": "pythagorean-converse"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "pythagorean-converse",
+      "title": "We-Do: Pythagorean Converse — Guided Practice",
+      "problems": [
+        {
+          "id": "rt-cv1",
+          "question": "A triangle has sides of length 20, 21, and 29. Is it a right triangle?",
+          "answer": "The longest side is 29, so c = 29 and the legs would be 20 and 21. Compare: 20² + 21² = 400 + 441 = 841, and 29² = 841. They are equal, so by the converse of the Pythagorean Theorem this IS a right triangle, with the right angle opposite the side of length 29.",
+          "hints": [
+            "Before squaring anything, decide which side plays the role of c. The converse only works if c is the LONGEST side.",
+            "c = 29. Now compute 20² + 21² and compare it to 29².",
+            "400 + 441 = 841 and 29² = 841. Equal means right. Say where the right angle is: always opposite the longest side."
+          ]
+        },
+        {
+          "id": "rt-cv2",
+          "question": "A triangle has sides of length 6, 8, and 11. Is it a right triangle? If not, is it acute or obtuse?",
+          "answer": "Longest side is 11, so c = 11. Compare: 6² + 8² = 36 + 64 = 100, and 11² = 121. Since 100 < 121, this is NOT a right triangle — and because the sum of the squares of the legs is LESS than c², the triangle is obtuse. Worth noticing: 6, 8, 10 would have been right (100 = 100), so stretching the longest side from 10 to 11 opened that angle past 90°.",
+          "hints": [
+            "Same first move: c is the longest side, which is 11 here.",
+            "6² + 8² = 100 but 11² = 121, so they are not equal — it is not a right triangle. Now decide which way it misses.",
+            "The rule: if a² + b² < c², the angle opposite c is bigger than 90°, so the triangle is obtuse. If a² + b² > c², it is acute."
+          ]
+        },
+        {
+          "id": "rt-cv3",
+          "question": "A triangle has sides of length 10, 15, and 18. Classify it as right, acute, or obtuse.",
+          "answer": "Longest side is 18, so c = 18. Compare: 10² + 15² = 100 + 225 = 325, and 18² = 324. Since 325 > 324, the triangle is acute — but only barely. This is exactly why you compute instead of eyeballing: a difference of 1 decides the classification, and this triangle looks like it could be right.",
+          "hints": [
+            "c = 18. Compute both sides of the comparison before judging anything.",
+            "10² + 15² = 325 and 18² = 324. Look closely — these are not equal.",
+            "325 > 324, so a² + b² > c², which means acute. The margin is 1; that is the whole lesson here — you cannot tell by looking."
+          ]
+        },
+        {
+          "id": "rt-cv4",
+          "question": "A carpenter is framing a rectangular deck. She measures one side as 12 feet, the adjacent side as 16 feet, and the diagonal between their far ends as 20 feet. Is the corner between the two sides a true right angle?",
+          "answer": "Treat the two sides as legs and the diagonal as the hypotenuse: 12² + 16² = 144 + 256 = 400, and 20² = 400. They are equal, so by the converse the corner IS a true right angle and the frame is square. This is the carpenter's 3-4-5 trick scaled up — 12, 16, 20 is just 4 times 3, 4, 5.",
+          "hints": [
+            "The diagonal connects the far ends of the two sides, so it is the side opposite the corner in question — that makes it c.",
+            "Compute 12² + 16² and compare it with 20².",
+            "144 + 256 = 400 = 20², so the corner is exactly 90°. Builders use this constantly; the smallest version is measuring 3 ft, 4 ft, and checking for a 5 ft diagonal."
+          ]
+        }
+      ],
+      "lessonId": "pythagorean-converse",
+      "initialPrompt": "Here's a triangle with sides 20, 21, and 29 — no picture, just the three lengths. Before we test anything: which of those three has to be c in a² + b² = c², and how do you know?"
     },
     {
       "type": "explanation",
@@ -297,7 +365,11 @@
     "rt-yp2": "Obtuse (290<324).",
     "rt-yp3": "10√2 each.",
     "rt-yp4": "Short=12, hyp=24.",
-    "rt-yp5": "≈5.2 ft."
+    "rt-yp5": "≈5.2 ft.",
+    "rt-cv1": "Yes — right triangle. 20² + 21² = 841 = 29².",
+    "rt-cv2": "Not right; obtuse. 6² + 8² = 100 < 121 = 11².",
+    "rt-cv3": "Acute, barely. 10² + 15² = 325 > 324 = 18².",
+    "rt-cv4": "Yes — a true right angle. 12² + 16² = 400 = 20² (a 3-4-5 triple scaled by 4)."
   },
   "lessons": [
     {
