@@ -113,6 +113,12 @@ html.embed .ch-card{padding:14px}
 html.embed .pagers{margin-top:16px}
 @media(max-width:860px){html.embed .lesson-body{padding-left:0}}
 
+.homeweek{margin:0 0 30px}
+.homeweek-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.homeweek .section-head{margin-bottom:12px}
+.seeall{font-size:13.5px;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap}
+.seeall:hover{text-decoration:underline}
+
 /* week view */
 .weekcta{margin:0 0 26px}
 .weeknav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px}
@@ -220,6 +226,8 @@ html.embed .pagers{margin-top:16px}
 /* media */
 .videos{display:grid;gap:14px;margin:14px 0}
 .video{margin:0}
+.yt{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000}
+.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .video video{width:100%;border-radius:10px;background:#000;display:block;aspect-ratio:16/10}
 .video figcaption{font-size:12.5px;color:var(--muted);margin-top:6px}
 .pending-box{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
