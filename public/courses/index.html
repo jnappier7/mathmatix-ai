@@ -4,83 +4,54 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Mr. Nappier's Courses | St. Charles Preparatory School</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy:ital@0;1&display=swap">
-<link rel="icon" href="assets/sc-crest.png">
+<title>Mr. Nappier's Courses</title>
 <style>
-/* Same tokens as the per-course assets/site.css — one school, one look.
-   St. Charles Preparatory School 2022 Brand Guidelines: blood red leads,
-   gleaming white supports it, rich black grounds the page. */
-:root{--sc-red:#EA1D2D;--sc-red-deep:#B8121F;--sc-black:#230E15;
-  --bg:#F6F3F2;--panel:#FFFFFF;--panel-2:#F2EEED;
-  --ink:#230E15;--muted:#6B5C60;--line:rgba(35,14,21,.12);
-  --accent:#EA1D2D;--accent-strong:#B8121F;--accent-soft:#FCEAEB;--radius:12px;
-  /* Blood red at full strength is under 4.5:1 as small text on these light
-     grounds, so red TEXT takes the deeper shade; fills keep Pantone 185. */
-  --accent-ink:#B8121F;
-  --shadow:0 1px 2px rgba(35,14,21,.06),0 8px 20px rgba(35,14,21,.08);
-  --font-display:"Goudy Old Style","Sorts Mill Goudy",Georgia,"Times New Roman",serif;
-  --font-body:"Avenir Next",Avenir,"Segoe UI",Arial,Helvetica,sans-serif}
-@media(prefers-color-scheme:dark){:root{--bg:#170910;--panel:#241017;--panel-2:#2F171E;
-  --ink:#FFFFFF;--muted:#BCA8AD;--line:rgba(255,255,255,.10);
-  --accent:#FF5A64;--accent-strong:#EA1D2D;--accent-soft:rgba(234,29,45,.20);
-  --accent-ink:#FF5A64;
-  --shadow:0 8px 20px rgba(0,0,0,.45)}}
+/* Same tokens as public/css/design-system.css — one product, one look. */
+:root{--bg:#0B0F1A;--panel:#161B2C;--panel-2:#1B2238;--ink:#E6E9F2;--muted:#9AA3B8;
+  --line:rgba(255,255,255,.08);--accent:#8B7BFF;--accent-strong:#6C5CE7;
+  --accent-soft:rgba(139,123,255,.14);--radius:18px;
+  --shadow:0 8px 20px rgba(0,0,0,.38)}
+@media(prefers-color-scheme:light){:root{--bg:#F5F7FB;--panel:#FFFFFF;--panel-2:#EEF1F7;
+  --ink:#18202B;--muted:#5B6876;--line:rgba(16,24,40,.10);--accent:#6C5CE7;
+  --accent-strong:#5A4BD1;--accent-soft:#EDE9FF;
+  --shadow:0 1px 2px rgba(16,24,40,.05),0 8px 20px rgba(16,24,40,.07)}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--font-body)}
-
-/* The brand book's own exemplar is white type reversed out of a red field, so
-   the school's mark leads the page on blood red before anything else. */
-.masthead{background:var(--sc-red);border-bottom:3px solid var(--sc-black);
-  padding:34px 20px 30px;text-align:center}
-.masthead img{width:auto;height:132px;display:block;margin:0 auto}
-@media(max-width:520px){.masthead{padding:26px 16px 24px}.masthead img{height:104px}}
-
-.wrap{max-width:880px;margin:0 auto;padding:44px 20px 80px}
-h1{margin:0 0 10px;font-family:var(--font-display);font-weight:700;
-  font-size:clamp(30px,6vw,44px);font-variant-numeric:lining-nums}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.55 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:56px 20px 80px}
+.logo{height:38px;width:auto;display:block;margin-bottom:26px}
+h1{margin:0 0 10px;font-size:clamp(30px,6vw,44px);letter-spacing:-.025em}
 .lede{margin:0 0 40px;color:var(--muted);font-size:17px;max-width:56ch}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 .card{display:block;text-decoration:none;color:inherit;background:var(--panel);
   border:1px solid var(--line);border-radius:var(--radius);padding:26px;
   box-shadow:var(--shadow);transition:transform .15s ease,border-color .15s ease}
 .card:hover{transform:translateY(-3px);border-color:var(--accent)}
-/* Goudy defaults to old-style figures, which make "Algebra 1" read as a
-     Roman numeral; lining-nums puts the digits back on the cap line. */
-.card h2{margin:0 0 6px;font-family:var(--font-display);font-weight:700;font-size:23px;
-  font-variant-numeric:lining-nums}
+.card h2{margin:0 0 6px;font-size:21px;letter-spacing:-.015em}
 .card p{margin:0 0 16px;color:var(--muted);font-size:14.5px}
 .facts{display:flex;gap:18px;padding-top:16px;border-top:1px solid var(--line)}
 .facts div{display:flex;flex-direction:column}
 .facts b{font-size:19px;letter-spacing:-.02em}
 .facts span{font-size:12px;color:var(--muted)}
-.go{display:inline-block;margin-top:16px;font-size:14px;font-weight:600;color:var(--accent-ink)}
+.go{display:inline-block;margin-top:16px;font-size:14px;font-weight:600;color:var(--accent)}
 .pill{display:inline-block;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;
   color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px;
   margin-bottom:10px}
-.pill.new{background:var(--accent-soft);color:var(--accent-ink);border-color:transparent}
+.pill.new{background:var(--accent-soft);color:var(--accent);border-color:transparent}
 .tutor{display:flex;align-items:center;gap:14px;margin-top:36px;padding:20px 22px;
   border-radius:var(--radius);background:var(--accent-soft);text-decoration:none;color:inherit;
   border:1px solid transparent;transition:.15s}
 .tutor:hover{border-color:var(--accent)}
-.tutor b{display:block;font-size:16px;color:var(--accent-ink)}
+.tutor b{display:block;font-size:16px;color:var(--accent)}
 .tutor em{font-style:normal;font-size:14px;color:var(--muted)}
-.tutor .arrow{margin-left:auto;color:var(--accent-ink);font-size:20px}
+.tutor .arrow{margin-left:auto;color:var(--accent);font-size:20px}
 .foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
   font-size:13px;color:var(--muted)}
-/* "Embrace our Building Better Men tagline. It is our rallying cry." */
-.foot b{font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:12px;
-  color:var(--ink)}
 </style>
 </head>
 <body>
-<header class="masthead">
-  <img src="assets/sc-lockup-white.png"
-       alt="St. Charles Preparatory School — Building Better Men">
-</header>
-
 <main class="wrap">
+  <img class="logo" src="assets/mathmatix-logo.png" alt="MATHMATIX.AI">
   <h1>Mr. Nappier's Courses</h1>
   <p class="lede">Lesson videos, guided notes, and practice for the whole year &mdash;
     in order, in one place. Pick your course to get started.</p>
@@ -115,11 +86,11 @@ h1{margin:0 0 10px;font-family:var(--font-display);font-weight:700;
 
   <a class="tutor" href="https://www.mathmatix.ai/chat.html" target="_blank" rel="noopener">
     <span><b>Stuck on something?</b>
-    <em>Your Mathmatix tutor is available any time, on any lesson.</em></span>
+    <em>Your MATHMATIX tutor is available any time, on any lesson.</em></span>
     <span class="arrow">&rarr;</span>
   </a>
 
-  <p class="foot">St. Charles Preparatory School &middot; <b>Building Better Men</b></p>
+  <p class="foot">MATHMATIX.AI &middot; See the Patterns, Solve with Ease.</p>
 </main>
 </body>
 </html>
