@@ -315,7 +315,7 @@ export async function showUpgradePrompt(errorData) {
             ${priceHtml}
             <ul style="text-align:left;list-style:none;padding:0;margin:20px 0;color:#ccc;font-size:14px;line-height:2;">
                 <li>\u2713 Unlimited 24/7 AI tutoring</li>
-                <li>\u2713 Voice chat with your tutor</li>
+                <li>\u2713 Unlimited voice chat with your tutor</li>
                 <li>\u2713 Unlimited homework uploads</li>
                 <li>\u2713 Full course enrollment</li>
                 <li>\u2713 Show My Work grading</li>
@@ -326,7 +326,7 @@ export async function showUpgradePrompt(errorData) {
                 ? `<div style="color:#888;font-size:12px;margin-top:12px;">We'll email you before your trial ends so you're never surprised. Cancel anytime — no charge until day ${trialDays}.</div>`
                 : isLimitReached
                 ? '<div style="color:#666;font-size:12px;margin-top:12px;">Your free minutes reset monthly. Upgrade for uninterrupted learning.</div>'
-                : '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Keep free plan (30 min/week)</button>'
+                : '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Keep free plan (30 min/month)</button>'
             }
             ${trialAvailable && !isLimitReached
                 ? '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:6px;">Maybe later</button>'
@@ -548,7 +548,7 @@ export async function showManageSubscription() {
                     <div style="background:#1a1a2a;border:1px solid #ffaa00;border-radius:10px;padding:16px;margin-bottom:16px;">
                         <div style="font-size:14px;color:#ffaa00;font-weight:600;margin-bottom:4px;"><i class="fas fa-pause-circle"></i> Subscription Paused</div>
                         <div style="font-size:13px;color:#aaa;">Your subscription is paused. Billing resumes automatically on <strong style="color:#fff;">${resumeDateStr}</strong>.</div>
-                        <div style="font-size:13px;color:#aaa;margin-top:4px;">You still have access to free-tier features (30 min/week) while paused.</div>
+                        <div style="font-size:13px;color:#aaa;margin-top:4px;">You still have access to free-tier features (30 min/month) while paused.</div>
                     </div>
                     <button id="manage-sub-resume" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-bottom:10px;"><i class="fas fa-play"></i> Resume Now</button>
                     <p style="color:#666;font-size:12px;text-align:center;">Resume early to get unlimited tutoring back immediately.</p>

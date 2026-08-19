@@ -571,28 +571,14 @@ async function persist(params) {
     ? Math.max(aiProcessingSeconds, AI_TIME_FLOOR_SECONDS)
     : 0;
   if (billedSeconds > 0) {
-    const previousWeekly = user.weeklyAISeconds || 0;
-    const updatedWeekly = previousWeekly + billedSeconds;
-    const aiTimeUpdate = { $inc: { weeklyAISeconds: billedSeconds, totalAISeconds: billedSeconds } };
-
-    const FREE_WEEKLY = 30 * 60;
-    const packStillValid = (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') &&
-      user.packSecondsRemaining > 0 &&
-      (!user.packExpiresAt || new Date() <= user.packExpiresAt);
-
-    if (packStillValid) {
-      const prevPaid = Math.max(0, previousWeekly - FREE_WEEKLY);
-      const newPaid = Math.max(0, updatedWeekly - FREE_WEEKLY);
-      const deduction = newPaid - prevPaid;
-      if (deduction > 0) aiTimeUpdate.$inc.packSecondsRemaining = -deduction;
-    }
-
-    try {
-      const User = require('../../models/user');
-      await User.findByIdAndUpdate(user._id, aiTimeUpdate);
-    } catch (err) {
-      console.error('[Persist] AI time tracking error:', err);
-    }
+    // The charge itself (window roll, atomic $inc, legacy-pack drawdown) lives
+    // in utils/aiTimeMeter — shared with utils/voiceSession so a text second and
+    // a voice second are spent from the same pool by the same arithmetic. This
+    // block used to own a private copy, and the voice copy had already drifted
+    // out of sync with it.
+    const { meterAiSeconds, FREE_WEEKLY_SECONDS: FREE_WEEKLY } = require('../aiTimeMeter');
+    const charge = await meterAiSeconds(user, billedSeconds);
+    const updatedWeekly = charge.usedSeconds;
 
     results.aiTimeUsed = billedSeconds;
     // Only surface a remaining-free-seconds number for students the quota

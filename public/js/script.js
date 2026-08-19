@@ -23,7 +23,7 @@ import { applyCosmetics } from './modules/cosmeticsApply.js';
 // script.js's own ?v= does NOT reach its imports — the import URL is what the
 // browser caches. Without this, a returning student keeps the old billing.js
 // (and the old free-time pill position) for up to a week. Bump on every edit.
-import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js?v=20260731a';
+import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js?v=20260819a';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
 import { applyAgeTier, getTierPlaybackRate, getTierSpeechAutoStop, getTierAutoReadAloud, getVoiceDefaults } from './modules/age-tier.js';
@@ -474,8 +474,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // Initialize session time tracking (pass getter for currentUser)
             initSessionTracking(() => currentUser);
 
-            // Check billing status (free tier remaining time)
-            checkBillingStatus();
+            // Check billing status (free tier remaining time). The promise is
+            // handed to the voice gate below, which needs the AI-minute balance
+            // to decide whether voice is available — reading window._billingStatus
+            // there would race this fetch.
+            const billingReady = checkBillingStatus();
 
             // Wire up "Manage Subscription" button in hamburger menu
             const manageSubLink = document.getElementById('manage-subscription-link');
@@ -487,8 +490,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
-            // Gate Voice Tutor button for non-premium users
-            gateVoiceTutorButton(currentUser);
+            // Gate Voice Tutor entry points on the AI-minute balance
+            gateVoiceTutorButton(currentUser, billingReady);
 
             // Show upgrade success toast if redirected from Stripe
             const urlParams = new URLSearchParams(window.location.search);
@@ -591,31 +594,54 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
 
     /**
-     * Lock the Voice Tutor buttons for non-premium users.
-     * Premium = unlimited tier, school-licensed, or teacher/parent/admin role.
+     * Gate the Voice Tutor buttons on the AI-minute balance.
+     *
+     * Voice used to be premium-only. It is now open to every 13+ student and
+     * spends the same monthly AI-minute pool as text tutoring — so the lock
+     * appears only when that pool is empty, which is the same wall text chat
+     * hits. Because voice streams continuously it drains the pool noticeably
+     * faster than typing, so students with a metered balance get the remaining
+     * minutes in the tooltip rather than discovering it mid-call.
+     *
+     * Server-side truth: hasVoiceAccess() in middleware/usageGate.js, enforced
+     * on the HTTP mounts and again on the WebSocket upgrade. This is a mirror.
      *
      * There are TWO entry points into voice: the sidebar button
      * (#sidebar-voice-tutor-btn) and the composer headset (#voice-mode-btn).
      * voice-mode.js bows out of a locked click expecting an upgrade-prompt
      * handler here, so BOTH must get one — otherwise the composer headset is a
-     * dead button for free-tier users (no toggle, no prompt, no feedback).
+     * dead button for out-of-minutes users (no toggle, no prompt, no feedback).
      */
-    function gateVoiceTutorButton(user) {
+    async function gateVoiceTutorButton(user, billingReady) {
         const sidebarBtn = document.getElementById('sidebar-voice-tutor-btn');
         const composerBtn = document.getElementById('voice-mode-btn');
         const lock = document.getElementById('voice-tutor-lock');
         if (!lock || (!sidebarBtn && !composerBtn)) return;
 
-        const role = user.role || 'student';
-        const hasPremiumRole = role === 'teacher' || role === 'parent' || role === 'admin';
-        const hasUnlimited = user.subscriptionTier === 'unlimited';
-        const hasSchoolLicense = !!user.schoolLicenseId;
+        let billing = null;
+        try { billing = await billingReady; } catch (_) { /* fall through to open */ }
+        billing = billing || window._billingStatus || null;
 
-        if (hasPremiumRole || hasUnlimited || hasSchoolLicense) return;
+        // Unknown balance (status fetch failed, billing disabled pre-launch) →
+        // leave voice open. The server still enforces; a failed status call must
+        // not lock a paying student out of a feature they have.
+        if (!billing || billing.billingEnabled === false || billing.unmetered) return;
 
-        // Non-premium: show the shared lock and intercept clicks on every entry
-        // point with the upgrade prompt. The shared lock being visible is also
-        // what tells voice-mode.js to stand down (it checks it at click time).
+        const secondsRemaining = billing.usage ? billing.usage.secondsRemaining : null;
+        if (secondsRemaining === null || secondsRemaining === undefined || !isFinite(secondsRemaining)) return;
+
+        if (secondsRemaining > 0) {
+            // Voice is available — surface the burn rate instead of a lock.
+            const minutes = Math.floor(secondsRemaining / 60);
+            const budget = `${minutes} AI minute${minutes === 1 ? '' : 's'} left this month (voice uses them faster than typing)`;
+            if (sidebarBtn) sidebarBtn.title = `Voice Tutor — ${budget}`;
+            if (composerBtn) composerBtn.title = `Voice chat — ${budget}`;
+            return;
+        }
+
+        // Out of minutes: show the shared lock and intercept clicks on every
+        // entry point with the upgrade prompt. The shared lock being visible is
+        // also what tells voice-mode.js to stand down (it checks it at click time).
         lock.style.display = '';
 
         const interceptWithUpgrade = (el) => {
@@ -623,7 +649,7 @@ document.addEventListener("DOMContentLoaded", () => {
             el.addEventListener('click', (e) => {
                 e.preventDefault();
                 showUpgradePrompt({
-                    premiumFeatureBlocked: true,
+                    usageLimitReached: true,
                     feature: 'Voice chat',
                     tier: user.subscriptionTier || 'free',
                     upgradeRequired: true
@@ -631,14 +657,15 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
 
+        const outOfMinutes = "You're out of AI minutes this month — upgrade or wait for your reset";
         if (sidebarBtn) {
             // Dim the sidebar row to read as locked (it has room for it).
             sidebarBtn.style.opacity = '0.65';
             sidebarBtn.style.cursor = 'default';
-            sidebarBtn.title = 'Voice Tutor requires the Unlimited plan or a school license';
+            sidebarBtn.title = `Voice Tutor — ${outOfMinutes}`;
         }
         if (composerBtn) {
-            composerBtn.title = 'Voice chat requires the Unlimited plan or a school license';
+            composerBtn.title = `Voice chat — ${outOfMinutes}`;
         }
 
         interceptWithUpgrade(sidebarBtn);

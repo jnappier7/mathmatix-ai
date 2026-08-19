@@ -13,7 +13,7 @@ const SchoolLicense = require('../../models/schoolLicense');
 
 // Clear module cache so BILLING_ENABLED takes effect
 delete require.cache[require.resolve('../../middleware/usageGate')];
-const { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasUnmeteredAiAccess, FREE_WEEKLY_SECONDS } = require('../../middleware/usageGate');
+const { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasUnmeteredAiAccess, hasVoiceAccess, FREE_WEEKLY_SECONDS } = require('../../middleware/usageGate');
 
 describe('Feature Gating Middleware', () => {
   let req, res, next;
@@ -705,6 +705,69 @@ describe('Feature Gating Middleware', () => {
       expect(next).toHaveBeenCalled();
       // Should NOT have incremented freeUploadsUsed
       expect(User.findByIdAndUpdate).not.toHaveBeenCalled();
+    });
+  });
+
+  // ============================================================
+  // hasVoiceAccess — voice is open to everyone, metered like text
+  // ============================================================
+  describe('hasVoiceAccess', () => {
+    test('allows a free student who still has AI minutes', async () => {
+      // Voice used to be premium-only. The gate is now the AI-minute pool, the
+      // same one text tutoring spends.
+      req.user.weeklyAISeconds = 600; // 10 of 30 minutes used
+      expect(await hasVoiceAccess(req.user)).toBe(true);
+    });
+
+    test('blocks a free student whose minutes are gone', async () => {
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS;
+      expect(await hasVoiceAccess(req.user)).toBe(false);
+    });
+
+    test('allows an out-of-minutes student once the monthly window has lapsed', async () => {
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS;
+      req.user.lastAIQuotaReset = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000);
+      expect(await hasVoiceAccess(req.user)).toBe(true);
+    });
+
+    test('allows an out-of-minutes student with a valid minute pack', async () => {
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS;
+      req.user.subscriptionTier = 'pack_60';
+      req.user.packSecondsRemaining = 900;
+      req.user.packExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      expect(await hasVoiceAccess(req.user)).toBe(true);
+    });
+
+    test('allows unlimited subscribers regardless of the meter', async () => {
+      req.user.subscriptionTier = 'unlimited';
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS * 10;
+      expect(await hasVoiceAccess(req.user)).toBe(true);
+    });
+
+    test('allows school-licensed students regardless of the meter', async () => {
+      req.user.schoolLicenseId = 'license123';
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS * 10;
+      SchoolLicense.findById = jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue({
+          status: 'active',
+          expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+          currentStudentCount: 10,
+          maxStudents: 100,
+          schoolName: 'Test School',
+        }),
+      });
+      expect(await hasVoiceAccess(req.user)).toBe(true);
+    });
+
+    test('allows teachers, parents and admins', async () => {
+      for (const role of ['teacher', 'parent', 'admin']) {
+        req.user.role = role;
+        expect(await hasVoiceAccess(req.user)).toBe(true);
+      }
+    });
+
+    test('refuses an anonymous socket', async () => {
+      expect(await hasVoiceAccess(null)).toBe(false);
     });
   });
 });

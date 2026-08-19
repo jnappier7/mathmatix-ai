@@ -242,11 +242,18 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // gates as /api/chat plus isStudent. See docs/BOARD_STUDENT_MOVES_INTEGRATION.md.
   app.use('/api/student-moves', isAuthenticated, isStudent, requireOwnConsent(), aiEndpointLimiter, usageGate, studentMovesRoutes);
   app.use('/api/conversations', isAuthenticated, conversationsRoutes);
-  app.use('/api/speak', isAuthenticated, requireOwnConsent(), requireThirteenPlus, speakRoutes);
+  // Read-aloud spends Cartesia minutes, so it meters and gates like every other
+  // AI surface (usageGateAllMethods — TTS arrives as POST, but the gate's
+  // POST-only default is a footgun waiting for the first GET variant).
+  app.use('/api/speak', isAuthenticated, requireOwnConsent(), requireThirteenPlus, usageGateAllMethods, speakRoutes);
   app.use('/api/animation-studio', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, animationStudioRoutes);
-  app.use('/api/voice', isAuthenticated, requireOwnConsent(), requireThirteenPlus, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes);
+  // Voice is open to every 13+ student and metered against the same monthly
+  // AI-second pool as text (it was premium-only until the pool became the gate).
+  // The WebSocket streaming path enforces the same rule in utils/voiceUpgrade.js,
+  // which never runs this chain.
+  app.use('/api/voice', isAuthenticated, requireOwnConsent(), requireThirteenPlus, aiEndpointLimiter, usageGateAllMethods, voiceRoutes);
   app.use('/api/voice', isAuthenticated, requireOwnConsent(), requireThirteenPlus, voiceTestRoutes);
-  app.use('/api/voice-tutor', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
+  app.use('/api/voice-tutor', isAuthenticated, requireOwnConsent(), aiEndpointLimiter, usageGateAllMethods, voiceTutorRoutes);
   // These routes accept base64 image data — larger JSON body limit
   const largeJsonParser = express.json({ limit: '10mb' });
   // Unified-upload classifier: cheap "is this worked or blank?" check that

@@ -6,7 +6,7 @@
 jest.mock('../../utils/sttStream', () => ({ isConfigured: () => true }));
 jest.mock('../../utils/ttsProvider', () => ({ isConfigured: () => true }));
 jest.mock('../../middleware/usageGate', () => ({
-    hasPremiumAccess: jest.fn().mockResolvedValue(true),
+    hasVoiceAccess: jest.fn().mockResolvedValue(true),
 }));
 
 const { handleUpgrade } = require('../../utils/voiceUpgrade');
@@ -37,7 +37,7 @@ function runUpgrade(user) {
     return { accepted, socket, wss };
 }
 
-// The paywall check is async, so give the promise chain a tick to settle.
+// The quota check is async, so give the promise chain a tick to settle.
 const settle = () => new Promise((r) => setImmediate(r));
 
 describe('voice upgrade own-consent gate', () => {

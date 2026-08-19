@@ -14,6 +14,7 @@ const { cleanTextForTTS } = require('../utils/mathTTS');
 const { loadActiveHistory, appendToActiveConversation } = require('../utils/activeConversation');
 const { getLoginSessionId, peekLoginSessionId } = require('../utils/loginSession');
 const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../utils/visualTools');
+const { meterAiSeconds } = require('../utils/aiTimeMeter');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for voice responses
 
@@ -21,6 +22,20 @@ const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for voic
 // either on for the whole product or off for the whole product — a student
 // should never get diagrams by typing and none by speaking.
 const VISUAL_TOOLS_ENABLED = process.env.ENABLE_VISUAL_TOOLS === 'true';
+
+// Cartesia returns WAV / pcm_s16le @ 44.1kHz (utils/ttsProvider.js), so playback
+// duration is exact: (bytes - 44-byte header) / (rate * 2 bytes).
+const TTS_SAMPLE_RATE = 44100;
+const WAV_HEADER_BYTES = 44;
+// Same fair-time floor the text path applies (utils/pipeline/persist.js): a real
+// tutoring turn always meters at least this, so a dense session on a fast model
+// can't bill out to near-zero.
+const AI_TIME_FLOOR_SECONDS = Number(process.env.AI_TIME_FLOOR_SECONDS) || 30;
+
+function wavSeconds(buffer) {
+    if (!buffer || buffer.length <= WAV_HEADER_BYTES) return 0;
+    return (buffer.length - WAV_HEADER_BYTES) / (TTS_SAMPLE_RATE * 2);
+}
 
 /**
  * Remove the exact visual tags we appended, so TTS never speaks them.
@@ -401,12 +416,14 @@ router.post('/process', isAuthenticated, async (req, res) => {
         const ttsText = cleanTextForTTS(stripVisualTags(aiResponseText, visualTags));
         const tutorVoiceId = ttsProvider.getVoiceId(tutorProfile);
 
+        let ttsSeconds = 0;
         const [audioUrl] = await Promise.all([
             // TTS generation
             (async () => {
                 if (!tutorVoiceId || !ttsText) return null;
                 try {
                     const audioData = await ttsProvider.generateAudio(ttsText, tutorVoiceId);
+                    ttsSeconds = wavSeconds(audioData);
                     const audioDir = path.join(__dirname, '../public/audio/voice');
                     if (!fs.existsSync(audioDir)) fs.mkdirSync(audioDir, { recursive: true });
                     const ext = ttsProvider.getFileExtension();
@@ -435,6 +452,15 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // ── Send audio URL ──
         sendPhase({ phase: 'audio', audioUrl });
         res.end();
+
+        // Meter the turn against the AI-minute pool. This endpoint spends
+        // Whisper + an LLM call + Cartesia and never used to charge for any of
+        // it — harmless while voice was premium-only (premium users are
+        // unmetered anyway), but now that voice is open to every student this is
+        // the one AI path that would run free. Charged after res.end() so a
+        // metering hiccup can never cost the student their reply.
+        meterAiSeconds(user, Math.max(totalTime / 1000 + ttsSeconds, AI_TIME_FLOOR_SECONDS))
+            .catch(err => logger.warn('[Voice] usage metering failed', { error: err.message }));
 
     } catch (error) {
         logger.error('[Voice] FATAL ERROR processing voice', error);
