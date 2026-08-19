@@ -314,7 +314,11 @@ function configureMiddleware(app) {
         objectSrc: ["'none'"],
         baseUri: ["'self'"],       // Prevents <base> tag hijacking
         formAction: ["'self'"],    // Limits form submission targets
-        frameSrc: ["'self'", 'https://www.commoncurriculum.com', 'https://www.commonplanner.com'],
+        // youtube-nocookie hosts the course lesson videos (unlisted embeds under
+        // /courses). Without it every player fails silently — the iframe is
+        // simply blocked, with no visible error on the page.
+        frameSrc: ["'self'", 'https://www.commoncurriculum.com', 'https://www.commonplanner.com',
+          'https://www.youtube-nocookie.com', 'https://www.youtube.com'],
         upgradeInsecureRequests: isProduction ? [] : null,
       },
     },
