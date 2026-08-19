@@ -269,6 +269,12 @@ function configureMiddleware(app) {
     next();
   });
 
+  // Canvas hosts permitted to embed /courses/. Comma-separated env override so
+  // another school's LMS can be added without a deploy.
+  const CANVAS_FRAME_ANCESTORS = (process.env.COURSE_FRAME_ANCESTORS
+    || 'https://scprep.instructure.com')
+    .split(',').map((h) => h.trim()).filter(Boolean);
+
   // Security headers
   app.use(helmet({
     contentSecurityPolicy: {
@@ -319,6 +325,13 @@ function configureMiddleware(app) {
         // simply blocked, with no visible error on the page.
         frameSrc: ["'self'", 'https://www.commoncurriculum.com', 'https://www.commonplanner.com',
           'https://www.youtube-nocookie.com', 'https://www.youtube.com'],
+        // The course site is designed to be embedded in the school's Canvas
+        // pages. Widen frame-ancestors for /courses/ ONLY — chat, dashboards,
+        // and login stay 'self', so a logged-in session can never be framed
+        // and clickjacked from outside.
+        frameAncestors: [(req) => (req.path.startsWith('/courses/')
+          ? "'self' " + CANVAS_FRAME_ANCESTORS.join(' ')
+          : "'self'")],
         upgradeInsecureRequests: isProduction ? [] : null,
       },
     },
@@ -327,11 +340,19 @@ function configureMiddleware(app) {
     xssFilter: true,
     noSniff: true,
     hidePoweredBy: true,
-    frameguard: { action: 'deny' },
+    frameguard: { action: 'deny' },   // relaxed for /courses/ below
     hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     dnsPrefetchControl: { allow: true }, // Allow DNS prefetch for CDN domains (jsdelivr, cloudflare, google fonts)
   }));
+
+  // X-Frame-Options has no path scoping and, in browsers that honour it, blocks
+  // framing regardless of CSP. Remove it for /courses/ so Canvas can embed the
+  // course pages; every other path keeps DENY.
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/courses/')) res.removeHeader('X-Frame-Options');
+    next();
+  });
 
   // Permissions-Policy header
   app.use((req, res, next) => {
