@@ -113,6 +113,12 @@ html.embed .ch-card{padding:14px}
 html.embed .pagers{margin-top:16px}
 @media(max-width:860px){html.embed .lesson-body{padding-left:0}}
 
+.homeweek{margin:0 0 30px}
+.homeweek-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.homeweek .section-head{margin-bottom:12px}
+.seeall{font-size:13.5px;font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap}
+.seeall:hover{text-decoration:underline}
+
 /* week view */
 .weekcta{margin:0 0 26px}
 .weeknav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px}
