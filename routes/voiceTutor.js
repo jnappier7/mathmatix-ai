@@ -74,6 +74,11 @@ function attachStreamWebSocket(server, app) {
   });
 
   logger.info('voice ws upgrade handler attached', { path: STREAM_PATH });
+
+  // Returned so shutdown can close it. server.close() waits for every open
+  // connection, and a WebSocket never closes on its own — without this the
+  // close callback never fires and shutdown always hit the force-exit timer.
+  return wss;
 }
 
 module.exports = router;

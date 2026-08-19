@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const logger = require('../utils/logger');
 const { startRetentionSchedule } = require('../utils/dataRetention');
+const { markReady } = require('../utils/lifecycle');
 
 function connectDatabase() {
   return mongoose.connect(process.env.MONGO_URI, {
@@ -12,6 +13,11 @@ function connectDatabase() {
   })
     .then(() => {
       logger.info('Connected to MongoDB', { database: 'MongoDB' });
+      // Only now is this instance able to serve a request end-to-end: the
+      // connect-mongo session store shares this connection, so until it is up
+      // every authenticated request stalls in the session middleware. Flipping
+      // readiness here is what stops Render routing to a half-booted instance.
+      markReady();
       if (process.env.NODE_ENV !== 'test') {
         startRetentionSchedule();
       }

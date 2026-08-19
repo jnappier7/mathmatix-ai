@@ -574,6 +574,9 @@ function attachStreamWebSocket(server, app) {
     });
 
     logger.info('voice ws upgrade handler attached', { path: STREAM_PATH, mode: 'board-actions' });
+
+    // See routes/voiceTutor.js: returned so shutdown can close it.
+    return wss;
 }
 
 module.exports = router;
