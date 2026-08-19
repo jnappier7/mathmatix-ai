@@ -19,8 +19,14 @@ const { recordConversionEvent } = require('../utils/conversionEvents');
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 // NOTE: constant/field names keep the "weekly" prefix for backward compatibility
 // (no DB migration), but the free AI quota now resets MONTHLY (see FREE_QUOTA_RESET_DAYS).
-const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per RESET PERIOD (now monthly) for ALL students
-const FREE_QUOTA_RESET_DAYS = 30;    // free-AI-minute quota window (was 7 / weekly)
+// The quota arithmetic itself lives in utils/aiTimeMeter.js — the one place AI
+// time is charged — so the gate and the meter can never disagree about how many
+// seconds a student has left.
+const {
+  FREE_WEEKLY_SECONDS,
+  FREE_QUOTA_RESET_DAYS,
+  remainingAiSeconds,
+} = require('../utils/aiTimeMeter');
 
 // Freemium taste limits — free users get a sample before upgrade prompt
 const FREE_UPLOAD_LIMIT  = 1;    // 1 free upload, then Mathmatix+ required
@@ -284,6 +290,34 @@ async function hasPremiumAccess(user) {
 }
 
 /**
+ * Can this user open a voice session?
+ *
+ * Voice used to be premium-only (hasPremiumAccess). It is now available to
+ * every 13+ student and metered against the same monthly AI-second pool as
+ * text tutoring — a voice second and a text second cost the same quota, voice
+ * just spends them continuously, so it drains the pool faster in wall-clock
+ * terms. See utils/aiTimeMeter.js for the arithmetic.
+ *
+ * Used by BOTH the HTTP mounts and the WebSocket upgrade
+ * (utils/voiceUpgrade.js), which never runs the Express chain and so needs the
+ * predicate rather than the middleware.
+ *
+ * NOTE: this answers "may they START a session". A session already in flight is
+ * cut off mid-call by utils/voiceSession.js, which re-checks the balance every
+ * time it flushes the meter — without that a student could connect with ten
+ * seconds left and talk for an hour, because nothing debits until hang-up.
+ *
+ * @param {Object} user - req.user / hydrated user doc (mongoose or lean)
+ * @returns {Promise<boolean>}
+ */
+async function hasVoiceAccess(user) {
+  if (!BILLING_ENABLED) return true;
+  if (!user) return false;
+  if (await hasUnmeteredAiAccess(user)) return true;
+  return remainingAiSeconds(user) > 0;
+}
+
+/**
  * Feature gate for premium-only features (voice, uploads, Show My Work).
  * School-licensed students and unlimited subscribers get full access.
  * Free users get a limited taste: 1 free upload and 1 free Show My Work,
@@ -406,4 +440,4 @@ function paidFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasPremiumAccess, hasUnmeteredAiAccess, FREE_WEEKLY_SECONDS, isLicenseValid };
+module.exports = { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasPremiumAccess, hasVoiceAccess, hasUnmeteredAiAccess, FREE_WEEKLY_SECONDS, FREE_QUOTA_RESET_DAYS, isLicenseValid };

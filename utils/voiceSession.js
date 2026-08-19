@@ -4,7 +4,6 @@
 // one AbortController per turn. Coordinates STT → LLM → TTS with
 // interrupt handling and per-turn metrics.
 
-const User = require('../models/user');
 const TUTOR_CONFIG = require('./tutorConfig');
 const { generateSystemPrompt } = require('./prompt');
 const { callLLM, callLLMStream } = require('./llmGateway');
@@ -35,6 +34,8 @@ const { Dispatcher } = require('./orchestrator/dispatcher');
 const { loadOrCreatePlan, resolveCurrentTarget } = require('./tutorPlanManager');
 const { loadActiveHistory, appendToActiveConversation } = require('./activeConversation');
 const logger = require('./logger').child({ module: 'voiceSession' });
+const { meterAiSeconds, remainingAiSeconds } = require('./aiTimeMeter');
+const { hasUnmeteredAiAccess } = require('../middleware/usageGate');
 
 const VOICE_MODEL = process.env.VOICE_LLM_MODEL || 'gpt-4o-mini';
 
@@ -42,6 +43,15 @@ const VOICE_MODEL = process.env.VOICE_LLM_MODEL || 'gpt-4o-mini';
 // the whole product or off for it — never diagrams by typing and none by speaking.
 const VISUAL_TOOLS_ENABLED = process.env.ENABLE_VISUAL_TOOLS === 'true';
 const HISTORY_DEPTH = 12;
+
+// How often a live session charges its accrued seconds to the AI-minute pool.
+// Metering only at hang-up (which is all this did while voice was premium-only)
+// means a metered student can connect with seconds left and talk for an hour —
+// nothing debits until they disconnect, and the gate only runs at connect.
+// 30s bounds the overrun to well under a minute of free tutoring.
+const METER_FLUSH_MS = Number(process.env.VOICE_METER_FLUSH_MS) || 30_000;
+// Balance at which a live call gets its wrap-up warning, in seconds.
+const METER_WARN_SECONDS = 120;
 
 // Active-session registry for multi-tab collision handling.
 // Keyed by `${userId}:${mode}` — same user can have one math-steps session
@@ -183,6 +193,14 @@ class VoiceSession {
         this._lastPartialAt = 0;
         this._pendingTurnDebounce = null;
 
+        // AI-minute metering (see _flushMeter). _meteredSeconds is what has
+        // already been charged, so every flush bills only the delta and
+        // shutdown's final flush can't double-charge.
+        this._meteredSeconds = 0;
+        this._meterTimer = null;
+        this._unmetered = true;   // assume unmetered until init() resolves it
+        this._lowBalanceWarned = false;
+
         this._bindClient();
     }
 
@@ -199,6 +217,21 @@ class VoiceSession {
             try { existing.shutdown('superseded_by_new_session'); } catch (_) {}
         }
         activeSessions.set(registryKey, this);
+
+        // Does the AI-minute pool apply to this student? Resolved once per
+        // session (it involves a school-license / linked-parent lookup) and then
+        // re-read from the cheap in-memory balance on every flush.
+        try {
+            this._unmetered = await hasUnmeteredAiAccess(this.user);
+        } catch (err) {
+            // Never let a metering lookup cost a student their session — the
+            // upgrade handler already decided they may be here.
+            this._unmetered = true;
+            logger.warn('voice metered-status check failed; treating as unmetered', {
+                userId: this.userId, error: err.message,
+            });
+        }
+        this._startMeter();
 
         this.systemPrompt = await generateSystemPrompt(this.user, this.tutorProfile);
 
@@ -1331,36 +1364,103 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         } catch (_) { return ''; }
     }
 
+    // ─── AI-minute metering ──────────────────────────────────────────────
+    //
+    // Voice is the only path that stacks three paid vendors, so usage is
+    // cost-accurate rather than wall-clock: Deepgram STT input + Cartesia
+    // playback + LLM latency, all charged to the same monthly pool text
+    // tutoring spends (utils/aiTimeMeter.js).
+
+    /** Total seconds this session has accrued so far, charged or not. */
+    _accruedSeconds() {
+        const sttSeconds = (this._sttBilledTotal || 0) + (this.stt?.billedSeconds || 0);
+        const ttsSeconds = this._ttsSampleRate ? (this._ttsSamples || 0) / this._ttsSampleRate : 0;
+        const llmSeconds = (this._llmLatencyMs || 0) / 1000;
+        return sttSeconds + ttsSeconds + llmSeconds;
+    }
+
+    _startMeter() {
+        if (this._meterTimer || this._unmetered) return;
+        this._meterTimer = setInterval(() => {
+            this._flushMeter().catch(err =>
+                logger.warn('voice meter flush failed', { userId: this.userId, error: err.message }));
+        }, METER_FLUSH_MS);
+        // Don't hold the process open on this timer during shutdown.
+        if (typeof this._meterTimer.unref === 'function') this._meterTimer.unref();
+    }
+
+    /**
+     * Charge everything accrued since the last flush, then act on the balance:
+     * warn once as it gets low, hang up when it's gone.
+     *
+     * @param {Object} [opts]
+     * @param {boolean} [opts.final] - final flush from shutdown(); charge but
+     *        never try to end an already-ending session.
+     */
+    async _flushMeter({ final = false } = {}) {
+        const accrued = this._accruedSeconds();
+        const delta = accrued - this._meteredSeconds;
+        if (delta < 1 && !final) return;
+
+        let remaining;
+        if (delta >= 1) {
+            this._meteredSeconds = accrued;
+            const charge = await meterAiSeconds(this.user, delta);
+            remaining = charge.remainingSeconds;
+            logger.info('voice usage metered', {
+                userId: this.userId,
+                billedSeconds: charge.billedSeconds,
+                sessionSeconds: Math.round(accrued),
+                remainingSeconds: Math.round(remaining),
+                final,
+            });
+        } else {
+            remaining = remainingAiSeconds(this.user);
+        }
+
+        // Unmetered students (school license, unlimited, staff) are still
+        // charged above — totalAISeconds is cost analytics for everyone — but
+        // nothing enforces against them.
+        if (final || this._unmetered) return;
+
+        if (remaining <= 0) {
+            // Out of minutes mid-call. Say so before hanging up — a socket that
+            // just dies reads as a bug, not a limit.
+            this._send({
+                type: 'quota_exhausted',
+                message: "That's all your AI minutes for this month! Your minutes reset soon — you can keep going with Mathmatix+.",
+                upgradeRequired: true,
+            });
+            logger.info('voice session ended: AI minutes exhausted', {
+                userId: this.userId, sessionSeconds: Math.round(accrued),
+            });
+            // Let the message reach the client before the socket closes.
+            setTimeout(() => this.shutdown('quota_exhausted'), 250);
+            return;
+        }
+
+        if (remaining <= METER_WARN_SECONDS && !this._lowBalanceWarned) {
+            this._lowBalanceWarned = true;
+            this._send({
+                type: 'quota_low',
+                secondsRemaining: Math.round(remaining),
+                message: `About ${Math.max(1, Math.round(remaining / 60))} minute${remaining >= 90 ? 's' : ''} of AI time left this month.`,
+            });
+        }
+    }
+
     shutdown(reason = 'shutdown') {
         if (this.closed) return;
         this.closed = true;
 
-        // ── Meter voice usage against the AI-seconds budget (cost-accurate) ──
-        // Voice is the only path that stacks three paid vendors. Count the full
-        // turn: STT input (Deepgram) + TTS playback (Cartesia) + LLM latency.
-        // Metered once here so async audio has finished arriving. Written to
-        // totalAISeconds (cost analytics) and weeklyAISeconds (the quota meter —
-        // no gating effect while voice is paid/unlimited, but correct and ready
-        // if a free voice sample is introduced later).
-        try {
-            const sttSeconds = (this._sttBilledTotal || 0) + (this.stt?.billedSeconds || 0);
-            const ttsSeconds = this._ttsSampleRate ? (this._ttsSamples || 0) / this._ttsSampleRate : 0;
-            const llmSeconds = (this._llmLatencyMs || 0) / 1000;
-            const voiceSeconds = Math.round(sttSeconds + ttsSeconds + llmSeconds);
-            if (voiceSeconds > 0 && this.userId) {
-                User.findByIdAndUpdate(this.userId, {
-                    $inc: { weeklyAISeconds: voiceSeconds, totalAISeconds: voiceSeconds }
-                }).catch(err => logger.warn('voice usage meter failed', { userId: this.userId, error: err.message }));
-                logger.info('voice usage metered', {
-                    userId: this.userId, voiceSeconds,
-                    sttSeconds: Math.round(sttSeconds),
-                    ttsSeconds: Math.round(ttsSeconds),
-                    llmSeconds: Math.round(llmSeconds),
-                });
-            }
-        } catch (err) {
-            logger.warn('voice metering error', { userId: this.userId, error: err.message });
+        if (this._meterTimer) {
+            clearInterval(this._meterTimer);
+            this._meterTimer = null;
         }
+        // Final charge for whatever accrued since the last flush. Fire-and-forget
+        // by design: shutdown is synchronous and runs on socket close.
+        this._flushMeter({ final: true }).catch(err =>
+            logger.warn('voice metering error', { userId: this.userId, error: err.message }));
 
         const registryKey = `${this.userId}:${this.mode}`;
         if (activeSessions.get(registryKey) === this) {

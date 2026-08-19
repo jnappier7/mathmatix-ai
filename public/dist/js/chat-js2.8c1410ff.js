@@ -612,19 +612,21 @@ class VoiceController {
     // STREAMING PIPELINE (Phase 2 — chat-page orb)
     // ============================================
 
-    // Best-effort client-side mirror of the server voice paywall
-    // (utils/voiceUpgrade.js → hasPremiumAccess). Read-only: the server still
-    // enforces. Returns false ONLY when we positively know the account is
-    // non-premium — if currentUser hasn't loaded yet we return true so we
-    // don't wrongly downgrade a premium user to the legacy path.
-    hasPremiumVoiceAccess() {
-        const u = window.currentUser;
-        if (!u) return true; // unknown → let the connect attempt / server decide
-        const roles = Array.isArray(u.roles) ? u.roles : [u.role || 'student'];
-        if (roles.some(r => r === 'teacher' || r === 'parent' || r === 'admin')) return true;
-        if (u.subscriptionTier === 'unlimited') return true;
-        if (u.schoolLicenseId) return true;
-        return false;
+    // Best-effort client-side mirror of the server voice gate
+    // (utils/voiceUpgrade.js → hasVoiceAccess). Read-only: the server still
+    // enforces. Voice is open to every 13+ student now and metered against the
+    // monthly AI-minute pool, so the only thing that closes it is an empty
+    // balance. Returns false ONLY when we positively know the pool is empty —
+    // an unknown or unreadable balance returns true so a transient status
+    // failure can't downgrade a student who does have minutes.
+    hasVoiceMinutes() {
+        const billing = window._billingStatus;
+        if (!billing) return true;                       // unknown → let the server decide
+        if (billing.billingEnabled === false) return true; // pre-launch: everything open
+        if (billing.unmetered) return true;              // school license / staff / unlimited
+        const remaining = billing.usage ? billing.usage.secondsRemaining : null;
+        if (remaining === null || remaining === undefined || !isFinite(remaining)) return true;
+        return remaining > 0;
     }
 
     async setupStreamingPipeline() {
@@ -634,15 +636,15 @@ class VoiceController {
             return;
         }
 
-        // The streaming WS enforces the same premium paywall as the HTTP routes
-        // (utils/voiceUpgrade.js → 402 Payment Required). A non-premium account
-        // would just get a handshake refusal that the browser surfaces as a
-        // contentless error Event — noisy and misleading in the console. Skip
-        // the doomed connect; the paywall intercept on the voice buttons
-        // (script.js gateVoiceTutorButton) owns the free-tier UX instead.
-        if (!this.hasPremiumVoiceAccess()) {
+        // The streaming WS enforces the same quota rule as the HTTP routes
+        // (utils/voiceUpgrade.js → 402 Payment Required). An out-of-minutes
+        // account would just get a handshake refusal that the browser surfaces
+        // as a contentless error Event — noisy and misleading in the console.
+        // Skip the doomed connect; the upgrade intercept on the voice buttons
+        // (script.js gateVoiceTutorButton) owns that UX instead.
+        if (!this.hasVoiceMinutes()) {
             this.streamingUnavailable = true;
-            console.info('[Voice] streaming pipeline skipped — account not premium (upgrade prompt handled by voice buttons)');
+            console.info('[Voice] streaming pipeline skipped — no AI minutes remaining (upgrade prompt handled by voice buttons)');
             return;
         }
 
@@ -685,6 +687,35 @@ class VoiceController {
         this._broadcastVoiceEvent(ev);
         switch (ev.type) {
             case 'ready':
+                break;
+
+            // Mid-call metering (utils/voiceSession.js _flushMeter). Voice spends
+            // the monthly AI-minute pool continuously, so the server warns once
+            // as the balance runs low and hangs up when it's gone — the socket
+            // closing on its own would read as a bug rather than a limit.
+            case 'quota_low':
+                if (window.showToast && ev.message) window.showToast(ev.message, 'info');
+                break;
+
+            case 'quota_exhausted':
+                // Latch it: the server closes the socket right after this, and
+                // 'disconnected' otherwise re-opens the mic on the LEGACY path —
+                // which would hand a student with no minutes left a working call
+                // by another route.
+                this._quotaExhausted = true;
+                try { window.voiceMode?.exit(); } catch (_) { /* not in call mode */ }
+                try { this.stopListening(); } catch (_) { /* mic already down */ }
+                this.updateUI('idle');
+                if (window.showUpgradePrompt) {
+                    window.showUpgradePrompt({
+                        usageLimitReached: true,
+                        feature: 'Voice chat',
+                        upgradeRequired: true,
+                        message: ev.message,
+                    });
+                } else if (window.showToast && ev.message) {
+                    window.showToast(ev.message, 'info');
+                }
                 break;
 
             case 'listening_started':
@@ -772,9 +803,15 @@ class VoiceController {
                 break;
 
             case 'disconnected':
+                this.streamClient = null;
+                if (this._quotaExhausted) {
+                    // Expected close — the student is out of AI minutes, not
+                    // hitting a transport failure. Don't fall back, don't warn.
+                    this.updateUI('idle');
+                    break;
+                }
                 console.warn('[Voice] stream disconnected — falling back to legacy path');
                 this.useStreamingPipeline = false;
-                this.streamClient = null;
                 this._resumeOnLegacyAfterFallback();
                 break;
 
@@ -805,6 +842,9 @@ class VoiceController {
     // tutor is mid-utterance), just settle to idle. No loop risk: the legacy
     // path never emits these stream events, and a legacy failure lands on idle.
     _resumeOnLegacyAfterFallback() {
+        // Out of AI minutes is a limit, not a transport failure — resuming on
+        // the legacy path would route around the wall the server just enforced.
+        if (this._quotaExhausted) { this.updateUI('idle'); return; }
         const inVoiceMode = typeof document !== 'undefined' &&
             document.body && document.body.classList.contains('cr-voice');
         const wasEngaged = this.isListening || inVoiceMode;

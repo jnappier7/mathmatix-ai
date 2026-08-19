@@ -8,7 +8,7 @@ const logger = require('./logger').child({ module: 'voiceUpgrade' });
 
 const sttStream = require('./sttStream');
 const ttsProvider = require('./ttsProvider');
-const { hasPremiumAccess } = require('../middleware/usageGate');
+const { hasVoiceAccess } = require('../middleware/usageGate');
 const { evaluateOwnConsent, getEnforcementMode } = require('../middleware/consentGate');
 
 const ALLOWED_ORIGINS = (process.env.VOICE_WS_ALLOWED_ORIGINS || '')
@@ -133,15 +133,21 @@ function handleUpgrade({ request, socket, head, app, wss, streamPath }) {
                         }
                     }
                 }
-                // Premium-tier paywall — mirrors premiumFeatureGate('Voice chat')
-                // on the HTTP routes (config/routes.js). Without this, a logged-in
-                // free-tier user who knows the WS path could open a session
-                // directly and burn unlimited Cartesia minutes, bypassing the
-                // HTTP-level gate entirely.
+                // AI-minute quota gate — mirrors usageGateAllMethods on the HTTP
+                // voice routes (config/routes.js). Voice is open to every 13+
+                // student now, but it spends the same monthly pool as text, so a
+                // student with an empty balance is refused here. Without this
+                // check a logged-in user who knows the WS path could open a
+                // session directly and burn unlimited Cartesia minutes,
+                // bypassing the HTTP-level gate entirely.
+                //
+                // This only covers STARTING a session. voiceSession re-checks the
+                // balance on every meter flush and hangs up mid-call when it runs
+                // out — connecting with ten seconds left must not buy an hour.
                 try {
-                    const allowed = await hasPremiumAccess(request.user);
+                    const allowed = await hasVoiceAccess(request.user);
                     if (!allowed) {
-                        logger.warn('voice ws upgrade: paywall blocked', {
+                        logger.warn('voice ws upgrade: out of AI minutes', {
                             userId: String(request.user._id),
                             tier: request.user.subscriptionTier || 'free',
                             path: streamPath,
@@ -151,7 +157,7 @@ function handleUpgrade({ request, socket, head, app, wss, streamPath }) {
                         return;
                     }
                 } catch (err) {
-                    logger.error('voice ws upgrade: paywall check failed', { error: err.message });
+                    logger.error('voice ws upgrade: quota check failed', { error: err.message });
                     socket.write('HTTP/1.1 500 Internal Server Error\r\n\r\n');
                     socket.destroy();
                     return;

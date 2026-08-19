@@ -7,6 +7,17 @@ const router = express.Router();
 const ttsProvider = require("../utils/ttsProvider");
 const { cleanTextForTTS } = require("../utils/mathTTS");
 const { resolveLangCode } = require("../utils/languageCodes");
+const { meterAiSeconds } = require("../utils/aiTimeMeter");
+
+// Cartesia returns WAV / pcm_s16le @ 44.1kHz (utils/ttsProvider.js), so the
+// synthesized duration is exact: (bytes - 44-byte header) / (rate * 2 bytes).
+const TTS_SAMPLE_RATE = 44100;
+const WAV_HEADER_BYTES = 44;
+
+function wavSeconds(buffer) {
+    if (!buffer || buffer.length <= WAV_HEADER_BYTES) return 0;
+    return (buffer.length - WAV_HEADER_BYTES) / (TTS_SAMPLE_RATE * 2);
+}
 
 router.post("/", async (req, res) => {
   const { text, voiceId } = req.body;
@@ -45,6 +56,15 @@ router.post("/", async (req, res) => {
     const audioBuffer = await ttsProvider.generateAudio(cleanedText, resolvedVoiceId, language);
     res.setHeader("Content-Type", ttsProvider.getContentType());
     res.send(audioBuffer);
+
+    // Meter the synthesized audio against the AI-second pool. Read-aloud spends
+    // real Cartesia minutes and used to be the one AI surface that spent them
+    // completely unmetered — free-tier included. Charged after the response so a
+    // metering hiccup can never cost the student their audio.
+    if (req.user) {
+      meterAiSeconds(req.user, wavSeconds(audioBuffer))
+        .catch(err => console.warn("[Speak] usage metering failed:", err.message));
+    }
 
   } catch (err) {
     console.error(`ERROR: ${ttsProvider.getProviderName()} TTS error:`, err.message);
