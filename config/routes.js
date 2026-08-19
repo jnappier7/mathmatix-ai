@@ -144,6 +144,7 @@ const transcriptFlagsRoutes = require('../routes/transcriptFlags');
 const notificationsRoutes = require('../routes/notifications');
 const onboardingRoutes = require('../routes/onboarding');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
+const lifecycle = require('../utils/lifecycle');
 
 function registerRoutes(app, { authLimiter, signupLimiter }) {
   // --- Health Check (public, no auth) ---
@@ -178,7 +179,19 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
     // Uptime
     checks.uptime = { seconds: Math.round(process.uptime()) };
 
-    const httpStatus = status === 'unhealthy' ? 503 : 200;
+    // Lifecycle — the load-balancer contract. Render polls this endpoint to
+    // decide whether to send us traffic, so the two windows where we cannot
+    // serve must answer 503 and nothing else:
+    //   starting — port is bound but Mongo (and the session store) is not up
+    //   draining — SIGTERM received; still serving, but stop sending us new work
+    // This check goes LAST and overrides: a starting instance also looks
+    // 'degraded' on the DB check above, and 'degraded' is a 200.
+    checks.lifecycle = { state: lifecycle.getState() };
+    let httpStatus = status === 'unhealthy' ? 503 : 200;
+    if (!lifecycle.isAcceptingTraffic()) {
+      status = lifecycle.getState();
+      httpStatus = 503;
+    }
     res.status(httpStatus).json({ status, checks, timestamp: new Date().toISOString() });
   });
 
