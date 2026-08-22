@@ -86,6 +86,34 @@ class OrchestratorSession {
     return this.turnAbort.signal;
   }
 
+  /**
+   * Kill the in-flight turn without destroying the session.
+   *
+   * startTurn() already aborts a prior turn, but that only helps when a
+   * replacement turn actually starts. A barge-in has to stop the segment
+   * loop *now* — before the next turn exists — or the dispatcher keeps
+   * synthesizing segments of a response the student has already talked
+   * over. Returns true when there was a live turn to stop.
+   */
+  abortTurn(reason = 'turn_abort') {
+    let had = false;
+    if (this.turnAbort && !this.turnAbort.signal.aborted) {
+      try { this.turnAbort.abort(reason); had = true; } catch (_) { /* node version variance */ }
+    }
+    for (const ac of this.segmentAbort.values()) {
+      try { ac.abort(reason); } catch (_) { /* swallow */ }
+    }
+    for (const ac of this.ttsPrefetch.values()) {
+      try { ac.abort(reason); } catch (_) { /* swallow */ }
+    }
+    this.ttsPrefetch.clear();
+    this.clearWaitTimer();
+    this.queue = [];
+    this.activeSegmentId = null;
+    this.touch();
+    return had;
+  }
+
   registerSegmentAbort(segmentId) {
     const ac = new AbortController();
     this.segmentAbort.set(segmentId, ac);
