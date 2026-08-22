@@ -1756,14 +1756,18 @@ a {
     }
 }
 
-/* --- 18. FREE-TIME INDICATOR: ABOVE INPUT + BOTTOM NAV ---
-   The billing time indicator is fixed at bottom:12px on desktop.
-   On mobile it must sit above both the bottom nav AND the input container
-   so it never blocks the chat input box (especially on iPhone). */
+/* --- 18. FREE-TIME INDICATOR: COMPACT, TOP-DOCKED ---
+   billing.js docks the pill to the TOP on phones (the message stream owns the
+   bottom of the screen). This block used to pin `bottom` as well, from back when
+   the pill lived above the input. A fixed element given BOTH `top` and `bottom`
+   does not move — it STRETCHES, so the pill became a full-height panel covering
+   the tutor, the conversation and the toolbar. `bottom: auto` is load-bearing:
+   billing.js sets `top` from a plain (non-!important) rule, so it cannot win
+   against an !important `bottom` here. Keep the two in step — this block styles
+   the pill, billing.js positions it. */
 @media (max-width: 768px) {
     #free-time-indicator {
-        /* Position above input area: 64px nav + safe-area + ~70px input + 8px gap */
-        bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 78px) !important;
+        bottom: auto !important;
         /* Compact pill on right side — NOT full-width, so it doesn't block input */
         right: 10px !important;
         left: auto !important;

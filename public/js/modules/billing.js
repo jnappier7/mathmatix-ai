@@ -139,6 +139,11 @@ function ensureTimePillStyles() {
       @media (max-width: 768px) {
         #free-time-indicator {
           top: calc(env(safe-area-inset-top, 0px) + 56px);
+          /* Explicit, because the desktop rule above is not the only source of
+             a bottom offset — mobile-fixes.css carries one too. A top and a
+             bottom together stretch a fixed box instead of moving it, which
+             turned this pill into a full-height panel over the conversation. */
+          bottom: auto;
           right: 12px;
           max-width: calc(100vw - 24px);
           font-size: 12px;
@@ -177,19 +182,27 @@ export function updateFreeTimeIndicator(usage) {
     const remaining = usage.secondsRemaining || 0;
     const mins = Math.floor(remaining / 60);
 
-    // QA P2: the pill is fixed over the bottom-right, which can sit on top of
-    // Work Board graphs/cards. Let the student dismiss it for the session so it
-    // doesn't block the canvas — BUT force it back (and clear the dismissal)
-    // once time runs low/out, so the upgrade nudge can't be permanently hidden.
-    const DISMISS_KEY = 'mm_time_pill_dismissed';
-    const isCritical = usage.limitReached || remaining <= 300;
-    const readFlag = () => { try { return sessionStorage.getItem(DISMISS_KEY) === '1'; } catch { return false; } };
-    if (isCritical) {
-        try { sessionStorage.removeItem(DISMISS_KEY); } catch { /* private mode */ }
-    } else if (readFlag()) {
+    // QA P2: the pill is fixed over the conversation, where it can sit on top of
+    // Work Board graphs/cards, so a student must always be able to clear it.
+    //
+    // It used to be undismissable below five minutes ("the upgrade nudge can't be
+    // permanently hidden") — but that made the *loudest* version of the pill, the
+    // one with the extra "Get Mathmatix+" and "Resets in…" lines, the one you were
+    // stuck with. Dismissal is per-urgency-level instead: hiding it at "low" hides
+    // the low warning only, and the pill returns on its own the moment the state
+    // escalates (low -> out). The nudge still can't be lost — clicking the pill at
+    // any level opens the upgrade modal, the wall itself still prompts on the next
+    // turn, and the nav keeps its "Upgrade Plan" link.
+    const DISMISS_KEY = 'mm_time_pill_level_dismissed';
+    const level = (usage.limitReached || remaining <= 0) ? 'out' : remaining <= 300 ? 'low' : 'ok';
+    const readFlag = () => { try { return sessionStorage.getItem(DISMISS_KEY); } catch { return null; } };
+    if (readFlag() === level) {
         setPillVisible(indicator, false);
         return;
     }
+    // A level change (in either direction) retires the old dismissal, so the pill
+    // is never hidden by a decision the student made about a different message.
+    try { sessionStorage.removeItem(DISMISS_KEY); } catch { /* private mode */ }
     setPillVisible(indicator, true);
 
     // Calculate human-readable reset time. "Resets soon" was the
@@ -219,26 +232,40 @@ export function updateFreeTimeIndicator(usage) {
     const subtitle = isMobile ? '' : '<div style="font-size:10px;color:#888;margin-top:2px;">Only counts when the tutor is responding — your reading time is free</div>';
     const resetLine = resetText ? `<div style="font-size:10px;color:#7b2ff7;margin-top:2px;">${resetText}</div>` : '';
 
-    if (usage.limitReached || remaining <= 0) {
-        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>' + resetLine + subtitle;
+    // The dismiss "×" rides on every level, not just the comfortable one — see the
+    // DISMISS_KEY note above. Sized for a fingertip (the 18px dot was a mouse
+    // target; this pill lives under a thumb on phones) and inset rather than hung
+    // off the corner, so the top-docked pill can't push it under the status bar.
+    const dismissBtn = '<span id="mm-time-dismiss" role="button" tabindex="0" aria-label="Hide time indicator"'
+        + ' title="Hide — it comes back if your time changes"'
+        + ' style="position:absolute;top:-9px;right:-9px;width:26px;height:26px;line-height:24px;text-align:center;'
+        + 'background:#33334d;color:#ccc;border:1px solid #555;border-radius:50%;font-size:15px;cursor:pointer;">&times;</span>';
+
+    if (level === 'out') {
+        indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>' + resetLine + subtitle + dismissBtn;
         indicator.style.borderColor = '#ff4444';
-    } else if (remaining <= 300) {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>` + resetLine + subtitle;
+    } else if (level === 'low') {
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>` + resetLine + subtitle + dismissBtn;
         indicator.style.borderColor = '#ffaa00';
     } else {
-        // Comfortable state: offer a dismiss "×" so it can be cleared off the board.
-        const dismissBtn = '<span id="mm-time-dismiss" role="button" aria-label="Hide time indicator" title="Hide — it comes back when your time runs low" style="position:absolute;top:-7px;right:-7px;width:18px;height:18px;line-height:15px;text-align:center;background:#33334d;color:#ccc;border:1px solid #555;border-radius:50%;font-size:12px;cursor:pointer;">&times;</span>';
         indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + resetLine + subtitle + dismissBtn;
         indicator.style.borderColor = '#333';
-        const x = indicator.querySelector('#mm-time-dismiss');
-        if (x) x.addEventListener('click', (e) => {
+    }
+
+    const x = indicator.querySelector('#mm-time-dismiss');
+    if (x) {
+        const dismiss = (e) => {
             e.stopPropagation();
-            try { sessionStorage.setItem(DISMISS_KEY, '1'); } catch { /* private mode */ }
+            e.preventDefault();
+            // Record WHICH warning was dismissed, so escalating brings it back.
+            try { sessionStorage.setItem(DISMISS_KEY, level); } catch { /* private mode */ }
             // Via the helper so the reserved space is released too — hiding the
             // pill while <body> still claims it leaves a dead gap at the top of
             // the conversation.
             setPillVisible(indicator, false);
-        });
+        };
+        x.addEventListener('click', dismiss);
+        x.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') dismiss(e); });
     }
 }
 
