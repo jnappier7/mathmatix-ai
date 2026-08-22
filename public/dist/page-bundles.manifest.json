@@ -62,7 +62,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js2.8c1410ff.js",
+        "src": "/dist/js/chat-js2.8fca8e94.js",
         "files": [
           "/js/voice-stream-client.js?v=3",
           "/js/voice-controller.js"
