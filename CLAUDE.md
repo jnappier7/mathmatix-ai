@@ -340,6 +340,7 @@ npm run seed:all:dry   # preflight + plan, no writes
 | Auth / roles / SSO | `auth/passport-config.js`, `middleware/auth.js`, `services/cleverSync.js` |
 | Billing / plans | `routes/billing.js`, `middleware/usageGate.js` |
 | Teacher/parent/admin dashboards | `routes/{teacher,parent,admin}.js` + matching `public/*-dashboard.html`/`.js` |
+| Course site branding (`/courses`) | `public/courses/assets/brand.css` (hand-owned) + `scripts/applyCourseBrand.js` (`npm run courses:brand`). Everything else under `public/courses/` is generator output — see §12 |
 | Chat UI / rendering | `public/js/script.js`, `public/js/inlineChatVisuals.js`, `public/css/chat*.css` |
 | Tutor teaching-quality regression / evals | `tests/eval/` — replayed-bug scenarios + behavioral personas through real observe→diagnose→decide; heuristic + LLM judges; live tier via `RUN_LLM_EVAL=1 npm run test:eval:live`. The judges themselves live in `utils/replyJudges.js` / `utils/replyLlmJudges.js` (shared with prod; tests/eval keeps shims) |
 | Transcript mining (nightly prod tutor-quality sweep) | `utils/transcriptMiner.js`, `scripts/mineTranscripts.js` (`npm run cron:mine-transcripts`), `GET /api/admin/tutor-quality-report`; doc: `TRANSCRIPT_MINING.md`. Findings are candidates for human review, never auto-actioned |
@@ -435,6 +436,21 @@ npm run seed:all:dry   # preflight + plan, no writes
   `dist/page-bundles.manifest.json` for whether the file you touched is bundled, then rebuild and
   commit the regenerated `public/dist/*` alongside the source edit. Pinned by
   `tests/unit/pageBundlesFresh.test.js`, which re-derives each bundle's hash from its sources.
+- **Everything under `public/courses/` is GENERATED — except `public/courses/assets/`.** The course
+  site is published from the Course Planner on Mr. Nappier's Mac
+  (`~/mathmatix-course-tools/`, `sync_to_repo.sh`), straight to `main`, roughly every two or three
+  days as `courses: update schedule and pages`. Each publish rewrites `courses/index.html`, both
+  courses' `*.html`, and their `assets/site.{css,js}` from the generator's own templates, so a hand
+  edit to any of those is gone at the next Publish — no conflict, no review, no error. `b1ce44b`
+  reverted the entire St. Charles rebrand (`de24d06`) that way and the school's students got
+  MATHMATIX.AI purple until someone noticed on a phone. The generator has no template for
+  `courses/assets/`, which is why the crest PNGs there survived untouched — so the school's brand
+  lives in `public/courses/assets/brand.css`, hand-owned, linked last on every page so it
+  out-cascades whatever `site.css` the generator shipped. The HTML that links it is still
+  generated: `npm run courses:brand` re-applies those few facts idempotently (head links, the mark,
+  the title and footer lines), and `tests/unit/courseBrandIntact.test.js` fails CI within minutes
+  of a publish that drops them. Do not "fix" the brand by editing `site.css` or a page — it will be
+  reverted; change `brand.css` or `scripts/applyCourseBrand.js`.
 
 ---
 

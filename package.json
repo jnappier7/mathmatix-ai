@@ -10,6 +10,8 @@
     "build:bundles": "node scripts/buildPageBundles.js",
     "build:chat": "node scripts/buildPageBundles.js",
     "build:preview": "vite preview",
+    "courses:brand": "node scripts/applyCourseBrand.js",
+    "courses:brand:check": "node scripts/applyCourseBrand.js --check",
     "test": "jest --coverage --verbose",
     "lint": "eslint .",
     "qa:modules": "node scripts/qaModule.js --all",

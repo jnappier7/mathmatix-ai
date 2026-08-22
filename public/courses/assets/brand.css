@@ -1,0 +1,200 @@
+/* ===========================================================================
+   St. Charles Preparatory School brand layer — HAND-OWNED, NOT GENERATED.
+   ===========================================================================
+
+   WHY THIS FILE EXISTS, AND WHY IT IS HERE AND NOT NEXT TO site.css.
+
+   The course site under /courses is published from the Course Planner on
+   Mr. Nappier's Mac (~/mathmatix-course-tools/, sync_to_repo.sh). Every
+   "courses: update schedule and pages" commit — roughly one every two and a
+   half days — rewrites, from the generator's own templates:
+
+       public/courses/index.html
+       public/courses/{algebra,geometry}/*.html
+       public/courses/{algebra,geometry}/assets/site.{css,js}
+
+   Anything hand-edited in those files is gone at the next Publish, with no
+   conflict and no review. That is not hypothetical: b1ce44b reverted the whole
+   St. Charles rebrand (de24d06) back to MATHMATIX.AI purple-on-navy, and the
+   site shipped off-brand to students until someone noticed.
+
+   The generator does NOT write public/courses/assets/ — that is why the crest
+   PNGs it references survived the same publish untouched. So the school's brand
+   lives HERE, in a directory the generator has no template for, and every page
+   links it AFTER its generated site.css. The design and the content therefore
+   stop sharing a file: the generator owns layout, this file owns the brand, and
+   a content republish is physically incapable of reverting the school's colours,
+   type, or mark.
+
+   The trade this makes: the tokens below are deliberately a full set, not a
+   patch. site.css ships its own :root — sometimes the St. Charles one, sometimes
+   MATHMATIX.AI's — and which one is a coin flip depending on when the generator
+   was last synced. Redefining every token here means the page looks the same
+   either way. Do not "de-duplicate" against site.css; that couples this file to
+   a file we do not own.
+
+   What is left over is the HTML: the <link> to this sheet, the crest, the mark
+   in the masthead, the title and footer lines. Those live in generated pages and
+   CAN be reverted. `npm run courses:brand` re-applies them idempotently, and
+   tests/unit/courseBrandIntact.test.js fails CI if a page ever lands without
+   them — see scripts/applyCourseBrand.js.
+
+   Brand source: St. Charles Preparatory School 2022 Brand Guidelines.
+   Blood red (Pantone 185) leads, gleaming white supports it, rich black grounds
+   the page and carries body copy. Those three are the whole palette, so the two
+   semantic roles the site needs are split across them rather than borrowed from
+   off-brand greens and ambers: red marks progress and anything you can act on,
+   black marks emphasis — tests, quizzes, closures, what is coming next.
+   =========================================================================== */
+
+/* Goudy Oldstyle is the brand's headline face. Imported here as well as linked
+   from each page's <head>: the <head> is generated and can lose the link, this
+   file cannot. Same URL either way, so the browser fetches it once. */
+@import url("https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy:ital@0;1&display=swap");
+
+/* ---------------------------------------------------------------------------
+   1. Tokens
+   --------------------------------------------------------------------------- */
+:root{
+  --sc-red:#EA1D2D;         /* Pantone 185 · CMYK 1/100/92/0 · RGB 234/29/45 */
+  --sc-red-deep:#B8121F;    /* shading only: hover, gradient end            */
+  --sc-black:#230E15;       /* rich black · CMYK 0/25/0/100 · RGB 35/14/21  */
+
+  --bg:#F6F3F2; --panel:#FFFFFF; --panel-2:#F2EEED;
+  --ink:#230E15; --muted:#6B5C60;
+  --line:rgba(35,14,21,.12); --line-strong:rgba(35,14,21,.24);
+  --accent:#EA1D2D; --accent-strong:#B8121F; --accent-soft:#FCEAEB;
+  --accent-ink:#B8121F;   /* red TEXT on light grounds — see §4 */
+  --ok:#EA1D2D; --ok-soft:#FCEAEB;
+  --warn:#230E15; --warn-soft:#ECE6E5;
+  --radius:12px;
+  --shadow:0 1px 2px rgba(35,14,21,.06),0 8px 20px rgba(35,14,21,.08);
+
+  /* Real Goudy is installed on most machines that have Office; Sorts Mill Goudy
+     is the open digitisation of the same face, pulled from Google Fonts as a
+     fallback; Georgia and Arial are the PC-compatible substitutes the brand book
+     itself names, so a page that loads no webfont at all is still on-brand. */
+  --font-display:"Goudy Old Style","Sorts Mill Goudy",Georgia,"Times New Roman",serif;
+  --font-body:"Avenir Next",Avenir,"Segoe UI",Arial,Helvetica,sans-serif;
+}
+/* Dark mode grounds in rich black rather than the brand's white. The red is
+   lifted to #FF5A64 for text and hairlines — #EA1D2D on a black field falls
+   under 4.5:1 — while fills that carry white type keep the true brand red.
+
+   Note the shape: site.css may declare its tokens on a bare :root (dark-default,
+   as MATHMATIX.AI's does) or inside a light media query (as the St. Charles one
+   does). Either way this file is later in the cascade at equal specificity, so
+   both blocks below win in their own scheme. */
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#170910; --panel:#241017; --panel-2:#2F171E;
+    --ink:#FFFFFF; --muted:#BCA8AD;
+    --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.22);
+    --accent:#FF5A64; --accent-strong:#EA1D2D; --accent-soft:rgba(234,29,45,.20);
+    --accent-ink:#FF5A64;
+    --ok:#FF5A64; --ok-soft:rgba(234,29,45,.20);
+    --warn:#FFFFFF; --warn-soft:rgba(255,255,255,.10);
+    --shadow:0 8px 20px rgba(0,0,0,.45);
+  }
+}
+/* The generated body rule reads its font off --font-body, but only in the
+   St. Charles build of site.css; the MATHMATIX.AI build hard-codes a sans
+   stack. Restate it so the brand type survives either. */
+body{font-family:var(--font-body)}
+
+/* ---------------------------------------------------------------------------
+   2. Type
+   --------------------------------------------------------------------------- */
+
+/* Goudy carries the headlines. Two adjustments it needs: the generated layout
+   tracks headings tight for a sans, and a serif wants that tracking back at
+   zero; and Goudy defaults to old-style figures, which turn "Algebra 1" into
+   something that reads as a Roman numeral. lining-nums fixes the second. */
+h1,h2,h3{font-family:var(--font-display);font-weight:700;
+  font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
+.hero h1,.ch-head h1,.ch-body h3,.lesson-title h3,.card h2{letter-spacing:0}
+.brand strong{font-family:var(--font-display);font-size:17px;
+  font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
+/* Small uppercase eyebrows stay in the sans — the brand book puts Goudy on
+   headlines and callouts, not on labels. So do the numerals in the fixed-size
+   chips, which stay crisper in the sans at 13-20px. */
+.section-head,.wday h4{font-family:var(--font-body)}
+.big-num,.ch-num,.stats b,.facts b,.witem .wt{font-family:var(--font-body)}
+
+/* ---------------------------------------------------------------------------
+   3. The mark
+   --------------------------------------------------------------------------- */
+
+/* "Blood red is the primary colour in our palette. It leads. Don't be afraid to
+   use it." — white type reversed out of a red field is the brand book's own
+   exemplar, so the masthead is the one place the page commits to it fully.
+   Embed mode hides the masthead, so Canvas pages are unaffected. */
+.topbar{background:var(--sc-red);border-bottom:3px solid var(--sc-black);
+  backdrop-filter:none}
+.topbar,.topbar a{color:#fff}
+.brand em{color:rgba(255,255,255,.82)}
+.chip{color:rgba(255,255,255,.92);border-color:rgba(255,255,255,.42)}
+.brand picture{display:block;flex:none;line-height:0}
+/* Scoped under .topbar so they out-specify the blanket `.topbar a{color:#fff}`
+   above — without that, the white "Ask your tutor" pill renders white-on-white. */
+.topbar .syl-top{color:#fff;border-color:rgba(255,255,255,.5)}
+.topbar .syl-top:hover{background:#fff;color:var(--sc-red);border-color:#fff}
+.topbar .tutor-top{background:#fff;color:var(--sc-red)}
+.topbar .tutor-top:hover{filter:none;background:var(--sc-black);color:#fff}
+/* The crest lockup carries the mandatory "PREPARATORY SCHOOL" strapline, so it
+   needs more height than the old wordmark did to stay legible at all. */
+.brand-logo{height:40px}
+@media(max-width:520px){.brand-logo{height:32px}}
+
+/* ---------------------------------------------------------------------------
+   4. Contrast
+   --------------------------------------------------------------------------- */
+
+/* Blood red at full strength is 4.0:1 against the page ground and 3.8:1 against
+   its own tint — under the 4.5:1 floor for text at these sizes. Red TEXT and
+   glyphs therefore take the deeper shade; every FILLED surface (the masthead,
+   progress bars, the checkbox, the number chips' gradient) keeps true Pantone
+   185, so the colour the page reads as is still the brand red. */
+.crumb a,.seeall,.tutor-txt b,.tutor-go,.notes .files a,.badge.k-review,
+.badge.due,.witem .wdue,.ch-num,.toc-links a:hover,.files a:hover,
+.linkish:hover,.weeknav button:hover{color:var(--accent-ink)}
+
+/* White on Pantone 185 is 4.46:1 — a hair under AA for text this size. The
+   course name clears it by qualifying as large text; the two pills clear it by
+   sitting on a slightly darkened field rather than the raw red. */
+.brand strong{font-size:19px}
+.brand em{color:rgba(255,255,255,.92)}
+.topbar .syl-top,.topbar .chip{background:rgba(0,0,0,.18);
+  border-color:rgba(255,255,255,.42)}
+/* The masthead is blood red in BOTH schemes, so everything on it takes a
+   fixed colour. --accent-ink follows the scheme and lightens in dark mode,
+   which dropped this white pill's label to 3.0:1 against its own white. */
+.topbar .tutor-top{color:var(--sc-red-deep)}
+/* The one thing left under AA is the 12px year beneath the course name, at
+   4.46:1 — inherent to white on Pantone 185, not something the layout adds.
+   Extra weight is the only lever that does not touch the brand red. */
+.brand em{font-size:12.5px;font-weight:600}
+
+/* ---------------------------------------------------------------------------
+   5. The landing page (/courses/index.html)
+   ---------------------------------------------------------------------------
+   That page carries its styles inline in a generated <style> block rather than
+   linking site.css, so its brand is the most exposed of the lot. The rules below
+   are the school-specific half of that block, restated here where the generator
+   cannot reach them; this sheet is linked after the inline styles, so it wins.
+   None of these selectors exist on the course pages, and .topbar above does not
+   exist here, so the two halves of this file never collide. */
+
+/* The brand book's own exemplar is white type reversed out of a red field, so
+   the school's mark leads the page on blood red before anything else. */
+.masthead{background:var(--sc-red);border-bottom:3px solid var(--sc-black);
+  padding:34px 20px 30px;text-align:center}
+.masthead img{width:auto;height:132px;display:block;margin:0 auto}
+@media(max-width:520px){.masthead{padding:26px 16px 24px}.masthead img{height:104px}}
+.card h2{font-family:var(--font-display);font-weight:700;
+  font-variant-numeric:lining-nums}
+.go,.tutor b,.tutor .arrow,.pill.new{color:var(--accent-ink)}
+.pill.new{background:var(--accent-soft);border-color:transparent}
+/* "Embrace our Building Better Men tagline. It is our rallying cry." */
+.foot b{font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:12px;
+  color:var(--ink)}
