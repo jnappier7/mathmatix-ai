@@ -37,7 +37,16 @@ function isConfigured() {
  *                                        Deepgram requires >=1000; values below
  *                                        that cause an HTTP 400 on upgrade.
  * @param {Function} opts.onPartial     - (text, confidence) => void
- * @param {Function} opts.onFinal       - (text, confidence) => void  -- per-segment final
+ * @param {Function} opts.onFinal       - (text, confidence, speechFinal) => void
+ *                                        Per-segment final. speechFinal is
+ *                                        Deepgram's "the speaker has stopped"
+ *                                        flag, raised once `endpointing` ms of
+ *                                        silence pass — roughly 700ms sooner
+ *                                        than UtteranceEnd can fire. Committing
+ *                                        the turn on it is the difference
+ *                                        between answering a beat after the
+ *                                        student stops and answering a full
+ *                                        second later.
  * @param {Function} opts.onUtteranceEnd- () => void  -- "user is done speaking, fire LLM"
  * @param {Function} opts.onError       - (err) => void
  * @param {Function} opts.onClose       - () => void
@@ -93,7 +102,11 @@ function createSession(opts = {}) {
         if (!text) return;
 
         if (data.is_final) {
-            onFinal(text, confidence);
+            // speech_final marks the segment that closed the utterance —
+            // Deepgram raising its endpointing verdict. UtteranceEnd says the
+            // same thing but cannot fire sooner than 1000ms, so relying on it
+            // alone charges every single turn a second of dead air.
+            onFinal(text, confidence, data.speech_final === true);
         } else {
             onPartial(text, confidence);
         }

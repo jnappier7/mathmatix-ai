@@ -44,6 +44,12 @@ function newTurn(sessionId, userId, tutorId) {
         llmOutputTokens: 0,
         ttsChars: 0,
         abortReason: null,
+        // Which signal ended the student's utterance: 'speech_final' (fast
+        // path, Deepgram's endpointing verdict) or 'utterance_end' (the
+        // 1000ms fallback, ~700ms slower). A fleet drifting toward
+        // utterance_end means endpointing is failing to fire — usually room
+        // noise — and every one of those turns felt sluggish to a student.
+        endpointReason: null,
         spokenChars: 0,
     };
 }
@@ -139,6 +145,7 @@ function record(turn) {
             duration_ms: t.turn_duration_ms,
             cost_cents: Math.round(t.estimated_cost_usd * 10000) / 100,
             abort: t.abortReason,
+            endpoint: t.endpointReason,
         });
     }
 
@@ -173,10 +180,18 @@ function aggregate() {
     const sub = turns.map(t => t.interrupt_substantive_ms).filter(x => x != null).sort((a, b) => a - b);
     const costs = turns.map(t => t.estimated_cost_usd);
     const interrupted = turns.filter(t => t.abortReason === 'user_barge_in').length;
+    // Voice turns only — typed input has no endpointing to attribute.
+    const endpointed = turns.filter(t => t.endpointReason === 'speech_final' ||
+                                        t.endpointReason === 'utterance_end');
+    const slowPath = endpointed.filter(t => t.endpointReason === 'utterance_end').length;
     return {
         count: turns.length,
         ttfa_ms_p50: percentile(ttfa, 0.50),
         ttfa_ms_p95: percentile(ttfa, 0.95),
+        // Share of turns that missed the fast endpointing path and paid the
+        // full UtteranceEnd wait. Rising here is the signal that students are
+        // sitting in silence, and it is invisible in ttfa alone.
+        slow_endpoint_rate: endpointed.length ? slowPath / endpointed.length : null,
         interrupt_stop_ms_p50: interrupts.length ? percentile(interrupts, 0.50) : null,
         interrupt_stop_ms_p95: interrupts.length ? percentile(interrupts, 0.95) : null,
         interrupt_ack_ms_p50: ack.length ? percentile(ack, 0.50) : null,
