@@ -59,6 +59,9 @@ const KNOWN_GAPS = {
 /** Pages a visitor meets before they have an account. These carry the review's fixes. */
 const FRONT_DOOR = [
   'index.html',
+  'for-teachers.html',
+  'for-students.html',
+  'safety.html',
   'signup.html',
   'onboarding.html',
   'login.html',

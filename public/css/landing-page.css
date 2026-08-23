@@ -477,10 +477,12 @@
 }
 
 .lp-features-grid {
+  /* Three cards, not the six this used to hold — see the section comment in
+     index.html for which three were dropped and why. */
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -542,82 +544,6 @@
 .lp-roles {
   padding: 4rem var(--page-horizontal-padding);
   background: #f7fbfb;
-}
-
-.lp-role-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  max-width: 560px;
-  margin: 0 auto 2.5rem;
-}
-
-.lp-role-tab {
-  background: var(--clr-bg-light);
-  border: 2px solid #e8ecf0;
-  border-radius: 12px;
-  padding: 1.35rem 0.75rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: none;
-}
-
-.lp-role-tab:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--clr-primary-teal);
-}
-
-.lp-role-tab--active {
-  border-color: var(--clr-primary-teal);
-  background: rgba(18, 179, 179, 0.03);
-  box-shadow: 0 4px 16px rgba(18, 179, 179, 0.15);
-}
-
-.lp-role-tab--active:hover {
-  transform: none;
-}
-
-.lp-role-tab-icon {
-  width: 52px; height: 52px; border-radius: 50%;
-  background: rgba(18, 179, 179, 0.08);
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 0.65rem;
-  transition: background 0.25s ease, color 0.25s ease;
-}
-
-.lp-role-tab-icon i {
-  font-size: 1.25rem;
-  color: var(--clr-primary-teal);
-  transition: color 0.25s ease;
-}
-
-.lp-role-tab--active .lp-role-tab-icon {
-  background: var(--clr-primary-teal);
-}
-
-.lp-role-tab--active .lp-role-tab-icon i {
-  color: white;
-}
-
-.lp-role-tab-label {
-  font-weight: 600; font-size: 0.92rem; color: var(--clr-text);
-}
-
-/* Role panels */
-.lp-role-panel {
-  display: none;
-  animation: lp-panel-in 0.35s ease;
-}
-
-.lp-role-panel--active {
-  display: block;
-}
-
-@keyframes lp-panel-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Shared audience grid used inside panels */
@@ -692,6 +618,14 @@
   gap: 0.75rem;
 }
 
+/* Standalone use on the homepage, under the digest preview. Inside
+   .lp-audience-grid (the for-teachers / for-students pages) the grid column
+   already constrains it, so only the unwrapped case needs this. */
+.lp-roles > .lp-inner > .lp-info-cards {
+  max-width: 560px;
+  margin: 1rem auto 0;
+}
+
 .lp-info-card {
   background: var(--clr-bg-light);
   border: 1px solid #e8ecf0;
@@ -728,94 +662,82 @@
   background: var(--clr-bg-light);
 }
 
-.lp-compare-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-  max-width: 960px;
+/* Comparison table. Replaces three feature-card columns where Mathmatix+ had
+   nine bullets and the alternatives had almost nothing but red crosses — a
+   table whose other columns are never right reads as marketing, not
+   information. This one concedes what a human tutor and a general AI actually
+   do well, and competes on the rows where the difference is real. */
+.lp-compare-table {
+  width: 100%;
+  max-width: 760px;
   margin: 0 auto;
-  align-items: stretch;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  /* Own scroll container: wide content must never make the body scroll. */
+  display: block;
+  overflow-x: auto;
 }
 
-.lp-compare-card {
-  background: var(--clr-bg-light);
+.lp-compare-table th,
+.lp-compare-table td {
   border: 1px solid #e8ecf0;
-  border-radius: 12px;
-  padding: 2rem 1.5rem;
-  text-align: center;
-  position: relative;
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
 }
 
-.lp-compare-card h3 {
-  font-size: 1.1rem; font-weight: 700;
-  margin-bottom: 0.35rem; color: var(--clr-text);
+.lp-compare-table thead th {
+  background: #f4f8f9;
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 
-.lp-compare-price {
-  font-size: 1.35rem; font-weight: 700;
-  color: var(--clr-text); margin-bottom: 1.5rem;
-}
-
-.lp-compare-price span {
-  font-size: 0.85rem; font-weight: 400; color: var(--clr-text-dim);
-}
-
-.lp-compare-card ul {
-  list-style: none; padding: 0; margin: 0;
-  text-align: left; display: grid; gap: 0.7rem;
-}
-
-.lp-compare-card li {
-  font-size: 0.88rem; line-height: 1.45;
-  display: flex; align-items: flex-start; gap: 0.6rem;
-}
-
-.lp-compare-card li i {
-  flex-shrink: 0; margin-top: 0.15rem; font-size: 0.82rem;
-}
-
-.lp-compare-yes i { color: var(--clr-primary-teal); }
-.lp-compare-yes { color: var(--clr-text); }
-.lp-compare-no i { color: var(--clr-text-dim); opacity: 0.5; }
-.lp-compare-no { color: var(--clr-text-dim); }
-
-/* The conversion-critical column. It previously sat at the same visual weight
-   as the two it is meant to beat. */
-.lp-compare-card--highlight {
-  border: 2px solid var(--clr-primary-teal);
-  box-shadow: 0 18px 48px rgba(18, 179, 179, 0.18);
-  padding-top: 2.75rem;
-  background: linear-gradient(180deg, rgba(18, 179, 179, 0.05) 0%, rgba(255, 255, 255, 0) 240px);
-  position: relative;
-  z-index: 1;
-}
-
-@media (min-width: 900px) {
-  .lp-compare-card--highlight { transform: scale(1.04); }
-}
-
-/* Free-plan / anti-anchor note under a comparison price */
-.lp-compare-freenote {
-  margin: -1.15rem 0 1.35rem;
-  font-size: 0.78rem;
-  line-height: 1.4;
-  color: var(--clr-text-dim);
+.lp-compare-table tbody th {
   font-weight: 500;
+  color: var(--clr-text);
 }
 
-.lp-compare-card--highlight .lp-compare-freenote {
+.lp-compare-table td { color: var(--clr-text-dim); }
+
+/* The product's own column is the only one that gets emphasis. */
+.lp-compare-table thead th:nth-child(2) { color: var(--clr-primary-teal); }
+.lp-compare-table tbody td:first-of-type {
+  color: var(--clr-text);
+  font-weight: 600;
+}
+
+.lp-compare-table tbody tr:nth-child(even) { background: #fafcfc; }
+
+/* One line acknowledging the audiences the homepage no longer explains to. */
+.lp-audience-links {
+  padding: 2rem var(--page-horizontal-padding);
+  text-align: center;
+}
+
+.lp-audience-links p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--clr-text-dim);
+}
+
+.lp-audience-links a {
   color: var(--clr-primary-teal);
   font-weight: 600;
 }
 
-.lp-compare-badge {
-  position: absolute; top: -1px; left: 50%;
-  transform: translateX(-50%);
-  background: var(--clr-primary-teal); color: white;
-  font-size: 0.72rem; font-weight: 600;
-  padding: 0.3rem 1rem;
-  border-radius: 0 0 8px 8px;
-  letter-spacing: 0.04em; text-transform: uppercase;
+/* Visible to screen readers only — the comparison table's caption, which the
+   heading above it already says out loud. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ── Testimonials ───────────────────────────────────────── */
@@ -1022,6 +944,7 @@
   border-radius: 14px;
 }
 
+.lp-spotlight-content h1,
 .lp-spotlight-content h2 {
   font-size: 1.85rem;
   font-weight: 700;
@@ -1445,11 +1368,9 @@
 .lp-sticky-cta .btn { padding: 0.55rem 1.35rem; font-size: 0.88rem; }
 
 /* ── Global Mobile Polish ──────────────────────────────── */
-.lp-role-tab,
 .lp-feature-card,
 .lp-stat-card,
 .lp-info-card,
-.lp-compare-card,
 .lp-testimonial,
 .lp-faq-question,
 .lp-step,
@@ -1520,12 +1441,6 @@
   .lp-feature-card p { font-size: 0.88rem; }
 
   /* -- Role selector tabs -- */
-  .lp-role-tabs { max-width: 100%; gap: 0.65rem; margin-bottom: 1.75rem; }
-  .lp-role-tab { padding: 0.85rem 0.4rem; border-radius: 10px; }
-  .lp-role-tab:hover { transform: none; }
-  .lp-role-tab-icon { width: 40px; height: 40px; margin-bottom: 0.45rem; }
-  .lp-role-tab-icon i { font-size: 1rem; }
-  .lp-role-tab-label { font-size: 0.78rem; font-weight: 600; }
 
   /* -- Audience panels -- */
   .lp-audience-grid { grid-template-columns: 1fr; gap: 1.5rem; }
@@ -1550,19 +1465,11 @@
   .lp-info-card strong { font-size: 0.88rem; }
   .lp-info-card span { font-size: 0.8rem; }
 
-  /* -- Comparison: swipeable horizontal scroll, edge-to-edge -- */
-  .lp-compare-grid {
-    grid-template-columns: repeat(3, 80vw);
-    max-width: none; gap: 0.75rem;
-    overflow-x: auto; -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    padding: 0 var(--page-horizontal-padding) 0.5rem;
-    margin: 0 calc(-1 * var(--page-horizontal-padding));
-    scrollbar-width: none; -ms-overflow-style: none;
-  }
-  .lp-compare-grid::-webkit-scrollbar { display: none; }
-  .lp-compare-card { scroll-snap-align: center; min-width: 0; }
-  .lp-compare-card--highlight { order: -1; }
+  /* -- Comparison: the table scrolls inside its own container, so the page
+        body never scrolls sideways. -- */
+  .lp-compare-table { font-size: 0.82rem; }
+  .lp-compare-table th,
+  .lp-compare-table td { padding: 0.5rem 0.6rem; }
 
   /* -- Testimonials: swipeable horizontal scroll, edge-to-edge -- */
   .lp-testimonials-grid {
@@ -1605,6 +1512,7 @@
   .lp-spotlight-photo { max-height: 340px; }
   .lp-spotlight-photo img { max-height: 340px; }
   .lp-spotlight-content { text-align: center; }
+  .lp-spotlight-content h1,
   .lp-spotlight-content h2 { font-size: 1.45rem; }
   .lp-spotlight-content p { font-size: 0.92rem; }
 
@@ -1644,10 +1552,6 @@
   .lp-hero .lp-hero-sub { font-size: 0.9rem; }
   .lp-section-heading { font-size: 1.35rem; }
 
-  .lp-role-tab { padding: 0.7rem 0.25rem; }
-  .lp-role-tab-icon { width: 36px; height: 36px; }
-  .lp-role-tab-icon i { font-size: 0.9rem; }
-  .lp-role-tab-label { font-size: 0.72rem; }
 
   .lp-audience-content h2 { font-size: 1.25rem; }
 

@@ -786,6 +786,13 @@ function registerHtmlRoutes(app) {
   app.get('/quiz/:answer', (req, res) =>
     res.redirect(302, '/quiz?a=' + encodeURIComponent(String(req.params.answer).slice(0, 24))));
   app.get('/pricing.html', sendHtml('pricing.html'));
+  // Audience pages. The homepage speaks to parents; the student and teacher
+  // pitches used to be two of three tabs in the middle of it, which asked every
+  // parent to read past them. Short aliases because these get linked directly.
+  app.get('/for-teachers.html', sendHtml('for-teachers.html'));
+  app.get('/for-teachers', sendHtml('for-teachers.html'));
+  app.get('/for-students.html', sendHtml('for-students.html'));
+  app.get('/for-students', sendHtml('for-students.html'));
   // Phone upload landing page — public; the page itself is inert until a valid
   // token + PIN are supplied, and all enforcement is server-side.
   app.get('/phone-upload', sendHtml('phone-upload.html'));

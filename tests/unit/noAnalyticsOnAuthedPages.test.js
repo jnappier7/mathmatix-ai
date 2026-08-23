@@ -28,6 +28,10 @@ const PUBLIC_DIR = path.join(__dirname, '..', '..', 'public');
 const ANALYTICS_ALLOWED = new Set([
     'index.html',
     'pricing.html',
+    // Audience landing pages split out of the homepage. Same prospect traffic,
+    // same funnel, no student records — see index.html above.
+    'for-teachers.html',
+    'for-students.html',
     'signup.html',
     'login.html',
     'privacy.html',
