@@ -69,7 +69,24 @@ const COMMAND_FIELDS = [
  *  - "\." is always a mangled period (KaTeX has no such command; the LaTeX
  *    accent form is "\.{x}", which is preserved) → "."
  *  - a trailing lone backslash or trailing punctuation-period is dropped
+ *  - a DISPLAY-ONLY multi-line environment (align, gather, split, alignat) is
+ *    swapped for its inline-safe twin. The card typesets inline, where KaTeX
+ *    refuses these outright ("{align} can be used only in display mode") and
+ *    paints the whole system as red source — production 2026-08-23, a 2x2
+ *    system posed as \\begin{align*}. The twins differ only in claiming the
+ *    full display width, which the card supplies anyway. Mirrored on the
+ *    client in derivationView.cleanLatex, which also heals already-ledgered
+ *    tex; keep the two maps in step.
  */
+const INLINE_ENV = {
+  align: 'aligned', 'align*': 'aligned',
+  alignat: 'alignedat', 'alignat*': 'alignedat',
+  gather: 'gathered', 'gather*': 'gathered',
+  split: 'aligned',
+  eqnarray: 'aligned', 'eqnarray*': 'aligned',   // not in KaTeX at all
+  multline: 'gathered', 'multline*': 'gathered', // ditto
+};
+
 function healBoardTex(tex) {
   if (typeof tex !== 'string') return tex;
   let t = tex.trim();
@@ -78,6 +95,8 @@ function healBoardTex(tex) {
   t = t.replace(/\\\.(?!\{)/g, '.');          // mangled "\." (not the accent "\.{x}")
   t = t.replace(/\\+$/, '');                  // dangling backslash at end
   t = t.replace(/\s*\.\s*$/, '');             // sentence period is prose, not math
+  t = t.replace(/\\(begin|end)\s*\{([a-zA-Z]+\*?)\}/g, (m, which, env) =>
+    (INLINE_ENV[env] ? `\\${which}{${INLINE_ENV[env]}}` : m));
   return t.trim();
 }
 
