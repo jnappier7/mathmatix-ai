@@ -14,6 +14,7 @@ const { VoiceSession } = require('../../utils/voiceSession');
 const {
     _onPartial,
     _onUtteranceEnd,
+    _commitUtterance,
     _openBargeDuck,
     _resolveBargeDuck,
     _clearBargeDuckTimer,
@@ -31,12 +32,16 @@ function session(overrides = {}) {
         currentTurn: { status: 'speaking', metric: { turnId: 't1' }, spokenAcc: '' },
         _accumulatedFinal: '',
         _bargeDuckTimer: null,
+        _speechEndedAt: null,
         _send: jest.fn(),
         _abortCurrentTurn: jest.fn(),
         _startTurn: jest.fn(),
         _openBargeDuck,
         _resolveBargeDuck,
         _clearBargeDuckTimer,
+        // _onUtteranceEnd delegates here now that speech_final shares the
+        // commit path — see voiceEndpointing.test.js for that seam.
+        _commitUtterance,
         ...overrides,
     };
 }
@@ -99,7 +104,9 @@ describe('_onUtteranceEnd — a backchannel is not a turn', () => {
         const s = session({ currentTurn: null, _accumulatedFinal: 'okay' });
         _onUtteranceEnd.call(s);
 
-        expect(s._startTurn).toHaveBeenCalledWith('okay', { source: 'voice' });
+        expect(s._startTurn).toHaveBeenCalledWith(
+            'okay', { source: 'voice', endpointReason: 'utterance_end' }
+        );
     });
 
     test('a real utterance over the tutor interrupts and starts a new turn', () => {
@@ -108,7 +115,8 @@ describe('_onUtteranceEnd — a backchannel is not a turn', () => {
 
         expect(s._abortCurrentTurn).toHaveBeenCalledWith('user_barge_in');
         expect(s._startTurn).toHaveBeenCalledWith(
-            'can you show that on the board', { source: 'voice' }
+            'can you show that on the board',
+            { source: 'voice', endpointReason: 'utterance_end' }
         );
     });
 

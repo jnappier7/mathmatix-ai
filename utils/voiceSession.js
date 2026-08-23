@@ -80,6 +80,19 @@ const STT_IDLE_CHECK_MS = 5_000;
 // sound like a dropout.
 const BARGE_DUCK_RESOLVE_MS = 900;
 
+// ─── Endpointing ────────────────────────────────────────────────────────
+// How long a student may pause before we treat them as finished. Math
+// students pause mid-thought far more than chatters do ("so x equals...
+// uh... four"), so this trades cut-offs against dead air and is worth
+// tuning against real calls rather than guessing — hence the env override.
+// 300ms is Deepgram's own default and errs toward responsiveness; the
+// backchannel classifier and barge-in duck make an early cut cheap to
+// recover from, which is what lets us sit at the fast end.
+const STT_ENDPOINTING_MS = Number(process.env.VOICE_ENDPOINTING_MS) || 300;
+// UtteranceEnd is now only the fallback for when endpointing never fires,
+// so its floor costs nothing on the common path. Deepgram rejects <1000.
+const STT_UTTERANCE_END_MS = Math.max(1000, Number(process.env.VOICE_UTTERANCE_END_MS) || 1000);
+
 // Streaming voice prompt — natural English first, then tagged math at the
 // end. The orchestrator forwards everything before <math> to TTS in real
 // time, then parses the JSON inside the tag for the board.
@@ -352,8 +365,8 @@ class VoiceSession {
         this.stt = sttStream.createSession({
             language: this.langCode,
             sampleRate: 16000,
-            endpointing: 300,
-            utteranceEndMs: 1000,
+            endpointing: STT_ENDPOINTING_MS,
+            utteranceEndMs: STT_UTTERANCE_END_MS,
             onPartial: (text) => { this._lastSttActivity = Date.now(); this._onPartial(text); },
             onFinal: (text) => { this._lastSttActivity = Date.now(); this._onFinal(text); },
             onUtteranceEnd: () => { this._lastSttActivity = Date.now(); this._onUtteranceEnd(); },
@@ -417,18 +430,40 @@ class VoiceSession {
     }
 
     _accumulatedFinal = '';
-    _onFinal(text, confidence) {
+    _onFinal(text, confidence, speechFinal) {
         // Concatenate "is_final" segments — Deepgram emits multiple finals
-        // per utterance (one per phrase). We commit on UtteranceEnd.
+        // per utterance (one per phrase). The last one carries speech_final.
         this._accumulatedFinal = this._accumulatedFinal
             ? `${this._accumulatedFinal} ${text}`
             : text;
         const msg = { type: 'transcript_final_segment', text };
         if (typeof confidence === 'number') msg.confidence = confidence;
         this._send(msg);
+
+        // Deepgram has decided the student stopped talking. Answer NOW rather
+        // than waiting for UtteranceEnd, whose 1000ms floor made every turn
+        // sit through a second of silence before the tutor even began
+        // thinking. This is the single largest slice of "it takes too long to
+        // respond", and it is pure dead air — no work was happening in it.
+        if (speechFinal) this._commitUtterance('speech_final');
     }
 
+    // UtteranceEnd is the safety net, not the trigger: it catches the
+    // utterance whose endpointing verdict never arrived (trailing room noise
+    // keeps speech_final from firing). When speech_final already committed,
+    // the accumulator is empty and this is a no-op.
     _onUtteranceEnd() {
+        this._commitUtterance('utterance_end');
+    }
+
+    /**
+     * Turn the accumulated final segments into a student turn.
+     *
+     * Reached from two places on purpose — speech_final (fast path, the common
+     * case) and UtteranceEnd (fallback). Whichever arrives first drains the
+     * accumulator, so the other finds nothing and returns.
+     */
+    _commitUtterance(reason) {
         const utterance = this._accumulatedFinal.trim();
         this._accumulatedFinal = '';
         if (!utterance) return;
@@ -450,8 +485,14 @@ class VoiceSession {
         if (this.currentTurn) {
             this._abortCurrentTurn('user_barge_in');
         }
+        // The student stopped talking NOW. Stamping it here rather than at
+        // _startTurn is what makes the latency metric honest: it used to be
+        // taken after the endpointing wait, so a turn that kept the student
+        // sitting in silence for a second still reported a fast ttfa.
+        this._speechEndedAt = Date.now();
+
         this._send({ type: 'transcript_final', text: utterance });
-        this._startTurn(utterance, { source: 'voice' });
+        this._startTurn(utterance, { source: 'voice', endpointReason: reason });
     }
 
     // ─── Barge-in duck lifecycle ─────────────────────────────────────────
@@ -503,7 +544,7 @@ class VoiceSession {
 
     // ─── Turn lifecycle ──────────────────────────────────────────────────
 
-    async _startTurn(userMessage, { source }) {
+    async _startTurn(userMessage, { source, endpointReason }) {
         if (this.closed) return;
         const ac = new AbortController();
         const turn = {
@@ -525,7 +566,14 @@ class VoiceSession {
             tokensEmitted: 0,
             metric: metrics.newTurn(this.sessionId, this.userId, this.tutorProfile.id || 'default'),
         };
-        turn.metric.t_user_speech_end = Date.now();
+        // Measure from when the student actually stopped speaking, not from
+        // when we got around to starting the turn — otherwise endpointing
+        // delay is invisible in ttfa and the numbers look good while the
+        // student waits. _speechEndedAt is unset for typed input, where
+        // "now" genuinely is the start.
+        turn.metric.t_user_speech_end = this._speechEndedAt || Date.now();
+        turn.metric.endpointReason = endpointReason || source;
+        this._speechEndedAt = null;
         turn.audioTag = hash32(turn.metric.turnId);
         this.currentTurn = turn;
 
