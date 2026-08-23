@@ -86,7 +86,7 @@
   }
 
   function wasDismissedRecently() {
-    let dismissed = null;
+    let dismissed;
     try { dismissed = localStorage.getItem(DISMISS_KEY); } catch (_) { return false; }
     if (!dismissed) return false;
     return (Date.now() - parseInt(dismissed, 10)) < DISMISS_DURATION;
@@ -143,7 +143,7 @@
         </div>
         <div class="pwa-install-actions">
           <button class="pwa-install-btn" id="pwa-install-accept">Install</button>
-          <button class="pwa-dismiss-btn" id="pwa-install-dismiss" aria-label="Dismiss">&times;</button>
+          <button class="pwa-dismiss-btn" id="pwa-install-dismiss" aria-label="Dismiss install prompt">&times;</button>
         </div>
       </div>
     `;
@@ -200,7 +200,7 @@
             'then <strong>"Add to Home Screen"</strong>' +
           '</span>' +
         '</div>' +
-        '<button class="pwa-dismiss-btn" id="pwa-install-dismiss" aria-label="Dismiss">&times;</button>' +
+        '<button class="pwa-dismiss-btn" id="pwa-install-dismiss" aria-label="Dismiss install prompt">&times;</button>' +
       '</div>';
     document.body.appendChild(banner);
 

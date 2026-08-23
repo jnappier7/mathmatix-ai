@@ -167,52 +167,80 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <!-- One-tap examples that fire the same live session -->
           <div class="lp-hero-examples">
             <span class="lp-hero-examples-label">or try:</span>
-            <button class="lp-hero-example" data-prompt="Solve 2(x - 3) = 10">Solve 2(x &minus; 3) = 10</button>
-            <button class="lp-hero-example" data-prompt="How do I add 1/3 + 1/4?">Add 1/3 + 1/4</button>
-            <button class="lp-hero-example" data-prompt="Find the slope between (2,5) and (6,13)">Find the slope</button>
-            <button class="lp-hero-example" data-prompt="Factor x^2 + 5x + 6">Factor x&sup2; + 5x + 6</button>
+            <button type="button" class="lp-hero-example" data-prompt="Solve 2(x - 3) = 10">Solve 2(x &minus; 3) = 10</button>
+            <button type="button" class="lp-hero-example" data-prompt="How do I add 1/3 + 1/4?">Add 1/3 + 1/4</button>
+            <button type="button" class="lp-hero-example" data-prompt="Find the slope between (2,5) and (6,13)">Find the slope</button>
+            <button type="button" class="lp-hero-example" data-prompt="Factor x^2 + 5x + 6">Factor x&sup2; + 5x + 6</button>
           </div>
 
           <!-- Tutor choice — subordinate to the action, pre-selected so the composer works immediately. -->
           <div class="lp-hero-tutor-strip">
             <span class="lp-hero-tutor-label">Your tutor:</span>
-            <div class="lp-hero-tutor-chips" id="lp-hero-tutor-chips">
-              <button type="button" class="lp-hero-tutor-chip is-selected" data-tutor="mr-nappier">
-                <picture>
-                  <source srcset="/images/tutor_avatars/mr-nappier.avif" type="image/avif">
-                  <source srcset="/images/tutor_avatars/mr-nappier.webp" type="image/webp">
-                  <img src="/images/tutor_avatars/mr-nappier.png" alt="Mr. Nappier" loading="eager" />
-                </picture>
-                <span class="lp-hero-tutor-name">Mr. Nappier</span>
-                <span class="lp-hero-tutor-hear" role="button" tabindex="0" title="Hear my voice"><i class="fas fa-volume-up"></i></span>
-              </button>
-              <button type="button" class="lp-hero-tutor-chip" data-tutor="bob">
-                <picture>
-                  <source srcset="/images/tutor_avatars/bob.avif" type="image/avif">
-                  <source srcset="/images/tutor_avatars/bob.webp" type="image/webp">
-                  <img src="/images/tutor_avatars/bob.png" alt="Bob" loading="eager" />
-                </picture>
-                <span class="lp-hero-tutor-name">Bob</span>
-                <span class="lp-hero-tutor-hear" role="button" tabindex="0" title="Hear my voice"><i class="fas fa-volume-up"></i></span>
-              </button>
-              <button type="button" class="lp-hero-tutor-chip" data-tutor="maya">
-                <picture>
-                  <source srcset="/images/tutor_avatars/maya.avif" type="image/avif">
-                  <source srcset="/images/tutor_avatars/maya.webp" type="image/webp">
-                  <img src="/images/tutor_avatars/maya.png" alt="Maya" loading="eager" />
-                </picture>
-                <span class="lp-hero-tutor-name">Maya</span>
-                <span class="lp-hero-tutor-hear" role="button" tabindex="0" title="Hear my voice"><i class="fas fa-volume-up"></i></span>
-              </button>
-              <button type="button" class="lp-hero-tutor-chip" data-tutor="ms-maria">
-                <picture>
-                  <source srcset="/images/tutor_avatars/ms-maria.avif" type="image/avif">
-                  <source srcset="/images/tutor_avatars/ms-maria.webp" type="image/webp">
-                  <img src="/images/tutor_avatars/ms-maria.png" alt="Ms. Maria" loading="eager" />
-                </picture>
-                <span class="lp-hero-tutor-name">Ms. Maria</span>
-                <span class="lp-hero-tutor-hear" role="button" tabindex="0" title="Hear my voice"><i class="fas fa-volume-up"></i></span>
-              </button>
+            <div class="lp-hero-tutor-chips" id="lp-hero-tutor-chips" role="group" aria-label="Choose your tutor">
+              <div class="lp-hero-tutor-chip-wrap">
+                <button type="button" class="lp-hero-tutor-chip is-selected" data-tutor="mr-nappier" aria-pressed="true">
+                  <picture>
+                    <source srcset="/images/tutor_avatars/mr-nappier.avif" type="image/avif">
+                    <source srcset="/images/tutor_avatars/mr-nappier.webp" type="image/webp">
+                    <img src="/images/tutor_avatars/mr-nappier.png" alt="" loading="eager" />
+                  </picture>
+                  <span class="lp-hero-tutor-text">
+                    <span class="lp-hero-tutor-name">Mr. Nappier</span>
+                    <span class="lp-hero-tutor-desc">Pattern spotter &mdash; makes math a puzzle to crack</span>
+                  </span>
+                </button>
+                <button type="button" class="lp-hero-tutor-hear" data-tutor="mr-nappier" aria-label="Hear Mr. Nappier&rsquo;s voice">
+                  <i class="fas fa-volume-up" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="lp-hero-tutor-chip-wrap">
+                <button type="button" class="lp-hero-tutor-chip" data-tutor="bob" aria-pressed="false">
+                  <picture>
+                    <source srcset="/images/tutor_avatars/bob.avif" type="image/avif">
+                    <source srcset="/images/tutor_avatars/bob.webp" type="image/webp">
+                    <img src="/images/tutor_avatars/bob.png" alt="" loading="eager" />
+                  </picture>
+                  <span class="lp-hero-tutor-text">
+                    <span class="lp-hero-tutor-name">Bob</span>
+                    <span class="lp-hero-tutor-desc">Real-world analogies, and a lot of math puns</span>
+                  </span>
+                </button>
+                <button type="button" class="lp-hero-tutor-hear" data-tutor="bob" aria-label="Hear Bob&rsquo;s voice">
+                  <i class="fas fa-volume-up" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="lp-hero-tutor-chip-wrap">
+                <button type="button" class="lp-hero-tutor-chip" data-tutor="maya" aria-pressed="false">
+                  <picture>
+                    <source srcset="/images/tutor_avatars/maya.avif" type="image/avif">
+                    <source srcset="/images/tutor_avatars/maya.webp" type="image/webp">
+                    <img src="/images/tutor_avatars/maya.png" alt="" loading="eager" />
+                  </picture>
+                  <span class="lp-hero-tutor-text">
+                    <span class="lp-hero-tutor-name">Maya</span>
+                    <span class="lp-hero-tutor-desc">Warm and steady &mdash; like a supportive older sister</span>
+                  </span>
+                </button>
+                <button type="button" class="lp-hero-tutor-hear" data-tutor="maya" aria-label="Hear Maya&rsquo;s voice">
+                  <i class="fas fa-volume-up" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="lp-hero-tutor-chip-wrap">
+                <button type="button" class="lp-hero-tutor-chip" data-tutor="ms-maria" aria-pressed="false">
+                  <picture>
+                    <source srcset="/images/tutor_avatars/ms-maria.avif" type="image/avif">
+                    <source srcset="/images/tutor_avatars/ms-maria.webp" type="image/webp">
+                    <img src="/images/tutor_avatars/ms-maria.png" alt="" loading="eager" />
+                  </picture>
+                  <span class="lp-hero-tutor-text">
+                    <span class="lp-hero-tutor-name">Ms. Maria</span>
+                    <span class="lp-hero-tutor-desc">Bilingual and methodical &mdash; paso por paso</span>
+                  </span>
+                </button>
+                <button type="button" class="lp-hero-tutor-hear" data-tutor="ms-maria" aria-label="Hear Ms. Maria&rsquo;s voice">
+                  <i class="fas fa-volume-up" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -249,7 +277,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <!-- MIDDLE — the conversation. -->
           <div class="lp-trial-main">
           <div class="lp-trial-header">
-            <button class="lp-trial-back" id="lp-trial-back" title="Pick a different tutor"><i class="fas fa-arrow-left"></i></button>
+            <button class="lp-trial-back" id="lp-trial-back" type="button" title="Pick a different tutor" aria-label="Go back and pick a different tutor"><i class="fas fa-arrow-left" aria-hidden="true"></i></button>
             <div class="lp-trial-tutor-info">
               <img id="lp-trial-tutor-img" src="" alt="" class="lp-trial-tutor-avatar" />
               <span id="lp-trial-tutor-name"></span>
@@ -266,34 +294,34 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="lp-trial-suggestions" id="lp-trial-suggestions">
             <p class="lp-trial-suggestions-label">Try asking:</p>
             <div class="lp-trial-prompt-btns">
-              <button class="lp-trial-prompt" data-prompt="Solve 2(x - 3) = 10">Solve 2(x &minus; 3) = 10</button>
-              <button class="lp-trial-prompt" data-prompt="How do I add 1/3 + 1/4?">Add 1/3 + 1/4</button>
-              <button class="lp-trial-prompt" data-prompt="Find the slope between (2,5) and (6,13)">Find the slope</button>
-              <button class="lp-trial-prompt" data-prompt="Factor x^2 + 5x + 6">Factor x&sup2; + 5x + 6</button>
+              <button type="button" class="lp-trial-prompt" data-prompt="Solve 2(x - 3) = 10">Solve 2(x &minus; 3) = 10</button>
+              <button type="button" class="lp-trial-prompt" data-prompt="How do I add 1/3 + 1/4?">Add 1/3 + 1/4</button>
+              <button type="button" class="lp-trial-prompt" data-prompt="Find the slope between (2,5) and (6,13)">Find the slope</button>
+              <button type="button" class="lp-trial-prompt" data-prompt="Factor x^2 + 5x + 6">Factor x&sup2; + 5x + 6</button>
             </div>
           </div>
           <!-- Math symbol bar -->
-          <div class="lp-trial-math-bar" id="lp-trial-math-bar">
-            <button class="lp-trial-math-btn" data-insert="^" title="Exponent">x<sup>n</sup></button>
-            <button class="lp-trial-math-btn" data-insert="²" title="Squared">&sup2;</button>
-            <button class="lp-trial-math-btn" data-insert="³" title="Cubed">&sup3;</button>
-            <button class="lp-trial-math-btn" data-insert="√(" title="Square root">&radic;</button>
-            <button class="lp-trial-math-btn" data-insert="/" title="Fraction">&frasl;</button>
-            <button class="lp-trial-math-btn" data-insert="π" title="Pi">&pi;</button>
-            <button class="lp-trial-math-btn" data-insert="±" title="Plus-minus">&pm;</button>
-            <button class="lp-trial-math-btn" data-insert="≤" title="Less than or equal">&le;</button>
-            <button class="lp-trial-math-btn" data-insert="≥" title="Greater than or equal">&ge;</button>
-            <button class="lp-trial-math-btn" data-insert="≠" title="Not equal">&ne;</button>
-            <button class="lp-trial-math-btn" data-insert="÷" title="Division">&divide;</button>
-            <button class="lp-trial-math-btn" data-insert="×" title="Multiplication">&times;</button>
-            <button class="lp-trial-math-btn" data-insert="∞" title="Infinity">&infin;</button>
-            <button class="lp-trial-math-btn" data-insert="θ" title="Theta">&theta;</button>
+          <div class="lp-trial-math-bar" id="lp-trial-math-bar" role="group" aria-label="Math symbols">
+            <button class="lp-trial-math-btn" data-insert="^" title="Exponent" type="button" aria-label="Insert exponent">x<sup>n</sup></button>
+            <button class="lp-trial-math-btn" data-insert="²" title="Squared" type="button" aria-label="Insert squared">&sup2;</button>
+            <button class="lp-trial-math-btn" data-insert="³" title="Cubed" type="button" aria-label="Insert cubed">&sup3;</button>
+            <button class="lp-trial-math-btn" data-insert="√(" title="Square root" type="button" aria-label="Insert square root">&radic;</button>
+            <button class="lp-trial-math-btn" data-insert="/" title="Fraction" type="button" aria-label="Insert fraction">&frasl;</button>
+            <button class="lp-trial-math-btn" data-insert="π" title="Pi" type="button" aria-label="Insert pi">&pi;</button>
+            <button class="lp-trial-math-btn" data-insert="±" title="Plus-minus" type="button" aria-label="Insert plus-minus">&pm;</button>
+            <button class="lp-trial-math-btn" data-insert="≤" title="Less than or equal" type="button" aria-label="Insert less than or equal">&le;</button>
+            <button class="lp-trial-math-btn" data-insert="≥" title="Greater than or equal" type="button" aria-label="Insert greater than or equal">&ge;</button>
+            <button class="lp-trial-math-btn" data-insert="≠" title="Not equal" type="button" aria-label="Insert not equal">&ne;</button>
+            <button class="lp-trial-math-btn" data-insert="÷" title="Division" type="button" aria-label="Insert division">&divide;</button>
+            <button class="lp-trial-math-btn" data-insert="×" title="Multiplication" type="button" aria-label="Insert multiplication">&times;</button>
+            <button class="lp-trial-math-btn" data-insert="∞" title="Infinity" type="button" aria-label="Insert infinity">&infin;</button>
+            <button class="lp-trial-math-btn" data-insert="θ" title="Theta" type="button" aria-label="Insert theta">&theta;</button>
           </div>
           <!-- Input area -->
           <div class="lp-trial-input-area" id="lp-trial-input-area">
-            <button class="lp-trial-math-toggle" id="lp-trial-math-toggle" title="Math symbols">&pi;</button>
+            <button class="lp-trial-math-toggle" id="lp-trial-math-toggle" type="button" title="Math symbols" aria-label="Open math symbols" aria-expanded="false" aria-controls="lp-trial-math-bar">&pi;</button>
             <input type="text" id="lp-trial-input" class="lp-trial-input" placeholder="Ask a math question..." aria-label="Type your math question" maxlength="500" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-1p-ignore data-lpignore="true" />
-            <button class="lp-trial-send" id="lp-trial-send" title="Send"><i class="fas fa-paper-plane"></i></button>
+            <button class="lp-trial-send" id="lp-trial-send" type="button" title="Send" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
           </div>
           <!-- Soft gate (shown after 3 turns) -->
           <div class="lp-trial-gate" id="lp-trial-gate" style="display:none;">
@@ -329,7 +357,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               <div class="lp-trial-player-meta">
                 <span class="lp-trial-player-name" id="lp-trial-player-name">You</span>
                 <!-- Engagement XP earned this session (ephemeral; a conversion hook). -->
-                <span class="lp-trial-xp" id="lp-trial-xp" title="XP earned this session">
+                <span class="lp-trial-xp" id="lp-trial-xp" title="XP earned this session" aria-label="XP earned this session">
                   <span class="lp-trial-xp-bolt" aria-hidden="true">⚡</span><span id="lp-trial-xp-total">0</span> XP
                 </span>
               </div>
@@ -769,7 +797,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="lp-faq-item">
             <button class="lp-faq-question" aria-expanded="false">
               Will Mathmatix do my child's homework for them?
-              <i class="fas fa-chevron-down"></i>
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
             </button>
             <div class="lp-faq-answer">
               <p>No. Mathmatix is designed to guide students through problems step by step &mdash; not hand them answers. Our anti-cheating policy is built into every tutor. Students learn by thinking through problems with support, not by copying solutions.</p>
@@ -778,7 +806,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="lp-faq-item">
             <button class="lp-faq-question" aria-expanded="false">
               What grade levels does Mathmatix cover?
-              <i class="fas fa-chevron-down"></i>
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
             </button>
             <div class="lp-faq-answer">
               <p>Grade 3 through Calculus 3. Whether your child is just starting multiplication or preparing for college-level math, Mathmatix meets them where they are and adapts to their level.</p>
@@ -787,7 +815,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="lp-faq-item">
             <button class="lp-faq-question" aria-expanded="false">
               How is this different from ChatGPT or other AI tools?
-              <i class="fas fa-chevron-down"></i>
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
             </button>
             <div class="lp-faq-answer">
               <p>Most AI tools give students the answer and move on. Mathmatix doesn't. Our tutors are built on math teaching pedagogy &mdash; they ask guiding questions, check for understanding, match the student's reading level, and adapt over time. Plus, parents and teachers get real visibility into what's happening.</p>
@@ -796,7 +824,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="lp-faq-item">
             <button class="lp-faq-question" aria-expanded="false">
               Is my child's data safe?
-              <i class="fas fa-chevron-down"></i>
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
             </button>
             <div class="lp-faq-answer">
               <p>Yes. We take student privacy seriously. Conversations are only visible to the student, their linked parent, and their teacher. We never sell data or use it for advertising.</p>
@@ -805,7 +833,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="lp-faq-item">
             <button class="lp-faq-question" aria-expanded="false">
               Can teachers use Mathmatix with their classes?
-              <i class="fas fa-chevron-down"></i>
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
             </button>
             <div class="lp-faq-answer">
               <p>Absolutely. Mathmatix was built by a teacher, for teachers. You can upload your own curriculum and pacing guides, set IEP accommodations per student, and monitor your entire class from a single dashboard.</p>
@@ -814,7 +842,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="lp-faq-item">
             <button class="lp-faq-question" aria-expanded="false">
               What does the homework check feature do?
-              <i class="fas fa-chevron-down"></i>
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
             </button>
             <div class="lp-faq-answer">
               <p>Students can upload a photo or PDF of their work. The AI uses OCR to read their handwriting, identifies mistakes, and gives targeted feedback &mdash; so they can fix errors before turning it in. It's like having a tutor look over your shoulder.</p>
@@ -823,7 +851,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <div class="lp-faq-item">
             <button class="lp-faq-question" aria-expanded="false">
               Is Mathmatix really free?
-              <i class="fas fa-chevron-down"></i>
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
             </button>
             <div class="lp-faq-answer">
               <p>Every student gets 30 free AI minutes a month &mdash; usually 2&ndash;3 hours of tutoring, because only the tutor&rsquo;s response time counts, never your child&rsquo;s reading or thinking time. No credit card required. For unlimited access plus voice tutoring, homework uploads, and courses, Mathmatix+ is $9.95/mo. <a href="/pricing.html" style="color:var(--clr-primary-teal);font-weight:600;">See plans &rarr;</a></p>

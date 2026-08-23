@@ -185,27 +185,30 @@
 
   /* ── Phase 1: Live hero composer → real trial session ─────── */
 
-  // Tutor chips: choose a tutor (subordinate to typing a problem). A chip's
-  // "hear" affordance previews the voice without selecting-and-launching.
+  // Tutor chips: choose a tutor (subordinate to typing a problem). The "hear my
+  // voice" control is a SIBLING button, not a child of the chip — it used to be
+  // a <span role="button" tabindex="0"> nested inside the chip's <button>,
+  // which is a control inside a control: unreachable by keyboard or screen
+  // reader, so the voice preview only existed for mouse users. Two real
+  // buttons means no stopPropagation dance either; a click on one is not a
+  // click on the other.
   var tutorChips = document.querySelectorAll('.lp-hero-tutor-chip');
   tutorChips.forEach(function (chip) {
-    var hearBtn = chip.querySelector('.lp-hero-tutor-hear');
-    if (hearBtn) {
-      var doHear = function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        playVoicePreview(chip.getAttribute('data-tutor'), hearBtn);
-      };
-      hearBtn.addEventListener('click', doHear);
-      hearBtn.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') doHear(e);
-      });
-    }
-
     chip.addEventListener('click', function () {
       selectedTutorId = chip.getAttribute('data-tutor');
-      tutorChips.forEach(function (c) { c.classList.remove('is-selected'); });
+      tutorChips.forEach(function (c) {
+        c.classList.remove('is-selected');
+        c.setAttribute('aria-pressed', 'false');
+      });
       chip.classList.add('is-selected');
+      chip.setAttribute('aria-pressed', 'true');
+    });
+  });
+
+  document.querySelectorAll('.lp-hero-tutor-hear').forEach(function (hearBtn) {
+    hearBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      playVoicePreview(hearBtn.getAttribute('data-tutor'), hearBtn);
     });
   });
 
@@ -876,6 +879,10 @@
       var isVisible = trialMathBar.classList.contains('visible');
       trialMathBar.classList.toggle('visible', !isVisible);
       trialMathToggle.classList.toggle('active', !isVisible);
+      // The button declares aria-expanded/aria-controls in the markup; keep it
+      // honest, otherwise it announces "collapsed" over an open symbol bar.
+      trialMathToggle.setAttribute('aria-expanded', String(!isVisible));
+      trialMathToggle.setAttribute('aria-label', isVisible ? 'Open math symbols' : 'Close math symbols');
       if (!isVisible) trialInput.focus();
     });
 
@@ -901,7 +908,11 @@
     // Hide input and math bar, show gate
     trialInputArea.style.display = 'none';
     if (trialMathBar) { trialMathBar.classList.remove('visible'); }
-    if (trialMathToggle) { trialMathToggle.classList.remove('active'); }
+    if (trialMathToggle) {
+      trialMathToggle.classList.remove('active');
+      trialMathToggle.setAttribute('aria-expanded', 'false');
+      trialMathToggle.setAttribute('aria-label', 'Open math symbols');
+    }
     trialGate.style.display = '';
 
     // Conversion hook: surface the XP earned this session above the message.
