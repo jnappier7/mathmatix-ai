@@ -29,12 +29,22 @@ const PRIVACY_HTML = fs.readFileSync(
     'utf8'
 );
 
+// public/safety.html is the plain-language front door for the same facts. It
+// restates two of the periods — the two parents ask about — so it is a third
+// place they can drift from the engine, and it gets bound here for the same
+// reason the notice is.
+const SAFETY_HTML = fs.readFileSync(
+    path.join(__dirname, '..', '..', 'public', 'safety.html'),
+    'utf8'
+);
+
 /** Collapse whitespace/entities so HTML formatting doesn't cause false failures. */
 function normalize(s) {
     return s.replace(/&#39;|&rsquo;|’/g, "'").replace(/\s+/g, ' ').trim();
 }
 
 const NORMALIZED_HTML = normalize(PRIVACY_HTML);
+const NORMALIZED_SAFETY = normalize(SAFETY_HTML);
 
 describe('retention policy is published', () => {
     test('every swept category is disclosed by name in the privacy notice', () => {
@@ -104,5 +114,29 @@ describe('the policy object is internally sound', () => {
         expect(byKey.studentUploads.humanPeriod).toBe('30 days');
         expect(byKey.inactiveConversations.humanPeriod).toBe('1 year');
         expect(byKey.completedAssessments.humanPeriod).toBe('3 years');
+    });
+});
+
+describe('the plain-language page agrees with the engine', () => {
+    const byKey = Object.fromEntries(getPublishedRetentionPolicy().map((r) => [r.key, r]));
+
+    test('uploads and conversations state the periods the sweep uses', () => {
+        // The two a parent asks about first. Restated in plain language on
+        // safety.html rather than linked, because "how long do you keep my
+        // child's homework photos" should not require opening a legal notice.
+        expect(NORMALIZED_SAFETY).toContain(byKey.studentUploads.humanPeriod);
+        expect(NORMALIZED_SAFETY).toContain(byKey.inactiveConversations.humanPeriod);
+    });
+
+    test('the educational-record period is stated too', () => {
+        expect(NORMALIZED_SAFETY).toContain(byKey.completedAssessments.humanPeriod);
+    });
+
+    test('it says retention is not indefinite and points at the full table', () => {
+        expect(NORMALIZED_SAFETY.toLowerCase()).toContain('not indefinitely');
+        // The anchor has to resolve, or "the full table" goes to the top of a
+        // long legal page and the reader gives up.
+        expect(NORMALIZED_SAFETY).toContain('privacy.html#retention');
+        expect(NORMALIZED_HTML).toContain('id="retention"');
     });
 });

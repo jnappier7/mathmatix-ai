@@ -768,6 +768,12 @@ function registerHtmlRoutes(app) {
   app.get('/parental-consent.html', sendHtml('parental-consent.html'));
   app.get('/privacy.html', sendHtml('privacy.html'));
   app.get('/terms.html', sendHtml('terms.html'));
+  // Plain-language trust centre. Public and explicitly routed alongside the two
+  // legal pages it fronts: the .html catch-all further down would serve it
+  // anyway, but this is a URL schools paste into procurement paperwork, so the
+  // short /safety alias should exist and should not depend on a fallback.
+  app.get('/safety.html', sendHtml('safety.html'));
+  app.get('/safety', sendHtml('safety.html'));
   app.get('/onboarding.html', sendHtml('onboarding.html'));
   app.get('/demo.html', sendHtml('demo.html'));
   // Pop-quiz landing (Facebook ad funnel) — clean URL for the ad's answer
@@ -780,6 +786,13 @@ function registerHtmlRoutes(app) {
   app.get('/quiz/:answer', (req, res) =>
     res.redirect(302, '/quiz?a=' + encodeURIComponent(String(req.params.answer).slice(0, 24))));
   app.get('/pricing.html', sendHtml('pricing.html'));
+  // Audience pages. The homepage speaks to parents; the student and teacher
+  // pitches used to be two of three tabs in the middle of it, which asked every
+  // parent to read past them. Short aliases because these get linked directly.
+  app.get('/for-teachers.html', sendHtml('for-teachers.html'));
+  app.get('/for-teachers', sendHtml('for-teachers.html'));
+  app.get('/for-students.html', sendHtml('for-students.html'));
+  app.get('/for-students', sendHtml('for-students.html'));
   // Phone upload landing page — public; the page itself is inert until a valid
   // token + PIN are supplied, and all enforcement is server-side.
   app.get('/phone-upload', sendHtml('phone-upload.html'));

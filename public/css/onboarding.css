@@ -397,3 +397,195 @@ html[data-theme="dark"] .onboarding-answer-box textarea {
   border-color: #233140;
   color: #F8FAFB;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   STRUCTURED FIRST STEP
+   The page used to open with "What brings you to Mathmatix today?" and a
+   microphone. Two closed questions replaced it — see the comment in
+   onboarding.html for why — so these are the styles for the progress rail and
+   the choice cards.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Visible to screen readers, not to eyes. Neither style.css nor this file had
+   one, and the choice fieldsets need a legend that the visible heading already
+   states out loud. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Progress rail ─────────────────────────────────────────────────────── */
+.onboarding-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0 0 6px;
+  padding: 0;
+}
+
+.onboarding-progress-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--clr-text-dim, #5b6876);
+}
+
+.onboarding-progress-step + .onboarding-progress-step::before {
+  content: "";
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--clr-border, #e2e8f0);
+}
+
+.onboarding-progress-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--clr-text-dim, #5b6876);
+  background: var(--clr-bg-subtle, #f1f5f9);
+  border: 1.5px solid var(--clr-border, #e2e8f0);
+}
+
+.onboarding-progress-step.is-current .onboarding-progress-dot,
+.onboarding-progress-step.is-done .onboarding-progress-dot {
+  color: #fff;
+  background: var(--clr-primary-teal, #12B3B3);
+  border-color: var(--clr-primary-teal, #12B3B3);
+}
+
+.onboarding-progress-step.is-current { color: var(--clr-text, #18202b); }
+
+.onboarding-progress-text {
+  margin: 0 0 18px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--clr-text-dim, #5b6876);
+}
+
+@media (max-width: 420px) {
+  /* The dots and the "Step 1 of 3" line carry the same information; at phone
+     widths the labels are what has to go. */
+  .onboarding-progress-label { display: none; }
+}
+
+/* ── Choice cards ──────────────────────────────────────────────────────── */
+.onboarding-choices {
+  display: grid;
+  gap: 10px;
+  border: 0;
+  padding: 0;
+  margin: 0 0 14px;
+}
+
+.onboarding-choices-compact { gap: 8px; }
+
+@media (min-width: 640px) {
+  .onboarding-choices-compact { grid-template-columns: 1fr 1fr; }
+}
+
+.onboarding-choice {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+/* The radio stays in the DOM rather than display:none, so it keeps its role,
+   its arrow-key behaviour within the group, and its focus ring. */
+.onboarding-choice input[type="radio"] {
+  position: absolute;
+  top: 14px;
+  left: 12px;
+  margin: 0;
+  accent-color: var(--clr-primary-teal, #12B3B3);
+}
+
+.onboarding-choice-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  height: 100%;
+  padding: 12px 14px 12px 36px;
+  text-align: left;
+  border: 2px solid var(--clr-border, #e2e8f0);
+  border-radius: var(--radius-base, 12px);
+  background: var(--clr-bg-subtle, #f8fafb);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.onboarding-choice:hover .onboarding-choice-body {
+  border-color: rgba(18, 179, 179, 0.45);
+}
+
+.onboarding-choice input[type="radio"]:checked + .onboarding-choice-body {
+  border-color: var(--clr-primary-teal, #12B3B3);
+  background: rgba(18, 179, 179, 0.07);
+}
+
+.onboarding-choice input[type="radio"]:focus-visible + .onboarding-choice-body {
+  outline: 3px solid var(--clr-primary-teal, #12B3B3);
+  outline-offset: 2px;
+}
+
+.onboarding-choice-body i {
+  font-size: 1rem;
+  color: var(--clr-primary-teal, #12B3B3);
+}
+
+.onboarding-choice-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--clr-text, #18202b);
+}
+
+.onboarding-choice-desc {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--clr-text-dim, #5b6876);
+}
+
+.onboarding-freeform { margin-top: 6px; }
+
+/* ── Dark theme ────────────────────────────────────────────────────────── */
+body.dark-mode .onboarding-choice-body,
+html[data-theme="dark"] .onboarding-choice-body {
+  background: #0F1A24;
+  border-color: #233140;
+}
+
+body.dark-mode .onboarding-choice-title,
+html[data-theme="dark"] .onboarding-choice-title { color: #F8FAFB; }
+
+body.dark-mode .onboarding-choice-desc,
+html[data-theme="dark"] .onboarding-choice-desc { color: #94A3B8; }
+
+body.dark-mode .onboarding-progress-dot,
+html[data-theme="dark"] .onboarding-progress-dot {
+  background: #0F1A24;
+  border-color: #233140;
+  color: #94A3B8;
+}
+
+body.dark-mode .onboarding-progress-step + .onboarding-progress-step::before,
+html[data-theme="dark"] .onboarding-progress-step + .onboarding-progress-step::before {
+  background: #233140;
+}
+
+body.dark-mode .onboarding-progress-step.is-current,
+html[data-theme="dark"] .onboarding-progress-step.is-current { color: #F8FAFB; }

@@ -274,7 +274,7 @@ only — HTML is served as-is, so i18n/feature-flags/user-data are injected clie
 - **Compliance (FERPA/COPPA)**: `consentGate`/`consent.js`/`consentManager.js`, `ferpaAccessLog`,
   `dataPrivacy.js` (export/delete/amend), `dataRetention.js`, PII anonymization in the LLM gateway,
   `impersonation.js` (read-only, 20-min timeout, fully audited).
-- **Billing/gating**: `routes/billing.js` + `middleware/usageGate.js`. Free = 30 AI-min/wk (students);
+- **Billing/gating**: `routes/billing.js` + `middleware/usageGate.js`. Free = 30 AI-min per rolling 30 days (students — the `weekly*` field names are back-compat, the quota is monthly);
   teachers/parents/admins/licensed students unlimited. Voice/upload/AI-grading are premium-gated.
 - **Observability**: `/api/health` (DB + keys + memory), Sentry (5xx only, 10% trace sample in prod),
   Winston with secret redaction → Logtail + rotating files.

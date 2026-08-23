@@ -875,7 +875,7 @@ const userSchema = new Schema({
         'unknown'
       ]
     },
-    capturedVia:    { type: String, enum: ['voice', 'text'] },
+    capturedVia:    { type: String, enum: ['voice', 'text', 'choice'] },
     completedAt:    { type: Date }
   },
 

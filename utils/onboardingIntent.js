@@ -99,6 +99,80 @@ function inferIntent(rawText) {
   return 'unknown';
 }
 
+/* ── Structured answers ──────────────────────────────────────────────────
+ * onboarding.html now leads with two closed questions — who will be using this,
+ * and what they want help with — because "What brings you to Mathmatix today?"
+ * asked cold was too open to answer. Visitors could not tell whether it wanted
+ * their role, their child's difficulty, or a specific math problem, and it sat
+ * between "Start Free Now" and the account they had just asked to create.
+ *
+ * The closed answers are mapped HERE, not in the browser. The client sends which
+ * options a human picked; it does not send a category. That is the same property
+ * the free-text path has (see inferIntent's note) and it is the point: a caller
+ * could otherwise name any enum value it liked.
+ */
+
+const WHO_CHOICES = ['my_child', 'me', 'my_students'];
+
+const GOAL_CHOICES = [
+  'homework',
+  'missing_skills',
+  'test_prep',
+  'act_sat',
+  'accommodations',
+  'not_sure'
+];
+
+// Goal -> category. Deliberately mirrors TOPIC_TESTS above, so a person who
+// picks "Homework" lands where a person who typed "homework" lands.
+//
+// `accommodations` maps to general_math_help rather than getting a category of
+// its own: what the tutor actually does about accommodations comes from the IEP
+// plan (models/iepPlan.js), which is a far stronger signal than a signup chip,
+// and general_math_help's guidance — the underlying idea over speed — is the
+// right posture in the meantime.
+const GOAL_TO_CATEGORY = {
+  homework:        'student_homework',
+  missing_skills:  'general_math_help',
+  test_prep:       'student_test_prep',
+  act_sat:         'act_sat_prep',
+  accommodations:  'general_math_help',
+  not_sure:        null   // says nothing about the work; fall through to identity
+};
+
+// Identity -> category, consulted only when the goal says nothing.
+const WHO_TO_CATEGORY = {
+  my_child:    'parent_support',
+  my_students: 'teacher_exploring',
+  me:          'unknown'
+};
+
+/**
+ * Classify a structured onboarding answer.
+ *
+ * Same precedence as inferIntent, for the same reasons: a first-person teacher
+ * outranks any topic (a teacher exploring the product is not a student, whatever
+ * they want to look at), then subject matter, then identity.
+ *
+ * @param {string} who   one of WHO_CHOICES
+ * @param {string} goal  one of GOAL_CHOICES
+ * @returns {string|null} a category, or null when neither answer is recognized
+ */
+function intentFromChoices(who, goal) {
+  const validWho = WHO_CHOICES.includes(who) ? who : null;
+  const validGoal = GOAL_CHOICES.includes(goal) ? goal : null;
+  if (!validWho && !validGoal) return null;
+
+  if (validWho === 'my_students') return 'teacher_exploring';
+
+  if (validGoal) {
+    const fromGoal = GOAL_TO_CATEGORY[validGoal];
+    if (fromGoal) return fromGoal;
+  }
+
+  return validWho ? WHO_TO_CATEGORY[validWho] : 'unknown';
+}
+
 /**
  * Category -> one line of tutoring guidance.
  *
@@ -224,7 +298,10 @@ function buildIntentContext(onboarding, firstName, signals = {}) {
 
 module.exports = {
   ALLOWED_CATEGORIES,
+  WHO_CHOICES,
+  GOAL_CHOICES,
   inferIntent,
+  intentFromChoices,
   buildIntentPrompt,
   buildIntentContext,
   intentStillUseful,

@@ -42,13 +42,9 @@
   })();
 
   /* ── Waitlist Form Handling ────────────────────────── */
+  /* Used to be switched by the role tabs, which no longer exist. Parent is the
+     homepage's audience, so it is the right constant rather than a guess. */
   var activeRole = 'parent';
-  var roleBtns = document.querySelectorAll('.lp-role-tab');
-  roleBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      activeRole = btn.getAttribute('data-role') || 'parent';
-    });
-  });
 
   var waitlistForms = document.querySelectorAll('.lp-waitlist-form');
   waitlistForms.forEach(function (form) {
@@ -185,27 +181,30 @@
 
   /* ── Phase 1: Live hero composer → real trial session ─────── */
 
-  // Tutor chips: choose a tutor (subordinate to typing a problem). A chip's
-  // "hear" affordance previews the voice without selecting-and-launching.
+  // Tutor chips: choose a tutor (subordinate to typing a problem). The "hear my
+  // voice" control is a SIBLING button, not a child of the chip — it used to be
+  // a <span role="button" tabindex="0"> nested inside the chip's <button>,
+  // which is a control inside a control: unreachable by keyboard or screen
+  // reader, so the voice preview only existed for mouse users. Two real
+  // buttons means no stopPropagation dance either; a click on one is not a
+  // click on the other.
   var tutorChips = document.querySelectorAll('.lp-hero-tutor-chip');
   tutorChips.forEach(function (chip) {
-    var hearBtn = chip.querySelector('.lp-hero-tutor-hear');
-    if (hearBtn) {
-      var doHear = function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        playVoicePreview(chip.getAttribute('data-tutor'), hearBtn);
-      };
-      hearBtn.addEventListener('click', doHear);
-      hearBtn.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') doHear(e);
-      });
-    }
-
     chip.addEventListener('click', function () {
       selectedTutorId = chip.getAttribute('data-tutor');
-      tutorChips.forEach(function (c) { c.classList.remove('is-selected'); });
+      tutorChips.forEach(function (c) {
+        c.classList.remove('is-selected');
+        c.setAttribute('aria-pressed', 'false');
+      });
       chip.classList.add('is-selected');
+      chip.setAttribute('aria-pressed', 'true');
+    });
+  });
+
+  document.querySelectorAll('.lp-hero-tutor-hear').forEach(function (hearBtn) {
+    hearBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      playVoicePreview(hearBtn.getAttribute('data-tutor'), hearBtn);
     });
   });
 
@@ -876,6 +875,10 @@
       var isVisible = trialMathBar.classList.contains('visible');
       trialMathBar.classList.toggle('visible', !isVisible);
       trialMathToggle.classList.toggle('active', !isVisible);
+      // The button declares aria-expanded/aria-controls in the markup; keep it
+      // honest, otherwise it announces "collapsed" over an open symbol bar.
+      trialMathToggle.setAttribute('aria-expanded', String(!isVisible));
+      trialMathToggle.setAttribute('aria-label', isVisible ? 'Open math symbols' : 'Close math symbols');
       if (!isVisible) trialInput.focus();
     });
 
@@ -901,7 +904,11 @@
     // Hide input and math bar, show gate
     trialInputArea.style.display = 'none';
     if (trialMathBar) { trialMathBar.classList.remove('visible'); }
-    if (trialMathToggle) { trialMathToggle.classList.remove('active'); }
+    if (trialMathToggle) {
+      trialMathToggle.classList.remove('active');
+      trialMathToggle.setAttribute('aria-expanded', 'false');
+      trialMathToggle.setAttribute('aria-label', 'Open math symbols');
+    }
     trialGate.style.display = '';
 
     // Conversion hook: surface the XP earned this session above the message.
@@ -973,22 +980,8 @@
 
   /* The animated chat preview was removed with its section. */
 
-  /* ── Role Selector Tabs ────────────────────────────── */
-  var roleTabs = document.querySelectorAll('.lp-role-tab');
-  var rolePanels = document.querySelectorAll('.lp-role-panel');
-
-  roleTabs.forEach(function (tab) {
-    tab.addEventListener('click', function () {
-      var role = tab.getAttribute('data-role');
-
-      roleTabs.forEach(function (t) { t.classList.remove('lp-role-tab--active'); });
-      tab.classList.add('lp-role-tab--active');
-
-      rolePanels.forEach(function (p) { p.classList.remove('lp-role-panel--active'); });
-      var targetPanel = document.querySelector('[data-panel="' + role + '"]');
-      if (targetPanel) targetPanel.classList.add('lp-role-panel--active');
-    });
-  });
+  /* The role-selector tabs were removed with their section: the homepage speaks
+     to parents, and the student and teacher pitches live on their own pages. */
 
   /* ── Sticky CTA Bar ────────────────────────────────── */
   var stickyBar = document.getElementById('lp-sticky-cta');

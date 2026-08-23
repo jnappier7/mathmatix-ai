@@ -19,11 +19,14 @@ const {
   buildIntentPrompt,
   buildIntentContext,
   inferIntent,
+  intentFromChoices,
   intentStillUseful,
   deriveObservedIntent,
   INTENT_GUIDANCE,
   INTENT_FADES_AFTER_SESSIONS,
   INTENT_FADES_AFTER_DAYS,
+  WHO_CHOICES,
+  GOAL_CHOICES,
 } = require('../../utils/onboardingIntent');
 
 // Mirrors the enum on user.onboarding.intentCategory.
@@ -281,5 +284,104 @@ describe('buildIntentContext', () => {
     // must not produce "Right now Sam undefined".
     const out = buildIntentContext(null, 'Sam', {});
     expect(out).toBe('');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────
+// STRUCTURED ANSWERS
+//
+// onboarding.html now leads with two closed questions instead of "What brings
+// you to Mathmatix today?" and a microphone. The open question was the first
+// thing between "Start Free Now" and the account someone had just asked for,
+// and it was open enough that people could not tell whether it wanted their
+// role, their child's difficulty, or a math problem.
+//
+// The security property from inferIntent has to survive the change: the client
+// sends WHICH OPTIONS a human picked, never a category. Everything below is
+// about that, and about the two mappings agreeing with each other.
+// ─────────────────────────────────────────────────────────────────────────
+
+describe('intentFromChoices — the client cannot name a category', () => {
+  it('rejects anything outside the whitelists', () => {
+    expect(intentFromChoices('teacher_exploring', 'act_sat_prep')).toBeNull();
+    expect(intentFromChoices('<script>', 'DROP TABLE')).toBeNull();
+    expect(intentFromChoices(undefined, undefined)).toBeNull();
+    expect(intentFromChoices(null, null)).toBeNull();
+  });
+
+  it('ignores a bogus half and honors the valid one', () => {
+    // A malformed field should degrade, not poison the whole answer.
+    expect(intentFromChoices('nonsense', 'homework')).toBe('student_homework');
+    expect(intentFromChoices('my_students', 'nonsense')).toBe('teacher_exploring');
+  });
+
+  it('only ever returns a schema category', () => {
+    for (const who of [...WHO_CHOICES, 'bogus', undefined]) {
+      for (const goal of [...GOAL_CHOICES, 'bogus', undefined]) {
+        const category = intentFromChoices(who, goal);
+        if (category !== null) expect(SCHEMA_CATEGORIES).toContain(category);
+      }
+    }
+  });
+});
+
+describe('intentFromChoices — same precedence as the free-text classifier', () => {
+  it('lets a first-person teacher outrank any topic', () => {
+    // inferIntent tests FIRST_PERSON_TEACHER before TOPIC_TESTS because a
+    // teacher exploring the product is not a student, whatever they came to
+    // look at. The structured path has to agree or the two disagree about the
+    // same person depending on which control they used.
+    expect(inferIntent('I teach algebra and need homework support')).toBe('teacher_exploring');
+    expect(intentFromChoices('my_students', 'homework')).toBe('teacher_exploring');
+    expect(intentFromChoices('my_students', 'act_sat')).toBe('teacher_exploring');
+  });
+
+  it('lets subject matter beat parent identity', () => {
+    // "help my daughter with her ACT" is a parent, but ACT is the actionable
+    // half — that is the ordering bug inferIntent was rewritten to fix.
+    expect(inferIntent('help my daughter with her ACT')).toBe('act_sat_prep');
+    expect(intentFromChoices('my_child', 'act_sat')).toBe('act_sat_prep');
+    expect(intentFromChoices('my_child', 'homework')).toBe('student_homework');
+  });
+
+  it('falls back to identity only when the goal says nothing', () => {
+    expect(intentFromChoices('my_child', 'not_sure')).toBe('parent_support');
+    expect(intentFromChoices('my_students', 'not_sure')).toBe('teacher_exploring');
+    expect(intentFromChoices('me', 'not_sure')).toBe('unknown');
+  });
+});
+
+describe('intentFromChoices — each goal lands where its typed equivalent lands', () => {
+  it.each([
+    ['homework',       'homework due tomorrow',            'student_homework'],
+    ['missing_skills', 'I am struggling and behind in math', 'general_math_help'],
+    ['test_prep',      'I have a unit test friday',          'student_test_prep'],
+    ['act_sat',        'ACT prep',                           'act_sat_prep'],
+  ])('%s', (goal, equivalentText, expected) => {
+    expect(intentFromChoices('me', goal)).toBe(expected);
+    expect(inferIntent(equivalentText)).toBe(expected);
+  });
+
+  it('maps the accommodations chip to general math help', () => {
+    // There is deliberately no accommodations category. What the tutor does
+    // about accommodations comes from the IEP plan (models/iepPlan.js), which
+    // is a far stronger signal than a signup chip; general_math_help's posture
+    // — the underlying idea over speed — is the right one in the meantime.
+    expect(intentFromChoices('my_child', 'accommodations')).toBe('general_math_help');
+  });
+});
+
+describe('intentFromChoices — every choice produces usable guidance or none by design', () => {
+  it('never produces a category the guidance table has silently forgotten', () => {
+    for (const who of WHO_CHOICES) {
+      for (const goal of GOAL_CHOICES) {
+        const category = intentFromChoices(who, goal);
+        expect(category).not.toBeNull();
+        // parent_support, teacher_exploring and unknown intentionally have no
+        // guidance line — they describe the account, not a way to teach.
+        const hasGuidance = Object.prototype.hasOwnProperty.call(INTENT_GUIDANCE, category);
+        expect(hasGuidance || NOT_TUTORING_SIGNALS.includes(category)).toBe(true);
+      }
+    }
   });
 });

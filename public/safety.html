@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- No Google Tag Manager on this page, deliberately.
+     tests/unit/noAnalyticsOnAuthedPages.test.js would let it through — this is a
+     public marketing page like privacy.html and terms.html, not a page behind a
+     login. It is left off anyway: this is the page a parent opens BECAUSE they
+     are worried about who gets data about their child, and handing a
+     third-party tag manager a request the moment they arrive contradicts every
+     paragraph below it. The conversion signal from one trust page is not worth
+     that. Keep it off. (The test matches on raw text, so do not name the host
+     here either.) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safety &amp; Privacy | Mathmatix AI</title>
+  <meta name="description" content="Plain-language answers about what Mathmatix AI collects from your child, who can see it, how long it is kept, and how to delete it." />
+
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.mathmatix.ai/safety.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.mathmatix.ai/safety.html" />
+  <meta property="og:title" content="Safety &amp; Privacy | Mathmatix AI" />
+  <meta property="og:description" content="What we collect, who can see it, how long we keep it, and how to delete it — in plain language." />
+  <meta property="og:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
+  <meta property="og:site_name" content="Mathmatix AI" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Safety &amp; Privacy | Mathmatix AI" />
+  <meta name="twitter:description" content="What we collect, who can see it, how long we keep it, and how to delete it." />
+
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* This page answers questions, so it is built out of them. Each <details>
+       is one question a parent or a school actually asks; the summary line is
+       the question, verbatim. */
+    .safety-intro {
+      padding: 16px 18px;
+      border-left: 4px solid var(--clr-primary-teal, #12B3B3);
+      background: rgba(18, 179, 179, 0.06);
+      border-radius: 0 10px 10px 0;
+      margin: 18px 0 28px;
+    }
+    .safety-intro p:last-child { margin-bottom: 0; }
+
+    .safety-q {
+      border: 1px solid #d9dde3;
+      border-radius: 10px;
+      margin: 0 0 10px;
+      background: #fff;
+    }
+    .safety-q > summary {
+      cursor: pointer;
+      padding: 14px 16px;
+      font-weight: 600;
+      font-size: 16px;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .safety-q > summary::-webkit-details-marker { display: none; }
+    .safety-q > summary::after {
+      content: "+";
+      font-size: 20px;
+      line-height: 1;
+      color: var(--clr-primary-teal, #12B3B3);
+      flex-shrink: 0;
+    }
+    .safety-q[open] > summary::after { content: "\2212"; }
+    .safety-q > summary:focus-visible {
+      outline: 3px solid var(--clr-primary-teal, #12B3B3);
+      outline-offset: -3px;
+      border-radius: 10px;
+    }
+    .safety-q-body { padding: 0 16px 14px; }
+    .safety-q-body > *:first-child { margin-top: 0; }
+    .safety-q-body > *:last-child { margin-bottom: 0; }
+
+    .safety-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 15px;
+      display: block;
+      overflow-x: auto;
+    }
+    .safety-table th,
+    .safety-table td {
+      border: 1px solid #d9dde3;
+      padding: 9px 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .safety-table thead th { background: #f4f6f9; font-weight: 600; }
+
+    .safety-note {
+      font-size: 14px;
+      color: #5b6876;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 28px;
+      padding-top: 16px;
+    }
+  </style>
+</head>
+<body class="landing-page-body">
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <a href="/"><img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" class="main-logo-hero" /></a>
+    </div>
+    <nav class="landing-nav">
+      <a href="/login.html" class="btn btn-primary-outline">Log In</a>
+    </nav>
+  </header>
+
+  <main id="main-content" class="content-page-wrapper">
+    <h1>Safety &amp; Privacy</h1>
+
+    <div class="safety-intro">
+      <p>Mathmatix is used by children, and by schools on behalf of children. That
+      means you are entitled to specific answers, not reassurance. Below is what we
+      collect, who can see it, how long we keep it, how to get rid of it, and what
+      happens when the AI gets something wrong.</p>
+      <p>This page is written in plain language. The
+      <a href="/privacy.html">Privacy Policy</a> is the binding legal version,
+      including the full data-retention table, and the
+      <a href="/terms.html">Terms of Use</a> cover the rest.</p>
+    </div>
+
+    <h2>Your child&rsquo;s information</h2>
+
+    <details class="safety-q">
+      <summary>What do you collect about my child?</summary>
+      <div class="safety-q-body">
+        <p>Three kinds of thing:</p>
+        <ul>
+          <li><strong>Account details</strong> &mdash; name, email, date of birth (used to
+          decide which consent rules apply), grade level, and the link to your parent
+          account or their teacher&rsquo;s class.</li>
+          <li><strong>What happens during tutoring</strong> &mdash; the messages between your
+          child and the tutor, the problems they work, which skills they have mastered
+          and which are shaky, and any photos of homework they upload.</li>
+          <li><strong>Learning profile</strong> &mdash; interests they tell the tutor about (so
+          word problems can use them), reading level, and any IEP accommodations a
+          teacher has set.</li>
+        </ul>
+        <p>We do not collect a home address. Payment details go directly to Stripe
+        and are never stored on our servers.</p>
+      </div>
+    </details>
+
+    <details class="safety-q">
+      <summary>Are my child&rsquo;s conversations used to train AI models?</summary>
+      <div class="safety-q-body">
+        <p><strong>No.</strong> We do not train any model on student data, and the AI
+        providers we send text to &mdash; OpenAI, Anthropic and Mathpix &mdash; are used under
+        their business API terms, under which customer data is not used to train their
+        models.</p>
+        <p>We also strip identifying details before the request leaves us where we can:
+        the tutoring pipeline replaces your child&rsquo;s name with a placeholder on the way
+        out and puts it back in the reply, so the provider sees the math, not the child.</p>
+      </div>
+    </details>
+
+    <details class="safety-q">
+      <summary>Do you sell data, or use it for advertising?</summary>
+      <div class="safety-q-body">
+        <p>No. We do not sell or rent personal data, and we do not use student data for
+        advertising or build advertising profiles. Mathmatix is paid for by
+        subscriptions and school licenses &mdash; that is the whole business model.</p>
+      </div>
+    </details>
+
+    <h2>Who can see it</h2>
+
+    <details class="safety-q">
+      <summary>Who can read my child&rsquo;s tutoring conversations?</summary>
+      <div class="safety-q-body">
+        <ul>
+          <li><strong>Your child.</strong></li>
+          <li><strong>You</strong>, once your parent account is linked to theirs.</li>
+          <li><strong>Their teacher</strong>, if the account is part of a school class.</li>
+        </ul>
+        <p>Nobody else, and not other students. Our own staff do not browse student
+        conversations as a matter of course; when a staff account does need to view an
+        account to resolve a problem, that access is read-only, expires automatically
+        after 20 minutes, and is written to an audit log.</p>
+        <p>Parents can request the log of who accessed their child&rsquo;s record from the
+        parent dashboard.</p>
+      </div>
+    </details>
+
+    <details class="safety-q">
+      <summary>My child is at a school that uses Mathmatix. Who controls the account?</summary>
+      <div class="safety-q-body">
+        <p>When a school licenses Mathmatix, it is the school that decides which
+        students have accounts, and rosters are usually synced from the school&rsquo;s own
+        system (such as Clever). Teachers see their own students; they do not see
+        students in other classes.</p>
+        <p>For school-provided accounts, requests to see, correct or delete a student&rsquo;s
+        record normally go through the school, because the school is the one holding
+        the education record. Contact us and we will work with them.</p>
+      </div>
+    </details>
+
+    <h2>How long it is kept, and how to delete it</h2>
+
+    <details class="safety-q">
+      <summary>How long do you keep conversations and uploads?</summary>
+      <div class="safety-q-body">
+        <p>Not indefinitely. An automated sweep runs daily and deletes anything past
+        its period. The two parents ask about most:</p>
+        <table class="safety-table">
+          <thead>
+            <tr>
+              <th scope="col">What</th>
+              <th scope="col">Deleted after</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Uploaded photos and documents</td>
+              <td>30 days</td>
+            </tr>
+            <tr>
+              <td>Tutoring conversations (once the account has gone inactive)</td>
+              <td>1 year</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Assessment results and graded work are kept for 3 years, the standard period
+        for an educational record, so growth can be measured against a baseline. The
+        <a href="/privacy.html#retention">full table</a>, with every category and the
+        reason we keep it, is in the Privacy Policy.</p>
+      </div>
+    </details>
+
+    <details class="safety-q">
+      <summary>How do I delete my child&rsquo;s information?</summary>
+      <div class="safety-q-body">
+        <p>From your parent dashboard you can:</p>
+        <ul>
+          <li><strong>Export</strong> everything we hold on your child, as a file.</li>
+          <li><strong>Delete</strong> your child&rsquo;s account and its data.</li>
+          <li><strong>Correct</strong> something that is wrong, by filing an amendment
+          request.</li>
+        </ul>
+        <p>You can also withdraw consent for AI features at any time without deleting
+        the account. If your child&rsquo;s account came from their school, see the school
+        question above. If you would rather not use a dashboard,
+        <a href="/contact-support.html">contact us</a> and we will handle it.</p>
+      </div>
+    </details>
+
+    <h2>Security</h2>
+
+    <details class="safety-q">
+      <summary>How is the data protected?</summary>
+      <div class="safety-q-body">
+        <ul>
+          <li>Everything travels over HTTPS, and the site refuses plain HTTP.</li>
+          <li>The most sensitive parts of a tutoring session &mdash; the summary of what a
+          student struggled with &mdash; are encrypted at the field level in the database, so
+          they are not readable from a database dump alone.</li>
+          <li>Passwords are hashed, never stored in a form we could read.</li>
+          <li>Uploaded photos are stripped of embedded location and camera metadata
+          before anything else touches them.</li>
+          <li>Sign-in is rate-limited against guessing, and every state-changing request
+          carries an anti-forgery token.</li>
+          <li>Logs redact secrets, and errors are monitored so problems surface quickly.</li>
+        </ul>
+      </div>
+    </details>
+
+    <h2>When the AI is wrong</h2>
+
+    <details class="safety-q">
+      <summary>Can the tutor make mistakes?</summary>
+      <div class="safety-q-body">
+        <p><strong>Yes.</strong> Mathmatix is built on large language models, and any
+        product that tells you otherwise is overselling. It can misread a photo of
+        handwriting, mis-state a rule, or follow a wrong turn confidently.</p>
+        <p>What we do about it:</p>
+        <ul>
+          <li>Where the math can be solved exactly, we solve it exactly rather than
+          asking a model &mdash; a computed answer is not an opinion.</li>
+          <li>Where it cannot, a <em>second</em> model from a <em>different</em> provider
+          checks the answer. A model marking its own homework is not a check, which is
+          why the checker is never the one that wrote the reply.</li>
+          <li>When the two cannot agree, the answer is treated as unverified rather than
+          stamped correct.</li>
+        </ul>
+        <p>None of that makes it infallible. Encourage your child to say &ldquo;I don&rsquo;t think
+        that&rsquo;s right&rdquo; &mdash; arguing with the tutor is good mathematics, and the tutor is
+        built to take it well. For work that is being graded, their teacher is the
+        authority, not us.</p>
+      </div>
+    </details>
+
+    <details class="safety-q">
+      <summary>Will it just do my child&rsquo;s homework for them?</summary>
+      <div class="safety-q-body">
+        <p>It is built not to. The tutor guides rather than answering: it asks what the
+        first step should be, responds to what your child actually tried, and the
+        verified answer to a problem is deliberately withheld from the tutor&rsquo;s context
+        unless your child has already attempted it.</p>
+        <p>A determined student can get an answer out of any AI tool, this one included.
+        What we can promise is that the default behaviour teaches, and that you can see
+        what happened in the session.</p>
+      </div>
+    </details>
+
+    <details class="safety-q">
+      <summary>How do I report something that worried me?</summary>
+      <div class="safety-q-body">
+        <p><a href="/contact-support.html">Contact us</a> with the date and roughly what
+        happened, and we will look at that session. If your child said something in a
+        session that suggests they are struggling in a way that goes beyond math, tell
+        us &mdash; and tell their teacher or school counselor, who can actually help.</p>
+      </div>
+    </details>
+
+    <p class="safety-note">
+      This page describes how Mathmatix works today; it is a description of our
+      practices, not a legal certification, and it is not legal advice to your school
+      or district. Schools evaluating Mathmatix for a data-privacy agreement should
+      <a href="/contact-support.html">get in touch</a> &mdash; we would rather answer your
+      questions directly than have you infer the answers from a marketing page.
+      Last reviewed: August 2026.
+    </p>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 M&#916;THM&#916;TI&#935; AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a> |
+      <a href="/safety.html">Safety &amp; Privacy</a>
+    </p>
+  </footer>
+</body>
+</html>

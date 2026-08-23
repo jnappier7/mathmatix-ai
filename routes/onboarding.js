@@ -7,7 +7,7 @@ const router = express.Router();
 const User = require('../models/user');
 const logger = require('../utils/logger');
 
-const { inferIntent } = require('../utils/onboardingIntent');
+const { inferIntent, intentFromChoices } = require('../utils/onboardingIntent');
 const { recordClassification } = require('../utils/intentMetrics');
 const { COPPA_AGE } = require('../utils/consentManager');
 const { parseDateOfBirth } = require('../utils/dob');
@@ -129,8 +129,11 @@ router.get('/status', (req, res) => {
  * once DOB + (if needed) parental-consent prerequisites are satisfied.
  *
  * Body: {
- *   intentText:     string (classified server-side, not stored),
- *   capturedVia:    ?'voice' | 'text',
+ *   who:            ?'my_child' | 'me' | 'my_students'   (structured, preferred)
+ *   goal:           ?'homework' | 'missing_skills' | 'test_prep' | 'act_sat'
+ *                   | 'accommodations' | 'not_sure'
+ *   intentText:     ?string (free text; classified server-side, not stored),
+ *   capturedVia:    ?'voice' | 'text' | 'choice',
  *   dateOfBirth:    ?string (YYYY-MM-DD)
  * }
  * Returns: { success, redirect, intentCategory, age, needsDob, needsParentalConsent }
@@ -142,14 +145,23 @@ router.post('/intent', async (req, res) => {
 
   try {
     const rawText = (req.body?.intentText || '').toString().trim().slice(0, 2000);
-    const capturedVia = ['voice', 'text'].includes(req.body?.capturedVia) ? req.body.capturedVia : 'text';
+    const capturedVia = ['voice', 'text', 'choice'].includes(req.body?.capturedVia)
+      ? req.body.capturedVia
+      : 'text';
     const dobInput = req.body?.dateOfBirth;
 
     // Classified here and only here. The client used to send its own category
     // (from a duplicate copy of these rules) and the server took it on trust,
-    // so a caller could name any enum value regardless of what they typed. The
-    // text is the only input; `intentCategory` in the body is ignored.
-    const category = inferIntent(rawText);
+    // so a caller could name any enum value regardless of what they typed.
+    // That still holds for the structured questions the page now leads with:
+    // the body carries WHICH OPTIONS a human picked, never a category, and
+    // intentFromChoices validates both against their whitelists here.
+    //
+    // Structured wins when present — two closed answers are unambiguous, where
+    // free text has to be guessed at. Free text remains the fallback for
+    // "say it in your own words" and for the anonymous localStorage replay.
+    const category = intentFromChoices(req.body?.who, req.body?.goal)
+      ?? inferIntent(rawText);
     recordClassification({ category, capturedVia, textLength: rawText.length });
 
     const user = await User.findById(req.user._id);
@@ -200,6 +212,7 @@ router.post('/intent', async (req, res) => {
       role: user.role,
       intentCategory: category,
       capturedVia,
+      structured: capturedVia === 'choice',
       textLength: rawText.length,
       profileGateCleared: !user.needsProfileCompletion,
       needsDob,

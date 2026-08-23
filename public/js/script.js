@@ -2375,6 +2375,15 @@ document.addEventListener("DOMContentLoaded", () => {
             autoStartGhostTimer(text);
         }
 
+        // A tutor reply just landed — that is the first moment the product has
+        // proved anything, and the only moment the "add to home screen" banner
+        // is an offer rather than an interruption. pwa-register.js keeps the
+        // banner suppressed until this fires (or the student comes back for a
+        // second session).
+        if (sender === 'ai' && window.MathmatixPWA) {
+            window.MathmatixPWA.markValueMoment();
+        }
+
         // In voice mode the voice engine already speaks every reply (the WS
         // streams TTS; the legacy path plays its own audio). Skipping the
         // chat's hands-free autoplay here is essential — otherwise the reply

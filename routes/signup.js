@@ -96,7 +96,13 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
     // SECURITY: Prevent privilege escalation — only allow self-registerable roles
     if (!SELF_REGISTERABLE_ROLES.includes(role)) {
         console.warn(`WARN: Signup blocked - attempted self-registration with disallowed role: '${role}'`);
-        return res.status(403).json({ message: 'Invalid role for self-registration.' });
+        // Teacher is the role people actually try, and it is blocked on purpose:
+        // a teacher account carries rosters and IEP data, so an admin provisions
+        // it. Say where to go instead of a dead-end "invalid".
+        const message = role === 'teacher'
+            ? 'Teacher accounts are set up by our team so we can verify your school. Request one at /contact-support.html and we will get you started.'
+            : 'Invalid role for self-registration.';
+        return res.status(403).json({ message });
     }
 
     // Terms of Use / Privacy Policy acceptance is required

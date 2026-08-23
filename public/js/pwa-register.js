@@ -15,9 +15,69 @@
   }
 
   // --- Install Prompt ---
+  //
+  // WHEN this shows matters more than how it looks. It used to fire 3s after any
+  // page load, on every page, which meant a first-time visitor met "Get the
+  // MATHMATIX app!" while they were part-way through onboarding and had not yet
+  // seen the tutor answer anything. At that moment the banner is not an offer,
+  // it is a third thing competing with the decision they came to make — and it
+  // asks them to install something they have no evidence is worth installing.
+  //
+  // The banner is injected on EVERY page (config/middleware.js adds
+  // pwa-register.js to every HTML response), so the gating has to live here.
+  // Two rules, both about earning the ask:
+  //   1. Never on a page where the visitor is mid-decision (SUPPRESSED_PATHS).
+  //   2. Not until they have something to install FOR — a tutoring reply landed,
+  //      or they came back for a second session.
   let deferredPrompt = null;
   const DISMISS_KEY = 'mathmatix-pwa-dismiss';
+  const VALUE_KEY = 'mathmatix-pwa-value-moment';
+  const SESSIONS_KEY = 'mathmatix-pwa-sessions';
+  const SESSION_COUNTED_KEY = 'mathmatix-pwa-session-counted';
   const DISMISS_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+  const SHOW_DELAY_MS = 3000;
+
+  // Pages where the visitor is in the middle of deciding or committing something.
+  // An install banner here competes with the primary action on the screen.
+  const SUPPRESSED_PATHS = [
+    '/onboarding',
+    '/signup',
+    '/login',
+    '/complete-profile',
+    '/parental-consent',
+    '/role-picker',
+    '/pick-tutor',
+    '/pick-avatar',
+    '/forgot-password',
+    '/reset-password',
+    '/email-verification',
+    '/oauth-enrollment',
+    '/pricing',
+  ];
+
+  // Surfaces that mean the visitor is actually using the product, as opposed to
+  // reading about it. Returning to one of these is the "second visit" signal.
+  const PRODUCT_PATHS = [
+    '/chat',
+    '/student-dashboard',
+    '/parent-dashboard',
+    '/teacher-dashboard',
+    '/mastery-chat',
+  ];
+
+  function pathStartsWithAny(list) {
+    // Pages are served both as /chat and /chat.html, so match on the stem.
+    const stem = (window.location.pathname || '/').replace(/\.html$/, '');
+    return list.some((p) => stem === p || stem.indexOf(p + '/') === 0);
+  }
+
+  function readNumber(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      const n = raw ? parseInt(raw, 10) : 0;
+      return Number.isFinite(n) ? n : 0;
+    } catch (_) { return 0; }
+  }
 
   // Don't show if already installed (standalone mode) or recently dismissed
   function isStandalone() {
@@ -26,10 +86,47 @@
   }
 
   function wasDismissedRecently() {
-    const dismissed = localStorage.getItem(DISMISS_KEY);
+    let dismissed;
+    try { dismissed = localStorage.getItem(DISMISS_KEY); } catch (_) { return false; }
     if (!dismissed) return false;
     return (Date.now() - parseInt(dismissed, 10)) < DISMISS_DURATION;
   }
+
+  /**
+   * The visitor has seen the tutor actually tutor. Called from the chat engine
+   * when an AI turn lands (public/js/script.js). One reply is enough — that is
+   * the moment the product has proved something, and the moment "keep this one
+   * tap away" becomes a useful offer rather than an interruption.
+   */
+  function markValueMoment() {
+    try { localStorage.setItem(VALUE_KEY, '1'); } catch (_) { /* storage off */ }
+  }
+
+  /** Count one browsing session per product surface, at most once per tab session. */
+  function countSession() {
+    if (!pathStartsWithAny(PRODUCT_PATHS)) return;
+    try {
+      if (sessionStorage.getItem(SESSION_COUNTED_KEY)) return;
+      sessionStorage.setItem(SESSION_COUNTED_KEY, '1');
+      localStorage.setItem(SESSIONS_KEY, String(readNumber(SESSIONS_KEY) + 1));
+    } catch (_) { /* storage off — the value-moment path still works */ }
+  }
+
+  function hasEarnedTheAsk() {
+    let sawValue = false;
+    try { sawValue = localStorage.getItem(VALUE_KEY) === '1'; } catch (_) { /* storage off */ }
+    return sawValue || readNumber(SESSIONS_KEY) >= 2;
+  }
+
+  /** Every reason the banner may not show, in one place. */
+  function mayPrompt() {
+    if (isStandalone()) return false;
+    if (wasDismissedRecently()) return false;
+    if (pathStartsWithAny(SUPPRESSED_PATHS)) return false;
+    return hasEarnedTheAsk();
+  }
+
+  countSession();
 
   function createInstallBanner() {
     if (document.getElementById('pwa-install-banner')) return;
@@ -46,7 +143,7 @@
         </div>
         <div class="pwa-install-actions">
           <button class="pwa-install-btn" id="pwa-install-accept">Install</button>
-          <button class="pwa-dismiss-btn" id="pwa-install-dismiss" aria-label="Dismiss">&times;</button>
+          <button class="pwa-dismiss-btn" id="pwa-install-dismiss" aria-label="Dismiss install prompt">&times;</button>
         </div>
       </div>
     `;
@@ -103,7 +200,7 @@
             'then <strong>"Add to Home Screen"</strong>' +
           '</span>' +
         '</div>' +
-        '<button class="pwa-dismiss-btn" id="pwa-install-dismiss" aria-label="Dismiss">&times;</button>' +
+        '<button class="pwa-dismiss-btn" id="pwa-install-dismiss" aria-label="Dismiss install prompt">&times;</button>' +
       '</div>';
     document.body.appendChild(banner);
 
@@ -122,9 +219,12 @@
     e.preventDefault();
     deferredPrompt = e;
 
-    if (!isStandalone() && !wasDismissedRecently()) {
+    // Hold the event. If the visitor has not earned the ask yet, we simply never
+    // call createInstallBanner — the browser keeps the prompt available for a
+    // later page load, when countSession()/markValueMoment() have caught up.
+    if (mayPrompt()) {
       // Delay showing the banner so it doesn't interrupt initial page load
-      setTimeout(createInstallBanner, 3000);
+      setTimeout(createInstallBanner, SHOW_DELAY_MS);
     }
   });
 
@@ -135,8 +235,13 @@
   });
 
   // iOS: show manual install instructions (beforeinstallprompt never fires)
-  if (isIOS() && !isStandalone() && !wasDismissedRecently()) {
+  if (isIOS() && mayPrompt()) {
     // Wait for page to settle before showing
-    setTimeout(createIOSInstallBanner, 3000);
+    setTimeout(createIOSInstallBanner, SHOW_DELAY_MS);
   }
+
+  // The chat engine calls this when a tutor reply lands. Exported rather than
+  // inferred from the DOM so the signal stays owned by the code that knows what
+  // a completed turn is.
+  window.MathmatixPWA = { markValueMoment: markValueMoment };
 })();
