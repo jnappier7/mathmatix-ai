@@ -71,7 +71,69 @@
     // source — production 2026-07-28: "1 \div (-0.1)\."). Accent "\.{x}" kept.
     t = t.replace(/\\\.(?!\{)/g, '.');
     t = t.replace(/\\+$/, '');               // dangling backslash at end
+    t = inlineEnvironments(t);
+    t = healTruncated(t);
     return t.trim();
+  }
+
+  // KaTeX's multi-line environments come in two flavours: DISPLAY-ONLY ones
+  // (align, gather, split, alignat) and inline-safe twins (aligned, gathered,
+  // alignedat). The card typesets inline, so a display-only environment raises
+  // "{align} can be used only in display mode" and — because throwOnError is
+  // false — KaTeX PAINTS the whole system as red LaTeX source at the student
+  // (production 2026-08-23: a 2x2 system posed as \begin{align*} showed up on
+  // the board as literal "\begin{align*} 2x + 3y &= 6 \\ ..."). The twins
+  // differ only in claiming the full display width, which the card supplies
+  // anyway, so map each onto the one that renders. eqnarray / multline aren't
+  // in KaTeX at all; aligned / gathered are their closest working shape.
+  var INLINE_ENV = {
+    'align': 'aligned', 'align*': 'aligned',
+    'alignat': 'alignedat', 'alignat*': 'alignedat',
+    'gather': 'gathered', 'gather*': 'gathered',
+    'split': 'aligned',
+    'eqnarray': 'aligned', 'eqnarray*': 'aligned',
+    'multline': 'gathered', 'multline*': 'gathered',
+  };
+  function inlineEnvironments(t) {
+    return t.replace(/\\(begin|end)\s*\{([a-zA-Z]+\*?)\}/g, function (m, which, env) {
+      var to = INLINE_ENV[env];
+      return to ? '\\' + which + '{' + to + '}' : m;
+    });
+  }
+
+  // Heal tex that arrived cut off mid-command — a stream that ended early, or a
+  // model that stopped inside a group. KaTeX reports "Unexpected end of input"
+  // like any other parse error, so ONE missing brace costs the student the whole
+  // line (production 2026-08-23: "\det(A) = \boxed", which also cost the blank
+  // its tappability — _wireBlanks finds no .fbox when the render never happened).
+  var TRAILING_ARG_CMD = /\\(boxed|frac|dfrac|tfrac|sqrt|text|textbf|mathbf|mathrm|overline|underline|hat|vec|bar)\s*$/;
+  function healTruncated(t) {
+    t = t.replace(TRAILING_ARG_CMD, '\\$1{}');     // command with no argument
+    var depth = 0;
+    for (var i = 0; i < t.length; i++) {
+      var c = t.charAt(i);
+      if (c === '\\') { i++; continue; }           // \{ \} \\ are literals, not groups
+      if (c === '{') depth++;
+      else if (c === '}') depth--;
+    }
+    while (depth-- > 0) t += '}';                  // close what the stream never did
+    return t;
+  }
+
+  // Last resort when KaTeX still cannot parse a line. throwOnError:false does
+  // not throw — it renders the SOURCE in red — and a student should never be
+  // shown "\begin{align*}". Strip to the characters that carry the math.
+  function detex(s) {
+    return String(s == null ? '' : s)
+      .replace(/\\(begin|end)\s*\{[^{}]*\}/g, ' ')
+      .replace(/\\(times|cdot)\b/g, '\u00d7')
+      .replace(/\\div\b/g, '\u00f7')
+      .replace(/\\(left|right)\b/g, '')
+      .replace(/\\\\/g, '; ')                        // row break -> sentence break
+      .replace(/\\[a-zA-Z]+/g, ' ')
+      .replace(/[{}&$]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   // Prose — a \text{…} wrapper or a natural-language sentence (word problems,
@@ -88,7 +150,10 @@
     // prose-with-inline-math path, whose splitter can't handle the nested
     // braces and shipped raw "\frac3 cups2 batches" to production. Drop the
     // whole \text groups BEFORE counting words.
-    var stripped = t.replace(/\\text\s*\{[^{}]*\}/g, ' ');
+    var stripped = t.replace(/\\text\s*\{[^{}]*\}/g, ' ')
+      // …and so are environment names: \begin{aligned} must not read as the
+      // word "aligned" and push a two-line system over the 3-word prose line.
+      .replace(/\\(begin|end)\s*\{[^{}]*\}/g, ' ');
     // Strip remaining LaTeX commands (\frac, \quad, \Rightarrow …) and braces
     // so command names aren't mistaken for words — then count the genuine
     // words left. Math is single-letter variables, digits and operators (no
@@ -154,10 +219,13 @@
       return;
     }
     if (katex && typeof katex.render === 'function') {
-      try { katex.render(tex, target, { throwOnError: false, displayMode: false }); return; }
-      catch (_) { /* fall through to text */ }
+      try {
+        katex.render(tex, target, { throwOnError: false, displayMode: false });
+        if (!target.querySelector('.katex-error')) return;
+      } catch (_) { /* fall through to text */ }
     }
-    target.textContent = tex;
+    target.className += ' lws-dv-prose';
+    target.textContent = detex(tex);
   }
 
   function toArray(nodeList) {
@@ -791,6 +859,14 @@
     }
     // Fallback: KaTeX markup not found — append a chip that opens an inline
     // input for the FIRST blank so the affordance never silently dies.
+    //
+    // It goes into the tex element's COLUMN, never onto `row` itself. `.lws-step`
+    // is a two-track grid (26px spine | 1fr content) and `main` is appended by
+    // the caller AFTER this runs, so a chip parented to the row takes the content
+    // track and auto-placement drops `main` into the 26px spine track on the next
+    // grid row — where `overflow-wrap: anywhere` breaks the step one character
+    // per line. That is the vertical "d/e/t/(/A/)" column in the 2026-08-23
+    // production screenshot, and it only ever appears alongside this chip.
     var chip = d.createElement('button');
     chip.className = 'lws-blank-chip';
     chip.type = 'button';
@@ -815,7 +891,7 @@
         }
       });
     });
-    row.appendChild(chip);
+    (texEl.parentNode || row).appendChild(chip);
   };
 
   // A graph / image / geometry block, framed and captioned so it reads as a
@@ -957,6 +1033,7 @@
   DerivationView.classify = classify;
   DerivationView.groupRows = groupRows;
   DerivationView.cleanLatex = cleanLatex;
+  DerivationView.detex = detex;
   DerivationView.looksLikeProse = looksLikeProse;
   DerivationView.unwrapText = unwrapText;
   DerivationView.freshNodes = freshNodes;
@@ -964,5 +1041,5 @@
   DerivationView.assistanceSummary = assistanceSummary;
   DerivationView.MAX_ARCHIVE = MAX_ARCHIVE;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, groupRows: groupRows, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, assistanceSummary: assistanceSummary, MAX_ARCHIVE: MAX_ARCHIVE };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, groupRows: groupRows, cleanLatex: cleanLatex, detex: detex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, assistanceSummary: assistanceSummary, MAX_ARCHIVE: MAX_ARCHIVE };
 })(typeof self !== 'undefined' ? self : this);
