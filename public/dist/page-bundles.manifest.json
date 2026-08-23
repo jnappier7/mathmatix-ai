@@ -203,7 +203,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/parent-js0.f9d859f2.js",
+        "src": "/dist/js/parent-js0.70a97b5d.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
@@ -258,7 +258,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/teacher-js0.f9d859f2.js",
+        "src": "/dist/js/teacher-js0.70a97b5d.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
