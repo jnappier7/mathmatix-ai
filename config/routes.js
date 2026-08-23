@@ -768,6 +768,12 @@ function registerHtmlRoutes(app) {
   app.get('/parental-consent.html', sendHtml('parental-consent.html'));
   app.get('/privacy.html', sendHtml('privacy.html'));
   app.get('/terms.html', sendHtml('terms.html'));
+  // Plain-language trust centre. Public and explicitly routed alongside the two
+  // legal pages it fronts: the .html catch-all further down would serve it
+  // anyway, but this is a URL schools paste into procurement paperwork, so the
+  // short /safety alias should exist and should not depend on a fallback.
+  app.get('/safety.html', sendHtml('safety.html'));
+  app.get('/safety', sendHtml('safety.html'));
   app.get('/onboarding.html', sendHtml('onboarding.html'));
   app.get('/demo.html', sendHtml('demo.html'));
   // Pop-quiz landing (Facebook ad funnel) — clean URL for the ad's answer
