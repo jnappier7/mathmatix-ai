@@ -1,6 +1,12 @@
-const roleSelect = document.getElementById("role");
+// Role is chosen from radio cards, not a <select> with a default. Nothing is
+// preselected on purpose: the old dropdown defaulted to "Student" while every
+// homepage CTA told parents to start with a parent account, so a parent moving
+// fast silently created the wrong account type.
+const roleRadios = Array.from(document.querySelectorAll('input[name="role"]'));
+const teacherNotice = document.getElementById("teacherNotice");
 const hasCodeCheckbox = document.getElementById("hasCodeCheckbox");
 const hasCodeLabel = document.getElementById("hasCodeLabel");
+const hasCodeRow = document.getElementById("hasCodeRow");
 const codeInputGroup = document.getElementById("codeInputGroup");
 const enrollmentCodeGroup = document.getElementById("enrollmentCodeGroup");
 const inviteCodeGroup = document.getElementById("inviteCodeGroup");
@@ -9,14 +15,29 @@ const signupForm = document.getElementById("signupForm");
 const signupMessage = document.getElementById("signup-message");
 const passwordInput = document.getElementById("password");
 const confirmPasswordInput = document.getElementById("confirm-password");
+const submitBtn = signupForm ? signupForm.querySelector('button[type="submit"]') : null;
+
+function selectedRole() {
+  const picked = roleRadios.find((r) => r.checked);
+  return picked ? picked.value : "";
+}
+
+function showMessage(text, kind) {
+  signupMessage.textContent = text;
+  signupMessage.className = kind;
+  signupMessage.style.display = "block";
+}
 
 // Prefill when arriving from a kid's "add a parent" invite email
 // (signup.html?role=parent&parentInvite=<token>&email=<addr>): preselect the
 // parent role + email so the parent just sets a password and is auto-linked.
+// This is the ONE case where a role is preselected, and it is preselected
+// because the invite already told us which one it is.
 const inviteParams = new URLSearchParams(window.location.search);
 const parentInviteToken = inviteParams.get("parentInvite") || "";
 if (parentInviteToken) {
-  if (roleSelect) roleSelect.value = "parent";
+  const parentRadio = roleRadios.find((r) => r.value === "parent");
+  if (parentRadio) parentRadio.checked = true;
   const invitedEmail = inviteParams.get("email");
   const emailField = document.getElementById("email");
   if (invitedEmail && emailField) emailField.value = invitedEmail;
@@ -24,11 +45,24 @@ if (parentInviteToken) {
 
 // Update which code field is visible based on role + checkbox state
 function updateCodeFields() {
-  const isChecked = hasCodeCheckbox.checked;
-  const role = roleSelect.value;
+  const role = selectedRole();
+
+  // Teacher accounts are not self-registerable (routes/signup.js
+  // SELF_REGISTERABLE_ROLES) — they carry rosters and IEP data, so an admin
+  // provisions them. Explain the route instead of letting the POST 403.
+  const isTeacher = role === "teacher";
+  if (teacherNotice) teacherNotice.classList.toggle("js-hidden", !isTeacher);
+  if (submitBtn) submitBtn.disabled = isTeacher;
+
+  // The code question is role-specific ("your teacher's class code" vs "your
+  // child's invite code"), so it stays hidden until we know which one to ask.
+  if (hasCodeRow) hasCodeRow.hidden = !(role === "student" || role === "parent");
+
+  const isChecked = hasCodeCheckbox.checked && !hasCodeRow.hidden;
 
   // Update label + hint text based on role
   const codeHint = document.getElementById("codeHint");
+  if (codeHint) codeHint.hidden = hasCodeRow.hidden;
   if (role === "parent") {
     hasCodeLabel.textContent = "I have my child's invite code";
     if (codeHint) codeHint.textContent = "Optional — you can link to your child later from your dashboard.";
@@ -66,34 +100,41 @@ function updateCodeFields() {
 updateCodeFields();
 
 hasCodeCheckbox.addEventListener("change", updateCodeFields);
-roleSelect.addEventListener("change", updateCodeFields);
+roleRadios.forEach((radio) => radio.addEventListener("change", updateCodeFields));
 
 // Handle form submission with Fetch API
 signupForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
+    const role = selectedRole();
+    if (!role) {
+      showMessage('Choose whether you are signing up as a parent, student, or teacher.', 'error');
+      const firstRadio = roleRadios[0];
+      if (firstRadio) firstRadio.focus();
+      return;
+    }
+
+    if (role === 'teacher') {
+      showMessage('Teacher accounts are set up by us — use the request link above.', 'error');
+      return;
+    }
+
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
 
     if (password !== confirmPassword) {
-      signupMessage.textContent = 'Passwords do not match!';
-      signupMessage.className = 'error';
-      signupMessage.style.display = 'block';
+      showMessage('Passwords do not match!', 'error');
       return;
     }
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(password)) {
-      signupMessage.textContent = 'Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, and one number.';
-      signupMessage.className = 'error';
-      signupMessage.style.display = 'block';
+      showMessage('Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, and one number.', 'error');
       return;
     }
 
     if (!document.getElementById('termsAccepted').checked) {
-      signupMessage.textContent = 'You must agree to the Terms of Use and Privacy Policy.';
-      signupMessage.className = 'error';
-      signupMessage.style.display = 'block';
+      showMessage('You must agree to the Terms of Use and Privacy Policy.', 'error');
       return;
     }
 
@@ -116,9 +157,7 @@ signupForm.addEventListener("submit", async function (event) {
         const result = await response.json();
 
         if (response.ok) {
-            signupMessage.textContent = result.message;
-            signupMessage.className = 'success';
-            signupMessage.style.display = 'block';
+            showMessage(result.message, 'success');
 
             setTimeout(() => {
                 window.location.href = result.redirect || '/complete-profile.html';
@@ -129,14 +168,10 @@ signupForm.addEventListener("submit", async function (event) {
             if (result.errors && result.errors.length > 0) {
                 errorText = result.errors.map(e => e.message).join(' ');
             }
-            signupMessage.textContent = errorText;
-            signupMessage.className = 'error';
-            signupMessage.style.display = 'block';
+            showMessage(errorText, 'error');
         }
     } catch (error) {
         console.error('Signup Error:', error);
-        signupMessage.textContent = 'Network error or server unavailable.';
-        signupMessage.className = 'error';
-        signupMessage.style.display = 'block';
+        showMessage('Network error or server unavailable.', 'error');
     }
 });

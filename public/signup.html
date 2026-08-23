@@ -136,6 +136,111 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .js-hidden {
       display: none;
     }
+
+    /* ── Role choice cards ─────────────────────────────────────────────
+       Radios styled as cards. The <input> stays in the DOM (never
+       display:none) so it keeps its accessible role, its keyboard arrow
+       behaviour within the group, and its focus ring. */
+    .role-choice {
+      border: 0;
+      padding: 0;
+      margin: 20px 0 4px;
+    }
+
+    .role-choice legend {
+      padding: 0;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--clr-text, #18202b);
+    }
+
+    .role-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 560px) {
+      .role-card-grid { grid-template-columns: 1fr; }
+    }
+
+    .role-card {
+      position: relative;
+      display: block;
+      cursor: pointer;
+
+    }
+
+    .role-card input[type="radio"] {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      margin: 0;
+      accent-color: var(--clr-primary-teal, #12b3b3);
+    }
+
+    .role-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      height: 100%;
+      padding: 12px 12px 12px 34px;
+      border: 2px solid var(--clr-border, #e2e8f0);
+      border-radius: var(--radius-base, 10px);
+      background: var(--clr-bg-subtle, #f8fafb);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .role-card:hover .role-card-body {
+      border-color: rgba(18, 179, 179, 0.45);
+    }
+
+    .role-card input[type="radio"]:checked + .role-card-body {
+      border-color: var(--clr-primary-teal, #12b3b3);
+      background: rgba(18, 179, 179, 0.07);
+    }
+
+    /* Focus ring on the card, driven by the real input's focus state. */
+    .role-card input[type="radio"]:focus-visible + .role-card-body {
+      outline: 3px solid var(--clr-primary-teal, #12b3b3);
+      outline-offset: 2px;
+    }
+
+    .role-card-body i {
+      font-size: 1.05rem;
+      color: var(--clr-primary-teal, #12b3b3);
+    }
+
+    .role-card-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .role-card-desc {
+      font-size: 0.8rem;
+      line-height: 1.35;
+      color: var(--clr-text-dim, #5b6876);
+    }
+
+    .role-notice {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-base, 10px);
+      background: rgba(18, 179, 179, 0.08);
+      border: 1px solid rgba(18, 179, 179, 0.25);
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .role-notice p { margin: 0; }
+    .role-notice-alt { margin-top: 8px !important; color: var(--clr-text-dim, #5b6876); }
+
+    /* Fields that only make sense once a role is chosen. `.checkbox-row` sets
+       display:flex, which out-specifies the UA stylesheet's [hidden] rule, so
+       the hidden state has to be restated here or the row shows up anyway. */
+    .checkbox-row[hidden],
+    .code-hint[hidden] { display: none; }
   </style>
 </head>
 <body class="landing-page-body">
@@ -182,19 +287,69 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <input type="password" name="confirmPassword" id="confirm-password" required autocomplete="new-password" placeholder="Re-enter your password" />
         </div>
 
-        <div class="form-group">
-          <label for="role" data-i18n="signup.iAmA">I am a</label>
-          <select name="role" id="role" required>
-            <option value="student" selected data-i18n="signup.student">Student</option>
-            <option value="parent" data-i18n="signup.parent">Parent</option>
-          </select>
-        </div>
+        <!-- Role choice: cards, and nothing preselected.
+             This used to be a <select> defaulting to "Student" while every
+             homepage CTA told parents to start with a parent account and add
+             their child. A parent moving fast took the default and ended up
+             with the wrong account type — which is not a preference you can
+             flip later, it decides who the dashboard belongs to. Making the
+             choice explicit costs one tap and removes a whole class of
+             wrong-account support tickets. -->
+        <fieldset class="role-choice">
+          <legend data-i18n="signup.iAmA">I&rsquo;m signing up as a&hellip;</legend>
+          <div class="role-card-grid">
+            <label class="role-card">
+              <input type="radio" name="role" value="parent" required />
+              <span class="role-card-body">
+                <i class="fas fa-user-shield" aria-hidden="true"></i>
+                <span class="role-card-title" data-i18n="signup.parent">Parent</span>
+                <span class="role-card-desc">Add your child, see their progress, and message their teacher.</span>
+              </span>
+            </label>
+            <label class="role-card">
+              <input type="radio" name="role" value="student" required />
+              <span class="role-card-body">
+                <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                <span class="role-card-title" data-i18n="signup.student">Student</span>
+                <span class="role-card-desc">Work with the tutor yourself. You can link a parent later.</span>
+              </span>
+            </label>
+            <label class="role-card">
+              <input type="radio" name="role" value="teacher" required />
+              <span class="role-card-body">
+                <i class="fas fa-chalkboard-user" aria-hidden="true"></i>
+                <span class="role-card-title" data-i18n="signup.teacher">Teacher</span>
+                <span class="role-card-desc">Rosters, class settings, and IEP tools for your students.</span>
+              </span>
+            </label>
+          </div>
+          <!-- Teacher accounts are not self-registerable (routes/signup.js
+               SELF_REGISTERABLE_ROLES) — they are provisioned by an admin so a
+               stranger cannot grant themselves a roster's worth of student data.
+               Showing the option and then explaining the route beats hiding it
+               and letting teachers guess. -->
+          <div id="teacherNotice" class="role-notice js-hidden" role="status">
+            <p>
+              <strong>Teacher accounts are set up by us, not self-serve.</strong>
+              They come with student rosters and IEP data, so we verify the school
+              first. <a href="/contact-support.html?topic=teacher-account">Request a teacher account</a>
+              &mdash; it usually takes a day.
+            </p>
+            <p class="role-notice-alt">
+              Just want to try the tutor yourself first? Pick <strong>Parent</strong> above
+              &mdash; you can be moved to a teacher account later without losing anything.
+            </p>
+          </div>
+        </fieldset>
 
-        <div class="form-group checkbox-row">
+        <!-- Role-dependent: the question is "your teacher's class code" for a
+             student and "your child's invite code" for a parent, so it stays
+             hidden until a role is picked. -->
+        <div class="form-group checkbox-row" id="hasCodeRow" hidden>
           <input type="checkbox" id="hasCodeCheckbox" />
           <label for="hasCodeCheckbox" id="hasCodeLabel">I have a code to enter</label>
         </div>
-        <p id="codeHint" class="note code-hint">Optional — you can sign up without a code and join a class later.</p>
+        <p id="codeHint" class="note code-hint" hidden>Optional — you can sign up without a code and join a class later.</p>
 
         <div id="codeInputGroup" class="js-hidden">
           <div id="enrollmentCodeGroup" class="form-group js-hidden">

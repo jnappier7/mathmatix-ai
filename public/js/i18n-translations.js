@@ -177,7 +177,7 @@ window.I18N_TRANSLATIONS = {
     German: 'Ein gültiger Anmeldecode ist erforderlich, um ein Konto zu erstellen.'
   },
   'signup.iAmA': {
-    English: 'I am a', Spanish: 'Soy', Russian: 'Я', Chinese: '我是',
+    English: 'I\u2019m signing up as a\u2026', Spanish: 'Soy', Russian: 'Я', Chinese: '我是',
     Vietnamese: 'Tôi là', Arabic: 'أنا', Somali: 'Waxaan ahay', French: 'Je suis', German: 'Ich bin'
   },
   'signup.student': {
@@ -187,6 +187,10 @@ window.I18N_TRANSLATIONS = {
   'signup.parent': {
     English: 'Parent', Spanish: 'Padre/Madre', Russian: 'Родитель', Chinese: '家长',
     Vietnamese: 'Phụ huynh', Arabic: 'ولي أمر', Somali: 'Waalid', French: 'Parent', German: 'Elternteil'
+  },
+  'signup.teacher': {
+    English: 'Teacher', Spanish: 'Docente', Russian: 'Учитель', Chinese: '教师',
+    Vietnamese: 'Giáo viên', Arabic: 'معلم', Somali: 'Macallin', French: 'Enseignant', German: 'Lehrkraft'
   },
   'signup.createBtn': {
     English: 'Create Account', Spanish: 'Crear cuenta', Russian: 'Создать аккаунт', Chinese: '创建账户',
