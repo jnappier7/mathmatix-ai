@@ -52,7 +52,7 @@ let classTotal = 0;
  *
  * @param {Object} args
  * @param {string} args.category - the resulting enum category
- * @param {string} [args.capturedVia] - 'voice' | 'text'
+ * @param {string} [args.capturedVia] - 'voice' | 'text' | 'choice'
  * @param {number} [args.textLength] - length of the answer, NOT the answer
  * @returns {Object} the stored record
  */

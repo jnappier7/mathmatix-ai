@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Welcome | M∆THM∆TIΧ AI</title>
-  <meta name="description" content="Tell us what brings you here today — we'll start there." />
+  <meta name="description" content="Two quick questions so Mathmatix starts in the right place." />
   <meta name="robots" content="noindex, follow" />
 
   <link rel="stylesheet" href="/style.css" />
@@ -32,72 +32,189 @@
         <img src="/images/mathmatix-ai-logo.png" alt="" class="onboarding-brand-logo" />
         <h2 class="onboarding-brand-title">Welcome to Mathmatix.</h2>
         <p class="onboarding-brand-tagline">
-          Tell us what brings you here — we’ll start there.
+          Two quick questions and we’ll start where it makes sense.
         </p>
         <ul class="onboarding-brand-points">
-          <li><i class="fas fa-microphone" aria-hidden="true"></i> Talk to it like a person</li>
+          <li><i class="fas fa-microphone" aria-hidden="true"></i> Talk or type — the tutor works either way</li>
           <li><i class="fas fa-graduation-cap" aria-hidden="true"></i> Built for real learning, not answer-dumping</li>
           <li><i class="fas fa-shield-halved" aria-hidden="true"></i> Built for grades 3–Calculus 3</li>
         </ul>
       </aside>
 
       <div class="onboarding-body">
-      <!-- STAGE 1: open-ended capture -->
+      <!-- STAGE 1: two closed questions, then an optional free-text answer.
+           This used to open with "What brings you to Mathmatix today?" and a
+           microphone. Voice-first was distinctive, but it was the first thing a
+           visitor met after clicking "Start Free Now" — it delayed the action
+           they had just chosen, and the question was open enough that people
+           could not tell what kind of answer was wanted: their role? their
+           child's difficulty? a math problem? Two closed questions are
+           answerable in two taps and produce a cleaner signal
+           (utils/onboardingIntent.js intentFromChoices) than guessing at prose.
+           Voice and typing are still here — as "say it in your own words",
+           under the chips, where they enhance the flow instead of defining it. -->
       <div id="onboarding-stage1">
-        <h1 id="onboarding-prompt-heading" class="onboarding-prompt">
-          What brings you to Mathmatix today?
-        </h1>
-        <p class="onboarding-subtle">
-          Answer however you want — there’s no wrong answer.
-          <small>Take a second if you need to.</small>
-        </p>
 
-        <div class="onboarding-mic-area">
-          <button
-            id="onboarding-mic-btn"
-            type="button"
-            class="onboarding-mic-btn"
-            aria-label="Tap to speak your answer"
-            aria-pressed="false"
-          >
-            <i class="fas fa-microphone" aria-hidden="true"></i>
-          </button>
-          <div id="onboarding-mic-hint" class="onboarding-mic-hint">
-            Tap the mic when you’re ready.
+        <!-- Progress. The old flow gave no sense of how much was left, which is
+             most of what makes a pre-account questionnaire feel long. -->
+        <ol class="onboarding-progress" id="onboarding-progress" aria-label="Setup progress">
+          <li class="onboarding-progress-step is-current" data-step="who" aria-current="step">
+            <span class="onboarding-progress-dot" aria-hidden="true">1</span>
+            <span class="onboarding-progress-label">Who</span>
+          </li>
+          <li class="onboarding-progress-step" data-step="goal">
+            <span class="onboarding-progress-dot" aria-hidden="true">2</span>
+            <span class="onboarding-progress-label">Goal</span>
+          </li>
+          <li class="onboarding-progress-step" data-step="details">
+            <span class="onboarding-progress-dot" aria-hidden="true">3</span>
+            <span class="onboarding-progress-label">Details</span>
+          </li>
+        </ol>
+        <p class="onboarding-progress-text" id="onboarding-progress-text" aria-live="polite">Step 1 of 3</p>
+
+        <!-- STEP 1 — who -->
+        <div id="onboarding-step-who">
+          <h1 id="onboarding-prompt-heading" class="onboarding-prompt">
+            Who will be using Mathmatix?
+          </h1>
+          <p class="onboarding-subtle">Two quick questions and you&rsquo;re in.</p>
+
+          <fieldset class="onboarding-choices">
+            <legend class="sr-only">Who will be using Mathmatix?</legend>
+            <label class="onboarding-choice">
+              <input type="radio" name="onboarding-who" value="my_child" />
+              <span class="onboarding-choice-body">
+                <i class="fas fa-child-reaching" aria-hidden="true"></i>
+                <span class="onboarding-choice-title">My child</span>
+                <span class="onboarding-choice-desc">You&rsquo;ll get a parent account and add them to it.</span>
+              </span>
+            </label>
+            <label class="onboarding-choice">
+              <input type="radio" name="onboarding-who" value="me" />
+              <span class="onboarding-choice-body">
+                <i class="fas fa-user" aria-hidden="true"></i>
+                <span class="onboarding-choice-title">Me</span>
+                <span class="onboarding-choice-desc">You&rsquo;re the one working with the tutor.</span>
+              </span>
+            </label>
+            <label class="onboarding-choice">
+              <input type="radio" name="onboarding-who" value="my_students" />
+              <span class="onboarding-choice-body">
+                <i class="fas fa-chalkboard-user" aria-hidden="true"></i>
+                <span class="onboarding-choice-title">My students</span>
+                <span class="onboarding-choice-desc">You teach a class and want to see how it works.</span>
+              </span>
+            </label>
+          </fieldset>
+
+          <div class="onboarding-actions">
+            <button id="onboarding-skip" type="button" class="onboarding-skip-btn">Skip for now</button>
           </div>
         </div>
 
-        <!-- Low-pressure typing fallback -->
-        <button
-          id="onboarding-typing-toggle"
-          type="button"
-          class="onboarding-typing-toggle"
-        >Prefer typing?</button>
+        <!-- STEP 2 — goal -->
+        <div id="onboarding-step-goal" hidden>
+          <h1 class="onboarding-prompt" id="onboarding-goal-heading">
+            What would you most like help with?
+          </h1>
+          <p class="onboarding-subtle">Pick the closest one &mdash; you can change direction any time.</p>
 
-        <div id="onboarding-answer-box" class="onboarding-answer-box" hidden>
-          <label for="onboarding-textarea">Type your answer</label>
-          <textarea
-            id="onboarding-textarea"
-            rows="3"
-            placeholder="For example: I’m a parent trying to help my kid, I need homework help, I’m prepping for the ACT…"
-            autocomplete="off"
-            autocapitalize="sentences"
-            spellcheck="true"
-          ></textarea>
-        </div>
+          <fieldset class="onboarding-choices onboarding-choices-compact">
+            <legend class="sr-only">What would you most like help with?</legend>
+            <label class="onboarding-choice">
+              <input type="radio" name="onboarding-goal" value="homework" />
+              <span class="onboarding-choice-body">
+                <span class="onboarding-choice-title">Homework help</span>
+                <span class="onboarding-choice-desc">Tonight&rsquo;s assignment, worked through step by step.</span>
+              </span>
+            </label>
+            <label class="onboarding-choice">
+              <input type="radio" name="onboarding-goal" value="missing_skills" />
+              <span class="onboarding-choice-body">
+                <span class="onboarding-choice-title">Building missing skills</span>
+                <span class="onboarding-choice-desc">Filling the gaps that make everything else hard.</span>
+              </span>
+            </label>
+            <label class="onboarding-choice">
+              <input type="radio" name="onboarding-goal" value="test_prep" />
+              <span class="onboarding-choice-body">
+                <span class="onboarding-choice-title">Test preparation</span>
+                <span class="onboarding-choice-desc">A quiz, unit test or final that&rsquo;s coming up.</span>
+              </span>
+            </label>
+            <label class="onboarding-choice">
+              <input type="radio" name="onboarding-goal" value="act_sat" />
+              <span class="onboarding-choice-body">
+                <span class="onboarding-choice-title">ACT / SAT prep</span>
+                <span class="onboarding-choice-desc">Strategy, pacing and question types.</span>
+              </span>
+            </label>
+            <label class="onboarding-choice">
+              <input type="radio" name="onboarding-goal" value="accommodations" />
+              <span class="onboarding-choice-body">
+                <span class="onboarding-choice-title">IEP / accommodation support</span>
+                <span class="onboarding-choice-desc">Extended time, chunking, read-aloud and the rest.</span>
+              </span>
+            </label>
+            <label class="onboarding-choice">
+              <input type="radio" name="onboarding-goal" value="not_sure" />
+              <span class="onboarding-choice-body">
+                <span class="onboarding-choice-title">Not sure yet</span>
+                <span class="onboarding-choice-desc">Just looking around &mdash; that&rsquo;s a fine answer.</span>
+              </span>
+            </label>
+          </fieldset>
 
-        <div class="onboarding-actions">
+          <!-- Voice and typing: still here, no longer the front door. -->
           <button
-            id="onboarding-submit"
+            id="onboarding-typing-toggle"
             type="button"
-            class="onboarding-submit-btn"
-            disabled
-          >Continue</button>
-          <button
-            id="onboarding-skip"
-            type="button"
-            class="onboarding-skip-btn"
-          >Skip for now</button>
+            class="onboarding-typing-toggle"
+          >Rather say it in your own words?</button>
+
+          <div id="onboarding-freeform" class="onboarding-freeform" hidden>
+            <div class="onboarding-mic-area">
+              <button
+                id="onboarding-mic-btn"
+                type="button"
+                class="onboarding-mic-btn"
+                aria-label="Speak your answer"
+                aria-pressed="false"
+              >
+                <i class="fas fa-microphone" aria-hidden="true"></i>
+              </button>
+              <div id="onboarding-mic-hint" class="onboarding-mic-hint">
+                Tap the mic, or type below.
+              </div>
+            </div>
+
+            <div id="onboarding-answer-box" class="onboarding-answer-box">
+              <label for="onboarding-textarea">In your own words</label>
+              <textarea
+                id="onboarding-textarea"
+                rows="3"
+                placeholder="For example: my daughter is behind in fractions, or I&rsquo;m prepping for the ACT…"
+                autocomplete="off"
+                autocapitalize="sentences"
+                spellcheck="true"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="onboarding-actions">
+            <button
+              id="onboarding-submit"
+              type="button"
+              class="onboarding-submit-btn"
+              disabled
+            >Continue</button>
+            <button
+              id="onboarding-back"
+              type="button"
+              class="onboarding-skip-btn"
+            >Back</button>
+          </div>
         </div>
 
         <div id="onboarding-status" class="onboarding-status" aria-live="polite"></div>

@@ -36,6 +36,12 @@
   // ---- Element refs ----
   const $ = (id) => document.getElementById(id);
   const stage1     = $('onboarding-stage1');
+  const stepWho    = $('onboarding-step-who');
+  const stepGoal   = $('onboarding-step-goal');
+  const backBtn    = $('onboarding-back');
+  const freeform   = $('onboarding-freeform');
+  const progressEl = $('onboarding-progress');
+  const progressText = $('onboarding-progress-text');
   const stage2     = $('onboarding-stage2');
   const stageDob   = $('onboarding-stage-dob');
   const stageCoppa = $('onboarding-stage-coppa');
@@ -73,6 +79,16 @@
   // Working state — populated from the server after intent save.
   let pendingCategory = 'unknown';
   let pendingRedirect = '/chat.html';
+
+  // The two closed answers. Classification happens server-side from THESE, not
+  // from a category the browser picks — see utils/onboardingIntent.js
+  // intentFromChoices and the note in routes/onboarding.js.
+  function chosen(name) {
+    const picked = document.querySelector('input[name="' + name + '"]:checked');
+    return picked ? picked.value : '';
+  }
+  const chosenWho = () => chosen('onboarding-who');
+  const chosenGoal = () => chosen('onboarding-goal');
 
   // ---- Speech recognition setup (feature-detected) ----
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -139,8 +155,10 @@
   }
 
   function updateSubmitState() {
+    // Either answer will do. The chips are the fast path; free text is still a
+    // complete answer on its own for anyone who would rather explain.
     const hasText = textarea.value.trim().length > 0;
-    submitBtn.disabled = !hasText;
+    submitBtn.disabled = !hasText && !chosenGoal();
   }
 
   function startListening() {
@@ -171,11 +189,41 @@
   }
 
   function revealTypingUI(focusIt) {
-    answerBox.hidden = false;
+    // The mic and the textarea live together in #onboarding-freeform now, below
+    // the chips, so revealing "in your own words" reveals both.
+    if (freeform) freeform.hidden = false;
+    if (answerBox) answerBox.hidden = false;
     if (focusIt) {
       // Slight delay so the keyboard doesn't jump in immediately on mobile
       setTimeout(() => textarea.focus(), 50);
     }
+  }
+
+  /* ── Step navigation within stage 1 ────────────────────────────────────
+   * Two questions, then the server decides what else is needed (DOB, consent).
+   * The rail is honest about the third step even though its content is
+   * server-driven: for everyone it is "a couple of details, then you're in".
+   */
+  function setProgress(step) {
+    const order = ['who', 'goal', 'details'];
+    const index = order.indexOf(step);
+    if (progressEl) {
+      progressEl.querySelectorAll('.onboarding-progress-step').forEach((el) => {
+        const at = order.indexOf(el.getAttribute('data-step'));
+        el.classList.toggle('is-current', at === index);
+        el.classList.toggle('is-done', at < index);
+        if (at === index) el.setAttribute('aria-current', 'step');
+        else el.removeAttribute('aria-current');
+      });
+    }
+    if (progressText) progressText.textContent = 'Step ' + (index + 1) + ' of ' + order.length;
+  }
+
+  function showStep(step) {
+    if (stepWho) stepWho.hidden = step !== 'who';
+    if (stepGoal) stepGoal.hidden = step !== 'goal';
+    setProgress(step);
+    showStatus('');
   }
 
   // ---- CSRF-aware POST that does NOT trigger session-expired redirects.
@@ -204,13 +252,20 @@
   // ---- Submit handler ----
   async function submitAnswer() {
     const intentText = (textarea.value || '').trim();
-    if (!intentText) {
-      showStatus('Type or say something first — even a few words help.', true);
+    const who = chosenWho();
+    const goal = chosenGoal();
+
+    if (!intentText && !goal) {
+      showStatus('Pick what you’d like help with, or tell me in your own words.', true);
       return;
     }
     stopListening();
 
-    const capturedVia = isRecognizing || finalText.trim().length > 0 ? 'voice' : 'text';
+    // 'choice' when the closed answers carried it, so the metrics can tell the
+    // structured path from the free-text one (utils/intentMetrics.js splits on
+    // capturedVia). Voice still wins when they actually spoke.
+    const spoke = isRecognizing || finalText.trim().length > 0;
+    const capturedVia = spoke ? 'voice' : (goal ? 'choice' : 'text');
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'Saving…';
@@ -220,13 +275,15 @@
     let serverResponse = null;
     try {
       const res = await postJson('/api/onboarding/intent', {
+        who,
+        goal,
         intentText,
         capturedVia
       });
 
       if (res.status === 401) {
         // Anonymous flow — save locally and route to signup.
-        saveLocally({ intentText, capturedVia });
+        saveLocally({ who, goal, intentText, capturedVia });
         showWarmResponse('unknown', /* anon */ true);
         return;
       }
@@ -237,7 +294,7 @@
       serverResponse = await res.json();
     } catch (err) {
       console.warn('[onboarding] save error, falling back to local:', err);
-      saveLocally({ intentText, capturedVia });
+      saveLocally({ who, goal, intentText, capturedVia });
       showWarmResponse('unknown', /* anon */ true);
       return;
     }
@@ -481,14 +538,17 @@
 
   // ---- Wire up events ----
   function init() {
-    // Mic feature-detect: hide mic + auto-reveal typing if not supported.
+    showStep('who');
+
+    // Mic feature-detect. Unlike before, this does NOT reveal the free-text box:
+    // the chips are the primary answer now, and a browser without speech
+    // recognition is not a reason to push a textarea at everyone.
     if (!SpeechRecognition || !recognition) {
       if (micBtn) {
+        micBtn.hidden = true;
         micBtn.disabled = true;
-        micBtn.title = 'Voice input is not supported in this browser';
       }
-      if (micHint) micHint.textContent = 'Voice isn’t available here — go ahead and type your answer.';
-      revealTypingUI(false);
+      if (micHint) micHint.textContent = 'Voice isn’t available in this browser — typing works just as well.';
     }
 
     if (micBtn) {
@@ -510,6 +570,24 @@
       textarea.addEventListener('input', updateSubmitState);
     }
 
+    // Question 1 advances on choice — a "who" answer has no ambiguity to
+    // confirm, and making people tap a card then a Continue button is the kind
+    // of friction this restructure exists to remove.
+    document.querySelectorAll('input[name="onboarding-who"]').forEach((radio) => {
+      radio.addEventListener('change', () => showStep('goal'));
+    });
+
+    // Question 2 does NOT auto-advance: it is the last thing we ask, and the
+    // free-text box lives underneath it, so people need a moment to decide
+    // whether to add anything.
+    document.querySelectorAll('input[name="onboarding-goal"]').forEach((radio) => {
+      radio.addEventListener('change', updateSubmitState);
+    });
+
+    if (backBtn) {
+      backBtn.addEventListener('click', () => showStep('who'));
+    }
+
     if (submitBtn) submitBtn.addEventListener('click', submitAnswer);
 
     // DOB + consent stage wiring (students only, gated by server response).
@@ -521,9 +599,13 @@
 
     if (skipBtn) {
       skipBtn.addEventListener('click', async () => {
-        // Skip = save an empty/unknown answer so we don't re-prompt.
+        // Skip = save whatever they did answer (often nothing) so we don't
+        // re-prompt. A "who" without a "goal" is still worth keeping — it is
+        // what tells parent_support from teacher_exploring.
         textarea.value = '';
         const res = await postJson('/api/onboarding/intent', {
+          who: chosenWho(),
+          goal: '',
           intentText: '',
           capturedVia: 'text'
         }).catch(() => null);
@@ -561,10 +643,12 @@
 
         if (data.authenticated) {
           const pending = readPendingIntent();
-          if (pending && (pending.intentText || '').trim()) {
+          if (pending && ((pending.intentText || '').trim() || pending.goal || pending.who)) {
             try {
               const res = await postJson('/api/onboarding/intent', {
-                intentText:     pending.intentText,
+                who:            pending.who || '',
+                goal:           pending.goal || '',
+                intentText:     pending.intentText || '',
                 capturedVia:    pending.capturedVia || 'text'
               });
               if (res.ok) {
