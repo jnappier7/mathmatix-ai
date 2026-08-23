@@ -2015,6 +2015,13 @@ window.StorageUtils = StorageUtils;
  * The idle timeout continues to count even when the tab is hidden/minimized.
  * When the tab becomes visible again, we check if the timeout has already
  * elapsed and immediately log out if so.
+ *
+ * The warning and the timed-out notice render through MMIdleDialog
+ * (js/idle-dialog.js), NOT confirm()/alert(). Beyond looking like the product,
+ * that matters behaviourally: confirm() blocks the event loop, so the "2
+ * minutes" the copy promised could never tick down, and the logout timer fired
+ * the instant a returning student dismissed it. The styled dialog is
+ * non-blocking, so the countdown is real and the grace period is real.
  */
 
 (function() {
@@ -2045,8 +2052,13 @@ window.StorageUtils = StorageUtils;
       }
     }
 
-    // Clear UI language cache so next user on shared device gets a clean state
-    StorageUtils.local.removeItem('mathmatix_ui_lang');
+    // Clear UI language cache so next user on shared device gets a clean state.
+    // Guarded like the block above it: this line was bare, so on any page that
+    // ever loads auto-logout.js without storage-utils.js it throws a
+    // ReferenceError, the rest of performLogout never runs, and the timeout
+    // silently does nothing at all — no beacon, no redirect. Every page
+    // currently loads both; this just stops that being load-bearing.
+    if (window.StorageUtils) StorageUtils.local.removeItem('mathmatix_ui_lang');
 
     // Use the CSRF-exempt /api/session/end endpoint (sendBeacon can't send CSRF headers).
     // This endpoint destroys the express session on the server side.
@@ -2056,35 +2068,73 @@ window.StorageUtils = StorageUtils;
   }
 
   /**
-   * Show inactivity warning
+   * Log out and tell the student why, without a blocking alert() sitting
+   * between them and the login page.
+   */
+  function logoutWithNotice() {
+    performLogout();
+    const go = () => { window.location.href = '/login.html'; };
+    if (!window.MMIdleDialog) { go(); return; }
+    window.MMIdleDialog.notice({
+      title: 'You’ve been signed out',
+      body: 'We signed you out after a long stretch of inactivity. Your work is saved.',
+      actionLabel: 'Sign in again',
+      onAction: go,
+      autoMs: 8000,
+    });
+  }
+
+  /**
+   * Show inactivity warning.
+   *
+   * While it is up, `resetInactivityTimer` ignores activity events — answering
+   * "are you still there?" is what the buttons are for. The native confirm()
+   * this replaced got that for free by freezing the event loop; without the
+   * guard, any stray click would silently re-arm the timer and leave the
+   * dialog on screen with nothing behind it.
    */
   function showInactivityWarning() {
     if (warningShown) return;
     warningShown = true;
 
-    const remainingTime = Math.ceil(WARNING_BEFORE_LOGOUT / 60000);
-    const shouldStay = confirm(
-      `⚠️ Inactivity Detected\n\n` +
-      `You will be logged out in ${remainingTime} minutes due to inactivity.\n\n` +
-      `Click OK to stay logged in, or Cancel to logout now.`
-    );
+    const deadline = lastActivityTime + INACTIVITY_TIMEOUT;
 
-    if (shouldStay) {
-      // User wants to stay - reset timers
+    const stay = () => {
+      warningShown = false;          // must clear BEFORE the reset guard runs
       lastActivityTime = Date.now();
       resetInactivityTimer();
-      warningShown = false;
-    } else {
-      // User chose to logout
+    };
+    const signOut = () => {
       performLogout();
       window.location.href = '/login.html';
+    };
+
+    if (!window.MMIdleDialog) {
+      // idle-dialog.js missing (page didn't load it) — keep the old prompt
+      // rather than silently dropping the warning entirely.
+      const mins = Math.ceil(WARNING_BEFORE_LOGOUT / 60000);
+      if (confirm(`You will be signed out in ${mins} minutes due to inactivity.\n\nOK to stay signed in, Cancel to sign out now.`)) stay();
+      else signOut();
+      return;
     }
+
+    window.MMIdleDialog.warn({
+      // Read the deadline live so the number stays honest even if the tab was
+      // throttled while hidden.
+      getRemaining: () => deadline - Date.now(),
+      onStay: stay,
+      onSignOut: signOut,
+    });
   }
 
   /**
    * Reset inactivity timer
    */
   function resetInactivityTimer() {
+    // The warning dialog is a question. Until it is answered, a stray click or
+    // keypress must not answer it for the student.
+    if (warningShown) return;
+
     // Clear existing timers
     if (inactivityTimer) clearTimeout(inactivityTimer);
     if (warningTimer) clearTimeout(warningTimer);
@@ -2099,9 +2149,7 @@ window.StorageUtils = StorageUtils;
     // Set logout timer (fires after full timeout)
     inactivityTimer = setTimeout(() => {
       console.log('[Auto-Logout] Session timed out due to inactivity');
-      performLogout();
-      alert('You have been logged out due to inactivity.');
-      window.location.href = '/login.html';
+      logoutWithNotice();
     }, INACTIVITY_TIMEOUT);
   }
 
@@ -2171,9 +2219,7 @@ window.StorageUtils = StorageUtils;
           const remaining = INACTIVITY_TIMEOUT - idleMs;
           inactivityTimer = setTimeout(() => {
             console.log('[Auto-Logout] Session timed out due to inactivity');
-            performLogout();
-            alert('You have been logged out due to inactivity.');
-            window.location.href = '/login.html';
+            logoutWithNotice();
           }, remaining);
 
           showInactivityWarning();
