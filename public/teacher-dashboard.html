@@ -4613,7 +4613,7 @@
         </div>
         <nav class="main-header-nav">
           <div id="roleSwitcher" class="role-switcher" style="display: none;">
-            <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role"></select>
+            <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role" aria-label="Switch role"></select>
           </div>
           <button id="logoutBtn" class="nav-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </nav>
@@ -4633,8 +4633,8 @@
               Smart Alerts
             </h2>
             <div class="feed-controls">
-              <button class="feed-control-btn" id="refresh-feed-btn" title="Refresh alerts">
-                <i class="fas fa-sync-alt"></i>
+              <button class="feed-control-btn" id="refresh-feed-btn" title="Refresh alerts" aria-label="Refresh alerts">
+                <i class="fas fa-sync-alt" aria-hidden="true"></i>
               </button>
               <span class="alert-count-badge" id="alert-count-badge" style="display:none;">0</span>
             </div>
@@ -4666,11 +4666,11 @@
               Live Activity
             </h2>
             <div class="feed-controls">
-              <button class="feed-control-btn" id="back-to-alerts-btn" title="Back to Smart Alerts">
-                <i class="fas fa-arrow-left"></i>
+              <button class="feed-control-btn" id="back-to-alerts-btn" title="Back to Smart Alerts" aria-label="Back to Smart Alerts">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
               </button>
-              <button class="feed-control-btn" id="pause-feed-btn" title="Pause Updates">
-                <i class="fas fa-pause"></i>
+              <button class="feed-control-btn" id="pause-feed-btn" title="Pause Updates" aria-label="Pause updates">
+                <i class="fas fa-pause" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -4906,11 +4906,11 @@
                   <i class="fas fa-plus"></i> New Class
                 </button>
                 <div class="view-toggle" id="view-toggle">
-                  <button class="view-toggle-btn active" data-view="grouped" title="Group by class">
-                    <i class="fas fa-layer-group"></i>
+                  <button class="view-toggle-btn active" data-view="grouped" title="Group by class" aria-label="Group by class">
+                    <i class="fas fa-layer-group" aria-hidden="true"></i>
                   </button>
-                  <button class="view-toggle-btn" data-view="flat" title="Flat list">
-                    <i class="fas fa-list"></i>
+                  <button class="view-toggle-btn" data-view="flat" title="Flat list" aria-label="Show as a flat list">
+                    <i class="fas fa-list" aria-hidden="true"></i>
                   </button>
                 </div>
                 <input type="text" id="student-search" placeholder="Search students..." class="student-search-input">
@@ -5273,7 +5273,7 @@
         <!-- Spy Modal -->
         <div id="spy-modal">
           <div class="spy-modal-inner">
-            <button class="spy-close"><i class="fas fa-times"></i></button>
+            <button class="spy-close" aria-label="Close"><i class="fas fa-times" aria-hidden="true"></i></button>
             <div class="spy-content"></div>
           </div>
         </div>
@@ -5404,8 +5404,8 @@
                 <div style="display: flex; gap: 10px;">
                   <textarea id="message-reply-input" rows="2" placeholder="Type your reply..."
                             style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; resize: none;"></textarea>
-                  <button id="send-reply-btn" class="btn btn-primary" style="align-self: flex-end;">
-                    <i class="fas fa-paper-plane"></i>
+                  <button id="send-reply-btn" class="btn btn-primary" style="align-self: flex-end;" aria-label="Send reply">
+                    <i class="fas fa-paper-plane" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -5525,7 +5525,7 @@
   <div class="mobile-alerts-drawer" id="mobile-alerts-drawer">
     <div class="drawer-header">
       <h3><i class="fas fa-bell"></i> <span id="mobile-alerts-title">Smart Alerts</span></h3>
-      <button class="drawer-close-btn" id="close-alerts-drawer"><i class="fas fa-times"></i></button>
+      <button class="drawer-close-btn" id="close-alerts-drawer" aria-label="Close alerts"><i class="fas fa-times" aria-hidden="true"></i></button>
     </div>
     <!-- Both halves of the desktop left sidebar. Smart Alerts had a mobile
          mirror; Live Activity did not, and its only switches
@@ -5549,7 +5549,7 @@
   <div class="mobile-actions-drawer" id="mobile-actions-drawer">
     <div class="drawer-header">
       <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-      <button class="drawer-close-btn" id="close-actions-drawer"><i class="fas fa-times"></i></button>
+      <button class="drawer-close-btn" id="close-actions-drawer" aria-label="Close actions"><i class="fas fa-times" aria-hidden="true"></i></button>
     </div>
     <div class="drawer-content">
       <div class="mobile-actions-grid">
@@ -5575,7 +5575,7 @@
       </div>
       <div class="confirm-dialog-title" id="confirm-dialog-title"></div>
       <div class="confirm-dialog-message" id="confirm-dialog-message"></div>
-      <input type="text" class="confirm-dialog-input" id="confirm-dialog-input" style="display: none;">
+      <input type="text" class="confirm-dialog-input" id="confirm-dialog-input" aria-labelledby="confirm-dialog-message" aria-label="Your answer" style="display: none;">
       <div class="confirm-dialog-buttons">
         <button class="btn btn-secondary" id="confirm-dialog-cancel">Cancel</button>
         <button class="btn btn-primary" id="confirm-dialog-confirm">Confirm</button>

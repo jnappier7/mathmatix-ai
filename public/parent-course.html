@@ -499,8 +499,8 @@
                          contenteditable="true"
                          data-placeholder="Ask a question or type a response..."
                          role="textbox"></div>
-                    <button class="pc-send-btn" id="pc-send-btn" title="Send">
-                        <i class="fas fa-paper-plane"></i>
+                    <button class="pc-send-btn" id="pc-send-btn" title="Send" aria-label="Send message">
+                        <i class="fas fa-paper-plane" aria-hidden="true"></i>
                     </button>
                 </div>
                 <p style="margin: 8px 0 0; font-size: 11px; color: #b45309; background: #fef9c3; border: 1px solid #fde68a; border-radius: 6px; padding: 6px 10px; display: flex; align-items: flex-start; gap: 5px;">
@@ -512,8 +512,8 @@
     </div>
 
     <!-- Mobile sidebar toggle -->
-    <button class="pc-sidebar-toggle" id="pc-sidebar-toggle">
-        <i class="fas fa-bars"></i>
+    <button class="pc-sidebar-toggle" id="pc-sidebar-toggle" aria-label="Toggle sidebar">
+        <i class="fas fa-bars" aria-hidden="true"></i>
     </button>
 
     <script src="/js/csrf.js"></script>

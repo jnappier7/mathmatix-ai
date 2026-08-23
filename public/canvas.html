@@ -242,12 +242,12 @@
                 <button type="button" class="color-preset" style="background-color: #2ECC71;" onclick="setDrawingColor('#2ECC71')" title="Green" aria-label="Green"></button>
                 <button type="button" class="color-preset" style="background-color: #F39C12;" onclick="setDrawingColor('#F39C12')" title="Orange" aria-label="Orange"></button>
                 <button type="button" class="color-preset" style="background-color: #9B59B6;" onclick="setDrawingColor('#9B59B6')" title="Purple" aria-label="Purple"></button>
-                <input type="color" id="color-picker" value="#000000" title="Custom Color">
+                <input type="color" id="color-picker" value="#000000" title="Custom Color" aria-label="Custom color">
             </div>
 
             <!-- Line Width -->
             <div class="toolbar-section">
-                <label>Width:</label>
+                <label for="line-width">Width:</label>
                 <input type="range" id="line-width" min="1" max="20" value="3" step="1">
                 <span id="line-width-value">3</span>
             </div>

@@ -40,7 +40,7 @@
         <button id="btnExport" class="primary" title="Render this clip to a WebM video">🎬 Export video</button>
         <button id="btnHelp" title="Keyboard shortcuts">?</button>
       </div>
-      <input type="file" id="importFile" accept="application/json,.json" hidden>
+      <input type="file" id="importFile" accept="application/json,.json" hidden aria-label="Import an animation JSON file">
     </header>
 
     <!-- ============================================================== main -->
@@ -59,9 +59,9 @@
             <input type="file" id="sceneFile" accept="image/*">
           </label>
           <div id="sceneInfo" class="muted">No backdrop. Load a set image (e.g. the classroom) — it shows during playback, previews, and every export.</div>
-          <div class="scene-slider"><span>Position</span><input type="range" id="sceneX" min="5" max="95" value="72"></div>
-          <div class="scene-slider"><span>Size</span><input type="range" id="sceneH" min="30" max="110" value="82"></div>
-          <div class="scene-slider"><span>Floor</span><input type="range" id="sceneFoot" min="60" max="100" value="95"></div>
+          <div class="scene-slider"><span>Position</span><input type="range" id="sceneX" min="5" max="95" value="72" aria-label="Backdrop position"></div>
+          <div class="scene-slider"><span>Size</span><input type="range" id="sceneH" min="30" max="110" value="82" aria-label="Backdrop size"></div>
+          <div class="scene-slider"><span>Floor</span><input type="range" id="sceneFoot" min="60" max="100" value="95" aria-label="Backdrop floor line"></div>
           <button id="btnSceneClear" class="wide" disabled>Remove backdrop</button>
         </div>
       </aside>

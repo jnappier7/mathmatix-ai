@@ -113,6 +113,16 @@ class AvatarBuilder {
         }
     }
 
+    /**
+     * Selection state for a colour swatch. The visual state is a class; the
+     * announced state is aria-pressed, and they have to move together or a
+     * screen-reader user is told every swatch is unselected.
+     */
+    setSwatch(btn, on) {
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', String(on));
+    }
+
     updateUIFromConfig() {
         // Update style selection
         document.querySelectorAll('.style-btn').forEach(btn => {
@@ -121,17 +131,17 @@ class AvatarBuilder {
 
         // Update skin color
         document.querySelectorAll('#skin-picker .color-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.color === this.config.skinColor);
+            this.setSwatch(btn, btn.dataset.color === this.config.skinColor);
         });
 
         // Update hair color
         document.querySelectorAll('#hair-color-picker .color-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.color === this.config.hairColor);
+            this.setSwatch(btn, btn.dataset.color === this.config.hairColor);
         });
 
         // Update background
         document.querySelectorAll('#bg-picker .color-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.color === this.config.backgroundColor);
+            this.setSwatch(btn, btn.dataset.color === this.config.backgroundColor);
         });
 
         // Update toggles
@@ -163,8 +173,8 @@ class AvatarBuilder {
         // Skin color
         document.querySelectorAll('#skin-picker .color-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('#skin-picker .color-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+                document.querySelectorAll('#skin-picker .color-btn').forEach(b => this.setSwatch(b, false));
+                this.setSwatch(btn, true);
                 this.config.skinColor = btn.dataset.color;
                 this.updatePreview();
             });
@@ -173,8 +183,8 @@ class AvatarBuilder {
         // Hair color
         document.querySelectorAll('#hair-color-picker .color-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('#hair-color-picker .color-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+                document.querySelectorAll('#hair-color-picker .color-btn').forEach(b => this.setSwatch(b, false));
+                this.setSwatch(btn, true);
                 this.config.hairColor = btn.dataset.color;
                 this.updatePreview();
             });
@@ -183,8 +193,8 @@ class AvatarBuilder {
         // Background color
         document.querySelectorAll('#bg-picker .color-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('#bg-picker .color-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+                document.querySelectorAll('#bg-picker .color-btn').forEach(b => this.setSwatch(b, false));
+                this.setSwatch(btn, true);
                 this.config.backgroundColor = btn.dataset.color;
                 this.updatePreview();
             });
