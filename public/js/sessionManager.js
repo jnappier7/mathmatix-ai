@@ -7,7 +7,17 @@
  * - Auto-save mastery progress on logout
  * - Session summary generation
  * - Tab/browser close detection
+ *
+ * The idle warning renders through MMIdleDialog (js/idle-dialog.js), shared
+ * with auto-logout.js. On pages that load both, auto-logout owns the timer and
+ * this class's idle check stands down (see init) — but both must reach for the
+ * same dialog, or the same event shows two different-looking prompts.
  */
+
+// Events that count as answering "are you still there?". mousemove and scroll
+// deliberately do not: the warning used to vanish as the pointer travelled
+// toward its own buttons.
+const DELIBERATE_ACTIVITY = new Set(['mousedown', 'keypress', 'touchstart', 'click']);
 
 class SessionManager {
   constructor() {
@@ -75,12 +85,12 @@ class SessionManager {
 
     activityEvents.forEach(event => {
       document.addEventListener(event, () => {
-        this.recordActivity();
+        this.recordActivity(event);
       }, { passive: true });
     });
   }
 
-  recordActivity() {
+  recordActivity(eventType) {
     const now = Date.now();
     const wasIdle = (now - this.lastActivity) > this.IDLE_TIMEOUT;
     const wasInactive = (now - this.lastActivity) > this.IDLE_THRESHOLD;
@@ -100,8 +110,11 @@ class SessionManager {
     this.lastActiveTimestamp = now;
     this.isCurrentlyActive = true;
 
-    // If user was idle and warning was shown, dismiss it
-    if (this.warningShown) {
+    // If user was idle and warning was shown, dismiss it — but only on a
+    // DELIBERATE action. A mousemove or a scroll is not an answer to "are you
+    // still there?", and dismissing on those meant the dialog vanished as the
+    // student moved the pointer toward its own buttons.
+    if (this.warningShown && DELIBERATE_ACTIVITY.has(eventType || 'click')) {
       this.dismissWarning();
     }
 
@@ -268,82 +281,30 @@ class SessionManager {
   showIdleWarning(timeRemaining) {
     this.warningShown = true;
 
-    const minutes = Math.ceil(timeRemaining / 60000);
-    const message = `You've been idle for a while. Your session will end in ${minutes} minute(s) due to inactivity.\n\nClick OK to stay logged in, or Cancel to log out now.`;
+    const deadline = Date.now() + timeRemaining;
+    const stay = () => { this.recordActivity('click'); this.dismissWarning(); };
+    const signOut = () => this.logout('user_requested');
 
-    // Create modal instead of using alert (better UX)
-    const modal = document.createElement('div');
-    modal.id = 'idle-warning-modal';
-    modal.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-    `;
+    // Shared with auto-logout.js so the same event never shows a student two
+    // different dialogs. If the page didn't load it, fall back to confirm()
+    // rather than dropping the warning.
+    if (!window.MMIdleDialog) {
+      const minutes = Math.ceil(timeRemaining / 60000);
+      if (confirm(`You will be signed out in ${minutes} minute(s) due to inactivity.\n\nOK to stay signed in, Cancel to sign out now.`)) stay();
+      else signOut();
+      return;
+    }
 
-    const modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      max-width: 500px;
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    `;
-
-    modalContent.innerHTML = `
-      <h2 style="margin-top: 0; color: #333;">Session Timeout Warning</h2>
-      <p style="color: #666; margin: 1rem 0;">You've been idle for a while. Your session will end in <strong>${minutes} minute(s)</strong> due to inactivity.</p>
-      <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
-        <button id="idle-stay-btn" style="
-          background: #12B3B3;
-          color: white;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 8px;
-          font-size: 1rem;
-          cursor: pointer;
-          font-weight: 600;
-        ">Stay Logged In</button>
-        <button id="idle-logout-btn" style="
-          background: white;
-          color: #12B3B3;
-          border: 2px solid #12B3B3;
-          padding: 0.75rem 1.5rem;
-          border-radius: 8px;
-          font-size: 1rem;
-          cursor: pointer;
-          font-weight: 600;
-        ">Log Out Now</button>
-      </div>
-    `;
-
-    modal.appendChild(modalContent);
-    document.body.appendChild(modal);
-
-    // Handle button clicks
-    document.getElementById('idle-stay-btn').addEventListener('click', () => {
-      this.recordActivity();
-      this.dismissWarning();
-    });
-
-    document.getElementById('idle-logout-btn').addEventListener('click', () => {
-      this.logout('user_requested');
+    window.MMIdleDialog.warn({
+      getRemaining: () => deadline - Date.now(),
+      onStay: stay,
+      onSignOut: signOut,
     });
   }
 
   dismissWarning() {
     this.warningShown = false;
-    const modal = document.getElementById('idle-warning-modal');
-    if (modal) {
-      modal.remove();
-    }
+    if (window.MMIdleDialog) window.MMIdleDialog.close();
   }
 
   handleIdleTimeout() {

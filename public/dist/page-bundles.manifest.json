@@ -53,11 +53,12 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js1.b97aead7.js",
+        "src": "/dist/js/chat-js1.79afd0f4.js",
         "files": [
           "/js/mathDelimiters.js",
           "/js/logout.js",
           "/js/role-switcher.js",
+          "/js/idle-dialog.js",
           "/js/auto-logout.js"
         ]
       },
@@ -132,7 +133,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js9.6c1f45bc.js",
+        "src": "/dist/js/chat-js9.e24c9da4.js",
         "files": [
           "/js/sessionManager.js",
           "/js/feedback.js",
@@ -160,7 +161,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/admin-js0.92cb8a37.js",
+        "src": "/dist/js/admin-js0.7ce5407b.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/admin-analytics.js",
@@ -169,6 +170,7 @@
           "/js/logout.js",
           "/js/role-switcher.js",
           "/js/storage-utils.js",
+          "/js/idle-dialog.js",
           "/js/auto-logout.js",
           "/js/admin-dashboard.js?v=2.4",
           "/js/teacher-transcripts.js",
@@ -210,7 +212,7 @@
         ]
       },
       {
-        "src": "/dist/js/parent-js1.5aa7725f.js",
+        "src": "/dist/js/parent-js1.a0f18d5d.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/parent-analytics.js",
@@ -227,9 +229,10 @@
         ]
       },
       {
-        "src": "/dist/js/parent-js2.4e586f35.js",
+        "src": "/dist/js/parent-js2.40f8bf42.js",
         "files": [
           "/js/guided-tour.js?v=20260728",
+          "/js/idle-dialog.js",
           "/js/sessionManager.js",
           "/js/demo-banner.js"
         ]
@@ -277,8 +280,9 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.7c13c05e.js",
+        "src": "/dist/js/teacher-js2.50ffeb6a.js",
         "files": [
+          "/js/idle-dialog.js",
           "/js/auto-logout.js",
           "/js/teacher-live-feed.js",
           "/js/teacher-live-monitor.js",
