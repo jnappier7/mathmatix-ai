@@ -24,7 +24,22 @@
     const INTERRUPT_DBFS = -38;     // threshold while AI speaking
     const INTERRUPT_DBFS_HARD = -24;// fallback when AEC underperforms
     const INTERRUPT_FRAMES = 4;     // ~80ms confirmation
-    const PLAYBACK_FADE_MS = 30;    // ramp gain to 0 on interrupt
+    const PLAYBACK_FADE_MS = 30;    // ramp gain down when the student speaks
+
+    // Gain the tutor drops to — not silence — the instant local VAD hears
+    // the student. This is the "go ahead" beat: the student gets an
+    // immediate audible answer to speaking, while the server works out
+    // from the transcript whether they actually meant to take the floor.
+    // A backchannel ("mm-hm") comes back up; a real interruption gets
+    // stopped dead by _stopPlayback().
+    const DUCK_GAIN = 0.15;
+    const DUCK_FADE_MS = 60;        // ramp back up — a step sounds like a glitch
+
+    // Failsafe: if the server never rules on a duck (message lost, socket
+    // hiccup), come back up on our own rather than leave the tutor
+    // inaudible but still streaming. Comfortably longer than the server's
+    // own BARGE_DUCK_RESOLVE_MS so its verdict normally wins.
+    const DUCK_FAILSAFE_MS = 1800;
 
     // Reconnect tuning
     const RECONNECT_MAX_ATTEMPTS = 4;
@@ -52,6 +67,31 @@
             // Barge-in state
             this.aiSpeaking = false;
             this.consecutiveLoudFrames = 0;
+            this.ducked = false;
+            this._duckFailsafeTimer = null;
+
+            // Every AudioBufferSourceNode currently scheduled or playing.
+            // Web Audio has no "flush the graph" call: once start() is
+            // called a source WILL play to completion unless something
+            // holds a reference and stops it. Resetting scheduledUntil only
+            // changes where the NEXT chunk lands, which is why interrupting
+            // used to leave the old response audibly running underneath the
+            // new one. This set is that reference.
+            this._liveSources = new Set();
+
+            // Audio frames carry the 32-bit tag of the turn that produced
+            // them. Only frames matching the tag the server announced in
+            // turn_start are played; chunks still in flight from a turn the
+            // student talked over are dropped instead of being mixed into
+            // the reply. null = accept anything (pre-first-turn).
+            this._acceptTag = null;
+
+            // Bumped by every _stopPlayback(). The per-chunk
+            // "playback finished" timers capture it, so a timer armed by a
+            // turn that has since been interrupted can't fire an
+            // ai_speaking_ended in the middle of the turn that replaced it —
+            // which would drop the UI to "listening" while the tutor talks.
+            this._playbackEpoch = 0;
 
             // Listening state
             this.listening = false;
@@ -286,28 +326,98 @@
             }
         }
 
+        /**
+         * Local VAD heard the student over the tutor.
+         *
+         * This DUCKS — it does not stop. The microphone alone cannot tell
+         * "wait, I don't get it" from "mm-hm" from a dropped pencil, and
+         * stopping on all three is what made the tutor feel twitchy and
+         * lose explanations to a nod. Dropping to DUCK_GAIN gives the
+         * student the instant "go ahead" a person would give, and the
+         * server rules on the transcript a beat later: `interrupted` stops
+         * playback dead, `resume_speaking` brings it back up.
+         */
         _fireBargeIn() {
-            if (!this.aiSpeaking) return;
-            // 1. Local: ramp playback gain to 0 in 30ms (no pop)
+            if (!this.aiSpeaking || this.ducked) return;
+            this.ducked = true;
+            this.consecutiveLoudFrames = 0;
+            this._rampGain(DUCK_GAIN, PLAYBACK_FADE_MS);
+            this._sendJson({ type: 'barge_in', at_ms: Date.now() });
+
+            // If the verdict never lands, come back up rather than leaving
+            // the tutor mumbling at 15% for the rest of the turn.
+            if (this._duckFailsafeTimer) clearTimeout(this._duckFailsafeTimer);
+            this._duckFailsafeTimer = setTimeout(() => {
+                this._duckFailsafeTimer = null;
+                this._unduck();
+            }, DUCK_FAILSAFE_MS);
+
+            this.on({ type: 'barge_in' });
+        }
+
+        /** Restore full volume after a duck that turned out not to be an interruption. */
+        _unduck() {
+            if (this._duckFailsafeTimer) {
+                clearTimeout(this._duckFailsafeTimer);
+                this._duckFailsafeTimer = null;
+            }
+            if (!this.ducked) return;
+            this.ducked = false;
+            this.consecutiveLoudFrames = 0;
+            this._rampGain(1.0, DUCK_FADE_MS);
+        }
+
+        _rampGain(target, ms) {
+            if (!this.outGain || !this.audioCtx) return;
             const now = this.audioCtx.currentTime;
-            this.outGain.gain.cancelScheduledValues(now);
-            this.outGain.gain.setValueAtTime(this.outGain.gain.value, now);
-            this.outGain.gain.linearRampToValueAtTime(0, now + PLAYBACK_FADE_MS / 1000);
-            // Reset gain after fade so next chunk is audible
-            setTimeout(() => {
-                if (this.outGain) {
+            try {
+                this.outGain.gain.cancelScheduledValues(now);
+                this.outGain.gain.setValueAtTime(this.outGain.gain.value, now);
+                this.outGain.gain.linearRampToValueAtTime(target, now + ms / 1000);
+            } catch (_) {
+                // Some engines throw on cancelScheduledValues mid-ramp —
+                // a hard set still leaves the student at the right volume.
+                try { this.outGain.gain.value = target; } catch (__) { /* give up quietly */ }
+            }
+        }
+
+        /**
+         * Hard stop: end the tutor's current utterance immediately and drop
+         * everything queued behind it.
+         *
+         * Stopping the scheduled source nodes is the part that actually
+         * silences the tutor — clearing scheduledUntil alone just decides
+         * where the next chunk starts, which is how a new response ended up
+         * playing on top of the old one instead of replacing it.
+         */
+        _stopPlayback() {
+            for (const src of this._liveSources) {
+                try { src.onended = null; src.stop(); } catch (_) { /* already finished */ }
+                try { src.disconnect(); } catch (_) { /* already detached */ }
+            }
+            this._liveSources.clear();
+            this._playbackEpoch++;
+            if (this.audioCtx) this.scheduledUntil = this.audioCtx.currentTime;
+
+            // Back to unity gain so the next turn is not born ducked.
+            if (this._duckFailsafeTimer) {
+                clearTimeout(this._duckFailsafeTimer);
+                this._duckFailsafeTimer = null;
+            }
+            this.ducked = false;
+            if (this.outGain && this.audioCtx) {
+                try {
                     this.outGain.gain.cancelScheduledValues(this.audioCtx.currentTime);
                     this.outGain.gain.setValueAtTime(1.0, this.audioCtx.currentTime);
-                }
-            }, PLAYBACK_FADE_MS + 5);
-            // 2. Reset playback queue head — drop scheduled future audio
-            this.scheduledUntil = this.audioCtx.currentTime;
-            // 3. Notify server (single message — server tears down LLM + Cartesia)
-            this._sendJson({ type: 'barge_in', at_ms: Date.now() });
-            this.aiSpeaking = false;
+                } catch (_) { /* see _rampGain */ }
+            }
+
             this.consecutiveLoudFrames = 0;
-            this._dispatchPlaybackEvent('audioPlaybackEnded');
-            this.on({ type: 'barge_in' });
+            if (this.aiSpeaking) {
+                this.aiSpeaking = false;
+                this.on({ type: 'ai_speaking_ended' });
+                this._dispatchPlaybackEvent('audioPlaybackEnded');
+            }
         }
 
         sendText(text) {
@@ -343,6 +453,16 @@
         _handleAudioFrame(u8) {
             // Frame format: [0x01][4B turnTag][2B sampleRate BE][N bytes pcm s16le]
             if (u8.length < 7 || u8[0] !== 0x01) return;
+
+            // Drop audio belonging to a turn that is no longer the live one.
+            // The server kills an interrupted turn instantly, but chunks it
+            // already flushed are in the socket and arrive AFTER the
+            // replacement turn has started speaking — playing them is
+            // literally two tutors talking at once. The tag has been in the
+            // frame header all along; nothing was reading it.
+            const tag = ((u8[1] << 24) | (u8[2] << 16) | (u8[3] << 8) | u8[4]) >>> 0;
+            if (this._acceptTag !== null && tag !== this._acceptTag) return;
+
             const sampleRate = (u8[5] << 8) | u8[6];
             const pcmStart = 7;
             // Int16Array requires a 2-byte aligned byteOffset. The frame
@@ -377,6 +497,14 @@
             src.buffer = buf;
             src.connect(this.outGain);
             const startAt = Math.max(this.audioCtx.currentTime + 0.005, this.scheduledUntil);
+            // Hold a reference until it finishes so _stopPlayback() can
+            // actually silence it — a started source is otherwise
+            // unreachable and plays to the end no matter what.
+            this._liveSources.add(src);
+            src.onended = () => {
+                this._liveSources.delete(src);
+                try { src.disconnect(); } catch (_) { /* already detached */ }
+            };
             src.start(startAt);
             this.scheduledUntil = startAt + buf.duration;
             if (!this.aiSpeaking) {
@@ -387,7 +515,9 @@
             }
             // When the last scheduled chunk completes, mark AI as no longer speaking
             const expectedDoneAt = this.scheduledUntil;
+            const epoch = this._playbackEpoch;
             setTimeout(() => {
+                if (epoch !== this._playbackEpoch) return;   // superseded turn
                 if (this.audioCtx.currentTime >= expectedDoneAt - 0.02 && this.aiSpeaking) {
                     this.aiSpeaking = false;
                     this.on({ type: 'ai_speaking_ended' });
@@ -441,6 +571,12 @@
                     this.on({ type: 'transcript_final', text: msg.text });
                     break;
                 case 'turn_start':
+                    // A new turn REPLACES the old one — it never layers on top
+                    // of it. Stop whatever is still sounding before adopting
+                    // the new turn's audio tag, so the changeover is a clean
+                    // handoff even if the previous turn died mid-sentence.
+                    this._stopPlayback();
+                    if (typeof msg.audioTag === 'number') this._acceptTag = msg.audioTag >>> 0;
                     // Fresh tutor turn — previous turn's replay buffer expires.
                     this._turnPcm = [];
                     this._turnPcmSamples = 0;
@@ -464,11 +600,28 @@
                     });
                     break;
                 case 'tts_flush':
-                    // Drop any audio scheduled past now
-                    this.scheduledUntil = this.audioCtx ? this.audioCtx.currentTime : 0;
+                    // The server retracted what it was saying (e.g. the verify
+                    // stage caught an answer giveaway) and is about to
+                    // re-synthesize. Everything queued must go, not just
+                    // everything not yet queued.
+                    this._stopPlayback();
+                    break;
+                case 'resume_speaking':
+                    // The server looked at the transcript and ruled that this
+                    // wasn't an interruption — a backchannel, or nobody spoke
+                    // at all. Bring the tutor back up and let them finish.
+                    this._unduck();
+                    this.on({ type: 'resume_speaking', reason: msg.reason });
                     break;
                 case 'interrupted':
-                    this.aiSpeaking = false;
+                    // Confirmed interruption: stop dead. Refuse any further
+                    // audio from this turn so late chunks can't sneak in
+                    // behind the student's next question.
+                    if (typeof msg.audioTag === 'number' &&
+                        this._acceptTag === (msg.audioTag >>> 0)) {
+                        this._acceptTag = -1;   // matches no real tag
+                    }
+                    this._stopPlayback();
                     this.on({ type: 'interrupted', reason: msg.reason, spokenSoFar: msg.spokenSoFar });
                     break;
                 case 'turn_end':
@@ -491,6 +644,7 @@
 
         disconnect() {
             this._intentionalDisconnect = true;
+            this._stopPlayback();
             if (this._reconnectTimer) {
                 clearTimeout(this._reconnectTimer);
                 this._reconnectTimer = null;
@@ -737,6 +891,11 @@ class VoiceController {
             case 'turn_start':
                 this.updateUI('thinking');
                 this._pendingResponseText = '';
+                // Board actions arrive cumulatively: each partial carries the
+                // new action, response_final carries the whole turn. This
+                // counter is how the final knows what the partials already
+                // drew, so streaming a line doesn't render it twice.
+                this._lwsRenderedActions = 0;
                 break;
 
             case 'response_delta':
@@ -744,22 +903,54 @@ class VoiceController {
                 break;
 
             case 'board_actions':
-                if (this.config.enableBoardCommands && Array.isArray(ev.boardActions)) {
-                    // When LWS owns the board, defer to response_final (the full
-                    // turn) so partial + final don't render duplicate lines.
-                    if (!this._lwsOwnsBoard()) this.executeBoardActions(ev.boardActions);
+                if (this.config.enableBoardCommands && Array.isArray(ev.boardActions) && ev.boardActions.length) {
+                    // Draw as the tutor speaks. Deferring the whole turn's
+                    // board work to response_final left the board blank
+                    // through the entire explanation and then dumped it in one
+                    // go after the tutor stopped — the opposite of someone
+                    // working a problem out in front of you. The final render
+                    // picks up from _lwsRenderedActions, so nothing repeats.
+                    if (this._lwsOwnsBoard()) {
+                        this._renderVoiceBoardToLWS({ boardActions: ev.boardActions });
+                    } else {
+                        this.executeBoardActions(ev.boardActions);
+                    }
+                    this._lwsRenderedActions = (this._lwsRenderedActions || 0) + ev.boardActions.length;
                 }
                 break;
 
             case 'response_final':
                 if (ev.text && window.appendMessage) {
-                    window.appendMessage(ev.text, 'ai');
+                    // An interrupted turn still says what it managed to get
+                    // out — the student heard it, so the transcript must show
+                    // it. The ellipsis marks where they cut in, the way a
+                    // person's sentence trails off when you talk over them.
+                    window.appendMessage(ev.interrupted ? `${ev.text}…` : ev.text, 'ai');
                 }
                 if (this.config.enableBoardCommands) {
                     if (this._lwsOwnsBoard()) {
-                        this._renderVoiceBoardToLWS({ mathSteps: ev.mathSteps, boardActions: ev.boardActions });
+                        // boardActions is cumulative for the turn — hand LWS
+                        // only the tail the streaming partials didn't already
+                        // draw. mathSteps are never streamed, so they pass
+                        // through whole.
+                        const drawn = this._lwsRenderedActions || 0;
+                        const remaining = Array.isArray(ev.boardActions)
+                            ? ev.boardActions.slice(drawn)
+                            : [];
+                        if (remaining.length || (ev.mathSteps && ev.mathSteps.length)) {
+                            this._renderVoiceBoardToLWS({ mathSteps: ev.mathSteps, boardActions: remaining });
+                        }
+                        this._lwsRenderedActions = Array.isArray(ev.boardActions)
+                            ? ev.boardActions.length
+                            : drawn;
                     } else if (Array.isArray(ev.boardActions) && ev.boardActions.length) {
-                        this.executeBoardActions(ev.boardActions);
+                        // Same cumulative contract on the legacy whiteboard:
+                        // the partials already wrote the earlier actions, so
+                        // replaying the full array here wrote every line twice.
+                        const drawn = this._lwsRenderedActions || 0;
+                        const remaining = ev.boardActions.slice(drawn);
+                        if (remaining.length) this.executeBoardActions(remaining);
+                        this._lwsRenderedActions = ev.boardActions.length;
                     }
                 }
                 // Visual tools — same call the text path and the legacy voice
@@ -790,7 +981,17 @@ class VoiceController {
                 break;
 
             case 'barge_in':
-                // local UI ack — server does the heavy lifting
+                // The tutor has ducked, not stopped — the server rules on the
+                // transcript. Show "listening" so the student sees they were
+                // heard, but leave isAISpeaking alone: a backchannel resumes
+                // the same utterance and no turn boundary was crossed.
+                this.updateUI('listening');
+                break;
+
+            case 'resume_speaking':
+                // Not an interruption after all (a nod, or room noise).
+                // Put the UI back where it was mid-explanation.
+                if (this.isAISpeaking) this.updateUI('speaking');
                 break;
 
             case 'interrupted':

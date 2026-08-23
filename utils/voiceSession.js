@@ -29,6 +29,7 @@ const ttsStream = require('./ttsStream');
 const ttsProvider = require('./ttsProvider');
 const { speakMathInProse, createMathSpeechStreamFilter } = require('./mathTTS');
 const metrics = require('./voiceMetrics');
+const { classifyInterruption } = require('./voiceBackchannel');
 const orchestrator = require('./orchestrator');
 const { Dispatcher } = require('./orchestrator/dispatcher');
 const { loadOrCreatePlan, resolveCurrentTarget } = require('./tutorPlanManager');
@@ -64,6 +65,20 @@ const activeSessions = new Map();
 // no transcript activity and lazy-reopen on the next mic frame.
 const STT_IDLE_MS = 30_000;
 const STT_IDLE_CHECK_MS = 5_000;
+
+// ─── Barge-in policy ────────────────────────────────────────────────────
+// The client ducks the tutor's audio the instant its local VAD hears the
+// student, then waits for the server to say whether that was a real
+// interruption. This is the "sorry, go ahead" beat a human tutor takes:
+// the student always gets an immediate audible response to speaking, but
+// the explanation is only *destroyed* once we know they meant to take
+// the floor.
+//
+// If no transcript resolves the duck within this window, it was room
+// noise or a cough — tell the client to come back up. Long enough for
+// Deepgram to land a partial, short enough that a real pause doesn't
+// sound like a dropout.
+const BARGE_DUCK_RESOLVE_MS = 900;
 
 // Streaming voice prompt — natural English first, then tagged math at the
 // end. The orchestrator forwards everything before <math> to TTS in real
@@ -288,7 +303,12 @@ class VoiceSession {
     async _handleClientMessage(msg) {
         switch (msg.type) {
             case 'barge_in':
-                this._abortCurrentTurn('user_barge_in');
+                // The client's VAD heard *something* over the tutor and has
+                // already ducked its own playback. It cannot tell speech from
+                // a chair scrape, so this is a question, not an order: hold
+                // the turn open and let the transcript decide. _onPartial
+                // hard-stops on real speech; the watchdog un-ducks on noise.
+                this._openBargeDuck();
                 break;
             case 'text_input':
                 if (typeof msg.text === 'string' && msg.text.trim()) {
@@ -372,11 +392,22 @@ class VoiceSession {
 
     _onPartial(text, confidence) {
         this._lastPartialAt = Date.now();
-        // If AI is currently speaking, partial transcripts on student channel
-        // are how the server confirms a barge-in even if the client missed it.
-        // Client also sends explicit 'barge_in' on local VAD; this is belt+suspenders.
-        if (this.currentTurn && this.currentTurn.status === 'speaking' && text.length > 2) {
-            this._abortCurrentTurn('user_barge_in_server_detected');
+        // Partials on the student channel while the tutor speaks are how a
+        // barge-in gets *confirmed* — the client's VAD only knows that the
+        // room got loud, this is the first look at what was actually said.
+        // It also stands alone as the server-side detector when the client
+        // missed the local VAD trigger entirely.
+        if (this.currentTurn && this.currentTurn.status === 'speaking') {
+            const verdict = classifyInterruption(text);
+            if (verdict.isBackchannel) {
+                // "mm-hm" / "yeah" / "okay" — the student is nodding along.
+                // Killing the explanation here is the single biggest source
+                // of voice friction, so keep talking and lift the duck the
+                // client applied on its local VAD.
+                this._resolveBargeDuck('backchannel');
+            } else {
+                this._abortCurrentTurn('user_barge_in_server_detected');
+            }
         }
         // Confidence rides along so the client can decline to display
         // low-confidence guesses (Whisper fallback sends none — omit).
@@ -401,6 +432,19 @@ class VoiceSession {
         const utterance = this._accumulatedFinal.trim();
         this._accumulatedFinal = '';
         if (!utterance) return;
+
+        // A backchannel spoken *over* the tutor is not a turn. Answering
+        // "mm-hm" restarts the explanation the student was agreeing with,
+        // which is how a nod used to cost them the rest of the sentence.
+        // Swallow it and keep speaking. (Once the tutor has finished, the
+        // same word IS a turn — "okay" then means "I'm ready", so this
+        // only applies while a turn is live.)
+        if (this.currentTurn && classifyInterruption(utterance).isBackchannel) {
+            this._resolveBargeDuck('backchannel_utterance');
+            logger.debug('backchannel swallowed', { userId: this.userId, utterance });
+            return;
+        }
+
         // If a turn is already in flight (LLM/TTS), a new user utterance
         // is itself a barge-in.
         if (this.currentTurn) {
@@ -408,6 +452,45 @@ class VoiceSession {
         }
         this._send({ type: 'transcript_final', text: utterance });
         this._startTurn(utterance, { source: 'voice' });
+    }
+
+    // ─── Barge-in duck lifecycle ─────────────────────────────────────────
+    // A "duck" is the client holding the tutor's audio at low gain while
+    // the server works out whether the student meant to interrupt. Exactly
+    // one of _resolveBargeDuck (keep talking) or _abortCurrentTurn (stop)
+    // ends it; the watchdog guarantees one of them runs, so the tutor can
+    // never be left permanently quiet but still streaming.
+
+    _openBargeDuck() {
+        if (!this.currentTurn) {
+            // Nothing to duck — the turn already ended between the client's
+            // VAD firing and this message landing. Tell the client to come
+            // back up so the next turn isn't born at 15% volume.
+            this._send({ type: 'resume_speaking', reason: 'no_active_turn' });
+            return;
+        }
+        if (this._bargeDuckTimer) return;   // already pending a verdict
+        this._bargeDuckTimer = setTimeout(() => {
+            this._bargeDuckTimer = null;
+            // No transcript resolved this duck in time — nobody actually
+            // spoke. Lift it rather than stranding the student in a tutor
+            // that has gone mysteriously quiet mid-sentence.
+            if (this.currentTurn) this._resolveBargeDuck('no_speech_detected');
+        }, BARGE_DUCK_RESOLVE_MS);
+        this._bargeDuckTimer.unref?.();
+    }
+
+    _clearBargeDuckTimer() {
+        if (this._bargeDuckTimer) {
+            clearTimeout(this._bargeDuckTimer);
+            this._bargeDuckTimer = null;
+        }
+    }
+
+    /** Verdict: not an interruption — bring the tutor back up to full volume. */
+    _resolveBargeDuck(reason) {
+        this._clearBargeDuckTimer();
+        this._send({ type: 'resume_speaking', reason });
     }
 
     _cancelPendingDebounce() {
@@ -443,9 +526,24 @@ class VoiceSession {
             metric: metrics.newTurn(this.sessionId, this.userId, this.tutorProfile.id || 'default'),
         };
         turn.metric.t_user_speech_end = Date.now();
+        turn.audioTag = hash32(turn.metric.turnId);
         this.currentTurn = turn;
 
-        this._send({ type: 'turn_start', turnId: turn.metric.turnId, transcript: userMessage });
+        // A duck belonging to the turn we just replaced must not outlive it,
+        // or the new turn speaks at 15% volume until its watchdog fires.
+        this._clearBargeDuckTimer();
+
+        // audioTag is the same 32-bit value stamped into every binary audio
+        // frame for this turn (see _sendAudioChunk). The client accepts PCM
+        // only while it matches, which is what stops frames that were
+        // already in flight when the last turn died from playing underneath
+        // this one — the "two tutors at once" symptom.
+        this._send({
+            type: 'turn_start',
+            turnId: turn.metric.turnId,
+            audioTag: turn.audioTag,
+            transcript: userMessage,
+        });
         this._setStatus('thinking');
 
         try {
@@ -728,6 +826,13 @@ class VoiceSession {
         }
 
         // ── Send final response + math/board ──
+        // A barge-in during the verify await above kills this turn without
+        // the stream loop ever seeing it — the loop already finished. Without
+        // this guard the dead turn still ships its full cumulative board,
+        // landing on top of the turn that replaced it. _abortCurrentTurn has
+        // already flushed whatever this turn legitimately delivered.
+        if (turn.ac.signal.aborted) return;
+
         this._send({
             type: 'response_final',
             turnId: turn.metric.turnId,
@@ -981,7 +1086,11 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
 
         // ── 7. Legacy events for the existing client ──
         // The old voice-stream-client.js consumes these; orchestrator
-        // frames coexist as type:'orch'.
+        // frames coexist as type:'orch'. Same guard as the streaming path:
+        // an interrupted turn must not deliver a final on top of its
+        // replacement.
+        if (turn.ac.signal.aborted) return;
+
         this._send({
             type: 'response_final',
             turnId: turn.metric.turnId,
@@ -1279,8 +1388,30 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
     _abortCurrentTurn(reason) {
         const turn = this.currentTurn;
         if (!turn) return;
+        this._clearBargeDuckTimer();
         try { turn.ac.abort(reason); } catch (_) { /* node version variance */ }
         try { turn.tts?.abort(); } catch (_) { /* swallow */ }
+
+        // Orchestrated mode runs its segment loop off the orchestrator's OWN
+        // AbortController, not turn.ac. Without this the dispatcher keeps
+        // walking the killed turn's segments — synthesizing and streaming
+        // them while the replacement turn starts — which is the server half
+        // of "the interrupt starts a new response on top of the old one".
+        try {
+            const orchSession = orchestrator.sessionStore.get(this.sessionId);
+            if (orchSession) orchSession.abortTurn(reason);
+        } catch (err) {
+            logger.warn('orchestrator abort failed (non-fatal)', { error: err.message });
+        }
+
+        // Everything this turn already put on the board was streamed to the
+        // client as partials and is sitting there half-owned: Live Workspace
+        // defers rendering to response_final, which an aborted turn never
+        // reaches. Send one so the work the tutor was talking about survives
+        // being interrupted, along with the words they got out. Only content
+        // already delivered goes in — no unverified visualCommands, so the
+        // answer-leak guard in the verify stage still holds.
+        this._sendInterruptedFinal(turn);
 
         const spokenSoFar = turn.spokenAcc;
         if (spokenSoFar) {
@@ -1302,12 +1433,44 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         this._send({
             type: 'interrupted',
             turnId: turn.metric.turnId,
+            audioTag: turn.audioTag,
             reason,
             spokenSoFar,
         });
 
         this.currentTurn = null;
         this._setStatus('listening');
+    }
+
+    /**
+     * Flush an interrupted turn's already-delivered board work to the client
+     * as a terminal response_final, so the transcript keeps what the tutor
+     * actually said and the board keeps what it actually drew.
+     *
+     * Carries ONLY content that already crossed the wire as a partial this
+     * turn — never visualCommands, which are resolved after the verify stage
+     * precisely so an answer-leaking diagram can be dropped.
+     */
+    _sendInterruptedFinal(turn) {
+        try {
+            const mathSteps = this.mode === 'math-steps'
+                ? this._parseMathBuffer(turn.mathBuffer)
+                : [];
+            const boardActions = turn.boardActions || [];
+            const spoken = (turn.spokenAcc || '').trim();
+            if (!spoken && !mathSteps.length && !boardActions.length) return;
+            this._send({
+                type: 'response_final',
+                turnId: turn.metric.turnId,
+                text: spoken,
+                mathSteps,
+                boardActions,
+                visualCommands: null,
+                interrupted: true,
+            });
+        } catch (err) {
+            logger.warn('interrupted final flush failed (non-fatal)', { error: err.message });
+        }
     }
 
     // ─── Outbound helpers ────────────────────────────────────────────────

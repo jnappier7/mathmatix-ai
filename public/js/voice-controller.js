@@ -225,6 +225,11 @@ class VoiceController {
             case 'turn_start':
                 this.updateUI('thinking');
                 this._pendingResponseText = '';
+                // Board actions arrive cumulatively: each partial carries the
+                // new action, response_final carries the whole turn. This
+                // counter is how the final knows what the partials already
+                // drew, so streaming a line doesn't render it twice.
+                this._lwsRenderedActions = 0;
                 break;
 
             case 'response_delta':
@@ -232,22 +237,54 @@ class VoiceController {
                 break;
 
             case 'board_actions':
-                if (this.config.enableBoardCommands && Array.isArray(ev.boardActions)) {
-                    // When LWS owns the board, defer to response_final (the full
-                    // turn) so partial + final don't render duplicate lines.
-                    if (!this._lwsOwnsBoard()) this.executeBoardActions(ev.boardActions);
+                if (this.config.enableBoardCommands && Array.isArray(ev.boardActions) && ev.boardActions.length) {
+                    // Draw as the tutor speaks. Deferring the whole turn's
+                    // board work to response_final left the board blank
+                    // through the entire explanation and then dumped it in one
+                    // go after the tutor stopped — the opposite of someone
+                    // working a problem out in front of you. The final render
+                    // picks up from _lwsRenderedActions, so nothing repeats.
+                    if (this._lwsOwnsBoard()) {
+                        this._renderVoiceBoardToLWS({ boardActions: ev.boardActions });
+                    } else {
+                        this.executeBoardActions(ev.boardActions);
+                    }
+                    this._lwsRenderedActions = (this._lwsRenderedActions || 0) + ev.boardActions.length;
                 }
                 break;
 
             case 'response_final':
                 if (ev.text && window.appendMessage) {
-                    window.appendMessage(ev.text, 'ai');
+                    // An interrupted turn still says what it managed to get
+                    // out — the student heard it, so the transcript must show
+                    // it. The ellipsis marks where they cut in, the way a
+                    // person's sentence trails off when you talk over them.
+                    window.appendMessage(ev.interrupted ? `${ev.text}…` : ev.text, 'ai');
                 }
                 if (this.config.enableBoardCommands) {
                     if (this._lwsOwnsBoard()) {
-                        this._renderVoiceBoardToLWS({ mathSteps: ev.mathSteps, boardActions: ev.boardActions });
+                        // boardActions is cumulative for the turn — hand LWS
+                        // only the tail the streaming partials didn't already
+                        // draw. mathSteps are never streamed, so they pass
+                        // through whole.
+                        const drawn = this._lwsRenderedActions || 0;
+                        const remaining = Array.isArray(ev.boardActions)
+                            ? ev.boardActions.slice(drawn)
+                            : [];
+                        if (remaining.length || (ev.mathSteps && ev.mathSteps.length)) {
+                            this._renderVoiceBoardToLWS({ mathSteps: ev.mathSteps, boardActions: remaining });
+                        }
+                        this._lwsRenderedActions = Array.isArray(ev.boardActions)
+                            ? ev.boardActions.length
+                            : drawn;
                     } else if (Array.isArray(ev.boardActions) && ev.boardActions.length) {
-                        this.executeBoardActions(ev.boardActions);
+                        // Same cumulative contract on the legacy whiteboard:
+                        // the partials already wrote the earlier actions, so
+                        // replaying the full array here wrote every line twice.
+                        const drawn = this._lwsRenderedActions || 0;
+                        const remaining = ev.boardActions.slice(drawn);
+                        if (remaining.length) this.executeBoardActions(remaining);
+                        this._lwsRenderedActions = ev.boardActions.length;
                     }
                 }
                 // Visual tools — same call the text path and the legacy voice
@@ -278,7 +315,17 @@ class VoiceController {
                 break;
 
             case 'barge_in':
-                // local UI ack — server does the heavy lifting
+                // The tutor has ducked, not stopped — the server rules on the
+                // transcript. Show "listening" so the student sees they were
+                // heard, but leave isAISpeaking alone: a backchannel resumes
+                // the same utterance and no turn boundary was crossed.
+                this.updateUI('listening');
+                break;
+
+            case 'resume_speaking':
+                // Not an interruption after all (a nod, or room noise).
+                // Put the UI back where it was mid-explanation.
+                if (this.isAISpeaking) this.updateUI('speaking');
                 break;
 
             case 'interrupted':
