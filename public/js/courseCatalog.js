@@ -170,14 +170,36 @@ class CourseManager {
             item.className = 'course-sidebar-item' + (isActive ? ' active' : '') + (s.status === 'paused' ? ' paused' : '');
             item.dataset.sessionId = s._id;
 
-            const pct = s.overallProgress || 0;
+            let pct = s.overallProgress || 0;
             const moduleDone = (s.modules || []).filter(m => m.status === 'completed').length;
             const moduleTotal = (s.modules || []).length;
+            let statsLabel = `${moduleDone}/${moduleTotal} modules &middot; ${pct}%`;
 
             // Build breadcrumb from module/lesson data
             const currentMod = (s.modules || []).find(m => m.moduleId === s.currentModuleId);
             let modLabel = '';
-            if (s.status === 'paused') {
+            if (s.courseId === 'act-prep' && s.status !== 'paused') {
+                // ACT prep is the test → review → re-test loop, not chapters:
+                // "0/11 modules" described a scaffold the bootcamp never shows.
+                const bc = s.bootcamp || {};
+                const qTotal = Array.isArray(bc.queue) ? bc.queue.length : 0;
+                const qDone = Array.isArray(bc.queue)
+                    ? bc.queue.filter(q => q && q.status === 'reviewed').length
+                    : 0;
+                if (bc.phase === 'review') {
+                    modLabel = `Round ${bc.round || 1} › Reviewing your misses`;
+                    pct = qTotal ? Math.round((100 * qDone) / qTotal) : 0;
+                    statsLabel = `${qDone}/${qTotal} misses reviewed`;
+                } else if (bc.phase === 'reassess') {
+                    modLabel = `Round ${bc.round || 1} › Ready to re-test`;
+                    pct = 100;
+                    statsLabel = 'Misses reviewed &middot; take a fresh test';
+                } else {
+                    modLabel = 'Start with your baseline test';
+                    pct = 0;
+                    statsLabel = 'Test &rarr; review &rarr; re-test';
+                }
+            } else if (s.status === 'paused') {
                 modLabel = 'Paused';
             } else if (currentMod) {
                 const parts = [];
@@ -202,7 +224,7 @@ class CourseManager {
                         <div class="course-sidebar-progress-track">
                             <div class="course-sidebar-progress-fill" style="width: ${pct}%"></div>
                         </div>
-                        <div class="course-sidebar-stats">${moduleDone}/${moduleTotal} modules &middot; ${pct}%</div>
+                        <div class="course-sidebar-stats">${statsLabel}</div>
                     </div>
                     <button class="course-drop-x" title="Drop course" aria-label="Drop course">
                         <i class="fas fa-times"></i>
@@ -276,6 +298,33 @@ class CourseManager {
         const pct = document.getElementById('course-progress-pct');
 
         if (title) title.textContent = session.courseName || '';
+
+        // ACT prep header reflects the bootcamp loop, not the chapter scaffold —
+        // "Unit 1 › Number & Quantity · 0%" described a curriculum the loop
+        // never presents.
+        if (session.courseId === 'act-prep') {
+            const bc = session.bootcamp || {};
+            const qTotal = Array.isArray(bc.queue) ? bc.queue.length : 0;
+            const qDone = Array.isArray(bc.queue)
+                ? bc.queue.filter(q => q && q.status === 'reviewed').length
+                : 0;
+            let label, p;
+            if (bc.phase === 'review') {
+                label = `Round ${bc.round || 1} › Reviewing your misses`;
+                p = qTotal ? Math.round((100 * qDone) / qTotal) : 0;
+            } else if (bc.phase === 'reassess') {
+                label = `Round ${bc.round || 1} › Ready to re-test`;
+                p = 100;
+            } else {
+                label = 'Baseline test';
+                p = 0;
+            }
+            if (mod) mod.textContent = label;
+            if (fill) fill.style.width = `${p}%`;
+            if (pct) pct.textContent = bc.phase ? `${p}%` : '';
+            return;
+        }
+
         if (fill) fill.style.width = `${session.overallProgress || 0}%`;
         if (pct) pct.textContent = `${session.overallProgress || 0}%`;
 

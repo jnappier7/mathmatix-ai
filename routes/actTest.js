@@ -568,10 +568,19 @@ router.post('/complete', async (req, res) => {
             probs.forEach((p) => { problemsById[p.problemId] = p; });
           }
           const queue = buildReviewQueue(session, problemsById);
-          const prevRound = (cs.bootcamp && cs.bootcamp.round) || 0;
+          // Round = which completed attempt this is, counted from the tests
+          // themselves — NOT bootcamp.round + 1. A test taken before enrolling
+          // scores and shows in /history but never touched cs.bootcamp, so the
+          // old increment under-counted: "Round 1" sitting next to a
+          // two-attempt score trend on the bootcamp card.
+          let round = ((cs.bootcamp && cs.bootcamp.round) || 0) + 1;
+          try {
+            const completed = await ActTestSession.countDocuments({ userId: req.user._id, status: 'completed' });
+            if (completed > 0) round = completed;   // this session is already saved as completed
+          } catch (_countErr) { /* keep the increment fallback */ }
           cs.bootcamp = queue.length
-            ? { phase: 'review', round: prevRound + 1, testSessionId: String(session._id), queue, index: 0 }
-            : { phase: 'reassess', round: prevRound + 1, testSessionId: String(session._id), queue: [], index: 0 };
+            ? { phase: 'review', round, testSessionId: String(session._id), queue, index: 0 }
+            : { phase: 'reassess', round, testSessionId: String(session._id), queue: [], index: 0 };
           cs.markModified('bootcamp');
         } catch (reviewErr) {
           console.error('[actTest] review-queue build error (non-fatal):', reviewErr.message);
