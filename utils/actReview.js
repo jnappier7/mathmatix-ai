@@ -9,7 +9,7 @@
 // prompt path (present + advance).
 
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
-const { normalizeOptions, resolveChoice, correctLabelOf } = require('./mcOptions');
+const { normalizeOptions, resolveChoice, correctLabelOf, actDisplayLabel } = require('./mcOptions');
 
 // Higher category exam-weight => higher-leverage miss => reviewed first.
 const DEFAULT_CATEGORY_WEIGHTS = {
@@ -105,12 +105,16 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
 function reviewPromptSection(miss, index, total) {
   if (!miss) return '';
   const cat = CATEGORY_LABEL[miss.category] || miss.category || 'ACT Math';
-  const opts = (miss.options || []).map((o) => `${o.label}) ${o.text}`).join('   ');
+  // Letters shown to the tutor must be the letters the student SAW on their
+  // form — the real ACT letters even questions F–G–H–J, and the runner
+  // displays the same alias. Stored labels stay A–D underneath.
+  const disp = (label) => actDisplayLabel(miss.position, label);
+  const opts = (miss.options || []).map((o) => `${disp(o.label)}) ${o.text}`).join('   ');
   const chose = miss.skipped
     ? 'They SKIPPED it (no answer).'
-    : `They chose ${miss.theirAnswer}${miss.theirAnswerText ? ` (${miss.theirAnswerText})` : ''} — INCORRECT.`;
+    : `They chose ${disp(miss.theirAnswer)}${miss.theirAnswerText ? ` (${miss.theirAnswerText})` : ''} — INCORRECT.`;
   const correct = miss.correctOption
-    ? `${miss.correctOption}${optionText(miss.options, miss.correctOption) ? ` (${optionText(miss.options, miss.correctOption)})` : ''}`
+    ? `${disp(miss.correctOption)}${optionText(miss.options, miss.correctOption) ? ` (${optionText(miss.options, miss.correctOption)})` : ''}`
     : (miss.correctAnswer || '(see explanation)');
 
   return `
