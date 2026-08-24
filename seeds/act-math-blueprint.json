@@ -10,13 +10,14 @@
     "min": 1,
     "max": 36
   },
+  "_categoryWeightsComment": "Slots per 45-item form, set to the official ACT reporting-category shares: Integrating Essential Skills 40-43% (19/45 = 42.2%) and Preparing for Higher Math 57-60% (26/45 = 57.8%), with N&Q 7-10%, Algebra 12-15%, Functions 12-15%, Geometry 12-15%, Stats & Prob 8-12%. IES was previously 9 (20%) ONLY because the item bank held 105 IES items; seeds/act-ies-expansion added 300 more, so the authentic weight is now supportable at ~21 non-repeating forms. Do not raise a weight past what the bank can fill -- assembleForm reports unfillable slots as gaps.",
   "categoryWeights": {
-    "integrating-essential-skills": 9,
-    "algebra": 8,
-    "functions": 8,
-    "geometry": 8,
-    "statistics-probability": 7,
-    "number-quantity": 5
+    "integrating-essential-skills": 19,
+    "algebra": 6,
+    "functions": 6,
+    "geometry": 6,
+    "statistics-probability": 4,
+    "number-quantity": 4
   },
   "difficultyRamp": [
     {
