@@ -44,36 +44,36 @@
                     <!-- Style Selector -->
                     <div class="option-group">
                         <h3><i class="fas fa-palette"></i> Avatar Style</h3>
-                        <div class="style-grid" id="style-selector">
-                            <button class="style-btn active" data-style="adventurer" title="Adventurer">
+                        <div class="style-grid" id="style-selector" role="radiogroup" aria-label="Avatar style">
+                            <button class="style-btn active" data-style="adventurer" title="Adventurer" role="radio" aria-checked="true" tabindex="0">
                                 <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=style1" alt="Adventurer">
                                 <span>Adventurer</span>
                             </button>
-                            <button class="style-btn" data-style="adventurer-neutral" title="Neutral">
+                            <button class="style-btn" data-style="adventurer-neutral" title="Neutral" role="radio" aria-checked="false" tabindex="-1">
                                 <img src="https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=style2" alt="Neutral">
                                 <span>Neutral</span>
                             </button>
-                            <button class="style-btn" data-style="big-smile" title="Big Smile">
+                            <button class="style-btn" data-style="big-smile" title="Big Smile" role="radio" aria-checked="false" tabindex="-1">
                                 <img src="https://api.dicebear.com/7.x/big-smile/svg?seed=style3" alt="Big Smile">
                                 <span>Big Smile</span>
                             </button>
-                            <button class="style-btn" data-style="lorelei" title="Lorelei">
+                            <button class="style-btn" data-style="lorelei" title="Lorelei" role="radio" aria-checked="false" tabindex="-1">
                                 <img src="https://api.dicebear.com/7.x/lorelei/svg?seed=style4" alt="Lorelei">
                                 <span>Lorelei</span>
                             </button>
-                            <button class="style-btn" data-style="micah" title="Micah">
+                            <button class="style-btn" data-style="micah" title="Micah" role="radio" aria-checked="false" tabindex="-1">
                                 <img src="https://api.dicebear.com/7.x/micah/svg?seed=style5" alt="Micah">
                                 <span>Micah</span>
                             </button>
-                            <button class="style-btn" data-style="pixel-art" title="Pixel Art">
+                            <button class="style-btn" data-style="pixel-art" title="Pixel Art" role="radio" aria-checked="false" tabindex="-1">
                                 <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=style6" alt="Pixel Art">
                                 <span>Pixel Art</span>
                             </button>
-                            <button class="style-btn" data-style="thumbs" title="Thumbs">
+                            <button class="style-btn" data-style="thumbs" title="Thumbs" role="radio" aria-checked="false" tabindex="-1">
                                 <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=style7" alt="Thumbs">
                                 <span>Thumbs</span>
                             </button>
-                            <button class="style-btn" data-style="fun-emoji" title="Emoji">
+                            <button class="style-btn" data-style="fun-emoji" title="Emoji" role="radio" aria-checked="false" tabindex="-1">
                                 <img src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=style8" alt="Emoji">
                                 <span>Emoji</span>
                             </button>
@@ -83,46 +83,46 @@
                     <!-- Skin Tone -->
                     <div class="option-group" id="skin-group">
                         <h3><i class="fas fa-user"></i> Skin Tone</h3>
-                        <div class="color-picker" id="skin-picker" role="group" aria-label="Skin tone">
-                            <button class="color-btn" data-color="f2d3b1" style="background-color: #f2d3b1" title="Light" aria-label="Skin tone: Light" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="ecad80" style="background-color: #ecad80" title="Light Medium" aria-label="Skin tone: Light Medium" aria-pressed="false"></button>
-                            <button class="color-btn active" data-color="d08b5b" style="background-color: #d08b5b" title="Medium" aria-label="Skin tone: Medium" aria-pressed="true"></button>
-                            <button class="color-btn" data-color="ae5d29" style="background-color: #ae5d29" title="Medium Dark" aria-label="Skin tone: Medium Dark" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="694d3d" style="background-color: #694d3d" title="Dark" aria-label="Skin tone: Dark" aria-pressed="false"></button>
+                        <div class="color-picker" id="skin-picker" role="radiogroup" aria-label="Skin tone">
+                            <button class="color-btn" data-color="f2d3b1" style="background-color: #f2d3b1" title="Light" aria-label="Skin tone: Light" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="ecad80" style="background-color: #ecad80" title="Light Medium" aria-label="Skin tone: Light Medium" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn active" data-color="d08b5b" style="background-color: #d08b5b" title="Medium" aria-label="Skin tone: Medium" role="radio" aria-checked="true" tabindex="0"></button>
+                            <button class="color-btn" data-color="ae5d29" style="background-color: #ae5d29" title="Medium Dark" aria-label="Skin tone: Medium Dark" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="694d3d" style="background-color: #694d3d" title="Dark" aria-label="Skin tone: Dark" role="radio" aria-checked="false" tabindex="-1"></button>
                         </div>
                     </div>
 
                     <!-- Hair Color -->
                     <div class="option-group" id="hair-color-group">
                         <h3><i class="fas fa-paint-brush"></i> Hair Color</h3>
-                        <div class="color-picker" id="hair-color-picker" role="group" aria-label="Hair color">
-                            <button class="color-btn" data-color="090806" style="background-color: #090806" title="Black" aria-label="Hair color: Black" aria-pressed="false"></button>
-                            <button class="color-btn active" data-color="4a3728" style="background-color: #4a3728" title="Brown" aria-label="Hair color: Brown" aria-pressed="true"></button>
-                            <button class="color-btn" data-color="b58143" style="background-color: #b58143" title="Blonde" aria-label="Hair color: Blonde" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="a55728" style="background-color: #a55728" title="Auburn" aria-label="Hair color: Auburn" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="d6c4c2" style="background-color: #d6c4c2" title="Gray" aria-label="Hair color: Gray" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="cc3333" style="background-color: #cc3333" title="Red" aria-label="Hair color: Red" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="6699ff" style="background-color: #6699ff" title="Blue" aria-label="Hair color: Blue" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="ff66cc" style="background-color: #ff66cc" title="Pink" aria-label="Hair color: Pink" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="9966ff" style="background-color: #9966ff" title="Purple" aria-label="Hair color: Purple" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="66ff66" style="background-color: #66ff66" title="Green" aria-label="Hair color: Green" aria-pressed="false"></button>
+                        <div class="color-picker" id="hair-color-picker" role="radiogroup" aria-label="Hair color">
+                            <button class="color-btn" data-color="090806" style="background-color: #090806" title="Black" aria-label="Hair color: Black" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn active" data-color="4a3728" style="background-color: #4a3728" title="Brown" aria-label="Hair color: Brown" role="radio" aria-checked="true" tabindex="0"></button>
+                            <button class="color-btn" data-color="b58143" style="background-color: #b58143" title="Blonde" aria-label="Hair color: Blonde" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="a55728" style="background-color: #a55728" title="Auburn" aria-label="Hair color: Auburn" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="d6c4c2" style="background-color: #d6c4c2" title="Gray" aria-label="Hair color: Gray" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="cc3333" style="background-color: #cc3333" title="Red" aria-label="Hair color: Red" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="6699ff" style="background-color: #6699ff" title="Blue" aria-label="Hair color: Blue" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="ff66cc" style="background-color: #ff66cc" title="Pink" aria-label="Hair color: Pink" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="9966ff" style="background-color: #9966ff" title="Purple" aria-label="Hair color: Purple" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="66ff66" style="background-color: #66ff66" title="Green" aria-label="Hair color: Green" role="radio" aria-checked="false" tabindex="-1"></button>
                         </div>
                     </div>
 
                     <!-- Background Color -->
                     <div class="option-group">
                         <h3><i class="fas fa-square"></i> Background</h3>
-                        <div class="color-picker" id="bg-picker" role="group" aria-label="Background">
-                            <button class="color-btn transparent active" data-color="transparent" title="None" aria-label="Background: None" aria-pressed="true">
+                        <div class="color-picker" id="bg-picker" role="radiogroup" aria-label="Background">
+                            <button class="color-btn transparent active" data-color="transparent" title="None" aria-label="Background: None" role="radio" aria-checked="true" tabindex="0">
                                 <i class="fas fa-ban" aria-hidden="true"></i>
                             </button>
-                            <button class="color-btn" data-color="b6e3f4" style="background-color: #b6e3f4" title="Sky Blue" aria-label="Background: Sky Blue" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="c0aede" style="background-color: #c0aede" title="Lavender" aria-label="Background: Lavender" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="d1d4f9" style="background-color: #d1d4f9" title="Periwinkle" aria-label="Background: Periwinkle" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="ffd5dc" style="background-color: #ffd5dc" title="Pink" aria-label="Background: Pink" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="ffdfbf" style="background-color: #ffdfbf" title="Peach" aria-label="Background: Peach" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="d5f5e3" style="background-color: #d5f5e3" title="Mint" aria-label="Background: Mint" aria-pressed="false"></button>
-                            <button class="color-btn" data-color="fef9c3" style="background-color: #fef9c3" title="Yellow" aria-label="Background: Yellow" aria-pressed="false"></button>
+                            <button class="color-btn" data-color="b6e3f4" style="background-color: #b6e3f4" title="Sky Blue" aria-label="Background: Sky Blue" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="c0aede" style="background-color: #c0aede" title="Lavender" aria-label="Background: Lavender" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="d1d4f9" style="background-color: #d1d4f9" title="Periwinkle" aria-label="Background: Periwinkle" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="ffd5dc" style="background-color: #ffd5dc" title="Pink" aria-label="Background: Pink" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="ffdfbf" style="background-color: #ffdfbf" title="Peach" aria-label="Background: Peach" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="d5f5e3" style="background-color: #d5f5e3" title="Mint" aria-label="Background: Mint" role="radio" aria-checked="false" tabindex="-1"></button>
+                            <button class="color-btn" data-color="fef9c3" style="background-color: #fef9c3" title="Yellow" aria-label="Background: Yellow" role="radio" aria-checked="false" tabindex="-1"></button>
                         </div>
                     </div>
 
