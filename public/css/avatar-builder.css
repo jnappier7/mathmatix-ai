@@ -136,6 +136,16 @@
     color: var(--clr-accent-1, #6366f1);
 }
 
+/* Keyboard focus. Neither picker had ANY focus style, which is what made the
+   arrow-key navigation worth adding pointless on its own: moving focus you
+   cannot see is not navigation. The ring has to read against both the dark
+   panel and the .active border, so it sits outside the element rather than
+   recolouring the border. */
+.style-btn:focus-visible {
+    outline: 3px solid var(--clr-accent-hotpink, #FF3B7F);
+    outline-offset: 2px;
+}
+
 /* Color Picker */
 .color-picker {
     display: flex;
@@ -162,6 +172,14 @@
 .color-btn.active {
     border-color: var(--clr-accent-1, #6366f1);
     box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+/* A swatch is a 38px circle whose whole job is to show a colour, so the focus
+   ring cannot be a border change — that is what .active already uses, and the
+   two states must stay distinguishable. Offset outline, in the brand accent. */
+.color-btn:focus-visible {
+    outline: 3px solid var(--clr-accent-hotpink, #FF3B7F);
+    outline-offset: 3px;
 }
 
 .color-btn.transparent {

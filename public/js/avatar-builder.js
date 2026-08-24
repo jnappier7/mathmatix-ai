@@ -114,34 +114,110 @@ class AvatarBuilder {
     }
 
     /**
-     * Selection state for a colour swatch. The visual state is a class; the
-     * announced state is aria-pressed, and they have to move together or a
-     * screen-reader user is told every swatch is unselected.
+     * Selection state for one option in a radiogroup. Three things move
+     * together or the widget lies: the class (what you see), aria-checked
+     * (what a screen reader announces), and tabindex (what Tab reaches).
+     *
+     * The tabindex is the roving half of the pattern: exactly one option in a
+     * group is tabbable, so Tab moves between GROUPS and the arrow keys move
+     * within one. Twenty-three swatches that each swallow a Tab press is not
+     * navigation, it is an obstacle course.
      */
-    setSwatch(btn, on) {
+    setOption(btn, on) {
         btn.classList.toggle('active', on);
-        btn.setAttribute('aria-pressed', String(on));
+        btn.setAttribute('aria-checked', String(on));
+        btn.setAttribute('tabindex', on ? '0' : '-1');
+    }
+
+    /**
+     * Wire a container of role="radio" buttons as a real radiogroup.
+     *
+     * Selection previously lived in four near-identical blocks — clear every
+     * sibling, set this one, write the config field, re-render — reachable only
+     * by mouse. This is that logic once, plus the keyboard contract the ARIA
+     * roles promise: arrows move focus AND selection (that is radio behaviour,
+     * not listbox), Home/End jump to the ends, and both wrap.
+     *
+     * Space and Enter are deliberately not handled here. These are real
+     * <button> elements, so the browser already turns both into a click, and
+     * the delegated click listener below selects. Re-implementing that would
+     * only risk diverging from it.
+     *
+     * @param {HTMLElement} container  the [role="radiogroup"]
+     * @param {(btn: HTMLElement) => void} onSelect  side effects for this group
+     */
+    initRadioGroup(container, onSelect) {
+        if (!container) return;
+        const options = () => Array.from(container.querySelectorAll('[role="radio"]'));
+
+        const select = (btn, { moveFocus = false } = {}) => {
+            options().forEach((o) => this.setOption(o, o === btn));
+            if (moveFocus) btn.focus();
+            onSelect(btn);
+        };
+
+        // Delegated: the option set is static today, but randomize() and
+        // updateUIFromConfig() both rewrite selection state, and a delegated
+        // listener cannot go stale against them.
+        container.addEventListener('click', (e) => {
+            const btn = e.target.closest('[role="radio"]');
+            if (btn && container.contains(btn)) select(btn);
+        });
+
+        container.addEventListener('keydown', (e) => {
+            const opts = options();
+            const focused = document.activeElement && document.activeElement.closest
+                ? document.activeElement.closest('[role="radio"]')
+                : null;
+            const i = focused ? opts.indexOf(focused) : -1;
+            if (i === -1) return;
+
+            let next;
+            switch (e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    next = opts[(i + 1) % opts.length];
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    next = opts[(i - 1 + opts.length) % opts.length];
+                    break;
+                case 'Home':
+                    next = opts[0];
+                    break;
+                case 'End':
+                    next = opts[opts.length - 1];
+                    break;
+                default:
+                    return;
+            }
+            // Reached only for keys handled above. Calling this any earlier
+            // would swallow Tab and trap focus in the very group these arrows
+            // exist to make navigable.
+            e.preventDefault();
+            select(next, { moveFocus: true });
+        });
     }
 
     updateUIFromConfig() {
         // Update style selection
         document.querySelectorAll('.style-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.style === this.config.style);
+            this.setOption(btn, btn.dataset.style === this.config.style);
         });
 
         // Update skin color
         document.querySelectorAll('#skin-picker .color-btn').forEach(btn => {
-            this.setSwatch(btn, btn.dataset.color === this.config.skinColor);
+            this.setOption(btn, btn.dataset.color === this.config.skinColor);
         });
 
         // Update hair color
         document.querySelectorAll('#hair-color-picker .color-btn').forEach(btn => {
-            this.setSwatch(btn, btn.dataset.color === this.config.hairColor);
+            this.setOption(btn, btn.dataset.color === this.config.hairColor);
         });
 
         // Update background
         document.querySelectorAll('#bg-picker .color-btn').forEach(btn => {
-            this.setSwatch(btn, btn.dataset.color === this.config.backgroundColor);
+            this.setOption(btn, btn.dataset.color === this.config.backgroundColor);
         });
 
         // Update toggles
@@ -159,46 +235,25 @@ class AvatarBuilder {
 
     setupEventListeners() {
         // Style selection
-        document.querySelectorAll('.style-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                this.config.style = btn.dataset.style;
-                this.config.seed = this.generateSeed(); // New seed for new style
-                this.updateFeatureVisibility();
-                this.updatePreview();
-            });
+        this.initRadioGroup(document.getElementById('style-selector'), (btn) => {
+            this.config.style = btn.dataset.style;
+            this.config.seed = this.generateSeed(); // New seed for new style
+            this.updateFeatureVisibility();
+            this.updatePreview();
         });
 
-        // Skin color
-        document.querySelectorAll('#skin-picker .color-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('#skin-picker .color-btn').forEach(b => this.setSwatch(b, false));
-                this.setSwatch(btn, true);
-                this.config.skinColor = btn.dataset.color;
+        // Colours. Same widget three times over, differing only in which field
+        // of the config the choice writes to.
+        for (const [id, field] of [
+            ['skin-picker', 'skinColor'],
+            ['hair-color-picker', 'hairColor'],
+            ['bg-picker', 'backgroundColor'],
+        ]) {
+            this.initRadioGroup(document.getElementById(id), (btn) => {
+                this.config[field] = btn.dataset.color;
                 this.updatePreview();
             });
-        });
-
-        // Hair color
-        document.querySelectorAll('#hair-color-picker .color-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('#hair-color-picker .color-btn').forEach(b => this.setSwatch(b, false));
-                this.setSwatch(btn, true);
-                this.config.hairColor = btn.dataset.color;
-                this.updatePreview();
-            });
-        });
-
-        // Background color
-        document.querySelectorAll('#bg-picker .color-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('#bg-picker .color-btn').forEach(b => this.setSwatch(b, false));
-                this.setSwatch(btn, true);
-                this.config.backgroundColor = btn.dataset.color;
-                this.updatePreview();
-            });
-        });
+        }
 
         // Accessories toggles
         document.getElementById('glasses-toggle')?.addEventListener('change', (e) => {
