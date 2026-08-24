@@ -48,9 +48,16 @@
         if(off) h+='<div class="off-label">'+esc(off)+'</div>';
         items.forEach(function(e){
           var k=KINDS[e.kind]?'<span class="badge k-'+e.kind+'">'+KINDS[e.kind]+'</span> ':'';
-          h+='<div class="witem"><div class="wt">'+k+esc(e.title)+'</div>'+
+          var inner='<div class="wt">'+k+esc(e.title)+'</div>'+
              (e.homework?'<div class="wd">'+esc(e.homework)+'</div>':'')+
-             (e.due?'<div class="wdue">Due '+esc(e.due)+'</div>':'')+'</div>';
+             (e.due?'<div class="wdue">Due '+esc(e.due)+'</div>':'');
+          // The whole card is the target: from "Paper Practice 1.1" a student
+          // wants the sheet, and the lesson block is where the sheet, the notes
+          // and the video all sit. Keep .witem a <div> either way so the
+          // :first-of-type border rule below still matches.
+          h+='<div class="witem">'+(e.href
+               ?'<a class="wlink" href="'+esc(e.href)+'">'+inner+'</a>'
+               :inner)+'</div>';
         });
         if(!off&&!items.length) h+='<div class="empty">Nothing scheduled</div>';
         box.innerHTML=h; g.appendChild(box);
