@@ -597,6 +597,13 @@ router.post('/complete', async (req, res) => {
                 q.transferIds = pickTransferItems(cands, q, 2);
                 q.transferIds.forEach((id) => claimed.add(id));
               });
+              // The queue is grouped by skill, so practice fires once at the END
+              // of each group. Selecting per miss first is deliberate: the last
+              // miss in a group carries the practice matched to ITS difficulty,
+              // and the ids claimed by earlier misses are released rather than
+              // handed out as six problems on one skill.
+              const { keepGroupFinalTransfersOnly } = require('../utils/actReview');
+              keepGroupFinalTransfersOnly(queue).forEach((m, i) => { queue[i].transferIds = m.transferIds; });
             }
           } catch (transferErr) {
             // Practice is an enhancement to review, never a precondition for it.

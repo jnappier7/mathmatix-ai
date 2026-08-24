@@ -87,21 +87,87 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
     })
     .filter((m) => m.problemId);
 
-  // Test order — "we go in order unless a student clicks on a number"
-  // (owner, 2026-07-28). The missed numbers render as a rail on screen, so the
-  // queue must march through them the way the student saw them: #2, #4, #5…
-  // Entries without a position (queues built before positions were stamped)
-  // sink to the end in their leverage order, so old data still reviews fully.
-  return queue
-    .map((m, i) => ({ m, i }))
-    .sort((a, b) => {
+  return clusterBySkill(queue);
+}
+
+/**
+ * Order the queue so misses on the SAME skill are worked back to back.
+ *
+ * Supersedes strict test order ("we go in order unless a student clicks on a
+ * number", owner 2026-07-28). That rule was about the number rail, and the rail
+ * still honors it — _numberRailHtml sorts its chips by position, so a student
+ * sees #2, #4, #5… exactly as on their answer sheet. What changes is only which
+ * miss the tutor picks up next.
+ *
+ * Why: six ratio misses scattered as #4, #9, #17, #23, #31, #38 get reviewed as
+ * six unrelated accidents, and the student never sees that they have a ratio
+ * problem — which is the single most useful thing the test told us. Worked
+ * together they are one lesson with five confirmations, which is also how a
+ * tutor with the answer sheet in front of them would actually run it.
+ *
+ * Groups are ordered by score opportunity — exam leverage x how many they
+ * missed — so the biggest available gain comes first. Within a group the
+ * original test order is kept.
+ *
+ * Entries with no position (queues built before positions were stamped) still
+ * sort last within their group, so old data reviews fully.
+ */
+function clusterBySkill(queue) {
+  const groups = new Map();
+  queue.forEach((m, i) => {
+    // Fall back to the category, then to the item itself: a miss with no skill
+    // tag must not collapse into one giant "null" group with unrelated items.
+    const key = m.skillId || m.category || `__${m.problemId || i}`;
+    if (!groups.has(key)) groups.set(key, { key, items: [], leverage: m.leverage || 5, first: i });
+    groups.get(key).items.push({ m, i });
+  });
+
+  const ordered = [...groups.values()].map((g) => {
+    g.items.sort((a, b) => {
       const ap = a.m.position, bp = b.m.position;
       if (ap != null && bp != null) return ap - bp;
       if (ap != null) return -1;
       if (bp != null) return 1;
-      return (b.m.leverage - a.m.leverage) || (a.i - b.i);
-    })
-    .map((x) => x.m);
+      return a.i - b.i;
+    });
+    g.score = g.leverage * g.items.length;
+    // Earliest question in the group, for a stable tie-break.
+    const positions = g.items.map((x) => x.m.position).filter((p) => p != null);
+    g.firstPosition = positions.length ? Math.min(...positions) : Infinity;
+    return g;
+  }).sort((a, b) => (b.score - a.score) || (a.firstPosition - b.firstPosition) || (a.first - b.first));
+
+  const out = [];
+  ordered.forEach((g) => {
+    g.items.forEach((x, idx) => {
+      out.push({
+        ...x.m,
+        // Where this miss sits in its skill group — the prompt says "2 of 3
+        // ratio questions you missed" so the student hears the pattern, and
+        // the transfer check fires once at the end of the group rather than
+        // after every miss (three misses on one skill would otherwise mean six
+        // practice problems on that one skill).
+        groupSize: g.items.length,
+        groupIndex: idx + 1,
+        groupLast: idx === g.items.length - 1,
+      });
+    });
+  });
+  return out;
+}
+
+/**
+ * One transfer check per skill group, not per miss.
+ *
+ * pickTransferItems is chosen per entry (each miss knows its own difficulty),
+ * but firing practice after every miss in a group means a student who missed
+ * three percentage questions works six extra percentage problems. Keep the
+ * practice on the LAST miss of each group — by then the skill has been retaught
+ * and every instance seen, which is exactly when an independent attempt is
+ * worth something.
+ */
+function keepGroupFinalTransfersOnly(queue) {
+  return (queue || []).map((m) => (m && m.groupLast === false ? { ...m, transferIds: [] } : m));
 }
 
 /**
@@ -199,6 +265,7 @@ REVIEWING A MISSED QUESTION — ${miss.position != null ? `#${miss.position} fro
 ====================================================================
 The student is going over a question they got wrong on their practice ACT. Work
 THIS one question with them, then advance. Do not move to a different topic.
+${groupLine(miss)}
 
 QUESTION: ${miss.prompt}
 ${opts ? `OPTIONS: ${opts}` : ''}
@@ -216,6 +283,28 @@ ${transfer && transfer.length
     ? '6. Emit the control tag <REVIEW_NEXT> on its own line to move to the next missed question — once the transfer check above is settled. NEVER emit it while they still owe you a practice attempt; never describe the tag.'
     : '5. When they can do it on their own, emit the control tag <REVIEW_NEXT> on its own line to move to the next missed question. NEVER emit it until they\'ve shown they\'ve got THIS one; never describe the tag.'}
 ====================================================================`;
+}
+
+/**
+ * Name the pattern out loud when a miss is one of several on the same skill.
+ *
+ * This is the most useful thing the test result contains and the student cannot
+ * see it themselves — the misses are scattered across their answer sheet. A
+ * tutor holding that sheet would open with "you missed three ratio questions,
+ * let's do them together", so say so.
+ */
+function groupLine(miss) {
+  if (!miss || !miss.groupSize || miss.groupSize < 2) return '';
+  const cat = CATEGORY_LABEL[miss.category] || miss.category || 'this topic';
+  const first = miss.groupIndex === 1
+    ? ` TELL THEM the pattern before you start this one — they cannot see it themselves, the questions were scattered across their test.`
+    : '';
+  const last = miss.groupLast
+    ? ` This is the LAST of the group, so the transfer check below covers the whole set.`
+    : '';
+  return `
+PATTERN: this is question ${miss.groupIndex} of ${miss.groupSize} they missed on the SAME skill (${cat}).${first}${last}
+They are grouped deliberately — work them as one connected set, not as ${miss.groupSize} unrelated accidents.`;
 }
 
 /**
@@ -311,6 +400,8 @@ function currentMiss(bootcamp) {
 
 module.exports = {
   buildReviewQueue,
+  clusterBySkill,
+  keepGroupFinalTransfersOnly,
   pickTransferItems,
   clientSafeBootcamp,
   reviewPromptSection,

@@ -5441,9 +5441,23 @@ class LessonTracker {
             const title = done ? 'Reviewed ✓ — click to revisit' : (isCur ? 'Up next' : 'Click to work this one next');
             return `<button data-bc-jump="${i}" title="${title}" style="border:0;border-radius:8px;min-width:30px;padding:4px 7px;font-size:12px;cursor:pointer;${style}">${done ? '✓ ' : ''}${q.position}</button>`;
         };
+        // The rail is the student's answer sheet: it reads in TEST order (#2,
+        // #4, #5…) no matter what order review actually works them in. Review
+        // is now grouped by skill, so queue order and test order differ —
+        // display sorts by position while data-bc-jump keeps the true queue
+        // index, or every jump would land on the wrong question.
+        const inTestOrder = queue
+            .map((q, i) => ({ q, i }))
+            .sort((a, b) => {
+                const ap = a.q.position, bp = b.q.position;
+                if (ap != null && bp != null) return ap - bp;
+                if (ap != null) return -1;
+                if (bp != null) return 1;
+                return a.i - b.i;
+            });
         return `<div style="margin-bottom:10px">
             <div style="color:rgba(255,255,255,.8);font-size:11.5px;margin-bottom:5px">Questions you missed — tap one to jump, or just keep going in order:</div>
-            <div id="lt-bc-numbers" style="display:flex;flex-wrap:wrap;gap:5px">${queue.map(chip).join('')}</div>
+            <div id="lt-bc-numbers" style="display:flex;flex-wrap:wrap;gap:5px">${inTestOrder.map(({ q, i }) => chip(q, i)).join('')}</div>
           </div>`;
     }
 
