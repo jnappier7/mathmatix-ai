@@ -297,6 +297,11 @@ class LessonTracker {
     _missPreviewHtml(cur, label) {
         if (!cur || !cur.prompt) return '';
         const esc = this._esc;
+        // Show the letters the student SAW on their form: the real ACT (and
+        // the test runner) letter even question numbers F–G–H–J. Stored labels
+        // and theirAnswer stay A–D — display alias only.
+        const evenLab = { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' };
+        const disp = (lab) => ((Number(cur.position) >= 1 && Number(cur.position) % 2 === 0) ? (evenLab[lab] || lab) : lab);
         // Figure is our own generated SVG from the item bank — same guard as
         // the test runner: bare <svg>, no scripts.
         const fig = (cur.svg && /^<svg[\s>]/.test(cur.svg) && !/<script/i.test(cur.svg))
@@ -307,7 +312,7 @@ class LessonTracker {
                 ? 'background:#fdecec;border:1px solid #f0b4b4'
                 : 'background:#f7f6fb;border:1px solid #eceaf4';
             return `<div style="display:flex;align-items:baseline;gap:8px;padding:5px 9px;border-radius:8px;${rowStyle}">
-                <span style="font-weight:700;font-size:12px;color:#5b3ea8;flex:0 0 14px">${esc(o.label)}</span>
+                <span style="font-weight:700;font-size:12px;color:#5b3ea8;flex:0 0 14px">${esc(disp(o.label))}</span>
                 <span style="font-size:13px;color:#2a2440">${esc(o.text)}</span>
                 ${mine ? '<span style="margin-left:auto;font-size:11px;font-weight:600;color:#c0392b;white-space:nowrap">your answer</span>' : ''}
               </div>`;

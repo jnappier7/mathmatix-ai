@@ -42,15 +42,30 @@ const MISS = {
 
 describe('the tutor is handed the exact missed question', () => {
   test('the review section carries question, options, their answer, and the key', () => {
+    // MISS is question #12 — EVEN, so the letters shown are the real-ACT
+    // even-question letters F–G–H–J (what the student saw on the runner),
+    // while the stored labels stay A–D underneath.
     const section = reviewPromptSection(MISS, 0, 4);
     expect(section).toContain('If 3x + 7 = 22, what is the value of x?');
-    expect(section).toContain('A) 3');
-    expect(section).toContain('B) 5');
-    expect(section).toContain('They chose A (3) — INCORRECT');
-    expect(section).toContain('CORRECT ANSWER: B (5)');
+    expect(section).toContain('F) 3');
+    expect(section).toContain('G) 5');
+    expect(section).toContain('They chose F (3) — INCORRECT');
+    expect(section).toContain('CORRECT ANSWER: G (5)');
     expect(section).toContain('Subtract 7 from both sides');
     expect(section).toContain('#12');          // the number on THEIR test
     expect(section).toContain('1 of 4');
+  });
+
+  test('an ODD-position miss keeps A–D letters (real-ACT alternation)', () => {
+    const section = reviewPromptSection({ ...MISS, position: 11 }, 0, 4);
+    expect(section).toContain('A) 3');
+    expect(section).toContain('They chose A (3) — INCORRECT');
+    expect(section).toContain('CORRECT ANSWER: B (5)');
+  });
+
+  test('a position-less legacy queue item defaults to A–D', () => {
+    const section = reviewPromptSection({ ...MISS, position: null }, 0, 4);
+    expect(section).toContain('A) 3');
   });
 
   test('a skipped question reads as skipped, not as a wrong answer', () => {
@@ -226,5 +241,32 @@ describe('the course describes the test it actually administers', () => {
     const src = read('public/js/act-test.js');
     expect(src).toContain(`data.totalItems || ${blueprint.totalItems}`);
     expect(src).toContain(`data.timeLimitMinutes || ${blueprint.timeLimitMinutes}`);
+  });
+});
+
+describe('real-ACT answer-letter alternation (odd A–D, even F–G–H–J)', () => {
+  const { actDisplayLabel } = require('../../utils/mcOptions');
+
+  test('the alias maps even positions and passes odd/invalid through', () => {
+    expect(actDisplayLabel(2, 'A')).toBe('F');
+    expect(actDisplayLabel(2, 'B')).toBe('G');
+    expect(actDisplayLabel(2, 'C')).toBe('H');
+    expect(actDisplayLabel(2, 'D')).toBe('J');   // no "I" on the real ACT
+    expect(actDisplayLabel(2, 'E')).toBe('K');
+    expect(actDisplayLabel(1, 'A')).toBe('A');
+    expect(actDisplayLabel(null, 'A')).toBe('A');
+    expect(actDisplayLabel(2, 'Z')).toBe('Z');
+  });
+
+  test('both client surfaces carry the alias, display-only', () => {
+    // The runner and the review card show F–G–H–J on even questions but keep
+    // data-label / theirAnswer on the stored A–D letters — grading and the
+    // wire protocol must never see an F.
+    const runner = read('public/js/act-test.js');
+    expect(runner).toMatch(/evenLab = \{ A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' \}/);
+    expect(runner).toMatch(/data-label="\$\{o\.label\}"/);   // stored label on the wire
+    const card = read('public/js/lessonTracker.js');
+    expect(card).toMatch(/evenLab = \{ A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' \}/);
+    expect(card).toMatch(/o\.label === cur\.theirAnswer/);   // match on stored labels
   });
 });

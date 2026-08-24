@@ -331,8 +331,13 @@
       this.el('actt-qnum').textContent = `Question ${this.pos} of ${this.total}`;
       this.el('actt-qpct').textContent = `${answered}/${this.total} answered`;
       this.el('actt-fill').style.width = `${Math.round((answered / this.total) * 100)}%`;
+      // Real-ACT letter alternation: even question numbers show F–G–H–J (no
+      // "I"), odd show A–D. Display alias ONLY — data-label / save-answer /
+      // grading all stay on the stored positional A–D letters.
+      const evenLab = { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' };
+      const disp = (lab) => (this.pos % 2 === 0 ? (evenLab[lab] || lab) : lab);
       const opts = (p.options || []).map(o =>
-        `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}"><span class="actt-optlab">${o.label}</span><span>${escapeHtml(o.text)}</span></button>`
+        `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}"><span class="actt-optlab">${disp(o.label)}</span><span>${escapeHtml(o.text)}</span></button>`
       ).join('');
       // Figure is our own generated SVG (from the item bank), not user input.
       // Guard: only render a bare <svg> with no scripts.

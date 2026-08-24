@@ -142,4 +142,18 @@ function correctLabelOf(problem) {
   return pos !== -1 && pos < stored.length ? LABELS[pos] : null;
 }
 
-module.exports = { LABELS, optionText, storedLabel, normalizeOptions, resolveChoice, correctLabelOf };
+// The real ACT alternates answer letters by question number: odd questions are
+// lettered A–D(–E), even questions F–G–H–J(–K) — no "I". Storage, the wire
+// protocol, and grading all stay on positional A–D; this alias is applied ONLY
+// at the surfaces that echo letters to the student (test runner, review card,
+// review prompt), so the letters they see match a real ACT form.
+const ACT_EVEN_LABELS = { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' };
+function actDisplayLabel(position, label) {
+  const pos = Number(position);
+  // Positions are 1-based; null/undefined coerce to 0 (which is "even"), so a
+  // legacy position-less queue item must fall through to the stored letters.
+  if (!Number.isFinite(pos) || pos < 1 || pos % 2 !== 0) return label;
+  return ACT_EVEN_LABELS[String(label || '').toUpperCase()] || label;
+}
+
+module.exports = { LABELS, optionText, storedLabel, normalizeOptions, resolveChoice, correctLabelOf, actDisplayLabel };
