@@ -32,6 +32,8 @@
     "seed:all:dry": "node scripts/seedAll.js --dry-run",
     "act:ingest": "python3 scripts/ingestFableActItems.py",
     "act:seed": "node scripts/seedActItems.js --fresh",
+    "act:seed:ies": "node scripts/seedActIesItems.js",
+    "act:validate:ies": "node seeds/act-ies-expansion/validate.js seeds/act-ies-expansion/ies-items.generated.json",
     "act:coverage": "node scripts/actTestCoverage.js",
     "alg1:ingest": "python3 scripts/ingestAlg1Items.py",
     "alg1:seed": "node scripts/seedAlg1Items.js --fresh",

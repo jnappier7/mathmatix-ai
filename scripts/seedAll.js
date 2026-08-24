@@ -167,6 +167,16 @@ const STEPS = [
     ids: gzIds(LOW_VOLUME_FILES, 'problemId'),
   },
   {
+    key: 'act-ies-items',
+    label: 'ACT Integrating Essential Skills expansion (6 skills x 50)',
+    script: 'seedActIesItems.js',
+    supportsFresh: true,
+    files: ['act-ies-expansion/ies-items.generated.json'],
+    model: 'Problem',
+    idField: 'problemId',
+    ids: jsonIds('act-ies-expansion/ies-items.generated.json', 'problemId'),
+  },
+  {
     key: 'answer-equivalents',
     label: 'Backfill answer.equivalents (must follow the banks)',
     script: 'backfillAnswerEquivalents.js',
