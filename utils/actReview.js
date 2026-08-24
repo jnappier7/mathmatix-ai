@@ -74,6 +74,13 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
           || p.correctOption || null,
         correctAnswer: (p.answer && p.answer.value) || null,
         explanation: p.explanation || '',
+        // Drives transfer-item selection: practice has to sit at the difficulty
+        // they actually missed, not a generic middle.
+        difficulty: Number(it.difficulty) || Number(p.difficulty) || null,
+        // Fresh items on this skill, filled in by the caller (which has DB
+        // access). Ids only — the text is resolved server-side at prompt time
+        // so the answers never ride to the browser.
+        transferIds: [],
         leverage: weights[category] || 5,
         status: 'pending',
       };
@@ -98,11 +105,79 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
 }
 
 /**
+ * Pick the fresh items a student will attempt AFTER their miss is retaught.
+ *
+ * Reviewing the missed question teaches that question. Without attempting new
+ * problems on the same skill, a student agrees with the explanation and then
+ * misses the same skill on the re-test — understanding the worked example is
+ * not the same as being able to do one. These are that check.
+ *
+ * Ordered easier-first: the first item should be winnable so the reteach lands,
+ * the second sits at the difficulty they actually missed, which is the one that
+ * proves the gap closed.
+ *
+ * @param {Array} candidates  Problem docs on the miss's skill, already excluding
+ *                            everything this student has been served
+ * @param {Object} miss       the queue entry (uses .difficulty)
+ * @param {Number} n          how many to take
+ * @returns {Array<String>} problemIds
+ */
+function pickTransferItems(candidates, miss, n = 2) {
+  if (!Array.isArray(candidates) || !candidates.length) return [];
+  const target = Number(miss && miss.difficulty) || 3;
+  const scored = candidates
+    .filter((c) => c && c.problemId)
+    .map((c) => {
+      const d = Number(c.difficulty) || 3;
+      // Same difficulty is the goal; one step below is the next best thing
+      // (a rung down still demands the same idea). Anything above the miss is
+      // last — a harder problem cannot show that THIS gap closed.
+      const delta = d - target;
+      const rank = delta === 0 ? 0 : delta === -1 ? 1 : delta < 0 ? 2 : 3 + delta;
+      return { problemId: c.problemId, difficulty: d, rank };
+    })
+    .sort((a, b) => a.rank - b.rank || a.difficulty - b.difficulty);
+  return scored.slice(0, n)
+    .sort((a, b) => a.difficulty - b.difficulty)     // easier first
+    .map((c) => c.problemId);
+}
+
+/**
+ * Strip everything answer-bearing from a bootcamp payload bound for the browser.
+ *
+ * The review card shows the missed question and the student's own pick but
+ * deliberately does NOT reveal the key — the tutor has them re-try first. The
+ * endpoints, though, were sending `session.bootcamp` verbatim, so correctOption
+ * / correctAnswer / explanation rode along in the JSON for anyone who opened the
+ * network tab. That was already at odds with the card's design; with transfer
+ * items — problems the student has NOT attempted yet — it would hand over the
+ * answers to work they are about to be asked to do.
+ *
+ * Transfer ids stay (a bare problemId reveals nothing; the text is fetched
+ * server-side when the prompt is built).
+ */
+function clientSafeBootcamp(bc) {
+  if (!bc) return bc;
+  const safe = { ...(typeof bc.toObject === 'function' ? bc.toObject() : bc) };
+  if (Array.isArray(safe.queue)) {
+    safe.queue = safe.queue.map((q) => {
+      if (!q) return q;
+      const { correctOption, correctAnswer, explanation, ...rest } = q;
+      return rest;
+    });
+  }
+  return safe;
+}
+
+/**
  * The prompt section for the current miss — injected into the course system
  * prompt while bootcamp.phase === 'review'. Tells the tutor exactly how to coach
  * this one question and when to advance.
+ *
+ * @param {Array} [transfer]  fresh problems on the same skill (Problem docs),
+ *                            resolved server-side from miss.transferIds
  */
-function reviewPromptSection(miss, index, total) {
+function reviewPromptSection(miss, index, total, transfer = []) {
   if (!miss) return '';
   const cat = CATEGORY_LABEL[miss.category] || miss.category || 'ACT Math';
   // Letters shown to the tutor must be the letters the student SAW on their
@@ -136,8 +211,38 @@ How to coach it:
 2. DIAGNOSE the miss: concept gap, careless slip, or a pacing/strategy problem?
 3. RETEACH the underlying concept ONLY if it's a genuine gap — and briefly. A slip earns a caution, not a full lesson.
 4. Teach the ACT MOVE for this question type — backsolving, plugging in numbers, estimating, eliminating, spotting the trap, or when to skip.
-5. When they can do it on their own, emit the control tag <REVIEW_NEXT> on its own line to move to the next missed question. NEVER emit it until they've shown they've got THIS one; never describe the tag.
+${transferBlock(transfer)}
+${transfer && transfer.length
+    ? '6. Emit the control tag <REVIEW_NEXT> on its own line to move to the next missed question — once the transfer check above is settled. NEVER emit it while they still owe you a practice attempt; never describe the tag.'
+    : '5. When they can do it on their own, emit the control tag <REVIEW_NEXT> on its own line to move to the next missed question. NEVER emit it until they\'ve shown they\'ve got THIS one; never describe the tag.'}
 ====================================================================`;
+}
+
+/**
+ * The transfer-practice step: 2 fresh problems on the skill they just missed.
+ *
+ * Gated on the tutor's own diagnosis rather than always fired. A careless slip
+ * does not need two more problems — that turns a 20-miss review into a slog and
+ * teaches the student that getting one wrong costs them a worksheet. A genuine
+ * concept gap is exactly where re-explaining feels like understanding and isn't,
+ * so that is where the student has to produce the work themselves.
+ */
+function transferBlock(transfer) {
+  if (!Array.isArray(transfer) || !transfer.length) return '';
+  const items = transfer.map((p, i) => {
+    const opts = (p.options || []).map((o) => `${o.label}) ${o.text}`).join('   ');
+    return `  PRACTICE ${i + 1}: ${p.prompt}
+${opts ? `    OPTIONS: ${opts}\n` : ''}    ANSWER (yours, not theirs): ${p.answerValue || p.correctOption || '(see solution)'}${p.explanation ? `\n    SOLUTION: ${p.explanation}` : ''}`;
+  }).join('\n\n');
+  return `5. TRANSFER CHECK — only if step 2 found a real CONCEPT GAP (skip it for a
+   careless slip or a pacing problem, and say so: "that was a slip, not a gap —
+   moving on"). Understanding your explanation is not the same as being able to
+   do one. Give them PRACTICE 1 and have them work it themselves. If they get
+   it, give them PRACTICE 2. If they miss one, coach that attempt and stay here.
+   Present ONE at a time, never both at once, and never paste the answer.
+
+${items}
+`;
 }
 
 /**
@@ -206,6 +311,8 @@ function currentMiss(bootcamp) {
 
 module.exports = {
   buildReviewQueue,
+  pickTransferItems,
+  clientSafeBootcamp,
   reviewPromptSection,
   reassessPromptSection,
   advanceReview,

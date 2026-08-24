@@ -568,6 +568,40 @@ router.post('/complete', async (req, res) => {
             probs.forEach((p) => { problemsById[p.problemId] = p; });
           }
           const queue = buildReviewQueue(session, problemsById);
+
+          // ── Transfer practice: 2 FRESH items per missed skill ──
+          // Reviewing the missed question teaches that question. Attempting new
+          // problems on the same skill is what shows the gap actually closed —
+          // without it a student agrees with the explanation and misses the same
+          // skill on the re-test. Chosen here (once) rather than per turn so the
+          // practice does not reshuffle mid-conversation, and excluded against
+          // the same seen-ledger the assembler uses so practice is never a
+          // question they have already been served.
+          try {
+            const { pickTransferItems } = require('../utils/actReview');
+            const skills = [...new Set(queue.map((q) => q.skillId).filter(Boolean))];
+            if (skills.length) {
+              const seen = new Set(await seenProblemIdsForUser(req.user._id));
+              const pool = await Problem.find({
+                skillId: { $in: skills },
+                isActive: true,
+                problemId: { $nin: [...seen] },
+              }).select('problemId skillId difficulty').lean();
+              const bySkill = {};
+              pool.forEach((p) => { (bySkill[p.skillId] = bySkill[p.skillId] || []).push(p); });
+              // One item serves one miss: claim as we go so two misses on the
+              // same skill do not both hand out the same practice problem.
+              const claimed = new Set();
+              queue.forEach((q) => {
+                const cands = (bySkill[q.skillId] || []).filter((c) => !claimed.has(c.problemId));
+                q.transferIds = pickTransferItems(cands, q, 2);
+                q.transferIds.forEach((id) => claimed.add(id));
+              });
+            }
+          } catch (transferErr) {
+            // Practice is an enhancement to review, never a precondition for it.
+            console.error('[actTest] transfer-item selection error (non-fatal):', transferErr.message);
+          }
           // Round = which completed attempt this is, counted from the tests
           // themselves — NOT bootcamp.round + 1. A test taken before enrolling
           // scores and shows in /history but never touched cs.bootcamp, so the
