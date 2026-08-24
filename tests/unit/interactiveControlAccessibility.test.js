@@ -15,64 +15,32 @@
  * name you can rely on: several screen readers skip it entirely and it never
  * surfaces on touch, which is most of this product's traffic.
  *
- * Two invariants, at different strengths:
+ * Two invariants, both enforced everywhere with no exceptions:
  *
- *   1. NESTED CONTROLS — enforced everywhere, no exceptions. There are currently
- *      zero in public/, and there is no legitimate reason to add one.
+ *   1. NESTED CONTROLS — a control inside another control cannot be announced or
+ *      activated separately, whatever role or tabindex is written on it.
  *
- *   2. ACCESSIBLE NAMES — enforced page by page against KNOWN_GAPS below, which
- *      records what each page has today. 42 pages are clean and must stay clean;
- *      the 16 that are not may only get better. This is a ratchet, not a
- *      pass: lowering a number is the fix, raising one is the regression.
+ *   2. ACCESSIBLE NAMES — every interactive control has one. `title` does not
+ *      count: several screen readers skip it and it never surfaces on touch,
+ *      which is most of this product's traffic.
+ *
+ * The second started as a ratchet — 42 pages clean, 16 with recorded budgets
+ * that could only shrink. Those budgets reached zero, so the allowlist is gone.
  *
  * The DOM parsing runs in a spawned process (tests/helpers/interactiveControlsProbe.js)
  * — jsdom@27 cannot be `require`d inside a Jest worker.
  */
 
+const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
-/**
- * Controls with no accessible name, per page, as of this test being written.
- * A page absent from this map must have zero. Fix a page, drop its count; when
- * it reaches zero, delete the entry so the page joins the enforced set.
- */
-const KNOWN_GAPS = {
-  'admin-dashboard.html': 6,
-  'admin-upload.html': 1,
-  'affiliate.html': 4,
-  'animation-studio.html': 4,
-  'avatar-builder.html': 23,
-  'bio-chat.html': 1,
-  'canvas.html': 2,
-  'chat-mockup.html': 3,
-  'chat.html': 12,
-  'contact-support.html': 5,
-  'mastery-chat.html': 2,
-  'math-showdown.html': 1,
-  'parent-course.html': 2,
-  'parent-dashboard.html': 5,
-  'phone-upload.html': 1,
-  'teacher-dashboard.html': 11,
-};
-
-/** Pages a visitor meets before they have an account. These carry the review's fixes. */
-const FRONT_DOOR = [
-  'index.html',
-  'for-teachers.html',
-  'for-students.html',
-  'safety.html',
-  'signup.html',
-  'onboarding.html',
-  'login.html',
-  'pricing.html',
-  'reset-password.html',
-  'forgot-password.html',
-  'complete-profile.html',
-  'parental-consent.html',
-  'role-picker.html',
-  'pick-tutor.html',
-];
+/** Page list read synchronously — it.each names its cases at collection time,
+ *  before beforeAll has run the probe. */
+const PAGES = fs
+  .readdirSync(path.join(__dirname, '..', '..', 'public'))
+  .filter((f) => f.endsWith('.html'))
+  .sort();
 
 describe('interactive control accessibility', () => {
   let report;
@@ -85,8 +53,9 @@ describe('interactive control accessibility', () => {
     ));
   });
 
-  it('parses the whole public/ surface', () => {
-    expect(Object.keys(report).length).toBeGreaterThan(50);
+  it('parses every page in public/', () => {
+    expect(Object.keys(report).sort()).toEqual(PAGES);
+    expect(PAGES.length).toBeGreaterThan(50);
   });
 
   describe('no control is nested inside another control', () => {
@@ -102,35 +71,23 @@ describe('interactive control accessibility', () => {
   });
 
   describe('every control has an accessible name', () => {
-    it.each(FRONT_DOOR)('%s is clean', (file) => {
-      // These are the pages someone meets before they trust us with anything.
-      expect(report[file].unnamed).toEqual([]);
-    });
-
-    it('holds on every page not in the known-gaps list', () => {
-      const unexpected = Object.entries(report)
-        .filter(([file, r]) => r.unnamed.length && !(file in KNOWN_GAPS))
+    // This started as a ratchet: 42 pages clean, 16 recorded in a KNOWN_GAPS map
+    // with exact counts that could only go down. They went to zero, so the
+    // allowlist is gone with them — a list nobody needs is a list someone
+    // eventually adds to. If a page ever genuinely needs an exception, bring the
+    // mechanism back with the reason written down, rather than loosening this.
+    it('holds on every page', () => {
+      const offenders = Object.entries(report)
+        .filter(([, r]) => r.unnamed.length)
         .map(([file, r]) => `${file}: ${r.unnamed.join(', ')}`);
 
-      expect(unexpected).toEqual([]);
+      expect(offenders).toEqual([]);
     });
 
-    it('never gets worse on a page that already has gaps', () => {
-      const worse = Object.entries(KNOWN_GAPS)
-        .filter(([file, allowed]) => (report[file]?.unnamed.length ?? 0) > allowed)
-        .map(([file, allowed]) => `${file}: ${report[file].unnamed.length} unnamed, budget ${allowed}`);
-
-      expect(worse).toEqual([]);
-    });
-
-    it('has its budgets tightened when a page is fixed', () => {
-      // Keeps KNOWN_GAPS honest: a stale, too-generous budget silently stops
-      // protecting the page it names.
-      const stale = Object.entries(KNOWN_GAPS)
-        .filter(([file, allowed]) => (report[file]?.unnamed.length ?? 0) < allowed)
-        .map(([file, allowed]) => `${file}: now ${report[file].unnamed.length}, budget still ${allowed} — lower it`);
-
-      expect(stale).toEqual([]);
+    // Per-page cases as well as the sweep above: when one page regresses, the
+    // failure should name it rather than printing a list to read through.
+    it.each(PAGES)('%s is clean', (file) => {
+      expect(report[file].unnamed).toEqual([]);
     });
   });
 

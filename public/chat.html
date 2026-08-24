@@ -392,8 +392,8 @@
   </header>
 
   <!-- Sidebar Toggle Button -->
-  <button id="sidebar-toggle" title="Toggle Sidebar">
-    <i class="fas fa-bars"></i>
+  <button id="sidebar-toggle" title="Toggle Sidebar" aria-label="Toggle sidebar">
+    <i class="fas fa-bars" aria-hidden="true"></i>
   </button>
 
   <!-- Collapsible Sidebar -->
@@ -670,8 +670,8 @@
               <span id="lt-step-label" class="lt-step-label"></span>
               <span class="lt-label-sep">&middot;</span>
               <span id="lt-phase-label" class="lt-phase-label"></span>
-              <button id="lt-details-toggle" class="lt-details-toggle" title="Show details">
-                <i class="fas fa-chevron-down lt-toggle-icon"></i>
+              <button id="lt-details-toggle" class="lt-details-toggle" title="Show details" aria-label="Show lesson details">
+                <i class="fas fa-chevron-down lt-toggle-icon" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -713,7 +713,7 @@
       </div>
      <div id="input-container">
     <!-- Hidden button triggers for sidebar -->
-    <button id="toggle-calculator-btn" style="display: none;"></button>
+    <button id="toggle-calculator-btn" style="display: none;" aria-label="Toggle calculator"></button>
 
     <!-- Inline Equation Palette (MS Word-like, docked above compose bar) -->
     <div id="inline-equation-palette" class="inline-equation-palette eq-docked" style="display: none;">
@@ -1184,7 +1184,7 @@
           <button class="mk-key" data-insert=")">)</button>
           <button class="mk-key" data-insert=".">.</button>
           <button class="mk-key" data-insert=",">,</button>
-          <button class="mk-key mk-key-action" data-command="deleteBackward" title="Delete"><i class="fas fa-delete-left"></i></button>
+          <button class="mk-key mk-key-action" data-command="deleteBackward" title="Delete" aria-label="Delete"><i class="fas fa-delete-left" aria-hidden="true"></i></button>
         </div>
       </div>
 
@@ -1196,7 +1196,7 @@
           <button class="mk-key" data-insert="\sqrt{#0}" title="Square root"><span class="mk-key-main">&radic;</span><span class="mk-key-hint">Root</span></button>
           <button class="mk-key" data-insert="#0^{#1}" title="Power / Exponent"><span class="mk-key-main">x<sup>n</sup></span><span class="mk-key-hint">Power</span></button>
           <button class="mk-key" data-insert="#0_{#1}" title="Subscript"><span class="mk-key-main">x<sub>n</sub></span><span class="mk-key-hint">Sub</span></button>
-          <button class="mk-key mk-key-action" data-command="deleteBackward" title="Delete"><i class="fas fa-delete-left"></i></button>
+          <button class="mk-key mk-key-action" data-command="deleteBackward" title="Delete" aria-label="Delete"><i class="fas fa-delete-left" aria-hidden="true"></i></button>
         </div>
         <div class="mk-section-label">Symbols</div>
         <div class="mk-grid mk-grid-5">
@@ -1230,7 +1230,7 @@
     <!-- Custom Keyboard Mount Point (mobile only) -->
     <div id="mx-keyboard-container"></div>
 
-    <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/svg+xml,application/pdf" multiple/>
+    <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/svg+xml,application/pdf" multiple aria-label="Attach an image or PDF" />
     <p class="chat-disclaimer"><i class="fas fa-info-circle"></i> AI can make mistakes. Always check your work.</p>
 </div>
 
@@ -1622,9 +1622,9 @@
 
           <!-- PDF Navigation -->
           <div id="pdf-nav-controls" style="display: none;" class="pdf-navigation">
-            <button id="pdf-prev-page" class="btn btn-tertiary"><i class="fas fa-chevron-left"></i></button>
+            <button id="pdf-prev-page" class="btn btn-tertiary" aria-label="Previous page"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
             <span id="pdf-page-info">Page <span id="pdf-current-page">1</span> of <span id="pdf-total-pages">1</span></span>
-            <button id="pdf-next-page" class="btn btn-tertiary"><i class="fas fa-chevron-right"></i></button>
+            <button id="pdf-next-page" class="btn btn-tertiary" aria-label="Next page"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
           </div>
         </div>
 
@@ -1697,8 +1697,8 @@
             <i class="fas fa-history"></i> Past Analyses
           </button>
         </div>
-        <input type="file" id="syw-file-input" accept="image/*,application/pdf" style="display: none;">
-        <input type="file" id="syw-camera-input" accept="image/*" capture="environment" style="display: none;">
+        <input type="file" id="syw-file-input" accept="image/*,application/pdf" style="display: none;" aria-label="Upload a photo or PDF of your work">
+        <input type="file" id="syw-camera-input" accept="image/*" capture="environment" style="display: none;" aria-label="Photograph your work">
       </div>
 
       <!-- Step 2: Preview & Submit -->
@@ -1924,7 +1924,7 @@
         <i class="fas fa-clipboard-check"></i> <span id="checkpoint-header-title">Checkpoint</span>
       </div>
       <div class="checkpoint-header-controls">
-        <button class="checkpoint-collapse-btn" title="Collapse"><i class="fas fa-minus"></i></button>
+        <button class="checkpoint-collapse-btn" title="Collapse" aria-label="Collapse checkpoint"><i class="fas fa-minus" aria-hidden="true"></i></button>
         <button class="checkpoint-close-btn" title="Close">&times;</button>
       </div>
     </div>
@@ -2018,7 +2018,7 @@
         <i class="fas fa-fire"></i> <span>Warm-Up</span>
       </div>
       <div class="review-header-controls">
-        <button class="review-collapse-btn" title="Collapse"><i class="fas fa-minus"></i></button>
+        <button class="review-collapse-btn" title="Collapse" aria-label="Collapse review"><i class="fas fa-minus" aria-hidden="true"></i></button>
         <button class="review-close-btn" title="Close">&times;</button>
       </div>
     </div>
