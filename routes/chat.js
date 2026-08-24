@@ -1303,7 +1303,33 @@ async function runStudentTurn(req, res) {
             if (bc && systemPrompt) {
                 const { currentMiss, reviewPromptSection, reassessPromptSection } = require('../utils/actReview');
                 if (bc.phase === 'review' && Array.isArray(bc.queue)) {
-                    const section = reviewPromptSection(currentMiss(bc), bc.index || 0, bc.queue.length);
+                    const miss = currentMiss(bc);
+                    // Transfer practice: the queue stores only problemIds, so the
+                    // fresh items' text and answers are resolved HERE, server-side.
+                    // They must never ride to the browser — these are problems the
+                    // student has not attempted yet.
+                    let transfer = [];
+                    const tIds = (miss && Array.isArray(miss.transferIds)) ? miss.transferIds : [];
+                    if (tIds.length) {
+                        try {
+                            const Problem = require('../models/problem');
+                            const { normalizeOptions } = require('../utils/mcOptions');
+                            const docs = await Problem.find({ problemId: { $in: tIds } })
+                                .select('problemId prompt options correctOption answer explanation').lean();
+                            const byId = {};
+                            docs.forEach((d) => { byId[d.problemId] = d; });
+                            transfer = tIds.map((id) => byId[id]).filter(Boolean).map((d) => ({
+                                prompt: d.prompt,
+                                options: normalizeOptions(d.options),
+                                correctOption: d.correctOption,
+                                answerValue: d.answer && d.answer.value,
+                                explanation: d.explanation,
+                            }));
+                        } catch (tErr) {
+                            logger.warn('ACT transfer lookup failed (review continues without practice)', { error: tErr.message });
+                        }
+                    }
+                    const section = reviewPromptSection(miss, bc.index || 0, bc.queue.length, transfer);
                     if (section) systemPrompt += section;
                 } else if (bc.phase === 'reassess') {
                     systemPrompt += reassessPromptSection(bc);

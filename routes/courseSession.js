@@ -23,6 +23,7 @@ const { advanceRung } = require('../utils/skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
 const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
 const { buildProgressUpdate } = require('../utils/progressState');
+const { clientSafeBootcamp } = require('../utils/actReview');
 
 // The diagnostic-card definitions and the "is a baseline pending" logic moved to
 // utils/courseDiagnostic.js so the SERVER greeting path can share the exact same
@@ -545,7 +546,10 @@ router.get('/:id/lesson-progress', async (req, res) => {
     // Surface the ACT bootcamp state so the tracker can render the loop view
     // (test → review misses → re-test → compare) instead of the scaffold stepper.
     progressUpdate.courseId = session.courseId;
-    progressUpdate.bootcamp = session.bootcamp || null;
+    // Sanitized: the card shows the missed question and the student's own pick,
+    // but the key, the worked solution, and the transfer practice stay server-
+    // side — the review flow has them re-try before anything is revealed.
+    progressUpdate.bootcamp = clientSafeBootcamp(session.bootcamp || null);
     progressUpdate.diagnosticPlan = session.diagnosticPlan || null;
 
     res.json({ success: true, progressUpdate });
@@ -589,7 +593,7 @@ router.post('/:id/bootcamp/jump', async (req, res) => {
     session.bootcamp = bc;
     session.markModified('bootcamp');
     await session.save();
-    res.json({ success: true, bootcamp: bc });
+    res.json({ success: true, bootcamp: clientSafeBootcamp(bc) });
   } catch (err) {
     console.error('[CourseSession] Error jumping review queue:', err);
     res.status(500).json({ success: false, message: 'Failed to jump review queue' });
