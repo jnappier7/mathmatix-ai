@@ -12,10 +12,10 @@ const { CATEGORY_LABEL } = require('./actBootcampPlan');
 const { normalizeOptions, resolveChoice, correctLabelOf, actDisplayLabel } = require('./mcOptions');
 
 // Higher category exam-weight => higher-leverage miss => reviewed first.
-const DEFAULT_CATEGORY_WEIGHTS = {
-  'integrating-essential-skills': 9, algebra: 8, functions: 8,
-  geometry: 8, 'statistics-probability': 7, 'number-quantity': 5,
-};
+// Read from the blueprint rather than copied: this was a hardcoded duplicate of
+// categoryWeights, so the moment the blueprint moved (IES 9 -> 19) the review
+// queue would have gone on ranking misses by the retired exam shape, silently.
+const DEFAULT_CATEGORY_WEIGHTS = require('../seeds/act-math-blueprint.json').categoryWeights;
 
 function optionText(options, label) {
   // Was `find(x => x.label === label)`, which returned null on every bank that
