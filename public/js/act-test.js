@@ -10,7 +10,8 @@
  * questions for review; nothing is graded until the test is submitted or time
  * expires. Answers save on click, so navigation never loses work.
  *
- * Open with window.openActTest(). Timed (60 min), 60 items, results screen
+ * Open with window.openActTest(). Timed (50 min), 45 items (the enhanced-ACT
+ * math blueprint — seeds/act-math-blueprint.json is authoritative), results screen
  * shows the scaled 1–36 estimate + a per-category breakdown (the diagnostic
  * that seeds the boot-camp plan).
  */
@@ -227,7 +228,7 @@
         }
         if (!data || !data.sessionId) throw new Error((data && data.message) || 'Could not start.');
         this.sessionId = data.sessionId;
-        this.total = data.totalItems || 60;
+        this.total = data.totalItems || 45;
         this.state = new Map();
 
         // On a resume, rebuild the palette state and land on the first
@@ -247,7 +248,7 @@
         // the hour. (Fallback covers an old server during a deploy window.)
         const remainSecs = (data.remainingSeconds != null)
           ? data.remainingSeconds
-          : (data.timeLimitMinutes || 60) * 60;
+          : (data.timeLimitMinutes || 50) * 60;
         this._buildPalette();
         if (data.resumed && remainSecs <= 0) return this.complete();
         this.deadline = Date.now() + remainSecs * 1000;

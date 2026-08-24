@@ -15,9 +15,9 @@
 
   "examAlignment": {
     "exam": "ACT Mathematics",
-    "totalQuestions": 60,
-    "totalTime": "60 minutes",
-    "format": "Multiple choice (5 options per question)",
+    "totalQuestions": 45,
+    "totalTime": "50 minutes",
+    "format": "Multiple choice (4 options per question)",
     "calculator": "Permitted for entire section (no CAS or built-in algebra)",
     "scoringRange": "1-36 (scaled)",
     "reportingCategories": {

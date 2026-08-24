@@ -3712,14 +3712,36 @@ class CourseManager {
             item.className = 'course-sidebar-item' + (isActive ? ' active' : '') + (s.status === 'paused' ? ' paused' : '');
             item.dataset.sessionId = s._id;
 
-            const pct = s.overallProgress || 0;
+            let pct = s.overallProgress || 0;
             const moduleDone = (s.modules || []).filter(m => m.status === 'completed').length;
             const moduleTotal = (s.modules || []).length;
+            let statsLabel = `${moduleDone}/${moduleTotal} modules &middot; ${pct}%`;
 
             // Build breadcrumb from module/lesson data
             const currentMod = (s.modules || []).find(m => m.moduleId === s.currentModuleId);
             let modLabel = '';
-            if (s.status === 'paused') {
+            if (s.courseId === 'act-prep' && s.status !== 'paused') {
+                // ACT prep is the test → review → re-test loop, not chapters:
+                // "0/11 modules" described a scaffold the bootcamp never shows.
+                const bc = s.bootcamp || {};
+                const qTotal = Array.isArray(bc.queue) ? bc.queue.length : 0;
+                const qDone = Array.isArray(bc.queue)
+                    ? bc.queue.filter(q => q && q.status === 'reviewed').length
+                    : 0;
+                if (bc.phase === 'review') {
+                    modLabel = `Round ${bc.round || 1} › Reviewing your misses`;
+                    pct = qTotal ? Math.round((100 * qDone) / qTotal) : 0;
+                    statsLabel = `${qDone}/${qTotal} misses reviewed`;
+                } else if (bc.phase === 'reassess') {
+                    modLabel = `Round ${bc.round || 1} › Ready to re-test`;
+                    pct = 100;
+                    statsLabel = 'Misses reviewed &middot; take a fresh test';
+                } else {
+                    modLabel = 'Start with your baseline test';
+                    pct = 0;
+                    statsLabel = 'Test &rarr; review &rarr; re-test';
+                }
+            } else if (s.status === 'paused') {
                 modLabel = 'Paused';
             } else if (currentMod) {
                 const parts = [];
@@ -3744,7 +3766,7 @@ class CourseManager {
                         <div class="course-sidebar-progress-track">
                             <div class="course-sidebar-progress-fill" style="width: ${pct}%"></div>
                         </div>
-                        <div class="course-sidebar-stats">${moduleDone}/${moduleTotal} modules &middot; ${pct}%</div>
+                        <div class="course-sidebar-stats">${statsLabel}</div>
                     </div>
                     <button class="course-drop-x" title="Drop course" aria-label="Drop course">
                         <i class="fas fa-times"></i>
@@ -3818,6 +3840,33 @@ class CourseManager {
         const pct = document.getElementById('course-progress-pct');
 
         if (title) title.textContent = session.courseName || '';
+
+        // ACT prep header reflects the bootcamp loop, not the chapter scaffold —
+        // "Unit 1 › Number & Quantity · 0%" described a curriculum the loop
+        // never presents.
+        if (session.courseId === 'act-prep') {
+            const bc = session.bootcamp || {};
+            const qTotal = Array.isArray(bc.queue) ? bc.queue.length : 0;
+            const qDone = Array.isArray(bc.queue)
+                ? bc.queue.filter(q => q && q.status === 'reviewed').length
+                : 0;
+            let label, p;
+            if (bc.phase === 'review') {
+                label = `Round ${bc.round || 1} › Reviewing your misses`;
+                p = qTotal ? Math.round((100 * qDone) / qTotal) : 0;
+            } else if (bc.phase === 'reassess') {
+                label = `Round ${bc.round || 1} › Ready to re-test`;
+                p = 100;
+            } else {
+                label = 'Baseline test';
+                p = 0;
+            }
+            if (mod) mod.textContent = label;
+            if (fill) fill.style.width = `${p}%`;
+            if (pct) pct.textContent = bc.phase ? `${p}%` : '';
+            return;
+        }
+
         if (fill) fill.style.width = `${session.overallProgress || 0}%`;
         if (pct) pct.textContent = `${session.overallProgress || 0}%`;
 
@@ -5296,17 +5345,22 @@ class LessonTracker {
         const isReview = bc.phase === 'review' && total > 0;
         const cur = isReview && Array.isArray(bc.queue) ? bc.queue[bc.index] : null;
 
-        const step = (icon, name, state) => {
+        const step = (icon, name, state, id) => {
             const style = state === 'active'
                 ? 'background:rgba(255,255,255,.22);color:#fff;font-weight:600'
                 : state === 'done' ? 'color:rgba(255,255,255,.85)' : 'color:rgba(255,255,255,.5)';
-            return `<div style="flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:12px;${style}"><i class="fas ${icon}"></i> ${name}</div>`;
+            return `<div ${id ? `id="${id}" ` : ''}style="flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:12px;${style}"><i class="fas ${icon}"></i> ${name}</div>`;
         };
+        // Compare is done once there are two scored tests to compare — the
+        // comparison screen auto-shows on every 2nd+ completion. The attempt
+        // count arrives async from /history (_loadBootcampScore), which also
+        // patches the step live on first load; _bcAttempts covers re-renders.
+        const compareDone = (this._bcAttempts || 0) >= 2;
         const loop = `<div style="display:flex;gap:6px;margin:10px 0 14px">
             ${step('fa-flag-checkered', 'Baseline', hasBaseline ? 'done' : 'active')}
             ${step('fa-bullseye', 'Review', isReview ? 'active' : (hasBaseline ? 'done' : 'todo'))}
             ${step('fa-clipboard-list', 'Re-test', bc.phase === 'reassess' ? 'active' : 'todo')}
-            ${step('fa-chart-line', 'Compare', 'todo')}
+            ${step('fa-chart-line', 'Compare', compareDone ? 'done' : 'todo', 'lt-bc-step-compare')}
           </div>`;
 
         const phaseCard = !hasBaseline ? `
@@ -5511,11 +5565,25 @@ class LessonTracker {
             const fetcher = window.csrfFetch || window.fetch;
             const r = await fetcher('/api/act-test/history').then((x) => x.json()).catch(() => null);
             const a = ((r && r.attempts) || []).filter((x) => x.scaledScore != null);
+            this._bcAttempts = a.length;
+            // Two scored tests = the student has a comparison — light the
+            // Compare step (it renders before this fetch resolves).
+            if (a.length >= 2) {
+                const cmp = document.getElementById('lt-bc-step-compare');
+                if (cmp) cmp.style.color = 'rgba(255,255,255,.85)';
+            }
             const el = document.getElementById('lt-bc-score');
             if (!el || !a.length) return;
             if (a.length === 1) { el.textContent = `Score ${a[0].scaledScore}`; return; }
             const first = a[0].scaledScore, latest = a[a.length - 1].scaledScore, d = latest - first;
-            el.innerHTML = `${first} &rarr; ${latest}${d > 0 ? ` <span style="background:rgba(255,255,255,.25);padding:1px 7px;border-radius:20px;font-size:11px">&#9650; +${d}</span>` : ''}`;
+            // A drop gets a badge too — bare "33 → 28" read like a rendering
+            // glitch, and hiding regressions from the student isn't honest.
+            const badge = d > 0
+                ? ` <span style="background:rgba(255,255,255,.25);padding:1px 7px;border-radius:20px;font-size:11px">&#9650; +${d}</span>`
+                : d < 0
+                    ? ` <span style="background:rgba(0,0,0,.22);padding:1px 7px;border-radius:20px;font-size:11px">&#9660; ${d}</span>`
+                    : '';
+            el.innerHTML = `${first} &rarr; ${latest}${badge}`;
         } catch (e) { /* non-fatal */ }
     }
 

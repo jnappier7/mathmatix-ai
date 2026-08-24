@@ -3856,7 +3856,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Server withheld course teaching because a REQUIRED baseline (e.g. the
             // ACT practice test) isn't done — surface the baseline card under the
             // tutor's message so the student can start it. We do NOT auto-open the
-            // runner: its 45-min timer starts the instant it opens, so the student
+            // runner: its 50-min timer starts the instant it opens, so the student
             // taps the card's CTA when ready. The card's CTA calls openActTest.
             if (data.baselineRequired && data.diagnostic &&
                 window.courseManager && typeof window.courseManager.showDiagnosticCard === 'function') {

@@ -1861,7 +1861,14 @@ async function runStudentTurn(req, res) {
             try {
                 const CourseSessionModel = require('../models/courseSession');
                 const csDoc = await CourseSessionModel.findById(user.activeCourseSessionId);
-                if (csDoc && csDoc.status === 'active') {
+                // ACT prep is the test→review→re-test loop, NOT the scaffold:
+                // its scaffold steps are never shown (the step anchor is nulled
+                // above, the greeting is branched, the tracker renders the loop
+                // view). Running the evidence-gated scaffold evaluator on
+                // bootcamp turns advanced the module bar through content the
+                // student never saw — and flipping the module to in_progress
+                // permanently disarmed planStartModule's round-2+ retargeting.
+                if (csDoc && csDoc.status === 'active' && csDoc.courseId !== 'act-prep') {
                     const courseCtx = loadCourseContext(csDoc);
                     if (courseCtx) {
                         const { advanceCourseProgress } = require('../utils/pipeline/courseAdapter');

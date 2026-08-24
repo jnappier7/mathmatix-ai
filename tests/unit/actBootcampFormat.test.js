@@ -163,3 +163,68 @@ describe('exam-weighted progress (score contribution, not module count)', () => 
     ])).toBe(50);
   });
 });
+
+describe('the UI tells the truth about the loop (owner report, 2026-08-23)', () => {
+  // The purple card showed "Round 1" beside a two-attempt score trend, the
+  // Compare step never lit, and the course chrome ("Unit 1 › Number &
+  // Quantity · 0/11 modules") described a chapter curriculum the bootcamp
+  // never presents.
+
+  test('round is counted from completed tests, not bootcamp increments', () => {
+    // A test taken before enrolling lands in /history but never touched
+    // cs.bootcamp — round must come from ActTestSession.countDocuments.
+    const src = read('routes/actTest.js');
+    expect(src).toMatch(/ActTestSession\.countDocuments\(\{ userId: req\.user\._id, status: 'completed' \}\)/);
+    expect(src).not.toMatch(/round: prevRound \+ 1/);
+  });
+
+  test('the Compare step can light up (two scored attempts = done)', () => {
+    const src = read('public/js/lessonTracker.js');
+    expect(src).toMatch(/lt-bc-step-compare/);
+    expect(src).toMatch(/_bcAttempts/);
+    // The old hardcoded permanently-grey step must be gone.
+    expect(src).not.toMatch(/step\('fa-chart-line', 'Compare', 'todo'\)/);
+  });
+
+  test('a score regression still gets a badge (no bare "33 → 28")', () => {
+    const src = read('public/js/lessonTracker.js');
+    expect(src).toMatch(/d < 0/);
+    expect(src).toMatch(/&#9660;/);   // the ▼ badge
+  });
+
+  test('bootcamp turns do not advance the scaffold progress bar', () => {
+    // The scaffold evaluator ran on every act-prep turn and moved the module
+    // bar through steps the student never saw — and flipping the module to
+    // in_progress disarmed planStartModule's round-2+ retargeting.
+    const src = read('routes/chat.js');
+    expect(src).toMatch(/csDoc\.status === 'active' && csDoc\.courseId !== 'act-prep'/);
+  });
+
+  test('sidebar + header chrome switch to loop language for act-prep', () => {
+    const src = read('public/js/courseCatalog.js');
+    // Both surfaces (sidebar card and top-of-chat header) branch on act-prep.
+    expect(src.match(/courseId === 'act-prep'/g).length).toBeGreaterThanOrEqual(2);
+    expect(src).toMatch(/Reviewing your misses/);
+    expect(src).toMatch(/Ready to re-test/);
+  });
+});
+
+describe('the course describes the test it actually administers', () => {
+  // examAlignment is the course's self-description; the blueprint is what the
+  // runner administers. They drifted (legacy 60q/60min/5-choice vs. the
+  // enhanced-ACT 45q/50min/4-choice) — pin them together.
+  const blueprint = JSON.parse(read('seeds/act-math-blueprint.json'));
+  const pathway = JSON.parse(read('public/resources/act-prep-pathway.json'));
+
+  test('question count, time, and choice count match the blueprint', () => {
+    expect(pathway.examAlignment.totalQuestions).toBe(blueprint.totalItems);
+    expect(pathway.examAlignment.totalTime).toBe(`${blueprint.timeLimitMinutes} minutes`);
+    expect(pathway.examAlignment.format).toContain(`${blueprint.choicesPerItem} options`);
+  });
+
+  test('the runner fallbacks agree with the blueprint', () => {
+    const src = read('public/js/act-test.js');
+    expect(src).toContain(`data.totalItems || ${blueprint.totalItems}`);
+    expect(src).toContain(`data.timeLimitMinutes || ${blueprint.timeLimitMinutes}`);
+  });
+});
