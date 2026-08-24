@@ -1,0 +1,762 @@
+{
+ "source": "act",
+ "_comment": "PROPOSED ACT -> unified taxonomy mapping. INERT BY DESIGN: skillCanonicalizer globs seeds/unified-taxonomy/*-crosswalk.json, and this filename deliberately does NOT match, so nothing here can reach mastery keying until a human renames it. See docs/ACT_UNIFIED_CROSSWALK_PROPOSAL.md for what activating it would change and the checks it requires first.",
+ "legacySkillCount": 44,
+ "mappedCount": 42,
+ "unmappedCount": 2,
+ "distinctUnifiedTargets": 42,
+ "confidenceCounts": {
+  "high": 26,
+  "medium": 16
+ },
+ "unmapped": [
+  {
+   "legacyId": "act-time-schedule-arithmetic",
+   "legacyName": "Time & schedule arithmetic",
+   "reason": "No unified node covers elapsed-time/schedule arithmetic. Deliberately left unmapped — inventing a home (e.g. rational-number operations) would credit a skill the student did not demonstrate."
+  },
+  {
+   "legacyId": "act-word-problems-modeling",
+   "legacyName": "Word problems & modeling",
+   "reason": "Too broad to canonicalize: it spans every strand. Any single target would be wrong for most of its items."
+  }
+ ],
+ "rows": [
+  {
+   "legacyId": "act-absolute-value-equations-inequalities",
+   "legacyName": "Absolute value equations/inequalities",
+   "unifiedId": "ALG1.EQV.5",
+   "unifiedName": "Absolute value equations",
+   "actCategory": "algebra",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG2.EQV.1",
+     "name": "Absolute value inequalities"
+    }
+   ],
+   "note": "Equations at ALG1, inequalities at ALG2 — one ACT skill spans both nodes.",
+   "approved": true
+  },
+  {
+   "legacyId": "act-angles-parallel-lines",
+   "legacyName": "Angles & parallel lines",
+   "unifiedId": "GEO.SPC.3",
+   "unifiedName": "Parallel lines angles",
+   "actCategory": "geometry",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "GEO.SPC.2",
+     "name": "Angle pair relationships"
+    },
+    {
+     "id": "MS.SPC.5",
+     "name": "Angle relationships"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-area-perimeter",
+   "legacyName": "Area & perimeter",
+   "unifiedId": "GEO.SPC.17",
+   "unifiedName": "Areas of polygons",
+   "actCategory": "geometry",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "MS.SPC.1",
+     "name": "Area of polygons"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-basic-geometry-measures",
+   "legacyName": "Basic geometry measures",
+   "unifiedId": "MS.SPC.1",
+   "unifiedName": "Area of polygons",
+   "actCategory": "integrating-essential-skills",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "MS.SPC.3",
+     "name": "Prism volume"
+    },
+    {
+     "id": "MS.SPC.9",
+     "name": "Cylinders cones spheres"
+    }
+   ],
+   "note": "Spans area/perimeter/volume in context; area of polygons is the largest share.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-center-spread",
+   "legacyName": "Center & spread",
+   "unifiedId": "MS.DTA.3",
+   "unifiedName": "Center and variability",
+   "actCategory": "statistics-probability",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG1.DTA.1",
+     "name": "Describe data distributions"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-circles",
+   "legacyName": "Circles",
+   "unifiedId": "MS.SPC.6",
+   "unifiedName": "Circles",
+   "actCategory": "geometry",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "GEO.SPC.15",
+     "name": "Arc length sectors"
+    },
+    {
+     "id": "GEO.SPC.13",
+     "name": "Arcs and chords"
+    },
+    {
+     "id": "GEO.SPC.16",
+     "name": "Circle equations"
+    }
+   ],
+   "note": "ACT circle items are mostly area/circumference/arc, which the MS node covers; the GEO nodes are more specialised than the items warrant.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-complex-numbers",
+   "legacyName": "Complex numbers",
+   "unifiedId": "ALG2.QNT.5",
+   "unifiedName": "Complex arithmetic",
+   "actCategory": "number-quantity",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG2.QNT.4",
+     "name": "Imaginary unit i"
+    },
+    {
+     "id": "PREC.QNT.1",
+     "name": "Complex number operations"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-conditional-probability",
+   "legacyName": "Conditional probability",
+   "unifiedId": "GEO.DTA.3",
+   "unifiedName": "Conditional probability",
+   "actCategory": "statistics-probability",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "MS.DTA.6",
+     "name": "Compound probability"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-coordinate-geometry",
+   "legacyName": "Coordinate geometry",
+   "unifiedId": "ALG1.SPC.1",
+   "unifiedName": "Distance and midpoint",
+   "actCategory": "geometry",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "GEO.EQV.9",
+     "name": "Coordinate proofs"
+    },
+    {
+     "id": "MS.SPC.4",
+     "name": "Four-quadrant coordinate plane"
+    }
+   ],
+   "note": "Distance/midpoint is the ACT staple.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-counting-arrangements",
+   "legacyName": "Counting & arrangements",
+   "unifiedId": "ALG2.DTA.4",
+   "unifiedName": "Permutations combinations",
+   "actCategory": "statistics-probability",
+   "confidence": "high",
+   "alternatives": [],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-expected-value",
+   "legacyName": "Expected value",
+   "unifiedId": "ALG2.DTA.8",
+   "unifiedName": "Expected payoff",
+   "actCategory": "statistics-probability",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG2.DTA.6",
+     "name": "Random variables"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-exponent-rules",
+   "legacyName": "Exponent rules",
+   "unifiedId": "ALG1.QNT.2",
+   "unifiedName": "Exponent properties",
+   "actCategory": "number-quantity",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "MS.QNT.9",
+     "name": "Integer exponent properties"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-exponential-models",
+   "legacyName": "Exponential models",
+   "unifiedId": "ALG1.FNC.8",
+   "unifiedName": "Exponential growth decay",
+   "actCategory": "functions",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG2.FNC.12",
+     "name": "Exponential log modeling"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-function-composition",
+   "legacyName": "Function composition",
+   "unifiedId": "ALG2.FNC.2",
+   "unifiedName": "Function composition",
+   "actCategory": "functions",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "PREC.FNC.3",
+     "name": "Function composition"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-function-evaluation-notation",
+   "legacyName": "Function evaluation & notation",
+   "unifiedId": "ALG1.FNC.1",
+   "unifiedName": "Function notation",
+   "actCategory": "functions",
+   "confidence": "high",
+   "alternatives": [],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-graph-transformations",
+   "legacyName": "Graph transformations",
+   "unifiedId": "ALG1.FNC.11",
+   "unifiedName": "Function transformations",
+   "actCategory": "functions",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG2.FNC.4",
+     "name": "Function transformations"
+    },
+    {
+     "id": "PREC.FNC.2",
+     "name": "Function transformations"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-law-of-sines-cosines",
+   "legacyName": "Law of sines/cosines",
+   "unifiedId": "PREC.PRP.3",
+   "unifiedName": "Law of Sines",
+   "actCategory": "geometry",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "PREC.PRP.4",
+     "name": "Law of Cosines"
+    }
+   ],
+   "note": "One ACT skill spanning both laws.",
+   "approved": true
+  },
+  {
+   "legacyId": "act-linear-equations",
+   "legacyName": "Linear equations",
+   "unifiedId": "ALG1.EQV.1",
+   "unifiedName": "Multi-step linear equations",
+   "actCategory": "algebra",
+   "confidence": "high",
+   "alternatives": [],
+   "note": "PINNED by skillCanonicalizerScope.test.js — see proposal notes.",
+   "approved": true
+  },
+  {
+   "legacyId": "act-linear-functions-models",
+   "legacyName": "Linear functions & models",
+   "unifiedId": "ALG1.FNC.4",
+   "unifiedName": "Write linear equations",
+   "actCategory": "functions",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "ALG1.FNC.3",
+     "name": "Graph linear functions"
+    },
+    {
+     "id": "ALG1.PRP.2",
+     "name": "Slope as rate"
+    }
+   ],
+   "note": "Writing the equation from a context is the ACT emphasis; graphing is the alternative.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-linear-inequalities",
+   "legacyName": "Linear inequalities",
+   "unifiedId": "ALG1.EQV.3",
+   "unifiedName": "One-variable inequalities",
+   "actCategory": "algebra",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG1.EQV.4",
+     "name": "Compound inequalities"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-logarithms",
+   "legacyName": "Logarithms",
+   "unifiedId": "ALG2.EQV.17",
+   "unifiedName": "Logarithm properties",
+   "actCategory": "functions",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG2.FNC.11",
+     "name": "Logarithmic functions"
+    },
+    {
+     "id": "ALG2.EQV.18",
+     "name": "Logarithmic equations"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-matrices-vectors",
+   "legacyName": "Matrices & vectors",
+   "unifiedId": "PREC.EQV.9",
+   "unifiedName": "Matrix operations",
+   "actCategory": "number-quantity",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "PREC.SPC.3",
+     "name": "Vector components"
+    }
+   ],
+   "note": "Matrices and vectors are separate unified nodes; ACT matrix items outnumber vector items.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-multi-step-arithmetic",
+   "legacyName": "Multi-step arithmetic",
+   "unifiedId": "MS.QNT.8",
+   "unifiedName": "Rational number operations",
+   "actCategory": "integrating-essential-skills",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "MS.EQV.10",
+     "name": "Order of operations with exponents"
+    }
+   ],
+   "note": "Rational-number operations is the nearest home; order-of-operations is the alternative when the item is precedence-driven.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-percentages",
+   "legacyName": "Percentages",
+   "unifiedId": "MS.PRP.7",
+   "unifiedName": "Multi-step percent problems",
+   "actCategory": "integrating-essential-skills",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "MS.PRP.4",
+     "name": "Percent of a quantity"
+    }
+   ],
+   "note": "ACT percent items are multi-step (successive/reverse percent), not single percent-of.",
+   "approved": true
+  },
+  {
+   "legacyId": "act-polynomial-expressions",
+   "legacyName": "Polynomial expressions",
+   "unifiedId": "ALG1.EQV.9",
+   "unifiedName": "Add subtract polynomials",
+   "actCategory": "algebra",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "ALG1.EQV.10",
+     "name": "Multiply polynomials"
+    },
+    {
+     "id": "ALG2.EQV.7",
+     "name": "Polynomial operations"
+    }
+   ],
+   "note": "Add/subtract is the ALG1 entry point; multiplication and higher-degree work sit on the alternatives.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-probability",
+   "legacyName": "Probability",
+   "unifiedId": "MS.DTA.5",
+   "unifiedName": "Probability of events",
+   "actCategory": "statistics-probability",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "GEO.DTA.1",
+     "name": "Probability foundations"
+    }
+   ],
+   "note": "PINNED by skillCanonicalizerScope.test.js — see proposal notes.",
+   "approved": true
+  },
+  {
+   "legacyId": "act-quadratic-equations",
+   "legacyName": "Quadratic equations",
+   "unifiedId": "ALG1.EQV.15",
+   "unifiedName": "Solve by factoring",
+   "actCategory": "algebra",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "ALG1.EQV.17",
+     "name": "Quadratic formula"
+    }
+   ],
+   "note": "ACT quadratics are predominantly factorable; the quadratic formula is the alternative.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-quadratic-functions-parabolas",
+   "legacyName": "Quadratic functions & parabolas",
+   "unifiedId": "ALG1.FNC.10",
+   "unifiedName": "Graph quadratic functions",
+   "actCategory": "functions",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG2.SPC.1",
+     "name": "Parabola focus directrix"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-radical-rational-equations",
+   "legacyName": "Radical & rational equations",
+   "unifiedId": "ALG2.EQV.12",
+   "unifiedName": "Radical equations",
+   "actCategory": "algebra",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "ALG2.EQV.15",
+     "name": "Rational equations"
+    }
+   ],
+   "note": "One ACT skill covering two distinct ALG2 nodes (radical vs rational equations).",
+   "approved": false
+  },
+  {
+   "legacyId": "act-radicals-roots",
+   "legacyName": "Radicals & roots",
+   "unifiedId": "ALG1.QNT.3",
+   "unifiedName": "Simplify square roots",
+   "actCategory": "number-quantity",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG1.QNT.4",
+     "name": "Operations with radicals"
+    },
+    {
+     "id": "ALG2.QNT.1",
+     "name": "Nth roots radicals"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-rates-unit-conversion",
+   "legacyName": "Rates & unit conversion",
+   "unifiedId": "MS.PRP.3",
+   "unifiedName": "Unit rates",
+   "actCategory": "integrating-essential-skills",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG1.PRP.1",
+     "name": "Dimensional analysis"
+    },
+    {
+     "id": "GEO.QNT.2",
+     "name": "Measurement conversions"
+    }
+   ],
+   "note": "Unit rates is the core; dimensional analysis and measurement conversion are the adjacent nodes.",
+   "approved": true
+  },
+  {
+   "legacyId": "act-ratios-proportions",
+   "legacyName": "Ratios & proportions",
+   "unifiedId": "MS.PRP.1",
+   "unifiedName": "Ratio concepts",
+   "actCategory": "integrating-essential-skills",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "MS.PRP.6",
+     "name": "Solve proportions"
+    },
+    {
+     "id": "MS.PRP.5",
+     "name": "Proportional relationships"
+    }
+   ],
+   "note": "Bank items are mostly part:part / part:whole reasoning (ratio concepts) rather than solving a proportion equation.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-right-triangle-trigonometry",
+   "legacyName": "Right-triangle trigonometry",
+   "unifiedId": "GEO.PRP.5",
+   "unifiedName": "Right triangle trig",
+   "actCategory": "geometry",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "GEO.PRP.6",
+     "name": "Inverse trig angles"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-scientific-notation",
+   "legacyName": "Scientific notation",
+   "unifiedId": "MS.QNT.10",
+   "unifiedName": "Scientific notation",
+   "actCategory": "number-quantity",
+   "confidence": "high",
+   "alternatives": [],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-sequences",
+   "legacyName": "Sequences",
+   "unifiedId": "ALG1.FNC.6",
+   "unifiedName": "Arithmetic sequences",
+   "actCategory": "functions",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "ALG1.FNC.7",
+     "name": "Geometric sequences"
+    },
+    {
+     "id": "PREC.FNC.10",
+     "name": "Sequences as functions"
+    }
+   ],
+   "note": "Arithmetic sequences dominate ACT items; geometric is the alternative.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-similar-congruent-figures",
+   "legacyName": "Similar & congruent figures",
+   "unifiedId": "GEO.PRP.2",
+   "unifiedName": "Similar polygons",
+   "actCategory": "geometry",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "GEO.PRP.3",
+     "name": "Triangle similarity criteria"
+    },
+    {
+     "id": "GEO.EQV.6",
+     "name": "Triangle congruence criteria"
+    }
+   ],
+   "note": "Similarity and congruence are separate unified nodes; similar polygons carries more ACT items.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-systems-of-equations",
+   "legacyName": "Systems of equations",
+   "unifiedId": "ALG1.EQV.7",
+   "unifiedName": "Systems by substitution",
+   "actCategory": "algebra",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "ALG1.EQV.6",
+     "name": "Systems by graphing"
+    },
+    {
+     "id": "ALG1.EQV.8",
+     "name": "Systems by elimination"
+    },
+    {
+     "id": "MS.EQV.9",
+     "name": "Systems of equations"
+    }
+   ],
+   "note": "Substitution is the most common ACT route; graphing/elimination are the alternatives.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-triangles-angle-relationships",
+   "legacyName": "Triangles & angle relationships",
+   "unifiedId": "GEO.SPC.4",
+   "unifiedName": "Triangle angle theorems",
+   "actCategory": "geometry",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "GEO.SPC.5",
+     "name": "Triangle inequalities"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-triangles-pythagorean-theorem",
+   "legacyName": "Triangles & Pythagorean theorem",
+   "unifiedId": "GEO.SPC.11",
+   "unifiedName": "Pythagorean applications",
+   "actCategory": "geometry",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "MS.SPC.8",
+     "name": "Pythagorean theorem"
+    },
+    {
+     "id": "GEO.SPC.12",
+     "name": "Special right triangles"
+    }
+   ],
+   "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-trigonometric-functions",
+   "legacyName": "Trigonometric functions",
+   "unifiedId": "ALG2.FNC.15",
+   "unifiedName": "Graph sine cosine",
+   "actCategory": "functions",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "ALG2.FNC.14",
+     "name": "Unit circle radians"
+    },
+    {
+     "id": "PREC.FNC.11",
+     "name": "Sinusoidal graphs"
+    }
+   ],
+   "note": "Graph/period questions rather than right-triangle ratios (that is act-right-triangle-trigonometry).",
+   "approved": false
+  },
+  {
+   "legacyId": "act-variation-direct-inverse",
+   "legacyName": "Variation (direct & inverse)",
+   "unifiedId": "ALG1.PRP.3",
+   "unifiedName": "Direct variation",
+   "actCategory": "algebra",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "ALG2.PRP.1",
+     "name": "Inverse joint variation"
+    }
+   ],
+   "note": "Direct variation at ALG1, inverse/joint at ALG2 — one ACT skill spans both.",
+   "approved": false
+  },
+  {
+   "legacyId": "act-volume-surface-area",
+   "legacyName": "Volume & surface area",
+   "unifiedId": "GEO.SPC.18",
+   "unifiedName": "Prisms and cylinders",
+   "actCategory": "geometry",
+   "confidence": "medium",
+   "alternatives": [
+    {
+     "id": "GEO.SPC.19",
+     "name": "Pyramids cones spheres"
+    },
+    {
+     "id": "MS.SPC.9",
+     "name": "Cylinders cones spheres"
+    },
+    {
+     "id": "MS.SPC.2",
+     "name": "Nets and surface area"
+    }
+   ],
+   "note": "Prisms/cylinders carry the most ACT items; pyramids/cones/spheres is the alternative.",
+   "approved": false
+  }
+ ]
+}
