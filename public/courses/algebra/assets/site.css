@@ -175,6 +175,8 @@ html.embed .pagers{margin-top:16px}
 /* course-level reference (syllabus etc.) — applies to the whole year */
 .resources{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
   padding:18px 20px;margin-bottom:30px;box-shadow:var(--shadow)}
+.chapter-sup{margin-top:18px}
+.resources .sup-note{margin:-4px 0 10px;font-size:12.5px;color:var(--muted)}
 .resources h4{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;
   color:var(--muted)}
 
