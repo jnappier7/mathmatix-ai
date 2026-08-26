@@ -7,6 +7,7 @@ const logger = require('../utils/logger').child({ middleware: 'auth' });
 const rateLimit = require('express-rate-limit');
 const { cleanupDemoClone } = require('../utils/demoClone');
 const { fail } = require('../utils/apiResponse');
+const { rolesOf } = require('../utils/roleQuery');
 
 /**
  * Checks if a user is logged in and their session data is valid.
@@ -41,7 +42,7 @@ function ensureNotAuthenticated(req, res, next) {
         }
 
         let redirectUrl = '/chat.html'; // Default for students
-        const userRoles = (req.user.roles && req.user.roles.length > 0) ? req.user.roles : [req.user.role];
+        const userRoles = rolesOf(req.user);
 
         // Voice-first onboarding intent capture comes BEFORE profile completion
         // for brand-new users. Existing users with completed profiles skip it
@@ -53,6 +54,11 @@ function ensureNotAuthenticated(req, res, next) {
             redirectUrl = '/complete-profile.html';
         } else if (userRoles.length > 1) {
             redirectUrl = '/role-picker.html';
+        // `req.user.role` — the ACTIVE role — is deliberate for the rest of this
+        // chain: this is acting-user dashboard routing, the one job CLAUDE.md §12
+        // keeps `role` for. Multi-role accounts never reach it (role-picker
+        // above), so there is no held-role reading to prefer. Authorization for
+        // this file lives in hasRole() below, which reads roles[].
         } else if (req.user.role === 'teacher') {
             redirectUrl = '/teacher-dashboard.html';
         } else if (req.user.role === 'admin') {

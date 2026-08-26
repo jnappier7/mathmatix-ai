@@ -4,6 +4,7 @@
 const User = require('../models/user');
 const ImpersonationLog = require('../models/impersonationLog');
 const logger = require('../utils/logger');
+const { userHasRole } = require('../utils/roleQuery');
 
 // Auto-timeout for impersonation sessions (20 minutes)
 const IMPERSONATION_TIMEOUT_MS = 20 * 60 * 1000;
@@ -231,49 +232,78 @@ async function endImpersonation(req, reason = 'manual') {
  * @returns {Object} { allowed: boolean, reason: string }
  */
 async function canImpersonate(actor, target) {
+  // Every role test below reads the roles a user HOLDS (utils/roleQuery), never
+  // `actor.role` / `target.role` — the dashboard that account currently has
+  // open (CLAUDE.md §12). Two distinct failures came out of the active role:
+  //
+  //  • ESCALATION. `target.role === 'admin'` is the guard that keeps admin
+  //    accounts off-limits. An admin who also holds teacher and had switched to
+  //    the teacher dashboard read as role='teacher', so the guard did not fire
+  //    and another admin could impersonate them — landing inside an admin
+  //    account through a session the audit log labels a teacher view. This is
+  //    the same shape as the `role: { $ne: 'admin' }` leak §12 already records.
+  //  • LOCKOUT. `target.role !== 'student'` refused a student who had flipped
+  //    to a parent view, and the actor branches were an if/else-if chain, so a
+  //    teacher who also holds parent got the teacher branch only and could
+  //    never view their own child.
+  //
+  // The actor's capabilities are therefore unioned rather than dispatched: an
+  // account that holds both teacher and parent gets both reaches, and the
+  // narrowest denial reason is reported when none of them match.
+
   // Can't impersonate yourself
   if (actor._id.toString() === target._id.toString()) {
     return { allowed: false, reason: 'You cannot impersonate yourself.' };
   }
 
   // Can't impersonate admins
-  if (target.role === 'admin') {
+  if (userHasRole(target, 'admin')) {
     return { allowed: false, reason: 'Admin accounts cannot be impersonated.' };
   }
 
   // Admin can impersonate anyone (except other admins)
-  if (actor.role === 'admin') {
+  if (userHasRole(actor, 'admin')) {
     return { allowed: true };
   }
 
-  // Teacher can only impersonate their assigned students
-  if (actor.role === 'teacher') {
-    if (target.role !== 'student') {
-      return { allowed: false, reason: 'Teachers can only view student accounts.' };
-    }
+  const actorIsTeacher = userHasRole(actor, 'teacher');
+  const actorIsParent = userHasRole(actor, 'parent');
 
-    if (!target.teacherId || target.teacherId.toString() !== actor._id.toString()) {
-      return { allowed: false, reason: 'You can only view students assigned to you.' };
-    }
+  if (!actorIsTeacher && !actorIsParent) {
+    return { allowed: false, reason: 'You do not have permission to view as another user.' };
+  }
 
+  // Teachers and parents may only ever land in a student account.
+  if (!userHasRole(target, 'student')) {
+    return {
+      allowed: false,
+      reason: actorIsTeacher
+        ? 'Teachers can only view student accounts.'
+        : 'Parents can only view student accounts.'
+    };
+  }
+
+  // Teacher reach: students on their own roster.
+  if (actorIsTeacher &&
+      target.teacherId &&
+      target.teacherId.toString() === actor._id.toString()) {
     return { allowed: true };
   }
 
-  // Parent can only impersonate their linked children
-  if (actor.role === 'parent') {
-    if (target.role !== 'student') {
-      return { allowed: false, reason: 'Parents can only view student accounts.' };
-    }
-
+  // Parent reach: their own linked children.
+  if (actorIsParent) {
     const childIds = (actor.children || []).map(id => id.toString());
-    if (!childIds.includes(target._id.toString())) {
-      return { allowed: false, reason: 'You can only view your linked children.' };
+    if (childIds.includes(target._id.toString())) {
+      return { allowed: true };
     }
-
-    return { allowed: true };
   }
 
-  return { allowed: false, reason: 'You do not have permission to view as another user.' };
+  return {
+    allowed: false,
+    reason: actorIsTeacher
+      ? 'You can only view students assigned to you.'
+      : 'You can only view your linked children.'
+  };
 }
 
 /**

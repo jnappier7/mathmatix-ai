@@ -110,6 +110,119 @@ describe('canImpersonate', () => {
   });
 });
 
+describe('canImpersonate — roles HELD, not the active dashboard', () => {
+  // Every check in canImpersonate used to read `actor.role` / `target.role`,
+  // the ACTIVE role — whichever dashboard that account currently has open
+  // (CLAUDE.md §12). Each case here sets `role` to something the old
+  // comparison decides differently on, so it fails against the old code.
+
+  test('an admin who switched to their teacher dashboard is STILL not impersonatable', async () => {
+    // THE ESCALATION. `target.role === 'admin'` is the only thing standing
+    // between an impersonation session and an admin account. An admin who also
+    // holds teacher reads as role='teacher' the moment they open the teacher
+    // dashboard, so the guard did not fire and another admin could land inside
+    // their account — logged as a routine teacher view.
+    const target = { _id: 'b', role: 'teacher', roles: ['admin', 'teacher'] };
+    expect(target.role === 'admin').toBe(false); // the old comparison, explicit
+
+    const r = await canImpersonate({ _id: 'a', role: 'admin', roles: ['admin'] }, target);
+    expect(r.allowed).toBe(false);
+    expect(r.reason).toMatch(/admin/i);
+  });
+
+  test('an admin-held target is unreachable to a teacher actor too', async () => {
+    // The same guard, from the other side: the teacher branch must not be the
+    // way around it either.
+    const r = await canImpersonate(
+      { _id: 't1', role: 'teacher', roles: ['teacher'] },
+      { _id: 'b', role: 'student', roles: ['admin', 'student'], teacherId: { toString: () => 't1' } }
+    );
+    expect(r.allowed).toBe(false);
+    expect(r.reason).toMatch(/admin/i);
+  });
+
+  test('an admin viewing the parent dashboard keeps their admin reach', async () => {
+    const actor = { _id: 'a', role: 'parent', roles: ['admin', 'parent'], children: [] };
+    expect(actor.role === 'admin').toBe(false);
+
+    const r = await canImpersonate(actor, { _id: 's', role: 'student', roles: ['student'] });
+    expect(r.allowed).toBe(true);
+  });
+
+  test('a teacher viewing the parent dashboard can still view their own student', async () => {
+    const actor = { _id: 't1', role: 'parent', roles: ['teacher', 'parent'], children: [] };
+    const r = await canImpersonate(
+      actor,
+      { _id: 's1', role: 'student', roles: ['student'], teacherId: { toString: () => 't1' } }
+    );
+    expect(r.allowed).toBe(true);
+  });
+
+  test('a teacher-parent reaches their own CHILD, not just their roster', async () => {
+    // The actor branches were an if/else-if chain keyed on the active role, so
+    // whichever role matched first was the only reach the account got. A
+    // teacher-parent on the teacher branch could never view their own child —
+    // the teacher branch rejected them and returned before the parent branch ran.
+    const actor = {
+      _id: 'tp1',
+      role: 'teacher',
+      roles: ['teacher', 'parent'],
+      children: [{ toString: () => 'kid-1' }],
+    };
+    const r = await canImpersonate(
+      actor,
+      { _id: 'kid-1', role: 'student', roles: ['student'], teacherId: { toString: () => 'other-teacher' } }
+    );
+    expect(r.allowed).toBe(true);
+  });
+
+  test('a student who switched to their parent dashboard is still viewable by their teacher', async () => {
+    // `target.role !== 'student'` locked a teacher out of a student who had
+    // flipped views — the failure mode was a 403 on a student who is plainly
+    // on their roster.
+    const target = {
+      _id: 's1',
+      role: 'parent',
+      roles: ['student', 'parent'],
+      teacherId: { toString: () => 't1' },
+    };
+    expect(target.role === 'student').toBe(false);
+
+    const r = await canImpersonate({ _id: 't1', role: 'teacher', roles: ['teacher'] }, target);
+    expect(r.allowed).toBe(true);
+  });
+
+  test('a teacher-parent still cannot reach a stranger’s student', async () => {
+    // Unioning the two reaches must not add a third.
+    const actor = {
+      _id: 'tp1',
+      role: 'teacher',
+      roles: ['teacher', 'parent'],
+      children: [{ toString: () => 'kid-1' }],
+    };
+    const r = await canImpersonate(
+      actor,
+      { _id: 'stranger', role: 'student', roles: ['student'], teacherId: { toString: () => 'other' } }
+    );
+    expect(r.allowed).toBe(false);
+  });
+
+  test('a teacher-parent still cannot reach a non-student account', async () => {
+    const actor = { _id: 'tp1', role: 'teacher', roles: ['teacher', 'parent'], children: [] };
+    const r = await canImpersonate(actor, { _id: 'p2', role: 'parent', roles: ['parent'] });
+    expect(r.allowed).toBe(false);
+    expect(r.reason).toMatch(/student accounts/i);
+  });
+
+  test('a student who also holds parent cannot impersonate their own “child”', async () => {
+    // Holding parent is the reach; being a student is not a bar to it. What
+    // bars this one is the link check, which must still run.
+    const actor = { _id: 'sp1', role: 'student', roles: ['student', 'parent'], children: [] };
+    const r = await canImpersonate(actor, { _id: 's2', role: 'student', roles: ['student'] });
+    expect(r.allowed).toBe(false);
+  });
+});
+
 describe('enforceReadOnly', () => {
   test('passes through when not impersonating', () => {
     const req = { isImpersonating: false, originalUrl: '/api/foo', method: 'POST' };
