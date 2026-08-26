@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const Feedback = require('../models/feedback');
 const { isAuthenticated } = require('../middleware/auth');
+const { userHasRole } = require('../utils/roleQuery');
 const logger = require('../utils/logger').child({ route: 'feedback' });
 
 /**
@@ -96,8 +97,9 @@ router.get('/my', isAuthenticated, async (req, res) => {
  */
 router.get('/all', isAuthenticated, async (req, res) => {
   try {
-    // Check if user is admin
-    if (req.user.role !== 'admin') {
+    // Check if user is admin — on roles HELD, not the dashboard they have
+    // open (CLAUDE.md §12).
+    if (!userHasRole(req.user, 'admin')) {
       return res.status(403).json({
         success: false,
         message: 'Unauthorized'

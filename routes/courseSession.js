@@ -12,6 +12,7 @@ const User = require('../models/user');
 const ActTestSession = require('../models/actTestSession');
 const { calculateOverallProgress, parseExamWeight } = require('../utils/coursePrompt');
 const { isAuthenticated } = require('../middleware/auth');
+const { userHasRole } = require('../utils/roleQuery');
 const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const { configCache } = require('../utils/cache');
@@ -238,8 +239,11 @@ router.post('/enroll', async (req, res) => {
 
     const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
 
-    // Prevent students from enrolling in parent-audience courses (parents can enroll)
-    if (pathway.audience === 'parent' && req.user.role !== 'parent') {
+    // Prevent students from enrolling in parent-audience courses (parents can
+    // enroll). Roles HELD, not the active dashboard (CLAUDE.md §12) — a parent
+    // who also holds student was refused a parent course whenever they had the
+    // student view open.
+    if (pathway.audience === 'parent' && !userHasRole(req.user, 'parent')) {
       return res.status(403).json({ success: false, message: 'This course is not available for student enrollment.' });
     }
 

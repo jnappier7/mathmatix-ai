@@ -24,15 +24,20 @@ const TranscriptFlag = require('../models/transcriptFlag');
 const { getStudentIdsForTeacher } = require('../services/userService');
 const { checkConsent } = require('../utils/consentManager');
 
-const { anyRole } = require('../utils/roleQuery');
+const { anyRole, userHasRole } = require('../utils/roleQuery');
+
+// Which reviewer capability this account carries: 'admin' outranks 'teacher'
+// because an admin may flag any student's transcript while a teacher is held to
+// their own roster.
+//
+// This used to consult `user.role` — the ACTIVE dashboard — BEFORE roles[], so
+// precedence moved with the view: an admin who also holds teacher and had the
+// teacher dashboard open came back as 'teacher', and GET / answered their own
+// admin-only queue with "Admin only." (CLAUDE.md §12). Reading roles held first
+// keeps the answer stable across a role switch.
 function roleOf(user) {
-    if (!user) return null;
-    if (user.role === 'admin') return 'admin';
-    if (user.role === 'teacher') return 'teacher';
-    if (Array.isArray(user.roles)) {
-        if (user.roles.includes('admin')) return 'admin';
-        if (user.roles.includes('teacher')) return 'teacher';
-    }
+    if (userHasRole(user, 'admin')) return 'admin';
+    if (userHasRole(user, 'teacher')) return 'teacher';
     return null;
 }
 

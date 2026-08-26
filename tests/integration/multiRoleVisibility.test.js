@@ -19,6 +19,9 @@ const User = require('../../models/user');
 const { anyRole, withoutRoles } = require('../../utils/roleQuery');
 const { teacherResourceFileAccess } = require('../../utils/resourceVisibility');
 const { canImpersonate } = require('../../middleware/impersonation');
+const impersonationRoutes = require('../../routes/impersonation');
+const express = require('express');
+const request = require('supertest');
 const { hasStaffRoleBypass } = require('../../middleware/usageGate');
 
 let mem;
@@ -331,5 +334,95 @@ describe('the AI-quota staff bypass on a multi-role account', () => {
     const doc = await User.findById(legacy._id);
     expect(doc.roles.length).toBe(0);
     expect(hasStaffRoleBypass(doc)).toBe(true);
+  });
+});
+
+describe('the impersonation target picker must mirror canImpersonate', () => {
+  // GET /api/impersonation/targets is the list the picker renders;
+  // canImpersonate() is the gate the switch itself runs. They have to agree.
+  //
+  // Both used to dispatch on the ACTIVE role through an if/else-if chain, so
+  // both were wrong in the same way — but fixing only the gate would leave a
+  // subtler failure: a teacher-parent's own child is impersonatable and simply
+  // never appears in the picker, which reads as a broken feature with no error
+  // to explain it. This drives the real route against a real database because
+  // what is under test is what Mongo matches, not the shape of a filter object.
+
+  function appAs(actorDoc) {
+    const app = express();
+    app.use(express.json());
+    app.use((req, _res, next) => { req.user = actorDoc; next(); });
+    app.use('/api/impersonation', impersonationRoutes);
+    return app;
+  }
+
+  test('a teacher-parent is offered BOTH their roster and their own child', async () => {
+    const actor = await makeUser('parent', ['teacher', 'parent']);
+    const rosterStudent = await makeUser('student', ['student'], { teacherId: actor._id });
+    const ownChild = await makeUser('student', ['student']);
+    await User.findByIdAndUpdate(actor._id, { children: [ownChild._id] });
+
+    const actorDoc = await User.findById(actor._id);
+    expect(actorDoc.role === 'teacher').toBe(false); // the old comparison, explicit
+
+    const res = await request(appAs(actorDoc)).get('/api/impersonation/targets');
+    expect(res.status).toBe(200);
+
+    const ids = res.body.map((t) => String(t._id)).sort();
+    expect(ids).toEqual([String(rosterStudent._id), String(ownChild._id)].sort());
+  });
+
+  test('a student who is also their own teacher’s child appears exactly once', async () => {
+    // The two reaches overlap when a teacher's own child is on their roster.
+    // The picker must not offer the same account twice.
+    const actor = await makeUser('teacher', ['teacher', 'parent']);
+    const child = await makeUser('student', ['student'], { teacherId: actor._id });
+    await User.findByIdAndUpdate(actor._id, { children: [child._id] });
+
+    const res = await request(appAs(await User.findById(actor._id)))
+      .get('/api/impersonation/targets');
+
+    expect(res.body.map((t) => String(t._id))).toEqual([String(child._id)]);
+  });
+
+  test('an admin viewing the parent dashboard is still offered every non-admin', async () => {
+    const actor = await makeUser('parent', ['admin', 'parent']);
+    const student = await makeUser('student', ['student']);
+    const otherAdmin = await makeUser('admin', ['admin']);
+
+    const res = await request(appAs(await User.findById(actor._id)))
+      .get('/api/impersonation/targets');
+
+    const ids = res.body.map((t) => String(t._id));
+    expect(ids).toContain(String(student._id));
+    expect(ids).not.toContain(String(otherAdmin._id));
+  });
+
+  test('every account the picker offers is one canImpersonate would allow', async () => {
+    // The invariant that keeps the two from drifting again.
+    const actor = await makeUser('parent', ['teacher', 'parent']);
+    const roster = await makeUser('student', ['student'], { teacherId: actor._id });
+    await makeUser('student', ['student']); // a stranger's student
+    const ownChild = await makeUser('student', ['student']);
+    await User.findByIdAndUpdate(actor._id, { children: [ownChild._id] });
+
+    const actorDoc = await User.findById(actor._id);
+    const res = await request(appAs(actorDoc)).get('/api/impersonation/targets');
+
+    for (const t of res.body) {
+      const verdict = await canImpersonate(actorDoc, await User.findById(t._id));
+      expect(verdict).toEqual({ allowed: true });
+    }
+    expect(res.body.map((t) => String(t._id)).sort())
+      .toEqual([String(roster._id), String(ownChild._id)].sort());
+  });
+
+  test('an account holding neither reach is offered nothing', async () => {
+    const actor = await makeUser('student', ['student']);
+    await makeUser('student', ['student']);
+
+    const res = await request(appAs(await User.findById(actor._id)))
+      .get('/api/impersonation/targets');
+    expect(res.body).toEqual([]);
   });
 });

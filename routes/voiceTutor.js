@@ -17,6 +17,7 @@ const express = require('express');
 const router = express.Router();
 const { WebSocketServer } = require('ws');
 const { isAuthenticated } = require('../middleware/auth');
+const { userHasRole } = require('../utils/roleQuery');
 const User = require('../models/user');
 const { createVoiceSession } = require('../utils/voiceSession');
 const { peekLoginSessionId } = require('../utils/loginSession');
@@ -25,7 +26,8 @@ const logger = require('../utils/logger').child({ route: 'voice-tutor' });
 
 // GET /api/voice-tutor/metrics  (admin observability)
 router.get('/metrics', isAuthenticated, (req, res) => {
-  if (req.user?.role !== 'admin') {
+  // Roles HELD, not the active dashboard (CLAUDE.md §12).
+  if (!userHasRole(req.user, 'admin')) {
     return res.status(403).json({ error: 'admin only' });
   }
   res.json({
