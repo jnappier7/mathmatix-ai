@@ -114,7 +114,35 @@ const upload = multer({
 });
 
 // Upload a new resource
-router.post('/upload', isAuthenticated, isTeacher, upload.single('file'), async (req, res) => {
+
+// Uploaded files must land somewhere that survives a deploy.
+//
+// The Render persistent disk that used to back `uploads/teacher-resources` was
+// removed on 2026-08-25 — it forced stop-then-start deploys (Render cannot mount
+// one disk to two containers), which cost ~199s of full-site downtime every
+// publish to protect a single 68 KB file.
+//
+// Without that disk this directory lives in the container's writable layer and
+// is destroyed on the next deploy. The old code did not notice: uploadFile()
+// returns null when S3 is unconfigured, the "delete the local copy" branch is
+// skipped, and the upload reports success — leaving a TeacherResource row in
+// Mongo pointing at a file that quietly disappears. Silent data loss is worse
+// than an unavailable feature, so refuse the upload instead and say why.
+//
+// Configure S3_BUCKET + S3_REGION (plus credentials) to turn this back on; the
+// S3-compatible path already works with Cloudflare R2 or Spaces via S3_ENDPOINT.
+function requireDurableStorage(req, res, next) {
+    if (cloudStorage.isConfigured) return next();
+    if (process.env.NODE_ENV !== 'production') return next();  // local dev keeps files on disk
+    return res.status(503).json({
+        message: 'File uploads are temporarily unavailable: no durable storage is configured. '
+               + 'Files saved now would be lost on the next deploy, so the upload was refused '
+               + 'rather than accepted and silently discarded.',
+        code: 'STORAGE_NOT_CONFIGURED',
+    });
+}
+
+router.post('/upload', isAuthenticated, isTeacher, requireDurableStorage, upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ message: 'No file uploaded' });
@@ -190,7 +218,20 @@ router.post('/upload', isAuthenticated, isTeacher, upload.single('file'), async 
         try {
             publicUrl = await cloudStorage.uploadFile(req.file.path, s3Key, req.file.mimetype);
         } catch (uploadErr) {
-            console.warn('⚠️ [Cloud Storage] Upload failed, falling back to local:', uploadErr.message);
+            console.warn('⚠️ [Cloud Storage] Upload failed:', uploadErr.message);
+        }
+
+        // In production there is no persistent disk any more, so "fall back to
+        // local" means "throw the file away at the next deploy, but tell the
+        // teacher it saved". Fail the request instead and take the temp file
+        // with us. Locally, keeping it on disk is still the right behaviour.
+        if (!publicUrl && process.env.NODE_ENV === 'production') {
+            if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+            return res.status(502).json({
+                message: 'Upload could not be saved to durable storage, so it was not accepted. '
+                       + 'Please try again; if this persists the storage configuration needs attention.',
+                code: 'STORAGE_UPLOAD_FAILED',
+            });
         }
 
         // Clean up local file if cloud upload succeeded
