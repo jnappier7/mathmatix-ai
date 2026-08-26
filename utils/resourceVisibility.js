@@ -26,6 +26,7 @@
 // that leaks quietly if it disagrees with the other two.
 
 const EnrollmentCode = require('../models/enrollmentCode');
+const { userHasRole } = require('./roleQuery');
 
 /**
  * Everything a student's teacher context depends on, in one query.
@@ -174,4 +175,56 @@ function resourceVisibleToStudent(resource, scope) {
     return targets.some(id => mineClasses.has(String(id)));
 }
 
-module.exports = { getStudentScope, getStudentClassIds, resourceVisibleToStudent, pickPrimaryTeacher };
+/**
+ * Can this user reach a file under uploads/teacher-resources/<teacherId>/ ?
+ *
+ * The static-file route in config/routes.js hands over bytes by PATH, before
+ * any TeacherResource document is loaded, so it needs the ownership half of the
+ * rule on its own. It lives here next to resourceVisibleToStudent so the two
+ * halves of "who may read a teacher's materials" are read and changed together
+ * — and because config/routes.js requires all 85 route modules at import time,
+ * which makes anything left inline there untestable in practice.
+ *
+ * Roles are read off the roles a user HOLDS (utils/roleQuery), never off
+ * `user.role`. `role` is the ACTIVE role — which dashboard they are looking at
+ * right now — so a teacher who also holds parent and had switched views was
+ * denied their own uploaded resources with a bare 403, and a student who also
+ * holds parent lost their teacher's materials the same way (CLAUDE.md §12).
+ *
+ * `asStudent` reports whether access was granted via the STUDENT branch, which
+ * is what the caller gates its publish check on. An owner teacher short-circuits
+ * it deliberately: a teacher has to be able to open their own unpublished
+ * drafts, and now that both branches match on roles held, a teacher who also
+ * holds student can satisfy both at once. Mirrors the ordering in
+ * routes/teacherResources.js's /download/:id.
+ *
+ * NOTE: the student branch matches on `user.teacherId` alone, which is a single
+ * pointer owned by whichever join wrote last — a student with two teachers is
+ * still denied the other teacher's files here. That is the same lossy-pointer
+ * bug getStudentScope() exists to fix, and this surface has NOT been converted
+ * yet; see the note on getStudentScope above.
+ *
+ * @param {Object} user       the requesting user (needs _id, teacherId, roles/role)
+ * @param {string} teacherId  the teacher directory being read from
+ * @returns {{allowed: boolean, asStudent: boolean}}
+ */
+function teacherResourceFileAccess(user, teacherId) {
+    if (!user || !user._id || !teacherId) return { allowed: false, asStudent: false };
+
+    const dir = String(teacherId);
+    const isOwnerTeacher = userHasRole(user, 'teacher') && String(user._id) === dir;
+    const isStudentOfTeacher = !isOwnerTeacher &&
+        userHasRole(user, 'student') &&
+        !!user.teacherId &&
+        String(user.teacherId) === dir;
+
+    return { allowed: isOwnerTeacher || isStudentOfTeacher, asStudent: isStudentOfTeacher };
+}
+
+module.exports = {
+    getStudentScope,
+    getStudentClassIds,
+    resourceVisibleToStudent,
+    pickPrimaryTeacher,
+    teacherResourceFileAccess,
+};
