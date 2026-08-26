@@ -5,15 +5,25 @@ const User = require('../models/user');
 const { isAuthorizedForLeaderboard } = require('../middleware/auth');
 const { hasOptedOutOfDirectoryInfo } = require('../utils/ferpaCompliance');
 
-const { anyRole } = require('../utils/roleQuery');
+const { anyRole, userHasRole } = require('../utils/roleQuery');
 router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
     try {
         let query = { ...anyRole('student'), isDemo: { $ne: true }, isDemoClone: { $ne: true } };
 
-        // Determine filtering based on user role (this logic is preserved)
-        if (req.user.role === 'teacher') {
+        // Scope by the roles the viewer HOLDS, not `role` — the dashboard they
+        // currently have open (CLAUDE.md §12). This chain narrows the board, so
+        // failing to recognise a viewer widens it: a teacher who also holds
+        // parent matched neither branch while on the parent dashboard and fell
+        // through to the unscoped global board — every student on the platform,
+        // named, to someone who is only entitled to their own class.
+        //
+        // The order is load-bearing and matches the old chain: teacher scope
+        // wins over student scope for an account that holds both. Parents and
+        // admins still match nothing and still get the global board, which is
+        // what they are meant to see.
+        if (userHasRole(req.user, 'teacher')) {
             query.teacherId = req.user._id;
-        } else if (req.user.role === 'student') {
+        } else if (userHasRole(req.user, 'student')) {
             if (req.user.teacherId) {
                 query.teacherId = req.user.teacherId;
             } else {

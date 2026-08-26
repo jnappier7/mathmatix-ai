@@ -33,6 +33,7 @@ const mongoose = require('mongoose');
 const { isAuthenticated, isAdmin, isParent } = require('../middleware/auth');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const logger = require('../utils/logger');
+const { userHasRole } = require('../utils/roleQuery');
 
 // Models
 const User = require('../models/user');
@@ -121,7 +122,9 @@ async function cascadeDeleteStudentData(studentId, requestor) {
         throw new Error('Student not found');
     }
 
-    if (student.role !== 'student' && !(student.roles && student.roles.includes('student'))) {
+    // Asserting a role on ANOTHER user, so it reads roles held (CLAUDE.md §12)
+    // through the canonical helper rather than a second hand-rolled spelling.
+    if (!userHasRole(student, 'student')) {
         throw new Error('Target user is not a student');
     }
 
@@ -454,7 +457,7 @@ router.get('/export/:studentId', isAuthenticated,
         }
 
         // Authorization: Admin can export anyone, parent can export linked child
-        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+        const isAdminUser = userHasRole(req.user, 'admin');
         const isParentOfChild = req.user.children?.some(
             childId => childId.toString() === studentId
         );
@@ -648,7 +651,7 @@ router.post('/amendment-request', isAuthenticated, async (req, res) => {
  */
 router.get('/amendment-requests', isAuthenticated, async (req, res) => {
     try {
-        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+        const isAdminUser = userHasRole(req.user, 'admin');
 
         let query = {};
         if (!isAdminUser) {
@@ -780,7 +783,7 @@ router.get('/access-log/:studentId', isAuthenticated, async (req, res) => {
             return res.status(400).json({ success: false, message: 'Invalid student ID' });
         }
 
-        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+        const isAdminUser = userHasRole(req.user, 'admin');
         const isParentOfChild = req.user.children?.some(id => id.toString() === studentId);
 
         if (!isAdminUser && !isParentOfChild) {

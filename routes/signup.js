@@ -368,6 +368,9 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             // "What brings you to Mathmatix today?"). After answering, the
             // onboarding page routes them to complete-profile / pick-tutor.
             let redirectUrl = '/onboarding.html';
+            // `newUser.role` — the ACTIVE role — is deliberate: acting-user
+            // dashboard routing on an account created seconds ago with exactly
+            // one role, the one job CLAUDE.md §12 keeps `role` for.
             if (!newUser.needsProfileCompletion && newUser.role === 'student' && !newUser.selectedTutorId) {
                 redirectUrl = '/pick-tutor.html'; // Student needs to pick a tutor
             }

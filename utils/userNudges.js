@@ -14,6 +14,8 @@
  * @module utils/userNudges
  */
 
+const { userHasRole } = require('./roleQuery');
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 // How long after a dismissal we stay quiet about the same nudge type.
@@ -37,9 +39,11 @@ const NUDGE_TYPES = Object.freeze({
 // A student "has a character" once they've picked a full-body preset
 // (selectedAvatarId === 'student.<x>'). DiceBear / empty selections do not count
 // — DiceBear is retired, so those students are nudged to choose one.
+// Roles HELD, via the canonical helper (CLAUDE.md §12) rather than a second
+// hand-rolled copy of it. Behaviour is unchanged — this file already read
+// roles[] first — but there is now one implementation to keep correct.
 function isStudentRole(user) {
-  if (Array.isArray(user.roles) && user.roles.length) return user.roles.includes('student');
-  return user.role === 'student';
+  return userHasRole(user, 'student');
 }
 function hasFullBodyCharacter(user) {
   return typeof user.selectedAvatarId === 'string' && user.selectedAvatarId.indexOf('student.') === 0;

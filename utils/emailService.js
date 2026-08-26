@@ -2,6 +2,7 @@
 // Email service for parent reports, consent emails, and notifications
 
 const nodemailer = require('nodemailer');
+const { messagingThreadRoles } = require('./messagingAccess');
 
 // Create reusable SMTP transporter
 let transporter = null;
@@ -1098,9 +1099,14 @@ async function sendMessageNotification(recipient, sender, message) {
 
   try {
     const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
-    const dashboardUrl = recipient.role === 'teacher'
+    // Which side of the thread each account is on — derived from roles HELD,
+    // not `role`, the dashboard they happened to have open when the message was
+    // sent (CLAUDE.md §12). See utils/messagingAccess.js.
+    const { senderRole, recipientRole } = messagingThreadRoles(sender, recipient);
+    const dashboardUrl = recipientRole === 'teacher'
       ? `${baseUrl}/teacher-dashboard.html?tab=messages`
       : `${baseUrl}/parent-dashboard.html?tab=messages`;
+    const senderLabel = senderRole === 'teacher' ? 'Teacher' : 'Parent';
     const emailConfig = getEmailConfig();
 
     const mailOptions = {
@@ -1110,7 +1116,7 @@ async function sendMessageNotification(recipient, sender, message) {
       subject: message.isUrgent
         ? `🔔 URGENT: New message from ${sender.firstName} ${sender.lastName}`
         : `New message from ${sender.firstName} ${sender.lastName} - MATHMATIX AI`,
-      html: getMessageNotificationTemplate(recipient, sender, message, dashboardUrl)
+      html: getMessageNotificationTemplate(recipient, sender, message, dashboardUrl, senderLabel)
     };
 
     const info = await transport.sendMail(mailOptions);
@@ -1122,7 +1128,11 @@ async function sendMessageNotification(recipient, sender, message) {
   }
 }
 
-function getMessageNotificationTemplate(recipient, sender, message, dashboardUrl) {
+// senderLabel is passed in rather than derived here: it comes from
+// messagingThreadRoles(), which needs BOTH accounts to tell which side of the
+// thread the sender is on. Deriving it from `sender.role` inside the template
+// is what put "(Parent)" on a teacher's message (CLAUDE.md §12).
+function getMessageNotificationTemplate(recipient, sender, message, dashboardUrl, senderLabel) {
   const categoryLabels = {
     general: 'General',
     progress: 'Progress Update',
@@ -1164,7 +1174,7 @@ function getMessageNotificationTemplate(recipient, sender, message, dashboardUrl
       ${urgentBanner}
 
       <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
-        You have a new message from <strong>${sender.firstName} ${sender.lastName}</strong> (${sender.role === 'teacher' ? 'Teacher' : 'Parent'}).
+        You have a new message from <strong>${sender.firstName} ${sender.lastName}</strong> (${senderLabel}).
       </p>
 
       <!-- Message Preview -->

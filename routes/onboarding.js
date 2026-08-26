@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const logger = require('../utils/logger');
+const { userHasRole, rolesOf } = require('../utils/roleQuery');
 
 const { inferIntent, intentFromChoices } = require('../utils/onboardingIntent');
 const { recordClassification } = require('../utils/intentMetrics');
@@ -23,7 +24,13 @@ const { parseDateOfBirth } = require('../utils/dob');
  * school DPA, self) sets that legacy flag alongside privacyConsent.
  */
 function consentFlagsFor(user, age) {
-  const isStudent = user.role === 'student';
+  // Roles HELD, not `role` — the dashboard the account currently has open
+  // (CLAUDE.md §12). This is a COPPA determination about who the account IS,
+  // and it fails OPEN: an account that stops reading as a student produces
+  // needsParentalConsent:false and needsSelfConsent:false, so the onboarding
+  // page simply asks for nothing. A minor who also holds parent walked past
+  // the consent step by switching dashboards.
+  const isStudent = userHasRole(user, 'student');
   const unconsented = isStudent && age !== null && !user.hasParentalConsent;
   return {
     needsParentalConsent: unconsented && age < COPPA_AGE,
@@ -57,8 +64,11 @@ function computeAge(dob) {
  *  - Under-13 students: required to be linked to a parent (COPPA).
  */
 function shouldStillBlockOnProfile(user) {
-  const role = user.role;
-  if (role !== 'student') return false;
+  // Same COPPA determination, same fail-open direction, and this one has teeth:
+  // returning false here CLEARS user.needsProfileCompletion, releasing the
+  // account past the DOB and parental-consent gate for good. Roles held, not
+  // the active dashboard (CLAUDE.md §12).
+  if (!userHasRole(user, 'student')) return false;
 
   const age = computeAge(user.dateOfBirth);
   if (age === null) return true; // need DOB
@@ -76,10 +86,13 @@ function shouldStillBlockOnProfile(user) {
  * Mirrors the post-login redirect logic in middleware/auth.js and login.js.
  */
 function computeNextUrl(user) {
-  const roles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
+  const roles = rolesOf(user);
 
   if (user.needsProfileCompletion) return '/complete-profile.html';
   if (roles.length > 1) return '/role-picker.html';
+  // `user.role` — the ACTIVE role — is deliberate from here down: this is
+  // acting-user dashboard routing, the one job CLAUDE.md §12 keeps `role` for,
+  // and multi-role accounts never reach it (role-picker above).
   if (user.role === 'teacher') return '/teacher-dashboard.html';
   if (user.role === 'admin')   return '/admin-dashboard.html';
   if (user.role === 'parent')  return '/parent-dashboard.html';
@@ -110,7 +123,7 @@ router.get('/status', (req, res) => {
     firstName: u.firstName,
     selectedTutorId: u.selectedTutorId || null,
     age,
-    needsDob: u.role === 'student' && age === null,
+    needsDob: userHasRole(u, 'student') && age === null,
     ...consentFlagsFor(u, age),
     hasParentalConsent: !!u.hasParentalConsent,
     onboarding: {
@@ -203,7 +216,7 @@ router.post('/intent', async (req, res) => {
     await user.save();
 
     const age = computeAge(user.dateOfBirth);
-    const needsDob = user.role === 'student' && age === null;
+    const needsDob = userHasRole(user, 'student') && age === null;
     const { needsParentalConsent, needsSelfConsent } = consentFlagsFor(user, age);
     const redirect = computeNextUrl(user);
 

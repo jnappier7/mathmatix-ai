@@ -426,3 +426,87 @@ describe('the impersonation target picker must mirror canImpersonate', () => {
     expect(res.body).toEqual([]);
   });
 });
+
+describe('deleting a multi-role account cleans up every link it held', () => {
+  // routes/admin.js DELETE /api/admin/users/:userId unlinks a deleted account
+  // from its students and its children. Both cleanups keyed on `user.role` —
+  // the dashboard the account had open when it was deleted (CLAUDE.md §12) —
+  // so deleting a teacher who also holds parent, while they were on the parent
+  // dashboard, skipped the teacher cleanup entirely. Nothing errors: the
+  // students are simply left pointing at a teacherId that no longer resolves,
+  // and the roster shows a dead teacher.
+  //
+  // This drives the REAL route against a real database, because what is under
+  // test is what the two updateMany calls actually match.
+
+  function adminApp(actor) {
+    const app = express();
+    app.use(express.json());
+    app.use((req, _res, next) => {
+      req.user = actor;
+      req.isAuthenticated = () => true;
+      next();
+    });
+    app.use('/api/admin', require('../../routes/admin'));
+    return app;
+  }
+
+  let admin;
+  let app;
+
+  beforeEach(async () => {
+    admin = await makeUser('admin', ['admin']);
+    app = adminApp(await User.findById(admin._id));
+  });
+
+  test('deleting a teacher-parent on the parent dashboard still clears their roster', async () => {
+    const owner = await makeUser('parent', ['teacher', 'parent']);
+    const student = await makeUser('student', ['student'], { teacherId: owner._id });
+
+    expect((await User.findById(owner._id)).role === 'teacher').toBe(false); // old comparison
+
+    const res = await request(app).delete(`/api/admin/users/${owner._id}`);
+    expect(res.status).toBe(200);
+
+    expect((await User.findById(student._id)).teacherId).toBeFalsy();
+    expect(await User.findById(owner._id)).toBeNull();
+  });
+
+  test('deleting a teacher-parent on the teacher dashboard still unlinks their children', async () => {
+    const owner = await makeUser('teacher', ['teacher', 'parent']);
+    const child = await makeUser('student', ['student'], { parentIds: [owner._id] });
+    await User.findByIdAndUpdate(owner._id, { children: [child._id] });
+
+    const res = await request(app).delete(`/api/admin/users/${owner._id}`);
+    expect(res.status).toBe(200);
+
+    expect((await User.findById(child._id)).parentIds.map(String)).toEqual([]);
+  });
+
+  test('the child unlink uses $pull on parentIds, not $unset on a field that does not exist', async () => {
+    // models/user.js has `parentIds: [ObjectId]` and no `parentId`, so the old
+    // `$unset: { parentId: '' }` matched nothing at all — the child kept a
+    // reference to the deleted parent and the dashboard kept resolving it to
+    // null. Found while fixing the role test on the line above.
+    const owner = await makeUser('parent', ['parent']);
+    const coParent = await makeUser('parent', ['parent']);
+    const child = await makeUser('student', ['student'], { parentIds: [owner._id, coParent._id] });
+    await User.findByIdAndUpdate(owner._id, { children: [child._id] });
+
+    await request(app).delete(`/api/admin/users/${owner._id}`);
+
+    // $pull removes one id; the surviving co-parent must be left alone.
+    expect((await User.findById(child._id)).parentIds.map(String))
+      .toEqual([String(coParent._id)]);
+  });
+
+  test('deleting a plain student touches no other account', async () => {
+    const teacher = await makeUser('teacher', ['teacher']);
+    const peer = await makeUser('student', ['student'], { teacherId: teacher._id });
+    const victim = await makeUser('student', ['student'], { teacherId: teacher._id });
+
+    await request(app).delete(`/api/admin/users/${victim._id}`);
+
+    expect(String((await User.findById(peer._id)).teacherId)).toBe(String(teacher._id));
+  });
+});
