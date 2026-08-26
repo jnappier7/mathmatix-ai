@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const ImpersonationLog = require('../models/impersonationLog');
-const { anyRole, withoutRoles } = require('../utils/roleQuery');
+const { anyRole, withoutRoles, userHasRole } = require('../utils/roleQuery');
 const {
   startImpersonation,
   endImpersonation,
@@ -136,27 +136,50 @@ router.get('/targets', async (req, res) => {
       return res.status(401).json({ message: 'Authentication required.' });
     }
 
+    // Which reaches this actor has is decided by the roles they HOLD, not
+    // `actor.role` — the dashboard they happen to have open (CLAUDE.md §12).
+    //
+    // This list must mirror middleware/impersonation.js `canImpersonate()`
+    // exactly, and that function unions an actor's reaches rather than
+    // dispatching to one of them. An if/else-if here would put the two out of
+    // step: a teacher-parent's own child is impersonatable but would never
+    // appear in the picker, so the feature reads as broken with no error to
+    // explain it.
     let targets = [];
 
-    if (actor.role === 'admin') {
+    if (userHasRole(actor, 'admin')) {
       // Admins can see all non-admin users
       targets = await User.find(
         withoutRoles('admin'),
         'firstName lastName email username role gradeLevel mathCourse teacherId'
       ).lean();
-    } else if (actor.role === 'teacher') {
-      // Teachers can only see their assigned students
-      targets = await User.find(
-        { ...anyRole('student'), teacherId: actor._id },
-        'firstName lastName email username role gradeLevel mathCourse'
-      ).lean();
-    } else if (actor.role === 'parent') {
-      // Parents can only see their linked children
-      const childIds = actor.children || [];
-      targets = await User.find(
-        { _id: { $in: childIds }, ...anyRole('student') },
-        'firstName lastName email username role gradeLevel mathCourse'
-      ).lean();
+    } else {
+      const reaches = [];
+
+      if (userHasRole(actor, 'teacher')) {
+        // Teachers can see their assigned students
+        reaches.push(User.find(
+          { ...anyRole('student'), teacherId: actor._id },
+          'firstName lastName email username role gradeLevel mathCourse'
+        ).lean());
+      }
+
+      if (userHasRole(actor, 'parent')) {
+        // Parents can see their linked children
+        const childIds = actor.children || [];
+        reaches.push(User.find(
+          { _id: { $in: childIds }, ...anyRole('student') },
+          'firstName lastName email username role gradeLevel mathCourse'
+        ).lean());
+      }
+
+      // Deduped: a teacher-parent's own child can sit on their roster too, and
+      // the picker must not offer the same account twice.
+      const byId = new Map();
+      for (const found of await Promise.all(reaches)) {
+        for (const t of found) byId.set(String(t._id), t);
+      }
+      targets = [...byId.values()];
     }
 
     res.json(targets);
@@ -175,7 +198,10 @@ router.get('/logs', async (req, res) => {
   try {
     const actor = req.originalUser || req.user;
 
-    if (actor.role !== 'admin') {
+    // Roles HELD, not the active dashboard (CLAUDE.md §12): an admin who also
+    // holds teacher lost the impersonation audit log on switching views — the
+    // one surface that exists to review impersonation after the fact.
+    if (!userHasRole(actor, 'admin')) {
       return res.status(403).json({ message: 'Admin access required.' });
     }
 
@@ -214,7 +240,7 @@ router.get('/logs/:logId', async (req, res) => {
   try {
     const actor = req.originalUser || req.user;
 
-    if (actor.role !== 'admin') {
+    if (!userHasRole(actor, 'admin')) {
       return res.status(403).json({ message: 'Admin access required.' });
     }
 

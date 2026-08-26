@@ -23,7 +23,7 @@ const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { checkConsent } = require('../utils/consentManager');
 const { requireActiveConsent } = require('../middleware/consentGate');
 
-const { anyRole } = require('../utils/roleQuery');
+const { anyRole, userHasRole } = require('../utils/roleQuery');
 // Fetches students assigned to the logged-in teacher (via teacherId OR enrollment codes)
 router.get('/students', isTeacher, async (req, res) => {
   try {
@@ -828,12 +828,15 @@ router.get('/class-ai-settings/for-student/:studentId', isAuthenticated, async (
     const { studentId } = req.params;
     const requesterId = req.user._id.toString();
 
-    // Security: only allow the student themselves, their teacher, or an admin
+    // Security: only allow the student themselves, their teacher, or an admin.
+    // userHasRole() is the canonical roles-held check (CLAUDE.md §12); the
+    // hand-rolled `role === x || roles.includes(x)` it replaces also accepted a
+    // stale `role` that roles[] no longer backs.
     const isSelf = requesterId === studentId;
-    const isAdminUser = req.user.role === 'admin' || (req.user.roles && req.user.roles.includes('admin'));
+    const isAdminUser = userHasRole(req.user, 'admin');
     if (!isSelf && !isAdminUser) {
       // Check if requester is the student's teacher
-      const isTeacherUser = req.user.role === 'teacher' || (req.user.roles && req.user.roles.includes('teacher'));
+      const isTeacherUser = userHasRole(req.user, 'teacher');
       if (!isTeacherUser) {
         return res.status(403).json({ message: 'Not authorized to view these settings.' });
       }
@@ -866,8 +869,15 @@ router.get('/class-ai-settings/for-student/:studentId', isAuthenticated, async (
 // STUDENT ACCESS: Get calculator access setting for current student
 router.get('/my-calculator-access', isAuthenticated, async (req, res) => {
   try {
-    // Only allow students to use this endpoint
-    if (req.user.role !== 'student') {
+    // Roles HELD, not the active dashboard. This is the second of the three
+    // calculator-access endpoints (the other two are /api/calculator/access in
+    // config/routes.js, fixed in #1540, and /api/student/my-calculator-access,
+    // which was already correct behind isStudent). A student who also holds
+    // parent read as a non-student here and was handed unrestricted access,
+    // silently escaping their teacher's classAISettings (CLAUDE.md §12).
+    // Genuine non-students still fall through: they have no teacherId, so the
+    // next check returns 'always' for them anyway.
+    if (!userHasRole(req.user, 'student')) {
       return res.json({
         success: true,
         calculatorAccess: 'always', // Teachers/parents always have access

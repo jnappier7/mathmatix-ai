@@ -314,3 +314,74 @@ describe('PATCH /api/transcript-flags/:id', () => {
         expect(res.status).toBe(404);
     });
 });
+
+describe('roleOf — the reviewer capability follows roles HELD', () => {
+    // roleOf() decides three things: whether the caller may flag at all,
+    // whether their flags are scoped to their own roster, and whether the
+    // admin-only review queue answers them. It used to consult `user.role` —
+    // the ACTIVE dashboard — BEFORE roles[], so an admin who also holds teacher
+    // came back as 'teacher' whenever they had the teacher dashboard open
+    // (CLAUDE.md §12): their own admin queue answered "Admin only."
+    beforeEach(() => jest.clearAllMocks());
+
+    test('an admin viewing the teacher dashboard still gets the admin queue', async () => {
+        const actor = { _id: ADMIN_ID, role: 'teacher', roles: ['admin', 'teacher'] };
+        expect(actor.role === 'admin').toBe(false); // the old comparison, explicit
+
+        const chain = {
+            sort: jest.fn().mockReturnThis(),
+            limit: jest.fn().mockReturnThis(),
+            populate: jest.fn().mockReturnThis(),
+            lean: jest.fn().mockResolvedValue([]),
+        };
+        TranscriptFlag.find.mockReturnValueOnce(chain);
+
+        const res = await request(makeApp(actor)).get('/api/transcript-flags');
+        expect(res.status).toBe(200);
+    });
+
+    test('an admin viewing the teacher dashboard flags without a roster check', async () => {
+        // The scoping consequence of the same precedence: read as 'teacher',
+        // an admin was held to getStudentIdsForTeacher() — a roster they do
+        // not have — so every flag they filed was refused.
+        mockConversationWithTutorTurn();
+        mockActiveStudent();
+        TranscriptFlag.findOne.mockReturnValueOnce({ lean: jest.fn().mockResolvedValue(null) });
+        TranscriptFlag.create.mockResolvedValueOnce({ _id: 'new-flag', toObject: () => ({}) });
+
+        const res = await request(makeApp({ _id: ADMIN_ID, role: 'teacher', roles: ['admin', 'teacher'] }))
+            .post('/api/transcript-flags')
+            .send({ conversationId: CONVO_ID, turnIndex: 1 });
+
+        expect(getStudentIdsForTeacher).not.toHaveBeenCalled();
+        expect(res.status).toBeLessThan(400);
+    });
+
+    test('a teacher viewing the parent dashboard may still flag their own students', async () => {
+        mockConversationWithTutorTurn();
+        getStudentIdsForTeacher.mockResolvedValue([STUDENT_ID]);
+        mockActiveStudent();
+        TranscriptFlag.findOne.mockReturnValueOnce({ lean: jest.fn().mockResolvedValue(null) });
+        TranscriptFlag.create.mockResolvedValueOnce({ _id: 'new-flag', toObject: () => ({}) });
+
+        const res = await request(makeApp({ _id: TEACHER_ID, role: 'parent', roles: ['teacher', 'parent'] }))
+            .post('/api/transcript-flags')
+            .send({ conversationId: CONVO_ID, turnIndex: 1 });
+
+        expect(res.status).toBeLessThan(400);
+    });
+
+    test('a parent who holds neither role still cannot flag', async () => {
+        // Reading roles held must not widen the gate to any authenticated user.
+        const res = await request(makeApp({ _id: 'p1', role: 'parent', roles: ['parent'] }))
+            .post('/api/transcript-flags')
+            .send({ conversationId: CONVO_ID, turnIndex: 1 });
+        expect(res.status).toBe(403);
+    });
+
+    test('a teacher still cannot reach the admin-only review queue', async () => {
+        const res = await request(makeApp({ _id: TEACHER_ID, role: 'teacher', roles: ['teacher'] }))
+            .get('/api/transcript-flags');
+        expect(res.status).toBe(403);
+    });
+});

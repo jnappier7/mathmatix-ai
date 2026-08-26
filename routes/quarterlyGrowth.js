@@ -60,7 +60,11 @@ async function aggregateActivity(userId, startDate, endDate) {
 
 // Middleware to check if user is teacher or admin
 const isTeacherOrAdmin = (req, res, next) => {
-  if (req.user && (req.user.role === 'teacher' || req.user.role === 'admin')) {
+  // Roles HELD, not `role` — the dashboard the account currently has open
+  // (CLAUDE.md §12). A teacher who also holds parent was refused their own
+  // class's growth reports the moment they looked at the parent dashboard.
+  // The rest of this file already reads roles held; this gate was the holdout.
+  if (userHasRole(req.user, 'teacher') || userHasRole(req.user, 'admin')) {
     return next();
   }
   return res.status(403).json({ message: 'Access denied. Teacher or admin role required.' });
