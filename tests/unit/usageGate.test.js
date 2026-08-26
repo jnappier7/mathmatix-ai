@@ -13,7 +13,7 @@ const SchoolLicense = require('../../models/schoolLicense');
 
 // Clear module cache so BILLING_ENABLED takes effect
 delete require.cache[require.resolve('../../middleware/usageGate')];
-const { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasUnmeteredAiAccess, hasVoiceAccess, FREE_WEEKLY_SECONDS } = require('../../middleware/usageGate');
+const { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasUnmeteredAiAccess, hasVoiceAccess, hasStaffRoleBypass, FREE_WEEKLY_SECONDS } = require('../../middleware/usageGate');
 
 describe('Feature Gating Middleware', () => {
   let req, res, next;
@@ -768,6 +768,86 @@ describe('Feature Gating Middleware', () => {
 
     test('refuses an anonymous socket', async () => {
       expect(await hasVoiceAccess(null)).toBe(false);
+    });
+  });
+
+  // ============================================================
+  // The staff bypass reads roles HELD, not the active dashboard
+  // ============================================================
+  //
+  // Teachers, parents and admins are never metered or paywalled. That rule used
+  // to be spelled `user.role === 'teacher' || ... 'parent' || ... 'admin'` in
+  // four places — the ACTIVE role, i.e. whichever dashboard the account has open
+  // (CLAUDE.md §12). For a multi-role account the quota then depended on a
+  // dashboard toggle: a teacher who also holds parent got metered against the
+  // 30-minute student quota while looking at a student view, and un-metered
+  // again the moment they switched back.
+  //
+  // Every case below sets `role` to something the old comparison would REJECT
+  // while `roles[]` still holds a staff role, so each one fails against the old
+  // code and passes against roles-held.
+  describe('staff bypass on roles held', () => {
+    const staffViewingElsewhere = (held) => ({
+      _id: 'multi1',
+      role: 'student',            // the dashboard they are looking at
+      roles: [held, 'student'],   // what they actually are
+      subscriptionTier: 'free',
+      weeklyAISeconds: FREE_WEEKLY_SECONDS + 5000, // quota long gone
+      lastWeeklyReset: new Date(),
+      lastAIQuotaReset: new Date(),
+      parentIds: [],
+      schoolLicenseId: null,
+    });
+
+    test.each(['teacher', 'parent', 'admin'])(
+      'hasStaffRoleBypass is true for a %s viewing the student dashboard',
+      (held) => {
+        const user = staffViewingElsewhere(held);
+        expect(user.role === held).toBe(false); // the old comparison, kept explicit
+        expect(hasStaffRoleBypass(user)).toBe(true);
+      }
+    );
+
+    test('hasStaffRoleBypass is still false for a plain student', () => {
+      // Widening to roles held must not widen to "everyone".
+      expect(hasStaffRoleBypass({ role: 'student', roles: ['student'] })).toBe(false);
+      expect(hasStaffRoleBypass(null)).toBe(false);
+    });
+
+    test('usageGate lets a teacher-parent through while they view a student dashboard', async () => {
+      req.user = staffViewingElsewhere('teacher');
+      await usageGate(req, res, next);
+      expect(next).toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+    });
+
+    test('hasUnmeteredAiAccess agrees with the gate for the same account', async () => {
+      // These two must never disagree — the display surfaces read this one and
+      // would otherwise paint "No AI time left" over a user the gate lets in.
+      expect(await hasUnmeteredAiAccess(staffViewingElsewhere('teacher'))).toBe(true);
+    });
+
+    test('premiumFeatureGate does not spend a free upload on a staff account', async () => {
+      // The freemium taste counters sit BELOW the bypass. Missing the bypass did
+      // not just paywall the account, it burned its one free upload first.
+      req.user = staffViewingElsewhere('admin');
+      req.user.freeUploadsUsed = 0;
+      await premiumFeatureGate('File uploads')(req, res, next);
+      expect(next).toHaveBeenCalled();
+      expect(User.findByIdAndUpdate).not.toHaveBeenCalled();
+    });
+
+    test('paidFeatureGate lets a parent viewing the student dashboard enrol in a course', async () => {
+      req.user = staffViewingElsewhere('parent');
+      await paidFeatureGate('Courses')(req, res, next);
+      expect(next).toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+    });
+
+    test('hasVoiceAccess lets a teacher-parent onto a socket with no minutes left', async () => {
+      // WebSocket upgrades skip usageGate entirely, so this is the only gate the
+      // voice path gets (see utils/voiceUpgrade.js).
+      expect(await hasVoiceAccess(staffViewingElsewhere('teacher'))).toBe(true);
     });
   });
 });

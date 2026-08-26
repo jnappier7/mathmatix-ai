@@ -211,6 +211,44 @@ describe('verifyUploadAccess', () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(next).not.toHaveBeenCalled();
   });
+
+  // The admin branch matched on `currentUser.role === 'admin'` — the ACTIVE
+  // role, i.e. whichever dashboard the account has open (CLAUDE.md §12). An
+  // admin who also holds teacher or parent lost every student upload the moment
+  // they switched views, with a bare 403 and no explanation.
+  test('grants access to an admin who is currently viewing the parent dashboard', async () => {
+    StudentUpload.findOne.mockResolvedValue({ userId: { toString: () => 'student-1' } });
+    const currentUser = { role: 'parent', roles: ['admin', 'parent'] };
+    expect(currentUser.role === 'admin').toBe(false); // the old comparison, explicit
+
+    User.findById
+      .mockResolvedValueOnce({ teacherId: null })
+      .mockResolvedValueOnce(currentUser);
+    const req = makeReq({ userId: 'admin-1' });
+    const res = makeRes();
+    const next = jest.fn();
+
+    await verifyUploadAccess(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(res.status).not.toHaveBeenCalled();
+  });
+
+  test('still denies a non-admin multi-role account with no link to the student', async () => {
+    // Reading roles held must not widen the branch to "any multi-role account".
+    StudentUpload.findOne.mockResolvedValue({ userId: { toString: () => 'student-1' } });
+    User.findById
+      .mockResolvedValueOnce({ teacherId: { toString: () => 'teacher-1' } })
+      .mockResolvedValueOnce({ role: 'parent', roles: ['teacher', 'parent'] });
+    const req = makeReq({ userId: 'attacker' });
+    const res = makeRes();
+    const next = jest.fn();
+
+    await verifyUploadAccess(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(next).not.toHaveBeenCalled();
+  });
 });
 
 describe('cleanupOldUploads', () => {

@@ -18,6 +18,8 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const User = require('../../models/user');
 const { anyRole, withoutRoles } = require('../../utils/roleQuery');
 const { teacherResourceFileAccess } = require('../../utils/resourceVisibility');
+const { canImpersonate } = require('../../middleware/impersonation');
+const { hasStaffRoleBypass } = require('../../middleware/usageGate');
 
 let mem;
 
@@ -224,5 +226,110 @@ describe('reaching a teacher’s uploaded resources', () => {
 
     const loaded = await User.findById(other._id);
     expect(teacherResourceFileAccess(loaded, owner._id.toString()).allowed).toBe(false);
+  });
+});
+
+describe('impersonating across a multi-role account', () => {
+  // middleware/impersonation.js decides both who may impersonate and who may be
+  // impersonated. Every one of those checks read the ACTIVE role, so the whole
+  // rule moved when an account switched dashboards (CLAUDE.md §12).
+  //
+  // The unit tests in tests/unit/impersonation.test.js cover the branch logic
+  // against plain objects. What needs a real database is the shape the ROUTE
+  // hands it: `User.findById(...)`, so canImpersonate sees MONGOOSE DOCUMENTS
+  // whose roles[] is a CoreMongooseArray and whose _id / teacherId / children
+  // entries are ObjectIds, not the strings the unit tests use. A rule that only
+  // held for POJOs would pass there and misbehave in production.
+
+  test('an admin who switched to their teacher dashboard cannot be impersonated', async () => {
+    // THE ESCALATION. `target.role === 'admin'` was the only guard on admin
+    // accounts, and it stopped firing the moment the admin opened another view.
+    const admin = await makeUser('admin', ['admin']);
+    const target = await makeUser('teacher', ['admin', 'teacher']);
+
+    const [actorDoc, targetDoc] = await Promise.all([
+      User.findById(admin._id),
+      User.findById(target._id),
+    ]);
+    expect(targetDoc.role === 'admin').toBe(false); // the old comparison, explicit
+
+    const r = await canImpersonate(actorDoc, targetDoc);
+    expect(r.allowed).toBe(false);
+    expect(r.reason).toMatch(/admin/i);
+  });
+
+  test('a teacher-parent reaches both their roster and their own child', async () => {
+    const actor = await makeUser('parent', ['teacher', 'parent']);
+    const rosterStudent = await makeUser('student', ['student'], { teacherId: actor._id });
+    const ownChild = await makeUser('student', ['student']);
+    await User.findByIdAndUpdate(actor._id, { children: [ownChild._id] });
+
+    const actorDoc = await User.findById(actor._id);
+    expect(actorDoc.role === 'teacher').toBe(false);
+
+    expect((await canImpersonate(actorDoc, await User.findById(rosterStudent._id))).allowed).toBe(true);
+    expect((await canImpersonate(actorDoc, await User.findById(ownChild._id))).allowed).toBe(true);
+  });
+
+  test('a student viewing their parent dashboard is still reachable by their teacher', async () => {
+    const teacher = await makeUser('teacher', ['teacher']);
+    const student = await makeUser('parent', ['student', 'parent'], { teacherId: teacher._id });
+
+    const targetDoc = await User.findById(student._id);
+    expect(targetDoc.role === 'student').toBe(false);
+
+    const r = await canImpersonate(await User.findById(teacher._id), targetDoc);
+    expect(r.allowed).toBe(true);
+  });
+
+  test('widening to roles held does not hand a teacher someone else’s student', async () => {
+    const otherTeacher = await makeUser('teacher', ['teacher']);
+    const stranger = await makeUser('student', ['student'], { teacherId: otherTeacher._id });
+    const actor = await makeUser('teacher', ['teacher', 'parent']);
+
+    const r = await canImpersonate(
+      await User.findById(actor._id),
+      await User.findById(stranger._id)
+    );
+    expect(r.allowed).toBe(false);
+  });
+});
+
+describe('the AI-quota staff bypass on a multi-role account', () => {
+  // middleware/usageGate.js exempts teachers, parents and admins from the free
+  // monthly AI quota. On the active role a teacher-parent was metered while
+  // viewing a student dashboard and exempt again after switching back — the
+  // quota followed a dashboard toggle rather than the account.
+  //
+  // Reading a mongoose document matters here specifically: userHasRole()
+  // branches on `Array.isArray(user.roles) && user.roles.length`, and a
+  // hydrated doc's roles[] is a CoreMongooseArray, not a plain Array.
+
+  test('a teacher viewing the student dashboard is still exempt', async () => {
+    const staff = await makeUser('student', ['teacher', 'student']);
+    const doc = await User.findById(staff._id);
+
+    expect(Array.isArray(doc.roles)).toBe(true); // CoreMongooseArray must pass this
+    expect(doc.role === 'teacher').toBe(false);
+    expect(hasStaffRoleBypass(doc)).toBe(true);
+  });
+
+  test('a plain student is still metered', async () => {
+    const doc = await User.findById((await makeUser('student', ['student']))._id);
+    expect(hasStaffRoleBypass(doc)).toBe(false);
+  });
+
+  test('a legacy account with no roles[] still falls back to role', async () => {
+    // roles[] is backfilled, not guaranteed. models/user.js has a pre-save hook
+    // that fills it from `role`, so the only way to get a genuinely pre-backfill
+    // document is the way production got them: written before the hook existed.
+    // $unset through the driver reproduces that exactly — going through
+    // makeUser() alone would silently be handed a roles[] and prove nothing.
+    const legacy = await makeUser('teacher', null);
+    await User.collection.updateOne({ _id: legacy._id }, { $unset: { roles: '' } });
+
+    const doc = await User.findById(legacy._id);
+    expect(doc.roles.length).toBe(0);
+    expect(hasStaffRoleBypass(doc)).toBe(true);
   });
 });
