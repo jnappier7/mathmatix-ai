@@ -22,7 +22,10 @@
  */
 
 const mongoose = require('mongoose');
-const { resourceVisibleToStudent } = require('../../utils/resourceVisibility');
+const {
+    resourceVisibleToStudent,
+    teacherResourceFileAccess,
+} = require('../../utils/resourceVisibility');
 const TeacherResource = require('../../models/teacherResource');
 
 const oid = () => new mongoose.Types.ObjectId();
@@ -364,4 +367,147 @@ describe('TeacherResource.search — the two $or clauses must not collide', () =
     const text = captured.$and[1];
     expect(() => new RegExp(text.$or[0].displayName.$regex)).not.toThrow();
   });
+});
+
+describe('teacherResourceFileAccess — the /uploads/... static-file route', () => {
+    // config/routes.js serves resource bytes by PATH
+    // (/uploads/teacher-resources/:teacherId/:filename) before any
+    // TeacherResource document is loaded, so it authorizes on ownership alone.
+    // It used to do that with `user.role === 'teacher'` / `=== 'student'` —
+    // the ACTIVE role, i.e. whichever dashboard the account is looking at right
+    // now — so a multi-role account was denied its own files with a bare 403
+    // and no log line to explain it (CLAUDE.md §12).
+    //
+    // :teacherId arrives off req.params, so it is always a STRING here while
+    // user._id / user.teacherId are ObjectIds. Every case below keeps that
+    // asymmetry rather than comparing ObjectId to ObjectId, because a rule that
+    // only holds for matching types would pass here and 403 in production.
+    const dir = (id) => String(id);
+
+    test('a single-role teacher reaches their own directory', () => {
+        const user = { _id: TEACHER, role: 'teacher', roles: ['teacher'] };
+        expect(teacherResourceFileAccess(user, dir(TEACHER))).toEqual({
+            allowed: true,
+            asStudent: false,
+        });
+    });
+
+    test('a teacher who also holds parent reaches their own files while viewing the parent dashboard', () => {
+        // THE BUG. roles=['teacher','parent'] with role='parent' is a teacher
+        // who clicked over to their parent view; `user.role === 'teacher'` is
+        // false for them and every resource link on the page 403'd.
+        const user = { _id: TEACHER, role: 'parent', roles: ['teacher', 'parent'] };
+        expect(teacherResourceFileAccess(user, dir(TEACHER))).toEqual({
+            allowed: true,
+            asStudent: false,
+        });
+    });
+
+    test('a student who also holds parent reaches their teacher’s files after switching views', () => {
+        const user = {
+            _id: oid(),
+            teacherId: TEACHER,
+            role: 'parent',
+            roles: ['student', 'parent'],
+        };
+        expect(teacherResourceFileAccess(user, dir(TEACHER))).toEqual({
+            allowed: true,
+            asStudent: true,
+        });
+    });
+
+    test('asStudent gates the publish check, so an owner teacher can open their own unpublished drafts', () => {
+        // A teacher who also holds student, assigned to themselves, satisfies
+        // BOTH branches now that each matches on roles held. The owner branch
+        // has to win — otherwise the route runs its isPublished check and the
+        // teacher cannot preview a draft they have not shared yet.
+        const user = {
+            _id: TEACHER,
+            teacherId: TEACHER,
+            role: 'teacher',
+            roles: ['teacher', 'student'],
+        };
+        expect(teacherResourceFileAccess(user, dir(TEACHER))).toEqual({
+            allowed: true,
+            asStudent: false,
+        });
+    });
+
+    test('legacy documents with no roles[] still authorize off the single role string', () => {
+        // roles[] was backfilled; anything written before it must not lose access.
+        expect(teacherResourceFileAccess({ _id: TEACHER, role: 'teacher' }, dir(TEACHER)))
+            .toEqual({ allowed: true, asStudent: false });
+        expect(teacherResourceFileAccess({ _id: oid(), teacherId: TEACHER, role: 'student' }, dir(TEACHER)))
+            .toEqual({ allowed: true, asStudent: true });
+    });
+
+    describe('and still denies everyone it denied before', () => {
+        test('another teacher’s directory', () => {
+            const user = { _id: OTHER_TEACHER, role: 'teacher', roles: ['teacher'] };
+            expect(teacherResourceFileAccess(user, dir(TEACHER)).allowed).toBe(false);
+        });
+
+        test('a student of a different teacher', () => {
+            const user = { _id: oid(), teacherId: OTHER_TEACHER, role: 'student', roles: ['student'] };
+            expect(teacherResourceFileAccess(user, dir(TEACHER)).allowed).toBe(false);
+        });
+
+        test('a student with no teacher at all', () => {
+            const user = { _id: oid(), role: 'student', roles: ['student'] };
+            expect(teacherResourceFileAccess(user, dir(TEACHER)).allowed).toBe(false);
+        });
+
+        test('a parent — holding parent is not holding teacher or student', () => {
+            // The widening is to roles HELD, not to "any authenticated user".
+            const user = { _id: oid(), teacherId: TEACHER, role: 'parent', roles: ['parent'] };
+            expect(teacherResourceFileAccess(user, dir(TEACHER)).allowed).toBe(false);
+        });
+
+        test('an admin who holds neither teacher nor student', () => {
+            const user = { _id: oid(), role: 'admin', roles: ['admin'] };
+            expect(teacherResourceFileAccess(user, dir(TEACHER)).allowed).toBe(false);
+        });
+
+        test('missing user or missing directory, without throwing', () => {
+            // The route calls User.findById first; a deleted account yields null.
+            expect(teacherResourceFileAccess(null, dir(TEACHER))).toEqual({ allowed: false, asStudent: false });
+            expect(teacherResourceFileAccess({ role: 'teacher' }, dir(TEACHER))).toEqual({ allowed: false, asStudent: false });
+            expect(teacherResourceFileAccess({ _id: TEACHER, role: 'teacher' }, undefined)).toEqual({ allowed: false, asStudent: false });
+        });
+    });
+});
+
+describe('the /uploads/teacher-resources route is wired to that rule', () => {
+    // config/routes.js requires all 85 route modules at import time, so it
+    // cannot be require()'d in a test (see staticHtmlCspGate.test.js). The
+    // failure mode worth pinning is not a wrong comparison but a regression
+    // back to an INLINE one, which is visible in the source.
+    const fs = require('fs');
+    const path = require('path');
+    const src = fs.readFileSync(path.join(__dirname, '../../config/routes.js'), 'utf8');
+    const handler = src.slice(
+        src.indexOf("app.get('/uploads/teacher-resources/:teacherId/:filename'"),
+        src.indexOf("app.get('/js/tutor-config-data.js'")
+    );
+
+    test('the handler was found, so the assertions below mean something', () => {
+        expect(handler).toContain('sendFile');
+        expect(handler.length).toBeGreaterThan(200);
+    });
+
+    test('it delegates to teacherResourceFileAccess', () => {
+        expect(handler).toContain('teacherResourceFileAccess(user, teacherId)');
+        expect(src).toContain("require('../utils/resourceVisibility')");
+    });
+
+    test('it never compares the ACTIVE role', () => {
+        expect(handler).not.toMatch(/\.role\s*===/);
+        expect(handler).not.toMatch(/\.role\s*!==/);
+    });
+
+    test('the publish check still runs on the student branch only', () => {
+        expect(handler).toContain('if (asStudent)');
+        expect(handler).toContain('isPublished === false');
+        expect(handler.indexOf('if (asStudent)')).toBeLessThan(handler.indexOf('isPublished === false'));
+    });
 });

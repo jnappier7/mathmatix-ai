@@ -17,6 +17,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const User = require('../../models/user');
 const { anyRole, withoutRoles } = require('../../utils/roleQuery');
+const { teacherResourceFileAccess } = require('../../utils/resourceVisibility');
 
 let mem;
 
@@ -162,5 +163,66 @@ describe('linking a multi-role account', () => {
     const reloaded = await User.findById(self._id).lean();
     expect(reloaded.children.map(String)).toEqual([self._id.toString()]);
     expect(reloaded.parentIds.map(String)).toEqual([self._id.toString()]);
+  });
+});
+
+describe('reaching a teacher’s uploaded resources', () => {
+  // config/routes.js serves resource bytes straight off disk at
+  // /uploads/teacher-resources/:teacherId/:filename. It authorized with
+  // `user.role === 'teacher'` / `=== 'student'` — the ACTIVE role — so a
+  // multi-role account got a bare 403 on its own materials the moment it
+  // switched dashboards. The rule now lives in utils/resourceVisibility.js.
+  //
+  // The unit tests in tests/unit/resourceClassSharing.test.js cover the branch
+  // logic against plain objects. What needs a real database is the shape the
+  // route actually holds: it does `User.findById(req.user._id)`, so the rule is
+  // handed a MONGOOSE DOCUMENT, whose roles[] is a CoreMongooseArray and whose
+  // _id/teacherId are ObjectIds — while :teacherId off req.params is a string.
+  // A rule that only worked on POJOs would pass the unit tests and 403 in prod.
+
+  test('a teacher viewing the parent dashboard still reaches their own directory', async () => {
+    const owner = await makeUser('parent', ['teacher', 'parent']);
+
+    const loaded = await User.findById(owner._id);
+    const teacherIdParam = owner._id.toString(); // as it arrives off req.params
+
+    // The old comparison, kept explicit so a regression fails here loudly.
+    expect(loaded.role === 'teacher').toBe(false);
+
+    expect(teacherResourceFileAccess(loaded, teacherIdParam)).toEqual({
+      allowed: true,
+      asStudent: false,
+    });
+  });
+
+  test('a student viewing the parent dashboard still reaches their teacher’s directory', async () => {
+    const teacher = await makeUser('teacher', ['teacher']);
+    const child = await makeUser('parent', ['student', 'parent'], { teacherId: teacher._id });
+
+    const loaded = await User.findById(child._id);
+    expect(loaded.role === 'student').toBe(false);
+
+    // asStudent true — the route still owes this request the isPublished check.
+    expect(teacherResourceFileAccess(loaded, teacher._id.toString())).toEqual({
+      allowed: true,
+      asStudent: true,
+    });
+  });
+
+  test('a parent who holds neither role is still denied', async () => {
+    // Widening to roles HELD must not widen to "any authenticated user".
+    const teacher = await makeUser('teacher', ['teacher']);
+    const parent = await makeUser('parent', ['parent'], { teacherId: teacher._id });
+
+    const loaded = await User.findById(parent._id);
+    expect(teacherResourceFileAccess(loaded, teacher._id.toString()).allowed).toBe(false);
+  });
+
+  test('a teacher cannot read another teacher’s directory by switching roles', async () => {
+    const owner = await makeUser('teacher', ['teacher']);
+    const other = await makeUser('parent', ['teacher', 'parent', 'student', 'admin']);
+
+    const loaded = await User.findById(other._id);
+    expect(teacherResourceFileAccess(loaded, owner._id.toString()).allowed).toBe(false);
   });
 });
