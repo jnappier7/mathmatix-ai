@@ -77,6 +77,66 @@ describe('Data Privacy Pipeline', () => {
     });
 
     // ========================================================================
+    // The "is this actually a student" check reads roles HELD
+    // ========================================================================
+    describe('the student assertion on the deletion target', () => {
+        // cascadeDeleteStudentData refuses to run against a non-student. The
+        // check was `student.role !== 'student' && !(student.roles && ...)` —
+        // a second hand-rolled spelling of userHasRole (CLAUDE.md §12), and one
+        // that ALSO accepted a stale `role` string roles[] no longer backs.
+        //
+        // Both directions matter for a deletion: refusing a real student leaves
+        // a FERPA/COPPA erasure request unfulfilled, and accepting a non-student
+        // cascades deletes across an account that was never in scope.
+        const studentId = '507f1f77bcf86cd799439011';
+        const requestor = { userId: 'admin123', role: 'admin', reason: 'Test deletion' };
+
+        test('a student who switched to their parent dashboard is still erasable', async () => {
+            User.findById = jest.fn().mockResolvedValue({
+                _id: studentId, role: 'parent', roles: ['student', 'parent'],
+                firstName: 'Sarah', lastName: 'Chen',
+            });
+
+            await expect(cascadeDeleteStudentData(studentId, requestor)).resolves.toBeDefined();
+            expect(User.findByIdAndDelete).toHaveBeenCalled();
+        });
+
+        test('an account that holds no student role is still refused', async () => {
+            User.findById = jest.fn().mockResolvedValue({
+                _id: studentId, role: 'parent', roles: ['parent', 'teacher'],
+                firstName: 'Pat', lastName: 'Doe',
+            });
+
+            await expect(cascadeDeleteStudentData(studentId, requestor))
+                .rejects.toThrow(/not a student/i);
+            expect(User.findByIdAndDelete).not.toHaveBeenCalled();
+        });
+
+        test('an account whose roles[] no longer backs a stale role is refused', async () => {
+            // The gap the hand-rolled `||` left open: `role` says student while
+            // roles[] does not list it. userHasRole trusts roles[] when it is
+            // populated, so the stale string no longer authorizes a cascade.
+            User.findById = jest.fn().mockResolvedValue({
+                _id: studentId, role: 'student', roles: ['parent'],
+                firstName: 'Pat', lastName: 'Doe',
+            });
+
+            await expect(cascadeDeleteStudentData(studentId, requestor))
+                .rejects.toThrow(/not a student/i);
+            expect(User.findByIdAndDelete).not.toHaveBeenCalled();
+        });
+
+        test('a legacy account with no roles[] is still erasable through role', async () => {
+            User.findById = jest.fn().mockResolvedValue({
+                _id: studentId, role: 'student',
+                firstName: 'Sarah', lastName: 'Chen',
+            });
+
+            await expect(cascadeDeleteStudentData(studentId, requestor)).resolves.toBeDefined();
+        });
+    });
+
+    // ========================================================================
     // cascadeDeleteStudentData
     // ========================================================================
     describe('cascadeDeleteStudentData', () => {

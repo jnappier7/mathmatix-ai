@@ -16,6 +16,15 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated, isAdmin, isParent } = require('../middleware/auth');
+const { userHasRole } = require('../utils/roleQuery');
+
+// Every role test in this file goes through userHasRole() — the canonical
+// roles-HELD check (CLAUDE.md §12). It replaces a hand-rolled
+// `user.roles?.includes(x) || user.role === x`, which reaches the same answer
+// for a well-formed account but ALSO accepts a stale `role` string that roles[]
+// no longer backs. roleSwitch.js validates `role` against roles[] before
+// writing it, so nothing legitimate loses access; what closes is the gap where
+// the two fields disagree.
 const {
     grantParentConsent,
     issueParentConsentRequest,
@@ -45,7 +54,7 @@ router.get('/status/:studentId', isAuthenticated, async (req, res) => {
         const requestor = req.user;
 
         // Authorization check
-        const isAdminUser = requestor.roles?.includes('admin') || requestor.role === 'admin';
+        const isAdminUser = userHasRole(requestor, 'admin');
         const isParentOfChild = requestor.children?.some(id => id.toString() === studentId);
         const isSelf = requestor._id.toString() === studentId;
 
@@ -191,7 +200,7 @@ router.post('/grant/self', isAuthenticated, async (req, res) => {
         const studentId = req.user._id.toString();
 
         // Must be a student role
-        const isStudent = req.user.roles?.includes('student') || req.user.role === 'student';
+        const isStudent = userHasRole(req.user, 'student');
         if (!isStudent) {
             return res.status(403).json({ success: false, message: 'Self-consent is only available for students' });
         }
@@ -268,7 +277,7 @@ router.post('/revoke', isAuthenticated, async (req, res) => {
             return res.status(400).json({ success: false, message: 'studentId is required' });
         }
 
-        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+        const isAdminUser = userHasRole(req.user, 'admin');
         const isParentOfChild = req.user.children?.some(id => id.toString() === studentId);
 
         if (!isAdminUser && !isParentOfChild) {
@@ -367,7 +376,7 @@ router.post('/request-parent-email', isAuthenticated, async (req, res) => {
 router.get('/directory-info/:studentId', isAuthenticated, async (req, res) => {
     try {
         const { studentId } = req.params;
-        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+        const isAdminUser = userHasRole(req.user, 'admin');
         const isParentOfChild = req.user.children?.some(id => id.toString() === studentId);
         const isSelf = req.user._id.toString() === studentId;
 
@@ -408,7 +417,7 @@ router.put('/directory-info/:studentId', isAuthenticated, async (req, res) => {
             return res.status(400).json({ success: false, message: 'optOut (boolean) is required' });
         }
 
-        const isAdminUser = req.user.roles?.includes('admin') || req.user.role === 'admin';
+        const isAdminUser = userHasRole(req.user, 'admin');
         const isParentOfChild = req.user.children?.some(id => id.toString() === studentId);
 
         if (!isAdminUser && !isParentOfChild) {
