@@ -10,6 +10,8 @@ const Sentry = require('@sentry/node');
 
 const logger = require('../utils/logger');
 const { applyDobToUser } = require('../utils/dob');
+const { userHasRole, rolesOf } = require('../utils/roleQuery');
+const { teacherResourceFileAccess } = require('../utils/resourceVisibility');
 const User = require('../models/user');
 
 // Stricter rate limiter for unauthenticated AI endpoints (trial chat)
@@ -482,8 +484,11 @@ function oauthCallback(strategy) {
           const onboardingDone = !!(user.onboarding && user.onboarding.completed);
           if (user.needsProfileCompletion && !onboardingDone) return res.redirect('/onboarding.html');
           if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-          const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
+          const userRoles = rolesOf(user);
           if (userRoles.length > 1) return res.redirect('/role-picker.html');
+          // `user.role` — the ACTIVE role — is deliberate here and below:
+          // this is acting-user dashboard routing, the one job §12 keeps it
+          // for. Multi-role accounts never reach it (role-picker above).
           if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
           const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
           res.redirect(dashboardMap[user.role] || '/login.html');
@@ -538,6 +543,8 @@ function registerOAuthRoutes(app, authLimiter) {
               const onboardingDone = !!(user.onboarding && user.onboarding.completed);
               if (user.needsProfileCompletion && !onboardingDone) return res.redirect('/onboarding.html');
               if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+              // Acting-user dashboard routing again — see the note in
+              // oauthCallback(). `role` is correct here; `roles[]` is not.
               if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
               const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
               res.redirect(dashboardMap[user.role] || '/login.html');
@@ -600,9 +607,7 @@ function registerUserRoutes(app) {
       // day 1 (enough to grab a cosmetic and feel the earn→spend loop). Granted
       // once, gated by wallet.welcomeGrantedAt; bypasses the daily earn cap since
       // it's a starter gift, not earned currency.
-      const isStudent = Array.isArray(userObj.roles) && userObj.roles.length
-        ? userObj.roles.includes('student')
-        : userObj.role === 'student';
+      const isStudent = userHasRole(userObj, 'student');
       if (isStudent && !(userObj.wallet && userObj.wallet.welcomeGrantedAt)) {
         const grant = (BRAND_CONFIG.coinRewards && BRAND_CONFIG.coinRewards.welcomeBonus) || 100;
         const now = new Date();
@@ -687,7 +692,12 @@ function registerUserRoutes(app) {
   // Calculator access
   app.get('/api/calculator/access', isAuthenticated, async (req, res) => {
     try {
-      if (req.user.role !== 'student') {
+      // Roles HELD, not the active dashboard: a student who also holds parent
+      // and had switched views read as a non-student here and was handed
+      // unrestricted calculator access, silently escaping their teacher's
+      // classAISettings (CLAUDE.md §12). Non-students still fall through to
+      // 'always' — they have no teacherId, so the next check catches them.
+      if (!userHasRole(req.user, 'student')) {
         return res.json({ success: true, calculatorAccess: 'always', message: 'Non-student users have full calculator access' });
       }
       if (!req.user.teacherId) {
@@ -720,14 +730,18 @@ function registerUserRoutes(app) {
       const { teacherId, filename } = req.params;
       const user = await User.findById(req.user._id);
 
-      const isOwnerTeacher = user.role === 'teacher' && user._id.toString() === teacherId;
-      const isStudentOfTeacher = user.role === 'student' && user.teacherId && user.teacherId.toString() === teacherId;
+      // Authorization lives in utils/resourceVisibility.js, next to the rule
+      // the /download/:id endpoint uses, and matches on the roles a user HOLDS
+      // rather than `user.role` — the active dashboard. A teacher who also
+      // holds parent and had switched views used to be denied their own
+      // uploaded resources with a bare 403 (CLAUDE.md §12).
+      const { allowed, asStudent } = teacherResourceFileAccess(user, teacherId);
 
-      if (!isOwnerTeacher && !isStudentOfTeacher) {
+      if (!allowed) {
         return res.status(403).json({ message: 'Access denied' });
       }
 
-      if (isStudentOfTeacher) {
+      if (asStudent) {
         const TeacherResource = require('../models/teacherResource');
         const resource = await TeacherResource.findOne({
           teacherId,

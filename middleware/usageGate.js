@@ -15,6 +15,7 @@
 const User = require('../models/user');
 const SchoolLicense = require('../models/schoolLicense');
 const { recordConversionEvent } = require('../utils/conversionEvents');
+const { userHasRole } = require('../utils/roleQuery');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 // NOTE: constant/field names keep the "weekly" prefix for backward compatibility
@@ -71,6 +72,24 @@ async function isLicenseValid(licenseId) {
 }
 
 /**
+ * The staff bypass: teachers, parents and admins are never metered or
+ * paywalled (Option D — free unlimited drives adoption).
+ *
+ * Reads the roles a user HOLDS, not `user.role` — the dashboard they happen to
+ * have open (CLAUDE.md §12). On the active role the bypass was BOTH too narrow
+ * and too loose at once: a teacher who also holds parent started being metered
+ * against the 30-minute student quota the moment they opened a student view,
+ * while the same account could flip back to parent and have the meter stop —
+ * so the quota was decided by a dashboard toggle rather than by who they are.
+ *
+ * All four gates below share this so the meter, the paywall and the display
+ * surfaces can never disagree about who is exempt.
+ */
+function hasStaffRoleBypass(user) {
+  return userHasRole(user, 'teacher') || userHasRole(user, 'parent') || userHasRole(user, 'admin');
+}
+
+/**
  * True when the user's AI usage is NOT metered against the free monthly
  * quota: role bypass (teacher/parent/admin), unlimited subscriber, valid
  * in-capacity school license, or a linked parent with Mathmatix+.
@@ -91,7 +110,7 @@ async function hasUnmeteredAiAccess(user) {
   if (!user) return false;
 
   // Teachers, parents, and admins are always free unlimited
-  if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') return true;
+  if (hasStaffRoleBypass(user)) return true;
 
   // Students covered by a school license get unlimited access
   if (user.schoolLicenseId) {
@@ -264,7 +283,7 @@ async function hasPremiumAccess(user) {
   if (!user) return false;
 
   // Role bypasses (drive adoption; teachers/parents/admins never paywalled)
-  if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
+  if (hasStaffRoleBypass(user)) {
     return true;
   }
 
@@ -331,7 +350,7 @@ function premiumFeatureGate(featureName) {
     if (!user) return next();
 
     // Teachers, parents, admins always get premium features
-    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
+    if (hasStaffRoleBypass(user)) {
       return next();
     }
 
@@ -406,7 +425,7 @@ function paidFeatureGate(featureName) {
     if (!user) return next();
 
     // Teachers, parents, admins always get access
-    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
+    if (hasStaffRoleBypass(user)) {
       return next();
     }
 
@@ -440,4 +459,4 @@ function paidFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasPremiumAccess, hasVoiceAccess, hasUnmeteredAiAccess, FREE_WEEKLY_SECONDS, FREE_QUOTA_RESET_DAYS, isLicenseValid };
+module.exports = { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasPremiumAccess, hasVoiceAccess, hasUnmeteredAiAccess, hasStaffRoleBypass, FREE_WEEKLY_SECONDS, FREE_QUOTA_RESET_DAYS, isLicenseValid };

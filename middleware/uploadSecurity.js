@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const logger = require('../utils/logger');
 const { moderateImage } = require('../utils/openaiClient');
+const { userHasRole } = require('../utils/roleQuery');
 
 // Categories that should always reject K-12 uploads, even if OpenAI's overall
 // `flagged` is false. We're stricter than the default threshold for student
@@ -61,9 +62,12 @@ async function verifyUploadAccess(req, res, next) {
         const isTeacher = student && student.teacherId &&
                          student.teacherId.toString() === userId.toString();
 
-        // Check if user is admin
+        // Check if user is admin — on the roles they HOLD, not `role`, which is
+        // only whichever dashboard they have open (CLAUDE.md §12). An admin who
+        // also holds teacher or parent lost access to every student upload the
+        // moment they switched views, and the 403 carried no hint why.
         const currentUser = await User.findById(userId);
-        const isAdmin = currentUser && currentUser.role === 'admin';
+        const isAdmin = userHasRole(currentUser, 'admin');
 
         if (!isOwner && !isTeacher && !isAdmin) {
             logger.warn('[Upload Security] Access denied', { userId: userId?.toString(), filename });

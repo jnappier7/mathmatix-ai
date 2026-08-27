@@ -8,6 +8,7 @@ const User = require('../models/user'); // Ensure User model is accessible
 const { isAuthenticated } = require('../middleware/auth'); // For potentially checking if user is already logged in
 const { loginValidation, handleValidationErrors } = require('../middleware/validation');
 const { computeNudges } = require('../utils/userNudges');
+const { userHasRole, rolesOf } = require('../utils/roleQuery');
 
 // POST /login - Local authentication strategy
 // Frontend calls this endpoint directly (e.g., fetch('/login', ...))
@@ -43,7 +44,7 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
 
             // Determine redirect URL based on user's role and completion status
             let redirectUrl = '/chat.html'; // Default for students
-            const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
+            const userRoles = rolesOf(user);
 
             // Voice-first onboarding precedes profile completion for new users.
             const onboardingDone = !!(user.onboarding && user.onboarding.completed);
@@ -54,6 +55,9 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
             } else if (userRoles.length > 1) {
                 // Multi-role user: let them pick which role to enter as
                 redirectUrl = "/role-picker.html";
+            // `user.role` — the ACTIVE role — is deliberate for the rest of this
+            // chain: acting-user dashboard routing, the one job CLAUDE.md §12
+            // keeps `role` for, and multi-role accounts never reach it.
             } else if (user.role === "teacher") {
                 redirectUrl = "/teacher-dashboard.html";
             } else if (user.role === "admin") {
@@ -68,7 +72,12 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
             // Awaited so the avatar is persisted before the frontend loads.
             // Auto-assign default avatar for legacy users (fire-and-forget to
             // avoid unhandled rejection inside Passport's non-async callback)
-            if (user.role === 'student' && !user.avatar?.dicebearUrl) {
+            // Roles HELD, not the active dashboard (CLAUDE.md §12) — this is a
+            // backfill for the account, not a decision about what to render, so
+            // it must not be skipped just because the account logged in on some
+            // other view. A student who also holds parent kept getting a login
+            // with no avatar assigned, every time.
+            if (userHasRole(user, 'student') && !user.avatar?.dicebearUrl) {
                 const seed = (user.firstName || user.username || 'student').toLowerCase();
                 user.avatar = {
                     dicebearConfig: { style: 'adventurer', seed },
@@ -83,7 +92,7 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
             // round-trip. Best-effort: a failure here must not block login.
             let nudges = [];
             try {
-                if (user.role === 'student') {
+                if (userHasRole(user, 'student')) {
                     nudges = computeNudges(user);
                 }
             } catch (nudgeErr) {

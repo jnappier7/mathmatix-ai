@@ -29,7 +29,7 @@ const { sendWelcomeEmail } = require('../utils/emailService');
 const csv = require('csv-parser');
 const { Readable } = require('stream');
 
-const { anyRole, withoutRoles, rolesOf, ROLE_NAMES } = require('../utils/roleQuery');
+const { anyRole, withoutRoles, rolesOf, userHasRole, ROLE_NAMES } = require('../utils/roleQuery');
 const {
   USER_PAGE_SIZE_DEFAULT,
   USER_PAGE_SIZE_MAX,
@@ -2322,19 +2322,31 @@ router.delete('/users/:userId', isAdmin, async (req, res) => {
     // Store user info for logging
     const userInfo = `${user.firstName} ${user.lastName} (${user.email}, ${user.role})`;
 
-    // Delete associated data
+    // Delete associated data.
+    //
+    // Both cleanups key on the roles the account HELD, not `user.role` — the
+    // dashboard it happened to have open when it was deleted (CLAUDE.md §12).
+    // This is the data-integrity direction of the same bug: deleting a teacher
+    // who also holds parent, while they were on the parent dashboard, skipped
+    // the teacher cleanup entirely and left every one of their students
+    // pointing at a teacherId that no longer resolves. Nothing errors — the
+    // roster just silently has a dead teacher in it.
     await Promise.all([
       // Delete all conversations
       Conversation.deleteMany({ userId: user._id }),
       // If teacher, remove from students' teacherId
-      user.role === 'teacher' ? User.updateMany(
+      userHasRole(user, 'teacher') ? User.updateMany(
         { teacherId: user._id },
         { $unset: { teacherId: '' } }
       ) : Promise.resolve(),
-      // If parent, unlink from children
-      user.role === 'parent' && user.children?.length > 0 ? User.updateMany(
+      // If parent, unlink from children.
+      // $pull from parentIds, not $unset parentId: models/user.js has no
+      // `parentId` field (it is `parentIds: [ObjectId]`), so the old $unset
+      // matched nothing and the children kept a reference to the deleted
+      // parent. Found while fixing the role test on the line above.
+      userHasRole(user, 'parent') && user.children?.length > 0 ? User.updateMany(
         { _id: { $in: user.children } },
-        { $unset: { parentId: '' } }
+        { $pull: { parentIds: user._id } }
       ) : Promise.resolve(),
       // Delete the user
       User.findByIdAndDelete(userId)
@@ -2643,6 +2655,9 @@ router.get('/students/:studentId/placement-results', isAdmin, requireActiveConse
 router.get('/waitlist', async (req, res) => {
   try {
     const entries = await Waitlist.find({}).sort({ createdAt: -1 }).lean();
+    // `e.role` here is Waitlist.role — a single self-declared string on a
+    // pre-signup record with no roles[] and no account behind it. Not the
+    // User.role/roles[] distinction in CLAUDE.md §12; nothing to sweep.
     const counts = {
       total: entries.length,
       student: entries.filter(e => e.role === 'student').length,

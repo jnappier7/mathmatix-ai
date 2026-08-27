@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const SupportTicket = require('../models/supportTicket');
 const { isAuthenticated } = require('../middleware/auth');
+const { userHasRole } = require('../utils/roleQuery');
 const { triageTicket, generateFollowUp } = require('../utils/supportTriage');
 const { sendSupportEscalationAlert } = require('../utils/emailService');
 const logger = require('../utils/logger').child({ route: 'support' });
@@ -352,7 +353,9 @@ router.post('/tickets/:id/reopen', isAuthenticated, async (req, res) => {
  */
 router.get('/tickets/admin/all', isAuthenticated, async (req, res) => {
   try {
-    if (req.user.role !== 'admin') {
+    // Roles HELD, not the active dashboard: an admin who also holds teacher or
+    // parent lost the admin ticket queue on switching views (CLAUDE.md §12).
+    if (!userHasRole(req.user, 'admin')) {
       return res.status(403).json({
         success: false,
         message: 'Unauthorized.'
@@ -407,7 +410,7 @@ router.get('/tickets/admin/all', isAuthenticated, async (req, res) => {
  */
 router.patch('/tickets/admin/:id', isAuthenticated, async (req, res) => {
   try {
-    if (req.user.role !== 'admin') {
+    if (!userHasRole(req.user, 'admin')) {
       return res.status(403).json({
         success: false,
         message: 'Unauthorized.'

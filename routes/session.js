@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
+const { userHasRole } = require('../utils/roleQuery');
 const logger = require('../utils/logger').child({ service: 'session-routes' });
 const {
   endSession,
@@ -195,8 +196,9 @@ router.get('/recap', isAuthenticated, async (req, res) => {
  */
 router.post('/cleanup-stale', isAuthenticated, async (req, res) => {
   try {
-    // Only allow admins or run as system task
-    if (req.user?.role !== 'admin') {
+    // Only allow admins or run as system task. Roles HELD, not the active
+    // dashboard (CLAUDE.md §12).
+    if (!userHasRole(req.user, 'admin')) {
       return res.status(403).json({ error: 'Admin access required' });
     }
 

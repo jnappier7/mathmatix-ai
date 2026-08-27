@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 const { isAuthenticated } = require('../middleware/auth');
+const { userHasRole } = require('../utils/roleQuery');
 const User = require('../models/user');
 const GradingResult = require('../models/gradingResult');
 const { gradeWithVision, callLLM } = require('../utils/llmGateway');
@@ -739,8 +740,12 @@ router.get('/:id',
             return res.status(404).json({ success: false, message: 'Result not found' });
         }
 
-        // Students can only view their own results
-        if (result.userId.toString() !== req.user._id.toString() && req.user.role === 'student') {
+        // Students can only view their own results. Roles HELD, not `role`
+        // (CLAUDE.md §12): this test runs the DENY direction, so reading the
+        // active dashboard did not merely lock someone out — a student who also
+        // holds parent stopped counting as a student the moment they switched
+        // views, and the guard let them read anyone's grading result.
+        if (result.userId.toString() !== req.user._id.toString() && userHasRole(req.user, 'student')) {
             return res.status(403).json({ success: false, message: 'Access denied' });
         }
 
@@ -759,7 +764,7 @@ router.post('/:id/review',
     isAuthenticated,
     async (req, res) => {
     try {
-        if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+        if (!userHasRole(req.user, 'teacher') && !userHasRole(req.user, 'admin')) {
             return res.status(403).json({ success: false, message: 'Only teachers can review work' });
         }
 

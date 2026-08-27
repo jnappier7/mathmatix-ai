@@ -10,6 +10,7 @@ const { sendEmailVerification } = require('../utils/emailService');
 const { generateUniqueStudentLinkCode } = require('./student');
 const logger = require('../utils/logger').child({ route: 'auth' });
 const { computeNudges } = require('../utils/userNudges');
+const { userHasRole } = require('../utils/roleQuery');
 
 // Cooldown between successive verification-email resends to the same address.
 // Prevents abuse / accidental double-clicks from blasting users' inboxes.
@@ -303,7 +304,7 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       // handle the very first starting-point offer.
       let nudges = [];
       try {
-        if (newUser.role === 'student') {
+        if (userHasRole(newUser, 'student')) {
           nudges = computeNudges(newUser);
         }
       } catch (nudgeErr) {

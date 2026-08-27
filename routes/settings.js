@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const { isAuthenticated } = require('../middleware/auth');
 const logger = require('../utils/logger');
+const { uploadRetentionAccess } = require('../utils/uploadRetentionAccess');
 
 /**
  * @route   POST /api/settings/change-password
@@ -153,39 +154,13 @@ router.post('/upload-retention', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Authorization check
-        let isAuthorized = false;
-        let authReason = '';
-
-        // Admin can set for anyone
-        if (currentUser.role === 'admin') {
-            isAuthorized = true;
-            authReason = 'admin';
-        }
-        // Parent can set for their children
-        else if (currentUser.role === 'parent') {
-            const isParentOfStudent = currentUser.children &&
-                                     currentUser.children.some(childId =>
-                                         childId.toString() === studentId);
-            if (isParentOfStudent) {
-                isAuthorized = true;
-                authReason = 'parent';
-            }
-        }
-        // Teacher can set for their students
-        else if (currentUser.role === 'teacher') {
-            const isTeacherOfStudent = student.teacherId &&
-                                       student.teacherId.toString() === currentUser._id.toString();
-            if (isTeacherOfStudent) {
-                isAuthorized = true;
-                authReason = 'teacher';
-            }
-        }
-        // Student can set for themselves (optional - remove if you don't want this)
-        else if (currentUser.role === 'student' && currentUser._id.toString() === studentId) {
-            isAuthorized = true;
-            authReason = 'self';
-        }
+        // Authorization check — the rule lives in utils/uploadRetentionAccess.js
+        // so this endpoint and the GET below cannot drift apart, and so it can
+        // be tested without express. It matches on the roles the actor HOLDS
+        // rather than `currentUser.role`, the dashboard they have open
+        // (CLAUDE.md §12).
+        const { allowed: isAuthorized, reason: authReason } =
+            uploadRetentionAccess(currentUser, student, studentId);
 
         if (!isAuthorized) {
             logger.warn('[Upload Retention] Unauthorized attempt', { role: currentUser.role, userId: currentUser._id?.toString(), studentId });
@@ -243,23 +218,10 @@ router.get('/upload-retention/:studentId', isAuthenticated, async (req, res) => 
             });
         }
 
-        // Authorization check (same as POST)
-        let isAuthorized = false;
-
-        if (currentUser.role === 'admin') {
-            isAuthorized = true;
-        } else if (currentUser.role === 'parent') {
-            const isParentOfStudent = currentUser.children &&
-                                     currentUser.children.some(childId =>
-                                         childId.toString() === studentId);
-            isAuthorized = isParentOfStudent;
-        } else if (currentUser.role === 'teacher') {
-            const isTeacherOfStudent = student.teacherId &&
-                                       student.teacherId.toString() === currentUser._id.toString();
-            isAuthorized = isTeacherOfStudent;
-        } else if (currentUser.role === 'student' && currentUser._id.toString() === studentId) {
-            isAuthorized = true;
-        }
+        // Authorization check — literally the same rule as the POST now, rather
+        // than a second copy of it.
+        const { allowed: isAuthorized } =
+            uploadRetentionAccess(currentUser, student, studentId);
 
         if (!isAuthorized) {
             return res.status(403).json({

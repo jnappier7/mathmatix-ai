@@ -133,3 +133,50 @@ describe('GET /api/leaderboard', () => {
     expect(filter.isDemoClone).toEqual({ $ne: true });
   });
 });
+
+describe('leaderboard scope follows roles HELD', () => {
+  // This chain NARROWS the board, so failing to recognise a viewer widens it.
+  // On `req.user.role` — the ACTIVE role, whichever dashboard the account has
+  // open (CLAUDE.md §12) — a teacher who also holds parent matched neither
+  // branch while on the parent dashboard and fell through to the unscoped
+  // global board: every student on the platform, by name and level, to someone
+  // entitled only to their own class.
+
+  test('a teacher viewing the parent dashboard still sees only their own class', async () => {
+    const viewer = { _id: 'teacher-1', role: 'parent', roles: ['teacher', 'parent'] };
+    expect(viewer.role === 'teacher').toBe(false); // the old comparison, explicit
+
+    await supertest(buildApp(viewer)).get('/api/leaderboard');
+    expect(User.find).toHaveBeenCalledWith(expect.objectContaining({ teacherId: 'teacher-1' }));
+  });
+
+  test('a student viewing the parent dashboard still sees only their classmates', async () => {
+    const viewer = { _id: 's1', role: 'parent', roles: ['student', 'parent'], teacherId: 'teacher-7' };
+    await supertest(buildApp(viewer)).get('/api/leaderboard');
+    expect(User.find).toHaveBeenCalledWith(expect.objectContaining({ teacherId: 'teacher-7' }));
+  });
+
+  test('teacher scope still wins over student scope for an account holding both', async () => {
+    // Order is load-bearing and matches the old chain: a teacher who is also
+    // enrolled as a student sees their CLASS, not their own classmates.
+    const viewer = { _id: 'teacher-1', role: 'student', roles: ['teacher', 'student'], teacherId: 'teacher-9' };
+    await supertest(buildApp(viewer)).get('/api/leaderboard');
+    expect(User.find).toHaveBeenCalledWith(expect.objectContaining({ teacherId: 'teacher-1' }));
+  });
+
+  test('a plain parent still gets the global board', async () => {
+    // Narrowing for teachers must not start narrowing for parents and admins,
+    // who match no branch on purpose.
+    await supertest(buildApp({ _id: 'p1', role: 'parent', roles: ['parent'] })).get('/api/leaderboard');
+    expect(User.find.mock.calls[0][0].teacherId).toBeUndefined();
+  });
+
+  test('an admin who also holds teacher is scoped to their class', async () => {
+    // A consequence worth stating: holding teacher now narrows the board even
+    // for an admin. That is the rule the chain has always meant to express —
+    // teacher scope first — and it only ever leaked because `role` said admin.
+    const viewer = { _id: 'a1', role: 'admin', roles: ['admin', 'teacher'] };
+    await supertest(buildApp(viewer)).get('/api/leaderboard');
+    expect(User.find).toHaveBeenCalledWith(expect.objectContaining({ teacherId: 'a1' }));
+  });
+});
