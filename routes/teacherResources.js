@@ -254,6 +254,7 @@ router.post('/upload', isAuthenticated, isTeacher, requireDurableStorage, upload
             extractedText: extractedText.slice(0, 5000), // Store first 5000 chars
             embedding: embedding, // DIRECTIVE 3: Store embedding vector
             publicUrl: publicUrl || null,
+            storageKey: publicUrl ? s3Key : null,
             sharedWithClassIds: classTargets
         });
 
@@ -628,6 +629,24 @@ router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req,
             res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
             const fileStream = fs.createReadStream(filePath);
             fileStream.pipe(res);
+        } else if (resource.storageKey && cloudStorage.isConfigured) {
+            // Private bucket: read with our own credentials and stream it on.
+            // Nothing about the object is reachable without passing the checks
+            // above, and no URL to it ever leaves the server.
+            try {
+                const { body, contentType } = await cloudStorage.getObjectStream(resource.storageKey);
+                res.setHeader('Content-Disposition', `attachment; filename="${resource.originalFilename}"`);
+                res.setHeader('Content-Type', contentType || resource.mimeType || 'application/octet-stream');
+                body.on('error', (err) => {
+                    console.error('❌ [Download] Storage stream failed:', err.message);
+                    if (!res.headersSent) res.status(502).json({ message: 'Failed to read the file' });
+                    else res.destroy();
+                });
+                return body.pipe(res);
+            } catch (err) {
+                console.error(`❌ [Download] Could not read ${resource.storageKey}:`, err.message);
+                return res.status(502).json({ message: 'Failed to load resource from storage' });
+            }
         } else if (resource.publicUrl) {
             // File not on disk but has a public URL — proxy the download instead of redirecting
             // (redirecting to external URLs is an open redirect vulnerability and triggers phishing scanners)
