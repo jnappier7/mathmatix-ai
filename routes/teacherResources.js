@@ -629,12 +629,18 @@ router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req,
             res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
             const fileStream = fs.createReadStream(filePath);
             fileStream.pipe(res);
-        } else if (resource.storageKey && cloudStorage.isConfigured) {
+        } else if ((resource.storageKey || cloudStorage.getKeyFromUrl(resource.publicUrl))
+                   && cloudStorage.isConfigured) {
             // Private bucket: read with our own credentials and stream it on.
             // Nothing about the object is reachable without passing the checks
             // above, and no URL to it ever leaves the server.
             try {
-                const { body, contentType } = await cloudStorage.getObjectStream(resource.storageKey);
+                // storageKey is the handle. Fall back to deriving it from
+                // publicUrl so anything uploaded between S3 being switched on
+                // and this code shipping is still readable — that window would
+                // otherwise leave rows whose file exists but cannot be served.
+                const key = resource.storageKey || cloudStorage.getKeyFromUrl(resource.publicUrl);
+                const { body, contentType } = await cloudStorage.getObjectStream(key);
                 res.setHeader('Content-Disposition', `attachment; filename="${resource.originalFilename}"`);
                 res.setHeader('Content-Type', contentType || resource.mimeType || 'application/octet-stream');
                 body.on('error', (err) => {
@@ -644,7 +650,7 @@ router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req,
                 });
                 return body.pipe(res);
             } catch (err) {
-                console.error(`❌ [Download] Could not read ${resource.storageKey}:`, err.message);
+                console.error('❌ [Download] Could not read from storage:', err.message);
                 return res.status(502).json({ message: 'Failed to load resource from storage' });
             }
         } else if (resource.publicUrl) {
