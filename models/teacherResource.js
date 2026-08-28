@@ -90,9 +90,18 @@ const teacherResourceSchema = new mongoose.Schema({
         type: [Number],
         default: null
     },
-    // Public URL (if hosted)
+    // Public URL (if hosted). Only set when the bucket is world-readable; with a
+    // private bucket this stays null and storageKey is the handle instead.
     publicUrl: {
         type: String
+    },
+    // Object key in S3-compatible storage. The bucket is private, so this is
+    // never a URL a browser can follow — the authenticated download route reads
+    // the object with our own credentials and streams it, keeping the ownership
+    // and publish-status checks in front of every byte.
+    storageKey: {
+        type: String,
+        default: null
     },
     // Upload metadata
     uploadedAt: {

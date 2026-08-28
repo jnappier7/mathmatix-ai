@@ -8,10 +8,11 @@ global.__sendMock = jest.fn();
 jest.mock('@aws-sdk/client-s3', () => {
   const PutObjectCommand = jest.fn(function (input) { this.input = input; this.kind = 'put'; });
   const DeleteObjectCommand = jest.fn(function (input) { this.input = input; this.kind = 'delete'; });
+  const GetObjectCommand = jest.fn(function (input) { this.input = input; this.kind = 'get'; });
   const S3Client = jest.fn().mockImplementation(() => ({
     send: (cmd) => global.__sendMock(cmd)
   }));
-  return { S3Client, PutObjectCommand, DeleteObjectCommand };
+  return { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand };
 });
 
 jest.mock('fs', () => ({
@@ -131,5 +132,39 @@ describe('getKeyFromUrl', () => {
     const cs = require('../../utils/cloudStorage');
     expect(cs.getKeyFromUrl('')).toBeNull();
     expect(cs.getKeyFromUrl(null)).toBeNull();
+  });
+});
+
+describe('getObjectStream — the private-bucket read path', () => {
+  // The bucket is deliberately NOT world-readable: the download route checks
+  // ownership, student-teacher membership and publish status before serving a
+  // byte, and a public URL would let anyone holding it skip all three.
+  test('throws when storage is not configured, rather than returning nothing', async () => {
+    const cs = require('../../utils/cloudStorage');
+    expect(cs.isConfigured).toBe(false);
+    await expect(cs.getObjectStream('teacher-resources/t1/x.pdf')).rejects.toThrow(/not configured/i);
+    expect(sendMock).not.toHaveBeenCalled();
+  });
+
+  test('reads the object with our own credentials and returns the stream', async () => {
+    process.env.S3_BUCKET = 'bucket-x';
+    process.env.S3_REGION = 'us-west-2';
+    sendMock.mockResolvedValue({ Body: 'fake-body-stream', ContentType: 'application/pdf' });
+    const cs = require('../../utils/cloudStorage');
+    const out = await cs.getObjectStream('teacher-resources/t1/x.pdf');
+
+    expect(out.body).toBe('fake-body-stream');
+    expect(out.contentType).toBe('application/pdf');
+    const cmd = sendMock.mock.calls[0][0];
+    expect(cmd.kind).toBe('get');
+    expect(cmd.input).toEqual({ Bucket: 'bucket-x', Key: 'teacher-resources/t1/x.pdf' });
+  });
+
+  test('propagates a storage failure so the route can answer 502 instead of a truncated file', async () => {
+    process.env.S3_BUCKET = 'bucket-x';
+    process.env.S3_REGION = 'us-west-2';
+    sendMock.mockRejectedValue(new Error('NoSuchKey'));
+    const cs = require('../../utils/cloudStorage');
+    await expect(cs.getObjectStream('missing.pdf')).rejects.toThrow('NoSuchKey');
   });
 });

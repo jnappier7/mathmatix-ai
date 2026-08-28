@@ -6368,7 +6368,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     onclick="togglePublish('${resource.id}', ${resource.isPublished})">
                                     <i class="fas ${resource.isPublished ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
                                 </button>
-                                <button class="btn-icon" title="Download" onclick="window.open('${resource.publicUrl}', '_blank')">
+                                <button class="btn-icon" title="Download" onclick="window.open('/api/teacher-resources/download/${resource.id}', '_blank')">
                                     <i class="fas fa-download"></i>
                                 </button>
                                 <button class="btn-icon btn-danger" title="Delete" onclick="deleteResource('${resource.id}', '${resource.displayName}')">

@@ -1,7 +1,7 @@
 // utils/cloudStorage.js
 // S3-compatible cloud storage for persistent file uploads (AWS S3, Cloudflare R2, DigitalOcean Spaces, etc.)
 
-const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const fs = require('fs');
 const path = require('path');
 
@@ -90,9 +90,33 @@ function getKeyFromUrl(publicUrl) {
     }
 }
 
+
+/**
+ * Open a readable stream for an object, authenticated with our own credentials.
+ *
+ * This is what lets the bucket stay PRIVATE. The download route already streams
+ * the file to the client after checking ownership, student-teacher membership
+ * and publish status; it just had no way to read from storage except over plain
+ * HTTP, which requires a world-readable bucket. A public bucket would hand out
+ * every uploaded worksheet to anyone holding the URL, bypassing all three
+ * checks — and teachers upload assessments.
+ *
+ * @param {string} s3Key
+ * @returns {Promise<{body: NodeJS.ReadableStream, contentType: string|undefined}>}
+ */
+async function getObjectStream(s3Key) {
+    if (!isConfigured) throw new Error('Cloud storage is not configured');
+    const out = await s3Client.send(new GetObjectCommand({
+        Bucket: process.env.S3_BUCKET,
+        Key: s3Key,
+    }));
+    return { body: out.Body, contentType: out.ContentType };
+}
+
 module.exports = {
     isConfigured,
     uploadFile,
+    getObjectStream,
     deleteFile,
     getKeyFromUrl
 };
