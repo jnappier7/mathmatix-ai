@@ -3593,5 +3593,152 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (_) { /* preview is best-effort */ }
     })();
 
+    // ============================================================
+    // Growth console — School Signals + Impact & Retention modals
+    // (entry points for /api/admin/school-signals, /impact-report,
+    //  /dormancy-summary; same modal conventions as the funnel above)
+    // ============================================================
+
+    // Domains and caveats come from the API but originate in user input
+    // (email addresses), so everything interpolated into innerHTML is escaped.
+    function escapeHtmlText(v) {
+        const d = document.createElement('div');
+        d.textContent = String(v ?? '');
+        return d.innerHTML;
+    }
+
+    function renderCaveats(listId, caveats) {
+        const ul = document.getElementById(listId);
+        if (!ul) return;
+        ul.innerHTML = (caveats || []).map(c => `<li>${escapeHtmlText(c)}</li>`).join('');
+    }
+
+    // ---- School Signals ----
+
+    async function loadSchoolSignals() {
+        const tbody = document.getElementById('ssTableBody');
+        try {
+            const readyOnly = document.getElementById('ssReadyOnlyToggle')?.checked ? 'true' : 'false';
+            const r = await fetch(`/api/admin/school-signals?readyOnly=${readyOnly}`, { credentials: 'include' });
+            if (!r.ok) throw new Error('Failed to fetch school signals');
+            const data = await r.json();
+
+            const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+            set('ssSchoolsInferred', data.totals?.schoolsInferred ?? 0);
+            set('ssReadyCount', data.totals?.readyForOutreach ?? 0);
+            set('ssTeachersConsidered', data.totals?.teachersConsidered ?? 0);
+
+            const clusters = data.clusters || [];
+            if (!clusters.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#888;">No institutional domains yet — teachers on personal email are invisible to this report.</td></tr>';
+            } else {
+                tbody.innerHTML = clusters.map(c => {
+                    let status = '<span style="color:#94a3b8;">—</span>';
+                    if (c.alreadyLicensed) {
+                        status = '<span class="status-pill" style="background:#ede9fe;color:#5b21b6;border-color:#ddd6fe;">Renewal</span>';
+                    } else if (c.readyForOutreach) {
+                        status = '<span class="status-pill" style="background:#dcfce7;color:#15803d;border-color:#bbf7d0;">Ready</span>';
+                    }
+                    return `<tr>
+                        <td>${escapeHtmlText(c.domain)}</td>
+                        <td>${c.teachers ?? 0}</td>
+                        <td>${c.activeTeachers ?? 0}</td>
+                        <td>${c.students ?? 0}</td>
+                        <td>${c.activeStudents ?? 0}</td>
+                        <td>${(c.tutoringMinutes ?? 0).toLocaleString()}</td>
+                        <td>${status}</td>
+                    </tr>`;
+                }).join('');
+            }
+
+            renderCaveats('ssCaveats', data.caveats);
+        } catch (err) {
+            console.error('Error loading school signals:', err);
+            if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#e74c3c;">Failed to load school signals</td></tr>';
+        }
+    }
+
+    // ---- Impact & Retention ----
+
+    async function loadImpactAndRetention() {
+        const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        try {
+            const r = await fetch('/api/admin/impact-report', { credentials: 'include' });
+            if (!r.ok) throw new Error('Failed to fetch impact report');
+            const data = await r.json();
+
+            const c = data.cohort || {};
+            const g = data.growth || {};
+            set('irMeasured', `${c.measured ?? 0} / ${c.enrolled ?? 0} (${c.measuredPct ?? 0}%)`);
+            const gain = g.meanThetaGain ?? 0;
+            set('irMeanGain', `${gain > 0 ? '+' : ''}${gain}`);
+            set('irMonths', g.meanMonthsOfGrowth ?? 0);
+            set('irCi', g.ci95 ? `${g.ci95.low} to ${g.ci95.high}` : 'n too small');
+
+            // Distribution: a 3-segment bar (status semantics — growth is good,
+            // decline is serious) with counts printed in the legend, so the
+            // reading never depends on color alone.
+            const d = data.distribution || {};
+            const measured = c.measured ?? 0;
+            const bar = document.getElementById('irDistBar');
+            const legend = document.getElementById('irDistLegend');
+            if (bar && legend) {
+                const segs = [
+                    { label: 'Grew', count: d.grew ?? 0, bg: '#bbf7d0' },
+                    { label: 'Stable', count: d.stable ?? 0, bg: '#e2e8f0' },
+                    { label: 'Declined', count: d.declined ?? 0, bg: '#fecaca' },
+                ];
+                bar.innerHTML = measured
+                    ? segs.filter(x => x.count > 0).map(x =>
+                        `<div style="flex:${x.count};background:${x.bg};" title="${x.label}: ${x.count}"></div>`).join('')
+                    : '<div style="flex:1;background:#f1f5f9;" title="No growth checks yet"></div>';
+                legend.innerHTML = segs.map(x => `<span>${x.label}: <strong>${x.count}</strong></span>`).join('');
+            }
+
+            renderCaveats('irCaveats', data.caveats);
+        } catch (err) {
+            console.error('Error loading impact report:', err);
+            set('irMeasured', 'error');
+        }
+
+        try {
+            const r = await fetch('/api/admin/dormancy-summary', { credentials: 'include' });
+            if (!r.ok) throw new Error('Failed to fetch dormancy summary');
+            const d = await r.json();
+            set('doTotal', d.total ?? 0);
+            set('doWithParent', d.withLinkedParent ?? 0);
+            set('doEmailable', d.emailableToday ?? 0);
+            const b = d.buckets || {};
+            const bucketsEl = document.getElementById('doBuckets');
+            if (bucketsEl) {
+                bucketsEl.innerHTML =
+                    `Gone 14–30 days: <strong>${b.d14to30 ?? 0}</strong> · ` +
+                    `30–90 days: <strong>${b.d30to90 ?? 0}</strong> · ` +
+                    `90+ days: <strong>${b.d90plus ?? 0}</strong> · ` +
+                    `never logged in: <strong>${b.never ?? 0}</strong>`;
+            }
+        } catch (err) {
+            console.error('Error loading dormancy summary:', err);
+            set('doTotal', 'error');
+        }
+    }
+
+    // ---- Modal wiring (mirrors the funnel modal above) ----
+
+    function wireGrowthModal(modalId, openBtnId, closeBtnId, refreshBtnId, loader) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+        const open = async () => { modal.classList.add('is-visible'); await loader(); };
+        const close = () => modal.classList.remove('is-visible');
+        document.getElementById(openBtnId)?.addEventListener('click', open);
+        document.getElementById(closeBtnId)?.addEventListener('click', close);
+        document.getElementById(refreshBtnId)?.addEventListener('click', loader);
+        modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+    }
+
+    wireGrowthModal('schoolSignalsModal', 'openSchoolSignalsBtn', 'closeSchoolSignalsBtn', 'refreshSchoolSignalsBtn', loadSchoolSignals);
+    wireGrowthModal('impactModal', 'openImpactReportBtn', 'closeImpactBtn', 'refreshImpactBtn', loadImpactAndRetention);
+    document.getElementById('ssReadyOnlyToggle')?.addEventListener('change', loadSchoolSignals);
+
     console.log('[Admin Dashboard] 3x UX enhancements loaded: Audit Trail, Real-time Polling, Bulk Operations');
 });
