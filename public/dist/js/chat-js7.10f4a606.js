@@ -125,6 +125,10 @@
   /* ---- bottom sheet -------------------------------------------------- */
   // label, subtitle, icon, and the action to run. Items whose target
   // is missing are skipped rather than rendered as dead links.
+  // Log out sits ABOVE Help, not last: the bottom row is the one a phone is
+  // most likely to clip (tab bar, home indicator, a short landscape viewport),
+  // so the row students actually need in a hurry doesn't get to be it. Help is
+  // the cheapest item to have to scroll for.
   var SHEET_ITEMS = [
     { icon: 'fa-user', label: 'Profile', sub: 'Your progress and account',
       run: function () { trigger('right-drawer-toggle'); } },
@@ -134,11 +138,12 @@
     { icon: 'fa-user-group', label: 'Switch Tutor', sub: 'Pick a different tutor',
       need: 'change-tutor-btn',
       run: function () { trigger('change-tutor-btn'); } },
-    { icon: 'fa-circle-question', label: 'Help', sub: 'Get help or send feedback',
-      run: function () { window.location.href = '/contact-support.html'; } },
-    { icon: 'fa-right-from-bracket', label: 'Log out', sub: null, danger: true,
+    { icon: 'fa-right-from-bracket', label: 'Log out', sub: 'Sign out of this device',
+      danger: true,
       need: 'logoutBtn',
-      run: function () { trigger('logoutBtn'); } }
+      run: function () { trigger('logoutBtn'); } },
+    { icon: 'fa-circle-question', label: 'Help', sub: 'Get help or send feedback',
+      run: function () { window.location.href = '/contact-support.html'; } }
   ];
 
   function buildSheet() {
@@ -149,6 +154,10 @@
     sheet.setAttribute('role', 'dialog');
     sheet.setAttribute('aria-label', 'Menu');
     sheet.appendChild(el('div', 'mpc-sheet-grabber'));
+
+    // Rows go in their own scroller (see .mpc-sheet-list) so the last one is
+    // always reachable, however short the viewport gets.
+    var list = el('div', 'mpc-sheet-list');
 
     SHEET_ITEMS.forEach(function (item) {
       if (item.need && !document.getElementById(item.need)) return; // skip dead link
@@ -162,30 +171,44 @@
         closeSheet();
         setTimeout(item.run, 220); // let the sheet animate out first
       });
-      sheet.appendChild(btn);
+      list.appendChild(btn);
     });
+
+    sheet.appendChild(list);
 
     document.body.appendChild(overlay);
     document.body.appendChild(sheet);
 
     overlay.addEventListener('click', closeSheet);
 
-    // drag-down to dismiss
+    // Drag-down to dismiss. Only arms when the row list is already scrolled to
+    // the top — now that the rows scroll, an un-guarded drag would translate
+    // the whole sheet on any downward swipe inside the list instead of
+    // scrolling it back up.
     var startY = null;
+    var dragging = false;
     sheet.addEventListener('touchstart', function (e) {
       startY = e.touches[0].clientY;
+      dragging = list.scrollTop <= 0;
     }, { passive: true });
     sheet.addEventListener('touchmove', function (e) {
-      if (startY == null) return;
+      if (startY == null || !dragging) return;
+      if (list.scrollTop > 0) {          // list took over mid-gesture
+        dragging = false;
+        sheet.style.transform = '';
+        return;
+      }
       var dy = e.touches[0].clientY - startY;
       if (dy > 0) sheet.style.transform = 'translateY(' + dy + 'px)';
     }, { passive: true });
     sheet.addEventListener('touchend', function (e) {
       if (startY == null) return;
       var dy = e.changedTouches[0].clientY - startY;
+      var wasDragging = dragging;
       sheet.style.transform = '';
-      if (dy > 60) closeSheet();
       startY = null;
+      dragging = false;
+      if (wasDragging && dy > 60) closeSheet();
     }, { passive: true });
   }
 

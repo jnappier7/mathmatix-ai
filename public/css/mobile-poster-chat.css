@@ -519,11 +519,16 @@
   }
 
   /* ---- 8. BOTTOM SHEET MENU ------------------------------------------ */
+  /* The bottom nav (.mbn, injected by bottom-nav.js) sits at z-index 9000, so
+     a sheet below that is painted over at exactly the bottom edge where its
+     last row lives — Log out sat behind the tab bar and was untappable. Sit
+     above the nav but under .modal-overlay (9999) so real modals still win.
+     See the mobile z-index ladder in mobile-fixes.css §8. */
   #mpc-sheet-overlay {
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 3000;
+    z-index: 9200;
     background: rgba(0,0,0,.55);
     opacity: 0;
     visibility: hidden;
@@ -532,10 +537,15 @@
   #mpc-sheet-overlay.open { opacity: 1; visibility: visible; }
 
   #mpc-sheet {
-    display: block;
+    display: flex;
+    flex-direction: column;
     position: fixed;
     left: 0; right: 0; bottom: 0;
-    z-index: 3001;
+    z-index: 9201;
+    /* Never taller than the viewport: the rows scroll, the sheet doesn't grow
+       off-screen. Leaving 56px of poster showing keeps it reading as a sheet. */
+    max-height: calc(100vh - 56px);
+    max-height: calc(100dvh - 56px);
     background: rgba(18,22,36,.98);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -550,6 +560,18 @@
     width: 38px; height: 5px; border-radius: 3px;
     background: rgba(255,255,255,.22);
     margin: 8px auto 10px;
+    flex: none;
+  }
+  /* The rows live in their own scroller so a short viewport (landscape, a
+     large accessibility text size) can still reach the last one. min-height:0
+     is load-bearing — without it the flex item refuses to shrink and the
+     overflow never engages. */
+  .mpc-sheet-list {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   .mpc-sheet-item {
     display: flex;
