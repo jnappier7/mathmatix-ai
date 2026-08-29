@@ -288,3 +288,66 @@
   .pricing-page .pricing-title { font-size: 26px; }
   .pricing-page { padding: 24px 16px 40px; }
 }
+
+/* ---- Billing-interval toggle (Monthly / School Year) ----
+   Sits above the cards and drives the Mathmatix+ card's price, period line and
+   `data-pack`. Colors follow the card palette above (#1a1a2e / #333 / #00d4ff)
+   rather than the --cr-* tokens, because this page is on the legacy sheet. */
+.billing-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 auto 24px;
+  padding: 4px;
+  background: #1a1a2e;
+  border: 1px solid #333;
+  border-radius: 999px;
+  width: fit-content;
+  max-width: 100%;
+}
+.billing-toggle-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #999;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.billing-toggle-opt:hover {
+  color: #ddd;
+}
+.billing-toggle-opt.is-active {
+  background: #00d4ff;
+  color: #0d0d1a;
+}
+.billing-toggle-opt:focus-visible {
+  outline: 2px solid #00d4ff;
+  outline-offset: 2px;
+}
+.billing-toggle-save {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.billing-toggle-opt.is-active .billing-toggle-save {
+  background: rgba(13, 13, 26, 0.18);
+  color: #0d0d1a;
+}
+
+@media (max-width: 480px) {
+  .billing-toggle-opt { padding: 8px 14px; font-size: 13px; }
+  .billing-toggle-save { font-size: 10px; padding: 2px 6px; }
+}

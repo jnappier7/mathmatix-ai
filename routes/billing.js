@@ -35,7 +35,14 @@ const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per reset period (now
 const FREE_QUOTA_RESET_DAYS = 30;    // free-AI-minute quota window — keep in sync with middleware/usageGate.js
 const TRIAL_DAYS = 7;                // card-required Mathmatix+ free-trial length
 
-// Active plan — Mathmatix+ is the only paid tier for new purchases
+// Active plans — Mathmatix+, billed monthly or by the school year.
+//
+// Both grant the identical `unlimited` tier; they differ only in Stripe's
+// recurring interval and price. The annual plan is two months free ($99.00 vs
+// $119.40), which is priced against churn rather than against a competitor:
+// a consumer math subscription is abandoned over summer break, so an annual
+// term both raises realized LTV and moves the renewal decision off the month
+// when a student stops having homework.
 const PACKS = {
   unlimited: {
     name: 'M∆THM∆TIX+',
@@ -43,9 +50,23 @@ const PACKS = {
     price: 995,         // $9.95 in cents
     seconds: null,
     expiryDays: null,
-    mode: 'subscription'
+    mode: 'subscription',
+    interval: 'month'
+  },
+  unlimited_annual: {
+    name: 'M∆THM∆TIX+ (School Year)',
+    description: 'A full year of unlimited 24/7 AI tutoring — voice, PDF upload, courses, Show My Work, and all platform features. Two months free vs monthly.',
+    price: 9900,        // $99.00 in cents — 2 months free vs $119.40
+    seconds: null,
+    expiryDays: null,
+    mode: 'subscription',
+    interval: 'year'
   }
 };
+
+// Plans a new purchase may select. Kept as a Set (not `pack in PACKS`) so a
+// legacy pack id can never be revived through the checkout endpoint.
+const PURCHASABLE_PACKS = new Set(['unlimited', 'unlimited_annual']);
 
 // Legacy packs — kept only for webhook processing of existing pack purchases
 const LEGACY_PACKS = {
@@ -109,8 +130,8 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
   if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
   try {
     const { pack, couponCode, trial } = req.body;
-    if (pack !== 'unlimited') {
-      return res.status(400).json({ message: 'Only the Unlimited plan is available for new purchases.' });
+    if (!PURCHASABLE_PACKS.has(pack)) {
+      return res.status(400).json({ message: 'Only the Mathmatix+ monthly and school-year plans are available for new purchases.' });
     }
     const packConfig = PACKS[pack];
 
@@ -124,7 +145,12 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
     // Card-required free trial: honor the trial request only if this user has
     // never trialed before (one trial per user). A repeat requester just checks
     // out as a normal paid subscription.
-    const wantsTrial = trial === true && !user.hasUsedTrial;
+    //
+    // Trials are deliberately monthly-only. A 7-day trial that converts into a
+    // single $99.00 charge is the shape that produces disputes; the $9.95 one
+    // is not. Someone who wants the annual price after trialing can switch at
+    // renewal.
+    const wantsTrial = trial === true && !user.hasUsedTrial && packConfig.interval !== 'year';
 
     // Create or reuse Stripe customer
     let customerId = user.stripeCustomerId;
@@ -175,9 +201,10 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
       quantity: 1
     };
 
-    // Recurring packs need the recurring interval
+    // Recurring packs need the recurring interval. Read it from the plan rather
+    // than hard-coding 'month' — that constant is what made annual unshippable.
     if (packConfig.mode === 'subscription') {
-      lineItem.price_data.recurring = { interval: 'month' };
+      lineItem.price_data.recurring = { interval: packConfig.interval || 'month' };
     }
 
     const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
