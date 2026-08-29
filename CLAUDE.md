@@ -344,6 +344,8 @@ npm run seed:all:dry   # preflight + plan, no writes
 | Chat UI / rendering | `public/js/script.js`, `public/js/inlineChatVisuals.js`, `public/css/chat*.css` |
 | Tutor teaching-quality regression / evals | `tests/eval/` — replayed-bug scenarios + behavioral personas through real observe→diagnose→decide; heuristic + LLM judges; live tier via `RUN_LLM_EVAL=1 npm run test:eval:live`. The judges themselves live in `utils/replyJudges.js` / `utils/replyLlmJudges.js` (shared with prod; tests/eval keeps shims) |
 | Transcript mining (nightly prod tutor-quality sweep) | `utils/transcriptMiner.js`, `scripts/mineTranscripts.js` (`npm run cron:mine-transcripts`), `GET /api/admin/tutor-quality-report`; doc: `TRANSCRIPT_MINING.md`. Findings are candidates for human review, never auto-actioned |
+| Growth / pricing / go-to-market | `docs/GROWTH_STRATEGY.md` — the $1M-ARR plan, market-grounded. Its two shipped pieces: `utils/impactReport.js` (`GET /api/admin/impact-report`, cohort efficacy evidence for a school) and `utils/schoolSignal.js` (`GET /api/admin/school-signals`, teacher density per inferred school = the sales pipeline). Both deliberately report their own limits in a `caveats` array — they are sales artifacts, so every bug in them points toward a flattering number |
+| Consumer plans / prices | `routes/billing.js` `PACKS` — monthly `unlimited` ($9.95) and annual `unlimited_annual` ($99, 2 months free). The interval comes from the plan, never a literal; trials are monthly-only by design. UI is the toggle in `public/pricing.html` (not bundled — edit directly), which drives the CTA's `data-pack` |
 | "What brings you to Mathmatix?" (onboarding intent) | `utils/onboardingIntent.js` — the ONE classifier (server-side; `routes/onboarding.js` ignores any category the client sends) and the prompt line. `buildIntentContext` is what `promptCompact` calls: observed behaviour first, stated intent second, silence once the stated intent goes stale (5 sessions / 30 days). Health on `GET /api/admin/structured-tutor-metrics` → `onboardingIntent` (`utils/intentMetrics.js`) |
 
 ---
@@ -462,4 +464,4 @@ pedagogy → `PEDAGOGY_ANALYSIS_AND_RECOMMENDATIONS.md`, `MATH_SKILLS_VERTICAL_A
 `BADGE_SYSTEM_DESIGN.md`, `MASTER_MODE_BADGE_SYSTEM.md`, `PATTERN_BADGE_GUIDE.md`; whiteboard →
 `WHITEBOARD_AI_INTEGRATION.md`, `BOARD_LLM_STAGE_DESIGN.md`, `CHAT_BOARD_AI_INTEGRATION.md`;
 security/compliance → `SECURITY.md`, `STUDENT_DATA_SECURITY_AUDIT.md`, `CSRF_PROTECTION.md`;
-cost → `AI_COST_PROJECTIONS.md`. **Docs describe intent and may lag code — verify against the source.**
+cost → `AI_COST_PROJECTIONS.md`; **growth/pricing/GTM → `GROWTH_STRATEGY.md`**. **Docs describe intent and may lag code — verify against the source.**
