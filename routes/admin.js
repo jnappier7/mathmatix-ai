@@ -21,6 +21,8 @@ const { checkConsent } = require('../utils/consentManager');
 const { requireActiveConsent } = require('../middleware/consentGate');
 const ScreenerSession = require('../models/screenerSession');
 const Waitlist = require('../models/waitlist');
+const SchoolLicense = require('../models/schoolLicense');
+const { buildImpactReport } = require('../utils/impactReport');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -29,7 +31,7 @@ const { sendWelcomeEmail } = require('../utils/emailService');
 const csv = require('csv-parser');
 const { Readable } = require('stream');
 
-const { anyRole, withoutRoles, rolesOf, userHasRole, ROLE_NAMES } = require('../utils/roleQuery');
+const { anyRole, withRole, withoutRoles, rolesOf, userHasRole, ROLE_NAMES } = require('../utils/roleQuery');
 const {
   USER_PAGE_SIZE_DEFAULT,
   USER_PAGE_SIZE_MAX,
@@ -2135,8 +2137,15 @@ router.get('/funnel', isAdmin, async (req, res) => {
       }
     }
 
-    const match = { role };
-    if (!allTime) match.createdAt = { $gte: startDate, $lte: endDate };
+    // Match on the roles the account HOLDS, not the one it is currently viewing.
+    // A bare `{ role }` filter drops every multi-role account that has since
+    // switched dashboards — a parent-teacher who signed up as a student would
+    // silently leave the cohort, deflating the denominator and inflating every
+    // downstream conversion rate.
+    const match = withRole(
+      allTime ? {} : { createdAt: { $gte: startDate, $lte: endDate } },
+      role
+    );
 
     // --- One aggregation: cohort size + how many reached each stage ---
     // Activation = did real tutoring at least once (totalActiveTutoringMinutes > 0).
@@ -3119,6 +3128,68 @@ router.get('/classes/:classId/students', isAdmin, async (req, res) => {
   } catch (err) {
     console.error('Error fetching class students for admin:', err);
     res.status(500).json({ message: 'Server error fetching class students.' });
+  }
+});
+
+// =====================================================
+// IMPACT REPORT: cohort-level efficacy evidence for a school or roster
+// =====================================================
+/**
+ * @route   GET /api/admin/impact-report
+ * @desc    Aggregate growth-check history into the evidence a school buyer
+ *          asks for: how much did this cohort gain, how many students is that
+ *          actually measured on, and how much did they use the product.
+ * @access  Private (Admin)
+ *
+ * Scope (first one supplied wins):
+ *   ?licenseId=<id>   students under a school license  — the renewal artifact
+ *   ?teacherId=<id>   one teacher's roster             — the pilot artifact
+ *   (neither)         every student on the platform
+ *
+ * The computation lives in utils/impactReport.js; this route only resolves the
+ * cohort. It returns students with NO growth checks in the cohort on purpose —
+ * the participation rate is part of the evidence, and dropping them would turn
+ * a 20%-participation pilot into a headline that reads like a whole school.
+ */
+router.get('/impact-report', isAdmin, async (req, res) => {
+  try {
+    const { licenseId, teacherId } = req.query;
+
+    let scope = 'all';
+    let scopeName = null;
+    const filter = {};
+
+    if (licenseId) {
+      if (!mongoose.Types.ObjectId.isValid(licenseId)) {
+        return res.status(400).json({ message: 'Invalid licenseId.' });
+      }
+      const license = await SchoolLicense.findById(licenseId).lean();
+      if (!license) return res.status(404).json({ message: 'School license not found.' });
+      scope = 'license';
+      scopeName = license.schoolName;
+      filter.schoolLicenseId = license._id;
+    } else if (teacherId) {
+      if (!mongoose.Types.ObjectId.isValid(teacherId)) {
+        return res.status(400).json({ message: 'Invalid teacherId.' });
+      }
+      const teacher = await User.findById(teacherId).select('firstName lastName').lean();
+      if (!teacher) return res.status(404).json({ message: 'Teacher not found.' });
+      scope = 'teacher';
+      scopeName = `${teacher.firstName || ''} ${teacher.lastName || ''}`.trim() || null;
+      filter.teacherId = teacher._id;
+    }
+
+    // Students by the roles they HOLD — a bare { role: 'student' } would drop
+    // any multi-role account that has since switched dashboards.
+    const students = await User.find(withRole(filter, 'student'))
+      .select('gradeLevel totalActiveTutoringMinutes learningProfile.growthCheckHistory')
+      .lean();
+
+    const report = buildImpactReport(students, { scope, scopeName });
+    res.json({ success: true, ...report });
+  } catch (err) {
+    console.error('Error building impact report:', err);
+    res.status(500).json({ message: 'Server error building impact report.' });
   }
 });
 
