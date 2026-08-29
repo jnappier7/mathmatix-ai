@@ -64,6 +64,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <p class="pricing-subtitle" style="font-size:0.85rem;color:#888;margin-top:4px;"><i class="fas fa-info-circle"></i> Minutes only count while the AI tutor is responding &mdash; your child&rsquo;s reading and thinking time is always free.</p>
     </header>
 
+    <!-- Billing-interval toggle -->
+    <div class="billing-toggle" role="group" aria-label="Billing interval">
+      <button type="button" class="billing-toggle-opt is-active" data-interval="month" aria-pressed="true">Monthly</button>
+      <button type="button" class="billing-toggle-opt" data-interval="year" aria-pressed="false">
+        School Year <span class="billing-toggle-save">2 months free</span>
+      </button>
+    </div>
+
     <!-- Plan Cards -->
     <div class="pricing-cards">
 
@@ -94,8 +102,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <div class="card-badge card-badge-featured">Recommended</div>
         <img src="/images/mathmatix-plus-logo.png" alt="Mathmatix+ logo" class="card-plus-logo" width="72" height="72" />
         <h2 class="card-plan-name">Mathmatix+</h2>
-        <div class="card-price">$9<span class="card-price-cents">.95</span><span class="card-price-mo">/mo</span></div>
-        <div class="card-period">cancel anytime</div>
+        <div class="card-price" id="plus-price">$9<span class="card-price-cents">.95</span><span class="card-price-mo">/mo</span></div>
+        <div class="card-period" id="plus-period">cancel anytime</div>
         <div class="card-realtime-note"><i class="fas fa-infinity"></i> Unlimited tutoring, 24/7. No limits.</div>
         <ul class="card-features">
           <li><i class="fas fa-check"></i> Unlimited 24/7 AI tutoring</li>
@@ -150,6 +158,72 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <a href="/chat.html" class="pricing-skip-link">Skip for now &mdash; start with 30 free minutes</a>
     </div>
   </div>
+
+  <script>
+  // --- Billing-interval toggle -------------------------------------------
+  // Owns which Mathmatix+ plan is selected and keeps three things in sync with
+  // it: the headline price, the period line, and the `data-pack` the checkout
+  // call posts. Deliberately its own IIFE ahead of the main page script, which
+  // returns early for logged-out visitors — they still get to see annual pricing.
+  // Emits `mm:plan-change` so the coupon preview can re-price without this block
+  // needing to know the coupon exists.
+  var MM_PLANS = {
+    month: {
+      pack: 'unlimited',
+      dollars: 9.95,
+      priceHtml: '$9<span class="card-price-cents">.95</span><span class="card-price-mo">/mo</span>',
+      period: 'cancel anytime',
+      suffix: '/mo'
+    },
+    year: {
+      pack: 'unlimited_annual',
+      dollars: 99.00,
+      priceHtml: '$99<span class="card-price-mo">/yr</span>',
+      period: '$8.25/mo billed yearly \u2014 2 months free',
+      suffix: '/yr'
+    }
+  };
+  var mmSelectedInterval = 'month';
+  function mmSelectedPlan() { return MM_PLANS[mmSelectedInterval]; }
+
+  (function() {
+    var opts = document.querySelectorAll('.billing-toggle-opt');
+    var priceEl = document.getElementById('plus-price');
+    var periodEl = document.getElementById('plus-period');
+    if (!opts.length || !priceEl || !periodEl) return;
+
+    function select(interval) {
+      var plan = MM_PLANS[interval];
+      if (!plan) return;
+      mmSelectedInterval = interval;
+
+      priceEl.innerHTML = plan.priceHtml;
+      periodEl.textContent = plan.period;
+
+      opts.forEach(function(o) {
+        var on = o.dataset.interval === interval;
+        o.classList.toggle('is-active', on);
+        o.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+
+      // The CTA posts whatever `data-pack` says, so this one attribute is the
+      // whole contract between the toggle and checkout.
+      document.querySelectorAll('.card-cta-premium').forEach(function(btn) {
+        btn.dataset.pack = plan.pack;
+      });
+
+      document.dispatchEvent(new CustomEvent('mm:plan-change', { detail: { interval: interval } }));
+    }
+
+    opts.forEach(function(o) {
+      o.addEventListener('click', function() { select(this.dataset.interval); });
+    });
+
+    // ?plan=year deep-links the annual card straight from an ad or email.
+    var wanted = new URLSearchParams(window.location.search).get('plan');
+    select(MM_PLANS[wanted] ? wanted : 'month');
+  })();
+  </script>
 
   <script>
   (function() {
@@ -253,13 +327,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Code <strong>' + data.couponCode + '</strong> applied!' + referredBy;
           statusEl.style.display = '';
 
-          // Show live price preview
-          var originalPrice = 9.95;
-          var discount = originalPrice * (data.discountPercent / 100);
-          var newPrice = (originalPrice - discount).toFixed(2);
-          document.getElementById('price-original').textContent = '$' + originalPrice.toFixed(2) + '/mo';
-          document.getElementById('price-new').textContent = '$' + newPrice + '/mo';
-          document.getElementById('price-savings').textContent = 'You save $' + discount.toFixed(2);
+          // Show live price preview against whichever plan is selected.
+          renderCouponPreview();
           previewEl.classList.add('active');
 
           // Track click
@@ -277,6 +346,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         previewEl.classList.remove('active');
       }
     }
+
+    // Price the coupon preview off the plan that is currently selected, so the
+    // discount shown is the discount actually charged at checkout (the server
+    // applies the same percentage to the same plan price).
+    function renderCouponPreview() {
+      if (!activeCoupon) return;
+      var plan = mmSelectedPlan();
+      var discount = plan.dollars * (activeCoupon.discountPercent / 100);
+      var newPrice = plan.dollars - discount;
+      document.getElementById('price-original').textContent = '$' + plan.dollars.toFixed(2) + plan.suffix;
+      document.getElementById('price-new').textContent = '$' + newPrice.toFixed(2) + plan.suffix;
+      document.getElementById('price-savings').textContent = 'You save $' + discount.toFixed(2);
+    }
+
+    document.addEventListener('mm:plan-change', renderCouponPreview);
 
     // Handle buy button for logged-in users
     document.querySelectorAll('.card-cta-premium').forEach(btn => {
@@ -335,10 +419,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <button id="pricing-reactivate-btn" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;"><i class="fas fa-undo"></i> Keep My Subscription</button>
             ${supportLine}`;
         } else {
-          panel.innerHTML = `
-            <h3 style="margin:0 0 12px;font-size:18px;"><i class="fas fa-cog" style="color:#7b2ff7;"></i> Manage Your Subscription</h3>
-            <p style="color:#aaa;margin:0 0 6px;font-size:14px;">Plan: <strong style="color:#fff;">Mathmatix+ ($9.95/mo)</strong></p>
-            <p style="color:#aaa;margin:0 0 16px;font-size:14px;">Next billing date: <strong style="color:#fff;">${periodEndStr}</strong></p>
+          // Describe the plan from what Stripe says the subscriber is on —
+          // annual subscribers exist now, so "$9.95/mo" can no longer be a constant.
+          var planLabel = 'Mathmatix+';
+          if (typeof sub.amountCents === 'number' && sub.interval) {
+            var dollars = (sub.amountCents / 100).toFixed(2).replace(/\.00$/, '');
+            planLabel += ' ($' + dollars + (sub.interval === 'year' ? '/yr' : '/mo') + ')';
+          }
+          // Pausing collection on a yearly term just nudges an invoice eleven
+          // months out — offering it would only confuse; annual subscribers
+          // manage everything through cancel and the billing portal.
+          var pauseBlock = sub.interval === 'year' ? '' : `
             <div style="background:#0f0f23;border:1px solid #333;border-radius:10px;padding:14px;margin-bottom:16px;">
               <div style="font-size:13px;color:#ffaa00;font-weight:600;margin-bottom:8px;"><i class="fas fa-pause-circle"></i> Need a Break?</div>
               <p style="color:#aaa;font-size:12px;margin:0 0 10px;line-height:1.4;">Pause instead of cancelling. No charges while paused.</p>
@@ -347,7 +438,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <button class="pricing-pause-btn" data-months="2" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">2 Months</button>
                 <button class="pricing-pause-btn" data-months="3" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">3 Months</button>
               </div>
-            </div>
+            </div>`;
+          panel.innerHTML = `
+            <h3 style="margin:0 0 12px;font-size:18px;"><i class="fas fa-cog" style="color:#7b2ff7;"></i> Manage Your Subscription</h3>
+            <p style="color:#aaa;margin:0 0 6px;font-size:14px;">Plan: <strong style="color:#fff;">${planLabel}</strong></p>
+            <p style="color:#aaa;margin:0 0 16px;font-size:14px;">Next billing date: <strong style="color:#fff;">${periodEndStr}</strong></p>
+            ${pauseBlock}
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <button id="pricing-cancel-btn" style="background:#ff4444;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Cancel Subscription</button>
               <button id="pricing-portal-btn" style="background:transparent;color:#00d4ff;border:1px solid #333;padding:10px 20px;border-radius:8px;font-size:13px;cursor:pointer;"><i class="fas fa-external-link-alt"></i> Billing Portal</button>
