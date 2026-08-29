@@ -384,6 +384,15 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
                     console.error("ERROR: Failed to save session after signup:", saveErr);
                     return res.status(500).json({ success: true, message: 'Account created, but session save failed. Please try logging in.' });
                 }
+                // Same marker the OAuth callbacks set (config/routes.js
+                // setSignupMethodCookie): analytics.js on the next page fires
+                // GA4 sign_up with the method, then clears the cookie.
+                res.cookie('mm_signup_method', 'email', {
+                    httpOnly: false,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                    maxAge: 10 * 60 * 1000
+                });
                 res.status(201).json({ success: true, message: 'Account created successfully!', redirect: redirectUrl });
             });
         });

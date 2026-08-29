@@ -221,7 +221,12 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
       customer: customerId,
       mode: packConfig.mode,
       line_items: [lineItem],
-      success_url: `${baseUrl}/chat.html?upgraded=true`,
+      // session_id/pack/value feed the GA4 purchase event in analytics.js;
+      // {CHECKOUT_SESSION_ID} is Stripe's literal placeholder (do not encode),
+      // substituted with the real session id and used as the transaction_id
+      // so GA dedupes any replayed URL. value is the promo-adjusted charge in
+      // dollars (a card-required trial is counted at plan value, not $0).
+      success_url: `${baseUrl}/chat.html?upgraded=true&session_id={CHECKOUT_SESSION_ID}&pack=${encodeURIComponent(pack)}&value=${(finalPrice / 100).toFixed(2)}`,
       cancel_url: `${baseUrl}/chat.html`,
       metadata
     };
