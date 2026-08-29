@@ -1,10 +1,13 @@
 # Growth Strategy — the path to $1M ARR
 
-> Written 2026-08-29. Market figures are cited inline; product figures come from
-> the code in this repo. **This document contains no live business metrics** —
-> nobody running it had database access. Every place a real number belongs is
+> Written 2026-08-29; revised the same day after an independent second pass
+> re-verified every claim and re-ran the market research. Where the two passes
+> disagreed, this version says so explicitly — the disagreements are the most
+> useful part. Market figures are cited inline; product figures come from the
+> code in this repo. **This document contains no live business metrics** —
+> nobody who wrote it had database access. Every place a real number belongs is
 > marked **[PULL]** with the endpoint that produces it. Fill those in before
-> acting on anything here; a plan built on assumed traction is a guess.
+> acting on anything here.
 
 ---
 
@@ -16,268 +19,265 @@ prices:
 | Path | Price today | Seats needed for $1M |
 |------|-------------|----------------------|
 | Consumer monthly | $9.95/mo | ~8,400 paying subscribers |
-| Consumer annual (new) | $99/yr | ~10,100 subscribers |
+| Consumer annual | $99/yr | ~10,100 subscribers |
 | School — small tier | $2,500 / 500 students = **$5.00/seat** | 200,000 students (400 schools) |
 | School — medium tier | $7,500 / 2,000 = **$3.75/seat** | 267,000 students (133 schools) |
 | School — large tier | $15,000 / 5,000 = **$3.00/seat** | 333,000 students (67 schools) |
 
-Two things fall out of that table immediately.
+Two things fall out of that table.
 
 **The school tiers get cheaper per seat as they get bigger, which is backwards.**
-Cost to serve scales with *usage*, and usage scales with students. The large tier
-prices the highest-cost customer at the lowest rate. That is a discount for
-volume applied to a variable-cost product.
+Cost to serve scales with *usage*, and usage scales with students. The large
+tier prices the highest-cost customer at the lowest rate — a volume discount
+applied to a variable-cost product.
 
-**The prices are 3–7× under the market comparable.** Khanmigo sells to districts
-at [$15–35 per student per year](https://www.edusageai.com/blogs/how-much-does-khanmigo-cost-pricing-for-teachers-and-schools-in-2026);
-MagicSchool's [district plans start around $3,000/year](https://academicaitrends.com/blog/magicschool-ai-vs-khanmigo-for-teachers/).
-Mathmatix at $3–5 is not "the affordable option" — it is priced as though the
-buyer will not believe it is real.
+**The prices are 3–7× under the B2B comparable.** Khanmigo sells to districts at
+[$15–35 per student per year](https://www.edusageai.com/blogs/how-much-does-khanmigo-cost-pricing-for-teachers-and-schools-in-2026);
+MagicSchool's [district plans start around
+$3,000/year](https://academicaitrends.com/blog/magicschool-ai-vs-khanmigo-for-teachers/).
+Nobody in K-12 buys because a seat is $3 instead of $12; they buy because a
+principal trusts it and it cleared procurement. The low price just makes each
+hard-won yes worth a third of what it should be.
 
-Underpricing here does not buy volume. In K-12 nobody buys because the price is
-$3 instead of $12; they buy because a principal trusts it and it survived
-procurement. The low price just means each closed deal is worth a third of what
-it should be, and $1M needs three times as many of the hardest thing to get.
-
-**Recommendation: reprice the school tiers to $10–12/seat with a $2,500 floor,
-flattening rather than declining with volume.** That is still 30–65% under
-Khanmigo. It changes $1M from 133 medium schools to roughly 40. It does not
-change the product, the pitch, or the sales effort — only what each yes is worth.
-
-> I have not made this change in code. Price is the founder's call and it is
-> visible to existing customers; the annual consumer plan I did ship is additive
-> and reversible, this is neither.
+**Recommendation (sharpened in revision): change the *list* price now, while
+there is almost nobody to anger.** Set new-customer school pricing at
+$10–12/seat with a $2,500 floor, flat with volume; grandfather any existing
+license at its current rate. That is an afternoon of work with zero
+customer-visible risk, and it changes $1M from ~133 medium schools to roughly
+40. Still 30–65% under Khanmigo.
 
 ### The honest timeline
 
 Consumer freemium converts at [2.6% in edtech, 2–8% across mature
 platforms](https://userpilot.com/blog/freemium-to-premium/). At 4%, 10,000
-subscribers means ~250,000 free signups. That is not reachable in a year without
-paid acquisition, and paid acquisition against a $99 LTV is thin.
+subscribers means ~250,000 free signups — not reachable in a year without paid
+acquisition, and paid acquisition against a $99 LTV is thin.
 
-So: **$1M ARR is a 24–36 month goal, and it comes from schools.** The consumer
-business is not the destination — it is what funds the runway, proves the
-product, and generates the density signal that opens schools. Plan against
-roughly $150–250K in year one, $500K in year two, $1M in year three, and treat
-any single district win as the thing that pulls that forward.
+**$1M ARR is a 24–36 month goal.** Plan against roughly $150–250K in year one,
+$500K in year two, and treat any single multi-school win as the thing that
+pulls the schedule forward.
 
 ---
 
-## 2. What the 2026 market actually rewards
+## 2. What the 2026 market actually looks like
 
-Four findings shaped everything below.
+Five findings, re-verified independently. The fifth changed the plan.
 
-**Engagement is the industry's open wound.** Khan Academy is
+**Engagement is the category's open wound.** Khan Academy is
 [redesigning Khanmigo after admitting only about 15% of students use
 it](https://aitoolsbakery.com/blog/khanmigo-updates-2026/), across 700,000
-students and 380+ districts. The category's problem is not capability. Every
-vendor has a competent model. The problem is that students do not come back.
+students and 380+ districts. The problem is not model capability; it is that
+students do not come back.
 
 **Proof beats promise.** The most useful vendor claim in 2026 is
-["here's how you'll know it helped" rather than "students will use
-it"](https://www.marketscale.com/industries/education-technology/k-12-ai-spending-is-moving-from-classroom-apps-to-vetting-policy-and-proof).
-Districts are shifting AI spend toward vetting, policy and validation.
-
-**Budgets are contracting and technology is first on the block.** Post-ESSER,
-districts are cutting [about $1,200 per student](https://www.idra.org/education_policy/what-you-need-to-know-about-the-esser-funding-cliff/),
-and [experts name technology as the chopping-block
-category](https://www.govtech.com/education/k-12/experts-push-student-focused-budgeting-as-esser-winds-down).
-The same reporting says districts are using *usage data and third-party
-validation* to decide what survives. A tool that cannot produce evidence gets
-cut regardless of quality.
+["here's how you'll know it helped," not "students will use
+it"](https://www.marketscale.com/industries/education-technology/k-12-ai-spending-is-moving-from-classroom-apps-to-vetting-policy-and-proof),
+and post-ESSER districts are cutting
+[about $1,200 per student](https://www.idra.org/education_policy/what-you-need-to-know-about-the-esser-funding-cliff/)
+with [technology first on the block](https://www.govtech.com/education/k-12/experts-push-student-focused-budgeting-as-esser-winds-down).
 
 **Teacher density predicts the close.** For one classroom app,
 [five active teachers at a school produced close rates more than 10× cold
-outbound](https://grahamforman.medium.com/key-product-led-growth-plg-measures-and-benchmarks-for-k12-b2b-edtech-companies-7082ffe6c358),
-and the most compelling sales argument was usage data showing teachers already
-using the free tier.
+outbound](https://grahamforman.medium.com/key-product-led-growth-plg-measures-and-benchmarks-for-k12-b2b-edtech-companies-7082ffe6c358).
 
-Meanwhile demand is not the problem: 8th-grade NAEP math is
-[down 11 points since 2013](https://brighterly.com/blog/homework-statistics/),
-45% of 12th graders are below NAEP Basic, families now spend
-[18% of household income on academic help, up from 12%
-pre-pandemic](https://cogconnected.com/2026/07/how-much-does-a-math-tutor-cost-in-2026-what-parents-need-to-budget/),
-and math tutoring runs $40–60/hour. Mathmatix+ at $9.95/month costs less than
-fifteen minutes of the thing it replaces.
+**The consumer shelf is not "$80/hour tutors."** The first draft benchmarked
+$9.95/mo against human tutoring. The actual shelf a parent sees:
+[Khanmigo Family at $4/month or $44/year covering up to ten
+children](https://www.kidsaitools.com/en/articles/khanmigo-review-2026), and
+answer engines above Mathmatix's price —
+[Gauth Plus at $11.99/mo, Photomath Plus at ~$9.99/mo with 100M+
+downloads](https://tutoraisolver.com/blog/gauth-vs-photomath-2026-best-ai-stem-solver-alternatives).
+Two consequences: **price is not the consumer wedge in either direction** (hold
+$9.95/$99 — don't cut against Khan's non-profit pricing, don't raise into
+answer-engine territory), and the sale must be what the $4 product doesn't do:
+remembers the child (`tutorPlan`), follows IEPs, shows the parent everything,
+refuses to be an answer machine. Demand context still holds — NAEP 8th-grade
+math [down 11 points since 2013](https://brighterly.com/blog/homework-statistics/),
+families spending [18% of household income on academic
+help](https://cogconnected.com/2026/07/how-much-does-a-math-tutor-cost-in-2026-what-parents-need-to-budget/).
 
----
-
-## 3. Counter-positioning: what this product has that the category doesn't
-
-Against "every vendor has a competent model," three things here are genuinely
-hard to copy — and none of them are the tutor's answer quality.
-
-**It remembers the student.** `models/tutorPlan.js` is a persistent mental model
-per child — skill focuses, notes, instructional mode — updated every turn by the
-pipeline. Combined with `skillMastery`'s four pillars and BKT/FSRS scheduling,
-the tutor on session 20 knows things the tutor on session 1 did not. Most
-competitors are stateless per conversation. This is the answer to the 15%
-engagement problem, and it is the marketing claim already on the landing page
-("a math tutor that actually knows your child").
-
-**It refuses to be an answer machine.** The anti-cheat safeguards, the
-math-answer injection gate, and the assistance ladder are real pedagogy
-constraints in code. In a market where [most AI study tools are answer
-machines](https://aitoolsbakery.com/blog/best-ai-tutoring-apps/), this is what
-a department head is actually worried about, and it is demonstrable in 30
-seconds on the landing-page trial.
-
-**It follows IEPs.** `models/iepPlan.js`, the accommodations engine and the
-fluency baseline are special-education infrastructure that general-purpose
-tutors do not have. This is a wedge with a budget attached — IEP compliance is
-a legal obligation, not a nice-to-have, and it is funded separately from
-general instructional technology. **This is the most under-exploited asset in
-the codebase.**
-
-The founder is a working math teacher with live classrooms and a published
-course site. In a channel where [teachers see each other as peers rather than
-following leaders](https://onlinelibrary.wiley.com/doi/10.1111/ejed.70434),
-that is not a bio detail — it is the distribution.
+**The district-tutoring vendor category is collapsing in real time.** [Varsity
+Tutors for Schools shut down August 7, 2026 — three weeks before this
+writing](https://govspend.com/blog/varsity-tutors-for-schools-shuts-down-where-online-tutoring-demand-goes-next/).
+[FEV Tutor shut down; experts cited lack of
+evidence](https://www.the74million.org/article/major-virtual-tutoring-provider-shuts-down-experts-cite-lack-of-evidence/).
+[Paper lost Boston, Hillsborough, Clark County and Detroit over low
+usage](https://www.chalkbeat.org/2023/9/6/23861330/online-tutoring-company-paper-hillsborough-clark-county-schools/).
+Read both ways: the evidence artifact (§4, Play 2) is now existential, not
+nice-to-have — the autopsy of every dead vendor reads "low usage, no proof,"
+which are precisely the two numbers the impact report leads with. And the
+near-term public-district sales motion is the coldest it has been in a decade:
+burned buyers, contracting budgets, and a "will you exist next year?" question
+every small vendor now inherits. **Public districts are the year-three market,
+not the year-one market.**
 
 ---
 
-## 4. The three plays
+## 3. The wedge the first draft missed: sell where you already teach
 
-### Play 1 — Price for the business you want (0 CAC, fastest)
+The founder teaches Algebra 1 and Honors Geometry at **St. Charles Preparatory
+School** — a private Catholic prep school — and the course site
+(`public/courses/`) is already live in front of those students, tutor link and
+all. That is not a detail; it is the go-to-market:
 
-- **Shipped: annual Mathmatix+ at $99/yr** (`routes/billing.js`). The recurring
-  interval was hard-coded to `'month'`, so an annual plan could not exist.
-  The point is churn, not the discount: a monthly term puts the renewal decision
-  in the exact month a student stops having homework. **[PULL]** annual mix after
-  30 days.
-- **Recommended: school tiers to $10–12/seat, flat with volume** (§1).
-- **Recommended: meter voice inside school licenses.** Text inference is cheap —
-  `docs/AI_COST_PROJECTIONS.md` puts a 1,000-student district near $78/month on
-  `gpt-4o-mini`, well under $1/seat/year. Voice (Cartesia TTS + Deepgram STT) is
-  per-minute and the license grants it unlimited. At $3/seat, a genuinely engaged
-  voice cohort is where gross margin goes negative — the failure mode where
-  success costs money. Measure cost-per-active-student before scaling the large
-  tier, not after.
-- **Open gap: monthly subscribers cannot switch to annual.** Checkout rejects
-  anyone already on `unlimited`, and they are the likeliest annual buyers. Needs
-  a Stripe subscription swap with proration; deliberately out of scope here
-  because a half-built upgrade path is worse than none.
+- **Private and parochial schools never had ESSER**, so they are not on the
+  cliff. Tuition-funded budgets, and parents already paying for education.
+- **Procurement is a principal's decision**, not an RFP cycle. The sales
+  motion is a conversation and an invoice, closable in weeks.
+- **The network is referential.** Catholic schools cluster in diocesan
+  systems and meet at NCEA; ~6,000 schools nationally. One flagship with a
+  quarterly impact report travels: St. Charles → Columbus-diocese peers →
+  the conference circuit.
+- **The founder is inside the building.** Trust — the thing every dead
+  tutoring vendor lacked — is already established.
 
-### Play 2 — Make the proof a product (the procurement unlock)
+The motion: make St. Charles the flagship (license it, even at a founding-school
+rate), run `GET /api/admin/impact-report` on it quarterly, and walk the
+one-pager to peer principals. Aim: 3–5 parochial schools by June 2027. At
+repriced seats, that is $25–60K ARR from a network the founder already belongs
+to — and the reference base that makes year-three district sales possible.
 
-The single highest-leverage fact in this repo: **the efficacy engine already
-exists and nothing was reading it.** Growth checks store a before and an after
-per student in `learningProfile.growthCheckHistory` — IRT theta, quarterly. That
-is an effect measurement, sitting unused above the level of one child.
+(Checked and dead: Ohio's ACE educational-savings program, which paid families
+$1,000/child for tutoring, [ended October
+2025](https://education.ohio.gov/ohioace) — do not chase it. ESA programs in
+other states (AZ, FL) may admit AI tutoring as a qualifying expense; verify
+per-state before building anything.)
 
-- **Shipped: `GET /api/admin/impact-report`** (`utils/impactReport.js`) —
-  cohort growth for a school license, a teacher's roster, or the platform:
-  mean/median theta gain, 95% CI, standardized gain, grade-level months,
-  the grew/stable/declined split, and participation.
-- It is built to survive being checked, because every plausible bug in a sales
-  artifact points the same way — toward a number that flatters us. It measures
-  the *undamped* theta so real declines can't hide behind `growthGuard`; counts
-  unmeasured students in the cohort but never as zeros; withholds inference below
-  ten students; and ships `caveats` **inside the payload**, including that this
-  is a pre/post cohort with no control group and supports no causal claim.
-- **This restraint is the strategy, not a hedge against it.** The buyer is a
-  district that has been pitched by vendors all year. A report that states its
-  own limits is the one that survives a curriculum director reading it closely,
-  and overclaiming once in this market is unrecoverable.
-- **Next:** render it as a one-page PDF a principal can forward, and mail it to
-  every licensed school in June and January unprompted. Renewal is won in the
-  month the budget is written, not the month it expires.
+---
 
-### Play 3 — Read the pipeline the free tier is already building
+## 4. The plays
 
-Teachers get free unlimited access to create density. Nothing could see it:
-`schoolLicenseId` is set when a license is *bought*, so the only school
+### Play 1 — Retention is the strategy (the gap the first draft never looked at)
+
+Every dead competitor died of the same disease: students stopped showing up.
+Mathmatix's differentiator — the tutor that remembers your child — is
+*specifically* a retention thesis. Yet nothing automated ever touched a dormant
+user: the weekly digest **deliberately skips inactive kids** (by design, to
+avoid "your child did nothing" emails), nudges are in-app only, and the one
+reactivation campaign was a manual script with a dry-run default — a human
+remembering to run it was the entire retention system.
+
+- **Shipped: the reactivation campaign is now one Render-cron line from
+  scheduled** (`npm run cron:reactivation`). It stays inert until the founder
+  sets `CAMPAIGN_MAILING_ADDRESS` (the script refuses to send without it) and
+  creates the cron; the 14-day per-student resend guard makes a weekly
+  schedule safe. Also fixed: it queried on bare `role` and missed multi-role
+  students.
+- **[PULL]** dormancy first: how many students with ≥5 tutoring minutes have
+  no login in 14 days? (The campaign's own dry run prints this.) That number
+  is the retention baseline everything else is judged against.
+- **Next, in order:** a "streak about to break" nudge that reaches a student
+  *outside* the app; a parent-digest line for the *dormant* kid ("Maya hasn't
+  seen Jayden in two weeks — here's a one-click restart") replacing the
+  silent skip; win-back for lapsed Mathmatix+ subscribers (there is
+  currently none).
+
+### Play 2 — Make the proof a product (verified; now existential)
+
+Growth checks store a per-student before/after (IRT theta, quarterly) in
+`learningProfile.growthCheckHistory`; nothing read it above one child until
+`GET /api/admin/impact-report` (`utils/impactReport.js`). Verified in the
+second pass: measures the *undamped* theta so real declines can't hide behind
+`growthGuard`; counts unmeasured students but never as zeros; withholds CI
+and effect size below ten students; ships `caveats` inside the payload,
+including that a pre/post cohort with no control group supports no causal
+claim. The distribution buckets delegate to `growthSummary`'s thresholds, so
+the report cannot call "growth" what the student was told was "stable."
+
+That restraint is the strategy. Every vendor autopsy in §2 cites missing
+evidence; a report that states its own limits is the one that survives a
+curriculum director reading it closely. **Next:** render it as a one-page PDF;
+send it to every licensed school in June and January unprompted. The quarterly
+St. Charles report (§3) is the first real instance.
+
+### Play 3 — Price for the business you want
+
+- **Shipped: annual Mathmatix+ at $99/yr.** The checkout interval was the
+  hard-coded string `'month'`; an annual plan could not exist. The point is
+  churn: a monthly term puts the renewal decision in the exact month a student
+  stops having homework. Trials stay monthly-only (a 7-day trial converting to
+  one $99 charge is the dispute shape). Second-pass fixes: the manage panel no
+  longer tells annual subscribers they're on "$9.95/mo," and no longer offers
+  a meaningless 1–3-month pause on a yearly term.
+- **Recommended: school list price to $10–12/seat, flat, grandfathering
+  existing** (§1).
+- **Watch: voice economics inside licenses.** Text inference is cheap
+  (`docs/AI_COST_PROJECTIONS.md` is stale — Jan-2025 prices — but the order of
+  magnitude holds: well under $1/seat/year). Voice is per-minute STT+TTS and
+  licenses grant it unlimited; an engaged voice cohort at $3/seat is where
+  margin goes negative. Measure cost-per-active-student before scaling any
+  large-tier deal.
+- **Open gap: monthly→annual upgrade.** Checkout rejects existing `unlimited`
+  subscribers — the likeliest annual buyers. Needs a Stripe subscription swap
+  with proration; left undone deliberately.
+
+### Play 4 — Read the pipeline the free tier is already building
+
+Teachers get free unlimited access to create in-building density (the 10×
+signal in §2), but `schoolLicenseId` is only set at *purchase* — the one school
 affiliation on an account identifies customers, never prospects.
-
-- **Shipped: `GET /api/admin/school-signals`** (`utils/schoolSignal.js`) —
-  clusters teachers by email domain, ranks by active teachers → student reach →
-  minutes, flags clusters over the outreach threshold, and marks fully licensed
-  ones as renewals. It needs no new signup field and works retroactively on
-  every account already in the database. Consumer mailbox domains are excluded
-  outright: the expensive failure is a false positive.
-- **[PULL]** run it. The output is the year-one target list, ranked. If it
-  returns nothing, that is the finding — the free teacher tier is not producing
-  density and Play 3 is blocked until it does.
-- **Next, in order:**
-  1. Add an optional school field at teacher signup — the domain proxy is a
-     stopgap and misses anyone on personal email.
-  2. Ship a teacher→colleague invite. There is an affiliate program for external
-     promoters and no loop for the users who actually create density.
-  3. **List on Clever Library.** Clever SSO and roster sync are already built
-     (`services/cleverSync.js`) — the integration cost of the largest K-12
-     distribution channel is already sunk, and nothing is using it for
-     acquisition.
+`GET /api/admin/school-signals` (`utils/schoolSignal.js`) clusters teachers by
+email domain instead, ranks by active-teacher density, and excludes consumer
+mailbox domains outright (the expensive failure is a false positive). Verified
+sound in the second pass. **[PULL]** run it — the output is the outreach list;
+empty output means the free teacher tier isn't producing density and this play
+waits. **Next:** optional school field at teacher signup; a teacher→colleague
+invite (an affiliate program exists for outsiders, no loop for the users who
+create density); a Clever Library listing — SSO and rostering are already
+built, so the largest K-12 channel's integration cost is already sunk.
 
 ---
 
-## 5. Channel plan
+## 5. Channels, ranked by return per founder-hour
 
-Ranked by expected return per founder-hour, not by reach.
+1. **St. Charles + the parochial network** (§3). The only motion that can
+   close a school this semester.
+2. **IEP / special education.** SPED directors: small, reachable, separately
+   budgeted, legally obligated — and almost no AI tutor speaks to them. The
+   accommodations engine + IEP plans are the most under-marketed asset in the
+   codebase.
+3. **Content from real data.** `utils/transcriptMiner.js` sweeps production
+   transcripts nightly; nobody else has this supply ("the mistake 6 in 10
+   Algebra 1 students actually make…"). **Compliance first**: aggregate only,
+   no excerpts, cleared against `docs/STUDENT_DATA_SECURITY_AUDIT.md` — if
+   that review says no, the play dies there.
+4. **Parent search intent.** "Why is my kid failing algebra." Slow to
+   compound; start early *because* of that.
+5. **Short-form video.** Real classroom credibility fits the format, but it's
+   the highest effort per qualified lead here and produces no school density.
+   Fifth, or not at all, until 1–3 run.
 
-**1. Teacher-to-teacher, in the founder's own district.** Highest trust, lowest
-cost, and it directly produces the Play 3 signal. Concrete: get three teachers in
-one building active, run the impact report on that building at the 90-day mark,
-take it to the principal. That is a repeatable motion, and it is the only one on
-this list that can be running next week.
-
-**2. IEP / special education.** The most under-exploited asset here (§3). SPED
-directors are a small, reachable, high-intent audience with a separate budget and
-a legal obligation, and almost no AI tutor speaks to them. One conference talk or
-one state SPED listserv is worth more than a month of general content.
-
-**3. Content, sourced from real data.** `utils/transcriptMiner.js` already runs a
-nightly sweep over production transcripts for tutor-quality findings. Nobody else
-has this supply: *"the mistake 6 in 10 Algebra 1 students actually make on
-two-step equations — from 4,000 real tutoring sessions."* That is a genuinely
-original post, it is defensible, and it markets the pedagogy rather than the
-product. **Compliance first: this is student data.** Aggregate-only, k-anonymity
-floor, no transcript excerpts, and run it past the FERPA posture in
-`docs/STUDENT_DATA_SECURITY_AUDIT.md` before a single post. If that review says
-no, the play dies there.
-
-**4. Parent search intent.** "why is my kid failing algebra", "how much does a
-math tutor cost". High intent, low competition against the $40–60/hour
-alternative. Slow to compound; start now because of that, not instead of the
-above.
-
-**5. Short-form video.** Real classroom credibility is the whole asset here, and
-the format rewards it. But it is the highest effort per unit of qualified
-pipeline on this list, and it does not produce school density. **Do it fifth, or
-not at all, until 1–3 are running.**
-
-> **On "you run social media": I can't, and didn't.** No account credentials are
-> connected to this session and I have not posted anything anywhere. What I can
-> do is what's above — the strategy, the ranking, and the product work that makes
-> the channels worth running. Posting needs either a human or connected accounts.
+> **On "you run social media":** no account credentials are connected to any
+> session that wrote this, and nothing has been posted anywhere. Executing the
+> channel plan needs a human or connected accounts.
 
 ---
 
 ## 6. What to measure
 
-Four numbers. If a dashboard shows more than these on the front page, it is
-hiding them.
-
 | Metric | Where | Why |
 |--------|-------|-----|
+| **Dormant warm students** | `node scripts/reactivationCampaign.js` (dry run prints it) | The retention baseline. Play 1 is judged against it. |
 | **Active teachers per school** | `GET /api/admin/school-signals` | The only leading indicator of a school sale. |
-| **Cohort theta gain + participation** | `GET /api/admin/impact-report` | The thing that renews a license. Participation is half the metric — gains on 15% of a roster is not a school result. |
-| **Signup → activation** | `GET /api/admin/funnel` | Activation is doing real tutoring at all. Everything downstream is bounded by it. |
-| **Cost per active student** | not yet built | Whether the school tiers make money at scale. Voice is the risk (§4). |
+| **Cohort theta gain + participation** | `GET /api/admin/impact-report` | What renews a license. Participation is half the metric. |
+| **Signup → activation** | `GET /api/admin/funnel` | Everything downstream is bounded by it. (Historical rates read high — the filter undercounted multi-role accounts until this branch.) |
+| **Cost per active student** | not yet built | Whether licenses make money at scale. Voice is the risk. |
 
-**[PULL] all four before deciding anything in this document.** Two are new and
-have never been run; the funnel was undercounting multi-role accounts until this
-week and its historical conversion rates read high as a result.
+**[PULL] all five before deciding anything in this document.**
 
 ---
 
 ## 7. The strategy in one paragraph
 
-Mathmatix does not have a product problem. It has ~70 shipped features, real
-pedagogy in code, and a live school using it. It has a **pricing problem** (3–7×
-under market, inverted with volume), a **proof problem** (an efficacy engine that
-nothing read), and a **pipeline-visibility problem** (a free teacher tier
-generating density nobody could see). Two of those three are fixed in this
-branch. The third is a founder decision that takes an afternoon and is worth
-roughly 3× per closed deal. The path to $1M is not more features — it is charging
-what the product is worth, proving it worked, and reading the pipeline the free
-tier has been quietly building the whole time.
+Mathmatix has ~70 shipped features, real pedagogy in code, and a live school —
+a private Catholic prep — using it today. The market it enters is one where
+every district-tutoring vendor is dying of the same two causes: students who
+don't come back and vendors who can't prove anything. So the plan is those two
+causes, inverted, plus the wedge the founder already holds: **make retention
+automatic** (the reactivation loop, the digest that stops skipping dormant
+kids), **make the proof a product** (the impact report, quarterly, starting
+with St. Charles), and **sell through the parochial network first** — where
+trust is personal, budgets are tuition-funded, and a principal can say yes in
+a week — while the repriced school tiers make each yes worth three times as
+much. Public districts are year three, approached with two years of evidence
+in hand.
