@@ -750,10 +750,18 @@ router.get('/subscription-details', isAuthenticated, async (req, res) => {
       ? new Date(subscription.pause_collection.resumes_at * 1000).toISOString()
       : null;
 
+    // The plan the subscriber is actually on. Checkout builds prices inline
+    // (price_data), so the subscription item's price is the source of truth for
+    // both the amount and the billing interval — the manage UI must render from
+    // these, not from a hardcoded "$9.95/mo" that lies to annual subscribers.
+    const price = subscription.items?.data?.[0]?.price || null;
+
     res.json({
       success: true,
       hasSubscription: true,
       tier: user.subscriptionTier,
+      interval: price?.recurring?.interval || null,
+      amountCents: typeof price?.unit_amount === 'number' ? price.unit_amount : null,
       status: subscription.status,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       currentPeriodEnd: (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end)

@@ -13,13 +13,14 @@ process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_mock';
 
 global.__stripeCheckoutCreate = jest.fn();
 global.__stripeCustomerCreate = jest.fn();
+global.__stripeSubRetrieve = jest.fn();
 
 jest.mock('stripe', () => () => ({
   webhooks: { constructEvent: jest.fn() },
   billingPortal: { sessions: { create: jest.fn() } },
   checkout: { sessions: { create: (...a) => global.__stripeCheckoutCreate(...a) } },
   customers: { create: (...a) => global.__stripeCustomerCreate(...a), retrieve: jest.fn() },
-  subscriptions: { update: jest.fn(), cancel: jest.fn(), retrieve: jest.fn() },
+  subscriptions: { update: jest.fn(), cancel: jest.fn(), retrieve: (...a) => global.__stripeSubRetrieve(...a) },
   prices: { list: jest.fn() }
 }));
 
@@ -77,6 +78,7 @@ function billedItem() {
 beforeEach(() => {
   jest.clearAllMocks();
   User.findById.mockReset();
+  global.__stripeSubRetrieve.mockReset();
   global.__stripeCheckoutCreate.mockResolvedValue({ url: 'https://checkout.stripe.test/s/x' });
 });
 
@@ -161,5 +163,61 @@ describe('POST /api/billing/create-checkout-session — trials are monthly-only'
     expect(params.metadata.trial).toBeUndefined();
     // The sale still goes through — it is just billed immediately.
     expect(params.line_items[0].price_data.unit_amount).toBe(9900);
+  });
+});
+
+describe('GET /api/billing/subscription-details — plan identity for the manage UI', () => {
+  // The panel used to hardcode "Plan: Mathmatix+ ($9.95/mo)". Once annual
+  // subscribers exist that line lies to them, so the endpoint must say which
+  // plan the subscriber is actually on — from the Stripe subscription item,
+  // the one source that cannot drift from what is being charged.
+
+  function subscriber() {
+    return freeUser({ subscriptionTier: 'unlimited', stripeSubscriptionId: 'sub_1' });
+  }
+
+  function stripeSub(unitAmount, interval) {
+    return {
+      status: 'active',
+      cancel_at_period_end: false,
+      pause_collection: null,
+      current_period_end: 1790000000,
+      items: { data: [{ price: { unit_amount: unitAmount, recurring: { interval } } }] }
+    };
+  }
+
+  test('reports the annual plan as $99.00 billed yearly', async () => {
+    User.findById.mockResolvedValue(subscriber());
+    global.__stripeSubRetrieve.mockResolvedValue(stripeSub(9900, 'year'));
+
+    const r = await supertest(makeApp()).get('/api/billing/subscription-details');
+
+    expect(r.status).toBe(200);
+    expect(r.body.interval).toBe('year');
+    expect(r.body.amountCents).toBe(9900);
+  });
+
+  test('reports the monthly plan as $9.95 billed monthly', async () => {
+    User.findById.mockResolvedValue(subscriber());
+    global.__stripeSubRetrieve.mockResolvedValue(stripeSub(995, 'month'));
+
+    const r = await supertest(makeApp()).get('/api/billing/subscription-details');
+
+    expect(r.status).toBe(200);
+    expect(r.body.interval).toBe('month');
+    expect(r.body.amountCents).toBe(995);
+  });
+
+  test('degrades to nulls, not a crash, when the price shape is missing', async () => {
+    User.findById.mockResolvedValue(subscriber());
+    global.__stripeSubRetrieve.mockResolvedValue({
+      status: 'active', cancel_at_period_end: false, pause_collection: null, items: { data: [] }
+    });
+
+    const r = await supertest(makeApp()).get('/api/billing/subscription-details');
+
+    expect(r.status).toBe(200);
+    expect(r.body.interval).toBeNull();
+    expect(r.body.amountCents).toBeNull();
   });
 });

@@ -419,10 +419,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <button id="pricing-reactivate-btn" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;"><i class="fas fa-undo"></i> Keep My Subscription</button>
             ${supportLine}`;
         } else {
-          panel.innerHTML = `
-            <h3 style="margin:0 0 12px;font-size:18px;"><i class="fas fa-cog" style="color:#7b2ff7;"></i> Manage Your Subscription</h3>
-            <p style="color:#aaa;margin:0 0 6px;font-size:14px;">Plan: <strong style="color:#fff;">Mathmatix+ ($9.95/mo)</strong></p>
-            <p style="color:#aaa;margin:0 0 16px;font-size:14px;">Next billing date: <strong style="color:#fff;">${periodEndStr}</strong></p>
+          // Describe the plan from what Stripe says the subscriber is on —
+          // annual subscribers exist now, so "$9.95/mo" can no longer be a constant.
+          var planLabel = 'Mathmatix+';
+          if (typeof sub.amountCents === 'number' && sub.interval) {
+            var dollars = (sub.amountCents / 100).toFixed(2).replace(/\.00$/, '');
+            planLabel += ' ($' + dollars + (sub.interval === 'year' ? '/yr' : '/mo') + ')';
+          }
+          // Pausing collection on a yearly term just nudges an invoice eleven
+          // months out — offering it would only confuse; annual subscribers
+          // manage everything through cancel and the billing portal.
+          var pauseBlock = sub.interval === 'year' ? '' : `
             <div style="background:#0f0f23;border:1px solid #333;border-radius:10px;padding:14px;margin-bottom:16px;">
               <div style="font-size:13px;color:#ffaa00;font-weight:600;margin-bottom:8px;"><i class="fas fa-pause-circle"></i> Need a Break?</div>
               <p style="color:#aaa;font-size:12px;margin:0 0 10px;line-height:1.4;">Pause instead of cancelling. No charges while paused.</p>
@@ -431,7 +438,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <button class="pricing-pause-btn" data-months="2" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">2 Months</button>
                 <button class="pricing-pause-btn" data-months="3" style="flex:1;background:#1a1a2e;color:#ffaa00;border:1px solid #ffaa00;padding:8px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">3 Months</button>
               </div>
-            </div>
+            </div>`;
+          panel.innerHTML = `
+            <h3 style="margin:0 0 12px;font-size:18px;"><i class="fas fa-cog" style="color:#7b2ff7;"></i> Manage Your Subscription</h3>
+            <p style="color:#aaa;margin:0 0 6px;font-size:14px;">Plan: <strong style="color:#fff;">${planLabel}</strong></p>
+            <p style="color:#aaa;margin:0 0 16px;font-size:14px;">Next billing date: <strong style="color:#fff;">${periodEndStr}</strong></p>
+            ${pauseBlock}
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <button id="pricing-cancel-btn" style="background:#ff4444;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Cancel Subscription</button>
               <button id="pricing-portal-btn" style="background:transparent;color:#00d4ff;border:1px solid #333;padding:10px 20px;border-radius:8px;font-size:13px;cursor:pointer;"><i class="fas fa-external-link-alt"></i> Billing Portal</button>

@@ -27,6 +27,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const { sendReactivationParentEmail, sendReactivationKidEmail } = require('../utils/emailService');
+const { anyRole } = require('../utils/roleQuery');
 
 const args = process.argv.slice(2);
 const SEND = args.includes('--send');
@@ -73,8 +74,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const dormantCutoff = new Date(Date.now() - DORMANT_DAYS * 86400000);
   const resendCutoff = new Date(Date.now() - RESEND_GUARD_DAYS * 86400000);
 
+  // Match students by the roles they HOLD (utils/roleQuery), not the dashboard
+  // they last viewed — a bare { role: 'student' } silently drops any multi-role
+  // account, the exact bug CLAUDE.md documents as having eaten ~65 sites.
   let q = User.find({
-    role: 'student',
+    ...anyRole('student'),
     _id: { $nin: excludeIds },
     totalActiveTutoringMinutes: { $gte: MIN_MINUTES },
     $and: [
