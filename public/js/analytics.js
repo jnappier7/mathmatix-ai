@@ -27,10 +27,29 @@
     function gtag() { window.dataLayer.push(arguments); }
     window.gtag = gtag;
     gtag('js', new Date());
-    gtag('config', gaId, {
+
+    var gaConfig = {
       send_page_view: true,
       cookie_flags: 'SameSite=Lax;Secure'
-    });
+    };
+
+    // SSO logins (Google / Microsoft / Clever) bounce through the provider's
+    // consent screen and back, so GA sees the provider as the referrer —
+    // splitting one visit into two sessions and crediting the provider as a
+    // traffic source. ignore_referrer suppresses that. Client-side twin of
+    // GA admin's "List unwanted referrals"; keep both in sync.
+    var SSO_HOSTS = ['accounts.google.com', 'login.microsoftonline.com', 'clever.com'];
+    try {
+      var refHost = document.referrer ? new URL(document.referrer).hostname : '';
+      for (var h = 0; h < SSO_HOSTS.length; h++) {
+        if (refHost === SSO_HOSTS[h] || refHost.slice(-(SSO_HOSTS[h].length + 1)) === '.' + SSO_HOSTS[h]) {
+          gaConfig.ignore_referrer = true;
+          break;
+        }
+      }
+    } catch (e) { /* no URL() support — leave referrer attribution as-is */ }
+
+    gtag('config', gaId, gaConfig);
 
     // Track key conversion events
     document.addEventListener('DOMContentLoaded', function() {
