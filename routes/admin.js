@@ -23,6 +23,7 @@ const ScreenerSession = require('../models/screenerSession');
 const Waitlist = require('../models/waitlist');
 const SchoolLicense = require('../models/schoolLicense');
 const { buildImpactReport } = require('../utils/impactReport');
+const { buildSchoolSignals } = require('../utils/schoolSignal');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -3190,6 +3191,56 @@ router.get('/impact-report', isAdmin, async (req, res) => {
   } catch (err) {
     console.error('Error building impact report:', err);
     res.status(500).json({ message: 'Server error building impact report.' });
+  }
+});
+
+// =====================================================
+// SCHOOL SIGNALS: which schools have enough teacher density to sell into
+// =====================================================
+/**
+ * @route   GET /api/admin/school-signals
+ * @desc    Rank inferred schools by active-teacher density — the pipeline the
+ *          free teacher tier is supposed to be generating.
+ * @access  Private (Admin)
+ *
+ * Schools are clustered from teacher email domains because `schoolLicenseId`,
+ * the only school affiliation an account carries, is set when a license is
+ * bought — it identifies customers, never prospects. See utils/schoolSignal.js
+ * for what that proxy can and cannot tell you; its limits ride along in
+ * `caveats`.
+ *
+ * ?readyOnly=true  returns only clusters over the outreach threshold.
+ */
+router.get('/school-signals', isAdmin, async (req, res) => {
+  try {
+    const [teachers, students] = await Promise.all([
+      User.find(anyRole('teacher'))
+        .select('email lastLogin schoolLicenseId')
+        .lean(),
+      User.find(anyRole('student'))
+        .select('teacherId totalActiveTutoringMinutes')
+        .lean(),
+    ]);
+
+    const signals = buildSchoolSignals(teachers, students);
+    const readyOnly = req.query.readyOnly === 'true' || req.query.readyOnly === '1';
+    const clusters = readyOnly
+      ? signals.clusters.filter((c) => c.readyForOutreach)
+      : signals.clusters;
+
+    res.json({
+      success: true,
+      ...signals,
+      clusters,
+      totals: {
+        teachersConsidered: teachers.length,
+        schoolsInferred: signals.clusters.length,
+        readyForOutreach: signals.clusters.filter((c) => c.readyForOutreach).length,
+      },
+    });
+  } catch (err) {
+    console.error('Error building school signals:', err);
+    res.status(500).json({ message: 'Server error building school signals.' });
   }
 });
 
