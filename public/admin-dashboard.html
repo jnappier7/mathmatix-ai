@@ -1859,6 +1859,12 @@
           <button id="openLiveActivityBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-broadcast-tower"></i> Live Activity
           </button>
+          <button id="openSchoolSignalsBtn" class="btn btn-secondary main-action-btn">
+            <i class="fas fa-school"></i> School Signals
+          </button>
+          <button id="openImpactReportBtn" class="btn btn-secondary main-action-btn">
+            <i class="fas fa-seedling"></i> Impact &amp; Retention
+          </button>
         </div>
 
         <!-- Learning Analytics Panel -->
@@ -2536,6 +2542,133 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- School Signals Modal -->
+  <div id="schoolSignalsModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close-button" id="closeSchoolSignalsBtn">&times;</button>
+      <h2><i class="fas fa-school"></i> School Signals</h2>
+      <p style="color: #666; margin-bottom: 20px;">
+        Schools inferred from teacher email domains, ranked by active-teacher density &mdash; the signal that predicts a license sale.
+        <button id="refreshSchoolSignalsBtn" class="btn btn-secondary" style="float: right;">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </p>
+
+      <div class="modal-section">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
+          <div class="stat-card">
+            <div class="stat-label">Schools inferred</div>
+            <div class="stat-value" id="ssSchoolsInferred">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Ready for outreach</div>
+            <div class="stat-value" id="ssReadyCount">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Teachers considered</div>
+            <div class="stat-value" id="ssTeachersConsidered">-</div>
+          </div>
+        </div>
+        <label style="font-size: 0.9em; color: #475569; display: inline-flex; align-items: center; gap: 6px;">
+          <input type="checkbox" id="ssReadyOnlyToggle" /> Only schools over the outreach threshold
+        </label>
+      </div>
+
+      <div class="modal-section">
+        <h3>Schools</h3>
+        <div class="table-scroll-container" style="max-height: 420px;">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Domain</th>
+                <th>Teachers</th>
+                <th>Active (30d)</th>
+                <th>Students</th>
+                <th>Active students</th>
+                <th>Minutes</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="ssTableBody">
+              <tr><td colspan="7" style="text-align: center;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <ul id="ssCaveats" style="color: #888; font-size: 0.82em; margin: 0; padding-left: 18px;"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Impact & Retention Modal -->
+  <div id="impactModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close-button" id="closeImpactBtn">&times;</button>
+      <h2><i class="fas fa-seedling"></i> Impact &amp; Retention</h2>
+      <p style="color: #666; margin-bottom: 20px;">
+        Platform-wide growth-check evidence, and how many engaged students have gone dormant.
+        <button id="refreshImpactBtn" class="btn btn-secondary" style="float: right;">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </p>
+
+      <div class="modal-section">
+        <h3>Measured growth</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 16px;">
+          <div class="stat-card">
+            <div class="stat-label">Measured / enrolled</div>
+            <div class="stat-value" id="irMeasured">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Mean &theta; gain</div>
+            <div class="stat-value" id="irMeanGain">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Months of growth (mean)</div>
+            <div class="stat-value" id="irMonths">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">95% CI</div>
+            <div class="stat-value" id="irCi" style="font-size: 1.1em;">-</div>
+          </div>
+        </div>
+
+        <h4 style="font-size: 0.9em; margin-bottom: 8px; color: #475569;">Distribution</h4>
+        <div id="irDistBar" style="display: flex; gap: 2px; height: 26px; border-radius: 6px; overflow: hidden;"></div>
+        <div id="irDistLegend" style="display: flex; justify-content: space-between; font-size: 0.78em; color: #666; margin-top: 4px;"></div>
+      </div>
+
+      <div class="modal-section">
+        <h3>Dormant students</h3>
+        <p style="color: #888; font-size: 0.85em; margin: 0 0 12px;">
+          Engaged &ge;5 tutoring minutes, no login in 14+ days &mdash; the students the reactivation
+          campaign (<code>npm run cron:reactivation</code>) would win back. Counts only; the send-list stays with the script.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 12px;">
+          <div class="stat-card">
+            <div class="stat-label">Dormant (engaged)</div>
+            <div class="stat-value" id="doTotal">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">With linked parent</div>
+            <div class="stat-value" id="doWithParent">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Emailable today</div>
+            <div class="stat-value" id="doEmailable">-</div>
+          </div>
+        </div>
+        <div id="doBuckets" style="font-size: 0.85em; color: #475569;"></div>
+      </div>
+
+      <div class="modal-section">
+        <ul id="irCaveats" style="color: #888; font-size: 0.82em; margin: 0; padding-left: 18px;"></ul>
       </div>
     </div>
   </div>
@@ -3522,6 +3655,6 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-  <script src="/dist/js/admin-js0.7ce5407b.js"></script>
+  <script src="/dist/js/admin-js0.0893c3c9.js"></script>
 </body>
 </html>

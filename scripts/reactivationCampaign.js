@@ -27,7 +27,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const { sendReactivationParentEmail, sendReactivationKidEmail } = require('../utils/emailService');
-const { anyRole } = require('../utils/roleQuery');
+const { engagedDormantFilter } = require('../utils/dormancy');
 
 const args = process.argv.slice(2);
 const SEND = args.includes('--send');
@@ -71,18 +71,16 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 15000 });
 
   const excludeIds = (await User.find({ email: { $in: EXCLUDE_EMAILS } }, { _id: 1 }).lean()).map(d => d._id);
-  const dormantCutoff = new Date(Date.now() - DORMANT_DAYS * 86400000);
   const resendCutoff = new Date(Date.now() - RESEND_GUARD_DAYS * 86400000);
 
-  // Match students by the roles they HOLD (utils/roleQuery), not the dashboard
-  // they last viewed — a bare { role: 'student' } silently drops any multi-role
-  // account, the exact bug CLAUDE.md documents as having eaten ~65 sites.
+  // Who counts as engaged-but-dormant is defined ONCE, in utils/dormancy.js,
+  // shared with GET /api/admin/dormancy-summary — so the dashboard's number
+  // and this campaign's reach can never disagree. The exclude list and the
+  // per-student resend guard are campaign-specific and stay here.
   let q = User.find({
-    ...anyRole('student'),
-    _id: { $nin: excludeIds },
-    totalActiveTutoringMinutes: { $gte: MIN_MINUTES },
     $and: [
-      { $or: [{ lastLogin: { $lt: dormantCutoff } }, { lastLogin: null }] },
+      engagedDormantFilter({ minMinutes: MIN_MINUTES, dormantDays: DORMANT_DAYS }),
+      { _id: { $nin: excludeIds } },
       { $or: [{ lastReactivationAt: null }, { lastReactivationAt: { $lt: resendCutoff } }] },
     ],
   }).populate('parentIds', 'firstName email role');

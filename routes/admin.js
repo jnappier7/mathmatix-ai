@@ -24,6 +24,7 @@ const Waitlist = require('../models/waitlist');
 const SchoolLicense = require('../models/schoolLicense');
 const { buildImpactReport } = require('../utils/impactReport');
 const { buildSchoolSignals } = require('../utils/schoolSignal');
+const { engagedDormantFilter, summarizeDormancy } = require('../utils/dormancy');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -3241,6 +3242,33 @@ router.get('/school-signals', isAdmin, async (req, res) => {
   } catch (err) {
     console.error('Error building school signals:', err);
     res.status(500).json({ message: 'Server error building school signals.' });
+  }
+});
+
+// =====================================================
+// DORMANCY SUMMARY: the retention baseline, as a number on the dashboard
+// =====================================================
+/**
+ * @route   GET /api/admin/dormancy-summary
+ * @desc    How many engaged students have gone dormant — the count the
+ *          reactivation campaign (scripts/reactivationCampaign.js) would act
+ *          on, computed from the same filter (utils/dormancy.js) so the
+ *          dashboard number and the campaign's reach can never disagree.
+ * @access  Private (Admin)
+ *
+ * Aggregate-only by design: counts and buckets, never per-student rows, so the
+ * endpoint carries no student PII. The actual send-list stays with the script.
+ */
+router.get('/dormancy-summary', isAdmin, async (req, res) => {
+  try {
+    const students = await User.find(engagedDormantFilter())
+      .select('lastLogin parentIds lastReactivationAt')
+      .lean();
+
+    res.json({ success: true, ...summarizeDormancy(students) });
+  } catch (err) {
+    console.error('Error building dormancy summary:', err);
+    res.status(500).json({ message: 'Server error building dormancy summary.' });
   }
 });
 
