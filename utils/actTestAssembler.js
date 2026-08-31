@@ -48,9 +48,48 @@ function hashSeed(str) {
   return h >>> 0;
 }
 
-/** Target difficulty for a 1-based position, from the blueprint ramp. */
+/**
+ * Target difficulty for a 1-based position, from the blueprint ramp.
+ *
+ * Two ramp shapes are accepted, told apart by the first entry's keys:
+ *
+ *   ANCHORS  [{position, targetDifficulty}]         ← what the real blueprint uses
+ *     A piecewise-linear curve through the anchors, so the target moves a little
+ *     at EVERY position instead of jumping a whole point at two band edges. The
+ *     ACT's own ordering is a smooth ascent, and the returned value is
+ *     fractional on purpose: assembleForm rounds it to pick the query window but
+ *     keeps the fraction to choose WITHIN that window, which is the only reason
+ *     interpolating beats simply adding more flat bands. Positions outside the
+ *     anchor range clamp to the nearest end.
+ *
+ *   BANDS    [{fromPosition, toPosition, targetDifficulty}]   ← legacy, flat
+ *     Kept working for blueprint overrides that want a deliberately flat ramp
+ *     (tests/integration/actNoRepeat.test.js pins every slot at 3 so the
+ *     no-repeat assertions aren't reading difficulty noise).
+ *
+ * @returns {number} 1-5, fractional under the anchor form
+ */
 function difficultyForPosition(blueprint, position) {
-  for (const band of blueprint.difficultyRamp || []) {
+  const ramp = blueprint.difficultyRamp || [];
+  if (!ramp.length) return 3;
+
+  if (ramp[0].position !== undefined) {
+    const anchors = ramp.slice().sort((a, b) => a.position - b.position);
+    const first = anchors[0], last = anchors[anchors.length - 1];
+    if (position <= first.position) return first.targetDifficulty;
+    if (position >= last.position) return last.targetDifficulty;
+    for (let i = 1; i < anchors.length; i++) {
+      const lo = anchors[i - 1], hi = anchors[i];
+      if (position <= hi.position) {
+        const span = hi.position - lo.position;
+        const t = span ? (position - lo.position) / span : 0;
+        // 2dp so slot payloads, logs and gap specs stay legible and comparable.
+        return Math.round((lo.targetDifficulty + t * (hi.targetDifficulty - lo.targetDifficulty)) * 100) / 100;
+      }
+    }
+  }
+
+  for (const band of ramp) {
     if (position >= band.fromPosition && position <= band.toPosition) return band.targetDifficulty;
   }
   return 3;
@@ -125,14 +164,31 @@ function promptSignature(s) {
 /**
  * From a candidate pool, pick the problem whose shape has appeared LEAST in the
  * form so far — so repeated draws of the same skill surface different wordings.
+ *
+ * Shape novelty still wins outright; `targetDifficulty` only breaks ties among
+ * equally-novel candidates, picking the one nearest the ramp's target for this
+ * position. That tie-break is what makes the interpolated ramp mean anything:
+ * the DB query can only ask for a ±1 window of INTEGER difficulties, so without
+ * it a target of 2.2 and one of 2.8 draw from the same pool and land on the same
+ * item, and the curve collapses back into the step function it replaced.
+ * Omit the argument and the old first-wins tie-break is preserved.
  */
-function pickDiverse(candidates, usedSignatures) {
+function pickDiverse(candidates, usedSignatures, targetDifficulty) {
   if (!candidates || !candidates.length) return null;
-  let best = candidates[0], bestCount = Infinity;
+  const distance = (c) => (
+    targetDifficulty == null || c.difficulty == null
+      ? 0
+      : Math.abs(c.difficulty - targetDifficulty)
+  );
+  let best = null, bestCount = Infinity, bestDist = Infinity;
   for (const c of candidates) {
     const count = usedSignatures.get(promptSignature(c.prompt)) || 0;
-    if (count < bestCount) { best = c; bestCount = count; }
-    if (bestCount === 0) break; // an unused shape — take it immediately
+    const dist = distance(c);
+    // No early exit on count 0: a later candidate with the same novelty may sit
+    // closer to the target, and that is the whole point of the tie-break.
+    if (count < bestCount || (count === bestCount && dist < bestDist)) {
+      best = c; bestCount = count; bestDist = dist;
+    }
   }
   return best;
 }
@@ -143,7 +199,9 @@ function toGenerationSpec(slot) {
     position: slot.position,
     skillId: slot.skillId,
     category: slot.category,
-    targetDifficulty: slot.targetDifficulty,
+    // Rounded: an author writes an item at difficulty 3, not 2.87, and the
+    // coverage worklist groups by this key (scripts/actTestCoverage.js).
+    targetDifficulty: Math.round(slot.targetDifficulty),
     answerType: 'multiple-choice',
     optionCount: (DEFAULT_BLUEPRINT.choicesPerItem || 4),
   };
@@ -189,8 +247,13 @@ async function assembleForm(opts = {}) {
       // Fetch a POOL of candidates near the target difficulty, then pick the
       // one whose wording-shape is least-used so far — this is what prevents
       // the same-looking question appearing 3-4 times in one form.
-      const lo = Math.max(1, slot.targetDifficulty - 1);
-      const hi = Math.min(5, slot.targetDifficulty + 1);
+      // Centre the window on the ROUNDED target. Using the fraction directly
+      // would narrow the window to two difficulty levels instead of three
+      // (2.87 ± 1 spans only 3 and 4), thinning every pool and manufacturing
+      // gaps; the fraction is spent below, on picking within the window.
+      const center = Math.round(slot.targetDifficulty);
+      const lo = Math.max(1, center - 1);
+      const hi = Math.min(5, center + 1);
       let candidates = await Problem.find({
         skillId: slot.skillId,
         isActive: true,
@@ -200,7 +263,7 @@ async function assembleForm(opts = {}) {
       }).limit(16).lean();
       if (!candidates.length) {
         // Widen: any difficulty for this skill, still excluding used items.
-        const p = await Problem.findNearDifficulty(slot.skillId, slot.targetDifficulty, usedProblemIds, { preferMultipleChoice: true });
+        const p = await Problem.findNearDifficulty(slot.skillId, center, usedProblemIds, { preferMultipleChoice: true });
         candidates = p ? [p] : [];
       }
       if (!candidates.length) {
@@ -219,7 +282,7 @@ async function assembleForm(opts = {}) {
           }).limit(24).lean();
         }
       }
-      problem = pickDiverse(candidates, usedSignatures);
+      problem = pickDiverse(candidates, usedSignatures, slot.targetDifficulty);
       // Record the item's OWN fine skill (fallback may cross sub-skills within
       // the category), so scoring & personalization attribute to the real skill.
       if (problem && problem.skillId) slot.skillId = problem.skillId;
