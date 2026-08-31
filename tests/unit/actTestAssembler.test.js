@@ -33,14 +33,11 @@ describe('actTestAssembler.buildSlots', () => {
     expect(slots.map(s => s.position)).toEqual(Array.from({ length: 45 }, (_, i) => i + 1));
   });
 
-  test('applies the difficulty ramp (Q1-15 / 16-30 / 31-45)', () => {
+  test('every slot carries the ramp target for its position', () => {
     const slots = A.buildSlots(bp, fixedRng);
-    expect(slots[0].targetDifficulty).toBe(2);   // pos 1
-    expect(slots[14].targetDifficulty).toBe(2);  // pos 15
-    expect(slots[15].targetDifficulty).toBe(3);  // pos 16
-    expect(slots[29].targetDifficulty).toBe(3);  // pos 30
-    expect(slots[30].targetDifficulty).toBe(4);  // pos 31
-    expect(slots[44].targetDifficulty).toBe(4);  // pos 45
+    slots.forEach((slot) => {
+      expect(slot.targetDifficulty).toBe(A.difficultyForPosition(bp, slot.position));
+    });
   });
 
   test('interleaves categories rather than blocking them', () => {
@@ -94,10 +91,49 @@ describe('actTestAssembler.rawToScaled', () => {
 });
 
 describe('actTestAssembler.difficultyForPosition', () => {
-  test('returns ramped difficulty per band', () => {
-    expect(A.difficultyForPosition(bp, 1)).toBe(2);
-    expect(A.difficultyForPosition(bp, 20)).toBe(3);
-    expect(A.difficultyForPosition(bp, 40)).toBe(4);
+  const ramp = Array.from({ length: bp.totalItems }, (_, i) => A.difficultyForPosition(bp, i + 1));
+
+  test('hits the blueprint anchors exactly', () => {
+    bp.difficultyRamp.forEach((anchor) => {
+      expect(A.difficultyForPosition(bp, anchor.position)).toBe(anchor.targetDifficulty);
+    });
+  });
+
+  test('ascends across the whole form, and strictly — no flat plateaus', () => {
+    // The plateau ramp this replaced sat flat for 15 questions at a time, so a
+    // student met one full difficulty step at Q15→Q16 and nothing either side.
+    for (let i = 1; i < ramp.length; i++) {
+      expect(ramp[i]).toBeGreaterThan(ramp[i - 1]);
+    }
+    expect(ramp[0]).toBeLessThan(2);        // Q1 is a gimme on a real form
+    expect(ramp[ramp.length - 1]).toBe(5);  // Q45 is the hardest item we can ask
+  });
+
+  test('the tail climbs faster than the body', () => {
+    // On a real ACT the last ~5 items are markedly harder than items 31-40 —
+    // that is where students run out of clock, and a flat 4 through Q45 let a
+    // strong student coast to an inflated baseline.
+    const perItem = (from, to) => (A.difficultyForPosition(bp, to) - A.difficultyForPosition(bp, from)) / (to - from);
+    expect(perItem(41, 45)).toBeGreaterThan(perItem(31, 40));
+  });
+
+  test('holds the mean the raw→scaled table is calibrated to', () => {
+    // scaledScore.scaledByRaw maps a form of ~this average difficulty. Reshape
+    // the curve freely; move its mean and every practice score silently shifts.
+    const mean = ramp.reduce((a, b) => a + b, 0) / ramp.length;
+    expect(mean).toBeCloseTo(3.0, 1);
+  });
+
+  test('clamps outside the anchor range instead of extrapolating', () => {
+    expect(A.difficultyForPosition(bp, 0)).toBe(bp.difficultyRamp[0].targetDifficulty);
+    expect(A.difficultyForPosition(bp, 999)).toBe(5);
+  });
+
+  test('still reads the legacy flat-band shape (blueprint overrides)', () => {
+    const banded = { difficultyRamp: [{ fromPosition: 1, toPosition: 45, targetDifficulty: 3 }] };
+    expect(A.difficultyForPosition(banded, 1)).toBe(3);
+    expect(A.difficultyForPosition(banded, 45)).toBe(3);
+    expect(A.difficultyForPosition({}, 20)).toBe(3);   // no ramp at all
   });
 });
 
@@ -121,5 +157,33 @@ describe('actTestAssembler diversity (no look-alike problems in one form)', () =
 
   test('pickDiverse returns null on an empty pool', () => {
     expect(A.pickDiverse([], new Map())).toBeNull();
+  });
+
+  test('pickDiverse breaks shape ties by nearness to the fractional target', () => {
+    // The query window is a ±1 band of integers, so a 2.2 slot and a 2.8 slot
+    // see the same pool. Without this the curve collapses into a step function.
+    const pool = [
+      { problemId: 'd2', prompt: 'Wholly distinct wording alpha', difficulty: 2 },
+      { problemId: 'd3', prompt: 'Wholly distinct wording beta', difficulty: 3 },
+    ];
+    expect(A.pickDiverse(pool, new Map(), 2.2).problemId).toBe('d2');
+    expect(A.pickDiverse(pool, new Map(), 2.8).problemId).toBe('d3');
+  });
+
+  test('pickDiverse still puts shape novelty ahead of difficulty', () => {
+    const pool = [
+      { problemId: 'onTarget', prompt: 'A cyclist rides at 5 mph for 3 hours', difficulty: 3 },
+      { problemId: 'freshShape', prompt: 'A printer prints at 5 ppm for 3 minutes', difficulty: 5 },
+    ];
+    const used = new Map([[A.promptSignature(pool[0].prompt), 1]]);
+    expect(A.pickDiverse(pool, used, 3).problemId).toBe('freshShape');
+  });
+
+  test('pickDiverse without a target keeps the old first-wins tie-break', () => {
+    const pool = [
+      { problemId: 'first', prompt: 'Wholly distinct wording alpha', difficulty: 5 },
+      { problemId: 'second', prompt: 'Wholly distinct wording beta', difficulty: 1 },
+    ];
+    expect(A.pickDiverse(pool, new Map()).problemId).toBe('first');
   });
 });
