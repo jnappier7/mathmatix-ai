@@ -170,21 +170,39 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
 // ===========================================================================
 
 /**
- * Find problem near target difficulty for a skill
- * Uses simple 1-5 scale
+ * Find problem near target difficulty for a skill.
+ *
+ * `targetDifficulty` is on the **1-5 problem scale** — never IRT theta. A caller
+ * holding theta converts first, explicitly: `Problem.thetaToDifficulty(theta)`.
+ *
+ * This used to sniff the scale instead: anything in [-3, 3] was assumed to be
+ * theta and remapped. The two scales OVERLAP on [1, 3], so every 1-5 caller
+ * asking for an easy item silently got a hard one — 1 and 2 both became 4 and 3
+ * became 5, while 4 and 5 (outside theta's range) passed through untouched.
+ * Exactly backwards: the easier the slot, the harder the item it drew. Nothing
+ * threw, and the only visible symptom was a practice form that felt wrong.
+ *
+ * @param {string} skillId
+ * @param {number} targetDifficulty - 1-5. Convert theta with thetaToDifficulty().
+ * @param {string[]} excludeIds - problemIds to skip
  * @param {Object} options - Optional preferences
  * @param {boolean} options.preferMultipleChoice - Prefer multiple-choice problems (for screener)
  */
 problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficulty, excludeIds = [], options = {}) {
   const { preferMultipleChoice = false } = options;
 
-  // Convert theta (-3 to +3) to difficulty (1-5) if needed
-  let difficulty = targetDifficulty;
-  if (targetDifficulty >= -3 && targetDifficulty <= 3) {
-    // Looks like theta scale, convert: theta -3→1, 0→3, +3→5
-    difficulty = Math.round(((targetDifficulty + 3) / 6) * 4 + 1);
-    difficulty = Math.max(1, Math.min(5, difficulty));
+  const requested = Number(targetDifficulty);
+  if (!Number.isFinite(requested) || requested < 1 || requested > 5) {
+    // The unambiguous "that's a theta, not a difficulty" signal (0, negatives,
+    // anything past 5). Say so rather than guessing — silence is how the old
+    // remap hid for so long. In-range-but-wrong input can't be detected here,
+    // which is exactly why the guess had to go.
+    console.warn(
+      `[Problem.findNearDifficulty] targetDifficulty=${targetDifficulty} is outside the 1-5 ` +
+      `scale (skill "${skillId}"). Pass Problem.thetaToDifficulty(theta) if you hold theta.`
+    );
   }
+  const difficulty = Math.max(1, Math.min(5, Math.round(Number.isFinite(requested) ? requested : 3)));
 
   // Build base query
   const baseQuery = {
