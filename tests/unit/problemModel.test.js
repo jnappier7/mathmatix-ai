@@ -202,14 +202,47 @@ describe('Problem.statics.findNearDifficulty', () => {
     expect(find.mock.calls[0][0]).toMatchObject({ answerType: 'multiple-choice' });
   });
 
-  test('converts theta-scale input to difficulty', async () => {
-    const find = jest.fn().mockResolvedValue([]);
-    const findOne = jest.fn().mockResolvedValue(null);
+  test('queries the 1-5 difficulty it was given, unmodified', async () => {
+    // The regression. This used to sniff the scale: anything in [-3, 3] was
+    // read as theta and remapped, and the two scales overlap on [1, 3] — so an
+    // easy target came back HARDER than a medium one. 1 → 4, 2 → 4, 3 → 5,
+    // while 4 and 5 passed through. Every difficulty must now query itself.
+    for (const difficulty of [1, 2, 3, 4, 5]) {
+      const find = jest.fn().mockResolvedValue([]);
+      const findOne = jest.fn().mockResolvedValue(null);
 
-    // theta = 0 → difficulty 3
-    await statics.findNearDifficulty.call({ find, findOne }, 'skill', 0);
-    const queryAtRange0 = find.mock.calls[0][0].difficulty;
-    expect(queryAtRange0).toEqual({ $gte: 3, $lte: 3 });
+      await statics.findNearDifficulty.call({ find, findOne }, 'skill', difficulty);
+
+      expect(find.mock.calls[0][0].difficulty).toEqual({ $gte: difficulty, $lte: difficulty });
+    }
+  });
+
+  test('warns and clamps when handed a theta instead of a difficulty', async () => {
+    // theta 0 is the common mistake, and it is unambiguous — no 1-5 difficulty
+    // is ever 0 — so say so out loud rather than guessing what was meant.
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const find = jest.fn().mockResolvedValue([]);
+      const findOne = jest.fn().mockResolvedValue(null);
+
+      await statics.findNearDifficulty.call({ find, findOne }, 'skill', 0);
+
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('outside the 1-5'));
+      expect(find.mock.calls[0][0].difficulty).toEqual({ $gte: 1, $lte: 1 });
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  test('an in-range target never warns', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const find = jest.fn().mockResolvedValue([]);
+      await statics.findNearDifficulty.call({ find, findOne: jest.fn().mockResolvedValue(null) }, 'skill', 2);
+      expect(warn).not.toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   test('honors excludeIds list', async () => {
