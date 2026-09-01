@@ -454,6 +454,19 @@ function isProviderConfigError(err) {
   return /AADSTS\d+/.test(msg) || /client secret|invalid_client/i.test(msg);
 }
 
+// Short-lived marker for client-side signup analytics: analytics.js on the
+// next page fires a GA4 sign_up event with this method, then clears the
+// cookie so an account is counted exactly once. httpOnly:false on purpose —
+// being read by page JS is the cookie's entire job. Method name only, no PII.
+function setSignupMethodCookie(res, method) {
+  res.cookie('mm_signup_method', method, {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 10 * 60 * 1000
+  });
+}
+
 function oauthCallback(strategy) {
   return (req, res, next) => {
     passport.authenticate(strategy, (err, user) => {
@@ -473,6 +486,7 @@ function oauthCallback(strategy) {
 
       req.logIn(user, async (err) => {
         if (err) return next(err);
+        if (user._isNewAccount) setSignupMethodCookie(res, strategy);
         try {
           await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
         } catch (updateErr) {
@@ -532,6 +546,7 @@ function registerOAuthRoutes(app, authLimiter) {
           if (err) return next(err);
           req.logIn(user, async (err) => {
             if (err) return next(err);
+            if (user._isNewAccount) setSignupMethodCookie(res, 'clever');
             try {
               await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
             } catch (updateErr) {

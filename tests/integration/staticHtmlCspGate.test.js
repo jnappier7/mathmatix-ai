@@ -30,6 +30,7 @@ process.env.MICROSOFT_CLIENT_SECRET = process.env.MICROSOFT_CLIENT_SECRET || 'te
 const path = require('path');
 const supertest = require('supertest');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const { closeSessionStore } = require('../helpers/closeSessionStore');
 
 let mem;
 let app;
@@ -52,28 +53,19 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  // connect-mongo closes the underlying driver client on a promise it never
-  // hands back (MongoStore's close path), so a connection interrupted
-  // mid-close surfaces as an *unhandled* rejection rather than one we can
-  // await. The try/catch below cannot see it, and Jest reports the whole suite
-  // as "failed to run" even when every test in it passed. Swallow that one
-  // error for the duration of teardown, and only that one.
-  const swallowClosedClient = (err) => {
-    if (err?.name === 'MongoClientClosedError') return; // expected teardown noise
-    console.error('Unexpected unhandled rejection during teardown:', err);
-  };
-  process.on('unhandledRejection', swallowClosedClient);
-
-  try {
-    // Let any in-flight rate-limiter/session writes settle before closing.
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    try {
-      if (app?.locals?.sessionStore) await app.locals.sessionStore.close();
-    } catch { /* interrupted mid-close — same cause, awaited path */ }
-    if (mem) await mem.stop();
-  } finally {
-    process.off('unhandledRejection', swallowClosedClient);
-  }
+  // See tests/helpers/closeSessionStore.js for what this is avoiding: the
+  // store's own constructor leaves a floating `collectionP` (connect +
+  // createIndex) that nothing here ever awaits, and closing the client on top
+  // of it produces an unhandled rejection Jest fails the whole file on.
+  //
+  // This replaced a fixed 250ms sleep whose stated reason — "let in-flight
+  // rate-limiter/session writes settle" — was wrong twice over: every rate
+  // limiter in this app uses express-rate-limit's default in-memory store, and
+  // `saveUninitialized: false` means these unauthenticated GETs never write a
+  // session at all. The only in-flight Mongo work was connect-mongo's own, so
+  // awaiting it is both exact and faster than betting on a timer.
+  await closeSessionStore(app?.locals?.sessionStore);
+  if (mem) await mem.stop();
 });
 
 describe('GET *.html — must reach the CSP pipeline, not express.static', () => {

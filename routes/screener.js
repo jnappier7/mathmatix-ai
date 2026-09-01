@@ -409,10 +409,14 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       // the placement unreliable, so we exclude and re-draw a bounded
       // number of times before falling through to template generation.
       const qualityExclusions = [...recentProblemIds];
+      // `targetDifficulty` is an IRT theta aim; findNearDifficulty takes the
+      // 1-5 problem scale. Convert explicitly — it used to sniff the scale and
+      // the two overlap on [1, 3], so easy aims quietly drew hard items.
+      const bankDifficulty = Problem.thetaToDifficulty(targetDifficulty);
       for (let draw = 0; draw < 5; draw++) {
         problem = await Problem.findNearDifficulty(
           selectedSkillId,
-          targetDifficulty,
+          bankDifficulty,
           qualityExclusions,
           { preferMultipleChoice: true }
         );

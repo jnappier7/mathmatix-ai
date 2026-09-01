@@ -413,8 +413,11 @@ router.post('/skip', isAuthenticated, async (req, res) => {
  */
 async function findProblemForSkill(skillId, user, excludeIds) {
   const theta = user.learningProfile?.currentTheta || 0;
+  // findNearDifficulty takes the 1-5 problem scale, not theta — convert here
+  // rather than letting it guess (it used to, and read easy targets as hard).
+  const difficulty = Problem.thetaToDifficulty(theta);
   for (const candidate of skillLookupCandidates(skillId)) {
-    const doc = await Problem.findNearDifficulty(candidate, theta, excludeIds, { preferMultipleChoice: false });
+    const doc = await Problem.findNearDifficulty(candidate, difficulty, excludeIds, { preferMultipleChoice: false });
     if (doc) return doc;
   }
   return null;

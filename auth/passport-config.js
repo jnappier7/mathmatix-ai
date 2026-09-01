@@ -163,6 +163,9 @@ passport.use(
         });
 
         await newUser.save();
+        // In-memory marker (never persisted): the callback route reads it to
+        // drop the mm_signup_method cookie for client-side signup analytics.
+        newUser._isNewAccount = true;
         console.log(`LOG: New Google OAuth user created: ${newUser.username}`);
         return done(null, newUser);
       } catch (err) {
@@ -227,6 +230,9 @@ passport.use(
         });
 
         await newUser.save();
+        // In-memory marker (never persisted): the callback route reads it to
+        // drop the mm_signup_method cookie for client-side signup analytics.
+        newUser._isNewAccount = true;
         console.log(`LOG: New Microsoft OAuth user created: ${newUser.username}`);
         return done(null, newUser);
       } catch (err) {
@@ -337,6 +343,9 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
         });
 
         await newUser.save();
+        // In-memory marker (never persisted): the callback route reads it to
+        // drop the mm_signup_method cookie for client-side signup analytics.
+        newUser._isNewAccount = true;
         console.log(`LOG: New Clever SSO user created: ${newUser.username}`);
 
         // Run Clever roster sync for the new user (non-blocking)
