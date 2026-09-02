@@ -110,12 +110,28 @@ describe('subprocessor disclosure matches the code', () => {
     });
 
     it('states the one signed DPA where it is, and nowhere it is not', () => {
-        // OpenAI is the only executed Data Processing Agreement. The page must
-        // say so for OpenAI and must not imply it for anyone else.
+        // OpenAI is the only executed (countersigned) Data Processing Agreement.
+        // The page must say so for OpenAI and must not imply it for anyone else.
         const rows = PAGE.split('<tr>').filter((r) => r.includes('<th scope="row">'));
-        const withDpa = rows.filter((r) => /Data Processing Agreement/.test(r));
-        expect(withDpa).toHaveLength(1);
-        expect(withDpa[0]).toMatch(/OpenAI/);
+        const signed = rows.filter((r) => /Signed Data Processing Agreement/.test(r));
+        expect(signed).toHaveLength(1);
+        expect(signed[0]).toMatch(/OpenAI/);
+    });
+
+    it('describes the Anthropic DPA as incorporated, not signed', () => {
+        // Anthropic's DPA is incorporated by reference into its Commercial
+        // Terms of Service; there is no separate signature flow. That is a
+        // different claim from OpenAI's countersigned agreement and the page
+        // must not blur the two.
+        const rows = PAGE.split('<tr>').filter((r) => r.includes('<th scope="row">'));
+        const anthropic = rows.find((r) => /<th scope="row">Anthropic</.test(r));
+        expect(anthropic).toMatch(/Data Processing Addendum/);
+        expect(anthropic).toMatch(/incorporated/);
+        expect(anthropic).not.toMatch(/Signed/);
+
+        // No third vendor gets a DPA claim of either kind.
+        const anyDpa = rows.filter((r) => /Data Processing (Agreement|Addendum)/.test(r));
+        expect(anyDpa.map((r) => r.match(/<th scope="row">([^<]+)</)[1]).sort()).toEqual(['Anthropic', 'OpenAI']);
     });
 
     it('is honest about what Sentry receives', () => {
