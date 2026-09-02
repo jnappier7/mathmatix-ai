@@ -25,6 +25,7 @@ const Affiliate = require('../models/affiliate');
 const WebhookEvent = require('../models/webhookEvent');
 const { isAuthenticated } = require('../middleware/auth');
 const { hasUnmeteredAiAccess } = require('../middleware/usageGate');
+const { isFoundingSchoolUser } = require('../utils/foundingSchool');
 const { sendCancellationConfirmation, sendTrialEndingReminder } = require('../utils/emailService');
 const logger = require('../utils/logger').child({ route: 'billing' });
 
@@ -140,6 +141,14 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
 
     if (user.subscriptionTier === 'unlimited') {
       return res.status(400).json({ message: 'Already subscribed to Unlimited' });
+    }
+
+    // Founding-school accounts already have Mathmatix+ free. Refusing the
+    // charge matters beyond courtesy: these are the founder's own school's
+    // families, and accidentally billing people who were promised free access
+    // is exactly the self-dealing the founding grant exists to rule out.
+    if (isFoundingSchoolUser(user)) {
+      return res.status(400).json({ message: 'Your school already provides Mathmatix+ free — no purchase needed.' });
     }
 
     // Card-required free trial: honor the trial request only if this user has

@@ -25,6 +25,7 @@ const SchoolLicense = require('../models/schoolLicense');
 const { buildImpactReport } = require('../utils/impactReport');
 const { buildSchoolSignals } = require('../utils/schoolSignal');
 const { engagedDormantFilter, summarizeDormancy } = require('../utils/dormancy');
+const { emailDomainFilter } = require('../utils/foundingSchool');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -3146,7 +3147,10 @@ router.get('/classes/:classId/students', isAdmin, async (req, res) => {
  * Scope (first one supplied wins):
  *   ?licenseId=<id>   students under a school license  — the renewal artifact
  *   ?teacherId=<id>   one teacher's roster             — the pilot artifact
- *   (neither)         every student on the platform
+ *   ?domain=<d>       students whose email is on a domain — how the founding
+ *                     school (no license record; granted by email domain via
+ *                     FOUNDING_SCHOOL_DOMAINS) gets its quarterly report
+ *   (none)            every student on the platform
  *
  * The computation lives in utils/impactReport.js; this route only resolves the
  * cohort. It returns students with NO growth checks in the cohort on purpose —
@@ -3155,11 +3159,11 @@ router.get('/classes/:classId/students', isAdmin, async (req, res) => {
  */
 router.get('/impact-report', isAdmin, async (req, res) => {
   try {
-    const { licenseId, teacherId } = req.query;
+    const { licenseId, teacherId, domain } = req.query;
 
     let scope = 'all';
     let scopeName = null;
-    const filter = {};
+    let filter = {};
 
     if (licenseId) {
       if (!mongoose.Types.ObjectId.isValid(licenseId)) {
@@ -3179,6 +3183,14 @@ router.get('/impact-report', isAdmin, async (req, res) => {
       scope = 'teacher';
       scopeName = `${teacher.firstName || ''} ${teacher.lastName || ''}`.trim() || null;
       filter.teacherId = teacher._id;
+    } else if (domain) {
+      const d = String(domain).trim().toLowerCase();
+      if (!/^[a-z0-9.-]{3,253}$/.test(d) || !d.includes('.')) {
+        return res.status(400).json({ message: 'Invalid domain.' });
+      }
+      scope = 'domain';
+      scopeName = d;
+      filter = emailDomainFilter(d);
     }
 
     // Students by the roles they HOLD — a bare { role: 'student' } would drop
