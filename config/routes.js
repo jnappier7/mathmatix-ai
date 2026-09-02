@@ -204,6 +204,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
     throw new Error('Sentry verification error (triggered by admin)');
   });
 
+  // --- Tracked campaign links (public; printed QR codes point here) ---
+  app.use('/go', require('../routes/campaignLink'));
+
   // --- Auth Routes ---
   app.use('/login', authLimiter, loginRoutes);
   app.use('/signup', signupLimiter, signupRoutes);
