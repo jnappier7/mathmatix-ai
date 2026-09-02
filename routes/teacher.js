@@ -18,6 +18,7 @@ const { summarizeLedger } = require('../utils/pipeline/boardLedger');
 const { normalizedMasteryScore } = require('../utils/masteryScore');
 const LearningCard = require('../models/learningCard');
 const { callLLMStream } = require('../utils/openaiClient');
+const { createRosterAnonymizationContext } = require('../utils/piiAnonymizer');
 const { getStudentIdsForTeacher } = require('../services/userService');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { checkConsent } = require('../utils/consentManager');
@@ -1531,14 +1532,37 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
  * Build a rich class snapshot for the Teaching Aide.
  * Returns student-level profiles, class health metrics, and actionable insights.
  */
-async function buildClassSnapshot(teacherId) {
+// Coarse band for an IEP goal's progress. The lesson planner needs to know a
+// goal is early or nearly met; it does not need the exact percentage, which
+// is an education-record value we would rather not send to a provider.
+function goalProgressBand(pct) {
+  const n = Number(pct);
+  if (!Number.isFinite(n)) return 'in progress';
+  if (n >= 100) return 'met';
+  if (n >= 75) return 'nearly met';
+  if (n >= 50) return 'progressing';
+  if (n >= 25) return 'developing';
+  return 'just started';
+}
+
+/**
+ * Builds the class picture the teacher tools work from.
+ *
+ * `forModel: true` renders the text blocks for an AI prompt: each student is
+ * labelled "[Student N]" instead of by name, and IEP goals are reduced to a
+ * count plus progress bands rather than the goal text and exact percentage.
+ * The returned `roster` maps each label back to the real name so the route
+ * can rehydrate the reply. The `students` array always carries real names —
+ * it feeds the teacher's own dashboard, which never leaves the app.
+ */
+async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
   const studentIds = await getStudentIdsForTeacher(teacherId);
   const students = await User.find(
     { _id: { $in: studentIds }, ...anyRole('student') },
     'firstName lastName gradeLevel mathCourse iepPlan skillMastery learningProfile lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds currentStreak level xp'
   ).lean();
 
-  if (students.length === 0) return { students: [], summary: 'No students enrolled yet.', studentProfiles: '', classHealth: '' };
+  if (students.length === 0) return { students: [], roster: [], summary: 'No students enrolled yet.', studentProfiles: '', classHealth: '', needsAttention: [], topPerformers: [], risingStars: [] };
 
   const now = new Date();
   const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
@@ -1551,8 +1575,10 @@ async function buildClassSnapshot(teacherId) {
   );
 
   // Build individual student profiles
-  const profiles = students.map(s => {
-    const name = `${s.firstName || ''}`.trim() || 'Unknown';
+  const profiles = students.map((s, index) => {
+    const firstName = `${s.firstName || ''}`.trim();
+    const placeholder = `[Student ${index + 1}]`;
+    const name = forModel ? placeholder : (firstName || 'Unknown');
     const mastery = s.skillMastery ? Object.entries(s.skillMastery) : [];
     const masteredCount = mastery.filter(([, d]) => d.status === 'mastered').length;
     const learningCount = mastery.filter(([, d]) => ['learning', 'practicing', 're-fragile', 'needs-review'].includes(d.status)).length;
@@ -1582,7 +1608,11 @@ async function buildClassSnapshot(teacherId) {
     const anxiety = s.learningProfile?.mathAnxietyLevel;
 
     return {
+      id: s._id,
       name,
+      firstName,
+      lastName: `${s.lastName || ''}`.trim(),
+      placeholder,
       grade: s.gradeLevel,
       course: s.mathCourse,
       masteredCount,
@@ -1634,7 +1664,11 @@ async function buildClassSnapshot(teacherId) {
     if (p.strugglingSkills.length > 0) line += ` | Struggling with: ${p.strugglingSkills.join(', ')}`;
     if (p.hasIEP) {
       line += ` | IEP: ${p.accommodations.join(', ')}`;
-      if (p.iepGoals.length > 0) line += ` | Goals: ${p.iepGoals.map(g => `${g.description} (${g.progress}%)`).join('; ')}`;
+      if (p.iepGoals.length > 0) {
+        line += forModel
+          ? ` | ${p.iepGoals.length} active IEP goal${p.iepGoals.length === 1 ? '' : 's'} (${p.iepGoals.map(g => goalProgressBand(g.progress)).join(', ')})`
+          : ` | Goals: ${p.iepGoals.map(g => `${g.description} (${g.progress}%)`).join('; ')}`;
+      }
     }
     if (p.growthStatus) line += ` | Recent growth: ${p.growthStatus.replace(/-/g, ' ')}`;
     if (p.anxiety !== undefined && p.anxiety >= 7) line += ' | HIGH MATH ANXIETY';
@@ -1669,6 +1703,7 @@ async function buildClassSnapshot(teacherId) {
 
   return {
     students: profiles,
+    roster: profiles.map(p => ({ placeholder: p.placeholder, firstName: p.firstName, lastName: p.lastName })),
     studentProfiles: studentProfilesText,
     classHealth: classHealthText,
     summary: `${profiles.length} students, ${activeCount} active, ${iepStudents.length} with IEPs`,
@@ -1680,7 +1715,15 @@ async function buildClassSnapshot(teacherId) {
 
 // POST /api/teacher/lesson-planner
 // ============================================
-router.post('/lesson-planner', isTeacher, async (req, res) => {
+// The whole roster — names, grades, IEP accommodations — is read here and
+// described to an AI provider, so this is a FERPA disclosure for every
+// student on it, not just the ones the teacher asks about. The handler sets
+// req.accessedStudentIds; the middleware logs one entry per student after the
+// response completes.
+const logRosterAccess = (recordType, interest) =>
+  logRecordAccess(recordType, interest, { getStudentIds: (req) => req.accessedStudentIds });
+
+router.post('/lesson-planner', isTeacher, logRosterAccess('iep_plan', 'teaching_instruction'), async (req, res) => {
   try {
     const teacherId = req.user._id;
     const { prompt, skillGaps, conversationHistory } = req.body;
@@ -1689,11 +1732,27 @@ router.post('/lesson-planner', isTeacher, async (req, res) => {
       return res.status(400).json({ message: 'Prompt is required.' });
     }
 
-    // Get teacher info and rich class snapshot in parallel
+    // Get teacher info and rich class snapshot in parallel. The snapshot is
+    // rendered for the model: students are "[Student N]", IEP goals are
+    // counts and bands. Real names go back in on the way out (see below).
     const [teacher, classSnapshot] = await Promise.all([
       User.findById(teacherId, 'firstName lastName classAISettings').lean(),
-      buildClassSnapshot(teacherId)
+      buildClassSnapshot(teacherId, { forModel: true })
     ]);
+    req.accessedStudentIds = classSnapshot.students.map(s => s.id);
+
+    // Everything else in the prompt — the teacher's question, the prior turns
+    // (which carry rehydrated names), and the client-supplied skill-gap lists
+    // — is swept for roster names with the same placeholders, so "what should
+    // I do about Maya?" leaves as "what should I do about [Student 3]?".
+    const teacherNames = {};
+    const teacherFull = `${teacher?.firstName || ''} ${teacher?.lastName || ''}`.trim();
+    if (teacherFull) teacherNames[teacherFull] = '[Teacher]';
+    if (teacher?.lastName) teacherNames[teacher.lastName] = '[Teacher]';
+    const anonContext = createRosterAnonymizationContext(classSnapshot.roster, {
+      additionalNames: teacherNames,
+      names: { teacher: teacher?.firstName || 'the teacher' }
+    });
 
     // Build skill gaps context
     let gapsContext = '';
@@ -1743,7 +1802,9 @@ router.post('/lesson-planner', isTeacher, async (req, res) => {
     const month = new Date().getMonth(); // 0-indexed
     const quarter = month >= 7 && month <= 9 ? 'Q1 (Fall)' : month >= 10 || month === 0 ? 'Q2 (Winter)' : month >= 1 && month <= 3 ? 'Q3 (Spring)' : 'Q4 (Summer)';
 
-    const systemPrompt = `You are an expert math instructional coach and teaching aide embedded in the MATHMATIX AI platform. You have deep expertise in mathematics pedagogy, evidence-based teaching strategies, and differentiated instruction. You know every student in this class by name and can provide specific, actionable guidance.
+    const systemPrompt = `You are an expert math instructional coach and teaching aide embedded in the MATHMATIX AI platform. You have deep expertise in mathematics pedagogy, evidence-based teaching strategies, and differentiated instruction. You know every student in this class and can provide specific, actionable guidance.
+
+STUDENT LABELS: For privacy, students are identified by roster labels like [Student 1], [Student 2]. Refer to a student ONLY by their exact label, brackets included — the labels are replaced with real names before the teacher reads your reply. Never invent a name, never write "Student 1" without the brackets, and never ask the teacher who a label is.
 
 You are like a brilliant co-teacher sitting in the room — you've watched every student work, you know their data, and you can have a real conversation with the teacher about what's happening and what to do next.
 
@@ -1784,7 +1845,7 @@ HOW TO RESPOND:
 - When asked about a SKILL or TOPIC: Connect to the class data — who has mastered it, who's struggling, what misconceptions are likely, what the research says about teaching it.
 - When asked about STRATEGIES or PEDAGOGY: Ground it in evidence, but make it practical. Give the teacher something they can use tomorrow.
 - Be conversational and direct. No jargon without explanation. No generic advice — always tie back to THIS class and THESE students.
-- Use markdown: #### headers, **bold** for names and key points, bullet lists, numbered steps for procedures.
+- Use markdown: #### headers, **bold** for student labels and key points, bullet lists, numbered steps for procedures.
 - Keep responses focused and actionable. If the question is narrow, answer narrowly. If it's broad, provide structure but offer to go deeper.`;
 
     // Build messages array
@@ -1802,24 +1863,33 @@ HOW TO RESPOND:
 
     messages.push({ role: 'user', content: prompt });
 
+    // Strip roster names from every message before it leaves the app. This is
+    // unconditional — not gated on PII_STRIP_OUTBOUND — because the teacher
+    // tools must be at least as protected as the tutor, and this prompt is
+    // the one place the app deliberately lines up name + grade + IEP status.
+    const outbound = messages.map(m => ({ ...m, content: anonContext.anonymize(m.content) }));
+
     // Stream the response
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('X-Accel-Buffering', 'no');
 
-    const stream = await callLLMStream('gpt-4o-mini', messages, {
+    const stream = await callLLMStream('gpt-4o-mini', outbound, {
       max_tokens: 4000,
-      temperature: 0.7
+      temperature: 0.7,
+      anonContext // tells the outbound chokepoint the caller owns rehydration
     });
 
-    // Handle OpenAI streaming
+    // Put the real names back as the reply streams. Placeholders can arrive
+    // split across chunks ("[Stu" + "dent 3]"), so this buffers the tail.
+    const rehydrator = anonContext.createStreamRehydrator();
+    const emit = (text) => { if (text) res.write(`data: ${JSON.stringify({ text })}\n\n`); };
     for await (const chunk of stream) {
       const content = chunk.choices?.[0]?.delta?.content;
-      if (content) {
-        res.write(`data: ${JSON.stringify({ text: content })}\n\n`);
-      }
+      if (content) emit(rehydrator.push(content));
     }
+    emit(rehydrator.flush());
 
     res.write('data: [DONE]\n\n');
     res.end();
@@ -1838,9 +1908,10 @@ HOW TO RESPOND:
 // GET /api/teacher/class-snapshot
 // Returns class health data for dynamic frontend suggestion chips
 // ============================================
-router.get('/class-snapshot', isTeacher, async (req, res) => {
+router.get('/class-snapshot', isTeacher, logRosterAccess('iep_plan', 'teaching_instruction'), async (req, res) => {
   try {
     const snapshot = await buildClassSnapshot(req.user._id);
+    req.accessedStudentIds = snapshot.students.map(s => s.id);
     res.json({
       studentCount: snapshot.students.length,
       needsAttention: snapshot.needsAttention.map(s => ({ name: s.name, reasons: [

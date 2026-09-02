@@ -38,6 +38,9 @@ function mostPrivilegedRole(user) {
  * @param {Object} [options] - Additional options
  * @param {string} [options.accessType] - 'view', 'export', 'api_read', etc.
  * @param {Function} [options.getStudentId] - Custom function to extract studentId from req
+ * @param {Function} [options.getStudentIds] - Custom function returning EVERY studentId the
+ *   request touched (a roster-wide read). One entry is written per student; the handler
+ *   usually sets these on req once it knows who was read.
  * @returns {Function} Express middleware
  */
 function logRecordAccess(recordType, legitimateInterest, options = {}) {
@@ -46,12 +49,19 @@ function logRecordAccess(recordType, legitimateInterest, options = {}) {
         res.on('finish', () => {
             // Only log successful access (2xx status codes)
             if (res.statusCode < 200 || res.statusCode >= 300) return;
+            if (!req.user) return;
 
-            const studentId = options.getStudentId
-                ? options.getStudentId(req)
-                : req.params.studentId || req.params.childId || req.body?.studentId;
-
-            if (!studentId || !req.user) return;
+            let studentIds;
+            if (options.getStudentIds) {
+                studentIds = options.getStudentIds(req) || [];
+            } else {
+                const one = options.getStudentId
+                    ? options.getStudentId(req)
+                    : req.params.studentId || req.params.childId || req.body?.studentId;
+                studentIds = one ? [one] : [];
+            }
+            studentIds = studentIds.filter(Boolean);
+            if (studentIds.length === 0) return;
 
             // Label the accessor by the most privileged role they HOLD, not by
             // req.user.role — that is the dashboard they happen to be viewing.
@@ -59,28 +69,35 @@ function logRecordAccess(recordType, legitimateInterest, options = {}) {
             // so the audit trail understated who actually read the record. See
             // the role vs roles[] note in CLAUDE.md.
             const accessedByRole = mostPrivilegedRole(req.user);
+            const endpoint = `${req.method} ${req.baseUrl}${req.route?.path || req.path}`;
 
-            // Determine FERPA exemption status
-            const isSelfAccess = req.user._id.toString() === studentId.toString();
-            const ferpaExempt = isSelfAccess;
-            const exemptionReason = isSelfAccess ? 'Student self-access' : undefined;
+            const docs = studentIds.map((studentId) => {
+                // Determine FERPA exemption status
+                const isSelfAccess = req.user._id.toString() === studentId.toString();
+                return {
+                    studentId,
+                    accessedBy: req.user._id,
+                    accessedByRole,
+                    recordType,
+                    accessType: options.accessType || 'api_read',
+                    legitimateInterest: isSelfAccess ? 'student_self_access' : legitimateInterest,
+                    endpoint,
+                    ferpaExempt: isSelfAccess,
+                    exemptionReason: isSelfAccess ? 'Student self-access' : undefined,
+                    ipAddress: req.ip,
+                    userAgent: req.get('User-Agent')
+                };
+            });
 
-            EducationRecordAccessLog.create({
-                studentId,
-                accessedBy: req.user._id,
-                accessedByRole,
-                recordType,
-                accessType: options.accessType || 'api_read',
-                legitimateInterest: isSelfAccess ? 'student_self_access' : legitimateInterest,
-                endpoint: `${req.method} ${req.baseUrl}${req.route?.path || req.path}`,
-                ferpaExempt,
-                exemptionReason,
-                ipAddress: req.ip,
-                userAgent: req.get('User-Agent')
-            }).catch(err => {
+            const write = docs.length === 1
+                ? EducationRecordAccessLog.create(docs[0])
+                : EducationRecordAccessLog.insertMany(docs, { ordered: false });
+
+            write.catch(err => {
                 logger.error('[FERPAAccessLog] Failed to log record access', {
                     error: err.message,
-                    studentId,
+                    studentId: docs.length === 1 ? docs[0].studentId : undefined,
+                    studentCount: docs.length,
                     accessedBy: req.user._id.toString(),
                     recordType
                 });

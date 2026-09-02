@@ -179,3 +179,42 @@ describe('logAccess (programmatic helper)', () => {
     await expect(logAccess({ studentId: 's1', recordType: 'x' })).resolves.toBeUndefined();
   });
 });
+
+describe('logRecordAccess with getStudentIds (roster-wide reads)', () => {
+  beforeEach(() => {
+    EducationRecordAccessLog.insertMany = jest.fn().mockReturnValue({ catch: () => undefined });
+  });
+
+  test('writes one entry per student the handler reports', () => {
+    const { req, res } = makeReqRes({ studentId: undefined, method: 'POST', baseUrl: '/api/teacher', routePath: '/lesson-planner' });
+    req.params = {};
+    const mw = logRecordAccess('iep_plan', 'teaching_instruction', { getStudentIds: (r) => r.accessedStudentIds });
+    mw(req, res, jest.fn());
+    req.accessedStudentIds = ['s1', 's2', 's3'];
+    res.finish();
+
+    expect(EducationRecordAccessLog.create).not.toHaveBeenCalled();
+    expect(EducationRecordAccessLog.insertMany).toHaveBeenCalledTimes(1);
+    const docs = EducationRecordAccessLog.insertMany.mock.calls[0][0];
+    expect(docs.map((d) => d.studentId)).toEqual(['s1', 's2', 's3']);
+    expect(docs.every((d) => d.endpoint === 'POST /api/teacher/lesson-planner' && d.recordType === 'iep_plan')).toBe(true);
+  });
+
+  test('writes nothing when the handler reported no students', () => {
+    const { req, res } = makeReqRes();
+    const mw = logRecordAccess('iep_plan', 'teaching_instruction', { getStudentIds: () => [] });
+    mw(req, res, jest.fn());
+    res.finish();
+    expect(EducationRecordAccessLog.create).not.toHaveBeenCalled();
+    expect(EducationRecordAccessLog.insertMany).not.toHaveBeenCalled();
+  });
+
+  test('a single reported student still goes through create, like the per-student routes', () => {
+    const { req, res } = makeReqRes();
+    const mw = logRecordAccess('iep_plan', 'teaching_instruction', { getStudentIds: () => ['only-one'] });
+    mw(req, res, jest.fn());
+    res.finish();
+    expect(EducationRecordAccessLog.create).toHaveBeenCalledTimes(1);
+    expect(EducationRecordAccessLog.create.mock.calls[0][0].studentId).toBe('only-one');
+  });
+});

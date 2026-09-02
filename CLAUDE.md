@@ -202,6 +202,12 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
 - **`utils/llmGateway.js`** is the single entry point. It does **PII anonymization** (strips student
   names → `[Student]` → rehydrates) before/after the API call. Routes/pipeline should call this, **not**
   `openaiClient` directly.
+- **Prompts that describe many students** (the teacher lesson planner, `routes/teacher.js`
+  `/lesson-planner`) use `createRosterAnonymizationContext` from `piiAnonymizer.js`: each student is
+  `[Student N]` in the outbound prompt, IEP goals go out as counts + progress bands (accommodation
+  *types* still go), the reply is rehydrated per label, and the read is logged once per student via
+  `logRecordAccess(..., { getStudentIds })`. This is unconditional, not gated on `PII_STRIP_OUTBOUND`.
+  Pinned by `tests/unit/lessonPlannerPii.test.js`.
 - **`utils/openaiClient.js`** wraps the OpenAI SDK (retry/backoff, 90s timeout, structured outputs,
   `max_completion_tokens` vs `max_tokens` per model). 35 files import one of these two. It is also the
   **provider router**: a model id starting with `claude` is dispatched to `anthropicClient`, with a
