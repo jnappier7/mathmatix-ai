@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- No tag manager here either — see safety.html for why. -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessibility | Mathmatix AI</title>
+  <meta name="description" content="What Mathmatix AI does to be usable with a keyboard and a screen reader, what is enforced automatically, what is not yet done, and how to report a problem." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.mathmatix.ai/accessibility.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.mathmatix.ai/accessibility.html" />
+  <meta property="og:title" content="Accessibility | Mathmatix AI" />
+  <meta property="og:description" content="How Mathmatix AI approaches accessibility, and how to report a problem." />
+  <meta property="og:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
+  <meta property="og:site_name" content="Mathmatix AI" />
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .ax-intro {
+      padding: 16px 18px;
+      border-left: 4px solid var(--clr-primary-teal, #12B3B3);
+      background: rgba(18, 179, 179, 0.06);
+      border-radius: 0 10px 10px 0;
+      margin: 18px 0 24px;
+    }
+    .ax-intro p:last-child { margin-bottom: 0; }
+    .ax-note {
+      font-size: 14px;
+      color: #5b6876;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 28px;
+      padding-top: 16px;
+    }
+  </style>
+</head>
+<body class="landing-page-body">
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <a href="/"><img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" class="main-logo-hero" /></a>
+    </div>
+    <nav class="landing-nav">
+      <a href="/login.html" class="btn btn-primary-outline">Log In</a>
+    </nav>
+  </header>
+
+  <main id="main-content" class="content-page-wrapper">
+    <h1>Accessibility</h1>
+    <p>Last updated: August 24, 2026</p>
+
+    <div class="ax-intro">
+      <p>Mathmatix is a math tutor for children, including children who use a screen
+      reader, navigate by keyboard, or need extended time and read-aloud to work. This
+      page says what we have done, what is checked automatically so it stays done, what we
+      have not done yet, and how to tell us when something is in your way.</p>
+      <p>It is a statement of practice, not a conformance claim. We have not yet had a
+      third-party audit against WCAG 2.1 AA, and we would rather say so than imply
+      otherwise.</p>
+    </div>
+
+    <h2>What is in place</h2>
+    <ul>
+      <li><strong>Every interactive control has a name.</strong> Buttons, links, inputs and
+      selects on every page announce what they do, not a glyph or nothing. Icon-only
+      controls carry explicit labels; decorative icons are hidden from assistive
+      technology.</li>
+      <li><strong>No control is nested inside another control.</strong> A button inside a
+      button cannot be reached separately by keyboard or screen reader; there are none.</li>
+      <li><strong>Choosers work like radio groups.</strong> Where the interface offers a
+      set of options to pick one from &mdash; tutors, avatar styles, colors &mdash; Tab moves
+      between groups, arrow keys move within one, and focus is visible while it moves.</li>
+      <li><strong>Skip links</strong> on public pages jump past the header to the content.</li>
+      <li><strong>Visible focus</strong> on interactive elements, using an outline offset from
+      the element rather than a color change that could be confused with selection.</li>
+      <li><strong>Read-aloud</strong> of the tutor&rsquo;s replies, available to every student
+      on every plan.</li>
+      <li><strong>Accommodations the tutor honors</strong>, set per student by a teacher or
+      parent: extended time, chunked instructions, read-aloud, calculator access, breaks,
+      reduced distraction, a digital multiplication chart, large print and high contrast,
+      and math-anxiety support. The tutor re-reads these on every turn, not just at
+      setup.</li>
+      <li><strong>Reading level</strong> adapts to the student, separately from grade
+      level.</li>
+    </ul>
+
+    <h2>What is enforced automatically</h2>
+    <p>The first three items above are not promises kept by hand. Automated tests in our
+    codebase parse every page and fail the build if a control loses its name, a control is
+    nested in another, or an option chooser stops behaving as a radio group. A change that
+    would regress them cannot be merged.</p>
+
+    <h2>What is not done yet</h2>
+    <ul>
+      <li><strong>No third-party WCAG audit</strong> and no VPAT. Schools that require one
+      should <a href="/contact-support.html">ask us</a>; we would rather tell you where we
+      stand than have you find out.</li>
+      <li><strong>Math on screen.</strong> Equations are rendered with KaTeX, which produces
+      accessible markup, but how well a given screen reader voices complex notation varies
+      by reader and by browser. We have not yet tested every combination.</li>
+      <li><strong>Color contrast</strong> has been checked by eye against the brand
+      palette, not measured against WCAG AA on every surface.</li>
+      <li><strong>The interactive whiteboard and graphing tools</strong> are visual by
+      nature and do not yet have non-visual equivalents. The tutor&rsquo;s written
+      explanation always accompanies them.</li>
+    </ul>
+
+    <h2>Tell us what is in your way</h2>
+    <p>If you or your child hit something that does not work with a keyboard, a screen
+    reader, magnification or voice control, <a href="/contact-support.html">contact us</a>
+    with the page, what you were trying to do, and the assistive technology you use. We
+    treat these as bugs, not feedback.</p>
+
+    <p class="ax-note">
+      Related: <a href="/safety.html">Safety &amp; Privacy</a> &middot;
+      <a href="/subprocessors.html">Subprocessors</a> &middot;
+      <a href="/privacy.html">Privacy Policy</a>
+    </p>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Mathmatix LLC. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a> |
+      <a href="/safety.html">Safety &amp; Privacy</a> |
+      <a href="/subprocessors.html">Subprocessors</a>
+    </p>
+  </footer>
+</body>
+</html>

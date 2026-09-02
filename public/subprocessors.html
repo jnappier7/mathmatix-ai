@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- No tag manager on this page, deliberately — same reasoning as safety.html.
+     This is the page a district's privacy officer opens to see who receives
+     student data; loading a third-party tracker on arrival would be the wrong
+     first impression, and the test would allow it. Keep it off. -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subprocessors | Mathmatix AI</title>
+  <meta name="description" content="Every third-party service that receives data from Mathmatix AI, what it receives, why, where it runs, and the terms it is used under." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.mathmatix.ai/subprocessors.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.mathmatix.ai/subprocessors.html" />
+  <meta property="og:title" content="Subprocessors | Mathmatix AI" />
+  <meta property="og:description" content="Who receives data from Mathmatix AI, what they receive, and why." />
+  <meta property="og:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
+  <meta property="og:site_name" content="Mathmatix AI" />
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .sp-intro {
+      padding: 16px 18px;
+      border-left: 4px solid var(--clr-primary-teal, #12B3B3);
+      background: rgba(18, 179, 179, 0.06);
+      border-radius: 0 10px 10px 0;
+      margin: 18px 0 24px;
+    }
+    .sp-intro p:last-child { margin-bottom: 0; }
+    .sp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 28px;
+      font-size: 14.5px;
+      display: block;
+      overflow-x: auto;
+    }
+    .sp-table th, .sp-table td {
+      border: 1px solid #d9dde3;
+      padding: 9px 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .sp-table thead th { background: #f4f6f9; font-weight: 600; white-space: nowrap; }
+    .sp-table tbody th { font-weight: 600; white-space: nowrap; }
+    .sp-table tbody tr:nth-child(even) { background: #fafbfc; }
+    .sp-dpa { font-weight: 600; color: var(--clr-primary-teal, #12B3B3); white-space: nowrap; }
+    .sp-note {
+      font-size: 14px;
+      color: #5b6876;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 28px;
+      padding-top: 16px;
+    }
+  </style>
+</head>
+<body class="landing-page-body">
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <a href="/"><img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" class="main-logo-hero" /></a>
+    </div>
+    <nav class="landing-nav">
+      <a href="/login.html" class="btn btn-primary-outline">Log In</a>
+    </nav>
+  </header>
+
+  <main id="main-content" class="content-page-wrapper">
+    <h1>Subprocessors</h1>
+    <p>Last updated: August 24, 2026</p>
+
+    <div class="sp-intro">
+      <p>This is every third-party service that receives data from Mathmatix AI, what each
+      one receives, why, and the terms it is used under. Mathmatix LLC is the operator of
+      the service and the party responsible for this list.</p>
+      <p>Everything below runs in the United States. We do not sell or rent personal data,
+      and no service on this list is permitted to use student data to train AI models.
+      Schools on a signed agreement with us are notified before a subprocessor is added
+      that would receive their students&rsquo; data.</p>
+    </div>
+
+    <h2>AI and tutoring</h2>
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th scope="col">Service</th>
+          <th scope="col">What it does for us</th>
+          <th scope="col">What it receives</th>
+          <th scope="col">Terms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">OpenAI</th>
+          <td>Generates the tutor&rsquo;s replies; reads photographed homework for grading; text embeddings; fallback speech-to-text.</td>
+          <td>The tutoring conversation with the student&rsquo;s name replaced by a placeholder before sending; grade level, learning preferences and any accommodations, so the tutor can adapt; uploaded work images.</td>
+          <td><span class="sp-dpa">Signed Data Processing Agreement</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Anthropic</th>
+          <td>Independently checks the tutor&rsquo;s math before an answer is treated as correct &mdash; a second model from a different provider, so the model that wrote the reply is never the one grading it.</td>
+          <td>The math problem and the answer being checked. Not the student&rsquo;s identity.</td>
+          <td>Business API terms (no training on customer data)</td>
+        </tr>
+        <tr>
+          <th scope="row">Mathpix</th>
+          <td>Reads handwritten and printed math from uploaded photos and PDFs.</td>
+          <td>The uploaded image or document, with camera and location metadata already stripped.</td>
+          <td>Business API terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Deepgram</th>
+          <td>Speech-to-text for voice mode.</td>
+          <td>Microphone audio during a voice session. Voice mode is for users 13 and over; younger students are directed to a text-only flow.</td>
+          <td>Business API terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Cartesia</th>
+          <td>Turns the tutor&rsquo;s written reply into speech.</td>
+          <td>The tutor&rsquo;s reply text. Not the student&rsquo;s words.</td>
+          <td>Business API terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Simli</th>
+          <td>Animates the tutor&rsquo;s face to match its speech during avatar sessions.</td>
+          <td>The tutor&rsquo;s synthesized speech audio only. No student audio, video or text is sent.</td>
+          <td>Business API terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Google Custom Search</th>
+          <td>Finds educational images (diagrams, number lines) for the tutor to show.</td>
+          <td>A search query with names and identifiers removed, restricted to an education-site whitelist with SafeSearch enforced. No user identifier or cookie is sent.</td>
+          <td>Business API terms</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Accounts, sign-in and billing</h2>
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th scope="col">Service</th>
+          <th scope="col">What it does for us</th>
+          <th scope="col">What it receives</th>
+          <th scope="col">Terms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Google, Microsoft</th>
+          <td>Optional single sign-on.</td>
+          <td>Handled by the provider; we receive the name and email of the account that signed in.</td>
+          <td>Provider terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Clever</th>
+          <td>School sign-on and roster sync, when a school chooses it.</td>
+          <td>Roster information the school shares through Clever: student and teacher names, class membership, school-assigned IDs.</td>
+          <td>Provider terms; governed by the school&rsquo;s own agreement with Clever</td>
+        </tr>
+        <tr>
+          <th scope="row">Stripe</th>
+          <td>Subscription and school-license payments.</td>
+          <td>Payment details go directly to Stripe and are never stored on our servers. We hold only a customer reference and subscription status.</td>
+          <td>Stripe services agreement</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Infrastructure</h2>
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th scope="col">Service</th>
+          <th scope="col">What it does for us</th>
+          <th scope="col">What it receives</th>
+          <th scope="col">Terms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Render</th>
+          <td>Hosts the application.</td>
+          <td>All application traffic passes through it. Runs in Oregon, United States.</td>
+          <td>Business terms</td>
+        </tr>
+        <tr>
+          <th scope="row">MongoDB</th>
+          <td>Primary database.</td>
+          <td>Account and learning data. The most sensitive fields &mdash; session summaries, what a student struggled with &mdash; are encrypted at the field level before storage.</td>
+          <td>Business terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Object storage (S3-compatible)</th>
+          <td>Stores uploaded homework photos and PDFs.</td>
+          <td>The uploaded files, deleted after 30 days.</td>
+          <td>Business terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Redis</th>
+          <td>Short-lived cache to keep tutoring responsive.</td>
+          <td>A student&rsquo;s profile and most recent conversation, held for at most five minutes and thirty seconds respectively, then discarded. Used only when configured for the deployment.</td>
+          <td>Business terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Transactional email (SMTP)</th>
+          <td>Account emails, parental-consent links, and the weekly progress digest.</td>
+          <td>Recipient email address; for digests, the child&rsquo;s first name and a progress summary.</td>
+          <td>Business terms</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Monitoring</h2>
+    <table class="sp-table">
+      <thead>
+        <tr>
+          <th scope="col">Service</th>
+          <th scope="col">What it does for us</th>
+          <th scope="col">What it receives</th>
+          <th scope="col">Terms</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Sentry</th>
+          <td>Reports server errors so we can fix them.</td>
+          <td>The error, the route it happened on, and an internal user ID for correlation. Request bodies, cookies, headers and IP addresses are stripped before sending, so no message content or session identifiers leave the server.</td>
+          <td>Business terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Better Stack</th>
+          <td>Collects application logs.</td>
+          <td>Operational log lines with secrets redacted. May include internal user IDs and request paths; never passwords, tokens or message content.</td>
+          <td>Business terms</td>
+        </tr>
+        <tr>
+          <th scope="row">Google Analytics</th>
+          <td>Measures marketing-page traffic.</td>
+          <td>Standard page-view analytics on public marketing pages only. It is never loaded on any signed-in page &mdash; not the tutor, not a dashboard &mdash; and that boundary is enforced by an automated test in our codebase.</td>
+          <td>Google terms</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>A Facebook Pixel integration exists in the codebase but is <strong>not enabled</strong>.</p>
+
+    <p class="sp-note">
+      This list is maintained in step with the code: an automated test in our repository
+      fails if a new third-party integration is added without an entry here. Questions, or
+      a school data-privacy agreement to complete? <a href="/contact-support.html">Contact
+      us</a>. See also the <a href="/safety.html">Safety &amp; Privacy</a> overview and the
+      <a href="/privacy.html">Privacy Policy</a>.
+    </p>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Mathmatix LLC. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a> |
+      <a href="/safety.html">Safety &amp; Privacy</a> |
+      <a href="/accessibility.html">Accessibility</a>
+    </p>
+  </footer>
+</body>
+</html>

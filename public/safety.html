@@ -154,10 +154,13 @@
     <details class="safety-q">
       <summary>Are my child&rsquo;s conversations used to train AI models?</summary>
       <div class="safety-q-body">
-        <p><strong>No.</strong> We do not train any model on student data, and the AI
-        providers we send text to &mdash; OpenAI, Anthropic and Mathpix &mdash; are used under
-        their business API terms, under which customer data is not used to train their
-        models.</p>
+        <p><strong>No.</strong> We do not train any model on student data. The AI providers
+        we send text to &mdash; OpenAI, Anthropic and Mathpix &mdash; are used under business
+        API terms under which customer data is not used to train their models, and we have
+        a <strong>signed Data Processing Agreement with OpenAI</strong>, the provider that
+        handles the tutoring conversation itself. Every third party that receives any data,
+        and exactly what each one gets, is listed on our
+        <a href="/subprocessors.html">subprocessors page</a>.</p>
         <p>We also strip identifying details before the request leaves us where we can:
         the tutoring pipeline replaces your child&rsquo;s name with a placeholder on the way
         out and puts it back in the reply, so the provider sees the math, not the child.</p>
@@ -269,7 +272,13 @@
           before anything else touches them.</li>
           <li>Sign-in is rate-limited against guessing, and every state-changing request
           carries an anti-forgery token.</li>
-          <li>Logs redact secrets, and errors are monitored so problems surface quickly.</li>
+          <li>Logs redact secrets, and errors are monitored so problems surface quickly &mdash;
+          with request contents, cookies, headers and IP addresses stripped from error
+          reports before they leave our servers.</li>
+          <li>We keep a written <strong>incident-response procedure</strong>: who decides, what
+          gets contained first, what evidence is preserved, and who is notified in what order
+          and within what window. Schools on a signed agreement get notice within the window
+          that agreement sets.</li>
         </ul>
       </div>
     </details>
@@ -307,7 +316,7 @@
         verified answer to a problem is deliberately withheld from the tutor&rsquo;s context
         unless your child has already attempted it.</p>
         <p>A determined student can get an answer out of any AI tool, this one included.
-        What we can promise is that the default behaviour teaches, and that you can see
+        What we can promise is that the default behavior teaches, and that you can see
         what happened in the session.</p>
       </div>
     </details>
@@ -333,11 +342,12 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 M&#916;THM&#916;TI&#935; AI. All rights reserved.</p>
+    <p>&copy; 2026 Mathmatix LLC. All rights reserved.</p>
     <p>
       <a href="/privacy.html">Privacy Policy</a> |
       <a href="/terms.html">Terms of Use</a> |
-      <a href="/safety.html">Safety &amp; Privacy</a>
+      <a href="/subprocessors.html">Subprocessors</a> |
+      <a href="/accessibility.html">Accessibility</a>
     </p>
   </footer>
 </body>
