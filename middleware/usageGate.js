@@ -16,6 +16,7 @@ const User = require('../models/user');
 const SchoolLicense = require('../models/schoolLicense');
 const { recordConversionEvent } = require('../utils/conversionEvents');
 const { userHasRole } = require('../utils/roleQuery');
+const { isFoundingSchoolUser } = require('../utils/foundingSchool');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 // NOTE: constant/field names keep the "weekly" prefix for backward compatibility
@@ -111,6 +112,12 @@ async function hasUnmeteredAiAccess(user) {
 
   // Teachers, parents, and admins are always free unlimited
   if (hasStaffRoleBypass(user)) return true;
+
+  // Founding-school accounts (matched by email domain — FOUNDING_SCHOOL_DOMAINS)
+  // are treated as Unlimited subscribers. Because this lives in the single
+  // source of truth, the gate, GET /api/billing/status, courseChat, the
+  // pipeline's metering flag and voice sessions all inherit it together.
+  if (isFoundingSchoolUser(user)) return true;
 
   // Students covered by a school license get unlimited access
   if (user.schoolLicenseId) {
@@ -356,6 +363,11 @@ function premiumFeatureGate(featureName) {
 
     // Unlimited individual subscribers
     if (user.subscriptionTier === 'unlimited') {
+      return next();
+    }
+
+    // Founding-school accounts get the full Mathmatix+ feature set
+    if (isFoundingSchoolUser(user)) {
       return next();
     }
 

@@ -221,3 +221,36 @@ describe('GET /api/billing/subscription-details — plan identity for the manage
     expect(r.body.amountCents).toBeNull();
   });
 });
+
+describe('POST /api/billing/create-checkout-session — founding-school accounts', () => {
+  // The founding grant (FOUNDING_SCHOOL_DOMAINS) gives these accounts
+  // Mathmatix+ free. Checkout must refuse them: accidentally billing the
+  // founder's own school's families is the self-dealing the grant rules out.
+
+  afterEach(() => { delete process.env.FOUNDING_SCHOOL_DOMAINS; });
+
+  test('refuses to charge a founding-school account', async () => {
+    process.env.FOUNDING_SCHOOL_DOMAINS = 'scprep.org';
+    User.findById.mockResolvedValue(freeUser({ email: 'kid@scprep.org' }));
+
+    const r = await supertest(makeApp())
+      .post('/api/billing/create-checkout-session')
+      .send({ pack: 'unlimited' });
+
+    expect(r.status).toBe(400);
+    expect(r.body.message).toMatch(/school already provides/i);
+    expect(global.__stripeCheckoutCreate).not.toHaveBeenCalled();
+  });
+
+  test('still charges everyone else while the grant is on', async () => {
+    process.env.FOUNDING_SCHOOL_DOMAINS = 'scprep.org';
+    User.findById.mockResolvedValue(freeUser({ email: 'kid@elsewhere.org' }));
+
+    const r = await supertest(makeApp())
+      .post('/api/billing/create-checkout-session')
+      .send({ pack: 'unlimited' });
+
+    expect(r.status).toBe(200);
+    expect(global.__stripeCheckoutCreate).toHaveBeenCalled();
+  });
+});
