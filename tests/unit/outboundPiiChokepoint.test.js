@@ -134,3 +134,19 @@ describe('the three entry points all route through the chokepoint', () => {
     }
   );
 });
+
+describe('the flag is discoverable by whoever sets up a deployment', () => {
+    // The chokepoint is off unless PII_STRIP_OUTBOUND=true, and for a while
+    // nothing in the repo said so: not .env.example, not render.yaml, not docs.
+    // A deploy built from the template ran with the tutoring path unfiltered and
+    // no one was told. The template is where the person configuring Render
+    // looks, so the flag has to be explained there.
+    test('.env.example documents PII_STRIP_OUTBOUND and what it covers', () => {
+        const fs = require('fs');
+        const path = require('path');
+        const example = fs.readFileSync(path.join(__dirname, '..', '..', '.env.example'), 'utf8');
+        expect(example).toMatch(/PII_STRIP_OUTBOUND/);
+        expect(example).toMatch(/\[Student\]/);
+        expect(example).toMatch(/Off by default/);
+    });
+});
