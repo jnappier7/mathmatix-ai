@@ -463,5 +463,5 @@ pedagogy → `PEDAGOGY_ANALYSIS_AND_RECOMMENDATIONS.md`, `MATH_SKILLS_VERTICAL_A
 `DUAL_MODE_SYSTEM_DESIGN.md`; assessment → `PLACEMENT_TEST_SYSTEM.md`; gamification →
 `BADGE_SYSTEM_DESIGN.md`, `MASTER_MODE_BADGE_SYSTEM.md`, `PATTERN_BADGE_GUIDE.md`; whiteboard →
 `WHITEBOARD_AI_INTEGRATION.md`, `BOARD_LLM_STAGE_DESIGN.md`, `CHAT_BOARD_AI_INTEGRATION.md`;
-security/compliance → `SECURITY.md`, `STUDENT_DATA_SECURITY_AUDIT.md`, `CSRF_PROTECTION.md`;
+security/compliance → `INCIDENT_RESPONSE.md` (the runbook), `STUDENT_DATA_SECURITY_AUDIT.md`, `CSRF_PROTECTION.md`; the public disclosures are `public/subprocessors.html` (bound to live env reads by `tests/unit/subprocessorsListed.test.js`) and `public/accessibility.html`;
 cost → `AI_COST_PROJECTIONS.md`; **growth/pricing/GTM → `GROWTH_STRATEGY.md`**. **Docs describe intent and may lag code — verify against the source.**

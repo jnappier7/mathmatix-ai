@@ -803,6 +803,13 @@ function registerHtmlRoutes(app) {
   // short /safety alias should exist and should not depend on a fallback.
   app.get('/safety.html', sendHtml('safety.html'));
   app.get('/safety', sendHtml('safety.html'));
+  // The two pages a district's privacy and accessibility reviewers ask for by
+  // name. Bound to the code by tests (subprocessorsListed, sentryPii,
+  // interactiveControlAccessibility) so they cannot quietly go stale.
+  app.get('/subprocessors.html', sendHtml('subprocessors.html'));
+  app.get('/subprocessors', sendHtml('subprocessors.html'));
+  app.get('/accessibility.html', sendHtml('accessibility.html'));
+  app.get('/accessibility', sendHtml('accessibility.html'));
   app.get('/onboarding.html', sendHtml('onboarding.html'));
   app.get('/demo.html', sendHtml('demo.html'));
   // Pop-quiz landing (Facebook ad funnel) — clean URL for the ad's answer
