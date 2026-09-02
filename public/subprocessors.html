@@ -105,7 +105,7 @@
         <tr>
           <th scope="row">Mathpix</th>
           <td>Reads handwritten and printed math from uploaded photos and PDFs.</td>
-          <td>The uploaded image or document, with camera and location metadata already stripped.</td>
+          <td>The uploaded image or document, with camera and location metadata already stripped. Every request is sent with Mathpix&rsquo;s retention option turned off, so the upload is processed and discarded rather than kept to improve their models, and each PDF is deleted from Mathpix as soon as the text has been retrieved. Mathpix keeps only billing metadata (page counts and timestamps).</td>
           <td>Business API terms</td>
         </tr>
         <tr>
