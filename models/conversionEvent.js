@@ -17,6 +17,7 @@ const CONVERSION_EVENTS = [
   'trial_exhausted',       // anonymous trial reached MAX_TURNS
   'free_quota_exhausted',  // signed-in free student hit the 30-min/month cap (402)
   'quiz_vote',             // anonymous pop-quiz vote (context: quizId, answer, correct)
+  'campaign_scan',         // tracked print/QR link hit (/go/:campaign — context: campaign)
 ];
 
 const conversionEventSchema = new mongoose.Schema({
