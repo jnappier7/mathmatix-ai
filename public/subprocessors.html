@@ -93,7 +93,7 @@
         <tr>
           <th scope="row">OpenAI</th>
           <td>Generates the tutor&rsquo;s replies; reads photographed homework for grading; text embeddings; fallback speech-to-text.</td>
-          <td>The tutoring conversation with the student&rsquo;s name replaced by a placeholder before sending; grade level, learning preferences and any accommodations, so the tutor can adapt; uploaded work images.</td>
+          <td>The tutoring conversation, plus grade level, learning preferences and any accommodations so the tutor can adapt; uploaded work images for grading. On the grading path, names and other identifiers are always removed before sending and restored in the reply. The tutoring conversation is filtered the same way when the outbound PII filter is enabled for the deployment; where it is not, the student&rsquo;s first name may be included so the tutor can address them, as the Privacy Policy states.</td>
           <td><span class="sp-dpa">Signed Data Processing Agreement</span></td>
         </tr>
         <tr>
