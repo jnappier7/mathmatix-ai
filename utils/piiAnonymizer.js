@@ -174,6 +174,7 @@ function createAnonymizationContext(userProfile, options = {}) {
 
     return {
         nameMap,
+        skipped,
         firstName: userProfile?.firstName || 'Student',
         allowFirstName,
 
@@ -400,17 +401,18 @@ function rehydrateResponse(responseText, firstNameOrNames) {
 const MAX_PLACEHOLDER_LENGTH = 12;
 
 /**
- * Streaming-safe rehydration.
+ * Streaming-safe rehydration over an arbitrary rehydrate function.
  *
  * Providers split tokens wherever they like, so "[Student]" can arrive as
  * "[Stu" + "dent]". Rehydrating each chunk independently misses it and the
  * placeholder reaches the reader verbatim. This holds back a trailing partial
  * placeholder until it either completes or grows too long to be one.
  *
- * @param {string|Object} firstNameOrNames - as rehydrateResponse
+ * @param {(text: string) => string} rehydrateFn
+ * @param {number} maxPlaceholderLength - longest placeholder this stream can carry
  * @returns {{push: (chunk: string) => string, flush: () => string}}
  */
-function createStreamRehydrator(firstNameOrNames) {
+function createStreamRehydratorFor(rehydrateFn, maxPlaceholderLength = MAX_PLACEHOLDER_LENGTH) {
     let pending = '';
 
     return {
@@ -422,20 +424,106 @@ function createStreamRehydrator(firstNameOrNames) {
             const open = buffer.lastIndexOf('[');
             const holdFrom = (open !== -1 &&
                 !buffer.slice(open).includes(']') &&
-                buffer.length - open <= MAX_PLACEHOLDER_LENGTH)
+                buffer.length - open <= maxPlaceholderLength)
                 ? open
                 : buffer.length;
 
             pending = buffer.slice(holdFrom);
-            return rehydrateResponse(buffer.slice(0, holdFrom), firstNameOrNames);
+            return rehydrateFn(buffer.slice(0, holdFrom));
         },
 
         /** Emit whatever is still held once the stream ends. */
         flush() {
-            const rest = rehydrateResponse(pending, firstNameOrNames);
+            const rest = rehydrateFn(pending);
             pending = '';
             return rest;
         }
+    };
+}
+
+/**
+ * Streaming-safe rehydration for the single-student placeholders.
+ *
+ * @param {string|Object} firstNameOrNames - as rehydrateResponse
+ * @returns {{push: (chunk: string) => string, flush: () => string}}
+ */
+function createStreamRehydrator(firstNameOrNames) {
+    return createStreamRehydratorFor(
+        (text) => rehydrateResponse(text, firstNameOrNames),
+        MAX_PLACEHOLDER_LENGTH
+    );
+}
+
+// ============================================================================
+// ROSTER ANONYMIZATION (teacher-facing prompts that describe many students)
+// ============================================================================
+
+const rosterPlaceholder = (index) => `[Student ${index + 1}]`;
+
+/**
+ * Anonymization context for a prompt that talks about a whole class.
+ *
+ * The single-student context maps every name to one "[Student]" token, which
+ * is right for a tutoring turn and useless for a lesson planner: the model has
+ * to be able to say "group [Student 3] with [Student 7]" and the teacher has
+ * to read it back as "group Maya with Jordan". So each student gets a numbered
+ * placeholder, and rehydration puts the right first name back on each one.
+ *
+ * Callers that render the roster themselves should label each student with
+ * `context.roster[i].placeholder` directly rather than relying on the regex
+ * pass — a first name that is also a word we protect (Grace, Max, Ray) is
+ * skipped by the regex, and the roster line is the one place we control.
+ *
+ * @param {Array<{firstName?: string, lastName?: string, placeholder?: string}>} students
+ * @param {Object} [options]
+ * @param {Object} [options.additionalNames] - extra name -> placeholder pairs (teacher, school)
+ * @param {Object} [options.names] - values for the fixed placeholders, e.g. { teacher: 'Ms. Rivera' }
+ */
+function createRosterAnonymizationContext(students = [], options = {}) {
+    const { additionalNames = {}, names = {} } = options;
+
+    const roster = [];
+    const byPlaceholder = new Map();
+    const nameEntries = {};
+
+    students.forEach((s, i) => {
+        const placeholder = s.placeholder || rosterPlaceholder(i);
+        const firstName = `${s.firstName || ''}`.trim();
+        const lastName = `${s.lastName || ''}`.trim();
+        const fullName = `${firstName} ${lastName}`.trim();
+
+        roster.push({ placeholder, firstName, lastName });
+        byPlaceholder.set(placeholder.toLowerCase(), firstName || 'the student');
+
+        if (firstName && lastName) nameEntries[fullName] = placeholder;
+        if (lastName.length > 1) nameEntries[lastName] = placeholder;
+        if (firstName.length > 1) nameEntries[firstName] = placeholder;
+    });
+
+    // Roster names win over caller-supplied extras on a collision; a student
+    // is the thing this context exists to hide.
+    const base = createAnonymizationContext(null, {
+        additionalNames: { ...additionalNames, ...nameEntries }
+    });
+
+    const longest = roster.reduce((n, r) => Math.max(n, r.placeholder.length), MAX_PLACEHOLDER_LENGTH);
+
+    const rehydrate = (text) => {
+        if (!text || typeof text !== 'string') return text;
+        const withStudents = text.replace(/\[Student \d+\]/gi, (m) => {
+            const name = byPlaceholder.get(m.toLowerCase());
+            return name === undefined ? m : name;
+        });
+        return rehydrateResponse(withStudents, names);
+    };
+
+    return {
+        nameMap: base.nameMap,
+        roster,
+        skipped: base.skipped,
+        anonymize: (text) => anonymizeText(text, base.nameMap),
+        rehydrate,
+        createStreamRehydrator: () => createStreamRehydratorFor(rehydrate, longest)
     };
 }
 
@@ -505,6 +593,8 @@ module.exports = {
     anonymizeSystemPrompt,
     rehydrateResponse,
     createStreamRehydrator,
+    createStreamRehydratorFor,
+    createRosterAnonymizationContext,
     isProtectedName,
 
     // Educational data sanitization

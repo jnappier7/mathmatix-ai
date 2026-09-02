@@ -617,3 +617,60 @@ describe('createStreamRehydrator — placeholders split across chunks', () => {
         expect(drain(['Hi [Student]', ' and welcome'], 'Ana')).toBe('Hi Ana and welcome');
     });
 });
+
+describe('createRosterAnonymizationContext — a prompt about a whole class', () => {
+    const { createRosterAnonymizationContext } = require('../../utils/piiAnonymizer');
+    const roster = [
+        { firstName: 'Maya', lastName: 'Chen' },
+        { firstName: 'Jordan', lastName: 'Okafor' },
+        { firstName: 'Grace', lastName: 'Lee' } // "grace" is protected vocabulary
+    ];
+
+    test('each student gets a distinct numbered label', () => {
+        const ctx = createRosterAnonymizationContext(roster);
+        expect(ctx.roster.map((r) => r.placeholder)).toEqual(['[Student 1]', '[Student 2]', '[Student 3]']);
+        expect(ctx.anonymize('Group Maya Chen with Jordan. Okafor is ahead.'))
+            .toBe('Group [Student 1] with [Student 2]. [Student 2] is ahead.');
+    });
+
+    test('rehydrates each label to the right first name, case-insensitively', () => {
+        const ctx = createRosterAnonymizationContext(roster);
+        expect(ctx.rehydrate('Pair **[Student 1]** with [student 2]; [Student 3] leads.'))
+            .toBe('Pair **Maya** with Jordan; Grace leads.');
+    });
+
+    test('a label the roster does not know is left alone rather than guessed', () => {
+        const ctx = createRosterAnonymizationContext(roster);
+        expect(ctx.rehydrate('See [Student 9].')).toBe('See [Student 9].');
+    });
+
+    test('a protected first name is skipped by the regex and reported, full name still caught', () => {
+        const ctx = createRosterAnonymizationContext(roster);
+        expect(ctx.skipped).toContain('Grace');
+        expect(ctx.anonymize('Grace Lee and Lee')).toBe('[Student 3] and [Student 3]');
+        // Callers render the roster line from ctx.roster[i].placeholder for exactly this case.
+    });
+
+    test('caller-supplied names and fixed placeholders round-trip too', () => {
+        const ctx = createRosterAnonymizationContext(roster, {
+            additionalNames: { 'Dana Rivera': '[Teacher]' },
+            names: { teacher: 'Dana' }
+        });
+        expect(ctx.anonymize('Ask Dana Rivera')).toBe('Ask [Teacher]');
+        expect(ctx.rehydrate('[Teacher] should pair [Student 2]')).toBe('Dana should pair Jordan');
+    });
+
+    test('stream rehydrator reassembles labels split across chunks, including two-digit ones', () => {
+        const big = Array.from({ length: 12 }, (_, i) => ({ firstName: `Kid${i + 1}`, lastName: 'X' }));
+        const ctx = createRosterAnonymizationContext(big);
+        const r = ctx.createStreamRehydrator();
+        const out = ['Start [Stu', 'dent 12], then [Student', ' 1]. Domain [0, 12].'].map((c) => r.push(c)).join('') + r.flush();
+        expect(out).toBe('Start Kid12, then Kid1. Domain [0, 12].');
+    });
+
+    test('an empty roster is a no-op context', () => {
+        const ctx = createRosterAnonymizationContext([]);
+        expect(ctx.anonymize('Nothing to hide')).toBe('Nothing to hide');
+        expect(ctx.rehydrate('[Student 1]')).toBe('[Student 1]');
+    });
+});
