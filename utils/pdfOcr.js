@@ -2,14 +2,45 @@
 
 const axios = require("axios");
 const FormData = require("form-data");
+const fs = require("fs");
+const path = require("path");
+const { MATHPIX_PRIVACY_METADATA } = require("./ocr");
+
+const authHeaders = () => ({
+  app_id: process.env.MATHPIX_APP_ID,
+  app_key: process.env.MATHPIX_APP_KEY
+});
 
 /**
- * Extract text from PDF using Mathpix /v3/pdf endpoint
+ * Permanently delete a submitted document and its derived outputs from
+ * Mathpix. Best-effort: a failure here is logged, never surfaced, because the
+ * text has already been retrieved (or the job already failed) and the student
+ * should not see an error for our cleanup. Mathpix keeps only billing
+ * metadata (page count, timestamps) after this call.
+ */
+async function deleteFromMathpix(pdfId) {
+  try {
+    await axios.delete(`https://api.mathpix.com/v3/pdf/${pdfId}`, { headers: authHeaders() });
+    console.log(`[pdfOcr] Deleted ${pdfId} from Mathpix`);
+  } catch (err) {
+    console.warn(`[pdfOcr] Could not delete ${pdfId} from Mathpix:`, err?.response?.status || err.message);
+  }
+}
+
+/**
+ * Extract text from PDF using Mathpix /v3/pdf endpoint.
+ *
+ * Privacy: the upload opts out of Mathpix retention (improve_mathpix=false)
+ * and the document is deleted from Mathpix as soon as the text is retrieved —
+ * or as soon as the job fails or times out. The extracted text is the only
+ * thing that persists, and it persists here, not there.
+ *
  * @param {Buffer} pdfBuffer - PDF file buffer
  * @param {string} filename - Original filename
  * @returns {Promise<string>} Extracted text
  */
-module.exports = async function processPDF(pdfBuffer, filename) {
+async function processPDF(pdfBuffer, filename) {
+  let pdfId = null;
   try {
     console.log(`[pdfOcr] Starting PDF processing for: ${filename}`);
 
@@ -23,7 +54,8 @@ module.exports = async function processPDF(pdfBuffer, filename) {
     const formData = new FormData();
     formData.append('file', pdfBuffer, { filename, contentType: 'application/pdf' });
     formData.append('options_json', JSON.stringify({
-      conversion_formats: { md: true }  // Use 'md' (Markdown) format
+      conversion_formats: { md: true },  // Use 'md' (Markdown) format
+      metadata: { ...MATHPIX_PRIVACY_METADATA }
     }));
 
     console.log(`[pdfOcr] Uploading PDF to Mathpix API...`);
@@ -45,7 +77,7 @@ module.exports = async function processPDF(pdfBuffer, filename) {
       throw new Error('Failed to upload PDF to Mathpix - no pdf_id returned');
     }
 
-    const pdfId = uploadResponse.data.pdf_id;
+    pdfId = uploadResponse.data.pdf_id;
     console.log(`[pdfOcr] PDF uploaded successfully, pdf_id: ${pdfId}`);
 
     // Step 2: Poll for completion with adaptive intervals
@@ -109,5 +141,23 @@ module.exports = async function processPDF(pdfBuffer, filename) {
 
     // Re-throw the error so it can be handled by the caller
     throw new Error(`PDF processing failed: ${err.message}`);
+  } finally {
+    // Whatever happened above, do not leave the student's document behind.
+    if (pdfId) await deleteFromMathpix(pdfId);
   }
-};
+}
+
+/**
+ * Path-based variant for callers that hold the PDF on disk
+ * (routes/teacherResources.js, utils/resourceDetector.js). Those callers
+ * destructured `extractTextFromPDF` from this module before it existed, so
+ * the call threw inside a try/catch and the upload silently indexed with no
+ * text.
+ */
+async function extractTextFromPDF(filePath) {
+  return processPDF(fs.readFileSync(filePath), path.basename(filePath));
+}
+
+module.exports = processPDF;
+module.exports.extractTextFromPDF = extractTextFromPDF;
+module.exports.deleteFromMathpix = deleteFromMathpix;

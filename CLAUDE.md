@@ -250,7 +250,12 @@ close after 30s (cost) and lazily reopen.
 
 ### OCR
 `utils/ocr.js` (image) + `utils/pdfOcr.js` (PDF, poll w/ backoff). Uploads flow into `routes/chat.js`
-(multer → Sharp EXIF-strip → Mathpix → injected into prompt as context).
+(multer → Sharp EXIF-strip → Mathpix → injected into prompt as context). Every Mathpix request carries
+`metadata.improve_mathpix=false` (`MATHPIX_PRIVACY_METADATA`) so the upload is not retained, and each
+PDF is `DELETE`d from Mathpix in a `finally` once the text is back — pinned by
+`tests/unit/mathpixPrivacy.test.js` and disclosed on `public/subprocessors.html`. Both modules also
+export path-based helpers (`performOCR`, `extractTextFromPDF`) for `routes/teacherResources.js` and
+`utils/resourceDetector.js`.
 
 ---
 

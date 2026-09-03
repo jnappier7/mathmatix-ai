@@ -134,6 +134,21 @@ describe('subprocessor disclosure matches the code', () => {
         expect(anyDpa.map((r) => r.match(/<th scope="row">([^<]+)</)[1]).sort()).toEqual(['Anthropic', 'OpenAI']);
     });
 
+    it('is honest about what Mathpix keeps', () => {
+        // Bound to utils/ocr.js + utils/pdfOcr.js (mathpixPrivacy.test.js):
+        // every request opts out of retention and PDFs are deleted after
+        // extraction. The page may claim it only while the code does it.
+        const ocrSrc = fs.readFileSync(path.join(ROOT, 'utils', 'ocr.js'), 'utf8');
+        const pdfSrc = fs.readFileSync(path.join(ROOT, 'utils', 'pdfOcr.js'), 'utf8');
+        expect(ocrSrc).toMatch(/improve_mathpix:\s*false/);
+        expect(pdfSrc).toMatch(/MATHPIX_PRIVACY_METADATA/);
+        expect(pdfSrc).toMatch(/axios\.delete\(`https:\/\/api\.mathpix\.com\/v3\/pdf\//);
+
+        const mathpixRow = PAGE.split('<tr>').find((r) => r.includes('>Mathpix<'));
+        expect(mathpixRow).toMatch(/retention option turned off/);
+        expect(mathpixRow).toMatch(/deleted from Mathpix as soon as the text has been retrieved/);
+    });
+
     it('is honest about what Sentry receives', () => {
         // Bound to instrument.js: sendDefaultPii off + scrubber (sentryPii.test.js).
         const sentryRow = PAGE.split('<tr>').find((r) => r.includes('>Sentry<'));
