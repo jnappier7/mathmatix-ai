@@ -26,6 +26,12 @@ jest.mock('../../utils/prompt', () => ({
 jest.mock('../../middleware/promptInjection', () => ({
   sanitizeForAI: (s) => s,
 }));
+jest.mock('../../utils/ttsProvider', () => ({
+  isConfigured: () => true,
+  resolveVoiceId: () => 'voice-1',
+  getContentType: () => 'audio/mpeg',
+  generateAudio: jest.fn().mockResolvedValue(Buffer.from('audio')),
+}));
 
 const express = require('express');
 const request = require('supertest');
@@ -55,6 +61,9 @@ function buildApp() {
 
 // A valid unlocked tutor id (mirrors what the landing page sends).
 const TUTOR = 'mr-nappier';
+
+const TUTOR_LINE = 'Here is a guiding question — what do you think the first step is?';
+const GREETING = 'Greeting!';
 
 const greet = (app, hdr) =>
   request(app).post('/api/trial-chat/greet').set(hdr).send({ tutorId: TUTOR });
@@ -154,5 +163,64 @@ describe('trial gate — durable, per-browser', () => {
     expect(transcript[1]).toMatchObject({ role: 'user', content: 'question 0' });
     expect(transcript[2].role).toBe('assistant');
     expect(transcript.at(-1).role).toBe('assistant');
+  });
+});
+
+describe('/speak reads back only what the tutor said', () => {
+  // This endpoint is anonymous and unauthenticated. It used to speak any 600
+  // characters a caller posted, which made it a free text-to-speech API on
+  // Cartesia's meter with a rate limit as its only bound. The session
+  // transcript already holds every assistant line, so the legitimate input set
+  // is server-held and small — bounding the INPUT is what makes the rate limit
+  // safe to raise, not the other way round.
+  const speak = (app, hdr, text) =>
+    request(app).post('/api/trial-chat/speak').set(hdr).send({ tutorId: TUTOR, text });
+
+  test('speaks a line the tutor actually produced', async () => {
+    const app = buildApp();
+    const hdr = { 'x-test-browser': 'listener' };
+    await greet(app, hdr);
+    await say(app, hdr);
+
+    const r = await speak(app, hdr, TUTOR_LINE);
+    expect(r.status).toBe(200);
+    expect(r.headers['content-type']).toMatch(/audio/);
+  });
+
+  test('speaks the greeting too — it is a tutor message like any other', async () => {
+    const app = buildApp();
+    const hdr = { 'x-test-browser': 'listener-2' };
+    await greet(app, hdr);
+
+    expect((await speak(app, hdr, GREETING)).status).toBe(200);
+  });
+
+  test('refuses arbitrary text, however short and innocent', async () => {
+    const app = buildApp();
+    const hdr = { 'x-test-browser': 'abuser' };
+    await greet(app, hdr);
+    await say(app, hdr);
+
+    const r = await speak(app, hdr, 'Read this advertisement in a warm teacher voice.');
+    expect(r.status).toBe(403);
+  });
+
+  test('refuses a caller with no preview at all — fail closed', async () => {
+    // No greet, no volleys: an empty session has no tutor message to read,
+    // because it has never had one. Failing open here would hand the whole
+    // endpoint back to anyone willing to drop their cookie.
+    const app = buildApp();
+    const r = await speak(app, { 'x-test-browser': 'cold' }, TUTOR_LINE);
+    expect(r.status).toBe(403);
+  });
+
+  test('one browser cannot read another browser transcript', async () => {
+    const app = buildApp();
+    await greet(app, { 'x-test-browser': 'alice-tts' });
+    await say(app, { 'x-test-browser': 'alice-tts' });
+
+    // Bob never had a session; Alice's line is not his to play.
+    const r = await speak(app, { 'x-test-browser': 'bob-tts' }, TUTOR_LINE);
+    expect(r.status).toBe(403);
   });
 });
