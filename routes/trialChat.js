@@ -645,3 +645,7 @@ router.post('/speak', trialTtsLimiter, async (req, res) => {
 module.exports = router;
 module.exports.stripVisualDirectives = stripVisualDirectives; // exported for tests
 module.exports.computeTrialXp = computeTrialXp; // exported for tests
+// The preview's turn cap, exported so tests drive off the real number instead
+// of a literal. tests/integration/trialChatGate.test.js used to hardcode 4, so
+// raising the cap failed it for the one reason that is not a bug.
+module.exports.MAX_TURNS = MAX_TURNS;

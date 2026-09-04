@@ -110,10 +110,13 @@
   }
 
   /* ══════════════════════════════════════════════════════
-     TRIAL CHAT FLOW
-     Phase 1: Tutor selection (cards)
-     Phase 2: Celebration video
-     Phase 3: Live chat (3 turns → soft gate)
+     PREVIEW FLOW  (anonymous, no account — see middleware/usageGate.js for
+     where PREVIEW sits in the Preview -> Trial -> Free ladder)
+     Phase 1: Composer + examples. No tutor picker any more; the preview runs
+              on PREVIEW_TUTOR_ID and choosing is now a post-signup reward.
+     Phase 2: Celebration video (retained; only reachable when a caller asks
+              selectTutor for it, which the composer path skips)
+     Phase 3: Live chat — MAX_CLIENT_TURNS turns, then the wall
      ══════════════════════════════════════════════════════ */
 
   // Tutor metadata (names for gate messages, images)
