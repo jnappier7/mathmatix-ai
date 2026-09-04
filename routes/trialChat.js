@@ -96,6 +96,14 @@ function bumpTrialTurns(req) {
 // the same intentional residual.
 const MAX_TRANSCRIPT_CHARS = 4000; // per message; generous for a tutor reply
 
+/** True when `text` is something the tutor actually said in THIS session. */
+function tutorSaidThis(req, text) {
+  const transcript = (req.session && req.session.trialTranscript) || [];
+  if (!transcript.length || !text) return false;
+  const needle = String(text).slice(0, MAX_TRANSCRIPT_CHARS);
+  return transcript.some((m) => m.role === 'assistant' && m.content === needle);
+}
+
 function appendTrialTranscript(req, role, content, tutorId = null) {
   if (!req.session || !content) return;
   if (!Array.isArray(req.session.trialTranscript)) req.session.trialTranscript = [];
@@ -516,59 +524,15 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
   }
 });
 
-/**
- * GET /api/trial-chat/voice-preview/:tutorId
- * Returns cached TTS audio of the tutor's voicePreview string.
- * Generates once, caches in memory for the lifetime of the process.
- */
-const voicePreviewCache = new Map();
+// GET /api/trial-chat/voice-preview/:tutorId lived here: an unauthenticated
+// endpoint that spoke a tutor's canned voicePreview line, for the "Hear my
+// voice" buttons on the landing page's tutor picker. The preview now runs on
+// one fixed tutor and the picker moved to pick-tutor.html, which has its own
+// buttons on the AUTHENTICATED /api/speak — so this was a public Cartesia
+// endpoint with no callers left. Removed rather than kept "in case": an unused
+// public surface is one nobody is watching.
+
 const ttsProvider = require('../utils/ttsProvider');
-
-const voicePreviewLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 20,             // 20 requests per minute per IP
-  keyGenerator: (req) => req.ip,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-router.get('/voice-preview/:tutorId', voicePreviewLimiter, async (req, res) => {
-  const { tutorId } = req.params;
-
-  if (!UNLOCKED_TUTOR_IDS.includes(tutorId)) {
-    return res.status(404).json({ error: 'Tutor not found.' });
-  }
-
-  // Check cache
-  if (voicePreviewCache.has(tutorId)) {
-    const cached = voicePreviewCache.get(tutorId);
-    res.setHeader('Content-Type', cached.contentType);
-    res.setHeader('Cache-Control', 'public, max-age=86400'); // 24h browser cache
-    return res.send(cached.audio);
-  }
-
-  if (!ttsProvider.isConfigured()) {
-    return res.status(503).json({ error: 'Voice preview unavailable.' });
-  }
-
-  const tutor = TUTOR_CONFIG[tutorId];
-  const voiceId = ttsProvider.resolveVoiceId(tutor.cartesiaVoiceId);
-
-  try {
-    const audioBuffer = await ttsProvider.generateAudio(tutor.voicePreview, voiceId);
-    const contentType = ttsProvider.getContentType();
-
-    // Cache it
-    voicePreviewCache.set(tutorId, { audio: audioBuffer, contentType });
-
-    res.setHeader('Content-Type', contentType);
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    res.send(audioBuffer);
-  } catch (err) {
-    console.error(`[Trial Chat] Voice preview error for ${tutorId}:`, err.message);
-    res.status(500).json({ error: 'Voice preview failed.' });
-  }
-});
 
 /**
  * POST /api/trial-chat/speak
@@ -577,7 +541,17 @@ router.get('/voice-preview/:tutorId', voicePreviewLimiter, async (req, res) => {
  */
 const trialTtsLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 15, // 15 TTS requests per hour per IP
+  // One read-aloud per message, for every preview the CHAT limiter already
+  // allows this IP. A flat 15 was set when a preview was 4 turns; at 9 it was
+  // tighter than one and a half previews, so on any shared IP — a family, a
+  // classroom behind NAT — the audio died mid-conversation while the chat kept
+  // going. An audio wall that arrives before the conversation wall is not a
+  // limit, it is a bug that looks like a broken button.
+  //
+  // Raising it is only safe because the handler no longer speaks arbitrary
+  // text: see tutorSaidThis below. The bound that matters is the INPUT, not
+  // the rate.
+  max: PREVIEW_SESSIONS_PER_IP * MAX_TURNS,
   keyGenerator: (req) => req.ip,
   standardHeaders: true,
   legacyHeaders: false,
@@ -595,6 +569,18 @@ router.post('/speak', trialTtsLimiter, async (req, res) => {
 
   if (!UNLOCKED_TUTOR_IDS.includes(tutorId)) {
     return res.status(400).json({ error: 'Invalid tutor.' });
+  }
+
+  // Speak only what the tutor actually said in this browser's session.
+  //
+  // This endpoint is anonymous and unauthenticated, and it used to speak any
+  // 600 characters a caller posted — a free text-to-speech API on Cartesia's
+  // meter, bounded only by a rate limit. The session transcript (added for
+  // signup carryover) already holds every assistant line, so the legitimate
+  // input set is small, known, and server-held. Fail closed: a caller with no
+  // transcript has no tutor message to read, because they have not had one.
+  if (!tutorSaidThis(req, text)) {
+    return res.status(403).json({ error: 'Nothing to read aloud.' });
   }
 
   if (!ttsProvider.isConfigured()) {

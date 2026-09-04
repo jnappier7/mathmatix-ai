@@ -198,13 +198,6 @@
 
   /* ── Phase 1: Live hero composer → real trial session ─────── */
 
-  // Tutor chips: choose a tutor (subordinate to typing a problem). The "hear my
-  // voice" control is a SIBLING button, not a child of the chip — it used to be
-  // a <span role="button" tabindex="0"> nested inside the chip's <button>,
-  // which is a control inside a control: unreachable by keyboard or screen
-  // reader, so the voice preview only existed for mouse users. Two real
-  // buttons means no stopPropagation dance either; a click on one is not a
-  // click on the other.
   // Kicks off the real trial session with the student's own problem as the
   // first message. Reuses the exact selectTutor → greet → send flow; we just
   // skip the celebration video so the answer arrives fast, and queue the
