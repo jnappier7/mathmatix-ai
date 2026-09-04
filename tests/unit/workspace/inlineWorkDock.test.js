@@ -197,6 +197,67 @@ describe('finished problems seal into the transcript', () => {
     expect(out.rootIsEmpty).toBe(false);
     expect(out.afterReset).toEqual({ focusProblem: null, rootIsEmpty: true, archive: 0 });
   });
+
+  test('a teaching aid with no posed problem SHOWS, head hidden', () => {
+    // Production, 2026-09-04: the student asked for a visual, the tutor sent a
+    // unit circle and a triangle with no `pose`, and the dock painted its
+    // "Our work" header over an empty strip. _setProblem was the only code
+    // path that ever revealed the card, so pose-less content rendered into a
+    // display:none card while `lines` had rows — non-empty and invisible at
+    // once. The card must show whenever it holds work; the head only when
+    // there is a problem to put in it.
+    const t = out.teachingAid;
+    expect(t.afterAid).toEqual({ cardDisplay: '', headHidden: true, rootIsEmpty: false, rows: 1 });
+    expect(t.afterSecondAid).toEqual({ cardDisplay: '', headHidden: true, rootIsEmpty: false, rows: 2 });
+    // A problem arriving afterwards reveals the head without dropping the aids.
+    expect(t.afterPose).toEqual({ cardDisplay: '', headHidden: false, rootIsEmpty: false, rows: 3 });
+    expect(t.afterReset).toEqual({ cardDisplay: 'none', headHidden: true, rootIsEmpty: true, rows: 0 });
+  });
+
+  test('the hidden head cannot be beaten by the authored sticky rules', () => {
+    // .lws-card-head sets position/padding/background; a bare `hidden`
+    // attribute (UA display:none) loses to any authored display, so the guard
+    // has to be explicit — the same one the rail and caption carry.
+    expect(lwsCss).toMatch(/\.lws-card-head\[hidden\] \{ display: none !important; \}/);
+  });
+
+  test('"N steps" counts work: not aids, not operations — and both counters agree', () => {
+    // Two diagrams and no work used to read "2 steps" under a card with
+    // nothing worked in it. A visual is an aid, an operation is a move;
+    // neither is a step. And the live foot and the sealed summary must give
+    // the same number, or a problem changes length the moment it is sealed.
+    const c = out.stepCount;
+    expect(c.aidsOnly).toEqual({ hidden: true, text: '' });   // nothing to count → no foot
+    // pose + operation + step + graph + step + solution → the 2 steps + the
+    // solution. Not 4 (graph counted), not 5 (operation counted too).
+    expect(c.live.hidden).toBe(false);
+    expect(c.live.text).toMatch(/^3 steps/);
+    expect(c.sealedSteps).toBe('3 steps');
+  });
+});
+
+describe('short viewports get more of the dock, not less', () => {
+  test('below 900px tall the cap rises, bounded by what the column can spare', () => {
+    // A pure vh cap gave the work its least room where room was scarcest
+    // (1366×768 → 338px; a 700px window → 264px). The third min() term is the
+    // safety rail: the chat column is calc(100vh - 124px), and the composer,
+    // the dock's own chrome, and two lines of the tutor's last message need
+    // ~236px of it — so a tiny window costs the dock, never the compose bar.
+    expect(lwsCss).toMatch(
+      /@media \(max-height: 900px\) \{\s*\.cr-work-dock \.lws-dv \{ max-height: min\(56vh, 400px, calc\(100vh - 360px\)\); \}/
+    );
+  });
+
+  test('the composer is pinned so a taller dock can never squeeze it', () => {
+    // On desktop #input-container has no flex rule (the flex:0 0 auto that
+    // chat-redesign.css credits it with is inside mobile-fixes.css's
+    // max-width:768px block), so it defaults to flex:0 1 auto — squeezable.
+    expect(lwsCss).toMatch(/html\.mm-work-inline #input-container \{ flex-shrink: 0; \}/);
+  });
+
+  test('phones follow the same rule from a smaller base', () => {
+    expect(lwsCss).toMatch(/max-height: min\(46vh, 340px, calc\(100vh - 300px\)\);/);
+  });
 });
 
 describe('sealed cards are placed by when the work happened', () => {

@@ -93,4 +93,55 @@ process.stdout.write(JSON.stringify({
       archive: view._archive.length,
     };
   })(),
+  // The production case from the owner's screenshot: "I'm a visual person,
+  // show me something about angles" → the tutor sends a unit circle, then a
+  // labelled triangle, and never poses a problem. Board content with no
+  // `pose` must still SHOW — before this the card stayed display:none while
+  // the dock reported itself non-empty, so students got the "Our work"
+  // header over an empty strip of graph paper.
+  teachingAid: (() => {
+    const snap = () => ({
+      cardDisplay: view.el.card.style.display,
+      headHidden: !!view.el.problem.hidden,
+      rootIsEmpty: view.el.root.classList.contains('is-empty'),
+      rows: view.el.lines.childNodes.length,
+    });
+    view.apply([{ type: 'model', semantic: { model: 'unit-circle', caption: 'The unit circle' } }]);
+    const afterAid = snap();
+    view.apply([{ type: 'geometry', semantic: { diagramType: 'right-triangle', caption: 'Acute angle + hypotenuse' } }]);
+    const afterSecondAid = snap();
+    // A real problem arriving later reveals the head; the aids stay as rows.
+    view.apply([eq('\\sin(30^\\circ) = x', 'problem'), eq('x = 0.5', 'step')]);
+    const afterPose = snap();
+    view.resetAll();
+    return { afterAid, afterSecondAid, afterPose, afterReset: snap() };
+  })(),
+  // "N steps" must count WORK. A visual is an aid, an operation is a move —
+  // neither is a step. Both counters (the live foot and the sealed summary)
+  // have to agree, or the same problem reads one length in the dock and
+  // another once it is sealed into the transcript.
+  stepCount: (() => {
+    const foot = () => ({ hidden: !!view.el.foot.hidden, text: (view.el.foot.textContent || '').trim() });
+    // Two aids, no work: there is nothing to count, so there is no foot.
+    view.apply([{ type: 'model', semantic: { model: 'unit-circle', caption: 'The unit circle' } }]);
+    view.apply([{ type: 'geometry', semantic: { diagramType: 'right-triangle', caption: 'Acute angle + hypotenuse' } }]);
+    const aidsOnly = foot();
+    // Then a problem: an operation, two steps, a diagram, and the solution.
+    view.apply([
+      eq('2x + 4 = 20', 'problem'),
+      { type: 'equation', semantic: { latex: 'subtract 4', role: 'operation', op: 'subtract 4 from both sides' } },
+      eq('2x = 16', 'step'),
+      { type: 'graph', semantic: { fn: '2x+4' } },
+      eq('x = 8', 'step'),
+      eq('x = 8', 'solution'),
+    ]);
+    const live = foot();
+    sealed.length = 0;
+    view.clear();
+    const entry = sealed[0];
+    const card = view.buildSealedCard(entry);
+    const sealedSteps = (card.querySelector('.lws-dv-ov-sum-steps') || {}).textContent || '';
+    view.resetAll();
+    return { aidsOnly, live, sealedSteps: sealedSteps.trim() };
+  })(),
 }, null, 2));
