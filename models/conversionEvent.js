@@ -1,9 +1,10 @@
 // models/conversionEvent.js — Funnel / conversion telemetry
 //
-// Lightweight, append-only event log for the freemium funnel. The two events
-// that matter first are the "walls" a user hits:
-//   - trial_exhausted     : an anonymous landing-page trial reached its turn cap
-//   - free_quota_exhausted : a signed-in free student hit the 30-min/month 402
+// Lightweight, append-only event log for the consumer funnel. It exists to answer
+// one question the revenue number cannot: WHERE people stop. The stages are
+// preview -> signup -> trial -> subscribed, plus the two walls
+// (preview_completed, free_quota_exhausted) where a decision is actually asked
+// for.
 //
 // Rows are written fire-and-forget (never block a request) and are ALSO emitted
 // to Winston -> Better Stack, so the data is queryable from Mongo AND visible in
@@ -13,9 +14,33 @@
 
 const mongoose = require('mongoose');
 
+// The consumer funnel, in order. Named for the PREVIEW -> TRIAL -> FREE ladder
+// (see middleware/usageGate.js) so a row's stage is readable without a lookup.
+//
+// This enum is ENFORCED by mongoose, and recordConversionEvent deliberately
+// swallows write failures so telemetry can never break tutoring. The two
+// together mean an event fired but not listed here is lost in total silence: it
+// reaches Winston/Better Stack and never lands a queryable row. Add the name
+// here first, always.
 const CONVERSION_EVENTS = [
-  'trial_exhausted',       // anonymous trial reached MAX_TURNS
-  'free_quota_exhausted',  // signed-in free student hit the 30-min/month cap (402)
+  // -- Preview (anonymous, no account) --
+  'preview_started',       // visitor got their first tutor reply on the landing page
+  'preview_completed',     // preview reached MAX_TURNS — the wall, and the ask
+  // -- Signup --
+  'signup_started',        // account created (context: role, carriedPreview)
+  // -- Trial (14 days, no card) --
+  'trial_started',         // trial granted at signup (context: trialDays)
+  'trial_activated',       // did meaningful tutoring inside the trial (NOT YET EMITTED)
+  'trial_returned',        // came back on a later day inside the trial (NOT YET EMITTED)
+  // -- Conversion --
+  'upgrade_started',       // Stripe checkout session created (context: pack)
+  'subscribed',            // checkout completed, subscription active (context: pack)
+  // -- Free (post-trial) --
+  'free_quota_exhausted',  // signed-in free student hit the monthly AI cap (402)
+  // -- Legacy / other surfaces --
+  // Superseded by preview_completed. Retained so historical rows still validate
+  // and so a funnel query can union the two across the rename boundary.
+  'trial_exhausted',
   'quiz_vote',             // anonymous pop-quiz vote (context: quizId, answer, correct)
   'campaign_scan',         // tracked print/QR link hit (/go/:campaign — context: campaign)
 ];

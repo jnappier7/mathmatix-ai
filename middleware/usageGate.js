@@ -1,11 +1,20 @@
 // middleware/usageGate.js — Usage enforcement for unlimited tier & school licenses
 //
-// OPTION D — School License Model:
-//   Teachers: always free unlimited (drives adoption)
-//   Students: 30 free AI-minutes per month
+// The consumer ladder is PREVIEW -> TRIAL -> FREE, and the three are distinct
+// on purpose; collapsing any two of them is what produced a funnel nobody ever
+// reached the end of:
+//   PREVIEW  anonymous, no account, 8 volleys on the landing page. Not gated
+//            here at all — routes/trialChat.js owns its own turn cap.
+//   TRIAL    14 days of full Mathmatix+ from signup, no card. Granted in code
+//            (utils/trialGrant.js), honoured below via isInTrial().
+//   FREE     what a lapsed trial drops to: a metered taste, deliberately not a
+//            usable substitute for Mathmatix+. FREE_WEEKLY_SECONDS.
+//
+// Everything else passes unconditionally:
+//   Teachers/parents/admins: always free unlimited (drives adoption)
 //   Students with school license: unlimited (school purchased access)
+//   Founding-school domains: unlimited (utils/foundingSchool.js)
 //   Unlimited individual subscribers: always pass
-//   Parents/admins: always pass (free unlimited)
 //
 // MASTER SWITCH: Set BILLING_ENABLED=true in .env to activate.
 // When disabled, all users get unlimited access (pre-launch mode).
@@ -17,6 +26,7 @@ const SchoolLicense = require('../models/schoolLicense');
 const { recordConversionEvent } = require('../utils/conversionEvents');
 const { userHasRole } = require('../utils/roleQuery');
 const { isFoundingSchoolUser } = require('../utils/foundingSchool');
+const { isInTrial } = require('../utils/trialGrant');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 // NOTE: constant/field names keep the "weekly" prefix for backward compatibility
@@ -140,6 +150,12 @@ async function hasUnmeteredAiAccess(user) {
 
   // Unlimited individual subscribers pass unconditionally
   if (user.subscriptionTier === 'unlimited') return true;
+
+  // Inside a free trial. The CARD trial rode in on subscriptionTier (Stripe's
+  // webhooks set 'unlimited' for its duration), so this check is what the
+  // no-card trial granted at signup depends on entirely — without it the trial
+  // sets a date, promises 14 days and grants nothing. See utils/trialGrant.js.
+  if (isInTrial(user)) return true;
 
   // Check if a linked parent has an active Mathmatix+ subscription
   // (parent pays → child gets unlimited access)
@@ -297,6 +313,10 @@ async function hasPremiumAccess(user) {
   // Unlimited individual subscribers
   if (user.subscriptionTier === 'unlimited') return true;
 
+  // Free trial — a trial that withheld the premium features would not be a
+  // Mathmatix+ trial, just a longer free tier.
+  if (isInTrial(user)) return true;
+
   // Active school license
   if (user.schoolLicenseId) {
     const valid = await isLicenseValid(user.schoolLicenseId);
@@ -368,6 +388,11 @@ function premiumFeatureGate(featureName) {
 
     // Founding-school accounts get the full Mathmatix+ feature set
     if (isFoundingSchoolUser(user)) {
+      return next();
+    }
+
+    // Free trial — full Mathmatix+ feature set for its duration.
+    if (isInTrial(user)) {
       return next();
     }
 
@@ -443,6 +468,11 @@ function paidFeatureGate(featureName) {
 
     // Unlimited subscribers
     if (user.subscriptionTier === 'unlimited') {
+      return next();
+    }
+
+    // Free trial
+    if (isInTrial(user)) {
       return next();
     }
 

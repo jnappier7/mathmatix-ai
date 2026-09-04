@@ -79,11 +79,11 @@
   <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <script defer src="/vendor/dompurify/purify.min.js?v=3.3.1"></script>
   <script src="/js/csrf.js"></script>
-  <script src="/js/landing.js?v=3" defer></script>
+  <script src="/js/landing.js?v=4" defer></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
   <!-- Chat design tokens (--cr-*) so the chat preview block can mirror the real product. -->
   <link rel="stylesheet" href="/css/design-system.css" />
-  <link rel="stylesheet" href="/css/landing-page.css?v=3" />
+  <link rel="stylesheet" href="/css/landing-page.css?v=4" />
   <!-- Scroll reveals start at opacity:0 and are switched on by an
        IntersectionObserver in landing.js. Without JS that leaves everything
        below the fold blank, so opt out of the animation entirely. -->
@@ -129,10 +129,10 @@
           <!-- Separators are drawn in CSS so a wrap can't strand a bullet at
                the end of a line, which it did at phone widths. -->
           <p class="lp-hero-eyebrow">
-            <span>Pick Your Tutor</span><span>Grades 3&ndash;Calculus 3</span><span>No signup, no card</span>
+            <span>Grades 3&ndash;Calculus 3</span><span>No signup, no card</span>
           </p>
           <h1>A math tutor that actually knows your child.</h1>
-          <p class="lp-hero-sub">They pick their tutor &mdash; four personalities, four real voices. It learns how they think, works their interests into the problems, and adapts to nine supported IEP accommodation types. <strong>Try the real tutor below.</strong></p>
+          <p class="lp-hero-sub">It works the problem <em>with</em> your child &mdash; learning how they think, weaving in what they care about, and adapting to their IEP accommodations. <strong>Start below. No signup, no card.</strong></p>
 
           <!-- LIVE COMPOSER — the hero action. Fires straight into the real /api/trial-chat session. -->
           <form class="lp-hero-composer" id="lp-hero-composer" autocomplete="off">
@@ -155,76 +155,13 @@
             <button type="button" class="lp-hero-example" data-prompt="Factor x^2 + 5x + 6">Factor x&sup2; + 5x + 6</button>
           </div>
 
-          <!-- Tutor choice — subordinate to the action, pre-selected so the composer works immediately. -->
-          <div class="lp-hero-tutor-strip">
-            <span class="lp-hero-tutor-label">Your tutor:</span>
-            <div class="lp-hero-tutor-chips" id="lp-hero-tutor-chips" role="group" aria-label="Choose your tutor">
-              <div class="lp-hero-tutor-chip-wrap">
-                <button type="button" class="lp-hero-tutor-chip is-selected" data-tutor="mr-nappier" aria-pressed="true">
-                  <picture>
-                    <source srcset="/images/tutor_avatars/mr-nappier.avif" type="image/avif">
-                    <source srcset="/images/tutor_avatars/mr-nappier.webp" type="image/webp">
-                    <img src="/images/tutor_avatars/mr-nappier.png" alt="" loading="eager" />
-                  </picture>
-                  <span class="lp-hero-tutor-text">
-                    <span class="lp-hero-tutor-name">Mr. Nappier</span>
-                    <span class="lp-hero-tutor-desc">Pattern spotter &mdash; makes math a puzzle to crack</span>
-                  </span>
-                </button>
-                <button type="button" class="lp-hero-tutor-hear" data-tutor="mr-nappier" aria-label="Hear Mr. Nappier&rsquo;s voice">
-                  <i class="fas fa-volume-up" aria-hidden="true"></i>
-                </button>
-              </div>
-              <div class="lp-hero-tutor-chip-wrap">
-                <button type="button" class="lp-hero-tutor-chip" data-tutor="bob" aria-pressed="false">
-                  <picture>
-                    <source srcset="/images/tutor_avatars/bob.avif" type="image/avif">
-                    <source srcset="/images/tutor_avatars/bob.webp" type="image/webp">
-                    <img src="/images/tutor_avatars/bob.png" alt="" loading="eager" />
-                  </picture>
-                  <span class="lp-hero-tutor-text">
-                    <span class="lp-hero-tutor-name">Bob</span>
-                    <span class="lp-hero-tutor-desc">Real-world analogies, and a lot of math puns</span>
-                  </span>
-                </button>
-                <button type="button" class="lp-hero-tutor-hear" data-tutor="bob" aria-label="Hear Bob&rsquo;s voice">
-                  <i class="fas fa-volume-up" aria-hidden="true"></i>
-                </button>
-              </div>
-              <div class="lp-hero-tutor-chip-wrap">
-                <button type="button" class="lp-hero-tutor-chip" data-tutor="maya" aria-pressed="false">
-                  <picture>
-                    <source srcset="/images/tutor_avatars/maya.avif" type="image/avif">
-                    <source srcset="/images/tutor_avatars/maya.webp" type="image/webp">
-                    <img src="/images/tutor_avatars/maya.png" alt="" loading="eager" />
-                  </picture>
-                  <span class="lp-hero-tutor-text">
-                    <span class="lp-hero-tutor-name">Maya</span>
-                    <span class="lp-hero-tutor-desc">Warm and steady &mdash; like a supportive older sister</span>
-                  </span>
-                </button>
-                <button type="button" class="lp-hero-tutor-hear" data-tutor="maya" aria-label="Hear Maya&rsquo;s voice">
-                  <i class="fas fa-volume-up" aria-hidden="true"></i>
-                </button>
-              </div>
-              <div class="lp-hero-tutor-chip-wrap">
-                <button type="button" class="lp-hero-tutor-chip" data-tutor="ms-maria" aria-pressed="false">
-                  <picture>
-                    <source srcset="/images/tutor_avatars/ms-maria.avif" type="image/avif">
-                    <source srcset="/images/tutor_avatars/ms-maria.webp" type="image/webp">
-                    <img src="/images/tutor_avatars/ms-maria.png" alt="" loading="eager" />
-                  </picture>
-                  <span class="lp-hero-tutor-text">
-                    <span class="lp-hero-tutor-name">Ms. Maria</span>
-                    <span class="lp-hero-tutor-desc">Bilingual and methodical &mdash; paso por paso</span>
-                  </span>
-                </button>
-                <button type="button" class="lp-hero-tutor-hear" data-tutor="ms-maria" aria-label="Hear Ms. Maria&rsquo;s voice">
-                  <i class="fas fa-volume-up" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-          </div>
+          <!-- The tutor picker used to live here. The anonymous preview now runs
+               on one fixed tutor (Mr. Nappier — PREVIEW_TUTOR_ID in landing.js):
+               asking a stranger to choose between four people they have never
+               met, before they have experienced anything, is a decision with no
+               basis. Choosing a tutor is now the first thing a new account does
+               (pick-tutor.html), where it reads as a reward for signing up and
+               where the "Hear my voice" previews already live. -->
         </div>
       </div>
 
@@ -305,12 +242,20 @@
             <input type="text" id="lp-trial-input" class="lp-trial-input" placeholder="Ask a math question..." aria-label="Type your math question" maxlength="500" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-1p-ignore data-lpignore="true" />
             <button class="lp-trial-send" id="lp-trial-send" type="button" title="Send" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
           </div>
-          <!-- Soft gate (shown after 3 turns) -->
+          <!-- The wall. Shown once the preview hits its volley cap (MAX_TURNS in
+               routes/trialChat.js). This is the entire ask: the tutor's own line
+               carries the moment, the offer states the terms, and both buttons
+               are real destinations — a returning user hitting the wall needs
+               sign-in, not another signup form. -->
           <div class="lp-trial-gate" id="lp-trial-gate" style="display:none;">
             <div class="lp-trial-gate-inner">
               <p class="lp-trial-gate-msg" id="lp-trial-gate-msg"></p>
-              <a href="/signup.html" class="btn btn-primary btn-lg lp-trial-gate-btn">Keep Working Together &mdash; It&rsquo;s Free</a>
-              <span class="lp-trial-gate-note">No credit card required &middot; Your conversation continues right where you left off</span>
+              <p class="lp-trial-gate-offer">
+                Create your free account and pick the tutor that fits you best.<br />
+                <strong>14 days free. No card required.</strong> Your conversation continues right where you left off.
+              </p>
+              <a href="/signup.html" class="btn btn-primary btn-lg lp-trial-gate-btn">Start my free trial</a>
+              <a href="/login.html" class="lp-trial-gate-signin">I already have an account</a>
             </div>
           </div>
           </div><!-- /.lp-trial-main -->
