@@ -126,14 +126,19 @@
     'ms-maria':   { name: 'Ms. Maria',   img: '/images/tutor_avatars/ms-maria.png',   hero: '/images/tutor_avatars/ms-maria-new2.png',   backdrop: '/images/tutor_avatars/ms-maria-backdrop.png' }
   };
 
-  // Personalized soft-gate messages — written in each tutor's voice
-  // Framed around what a refresh THROWS AWAY: this conversation, the tutor
-  // remembering you, and starting over. Signup = keep it; refresh = lose it.
+  // The wall's opening line, in the tutor's own voice. Keyed by tutor because
+  // PREVIEW_TUTOR_ID decides which one a visitor meets — not dead entries.
+  //
+  // These carry the HOOK only. The terms (14 days, no card, conversation
+  // carries over) are in .lp-trial-gate-offer directly beneath, and saying them
+  // in both places made the wall read like it was arguing with itself. What is
+  // left here is the one thing the offer paragraph cannot say: that the tutor
+  // has started to learn how this particular person thinks.
   var GATE_MESSAGES = {
-    'mr-nappier': "We're just starting to see the pattern click — I don't want to lose that. Make a free account and I'll save our work and remember exactly where we are next time.",
-    'bob':        "Math you believe how far we got?! Sign up free so I can save this conversation and pick up right where we left off — no starting over.",
-    'maya':       "Okay we're lowkey cooking 🔥 Sign up (it's free) so this convo saves and I actually remember you next time — instead of starting from scratch.",
-    'ms-maria':   "¡Vamos muy bien, paso por paso! Create a free account so I can save our progress and remember you — we'll continue right where we stopped."
+    'mr-nappier': "We're just getting to the good part — I can see how you're thinking about this, and I don't want to lose that thread.",
+    'bob':        "Math you believe how far we got?! I'm just starting to figure out how you like to work through these.",
+    'maya':       "Okay we're lowkey cooking 🔥 I'm starting to get how your brain works on these — don't make me start over.",
+    'ms-maria':   "¡Vamos muy bien, paso por paso! I am learning how you think about these problems — let's not lose that."
   };
 
   // DOM refs
@@ -169,13 +174,22 @@
   var trialXpEl        = document.getElementById('lp-trial-xp');
   var trialXpTotalEl   = document.getElementById('lp-trial-xp-total');
 
+  // The anonymous preview runs on ONE tutor. Choosing between four strangers
+  // before you have experienced anything is a decision with no basis; the picker
+  // now lives at pick-tutor.html, as the first thing a new account does.
+  var PREVIEW_TUTOR_ID = 'mr-nappier';
+
   // State
-  var selectedTutorId = 'mr-nappier'; // Pre-selected so the hero composer works on first keystroke
+  var selectedTutorId = PREVIEW_TUTOR_ID;
   var pendingFirstMessage = null;     // Problem typed in the hero, auto-sent once the session greets
   var trialXpTotal = 0;               // engagement XP earned this session (server-authoritative)
   var chatHistory = []; // { role: 'user'|'assistant', content: string }
   var clientTurnCount = 0; // Client-side backup gate (defense-in-depth)
-  var MAX_CLIENT_TURNS = 4; // 1 greeting + 3 student messages
+  // Client-side backup gate. MUST stay in step with MAX_TURNS in
+  // routes/trialChat.js — it is a defense-in-depth copy, not an independent
+  // policy, and when it is the lower of the two it silently becomes the real
+  // cap: the server would happily serve turn 5 and the browser would never ask.
+  var MAX_CLIENT_TURNS = 9; // 1 greeting + 8 student volleys
   var isSending = false;
   var trialTtsAudio = null; // Currently playing TTS audio
 
@@ -188,26 +202,6 @@
   // reader, so the voice preview only existed for mouse users. Two real
   // buttons means no stopPropagation dance either; a click on one is not a
   // click on the other.
-  var tutorChips = document.querySelectorAll('.lp-hero-tutor-chip');
-  tutorChips.forEach(function (chip) {
-    chip.addEventListener('click', function () {
-      selectedTutorId = chip.getAttribute('data-tutor');
-      tutorChips.forEach(function (c) {
-        c.classList.remove('is-selected');
-        c.setAttribute('aria-pressed', 'false');
-      });
-      chip.classList.add('is-selected');
-      chip.setAttribute('aria-pressed', 'true');
-    });
-  });
-
-  document.querySelectorAll('.lp-hero-tutor-hear').forEach(function (hearBtn) {
-    hearBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      playVoicePreview(hearBtn.getAttribute('data-tutor'), hearBtn);
-    });
-  });
-
   // Kicks off the real trial session with the student's own problem as the
   // first message. Reuses the exact selectTutor → greet → send flow; we just
   // skip the celebration video so the answer arrives fast, and queue the
@@ -234,43 +228,6 @@
       startTrialWith(btn.getAttribute('data-prompt'));
     });
   });
-
-  /* ── Voice Preview ───────────────────────────────── */
-  var voicePreviewAudio = null;
-
-  function playVoicePreview(tutorId, btnEl) {
-    // Stop any currently playing preview
-    if (voicePreviewAudio) {
-      voicePreviewAudio.pause();
-      voicePreviewAudio = null;
-    }
-
-    // Visual feedback
-    var icon = btnEl.querySelector('i');
-    if (icon) {
-      icon.className = 'fas fa-spinner fa-spin';
-    }
-
-    voicePreviewAudio = new Audio('/api/trial-chat/voice-preview/' + tutorId);
-
-    voicePreviewAudio.addEventListener('canplaythrough', function () {
-      if (icon) icon.className = 'fas fa-volume-up';
-      voicePreviewAudio.play().catch(function () {
-        if (icon) icon.className = 'fas fa-volume-up';
-      });
-    }, { once: true });
-
-    voicePreviewAudio.addEventListener('error', function () {
-      if (icon) icon.className = 'fas fa-volume-up';
-      // Silently fail — voice preview is a nice-to-have
-    }, { once: true });
-
-    voicePreviewAudio.addEventListener('ended', function () {
-      voicePreviewAudio = null;
-    }, { once: true });
-
-    voicePreviewAudio.load();
-  }
 
   /* ── Phase 2: Celebration ────────────────────────── */
   function selectTutor(tutorId, opts) {
@@ -418,7 +375,7 @@
     trialChat.style.display = 'none';
     heroPick.style.display = '';
     if (trustBar) trustBar.style.display = '';
-    selectedTutorId = null;
+    selectedTutorId = PREVIEW_TUTOR_ID; // never null: the next start reuses it
     chatHistory = [];
     clientTurnCount = 0;
     clearTrialState();
@@ -925,20 +882,14 @@
     }
 
     // Set tutor-voice gate message
-    var msg = GATE_MESSAGES[selectedTutorId] || "We're making great progress! Sign up free to keep going.";
+    var msg = GATE_MESSAGES[selectedTutorId] || "We're just getting to the good part — let's keep going.";
     trialGateMsg.textContent = msg;
 
-    // Append the signup URL with trial tutor info for session carryover
-    var signupLinks = trialGate.querySelectorAll('a[href*="signup"]');
-    signupLinks.forEach(function (link) {
-      link.href = '/signup.html?trial_tutor=' + encodeURIComponent(selectedTutorId);
-    });
-
-    // Also update the header signup button
-    var headerSignup = document.querySelector('.lp-trial-signup-btn');
-    if (headerSignup) {
-      headerSignup.href = '/signup.html?trial_tutor=' + encodeURIComponent(selectedTutorId);
-    }
+    // The signup links stay plain /signup.html on purpose. They used to carry
+    // ?trial_tutor=, which pre-set selectedTutorId server-side and thereby SKIPPED
+    // pick-tutor.html — so a visitor would silently inherit the one preview tutor
+    // they never chose. The transcript now rides the server session instead
+    // (routes/trialChat.js appendTrialTranscript), so the URL has nothing to carry.
   }
 
   /* ── Session Carryover (localStorage) ────────────── */

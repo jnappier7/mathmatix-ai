@@ -20,8 +20,24 @@ const { callLLM } = require('../utils/llmGateway');
 const { samplePoints } = require('../utils/trialGraphPoints');
 const { recordConversionEvent } = require('../utils/conversionEvents');
 
-const MAX_TURNS = 4; // 1 greeting + 3 student messages
+// 1 greeting + 8 student volleys.
+//
+// Four was too few for the wall to land anywhere useful: a scaffolded problem in
+// this pipeline runs 4-8 exchanges, so the cap fell mid-first-problem, which
+// reads as the tutor giving up rather than as a cliffhanger. Eight volleys gets
+// a full problem finished and a second one started — which is where isLastTurn's
+// deliberately-unresolved ending actually bites.
+//
+// MAX_HISTORY_MESSAGES and the rate limiter below BOTH derive from this. They
+// were sized by hand for 4 turns, and raising this without them is silent: the
+// tutor forgets the opening of the conversation, and a second visitor on the
+// same IP gets a 429 instead of the wall.
+const MAX_TURNS = 9;
 const MAX_MESSAGE_LENGTH = 500;
+// Every message the preview can hold (each volley is a user + assistant pair).
+// Must cover the whole preview: below this the tutor silently loses the top of
+// the conversation and starts re-asking what the student already told it.
+const MAX_HISTORY_MESSAGES = MAX_TURNS * 2;
 // Board op types the lightweight trial notebook renders. `graph` is rendered from
 // server-computed points (see below); image/model still need workspace libs the
 // landing page doesn't load, so they're skipped. All are already Visual-Gated.
@@ -62,10 +78,48 @@ function bumpTrialTurns(req) {
   req.session.trialTurns = (req.session.trialTurns || 0) + 1;
 }
 
+// Preview transcript, held server-side for carryover into signup.
+//
+// The preview runs with skipPersist:true, so nothing it produces reaches the DB
+// — the conversation exists only in the visitor's browser. The wall promises
+// "your conversation continues right where you left off", and routes/signup.js
+// keeps that promise by reading this array back out of the session and writing a
+// real Conversation from it. Losing it is not cosmetic: after eight volleys the
+// visitor has done real work, and the wall asks them to trust us with an account
+// at exactly the moment we would be throwing that work away.
+//
+// Server-side rather than posted back by the client at signup, for the same
+// reason the turn counter moved here: the session is Mongo-backed (durable
+// across refreshes and instances), and a transcript the client could rewrite is
+// a free prompt-injection channel into the first conversation of every new
+// account. Clearing cookies loses the transcript along with the turn count —
+// the same intentional residual.
+const MAX_TRANSCRIPT_CHARS = 4000; // per message; generous for a tutor reply
+
+function appendTrialTranscript(req, role, content, tutorId = null) {
+  if (!req.session || !content) return;
+  if (!Array.isArray(req.session.trialTranscript)) req.session.trialTranscript = [];
+  // Bounded by the preview itself, so a session doc can never grow past the
+  // conversation the visitor was actually allowed to have.
+  if (req.session.trialTranscript.length >= MAX_HISTORY_MESSAGES) return;
+  req.session.trialTranscript.push({
+    role,
+    content: String(content).slice(0, MAX_TRANSCRIPT_CHARS),
+    ...(tutorId ? { tutorId } : {}),
+  });
+}
+
+// Complete previews one IP may run per hour before the abuse backstop trips.
+const PREVIEW_SESSIONS_PER_IP = 8;
+
 // Aggressive rate limit for anonymous endpoint — IP-based
 const trialLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 40, // 40 requests per hour per IP (8 sessions × 4 turns + greet)
+  // Derived, not hand-tuned: enough for PREVIEW_SESSIONS_PER_IP complete previews
+  // an hour. The durable per-browser turn count (below) is what actually stops a
+  // visitor spending more than MAX_TURNS; this is only the abuse backstop, so it
+  // has to stay comfortably above legitimate shared-IP traffic.
+  max: PREVIEW_SESSIONS_PER_IP * (MAX_TURNS + 1),
   keyGenerator: (req) => req.ip,
   standardHeaders: true,
   legacyHeaders: false,
@@ -233,6 +287,7 @@ RULES:
 
     // Count this as a turn
     bumpTrialTurns(req);
+    appendTrialTranscript(req, 'assistant', greeting, tutorId);
 
     res.json({ greeting, turnsRemaining: Math.max(0, MAX_TURNS - (serverTurns + 1)) });
 
@@ -245,7 +300,11 @@ RULES:
       'ms-maria': "¡Hola! Welcome — I'm so glad you stopped by! Do you have a math question I can help you with? If not, there are a few suggestions below to get us started. ¡Vamos!",
       'mr-nappier': "What's up! Ready to find some patterns? Got a math question for me? If you can't think of one, check out the suggestions below — let's get started!"
     };
-    res.json({ greeting: fallbacks[req.body?.tutorId] || "Hey! Got a math question? Pick one of the suggestions below to get started!" });
+    const fallbackGreeting = fallbacks[req.body?.tutorId] || "Hey! Got a math question? Pick one of the suggestions below to get started!";
+    // Carried too — from the visitor's side this IS the opening message, and a
+    // restored conversation that silently starts at turn two is worse than none.
+    appendTrialTranscript(req, 'assistant', fallbackGreeting, req.body?.tutorId || null);
+    res.json({ greeting: fallbackGreeting });
   }
 });
 
@@ -297,8 +356,11 @@ router.post('/', trialLimiter, async (req, res) => {
       : [];
 
     // Limit history to server-verified turn count to prevent fabricated history injection
-    const maxHistoryMessages = serverTurns * 2;
-    const sanitizedHistory = validHistory.slice(-Math.min(6, maxHistoryMessages)).map(m => ({
+    // serverTurns * 2 is the anti-injection bound — the client cannot claim more
+    // history than the server has actually served. MAX_HISTORY_MESSAGES is the
+    // budget ceiling. Both scale with MAX_TURNS; neither may be a literal.
+    const maxHistoryMessages = Math.min(MAX_HISTORY_MESSAGES, serverTurns * 2);
+    const sanitizedHistory = validHistory.slice(-maxHistoryMessages).map(m => ({
       role: m.role === 'user' ? 'user' : 'assistant',
       content: sanitizeForAI(m.content.slice(0, MAX_MESSAGE_LENGTH))
     }));
@@ -405,13 +467,35 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
 
     // Increment server-side turn count AFTER successful response
     bumpTrialTurns(req);
+    // Recorded here, in step with the turn counter, so the carried transcript can
+    // never contain a turn the server did not actually serve.
+    appendTrialTranscript(req, 'user', sanitizedMessage);
+    appendTrialTranscript(req, 'assistant', reply, tutorId);
     const newTurnCount = serverTurns + 1;
 
-    // Funnel telemetry — fire once when the anonymous trial first hits its cap.
-    // sessionID is an opaque, anonymized key (never an IP or name).
+    // Funnel telemetry. sessionID is an opaque, anonymized key (never an IP or
+    // name), which is what lets preview rows be de-duped without storing anyone.
+    //
+    // preview_started fires on the FIRST student volley, not on the greeting:
+    // the greeting is emitted automatically when the page loads, so counting it
+    // would make every bot and bounce look like an engaged visitor and put a
+    // meaningless denominator under the whole funnel.
+    // Every request that reaches here is a served student volley, so the
+    // once-only flag is the whole condition — gating on serverTurns would miss
+    // the first volley whenever the greeting call failed and fell back.
+    if (req.session && !req.session.__previewStartedLogged) {
+      req.session.__previewStartedLogged = true;
+      recordConversionEvent('preview_started', {
+        sessionKey: req.sessionID,
+        context: { tutorId },
+      });
+    }
+    // preview_completed — reached the wall. This is the ask, and the denominator
+    // for signup_started. (Was 'trial_exhausted'; renamed with the ladder, and
+    // the old name is kept in the enum so historical rows still union in.)
     if (newTurnCount >= MAX_TURNS && req.session && !req.session.__trialExhaustedLogged) {
       req.session.__trialExhaustedLogged = true;
-      recordConversionEvent('trial_exhausted', {
+      recordConversionEvent('preview_completed', {
         sessionKey: req.sessionID,
         context: { tutorId, turns: newTurnCount },
       });

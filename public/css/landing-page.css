@@ -2325,6 +2325,36 @@
   color: var(--clr-text-dim);
 }
 
+/* The terms, under the tutor's line. Deliberately quieter than the message
+   above it and louder than a footnote: "no card required" is the objection this
+   wall exists to answer, so it must survive a skim. */
+.lp-trial-gate-offer {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--clr-text-dim);
+  margin: 0 0 1rem;
+}
+.lp-trial-gate-offer strong {
+  color: var(--clr-text);
+}
+
+/* Sign-in is a real destination, not a footnote: a returning user who hits the
+   wall needs their account, not another signup form. Secondary to the trial CTA
+   in weight, but a full-width row so it keeps a thumb-sized tap target. */
+.lp-trial-gate-signin {
+  display: block;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--clr-primary-teal);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.lp-trial-gate-signin:hover,
+.lp-trial-gate-signin:focus-visible {
+  color: var(--clr-text);
+}
+
 /* ── Trial Chat Mobile ─────────────────────────────── */
 @media (max-width: 768px) {
   .lp-tutor-grid {

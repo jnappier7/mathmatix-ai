@@ -10,10 +10,12 @@ const { ensureNotAuthenticated } = require('../middleware/auth'); // Middleware 
 const passport = require('passport'); // For req.logIn after successful signup
 const { sendEmailVerification } = require('../utils/emailService'); // For email verification
 const { signupValidation, handleValidationErrors } = require('../middleware/validation');
-const TUTOR_CONFIG = require('../utils/tutorConfig');
+const Conversation = require('../models/conversation');
+const { grantTrial, TRIAL_DAYS } = require('../utils/trialGrant');
+const { recordConversionEvent } = require('../utils/conversionEvents');
 const { generateUniqueUsername } = require('../auth/passport-config');
 
-const { anyRole } = require('../utils/roleQuery');
+const { anyRole, userHasRole } = require('../utils/roleQuery');
 const { parseDateOfBirth } = require('../utils/dob');
 // Roles that can be self-assigned during public signup.
 // 'admin' and 'teacher' are intentionally excluded — these accounts must be created by existing admins.
@@ -208,9 +210,13 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             ...(mathCourseFromCode ? { mathCourse: mathCourseFromCode } : {}),
             // Apply subscription tier from enrollment code if set (e.g. 'unlimited' for teacher classes)
             ...(subscriptionTierFromCode && subscriptionTierFromCode !== 'free' ? { subscriptionTier: subscriptionTierFromCode } : {}),
-            // Pre-set tutor from trial chat (skip pick-tutor step)
-            ...(req.body.trialTutor && TUTOR_CONFIG[req.body.trialTutor] && TUTOR_CONFIG[req.body.trialTutor].unlocked
-                ? { selectedTutorId: req.body.trialTutor } : {}),
+            // NOT pre-set from the preview any more. The anonymous preview runs on
+            // one fixed tutor (Mr. Nappier), so carrying that choice forward would
+            // hand every new student a tutor they never chose AND skip the picker,
+            // since the redirect below only sends students there when
+            // selectedTutorId is empty. Choosing a tutor is now the first thing a
+            // new account does — a reward for signing up rather than a decision
+            // demanded of a stranger who has not experienced anything yet.
             // Auto-assign default DiceBear avatar (no more pick-avatar onboarding step)
             selectedAvatarId: 'dicebear-default',
             avatar: {
@@ -223,7 +229,65 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             // Default values for other fields (e.g., XP, level) will come from the schema defaults
         });
 
+        // --- PREVIEW -> TRIAL handoff -------------------------------------
+        // Read the preview transcript BEFORE req.logIn() further down: passport
+        // may regenerate the session on login, and everything the anonymous
+        // visitor did lives in that session.
+        const previewTranscript = Array.isArray(req.session?.trialTranscript)
+            ? req.session.trialTranscript
+            : [];
+
+        // Grant the no-card trial. Students only: teachers, parents and admins
+        // already pass every gate via hasStaffRoleBypass, so a trial on those
+        // accounts would grant nothing and pollute trial_started with rows that
+        // can never convert. See utils/trialGrant.js.
+        //
+        // userHasRole, not `newUser.role`: this decides an ENTITLEMENT, which
+        // CLAUDE.md §12 puts squarely on roles held. The two agree on an account
+        // created three lines ago, which is exactly why the wrong one would sit
+        // here unnoticed until the day signup can mint more than one role.
+        const grantedTrial = userHasRole(newUser, 'student') && grantTrial(newUser);
+
         await newUser.save(); // Save the new user to MongoDB
+
+        // Restore the preview conversation so the wall's promise — "your
+        // conversation continues right where you left off" — is literally true.
+        // Best-effort: a signup must never fail because the carryover did.
+        if (previewTranscript.length) {
+            try {
+                const conversation = await Conversation.create({
+                    userId: newUser._id,
+                    messages: previewTranscript.map((m) => ({
+                        role: m.role === 'user' ? 'user' : 'assistant',
+                        content: m.content,
+                        ...(m.tutorId ? { tutorId: m.tutorId } : {}),
+                    })),
+                    lastActivity: new Date(),
+                });
+                // Both resolution paths: some surfaces read the user's pointer,
+                // others take the most recent active conversation.
+                newUser.activeConversationId = conversation._id;
+                await newUser.save();
+                // Consumed — a second signup in this browser must not re-import it.
+                if (req.session) {
+                    delete req.session.trialTranscript;
+                    delete req.session.trialTurns;
+                }
+            } catch (convErr) {
+                console.error('ERROR: Failed to carry preview conversation into signup:', convErr);
+            }
+        }
+
+        recordConversionEvent('signup_started', {
+            userId: newUser._id,
+            context: { role: newUser.role, carriedPreview: previewTranscript.length > 0 },
+        });
+        if (grantedTrial) {
+            recordConversionEvent('trial_started', {
+                userId: newUser._id,
+                context: { trialDays: TRIAL_DAYS, carriedPreview: previewTranscript.length > 0 },
+            });
+        }
 
         // Send verification email (non-blocking - don't fail signup if email fails)
         sendEmailVerification(newUser.email, newUser.firstName, verificationToken)

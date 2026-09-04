@@ -26,6 +26,7 @@ const WebhookEvent = require('../models/webhookEvent');
 const { isAuthenticated } = require('../middleware/auth');
 const { hasUnmeteredAiAccess } = require('../middleware/usageGate');
 const { isFoundingSchoolUser } = require('../utils/foundingSchool');
+const { recordConversionEvent } = require('../utils/conversionEvents');
 const { sendCancellationConfirmation, sendTrialEndingReminder } = require('../utils/emailService');
 const logger = require('../utils/logger').child({ route: 'billing' });
 
@@ -252,6 +253,14 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
 
     const session = await stripe.checkout.sessions.create(sessionParams);
 
+    // Funnel: the intent to pay, recorded separately from the payment. The gap
+    // between upgrade_started and subscribed is checkout abandonment, which no
+    // other surface can see.
+    recordConversionEvent('upgrade_started', {
+      userId: user._id,
+      context: { pack, trial: wantsTrial },
+    });
+
     res.json({ url: session.url });
   } catch (error) {
     logger.error('Checkout session error', { userId: req.user?._id?.toString(), error: error.message });
@@ -426,6 +435,19 @@ router.post('/webhook', async (req, res) => {
         }
 
         await user.save();
+
+        // Funnel terminus. Fired from the webhook rather than the success_url so
+        // it records money actually committed, not a browser that reached a
+        // redirect. Replayed webhooks are already de-duped by the WebhookEvent
+        // guard above, so this cannot double-count.
+        recordConversionEvent('subscribed', {
+          userId: user._id,
+          context: {
+            pack,
+            mode: packConfig.mode,
+            startedInTrial: session.metadata?.trial === 'true',
+          },
+        });
         break;
       }
 
