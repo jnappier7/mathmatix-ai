@@ -6136,7 +6136,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     url: `/api/student/uploads/${a.uploadId}/file`,
                     fileType: a.fileType
                 }));
+                const before = chatBox.lastElementChild;
                 appendMessage(msg.content, sender, null, false, histAttachments);
+                // Stamp when this message was sent. The Living Workspace seals
+                // each finished problem back into the transcript on hydrate
+                // (chat-workspace.js placeSealed) and needs these to put the
+                // work where it actually happened — without them every replayed
+                // card piles up at the end, after messages that came later.
+                const added = chatBox.lastElementChild;
+                if (added && added !== before && msg.timestamp) {
+                    const ts = Date.parse(msg.timestamp);
+                    if (Number.isFinite(ts)) added.setAttribute('data-ts', String(ts));
+                }
             });
 
             // Scroll to bottom

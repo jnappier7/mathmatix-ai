@@ -271,8 +271,17 @@ only — HTML is served as-is, so i18n/feature-flags/user-data are injected clie
 - Heavy reliance on globals (`window.currentUser`, `window.TUTOR_CONFIG`, `window.MM_FEATURES`).
 - CSS is **dual-system**: legacy sheets hardcode colors; newer ones use `--cr-*` design tokens
   (`design-system.css`, `chat-redesign.css`). 70 CSS files, no CSS-modules.
-- **Feature flags / shelved**: whiteboard panel (`MM_FEATURES.boardPanel`, default off — tutor work
-  shows as inline chat cards instead), voice-mode-in-chat, course catalog UI.
+- **The tutor's work is INLINE IN THE CHAT COLUMN** (2026-09), not a right rail. Two surfaces, both
+  inside `#chat-container`: the **work dock** (`#cr-work-dock`, between the transcript and the
+  composer) holds the problem in focus and collapses to nothing when idle; a finished problem is
+  **sealed** into the transcript as a card (`DerivationView.buildSealedCard` ← `chat-workspace.js`
+  `onSeal`), so scrollback is the archive and there is no thumbnail rail. `html.mm-work-inline`
+  (stamped synchronously in `chat.html` for `livingWorkspace` dev/beta/live) is what drops
+  `.cr-workspace` from the stage grid; `livingWorkspace=off` restores the legacy tabbed rail intact.
+  The Living Workspace spec's "always two columns" decision is superseded — see the amendment atop
+  `docs/BOARD_LIVING_WORKSPACE_SPEC.md`. Pinned by `tests/unit/workspace/inlineWorkDock.test.js`.
+- **Feature flags / shelved**: legacy tabbed board (`MM_FEATURES.livingWorkspace='off'`),
+  voice-mode-in-chat, course catalog UI. (`MM_FEATURES.boardPanel` now only gates the legacy rail.)
 
 ---
 
@@ -348,6 +357,7 @@ npm run seed:all:dry   # preflight + plan, no writes
 | IEP / accommodations | `models/iepPlan.js`, `routes/iepTemplates.js`, `utils/iepTemplates.js`; docs: `IEP_*` |
 | Voice | `routes/voiceTutor.js`, `utils/{voiceSession,sttStream,ttsStream}.js` |
 | Whiteboard / board commands | `utils/{boardCommandGuard,boardResponseSchema}.js`, `pipeline/board*.js`; docs: `WHITEBOARD_*`, `BOARD_LLM_STAGE_DESIGN.md` |
+| Where the tutor's work RENDERS (dock / sealed cards) | `public/js/living-workspace/chat-workspace.js` (mount + seal + hydrate) and `dom/derivationView.js` (the card itself); CSS in `public/css/living-workspace.css` (`.cr-work-dock`, `.lws-sealed`) + the `html.mm-work-inline` block in `chat-redesign.css`. Placement only — the generation funnel and anti-cheat gauntlet upstream are untouched |
 | Auth / roles / SSO | `auth/passport-config.js`, `middleware/auth.js`, `services/cleverSync.js` |
 | Billing / plans | `routes/billing.js`, `middleware/usageGate.js` |
 | Teacher/parent/admin dashboards | `routes/{teacher,parent,admin}.js` + matching `public/*-dashboard.html`/`.js` |
@@ -437,6 +447,17 @@ npm run seed:all:dry   # preflight + plan, no writes
   uncommitted still passes locally while the committed branch is broken. When a test fails and then
   "goes away", don't call it flaky — `git stash -u` and run against the branch as committed before
   concluding anything.
+- **The chat page and the Living Workspace theme themselves DIFFERENTLY.** `design-system.css`
+  (`--cr-*`) is **dark by default** and goes light only on `[data-theme="light"]`;
+  `living-workspace.css` (`--lws-*`) is dark by default but *also* answers
+  `@media (prefers-color-scheme: light)`. So on a light-OS machine, before the deferred
+  `theme-toggle.js` stamps `data-theme`, the chat panel is dark while the board palette is light — at
+  the same time. This was invisible while the board lived in the rail, because `.lws-root` painted
+  `--lws-grid-bg` beneath its own ink. Now that the work is inline, **any inline workspace surface
+  must paint its own opaque ground** — a transparent one puts light ink straight onto the dark chat
+  panel. It shipped exactly once that way: the sealed card's "N steps" rendered near-black on
+  near-black, readable in neither theme and erroring in none. Pinned by the "paint their own ground"
+  block in `tests/unit/workspace/inlineWorkDock.test.js`.
 - **Editing a bundled `public/js` or `public/css` file changes NOTHING until you run
   `npm run build:bundles`.** `chat.html`, both dashboards and `admin-dashboard.html` do not load their
   own sources — `scripts/buildPageBundles.js` concatenates them into content-hashed bundles under

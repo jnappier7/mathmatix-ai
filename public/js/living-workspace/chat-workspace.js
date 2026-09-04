@@ -1,25 +1,39 @@
 /* ============================================================
-   chat-workspace.js — flag-gated integration of the Living
-   Workspace INTO the live chat (spec milestone M-B: "new surface
-   beside the old board, proven before swapping").
+   chat-workspace.js — the Living Workspace, INLINE IN THE CHAT COLUMN.
 
    Default = OFF: this file loads on chat.html but does NOTHING unless
-   the LivingWorkspace flag is dev|beta|live. So the normal chat
-   experience (old board) is untouched, and none of the ~10 workspace
-   scripts are even fetched.
+   the LivingWorkspace flag is dev|beta|live. So the flag-off experience
+   (the legacy tabbed board in the right rail) is untouched, and none of
+   the ~10 workspace scripts are even fetched.
+
+   WHERE THE WORK LIVES (the 2026-09 move off the right rail):
+   The board is no longer a 320px side column. The tutor's work renders
+   in the chat column itself, in two places:
+
+     • the WORK DOCK (#cr-work-dock) — the problem in focus, docked
+       directly above the composer at full chat width. It grows in place
+       as the turn's steps arrive and collapses to nothing when there is
+       no work, so it costs zero space when idle.
+     • the TRANSCRIPT — when a problem finishes, its card is SEALED into
+       the message list as scrollback. The conversation is the archive,
+       which is why this mode has no thumbnail rail: looking back at
+       earlier work is just scrolling.
+
+   Why: the derivation is a document-style column, and a 320px rail is
+   the worst possible width for one (the card's own layout caps at
+   620px). Inline it reads at full width, in the same reading order as
+   the sentence that describes it, on the surface phones already use.
 
    When ON (window.MM_FEATURES.livingWorkspace or ?livingWorkspace=dev):
      1. lazily inject the workspace CSS + UMD-lite modules (KaTeX/
         MathLive are already on the chat page — reused, not re-loaded),
-     2. mount the shell into a self-contained, dismissible dev panel
-        (its own container — it never touches the old board's DOM, so
-        it can't break the live layout),
+     2. mount the derivation view into the work dock,
      3. expose window.LWS_CHAT.applyBoardCommands(cmds): the chat SSE
         handler feeds each turn's board_commands here; the P5 adapter
         turns them into workspace elements that render on the surface.
 
-   This is a preview harness in the real app, not the swap. Turning the
-   old board off / making this the default is a later milestone.
+   Nothing upstream changes: the same guarded board commands, the same
+   adapter, the same anti-cheat gauntlet. This is a placement change.
    ============================================================ */
 (function () {
   'use strict';
@@ -83,7 +97,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260823a';
+  var ASSET_V = '?v=20260904a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -125,54 +139,45 @@
     document.body.appendChild(s);
   }
 
-  // THE SWAP (M-C): take over the chat's board region in-layout. Hide the old
-  // board's contents inside #cr-workspace and mount the new surface there, so
-  // the workspace IS the board (not a floating preview). Reversible — flag off
-  // leaves #cr-workspace untouched; the hidden nodes are still in the DOM.
-  // Falls back to a floating panel when #cr-workspace is absent (dev harnesses,
-  // other pages) so the integration still works anywhere.
-  function buildPanel() {
-    var region = document.getElementById('cr-workspace');
-    if (region) {
-      region.classList.add('lws-swapped');
-      // Hide the old tabbed board tools, keep them in the DOM (reversible).
-      // EXCEPTIONS that stay visible: the student player card / progress switcher
-      // (#cr-player-card, pinned to the bottom of the rail) and the "My Progress"
-      // profile overlay (#psc-profile). Both belong to the rail, not the legacy
-      // board. #psc-profile is created by playerStatsCard.js AFTER the /user
-      // fetch, which can race ahead of this swap — if it does, this loop would
-      // stamp inline display:none on it and the panel could never paint, no
-      // matter what the toggle does. Skipping it here keeps the toggle honest.
-      for (var i = 0; i < region.children.length; i++) {
-        var cid = region.children[i].id;
-        if (cid === 'cr-player-card' || cid === 'psc-profile') continue;
-        region.children[i].setAttribute('data-lws-hidden', '1');
-        region.children[i].style.display = 'none';
+  // Where the work docks: a slot inside the chat column, between the message
+  // list and the composer (chat.html #cr-work-dock). Falls back to a floating
+  // panel when the slot is absent (dev harnesses, other pages) so the
+  // integration still works anywhere.
+  function buildDock() {
+    var slot = document.getElementById('cr-work-dock');
+    if (slot) {
+      slot.classList.add('is-live');
+      // A long derivation can grow to the dock's cap and push the conversation
+      // up, so the student needs a way to get the height back without losing
+      // the work. CSS hides the whole bar while the dock is empty.
+      var bar = document.createElement('div');
+      bar.className = 'lws-dock-bar';
+      var label = document.createElement('span');
+      label.className = 'lws-dock-bar-t';
+      label.textContent = 'Our work';
+      var toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'lws-dock-toggle';
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-controls', 'lws-chat-mount');
+      function paintToggle(collapsed) {
+        toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        toggle.innerHTML = collapsed
+          ? '<i class="fas fa-chevron-up" aria-hidden="true"></i><span>Show</span>'
+          : '<i class="fas fa-chevron-down" aria-hidden="true"></i><span>Hide</span>';
+        toggle.setAttribute('aria-label', collapsed ? 'Show our work' : 'Hide our work');
       }
+      paintToggle(false);
+      toggle.addEventListener('click', function () {
+        paintToggle(slot.classList.toggle('is-collapsed'));
+      });
+      bar.appendChild(label);
+      bar.appendChild(toggle);
+      slot.appendChild(bar);
+
       var mountIn = document.createElement('div');
       mountIn.id = 'lws-chat-mount';
-      mountIn.style.cssText = 'position:absolute;inset:0;';
-      if (getComputedStyle(region).position === 'static') region.style.position = 'relative';
-      region.appendChild(mountIn);
-      // Way back to chat. On mobile the swapped workspace is a FULL-SCREEN
-      // drawer, and the old close X is hidden with the rest of the legacy board
-      // chrome — leaving phone students with no exit. A dedicated, clearly
-      // labeled "‹ Chat" pill fixes that. Deliberately TOP-LEFT: the
-      // derivation's own text-size control (.lws-dv-az) floats top-right, so the
-      // right corner is taken. Appended after the mount (and z-index'd in CSS)
-      // so it sits above the board; shown only on the mobile drawer (CSS), since
-      // on desktop the workspace is a persistent column that needs no exit.
-      var exit = document.createElement('button');
-      exit.type = 'button';
-      exit.className = 'lws-chat-exit';
-      exit.setAttribute('aria-label', 'Close workspace and return to chat');
-      exit.innerHTML = '<i class="fas fa-chevron-left" aria-hidden="true"></i><span>Chat</span>';
-      exit.addEventListener('click', function () {
-        if (window.MathWorkspace && typeof window.MathWorkspace.close === 'function') {
-          window.MathWorkspace.close();
-        }
-      });
-      region.appendChild(exit);
+      slot.appendChild(mountIn);
       return mountIn;
     }
 
@@ -181,8 +186,8 @@
     panel.id = 'lws-chat-panel';
     panel.setAttribute('aria-label', 'Living Workspace (preview)');
     panel.style.cssText = [
-      'position:fixed', 'top:72px', 'right:16px', 'bottom:16px',
-      'width:min(46vw,640px)', 'z-index:2200',
+      'position:fixed', 'right:16px', 'bottom:16px',
+      'width:min(46vw,640px)', 'max-height:60vh', 'z-index:2200',
       'background:var(--cr-bg-panel,#fff)', 'border:1px solid rgba(15,26,36,0.12)',
       'border-radius:16px', 'box-shadow:0 12px 40px rgba(15,26,36,0.18)',
       'display:flex', 'flex-direction:column', 'overflow:hidden',
@@ -206,6 +211,100 @@
     panel.appendChild(mount);
     document.body.appendChild(panel);
     return mount;
+  }
+
+  // The Source Dock's viewer overlay fills whatever element hosts it, so the
+  // dock does NOT live in the work dock (a short strip above the composer):
+  // a worksheet page opened in a 200px-tall overlay is unreadable. It hosts in
+  // its own full-height layer over the chat panel instead.
+  //
+  // That layer must carry .lws-root: every --lws-* token (colours, the
+  // overlay's opaque background) is defined ON .lws-root, and a widget mounted
+  // outside one resolves them to nothing — which shipped once already as a
+  // transparent overlay bleeding over the board.
+  function buildOverlayHost() {
+    var chat = document.getElementById('chat-container');
+    if (!chat) return null;
+    var host = document.getElementById('lws-chat-overlays');
+    if (host) return host;
+    host = document.createElement('div');
+    host.id = 'lws-chat-overlays';
+    host.className = 'lws-root lws-chat-overlays';
+    if (getComputedStyle(chat).position === 'static') chat.style.position = 'relative';
+    chat.appendChild(host);
+    return host;
+  }
+
+  // ── Sealing: a finished problem leaves the dock and becomes scrollback ────
+  //
+  // Live turns seal at the end of the transcript (the conversation is at its
+  // newest message, so that is where the work just finished). A hydration
+  // replay instead places each card by when it was completed, so reopening a
+  // conversation reads in the order it actually happened.
+  var sealDeferred = null;    // non-null while a hydrate replay is running
+
+  function transcript() { return document.getElementById('chat-messages-container'); }
+
+  function placeSealed(node, completedAt) {
+    var box = transcript();
+    if (!box) return;
+    var at = completedAt ? Date.parse(completedAt) : NaN;
+    if (!isFinite(at)) { box.appendChild(node); return; }
+    // Insert after the last message that predates the completion. Messages are
+    // stamped with data-ts on history load; a transcript with no stamps (a
+    // live session) falls through to the append below.
+    var stamped = box.querySelectorAll('[data-ts]');
+    var after = null;
+    for (var i = 0; i < stamped.length; i++) {
+      var ts = Number(stamped[i].getAttribute('data-ts'));
+      if (isFinite(ts) && ts <= at) after = stamped[i]; else break;
+    }
+    if (!after) { box.insertBefore(node, stamped.length ? stamped[0] : null); return; }
+    // Two problems finished between the same pair of messages anchor to the
+    // same message. Step past cards already sealed there, or the second one
+    // would land in front of the first and the replay would read backwards.
+    var at2 = after.nextSibling;
+    while (at2 && at2.classList && at2.classList.contains('lws-sealed')) at2 = at2.nextSibling;
+    box.insertBefore(node, at2);
+  }
+
+  function sealToTranscript(entry) {
+    if (!dv || !entry) return;
+    var node;
+    try { node = dv.buildSealedCard(entry); }
+    catch (e) { console.error('[LWS_CHAT] seal render failed', e); return; }
+    var box = transcript();
+    // Was the student at the live edge BEFORE we grow the transcript? A sealed
+    // card is tall, so appending one silently pushes the newest message out of
+    // view. Only follow if they were already at the bottom — someone scrolled
+    // up re-reading an earlier problem must not be yanked back down.
+    var atBottom = !!box && (box.scrollHeight - box.scrollTop - box.clientHeight) < 80;
+    placeSealed(node, entry.completedAt);
+    if (atBottom && box) {
+      try { box.scrollTop = box.scrollHeight; } catch (_) { /* not laid out */ }
+    }
+  }
+
+  // Drop every sealed card from the transcript. Chat clears the message list
+  // itself on a session switch, but a rollover keeps the thread and re-seeds
+  // it — so the previous session's work must not survive as orphan cards whose
+  // renderers resetAll has already disposed.
+  function clearSealed() {
+    var box = transcript();
+    if (!box) return;
+    var old = box.querySelectorAll('.lws-sealed');
+    for (var i = 0; i < old.length; i++) {
+      if (old[i].parentNode) old[i].parentNode.removeChild(old[i]);
+    }
+  }
+
+  function onSeal(entry) {
+    // During hydration the per-problem metadata (assistance level, completedAt)
+    // has not been zipped on yet — ledgerMeta runs after the replay. Sealing
+    // now would render every card as a bare "Solved" and place it blind, so
+    // hold the entries and paint them once the replay is annotated.
+    if (sealDeferred) { sealDeferred.push(entry); return; }
+    sealToTranscript(entry);
   }
 
   // Renderers for the inline blocks the derivation embeds. Equation-family
@@ -279,6 +378,7 @@
     pendingLedger = undefined;
     pendingSources = undefined;
     if (dock) { try { dock.clear(); } catch (e) { console.error('[LWS_CHAT] dock clear failed', e); } }
+    clearSealed();
     if (!dv) return;
     try { dv.resetAll(); } catch (e) { console.error('[LWS_CHAT] reset failed', e); }
   };
@@ -418,22 +518,34 @@
   }
 
   // Rebuild the board from a persisted conversation.boardLedger: each finished
-  // problem replays and is parked on the rail, the in-progress one lands in
-  // focus. Replays run through the SAME adapter/render path as live turns, so
-  // hydration can't drift from live behavior. hydrate(null) is a plain reset
-  // (a conversation with no board history must show an empty board).
+  // problem replays and is sealed back into the transcript, the in-progress one
+  // lands in the work dock. Replays run through the SAME adapter/render path as
+  // live turns, so hydration can't drift from live behavior. hydrate(null) is a
+  // plain reset (a conversation with no board history must show no work).
   function doHydrate(ledger) {
     try { dv.resetAll(); } catch (e) { console.error('[LWS_CHAT] hydrate reset failed', e); }
+    clearSealed();
     if (!ledger || typeof window.LWS.ledgerToTurns !== 'function') return;
     var turns;
     try { turns = window.LWS.ledgerToTurns(ledger); }
     catch (e) { console.error('[LWS_CHAT] ledger replay failed', e); return; }
-    turns.forEach(render);
-    // Commands can't carry per-problem metadata (assistance level etc.) —
-    // zip it onto the rail entries the replay just produced.
-    if (typeof window.LWS.ledgerMeta === 'function') {
-      try { dv.annotateArchive(window.LWS.ledgerMeta(ledger)); }
-      catch (e) { console.error('[LWS_CHAT] archive annotate failed', e); }
+    // Hold the seals: the replay archives each finished problem BEFORE
+    // ledgerMeta has zipped its assistance level and completedAt on, and both
+    // decide how a sealed card reads and where it lands in the transcript.
+    sealDeferred = [];
+    try {
+      turns.forEach(render);
+      // Commands can't carry per-problem metadata (assistance level etc.) —
+      // zip it onto the archive entries the replay just produced. The deferred
+      // seals hold the SAME entry objects, so this annotates them in place.
+      if (typeof window.LWS.ledgerMeta === 'function') {
+        try { dv.annotateArchive(window.LWS.ledgerMeta(ledger)); }
+        catch (e) { console.error('[LWS_CHAT] archive annotate failed', e); }
+      }
+    } finally {
+      var held = sealDeferred;
+      sealDeferred = null;              // before painting, so a seal can't re-queue
+      held.forEach(sealToTranscript);
     }
     // The in-focus problem's source link survives the reload too.
     if (ledger.current && ledger.current.sourceRef) {
@@ -452,13 +564,24 @@
     injectCss();
     loadNext(0, function () {
       if (!window.LWS || !window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
-      var mount = buildPanel();
-      dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers(), onOpenSource: openLinkedSource });
-      // Docked widgets mount INSIDE the view's root, not beside it: every
-      // --lws-* token (colors, the overlays' opaque background) is defined ON
-      // .lws-root, so a sibling widget resolves them to nothing — which
-      // shipped as a transparent notebook overlay bleeding over the board.
-      var widgetHost = (dv.el && dv.el.root) || mount;
+      var mount = buildDock();
+      dv = new window.LWS.DerivationView(mount, {
+        renderers: makeRenderers(),
+        onOpenSource: openLinkedSource,
+        onSeal: onSeal,
+      });
+      // The derivation's A−/A+ text-size control pins itself to its own
+      // top-right corner. In a full-height rail that read as board chrome; over
+      // a short dock whose card is left-aligned it reads as an orphan floating
+      // in the margin. The dock already has a bar for chrome — move it there.
+      // Handlers are closures over the buttons, so re-parenting is safe.
+      try {
+        var bar = document.querySelector('#cr-work-dock .lws-dock-bar');
+        var az = dv.el && dv.el.root && dv.el.root.querySelector('.lws-dv-az');
+        if (bar && az) bar.insertBefore(az, bar.querySelector('.lws-dock-toggle'));
+      } catch (e) { console.error('[LWS_CHAT] text-size relocate failed', e); }
+
+      var widgetHost = buildOverlayHost() || (dv.el && dv.el.root) || mount;
       if (window.LWS.SourceDock) {
         try { dock = new window.LWS.SourceDock(widgetHost, { onAskRegion: askAboutRegion }); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
       }
@@ -478,7 +601,7 @@
       // arrived AFTER the hydrate and renders on top of the rebuilt board.
       if (pendingLedger !== undefined) { var l = pendingLedger; pendingLedger = undefined; doHydrate(l); }
       if (pending) { var p = pending; pending = null; render(p); }
-      console.log('[LWS_CHAT] mounted (derivation, mode=' + MODE + ')');
+      console.log('[LWS_CHAT] mounted (inline work dock, mode=' + MODE + ')');
     });
   }
 

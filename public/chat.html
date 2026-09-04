@@ -20,15 +20,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="MATHMATIX" />
   <title>M∆THM∆TIΧ AI Chat</title>
-  <!-- Feature flags. The visual math board (right-column workspace, whiteboard,
-       graph/tiles/calc tools) is hidden until it's polished; students keep chat
-       with the tutor's work mirrored inline as cards. To bring the board back,
-       set boardPanel: true (or delete this block). -->
+  <!-- Feature flags. The tutor's work is INLINE IN CHAT: the problem in focus
+       docks above the composer (#cr-work-dock) and finished problems seal into
+       the transcript. The right-column workspace (legacy whiteboard,
+       graph/tiles/calc tools) is the flag-off fallback only. -->
   <script src="/api/features.js"></script>
   <script>
     // livingWorkspace: 'live' — the Living Workspace replaces the legacy tabbed
-    // board. boardPanel stays true so #cr-workspace (the mount slot) is visible;
-    // the M-C swap hides the legacy tools *inside* it and mounts the new surface.
+    // board, and renders INLINE IN THE CHAT COLUMN (#cr-work-dock + sealed cards
+    // in the transcript). boardPanel only gates the legacy rail now, which
+    // html.mm-work-inline drops from the stage entirely while this is on.
     // Kill switch: set the `livingWorkspace` (or LIVING_WORKSPACE) env var on
     // Render to 'off' — /api/features.js (loaded above) overrides this default
     // from the dashboard, no code change needed. Editing here still works too.
@@ -49,6 +50,16 @@
     // returns untouched.
     if (window.MM_FEATURES.livingWorkspace === 'live') {
       document.documentElement.classList.add('mm-lws-live');
+    }
+
+    // The work is inline in the chat column for EVERY on-mode (dev/beta/live),
+    // so the right rail leaves the stage grid and chat takes its width back.
+    // Stamped synchronously, before first paint, for the same reason
+    // mm-lws-live is: doing it in JS after the modules load meant students saw
+    // a three-column stage reflow to two under them. The 'off' kill switch
+    // does not add the class, so the legacy three-column board returns intact.
+    if (['dev', 'beta', 'live'].indexOf(window.MM_FEATURES.livingWorkspace) !== -1) {
+      document.documentElement.classList.add('mm-work-inline');
     }
 
     // Visual-board tool scripts (fabric + whiteboard/graph/calc) are ~680KB and
@@ -109,7 +120,7 @@
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
   <link rel="stylesheet" href="/css/design-system.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
-  <link rel="stylesheet" href="/css/chat-redesign.css?v=20260725h" />
+  <link rel="stylesheet" href="/css/chat-redesign.css?v=20260904a" />
   <!-- Gamification surfacing: combo meter + identity chip -->
   <link rel="stylesheet" href="/css/mm-calculator.css?v=20260801a" />
   <link rel="stylesheet" href="/css/gamification-surfacing.css?v=20260731b" />
@@ -125,13 +136,13 @@
   <link rel="stylesheet" href="/css/workspace.css?v=20260817a" />
   <!-- Enriched right-rail player card (stats band + expand-up progress panel).
        Loads AFTER workspace.css/avatar-fullbody.css so .psc-* rules win. -->
-  <link rel="stylesheet" href="/css/player-stats-card.css?v=20260726a" />
+  <link rel="stylesheet" href="/css/player-stats-card.css?v=20260904a" />
   <link rel="stylesheet" href="/css/challenge-card.css?v=20260725f" />
   <link rel="stylesheet" href="/css/floating-review.css?v=20260807" />
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
   <link rel="stylesheet" href="/css/adjustable-panels.css?v=20260721" />
   <!-- Voice mode (layout mode of the chat stage) -->
-  <link rel="stylesheet" href="/css/voice-mode.css?v=4" />
+  <link rel="stylesheet" href="/css/voice-mode.css?v=20260904a" />
   <!-- Fresh styling for rendered math (equation cards) -->
   <link rel="stylesheet" href="/css/math-style.css" />
   <!-- DNS prefetch & preconnect for CDN domains -->
@@ -156,9 +167,10 @@
   <script defer src="/js/mathGraph3d.js?v=20260731"></script>
   <!-- Living Workspace (M-B preview). Self-gating: does nothing unless the
        LivingWorkspace flag is dev|beta|live (?livingWorkspace=dev). When on,
-       it lazy-loads the workspace and mirrors the tutor's board output onto
-       the new surface beside the old board. Default OFF → zero impact. -->
-  <script defer src="/js/living-workspace/chat-workspace.js?v=20260823a"></script>
+       it lazy-loads the workspace, mounts the derivation into #cr-work-dock,
+       and seals each finished problem into the transcript.
+       Default OFF → zero impact. -->
+  <script defer src="/js/living-workspace/chat-workspace.js?v=20260904a"></script>
   <!-- Final safety net: strips any inline visual tag no renderer handled -->
   <script defer src="/js/stripVisualTags.js?v=20260731"></script>
   <!-- Non-core libs (lazy-loaded after first interaction) -->
@@ -536,9 +548,13 @@
         </div>
       </div>
 
-      <!-- Tutor hero panel — portrait + backdrop swap per tutor -->
-      <aside class="cr-tutor-hero" aria-hidden="true">
-        <div class="cr-tutor-backdrop"></div>
+      <!-- Tutor hero panel — portrait + backdrop swap per tutor.
+           NOT aria-hidden: it holds focusable controls (the voice caption
+           actions, and the Tutor / My Progress switcher pinned at its foot).
+           Focusable content inside aria-hidden is a WCAG failure — the
+           decorative layers carry aria-hidden individually instead. -->
+      <aside class="cr-tutor-hero">
+        <div class="cr-tutor-backdrop" aria-hidden="true"></div>
         <!-- Voice-reactive glow: pulses in sync with the tutor's TTS via
              --voice-amp (written by chat-voice-meter.js). Sits above the
              backdrop, behind the portrait. -->
@@ -612,6 +628,17 @@
           <span id="mm-vc-announcer" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);" aria-live="polite"></span>
         </div>
       </aside>
+
+      <!-- Player card — full-body character + name. playerStatsCard.js turns it
+           into the Tutor / My Progress switcher and overlays #psc-profile on the
+           column above it. It used to sit at the foot of the right rail; the
+           rail is gone (the work is inline in chat now), so it moves to the foot
+           of THIS column — a sibling of the tutor hero, never inside it, so the
+           hero's own box is untouched. -->
+      <div class="cr-player-card" id="cr-player-card">
+        <div class="cr-player-avatar" id="sidebar-avatar-panel"></div>
+        <div class="cr-player-name" id="cr-player-name"></div>
+      </div>
       </div><!-- /.cr-hero-col -->
 
     <div id="chat-container" class="dashboard-panel full-width">
@@ -711,6 +738,18 @@
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
         <span class="thinking-indicator-text">Your tutor is thinking...</span>
       </div>
+
+      <!-- Work dock — the Living Workspace, inline in the chat column.
+           Holds the PROBLEM IN FOCUS, docked directly above the composer at
+           full chat width; it grows as the turn's steps arrive and collapses
+           to nothing when there is no work (see .lws-dv-root.is-empty in
+           living-workspace.css), so it costs no space when idle. Finished
+           problems leave here and seal into the transcript as scrollback —
+           the conversation is the archive, which is why there is no
+           thumbnail rail. Mounted by js/living-workspace/chat-workspace.js;
+           stays empty when the livingWorkspace flag is off. -->
+      <div id="cr-work-dock" class="cr-work-dock" aria-label="Our work"></div>
+
      <div id="input-container">
     <!-- Hidden button triggers for sidebar -->
     <button id="toggle-calculator-btn" style="display: none;" aria-label="Toggle calculator"></button>
@@ -1235,7 +1274,10 @@
 </div>
 
     </div>
-      <!-- Math workspace (right slot) — driven by workspace.js -->
+      <!-- Math workspace (right slot) — the LEGACY tabbed board, driven by
+           workspace.js. This is the livingWorkspace:'off' fallback only:
+           html.mm-work-inline removes it from the stage entirely, because the
+           work renders in the chat column instead (see #cr-work-dock). -->
       <aside class="cr-workspace" id="cr-workspace" aria-label="Math workspace">
         <button class="cr-ws-close" type="button" aria-label="Close workspace">
           <i class="fas fa-times" aria-hidden="true"></i>
@@ -1257,13 +1299,6 @@
           </button>
         </div>
         <div class="cr-ws-body" id="cr-ws-body"></div>
-        <!-- Player card — full-body character + name. Pinned to the BOTTOM of
-             the right rail so the work board sits up top; kept visible even when
-             the Living Workspace swaps in (see chat-workspace.js + workspace.css). -->
-        <div class="cr-player-card" id="cr-player-card">
-          <div class="cr-player-avatar" id="sidebar-avatar-panel"></div>
-          <div class="cr-player-name" id="cr-player-name"></div>
-        </div>
       </aside>
     </div><!-- /.cr-stage -->
 
@@ -2496,7 +2531,7 @@
   <script src="/dist/js/chat-js8.85ca98e2.js"></script>
 <!-- Player stats card: window-global, loaded before script.js which calls
      window.PlayerStatsCard.init(currentUser) once the user doc is fetched. -->
-<script defer src="/js/modules/playerStatsCard.js?v=20260724b"></script>
+<script defer src="/js/modules/playerStatsCard.js?v=20260904a"></script>
 <script defer src="/js/modules/studentSupports.js"></script>
 <script>
   // Mount lazily when Settings is opened — the panel is behind a modal, so
@@ -2514,7 +2549,7 @@
 </script>
 <script src="/js/challengeCard.js?v=20260804a"></script>
 <script defer src="/js/floating-review.js?v=20260807"></script>
-<script src="/js/script.js?v=20260823a" type="module"></script>
+<script src="/js/script.js?v=20260904a" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.e24c9da4.js"></script>
   <!-- Bottom tab bar (phones only; MM_FEATURES.bottomNav) -->

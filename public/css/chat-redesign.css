@@ -236,6 +236,69 @@ html.mm-board-hidden .cr-ws-fab,
 html.mm-board-hidden .cr-ws-backdrop,
 html.mm-board-hidden #mathmatix-whiteboard-panel { display: none !important; }
 
+/* ── The work is inline in chat (html.mm-work-inline) ──────────────────────
+   The tutor's work no longer lives in a 320px side rail: the problem in focus
+   docks above the composer and finished problems seal into the transcript.
+   So the rail leaves the grid and the chat column takes its width back — the
+   whole point of the move, since a derivation is a document column and its own
+   card layout wants 620px, not 280px of usable rail.
+
+   Same shape as the mm-board-hidden rule above, deliberately: both mean "no
+   third column". They are independent flags, so both selectors stay. */
+html.mm-work-inline .cr-stage {
+  grid-template-columns: var(--cr-hero-w) minmax(0, 1fr);
+}
+/* The responsive stage widths below are plain `.cr-stage` rules, which this
+   flag's selector outranks — so without restating them here the flag would
+   pin every viewport to the desktop hero width. Same shape as the desktop
+   rule above, one per breakpoint the base stylesheet defines. */
+@media (max-width: 1200px) {
+  html.mm-work-inline .cr-stage { grid-template-columns: 260px minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  html.mm-work-inline .cr-stage { grid-template-columns: 1fr; }
+}
+html.mm-work-inline .cr-workspace,
+html.mm-work-inline .cr-ws-fab,
+html.mm-work-inline .cr-ws-backdrop,
+html.mm-work-inline #mathmatix-whiteboard-panel { display: none !important; }
+
+/* The hero COLUMN is now the positioned host for the Tutor / My Progress
+   switcher and the #psc-profile overlay (both moved off the retired rail).
+   Only the column is touched — the tutor hero's own box is unchanged, and the
+   switcher is its sibling rather than an overlay cropping the portrait. The
+   column reserves the switcher's height at its foot; #psc-profile insets by
+   the same amount (player-stats-card.css), exactly as it did in the rail. */
+.cr-hero-col { position: relative; }
+/* IN FLOW, not pinned. player-stats-card.css absolutely positions the switcher
+   against the rail it used to live in; here that would park it ON the tutor
+   portrait's feet. As its own fixed-height row at the column's foot it covers
+   nothing — the hero simply flexes around it, the same way it already flexes
+   around the My Courses card. #psc-profile still insets by exactly this height
+   (inset: 0 0 var(--cr-player-card-h) 0), so the overlay's bottom edge meets
+   the switcher's top edge as it did in the rail. */
+.cr-hero-col > #cr-player-card.psc-toggle {
+  position: static;
+  flex: 0 0 var(--cr-player-card-h);
+  border-radius: 12px;
+}
+
+@media (max-width: 900px) {
+  /* Phones: no switcher, no profile overlay.
+     Two reasons, and either alone is enough. (1) The phone stage collapses
+     .cr-hero-col to `display: contents`, which cannot be a containing block —
+     position:relative on it does nothing, so #psc-profile would escape to the
+     nearest positioned ancestor and inset 0/0/50px/0 against the wrapper. That
+     is the exact failure workspace.css documents from the rail era: a panel
+     stretched across the whole viewport. (2) It has nothing to replace: the
+     switcher used to live inside .cr-workspace, which is position:fixed and
+     off-screen below 1200px, so on a phone it was only ever reachable by
+     opening the board drawer. Progress on a phone is the bottom nav's
+     📈 tab (bottom-nav.js → #cr-progress-btn), which is untouched. */
+  html.mm-work-inline .cr-hero-col > #cr-player-card,
+  html.mm-work-inline #psc-profile { display: none !important; }
+}
+
 @media (max-width: 1200px) {
   /* Workspace leaves grid flow here (becomes a drawer — see workspace.css). */
   .cr-stage { grid-template-columns: 260px minmax(0, 1fr); }

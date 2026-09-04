@@ -320,6 +320,15 @@
     // Called with the sourceRef when the student clicks the problem header's
     // "from my worksheet" chip — the integration opens the docked source.
     this.onOpenSource = typeof opts.onOpenSource === 'function' ? opts.onOpenSource : null;
+    // Chat-inline mode (the work dock). When set, a finished problem is handed
+    // to the host INSTEAD of being parked on the thumbnail rail: the chat
+    // transcript is the archive, so scrollback IS the rail. Leaving it unset
+    // keeps the rail behaviour the flag-off / standalone harnesses rely on.
+    this.onSeal = typeof opts.onSeal === 'function' ? opts.onSeal : null;
+    // Block renderers belonging to cards already sealed into the transcript.
+    // They outlive the live derivation, so they are disposed only on a
+    // session-level reset (resetAll) — never by _wipeCurrent.
+    this._sealedBlocks = [];
     this._blocks = [];        // live block renderers (for destroy on clear)
     this._problemTex = null;
     this._problemSource = null;   // {uploadId, region} link of the problem in focus
@@ -433,6 +442,11 @@
     var has = this._problemTex != null || this.el.lines.childNodes.length > 0;
     this.el.empty.style.display = has ? 'none' : '';
     this.el.inner.style.display = has ? '' : 'none';
+    // Chat-inline mode collapses the dock entirely when there is no work: an
+    // empty-state panel permanently parked above the composer is dead space in
+    // the one column the conversation needs. CSS reads this class; the rail
+    // build ignores it (the column is always there to fill).
+    this.el.root.classList.toggle('is-empty', !has);
   };
 
   DerivationView.prototype._destroyBlocks = function () {
@@ -476,6 +490,14 @@
       sourceRef: this._problemSource || null,
     });
     while (this._archive.length > MAX_ARCHIVE) this._archive.shift();
+    if (this.onSeal) {
+      // The host (chat) renders the finished card into the transcript. The
+      // entry stays in _archive so annotateArchive can still zip ledger meta
+      // onto it, but nothing paints a rail.
+      var sealed = this._archive[this._archive.length - 1];
+      try { this.onSeal(sealed); } catch (e) { console.error('[LWS] seal failed', e); }
+      return;
+    }
     this._renderRail();
   };
 
@@ -526,6 +548,10 @@
     var self = this;
     var d = this.doc;
     var rail = this.el.rail;
+    // Seal mode has no rail — the transcript holds the finished work. Callers
+    // (annotateArchive, resetAll) still reach here; keep it inert rather than
+    // making every caller check.
+    if (this.onSeal) { rail.textContent = ''; rail.hidden = true; return; }
     rail.textContent = '';
     rail.hidden = this._archive.length === 0;
     this.el.root.classList.toggle('has-rail', this._archive.length > 0);
@@ -557,34 +583,13 @@
     try { rail.scrollLeft = rail.scrollWidth; } catch (_) { /* not laid out yet */ }
   };
 
-  // Reopen an archived problem in a read-only overlay above the live board, so
-  // looking back never disturbs the work in progress.
-  DerivationView.prototype.openArchived = function (id) {
-    var entry = null;
-    for (var i = 0; i < this._archive.length; i++) {
-      if (this._archive[i].id === id) { entry = this._archive[i]; break; }
-    }
-    if (!entry) return;
-    this.closeArchived();
-
+  // The "how it went" row for a FINISHED problem (spec §4.5): completion +
+  // assistance in the student's own terms, plus the worksheet link when the
+  // problem came from one. Shared by the rail overlay and the chat seal so a
+  // look-back and a sealed card read identically.
+  DerivationView.prototype._buildSummary = function (entry) {
     var self = this;
     var d = this.doc;
-    var ov = d.createElement('div');
-    ov.className = 'lws-dv-ov';
-    ov.setAttribute('role', 'dialog');
-    ov.setAttribute('aria-modal', 'false');
-    ov.setAttribute('aria-label', 'A problem you already finished');
-
-    var bar = d.createElement('div'); bar.className = 'lws-dv-ov-bar';
-    var tag = d.createElement('span'); tag.className = 'lws-dv-ov-tag'; tag.textContent = 'Earlier problem';
-    var back = d.createElement('button');
-    back.type = 'button'; back.className = 'lws-dv-ov-back';
-    back.textContent = 'Back to my work';
-    back.addEventListener('click', function () { self.closeArchived(); });
-    bar.appendChild(tag); bar.appendChild(back);
-
-    // Collapsed-card summary (spec §4.5): how it ended and how much work it
-    // took, in the student's terms, before the full derivation below.
     var stepCount = entry.elements.filter(function (e) {
       var k = classify(e);
       return k && k !== 'problem' && k !== 'operation';
@@ -613,10 +618,17 @@
       });
       sum.appendChild(sumSrc);
     }
+    return sum;
+  };
 
-    var body = d.createElement('div'); body.className = 'lws-dv-ov-body';
-    var inner = d.createElement('div'); inner.className = 'lws-dv-inner';
-    // Same card the live board uses, so a look-back reads identically.
+  // Rebuild a finished problem as a STATIC card from its archived elements.
+  // Data in, DOM out — nothing live is detached, because block renderers
+  // (JSXGraph, canvas graphs) do not survive being pulled out of the document
+  // and put back. `blockSink` collects the renderers so the caller can dispose
+  // them on its own schedule.
+  DerivationView.prototype._buildFinishedCard = function (entry, blockSink) {
+    var self = this;
+    var d = this.doc;
     var card = d.createElement('div'); card.className = 'lws-card' + (entry.solved ? ' is-solved' : '');
     var problem = d.createElement('div'); problem.className = 'lws-card-head';
     var eyebrow = d.createElement('div'); eyebrow.className = 'lws-card-eyebrow';
@@ -628,15 +640,67 @@
     problem.appendChild(eyebrow); problem.appendChild(ptex);
     var lines = d.createElement('div'); lines.className = 'lws-card-body';
     card.appendChild(problem); card.appendChild(lines);
-    inner.appendChild(card);
-    body.appendChild(inner);
 
-    // Rebuild the steps from the archived elements. Blocks get fresh renderers
-    // (tracked separately so closing the overlay disposes them).
-    var ovCtx = { stepNo: 0 };
+    var ctx = { stepNo: 0 };
     groupRows(entry.elements, 0).forEach(function (row) {
-      self._addRow(row, lines, ovCtx, self._overlayBlocks);
+      self._addRow(row, lines, ctx, blockSink);
     });
+    return card;
+  };
+
+  // Seal a finished problem into the chat transcript (chat-inline mode). The
+  // card leaves the dock and becomes part of the conversation's scrollback —
+  // which is why this mode needs no thumbnail rail. Returns the node so the
+  // host can place it (append for a live seal, insert for a hydration replay).
+  DerivationView.prototype.buildSealedCard = function (entry) {
+    var d = this.doc;
+    // Own .lws-root so the --lws-* tokens resolve: the transcript is outside
+    // the board's subtree, and every card colour is defined ON .lws-root.
+    var wrap = d.createElement('div');
+    wrap.className = 'lws-root lws-sealed';
+    wrap.setAttribute('role', 'group');
+    wrap.setAttribute('aria-label', 'Finished problem');
+    var inner = d.createElement('div'); inner.className = 'lws-dv-inner';
+    inner.appendChild(this._buildSummary(entry));
+    inner.appendChild(this._buildFinishedCard(entry, this._sealedBlocks));
+    wrap.appendChild(inner);
+    return wrap;
+  };
+
+  // Reopen an archived problem in a read-only overlay above the live board, so
+  // looking back never disturbs the work in progress.
+  DerivationView.prototype.openArchived = function (id) {
+    var entry = null;
+    for (var i = 0; i < this._archive.length; i++) {
+      if (this._archive[i].id === id) { entry = this._archive[i]; break; }
+    }
+    if (!entry) return;
+    this.closeArchived();
+
+    var self = this;
+    var d = this.doc;
+    var ov = d.createElement('div');
+    ov.className = 'lws-dv-ov';
+    ov.setAttribute('role', 'dialog');
+    ov.setAttribute('aria-modal', 'false');
+    ov.setAttribute('aria-label', 'A problem you already finished');
+
+    var bar = d.createElement('div'); bar.className = 'lws-dv-ov-bar';
+    var tag = d.createElement('span'); tag.className = 'lws-dv-ov-tag'; tag.textContent = 'Earlier problem';
+    var back = d.createElement('button');
+    back.type = 'button'; back.className = 'lws-dv-ov-back';
+    back.textContent = 'Back to my work';
+    back.addEventListener('click', function () { self.closeArchived(); });
+    bar.appendChild(tag); bar.appendChild(back);
+
+    var sum = this._buildSummary(entry);
+
+    var body = d.createElement('div'); body.className = 'lws-dv-ov-body';
+    var inner = d.createElement('div'); inner.className = 'lws-dv-inner';
+    // Same card the live board uses, so a look-back reads identically. Blocks
+    // get fresh renderers, tracked so closing the overlay disposes them.
+    inner.appendChild(this._buildFinishedCard(entry, this._overlayBlocks));
+    body.appendChild(inner);
 
     ov.appendChild(bar); ov.appendChild(sum); ov.appendChild(body);
     this.el.root.appendChild(ov);
@@ -676,6 +740,10 @@
     this.closeArchived();
     this._archive = [];
     this._renderRail();
+    // Cards sealed into the transcript are the host's DOM to remove (it clears
+    // the message list); their renderers are ours to dispose.
+    this._sealedBlocks.forEach(function (b) { try { b && b.destroy && b.destroy(); } catch (_) {} });
+    this._sealedBlocks = [];
     this._wipeCurrent();
     this.setCaption('');
   };

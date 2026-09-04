@@ -17,14 +17,12 @@
   flex-direction: column;
   align-self: stretch;
   /* Positioned so the rail is the containing block for its own absolute
-     children — #lws-chat-mount (inset:0 above the card) and #cr-player-card
-     (pinned bottom), both below. Without it those two escaped to the nearest
-     positioned ancestor, which is the whole stage: the Living Workspace board
-     rendered full-page-wide UNDER the tutor cam and the transcript (its empty
-     state centred on the window, not on the board), and the Board / My
-     Progress switcher stretched across the entire viewport bottom. In chat
-     mode the composer hid the damage; voice mode hides the composer, which is
-     where it surfaced. */
+     children. This mattered when the Living Workspace mounted here: without
+     it the board and the Board / My Progress switcher escaped to the nearest
+     positioned ancestor — the whole stage — and rendered full-page-wide under
+     the tutor cam and the transcript. Both have since moved to the chat column
+     and the hero column; kept because the legacy board's own chrome still
+     positions against this box. */
   position: relative;
   margin-bottom: 60px;
   max-height: calc(100vh - 124px);
@@ -34,13 +32,20 @@
   overflow: hidden;
 }
 
-/* ---- Student player card: pinned to the BOTTOM of the rail ----
-   Reordered in chat.html to sit below #cr-ws-body so the work board is up top.
-   A compact avatar keeps the bottom strip small. The Living Workspace swap
-   mounts an absolute overlay (#lws-chat-mount, inset:0) that would otherwise
-   cover the card and its hide-loop would eliminate it; chat-workspace.js now
-   skips the card, and here we inset the board mount above it and pin the card
-   to the bottom, so the workspace never covers or removes the student avatar. */
+/* ---- Student player card ----
+   NO LONGER IN THIS RAIL. The work moved inline into the chat column (2026-09),
+   so #cr-player-card moved with the surface that outlived the rail: it is now a
+   child of .cr-hero-col, beneath the tutor hero (chat.html), and
+   playerStatsCard.js scaffolds the Tutor / My Progress switcher against that
+   column. The rules below still shape the pre-scaffold card wherever it sits;
+   its docking is chat-redesign.css's job now.
+
+   The rules that pinned it against the board overlay are gone with the rail —
+   #lws-chat-mount never mounts inside .cr-workspace any more, so they could
+   only ever mislead.
+
+   player-stats-card.css redefines --cr-player-card-h (50px, the switcher's
+   height) and loads after this file, so that value is the live one. */
 :root { --cr-player-card-h: 152px; }
 
 #cr-player-card.cr-player-card {
@@ -56,26 +61,6 @@
 }
 #cr-player-card .fba-stage { height: 96px; }   /* compact vs the md 168px default */
 #cr-player-card .cr-player-name { font-size: 0.9rem; }
-
-/* Dock the card to the bottom whenever the Living Workspace overlay is
-   mounted. Keyed on the overlay EXISTING (:has(#lws-chat-mount)) rather than
-   on the .lws-swapped class settling, so a rehydration/ordering gap in the
-   class can't leave the avatar floating mid-rail. */
-.cr-workspace:has(#lws-chat-mount) #lws-chat-mount {
-  inset: 0 0 var(--cr-player-card-h) 0 !important;
-}
-.cr-workspace:has(#lws-chat-mount) #cr-player-card {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--cr-player-card-h);
-  z-index: 3;
-  box-sizing: border-box;
-  overflow: hidden;
-  justify-content: center;
-  background: var(--cr-bg-panel);
-}
 
 /* ---- Tab bar ---- */
 .cr-ws-tabs {

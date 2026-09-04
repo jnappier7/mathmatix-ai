@@ -1043,3 +1043,180 @@ html[data-theme="dark"] .lws-root {
 .lws-blank-ok  { border: 1.5px solid #2e9e6b !important; background: rgba(46,158,107,0.12); }
 .lws-blank-bad { border: 1.5px solid #d85a30 !important; background: rgba(216,90,48,0.10); text-decoration: line-through; }
 .lws-blank-open { border-style: solid !important; }
+
+/* ============================================================
+   INLINE IN CHAT — the work dock + sealed cards.
+
+   The board left the 320px right rail (2026-09). Two surfaces replace it,
+   both in the chat column:
+
+     • the WORK DOCK (#cr-work-dock) — the problem in focus, above the
+       composer, at full chat width;
+     • SEALED CARDS (.lws-sealed) — finished problems, in the transcript.
+
+   Everything below overrides the column-shaped assumptions the rail build
+   baked in: .lws-root is height:100% with its own background, and .lws-dv is
+   an absolutely-positioned viewport filling it. Inline, both must size to
+   their content instead.
+   ============================================================ */
+
+/* ── The dock slot (chat.html, between the transcript and the composer) ── */
+.cr-work-dock {
+  flex: 0 0 auto;           /* the transcript flexes; the dock keeps its size */
+  min-height: 0;
+}
+.cr-work-dock:empty { display: none; }
+#lws-chat-mount { display: block; }
+
+/* Collapse the whole dock when there is no work. The derivation view stamps
+   is-empty on its root (DerivationView._refreshEmpty), so an idle session
+   costs zero space above the composer instead of parking an empty-state
+   panel there permanently. */
+.cr-work-dock .lws-dv-root.is-empty { display: none; }
+
+/* ── The derivation, docked ────────────────────────────────────────────── */
+/* It keeps its OWN opaque ground — do not make this transparent. The two theme
+   systems can disagree: design-system.css is dark by default and only goes
+   light on [data-theme="light"], while .lws-root ALSO answers to
+   prefers-color-scheme. So a student on a light-OS machine before
+   theme-toggle.js stamps data-theme has a dark chat panel and a light board
+   palette at the same time. In the rail that was invisible, because the board
+   painted --lws-grid-bg beneath its own ink. Inline, a transparent root puts
+   light ink on a dark panel — which is how "2 steps" first shipped as
+   near-black on near-black. Painting its own ground keeps the surface
+   self-consistent under every combination, and is what makes the dock read as
+   shared paper rather than one more chat card. */
+.cr-work-dock .lws-root {
+  height: auto;
+  overflow: visible;
+  background: var(--lws-grid-bg);
+  border-top: 1px solid var(--cr-border, rgba(15, 26, 36, .12));
+}
+.cr-work-dock .lws-dv {
+  position: static;
+  /* Tall enough to hold a real derivation, capped so the conversation above
+     is never squeezed out. The card scrolls inside; the newest step is kept
+     in view by DerivationView._scrollToEnd. */
+  max-height: min(44vh, 440px);
+  overflow-y: auto;
+  padding: 12px clamp(10px, 3%, 24px) 14px;
+  /* The warm graph-paper substrate stays: it is what makes the dock read as
+     shared paper rather than another chat card. */
+  border-radius: 0;
+}
+/* Full chat width is the reason for the move — don't re-narrow it to the
+   rail's column. The card's own padding does the rest. Left-aligned, not
+   centred: it shares a column with the message bubbles now, and a centred card
+   over a left-aligned conversation reads as a different surface. */
+.cr-work-dock .lws-dv-inner { max-width: 760px; margin: 0; }
+
+/* No rail inline: the transcript IS the archive (see chat-workspace.js
+   onSeal). Belt-and-braces — DerivationView._renderRail is already inert in
+   seal mode — so a stale `has-rail` class can never reserve dead space. */
+.cr-work-dock .lws-dv-rail { display: none !important; }
+.cr-work-dock .lws-dv-root.has-rail .lws-dv { padding-top: 12px; }
+
+/* The text-size control is re-parented into the dock bar (chat-workspace.js),
+   so it stops floating in the card's margin and becomes bar chrome. */
+.cr-work-dock .lws-dock-bar .lws-dv-az {
+  position: static;
+  padding: 1px;
+  background: transparent;
+  border-color: transparent;
+}
+.cr-work-dock .lws-dock-bar .lws-dv-az button { min-height: 22px; padding: 2px 7px; }
+/* Fallback for the (logged) case where the move fails: keep it on the board
+   rather than letting it fall to the rail's coordinates. */
+.cr-work-dock .lws-dv-root > .lws-dv-az { top: 6px; right: 8px; }
+
+/* Voice karaoke captions render under the work, not floating over a tall
+   column — inline there is no spare height to float into. */
+.cr-work-dock .lws-dv-caption { position: static; margin: 0 10px 10px; }
+.cr-work-dock .lws-dv-root:has(.lws-dv-caption:not([hidden])) .lws-dv-inner { padding-bottom: 0; }
+
+/* No workspace drawer to exit inline — the work is already in the chat. */
+.cr-work-dock .lws-chat-exit { display: none !important; }
+
+/* ── Dock header: label + collapse (built by chat-workspace.js) ────────── */
+.lws-dock-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 12px;
+  border-top: 1px solid var(--cr-border, rgba(15, 26, 36, .12));
+  background: var(--cr-bg-2, rgba(127, 127, 127, .06));
+  font: 600 11px/1 Inter, system-ui, sans-serif;
+  letter-spacing: .04em; text-transform: uppercase;
+  color: var(--cr-text-dim, #5b6876);
+}
+.lws-dock-bar[hidden] { display: none; }
+/* No work, no chrome: the bar goes with the dock it labels. */
+.cr-work-dock:has(.lws-dv-root.is-empty) .lws-dock-bar { display: none; }
+.lws-dock-bar-t { flex: 1 1 auto; min-width: 0; }
+.lws-dock-toggle {
+  appearance: none; -webkit-appearance: none;
+  border: none; background: transparent; cursor: pointer;
+  color: inherit; font: inherit; letter-spacing: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 8px; border-radius: 8px; min-height: 26px;
+}
+.lws-dock-toggle:hover { background: var(--cr-pill-bg, rgba(108, 92, 231, .1)); color: var(--cr-text, inherit); }
+.lws-dock-toggle:focus-visible { outline: 2px solid var(--cr-accent, #6c5ce7); outline-offset: 2px; }
+.cr-work-dock.is-collapsed #lws-chat-mount { display: none; }
+
+/* ── Sealed cards: finished work, living in the transcript ─────────────── */
+/* The wrapper is only a container — the card and the summary each paint their
+   own ground (see the dock note above on why nothing here may inherit the
+   chat panel's background). */
+.lws-sealed {
+  height: auto;
+  overflow: visible;
+  background: transparent;
+  margin: 14px 0;
+  padding: 0;
+}
+.lws-sealed .lws-dv-inner { max-width: 760px; margin: 0; }
+/* The summary row reads as a caption above the card here, not as an overlay
+   bar inside one, so it loses the overlay's tinted panel treatment. */
+.lws-sealed .lws-dv-ov-sum {
+  border-radius: 10px 10px 0 0;
+  margin: 0;
+}
+/* Opaque, from the board's own palette: the tint below is translucent, so
+   without a known base beneath it the summary's ink lands on whatever the chat
+   panel happens to be. */
+.lws-sealed .lws-dv-ov-sum { background-color: var(--lws-card-bg); }
+.lws-sealed .lws-dv-ov-sum.is-solved {
+  background-image: linear-gradient(
+    color-mix(in srgb, #35c98a 10%, transparent),
+    color-mix(in srgb, #35c98a 10%, transparent)
+  );
+}
+/* The step count is the one number telling a student how much work a problem
+   took, so it does not get to fade out. */
+.lws-sealed .lws-dv-ov-sum-steps { opacity: .8; color: var(--lws-card-ink); }
+/* A sealed card is finished work — it never re-animates as fresh, and its
+   head has nothing to stick to inside the scrolling transcript. */
+.lws-sealed .lws-step { animation: none; }
+.lws-sealed .lws-card-head { position: static; }
+
+/* ── Chat-level overlay host (source viewer, notebook) ─────────────────── */
+/* These fill their host, so hosting them in the short dock would open a
+   worksheet page into a ~200px window. They get their own full-height layer
+   over the chat panel instead — carrying .lws-root so the --lws-* tokens
+   (every card colour, the overlays' opaque background) resolve. */
+.lws-chat-overlays {
+  position: absolute; inset: 0; z-index: 40;
+  height: auto;
+  background: transparent;
+  pointer-events: none;
+}
+.lws-chat-overlays > * { pointer-events: auto; }
+/* The "My materials" strip sits clear of the composer and the work dock. */
+.lws-chat-overlays .lws-sd { bottom: auto; top: 10px; left: 10px; }
+
+@media (max-width: 900px) {
+  /* Phones: the conversation is the whole screen, so the dock takes a smaller
+     share of it and the sealed cards lose their side margins. */
+  .cr-work-dock .lws-dv { max-height: min(38vh, 320px); padding: 10px 10px 12px; }
+  .cr-work-dock .lws-dv-inner,
+  .lws-sealed .lws-dv-inner { max-width: none; }
+}
