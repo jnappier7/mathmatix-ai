@@ -116,4 +116,32 @@ process.stdout.write(JSON.stringify({
     view.resetAll();
     return { afterAid, afterSecondAid, afterPose, afterReset: snap() };
   })(),
+  // "N steps" must count WORK. A visual is an aid, an operation is a move —
+  // neither is a step. Both counters (the live foot and the sealed summary)
+  // have to agree, or the same problem reads one length in the dock and
+  // another once it is sealed into the transcript.
+  stepCount: (() => {
+    const foot = () => ({ hidden: !!view.el.foot.hidden, text: (view.el.foot.textContent || '').trim() });
+    // Two aids, no work: there is nothing to count, so there is no foot.
+    view.apply([{ type: 'model', semantic: { model: 'unit-circle', caption: 'The unit circle' } }]);
+    view.apply([{ type: 'geometry', semantic: { diagramType: 'right-triangle', caption: 'Acute angle + hypotenuse' } }]);
+    const aidsOnly = foot();
+    // Then a problem: an operation, two steps, a diagram, and the solution.
+    view.apply([
+      eq('2x + 4 = 20', 'problem'),
+      { type: 'equation', semantic: { latex: 'subtract 4', role: 'operation', op: 'subtract 4 from both sides' } },
+      eq('2x = 16', 'step'),
+      { type: 'graph', semantic: { fn: '2x+4' } },
+      eq('x = 8', 'step'),
+      eq('x = 8', 'solution'),
+    ]);
+    const live = foot();
+    sealed.length = 0;
+    view.clear();
+    const entry = sealed[0];
+    const card = view.buildSealedCard(entry);
+    const sealedSteps = (card.querySelector('.lws-dv-ov-sum-steps') || {}).textContent || '';
+    view.resetAll();
+    return { aidsOnly, live, sealedSteps: sealedSteps.trim() };
+  })(),
 }, null, 2));

@@ -220,6 +220,20 @@ describe('finished problems seal into the transcript', () => {
     // has to be explicit — the same one the rail and caption carry.
     expect(lwsCss).toMatch(/\.lws-card-head\[hidden\] \{ display: none !important; \}/);
   });
+
+  test('"N steps" counts work: not aids, not operations — and both counters agree', () => {
+    // Two diagrams and no work used to read "2 steps" under a card with
+    // nothing worked in it. A visual is an aid, an operation is a move;
+    // neither is a step. And the live foot and the sealed summary must give
+    // the same number, or a problem changes length the moment it is sealed.
+    const c = out.stepCount;
+    expect(c.aidsOnly).toEqual({ hidden: true, text: '' });   // nothing to count → no foot
+    // pose + operation + step + graph + step + solution → the 2 steps + the
+    // solution. Not 4 (graph counted), not 5 (operation counted too).
+    expect(c.live.hidden).toBe(false);
+    expect(c.live.text).toMatch(/^3 steps/);
+    expect(c.sealedSteps).toBe('3 steps');
+  });
 });
 
 describe('short viewports get more of the dock, not less', () => {

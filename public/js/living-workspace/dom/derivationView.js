@@ -606,9 +606,11 @@
   DerivationView.prototype._buildSummary = function (entry) {
     var self = this;
     var d = this.doc;
+    // Same rule as _refreshFoot: operations are moves, blocks are aids —
+    // neither is a step of work.
     var stepCount = entry.elements.filter(function (e) {
       var k = classify(e);
-      return k && k !== 'problem' && k !== 'operation';
+      return k && k !== 'problem' && k !== 'operation' && k !== 'block';
     }).length;
     var sum = d.createElement('div');
     sum.className = 'lws-dv-ov-sum' + (entry.solved ? ' is-solved' : '');
@@ -1049,10 +1051,13 @@
   // archive summary (assistanceSummary), not to work still in progress.
   DerivationView.prototype._refreshFoot = function () {
     var d = this.doc;
-    // Counted the way the archive summary counts (openArchived): a bare
-    // operation is a move, not a step. Otherwise the same work reads as one
-    // step longer live than it does when reopened from the rail.
-    var steps = this.el.lines.querySelectorAll('.lws-step:not(.is-operation)').length;
+    // Counted the way the sealed summary counts (_buildSummary) — the two MUST
+    // agree, or the same work reads one length live and another once sealed.
+    // A bare operation is a move, not a step. A visual (graph / image /
+    // diagram / model) is an AID, not a step either: a unit circle and a
+    // labelled triangle used to read as "2 steps" under a card with no work
+    // in it at all.
+    var steps = this.el.lines.querySelectorAll('.lws-step:not(.is-operation):not(.is-visual)').length;
     var foot = this.el.foot;
     if (!steps) { foot.hidden = true; foot.textContent = ''; return; }
     foot.textContent = '';
