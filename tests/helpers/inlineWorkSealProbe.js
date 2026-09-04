@@ -93,4 +93,27 @@ process.stdout.write(JSON.stringify({
       archive: view._archive.length,
     };
   })(),
+  // The production case from the owner's screenshot: "I'm a visual person,
+  // show me something about angles" → the tutor sends a unit circle, then a
+  // labelled triangle, and never poses a problem. Board content with no
+  // `pose` must still SHOW — before this the card stayed display:none while
+  // the dock reported itself non-empty, so students got the "Our work"
+  // header over an empty strip of graph paper.
+  teachingAid: (() => {
+    const snap = () => ({
+      cardDisplay: view.el.card.style.display,
+      headHidden: !!view.el.problem.hidden,
+      rootIsEmpty: view.el.root.classList.contains('is-empty'),
+      rows: view.el.lines.childNodes.length,
+    });
+    view.apply([{ type: 'model', semantic: { model: 'unit-circle', caption: 'The unit circle' } }]);
+    const afterAid = snap();
+    view.apply([{ type: 'geometry', semantic: { diagramType: 'right-triangle', caption: 'Acute angle + hypotenuse' } }]);
+    const afterSecondAid = snap();
+    // A real problem arriving later reveals the head; the aids stay as rows.
+    view.apply([eq('\\sin(30^\\circ) = x', 'problem'), eq('x = 0.5', 'step')]);
+    const afterPose = snap();
+    view.resetAll();
+    return { afterAid, afterSecondAid, afterPose, afterReset: snap() };
+  })(),
 }, null, 2));

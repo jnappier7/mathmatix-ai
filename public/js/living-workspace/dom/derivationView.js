@@ -439,9 +439,25 @@
   };
 
   DerivationView.prototype._refreshEmpty = function () {
-    var has = this._problemTex != null || this.el.lines.childNodes.length > 0;
+    var hasProblem = this._problemTex != null;
+    var has = hasProblem || this.el.lines.childNodes.length > 0;
     this.el.empty.style.display = has ? 'none' : '';
     this.el.inner.style.display = has ? '' : 'none';
+    // The card is visible whenever there is WORK — not only once a problem has
+    // been posed. _setProblem used to be the single place that ever revealed
+    // it, so board content arriving without a `pose` rendered into a card that
+    // was still display:none. That is not an edge case: a teaching aid is
+    // exactly that shape — a student asks "I'm a visual person, show me
+    // something about angles", the tutor sends a unit circle and a labelled
+    // triangle, and the guard passes them as aids with no problem attached
+    // (see boardGuardDiagram). The rows landed in `lines`, so `has` was true
+    // and the dock declared itself non-empty and painted its "Our work"
+    // header — over nothing at all. Nothing threw; the student just watched
+    // the tutor promise a diagram and deliver a blank strip.
+    this.el.card.style.display = has ? '' : 'none';
+    // With no problem there is no head to show — only the work. Otherwise the
+    // card opens with an empty "Problem" bar above the aid.
+    this.el.problem.hidden = !hasProblem;
     // Chat-inline mode collapses the dock entirely when there is no work: an
     // empty-state panel permanently parked above the composer is dead space in
     // the one column the conversation needs. CSS reads this class; the rail
@@ -529,7 +545,7 @@
     var old = this.el.problem.querySelector('.lws-dv-srcchip');
     if (old) old.parentNode.removeChild(old);
     var eyebrow = this.el.problem.querySelector('.lws-card-eyebrow');
-    if (!this._problemSource || !eyebrow || this.el.card.style.display === 'none') return;
+    if (!this._problemSource || !eyebrow || this.el.card.style.display === 'none' || this.el.problem.hidden) return;
     var self = this;
     var chip = this.doc.createElement('button');
     chip.type = 'button';
@@ -1064,7 +1080,9 @@
     if (!ref || typeof ref !== 'object') return;
     var rows = this.el.lines.children;
     var node = null;
-    if (ref.target === 'problem') node = this.el.card.style.display === 'none' ? null : this.el.problem;
+    if (ref.target === 'problem') {
+      node = (this.el.card.style.display === 'none' || this.el.problem.hidden) ? null : this.el.problem;
+    }
     else if (ref.target === 'solution') {
       var sols = this.el.lines.querySelectorAll('.lws-step.is-solution');
       node = sols.length ? sols[sols.length - 1] : null;

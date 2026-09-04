@@ -225,6 +225,10 @@ html[data-theme="dark"] .lws-root {
    the work scrolls beneath it. top:0 is measured from the scroller's CONTENT
    edge, so .lws-dv's own padding-top does the placing: 20px normally, clear
    of the thumbnail rail (60px) when one is showing. */
+/* `hidden` must beat the authored rules below (a UA display:none loses to any
+   authored display) — the same guard the rail, the caption and the source dock
+   carry. The head is hidden whenever the card holds work but no posed problem. */
+.lws-card-head[hidden] { display: none !important; }
 .lws-card-head {
   position: sticky; top: 0; z-index: 4;
   border-radius: 15px 15px 0 0;
@@ -1110,6 +1114,33 @@ html[data-theme="dark"] .lws-root {
    over a left-aligned conversation reads as a different surface. */
 .cr-work-dock .lws-dv-inner { max-width: 760px; margin: 0; }
 
+/* ── Short viewports get MORE of the dock, not less ────────────────────────
+   A pure vh cap hands the work its least absolute room exactly where room is
+   scarcest: a 1080p screen got the full 440px, a 1366×768 Chromebook 338px, a
+   700px-tall window 264px. But a derivation needs a roughly fixed number of
+   LINES to be readable — four steps is four steps; it does not scale with the
+   window. So below 900px tall the dock claims a larger SHARE of the column
+   instead of a thinner slab of it.
+
+   The third term is the safety rail, and it is why this can be generous: the
+   chat column is calc(100vh - 124px); the composer (~70px), the dock's own
+   bar and padding (~64px), and the tutor's last line of conversation (~100px,
+   two lines tall) need ~236px of it. The cap can never eat into them, so on a
+   genuinely tiny window the dock gives way rather than the compose bar or the
+   last thing the tutor said. Measured: 1366×768 → 400px (was 338); a 720px
+   window → 360px with 102px of transcript left (was 317 / 66). */
+@media (max-height: 900px) {
+  .cr-work-dock .lws-dv { max-height: min(56vh, 400px, calc(100vh - 360px)); }
+}
+
+/* The dock may yield; the composer never may. On desktop #input-container has
+   NO flex rule — the `flex: 0 0 auto` that chat-redesign.css's comment credits
+   it with lives inside mobile-fixes.css's max-width:768px block — so it
+   defaults to flex:0 1 auto and is squeezable. That was harmless while the dock
+   was short; with a taller one it is the difference between a brief
+   conversation and a clipped compose bar. */
+html.mm-work-inline #input-container { flex-shrink: 0; }
+
 /* No rail inline: the transcript IS the archive (see chat-workspace.js
    onSeal). Belt-and-braces — DerivationView._renderRail is already inert in
    seal mode — so a stale `has-rail` class can never reserve dead space. */
@@ -1216,7 +1247,13 @@ html[data-theme="dark"] .lws-root {
 @media (max-width: 900px) {
   /* Phones: the conversation is the whole screen, so the dock takes a smaller
      share of it and the sealed cards lose their side margins. */
-  .cr-work-dock .lws-dv { max-height: min(38vh, 320px); padding: 10px 10px 12px; }
+  /* Phones follow the same rule (a landscape phone is a very short viewport),
+     but from a smaller base: here the chat column is the entire screen and the
+     software keyboard takes half of it the moment the student types. */
+  .cr-work-dock .lws-dv {
+    max-height: min(46vh, 340px, calc(100vh - 300px));
+    padding: 10px 10px 12px;
+  }
   .cr-work-dock .lws-dv-inner,
   .lws-sealed .lws-dv-inner { max-width: none; }
 }
