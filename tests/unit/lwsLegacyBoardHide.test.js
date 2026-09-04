@@ -62,13 +62,32 @@ describe('the CSS pre-hides the legacy board', () => {
 });
 
 describe('the rule targets elements that actually exist', () => {
+  const workspaceAside = () =>
+    html.slice(html.indexOf('id="cr-workspace"'), html.indexOf('/.cr-stage'));
+
   test('#cr-workspace really contains cr-ws-close, cr-ws-tabs and cr-ws-body', () => {
     // If any of these are renamed/moved, the pre-hide silently stops working and
     // the flash returns — so pin them here.
-    const ws = html.slice(html.indexOf('id="cr-workspace"'), html.indexOf('/.cr-stage'));
+    const ws = workspaceAside();
     expect(ws).toMatch(/class="cr-ws-close"/);
     expect(ws).toMatch(/class="cr-ws-tabs"/);
     expect(ws).toMatch(/id="cr-ws-body"/);
-    expect(ws).toMatch(/id="cr-player-card"/);
+  });
+
+  test('the player card has LEFT the rail for the hero column', () => {
+    // The work went inline (html.mm-work-inline removes this rail from the
+    // stage), so the switcher had to move to a column that survives. If it ever
+    // drifts back into #cr-workspace it becomes invisible in the default build —
+    // no error, just a student with no avatar and no My Progress panel.
+    expect(workspaceAside()).not.toMatch(/id="cr-player-card"/);
+
+    const heroCol = html.slice(
+      html.indexOf('class="cr-hero-col"'),
+      html.indexOf('/.cr-hero-col')
+    );
+    expect(heroCol).toMatch(/id="cr-player-card"/);
+    // A sibling of the tutor hero, never inside it: nesting it there would put
+    // the switcher on the portrait and force the hero to grow to make room.
+    expect(heroCol.indexOf('id="cr-player-card"')).toBeGreaterThan(heroCol.indexOf('</aside>'));
   });
 });

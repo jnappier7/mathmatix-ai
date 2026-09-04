@@ -6,6 +6,47 @@
 
 ---
 
+> ## ⚠️ AMENDED 2026-09-04 — the board is INLINE IN CHAT, not a column
+>
+> **Decision 6 ("always two columns · the board is one column, never full-bleed") is
+> superseded, and with it §3.1's layout, §3.9's rail, and P10's chat/voice column
+> modes.** Everything else in this spec stands unchanged — the generation funnel,
+> the anti-cheat gauntlet (§3.6), the element framework, `StudentMove` (§3.4), the
+> per-element Definition of Done (§5.5).
+>
+> **What changed.** The board left the 320px right rail. The work now renders in the
+> chat column itself, in two places:
+>
+> - **The work dock** (`#cr-work-dock`) — the problem in focus, docked directly
+>   above the composer at full chat width, growing in place as steps arrive and
+>   collapsing to nothing when there is no work.
+> - **The transcript** — a finished problem is *sealed* into the message list as
+>   scrollback (`DerivationView.buildSealedCard`, `chat-workspace.js` `onSeal`).
+>
+> **Why.** What actually got built (`dom/derivationView.js`) is a *document* — a
+> problem head with a numbered step spine — not the free 2D canvas of §3.1/§3.2. A
+> document column does not need its own viewport, and 320px is the worst width to
+> give one: the card's own layout caps at 620px, so the rail was clipping the work
+> it existed to show. Inline it reads at full width, in the same reading order as
+> the sentence describing it, on the surface phones already used as the fallback.
+>
+> **What the move deleted rather than ported.** The finished-problem **thumbnail
+> rail** (§3.9 / `_renderRail` / `openArchived`) existed only because a
+> single-viewport panel can show one problem at a time. In the transcript, problem
+> history is scrollback, so the rail is inert in seal mode.
+>
+> **Voice.** Decision 7 ("voice = shared central stage") survives, but as a
+> *proportion* rather than a column reorder: in `body.cr-voice` the work dock takes
+> most of the chat column and the transcript yields.
+>
+> **Kill switch unchanged.** `livingWorkspace=off` restores the legacy tabbed rail
+> exactly. `html.mm-work-inline` (stamped for dev/beta/live) is what removes the
+> rail from the stage.
+>
+> Pinned by `tests/unit/workspace/inlineWorkDock.test.js`.
+
+---
+
 ## 0. North star
 
 > **The board should feel like a real live tutor is sitting next to the student, working problems on shared paper.**
@@ -25,7 +66,7 @@ These are settled. Each is expanded in §3.
 | 3 | **Student drag & control — both kinds** | (a) reposition to organize; (b) **semantic manipulation** — the drag *does* math and becomes a student move in the pipeline. |
 | 4 | **Smart board + allow-and-teach** | Manipulatives carry real math rules; a gesture is deterministically interpreted into a canonical student move. Wrong moves LAND (teach into them); only physics-invalid drops snap back. Never hard-block a math mistake. |
 | 5 | **Mirror + worked-examples pedagogy** | Board mirrors the student's own problem + stated steps (the #1 anti-cheat rule). Full worked steps only on a *parallel* teaching problem, never the graded one. |
-| 6 | **Mode-dependent layout (always two columns)** | The board is **always one column of a two-column layout — never full-bleed**; modes only flip which column is dominant. Chat mode → board is the sidebar column, chat primary. Voice mode → board is the wide column, transcript demotes to the rail. Same board, emphasis swaps. |
+| 6 | ~~**Mode-dependent layout (always two columns)**~~ **SUPERSEDED 2026-09-04** | ~~The board is always one column of a two-column layout — never full-bleed; modes only flip which column is dominant.~~ The board is **inline in the chat column**: the problem in focus docks above the composer, finished problems seal into the transcript. See the amendment at the top. |
 | 7 | **Voice = shared central stage, synced to speech** | Board illustrates in time with narration; the student's hands stay live (drag while talking). |
 | 8 | **Uploads → the board** | An uploaded image becomes a pinned, positionable board element the tutor annotates in place; chat keeps a tap-to-locate breadcrumb. Files stay chat attachments with per-page "send to board." |
 | 9 | **Persistence = semantic snapshot + adaptive resume** | Persist elements/positions/progress (not pixels), keyed to the conversation. On return the tutor re-hydrates AND re-frames. |

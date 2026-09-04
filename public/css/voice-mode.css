@@ -82,6 +82,29 @@ body.cr-voice .cr-voice-toggle {
     border-radius: 0;
     order: 2;
   }
+
+  /* Work inline → there is no third column to promote. The board and the
+     transcript are the SAME column now, so "board centre stage" stops being a
+     reorder and becomes a proportion: the chat column takes the floor beside
+     the cam, and inside it the work dock grows while the transcript yields
+     (see the dock rule below). The karaoke captions ride with the work,
+     because the caption strip lives inside the derivation view. */
+  html.mm-work-inline body.cr-voice #chat-container {
+    box-shadow: none;
+    border-radius: var(--cr-radius-lg, 16px);
+    order: 2;
+  }
+  html.mm-work-inline body.cr-voice #chat-messages-container { font-size: inherit; }
+}
+
+/* ---- Voice: the work takes the stage inside the chat column ----
+   Decision 7 of the Living Workspace spec ("voice = shared central stage")
+   survives the move off the rail: in a call the work is what the student is
+   looking at while the tutor talks, so the dock claims most of the column and
+   the transcript keeps what's left. Applies at every width — on a phone this
+   is the whole difference between voice and chat mode. */
+html.mm-work-inline body.cr-voice .cr-work-dock .lws-dv {
+  max-height: min(68vh, 720px);
 }
 
 /* ---- Voice presence: the tutor hero reads as "live" ----

@@ -73,7 +73,10 @@
   var elProfile = null;
   function scaffold(host) {
     if (elProfile && document.body.contains(elProfile)) return elProfile;
-    var region = host.closest('#cr-workspace') || host.parentNode || host;
+    // The host column: the retired right rail (#cr-workspace, flag-off) or the
+    // hero column that replaced it. Both are position:relative, and the overlay
+    // insets by the switcher's height, so the panel fills the column above it.
+    var region = host.closest('#cr-workspace, .cr-hero-col') || host.parentNode || host;
     if (getComputedStyle(region).position === 'static') region.style.position = 'relative';
 
     // The profile overlay (fills the rail above the switcher, hidden by default).
@@ -99,7 +102,12 @@
       host.classList.add('psc-toggle');
       host.classList.remove('psc-card', 'cr-player-card');   // shed old centered-column styling
       host.textContent = '';
-      var segBoard = h('button', 'psc-seg is-active', '<i class="fas fa-pen"></i><span>Board</span>');
+      // "Board" named the rail's work surface. The work is inline in chat now,
+      // so this segment returns the column to the tutor, and says so.
+      var inlineWork = document.documentElement.classList.contains('mm-work-inline');
+      var segBoard = h('button', 'psc-seg is-active', inlineWork
+        ? '<i class="fas fa-user-graduate"></i><span>Tutor</span>'
+        : '<i class="fas fa-pen"></i><span>Board</span>');
       segBoard.type = 'button'; segBoard.setAttribute('role', 'tab');
       var segMe = h('button', 'psc-seg', '<i class="fas fa-user"></i><span>My Progress</span>');
       segMe.type = 'button'; segMe.setAttribute('role', 'tab');
