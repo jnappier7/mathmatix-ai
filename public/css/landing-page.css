@@ -388,6 +388,14 @@
   max-width: 82%;
 }
 
+/* marked wraps every reply in <p>, and the read-aloud button is appended after
+   that block — so it was pushed onto a line of its own with the paragraph's
+   bottom margin above it. Barely noticeable on a one-line reply; a visible hole
+   under the four-line arrival greeting. Collapsing the LAST paragraph to inline
+   puts the button back on the final line, where a chat affordance belongs. */
+.lp-chat-bubble p { margin: 0 0 0.55em; }
+.lp-chat-bubble p:last-of-type { display: inline; margin-bottom: 0; }
+
 /* Student bubble — purple gradient (matches app) */
 .lp-chat-student {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1755,13 +1763,13 @@
    ═══════════════════════════════════════════════════════ */
 
 /* ── Tutor Selection Cards ─────────────────────────── */
-.lp-hero-pick-inner {
+.lp-hero-intro {
   max-width: 1100px;
   margin: 0 auto;
   text-align: center;
 }
 
-.lp-hero-pick-inner .lp-hero-sub {
+.lp-hero-intro .lp-hero-sub {
   margin-left: auto;
   margin-right: auto;
 }
@@ -1796,7 +1804,7 @@
   .lp-hero-eyebrow span:nth-child(3) { display: none; }
 }
 
-.lp-hero-pick-inner h1 {
+.lp-hero-intro h1 {
   font-size: 2.5rem;
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -1922,73 +1930,6 @@
 }
 
 /* ── Celebration Overlay ────────────────────────────── */
-.lp-celebration-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  backdrop-filter: blur(8px);
-  animation: celebrationFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.lp-celebration-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  animation: celebrationSpinFlyFold 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  transform-origin: center center;
-}
-
-.lp-celebration-video-wrap {
-  width: 340px;
-  height: 340px;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 0 40px rgba(18, 179, 179, 0.6), 0 0 80px rgba(255, 59, 127, 0.4), 0 20px 60px rgba(0,0,0,0.5);
-  border: 4px solid #12B3B3;
-  background: white;
-  animation: celebrationGlow 2s ease-in-out infinite;
-}
-
-.lp-celebration-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 25%;
-}
-
-.lp-celebration-title {
-  font-size: 3.5rem;
-  font-weight: 900;
-  margin: 0;
-  background: linear-gradient(135deg, #12B3B3 0%, #FF3B7F 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: celebrationTitlePulse 1.5s ease-in-out infinite;
-}
-
-.lp-celebration-subtitle {
-  font-size: 1.3rem;
-  margin: 6px 0 0;
-  color: #fff;
-  opacity: 0.95;
-  font-weight: 600;
-}
-
-.lp-celebration-overlay.fade-out {
-  animation: celebrationFadeOutAnim 0.4s forwards;
-}
-
-@keyframes celebrationFadeOutAnim {
-  to { opacity: 0; }
-}
-
-/* ── Trial Chat UI ─────────────────────────────────── */
 .lp-trial-chat {
   max-width: 640px;
   margin: 0 auto;
@@ -2012,21 +1953,6 @@
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #eef1f4;
   background: #fafcfc;
-}
-
-.lp-trial-back {
-  background: none;
-  border: none;
-  font-size: 1rem;
-  color: var(--clr-text-dim);
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: background 0.2s;
-}
-
-.lp-trial-back:hover {
-  background: rgba(0,0,0,0.06);
 }
 
 .lp-trial-tutor-info {
@@ -2133,7 +2059,8 @@
 }
 
 .lp-trial-input {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;   /* without this the input refuses to shrink and the placeholder truncates */
   border: 1px solid #ddd;
   border-radius: 24px;
   padding: 10px 16px;
@@ -2226,7 +2153,12 @@
   color: var(--clr-primary-teal);
   font-size: 0.7rem;
   cursor: pointer;
-  margin-top: 6px;
+  /* Sits ON the text baseline-box rather than below it. margin-top pushed a
+     26px inline-flex box down inside the line, which inflated the last line of
+     every bubble — invisible on a one-line reply, obvious once the greeting
+     runs to four lines. */
+  vertical-align: middle;
+  margin-left: 6px;
   transition: all 0.2s;
   flex-shrink: 0;
 }
@@ -2361,11 +2293,9 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
   }
-  .lp-hero-pick-inner h1 { font-size: 1.7rem; }
+  .lp-hero-intro h1 { font-size: 1.7rem; }
   .lp-tutor-card-img { width: 72px; height: 72px; }
   .lp-tutor-card { padding: 1rem 0.75rem 0.75rem; }
-  .lp-celebration-video-wrap { width: 260px; height: 260px; }
-  .lp-celebration-title { font-size: 2.5rem; }
   .lp-trial-chat { padding: 0; }
   .lp-trial-chat-inner { border-radius: 0; border-left: 0; border-right: 0; }
   .lp-trial-prompt-btns { flex-direction: column; }
@@ -2382,7 +2312,7 @@
 }
 
 @media (max-width: 375px) {
-  .lp-hero-pick-inner h1 { font-size: 1.4rem; }
+  .lp-hero-intro h1 { font-size: 1.4rem; }
   .lp-tutor-card-img { width: 56px; height: 56px; }
   .lp-tutor-card-catch { font-size: 0.72rem; }
   .lp-tutor-card-spec { display: none; }
@@ -2421,9 +2351,6 @@
   background: #1e293b;
   border-bottom-color: #334155;
 }
-[data-theme="dark"] .lp-trial-back:hover {
-  background: rgba(255,255,255,0.08);
-}
 [data-theme="dark"] .lp-trial-typing {
   background: #1e293b;
   border-color: #334155;
@@ -2453,240 +2380,10 @@
   background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
   border-top-color: #334155;
 }
-[data-theme="dark"] .lp-celebration-overlay {
-  background: rgba(15, 23, 42, 0.95);
-}
-
 /* ══════════════════════════════════════════════════════════════
-   LIVE HERO COMPOSER — activation-first entry (feat/landing-activation)
+   PREVIEW STAGE
    The student's first action is getting real help on their own problem,
    not browsing a tutor gallery or watching a scripted demo.
-   ══════════════════════════════════════════════════════════════ */
-.lp-hero-composer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  max-width: 640px;
-  margin: 1.75rem auto 0;
-  background: var(--clr-bg-light, #fff);
-  border: 2px solid rgba(18, 179, 179, 0.35);
-  border-radius: 999px;
-  padding: 6px 6px 6px 20px;
-  box-shadow: 0 8px 30px rgba(18, 179, 179, 0.12), 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.lp-hero-composer:focus-within {
-  border-color: var(--clr-primary-teal, #12b3b3);
-  box-shadow: 0 10px 36px rgba(18, 179, 179, 0.2), 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-.lp-hero-composer-input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 1.05rem;
-  font-family: inherit;
-  color: var(--clr-text);
-  padding: 12px 4px;
-}
-.lp-hero-composer-input::placeholder { color: var(--clr-text-dim); opacity: 0.85; }
-.lp-hero-composer-send {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: none;
-  border-radius: 999px;
-  /* The accent color marks the page's primary action, and this is it — the
-     composer is the conversion event, not the nav button. It was teal, which
-     ranked it below the smaller pink CTA in the corner. */
-  background: linear-gradient(135deg, #db2b6a 0%, #c92260 100%);
-  color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  font-family: inherit;
-  padding: 12px 22px;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: transform 0.1s, filter 0.2s;
-}
-.lp-hero-composer-send:hover { filter: brightness(1.07); }
-.lp-hero-composer-send:active { transform: scale(0.97); }
-
-/* One-tap example problems */
-.lp-hero-examples {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  max-width: 660px;
-  margin: 1rem auto 0;
-}
-.lp-hero-examples-label { font-size: 0.85rem; color: var(--clr-text-dim); font-weight: 500; }
-.lp-hero-example {
-  background: rgba(18, 179, 179, 0.06);
-  border: 1px solid rgba(18, 179, 179, 0.2);
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 0.82rem;
-  color: var(--clr-primary-teal);
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.2s;
-}
-.lp-hero-example:hover { background: rgba(18, 179, 179, 0.14); border-color: var(--clr-primary-teal); }
-
-/* Tutor choice — subordinate to the action */
-.lp-hero-tutor-strip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 1.75rem auto 0;
-}
-.lp-hero-tutor-label { font-size: 0.85rem; color: var(--clr-text-dim); font-weight: 600; }
-.lp-hero-tutor-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-
-/* The "hear my voice" control is a sibling of the chip, not a child of it.
-   It used to be a <span role="button" tabindex="0"> INSIDE the chip's
-   <button> — a control nested in a control, which no assistive technology can
-   announce or activate separately, so the voice preview was simply unreachable
-   without a mouse. The wrapper restores the visual (a pill with a speaker on
-   its right edge) while keeping two real, separately-focusable buttons. */
-.lp-hero-tutor-chip-wrap {
-  position: relative;
-  display: inline-flex;
-  max-width: 260px;
-}
-.lp-hero-tutor-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  text-align: left;
-  background: var(--clr-bg-light, #fff);
-  border: 1.5px solid rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
-  /* Right padding reserves the speaker button's footprint. */
-  padding: 5px 42px 5px 5px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
-}
-.lp-hero-tutor-chip img {
-  width: 34px; height: 34px; border-radius: 50%;
-  object-fit: cover; object-position: top;
-  border: 2px solid #f0f2f5;
-  flex-shrink: 0;
-}
-.lp-hero-tutor-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.lp-hero-tutor-name { font-size: 0.85rem; font-weight: 600; color: var(--clr-text); }
-
-/* Four faces with only names under them made the choice cosmetic — you could
-   not tell what picking one changed. Each line is drawn from that persona's
-   actual definition in utils/tutorConfig.js. */
-.lp-hero-tutor-desc {
-  font-size: 0.7rem;
-  line-height: 1.25;
-  color: var(--clr-text-dim, #5b6876);
-  font-weight: 500;
-}
-.lp-hero-tutor-chip:hover { border-color: rgba(18, 179, 179, 0.4); transform: translateY(-1px); }
-.lp-hero-tutor-chip.is-selected {
-  border-color: var(--clr-primary-teal, #12b3b3);
-  box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.14);
-}
-.lp-hero-tutor-chip.is-selected img { border-color: var(--clr-primary-teal, #12b3b3); }
-.lp-hero-tutor-hear {
-  position: absolute;
-  top: 50%;
-  right: 8px;
-  transform: translateY(-50%);
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 0;
-  cursor: pointer;
-  color: var(--clr-accent-hotpink, #ff3b7f);
-  background: rgba(255, 59, 127, 0.08);
-  font-size: 0.72rem;
-  transition: background 0.2s, transform 0.15s;
-}
-.lp-hero-tutor-hear:hover {
-  background: rgba(255, 59, 127, 0.16);
-  transform: translateY(-50%) scale(1.08);
-}
-/* Both controls need a visible focus ring — the chip's is otherwise swallowed
-   by the pill border, and the speaker sits on top of it. */
-.lp-hero-tutor-chip:focus-visible,
-.lp-hero-tutor-hear:focus-visible {
-  outline: 3px solid var(--clr-primary-teal, #12b3b3);
-  outline-offset: 2px;
-}
-
-/* Demo section pill — deliberately NOT the green "live" dot, so the recorded
-   example reads as an example and never competes with the live hero. */
-.lp-preview-example-pill {
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 11px;
-  color: var(--cr-text-dim, #AEB4C6);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-/* Dark theme */
-[data-theme="dark"] .lp-hero-composer {
-  background: #1e293b;
-  border-color: rgba(18, 179, 179, 0.45);
-}
-[data-theme="dark"] .lp-hero-composer-input { color: #e2e8f0; }
-[data-theme="dark"] .lp-hero-example {
-  background: rgba(18, 179, 179, 0.1);
-  border-color: rgba(18, 179, 179, 0.25);
-}
-[data-theme="dark"] .lp-hero-tutor-chip {
-  background: #1e293b;
-  border-color: #334155;
-}
-[data-theme="dark"] .lp-hero-tutor-name { color: #e2e8f0; }
-[data-theme="dark"] .lp-hero-tutor-desc { color: #94a3b8; }
-
-/* Mobile — stack the composer, let the send button breathe */
-@media (max-width: 600px) {
-  .lp-hero-composer {
-    flex-direction: column;
-    border-radius: 20px;
-    padding: 10px;
-    gap: 10px;
-  }
-  .lp-hero-composer-input { width: 100%; text-align: center; padding: 8px 4px; }
-  .lp-hero-composer-send { width: 100%; justify-content: center; padding: 12px; }
-
-  /* The names used to be hidden here, leaving four unlabelled faces — the
-     tutors' personalities are the point of this picker. Two columns gives
-     each chip room to keep its name. */
-  .lp-hero-tutor-chips {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 0.5rem; width: 100%;
-  }
-  .lp-hero-tutor-chip-wrap { max-width: none; width: 100%; }
-  .lp-hero-tutor-chip { justify-content: flex-start; width: 100%; }
-  .lp-hero-tutor-name {
-    font-size: 0.8rem; overflow: hidden;
-    text-overflow: ellipsis; white-space: nowrap;
-  }
-  /* Two columns is not enough room for the personality line; the name and the
-     voice preview are what have to survive here. */
-  .lp-hero-tutor-desc { display: none; }
-  .lp-hero-tutor-chip { padding: 4px 34px 4px 4px; }
-}
-
-/* ══════════════════════════════════════════════════════════════
-   TRIAL LIVING BOARD — the tutor's earned steps write onto a notebook
-   (feat/trial-living-board). Display only; anti-cheat is server-side.
    ══════════════════════════════════════════════════════════════ */
 .lp-trial-notebook {
   margin: 0 0 10px;
@@ -2809,9 +2506,12 @@
 
 /* Column widths track --cr-hero-w / --cr-side-w (320px) from design-system.css
    so the trial reads at the same proportions as chat.html. */
+/* Two columns, not three. #1569 moved the tutor's work out of the right rail
+   and into the chat column in the real product; the preview follows it, so a
+   visitor's first sight of Mathmatix is the layout they will actually get. */
 .lp-trial-stage {
   display: grid;
-  grid-template-columns: var(--cr-hero-w, 320px) minmax(0, 1fr) 300px;
+  grid-template-columns: var(--cr-hero-w, 320px) minmax(0, 1fr);
   align-items: stretch;
   min-height: 520px;
   text-align: left;
@@ -2878,81 +2578,158 @@
 }
 
 /* ── Right: living workspace ──────────────────────────── */
-.lp-trial-workspace {
-  display: flex; flex-direction: column; min-width: 0;
-  border-left: 1px solid rgba(0, 0, 0, 0.07);
-  background: #f7f9fb;
-}
-
-.lp-trial-ws-tabs {
-  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
-  padding: 0.6rem 0.8rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.lp-trial-ws-tab {
-  display: inline-flex; align-items: center; gap: 6px;
-  border: none; background: rgba(18, 179, 179, 0.12);
-  color: #0c7575; font: inherit; font-size: 0.8rem; font-weight: 700;
-  border-radius: 8px; padding: 4px 10px; cursor: default;
-}
-
-/* Graph / Tiles / Calc are real tools in the product; naming them here shows
-   what a free account opens up without pretending they work in the trial. */
-.lp-trial-ws-more {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 0.7rem; font-weight: 600; color: #7c8794;
-  white-space: nowrap;
-}
-.lp-trial-ws-more i { font-size: 0.65rem; opacity: 0.7; }
-
-.lp-trial-ws-body {
-  flex: 1; min-height: 0; overflow-y: auto;
-  padding: 0.7rem;
-  display: flex; flex-direction: column;
-}
-
-/* In a column of its own the notebook fills the rail instead of being a
-   230px strip wedged above the messages. */
-.lp-trial-workspace .lp-trial-notebook {
-  margin: 0; max-height: none; flex: 1; min-height: 180px;
-}
-
-.lp-trial-ws-empty {
-  margin: 0.75rem 0.25rem 0;
-  font-size: 0.78rem; line-height: 1.45; color: #7c8794;
-}
-
-.lp-trial-player {
-  display: flex; align-items: center; gap: 0.6rem;
-  padding: 0.65rem 0.8rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-.lp-trial-player-meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.lp-trial-player-name { font-size: 0.8rem; font-weight: 700; color: #14213d; }
-
-/* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 1080px) {
-  /* Drop the hero first — the workspace is the thing worth keeping. */
-  .lp-trial-stage { grid-template-columns: minmax(0, 1fr) 280px; }
+  /* The tutor portrait is the first thing to go — the conversation is the
+     product, the portrait is atmosphere. */
+  .lp-trial-stage { grid-template-columns: minmax(0, 1fr); }
   .lp-trial-hero { display: none; }
 }
 
 @media (max-width: 780px) {
-  /* Stack: chat first, board beneath it, same order as the mobile product. */
-  .lp-trial-stage { grid-template-columns: 1fr; min-height: 0; }
-  .lp-trial-workspace {
-    border-left: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.07);
-  }
-  .lp-trial-ws-body { max-height: 260px; }
-  .lp-trial-workspace .lp-trial-notebook { min-height: 140px; }
+  .lp-trial-stage { min-height: 0; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   FRONT PAGE — the product, unpersonalized
+   The stage is the first thing on the page, so everything above it is
+   budgeted against one question: is the tutor visible without scrolling?
+   ══════════════════════════════════════════════════════════════ */
+
+.lp-hero { padding: 2.25rem var(--page-horizontal-padding) 2rem; }
+
+.lp-hero-intro { margin-bottom: 1.5rem; }
+.lp-hero-intro h1 { font-size: 2.15rem; margin-bottom: 0.55rem; }
+.lp-hero-intro .lp-hero-sub {
+  font-size: 1rem;
+  max-width: 42rem;
+  margin-bottom: 0;
+}
+
+/* ── Work dock ─────────────────────────────────────────
+   The tutor's work, in the chat column, above the composer. Hidden outright
+   when there is nothing to show, so it costs no space when idle.
+
+   The opaque ground is load-bearing, not decoration (CLAUDE.md §12): the chat
+   panel and the board palette answer different theme signals before
+   theme-toggle.js stamps data-theme, so a transparent inline surface can put
+   light ink on a dark panel — which shipped exactly once and rendered
+   near-black on near-black. */
+.lp-work-dock {
+  margin: 0 1rem 0.5rem;
+  border: 1px solid #e3e8ec;
+  border-radius: 12px;
+  background: #fbfcfd;
+  overflow: hidden;
+}
+
+.lp-work-dock-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.7rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.lp-work-dock-title {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; font-weight: 700; color: #0c7575;
+}
+.lp-work-dock-title i { font-size: 0.7rem; }
+
+/* Graph / Tiles / Calc are real tools in the product. Naming them shows what a
+   free account opens without pretending they work here. */
+.lp-work-dock-more {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.68rem; font-weight: 600; color: #7c8794;
+  white-space: nowrap;
+}
+.lp-work-dock-more i { font-size: 0.62rem; opacity: 0.7; }
+
+.lp-work-dock .lp-trial-notebook {
+  margin: 0;
+  max-height: 260px;
+  min-height: 0;
+}
+
+/* ── Locked affordances ────────────────────────────────
+   Locked, not absent: the point is that the capability is real. */
+.lp-trial-locked-btn {
+  width: 36px; height: 36px; flex: 0 0 auto;
+  position: relative;
+  border-radius: 50%;
+  border: 1px dashed #d6dbe0;
+  background: #fff;
+  color: #9aa4ad;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.lp-trial-locked-btn:hover,
+.lp-trial-locked-btn:focus-visible {
+  border-color: var(--clr-primary-teal, #12b3b3);
+  color: var(--clr-primary-teal, #12b3b3);
+}
+.lp-locked-pip {
+  position: absolute; right: 1px; bottom: 1px;
+  font-size: 0.5rem; line-height: 1;
+  background: #fff; border-radius: 50%; padding: 1px;
+}
+
+/* An author `display` beats the UA stylesheet's [hidden] rule, so without this
+   the notice renders empty on every page load — which is exactly how it first
+   shipped in Chromium. Same guard on the dock, which has no display today but
+   would inherit the same trap the moment one is added. */
+.lp-locked-notice[hidden],
+.lp-work-dock[hidden] { display: none; }
+
+.lp-locked-notice {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin: 0 1rem 0.5rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(18, 179, 179, 0.35);
+  background: rgba(18, 179, 179, 0.08);
+  border-radius: 10px;
+  font-size: 0.82rem; line-height: 1.4;
+  color: var(--clr-text);
+}
+.lp-locked-notice i { color: #0c7575; font-size: 0.75rem; flex: 0 0 auto; }
+.lp-locked-notice-cta {
+  margin-left: auto; flex: 0 0 auto;
+  font-weight: 700; color: #0c7575;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  /* The composer row carries five controls at 390px. Shrinking the round
+     buttons is what keeps the input itself readable. */
+  .lp-trial-input-area { gap: 6px; padding: 0.6rem 0.7rem; }
+  .lp-trial-math-toggle,
+  .lp-trial-locked-btn { width: 32px; height: 32px; font-size: 0.8rem; }
+  .lp-trial-input { padding: 9px 12px; }
+
+  /* The stage is the page now, so four full-width suggestion buttons pushed
+     the tutor's own greeting off the top of the screen. */
+  .lp-trial-prompt { padding: 5px 11px; font-size: 0.76rem; }
+  .lp-trial-suggestions { padding-bottom: 0.4rem; }
+
+  .lp-hero-intro h1 { font-size: 1.7rem; }
+  .lp-hero-intro .lp-hero-sub { font-size: 0.95rem; }
+  .lp-hero { padding-top: 1.5rem; }
+  .lp-locked-notice { font-size: 0.78rem; }
+  .lp-locked-notice-cta { margin-left: 0; }
 }
 
 /* ── Dark mode ────────────────────────────────────────── */
 [data-theme="dark"] .lp-trial-hero { background: linear-gradient(160deg, #16283a, #101c2c); }
-[data-theme="dark"] .lp-trial-workspace { background: #111c33; border-color: #334155; }
-[data-theme="dark"] .lp-trial-ws-tabs,
-[data-theme="dark"] .lp-trial-player { border-color: #334155; }
-[data-theme="dark"] .lp-trial-player-name { color: #e2e8f0; }
+[data-theme="dark"] .lp-work-dock { background: #111c33; border-color: #334155; }
+[data-theme="dark"] .lp-work-dock-head { border-bottom-color: #334155; }
+[data-theme="dark"] .lp-work-dock-title { color: #5eead4; }
+[data-theme="dark"] .lp-trial-locked-btn { background: #1e293b; border-color: #3f4d61; color: #94a3b8; }
+[data-theme="dark"] .lp-locked-pip { background: #1e293b; }
+[data-theme="dark"] .lp-locked-notice { background: rgba(18, 179, 179, 0.14); border-color: rgba(94, 234, 212, 0.35); color: #e2e8f0; }
+[data-theme="dark"] .lp-locked-notice i,
+[data-theme="dark"] .lp-locked-notice-cta { color: #5eead4; }
 [data-theme="dark"] .lp-trial-hero-name { background: rgba(15, 23, 42, 0.9); color: #e2e8f0; }

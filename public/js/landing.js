@@ -145,27 +145,20 @@
   };
 
   // DOM refs
-  var heroPick     = document.getElementById('lp-hero-pick');
-  var celebration  = document.getElementById('lp-celebration');
   var trialChat    = document.getElementById('lp-trial-chat');
-  var trustBar     = document.getElementById('lp-trust-bar');
 
-  if (!heroPick || !celebration || !trialChat) return; // Guard: parent containers must exist
+  if (!trialChat) return; // Guard: the stage must exist
 
-  var celebrationVideo = document.getElementById('lp-celebration-video');
-  var celebrationTitle = document.getElementById('lp-celebration-title');
-  var celebrationSub   = document.getElementById('lp-celebration-subtitle');
 
   var trialMessages    = document.getElementById('lp-trial-messages');
   var trialNotebook    = document.getElementById('lp-trial-notebook');
   var trialHeroPortrait = document.getElementById('lp-trial-hero-portrait');
   var trialHeroBackdrop = document.getElementById('lp-trial-hero-backdrop');
   var trialHeroName     = document.getElementById('lp-trial-hero-name');
-  var trialWsEmpty      = document.getElementById('lp-trial-ws-empty');
+  var workDock          = document.getElementById('lp-work-dock');
   var trialTyping      = document.getElementById('lp-trial-typing');
   var trialInput       = document.getElementById('lp-trial-input');
   var trialSend        = document.getElementById('lp-trial-send');
-  var trialBack        = document.getElementById('lp-trial-back');
   var trialSuggestions = document.getElementById('lp-trial-suggestions');
   var trialInputArea   = document.getElementById('lp-trial-input-area');
   var trialGate        = document.getElementById('lp-trial-gate');
@@ -184,7 +177,6 @@
 
   // State
   var selectedTutorId = PREVIEW_TUTOR_ID;
-  var pendingFirstMessage = null;     // Problem typed in the hero, auto-sent once the session greets
   var trialXpTotal = 0;               // engagement XP earned this session (server-authoritative)
   var chatHistory = []; // { role: 'user'|'assistant', content: string }
   var clientTurnCount = 0; // Client-side backup gate (defense-in-depth)
@@ -196,91 +188,26 @@
   var isSending = false;
   var trialTtsAudio = null; // Currently playing TTS audio
 
-  /* ── Phase 1: Live hero composer → real trial session ─────── */
+  /* The tutor-celebration overlay lived here — a levelUp video that played
+     between picking a tutor and landing in chat. With one fixed tutor and the
+     chat as the page itself, nothing could reach it: there is no pick, and no
+     transition to cover. The videos remain in /videos/ and the moment belongs
+     to pick-tutor.html now, where choosing a tutor is the reward for signing
+     up and a celebration actually has something to celebrate. */
 
-  // Kicks off the real trial session with the student's own problem as the
-  // first message. Reuses the exact selectTutor → greet → send flow; we just
-  // skip the celebration video so the answer arrives fast, and queue the
-  // typed problem to auto-send once the greeting lands.
-  function startTrialWith(text) {
-    text = (text || '').trim();
-    if (!text) return;
-    pendingFirstMessage = text;
-    selectTutor(selectedTutorId, { skipCelebration: true });
-  }
-
-  var heroComposer = document.getElementById('lp-hero-composer');
-  var heroInput    = document.getElementById('lp-hero-input');
-  if (heroComposer && heroInput) {
-    heroComposer.addEventListener('submit', function (e) {
-      e.preventDefault();
-      startTrialWith(heroInput.value);
-    });
-  }
-
-  var heroExamples = document.querySelectorAll('.lp-hero-example');
-  heroExamples.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      startTrialWith(btn.getAttribute('data-prompt'));
-    });
-  });
-
-  /* ── Phase 2: Celebration ────────────────────────── */
-  function selectTutor(tutorId, opts) {
-    selectedTutorId = tutorId;
-    chatHistory = [];
-    clientTurnCount = 0;
-
-    var meta = TUTOR_META[tutorId];
-    if (!meta) return;
-
-    // Hide the pick/composer UI on every path into the session.
-    heroPick.style.display = 'none';
-    if (trustBar) trustBar.style.display = 'none';
-
-    // Type-first path: the student already gave us a problem — skip the
-    // celebration video and drop them straight into help.
-    if (opts && opts.skipCelebration) {
-      celebration.style.display = 'none';
-      showTrialChat();
-      return;
-    }
-
-    // Set celebration content
-    celebrationTitle.textContent = meta.name.toUpperCase() + '!';
-    celebrationSub.textContent = "Let's do some math together!";
-
-    // Set video source — use the levelUp video for maximum impact
-    celebrationVideo.src = '/videos/' + tutorId + '_levelUp.mp4';
-    celebration.style.display = 'flex';
-    celebration.classList.remove('fade-out');
-
-    // Hide tutor selection
-    heroPick.style.display = 'none';
-    if (trustBar) trustBar.style.display = 'none';
-
-    celebrationVideo.play().catch(function () {
-      // Video autoplay blocked — skip celebration, go to chat
-      showTrialChat();
-    });
-
-    // Dismiss celebration → transition to chat
-    var dismissed = false;
-    function dismissCelebration() {
-      if (dismissed) return;
-      dismissed = true;
-
-      celebration.classList.add('fade-out');
-      setTimeout(function () {
-        celebration.style.display = 'none';
-        showTrialChat();
-      }, 400);
-    }
-
-    celebrationVideo.addEventListener('ended', dismissCelebration, { once: true });
-    celebration.addEventListener('click', dismissCelebration, { once: true });
-    // Safety timeout — don't leave them stuck
-    setTimeout(dismissCelebration, 5000);
+  /* Focusing the composer used to scroll the page. That was invisible while the
+     chat opened below a hero the visitor had already scrolled to — now that the
+     stage IS the page, a plain focus() on arrival scrolled the headline AND the
+     tutor's greeting off the top of a phone screen before either was read.
+     preventScroll keeps the caret without moving the viewport; narrow screens
+     skip the focus entirely so an unrequested keyboard never covers the
+     greeting on load. */
+  function focusComposer() {
+    if (!trialInput) return;
+    if (window.matchMedia && window.matchMedia('(max-width: 780px)').matches) return;
+    // The options object is safely ignored by engines that predate it — an
+    // unsupported member is simply not read, so this needs no guard.
+    trialInput.focus({ preventScroll: true });
   }
 
   /* ── Phase 3: Trial Chat ─────────────────────────── */
@@ -300,10 +227,9 @@
 
     // Reset chat UI
     trialMessages.innerHTML = '';
-    // The board is its own column now, so it stays visible and shows an
-    // empty-state instead of appearing out of nowhere on the first step.
+    // The dock costs no space until the tutor actually writes something.
     if (trialNotebook) { trialNotebook.innerHTML = ''; nbLastPose = null; }
-    if (trialWsEmpty) trialWsEmpty.style.display = '';
+    if (workDock) workDock.hidden = true;
     trialXpTotal = 0; if (trialXpTotalEl) trialXpTotalEl.textContent = '0';
     trialInput.value = '';
     trialSuggestions.style.display = 'none'; // Hide suggestions until greeting loads
@@ -315,8 +241,8 @@
     // Show chat panel
     trialChat.style.display = 'block';
 
-    // Scroll hero into view
-    document.getElementById('lp-hero').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // No scroll: the stage is already the top of the page. This used to jump
+    // the viewport because the chat replaced a hero the visitor had scrolled past.
 
     // Show typing indicator while greeting loads
     trialTyping.style.display = 'flex';
@@ -347,10 +273,9 @@
       trialSuggestions.style.display = '';
       trialSend.disabled = false;
       trialInput.disabled = false;
-      trialInput.focus();
+      focusComposer();
 
       saveTrialState();
-      flushPendingFirstMessage();
     })
     .catch(function () {
       trialTyping.style.display = 'none';
@@ -358,24 +283,12 @@
       trialSuggestions.style.display = '';
       trialSend.disabled = false;
       trialInput.disabled = false;
-      trialInput.focus();
-      flushPendingFirstMessage();
+      focusComposer();
     });
 
     // Persist tutor selection for session carryover
     saveTrialState();
   }
-
-  /* ── Back Button: Return to tutor selection ──────── */
-  if (trialBack) trialBack.addEventListener('click', function () {
-    trialChat.style.display = 'none';
-    heroPick.style.display = '';
-    if (trustBar) trustBar.style.display = '';
-    selectedTutorId = PREVIEW_TUTOR_ID; // never null: the next start reuses it
-    chatHistory = [];
-    clientTurnCount = 0;
-    clearTrialState();
-  });
 
   /* ── Suggested Prompt Buttons ────────────────────── */
   var promptBtns = document.querySelectorAll('.lp-trial-prompt');
@@ -400,14 +313,6 @@
 
   // If the student typed a problem in the hero, send it as their first turn
   // once the greeting has loaded and the input is live.
-  function flushPendingFirstMessage() {
-    if (!pendingFirstMessage) return;
-    var msg = pendingFirstMessage;
-    pendingFirstMessage = null;
-    trialInput.value = msg;
-    sendTrialMessage();
-  }
-
   function sendTrialMessage() {
     if (isSending) return;
 
@@ -732,9 +637,9 @@
   function renderTrialBoard(ops) {
     if (!trialNotebook) return;
     ops.forEach(appendNotebookStep);
-    // The board column is always present; the empty-state steps aside as soon
-    // as there is real work on the page.
-    if (trialNotebook.children.length && trialWsEmpty) trialWsEmpty.style.display = 'none';
+    // Grows in place as the turn's steps arrive; stays collapsed if the turn
+    // produced nothing renderable.
+    if (workDock) workDock.hidden = !trialNotebook.children.length;
     trialNotebook.scrollTop = trialNotebook.scrollHeight;
   }
 
@@ -887,6 +792,80 @@
     // they never chose. The transcript now rides the server session instead
     // (routes/trialChat.js appendTrialTranscript), so the URL has nothing to carry.
   }
+
+  /* ── Locked affordances ──────────────────────────────
+     Photo help and voice are REAL features that need an account, not things
+     this page lacks. Presenting them as locked rather than absent turns a dead
+     end into the reason to sign up.
+
+     Paste and drag-drop are the two that get missed. A page that looks like a
+     real chat invites a student to paste a screenshot of their homework — it is
+     the most natural thing they do — and with no handler the paste silently
+     does nothing, which reads as a broken page at the exact moment they were
+     most engaged. Dropping a file without intercepting dragover is worse: the
+     browser navigates away from the site entirely. */
+  var lockedNotice     = document.getElementById('lp-locked-notice');
+  var lockedNoticeText = document.getElementById('lp-locked-notice-text');
+  var lockedNoticeTimer = null;
+
+  var LOCKED_COPY = {
+    photo: 'Photo help lives in a free account — snap your worksheet and work it through together.',
+    voice: 'Talking it through out loud comes with a free account.'
+  };
+
+  function showLockedNotice(kind) {
+    if (!lockedNotice || !lockedNoticeText) return;
+    lockedNoticeText.textContent = LOCKED_COPY[kind] || LOCKED_COPY.photo;
+    lockedNotice.hidden = false;
+    clearTimeout(lockedNoticeTimer);
+    lockedNoticeTimer = setTimeout(function () { lockedNotice.hidden = true; }, 9000);
+  }
+
+  document.querySelectorAll('.lp-trial-locked-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      showLockedNotice(btn.getAttribute('data-locked'));
+    });
+  });
+
+  if (trialInput) {
+    trialInput.addEventListener('paste', function (e) {
+      var items = (e.clipboardData && e.clipboardData.items) || [];
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].kind === 'file') {
+          e.preventDefault();          // never let an image reach a field that cannot use it
+          showLockedNotice('photo');
+          return;
+        }
+      }
+      // Plain text paste falls through untouched — that is just typing.
+    });
+  }
+
+  var previewStage = document.querySelector('.lp-trial-stage');
+  if (previewStage) {
+    previewStage.addEventListener('dragover', function (e) {
+      var types = (e.dataTransfer && e.dataTransfer.types) || [];
+      if (Array.prototype.indexOf.call(types, 'Files') !== -1) e.preventDefault();
+    });
+    previewStage.addEventListener('drop', function (e) {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        e.preventDefault();
+        showLockedNotice('photo');
+      }
+    });
+  }
+
+  /* ── Arrival ─────────────────────────────────────────
+     The tutor greets on load, before anything is typed. A chat window that
+     opens silent reads as a widget waiting to be poked; a tutor who says hello
+     is the product introducing itself, which is the whole point of the page.
+
+     The greeting costs one LLM call per page load, bots and bounces included.
+     That is deliberate and accounted for: preview_started fires on the first
+     STUDENT volley (routes/trialChat.js), never on the greeting, so the funnel
+     denominator still counts people who engaged rather than people who
+     loaded. */
+  showTrialChat();
 
   /* ── Session Carryover (localStorage) ────────────── */
   var TRIAL_STORAGE_KEY = 'mathmatix_trial_chat';

@@ -79,11 +79,11 @@
   <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <script defer src="/vendor/dompurify/purify.min.js?v=3.3.1"></script>
   <script src="/js/csrf.js"></script>
-  <script src="/js/landing.js?v=4" defer></script>
+  <script src="/js/landing.js?v=5" defer></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
   <!-- Chat design tokens (--cr-*) so the chat preview block can mirror the real product. -->
   <link rel="stylesheet" href="/css/design-system.css" />
-  <link rel="stylesheet" href="/css/landing-page.css?v=4" />
+  <link rel="stylesheet" href="/css/landing-page.css?v=5" />
   <!-- Scroll reveals start at opacity:0 and are switched on by an
        IntersectionObserver in landing.js. Without JS that leaves everything
        below the fold blank, so opt out of the animation entirely. -->
@@ -121,65 +121,23 @@
   </header>
 
   <main class="landing-main" id="lp-main">
-    <!-- ── Hero: Tutor Selection → Trial Chat ──────────── -->
+    <!-- ── The product, unpersonalized ──────────────────────
+         Signing in does not change what this is; it makes it theirs. -->
     <section class="lp-hero" id="lp-hero">
-      <!-- PHASE 1: Pick a tutor -->
-      <div class="lp-hero-pick" id="lp-hero-pick">
-        <div class="lp-hero-pick-inner">
-          <!-- Separators are drawn in CSS so a wrap can't strand a bullet at
-               the end of a line, which it did at phone widths. -->
-          <p class="lp-hero-eyebrow">
-            <span>Grades 3&ndash;Calculus 3</span><span>No signup, no card</span>
-          </p>
-          <h1>A math tutor that actually knows your child.</h1>
-          <p class="lp-hero-sub">It works the problem <em>with</em> your child &mdash; learning how they think, weaving in what they care about, and adapting to their IEP accommodations. <strong>Start below. No signup, no card.</strong></p>
-
-          <!-- LIVE COMPOSER — the hero action. Fires straight into the real /api/trial-chat session. -->
-          <form class="lp-hero-composer" id="lp-hero-composer" autocomplete="off">
-            <input type="text" id="lp-hero-input" class="lp-hero-composer-input"
-              placeholder="Type any math problem…"
-              aria-label="Type your math problem" maxlength="500"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-              data-form-type="other" data-1p-ignore data-lpignore="true" />
-            <button type="submit" class="lp-hero-composer-send" id="lp-hero-send">
-              <span>Get help</span><i class="fas fa-arrow-right"></i>
-            </button>
-          </form>
-
-          <!-- One-tap examples that fire the same live session -->
-          <div class="lp-hero-examples">
-            <span class="lp-hero-examples-label">or try:</span>
-            <button type="button" class="lp-hero-example" data-prompt="Solve 2(x - 3) = 10">Solve 2(x &minus; 3) = 10</button>
-            <button type="button" class="lp-hero-example" data-prompt="How do I add 1/3 + 1/4?">Add 1/3 + 1/4</button>
-            <button type="button" class="lp-hero-example" data-prompt="Find the slope between (2,5) and (6,13)">Find the slope</button>
-            <button type="button" class="lp-hero-example" data-prompt="Factor x^2 + 5x + 6">Factor x&sup2; + 5x + 6</button>
-          </div>
-
-          <!-- The tutor picker used to live here. The anonymous preview now runs
-               on one fixed tutor (Mr. Nappier — PREVIEW_TUTOR_ID in landing.js):
-               asking a stranger to choose between four people they have never
-               met, before they have experienced anything, is a decision with no
-               basis. Choosing a tutor is now the first thing a new account does
-               (pick-tutor.html), where it reads as a reward for signing up and
-               where the "Hear my voice" previews already live. -->
-        </div>
+      <!-- The intro, for the buyer. Kept deliberately short: the product itself
+           is directly below and already running, the way claude.ai shows Claude
+           before you sign in. Signing in does not change WHAT this is — it makes
+           it theirs. The full pitch lives below the fold, where the parent who
+           needs it will scroll and the student who does not can ignore it. -->
+      <div class="lp-hero-intro">
+        <p class="lp-hero-eyebrow">
+          <span>Grades 3&ndash;Calculus 3</span><span>No signup, no card</span>
+        </p>
+        <h1>A math tutor that actually knows your child.</h1>
+        <p class="lp-hero-sub">It works the problem <em>with</em> your child &mdash; learning how they think, weaving in what they care about, and adapting to their IEP accommodations.</p>
       </div>
 
-      <!-- PHASE 2: Tutor celebration overlay (plays video then transitions to chat) -->
-      <div class="lp-celebration-overlay" id="lp-celebration" style="display:none;">
-        <div class="lp-celebration-content">
-          <div class="lp-celebration-video-wrap">
-            <video id="lp-celebration-video" class="lp-celebration-video" muted playsinline><p>Your browser does not support video.</p></video>
-          </div>
-          <div class="lp-celebration-msg">
-            <h1 id="lp-celebration-title" class="lp-celebration-title"></h1>
-            <p id="lp-celebration-subtitle" class="lp-celebration-subtitle"></p>
-          </div>
-        </div>
-      </div>
-
-      <!-- PHASE 3: Trial chat -->
-      <div class="lp-trial-chat" id="lp-trial-chat" style="display:none;">
+      <div class="lp-trial-chat" id="lp-trial-chat">
         <!-- Three-column stage, mirroring .cr-stage in the real product:
              tutor hero | chat | living workspace. The trial is the actual
              tutor, so it should look like the actual tutor. -->
@@ -196,11 +154,18 @@
           <!-- MIDDLE — the conversation. -->
           <div class="lp-trial-main">
           <div class="lp-trial-header">
-            <button class="lp-trial-back" id="lp-trial-back" type="button" title="Pick a different tutor" aria-label="Go back and pick a different tutor"><i class="fas fa-arrow-left" aria-hidden="true"></i></button>
+            <!-- No back button: there is no tutor picker to go back TO, and the
+                 server turn count does not reset, so "start over" would hand
+                 someone a fresh-looking chat with a spent allowance. -->
             <div class="lp-trial-tutor-info">
               <img id="lp-trial-tutor-img" src="" alt="" class="lp-trial-tutor-avatar" />
               <span id="lp-trial-tutor-name"></span>
             </div>
+            <!-- XP earned this session (ephemeral; a conversion hook). Moved out
+                 of the deleted workspace rail's player card. -->
+            <span class="lp-trial-xp" id="lp-trial-xp" title="XP earned this session" aria-label="XP earned this session">
+              <span class="lp-trial-xp-bolt" aria-hidden="true">&#9889;</span><span id="lp-trial-xp-total">0</span> XP
+            </span>
             <a href="/signup.html" class="btn btn-primary btn-sm lp-trial-signup-btn">Sign Up Free</a>
           </div>
           <div class="lp-trial-messages" id="lp-trial-messages"></div>
@@ -219,6 +184,29 @@
               <button type="button" class="lp-trial-prompt" data-prompt="Factor x^2 + 5x + 6">Factor x&sup2; + 5x + 6</button>
             </div>
           </div>
+          <!-- WORK DOCK — the tutor's work, in the chat column.
+               Mirrors #cr-work-dock in the real product (#1569): the board came
+               out of a 320px rail because the card's own layout caps at 620px,
+               so the rail clipped the very work it existed to show, and the
+               student read the tutor's words in one column and the tutor's math
+               in another. Hidden outright when there is no work, so it costs no
+               space when idle — an empty-state panel would just be the rail
+               again, narrower.
+
+               It paints its own opaque ground on purpose (CLAUDE.md §12): an
+               inline workspace surface that is transparent puts board ink
+               straight onto the chat panel, and the two answer different theme
+               signals before theme-toggle.js stamps data-theme. -->
+          <div class="lp-work-dock" id="lp-work-dock" hidden>
+            <div class="lp-work-dock-head">
+              <span class="lp-work-dock-title"><i class="fas fa-pen" aria-hidden="true"></i> Our work</span>
+              <span class="lp-work-dock-more" title="Graphing, algebra tiles and a calculator come with a free account">
+                Graph &middot; Tiles &middot; Calc <i class="fas fa-lock" aria-hidden="true"></i>
+              </span>
+            </div>
+            <div class="lp-trial-notebook" id="lp-trial-notebook" aria-label="Tutoring workspace"></div>
+          </div>
+
           <!-- Math symbol bar -->
           <div class="lp-trial-math-bar" id="lp-trial-math-bar" role="group" aria-label="Math symbols">
             <button class="lp-trial-math-btn" data-insert="^" title="Exponent" type="button" aria-label="Insert exponent">x<sup>n</sup></button>
@@ -236,9 +224,29 @@
             <button class="lp-trial-math-btn" data-insert="∞" title="Infinity" type="button" aria-label="Insert infinity">&infin;</button>
             <button class="lp-trial-math-btn" data-insert="θ" title="Theta" type="button" aria-label="Insert theta">&theta;</button>
           </div>
+          <!-- Locked-affordance notice. Photo help and voice are real features
+               that need an account; a page that LOOKS like the product invites
+               people to try them, and a silent no-op at that moment reads as a
+               broken button rather than a reason to sign up. -->
+          <div class="lp-locked-notice" id="lp-locked-notice" role="status" hidden>
+            <i class="fas fa-lock" aria-hidden="true"></i>
+            <span id="lp-locked-notice-text"></span>
+            <a href="/signup.html" class="lp-locked-notice-cta">Start free</a>
+          </div>
+
           <!-- Input area -->
           <div class="lp-trial-input-area" id="lp-trial-input-area">
             <button class="lp-trial-math-toggle" id="lp-trial-math-toggle" type="button" title="Math symbols" aria-label="Open math symbols" aria-expanded="false" aria-controls="lp-trial-math-bar">&pi;</button>
+            <!-- Locked, not absent. The voice WebSocket 401s for anonymous
+                 visitors (utils/voiceUpgrade.js checks request.user before any
+                 entitlement logic), so this can never open a session — it exists
+                 to say the capability is real and comes with an account. -->
+            <button class="lp-trial-locked-btn" id="lp-trial-mic" type="button" data-locked="voice" title="Talk it through out loud — free with an account" aria-label="Voice tutoring — available with a free account">
+              <i class="fas fa-microphone" aria-hidden="true"></i><i class="fas fa-lock lp-locked-pip" aria-hidden="true"></i>
+            </button>
+            <button class="lp-trial-locked-btn" id="lp-trial-upload" type="button" data-locked="photo" title="Snap a photo of your worksheet — free with an account" aria-label="Photo help — available with a free account">
+              <i class="fas fa-camera" aria-hidden="true"></i><i class="fas fa-lock lp-locked-pip" aria-hidden="true"></i>
+            </button>
             <input type="text" id="lp-trial-input" class="lp-trial-input" placeholder="Ask a math question..." aria-label="Type your math question" maxlength="500" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-1p-ignore data-lpignore="true" />
             <button class="lp-trial-send" id="lp-trial-send" type="button" title="Send" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
           </div>
@@ -260,41 +268,11 @@
           </div>
           </div><!-- /.lp-trial-main -->
 
-          <!-- RIGHT — living workspace. Mirrors .cr-workspace: the board is
-               home base, with the player card pinned to the bottom of the rail.
-               Anti-cheat is server-side; only steps the student has already
-               stated ever arrive here, so this is display only. -->
-          <aside class="lp-trial-workspace" aria-label="Math workspace">
-            <div class="lp-trial-ws-tabs" role="tablist" aria-label="Workspace tools">
-              <button class="lp-trial-ws-tab is-active" type="button" role="tab" aria-selected="true" disabled>
-                <i class="fas fa-pen" aria-hidden="true"></i> Board
-              </button>
-              <span class="lp-trial-ws-more" title="Graphing, algebra tiles and a calculator are available with a free account">
-                Graph &middot; Tiles &middot; Calc
-                <i class="fas fa-lock" aria-hidden="true"></i>
-              </span>
-            </div>
-            <div class="lp-trial-ws-body">
-              <div class="lp-trial-notebook" id="lp-trial-notebook" aria-label="Tutoring workspace"></div>
-              <p class="lp-trial-ws-empty" id="lp-trial-ws-empty">
-                Your work shows up here, step by step, as you and your tutor solve it together.
-              </p>
-            </div>
-            <div class="lp-trial-player">
-              <div class="lp-trial-player-meta">
-                <span class="lp-trial-player-name" id="lp-trial-player-name">You</span>
-                <!-- Engagement XP earned this session (ephemeral; a conversion hook). -->
-                <span class="lp-trial-xp" id="lp-trial-xp" title="XP earned this session" aria-label="XP earned this session">
-                  <span class="lp-trial-xp-bolt" aria-hidden="true">⚡</span><span id="lp-trial-xp-total">0</span> XP
-                </span>
-              </div>
-            </div>
-          </aside>
-
         </div>
       </div>
 
-      <!-- Trust bar (shown in tutor selection phase) -->
+      <!-- Trust bar — always visible now; it used to hide the moment the
+           chat opened, which with the chat always open meant never. -->
       <div class="lp-trust-bar" id="lp-trust-bar">
         <div class="lp-trust-item"><i class="fas fa-universal-access"></i> Follows IEP accommodations</div>
         <div class="lp-trust-item"><i class="fas fa-chalkboard-teacher"></i> Built by a real math teacher</div>

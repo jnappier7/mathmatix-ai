@@ -270,13 +270,17 @@ PERSONALITY: ${tutor.personality}
 
 CULTURAL BACKGROUND: ${tutor.culturalBackground}
 
-Generate a warm, in-character greeting for an anonymous visitor who just landed on the site and picked you as their tutor. This is the FIRST thing they see.
+Generate a warm, in-character greeting for someone who has just opened Mathmatix and has not signed in. The page IS the tutor — you are the first thing on it, before they have typed anything, so this greeting is the product introducing itself.
+
+Cover these three beats, in your own words. Never the same phrasing twice:
+1. Welcome them to Mathmatix.
+2. Say who you are, as ONE OF the tutors here — not the only one. (There are four; they choose theirs when they make an account, so hint that the roster exists without listing it.)
+3. Say you're looking forward to learning how THEY think about math, then invite a problem they are working on.
 
 RULES:
-- 1-3 sentences max. Be warm and natural.
-- Stay fully in character — use your personality, catchphrase style, and cultural voice.
-- Welcome them and ask if they have a math question you can help with. If not, mention they can pick from the suggestions below.
-- Do NOT ask their name or grade. Do NOT say "welcome to Mathmatix." Just be yourself.
+- 2-3 sentences. Warm, natural, and specific to your voice — personality, catchphrase style, cultural voice.
+- Beat 3 is a PROMISE, not an interview. Do NOT ask their name, grade, school, interests, or anything else about them. They are anonymous: anything they told you now would go nowhere, and questions in front of help are friction at the worst possible moment. You learn how they think by doing math WITH them, so get to the math.
+- Never say "trial", "preview", "demo", "free", or anything about limits. You are their tutor, not a sample of one.
 - ALL math references must use LaTeX: \\( x \\) for inline.
 - Do NOT use bold, headers, or markdown formatting.`
       },
@@ -302,11 +306,15 @@ RULES:
   } catch (error) {
     console.error('[Trial Chat] Greeting error:', error.message);
     // Fallback greetings in each tutor's voice
+    // The LLM-failure path. Canned by necessity — but this is the first thing a
+    // visitor sees when it fires, so each one hits the same three beats as the
+    // generated greeting: welcome, one of the tutors, and looking forward to
+    // learning how they think. Never mentions a trial or a limit.
     const fallbacks = {
-      'bob': "Hey there! Math you believe it — you found the right tutor! Got a math question? Fire away, or pick one of those suggestions below!",
-      'maya': "Heyy! ✨ So glad you're here! Got a math question you need help with? If not, no worries — there are some suggestions right there to get us started! 💯",
-      'ms-maria': "¡Hola! Welcome — I'm so glad you stopped by! Do you have a math question I can help you with? If not, there are a few suggestions below to get us started. ¡Vamos!",
-      'mr-nappier': "What's up! Ready to find some patterns? Got a math question for me? If you can't think of one, check out the suggestions below — let's get started!"
+      'bob': "Hey, welcome to Mathmatix! I'm Bob, one of the tutors around here. I'm looking forward to figuring out how you think about math — throw me a problem you're working on.",
+      'maya': "Heyy, welcome to Mathmatix! ✨ I'm Maya, one of the tutors here. I really want to see how your brain works on these — drop me a problem you're stuck on.",
+      'ms-maria': "¡Hola! Welcome to Mathmatix. I'm Ms. Maria, one of the tutors here, and I'd love to learn how you think through a problem. Show me one you're working on — paso por paso.",
+      'mr-nappier': "Hey, welcome to Mathmatix. I'm Mr. Nappier, one of the tutors here. I'm looking forward to learning how you think about math — give me a problem you're working on."
     };
     const fallbackGreeting = fallbacks[req.body?.tutorId] || "Hey! Got a math question? Pick one of the suggestions below to get started!";
     // Carried too — from the visitor's side this IS the opening message, and a
