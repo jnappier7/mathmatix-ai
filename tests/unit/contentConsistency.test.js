@@ -24,6 +24,11 @@ const path = require('path');
 
 const PUBLIC_DIR = path.join(__dirname, '..', '..', 'public');
 
+// The allowance is one constant. Deriving it here means a tier change updates
+// this test rather than breaking it into a re-pinned literal.
+const { FREE_WEEKLY_SECONDS } = require('../../utils/aiTimeMeter');
+const FREE_MINUTES = Math.round(FREE_WEEKLY_SECONDS / 60);
+
 /** Every top-level marketing/app page. Subdirectories (incl. generated /courses) excluded. */
 function marketingPages() {
   return fs.readdirSync(PUBLIC_DIR)
@@ -71,10 +76,13 @@ const BANNED = [
     allow: [],
   },
   {
-    name: 'free allowance stated as weekly',
-    // The quota is a rolling 30-day window (utils/aiTimeMeter.js FREE_QUOTA_RESET_DAYS).
-    pattern: /30\s*(?:free\s*)?(?:AI\s*)?min(?:ute)?s?\s*(?:\/|per\s+|a\s+|every\s+)week/i,
-    instead: '30 free AI minutes a month',
+    name: 'free allowance stated as monthly',
+    // This rule used to run the other way, banning the WEEKLY form, because the quota
+    // was then a rolling 30-day window. The window is now FREE_QUOTA_RESET_DAYS = 7,
+    // so the monthly form is the retired one. The rule that survived the flip is the
+    // one underneath both: state the window the meter actually enforces.
+    pattern: /\d+\s*(?:free\s*)?(?:AI\s*)?min(?:ute)?s?\s*(?:\/|per\s+|a\s+|every\s+)month/i,
+    instead: `${FREE_MINUTES} free AI minutes a week`,
     allow: [],
   },
   {
@@ -108,14 +116,22 @@ describe('marketing copy matches docs/CONTENT_STANDARDS.md', () => {
 });
 
 describe('the free-plan number never travels without its clarifier', () => {
-  // "30 minutes" read cold sounds like half an hour of use. The reason it is not is the
-  // metering rule, so the rule has to be on the same page as the first mention — that is
-  // the whole point of the number being persuasive rather than alarming.
-  const NUMBER = /30\s*(?:free\s*)?AI\s*min/ig;
-  const CLARIFIER = /(2&ndash;3 hours|2–3 hours|2\+ hours|response time counts|only the tutor)/i;
+  // The clarifier used to convert UPWARD: "30 minutes" read cold sounds like half an
+  // hour of use, and the point was that it is really 2-3 hours, because only the
+  // tutor's response time is metered.
+  //
+  // At three minutes the risk inverts. Read cold it sounds like 180 seconds of
+  // tutoring, which is not a product — and the hours conversion that rescued the old
+  // number now reads as a stretch. utils/pipeline/persist.js bills every tutor turn a
+  // 30s floor, so the honest unit at this scale is turns: three minutes is six of
+  // them, one problem end to end. Either way the rule is the same, which is why this
+  // test survived the tier change: the number is not self-explanatory, so whatever
+  // explains it has to be on the same page as the first mention.
+  const NUMBER = new RegExp(`${FREE_MINUTES}\\s*(?:free\\s*)?AI\\s*min`, 'ig');
+  const CLARIFIER = /(one problem|response time counts|only the tutor)/i;
 
-  // Only ADVERTISING mentions need the clarifier. A quota-exhausted message ("you've used
-  // your 30 free AI minutes this month") states the number to explain why the tutor just
+  // Only ADVERTISING mentions need the clarifier. A quota-exhausted message ("you've
+  // used your 3 free AI minutes") states the number to explain why the tutor just
   // stopped, and padding it with the sales clarifier would be worse copy, not better.
   const SPENT = /(used|spent|out of|ran out of|exhausted|remaining|left)\s*(your|their|the)?\s*$/i;
 
@@ -131,8 +147,11 @@ describe('the free-plan number never travels without its clarifier', () => {
 
   const pagesWithTheNumber = marketingPages().filter(advertisesTheAllowance);
 
-  it('is stated on at least the homepage and pricing page', () => {
-    expect(pagesWithTheNumber).toEqual(expect.arrayContaining(['index.html', 'pricing.html']));
+  it('is stated on the pricing page', () => {
+    // Only pricing.html states the figure now. The homepage leads with the trial and
+    // describes the floor qualitatively ("a few tutoring minutes each week") — that is
+    // deliberate, and it is why this no longer requires index.html.
+    expect(pagesWithTheNumber).toEqual(expect.arrayContaining(['pricing.html']));
   });
 
   it.each(pagesWithTheNumber)('%s explains what an AI minute is', (file) => {

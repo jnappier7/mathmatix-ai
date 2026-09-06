@@ -1,15 +1,14 @@
 // utils/aiTimeMeter.js — the ONE place AI time is charged to a user.
 //
 // Every AI-spending surface (text tutor turns, voice sessions, read-aloud)
-// debits the same monthly pool: `weeklyAISeconds` (the name is legacy — the
-// quota resets MONTHLY, see FREE_QUOTA_RESET_DAYS). Before this module the
+// debits the same weekly pool: `weeklyAISeconds` (see FREE_QUOTA_RESET_DAYS). Before this module the
 // arithmetic lived inline in utils/pipeline/persist.js and utils/voiceSession.js,
 // and the two had already drifted: the voice copy never drew down
 // `packSecondsRemaining`, so a pack subscriber's voice minutes inflated the
 // meter without ever consuming the minutes they paid for.
 //
 // Three jobs, all of which have to happen together to stay correct:
-//   1. Roll the monthly window when it has lapsed. middleware/usageGate.js does
+//   1. Roll the quota window when it has lapsed. middleware/usageGate.js does
 //      this on the HTTP path, but a voice WebSocket upgrade never runs the
 //      Express chain, so the meter has to be able to roll it itself.
 //   2. $inc weeklyAISeconds / totalAISeconds atomically.
@@ -20,10 +19,60 @@
 
 const User = require('../models/user');
 
-// Free AI seconds per reset window, for students the quota actually meters.
-const FREE_WEEKLY_SECONDS = 30 * 60;
-// Length of the quota window in days (monthly, despite the "weekly" field names).
-const FREE_QUOTA_RESET_DAYS = 30;
+// The FREE tier: what a lapsed trial drops to.
+//
+// Read this number in TURNS, not minutes. utils/pipeline/persist.js bills every
+// genuine tutor turn a floor of AI_TIME_FLOOR_SECONDS (30s) rather than raw LLM
+// latency, because a few seconds of gpt-4o-mini per turn would meter a real
+// twelve-minute session as two minutes. So the free tier is
+// FREE_WEEKLY_SECONDS / 30 = six turns a week: one problem, worked all the way
+// through, with the tutor asking rather than telling.
+//
+// That is the whole job of the number. It has to be enough to remember the
+// tutor exists and to feel its absence; it must not be enough to do a homework
+// night on. The old tier (30 min per 30 days = SIXTY turns a month) failed the
+// second half: a student doing one problem a week never reached the wall inside
+// the window, so the paywall never asked them for a decision and one conversion
+// came out the other end.
+//
+// It is not a cost control. At gpt-4o-mini prices the old thirty minutes cost
+// roughly five cents per student per month (docs/AI_COST_PROJECTIONS.md), so
+// nothing here is about saving money. It is about whether FREE is good enough
+// that nobody upgrades.
+//
+// Everything that STATES this number derives it from here — the 402 message and
+// payload in middleware/usageGate.js, /api/billing/status, and the public pages
+// via tests/unit/freeTierCopy.test.js. Twelve surfaces used to hardcode "30",
+// which meant changing the tier silently made the product lie in twelve places.
+const FREE_WEEKLY_SECONDS = 3 * 60;
+
+// WEEKLY, and the shape matters more than the size. A monthly bucket rewards
+// bingeing and punishes regularity: a student doing two minutes a night runs dry
+// on day five and gets twenty-five days of nothing, which kills the daily habit
+// that makes Mathmatix+ worth buying — and gives them twenty-five days to find
+// another tool. A small weekly allowance brings them back every week and turns
+// the wall into a recurring ask (~4x a month) instead of a monthly blackout that
+// most free users never even reached.
+//
+// The field names (weeklyAISeconds, lastAIQuotaReset) were built weekly and were
+// left that way through a spell of monthly, so this goes with the grain.
+//
+// Shrinking the window is safe for anyone mid-window: a student already gated
+// under the 30-day window becomes eligible for a reset sooner, never later.
+// Shrinking the ALLOWANCE is not symmetrical — a student who spent 10 minutes in
+// the last few days is over the new cap until their (now much nearer) reset.
+// That is the intended effect, and docs/CONTENT_STANDARDS.md carries the copy.
+const FREE_QUOTA_RESET_DAYS = 7;
+
+// The tier in words, for server-rendered copy — cancellation emails, the
+// downgrade notice, marketing sends. Those three used to each carry their own
+// sentence ("30 minutes of AI tutoring a month", "30 AI minutes per month",
+// "30 free minutes per week"), and the third was already wrong about the window
+// before the tier ever changed. A shared phrase is the only thing that keeps an
+// email nobody re-reads from outliving the number it describes.
+// Canonical wording: docs/CONTENT_STANDARDS.md.
+const FREE_TIER_MINUTES = Math.round(FREE_WEEKLY_SECONDS / 60);
+const freeTierPhrase = () => `${FREE_TIER_MINUTES} free AI minutes a week`;
 
 const PACK_TIERS = new Set(['pack_60', 'pack_120']);
 
@@ -127,6 +176,8 @@ async function meterAiSeconds(user, seconds, now = new Date()) {
 
 module.exports = {
   FREE_WEEKLY_SECONDS,
+  FREE_TIER_MINUTES,
+  freeTierPhrase,
   FREE_QUOTA_RESET_DAYS,
   isResetPending,
   usedAiSeconds,

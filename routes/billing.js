@@ -1,7 +1,10 @@
-// routes/billing.js — Stripe billing: Free (30 min/month) + Mathmatix+ ($9.95/mo unlimited)
+// routes/billing.js — Stripe billing: a 14-day no-card trial, then Mathmatix+ ($9.95/mo
+// unlimited) or the free tier. The tier itself is utils/aiTimeMeter.FREE_WEEKLY_SECONDS —
+// never restate it here as a literal.
 //
 // Plans:
-//   Free      — 30 AI min/month (~2-3 hours real help), no credit card
+//   Trial     — TRIAL_DAYS of everything, granted at signup, no card (utils/trialGrant.js)
+//   Free      — what a lapsed trial drops to; see FREE_WEEKLY_SECONDS
 //   Mathmatix+ — $9.95/mo recurring, unlimited everything, cancel anytime
 //
 // Legacy minute packs (pack_60, pack_120) are retained in webhook processing
@@ -878,7 +881,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
       const expired = user.packExpiresAt && now > user.packExpiresAt;
       const packRemaining = expired ? 0 : (user.packSecondsRemaining || 0);
 
-      // Pack users also get 30 free minutes/month before pack is used
+      // Pack users also get the free tier's minutes before the pack is drawn down
       let weeklyAIUsedPack = user.weeklyAISeconds || 0;
       const lastResetPack = user.lastAIQuotaReset ? new Date(user.lastAIQuotaReset) : new Date(0);
       if ((now - lastResetPack) / (1000 * 60 * 60 * 24) >= FREE_QUOTA_RESET_DAYS) {
@@ -935,7 +938,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
     }
 
     // Free users — calculate remaining free monthly AI minutes
-    // Teachers, parents, admins get unlimited; students get 30 free AI minutes/month
+    // Teachers, parents, admins get unlimited; students get the free tier's weekly minutes
     if (['teacher', 'parent', 'admin'].some(r => userHasRole(user, r))) {
       return res.json({
         success: true,

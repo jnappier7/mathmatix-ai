@@ -12,6 +12,9 @@
 
 const express = require('express');
 const router = express.Router();
+// The offer these templates advertise is the trial, not the free tier — one
+// definition, so a campaign can't ship a stale one (docs/CONTENT_STANDARDS.md).
+const { TRIAL_DAYS } = require('../utils/trialGrant');
 const AdminEmail = require('../models/adminEmail');
 const User = require('../models/user');
 const Waitlist = require('../models/waitlist');
@@ -602,7 +605,7 @@ router.get('/templates', isAuthenticated, isAdmin, async (req, res) => {
           <div style="font-size: 18px; font-weight: 700; color: #0f3460;">$16.81/mo</div>
         </div>
       </div>
-      <p style="font-size: 13px; color: #888; margin: 0;">Every student gets <strong>30 free minutes per week</strong> \u2014 no credit card required.</p>
+      <p style="font-size: 13px; color: #888; margin: 0;">Every new account gets <strong>${TRIAL_DAYS} days of everything, free</strong> \u2014 no credit card, nothing to cancel.</p>
     </div>
 
     <!-- CTA Button -->

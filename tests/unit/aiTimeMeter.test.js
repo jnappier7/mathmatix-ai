@@ -18,6 +18,14 @@ const {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+// Fixtures derive from the tier instead of naming seconds. These used to be
+// literals sized for a 30-minute tier (600, 300, 120); shrinking the tier made
+// them larger than the whole allowance, so the assertions started expecting
+// negative balances that remainingAiSeconds correctly clamps to zero. A partial
+// spend has to stay partial at any tier size.
+const SPENT = Math.round(FREE_WEEKLY_SECONDS / 3);
+const CHARGE = SPENT;
+
 function student(overrides = {}) {
   return {
     _id: 'student123',
@@ -35,10 +43,10 @@ beforeEach(() => {
 
 describe('quota window', () => {
   test('a fresh window counts the seconds already spent', () => {
-    const user = student({ weeklyAISeconds: 600 });
+    const user = student({ weeklyAISeconds: SPENT });
     expect(isResetPending(user)).toBe(false);
-    expect(usedAiSeconds(user)).toBe(600);
-    expect(remainingAiSeconds(user)).toBe(FREE_WEEKLY_SECONDS - 600);
+    expect(usedAiSeconds(user)).toBe(SPENT);
+    expect(remainingAiSeconds(user)).toBe(FREE_WEEKLY_SECONDS - SPENT);
   });
 
   test('a lapsed window reads as zero spent even before anything writes the reset', () => {
@@ -71,15 +79,15 @@ describe('quota window', () => {
 
 describe('meterAiSeconds', () => {
   test('charges the pool atomically and reports the new balance', async () => {
-    const user = student({ weeklyAISeconds: 300 });
-    const result = await meterAiSeconds(user, 60);
+    const user = student({ weeklyAISeconds: SPENT });
+    const result = await meterAiSeconds(user, CHARGE);
 
     expect(User.findByIdAndUpdate).toHaveBeenCalledWith('student123', {
-      $inc: { weeklyAISeconds: 60, totalAISeconds: 60 },
+      $inc: { weeklyAISeconds: CHARGE, totalAISeconds: CHARGE },
     });
-    expect(result.billedSeconds).toBe(60);
-    expect(result.usedSeconds).toBe(360);
-    expect(result.remainingSeconds).toBe(FREE_WEEKLY_SECONDS - 360);
+    expect(result.billedSeconds).toBe(CHARGE);
+    expect(result.usedSeconds).toBe(SPENT + CHARGE);
+    expect(result.remainingSeconds).toBe(FREE_WEEKLY_SECONDS - SPENT - CHARGE);
   });
 
   test('mutates the passed user so a long-lived session stays accurate without re-fetching', async () => {
@@ -99,11 +107,11 @@ describe('meterAiSeconds', () => {
   });
 
   test('is a no-op for zero or negative seconds', async () => {
-    const user = student({ weeklyAISeconds: 120 });
+    const user = student({ weeklyAISeconds: SPENT });
     const result = await meterAiSeconds(user, 0);
     expect(User.findByIdAndUpdate).not.toHaveBeenCalled();
     expect(result.billedSeconds).toBe(0);
-    expect(result.remainingSeconds).toBe(FREE_WEEKLY_SECONDS - 120);
+    expect(result.remainingSeconds).toBe(FREE_WEEKLY_SECONDS - SPENT);
   });
 
   test('a failed write never throws at the caller', async () => {

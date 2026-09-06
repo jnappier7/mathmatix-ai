@@ -7,8 +7,8 @@
 //            here at all — routes/trialChat.js owns its own turn cap.
 //   TRIAL    14 days of full Mathmatix+ from signup, no card. Granted in code
 //            (utils/trialGrant.js), honoured below via isInTrial().
-//   FREE     what a lapsed trial drops to: a metered taste, deliberately not a
-//            usable substitute for Mathmatix+. FREE_WEEKLY_SECONDS.
+//   FREE     what a lapsed trial drops to: a small WEEKLY taste, deliberately
+//            not a usable substitute for Mathmatix+. FREE_WEEKLY_SECONDS.
 //
 // Everything else passes unconditionally:
 //   Teachers/parents/admins: always free unlimited (drives adoption)
@@ -28,9 +28,10 @@ const { userHasRole } = require('../utils/roleQuery');
 const { isFoundingSchoolUser } = require('../utils/foundingSchool');
 const { isInTrial } = require('../utils/trialGrant');
 
+
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 // NOTE: constant/field names keep the "weekly" prefix for backward compatibility
-// (no DB migration), but the free AI quota now resets MONTHLY (see FREE_QUOTA_RESET_DAYS).
+// (no DB migration); the quota window is FREE_QUOTA_RESET_DAYS.
 // The quota arithmetic itself lives in utils/aiTimeMeter.js — the one place AI
 // time is charged — so the gate and the meter can never disagree about how many
 // seconds a student has left.
@@ -39,6 +40,12 @@ const {
   FREE_QUOTA_RESET_DAYS,
   remainingAiSeconds,
 } = require('../utils/aiTimeMeter');
+
+// "You're almost out" threshold. Fixed at 120s while the tier was 1800s, which
+// was a sensible last-two-minutes nudge. On a 180s tier a fixed 120 would fire
+// after the very first turn and stay on for the rest of the week, so the warning
+// would carry no information. Derive it: the last third, capped at two minutes.
+const LOW_USAGE_WARNING_SECONDS = Math.min(120, Math.round(FREE_WEEKLY_SECONDS / 3));
 
 // Freemium taste limits — free users get a sample before upgrade prompt
 const FREE_UPLOAD_LIMIT  = 1;    // 1 free upload, then Mathmatix+ required
@@ -101,7 +108,7 @@ function hasStaffRoleBypass(user) {
 }
 
 /**
- * True when the user's AI usage is NOT metered against the free monthly
+ * True when the user's AI usage is NOT metered against the free
  * quota: role bypass (teacher/parent/admin), unlimited subscriber, valid
  * in-capacity school license, or a linked parent with Mathmatix+.
  *
@@ -176,7 +183,7 @@ async function hasUnmeteredAiAccess(user) {
  * - Teachers, parents, admins: always pass (free unlimited)
  * - Students with active school license: always pass (school purchased access)
  * - Unlimited individual subscribers: always pass
- * - Any student with free monthly minutes remaining: pass (free minutes first)
+ * - Any student with free minutes remaining: pass (free minutes first)
  * - Otherwise: 402 Payment Required
  */
 async function runUsageGate(req, res, next, { allMethods = false } = {}) {
@@ -197,8 +204,10 @@ async function runUsageGate(req, res, next, { allMethods = false } = {}) {
 
     // --- WEEKLY engagement-metric reset (every 7 days) ---
     // weeklyActive* feed the teacher/parent "min/wk" dashboards and the
-    // struggling heuristic, so they stay weekly even though the free-AI quota
-    // below is monthly. (Decoupled from the quota anchor on purpose.)
+    // struggling heuristic. They share a cadence with the free-AI quota below
+    // again, but remain on their own anchor (lastWeeklyReset, not
+    // lastAIQuotaReset) — deliberately, so tuning the tier can never silently
+    // move what a teacher's dashboard means.
     const lastWeeklyReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
     if ((now - lastWeeklyReset) / (1000 * 60 * 60 * 24) >= 7) {
       // Atomic reset: only resets if lastWeeklyReset hasn't changed (prevents race condition)
@@ -208,7 +217,7 @@ async function runUsageGate(req, res, next, { allMethods = false } = {}) {
       );
     }
 
-    // --- MONTHLY free-AI-minute quota reset (rolling 30-day window) ---
+    // --- Free-AI-minute quota reset (rolling FREE_QUOTA_RESET_DAYS window) ---
     let aiUsed = user.weeklyAISeconds || 0;
     const lastQuotaReset = user.lastAIQuotaReset ? new Date(user.lastAIQuotaReset) : new Date(0);
     if ((now - lastQuotaReset) / (1000 * 60 * 60 * 24) >= FREE_QUOTA_RESET_DAYS) {
@@ -220,14 +229,14 @@ async function runUsageGate(req, res, next, { allMethods = false } = {}) {
       );
     }
 
-    // --- Free monthly minutes (every student gets these first) ---
+    // --- Free minutes (every student gets these first) ---
     const freeRemaining = FREE_WEEKLY_SECONDS - aiUsed;
 
     if (freeRemaining > 0) {
       // Still have free minutes — let them through regardless of tier
       res.setHeader('X-Free-Remaining-Seconds', Math.max(0, freeRemaining).toString());
       res.setHeader('Access-Control-Expose-Headers', 'X-Free-Remaining-Seconds, X-Usage-Warning');
-      if (freeRemaining <= 120) {
+      if (freeRemaining <= LOW_USAGE_WARNING_SECONDS) {
         res.setHeader('X-Usage-Warning', 'low');
       }
       return next();
@@ -258,13 +267,27 @@ async function runUsageGate(req, res, next, { allMethods = false } = {}) {
       });
     }
 
+    // Both the sentence and the payload derive from the constant. They used to
+    // say "30" outright, so shrinking the tier would have left the wall quoting
+    // a number the meter had stopped enforcing — the product contradicting
+    // itself at the one moment it is asking for money.
+    const freeMinutesTotal = Math.round(FREE_WEEKLY_SECONDS / 60);
+    const resetPhrase = daysUntilReset > 0
+      ? `They come back in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}.`
+      : 'They come back today.';
+    // Deliberately does NOT say "you've used your N minutes". A student part-way
+    // through the old 30-day window has spent more than the new weekly tier
+    // holds, so naming the tier as the amount they used reads as a lie to
+    // exactly the people this change lands on first. "Out of minutes for this
+    // week" is true at any point in the transition; the number itself travels in
+    // freeMinutesTotal, where the modal can show it in context.
     return res.status(402).json({
-      message: `You've used your 30 free minutes this month. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. ${upgradeLine}`,
+      message: `You're out of free AI minutes for this week. ${resetPhrase} ${upgradeLine}`,
       usageLimitReached: true,
       tier: 'free',
       inCourse,
       freeMinutesUsed: Math.floor(aiUsed / 60),
-      freeMinutesTotal: 30,
+      freeMinutesTotal,
       freeSecondsRemaining: 0,
       nextResetAt: resetDate.toISOString(),
       upgradeRequired: true
@@ -339,7 +362,7 @@ async function hasPremiumAccess(user) {
  * Can this user open a voice session?
  *
  * Voice used to be premium-only (hasPremiumAccess). It is now available to
- * every 13+ student and metered against the same monthly AI-second pool as
+ * every 13+ student and metered against the same AI-second pool as
  * text tutoring — a voice second and a text second cost the same quota, voice
  * just spends them continuously, so it drains the pool faster in wall-clock
  * terms. See utils/aiTimeMeter.js for the arithmetic.
@@ -501,4 +524,4 @@ function paidFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasPremiumAccess, hasVoiceAccess, hasUnmeteredAiAccess, hasStaffRoleBypass, FREE_WEEKLY_SECONDS, FREE_QUOTA_RESET_DAYS, isLicenseValid };
+module.exports = { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasPremiumAccess, hasVoiceAccess, hasUnmeteredAiAccess, hasStaffRoleBypass, FREE_WEEKLY_SECONDS, FREE_QUOTA_RESET_DAYS, LOW_USAGE_WARNING_SECONDS, isLicenseValid };

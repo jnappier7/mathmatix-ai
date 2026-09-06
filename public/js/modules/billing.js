@@ -180,7 +180,22 @@ export function updateFreeTimeIndicator(usage) {
     }
 
     const remaining = usage.secondsRemaining || 0;
-    const mins = Math.floor(remaining / 60);
+
+    // The pill's numbers and thresholds have to scale with the tier. Both were
+    // sized for 1800s and neither survives a 180s one: a fixed 300s "low" mark is
+    // wider than the whole allowance, so a free student would sit in the orange
+    // warning state from second zero (a warning that is always on is not a
+    // warning), and flooring to minutes renders the last 59 seconds as "0 min
+    // AI time left" while the tutor is still answering.
+    //
+    // /api/billing/status ships the real tier as usage.freeWeeklySeconds. The
+    // per-turn update path in script.js sends remaining-only, hence the fallback —
+    // keep it in step with FREE_WEEKLY_SECONDS in utils/aiTimeMeter.js.
+    const tierSeconds = usage.freeWeeklySeconds || 180;
+    const lowMark = Math.min(300, Math.max(30, Math.round(tierSeconds / 3)));
+    const timeLeftLabel = remaining >= 60
+        ? `${Math.floor(remaining / 60)} min`
+        : `${Math.max(1, Math.round(remaining))} sec`;
 
     // QA P2: the pill is fixed over the conversation, where it can sit on top of
     // Work Board graphs/cards, so a student must always be able to clear it.
@@ -194,7 +209,7 @@ export function updateFreeTimeIndicator(usage) {
     // any level opens the upgrade modal, the wall itself still prompts on the next
     // turn, and the nav keeps its "Upgrade Plan" link.
     const DISMISS_KEY = 'mm_time_pill_level_dismissed';
-    const level = (usage.limitReached || remaining <= 0) ? 'out' : remaining <= 300 ? 'low' : 'ok';
+    const level = (usage.limitReached || remaining <= 0) ? 'out' : remaining <= lowMark ? 'low' : 'ok';
     const readFlag = () => { try { return sessionStorage.getItem(DISMISS_KEY); } catch { return null; } };
     if (readFlag() === level) {
         setPillVisible(indicator, false);
@@ -245,10 +260,10 @@ export function updateFreeTimeIndicator(usage) {
         indicator.innerHTML = '<strong>No AI time left</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>' + resetLine + subtitle + dismissBtn;
         indicator.style.borderColor = '#ff4444';
     } else if (level === 'low') {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>` + resetLine + subtitle + dismissBtn;
+        indicator.innerHTML = `<strong>${timeLeftLabel}</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>` + resetLine + subtitle + dismissBtn;
         indicator.style.borderColor = '#ffaa00';
     } else {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + resetLine + subtitle + dismissBtn;
+        indicator.innerHTML = `<strong>${timeLeftLabel}</strong> AI time left` + resetLine + subtitle + dismissBtn;
         indicator.style.borderColor = '#333';
     }
 
@@ -563,12 +578,26 @@ export function showNewUserPricingPrompt() {
     const existing = document.getElementById('new-user-pricing-banner');
     if (existing) return;
 
+    // A brand-new account is TRIALING, not on the free tier — it is granted at
+    // signup. This banner used to welcome them with "30 free minutes this
+    // month", which was the wrong number and, more importantly, the wrong
+    // offer: it described the thing they drop to in two weeks rather than the
+    // thing they currently have.
+    const st = window._billingStatus || {};
+    // Prefer the server's number. The literal is only reached when /status has not
+    // answered yet, and it is the one place a client-side copy of the tier exists —
+    // keep it in step with FREE_WEEKLY_SECONDS in utils/aiTimeMeter.js.
+    const freeMins = Math.round(((st.usage && st.usage.freeWeeklySeconds) || 180) / 60);
+    const welcomeLine = st.isTrialing && st.trialDaysRemaining
+        ? `You have <strong style="color:#00d4ff;">${st.trialDaysRemaining} days</strong> of everything, free. No card, nothing to cancel.`
+        : `You have <strong style="color:#00d4ff;">${freeMins} free AI minutes</strong> a week &mdash; about one problem. Want unlimited?`;
+
     const banner = document.createElement('div');
     banner.id = 'new-user-pricing-banner';
     banner.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #7b2ff7;border-radius:12px;padding:16px 24px;z-index:9500;max-width:440px;width:90%;text-align:center;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideDown 0.3s ease;';
     banner.innerHTML = `
         <div style="font-size:16px;font-weight:600;margin-bottom:6px;">Welcome to Mathmatix!</div>
-        <div style="font-size:13px;color:#aaa;margin-bottom:14px;line-height:1.5;">You have <strong style="color:#00d4ff;">30 free minutes</strong> of AI tutoring this month. Want unlimited access?</div>
+        <div style="font-size:13px;color:#aaa;margin-bottom:14px;line-height:1.5;">${welcomeLine}</div>
         <div style="display:flex;gap:10px;justify-content:center;">
             <a href="/pricing.html" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;">View Plans</a>
             <button id="dismiss-pricing-banner" style="background:transparent;color:#666;border:1px solid #333;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;">Maybe Later</button>
@@ -648,7 +677,7 @@ export async function showManageSubscription() {
                     <div style="background:#1a1a2a;border:1px solid #ffaa00;border-radius:10px;padding:16px;margin-bottom:16px;">
                         <div style="font-size:14px;color:#ffaa00;font-weight:600;margin-bottom:4px;"><i class="fas fa-pause-circle"></i> Subscription Paused</div>
                         <div style="font-size:13px;color:#aaa;">Your subscription is paused. Billing resumes automatically on <strong style="color:#fff;">${resumeDateStr}</strong>.</div>
-                        <div style="font-size:13px;color:#aaa;margin-top:4px;">You still have access to free-tier features (30 min/month) while paused.</div>
+                        <div style="font-size:13px;color:#aaa;margin-top:4px;">You still have the free plan's tutoring minutes while paused.</div>
                     </div>
                     <button id="manage-sub-resume" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-bottom:10px;"><i class="fas fa-play"></i> Resume Now</button>
                     <p style="color:#666;font-size:12px;text-align:center;">Resume early to get unlimited tutoring back immediately.</p>

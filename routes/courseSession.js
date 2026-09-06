@@ -162,7 +162,7 @@ router.post('/enroll', async (req, res) => {
     }
 
     // Courses are open to all students as a free on-ramp — no plan/license required to enrol.
-    // AI usage inside the course is still metered by usageGate (30 free min/month); the cap,
+    // AI usage inside the course is still metered by usageGate (FREE_WEEKLY_SECONDS); the cap,
     // not enrolment, is the upgrade moment. See docs/COURSES_IN_FLOW_DESIGN.md.
 
     // Check for existing session in this course (active OR paused)

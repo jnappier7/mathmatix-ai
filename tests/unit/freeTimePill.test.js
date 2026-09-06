@@ -81,7 +81,11 @@ describe('free-time pill — dismissal', () => {
         expect(probe.comfortable).toMatchObject({ visible: true, hasDismiss: true });
         expect(probe.low).toMatchObject({ visible: true, hasDismiss: true });
         expect(probe.out).toMatchObject({ visible: true, hasDismiss: true });
-        expect(probe.low.text).toContain('3 min');
+        // The label used to be pinned to "3 min" from the bug report. At a
+        // three-minute tier the low-water mark is under a minute, so the pill
+        // reads in seconds — which is the point of the label change: flooring
+        // to minutes rendered the last stretch as "0 min AI time left".
+        expect(probe.low.text).toMatch(/\d+ (min|sec) AI time left/);
     });
 
     it('hides the pill and releases the space the layout reserved for it', () => {

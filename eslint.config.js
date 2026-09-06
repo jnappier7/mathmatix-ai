@@ -11,6 +11,12 @@ module.exports = [
       'public/vendor/',
       'public/pdfjs-viewer/',
       'public/dist/',   // generated bundles — lint the sources, not the build
+      'dist/',          // vite output (vite.config.js outDir: '../dist', gitignored).
+                        // Missing here, a local `npm run build` left 959 no-undef
+                        // ERRORS in one minified chat bundle — every real finding
+                        // in the repo buried under a build artifact, and only for
+                        // whoever had built recently. CI never saw it: dist/ is
+                        // gitignored, so it does not exist on a fresh checkout.
       '**/*.min.js',
     ],
   },
