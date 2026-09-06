@@ -31,11 +31,25 @@ const { sendCancellationConfirmation, sendTrialEndingReminder } = require('../ut
 const logger = require('../utils/logger').child({ route: 'billing' });
 
 const { userHasRole } = require('../utils/roleQuery');
+// The free quota is defined ONCE, in utils/aiTimeMeter.js. These used to be
+// literals here with a "keep in sync with usageGate" comment, which is the
+// weakest possible guarantee: this file is what tells a student how many
+// minutes they have left, so a drift here does not throw, it just lies to them
+// about their own account.
+const { FREE_WEEKLY_SECONDS, FREE_QUOTA_RESET_DAYS } = require('../utils/aiTimeMeter');
+// The trial is likewise defined once, in utils/trialGrant.js.
+const { TRIAL_DAYS, isInTrial, trialDaysRemaining, grantTrial } = require('../utils/trialGrant');
+
 // ---- Configuration ----
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
-const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per reset period (now monthly) for all students
-const FREE_QUOTA_RESET_DAYS = 30;    // free-AI-minute quota window — keep in sync with middleware/usageGate.js
-const TRIAL_DAYS = 7;                // card-required Mathmatix+ free-trial length
+
+// The legacy CARD-required trial length, kept only for Stripe subscriptions
+// created before the no-card trial existed. Nothing offers it any more: the
+// no-card grant at signup burns hasUsedTrial, so `wantsTrial` below resolves
+// false for every account created since. Two trials with different lengths and
+// different terms, handed out by account age, is not a thing a user can be
+// told coherently — utils/trialGrant.js is the one that ships.
+const CARD_TRIAL_DAYS = 7;
 
 // Active plans — Mathmatix+, billed monthly or by the school year.
 //
@@ -241,12 +255,12 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
       metadata
     };
 
-    // Card-required trial: collect the card now, don't charge for TRIAL_DAYS,
+    // Card-required trial: collect the card now, don't charge for CARD_TRIAL_DAYS,
     // then auto-convert to the paid plan unless the user cancels. Stripe manages
     // the trial→bill transition and (per dashboard setting) the trial-ending
     // reminder email; we also send our own via the trial_will_end webhook.
     if (wantsTrial) {
-      sessionParams.subscription_data = { trial_period_days: TRIAL_DAYS };
+      sessionParams.subscription_data = { trial_period_days: CARD_TRIAL_DAYS };
       // Force card capture during the trial (default would let a trial skip it).
       sessionParams.payment_method_collection = 'always';
     }
@@ -939,12 +953,22 @@ router.get('/status', isAuthenticated, async (req, res) => {
     // while usageGate (correctly) kept letting tutor turns through. Same check
     // as the gate, so display and enforcement can never disagree.
     if (await hasUnmeteredAiAccess(user)) {
+      // A no-card trial lands HERE, not in the tier==='unlimited' branch above —
+      // it grants access through trialEndsAt rather than by changing the tier.
+      // Without these fields the trial was invisible: the student saw unlimited
+      // access, was never told a clock was running, and then met the wall one
+      // day with no warning. A trial nobody knows about cannot convert, and its
+      // ending reads as a fault rather than as the offer it is.
+      const trialing = isInTrial(user, now);
       return res.json({
         success: true,
         billingEnabled: true,
         tier: 'free',
         hasAccess: true,
         unmetered: true,
+        isTrialing: trialing,
+        trialEndsAt: trialing ? user.trialEndsAt : null,
+        trialDaysRemaining: trialing ? trialDaysRemaining(user, now) : 0,
         usage: { secondsRemaining: Infinity, limitReached: false }
       });
     }
@@ -971,11 +995,17 @@ router.get('/status', isAuthenticated, async (req, res) => {
       tier: 'free',
       hasAccess: !limitReached,
       hasSeenPricing: user.hasSeenPricing || false,
-      // Whether this free student can still start a card-required Mathmatix+ trial
-      // (one per user). Frontend uses this to show "Start 7-day free trial" vs a
-      // plain upgrade CTA — especially at the 30-min wall.
+      // Whether this student can still start the no-card Mathmatix+ trial (one
+      // per account, whichever path granted it). True in practice only for
+      // accounts created before the trial was granted at signup — they never had
+      // a chance at it, so the wall offers it to them rather than asking for a
+      // card for a product that advertises none.
       trialAvailable: !user.hasUsedTrial,
       trialDays: TRIAL_DAYS,
+      // Distinguishes "your trial ended" from "you never had one" at the wall.
+      // Both are on the free tier and both are out of minutes; they are not the
+      // same person and should not get the same ask.
+      trialExpired: !!(user.hasUsedTrial && user.trialEndsAt && new Date(user.trialEndsAt) <= now),
       usage: {
         secondsRemaining: freeRemaining,
         minutesRemaining: Math.floor(freeRemaining / 60),
@@ -988,6 +1018,61 @@ router.get('/status', isAuthenticated, async (req, res) => {
   } catch (error) {
     logger.error('Status check error', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to fetch billing status' });
+  }
+});
+
+/* ============================================================
+   POST /api/billing/start-trial
+   Start the no-card Mathmatix+ trial. No Stripe, no checkout, no card.
+
+   This exists so the wall can OFFER the trial rather than send someone to a
+   payment page for something that is free. It is reachable in practice only by
+   accounts created before the trial was granted at signup: grantTrial refuses
+   to re-grant, so everyone else falls through to the paid ask.
+
+   Deliberately not a checkout call. Routing this through Stripe with
+   trial_period_days would collect a card for a trial the product advertises as
+   card-free — the terms on the button and the terms Stripe enforces have to be
+   the same sentence.
+   ============================================================ */
+router.post('/start-trial', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Already covered by something better — a subscription, a school license,
+    // the founding grant, a staff role, or a trial already running. Granting
+    // here would burn the one trial they have on time they are not spending.
+    if (await hasUnmeteredAiAccess(user)) {
+      return res.status(400).json({ message: 'You already have full access.', alreadyUnmetered: true });
+    }
+
+    if (!grantTrial(user)) {
+      return res.status(400).json({
+        message: 'This account has already used its free trial.',
+        trialAvailable: false,
+      });
+    }
+    await user.save();
+
+    recordConversionEvent('trial_started', {
+      userId: user._id,
+      context: { trialDays: TRIAL_DAYS, source: 'wall' },
+    });
+    logger.info('No-card trial started from the wall', {
+      userId: user._id.toString(),
+      trialEndsAt: user.trialEndsAt?.toISOString(),
+    });
+
+    return res.json({
+      success: true,
+      trialDays: TRIAL_DAYS,
+      trialEndsAt: user.trialEndsAt,
+      trialDaysRemaining: trialDaysRemaining(user),
+    });
+  } catch (error) {
+    logger.error('Start-trial error', { userId: req.user?._id?.toString(), error: error.message });
+    res.status(500).json({ message: 'Could not start your free trial.' });
   }
 });
 
