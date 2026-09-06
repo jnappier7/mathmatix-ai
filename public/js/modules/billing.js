@@ -293,88 +293,161 @@ export async function showUpgradePrompt(errorData) {
     const isFeatureBlock = errorData.premiumFeatureBlocked;
     const isLimitReached = errorData.usageLimitReached;
 
-    // Card-required free trial: offered to students who haven't trialed yet.
-    // At the 30-min wall this is the primary CTA \u2014 highest-intent moment.
-    const trialAvailable = !!(window._billingStatus && window._billingStatus.trialAvailable);
-    const trialDays = (window._billingStatus && window._billingStatus.trialDays) || 7;
+    const status = window._billingStatus || {};
 
-    // Students usually can't pay themselves — surface an "ask a parent" path so the
-    // offer reaches the person who holds the card.
+    // THREE different people arrive at this wall and they are not the same ask:
+    //
+    //   trialAvailable  never had the free trial (an account older than the
+    //                   grant-at-signup change). Offer it. Asking them for a
+    //                   card here would be asking for money for something the
+    //                   product gives away.
+    //   trialExpired    had the 14 days and let them run out. They have seen
+    //                   what this is; the ask is the subscription.
+    //   neither         everyone else on the metered free tier.
+    //
+    // Getting this wrong is not cosmetic: offering a trial to someone who spent
+    // theirs reads as a bait, and asking a first-timer to pay skips the step
+    // that would have shown them why.
+    const trialAvailable = !!status.trialAvailable;
+    const trialExpired = !!status.trialExpired;
+    const trialDays = status.trialDays || 14;
+
+    // Students usually cannot pay themselves — the offer has to be able to reach
+    // whoever holds the card. Checks roles HELD, not the active role.
     const cu = window.currentUser || {};
-    const isStudentUser = cu.role === 'student' || (Array.isArray(cu.roles) && cu.roles.includes('student'));
+    const isStudentUser = Array.isArray(cu.roles) ? cu.roles.includes('student') : cu.role === 'student';
 
-    const title = trialAvailable
-        ? `Try Mathmatix+ free for ${trialDays} days`
-        : promo
-        ? 'Pi Day Special \u2014 $3.14 Off!'
-        : 'Get Mathmatix+';
-    const subtitle = trialAvailable
-        ? (isLimitReached
-            ? `Out of free minutes? Unlock everything free for ${trialDays} days. Card required \u2014 no charge until then, cancel anytime.`
-            : `Full access to everything, free for ${trialDays} days. Card required \u2014 then $9.95/mo, cancel anytime.`)
-        : isFeatureBlock
-        ? `${errorData.feature} requires Mathmatix+.`
-        : isLimitReached
-        ? "You've used your free minutes this month. Upgrade for unlimited tutoring."
-        : 'Unlimited 24/7 tutoring for your child. Cancel anytime.';
+    // The tutor asks, in their own voice, about the work that just stopped. A
+    // generic "Upgrade to Pro" box is a different product interrupting; the
+    // person they were working with asking them to keep going is the same one.
+    const WALL_LINES = {
+        'mr-nappier': "We were just getting somewhere — I'd rather not stop on a half-finished thought.",
+        'bob': "Aw man, right when we were on a roll! Don't leave me hanging here.",
+        'maya': "Nooo we were actually cooking \uD83D\uDE2D I don't want to lose this momentum.",
+        'ms-maria': "\u00A1Ay, justo ahora! We were building something good \u2014 let's not stop here."
+    };
+    const tutorId = cu.selectedTutorId;
+    const tutorCfg = (window.TUTOR_CONFIG && (window.TUTOR_CONFIG[tutorId] || window.TUTOR_CONFIG.default)) || {};
+    const tutorName = tutorCfg.name || 'Your tutor';
+    const tutorImg = (window.getTutorPortraitSrc && window.getTutorPortraitSrc(tutorId))
+        || (tutorCfg.image ? `/images/tutor_avatars/${tutorCfg.image}` : null);
+    const tutorLine = WALL_LINES[tutorId] || "We were just getting somewhere — let's not stop here.";
 
-    // Price display
-    let priceHtml;
-    if (trialAvailable) {
-        priceHtml = `<div style="font-size:34px;font-weight:bold;color:#00d4ff;margin:4px 0;">Free<span style="font-size:16px;color:#aaa;font-weight:normal"> for ${trialDays} days</span></div>
-                     <div style="color:#888;font-size:13px;">then $9.95/mo &mdash; cancel anytime before then and pay nothing</div>`;
-    } else if (promo && promo.prices.unlimited) {
-        const promoPrice = (promo.prices.unlimited.promo / 100).toFixed(2);
-        priceHtml = `<div style="font-size:16px;color:#888;text-decoration:line-through;">$9.95/mo</div>
-                     <div style="font-size:36px;font-weight:bold;color:#00d4ff;margin:4px 0;">$${promoPrice}<span style="font-size:16px;color:#aaa;font-weight:normal">/mo</span></div>
-                     <div style="color:#ff6b9d;font-size:12px;font-weight:bold;">Save $3.14 \u2014 Pi Day Special!</div>`;
+    // Promo only ever discounts a PRICE. It has no meaning against a free trial,
+    // and showing a struck-through price under "free" reads as a trick.
+    const showPromo = !!promo && !trialAvailable && !isFeatureBlock;
+
+    let offerTitle, offerBody, ctaLabel, ctaAction;
+    if (isFeatureBlock) {
+        offerTitle = `${errorData.feature} comes with Mathmatix+`;
+        offerBody = trialAvailable
+            ? `Unlock it, and everything else, free for ${trialDays} days. No card.`
+            : 'Unlimited tutoring, voice, uploads and courses — $9.95 a month.';
+        ctaLabel = trialAvailable ? `Start my ${trialDays} days free` : 'Get Mathmatix+';
+        ctaAction = trialAvailable ? 'trial' : 'buy';
+    } else if (trialAvailable) {
+        offerTitle = `${trialDays} days of everything, free`;
+        offerBody = 'No card, nothing to cancel. Just keep working.';
+        ctaLabel = `Start my ${trialDays} days free`;
+        ctaAction = 'trial';
+    } else if (trialExpired) {
+        offerTitle = 'Your free trial has ended';
+        offerBody = 'Mathmatix+ keeps it going — unlimited tutoring, voice, photo help and courses.';
+        ctaLabel = 'Keep going \u2014 $9.95/month';
+        ctaAction = 'buy';
     } else {
-        priceHtml = '<div style="font-size:36px;font-weight:bold;color:#00d4ff;margin:4px 0;">$9.95<span style="font-size:16px;color:#aaa;font-weight:normal">/mo</span></div>';
+        offerTitle = 'Keep going with Mathmatix+';
+        offerBody = 'Unlimited tutoring, voice, photo help and courses.';
+        ctaLabel = 'Get Mathmatix+';
+        ctaAction = 'buy';
+    }
+
+    // When their minutes come back. The wall is not a dead end even if they do
+    // nothing, and saying so is what keeps it from reading as a shakedown.
+    let resetLine = '';
+    const nextResetAt = status.usage && status.usage.nextResetAt;
+    if (isLimitReached && nextResetAt) {
+        const days = Math.max(0, Math.ceil((new Date(nextResetAt) - Date.now()) / 86400000));
+        resetLine = days > 0
+            ? `Your free minutes come back in ${days} day${days === 1 ? '' : 's'}.`
+            : 'Your free minutes reset today.';
+    }
+
+    let priceNote = '';
+    if (showPromo && promo.prices && promo.prices.unlimited) {
+        priceNote = `<div style="font-size:12px;color:var(--cr-text-dim);margin-top:6px;">Pi Day: $${(promo.prices.unlimited.promo / 100).toFixed(2)} for your first month.</div>`;
     }
 
     const modal = document.createElement('div');
     modal.id = 'upgrade-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', offerTitle);
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(4,7,14,0.66);display:flex;align-items:center;justify-content:center;z-index:10000;padding:16px;';
+
+    // --cr-* tokens rather than the old hardcoded #1a1a2e/#00d4ff: this modal sits
+    // on top of the chat, which is themed. A dark box over a light chat read as a
+    // different application. The panel paints an opaque ground of its own.
     modal.innerHTML = `
-        <div style="background:#1a1a2e;border-radius:16px;padding:32px;max-width:400px;width:92%;color:#fff;border:1px solid ${promo ? '#ff6b9d' : '#333'};text-align:center;">
-            <h2 style="margin:0 0 8px;font-size:22px;">${title}</h2>
-            <p style="color:#aaa;margin:0 0 20px;line-height:1.5;">${subtitle}</p>
-            ${priceHtml}
-            <ul style="text-align:left;list-style:none;padding:0;margin:20px 0;color:#ccc;font-size:14px;line-height:2;">
-                <li>\u2713 Unlimited 24/7 AI tutoring</li>
-                <li>\u2713 Unlimited voice chat with your tutor</li>
-                <li>\u2713 Unlimited homework uploads</li>
-                <li>\u2713 Full course enrollment</li>
-                <li>\u2713 Show My Work grading</li>
-                <li>\u2713 All features unlocked</li>
-            </ul>
-            <button id="upgrade-go" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%;">${trialAvailable ? `Start my ${trialDays}-day free trial` : 'Get Mathmatix+'}</button>
-            ${trialAvailable
-                ? `<div style="color:#888;font-size:12px;margin-top:12px;">We'll email you before your trial ends so you're never surprised. Cancel anytime — no charge until day ${trialDays}.</div>`
-                : isLimitReached
-                ? '<div style="color:#666;font-size:12px;margin-top:12px;">Your free minutes reset monthly. Upgrade for uninterrupted learning.</div>'
-                : '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Keep free plan (30 min/month)</button>'
-            }
-            ${trialAvailable && !isLimitReached
-                ? '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:6px;">Maybe later</button>'
-                : ''
-            }
-            ${isStudentUser ? `
-            <div style="border-top:1px solid #333;margin:16px 0 12px;"></div>
-            <button id="ask-parent-btn" style="background:transparent;color:#00d4ff;border:1px solid #00d4ff;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;">🙋 Ask a parent to unlock this</button>
-            <div id="ask-parent-status" style="color:#8fd; font-size:12px;margin-top:8px;display:none;"></div>
-            <div id="parent-email-form" style="display:none;margin-top:10px;">
-                <input id="parent-email-input" type="email" placeholder="parent@email.com" style="width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:1px solid #444;background:#12121f;color:#fff;font-size:14px;" />
-                <button id="parent-email-send" style="background:#0d9488;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-top:8px;">Send my parent an invite</button>
-            </div>` : ''}
+        <div style="background:var(--cr-bg-panel,#161B2C);color:var(--cr-text,#E6E9F2);border:1px solid var(--cr-border,rgba(255,255,255,0.08));border-radius:16px;padding:24px;max-width:420px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,0.35);">
+            <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:18px;">
+                ${tutorImg ? `<img src="${tutorImg}" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex:0 0 auto;border:2px solid var(--cr-accent,#8B7BFF);" />` : ''}
+                <div style="min-width:0;">
+                    <p style="margin:0 0 4px;font-size:15px;line-height:1.5;">${tutorLine}</p>
+                    <span style="font-size:12px;color:var(--cr-text-dim,#9AA3B8);">&mdash; ${tutorName}</span>
+                </div>
+            </div>
+
+            <div style="border-top:1px solid var(--cr-border,rgba(255,255,255,0.08));padding-top:16px;">
+                <h2 style="margin:0 0 6px;font-size:18px;font-weight:700;">${offerTitle}</h2>
+                <p style="margin:0 0 16px;font-size:14px;line-height:1.5;color:var(--cr-text-dim,#9AA3B8);">${offerBody}</p>
+                <button id="upgrade-go" style="background:var(--cr-accent-grad,linear-gradient(135deg,#8B7BFF,#6C5CE7));color:#fff;border:none;padding:13px 20px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;">${ctaLabel}</button>
+                ${priceNote}
+                ${isStudentUser ? `
+                <button id="ask-parent-btn" style="background:transparent;color:var(--cr-accent,#8B7BFF);border:1px solid var(--cr-accent,#8B7BFF);padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-top:10px;font-family:inherit;">Ask a parent to unlock this</button>
+                <div id="ask-parent-status" style="font-size:12px;margin-top:8px;display:none;"></div>
+                <div id="parent-email-form" style="display:none;margin-top:10px;">
+                    <input id="parent-email-input" type="email" placeholder="parent@email.com" style="width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:1px solid var(--cr-border-strong,rgba(255,255,255,0.18));background:var(--cr-bg-2,#1B2238);color:var(--cr-text,#E6E9F2);font-size:14px;font-family:inherit;" />
+                    <button id="parent-email-send" style="background:var(--cr-accent-strong,#6C5CE7);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-top:8px;font-family:inherit;">Send my parent an invite</button>
+                </div>` : ''}
+                ${resetLine ? `<p style="margin:14px 0 0;font-size:12px;color:var(--cr-text-dim,#9AA3B8);text-align:center;">${resetLine}</p>` : ''}
+                ${!isLimitReached ? '<button id="upgrade-dismiss" style="background:transparent;color:var(--cr-text-dim,#9AA3B8);border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:6px;font-family:inherit;">Maybe later</button>' : ''}
+            </div>
         </div>`;
     document.body.appendChild(modal);
 
-    document.getElementById('upgrade-go').addEventListener('click', () => initiateUpgrade('unlimited', { trial: trialAvailable }));
+    const goBtn = document.getElementById('upgrade-go');
+    goBtn.addEventListener('click', async () => {
+        if (ctaAction !== 'trial') {
+            initiateUpgrade('unlimited');
+            return;
+        }
+        // The no-card trial is granted server-side with no checkout at all. Sending
+        // this through Stripe would collect a card for a trial the button just
+        // promised was card-free.
+        goBtn.disabled = true;
+        goBtn.textContent = 'Starting\u2026';
+        try {
+            const res = await csrfFetch('/api/billing/start-trial', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: '{}', credentials: 'include'
+            });
+            if (!res.ok) throw new Error(await res.text());
+            window.location.reload();
+        } catch (_) {
+            goBtn.disabled = false;
+            goBtn.textContent = ctaLabel;
+            const statusEl = document.getElementById('ask-parent-status');
+            if (statusEl) {
+                statusEl.textContent = "That didn't go through. Try again in a moment.";
+                statusEl.style.color = '#ffb3b3';
+                statusEl.style.display = '';
+            }
+        }
+    });
+
     const dismissBtn = document.getElementById('upgrade-dismiss');
-    if (dismissBtn) {
-        dismissBtn.addEventListener('click', () => modal.remove());
-    }
+    if (dismissBtn) dismissBtn.addEventListener('click', () => modal.remove());
     if (isStudentUser) wireAskParent();
     // Only allow clicking outside to dismiss if it's not a usage limit block
     if (!isLimitReached) {

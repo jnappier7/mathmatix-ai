@@ -23,7 +23,7 @@ import { applyCosmetics } from './modules/cosmeticsApply.js';
 // script.js's own ?v= does NOT reach its imports — the import URL is what the
 // browser caches. Without this, a returning student keeps the old billing.js
 // (and the old free-time pill position) for up to a week. Bump on every edit.
-import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js?v=20260819a';
+import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js?v=20260906a';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
 import { applyAgeTier, getTierPlaybackRate, getTierSpeechAutoStop, getTierAutoReadAloud, getVoiceDefaults } from './modules/age-tier.js';
