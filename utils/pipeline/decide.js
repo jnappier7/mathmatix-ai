@@ -441,6 +441,31 @@ function decideCore(observation, diagnosis, context) {
     return decision;
   }
 
+  // ── Proposed step — student named the next operation but has NOT done it ──
+  //
+  // "add 3", "divide by 2", "distribute the 4" — the ordinary reply to "what
+  // would you do next?". This is the moment the tutor is most tempted to help
+  // by finishing the sentence, and finishing it is the whole failure:
+  //   Student: "add 3"   Tutor: "Exactly! Adding 3 gives you x = 8."
+  // The student named the move; the arithmetic — the part that is actually
+  // theirs to do — got done for them, and the problem ended.
+  //
+  // ACKNOWLEDGE_PROGRESS is reused deliberately rather than adding an action:
+  // it already maps to assistance level 2 (assistanceLadder) and is already on
+  // the no-visual list (visualDirective), and both of those are right here. An
+  // unlisted action would silently take level 1.
+  if (msgType === MESSAGE_TYPES.PROPOSED_STEP) {
+    decision.action = ACTIONS.ACKNOWLEDGE_PROGRESS;
+    decision.directives.push(
+      'PROPOSED STEP: The student named the NEXT OPERATION but has not carried it out yet (e.g. "add 3", "divide by 2"). They chose the move; the arithmetic is still theirs to do.',
+      'If their choice is right: say so in a few words and hand it straight back — ask them to DO it and tell you what they get.',
+      'If their choice is wrong: do not perform it. Point at what it would do to the equation and ask them to reconsider.',
+      'ABSOLUTE: do NOT carry out the operation, do NOT state the resulting equation, and do NOT state the final answer. "Adding 3 gives you x = 8" is exactly the failure — the student named the step and you did it for them.',
+      'Keep it to a sentence or two. The reply ends with them holding the work.'
+    );
+    return decision;
+  }
+
   // ── Give-up / IDK streaks — exit ramp logic ──
   // A VERIFIED attempt this turn outranks a lingering give-up streak: the
   // student who fished for the answer, got redirected, and then genuinely
@@ -985,9 +1010,15 @@ function decideCore(observation, diagnosis, context) {
 
     decision.action = ACTIONS.CONTINUE_CONVERSATION;
     decision.directives.push(
-      'The student stated a math problem. Acknowledge it and immediately guide them into the first step.',
-      'Do NOT ask "what problem are you working on?" or "what have you tried?" — they just told you the problem. Start tutoring.',
-      'Break the problem into its first step and ask the student to attempt THAT step. Be specific to the actual math they asked about.',
+      // GENERAL_MATH is the 0.5-confidence CATCH-ALL, so this branch must not
+      // assert what the message was. It used to open "The student stated a math
+      // problem", which is false for most of what lands here — and mid-problem
+      // the only way to obey "break the problem into its first step" was to
+      // perform the student's own step and announce the result.
+      'If the student has just stated a math problem, acknowledge it and guide them into the first step. If you are already mid-problem with them, continue from where they are — do not restart.',
+      'Do NOT ask "what problem are you working on?" or "what have you tried?" if they have already told you. Start, or resume, tutoring.',
+      'Work one step at a time, and be specific to the actual math in front of you. Ask the student to attempt the step; do not attempt it for them.',
+      'If the student named an operation without carrying it out ("add 3", "divide by 2"), that step is THEIRS to execute — confirm the choice and ask them to do it. Never perform it and never state the resulting equation.',
       'NEVER show the full solution or final answer. Guide them to discover it one step at a time.'
     );
     return decision;

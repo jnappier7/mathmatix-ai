@@ -28,6 +28,11 @@ const MESSAGE_TYPES = {
   PARROTING: 'parroting',
   EVASIVE_AFFIRMATIVE: 'evasive_affirmative',
   PROGRESS_REPORT: 'progress_report',
+  // Named the next operation without carrying it out ("add 3", "divide by 2").
+  // Distinct from PROGRESS_REPORT, which reports a step already DONE: a proposed
+  // step still has to be executed BY THE STUDENT, so the tutor must confirm the
+  // choice and hand it back, never perform it.
+  PROPOSED_STEP: 'proposed_step',
   DISPUTE: 'dispute',
 };
 
@@ -326,6 +331,65 @@ function detectProgressReport(message) {
 }
 
 /**
+ * Detect a PROPOSED step — the student named the next operation but has not
+ * carried it out ("add 3", "divide by 2", "distribute the 4", "then subtract 5
+ * from both sides").
+ *
+ * THE BUG THIS CATCHES: this is the ordinary way a student answers "what would
+ * you do next?", and it matched nothing. It carries no extractable answer and
+ * no first-person past tense, so it fell through to GENERAL_MATH at 0.5
+ * confidence — whose directives assert "the student stated a math problem" and
+ * tell the tutor to "break the problem into its first step". Mid-problem, the
+ * only way to obey that is to perform the named operation, so the tutor did:
+ *   Student: "add 3"
+ *   Tutor:   "Exactly! Adding 3 gives you x = 8. Nice work!"
+ * That is the tutor doing the step it had just asked the student to do, on the
+ * landing page, three inches under "Teaches thinking, not answers".
+ *
+ * Deliberately narrow, because the cost of a false positive (treating a real
+ * problem statement as a proposed step) is higher than of a miss (GENERAL_MATH,
+ * whose directives now also forbid executing the student's step):
+ *   - Only fires when the tutor's own last message ASKED for a next step, so a
+ *     cold-open "divide by 2" is still a question about how to divide.
+ *   - Only on short messages; a long explanation is a different animal.
+ *   - Never when the student wrote a RESULT (an "=" or an extractable answer) —
+ *     they executed it, so it is an attempt to be graded, not a proposal. The
+ *     classify chain already tries extractAnswer first; the `=` guard here
+ *     covers the forms extraction declines.
+ *
+ * @param {string} message
+ * @param {Array<{content:string}>} recentAssistantMessages
+ * @returns {boolean}
+ */
+function detectProposedStep(message, recentAssistantMessages) {
+  if (!message || typeof message !== 'string') return false;
+  const t = message.trim();
+  if (t.length < 2 || t.length > 120) return false;
+
+  // Only in reply to a request for the next step. Without this gate the same
+  // words are a question about method, not a proposal about this problem.
+  if (!lastTutorAskedForNextStep(recentAssistantMessages)) return false;
+
+  // A written result means they carried it out — grade it, don't hand it back.
+  if (/=/.test(t)) return false;
+
+  const OPS = 'add|subtract|minus|plus|multiply|divide|times|factor|distribute|expand|foil'
+    + '|combine|simplify|isolate|substitute|plug|square|cube|cancel|reduce|convert|flip'
+    + '|invert|group|split|move|balance|integrate|differentiate|derive|complete|solve|take';
+
+  // Imperative ("add 3"), gerund ("adding 3"), or hedged/first-person-present
+  // ("i'd add 3", "we should divide by 2", "maybe distribute"). Past tense is
+  // NOT here on purpose — "I added 3" is a completed step and detectProgressReport
+  // owns it, with a different correct response.
+  const lead = "(?:(?:ok(?:ay)?|um|uh|well|so|then|next|now|first|maybe|probably|i\\s+think|i\\s+guess"
+    + "|i(?:'|\u2019)?d|i\\s+would|we(?:'|\u2019)?d|we\\s+would|we\\s+(?:should|could|can|need\\s+to)"
+    + "|you\\s+(?:should|could|can)|let(?:'|\u2019)?s|lets|i|we|you)\\b[\\s,]*){0,3}";
+  const proposed = new RegExp('^\\s*' + lead + '(?:' + OPS + ')(?:ing|s)?\\b', 'i');
+
+  return proposed.test(t);
+}
+
+/**
  * Detect context signals in the message (confidence, frustration, metacognition).
  * Returns an array of signal objects.
  */
@@ -462,10 +526,14 @@ function lastTutorAskedForNextStep(recentAssistantMessages) {
   if (!/\?/.test(text)) return false;
 
   const stepGuidance = [
-    /\bwhat'?s\s+the\s+(?:next|first|second|third|last|final)\s+step\b/,
+    // "step" is not the only word tutors use — "what's the first move you'd
+    // make?" is the same ask, and the proposed-step gate depends on this
+    // detector, so a phrasing it misses silently loses the classification.
+    /\bwhat'?s\s+the\s+(?:next|first|second|third|last|final)\s+(?:step|move|thing|one)\b/,
+    /\bwhat\s+(?:is|would\s+be)\s+(?:your|the)\s+(?:next|first)\s+(?:step|move)\b/,
     /\bwhat\s+(?:do|should|would|could)\s+(?:we|you)\s+(?:do|try|use|think|get|notice|see|need|start|begin)\b/,
     /\bwhat\s+(?:do|did)\s+you\s+(?:think|get|notice|see|find|come\s+up\s+with)\b/,
-    /\bwhat'?s\s+(?:next|the\s+(?:answer|result|value|next\s+step))\b/,
+    /\bwhat(?:'?s|\s+is|\s+would\s+be)\s+(?:next|the\s+(?:answer|result|value|next\s+step|first\s+step))\b/,
     /\bnow\s+what\b/,
     /\bany\s+ideas?\b/,
     /\bcan\s+you\s+(?:tell|show|try|evaluate|simplify|factor|solve|find|compute|integrate|differentiate|plug|substitute)\b/,
@@ -738,6 +806,13 @@ function observe(message, context = {}) {
       // do NOT re-teach it (handled by decide's PROGRESS_REPORT branch).
       messageType = MESSAGE_TYPES.PROGRESS_REPORT;
       confidence = 0.8;
+    } else if (detectProposedStep(text, context.recentAssistantMessages)) {
+      // Student named the next operation but has NOT carried it out. Checked
+      // after progress-report so first-person past tense ("I added 3") keeps
+      // its own branch, and after answer extraction so a student who wrote the
+      // result is still graded on it.
+      messageType = MESSAGE_TYPES.PROPOSED_STEP;
+      confidence = 0.8;
     } else {
       messageType = MESSAGE_TYPES.GENERAL_MATH;
       confidence = 0.5;
@@ -830,6 +905,7 @@ module.exports = {
   detectParroting,
   detectEvasiveAffirmative,
   detectProgressReport,
+  detectProposedStep,
   detectBareProblemDrop,
   messageStatesProblem,
   lastTutorAskedForNextStep,

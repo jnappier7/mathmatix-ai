@@ -579,9 +579,24 @@ async function verify(responseText, context = {}) {
   const inferredBareDrop = (context.isBareProblemDrop === undefined && context.userMessage)
     ? detectBareProblemDrop(context.userMessage, context.messageType, false)
     : false;
+  // PROPOSED_STEP is listed separately, OUTSIDE the student_correct exemption,
+  // and both halves of that are deliberate.
+  //
+  // Outside the set, because it must be here at all: "add 3" used to classify
+  // GENERAL_MATH, which is in the set, so this guard covered it. Giving the
+  // message its own type would have silently narrowed a working guard away from
+  // the exact case that needs it most.
+  //
+  // Outside the exemption, because the exemption is inverted here. For the other
+  // types, diagnosisType 'student_correct' means the student produced the answer,
+  // so restating it is confirmation rather than a leak. For a proposed step the
+  // student produced no answer at all — 'student_correct' only means the OPERATION
+  // they named was the right one, and "that's right, and it gives you x = 8" is
+  // the leak this guard exists to stop.
   const isStudentPosed =
     context.isBareProblemDrop ||
     inferredBareDrop ||
+    context.messageType === MESSAGE_TYPES.PROPOSED_STEP ||
     (studentPosedTypes.has(context.messageType) && context.diagnosisType !== 'student_correct');
   const currentPhase = context.phaseState?.currentPhase || context.phaseState?.phase || null;
   const isIDoPhase = currentPhase === 'i-do';
