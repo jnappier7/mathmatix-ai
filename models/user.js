@@ -827,6 +827,15 @@ const userSchema = new Schema({
   // trialEndsAt is what distinguishes "trialing" from "paid unlimited".
   trialEndsAt: { type: Date, default: null },       // future = actively trialing
   hasUsedTrial: { type: Boolean, default: false },  // one trial per user — blocks re-trialing
+  // Trial ENGAGEMENT — how the trial was actually used, not just that it exists.
+  // These two answer the question the conversion rate cannot: when a trial does
+  // not convert, was the product never really used, or used and judged not worth
+  // paying for? Those have opposite fixes. Written by utils/trialGrant.js
+  // recordTrialActivity() on billed tutoring turns, and they are also what makes
+  // the trial_activated / trial_returned funnel events fire exactly once each
+  // rather than on every turn.
+  trialTurns: { type: Number, default: 0 },         // billed tutoring turns taken inside the trial
+  trialActiveDays: { type: [String], default: [] }, // distinct UTC day keys (YYYY-MM-DD) they showed up
   // Throttle for "ask a parent to unlock" requests (student → linked parent),
   // so a kid hitting the wall repeatedly can't spam their parent.
   lastParentUpgradeRequestAt: { type: Date, default: null },

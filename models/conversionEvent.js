@@ -30,8 +30,16 @@ const CONVERSION_EVENTS = [
   'signup_started',        // account created (context: role, carriedPreview)
   // -- Trial (14 days, no card) --
   'trial_started',         // trial granted at signup (context: trialDays)
-  'trial_activated',       // did meaningful tutoring inside the trial (NOT YET EMITTED)
-  'trial_returned',        // came back on a later day inside the trial (NOT YET EMITTED)
+  // Both are THRESHOLD events written by utils/pipeline/persist.js via
+  // trialGrant.recordTrialActivity — never once per turn. trial_activated fires
+  // exactly once per trial; trial_returned fires once per DISTINCT day after the
+  // first, so a 14-day trial can produce at most 13 of them and the row count is
+  // itself the retention curve. Together they split a non-converting trial into
+  // "never really used it" and "used it, did not think it was worth paying for",
+  // which the conversion rate alone cannot distinguish and which have opposite
+  // fixes.
+  'trial_activated',       // TRIAL_ACTIVATION_TURNS billed turns reached (context: turns, trialDaysRemaining)
+  'trial_returned',        // showed up on a second distinct day (context: activeDays, trialDaysRemaining)
   // -- Conversion --
   'upgrade_started',       // Stripe checkout session created (context: pack)
   'subscribed',            // checkout completed, subscription active (context: pack)
