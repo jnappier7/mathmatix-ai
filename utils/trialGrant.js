@@ -33,6 +33,29 @@
 // it is gone). Fourteen days spans two homework cycles and most of a quiz cycle.
 const TRIAL_DAYS = 14;
 
+// How many genuine tutoring turns count as "they actually used it".
+//
+// The funnel's whole reason for wanting this event is to separate two failures
+// that look identical in the conversion number and have OPPOSITE fixes: a
+// trialist who never really used the product, and one who used it and did not
+// think it was worth $9.95. Without the split, a weak trial month is
+// uninterpretable.
+//
+// Five turns is one problem worked through plus a little — the same turn unit
+// the meter bills in (utils/pipeline/persist.js charges every genuine turn a
+// 30s floor), and the threshold is crossed by a student who brought real work,
+// not by one who said hello and left. Only BILLED turns are counted, so the
+// definition of "genuine" is the meter's, not a second one invented here.
+const TRIAL_ACTIVATION_TURNS = 5;
+
+/** UTC day key (YYYY-MM-DD). UTC, not local: the server runs on it, it is
+ *  deterministic to test, and "which calendar day" only has to be consistent —
+ *  a returning student is one who came back on a different day, and no timezone
+ *  choice changes that for anyone but the midnight-hour edge case. */
+function dayKey(date) {
+  return new Date(date).toISOString().slice(0, 10);
+}
+
 /**
  * True when this user is inside an unexpired free trial.
  *
@@ -80,9 +103,73 @@ function grantTrial(user, now = new Date()) {
   return true;
 }
 
+/**
+ * Record one genuine tutoring turn against the trial, and report which funnel
+ * events that turn earned.
+ *
+ * Mutates the user's trial counters and does NOT save — like grantTrial, the
+ * caller is already writing the doc for other reasons and a second write here
+ * would race with theirs.
+ *
+ * IDEMPOTENCE IS THE POINT. Both events describe a threshold being crossed, and
+ * a turn-rate event would drown the table it lives in:
+ *   - trial_activated fires on the turn where trialTurns EQUALS the threshold,
+ *     so it fires exactly once per trial and never again.
+ *   - trial_returned fires only when a day key is appended that was not already
+ *     in the list, and only when that leaves more than one day — the first day
+ *     of a trial is arriving, not returning.
+ * That is also why the counters live on the user doc rather than being derived
+ * by querying ConversionEvent: this runs on every tutoring turn, and a read
+ * there would put a query in the hot path to answer a question one integer
+ * already answers.
+ *
+ * @param {Object} user - hydrated user doc (mutated)
+ * @param {Date} [now]
+ * @returns {Array<{event: string, context: Object}>} events to record; empty
+ *          when the user is not trialing or the turn crossed no threshold
+ */
+function recordTrialActivity(user, now = new Date()) {
+  const events = [];
+  if (!user || !isInTrial(user, now)) return events;
+
+  const daysLeft = trialDaysRemaining(user, now);
+
+  // ── Depth: did they use it enough to have an opinion? ──
+  user.trialTurns = (Number(user.trialTurns) || 0) + 1;
+  if (user.trialTurns === TRIAL_ACTIVATION_TURNS) {
+    events.push({
+      event: 'trial_activated',
+      context: { turns: user.trialTurns, trialDaysRemaining: daysLeft },
+    });
+  }
+
+  // ── Breadth: did they come back? ──
+  // Reassigned rather than push()ed so the change is tracked without a
+  // markModified call at the persist site.
+  const today = dayKey(now);
+  const seen = Array.isArray(user.trialActiveDays) ? user.trialActiveDays.map(String) : [];
+  if (!seen.includes(today)) {
+    // Capped defensively: a 14-day trial cannot produce more keys than this,
+    // but a re-grant or clock skew must not grow the array without bound.
+    const days = seen.concat(today).slice(-(TRIAL_DAYS + 1));
+    user.trialActiveDays = days;
+    if (days.length > 1) {
+      events.push({
+        event: 'trial_returned',
+        context: { activeDays: days.length, trialDaysRemaining: daysLeft },
+      });
+    }
+  }
+
+  return events;
+}
+
 module.exports = {
   TRIAL_DAYS,
+  TRIAL_ACTIVATION_TURNS,
+  dayKey,
   isInTrial,
   trialDaysRemaining,
   grantTrial,
+  recordTrialActivity,
 };

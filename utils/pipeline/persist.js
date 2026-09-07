@@ -598,6 +598,33 @@ async function persist(params) {
     results.freeWeeklySecondsRemaining = metered
       ? Math.max(0, FREE_WEEKLY - updatedWeekly)
       : null;
+
+    // ── Trial engagement telemetry ──
+    // Deliberately INSIDE the billed-turn block, so "a genuine tutoring turn"
+    // has exactly one definition — the meter's. A turn that was not worth
+    // charging for is not worth counting as trial usage either, and putting the
+    // count anywhere else would create a second, quietly diverging answer to the
+    // same question.
+    //
+    // The counters are mutated on `user` and ride out on the user.save() below;
+    // no extra write. recordTrialActivity returns only THRESHOLD crossings —
+    // trial_activated once, trial_returned once per distinct new day — so a
+    // whole 14-day trial writes at most 14 rows, not one per turn. It returns an
+    // empty array for everyone not trialing, which is almost everyone.
+    try {
+      // Lazy-required to match the surrounding block (meterAiSeconds,
+      // hasUnmeteredAiAccess) and to keep telemetry off the module graph of
+      // every caller that imports persist.
+      const { recordTrialActivity } = require('../trialGrant');
+      const { recordConversionEvent } = require('../conversionEvents');
+      for (const { event, context } of recordTrialActivity(user)) {
+        recordConversionEvent(event, { userId: user._id, context });
+      }
+    } catch (err) {
+      // Telemetry must never break a tutoring turn (same rule as
+      // recordConversionEvent's own error swallowing).
+      console.error('[Persist] Trial engagement telemetry error:', err.message);
+    }
   }
 
   // ── Persist cognitive load snapshot ──
