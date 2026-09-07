@@ -77,6 +77,9 @@
 
       return {
         node: card,
+        // The note's body IS the caption (describe() puts semantic.caption in
+        // .lws-note-text), so the derivation view must not add a figcaption.
+        ownsCaption: true,
         update: function (el) { current = Object.assign({}, el); render(); },
         destroy: function () {},
         describe: function () { const d = describe(current); return d.title + ': ' + d.text; },

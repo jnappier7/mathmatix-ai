@@ -33,13 +33,39 @@
   }
 
   // First result that carries a usable image.
-  function pickResult(results) {
+  // Words in a picture query that name the PICTURE rather than the math —
+  // "graph", "diagram", "showing" — plus function words. Never evidence that
+  // a result is about the right thing.
+  const QUERY_STOP = /^(the|a|an|of|for|and|or|in|on|to|with|graph|graphs|diagram|diagrams|picture|pictures|image|images|showing|example|examples|labell?ed)$/;
+  function contentStems(query) {
+    return String(query || '').toLowerCase().split(/[^a-z0-9]+/)
+      .filter((w) => w.length >= 4 && !QUERY_STOP.test(w))
+      // A 6-letter stem at a word boundary: "trigonometric" finds "Trigonometry",
+      // "functions" finds "function", "circle" finds "circles".
+      .map((w) => new RegExp('\\b' + w.slice(0, 6)));
+  }
+
+  // Prefer a result whose TITLE is about the query; fall back to the first
+  // result that carries an image at all. The search is already site-restricted
+  // and safe, but "relevant to an educational site" is not "relevant to the
+  // query": production 2026-09-07 captioned a cosmology plot of the expanding
+  // universe as "a great tool for understanding trigonometric functions" — the
+  // first image the site whitelist returned for that query. A title check can
+  // only move a better result up; with no title match it returns what it
+  // always did.
+  function pickResult(results, query) {
     if (!Array.isArray(results)) return null;
-    for (let i = 0; i < results.length; i++) {
-      const r = results[i];
-      if (r && (r.thumbnail || r.url)) return r;
+    const withImage = results.filter((r) => r && (r.thumbnail || r.url));
+    if (!withImage.length) return null;
+    const stems = contentStems(query);
+    if (stems.length) {
+      const hit = withImage.find((r) => {
+        const title = String(r.title || '').toLowerCase();
+        return stems.some((re) => re.test(title));
+      });
+      if (hit) return hit;
     }
-    return null;
+    return withImage[0];
   }
 
   function defaultSearch(query) {
@@ -122,7 +148,7 @@
         const my = ++token;
         Promise.resolve(search(q)).then(function (data) {
           if (my !== token) return; // superseded by a newer render/update
-          const r = pickResult(data && data.results);
+          const r = pickResult(data && data.results, q);
           if (r) showImage(r); else fallback('No image found for “' + q + '”.');
         }).catch(function () { if (my === token) fallback(); });
       }
@@ -130,6 +156,9 @@
 
       return {
         node: card,
+        // The card paints the caption itself (.lws-image-caption); tell the
+        // derivation view not to add a figcaption too.
+        ownsCaption: true,
         update: function (el) { current = Object.assign({}, el); render(); },
         destroy: function () { token++; /* invalidate any in-flight search */ },
         describe: function () { return 'Picture: ' + (sem().caption || sem().query); },
