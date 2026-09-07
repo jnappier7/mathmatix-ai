@@ -899,7 +899,11 @@
                     // Handle usage limit (402) — show friendly message
                     if (response.status === 402) {
                         const errorData = await response.json().catch(() => ({}));
-                        aiMessageDiv.textContent = errorData.message || "You've used your 30 free AI minutes this month. Come back next month!";
+                        // The server sends the real sentence, derived from the quota constant. This
+                        // fallback only fires if the body is missing, so it must not name a number
+                        // of its own — that is how the old "30 minutes / next month" copy outlived
+                        // the tier it described.
+                        aiMessageDiv.textContent = errorData.message || "You're out of free tutoring minutes for now. They come back soon.";
                         aiMessageDiv.style.color = '#ff6b6b';
                         return;
                     }

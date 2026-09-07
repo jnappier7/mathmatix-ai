@@ -2,6 +2,8 @@
 // Email service for parent reports, consent emails, and notifications
 
 const nodemailer = require('nodemailer');
+// One phrase for the free tier everywhere it is stated (docs/CONTENT_STANDARDS.md).
+const { freeTierPhrase } = require('./aiTimeMeter');
 const { messagingThreadRoles } = require('./messagingAccess');
 
 // Create reusable SMTP transporter
@@ -385,7 +387,7 @@ async function sendTrialEndingReminder(user, trialEndsAt) {
         <p style="text-align:center;margin:24px 0;">
           <a href="${manageUrl}" style="background:#0d9488;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block;">Manage my subscription</a>
         </p>
-        <p style="color:#666;font-size:13px;">Cancelling keeps you on the free plan (30 minutes of AI tutoring a month) — you won't lose your account or progress.</p>
+        <p style="color:#666;font-size:13px;">Cancelling keeps you on the free plan (${freeTierPhrase()}) — you won't lose your account or progress.</p>
       </div>`;
 
     const mailOptions = {
@@ -1822,7 +1824,7 @@ function getCancellationConfirmationTemplate(firstName, accessUntilDate, baseUrl
       </div>
 
       <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
-        After ${accessUntilDate}, the account will switch to our free plan (30 AI minutes per month).
+        After ${accessUntilDate}, the account will switch to our free plan (${freeTierPhrase()}).
       </p>
 
       <h3 style="margin: 25px 0 12px 0; color: #2c3e50; font-size: 18px;">Changed your mind?</h3>

@@ -33,22 +33,41 @@ Grounding: `models/skill.js` catalog + `docs/MATH_SKILLS_VERTICAL_ALIGNMENT.md`.
 
 ## Free plan allowance
 
+The offer we lead with is the **trial**, not the free tier. Every new account gets
+14 days of everything, no credit card (`utils/trialGrant.js`). The free tier is what
+a lapsed trial drops to, and marketing copy should introduce it in that order —
+trial first, free plan as the floor underneath it — never the other way round.
+
 | Form | Text |
 |------|------|
-| Canonical | `30 free AI minutes a month` |
-| With the clarifier (first mention on any page) | `30 free AI minutes a month — usually 2–3 hours of tutoring, because only the tutor's response time counts, never your child's reading or thinking time.` |
-| Short (cards, meta descriptions) | `30 AI min/month` |
+| Canonical (the trial) | `14 days of everything, free — no credit card, nothing to cancel` |
+| Canonical (the free tier) | `3 free AI minutes a week` |
+| With the clarifier (first mention on any page) | `3 free AI minutes a week — about one problem, worked all the way through, because only the tutor's response time counts.` |
+| Short (cards, meta descriptions) | `3 AI min/week` |
+| Qualitative (where a number would read as stingy) | `a few tutoring minutes each week` |
 
-**Never** "per week" or "30 minutes of tutoring" — both understate it. The quota is a
-rolling 30-day window, not a calendar month, so avoid "resets on the 1st".
+**Never** "30 free AI minutes a month" or `30 AI min/month` — that was the tier through
+2026-09-06 and it is retired. **Never** "3 minutes of tutoring": three AI minutes is
+about fifteen minutes of real tutoring, so that form understates it.
 
-The clarifier is not optional garnish. "30 minutes" read cold sounds like half an hour
-of use; the reason it isn't is the metering rule, so the rule travels with the number
-the first time a page states it.
+*This section previously said **never** "per week", because the quota then ran on a
+rolling 30-day window and a weekly form understated it. The window is now
+`FREE_QUOTA_RESET_DAYS = 7`, so "a week" is the accurate form and "a month" is the
+retired one. The rule that survives both is the one underneath: **state the window the
+meter actually enforces.***
+
+The clarifier is not optional garnish, but note what it is doing at this scale. It used
+to convert upward — "30 minutes" read cold sounds like half an hour of use, and the
+point was that it is really 2–3 hours. At three minutes the risk inverts: read cold it
+sounds like 180 seconds of tutoring, which is not a product. The honest unit is turns.
+`utils/pipeline/persist.js` bills every tutor turn a floor of `AI_TIME_FLOOR_SECONDS`
+(30s), so three minutes is **six turns — one problem, start to finish**. Say that.
 
 Grounding: `utils/aiTimeMeter.js` (`FREE_WEEKLY_SECONDS`, `FREE_QUOTA_RESET_DAYS` — the
-constant names still say "weekly" for backward compatibility; the quota is monthly) and
-`middleware/usageGate.js`.
+constant names always said "weekly" and now mean it), `utils/pipeline/persist.js`
+(`AI_TIME_FLOOR_SECONDS`), `middleware/usageGate.js`, and `utils/trialGrant.js`
+(`TRIAL_DAYS`). Pinned by `tests/unit/freeTierCopy.test.js`, which derives the number
+from the constant rather than re-pinning a literal.
 
 ---
 

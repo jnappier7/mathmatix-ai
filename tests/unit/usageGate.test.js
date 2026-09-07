@@ -13,7 +13,7 @@ const SchoolLicense = require('../../models/schoolLicense');
 
 // Clear module cache so BILLING_ENABLED takes effect
 delete require.cache[require.resolve('../../middleware/usageGate')];
-const { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasUnmeteredAiAccess, hasVoiceAccess, hasStaffRoleBypass, FREE_WEEKLY_SECONDS } = require('../../middleware/usageGate');
+const { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasUnmeteredAiAccess, hasVoiceAccess, hasStaffRoleBypass, FREE_WEEKLY_SECONDS, FREE_QUOTA_RESET_DAYS, LOW_USAGE_WARNING_SECONDS } = require('../../middleware/usageGate');
 
 describe('Feature Gating Middleware', () => {
   let req, res, next;
@@ -186,7 +186,7 @@ describe('Feature Gating Middleware', () => {
 
     // --- Free weekly minutes ---
     test('should allow student with remaining free minutes', async () => {
-      req.user.weeklyAISeconds = 600; // 10 minutes used, 20 remaining
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS - 60; // part of the tier spent, some left
       await usageGate(req, res, next);
       expect(next).toHaveBeenCalled();
       expect(res.setHeader).toHaveBeenCalledWith(
@@ -195,15 +195,15 @@ describe('Feature Gating Middleware', () => {
       );
     });
 
-    test('should set low usage warning when <= 2 minutes remain', async () => {
-      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS - 60; // 1 minute remaining
+    test('should set low usage warning at or below the threshold', async () => {
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS - LOW_USAGE_WARNING_SECONDS; // exactly at the threshold
       await usageGate(req, res, next);
       expect(next).toHaveBeenCalled();
       expect(res.setHeader).toHaveBeenCalledWith('X-Usage-Warning', 'low');
     });
 
-    test('should NOT set low usage warning when > 2 minutes remain', async () => {
-      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS - 300; // 5 minutes remaining
+    test('should NOT set low usage warning above the threshold', async () => {
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS - LOW_USAGE_WARNING_SECONDS - 1; // one second clear of it
       await usageGate(req, res, next);
       expect(next).toHaveBeenCalled();
       // Should not have X-Usage-Warning set
@@ -211,19 +211,24 @@ describe('Feature Gating Middleware', () => {
       expect(warningCalls.length).toBe(0);
     });
 
-    // --- Monthly AI quota reset (decoupled from weekly engagement reset) ---
-    test('should reset AI quota when 30+ days have passed', async () => {
+    // --- AI quota reset (decoupled from the weekly engagement reset) ---
+    test('should reset AI quota once the quota window has lapsed', async () => {
       req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 100;
-      req.user.lastAIQuotaReset = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000); // 31 days ago
+      req.user.lastAIQuotaReset = new Date(Date.now() - (FREE_QUOTA_RESET_DAYS + 1) * 24 * 60 * 60 * 1000);
       await usageGate(req, res, next);
       expect(User.findOneAndUpdate).toHaveBeenCalled();
       expect(next).toHaveBeenCalled(); // After reset, free minutes are available
     });
 
-    test('should NOT reset AI quota before 30 days, even after the weekly engagement reset', async () => {
+    test('the weekly engagement reset does NOT reset the AI quota', async () => {
+      // These two windows ran on different durations (7 vs 30 days) and this
+      // test used to prove the decoupling with that gap. They now share a
+      // 7-day cadence, so the only thing keeping them independent is their
+      // separate anchors — lastWeeklyReset vs lastAIQuotaReset. That is the
+      // invariant worth pinning: firing one must not roll the other.
       req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 100;
-      req.user.lastAIQuotaReset = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000); // 8 days — quota NOT due
-      req.user.lastWeeklyReset = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000);  // 8 days — engagement reset due
+      req.user.lastAIQuotaReset = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000); // quota NOT due
+      req.user.lastWeeklyReset = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000);  // engagement reset due
       await usageGate(req, res, next);
       expect(res.status).toHaveBeenCalledWith(402); // quota still exhausted
       expect(next).not.toHaveBeenCalled();
@@ -281,7 +286,7 @@ describe('Feature Gating Middleware', () => {
 
     test('usageGateAllMethods should allow GET requests with free minutes remaining', async () => {
       req.method = 'GET';
-      req.user.weeklyAISeconds = 600;
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS - 60;
       await usageGateAllMethods(req, res, next);
       expect(next).toHaveBeenCalled();
     });
@@ -650,8 +655,30 @@ describe('Feature Gating Middleware', () => {
   // FREE_WEEKLY_SECONDS constant
   // ============================================================
   describe('FREE_WEEKLY_SECONDS', () => {
-    test('should be 30 minutes (1800 seconds)', () => {
-      expect(FREE_WEEKLY_SECONDS).toBe(30 * 60);
+    // Read the tier in TURNS. utils/pipeline/persist.js bills every genuine
+    // tutor turn a floor of AI_TIME_FLOOR_SECONDS rather than raw LLM latency,
+    // so the free allowance is really "N turns a week", and N is the number
+    // that decides whether FREE is good enough that nobody upgrades.
+    const AI_TIME_FLOOR_SECONDS = 30;
+
+    test('is three minutes a week — six turns, one problem end to end', () => {
+      expect(FREE_WEEKLY_SECONDS).toBe(3 * 60);
+      expect(FREE_QUOTA_RESET_DAYS).toBe(7);
+      expect(FREE_WEEKLY_SECONDS / AI_TIME_FLOOR_SECONDS).toBe(6);
+    });
+
+    test('is a whole number of billable turns', () => {
+      // A tier that is not a multiple of the floor strands a partial turn the
+      // student can never spend, and makes every "N turns" claim in the copy
+      // and in docs/CONTENT_STANDARDS.md an approximation.
+      expect(FREE_WEEKLY_SECONDS % AI_TIME_FLOOR_SECONDS).toBe(0);
+    });
+
+    test('the low-usage warning still leaves room to be a warning', () => {
+      // Fixed at 120s it would have fired on the first turn of a 180s tier and
+      // never turned off, which is the same as having no warning.
+      expect(LOW_USAGE_WARNING_SECONDS).toBeLessThan(FREE_WEEKLY_SECONDS);
+      expect(LOW_USAGE_WARNING_SECONDS).toBeGreaterThanOrEqual(AI_TIME_FLOOR_SECONDS);
     });
   });
 
@@ -679,7 +706,7 @@ describe('Feature Gating Middleware', () => {
     });
 
     test('free minutes should be consumed before blocking', async () => {
-      req.user.weeklyAISeconds = 600; // Still has free minutes
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS - 60; // Still has free minutes
       await usageGate(req, res, next);
       expect(next).toHaveBeenCalled();
       expect(res.setHeader).toHaveBeenCalledWith(
@@ -715,7 +742,7 @@ describe('Feature Gating Middleware', () => {
     test('allows a free student who still has AI minutes', async () => {
       // Voice used to be premium-only. The gate is now the AI-minute pool, the
       // same one text tutoring spends.
-      req.user.weeklyAISeconds = 600; // 10 of 30 minutes used
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS - 60; // a minute left
       expect(await hasVoiceAccess(req.user)).toBe(true);
     });
 

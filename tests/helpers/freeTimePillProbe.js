@@ -50,8 +50,25 @@ const snapshot = () => {
         text: el ? el.textContent.replace(/\s+/g, ' ').trim() : null,
     };
 };
+// The pill's urgency levels are a fraction of the tier, not fixed seconds — see
+// updateFreeTimeIndicator. This walk used to hardcode 1200s "comfortable" and
+// 180s "low", both of which are now MORE than the whole free tier, so they
+// collapsed into one level and the escalation this file exists to test could
+// not happen. Feed the real tier and derive the steps from it.
+const { FREE_WEEKLY_SECONDS } = require('../../utils/aiTimeMeter');
+const LOW_MARK = Math.min(300, Math.max(30, Math.round(FREE_WEEKLY_SECONDS / 3)));
+const COMFORTABLE = FREE_WEEKLY_SECONDS;              // a full tank
+const STILL_COMFORTABLE = LOW_MARK + 30;              // spent some, not warned yet
+const LOW = LOW_MARK;                                 // at the warning
+const STILL_LOW = Math.max(1, LOW_MARK - 15);         // deeper in, same level
+
 const update = (secondsRemaining, extra = {}) =>
-    win.updateFreeTimeIndicator({ secondsRemaining, limitReached: secondsRemaining <= 0, ...extra });
+    win.updateFreeTimeIndicator({
+        secondsRemaining,
+        limitReached: secondsRemaining <= 0,
+        freeWeeklySeconds: FREE_WEEKLY_SECONDS,
+        ...extra,
+    });
 const clickDismiss = () => {
     const x = pill().querySelector('#mm-time-dismiss');
     x.dispatchEvent(new win.MouseEvent('click', { bubbles: true, cancelable: true }));
@@ -59,23 +76,23 @@ const clickDismiss = () => {
 
 const result = {};
 
-// Comfortable: 20 minutes left.
-update(1200);
+// Comfortable: a full week's allowance.
+update(COMFORTABLE);
 result.comfortable = snapshot();
 
 // Dismissed while comfortable, then a later turn still comfortable: stays gone.
 clickDismiss();
 result.comfortableAfterDismiss = snapshot();
-update(1100);
+update(STILL_COMFORTABLE);
 result.comfortableStaysDismissed = snapshot();
 
-// Escalating past the five-minute mark retires that dismissal — this is the
-// state in the bug report (3 min left), and it must arrive dismissable.
-update(180);
+// Escalating past the low-water mark retires that dismissal — this is the
+// state in the bug report, and it must arrive dismissable.
+update(LOW);
 result.low = snapshot();
 clickDismiss();
 result.lowAfterDismiss = snapshot();
-update(150);
+update(STILL_LOW);
 result.lowStaysDismissed = snapshot();
 
 // Running out escalates again: back it comes, still dismissable.
@@ -85,7 +102,7 @@ clickDismiss();
 result.outAfterDismiss = snapshot();
 
 // Buying time / a quota reset de-escalates, which also retires the dismissal.
-update(1800);
+update(COMFORTABLE);
 result.afterReset = snapshot();
 
 // A dismissal must not survive into a state the student never saw dismissed.
