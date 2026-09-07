@@ -375,7 +375,11 @@ function detectProposedStep(message, recentAssistantMessages) {
 
   const OPS = 'add|subtract|minus|plus|multiply|divide|times|factor|distribute|expand|foil'
     + '|combine|simplify|isolate|substitute|plug|square|cube|cancel|reduce|convert|flip'
-    + '|invert|group|split|move|balance|integrate|differentiate|derive|complete|solve|take';
+    + '|invert|group|split|move|balance|integrate|differentiate|derive|complete|solve|take'
+    // "put a +3 on both sides" — seen live 2026-09-07, and it fell to the
+    // catch-all. Students phrase the move as placing something, not only as
+    // performing an operation.
+    + '|put|bring|carry|apply';
 
   // Imperative ("add 3"), gerund ("adding 3"), or hedged/first-person-present
   // ("i'd add 3", "we should divide by 2", "maybe distribute"). Past tense is
@@ -531,6 +535,16 @@ function lastTutorAskedForNextStep(recentAssistantMessages) {
     // detector, so a phrasing it misses silently loses the classification.
     /\bwhat'?s\s+the\s+(?:next|first|second|third|last|final)\s+(?:step|move|thing|one)\b/,
     /\bwhat\s+(?:is|would\s+be)\s+(?:your|the)\s+(?:next|first)\s+(?:step|move)\b/,
+    // Inverted form — "...on what the next step would be to solve for x?".
+    // Seen live 2026-09-07; the gate missed it, so the student's reply
+    // ("put a +3 on both sides") fell to the catch-all instead of being
+    // classified as the proposed step it was.
+    /\bwhat\s+the\s+(?:next|first)\s+step\s+(?:would\s+be|is|should\s+be)\b/,
+    // Asking them to CARRY OUT the step they just named — the tutor's half
+    // of the proposed-step exchange, and the turn most likely to be answered
+    // with a bare operation.
+    /\b(?:walk|talk|show)\s+me\s+(?:through\s+)?what\s+(?:that|it)\s+(?:looks|would\s+look)\s+like\b/,
+    /\bwhat\s+(?:that|it)\s+looks\s+like\s+in\s+your\s+work\b/,
     /\bwhat\s+(?:do|should|would|could)\s+(?:we|you)\s+(?:do|try|use|think|get|notice|see|need|start|begin)\b/,
     /\bwhat\s+(?:do|did)\s+you\s+(?:think|get|notice|see|find|come\s+up\s+with)\b/,
     /\bwhat(?:'?s|\s+is|\s+would\s+be)\s+(?:next|the\s+(?:answer|result|value|next\s+step|first\s+step))\b/,

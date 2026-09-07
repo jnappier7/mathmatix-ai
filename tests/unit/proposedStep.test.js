@@ -148,6 +148,29 @@ describe('observe — PROPOSED_STEP classification', () => {
   test('without a next-step ask it stays GENERAL_MATH', () => {
     expect(observe('divide by 2', ctx(DID_NOT_ASK)).messageType).toBe(MESSAGE_TYPES.GENERAL_MATH);
   });
+
+  // ── Phrasings seen live on the landing page, 2026-09-07 ──
+  // Both were missed on the first pass. The tutor still behaved correctly
+  // because of the repaired GENERAL_MATH catch-all, which is the safety net
+  // doing its job — but the gate is what makes the classification precise, and
+  // a phrasing it misses silently loses it.
+  test.each([
+    // The gate missed the INVERTED next-step ask.
+    ['put a +3 on both sides', 'Great job getting to the equation x - 3 = 5! Can you walk me through your thought process on what the next step would be to solve for x?'],
+    // ...and the tutor asking them to CARRY OUT the step they just named.
+    ['add 3', 'Adding 3 to both sides is a solid step to isolate x. Can you walk me through what that looks like in your work?'],
+  ])('classifies %j after a next-step ask the gate used to miss', (msg, tutorTurn) => {
+    expect(observe(msg, ctx([{ content: tutorTurn }])).messageType).toBe(MESSAGE_TYPES.PROPOSED_STEP);
+  });
+
+  test('a retrospective "walk me through" does NOT gate — that is about a done answer', () => {
+    // "walk me through how you ARRIVED at that" asks about work already done;
+    // "walk me through what that LOOKS LIKE" asks them to do it. Only the second
+    // is a next-step ask, and conflating them would classify a reasoning
+    // explanation as a proposal.
+    const retrospective = [{ content: 'Can you walk me through how you arrived at that solution?' }];
+    expect(observe('add 3', ctx(retrospective)).messageType).not.toBe(MESSAGE_TYPES.PROPOSED_STEP);
+  });
 });
 
 // ============================================================================
