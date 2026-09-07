@@ -2514,6 +2514,17 @@
   grid-template-columns: var(--cr-hero-w, 320px) minmax(0, 1fr);
   align-items: stretch;
   min-height: 520px;
+  /* BOUNDED, and that is the whole point of this rule.
+     Without a ceiling the grid row is as tall as its tallest child, which is
+     the transcript — so every message made the row taller, and because the
+     hero stretches to the row and .lp-trial-hero-portrait is height:100%, the
+     TUTOR grew with the conversation. By turn nine the portrait was several
+     times its intended size and the page had stretched with it.
+     Capping the stage turns it back into a fixed frame that the transcript
+     scrolls inside. Paired with min-height:0 on the column below — a flex
+     child defaults to min-height:auto and refuses to shrink below its content,
+     which is what silently defeats overflow-y on .lp-trial-messages. */
+  height: min(76vh, 760px);
   text-align: left;
 }
 
@@ -2565,8 +2576,15 @@
 }
 
 /* ── Middle: conversation ─────────────────────────────── */
-.lp-trial-main { display: flex; flex-direction: column; min-width: 0; }
-.lp-trial-main .lp-trial-messages { max-height: none; flex: 1; }
+/* min-height:0 on BOTH: the column must be allowed to shrink inside the bounded
+   stage, and the transcript must be allowed to shrink inside the column. Either
+   one left at the default `auto` pins the box open to its content height and
+   the overflow-y below never engages. */
+.lp-trial-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+/* max-height:none is deliberate — the 360px cap on the base rule is for the
+   old standalone widget. Here the ceiling comes from the stage, and the
+   transcript takes the leftover space and scrolls. */
+.lp-trial-main .lp-trial-messages { max-height: none; flex: 1; min-height: 0; overflow-y: auto; }
 
 /* The tutor identity lives in the hero column now, so the header only
    carries navigation on wide screens. */
@@ -2583,6 +2601,10 @@
      product, the portrait is atmosphere. */
   .lp-trial-stage { grid-template-columns: minmax(0, 1fr); }
   .lp-trial-hero { display: none; }
+  /* With no portrait there is nothing to stretch, and a phone wants the page
+     to grow and the whole document to scroll rather than a short inner pane.
+     Releasing the cap here keeps that behaviour exactly as it was. */
+  .lp-trial-stage { height: auto; }
 }
 
 @media (max-width: 780px) {
