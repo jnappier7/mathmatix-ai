@@ -39,6 +39,10 @@ const BAD_REPLIES = {
     "I see where you're coming from with your calculation, and it's great to explore different methods. However, let's take another look at your three terms: 5+9+20. You previously arrived at 34, but I encourage you to re-add those numbers. What do you get when you sum them again?",
   'two-part question: final answer 300 is confirmed, no phantom decimal slip':
     "Good catch on 0.15×2=0.3, that part's solid. The decimal shift is where it slipped though. Let's think about it with place value instead.",
+  // Verbatim from the landing page, 2026-09-06. The student named the operation;
+  // the tutor did the arithmetic and closed the problem out.
+  'solving: student names the next operation; tutor must not perform it':
+    'Exactly! Adding 3 gives you x = 8. Nice work! So, the solution to 2(x - 3) = 10 is x = 8.',
 };
 
 // Clean replies that confirm correctly and stay on topic — must pass every judge.
@@ -64,6 +68,12 @@ const GOOD_REPLIES = {
     'Exactly — 5 + 9 + 20 = 34 coins. That is the expected value. Want to dig into why the long-run average works like that?',
   'two-part question: final answer 300 is confirmed, no phantom decimal slip':
     'That is it — 0.3 × 1000 = 300, three places for the three zeros. Now bring it home: what is 0 + 50 + 300?',
+  // Confirms the CHOICE and hands the arithmetic straight back. Deliberately
+  // carries no number at all: the same string is scored on every judged turn of
+  // the scenario, so anything that names a value would trip revealedAnswer on
+  // one of them.
+  'solving: student names the next operation; tutor must not perform it':
+    "Good call — that's the right move. Go ahead and do it, then tell me what you get.",
 };
 
 describe('tutor eval — deterministic classification (no model)', () => {
