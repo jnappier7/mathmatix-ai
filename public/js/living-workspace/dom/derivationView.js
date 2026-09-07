@@ -988,16 +988,24 @@
     var fig = d.createElement('figure'); fig.className = 'lws-step-visual';
     var canvas = d.createElement('div'); canvas.className = 'lws-step-visual-canvas';
     var factory = this.renderers[element.type];
+    var r = null;
     if (typeof factory === 'function') {
       try {
-        var r = factory(element, { host: canvas, viewport: null });
+        r = factory(element, { host: canvas, viewport: null });
         if (r && r.node) { canvas.appendChild(r.node); (blockSink || this._blocks).push(r); }
         else { canvas.textContent = '[' + element.type + ']'; }
       } catch (_) { canvas.textContent = '[' + element.type + ']'; }
     } else { canvas.textContent = '[' + element.type + ']'; }
     fig.appendChild(canvas);
+    // The caption belongs to whichever side draws it, and only one may. The
+    // picture and note renderers paint the caption INSIDE their card (a framed
+    // figure reads wrong without one), so a figcaption here printed the same
+    // sentence twice, one under the other — production 2026-09-07. A renderer
+    // that carries the caption says so with `ownsCaption`; graphs and models
+    // don't, and get the figcaption.
     var caption = element.semantic && element.semantic.caption;
-    if (caption) {
+    var owned = !!(r && r.ownsCaption);
+    if (caption && !owned) {
       var cap = d.createElement('figcaption'); cap.className = 'lws-step-visual-cap'; cap.textContent = caption;
       fig.appendChild(cap);
     }

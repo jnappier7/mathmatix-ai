@@ -234,6 +234,62 @@ describe('finished problems seal into the transcript', () => {
     expect(c.live.text).toMatch(/^3 steps/);
     expect(c.sealedSteps).toBe('3 steps');
   });
+
+  test('a caption is drawn by exactly one side', () => {
+    // Production 2026-09-07: a picture's caption printed twice — once inside
+    // the image card (which paints .lws-image-caption itself) and once as the
+    // view's figcaption under it. A renderer that carries the caption declares
+    // `ownsCaption`; the view adds a figcaption only for the ones that don't.
+    expect(out.captionOwnership).toEqual({ image: 0, graph: 1 });
+    const view = read('public', 'js', 'living-workspace', 'dom', 'derivationView.js');
+    expect(view).toMatch(/var owned = !!\(r && r\.ownsCaption\);/);
+    // Both renderers that paint their own caption say so.
+    expect(read('public', 'js', 'living-workspace', 'dom', 'imageElement.js')).toMatch(/ownsCaption: true,/);
+    expect(read('public', 'js', 'living-workspace', 'dom', 'noteElement.js')).toMatch(/ownsCaption: true,/);
+  });
+});
+
+describe('the dock yields to the conversation, never the other way round', () => {
+  // Production 2026-09-07, on a phone: the dock held a picture and the
+  // transcript was down to one recap card — not a word of what the tutor said
+  // about the picture was on screen. The dock was flex: 0 0 auto (rigid) while
+  // the transcript is flex: 1 1 0%, so the dock took what it wanted and the
+  // conversation got the remainder.
+  test('the dock can shrink, and the shrink reaches the scroller', () => {
+    expect(lwsCss).toMatch(/\.cr-work-dock \{\s*flex: 0 1 auto;/);
+    // Every link in the chain must be a min-height:0 flex column, or the
+    // shrink stops at the first rigid box and .lws-dv never scrolls.
+    expect(lwsCss).toMatch(/\.cr-work-dock #lws-chat-mount \{ flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; \}/);
+    expect(lwsCss).toMatch(/\.cr-work-dock \.lws-root\s+\{ flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; \}/);
+    expect(lwsCss).toMatch(/\.cr-work-dock \.lws-dv \{\s*position: static;\s*flex: 1 1 auto;\s*min-height: 0;/);
+  });
+
+  test('the transcript keeps a floor on every viewport', () => {
+    // `body` in the selector outranks body.cr-mode #chat-messages-container
+    // (equal weight otherwise) regardless of which stylesheet the lazy loader
+    // appends last.
+    expect(lwsCss).toMatch(/html\.mm-work-inline body #chat-messages-container \{ min-height: 120px; \}/);
+    // Phones: mobile-fixes.css pins it to min-height:0 !important, so the
+    // floor there needs !important AND higher specificity.
+    expect(lwsCss).toMatch(/@media \(max-width: 900px\)[\s\S]{0,1500}html\.mm-work-inline body #chat-messages-container \{ min-height: 150px !important; \}/);
+  });
+
+  test('the phone cap is measured in dvh, with a vh fallback first', () => {
+    // On iOS Safari 100vh is the toolbars-hidden height, so the vh rail never
+    // bound while the bars were showing. Engines without dvh keep the vh line.
+    const phone = lwsCss.slice(lwsCss.indexOf('@media (max-width: 900px)'));
+    const vh = phone.indexOf('max-height: min(46vh, 340px, calc(100vh - 300px));');
+    const dvh = phone.indexOf('max-height: min(46dvh, 340px, calc(100dvh - 300px));');
+    expect(vh).toBeGreaterThan(-1);
+    expect(dvh).toBeGreaterThan(vh);
+  });
+
+  test('the notebook chip does not exist on phones', () => {
+    // A hover affordance absolutely positioned in the bubble's top-right; a
+    // phone has no hover, and a phone bubble's first line runs right under it.
+    // Base rule is in bundled ux-enhancements.css — the override lives here.
+    expect(lwsCss).toMatch(/@media \(max-width: 900px\)[\s\S]{0,2500}html\.mm-work-inline \.notebook-save-chip \{ display: none; \}/);
+  });
 });
 
 describe('short viewports get more of the dock, not less', () => {

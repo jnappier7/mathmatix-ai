@@ -1065,10 +1065,27 @@ html[data-theme="dark"] .lws-root {
    ============================================================ */
 
 /* ── The dock slot (chat.html, between the transcript and the composer) ── */
+/* The dock may YIELD. It used to be flex: 0 0 auto — rigid — and the transcript
+   is flex: 1 1 0%, so on any short column the dock took what it wanted and the
+   conversation got the remainder. On a phone that remainder was one recap card:
+   a picture in the dock, and not a word of what the tutor said about it
+   (production 2026-09-07). Now the transcript has a floor (below) and the dock
+   shrinks to honour it, scrolling inside. The chain of flex columns is what
+   lets the shrink reach .lws-dv, the element that actually scrolls. */
 .cr-work-dock {
-  flex: 0 0 auto;           /* the transcript flexes; the dock keeps its size */
+  flex: 0 1 auto;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
+.cr-work-dock #lws-chat-mount { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.cr-work-dock .lws-root       { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+/* Chrome-independent: whatever the column holds above the transcript — course
+   bar, lesson tracker, the phone's hero banner — the conversation keeps enough
+   for the tutor's last message. `body` in the selector outranks the desktop
+   rule of equal weight (body.cr-mode #chat-messages-container) regardless of
+   which stylesheet the lazy loader appends last. */
+html.mm-work-inline body #chat-messages-container { min-height: 120px; }
 .cr-work-dock:empty { display: none; }
 #lws-chat-mount { display: block; }
 
@@ -1098,6 +1115,8 @@ html[data-theme="dark"] .lws-root {
 }
 .cr-work-dock .lws-dv {
   position: static;
+  flex: 1 1 auto;
+  min-height: 0;            /* may shrink below its content — that is the point */
   /* Tall enough to hold a real derivation, capped so the conversation above
      is never squeezed out. The card scrolls inside; the newest step is kept
      in view by DerivationView._scrollToEnd. */
@@ -1251,9 +1270,26 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
      but from a smaller base: here the chat column is the entire screen and the
      software keyboard takes half of it the moment the student types. */
   .cr-work-dock .lws-dv {
+    /* Two declarations on purpose. On iOS Safari `100vh` is the TOOLBARS-
+       HIDDEN height, so the vh rail never bound while the bars were showing;
+       `dvh` is the height actually on screen. Older engines that don't know
+       dvh drop the second line and keep the first. */
     max-height: min(46vh, 340px, calc(100vh - 300px));
+    max-height: min(46dvh, 340px, calc(100dvh - 300px));
     padding: 10px 10px 12px;
   }
+  /* mobile-fixes.css pins the transcript to min-height:0 !important inside its
+     own phone block; this outranks it on specificity, so the floor holds. */
+  html.mm-work-inline body #chat-messages-container { min-height: 150px !important; }
+  /* The notebook "keep this" chip is a hover affordance sitting absolutely in
+     the bubble's top-right corner. There is no hover on a phone: it only ever
+     appeared by accident, on :focus-within after a tap on the play button, and
+     a phone bubble's first line runs right under it — so it landed on the text
+     ("Nap●ier", 2026-09-07). Dragging into the notebook is a pointer flow; on
+     phones the chip goes. (Base rule lives in bundled ux-enhancements.css;
+     this file is not bundled, and the chip exists only when the workspace is
+     on, so the override belongs here.) */
+  html.mm-work-inline .notebook-save-chip { display: none; }
   .cr-work-dock .lws-dv-inner,
   .lws-sealed .lws-dv-inner { max-width: none; }
 }

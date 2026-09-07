@@ -144,4 +144,26 @@ process.stdout.write(JSON.stringify({
     view.resetAll();
     return { aidsOnly, live, sealedSteps: sealedSteps.trim() };
   })(),
+  // A caption is drawn by exactly one side. The picture and note renderers
+  // paint it inside their card and say so with `ownsCaption`; the view adds a
+  // figcaption only for renderers that don't. Before this a picture's caption
+  // printed twice, one under the other (production 2026-09-07).
+  captionOwnership: (() => {
+    const mk = (owns) => () => {
+      const node = win.document.createElement('div');
+      return owns ? { node, ownsCaption: true, destroy() {} } : { node, destroy() {} };
+    };
+    view.renderers.image = mk(true);    // paints its own caption
+    view.renderers.graph = mk(false);   // does not
+    view.apply([
+      { type: 'image', semantic: { query: 'unit circle', caption: 'The unit circle' } },
+      { type: 'graph', semantic: { fn: 'sin(x)', caption: 'One period of sine' } },
+    ]);
+    const figs = Array.from(view.el.lines.querySelectorAll('.lws-step-visual'));
+    const counts = figs.map((f) => f.querySelectorAll('figcaption.lws-step-visual-cap').length);
+    view.resetAll();
+    delete view.renderers.image;
+    delete view.renderers.graph;
+    return { image: counts[0], graph: counts[1] };
+  })(),
 }, null, 2));
