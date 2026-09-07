@@ -361,6 +361,50 @@ function repairStrippedHead(text) {
   return t;
 }
 
+/**
+ * Remove sentences that take a student mistake for granted.
+ *
+ * Used only on an UNDECIDED answer turn — the pipeline reached no verdict, so
+ * it has no grounds to imply an error, and decide.js already orders exactly
+ * that ("Do not default to implying the student is wrong"). That directive was
+ * advisory and nothing enforced it: the false-rejection guard below runs only
+ * when an answer is VERIFIED correct, so on `unverifiable` the model's output
+ * was unchecked. This is the enforcement.
+ *
+ * Also drops a leading consolation opener ("Great effort!", "Nice try!") for
+ * the same reason CONSOLATION_OPENER exists — it is the register of a wrong
+ * answer, and the student hears it before they hear anything else.
+ *
+ * @param {string} text
+ * @returns {{text: string, changed: boolean}}
+ */
+function stripPresupposedError(text) {
+  const original = String(text || '');
+  if (!original.trim()) return { text: original, changed: false };
+
+  // Split on sentence ends, keeping the delimiter with its sentence.
+  const parts = original.match(/[^.!?\n]+[.!?]*\s*/g) || [original];
+  const kept = parts.filter(part => !PRESUPPOSES_ERROR.test(part));
+
+  // Never strip the reply to nothing: if every sentence presupposed an error
+  // there is no neutral remainder to keep, and an empty bubble is worse than
+  // the original. Leave it and let the flag surface it.
+  if (!kept.length) return { text: original, changed: false };
+
+  let out = kept.join('').trim();
+
+  // A consolation opener is dropped only when something follows it — the same
+  // no-empty-reply rule.
+  const opening = out.split(/(?<=[.!?\n])\s/)[0];
+  if (CONSOLATION_OPENER.test(opening) && out.length > opening.length) {
+    out = repairStrippedHead(out.slice(opening.length));
+  }
+
+  out = out.trim();
+  if (!out) return { text: original, changed: false };
+  return { text: out, changed: out !== original.trim() };
+}
+
 // Sentence boundary scanners for the transition scrub. A '.' only counts as
 // a boundary when followed by whitespace (or end), so decimals like 3.5
 // never split a sentence.
@@ -871,6 +915,43 @@ async function verify(responseText, context = {}) {
   // word problems — anything the solver returns 'unverifiable' on.
   // Only acts on high-confidence verdicts (the verifier already gates on
   // its own CONFIDENCE_THRESHOLD), and only regenerates once per turn.
+  // ── 2e. Undecided answers must not accuse ──
+  // Every guard above needs a VERDICT: §2d runs on a verified-correct action,
+  // and the block below on an llmVerdict that resolved. When the pipeline
+  // reached neither — diagnosisType 'unverifiable' — the reply went out
+  // unchecked, which is precisely the turn where the tutor has the least
+  // standing to imply anything.
+  //
+  // decide.js already orders the right behavior on this turn ("Do not default
+  // to implying the student is wrong"), but a directive is advice. Observed
+  // live on the landing page 2026-09-07, on a CORRECT answer to 2(x-3)=10:
+  //   "I see where you're going with x = 8, but let's take a closer look at
+  //    the steps you took... retracing our steps can help us spot any little
+  //    mistakes along the way."
+  // The student did everything right and was told, unfalsifiably, that they
+  // had not. That is worse than a wrong verdict: there is nothing to argue
+  // with, and the fix for a missing verdict can never be to guess "wrong".
+  //
+  // Strip rather than regenerate: what remains is the neutral ask the
+  // directives wanted, at no LLM cost, and the §2b false-affirmation guard
+  // already establishes stripping as the pattern here.
+  const undecidedAnswer = context.messageType === MESSAGE_TYPES.ANSWER_ATTEMPT
+    && context.diagnosisType === 'unverifiable'
+    && !(context.llmVerdict && context.llmVerdict.isCorrect !== null);
+  if (!regeneratedThisPass && undecidedAnswer) {
+    const scrubbed = stripPresupposedError(text);
+    if (scrubbed.changed) {
+      text = scrubbed.text;
+      flags.push('presupposed_error_on_undecided_answer');
+      console.log('[Verify] Stripped error-presupposing language from an UNVERIFIED answer turn');
+      if (context.isStreaming && context.res) {
+        try {
+          context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+        } catch (e) { /* client disconnected */ }
+      }
+    }
+  }
+
   if (!regeneratedThisPass && context.llmVerdict && context.llmVerdict.isCorrect !== null) {
     // Don't double-act if the action-based guard already gated on the same
     // info (i.e. action already reflected the LLM verdict via diagnose's
@@ -1604,6 +1685,30 @@ function normalizeLatex(text) {
 // vocabulary. That asymmetry is why we detect the ABSENCE of this rather than
 // enumerate doubt. Keep this list generous; a missing entry only costs a
 // low-harm regeneration (see leadsWithDoubtOnCorrect).
+// Consolation dressed as praise. These read as affirmations to a word-level
+// scan — "great", "nice", "good" are all in AFFIRMATION_OPENER — but they are
+// the register a teacher uses for a WRONG answer, and a student hears them that
+// way. "Great effort!" is what you say to someone who missed it.
+//
+// Observed live on the landing page 2026-09-07, on an answer that was correct:
+//   "Great effort! Adding 3 to both sides is a solid step..."
+//   "I see where you're going with x = 8, but let's take a closer look at the
+//    steps you took... retracing our steps can help us spot any little mistakes."
+// Checked BEFORE the affirmation scan, so praising the EFFORT never counts as
+// affirming the ANSWER.
+// Language that PRESUPPOSES a mistake. Not "you are wrong" — worse, because it
+// is unfalsifiable: it takes the error for granted and asks the student to go
+// find it. On a turn where the pipeline reached NO verdict, this tells a student
+// who was right that they were wrong, and they have no way to argue.
+//
+// Sentence-scoped: each of these is removed as a whole sentence rather than
+// regenerated, following the §2b false-affirmation strip. Cheaper than an LLM
+// round-trip and deterministic, and what is left ("Can you walk me through how
+// you got there?") is exactly the neutral ask the directives already order.
+const PRESUPPOSES_ERROR = /\b(?:spot\s+(?:any|the)\s+(?:little\s+)?(?:mistakes?|errors?|slips?)|find\s+(?:the|any)\s+(?:mistakes?|errors?)|where\s+(?:it|things?|you)\s+(?:went|may\s+have\s+gone|might\s+have\s+gone)\s+(?:wrong|off|astray)|catch\s+(?:any|the)\s+(?:mistakes?|errors?)|went\s+off\s+track|slipped\s+up|see\s+where\s+(?:it|you)\s+(?:broke|slipped)|double-?check\s+(?:your|the)\s+(?:work|steps?)\s+for\s+(?:mistakes?|errors?)|take\s+a\s+(?:closer|another|second)\s+look\s+at\s+(?:that|your|the|it)|look\s+at\s+(?:that|it|this)\s+again|revisit\s+(?:that|your)\s+(?:step|work|answer))\b/i;
+
+const CONSOLATION_OPENER = /\b(?:(?:great|good|nice|solid|valiant|decent)\s+(?:effort|try|attempt|start|thinking|instinct)|nice\s+try|good\s+thinking|i\s+(?:see|understand|get)\s+(?:where|what)\s+you(?:'?re|\s+are)\s+(?:going|coming\s+from|thinking)|i\s+appreciate\s+your\s+(?:effort|attempt|work)|you'?re\s+on\s+the\s+right\s+track,?\s+but)\b/i;
+
 const AFFIRMATION_OPENER = /\b(right|correct(?:ly)?|exact(?:ly)?|nailed|perfect|yes|yep|yup|nice|great|awesome|excellent|boom|there\s+(?:it|you)\s+(?:is|go)|that'?s\s+(?:it|right|the\s+one)|you\s+(?:(?:got|nailed)\s+it|did\s+it)|spot\s+on|clean|love\s+it|beautiful|bingo|solid|well\s+done|good\s+(?:job|work|call)|way\s+to\s+go|bang\s+on|✓|💯)\b|^\s*(?:yeah|yea|yup|mm+-?hm+|ding)\b/i;
 
 /**
@@ -1639,6 +1744,9 @@ function leadsWithDoubtOnCorrect(text) {
   if (!trimmed) return false;
   // First sentence/clause only — split on the first sentence break or newline.
   const opening = trimmed.split(/(?<=[.!?\n])\s/)[0].slice(0, 120);
+  // Consolation first: "Great effort!" contains "great" and would otherwise
+  // pass as an affirmation of the ANSWER when it is praise for the ATTEMPT.
+  if (CONSOLATION_OPENER.test(opening)) return true;
   return !AFFIRMATION_OPENER.test(opening);
 }
 
@@ -1647,6 +1755,7 @@ module.exports = {
   extractSystemTags,
   normalizeLatex,
   leadsWithDoubtOnCorrect,
+  stripPresupposedError,
   stripCannedTransitions,
   repairStrippedHead,
 };
