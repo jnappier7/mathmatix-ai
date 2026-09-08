@@ -2523,8 +2523,23 @@
      Capping the stage turns it back into a fixed frame that the transcript
      scrolls inside. Paired with min-height:0 on the column below — a flex
      child defaults to min-height:auto and refuses to shrink below its content,
-     which is what silently defeats overflow-y on .lp-trial-messages. */
-  height: min(76vh, 760px);
+     which is what silently defeats overflow-y on .lp-trial-messages.
+
+     The ceiling is measured from what is LEFT, not from a flat fraction of the
+     viewport. 76vh looked like a cap and never was one. The stage starts 227px
+     down the page (header + eyebrow + headline), so the frame only fits when
+     its height is under 100vh - 227px — and 76vh clears that only above a
+     ~945px-tall window, which is taller than the laptops we actually ship to.
+     Measured in Chromium before this change, the composer (the demo's ONLY
+     input) was below the fold at every one of them: clipped by 46px on a
+     16-inch, 50px at 1080p, 71px on a 14-inch, 88px on a 13-inch Air.
+     --lp-stage-offset is that 227px header stack plus ~33px of air, so the
+     frame lands just clear of the fold at any height; the 760px arm still
+     stops it ballooning on a tall monitor. The 520px min-height deliberately
+     wins on a short window — below that the transcript is not usable and
+     scrolling is the better failure. */
+  --lp-stage-offset: 260px;
+  height: min(calc(100vh - var(--lp-stage-offset)), 760px);
   text-align: left;
 }
 
@@ -2622,10 +2637,19 @@
 
 .lp-hero-intro { margin-bottom: 1.5rem; }
 .lp-hero-intro h1 { font-size: 2.15rem; margin-bottom: 0.55rem; }
-.lp-hero-intro .lp-hero-sub {
+/* The describing sentence, moved out from under the headline (2026-09-08).
+   Above the demo it cost 54px of the frame and the composer fell off the fold;
+   here it is the first thing you meet on the way down. Centred on the demo's
+   own measure rather than the page's, so it reads as a caption to the tutor
+   above it and not as the opening of the section below. */
+/* Selector carries .lp-hero so it out-specifies the base `.lp-hero .lp-hero-sub`
+   rule this paragraph still wants for its type; a bare `.lp-hero-lede` loses to
+   it and silently keeps the old 640px measure and 2rem bottom margin. */
+.lp-hero .lp-hero-lede {
   font-size: 1rem;
-  max-width: 42rem;
-  margin-bottom: 0;
+  max-width: 46rem;
+  margin: 1.5rem auto 0;
+  text-align: center;
 }
 
 /* ── Work dock ─────────────────────────────────────────

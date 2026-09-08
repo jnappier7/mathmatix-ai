@@ -24,11 +24,28 @@
  *   5. `.lp-trial-hero-portrait` is `height: 100%` of the hero.
  * So every message made the tutor bigger.
  *
+ * THE SECOND BUG, 2026-09-08: "move that blurb on top below the fold." The
+ * frame had a ceiling by then, but the ceiling was a flat 76vh and the stage
+ * starts 227px down the page, so 76vh + 227px overflowed every laptop window.
+ * Measured in Chromium, the composer — the demo's only input — sat below the
+ * fold at every size we ship to:
+ *
+ *   viewport (content)   composer clipped by
+ *   1440x788  (Air 13)         88 px
+ *   1512x860  (MBP 14)         71 px
+ *   1728x965  (MBP 16)         46 px
+ *   1920x945  (1080p)          50 px
+ *
+ * Two changes fixed it, and both are pinned below: the describing sentence
+ * moved out from under the headline to below the demo (54px), and the ceiling
+ * became `100vh - (what is above it)` instead of a fraction of the viewport.
+ * After: every one of those viewports clears the fold by 46px.
+ *
  * WHY THIS IS A STATIC TEST: jest's testEnvironment is node — nothing in the
  * unit suite has a layout engine, and jsdom would not evaluate the media
  * queries even if it did. The same split as tests/unit/freeTimePill.test.js:
  * the properties ARE the defect, so they are asserted against the stylesheet.
- * The 4.3x number above came from a real browser; this file keeps the fix from
+ * The numbers above came from a real browser; this file keeps the fixes from
  * being edited away without one.
  */
 
@@ -37,6 +54,11 @@ const path = require('path');
 
 const CSS = fs.readFileSync(
   path.join(__dirname, '..', '..', 'public', 'css', 'landing-page.css'),
+  'utf8'
+);
+
+const HTML = fs.readFileSync(
+  path.join(__dirname, '..', '..', 'public', 'index.html'),
   'utf8'
 );
 
@@ -123,5 +145,73 @@ describe('the portrait still sizes by height', () => {
     const portrait = ruleBody('.lp-trial-hero-portrait');
     expect(portrait).toMatch(/height:\s*100%/);
     expect(portrait).toMatch(/width:\s*auto/);
+  });
+});
+
+describe('the frame fits in what is left of the window', () => {
+  const stage = () => ruleBody('.lp-trial-stage');
+
+  it('subtracts what sits above it rather than taking a flat share of the viewport', () => {
+    // `min(76vh, 760px)` reads like a cap and is not one: it knows nothing
+    // about the 227px of header, eyebrow and headline above the stage, so the
+    // sum overflowed every laptop. The ceiling has to be relative to the space
+    // that is actually left.
+    expect(stage()).toMatch(/height:\s*min\(\s*calc\(\s*100vh\s*-/);
+    expect(stage()).not.toMatch(/height:\s*min\(\s*\d+vh/);
+  });
+
+  it('names that offset once, so the two numbers cannot drift apart', () => {
+    // The offset is the measured height of the header stack. Inlining it in the
+    // calc would leave a bare magic number with nothing tying it to the thing
+    // it measures — and the next person to add a line above the demo would have
+    // no reason to look here at all.
+    expect(stage()).toMatch(/--lp-stage-offset:\s*\d+px/);
+    expect(stage()).toMatch(/var\(--lp-stage-offset\)/);
+  });
+
+  it('still stops the frame ballooning on a tall monitor', () => {
+    expect(stage()).toMatch(/,\s*760px\s*\)/);
+  });
+});
+
+describe('nothing but the headline is spent above the demo', () => {
+  const introIndex = HTML.indexOf('class="lp-hero-intro"');
+  const demoIndex = HTML.indexOf('id="lp-trial-chat"');
+  const ledeIndex = HTML.indexOf('lp-hero-lede');
+
+  it('the describing sentence comes after the demo, not before it', () => {
+    // Every line above the stage is paid for out of the stage's height. This
+    // sentence cost 54px there and pushed the composer off the fold; below the
+    // demo it costs nothing and reads better, because by then the reader has
+    // watched the tutor do what it claims.
+    expect(ledeIndex).toBeGreaterThan(-1);
+    expect(demoIndex).toBeGreaterThan(-1);
+    expect(ledeIndex).toBeGreaterThan(demoIndex);
+  });
+
+  it('the intro block above the demo is eyebrow and headline only', () => {
+    const intro = HTML.slice(introIndex, demoIndex);
+    expect(intro).toMatch(/lp-hero-eyebrow/);
+    expect(intro).toMatch(/<h1>/);
+    expect(intro).not.toMatch(/lp-hero-sub/);
+  });
+
+  it('keeps the sentence itself — moved, not deleted', () => {
+    // It is the only early mention of IEP accommodations, which is the
+    // differentiator. A "shorten the hero" edit that drops it is a regression
+    // of a different kind, so it is pinned rather than left to judgement.
+    expect(HTML).toMatch(/adapting to their IEP accommodations/);
+  });
+});
+
+describe('the moved sentence keeps its type', () => {
+  it('is styled through .lp-hero so it out-specifies the base rule', () => {
+    // `.lp-hero .lp-hero-sub` is 0,2,0. A bare `.lp-hero-lede` is 0,1,0 and
+    // loses to it wherever they disagree, silently keeping the old 640px
+    // measure and 2rem bottom margin — a rule that appears to apply and does
+    // not is worse than no rule at all.
+    const matches = [...CSS.matchAll(/\n(\.[^\n{]*\.lp-hero-lede[^\n{]*)\{/g)];
+    expect(matches.length).toBeGreaterThan(0);
+    expect(matches.every((m) => m[1].includes('.lp-hero '))).toBe(true);
   });
 });

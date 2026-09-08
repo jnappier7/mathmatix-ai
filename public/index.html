@@ -83,7 +83,7 @@
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
   <!-- Chat design tokens (--cr-*) so the chat preview block can mirror the real product. -->
   <link rel="stylesheet" href="/css/design-system.css" />
-  <link rel="stylesheet" href="/css/landing-page.css?v=6" />
+  <link rel="stylesheet" href="/css/landing-page.css?v=7" />
   <!-- Scroll reveals start at opacity:0 and are switched on by an
        IntersectionObserver in landing.js. Without JS that leaves everything
        below the fold blank, so opt out of the animation entirely. -->
@@ -124,17 +124,19 @@
     <!-- ── The product, unpersonalized ──────────────────────
          Signing in does not change what this is; it makes it theirs. -->
     <section class="lp-hero" id="lp-hero">
-      <!-- The intro, for the buyer. Kept deliberately short: the product itself
-           is directly below and already running, the way claude.ai shows Claude
-           before you sign in. Signing in does not change WHAT this is — it makes
-           it theirs. The full pitch lives below the fold, where the parent who
-           needs it will scroll and the student who does not can ignore it. -->
+      <!-- The intro, for the buyer. Now an eyebrow and a headline and nothing
+           else: the product itself is directly below and already running, the
+           way claude.ai shows Claude before you sign in, and every line up here
+           is paid for out of the demo's height. The describing sentence moved
+           BELOW the demo (2026-09-08) — measured in Chromium, it cost 54px and
+           the composer was clipped at every laptop size, so the first thing a
+           visitor saw was a tutor with no way to talk to it. Show, then tell.
+           Signing in does not change WHAT this is — it makes it theirs. -->
       <div class="lp-hero-intro">
         <p class="lp-hero-eyebrow">
           <span>Grades 3&ndash;Calculus 3</span><span>No signup, no card</span>
         </p>
         <h1>A math tutor that actually knows your child.</h1>
-        <p class="lp-hero-sub">It works the problem <em>with</em> your child &mdash; learning how they think, weaving in what they care about, and adapting to their IEP accommodations.</p>
       </div>
 
       <div class="lp-trial-chat" id="lp-trial-chat">
@@ -270,6 +272,13 @@
 
         </div>
       </div>
+
+      <!-- What it is, read AFTER the thing itself. Same sentence that used to
+           sit under the headline; it lands better here anyway, because by now
+           the reader has watched the tutor do the working-it-with-you part the
+           sentence is claiming. Keeps .lp-hero-sub so the type scale and the
+           responsive rules that already tune this sentence still apply. -->
+      <p class="lp-hero-sub lp-hero-lede">It works the problem <em>with</em> your child &mdash; learning how they think, weaving in what they care about, and adapting to their IEP accommodations.</p>
 
       <!-- Trust bar — always visible now; it used to hide the moment the
            chat opened, which with the chat always open meant never. -->
