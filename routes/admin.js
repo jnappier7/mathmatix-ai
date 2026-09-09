@@ -1515,13 +1515,33 @@ router.patch('/assign-teacher', isAdmin, async (req, res) => {
 
 /**
  * @route   GET /api/admin/health-check
- * @desc    A simple endpoint to confirm the API is running.
+ * @desc    What the dashboard's System Status panel reads. It used to return
+ *          the literal string 'Operational' and nothing else, so the panel said
+ *          "Database: Online / AI Service: Operational" on any 200 — including
+ *          while Mongo was down (the client set 'Online' itself whenever the
+ *          fetch succeeded) and while the answer verifier had silently fallen
+ *          back to grading itself. A panel that cannot say anything but "fine"
+ *          is worse than no panel: it is read as evidence.
+ *
+ *          `status` stays a human word because both existing callers write it
+ *          straight into the panel; it just tells the truth now.
  * @access  Private (Admin)
  */
 router.get('/health-check', isAdmin, (req, res) => {
+  const healthReport = require('../utils/healthReport');
+  const dbConnected = mongoose.connection.readyState === 1;
   res.status(200).json({
-    status: 'Operational',
-    timestamp: new Date().toISOString()
+    // Still a human word, because both callers write it straight into the
+    // panel — it just tells the truth now.
+    status: healthReport.isDegraded({ dbConnected }) ? 'Degraded' : 'Operational',
+    timestamp: new Date().toISOString(),
+    database: { connected: dbConnected, state: mongoose.connection.readyState },
+    providers: healthReport.providerKeys(),
+    // includeDetail: admin-only. Carries the provider's own error sentence and
+    // the verifier's outcome rates — unverifiableRate next to the cross-provider
+    // state, because the rate means two different things depending on whether
+    // the verdicts behind it came from an independent model or the tutor's own.
+    verifier: healthReport.verifierReport({ includeDetail: true }),
   });
 });
 

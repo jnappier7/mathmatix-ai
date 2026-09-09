@@ -661,25 +661,88 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /**
+     * Paints the System Status panel from a /api/admin/health-check payload.
+     *
+     * This panel used to be decorative: it wrote 'Online' for the database on
+     * any successful fetch (the endpoint never looked at Mongo) and the endpoint
+     * returned the literal string 'Operational' for the AI service. It could not
+     * report a problem, so its green was worthless. Every line below now comes
+     * from something actually measured.
+     */
+    function renderSystemStatus(data) {
+        const set = (id, text, cls, title) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = text;
+            if (cls) el.className = cls;
+            el.title = title || '';
+        };
+        const ok = 'status-online';
+        const bad = 'status-offline';
+
+        set('dbStatus', data.database?.connected ? 'Connected' : 'Disconnected',
+            data.database?.connected ? ok : bad);
+
+        // The colour follows the reported STATUS, not just the key check. Keying
+        // it off missing keys alone painted "Degraded" green whenever every key
+        // was present — which is the exact production case this panel exists
+        // for (keys fine, Anthropic balance empty), so the one state it had to
+        // get right was the one it got wrong.
+        const providers = data.providers || {};
+        const missing = Object.keys(providers).filter((k) => providers[k] !== 'ok');
+        const overallOk = (data.status || 'Operational') === 'Operational';
+        set('aiStatus',
+            missing.length ? `Missing key: ${missing.join(', ')}` : (data.status || 'Operational'),
+            (missing.length || !overallOk) ? bad : ok,
+            missing.length ? 'These provider keys are not configured on this instance.' : '');
+
+        // The verifier line is the one that catches the quiet failure: the key
+        // can be present and valid while the account balance is empty, and then
+        // grading silently moves to the tutor's own model.
+        const v = data.verifier || {};
+        if (v.degraded) {
+            set('verifierStatus', 'Self-grading (fallback)', bad,
+                `Tier 1 (Claude) is unreachable, so answers are being graded by the same model that `
+                + `writes them. ${v.fallbacks || 0} fallback${v.fallbacks === 1 ? '' : 's'}`
+                + `${v.lastFallbackStatus ? `, last HTTP ${v.lastFallbackStatus}` : ''}`
+                + `${v.lastFallbackMessage ? `: ${v.lastFallbackMessage}` : ''}`);
+        } else {
+            set('verifierStatus', 'Cross-checked', ok,
+                'Answers are graded by a model on a different provider from the one that writes them.');
+        }
+
+        // Shown next to the verifier state on purpose: the same rate means two
+        // different things depending on whether the cross-check is intact.
+        if (typeof v.unverifiableRate === 'number') {
+            const pct = `${(v.unverifiableRate * 100).toFixed(1)}%`;
+            set('verifierUnverifiable',
+                v.sampleSize ? `${pct} of last ${v.sampleSize}` : 'no answers yet',
+                v.unverifiableRate > 0.35 ? bad : ok,
+                'Share of answer attempts that got no usable correct/incorrect verdict.');
+        }
+
+        const lastSyncTime = document.getElementById('lastSyncTime');
+        if (lastSyncTime) lastSyncTime.textContent = new Date().toLocaleTimeString();
+    }
+
+    /**
      * Fetches the system health and updates the status panel.
      */
     async function fetchSystemStatus() {
-        const dbStatus = document.getElementById("dbStatus");
-        const aiStatus = document.getElementById("aiStatus");
-        const lastSyncTime = document.getElementById("lastSyncTime");
-        if (!dbStatus || !aiStatus) return;
-
+        if (!document.getElementById('dbStatus')) return;
         try {
             const response = await fetch('/api/admin/health-check', { credentials: 'include' });
             if (!response.ok) throw new Error('Health check failed');
-            const data = await response.json();
-            dbStatus.textContent = 'Online';
-            aiStatus.textContent = data.status || 'Operational';
-            lastSyncTime.textContent = new Date().toLocaleTimeString();
+            renderSystemStatus(await response.json());
         } catch (error) {
-            dbStatus.textContent = 'Offline';
-            dbStatus.className = 'status-offline'; // Assumes you have a CSS class for this
-            aiStatus.textContent = 'Unknown';
+            // The endpoint itself being unreachable is its own signal, and it is
+            // NOT the same as a healthy instance — say unknown, never 'Online'.
+            const dbStatus = document.getElementById('dbStatus');
+            const aiStatus = document.getElementById('aiStatus');
+            const verifierStatus = document.getElementById('verifierStatus');
+            if (dbStatus) { dbStatus.textContent = 'Unreachable'; dbStatus.className = 'status-offline'; }
+            if (aiStatus) { aiStatus.textContent = 'Unknown'; aiStatus.className = 'status-offline'; }
+            if (verifierStatus) { verifierStatus.textContent = 'Unknown'; verifierStatus.className = 'status-offline'; }
         }
     }
 
@@ -2887,14 +2950,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Quick health check
                 const healthRes = await fetch('/api/admin/health-check', { credentials: 'include' });
                 if (healthRes.ok) {
-                    const health = await healthRes.json();
-                    const dbStatus = document.getElementById("dbStatus");
-                    const aiStatus = document.getElementById("aiStatus");
-                    const lastSyncTime = document.getElementById("lastSyncTime");
-
-                    if (dbStatus) dbStatus.textContent = 'Online';
-                    if (aiStatus) aiStatus.textContent = health.status || 'Operational';
-                    if (lastSyncTime) lastSyncTime.textContent = new Date().toLocaleTimeString();
+                    // Same renderer as the initial load. Two copies of this
+                    // painting logic is how the poll kept writing a hardcoded
+                    // 'Online' over anything the first render had learned.
+                    renderSystemStatus(await healthRes.json());
                 }
 
                 // Check for live activity changes

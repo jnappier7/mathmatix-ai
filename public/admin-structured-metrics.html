@@ -70,6 +70,15 @@
     code { background: var(--bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
     .refresh-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); display: inline-block; }
     .refresh-dot.stale { background: var(--muted); }
+    .section-heading { margin: 28px 0 12px; font-size: 15px; display: flex; align-items: baseline; gap: 10px; }
+    .section-heading:first-of-type { margin-top: 0; }
+    .always-live { font-size: 11px; font-weight: 500; color: var(--muted); }
+    /* Same shape as .flag-banner so the two read as peers, but its own element:
+       the flag banner speaks for the structured path only. */
+    .verifier-banner { display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      border-radius: 8px; font-size: 13px; margin-bottom: 16px; border: 1px solid transparent; }
+    .verifier-banner.ok { background: #dcfce7; color: var(--good); border-color: #bbf7d0; }
+    .verifier-banner.bad { background: #fee2e2; color: var(--bad); border-color: #fecaca; }
   </style>
 </head>
 <body>
@@ -84,6 +93,27 @@
     </div>
   </header>
   <main>
+    <!-- ── Answer verifier ─────────────────────────────────────────────
+         Deliberately ABOVE the structured-path content and outside the flag
+         banner's scope. The verifier records on every answer attempt whether
+         STRUCTURED_TUTOR_RESPONSE is on or off, but the page led with "this
+         page is empty until the flag is on" — so the one always-live block on
+         it read as dead too, and unverifiableRate was served by the API and
+         looked at by nobody. -->
+    <h2 class="section-heading">Answer verifier <span class="always-live">always live &mdash; not gated on the flag below</span></h2>
+    <div class="verifier-banner" id="verifier-banner">
+      <i class="fas fa-circle-notch fa-spin"></i> <span id="verifier-text">Checking the cross-provider check…</span>
+    </div>
+    <div class="stats" id="verify-stats"></div>
+    <div class="table-wrap">
+      <h2>Where the unverifiable budget goes (by problem type)</h2>
+      <table>
+        <thead><tr><th>Math type</th><th class="num">Attempts</th><th class="num">Unresolved</th><th class="num">Rate</th></tr></thead>
+        <tbody id="verify-type-body"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+      </table>
+    </div>
+
+    <h2 class="section-heading">Structured tutor path</h2>
     <div class="flag-banner off" id="flag-banner">
       <i class="fas fa-circle-notch fa-spin"></i> <span id="flag-text">Checking flag…</span>
     </div>
@@ -123,7 +153,8 @@
       </table>
     </div>
     <p class="footer-note">
-      The <code>STRUCTURED_TUTOR_RESPONSE</code> path is dark by default — this page is empty until the flag is on.
+      The <strong>Answer verifier</strong> section above records on every answer attempt and is never gated on a flag.
+      The <code>STRUCTURED_TUTOR_RESPONSE</code> path is dark by default — the <em>structured</em> tables are empty until the flag is on.
       Watch <strong>hard mismatch rate</strong> (model misclassified the turn) and <strong>backfill pose-success</strong>
       (Stage 5c.1 rescued a forgotten pose) to decide whether the flag is safe to ramp.
       Source: <code>/api/admin/structured-tutor-metrics</code> (admin-only, in-memory ring buffer of last 1000 turns, resets on restart).
@@ -201,6 +232,95 @@
           <div class="value">${escapeHtml(c.value)}</div>
           <div class="sub">${escapeHtml(c.sub)}</div>
         </div>
+      `).join('');
+    }
+
+    /**
+     * The cross-provider banner. This is the state that decides how to READ
+     * every number below it: the verifier's job is to be a second opinion, and
+     * when tier 1 is unreachable it keeps grading on the tutor's own model. A
+     * clean-looking unverifiableRate produced by a model marking its own work
+     * is not the same measurement.
+     */
+    function renderVerifierBanner(cp) {
+      const banner = document.getElementById('verifier-banner');
+      const text = document.getElementById('verifier-text');
+      banner.classList.remove('ok', 'bad');
+      if (!cp) {
+        banner.querySelector('i').className = 'fas fa-circle-notch fa-spin';
+        text.textContent = 'No verifier state reported.';
+        return;
+      }
+      if (cp.degraded) {
+        banner.classList.add('bad');
+        banner.querySelector('i').className = 'fas fa-triangle-exclamation';
+        const when = cp.lastFallbackAt ? new Date(cp.lastFallbackAt).toLocaleTimeString() : 'unknown time';
+        text.innerHTML = '<strong>SELF-GRADING</strong> — tier 1 (Claude) is unreachable, so answers are being '
+          + 'graded by the same model that writes them. '
+          + escapeHtml(`${cp.fallbacks} fallback${cp.fallbacks === 1 ? '' : 's'}, last at ${when}`)
+          + (cp.lastFallbackStatus ? escapeHtml(` (HTTP ${cp.lastFallbackStatus})`) : '')
+          + (cp.lastFallbackMessage ? `: <code>${escapeHtml(cp.lastFallbackMessage)}</code>` : '')
+          + ' — check ANTHROPIC_API_KEY and the account balance. Clears itself on the next Claude call that succeeds.';
+      } else {
+        banner.classList.add('ok');
+        banner.querySelector('i').className = 'fas fa-circle-check';
+        text.innerHTML = '<strong>Cross-checked</strong> — answers are graded by a model on a different '
+          + 'provider from the one that writes them.'
+          + (cp.fallbacks ? escapeHtml(` (${cp.fallbacks} fallback${cp.fallbacks === 1 ? '' : 's'} earlier this process)`) : '');
+      }
+    }
+
+    function renderVerifyStats(agg) {
+      const stats = document.getElementById('verify-stats');
+      if (!agg || !agg.sampleSize) {
+        stats.innerHTML = '<div class="stat"><div class="label">No answer attempts yet</div><div class="value">—</div><div class="sub">Counters reset on restart</div></div>';
+        return;
+      }
+      const r = agg.byResolver || {};
+      const cards = [
+        // The headline. Everything else on this row explains it.
+        { label: 'Unverifiable rate', value: fmtPct(agg.unverifiableRate),
+          sub: `of last ${agg.sampleSize} answer attempts`,
+          klass: classifyLowerBetter(agg.unverifiableRate, 0.15, 0.35) },
+        { label: 'Resolved rate', value: fmtPct(agg.resolvedRate),
+          sub: `${agg.totalEver} attempts since restart`,
+          klass: classifyHigherBetter(agg.resolvedRate, 0.85, 0.65) },
+        // How often the stronger judge rescues what tier 1 could not settle.
+        { label: 'Escalation rescue', value: fmtPct(agg.escalationResolveRate),
+          sub: `${agg.escalationResolved ?? 0} of ${agg.escalated ?? 0} escalated`,
+          klass: classifyHigherBetter(agg.escalationResolveRate, 0.6, 0.3) },
+        // How much the deterministic CAS is carrying — the baseline for any
+        // "should we widen the solver" decision.
+        { label: 'Resolved by CAS', value: `${r.symbolic ?? 0}`,
+          sub: `vs ${r.llm ?? 0} by the LLM judge`, klass: '' },
+        { label: 'Error rate', value: fmtPct(agg.errorRate),
+          sub: 'missing input or upstream failure',
+          klass: classifyLowerBetter(agg.errorRate, 0.02, 0.1) },
+      ];
+      stats.innerHTML = cards.map(c => `
+        <div class="stat ${c.klass}">
+          <div class="label">${escapeHtml(c.label)}</div>
+          <div class="value">${escapeHtml(c.value)}</div>
+          <div class="sub">${escapeHtml(c.sub)}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderVerifyTypes(rows) {
+      const tbody = document.getElementById('verify-type-body');
+      if (!rows || !rows.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty">Nothing unresolved — every attempt got a verdict.</td></tr>';
+        return;
+      }
+      // Already sorted by absolute count server-side: the top row is where
+      // widening solver coverage buys the most resolved turns.
+      tbody.innerHTML = rows.map(b => `
+        <tr>
+          <td><span class="pill type">${escapeHtml(b.mathType)}</span></td>
+          <td class="num">${escapeHtml(b.attempts)}</td>
+          <td class="num">${escapeHtml(b.unresolved)}</td>
+          <td class="num">${fmtPct(b.unresolvedRate)}</td>
+        </tr>
       `).join('');
     }
 
@@ -295,6 +415,10 @@
         const inst = data.instance || {};
         document.getElementById('instance').textContent =
           inst.hostname ? `inst ${shortHost(inst.hostname)} · up ${fmtUptime(inst.uptimeSeconds)}` : '';
+        const verifyAgg = (data.verify && data.verify.aggregate) || {};
+        renderVerifierBanner(verifyAgg.crossProvider);
+        renderVerifyStats(verifyAgg);
+        renderVerifyTypes(verifyAgg.unresolvedByMathType || []);
         renderFlag(!!data.flagEnabled);
         renderStats(agg);
         renderTurnTypes(agg.turn_type || {});

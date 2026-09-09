@@ -30,6 +30,10 @@ const { callLLM } = require('../llmGateway');
 // definition.
 const { isClaudeModel } = require('../anthropicClient');
 const { symbolicVerify } = require('./symbolicVerifier');
+// Where the cross-provider state lives, alongside the outcome ring it has to be
+// read next to: an unverifiableRate measured while tier 1 is self-grading does
+// not mean the same thing as one measured across two providers.
+const verifyMetrics = require('../verifyMetrics');
 
 // Small, fast model, deliberately on a DIFFERENT provider from the generate
 // stage. The verifier is the second opinion that checks the tutor's own answer:
@@ -129,9 +133,20 @@ function isTerminalConfigError(err) {
 
 async function verifierCall(model, messages, options) {
   try {
-    return await callLLM(model, messages, options);
+    const out = await callLLM(model, messages, options);
+    // A tier-1 call that went through means the cross-check is intact. Recording
+    // the good case is what lets `degraded` clear itself: funding the Anthropic
+    // account fixes the panels on the next answer attempt, with no restart and
+    // no expiry timer that would guess wrong in one direction or the other.
+    if (isClaudeModel(model)) verifyMetrics.noteCrossProviderOk();
+    return out;
   } catch (err) {
     if (!isClaudeModel(model) || !isTerminalConfigError(err)) throw err;
+    // This is the silent one. Grading continues on the fallback, verdicts keep
+    // their shape, nothing throws — and the model checking the tutor's answer is
+    // now the model that wrote it. A console line is not an alarm anybody sees,
+    // so the state goes somewhere /api/health and the admin panels can read it.
+    verifyMetrics.noteCrossProviderFallback({ status: err?.status ?? null, message: err?.message });
     console.error(
       `[LLMVerifier] ${model} rejected the call (${err.status}: ${err.message}) — check `
       + `ANTHROPIC_API_KEY and the account balance. Falling back to `

@@ -161,6 +161,74 @@ function aggregate() {
     escalationResolved,
     byResolver,
     unresolvedByMathType,
+    // Not derived from the ring — live provider state. It rides along here
+    // because every consumer of unverifiableRate needs it to read the number:
+    // a rate measured while tier 1 is self-grading means something different
+    // from the same rate measured across two providers.
+    crossProvider: crossProviderHealth(),
+  };
+}
+
+// ── Cross-provider health ───────────────────────────────────────────────────
+// The verifier exists to be a SECOND opinion: the model grading the tutor's
+// answer must not be the model that wrote it. llmVerifier pins tier 1 to
+// claude-haiku-4-5 while generate runs TUTOR_MODEL (gpt-4o-mini today), and
+// that split is the entire value of the check.
+//
+// It can be lost without anything breaking. An unfunded Anthropic balance or a
+// bad key is a terminal 4xx, which openaiClient deliberately does not fail over,
+// so llmVerifier's verifierCall catches it and retries on gpt-4o-mini — the
+// SAME model as generate. Grading keeps working, verdicts keep the same shape,
+// nothing throws, and the cross-check is gone: gpt-4o-mini grading gpt-4o-mini.
+// Before this, the only trace was one console.error line per call.
+//
+// `degraded` is live state, not a counter: it goes true on a fallback and false
+// again on the next Claude call that succeeds, so funding the account clears it
+// without a restart and without a timer that could lie in either direction.
+const crossProvider = {
+  degraded: false,
+  fallbacks: 0,
+  lastFallbackAt: null,
+  lastFallbackStatus: null,
+  lastFallbackMessage: null,
+  lastOkAt: null,
+};
+
+/** The Claude verifier refused the call and we fell back to the tutor's model. */
+function noteCrossProviderFallback({ status = null, message = null } = {}) {
+  crossProvider.degraded = true;
+  crossProvider.fallbacks += 1;
+  crossProvider.lastFallbackAt = Date.now();
+  crossProvider.lastFallbackStatus = status;
+  // Bounded: provider error strings are short, but they are third-party text
+  // heading for an admin page and a public health payload.
+  crossProvider.lastFallbackMessage = message ? String(message).slice(0, 300) : null;
+  logger.warn('llm_verify_cross_provider_fallback', {
+    status, fallbacks: crossProvider.fallbacks,
+  });
+  return { ...crossProvider };
+}
+
+/** A Claude verifier call went through — the cross-check is intact again. */
+function noteCrossProviderOk() {
+  const wasDegraded = crossProvider.degraded;
+  crossProvider.degraded = false;
+  crossProvider.lastOkAt = Date.now();
+  if (wasDegraded) {
+    logger.info('llm_verify_cross_provider_recovered', { fallbacks: crossProvider.fallbacks });
+  }
+  return { ...crossProvider };
+}
+
+/**
+ * Current cross-provider state, for /api/health and the admin panels.
+ * `provider` is what tier 1 is actually running on right now, which is the
+ * one-word answer to "is the verifier still a second opinion?".
+ */
+function crossProviderHealth() {
+  return {
+    ...crossProvider,
+    provider: crossProvider.degraded ? 'fallback' : 'claude',
   };
 }
 
@@ -169,10 +237,19 @@ function reset() {
   ring.fill(undefined);
   cursor = 0;
   total = 0;
+  crossProvider.degraded = false;
+  crossProvider.fallbacks = 0;
+  crossProvider.lastFallbackAt = null;
+  crossProvider.lastFallbackStatus = null;
+  crossProvider.lastFallbackMessage = null;
+  crossProvider.lastOkAt = null;
 }
 
 module.exports = {
   recordVerification,
+  noteCrossProviderFallback,
+  noteCrossProviderOk,
+  crossProviderHealth,
   classifyOutcome,
   classifyResolver,
   snapshot,
