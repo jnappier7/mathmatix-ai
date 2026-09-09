@@ -147,6 +147,7 @@ const notificationsRoutes = require('../routes/notifications');
 const onboardingRoutes = require('../routes/onboarding');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const lifecycle = require('../utils/lifecycle');
+const healthReport = require('../utils/healthReport');
 
 function registerRoutes(app, { authLimiter, signupLimiter }) {
   // --- Health Check (public, no auth) ---
@@ -165,10 +166,27 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
       status = 'unhealthy';
     }
 
-    // API keys configured
-    checks.openai = { status: process.env.OPENAI_API_KEY ? 'ok' : 'missing' };
-    checks.mathpix = { status: (process.env.MATHPIX_APP_ID && process.env.MATHPIX_APP_KEY) ? 'ok' : 'missing' };
-    if (!process.env.OPENAI_API_KEY) status = 'degraded';
+    // Third-party keys and the answer verifier's live cross-provider state.
+    // Both come from utils/healthReport so this endpoint and the admin panel
+    // cannot drift into disagreeing about what "healthy" means — which they did:
+    // this one watched OpenAI and Mathpix, the admin one watched nothing, and
+    // neither watched Anthropic, a production dependency of grading even with
+    // TUTOR_MODEL on OpenAI (llmVerifier's tier 1 is hard-pinned to Claude).
+    const keys = healthReport.providerKeys();
+    for (const [name, keyStatus] of Object.entries(keys)) checks[name] = { status: keyStatus };
+    // `verifier` is the one check a key-presence test cannot make: the key can
+    // be present and valid while the balance is empty, and grading then falls
+    // back to the tutor's own model — still grading, no longer a second opinion.
+    // No lastFallbackMessage here: it is third-party prose and this endpoint is
+    // unauthenticated. The status code names the failure; the admin panel
+    // carries the sentence.
+    checks.verifier = healthReport.verifierReport();
+    // Deliberately 'degraded', never 'unhealthy'. 'degraded' is a 200 below, so
+    // Render keeps routing here — a verifier grading without independence is a
+    // quality problem, and answering 503 would turn it into an outage.
+    if (healthReport.isDegraded({ dbConnected: mongoose.connection.readyState === 1 })) {
+      status = 'degraded';
+    }
 
     // Memory usage
     const mem = process.memoryUsage();

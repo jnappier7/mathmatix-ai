@@ -1,6 +1,14 @@
 /**
  * Tests for verifyMetrics — the in-memory answer-verifier metrics ring.
- * Focus: outcome classification and the aggregate (the unverifiableRate headline).
+ * Focus: outcome classification, the aggregate (the unverifiableRate headline),
+ * and the cross-provider state that says whether that rate was measured by an
+ * independent model or by the tutor's own.
+ *
+ * This file is in the critical-coverage set (jest.critical.config.js, 99/92/100/99
+ * on utils/verifyMetrics.js) and that gate runs a curated list of files — so the
+ * module's own unit coverage belongs HERE. The seam around it (verifierCall's
+ * wiring, the two health endpoints, the admin surfaces) is in
+ * tests/unit/verifierProviderHealth.test.js.
  */
 
 const vm = require('../../utils/verifyMetrics');
@@ -125,5 +133,75 @@ describe('recordVerification', () => {
     expect(rec.mathType).toBeNull();
     expect(rec.skillId).toBeNull();
     expect(rec.resolvedBy).toBeNull();
+  });
+});
+
+describe('cross-provider state', () => {
+  test('starts intact', () => {
+    const cp = vm.crossProviderHealth();
+    expect(cp.degraded).toBe(false);
+    expect(cp.provider).toBe('claude');
+    expect(cp.fallbacks).toBe(0);
+  });
+
+  test('a fallback marks it degraded and names the provider actually grading', () => {
+    vm.noteCrossProviderFallback({ status: 400, message: 'credit balance is too low' });
+    const cp = vm.crossProviderHealth();
+    expect(cp.degraded).toBe(true);
+    expect(cp.provider).toBe('fallback');
+    expect(cp.fallbacks).toBe(1);
+    expect(cp.lastFallbackStatus).toBe(400);
+    expect(cp.lastFallbackMessage).toBe('credit balance is too low');
+    expect(typeof cp.lastFallbackAt).toBe('number');
+  });
+
+  test('a later Claude success clears it — no restart, no timer', () => {
+    // Deliberately state and not a counter: funding the account fixes every
+    // panel on the next answer attempt. A time-based expiry would have to guess,
+    // and would guess wrong in one direction or the other.
+    vm.noteCrossProviderFallback({ status: 400 });
+    vm.noteCrossProviderOk();
+    const cp = vm.crossProviderHealth();
+    expect(cp.degraded).toBe(false);
+    expect(cp.provider).toBe('claude');
+    // The history survives the recovery: "it was down and came back" is a
+    // different fact from "it was never down", and only one of them is worth
+    // funding an account over.
+    expect(cp.fallbacks).toBe(1);
+    expect(cp.lastFallbackAt).not.toBeNull();
+  });
+
+  test('counts every fallback, so a persistent outage is distinguishable from a blip', () => {
+    for (let i = 0; i < 5; i++) vm.noteCrossProviderFallback({ status: 400 });
+    expect(vm.crossProviderHealth().fallbacks).toBe(5);
+  });
+
+  test('bounds the provider error text', () => {
+    // Third-party prose that ends up on an admin page. Unbounded, a chatty
+    // provider error becomes the page.
+    vm.noteCrossProviderFallback({ status: 400, message: 'x'.repeat(5000) });
+    expect(vm.crossProviderHealth().lastFallbackMessage.length).toBeLessThanOrEqual(300);
+  });
+
+  test('tolerates a fallback reported with nothing attached', () => {
+    expect(() => vm.noteCrossProviderFallback()).not.toThrow();
+    expect(vm.crossProviderHealth().degraded).toBe(true);
+  });
+
+  test('rides along on aggregate(), where unverifiableRate is read', () => {
+    // The rate and the provider state have to arrive together: a clean-looking
+    // unverifiableRate produced by a model marking its own work is not the same
+    // measurement as one produced across two providers.
+    vm.noteCrossProviderFallback({ status: 400 });
+    const agg = vm.aggregate();
+    expect(agg).toHaveProperty('unverifiableRate');
+    expect(agg.crossProvider.degraded).toBe(true);
+  });
+
+  test('reset() clears it, so one test cannot poison the next', () => {
+    vm.noteCrossProviderFallback({ status: 400 });
+    vm.reset();
+    expect(vm.crossProviderHealth().degraded).toBe(false);
+    expect(vm.crossProviderHealth().fallbacks).toBe(0);
   });
 });

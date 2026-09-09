@@ -1689,8 +1689,15 @@
       <aside class="left-sidebar" role="complementary" aria-label="System status and leaderboard">
         <div class="dashboard-panel">
           <h2 class="dashboard-panel-header">System Status</h2>
-          <p>Database: <span id="dbStatus" class="status-online">Online</span></p>
-          <p>AI Service: <span id="aiStatus" class="status-online">Operational</span></p>
+          <p>Database: <span id="dbStatus" class="status-online">Checking&hellip;</span></p>
+          <p>AI Service: <span id="aiStatus" class="status-online">Checking&hellip;</span></p>
+          <!-- The answer verifier grades student answers with a model on a
+               DIFFERENT provider from the one that writes the tutor's replies.
+               When it can't reach that provider it keeps grading on the tutor's
+               own model — still working, no longer a second opinion, and
+               previously visible nowhere. -->
+          <p>Answer verifier: <span id="verifierStatus" class="status-online">Checking&hellip;</span></p>
+          <p>Unverified answers: <span id="verifierUnverifiable">&mdash;</span></p>
           <p>Last Sync: <span id="lastSyncTime">Just now</span></p>
         </div>
 
@@ -3515,8 +3522,10 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
       <div class="drawer-section">
         <div class="drawer-section-title"><i class="fas fa-heartbeat" style="color: #27ae60;"></i> System Health</div>
         <div style="background: #f8f9fa; border-radius: 10px; padding: 16px;">
-          <p style="margin-bottom: 8px;"><strong>Database:</strong> <span id="mobile-dbStatus" class="status-online">Online</span></p>
-          <p style="margin-bottom: 8px;"><strong>AI Service:</strong> <span id="mobile-aiStatus" class="status-online">Operational</span></p>
+          <p style="margin-bottom: 8px;"><strong>Database:</strong> <span id="mobile-dbStatus" class="status-online">Checking&hellip;</span></p>
+          <p style="margin-bottom: 8px;"><strong>AI Service:</strong> <span id="mobile-aiStatus" class="status-online">Checking&hellip;</span></p>
+          <p style="margin-bottom: 8px;"><strong>Answer verifier:</strong> <span id="mobile-verifierStatus" class="status-online">Checking&hellip;</span></p>
+          <p style="margin-bottom: 8px;"><strong>Unverified answers:</strong> <span id="mobile-verifierUnverifiable">&mdash;</span></p>
           <p><strong>Last Sync:</strong> <span id="mobile-lastSyncTime">Just now</span></p>
         </div>
       </div>
@@ -3589,11 +3598,20 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
         // Sync status info from desktop sidebar to mobile drawer
         function syncStatusToMobile() {
           // System status
-          const fields = [['dbStatus', 'mobile-dbStatus'], ['aiStatus', 'mobile-aiStatus'], ['lastSyncTime', 'mobile-lastSyncTime']];
+          const fields = [
+            ['dbStatus', 'mobile-dbStatus'],
+            ['aiStatus', 'mobile-aiStatus'],
+            ['verifierStatus', 'mobile-verifierStatus'],
+            ['verifierUnverifiable', 'mobile-verifierUnverifiable'],
+            ['lastSyncTime', 'mobile-lastSyncTime'],
+          ];
           fields.forEach(([src, dest]) => {
             const s = document.getElementById(src);
             const d = document.getElementById(dest);
-            if (s && d) { d.textContent = s.textContent; d.className = s.className; }
+            // title carries the provider's own reason for a verifier fallback,
+            // which is the sentence that tells you WHY — copying text and class
+            // without it would leave the phone saying "Fallback" and nothing more.
+            if (s && d) { d.textContent = s.textContent; d.className = s.className; d.title = s.title || ''; }
           });
 
           // Leaderboard
@@ -3655,6 +3673,6 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-  <script src="/dist/js/admin-js0.0893c3c9.js"></script>
+  <script src="/dist/js/admin-js0.3ae0279b.js"></script>
 </body>
 </html>
