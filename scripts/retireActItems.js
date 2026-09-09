@@ -20,6 +20,11 @@ const RETIRED = {
   // Point-to-line distance formula is not ACT Mathematics content; the item is
   // sound but belongs in a precalculus set (owner evaluation, 2026-09-09).
   'act-fable-topup1q79': 'out-of-scope: point-to-line distance formula is not ACT Mathematics content',
+  // Verbatim twins of items that stay active (t1q32, t2q32): same circle
+  // equation, same radius. The no-repeat ledger is keyed by problemId, so a
+  // re-test could serve a student the twin of a question they already saw.
+  'act-fable-t3q37': 'duplicate: same circle as act-fable-t1q32 (x² + y² − 6x + 4y − 12 = 0, r = 5)',
+  'act-fable-t5q33': 'duplicate: same circle as act-fable-t2q32 (x² + y² − 8x + 6y = 11, r = 6)',
 };
 
 async function main() {

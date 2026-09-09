@@ -5585,7 +5585,8 @@
     ],
     "source": "act-fable",
     "contentHash": "c51f036ddf1cc4334b3fbc781f485ab833192ee1f4533db9b6e5f762bf8eebd6",
-    "isActive": true
+    "isActive": false,
+    "inactiveReason": "duplicate: same circle (x² + y² − 6x + 4y − 12 = 0, r = 5) as act-fable-t1q32, which is kept; the no-repeat ledger is by problemId so a re-test could serve the twin"
   },
   {
     "problemId": "act-fable-t3q38",
@@ -9369,7 +9370,8 @@
     ],
     "source": "act-fable",
     "contentHash": "afae7d08762b0d89d795ccf8e0c1cb1bb4a6c1950c7f41c3ffea43b9950d8f78",
-    "isActive": true
+    "isActive": false,
+    "inactiveReason": "duplicate: same circle (x² + y² − 8x + 6y = 11, r = 6) as act-fable-t2q32, which is kept; the no-repeat ledger is by problemId so a re-test could serve the twin"
   },
   {
     "problemId": "act-fable-t5q34",
