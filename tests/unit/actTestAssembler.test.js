@@ -187,3 +187,40 @@ describe('actTestAssembler diversity (no look-alike problems in one form)', () =
     expect(A.pickDiverse(pool, new Map()).problemId).toBe('first');
   });
 });
+
+describe('actTestAssembler.orderByDifficulty', () => {
+  // The ramp only steers which pool a slot draws from, so the assembled order
+  // still read as random — "3 notebooks cost $12" in the final third between a
+  // matrix sum and a distance-to-a-line item (owner report, 2026-09-09). The
+  // real ACT ramps, and pacing strategy is taught on that assumption.
+  const items = [
+    { position: 1, category: 'algebra', difficulty: 4, problemId: 'hard-a' },
+    { position: 2, category: 'geometry', difficulty: 1, problemId: 'easy-g' },
+    { position: 3, category: 'algebra', difficulty: 2, problemId: 'mid-a' },
+    { position: 4, category: 'functions', problemId: 'unknown-f' },          // no difficulty → treated as 3
+    { position: 5, category: 'geometry', difficulty: 2, problemId: 'mid-g' },
+    { position: 6, category: 'algebra', difficulty: 4, problemId: 'hard-a2' },
+  ];
+
+  test('sequences easiest-first and renumbers positions 1..n', () => {
+    const out = A.orderByDifficulty(items);
+    expect(out.map((it) => it.problemId)).toEqual(['easy-g', 'mid-a', 'mid-g', 'unknown-f', 'hard-a', 'hard-a2']);
+    expect(out.map((it) => it.position)).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  test('is stable — ties keep the category interleave', () => {
+    const out = A.orderByDifficulty(items);
+    const twos = out.filter((it) => it.difficulty === 2).map((it) => it.problemId);
+    expect(twos).toEqual(['mid-a', 'mid-g']);
+    const fours = out.filter((it) => it.difficulty === 4).map((it) => it.problemId);
+    expect(fours).toEqual(['hard-a', 'hard-a2']);
+  });
+
+  test('does not mutate its input and tolerates an empty form', () => {
+    A.orderByDifficulty(items);
+    expect(items[0].position).toBe(1);
+    expect(items[0].problemId).toBe('hard-a');
+    expect(A.orderByDifficulty([])).toEqual([]);
+    expect(A.orderByDifficulty(null)).toEqual([]);
+  });
+});

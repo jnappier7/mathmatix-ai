@@ -89,7 +89,20 @@
     .actt-cmpname{color:#b7b3cc}.actt-cmpval{color:#d7d3ea}
     .actt-up{background:#183a27;color:#63d391}.actt-down{background:#3a1c1c;color:#ff8a8a}.actt-same{background:#2d2a40;color:#9a96b2}
   }
-  @media (max-width:700px){ .actt-card{order:1} }`;
+  @media (max-width:700px){
+    .actt-card{order:1}
+    /* A figure must not push the answer choices below the fold: on a phone
+       only two of four choices were visible on figure items, and the correct
+       one needed a scroll to exist (owner report, 2026-09-09). Cap the figure
+       — preserveAspectRatio keeps it undistorted — and tighten the spacing. */
+    .actt-fig{margin:0 0 8px}
+    .actt-fig svg{max-height:min(26vh,160px);width:auto;max-width:100%;padding:6px}
+    .actt-q{font-size:15.5px;margin:2px 0 10px}
+    .actt-opts{gap:6px}
+    .actt-opts--grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .actt-opt{padding:9px 12px;font-size:14.5px}
+    .actt-body{padding:12px 14px}
+  }`;
 
   const CATEGORY_LABELS = {
     'integrating-essential-skills': 'Essential skills',
@@ -343,7 +356,11 @@
       // Guard: only render a bare <svg> with no scripts.
       const fig = (p.svg && /^<svg[\s>]/.test(p.svg) && !/<script/i.test(p.svg))
         ? `<div class="actt-fig">${p.svg}</div>` : '';
-      this.el('actt-body').innerHTML = `${fig}<div class="actt-q">${escapeHtml(p.content || '')}</div><div class="actt-opts">${opts}</div>`;
+      // Short choices (numbers, "18π", "2/15") sit two to a row on a phone, the
+      // way a printed ACT lays them out — with a figure above, four stacked
+      // rows pushed the last choices below the fold.
+      const shortChoices = (p.options || []).length > 0 && (p.options || []).every((o) => String(o.text || '').length <= 12);
+      this.el('actt-body').innerHTML = `${fig}<div class="actt-q">${escapeHtml(p.content || '')}</div><div class="actt-opts${shortChoices ? ' actt-opts--grid' : ''}">${opts}</div>`;
       this.el('actt-body').querySelectorAll('.actt-opt').forEach(btn => {
         btn.addEventListener('click', () => {
           this.selected = btn.getAttribute('data-label');
