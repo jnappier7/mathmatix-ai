@@ -121,6 +121,9 @@ const problemSchema = new mongoose.Schema({
     default: true,
     index: true
   },
+  // Why an item was retired (out-of-scope, mis-keyed, duplicate…). Set with
+  // isActive:false so a deactivation explains itself in the bank.
+  inactiveReason: { type: String },
 
   // Source tracking
   source: {

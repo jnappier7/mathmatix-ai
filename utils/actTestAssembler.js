@@ -296,8 +296,18 @@ async function assembleForm(opts = {}) {
     items.push(toClientItem(slot, problem));
   }
 
+  // Sequence the FILLED form by the items' own difficulty. The ramp above
+  // only steers which pool each slot draws from (a ±1 window, and shape
+  // novelty wins inside it), so the assembled order still read as random:
+  // "3 notebooks cost $12" turned up in the final third between a matrix sum
+  // and a point-to-line distance (owner report, 2026-09-09). The real ACT
+  // ramps, and pacing is taught on that assumption — move fast early, bank
+  // time for the end. Stable, so the category interleave survives within
+  // each difficulty band.
+  const ordered = orderByDifficulty(items);
+
   return {
-    items,
+    items: ordered,
     gaps,
     coverage: {
       total: slots.length,
@@ -314,6 +324,25 @@ async function assembleForm(opts = {}) {
       seed,
     },
   };
+}
+
+/**
+ * Re-sequence assembled items easiest-first and renumber their positions.
+ *
+ * Stable: items of equal difficulty keep their relative (category-interleaved)
+ * order. An item with no difficulty is treated as middling (3) rather than
+ * pushed to either end. Positions are rewritten 1..n because the position IS
+ * the question number the student sees, grades against, and reviews by.
+ */
+function orderByDifficulty(items) {
+  const d = (it) => {
+    const n = Number(it && it.difficulty);
+    return Number.isFinite(n) ? n : 3;
+  };
+  return (items || [])
+    .map((it, i) => ({ it, i }))
+    .sort((a, b) => (d(a.it) - d(b.it)) || (a.i - b.i))
+    .map(({ it }, idx) => ({ ...it, position: idx + 1 }));
 }
 
 /** Flat list of the ACT content skillIds (for constraining the CAT engine). */
@@ -337,5 +366,6 @@ module.exports = {
   difficultyForPosition,
   promptSignature,
   pickDiverse,
+  orderByDifficulty,
   getBlueprint: () => DEFAULT_BLUEPRINT,
 };
