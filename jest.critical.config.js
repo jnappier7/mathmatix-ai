@@ -64,7 +64,15 @@ module.exports = {
     './utils/mathSolver.js': { statements: 78, branches: 68, functions: 88, lines: 81 },
     './utils/irt.js': { statements: 90, branches: 82, functions: 95, lines: 90 },
     './utils/knowledgeTracer.js': { statements: 83, branches: 78, functions: 95, lines: 83 },
-    // Measured 100/94.9/100/100 after the mathType + resolvedBy tests — ratcheted.
+    // Measured 100/95.58/100/100 after the cross-provider state tests (up from
+    // 100/94.9 after mathType + resolvedBy). The floor keeps its usual few
+    // points of headroom for cross-Node branch-counting drift rather than being
+    // pinned to the measurement.
+    //
+    // NOTE the curated testMatch above: coverage for this module has to come
+    // from a file this config actually runs. Adding the cross-provider state
+    // machine to verifyMetrics.js while its tests lived only in
+    // verifierProviderHealth.test.js is what turned this gate red.
     './utils/verifyMetrics.js': { statements: 99, branches: 92, functions: 100, lines: 99 },
     // Measured 97.9/90.7/100/98.8 after the cross-provider tests (parseVerdict +
     // verifierCall) — ratcheted. The verifier now depends on a second provider, so

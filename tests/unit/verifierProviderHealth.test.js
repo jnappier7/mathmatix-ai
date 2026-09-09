@@ -42,76 +42,12 @@ beforeEach(() => verifyMetrics.reset());
 // ============================================================================
 // 1. The state machine
 // ============================================================================
-
-describe('cross-provider state', () => {
-  test('starts intact', () => {
-    const cp = verifyMetrics.crossProviderHealth();
-    expect(cp.degraded).toBe(false);
-    expect(cp.provider).toBe('claude');
-    expect(cp.fallbacks).toBe(0);
-  });
-
-  test('a fallback marks it degraded and names the provider actually grading', () => {
-    verifyMetrics.noteCrossProviderFallback({ status: 400, message: 'credit balance is too low' });
-    const cp = verifyMetrics.crossProviderHealth();
-    expect(cp.degraded).toBe(true);
-    expect(cp.provider).toBe('fallback');
-    expect(cp.fallbacks).toBe(1);
-    expect(cp.lastFallbackStatus).toBe(400);
-    expect(cp.lastFallbackMessage).toBe('credit balance is too low');
-    expect(typeof cp.lastFallbackAt).toBe('number');
-  });
-
-  test('a later Claude success clears it — no restart, no timer', () => {
-    // Deliberately state and not a counter: funding the account fixes every
-    // panel on the next answer attempt. A time-based expiry would have to guess,
-    // and would guess wrong in one direction or the other.
-    verifyMetrics.noteCrossProviderFallback({ status: 400 });
-    verifyMetrics.noteCrossProviderOk();
-    const cp = verifyMetrics.crossProviderHealth();
-    expect(cp.degraded).toBe(false);
-    expect(cp.provider).toBe('claude');
-    // The history survives the recovery: "it was down and came back" is a
-    // different fact from "it was never down", and only one of them is worth
-    // funding an account over.
-    expect(cp.fallbacks).toBe(1);
-    expect(cp.lastFallbackAt).not.toBeNull();
-  });
-
-  test('counts every fallback, so a persistent outage is distinguishable from a blip', () => {
-    for (let i = 0; i < 5; i++) verifyMetrics.noteCrossProviderFallback({ status: 400 });
-    expect(verifyMetrics.crossProviderHealth().fallbacks).toBe(5);
-  });
-
-  test('bounds the provider error text', () => {
-    // Third-party prose that ends up on an admin page. Unbounded, a chatty
-    // provider error becomes the page.
-    verifyMetrics.noteCrossProviderFallback({ status: 400, message: 'x'.repeat(5000) });
-    expect(verifyMetrics.crossProviderHealth().lastFallbackMessage.length).toBeLessThanOrEqual(300);
-  });
-
-  test('tolerates a fallback reported with nothing attached', () => {
-    expect(() => verifyMetrics.noteCrossProviderFallback()).not.toThrow();
-    expect(verifyMetrics.crossProviderHealth().degraded).toBe(true);
-  });
-
-  test('rides along on aggregate(), where unverifiableRate is read', () => {
-    // The rate and the provider state have to arrive together: a clean-looking
-    // unverifiableRate produced by a model marking its own work is not the same
-    // measurement as one produced across two providers.
-    verifyMetrics.noteCrossProviderFallback({ status: 400 });
-    const agg = verifyMetrics.aggregate();
-    expect(agg).toHaveProperty('unverifiableRate');
-    expect(agg.crossProvider.degraded).toBe(true);
-  });
-
-  test('reset() clears it, so one test cannot poison the next', () => {
-    verifyMetrics.noteCrossProviderFallback({ status: 400 });
-    verifyMetrics.reset();
-    expect(verifyMetrics.crossProviderHealth().degraded).toBe(false);
-    expect(verifyMetrics.crossProviderHealth().fallbacks).toBe(0);
-  });
-});
+//
+// Lives in tests/unit/verifyMetrics.test.js, not here. utils/verifyMetrics.js is
+// in the critical-coverage set (jest.critical.config.js holds it to 99/92/100/99
+// and runs a CURATED list of test files), so state-machine coverage has to sit
+// in a file that gate actually runs — this one also source-scans HTML and mocks
+// the LLM gateway, which does not belong in a math-critical gate.
 
 // ============================================================================
 // 2. The wiring — state nobody sets is worth nothing
