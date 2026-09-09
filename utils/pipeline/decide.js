@@ -161,6 +161,14 @@ function decide(observation, diagnosis, context = {}) {
   // "today we're kicking off sequences." Runs before other post-passes.
   applyStudentsLeadGuard(decision, observation, context);
 
+  // The tutor is holding a missed ACT question this turn: say so where it is
+  // read first, and make it verify the key before using it.
+  applyActReviewDirective(decision, context);
+
+  // "The test marked it wrong" / "isn't 52 exactly right?" — the verdict comes
+  // from the math, not from whatever marked it and not from who insists.
+  applyGradeDisputeGuard(decision, observation, context);
+
   // Demonstrated competence runs across ALL branches (owner: "the system
   // doesn't need students to walk through EVERY problem — especially once
   // it is clear that this kid knows what he is talking about"). Per-branch
@@ -205,6 +213,60 @@ function applyVisualDirective(decision, observation, context) {
     recentWrongCount: observation?.streaks?.recentWrongCount || 0,
   });
   if (directive) decision.directives.push(directive);
+}
+
+// ── ACT review context (owner evaluation, 2026-09-09) ──
+// The missed question sat in the system prompt while the ACTION DIRECTIVES in
+// the last user turn said, in effect, "ask what problem they mean" — and the
+// directives won: "Can you share the specific question you missed?" to a
+// student whose question the platform had authored, served and scored. The
+// same evaluation caught the tutor calling 52° "close but not quite right" for
+// the supplement of 128° because a stored record said the student had missed
+// it. Both fixes ride here, in the slot the model reads first.
+function applyActReviewDirective(decision, context) {
+  const miss = context && context.actReviewMiss;
+  if (!miss) return;
+  const where = miss.position != null ? `Question #${miss.position} from their practice test` : 'The missed practice-test question';
+  decision.directives.unshift(
+    `ACT REVIEW — YOU HAVE THE QUESTION. ${where} is in your system prompt under "REVIEWING A MISSED QUESTION" (the question, its lettered choices, the letter recorded for them, and the stored key). The student CANNOT see it in this chat. If you have not yet presented it this review, present it now, verbatim, with its lettered choices. Do NOT ask them to share, paste, remember, or describe the question — you are holding it.`,
+    'VERIFY THE KEY BEFORE YOU USE IT. Solve the question yourself, completely, before you call any answer right or wrong. Your own derivation outranks the stored key. If they disagree: say what you got, say the stored answer differs, tell the student you are flagging the question, and put <KEY_DISPUTE: your answer> on its own line. If the student\'s pick matches YOUR answer, tell them plainly their answer looks right. Never tell a student they were wrong on the strength of a key you have not checked.'
+  );
+}
+
+// The student says something marked their answer wrong — a test, a key, an
+// app, a teacher — or is asking whether their answer was actually right.
+const GRADE_DISPUTE_RX = /\b(?:marked|graded|scored|counted|flagged)\b[^.?!\n]{0,40}\b(?:wrong|incorrect)\b|\b(?:answer key|the key)\b|\b(?:the )?(?:test|quiz|app|computer|site|program|teacher|book|homework|worksheet)\s+(?:said|says|marked|told me|thinks|thought|gave me)\b[^.?!\n]{0,40}\b(?:wrong|incorrect|right|correct)\b|\bwas i (?:wrong|right)\b|\b(?:isn'?t|wasn'?t)\b[^.?!\n]{0,50}\b(?:right|correct|the answer)\b\s*\?/i;
+
+// The previous tutor turn delivered a wrongness verdict…
+const VERDICT_RX = /\b(?:not (?:quite|exactly|correct|right)|incorrect|that'?s wrong|isn'?t (?:correct|right|quite)|close,? but|not the (?:right|correct) answer)\b/i;
+// …and the student is contesting it rather than accepting it.
+const PUSHBACK_RX = /\b(?:isn'?t|is)\b[^.?!\n]{0,50}\b(?:right|correct)\b\s*\?|\bexactly right\b|\bi(?:'m| am) (?:sure|right|pretty sure|positive)\b|\bbut\b[^.?!\n]{0,40}=|\bthat(?:'s| is) (?:right|correct)\b|\b(?:actually|no,|nope)\b|=\s*-?\d/i;
+
+function lastAssistantText(context) {
+  const msgs = context && context.conversation && context.conversation.messages;
+  if (!Array.isArray(msgs)) return '';
+  for (let i = msgs.length - 1; i >= 0; i--) {
+    const m = msgs[i];
+    if (m && m.role !== 'user' && typeof m.content === 'string' && m.content.trim()) return m.content;
+  }
+  return '';
+}
+
+function applyGradeDisputeGuard(decision, observation, context) {
+  const text = (observation && observation.raw) || '';
+  if (!text) return;
+
+  if (GRADE_DISPUTE_RX.test(text)) {
+    decision.directives.push(
+      "THE STUDENT SAYS AN ANSWER WAS MARKED WRONG (or is asking whether it was right). Do the math yourself, completely, before any verdict — 'it was marked wrong' is not evidence, and neither is how sure the student sounds. If their answer is correct, say so plainly in your FIRST sentence and say the marking looks wrong. If it is wrong, show exactly where. Never invent a reason a correct answer is 'not quite right', and never ask them to walk you through a calculation you can check yourself."
+    );
+  }
+
+  if (VERDICT_RX.test(lastAssistantText(context)) && PUSHBACK_RX.test(text)) {
+    decision.directives.push(
+      'THE STUDENT IS PUSHING BACK ON YOUR VERDICT. Re-derive from scratch and show the derivation. Change your verdict ONLY if the math changes it: if you were wrong, say so plainly and correct yourself in the first sentence; if you were right, hold the line kindly and point to the exact step where their reasoning breaks. Insistence is not evidence in either direction.'
+    );
+  }
 }
 
 // A topicless session start in FREE chat: nothing on the board, no problem

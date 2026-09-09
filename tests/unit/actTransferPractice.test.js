@@ -179,7 +179,7 @@ describe('the prompt asks for the work, not just agreement', () => {
     const section = reviewPromptSection(MISS, 0, 4, []);
     expect(section).not.toContain('TRANSFER CHECK');
     expect(section).toMatch(/5\. When they can do it on their own, emit the control tag <REVIEW_NEXT>/);
-    expect(section).toContain('CORRECT ANSWER:');
+    expect(section).toContain('STORED KEY:');
   });
 
   test('practice options are lettered A-D, not aliased to the test form', () => {

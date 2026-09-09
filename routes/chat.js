@@ -1298,12 +1298,25 @@ async function runStudentTurn(req, res) {
         // instead of a generic lesson. Appended at the finalizer so it survives
         // whichever builder produced systemPrompt. Advancement (<REVIEW_NEXT>) is
         // handled after the pipeline, below.
+        // The miss the tutor is holding this turn — handed to the pipeline so
+        // decide can put it in the ACTION DIRECTIVES (see applyActReviewDirective)
+        // and so a <KEY_DISPUTE> can be recorded against the right item.
+        let actReviewMiss = null;
         {
             const bc = conversationContextForPrompt?.courseSession?.bootcamp;
             if (bc && systemPrompt) {
                 const { currentMiss, reviewPromptSection, reassessPromptSection } = require('../utils/actReview');
                 if (bc.phase === 'review' && Array.isArray(bc.queue)) {
                     const miss = currentMiss(bc);
+                    if (miss) {
+                        actReviewMiss = {
+                            position: miss.position != null ? miss.position : null,
+                            problemId: miss.problemId || null,
+                            theirAnswer: miss.theirAnswer || null,
+                            correctOption: miss.correctOption || null,
+                            testSessionId: bc.testSessionId || null,
+                        };
+                    }
                     // Transfer practice: the queue stores only problemIds, so the
                     // fresh items' text and answers are resolved HERE, server-side.
                     // They must never ride to the browser — these are problems the
@@ -1653,6 +1666,7 @@ async function runStudentTurn(req, res) {
                 // work, not on the model's say-so alone (utils/pipeline/stepEvaluator).
                 courseStep: courseScaffoldCtx?.step || null,
                 isParentCourse: courseScaffoldCtx?.isParentCourse === true,
+                actReviewMiss,
             });
         } catch (pipelineError) {
             // Pipeline failed — fall back to direct LLM call so student always gets a response
@@ -1835,6 +1849,34 @@ async function runStudentTurn(req, res) {
             round: bc.round || 1,
             queue: (bc.queue || []).map((q) => ({ position: q.position != null ? q.position : null, status: q.status || 'pending', category: q.category || null })),
         } : null);
+
+        // ── Key dispute: the tutor's own derivation disagreed with the stored key ──
+        // Recorded for the bank audit (GET /api/admin/item-disputes), never
+        // auto-actioned: a dispute is a candidate for human review, not a
+        // verdict. Non-fatal — the student's reply is already on its way.
+        if (pipelineResult.keyDispute) {
+            try {
+                const ItemKeyDispute = require('../models/itemKeyDispute');
+                if (actReviewMiss && actReviewMiss.problemId) {
+                    await ItemKeyDispute.create({
+                        problemId: actReviewMiss.problemId,
+                        testSessionId: actReviewMiss.testSessionId || null,
+                        position: actReviewMiss.position,
+                        userId,
+                        conversationId: activeConversation._id,
+                        studentAnswer: actReviewMiss.theirAnswer || null,
+                        storedKey: actReviewMiss.correctOption || null,
+                        tutorAnswer: pipelineResult.keyDispute.claimed || null,
+                        source: 'act-review',
+                    });
+                    logger.warn('Item key disputed by the tutor', { problemId: actReviewMiss.problemId, tutorAnswer: pipelineResult.keyDispute.claimed });
+                } else {
+                    logger.warn('Tutor emitted KEY_DISPUTE outside an ACT review (no item to attach it to)', { userId, claimed: pipelineResult.keyDispute.claimed });
+                }
+            } catch (disputeErr) {
+                logger.warn('Could not record item key dispute (non-fatal)', { error: disputeErr.message });
+            }
+        }
 
         // ── ACT bootcamp: advance the missed-items review ──
         // The tutor emits <REVIEW_NEXT> when the student has the current miss.

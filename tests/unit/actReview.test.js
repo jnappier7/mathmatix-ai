@@ -102,8 +102,12 @@ describe('reviewPromptSection', () => {
   test('names the question, their wrong choice, the correct answer, and the advance tag', () => {
     const s = reviewPromptSection(queue[0], 0, queue.length);
     expect(s).toMatch(/Solve 2x\+3=11/);
-    expect(s).toMatch(/chose B \(5\).*INCORRECT/s);
-    expect(s).toMatch(/CORRECT ANSWER: A \(4\)/);
+    // The key is presented as something to VERIFY, not as a fact about the
+    // student: a recorded answer can differ from what they chose, and a key can
+    // be wrong (owner evaluation, 2026-09-09).
+    expect(s).toMatch(/RECORDED ANSWER: B \(5\) — marked wrong against the stored key/);
+    expect(s).toMatch(/STORED KEY: A \(4\)/);
+    expect(s).toMatch(/VERIFY THE KEY BEFORE YOU USE IT/);
     expect(s).toMatch(/<REVIEW_NEXT>/);
     expect(s).toMatch(/RETEACH the underlying concept ONLY if/);
   });
