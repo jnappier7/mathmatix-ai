@@ -9,7 +9,7 @@
  * @module pipeline/observe
  */
 
-const { normalizeSpokenNumbers } = require('../mathUnicodeNormalizer');
+const { normalizeSpokenNumbers, normalizeMathUnicode } = require('../mathUnicodeNormalizer');
 
 // ── Message categories ──
 const MESSAGE_TYPES = {
@@ -176,12 +176,63 @@ function matchAnswerLine(line) {
   return null;
 }
 
+/**
+ * Unwrap LaTeX so the answer PATTERNS (which only understand ASCII) can see
+ * the value. The chat composer and MathLive emit fractions as
+ * `\(\frac{4}{3}\)`, so "x = \(\frac{4}{3}\)" is what a real student sends
+ * — and until this ran, `x = \(` matched nothing, the turn classified
+ * general_math, and the claim was never graded (production, 3x - 7 = 11,
+ * student turns S2/S3 in tests/unit/boardScratchPromotion.test.js).
+ *
+ * normalizeMathUnicode strips the `\(…\)` delimiters and rewrites \frac as
+ * `(a)/(b)`; a purely numeric fraction is then collapsed to the `a/b` shape
+ * every answer pattern already accepts. Symbolic fractions keep their parens.
+ */
+function normalizeLatexAnswerText(str) {
+  // \dfrac / \tfrac are display-size variants of \frac; the normalizer only
+  // knows the plain form.
+  return normalizeMathUnicode(str.replace(/\\[dt]frac\b/g, '\\frac'))
+    .replace(/\((-?\d+(?:\.\d+)?)\)\s*\/\s*\((\d+(?:\.\d+)?)\)/g, '$1/$2')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+}
+
+// A single-line message is split into clauses at sentence punctuation so the
+// LAST stated claim can be graded ("divide by 3. x = 4/3. final answer"). The
+// terminator must be followed by whitespace or end-of-text so a decimal
+// ("x = 4.5") is never split.
+const CLAUSE_SPLIT = /[.!?;]+(?=\s|$)/;
+
+// Discourse lead-ins a student puts before the claim itself. Stripped from a
+// clause before the strict answer shapes are tried, so "so x = 4/3" reads as
+// "x = 4/3" (the multi-line branch has the same idea for "step 3:" prefixes).
+const CLAUSE_LEAD_IN = /^(?:(?:so|then|and|thus|therefore|hence|which\s+means|that\s+means|meaning|final\s+answer|answer|i\s+get|i\s+got|its|it'?s)\s*[:,]?\s+)+/i;
+
+/**
+ * Try the strict answer shapes on one clause of a single-line message.
+ * Same contract as matchAnswerLine (only unambiguous forms may win; an
+ * arithmetic line like "11 - 7 = 4" is work, not an answer), plus the
+ * cue-gated self-check shape so "so x = 4/3 right?" is read as the proposed
+ * answer 4/3. Returns { value, proposed } or null.
+ */
+function matchAnswerClause(clause) {
+  const bare = clause.replace(CLAUSE_LEAD_IN, '').replace(/[\s?!.]+$/, '');
+  const value = matchAnswerLine(bare);
+  if (value) return { value, proposed: false };
+  const match = clause.match(PATTERNS.proposedAnswer);
+  if (match) return { value: (match[1] || match[2]).replace(/\s/g, ''), proposed: true };
+  return null;
+}
+
 function extractAnswer(message) {
   const raw = message.trim();
+  // Unwrap LaTeX delimiters / \frac BEFORE any pattern runs (see
+  // normalizeLatexAnswerText). `raw` keeps the original text for downstream use.
+  const unwrapped = normalizeLatexAnswerText(raw);
   // Normalize speech-to-text negatives/number-words to signed digits BEFORE matching,
   // so a spoken "negative six" is recognized as the answer -6 (the numeric PATTERNS
   // only understand digits). `raw` keeps the original text for downstream use.
-  const text = normalizeSpokenNumbers(raw);
+  const text = normalizeSpokenNumbers(unwrapped);
 
   // A number-WORD buried in prose is not an answer. "if its zero on top too" is
   // a correct description of when a rational function has a hole, but the
@@ -191,7 +242,7 @@ function extractAnswer(message) {
   // AB, 2026-07-28). When the student typed no digits at all, only trust the
   // converted number if it ENDS the message ("negative six", "the answer is
   // forty two"); prose continuing after it means the word was incidental.
-  if (text !== raw && !/\d/.test(raw) && !/\d\s*[.!?]*$/.test(text)) return null;
+  if (text !== unwrapped && !/\d/.test(unwrapped) && !/\d\s*[.!?]*$/.test(text)) return null;
 
   // Multi-line shown work: the LAST math-bearing line is the answer candidate;
   // the lines above it are work, which diagnose grades as a chain (and which
@@ -206,6 +257,29 @@ function extractAnswer(message) {
     if (mathLines.length >= 2) {
       const value = matchAnswerLine(mathLines[mathLines.length - 1]);
       if (value) return { value, raw, hasExplanation: true };
+    }
+  }
+
+  // Multi-clause single line: the LAST math-bearing clause is the answer
+  // candidate, exactly as the last line is above. Without this, "divide by 3.
+  // x = 4/3. final answer" matched nothing (varAssignment is start-anchored),
+  // and "11 - 7 = 4. so x = 4/3 right?" was graded on its FIRST clause — the
+  // arithmeticStatement pattern saw "11 - 7 = 4." and minted the answer "4."
+  // while the student's actual claim, 4/3, went unread. The last stated claim
+  // wins; the clauses before it are work. Only the strict shapes may win here
+  // — anything else falls through to the whole-text patterns below unchanged.
+  {
+    const clauses = text.split(CLAUSE_SPLIT).map(c => c.trim()).filter(Boolean);
+    if (clauses.length >= 2) {
+      const mathClauses = clauses.filter(c => /\d/.test(c));
+      const last = mathClauses[mathClauses.length - 1];
+      const hit = last ? matchAnswerClause(last) : null;
+      if (hit) {
+        const out = { value: hit.value, raw };
+        if (mathClauses.length >= 2) out.hasExplanation = true;
+        if (hit.proposed) out.proposed = true;
+        return out;
+      }
     }
   }
 
@@ -772,7 +846,9 @@ function observe(message, context = {}) {
   // (grade them), not pure frustration/IDK (eval-harness finding,
   // 2026-07-29). The affect is not lost — it is still recorded as a
   // context signal above, so decide/mood see it either way.
-  const carriesProposedAnswer = PATTERNS.proposedAnswer.test(text);
+  // Tested on the LaTeX-unwrapped text so a MathLive self-check
+  // ("is it \\(\\frac{5}{12}\\)?") is an attempt too, not a QUESTION.
+  const carriesProposedAnswer = PATTERNS.proposedAnswer.test(normalizeLatexAnswerText(text));
 
   if (PATTERNS.giveUp.test(lower)) {
     messageType = MESSAGE_TYPES.GIVE_UP;
@@ -790,7 +866,7 @@ function observe(message, context = {}) {
   } else if (isDispute) {
     messageType = MESSAGE_TYPES.DISPUTE;
     confidence = 0.9;
-  } else if (PATTERNS.question.test(lower) && !PATTERNS.proposedAnswer.test(text)) {
+  } else if (PATTERNS.question.test(lower) && !carriesProposedAnswer) {
     // A question word normally means "asking", EXCEPT when the student is
     // self-checking a concrete answer ("is it 5/12?", "would it be 3/4?") — that's
     // an answer attempt, so let it fall through to extraction and get verified.
@@ -912,6 +988,7 @@ module.exports = {
   observe,
   extractAnswer,
   extractAnswerFromExplanation,
+  normalizeLatexAnswerText,
   hasReasoningIndicators,
   detectContextSignals,
   detectProblemContext,
