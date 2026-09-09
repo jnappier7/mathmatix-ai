@@ -28,6 +28,8 @@ jest.mock('../../utils/mathSolver', () => ({
   processMathMessage: jest.fn(() => ({ hasMath: false, problem: null, solution: null })),
   parseCleanProblem: jest.fn(() => ({ hasMath: false, problem: null, solution: null })),
   verifyAnswer: jest.fn(() => null),
+  isEquationSideFragment: jest.fn(() => false),
+  hasVariableEquation: jest.fn(() => false),
 }));
 
 jest.mock('../../utils/misconceptionDetector', () => ({
