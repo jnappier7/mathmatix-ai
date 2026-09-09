@@ -1942,6 +1942,18 @@ async function runPipeline(message, ctx) {
   // ── Return everything chat.js needs ──
   return {
     text: verified.text,
+    // The skill this turn was actually about. Resolved the SAME way the
+    // evidence layer attributes BKT/FSRS credit (engineSkillId, above):
+    // activeSkill when a badge/course pins one, else the tutor plan's
+    // current target, else the most-recently-worked in-progress skill (the
+    // target goes transiently null after a mastery read). This key never
+    // existed, so chat.js's
+    // `pipelineResult.activeSkillId` was undefined on every turn and
+    // `currentSkillId` went to the client as null in all free chat — which
+    // made the in-chat Practice Pack nudge omit `skillId` and fall through
+    // to the student's active COURSE module (a fractions session printed an
+    // ACT geometry pack).
+    activeSkillId: ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId || recentPracticeSkillId(tutorPlan) || null,
     // Signals the client to open the timed practice-ACT runner. Extracted in
     // verify (shared choke point) so it fires on both /api/chat and course-chat.
     launchPracticeAct: verified.extracted?.launchPracticeAct || false,
