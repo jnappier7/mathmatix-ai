@@ -195,6 +195,10 @@ function extractSystemTags(responseText) {
     moduleComplete: false,
     launchPracticeAct: false,
     reviewNext: false,
+    // The tutor's own derivation disagreed with a stored answer key
+    // ({ claimed: 'what the tutor got' }). Recorded server-side as an item
+    // dispute for the bank audit; never shown to the student.
+    keyDispute: null,
     ideaSuggestion: null,
     boardPoint: null,
   };
@@ -322,6 +326,17 @@ function extractSystemTags(responseText) {
         : { target: pointMatch[2].toLowerCase() };
     }
     text = text.replace(pointMatch[0], '').trim();
+  }
+
+  // Key dispute: the tutor solved the question and got something other than
+  // the stored key. Captured here (the shared choke point) so it fires on
+  // every path; routes/chat.js turns it into an ItemKeyDispute record.
+  const disputeRx = /<\s*KEY_DISPUTE\s*(?::\s*([^>]*))?>/i;
+  const disputeMatch = text.match(disputeRx);
+  if (disputeMatch) {
+    extracted.keyDispute = { claimed: (disputeMatch[1] || '').trim() || null };
+    text = text.replace(/<\s*KEY_DISPUTE\s*(?::\s*[^>]*)?>/gi, '').trim();
+    console.log('[Verify] AI emitted <KEY_DISPUTE> — the tutor disagrees with a stored answer key');
   }
 
   // ACT bootcamp: tutor finished coaching the current missed question → advance.

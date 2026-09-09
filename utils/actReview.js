@@ -253,7 +253,7 @@ function reviewPromptSection(miss, index, total, transfer = []) {
   const opts = (miss.options || []).map((o) => `${disp(o.label)}) ${o.text}`).join('   ');
   const chose = miss.skipped
     ? 'They SKIPPED it (no answer).'
-    : `They chose ${disp(miss.theirAnswer)}${miss.theirAnswerText ? ` (${miss.theirAnswerText})` : ''} — INCORRECT.`;
+    : `RECORDED ANSWER: ${disp(miss.theirAnswer)}${miss.theirAnswerText ? ` (${miss.theirAnswerText})` : ''} — marked wrong against the stored key.`;
   const correct = miss.correctOption
     ? `${disp(miss.correctOption)}${optionText(miss.options, miss.correctOption) ? ` (${optionText(miss.options, miss.correctOption)})` : ''}`
     : (miss.correctAnswer || '(see explanation)');
@@ -263,15 +263,39 @@ function reviewPromptSection(miss, index, total, transfer = []) {
 ====================================================================
 REVIEWING A MISSED QUESTION — ${miss.position != null ? `#${miss.position} from their test  ·  ` : ''}${index + 1} of ${total}  ·  ${cat}
 ====================================================================
-The student is going over a question they got wrong on their practice ACT. Work
-THIS one question with them, then advance. Do not move to a different topic.
+The student is going over a question the test marked wrong on their practice ACT.
+Work THIS one question with them, then advance. Do not move to a different topic.
 ${groupLine(miss)}
 
 QUESTION: ${miss.prompt}
 ${opts ? `OPTIONS: ${opts}` : ''}
 ${chose}
-CORRECT ANSWER: ${correct}.
+STORED KEY: ${correct}.
 WORKED SOLUTION (for YOUR reference — never just read it aloud): ${miss.explanation || '(none stored)'}
+
+YOU HAVE THE QUESTION; THE STUDENT DOES NOT. It is not shown in this chat. Your
+first message about it must present it to them verbatim — the question and its
+lettered choices — and remind them which letter they picked. Never ask them to
+share, paste, remember, or describe the question; you are holding it.
+
+VERIFY THE KEY BEFORE YOU USE IT. Solve the question yourself, completely, before
+you say anything about right or wrong. Your own derivation outranks the stored key
+and the worked solution — keys can be wrong, and a recorded answer can differ from
+what the student actually chose.
+- If your work AGREES with the stored key: coach the miss as below.
+- If your work DISAGREES with the stored key: do NOT tell the student they were
+  wrong. Say what you got, say the stored answer is different, tell them you are
+  flagging this question for review, and put <KEY_DISPUTE: your answer> on its own
+  line (never describe the tag). If the student's pick matches YOUR answer, say
+  plainly that their answer looks right and move on.
+- If the student says they picked a different letter than the one recorded,
+  believe them, work from their letter, and say the recording will be looked at.
+
+IF THEY PUSH BACK ON A VERDICT: re-derive from scratch and show the derivation.
+Change your verdict only if the math changes it. Insistence is not evidence in
+either direction — a student who is right must hear it plainly the FIRST time,
+and a student who is confidently wrong must still be shown the step that breaks.
+Never call a correct answer "close but not quite right".
 
 How to coach it:
 1. Ask them to walk through how they got their answer, or to re-try it — do NOT lead with the answer.

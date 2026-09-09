@@ -3304,4 +3304,42 @@ router.get('/dormancy-summary', isAdmin, async (req, res) => {
   }
 });
 
+/**
+ * @route   GET /api/admin/item-disputes
+ * @desc    Bank items whose stored key the tutor has disputed after solving
+ *          the question itself (<KEY_DISPUTE>, recorded in routes/chat.js).
+ *          Grouped by item, open first. A dispute is a candidate for human
+ *          review of the key — nothing here changes an item automatically.
+ * @access  Private (Admin)
+ */
+router.get('/item-disputes', isAdmin, async (req, res) => {
+  try {
+    const ItemKeyDispute = require('../models/itemKeyDispute');
+    const Problem = require('../models/problem');
+    const status = ['open', 'confirmed', 'dismissed'].includes(req.query.status) ? req.query.status : 'open';
+    const disputes = await ItemKeyDispute.find({ status }).sort({ createdAt: -1 }).limit(500).lean();
+    const byItem = new Map();
+    for (const d of disputes) {
+      if (!byItem.has(d.problemId)) byItem.set(d.problemId, { problemId: d.problemId, count: 0, tutorAnswers: {}, storedKey: d.storedKey, latest: d.createdAt, disputes: [] });
+      const g = byItem.get(d.problemId);
+      g.count += 1;
+      if (d.tutorAnswer) g.tutorAnswers[d.tutorAnswer] = (g.tutorAnswers[d.tutorAnswer] || 0) + 1;
+      g.disputes.push({ id: d._id, at: d.createdAt, studentAnswer: d.studentAnswer, tutorAnswer: d.tutorAnswer, position: d.position, conversationId: d.conversationId });
+    }
+    const ids = [...byItem.keys()];
+    const problems = ids.length
+      ? await Problem.find({ problemId: { $in: ids } }).select('problemId prompt correctOption skillId source isActive').lean()
+      : [];
+    const promptById = {};
+    problems.forEach((p) => { promptById[p.problemId] = p; });
+    const items = [...byItem.values()]
+      .map((g) => ({ ...g, item: promptById[g.problemId] || null }))
+      .sort((a, b) => b.count - a.count || new Date(b.latest) - new Date(a.latest));
+    res.json({ status, items, total: disputes.length });
+  } catch (err) {
+    console.error('[Admin] item-disputes error:', err.message);
+    res.status(500).json({ message: 'Could not load item disputes.' });
+  }
+});
+
 module.exports = router;

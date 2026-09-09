@@ -49,8 +49,8 @@ describe('the tutor is handed the exact missed question', () => {
     expect(section).toContain('If 3x + 7 = 22, what is the value of x?');
     expect(section).toContain('F) 3');
     expect(section).toContain('G) 5');
-    expect(section).toContain('They chose F (3) — INCORRECT');
-    expect(section).toContain('CORRECT ANSWER: G (5)');
+    expect(section).toContain('RECORDED ANSWER: F (3) — marked wrong against the stored key');
+    expect(section).toContain('STORED KEY: G (5)');
     expect(section).toContain('Subtract 7 from both sides');
     expect(section).toContain('#12');          // the number on THEIR test
     expect(section).toContain('1 of 4');
@@ -59,8 +59,8 @@ describe('the tutor is handed the exact missed question', () => {
   test('an ODD-position miss keeps A–D letters (real-ACT alternation)', () => {
     const section = reviewPromptSection({ ...MISS, position: 11 }, 0, 4);
     expect(section).toContain('A) 3');
-    expect(section).toContain('They chose A (3) — INCORRECT');
-    expect(section).toContain('CORRECT ANSWER: B (5)');
+    expect(section).toContain('RECORDED ANSWER: A (3) — marked wrong against the stored key');
+    expect(section).toContain('STORED KEY: B (5)');
   });
 
   test('a position-less legacy queue item defaults to A–D', () => {

@@ -557,6 +557,11 @@ async function runPipeline(message, ctx) {
     // flag to know the topic is already chosen (the student's-lead guard
     // must launch the module, never offer a topic menu).
     isCourseMode: inCourseLesson,
+    // ACT bootcamp review: the missed question the tutor is holding this turn
+    // (routes/chat.js resolves it from courseSession.bootcamp). decide turns it
+    // into ACTION DIRECTIVES — the highest-attention slot — so the tutor
+    // presents the question instead of asking the student to supply it.
+    actReviewMiss: ctx.actReviewMiss || null,
   });
 
   // Test-out: the challenge card is about to render below the tutor's reply, so
@@ -1947,6 +1952,9 @@ async function runPipeline(message, ctx) {
     // Tutor finished coaching the current missed question → advance the ACT
     // bootcamp review queue (handled in routes/chat.js after the pipeline).
     reviewNext: verified.extracted?.reviewNext || false,
+    // The tutor's own derivation disagreed with a stored answer key
+    // (handled in routes/chat.js → ItemKeyDispute).
+    keyDispute: verified.extracted?.keyDispute || null,
     // Course lesson progression (handled in routes/chat.js). These were
     // extracted-and-dropped for months: verify stripped the tags from the
     // text, chat.js then regex-tested the ALREADY-STRIPPED text, and the
