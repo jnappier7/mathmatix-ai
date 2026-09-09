@@ -350,6 +350,11 @@
           this.el('actt-body').querySelectorAll('.actt-opt').forEach(b => b.classList.toggle('sel', b === btn));
           const st = this.state.get(this.pos) || {};
           st.answer = this.selected;
+          // Per-question change counter. Saves are fire-and-forget, so two can
+          // be in flight for one question (a mis-tap and its correction); the
+          // server keeps whichever carries the HIGHER seq, never whichever
+          // request it happened to finish last.
+          st.seq = (st.seq || 0) + 1;
           this.state.set(this.pos, st);
           this._save();
           this._syncPalette();
@@ -378,6 +383,7 @@
           position: this.pos,
           answer: st.answer != null ? st.answer : null,
           flagged: !!st.flagged,
+          seq: st.seq || 0,
           responseTime: Date.now() - this.itemStart,
         }),
       }).then((d) => { if (d && d.timeUp) this.complete(); })
@@ -387,6 +393,7 @@
     toggleFlag() {
       const st = this.state.get(this.pos) || {};
       st.flagged = !st.flagged;
+      st.seq = (st.seq || 0) + 1;
       this.state.set(this.pos, st);
       this._save();
       this._syncFlagBtn();
@@ -477,7 +484,34 @@
       if (pal) { pal.classList.remove('open'); pal.innerHTML = ''; }
       this.el('actt-body').innerHTML = '<div class="actt-center">Scoring…</div>';
       try {
-        const data = await api('/api/act-test/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: this.sessionId }) });
+        // The answer sheet on screen is the answer sheet that gets graded. Every
+        // click saved as it happened, but a save can fail or land out of order and
+        // the student cannot tell — the screen still shows their pick. Submitting
+        // the whole sheet lets the server take it as final (see applyAnswerSheet).
+        const answers = [];
+        this.state.forEach((st, position) => {
+          if (st && (st.answer != null || st.flagged || st.seq)) {
+            answers.push({ position, answer: st.answer != null ? st.answer : null, flagged: !!st.flagged, seq: st.seq || 0 });
+          }
+        });
+        const data = await api('/api/act-test/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: this.sessionId, answers }) });
+        if (data && data.abandoned) {
+          // The clock ran out while nobody was here. Not an attempt, not scored —
+          // never a "7" on the trend line. Offer a fresh start.
+          this.sessionId = null;
+          this.state = new Map();
+          this.el('actt-body').innerHTML = `
+            <div class="actt-center">
+              <div style="font-size:15px;line-height:1.5;max-width:420px;margin:0 auto">${escapeHtml(data.message || "That test's clock ran out while you were away, so it wasn't scored.")}</div>
+              <div style="margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+                <button class="actt-btn actt-next" id="actt-fresh">Start a fresh test</button>
+                <button class="actt-btn actt-skip" id="actt-done">Close</button>
+              </div>
+            </div>`;
+          this.el('actt-fresh').addEventListener('click', () => this.open());
+          this.el('actt-done').addEventListener('click', () => this.close());
+          return;
+        }
         // The baseline is now scored and the course retargeted server-side. Mark
         // it so close() lets the course begin teaching — only on a real
         // completion, never on a cancelled/closed test.
@@ -487,7 +521,7 @@
         // against, so it falls through to the single-test results below.)
         try {
           const hist = await api('/api/act-test/history');
-          if (hist && (hist.attempts || []).filter((a) => a.scaledScore != null).length >= 2) {
+          if (hist && (hist.attempts || []).filter((a) => a.scaledScore != null && !a.incomplete).length >= 2) {
             this.renderProgress(hist);
             return;
           }
@@ -575,7 +609,10 @@
     }
 
     renderProgress(data) {
-      const attempts = (data.attempts || []).filter(a => a.scaledScore != null);
+      // A test that expired while the student was away is not an attempt;
+      // /history flags those and they stay off the chart.
+      const attempts = (data.attempts || []).filter(a => a.scaledScore != null && !a.incomplete);
+      const hiddenCount = (data.attempts || []).length - attempts.length;
       // Turn a history attempt into a report the tutor-handoff can use to open
       // the missed-items review on the newest test's gaps — so the loop continues
       // straight from the growth screen.
@@ -612,39 +649,67 @@
         return wire(rev.weakSkills.length ? rev : null);
       }
 
-      const first = attempts[0], latest = attempts[attempts.length - 1];
-      const delta = latest.scaledScore - first.scaledScore;
+      const latest = attempts[attempts.length - 1];
+      // The comparison is computed server-side (utils/actProgress.js): first
+      // and latest on the SAME form, and a category delta only where the
+      // category has enough questions for one to mean anything. Older servers
+      // send no comparison — fall back to a plain first-vs-latest.
+      const cmp = data.comparison || null;
+      const first = attempts[0];
+      const delta = cmp ? cmp.delta : latest.scaledScore - first.scaledScore;
       const deltaChip = (d) => {
-        const cls = d > 0 ? 'actt-up' : d < 0 ? 'actt-down' : 'actt-same';
-        const sign = d > 0 ? `▲ +${d}` : d < 0 ? `▼ ${d}` : '= 0';
+        const v = Number(d) || 0;
+        const cls = v > 0 ? 'actt-up' : v < 0 ? 'actt-down' : 'actt-same';
+        const sign = v > 0 ? `▲ +${v}` : v < 0 ? `▼ ${v}` : '= 0';
         return `<span class="actt-delta ${cls}">${sign}</span>`;
       };
+      const naChip = (why) => `<span class="actt-delta actt-same" title="${escapeHtml(why)}">n/a</span>`;
 
-      // Per-category first → latest (categories present in both).
-      const cats = Object.keys(latest.byCategory).filter(c => first.byCategory[c]).map(c => {
-        const f = first.byCategory[c], l = latest.byCategory[c];
-        const fp = f.total ? f.correct / f.total : 0, lp = l.total ? l.correct / l.total : 0;
-        return { c, name: CATEGORY_LABELS[c] || c, f, l, d: Math.round((lp - fp) * 100) };
-      }).sort((a, b) => b.d - a.d);
-
-      const catRows = cats.map(x => `
+      let catRows;
+      if (cmp && Array.isArray(cmp.categories)) {
+        catRows = cmp.categories.map((x) => {
+          const name = CATEGORY_LABELS[x.category] || x.category;
+          const why = x.reason === 'too-few-items'
+            ? `Only ${x.latest.total} questions in this category — one question moves it ${Math.round(100 / Math.max(1, x.latest.total))} points, so a change here is noise`
+            : 'Different test forms — not comparable';
+          const chip = x.comparable ? deltaChip(x.deltaCorrect) : naChip(why);
+          return `
+        <div class="actt-cmp">
+          <span class="actt-cmpname">${name}</span>
+          <span class="actt-cmpval">${x.first.correct}/${x.first.total} → ${x.latest.correct}/${x.latest.total}</span>
+          ${chip}
+        </div>`;
+        }).join('');
+      } else {
+        const cats = Object.keys(latest.byCategory).filter(c => first.byCategory[c]).map(c => {
+          const f = first.byCategory[c], l = latest.byCategory[c];
+          return { c, name: CATEGORY_LABELS[c] || c, f, l };
+        });
+        catRows = cats.map(x => `
         <div class="actt-cmp">
           <span class="actt-cmpname">${x.name}</span>
           <span class="actt-cmpval">${x.f.correct}/${x.f.total} → ${x.l.correct}/${x.l.total}</span>
-          ${deltaChip(x.d > 0 ? +Math.round(x.d) : x.d)}
         </div>`).join('');
+      }
 
       const trend = attempts.map(a => a.scaledScore).join('  →  ');
+      const sinceLabel = cmp && cmp.sameForm === false
+        ? 'since your first test (different form — approximate)'
+        : 'since your first test';
+      const hiddenNote = hiddenCount
+        ? `<div style="font-size:11.5px;color:#999;margin-top:6px">${hiddenCount} test${hiddenCount > 1 ? 's' : ''} that expired while you were away ${hiddenCount > 1 ? 'are' : 'is'} not counted.</div>`
+        : '';
 
       this.el('actt-body').innerHTML = `
         <div class="actt-center" style="padding-bottom:6px">
           <div class="actt-score">${latest.scaledScore}</div>
           <div class="actt-scorelab">Latest ACT Math score (approx.)</div>
-          <div class="actt-sub">${deltaChip(delta)} &nbsp;since your first test &nbsp;·&nbsp; ${attempts.length} attempts</div>
+          <div class="actt-sub">${deltaChip(delta)} &nbsp;${sinceLabel} &nbsp;·&nbsp; ${attempts.length} attempts</div>
           <div class="actt-trend">${trend}</div>
+          ${hiddenNote}
         </div>
         <div style="max-width:520px;margin:14px auto 0">
-          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:6px;text-align:center">By category · first → latest</div>
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:6px;text-align:center">By category · first → latest${cmp ? ' · change in questions right' : ''}</div>
           ${catRows}
         </div>${backBtns(reportFromAttempt(latest).weakSkills.length ? reportFromAttempt(latest) : null)}`;
       wire(reportFromAttempt(latest).weakSkills.length ? reportFromAttempt(latest) : null);

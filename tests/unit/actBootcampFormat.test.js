@@ -187,9 +187,12 @@ describe('the UI tells the truth about the loop (owner report, 2026-08-23)', () 
 
   test('round is counted from completed tests, not bootcamp increments', () => {
     // A test taken before enrolling lands in /history but never touched
-    // cs.bootcamp — round must come from ActTestSession.countDocuments.
+    // cs.bootcamp — round must come from the completed ActTestSessions, minus
+    // the auto-submitted partials that isIncompleteAttempt keeps off the trend
+    // (a 3-answer form that expired while the student was away is not a round).
     const src = read('routes/actTest.js');
-    expect(src).toMatch(/ActTestSession\.countDocuments\(\{ userId: req\.user\._id, status: 'completed' \}\)/);
+    expect(src).toMatch(/ActTestSession\.find\(\{ userId: req\.user\._id, status: 'completed' \}\)/);
+    expect(src).toMatch(/completedDocs\.filter\(\(s\) => !isIncompleteAttempt\(s\)\)/);
     expect(src).not.toMatch(/round: prevRound \+ 1/);
   });
 
