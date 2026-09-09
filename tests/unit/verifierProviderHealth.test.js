@@ -174,6 +174,43 @@ describe('healthReport', () => {
     expect(healthReport.isDegraded({ dbConnected: false })).toBe(true);
   });
 
+  test('reports lastOkAt, the only field that separates recovered from restarted', () => {
+    // Without it, `degraded: false` covers two states that mean opposite things:
+    // a verifier that came back, and a process that has not asked yet. Both
+    // rendered as "Cross-checked", so every deploy showed the most reassuring
+    // label on the least evidence.
+    verifyMetrics.noteCrossProviderFallback({ status: 400 });
+    verifyMetrics.noteCrossProviderOk();
+    const r = healthReport.verifierReport();
+    expect(r.lastOkAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(r.status).toBe('ok');
+    // The history survives, so "recovered" is distinguishable from "never broke".
+    expect(r.fallbacks).toBe(1);
+  });
+
+  test('a fresh process is unconfirmed, not ok', () => {
+    const r = healthReport.verifierReport();
+    expect(r.lastOkAt).toBeNull();
+    expect(r.degraded).toBe(false);
+    expect(r.status).toBe('unconfirmed');
+  });
+
+  test('unconfirmed does not degrade the instance — nothing has asked yet', () => {
+    // It has to stay a 200 and a healthy instance: every deploy passes through
+    // this state, and it clears on the first graded answer because llmVerifier
+    // step 1 is a tier-1 call on every attempt (the CAS only replaces step 2).
+    expect(healthReport.verifierReport().status).toBe('unconfirmed');
+    expect(healthReport.isDegraded({ dbConnected: true })).toBe(false);
+  });
+
+  test('a degraded verifier stays degraded even before any success', () => {
+    // Ordering matters: the fallback check must win over the "no lastOkAt yet"
+    // check, or a first-call failure would report as merely unconfirmed.
+    verifyMetrics.noteCrossProviderFallback({ status: 400 });
+    expect(healthReport.verifierReport().lastOkAt).toBeNull();
+    expect(healthReport.verifierReport().status).toBe('degraded');
+  });
+
   test('the public report withholds the provider error prose', () => {
     // /api/health is unauthenticated; the message is third-party text.
     verifyMetrics.noteCrossProviderFallback({ status: 400, message: 'credit balance is too low' });
@@ -282,6 +319,29 @@ describe('the admin dashboard panel reports what it measured', () => {
     expect(js).toMatch(/Self-grading/);
   });
 
+  test('the panel distinguishes confirmed from merely not-yet-failed', () => {
+    // Three states and three colours. The middle one may borrow neither of the
+    // others: green asserts a cross-check nothing verified, red reports a
+    // failure that has not happened.
+    expect(js).toMatch(/Not yet confirmed/);
+    expect(js).toMatch(/status-unknown/);
+    expect(html).toMatch(/\.status-unknown\s*\{/);
+  });
+
+  test('an empty sample is not reported as a good rate', () => {
+    // unverifiableRate is 0 on an empty ring. Green there says "0% unverifiable"
+    // about zero answers — the same reassuring-colour-on-no-evidence mistake as
+    // the verifier state itself.
+    expect(js).toMatch(/!v\.sampleSize \? warn :/);
+  });
+
+  test('the confirmed state shows WHEN, not just that', () => {
+    // A timestamp is what makes the green worth anything — it is the difference
+    // between "nothing has gone wrong" and "this was true at 10:42".
+    expect(js).toMatch(/Cross-checked · \$\{at\}/);
+    expect(js).toMatch(/v\.lastOkAt/);
+  });
+
   test('the AI Service colour follows the reported status, not only the key check', () => {
     // Caught in a browser render, not in review: keying the colour off missing
     // keys alone painted the word "Degraded" in green whenever every key was
@@ -308,6 +368,17 @@ describe('the metrics page shows unverifiableRate', () => {
   test('ranks which problem types burn the budget', () => {
     // The rate says there is a problem; this table says where to spend the fix.
     expect(page).toMatch(/unresolvedByMathType/);
+  });
+
+  test('the banner has a third state for "not yet asked"', () => {
+    expect(page).toMatch(/Not yet confirmed/);
+    expect(page).toMatch(/verifier-banner\.warn/);
+    expect(page).toMatch(/banner\.classList\.remove\('ok', 'warn', 'bad'\)/);
+  });
+
+  test('the confirmed banner carries the timestamp it is claiming', () => {
+    expect(page).toMatch(/Last confirmed/);
+    expect(page).toMatch(/cp\.lastOkAt/);
   });
 
   test('the verifier block is not described as gated on the structured flag', () => {

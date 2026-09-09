@@ -57,10 +57,27 @@ function missingRequiredKeys(keys = providerKeys()) {
  */
 function verifierReport({ includeDetail = false } = {}) {
   const cp = crossProviderHealth();
+  // THREE states, not two. `degraded: false` alone was ambiguous in exactly the
+  // moment it mattered most: a process that has just restarted starts there,
+  // with no Claude call behind it, and read as "Cross-checked" — the same as a
+  // verifier that had genuinely recovered. So after every deploy the panel
+  // showed its most reassuring value on its least evidence, which is the wrong
+  // way round. `lastOkAt` is the evidence: the moment a Claude verifier call
+  // last completed in this process.
+  //
+  // 'unconfirmed' is not an alarm and does not degrade the instance — it is
+  // "nothing has asked yet". It resolves on the first answer attempt that
+  // reaches the verifier, which is every one of them: llmVerifier's step 1
+  // (compute the answer independently) is always a tier-1 call, and the
+  // deterministic CAS only replaces step 2. So this state is short-lived by
+  // construction rather than a status that can quietly stick.
+  const confirmed = cp.lastOkAt !== null && cp.lastOkAt !== undefined;
   const base = {
-    status: cp.degraded ? 'degraded' : 'ok',
+    status: cp.degraded ? 'degraded' : (confirmed ? 'ok' : 'unconfirmed'),
     crossProvider: cp.provider,
     degraded: cp.degraded,
+    // The proof, and the only field that separates "recovered" from "restarted".
+    lastOkAt: iso(cp.lastOkAt),
     fallbacks: cp.fallbacks,
     lastFallbackAt: iso(cp.lastFallbackAt),
     lastFallbackStatus: cp.lastFallbackStatus,
