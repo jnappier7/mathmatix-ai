@@ -160,6 +160,84 @@ describe('subprocessor disclosure matches the code', () => {
         expect(PAGE).toMatch(/never loaded on any signed-in page/);
     });
 
+
+    it('discloses third parties the browser contacts, not only the ones with an API key', () => {
+        // THE BLIND SPOT THIS CLOSES: the env-var scan above finds a vendor by
+        // its credential. An embedded third party needs no credential — the
+        // student's browser talks to it directly — so it is invisible to that
+        // scan. YouTube hosts every lesson video under public/courses and went
+        // undisclosed for months because of exactly this.
+        //
+        // So: any external origin the generated course pages embed in an iframe
+        // must be named on the page. Scanning the built output rather than a
+        // list means a generator that changes hosts cannot quietly bypass this.
+        const coursesDir = path.join(ROOT, 'public', 'courses');
+        if (!fs.existsSync(coursesDir)) return;            // repo without a publish yet
+
+        const pages = [];
+        const walk = (dir) => {
+            for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+                const full = path.join(dir, e.name);
+                if (e.isDirectory()) walk(full);
+                else if (e.name.endsWith('.html')) pages.push(full);
+            }
+        };
+        walk(coursesDir);
+
+        const origins = new Set();
+        for (const f of pages) {
+            const html = fs.readFileSync(f, 'utf8');
+            for (const m of html.matchAll(/<iframe[^>]+src="https:\/\/([^/"]+)/g)) {
+                origins.add(m[1].replace(/^www\./, ''));
+            }
+        }
+
+        // origin -> the name that must appear on the disclosure page
+        const NAMES = {
+            'youtube-nocookie.com': 'YouTube',
+            'youtube.com': 'YouTube',
+        };
+        const undisclosed = [];
+        for (const o of origins) {
+            const name = NAMES[o];
+            if (!name) {
+                undisclosed.push(`${o} (unknown embed origin — add it to NAMES and to the page)`);
+            } else if (!PAGE.includes(name)) {
+                undisclosed.push(`${o} -> "${name}" is not named on subprocessors.html`);
+            }
+        }
+        expect(undisclosed).toEqual([]);
+    });
+
+    it('describes the embed host the course pages actually use', () => {
+        // The nocookie host sets no cookie until playback starts; plain
+        // youtube.com sets them on load. The page states which one we use, so
+        // that claim has to track the generated pages. It has already been
+        // switched once under a filtering problem and switched back.
+        const coursesDir = path.join(ROOT, 'public', 'courses');
+        if (!fs.existsSync(coursesDir)) return;
+        const pages = [];
+        const walk = (dir) => {
+            for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+                const full = path.join(dir, e.name);
+                if (e.isDirectory()) walk(full);
+                else if (e.name.endsWith('.html')) pages.push(full);
+            }
+        };
+        walk(coursesDir);
+        const all = pages.map((f) => fs.readFileSync(f, 'utf8')).join('');
+        const usesNoCookie = /<iframe[^>]+src="https:\/\/www\.youtube-nocookie\.com/.test(all);
+        const usesPlain = /<iframe[^>]+src="https:\/\/www\.youtube\.com\/embed/.test(all);
+        if (usesNoCookie && !usesPlain) {
+            expect(PAGE).toMatch(/youtube-nocookie\.com/);
+            expect(PAGE).toMatch(/sets no cookie until playback starts/);
+        } else if (usesPlain) {
+            // If the pages ever go back to the cookie-setting host, the page
+            // must stop claiming otherwise.
+            expect(PAGE).not.toMatch(/sets no cookie until playback starts/);
+        }
+    });
+
     it('names the legal entity', () => {
         expect(PAGE).toMatch(/Mathmatix LLC/);
     });

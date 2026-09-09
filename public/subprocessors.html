@@ -197,6 +197,12 @@
           <td>Business terms</td>
         </tr>
         <tr>
+          <th scope="row">YouTube (Google)</th>
+          <td>Hosts and plays the lesson videos embedded on the course pages at <code>/courses</code>.</td>
+          <td>When a student opens a page with a video, their browser contacts YouTube directly: IP address, browser details and, if they are signed in to a Google account, that identity. We embed through <code>youtube-nocookie.com</code>, which sets no cookie until playback starts. We send YouTube no account or roster data, and the course pages require no sign-in of ours.</td>
+          <td>YouTube terms</td>
+        </tr>
+        <tr>
           <th scope="row">Redis</th>
           <td>Short-lived cache to keep tutoring responsive.</td>
           <td>A student&rsquo;s profile and most recent conversation, held for at most five minutes and thirty seconds respectively, then discarded. Used only when configured for the deployment.</td>
