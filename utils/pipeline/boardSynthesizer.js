@@ -44,7 +44,8 @@
 
 'use strict';
 
-const { parseCleanProblem } = require('../mathSolver');
+const { parseCleanProblem, verifyAnswer, isEquationSideFragment, hasVariableEquation } = require('../mathSolver');
+const { normalizeMathOperators, normalizeMathUnicode } = require('../mathUnicodeNormalizer');
 
 // ---------------------------------------------------------------------------
 // Board reference — student explicitly asks to use the work board
@@ -408,8 +409,15 @@ function looksLikeProblemStatement(text) {
   const t = text.trim();
   // A stated solution ("x = 2 or -6", "y= -3") is the end of work, never
   // a new problem. Require the variable isolated on one side so a real
-  // problem like "2x = 10" isn't misread as an answer.
-  if (/(^|[\s,(])[a-z]\s*=\s*-?\d/i.test(t)) return false;
+  // problem like "2x = 10" isn't misread as an answer. The value may arrive
+  // LaTeX-wrapped ("x = \\(\\frac{4}{3}\\)") — MathLive and the chat composer
+  // both emit that, and the 2026-09-09 sign-error transcript slipped past
+  // this check exactly because the digit sat behind "\\(\\frac".
+  if (/(^|[\s,(])[a-z]\s*=\s*(?:\\\(|\\\[|\$)?\s*-?\s*(?:\d|\\frac)/i.test(t)) return false;
+  // An "= … =" chain with a purely numeric middle ("3x = 11 - 7 = 4") is a
+  // worked line, never an ask. A system on one line ("2x + y = 5, x - y = 1")
+  // has a variable between its equals signs and is unaffected.
+  if (/=\s*[\d\s.+\-*/^()]+=/.test(t)) return false;
   // Two or more equation/expression lines = a derivation, not a fresh ask.
   const eqLines = t.split(/\n+/).map(l => l.trim())
     .filter(l => /=/.test(l) || /[+\-*/^]/.test(l));
@@ -422,6 +430,99 @@ function looksLikeProblemStatement(text) {
 // equation like "3x = 21" carries no cue and must never be mistaken for
 // a new problem to re-pose.
 const NEW_PROBLEM_CUE = /\b(solve|factor|simplify|expand|evaluate|graph|compute|calculate|find|what\s+is|new\s+problem|next\s+problem|another\s+(?:one|problem))\b/i;
+
+// The clause a student's cue verb introduces — "solve 3x - 7 = 11. i did
+// 3x = 11 - 7 = 4 so x = 4/3" → "3x - 7 = 11". A message that hands over a
+// problem AND an attempt at it is common ("here's the question, here's what I
+// did"), and the problem is the clause after the verb; everything after the
+// sentence break is the student's work. A period counts as a break only when
+// followed by whitespace/end, so "solve 2.5x = 10" keeps its decimal.
+const STATED_PROBLEM_CLAUSE_RX = /\b(?:solve|factor|simplify|expand|evaluate|graph|compute|calculate|find|what\s+is)\b[\s:]*(?:for\s+[a-z]\s*[:,]?\s*)?([^?!\n]+?)(?=\s*(?:[?!\n]|\.(?:\s|$)|$))/i;
+
+function extractStatedProblemClause(text) {
+  if (!text || typeof text !== 'string') return null;
+  const m = text.match(STATED_PROBLEM_CLAUSE_RX);
+  if (!m) return null;
+  const clause = m[1].trim();
+  return clause || null;
+}
+
+// Flatten tex/text the same way for the fragment checks below: LaTeX
+// delimiters and \frac unwrapped, operator spellings folded, whitespace gone.
+function flattenMath(s) {
+  return normalizeMathOperators(normalizeMathUnicode(String(s || ''))).replace(/\s+/g, '');
+}
+
+// A pure-arithmetic pose derived from a STUDENT message that also carries an
+// equation with a variable is the student's own scratch ("11 - 7", "4/3"),
+// never the problem — the problem is the equation. Broader than
+// isEquationSideFragment on purpose: this only judges poses extracted from
+// the student's own text, where a numeric bit beside an algebra equation has
+// exactly one meaning.
+function numericFragmentBesideEquation(tex, studentText) {
+  const expr = flattenMath(tex);
+  if (!expr || /[a-z]/i.test(expr)) return false;
+  return hasVariableEquation(studentText);
+}
+
+// The problem a STUDENT message states, if any — the cue clause first
+// ("solve 3x - 7 = 11. i did …" → the equation, not the work), else the whole
+// message; in both cases the text judged must read as a problem statement, not
+// worked scratch, and a numeric fragment next to an algebra equation is never
+// promoted. Returns { tex, problem, correctAnswer } or null.
+function detectStudentStatedProblem(studentMessage) {
+  if (!studentMessage || typeof studentMessage !== 'string') return null;
+  const clause = extractStatedProblemClause(studentMessage);
+  const candidates = clause ? [clause, studentMessage] : [studentMessage];
+  for (const statement of candidates) {
+    const posed = detectPosedProblem(statement);
+    if (!posed) continue;
+    if (!looksLikeProblemStatement(statement)) continue;
+    if (numericFragmentBesideEquation(posed.tex, studentMessage)) continue;
+    return posed;
+  }
+  return null;
+}
+
+// The single answer the pinned problem solves to, when the pin is an EQUATION
+// with a variable the exact engine solves ("3x - 7 = 11" → 6). Null when the
+// pin isn't such an equation, doesn't parse, doesn't solve, or has a root SET
+// (multi-root closes are judged by diagnose's accumulator, not here). Limited
+// to variable equations on purpose: arithmetic pins reach the board as the
+// model's LaTeX ("3\\frac{1}{2} \\times 2\\frac{2}{7}") and the engine can
+// misread those — a wrong answer here would veto a right verify.
+function pinnedEquationAnswer(pinnedProblem) {
+  if (!pinnedProblem || !hasVariableEquation(pinnedProblem)) return null;
+  try {
+    const r = parseCleanProblem(String(pinnedProblem));
+    if (!r.hasMath || !r.solution?.success || r.solution.answer == null) return null;
+    if (Array.isArray(r.solution.roots) && r.solution.roots.length > 1) return null;
+    return String(r.solution.answer);
+  } catch (_) {
+    return null;
+  }
+}
+
+// May this stated answer CLOSE the pinned problem? A verify card seals the
+// PROBLEM card as solved and drops the pin, so it must answer THAT problem.
+// diagnosis.isCorrect alone is not enough: it can be a verdict on the tutor's
+// sub-question ("what does 11 - 7 equal?" → 4) or on an intermediate the
+// tutor wrote down ("3x = 4" → 4/3), and a verify built on that closed
+// 3x - 7 = 11 with x = 4/3. The engine's own target (diagnosis.correctAnswer)
+// is what it graded against; when that isn't the pin's answer, the verdict
+// was about something else. With no target, judge the stated value itself.
+// When the pin can't be solved here, defer to the engine's verdict as before.
+function answerClosesPin(value, pinnedProblem, diagnosis) {
+  const pinAnswer = pinnedEquationAnswer(pinnedProblem);
+  if (pinAnswer == null) return true;
+  const target = diagnosis?.correctAnswer;
+  const probe = target != null && target !== '' ? String(target) : String(value);
+  try {
+    return verifyAnswer(probe, pinAnswer).isCorrect === true;
+  } catch (_) {
+    return true;
+  }
+}
 
 // How a TUTOR introduces a fresh problem ("un poco más picante this time —
 // 2x^2+5x-3=0", "try this one", "here's another", "how about"). The student
@@ -598,10 +699,10 @@ function synthesizeBoardCommands({
     // intermediate equation ("3x = 21") carries no NEW_PROBLEM_CUE and
     // must not be mistaken for a fresh problem; a clear+pose resets the
     // board to the new one.
-    const fresh = detectPosedProblem(studentMessage);
+    const fresh = NEW_PROBLEM_CUE.test(studentMessage)
+      ? detectStudentStatedProblem(studentMessage)
+      : null;
     if (fresh
-        && NEW_PROBLEM_CUE.test(studentMessage)
-        && looksLikeProblemStatement(studentMessage)
         && normalizeForCompare(fresh.tex) !== normalizeForCompare(pinnedProblem)) {
       cards.push({ action: 'clear' });
       cards.push({ action: 'pose', tex: fresh.tex });
@@ -626,8 +727,7 @@ function synthesizeBoardCommands({
     // Empty board. Prefer the student's message — if they introduced
     // the problem, the canonical text matches what they typed — but
     // never pose from the student's own worked solution.
-    let posed = detectPosedProblem(studentMessage);
-    if (posed && !looksLikeProblemStatement(studentMessage)) posed = null;
+    let posed = detectStudentStatedProblem(studentMessage);
     if (!posed) posed = detectPosedProblem(tutorResponse);
     // Geometry word problems don't parse as algebra; quote the
     // tutor's question sentence verbatim so the board reflects the
@@ -690,10 +790,14 @@ function synthesizeBoardCommands({
   //       for arbitrary substitution math).
   const finalSol = detectFinalSolution(studentMessage);
   const bareFinal = finalSol ? null : detectBareFinalAnswer(studentMessage);
-  if (finalSol && diagnosis?.isCorrect === true) {
+  //   In every path the answer must also CLOSE the pinned problem
+  //   (answerClosesPin): a correct verdict on a sub-question or on an
+  //   intermediate must not seal the PROBLEM card.
+  if (finalSol && diagnosis?.isCorrect === true && answerClosesPin(finalSol.value, pinnedProblem, diagnosis)) {
     const card = { action: 'verify', tex: finalSol.tex };
     cards.push(card);
-  } else if (bareFinal && pinnedProblem && diagnosis?.isCorrect === true) {
+  } else if (bareFinal && pinnedProblem && diagnosis?.isCorrect === true
+             && answerClosesPin(bareFinal, pinnedProblem, diagnosis)) {
     // Strip a trailing period/space the pose tex may carry so the "= answer"
     // reads cleanly.
     const problemTex = String(pinnedProblem).replace(/[\s.]+$/, '');
@@ -798,6 +902,31 @@ function dropRedundantPoses(commands, pinnedTex) {
       continue;
     }
     seen.add(key);
+    kept.push(c);
+  }
+  return { kept, dropped };
+}
+
+// Drop a pose whose tex is a line of the STUDENT'S OWN WORKING — a pure
+// arithmetic expression that their message states as one side of an equation
+// ("3x = 11 - 7 = 4" → a pose of "11 - 7"). Every pose source runs through
+// this (the model's own tags, the synthesizer, the backfills), because the
+// pedagogy guard allows `pose` unconditionally and the model does emit these:
+// the PROBLEM card then shows the student's scratch, the pin follows it, and
+// the grader certifies the wrong problem. A `clear` emitted as the pair of a
+// dropped pose goes with it — a lone clear would wipe the real problem.
+function dropScratchFragmentPoses(commands, studentMessage) {
+  const list = Array.isArray(commands) ? commands : [];
+  if (!studentMessage || typeof studentMessage !== 'string') return { kept: list, dropped: [] };
+  const kept = [];
+  const dropped = [];
+  for (const c of list) {
+    if (c && c.action === 'pose' && c.tex && isEquationSideFragment(c.tex, studentMessage)) {
+      dropped.push(c);
+      const prev = kept[kept.length - 1];
+      if (prev && prev.action === 'clear') dropped.push(kept.pop());
+      continue;
+    }
     kept.push(c);
   }
   return { kept, dropped };
@@ -1056,6 +1185,7 @@ module.exports = {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
   dropRedundantPoses,
+  dropScratchFragmentPoses,
   synthesizeFallbackPose,
   synthesizeFallbackImage,
   synthesizeTilesTab,
@@ -1074,6 +1204,9 @@ module.exports = {
   _detectSubstitutionCheck: detectSubstitutionCheck,
   _detectPosedProblem: detectPosedProblem,
   _looksLikeProblemStatement: looksLikeProblemStatement,
+  _extractStatedProblemClause: extractStatedProblemClause,
+  _detectStudentStatedProblem: detectStudentStatedProblem,
+  _answerClosesPin: answerClosesPin,
   _detectGeometryProblem: detectGeometryProblem,
   _extractProblemSentence: extractProblemSentence,
   _extractPosableSentence: extractPosableSentence,

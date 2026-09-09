@@ -3874,12 +3874,72 @@ function _latexToPlainMath(text) {
     return s || null;
 }
 
+// ── Work-fragment demotion ──
+// A pure-numeric expression that the text states as one SIDE of an equation is
+// a line of somebody's working, not a problem to solve. Production, 2026-09-09:
+// "solve 3x - 7 = 11. i did 3x = 11 - 7 = 4 so x = 4/3" — the whole-message
+// catch-all grabbed "11 - 7" (pure arithmetic, so _isTrustedProblem let it
+// through) before the verb-anchored candidate "3x - 7 = 11" was ever tried.
+// That fragment became the board's PROBLEM card and the grader's pin, so the
+// student's sign error was certified correct against 11 - 7 = 4 — twice, with
+// XP both times and a green Solved card. The check is deliberately narrow: the
+// fragment must sit directly beside an "=" in the text ("= 11 - 7" or
+// "11 - 7 =") — so prose-embedded arithmetic a tutor actually asks
+// ("what's -34 + 6?") still grades deterministically.
+function _flattenMath(s) {
+    return normalizeMathOperators(normalizeMathUnicode(String(s || ''))).replace(/\s+/g, '');
+}
+
+// Does the text carry an equation with a variable in it ("3x - 7 = 11",
+// "x^2 = 16", "so x = 4/3")? Judged on the operator-normalized text with its
+// spacing intact, so a variable glued to a coefficient reads as one and a
+// letter inside a word does not. Pure arithmetic ("4(6) + 3 = 27") is false.
+function hasVariableEquation(text) {
+    const t = normalizeMathOperators(normalizeMathUnicode(String(text || '')));
+    return /(?:^|[^a-z])\d*[a-z]\s*(?:\^\s*\d+)?\s*(?:[+\-*/^]\s*[\d().]+\s*)*=|=\s*[\d\s+\-*/^().]*\b[a-z](?![a-z])/i.test(t);
+}
+
+function isEquationSideFragment(expression, text) {
+    if (!expression || !text) return false;
+    const expr = _flattenMath(expression);
+    // Arithmetic only: an operator beyond a leading sign, and no variable.
+    if (!expr || /[a-z]/i.test(expr)) return false;
+    if (!/[-+*/^]/.test(expr.replace(/^-/, ''))) return false;
+    const hay = _flattenMath(text);
+    let from = 0;
+    for (;;) {
+        const i = hay.indexOf(expr, from);
+        if (i === -1) return false;
+        const before = i > 0 ? hay[i - 1] : '';
+        const after = hay[i + expr.length] || '';
+        // "= 11 - 7": the right-hand side of something — always a step.
+        if (before === '=') return true;
+        // "11 - 7 = 4": a stated fact. It's a step when algebra is in play in
+        // the same text ("… so x = 4/3"); on its own ("4(6) + 3 = 27") it is a
+        // self-contained arithmetic statement and stays gradable/posable.
+        if (after === '=' && hasVariableEquation(text)) return true;
+        from = i + 1;
+    }
+}
+
+function _isWorkFragment(problem, text) {
+    if (!problem) return false;
+    let expr = null;
+    if (problem.type === 'evaluation') {
+        expr = problem.expression;
+    } else if (problem.type === 'arithmetic' && problem.left !== undefined && problem.operator) {
+        expr = `${problem.left} ${problem.operator} ${problem.right}`;
+    }
+    return expr ? isEquationSideFragment(expr, text) : false;
+}
+
 function parseCleanProblem(text) {
     if (!text || typeof text !== 'string') return { hasMath: false };
 
     const direct = processMathMessage(text);
     if (direct.hasMath && direct.solution?.success
-        && _isTrustedProblem(direct.problem, text)) {
+        && _isTrustedProblem(direct.problem, text)
+        && !_isWorkFragment(direct.problem, text)) {
         return direct;
     }
 
@@ -3896,6 +3956,10 @@ function parseCleanProblem(text) {
         const result = processMathMessage(candidate);
         if (!result.hasMath || !result.solution?.success) continue;
         if (!_isTrustedProblem(result.problem, candidate)) continue;
+        // Judged against the FULL text: the equation-candidate regex can lead
+        // a fragment with a word's last letter ("that 11 - 7 = 4"), and only
+        // the whole message shows the algebra that makes it a step.
+        if (_isWorkFragment(result.problem, text)) continue;
         return result;
     }
 
@@ -3909,6 +3973,8 @@ module.exports = {
     matchRootsInText,
     processMathMessage,
     parseCleanProblem,
+    isEquationSideFragment,
+    hasVariableEquation,
     // Export individual solvers for testing
     solveArithmetic,
     solveLinearEquation,

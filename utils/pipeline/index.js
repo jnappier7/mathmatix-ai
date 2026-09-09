@@ -70,7 +70,7 @@ const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeTilesTab, synthesizeAutoClear, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, dropScratchFragmentPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeTilesTab, synthesizeAutoClear, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
 const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
 const { gateInlineGraphTags, containsInlineGraphTag } = require('./inlineGraphGate');
@@ -1370,6 +1370,25 @@ async function runPipeline(message, ctx) {
       }
     } else {
       boardLogger.warn('Board referenced but nothing posable; board left empty', {});
+    }
+  }
+
+  // ── Stage 5c.1b: SCRATCH-FRAGMENT POSE GUARD ──
+  // All pose sources have spoken. A pose whose tex is a line of the student's
+  // own working — arithmetic their message states as one side of an equation
+  // ("3x = 11 - 7 = 4" → pose "11 - 7") — is never the problem, whoever
+  // emitted it. The pedagogy guard allows `pose` unconditionally, so this is
+  // the one place that rule is enforced. Production, 2026-09-09: that exact
+  // pose replaced the PROBLEM card and the grading pin, and the student's
+  // sign error was certified correct twice (with XP) against 11 - 7 = 4.
+  if (verified.boardCommands.some(c => c.action === 'pose')) {
+    const { kept, dropped } = dropScratchFragmentPoses(verified.boardCommands, message);
+    if (dropped.length > 0) {
+      verified.boardCommands = kept;
+      boardLogger.warn('Dropped scratch-fragment pose(s)', {
+        dropped: dropped.map(c => ({ action: c.action, tex: c.tex || null })),
+        pinnedTex: ctx.conversation?.boardProblem?.tex || null,
+      });
     }
   }
 
