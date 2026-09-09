@@ -40,6 +40,7 @@ module.exports = {
     '<rootDir>/tests/unit/workspace/scaffoldBlankMove.test.js',
     '<rootDir>/tests/unit/diagnoseArithmeticGuard.test.js',
     '<rootDir>/tests/unit/diagnoseMultiLineAnswer.test.js',
+    '<rootDir>/tests/unit/observeLatexAnswer.test.js',
     '<rootDir>/tests/unit/diagnoseMultiStep.test.js',
     '<rootDir>/tests/unit/derivationVerifier.test.js',
     '<rootDir>/tests/unit/mathSolver*.test.js',
@@ -83,7 +84,11 @@ module.exports = {
     // Measured 100 across the board. It is a pure, bounded label function with no
     // I/O, so full coverage is the steady state, not an aspiration.
     './utils/pipeline/verifyTopic.js': { statements: 98, branches: 96, functions: 100, lines: 98 },
-    './utils/pipeline/observe.js': { statements: 80, branches: 76, functions: 95, lines: 87 },
+    // Measured 82.4/80.1/100/88.4 after the LaTeX-answer / last-clause tests
+    // (observeLatexAnswer.test.js) — ratcheted. extractAnswer is the gate that
+    // decides whether a student's claim gets graded at all; a shape it misses
+    // fails silently (general_math, no verdict), so coverage is the alarm.
+    './utils/pipeline/observe.js': { statements: 82, branches: 79, functions: 100, lines: 88 },
     // Measured 64.4/65.3/100/63.8 after the decideInstructionalMode tests — ratcheted.
     // functions:100 is deliberate and is the lesson from the drop that turned this
     // gate red (81.3% → 77.77% against a 78% floor, from three helpers landing
