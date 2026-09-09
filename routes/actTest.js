@@ -30,8 +30,15 @@ const ActTestSession = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { assembleForm, rawToScaled, getBlueprint } = require('../utils/actTestAssembler');
 const { buildActPlan, planStartModule, planSummary } = require('../utils/actBootcampPlan');
-const { normalizeOptions } = require('../utils/mcOptions');
+const { normalizeOptions, LABELS: MC_LABELS } = require('../utils/mcOptions');
 const CourseSession = require('../models/courseSession');
+const {
+  answeredCount, overdueMs, shouldAbandonOnExpiry, isIncompleteAttempt, buildComparison,
+} = require('../utils/actProgress');
+
+// How far past the deadline a final answer (or the submitted answer sheet) is
+// still accepted — absorbs client-tick vs server-clock skew on the last click.
+const DEADLINE_GRACE_MS = 10000;
 
 // skillId → human-readable name, so the report can name EXACT weak skills
 // (e.g. "Quadratic Equations") rather than just the broad category.
@@ -88,6 +95,200 @@ function secondsRemaining(session) {
   return Math.max(0, Math.round((session.timeLimitMinutes * 60000 - elapsedMs) / 1000));
 }
 
+function normalizeAnswer(answer) {
+  return (answer === null || answer === undefined || answer === '') ? null : String(answer);
+}
+
+/**
+ * Record one question's answer/flag with a single atomic, sequence-guarded
+ * update. Returns { written: boolean }.
+ *
+ * `seq` is the client's per-question change counter. A save whose seq is not
+ * newer than the stored row's is stale — it left the browser BEFORE the one
+ * already on file — and is dropped. Saves from clients that send no seq (the
+ * previous runner, still cached in some browsers) keep last-arrival semantics
+ * against each other but can never overwrite a sequenced row.
+ */
+async function writeResponse(session, item, { answer, flagged, responseTime, seq }) {
+  const value = normalizeAnswer(answer);
+  const seqNum = Number.isFinite(Number(seq)) ? Number(seq) : null;
+  const fields = {
+    'responses.$.answer': value,
+    'responses.$.flagged': !!flagged,
+    'responses.$.skipped': value === null,
+    'responses.$.answeredAt': new Date(),
+    'responses.$.seq': seqNum === null ? 0 : seqNum,
+  };
+  if (responseTime) fields['responses.$.responseTime'] = responseTime;
+
+  // Newer-or-equal-sequence guard on the existing row. An unsequenced save
+  // (seq null) may only replace an unsequenced row.
+  const newerThanStored = seqNum === null
+    ? [{ seq: { $exists: false } }, { seq: null }, { seq: 0 }]
+    : [{ seq: { $exists: false } }, { seq: null }, { seq: { $lte: seqNum } }];
+
+  const updateExisting = () => ActTestSession.updateOne(
+    { _id: session._id, status: 'in_progress', responses: { $elemMatch: { position: item.position, $or: newerThanStored } } },
+    { $set: fields }
+  );
+
+  let r = await updateExisting();
+  if (r.matchedCount > 0) return { written: true };
+
+  // No row (or only a newer one). Push a fresh row — guarded so two first
+  // saves racing each other cannot both insert one.
+  const pushed = await ActTestSession.updateOne(
+    { _id: session._id, status: 'in_progress', 'responses.position': { $ne: item.position } },
+    {
+      $push: {
+        responses: {
+          position: item.position,
+          problemId: item.problemId,
+          skillId: item.skillId,
+          category: item.category,
+          answer: value,
+          flagged: !!flagged,
+          skipped: value === null,
+          responseTime: responseTime || null,
+          answeredAt: new Date(),
+          seq: seqNum === null ? 0 : seqNum,
+        },
+      },
+    }
+  );
+  if (pushed.matchedCount > 0) return { written: true };
+
+  // Lost the push race to a concurrent first-save: the row exists now, so
+  // apply the sequence rule against it.
+  r = await updateExisting();
+  return { written: r.matchedCount > 0 };
+}
+
+/**
+ * The ONE grading pass. Marks every answered row right/wrong against the
+ * Problem key, synthesizes rows for never-visited questions (wrong on the real
+ * ACT too), tallies by category and skill, and stamps the session completed.
+ * Mutates `session`; the caller saves it.
+ */
+async function gradeSession(session) {
+  const answeredRows = session.responses.filter((r) => r.answer != null && r.answer !== '');
+  const keyByProblemId = new Map();
+  if (answeredRows.length) {
+    const probs = await Problem.find({ problemId: { $in: answeredRows.map((r) => r.problemId) } });
+    probs.forEach((p) => keyByProblemId.set(p.problemId, p));
+  }
+  for (const r of session.responses) {
+    if (r.answer != null && r.answer !== '') {
+      const p = keyByProblemId.get(r.problemId);
+      r.correct = p ? !!p.checkAnswer(r.answer) : false;
+      r.skipped = false;
+    } else {
+      r.correct = false;
+      r.skipped = true;
+    }
+  }
+  const respondedPositions = new Set(session.responses.map((r) => r.position));
+  for (const item of session.items) {
+    if (!respondedPositions.has(item.position)) {
+      session.responses.push({
+        position: item.position,
+        problemId: item.problemId,
+        skillId: item.skillId,
+        category: item.category,
+        answer: null,
+        correct: false,
+        skipped: true,
+      });
+    }
+  }
+  session.responses.sort((a, b) => (a.position || 0) - (b.position || 0));
+  session.markModified('responses');
+
+  const raw = session.responses.filter((r) => r.correct).length;
+  const total = session.items.length;
+  const scaled = rawToScaled(raw);
+
+  const byCategory = {};
+  const bySkill = {};
+  for (const r of session.responses) {
+    const c = r.category || 'unknown';
+    byCategory[c] = byCategory[c] || { correct: 0, total: 0 };
+    byCategory[c].total += 1;
+    if (r.correct) byCategory[c].correct += 1;
+
+    const s = r.skillId || 'unknown';
+    bySkill[s] = bySkill[s] || { correct: 0, total: 0 };
+    bySkill[s].total += 1;
+    if (r.correct) bySkill[s].correct += 1;
+  }
+
+  session.status = 'completed';
+  session.completedAt = new Date();
+  session.rawScore = raw;
+  session.scaledScore = scaled ? scaled.scaled : null;
+  return { raw, total, scaled, byCategory, bySkill };
+}
+
+/**
+ * Apply the answer sheet the runner submits with /complete.
+ *
+ * The browser's state IS the answer sheet the student saw. Every click saved
+ * as it happened, but a save can fail or arrive out of order (see
+ * writeResponse), and the student has no way to know — the screen still shows
+ * their pick. So on submit the runner sends the whole sheet and the server
+ * takes it as final for every question where it is newer than (or as new as)
+ * what is stored. Only positional option labels the item actually has (or
+ * null for "cleared") are accepted, and only while the section clock, plus
+ * grace, allows changes — a sheet is never a way to answer after time.
+ */
+function applyAnswerSheet(session, sheet) {
+  if (!Array.isArray(sheet) || !sheet.length) return 0;
+  if (overdueMs(session) > DEADLINE_GRACE_MS) return 0;
+  const byPos = new Map(session.items.map((it) => [it.position, it]));
+  let applied = 0;
+  for (const entry of sheet) {
+    if (!entry || typeof entry !== 'object') continue;
+    const pos = parseInt(entry.position, 10);
+    const item = byPos.get(pos);
+    if (!item) continue;
+    if (entry.problemId && entry.problemId !== item.problemId) continue;
+    const value = normalizeAnswer(entry.answer);
+    if (value !== null) {
+      const label = value.toUpperCase();
+      const optionCount = Array.isArray(item.options) ? item.options.length : 0;
+      const idx = MC_LABELS.indexOf(label);
+      if (idx === -1 || (optionCount && idx >= optionCount)) continue;   // not a choice on this item
+    }
+    const seq = Number.isFinite(Number(entry.seq)) ? Number(entry.seq) : 0;
+    const existing = session.responses.find((r) => r.position === pos);
+    if (existing) {
+      const storedSeq = Number(existing.seq) || 0;
+      if (storedSeq > seq) continue;                                 // server holds something newer
+      if (existing.answer === value && !!existing.flagged === !!entry.flagged) continue;
+      existing.answer = value;
+      existing.flagged = !!entry.flagged;
+      existing.skipped = value === null;
+      existing.seq = seq;
+      existing.answeredAt = new Date();
+    } else {
+      session.responses.push({
+        position: pos,
+        problemId: item.problemId,
+        skillId: item.skillId,
+        category: item.category,
+        answer: value,
+        flagged: !!entry.flagged,
+        skipped: value === null,
+        seq,
+        answeredAt: new Date(),
+      });
+    }
+    applied += 1;
+  }
+  if (applied) session.markModified('responses');
+  return applied;
+}
+
 // ── POST /start ─────────────────────────────────────────────
 router.post('/', async (req, res) => {
   return res.status(404).json({ message: 'Use POST /api/act-test/start' });
@@ -101,7 +302,20 @@ router.post('/start', async (req, res) => {
     // Resume an in-progress test unless restarting.
     if (!restart) {
       const active = await ActTestSession.getActiveSession(userId);
-      if (active && active.items.length > 0) {
+      // A test whose clock ran out while nobody was here is NOT resumed. It
+      // used to be: the runner reopened it, saw 0:00, and auto-submitted a form
+      // with 1, 3 or 6 answers as a completed attempt — scores of 3, 7 and 10
+      // on the student's trend line (owner report, 2026-09-09). A fully
+      // answered sheet is graded (they only skipped pressing Submit); anything
+      // less is abandoned, unscored, and a fresh test starts below.
+      if (active && active.items.length > 0 && shouldAbandonOnExpiry(active)) {
+        active.status = 'abandoned';
+        active.abandonedReason = 'expired';
+        await active.save();
+      } else if (active && active.items.length > 0 && overdueMs(active) > DEADLINE_GRACE_MS) {
+        await gradeSession(active);
+        await active.save();
+      } else if (active && active.items.length > 0) {
         return res.json({
           sessionId: active._id,
           resumed: true,
@@ -252,9 +466,20 @@ router.get('/problem', async (req, res) => {
 // Record (or replace) an answer and/or flag for one question. Deliberately
 // ungraded — see the header note. Answers stay editable until time is called
 // or the test is submitted, exactly like the real ACT within a section.
+//
+// Writes are ATOMIC and ORDERED. The runner fires saves without waiting (a
+// timed test must never block on the network), so two saves for one question
+// can be in flight together — the mis-tap and the correction a second later.
+// This used to load the document, mutate the row, and write the whole array
+// back, so whichever request the server finished LAST won, regardless of
+// which the student clicked last. Production graded a student on "B" for two
+// questions where the screen showed D and A selected (owner report,
+// 2026-09-09). Now each save carries the client's per-question sequence number
+// and the write is a single guarded update: a stale save can no longer
+// overwrite a newer one, and two first-saves can no longer both push a row.
 router.post('/save-answer', async (req, res) => {
   try {
-    const { sessionId, problemId, position, answer, flagged, responseTime } = req.body || {};
+    const { sessionId, problemId, position, answer, flagged, responseTime, seq } = req.body || {};
     const session = await loadOwnedSession(sessionId, req.user._id, res);
     if (!session) return;
 
@@ -262,10 +487,9 @@ router.post('/save-answer', async (req, res) => {
       return res.status(409).json({ message: 'This test is already finished.' });
     }
     // Pencils down: once the section clock runs out no answer may change.
-    // 10s grace absorbs client-tick vs server-clock skew on the final answer.
-    if (secondsRemaining(session) === 0) {
-      const overMs = Date.now() - new Date(session.startedAt).getTime() - session.timeLimitMinutes * 60000;
-      if (overMs > 10000) return res.status(409).json({ message: 'Time is up.', timeUp: true });
+    // The grace absorbs client-tick vs server-clock skew on the final answer.
+    if (overdueMs(session) > DEADLINE_GRACE_MS) {
+      return res.status(409).json({ message: 'Time is up.', timeUp: true });
     }
 
     const pos = parseInt(position, 10);
@@ -274,27 +498,19 @@ router.post('/save-answer', async (req, res) => {
       return res.status(409).json({ message: 'Question mismatch; refetch the question.' });
     }
 
-    const existing = session.responses.find((r) => r.position === item.position);
-    const row = existing || {
-      position: item.position,
-      problemId: item.problemId,
-      skillId: item.skillId,
-      category: item.category,
-    };
-    row.answer = (answer === null || answer === undefined || answer === '') ? null : String(answer);
-    row.flagged = !!flagged;
-    row.skipped = row.answer === null;
-    if (responseTime) row.responseTime = responseTime;
-    row.answeredAt = new Date();
-    if (!existing) session.responses.push(row);
-    session.markModified('responses');
-    await session.save();
+    const result = await writeResponse(session, item, {
+      answer, flagged, responseTime, seq,
+    });
+    // Reload the counts from what is actually stored, not from the copy we
+    // loaded before the write.
+    const fresh = await ActTestSession.findById(session._id).select('responses items timeLimitMinutes startedAt').lean();
 
     return res.json({
-      saved: true,
-      answered: session.responses.filter((r) => r.answer != null).length,
-      total: session.items.length,
-      remainingSeconds: secondsRemaining(session),
+      saved: result.written,
+      stale: !result.written,            // a newer save for this question already landed
+      answered: answeredCount(fresh),
+      total: (fresh.items || []).length,
+      remainingSeconds: secondsRemaining(fresh),
     });
   } catch (err) {
     console.error('[actTest] save-answer error:', err.message);
@@ -384,67 +600,40 @@ router.post('/submit-answer', async (req, res) => {
 // ── POST /complete ──────────────────────────────────────────
 router.post('/complete', async (req, res) => {
   try {
-    const { sessionId } = req.body || {};
+    const { sessionId, answers } = req.body || {};
     const session = await loadOwnedSession(sessionId, req.user._id, res);
     if (!session) return;
+
+    // A test that expired while the student was away is not an attempt. The
+    // runner used to reach here on resume and score a 3-answer form; the
+    // response tells it to offer a fresh test instead. Fully answered sheets
+    // still grade (only the Submit click was missed).
+    if (session.status === 'in_progress' && shouldAbandonOnExpiry(session)) {
+      session.status = 'abandoned';
+      session.abandonedReason = 'expired';
+      await session.save();
+      return res.json({
+        success: false,
+        abandoned: true,
+        reason: 'expired',
+        answered: answeredCount(session),
+        totalItems: session.items.length,
+        message: "That test's clock ran out while you were away, so it wasn't scored. Start a fresh one when you're ready.",
+      });
+    }
+
+    // The submitted answer sheet is final (see applyAnswerSheet). Only an
+    // in-progress test takes one — a completed test's record does not change.
+    let sheetApplied = 0;
+    if (session.status === 'in_progress') {
+      sheetApplied = applyAnswerSheet(session, answers);
+    }
 
     // ── Final grading pass — the ONE place correctness is decided ──
     // Free navigation means an answer can change right up to submission, so
     // grade the final state here in a single batch. Legacy sessions (graded at
     // submit time) regrade to the identical verdict, so both rails share this.
-    const answeredRows = session.responses.filter((r) => r.answer != null && r.answer !== '');
-    const keyByProblemId = new Map();
-    if (answeredRows.length) {
-      const probs = await Problem.find({ problemId: { $in: answeredRows.map((r) => r.problemId) } });
-      probs.forEach((p) => keyByProblemId.set(p.problemId, p));
-    }
-    for (const r of session.responses) {
-      if (r.answer != null && r.answer !== '') {
-        const p = keyByProblemId.get(r.problemId);
-        r.correct = p ? !!p.checkAnswer(r.answer) : false;
-        r.skipped = false;
-      } else {
-        r.correct = false;
-        r.skipped = true;
-      }
-    }
-    // A question never visited is wrong on the real ACT too — synthesize its
-    // row so the per-skill diagnostics and the review queue can see it.
-    const respondedPositions = new Set(session.responses.map((r) => r.position));
-    for (const item of session.items) {
-      if (!respondedPositions.has(item.position)) {
-        session.responses.push({
-          position: item.position,
-          problemId: item.problemId,
-          skillId: item.skillId,
-          category: item.category,
-          answer: null,
-          correct: false,
-          skipped: true,
-        });
-      }
-    }
-    session.responses.sort((a, b) => (a.position || 0) - (b.position || 0));
-    session.markModified('responses');
-
-    const raw = session.responses.filter(r => r.correct).length;
-    const total = session.items.length;
-    const scaled = rawToScaled(raw);
-
-    // Per-category breakdown — the diagnostic signal that drives the boot-camp plan.
-    const byCategory = {};
-    const bySkill = {};
-    for (const r of session.responses) {
-      const c = r.category || 'unknown';
-      byCategory[c] = byCategory[c] || { correct: 0, total: 0 };
-      byCategory[c].total += 1;
-      if (r.correct) byCategory[c].correct += 1;
-
-      const s = r.skillId || 'unknown';
-      bySkill[s] = bySkill[s] || { correct: 0, total: 0 };
-      bySkill[s].total += 1;
-      if (r.correct) bySkill[s].correct += 1;
-    }
+    const { raw, total, scaled, byCategory, bySkill } = await gradeSession(session);
 
     // Exact weak skills (by name), worst first — the precise remediation targets.
     const weakSkills = Object.entries(bySkill)
@@ -462,10 +651,6 @@ router.post('/complete', async (req, res) => {
     // This is the plan the course opening + module ordering consume (next step).
     const plan = buildActPlan(byCategory);
 
-    session.status = 'completed';
-    session.completedAt = new Date();
-    session.rawScore = raw;
-    session.scaledScore = scaled ? scaled.scaled : null;
     await session.save();
 
     // ── Credit what the baseline PROVED ──
@@ -616,7 +801,11 @@ router.post('/complete', async (req, res) => {
           // two-attempt score trend on the bootcamp card.
           let round = ((cs.bootcamp && cs.bootcamp.round) || 0) + 1;
           try {
-            const completed = await ActTestSession.countDocuments({ userId: req.user._id, status: 'completed' });
+            // Only real attempts count — a legacy auto-submitted 3-answer form
+            // is not a round of the bootcamp.
+            const completedDocs = await ActTestSession.find({ userId: req.user._id, status: 'completed' })
+              .select('status startedAt completedAt timeLimitMinutes items.position responses.answer').lean();
+            const completed = completedDocs.filter((s) => !isIncompleteAttempt(s)).length;
             if (completed > 0) round = completed;   // this session is already saved as completed
           } catch (_countErr) { /* keep the increment fallback */ }
           cs.bootcamp = queue.length
@@ -668,6 +857,7 @@ router.post('/complete', async (req, res) => {
         weakSkills,
         plannedSkills,
         plan,
+        sheetApplied,                      // answers the submitted sheet corrected on the server
         durationMinutes: session.startedAt
           ? Math.round((session.completedAt - session.startedAt) / 60000)
           : null,
@@ -705,12 +895,21 @@ router.get('/history', async (req, res) => {
         rawScore: s.rawScore,
         scaledScore: s.scaledScore,
         totalItems: (s.items || []).length || (s.responses || []).length,
+        answered: answeredCount(s),
+        // Auto-submitted after expiring while away, with under half the form
+        // answered: kept in the list (it happened) but off the trend line.
+        incomplete: isIncompleteAttempt(s),
         byCategory,
         bySkill,
       };
     });
 
-    return res.json({ count: attempts.length, attempts });
+    // First → latest, computed HERE so both clients (the runner's progress
+    // screen and the bootcamp card) read one answer: same-form attempts only,
+    // and no category delta on a handful of items.
+    const comparison = buildComparison(attempts);
+
+    return res.json({ count: attempts.length, attempts, comparison });
   } catch (err) {
     console.error('[actTest] history error:', err.message);
     return res.status(500).json({ message: 'Could not load your test history.' });

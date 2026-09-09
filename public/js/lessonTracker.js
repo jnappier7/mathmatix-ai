@@ -419,7 +419,10 @@ class LessonTracker {
         try {
             const fetcher = window.csrfFetch || window.fetch;
             const r = await fetcher('/api/act-test/history').then((x) => x.json()).catch(() => null);
-            const a = ((r && r.attempts) || []).filter((x) => x.scaledScore != null);
+            // Expired-while-away tests are flagged incomplete by /history and
+            // never make the trend — that is how "33 → 7 ▼ −26" got on the card.
+            const a = ((r && r.attempts) || []).filter((x) => x.scaledScore != null && !x.incomplete);
+            const cmp = r && r.comparison;
             this._bcAttempts = a.length;
             // Two scored tests = the student has a comparison — light the
             // Compare step (it renders before this fetch resolves).
@@ -430,7 +433,9 @@ class LessonTracker {
             const el = document.getElementById('lt-bc-score');
             if (!el || !a.length) return;
             if (a.length === 1) { el.textContent = `Score ${a[0].scaledScore}`; return; }
-            const first = a[0].scaledScore, latest = a[a.length - 1].scaledScore, d = latest - first;
+            const first = cmp && cmp.first ? cmp.first.scaledScore : a[0].scaledScore;
+            const latest = cmp && cmp.latest ? cmp.latest.scaledScore : a[a.length - 1].scaledScore;
+            const d = cmp ? cmp.delta : latest - first;
             // A drop gets a badge too — bare "33 → 28" read like a rendering
             // glitch, and hiding regressions from the student isn't honest.
             const badge = d > 0

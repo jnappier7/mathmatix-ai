@@ -30,6 +30,10 @@ const actResponseSchema = new Schema({
   correct: { type: Boolean },
   skipped: { type: Boolean, default: false },
   flagged: { type: Boolean, default: false },   // marked for review mid-test
+  // The runner's per-question change counter, carried on every save. The
+  // save route only lets a newer sequence replace an older one, so a save that
+  // left the browser first can never overwrite the correction that followed it.
+  seq: { type: Number, default: 0 },
 
   responseTime: { type: Number },            // ms
   answeredAt: { type: Date, default: Date.now },
@@ -50,6 +54,11 @@ const actTestSessionSchema = new Schema({
     default: 'in_progress',
     index: true,
   },
+
+  // Why an abandoned session was abandoned: 'expired' = the clock ran out
+  // while the student was away (never scored — not an attempt); unset = the
+  // student started a new test over it.
+  abandonedReason: { type: String },
 
   timeLimitMinutes: { type: Number, default: 60 },
   startedAt: { type: Date, default: Date.now },
