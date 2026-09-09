@@ -18,6 +18,7 @@ const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Problem = require('../models/problem');
 const Skill = require('../models/skill');
+const TutorPlan = require('../models/tutorPlan');
 const logger = require('../utils/logger').child({ route: 'practicePack' });
 const { skillLookupCandidates } = require('../utils/skillCanonicalizer');
 const { normalizedMasteryScore } = require('../utils/masteryScore');
@@ -178,6 +179,24 @@ async function packFileName(firstName, problems) {
   return `MATHMATIX-Practice_${clean(topic)}_${clean(firstName || 'Student')}_${date}.pdf`;
 }
 
+/**
+ * The ONE skill the tutor is actively working on for this student, per the
+ * tutor plan's currentTarget. Read-only on purpose: printing a worksheet must
+ * never mint a plan as a side effect, so this does NOT use loadOrCreatePlan.
+ * Returns null when there's no plan or no target.
+ */
+async function currentTutorPlanTarget(user) {
+  try {
+    const plan = await TutorPlan.findOne({ userId: user._id })
+      .select('currentTarget.skillId')
+      .lean();
+    return plan?.currentTarget?.skillId || null;
+  } catch (e) {
+    logger.warn('[PracticePack] tutor plan target lookup failed', { error: e.message });
+    return null;
+  }
+}
+
 async function selectProblemsForPack(user, options = {}) {
   const { count = DEFAULT_PROBLEM_COUNT, skillId = null } = options;
   const problems = [];
@@ -202,6 +221,16 @@ async function selectProblemsForPack(user, options = {}) {
     const courseSkills = await activeCourseModuleSkills(user);
     if (courseSkills.length > 0) {
       targetSkills = courseSkills.slice(0, 4);
+    }
+
+    // Not in a course (or the module resolved nothing): fall back to what the
+    // tutor is ACTUALLY working on this session before dropping to the
+    // historical skillMastery scan below. Without this, a free-chat student
+    // whose client sends no skillId gets a pack built from stale mastery
+    // records instead of the skill they were just struggling with.
+    if (targetSkills.length === 0) {
+      const planTarget = await currentTutorPlanTarget(user);
+      if (planTarget) targetSkills = [planTarget];
     }
   }
 
