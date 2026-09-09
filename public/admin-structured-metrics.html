@@ -78,6 +78,7 @@
     .verifier-banner { display: flex; align-items: center; gap: 10px; padding: 10px 14px;
       border-radius: 8px; font-size: 13px; margin-bottom: 16px; border: 1px solid transparent; }
     .verifier-banner.ok { background: #dcfce7; color: var(--good); border-color: #bbf7d0; }
+    .verifier-banner.warn { background: #fef3c7; color: var(--warn); border-color: #fde68a; }
     .verifier-banner.bad { background: #fee2e2; color: var(--bad); border-color: #fecaca; }
   </style>
 </head>
@@ -245,7 +246,7 @@
     function renderVerifierBanner(cp) {
       const banner = document.getElementById('verifier-banner');
       const text = document.getElementById('verifier-text');
-      banner.classList.remove('ok', 'bad');
+      banner.classList.remove('ok', 'warn', 'bad');
       if (!cp) {
         banner.querySelector('i').className = 'fas fa-circle-notch fa-spin';
         text.textContent = 'No verifier state reported.';
@@ -261,12 +262,25 @@
           + (cp.lastFallbackStatus ? escapeHtml(` (HTTP ${cp.lastFallbackStatus})`) : '')
           + (cp.lastFallbackMessage ? `: <code>${escapeHtml(cp.lastFallbackMessage)}</code>` : '')
           + ' — check ANTHROPIC_API_KEY and the account balance. Clears itself on the next Claude call that succeeds.';
+      } else if (!cp.lastOkAt) {
+        // Neither confirmed nor broken. A restarted process starts here, and
+        // painting it green would put the most reassuring label on the least
+        // evidence — which is exactly what happens right after every deploy.
+        // llmVerifier step 1 is a tier-1 call on every answer attempt (the CAS
+        // only replaces step 2), so the next graded answer settles it.
+        banner.classList.add('warn');
+        banner.querySelector('i').className = 'fas fa-circle-question';
+        text.innerHTML = '<strong>Not yet confirmed</strong> — no Claude verifier call has completed '
+          + 'since this instance started, so the cross-check is unproven either way. '
+          + 'The next graded answer settles it.';
       } else {
         banner.classList.add('ok');
         banner.querySelector('i').className = 'fas fa-circle-check';
         text.innerHTML = '<strong>Cross-checked</strong> — answers are graded by a model on a different '
-          + 'provider from the one that writes them.'
-          + (cp.fallbacks ? escapeHtml(` (${cp.fallbacks} fallback${cp.fallbacks === 1 ? '' : 's'} earlier this process)`) : '');
+          + 'provider from the one that writes them. Last confirmed '
+          + escapeHtml(new Date(cp.lastOkAt).toLocaleString())
+          + (cp.fallbacks ? escapeHtml(`, after ${cp.fallbacks} fallback${cp.fallbacks === 1 ? '' : 's'} earlier this process`) : '')
+          + '.';
       }
     }
 

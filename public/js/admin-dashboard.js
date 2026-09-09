@@ -679,6 +679,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
         const ok = 'status-online';
         const bad = 'status-offline';
+        // "unknown yet" must not borrow either of the other two colours: green
+        // would assert a cross-check nothing has verified, red would report a
+        // failure that has not happened.
+        const warn = 'status-unknown';
 
         set('dbStatus', data.database?.connected ? 'Connected' : 'Disconnected',
             data.database?.connected ? ok : bad);
@@ -699,26 +703,48 @@ document.addEventListener("DOMContentLoaded", async () => {
         // The verifier line is the one that catches the quiet failure: the key
         // can be present and valid while the account balance is empty, and then
         // grading silently moves to the tutor's own model.
+        //
+        // Three states. "Cross-checked" used to cover two of them, and the one it
+        // hid was the one that mattered: a freshly restarted process has no
+        // Claude call behind it, so every deploy painted the most reassuring
+        // label on the least evidence. lastOkAt is the evidence, and it is shown
+        // rather than merely consulted — a timestamp is what makes the green
+        // worth anything.
         const v = data.verifier || {};
+        const at = v.lastOkAt ? new Date(v.lastOkAt).toLocaleTimeString() : null;
         if (v.degraded) {
             set('verifierStatus', 'Self-grading (fallback)', bad,
                 `Tier 1 (Claude) is unreachable, so answers are being graded by the same model that `
                 + `writes them. ${v.fallbacks || 0} fallback${v.fallbacks === 1 ? '' : 's'}`
                 + `${v.lastFallbackStatus ? `, last HTTP ${v.lastFallbackStatus}` : ''}`
                 + `${v.lastFallbackMessage ? `: ${v.lastFallbackMessage}` : ''}`);
+        } else if (!at) {
+            // Not an alarm — nothing has asked yet. Every answer attempt makes a
+            // tier-1 call (llmVerifier step 1 always runs; the CAS only replaces
+            // step 2), so this clears on the next graded answer.
+            set('verifierStatus', 'Not yet confirmed', warn,
+                'No Claude verifier call has completed since this instance started, so the '
+                + 'cross-check is unproven either way. The next graded answer settles it.');
         } else {
-            set('verifierStatus', 'Cross-checked', ok,
-                'Answers are graded by a model on a different provider from the one that writes them.');
+            set('verifierStatus', `Cross-checked · ${at}`, ok,
+                'A Claude verifier call last succeeded at ' + new Date(v.lastOkAt).toLocaleString()
+                + `. Answers are graded by a model on a different provider from the one that writes them.`
+                + (v.fallbacks ? ` Recovered after ${v.fallbacks} fallback${v.fallbacks === 1 ? '' : 's'} earlier in this process.` : ''));
         }
 
         // Shown next to the verifier state on purpose: the same rate means two
         // different things depending on whether the cross-check is intact.
         if (typeof v.unverifiableRate === 'number') {
             const pct = `${(v.unverifiableRate * 100).toFixed(1)}%`;
+            // An empty ring reports 0%, which is not a good rate — it is no rate.
+            // Painting it green is the same mistake as painting an unconfirmed
+            // verifier green: a reassuring colour on an absence of evidence.
             set('verifierUnverifiable',
                 v.sampleSize ? `${pct} of last ${v.sampleSize}` : 'no answers yet',
-                v.unverifiableRate > 0.35 ? bad : ok,
-                'Share of answer attempts that got no usable correct/incorrect verdict.');
+                !v.sampleSize ? warn : (v.unverifiableRate > 0.35 ? bad : ok),
+                v.sampleSize
+                    ? 'Share of answer attempts that got no usable correct/incorrect verdict.'
+                    : 'No answer attempts recorded since this instance started.');
         }
 
         const lastSyncTime = document.getElementById('lastSyncTime');
