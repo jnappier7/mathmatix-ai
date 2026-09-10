@@ -181,6 +181,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
     // unauthenticated. The status code names the failure; the admin panel
     // carries the sentence.
     checks.verifier = healthReport.verifierReport();
+    // The founding-school grant (FOUNDING_SCHOOL_DOMAINS). 'off' is legitimate
+    // — it is the kill switch — so it never changes `status`; it is here because
+    // an unset variable is indistinguishable from a bug at every other surface.
+    checks.foundingSchool = healthReport.foundingSchoolReport();
     // Deliberately 'degraded', never 'unhealthy'. 'degraded' is a 200 below, so
     // Render keeps routing here — a verifier grading without independence is a
     // quality problem, and answering 503 would turn it into an outage.

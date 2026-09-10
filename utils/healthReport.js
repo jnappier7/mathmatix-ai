@@ -15,6 +15,7 @@
 // across the whole product and every health surface stayed green.
 
 const { crossProviderHealth, aggregate } = require('./verifyMetrics');
+const { foundingSchoolDomains } = require('./foundingSchool');
 
 const iso = (ms) => (ms ? new Date(ms).toISOString() : null);
 
@@ -34,6 +35,21 @@ function providerKeys() {
 
 /** The keys whose absence is a degradation, as opposed to a note. */
 const REQUIRED_KEYS = ['openai', 'anthropic'];
+
+/**
+ * The founding-school grant's configuration (FOUNDING_SCHOOL_DOMAINS).
+ *
+ * A note, never a degradation: unset is the documented kill switch. It is
+ * reported because the failure it produces is invisible from the server side
+ * — every scprep.org student silently becomes a free-tier student and hits the
+ * weekly wall, and nothing logs, throws, or trips a metric. The first report of
+ * it came from a student. The count, not the domains: this feeds a public,
+ * unauthenticated endpoint.
+ */
+function foundingSchoolReport() {
+  const count = foundingSchoolDomains().length;
+  return { status: count > 0 ? 'ok' : 'off', domains: count };
+}
 
 /** Names of the required keys that are missing. Empty array is the happy path. */
 function missingRequiredKeys(keys = providerKeys()) {
@@ -114,6 +130,7 @@ function isDegraded({ dbConnected = true } = {}) {
 module.exports = {
   providerKeys,
   missingRequiredKeys,
+  foundingSchoolReport,
   verifierReport,
   isDegraded,
   REQUIRED_KEYS,
