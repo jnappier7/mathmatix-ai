@@ -6,12 +6,19 @@
 #
 # Usage (locally):  set -a; source .env; set +a; bash scripts/nightly-tutor-eval.sh
 # Env knobs:
-#   MODELS          space-separated tutor models   (default: prod + fallback)
-#   RUNS_PER_MODEL  live-suite runs per model      (default: 5 → 10 total)
+#   MODELS          space-separated tutor models   (default: the prod model only)
+#   RUNS_PER_MODEL  live-suite runs per model      (default: 5)
 #   OUT_DIR         where per-run jest logs land   (default: eval-nightly-logs)
+#
+# The default deliberately names ONE model: the one prod runs (TUTOR_MODEL on
+# Render, gpt-4o-mini since 2026-08-18). It used to also run claude-sonnet-5
+# "as the prod model" after prod had already left it, and that half cost
+# ~$5.50 a night in 20K-token eval turns for a model no student was talking
+# to. Evaluate a candidate model by passing MODELS explicitly (or the
+# workflow_dispatch input), not by widening this default.
 set -uo pipefail
 
-MODELS=${MODELS:-"claude-sonnet-5 gpt-4o-mini"}
+MODELS=${MODELS:-"gpt-4o-mini"}
 RUNS_PER_MODEL=${RUNS_PER_MODEL:-5}
 OUT_DIR=${OUT_DIR:-eval-nightly-logs}
 
