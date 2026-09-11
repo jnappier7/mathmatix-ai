@@ -1,12 +1,15 @@
 # Nightly tutor-quality eval — the live LLM tier the PR gate can't run.
 #
-# 10 live-suite runs per evening (5 × the prod model, 5 × the fallback the
-# students get on transient errors), aggregated into a pass-rate table in the
-# job summary. Fails only on STABLE regressions (a test failing a majority of
-# its runs for a model) — single-run flakes are listed but don't page.
+# 5 live-suite runs per evening of the model prod actually runs (gpt-4o-mini,
+# the scripts/nightly-tutor-eval.sh default), aggregated into a pass-rate
+# table in the job summary. Fails only on STABLE regressions (a test failing a
+# majority of its runs for a model) — single-run flakes are listed but don't
+# page. To trial another model, dispatch the workflow with `models` set —
+# each extra model is ~$5.50 of Sonnet-class spend per night, which is why
+# none is scheduled.
 #
-# Needs repo secrets: OPENAI_API_KEY (replies for the fallback model + all
-# LLM judges) and ANTHROPIC_API_KEY (replies for the prod claude model).
+# Needs repo secrets: OPENAI_API_KEY (replies + all LLM judges) and, only when
+# `models` names a claude model, ANTHROPIC_API_KEY.
 name: Nightly tutor eval
 
 on:
@@ -17,6 +20,10 @@ on:
       runs_per_model:
         description: 'Live-suite runs per model'
         default: '5'
+        required: false
+      models:
+        description: 'Space-separated tutor models (default: the prod model only)'
+        default: ''
         required: false
 
 jobs:
@@ -42,6 +49,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           RUNS_PER_MODEL: ${{ github.event.inputs.runs_per_model || '5' }}
+          MODELS: ${{ github.event.inputs.models }}
 
       - name: Upload per-run logs
         if: always()
