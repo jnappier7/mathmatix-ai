@@ -450,6 +450,9 @@
   function cacheTutorId(id) {
     try { if (id) localStorage.setItem(TUTOR_CACHE_KEY, id); } catch (_) { /* storage unavailable */ }
   }
+  function clearCachedTutorId() {
+    try { localStorage.removeItem(TUTOR_CACHE_KEY); } catch (_) { /* storage unavailable */ }
+  }
 
   async function init() {
     await waitForTutorConfig();
@@ -459,13 +462,25 @@
     const cached = readCachedTutorId();
     if (cached) applyTutor(cached);
 
-    // Confirm against the server; re-apply only if it actually differs.
+    // Then let the SERVER decide, always.
+    //
+    // This used to read `else if (!cached)`, so when /user reported no tutor
+    // the cached one simply stayed on screen and was never corrected. The
+    // server, meanwhile, resolves its own persona the other way — no
+    // selectedTutorId means TUTOR_CONFIG.default, which is Mr. Nappier. The
+    // result was a chat page wearing one tutor's face and name while the
+    // greeting introduced a different tutor by name (owner report, live,
+    // 2026-09-14). The cache is a placeholder to kill a flash, never a source
+    // of truth; whatever /user says wins, including when it says nothing.
     const tutorId = await loadCurrentTutorId();
+    const resolved = tutorId || 'default';
+    if (resolved !== cached) applyTutor(resolved);
     if (tutorId) {
-      if (tutorId !== cached) applyTutor(tutorId);
       cacheTutorId(tutorId);
-    } else if (!cached) {
-      applyTutor('default');
+    } else {
+      // No tutor on the account: drop the stale pick so a later load does not
+      // flash it again before /user answers.
+      clearCachedTutorId();
     }
 
     wireQuickActions();

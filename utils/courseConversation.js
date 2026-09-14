@@ -37,6 +37,32 @@ function courseBreakReason(conversation, loginSessionId, now = Date.now()) {
 }
 
 /**
+ * Pure: did the student ENTER this course during the login now asking?
+ *
+ * This decides where a returning student LANDS, which is a different question
+ * from whether a conversation may be continued — and it deliberately answers
+ * the unknown case the other way.
+ *
+ * `isForeignLoginSession` adopts: an unmarked conversation is claimable, because
+ * refusing to continue one would throw away a live session on deploy day. Right
+ * for continuing. Wrong here — an unmarked conversation from some earlier login
+ * would drop a student straight into Round 3 of a course they never asked to
+ * open, which is the exact complaint. So anything we cannot PROVE belongs to
+ * this login counts as "not entered": the cost is one extra click, against the
+ * cost of hijacking their landing.
+ *
+ * @param {Object|null} conversation   - the course session's conversation, if any
+ * @param {string|null} loginSessionId - current login marker
+ * @returns {boolean}
+ */
+function courseEnteredThisLogin(conversation, loginSessionId) {
+    if (!conversation || !loginSessionId) return false;
+    const stored = conversation.loginSessionId;
+    if (!stored) return false;
+    return String(stored) === String(loginSessionId);
+}
+
+/**
  * Resolve (and if necessary roll) the conversation backing a course session.
  *
  * Continuing is the common case — a course turn, mid-sitting, keeps its thread.
@@ -122,4 +148,4 @@ async function resolveCourseConversation({
     return { conversation: fresh, rolled: !!conversation, reason };
 }
 
-module.exports = { courseBreakReason, resolveCourseConversation };
+module.exports = { courseBreakReason, courseEnteredThisLogin, resolveCourseConversation };
