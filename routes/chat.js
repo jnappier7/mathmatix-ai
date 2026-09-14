@@ -12,7 +12,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { isSessionStale, touchSession } = require('../utils/sessionWindow');
 const { getLoginSessionId, isForeignLoginSession, claimLoginSession } = require('../utils/loginSession');
-const { resolveCourseConversation } = require('../utils/courseConversation');
+const { resolveCourseConversation, courseEnteredThisLogin } = require('../utils/courseConversation');
 const Curriculum = require('../models/curriculum');
 const StudentUpload = require('../models/studentUpload');
 const Skill = require('../models/skill');
@@ -3087,6 +3087,31 @@ async function handleGreetingRequest(req, res, userId) {
         const activeScreenerSession = await ScreenerSession.getActiveSession(userId);
         const assessmentNeeded = await needsAssessment(userId);
 
+        // ── Course: looked up ONCE, here, for two different questions ──
+        // (1) may the tutor MENTION it in the greeting, and (2) should this
+        // greeting be delivered in course mode at all. They have different
+        // answers now: naming a course is always fine, entering one is a click.
+        let courseSessionForGreeting = null;
+        let courseNameForGreeting = null;
+        let courseEnteredInThisLogin = false;
+        if (user.activeCourseSessionId) {
+            try {
+                const CourseSessionModel = require('../models/courseSession');
+                courseSessionForGreeting = await CourseSessionModel.findById(user.activeCourseSessionId);
+                if (courseSessionForGreeting && courseSessionForGreeting.status === 'active') {
+                    courseNameForGreeting = courseSessionForGreeting.courseName || null;
+                    const courseConvForLanding = courseSessionForGreeting.conversationId
+                        ? await Conversation.findById(courseSessionForGreeting.conversationId)
+                        : null;
+                    courseEnteredInThisLogin = courseEnteredThisLogin(courseConvForLanding, loginSessionId);
+                } else {
+                    courseSessionForGreeting = null;
+                }
+            } catch (courseLookupErr) {
+                logger.warn('Could not load course session for greeting', { error: courseLookupErr.message });
+            }
+        }
+
         // Get last conversation context
         let lastSessionContext = '';
         let strugglingWith = '';
@@ -3149,9 +3174,34 @@ async function handleGreetingRequest(req, res, userId) {
         }
 
         // User state context
-        if (!user.learningProfile?.rapportBuildingComplete) {
+        //
+        // "First time" is decided by EVIDENCE OF HISTORY, not by the rapport
+        // flag. It used to read `!rapportBuildingComplete`, which is a different
+        // fact entirely — anyone who never finished the get-to-know-you flow was
+        // introduced to the product forever. That is what produced "Welcome to
+        // Mathmatix! I'm <tutor>, one of the cool tutors here" for a student on
+        // a streak, with XP, mid-course (owner report, live, 2026-09-14). A
+        // returning student being welcomed like a stranger is worse than no
+        // greeting: it says the tutor does not know them, which is the one
+        // thing this product claims.
+        const priorSessions = user.learningProfile?.stats?.totalSessions || 0;
+        const hasBeenHereBefore = priorSessions > 0
+            || !!lastSessionContext
+            || (user.xp || 0) > 0
+            || (user.level || 1) > 1
+            || (user.currentStreak || 0) > 0
+            || !!user.assessmentCompleted
+            || (activeConversation.messages && activeConversation.messages.length > 0);
+
+        if (!hasBeenHereBefore) {
             ghostMessageParts.push("This is my first time here");
-        } else if (activeScreenerSession && !user.assessmentCompleted) {
+        } else if (!user.learningProfile?.rapportBuildingComplete) {
+            // Returning, but we still don't know much about them. The tutor
+            // should be curious — NOT introduce the product again.
+            ghostMessageParts.push("I've been here before, but we haven't really gotten to know each other yet");
+        }
+
+        if (activeScreenerSession && !user.assessmentCompleted) {
             const questionsCompleted = activeScreenerSession.questionCount || 0;
             ghostMessageParts.push(`I started a placement test but didn't finish (got through ${questionsCompleted} questions)`);
         } else if (assessmentNeeded && user.assessmentCompleted) {
@@ -3169,11 +3219,23 @@ async function handleGreetingRequest(req, res, userId) {
         }
 
         // Session count — helps the tutor calibrate familiarity
-        const totalSessions = user.learningProfile?.stats?.totalSessions || 0;
+        const totalSessions = priorSessions;
         if (totalSessions > 10) {
             ghostMessageParts.push(`I've had ${totalSessions} sessions so far`);
         } else if (totalSessions > 1) {
             ghostMessageParts.push(`This is about my ${totalSessions + 1}th session`);
+        }
+
+        // Concrete things to be warm ABOUT. Without these the model is told the
+        // student is returning and given nothing to return TO, which is how
+        // "welcome back!" ends up as filler.
+        if ((user.currentStreak || 0) > 1) {
+            ghostMessageParts.push(`I'm on a ${user.currentStreak}-day streak`);
+        }
+        if (user.activeCourseSessionId && courseNameForGreeting) {
+            // Named, NOT resumed — see the landing note on the course branch.
+            // The tutor may mention it; only a click opens it.
+            ghostMessageParts.push(`I have ${courseNameForGreeting} going, but I haven't opened it today`);
         }
 
         // Learning preferences from profile
@@ -3210,11 +3272,26 @@ async function handleGreetingRequest(req, res, userId) {
             currentModuleId: courseContext.courseSession.currentModuleId,
             overallProgress: courseContext.courseSession.overallProgress,
         } : null);
-        if (user.activeCourseSessionId && !skipCourse) {
+        if (courseSessionForGreeting && !skipCourse) {
             try {
-                const CourseSession = require('../models/courseSession');
-                const courseSession = await CourseSession.findById(user.activeCourseSessionId);
-                if (courseSession && courseSession.status === 'active') {
+                const courseSession = courseSessionForGreeting;
+                // A NEW LOGIN LANDS IN GENERAL CHAT. Entering a course is a click,
+                // not a thing that happens to you (owner, 2026-09-14).
+                //
+                // user.activeCourseSessionId is durable intent — it survives
+                // logout, so on the next sign-in it still points at whatever
+                // lesson was open days ago. Greeting off it alone meant a
+                // returning student was dropped straight back into Round 3 of ACT
+                // prep with a module introduction, having asked for nothing. They
+                // should be met by their tutor first and choose where to go.
+                //
+                // Same login is different: once they have clicked in,
+                // /api/course-chat owns the opener and a reload inside that
+                // sitting must not knock them back out to general chat. So the
+                // test is whether the course conversation belongs to THIS login —
+                // the same marker utils/loginSession.js already uses for rules 2
+                // and 3. This is that policy extended to the landing decision.
+                if (courseEnteredInThisLogin) {
                     const ctx = loadCourseContext(courseSession);
                     if (ctx) {
                         courseContext = { courseSession, ...ctx };
@@ -3365,10 +3442,29 @@ async function handleGreetingRequest(req, res, userId) {
             const warmUpInstruction =
                 `You MAY include a quick warm-up question — optional, not required. ${anchorLine} ${levelHint} NEVER give a warm-up below the student's level.${recentGreetingsBlock}`;
 
+            // ── Returning students are never introduced to the product ──
+            // The tutor may only say hello for the first time ONCE. After that
+            // the greeting has to sound like someone who already knows them,
+            // because the whole promise of this product is a tutor who does.
+            // Stated as a ban rather than a preference: "welcome them back" as
+            // advice still produced "Welcome to Mathmatix! I'm <tutor>, one of
+            // the cool tutors here" to a student on a streak, mid-course.
+            const returningVoiceRule = hasBeenHereBefore
+                ? `\n\nTHIS STUDENT IS NOT NEW. Do NOT welcome them to Mathmatix, do NOT introduce yourself, do NOT explain what you do, and do NOT say anything a landing page would say. You already know them — greet them the way you'd greet a student walking back into your room, in YOUR voice. Use what you know (the day, their streak, what they were last working on) so it lands as recognition rather than a stock "welcome back".`
+                : `\n\nThis IS their first time. Introduce yourself in character — brief, warm, not formal, and not a product tour.`;
+
+            // Naming a course is not entering one: opening it is a click the
+            // student makes, so the tutor must not behave as though the lesson
+            // has already started.
+            const courseMentionRule = (hasBeenHereBefore && courseNameForGreeting)
+                ? `\n\nThey have "${courseNameForGreeting}" in progress but have NOT opened it this visit. You may mention it in one short clause and invite them to pick it up — but you are in general chat, so do NOT start the lesson, do NOT teach its content, and do NOT act as though it is already open.`
+                : '';
+
             if (openerResult && openerResult.directives?.length > 0) {
                 // Use intelligent session opener directives from TutorPlan
                 greetingInstruction = openerResult.directives.join('\n') +
                     `\n\nKeep it to 1-3 sentences. Talk like a real person — the way you'd greet a student who just walked into your room. Don't repeat back their info.` +
+                    returningVoiceRule + courseMentionRule +
                     `\n${warmUpInstruction}`;
             } else {
                 // Fallback: default greeting instruction (no TutorPlan yet)
@@ -3378,7 +3474,7 @@ The following is context about them (not something they said). Use it the way a 
 
 Keep it to 1-3 sentences. Sound like a real person, not a welcome screen. Match the time of day — morning greetings are different from evening ones. ${isLateNight ? 'It\'s late — acknowledge that naturally, the way a real person would.' : ''}${isWeekend ? 'It\'s the weekend — a brief natural acknowledgment is fine.' : ''}
 
-If they're new, introduce yourself IN CHARACTER — just be yourself, not formal. If they're returning, welcome them back like you remember them. If they were struggling with something, mention it like you've been thinking about it.
+If they were struggling with something, mention it like you've been thinking about it.${returningVoiceRule}${courseMentionRule}
 
 End with something they can respond to. ${warmUpInstruction}`;
             }
