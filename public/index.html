@@ -83,7 +83,7 @@
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
   <!-- Chat design tokens (--cr-*) so the chat preview block can mirror the real product. -->
   <link rel="stylesheet" href="/css/design-system.css" />
-  <link rel="stylesheet" href="/css/landing-page.css?v=7" />
+  <link rel="stylesheet" href="/css/landing-page.css?v=8" />
   <!-- Scroll reveals start at opacity:0 and are switched on by an
        IntersectionObserver in landing.js. Without JS that leaves everything
        below the fold blank, so opt out of the animation entirely. -->
@@ -95,7 +95,7 @@
   <!-- Mobile-only top bar (desktop header is hidden on mobile by multiple CSS files) -->
   <div class="lp-mobile-topbar">
     <a href="/" class="lp-mobile-topbar-logo">
-      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" />
+      <img src="/images/mathmatix-ai-logoheader.png" alt="Mathmatix AI" />
     </a>
     <div class="lp-mobile-topbar-actions">
       <a href="/pricing.html" class="lp-mobile-topbar-link">Pricing</a>
@@ -106,8 +106,10 @@
 
   <header class="landing-header">
     <div class="header-logo-container">
-      <a href="/">
-        <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+      <!-- The wide wordmark chat.html wears, not the square mark: the square
+           one capped at 65px read as a postage stamp next to the nav. -->
+      <a href="/" title="Home" aria-label="Home">
+        <img src="/images/mathmatix-ai-logoheader.png" alt="Mathmatix AI" class="main-logo-hero" />
       </a>
     </div>
     <nav class="landing-nav">
@@ -236,21 +238,32 @@
             <a href="/signup.html" class="lp-locked-notice-cta">Start free</a>
           </div>
 
-          <!-- Input area -->
+          <!-- Input area — chat.html's compose bar, not a widget of its own: the
+               tools on a row above the input and a round send button at the
+               right (.imessage-compose-bar in the product), so the first
+               composer a visitor types into is the one they get after signing
+               up. Same three controls as before, in chat's order; landing.js
+               keys off the ids and frontPagePreview.test.js pins them. -->
           <div class="lp-trial-input-area" id="lp-trial-input-area">
-            <button class="lp-trial-math-toggle" id="lp-trial-math-toggle" type="button" title="Math symbols" aria-label="Open math symbols" aria-expanded="false" aria-controls="lp-trial-math-bar">&pi;</button>
-            <!-- Locked, not absent. The voice WebSocket 401s for anonymous
-                 visitors (utils/voiceUpgrade.js checks request.user before any
-                 entitlement logic), so this can never open a session — it exists
-                 to say the capability is real and comes with an account. -->
-            <button class="lp-trial-locked-btn" id="lp-trial-mic" type="button" data-locked="voice" title="Talk it through out loud — free with an account" aria-label="Voice tutoring — available with a free account">
-              <i class="fas fa-microphone" aria-hidden="true"></i><i class="fas fa-lock lp-locked-pip" aria-hidden="true"></i>
-            </button>
-            <button class="lp-trial-locked-btn" id="lp-trial-upload" type="button" data-locked="photo" title="Snap a photo of your worksheet — free with an account" aria-label="Photo help — available with a free account">
-              <i class="fas fa-camera" aria-hidden="true"></i><i class="fas fa-lock lp-locked-pip" aria-hidden="true"></i>
-            </button>
-            <input type="text" id="lp-trial-input" class="lp-trial-input" placeholder="Ask a math question..." aria-label="Type your math question" maxlength="500" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-1p-ignore data-lpignore="true" />
-            <button class="lp-trial-send" id="lp-trial-send" type="button" title="Send" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
+            <div class="lp-trial-compose-bar">
+              <div class="lp-trial-tool-row" role="group" aria-label="Composer tools">
+                <button class="lp-trial-math-toggle" id="lp-trial-math-toggle" type="button" title="Math symbols" aria-label="Open math symbols" aria-expanded="false" aria-controls="lp-trial-math-bar"><i class="fas fa-square-root-variable" aria-hidden="true"></i></button>
+                <!-- Locked, not absent. The voice WebSocket 401s for anonymous
+                     visitors (utils/voiceUpgrade.js checks request.user before any
+                     entitlement logic), so the mic can never open a session — it
+                     exists to say the capability is real and comes with an account. -->
+                <button class="lp-trial-locked-btn" id="lp-trial-upload" type="button" data-locked="photo" title="Snap a photo of your worksheet — free with an account" aria-label="Photo help — available with a free account">
+                  <i class="fas fa-camera-retro" aria-hidden="true"></i><i class="fas fa-lock lp-locked-pip" aria-hidden="true"></i>
+                </button>
+                <button class="lp-trial-locked-btn" id="lp-trial-mic" type="button" data-locked="voice" title="Talk it through out loud — free with an account" aria-label="Voice tutoring — available with a free account">
+                  <i class="fas fa-microphone" aria-hidden="true"></i><i class="fas fa-lock lp-locked-pip" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="lp-trial-input-row">
+                <input type="text" id="lp-trial-input" class="lp-trial-input" placeholder="Ask a math question..." aria-label="Type your math question" maxlength="500" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-1p-ignore data-lpignore="true" />
+                <button class="lp-trial-send" id="lp-trial-send" type="button" title="Send" aria-label="Send message"><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
+              </div>
+            </div>
           </div>
           <!-- The wall. Shown once the preview hits its volley cap (MAX_TURNS in
                routes/trialChat.js). This is the entire ask: the tutor's own line
