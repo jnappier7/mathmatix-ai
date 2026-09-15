@@ -207,3 +207,32 @@ describe('wiring pins (source-level — the seams that silently drop this)', () 
     expect(read('routes/admin.js')).toMatch(/router\.get\('\/item-disputes', isAdmin/);
   });
 });
+
+describe('applyUnfamiliarConceptGuard — "I have never seen that before"', () => {
+  // Owner transcript, 2026-09-15, ACT review of an expected-value item: the
+  // tutor answered with the sigma formula, then computed every product itself.
+  test('the production line gets the drop-the-level directive', () => {
+    const d = run("I have never seemn that before!  I'm just a junior".replace('seemn', 'seen'));
+    expect(joined(d)).toMatch(/NEVER SEEN THIS CONCEPT/);
+    expect(joined(d)).toMatch(/Do NOT open with the formula/);
+    expect(joined(d)).toMatch(/have THEM work that version/);
+  });
+  test.each([
+    "we haven't learned this yet",
+    'never seen that',
+    'what does that even mean?',
+    'this is new to me',
+    "I don't know what that is",
+    "we didn't cover that",
+  ])('fires on %p', (msg) => {
+    expect(joined(run(msg))).toMatch(/NEVER SEEN THIS CONCEPT/);
+  });
+  test.each([
+    'x = 15',
+    'can we do another one?',
+    "I've seen this before, it's a weighted average",
+    'I never get these right',
+  ])('does not fire on %p', (msg) => {
+    expect(joined(run(msg))).not.toMatch(/NEVER SEEN THIS CONCEPT/);
+  });
+});

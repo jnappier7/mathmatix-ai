@@ -110,6 +110,9 @@ describe('reviewPromptSection', () => {
     expect(s).toMatch(/VERIFY THE KEY BEFORE YOU USE IT/);
     expect(s).toMatch(/<REVIEW_NEXT>/);
     expect(s).toMatch(/RETEACH the underlying concept ONLY if/);
+    // 2026-09-15: "I have never seen that before" was answered with Σ x·P(x).
+    expect(s).toMatch(/NEVER SEEN the concept, do not open with the formula/);
+    expect(s).toMatch(/Build it from something they already know/);
   });
   test('handles a skipped item: no recorded answer, and the key is not offered as one', () => {
     const s = reviewPromptSection(queue[1], 1, queue.length);

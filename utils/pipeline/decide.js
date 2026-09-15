@@ -169,6 +169,10 @@ function decide(observation, diagnosis, context = {}) {
   // from the math, not from whatever marked it and not from who insists.
   applyGradeDisputeGuard(decision, observation, context);
 
+  // "I have never seen that before" — teach it from something they know
+  // before naming it, and never by doing the computation for them.
+  applyUnfamiliarConceptGuard(decision, observation);
+
   // Demonstrated competence runs across ALL branches (owner: "the system
   // doesn't need students to walk through EVERY problem — especially once
   // it is clear that this kid knows what he is talking about"). Per-branch
@@ -256,6 +260,21 @@ function lastAssistantText(context) {
     if (m && m.role !== 'user' && typeof m.content === 'string' && m.content.trim()) return m.content;
   }
   return '';
+}
+
+// The student says the concept itself is new to them (owner transcript,
+// 2026-09-15: "I have never seen that before! I'm just a junior" — the tutor
+// answered with the sigma-notation formula, then computed every product
+// itself and left the student the addition). A genuine gap is where the
+// level has to DROP, not where the tutor's own work gets longer.
+const UNFAMILIAR_RX = /\b(?:(?:i(?:'ve| have)|we(?:'ve| have)) (?:never|not) (?:seen|learned|done|heard of|covered)|(?:never|haven'?t) (?:seen|learned|heard of) (?:that|this|it)|(?:we|i) (?:haven'?t|didn'?t|never) (?:learn|do|cover|get to)(?:ed)? (?:that|this|it)|(?:what|what'?s) (?:is |does )?(?:that|this) (?:even )?(?:mean|called)|never (?:seen|learned) (?:that|this)|(?:that|this) is new to me|i don'?t know what (?:that|this) is)\b/i;
+
+function applyUnfamiliarConceptGuard(decision, observation) {
+  const text = (observation && observation.raw) || '';
+  if (!text || !UNFAMILIAR_RX.test(text)) return;
+  decision.directives.push(
+    "THE STUDENT SAYS THEY HAVE NEVER SEEN THIS CONCEPT. Drop the level, don't lengthen your explanation. Do NOT open with the formula, its notation, or vocabulary they just said they don't know. Start from something they already have — an average, a picture, a number line, a small concrete case ('imagine 10 students…') — and have THEM work that version. Only after they get it, name the concept and show the textbook form. Never do the computation for them and hand back the last step; the first worked instance is yours at most, the rest are theirs."
+  );
 }
 
 function applyGradeDisputeGuard(decision, observation, context) {
