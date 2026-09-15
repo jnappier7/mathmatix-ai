@@ -4783,31 +4783,53 @@ class CourseManager {
 
         if (!confirmed) return;
 
+        const leaving = this.courseSessions.find(s => s._id === this.activeCourseSessionId);
+        const courseName = leaving ? this.formatCourseName(leaving.courseName || '') : '';
+
         try {
             await csrfFetch('/api/course-sessions/deactivate', {
                 method: 'POST',
                 credentials: 'include'
             });
 
-            // Hide progress bar and lesson tracker
-            const wrapper = document.getElementById('course-progress-wrapper');
-            if (wrapper) wrapper.style.display = 'none';
-            if (window.lessonTracker) window.lessonTracker.hide();
-            this.activeCourseSessionId = null;
-
-            // Switch sidebar back to general context
-            if (window.sidebar) window.sidebar.setContext('general');
-
-            // Start a fresh general chat session so the user isn't
-            // left staring at stale course messages
-            if (window.sidebar) {
-                await window.sidebar.loadSessions();
-                await window.sidebar.createNewSession();
-            }
-
+            await this.returnToGeneralChat(courseName);
             this.showToast('Returned to general tutoring');
         } catch (err) {
             console.error('[CourseManager] Failed to exit course:', err);
+        }
+    }
+
+    // --------------------------------------------------
+    // Back to open tutoring — the part of leaving a course that SPEAKS.
+    // Shared by exitCourse() and dropCourse() (when the dropped course was the
+    // one open). Opens a fresh general conversation and asks the tutor for
+    // its opener: a new conversation is empty, updateChatForSession paints
+    // nothing for an empty one by design, and the page-load greeting ran
+    // long ago — so without this the student stared at a blank transcript
+    // until they typed (dead air, owner report 2026-09-15).
+    // --------------------------------------------------
+    async returnToGeneralChat(courseName) {
+        // Hide progress bar and lesson tracker
+        const wrapper = document.getElementById('course-progress-wrapper');
+        if (wrapper) wrapper.style.display = 'none';
+        if (window.lessonTracker) window.lessonTracker.hide();
+        this.activeCourseSessionId = null;
+
+        // Switch sidebar back to general context
+        if (window.sidebar) window.sidebar.setContext('general');
+
+        // Start a fresh general chat session so the user isn't
+        // left staring at stale course messages
+        if (window.sidebar) {
+            await window.sidebar.loadSessions();
+            await window.sidebar.createNewSession();
+        }
+
+        // ...and have the tutor say so. Deactivation is already durable, so
+        // the server greets in general mode; "returningFrom" only tells it
+        // this is the same visit, not a new arrival.
+        if (typeof window.requestReentryGreeting === 'function') {
+            await window.requestReentryGreeting({ from: 'course', courseName });
         }
     }
 
@@ -4849,12 +4871,13 @@ class CourseManager {
                 return;
             }
 
-            // If this was the active course, hide the progress bar
+            // If this was the active course, the student is sitting in its
+            // transcript: leave it the same way Exit Lesson does, with a fresh
+            // general conversation and the tutor's opener — not an orphaned
+            // course transcript and silence.
             if (this.activeCourseSessionId === sessionId) {
-                const wrapper = document.getElementById('course-progress-wrapper');
-                if (wrapper) wrapper.style.display = 'none';
-                this.activeCourseSessionId = null;
                 this.closeProgressDropdown();
+                await this.returnToGeneralChat(name);
             }
 
             // Refresh sidebar courses

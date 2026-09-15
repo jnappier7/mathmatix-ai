@@ -1201,6 +1201,78 @@ document.addEventListener("DOMContentLoaded", () => {
     // on /screener.html, or closed the tab before the wrap-up.
     document.addEventListener('growth-check-debrief-pending', () => { requestGrowthCheckDebrief(); });
 
+    // ── Review warm-up closure ──
+    // Same shape as the Growth Check above, smaller moment: the warm-up runs in
+    // the FloatingReview widget, and the tutor who offered it used to go quiet
+    // the moment it closed. The widget hands its results back in this event;
+    // the server turns them into the tutor's wrap-up with ONE suggested next
+    // step, and it lands here as a normal tutor message.
+    let warmupDebriefInFlight = false;
+
+    async function requestReviewWarmupDebrief(detail) {
+        if (warmupDebriefInFlight) return;
+        if (!detail || !Array.isArray(detail.results) || detail.results.length === 0) return;
+        warmupDebriefInFlight = true;
+        showThinkingIndicator(true);
+        try {
+            const res = await csrfFetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ reviewWarmupDebrief: { planned: detail.planned, results: detail.results } }),
+            });
+            const data = await res.json();
+            showThinkingIndicator(false);
+            if (data.text) appendMessage(data.text, 'ai');
+        } catch (error) {
+            showThinkingIndicator(false);
+            console.error('[ReviewWarmup] Debrief request failed', error);
+        } finally {
+            warmupDebriefInFlight = false;
+        }
+    }
+
+    document.addEventListener('review-warmup-complete', (e) => { requestReviewWarmupDebrief(e.detail); });
+
+    // ── Re-entry greeting (leaving a course lesson) ──
+    // getWelcomeMessage() runs exactly once, on page load, and is scoped to
+    // this module. Exiting a course is an in-page mode switch: courseCatalog
+    // deactivates the lesson and opens a fresh, EMPTY general conversation,
+    // and updateChatForSession deliberately paints nothing for an empty one
+    // ("the caller owns the greeting"). Nobody did — the student got a blank
+    // transcript and silence. This is the greeting that caller asks for:
+    // the same /api/chat greeting, told where the student is coming from so
+    // it reads as "back to open tutoring" rather than a second hello.
+    let reentryGreetingInFlight = false;
+
+    async function requestReentryGreeting({ from, courseName } = {}) {
+        if (reentryGreetingInFlight) return;
+        reentryGreetingInFlight = true;
+        showThinkingIndicator(true);
+        try {
+            const res = await csrfFetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ isGreeting: true, returningFrom: from || 'course', courseName: courseName || undefined }),
+            });
+            const data = await res.json();
+            showThinkingIndicator(false);
+            if (data.text) {
+                appendMessage(data.text, 'ai');
+                if (data.inlineCta) attachInlineCtaToLatestMessage(data.inlineCta);
+            }
+        } catch (error) {
+            showThinkingIndicator(false);
+            console.error('[Reentry] Greeting request failed', error);
+            appendMessage("Back to open tutoring — what do you want to work on?", 'ai');
+        } finally {
+            reentryGreetingInFlight = false;
+        }
+    }
+
+    window.requestReentryGreeting = requestReentryGreeting;
+
     // ── Notebook idea offer (Live Workspace §7.6) ──
     // The tutor proposed saving an idea; render a small consent chip under its
     // message. Saving POSTs to the notebook; dismissing just removes the chip.
