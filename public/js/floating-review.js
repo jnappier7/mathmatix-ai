@@ -16,8 +16,9 @@ class FloatingReview {
     this.submitting = false;
     this.items = [];          // queue items that have a problem attached
     this.index = 0;
-    this.results = [];        // { skillName, correct, skipped, intervalDays }
+    this.results = [];        // { skillId, skillName, correct, skipped, intervalDays }
     this.questionStartedAt = null;
+    this._handedBack = false; // true once this run's results reached the tutor
     this.selectedOption = null;
 
     // Drag state
@@ -156,6 +157,11 @@ class FloatingReview {
     this.container.style.top = '50%';
     this.container.style.transform = 'translate(-50%, -50%)';
 
+    // A fresh run: the previous run's results were handed back when it
+    // closed, and must not be re-sent if this one is dismissed at the intro.
+    this.results = [];
+    this._handedBack = false;
+
     this.showScreen('loading');
     const loadingText = document.getElementById('review-loading-text');
     if (loadingText) loadingText.textContent = 'Checking which skills are due...';
@@ -183,10 +189,34 @@ class FloatingReview {
     }
   }
 
+  // EVERY way out lands here — Done, the X, Escape, "Later", the empty-queue
+  // close — so this is the one place the widget hands control back to the
+  // tutor. It used to remove two classes and stop, which left the student
+  // looking at a transcript whose last line was the tutor OFFERING the
+  // warm-up: dead air until they typed. Now, if anything was attempted, the
+  // results go out as an event and script.js asks the server for the
+  // tutor's wrap-up (the same hand-back the Growth Check uses). "Later" on
+  // the intro screen has no results and stays silent — nothing happened.
   close() {
     if (!this.container) return;
     this.container.classList.remove('active', 'collapsed');
     this.isOpen = false;
+    this.handBack();
+  }
+
+  handBack() {
+    if (this._handedBack || this.results.length === 0) return;
+    this._handedBack = true;
+    document.dispatchEvent(new CustomEvent('review-warmup-complete', {
+      detail: {
+        planned: this.items.length,
+        results: this.results.map(r => ({
+          skillId: r.skillId,
+          correct: r.correct === true,
+          skipped: r.skipped === true,
+        })),
+      },
+    }));
   }
 
   renderIntro() {
@@ -207,6 +237,7 @@ class FloatingReview {
   startSession() {
     this.index = 0;
     this.results = [];
+    this._handedBack = false;
     this.renderProblem();
     this.showScreen('question');
   }
@@ -380,7 +411,7 @@ class FloatingReview {
     } catch (err) {
       console.error('[FloatingReview] Submit error:', err);
       // Don't strand the student mid-warm-up on a transient error
-      this.results.push({ skillName: item.displayName, skipped: true });
+      this.results.push({ skillId: item.skillId, skillName: item.displayName, skipped: true });
       this.toggleButtons('next');
     } finally {
       this.submitting = false;
@@ -405,13 +436,14 @@ class FloatingReview {
       this.submitting = false;
     }
 
-    this.results.push({ skillName: item.displayName, skipped: true });
+    this.results.push({ skillId: item.skillId, skillName: item.displayName, skipped: true });
     this.advance();
   }
 
   handleResult(item, data) {
     const intervalDays = Math.max(1, Math.round(data.interval || 1));
     this.results.push({
+      skillId: item.skillId,
       skillName: item.displayName,
       correct: data.correct,
       intervalDays,
