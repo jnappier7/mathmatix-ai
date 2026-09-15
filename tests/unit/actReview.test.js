@@ -111,9 +111,15 @@ describe('reviewPromptSection', () => {
     expect(s).toMatch(/<REVIEW_NEXT>/);
     expect(s).toMatch(/RETEACH the underlying concept ONLY if/);
   });
-  test('handles a skipped item', () => {
+  test('handles a skipped item: no recorded answer, and the key is not offered as one', () => {
     const s = reviewPromptSection(queue[1], 1, queue.length);
     expect(s).toMatch(/SKIPPED/);
+    // 2026-09-15: "You skipped it but the recorded answer was J (42)" — the
+    // stored key, leaked as the student's answer before their first attempt.
+    expect(s).toMatch(/NO answer was recorded for them/);
+    expect(s).not.toMatch(/RECORDED ANSWER:/);
+    expect(s).toMatch(/stored key is for YOUR reference only/);
+    expect(s).toMatch(/or that they\s+skipped it/);
   });
   test('empty for no miss', () => {
     expect(reviewPromptSection(null, 0, 0)).toBe('');

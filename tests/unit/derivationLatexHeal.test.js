@@ -109,3 +109,17 @@ describe('the ledger applies the same environment mapping', () => {
     expect(healBoardTex('\\begin{pmatrix} 1 & 2 \\end{pmatrix}')).toBe('\\begin{pmatrix} 1 & 2 \\end{pmatrix}');
   });
 });
+
+describe('markdown emphasis is stripped from board tex (both healers)', () => {
+  const { healBoardTex } = require('../../utils/pipeline/boardLedger.js');
+  // 2026-09-15: a word-problem pose copied from the tutor's bolded sentence
+  // showed the asterisks on the work card.
+  const posed = '\\text{**What is the area, in square centimeters, of a triangle with a base of 12 centimeters and a height of 7 centimeters?**}';
+  const healed = '\\text{What is the area, in square centimeters, of a triangle with a base of 12 centimeters and a height of 7 centimeters?}';
+  it('client cleanLatex', () => { expect(cleanLatex(posed)).toBe(healed); });
+  it('server healBoardTex', () => { expect(healBoardTex(posed)).toBe(healed); });
+  it('leaves a lone * (multiplication) and subscripts alone', () => {
+    expect(cleanLatex('2 * 3 = 6')).toBe('2 * 3 = 6');
+    expect(healBoardTex('x_1 + x_2')).toBe('x_1 + x_2');
+  });
+});

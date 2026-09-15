@@ -1537,6 +1537,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     // inlineChatVisuals.initializeVisuals() binds every handler with
                     // addEventListener after insertion.
                     'type', 'min', 'max', 'value', 'step',
+                    // <ol start="N">: marked resumes a numbered list at N when a
+                    // bullet block interrupts it. Without 'start' every step of
+                    // a tutor's "1. … 2. … 3." rendered as "1." (2026-09-15).
+                    'start',
                     // Data attributes for visuals
                     'data-config', 'data-diagram-id', 'data-value', 'data-label',
                     // KaTeX attributes
