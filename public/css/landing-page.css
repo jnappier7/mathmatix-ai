@@ -31,9 +31,19 @@
     -webkit-backdrop-filter: blur(8px);
   }
 
+  .lp-mobile-topbar-logo {
+    /* The wordmark is 5:1, so it must be allowed to shrink on a narrow phone
+       or it shoves the three actions off the right edge. */
+    flex: 0 1 auto;
+    min-width: 0;
+    margin-right: 12px;
+  }
+
   .lp-mobile-topbar-logo img {
-    height: 32px;
+    max-height: 28px;
+    max-width: 100%;
     width: auto;
+    height: auto;
     display: block;
   }
 
@@ -106,8 +116,25 @@
 }
 
 /* ── Landing Page Overrides ─────────────────────────────── */
+/* Slimmer than the 14px / 72px-min-height default in style.css: the header is
+   the one thing on this page that pushes the live demo below the fold, and it
+   only holds a logo and three links. 8px + 48px logo + 8px = 64px, which the
+   46px nav CTA also fits inside. */
+.landing-header {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  min-height: 64px;
+}
+
+/* The wordmark is laid out at its real height instead of the global
+   scale(1.5) trick chat.html relies on (a transform paints bigger without
+   taking space, so it overflows the header's padding). margin-left resets the
+   1rem the same desktop rule adds, so the logo sits on the page gutter. */
 .landing-header .main-logo-hero {
-  max-height: 65px;
+  height: 48px;
+  max-height: 48px;
+  width: auto;
+  margin-left: 0;
   transform: none;
   position: relative;
   z-index: 2;
@@ -2050,71 +2077,146 @@
 }
 
 /* ── Input Area ────────────────────────────────────── */
+/* This is chat.html's composer, not a widget of its own: the same shape as
+   .imessage-compose-bar (css/base/chat.css, painted by chat-redesign.css) — a
+   rounded well, the tools on a row above the input, the input borderless on
+   the well, a round send button at the right. The colours are chat-redesign's
+   LIGHT tokens written out, because design-system.css is dark by default and
+   this page is light until theme-toggle.js says otherwise (CLAUDE.md §12); the
+   accent stays this page's teal so the composer matches the chips and CTA
+   around it rather than standing out purple. The class names are not chat's:
+   landing.js keys off the lp-trial-* ids and frontPagePreview.test.js pins
+   them. */
 .lp-trial-input-area {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0.75rem 1rem;
+  padding: 10px 1rem 14px;
   border-top: 1px solid #eef1f4;
 }
 
-.lp-trial-input {
-  flex: 1 1 auto;
-  min-width: 0;   /* without this the input refuses to shrink and the placeholder truncates */
-  border: 1px solid #ddd;
-  border-radius: 24px;
-  padding: 10px 16px;
-  font-size: 0.92rem;
-  outline: none;
-  transition: border-color 0.2s;
-  font-family: inherit;
+.lp-trial-compose-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  background: #eef1f7;                       /* --cr-bg-2, light */
+  border: 1px solid rgba(15, 23, 42, 0.08);  /* --cr-border, light */
+  border-radius: 16px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+/* Focus lives on the well: the input itself has no border to light up. */
+.lp-trial-compose-bar:focus-within {
+  border-color: rgba(18, 179, 179, 0.55);
+  box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.12);
 }
 
-.lp-trial-input:focus {
-  border-color: var(--clr-primary-teal);
+.lp-trial-tool-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
 }
 
-.lp-trial-send {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.lp-trial-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Tool buttons — chat's .imessage-tool-btn: no chrome of their own, just the
+   glyph on the well, dim until hovered. */
+.lp-trial-math-toggle,
+.lp-trial-locked-btn {
+  width: 34px;
+  height: 30px;
+  flex: 0 0 auto;
+  position: relative;
   border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #5b6876;                            /* --cr-text-dim, light */
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, color 0.15s;
+}
+.lp-trial-math-toggle:hover,
+.lp-trial-locked-btn:hover,
+.lp-trial-math-toggle:focus-visible,
+.lp-trial-locked-btn:focus-visible {
+  background: rgba(18, 179, 179, 0.1);
+  color: #0c7575;
+}
+.lp-trial-math-toggle.active {
   background: var(--clr-primary-teal, #12b3b3);
   color: #fff;
-  font-size: 1rem;
+}
+
+/* Scoped under the well on purpose. css/base/typography.css styles every
+   input[type="text"] (0,1,1) with a white ground, a 1.5px border and a teal
+   focus ring, and its :focus rule is (0,2,1) — a bare .lp-trial-input loses
+   to both and the input renders as a white box with a ring INSIDE the well,
+   which is exactly what shipped in the first render. chat's own input is a
+   contenteditable div, so it never met that rule. */
+.lp-trial-compose-bar .lp-trial-input {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;   /* without this the input refuses to shrink and the placeholder truncates */
+  min-height: 36px;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--clr-text);
+  outline: none;
+  font-family: inherit;
+}
+.lp-trial-compose-bar .lp-trial-input:hover,
+.lp-trial-compose-bar .lp-trial-input:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+/* css/base/variables.css paints a 2px teal outline on every :focus-visible
+   with !important, and a text input matches :focus-visible on ANY focus —
+   including the arrival focus landing.js gives this one — so the ring showed
+   inside the well on every page load. The well's :focus-within ring above is
+   the visible indicator instead (WCAG 2.4.7 wants one, not that one), so the
+   !important here removes a duplicate, not the affordance. */
+.lp-trial-compose-bar .lp-trial-input:focus-visible {
+  outline: none !important;
+}
+.lp-trial-compose-bar .lp-trial-input::placeholder { color: #5b6876; opacity: 0.7; }
+
+.lp-trial-send {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--clr-primary-teal, #12b3b3), #0c8f8f);
+  color: #fff;
+  font-size: 15px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s, transform 0.1s;
   flex-shrink: 0;
+  padding: 0;
+  box-shadow: 0 4px 14px rgba(18, 179, 179, 0.35);
+  transition: filter 0.15s, transform 0.1s;
 }
-
-.lp-trial-send:hover { background: #0fa0a0; }
-.lp-trial-send:active { transform: scale(0.95); }
+.lp-trial-send:hover { filter: brightness(1.08); }
+.lp-trial-send:active { transform: scale(0.9); }
 .lp-trial-send:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── Math Symbol Keyboard ────────────────────────────── */
-.lp-trial-math-toggle {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid #ddd;
-  background: #fff;
-  color: var(--clr-text-dim);
-  font-size: 0.95rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  flex-shrink: 0;
-  font-family: 'KaTeX_Math', 'Times New Roman', serif;
-  font-style: italic;
-}
-.lp-trial-math-toggle:hover { border-color: var(--clr-primary-teal); color: var(--clr-primary-teal); }
-.lp-trial-math-toggle.active { background: var(--clr-primary-teal); color: #fff; border-color: var(--clr-primary-teal); }
-
 .lp-trial-math-bar {
   display: none;
   flex-wrap: wrap;
@@ -2368,14 +2470,14 @@
 [data-theme="dark"] .lp-trial-input-area {
   border-top-color: #334155;
 }
-[data-theme="dark"] .lp-trial-input {
-  background: #1e293b;
-  border-color: #475569;
-  color: #e2e8f0;
+[data-theme="dark"] .lp-trial-compose-bar {
+  background: #1b2238;                       /* --cr-bg-2, dark */
+  border-color: rgba(255, 255, 255, 0.08);
 }
-[data-theme="dark"] .lp-trial-input:focus {
-  border-color: var(--clr-primary-teal);
-}
+[data-theme="dark"] .lp-trial-compose-bar .lp-trial-input { color: #e6e9f2; background-color: transparent; }
+[data-theme="dark"] .lp-trial-compose-bar .lp-trial-input::placeholder { color: #9aa3b8; }
+[data-theme="dark"] .lp-trial-math-toggle,
+[data-theme="dark"] .lp-trial-locked-btn { color: #9aa3b8; }
 [data-theme="dark"] .lp-trial-gate {
   background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
   border-top-color: #334155;
@@ -2513,7 +2615,7 @@
   display: grid;
   grid-template-columns: var(--cr-hero-w, 320px) minmax(0, 1fr);
   align-items: stretch;
-  min-height: 520px;
+  min-height: 400px;
   /* BOUNDED, and that is the whole point of this rule.
      Without a ceiling the grid row is as tall as its tallest child, which is
      the transcript — so every message made the row taller, and because the
@@ -2533,12 +2635,18 @@
      Measured in Chromium before this change, the composer (the demo's ONLY
      input) was below the fold at every one of them: clipped by 46px on a
      16-inch, 50px at 1080p, 71px on a 14-inch, 88px on a 13-inch Air.
-     --lp-stage-offset is that 227px header stack plus ~33px of air, so the
-     frame lands just clear of the fold at any height; the 760px arm still
-     stops it ballooning on a tall monitor. The 520px min-height deliberately
-     wins on a short window — below that the transcript is not usable and
-     scrolling is the better failure. */
-  --lp-stage-offset: 260px;
+     --lp-stage-offset is that header stack plus ~40px of air, so the frame
+     lands just clear of the fold at any height; the 760px arm still stops it
+     ballooning on a tall monitor. The stack is 190px since the header slimmed
+     to 64px and wears the wordmark (2026-09-15; it was 227px) — re-measure it
+     if anything above the demo changes height.
+     The 400px min-height is the floor: it used to be 520px, which won on any
+     window under ~780px tall and put the composer back below the fold on a
+     1366x768 laptop (657px of content) by 60px — exactly the failure this
+     rule exists to prevent. At 400px the transcript still shows the greeting
+     and two turns above the composer; below that, scrolling is the better
+     failure. */
+  --lp-stage-offset: 230px;
   height: min(calc(100vh - var(--lp-stage-offset)), 760px);
   text-align: left;
 }
@@ -2633,7 +2741,7 @@
    budgeted against one question: is the tutor visible without scrolling?
    ══════════════════════════════════════════════════════════════ */
 
-.lp-hero { padding: 2.25rem var(--page-horizontal-padding) 2rem; }
+.lp-hero { padding: 1.75rem var(--page-horizontal-padding) 2rem; }
 
 .lp-hero-intro { margin-bottom: 1.5rem; }
 .lp-hero-intro h1 { font-size: 2.15rem; margin-bottom: 0.55rem; }
@@ -2701,27 +2809,12 @@
 
 /* ── Locked affordances ────────────────────────────────
    Locked, not absent: the point is that the capability is real. */
-.lp-trial-locked-btn {
-  width: 36px; height: 36px; flex: 0 0 auto;
-  position: relative;
-  border-radius: 50%;
-  border: 1px dashed #d6dbe0;
-  background: #fff;
-  color: #9aa4ad;
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-}
-.lp-trial-locked-btn:hover,
-.lp-trial-locked-btn:focus-visible {
-  border-color: var(--clr-primary-teal, #12b3b3);
-  color: var(--clr-primary-teal, #12b3b3);
-}
+/* The lock pip rides the bottom-right of a locked tool button; its ground is
+   the well's colour so it reads as a badge, not a white dot. */
 .lp-locked-pip {
-  position: absolute; right: 1px; bottom: 1px;
+  position: absolute; right: 3px; bottom: 2px;
   font-size: 0.5rem; line-height: 1;
-  background: #fff; border-radius: 50%; padding: 1px;
+  background: #eef1f7; border-radius: 50%; padding: 1px;
 }
 
 /* An author `display` beats the UA stylesheet's [hidden] rule, so without this
@@ -2749,12 +2842,13 @@
 }
 
 @media (max-width: 600px) {
-  /* The composer row carries five controls at 390px. Shrinking the round
-     buttons is what keeps the input itself readable. */
-  .lp-trial-input-area { gap: 6px; padding: 0.6rem 0.7rem; }
-  .lp-trial-math-toggle,
-  .lp-trial-locked-btn { width: 32px; height: 32px; font-size: 0.8rem; }
-  .lp-trial-input { padding: 9px 12px; }
+  /* The tools have their own row above the input now, so nothing crowds the
+     placeholder at 390px; only the outer gutter tightens. */
+  .lp-trial-input-area { padding: 8px 0.7rem 10px; }
+  /* 16px is the floor below which iOS Safari zooms the page on focus. The
+     base responsive.css rule that used to guarantee it loses to the scoped
+     selector above, so it is restated here. */
+  .lp-trial-compose-bar .lp-trial-input { font-size: 16px; }
 
   /* The stage is the page now, so four full-width suggestion buttons pushed
      the tutor's own greeting off the top of the screen. */
@@ -2773,8 +2867,7 @@
 [data-theme="dark"] .lp-work-dock { background: #111c33; border-color: #334155; }
 [data-theme="dark"] .lp-work-dock-head { border-bottom-color: #334155; }
 [data-theme="dark"] .lp-work-dock-title { color: #5eead4; }
-[data-theme="dark"] .lp-trial-locked-btn { background: #1e293b; border-color: #3f4d61; color: #94a3b8; }
-[data-theme="dark"] .lp-locked-pip { background: #1e293b; }
+[data-theme="dark"] .lp-locked-pip { background: #1b2238; }
 [data-theme="dark"] .lp-locked-notice { background: rgba(18, 179, 179, 0.14); border-color: rgba(94, 234, 212, 0.35); color: #e2e8f0; }
 [data-theme="dark"] .lp-locked-notice i,
 [data-theme="dark"] .lp-locked-notice-cta { color: #5eead4; }
