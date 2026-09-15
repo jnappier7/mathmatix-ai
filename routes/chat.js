@@ -49,6 +49,7 @@ const { buildSmartQueue } = require('../utils/smartReviewQueue');
 const { studentLabel } = require('../utils/studentLabels');
 const { detectGrowthCheckAcceptance, detectStartingPointAcceptance } = require('../utils/growthCheckIntent');
 const { buildDebriefInstruction, fallbackDebriefText } = require('../utils/growthSummary');
+const { normalizeWarmupResults, buildWarmupDebriefInstruction, fallbackWarmupDebriefText } = require('../utils/reviewWarmupDebrief');
 const { buildCourseSystemPrompt, buildActPracticeGuidance, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -238,7 +239,8 @@ async function runStudentTurn(req, res) {
     // tutor talking, not the student — it carries no message by design.
     const hasFiles = req.files && req.files.length > 0;
     const isGrowthDebriefRequest = !!req.body?.growthCheckDebrief;
-    if (!isGreeting && !isGrowthDebriefRequest && !hasFiles && !message) {
+    const isWarmupDebriefRequest = !!req.body?.reviewWarmupDebrief;
+    if (!isGreeting && !isGrowthDebriefRequest && !isWarmupDebriefRequest && !hasFiles && !message) {
         return res.status(400).json({ message: "Message is required." });
     }
     if (message && message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
@@ -270,6 +272,14 @@ async function runStudentTurn(req, res) {
     // ("come back here when you're done").
     if (isGrowthDebriefRequest) {
         return handleGrowthCheckDebrief(req, res, userId);
+    }
+
+    // ========== REVIEW WARM-UP DEBRIEF: same shape, smaller moment ==========
+    // The spaced-review warm-up runs in the FloatingReview widget, outside the
+    // transcript, and used to end on a results card and silence from the tutor
+    // who had just offered it. The client asks for the wrap-up on hand-back.
+    if (isWarmupDebriefRequest) {
+        return handleReviewWarmupDebrief(req, res, userId);
     }
 
     // Acquire per-user lock to prevent concurrent message processing
@@ -2844,6 +2854,106 @@ async function handleGrowthCheckDebrief(req, res, userId) {
     }
 }
 
+/**
+ * THE WARM-UP'S CLOSING LINE, in the tutor's voice.
+ *
+ * Mirrors handleGrowthCheckDebrief. The difference is provenance: a Growth
+ * Check leaves a server-side summary to claim, while the warm-up's results
+ * come up from the client — so utils/reviewWarmupDebrief.js bounds them to
+ * {skillId, correct, skipped} rows and resolves every name on the server.
+ * Nothing the browser sent is spoken verbatim. An empty or unparseable
+ * payload means nothing is owed, and the tutor stays quiet rather than
+ * reacting to a warm-up that didn't happen.
+ */
+async function handleReviewWarmupDebrief(req, res, userId) {
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'User not found.' });
+
+        const summary = normalizeWarmupResults(req.body.reviewWarmupDebrief);
+        if (!summary) {
+            return res.json({ text: '', debriefDelivered: false });
+        }
+
+        const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
+            ? user.selectedTutorId
+            : 'default';
+        const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+
+        let debriefText = '';
+        try {
+            const systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, null, [], null, null);
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, [
+                { role: 'system', content: systemPrompt },
+                { role: 'system', content: buildWarmupDebriefInstruction(summary) },
+                { role: 'user', content: '[The student just finished a review warm-up and is back in chat.]' }
+            ], withAnonContext(user, { temperature: 0.6, max_tokens: 220 }));
+            debriefText = rehydrateFor(user, completion.choices?.[0]?.message?.content?.trim()) || '';
+        } catch (llmErr) {
+            logger.warn('Review warm-up debrief generation failed, using fallback', { error: llmErr.message });
+        }
+
+        if (!debriefText) {
+            debriefText = fallbackWarmupDebriefText(summary, user.firstName);
+        }
+
+        // IEP reading level enforcement (same contract as the greeting path)
+        const iepLevel = user.iepPlan?.readingLevel || null;
+        if (iepLevel) {
+            try {
+                const readCheck = checkReadingLevel(debriefText, iepLevel);
+                if (!readCheck.passes) {
+                    const simplified = await callLLM(PRIMARY_CHAT_MODEL, [
+                        { role: 'system', content: buildSimplificationPrompt(debriefText, readCheck.targetGrade, user.firstName || 'the student') }
+                    ], withAnonContext(user, { temperature: 0.3, max_tokens: 220 }));
+                    const simplifiedText = rehydrateFor(user, simplified.choices?.[0]?.message?.content?.trim());
+                    if (simplifiedText && simplifiedText.length > 20) debriefText = simplifiedText;
+                }
+            } catch (err) {
+                logger.warn('Review warm-up debrief simplification failed', { error: err.message });
+            }
+        }
+
+        // Land it in the transcript so the wrap-up survives a refresh.
+        try {
+            let conversation = user.activeConversationId
+                ? await Conversation.findById(user.activeConversationId)
+                : null;
+            if (!conversation || !conversation.isActive || conversation.isMastery || isSessionStale(conversation)) {
+                conversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+                user.activeConversationId = conversation._id;
+                await user.save();
+            }
+            conversation.messages.push({
+                role: 'assistant',
+                content: debriefText,
+                timestamp: new Date(),
+                tutorId: selectedTutorKey
+            });
+            touchSession(conversation);
+            await conversation.save();
+        } catch (convErr) {
+            logger.warn('Review warm-up debrief conversation save failed', { error: convErr.message });
+        }
+
+        logger.info('Review warm-up debrief delivered', { userId, correct: summary.correct, answered: summary.answered, rusty: summary.rusty.length });
+
+        const xpProgress = BRAND_CONFIG.xpProgress(user.xp);
+        return res.json({
+            text: debriefText,
+            debriefDelivered: true,
+            warmupSummary: summary,
+            voiceId: currentTutor.cartesiaVoiceId,
+            userXp: xpProgress.xpForCurrentLevel,
+            userLevel: xpProgress.level,
+            xpNeeded: xpProgress.xpForNextLevel,
+        });
+    } catch (error) {
+        logger.error('Review warm-up debrief handler error', error);
+        return res.status(500).json({ message: 'Failed to deliver warm-up debrief.' });
+    }
+}
+
 async function handleGreetingRequest(req, res, userId) {
     try {
         const user = await User.findById(userId);
@@ -3238,6 +3348,23 @@ async function handleGreetingRequest(req, res, userId) {
             ghostMessageParts.push(`I have ${courseNameForGreeting} going, but I haven't opened it today`);
         }
 
+        // ── Re-entry from a course lesson ──
+        // "Exit Lesson" deactivates the course and opens a fresh general
+        // conversation, and the client asks for this greeting to fill it —
+        // it used to open on an empty transcript and silence until the
+        // student typed. The course is already deactivated server-side by
+        // the time this runs, so courseNameForGreeting is null here; the
+        // client names it, and only the name (bounded, printable) is used.
+        const returningFromCourse = req.body?.returningFrom === 'course';
+        const returningCourseName = returningFromCourse && typeof req.body.courseName === 'string'
+            ? req.body.courseName.replace(/[^\p{L}\p{N} .,'&:()-]/gu, '').trim().slice(0, 80)
+            : '';
+        if (returningFromCourse) {
+            ghostMessageParts.push(returningCourseName
+                ? `I just stepped out of my ${returningCourseName} lesson and I'm back in open chat`
+                : `I just stepped out of a course lesson and I'm back in open chat`);
+        }
+
         // Learning preferences from profile
         if (user.learningProfile?.rapportAnswers) {
             const answers = user.learningProfile.rapportAnswers;
@@ -3458,7 +3585,9 @@ async function handleGreetingRequest(req, res, userId) {
             // has already started.
             const courseMentionRule = (hasBeenHereBefore && courseNameForGreeting)
                 ? `\n\nThey have "${courseNameForGreeting}" in progress but have NOT opened it this visit. You may mention it in one short clause and invite them to pick it up — but you are in general chat, so do NOT start the lesson, do NOT teach its content, and do NOT act as though it is already open.`
-                : '';
+                : returningFromCourse
+                    ? `\n\nThey JUST stepped out of ${returningCourseName ? `their "${returningCourseName}" lesson` : 'a course lesson'} into open chat — this is the same visit, not a new arrival, so no hello-again and no time-of-day small talk. Acknowledge the switch in one short clause (their progress in the lesson is saved), do NOT re-pitch or resume the course, and ask what they'd like to work on now. Skip any warm-up question this time.`
+                    : '';
 
             if (openerResult && openerResult.directives?.length > 0) {
                 // Use intelligent session opener directives from TutorPlan
