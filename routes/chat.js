@@ -1313,6 +1313,7 @@ async function runStudentTurn(req, res) {
                             position: miss.position != null ? miss.position : null,
                             problemId: miss.problemId || null,
                             theirAnswer: miss.theirAnswer || null,
+                            skipped: !!miss.skipped,
                             correctOption: miss.correctOption || null,
                             testSessionId: bc.testSessionId || null,
                         };

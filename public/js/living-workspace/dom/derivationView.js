@@ -71,6 +71,7 @@
     // source — production 2026-07-28: "1 \div (-0.1)\."). Accent "\.{x}" kept.
     t = t.replace(/\\\.(?!\{)/g, '.');
     t = t.replace(/\\+$/, '');               // dangling backslash at end
+    t = t.replace(/\*\*|__|`/g, '');         // markdown emphasis, never math (mirrors healBoardTex)
     t = inlineEnvironments(t);
     t = healTruncated(t);
     return t.trim();

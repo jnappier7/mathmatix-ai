@@ -227,8 +227,14 @@ function applyActReviewDirective(decision, context) {
   const miss = context && context.actReviewMiss;
   if (!miss) return;
   const where = miss.position != null ? `Question #${miss.position} from their practice test` : 'The missed practice-test question';
+  // A skipped item has no recorded letter. Saying "the letter recorded for
+  // them" regardless had the tutor supply one — the stored key — as the
+  // student's "recorded answer" on every skipped question (2026-09-15).
+  const recorded = miss.skipped
+    ? 'the fact that they SKIPPED it — no letter was recorded for them'
+    : 'the letter recorded for them';
   decision.directives.unshift(
-    `ACT REVIEW — YOU HAVE THE QUESTION. ${where} is in your system prompt under "REVIEWING A MISSED QUESTION" (the question, its lettered choices, the letter recorded for them, and the stored key). The student CANNOT see it in this chat. If you have not yet presented it this review, present it now, verbatim, with its lettered choices. Do NOT ask them to share, paste, remember, or describe the question — you are holding it.`,
+    `ACT REVIEW — YOU HAVE THE QUESTION. ${where} is in your system prompt under "REVIEWING A MISSED QUESTION" (the question, its lettered choices, ${recorded}, and the stored key). The student CANNOT see it in this chat. If you have not yet presented it this review, present it now, verbatim, with its lettered choices. Do NOT ask them to share, paste, remember, or describe the question — you are holding it. Do NOT reveal the stored key, or call it their recorded answer, before they have made their own attempt.`,
     'VERIFY THE KEY BEFORE YOU USE IT. Solve the question yourself, completely, before you call any answer right or wrong. Your own derivation outranks the stored key. If they disagree: say what you got, say the stored answer differs, tell the student you are flagging the question, and put <KEY_DISPUTE: your answer> on its own line. If the student\'s pick matches YOUR answer, tell them plainly their answer looks right. Never tell a student they were wrong on the strength of a key you have not checked.'
   );
 }

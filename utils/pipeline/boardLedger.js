@@ -95,6 +95,10 @@ function healBoardTex(tex) {
   t = t.replace(/\\\.(?!\{)/g, '.');          // mangled "\." (not the accent "\.{x}")
   t = t.replace(/\\+$/, '');                  // dangling backslash at end
   t = t.replace(/\s*\.\s*$/, '');             // sentence period is prose, not math
+  // Markdown emphasis is chat formatting, never math: "**" and "__" are not
+  // valid LaTeX, and a word-problem pose copied from the tutor's bolded
+  // sentence painted the asterisks on the card (2026-09-15).
+  t = t.replace(/\*\*|__|`/g, '');
   t = t.replace(/\\(begin|end)\s*\{([a-zA-Z]+\*?)\}/g, (m, which, env) =>
     (INLINE_ENV[env] ? `\\${which}{${INLINE_ENV[env]}}` : m));
   return t.trim();

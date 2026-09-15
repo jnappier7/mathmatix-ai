@@ -54,6 +54,19 @@ describe('applyActReviewDirective — the tutor is told it HAS the question', ()
     expect(d.directives[1]).toMatch(/<KEY_DISPUTE: your answer>/);
   });
 
+  test('a SKIPPED miss is described as having no recorded letter', () => {
+    // 2026-09-15, questions 6 and 10: told "the letter recorded for them" on a
+    // skipped item, the tutor supplied one — the stored key — as the student's
+    // "recorded answer", before they had tried the question.
+    const skipped = { ...miss, theirAnswer: null, skipped: true };
+    const d = run("Let's go over question 1.", { actReviewMiss: skipped, isCourseMode: true });
+    expect(d.directives[0]).toMatch(/SKIPPED it — no letter was recorded for them/);
+    expect(d.directives[0]).not.toMatch(/the letter recorded for them/);
+    expect(d.directives[0]).toMatch(/Do NOT reveal the stored key/);
+    const answered = run("Let's go over question 1.", { actReviewMiss: miss, isCourseMode: true });
+    expect(answered.directives[0]).toMatch(/the letter recorded for them/);
+  });
+
   test('the handoff message itself gets the same directives', () => {
     const d = run('I just finished an ACT Math practice test — estimated score 34 (43/45 correct). The specific skills I missed questions on: Angles & parallel lines (missed 1/1). Can we work through those one at a time, starting with the weakest?', { actReviewMiss: miss, isCourseMode: true });
     expect(joined(d)).toMatch(/YOU HAVE THE QUESTION/);

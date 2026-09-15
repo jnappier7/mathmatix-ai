@@ -251,8 +251,13 @@ function reviewPromptSection(miss, index, total, transfer = []) {
   // displays the same alias. Stored labels stay A–D underneath.
   const disp = (label) => actDisplayLabel(miss.position, label);
   const opts = (miss.options || []).map((o) => `${disp(o.label)}) ${o.text}`).join('   ');
+  // A skipped item has NO recorded answer. Say so in words the model cannot
+  // repurpose: told to "remind them which letter they picked" and handed a
+  // STORED KEY, the tutor opened a skipped question with "you skipped it but
+  // the recorded answer was J (42)" — the key, leaked before the first attempt
+  // (owner transcript, 2026-09-15, questions 6 and 10).
   const chose = miss.skipped
-    ? 'They SKIPPED it (no answer).'
+    ? 'They SKIPPED it — NO answer was recorded for them. There is no "recorded answer" to remind them of; never present the stored key as one.'
     : `RECORDED ANSWER: ${disp(miss.theirAnswer)}${miss.theirAnswerText ? ` (${miss.theirAnswerText})` : ''} — marked wrong against the stored key.`;
   const correct = miss.correctOption
     ? `${disp(miss.correctOption)}${optionText(miss.options, miss.correctOption) ? ` (${optionText(miss.options, miss.correctOption)})` : ''}`
@@ -271,11 +276,14 @@ QUESTION: ${miss.prompt}
 ${opts ? `OPTIONS: ${opts}` : ''}
 ${chose}
 STORED KEY: ${correct}.
+The stored key is for YOUR reference only. Do not state it, hint at it, or call it
+their "recorded answer" before they have made their own attempt in this chat.
 WORKED SOLUTION (for YOUR reference — never just read it aloud): ${miss.explanation || '(none stored)'}
 
 YOU HAVE THE QUESTION; THE STUDENT DOES NOT. It is not shown in this chat. Your
 first message about it must present it to them verbatim — the question and its
-lettered choices — and remind them which letter they picked. Never ask them to
+lettered choices — and remind them which letter they picked (or that they
+skipped it). Never ask them to
 share, paste, remember, or describe the question; you are holding it.
 
 VERIFY THE KEY BEFORE YOU USE IT. Solve the question yourself, completely, before
