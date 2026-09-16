@@ -234,10 +234,14 @@ describe('Pipeline Integration: runPipeline', () => {
 
     const result = await runPipeline('I don\'t know how to do this', buildCtx(user, conversation));
 
-    // "Let's break it down" is a banned canned transition (verify §2f strips
-    // the filler sentence whole); the scaffolding question must survive.
-    expect(result.text).not.toContain('break it down');
-    expect(result.text).toContain('what operation can we use to get rid of the +5?');
+    // The head opener ("No problem!") is stripped by the anchored CANNED_OPENERS
+    // strip. "Let's break it down" is NOT touched: the mid-reply transition
+    // scrub was removed 2026-09-16 after it mangled sentences in production
+    // ("Great problem! It together."). The prompt asks the model not to write
+    // it; verify() ships what the model wrote, intact.
+    expect(result.text).toBe('Let\'s break it down. First, what operation can we use to get rid of the +5?');
+    expect(result._pipeline.flags).toContain('canned_opener_stripped');
+    expect(result._pipeline.flags).not.toContain('canned_transitions_stripped');
     expect(result.xpBreakdown.tier1).toBe(2);
     expect(result.xpBreakdown.tier2).toBe(0);
   });

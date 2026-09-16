@@ -15,8 +15,10 @@
  *     decide.js forbids it in a directive, but nothing enforced it).
  *  2. Literal "\div" shown to the student — normalizeLatex converts ÷ to
  *     \div but never wrapped bare operator math in \( \).
- *  3. "Let's work through it together" slipped the canned-transition ban,
- *     which only knew "work through this".
+ *  3. "Let's work through it together" — filler. A regex scrub used to delete
+ *     it after the fact; that scrub is gone (it mangled sentences, see
+ *     mangledSentenceHeads.test.js). The OPENERS block in promptCompact now
+ *     asks the model not to write it in the first place.
  */
 jest.mock('../../utils/llmGateway', () => ({
   callLLM: jest.fn(),
@@ -25,7 +27,7 @@ jest.mock('../../utils/llmGateway', () => ({
 }));
 
 const { callLLM } = require('../../utils/llmGateway');
-const { verify, normalizeLatex, stripCannedTransitions } = require('../../utils/pipeline/verify');
+const { verify, normalizeLatex } = require('../../utils/pipeline/verify');
 const { ACTIONS } = require('../../utils/pipeline/decide');
 
 const SCREENSHOT_REPLY =
@@ -95,23 +97,5 @@ describe('bare operator math gets wrapped (the \\div leak)', () => {
   test('already-delimited math is not double-wrapped', () => {
     const out = normalizeLatex('Try \\(120 \\div 4\\) first.');
     expect(out).toBe('Try \\(120 \\div 4\\) first.');
-  });
-});
-
-describe('"work through it together" is now a banned transition', () => {
-  test('the screenshot closing sentence drops whole, purpose clause included', () => {
-    const { text, changed } = stripCannedTransitions(
-      "Great thinking on the setup! Let's work through it together to ensure we understand each step clearly!",
-      'Jason'
-    );
-    expect(changed).toBe(true);
-    expect(text).toBe('Great thinking on the setup!');
-  });
-
-  test('"tackle that" and "break it down" variants match too', () => {
-    expect(stripCannedTransitions("Let's tackle that together. What is 6 times 7?", null).text)
-      .toBe('What is 6 times 7?');
-    expect(stripCannedTransitions("Let's break it down. What is the first factor?", null).text)
-      .toBe('What is the first factor?');
   });
 });
