@@ -74,7 +74,9 @@ describe('sentence-aware scrub keeps real content', () => {
       'Moving on to quadratics, remember the vertex form.',
       null
     );
-    expect(text).toBe('Quadratics, remember the vertex form.');
+    // "Moving on to" was the sentence's spine, so "quadratics" was its object,
+    // not the next clause's subject — only the clause after the comma stays.
+    expect(text).toBe('Remember the vertex form.');
   });
 
   test('surrounding sentences are untouched when the filler sentence drops', () => {
