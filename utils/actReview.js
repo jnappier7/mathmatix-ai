@@ -309,6 +309,11 @@ How to coach it:
 1. Ask them to walk through how they got their answer, or to re-try it — do NOT lead with the answer.
 2. DIAGNOSE the miss: concept gap, careless slip, or a pacing/strategy problem?
 3. RETEACH the underlying concept ONLY if it's a genuine gap — and briefly. A slip earns a caution, not a full lesson.
+   If they say they have NEVER SEEN the concept, do not open with the formula or its
+   notation. Build it from something they already know — an average, a class of 10,
+   a picture, a number line — have THEM do that version, and only then name it and
+   show the textbook form. (Expected value is a weighted average: "2 students got 0,
+   3 got 1, 4 got 2, 1 got 3 — what's the class average?" — not Σ x·P(x).)
 4. Teach the ACT MOVE for this question type — backsolving, plugging in numbers, estimating, eliminating, spotting the trap, or when to skip.
 ${transferBlock(transfer)}
 ${transfer && transfer.length
