@@ -1,104 +1,95 @@
 /**
- * Mangled sentence-head production bug (owner transcript, 2026-07-26).
+ * Mangled sentence heads (owner transcripts, 2026-07-26 and 2026-09-16).
  *
- * Two verbatim shapes shipped to a student:
- *   ", Jason! You're suggesting we multiply…"   (head eaten before the comma)
- *   "Alright, together. You've got…"            (middle of the sentence eaten)
+ * Three verbatim shapes shipped to students:
+ *   ", Jason! You're suggesting we multiply…"   (2026-07-26, head eaten)
+ *   "Alright, together. You've got…"            (2026-07-26, middle eaten)
+ *   "Great problem! It together."               (2026-09-16, trial page)
  *
- * Root cause: verify()'s canned-phrase scrub deleted banned transition
- * phrases ("let's work through this", "let's tackle this", …) wherever they
- * appeared, leaving the sentence's trimmings behind. The anchored opener
- * strips (false-affirmation, CANNED_OPENERS) could orphan a comma the same
- * way ("Exactly, Jason!" → ", Jason!").
+ * Root cause, all three: verify() had a scrub that deleted "canned transition"
+ * phrases ("let's work through this", "let's tackle it together", "let's dive
+ * into it", "moving on to") from wherever they sat. The model had built the
+ * sentence around the phrase, so what was left was not a sentence. The first
+ * fix made the deletion sentence-aware; the third shape arrived anyway.
  *
- * These tests pin: phrase removal is sentence-aware, stripping never orphans
- * punctuation or ships a decapitated sentence, and clean text is untouched.
+ * The scrub is gone. These phrases are filler, not a teaching error, and the
+ * prompt (OPENERS block, shared by open chat and course chat) now asks the
+ * model to sound like a tutor at the table rather than announce the teaching
+ * — a principle, not another phrase list, because a banned-phrase list is
+ * itself canned. A sentence never written needs no repair. What
+ * remains in verify() is the anchored opener strip at the head of the reply,
+ * which cannot orphan mid-sentence text, plus repairStrippedHead for the one
+ * seam it can leave (a vocative comma).
+ *
+ * Pinned here:
+ *   1. every historical shape now passes through verify() byte-for-byte —
+ *      no scrub means no mangling;
+ *   2. the scrub is not exported, so nothing can quietly wire it back in;
+ *   3. the prompt carries the ban, in the block both chat modes include;
+ *   4. the anchored opener strip and repairStrippedHead still behave.
  */
-const { verify, stripCannedTransitions, repairStrippedHead } = require('../../utils/pipeline/verify');
+const verifyModule = require('../../utils/pipeline/verify');
+const { verify, repairStrippedHead } = verifyModule;
 const { ACTIONS } = require('../../utils/pipeline/decide');
 const { MESSAGE_TYPES } = require('../../utils/pipeline/observe');
+const { SHARED_VOICE_BLOCKS, STATIC_RULES } = require('../../utils/promptCompact');
 
-describe('production shape 1: ", Jason! You\'re suggesting…"', () => {
-  test('transition phrase heading the sentence drops the whole filler sentence', async () => {
-    const v = await verify(
-      "Let's work through this, Jason! You're suggesting we multiply both sides by 4.",
-      { firstName: 'Jason' }
-    );
-    expect(v.text).toBe("You're suggesting we multiply both sides by 4.");
-    expect(v.flags).toContain('canned_transitions_stripped');
+describe('replies with a transition phrase pass through verify() untouched', () => {
+  test.each([
+    // 2026-09-16 trial page — became "Great problem! It together."
+    "Great problem! Let's dive into it together.\n\nWhat do you think is the first step to take when solving \\(2(x - 3) = 10\\)?",
+    // 2026-07-26 — became ", Jason! You're suggesting…"
+    "Let's work through this, Jason! You're suggesting we multiply both sides by 4.",
+    // 2026-07-26 — became "Alright, together. You've got…"
+    "Alright, let's work through this together. You've got \\(3x + 5 = 20\\).",
+    "Now let's tackle this, Jason! What does the 5 tell you?",
+    "Let's tackle it step by step. What is 2 times x?",
+    "Let's break this down: first, find the GCF of 12 and 18.",
+    'Moving on to quadratics, remember the vertex form.',
+    "You nailed the setup, so let's tackle it together. What is 2 times x?",
+  ])('%s', async (reply) => {
+    const v = await verify(reply, { firstName: 'Jason' });
+    expect(v.text).toBe(reply);
+    expect(v.flags).not.toContain('canned_transitions_stripped');
   });
 
+  test('the scrub is not exported', () => {
+    expect(verifyModule.stripCannedTransitions).toBeUndefined();
+  });
+});
+
+describe('the fix lives in the prompt, as a principle rather than a phrase list', () => {
+  // A blacklist of phrases is itself canned: the model dodges those exact
+  // strings and reaches for the next stilted substitute. The prompt asks for
+  // the behaviour instead — sound like the tutor at the table.
+  test('the shared OPENERS block asks the model not to announce teaching before doing it', () => {
+    expect(SHARED_VOICE_BLOCKS).toMatch(/announce the teaching before doing it/);
+    expect(SHARED_VOICE_BLOCKS).toMatch(/Write the way that tutor talks/);
+  });
+
+  test('open chat carries it (course chat includes SHARED_VOICE_BLOCKS, see courseVoiceBlocks.test.js)', () => {
+    expect(STATIC_RULES).toMatch(/announce the teaching before doing it/);
+  });
+});
+
+describe('the anchored opener strip still cannot orphan a head', () => {
   test('false-affirmation strip does not orphan the vocative comma', async () => {
     const v = await verify(
-      "Exactly, Jason! Which number should we look at first?",
+      'Exactly, Jason! Which number should we look at first?',
       { action: ACTIONS.HINT, messageType: MESSAGE_TYPES.IDK, firstName: 'Jason' }
     );
     expect(v.text).not.toMatch(/^[,;]/);
     expect(v.text).toMatch(/^Jason! Which number/);
     expect(v.flags).toContain('false_affirmation_stripped');
   });
-});
 
-describe('production shape 2: "Alright, together. You\'ve got…"', () => {
-  test('mid-sentence transition drops the whole filler sentence, not just the phrase', async () => {
-    const v = await verify(
-      "Alright, let's work through this together. You've got \\(3x + 5 = 20\\).",
-      {}
-    );
-    expect(v.text).toBe("You've got \\(3x + 5 = 20\\).");
-    expect(v.text).not.toMatch(/Alright,\s*together/);
-    expect(v.flags).toContain('canned_transitions_stripped');
+  test('a canned opener at the head of the reply is stripped cleanly', async () => {
+    const v = await verify("Great question! What is 12 divided by 3?", {});
+    expect(v.text).toBe('What is 12 divided by 3?');
+    expect(v.flags).toContain('canned_opener_stripped');
   });
 
-  test('"let\'s tackle this" variant with a vocative', async () => {
-    const v = await verify(
-      "Now let's tackle this, Jason! What does the 5 tell you?",
-      { firstName: 'Jason' }
-    );
-    expect(v.text).toBe('What does the 5 tell you?');
-  });
-});
-
-describe('sentence-aware scrub keeps real content', () => {
-  test('substantive remainder survives with repaired seams', () => {
-    const { text, changed } = stripCannedTransitions(
-      "Now let's break this down: first, find the GCF of 12 and 18.",
-      'Jason'
-    );
-    expect(changed).toBe(true);
-    expect(text).toBe('First, find the GCF of 12 and 18.');
-  });
-
-  test('phrase embedded in a content-bearing sentence never leaves a lowercase orphan head', () => {
-    const { text } = stripCannedTransitions(
-      'Moving on to quadratics, remember the vertex form.',
-      null
-    );
-    // "Moving on to" was the sentence's spine, so "quadratics" was its object,
-    // not the next clause's subject — only the clause after the comma stays.
-    expect(text).toBe('Remember the vertex form.');
-  });
-
-  test('surrounding sentences are untouched when the filler sentence drops', () => {
-    const { text } = stripCannedTransitions(
-      "Nice work on that step. Let's tackle this together. What is 12 divided by 3?",
-      null
-    );
-    expect(text).toBe('Nice work on that step. What is 12 divided by 3?');
-  });
-
-  test('decimals do not split a sentence', () => {
-    const { text } = stripCannedTransitions(
-      "Let's work through this with 3.5 as the rate. What is 3.5 times 4?",
-      null
-    );
-    expect(text).not.toMatch(/^\s*[,.]/);
-    expect(text).toContain('What is 3.5 times 4?');
-  });
-});
-
-describe('the orphaned-head safety net (§8e)', () => {
-  test('a system tag heading the reply cannot leave its comma behind', async () => {
+  test('a system tag heading the reply cannot leave its comma behind (§8e)', async () => {
     const v = await verify('<AWARD_XP:5,effort>, nice work on setting that up. What comes next?', {});
     expect(v.text).toBe('Nice work on setting that up. What comes next?');
   });

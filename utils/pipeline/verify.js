@@ -349,48 +349,21 @@ function extractSystemTags(responseText) {
   return { text, extracted };
 }
 
-// ── Canned phrase patterns (§2f) ──
-// The system prompt bans these, but the model slips them in regularly.
-// Stripped instead of regenerated (cheaper, faster).
-const CANNED_OPENERS = /^(great\s+question[.!]*\s*|that'?s\s+a\s+great\s+question[.!]*\s*|let'?s\s+dive\s+(right\s+)?in[.!]*\s*|i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?[.!]*\s*|i\s+can\s+(?:definitely|certainly)\s+help\s+(?:you\s+)?with\s+that[.!]*\s*|absolutely[.!]*\s+(?=\w)|certainly[.!]*\s+(?=\w)|of\s+course[.!]*\s+(?=\w)|no\s+problem[.!]*\s+(?=\w))/i;
-// "this|that|it" variants: production shipped "Let's work through it together…"
-// (2026-07-26 screenshot) because the ban only knew "work through this".
+// ── Canned opener (§2f) ──
+// OPENERS_BLOCK in promptCompact bans these; when the model slips one in
+// anyway it is stripped rather than regenerated (cheaper, faster). Anchored to
+// the START of the reply on purpose — the only safe place to delete words.
 //
-// The phrase swallows its own object and tail ("into it", "this one",
-// "together", "step by step", a chained "and tackle it"). Those words are the
-// phrase's complements, not the sentence's content — when the pattern stopped
-// at "dive into", the trial tutor shipped "Great problem! It together."
-// (2026-09-16 screenshot): "it together" survived as the sentence.
-const CANNED_OBJECT = String.raw`(?:\s+(?:this|that|it)(?:\s+one)?)`;
-const CANNED_VERB = String.raw`(?:break${CANNED_OBJECT}\s+down|tackle${CANNED_OBJECT}|work\s+through${CANNED_OBJECT}|dive\s+(?:right\s+)?in(?:to)?${CANNED_OBJECT}?)`;
-const CANNED_TAIL = String.raw`(?:\s+together)?(?:,?\s+step[\s-]+by[\s-]+step)?`;
-const CANNED_TRANSITIONS = new RegExp(
-  String.raw`\b((?:now,?\s+)?let'?s\s+${CANNED_VERB}(?:\s+and\s+${CANNED_VERB})*${CANNED_TAIL}|moving\s+on\s+to|with\s+that\s+said|having\s+said\s+that)`,
-  'gi'
-);
-
-// Words that carry no content on their own — a sentence reduced to these
-// after phrase removal is packaging, not pedagogy, and gets dropped whole.
-const TRANSITION_FILLER_WORDS = new Set([
-  'alright', 'okay', 'ok', 'so', 'now', 'well', 'then', 'and', 'but',
-  'together', 'great', 'awesome', 'everyone', 'team', 'folks', 'again',
-  // Function words a banned phrase can leave behind ("it together", "this
-  // one", "into it"). None of them can carry a sentence on its own.
-  'it', 'this', 'that', 'one', 'in', 'into', 'to', 'on', 'with', 'the', 'a',
-  'an', 'we', 'us', 'you', 'all', 'right', 'here', 'there',
-]);
-
-// The words that may precede a banned phrase without making it mid-sentence:
-// interjections and a vocative ("Alright, Jason, let's tackle this…"). If the
-// prefix is only these, the phrase is the sentence's subject and verb.
-function hasContentWords(fragment, firstName) {
-  const fn = (firstName || '').toLowerCase();
-  const words = fragment.match(/[A-Za-z']+/g) || [];
-  return words.some((w) => {
-    const lower = w.toLowerCase();
-    return !TRANSITION_FILLER_WORDS.has(lower) && lower !== fn;
-  });
-}
+// There used to be a second scrub here for mid-reply transitions ("let's
+// break this down", "let's tackle it together", "moving on to"). It was
+// removed 2026-09-16. Deleting a phrase from the middle of a sentence the
+// model built around it cannot be made safe: it shipped ", Jason! You're…"
+// and "Alright, together." (2026-07-26) and then "Great problem! It together."
+// on the trial page (2026-09-16), each after a fix to the previous shape.
+// Those phrases are filler, not a teaching error — the prompt asks the model
+// not to write them (OPENERS_BLOCK), and a sentence the model never wrote
+// needs no repair. Do not reintroduce a mid-sentence phrase deletion here.
+const CANNED_OPENERS = /^(great\s+question[.!]*\s*|that'?s\s+a\s+great\s+question[.!]*\s*|let'?s\s+dive\s+(right\s+)?in[.!]*\s*|i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?[.!]*\s*|i\s+can\s+(?:definitely|certainly)\s+help\s+(?:you\s+)?with\s+that[.!]*\s*|absolutely[.!]*\s+(?=\w)|certainly[.!]*\s+(?=\w)|of\s+course[.!]*\s+(?=\w)|no\s+problem[.!]*\s+(?=\w))/i;
 
 /**
  * After a leading phrase has been stripped, the sentence head may be an
@@ -446,150 +419,6 @@ function stripPresupposedError(text) {
   out = out.trim();
   if (!out) return { text: original, changed: false };
   return { text: out, changed: out !== original.trim() };
-}
-
-// Sentence boundary scanners for the transition scrub. A '.' only counts as
-// a boundary when followed by whitespace (or end), so decimals like 3.5
-// never split a sentence.
-function sentenceStartIndex(text, from) {
-  for (let j = from - 1; j >= 0; j--) {
-    const c = text[j];
-    if (c === '\n') return j + 1;
-    if ('.!?:'.includes(c) && /\s/.test(text[j + 1] || '')) {
-      let k = j + 1;
-      while (k < from && /\s/.test(text[k])) k++;
-      return k;
-    }
-  }
-  return 0;
-}
-
-function sentenceEndIndex(text, from) {
-  for (let j = from; j < text.length; j++) {
-    const c = text[j];
-    if (c === '\n') return j;
-    if ('.!?:'.includes(c) && (j + 1 === text.length || /\s/.test(text[j + 1]))) return j + 1;
-  }
-  return text.length;
-}
-
-/**
- * Is anything left of this sentence once the banned phrase is gone?
- * A bare vocative (", Jason!") and filler words are not content.
- */
-function remainderHasContent(remainder, firstName) {
-  if (/^\s*,\s*[A-Z][a-zA-Z]*\s*[!.?]*\s*$/.test(remainder.trim())) return false;
-  // A dangling purpose clause is packaging too: removing "let's work through
-  // it together" from "…together to ensure we understand each step clearly!"
-  // must not keep "To ensure we understand each step clearly!" as a sentence.
-  const lead = remainder.replace(/^[\s,;:]+/, '');
-  if (/^(?:to|so|in\s+order\s+to)\b/i.test(lead)) return false;
-  return hasContentWords(remainder, firstName);
-}
-
-/**
- * When the banned phrase WAS the sentence's subject and verb ("Let's tackle
- * this using the distributive property."), whatever follows it is that verb's
- * complement — an adverbial fragment with no clause of its own. Word-counting
- * it is the wrong test: "it together", "step by step", "this one, Jason" all
- * have words and none of them is a sentence. The only remainder worth keeping
- * is a separate clause introduced by a comma or dash ("Moving on to
- * quadratics, remember the vertex form."), and only when that clause is more
- * than a vocative.
- */
-function spineRemainderClause(remainder, firstName) {
-  const idx = remainder.search(/[,;—–]|\s-\s/);
-  if (idx < 0) return null;
-  let clause = remainder.slice(idx + 1);
-  const fn = (firstName || '').toLowerCase();
-  // A vocative heading the clause was the phrase's, not the clause's.
-  if (fn) clause = clause.replace(new RegExp(String.raw`^\s*${fn}\s*[,!]\s*`, 'i'), '');
-  const words = (clause.match(/[A-Za-z']+/g) || []).filter((w) => {
-    const lower = w.toLowerCase();
-    return !TRANSITION_FILLER_WORDS.has(lower) && lower !== fn;
-  });
-  // Two content words is the floor: "starting with the parentheses" stays
-  // (the next sentence's "them" may point at it), "Jason" alone does not.
-  return words.length >= 2 ? clause : null;
-}
-
-/**
- * Seam repair for a sentence that kept its content after the phrase came out:
- * "You nailed the setup, so let's tackle it together." → "You nailed the setup."
- * not "You nailed the setup, so." Removes a conjunction or comma left hanging
- * before the terminal punctuation, then the usual orphaned-head repair.
- */
-function repairStrippedSentence(remainder) {
-  return repairStrippedHead(
-    remainder
-      .replace(/\s*,(\s*,)+/g, ',')
-      .replace(/,\s*\b(so|and|but|then)\b\s*,\s*/gi, ', $1 ')
-      .replace(/(?:,\s*)?\b(?:so|and|but|then|now|alright|okay|ok)\s*(?=[.!?]\s*$)/i, '')
-      .replace(/,\s*(?=[.!?]\s*$)/, '')
-      .replace(/\s+([,.!?;:])/g, '$1')
-      .replace(/ {2,}/g, ' ')
-  );
-}
-
-/**
- * Remove banned transition phrases WITHOUT mangling the sentence they sit in.
- *
- * The old scrub replaced the phrase with '' wherever it appeared. When the
- * phrase was the spine of its sentence, deletion left the trimmings behind
- * (two live examples, production 2026-07-26):
- *   "Let's work through this, Jason! You're…"         → ", Jason! You're…"
- *   "Alright, let's work through this together. You…" → "Alright, together. You…"
- *
- * So the scrub is sentence-aware: find the sentence containing the phrase,
- * delete the phrase, and if what's left carries no content (filler words, a
- * bare vocative) drop the whole sentence. If real content remains, keep it
- * and repair the seams — orphaned commas, doubled spaces, capitalization.
- */
-function stripCannedTransitions(text, firstName) {
-  const finder = new RegExp(CANNED_TRANSITIONS.source, 'gi');
-  const ranges = [];
-  let m;
-  while ((m = finder.exec(text)) !== null) {
-    const a = sentenceStartIndex(text, m.index);
-    const b = sentenceEndIndex(text, finder.lastIndex);
-    const last = ranges[ranges.length - 1];
-    if (last && a <= last.b) last.b = Math.max(last.b, b);
-    else ranges.push({ a, b });
-  }
-  if (ranges.length === 0) return { text, changed: false };
-
-  let out = text;
-  for (let i = ranges.length - 1; i >= 0; i--) {
-    const { a, b } = ranges[i];
-    const sentence = out.slice(a, b);
-    const phraseRx = new RegExp(CANNED_TRANSITIONS.source, 'gi');
-    const first = phraseRx.exec(sentence);
-    // Is the phrase the spine of its sentence, or embedded in a real clause?
-    const isSpine = !first || !hasContentWords(sentence.slice(0, first.index), firstName);
-    const remainder = sentence.replace(new RegExp(CANNED_TRANSITIONS.source, 'gi'), '');
-    let replacement = '';
-    if (isSpine) {
-      // Only a separate clause survives, and only that clause — the words
-      // between the phrase and the break were its complement.
-      const clause = spineRemainderClause(remainder, firstName);
-      if (clause) replacement = repairStrippedSentence(clause);
-    } else if (remainderHasContent(remainder, firstName)) {
-      replacement = repairStrippedSentence(remainder);
-    }
-    let tail = out.slice(b);
-    if (!replacement) {
-      tail = tail.replace(/^[ \t]+/, '');
-      if (/\n\s*$/.test(out.slice(0, a))) tail = tail.replace(/^\s+/, '');
-      // The dropped sentence may have introduced the one that follows
-      // ("…break this down: first, …") — re-capitalize its head.
-      if (/^[a-z][a-z]/.test(tail)) tail = tail.charAt(0).toUpperCase() + tail.slice(1);
-    }
-    out = out.slice(0, a) + replacement + tail;
-  }
-  // A dropped sentence can leave its leading space stranded before a
-  // newline ("Great problem! \n\n…").
-  out = out.replace(/[ \t]+(?=\n)/g, '').replace(/[ \t]+$/, '');
-  return { text: out, changed: out !== text };
 }
 
 /**
@@ -1279,19 +1108,12 @@ async function verify(responseText, context = {}) {
     }
   }
 
-  // ── 2f. Canned phrase scrub ──
-  // Patterns and helpers live at module scope (see stripCannedTransitions).
-  // Removal is sentence-aware: naive phrase deletion shipped mangled heads
-  // like ", Jason! You're suggesting…" to production (2026-07-26).
+  // ── 2f. Canned opener strip ──
+  // Anchored to the head of the reply (see CANNED_OPENERS). repairStrippedHead
+  // keeps a vocative comma from being orphaned (", Jason! …", 2026-07-26).
   if (CANNED_OPENERS.test(text.trim())) {
     text = repairStrippedHead(text.trim().replace(CANNED_OPENERS, ''));
     flags.push('canned_opener_stripped');
-  }
-
-  const transitionScrub = stripCannedTransitions(text, context.firstName);
-  if (transitionScrub.changed) {
-    text = transitionScrub.text.replace(/\n +/g, '\n').trim();
-    flags.push('canned_transitions_stripped');
   }
 
   // ── 3. IEP reading level enforcement ──
@@ -1844,6 +1666,5 @@ module.exports = {
   normalizeLatex,
   leadsWithDoubtOnCorrect,
   stripPresupposedError,
-  stripCannedTransitions,
   repairStrippedHead,
 };
