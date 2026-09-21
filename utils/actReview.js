@@ -243,8 +243,61 @@ function clientSafeBootcamp(bc) {
  * @param {Array} [transfer]  fresh problems on the same skill (Problem docs),
  *                            resolved server-side from miss.transferIds
  */
+/**
+ * Does this queued miss actually carry its question text?
+ *
+ * `prompt` is `it.content || p.prompt || ''` — the session item's stored copy,
+ * else the bank problem's. Both are optional, so a miss whose item predates
+ * content-stamping, or whose problemId no longer resolves in the bank (a
+ * re-key, a deactivation), lands in the queue with an EMPTY question and
+ * nothing anywhere says so.
+ */
+function hasQuestionText(miss) {
+  return !!(miss && typeof miss.prompt === 'string' && miss.prompt.trim());
+}
+
+/**
+ * The section for a miss we cannot actually show.
+ *
+ * The normal section ends with "YOU HAVE THE QUESTION; THE STUDENT DOES NOT …
+ * never ask them to share, paste, remember, or describe the question". Handed
+ * an empty prompt, that boxes the model in completely: it cannot present a
+ * question that isn't there, and it is forbidden to ask for one. Owner
+ * transcript, 2026-09-20 — the student asked for question 30 four times and got
+ * four contentless variations of "what have you tried so far?", then gave up
+ * with "I just know I got the wrong answer."
+ *
+ * So say the true thing instead. We still know which question it was, what
+ * category it is, and what they answered; the tutor can open with that and ask
+ * the student to read it out, which is an honest thirty seconds rather than a
+ * silent deadlock.
+ */
+function missingQuestionSection(miss, index, total) {
+  const cat = CATEGORY_LABEL[miss.category] || miss.category || 'ACT Math';
+  const where = miss.position != null ? `#${miss.position} from their test` : 'a question from their test';
+  return `
+
+====================================================================
+REVIEWING A MISSED QUESTION — ${where}  ·  ${index + 1} of ${total}  ·  ${cat}
+====================================================================
+THE QUESTION TEXT DID NOT LOAD on our side. You do NOT have it. This is the one
+case where you must ask the student for it.
+${groupLine(miss)}
+What you DO know: it was ${where}, the topic is ${cat}${miss.skipped
+    ? ', and they SKIPPED it — no answer was recorded'
+    : (miss.theirAnswer ? `, and they answered ${actDisplayLabel(miss.position, miss.theirAnswer)}` : '')}.
+
+Say so plainly and in ONE sentence — "I've got ${where} on your list as ${cat},
+but the question text didn't come through on my end" — then ask them to read it
+to you or snap a photo. Do NOT pretend to hold it, do NOT invent a question that
+fits the topic, and do NOT ask them what they tried on a question neither of you
+has in front of them. Once they give it to you, coach it normally.
+====================================================================`;
+}
+
 function reviewPromptSection(miss, index, total, transfer = []) {
   if (!miss) return '';
+  if (!hasQuestionText(miss)) return missingQuestionSection(miss, index, total);
   const cat = CATEGORY_LABEL[miss.category] || miss.category || 'ACT Math';
   // Letters shown to the tutor must be the letters the student SAW on their
   // form — the real ACT letters even questions F–G–H–J, and the runner
@@ -442,6 +495,7 @@ module.exports = {
   pickTransferItems,
   clientSafeBootcamp,
   reviewPromptSection,
+  hasQuestionText,
   reassessPromptSection,
   advanceReview,
   jumpToReview,

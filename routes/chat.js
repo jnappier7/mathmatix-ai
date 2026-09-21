@@ -1318,6 +1318,34 @@ async function runStudentTurn(req, res) {
                 const { currentMiss, reviewPromptSection, reassessPromptSection } = require('../utils/actReview');
                 if (bc.phase === 'review' && Array.isArray(bc.queue)) {
                     const miss = currentMiss(bc);
+                    // ── Last-chance repair of a miss with no question text ──
+                    // The queue stores `it.content || p.prompt || ''`, so a miss
+                    // whose item never carried content AND whose bank lookup came
+                    // up empty at /complete sits in the queue as a blank question
+                    // forever. Try the bank once more here, where we have DB
+                    // access: a problemId that resolves now (a transient failure,
+                    // a since-reseeded item) turns a dead review turn into a
+                    // normal one. Failure is not fatal — the prompt section and
+                    // the directive both handle a blank question honestly now.
+                    const { hasQuestionText } = require('../utils/actReview');
+                    if (miss && !hasQuestionText(miss) && miss.problemId) {
+                        try {
+                            const Problem = require('../models/problem');
+                            const { normalizeOptions } = require('../utils/mcOptions');
+                            const doc = await Problem.findOne({ problemId: miss.problemId })
+                                .select('problemId prompt options explanation answer').lean();
+                            if (doc && doc.prompt) {
+                                miss.prompt = doc.prompt;
+                                if (!(miss.options || []).length) miss.options = normalizeOptions(doc.options);
+                                if (!miss.explanation) miss.explanation = doc.explanation || '';
+                                logger.info('ACT review: recovered a missing question text from the bank', { problemId: miss.problemId, position: miss.position });
+                            } else {
+                                logger.warn('ACT review: queued miss has NO question text and the bank cannot supply it', { problemId: miss.problemId, position: miss.position });
+                            }
+                        } catch (pErr) {
+                            logger.warn('ACT review: question-text recovery failed', { problemId: miss.problemId, error: pErr.message });
+                        }
+                    }
                     if (miss) {
                         actReviewMiss = {
                             position: miss.position != null ? miss.position : null,
@@ -1326,6 +1354,11 @@ async function runStudentTurn(req, res) {
                             skipped: !!miss.skipped,
                             correctOption: miss.correctOption || null,
                             testSessionId: bc.testSessionId || null,
+                            // Whether the tutor is actually holding the question.
+                            // decide reads this: its ACT-review directive forbids
+                            // asking the student for the question, which is only
+                            // right when we have it.
+                            hasPrompt: hasQuestionText(miss),
                         };
                     }
                     // Transfer practice: the queue stores only problemIds, so the
