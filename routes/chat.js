@@ -1887,12 +1887,19 @@ async function runStudentTurn(req, res) {
         // Compact rail payload — lets the missed-number rail repaint on the very
         // turn <REVIEW_NEXT> fires instead of waiting for a page-load rehydrate.
         let actBootcampState = null;
-        const compactBootcamp = (bc) => (bc && bc.phase ? {
-            phase: bc.phase,
-            index: bc.index || 0,
-            round: bc.round || 1,
-            queue: (bc.queue || []).map((q) => ({ position: q.position != null ? q.position : null, status: q.status || 'pending', category: q.category || null })),
-        } : null);
+        // ONE bootcamp payload shape, shared with the page-load path
+        // (GET /api/course-sessions/... → clientSafeBootcamp). This used to be a
+        // second, thinner shape carrying only {position,status,category} per
+        // item, and the panel repaints from whichever arrived last: the student
+        // saw the missed question on the card at page load and it VANISHED the
+        // moment they sent their first message, because _missPreviewHtml bails
+        // on a queue entry with no `prompt`. From then on the question existed
+        // only in the chat stream — which is why a miss whose text failed to
+        // load had no second surface to fall back on.
+        // clientSafeBootcamp is what keeps the answer key out of the browser;
+        // it is the only shape allowed to leave the server.
+        const { clientSafeBootcamp } = require('../utils/actReview');
+        const compactBootcamp = (bc) => (bc && bc.phase ? clientSafeBootcamp(bc) : null);
 
         // ── Key dispute: the tutor's own derivation disagreed with the stored key ──
         // Recorded for the bank audit (GET /api/admin/item-disputes), never

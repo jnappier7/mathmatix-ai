@@ -17,6 +17,22 @@ const { normalizeOptions, resolveChoice, correctLabelOf, actDisplayLabel } = req
 // queue would have gone on ranking misses by the retired exam shape, silently.
 const DEFAULT_CATEGORY_WEIGHTS = require('../seeds/act-math-blueprint.json').categoryWeights;
 
+// skillId -> human name ("act-ratios-proportions" -> "Ratios & proportions").
+// The review list is grouped BY SKILL and now says so on screen, so the group
+// needs a name a student recognizes; the broad category ("Essential Skills")
+// is not one — 19 of the blueprint's 45 slots carry that label.
+const SKILL_NAME = (() => {
+  try { return require('../seeds/act-skill-names.json') || {}; } catch { return {}; }
+})();
+
+/** The name to head a review group with: the fine skill, else the category. */
+function groupLabelFor(miss) {
+  if (!miss) return 'Review';
+  return SKILL_NAME[miss.skillId]
+    || CATEGORY_LABEL[miss.category]
+    || (miss.category ? String(miss.category).replace(/-/g, ' ') : 'Review');
+}
+
 function optionText(options, label) {
   // Was `find(x => x.label === label)`, which returned null on every bank that
   // stores the letter as `id`/`letter` or not at all — so the tutor's review
@@ -142,6 +158,11 @@ function clusterBySkill(queue) {
     g.items.forEach((x, idx) => {
       out.push({
         ...x.m,
+        // Group identity, so the on-screen list can render THE QUEUE grouped
+        // and named instead of re-sorting the same misses into a second,
+        // contradictory order (see the rail in public/js/lessonTracker.js).
+        groupKey: g.key,
+        groupLabel: groupLabelFor(x.m),
         // Where this miss sits in its skill group — the prompt says "2 of 3
         // ratio questions you missed" so the student hears the pattern, and
         // the transfer check fires once at the end of the group rather than
@@ -488,8 +509,85 @@ function currentMiss(bootcamp) {
   return bootcamp.queue[bootcamp.index || 0] || null;
 }
 
+/**
+ * The review list as the student should see it: the QUEUE, in queue order,
+ * cut into its skill groups.
+ *
+ * There used to be two orderings on screen at once. The queue is clustered by
+ * skill (clusterBySkill) and `bootcamp.index` points into it, but the number
+ * rail re-sorted the same misses by test position and told the student "just
+ * keep going in order" — which was the one order review does NOT use. So the
+ * highlighted chip sat mid-rail with un-worked numbers to its left, and
+ * "up next: #30" contradicted a list that started at #2.
+ *
+ * One ordering now: this. The clustering stops being invisible machinery and
+ * becomes the label — "Ratios & proportions · #4, #9, #17" — which is the most
+ * useful thing the test result contains and the thing a student cannot see for
+ * themselves, because the questions were scattered across their answer sheet.
+ *
+ * `queueIndex` is the true index into bootcamp.queue: it is what /jump and
+ * /advance take, so display order can never desync from what a tap selects.
+ *
+ * @returns {Array<{key, label, items: Array<{queueIndex, position, status, current}>, total, reviewed, allDone}>}
+ */
+function reviewGroups(bootcamp) {
+  const queue = (bootcamp && Array.isArray(bootcamp.queue)) ? bootcamp.queue : [];
+  const cur = (bootcamp && bootcamp.index) || 0;
+  const groups = [];
+  const byKey = new Map();
+  queue.forEach((m, i) => {
+    if (!m) return;
+    const key = m.groupKey || m.skillId || m.category || `__${m.problemId || i}`;
+    let g = byKey.get(key);
+    if (!g) {
+      g = { key, label: m.groupLabel || groupLabelFor(m), items: [], total: 0, reviewed: 0, allDone: false };
+      byKey.set(key, g);
+      groups.push(g);           // push order === queue order, which is the point
+    }
+    g.items.push({
+      queueIndex: i,
+      position: m.position != null ? m.position : null,
+      status: m.status || 'pending',
+      current: i === cur,
+    });
+  });
+  groups.forEach((g) => {
+    g.total = g.items.length;
+    g.reviewed = g.items.filter((x) => x.status === 'reviewed').length;
+    g.allDone = g.total > 0 && g.reviewed === g.total;
+  });
+  return groups;
+}
+
+/**
+ * Mark the current miss reviewed and move on — the STUDENT's advance.
+ *
+ * <REVIEW_NEXT> from the tutor was the only thing that could advance the queue
+ * or mark anything reviewed, which made the model the sole keyholder: a turn
+ * where it simply forgot the tag left the student re-reading a question they
+ * were already done with, with no control on screen that could move them. The
+ * tag still works and still means what it meant (the tutor's judgement that the
+ * student has it). This is the same transition, available to the student.
+ */
+function markReviewedAndAdvance(bootcamp) {
+  const queue = (bootcamp && Array.isArray(bootcamp.queue)) ? bootcamp.queue : [];
+  if (!queue.length) return { ok: false, index: 0, done: false, total: 0 };
+  const cur = queue[(bootcamp && bootcamp.index) || 0];
+  if (cur) cur.status = 'reviewed';
+  const { index, done, total } = advanceReview(bootcamp);
+  // Move the pointer here too. Marking the status but leaving `index` to the
+  // caller is half a transition: call it twice without copying `index` back and
+  // it re-marks the same entry forever, which is exactly the stuck-on-one-
+  // question failure this function exists to end.
+  bootcamp.index = index;
+  return { ok: true, index, done, total };
+}
+
 module.exports = {
   buildReviewQueue,
+  reviewGroups,
+  groupLabelFor,
+  markReviewedAndAdvance,
   clusterBySkill,
   keepGroupFinalTransfersOnly,
   pickTransferItems,

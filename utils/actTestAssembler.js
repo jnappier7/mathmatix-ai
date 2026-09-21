@@ -350,12 +350,38 @@ function skillPool(blueprint = DEFAULT_BLUEPRINT) {
   return Object.values(blueprint.skillsByCategory || {}).flat();
 }
 
-/** Map a raw score (0..totalItems) to the approximate scaled 1-36 estimate. */
-function rawToScaled(raw, blueprint = DEFAULT_BLUEPRINT) {
+/**
+ * Map a raw score to the approximate scaled 1-36 estimate.
+ *
+ * `formLength` is how many items the student was ACTUALLY served, which is not
+ * always the blueprint's 45: assembleForm fills what the bank can fill and
+ * reports the rest as `gaps`, so a thin bank — or a student deep enough into
+ * the seen-ledger that the fresh items have run low — sits a SHORT form.
+ *
+ * Indexing the 45-row table with a short form's raw count silently caps the
+ * student. A perfect 28-item form scored table[28] = 24: not "a 24-level
+ * performance", but the highest number that form could physically return. And
+ * because each re-test excludes everything already served, forms get shorter as
+ * a student works through the bank — so the trend line the whole bootcamp loop
+ * exists to produce drifts DOWNWARD while the student improves. A student who
+ * aced their re-test was shown a drop and told it was their score.
+ *
+ * So normalize to the blueprint's length first: the table stays the scale, and
+ * a short form maps onto it proportionally. `shortForm` is set when that
+ * happened, so callers can say the estimate is off fewer questions instead of
+ * presenting it as an equal comparison.
+ */
+function rawToScaled(raw, blueprint = DEFAULT_BLUEPRINT, formLength = null) {
   const table = blueprint.scaledScore && blueprint.scaledScore.scaledByRaw;
   if (!Array.isArray(table)) return null;
-  const r = Math.max(0, Math.min(table.length - 1, Math.round(raw)));
-  return { scaled: table[r], approximate: true };
+  const full = table.length - 1;                    // the raw score a full form tops out at
+  const served = Number(formLength);
+  const usable = Number.isFinite(served) && served > 0 ? Math.min(served, full) : full;
+  const shortForm = usable < full;
+  // Proportional when short, identity when the form is full-length.
+  const projected = shortForm ? (Math.max(0, raw) / usable) * full : raw;
+  const r = Math.max(0, Math.min(full, Math.round(projected)));
+  return { scaled: table[r], approximate: true, shortForm, formLength: usable, blueprintLength: full };
 }
 
 module.exports = {
