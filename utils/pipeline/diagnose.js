@@ -11,7 +11,7 @@
  */
 
 const { parseCleanProblem, verifyAnswer, matchRootsInText } = require('../mathSolver');
-const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer } = require('./symbolicVerifier');
+const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer, trueArithmeticStatement } = require('./symbolicVerifier');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 const { hasMathematicalContent } = require('./verificationState');
 const { verifyDerivation } = require('../derivationVerifier');
@@ -172,6 +172,33 @@ function resolveProblemExpression(context) {
  *     which. Defer to the LLM verifier; if that also declines, the turn stays
  *     unverifiable and the tutor must ask instead of accuse.
  */
+/**
+ * The verdict for a student turn that checks out as a correct STEP rather than
+ * a final answer. `correctAnswer` stays null — there is nothing to reveal —
+ * and `isTransformation` tells decide() to affirm and move forward rather than
+ * run the close-out ladder. Mirrors the step-equivalence return below, which is
+ * the established shape for this.
+ */
+function correctStep(observation, context, answer, source) {
+  return {
+    type: 'correct',
+    isCorrect: true,
+    answer,
+    correctAnswer: null,
+    misconception: null,
+    evidence: {
+      isCorrect: true,
+      independenceLevel: estimateIndependence(observation, context),
+      misconceptionHit: null,
+      responseTimeCategory: null,
+      problemContext: observation.problemContext,
+      timestamp: new Date(),
+    },
+    verificationSource: source,
+    isTransformation: true,
+  };
+}
+
 async function diagnoseTransformation(observation, context) {
   const rawText = observation.raw || '';
 
@@ -214,6 +241,36 @@ async function diagnoseTransformation(observation, context) {
         : null,
       isTransformation: true,
     };
+  }
+
+  // A closed arithmetic claim the student wrote out ("0.8(1.25)=1") is true or
+  // false on its own terms — no posed problem needed, and no LLM. Checked here,
+  // ahead of the extractors below, because none of them can reach it: the claim
+  // states its own result, so extractBareExpression rejects it as not-a-step and
+  // the turn died as `no_answer` with the tutor left to supply the arithmetic
+  // itself. AFFIRM-ONLY — a false claim returns null and falls through.
+  const statedTrue = trueArithmeticStatement(rawText);
+  if (statedTrue !== null) {
+    console.log(`[Diagnose] Student stated a TRUE arithmetic fact: "${rawText}"`);
+    return correctStep(observation, context, statedTrue, 'symbolic:arithmetic_statement');
+  }
+
+  // The student re-asserting a bare number after the tutor posed a computation
+  // ("still 1", "I get 1"). observe extracts no answer from those words, so the
+  // answer path — which owns the posed-arithmetic check — never sees the turn.
+  // That is the turn AFTER the tutor has already doubted them, when a correct
+  // student most needs the pipeline to produce a verdict rather than let the
+  // doubt compound. AFFIRM-ONLY: a mismatch stays undecided.
+  const restated = bareNumericAnswer(rawText);
+  const recent = context.recentAssistantMessages || [];
+  if (restated != null && recent.length) {
+    const lastTutor = recent[recent.length - 1] && recent[recent.length - 1].content;
+    const posed = detectPosedArithmetic(lastTutor)
+      || detectPosedArithmetic(lastTutor, { allowTrailingVariable: true });
+    if (posed && equivalent(posed, restated) === true) {
+      console.log(`[Diagnose] Restated answer "${restated}" matches the posed "${posed}" -> correct`);
+      return correctStep(observation, context, restated, 'symbolic:arithmetic_restated');
+    }
   }
 
   // `no_answer` means "the student submitted no work of their own" — a question,
@@ -667,8 +724,44 @@ async function diagnose(observation, context = {}) {
             console.log(`[Diagnose] Arithmetic check: "${posed}" vs "${ans}" -> ${isCorrect ? 'correct' : 'incorrect'}`);
           }
         }
+
+        // Second pass, AFFIRM-ONLY: the tutor wrote the computation with a
+        // variable still attached to its last number — "we have 0.8 × 1.25P,
+        // now multiply those two numbers together" — which the strict scan
+        // discards whole. The student's correct "1" then had no target, and the
+        // tutor spent four turns insisting it was wrong, finally asserting 0.8
+        // is "10/8 or 5/4" (owner transcript, 2026-09-20).
+        //
+        // A relaxed candidate is a weaker read of what was asked ("2 + 3x" also
+        // yields "2+3"), so it may CONFIRM a match and must never reject: a
+        // mismatch here means the student answered a different question, not a
+        // wrong one, and leaving it undecided keeps the tutor asking.
+        if (isCorrect === null && ans != null) {
+          const loose = detectPosedArithmetic(lastTutor, { allowTrailingVariable: true });
+          if (loose && loose !== posed && equivalent(loose, ans) === true) {
+            isCorrect = true;
+            if (correctAnswer == null) correctAnswer = ans;
+            verificationSource = 'symbolic:arithmetic_coefficient';
+            console.log(`[Diagnose] Arithmetic check (coefficient form): "${loose}" vs "${ans}" -> correct`);
+          }
+        }
       }
     } catch (_) { /* never break diagnosis */ }
+  }
+
+  // ── Step 2a.6: A closed arithmetic claim the student wrote out ──
+  // "0.8(1.25)=1" — true or false on its own terms, whatever the pipeline did
+  // or didn't resolve as the posed problem. Last of the deterministic tiers and
+  // AFFIRM-ONLY, so it can only rescue a correct student from an undecided turn;
+  // a false claim returns null and falls through to the LLM verifier unchanged.
+  if (isCorrect === null && multiRoot === null) {
+    const statedTrue = trueArithmeticStatement(rawText);
+    if (statedTrue !== null) {
+      isCorrect = true;
+      if (correctAnswer == null) correctAnswer = statedTrue;
+      verificationSource = 'symbolic:arithmetic_statement';
+      console.log(`[Diagnose] Student stated a TRUE arithmetic fact: "${rawText}"`);
+    }
   }
 
   // ── Step 2b: LLM verification fallback ──

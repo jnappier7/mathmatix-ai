@@ -220,7 +220,17 @@ function symbolicVerify(p) {
 // arithmetic operators with NO letters attached, so it never mis-fires on
 // algebra (2x), dimensions ("7 cm, 2.6 cm"), or list/step numbers. Returns the
 // last such expression (the question usually trails the message), or null.
-function detectPosedArithmetic(text) {
+//
+// `allowTrailingVariable` relaxes ONE thing: the final number may be glued to a
+// variable. The tutor writes the coefficient product with the symbol still
+// attached — "we have 0.8 × 1.25P. Now multiply those two numbers together" —
+// and the strict lookahead threw the whole candidate away because of that P, so
+// the student's correct "1" went unverified and the tutor spent four turns
+// insisting it was wrong (owner transcript, 2026-09-20). Relaxed candidates are
+// AFFIRM-ONLY at the call site: "2 + 3x" also yields "2+3" under this flag, and
+// a coefficient sum is not what the tutor asked for, so a mismatch must never
+// become a rejection.
+function detectPosedArithmetic(text, { allowTrailingVariable = false } = {}) {
   if (text == null) return null;
   const s = String(text)
     // LaTeX operators FIRST — the system prompt mandates LaTeX for all math, so a
@@ -238,7 +248,11 @@ function detectPosedArithmetic(text) {
   // came back INCORRECT in production (AP Calculus AB, 2026-07-28). A candidate
   // whose first number is the exponent of a variable is a fragment of algebra,
   // not a posed computation, so drop it and keep looking at earlier candidates.
-  const re = /(?<![\w.$])-?\d+(?:\.\d+)?(?:\s*[*+/-]\s*-?\d+(?:\.\d+)?)+(?![\w.])/g;
+  // The trailing guard keeps a candidate from ending mid-number ("1.2" out of
+  // "1.25"); the strict form additionally refuses any letter after it.
+  const re = allowTrailingVariable
+    ? /(?<![\w.$])-?\d+(?:\.\d+)?(?:\s*[*+/-]\s*-?\d+(?:\.\d+)?)+(?![.\d])/g
+    : /(?<![\w.$])-?\d+(?:\.\d+)?(?:\s*[*+/-]\s*-?\d+(?:\.\d+)?)+(?![\w.])/g;
   const candidates = [];
   for (const match of s.matchAll(re)) {
     const before = s.slice(0, match.index).replace(/\s+$/, '');
@@ -265,12 +279,77 @@ function detectPosedArithmetic(text) {
   return expr;
 }
 
+// ── A self-contained arithmetic claim the student wrote out ──
+// "0.8(1.25)=1", "1.25 x 0.8 = 1", "so 6/2 = 3". The whole message is the
+// claim — both sides purely numeric, nothing but filler around it — so it is
+// decidable on its own terms, with no posed problem and no LLM.
+//
+// Why this exists: the pipeline could only check a student's number against a
+// target it had resolved. When it resolved none, a student restating a TRUE
+// calculation got no verdict at all, and the tutor filled the silence with its
+// own arithmetic — which on gpt-4o-mini is not reliable. Owner transcript,
+// 2026-09-20: "0.8(1.25)=1" (true) drew "it looks like there might be some
+// confusion with that calculation", and the tutor then told the student 0.8 is
+// "10/8 or 5/4".
+//
+// AFFIRM-ONLY by construction: a FALSE claim returns null, never a rejection,
+// so this tier can add a verdict but never manufacture a wrong one.
+// Returns the stated result as a string, or null.
+function trueArithmeticStatement(text) {
+  if (text == null) return null;
+  let s = String(text).trim();
+  if (!s) return null;
+  s = s.replace(/[−–—]/g, '-')
+    .replace(/\\times|\\cdot/g, '*').replace(/\\div/g, '/')
+    .replace(/\\left|\\right/g, '')
+    .replace(/\\[()[\]]/g, ' ').replace(/\$/g, '')
+    .replace(/×|·/g, '*').replace(/÷/g, '/')
+    // "1.25 x 0.8" — the times sign people actually type. Only between numbers,
+    // so the variable x is untouched.
+    .replace(/(\d)\s*[x]\s*(?=[\d.(])/gi, '$1*')
+    // Operators as students say them out loud.
+    .replace(/\b(?:times|multiplied\s+by)\b/gi, '*')
+    .replace(/\bdivided\s+by\b/gi, '/')
+    .replace(/\bplus\b/gi, '+').replace(/\bminus\b/gi, '-')
+    .replace(/\b(?:is|equals|equal to|makes|gives)\b/gi, '=')
+    .replace(ANSWER_LEAD_IN, '')
+    .replace(/[.!?]+$/, '')
+    .trim();
+  const sides = s.split('=');
+  if (sides.length !== 2) return null;
+  const [lhs, rhs] = sides.map((p) => p.trim());
+  if (!lhs || !rhs) return null;
+  // Purely numeric on both sides: digits, operators, parens, decimals only. A
+  // letter anywhere means this is algebra, not a closed arithmetic claim.
+  const NUMERIC_ONLY = /^[-+*/^()\s\d.,]+$/;
+  if (!NUMERIC_ONLY.test(lhs) || !NUMERIC_ONLY.test(rhs)) return null;
+  if (!/\d/.test(lhs) || !/\d/.test(rhs)) return null;
+  // The claim must COMPUTE something. "1 = 1" is not a calculation, and
+  // affirming it would hand credit for restating a number.
+  if (!/[-+*/^]|\d\s*\(/.test(lhs)) return null;
+  try {
+    const a = math.evaluate(lhs.replace(/,/g, ''));
+    const b = math.evaluate(rhs.replace(/,/g, ''));
+    if (typeof a !== 'number' || typeof b !== 'number') return null;
+    if (!isFinite(a) || !isFinite(b)) return null;
+    if (Math.abs(a - b) > 1e-9 * (1 + Math.abs(a))) return null;   // false claim -> no verdict
+    return String(b);
+  } catch (_) { return null; }
+}
+
+// A short lead-in that carries no math: the student restating the same number
+// after being doubted ("still 1", "I get 1", "it's 1"). Without this the letters
+// disqualified the message and a re-asserted CORRECT answer stayed unverified —
+// which is precisely the turn where the tutor has already implied it is wrong
+// and most needs a verdict (owner transcript, 2026-09-20).
+const ANSWER_LEAD_IN = /^(?:(?:and|but|so|no|nope|yes|yeah|ok|okay|well|hmm|um)\b[,\s]*)*(?:(?:(?:it|that)(?:'| i)?s|i\s+(?:get|got|still\s+get|have)|(?:the\s+)?answer\s+is|still|again|same|it\s+is)\b[:,\s]*)?/i;
+
 // The student's answer as a bare number, or null if it's an expression/prose.
 // "150" -> "150", "72 cm^3" -> "72", "-2" -> "-2"; "50*3=150" / "x^2" -> null.
 function bareNumericAnswer(text) {
   if (text == null) return null;
   // strip a trailing unit (+ optional exponent) so "72 cm^3" reads as one number
-  const t = String(text).replace(/[−–—]/g, '-')
+  const t = String(text).replace(/[−–—]/g, '-').replace(ANSWER_LEAD_IN, '')
     .replace(/\s*(cm|mm|km|m|in|ft|yd|units?|degrees?|°)\s*(\^?\s*\d+|[²³¹])?\s*[.!]*$/i, '')
     .trim();
   if (/[a-z]/i.test(t)) return null;                  // leftover letters -> prose / variable (x^2)
@@ -280,4 +359,4 @@ function bareNumericAnswer(text) {
   return nums[0];
 }
 
-module.exports = { symbolicVerify, equivalent, verifyAntiderivative, verifyEquationSolution, extractEquation, latexToExpr, extractIntegral, detectPosedArithmetic, bareNumericAnswer };
+module.exports = { symbolicVerify, equivalent, verifyAntiderivative, verifyEquationSolution, extractEquation, latexToExpr, extractIntegral, detectPosedArithmetic, bareNumericAnswer, trueArithmeticStatement };
