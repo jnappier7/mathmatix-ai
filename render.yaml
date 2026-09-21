@@ -141,3 +141,37 @@ services:
         sync: false
       - key: OPENAI_API_KEY
         sync: false
+
+  # ── Item difficulty calibration (scheduled, MONTHLY) ──────────────────────
+  # Re-rates problem difficulty from real student responses with a Rasch fit
+  # (utils/itemCalibration.js). Monthly, not nightly: an item needs ~25
+  # responses before its estimate means anything, and at a few hundred ACT
+  # forms a month that threshold is crossed by a handful of items at a time.
+  # Running it nightly would just re-fit the same matrix and re-stamp the same
+  # numbers. Monthly on the 1st at 09:00 UTC — after the archive (04:30) and
+  # the transcript miner (07:00), before the digest (13:00).
+  #
+  # SAFE TO RUN UNATTENDED because it declines three ways: items under n=25 are
+  # reported and never written; items that look mis-keyed rather than hard are
+  # never written and are pushed to Sentry for a human; and a fit that has not
+  # settled writes nothing at all. Shrinkage is toward the AUTHORED difficulty
+  # (recovered from calibration.priorDifficulty), so twelve runs a year do not
+  # walk the bank off its scale. See the header of the script.
+  #
+  # --require ./instrument.js is load-bearing here for the SAME reason as the
+  # two crons above, plus one more: the mis-key review queue is delivered through
+  # Sentry. Without it that queue exists only in a log nobody opens.
+  # NOTE: the env vars below are sync:false — set them on THIS cron service in
+  # the Render dashboard (Render can copy from the web service, or use an env group).
+  - type: cron
+    name: mathmatix-calibrate-items
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    schedule: "0 9 1 * *"
+    dockerCommand: npm run cron:calibrate-items
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
