@@ -895,7 +895,15 @@ HARD RULES for this greeting:
     instruction += `\nWHERE THEY ARE: They have finished going back over the questions they missed. The next move is a FRESH timed practice ACT to measure their gains. Your greeting: welcome ${firstName} back, tell them they've worked through their misses and it's time to re-test to see how much they've moved, and invite them to start the fresh test when ready. Do NOT teach anything.`;
   } else if (bc.phase === 'review') {
     const total = Array.isArray(bc.queue) ? bc.queue.length : 0;
-    const done = Math.min(bc.index || 0, total);
+    // Count the items actually REVIEWED, never bc.index. The index is a
+    // pointer into the queue, and /bootcamp/jump moves it without reviewing
+    // anything, so the old `Math.min(bc.index || 0, total)` greeted a student
+    // who had jumped to slot 17 with "17 of 22 done" after reviewing one.
+    // Every other reader of this state counts by status (actReview.reviewGroups,
+    // lessonTracker) — this was the one place that disagreed.
+    const done = Array.isArray(bc.queue)
+      ? bc.queue.filter((q) => q && q.status === 'reviewed').length
+      : 0;
     instruction += `\nWHERE THEY ARE: REVIEW phase — going back through the questions they missed on their practice ACT (${done} of ${total} done so far). Your greeting:
 1. Welcome ${firstName}${bc.round > 1 ? ' back' : ''} in one line.
 ${strong ? `2. Give a quick nod to what they're already strong on (${strong}).\n` : ''}${focus ? `${strong ? '3' : '2'}. Name where you're focusing — ${focus} — because that's where they lost the most points.\n` : ''}Then tell them you'll go through their missed questions one at a time and invite them to say "ready" (or ask you anything) to pull up the first one. Do NOT present the question yourself — the next turn does that.`;

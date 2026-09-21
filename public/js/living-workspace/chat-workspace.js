@@ -490,8 +490,24 @@
           else if (vm && vm.mathematicallyValid === false) box.classList.add('lws-blank-bad');
           else box.classList.add('lws-blank-open');   // tutor decides — stay neutral
         }
-        var resp = result && result.response;
-        var text = resp && (resp.text || resp.message || (resp.response && resp.response.text));
+        // Only a 2xx carries tutor speech. On any non-2xx the body is an ERROR
+        // envelope from utils/apiResponse.fail(), whose `message` is written for
+        // a developer, not a student: /api/student-moves sits behind isStudent,
+        // so a teacher/admin preview, an impersonated session or a demo clone
+        // gets 403 "Forbidden: Students only." — which shipped into the ACT
+        // bootcamp transcript as a tutor bubble (owner report, 2026-09-21).
+        // A lapsed session (401) and a quota block (402/429) leak the same way.
+        // The blank is already painted neutral above, so bailing here just means
+        // the tutor says nothing — the right failure for an unreadable reply.
+        if (!result || !result.ok) {
+          if (window.console && console.warn) {
+            console.warn('[workspace] student-move failed:', result && result.status);
+          }
+          return;
+        }
+        var resp = result.response;
+        // `message` is deliberately NOT in this chain — it is the error channel.
+        var text = resp && (resp.text || (resp.response && resp.response.text));
         if (text && typeof window.appendMessage === 'function') {
           window.appendMessage(text, 'ai');
         }
