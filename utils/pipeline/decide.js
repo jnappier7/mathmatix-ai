@@ -728,6 +728,29 @@ function decideCore(observation, diagnosis, context) {
     return decision;
   }
 
+  // ── A verified-correct STEP that observe did not call an answer attempt ──
+  // Work written as a claim ("0.8(1.25)=1") or re-asserted in words ("still 1")
+  // carries no extractable answer, so observe files it as general math and the
+  // correctness block below never sees it — the turn reached here with a
+  // verdict of `correct` in hand and decided CONTINUE_CONVERSATION, which says
+  // nothing about the work and leaves the tutor free to doubt it. That is how a
+  // student who had the arithmetic right was told four times running that they
+  // did not (owner transcript, 2026-09-20).
+  //
+  // Gated on a real verdict, so an unverifiable step is untouched and still
+  // falls through to the neutral paths below.
+  if (diagnosis.isTransformation && diagnosis.isCorrect === true
+      && msgType !== MESSAGE_TYPES.ANSWER_ATTEMPT) {
+    decision.action = ACTIONS.CONFIRM_CORRECT;
+    decision.directives.push(
+      'VERIFIED CORRECT STEP: the student\'s work this turn has been checked independently and it is right.',
+      'Say so plainly in your FIRST sentence. Do NOT ask them to re-check it, re-do it, walk you through it, or "take another look" — there is nothing wrong with it.',
+      'If your own earlier turn implied this was wrong, correct yourself openly and briefly ("you\'re right, I had that wrong") — do not quietly move on.',
+      'Then take the lesson FORWARD: what this step means for the problem, or the next step. Do not re-pose the step they just finished.'
+    );
+    return decision;
+  }
+
   // ── Answer attempts — correctness-driven decisions ──
   if (msgType === MESSAGE_TYPES.ANSWER_ATTEMPT && diagnosis.type !== 'no_answer') {
     // ── Correct but incomplete: a multi-root problem with one root still missing ──

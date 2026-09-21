@@ -39,6 +39,7 @@ module.exports = {
     '<rootDir>/tests/unit/knowledgeTracer.test.js',
     '<rootDir>/tests/unit/workspace/scaffoldBlankMove.test.js',
     '<rootDir>/tests/unit/diagnoseArithmeticGuard.test.js',
+    '<rootDir>/tests/unit/trueArithmeticVerdict.test.js',
     '<rootDir>/tests/unit/diagnoseMultiLineAnswer.test.js',
     '<rootDir>/tests/unit/observeLatexAnswer.test.js',
     '<rootDir>/tests/unit/diagnoseMultiStep.test.js',
@@ -95,6 +96,11 @@ module.exports = {
     // untested). decide.js is where the tutor picks its move; a new decision
     // helper here arrives with a test or it doesn't arrive.
     './utils/pipeline/decide.js': { statements: 62, branches: 63, functions: 100, lines: 62 },
-    './utils/pipeline/diagnose.js': { statements: 62, branches: 57, functions: 68, lines: 62 },
+    // Measured 67.9/62.6/72.2/68.6 after the true-arithmetic tiers
+    // (trueArithmeticVerdict.test.js) — ratcheted. Those tiers are the pipeline's
+    // last line between a correct student and a tutor improvising arithmetic, and
+    // they fail SILENTLY: losing one costs a verdict, not an exception, and the
+    // turn goes out undecided with every language guard in verify.js disarmed.
+    './utils/pipeline/diagnose.js': { statements: 65, branches: 59, functions: 70, lines: 65 },
   },
 };
