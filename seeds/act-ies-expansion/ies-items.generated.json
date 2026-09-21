@@ -13198,5 +13198,1037 @@
   "source": "act-ies-expansion",
   "contentHash": "4fe090baae448f3fecd3813e474a6739bea0ef30adbe252a74c11e7297535108",
   "isActive": true
+ },
+ {
+  "problemId": "act-ies-avgmed-001",
+  "skillId": "act-average-median",
+  "prompt": "Over 5 games, a basketball player scored 14, 22, 9, 17, and 18 points. What was her average (arithmetic mean) number of points per game?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "15"
+   },
+   {
+    "label": "B",
+    "text": "16"
+   },
+   {
+    "label": "C",
+    "text": "17"
+   },
+   {
+    "label": "D",
+    "text": "80"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 1,
+  "gradeBand": "8-12",
+  "explanation": "The five scores total 14 + 22 + 9 + 17 + 18 = 80, and 80 ÷ 5 = 16. Choice D (80) stops at the total and never divides. Choice C (17) is the median — the middle value once the scores are ordered 9, 14, 17, 18, 22 — which is a different statistic.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "44cd124c5e447d21a8b7b1ac2af13a00a5e3613d88684e47985d83d1fad27b4d"
+ },
+ {
+  "problemId": "act-ies-avgmed-002",
+  "skillId": "act-average-median",
+  "prompt": "What is the median of the list 12, 7, 19, 4, and 11?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4"
+   },
+   {
+    "label": "B",
+    "text": "10.6"
+   },
+   {
+    "label": "C",
+    "text": "11"
+   },
+   {
+    "label": "D",
+    "text": "19"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 1,
+  "gradeBand": "8-12",
+  "explanation": "Order the list first: 4, 7, 11, 12, 19. With five values the median is the third, 11. Choice B (10.6) is the mean, not the median. Choosing 19 or 4 takes the largest or smallest value instead of the middle one, and the most common slip is reading the middle of the UNORDERED list (19).",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "a2629de0038b060f992810ca47d76e99a9a9e4435dd3d01bf64515761c24dbcf"
+ },
+ {
+  "problemId": "act-ies-avgmed-003",
+  "skillId": "act-average-median",
+  "prompt": "What is the median of the list 8, 3, 14, 6, 11, and 2?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6"
+   },
+   {
+    "label": "B",
+    "text": "7"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "8.5"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "With an even number of values the median is the average of the two middle ones. Ordered, the list is 2, 3, 6, 8, 11, 14, so the middle two are 6 and 8 and the median is (6 + 8) ÷ 2 = 7. Choices A and C take just one of the two middle values; choice D (8.5) is the mean.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "52732354930361858962e406a3c8231ce33403080216eba36b75350e4ccf46df"
+ },
+ {
+  "problemId": "act-ies-avgmed-004",
+  "skillId": "act-average-median",
+  "prompt": "The mean of 4 numbers is 31. Three of the numbers are 18, 27, and 44. What is the fourth number?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "35",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "29"
+   },
+   {
+    "label": "B",
+    "text": "31"
+   },
+   {
+    "label": "C",
+    "text": "35"
+   },
+   {
+    "label": "D",
+    "text": "124"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "If the mean of 4 numbers is 31, the four must total 4 × 31 = 124. The three given numbers total 18 + 27 + 44 = 89, so the fourth is 124 − 89 = 35. Choice D (124) stops at the total. Choice A (29) averages only the three given numbers. Choice B assumes the missing value must equal the mean, which is only true when the other values already average to it.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "a15fea41aa6e34dd297fae8e18b2fbbf019585075868edd844ec9b24a6422d21"
+ },
+ {
+  "problemId": "act-ies-avgmed-005",
+  "skillId": "act-average-median",
+  "prompt": "A student has quiz scores of 82, 91, and 76. What score on a fourth quiz would give the student an average of exactly 85?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "91",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "85"
+   },
+   {
+    "label": "B",
+    "text": "88"
+   },
+   {
+    "label": "C",
+    "text": "91"
+   },
+   {
+    "label": "D",
+    "text": "340"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Four quizzes averaging 85 must total 4 × 85 = 340. The first three total 82 + 91 + 76 = 249, so the fourth must be 340 − 249 = 91. Choice D (340) is the required total, not a single score. Choice A assumes scoring the target average keeps the average at the target, which only holds if the current average is already 85 — here it is 83.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "a2f303ba2fe635c7624e0296150ac6fcdcd7c2f011a4436ebe2ccc37fe8c4fcd"
+ },
+ {
+  "problemId": "act-ies-avgmed-006",
+  "skillId": "act-average-median",
+  "prompt": "The mean of 6 numbers is 20. When one number is removed, the mean of the remaining 5 numbers is 22. What number was removed?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "10"
+   },
+   {
+    "label": "C",
+    "text": "18"
+   },
+   {
+    "label": "D",
+    "text": "21"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Six numbers with mean 20 total 6 × 20 = 120. The remaining five with mean 22 total 5 × 22 = 110. The removed number is 120 − 110 = 10. Choice A (2) subtracts the two means. Note the mean went UP when the number was removed, so the removed value had to be below 20 — that alone rules out choice D.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "8e1a1e89df7a81db031d2fdf24283c1ad5a0e349df475fa6d610ee98495d9520"
+ },
+ {
+  "problemId": "act-ies-avgmed-007",
+  "skillId": "act-average-median",
+  "prompt": "In a class of 20 students, the 12 students in the morning section averaged 78 on a test and the 8 students in the afternoon section averaged 88. What was the average score for all 20 students?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "82",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "81"
+   },
+   {
+    "label": "B",
+    "text": "82"
+   },
+   {
+    "label": "C",
+    "text": "83"
+   },
+   {
+    "label": "D",
+    "text": "84"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Weight each section by its size: the morning section contributes 12 × 78 = 936 and the afternoon 8 × 88 = 704, for a total of 1,640 across 20 students, so 1,640 ÷ 20 = 82. Choice C (83) averages the two section averages as if the sections were the same size — the classic trap. Because the larger section scored lower, the true average must sit below 83.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "c69ffa1389d89cfbc86134f95c1f528e085dee3681664b6d6d7a5bc8bb8c85a6"
+ },
+ {
+  "problemId": "act-ies-avgmed-008",
+  "skillId": "act-average-median",
+  "prompt": "The table shows the number of pets owned by the 15 students in a club. What is the median number of pets?\n\n  Pets:     0   1   2   3\n  Students: 4   6   3   2",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "1.5"
+   },
+   {
+    "label": "C",
+    "text": "2"
+   },
+   {
+    "label": "D",
+    "text": "6"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "With 15 values the median is the 8th when they are listed in order. The first 4 students own 0 pets and the next 6 own 1 pet, so values 5 through 10 are all 1 — the 8th is 1. Choice D (6) reads the largest FREQUENCY instead of a data value. Choice C (2) takes the middle of the \"Pets\" row rather than the middle of the 15 students.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "97839d4e3ad01673b542ce4db97a2ba55488ddee4a99df9d33eb5b3e38565991"
+ },
+ {
+  "problemId": "act-ies-avgmed-009",
+  "skillId": "act-average-median",
+  "prompt": "A set of 7 numbers has a mean of 12. If each number in the set is increased by 4, what is the mean of the new set?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "12"
+   },
+   {
+    "label": "B",
+    "text": "16"
+   },
+   {
+    "label": "C",
+    "text": "28"
+   },
+   {
+    "label": "D",
+    "text": "84"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Adding 4 to every value adds 7 × 4 = 28 to the total, so the new total is 84 + 28 = 112 and the new mean is 112 ÷ 7 = 16 — the original mean plus 4. Choice D (84) is the original total. Choice C (28) is the total added. Shifting every value shifts the mean by the same amount; it does not multiply it.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "da3815e4b4086ab3f8a2870350479f863e7ef9d3fa09502a29e03b369ab92b2d"
+ },
+ {
+  "problemId": "act-ies-avgmed-010",
+  "skillId": "act-average-median",
+  "prompt": "The mean of 5 numbers is 30. Four of the numbers are 21, 34, 27, and 38. A sixth number is then added to the original five, and the mean of all 6 numbers is 32. What is the sixth number?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "42",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "30"
+   },
+   {
+    "label": "B",
+    "text": "42"
+   },
+   {
+    "label": "C",
+    "text": "44"
+   },
+   {
+    "label": "D",
+    "text": "192"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The original five total 5 × 30 = 150. Six numbers with mean 32 total 6 × 32 = 192, so the sixth number is 192 − 150 = 42. Choice D (192) stops at the new total. The four listed values are not needed — recognizing that the fifth number never has to be found is the point of the question. Choice C (44) comes from using the four listed values (120) plus a wrongly recovered fifth.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "6d09b6b20838e12956b3b7003761673ceac717d5fd3c3c14eb1d5ca95ee96ee8"
+ },
+ {
+  "problemId": "act-ies-avgmed-011",
+  "skillId": "act-average-median",
+  "prompt": "A list of 5 numbers is 6, 9, 14, 21, and x. For which value of x is the median of the list equal to 14?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "any value of x that is at least 14",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "9"
+   },
+   {
+    "label": "B",
+    "text": "12"
+   },
+   {
+    "label": "C",
+    "text": "14"
+   },
+   {
+    "label": "D",
+    "text": "any value of x that is at least 14"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "With 6, 9, 14, and 21 already placed, x becomes the fifth value and the median is the third. If x is 14 or larger, the ordered list has 6 and 9 below 14 and two values at or above it, so 14 sits third and is the median. If x were less than 14 the list would read x, 6, 9, 14, 21 (or similar) and the median would drop to 9. Choices A and B each place x below 14, which moves the median off 14.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "45d2afc72dcdeb49c487fcc51d8c4d18e24a5ccf84c4afa6253c4674ed25421e"
+ },
+ {
+  "problemId": "act-ies-avgmed-012",
+  "skillId": "act-average-median",
+  "prompt": "A data set of 9 values has a median of 40. The 4 smallest values are each increased by 10 and the 4 largest values are each decreased by 10. What happens to the median?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "It cannot be determined from the given information.",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "It increases by 10."
+   },
+   {
+    "label": "B",
+    "text": "It decreases by 10."
+   },
+   {
+    "label": "C",
+    "text": "It stays 40."
+   },
+   {
+    "label": "D",
+    "text": "It cannot be determined from the given information."
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "The median is the 5th value, which was not changed — but that is not enough. Raising the 4 smallest by 10 can push one of them above 40, and lowering the 4 largest by 10 can pull one below 40, which reorders the list and changes which value sits 5th. Whether that happens depends on values not given. Choice C is the tempting answer for exactly the reason it fails: the untouched middle value only stays the median if the ordering around it survives.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "4f7a6fff35bb28746d3a86d595a17bf8c75043a5a51babee1efc5e479b9a0af2"
+ },
+ {
+  "problemId": "act-ies-numforms-001",
+  "skillId": "act-number-forms",
+  "prompt": "Which of the following is equal to 3/8?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "0.375",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0.375"
+   },
+   {
+    "label": "B",
+    "text": "0.38"
+   },
+   {
+    "label": "C",
+    "text": "3.8"
+   },
+   {
+    "label": "D",
+    "text": "0.625"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 1,
+  "gradeBand": "8-12",
+  "explanation": "3 ÷ 8 = 0.375 exactly. Choice B (0.38) is that value rounded and so is not equal to it. Choice C (3.8) reads the fraction bar as a decimal point. Choice D (0.625) is 5/8, the complement of 3/8.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "ea0a5c4f2beaf022e91bda2b9a126029253107a74a2202a10c4a85eb8d432878"
+ },
+ {
+  "problemId": "act-ies-numforms-002",
+  "skillId": "act-number-forms",
+  "prompt": "A survey found that 0.6 of the respondents owned a bicycle. What percent of the respondents owned a bicycle?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "60%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0.6%"
+   },
+   {
+    "label": "B",
+    "text": "6%"
+   },
+   {
+    "label": "C",
+    "text": "60%"
+   },
+   {
+    "label": "D",
+    "text": "600%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 1,
+  "gradeBand": "8-12",
+  "explanation": "A decimal becomes a percent by multiplying by 100, so 0.6 = 60%. Choice B (6%) moves the decimal point only one place. Choice A treats the decimal as though it were already a percent. A quick check: 0.6 is more than half, so the answer must be more than 50%.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "a15d7ff773b3a4ffaf5c1f0c8c0b35cf0fa956ad67e416cc728935fe0f2ae9f0"
+ },
+ {
+  "problemId": "act-ies-numforms-003",
+  "skillId": "act-number-forms",
+  "prompt": "Between which two consecutive integers does √53 lie?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7 and 8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6 and 7"
+   },
+   {
+    "label": "B",
+    "text": "7 and 8"
+   },
+   {
+    "label": "C",
+    "text": "8 and 9"
+   },
+   {
+    "label": "D",
+    "text": "26 and 27"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Compare 53 to nearby perfect squares: 7² = 49 and 8² = 64. Since 49 < 53 < 64, √53 falls between 7 and 8. Choice D halves 53 instead of taking its square root — the most common misread of the radical.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "a060e81f701d43ec6d4f457cc5851c168c010b15f06677c704d233343000ea6c"
+ },
+ {
+  "problemId": "act-ies-numforms-004",
+  "skillId": "act-number-forms",
+  "prompt": "The mass of a certain particle is 4.5 × 10⁻⁵ grams. What is this mass written in standard decimal form?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "0.000045",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0.000045"
+   },
+   {
+    "label": "B",
+    "text": "0.00045"
+   },
+   {
+    "label": "C",
+    "text": "450,000"
+   },
+   {
+    "label": "D",
+    "text": "0.0000045"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A negative exponent moves the decimal point left, here 5 places: 4.5 becomes 0.000045. Choice B moves only 4 places. Choice C moves right, which is what a POSITIVE exponent would do and would make a subatomic particle heavier than a person.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "520dc97e448c230b8be738432914de2930cb771c19d71f04256f82d5def12f32"
+ },
+ {
+  "problemId": "act-ies-numforms-005",
+  "skillId": "act-number-forms",
+  "prompt": "Which of the following lists is in order from least to greatest?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5/8, 68%, 0.7",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0.7, 5/8, 68%"
+   },
+   {
+    "label": "B",
+    "text": "5/8, 68%, 0.7"
+   },
+   {
+    "label": "C",
+    "text": "68%, 5/8, 0.7"
+   },
+   {
+    "label": "D",
+    "text": "5/8, 0.7, 68%"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Convert to one form before comparing anything: 5/8 = 0.625, 68% = 0.68, and 0.7 = 0.700, so the order is 0.625 < 0.68 < 0.7. Choice D gets the smallest right and then ranks 0.7 below 68% by comparing the bare numerals 0.7 and 68 instead of their values. Choice A leads with 0.7, the largest. Choice C assumes a percent must be smallest because it is written as a part of 100.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "c674d310d59d082d87c603ffa749c0765a1ff580c78067deb7268084b1ca034b"
+ },
+ {
+  "problemId": "act-ies-numforms-006",
+  "skillId": "act-number-forms",
+  "prompt": "On a number line, the segment from 0 to 5 is divided into 10 segments of equal length by 9 evenly spaced points. Between which two of those points does √21 fall?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "The 9th point and 5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "The 8th and 9th points"
+   },
+   {
+    "label": "B",
+    "text": "The 9th point and 5"
+   },
+   {
+    "label": "C",
+    "text": "The 7th and 8th points"
+   },
+   {
+    "label": "D",
+    "text": "It falls exactly on the 9th point."
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Each segment has length 5 ÷ 10 = 0.5, so the 9th point sits at 9 × 0.5 = 4.5. Square the candidates instead of approximating the radical: 4.5² = 20.25 and 5² = 25, and 20.25 < 21 < 25, so √21 lies between 4.5 and 5. Choice D assumes 4.5² is 21 when it is 20.25, so the point is close but not exact. Choices A and C come from estimating √21 near 4.2 or below instead of anchoring it between the squares that bracket 21.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "10996158de874c1cf4f6b220aff9677738056c7f34c52af42535e2ce0d19d252"
+ },
+ {
+  "problemId": "act-ies-numforms-007",
+  "skillId": "act-number-forms",
+  "prompt": "A city has a population of 2.4 × 10⁵ people and a land area of 8 × 10² square miles. What is the population density, in people per square mile?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3 × 10²",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3 × 10²"
+   },
+   {
+    "label": "B",
+    "text": "3 × 10³"
+   },
+   {
+    "label": "C",
+    "text": "1.92 × 10⁸"
+   },
+   {
+    "label": "D",
+    "text": "3 × 10⁷"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Divide the coefficients and subtract the exponents: (2.4 ÷ 8) × 10^(5−2) = 0.3 × 10³ = 3 × 10², or 300 people per square mile. Choice C multiplies instead of dividing. Choice B keeps 10³ without renormalizing 0.3 to 3 × 10⁻¹, which is the step most often dropped.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "2cf385316c42624b4011d4e81071fe26ffa2c9f2b683214031d6aa5dd341f8cf"
+ },
+ {
+  "problemId": "act-ies-numforms-008",
+  "skillId": "act-number-forms",
+  "prompt": "Which of the following is NOT equal to 0.24?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2.4 × 10⁻²",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6/25"
+   },
+   {
+    "label": "B",
+    "text": "24%"
+   },
+   {
+    "label": "C",
+    "text": "2.4 × 10⁻²"
+   },
+   {
+    "label": "D",
+    "text": "12/50"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "2.4 × 10⁻² moves the decimal point TWO places left, giving 0.024 — one tenth of 0.24. Choices A, B and D are the same number in three different forms: 6/25 = 0.24, 24% = 0.24, and 12/50 reduces to 6/25 = 0.24. The trap is reading a negative exponent as \"make it a decimal\" without counting the places; 0.24 in scientific notation is 2.4 × 10⁻¹, not 10⁻².",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "88950b4eb1d73687854866053c6fe3da04f7f429ec7f06088bd86aab3e8824a9"
+ },
+ {
+  "problemId": "act-ies-numforms-009",
+  "skillId": "act-number-forms",
+  "prompt": "The repeating decimal 0.4̄ (0.444…) is equal to which of the following fractions?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4/9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4/9"
+   },
+   {
+    "label": "B",
+    "text": "2/5"
+   },
+   {
+    "label": "C",
+    "text": "4/10"
+   },
+   {
+    "label": "D",
+    "text": "44/100"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "For a single repeating digit d, 0.ddd… = d/9, so 0.444… = 4/9 ≈ 0.4444. Choices C (0.4) and D (0.44) are the decimal truncated after one or two places, which is close but not equal. Choice B (2/5) is also exactly 0.4. The repeating bar is what separates the exact value from its roundings.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "a5311d37beebb61d397b6f965a47f852e9a924b6a1597c9f4ac4026da052b442"
+ },
+ {
+  "problemId": "act-ies-numforms-010",
+  "skillId": "act-number-forms",
+  "prompt": "If √n is between 6 and 7, which of the following could be the value of n?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "45",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "13"
+   },
+   {
+    "label": "B",
+    "text": "36"
+   },
+   {
+    "label": "C",
+    "text": "45"
+   },
+   {
+    "label": "D",
+    "text": "49"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Square the bounds: 6² = 36 and 7² = 49, so n must satisfy 36 < n < 49. Only 45 falls strictly between. Choices B (36) and D (49) are the endpoints, where √n equals 6 or 7 rather than lying between them. Choice A (13) comes from adding 6 and 7 instead of squaring.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "a9a5ebcfac4493bbae2e9aee7a83dc0a206d327451330f2f025992f63c686876"
+ },
+ {
+  "problemId": "act-ies-numforms-011",
+  "skillId": "act-number-forms",
+  "prompt": "A recipe calls for 2/3 cup of flour for every 1/2 cup of sugar. Which of the following expresses the ratio of flour to sugar as a single number?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4/3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/3"
+   },
+   {
+    "label": "B",
+    "text": "3/4"
+   },
+   {
+    "label": "C",
+    "text": "4/3"
+   },
+   {
+    "label": "D",
+    "text": "7/6"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "A ratio is a quotient: (2/3) ÷ (1/2) = (2/3) × (2/1) = 4/3. Choice B (3/4) inverts the ratio, giving sugar to flour. Choice A multiplies the two fractions instead of dividing. Choice D adds them. Since more flour than sugar is used, the ratio must be greater than 1 — which rules out A and B immediately.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "4b9841faf3b2435f7d0997b5a756495c04b5b834dce669a9269a99f2695062ac"
+ },
+ {
+  "problemId": "act-ies-numforms-012",
+  "skillId": "act-number-forms",
+  "prompt": "Which of the following is NOT equal to 16/5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "√10",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3.2"
+   },
+   {
+    "label": "B",
+    "text": "320%"
+   },
+   {
+    "label": "C",
+    "text": "√10"
+   },
+   {
+    "label": "D",
+    "text": "3 1/5"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "16/5 = 3.2 exactly, and so are the other three: 320% = 3.20, and the mixed number 3 1/5 = 3 + 0.2 = 3.2. Only √10 differs — it is about 3.1623, because 3.2² = 10.24, which is more than 10, so √10 must be a little less than 3.2. Choice C is the one most often kept as \"equal\" precisely because it is close; being near a value is not being it. The question is really asking which form is irrational.",
+  "tags": [
+   "act",
+   "act-math",
+   "integrating-essential-skills",
+   "IES"
+  ],
+  "source": "act-ies-expansion",
+  "isActive": true,
+  "contentHash": "0a68ecdda28a856d3975dc6773d7fd554f21a44322d5c21af4b8bce93b257b24"
  }
 ]

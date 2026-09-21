@@ -1,10 +1,16 @@
 /**
  * The ACT Integrating Essential Skills expansion bank.
  *
- * IES is 40–43% of the real ACT math section, but our bank held only 105 IES
- * items — so seeds/act-math-blueprint.json had to under-weight IES at 9 of 45
- * slots just to keep enough depth for non-repeating forms. This bank of 300
- * (6 IES skills × 50) is what lets the blueprint move to the authentic weight.
+ * CORRECTION 2026-09-21: this header used to open "IES is 40–43% of the real
+ * ACT math section", and that claim is what talked the blueprint from 9 of 45
+ * slots up to 19. It is the LEGACY 60-question ACT's share. The enhanced
+ * 45-question section is 80/20 — ACT's own "Preparing for the ACT" ((c) 2026)
+ * states IES at 20%, and both official practice forms score it at exactly 8 of
+ * 41 scored items. 9 of 45 was the right weight all along; the bank's depth was
+ * never the thing holding it down.
+ *
+ * What the bank is for, then, is DEPTH per skill so that no two forms repeat an
+ * item — not leverage to enlarge the category.
  *
  * These assertions are the ones that would silently ruin a practice test if
  * they broke: a key that doesn't match its option text marks a correct student
@@ -25,12 +31,17 @@ const blueprint = JSON.parse(fs.readFileSync(
 const IES_SKILLS = blueprint.skillsByCategory['integrating-essential-skills'];
 
 describe('ACT IES expansion bank', () => {
-  test('300 items, 50 per IES skill, all six skills covered', () => {
-    expect(items).toHaveLength(300);
+  test('every IES skill in the blueprint is stocked, and only those', () => {
+    // Was pinned at exactly 300 items / 50 per skill / six skills. The two
+    // concept areas ACT names but we never covered (average and median;
+    // expressing numbers in different ways) are now skills too, so the shape
+    // is a floor per skill rather than one magic number — but the set of
+    // skills must still match the blueprint exactly in both directions.
     const bySkill = {};
     items.forEach((i) => { bySkill[i.skillId] = (bySkill[i.skillId] || 0) + 1; });
     expect(Object.keys(bySkill).sort()).toEqual([...IES_SKILLS].sort());
-    Object.values(bySkill).forEach((n) => expect(n).toBe(50));
+    Object.values(bySkill).forEach((n) => expect(n).toBeGreaterThanOrEqual(12));
+    expect(items.length).toBeGreaterThanOrEqual(300);
   });
 
   test('every skillId is an IES skill the blueprint can actually draw', () => {
@@ -96,13 +107,34 @@ describe('ACT IES expansion bank', () => {
   });
 
   test('the difficulty ramp is spread, not bunched at one level', () => {
+    // assembleForm draws each slot against a target difficulty from the
+    // blueprint's ramp, so a skill bunched at one level leaves the rest of the
+    // ramp unfillable and the form drifts off its intended shape.
+    //
+    // The six original skills were generated to one exact histogram and it is
+    // still worth pinning exactly. The two later concept-coverage skills are
+    // hand-authored and smaller, so they get the property the test is actually
+    // named for: every level present, none dominant.
+    const GENERATED_HISTOGRAM = { 1: 8, 2: 12, 3: 14, 4: 10, 5: 6 };
     const bySkillDiff = {};
     items.forEach((i) => {
       bySkillDiff[i.skillId] = bySkillDiff[i.skillId] || {};
       bySkillDiff[i.skillId][i.difficulty] = (bySkillDiff[i.skillId][i.difficulty] || 0) + 1;
     });
-    Object.values(bySkillDiff).forEach((d) => {
-      expect(d).toEqual({ 1: 8, 2: 12, 3: 14, 4: 10, 5: 6 });
+    Object.entries(bySkillDiff).forEach(([skill, d]) => {
+      const n = Object.values(d).reduce((a, b) => a + b, 0);
+      if (n === 50) {
+        expect(d).toEqual(GENERATED_HISTOGRAM);
+        return;
+      }
+      const levels = Object.keys(d).map(Number).sort((a, b) => a - b);
+      expect(levels.length).toBeGreaterThanOrEqual(3);          // genuinely spread
+      expect(Math.min(...levels)).toBeLessThanOrEqual(2);       // reaches the easy end
+      expect(Math.max(...levels)).toBeGreaterThanOrEqual(4);    // reaches the hard end
+      Object.values(d).forEach((c) => {
+        expect(c / n).toBeLessThanOrEqual(0.5);                 // no level dominates
+        expect(skill).toBeTruthy();
+      });
     });
   });
 

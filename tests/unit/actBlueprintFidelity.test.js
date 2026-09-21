@@ -1,17 +1,28 @@
 /**
  * The practice test has to be shaped like the real one.
  *
- * ACT publishes the composition of its math section as reporting-category
- * shares, and a practice form that drifts from them trains the wrong mix:
- * Integrating Essential Skills is 40-43% of the real test -- nearly half --
- * and our blueprint carried it at 20% (9 of 45) because the item bank could
- * not support more. That is a bank constraint leaking into the measurement
- * instrument, so pin the shares here and let the test fail loudly if a future
- * bank shortage tempts someone to quietly re-balance the exam instead.
+ * The principle this file was written to defend is right and unchanged: pin
+ * ACT's published shares so a bank shortage can never quietly re-balance the
+ * exam. The NUMBERS it pinned were wrong.
  *
- * Depth is the other half: raising a weight past what the bank can fill makes
- * assembleForm emit `gaps` and, once the no-repeat ledger is deep enough,
- * return 409 exhausted to a student mid-bootcamp.
+ * It asserted "Integrating Essential Skills is 40-43% of the real test --
+ * nearly half", and drove the blueprint to 19 of 45 (42%). That is the LEGACY
+ * 60-question ACT's IES share. The enhanced (2025+) 45-question section splits
+ * 80/20: ACT's own "Preparing for the ACT" ((c) 2026) states Preparing for
+ * Higher Math 80% (N&Q 10-12%, Algebra 17-20%, Functions 17-20%, Geometry
+ * 17-20%, Stats & Prob 12-15%) and Integrating Essential Skills 20%. Both
+ * official practice forms score IES at exactly 8 of 41 scored items (19.5%).
+ *
+ * So the file had it backwards in the most costly way: it read 9/45 (the
+ * correct weight) as evidence of a bank compromise and "corrected" it to 19,
+ * citing the 300-item IES expansion as licence. Supply reshaped the instrument.
+ * Two effects on a real student, both observed: 42% of every form came from the
+ * six IES skills, so the same skill appeared 3-4 times per test; and every
+ * other category was starved to 6 or 4 slots, well under its published band.
+ *
+ * Depth is the other half, and it was never the constraint it was claimed to
+ * be -- at the correct weights the bank supports MORE fresh forms (18) than it
+ * did at the inflated ones, because the PHM banks stop being rationed.
  */
 const fs = require('fs');
 const path = require('path');
@@ -22,14 +33,16 @@ const ROOT = path.join(__dirname, '../..');
 const read = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), 'utf8'));
 const blueprint = read('seeds/act-math-blueprint.json');
 
-// Official ACT math reporting-category shares (percent of the section).
+// Official ACT math reporting-category shares for the enhanced 45-question
+// section, verbatim from Preparing for the ACT ((c) 2026), "Mathematics Test".
+// IES is stated as a single figure (20%), not a band.
 const OFFICIAL = {
-  'integrating-essential-skills': [40, 43],
-  'number-quantity': [7, 10],
-  algebra: [12, 15],
-  functions: [12, 15],
-  geometry: [12, 15],
-  'statistics-probability': [8, 12],
+  'integrating-essential-skills': [20, 20],
+  'number-quantity': [10, 12],
+  algebra: [17, 20],
+  functions: [17, 20],
+  geometry: [17, 20],
+  'statistics-probability': [12, 15],
 };
 
 const total = blueprint.totalItems;
@@ -54,19 +67,34 @@ describe('the blueprint matches the real ACT composition', () => {
     });
   });
 
-  test('Integrating Essential Skills carries its real weight', () => {
-    // The single share most likely to be quietly traded away for bank depth:
-    // IES is the multi-step synthesis half of the exam and the hardest to
-    // author, so it is the first thing a thin bank pressures downward.
-    expect(weights['integrating-essential-skills']).toBe(19);
+  test('Integrating Essential Skills carries its real weight — 20%, not 42%', () => {
+    // Guards BOTH directions. Downward: a thin bank must not buy slack by
+    // shaving the hardest category to author. Upward: a DEEP IES bank must not
+    // buy itself slots either, which is the direction that actually happened.
+    expect(weights['integrating-essential-skills']).toBe(9);
     expect(Object.keys(OFFICIAL).sort()).toEqual(Object.keys(weights).sort());
   });
 
-  test('Preparing for Higher Math totals 57-60%', () => {
+  test('Preparing for Higher Math totals 80%', () => {
     const phm = total - weights['integrating-essential-skills'];
-    const share = (100 * phm) / total;
-    expect(share).toBeGreaterThanOrEqual(57);
-    expect(share).toBeLessThanOrEqual(60);
+    expect((100 * phm) / total).toBeCloseTo(80, 0);
+  });
+
+  test('the raw→scale curve is ACT\'s published one, not a hand-drawn line', () => {
+    // ACT's Mathematics Scale Score Conversion Table for a 41-scored-item form
+    // (Preparing for the ACT, (c) 2026), at four anchor points, projected onto
+    // this form's 45 slots. The previous hand-made curve ran ~2 points generous
+    // across the 30-50%-correct band and ~2 harsh above 80%: it flattered
+    // struggling students and under-credited strong ones, in a product whose
+    // entire payoff is a believable score delta.
+    const t = blueprint.scaledScore.scaledByRaw;
+    expect(t).toHaveLength(total + 1);
+    expect(t[0]).toBe(1);
+    expect(t[total]).toBe(36);
+    [[0.30, 15], [0.50, 20], [0.80, 30]].forEach(([pct, expected]) => {
+      expect(Math.abs(t[Math.round(pct * total)] - expected)).toBeLessThanOrEqual(1);
+    });
+    for (let i = 1; i <= total; i++) expect(t[i]).toBeGreaterThanOrEqual(t[i - 1]);
   });
 });
 
@@ -95,11 +123,13 @@ describe('the item bank can actually fill the blueprint', () => {
     });
   });
 
-  test('no category is oversubscribed relative to IES depth', () => {
-    // IES is the deepest ask (19 slots); it must not be the thing that
-    // starves first now that its weight went up.
-    const ies = Math.floor(perCat['integrating-essential-skills'] / weights['integrating-essential-skills']);
-    expect(ies).toBeGreaterThanOrEqual(15);
+  test('correcting the weights did not cost form depth', () => {
+    // The 19-slot IES blueprint was defended as the one the bank could support.
+    // It was the opposite: rationing PHM to 6/6/6/4/4 slots made the PHM banks
+    // the binding constraint. At the published shares every category clears 15
+    // fresh forms and the weakest link is Stats & Probability at ~18.
+    const depths = Object.entries(weights).map(([cat, slots]) => Math.floor((perCat[cat] || 0) / slots));
+    expect(Math.min(...depths)).toBeGreaterThanOrEqual(15);
   });
 });
 
@@ -125,13 +155,11 @@ describe('assembled forms honor the blueprint', () => {
   });
 
   test('categories stay interleaved — no long single-category run', () => {
-    // A real ACT does not block by topic, but it does put same-category items
-    // next to each other, and at 19-of-45 IES is dense enough that short runs
-    // are expected rather than a defect. Measured over 2,000 forms, buildSlots'
-    // even-spread placement yields a longest run of 2 (36%), 3 (61%), or 4 (3%)
-    // and never more; a pure shuffle of the same slots reaches 10. So 4 is the
-    // real ceiling of the current algorithm — this guards against a future
-    // change that blocks by topic, not against ordinary density.
+    // A real ACT does not block by topic. At the old 19-of-45 IES weight the
+    // measured ceiling was 4; at the published shares no category is dense
+    // enough to run long and the measured ceiling over 3,000 forms is 2. A
+    // pure shuffle of the same slots reaches 10, so this still catches a
+    // future change that blocks by topic — with one slot of slack.
     for (let s = 0; s < 200; s++) {
       const slots = buildSlots(blueprint, mulberry32(s * 40503 + 7));
       let run = 1; let longest = 1;
@@ -139,16 +167,21 @@ describe('assembled forms honor the blueprint', () => {
         run = slots[i].category === slots[i - 1].category ? run + 1 : 1;
         longest = Math.max(longest, run);
       }
-      expect(longest).toBeLessThanOrEqual(4);
+      expect(longest).toBeLessThanOrEqual(3);
     }
   });
 
-  test('no skill is asked more than a few times in one form', () => {
+  test('no skill is asked more than twice in one form', () => {
+    // The owner's report that started this: "some questions may have covered
+    // the same skill". At IES 19/45 over six skills, buildSlots' round-robin
+    // GUARANTEED 3-4 questions on every IES skill, every form. At 9 slots over
+    // the same six it is at most 2, and 2 is the hard ceiling across all
+    // categories (measured over 3,000 forms).
     for (let s = 0; s < 50; s++) {
       const slots = buildSlots(blueprint, mulberry32(s * 91711 + 13));
       const bySkill = {};
       slots.forEach((sl) => { bySkill[sl.skillId] = (bySkill[sl.skillId] || 0) + 1; });
-      Object.values(bySkill).forEach((n) => expect(n).toBeLessThanOrEqual(4));
+      Object.values(bySkill).forEach((n) => expect(n).toBeLessThanOrEqual(2));
     }
   });
 });
@@ -161,7 +194,7 @@ describe('nothing keeps a private copy of the exam shape', () => {
     // through their misses in a slightly wrong priority forever.
     const { DEFAULT_CATEGORY_WEIGHTS } = require('../../utils/actReview');
     expect(DEFAULT_CATEGORY_WEIGHTS).toEqual(blueprint.categoryWeights);
-    expect(DEFAULT_CATEGORY_WEIGHTS['integrating-essential-skills']).toBe(19);
+    expect(DEFAULT_CATEGORY_WEIGHTS['integrating-essential-skills']).toBe(9);
   });
 
   test('the bootcamp plan reads the blueprint too', () => {

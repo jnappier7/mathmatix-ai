@@ -10,28 +10,48 @@
     "min": 1,
     "max": 36
   },
-  "_categoryWeightsComment": "Slots per 45-item form, set to the official ACT reporting-category shares: Integrating Essential Skills 40-43% (19/45 = 42.2%) and Preparing for Higher Math 57-60% (26/45 = 57.8%), with N&Q 7-10%, Algebra 12-15%, Functions 12-15%, Geometry 12-15%, Stats & Prob 8-12%. IES was previously 9 (20%) ONLY because the item bank held 105 IES items; seeds/act-ies-expansion added 300 more, so the authentic weight is now supportable at ~21 non-repeating forms. Do not raise a weight past what the bank can fill -- assembleForm reports unfillable slots as gaps.",
+  "_categoryWeightsComment": "Slots per 45-item form, set from ACT's OWN published shares for the enhanced (2025+) 45-question section: 'Preparing for Higher Math (80%)' split into Number & Quantity 10-12%, Algebra 17-20%, Functions 17-20%, Geometry 17-20%, Statistics & Probability 12-15%; and 'Integrating Essential Skills (20%)'. Source: Preparing for the ACT (c) 2026, 'Mathematics Test' description. CORRECTION 2026-09-21: this file previously carried IES at 19/45 (42%) on the stated basis that IES is '40-43% of the real test'. That is the LEGACY 60-question ACT's share, not the enhanced form's. Both official practice forms score IES at exactly 8 of 41 scored items (19.5%), and the spec above says 20%, so 9/45 is the authentic weight -- which is what this file held before the regression. The 19 was justified by bank depth ('seeds/act-ies-expansion added 300 more'), i.e. supply was allowed to reshape the measurement instrument. It is the wrong direction of causation: when the bank is short, generate items, never re-weight the exam. Geometry takes 9 (top of its band) because it is the highest-observed PHM category on both real forms (22.0% and 19.5%).",
   "categoryWeights": {
-    "integrating-essential-skills": 19,
-    "algebra": 6,
-    "functions": 6,
-    "geometry": 6,
-    "statistics-probability": 4,
-    "number-quantity": 4
+    "integrating-essential-skills": 9,
+    "algebra": 8,
+    "functions": 8,
+    "geometry": 9,
+    "statistics-probability": 6,
+    "number-quantity": 5
   },
   "_difficultyRampComment": "Target difficulty by position: ANCHORS, interpolated piecewise-linearly between them (utils/actTestAssembler.difficultyForPosition). Real ACT Math is ordered by ascending difficulty -- approximately, and as a smooth curve, which the three flat plateaus this replaced (15@2 / 15@3 / 15@4) could not express: a student met a full difficulty step between Q15 and Q16 and then nothing for fifteen questions. Two properties are deliberate. (1) The TAIL is steeper than the body. On a real form the last ~5 items are markedly harder than items 31-40 -- that is where students run out of clock -- so a flat 4 through Q45 understated the baseline for exactly the strong students the bootcamp most needs to target precisely. (2) The MEAN target is 3.02 against the old ramp's 3.00, held equal on purpose: scaledScore.scaledByRaw below is calibrated to a form of this average difficulty. Reshape the curve freely, but if you move the mean, re-derive that table too or every practice score shifts. ACT-Math-only: English/Reading/Science are ordered by passage and question-to-line reference, NOT difficulty, so do not copy this ramp into another section's blueprint.",
   "difficultyRamp": [
-    { "position": 1, "targetDifficulty": 1.5 },
-    { "position": 10, "targetDifficulty": 2.0 },
-    { "position": 20, "targetDifficulty": 2.8 },
-    { "position": 30, "targetDifficulty": 3.5 },
-    { "position": 40, "targetDifficulty": 4.2 },
-    { "position": 45, "targetDifficulty": 5.0 }
+    {
+      "position": 1,
+      "targetDifficulty": 1.5
+    },
+    {
+      "position": 10,
+      "targetDifficulty": 2.0
+    },
+    {
+      "position": 20,
+      "targetDifficulty": 2.8
+    },
+    {
+      "position": 30,
+      "targetDifficulty": 3.5
+    },
+    {
+      "position": 40,
+      "targetDifficulty": 4.2
+    },
+    {
+      "position": 45,
+      "targetDifficulty": 5.0
+    }
   ],
   "skillsByCategory": {
     "integrating-essential-skills": [
+      "act-average-median",
       "act-basic-geometry-measures",
       "act-multi-step-arithmetic",
+      "act-number-forms",
       "act-percentages",
       "act-rates-unit-conversion",
       "act-ratios-proportions",
@@ -87,55 +107,56 @@
     ]
   },
   "scaledScore": {
-    "_comment": "APPROXIMATE raw(0-45)->scaled(1-36) estimate for practice feedback only.",
+    "_comment": "Raw (0..45 on THIS form) -> estimated ACT scale score 1-36. Interpolated from ACT's published Mathematics Scale Score Conversion Table for a 41-scored-item form (Preparing for the ACT (c) 2026) and forced monotonic. The previous curve was hand-made and ran ~2 points generous across the 30-50%-correct band and ~2 points harsh above 80%, so it flattered struggling students and under-credited strong ones -- in a product whose whole payoff is a believable score delta.",
     "approximate": true,
     "scaledByRaw": [
       1,
-      3,
       5,
       7,
-      9,
+      8,
       10,
-      11,
+      12,
       12,
       13,
+      13,
+      14,
       14,
       15,
       15,
+      15,
       16,
       16,
       17,
       17,
-      18,
+      17,
+      17,
       18,
       19,
       19,
-      20,
       20,
       21,
       22,
-      22,
       23,
-      23,
-      24,
       24,
       25,
       25,
       26,
-      26,
       27,
       27,
-      28,
       28,
       29,
-      30,
+      29,
       30,
       31,
       32,
       33,
+      33,
+      34,
       34,
       35,
+      36,
       36
     ]
-  }
+  },
+  "_skillsByCategoryComment": "IES now covers all five concept areas ACT names for it (Preparing for the ACT (c) 2026): rates and percentages (act-percentages, act-rates-unit-conversion); proportional relationships (act-ratios-proportions); area, surface area and volume (act-basic-geometry-measures); average and median (act-average-median); and expressing numbers in different ways (act-number-forms). The last two had NO coverage until 2026-09-21 even though both official practice forms score items on them as IES. act-multi-step-arithmetic and act-time-schedule-arithmetic are ours; real IES items lean on both heavily."
 }
