@@ -116,6 +116,38 @@ const exactFrom = (x, maxDen = 10000) => {
   return null;
 };
 const pow = (base, e) => (e === 1 ? 'x' : `x^${e}`);
+
+/**
+ * Read "2x^2 + x - 7", "x^2 - 9", "4x^2 + x" into {a, b, c}.
+ *
+ * The bank writes a coefficient of 1 as nothing at all ("x^2 + x - 12") and
+ * drops a zero term entirely ("2x^2 - 3"). Earlier explainers demanded an
+ * explicit digit on every term and simply failed to match those, which is why
+ * a third of the unexplained tail was variants of shapes already handled.
+ */
+function parseQuadratic(expr) {
+  const m = /^\s*(-?\d*)x\^2(?:\s*([+-])\s*(\d*)x)?(?:\s*([+-])\s*(\d+))?\s*$/.exec(String(expr));
+  if (!m) return null;
+  const lead = m[1];
+  const a = lead === '' || lead === '+' ? 1 : (lead === '-' ? -1 : Number(lead));
+  let b = 0;
+  if (m[2]) {
+    const mag = m[3] === '' ? 1 : Number(m[3]);
+    b = m[2] === '-' ? -mag : mag;
+  }
+  const c = m[4] ? (m[4] === '-' ? -Number(m[5]) : Number(m[5])) : 0;
+  return Number.isFinite(a) && a !== 0 ? { a, b, c } : null;
+}
+
+/** Read "3x", "4x + 1", "(-5/4)x - 3" into {m, b}. */
+function parseLinear(expr) {
+  const mm = /^\s*\(?(-?\d*(?:\/\d+)?)\)?x(?:\s*([+-])\s*(\d+))?\s*$/.exec(String(expr));
+  if (!mm) return null;
+  const lead = mm[1];
+  const slope = lead === '' || lead === '+' ? 1 : (lead === '-' ? -1 : num(lead));
+  const b = mm[2] ? (mm[2] === '-' ? -Number(mm[3]) : Number(mm[3])) : 0;
+  return Number.isFinite(slope) ? { m: slope, b } : null;
+}
 /**
  * Write a multiple of π the way the choices do: "64π/3", not "64/3π", and a
  * bare "π" rather than "1π".
@@ -1438,10 +1470,11 @@ const EXPLAINERS = [
   },
   {
     id: 'quadratic-solve-factor',
-    match: /^Solve for x: x\^2 ([+-]) (\d+)x ([+-]) (\d+) = 0$/,
+    match: /^Solve for x: ([^=]*x\^2[^=]*) = 0$/,
     solve: (m) => {
-      const b = m[1] === '-' ? -Number(m[2]) : Number(m[2]);
-      const c = m[3] === '-' ? -Number(m[4]) : Number(m[4]);
+      const q = parseQuadratic(m[1]);
+      if (!q || q.a !== 1) return null;
+      const { b, c } = q;
       const disc = b * b - 4 * c;
       if (disc < 0) return null;
       const r = Math.sqrt(disc);
@@ -1462,10 +1495,11 @@ const EXPLAINERS = [
   },
   {
     id: 'factor-quadratic',
-    match: /^Factor completely: x\^2 ([+-]) (\d+)x ([+-]) (\d+)$/,
+    match: /^Factor completely: (.*x\^2.*)$/,
     solve: (m) => {
-      const b = m[1] === '-' ? -Number(m[2]) : Number(m[2]);
-      const c = m[3] === '-' ? -Number(m[4]) : Number(m[4]);
+      const q = parseQuadratic(m[1]);
+      if (!q || q.a !== 1) return null;
+      const { b, c } = q;
       const disc = b * b - 4 * c;
       if (disc < 0) return null;
       const r = Math.sqrt(disc);
@@ -1504,13 +1538,16 @@ const EXPLAINERS = [
   },
   {
     id: 'composition-numeric',
-    match: /^If f\(x\) = (-?\d+)x ([+-]) (\d+) and g\(x\) = (-?\d+)x ([+-]) (\d+), what is f\(g\((-?\d+)\)\)\?$/,
+    match: /^If f\(x\) = (.+) and g\(x\) = (.+), what is f\(g\((-?\d+)\)\)\?$/,
     solve: (m) => {
-      const fa = Number(m[1]);
-      const fb = m[2] === '-' ? -Number(m[3]) : Number(m[3]);
-      const ga = Number(m[4]);
-      const gb = m[5] === '-' ? -Number(m[6]) : Number(m[6]);
-      const x = Number(m[7]);
+      const f = parseLinear(m[1]);
+      const g = parseLinear(m[2]);
+      if (!f || !g) return null;
+      const fa = f.m;
+      const fb = f.b;
+      const ga = g.m;
+      const gb = g.b;
+      const x = Number(m[3]);
       const inner = ga * x + gb;
       const outer = fa * inner + fb;
       return {
@@ -1552,10 +1589,12 @@ const EXPLAINERS = [
   },
   {
     id: 'domain-sqrt',
-    match: /^What is the domain of f\(x\) = √\((-?\d*)x ([+-]) (\d+)\)\?$/,
+    match: /^What is the domain of f\(x\) = √\((.+)\)\?$/,
     solve: (m) => {
-      const a = m[1] === '' ? 1 : (m[1] === '-' ? -1 : Number(m[1]));
-      const b = m[2] === '-' ? -Number(m[3]) : Number(m[3]);
+      const lin = parseLinear(m[1]);
+      if (!lin || lin.m === 0) return null;
+      const a = lin.m;
+      const b = lin.b;
       const bound = -b / a;
       const t = exactFrom(bound) || round(bound, 6);
       const dir = a > 0 ? '≥' : '≤';
@@ -1572,10 +1611,12 @@ const EXPLAINERS = [
   },
   {
     id: 'domain-rational',
-    match: /^What is the domain of f\(x\) = 1\/\((-?\d*)x ([+-]) (\d+)\)\?$/,
+    match: /^What is the domain of f\(x\) = 1\/\((.+)\)\?$/,
     solve: (m) => {
-      const a = m[1] === '' ? 1 : (m[1] === '-' ? -1 : Number(m[1]));
-      const b = m[2] === '-' ? -Number(m[3]) : Number(m[3]);
+      const lin = parseLinear(m[1]);
+      if (!lin || lin.m === 0) return null;
+      const a = lin.m;
+      const b = lin.b;
       const bad = -b / a;
       const t = exactFrom(bad) || round(bad, 6);
       return {
@@ -1613,11 +1654,11 @@ const EXPLAINERS = [
   },
   {
     id: 'discriminant-count',
-    match: /^How many real solutions does (-?\d*)x\^2 ([+-]) (\d+)x ([+-]) (\d+) = 0 have\?$/,
+    match: /^How many real solutions does (.+) = 0 have\?$/,
     solve: (m) => {
-      const a = m[1] === '' || m[1] === '+' ? 1 : (m[1] === '-' ? -1 : Number(m[1]));
-      const b = m[2] === '-' ? -Number(m[3]) : Number(m[3]);
-      const c = m[4] === '-' ? -Number(m[5]) : Number(m[5]);
+      const q = parseQuadratic(m[1]);
+      if (!q) return null;
+      const { a, b, c } = q;
       const disc = b * b - 4 * a * c;
       const answer = disc > 0 ? '2 real solutions' : disc === 0 ? 'exactly 1 real solution' : 'no real solutions';
       return {
@@ -1633,12 +1674,12 @@ const EXPLAINERS = [
   },
   {
     id: 'evaluate-quadratic',
-    match: /^If f\(x\) = (-?\d*)x\^2 ([+-]) (\d+)x ([+-]) (\d+), what is f\((-?\d+)\)\?$/,
+    match: /^If f\(x\) = (.+), what is f\((-?\d+)\)\?$/,
     solve: (m) => {
-      const a = m[1] === '' || m[1] === '+' ? 1 : (m[1] === '-' ? -1 : Number(m[1]));
-      const b = m[2] === '-' ? -Number(m[3]) : Number(m[3]);
-      const c = m[4] === '-' ? -Number(m[5]) : Number(m[5]);
-      const x = Number(m[6]);
+      const q = parseQuadratic(m[1]);
+      if (!q) return null;
+      const { a, b, c } = q;
+      const x = Number(m[2]);
       const v = a * x * x + b * x + c;
       return {
         answer: v,
@@ -1731,12 +1772,15 @@ const EXPLAINERS = [
   },
   {
     id: 'vertical-asymptote',
-    match: /^What is the vertical asymptote of f\(x\) = \((-?\d*)x ([+-]) (\d+)\)\/\((-?\d*)x ([+-]) (\d+)\)\?$/,
+    match: /^What is the vertical asymptote of f\(x\) = \((.+)\)\/\((.+)\)\?$/,
     solve: (m) => {
-      const c = m[4] === '' ? 1 : (m[4] === '-' ? -1 : Number(m[4]));
-      const d = m[5] === '-' ? -Number(m[6]) : Number(m[6]);
-      const a = m[1] === '' ? 1 : (m[1] === '-' ? -1 : Number(m[1]));
-      const b = m[2] === '-' ? -Number(m[3]) : Number(m[3]);
+      const top = parseLinear(m[1]);
+      const bot = parseLinear(m[2]);
+      if (!top || !bot || bot.m === 0) return null;
+      const a = top.m;
+      const b = top.b;
+      const c = bot.m;
+      const d = bot.b;
       const x = -d / c;
       const t = exactFrom(x) || round(x, 6);
       return {
@@ -1752,13 +1796,13 @@ const EXPLAINERS = [
   },
   {
     id: 'average-rate-of-change',
-    match: /^For f\(x\) = (-?\d*)x\^2 ([+-]) (\d+)x ([+-]) (\d+), what is the average rate of change from x = (-?\d+) to x = (-?\d+)\?$/,
+    match: /^For f\(x\) = (.+), what is the average rate of change from x = (-?\d+) to x = (-?\d+)\?$/,
     solve: (m) => {
-      const a = m[1] === '' || m[1] === '+' ? 1 : (m[1] === '-' ? -1 : Number(m[1]));
-      const b = m[2] === '-' ? -Number(m[3]) : Number(m[3]);
-      const c = m[4] === '-' ? -Number(m[5]) : Number(m[5]);
-      const x1 = Number(m[6]);
-      const x2 = Number(m[7]);
+      const q = parseQuadratic(m[1]);
+      if (!q) return null;
+      const { a, b, c } = q;
+      const x1 = Number(m[2]);
+      const x2 = Number(m[3]);
       const f = (x) => a * x * x + b * x + c;
       const rate = (f(x2) - f(x1)) / (x2 - x1);
       return {
@@ -1774,11 +1818,13 @@ const EXPLAINERS = [
   },
   {
     id: 'parallel-perpendicular-slope',
-    match: /^What is the slope of a line (parallel|perpendicular) to the line y = \(?(-?\d+(?:\/\d+)?)\)?x ([+-]) (\d+)\?$/,
+    match: /^What is the slope of a line (parallel|perpendicular) to the line y = (.+)\?$/,
     solve: (m) => {
       const kind = m[1];
-      const slope = num(m[2]);
-      if (slope === 0) return null;
+      const lin = parseLinear(m[2]);
+      if (!lin || lin.m === 0) return null;
+      const slope = lin.m;
+      m[2] = exactFrom(slope) || String(slope);
       const value = kind === 'parallel' ? slope : -1 / slope;
       const t = exactFrom(value) || round(value, 6);
       return {
@@ -1951,6 +1997,318 @@ const EXPLAINERS = [
     },
   },
   {
+    id: 'horizontal-asymptote',
+    match: /^What is the horizontal asymptote of f\(x\) = \((.+)\)\/\((.+)\)\?$/,
+    solve: (m) => {
+      const top = parseLinear(m[1]);
+      const bot = parseLinear(m[2]);
+      if (!top || !bot || bot.m === 0) return null;
+      const y = top.m / bot.m;
+      const t = exactFrom(y) || round(y, 6);
+      return {
+        answer: `y = ${t}`,
+        steps: `When top and bottom have the same degree, the horizontal asymptote is the ratio of the LEADING coefficients: ${exactFrom(top.m) || top.m} ÷ ${exactFrom(bot.m) || bot.m} = ${t}. The constants do not matter — far out, they are swamped by the x terms.`,
+        traps: [
+          [`y = ${exactFrom(bot.m / top.m) || round(bot.m / top.m, 6)}`, 'inverts the ratio, dividing bottom by top'],
+          [`x = ${exactFrom(-bot.b / bot.m) || round(-bot.b / bot.m, 6)}`, 'gives the VERTICAL asymptote (where the denominator is zero), which is a different line'],
+          ['y = 0', 'is the asymptote only when the bottom has the HIGHER degree; here the degrees match'],
+          ['y = 1', 'assumes the leading coefficients cancel'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'simple-probability',
+    match: /^A bag contains (\d+) (\w+) marbles, (\d+) (\w+) marbles, and (\d+) (\w+) marbles\. One marble is drawn at random\. What is the probability that it is (\w+)\?/,
+    solve: (m) => {
+      const counts = { [m[2]]: Number(m[1]), [m[4]]: Number(m[3]), [m[6]]: Number(m[5]) };
+      const want = m[7];
+      if (!(want in counts)) return null;
+      const total = Number(m[1]) + Number(m[3]) + Number(m[5]);
+      const k = counts[want];
+      return {
+        answer: frac(k, total),
+        steps: `Probability is favourable ÷ TOTAL, and the total is every marble in the bag: ${m[1]} + ${m[3]} + ${m[5]} = ${total}. So ${k}/${total} = ${frac(k, total)}.`,
+        traps: [
+          [frac(k, total - k), `divides by the marbles that are NOT ${want} (${total - k}) instead of by all ${total} — that is odds, not probability`],
+          [frac(total - k, total), `gives the probability of NOT drawing ${want}`],
+          [frac(k, 3), 'divides by the number of COLOURS rather than the number of marbles'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'volume-sphere',
+    match: /^A sphere has a radius of ([\d.]+)\. What is its volume\?/,
+    solve: (m) => {
+      const r = Number(m[1]);
+      return {
+        answer: piText(4 * r ** 3 / 3),
+        steps: `Volume of a sphere is (4/3)πr³: (4/3) × ${r}³ = (4/3) × ${r ** 3} = ${piText(4 * r ** 3 / 3)}.`,
+        traps: [
+          [piText(4 * r * r), 'uses the SURFACE AREA formula 4πr² instead of the volume'],
+          [piText(r ** 3), 'drops the 4/3'],
+          [piText(r ** 3 / 3), 'keeps the 1/3 but loses the 4'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'volume-cone',
+    match: /^A cone has a radius of ([\d.]+) and a height of ([\d.]+)\. What is its volume\?/,
+    solve: (m) => {
+      const [r, h] = [Number(m[1]), Number(m[2])];
+      return {
+        answer: piText(r * r * h / 3),
+        steps: `A cone is one THIRD of the cylinder that contains it: (1/3)πr²h = (1/3) × ${r * r} × ${h} = ${piText(r * r * h / 3)}.`,
+        traps: [
+          [piText(r * r * h), 'forgets the 1/3 — that is the CYLINDER of the same radius and height'],
+          [piText(r * h / 3), 'uses r rather than r²'],
+          [piText(r * r * h / 2), 'halves instead of taking a third'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'volume-cylinder',
+    match: /^A cylinder has a radius of ([\d.]+) and a height of ([\d.]+)\. What is its volume\?/,
+    solve: (m) => {
+      const [r, h] = [Number(m[1]), Number(m[2])];
+      return {
+        answer: piText(r * r * h),
+        steps: `Volume of a cylinder is the base area times the height: πr²h = π × ${r * r} × ${h} = ${piText(r * r * h)}.`,
+        traps: [
+          [piText(r * r * h / 3), 'takes a third, which is the CONE formula'],
+          [piText(r * h), 'uses r rather than r²'],
+          [piText(2 * r * h), 'computes the curved surface area (2πrh) instead of the volume'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'surface-area-prism',
+    match: /^What is the surface area of a rectangular prism measuring ([\d.]+) by ([\d.]+) by ([\d.]+)\?$/,
+    solve: (m) => {
+      const [a, b, c] = [Number(m[1]), Number(m[2]), Number(m[3])];
+      const sa = 2 * (a * b + b * c + a * c);
+      return {
+        answer: sa,
+        steps: `Three pairs of matching faces: 2(${a}×${b} + ${b}×${c} + ${a}×${c}) = 2(${a * b} + ${b * c} + ${a * c}) = ${sa}.`,
+        traps: [
+          [a * b * c, 'computes the VOLUME instead of the surface area'],
+          [a * b + b * c + a * c, 'counts one of each face and forgets that every face has a twin'],
+          [2 * (a + b + c), 'adds the edge lengths rather than the face areas'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'surface-area-cylinder',
+    match: /^What is the total surface area of a cylinder with radius ([\d.]+) and height ([\d.]+)\?/,
+    solve: (m) => {
+      const [r, h] = [Number(m[1]), Number(m[2])];
+      const total = 2 * r * r + 2 * r * h;
+      return {
+        answer: piText(total),
+        steps: `TOTAL surface area is the curved side plus BOTH circular ends: 2πrh + 2πr² = ${piText(2 * r * h)} + ${piText(2 * r * r)} = ${piText(total)}.`,
+        traps: [
+          [piText(2 * r * h), 'gives only the curved side, leaving off the two ends'],
+          [piText(2 * r * h + r * r), 'counts only one end'],
+          [piText(r * r * h), 'computes the volume'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'reflection',
+    match: /^The point \((-?\d+), (-?\d+)\) undergoes a reflection over the (x-axis|y-axis|line y = x)\. What are the coordinates of the image\?$/,
+    solve: (m) => {
+      const [x, y] = [Number(m[1]), Number(m[2])];
+      const over = m[3];
+      const image = over === 'x-axis' ? [x, -y] : over === 'y-axis' ? [-x, y] : [y, x];
+      const rule = over === 'x-axis' ? '(x, y) → (x, −y)' : over === 'y-axis' ? '(x, y) → (−x, y)' : '(x, y) → (y, x)';
+      return {
+        answer: `(${image[0]}, ${image[1]})`,
+        steps: `Reflecting over the ${over} follows ${rule}. ${over === 'x-axis' ? 'The x-axis is the mirror, so the horizontal position is untouched and only the sign of y flips.' : over === 'y-axis' ? 'The y-axis is the mirror, so only the sign of x flips.' : 'The line y = x swaps the roles of the two coordinates; no sign changes.'} So (${x}, ${y}) → (${image[0]}, ${image[1]}).`,
+        traps: [
+          [`(${over === 'x-axis' ? -x : x}, ${over === 'x-axis' ? y : -y})`, 'flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put'],
+          [`(${-x}, ${-y})`, 'negates both, which is a rotation of 180° about the origin, not a reflection'],
+          [`(${y}, ${x})`, over === 'line y = x' ? null : 'swaps the coordinates, which is the reflection over y = x'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'midpoint',
+    match: /^What is the midpoint of the segment joining \((-?\d+), (-?\d+)\) and \((-?\d+), (-?\d+)\)\?$/,
+    solve: (m) => {
+      const [x1, y1, x2, y2] = [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4])];
+      const mx = (x1 + x2) / 2;
+      const my = (y1 + y2) / 2;
+      const f = (v) => exactFrom(v) || round(v, 6);
+      return {
+        answer: `(${f(mx)}, ${f(my)})`,
+        steps: `The midpoint is the average of each coordinate: ((${x1} + ${x2})/2, (${y1} + ${y2})/2) = (${f(mx)}, ${f(my)}).`,
+        traps: [
+          [`(${f((x2 - x1) / 2)}, ${f((y2 - y1) / 2)})`, 'subtracts instead of adding — that is halfway along the displacement, measured from the origin'],
+          [`(${x1 + x2}, ${y1 + y2})`, 'adds the coordinates but never halves them'],
+          [`(${f(my)}, ${f(mx)})`, 'reports the coordinates in the wrong order'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'distance-formula',
+    match: /^What is the distance between the points \((-?\d+), (-?\d+)\) and \((-?\d+), (-?\d+)\)\?$/,
+    solve: (m) => {
+      const [x1, y1, x2, y2] = [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4])];
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const sq = dx * dx + dy * dy;
+      const simp = simplifyRadical(sq);
+      return {
+        answer: simp.text,
+        steps: `The distance formula is the Pythagorean theorem on the legs Δx and Δy: Δx = ${dx}, Δy = ${dy}, so d = √(${dx}² + ${dy}²) = √(${dx * dx} + ${dy * dy}) = √${sq}${simp.text !== `√${sq}` ? ` = ${simp.text}` : ''}.`,
+        traps: [
+          [sq, 'stops at d² and never takes the square root'],
+          [Math.abs(dx) + Math.abs(dy), 'adds the two legs instead of combining them at right angles'],
+          [`√${Math.abs(dx * dx - dy * dy)}`, 'subtracts the squares rather than adding them'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'complex-multiply',
+    match: /^Simplify: \((-?\d+)([+-])(\d*)i\)\((-?\d+)([+-])(\d*)i\), where i² = -1\.$/,
+    solve: (m) => {
+      // "(3+i)" writes the coefficient 1 as nothing at all.
+      const a = Number(m[1]);
+      const bMag = m[3] === '' ? 1 : Number(m[3]);
+      const b = m[2] === '-' ? -bMag : bMag;
+      const c = Number(m[4]);
+      const dMag = m[6] === '' ? 1 : Number(m[6]);
+      const d = m[5] === '-' ? -dMag : dMag;
+      const re = a * c - b * d;
+      const im = a * d + b * c;
+      const text = im === 0 ? `${re}` : `${re}${im < 0 ? ' - ' : ' + '}${Math.abs(im)}i`;
+      return {
+        answer: [text, im === 0 ? `${re}` : `${re}${im < 0 ? '-' : '+'}${Math.abs(im)}i`],
+        steps: `FOIL, then use i² = −1: real part ${a}(${c}) − (${b})(${d}) = ${re}, imaginary part ${a}(${d}) + (${b})(${c}) = ${im}. So ${text}.${im === 0 ? ' The imaginary parts cancel — these are conjugates, and a number times its conjugate is always real.' : ''}`,
+        traps: [
+          [`${a * c + b * d * -1 * -1}${im < 0 ? ' - ' : ' + '}${Math.abs(im)}i`, 'treats i² as +1, so the last product keeps its sign instead of flipping'],
+          [`${a * c}${b * d < 0 ? ' - ' : ' + '}${Math.abs(b * d)}i`, 'multiplies the parts straight across without FOILing'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'determinant-2x2',
+    match: /^What is the determinant of the matrix \[\[(-?\d+), (-?\d+)\], \[(-?\d+), (-?\d+)\]\]\?$/,
+    solve: (m) => {
+      const [a, b, c, d] = [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4])];
+      return {
+        answer: a * d - b * c,
+        steps: `For [[a, b], [c, d]] the determinant is ad − bc: (${a})(${d}) − (${b})(${c}) = ${a * d} − ${b * c} = ${a * d - b * c}.`,
+        traps: [
+          [a * d + b * c, 'adds the two products instead of subtracting'],
+          [a * b - c * d, 'multiplies along the rows rather than the diagonals'],
+          [b * c - a * d, 'subtracts in the wrong order, giving the negative'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'literal-equation',
+    match: /^Solve the formula (.+) for (\w+)\.$/,
+    solve: (m) => {
+      const KNOWN = {
+        'A = (1/2)bh|h': { answer: '2A/b', steps: 'Undo the (1/2) by multiplying both sides by 2, then divide by b: h = 2A/b.', traps: [['2b/A', 'divides the wrong way round'], ['A/(2b)', 'divides by 2 instead of multiplying by it'], ['A/b - 2', 'subtracts the 2 rather than undoing a multiplication']] },
+        'V = lwh|h': { answer: 'V/(lw)', steps: 'h is multiplied by both l and w, so divide by both: h = V/(lw).', traps: [['lw/V', 'inverts the division'], ['Vlw', 'multiplies instead of dividing'], ['V - lw', 'subtracts, but l and w are factors, not terms']] },
+        'P = 2l + 2w|w': { answer: '(P - 2l)/2', steps: 'Subtract the 2l first, then divide by 2: w = (P − 2l)/2.', traps: [['P - 2l', 'stops before dividing by 2'], ['(P + 2l)/2', 'adds 2l instead of subtracting it'], ['2(P - l)', 'multiplies by 2 rather than dividing']] },
+        'y = mx + b|m': { answer: '(y - b)/x', steps: 'Subtract b, then divide by x: m = (y − b)/x.', traps: [['(y + b)/x', 'adds b instead of subtracting'], ['x/(y - b)', 'inverts the fraction'], ['y - b - x', 'subtracts x rather than dividing by it']] },
+        'd = rt|t': { answer: 'd/r', steps: 't is multiplied by r, so divide by r: t = d/r.', traps: [['r/d', 'inverts the division'], ['dr', 'multiplies instead of dividing'], ['d - r', 'subtracts, but r is a factor']] },
+        'C = (5/9)(F - 32)|F': { answer: '(9/5)C + 32', steps: 'Multiply by 9/5 to undo the 5/9, then ADD 32 back: F = (9/5)C + 32. Undo the outermost operation first and the innermost last.', traps: [['(9/5)C - 32', 'subtracts 32 rather than adding it back'], ['(9/5)(C + 32)', 'adds 32 before scaling, so the 32 gets multiplied too'], ['(5/9)C + 32', 'keeps 5/9 instead of inverting it']] },
+      };
+      const row = KNOWN[`${m[1]}|${m[2]}`];
+      if (!row) return null;
+      return { answer: row.answer, steps: row.steps, traps: row.traps };
+    },
+  },
+  {
+    id: 'log-properties',
+    match: /^Which expression is equivalent to (.+)\?$/,
+    solve: (m) => {
+      const KNOWN = {
+        'log(a) - log(b)': { answer: 'log(a/b)', steps: 'Subtracting logs divides the arguments: log(a) − log(b) = log(a/b).', traps: [['log(ab)', 'multiplies — that is what ADDING logs does'], ['log(a - b)', 'subtracts inside the log; the rule turns subtraction OUTSIDE into division INSIDE'], ['log(b/a)', 'divides the wrong way round']] },
+        'log(a) + log(b)': { answer: 'log(ab)', steps: 'Adding logs multiplies the arguments: log(a) + log(b) = log(ab).', traps: [['log(a + b)', 'adds inside the log; addition outside becomes multiplication inside'], ['log(a/b)', 'divides — that is what SUBTRACTING logs does'], ['log(a)log(b)', 'multiplies the logs themselves rather than the arguments']] },
+        'log(a^2 b)': { answer: '2log(a) + log(b)', steps: 'Split the product first, then bring the exponent down: log(a²b) = log(a²) + log(b) = 2log(a) + log(b).', traps: [['2(log(a) + log(b))', 'applies the 2 to both terms; only a is squared'], ['log(a) + 2log(b)', 'attaches the exponent to the wrong factor'], ['2log(a)log(b)', 'multiplies the logs instead of adding them']] },
+        '3log(a)': { answer: 'log(a^3)', steps: 'A coefficient in front of a log becomes an EXPONENT inside it: 3log(a) = log(a³).', traps: [['log(3a)', 'multiplies the argument by 3; the coefficient becomes a power, not a factor'], ['log(a)^3', 'cubes the whole log rather than the argument'], ['3 + log(a)', 'adds instead of raising']] },
+      };
+      const row = KNOWN[m[1]];
+      if (!row) return null;
+      return { answer: row.answer, steps: row.steps, traps: row.traps };
+    },
+  },
+  {
+    id: 'graph-reflect',
+    match: /^The graph of y = (-f\(x\)|f\(-x\)) is the graph of y = f\(x\) transformed how\?$/,
+    solve: (m) => {
+      const negOutside = m[1] === '-f(x)';
+      return {
+        answer: `reflected over the ${negOutside ? 'x' : 'y'}-axis`,
+        steps: negOutside
+          ? 'The minus is OUTSIDE f, so it negates the output: every y becomes −y, which flips the graph over the x-axis.'
+          : 'The minus is INSIDE f, so it negates the input: the value once found at x is now found at −x, which flips the graph over the y-axis.',
+        traps: [
+          [`reflected over the ${negOutside ? 'y' : 'x'}-axis`, `confuses inside with outside — a minus ${negOutside ? 'outside' : 'inside'} f changes the ${negOutside ? 'output' : 'input'}, so the flip is over the ${negOutside ? 'x' : 'y'}-axis`],
+          ['reflected over the line y = x', 'that swaps x and y, which is an inverse, not a sign change'],
+          ['rotated 90° about the origin', 'a sign change is a reflection, not a rotation'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'rotation-180',
+    match: /^The point \((-?\d+), (-?\d+)\) undergoes a rotation of 180° about the origin\. What are the coordinates of the image\?$/,
+    solve: (m) => {
+      const [x, y] = [Number(m[1]), Number(m[2])];
+      return {
+        answer: `(${-x}, ${-y})`,
+        steps: `A 180° rotation about the origin sends (x, y) → (−x, −y): the point goes straight through the origin and out the same distance the other side. So (${x}, ${y}) → (${-x}, ${-y}).`,
+        traps: [
+          [`(${x}, ${-y})`, 'negates only y, which is a reflection over the x-axis'],
+          [`(${-x}, ${y})`, 'negates only x, which is a reflection over the y-axis'],
+          [`(${y}, ${x})`, 'swaps the coordinates, which is a reflection over y = x'],
+          [`(${-y}, ${x})`, 'is a 90° rotation, not 180°'],
+        ],
+      };
+    },
+  },
+  {
+    id: 'correlation-description',
+    match: /^A scatterplot shows that (.+)\. This describes:$/,
+    solve: (m) => {
+      const text = m[1];
+      const none = /no visible pattern|no pattern|no apparent/.test(text);
+      const down = /tend to decrease|decreases/.test(text.replace(/^as [^,]+increases,\s*/, ''));
+      const kind = none ? 'no correlation' : (down ? 'a negative correlation' : 'a positive correlation');
+      return {
+        answer: kind,
+        steps: none
+          ? 'Two quantities with no visible pattern have NO correlation — knowing one tells you nothing about the other.'
+          : down
+            ? 'One goes up while the other goes down, so the correlation is NEGATIVE. Negative does not mean weak; it describes the direction of the trend, not its strength.'
+            : 'Both move in the same direction, so the correlation is POSITIVE.',
+        traps: [
+          ['a causal relationship', 'correlation describes how two variables MOVE TOGETHER; it never establishes that one causes the other, which is the single most common misreading of a scatterplot'],
+          [none ? 'a positive correlation' : 'no correlation', none ? 'reads a pattern into data that has none' : 'misses a clear trend'],
+          [down ? 'a positive correlation' : 'a negative correlation', 'has the direction backwards'],
+          ['a strong association', 'describes STRENGTH, not direction, and a pattern-free plot has neither'],
+        ],
+      };
+    },
+  },
+  {
     id: 'expected-value-three',
     match: /^A game pays \$([\d.]+) with probability (\d+)\/(\d+), \$([\d.]+) with probability (\d+)\/(\d+), and \$([\d.]+) with probability (\d+)\/(\d+)\./,
     solve: (m) => {
@@ -1984,7 +2342,12 @@ function explainItem(item) {
     if (!m) continue;
     let out;
     try { out = ex.solve(m, item); } catch { return { status: 'solve-threw', explainer: ex.id }; }
-    if (!out) return { status: 'solve-declined', explainer: ex.id };
+    // A solver that declines (its regex matched but the numbers were not the
+    // shape it handles) hands the prompt to the next explainer rather than
+    // ending the search. Without this the registry's ORDER decides whether an
+    // item gets explained, which is a silent dependency nobody would think to
+    // preserve while editing.
+    if (!out) continue;
 
     const keyed = (item.options || []).find((o) => o.label === item.correctOption);
     if (!keyed) return { status: 'no-key', explainer: ex.id };

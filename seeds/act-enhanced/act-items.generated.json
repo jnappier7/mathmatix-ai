@@ -78,7 +78,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "Undo the (1/2) by multiplying both sides by 2, then divide by b: h = 2A/b. Wrong choices: B) 2b/A divides the wrong way round; C) A/b - 2 subtracts the 2 rather than undoing a multiplication; D) A/(2b) divides by 2 instead of multiplying by it.",
   "tags": [
    "act",
    "act-algebra",
@@ -313,7 +313,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "",
+  "explanation": "Look for two numbers that multiply to -12 and add to 1: -3 and 4. So the factorisation is (x - 3)(x + 4). Wrong choices: B) (x + 1)(x - 12) drops the coefficients straight into the factors instead of solving for the pair.",
   "tags": [
    "act",
    "act-algebra",
@@ -454,7 +454,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "Subtracting logs divides the arguments: log(a) − log(b) = log(a/b). Wrong choices: A) log(ab) multiplies — that is what ADDING logs does; B) log(b/a) divides the wrong way round; C) log(a - b) subtracts inside the log; the rule turns subtraction OUTSIDE into division INSIDE.",
   "tags": [
    "act",
    "act-algebra",
@@ -782,7 +782,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "h is multiplied by both l and w, so divide by both: h = V/(lw). Wrong choices: B) lw/V inverts the division; C) Vlw multiplies instead of dividing; D) V - lw subtracts, but l and w are factors, not terms.",
   "tags": [
    "act",
    "act-algebra",
@@ -1158,7 +1158,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "Adding logs multiplies the arguments: log(a) + log(b) = log(ab). Wrong choices: A) log(a + b) adds inside the log; addition outside becomes multiplication inside; B) log(a/b) divides — that is what SUBTRACTING logs does; C) log(a)log(b) multiplies the logs themselves rather than the arguments.",
   "tags": [
    "act",
    "act-algebra",
@@ -1486,7 +1486,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "Find two numbers multiplying to -20 and adding to -1: 4 and -5 do, so x² − 1x − 20 = (x + 4)(x − 5). Setting each factor to zero gives x = -4 or x = 5. Wrong choices: A) x = -4 or x = -5 gets one sign right and one wrong; B) x = 4 or x = -5 reads the roots straight off the factors without flipping their signs — (x + 5) = 0 gives x = −5, not +5; D) x = -1 or x = -20 reads the coefficients as the answers.",
   "tags": [
    "act",
    "act-algebra",
@@ -1533,7 +1533,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "The discriminant b² − 4ac decides it without solving: 1² − 4(4)(3) = 1 − 48 = -47. Negative, so no real roots — the parabola misses the x-axis. Wrong choices: A) 2 real solutions reads the sign of the discriminant backwards; C) exactly 1 real solution misses that a zero discriminant is the single repeated-root case; D) infinitely many solutions a quadratic with a non-zero leading coefficient can never have infinitely many roots.",
   "tags": [
    "act",
    "act-algebra",
@@ -1815,7 +1815,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "Split the product first, then bring the exponent down: log(a²b) = log(a²) + log(b) = 2log(a) + log(b). Wrong choices: B) 2(log(a) + log(b)) applies the 2 to both terms; only a is squared; C) log(a) + 2log(b) attaches the exponent to the wrong factor; D) 2log(a)log(b) multiplies the logs instead of adding them.",
   "tags": [
    "act",
    "act-algebra",
@@ -2707,7 +2707,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "Subtract the 2l first, then divide by 2: w = (P − 2l)/2. Wrong choices: B) P - 2l stops before dividing by 2; C) (P + 2l)/2 adds 2l instead of subtracting it; D) 2(P - l) multiplies by 2 rather than dividing.",
   "tags": [
    "act",
    "act-algebra",
@@ -3222,7 +3222,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "Subtract b, then divide by x: m = (y − b)/x. Wrong choices: A) x/(y - b) inverts the fraction; B) (y + b)/x adds b instead of subtracting; D) y - b - x subtracts x rather than dividing by it.",
   "tags": [
    "act",
    "act-algebra",
@@ -3269,7 +3269,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "Find two numbers multiplying to -72 and adding to 1: 9 and -8 do, so x² + 1x − 72 = (x + 9)(x − 8). Setting each factor to zero gives x = -9 or x = 8. Wrong choices: A) x = 1 or x = -72 reads the coefficients as the answers; B) x = -9 or x = -8 gets one sign right and one wrong; C) x = 9 or x = -8 reads the roots straight off the factors without flipping their signs — (x + 5) = 0 gives x = −5, not +5.",
   "tags": [
    "act",
    "act-algebra",
@@ -3457,7 +3457,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "",
+  "explanation": "Look for two numbers that multiply to -9 and add to 0: -3 and 3. So the factorisation is (x - 3)(x + 3). Wrong choices: B) (x - 3)(x - 3) mixes the signs, giving a difference of squares rather than this trinomial; C) (x + 3)(x - 3) flips both signs, which changes the middle term to 0; D) (x + 0)(x - 9) drops the coefficients straight into the factors instead of solving for the pair.",
   "tags": [
    "act",
    "act-algebra",
@@ -3551,7 +3551,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "A coefficient in front of a log becomes an EXPONENT inside it: 3log(a) = log(a³). Wrong choices: B) log(3a) multiplies the argument by 3; the coefficient becomes a power, not a factor; C) log(a)^3 cubes the whole log rather than the argument; D) 3 + log(a) adds instead of raising.",
   "tags": [
    "act",
    "act-algebra",
@@ -4395,7 +4395,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "t is multiplied by r, so divide by r: t = d/r. Wrong choices: A) r/d inverts the division; B) d - r subtracts, but r is a factor; D) dr multiplies instead of dividing.",
   "tags": [
    "act",
    "act-algebra",
@@ -4489,7 +4489,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "The discriminant b² − 4ac decides it without solving: 1² − 4(1)(6) = 1 − 24 = -23. Negative, so no real roots — the parabola misses the x-axis. Wrong choices: A) 2 real solutions reads the sign of the discriminant backwards; B) exactly 1 real solution misses that a zero discriminant is the single repeated-root case; C) infinitely many solutions a quadratic with a non-zero leading coefficient can never have infinitely many roots.",
   "tags": [
    "act",
    "act-algebra",
@@ -5193,7 +5193,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "",
+  "explanation": "Look for two numbers that multiply to -42 and add to 1: -6 and 7. So the factorisation is (x - 6)(x + 7). Wrong choices: C) (x + 1)(x - 42) drops the coefficients straight into the factors instead of solving for the pair.",
   "tags": [
    "act",
    "act-algebra",
@@ -5568,7 +5568,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "Multiply by 9/5 to undo the 5/9, then ADD 32 back: F = (9/5)C + 32. Undo the outermost operation first and the innermost last. Wrong choices: A) (9/5)C - 32 subtracts 32 rather than adding it back; C) (9/5)(C + 32) adds 32 before scaling, so the 32 gets multiplied too; D) (5/9)C + 32 keeps 5/9 instead of inverting it.",
   "tags": [
    "act",
    "act-algebra",
@@ -6131,7 +6131,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "The discriminant b² − 4ac decides it without solving: -1² − 4(3)(-7) = 1 − -84 = 85. Positive, so two real roots. Wrong choices: B) infinitely many solutions a quadratic with a non-zero leading coefficient can never have infinitely many roots; C) no real solutions reads the sign of the discriminant backwards; D) exactly 1 real solution misses that a zero discriminant is the single repeated-root case.",
   "tags": [
    "act",
    "act-algebra",
@@ -7726,7 +7726,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "",
+  "explanation": "The discriminant b² − 4ac decides it without solving: 0² − 4(2)(-3) = 0 − -24 = 24. Positive, so two real roots. Wrong choices: B) infinitely many solutions a quadratic with a non-zero leading coefficient can never have infinitely many roots; C) no real solutions reads the sign of the discriminant backwards; D) exactly 1 real solution misses that a zero discriminant is the single repeated-root case.",
   "tags": [
    "act",
    "act-algebra",
@@ -10728,7 +10728,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Average rate of change is the SLOPE between the two points: f(0) = 7 and f(3) = 28, so (28 − 7) ÷ (3 − 0) = 7. Wrong choices: A) 1/7 inverts the ratio, computing run over rise; D) 21 stops at the change in f without dividing by the change in x.",
   "tags": [
    "act",
    "act-functions",
@@ -11056,7 +11056,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "The minus is OUTSIDE f, so it negates the output: every y becomes −y, which flips the graph over the x-axis. Wrong choices: B) rotated 90° about the origin a sign change is a reflection, not a rotation; C) reflected over the y-axis confuses inside with outside — a minus outside f changes the output, so the flip is over the x-axis; D) reflected over the line y = x that swaps x and y, which is an inverse, not a sign change.",
   "tags": [
    "act",
    "act-functions",
@@ -11196,7 +11196,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Perpendicular slopes are negative reciprocals: flip 3 and change the sign to get -1/3. (Check: 3 × -1/3 = −1.) Wrong choices: A) -3 changes the sign but does not flip the fraction; C) 1/3 flips the fraction but does not change the sign; D) 3 repeats the original slope, which is the PARALLEL answer.",
   "tags": [
    "act",
    "act-functions",
@@ -11945,7 +11945,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "The minus is INSIDE f, so it negates the input: the value once found at x is now found at −x, which flips the graph over the y-axis. Wrong choices: A) reflected over the line y = x that swaps x and y, which is an inverse, not a sign change; B) reflected over the x-axis confuses inside with outside — a minus inside f changes the input, so the flip is over the y-axis.",
   "tags": [
    "act",
    "act-functions",
@@ -12975,7 +12975,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Substitute x = -5: 3(-5)² + 1(-5) + 8 = 75 − 5 + 8 = 78. Wrong choices: A) -12 forgets to square x in the first term.",
   "tags": [
    "act",
    "act-functions",
@@ -13115,7 +13115,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "A square root needs a non-negative inside: 4x + 0 ≥ 0, so 4x ≥ 0 and x ≥ 0. Wrong choices: A) x ≠ 0 is the restriction for a DENOMINATOR, not for a square root; C) x ≤ 0 points the inequality the wrong way; D) x > 0 excludes the endpoint; the inside may equal zero, and √0 is perfectly defined.",
   "tags": [
    "act",
    "act-functions",
@@ -13349,7 +13349,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "When top and bottom have the same degree, the horizontal asymptote is the ratio of the LEADING coefficients: 3 ÷ 1 = 3. The constants do not matter — far out, they are swamped by the x terms. Wrong choices: B) y = 1/3 inverts the ratio, dividing bottom by top; C) x = 8 gives the VERTICAL asymptote (where the denominator is zero), which is a different line; D) y = 1 assumes the leading coefficients cancel.",
   "tags": [
    "act",
    "act-functions",
@@ -13771,7 +13771,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Substitute x = 4: 2(4)² + 1(4) + 4 = 32 + 4 + 4 = 40. Wrong choices: A) 16 forgets to square x in the first term; B) 32 mis-signs the constant.",
   "tags": [
    "act",
    "act-functions",
@@ -14098,7 +14098,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Parallel lines have the SAME slope, so it is 8. Wrong choices: A) -8 changes the sign but does not flip the fraction; B) -1/8 gives the PERPENDICULAR slope (negative reciprocal) instead of the same slope; C) 1/8 flips the fraction but does not change the sign.",
   "tags": [
    "act",
    "act-functions",
@@ -14847,7 +14847,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Average rate of change is the SLOPE between the two points: f(2) = -5 and f(4) = 7, so (7 − -5) ÷ (4 − 2) = 6. Wrong choices: A) 1/6 inverts the ratio, computing run over rise; D) 12 stops at the change in f without dividing by the change in x.",
   "tags": [
    "act",
    "act-functions",
@@ -15641,7 +15641,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "When top and bottom have the same degree, the horizontal asymptote is the ratio of the LEADING coefficients: 3 ÷ 1 = 3. The constants do not matter — far out, they are swamped by the x terms. Wrong choices: A) y = 0 is the asymptote only when the bottom has the HIGHER degree; here the degrees match; C) y = 1/3 inverts the ratio, dividing bottom by top; D) x = 6 gives the VERTICAL asymptote (where the denominator is zero), which is a different line.",
   "tags": [
    "act",
    "act-functions",
@@ -16015,7 +16015,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "When top and bottom have the same degree, the horizontal asymptote is the ratio of the LEADING coefficients: 2 ÷ 5 = 2/5. The constants do not matter — far out, they are swamped by the x terms. Wrong choices: A) y = 5/2 inverts the ratio, dividing bottom by top; B) x = -8/5 gives the VERTICAL asymptote (where the denominator is zero), which is a different line; D) y = 1 assumes the leading coefficients cancel.",
   "tags": [
    "act",
    "act-functions",
@@ -16483,7 +16483,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "When top and bottom have the same degree, the horizontal asymptote is the ratio of the LEADING coefficients: 4 ÷ 1 = 4. The constants do not matter — far out, they are swamped by the x terms. Wrong choices: B) y = 1/4 inverts the ratio, dividing bottom by top; D) x = -4 gives the VERTICAL asymptote (where the denominator is zero), which is a different line.",
   "tags": [
    "act",
    "act-functions",
@@ -16577,7 +16577,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Work from the INSIDE out. g(-1) = 4(-1) + 0 = -4. Then f(-4) = 4(-4) + 1 = -15. Wrong choices: B) -12 computes g(f(x)) instead — composition is not commutative, and the order is the whole question.",
   "tags": [
    "act",
    "act-functions",
@@ -17606,7 +17606,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Work from the INSIDE out. g(3) = 3(3) − 2 = 7. Then f(7) = 5(7) + 0 = 35. Wrong choices: C) 43 computes g(f(x)) instead — composition is not commutative, and the order is the whole question.",
   "tags": [
    "act",
    "act-functions",
@@ -17747,7 +17747,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Average rate of change is the SLOPE between the two points: f(-1) = 6 and f(2) = 0, so (0 − 6) ÷ (2 − -1) = -2. Wrong choices: A) -6 stops at the change in f without dividing by the change in x; C) -1/2 inverts the ratio, computing run over rise.",
   "tags": [
    "act",
    "act-functions",
@@ -17840,7 +17840,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "When top and bottom have the same degree, the horizontal asymptote is the ratio of the LEADING coefficients: 3 ÷ 5 = 3/5. The constants do not matter — far out, they are swamped by the x terms. Wrong choices: A) y = 5/3 inverts the ratio, dividing bottom by top; C) x = -7/5 gives the VERTICAL asymptote (where the denominator is zero), which is a different line.",
   "tags": [
    "act",
    "act-functions",
@@ -18121,7 +18121,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Average rate of change is the SLOPE between the two points: f(-3) = 0 and f(1) = 8, so (8 − 0) ÷ (1 − -3) = 2. Wrong choices: B) 1/2 inverts the ratio, computing run over rise; D) 8 stops at the change in f without dividing by the change in x.",
   "tags": [
    "act",
    "act-functions",
@@ -18635,7 +18635,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Perpendicular slopes are negative reciprocals: flip 9 and change the sign to get -1/9. (Check: 9 × -1/9 = −1.) Wrong choices: A) -9 changes the sign but does not flip the fraction; C) 1/9 flips the fraction but does not change the sign; D) 9 repeats the original slope, which is the PARALLEL answer.",
   "tags": [
    "act",
    "act-functions",
@@ -19103,7 +19103,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Substitute x = 4: 6(4)² + 6(4) + 0 = 96 + 24 + 0 = 120. Wrong choices: A) 48 forgets to square x in the first term.",
   "tags": [
    "act",
    "act-functions",
@@ -19149,7 +19149,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Work from the INSIDE out. g(-3) = 2(-3) + 0 = -6. Then f(-6) = 4(-6) − 4 = -28. Wrong choices: A) -32 computes g(f(x)) instead — composition is not commutative, and the order is the whole question.",
   "tags": [
    "act",
    "act-functions",
@@ -19477,7 +19477,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "When top and bottom have the same degree, the horizontal asymptote is the ratio of the LEADING coefficients: 2 ÷ 3 = 2/3. The constants do not matter — far out, they are swamped by the x terms. Wrong choices: A) x = -5/3 gives the VERTICAL asymptote (where the denominator is zero), which is a different line; C) y = 3/2 inverts the ratio, dividing bottom by top.",
   "tags": [
    "act",
    "act-functions",
@@ -19898,7 +19898,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "A vertical asymptote sits where the DENOMINATOR is zero: 4x − 5 = 0 gives x = 5/4. Wrong choices: A) x = -5/4 solves the denominator without flipping the sign; B) y = 5/4 gives the HORIZONTAL asymptote (the ratio of leading coefficients); C) x = 0 sets the NUMERATOR to zero — that gives an x-intercept, not an asymptote.",
   "tags": [
    "act",
    "act-functions",
@@ -19991,7 +19991,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Work from the INSIDE out. g(2) = 4(2) + 0 = 8. Then f(8) = 3(8) − 4 = 20. Wrong choices: A) 8 computes g(f(x)) instead — composition is not commutative, and the order is the whole question.",
   "tags": [
    "act",
    "act-functions",
@@ -20038,7 +20038,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "",
+  "explanation": "Average rate of change is the SLOPE between the two points: f(-4) = 56 and f(2) = 14, so (14 − 56) ÷ (2 − -4) = -7. Wrong choices: A) -42 stops at the change in f without dividing by the change in x; D) -1/7 inverts the ratio, computing run over rise.",
   "tags": [
    "act",
    "act-functions",
@@ -21025,7 +21025,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Volume of a sphere is (4/3)πr³: (4/3) × 9³ = (4/3) × 729 = 972π. Wrong choices: A) 243π keeps the 1/3 but loses the 4; B) 729π drops the 4/3; C) 324π uses the SURFACE AREA formula 4πr² instead of the volume.",
   "tags": [
    "3d-shapes",
    "act",
@@ -21214,7 +21214,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the x-axis follows (x, y) → (x, −y). The x-axis is the mirror, so the horizontal position is untouched and only the sign of y flips. So (4, -4) → (4, 4). Wrong choices: A) (-4, -4) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put; D) (-4, 4) negates both, which is a rotation of 180° about the origin, not a reflection.",
   "tags": [
    "act",
    "act-geometry",
@@ -22014,7 +22014,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "TOTAL surface area is the curved side plus BOTH circular ends: 2πrh + 2πr² = 80π + 32π = 112π. Wrong choices: A) 96π counts only one end; C) 160π computes the volume; D) 80π gives only the curved side, leaving off the two ends.",
   "tags": [
    "3d-shapes",
    "act",
@@ -22156,7 +22156,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "The midpoint is the average of each coordinate: ((-5 + 8)/2, (-2 + -4)/2) = (3/2, -3). Wrong choices: A) (3, -6) adds the coordinates but never halves them; C) (13/2, -1) subtracts instead of adding — that is halfway along the displacement, measured from the origin; D) (-3, 3/2) reports the coordinates in the wrong order.",
   "tags": [
    "act",
    "act-geometry",
@@ -22203,7 +22203,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the line y = x follows (x, y) → (y, x). The line y = x swaps the roles of the two coordinates; no sign changes. So (-5, -1) → (-1, -5). Wrong choices: A) (-5, 1) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put; B) (5, 1) negates both, which is a rotation of 180° about the origin, not a reflection.",
   "tags": [
    "act",
    "act-geometry",
@@ -23146,7 +23146,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "The distance formula is the Pythagorean theorem on the legs Δx and Δy: Δx = 5, Δy = -8, so d = √(5² + -8²) = √(25 + 64) = √89. Wrong choices: A) 89 stops at d² and never takes the square root; B) 13 adds the two legs instead of combining them at right angles; D) √39 subtracts the squares rather than adding them.",
   "tags": [
    "act",
    "act-geometry",
@@ -23193,7 +23193,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the line y = x follows (x, y) → (y, x). The line y = x swaps the roles of the two coordinates; no sign changes. So (4, -2) → (-2, 4). Wrong choices: A) (4, 2) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put.",
   "tags": [
    "act",
    "act-geometry",
@@ -23711,7 +23711,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Volume of a cylinder is the base area times the height: πr²h = π × 64 × 6 = 384π. Wrong choices: A) 128π takes a third, which is the CONE formula; B) 96π computes the curved surface area (2πrh) instead of the volume; C) 48π uses r rather than r².",
   "tags": [
    "3d-shapes",
    "act",
@@ -23852,7 +23852,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "The midpoint is the average of each coordinate: ((3 + -4)/2, (7 + -6)/2) = (-1/2, 1/2). Wrong choices: B) (-1, 1) adds the coordinates but never halves them; C) (-7/2, -13/2) subtracts instead of adding — that is halfway along the displacement, measured from the origin; D) (1/2, -1/2) reports the coordinates in the wrong order.",
   "tags": [
    "act",
    "act-geometry",
@@ -23899,7 +23899,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the y-axis follows (x, y) → (−x, y). The y-axis is the mirror, so only the sign of x flips. So (-3, -6) → (3, -6). Wrong choices: A) (-6, -3) swaps the coordinates, which is the reflection over y = x; C) (-3, 6) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put.",
   "tags": [
    "act",
    "act-geometry",
@@ -24606,7 +24606,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "A cone is one THIRD of the cylinder that contains it: (1/3)πr²h = (1/3) × 144 × 12 = 576π. Wrong choices: A) 48π uses r rather than r²; C) 1728π forgets the 1/3 — that is the CYLINDER of the same radius and height.",
   "tags": [
    "3d-shapes",
    "act",
@@ -24795,7 +24795,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the x-axis follows (x, y) → (x, −y). The x-axis is the mirror, so the horizontal position is untouched and only the sign of y flips. So (1, 4) → (1, -4). Wrong choices: A) (-1, -4) negates both, which is a rotation of 180° about the origin, not a reflection; C) (4, 1) swaps the coordinates, which is the reflection over y = x.",
   "tags": [
    "act",
    "act-geometry",
@@ -25549,7 +25549,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "The distance formula is the Pythagorean theorem on the legs Δx and Δy: Δx = 6, Δy = -2, so d = √(6² + -2²) = √(36 + 4) = √40 = 2√10. Wrong choices: A) 40 stops at d² and never takes the square root; C) 8 adds the two legs instead of combining them at right angles.",
   "tags": [
    "act",
    "act-geometry",
@@ -25596,7 +25596,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the line y = x follows (x, y) → (y, x). The line y = x swaps the roles of the two coordinates; no sign changes. So (6, 8) → (8, 6). Wrong choices: C) (-6, -8) negates both, which is a rotation of 180° about the origin, not a reflection; D) (6, -8) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put.",
   "tags": [
    "act",
    "act-geometry",
@@ -26349,7 +26349,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Three pairs of matching faces: 2(8×10 + 10×2 + 8×2) = 2(80 + 20 + 16) = 232. Wrong choices: A) 40 adds the edge lengths rather than the face areas; B) 116 counts one of each face and forgets that every face has a twin; C) 160 computes the VOLUME instead of the surface area.",
   "tags": [
    "3d-shapes",
    "act",
@@ -26491,7 +26491,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "A 180° rotation about the origin sends (x, y) → (−x, −y): the point goes straight through the origin and out the same distance the other side. So (3, -4) → (-3, 4). Wrong choices: A) (3, 4) negates only y, which is a reflection over the x-axis; B) (-3, -4) negates only x, which is a reflection over the y-axis.",
   "tags": [
    "act",
    "act-geometry",
@@ -26961,7 +26961,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "The midpoint is the average of each coordinate: ((-8 + 7)/2, (-4 + -6)/2) = (-1/2, -5). Wrong choices: A) (-5, -1/2) reports the coordinates in the wrong order; B) (15/2, -1) subtracts instead of adding — that is halfway along the displacement, measured from the origin; D) (-1, -10) adds the coordinates but never halves them.",
   "tags": [
    "act",
    "act-geometry",
@@ -27008,7 +27008,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the y-axis follows (x, y) → (−x, y). The y-axis is the mirror, so only the sign of x flips. So (0, 6) → (0, 6). Wrong choices: A) (0, -6) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put; D) (6, 0) swaps the coordinates, which is the reflection over y = x.",
   "tags": [
    "act",
    "act-geometry",
@@ -27337,7 +27337,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "The midpoint is the average of each coordinate: ((-3 + -3)/2, (1 + -1)/2) = (-3, 0). Wrong choices: A) (0, -3) reports the coordinates in the wrong order; B) (-6, 0) adds the coordinates but never halves them; D) (0, -1) subtracts instead of adding — that is halfway along the displacement, measured from the origin.",
   "tags": [
    "act",
    "act-geometry",
@@ -27384,7 +27384,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "A 180° rotation about the origin sends (x, y) → (−x, −y): the point goes straight through the origin and out the same distance the other side. So (7, 0) → (-7, 0). Wrong choices: B) (7, 0) negates only y, which is a reflection over the x-axis; D) (0, 7) swaps the coordinates, which is a reflection over y = x.",
   "tags": [
    "act",
    "act-geometry",
@@ -27949,7 +27949,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Three pairs of matching faces: 2(5×4 + 4×3 + 5×3) = 2(20 + 12 + 15) = 94. Wrong choices: A) 24 adds the edge lengths rather than the face areas; B) 47 counts one of each face and forgets that every face has a twin; C) 60 computes the VOLUME instead of the surface area.",
   "tags": [
    "3d-shapes",
    "act",
@@ -28091,7 +28091,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the x-axis follows (x, y) → (x, −y). The x-axis is the mirror, so the horizontal position is untouched and only the sign of y flips. So (6, -4) → (6, 4). Wrong choices: B) (-6, -4) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put; C) (-6, 4) negates both, which is a rotation of 180° about the origin, not a reflection.",
   "tags": [
    "act",
    "act-geometry",
@@ -28608,7 +28608,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "A cone is one THIRD of the cylinder that contains it: (1/3)πr²h = (1/3) × 36 × 6 = 72π. Wrong choices: C) 216π forgets the 1/3 — that is the CYLINDER of the same radius and height; D) 12π uses r rather than r².",
   "tags": [
    "3d-shapes",
    "act",
@@ -28703,7 +28703,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "The midpoint is the average of each coordinate: ((-9 + 5)/2, (4 + 0)/2) = (-2, 2). Wrong choices: A) (2, -2) reports the coordinates in the wrong order; B) (-4, 4) adds the coordinates but never halves them; D) (7, -2) subtracts instead of adding — that is halfway along the displacement, measured from the origin.",
   "tags": [
    "act",
    "act-geometry",
@@ -28750,7 +28750,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the line y = x follows (x, y) → (y, x). The line y = x swaps the roles of the two coordinates; no sign changes. So (-2, 7) → (7, -2). Wrong choices: A) (-2, -7) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put; D) (2, -7) negates both, which is a rotation of 180° about the origin, not a reflection.",
   "tags": [
    "act",
    "act-geometry",
@@ -29268,7 +29268,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Volume of a sphere is (4/3)πr³: (4/3) × 2³ = (4/3) × 8 = 32π/3. Wrong choices: A) 16π uses the SURFACE AREA formula 4πr² instead of the volume; B) 8π drops the 4/3; D) 8π/3 keeps the 1/3 but loses the 4.",
   "tags": [
    "3d-shapes",
    "act",
@@ -29362,7 +29362,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "The midpoint is the average of each coordinate: ((0 + -1)/2, (9 + -6)/2) = (-1/2, 3/2). Wrong choices: A) (-1, 3) adds the coordinates but never halves them; B) (3/2, -1/2) reports the coordinates in the wrong order; C) (-1/2, -15/2) subtracts instead of adding — that is halfway along the displacement, measured from the origin.",
   "tags": [
    "act",
    "act-geometry",
@@ -29409,7 +29409,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the line y = x follows (x, y) → (y, x). The line y = x swaps the roles of the two coordinates; no sign changes. So (-3, -3) → (-3, -3). Wrong choices: A) (3, 3) negates both, which is a rotation of 180° about the origin, not a reflection; C) (-3, 3) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put.",
   "tags": [
    "act",
    "act-geometry",
@@ -30068,7 +30068,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "The midpoint is the average of each coordinate: ((-1 + -1)/2, (6 + 1)/2) = (-1, 7/2). Wrong choices: B) (-2, 7) adds the coordinates but never halves them; C) (7/2, -1) reports the coordinates in the wrong order; D) (0, -5/2) subtracts instead of adding — that is halfway along the displacement, measured from the origin.",
   "tags": [
    "act",
    "act-geometry",
@@ -30115,7 +30115,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "",
+  "explanation": "Reflecting over the y-axis follows (x, y) → (−x, y). The y-axis is the mirror, so only the sign of x flips. So (3, -4) → (-3, -4). Wrong choices: C) (-3, 4) negates both, which is a rotation of 180° about the origin, not a reflection; D) (3, 4) flips the wrong coordinate — the axis you reflect ACROSS is the one that stays put.",
   "tags": [
    "act",
    "act-geometry",
@@ -43210,7 +43210,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 7 + 3 = 13. So 7/13 = 7/13. Wrong choices: B) 6/13 gives the probability of NOT drawing white; D) 7/6 divides by the marbles that are NOT white (6) instead of by all 13 — that is odds, not probability.",
   "tags": [
    "act",
    "act-statistics",
@@ -43544,7 +43544,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Two quantities with no visible pattern have NO correlation — knowing one tells you nothing about the other. Wrong choices: A) a positive correlation reads a pattern into data that has none; B) a negative correlation has the direction backwards; D) a strong association describes STRENGTH, not direction, and a pattern-free plot has neither.",
   "tags": [
    "act",
    "act-statistics",
@@ -43736,7 +43736,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 8 + 7 + 5 = 20. So 7/20 = 7/20. Wrong choices: C) 7/13 divides by the marbles that are NOT yellow (13) instead of by all 20 — that is odds, not probability; D) 13/20 gives the probability of NOT drawing yellow.",
   "tags": [
    "act",
    "act-statistics",
@@ -44020,7 +44020,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Both move in the same direction, so the correlation is POSITIVE. Wrong choices: A) a causal relationship correlation describes how two variables MOVE TOGETHER; it never establishes that one causes the other, which is the single most common misreading of a scatterplot; B) no correlation misses a clear trend; C) a negative correlation has the direction backwards.",
   "tags": [
    "act",
    "act-statistics",
@@ -44212,7 +44212,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 7 + 7 + 6 = 20. So 6/20 = 3/10. Wrong choices: C) 3/7 divides by the marbles that are NOT white (14) instead of by all 20 — that is odds, not probability; D) 7/10 gives the probability of NOT drawing white.",
   "tags": [
    "act",
    "act-statistics",
@@ -44499,7 +44499,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "One goes up while the other goes down, so the correlation is NEGATIVE. Negative does not mean weak; it describes the direction of the trend, not its strength. Wrong choices: A) no correlation misses a clear trend; C) a causal relationship correlation describes how two variables MOVE TOGETHER; it never establishes that one causes the other, which is the single most common misreading of a scatterplot; D) a positive correlation has the direction backwards.",
   "tags": [
    "act",
    "act-statistics",
@@ -44739,7 +44739,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 9 + 6 + 6 = 21. So 6/21 = 2/7. Wrong choices: C) 2/5 divides by the marbles that are NOT red (15) instead of by all 21 — that is odds, not probability; D) 5/7 gives the probability of NOT drawing red.",
   "tags": [
    "act",
    "act-statistics",
@@ -45264,7 +45264,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 4 + 3 + 3 = 10. So 4/10 = 2/5. Wrong choices: C) 3/5 gives the probability of NOT drawing green; D) 2/3 divides by the marbles that are NOT green (6) instead of by all 10 — that is odds, not probability.",
   "tags": [
    "act",
    "act-statistics",
@@ -45789,7 +45789,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 4 + 7 + 4 = 15. So 4/15 = 4/15. Wrong choices: C) 4/11 divides by the marbles that are NOT yellow (11) instead of by all 15 — that is odds, not probability; D) 11/15 gives the probability of NOT drawing yellow.",
   "tags": [
    "act",
    "act-statistics",
@@ -46314,7 +46314,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 8 + 3 = 14. So 8/14 = 4/7. Wrong choices: B) 3/7 gives the probability of NOT drawing blue; D) 4/3 divides by the marbles that are NOT blue (6) instead of by all 14 — that is odds, not probability.",
   "tags": [
    "act",
    "act-statistics",
@@ -46839,7 +46839,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 5 + 5 = 13. So 3/13 = 3/13. Wrong choices: C) 3/10 divides by the marbles that are NOT yellow (10) instead of by all 13 — that is odds, not probability; D) 10/13 gives the probability of NOT drawing yellow.",
   "tags": [
    "act",
    "act-statistics",
@@ -47317,7 +47317,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 6 + 5 = 14. So 6/14 = 3/7. Wrong choices: C) 4/7 gives the probability of NOT drawing green; D) 3/4 divides by the marbles that are NOT green (8) instead of by all 14 — that is odds, not probability.",
   "tags": [
    "act",
    "act-statistics",
@@ -47745,7 +47745,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 6 + 7 + 6 = 19. So 6/19 = 6/19. Wrong choices: C) 6/13 divides by the marbles that are NOT blue (13) instead of by all 19 — that is odds, not probability; D) 13/19 gives the probability of NOT drawing blue.",
   "tags": [
    "act",
    "act-statistics",
@@ -48123,7 +48123,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 9 + 6 + 3 = 18. So 3/18 = 1/6. Wrong choices: C) 1/5 divides by the marbles that are NOT red (15) instead of by all 18 — that is odds, not probability; D) 5/6 gives the probability of NOT drawing red.",
   "tags": [
    "act",
    "act-statistics",
@@ -48648,7 +48648,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 5 + 6 = 14. So 5/14 = 5/14. Wrong choices: C) 5/9 divides by the marbles that are NOT green (9) instead of by all 14 — that is odds, not probability; D) 9/14 gives the probability of NOT drawing green.",
   "tags": [
    "act",
    "act-statistics",
@@ -49125,7 +49125,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 7 + 8 + 4 = 19. So 8/19 = 8/19. Wrong choices: C) 11/19 gives the probability of NOT drawing red; D) 8/11 divides by the marbles that are NOT red (11) instead of by all 19 — that is odds, not probability.",
   "tags": [
    "act",
    "act-statistics",
@@ -49650,7 +49650,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 7 + 4 + 2 = 13. So 2/13 = 2/13. Wrong choices: C) 2/11 divides by the marbles that are NOT red (11) instead of by all 13 — that is odds, not probability; D) 11/13 gives the probability of NOT drawing red.",
   "tags": [
    "act",
    "act-statistics",
@@ -50175,7 +50175,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 4 + 3 + 2 = 9. So 2/9 = 2/9. Wrong choices: C) 2/7 divides by the marbles that are NOT yellow (7) instead of by all 9 — that is odds, not probability; D) 7/9 gives the probability of NOT drawing yellow.",
   "tags": [
    "act",
    "act-statistics",
@@ -50964,7 +50964,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "FOIL, then use i² = −1: real part 5(5) − (6)(-6) = 61, imaginary part 5(-6) + (6)(5) = 0. So 61. The imaginary parts cancel — these are conjugates, and a number times its conjugate is always real. Wrong choices: B) 25-36i multiplies the parts straight across without FOILing.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -51054,7 +51054,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "For [[a, b], [c, d]] the determinant is ad − bc: (8)(-1) − (3)(-1) = -8 − -3 = -5. Wrong choices: A) -11 adds the two products instead of subtracting; C) 5 subtracts in the wrong order, giving the negative; D) 23 multiplies along the rows rather than the diagonals.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -51644,7 +51644,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "FOIL, then use i² = −1: real part 4(5) − (-2)(-1) = 18, imaginary part 4(-1) + (-2)(5) = -14. So 18 - 14i. Wrong choices: A) 22-14i treats i² as +1, so the last product keeps its sign instead of flipping; B) 20+2i multiplies the parts straight across without FOILing.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -51734,7 +51734,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "For [[a, b], [c, d]] the determinant is ad − bc: (9)(0) − (8)(-7) = 0 − -56 = 56. Wrong choices: A) -56 adds the two products instead of subtracting; D) 72 multiplies along the rows rather than the diagonals.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -52234,7 +52234,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "FOIL, then use i² = −1: real part 3(7) − (1)(-3) = 24, imaginary part 3(-3) + (1)(7) = -2. So 24 - 2i. Wrong choices: A) 18-2i treats i² as +1, so the last product keeps its sign instead of flipping; B) 21-3i multiplies the parts straight across without FOILing.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -52324,7 +52324,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "For [[a, b], [c, d]] the determinant is ad − bc: (-3)(4) − (-5)(2) = -12 − -10 = -2. Wrong choices: A) -22 adds the two products instead of subtracting; D) 7 multiplies along the rows rather than the diagonals.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -52868,7 +52868,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "FOIL, then use i² = −1: real part 3(7) − (-6)(2) = 33, imaginary part 3(2) + (-6)(7) = -36. So 33 - 36i. Wrong choices: A) 21-12i multiplies the parts straight across without FOILing; D) 9-36i treats i² as +1, so the last product keeps its sign instead of flipping.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -53503,7 +53503,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "FOIL, then use i² = −1: real part 2(4) − (7)(7) = -41, imaginary part 2(7) + (7)(4) = 42. So -41 + 42i. Wrong choices: B) 57+42i treats i² as +1, so the last product keeps its sign instead of flipping; D) 8+49i multiplies the parts straight across without FOILing.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -53548,7 +53548,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "For [[a, b], [c, d]] the determinant is ad − bc: (3)(5) − (-2)(-1) = 15 − 2 = 13. Wrong choices: A) -1 multiplies along the rows rather than the diagonals; D) 17 adds the two products instead of subtracting.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -54048,7 +54048,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "FOIL, then use i² = −1: real part 1(2) − (-4)(1) = 6, imaginary part 1(1) + (-4)(2) = -7. So 6 - 7i. Wrong choices: A) -2-7i treats i² as +1, so the last product keeps its sign instead of flipping; D) 2-4i multiplies the parts straight across without FOILing.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -54138,7 +54138,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "For [[a, b], [c, d]] the determinant is ad − bc: (6)(6) − (9)(-3) = 36 − -27 = 63. Wrong choices: B) 9 adds the two products instead of subtracting; D) 72 multiplies along the rows rather than the diagonals.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -54683,7 +54683,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "FOIL, then use i² = −1: real part 1(5) − (2)(-7) = 19, imaginary part 1(-7) + (2)(5) = 3. So 19 + 3i. Wrong choices: B) -9+3i treats i² as +1, so the last product keeps its sign instead of flipping; D) 5-14i multiplies the parts straight across without FOILing.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -54728,7 +54728,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "For [[a, b], [c, d]] the determinant is ad − bc: (0)(1) − (2)(5) = 0 − 10 = -10. Wrong choices: C) -5 multiplies along the rows rather than the diagonals; D) 10 adds the two products instead of subtracting.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -55183,7 +55183,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "FOIL, then use i² = −1: real part 7(5) − (-3)(7) = 56, imaginary part 7(7) + (-3)(5) = 34. So 56 + 34i. Wrong choices: C) 35-21i multiplies the parts straight across without FOILing; D) 14+34i treats i² as +1, so the last product keeps its sign instead of flipping.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -55228,7 +55228,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "For [[a, b], [c, d]] the determinant is ad − bc: (9)(8) − (6)(1) = 72 − 6 = 66. Wrong choices: B) 46 multiplies along the rows rather than the diagonals; D) 78 adds the two products instead of subtracting.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -55636,7 +55636,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "FOIL, then use i² = −1: real part 2(5) − (-2)(-4) = 2, imaginary part 2(-4) + (-2)(5) = -18. So 2 - 18i. Wrong choices: C) 18-18i treats i² as +1, so the last product keeps its sign instead of flipping; D) 10+8i multiplies the parts straight across without FOILing.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -55726,7 +55726,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "",
+  "explanation": "For [[a, b], [c, d]] the determinant is ad − bc: (8)(9) − (-8)(8) = 72 − -64 = 136. Wrong choices: A) -136 multiplies along the rows rather than the diagonals; B) 8 adds the two products instead of subtracting.",
   "tags": [
    "act",
    "act-number-quantity",
