@@ -38,8 +38,12 @@ describe('a full-length form is unchanged', () => {
 });
 
 describe('a short form scores on merit, not on length', () => {
-  test('acing a 28-item form is a 36, not the old 24', () => {
-    expect(BP.scaledScore.scaledByRaw[28]).toBe(24);      // the cap that used to apply
+  test('acing a short form is a 36, not whatever the table caps it at', () => {
+    // Read the cap off the live table rather than hardcoding it — the curve
+    // itself was later corrected to ACT's published one, and the bug under
+    // test is the INDEXING, not any particular scale value.
+    const capAt28 = BP.scaledScore.scaledByRaw[28];
+    expect(capAt28).toBeLessThan(36);                     // the cap that used to apply
     expect(rawToScaled(28, BP, 28).scaled).toBe(36);      // what it scores now
   });
 

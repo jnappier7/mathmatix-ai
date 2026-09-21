@@ -3,13 +3,24 @@
 // (seeds/act-ies-expansion/ies-items.generated.json) into the Problem collection.
 //
 // WHY THIS BANK EXISTS
-// The real ACT devotes 40–43% of its math section to Integrating Essential
-// Skills — the multi-step problems that synthesize arithmetic, percentages,
-// rates, ratios, and basic geometry in context. Our bank held only 105 IES
-// items, which forced seeds/act-math-blueprint.json to under-weight IES at
-// 9 of 45 slots (20%) just to keep enough depth for non-repeating forms.
-// These 300 items (50 across each of the 6 IES skills) are what let the
-// blueprint move to the authentic weight without running the bank dry.
+// Integrating Essential Skills is the multi-step half of ACT math — problems
+// that synthesize arithmetic, percentages, rates, ratios, averages and basic
+// geometry in context. This bank gives those skills enough depth that no two
+// practice forms have to repeat an item.
+//
+// CORRECTION 2026-09-21. This header used to read "the real ACT devotes 40–43%
+// of its math section to Integrating Essential Skills", and on that basis the
+// blueprint was moved from 9 of 45 slots to 19. That figure is the LEGACY
+// 60-question ACT's share. The enhanced (2025+) 45-question section is 80/20:
+// ACT's own "Preparing for the ACT" ((c) 2026) states Integrating Essential
+// Skills at 20%, and both official practice forms score it at exactly 8 of 41
+// scored items. So 9 of 45 was never an under-weighting forced by a thin bank —
+// it was correct, and the bank's depth was used to argue the exam into the wrong
+// shape. Depth is a reason to stop generating, never a reason to re-weight.
+//
+// The bank now also carries act-average-median and act-number-forms, the two
+// concept areas ACT names for IES that had no coverage at all. See
+// scripts/generateIesConceptCoverage.js.
 //
 // Usage:
 //   node scripts/seedActIesItems.js            # upsert (idempotent)

@@ -1,15 +1,20 @@
 {
  "source": "act",
  "_comment": "PROPOSED ACT -> unified taxonomy mapping. INERT BY DESIGN: skillCanonicalizer globs seeds/unified-taxonomy/*-crosswalk.json, and this filename deliberately does NOT match, so nothing here can reach mastery keying until a human renames it. See docs/ACT_UNIFIED_CROSSWALK_PROPOSAL.md for what activating it would change and the checks it requires first.",
- "legacySkillCount": 44,
- "mappedCount": 42,
- "unmappedCount": 2,
+ "legacySkillCount": 46,
+ "mappedCount": 43,
+ "unmappedCount": 3,
  "distinctUnifiedTargets": 42,
  "confidenceCounts": {
-  "high": 26,
+  "high": 27,
   "medium": 16
  },
  "unmapped": [
+  {
+   "legacyId": "act-number-forms",
+   "legacyName": "Number forms",
+   "reason": "No unified node covers equivalence ACROSS forms. The pieces exist separately — ELEM.PRP.4 (fractions as decimals), MS.QNT.5 (compare rational numbers), MS.QNT.10 (scientific notation), MS.QNT.11 (approximate irrationals on a number line) — but the ACT skill is recognizing one quantity wearing any of those forms and moving between them, which is precisely what no single node asserts. Mapping it to any one would credit a narrower skill than the student demonstrated."
+  },
   {
    "legacyId": "act-time-schedule-arithmetic",
    "legacyName": "Time & schedule arithmetic",
@@ -72,6 +77,22 @@
     }
    ],
    "note": "",
+   "approved": true
+  },
+  {
+   "legacyId": "act-average-median",
+   "legacyName": "Average & median",
+   "unifiedId": "MS.DTA.3",
+   "unifiedName": "Center and variability",
+   "actCategory": "integrating-essential-skills",
+   "confidence": "high",
+   "alternatives": [
+    {
+     "id": "ALG1.DTA.1",
+     "name": "Describe data distributions"
+    }
+   ],
+   "note": "MS.DTA.3 covers mean and median directly. ACT assesses them under Integrating Essential Skills rather than Statistics & Probability, because its items work BACKWARDS from the statistic (given the mean and all but one value, recover it) rather than computing one forwards.",
    "approved": true
   },
   {
