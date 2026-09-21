@@ -206,7 +206,14 @@ async function gradeSession(session) {
 
   const raw = session.responses.filter((r) => r.correct).length;
   const total = session.items.length;
-  const scaled = rawToScaled(raw);
+  // Scale against the length of the form THIS student actually sat. A thin
+  // bank (or a deep seen-ledger on a re-test) fills fewer than the blueprint's
+  // 45 slots, and indexing the 45-row table with a short form's raw count caps
+  // the student at whatever that form could physically return — a perfect
+  // 28-item form used to score 24. Forms shrink as the ledger grows, so that
+  // capped the re-test harder than the baseline and turned real improvement
+  // into a downward trend line.
+  const scaled = rawToScaled(raw, undefined, total);
 
   const byCategory = {};
   const bySkill = {};
@@ -646,6 +653,38 @@ router.post('/complete', async (req, res) => {
       }))
       .sort((a, b) => (b.missed / b.total) - (a.missed / a.total) || b.missed - a.missed);
 
+    // ── What you missed, question by question ──
+    // "Take the test, see your score and what you missed" — the results screen
+    // showed the scaled score and six category bars and stopped there, so the
+    // only place a student could find out WHICH questions they got wrong was
+    // the review panel in chat, after they had already left the test. Beats 2
+    // and 3 were fused; this un-fuses them. Grouped the same way review runs
+    // (by skill), so the list the student reads here is the list they then work.
+    const missedByGroup = (() => {
+      const byKey = new Map();
+      const order = [];
+      for (const r of session.responses) {
+        if (!r || !(r.correct === false || r.skipped === true)) continue;
+        const key = r.skillId || r.category || 'unknown';
+        if (!byKey.has(key)) {
+          byKey.set(key, {
+            key,
+            label: ACT_SKILL_NAMES[r.skillId] || ACT_SKILL_NAMES[r.category] || 'Other',
+            category: r.category || null,
+            positions: [],
+          });
+          order.push(key);
+        }
+        byKey.get(key).positions.push({ position: r.position != null ? r.position : null, skipped: !!r.skipped });
+      }
+      return order
+        .map((k) => byKey.get(k))
+        .map((g) => ({ ...g, positions: g.positions.sort((a, b) => (a.position || 0) - (b.position || 0)), count: g.positions.length }))
+        // Biggest cluster first: the pattern is the headline, not the order
+        // the questions happened to appear in.
+        .sort((a, b) => b.count - a.count || (a.positions[0].position || 0) - (b.positions[0].position || 0));
+    })();
+
     // "Great tutor" triage: skip mastered domains, rank the rest by leverage
     // (weakness x ACT exam-weight), and pick a prerequisite-aware starting module.
     // This is the plan the course opening + module ordering consume (next step).
@@ -852,9 +891,15 @@ router.post('/complete', async (req, res) => {
         totalItems: total,
         scaledScore: scaled ? scaled.scaled : null,
         scaledApproximate: true,
+        // The bank could not fill the whole blueprint for this student, so the
+        // estimate is projected from fewer questions. Say so rather than
+        // presenting it as an equal comparison to a full-length attempt.
+        shortForm: !!(scaled && scaled.shortForm),
+        blueprintItems: scaled ? scaled.blueprintLength : null,
         accuracy: total ? Math.round((raw / total) * 100) : 0,
         byCategory,
         weakSkills,
+        missedByGroup,
         plannedSkills,
         plan,
         sheetApplied,                      // answers the submitted sheet corrected on the server

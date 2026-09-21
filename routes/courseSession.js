@@ -605,6 +605,58 @@ router.post('/:id/bootcamp/jump', async (req, res) => {
 });
 
 /* ============================================================
+   POST /api/course-sessions/:id/bootcamp/advance
+   The STUDENT says they're done with the current miss ("Got
+   it - next"). Marks it reviewed and moves to the next pending
+   one, flipping to 'reassess' when the queue is worked down.
+
+   Same transition <REVIEW_NEXT> performs, with the student
+   holding the key instead of only the model. The tag was the
+   sole way the queue could move or anything could be marked
+   reviewed, so a turn where the tutor simply didn't emit it
+   left the student stuck on a question they were finished with
+   and nothing on screen could move them.
+
+   Body: { done: true } ends review early and jumps to the
+   re-test - a student who has had enough is not made to grind
+   all 22 misses to unlock the next test.
+   ============================================================ */
+router.post('/:id/bootcamp/advance', async (req, res) => {
+  try {
+    const session = await CourseSession.findOne({ _id: req.params.id, userId: req.user._id });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Course session not found' });
+    }
+    const bc = session.bootcamp;
+    if (!bc || !Array.isArray(bc.queue) || !bc.queue.length) {
+      return res.status(400).json({ success: false, message: 'No review queue for this session' });
+    }
+    const { markReviewedAndAdvance } = require('../utils/actReview');
+
+    let done;
+    if (req.body && req.body.done) {
+      // Ending review early is a legitimate choice, not an error state. Leave
+      // every un-worked miss PENDING so the rail still shows what is left and
+      // a tap back in resumes it — only the phase moves.
+      done = true;
+    } else {
+      const r = markReviewedAndAdvance(bc);   // marks reviewed AND moves bc.index
+      if (!r.ok) return res.status(400).json({ success: false, message: 'Nothing to advance' });
+      done = r.done;
+    }
+    if (done) bc.phase = 'reassess';
+
+    session.bootcamp = bc;
+    session.markModified('bootcamp');
+    await session.save();
+    res.json({ success: true, done, bootcamp: clientSafeBootcamp(bc) });
+  } catch (err) {
+    console.error('[CourseSession] Error advancing review queue:', err);
+    res.status(500).json({ success: false, message: 'Failed to advance review queue' });
+  }
+});
+
+/* ============================================================
    POST /api/course-sessions/:id/complete-module
    Mark a module as completed, unlock next, award XP
    ============================================================ */

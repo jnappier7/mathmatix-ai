@@ -557,6 +557,7 @@
             ${r.plannedSkills ? `<div style="font-size:13px;color:#8b6fd6;margin-top:2px">✓ Your tutor will now focus on your ${r.plannedSkills} weakest skill${r.plannedSkills > 1 ? 's' : ''}.</div>` : ''}
           </div>
           <div style="max-width:520px;margin:0 auto">${cats}</div>
+          ${this._missedListHtml(r)}
           <div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
             <button class="actt-btn actt-next" id="actt-tutor">📤 Review with my tutor</button>
             <button class="actt-btn actt-skip" id="actt-progress">📈 My progress</button>
@@ -572,16 +573,55 @@
       }
     }
 
+    /**
+     * "…and what you missed." The score and six category bars never said WHICH
+     * questions went wrong — a student had to leave the test and open the chat
+     * panel to find out, which fused "see what you missed" into "review with
+     * the tutor". Grouped by skill, in the order review will actually work
+     * them, so this list and the review rail read the same.
+     */
+    _missedListHtml(r) {
+      const groups = (r && r.missedByGroup) || [];
+      if (!groups.length) return '';
+      const esc = escapeHtml;
+      const rows = groups.map((g) => {
+        const nums = g.positions.map((p) => {
+          const n = p.position != null ? `#${p.position}` : '—';
+          return `<span title="${p.skipped ? 'Skipped' : 'Answered wrong'}" style="display:inline-block;background:${p.skipped ? '#fff4e0' : '#fdecec'};border:1px solid ${p.skipped ? '#f0d9b4' : '#f0b4b4'};color:#6b3030;border-radius:7px;padding:2px 7px;font-size:12px;margin:0 4px 4px 0">${n}</span>`;
+        }).join('');
+        return `<div style="padding:8px 0;border-bottom:1px solid #eceaf4">
+            <div style="font-size:13px;font-weight:600;color:#3a3160;margin-bottom:5px">${esc(g.label)}${g.count > 1 ? ` <span style="font-weight:400;color:#8578ab">· ${g.count} missed</span>` : ''}</div>
+            <div>${nums}</div>
+          </div>`;
+      }).join('');
+      const short = r.shortForm
+        ? `<div style="font-size:11.5px;color:#8578ab;margin-top:10px">This form ran ${r.totalItems} questions instead of ${r.blueprintItems}, so the score is projected from fewer items.</div>`
+        : '';
+      return `<div style="max-width:520px;margin:20px auto 0">
+          <div style="font-size:13.5px;font-weight:700;color:#3a3160;margin-bottom:4px">What you missed</div>
+          <div style="font-size:11.5px;color:#8578ab;margin-bottom:6px">Grouped by skill — this is the order you'll review them in.</div>
+          ${rows}
+          ${short}
+        </div>`;
+    }
+
     // Compose a student-voiced results summary and hand it to the chat tutor so
     // the conversation has context and remediation can start on the weak areas.
     buildTutorMessage(r) {
       const head = `I just finished an ACT Math practice test — estimated score ${r.scaledScore != null ? r.scaledScore : '?'} (${r.rawScore}/${r.totalItems} correct).`;
 
       // Prefer EXACT skills (e.g. "Quadratic Equations") over broad categories.
+      //
+      // Deliberately does NOT name an order. This message used to ask to start
+      // "with the weakest", which was a THIRD ordering promise on top of the
+      // rail's test order and the queue's own leverage order — and the queue is
+      // what actually runs, so the tutor opened on a question the student had
+      // just been told would come later. The server's queue decides; the
+      // student's opening line only supplies context.
       const skills = (r.weakSkills || []).slice(0, 5);
       if (skills.length) {
         const list = skills.map(s => `${s.name} (missed ${s.missed}/${s.total})`).join(', ');
-        return `${head} The specific skills I missed questions on: ${list}. Can we work through those one at a time, starting with the weakest?`;
+        return `${head} The specific skills I missed questions on: ${list}. Can we start going over the ones I missed?`;
       }
 
       // Fallback: category level (if the backend didn't send per-skill data).
@@ -592,7 +632,7 @@
       if (!cats.length) {
         return `${head} I got everything right — what should I work on to push my score even higher?`;
       }
-      return `${head} My weakest areas were ${cats.map(c => `${c.name} (${c.correct}/${c.total})`).join(' and ')}. Can we start reviewing those, one topic at a time?`;
+      return `${head} My weakest areas were ${cats.map(c => `${c.name} (${c.correct}/${c.total})`).join(' and ')}. Can we start going over the ones I missed?`;
     }
 
     sendToTutor(r) {

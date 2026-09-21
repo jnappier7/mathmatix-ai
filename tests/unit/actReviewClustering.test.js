@@ -174,20 +174,48 @@ describe('the student is told the pattern', () => {
   });
 });
 
-describe('the number rail still reads like their answer sheet', () => {
+describe('the review list shows the clustering rather than hiding it', () => {
   const src = read('public/js/lessonTracker.js');
 
-  test('chips are sorted by position for display', () => {
-    // Owner rule, 2026-07-28: the rail marches through the numbers the way the
-    // student saw them. Review order is now different, so the rail sorts.
-    expect(src).toMatch(/const inTestOrder = queue/);
-    expect(src).toMatch(/inTestOrder\.map\(\(\{ q, i \}\) => chip\(q, i\)\)/);
+  // SUPERSEDED, 2026-09-21 (owner). The rule this block used to pin — "the rail
+  // marches through the numbers the way the student saw them" (2026-07-28) —
+  // was written when the rail was the ONLY list and review ran in test order
+  // too. Once review moved to skill clusters, keeping the rail in position
+  // order put two orderings on one screen: the current chip sat mid-rail with
+  // un-worked numbers to its left, and the card above it read "up next: #30"
+  // over a list beginning at #2. The owner's call was to keep the clustering
+  // and make it visible, so the rail now renders the queue, grouped and named.
+  //
+  // What test order bought the student — recognising their own answer sheet —
+  // is preserved WITHIN each group, where the numbers still read ascending.
+
+  test('the list is built from the queue, grouped, not re-sorted by position', () => {
+    expect(src).toMatch(/_reviewGroups\(bc\)/);
+    expect(src).not.toMatch(/const inTestOrder = queue/);
   });
 
-  test('the jump target is the QUEUE index, not the display index', () => {
-    // Sorting for display while jumping by display position would send the
-    // student to a different question than the one they tapped.
-    expect(src).toMatch(/data-bc-jump="\$\{i\}"/);
-    expect(src).toMatch(/\.map\(\(q, i\) => \(\{ q, i \}\)\)/);
+  test('within a group the numbers still read in test order', () => {
+    // reviewGroups preserves queue order, and clusterBySkill sorts each group
+    // by position — so a group reads #4 #17 #38, the way the sheet did.
+    const { buildReviewQueue, reviewGroups } = require('../../utils/actReview');
+    const q = buildReviewQueue({
+      items: [38, 4, 17].map((position) => ({ position, problemId: `p${position}`, skillId: 'act-ratios-proportions', category: 'integrating-essential-skills', content: 'x' })),
+      responses: [38, 4, 17].map((position) => ({ position, problemId: `p${position}`, answer: 'A', correct: false })),
+    }, {});
+    const nums = reviewGroups({ index: 0, queue: q })[0].items.map((i) => i.position);
+    expect(nums).toEqual([4, 17, 38]);
+  });
+
+  test('the jump target is still the QUEUE index, never the display index', () => {
+    // The invariant that outlived the re-sort: rendering in one order while
+    // jumping by another sends the student to a different question than the
+    // one they tapped. reviewGroups carries queueIndex for exactly this.
+    expect(src).toMatch(/data-bc-jump="\$\{it\.queueIndex\}"/);
+    expect(src).toMatch(/queueIndex: i,/);
+  });
+
+  test('the group heading names the skill, so the pattern is on screen', () => {
+    expect(src).toMatch(/g\.total > 1/);
+    expect(src).toMatch(/missed/);
   });
 });

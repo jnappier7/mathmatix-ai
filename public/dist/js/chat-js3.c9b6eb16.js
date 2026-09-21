@@ -5396,9 +5396,12 @@ class LessonTracker {
               <div style="height:7px;background:rgba(255,255,255,.22);border-radius:5px;overflow:hidden;margin-bottom:10px"><div style="width:${pct}%;height:100%;background:#fff;border-radius:5px"></div></div>
               ${this._numberRailHtml(bc)}
               ${this._missPreviewHtml(cur, label)}
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-                <span style="color:rgba(255,255,255,.9);font-size:12.5px">Up next: <strong>${cur && cur.position != null ? `#${cur.position} · ` : ''}${cur ? label(cur.category) : '—'}</strong></span>
-                <button id="lt-bc-continue" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Continue in chat</button>
+              <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap">
+                <button id="lt-bc-continue" style="background:rgba(255,255,255,.22);color:#fff;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Work it with my tutor</button>
+                <button id="lt-bc-next" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Got it &mdash; next &#9654;</button>
+              </div>
+              <div style="margin-top:9px;text-align:right">
+                <a id="lt-bc-done" href="#" style="color:rgba(255,255,255,.8);font-size:11.5px;text-decoration:underline">I'm done reviewing &mdash; re-test me</a>
               </div>
             </div>` : `
             <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
@@ -5440,48 +5443,94 @@ class LessonTracker {
     }
 
     /**
-     * The missed-number rail: every question they missed, as a clickable
-     * number in test order ("maybe they missed 2, 4, 5, 12, 19, 23, 35…").
-     * Review runs in order unless the student clicks a number to jump.
-     * Renders nothing for queues that predate position-stamping — wrong
-     * numbers would be worse than none.
+     * The review list: the QUEUE, in queue order, cut into its skill groups.
+     *
+     * This used to re-sort the same misses by test position and label itself
+     * "just keep going in order" — the one order review does NOT run in. The
+     * queue is clustered by skill, so the highlighted chip landed mid-rail with
+     * un-worked numbers to its left and "up next: #30" contradicted a list that
+     * started at #2. Two orderings, one widget, and the widget named the wrong
+     * one.
+     *
+     * Now the list IS the queue, and the clustering it was hiding becomes the
+     * heading: "Ratios & proportions · #4 #9 #17". That grouping is the most
+     * useful thing the test result contains and the one thing the student
+     * cannot see for themselves — on their answer sheet those three were
+     * scattered thirty questions apart.
+     *
+     * data-bc-jump carries the true queue index, so a tap can never desync from
+     * what is drawn.
      */
     _numberRailHtml(bc) {
-        const queue = Array.isArray(bc.queue) ? bc.queue : [];
-        if (!queue.length || !queue.some((q) => q && q.position != null)) return '';
-        const idx = bc.index || 0;
-        const chip = (q, i) => {
-            if (q.position == null) return '';
-            const isCur = i === idx;
-            const done = q.status === 'reviewed';
-            // Reviewed = checked off: a ✓ beside the number, green-tinted. It
-            // stays clickable — revisiting a reviewed miss is legitimate.
-            const style = isCur
+        const groups = this._reviewGroups(bc);
+        if (!groups.length) return '';
+        const esc = this._esc;
+        const chip = (it) => {
+            if (it.position == null) return '';
+            const done = it.status === 'reviewed';
+            const style = it.current
                 ? 'background:#fff;color:#5b3ea8;font-weight:700'
                 : done
                     ? 'background:rgba(88,214,141,.28);color:#eafff2;cursor:pointer'
                     : 'background:rgba(255,255,255,.2);color:#fff;cursor:pointer';
-            const title = done ? 'Reviewed ✓ — click to revisit' : (isCur ? 'Up next' : 'Click to work this one next');
-            return `<button data-bc-jump="${i}" title="${title}" style="border:0;border-radius:8px;min-width:30px;padding:4px 7px;font-size:12px;cursor:pointer;${style}">${done ? '✓ ' : ''}${q.position}</button>`;
+            const title = done ? 'Reviewed \u2713 — tap to revisit' : (it.current ? 'Working this one now' : 'Tap to work this one next');
+            return `<button data-bc-jump="${it.queueIndex}" title="${title}" style="border:0;border-radius:8px;min-width:30px;padding:4px 7px;font-size:12px;cursor:pointer;${style}">${done ? '\u2713 ' : ''}${it.position}</button>`;
         };
-        // The rail is the student's answer sheet: it reads in TEST order (#2,
-        // #4, #5…) no matter what order review actually works them in. Review
-        // is now grouped by skill, so queue order and test order differ —
-        // display sorts by position while data-bc-jump keeps the true queue
-        // index, or every jump would land on the wrong question.
-        const inTestOrder = queue
-            .map((q, i) => ({ q, i }))
-            .sort((a, b) => {
-                const ap = a.q.position, bp = b.q.position;
-                if (ap != null && bp != null) return ap - bp;
-                if (ap != null) return -1;
-                if (bp != null) return 1;
-                return a.i - b.i;
-            });
+        const block = (g) => {
+            // Name the pattern where there IS one. A lone miss on a skill is
+            // just a question; three is the thing worth telling them about.
+            const head = g.total > 1
+                ? `${esc(g.label)} <span style="opacity:.75;font-weight:400">· ${g.total} missed</span>`
+                : esc(g.label);
+            return `<div style="margin-bottom:7px">
+                <div style="color:${g.allDone ? 'rgba(234,255,242,.85)' : 'rgba(255,255,255,.92)'};font-size:11.5px;font-weight:600;margin-bottom:4px">${g.allDone ? '\u2713 ' : ''}${head}</div>
+                <div style="display:flex;flex-wrap:wrap;gap:5px">${g.items.map(chip).join('')}</div>
+              </div>`;
+        };
         return `<div style="margin-bottom:10px">
-            <div style="color:rgba(255,255,255,.8);font-size:11.5px;margin-bottom:5px">Questions you missed — tap one to jump, or just keep going in order:</div>
-            <div id="lt-bc-numbers" style="display:flex;flex-wrap:wrap;gap:5px">${inTestOrder.map(({ q, i }) => chip(q, i)).join('')}</div>
+            <div style="color:rgba(255,255,255,.8);font-size:11.5px;margin-bottom:6px">What you missed, grouped by skill — we work down this list:</div>
+            <div id="lt-bc-numbers">${groups.map(block).join('')}</div>
           </div>`;
+    }
+
+    /**
+     * Client-side mirror of utils/actReview.reviewGroups — same grouping, same
+     * order, derived from the same queue the server sends. Kept here (rather
+     * than shipped pre-grouped) so a queue built before groupKey/groupLabel
+     * existed still renders, falling back to skillId and then category.
+     */
+    _reviewGroups(bc) {
+        const queue = Array.isArray(bc && bc.queue) ? bc.queue : [];
+        if (!queue.length || !queue.some((q) => q && q.position != null)) return [];
+        const CAT = { 'integrating-essential-skills': 'Essential skills', 'number-quantity': 'Number & Quantity', algebra: 'Algebra', functions: 'Functions', geometry: 'Geometry', 'statistics-probability': 'Statistics & Probability' };
+        const cur = bc.index || 0;
+        const out = [];
+        const byKey = new Map();
+        queue.forEach((m, i) => {
+            if (!m) return;
+            const key = m.groupKey || m.skillId || m.category || ('__' + (m.problemId || i));
+            let g = byKey.get(key);
+            if (!g) {
+                const label = m.groupLabel
+                    || CAT[m.category]
+                    || String(m.category || 'Review').replace(/-/g, ' ');
+                g = { key, label, items: [], total: 0, reviewed: 0, allDone: false };
+                byKey.set(key, g);
+                out.push(g);
+            }
+            g.items.push({
+                queueIndex: i,
+                position: m.position != null ? m.position : null,
+                status: m.status || 'pending',
+                current: i === cur,
+            });
+        });
+        out.forEach((g) => {
+            g.total = g.items.length;
+            g.reviewed = g.items.filter((x) => x.status === 'reviewed').length;
+            g.allDone = g.total > 0 && g.reviewed === g.total;
+        });
+        return out;
     }
 
     _esc(s) {
@@ -5496,8 +5545,19 @@ class LessonTracker {
      * Renders nothing for queues that predate prompt/options stamping.
      */
     _missPreviewHtml(cur, label) {
-        if (!cur || !cur.prompt) return '';
+        if (!cur) return '';
         const esc = this._esc;
+        if (!cur.prompt) {
+            // The question text never loaded. Say so HERE too. The prompt side
+            // already stopped pretending to hold it (utils/actReview
+            // missingQuestionSection), but the panel just rendered nothing —
+            // so the student saw "#30 · up next" over blank space and no
+            // surface anywhere admitted the gap.
+            return `<div style="background:rgba(255,255,255,.96);border-radius:10px;padding:11px 13px;margin-bottom:10px">
+                <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">Question ${cur.position != null ? '#' + cur.position : ''} · ${esc(label(cur.category))}</div>
+                <div style="font-size:13px;line-height:1.5;color:#6b6480">We couldn't load this question's text. Your tutor will ask you to read it out so you can still work it.</div>
+              </div>`;
+        }
         // Show the letters the student SAW on their form: the real ACT (and
         // the test runner) letter even question numbers F–G–H–J. Stored labels
         // and theirAnswer stay A–D — display alias only.
@@ -5532,6 +5592,45 @@ class LessonTracker {
         if (!bc || !this._lastUpdate) return;
         this._lastUpdate.bootcamp = bc;
         this._renderBootcamp(this._lastUpdate);
+    }
+
+    /**
+     * The student's own advance. <REVIEW_NEXT> from the tutor performs the same
+     * transition, but it was the ONLY thing that could: a turn where the model
+     * forgot the tag left the student re-reading a question they were finished
+     * with, and nothing on screen could move them on.
+     *
+     * `done` ends review and goes to the re-test. Un-worked misses stay pending
+     * and stay on the rail, so this is a door, not a discard.
+     */
+    async _advance(done) {
+        const sessionId = this._sessionId
+            || (window.courseManager && window.courseManager.activeCourseSessionId);
+        if (!sessionId) { console.warn('[LessonTracker] Advance skipped: no course-session id'); return; }
+        try {
+            const fetcher = window.csrfFetch || window.fetch;
+            const res = await fetcher(`/api/course-sessions/${sessionId}/bootcamp/advance`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ done: !!done })
+            });
+            const data = await res.json();
+            if (!data || !data.success) { console.warn('[LessonTracker] Advance rejected:', data && data.message); return; }
+            this.updateBootcamp(data.bootcamp);
+            // Bring the tutor with us: the panel and the chat show the same
+            // question, so moving one without the other is how they desync.
+            if (typeof window.mmSendChatMessage === 'function') {
+                if (data.done) {
+                    window.mmSendChatMessage("I'm done going over my misses — I'd like to take a fresh test.");
+                } else {
+                    const q = (data.bootcamp.queue || [])[data.bootcamp.index || 0];
+                    window.mmSendChatMessage(q && q.position != null
+                        ? `Got that one. Let's go over question ${q.position}.`
+                        : "Got that one. What's next?");
+                }
+            }
+        } catch (e) { console.warn('[LessonTracker] Advance failed:', e); }
     }
 
     async _jumpTo(i) {
@@ -5594,6 +5693,10 @@ class LessonTracker {
                 if (input) input.focus();
             }
         });
+        const next = document.getElementById('lt-bc-next');
+        if (next) next.addEventListener('click', () => this._advance(false));
+        const doneLink = document.getElementById('lt-bc-done');
+        if (doneLink) doneLink.addEventListener('click', (e) => { e.preventDefault(); this._advance(true); });
         const retest = document.getElementById('lt-bc-retest');
         if (retest) retest.addEventListener('click', () => { if (window.openActTest) window.openActTest(); });
         const start = document.getElementById('lt-bc-start');
