@@ -44,8 +44,8 @@ describe('the derivation agrees with the bank, item by item', () => {
 describe('coverage', () => {
   const explained = items.filter((p) => p.explanation && p.explanation.trim());
 
-  test('most of the bank is explained', () => {
-    expect(explained.length / items.length).toBeGreaterThan(0.85);
+  test('EVERY item in the bank is explained', () => {
+    expect(explained.length).toBe(items.length);
   });
 
   test('every explanation in the bank is one the solver still stands behind', () => {
@@ -127,6 +127,19 @@ describe('the explainers themselves', () => {
       const hits = EXPLAINERS.filter((e) => e.match.test(p.prompt)).map((e) => e.id);
       expect(hits.length).toBeLessThanOrEqual(1);
     });
+  });
+
+  test('a solver that declines hands the prompt to the next explainer', () => {
+    // Two explainers can legitimately match one prompt shape — "Solve for x:
+    // … = 0" is both a linear and a quadratic template. Whichever fires first
+    // must not be able to END the search by declining, or the registry's ORDER
+    // silently decides which items get explained.
+    const r = explainItem({
+      prompt: 'Solve for x: 4(x - 4) + 6 = 0',
+      correctOption: 'B',
+      options: ['-11/2', '5/2', '11/2', '10'].map((text, i) => ({ label: 'ABCD'[i], text })),
+    });
+    expect(r.status).toBe('ok');
   });
 
   test('a prompt that matches nothing is reported, not guessed at', () => {
