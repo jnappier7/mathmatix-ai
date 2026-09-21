@@ -351,8 +351,21 @@ function extractSystemTags(responseText) {
 
 // ── Canned opener (§2f) ──
 // OPENERS_BLOCK in promptCompact bans these; when the model slips one in
-// anyway it is stripped rather than regenerated (cheaper, faster). Anchored to
-// the START of the reply on purpose — the only safe place to delete words.
+// anyway it is stripped rather than regenerated (cheaper, faster).
+//
+// Anchoring to the start of the reply is NOT by itself enough to make a
+// deletion safe — the 2026-09-21 ACT bootcamp transcript shipped
+// "To question 30! What have you tried so far?" because the old pattern
+// matched "let's dive in" inside "Let's dive INTO question 30!", split the
+// word, and left "to question 30!" for repairStrippedHead to capitalize.
+// The same pattern truncated "Great questions!" to "s!" and
+// "Let's dive in and find out." to "And find out."
+//
+// So an opener is stripped ONLY when it is a COMPLETE leading sentence: the
+// phrase, then terminal punctuation, then end-of-reply or the next sentence.
+// Removing a whole sentence cannot leave a fragment. A phrase that runs on
+// into its own object ("Let's dive into question 30") is not an opener at
+// all — it is a sentence with content, and it ships as written.
 //
 // There used to be a second scrub here for mid-reply transitions ("let's
 // break this down", "let's tackle it together", "moving on to"). It was
@@ -363,7 +376,23 @@ function extractSystemTags(responseText) {
 // Those phrases are filler, not a teaching error — the prompt asks the model
 // not to write them (OPENERS_BLOCK), and a sentence the model never wrote
 // needs no repair. Do not reintroduce a mid-sentence phrase deletion here.
-const CANNED_OPENERS = /^(great\s+question[.!]*\s*|that'?s\s+a\s+great\s+question[.!]*\s*|let'?s\s+dive\s+(right\s+)?in[.!]*\s*|i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?[.!]*\s*|i\s+can\s+(?:definitely|certainly)\s+help\s+(?:you\s+)?with\s+that[.!]*\s*|absolutely[.!]*\s+(?=\w)|certainly[.!]*\s+(?=\w)|of\s+course[.!]*\s+(?=\w)|no\s+problem[.!]*\s+(?=\w))/i;
+const CANNED_OPENER_PHRASES = [
+  String.raw`that'?s\s+a\s+great\s+question`,
+  String.raw`great\s+question`,
+  String.raw`let'?s\s+dive\s+(?:right\s+)?in`,
+  String.raw`i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?`,
+  String.raw`i\s+can\s+(?:definitely|certainly)\s+help(?:\s+you)?(?:\s+with\s+that)?`,
+  String.raw`absolutely`,
+  String.raw`certainly`,
+  String.raw`of\s+course`,
+  String.raw`no\s+problem`,
+];
+// The trailing `[.!?]+` is the whole safety property: the phrase must END a
+// sentence. Without it the pattern can stop mid-word or mid-clause. Keep it.
+const CANNED_OPENERS = new RegExp(
+  String.raw`^(?:${CANNED_OPENER_PHRASES.join('|')})\s*[.!?]+[\s]*`,
+  'i'
+);
 
 /**
  * After a leading phrase has been stripped, the sentence head may be an
@@ -1109,11 +1138,16 @@ async function verify(responseText, context = {}) {
   }
 
   // ── 2f. Canned opener strip ──
-  // Anchored to the head of the reply (see CANNED_OPENERS). repairStrippedHead
-  // keeps a vocative comma from being orphaned (", Jason! …", 2026-07-26).
+  // Removes a COMPLETE leading sentence only (see CANNED_OPENERS), so the
+  // remainder is always a sentence head already. Never strip the reply to
+  // nothing: an opener that IS the whole reply stays — an empty bubble is
+  // worse than a canned one.
   if (CANNED_OPENERS.test(text.trim())) {
-    text = repairStrippedHead(text.trim().replace(CANNED_OPENERS, ''));
-    flags.push('canned_opener_stripped');
+    const stripped = repairStrippedHead(text.trim().replace(CANNED_OPENERS, ''));
+    if (stripped) {
+      text = stripped;
+      flags.push('canned_opener_stripped');
+    }
   }
 
   // ── 3. IEP reading level enforcement ──
