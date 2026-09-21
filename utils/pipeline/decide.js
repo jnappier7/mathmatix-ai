@@ -231,6 +231,20 @@ function applyActReviewDirective(decision, context) {
   const miss = context && context.actReviewMiss;
   if (!miss) return;
   const where = miss.position != null ? `Question #${miss.position} from their practice test` : 'The missed practice-test question';
+
+  // The queue can carry a miss whose question text never resolved (see
+  // actReview.hasQuestionText). The directive below is the one the model reads
+  // FIRST, and it forbids asking — so on an empty question it demanded the
+  // impossible and the tutor stalled on "what have you tried so far?" for four
+  // turns rather than admit it had nothing (owner transcript, 2026-09-20).
+  // Asking is the correct move in exactly this case, so say so here too: the
+  // system prompt's matching section is useless if the directives contradict it.
+  if (miss.hasPrompt === false) {
+    decision.directives.unshift(
+      `ACT REVIEW — THE QUESTION TEXT DID NOT LOAD. You do NOT have ${where.toLowerCase()}; the student does. Tell them so in one sentence and ask them to read it to you or send a photo. Do NOT pretend to hold it, do NOT invent a question on the topic, and do NOT ask what they tried on a question neither of you can see.`
+    );
+    return;
+  }
   // A skipped item has no recorded letter. Saying "the letter recorded for
   // them" regardless had the tutor supply one — the stored key — as the
   // student's "recorded answer" on every skipped question (2026-09-15).
