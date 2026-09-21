@@ -135,6 +135,24 @@ const problemSchema = new mongoose.Schema({
     type: String,
     index: true,
     sparse: true
+  },
+
+  // Evidence behind `difficulty`, when it was MEASURED rather than authored.
+  // scripts/calibrateItemDifficulty.js fits a Rasch model over real responses
+  // and writes the estimate here beside the number it set, so the next person
+  // can tell a difficulty that met students from one that never did — and on
+  // how much data. Absent means the difficulty is still somebody's guess.
+  //
+  // This has to be a declared path: the schema is strict, so an undeclared
+  // `calibration` would have been dropped on write with nothing raised, and
+  // the script would have reported success every run while changing nothing.
+  calibration: {
+    method: { type: String },          // e.g. 'rasch-jmle'
+    n: { type: Number },               // usable responses behind the estimate
+    pValue: { type: Number },          // raw proportion correct, for context
+    theta: { type: Number },           // shrunk difficulty in logits
+    priorDifficulty: { type: Number }, // what it was authored at
+    calibratedAt: { type: Date },
   }
 
 }, {

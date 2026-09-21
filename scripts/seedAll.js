@@ -177,6 +177,16 @@ const STEPS = [
     ids: jsonIds('act-ies-expansion/ies-items.generated.json', 'problemId'),
   },
   {
+    key: 'act-enhanced-items',
+    label: 'ACT enhanced drop (2026-09, mapped onto the blueprint taxonomy)',
+    script: 'seedActEnhancedItems.js',
+    supportsFresh: true,
+    files: ['act-enhanced/act-items.generated.json'],
+    model: 'Problem',
+    idField: 'problemId',
+    ids: jsonIds('act-enhanced/act-items.generated.json', 'problemId'),
+  },
+  {
     key: 'answer-equivalents',
     label: 'Backfill answer.equivalents (must follow the banks)',
     script: 'backfillAnswerEquivalents.js',

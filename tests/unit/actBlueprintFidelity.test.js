@@ -104,6 +104,7 @@ describe('the item bank can actually fill the blueprint', () => {
     ...JSON.parse(zlib.gunzipSync(fs.readFileSync(
       path.join(ROOT, 'seeds/low-volume-expansion/act-items.generated.json.gz'))).toString('utf8')),
     ...read('seeds/act-ies-expansion/ies-items.generated.json'),
+    ...read('seeds/act-enhanced/act-items.generated.json'),
   ];
   const skillToCat = {};
   Object.entries(blueprint.skillsByCategory).forEach(([cat, skills]) => {
