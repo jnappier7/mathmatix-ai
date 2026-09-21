@@ -30,6 +30,8 @@
     "seed:all": "node scripts/seedAll.js",
     "seed:all:fresh": "node scripts/seedAll.js --fresh",
     "seed:all:dry": "node scripts/seedAll.js --dry-run",
+    "calibrate:items": "node scripts/calibrateItemDifficulty.js",
+    "calibrate:items:apply": "node scripts/calibrateItemDifficulty.js --apply",
     "act:ingest": "python3 scripts/ingestFableActItems.py",
     "act:seed": "node scripts/seedActItems.js --fresh",
     "act:seed:ies": "node scripts/seedActIesItems.js",
