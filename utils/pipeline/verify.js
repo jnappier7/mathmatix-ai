@@ -1581,12 +1581,40 @@ function normalizeLatex(text) {
   // Use (?=[_^{\\s(]|$) instead of \b because _ is a word char (so \lim_ fails with \b)
   const WB = '(?=[_^{\\\\s(]|$)';
   const cmdWithArgs = `\\\\(?:${RENDER_CMDS})${WB}(?:[_^](?:\\{[^{}]*\\}|\\w)|\\{[^{}]*\\})*`;
-  const mathTail = `(?:\\s*(?:[+\\-=*/<>,]|\\\\(?:${ALL_CMDS})${WB}(?:[_^](?:\\{[^{}]*\\}|\\w)|\\{[^{}]*\\})*|[0-9a-zA-Z_^{}()\\s](?![a-zA-Z]{3})))*`;
+
+  // The tail may only absorb MATH-SHAPED atoms. It used to end with a
+  // character-at-a-time catch-all, `[0-9a-zA-Z_^{}()\s](?![a-zA-Z]{3})`,
+  // whose only brake was a lookahead for three consecutive letters — so it
+  // walked out of the expression and ate the English sentence around it.
+  // Everything it swallowed landed INSIDE \( … \), and KaTeX discards spaces
+  // in math mode, which is how the ACT bootcamp showed a student (2026-09-21):
+  //
+  //   "0.8 is \frac{8}{10} or \frac{4}{5}."  →  "0.8 is 108or54."
+  //   "So \frac{125}{100} is the same as 1.25."  →  "So 100125isthe same as 1.25."
+  //
+  // It also split numbers: "\frac{1}{2} of x is 0.5x" closed the delimiter
+  // between the 0 and the .5, because the catch-all had no '.' in its class.
+  //
+  // Each atom below is self-delimiting, so the scan stops at the first real
+  // word instead of guessing where the math ends. Leading space is already
+  // handled by the \s* in front of each atom, so whitespace is deliberately
+  // NOT an atom of its own — that was part of how the old class drifted.
+  const mathAtom = [
+    '[+\\-=*/<>,]',                                                       // operators and separators
+    `\\\\(?:${ALL_CMDS})${WB}(?:[_^](?:\\{[^{}]*\\}|\\w)|\\{[^{}]*\\})*`,  // a further command
+    '\\d+(?:\\.\\d+)?',                                                    // a whole number, decimal included
+    '(?<![a-zA-Z])[a-zA-Z](?![a-zA-Z])',                                  // a LONE variable (x, P) — never a word
+    '[_^{}()]',                                                           // structure
+  ].join('|');
+  const mathTail = `(?:\\s*(?:${mathAtom}))*`;
   const bareMathRegex = new RegExp(`(${cmdWithArgs}${mathTail})`, 'g');
   result = result.replace(bareMathRegex, (match) => {
-    const trimmed = match.trim();
-    if (!trimmed) return match;
-    return `\\(${trimmed}\\)`;
+    // A trailing separator or space belongs to the sentence, not the formula:
+    // "\frac{1}{2}," must not render its comma in math mode.
+    const trailing = (match.match(/[\s,]+$/) || [''])[0];
+    const core = match.slice(0, match.length - trailing.length).trim();
+    if (!core) return match;
+    return `\\(${core}\\)${trailing}`;
   });
 
   // ── Restore protected math blocks ──
