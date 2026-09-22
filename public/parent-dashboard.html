@@ -1785,7 +1785,7 @@
       return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
     };
   </script>
-  <script src="/dist/js/parent-js0.70a97b5d.js"></script>
+  <script src="/dist/js/parent-js0.08f701d8.js"></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
 </head>
 <body>
@@ -1852,11 +1852,11 @@
 
         <div class="dashboard-panel">
           <div class="dashboard-panel-header" data-i18n="parent.linkExisting">Link to Existing Student</div>
-          <p class="panel-helper" data-i18n="parent.linkExistingHelp">Already have a child using Mathmatix? Ask them for their 6-character link code (Profile → Family) and enter it below.</p>
+          <p class="panel-helper" data-i18n="parent.linkExistingHelp">Already have a child using Mathmatix? In their tutor, open the menu and tap &ldquo;Share Progress&rdquo; &mdash; the code there looks like MATH-A1B2C3. Enter it below.</p>
           <form id="link-student-form">
             <div class="form-group">
               <label for="studentLinkCode" data-i18n="parent.studentLinkCode">Student's Link Code</label>
-              <input type="text" id="studentLinkCode" name="studentLinkCode" placeholder="Enter 6-character code" data-i18n-placeholder="parent.linkCodePlaceholder" required>
+              <input type="text" id="studentLinkCode" name="studentLinkCode" placeholder="MATH-A1B2C3" autocapitalize="characters" autocomplete="off" spellcheck="false" data-i18n-placeholder="parent.linkCodePlaceholder" required>
             </div>
             <button type="submit" class="btn btn-primary main-action-btn" data-i18n="parent.linkStudent">
               <i class="fas fa-link"></i> Link Student
@@ -2160,10 +2160,10 @@
 
       <div class="drawer-section">
         <div class="drawer-section-title" data-i18n="parent.linkExistingShort"><i class="fas fa-link" style="color: #3498db;"></i> Link Existing Student</div>
-        <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;" data-i18n="parent.mobileLinkHelp">Enter your child's link code to connect their account.</p>
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;" data-i18n="parent.mobileLinkHelp">Enter the code from your child&rsquo;s &ldquo;Share Progress&rdquo; menu (looks like MATH-A1B2C3).</p>
         <form id="mobile-link-student-form">
           <div class="form-group" style="margin-bottom: 12px;">
-            <input type="text" id="mobile-studentLinkCode" placeholder="Enter 6-character code" data-i18n-placeholder="parent.linkCodePlaceholder" required style="width: 100%;">
+            <input type="text" id="mobile-studentLinkCode" placeholder="MATH-A1B2C3" autocapitalize="characters" autocomplete="off" spellcheck="false" data-i18n-placeholder="parent.linkCodePlaceholder" required style="width: 100%;">
           </div>
           <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;" data-i18n="parent.linkStudent">
             <i class="fas fa-link"></i> Link Student

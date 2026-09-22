@@ -27,6 +27,7 @@ const {
     readStudentSupports,
     grantedAbove
 } = require('../utils/studentSupports');
+const { normalizeParentInviteCode, explainParentInviteFailure } = require('../utils/linkCodes');
 // Helper function to generate a unique short code for student-to-parent linking
 async function generateUniqueStudentLinkCode() {
     let code;
@@ -128,21 +129,26 @@ router.post('/link-to-parent', isAuthenticated, isStudent, async (req, res) => {
             return res.status(404).json({ message: "Student not found." });
         }
 
-        // Find a parent with a matching, valid invite code
+        // Find the parent who owns this code, then work out separately whether
+        // it is still usable. One combined query used to collapse "no such
+        // code", "used", "expired" and "that's a student's Share Progress
+        // code" into a single "Invalid, expired, or already used" — which
+        // families read as "expired" and could not act on.
+        const code = normalizeParentInviteCode(parentInviteCode);
         const parent = await User.findOne({
-            'parentToChildInviteCode.code': parentInviteCode.trim().toUpperCase(),
-            'parentToChildInviteCode.childLinked': false,
-            'parentToChildInviteCode.expiresAt': { $gt: new Date() },
+            'parentToChildInviteCode.code': code,
             ...anyRole('parent')
         });
 
-        if (!parent) {
-            return res.status(400).json({ message: "Invalid, expired, or already used parent invite code." });
+        // Already linked to this parent → say so before judging the code, since
+        // the code is naturally spent once the link exists.
+        if (parent && student.parentIds && student.parentIds.some(pid => pid.equals(parent._id))) {
+            return res.status(400).json({ success: false, reason: 'already_linked', message: `You're already linked to ${parent.firstName || 'this parent'}.` });
         }
 
-        // Check if already linked to this parent
-        if (student.parentIds && student.parentIds.some(pid => pid.equals(parent._id))) {
-            return res.status(400).json({ message: "Already linked to this parent." });
+        const failure = explainParentInviteFailure({ rawCode: parentInviteCode, parent });
+        if (failure) {
+            return res.status(400).json({ success: false, reason: failure.reason, message: failure.message });
         }
 
         // Link the student to the parent
