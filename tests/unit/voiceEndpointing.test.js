@@ -156,6 +156,9 @@ describe('latency is measured from when the student actually stopped', () => {
             _setStatus: jest.fn(),
             _clearBargeDuckTimer: jest.fn(),
             _driveTurn: jest.fn().mockResolvedValue(undefined),
+            // _startTurn is now a thin wrapper that opens the outbound-PII
+            // scope and delegates to _runTurn, which holds the body under test.
+            _runTurn: VoiceSession.prototype._runTurn,
         };
 
         return _startTurn.call(s, 'hi', { source: 'voice', endpointReason: 'speech_final' })

@@ -129,12 +129,42 @@ describe('callLLM', () => {
 });
 
 describe('callLLMStream', () => {
-  test('returns the stream object with stream:true', async () => {
-    const fakeStream = { __isStream: true };
+  const chunk = (content) => ({ choices: [{ index: 0, delta: { content }, finish_reason: null }] });
+  const fakeStreamOf = (...chunks) => ({
+    __isStream: true,
+    async *[Symbol.asyncIterator]() { for (const c of chunks) yield c; }
+  });
+
+  test('asks for stream:true and yields the provider chunks through the rehydrating wrapper', async () => {
+    // The chokepoint wraps every stream so placeholders come back as names
+    // (see outboundPiiScope.test.js), so the SDK object itself is not what
+    // callers get any more — the chunks are what must survive.
+    const fakeStream = fakeStreamOf(chunk('a'), chunk('b'), { choices: [{ index: 0, delta: {}, finish_reason: 'stop' }] });
     mockChatCreate.mockResolvedValue(fakeStream);
     const r = await callLLMStream('gpt-4o', [{ role: 'user', content: 'x' }], { max_tokens: 10 });
-    expect(r).toBe(fakeStream);
     expect(mockChatCreate.mock.calls[0][0]).toMatchObject({ stream: true });
+    let text = '';
+    let finish = null;
+    for await (const c of r) {
+      if (c.choices[0].delta.content) text += c.choices[0].delta.content;
+      if (c.choices[0].finish_reason) finish = c.choices[0].finish_reason;
+    }
+    expect(text).toBe('ab');
+    expect(finish).toBe('stop');
+  });
+
+  test('returns the SDK stream object itself when the strip is switched off', async () => {
+    const prev = process.env.PII_STRIP_OUTBOUND;
+    process.env.PII_STRIP_OUTBOUND = 'false';
+    try {
+      const fakeStream = { __isStream: true };
+      mockChatCreate.mockResolvedValue(fakeStream);
+      const r = await callLLMStream('gpt-4o', [{ role: 'user', content: 'x' }], { max_tokens: 10 });
+      expect(r).toBe(fakeStream);
+    } finally {
+      if (prev === undefined) delete process.env.PII_STRIP_OUTBOUND;
+      else process.env.PII_STRIP_OUTBOUND = prev;
+    }
   });
 
   test('rethrows errors from the stream call', async () => {

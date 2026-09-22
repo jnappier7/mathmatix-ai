@@ -129,7 +129,7 @@ const PLACEHOLDERS = {
  * @returns {Object} Anonymization context with nameMap and utility methods
  */
 function createAnonymizationContext(userProfile, options = {}) {
-    const { allowFirstName = false, additionalNames = {} } = options;
+    const { allowFirstName = false, additionalNames = {}, names = {} } = options;
 
     // Build name replacement map (longest names first to avoid partial matches)
     const nameMap = new Map();
@@ -172,11 +172,20 @@ function createAnonymizationContext(userProfile, options = {}) {
         nameMap.set(name.toLowerCase(), placeholder);
     }
 
+    // Everything this context can put in, rehydrate() must take back out:
+    // [Student] for the profile it was built around, plus whatever fixed
+    // placeholders the caller mapped extra names to ([Parent], [Teacher]).
+    const rehydrateNames = {
+        student: userProfile?.firstName || 'Student',
+        ...names,
+    };
+
     return {
         nameMap,
         skipped,
         firstName: userProfile?.firstName || 'Student',
         allowFirstName,
+        names: rehydrateNames,
 
         /**
          * Anonymize a single string using this context
@@ -186,10 +195,16 @@ function createAnonymizationContext(userProfile, options = {}) {
         },
 
         /**
-         * Replace [Student] placeholders with the real first name
+         * Replace [Student] (and any other placeholder this context owns a
+         * name for) with the real first name.
          */
         rehydrate(text) {
-            return rehydrateResponse(text, this.firstName);
+            return rehydrateResponse(text, this.names);
+        },
+
+        /** Streaming-safe rehydration over this context's placeholders. */
+        createStreamRehydrator() {
+            return createStreamRehydratorFor((text) => this.rehydrate(text), MAX_PLACEHOLDER_LENGTH);
         }
     };
 }
@@ -528,6 +543,81 @@ function createRosterAnonymizationContext(students = [], options = {}) {
 }
 
 // ============================================================================
+// OUTBOUND SCOPE — the request-level context the chokepoint falls back on
+// ============================================================================
+
+/**
+ * Is the outbound strip on? ON unless PII_STRIP_OUTBOUND is exactly "false".
+ *
+ * It used to be off unless "true", and production ran that way: the flag was
+ * documented as "set this in production" and never was. OpenAI's own answer to
+ * our privacy inquiry puts the burden on the platform to keep under-13 personal
+ * data out of their API entirely, so the safe state has to be the default and
+ * turning it OFF the deliberate act.
+ */
+function outboundPiiStripEnabled() {
+    return process.env.PII_STRIP_OUTBOUND !== 'false';
+}
+
+const { AsyncLocalStorage } = require('async_hooks');
+const outboundPiiScope = new AsyncLocalStorage();
+
+/**
+ * Run fn with this context as the ambient outbound-PII context. Every
+ * callLLM / callLLMStream / callLLMStructured / generateEmbedding made while
+ * fn (and anything it awaits) is running strips and rehydrates with it unless
+ * the call passes its own options.anonContext.
+ */
+function runWithOutboundPiiContext(context, fn) {
+    return outboundPiiScope.run(context || null, fn);
+}
+
+/** The ambient context opened by runWithOutboundPiiContext, or null. */
+function currentOutboundPiiContext() {
+    return outboundPiiScope.getStore() || null;
+}
+
+const ROLE_PLACEHOLDER = { teacher: PLACEHOLDERS.teacher, parent: PLACEHOLDERS.parent, admin: PLACEHOLDERS.teacher };
+
+/**
+ * The context for "the person this request is being served for".
+ *
+ * A student is the profile the context is built around — first and last name
+ * to [Student], restored on the way back. A teacher, parent or admin is not a
+ * student, so mapping their name to [Student] would be wrong in both
+ * directions; their name goes to [Teacher] / [Parent] instead and comes back
+ * the same way. Their *students* are not in this context — a call that talks
+ * about a child while serving an adult (the parent chat, a teacher summary)
+ * has to pass its own anonContext with the child in it.
+ *
+ * No user (a trial visitor, a cron) => pattern-only context.
+ *
+ * `role` here is the active role: which dashboard the person is in is exactly
+ * what decides whether they are being addressed as a student. (CLAUDE.md §12:
+ * that is the one thing `role` is for.)
+ */
+function createActorAnonymizationContext(user) {
+    if (!user) return createAnonymizationContext(null);
+
+    const role = String(user.role || (Array.isArray(user.roles) && user.roles[0]) || 'student').toLowerCase();
+    const placeholder = ROLE_PLACEHOLDER[role];
+    if (!placeholder) return createAnonymizationContext(user);
+
+    const firstName = `${user.firstName || ''}`.trim();
+    const lastName = `${user.lastName || ''}`.trim();
+    const additionalNames = {};
+    if (firstName && lastName) additionalNames[`${firstName} ${lastName}`] = placeholder;
+    if (lastName.length > 1) additionalNames[lastName] = placeholder;
+    if (firstName.length > 1) additionalNames[firstName] = placeholder;
+
+    const key = placeholder === PLACEHOLDERS.parent ? 'parent' : 'teacher';
+    return createAnonymizationContext(null, {
+        additionalNames,
+        names: firstName ? { [key]: firstName } : {},
+    });
+}
+
+// ============================================================================
 // LOGGING & AUDIT
 // ============================================================================
 
@@ -599,6 +689,12 @@ module.exports = {
 
     // Educational data sanitization
     sanitizeEducationalData,
+
+    // Outbound scope (what the openaiClient chokepoint falls back on)
+    outboundPiiStripEnabled,
+    runWithOutboundPiiContext,
+    currentOutboundPiiContext,
+    createActorAnonymizationContext,
 
     // Helpers
     buildAnonymizationContextFromRequest,

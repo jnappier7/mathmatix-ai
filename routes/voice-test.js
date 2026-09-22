@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
-const { openai } = require('../utils/openaiClient');
+const { callLLM } = require('../utils/openaiClient');
 const ttsProvider = require('../utils/ttsProvider');
 const fs = require('fs');
 const path = require('path');
@@ -146,9 +146,10 @@ async function testAudioDirectory() {
 async function testOpenAIClient() {
     try {
         // Test a simple completion to verify API key works
-        const response = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
-            messages: [{ role: 'user', content: 'Say "test"' }],
+        // Through the chokepoint like every other call: the payload is a
+        // literal, but a direct SDK call here is one more path a future edit
+        // could route student text through unfiltered.
+        const response = await callLLM('gpt-4o-mini', [{ role: 'user', content: 'Say "test"' }], {
             max_tokens: 5
         });
 

@@ -2,6 +2,18 @@
 // Generates AI summaries of student activity for teacher live feed
 
 const { callLLM } = require('./llmGateway');
+const { createAnonymizationContext } = require('./piiAnonymizer');
+
+// Callers hand us "First Last" for the teacher-facing text. The provider
+// gets [Student]: this context strips the name from the transcript we send
+// (the tutor addresses the student by name every few turns) and the
+// chokepoint restores it in the summary that comes back. The request these
+// run under belongs to the teacher or is a session-end job, so the request
+// scope does not know the student — this has to be explicit.
+function contextForStudentName(studentName) {
+    const [firstName, ...rest] = String(studentName || '').trim().split(/\s+/);
+    return createAnonymizationContext({ firstName: firstName || '', lastName: rest.join(' ') });
+}
 
 /**
  * Generate a concise live summary of student activity
@@ -56,7 +68,8 @@ Summary:`;
             { role: 'user', content: summaryPrompt }
         ], {
             temperature: 0.3,
-            max_tokens: 100
+            max_tokens: 100,
+            anonContext: contextForStudentName(studentName)
         });
 
         const summary = response.choices[0]?.message?.content?.trim() || `${studentName} is in an active session`;
@@ -237,7 +250,7 @@ ${stats.attempted > 0 ? '- Number of problems attempted and success rate' : '- W
 - Any concepts the student mastered or struggled with
 
 Session details:
-- Student: ${studentName}
+- Student: [Student]
 - Topic: ${topic}
 ${problemStatsSection}
 - Duration: ${conversation.activeMinutes} minutes
@@ -254,7 +267,8 @@ Generate a concise teacher summary:`;
             { role: 'user', content: summaryPrompt }
         ], {
             temperature: 0.3,
-            max_tokens: 150
+            max_tokens: 150,
+            anonContext: contextForStudentName(studentName)
         });
 
         const fallbackSummary = stats.attempted > 0

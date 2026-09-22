@@ -16,6 +16,7 @@ const path = require('path');
 const logger = require('../utils/logger');
 const { csrfProtection } = require('../middleware/csrf');
 const { handleImpersonation, enforceReadOnly } = require('../middleware/impersonation');
+const { outboundPiiScope } = require('../middleware/outboundPii');
 const { trackErrors, clientErrorHandler } = require('../middleware/errorTracking');
 const { requestId } = require('../middleware/requestId');
 
@@ -213,6 +214,12 @@ function configureMiddleware(app) {
   // Impersonation middleware — must run after passport
   app.use(handleImpersonation);
   app.use(enforceReadOnly);
+
+  // Outbound PII scope — must run after impersonation, so the context is
+  // built from the user the request is actually being served for. Every LLM
+  // and embedding call downstream strips/rehydrates that user's name through
+  // it (utils/openaiClient.js chokepoint) without opting in.
+  app.use(outboundPiiScope);
 
   // CSP Nonce middleware
   app.use((req, res, next) => {

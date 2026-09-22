@@ -22,8 +22,8 @@ const { callLLM, callLLMStream } = require("../utils/llmGateway");
 // path passes an anonContext so the choke point can strip the student's name,
 // and every reply is rehydrated before it is streamed, persisted, or returned.
 // Flag off → all three helpers are pass-throughs.
-const { createAnonymizationContext, createStreamRehydrator, rehydrateResponse } = require('../utils/piiAnonymizer');
-const piiStripOn = () => process.env.PII_STRIP_OUTBOUND === 'true';
+const { createAnonymizationContext, createStreamRehydrator, rehydrateResponse, outboundPiiStripEnabled } = require('../utils/piiAnonymizer');
+const piiStripOn = () => outboundPiiStripEnabled();
 const withAnonContext = (user, options) => ({ ...options, anonContext: createAnonymizationContext(user) });
 const rehydrateFor = (user, text) =>
     (text && piiStripOn()) ? rehydrateResponse(text, user?.firstName || 'Student') : text;
@@ -2268,9 +2268,25 @@ async function handleParentChat(req, res, parentId, childId, message) {
         // has no such option, and anthropicClient's buildBody derives system purely
         // from splitSystemAndMessages(messages). The danger of leaving it was that
         // the next reader deletes the "duplicate" — and picks the working one.
+        // The request scope only knows the parent (req.user). This prompt is
+        // about the CHILD — first name ~25 times, grade, course, IEP — with the
+        // parent's name beside it, so build the context that hides both and
+        // restores each to its own placeholder in the reply.
+        const parentFirst = `${parent.firstName || ''}`.trim();
+        const parentLast = `${parent.lastName || ''}`.trim();
+        const parentNames = {};
+        if (parentFirst && parentLast) parentNames[`${parentFirst} ${parentLast}`] = '[Parent]';
+        if (parentLast.length > 1) parentNames[parentLast] = '[Parent]';
+        if (parentFirst.length > 1) parentNames[parentFirst] = '[Parent]';
+        const parentChatAnonContext = createAnonymizationContext(child, {
+            additionalNames: parentNames,
+            names: parentFirst ? { parent: parentFirst } : {}
+        });
+
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, {
             temperature: 0.7,
-            max_tokens: 800
+            max_tokens: 800,
+            anonContext: parentChatAnonContext
         });
 
         let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I apologize, I'm having trouble responding right now.";

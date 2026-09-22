@@ -752,8 +752,10 @@ NEVER open by diagnosing a weakness. Do not start a session by telling ${firstNa
 ${new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
 Use for appropriate greetings.`);
 
-  // Student profile
-  const profileLines = [`**Name:** ${firstName} ${lastName}`];
+  // Student profile. First name only: the tutor addresses the student by it,
+  // and the outbound chokepoint swaps it for [Student] on the way out. The
+  // surname was sent for years and had no pedagogical use at all.
+  const profileLines = [`**Name:** ${firstName}`];
   if (gradeLevel) profileLines.push(`**Grade:** ${gradeLevel}`);
   if (mathCourse) profileLines.push(`**Course:** ${mathCourse}`);
   if (interests?.length) profileLines.push(`**Interests:** ${interests.join(', ')}`);

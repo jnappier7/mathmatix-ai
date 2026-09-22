@@ -24,7 +24,7 @@ const { createBoardTagStreamFilter } = require('../boardTagStreamFilter');
 const { createXpTagStreamFilter } = require('../xpTagStreamFilter');
 const { createVisualTabTagStreamFilter } = require('../visualTabTagStreamFilter');
 const { createStructuredChatStreamExtractor, deEnvelope } = require('../structuredChatStreamExtractor');
-const { createStreamRehydrator } = require('../piiAnonymizer');
+const { createStreamRehydrator, outboundPiiStripEnabled } = require('../piiAnonymizer');
 const {
   OPENAI_RESPONSE_FORMAT,
   normalizeStructuredResponse,
@@ -586,8 +586,11 @@ function assemblePrompt(decision, promptContext) {
 // across chunks), and every returned `text`. Flag off or no context → both
 // helpers are pass-throughs, so the default deploy changes nothing.
 // ---------------------------------------------------------------------------
+// The chokepoint now rehydrates too, so this layer is belt-and-braces: a
+// placeholder that reached us intact is restored here, and one the chokepoint
+// already restored is left alone (rehydration is idempotent).
 function piiRehydrationActive(llmOptions) {
-  return process.env.PII_STRIP_OUTBOUND === 'true'
+  return outboundPiiStripEnabled()
     && !!(llmOptions && llmOptions.anonContext);
 }
 
