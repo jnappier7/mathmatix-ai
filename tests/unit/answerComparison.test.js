@@ -9,6 +9,7 @@ const {
   textAnswerMatch,
   expressionMatch,
   parseFractionOrDecimal,
+  parseStrictNumber,
 } = require('../../utils/answerComparison');
 
 describe('parseFractionOrDecimal', () => {
@@ -258,5 +259,165 @@ describe('compareAnswer (the problem.checkAnswer engine)', () => {
     expect(compareAnswer('undefined', { value: undefined })).toBe(false);
     expect(compareAnswer('null', { value: null })).toBe(false);
     expect(compareAnswer('', { value: '' })).toBe(false);
+  });
+});
+
+describe('a number is the WHOLE string, never its leading digits', () => {
+  // valuesMatch's last resort was parseFloat, which reads the leading digits
+  // and ignores the rest — so every pair below graded EQUAL. Swept against the
+  // seeded banks: 528 distractors on 344 multiple-choice items graded correct
+  // when typed, none of them a bad item. Each row is a real key and one of its
+  // own distractors, from seeds/act-*.generated.json.
+  test.each([
+    ['4x^2 + 36', '4x^2 - 36', 'sign flip in a polynomial'],
+    ['4x^2 - 24x - 36', '4x^2 - 36', 'extra middle term'],
+    ['2x + 3', '2x - 3', 'linear, same leading coefficient'],
+    ['3,429', '3,610', 'thousands — parseFloat read both as 3'],
+    ['1,000', '1,999', 'thousands, wildly different'],
+    ['-7 < x < 18', '-7/5 < x < 18/5', 'compound inequality, unscaled bounds'],
+    ['2(log(a) + log(b))', '2log(a) + log(b)', 'log identity'],
+    ['2log(a)log(b)', '2log(a) + log(b)', 'log identity, product for sum'],
+    ['2b/A', '2A/b', 'formula rearranged the wrong way'],
+    ['18 + 22i', '18 - 14i', 'complex, same real part'],
+    ['61 - 11i', '61', 'complex against a real'],
+    ['2', '2π/3', 'bare number against a π fraction'],
+    ['64', '64π', 'bare number against a π multiple'],
+    ['5', '5√2', 'bare number against a radical'],
+    ['1.8 × 10⁹', '1.8 × 10¹⁰', 'same mantissa, different exponent'],
+    ['16.9 × 10^5', '1.69 × 10^6', 'equal quantity, but not scientific notation — the item tests the form'],
+    ['8% decrease', '8% increase', 'direction is not a unit'],
+    ['8 and every choice smaller', '8 and every choice larger', 'act-backsolving key vs its own distractor'],
+    ['4 centimeters left of the line', '4 centimeters right of the line', 'create-symmetry key vs its own distractor'],
+    ['10 more', '10', 'a comparative is not a unit'],
+    ['0.5 × 10^3', '5 × 10^2', 'mantissa below 1 is a form error too'],
+    ['2⁷', '2', 'superscript power'],
+    ['3:4', '3', 'ratio'],
+  ])('%s is not %s (%s)', (a, b) => {
+    expect(valuesMatch(a, b)).toBe(false);
+    expect(valuesMatch(b, a)).toBe(false);
+  });
+
+  test('parseStrictNumber refuses everything that is more than a number', () => {
+    for (const s of ['4x^2 - 36', '2π/3', '64π', '5√2', '18-14i', '3:4', '2⁷', '5 or 6', '2 and 3', '11:00 a.m.', '6,8,10', 'e', 'abc', '']) {
+      expect(parseStrictNumber(s)).toBeNull();
+    }
+  });
+
+  test('a × 10ⁿ is a spelling of a number only with the mantissa in [1, 10)', () => {
+    // 20 act-scientific-notation items carry the unnormalized form as a
+    // distractor — "16.9 × 10^5" against key "1.69 × 10^6". Same quantity,
+    // wrong form, and the form is what the item is asking for.
+    expect(parseStrictNumber('1.69 × 10^6')).toBe(1690000);
+    expect(parseStrictNumber('1 × 10^5')).toBe(100000);
+    expect(parseStrictNumber('-2.5 × 10^4')).toBe(-25000);
+    expect(parseStrictNumber('16.9 × 10^5')).toBeNull();
+    expect(parseStrictNumber('10 × 10^3')).toBeNull();
+    expect(parseStrictNumber('0.5 × 10^3')).toBeNull();
+    // The plain number is still that number.
+    expect(valuesMatch('1690000', '1.69 × 10^6')).toBe(true);
+  });
+
+  test('a real item: the key and its letter grade correct, no distractor does', () => {
+    // seeds/act-enhanced fa52ebe5 — all three distractors graded correct before.
+    const spec = {
+      value: '4x^2 - 36', equivalents: [], answerType: 'multiple-choice',
+      options: [{ label: 'A', text: '4x^2 + 36' }, { label: 'B', text: '4x^2 - 36' },
+        { label: 'C', text: '4x^2 - 24x - 36' }, { label: 'D', text: '4x^2 + 6' }],
+      correctOption: 'B',
+    };
+    expect(compareAnswer('B', spec)).toBe(true);
+    expect(compareAnswer('4x^2 - 36', spec)).toBe(true);
+    for (const wrong of ['4x^2 + 36', '4x^2 - 24x - 36', '4x^2 + 6']) expect(compareAnswer(wrong, spec)).toBe(false);
+  });
+});
+
+describe('spellings that ARE the same number still match', () => {
+  // The bank writes numbers with currency signs, degree signs, percent signs,
+  // thousands separators, a trailing unit word, and two spellings of scientific
+  // notation. Each is the same number the student typed without the dressing,
+  // and none must be lost to the strictness above. ("$276" vs "276" actually
+  // FAILED before — parseFloat("$276") is NaN — so that one is a fix, not a hold.)
+  test.each([
+    ['3,610', '3610'],
+    ['1,234,567.5', '1234567.5'],
+    ['$276', '276'],
+    ['$20.00', '20'],
+    ['-$5', '-5'],
+    ['68°', '68'],
+    ['15%', '15'],
+    ['9 only', '9'],
+    ['12 ft', '12'],
+    ['295 vehicles', '295'],
+    ['36 units squared', '36'],
+    ['12 square feet', '12'],
+    ['295 vehicles per hour', '295'],
+    ['$5 per hour', '5'],
+    ['1.8 × 10¹⁰', '18000000000'],
+    ['1.8 × 10¹⁰', '1.8e10'],
+    ['2.88 × 10^10', '28800000000'],
+    ['4.7 × 10⁻⁴', '0.00047'],
+    ['4.7 x 10^-4', '0.00047'],
+    ['−5', '-5'],
+    ['−3/4', '-0.75'],
+  ])('%s matches %s', (a, b) => {
+    expect(valuesMatch(a, b)).toBe(true);
+    expect(valuesMatch(b, a)).toBe(true);
+  });
+
+  test('units are words — a second number is not a unit, nor is a lone letter', () => {
+    expect(parseStrictNumber('9 only')).toBe(9);
+    expect(parseStrictNumber('36 units squared')).toBe(36);
+    expect(parseStrictNumber('5 or 6')).toBeNull();
+    expect(parseStrictNumber('2 and 3')).toBeNull();
+    expect(parseStrictNumber('3 and π')).toBeNull();
+    // "5 x" is 5x with a space, "2 i" is a complex number — variables, not units.
+    expect(parseStrictNumber('5 x')).toBeNull();
+    expect(parseStrictNumber('2 i')).toBeNull();
+    // A word that makes the number relative to something halts the peel, and
+    // what is left is not a number. The bank carries each of these as a
+    // key/distractor pair, so peeling through them would grade opposites equal.
+    for (const s of ['8 and every choice smaller', '4 centimeters left of the line', '8% decrease', '10 more', '6 left', '3 greater than']) {
+      expect(parseStrictNumber(s)).toBeNull();
+    }
+    // "per" connects units and is not in the way.
+    expect(parseStrictNumber('295 vehicles per hour')).toBe(295);
+  });
+
+  test('commas are thousands separators only in that shape', () => {
+    expect(parseStrictNumber('9,000')).toBe(9000);
+    expect(parseStrictNumber('6,8,10')).toBeNull();   // a list
+    expect(parseStrictNumber('8, 15, 17')).toBeNull(); // a triple
+    expect(parseStrictNumber('1,2')).toBeNull();       // not thousands
+  });
+
+  test('the fraction path inherits the same strictness', () => {
+    expect(parseFractionOrDecimal('2A/b')).toBeNull();
+    expect(parseFractionOrDecimal('-7/5 < x < 18/5')).toBeNull();
+    expect(parseFractionOrDecimal('−3/4')).toBeCloseTo(-0.75);
+  });
+});
+
+describe('no seeded multiple-choice item has a distractor that grades correct', () => {
+  // The two largest banks on disk uncompressed. A distractor whose text is
+  // literally the key is a bad ITEM and is skipped; everything else that
+  // grades correct here is a grader bug, and there were 327 of them.
+  const load = (f) => require(`../../seeds/${f}`);
+  const banks = ['act-enhanced/act-items.generated.json', 'act-fable-items.generated.json'];
+
+  test.each(banks)('%s', (bank) => {
+    const items = load(bank).filter((it) => it && it.answer && Array.isArray(it.options) && it.options.length);
+    expect(items.length).toBeGreaterThan(500);
+    const hits = [];
+    for (const it of items) {
+      const spec = { value: it.answer.value, equivalents: it.answer.equivalents || [], answerType: it.answerType, options: it.options, correctOption: it.correctOption };
+      for (const o of it.options) {
+        if (o.label === it.correctOption) continue;
+        if (String(o.text).trim() === String(it.answer.value).trim()) continue;
+        if (compareAnswer(o.text, spec)) hits.push(`${it.problemId} key=${JSON.stringify(it.answer.value)} distractor=${JSON.stringify(o.text)}`);
+      }
+      // and the key itself, typed, must still grade correct
+      expect(compareAnswer(it.answer.value, spec)).toBe(true);
+    }
+    expect(hits).toEqual([]);
   });
 });
