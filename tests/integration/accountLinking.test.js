@@ -23,7 +23,6 @@ jest.mock('../../utils/emailService', () => ({
   sendParentInvite: jest.fn().mockResolvedValue({ success: true }),
   sendParentUpgradeRequest: jest.fn().mockResolvedValue({ success: true })
 }));
-jest.mock('../../utils/logger', () => ({ info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() }));
 
 const User = require('../../models/user');
 const { PARENT_INVITE_TTL_DAYS } = require('../../utils/linkCodes');
@@ -44,7 +43,8 @@ beforeAll(async () => {
     next();
   });
   app.use('/api/parent', require('../../routes/parent'));
-  app.use('/api/student', require('../../routes/student'));
+  // routes/student.js exports { router, generateUniqueStudentLinkCode }, not the bare router.
+  app.use('/api/student', require('../../routes/student').router);
 }, 60000);
 
 afterAll(async () => {
