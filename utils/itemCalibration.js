@@ -53,6 +53,38 @@ function thetaToDifficulty(theta) {
 }
 
 /**
+ * The difficulty an estimate should be shrunk toward, for one Problem doc.
+ *
+ * `problem.difficulty` is the LIVE number, and after a --apply run it IS the
+ * calibrated one. Feeding that back in as the prior on the next run turns a
+ * repeating job into a ratchet, in three separate places:
+ *
+ *   - the scale anchor is the MEAN of the priors, so once a run moves the
+ *     bank's centre, the next run pins the scale to the moved centre and the
+ *     whole bank drifts with nothing holding it. (See the anchor comment in
+ *     calibrateItems: the point of pinning to the authored mean is that a
+ *     recalibrated item stays comparable to one never calibrated.)
+ *   - the shrinkage `w*estimate + (1-w)*prior` stops being regularization and
+ *     becomes a random walk: at n=26 each run moves 56% of the way from last
+ *     month's noise to this month's.
+ *   - `suspectKey` only fires when the prior is <= 2, so an item that was
+ *     rewritten upward can never again be spotted as mis-keyed rather than hard.
+ *
+ * So the prior is the AUTHORED difficulty, forever. --apply stores it in
+ * calibration.priorDifficulty precisely so it survives being overwritten.
+ * Pinned by "a monthly re-run does not ratchet" in the unit tests.
+ *
+ * @param {Object} problem a lean Problem doc ({difficulty, calibration})
+ * @returns {number|undefined} the authored difficulty
+ */
+function authoredPrior(problem) {
+  if (!problem) return undefined;
+  const stored = Number(problem.calibration && problem.calibration.priorDifficulty);
+  if (Number.isFinite(stored) && stored >= DIFFICULTY_MIN && stored <= DIFFICULTY_MAX) return stored;
+  return problem.difficulty;
+}
+
+/**
  * Drop the trailing run of unanswered items from a timed form.
  *
  * A blank at the end of a timed section usually means the clock ran out, not
@@ -205,6 +237,22 @@ function calibrateItems(rows, priors = {}, options = {}) {
   // on 0 instead and a strong cohort would quietly re-rate the whole bank.
   const anchor = [...b.values()].reduce((a, x) => a + x, 0) / (b.size || 1);
 
+  // Convergence is judged ONLY over the items this run could write. An item
+  // with one response has no finite MLE and jitters at the edge of the scale
+  // forever, so on a real bank — thousands of items, most of them barely seen
+  // — a maxShift taken over everything never settles and `converged` is false
+  // by construction. That is fine for a human reading a dry run and useless as
+  // a gate for an unattended --apply, which is what it now feeds. Thin items
+  // still get fitted and reported; they just do not get a vote on whether the
+  // fit is stable, because nothing acts on them.
+  const convergenceIds = new Set();
+  for (const [id, obs] of byItem) {
+    if (obs.filter((o) => usablePeople.has(o.person)).length >= minResponses) convergenceIds.add(id);
+  }
+  // Nothing is writable yet -> there is nothing to be stable ABOUT. Report
+  // converged:false rather than letting an empty max() report success.
+  const convergenceBasis = convergenceIds.size ? 'writable-items' : 'none';
+
   let iterations = 0;
   let converged = false;
   for (let it = 0; it < maxIterations; it++) {
@@ -226,7 +274,7 @@ function calibrateItems(rows, priors = {}, options = {}) {
       const prev = b.get(id);
       const next = estimateItemDifficulty(usable, { initial: prev }).b;
       b.set(id, next);
-      maxShift = Math.max(maxShift, Math.abs(next - prev));
+      if (convergenceIds.has(id)) maxShift = Math.max(maxShift, Math.abs(next - prev));
     }
 
     // Re-pin the scale after each sweep.
@@ -235,7 +283,7 @@ function calibrateItems(rows, priors = {}, options = {}) {
     for (const [id, v] of b) b.set(id, v + shift);
     for (const [p, v] of theta) theta.set(p, v + shift);
 
-    if (maxShift < tolerance) { converged = true; break; }
+    if (convergenceBasis !== 'none' && maxShift < tolerance) { converged = true; break; }
   }
 
   // ── Correct the JMLE spread bias ──
@@ -304,6 +352,8 @@ function calibrateItems(rows, priors = {}, options = {}) {
       droppedPeople,
       iterations,
       converged,
+      convergenceBasis,
+      writableItems: convergenceIds.size,
       anchor,
       meanItemsPerPerson,
       biasCorrection,
@@ -315,6 +365,7 @@ function calibrateItems(rows, priors = {}, options = {}) {
 
 module.exports = {
   calibrateItems,
+  authoredPrior,
   estimateItemDifficulty,
   dropNotReached,
   difficultyToTheta,

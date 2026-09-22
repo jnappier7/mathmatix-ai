@@ -17,6 +17,7 @@ const {
   dropNotReached,
   difficultyToTheta,
   thetaToDifficulty,
+  authoredPrior,
 } = require('../../utils/itemCalibration');
 
 /** Deterministic PRNG — a calibration test that flakes is worthless. */
@@ -313,5 +314,161 @@ describe('the script can actually write what it reports', () => {
   test('it only reads completed ACT sessions', () => {
     // An abandoned session's blanks mean "walked away", not "got it wrong".
     expect(script).toMatch(/status: 'completed'/);
+  });
+});
+
+describe('the prior a re-run shrinks toward is the AUTHORED difficulty', () => {
+  test('it prefers what --apply recorded over what --apply wrote', () => {
+    expect(authoredPrior({ difficulty: 5, calibration: { priorDifficulty: 2 } })).toBe(2);
+  });
+
+  test('an item that was never calibrated has only its authored value', () => {
+    expect(authoredPrior({ difficulty: 3 })).toBe(3);
+    expect(authoredPrior({ difficulty: 3, calibration: {} })).toBe(3);
+    expect(authoredPrior({ difficulty: 3, calibration: { calibratedAt: new Date() } })).toBe(3);
+  });
+
+  test('junk in calibration.priorDifficulty falls back rather than poisoning the anchor', () => {
+    expect(authoredPrior({ difficulty: 4, calibration: { priorDifficulty: null } })).toBe(4);
+    expect(authoredPrior({ difficulty: 4, calibration: { priorDifficulty: 0 } })).toBe(4);
+    expect(authoredPrior({ difficulty: 4, calibration: { priorDifficulty: 9 } })).toBe(4);
+    expect(authoredPrior({ difficulty: 4, calibration: { priorDifficulty: 'hard' } })).toBe(4);
+    expect(authoredPrior(null)).toBeUndefined();
+  });
+});
+
+describe('a monthly re-run does not ratchet', () => {
+  // THE cron test. Once this job runs on a schedule it sees its own output as
+  // input, and the only thing standing between that and a slow walk off the
+  // scale is which number it treats as the prior.
+  //
+  // A bank of well-seen items holds the scale steady; `fresh` is one item that
+  // has just crossed the n=25 line, which is the regime a monthly cron lives
+  // in — items arrive at the threshold a few at a time, with w near 0.5, where
+  // shrinkage is doing the most work and has the most to lose.
+  const trueB = { a: -2.0, b: -1.2, c: -0.4, d: 0.4, e: 1.2, f: 2.0, fresh: 2.6 };
+  const { rows } = simulate({ nPeople: 200, trueB, seed: 99 });
+  const data = rows.filter((r) => r.problemId !== 'fresh' || Number(r.userId.slice(1)) < 30);
+  // The author called `fresh` easy. It is not. Every other item is authored 3.
+  const authored = Object.fromEntries(Object.keys(trueB).map((k) => [k, 3]));
+  authored.fresh = 2;
+
+  const run = (priors) => {
+    const { items } = calibrateItems(data, priors, { minResponses: 25 });
+    return Object.fromEntries(items.map((i) => [i.problemId, i]));
+  };
+  const asPriors = (out) => Object.fromEntries(Object.entries(out).map(([k, v]) => [k, v.difficulty]));
+
+  test('the same data through twelve runs gives the same answer every time', () => {
+    const first = run(authored);
+    const firstJson = JSON.stringify(asPriors(first));
+    for (let gen = 0; gen < 12; gen++) {
+      expect(JSON.stringify(asPriors(run(authored)))).toBe(firstJson);
+    }
+    // And it is genuinely shrunk — partway between the author's 2 and the
+    // measured truth, not sitting on either.
+    expect(first.fresh.usableN).toBe(30);
+    expect(first.fresh.weight).toBeGreaterThan(0.5);
+    expect(first.fresh.weight).toBeLessThan(0.7);
+    expect(first.fresh.difficulty).toBe(3);
+  });
+
+  test('feeding the LIVE difficulty back in instead would evaporate the shrinkage', () => {
+    // This is the bug authoredPrior exists to prevent, demonstrated: no new
+    // responses, no new information, and the item walks two whole difficulty
+    // levels over three monthly runs as the shrinkage weight is re-applied to
+    // its own output. It lands on the raw unshrunk estimate — exactly the
+    // number shrinkage was there to keep it off.
+    let priors = { ...authored };
+    const walk = [];
+    for (let gen = 0; gen < 4; gen++) {
+      const out = run(priors);
+      walk.push(out.fresh.difficulty);
+      priors = asPriors(out);
+    }
+    expect(walk).toEqual([3, 4, 4, 4]);
+    expect(walk[walk.length - 1]).toBeGreaterThan(run(authored).fresh.difficulty);
+  });
+});
+
+describe('convergence is judged on the items a run could actually write', () => {
+  // An unattended --apply gates on meta.converged, so that flag has to mean
+  // something. A bank is mostly items nobody has seen twice; those have no
+  // finite MLE and jitter at the edge of the scale forever. If they get a vote,
+  // `converged` is false by construction on any real bank and the gate is a
+  // permanent lockout.
+  const trueB = { a: -1.5, b: -0.7, c: 0, d: 0.7, e: 1.5, f: 0.3, g: -0.3, h: 1.0 };
+  const { rows } = simulate({ nPeople: 150, trueB, seed: 4242 });
+  const priors = Object.fromEntries(Object.keys(trueB).map((k) => [k, 3]));
+
+  test('a well-seen bank converges and says what it judged that on', () => {
+    const { meta } = calibrateItems(rows, priors, { minResponses: 25 });
+    expect(meta.convergenceBasis).toBe('writable-items');
+    expect(meta.writableItems).toBe(8);
+    expect(meta.converged).toBe(true);
+  });
+
+  test('one barely-seen item cannot veto a fit nothing else disagrees with', () => {
+    const drifter = [
+      { userId: 'u0', problemId: 'ghost', correct: false },
+      { userId: 'u1', problemId: 'ghost', correct: false },
+    ];
+    const { meta, items } = calibrateItems([...rows, ...drifter], { ...priors, ghost: 3 }, { minResponses: 25 });
+    expect(meta.writableItems).toBe(8);            // ghost is not one of them
+    expect(meta.converged).toBe(true);
+    // It is still fitted and still reported — just not consulted about stability.
+    expect(items.find((i) => i.problemId === 'ghost').enoughData).toBe(false);
+  });
+
+  test('with nothing writable there is nothing to be stable about, so: not converged', () => {
+    // Zero items over the threshold. An empty max() is 0, which is < tolerance,
+    // which would report a converged fit on no evidence — and the --apply gate
+    // would wave it through.
+    const { meta } = calibrateItems(rows, priors, { minResponses: 5000 });
+    expect(meta.convergenceBasis).toBe('none');
+    expect(meta.writableItems).toBe(0);
+    expect(meta.converged).toBe(false);
+  });
+});
+
+describe('the cron can be run unattended', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const root = path.join(__dirname, '../..');
+  const script = fs.readFileSync(path.join(root, 'scripts/calibrateItemDifficulty.js'), 'utf8');
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+
+  test('npm run cron:calibrate-items applies, and loads Sentry while doing it', () => {
+    const cmd = pkg.scripts['cron:calibrate-items'];
+    expect(cmd).toBeTruthy();
+    expect(cmd).toContain('scripts/calibrateItemDifficulty.js');
+    expect(cmd).toContain('--apply');
+    // Without instrument.js there is no Sentry client, so notify() is a no-op
+    // and the mis-key review queue never leaves the container.
+    expect(cmd).toContain('--require ./instrument.js');
+  });
+
+  test('it shrinks toward the authored prior, not the live difficulty', () => {
+    expect(script).toMatch(/authoredPrior/);
+    expect(script).not.toMatch(/priors\[p\.problemId\] = p\.difficulty/);
+    // calibration must be selected, or authoredPrior has nothing to read.
+    expect(script).toMatch(/\.select\('problemId difficulty skillId isActive calibration'\)/);
+  });
+
+  test('a fit that did not settle writes nothing unless forced', () => {
+    expect(script).toMatch(/if \(!fit\.converged && !FORCE\)/);
+    expect(script.indexOf('if (!fit.converged && !FORCE)')).toBeLessThan(script.indexOf('updateOne'));
+  });
+
+  test('the two things a human must see are pushed out of the log', () => {
+    // Mis-key queue, and a run that declined to write. Both Sentry warnings.
+    expect(script).toMatch(/notify\('warning', `\[calibrateItemDifficulty\] \$\{suspect\.length\}/);
+    expect(script).toMatch(/notify\('warning', '\[calibrateItemDifficulty\] declined to write/);
+  });
+
+  test('a no-op run is not reported as work', () => {
+    // An item already sitting at its estimate must not be rewritten every
+    // month just to re-stamp calibratedAt.
+    expect(script).toMatch(/i\.difficulty !== \(live\[i\.problemId\]/);
   });
 });
