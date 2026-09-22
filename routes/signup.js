@@ -16,6 +16,7 @@ const { recordConversionEvent } = require('../utils/conversionEvents');
 const { generateUniqueUsername } = require('../auth/passport-config');
 
 const { anyRole, userHasRole } = require('../utils/roleQuery');
+const { normalizeStudentLinkCode, normalizeParentInviteCode } = require('../utils/linkCodes');
 const { parseDateOfBirth } = require('../utils/dob');
 // Roles that can be self-assigned during public signup.
 // 'admin' and 'teacher' are intentionally excluded — these accounts must be created by existing admins.
@@ -317,7 +318,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
         if (role === 'parent' && inviteCode) {
             // Find a student with a matching, unlinked invite code
             const studentUser = await User.findOne({
-                'studentToParentLinkCode.code': inviteCode.trim(),
+                'studentToParentLinkCode.code': normalizeStudentLinkCode(inviteCode),
                 'studentToParentLinkCode.parentLinked': false,
                 ...anyRole('student')
             });
@@ -353,7 +354,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
         if (role === 'student' && parentInviteCode) {
             // Find a parent with a matching, valid invite code
             const parentUser = await User.findOne({
-                'parentToChildInviteCode.code': parentInviteCode.trim().toUpperCase(),
+                'parentToChildInviteCode.code': normalizeParentInviteCode(parentInviteCode),
                 'parentToChildInviteCode.childLinked': false,
                 'parentToChildInviteCode.expiresAt': { $gt: new Date() },
                 ...anyRole('parent')

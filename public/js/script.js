@@ -707,8 +707,11 @@ document.addEventListener("DOMContentLoaded", () => {
     
     async function fetchAndDisplayParentCode() {
         if (currentUser.role === 'student' && studentLinkCodeValue) {
-            // Check if student has a link code already
-            if (currentUser.studentToParentLinkCode && currentUser.studentToParentLinkCode.code) {
+            // Show the stored code only while it is still usable. Once a parent
+            // has used it (parentLinked) the server will mint a fresh one on
+            // request; showing the spent code left a second parent copying a
+            // code that could only ever answer "already linked".
+            if (currentUser.studentToParentLinkCode && currentUser.studentToParentLinkCode.code && !currentUser.studentToParentLinkCode.parentLinked) {
                 studentLinkCodeValue.textContent = currentUser.studentToParentLinkCode.code;
                 // Make it clickable to copy
                 studentLinkCodeValue.style.cursor = 'pointer';
@@ -4728,9 +4731,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (shareProgressHeaderBtn) {
         shareProgressHeaderBtn.addEventListener('click', async () => {
             if (currentUser && currentUser.role === 'student') {
-                let code = currentUser.studentToParentLinkCode?.code;
+                let code = currentUser.studentToParentLinkCode?.parentLinked
+                    ? null
+                    : currentUser.studentToParentLinkCode?.code;
 
-                // Generate code if it doesn't exist
+                // Generate code if it doesn't exist (or the last one was spent)
                 if (!code) {
                     try {
                         const res = await csrfFetch('/api/student/generate-link-code', {
