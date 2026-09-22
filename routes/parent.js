@@ -16,6 +16,12 @@ const { calculateRetrievability } = require('../utils/fsrsScheduler');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 
 const { userHasRole, anyRole } = require('../utils/roleQuery');
+const {
+    normalizeStudentLinkCode,
+    parentInviteExpiry,
+    isParentInviteActive,
+    explainStudentLinkFailure
+} = require('../utils/linkCodes');
 // Helper: verify parent has access to child
 async function verifyParentChildAccess(parentId, childId) {
     const parent = await User.findById(parentId);
@@ -42,7 +48,7 @@ router.post('/generate-invite-code', isAuthenticated, isParent, async (req, res)
         if (!parent) {
             return res.status(404).json({ message: "Parent not found." });
         }
-        if (parent.parentToChildInviteCode && parent.parentToChildInviteCode.code && !parent.parentToChildInviteCode.childLinked && parent.parentToChildInviteCode.expiresAt > new Date()) {
+        if (isParentInviteActive(parent.parentToChildInviteCode)) {
             return res.status(200).json({ success: true, message: "Active invite code already exists.", code: parent.parentToChildInviteCode.code, expiresAt: parent.parentToChildInviteCode.expiresAt });
         }
         let newCode;
@@ -54,8 +60,7 @@ router.post('/generate-invite-code', isAuthenticated, isParent, async (req, res)
                 codeExists = false;
             }
         }
-        const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 7);
+        const expiresAt = parentInviteExpiry();
         parent.parentToChildInviteCode = {
             code: newCode,
             expiresAt: expiresAt,
@@ -81,15 +86,19 @@ router.post('/link-to-student', isAuthenticated, isParent, async (req, res) => {
         if (!parent) {
             return res.status(404).json({ message: "Parent not found." });
         }
-        const student = await User.findOne({ 'studentToParentLinkCode.code': studentLinkCode.trim() });
-        if (!student) {
-            return res.status(400).json({ message: "Invalid student link code. Student not found." });
-        }
-        if (student.studentToParentLinkCode.parentLinked) {
-            return res.status(400).json({ message: "This student account is already linked to a parent." });
+        // Accept "MATH-A1B2C3", "math-a1b2c3", or just "A1B2C3" — the dashboard
+        // copy used to say "6-character code", so parents typed exactly six.
+        const code = normalizeStudentLinkCode(studentLinkCode);
+        const student = await User.findOne({ 'studentToParentLinkCode.code': code });
+        // Say WHY it failed: a code that is not found, a code that is really
+        // this parent's own invite code pasted into the wrong box, and a code
+        // already spent all used to be "Invalid student link code".
+        const failure = explainStudentLinkFailure({ rawCode: studentLinkCode, student, parent });
+        if (failure) {
+            return res.status(400).json({ success: false, reason: failure.reason, message: failure.message });
         }
         if (!userHasRole(student, 'student')) {
-            return res.status(400).json({ message: "This code is not from a student account." });
+            return res.status(400).json({ success: false, reason: 'not_student', message: "This code is not from a student account." });
         }
 
         // Add parent to student's parentIds array (supports multiple parents)

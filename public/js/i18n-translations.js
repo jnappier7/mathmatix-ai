@@ -494,23 +494,28 @@ window.I18N_TRANSLATIONS = {
     Vietnamese: 'Liên kết với học sinh hiện có', Arabic: 'الربط بطالب موجود', Somali: 'Ku xir arday hore u jira', French: 'Associer un élève existant', German: 'Mit vorhandenem Schüler verknüpfen'
   },
   'parent.linkExistingHelp': {
-    English: 'Already have a child using Mathmatix? Ask them for their 6-character link code (Profile → Family) and enter it below.',
-    Spanish: '¿Su hijo ya usa Mathmatix? Pídale su código de vinculación de 6 caracteres (Perfil → Familia) e introdúzcalo a continuación.',
-    Russian: 'Ваш ребёнок уже пользуется Mathmatix? Попросите у него 6-значный код привязки (Профиль → Семья) и введите его ниже.',
-    Chinese: '孩子已经在使用 Mathmatix 了吗？向他们索取 6 位关联代码（个人资料 → 家庭），然后在下方输入。',
-    Vietnamese: 'Con bạn đã dùng Mathmatix? Hãy hỏi mã liên kết 6 ký tự của con (Hồ sơ → Gia đình) và nhập vào bên dưới.',
-    Arabic: 'هل يستخدم طفلك Mathmatix بالفعل؟ اطلب منه رمز الربط المكوّن من 6 أحرف (الملف الشخصي ← العائلة) وأدخله أدناه.',
-    Somali: 'Ilmahaagu horey ma u isticmaalaa Mathmatix? Weydii koodhka xiriirinta ee 6-xaraf ah (Profile → Family) oo hoos geli.',
-    French: 'Votre enfant utilise déjà Mathmatix ? Demandez-lui son code de liaison à 6 caractères (Profil → Famille) et saisissez-le ci-dessous.',
-    German: 'Nutzt Ihr Kind Mathmatix bereits? Fragen Sie nach dem 6-stelligen Verknüpfungscode (Profil → Familie) und geben Sie ihn unten ein.'
+    // The student-side location and the code shape are deliberately literal:
+    // the code is "MATH-" + 6 characters and lives under "Share Progress" in the
+    // student's tutor (chat.html header menu). Earlier copy said "6-character
+    // code (Profile → Family)" — neither existed, and parents pasted the wrong
+    // code into the wrong box.
+    English: 'Already have a child using Mathmatix? In their tutor, open the menu and tap "Share Progress" — the code there looks like MATH-A1B2C3. Enter it below.',
+    Spanish: '¿Su hijo ya usa Mathmatix? En su tutor, abra el menú y toque "Share Progress" (Compartir progreso); el código se parece a MATH-A1B2C3. Introdúzcalo a continuación.',
+    Russian: 'Ваш ребёнок уже пользуется Mathmatix? В его репетиторе откройте меню и нажмите «Share Progress» (Поделиться прогрессом) — код выглядит как MATH-A1B2C3. Введите его ниже.',
+    Chinese: '孩子已经在使用 Mathmatix 了吗？在孩子的辅导页面打开菜单，点按"Share Progress"（分享进度），代码形如 MATH-A1B2C3。请在下方输入。',
+    Vietnamese: 'Con bạn đã dùng Mathmatix? Trong trang gia sư của con, mở menu và chạm "Share Progress" (Chia sẻ tiến độ) — mã có dạng MATH-A1B2C3. Nhập mã vào bên dưới.',
+    Arabic: 'هل يستخدم طفلك Mathmatix بالفعل؟ في صفحة المعلّم الخاصة به، افتح القائمة واضغط "Share Progress" (مشاركة التقدّم) — يبدو الرمز مثل MATH-A1B2C3. أدخله أدناه.',
+    Somali: 'Ilmahaagu horey ma u isticmaalaa Mathmatix? Bogga macallinkiisa, fur menu-ga oo taabo "Share Progress" — koodhku wuxuu u eg yahay MATH-A1B2C3. Hoos geli.',
+    French: 'Votre enfant utilise déjà Mathmatix ? Dans son tuteur, ouvrez le menu et touchez « Share Progress » (Partager mes progrès) : le code ressemble à MATH-A1B2C3. Saisissez-le ci-dessous.',
+    German: 'Nutzt Ihr Kind Mathmatix bereits? Öffnen Sie in seinem Tutor das Menü und tippen Sie auf „Share Progress" (Fortschritt teilen) – der Code sieht aus wie MATH-A1B2C3. Geben Sie ihn unten ein.'
   },
   'parent.studentLinkCode': {
     English: 'Student\'s Link Code', Spanish: 'Código de vinculación del estudiante', Russian: 'Код привязки ученика', Chinese: '学生关联代码',
     Vietnamese: 'Mã liên kết của học sinh', Arabic: 'رمز ربط الطالب', Somali: 'Koodhka xiriirinta ardayga', French: 'Code de liaison de l\'élève', German: 'Verknüpfungscode des Schülers'
   },
   'parent.linkCodePlaceholder': {
-    English: 'Enter 6-character code', Spanish: 'Introduzca el código de 6 caracteres', Russian: 'Введите 6-значный код', Chinese: '输入 6 位代码',
-    Vietnamese: 'Nhập mã 6 ký tự', Arabic: 'أدخل الرمز المكوّن من 6 أحرف', Somali: 'Geli koodhka 6-xaraf ah', French: 'Saisissez le code à 6 caractères', German: '6-stelligen Code eingeben'
+    English: 'MATH-A1B2C3', Spanish: 'MATH-A1B2C3', Russian: 'MATH-A1B2C3', Chinese: 'MATH-A1B2C3',
+    Vietnamese: 'MATH-A1B2C3', Arabic: 'MATH-A1B2C3', Somali: 'MATH-A1B2C3', French: 'MATH-A1B2C3', German: 'MATH-A1B2C3'
   },
   'parent.linkStudent': {
     English: 'Link Student', Spanish: 'Vincular estudiante', Russian: 'Привязать ученика', Chinese: '关联学生',
@@ -814,15 +819,15 @@ window.I18N_TRANSLATIONS = {
     Vietnamese: 'Liên kết học sinh hiện có', Arabic: 'ربط طالب موجود', Somali: 'Ku xir arday hore u jira', French: 'Associer un élève existant', German: 'Vorhandenen Schüler verknüpfen'
   },
   'parent.mobileLinkHelp': {
-    English: 'Enter your child\'s link code to connect their account.',
-    Spanish: 'Introduzca el código de vinculación de su hijo para conectar su cuenta.',
-    Russian: 'Введите код привязки ребёнка, чтобы подключить его аккаунт.',
-    Chinese: '输入孩子的关联代码以连接其账户。',
-    Vietnamese: 'Nhập mã liên kết của con bạn để kết nối tài khoản.',
-    Arabic: 'أدخل رمز ربط طفلك لتوصيل حسابه.',
-    Somali: 'Geli koodhka xiriirinta ee ilmahaaga si aad akoonkiisa ugu xirto.',
-    French: 'Saisissez le code de liaison de votre enfant pour connecter son compte.',
-    German: 'Geben Sie den Verknüpfungscode Ihres Kindes ein, um sein Konto zu verbinden.'
+    English: 'Enter the code from your child\'s "Share Progress" menu (looks like MATH-A1B2C3).',
+    Spanish: 'Introduzca el código del menú "Share Progress" de su hijo (se parece a MATH-A1B2C3).',
+    Russian: 'Введите код из меню «Share Progress» ребёнка (выглядит как MATH-A1B2C3).',
+    Chinese: '输入孩子"Share Progress"菜单中的代码（形如 MATH-A1B2C3）。',
+    Vietnamese: 'Nhập mã từ menu "Share Progress" của con bạn (có dạng MATH-A1B2C3).',
+    Arabic: 'أدخل الرمز من قائمة "Share Progress" لدى طفلك (يبدو مثل MATH-A1B2C3).',
+    Somali: 'Geli koodhka ka yimid menu-ga "Share Progress" ee ilmahaaga (u eg MATH-A1B2C3).',
+    French: 'Saisissez le code du menu « Share Progress » de votre enfant (ressemble à MATH-A1B2C3).',
+    German: 'Geben Sie den Code aus dem Menü „Share Progress" Ihres Kindes ein (sieht aus wie MATH-A1B2C3).'
   },
 
   /* Injected by parent-dashboard.js at runtime, after apply() has already run.
