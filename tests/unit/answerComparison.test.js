@@ -398,15 +398,15 @@ describe('spellings that ARE the same number still match', () => {
 });
 
 describe('no seeded multiple-choice item has a distractor that grades correct', () => {
-  // The two largest banks on disk uncompressed. A distractor whose text is
+  // The three largest banks on disk uncompressed. A distractor whose text is
   // literally the key is a bad ITEM and is skipped; everything else that
-  // grades correct here is a grader bug, and there were 327 of them.
+  // grades correct here is a grader bug, and there were 361 of them.
   const load = (f) => require(`../../seeds/${f}`);
-  const banks = ['act-enhanced/act-items.generated.json', 'act-fable-items.generated.json'];
+  const banks = ['act-enhanced/act-items.generated.json', 'act-fable-items.generated.json', 'act-ies-expansion/ies-items.generated.json'];
 
   test.each(banks)('%s', (bank) => {
     const items = load(bank).filter((it) => it && it.answer && Array.isArray(it.options) && it.options.length);
-    expect(items.length).toBeGreaterThan(500);
+    expect(items.length).toBeGreaterThan(300);   // a missing or empty bank must not pass vacuously
     const hits = [];
     for (const it of items) {
       const spec = { value: it.answer.value, equivalents: it.answer.equivalents || [], answerType: it.answerType, options: it.options, correctOption: it.correctOption };
@@ -419,5 +419,61 @@ describe('no seeded multiple-choice item has a distractor that grades correct', 
       expect(compareAnswer(it.answer.value, spec)).toBe(true);
     }
     expect(hits).toEqual([]);
+  });
+});
+
+describe('the absolute slack does not outgrow a small key', () => {
+  // valuesMatch's default slack is 1e-4 absolute. On a key of 36 that is
+  // rounding at the fourth decimal. On a key of 0.000045 it is 222% of the key,
+  // so "0.0000045" — a tenth of the answer — graded correct. The bank has six
+  // keys in that zone; each row below is one of them against its own
+  // distractor (all decade neighbours, from seeds/act-*.generated.json).
+  test.each([
+    ['0.0000045', '0.000045'],
+    ['0.00045', '0.000045'],
+    ['1.4 × 10⁻⁵', '1.4 × 10⁻⁴'],
+    ['4.5 × 10⁻⁵', '4.5 × 10⁻⁴'],
+    ['4.5 × 10⁻³', '4.5 × 10⁻⁴'],
+    ['4.7 × 10⁻³', '4.7 × 10⁻⁴'],
+    ['7.2×10⁻⁵', '7.2×10⁻⁴'],
+    ['$0.15', '$0.01'],
+  ])('%s is not %s', (a, b) => {
+    expect(valuesMatch(a, b)).toBe(false);
+    expect(valuesMatch(b, a)).toBe(false);
+  });
+
+  test('the same small number in another spelling still matches', () => {
+    expect(valuesMatch('0.000045', '4.5 × 10⁻⁵')).toBe(true);
+    expect(valuesMatch('0.00045', '4.5 × 10⁻⁴')).toBe(true);
+    expect(valuesMatch('0.00047', '4.7 × 10⁻⁴')).toBe(true);
+    expect(valuesMatch('0.01', '$0.01')).toBe(true);
+  });
+
+  test('rounding a small key to three significant figures still passes', () => {
+    // 3 s.f. costs at most 0.5%, under the 1% cap. This is what the cap is
+    // sized against — tighter would start rejecting honest rounding.
+    expect(valuesMatch('0.0067', '0.00667')).toBe(true);
+    expect(valuesMatch('0.00333', '1/300')).toBe(true);
+  });
+
+  test('nothing changes at normal magnitude or at zero', () => {
+    // 1e-4 is below 1% of any key >= 0.01, so the cap is inert there — and 45
+    // bank items have a distractor within 1% of the key, so it has to be.
+    expect(valuesMatch('0.6667', '2/3')).toBe(true);
+    expect(valuesMatch('36.00005', '36')).toBe(true);
+    expect(valuesMatch('35.99', '36')).toBe(false);
+    expect(valuesMatch('0.5', '0.50')).toBe(true);
+    // A zero KEY has no magnitude to scale by; the absolute slack stands.
+    expect(valuesMatch('0.00005', '0')).toBe(true);
+    expect(valuesMatch('0.001', '0')).toBe(false);
+    // The other direction is not the zero rule: typing 0 for a nonzero key is
+    // wrong by 100%, and used to grade correct for any key under 1e-4.
+    expect(valuesMatch('0', '0.00005')).toBe(false);
+  });
+
+  test('relative mode (assessmentService) is untouched', () => {
+    const tol = { relative: 0.015, zeroAbsolute: 0.01 };
+    expect(valuesMatch('0.0000455', '0.000045', tol)).toBe(true);   // 1.1% off, under 1.5%
+    expect(valuesMatch('0.000046', '0.000045', tol)).toBe(false);   // 2.2% off
   });
 });

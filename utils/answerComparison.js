@@ -185,6 +185,20 @@ function valuesMatch(userStr, acceptable, tolerance = {}) {
   return false;
 }
 
+// In default (absolute) mode, the slack is also capped at this fraction of the
+// key. 1e-4 absolute is the right amount of give for a student rounding at the
+// fourth decimal — on a key of 36, or 0.5, or 0.0667. On a key of 0.000045 it
+// is 222% of the key, so 0.0000045, a TENTH of the answer, graded correct.
+//
+// Why 1%: measured against the bank. Rounding to three significant figures
+// costs at most 0.5%, so everything the absolute rule accepted on a small key
+// still passes; and the fix must not reach normal magnitudes, where 45 items
+// have a distractor within 1% of the key and the absolute rule already governs
+// (1e-4 is below 1% of any key >= 0.01, so the cap is inert there — the sweep
+// that found this had zero hits above that line). The six keys it bites are
+// all in the 1e-2..1e-5 range with their nearest distractor 72-90% away.
+const SMALL_KEY_RELATIVE_CAP = 0.01;
+
 function numbersMatch(userNum, correctNum, tolerance, absolute) {
   if (tolerance.relative != null) {
     if (correctNum === 0) {
@@ -192,7 +206,12 @@ function numbersMatch(userNum, correctNum, tolerance, absolute) {
     }
     return Math.abs(userNum - correctNum) / Math.abs(correctNum) < tolerance.relative;
   }
-  return Math.abs(userNum - correctNum) < absolute;
+  // A key of exactly 0 has no magnitude to scale by; the absolute slack stands
+  // (every zero key in the bank has its nearest distractor at |1| or further).
+  const slack = correctNum === 0
+    ? absolute
+    : Math.min(absolute, Math.abs(correctNum) * SMALL_KEY_RELATIVE_CAP);
+  return Math.abs(userNum - correctNum) < slack;
 }
 
 // Split free text into comparable tokens, keeping fractions ("3/4"),
