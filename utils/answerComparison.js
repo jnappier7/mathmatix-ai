@@ -19,8 +19,85 @@ const { normalizeOptions, correctLabelOf } = require('./mcOptions');
  * @param {String} str
  * @returns {Number|null} numeric value, or null if unparseable
  */
+/**
+ * The number a string IS — or null when it is not a number at all.
+ *
+ * `parseFloat` reads the leading digits and ignores the rest, so it says
+ * "4x^2 + 36" is 4 and "4x^2 - 36" is 4, "3,429" is 3 and "3,610" is 3,
+ * "18 + 22i" is 18 and "18 - 14i" is 18 — and valuesMatch, which used it as
+ * its last resort, then graded every one of those pairs EQUAL. Swept against
+ * the seeded item banks that was 528 distractors on 344 multiple-choice items
+ * grading correct when typed, across every bank, not one of them a bad item.
+ * The ACT runner submits letters and was never exposed; every surface that
+ * takes a typed answer (screener, review, challenges, the chat assessment) was.
+ *
+ * So: the whole string has to be a number, after the spellings that ARE the
+ * same number are peeled off — and only those:
+ *   - a typographic minus                    "−5"           → -5
+ *   - a currency sign                        "$276"         → 276
+ *   - a trailing ° or %                      "68°" "15%"    → 68, 15
+ *   - trailing unit WORDS                    "9 only" "12 ft" "36 units squared"
+ *     (each at least two letters — a lone "x" or "i" after a space is a
+ *     variable, not a unit, and "5 x" must not become 5). A word that makes
+ *     the number RELATIVE to something is not a unit and stops the peel:
+ *     "8 and every choice smaller" is not 8, "4 centimeters left of the
+ *     line" is not 4, and "8% decrease" is not "8% increase" — the bank has
+ *     all three as key/distractor pairs.
+ *   - thousands separators, in that pattern  "3,610"        → 3610  ("6,8,10" is a list)
+ *   - scientific notation, both spellings    "1.8 × 10¹⁰"  "2.88 × 10^10"
+ *     — and only with the mantissa in [1, 10). "16.9 × 10^5" is the same
+ *     quantity as "1.69 × 10^6" but it is not scientific notation, and the
+ *     items that carry it as a distractor exist to test exactly that; an
+ *     unnormalized mantissa is a form error, so it is not a spelling of the
+ *     number and stays out of numeric comparison.
+ * Anything else that follows the digits — a variable, an operator, π, √, i, a
+ * second number, a ratio colon — makes it NOT this number, and it stays out of
+ * numeric comparison altogether. A key like "64π" then matches "64π" and its
+ * equivalents, never a bare "64".
+ *
+ * @param {*} str
+ * @returns {number|null}
+ */
+const SUPERSCRIPT_DIGITS = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁻': '-' };
+// Trailing words that change what the number MEANS rather than name its unit.
+const NOT_A_UNIT = new Set([
+  'and', 'or', 'nor', 'not', 'of', 'the', 'than', 'each', 'every',
+  'left', 'right', 'up', 'down', 'above', 'below', 'before', 'after',
+  'larger', 'smaller', 'greater', 'less', 'more', 'fewer', 'bigger',
+  'increase', 'decrease', 'gain', 'loss', 'positive', 'negative',
+]);
+function parseStrictNumber(str) {
+  if (str === null || str === undefined) return null;
+  let s = String(str).trim()
+    .replace(/[−–]/g, '-')
+    .replace(/^(-?)\$\s*/, '$1')            // "$276", "-$5"
+    .replace(/^\$\s*(-)/, '$1')             // "$-5"
+    .replace(/\s+$/, '');
+  // Peel trailing unit words off the END, one at a time: "36 units squared"
+  // → "36 units" → "36". Stopping at the first non-word token is what keeps
+  // "5 or 6" and "3 and π" whole (and therefore not numbers). A single regex
+  // with a lazy head cannot do this — it splits "$5 per hour" as "5 per" +
+  // "hour", because "hour" alone satisfies the tail.
+  for (let m = s.match(/\s+([a-zA-Z]{2,})\.?$/); m && !NOT_A_UNIT.has(m[1].toLowerCase()); m = s.match(/\s+([a-zA-Z]{2,})\.?$/)) {
+    s = s.slice(0, m.index);
+  }
+  s = s.replace(/\s*[°%]$/, '');             // "68°", "15%"
+  if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s = s.replace(/,/g, '');
+  // "1.8 × 10¹⁰" / "2.88 × 10^10" / "4.7 x 10^-4" → "1.8e10" / "2.88e10" / "4.7e-4"
+  const sci = s.match(/^(-?(?:\d+\.?\d*|\.\d+))\s*[×x*]\s*10\s*(?:\^\s*(-?\d+)|([⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+))$/);
+  if (sci) {
+    const mantissa = Math.abs(Number(sci[1]));
+    if (!(mantissa >= 1 && mantissa < 10)) return null;   // not scientific notation
+    const exp = sci[2] !== undefined ? sci[2] : [...sci[3]].map((c) => SUPERSCRIPT_DIGITS[c]).join('');
+    s = `${sci[1]}e${exp}`;
+  }
+  if (!/^-?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(s)) return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+
 function parseFractionOrDecimal(str) {
-  const s = String(str).trim();
+  const s = String(str).trim().replace(/[−–]/g, '-');
 
   // Mixed number like "1 1/2"
   const mixedMatch = s.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
@@ -40,8 +117,9 @@ function parseFractionOrDecimal(str) {
     return den === 0 ? null : num / den;
   }
 
-  const num = parseFloat(s);
-  return isNaN(num) ? null : num;
+  // Not a fraction: a plain number, or nothing. Never the leading digits of
+  // something else — see parseStrictNumber for what that cost.
+  return parseStrictNumber(s);
 }
 
 // Comparison-symbol synonyms: a student can select ">" where the key says
@@ -95,10 +173,12 @@ function valuesMatch(userStr, acceptable, tolerance = {}) {
     return false;
   }
 
-  // Numeric comparison ("0.5" vs "0.50" vs ".5")
-  const userNum = parseFloat(userStr);
-  const acceptableNum = parseFloat(acceptable);
-  if (!isNaN(userNum) && !isNaN(acceptableNum)) {
+  // Numeric comparison ("0.5" vs "0.50" vs ".5", "$276" vs "276", "3,610" vs
+  // "3610"). Both sides must BE a number — parseFloat's leading-digits read is
+  // what made "4x^2 + 36" equal "4x^2 - 36" here.
+  const userNum = parseStrictNumber(userStr);
+  const acceptableNum = parseStrictNumber(acceptable);
+  if (userNum !== null && acceptableNum !== null) {
     return numbersMatch(userNum, acceptableNum, tolerance, absolute);
   }
 
@@ -306,6 +386,7 @@ function compareAnswer(userAnswer, spec = {}) {
 module.exports = {
   compareAnswer,
   valuesMatch,
+  parseStrictNumber,
   textAnswerMatch,
   expressionMatch,
   parseFractionOrDecimal,
