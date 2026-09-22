@@ -7,6 +7,7 @@
 const TUTOR_CONFIG = require('./tutorConfig');
 const { generateSystemPrompt } = require('./prompt');
 const { callLLM, callLLMStream } = require('./llmGateway');
+const { createActorAnonymizationContext, runWithOutboundPiiContext } = require('./piiAnonymizer');
 const { verify: pipelineVerify } = require('./pipeline');
 const { checkReadingLevel } = require('./readability');
 const { replaceDashes } = require('./dashNormalizer');
@@ -185,6 +186,12 @@ class VoiceSession {
         this.ws = ws;
         this.user = user;                       // populated user doc (lean)
         this.userId = String(user._id);
+        // A socket has no request, so no middleware opened an outbound-PII
+        // scope for it. Every turn runs inside this one (see _startTurn), so
+        // the LLM calls the turn makes — the stream, the tool narration, the
+        // orchestrated call, and the verify stage's regenerations — strip
+        // the student's name and restore it before anything is spoken.
+        this.anonContext = createActorAnonymizationContext(user);
         // The sign-in this socket was opened under, read off the upgrade
         // request's express session. Carried so voice turns land in a
         // conversation stamped with the CURRENT login — a voice session opened
@@ -544,7 +551,12 @@ class VoiceSession {
 
     // ─── Turn lifecycle ──────────────────────────────────────────────────
 
-    async _startTurn(userMessage, { source, endpointReason }) {
+    async _startTurn(userMessage, opts) {
+        // Wraps the turn in the session's outbound-PII scope (see constructor).
+        return runWithOutboundPiiContext(this.anonContext, () => this._runTurn(userMessage, opts));
+    }
+
+    async _runTurn(userMessage, { source, endpointReason }) {
         if (this.closed) return;
         const ac = new AbortController();
         const turn = {

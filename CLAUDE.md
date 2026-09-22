@@ -199,9 +199,17 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
 6. **persist** — save messages, update `skillMastery` (BKT + FSRS), award XP/badges, update `tutorPlan`, mood.
 
 ### LLM access — always go through the gateway
-- **`utils/llmGateway.js`** is the single entry point. It does **PII anonymization** (strips student
-  names → `[Student]` → rehydrates) before/after the API call. Routes/pipeline should call this, **not**
-  `openaiClient` directly.
+- **The outbound-PII chokepoint is `utils/openaiClient.js`** (`callLLM` / `callLLMStructured` /
+  `callLLMStream` / `generateEmbedding`), **on by default** (`PII_STRIP_OUTBOUND=false` is the emergency
+  bypass). It strips pattern PII (email/phone/SSN/ObjectId/address/IEP specifics) on every call, and the
+  acting user's name via the **request scope** that `middleware/outboundPii.js` opens from `req.user`
+  after impersonation (AsyncLocalStorage; voice sessions open their own in `voiceSession._startTurn`). It
+  **rehydrates at the same layer** — completions, structured JSON and streamed chunks come back with the
+  real name — so a call site never has to know. A call that talks about someone *other than* `req.user`
+  (parent chat → the child; teacher summaries → the student) must pass its own `options.anonContext`.
+  **No file outside `openaiClient.js`/`anthropicClient.js` may hold a provider SDK handle** —
+  `tests/unit/outboundPiiScope.test.js` scans for it. `utils/llmGateway.js` is the convenience layer over
+  it. What cannot be filtered: image pixels and voice audio. Audit record: `docs/OUTBOUND_PII_AUDIT.md`.
 - **Prompts that describe many students** (the teacher lesson planner, `routes/teacher.js`
   `/lesson-planner`) use `createRosterAnonymizationContext` from `piiAnonymizer.js`: each student is
   `[Student N]` in the outbound prompt, IEP goals go out as counts + progress bands (accommodation
@@ -292,7 +300,7 @@ only — HTML is served as-is, so i18n/feature-flags/user-data are injected clie
   trial 30/hr), prompt-injection middleware, upload validation + 30-day auto-delete, optional
   AES-256-GCM field encryption (`FIELD_ENCRYPTION_KEY`).
 - **Compliance (FERPA/COPPA)**: `consentGate`/`consent.js`/`consentManager.js`, `ferpaAccessLog`,
-  `dataPrivacy.js` (export/delete/amend), `dataRetention.js`, PII anonymization in the LLM gateway,
+  `dataPrivacy.js` (export/delete/amend), `dataRetention.js`, the outbound-PII chokepoint in `openaiClient` (on by default),
   `impersonation.js` (read-only, 20-min timeout, fully audited).
 - **Billing/gating**: `routes/billing.js` + `middleware/usageGate.js`. Free = 30 AI-min per rolling 30 days (students — the `weekly*` field names are back-compat, the quota is monthly);
   teachers/parents/admins/licensed students unlimited. Voice/upload/AI-grading are premium-gated.
@@ -386,7 +394,9 @@ npm run seed:all:dry   # preflight + plan, no writes
   routing (`onboarding.js`, `login.js`, `roleSwitch.js`) and audit-trail role labels. Pinned by
   `tests/unit/roleQuery.test.js` and `tests/integration/multiRoleVisibility.test.js`.
 - **Use `promptCompact`, not the legacy `prompt.js` body** — the latter is rollback-only and huge.
-- **Use `llmGateway`, never `openaiClient` directly** from routes — you'd bypass PII anonymization.
+- **Never hold a provider SDK handle outside `utils/openaiClient.js`** — every call goes through
+  `callLLM*`/`generateEmbedding`, the outbound-PII chokepoint (strip + rehydrate, on by default).
+  `tests/unit/outboundPiiScope.test.js` fails the build on a direct `chat.completions.create` anywhere else.
 - **`config/middleware.js` order matters** — Stripe raw-body must precede `express.json`; CSP nonce
   must precede helmet; CSRF after session.
 - **Per-user chat lock** in `routes/chat.js` serializes a user's concurrent messages — don't remove it.

@@ -2,16 +2,23 @@
  * LLM GATEWAY - Unified AI Brain for Mathmatix
  *
  * Centralized interface for ALL AI interactions.
- * Uses OpenAI (GPT) models exclusively.
+ * Provider-agnostic: model ids starting with `claude` are dispatched to
+ * Anthropic by utils/openaiClient.js, everything else to OpenAI.
  *
  * - Ensures consistent tutor persona across all routes
  * - Handles chat, vision, streaming, embeddings
  * - Centralizes retry logic and error handling
  *
+ * Every method here, and every callLLM* re-exported below, goes through the
+ * outbound-PII chokepoint in utils/openaiClient.js. Nothing in this file
+ * touches the provider SDK directly any more — gradeWithVision was the last
+ * holdout — and tests/unit/outboundPiiScope.test.js fails the build if a
+ * direct SDK call reappears anywhere outside openaiClient.js.
+ *
  * @module llmGateway
  */
 
-const { openai, retryWithExponentialBackoff, callLLM, callLLMStructured, callLLMStream, generateEmbedding } = require('./openaiClient');
+const { callLLM, callLLMStructured, callLLMStream, generateEmbedding } = require('./openaiClient');
 const { generateSystemPrompt } = require('./prompt');
 const { createAnonymizationContext, anonymizeMessages, anonymizeSystemPrompt, rehydrateResponse, logAnonymizationEvent } = require('./piiAnonymizer');
 
@@ -80,10 +87,12 @@ async function chat(context, options = {}) {
     const anonymizedMessages = anonymizeMessages(messagesForAI, anonContext);
     logAnonymizationEvent(user?._id, 'anonymize', { messageCount: anonymizedMessages.length });
 
-    // Call LLM with anonymized messages
+    // Call LLM with anonymized messages (the chokepoint gets the same context,
+    // so its own strip/rehydrate pass is a no-op rather than a second opinion)
     const completion = await callLLM(model, anonymizedMessages, {
         temperature,
-        max_tokens: maxTokens
+        max_tokens: maxTokens,
+        anonContext
     });
 
     // Rehydrate: Replace [Student] placeholders with real first name
@@ -142,7 +151,8 @@ async function chatStream(context, options = {}) {
     // Note: Stream rehydration happens at the route level where chunks are processed
     const stream = await callLLMStream(model, anonymizedMessages, {
         temperature,
-        max_tokens: maxTokens
+        max_tokens: maxTokens,
+        anonContext
     });
 
     return { stream, anonContext };
@@ -175,36 +185,29 @@ async function gradeWithVision(context, options = {}) {
     console.log(`[LLMGateway] Calling vision model: ${model}`);
 
     try {
-        // Use max_completion_tokens for newer gpt-4o/gpt-5 models
-        const tokenParam = (model.includes('gpt-5') || model.includes('gpt-4o'))
-            ? { max_completion_tokens: maxTokens }
-            : { max_tokens: maxTokens };
-
-        const completion = await retryWithExponentialBackoff(() =>
-            openai.chat.completions.create({
-                model: model,
-                messages: [
-                    {
-                        role: 'user',
-                        content: [
-                            {
-                                type: 'text',
-                                text: anonymizedPrompt
-                            },
-                            {
-                                type: 'image_url',
-                                image_url: {
-                                    url: imageDataUrl,
-                                    detail: 'high'
-                                }
-                            }
-                        ]
-                    }
-                ],
-                ...tokenParam,
-                temperature: temperature
-            })
-        );
+        // Through the chokepoint, not the SDK: this used to be the one
+        // gateway method that called openai.chat.completions.create itself,
+        // which made it the one path that bypassed the outbound strip and
+        // its request scope. callLLM handles the vision payload, the
+        // max_completion_tokens mapping, the timeout and the retry.
+        //
+        // The image itself cannot be filtered — a name written at the top of
+        // a worksheet goes out in the pixels. That is disclosed on
+        // public/subprocessors.html and is the reason photo grading is a
+        // premium, consented feature rather than a default.
+        const completion = await callLLM(model, [
+            {
+                role: 'user',
+                content: [
+                    { type: 'text', text: anonymizedPrompt },
+                    { type: 'image_url', image_url: { url: imageDataUrl, detail: 'high' } }
+                ]
+            }
+        ], {
+            temperature,
+            max_tokens: maxTokens,
+            ...(user ? { anonContext } : {})
+        });
 
         return rehydrateResponse(completion.choices[0].message.content, user?.firstName);
 
@@ -233,9 +236,12 @@ async function reason(prompt, options = {}) {
         { role: 'user', content: anonymizedPrompt }
     ];
 
+    // Hand the same context to the chokepoint so it strips and rehydrates
+    // with it; with no user the chokepoint falls back to the request scope.
     const completion = await callLLM(model, messages, {
         temperature,
-        max_tokens: maxTokens
+        max_tokens: maxTokens,
+        ...(options.user ? { anonContext } : {})
     });
 
     return rehydrateResponse(completion.choices[0].message.content, options.user?.firstName);

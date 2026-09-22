@@ -91,7 +91,9 @@ async function* claudeStreamWithFallback(model, messages, options) {
         if (emitted || !isTransientError(err)) throw err;
         const fb = process.env.TUTOR_FALLBACK_MODEL || 'gpt-4o-mini';
         console.warn(`[LLM fallback] ${model} → ${fb} (stream): ${err.status || ''} ${err.message}`);
-        const oaStream = await callLLMStream(fb, messages, options); // fb is OpenAI → native path
+        // fb is OpenAI → native path. Raw: the caller's callLLMStream already
+        // stripped these messages and wraps the result for rehydration.
+        const oaStream = await callLLMStreamRaw(fb, messages, options);
         for await (const chunk of oaStream) yield chunk;
     }
 }
@@ -109,33 +111,95 @@ async function* claudeStreamWithFallback(model, messages, options) {
 //
 // Pattern-based stripping (email, phone, SSN, ObjectId, address, IEP specifics)
 // needs no user context and covers every caller. NAME stripping does need
-// context — you cannot spot "Ray" without being told to look for him — so a
-// caller wanting it passes options.anonContext and owns rehydrating the reply.
-// Prompts we author should emit [Student] rather than lean on a blind
-// search-and-replace at all; see piiAnonymizer's PROTECTED_VOCABULARY for why.
+// context — you cannot spot "Ray" without being told to look for him. That
+// context comes from one of two places, in order:
 //
-// Off unless PII_STRIP_OUTBOUND=true, read per-call so it can be flipped per
-// environment and reverted without a deploy.
+//   1. options.anonContext — a caller that knows better than the request
+//      (the parent chat, which must hide the child as well as the parent; the
+//      lesson planner's numbered roster; a voice session, which has no
+//      request at all).
+//   2. The request scope — middleware/outboundPii.js opens one per HTTP
+//      request from req.user (after impersonation has swapped it), so every
+//      call made while serving a student's request strips that student's
+//      name without the call site knowing the scope exists. This is what
+//      makes the chokepoint sufficient: before it, 60-odd call sites needed
+//      to opt in and one did.
+//
+// The same context REHYDRATES the reply on the way back in, at this layer,
+// so a call site that never heard of [Student] still hands its caller the
+// real name — in a completion's message content, in a structured JSON
+// payload, and in every streamed chunk (a placeholder split across two
+// chunks is reassembled first). Call sites that rehydrate themselves are now
+// idempotent no-ops, not required.
+//
+// Prompts we author should still emit [Student] rather than lean on a blind
+// search-and-replace; see piiAnonymizer's PROTECTED_VOCABULARY for why.
+//
+// ON by default. PII_STRIP_OUTBOUND=false turns it off, read per-call so it
+// can be flipped per environment and reverted without a deploy.
 // ---------------------------------------------------------------------------
-function stripOutboundPII(messages, options = {}) {
-    if (process.env.PII_STRIP_OUTBOUND !== 'true') return messages;
-    if (!Array.isArray(messages)) return messages;
+function resolveOutboundPiiContext(options = {}) {
+    const pii = require('./piiAnonymizer');
+    if (!pii.outboundPiiStripEnabled()) return null;
+    // No caller context and no request scope => pattern-only pass.
+    return options.anonContext || pii.currentOutboundPiiContext() || pii.createAnonymizationContext(null);
+}
 
-    const { anonymizeMessages, createAnonymizationContext } = require('./piiAnonymizer');
-    // No context => pattern-only pass. anonymizeMessages copies rather than
-    // mutating, and leaves image parts of vision payloads untouched.
-    const context = options.anonContext || createAnonymizationContext(null);
-    return anonymizeMessages(messages, context);
+function stripOutboundPII(messages, options = {}) {
+    if (!Array.isArray(messages)) return messages;
+    const context = resolveOutboundPiiContext(options);
+    if (!context) return messages;
+    // anonymizeMessages copies rather than mutating, and leaves image parts
+    // of vision payloads untouched.
+    return require('./piiAnonymizer').anonymizeMessages(messages, context);
+}
+
+// Put the names back into a non-streaming completion, in place. Both
+// providers hand back the OpenAI shape, so one walk covers them.
+function rehydrateCompletion(completion, context) {
+    if (!context || !completion || !Array.isArray(completion.choices)) return completion;
+    for (const choice of completion.choices) {
+        const msg = choice && choice.message;
+        if (msg && typeof msg.content === 'string') msg.content = context.rehydrate(msg.content);
+    }
+    return completion;
+}
+
+// Wrap a chunk stream so delta.content arrives rehydrated. A placeholder can
+// straddle a chunk boundary ("[Stu" + "dent]"), so a trailing partial is held
+// back until it completes and flushed on the final chunk. Chunks that carry
+// only held-back text are dropped; tool-call and finish_reason chunks pass
+// through untouched.
+async function* rehydrateStream(stream, context) {
+    const r = context.createStreamRehydrator
+        ? context.createStreamRehydrator()
+        : require('./piiAnonymizer').createStreamRehydratorFor((t) => context.rehydrate(t));
+    let sawFinish = false;
+    for await (const chunk of stream) {
+        const choice = chunk && chunk.choices && chunk.choices[0];
+        const delta = choice && choice.delta;
+        if (!delta || typeof delta.content !== 'string') { yield chunk; continue; }
+        let content = r.push(delta.content);
+        if (choice.finish_reason) { content += r.flush(); sawFinish = true; }
+        if (!content && !choice.finish_reason && !delta.tool_calls) continue;
+        yield { ...chunk, choices: [{ ...choice, delta: { ...delta, content } }, ...chunk.choices.slice(1)] };
+    }
+    if (!sawFinish) {
+        const rest = r.flush();
+        if (rest) yield { choices: [{ index: 0, delta: { content: rest }, finish_reason: null }] };
+    }
 }
 
 async function callLLM(model, messages, options = {}) {
+    const piiContext = resolveOutboundPiiContext(options);
     messages = stripOutboundPII(messages, options);
     // Provider dispatch: claude-* models route to the Anthropic adapter. On a
     // *transient* Claude failure, fall through to OpenAI with the fallback
     // model. Refusals (HTTP 200) don't throw, so they never fall back.
     if (require('./anthropicClient').isClaudeModel(model)) {
         try {
-            return await require('./anthropicClient').callLLM(model, messages, options);
+            const completion = await require('./anthropicClient').callLLM(model, messages, options);
+            return rehydrateCompletion(completion, piiContext);
         } catch (err) {
             if (!isTransientError(err)) throw err;
             const fb = process.env.TUTOR_FALLBACK_MODEL || 'gpt-4o-mini';
@@ -196,7 +260,7 @@ async function callLLM(model, messages, options = {}) {
         const completion = await retryWithExponentialBackoff(() =>
             openai.chat.completions.create(requestBody, requestOptions)
         );
-        return completion;
+        return rehydrateCompletion(completion, piiContext);
     } catch (openAiError) {
         console.error(`ERROR: OpenAI model (${model}) failed:`, openAiError.message);
         throw openAiError;
@@ -281,7 +345,13 @@ async function callLLMStructured(model, messages, responseFormat, options = {}) 
  * @returns {Promise<Stream>} The stream object
  */
 async function callLLMStream(model, messages, options = {}) {
+    const piiContext = resolveOutboundPiiContext(options);
     messages = stripOutboundPII(messages, options);
+    const stream = await callLLMStreamRaw(model, messages, options);
+    return piiContext ? rehydrateStream(stream, piiContext) : stream;
+}
+
+async function callLLMStreamRaw(model, messages, options = {}) {
     // Provider dispatch: claude-* models stream via the Anthropic adapter,
     // wrapped so a pre-first-token transient failure fails over to OpenAI.
     if (require('./anthropicClient').isClaudeModel(model)) {
@@ -349,6 +419,14 @@ async function generateEmbedding(text) {
         if (!text || typeof text !== 'string' || text.trim().length === 0) {
             throw new Error('Text must be a non-empty string');
         }
+
+        // Embeddings are an outbound call like any other: the text is a
+        // student's raw message (resourceDetector, ragRetrieval) or a
+        // teacher's uploaded worksheet (teacherResources), and it left the
+        // building unfiltered before this. Names, emails and ids add nothing
+        // to a similarity vector, so strip them the same way as a prompt.
+        const piiContext = resolveOutboundPiiContext();
+        if (piiContext) text = piiContext.anonymize(text);
 
         // Truncate to first 8000 characters to avoid token limits
         const truncatedText = text.substring(0, 8000);
@@ -449,5 +527,8 @@ module.exports = {
     moderateText,
     moderateImage,
     // Exported for unit testing the chokepoint without standing up the provider SDKs.
-    stripOutboundPII
+    stripOutboundPII,
+    resolveOutboundPiiContext,
+    rehydrateCompletion,
+    rehydrateStream
 };

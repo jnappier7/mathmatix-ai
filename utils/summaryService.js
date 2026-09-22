@@ -2,8 +2,16 @@
 // Centralizes the logic for generating a conversation summary.
 
 const { callLLM } = require('./llmGateway');
+const { createAnonymizationContext } = require('./piiAnonymizer');
 
 const SUMMARY_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for summaries
+
+// The teacher reads this summary, so it may name the student — but the
+// provider does not need to. The profile block below labels the student
+// [Student] and the chokepoint puts the first name back in the reply. The
+// username and last name were sent for no reason at all; IEP goals go out as
+// a count, since the transcript already shows what was worked on and the
+// teacher has the plan.
 
 async function generateSummary(messageLog, studentProfile) {
     if (!messageLog || !Array.isArray(messageLog) || messageLog.length === 0) {
@@ -20,19 +28,22 @@ async function generateSummary(messageLog, studentProfile) {
         }))
         .filter(msg => msg.role !== 'system');
 
+    const activeIepGoals = Array.isArray(studentProfile.iepPlan?.goals)
+        ? studentProfile.iepPlan.goals.filter(g => !g.status || g.status === 'active').length
+        : 0;
+    const anonContext = createAnonymizationContext(studentProfile);
+
     const summarizationPromptContent = `
     You are an AI assistant tasked with summarizing a tutoring session for a teacher.
     Your goal is to provide a concise, actionable summary of the student's progress and the session's focus, along with suggestions for next steps.
 
     --- Student Profile ---
-    Name: ${studentProfile.firstName} ${studentProfile.lastName}
-    Username: ${studentProfile.username}
+    Name: [Student]
     Grade Level: ${studentProfile.gradeLevel}
     Math Course: ${studentProfile.mathCourse || 'N/A'}
     Learning Style: ${studentProfile.learningStyle}
     Tone Preference: ${studentProfile.tonePreference}
-    ${studentProfile.iepPlan && studentProfile.iepPlan.goals && studentProfile.iepPlan.goals.length > 0 ?
-        `IEP Goals: \n${studentProfile.iepPlan.goals.map(g => `- ${g.description} (Progress: ${g.currentProgress}%)`).join('\n')}` : ''}
+    ${activeIepGoals > 0 ? `IEP: ${activeIepGoals} active goal${activeIepGoals === 1 ? '' : 's'} on file (refer to them generically; the teacher has the plan)` : ''}
     --- End Student Profile ---
 
     --- Session Transcript ---
@@ -59,7 +70,9 @@ async function generateSummary(messageLog, studentProfile) {
             ...formattedHistory
         ], {
             temperature: 0.3,
-            max_tokens: 500
+            max_tokens: 500,
+            // The request is the teacher's; the student is who must be hidden.
+            anonContext
         });
 
         return completion.choices[0]?.message?.content?.trim() || "No summary was generated.";

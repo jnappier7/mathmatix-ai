@@ -112,28 +112,38 @@ describe('gradeWithVision', () => {
     await expect(gateway.gradeWithVision({ imageDataUrl: 'd' })).rejects.toThrow(/required/);
   });
 
-  test('uses max_completion_tokens for gpt-4o vision model', async () => {
-    mockChatCreate.mockResolvedValue({ choices: [{ message: { content: 'graded' } }] });
+  test('goes through callLLM (the chokepoint), never the SDK, with the vision payload intact', async () => {
+    // gradeWithVision used to call openai.chat.completions.create itself —
+    // the one gateway method that bypassed the outbound-PII chokepoint.
+    callLLM.mockResolvedValue({ choices: [{ message: { content: 'graded' } }] });
     const r = await gateway.gradeWithVision({
       imageDataUrl: 'data:image/png;base64,xyz',
       prompt: 'grade this',
       user: { firstName: 'Sam' }
     });
 
-    const args = mockChatCreate.mock.calls[0][0];
-    expect(args.model).toBe('gpt-4o');
-    expect(args.max_completion_tokens).toBe(1500);
-    expect(args.max_tokens).toBeUndefined();
-    expect(args.messages[0].content[0]).toMatchObject({ type: 'text' });
-    expect(args.messages[0].content[1]).toMatchObject({
+    expect(mockChatCreate).not.toHaveBeenCalled();
+    const [model, messages, options] = callLLM.mock.calls[0];
+    expect(model).toBe('gpt-4o');
+    expect(options.max_tokens).toBe(1500);
+    // The user's context rides along so the chokepoint strips/rehydrates with it.
+    expect(options.anonContext).toEqual({ ctx: 'anon' });
+    expect(messages[0].content[0]).toMatchObject({ type: 'text' });
+    expect(messages[0].content[1]).toMatchObject({
       type: 'image_url',
       image_url: { url: 'data:image/png;base64,xyz', detail: 'high' }
     });
     expect(r).toBe('graded|Sam');
   });
 
-  test('rethrows OpenAI errors', async () => {
-    mockChatCreate.mockRejectedValue(new Error('rate limited'));
+  test('passes no context when there is no user (the request scope covers it)', async () => {
+    callLLM.mockResolvedValue({ choices: [{ message: { content: 'graded' } }] });
+    await gateway.gradeWithVision({ imageDataUrl: 'd', prompt: 'p' });
+    expect(callLLM.mock.calls[0][2].anonContext).toBeUndefined();
+  });
+
+  test('rethrows provider errors', async () => {
+    callLLM.mockRejectedValue(new Error('rate limited'));
     await expect(gateway.gradeWithVision({
       imageDataUrl: 'd', prompt: 'p'
     })).rejects.toThrow('rate limited');

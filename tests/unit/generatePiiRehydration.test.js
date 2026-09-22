@@ -105,14 +105,16 @@ describe('generate placeholder rehydration (PII_STRIP_OUTBOUND=true)', () => {
   });
 });
 
-describe('generate with the flag off (production default)', () => {
+describe('generate with the strip switched off (PII_STRIP_OUTBOUND=false)', () => {
+  // The strip is on by default now; "off" is the deliberate opt-out.
   const ORIGINAL = process.env.PII_STRIP_OUTBOUND;
   beforeEach(() => {
     jest.clearAllMocks();
-    delete process.env.PII_STRIP_OUTBOUND;
+    process.env.PII_STRIP_OUTBOUND = 'false';
   });
   afterAll(() => {
-    if (ORIGINAL !== undefined) process.env.PII_STRIP_OUTBOUND = ORIGINAL;
+    if (ORIGINAL === undefined) delete process.env.PII_STRIP_OUTBOUND;
+    else process.env.PII_STRIP_OUTBOUND = ORIGINAL;
   });
 
   test('streaming output is byte-identical to the model output', async () => {

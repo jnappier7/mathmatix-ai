@@ -45,11 +45,13 @@ Mathmatix AI has a **solid security foundation** with meaningful protections in 
 - **Brute-force protection**: Login rate limited to 5 attempts per 15 minutes (`server.js:313-325`)
 - **Session destruction on logout** with cookie clearing (`middleware/auth.js:139-144`)
 
-### 2. PII Anonymization on AI Grading and Analysis Paths
-- **Dedicated PII anonymizer** (`utils/piiAnonymizer.js`) strips names, emails, phone numbers, SSNs, addresses, and MongoDB ObjectIds on the vision-grading and reasoning paths of the LLM gateway (`utils/llmGateway.js`)
-- **Educational data sanitization**: IEP goals, z-scores, and progress percentages are abstracted to prevent re-identification
-- **Rehydration**: Student first names are restored in AI responses after anonymization
-- **Tutoring chat** sends the personalization context disclosed in the privacy policy (student first name, grade level, learning preferences, applicable accommodations) under provider business API terms that exclude model training; an outbound pattern-based stripper (`PII_STRIP_OUTBOUND` in `utils/openaiClient.js`) is available for broader coverage
+### 2. Outbound PII Chokepoint (every AI call, both providers)
+- **One chokepoint** (`utils/openaiClient.js`: `callLLM` / `callLLMStructured` / `callLLMStream` / `generateEmbedding`) strips emails, phone numbers, SSNs, addresses, MongoDB ObjectIds and IEP specifics from every outbound payload, **on by default** (`PII_STRIP_OUTBOUND=false` is the emergency bypass). No file outside the two provider clients holds an SDK handle; `tests/unit/outboundPiiScope.test.js` fails the build if one appears.
+- **Name stripping via request scope**: `middleware/outboundPii.js` opens an AsyncLocalStorage context from `req.user` (after impersonation), so every call made while serving a student replaces their name with `[Student]` without the call site opting in. Voice sessions open their own scope per turn. Calls that describe someone other than `req.user` (parent chat, teacher-facing summaries) pass an explicit context for the child.
+- **Rehydration at the chokepoint**: completions, structured JSON and streamed chunks come back with the real first name restored, so a placeholder can never reach a student.
+- **Educational data sanitization**: IEP goal specifics, z-scores, progress percentages and target dates are abstracted; the tutor prompt sends first name only (never surname, username or email).
+- **What cannot be filtered**: the pixels of an uploaded photo and the audio of a voice recording (Whisper fallback). Both are disclosed on `public/subprocessors.html`.
+- Audit record and remaining policy items: `docs/OUTBOUND_PII_AUDIT.md`
 
 ### 3. Role-Based Access Control
 - **Four-role system**: student, teacher, parent, admin (`middleware/auth.js`)

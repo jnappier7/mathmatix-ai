@@ -11,9 +11,14 @@
  * The strip now runs at the top of all three entry points, ahead of the
  * provider dispatch, so it covers the OpenAI and Anthropic paths alike.
  *
- * It is gated on PII_STRIP_OUTBOUND so turning it on is a deliberate
- * per-environment decision. These tests drive the gate both ways: OFF must be
- * byte-for-byte pass-through, because that is what production runs today.
+ * It is ON by default. It was gated on PII_STRIP_OUTBOUND=true for a while,
+ * documented as "set this in production", and production never did — so the
+ * safe state is now the default and PII_STRIP_OUTBOUND=false is the opt-out.
+ * These tests drive the gate both ways: OFF must be byte-for-byte
+ * pass-through, so the switch is a real rollback.
+ *
+ * Name stripping without a caller-supplied context (the request scope) and
+ * rehydration at this layer are covered in outboundPiiScope.test.js.
  */
 
 const { stripOutboundPII } = require('../../utils/openaiClient');
@@ -21,8 +26,8 @@ const { createAnonymizationContext } = require('../../utils/piiAnonymizer');
 
 const ORIGINAL_FLAG = process.env.PII_STRIP_OUTBOUND;
 
-const enable = () => { process.env.PII_STRIP_OUTBOUND = 'true'; };
-const disable = () => { delete process.env.PII_STRIP_OUTBOUND; };
+const enable = () => { delete process.env.PII_STRIP_OUTBOUND; };
+const disable = () => { process.env.PII_STRIP_OUTBOUND = 'false'; };
 
 afterEach(() => {
   if (ORIGINAL_FLAG === undefined) delete process.env.PII_STRIP_OUTBOUND;
@@ -34,22 +39,30 @@ const messages = () => ([
   { role: 'user', content: 'Call me on (555) 123-4567. The product is 1234567890.' }
 ]);
 
-describe('stripOutboundPII — disabled (production default)', () => {
+describe('stripOutboundPII — switched off (PII_STRIP_OUTBOUND=false)', () => {
   test('returns the messages untouched', () => {
     disable();
     const input = messages();
     expect(stripOutboundPII(input)).toBe(input);
   });
 
-  test('is off when the flag is any value other than "true"', () => {
-    process.env.PII_STRIP_OUTBOUND = '1';
-    const input = messages();
-    expect(stripOutboundPII(input)).toBe(input);
+  test('only the literal "false" turns it off', () => {
+    for (const value of ['0', 'off', 'no', 'FALSE ', '']) {
+      process.env.PII_STRIP_OUTBOUND = value;
+      const [system] = stripOutboundPII(messages());
+      expect(system.content).toContain('[email]');
+    }
   });
 });
 
-describe('stripOutboundPII — enabled, no caller context', () => {
+describe('stripOutboundPII — default (flag unset), no caller context', () => {
   beforeEach(enable);
+
+  test('is on when nothing set it', () => {
+    expect(process.env.PII_STRIP_OUTBOUND).toBeUndefined();
+    const [system] = stripOutboundPII(messages());
+    expect(system.content).toContain('[email]');
+  });
 
   test('strips the patterns that need no knowledge of the user', () => {
     const [system, user] = stripOutboundPII(messages());
@@ -63,8 +76,10 @@ describe('stripOutboundPII — enabled, no caller context', () => {
     expect(user.content).toContain('1234567890');
   });
 
-  test('cannot strip a bare name without context, and does not pretend to', () => {
+  test('cannot strip a bare name with no context or scope, and does not pretend to', () => {
     // The honest limit of a context-free chokepoint: names need a name map.
+    // The request scope supplies one for every HTTP request (see
+    // outboundPiiScope.test.js); a bare call from nowhere has none.
     const [system] = stripOutboundPII(messages());
     expect(system.content).toContain('Zoe');
   });
@@ -82,7 +97,7 @@ describe('stripOutboundPII — enabled, no caller context', () => {
   });
 });
 
-describe('stripOutboundPII — enabled, with an anonymization context', () => {
+describe('stripOutboundPII — with an anonymization context', () => {
   beforeEach(enable);
 
   test('strips names once the caller supplies who to look for', () => {
@@ -133,20 +148,28 @@ describe('the three entry points all route through the chokepoint', () => {
       expect(strip).toBeLessThan(dispatch);
     }
   );
+
+  test('generateEmbedding strips before calling the embeddings endpoint', () => {
+    const body = src.slice(src.indexOf('async function generateEmbedding('));
+    const strip = body.indexOf('resolveOutboundPiiContext(');
+    const dispatch = body.indexOf('openai.embeddings.create');
+    expect(strip).toBeGreaterThan(-1);
+    expect(strip).toBeLessThan(dispatch);
+  });
 });
 
 describe('the flag is discoverable by whoever sets up a deployment', () => {
-    // The chokepoint is off unless PII_STRIP_OUTBOUND=true, and for a while
-    // nothing in the repo said so: not .env.example, not render.yaml, not docs.
-    // A deploy built from the template ran with the tutoring path unfiltered and
-    // no one was told. The template is where the person configuring Render
-    // looks, so the flag has to be explained there.
-    test('.env.example documents PII_STRIP_OUTBOUND and what it covers', () => {
+    // The template is where the person configuring Render looks, so the flag
+    // has to be explained there — and explained as the OPT-OUT it now is, or
+    // the next reader "enables" it by setting it to true and changes nothing.
+    test('.env.example documents PII_STRIP_OUTBOUND as on by default', () => {
         const fs = require('fs');
         const path = require('path');
         const example = fs.readFileSync(path.join(__dirname, '..', '..', '.env.example'), 'utf8');
         expect(example).toMatch(/PII_STRIP_OUTBOUND/);
         expect(example).toMatch(/\[Student\]/);
-        expect(example).toMatch(/Off by default/);
+        expect(example).toMatch(/On by default/);
+        expect(example).toMatch(/PII_STRIP_OUTBOUND=false/);
+        expect(example).not.toMatch(/Off by default/);
     });
 });

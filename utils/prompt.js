@@ -627,7 +627,7 @@ ${preferredLanguage === 'German' ? `- Respond PRIMARILY in German (Deutsch)
 - Reference the day naturally in conversation when relevant
 
 --- YOUR STUDENT ---
-**Name:** ${firstName} ${lastName}
+**Name:** ${firstName}
 ${gradeLevel ? `**Grade Level:** ${gradeLevel}` : ''}
 ${mathCourse ? `**Current Math Course:** ${mathCourse}` : ''}
 ${interests && interests.length > 0 ? `**Interests:** ${interests.join(', ')}` : ''}
