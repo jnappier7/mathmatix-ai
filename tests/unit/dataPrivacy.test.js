@@ -12,6 +12,7 @@ jest.mock('../../models/courseSession');
 jest.mock('../../models/screenerSession');
 jest.mock('../../models/gradingResult');
 jest.mock('../../models/studentUpload');
+jest.mock('../../models/activityAttempt');
 jest.mock('../../models/feedback');
 jest.mock('../../models/enrollmentCode');
 jest.mock('../../models/announcement');
@@ -39,6 +40,7 @@ const CourseSession = require('../../models/courseSession');
 const ScreenerSession = require('../../models/screenerSession');
 const GradingResult = require('../../models/gradingResult');
 const StudentUpload = require('../../models/studentUpload');
+const ActivityAttempt = require('../../models/activityAttempt');
 const Feedback = require('../../models/feedback');
 const EnrollmentCode = require('../../models/enrollmentCode');
 const Announcement = require('../../models/announcement');
@@ -66,6 +68,7 @@ describe('Data Privacy Pipeline', () => {
         ScreenerSession.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 1 });
         GradingResult.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 10 });
         StudentUpload.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 3 });
+        ActivityAttempt.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 6 });
         Feedback.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 1 });
         Message.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 4 });
         EnrollmentCode.updateMany = jest.fn().mockResolvedValue({ modifiedCount: 1 });
@@ -152,6 +155,8 @@ describe('Data Privacy Pipeline', () => {
             expect(ScreenerSession.deleteMany).toHaveBeenCalled();
             expect(GradingResult.deleteMany).toHaveBeenCalled();
             expect(StudentUpload.deleteMany).toHaveBeenCalled();
+            expect(ActivityAttempt.deleteMany).toHaveBeenCalled();
+            expect(summary.documentCounts.activityAttempts).toBe(6);
             expect(Feedback.deleteMany).toHaveBeenCalled();
             expect(Message.deleteMany).toHaveBeenCalled();
             expect(User.findByIdAndDelete).toHaveBeenCalled();
@@ -291,6 +296,10 @@ describe('Data Privacy Pipeline', () => {
             Message.find = jest.fn().mockReturnValue({
                 lean: jest.fn().mockResolvedValue([])
             });
+
+            ActivityAttempt.find = jest.fn().mockReturnValue({
+                lean: jest.fn().mockResolvedValue([{ activitySlug: 'proof-scramble', kind: 'check' }])
+            });
         });
 
         test('compiles all student data', async () => {
@@ -300,6 +309,7 @@ describe('Data Privacy Pipeline', () => {
             expect(data.exportVersion).toBe('1.0');
             expect(data.student.profile.firstName).toBe('Sarah');
             expect(data.student.conversations).toHaveLength(1);
+            expect(data.student.activityAttempts).toHaveLength(1);
         });
 
         test('excludes sensitive auth fields', async () => {

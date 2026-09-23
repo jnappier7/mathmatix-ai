@@ -1,0 +1,26 @@
+{
+  "_comment": "Class Activities registry. Each entry is a hand-built interactive page in this directory. Adding a file here (via PR) is the ONLY way to publish an activity — there is no upload path. See docs/CLASS_ACTIVITIES.md.",
+  "activities": [
+    {
+      "slug": "proof-scramble",
+      "file": "proof-scramble.html",
+      "title": "Proof Scramble",
+      "description": "Order the statements of a two-column proof and match each to the reason that licenses it. Two strips in each pile are traps.",
+      "course": "Honors Geometry",
+      "sections": "2.4 – 2.6",
+      "author": "Nappier",
+      "levels": [
+        { "n": 1, "name": "Both columns" },
+        { "n": 2, "name": "Reasons only" },
+        { "n": 3, "name": "Statements only" }
+      ],
+      "items": [
+        { "key": "A", "label": "Algebraic (2.4)" },
+        { "key": "B", "label": "Double midpoint (2.5)" },
+        { "key": "D", "label": "Vertical angles (2.6)" },
+        { "key": "C", "label": "Angle bisector (2.5)" },
+        { "key": "E", "label": "The capstone (2.6)" }
+      ]
+    }
+  ]
+}
