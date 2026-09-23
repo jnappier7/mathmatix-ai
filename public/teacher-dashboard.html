@@ -4848,6 +4848,9 @@
           <button class="tab-btn" data-tab="announcements">
             <i class="fas fa-bullhorn"></i> Announcements
           </button>
+          <button class="tab-btn" data-tab="activities">
+            <i class="fas fa-clipboard-check"></i> Activities
+          </button>
           <button class="tab-btn" data-tab="messages">
             <i class="fas fa-envelope"></i> Messages
             <span id="unread-messages-badge" class="tab-badge" style="display: none;">0</span>
@@ -5375,6 +5378,45 @@
               </div>
               <div id="sent-announcements-list" class="table-scroll-container" style="padding: 15px;">
                 Loading announcements...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activities Tab (Class Activities — js/teacher-activities.js, docs/CLASS_ACTIVITIES.md) -->
+        <div class="tab-content" id="activities-tab">
+          <div class="ta-layout">
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-header">
+                <span><i class="fas fa-clipboard-check"></i> Assign an Activity</span>
+              </div>
+              <form id="ta-assign-form" class="ta-form">
+                <label for="ta-activity">Activity</label>
+                <select id="ta-activity" required></select>
+                <p class="ta-activity-desc" id="ta-activity-desc"></p>
+                <label for="ta-class">Class</label>
+                <select id="ta-class" required></select>
+                <label for="ta-due">Due date <span class="ta-optional">(optional)</span></label>
+                <input type="date" id="ta-due">
+                <label for="ta-note">Note to students <span class="ta-optional">(optional)</span></label>
+                <input type="text" id="ta-note" maxlength="500" placeholder="e.g. Rung 1 on all five by Friday">
+                <div class="ta-actions">
+                  <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Assign</button>
+                  <a id="ta-preview" class="btn btn-secondary" href="#" target="_blank" rel="noopener"><i class="fas fa-eye"></i> Preview</a>
+                </div>
+                <p class="ta-status" id="ta-assign-status" role="status"></p>
+              </form>
+              <div class="dashboard-panel-header ta-subhead">
+                <span><i class="fas fa-list"></i> Assigned</span>
+              </div>
+              <div id="ta-assignments" class="ta-assignments">Loading…</div>
+            </div>
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-header">
+                <span><i class="fas fa-chart-bar"></i> <span id="ta-results-title">Results</span></span>
+              </div>
+              <div id="ta-results" class="ta-results">
+                <p class="ta-empty">Pick an assignment to see who has done what, and which trap strips your class keeps falling for.</p>
               </div>
             </div>
           </div>
@@ -6140,5 +6182,7 @@
   </script>
 
   <script src="/dist/js/teacher-js2.9ebbcb8a.js"></script>
+  <link rel="stylesheet" href="/css/teacher-activities.css?v=20260923a">
+  <script defer src="/js/teacher-activities.js?v=20260923a"></script>
 </body>
 </html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Activities | MATHMATIX AI</title>
+    <link rel="stylesheet" href="/css/activities.css?v=20260923a">
+    <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+</head>
+<body>
+    <a href="#main" class="skip-to-content">Skip to main content</a>
+
+    <header class="act-top">
+        <a href="/chat.html" class="act-back" id="act-back">&larr; Chat</a>
+        <h1 id="act-title">Class Activities</h1>
+        <span class="act-save" id="act-save" role="status" aria-live="polite"></span>
+    </header>
+
+    <main id="main">
+        <!-- List view: everything assigned to the classes this student is in -->
+        <section id="act-list-view">
+            <p class="act-lede">Activities your teacher has assigned. Your work is saved as you go.</p>
+            <div id="act-status" class="act-status" role="status"></div>
+            <ul class="act-list" id="act-list"></ul>
+        </section>
+
+        <!-- Player view: the activity runs in a sandbox and reports back by postMessage -->
+        <section id="act-player-view" hidden>
+            <iframe id="act-frame" class="act-frame" title="Activity"
+                    sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+        </section>
+    </main>
+
+    <script src="/js/csrf.js"></script>
+    <script src="/js/activities.js?v=20260923a"></script>
+</body>
+</html>

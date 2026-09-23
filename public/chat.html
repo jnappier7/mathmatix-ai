@@ -464,6 +464,14 @@
           <span data-i18n="chat.startingPoint">Starting Point</span>
         </button>
 
+        <!-- Class Activities — revealed by js/activities-entry.js only when the
+             student has something assigned (most students have no teacher). -->
+        <a href="/activities.html" id="sidebar-activities-btn" class="sidebar-tool-btn" style="display: none;">
+          <i class="fas fa-clipboard-check"></i>
+          <span>Assignments</span>
+          <span id="sidebar-activities-count" style="display: none; margin-left: auto; font-size: 11px; font-weight: 700; background: #6c4ed9; color: #fff; border-radius: 999px; padding: 1px 7px;"></span>
+        </a>
+
         <!-- Skill Map — the student's ladder/progression view -->
         <a href="/skill-map.html" id="sidebar-skill-map-btn" class="sidebar-tool-btn">
           <i class="fas fa-project-diagram"></i>
@@ -2554,6 +2562,7 @@
   <script src="/dist/js/chat-js9.e24c9da4.js"></script>
   <!-- Bottom tab bar (phones only; MM_FEATURES.bottomNav) -->
   <script defer src="/js/bottom-nav.js?v=1"></script>
+  <script defer src="/js/activities-entry.js?v=20260923a"></script>
 <!-- Intelligent Whiteboard init (Phase 0 wire-up) -->
 <script>
   (function initMathmatixWhiteboard() {

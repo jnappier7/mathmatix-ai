@@ -119,6 +119,7 @@ const iepTemplatesRoutes = require('../routes/iepTemplates');
 const roleSwitchRoutes = require('../routes/roleSwitch');
 const impersonationRoutes = require('../routes/impersonation');
 const announcementsRoutes = require('../routes/announcements');
+const activitiesRoutes = require('../routes/activities');
 const adminEmailRoutes = require('../routes/adminEmail');
 const billingRoutes = require('../routes/billing');
 const affiliateRoutes = require('../routes/affiliate');
@@ -351,6 +352,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/user', isAuthenticated, tourSurveyRoutes);
   app.use('/api/messages', isAuthenticated, messagingRoutes);
   app.use('/api/announcements', isAuthenticated, announcementsRoutes);
+  // Class Activities — hand-built interactive pages from activities/, assigned
+  // per class, results per student. See docs/CLASS_ACTIVITIES.md.
+  app.use('/api/activities', isAuthenticated, activitiesRoutes);
   app.use('/api/admin/email', isAuthenticated, isAdmin, adminEmailRoutes);
   app.use('/api/school-licenses', isAuthenticated, isAdmin, schoolLicenseRoutes);
   app.post('/api/clever-sync/webhook', cleverSyncRoutes);
@@ -882,6 +886,7 @@ function registerHtmlRoutes(app) {
   app.get('/math-showdown.html', isAuthenticated, sendHtml('math-showdown.html'));
   app.get('/avatar-builder.html', isAuthenticated, sendHtml('avatar-builder.html'));
   app.get('/skill-map.html', isAuthenticated, sendHtml('skill-map.html'));
+  app.get('/activities.html', isAuthenticated, sendHtml('activities.html'));
 
   // Role-specific routes
   app.get('/admin-dashboard.html', isAuthenticated, isAdmin, sendHtml('admin-dashboard.html'));

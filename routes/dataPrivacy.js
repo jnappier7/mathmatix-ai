@@ -42,6 +42,7 @@ const CourseSession = require('../models/courseSession');
 const ScreenerSession = require('../models/screenerSession');
 const GradingResult = require('../models/gradingResult');
 const StudentUpload = require('../models/studentUpload');
+const ActivityAttempt = require('../models/activityAttempt');
 const Feedback = require('../models/feedback');
 const EnrollmentCode = require('../models/enrollmentCode');
 const Announcement = require('../models/announcement');
@@ -171,6 +172,15 @@ async function cascadeDeleteStudentData(studentId, requestor) {
         if (result.deletedCount > 0) summary.collectionsAffected.push('studentUploads');
     } catch (err) {
         summary.errors.push({ collection: 'studentUploads', error: err.message });
+    }
+
+    // --- 5b. Delete Class Activity attempts ---
+    try {
+        const result = await ActivityAttempt.deleteMany({ userId: objectId });
+        summary.documentCounts.activityAttempts = result.deletedCount;
+        if (result.deletedCount > 0) summary.collectionsAffected.push('activityAttempts');
+    } catch (err) {
+        summary.errors.push({ collection: 'activityAttempts', error: err.message });
     }
 
     // --- 6. Delete Feedback ---
@@ -305,7 +315,8 @@ async function exportStudentData(studentId) {
         gradingResults,
         uploads,
         feedbackEntries,
-        messages
+        messages,
+        activityAttempts
     ] = await Promise.all([
         User.findById(objectId).select('-passwordHash -resetPasswordToken -resetPasswordExpires -emailVerificationToken').lean(),
         Conversation.find({ userId: objectId }).lean(),
@@ -320,7 +331,8 @@ async function exportStudentData(studentId) {
                 { recipientId: objectId },
                 { studentId: objectId }
             ]
-        }).lean()
+        }).lean(),
+        ActivityAttempt.find({ userId: objectId }).lean()
     ]);
 
     return {
@@ -337,7 +349,8 @@ async function exportStudentData(studentId) {
                 note: 'Binary file data excluded from export. Contact support for file copies.'
             })),
             feedback: feedbackEntries,
-            messages
+            messages,
+            activityAttempts
         }
     };
 }
