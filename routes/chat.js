@@ -55,7 +55,7 @@ const { buildCourseSystemPrompt, buildActPracticeGuidance, buildCourseGreetingIn
 const contextCache = require('../utils/contextCache');
 const { buildSystemPrompt: buildCompressedPrompt, determineTier, calculateXpBoostFactor } = require('../utils/promptCompressor');
 const { processMathMessage, verifyAnswer } = require('../utils/mathSolver');
-const { filterAnswerKeyResponse, WORKSHEET_GUARD_INSTRUCTION } = require('../utils/worksheetGuard');
+const { filterAnswerKeyResponse, WORKSHEET_GUARD_INSTRUCTION, CHECK_WORK_GUARD } = require('../utils/worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
@@ -89,14 +89,21 @@ const { verifyStudentWork } = require('../utils/pipeline/checkWorkVerifier');
 // the answer. `isCheckWorkIntent` lives in utils/worksheetGuard.js (imported
 // below) so it can be unit-tested alongside the other worksheet/answer-key
 // detectors.
-const CHECK_WORK_GUIDANCE = "\n\n[CHECK MY WORK: The student shared their OWN worked solution and asked you to check it. Actually READ their steps and re-derive the math yourself before judging. If it's correct, say so and name specifically what they did right — do NOT invent a mistake. Only point out an error if you are CERTAIN of the specific wrong step AND its corrected value; a correct negative result (e.g. 4−5=−1), an equivalent form (0.5=1/2), or multiple valid roots (x=2 or x=3) are NOT mistakes. If you're unsure whether something is wrong, ask a clarifying question rather than asserting an error. Do NOT ask them to re-explain the problem from scratch, and do NOT simply give the answer.]";
+const CHECK_WORK_GUIDANCE = "\n\n[CHECK MY WORK: The student shared their OWN worked solution and asked you to check it. Actually READ their steps and re-derive the math yourself before judging. If the image shows several problems, check EVERY problem they attempted, in order — not just the first one — and give feedback on each. Checking their work and telling them what is right or wrong is NOT giving answers. If it's correct, say so and name specifically what they did right — do NOT invent a mistake. Only point out an error if you are CERTAIN of the specific wrong step AND its corrected value; a correct negative result (e.g. 4−5=−1), an equivalent form (0.5=1/2), or multiple valid roots (x=2 or x=3) are NOT mistakes. If you're unsure whether something is wrong, ask a clarifying question rather than asserting an error. Do NOT ask them to re-explain the problem from scratch, do NOT solve problems they left blank, and do NOT simply give the answer.]";
 
 // Build the check-work guidance from an independent verification verdict (see
 // utils/pipeline/checkWorkVerifier). When the verdict is trustworthy we hand
 // Maya ground truth so she affirms correct work instead of fabricating an error;
 // otherwise we fall back to the conservative CHECK_WORK_GUIDANCE above.
+//
+// A multi-problem sheet gets the whole per-problem breakdown. The old single
+// verdict ("guide the student to THAT step with ONE question") is what made a
+// completed homework sheet come back as feedback on one problem.
 function buildCheckWorkSuffix(verdict) {
-    if (!verdict || verdict.verdict === 'uncertain') return CHECK_WORK_GUIDANCE;
+    if (!verdict) return CHECK_WORK_GUIDANCE;
+    const problems = Array.isArray(verdict.problems) ? verdict.problems : [];
+    if (problems.length > 1) return buildSheetCheckSuffix(problems);
+    if (verdict.verdict === 'uncertain') return CHECK_WORK_GUIDANCE;
     if (verdict.verdict === 'correct') {
         const right = verdict.whatIsRight ? ` Specifically correct: ${verdict.whatIsRight}` : '';
         return `\n\n[CHECK MY WORK — INDEPENDENTLY VERIFIED CORRECT: A separate check confirms the student's work is correct.${right} Affirm it warmly and name specifically what they did right. Do NOT invent or imply any mistake. You may offer an optional next step, but do not manufacture a problem.]`;
@@ -105,6 +112,29 @@ function buildCheckWorkSuffix(verdict) {
         return `\n\n[CHECK MY WORK — INDEPENDENTLY VERIFIED ERROR: A separate check found a specific error at this step: "${verdict.errorStep}" (it should be ${verdict.correctedValue}). Guide the student to THAT step with ONE Socratic question. Do NOT reveal the corrected value outright — let them fix it. Affirm the steps that were correct.]`;
     }
     return CHECK_WORK_GUIDANCE;
+}
+
+function buildSheetCheckSuffix(problems) {
+    const lines = problems.map(p => {
+        const ans = p.studentAnswer ? ` (student wrote: ${p.studentAnswer})` : '';
+        switch (p.status) {
+            case 'correct':
+                return `- #${p.label}: VERIFIED CORRECT${ans}.${p.whatIsRight ? ` What's right: ${p.whatIsRight}` : ''}`;
+            case 'has_error':
+                return `- #${p.label}: VERIFIED ERROR${ans} at the step "${p.errorStep}" (it should be ${p.correctedValue} — do NOT say this value).${p.whatIsRight ? ` What's right: ${p.whatIsRight}` : ''}`;
+            case 'blank':
+                return `- #${p.label}: BLANK — not attempted. Do NOT solve it; just note it's left to do.`;
+            default:
+                return `- #${p.label}: COULD NOT VERIFY${ans}. Read it yourself; if you can't tell, ask about it — never assert an error.`;
+        }
+    });
+    const attempted = problems.filter(p => p.status !== 'blank');
+    const correct = problems.filter(p => p.status === 'correct').length;
+    return `\n\n[CHECK MY WORK — WHOLE SHEET, INDEPENDENTLY CHECKED: The student asked you to check their completed sheet. Give feedback on EVERY problem below, in this order — do not stop after the first one, and do NOT ask which problem they want to start with. Checking their work and saying what is right or wrong is NOT giving answers.
+${lines.join('\n')}
+Verified: ${correct} of ${attempted.length} attempted problems correct.
+FORMAT: open with a one-line overall summary. Then one short line per problem, labeled by its number: ✅ for correct with a few specific words of praise; 🔍 for a verified error — name the exact step and ask ONE pointed question that leads them to the fix; ❓ for could-not-verify. Close by inviting them to rework the 🔍 problems and send them back. Keep each line to one or two sentences.
+RULES: never state the corrected value or final answer for a 🔍 problem; never solve a blank problem; do NOT invent a mistake on a verified-correct problem.]`;
 }
 
 // Multer disk storage for file uploads (prevents server crashes vs memoryStorage)
@@ -1455,7 +1485,13 @@ async function runStudentTurn(req, res) {
         // uncertain falls back to conservative "assume correct unless certain."
         const checkWorkVerdict = checkWorkVerdictPromise ? await checkWorkVerdictPromise : null;
         if (checkWorkVerdict) {
-            logger.info('[checkWorkVerify] verdict', { verdict: checkWorkVerdict.verdict, confidence: checkWorkVerdict.confidence, hasError: !!checkWorkVerdict.errorStep });
+            logger.info('[checkWorkVerify] verdict', {
+                verdict: checkWorkVerdict.verdict,
+                confidence: checkWorkVerdict.confidence,
+                hasError: !!checkWorkVerdict.errorStep,
+                problemCount: (checkWorkVerdict.problems || []).length,
+                errorCount: (checkWorkVerdict.problems || []).filter(p => p.status === 'has_error').length,
+            });
         }
         const checkWorkSuffix = isCheckWork ? buildCheckWorkSuffix(checkWorkVerdict) : '';
 
@@ -1466,7 +1502,7 @@ async function runStudentTurn(req, res) {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
                 const checkSuffix = checkWorkSuffix;
-                const guardedText = applyWorksheetGuard(typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage);
+                const guardedText = applyWorksheetGuard(typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage, { checkWork: isCheckWork });
                 if (uploadImageContents.length > 0) {
                     // Multimodal: text + images for vision API
                     lastMsg.content = [
@@ -1488,7 +1524,7 @@ async function runStudentTurn(req, res) {
             if (lastMsg?.role === 'user') {
                 const checkSuffix = checkWorkSuffix;
                 const baseText = typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage;
-                const guardedText = applyWorksheetGuard(baseText);
+                const guardedText = applyWorksheetGuard(baseText, { checkWork: isCheckWork });
                 // Use the FOLLOW-UP reminder (not UPLOAD_CONTEXT_REMINDER): the
                 // student didn't attach anything this turn, and the image is
                 // re-attached BELOW. The fresh-upload wording ("uploaded with
@@ -1504,7 +1540,9 @@ async function runStudentTurn(req, res) {
             // Follow-up messages after a recent upload — inject worksheet guard
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user' && typeof lastMsg.content === 'string') {
-                lastMsg.content += `\n\n${WORKSHEET_GUARD_INSTRUCTION}`;
+                lastMsg.content += isCheckWork
+                    ? `\n\n${CHECK_WORK_GUARD}${checkWorkSuffix}`
+                    : `\n\n${WORKSHEET_GUARD_INSTRUCTION}`;
             }
         }
 
@@ -1710,6 +1748,9 @@ async function runStudentTurn(req, res) {
                 // work, not on the model's say-so alone (utils/pipeline/stepEvaluator).
                 courseStep: courseScaffoldCtx?.step || null,
                 isParentCourse: courseScaffoldCtx?.isParentCourse === true,
+                // Per-problem check-work results: lets verify tell a sheet-wide
+                // check (feedback on every problem) from an answer key.
+                checkWork: isCheckWork ? { problems: checkWorkVerdict?.problems || [] } : null,
                 actReviewMiss,
             });
         } catch (pipelineError) {

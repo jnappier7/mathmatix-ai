@@ -10,6 +10,7 @@
  */
 
 const { normalizeSpokenNumbers, normalizeMathUnicode } = require('../mathUnicodeNormalizer');
+const { isCheckWorkIntent } = require('../worksheetGuard');
 
 // ── Message categories ──
 const MESSAGE_TYPES = {
@@ -866,6 +867,12 @@ function observe(message, context = {}) {
   } else if (isDispute) {
     messageType = MESSAGE_TYPES.DISPUTE;
     confidence = 0.9;
+  } else if (context.hasRecentUpload && isCheckWorkIntent(text)) {
+    // "Can you check my work…?" on uploaded work is a check, not a question.
+    // Without this the question branch below claimed the upload chip's own
+    // default message, and decide steered a sheet check as a generic question.
+    // Same detector routes/chat.js uses to run the check-work verifier.
+    messageType = MESSAGE_TYPES.CHECK_MY_WORK;
   } else if (PATTERNS.question.test(lower) && !carriesProposedAnswer) {
     // A question word normally means "asking", EXCEPT when the student is
     // self-checking a concrete answer ("is it 5/12?", "would it be 3/4?") — that's

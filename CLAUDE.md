@@ -403,6 +403,16 @@ npm run seed:all:dry   # preflight + plan, no writes
 - **Per-user chat lock** in `routes/chat.js` serializes a user's concurrent messages — don't remove it.
 - **Math-answer injection gate**: the verified answer is injected into context **only** on an
   `ANSWER_ATTEMPT`, never when the student is *asking* — preserve this or you'll leak answers.
+- **"Check my work" on an uploaded sheet checks the WHOLE sheet — checking work is not giving answers.**
+  `pipeline/checkWorkVerifier.js` returns a per-problem `problems[]` (blanks included, never solved);
+  `routes/chat.js` turns it into a per-problem breakdown (`buildSheetCheckSuffix`) and passes it to the
+  pipeline as `ctx.checkWork`. That is what lets `verify.js` skip the upload answer-key filter for a
+  worked sheet — that filter rewrites any reply walking 2+ numbered problems into "pick one problem",
+  which is how a finished sheet used to come back as feedback on one problem. What stays enforced: a
+  wrong problem's corrected value is never handed over (`findRevealedCorrections` → in-voice rewrite →
+  deterministic fallback), and a mostly-blank sheet (answer-key fishing) keeps the strict filter. Four
+  layers each narrowed it to one problem (verifier, suffix, decide directive, upload guard); don't
+  reintroduce "one problem at a time" in any of them. Pinned by `tests/unit/checkWorkSheetCoverage.test.js`.
 - **Conversations >100 msgs are summarized** before hitting the LLM — mind token budgets.
 - **IEP is split** (collection + cached copy on user) — update both / sync on read.
 - **`learningProfile.growthCheckHistory` has exactly ONE writer** — the `isGrowth` block in

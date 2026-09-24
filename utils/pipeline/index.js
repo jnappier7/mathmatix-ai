@@ -110,6 +110,7 @@ function isTeachingMove(decision) {
  * @param {Object} ctx.activeSkill - Current skill if any { skillId, displayName, teachingGuidance }
  * @param {Object} ctx.phaseState - Lesson phase state if in structured mode
  * @param {boolean} ctx.hasRecentUpload - Whether student has recent uploads
+ * @param {Object}  [ctx.checkWork] - Set on "check my work" turns: { problems } from utils/pipeline/checkWorkVerifier
  * @param {boolean} ctx.stream - Whether to stream the response
  * @param {Object} ctx.res - Express response object (for streaming)
  * @param {number} ctx.aiProcessingStartTime - Date.now() when processing started
@@ -740,6 +741,7 @@ async function runPipeline(message, ctx) {
     phaseState: ctx.phaseState || ctx.conversation?.phaseState || null,
     studentAnswer: observation.answer?.value || null,
     llmVerdict,
+    checkWork: ctx.checkWork || null,
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);

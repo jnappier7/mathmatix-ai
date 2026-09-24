@@ -1013,7 +1013,8 @@ function decideCore(observation, diagnosis, context) {
     decision.action = ACTIONS.CONTINUE_CONVERSATION;
     decision.directives.push(
       'Reference uploaded content from conversation history.',
-      'Check work one problem at a time. Do NOT just give answers.',
+      'Check EVERY problem the student attempted, in order, and give feedback on each — do not stop after the first one or ask which problem to start with. Checking their work is not giving answers.',
+      'For a wrong problem, point to the exact step and ask a question that leads them to fix it — never state the corrected answer. Never solve a problem they left blank.',
       'Do NOT ask the student to re-share the problem.'
     );
     return decision;
