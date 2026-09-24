@@ -12,7 +12,8 @@
 
    Bytes are served by /api/student/uploads/:id/file (auth + ownership
    enforced server-side); this module only ever handles {uploadId,
-   fileType} references. Region selection and source↔problem linking
+   fileType} references. The dock itself is a collapsed "My materials"
+   tab (see SourceDock below) so it never covers the chat. Region selection and source↔problem linking
    (spec §5.3–5.4) build on top of this surface in a later slice.
 
    Browser-only view; the pure list logic lives in core/sourceList.js.
@@ -25,6 +26,31 @@
     return '/api/student/uploads/' + encodeURIComponent(uploadId) + '/file';
   }
 
+  // The upload's DB record is written just AFTER the chat reply goes out, so
+  // the first request for a brand-new card can 404. A single failed load used
+  // to leave a broken-image glyph for good; retry with backoff instead, and
+  // fall back to a clean placeholder if it never arrives.
+  var RETRY_DELAYS = [800, 2000, 5000];
+  function loadWithRetry(img, uploadId, onGiveUp) {
+    var attempt = 0;
+    img.addEventListener('error', function () {
+      if (attempt >= RETRY_DELAYS.length) { if (onGiveUp) onGiveUp(); return; }
+      var delay = RETRY_DELAYS[attempt++];
+      setTimeout(function () { img.src = fileUrl(uploadId) + '?r=' + attempt; }, delay);
+    });
+    img.src = fileUrl(uploadId);
+  }
+
+  function prefersReducedMotion(win) {
+    try { return !!(win && win.matchMedia && win.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+    catch { return false; }
+  }
+
+  // "My materials" is a TAB, not a strip: it rests collapsed as a small pill
+  // (with a count) so it never sits over the conversation, opens into a panel
+  // on click, and closes from its ✕, Esc, or a click anywhere else. New
+  // uploads fly from the composer into the tab so the student sees where
+  // their photos went.
   function SourceDock(container, opts) {
     opts = opts || {};
     this.doc = container.ownerDocument || document;
@@ -32,46 +58,125 @@
     // problem region. The integration owns the send (it goes through chat, the
     // one path the tutor can see) — the dock never invents its own.
     this.onAskRegion = typeof opts.onAskRegion === 'function' ? opts.onAskRegion : null;
+    // Returns the element new uploads fly FROM (the composer). Optional.
+    this.flyFrom = typeof opts.flyFrom === 'function' ? opts.flyFrom : null;
     this._sources = [];
+    this._seen = {};
     this._overlay = null;
     this._escHandler = null;
+    this._outsideHandler = null;
+    this._panelKeyHandler = null;
 
     var d = this.doc;
+    var self = this;
     var dock = d.createElement('div');
-    dock.className = 'lws-sd';
+    dock.className = 'lws-sd is-collapsed';
     dock.hidden = true;
 
     var head = d.createElement('button');
     head.type = 'button';
     head.className = 'lws-sd-head';
-    head.setAttribute('aria-expanded', 'true');
-    head.innerHTML = '<span class="lws-sd-head-ic" aria-hidden="true">📎</span><span class="lws-sd-head-t">My materials</span>';
-    var self = this;
-    head.addEventListener('click', function () {
-      var collapsed = dock.classList.toggle('is-collapsed');
-      head.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-    });
+    head.setAttribute('aria-expanded', 'false');
+    function span(cls, text, hidden) {
+      var el = d.createElement('span');
+      el.className = cls;
+      el.textContent = text;
+      if (hidden) el.setAttribute('aria-hidden', 'true');
+      head.appendChild(el);
+      return el;
+    }
+    span('lws-sd-head-ic', '📎', true);
+    span('lws-sd-head-t', 'My materials');
+    var countEl = span('lws-sd-count', '0', true);
+    head.addEventListener('click', function () { self.toggle(); });
+
+    var panel = d.createElement('div');
+    panel.className = 'lws-sd-panel';
+
+    var panelBar = d.createElement('div');
+    panelBar.className = 'lws-sd-panel-bar';
+    var panelTitle = d.createElement('span');
+    panelTitle.className = 'lws-sd-panel-t';
+    panelTitle.textContent = 'My materials';
+    var close = d.createElement('button');
+    close.type = 'button';
+    close.className = 'lws-sd-close';
+    close.setAttribute('aria-label', 'Close My materials');
+    close.textContent = '✕';
+    close.addEventListener('click', function () { self.collapse(); });
+    panelBar.appendChild(panelTitle);
+    panelBar.appendChild(close);
 
     var strip = d.createElement('div');
     strip.className = 'lws-sd-strip';
     strip.setAttribute('role', 'list');
     strip.setAttribute('aria-label', 'Uploaded materials');
 
+    panel.appendChild(panelBar);
+    panel.appendChild(strip);
     dock.appendChild(head);
-    dock.appendChild(strip);
+    dock.appendChild(panel);
     container.appendChild(dock);
-    this.el = { root: dock, strip: strip, container: container };
-    void self; // bound handlers only
+    this.el = { root: dock, head: head, panel: panel, strip: strip, count: countEl, container: container };
   }
 
-  SourceDock.prototype.setSources = function (sources) {
-    this._sources = Array.isArray(sources) ? sources : [];
+  SourceDock.prototype.isOpen = function () {
+    return !this.el.root.classList.contains('is-collapsed');
+  };
+
+  SourceDock.prototype.expand = function () {
+    if (this.isOpen() || this._sources.length === 0) return;
+    var self = this;
+    var d = this.doc;
+    this.el.root.classList.remove('is-collapsed');
+    this.el.head.setAttribute('aria-expanded', 'true');
+    this._outsideHandler = function (ev) {
+      if (!self.el.root.contains(ev.target)) self.collapse();
+    };
+    this._panelKeyHandler = function (ev) {
+      // The source viewer owns Esc while it is open.
+      if (ev.key === 'Escape' && !self._overlay) self.collapse();
+    };
+    d.addEventListener('pointerdown', this._outsideHandler, true);
+    d.addEventListener('keydown', this._panelKeyHandler);
+  };
+
+  SourceDock.prototype.collapse = function () {
+    var d = this.doc;
+    this.el.root.classList.add('is-collapsed');
+    this.el.head.setAttribute('aria-expanded', 'false');
+    if (this._outsideHandler) d.removeEventListener('pointerdown', this._outsideHandler, true);
+    if (this._panelKeyHandler) d.removeEventListener('keydown', this._panelKeyHandler);
+    this._outsideHandler = null;
+    this._panelKeyHandler = null;
+  };
+
+  SourceDock.prototype.toggle = function () {
+    if (this.isOpen()) this.collapse(); else this.expand();
+  };
+
+  // opts.animateNew: fly sources not seen before into the tab (live uploads).
+  // History loads pass nothing — reopening a conversation shouldn't replay
+  // every photo it ever had.
+  SourceDock.prototype.setSources = function (sources, opts) {
+    var self = this;
+    var list = Array.isArray(sources) ? sources : [];
+    var fresh = [];
+    if (opts && opts.animateNew) {
+      list.forEach(function (src) { if (src && src.uploadId && !self._seen[src.uploadId]) fresh.push(src); });
+    }
+    this._seen = {};
+    list.forEach(function (src) { if (src && src.uploadId) self._seen[src.uploadId] = true; });
+    this._sources = list;
     this._render();
+    if (fresh.length) this._flyIn(fresh);
   };
 
   SourceDock.prototype.clear = function () {
     this.closeSource();
+    this.collapse();
     this._sources = [];
+    this._seen = {};
     this._render();
   };
 
@@ -80,7 +185,11 @@
     var d = this.doc;
     var strip = this.el.strip;
     strip.textContent = '';
-    this.el.root.hidden = this._sources.length === 0;
+    var count = this._sources.filter(function (s) { return s && s.uploadId; }).length;
+    this.el.root.hidden = count === 0;
+    this.el.count.textContent = String(count);
+    this.el.head.setAttribute('aria-label', 'My materials, ' + count + (count === 1 ? ' item' : ' items'));
+    if (count === 0) this.collapse();
 
     this._sources.forEach(function (src, i) {
       if (!src || !src.uploadId) return;
@@ -101,8 +210,12 @@
         var img = d.createElement('img');
         img.className = 'lws-sd-card-img';
         img.alt = '';
-        img.loading = 'lazy';
-        img.src = fileUrl(src.uploadId);
+        loadWithRetry(img, src.uploadId, function () {
+          var ph = d.createElement('span');
+          ph.className = 'lws-sd-card-ph';
+          ph.textContent = '📷';
+          if (img.parentNode) img.parentNode.replaceChild(ph, img);
+        });
         b.appendChild(img);
       }
       var lab = d.createElement('span');
@@ -110,8 +223,53 @@
       lab.textContent = name;
       b.appendChild(lab);
 
-      b.addEventListener('click', function () { self.openSource(src, name); });
+      b.addEventListener('click', function () { self.collapse(); self.openSource(src, name); });
       strip.appendChild(b);
+    });
+  };
+
+  // New uploads fly from the composer into the tab, then the tab pulses and
+  // its count ticks up. Purely decorative: the tab is already updated, so a
+  // missing origin or reduced motion just skips the flight.
+  SourceDock.prototype._flyIn = function (fresh) {
+    var d = this.doc;
+    var win = d.defaultView;
+    var head = this.el.head;
+    function bump() {
+      head.classList.remove('is-bump');
+      void head.offsetWidth; // restart the animation
+      head.classList.add('is-bump');
+    }
+    if (!win || prefersReducedMotion(win) || typeof head.getBoundingClientRect !== 'function') { bump(); return; }
+    var to = head.getBoundingClientRect();
+    var fromEl;
+    try { fromEl = this.flyFrom ? this.flyFrom() : null; } catch { fromEl = null; }
+    var from = fromEl && fromEl.getBoundingClientRect ? fromEl.getBoundingClientRect()
+      : this.el.container.getBoundingClientRect();
+    if (!to.width || !from.width) { bump(); return; }
+
+    var startX = from.left + from.width / 2 - 28;
+    var startY = from.top + Math.min(from.height / 2, 60) - 22;
+    var endX = to.left + 10;
+    var endY = to.top + to.height / 2 - 22;
+
+    fresh.slice(0, 6).forEach(function (src, i) {
+      var ghost = d.createElement('div');
+      ghost.className = 'lws-sd-ghost';
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.textContent = src.fileType === 'pdf' ? 'PDF' : '📷';
+      ghost.style.left = startX + 'px';
+      ghost.style.top = startY + 'px';
+      d.body.appendChild(ghost);
+      var delay = i * 110;
+      win.setTimeout(function () {
+        ghost.style.transform = 'translate(' + (endX - startX) + 'px,' + (endY - startY) + 'px) scale(.35)';
+        ghost.style.opacity = '0.15';
+      }, 30 + delay);
+      win.setTimeout(function () {
+        if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
+        bump();
+      }, 720 + delay);
     });
   };
 
@@ -159,7 +317,7 @@
       var img = d.createElement('img');
       img.className = 'lws-sd-ov-img';
       img.alt = name;
-      img.src = fileUrl(src.uploadId);
+      loadWithRetry(img, src.uploadId, null);
       wrap.appendChild(img);
 
       if (region && region.w > 0 && region.h > 0) {
@@ -341,5 +499,5 @@
   };
 
   LWS.SourceDock = SourceDock;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { SourceDock: SourceDock };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { SourceDock: SourceDock, _fileUrl: fileUrl };
 })(typeof self !== 'undefined' ? self : this);
