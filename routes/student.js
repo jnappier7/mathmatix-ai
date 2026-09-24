@@ -2,6 +2,7 @@
 // Handles student-specific API actions.
 
 const express = require('express');
+const fsSync = require('fs');
 const router = express.Router();
 const path = require('path');
 const User = require('../models/user');
@@ -798,6 +799,25 @@ router.get('/uploads/:uploadId', isAuthenticated, isStudent, async (req, res) =>
     }
 });
 
+// Decode a `data:<mime>;base64,<payload>` URL (StudentUpload.imageData).
+function decodeImageDataUrl(dataUrl) {
+    if (typeof dataUrl !== 'string') return null;
+    const m = /^data:(image\/[a-z0-9.+-]+);base64,(.+)$/i.exec(dataUrl);
+    if (!m) return null;
+    try {
+        const buffer = Buffer.from(m[2], 'base64');
+        return buffer.length ? { mimeType: m[1].toLowerCase(), buffer } : null;
+    } catch {
+        return null;
+    }
+}
+
+function sendDurableImage(res, durable) {
+    res.set('Content-Type', durable.mimeType);
+    res.set('Cache-Control', 'private, max-age=3600');
+    return res.send(durable.buffer);
+}
+
 // GET /api/student/uploads/:uploadId/file
 // Serve the actual file (for viewing/downloading)
 router.get('/uploads/:uploadId/file', isAuthenticated, isStudent, async (req, res) => {
@@ -814,15 +834,27 @@ router.get('/uploads/:uploadId/file', isAuthenticated, isStudent, async (req, re
             });
         }
 
-        // Send the file
+        // The on-disk copy lives on the instance's ephemeral disk, so it is
+        // gone after any deploy/restart or on another instance — which is how
+        // every "My materials" thumbnail rendered as a broken image. Images
+        // also carry a durable downscaled copy in the DB (imageData); serve
+        // that whenever the file itself is missing.
+        const durable = decodeImageDataUrl(upload.imageData);
+        const onDisk = upload.filePath && fsSync.existsSync(upload.filePath);
+        if (!onDisk) {
+            if (durable) return sendDurableImage(res, durable);
+            return res.status(404).json({ success: false, message: 'File no longer available' });
+        }
+
         res.sendFile(upload.filePath, (err) => {
-            if (err) {
-                console.error('[Student Uploads] Error sending file:', err);
-                res.status(500).json({
-                    success: false,
-                    message: 'Failed to retrieve file'
-                });
-            }
+            if (!err) return;
+            console.error('[Student Uploads] Error sending file:', err);
+            if (res.headersSent) return;
+            if (durable) return sendDurableImage(res, durable);
+            res.status(500).json({
+                success: false,
+                message: 'Failed to retrieve file'
+            });
         });
 
     } catch (error) {
@@ -1076,5 +1108,6 @@ router.put('/supports', isAuthenticated, isStudent, async (req, res) => {
 
 module.exports = {
     router,
-    generateUniqueStudentLinkCode
+    generateUniqueStudentLinkCode,
+    decodeImageDataUrl
 };
