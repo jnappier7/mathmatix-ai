@@ -19,6 +19,7 @@ const { replaceDashes } = require('../dashNormalizer');
 const { callLLM } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { MESSAGE_TYPES, detectBareProblemDrop } = require('./observe');
+const { isSheetCheckable, findRevealedCorrections, buildSheetCheckFallback } = require('./checkWorkVerifier');
 const {
   VERIFICATION_STATES,
   ASSERTIONS,
@@ -153,6 +154,33 @@ async function socraticRegenerate(originalText, context, reason) {
     return null;
   } catch (err) {
     console.error('[Verify] Socratic regenerate failed:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Rewrite a sheet-wide check-work reply that named the corrected value for a
+ * problem the student got wrong. Unlike socraticRegenerate this keeps the
+ * feedback for EVERY problem — only the revealed values are replaced with a
+ * question pointing at the step.
+ * @param {string} originalText
+ * @param {Array<{label:string, correctedValue:string}>} revealed
+ * @returns {Promise<string|null>}
+ */
+async function checkWorkRegenerate(originalText, revealed) {
+  const list = revealed.map(r => `#${r.label} (do not write "${r.correctedValue}")`).join('; ');
+  const systemPrompt = `You are a math tutor checking a student's homework sheet. Your previous response gave away the correct answer for problem(s) the student got wrong: ${list}. Rewrite the response in the same warm voice. Keep the feedback for EVERY problem, in the same order — do not drop any, and do not change what you said about the ones that are correct. For the listed problems only, remove the correct value and instead point to the step that went wrong with one question that leads the student to fix it. Do not add any new answers.`;
+  try {
+    const completion = await callLLM(PRIMARY_CHAT_MODEL,
+      [{ role: 'system', content: systemPrompt },
+       { role: 'assistant', content: originalText },
+       { role: 'user', content: 'Rewrite this response without those answers. Keep every problem.' }],
+      { temperature: 0.3, max_tokens: 1200 }
+    );
+    const rewritten = completion?.choices?.[0]?.message?.content?.trim();
+    return rewritten && rewritten.length > 10 ? rewritten : null;
+  } catch (err) {
+    console.error('[Verify] Check-work regenerate failed:', err.message);
     return null;
   }
 }
@@ -492,7 +520,35 @@ async function verify(responseText, context = {}) {
   // through the LLM so the tutor stays in voice. The complete-solution
   // detector (one problem fully solved) also routes through the same
   // helper, replacing the older copy-pasted regen block.
-  if (context.hasRecentUpload || context.isWorksheetFollowUp) {
+  //
+  // Exception — a sheet-wide "check my work" on a sheet the student actually
+  // worked (per-problem results from pipeline/checkWorkVerifier). Feedback on
+  // every problem is the point there, and checking work is not giving answers,
+  // so the numbered-list detector would only collapse a real check to one
+  // problem. What IS enforced is that no wrong problem's corrected value is
+  // handed over. A mostly-blank sheet never gets here (isSheetCheckable) and
+  // keeps the strict path below.
+  const checkWorkProblems = Array.isArray(context.checkWork?.problems) ? context.checkWork.problems : null;
+  if (checkWorkProblems && isSheetCheckable(checkWorkProblems)) {
+    const revealed = findRevealedCorrections(text, checkWorkProblems);
+    if (revealed.length) {
+      const labels = revealed.map(r => `#${r.label}`).join(', ');
+      console.warn(`[Verify] CHECK-WORK: corrected value revealed for ${labels}. Rewriting without it.`);
+      const rewritten = await checkWorkRegenerate(text, revealed);
+      if (rewritten && !findRevealedCorrections(rewritten, checkWorkProblems).length) {
+        text = rewritten;
+        flags.push('check_work_correction_redacted');
+      } else {
+        text = buildSheetCheckFallback(checkWorkProblems);
+        flags.push('check_work_correction_fallback');
+      }
+      if (context.isStreaming && context.res) {
+        try {
+          context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+        } catch { /* client disconnected */ }
+      }
+    }
+  } else if (context.hasRecentUpload || context.isWorksheetFollowUp) {
     const strictCheck = detectAnswerKeyResponse(text, { minProblems: 2 });
 
     if (strictCheck.isAnswerKey) {

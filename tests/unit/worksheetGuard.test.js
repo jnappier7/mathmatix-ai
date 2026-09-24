@@ -197,6 +197,20 @@ describe('detectWorksheetSignals', () => {
   });
 });
 
+describe('applyWorksheetGuard — check my work', () => {
+  test('uses the check-work guard, which covers every problem and keeps the anti-cheat lines', () => {
+    const r = applyWorksheetGuard('Can you check my work?', { checkWork: true });
+    expect(r).toContain('CHECK work they already did');
+    expect(r).toMatch(/EVERY problem they attempted/);
+    expect(r).toMatch(/NOT giving answers/);
+    expect(r).toMatch(/Never solve a problem they left blank/);
+    expect(r).toMatch(/Never state the corrected answer/);
+    // The help-me-start guards' "pick one" / "what have you tried" steering is gone.
+    expect(r).not.toMatch(/specific problem giving you trouble/);
+    expect(r).not.toMatch(/What have you tried so far/);
+  });
+});
+
 describe('applyWorksheetGuard', () => {
   test('appends full guard for multi-problem worksheets', () => {
     const r = applyWorksheetGuard('Name: x\nDate: y\n1) solve\n2) solve\n3) solve');
