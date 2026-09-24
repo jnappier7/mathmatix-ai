@@ -97,7 +97,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260907a';
+  var ASSET_V = '?v=20260924a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -384,9 +384,9 @@
   };
 
   var sources = [];
-  function paintSources() {
+  function paintSources(opts) {
     if (!dock) return;
-    try { dock.setSources(sources); } catch (e) { console.error('[LWS_CHAT] dock render failed', e); }
+    try { dock.setSources(sources, opts); } catch (e) { console.error('[LWS_CHAT] dock render failed', e); }
   }
 
   // History load: the full source list derives from messages[].attachments.
@@ -403,7 +403,7 @@
     if (!Array.isArray(delta) || !delta.length) return;
     if (!window.LWS || typeof window.LWS.mergeSources !== 'function' || !ready) return;
     sources = window.LWS.mergeSources(sources, delta);
-    paintSources();
+    paintSources({ animateNew: true });
   };
 
   api.setProblemSource = function (ref) {
@@ -599,7 +599,11 @@
 
       var widgetHost = buildOverlayHost() || (dv.el && dv.el.root) || mount;
       if (window.LWS.SourceDock) {
-        try { dock = new window.LWS.SourceDock(widgetHost, { onAskRegion: askAboutRegion }); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
+        try { dock = new window.LWS.SourceDock(widgetHost, {
+          onAskRegion: askAboutRegion,
+          // New uploads fly from the composer into the "My materials" tab.
+          flyFrom: function () { return document.querySelector('.imessage-compose-bar') || document.getElementById('user-input'); },
+        }); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
       }
       if (window.LWS.NotebookPanel) {
         try {
