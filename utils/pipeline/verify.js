@@ -1113,8 +1113,16 @@ async function verify(responseText, context = {}) {
   //   3. an LLM classifier adjudicates the rest. This is the tier that catches
   //      novel phrasings, and the reason this guard does not decay as the tutor's
   //      wording changes.
-  if (!regeneratedThisPass
-      && ASSERTION_GUARD_ENABLED
+  //
+  // It runs AFTER a regeneration too — that is not optional. Every guard above
+  // rewrites through the model, and a rewrite is fresh, unchecked model output:
+  // the self-contradiction guard literally asks the model to re-decide the
+  // verdict on its own. Gating this on !regeneratedThisPass meant the one text
+  // most likely to contradict the verdict was the one text never checked; that
+  // is how a correct x = 8 on 2(x - 3) = 10 went out as "there might be a
+  // mistake" (2026-09-07, and again 2026-09-24). A rewrite that already agrees
+  // with the verdict costs only the regex tiers here.
+  if (ASSERTION_GUARD_ENABLED
       && context.verificationState
       && context.verificationState !== VERIFICATION_STATES.NOT_APPLICABLE
       && mayAssertCorrectness(text)) {
