@@ -30,6 +30,7 @@ module.exports = {
     '<rootDir>/tests/unit/llmVerifier.test.js',
     '<rootDir>/tests/unit/llmVerifierEscalation.test.js',
     '<rootDir>/tests/unit/verifierCrossProvider.test.js',
+    '<rootDir>/tests/unit/verifierPinnedProblem.test.js',
     '<rootDir>/tests/unit/affirmThenProbe.test.js',
     '<rootDir>/tests/unit/decideInstructionalMode.test.js',
     '<rootDir>/tests/unit/conceptualAnswerVerdict.test.js',
