@@ -30,6 +30,7 @@ const {
   verifyWithEscalation,
   pickProblemContext,
   pickPosedQuestion,
+  pinnedProblemForAnswer,
   llmVerifyConceptual,
   isConceptualQuestion,
   isProseAnswer,
@@ -267,7 +268,10 @@ async function runPipeline(message, ctx) {
   }
 
   if (verificationCandidate && !isConceptualTurn) {
-    const problemText = pickProblemContext(assistantContext);
+    // A stated "x = …" finishes the PINNED problem, so grade it against that.
+    // Anything else answers the tutor's latest question (pickProblemContext).
+    const problemText = pinnedProblemForAnswer(ctx.conversation?.boardProblem?.tex || null, message)
+      || pickProblemContext(assistantContext);
     if (problemText) {
       const verifyStart = Date.now();
       // Computed once, outside the .then/.catch, so both metric paths label the

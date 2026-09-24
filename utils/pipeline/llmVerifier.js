@@ -30,6 +30,7 @@ const { callLLM } = require('../llmGateway');
 // definition.
 const { isClaudeModel } = require('../anthropicClient');
 const { symbolicVerify } = require('./symbolicVerifier');
+const { normalizeMathUnicode } = require('../mathUnicodeNormalizer');
 // Where the cross-provider state lives, alongside the outcome ring it has to be
 // read next to: an unverifiableRate measured while tier 1 is self-grading does
 // not mean the same thing as one measured across two providers.
@@ -668,6 +669,49 @@ function pickProblemContext(recentAssistantMessages) {
 }
 
 /**
+ * The PINNED problem, phrased as the question, when the student's message claims
+ * to have solved it — else null, and the caller falls back to
+ * pickProblemContext.
+ *
+ * pickProblemContext grades against the newest mathy tutor message, and it has to:
+ * a student answers the sub-question in front of them (the 2026-07-28 AP Calc
+ * case above). But a stated "x = 8" is not an answer to "how would you isolate x
+ * from here?". It is a claim to have finished the problem pinned on the board.
+ * Graded against that sub-question, the verifier said NO MATCH on a correct
+ * x = 8 for 2(x - 3) = 10 (production, 2026-09-24).
+ *
+ * Narrow on purpose, so a sub-question answer is never regraded against the
+ * whole problem:
+ *   - the pin is a single-variable EQUATION (an expression like
+ *     "simplify (x^2-9)/(x-3)" has no "x =" to finish),
+ *   - the whole student message is "<that variable> = <value>", with no other
+ *     letters on the right. A bare "3" or "x - 3 = 5" still goes to the tutor's
+ *     latest question.
+ *
+ * @param {string|null} pinnedTex  conversation.boardProblem.tex
+ * @param {string} studentMessage
+ * @returns {string|null}
+ */
+function pinnedProblemForAnswer(pinnedTex, studentMessage) {
+  if (!pinnedTex || typeof pinnedTex !== 'string' || !studentMessage) return null;
+  // Drop LaTeX commands BEFORE normalizing: normalizeMathUnicode spells \sqrt as
+  // "sqrt", which would read as a word. Only the unknowns are counted here.
+  const pin = normalizeMathUnicode(pinnedTex.replace(/\\[a-zA-Z]+/g, ' '));
+  if (/[a-z]{2,}/i.test(pin)) return null;           // prose or a multi-letter term
+  if (pin.split('=').length !== 2) return null;      // one equation, not an expression or a chain
+  const letters = new Set((pin.match(/[a-z]/gi) || []).map(c => c.toLowerCase()));
+  if (letters.size !== 1) return null;                // one unknown, or it's not "solve for x"
+  const [variable] = letters;
+
+  const claim = normalizeMathUnicode(String(studentMessage)).trim().replace(/[.!]+$/, '');
+  const m = claim.match(/^([a-z])\s*=\s*([^=]+)$/i);
+  if (!m || m[1].toLowerCase() !== variable) return null;
+  if (/[a-z]/i.test(m[2].replace(/\\[a-zA-Z]+/g, ''))) return null;
+
+  return `Solve for ${variable}: ${pinnedTex}`;
+}
+
+/**
  * The question the student is actually replying to — the newest tutor message
  * that asks something or poses a problem.
  *
@@ -760,6 +804,7 @@ module.exports = {
   verifyWithEscalation,
   pickProblemContext,
   pickPosedQuestion,
+  pinnedProblemForAnswer,
   VERIFIER_MODEL,
   VERIFIER_FALLBACK_MODEL,
   ESCALATION_MODEL,
