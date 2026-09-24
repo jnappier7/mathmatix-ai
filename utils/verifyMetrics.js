@@ -68,6 +68,15 @@ function classifyResolver(verdict) {
  *   so coverage work is guesswork. Never the problem text itself — a bounded
  *   taxonomy label carries no student content into the logs.
  * @param {string|null} [args.skillId] - active skill, when the turn has one
+ * @param {string|null} [args.problemSource] - where the verifier's problem text
+ *   came from: 'pin' (the board pin, llmVerifier.pinnedProblemForAnswer),
+ *   'context' (the newest mathy tutor message, pickProblemContext) or
+ *   'posed_question' (conceptual judge). 'context' grades against whatever the
+ *   tutor said last, which is how a correct x = 8 was graded against a
+ *   sub-question (2026-09-24); comparing its rejection rate with 'pin' is how
+ *   we learn whether that still happens at scale.
+ * @param {string|null} [args.pinState] - llmVerifier.classifyPinState label
+ * @param {boolean} [args.finalClaim] - the message was a whole "x = value"
  * @returns {Object} the stored record
  */
 function recordVerification({
@@ -78,6 +87,9 @@ function recordVerification({
   latencyMs = null,
   mathType = null,
   skillId = null,
+  problemSource = null,
+  pinState = null,
+  finalClaim = false,
 } = {}) {
   const outcome = classifyOutcome(verdict);
   const rec = {
@@ -89,6 +101,9 @@ function recordVerification({
     resolvedBy: classifyResolver(verdict),
     mathType,
     skillId,
+    problemSource,
+    pinState,
+    finalClaim: !!finalClaim,
     confidence: verdict && typeof verdict.confidence === 'number' ? verdict.confidence : null,
     latencyMs,
   };
@@ -123,6 +138,8 @@ function aggregate() {
   const byOutcome = Object.fromEntries(OUTCOMES.map((o) => [o, 0]));
   const byResolver = { symbolic: 0, llm: 0 };
   const perType = new Map();
+  const perSource = new Map();
+  const unpinnedFinal = new Map();
   let escalated = 0;
   let escalationResolved = 0;
   for (const r of records) {
@@ -135,6 +152,13 @@ function aggregate() {
     bucket.attempts += 1;
     if (r.outcome === 'low_confidence' || r.outcome === 'unverifiable') bucket.unresolved += 1;
     perType.set(key, bucket);
+
+    tallySource(perSource, r.problemSource || 'unknown', r);
+    // A finished "x = v" that could not be graded against a pinned equation:
+    // the turns the no-pin fix is about, bucketed by WHY there was no pin.
+    if (r.finalClaim && r.pinState && r.pinState !== 'pinned_equation') {
+      tallySource(unpinnedFinal, r.pinState, r);
+    }
   }
   // The actionable output: which problem classes burn the unverifiable budget,
   // ranked by absolute count so the top of the list is where widening the CAS
@@ -161,12 +185,41 @@ function aggregate() {
     escalationResolved,
     byResolver,
     unresolvedByMathType,
+    // Rejection rate by where the problem text came from. If 'context' rejects
+    // noticeably more often than 'pin', answers are being graded against the
+    // wrong question.
+    byProblemSource: finishSourceBuckets(perSource),
+    // Finished answers with no pinned equation to grade against, by cause.
+    unpinnedFinalClaims: finishSourceBuckets(unpinnedFinal),
     // Not derived from the ring — live provider state. It rides along here
     // because every consumer of unverifiableRate needs it to read the number:
     // a rate measured while tier 1 is self-grading means something different
     // from the same rate measured across two providers.
     crossProvider: crossProviderHealth(),
   };
+}
+
+function tallySource(map, key, r) {
+  const b = map.get(key) || { key, attempts: 0, verifiedCorrect: 0, verifiedIncorrect: 0, unresolved: 0 };
+  b.attempts += 1;
+  if (r.outcome === 'verified_correct') b.verifiedCorrect += 1;
+  else if (r.outcome === 'verified_incorrect') b.verifiedIncorrect += 1;
+  else if (r.outcome === 'low_confidence' || r.outcome === 'unverifiable') b.unresolved += 1;
+  map.set(key, b);
+}
+
+// rejectionRate is over RESOLVED verdicts only, so a source with many
+// unverifiable turns isn't made to look lenient.
+function finishSourceBuckets(map) {
+  return [...map.values()]
+    .map((b) => {
+      const resolved = b.verifiedCorrect + b.verifiedIncorrect;
+      return {
+        ...b,
+        rejectionRate: resolved > 0 ? Number((b.verifiedIncorrect / resolved).toFixed(4)) : null,
+      };
+    })
+    .sort((a, b) => b.attempts - a.attempts);
 }
 
 // ── Cross-provider health ───────────────────────────────────────────────────

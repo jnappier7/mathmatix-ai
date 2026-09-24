@@ -31,6 +31,8 @@ const {
   pickProblemContext,
   pickPosedQuestion,
   pinnedProblemForAnswer,
+  statedSolution,
+  classifyPinState,
   llmVerifyConceptual,
   isConceptualQuestion,
   isProseAnswer,
@@ -256,6 +258,7 @@ async function runPipeline(message, ctx) {
           // so mathSolver's taxonomy doesn't apply and labelling it 'unparsed'
           // would inflate that bucket with turns no CAS work could ever resolve.
           mathType: 'conceptual',
+          problemSource: 'posed_question',
           skillId: ctx.activeSkill?.skillId || null,
           latencyMs: Date.now() - conceptualStart,
         });
@@ -270,8 +273,15 @@ async function runPipeline(message, ctx) {
   if (verificationCandidate && !isConceptualTurn) {
     // A stated "x = …" finishes the PINNED problem, so grade it against that.
     // Anything else answers the tutor's latest question (pickProblemContext).
-    const problemText = pinnedProblemForAnswer(ctx.conversation?.boardProblem?.tex || null, message)
-      || pickProblemContext(assistantContext);
+    const pinnedProblem = pinnedProblemForAnswer(ctx.conversation?.boardProblem?.tex || null, message);
+    const problemText = pinnedProblem || pickProblemContext(assistantContext);
+    // Bounded labels for verifyMetrics: where the problem came from and why
+    // there was (or wasn't) a pin — the measurement the no-pin fix waits on.
+    const problemLabels = {
+      problemSource: pinnedProblem ? 'pin' : 'context',
+      pinState: classifyPinState(ctx.conversation?.boardProblem?.tex || null, ctx.conversation?.lastBoardAction || null),
+      finalClaim: !!statedSolution(message),
+    };
     if (problemText) {
       const verifyStart = Date.now();
       // Computed once, outside the .then/.catch, so both metric paths label the
@@ -302,6 +312,7 @@ async function runPipeline(message, ctx) {
             mathType,
             skillId: verifySkillId,
             latencyMs: Date.now() - verifyStart,
+            ...problemLabels,
           });
           return verdict;
         })
@@ -313,6 +324,7 @@ async function runPipeline(message, ctx) {
             mathType,
             skillId: verifySkillId,
             latencyMs: Date.now() - verifyStart,
+            ...problemLabels,
           });
           return verdict;
         });

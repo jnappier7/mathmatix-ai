@@ -22,7 +22,11 @@ jest.mock('../../utils/llmGateway', () => ({
 
 const fs = require('fs');
 const path = require('path');
-const { pinnedProblemForAnswer } = require('../../utils/pipeline/llmVerifier');
+const {
+  pinnedProblemForAnswer,
+  statedSolution,
+  classifyPinState,
+} = require('../../utils/pipeline/llmVerifier');
 
 describe('pinnedProblemForAnswer: a finished solution grades against the pin', () => {
   test.each([
@@ -59,6 +63,41 @@ describe('pinnedProblemForAnswer: everything else answers the latest question', 
 test('the pipeline asks the pin first and falls back to pickProblemContext', () => {
   const src = fs.readFileSync(path.join(__dirname, '../../utils/pipeline/index.js'), 'utf8');
   expect(src).toMatch(
-    /pinnedProblemForAnswer\(ctx\.conversation\?\.boardProblem\?\.tex[^)]*,\s*message\)\s*\|\|\s*pickProblemContext\(assistantContext\)/
+    /const pinnedProblem = pinnedProblemForAnswer\(ctx\.conversation\?\.boardProblem\?\.tex[^)]*,\s*message\);/
   );
+  expect(src).toMatch(/const problemText = pinnedProblem \|\| pickProblemContext\(assistantContext\);/);
+});
+
+// ── Step 0 of the no-pin fix: the labels verifyMetrics records ──
+
+describe('statedSolution: is the whole message a finished "x = value"?', () => {
+  test.each([['x=8'], ['x = 8.'], ['X = -3/4'], ['y = \\frac{1}{2}']])('%p → claim', (said) => {
+    expect(statedSolution(said)).toEqual({ variable: said.trim()[0].toLowerCase() });
+  });
+  test.each([['8'], ['x-3=5'], ['x = 8 because I added 3'], ['x = y'], [''], [null]])('%p → null', (said) => {
+    expect(statedSolution(said)).toBeNull();
+  });
+});
+
+describe('classifyPinState: why there is (or is no) pin to grade against', () => {
+  test.each([
+    ['2(x - 3) = 10', null, 'pinned_equation'],
+    ['(x^2-9)/(x-3)', 'pose', 'pinned_other'],
+    ['\\text{A triangle has sides 3, 4 and 5}', 'pose', 'pinned_other'],
+    [null, 'verify', 'none_closed'],
+    [null, 'clear', 'none_cleared'],
+    [null, null, 'none_never'],
+    [null, 'apply', 'none_never'],
+  ])('pin %p, last action %p → %s', (pin, last, label) => {
+    expect(classifyPinState(pin, last)).toBe(label);
+  });
+});
+
+test('the pipeline labels every math verification for verifyMetrics', () => {
+  const src = fs.readFileSync(path.join(__dirname, '../../utils/pipeline/index.js'), 'utf8');
+  expect(src).toMatch(/problemSource: pinnedProblem \? 'pin' : 'context'/);
+  expect(src).toMatch(/pinState: classifyPinState\(/);
+  expect(src).toMatch(/finalClaim: !!statedSolution\(message\)/);
+  // Both record paths (resolved and rejected promise) carry the labels.
+  expect(src.match(/\.\.\.problemLabels,/g)).toHaveLength(2);
 });
