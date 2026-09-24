@@ -630,7 +630,11 @@ function detectGeometryProblem(tutorText) {
 
 function normalizeForCompare(s) {
   if (!s || typeof s !== 'string') return '';
-  let out = s.toLowerCase();
+  // Fold typography first: the student types "2(x - 3) = 10", the model
+  // re-poses "2(x−3)=10" (U+2212) or "2\left(x-3\right)=10". Same problem —
+  // but compared raw, the re-pose read as NEW, so every turn auto-cleared the
+  // board and the work card never advanced past the pose.
+  let out = normalizeMathUnicode(s).toLowerCase();
   // Canonicalize operator synonyms so equivalent cards dedupe (QA P1-2):
   // "6 × 7", "6 \times 7", "6 * 7", "6 \cdot 7", "6 · 7" must all compare
   // equal. Fold BEFORE stripping backslashes so \times / \cdot / \div match.
@@ -1103,7 +1107,7 @@ function synthesizeTilesTab({ tutorResponse, pinnedProblemTex } = {}) {
 // Loose tex identity for "is this pose a NEW problem?" — formatting drift
 // (\left, braces, spacing) must not read as a different problem.
 function normalizeTexLoose(t) {
-  return String(t || '').toLowerCase().replace(/\\[a-zA-Z]+/g, '').replace(/[{}\s$]/g, '');
+  return normalizeMathUnicode(String(t || '')).toLowerCase().replace(/\\[a-zA-Z]+/g, '').replace(/[{}\s$]/g, '');
 }
 
 /**

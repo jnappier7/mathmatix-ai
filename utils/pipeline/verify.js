@@ -961,10 +961,20 @@ async function verify(responseText, context = {}) {
     const alreadyGatedCorrect = context.action === ACTIONS.CONFIRM_CORRECT
       || context.action === ACTIONS.AFFIRM_THEN_PROBE;
     const alreadyGatedIncorrect = context.action === ACTIONS.GUIDE_INCORRECT || context.action === ACTIONS.RETEACH_MISCONCEPTION;
+    // The pipeline's own verdict outranks the parallel LLM verdict. The LLM
+    // verifier grades against pickProblemContext — the newest mathy message —
+    // which is often the tutor's latest sub-question, not the problem. On
+    // "2(x - 3) = 10" → … → "x=8" it graded 8 against "how would you isolate
+    // x?", said NO MATCH, and this block rewrote a solver-verified CORRECT
+    // answer into "there might be a mistake in your steps" (production,
+    // 2026-09-24). A cross-check may fill a gap; it may not overturn a verdict.
+    const pipelineSaysCorrect = context.verificationState === VERIFICATION_STATES.VERIFIED_CORRECT;
+    const pipelineSaysIncorrect = context.verificationState === VERIFICATION_STATES.VERIFIED_INCORRECT;
 
     // LLM says WRONG, response is affirming → regenerate as correction.
     if (context.llmVerdict.isCorrect === false
         && !alreadyGatedIncorrect
+        && !pipelineSaysCorrect
         && falseConfirmationPattern.test(text.trim())) {
       flags.push('llm_false_confirmation_detected');
       console.log(`[Verify] LLM-verdict FALSE CONFIRMATION (student: "${context.studentAnswer}", correct: "${context.llmVerdict.modelAnswer}") — regenerating`);
@@ -998,6 +1008,7 @@ async function verify(responseText, context = {}) {
     // LLM says RIGHT, response is rejecting → regenerate as confirmation.
     else if (context.llmVerdict.isCorrect === true
              && !alreadyGatedCorrect
+             && !pipelineSaysIncorrect
              && (falseRejectionOpener.test(text.trim()) || leadsWithDoubtOnCorrect(text))) {
       flags.push('llm_false_rejection_detected');
       console.log(`[Verify] LLM-verdict FALSE REJECTION (student: "${context.studentAnswer}" confirmed correct) — regenerating`);
