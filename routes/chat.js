@@ -109,7 +109,8 @@ function buildCheckWorkSuffix(verdict) {
         return `\n\n[CHECK MY WORK — INDEPENDENTLY VERIFIED CORRECT: A separate check confirms the student's work is correct.${right} Affirm it warmly and name specifically what they did right. Do NOT invent or imply any mistake. You may offer an optional next step, but do not manufacture a problem.]`;
     }
     if (verdict.verdict === 'has_error') {
-        return `\n\n[CHECK MY WORK — INDEPENDENTLY VERIFIED ERROR: A separate check found a specific error at this step: "${verdict.errorStep}" (it should be ${verdict.correctedValue}). Guide the student to THAT step with ONE Socratic question. Do NOT reveal the corrected value outright — let them fix it. Affirm the steps that were correct.]`;
+        const should = verdict.correctedValue ? ` (it should be ${verdict.correctedValue})` : '';
+        return `\n\n[CHECK MY WORK — INDEPENDENTLY VERIFIED ERROR: A separate check found a specific error at this step: "${verdict.errorStep}"${should}. Guide the student to THAT step with ONE Socratic question. Do NOT reveal the corrected value outright — let them fix it. Affirm the steps that were correct.]`;
     }
     return CHECK_WORK_GUIDANCE;
 }
@@ -120,12 +121,21 @@ function buildSheetCheckSuffix(problems) {
         switch (p.status) {
             case 'correct':
                 return `- #${p.label}: VERIFIED CORRECT${ans}.${p.whatIsRight ? ` What's right: ${p.whatIsRight}` : ''}`;
-            case 'has_error':
-                return `- #${p.label}: VERIFIED ERROR${ans} at the step "${p.errorStep}" (it should be ${p.correctedValue} — do NOT say this value).${p.whatIsRight ? ` What's right: ${p.whatIsRight}` : ''}`;
+            case 'has_error': {
+                const should = p.correctedValue ? ` (it should be ${p.correctedValue} — do NOT say this value)` : '';
+                return `- #${p.label}: VERIFIED ERROR${ans} at the step "${p.errorStep}"${should}.${p.whatIsRight ? ` What's right: ${p.whatIsRight}` : ''}`;
+            }
             case 'blank':
                 return `- #${p.label}: BLANK — not attempted. Do NOT solve it; just note it's left to do.`;
-            default:
-                return `- #${p.label}: COULD NOT VERIFY${ans}. Read it yourself; if you can't tell, ask about it — never assert an error.`;
+            default: {
+                // The read-then-grade pipeline says how it read the problem;
+                // an unsure reading is confirmed with the student, not graded.
+                const readAs = p.readAs ? ` I read the problem as "${p.readAs}".` : '';
+                const ask = p.reading === 'unconfirmed' || (p.evidence || []).includes('reading:unconfirmed')
+                    ? ' The handwriting may have been misread: tell them what you read and ask them to confirm it before judging.'
+                    : " Read it yourself; if you can't tell, ask about it — never assert an error.";
+                return `- #${p.label}: COULD NOT VERIFY${ans}.${readAs}${ask}`;
+            }
         }
     });
     const attempted = problems.filter(p => p.status !== 'blank');
@@ -1489,7 +1499,9 @@ async function runStudentTurn(req, res) {
                 verdict: checkWorkVerdict.verdict,
                 confidence: checkWorkVerdict.confidence,
                 hasError: !!checkWorkVerdict.errorStep,
+                pipeline: checkWorkVerdict.pipeline || null,
                 problemCount: (checkWorkVerdict.problems || []).length,
+                sources: (checkWorkVerdict.problems || []).map(p => `${p.status}:${p.source || '-'}`).join(','),
                 errorCount: (checkWorkVerdict.problems || []).filter(p => p.status === 'has_error').length,
             });
         }

@@ -26,6 +26,7 @@
 // a correct student they got it wrong.
 
 const { callLLMStructured } = require('../llmGateway');
+const { gradeSheet } = require('./checkWorkGrader');
 
 // Below this confidence we refuse to assert an error (downgrade to 'uncertain').
 const MIN_ERROR_CONFIDENCE = 0.6;
@@ -181,13 +182,25 @@ function normalizeVerdict(raw) {
  * @param {object} args
  * @param {Array} args.imageContents  OpenAI vision content blocks ({type:'image_url', image_url:{url}})
  * @param {string} [args.studentText]  the student's accompanying chat text
- * @param {string} [args.model]        override model (default gpt-4o)
+ * @param {string} [args.model]        override model (default gpt-4o); forces the single-pass grader
+ * @param {object} [deps]              injectable for tests (callLLMStructured, ocrDetailed)
  * @returns {Promise<{verdict:string, whatIsRight:string, errorStep:string|null, correctedValue:string|null, confidence:number, problems:Array, reason?:string}>}
  */
-async function verifyStudentWork({ imageContents, studentText = '', model } = {}) {
+async function verifyStudentWork({ imageContents, studentText = '', model } = {}, deps = {}) {
     const images = (Array.isArray(imageContents) ? imageContents : [])
         .filter(c => c && c.type === 'image_url' && c.image_url && typeof c.image_url.url === 'string');
     if (!images.length) return uncertain('no-image');
+
+    // Read-then-grade (utils/pipeline/checkWorkGrader): transcribe, grade with
+    // code, cross-check with two blind judges. The single-pass grader below is
+    // the fallback when the READ stage fails, and the whole path when
+    // CHECK_WORK_PIPELINE=legacy.
+    if (process.env.CHECK_WORK_PIPELINE !== 'legacy' && !model) {
+        try {
+            const problems = await gradeSheet({ images, studentText }, deps);
+            if (problems && problems.length) return { ...aggregate(problems), pipeline: 'read-then-grade' };
+        } catch { /* fall through to single-pass */ }
+    }
 
     const trimmedText = String(studentText || '').slice(0, 500).trim();
     const userText = `The student wrote: "${trimmedText || '(no text — just the photo)'}"\n\nCheck EVERY problem in the handwritten work shown in the image(s).`;
@@ -202,7 +215,7 @@ async function verifyStudentWork({ imageContents, studentText = '', model } = {}
             // A full sheet is ~40-80 tokens per problem.
             max_tokens: 3000,
         });
-        return normalizeVerdict(raw);
+        return { ...normalizeVerdict(raw), pipeline: 'single-pass' };
     } catch (err) {
         // Fail SAFE: verification unavailable must never become a fabricated error.
         return uncertain(`verify-failed: ${err && err.message ? err.message : 'unknown'}`);

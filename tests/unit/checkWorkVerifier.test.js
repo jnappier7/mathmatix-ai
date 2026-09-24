@@ -3,6 +3,10 @@
 // correct student they're wrong, so the tests focus on the conservative
 // downgrade contract + the fail-safe paths.
 
+// This suite pins the SINGLE-PASS grader (the fallback / CHECK_WORK_PIPELINE=legacy
+// path). The read-then-grade pipeline is covered in checkWorkGrader.test.js.
+process.env.CHECK_WORK_PIPELINE = 'legacy';
+
 jest.mock('../../utils/llmGateway', () => ({
   callLLMStructured: jest.fn(),
 }));

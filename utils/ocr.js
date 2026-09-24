@@ -12,6 +12,44 @@ const path = require("path");
 // level too, so a request that forgets the flag is still covered.
 const MATHPIX_PRIVACY_METADATA = Object.freeze({ improve_mathpix: false });
 
+/**
+ * Like ocr(), but also returns Mathpix's own confidence (0..1). The check-work
+ * grader uses it to CONFIRM a vision model's reading of the student's answers
+ * — it needs to know how sure Mathpix was, not just what it read.
+ * @returns {Promise<{text: string, confidence: number|null}>}
+ */
+async function ocrDetailed(base64) {
+  const res = await mathpixText(base64);
+  return {
+    text: (res.data.latex_styled?.trim() || res.data.text?.trim() || ''),
+    confidence: typeof res.data.confidence === 'number' ? res.data.confidence : null,
+  };
+}
+
+function mathpixText(base64) {
+  if (!process.env.MATHPIX_APP_ID || !process.env.MATHPIX_APP_KEY) {
+    throw new Error('Mathpix API credentials not configured. Please contact support.');
+  }
+  return axios.post(
+    "https://api.mathpix.com/v3/text",
+    {
+      src: base64,
+      formats: ["text", "latex_styled"],
+      data_options: {
+        include_latex: true,
+      },
+      metadata: { ...MATHPIX_PRIVACY_METADATA }
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        app_id: process.env.MATHPIX_APP_ID,
+        app_key: process.env.MATHPIX_APP_KEY
+      }
+    }
+  );
+}
+
 async function ocr(base64) {
   try {
     // Validate API credentials
@@ -21,24 +59,7 @@ async function ocr(base64) {
     }
 
     console.log('[ocr] Sending image to Mathpix API...');
-    const res = await axios.post(
-      "https://api.mathpix.com/v3/text",
-      {
-        src: base64,
-        formats: ["text", "latex_styled"],
-        data_options: {
-          include_latex: true,
-        },
-        metadata: { ...MATHPIX_PRIVACY_METADATA }
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          app_id: process.env.MATHPIX_APP_ID,
-          app_key: process.env.MATHPIX_APP_KEY
-        }
-      }
-    );
+    const res = await mathpixText(base64);
 
     console.log("[ocr] Mathpix response received:", {
       hasLatex: !!res.data.latex_styled,
@@ -92,4 +113,5 @@ async function performOCR(filePath) {
 
 module.exports = ocr;
 module.exports.performOCR = performOCR;
+module.exports.ocrDetailed = ocrDetailed;
 module.exports.MATHPIX_PRIVACY_METADATA = MATHPIX_PRIVACY_METADATA;

@@ -413,6 +413,15 @@ npm run seed:all:dry   # preflight + plan, no writes
   deterministic fallback), and a mostly-blank sheet (answer-key fishing) keeps the strict filter. Four
   layers each narrowed it to one problem (verifier, suffix, decide directive, upload guard); don't
   reintroduce "one problem at a time" in any of them. Pinned by `tests/unit/checkWorkSheetCoverage.test.js`.
+  **The grading itself is read-then-grade** (`pipeline/checkWorkGrader.js`): a vision call only
+  TRANSCRIBES (problem, the student's lines, final answer, legibility) while Mathpix reads the same
+  photos to confirm the answers; then `mathSolver` checks the answer, `pipeline/checkWorkSteps.js`
+  (mathjs) finds the first line that doesn't follow or a false arithmetic line, and two blind judges on
+  different providers grade the text. A solver match calls a problem right; calling it WRONG takes two
+  independent witnesses, and an error on an unconfirmed reading becomes "could not verify — I read it
+  as …". A failed read falls back to the single-pass vision grader; `CHECK_WORK_PIPELINE=legacy` forces
+  it. The step checker is one-sided by design (anything it can't prove is `unknown`, never `broken`) —
+  keep it that way. Pinned by `tests/unit/checkWorkGrader.test.js`.
 - **Conversations >100 msgs are summarized** before hitting the LLM — mind token budgets.
 - **IEP is split** (collection + cached copy on user) — update both / sync on read.
 - **`learningProfile.growthCheckHistory` has exactly ONE writer** — the `isGrowth` block in
