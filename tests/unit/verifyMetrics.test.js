@@ -205,3 +205,49 @@ describe('cross-provider state', () => {
     expect(vm.crossProviderHealth().fallbacks).toBe(0);
   });
 });
+
+// Step 0 of the no-pin fix: is a finished answer graded against the right problem?
+describe('problem-source labels', () => {
+  const correct = { isCorrect: true };
+  const wrong = { isCorrect: false };
+  const unsure = { isCorrect: null, error: null };
+
+  test('records the labels on each record, defaulting when absent', () => {
+    const rec = vm.recordVerification({
+      verdict: correct, problemSource: 'pin', pinState: 'pinned_equation', finalClaim: true,
+    });
+    expect(rec).toMatchObject({ problemSource: 'pin', pinState: 'pinned_equation', finalClaim: true });
+    expect(vm.recordVerification({ verdict: correct })).toMatchObject({
+      problemSource: null, pinState: null, finalClaim: false,
+    });
+  });
+
+  test('byProblemSource gives the rejection rate over RESOLVED verdicts', () => {
+    vm.recordVerification({ verdict: correct, problemSource: 'pin' });
+    vm.recordVerification({ verdict: correct, problemSource: 'pin' });
+    vm.recordVerification({ verdict: correct, problemSource: 'context' });
+    vm.recordVerification({ verdict: wrong, problemSource: 'context' });
+    vm.recordVerification({ verdict: unsure, problemSource: 'context' });
+    vm.recordVerification({ verdict: unsure }); // unlabelled → 'unknown'
+
+    const { byProblemSource } = vm.aggregate();
+    const by = Object.fromEntries(byProblemSource.map(b => [b.key, b]));
+    expect(by.context).toMatchObject({ attempts: 3, verifiedCorrect: 1, verifiedIncorrect: 1, unresolved: 1, rejectionRate: 0.5 });
+    expect(by.pin).toMatchObject({ attempts: 2, rejectionRate: 0 });
+    expect(by.unknown).toMatchObject({ attempts: 1, rejectionRate: null }); // nothing resolved
+    expect(byProblemSource[0].key).toBe('context'); // most attempts first
+  });
+
+  test('unpinnedFinalClaims counts finished answers with no pinned equation, by cause', () => {
+    vm.recordVerification({ verdict: wrong, finalClaim: true, pinState: 'none_closed' });
+    vm.recordVerification({ verdict: correct, finalClaim: true, pinState: 'none_closed' });
+    vm.recordVerification({ verdict: wrong, finalClaim: true, pinState: 'none_never' });
+    vm.recordVerification({ verdict: correct, finalClaim: true, pinState: 'pinned_equation' }); // graded vs pin: excluded
+    vm.recordVerification({ verdict: wrong, finalClaim: false, pinState: 'none_never' });       // not a final claim: excluded
+
+    const by = Object.fromEntries(vm.aggregate().unpinnedFinalClaims.map(b => [b.key, b]));
+    expect(Object.keys(by).sort()).toEqual(['none_closed', 'none_never']);
+    expect(by.none_closed).toMatchObject({ attempts: 2, rejectionRate: 0.5 });
+    expect(by.none_never).toMatchObject({ attempts: 1, rejectionRate: 1 });
+  });
+});

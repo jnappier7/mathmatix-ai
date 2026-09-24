@@ -693,7 +693,21 @@ function pickProblemContext(recentAssistantMessages) {
  * @returns {string|null}
  */
 function pinnedProblemForAnswer(pinnedTex, studentMessage) {
-  if (!pinnedTex || typeof pinnedTex !== 'string' || !studentMessage) return null;
+  const variable = pinVariable(pinnedTex);
+  if (!variable) return null;
+  const claim = statedSolution(studentMessage);
+  if (!claim || claim.variable !== variable) return null;
+  return `Solve for ${variable}: ${pinnedTex}`;
+}
+
+/**
+ * The single unknown of a pinned one-unknown EQUATION ("2(x - 3) = 10" → "x"),
+ * else null (no pin, an expression, a chain, two unknowns, or prose).
+ * @param {string|null} pinnedTex
+ * @returns {string|null}
+ */
+function pinVariable(pinnedTex) {
+  if (!pinnedTex || typeof pinnedTex !== 'string') return null;
   // Drop LaTeX commands BEFORE normalizing: normalizeMathUnicode spells \sqrt as
   // "sqrt", which would read as a word. Only the unknowns are counted here.
   const pin = normalizeMathUnicode(pinnedTex.replace(/\\[a-zA-Z]+/g, ' '));
@@ -701,14 +715,38 @@ function pinnedProblemForAnswer(pinnedTex, studentMessage) {
   if (pin.split('=').length !== 2) return null;      // one equation, not an expression or a chain
   const letters = new Set((pin.match(/[a-z]/gi) || []).map(c => c.toLowerCase()));
   if (letters.size !== 1) return null;                // one unknown, or it's not "solve for x"
-  const [variable] = letters;
+  return [...letters][0];
+}
 
+/**
+ * The student's message as a finished solution — the WHOLE message is
+ * "<letter> = <value>" with no letters on the right — else null.
+ * @param {string} studentMessage
+ * @returns {{variable: string}|null}
+ */
+function statedSolution(studentMessage) {
+  if (!studentMessage) return null;
   const claim = normalizeMathUnicode(String(studentMessage)).trim().replace(/[.!]+$/, '');
   const m = claim.match(/^([a-z])\s*=\s*([^=]+)$/i);
-  if (!m || m[1].toLowerCase() !== variable) return null;
+  if (!m) return null;
   if (/[a-z]/i.test(m[2].replace(/\\[a-zA-Z]+/g, ''))) return null;
+  return { variable: m[1].toLowerCase() };
+}
 
-  return `Solve for ${variable}: ${pinnedTex}`;
+/**
+ * Metrics label for the board pin at verification time — the denominator for
+ * "how often does a finished answer arrive with no usable pin, and why".
+ * Bounded labels only; never the problem text.
+ *
+ * @param {string|null} pinnedTex        conversation.boardProblem.tex
+ * @param {string|null} lastBoardAction  conversation.lastBoardAction
+ * @returns {'pinned_equation'|'pinned_other'|'none_closed'|'none_cleared'|'none_never'}
+ */
+function classifyPinState(pinnedTex, lastBoardAction) {
+  if (pinnedTex) return pinVariable(pinnedTex) ? 'pinned_equation' : 'pinned_other';
+  if (lastBoardAction === 'verify') return 'none_closed';
+  if (lastBoardAction === 'clear') return 'none_cleared';
+  return 'none_never';
 }
 
 /**
@@ -805,6 +843,8 @@ module.exports = {
   pickProblemContext,
   pickPosedQuestion,
   pinnedProblemForAnswer,
+  statedSolution,
+  classifyPinState,
   VERIFIER_MODEL,
   VERIFIER_FALLBACK_MODEL,
   ESCALATION_MODEL,
