@@ -1858,9 +1858,11 @@ router.get('/reports/usage', isAdmin, async (req, res) => {
     const { startDate, endDate, role, sortBy = 'lastLogin', sortOrder = 'desc' } = req.query;
 
     // Build query filter
+    // By roles HELD — a bare { role } drops multi-role accounts that are
+    // viewing another dashboard right now (CLAUDE.md §12).
     const filter = {};
-    if (role) {
-      filter.role = role;
+    if (ROLE_NAMES.includes(role)) {
+      Object.assign(filter, anyRole(role));
     }
 
     if (startDate || endDate) {
@@ -2165,8 +2167,13 @@ router.get('/funnel', isAdmin, async (req, res) => {
     // switched dashboards — a parent-teacher who signed up as a student would
     // silently leave the cohort, deflating the denominator and inflating every
     // downstream conversion rate.
+    // Demo accounts and per-session demo clones are not signups.
     const match = withRole(
-      allTime ? {} : { createdAt: { $gte: startDate, $lte: endDate } },
+      {
+        ...(allTime ? {} : { createdAt: { $gte: startDate, $lte: endDate } }),
+        isDemo: { $ne: true },
+        isDemoClone: { $ne: true },
+      },
       role
     );
 
@@ -2253,6 +2260,88 @@ router.get('/funnel', isAdmin, async (req, res) => {
   } catch (err) {
     console.error('Error generating funnel report:', err);
     res.status(500).json({ message: 'Server error generating funnel report.' });
+  }
+});
+
+/**
+ * @route   GET /api/admin/reports/student-conversion
+ * @desc    Student usage (active, activation, minutes, plan mix) and the
+ *          consumer conversion funnel, read from ConversionEvent + User.
+ * @access  Private (Admin)
+ *
+ * Supersedes /funnel for students: that one counts a card trial as "Paid"
+ * because subscriptionStartDate is stamped at checkout. Definitions, and why
+ * each one is drawn where it is, live in utils/studentUsageReport.js; the
+ * report's limits ride along in `caveats`.
+ *
+ * Query: startDate, endDate (signup window, default last 90 days), all=true.
+ */
+router.get('/reports/student-conversion', isAdmin, async (req, res) => {
+  try {
+    const now = new Date();
+    const allTime = req.query.all === 'true' || req.query.all === '1';
+    let endDate = req.query.endDate ? new Date(req.query.endDate) : now;
+    if (isNaN(endDate.getTime())) endDate = now;
+    let startDate = null;
+    if (!allTime) {
+      startDate = req.query.startDate ? new Date(req.query.startDate) : null;
+      if (!startDate || isNaN(startDate.getTime())) {
+        startDate = new Date(endDate.getTime() - 90 * 24 * 60 * 60 * 1000);
+      }
+    }
+
+    const ConversionEvent = require('../models/conversionEvent');
+    const { buildStudentUsageReport, REPORT_EVENTS } = require('../utils/studentUsageReport');
+
+    const students = await User.find(anyRole('student'))
+      .select('createdAt email username isDemo isDemoClone schoolLicenseId subscriptionTier '
+        + 'trialEndsAt hasUsedTrial parentIds totalActiveTutoringMinutes')
+      .lean();
+
+    const parentIds = [...new Set(students.flatMap((s) => (s.parentIds || []).map(String)))];
+    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    // A cohort member's events all postdate their signup, so the window's
+    // start bounds the event scan without listing the cohort's ids.
+    const eventMatch = { event: { $in: REPORT_EVENTS }, userId: { $ne: null } };
+    if (startDate) eventMatch.createdAt = { $gte: startDate };
+
+    const [payingParents, activity, events, firstEvent] = await Promise.all([
+      parentIds.length
+        ? User.find({ _id: { $in: parentIds }, subscriptionTier: 'unlimited' }).select('_id').lean()
+        : [],
+      Conversation.aggregate([
+        { $match: { lastActivity: { $gte: monthAgo } } },
+        { $group: { _id: '$userId', last: { $max: '$lastActivity' } } },
+      ]),
+      ConversionEvent.find(eventMatch).select('event userId context createdAt').lean(),
+      ConversionEvent.findOne({}).sort({ createdAt: 1 }).select('createdAt').lean(),
+    ]);
+
+    const report = buildStudentUsageReport({
+      students,
+      payingParentIds: new Set(payingParents.map((p) => String(p._id))),
+      lastActivityByUser: new Map(activity.map((a) => [String(a._id), a.last])),
+      events,
+      earliestEventAt: firstEvent?.createdAt || null,
+      startDate,
+      endDate,
+      now,
+    });
+
+    res.json({
+      success: true,
+      filters: {
+        allTime,
+        startDate: startDate ? startDate.toISOString() : null,
+        endDate: endDate.toISOString(),
+      },
+      ...report,
+      generatedAt: now.toISOString(),
+    });
+  } catch (err) {
+    console.error('Error building student conversion report:', err);
+    res.status(500).json({ message: 'Server error building student conversion report.' });
   }
 });
 
