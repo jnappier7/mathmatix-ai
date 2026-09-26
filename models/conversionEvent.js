@@ -42,7 +42,12 @@ const CONVERSION_EVENTS = [
   'trial_returned',        // showed up on a second distinct day (context: activeDays, trialDaysRemaining)
   // -- Conversion --
   'upgrade_started',       // Stripe checkout session created (context: pack)
-  'subscribed',            // checkout completed, subscription active (context: pack)
+  // `subscribed` fires at checkout, which for a CARD trial commits no money —
+  // only rows with context.startedInTrial false are payments. The card trial's
+  // payment is `trial_converted`. Paid = the union of those two.
+  'subscribed',            // checkout completed (context: pack, mode, startedInTrial)
+  'trial_converted',       // card trial's first charge: Stripe trialing → active
+  'subscription_ended',    // unlimited → free (context: reason, endedInTrial)
   // -- Free (post-trial) --
   'free_quota_exhausted',  // signed-in free student hit the monthly AI cap (402)
   // -- Legacy / other surfaces --

@@ -285,6 +285,16 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
   }
 });
 
+// A paid (or card-trial) subscription ended. Call BEFORE the downgrade clears
+// trialEndsAt: `endedInTrial` is what separates "cancelled the trial" (a
+// conversion miss) from "stopped paying" (churn), and they have opposite fixes.
+function recordSubscriptionEnded(user, reason) {
+  recordConversionEvent('subscription_ended', {
+    userId: user._id,
+    context: { reason, endedInTrial: isInTrial(user) },
+  });
+}
+
 // =====================================================
 // POST /webhook
 // Stripe sends events here. Must use raw body for signature verification.
@@ -474,6 +484,10 @@ router.post('/webhook', async (req, res) => {
         const user = await User.findOne({ stripeSubscriptionId: subscription.id });
         if (!user) break;
 
+        // Read before the fields below are cleared: whether they were paying,
+        // and whether it was still a trial, is exactly what the row is for.
+        if (user.subscriptionTier === 'unlimited') recordSubscriptionEnded(user, 'deleted');
+
         user.subscriptionTier = 'free';
         user.stripeSubscriptionId = null;
         user.subscriptionEndDate = new Date();
@@ -502,10 +516,20 @@ router.post('/webhook', async (req, res) => {
           if (subscription.trial_end) user.trialEndsAt = new Date(subscription.trial_end * 1000);
         } else if (subscription.status === 'active') {
           // Active (incl. a trial that just converted) — clear the trial marker.
+          // The trial→paid flip is the first real charge and nothing else
+          // records it: `subscribed` fired at checkout, when the card trial had
+          // committed no money. Stripe names the prior status only on the
+          // event that changed it, so a later renewal can't re-fire this.
+          if (event.data.previous_attributes?.status === 'trialing') {
+            recordConversionEvent('trial_converted', { userId: user._id });
+          }
           user.subscriptionTier = 'unlimited';
           user.stripeSubscriptionId = subscription.id;
           user.trialEndsAt = null;
         } else if (['past_due', 'unpaid', 'canceled'].includes(subscription.status)) {
+          // past_due → unpaid → canceled can each arrive; only the first
+          // downgrade is an ending.
+          if (user.subscriptionTier === 'unlimited') recordSubscriptionEnded(user, subscription.status);
           user.subscriptionTier = 'free';
           user.subscriptionEndDate = new Date();
           user.trialEndsAt = null;
@@ -540,6 +564,7 @@ router.post('/webhook', async (req, res) => {
           logger.warn('Payment failed — downgrading to free', { userId: user._id.toString() });
           // Downgrade immediately so user doesn't retain unlimited access
           if (user.subscriptionTier === 'unlimited') {
+            recordSubscriptionEnded(user, 'payment_failed');
             user.subscriptionTier = 'free';
             user.subscriptionEndDate = new Date();
             await user.save();

@@ -48,8 +48,11 @@ jest.mock('../../utils/emailService', () => ({
   sendTrialEndingReminder: jest.fn().mockResolvedValue({ success: true })
 }));
 
+jest.mock('../../utils/conversionEvents', () => ({ recordConversionEvent: jest.fn() }));
+
 const express = require('express');
 const supertest = require('supertest');
+const { recordConversionEvent } = require('../../utils/conversionEvents');
 const User = require('../../models/user');
 const WebhookEvent = require('../../models/webhookEvent');
 const emailService = require('../../utils/emailService');
@@ -358,6 +361,65 @@ describe('customer.subscription.updated — trialing', () => {
 
     expect(user.subscriptionTier).toBe('unlimited');
     expect(user.trialEndsAt).toBeNull();
+  });
+});
+
+// The funnel had no row for the moment a card trial first charged, or for a
+// subscription ending — so "paid" and "churned" could only be guessed from
+// User fields that can't tell a trial from a payment.
+describe('subscription lifecycle → conversion events', () => {
+  function send(evt) {
+    constructEvent.mockReturnValue(evt);
+    return supertest(makeApp()).post('/api/billing/webhook').set('stripe-signature', 's').send({});
+  }
+  const eventsNamed = (name) => recordConversionEvent.mock.calls.filter(([n]) => n === name);
+
+  test('trialing → active records trial_converted', async () => {
+    User.findOne.mockResolvedValueOnce({ _id: 'u1', trialEndsAt: new Date(), save: jest.fn().mockResolvedValue() });
+    await send({
+      id: 'evt_tc', type: 'customer.subscription.updated',
+      data: { object: { id: 'sub_1', status: 'active' }, previous_attributes: { status: 'trialing' } },
+    });
+    expect(eventsNamed('trial_converted')).toEqual([['trial_converted', { userId: 'u1' }]]);
+  });
+
+  test('an active renewal (no prior trialing status) is not a conversion', async () => {
+    User.findOne.mockResolvedValueOnce({ _id: 'u1', save: jest.fn().mockResolvedValue() });
+    await send({
+      id: 'evt_rn', type: 'customer.subscription.updated',
+      data: { object: { id: 'sub_1', status: 'active' }, previous_attributes: { current_period_end: 1 } },
+    });
+    expect(eventsNamed('trial_converted')).toHaveLength(0);
+  });
+
+  test('deleting a subscription mid-trial records endedInTrial, read before the trial is cleared', async () => {
+    const user = {
+      _id: 'u1', subscriptionTier: 'unlimited',
+      trialEndsAt: new Date(Date.now() + 3 * 86400000), save: jest.fn().mockResolvedValue(),
+    };
+    User.findOne.mockResolvedValueOnce(user);
+    await send({ id: 'evt_del', type: 'customer.subscription.deleted', data: { object: { id: 'sub_1' } } });
+    expect(eventsNamed('subscription_ended')).toEqual([
+      ['subscription_ended', { userId: 'u1', context: { reason: 'deleted', endedInTrial: true } }],
+    ]);
+    expect(user.trialEndsAt).toBeNull();
+  });
+
+  test('a paying subscriber going past_due is a paid ending; a repeat downgrade is not recorded twice', async () => {
+    const user = { _id: 'u1', subscriptionTier: 'unlimited', trialEndsAt: null, save: jest.fn().mockResolvedValue() };
+    User.findOne.mockResolvedValue(user);
+    await send({ id: 'evt_pd', type: 'customer.subscription.updated', data: { object: { id: 'sub_1', status: 'past_due' } } });
+    await send({ id: 'evt_up', type: 'customer.subscription.updated', data: { object: { id: 'sub_1', status: 'unpaid' } } });
+    await send({ id: 'evt_dl', type: 'customer.subscription.deleted', data: { object: { id: 'sub_1' } } });
+    expect(eventsNamed('subscription_ended')).toEqual([
+      ['subscription_ended', { userId: 'u1', context: { reason: 'past_due', endedInTrial: false } }],
+    ]);
+  });
+
+  test('a failed payment that downgrades records payment_failed', async () => {
+    User.findOne.mockResolvedValueOnce({ _id: 'u1', subscriptionTier: 'unlimited', save: jest.fn().mockResolvedValue() });
+    await send({ id: 'evt_pf', type: 'invoice.payment_failed', data: { object: { customer: 'cus_1' } } });
+    expect(eventsNamed('subscription_ended')[0][1].context.reason).toBe('payment_failed');
   });
 });
 
