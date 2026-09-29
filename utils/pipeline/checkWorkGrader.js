@@ -361,18 +361,32 @@ async function gradeSheet({ images, studentText = '' } = {}, deps = {}) {
         mathpixRead(images, d),
     ]);
     if (!transcription) return null;
+    return gradeTranscription(transcription, { studentText, mathpix }, d);
+}
 
+/**
+ * Grade an already-transcribed sheet: code checks, blind judges, combine.
+ * Split out of gradeSheet so the eval harness (tests/eval/checkWork) can
+ * measure GRADING on gold transcriptions, separately from READING.
+ * @param {Array}  transcription  [{ label, problem, steps[], answer, legibility }]
+ * @param {object} [opts]         { studentText, mathpix: {text}|null, judgeModels }
+ * @param {object} [deps]         { callLLMStructured }
+ * @returns {Promise<Array>}      decided problems[]
+ */
+async function gradeTranscription(transcription, opts = {}, deps = {}) {
+    const d = { callLLMStructured: deps.callLLMStructured || callLLMStructured };
+    const judgeModels = Array.isArray(opts.judgeModels) ? opts.judgeModels : JUDGE_MODELS;
     const attempted = transcription.filter(p => p.legibility !== 'blank');
-    const trimmedText = String(studentText || '').slice(0, 500).trim();
-    const judgements = attempted.length
-        ? await Promise.all(JUDGE_MODELS.map(m => judge(m, attempted, trimmedText, d)))
+    const trimmedText = String(opts.studentText || '').slice(0, 500).trim();
+    const judgements = attempted.length && judgeModels.length
+        ? await Promise.all(judgeModels.map(m => judge(m, attempted, trimmedText, d)))
         : [];
 
     return transcription.map(p => decide(p, {
         solver: p.legibility === 'blank' ? { result: null, solverAnswer: null } : solverCheck(p),
         steps: p.legibility === 'blank' ? null : stepCheck(p),
         judges: judgements.map(m => (m ? m.get(labelKey(p.label)) || null : null)),
-        reading: confirmReading(p, mathpix),
+        reading: confirmReading(p, opts.mathpix || null),
     }));
 }
 
@@ -382,5 +396,6 @@ function safeOcrDetailed() {
 
 module.exports = {
     gradeSheet,
+    gradeTranscription,
     _internal: { labelKey, transcribe, confirmReading, solverCheck, stepCheck, decide, squashMath, JUDGE_MODELS, READ_PROMPT, JUDGE_PROMPT },
 };

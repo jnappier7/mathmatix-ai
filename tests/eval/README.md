@@ -131,3 +131,30 @@ Deterministic layers run in `personaEval.test.js` (keyless CI); live judges in
 `livePersonaEval.test.js` (`RUN_LLM_EVAL=1`). Calibration findings that
 represent *current bugs* are documented in `personas.json` `_knownIssues` and
 deliberately NOT pinned — fix the bug, then tighten the persona.
+
+## Check-work grading eval (`checkWork/`)
+
+Measures the "Check my work" photo grader (`utils/pipeline/checkWorkGrader.js`)
+against a hand-labeled corpus: 8 sheets / 58 problems (`checkWork/corpus.json`)
+of correct work (including the false-positive traps: negative results,
+equivalent forms, two roots, skipped steps), deliberate errors with the exact
+wrong line recorded, and blanks.
+
+The headline number is the **false accusation rate**: correct work called
+wrong. It gates; everything else (errors caught, located at the right line,
+waved through, coverage, answers read right, per-tag) is reported.
+
+| Tier | Command | Keys | Measures |
+|------|---------|------|----------|
+| Hermetic (`checkWork/checkWorkEval.test.js`) | `npm run test:eval` | none | corpus integrity (code never contradicts a gold label); code-only grading; that two hostile judges can only mislead on problems the solver can't check; real-sheet format + consent |
+| Live (`liveCheckWorkEval.test.js`) | `npm run test:eval:checkwork` | OpenAI (+ optional Anthropic, Mathpix) | **A.** real judges + code on gold transcriptions (grading alone); **B.** full read-then-grade on rendered sheet images + every real sheet (adds read accuracy) |
+
+Live runs write `checkWork/reports/latest.json` (gitignored) and the rendered
+images to `checkWork/.rendered/` so you can look at what the model saw.
+`CHECK_WORK_EVAL_MAX_FALSE_ACCUSATION` loosens the gate (default `0`). A run
+where no judge or no read ever answered fails as **INFRA**, never as a score.
+
+Rendered sheets are cleaner than real handwriting — they measure the floor.
+Real sheets are how the number becomes real: see `checkWork/sheets/README.md`
+for the format and the privacy rules (teacher-written samples or consented,
+anonymized student work only — never production uploads).

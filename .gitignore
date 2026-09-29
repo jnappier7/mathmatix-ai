@@ -48,3 +48,7 @@ __pycache__/
 # Raw video source material — never ship (masters live locally / in cloud storage)
 video-masters/
 public/videos/*.mov
+
+# check-work eval outputs (tests/eval/checkWork)
+tests/eval/checkWork/reports/
+tests/eval/checkWork/.rendered/
