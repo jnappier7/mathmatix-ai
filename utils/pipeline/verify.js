@@ -158,6 +158,35 @@ async function socraticRegenerate(originalText, context, reason) {
   }
 }
 
+// What ships when a reply solved the student's problem and no clean rewrite
+// is available (the rewrite failed, or it solved the problem again). Plain on
+// purpose: it has to be safe to show in any persona and any phase.
+const GIVEAWAY_FALLBACK_TEXT =
+  "Let's work through this one together instead of me just handing you the answer. What do you think the first step should be?";
+
+// Push a rewritten reply over the one already streamed to the client.
+function sendReplacement(context, text) {
+  if (!context.isStreaming || !context.res) return;
+  try {
+    context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+  } catch { /* client disconnected */ }
+}
+
+/**
+ * Does this reply hand over a complete solution? Shared by the giveaway
+ * guards so an LLM rewrite is held to the same test as the reply it replaces.
+ * Form-based only: announcement phrases ("x=7 or x=-7", "so the solutions
+ * are", "this gives us x="), a trailing bare assignment ("x = 9" ending a
+ * line), or a structurally worked solution.
+ */
+function handsOverSolution(text) {
+  if (!text) return false;
+  const trailingAssignment = /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m;
+  return detectAnswerAnnouncement(text).detected ||
+    trailingAssignment.test(text) ||
+    detectWorkedSolution(text).isWorkedSolution;
+}
+
 /**
  * Rewrite a sheet-wide check-work reply that named the corrected value for a
  * problem the student got wrong. Unlike socraticRegenerate this keeps the
@@ -650,21 +679,9 @@ async function verify(responseText, context = {}) {
   if (isStudentPosed &&
       !context.hasRecentUpload &&
       !context.isWorksheetFollowUp) {
-    // Shared detector handles multi-root announcements ("x=7 or x=-7"),
-    // pluralized conclusions ("so the solutions are..."), transitional
-    // reveals ("this gives us x="), and the original explicit-answer set.
     const announcement = detectAnswerAnnouncement(text);
-    // Legacy trailing-assignment check — a line ending in "x = 9" on its own
-    // is still a conclusion even when no announcement phrase precedes it.
-    const trailingAssignment = /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m;
-    // Full worked solution with multiple structural signals (steps, summary,
-    // labeled key points) — even without an explicit "answer is" phrase the
-    // tutor has handed over the work.
     const worked = detectWorkedSolution(text);
-    const hasCompleteSolution =
-      announcement.detected ||
-      trailingAssignment.test(text) ||
-      worked.isWorkedSolution;
+    const hasCompleteSolution = handsOverSolution(text);
 
     // A trailing question ("Does that make sense?") does NOT excuse dumping the answer.
     // The guard fires whenever the AI reveals a complete solution to a student-posed problem.
@@ -687,22 +704,27 @@ async function verify(responseText, context = {}) {
           { temperature: 0.55, max_tokens: 800 }
         );
         const redirectedText = redirect.choices[0]?.message?.content?.trim();
-        if (redirectedText && redirectedText.length > 10) {
+        // The rewrite is an LLM too — hold it to the same test. A rewriter
+        // that echoes the solution back used to ship it unchecked, and an
+        // empty rewrite shipped the original.
+        if (!redirectedText || redirectedText.length <= 10) {
+          text = GIVEAWAY_FALLBACK_TEXT;
+          flags.push('answer_giveaway_redirect_fallback');
+        } else if (handsOverSolution(redirectedText)) {
+          text = GIVEAWAY_FALLBACK_TEXT;
+          flags.push('answer_giveaway_redirect_still_leaked');
+        } else {
           text = redirectedText;
           flags.push(isIDoPhase ? 'answer_giveaway_parallel_redirected' : 'answer_giveaway_redirected');
-
-          if (context.isStreaming && context.res) {
-            try {
-              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
-            } catch (e) { /* client disconnected */ }
-          }
         }
       } catch (err) {
         console.error('[Verify] Answer giveaway redirect failed:', err.message);
-        // Fallback: append a Socratic question to soften the damage
-        text += '\n\nWhat do you think the first step should be?';
+        // Fallback: replace, never append. Appending a question to the
+        // solution still handed the student the solution.
+        text = GIVEAWAY_FALLBACK_TEXT;
         flags.push('answer_giveaway_redirect_fallback');
       }
+      sendReplacement(context, text);
     }
   }
 
@@ -804,18 +826,20 @@ async function verify(responseText, context = {}) {
         context,
         'named the correct answer or solved the problem for the student after they got it wrong'
       );
-      if (rewritten) {
+      // Every outcome replaces the leak: the rewrite if it is clean, the
+      // fallback if the rewrite failed or named the answer again.
+      if (!rewritten) {
+        text = GIVEAWAY_FALLBACK_TEXT;
+        flags.push('answer_leak_on_tutor_posed_regeneration_failed');
+      } else if (handsOverSolution(rewritten)) {
+        text = GIVEAWAY_FALLBACK_TEXT;
+        flags.push('answer_leak_on_tutor_posed_regeneration_still_leaked');
+      } else {
         text = rewritten;
         flags.push('answer_leak_on_tutor_posed_regenerated');
-        regeneratedThisPass = true;
-        if (context.isStreaming && context.res) {
-          try {
-            context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
-          } catch (e) { /* client disconnected */ }
-        }
-      } else {
-        flags.push('answer_leak_on_tutor_posed_regeneration_failed');
       }
+      regeneratedThisPass = true;
+      sendReplacement(context, text);
     }
   }
 

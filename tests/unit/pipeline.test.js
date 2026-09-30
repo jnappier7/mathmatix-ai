@@ -1589,7 +1589,7 @@ describe('Pipeline: Verify Stage — Answer-leak guard on tutor-posed problems',
     expect(callLLM).not.toHaveBeenCalled();
   });
 
-  test('regen failure → leaves leak flag but does not crash', async () => {
+  test('regen failure → does not crash, and does not ship the leak', async () => {
     callLLM.mockRejectedValueOnce(new Error('LLM unavailable'));
     const result = await verify(leakedAnswer, {
       userId: 'u1',
@@ -1599,5 +1599,18 @@ describe('Pipeline: Verify Stage — Answer-leak guard on tutor-posed problems',
     expect(result.flags).toContain('answer_leak_on_tutor_posed_detected');
     expect(result.flags).toContain('answer_leak_on_tutor_posed_regeneration_failed');
     expect(result.flags).not.toContain('answer_leak_on_tutor_posed_regenerated');
+    expect(result.text).not.toBe(leakedAnswer);
+    expect(result.text).not.toMatch(/x-coordinate of the vertex is 2/i);
+  });
+
+  test('regen that leaks again → replaced, not shipped', async () => {
+    callLLM.mockResolvedValueOnce({ choices: [{ message: { content: leakedAnswer } }] });
+    const result = await verify(leakedAnswer, {
+      userId: 'u1',
+      action: ACTIONS.GUIDE_INCORRECT,
+      messageType: MESSAGE_TYPES.ANSWER_ATTEMPT,
+    });
+    expect(result.flags).toContain('answer_leak_on_tutor_posed_regeneration_still_leaked');
+    expect(result.text).not.toMatch(/x-coordinate of the vertex is 2/i);
   });
 });

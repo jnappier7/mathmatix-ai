@@ -120,6 +120,7 @@ function detectPromptInjection(message) {
 
   // Normalize the message for detection (but don't modify the original)
   const normalizedMessage = message
+    .normalize('NFKC') // Fold fullwidth/compatibility forms ("\uFF29\uFF47\uFF4E\uFF4F\uFF52\uFF45" \u2192 "Ignore")
     .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width characters
     .replace(/\s+/g, ' ') // Normalize whitespace
     .trim();

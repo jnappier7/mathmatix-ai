@@ -22,6 +22,9 @@ const { verify: pipelineVerify } = require('../utils/pipeline');
 const { generateSystemPrompt } = require('../utils/prompt');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
+// "1-2 questions MAX" (above), enforced server-side rather than left to the model.
+const MAX_RAPPORT_EXCHANGES = 2;
+
 /**
  * POST /api/rapport/respond
  * Handle user responses during rapport building phase
@@ -104,7 +107,7 @@ router.post('/respond', isAuthenticated, async (req, res) => {
         // Extract information from user's response and generate next message
         const systemPrompt = generateSystemPrompt(user, tutorNameForPrompt, null, 'student');
 
-        const extractionPrompt = `Brief intro chat with ${user.firstName} (Grade: ${user.grade || 'unknown'}). Exchange count: ${rapportMessageCount}. Context: ${temporalContext}.
+        const extractionPrompt = `Brief intro chat with ${user.firstName} (Grade: ${user.gradeLevel || 'unknown'}). Exchange count: ${rapportMessageCount}. Context: ${temporalContext}.
 
 Current info: ${JSON.stringify(user.learningProfile.rapportAnswers, null, 2)}
 Their message: "${message}"
@@ -157,6 +160,21 @@ RESPOND IN JSON:
         }).catch(err => console.error('[Rapport] AI time tracking error:', err));
 
         const result = JSON.parse(completion.choices[0].message.content.trim());
+
+        // The prompt asks the model to wrap up by the 2nd message, but only
+        // the server can guarantee it: every message sent before this flag
+        // flips comes here instead of to the tutor, so a model that keeps
+        // saying "not yet" traps a student who is asking real math questions
+        // in small talk.
+        if (rapportMessageCount >= MAX_RAPPORT_EXCHANGES) {
+            result.rapportComplete = true;
+        }
+        // A reply without nextMessage used to render as nothing at all.
+        if (typeof result.nextMessage !== 'string' || !result.nextMessage.trim()) {
+            result.nextMessage = result.rapportComplete
+                ? "Cool — let's jump into some math!"
+                : 'Nice to meet you! What are you working on in math right now?';
+        }
 
         // Update user's rapport answers
         user.learningProfile.rapportAnswers = {
