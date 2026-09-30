@@ -64,7 +64,7 @@ module.exports = {
   // Floors sit a few points below measured coverage to absorb cross-Node-version
   // branch-counting drift. Tighten as coverage improves.
   coverageThreshold: {
-    './utils/mathSolver.js': { statements: 78, branches: 68, functions: 88, lines: 81 },
+    './utils/mathSolver.js': { statements: 82, branches: 73, functions: 91, lines: 85 },
     './utils/irt.js': { statements: 90, branches: 82, functions: 95, lines: 90 },
     './utils/knowledgeTracer.js': { statements: 83, branches: 78, functions: 95, lines: 83 },
     // Measured 100/95.58/100/100 after the cross-provider state tests (up from

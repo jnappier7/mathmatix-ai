@@ -21,6 +21,7 @@
    only ever ADDS confident verdicts, never manufactures one.
    ============================================================ */
 const math = require('mathjs');
+const { isWrappedOperand } = require('../wrappedOperand');
 
 const CONSTS = /^(pi|e|i|Infinity|NaN|true|false|PI|E)$/;
 
@@ -275,6 +276,17 @@ function detectPosedArithmetic(text, { allowTrailingVariable = false } = {}) {
   // new RegExp is how this threw "Nothing to repeat" on "50 * 3".
   const at = s.lastIndexOf(raw);
   if (at !== -1 && /^\s*=\s*-?\d/.test(s.slice(at + raw.length))) return null;
+
+  // The OPERAND of a wrapper is not what was posed. "What is the absolute value
+  // of \(3 - 10\)?" poses |3 - 10| = 7; this scan sees "3 - 10" and would grade
+  // the student's correct 7 against -7 — the exact false negative that
+  // mathSolver.parseCleanProblem now refuses upstream (2026-09-30 warm-up
+  // incident). This tier runs whenever that scan produced no target, so it has
+  // to refuse the same shape or it re-creates the verdict the guard removed.
+  // Returning null leaves the turn to the LLM verifier, which reads the wording.
+  // Judged on the original text: `s` has already had its \( \) turned to spaces,
+  // but the wrapper words and pipes survive either way.
+  if (isWrappedOperand(raw, text)) return null;
 
   return expr;
 }

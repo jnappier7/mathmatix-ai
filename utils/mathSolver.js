@@ -12,6 +12,7 @@
 
 const { normalizeMathOperators, normalizeMathUnicode, normalizeSpokenNumbers } = require('./mathUnicodeNormalizer');
 const { evalExpression, expressionValue } = require('./rationalEvaluator');
+const { isWrappedOperand } = require('./wrappedOperand');
 
 /**
  * Isolate the first clean, contiguous numeric arithmetic expression embedded in a
@@ -125,14 +126,16 @@ function detectMathProblem(message) {
     if (nlAddMatch) {
         return { type: 'arithmetic', left: parseFloat(nlAddMatch[1]), operator: '+', right: parseFloat(nlAddMatch[2]) };
     }
-    const plusPattern = /(\d+\.?\d*)\s+plus\s+(\d+\.?\d*)/i;
+    // The left operand keeps its sign: "-7 minus 3" is -10, not 7 - 3 = 4. The
+    // lookbehind stops "10-7 plus 3" from reading "-7" as a signed number.
+    const plusPattern = /(?<![\d.])(-?\d+\.?\d*)\s+plus\s+(-?\d+\.?\d*)/i;
     const plusMatch = message.match(plusPattern);
     if (plusMatch) {
         return { type: 'arithmetic', left: parseFloat(plusMatch[1]), operator: '+', right: parseFloat(plusMatch[2]) };
     }
 
     // Pattern: Natural-language subtraction "subtract X from Y" or "X minus Y"
-    const minusPattern = /(\d+\.?\d*)\s+minus\s+(\d+\.?\d*)/i;
+    const minusPattern = /(?<![\d.])(-?\d+\.?\d*)\s+minus\s+(-?\d+\.?\d*)/i;
     const minusMatch = message.match(minusPattern);
     if (minusMatch) {
         return { type: 'arithmetic', left: parseFloat(minusMatch[1]), operator: '-', right: parseFloat(minusMatch[2]) };
@@ -204,6 +207,25 @@ function detectMathProblem(message) {
             }
         }
     }
+
+    // Pattern: Absolute value of a NUMERIC expression — "|3 - 10|", "\left|3-10\right|",
+    // "the absolute value of \(3 - 10\)", "absolute value of -7", "abs(3-10)".
+    //
+    // Production, 2026-09-30 (Absolute Value warm-up): the tutor asked "What is the
+    // absolute value of \(3 - 10\)?". No pattern knew the wrapper, so the "what is"
+    // catch-all below isolated the bare operand 3 - 10 and persisted
+    // correctAnswer = -7. The student's correct 7 was graded wrong on two
+    // consecutive turns ("I see where you're coming from, but…") while the tutor
+    // walked them through 3 - 10 = -7 and then rejected |-7| = 7 again. Must run
+    // BEFORE the arithmetic and "what is" patterns, which would claim the operand.
+    //
+    // Only an explicitly GROUPED operand is solved here: pipes, \left|…\right|,
+    // a \(…\) or (…) group after the words, abs(…), or a single signed number.
+    // Ungrouped prose ("absolute value of 3 - 10") is ambiguous (|3| - 10?) and is
+    // deliberately left unparsed — _isWrappedOperand keeps the catch-all off it,
+    // so the LLM verifier grades it with the wording in view.
+    const absDetected = detectAbsoluteValueExpression(message);
+    if (absDetected) return absDetected;
 
     // Pattern: Slope between two points
     // "slope through (1,2) and (3,6)", "find the slope of the line through (-1,3) and (2,-4)"
@@ -731,6 +753,8 @@ function solveProblem(problem) {
                 return solveMidpoint(problem);
             case 'absolute_value_equation':
                 return solveAbsoluteValue(problem);
+            case 'absolute_value':
+                return solveAbsoluteValueExpression(problem);
             case 'statistics':
                 return solveStatistics(problem);
             case 'probability':
@@ -1989,6 +2013,58 @@ function solveMidpoint(problem) {
             `midpoint = (${formatNumber(mx)}, ${formatNumber(my)})`,
         ],
     };
+}
+
+// A pure-numeric operand: digits, operators, parens, an optional leading sign,
+// ending on a digit so a trailing "." or ")" of prose is never swept in.
+const ABS_NUMERIC_OPERAND = '(-?[\\d\\s.+\\-*/^()]*\\d)';
+const ABS_PIPE_RX = new RegExp('\\|\\s*' + ABS_NUMERIC_OPERAND + '\\s*\\|');
+// "absolute value of \(3 - 10\)", "abs(3-10)", "absolute value (3 - 10)"
+const ABS_GROUP_RX = new RegExp(
+    '\\babs(?:olute)?\\s*(?:value)?\\s*(?:of)?\\s*(?:\\\\\\(|\\()\\s*' + ABS_NUMERIC_OPERAND + '\\s*(?:\\\\\\)|\\))',
+    'i'
+);
+// "absolute value of -7" — a single signed number, and nothing arithmetic after it
+// ("absolute value of -7 minus 3" is |-7| - 3 or |-7 - 3|; neither is guessed).
+const ABS_NUMBER_RX = /\babsolute\s+value\s+of\s+(-?\d+(?:\.\d+)?)(?!\s*(?:[\d.+\-*/^(]|plus|minus|times|divided|multiplied))/i;
+
+/**
+ * Detect the absolute value of a numeric expression. See the call site in
+ * detectMathProblem for the production incident this exists for.
+ * @param {string} message - operator-normalized text
+ * @returns {Object|null} { type: 'absolute_value', expression: '|3 - 10|', operand: '3 - 10' }
+ */
+function detectAbsoluteValueExpression(message) {
+    if (!message) return null;
+    const src = String(message)
+        .replace(/\\(?:left|right)\s*\|/g, '|')
+        .replace(/\\[lr]?vert\b/g, '|');
+    for (const rx of [ABS_PIPE_RX, ABS_GROUP_RX, ABS_NUMBER_RX]) {
+        const m = src.match(rx);
+        if (!m) continue;
+        const operand = m[1].replace(/\s+/g, ' ').trim();
+        // Bare pipes around a plain positive number ("| 3 |") are a markdown
+        // table cell as often as a problem — require a sign or an operator there.
+        if (rx === ABS_PIPE_RX && !/[-+*/^]/.test(operand)) continue;
+        if (evalExpression(operand) === null) continue; // exact engine rejects → defer, never guess
+        return { type: 'absolute_value', expression: `|${operand}|`, operand };
+    }
+    return null;
+}
+
+/**
+ * Solve |numeric expression| — evaluate the operand exactly, then drop the sign.
+ */
+function solveAbsoluteValueExpression(problem) {
+    const { operand, expression } = problem;
+    const r = evalExpression(operand);
+    if (!r) return { success: false, error: 'Could not evaluate expression' };
+    const inner = String(r.answer);
+    const answer = inner.replace(/^-/, '');
+    const steps = inner === operand.replace(/\s+/g, '')
+        ? [`${expression} = ${answer}`]
+        : [`${operand} = ${inner}`, `|${inner}| = ${answer}`];
+    return { success: true, answer, steps };
 }
 
 /**
@@ -3933,13 +4009,31 @@ function _isWorkFragment(problem, text) {
     return expr ? isEquationSideFragment(expr, text) : false;
 }
 
+// ── Wrapped-operand demotion ──
+// The guard itself lives in utils/wrappedOperand.js (shared with the symbolic
+// verifier's posed-arithmetic tier — both must refuse the same shape). Here it
+// keeps the parse paths below from certifying "3 - 10" as the problem when the
+// text says "the absolute value of 3 - 10" (2026-09-30 warm-up incident).
+
+function _isWrappedOperand(problem, text) {
+    if (!problem) return false;
+    let expr = null;
+    if (problem.type === 'evaluation') {
+        expr = problem.expression;
+    } else if (problem.type === 'arithmetic' && problem.left !== undefined && problem.operator) {
+        expr = `${problem.left} ${problem.operator} ${problem.right}`;
+    }
+    return expr ? isWrappedOperand(expr, text) : false;
+}
+
 function parseCleanProblem(text) {
     if (!text || typeof text !== 'string') return { hasMath: false };
 
     const direct = processMathMessage(text);
     if (direct.hasMath && direct.solution?.success
         && _isTrustedProblem(direct.problem, text)
-        && !_isWorkFragment(direct.problem, text)) {
+        && !_isWorkFragment(direct.problem, text)
+        && !_isWrappedOperand(direct.problem, text)) {
         return direct;
     }
 
@@ -3960,6 +4054,7 @@ function parseCleanProblem(text) {
         // a fragment with a word's last letter ("that 11 - 7 = 4"), and only
         // the whole message shows the algebra that makes it a step.
         if (_isWorkFragment(result.problem, text)) continue;
+        if (_isWrappedOperand(result.problem, text)) continue;
         return result;
     }
 
@@ -3975,6 +4070,9 @@ module.exports = {
     parseCleanProblem,
     isEquationSideFragment,
     hasVariableEquation,
+    isWrappedOperand,
+    detectAbsoluteValueExpression,
+    solveAbsoluteValueExpression,
     // Export individual solvers for testing
     solveArithmetic,
     solveLinearEquation,
