@@ -120,10 +120,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (teenConsentMessage) teenConsentMessage.textContent = '';
         try {
+            // The DOB isn't saved until the form submits, and the form won't
+            // submit a 13-17 without consent — so it travels with the
+            // agreement. The server only stores it when none is on file.
             const res = await csrfFetch('/api/consent/grant/self', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({})
+                body: JSON.stringify({ dateOfBirth: dobInput ? dobInput.value : undefined })
             });
             const data = await res.json();
             if (res.ok && data.success) {
@@ -385,9 +388,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return;
                 }
 
-                // AI provider terms: 13-17 requires parental consent (email or invite code)
+                // AI provider terms: 13-17 needs an agreement on file — their own
+                // ("I agree"), or a parent's (email or invite code)
                 if (age >= 13 && age < 18 && !currentUser.hasParentalConsent) {
-                    alert('Students under 18 need a parent or guardian\'s permission. Please provide your parent\'s email or invite code above.');
+                    alert('Before you continue, tap "I agree — continue" above, or add a parent or guardian\'s email or invite code.');
                     if (teenConsentSection) teenConsentSection.style.display = 'block';
                     if (teenParentEmailInput) teenParentEmailInput.focus();
                     return;
