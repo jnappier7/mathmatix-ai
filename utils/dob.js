@@ -35,6 +35,14 @@ function parseDateOfBirth(input) {
  */
 function applyDobToUser(user, input) {
     if (user.dateOfBirth) {
+        // Re-sending the date already on file is not a change. complete-profile
+        // pre-fills the stored DOB and submits it back, and the teen
+        // self-consent step saves it before the form submits — refusing the
+        // same date there blocked every student from finishing their profile.
+        const parsed = parseDateOfBirth(input);
+        if (!parsed.error && sameCalendarDay(parsed.date, user.dateOfBirth)) {
+            return { ok: true, changed: false };
+        }
         return {
             ok: false,
             status: 400,
@@ -47,6 +55,13 @@ function applyDobToUser(user, input) {
     }
     user.dateOfBirth = parsed.date;
     return { ok: true, changed: true };
+}
+
+function sameCalendarDay(a, b) {
+    const d1 = new Date(a);
+    const d2 = new Date(b);
+    return !Number.isNaN(d1.getTime()) && !Number.isNaN(d2.getTime()) &&
+        d1.toISOString().slice(0, 10) === d2.toISOString().slice(0, 10);
 }
 
 module.exports = { parseDateOfBirth, applyDobToUser };
