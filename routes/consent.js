@@ -35,6 +35,7 @@ const {
     grantBatchSchoolConsent
 } = require('../utils/consentManager');
 const User = require('../models/user');
+const { applyDobToUser } = require('../utils/dob');
 const EnrollmentCode = require('../models/enrollmentCode');
 const logger = require('../utils/logger');
 const { sendTeenConsentRequest } = require('../utils/emailService');
@@ -205,6 +206,23 @@ router.post('/grant/self', isAuthenticated, async (req, res) => {
             return res.status(403).json({ success: false, message: 'Self-consent is only available for students' });
         }
 
+        // complete-profile.html shows "I agree" beside the DOB field, but the
+        // DOB is only saved when the form is submitted — and the form refuses
+        // to submit a 13-17 until consent exists. Without accepting the DOB
+        // here, every self-signup teen who lands on that page is stuck. Same
+        // write-once rule as every other DOB writer (utils/dob.js): a stored
+        // DOB is never replaced, so this can't be used to age up.
+        if (req.body?.dateOfBirth) {
+            const student = await User.findById(studentId);
+            if (student && !student.dateOfBirth) {
+                const applied = applyDobToUser(student, req.body.dateOfBirth);
+                if (!applied.ok) {
+                    return res.status(applied.status).json({ success: false, message: applied.message });
+                }
+                await student.save();
+            }
+        }
+
         const result = await grantSelfConsent(studentId, {
             ipAddress: req.ip,
             userAgent: req.get('User-Agent')
@@ -213,7 +231,9 @@ router.post('/grant/self', isAuthenticated, async (req, res) => {
         res.json({ success: true, message: 'Consent granted successfully', consent: result });
     } catch (error) {
         logger.error('[Consent] Self-consent grant failed', { error: error.message });
-        const status = error.message.includes('13 or older') ? 403 : 500;
+        const status = error.message.includes('13 or older') ? 403
+            : error.message.includes('Date of birth required') ? 400
+            : 500;
         res.status(status).json({ success: false, message: error.message });
     }
 });
