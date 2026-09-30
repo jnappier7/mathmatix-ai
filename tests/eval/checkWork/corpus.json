@@ -1,0 +1,815 @@
+{
+  "_about": "Hand-labeled check-work corpus. Each sheet is what a student hands in; each problem carries the GOLD verdict and, for errors, the exact line the mistake is on. Used by tests/eval/checkWork (hermetic: code stages; live: judges on gold transcripts, and the full read-then-grade on rendered sheet images). Labels were written by hand and cross-checked by the corpus-integrity test.",
+  "sheets": [
+    {
+      "id": "S1-one-step-equations",
+      "title": "One- and two-step equations",
+      "problems": [
+        {
+          "label": "1",
+          "problem": "3x + 5 = 20",
+          "steps": [
+            "3x = 15",
+            "x = 5"
+          ],
+          "answer": "x = 5",
+          "gold": "correct",
+          "tags": [
+            "linear"
+          ]
+        },
+        {
+          "label": "2",
+          "problem": "2x + 4 = 18",
+          "steps": [
+            "2x = 12",
+            "x = 6"
+          ],
+          "answer": "x = 6",
+          "gold": "has_error",
+          "errorLine": "2x = 12",
+          "tags": [
+            "linear",
+            "arithmetic-slip"
+          ]
+        },
+        {
+          "label": "3",
+          "problem": "-3x = 12",
+          "steps": [
+            "x = -4"
+          ],
+          "answer": "x = -4",
+          "gold": "correct",
+          "tags": [
+            "linear",
+            "negative"
+          ]
+        },
+        {
+          "label": "4",
+          "problem": "-3x = 12",
+          "steps": [
+            "x = 4"
+          ],
+          "answer": "x = 4",
+          "gold": "has_error",
+          "errorLine": "x = 4",
+          "tags": [
+            "linear",
+            "sign-error"
+          ]
+        },
+        {
+          "label": "5",
+          "problem": "x/4 = 3",
+          "steps": [
+            "x = 12"
+          ],
+          "answer": "x = 12",
+          "gold": "correct",
+          "tags": [
+            "linear"
+          ]
+        },
+        {
+          "label": "6",
+          "problem": "x/4 = 3",
+          "steps": [
+            "x = 3/4"
+          ],
+          "answer": "x = 3/4",
+          "gold": "has_error",
+          "errorLine": "x = 3/4",
+          "tags": [
+            "linear",
+            "inverse-operation"
+          ]
+        },
+        {
+          "label": "7",
+          "problem": "4x + 1 = 21",
+          "steps": [],
+          "answer": "x = 5",
+          "gold": "correct",
+          "tags": [
+            "linear",
+            "skipped-steps"
+          ],
+          "note": "No work shown — a skipped step is not a mistake."
+        }
+      ]
+    },
+    {
+      "id": "S2-multi-step",
+      "title": "Multi-step equations",
+      "problems": [
+        {
+          "label": "1",
+          "problem": "2(x - 3) = 10",
+          "steps": [
+            "2x - 6 = 10",
+            "2x = 16",
+            "x = 8"
+          ],
+          "answer": "x = 8",
+          "gold": "correct",
+          "tags": [
+            "linear",
+            "distribution"
+          ]
+        },
+        {
+          "label": "2",
+          "problem": "2(x - 3) = 10",
+          "steps": [
+            "2x - 3 = 10",
+            "2x = 13",
+            "x = 6.5"
+          ],
+          "answer": "x = 6.5",
+          "gold": "has_error",
+          "errorLine": "2x - 3 = 10",
+          "tags": [
+            "linear",
+            "distribution"
+          ]
+        },
+        {
+          "label": "3",
+          "problem": "5x - 7 = 2x + 8",
+          "steps": [
+            "3x - 7 = 8",
+            "3x = 15",
+            "x = 5"
+          ],
+          "answer": "x = 5",
+          "gold": "correct",
+          "tags": [
+            "linear",
+            "variables-both-sides"
+          ]
+        },
+        {
+          "label": "4",
+          "problem": "5x - 7 = 2x + 8",
+          "steps": [
+            "7x - 7 = 8",
+            "7x = 15",
+            "x = 15/7"
+          ],
+          "answer": "x = 15/7",
+          "gold": "has_error",
+          "errorLine": "7x - 7 = 8",
+          "tags": [
+            "linear",
+            "variables-both-sides",
+            "inverse-operation"
+          ]
+        },
+        {
+          "label": "5",
+          "problem": "-2(x - 5) = 4",
+          "steps": [
+            "-2x + 10 = 4",
+            "-2x = -6",
+            "x = 3"
+          ],
+          "answer": "x = 3",
+          "gold": "correct",
+          "tags": [
+            "linear",
+            "distribution",
+            "negative"
+          ]
+        },
+        {
+          "label": "6",
+          "problem": "-2(x - 5) = 4",
+          "steps": [
+            "-2x - 10 = 4",
+            "-2x = 14",
+            "x = -7"
+          ],
+          "answer": "x = -7",
+          "gold": "has_error",
+          "errorLine": "-2x - 10 = 4",
+          "tags": [
+            "linear",
+            "distribution",
+            "sign-error"
+          ]
+        },
+        {
+          "label": "7",
+          "problem": "3(x - 1) - 2 = 7",
+          "steps": [
+            "3x - 3 - 2 = 7",
+            "3x - 5 = 7",
+            "3x = 12",
+            "x = 4"
+          ],
+          "answer": "x = 4",
+          "gold": "correct",
+          "tags": [
+            "linear",
+            "distribution"
+          ]
+        },
+        {
+          "label": "8",
+          "problem": "3(x - 1) - 2 = 7",
+          "steps": [
+            "3x - 1 - 2 = 7",
+            "3x - 3 = 7",
+            "3x = 10",
+            "x = 10/3"
+          ],
+          "answer": "x = 10/3",
+          "gold": "has_error",
+          "errorLine": "3x - 1 - 2 = 7",
+          "tags": [
+            "linear",
+            "distribution"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S3-arithmetic",
+      "title": "Integer and decimal arithmetic",
+      "problems": [
+        {
+          "label": "1",
+          "problem": "4 - 5",
+          "steps": [],
+          "answer": "-1",
+          "gold": "correct",
+          "tags": [
+            "arithmetic",
+            "negative"
+          ],
+          "note": "The classic false-positive trap: a correct negative result."
+        },
+        {
+          "label": "2",
+          "problem": "6 - 9",
+          "steps": [],
+          "answer": "-3",
+          "gold": "correct",
+          "tags": [
+            "arithmetic",
+            "negative"
+          ]
+        },
+        {
+          "label": "3",
+          "problem": "15.5 - 6",
+          "steps": [],
+          "answer": "9.5",
+          "gold": "correct",
+          "tags": [
+            "arithmetic",
+            "decimal"
+          ]
+        },
+        {
+          "label": "4",
+          "problem": "15.5 - 6",
+          "steps": [
+            "15.5 - 6 = 8.5"
+          ],
+          "answer": "8.5",
+          "gold": "has_error",
+          "errorLine": "15.5 - 6 = 8.5",
+          "tags": [
+            "arithmetic",
+            "decimal"
+          ]
+        },
+        {
+          "label": "5",
+          "problem": "7 - 2(3)",
+          "steps": [
+            "7 - 6 = 1"
+          ],
+          "answer": "1",
+          "gold": "correct",
+          "tags": [
+            "arithmetic",
+            "order-of-operations"
+          ]
+        },
+        {
+          "label": "6",
+          "problem": "7 - 2(3)",
+          "steps": [
+            "7 - 2(3) = 5(3)",
+            "5(3) = 15"
+          ],
+          "answer": "15",
+          "gold": "has_error",
+          "errorLine": "7 - 2(3) = 5(3)",
+          "tags": [
+            "arithmetic",
+            "order-of-operations"
+          ]
+        },
+        {
+          "label": "7",
+          "problem": "12 / 4 * 3",
+          "steps": [],
+          "answer": "9",
+          "gold": "correct",
+          "tags": [
+            "arithmetic",
+            "order-of-operations"
+          ]
+        },
+        {
+          "label": "8",
+          "problem": "12 / 4 * 3",
+          "steps": [
+            "12 / 4 * 3 = 12 / 12",
+            "12 / 12 = 1"
+          ],
+          "answer": "1",
+          "gold": "has_error",
+          "errorLine": "12 / 4 * 3 = 12 / 12",
+          "tags": [
+            "arithmetic",
+            "order-of-operations"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S4-fractions",
+      "title": "Fractions",
+      "problems": [
+        {
+          "label": "1",
+          "problem": "3/4 + 1/2",
+          "steps": [
+            "3/4 + 2/4 = 5/4"
+          ],
+          "answer": "5/4",
+          "gold": "correct",
+          "tags": [
+            "fraction"
+          ]
+        },
+        {
+          "label": "2",
+          "problem": "3/4 + 1/2",
+          "steps": [],
+          "answer": "1 1/4",
+          "gold": "correct",
+          "tags": [
+            "fraction",
+            "equivalent-form"
+          ],
+          "note": "Mixed number for 5/4 is an equivalent form."
+        },
+        {
+          "label": "3",
+          "problem": "3/4 + 1/2",
+          "steps": [
+            "3/4 + 1/2 = 4/6"
+          ],
+          "answer": "4/6",
+          "gold": "has_error",
+          "errorLine": "3/4 + 1/2 = 4/6",
+          "tags": [
+            "fraction",
+            "add-across"
+          ]
+        },
+        {
+          "label": "4",
+          "problem": "1/2 + 1/3",
+          "steps": [
+            "3/6 + 2/6 = 5/6"
+          ],
+          "answer": "5/6",
+          "gold": "correct",
+          "tags": [
+            "fraction"
+          ]
+        },
+        {
+          "label": "5",
+          "problem": "1/2 + 1/3",
+          "steps": [
+            "1/2 + 1/3 = 2/5"
+          ],
+          "answer": "2/5",
+          "gold": "has_error",
+          "errorLine": "1/2 + 1/3 = 2/5",
+          "tags": [
+            "fraction",
+            "add-across"
+          ]
+        },
+        {
+          "label": "6",
+          "problem": "(2/3) * (9/4)",
+          "steps": [
+            "18/12 = 3/2"
+          ],
+          "answer": "3/2",
+          "gold": "correct",
+          "tags": [
+            "fraction"
+          ]
+        },
+        {
+          "label": "7",
+          "problem": "0.5 + 0.25",
+          "steps": [],
+          "answer": "3/4",
+          "gold": "correct",
+          "tags": [
+            "decimal",
+            "equivalent-form"
+          ],
+          "note": "A fraction answer to a decimal problem is still right."
+        },
+        {
+          "label": "8",
+          "problem": "2/3 + 1/6",
+          "steps": [],
+          "answer": null,
+          "gold": "blank",
+          "tags": [
+            "fraction",
+            "blank"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S5-quadratics",
+      "title": "Quadratics and roots",
+      "problems": [
+        {
+          "label": "1",
+          "problem": "x^2 - 5x + 6 = 0",
+          "steps": [
+            "(x - 2)(x - 3) = 0"
+          ],
+          "answer": "x = 2 or x = 3",
+          "gold": "correct",
+          "tags": [
+            "quadratic",
+            "factoring",
+            "multi-root"
+          ]
+        },
+        {
+          "label": "2",
+          "problem": "x^2 - 5x + 6 = 0",
+          "steps": [
+            "(x + 2)(x - 3) = 0"
+          ],
+          "answer": "x = -2 or x = 3",
+          "gold": "has_error",
+          "errorLine": "(x + 2)(x - 3) = 0",
+          "tags": [
+            "quadratic",
+            "factoring",
+            "sign-error"
+          ]
+        },
+        {
+          "label": "3",
+          "problem": "x^2 = 49",
+          "steps": [],
+          "answer": "x = 7 or x = -7",
+          "gold": "correct",
+          "tags": [
+            "quadratic",
+            "multi-root"
+          ]
+        },
+        {
+          "label": "4",
+          "problem": "x^2 = 49",
+          "steps": [],
+          "answer": "x = 7",
+          "gold": "has_error",
+          "errorLine": "x = 7",
+          "tags": [
+            "quadratic",
+            "incomplete"
+          ],
+          "note": "Missing the negative root. Some teachers grade this as incomplete rather than wrong; reported separately via the tag."
+        },
+        {
+          "label": "5",
+          "problem": "Expand (x + 3)(x + 2)",
+          "steps": [],
+          "answer": "x^2 + 5x + 6",
+          "gold": "correct",
+          "tags": [
+            "polynomial"
+          ]
+        },
+        {
+          "label": "6",
+          "problem": "Factor x^2 - 9",
+          "steps": [],
+          "answer": "(x - 3)(x + 3)",
+          "gold": "correct",
+          "tags": [
+            "factoring"
+          ]
+        },
+        {
+          "label": "7",
+          "problem": "|x - 3| = 5",
+          "steps": [
+            "x - 3 = 5 or x - 3 = -5"
+          ],
+          "answer": "x = 8 or x = -2",
+          "gold": "correct",
+          "tags": [
+            "absolute-value",
+            "multi-root"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S6-expressions",
+      "title": "Expressions and exponents",
+      "problems": [
+        {
+          "label": "1",
+          "problem": "Simplify 3x + 2x - 4",
+          "steps": [],
+          "answer": "5x - 4",
+          "gold": "correct",
+          "tags": [
+            "simplify"
+          ]
+        },
+        {
+          "label": "2",
+          "problem": "Simplify 3x + 2x - 4",
+          "steps": [],
+          "answer": "-4 + 5x",
+          "gold": "correct",
+          "tags": [
+            "simplify",
+            "equivalent-form"
+          ],
+          "note": "Reordered but equivalent."
+        },
+        {
+          "label": "3",
+          "problem": "Simplify 3x + 2x - 4",
+          "steps": [
+            "3x + 2x - 4 = 6x - 4"
+          ],
+          "answer": "6x - 4",
+          "gold": "has_error",
+          "errorLine": "3x + 2x - 4 = 6x - 4",
+          "tags": [
+            "simplify",
+            "combine-like-terms"
+          ]
+        },
+        {
+          "label": "4",
+          "problem": "2^3 * 2^2",
+          "steps": [],
+          "answer": "32",
+          "gold": "correct",
+          "tags": [
+            "exponent"
+          ]
+        },
+        {
+          "label": "5",
+          "problem": "2^3 * 2^2",
+          "steps": [
+            "2^3 * 2^2 = 2^6",
+            "2^6 = 64"
+          ],
+          "answer": "64",
+          "gold": "has_error",
+          "errorLine": "2^3 * 2^2 = 2^6",
+          "tags": [
+            "exponent",
+            "exponent-rule"
+          ]
+        },
+        {
+          "label": "6",
+          "problem": "sqrt(81)",
+          "steps": [],
+          "answer": "9",
+          "gold": "correct",
+          "tags": [
+            "radical"
+          ]
+        },
+        {
+          "label": "7",
+          "problem": "5x - 1 = 9",
+          "steps": [],
+          "answer": null,
+          "gold": "blank",
+          "tags": [
+            "linear",
+            "blank"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S7-applied",
+      "title": "Percent, slope and evaluation",
+      "problems": [
+        {
+          "label": "1",
+          "problem": "25% of 80",
+          "steps": [
+            "0.25 * 80 = 20"
+          ],
+          "answer": "20",
+          "gold": "correct",
+          "tags": [
+            "percent"
+          ]
+        },
+        {
+          "label": "2",
+          "problem": "25% of 80",
+          "steps": [
+            "25 * 80 = 2000"
+          ],
+          "answer": "2000",
+          "gold": "has_error",
+          "errorLine": "25 * 80 = 2000",
+          "tags": [
+            "percent",
+            "conversion"
+          ]
+        },
+        {
+          "label": "3",
+          "problem": "Find the slope between (1, 2) and (3, 8)",
+          "steps": [
+            "(8 - 2)/(3 - 1) = 6/2"
+          ],
+          "answer": "3",
+          "gold": "correct",
+          "tags": [
+            "slope"
+          ]
+        },
+        {
+          "label": "4",
+          "problem": "Find the slope between (1, 2) and (3, 8)",
+          "steps": [
+            "(8 - 2)/(1 - 3) = -3"
+          ],
+          "answer": "-3",
+          "gold": "has_error",
+          "errorLine": "(8 - 2)/(1 - 3) = -3",
+          "tags": [
+            "slope",
+            "order-of-subtraction"
+          ],
+          "note": "Every line is TRUE arithmetic — only a judge can catch the mismatched order."
+        },
+        {
+          "label": "5",
+          "problem": "Evaluate y = 2x + 3 when x = -2",
+          "steps": [
+            "y = 2(-2) + 3",
+            "y = -4 + 3"
+          ],
+          "answer": "y = -1",
+          "gold": "correct",
+          "tags": [
+            "evaluation",
+            "negative"
+          ]
+        },
+        {
+          "label": "6",
+          "problem": "Evaluate y = 2x + 3 when x = -2",
+          "steps": [
+            "y = 2(-2) + 3",
+            "y = 4 + 3"
+          ],
+          "answer": "y = 7",
+          "gold": "has_error",
+          "errorLine": "y = 4 + 3",
+          "tags": [
+            "evaluation",
+            "sign-error"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S8-mixed-review",
+      "title": "Mixed review",
+      "problems": [
+        {
+          "label": "1",
+          "problem": "2(x + 4) = 3x + 1",
+          "steps": [
+            "2x + 8 = 3x + 1",
+            "8 = x + 1"
+          ],
+          "answer": "x = 7",
+          "gold": "correct",
+          "tags": [
+            "linear",
+            "variables-both-sides"
+          ]
+        },
+        {
+          "label": "2",
+          "problem": "4x + 1 = 21",
+          "steps": [
+            "4x = 22"
+          ],
+          "answer": "x = 5.5",
+          "gold": "has_error",
+          "errorLine": "4x = 22",
+          "tags": [
+            "linear",
+            "arithmetic-slip"
+          ]
+        },
+        {
+          "label": "3",
+          "problem": "x + 0.5 = 2",
+          "steps": [],
+          "answer": "x = 3/2",
+          "gold": "correct",
+          "tags": [
+            "linear",
+            "equivalent-form"
+          ]
+        },
+        {
+          "label": "4",
+          "problem": "9 - 12",
+          "steps": [],
+          "answer": "-3",
+          "gold": "correct",
+          "tags": [
+            "arithmetic",
+            "negative"
+          ]
+        },
+        {
+          "label": "5",
+          "problem": "x/3 + 2 = 5",
+          "steps": [
+            "x/3 = 3",
+            "x = 9"
+          ],
+          "answer": "x = 9",
+          "gold": "correct",
+          "tags": [
+            "linear"
+          ]
+        },
+        {
+          "label": "6",
+          "problem": "x/3 + 2 = 5",
+          "steps": [
+            "x/3 = 7",
+            "x = 21"
+          ],
+          "answer": "x = 21",
+          "gold": "has_error",
+          "errorLine": "x/3 = 7",
+          "tags": [
+            "linear",
+            "inverse-operation"
+          ]
+        },
+        {
+          "label": "7",
+          "problem": "2/3 + 1/6",
+          "steps": [],
+          "answer": null,
+          "gold": "blank",
+          "tags": [
+            "fraction",
+            "blank"
+          ]
+        }
+      ]
+    }
+  ]
+}
