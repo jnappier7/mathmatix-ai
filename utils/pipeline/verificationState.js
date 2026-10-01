@@ -88,6 +88,66 @@ function hasMathematicalContent(text) {
   return false;
 }
 
+// The student is presenting their own work or a belief, even inside a question:
+// "I got 12 but how do I check it?", "why is my answer of 5 wrong?",
+// "can you check 2x = 12?", "does 2x = 12 mean x = 6?".
+const WORK_MARKERS = new RegExp([
+  "\\b(?:i|i've|ive|we)\\s+(?:got|get|did|wrote|write|have|had|found|put|think|thought|tried|used|said)\\b",
+  '\\bmy\\s+(?:answer|work|step|steps|solution|result|way|method|guess)\\b',
+  '\\bcheck\\b',
+  '\\b(?:right|wrong|correct|incorrect)\\b',
+  '\\bmean(?:s)?\\s+(?:that\\s+)?[a-z]\\s*=',
+].join('|'), 'i');
+
+// A relation between variable-free expressions is a CLAIM ("1/2 + 1/3 = 2/5",
+// "3/4 > 2/3"), and a claim is the student's belief — something the tutor could
+// wrongly reject. An equation with a variable ("2x + 5 = 17") is a problem
+// statement, not a claim.
+function hasNumericClaim(text) {
+  // A side is the run of math tokens touching the relation: digits, operators,
+  // and single letters (variables) — a real word ends it.
+  const MATH_RUN = '(?:[0-9.+\\-*/×÷()^\\s]|(?<![a-z])[a-z](?![a-z]))+';
+  const sideRe = new RegExp(`(${MATH_RUN})(=|<|>|≤|≥|≠)(${MATH_RUN})`, 'gi');
+  // A letter counts as a variable only when it is glued to the math ("2x",
+  // "x+", "(x"), so an article ("a 1/2 = 2/4") does not.
+  const hasVariable = (side) =>
+    /\d\s*[a-z](?![a-z])|(?<![a-z])[a-z](?![a-z])\s*[+\-*/^)]|[+\-*/^(]\s*[a-z](?![a-z])|^\s*[a-z]\s*$/i.test(side);
+  for (const m of text.matchAll(sideRe)) {
+    const [, left, , right] = m;
+    if (/\d/.test(left) && /\d/.test(right) && !hasVariable(left) && !hasVariable(right)) return true;
+  }
+  return false;
+}
+
+/**
+ * Is this turn a plain ask — a question or a request for help that carries no
+ * work of the student's own?
+ *
+ * Such a turn has nothing to be right or wrong ABOUT, so it gets
+ * NOT_APPLICABLE rather than UNVERIFIED. UNVERIFIED tells the tutor "we could
+ * not determine whether the student's work is right or wrong — ask them to
+ * show their step", which is nonsense on "can you help me with 2x+5=17": it
+ * made the tutor demand work from a student who had just asked for help.
+ *
+ * Deliberately narrow, because UNVERIFIED is what stops the tutor rejecting
+ * correct work (the five-turn defence of a wrong "hold up"): anything with an
+ * extracted answer, a verification candidate, a dispute, a first-person work
+ * marker, or a numeric claim stays UNVERIFIED.
+ *
+ * @param {string} message
+ * @param {{messageType?: string, answer?: Object, isDispute?: boolean}} observation
+ * @param {*} [verificationCandidate]
+ * @returns {boolean}
+ */
+function isPlainAsk(message, observation = {}, verificationCandidate = null) {
+  if (!message || typeof message !== 'string') return false;
+  if (observation.messageType !== 'question' && observation.messageType !== 'help_request') return false;
+  if (observation.answer || observation.isDispute || verificationCandidate) return false;
+  if (WORK_MARKERS.test(message)) return false;
+  if (hasNumericClaim(message)) return false;
+  return true;
+}
+
 /**
  * Map a diagnosis into the verification state the rest of the pipeline reasons about.
  *
@@ -213,6 +273,7 @@ module.exports = {
   VERIFICATION_STATES,
   ASSERTIONS,
   hasMathematicalContent,
+  isPlainAsk,
   deriveVerificationState,
   classifyAssertionFast,
   mayAssertCorrectness,

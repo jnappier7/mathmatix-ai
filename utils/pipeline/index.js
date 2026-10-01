@@ -40,7 +40,7 @@ const {
   isPolarityAnswer,
   VERIFIER_MODEL,
 } = require('./llmVerifier');
-const { deriveVerificationState, hasMathematicalContent } = require('./verificationState');
+const { deriveVerificationState, hasMathematicalContent, isPlainAsk } = require('./verificationState');
 const { gateAdvance } = require('./stepEvaluator');
 const { mathTypeOf } = require('./verifyTopic');
 const verifyMetrics = require('../verifyMetrics');
@@ -354,9 +354,12 @@ async function runPipeline(message, ctx) {
   // UNVERIFIED is a RESTRICTION, not an absence: it is what the generate stage
   // must be told so it asks instead of guessing, and what the verify stage
   // enforces against on the way out.
+  // A plain ask ("can you help me with 2x+5=17") carries no work of the
+  // student's to be right or wrong about, so it is NOT_APPLICABLE, not
+  // UNVERIFIED — see isPlainAsk for what stays restricted.
   diagnosis.verificationState = deriveVerificationState(
     diagnosis,
-    hasMathematicalContent(message)
+    hasMathematicalContent(message) && !isPlainAsk(message, observation, verificationCandidate)
   );
 
   if (diagnosis.type !== 'no_answer') {
