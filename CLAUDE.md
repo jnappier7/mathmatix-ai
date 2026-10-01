@@ -414,6 +414,13 @@ npm run seed:all:dry   # preflight + plan, no writes
   tutoring. The gate is the labelled corpus `tests/eval/valueLeak/corpus.json` — add every
   production false alarm or miss there. In I-DO the rewrite is *asked* for a worked parallel
   example, so only the value check applies to it, never the form check.
+- **`learningProfile.rapportAnswers` has ONE vocabulary: `utils/rapportNotes.js`.** The schema's
+  fields (`currentTopic`, `learningGoal`, `interests`, `favoriteSubject`, `conversationStyle`) — the
+  rapport route used to write `mood`/`currentFocus`, strict mode dropped them, and `promptCompact`
+  read names that never existed, so no intro answer ever reached a prompt. The values are
+  model-extracted from free student text and land in every future system prompt, so every writer
+  and reader goes through `sanitizeRapportAnswers`/`buildRapportNotes` (length cap, no
+  instruction-like text, framed as information). Pinned by `tests/unit/rapportNotes.test.js`.
 - **"Check my work" on an uploaded sheet checks the WHOLE sheet — checking work is not giving answers.**
   `pipeline/checkWorkVerifier.js` returns a per-problem `problems[]` (blanks included, never solved);
   `routes/chat.js` turns it into a per-problem breakdown (`buildSheetCheckSuffix`) and passes it to the
