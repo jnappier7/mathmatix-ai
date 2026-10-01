@@ -20,6 +20,7 @@ const { callLLM } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { MESSAGE_TYPES, detectBareProblemDrop } = require('./observe');
 const { isSheetCheckable, findRevealedCorrections, buildSheetCheckFallback } = require('./checkWorkVerifier');
+const { extractPosedEquations, findValueReveal } = require('./valueLeak');
 const {
   VERIFICATION_STATES,
   ASSERTIONS,
@@ -181,7 +182,9 @@ function sendReplacement(context, text) {
  */
 function handsOverSolution(text) {
   if (!text) return false;
-  const trailingAssignment = /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m;
+  // A bare "x = 9" ending a line. Not "4x = 28" — an intermediate step with a
+  // coefficient still attached is exactly what a Socratic reply walks through.
+  const trailingAssignment = /(?<![\w.])[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m;
   return detectAnswerAnnouncement(text).detected ||
     trailingAssignment.test(text) ||
     detectWorkedSolution(text).isWorkedSolution;
@@ -681,12 +684,19 @@ async function verify(responseText, context = {}) {
       !context.isWorksheetFollowUp) {
     const announcement = detectAnswerAnnouncement(text);
     const worked = detectWorkedSolution(text);
-    const hasCompleteSolution = handsOverSolution(text);
+    // The form checks can't see "x is seven" or "5(7) + 10 = 45 ✓". Solve the
+    // student's own equation and look for its value in the reply too.
+    const posed = extractPosedEquations(
+      [context.userMessage, ...(context.recentUserMessages || [])].filter(Boolean).join('\n')
+    );
+    const valueReveal = findValueReveal(text, posed);
+    if (valueReveal) flags.push('answer_value_revealed');
+    const hasCompleteSolution = handsOverSolution(text) || !!valueReveal;
 
     // A trailing question ("Does that make sense?") does NOT excuse dumping the answer.
     // The guard fires whenever the AI reveals a complete solution to a student-posed problem.
     if (hasCompleteSolution) {
-      console.warn(`[Verify] ANSWER GIVEAWAY: AI solved a student-posed problem (phase=${currentPhase || 'none'}, announcement=${announcement.pattern}, workedSignals=${worked.signalCount}, isBareDrop=${!!context.isBareProblemDrop}). Redirecting (${isIDoPhase ? 'parallel-demo' : 'socratic'}).`);
+      console.warn(`[Verify] ANSWER GIVEAWAY: AI solved a student-posed problem (phase=${currentPhase || 'none'}, announcement=${announcement.pattern}, workedSignals=${worked.signalCount}, value=${valueReveal ? `${valueReveal.how}:${valueReveal.equation}` : 'none'}, isBareDrop=${!!context.isBareProblemDrop}). Redirecting (${isIDoPhase ? 'parallel-demo' : 'socratic'}).`);
       // Phase-aware redirect:
       //   - I-DO: tutor IS teaching by demonstration, but must use a
       //     PARALLEL problem (same skill, different numbers) — never the
@@ -710,7 +720,12 @@ async function verify(responseText, context = {}) {
         if (!redirectedText || redirectedText.length <= 10) {
           text = GIVEAWAY_FALLBACK_TEXT;
           flags.push('answer_giveaway_redirect_fallback');
-        } else if (handsOverSolution(redirectedText)) {
+        } else if (
+          // In I-DO the rewrite is ASKED for a worked parallel example, so its
+          // form proves nothing — only the student's own value can leak.
+          (!isIDoPhase && handsOverSolution(redirectedText)) ||
+          findValueReveal(redirectedText, posed)
+        ) {
           text = GIVEAWAY_FALLBACK_TEXT;
           flags.push('answer_giveaway_redirect_still_leaked');
         } else {

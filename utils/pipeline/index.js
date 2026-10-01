@@ -740,6 +740,9 @@ async function runPipeline(message, ctx) {
     resolvedTools,
     userId: ctx.user._id?.toString(),
     userMessage: message,
+    // "just tell me x" often arrives a turn after the equation itself; the
+    // value-aware giveaway check reads the student's recent turns for it.
+    recentUserMessages: recentUserMessages.slice(-3).map(m => m.content).filter(Boolean),
     iepReadingLevel: ctx.user.iepPlan?.readingLevel || null,
     firstName: ctx.user.firstName,
     isVisualLearner: ctx.user.learningStyle === 'Visual' || ctx.user.learningProfile?.learningStyle?.prefersDiagrams === true,

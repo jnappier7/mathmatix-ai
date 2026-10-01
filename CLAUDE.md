@@ -405,6 +405,15 @@ npm run seed:all:dry   # preflight + plan, no writes
 - **Per-user chat lock** in `routes/chat.js` serializes a user's concurrent messages — don't remove it.
 - **Math-answer injection gate**: the verified answer is injected into context **only** on an
   `ANSWER_ATTEMPT`, never when the student is *asking* — preserve this or you'll leak answers.
+- **The giveaway guard checks VALUE, not just form.** A student-posed problem never gets a
+  `correctAnswer`, so `verify.js` 2a-bis used to judge replies by wording alone — "x is seven",
+  "plug in x = 7: 5(7)+10 = 45 ✓" and base64 all shipped. `pipeline/valueLeak.js` solves the
+  student's own equation (current + last 3 turns) with `mathSolver` and looks for that value bound
+  to the variable, an "answer is", a substitution, or a coefficient. It is deliberately narrow
+  (single-variable equations; a bare number is never enough) because a false alarm rewrites good
+  tutoring. The gate is the labelled corpus `tests/eval/valueLeak/corpus.json` — add every
+  production false alarm or miss there. In I-DO the rewrite is *asked* for a worked parallel
+  example, so only the value check applies to it, never the form check.
 - **"Check my work" on an uploaded sheet checks the WHOLE sheet — checking work is not giving answers.**
   `pipeline/checkWorkVerifier.js` returns a per-problem `problems[]` (blanks included, never solved);
   `routes/chat.js` turns it into a per-problem breakdown (`buildSheetCheckSuffix`) and passes it to the
