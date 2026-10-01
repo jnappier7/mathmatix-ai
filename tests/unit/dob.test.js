@@ -58,6 +58,21 @@ describe('applyDobToUser (write-once)', () => {
         expect(user.dateOfBirth.getUTCFullYear()).toBe(2015);
     });
 
+    test('re-sending the SAME date is a no-op, not an error', () => {
+        // complete-profile pre-fills the stored DOB and submits it back; the
+        // teen self-consent step stores it before that submit. Both must pass.
+        const stored = new Date('2011-03-14');
+        const user = { dateOfBirth: stored };
+        const r = applyDobToUser(user, '2011-03-14');
+        expect(r).toEqual({ ok: true, changed: false });
+        expect(user.dateOfBirth).toBe(stored);
+    });
+
+    test('an off-by-one-day date still counts as a change', () => {
+        const user = { dateOfBirth: new Date('2011-03-14') };
+        expect(applyDobToUser(user, '2011-03-15').ok).toBe(false);
+    });
+
     test('surfaces validation errors without mutating the user', () => {
         const user = {};
         const r = applyDobToUser(user, 'gibberish');
