@@ -18,6 +18,7 @@ const { recordObservation } = require('./intentMetrics');
 // must not reach the database. See utils/studentLabels.js.
 const { studentLabel } = require('./studentLabels');
 const { canonicalSkillId, decodeMasteryKey } = require('./skillCanonicalizer');
+const { buildRapportNotes } = require('./rapportNotes');
 const {
   CAPABILITY_IDENTITY,
   VISUAL_TOOLS_SECTION,
@@ -783,16 +784,10 @@ When ${firstName} asks about themselves ("What grade am I in?", "What do you kno
     parts.push(VISUAL_LEARNER_DIRECTIVE);
   }
 
-  // Rapport context — what we learned during the intro conversation
-  const rapportAnswers = userProfile.learningProfile?.rapportAnswers;
-  if (rapportAnswers && Object.keys(rapportAnswers).length > 0) {
-    const rapportParts = [];
-    if (rapportAnswers.mood && rapportAnswers.mood !== 'neutral') rapportParts.push(`Arrived feeling: ${rapportAnswers.mood}`);
-    if (rapportAnswers.currentFocus) rapportParts.push(`Working on: ${rapportAnswers.currentFocus}`);
-    if (rapportParts.length) {
-      parts.push(`--- RAPPORT NOTES ---\n${rapportParts.join('\n')}\nUse naturally. Don't parrot back verbatim.`);
-    }
-  }
+  // Rapport context — what we learned during the intro conversation. Cleaned
+  // again here: rows written before utils/rapportNotes.js existed were not.
+  const rapportNotes = buildRapportNotes(userProfile.learningProfile?.rapportAnswers);
+  if (rapportNotes) parts.push(rapportNotes);
 
   // Language preference
   if (preferredLanguage && preferredLanguage !== 'English') {

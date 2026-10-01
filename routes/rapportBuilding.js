@@ -21,6 +21,7 @@ const { callLLM } = require('../utils/llmGateway');
 const { verify: pipelineVerify } = require('../utils/pipeline');
 const { generateSystemPrompt } = require('../utils/prompt');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
+const { sanitizeRapportAnswers } = require('../utils/rapportNotes');
 
 // "1-2 questions MAX" (above), enforced server-side rather than left to the model.
 const MAX_RAPPORT_EXCHANGES = 2;
@@ -112,11 +113,11 @@ router.post('/respond', isAuthenticated, async (req, res) => {
 Current info: ${JSON.stringify(user.learningProfile.rapportAnswers, null, 2)}
 Their message: "${message}"
 
-TASK 1: Extract conversational insights (keep brief):
+TASK 1: Note what they told you, in a few plain words each. Leave a field out if they didn't say:
 {
-  "mood": "how they seem (excited/stressed/neutral/eager)",
-  "currentFocus": "what they mentioned working on or struggling with, if any",
-  "readyToStart": "do they seem ready to jump into math?"
+  "currentTopic": "what they're working on or struggling with in math",
+  "learningGoal": "what they want to get better at",
+  "interests": "hobbies or interests they mentioned"
 }
 
 TASK 2: Decide if rapport is complete.
@@ -176,11 +177,13 @@ RESPOND IN JSON:
                 : 'Nice to meet you! What are you working on in math right now?';
         }
 
-        // Update user's rapport answers
-        user.learningProfile.rapportAnswers = {
-            ...user.learningProfile.rapportAnswers,
-            ...result.extractedInfo
-        };
+        // Store what the student told us — under the schema's own field names
+        // (anything else is dropped by strict mode, which is how these notes
+        // never reached a prompt) and cleaned, because every value lands in
+        // the student's system prompt from now on. See utils/rapportNotes.js.
+        for (const [key, value] of Object.entries(sanitizeRapportAnswers(result.extractedInfo))) {
+            user.set(`learningProfile.rapportAnswers.${key}`, value);
+        }
 
         // Mark rapport building as complete if AI decides it's time
         if (result.rapportComplete) {
