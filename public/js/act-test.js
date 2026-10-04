@@ -14,6 +14,13 @@
  * math blueprint — seeds/act-math-blueprint.json is authoritative), results screen
  * shows the scaled 1–36 estimate + a per-category breakdown (the diagnostic
  * that seeds the boot-camp plan).
+ *
+ * GUEST MODE (public/act-practice-test.html, no account): the same runner
+ * against /api/act-practice, owned by a bearer token kept in localStorage.
+ * The results show the score and categories; WHICH questions were missed is
+ * locked behind signup. When that browser next opens chat.html signed in,
+ * claimGuestTest() attaches the test to the account (/api/act-test/claim) and
+ * shows the full results, leading into the ACT boot camp review of the misses.
  */
 (function () {
   'use strict';
@@ -72,6 +79,18 @@
   .actt-down{background:#fdeaea;color:#c0392b}
   .actt-same{background:#eee;color:#888}
   .actt-err{color:#c0392b;padding:24px;text-align:center}
+  .actt-lock{display:grid;max-width:520px;margin:22px auto 0;border:2px solid #e2dcf6;border-radius:14px;overflow:hidden;background:#faf9ff}
+  /* Rows and message share one grid cell, so the card is as tall as the
+     taller of the two and the message can never spill out of it. */
+  .actt-lockrows,.actt-lockover{grid-area:1/1}
+  .actt-lockrows{padding:10px 16px;filter:blur(5px);opacity:.55;pointer-events:none;user-select:none}
+  .actt-lockrow{height:12px;border-radius:6px;background:#d9d2f0;margin:10px 0}
+  .actt-lockover{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 16px;text-align:center;background:rgba(250,249,255,.55)}
+  .actt-lockh{font-size:17px;font-weight:800;color:#3a3160}
+  .actt-lockp{font-size:13.5px;color:#5b5480;line-height:1.45;max-width:400px}
+  .actt-overlay a.actt-cta{display:inline-block;text-decoration:none;color:#fff;background:linear-gradient(135deg,#667eea,#764ba2);padding:12px 22px;border-radius:11px;font-weight:700;font-size:15px}
+  .actt-cta2{font-size:13px;color:#5b5480}
+  .actt-cta2 a{color:#764ba2;font-weight:600}
   @media (prefers-color-scheme:dark){
     .actt-card{background:#1c1a2b;color:#ece9f7}
     .actt-opt{background:#211e32;border-color:#302c45;color:#ece9f7}
@@ -88,6 +107,10 @@
     .actt-catname{color:#b7b3cc}
     .actt-cmpname{color:#b7b3cc}.actt-cmpval{color:#d7d3ea}
     .actt-up{background:#183a27;color:#63d391}.actt-down{background:#3a1c1c;color:#ff8a8a}.actt-same{background:#2d2a40;color:#9a96b2}
+    .actt-lock{background:#211e32;border-color:#302c45}
+    .actt-lockrow{background:#3a3555}
+    .actt-lockover{background:rgba(28,26,43,.6)}
+    .actt-lockh{color:#ece9f7}.actt-lockp,.actt-cta2{color:#b7b3cc}.actt-cta2 a{color:#b9a6ff}
   }
   @media (max-width:700px){
     .actt-card{order:1}
@@ -119,8 +142,21 @@
     return fetcher(url, opts).then(r => r.json());
   }
 
+  // Where a guest test's id + bearer token live between page loads: resume a
+  // test after a refresh, and claim a finished one after signup.
+  const GUEST_KEY = 'mathmatix.actGuestTest';
+  function readGuest() {
+    try { const raw = localStorage.getItem(GUEST_KEY); return raw ? JSON.parse(raw) : null; } catch (_) { return null; }
+  }
+  function writeGuest(v) {
+    try { if (v) localStorage.setItem(GUEST_KEY, JSON.stringify(v)); else localStorage.removeItem(GUEST_KEY); } catch (_) { /* storage off: no resume/claim */ }
+  }
+
   class ActTest {
-    constructor() {
+    constructor(opts) {
+      opts = opts || {};
+      this.guest = !!opts.guest;
+      this.apiBase = this.guest ? '/api/act-practice' : '/api/act-test';
       this.sessionId = null;
       this.current = null;
       this.selected = null;
@@ -131,6 +167,18 @@
       this.deadline = 0;
       this.timerId = null;
       this._injectCss();
+    }
+
+    // Every runner call goes through here: the right rail, plus the guest's
+    // bearer token on the guest rail. (/history is signed-in only and keeps
+    // calling api() directly.)
+    _api(path, opts) {
+      opts = Object.assign({}, opts || {});
+      if (this.guest) {
+        const g = readGuest();
+        opts.headers = Object.assign({}, opts.headers || {}, g && g.token ? { 'X-Act-Guest-Token': g.token } : {});
+      }
+      return api(this.apiBase + path, opts);
     }
 
     _injectCss() {
@@ -211,6 +259,23 @@
       this.el('actt-timer').style.display = 'none';    // no clock on the intro
       this.el('actt-calc').style.display = 'none';     // calc appears with the test
       this.el('actt-foot').style.display = 'none';
+      if (this.guest) {
+        this.el('actt-body').innerHTML = `
+        <div style="max-width:520px;margin:0 auto;padding:6px 4px 4px">
+          <h2 style="margin:0 0 10px;font-size:20px">Free ACT Math practice test</h2>
+          <p style="margin:0 0 14px;line-height:1.5">A full, timed ACT Math section: <strong>45 questions, 50 minutes</strong>, four answer choices, calculator allowed. You get an estimated 1–36 score the moment you finish.</p>
+          <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
+            <li><strong>It's timed and can't be paused</strong> — just like the real ACT. Pacing is part of the score.</li>
+            <li>Do it in <strong>one sitting</strong>. Find a quiet spot and grab scratch paper first.</li>
+            <li><strong>Move freely</strong> — go back, change answers, and 🚩 flag anything you want to revisit.</li>
+            <li>Unanswered questions count as wrong, so guess before time runs out.</li>
+          </ul>
+          <button id="actt-begin" style="width:100%;padding:13px 16px;font-size:16px;font-weight:700;border:0;border-radius:12px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6)">Start the test</button>
+        </div>`;
+        const gb = this.overlay.querySelector('#actt-begin');
+        if (gb) gb.addEventListener('click', () => this._begin());
+        return;
+      }
       this.el('actt-body').innerHTML = `
         <div style="max-width:520px;margin:0 auto;padding:6px 4px 4px">
           <h2 style="margin:0 0 10px;font-size:20px">Your baseline ACT Math test</h2>
@@ -234,13 +299,22 @@
       this.el('actt-calc').style.display = '';
       this.el('actt-body').innerHTML = '<div class="actt-center">Building your practice test…</div>';
       try {
-        const data = await api('/api/act-test/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+        // A guest resumes the test this browser already has in progress (the
+        // server checks the token); otherwise the server mints a new one.
+        const prior = this.guest ? readGuest() : null;
+        const startBody = (prior && prior.status === 'in_progress' && prior.sessionId) ? { sessionId: prior.sessionId } : {};
+        const data = await this._api('/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(startBody) });
         if (data && data.needsGeneration !== undefined) {
-          this.el('actt-body').innerHTML = `<div class="actt-err">The ACT item bank isn't loaded yet.<br><small>Ask an admin to run <code>npm run act:seed</code>.</small></div>`;
+          this.el('actt-body').innerHTML = this.guest
+            ? `<div class="actt-err">${escapeHtml(data.message || 'The practice test is not available right now.')}</div>`
+            : `<div class="actt-err">The ACT item bank isn't loaded yet.<br><small>Ask an admin to run <code>npm run act:seed</code>.</small></div>`;
           return;
         }
         if (!data || !data.sessionId) throw new Error((data && data.message) || 'Could not start.');
         this.sessionId = data.sessionId;
+        if (this.guest && data.guestToken) {
+          writeGuest({ sessionId: String(data.sessionId), token: data.guestToken, status: 'in_progress' });
+        }
         this.total = data.totalItems || 45;
         this.state = new Map();
 
@@ -248,7 +322,7 @@
         // unanswered question rather than question 1.
         let startPos = 1;
         if (data.resumed) {
-          const ov = await api(`/api/act-test/overview?sessionId=${encodeURIComponent(this.sessionId)}`);
+          const ov = await this._api(`/overview?sessionId=${encodeURIComponent(this.sessionId)}`);
           (ov && ov.items || []).forEach((it) => {
             if (it.answered || it.flagged) this.state.set(it.position, { answered: !!it.answered, flagged: !!it.flagged });
           });
@@ -315,7 +389,7 @@
     // on click, so navigating away never loses work.
     async goTo(pos) {
       pos = Math.min(Math.max(1, pos), this.total);
-      const data = await api(`/api/act-test/problem?sessionId=${encodeURIComponent(this.sessionId)}&position=${pos}`);
+      const data = await this._api(`/problem?sessionId=${encodeURIComponent(this.sessionId)}&position=${pos}`);
       if (!data || !data.problem) {
         this.el('actt-body').innerHTML = `<div class="actt-err">${(data && data.message) || 'Could not load that question.'}</div>`;
         return;
@@ -392,7 +466,7 @@
     // re-saves it.
     _save() {
       const st = this.state.get(this.pos) || {};
-      return api('/api/act-test/save-answer', {
+      return this._api('/save-answer', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId: this.sessionId,
@@ -511,7 +585,14 @@
             answers.push({ position, answer: st.answer != null ? st.answer : null, flagged: !!st.flagged, seq: st.seq || 0 });
           }
         });
-        const data = await api('/api/act-test/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: this.sessionId, answers }) });
+        const data = await this._api('/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: this.sessionId, answers }) });
+        if (this.guest && data && data.abandoned) writeGuest(null);
+        if (this.guest && data && data.success) {
+          const g = readGuest();
+          if (g) writeGuest(Object.assign({}, g, { status: 'completed', completedAt: Date.now() }));
+          this.renderGuestResults(data.report || {});
+          return;
+        }
         if (data && data.abandoned) {
           // The clock ran out while nobody was here. Not an attempt, not scored —
           // never a "7" on the trend line. Offer a fresh start.
@@ -544,19 +625,8 @@
           }
         } catch (e) { /* fall through to single-test results */ }
         const r = (data && data.report) || {};
-        const cats = Object.entries(r.byCategory || {}).map(([k, v]) => {
-          const pct = v.total ? Math.round((v.correct / v.total) * 100) : 0;
-          const name = CATEGORY_LABELS[k] || k;
-          return `<div class="actt-cat"><span class="actt-catname">${name}</span><span class="actt-catbar"><span class="actt-catfill" style="width:${pct}%"></span></span><span class="actt-catpct">${v.correct}/${v.total}</span></div>`;
-        }).join('');
         this.el('actt-body').innerHTML = `
-          <div class="actt-center" style="padding-bottom:12px">
-            <div class="actt-score">${r.scaledScore != null ? r.scaledScore : '—'}</div>
-            <div class="actt-scorelab">Estimated ACT Math score${r.scaledApproximate ? ' (approx.)' : ''}</div>
-            <div class="actt-sub">${r.rawScore}/${r.totalItems} correct · ${r.accuracy}% · ${r.durationMinutes != null ? r.durationMinutes + ' min' : ''}</div>
-            ${r.plannedSkills ? `<div style="font-size:13px;color:#8b6fd6;margin-top:2px">✓ Your tutor will now focus on your ${r.plannedSkills} weakest skill${r.plannedSkills > 1 ? 's' : ''}.</div>` : ''}
-          </div>
-          <div style="max-width:520px;margin:0 auto">${cats}</div>
+          ${this._scoreHeadHtml(r)}
           ${this._missedListHtml(r)}
           <div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
             <button class="actt-btn actt-next" id="actt-tutor">📤 Review with my tutor</button>
@@ -570,6 +640,165 @@
         this.el('actt-progress').addEventListener('click', () => this.showProgress());
       } catch (e) {
         this.el('actt-body').innerHTML = `<div class="actt-err">${e.message || 'Could not score the test.'}</div>`;
+      }
+    }
+
+    // Score + category bars — the top of every results screen (signed-in,
+    // guest, and claimed).
+    _scoreHeadHtml(r) {
+      const cats = Object.entries(r.byCategory || {}).map(([k, v]) => {
+        const pct = v.total ? Math.round((v.correct / v.total) * 100) : 0;
+        const name = escapeHtml(CATEGORY_LABELS[k] || k);
+        return `<div class="actt-cat"><span class="actt-catname">${name}</span><span class="actt-catbar"><span class="actt-catfill" style="width:${pct}%"></span></span><span class="actt-catpct">${v.correct}/${v.total}</span></div>`;
+      }).join('');
+      return `
+          <div class="actt-center" style="padding-bottom:12px">
+            <div class="actt-score">${r.scaledScore != null ? r.scaledScore : '—'}</div>
+            <div class="actt-scorelab">Estimated ACT Math score${r.scaledApproximate ? ' (approx.)' : ''}</div>
+            <div class="actt-sub">${r.rawScore}/${r.totalItems} correct · ${r.accuracy}%${r.durationMinutes != null ? ' · ' + r.durationMinutes + ' min' : ''}</div>
+            ${r.plannedSkills ? `<div style="font-size:13px;color:#8b6fd6;margin-top:2px">✓ Your tutor will now focus on your ${r.plannedSkills} weakest skill${r.plannedSkills > 1 ? 's' : ''}.</div>` : ''}
+          </div>
+          <div style="max-width:520px;margin:0 auto">${cats}</div>`;
+    }
+
+    /**
+     * The guest results — the hook. Score and categories are free; WHICH
+     * questions were missed is not. The server never sends that list to a
+     * guest (routes/actTest.js buildGuestReport), so the blurred rows below
+     * are decoration, not hidden data.
+     */
+    renderGuestResults(r) {
+      const missed = Number(r.missedCount) || 0;
+      const rows = '<div class="actt-lockrow" style="width:72%"></div><div class="actt-lockrow" style="width:48%"></div>'
+        + '<div class="actt-lockrow" style="width:64%"></div><div class="actt-lockrow" style="width:40%"></div>'
+        + '<div class="actt-lockrow" style="width:58%"></div>';
+      const lock = missed > 0
+        ? `<div class="actt-lock">
+            <div class="actt-lockrows" aria-hidden="true">${rows}</div>
+            <div class="actt-lockover">
+              <div class="actt-lockh">🔒 You missed ${missed} question${missed === 1 ? '' : 's'}</div>
+              <div class="actt-lockp">Create a free account to see exactly which ones, grouped by skill, then work through each one with your AI tutor until it clicks.</div>
+              <a class="actt-cta" href="/signup.html" id="actt-signup">See what I missed — free</a>
+              <div class="actt-cta2">Already have an account? <a href="/login.html" id="actt-login">Log in</a></div>
+            </div>
+          </div>`
+        : `<div class="actt-lock" style="padding:18px 16px;text-align:center">
+            <div class="actt-lockh">A perfect section 🎯</div>
+            <div class="actt-lockp" style="margin:6px auto 12px">Create a free account to save this score and get a fresh test that pushes you further.</div>
+            <a class="actt-cta" href="/signup.html" id="actt-signup">Save my score — free</a>
+          </div>`;
+      const short = r.shortForm
+        ? `<div style="font-size:11.5px;color:#8578ab;margin-top:10px;text-align:center">This form ran ${r.totalItems} questions instead of ${r.blueprintItems}, so the score is projected from fewer items.</div>`
+        : '';
+      this.el('actt-calc').style.display = 'none';
+      this.el('actt-body').innerHTML = `
+          ${this._scoreHeadHtml(r)}
+          ${lock}
+          ${short}
+          <div style="font-size:11.5px;color:#999;margin-top:12px;text-align:center">Your results are saved in this browser for 14 days — sign up here to keep them.</div>
+          <div style="text-align:center;margin-top:16px">
+            <button class="actt-btn actt-skip" id="actt-done">Close</button>
+          </div>`;
+      this.el('actt-done').addEventListener('click', () => this.close());
+    }
+
+    /** Public page: is there a finished guest test in this browser to reopen? */
+    hasGuestResults() {
+      const g = readGuest();
+      return !!(this.guest && g && g.status === 'completed' && g.sessionId);
+    }
+
+    // Re-show a finished guest test's (locked) results. /complete on a scored
+    // guest test returns the stored report without regrading.
+    async reopenGuestResults() {
+      const g = readGuest();
+      if (!g || !g.sessionId) return this.open();
+      this._mount();
+      this.overlay.style.display = 'flex';
+      this.el('actt-timer').style.display = 'none';
+      this.el('actt-calc').style.display = 'none';
+      this.el('actt-progwrap').style.display = 'none';
+      this.el('actt-foot').style.display = 'none';
+      this.el('actt-body').innerHTML = '<div class="actt-center">Loading your results…</div>';
+      const data = await this._api('/complete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: g.sessionId, answers: [] }),
+      }).catch(() => null);
+      if (data && data.success) return this.renderGuestResults(data.report || {});
+      writeGuest(null);   // expired or gone: start over
+      return this.open();
+    }
+
+    /**
+     * Signed in, with a finished guest test from this browser: attach it to
+     * the account and show the FULL results — the payoff of the signup the
+     * guest results asked for. Safe to call on every chat.html load: it does
+     * nothing unless a completed guest test is waiting, forgets an
+     * unfinished one (a signed-in student takes tests in-app), and forgets
+     * the record once the server has answered either way.
+     */
+    async claimGuestTest() {
+      const g = readGuest();
+      if (!g) return false;
+      if (g.status !== 'completed' || !g.sessionId || !g.token) { writeGuest(null); return false; }
+      let data;
+      try {
+        data = await api('/api/act-test/claim', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: g.sessionId, guestToken: g.token }),
+        });
+      } catch (e) {
+        return false;   // network blip: keep the record, try on the next load
+      }
+      if (!data || !data.success) {
+        // Only a definitive "gone" (claimed elsewhere, expired, bad token)
+        // forgets the record; a server error keeps it for the next load.
+        if (data && data.gone) writeGuest(null);
+        return false;
+      }
+      writeGuest(null);
+      this.renderClaimedResults(data);
+      return true;
+    }
+
+    renderClaimedResults(data) {
+      const r = data.report || {};
+      this._mount();
+      this._stopTimer();
+      this.overlay.style.display = 'flex';
+      this.el('actt-timer').style.display = 'none';
+      this.el('actt-calc').style.display = 'none';
+      this.el('actt-progwrap').style.display = 'none';
+      this.el('actt-foot').style.display = 'none';
+      const missed = (r.missedByGroup || []).reduce((n, g) => n + (g.count || 0), 0);
+      this.el('actt-body').innerHTML = `
+          <div style="text-align:center;font-size:13px;font-weight:600;color:#1a7f43;margin:0 0 6px">✓ Your practice test is saved to your account</div>
+          ${this._scoreHeadHtml(r)}
+          ${this._missedListHtml(r)}
+          <div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            ${missed ? '<button class="actt-btn actt-next" id="actt-bootcamp">Review my misses with my tutor</button>' : ''}
+            <button class="actt-btn actt-skip" id="actt-done">${missed ? 'Later' : 'Done'}</button>
+          </div>
+          ${missed ? '<div style="font-size:11.5px;color:#8578ab;margin-top:10px;text-align:center">This starts your free ACT Math boot camp: your tutor walks you through each question you missed, then you re-test.</div>' : ''}`;
+      this.el('actt-done').addEventListener('click', () => this.close());
+      const bc = this.el('actt-bootcamp');
+      if (bc) bc.addEventListener('click', () => this.startBootcampReview(data, r));
+    }
+
+    // Open the ACT boot camp on this test's misses. Enrolling builds the
+    // review queue from the claimed test (routes/courseSession.js /enroll →
+    // utils/actBootcampSeed.js); an existing enrollment was already seeded
+    // by the claim itself. No course manager on the page → hand the results
+    // to the tutor in plain chat instead.
+    startBootcampReview(data, r) {
+      this.close();
+      const cm = window.courseManager;
+      if (cm && data.actPrepSessionId && typeof cm.activateCourse === 'function') {
+        cm.activateCourse(data.actPrepSessionId);
+      } else if (cm && typeof cm.enrollInCourse === 'function') {
+        cm.enrollInCourse('act-prep');
+      } else {
+        this.sendToTutor(r);
       }
     }
 
@@ -777,9 +1006,20 @@
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  window.actTest = new ActTest();
+  // The public page (act-practice-test.html) sets this before loading the
+  // script: same runner, guest rail, locked results.
+  const GUEST_PAGE = !!window.MM_ACT_GUEST;
+  window.actTest = new ActTest({ guest: GUEST_PAGE });
   window.openActTest = function () { window.actTest.open(); };
   window.openActProgress = function () { window.actTest.showProgress(); };
+
+  // Signed-in page: a guest test finished in this browser before signup is
+  // claimed on load. (On the public page there is no account to claim into.)
+  if (!GUEST_PAGE) {
+    window.addEventListener('load', () => {
+      setTimeout(() => { window.actTest.claimGuestTest().catch(() => {}); }, 600);
+    });
+  }
 
   // Reachable entry point: a boot-camp CTA can link to /chat.html?acttest=1,
   // and it's an easy way to try the flow. (A visible button lives with the

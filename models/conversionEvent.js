@@ -56,6 +56,13 @@ const CONVERSION_EVENTS = [
   'trial_exhausted',
   'quiz_vote',             // anonymous pop-quiz vote (context: quizId, answer, correct)
   'campaign_scan',         // tracked print/QR link hit (/go/:campaign — context: campaign)
+  // -- Public ACT practice test (/act-practice-test, no account) --
+  // started -> completed (saw the score, "what you missed" locked) -> claimed
+  // (signed up or logged in, test attached). sessionKey is the ActTestSession
+  // id, so the three join per test without any visitor identifier.
+  'act_guest_started',     // guest assembled a form (context: totalItems)
+  'act_guest_completed',   // guest scored (context: scaledScore, totalItems)
+  'act_guest_claimed',     // test attached to an account (context: scaledScore, totalItems)
 ];
 
 const conversionEventSchema = new mongoose.Schema({

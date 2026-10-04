@@ -190,8 +190,9 @@ describe('the UI tells the truth about the loop (owner report, 2026-08-23)', () 
     // cs.bootcamp — round must come from the completed ActTestSessions, minus
     // the auto-submitted partials that isIncompleteAttempt keeps off the trend
     // (a 3-answer form that expired while the student was away is not a round).
-    const src = read('routes/actTest.js');
-    expect(src).toMatch(/ActTestSession\.find\(\{ userId: req\.user\._id, status: 'completed' \}\)/);
+    // Built in utils/actBootcampSeed.js (shared by /complete, /claim, enroll).
+    const src = read('utils/actBootcampSeed.js');
+    expect(src).toMatch(/ActTestSession\.find\(\{ userId, status: 'completed' \}\)/);
     expect(src).toMatch(/completedDocs\.filter\(\(s\) => !isIncompleteAttempt\(s\)\)/);
     expect(src).not.toMatch(/round: prevRound \+ 1/);
   });
