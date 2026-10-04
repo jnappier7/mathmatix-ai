@@ -214,19 +214,22 @@ describe('the queue carries what selection needs', () => {
   test('selection excludes items the student has already been served', () => {
     // Practice drawn from the seen-ledger would be a question from their own
     // test, which proves nothing about transfer.
-    const src = read('routes/actTest.js');
-    expect(src).toMatch(/seenProblemIdsForUser\(req\.user\._id\)/);
+    // Selection lives in utils/actBootcampSeed.js since /complete, /claim and
+    // ACT-prep enrollment all build the queue through it.
+    const src = read('utils/actBootcampSeed.js');
+    expect(src).toMatch(/seenProblemIdsForUser\(userId\)/);
     expect(src).toMatch(/problemId: \{ \$nin: \[\.\.\.seen\] \}/);
+    expect(read('routes/actTest.js')).toMatch(/seedBootcampFromTest\(cs, session/);
   });
 
   test('two misses on one skill never hand out the same practice problem', () => {
-    const src = read('routes/actTest.js');
+    const src = read('utils/actBootcampSeed.js');
     expect(src).toMatch(/claimed\.add\(id\)/);
     expect(src).toMatch(/!claimed\.has\(c\.problemId\)/);
   });
 
   test('a selection failure leaves review working', () => {
-    const src = read('routes/actTest.js');
+    const src = read('utils/actBootcampSeed.js');
     expect(src).toMatch(/transfer-item selection error \(non-fatal\)/);
   });
 });

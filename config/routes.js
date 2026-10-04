@@ -40,6 +40,26 @@ const quizLimiter = rateLimit({
   },
 });
 
+// Public ACT practice test (no account). Only /start is expensive — it
+// assembles a 45-item form and writes a session — so only /start is capped
+// here; the per-question traffic of a test in progress rides the global
+// apiLimiter like everything else. 20/hour/IP covers a household or a few
+// students on one network; a scripted form farm gets nowhere, and an unclaimed
+// form deletes itself after 14 days (TTL on guestExpiresAt).
+const actGuestStartLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => !(req.method === 'POST' && req.path === '/start'),
+  handler: (req, res) => {
+    res.status(429).json({
+      message: 'You have started a lot of practice tests from this network. Create a free account to keep going.',
+      retryAfter: 3600,
+    });
+  },
+});
+
 const {
   isAuthenticated,
   ensureNotAuthenticated,
@@ -331,6 +351,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // (POST /api/screener/start {isGrowthCheck:true} → sessionType 'growth-check').
   // ACT Math practice test — free (boot-camp on-ramp), fixed-form, no AI at request time.
   app.use('/api/act-test', isAuthenticated, actTestRoutes);
+  // The same test with NO account — the public practice test at
+  // /act-practice-test. Bearer-token ownership, locked results; signing up
+  // claims the test through /api/act-test/claim above. See routes/actTest.js.
+  app.use('/api/act-practice', actGuestStartLimiter, actTestRoutes.guestRouter);
   app.use('/api/calc-bootcamp', isAuthenticated, calcBootcampRoutes);
   app.use('/api/mastery', isAuthenticated, masteryRoutes);
   app.use('/api/nudges', isAuthenticated, nudgeRoutes);
@@ -851,6 +875,20 @@ function registerHtmlRoutes(app) {
   app.get('/quiz/:answer', (req, res) =>
     res.redirect(302, '/quiz?a=' + encodeURIComponent(String(req.params.answer).slice(0, 24))));
   app.get('/pricing.html', sendHtml('pricing.html'));
+  // Free ACT Math practice test — no sign-up to take it or to see the score;
+  // an account unlocks which questions were missed. Signed-in STUDENTS go
+  // straight to the in-app runner instead (their test counts toward their
+  // history and boot camp from the start). Everyone else, signed in or not,
+  // gets the public page.
+  const actPracticePage = (req, res) => {
+    if (req.isAuthenticated && req.isAuthenticated() && req.user && userHasRole(req.user, 'student')) {
+      return res.redirect(302, '/chat.html?acttest=1');
+    }
+    return res.sendFile(path.join(publicDir, 'act-practice-test.html'));
+  };
+  app.get('/act-practice-test', actPracticePage);
+  app.get('/act-practice-test.html', actPracticePage);
+  app.get('/act', (req, res) => res.redirect(302, '/act-practice-test'));
   // Audience pages. The homepage speaks to parents; the student and teacher
   // pitches used to be two of three tabs in the middle of it, which asked every
   // parent to read past them. Short aliases because these get linked directly.

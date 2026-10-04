@@ -103,8 +103,12 @@ async function actRows(ActTestSession) {
       }));
     const reached = dropNotReached(ordered);
     notReached += ordered.length - reached.length;
+    // An unclaimed test from the public no-account practice page has no
+    // userId. Each one is its own anonymous test-taker; String(undefined)
+    // would have pooled every guest into one fictional student.
+    const personId = s.userId ? String(s.userId) : `guest:${s._id}`;
     for (const r of reached) {
-      rows.push({ userId: String(s.userId), problemId: r.problemId, correct: r.correct });
+      rows.push({ userId: personId, problemId: r.problemId, correct: r.correct });
     }
   }
   return { rows, sessions: sessions.length, notReached };

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free ACT Math Practice Test, No Sign-Up | Mathmatix AI</title>
+  <meta name="description" content="Take a full-length, timed ACT Math practice test free with no sign-up. 45 questions, 50 minutes, calculator allowed, and an instant estimated 1-36 score." />
+
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.mathmatix.ai/act-practice-test" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.mathmatix.ai/act-practice-test" />
+  <meta property="og:title" content="Free ACT Math Practice Test, No Sign-Up" />
+  <meta property="og:description" content="Full-length and timed, like the real thing. 45 questions, 50 minutes, and your estimated ACT Math score the moment you finish." />
+  <meta property="og:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
+  <meta property="og:site_name" content="Mathmatix AI" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Free ACT Math Practice Test, No Sign-Up" />
+  <meta name="twitter:description" content="45 questions, 50 minutes, instant estimated score. No account needed to take it." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
+  <link rel="stylesheet" href="/css/mobile-fixes.css" />
+  <link rel="stylesheet" href="/vendor/fontawesome/css/all.min.css" />
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <link rel="stylesheet" href="/css/landing-page.css?v=3" />
+  <link rel="stylesheet" href="/css/mm-calculator.css?v=20260801a" />
+  <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
+  <style>
+    /* The shared landing CSS centers some hero text and not the rest (and
+       differently on phones); this page reads left-aligned at every width. */
+    .actp-hero, .actp-hero h1, .actp-hero p, .actp-hero .lp-section-eyebrow { text-align: left; }
+    .actp-facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 24px; padding: 0; list-style: none; }
+    .actp-facts li { background: rgba(118, 75, 162, 0.08); color: #4d3577; border-radius: 999px; padding: 7px 14px; font-weight: 600; font-size: 14px; }
+    .actp-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .actp-resume { display: none; }
+    .actp-resume.show { display: inline-flex; }
+    .actp-note { font-size: 13px; color: #6b6488; margin-top: 14px; }
+    .actp-steps { counter-reset: actp; list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+    .actp-steps li { counter-increment: actp; position: relative; padding-left: 44px; line-height: 1.5; }
+    .actp-steps li::before { content: counter(actp); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: #fff; background: linear-gradient(135deg, #667eea, #764ba2); }
+    @media (prefers-color-scheme: dark) {
+      .actp-facts li { background: rgba(154, 128, 255, 0.16); color: #d9d2f5; }
+      .actp-note { color: #b7b3cc; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <a href="/">
+        <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+      </a>
+    </div>
+    <nav class="landing-nav">
+      <a href="/pricing.html" class="lp-nav-link">Pricing</a>
+      <a href="/login.html" class="lp-nav-link">Log In</a>
+      <a href="/signup.html" class="btn btn-primary lp-nav-cta">Start Free Now</a>
+    </nav>
+  </header>
+
+  <main id="main-content" class="landing-main">
+
+    <section class="lp-spotlight">
+      <div class="lp-inner">
+        <div class="lp-spotlight-content actp-hero" style="max-width: 720px;">
+          <p class="lp-section-eyebrow">Free ACT Math practice test</p>
+          <h1>Find out your ACT Math score today</h1>
+          <p>A full-length, timed ACT Math section built to the current test: the same question count, the same clock, the same four answer choices. Finish it and you get your estimated score on the spot. No account needed.</p>
+          <ul class="actp-facts" aria-label="Test details">
+            <li>45 questions</li>
+            <li>50 minutes</li>
+            <li>Calculator allowed</li>
+            <li>Instant 1&ndash;36 score</li>
+            <li>No sign-up</li>
+          </ul>
+          <div class="actp-actions">
+            <button type="button" class="btn btn-primary btn-lg" id="actp-start">Start the free test</button>
+            <button type="button" class="btn btn-lg actp-resume" id="actp-results">See my last score</button>
+          </div>
+          <p class="actp-note">Set aside 50 minutes in one sitting. The clock can&rsquo;t be paused, just like test day.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lp-roles">
+      <div class="lp-inner">
+        <h2>How it works</h2>
+        <ol class="actp-steps">
+          <li><strong>Take the test.</strong> Move back and forth, change answers, and flag questions to revisit, the way the real ACT lets you.</li>
+          <li><strong>Get your score.</strong> An estimated ACT Math score plus how you did in each reporting category, from Algebra to Geometry.</li>
+          <li><strong>See what you missed.</strong> Create a free account to see exactly which questions you got wrong, grouped by skill. Then your AI tutor walks you through each one until it clicks, and you re-test with fresh questions.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="lp-audience-links">
+      <div class="lp-inner">
+        <p>
+          Every question is original, written to the official ACT Math blueprint. The score is an
+          estimate, not an official ACT score. ACT is a registered trademark of ACT, Inc., which
+          is not affiliated with Mathmatix AI.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="lp-footer">
+    <div class="lp-inner">
+      <div class="lp-footer-grid">
+        <div class="lp-footer-brand">
+          <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" style="height: 36px; width: auto; margin-bottom: 8px; filter: brightness(0) invert(1); opacity: 0.9;" />
+          <p>AI-powered math tutoring that actually knows your child.</p>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Product</h4>
+          <a href="/">Home</a>
+          <a href="/pricing.html">Pricing</a>
+          <a href="/for-students.html">For Students</a>
+          <a href="/signup.html">Start Free</a>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Company</h4>
+          <a href="/contact-support.html">Contact Us</a>
+          <a href="/safety.html">Safety &amp; Privacy</a>
+          <a href="/privacy.html">Privacy Policy</a>
+          <a href="/terms.html">Terms of Use</a>
+        </div>
+      </div>
+      <div class="lp-footer-bottom">
+        <p>&copy; 2026 M&#916;THM&#916;TI&#935; AI. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Guest mode: the runner below talks to /api/act-practice and locks
+       "what you missed" behind signup. Must be set before act-test.js loads. -->
+  <script>window.MM_ACT_GUEST = true;</script>
+  <script src="/js/csrf.js"></script>
+  <script src="/js/mmCalculator.js?v=20260801a"></script>
+  <script src="/js/act-test.js?v=7"></script>
+  <script>
+    (function () {
+      var start = document.getElementById('actp-start');
+      var results = document.getElementById('actp-results');
+      if (window.actTest && window.actTest.hasGuestResults()) {
+        results.classList.add('show');
+        start.textContent = 'Take another test';
+      }
+      start.addEventListener('click', function () { window.actTest.open(); });
+      results.addEventListener('click', function () { window.actTest.reopenGuestResults(); });
+      // Deep link straight into the test: /act-practice-test?start=1
+      try {
+        if (new URLSearchParams(location.search).get('start') === '1') window.actTest.open();
+      } catch (e) { /* noop */ }
+    })();
+  </script>
+</body>
+</html>

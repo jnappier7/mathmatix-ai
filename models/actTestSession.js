@@ -39,8 +39,30 @@ const actResponseSchema = new Schema({
   answeredAt: { type: Date, default: Date.now },
 }, { _id: false });
 
+// How long an unclaimed guest test lives. Long enough to cover "I'll make the
+// account tonight", short enough that anonymous forms don't pile up.
+const GUEST_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+
 const actTestSessionSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+  // Null only for a GUEST test (the public, no-account practice test at
+  // /act-practice-test). A guest session is owned by whoever holds the token
+  // whose hash is stored below; signing up claims it, which sets userId and
+  // clears both guest fields in one atomic update (routes/actTest.js /claim).
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
+    required: function () { return !this.guestTokenHash; },
+  },
+  // sha256 of the guest's bearer token. Never the token itself, and never
+  // selected by default, so no ordinary read can hand it back.
+  guestTokenHash: { type: String, select: false },
+  // TTL anchor: Mongo deletes an unclaimed guest session at this time. Unset on
+  // claim, so a claimed test is permanent like any other. Rows without the
+  // field (every signed-in test) are never touched by the TTL monitor.
+  guestExpiresAt: { type: Date },
+  // When a guest test was attached to an account — the hook's conversion mark.
+  claimedAt: { type: Date },
   testId: { type: String, default: 'act-math' },
   seed: { type: Number },
 
@@ -77,6 +99,7 @@ const actTestSessionSchema = new Schema({
 }, { timestamps: true });
 
 actTestSessionSchema.index({ userId: 1, status: 1 });
+actTestSessionSchema.index({ guestExpiresAt: 1 }, { expireAfterSeconds: 0 });
 
 actTestSessionSchema.statics.getActiveSession = function (userId) {
   return this.findOne({ userId, status: 'in_progress' }).sort({ createdAt: -1 });
@@ -86,3 +109,4 @@ const ActTestSession = mongoose.models.ActTestSession
   || mongoose.model('ActTestSession', actTestSessionSchema);
 
 module.exports = ActTestSession;
+module.exports.GUEST_TTL_MS = GUEST_TTL_MS;

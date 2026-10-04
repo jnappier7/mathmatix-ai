@@ -135,7 +135,7 @@ describe('practice fires once per skill, not once per miss', () => {
   });
 
   test('the route applies the group rule after selection', () => {
-    const src = read('routes/actTest.js');
+    const src = read('utils/actBootcampSeed.js');
     expect(src).toMatch(/keepGroupFinalTransfersOnly\(queue\)/);
   });
 });

@@ -290,6 +290,20 @@ router.post('/enroll', async (req, res) => {
       conversationId: conversation._id,
       createdBy: 'self'
     });
+
+    // ACT prep with a test ALREADY taken (the public no-account test claimed at
+    // signup, or any test taken before enrolling): that test satisfies the
+    // baseline gate, so the course will not ask for one — build the bootcamp
+    // review from it now, or the course opens with nothing to review.
+    // Non-fatal: an unseeded bootcamp is the pre-existing behaviour.
+    if (courseId === 'act-prep') {
+      try {
+        const { seedBootcampFromLatestTest } = require('../utils/actBootcampSeed');
+        await seedBootcampFromLatestTest(session, req.user._id);
+      } catch (seedErr) {
+        console.error('[CourseSession] ACT bootcamp seed on enroll failed (non-fatal):', seedErr.message);
+      }
+    }
     await session.save();
 
     // Set as active course session on user
