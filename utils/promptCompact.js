@@ -19,6 +19,7 @@ const { recordObservation } = require('./intentMetrics');
 const { studentLabel } = require('./studentLabels');
 const { canonicalSkillId, decodeMasteryKey } = require('./skillCanonicalizer');
 const { buildRapportNotes } = require('./rapportNotes');
+const { isWorkBoardEnabled } = require('./featureFlags');
 const {
   CAPABILITY_IDENTITY,
   VISUAL_TOOLS_SECTION,
@@ -45,7 +46,14 @@ const RULE_1_TEACHING = 'RULE 1 — TEACHING MODE ACTIVE. During direct instruct
  */
 function buildStaticRules(options = {}) {
   const rule1 = options.suppressSocratic ? RULE_1_TEACHING : RULE_1_SOCRATIC;
-  return STATIC_RULES_TEMPLATE.replace('{{RULE_1}}', rule1);
+  // Board off (WORK_BOARD, utils/featureFlags.js): the ~3.4K-token board and
+  // workspace-tab protocols leave the prompt and the tutor is told the work
+  // goes in its message. Replacers are functions so a '$' in the text is literal.
+  const board = isWorkBoardEnabled();
+  return STATIC_RULES_TEMPLATE
+    .replace('{{RULE_1}}', () => rule1)
+    .replace('{{WORK_SURFACE}}', () => (board ? BOARD_TAG_INSTRUCTIONS : INLINE_WORK_INSTRUCTIONS))
+    .replace('{{WORKSPACE_TABS}}', () => (board ? VISUAL_TAB_TAG_INSTRUCTIONS : ''));
 }
 
 // ── BOARD TAG PROTOCOL (Phase B) ──
@@ -169,6 +177,20 @@ EXAMPLES:
 `.trim();
 
 // ── VISUAL TAB TAGS (Phase D) ──
+// ── WORK IN THE MESSAGE (board off) ──
+// Replaces BOARD_TAG_INSTRUCTIONS when the Work Board is off: there is no
+// separate surface, so the problem and the student's steps live in the reply.
+// Same pedagogy the board enforced — mirror the student, never preview them.
+const INLINE_WORK_INSTRUCTIONS = `
+--- WHERE THE WORK GOES: IN YOUR MESSAGE ---
+There is no separate board or workspace. Everything the student sees is in the chat, so the math goes in your message, written in LaTeX as described in MATH FORMATTING.
+- Putting a problem in front of the student: give it its own display line, e.g. \\[ 2x + 4 = 20 \\].
+- Steps on the student's OWN problem: write only what the student has already said. Never write out their next step, or the answer, before they do. You may model a full worked solution only on a DIFFERENT problem with different numbers.
+- Nudging a stuck student: write the partial step with a ? where their answer goes, e.g. \\[ 2x = \\,? \\], and ask for that one quantity in words.
+- Graphs, number lines, tiles and other pictures: use the inline [TYPE:params] visuals from the visual catalog, inside your message. Never graph the student's own unsolved function — the picture would give the answer away.
+- If the student asks you to "show it on the board", "draw it" or "put it on the board", show it right here in your message.
+`.trim();
+
 // Inline <GRAPH/> and <TILES/> tags switch the workspace right slot to
 // a focused tool tab where the student can interact directly. Sibling
 // protocol to <BOARD>: same shape, different surface.
@@ -434,11 +456,11 @@ Talk like a real person who knows this student. Use contractions. Vary your rhyt
 
 Read the energy behind the message — not just the words — and respond to that. Two students can say the same words and mean completely different things.
 
-${BOARD_TAG_INSTRUCTIONS}
+{{WORK_SURFACE}}
 
 ${XP_TAG_INSTRUCTIONS}
 
-${VISUAL_TAB_TAG_INSTRUCTIONS}
+{{WORKSPACE_TABS}}
 
 ${IMAGE_SEARCH_SECTION}
 
@@ -729,7 +751,7 @@ function buildSystemPrompt(userProfile, tutorProfile, childProfile = null, curre
   }
 
   // ── STUDENT ROLE ──
-  const parts = [STATIC_RULES];
+  const parts = [buildStaticRules()];
 
   // Identity
   const culturalCtx = tutorProfile.culturalBackground

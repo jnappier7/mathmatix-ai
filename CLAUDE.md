@@ -279,6 +279,19 @@ only — HTML is served as-is, so i18n/feature-flags/user-data are injected clie
 - Heavy reliance on globals (`window.currentUser`, `window.TUTOR_CONFIG`, `window.MM_FEATURES`).
 - CSS is **dual-system**: legacy sheets hardcode colors; newer ones use `--cr-*` design tokens
   (`design-system.css`, `chat-redesign.css`). 70 CSS files, no CSS-modules.
+- **The Work Board is OFF by default (2026-10) — the math goes in the tutor's message.** One env var,
+  `WORK_BOARD` (`on` restores it), is the whole switch: `utils/featureFlags.js` `isWorkBoardEnabled()`
+  is read by the server for the prompt and emitted to the client as `MM_FEATURES.workBoard` via
+  `/api/features.js`, so the two cannot disagree. Board off: the board and workspace-tab protocols
+  leave the prompt (~2.5K tokens/turn) for a short "WHERE THE WORK GOES: IN YOUR MESSAGE" section;
+  `STRUCTURED_TUTOR_RESPONSE` and `BOARD_TOOL_CALLS` stand down; the per-turn board block shrinks to
+  "PROBLEM IN FOCUS"; `chat-workspace.js` skips the dock and derivation view but still mounts the
+  Notebook and Source Dock (`isOn()` stays true — `script.js` falls back to the legacy board
+  otherwise). The server **still runs the board pipeline silently**: the synthesizer pins the problem
+  from chat text, so `conversation.boardProblem` (the verifier's grading anchor) and the
+  `boardLedger` (teacher live view) keep working without a single model tag. Voice board actions
+  (shelved in chat) render nowhere with it off. The board's own suites opt in with `WORK_BOARD=on`;
+  board-off is pinned by `tests/unit/workBoardOff.test.js`. The notes below describe the board ON.
 - **The tutor's work is INLINE IN THE CHAT COLUMN** (2026-09), not a right rail. Two surfaces, both
   inside `#chat-container`: the **work dock** (`#cr-work-dock`, between the transcript and the
   composer) holds the problem in focus and collapses to nothing when idle; a finished problem is

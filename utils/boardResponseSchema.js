@@ -41,6 +41,8 @@
 
 'use strict';
 
+const { isWorkBoardEnabled } = require('./featureFlags');
+
 // NOTE: 'diagram' (deterministic JSXGraph geometry, gated behind DIAGRAM_BOARD)
 // is recognized so the verb + guard + client renderer can be exercised, but the
 // strict structured-output JSON fields (diagram_type / diagram_params) are added
@@ -254,6 +256,8 @@ function normalizeStructuredResponse(parsed) {
  * without needing to reload modules.
  */
 function isStructuredModeEnabled() {
+  // Structured mode exists to carry board_commands; board off → stand down.
+  if (!isWorkBoardEnabled()) return false;
   const v = process.env.STRUCTURED_TUTOR_RESPONSE;
   return v === 'true' || v === '1';
 }

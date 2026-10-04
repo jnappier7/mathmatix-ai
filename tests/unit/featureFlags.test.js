@@ -5,7 +5,7 @@
  * authoritative switch. Whitelist-only emission: nothing from the env is ever
  * interpolated raw into the served script.
  */
-const { buildFeaturesScript, LWS_MODES } = require('../../utils/featureFlags');
+const { buildFeaturesScript, isWorkBoardEnabled, LWS_MODES } = require('../../utils/featureFlags');
 
 describe('buildFeaturesScript', () => {
   test('the exact dashboard spelling works: livingWorkspace=live', () => {
@@ -24,7 +24,8 @@ describe('buildFeaturesScript', () => {
     for (const env of [{}, { livingWorkspace: 'banana' }, { livingWorkspace: '' }, { livingWorkspace: 'LIVE ' }]) {
       const js = buildFeaturesScript(env);
       expect(js).not.toContain('livingWorkspace"');
-      expect(js).toContain('window.MM_FEATURES = window.MM_FEATURES || {};');
+      // workBoard is always emitted (the server owns it); nothing else is.
+      expect(js).toContain('Object.assign(window.MM_FEATURES || {}, {"workBoard":false});');
     }
   });
 
@@ -48,5 +49,27 @@ describe('buildFeaturesScript', () => {
     expect(override).toBeGreaterThan(-1);
     expect(seed).toBeGreaterThan(-1);
     expect(override).toBeLessThan(seed);
+  });
+});
+
+describe('workBoard — the server owns it, off by default', () => {
+  test('absent or unrecognised → off', () => {
+    for (const env of [{}, { WORK_BOARD: '' }, { WORK_BOARD: 'banana' }, { WORK_BOARD: 'off' }, { WORK_BOARD: '0' }]) {
+      expect(isWorkBoardEnabled(env)).toBe(false);
+      expect(buildFeaturesScript(env)).toContain('"workBoard":false');
+    }
+  });
+
+  test('on / true / 1 → on, in both the server read and the client script', () => {
+    for (const v of ['on', 'ON', 'true', '1', ' on ']) {
+      expect(isWorkBoardEnabled({ WORK_BOARD: v })).toBe(true);
+      expect(buildFeaturesScript({ WORK_BOARD: v })).toContain('"workBoard":true');
+    }
+  });
+
+  test('an injection-shaped value can only ever produce a boolean', () => {
+    const js = buildFeaturesScript({ WORK_BOARD: '";alert(1);//' });
+    expect(js).not.toContain('alert');
+    expect(js).toContain('"workBoard":false');
   });
 });

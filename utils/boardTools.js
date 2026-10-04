@@ -27,6 +27,8 @@
 
 'use strict';
 
+const { isWorkBoardEnabled } = require('./featureFlags');
+
 const { BOARD_ACTIONS, normalizeBoardCommand } = require('./boardResponseSchema');
 
 const BOARD_TOOL_NAME = 'update_board';
@@ -113,6 +115,8 @@ function isBoardToolCall(name) {
  * reloads (same convention as isStructuredModeEnabled).
  */
 function isBoardToolModeEnabled() {
+  // Board off (utils/featureFlags.js) → there is no board for a tool to drive.
+  if (!isWorkBoardEnabled()) return false;
   const v = process.env.BOARD_TOOL_CALLS;
   return v === 'true' || v === '1';
 }

@@ -26,6 +26,24 @@ function boolFlag(v) {
 }
 
 /**
+ * Is the Work Board on? OFF unless WORK_BOARD says otherwise (2026-10).
+ *
+ * The board was the dock above the composer where the tutor's <BOARD/> tags
+ * rendered as cards. With it off, the tutor writes the math in its message and
+ * the dock never mounts; the server still pins the problem silently from chat
+ * text (grading anchor + teacher live view). One env var is the whole switch:
+ * the server reads it here for the prompt, and the client reads the same value
+ * through /api/features.js for the dock — so the two can never disagree.
+ *
+ * @param {object} env - process.env (injectable for tests)
+ * @returns {boolean}
+ */
+function isWorkBoardEnabled(env = process.env) {
+  const v = String(env.WORK_BOARD || '').trim().toLowerCase();
+  return v === 'on' || v === 'true' || v === '1';
+}
+
+/**
  * @param {object} env - process.env (injectable for tests)
  * @returns {string} JavaScript source for /api/features.js
  */
@@ -42,10 +60,14 @@ function buildFeaturesScript(env = process.env) {
   const courses = boolFlag(env.COURSES_FEATURE || env.courses);
   if (courses !== null) flags.courses = courses;
 
+  // Always emitted: the server is the source of truth for the board, because
+  // the prompt (server) and the dock (client) must agree.
+  flags.workBoard = isWorkBoardEnabled(env);
+
   const body = Object.keys(flags).length
     ? `window.MM_FEATURES = Object.assign(window.MM_FEATURES || {}, ${JSON.stringify(flags)});`
     : 'window.MM_FEATURES = window.MM_FEATURES || {};';
   return '// server feature-flag overrides — see utils/featureFlags.js\n' + body + '\n';
 }
 
-module.exports = { buildFeaturesScript, LWS_MODES };
+module.exports = { buildFeaturesScript, isWorkBoardEnabled, LWS_MODES };
