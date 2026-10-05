@@ -453,8 +453,14 @@ describe('Pipeline Integration: runPipeline', () => {
   // STRUCTURED_TUTOR_RESPONSE.
   // ──────────────────────────────────────────────────────────────────────
   describe('Phase 5: turn-type backfill', () => {
+    // Structured mode carries board_commands, so it only runs with the Work
+    // Board on (utils/featureFlags.js) — these tests are of that board path.
     const ORIGINAL_FLAG = process.env.STRUCTURED_TUTOR_RESPONSE;
+    const ORIGINAL_WORK_BOARD = process.env.WORK_BOARD;
+    beforeEach(() => { process.env.WORK_BOARD = 'on'; });
     afterEach(() => {
+      if (ORIGINAL_WORK_BOARD === undefined) delete process.env.WORK_BOARD;
+      else process.env.WORK_BOARD = ORIGINAL_WORK_BOARD;
       if (ORIGINAL_FLAG === undefined) delete process.env.STRUCTURED_TUTOR_RESPONSE;
       else process.env.STRUCTURED_TUTOR_RESPONSE = ORIGINAL_FLAG;
     });
