@@ -1,5 +1,5 @@
 {
-  "_about": "Labelled (student message, tutor reply) pairs for utils/pipeline/valueLeak.js. leaks=true: the reply hands over the value of the student's own equation. leaks=false: honest tutoring the guard must leave alone — a false alarm rewrites a good reply. The clean half is weighted toward the hard cases: replies full of the problem's own numbers, intermediate results, parallel examples, and answers that collide with a number already in the problem. Add every production false alarm here.",
+  "_about": "Labelled (student message, tutor reply) pairs for utils/pipeline/valueLeak.js. leaks=true: the reply hands over the value of the student's own equation. leaks=false: honest tutoring the guard must leave alone — a false alarm rewrites a good reply. The clean half is weighted toward the hard cases: replies full of the problem's own numbers, intermediate results, parallel examples, and answers that collide with a number already in the problem. Add every production false alarm here. A value the student stated themselves is credited (creditStudentStatements) before the reply is checked: confirming it is not a leak, and the 'student' field may hold several of their messages, one per line.",
   "cases": [
     {
       "id": "clean-first-step-question",
@@ -385,6 +385,42 @@
       "id": "leak-hyphenated-word",
       "student": "solve x - 4 = 17",
       "reply": "x is twenty-one.",
+      "leaks": true
+    },
+    {
+      "id": "clean-confirms-student-final-step",
+      "student": "prove 5(x+2)-3x=26 is equal to x=8\n2x+10=26 combine like terms\n-10 on both sides to get 2x=16 subtraction property of equality\ndivide by 2 to get x=8",
+      "reply": "Exactly! Dividing both sides by 2 gives us x = 8. That completes your proof!",
+      "leaks": false
+    },
+    {
+      "id": "clean-confirms-student-step-with-property-name",
+      "student": "5x+10-3x=26 distributive property\n2x+10=26 combine like terms\ndivide by 2 x=8 division property of equality",
+      "reply": "That's right — 16 divided by 2 is 8, so x = 8. Nice job naming the division property of equality!",
+      "leaks": false
+    },
+    {
+      "id": "clean-confirms-student-in-words",
+      "student": "solve 3x - 7 = 20\nx is nine",
+      "reply": "You got it, x = 9!",
+      "leaks": false
+    },
+    {
+      "id": "leak-corrects-a-wrong-guess",
+      "student": "solve 3x - 7 = 20\nis it x=5?",
+      "reply": "Not quite — x = 9.",
+      "leaks": true
+    },
+    {
+      "id": "leak-picks-from-a-shotgun-guess",
+      "student": "solve 3x - 7 = 20\nx = 1 or x = 9 or x = 20",
+      "reply": "Yes, x = 9.",
+      "leaks": true
+    },
+    {
+      "id": "leak-names-the-unsolved-second-problem",
+      "student": "do these: 1) 2x=10 2) 3x=12\nx=5",
+      "reply": "Right! And for #2, x = 4.",
       "leaks": true
     }
   ]

@@ -139,3 +139,85 @@ describe('verify: value-aware giveaway check', () => {
     });
   });
 });
+
+// Production 2026-10: a student working an algebraic proof of
+// 5(x+2) - 3x = 26 typed each step with its property. On the last one,
+// "divide by 2 to get x=8", the tutor's "x = 8" confirmation tripped this guard,
+// shipped the canned "first step" fallback, and the tutor restarted the proof
+// from distribution — four times. Confirming a value the student produced is
+// not giving it away.
+describe('verify: confirming the student\'s own answer is not a giveaway', () => {
+  beforeEach(() => callLLM.mockReset());
+  const proofSteps = [
+    '5x+10-3x=26 distributive property',
+    '2x+10=26 combine like terms',
+    '-10 on both sides to get 2x=16 subtraction property of equality',
+  ];
+  const finalStep = {
+    userId: 'u1',
+    messageType: MESSAGE_TYPES.GENERAL_MATH,
+    isBareProblemDrop: true, // what observe() says about "divide by 2 to get x=8"
+    userMessage: 'divide by 2 to get x=8',
+    recentUserMessages: proofSteps,
+  };
+  const confirmation = 'Exactly! Dividing both sides by 2 gives us:\nx = 8\nThat completes your proof, and every step has its reason.';
+
+  test('the student\'s final step is confirmed, not rewritten', async () => {
+    const result = await verify(confirmation, finalStep);
+    expect(result.text).toBe(confirmation);
+    expect(result.flags).toContain('answer_restates_student_value');
+    expect(result.flags).not.toContain('answer_giveaway_redirect_fallback');
+    expect(callLLM).not.toHaveBeenCalled();
+  });
+
+  test('a recap of the whole derivation ending in their answer ships too', async () => {
+    const recap = 'Nice proof! 5(x+2) - 3x = 26 → 5x + 10 - 3x = 26 → 2x + 10 = 26 → 2x = 16 → x = 8';
+    const result = await verify(recap, finalStep);
+    expect(result.text).toBe(recap);
+    expect(callLLM).not.toHaveBeenCalled();
+  });
+
+  test('"divide by 2" right after they said x=8 is still theirs to confirm', async () => {
+    const result = await verify("That's the move — and it gives you x = 8.", {
+      ...finalStep,
+      messageType: MESSAGE_TYPES.PROPOSED_STEP,
+      isBareProblemDrop: false,
+      userMessage: 'divide by 2',
+      recentUserMessages: ['2x+10=26', '-10 on both sides to get 2x=16', 'divide by 2 to get x=8'],
+    });
+    expect(result.flags).not.toContain('answer_value_revealed');
+    expect(callLLM).not.toHaveBeenCalled();
+  });
+
+  test('"divide by 2" before they have said x=8 is still guarded', async () => {
+    callLLM.mockResolvedValueOnce({ choices: [{ message: { content: 'Right operation! What do you get when you divide 16 by 2?' } }] });
+    const result = await verify("That's the move — and it gives you x = 8.", {
+      ...finalStep,
+      messageType: MESSAGE_TYPES.PROPOSED_STEP,
+      isBareProblemDrop: false,
+      userMessage: 'divide by 2',
+      recentUserMessages: ['2x+10=26 combine like terms', '-10 on both sides to get 2x=16'],
+    });
+    expect(result.flags).toContain('answer_value_revealed');
+    expect(result.text).not.toMatch(/x\s*=\s*8/);
+  });
+
+  test('a wrong guess still does not get corrected to the answer', async () => {
+    callLLM.mockResolvedValueOnce({ choices: [{ message: { content: 'Let\'s check it: what is 3 times 5, minus 7?' } }] });
+    const result = await verify('Not quite.\nx = 9', {
+      userId: 'u1',
+      messageType: MESSAGE_TYPES.QUESTION,
+      userMessage: 'is it x=5?',
+      recentUserMessages: ['solve 3x - 7 = 20'],
+    });
+    expect(result.flags).toContain('answer_giveaway_redirected');
+    expect(result.text).not.toMatch(/x\s*=\s*9/);
+  });
+
+  test('the fallback does not send a student mid-problem back to the first step', async () => {
+    callLLM.mockRejectedValueOnce(new Error('LLM unavailable'));
+    const result = await verify(solved, ctx);
+    expect(result.flags).toContain('answer_giveaway_redirect_fallback');
+    expect(result.text).not.toMatch(/first step/i);
+  });
+});

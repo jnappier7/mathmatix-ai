@@ -20,7 +20,12 @@ const { callLLM } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { MESSAGE_TYPES, detectBareProblemDrop } = require('./observe');
 const { isSheetCheckable, findRevealedCorrections, buildSheetCheckFallback } = require('./checkWorkVerifier');
-const { extractPosedEquations, findValueReveal } = require('./valueLeak');
+const {
+  extractPosedEquations,
+  findValueReveal,
+  creditStudentStatements,
+  restatesStudentAnswer,
+} = require('./valueLeak');
 const {
   VERIFICATION_STATES,
   ASSERTIONS,
@@ -161,9 +166,12 @@ async function socraticRegenerate(originalText, context, reason) {
 
 // What ships when a reply solved the student's problem and no clean rewrite
 // is available (the rewrite failed, or it solved the problem again). Plain on
-// purpose: it has to be safe to show in any persona and any phase.
+// purpose: it has to be safe to show in any persona and any phase — and at
+// any point in the problem. It used to ask for "the first step", which sent a
+// student who was one step from done back to the top of the problem, and the
+// next turn's tutor followed the transcript there.
 const GIVEAWAY_FALLBACK_TEXT =
-  "Let's work through this one together instead of me just handing you the answer. What do you think the first step should be?";
+  "Let's work through this one together instead of me just handing you the answer. What step would you take from here?";
 
 // Push a rewritten reply over the one already streamed to the client.
 function sendReplacement(context, text) {
@@ -670,7 +678,8 @@ async function verify(responseText, context = {}) {
   // so restating it is confirmation rather than a leak. For a proposed step the
   // student produced no answer at all — 'student_correct' only means the OPERATION
   // they named was the right one, and "that's right, and it gives you x = 8" is
-  // the leak this guard exists to stop.
+  // the leak this guard exists to stop — unless the student already said x = 8
+  // themselves, which creditStudentStatements below accounts for per value.
   const isStudentPosed =
     context.isBareProblemDrop ||
     inferredBareDrop ||
@@ -686,12 +695,22 @@ async function verify(responseText, context = {}) {
     const worked = detectWorkedSolution(text);
     // The form checks can't see "x is seven" or "5(7) + 10 = 45 ✓". Solve the
     // student's own equation and look for its value in the reply too.
-    const posed = extractPosedEquations(
-      [context.userMessage, ...(context.recentUserMessages || [])].filter(Boolean).join('\n')
-    );
-    const valueReveal = findValueReveal(text, posed);
+    const studentMessages = [context.userMessage, ...(context.recentUserMessages || [])]
+      .filter((m) => typeof m === 'string' && m);
+    const posed = extractPosedEquations(studentMessages.join('\n'));
+    // A value the student already stated can't be leaked. Only the values
+    // they have NOT produced are guarded; and when they have stated the
+    // answer to their own equation, a reply that binds the variable to
+    // nothing else is confirming their work, not handing it over — the same
+    // reasoning as the student_correct exemption above. Without this, "divide
+    // by 2 to get x=8" → "Exactly, x = 8!" was rewritten to the canned
+    // first-step fallback and the student looped back to the start.
+    const { open: unstated, answered } = creditStudentStatements(posed, studentMessages);
+    const valueReveal = findValueReveal(text, unstated);
     if (valueReveal) flags.push('answer_value_revealed');
-    const hasCompleteSolution = handsOverSolution(text) || !!valueReveal;
+    const restatesStudent = !valueReveal && restatesStudentAnswer(text, answered);
+    if (restatesStudent && handsOverSolution(text)) flags.push('answer_restates_student_value');
+    const hasCompleteSolution = !restatesStudent && (handsOverSolution(text) || !!valueReveal);
 
     // A trailing question ("Does that make sense?") does NOT excuse dumping the answer.
     // The guard fires whenever the AI reveals a complete solution to a student-posed problem.
@@ -724,7 +743,7 @@ async function verify(responseText, context = {}) {
           // In I-DO the rewrite is ASKED for a worked parallel example, so its
           // form proves nothing — only the student's own value can leak.
           (!isIDoPhase && handsOverSolution(redirectedText)) ||
-          findValueReveal(redirectedText, posed)
+          findValueReveal(redirectedText, unstated)
         ) {
           text = GIVEAWAY_FALLBACK_TEXT;
           flags.push('answer_giveaway_redirect_still_leaked');
