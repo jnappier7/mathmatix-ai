@@ -9,6 +9,11 @@
 //   seeds/fable-act/*.json                      choices[] + answer index
 //   seeds/act-fable-items.generated.json        options[] + correctOption
 //   seeds/act-ies-expansion/ies-items.generated.json   options[] + correctOption
+//   seeds/act-enhanced/act-items.generated.json        options[] + correctOption
+//
+// A number with a unit sorts too ("540°", "12 cm") when every choice carries
+// the same unit (utils/actChoiceOrder.js — the form builder uses the same
+// rule, so production items from any source are served sorted regardless).
 //
 // For every item whose choices are all plain numbers and not already in
 // ascending or descending order, choices are sorted ascending (stable, so
@@ -24,50 +29,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const { numericValue } = require('../utils/distractorQuality');
+const { sortPermutation, remapChoiceLetters } = require('../utils/actChoiceOrder');
+const { explainItem } = require('../utils/actItemExplainers');
 
 const ROOT = path.join(__dirname, '..');
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
-
-function isMonotonic(values) {
-  let up = true;
-  let down = true;
-  for (let i = 1; i < values.length; i++) {
-    if (values[i] < values[i - 1]) up = false;
-    if (values[i] > values[i - 1]) down = false;
-  }
-  return up || down;
-}
-
-/**
- * The new order for a list of choice texts, or null when nothing should move.
- * Returns `perm` where new position i holds old position perm[i].
- */
-function sortPermutation(texts) {
-  const values = texts.map(numericValue);
-  if (values.length < 3 || values.some((v) => v == null) || isMonotonic(values)) return null;
-  return values
-    .map((v, i) => ({ v, i }))
-    .sort((a, b) => (a.v - b.v) || (a.i - b.i))
-    .map((x) => x.i);
-}
-
-/**
- * Remap choice letters inside the sentences that talk about choices. A letter
- * is only rewritten when its sentence names a choice ("Choice", "Choices",
- * "answer is", "rules out"), so geometry names elsewhere stay untouched.
- */
-function remapExplanation(text, oldToNew) {
-  if (!text) return text;
-  const sentences = String(text).split(/(?<=[.!?])(\s+)/);
-  return sentences.map((s) => {
-    if (!/\b(?:[Cc]hoices?|answer is|rules out)\b/.test(s)) return s;
-    // Two passes through placeholders so A→B and B→A cannot collide.
-    return s
-      .replace(/(^|[^∠\w])([A-E])(?=$|[^\w])/g, (m, pre, l) => `${pre}\u0000${l}`)
-      .replace(/\u0000([A-E])/g, (m, l) => oldToNew[l] || l);
-  }).join('');
-}
 
 function permuteItem(item, perm) {
   const oldLabels = item.options.map((o, i) => LETTERS[i]);
@@ -75,12 +41,28 @@ function permuteItem(item, perm) {
   perm.forEach((oldIdx, newIdx) => { oldToNew[oldLabels[oldIdx]] = LETTERS[newIdx]; });
   const options = perm.map((oldIdx, newIdx) => ({ ...item.options[oldIdx], label: LETTERS[newIdx] }));
   const keyIdx = LETTERS.indexOf(String(item.correctOption).toUpperCase());
-  return {
+  const out = {
     ...item,
     options,
     correctOption: keyIdx >= 0 ? oldToNew[LETTERS[keyIdx]] : item.correctOption,
-    explanation: remapExplanation(item.explanation, oldToNew),
+    explanation: remapChoiceLetters(item.explanation, oldToNew),
   };
+  // An explanation the solver wrote (utils/actItemExplainers) walks the wrong
+  // choices in option order; regenerate it rather than remap it, so it stays
+  // exactly what the solver produces (tests/unit/actItemExplainers.test.js).
+  const regenerated = explainItem(out);
+  if (regenerated.status === 'ok' && isSolverWritten(item)) out.explanation = regenerated.explanation;
+  return out;
+}
+
+function isSolverWritten(item) {
+  if (!item.explanation) return false;
+  const r = explainItem(item);
+  if (r.status === 'ok' && r.explanation === item.explanation) return true;
+  // Already reordered by an earlier run that only remapped letters: same
+  // opening (the worked solution), differing only in the wrong-choice walk.
+  return r.status === 'ok' && /Wrong choices:/.test(item.explanation)
+    && item.explanation.split('Wrong choices:')[0] === r.explanation.split('Wrong choices:')[0];
 }
 
 // Each seed file keeps its own formatting (they differ: 1- or 2-space indent,
@@ -135,7 +117,7 @@ function main() {
       perm.forEach((oldIdx, newIdx) => { oldToNew[LETTERS[oldIdx]] = LETTERS[newIdx]; });
       q.choices = perm.map((i) => q.choices[i]);
       q.answer = perm.indexOf(q.answer);
-      q.explanation = remapExplanation(q.explanation, oldToNew);
+      q.explanation = remapChoiceLetters(q.explanation, oldToNew);
       if (JSON.stringify(q.choices) !== JSON.stringify(gen.options.map((o) => o.text))
         || LETTERS[q.answer] !== gen.correctOption) {
         throw new Error(`${pid}: source and generated disagree after sorting`);
@@ -144,26 +126,36 @@ function main() {
     sourceOut[file] = data;
   }
 
-  // ── IES expansion bank (its generated file is its source) ──
-  const iesRel = 'seeds/act-ies-expansion/ies-items.generated.json';
-  const iesRaw = readJson(iesRel);
-  const iesItems = Array.isArray(iesRaw) ? iesRaw : iesRaw.items;
-  const iesOut = iesItems.map((item) => {
-    const perm = sortPermutation(item.options.map((o) => o.text));
-    if (!perm) return item;
-    changed.push(item.problemId);
-    return permuteItem(item, perm);
-  });
+  // ── Banks whose generated file is their source in this repo: the IES
+  //    expansion, and the enhanced drop (ingested from a file outside it) ──
+  const flatBanks = [
+    'seeds/act-ies-expansion/ies-items.generated.json',
+    'seeds/act-enhanced/act-items.generated.json',
+  ];
+  const flatOut = {};
+  for (const rel of flatBanks) {
+    const raw = readJson(rel);
+    const items = Array.isArray(raw) ? raw : raw.items;
+    let touched = false;
+    const out = items.map((item) => {
+      const perm = sortPermutation(item.options.map((o) => o.text));
+      if (!perm) return item;
+      touched = true;
+      changed.push(item.problemId);
+      return permuteItem(item, perm);
+    });
+    if (touched) flatOut[rel] = Array.isArray(raw) ? out : { ...raw, items: out };
+  }
 
   console.log(`${changed.length} item(s) reordered${dry ? ' (dry run, nothing written)' : ''}.`);
   changed.forEach((id) => console.log(`  ${id}`));
   if (dry || !changed.length) return;
 
-  writeJson(fableRel, fableOut);
+  if (perms.size) writeJson(fableRel, fableOut);
   for (const [file, data] of Object.entries(sourceOut)) writeJson(file, data);
-  writeJson(iesRel, Array.isArray(iesRaw) ? iesOut : { ...iesRaw, items: iesOut });
+  for (const [rel, data] of Object.entries(flatOut)) writeJson(rel, data);
 }
 
 if (require.main === module) main();
 
-module.exports = { sortPermutation, remapExplanation, permuteItem };
+module.exports = { sortPermutation, remapExplanation: remapChoiceLetters, permuteItem, isSolverWritten };

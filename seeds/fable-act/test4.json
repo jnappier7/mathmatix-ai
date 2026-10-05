@@ -161,6 +161,7 @@
    "explanation": "By the Pythagorean theorem, the hypotenuse is √(6² + 8²) = √(36 + 64) = √100 = 10, choice A. Choice C comes from adding the legs, and choice D from multiplying them.",
    "verify": "print((6**2 + 8**2)**0.5)",
    "figure_code": "def draw(ax):\n    ax.plot([0, 8, 0, 0], [0, 0, 6, 0], 'k-')\n    ax.plot([0.5, 0.5, 0], [0, 0.5, 0.5], 'k-')\n    ax.text(4, -0.25, '8', ha='center', va='top')\n    ax.text(-0.25, 3, '6', ha='right', va='center')\n    ax.text(4.2, 3.2, '?', ha='left', va='bottom')\n    ax.set_xlim(-1.5, 9.5)\n    ax.set_ylim(-1.5, 7.5)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Right triangle with the right angle at the bottom left. The vertical leg is labeled 6, the bottom leg is labeled 8, and the hypotenuse is labeled with a question mark.",
    "skill": "Triangles & Pythagorean theorem"
   },
   {
@@ -269,6 +270,7 @@
    "explanation": "The base angles of an isosceles triangle are congruent, so ∠B = ∠C. Since the angles sum to 180°, each base angle is (180° − 40°)/2 = 70°, choice C. Choice D is the sum of both base angles.",
    "verify": "print((180-40)/2)",
    "figure_code": "def draw(ax):\n    ax.plot([-2, 0, 2, -2], [0, 4, 0, 0], 'k-')\n    ax.text(0, 4.15, 'A', ha='center', va='bottom')\n    ax.text(-2.15, -0.15, 'B', ha='right', va='top')\n    ax.text(2.15, -0.15, 'C', ha='left', va='top')\n    ax.text(0, 3.15, '40°', ha='center', va='top')\n    ax.set_xlim(-3.5, 3.5)\n    ax.set_ylim(-1.2, 5.2)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Triangle ABC with A at the top, B at the bottom left and C at the bottom right. The angle at A is labeled 40°.",
    "skill": "Triangles & angle relationships"
   },
   {
@@ -340,7 +342,8 @@
    "answer": 0,
    "explanation": "The two marked angles are same-side interior angles, so they are supplementary: 4x + 2 + 118 = 180. Then 4x = 60 and x = 15, choice A. Choice B comes from incorrectly setting 4x + 2 equal to 118.",
    "verify": "print((180 - 118 - 2)/4)",
-   "figure_code": "def draw(ax):\n    ax.plot([-4, 4], [2, 2], 'k-')\n    ax.plot([-4, 4], [-2, -2], 'k-')\n    ax.plot([-2.2, 2.2], [-3.8, 3.8], 'k-')\n    ax.text(1.7, 1.5, '118°', ha='left', va='top')\n    ax.text(-0.6, -1.5, '(4x + 2)°', ha='left', va='bottom')\n    ax.set_xlim(-5, 5)\n    ax.set_ylim(-4.5, 4.5)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_code": "def draw(ax):\n    ax.plot([-4, 4], [2, 2], 'k-')\n    ax.plot([-4, 4], [-2, -2], 'k-')\n    ax.plot([-2.2, 2.2], [-3.8, 3.8], 'k-')\n    ax.text(1.7, 1.5, '118°', ha='left', va='top')\n    ax.text(-0.05, -1.5, '(4x + 2)°', ha='left', va='bottom')\n    ax.set_xlim(-5, 5)\n    ax.set_ylim(-4.5, 4.5)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Two horizontal parallel lines crossed by a transversal rising to the right. At the upper line, the angle below the line and to the right of the transversal is labeled 118°. At the lower line, the angle above the line and to the right of the transversal is labeled (4x + 2)°.",
    "skill": "Angles & parallel lines"
   },
   {
@@ -539,6 +542,7 @@
    "explanation": "The sector is 80/360 = 2/9 of the whole circle, whose area is π(9²) = 81π. So the sector area is (2/9)(81π) = 18π square inches, choice H. Choice F, 4π, is the arc length of the sector, not its area.",
    "verify": "print(80/360*81)",
    "figure_code": "import numpy as np\n\ndef draw(ax):\n    t = np.linspace(0, 2*np.pi, 200)\n    ax.plot(np.cos(t), np.sin(t), 'k-')\n    for ang in (10, 90):\n        a = np.radians(ang)\n        ax.plot([0, np.cos(a)], [0, np.sin(a)], 'k-')\n    ax.plot(0, 0, 'ko', markersize=3)\n    ax.text(-0.08, -0.08, 'O', ha='right', va='top')\n    a = np.radians(50)\n    ax.text(0.42*np.cos(a), 0.42*np.sin(a), '80°', ha='center', va='center')\n    am = np.radians(10)\n    ax.text(0.6*np.cos(am), 0.6*np.sin(am) - 0.12, '9', ha='center', va='top')\n    ax.set_xlim(-1.3, 1.3)\n    ax.set_ylim(-1.3, 1.3)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Circle with center O. Two radii form a central angle labeled 80°, marking off a sector. One radius points straight up and the other points right and slightly up; the radius is labeled 9.",
    "skill": "Circles"
   },
   {
@@ -665,6 +669,7 @@
    "explanation": "The graph reaches a maximum of 3 and a minimum of −3, so the amplitude is a = 3. It completes one full cycle every π units, so the period is π and b = 2π/π = 2. The equation is y = 3 sin(2x), choice D.",
    "verify": "import math; f = lambda x: 3*math.sin(2*x); print(round(max(f(i*2*math.pi/1000) for i in range(1001)), 3), round(f(1.0) - f(1.0 + math.pi), 9))",
    "figure_code": "import numpy as np\n\ndef draw(ax):\n    x = np.linspace(0, 2*np.pi, 400)\n    ax.plot(x, 3*np.sin(2*x), 'k-')\n    ax.axhline(0, color='k', linewidth=0.8)\n    ax.axvline(0, color='k', linewidth=0.8)\n    ax.set_xticks([np.pi/2, np.pi, 3*np.pi/2, 2*np.pi])\n    ax.set_xticklabels(['π/2', 'π', '3π/2', '2π'])\n    ax.set_yticks([-3, 3])\n    ax.spines['top'].set_visible(False)\n    ax.spines['right'].set_visible(False)",
+   "figure_alt": "Graph for x from 0 to 2π. The y-axis is marked at 3 and −3, and the x-axis at π/2, π, 3π/2 and 2π. The curve starts at the origin and rises to 3 near x = π/4, falls to −3 near 3π/4, rises to 3 again near 5π/4, falls to −3 near 7π/4, and returns to 0 at 2π.",
    "skill": "Trigonometric functions"
   },
   {

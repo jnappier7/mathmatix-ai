@@ -442,6 +442,7 @@ router.get('/next-problem', async (req, res) => {
         problemId: item.problemId,
         content: item.content,
         svg: item.svg,
+        figureAlt: item.figureAlt,
         skillId: item.skillId,
         category: item.category,
         answerType: item.answerType,
@@ -485,6 +486,7 @@ async function serveProblem(req, res) {
         problemId: item.problemId,
         content: item.content,
         svg: item.svg,
+        figureAlt: item.figureAlt,
         skillId: item.skillId,
         category: item.category,
         answerType: item.answerType,
@@ -1009,13 +1011,39 @@ router.post('/claim', async (req, res) => {
   }
 });
 
+// Questions this browser's earlier guest tests already showed. `previous` is
+// [{ sessionId, token }] from the browser; at most GUEST_HISTORY_MAX are read,
+// and only entries whose token matches an unclaimed guest session count.
+const GUEST_HISTORY_MAX = 5;
+async function guestSeenProblemIds(previous) {
+  if (!Array.isArray(previous) || !previous.length) return [];
+  const entries = previous
+    .filter((p) => p && typeof p === 'object' && mongoose.isValidObjectId(p.sessionId) && typeof p.token === 'string')
+    .slice(0, GUEST_HISTORY_MAX);
+  if (!entries.length) return [];
+  try {
+    const docs = await ActTestSession.find({ _id: { $in: entries.map((e) => e.sessionId) }, userId: null })
+      .select('+guestTokenHash items.problemId').lean();
+    const seen = new Set();
+    for (const d of docs) {
+      const e = entries.find((x) => String(x.sessionId) === String(d._id));
+      if (!e || !guestTokenMatches(e.token, d.guestTokenHash)) continue;
+      (d.items || []).forEach((it) => it && it.problemId && seen.add(it.problemId));
+    }
+    return [...seen];
+  } catch (err) {
+    console.error('[actTest] guest history lookup failed (non-fatal, no exclusion):', err.message);
+    return [];
+  }
+}
+
 // ── Guest rail: POST /start ─────────────────────────────────
 // Resume the caller's in-progress guest test (sessionId + its token) or
 // assemble a fresh one. No seen-ledger — a guest has no history to exclude —
 // and no burn: the items join a seen-ledger only if the test is claimed.
 guestRouter.post('/start', async (req, res) => {
   try {
-    const { sessionId, restart } = req.body || {};
+    const { sessionId, restart, previous } = req.body || {};
     const token = req.actOwner.guestToken;
 
     if (!restart && sessionId && token && mongoose.isValidObjectId(sessionId)) {
@@ -1045,7 +1073,16 @@ guestRouter.post('/start', async (req, res) => {
     }
 
     const blueprint = getBlueprint();
-    const form = await assembleForm({ seed: `guest-${crypto.randomBytes(8).toString('hex')}-${Date.now()}` });
+    // A guest has no account to keep a seen-ledger on, so the browser sends
+    // the tests it took before (id + token, last few). Their questions are
+    // excluded, so a retake is fresh — the same promise a signed-in student
+    // gets. Each entry must prove ownership with its token; anything else is
+    // ignored rather than refused.
+    const excludeIds = await guestSeenProblemIds(previous);
+    const form = await assembleForm({
+      seed: `guest-${crypto.randomBytes(8).toString('hex')}-${Date.now()}`,
+      excludeIds,
+    });
     if (form.coverage.filled === 0) {
       return res.status(503).json({
         message: 'The ACT practice test is not available right now. Please try again later.',

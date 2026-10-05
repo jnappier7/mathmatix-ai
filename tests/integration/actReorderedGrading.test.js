@@ -65,6 +65,32 @@ test('the right choice on the old order still grades right', async () => {
   expect(res.body.report.rawScore).toBe(1);
 });
 
+test('a bank item stored out of order is served sorted, and its key still grades right', async () => {
+  const { assembleForm } = require('../../utils/actTestAssembler');
+  // Bank order puts the key "72°" at D; served sorted, it sits at B.
+  await Problem.create({
+    problemId: 'ro-unsorted', skillId: 'ro-skill-2', prompt: 'Each exterior angle?', answer: { value: '72°' },
+    answerType: 'multiple-choice', options: opts('108°', '540°', '36°', '72°'), correctOption: 'D',
+    difficulty: 3, isActive: true, source: 'test',
+  });
+  const blueprint = {
+    testId: 'act-math', title: 'T', totalItems: 1, timeLimitMinutes: 50,
+    categoryWeights: { geometry: 1 }, skillsByCategory: { geometry: ['ro-skill-2'] },
+    difficultyRamp: [{ fromPosition: 1, toPosition: 45, targetDifficulty: 3 }],
+  };
+  const form = await assembleForm({ blueprint, seed: 'sort-me' });
+  expect(form.items[0].options.map((o) => o.text)).toEqual(['36°', '72°', '108°', '540°']);
+
+  const grade = async (answer) => {
+    const s = await ActTestSession.create({ userId: USER_ID, testId: 'act-math', timeLimitMinutes: 50, items: form.items });
+    const res = await supertest(app).post('/api/act-test/complete')
+      .send({ sessionId: String(s._id), answers: [{ position: 1, problemId: 'ro-unsorted', answer, seq: 1 }] });
+    return res.body.report.rawScore;
+  };
+  expect(await grade('B')).toBe(1);   // "72°" as served — right
+  expect(await grade('D')).toBe(0);   // "540°" as served — the bank's key LETTER, but wrong
+});
+
 test('the choice that now sits in the key\'s slot does not', async () => {
   const s = await frozenSession();
   // Old C is "185" — it now occupies nothing special, but C IS the bank's key letter.

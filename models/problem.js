@@ -44,6 +44,11 @@ const problemSchema = new mongoose.Schema({
   svg: {
     type: String
   },
+  // Written description of `svg` for screen readers. The bank's figures draw
+  // their labels as shapes, so there is no text to read out of the SVG itself.
+  figureAlt: {
+    type: String
+  },
 
   // Optional declarative figure (fixed-library kind + concrete params) for
   // problems whose visual is drawn by the renderer rather than a baked SVG.

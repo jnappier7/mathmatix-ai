@@ -27,6 +27,12 @@ describe('sorting choices', () => {
     expect(sortPermutation(['x + 1', '2', '3', '4'])).toBeNull();          // not all numbers
   });
 
+  test('numbers with a shared unit sort too; mixed units are left alone', () => {
+    expect(sortPermutation(['540°', '360°', '720°', '900°'])).toEqual([1, 0, 2, 3]);
+    expect(sortPermutation(['12 cm', '3 cm', '5 cm', '9 cm'])).toEqual([1, 2, 3, 0]);
+    expect(sortPermutation(['3 cm', '5 in', '1 cm', '2 cm'])).toBeNull();
+  });
+
   test('the key moves with its text', () => {
     const item = { options: opts('16', '2', '4', '8'), correctOption: 'D', explanation: 'Slope is 8.' };
     const out = permuteItem(item, sortPermutation(item.options.map((o) => o.text)));
@@ -75,6 +81,19 @@ describe('tests taken before the reorder', () => {
     expect(relabelByText('C', frozen, bank)).toBe('B');   // "185"
     expect(relabelByText('A', frozen, bank)).toBe('A');
     expect(relabelByText('B', opts('1', 'gone'), opts('1', '2'))).toBeNull();
+  });
+
+  test('the review explanation follows the order the student saw', () => {
+    const o = (...t) => t.map((x, i) => ({ label: 'ABCD'[i], text: x }));
+    const session = {
+      items: [{ position: 1, problemId: 'g', skillId: 's', category: 'geometry', content: 'Q', options: o('36°', '72°', '108°', '540°') }],
+      responses: [{ position: 1, problemId: 'g', skillId: 's', category: 'geometry', answer: 'A', correct: false }],
+    };
+    const bank = { g: { problemId: 'g', options: o('108°', '72°', '36°', '540°'), correctOption: 'B',
+      answer: { value: '72°' }, explanation: 'Each is 72°. Wrong choices: A) 108° is interior; D) 540° is the sum.' } };
+    const [miss] = buildReviewQueue(session, bank);
+    expect(miss.correctOption).toBe('B');
+    expect(miss.explanation).toBe('Each is 72°. Wrong choices: C) 108° is interior; D) 540° is the sum.');
   });
 
   test('the review queue names the key in the order the student saw', () => {

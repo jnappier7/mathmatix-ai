@@ -6310,11 +6310,11 @@
       "stem": "In △XYZ, m∠X = 25° and m∠Y = 90°. What is the measure of ∠Z?",
       "choices": [
         "25°",
-        "155°",
         "65°",
-        "115°"
+        "115°",
+        "155°"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "The three interior angles of a triangle sum to 180°, so m∠Z = 180 − 25 − 90 = 65°. The value 115° is the sum of the two given angles, and 155° subtracts only ∠X from 180°.",
       "verify": "str(180-25-90)+\"°\"",
       "figure_code": null
@@ -6327,12 +6327,12 @@
       "difficulty": 2,
       "stem": "In an isosceles triangle, each of the two base angles measures 52°. What is the measure of the vertex angle?",
       "choices": [
+        "52°",
         "76°",
         "104°",
-        "52°",
         "128°"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The base angles account for 2(52) = 104°, so the vertex angle measures 180 − 104 = 76°. Subtracting only one 52° angle gives 128°, and 104° is the combined measure of the base angles.",
       "verify": "str(180-2*52)+\"°\"",
       "figure_code": null
@@ -6346,11 +6346,11 @@
       "stem": "In △ABC, the exterior angle at vertex C measures 115° and m∠A = 48°. What is the measure of ∠B?",
       "choices": [
         "17°",
-        "132°",
+        "67°",
         "115°",
-        "67°"
+        "132°"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "An exterior angle equals the sum of the two remote interior angles, so 115 = 48 + m∠B and m∠B = 67°. Treating 115° as an interior angle gives 180 − 115 − 48 = 17°, and 132° is the interior angle at C subtracted incorrectly from 180°.",
       "verify": "str(115-48)+\"°\"",
       "figure_code": null
@@ -6417,12 +6417,12 @@
       "difficulty": 4,
       "stem": "In isosceles △ABC, AB = AC, and the exterior angle formed at vertex B by extending side CB measures 118°. What is the measure of ∠A?",
       "choices": [
-        "62°",
-        "118°",
         "28°",
-        "56°"
+        "56°",
+        "62°",
+        "118°"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "The interior angle at B is 180 − 118 = 62°, and since AB = AC, the base angles at B and C are equal, so m∠C = 62° as well. Then m∠A = 180 − 62 − 62 = 56°. Stopping at the base angle gives the trap 62°.",
       "verify": "b=180-118\nstr(180-2*b)+\"°\"",
       "figure_code": null
@@ -6435,10 +6435,10 @@
       "difficulty": 4,
       "stem": "In △PQR, m∠P = 44° and m∠Q = 76°. Ray RS bisects ∠R, where point S lies on side PQ. What is the measure of ∠PRS?",
       "choices": [
-        "60°",
+        "22°",
         "30°",
         "38°",
-        "22°"
+        "60°"
       ],
       "answer": 1,
       "explanation": "First find m∠R = 180 − 44 − 76 = 60°. A bisector splits that angle into two congruent parts, so m∠PRS = 60/2 = 30°. The value 60° is the full ∠R, while 22° and 38° come from halving ∠P or ∠Q instead.",
@@ -6455,10 +6455,10 @@
       "choices": [
         "32°",
         "52°",
-        "96°",
-        "64°"
+        "64°",
+        "96°"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "Let m∠B = b. Then 3b + b + (b + 20) = 180, so 5b = 160 and b = 32. Therefore m∠A = 3(32) = 96°. The value 32° is ∠B and 52° is ∠C.",
       "verify": "b=(180-20)//5\nstr(3*b)+\"°\"",
       "figure_code": null
@@ -6471,12 +6471,12 @@
       "difficulty": 5,
       "stem": "The three interior angles of a triangular garden plot measure (x + 15)°, (2x − 5)°, and (3x + 20)°. What is the measure of the largest angle?",
       "choices": [
-        "45°",
-        "95°",
+        "25°",
         "40°",
-        "25°"
+        "45°",
+        "95°"
       ],
-      "answer": 1,
+      "answer": 3,
       "explanation": "The angles sum to 180°: (x + 15) + (2x − 5) + (3x + 20) = 6x + 30 = 180, so x = 25. The three angles are 40°, 45°, and 95°, and the largest is 95°. The values 40° and 45° are the other two angles, and 25° is x itself.",
       "verify": "x=(180-30)//6\nstr(max(x+15,2*x-5,3*x+20))+\"°\"",
       "figure_code": null

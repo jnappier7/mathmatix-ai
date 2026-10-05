@@ -80,6 +80,94 @@ function numericValue(text) {
   return m[1] ? -v : v;
 }
 
+// ── Symbolic equality ────────────────────────────────────────────────────
+// x⁶ and |x⁶| (or 2√3 and √12) are one answer written two ways, which is as
+// much a giveaway as 2/5 next to 4/10. Choices are parsed with mathjs and
+// evaluated at fixed sample points; two DIFFERENT texts that agree at every
+// point are the same expression. Anything that does not parse to a real
+// number (words, equations, coordinates, inequalities) is skipped, never
+// guessed at.
+let mathjs = null;
+function loadMath() {
+  if (mathjs === null) { try { mathjs = require('mathjs'); } catch { mathjs = false; } }
+  return mathjs || null;
+}
+const SUP = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁻': '-' };
+function toMathjs(text) {
+  let t = String(text == null ? '' : text).trim();
+  if (!t || t.length > 40 || /[=<>≤≥,;:]|[a-z]{3,}/i.test(t.replace(/\b(sqrt|abs|pi)\b/g, ''))) return null;
+  t = t.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+/g, (m) => '^(' + m.split('').map((c) => SUP[c]).join('') + ')')
+    .replace(/−/g, '-').replace(/×|·/g, '*').replace(/÷/g, '/').replace(/π/g, 'pi')
+    .replace(/√\s*\(/g, 'sqrt(').replace(/√\s*([0-9.]+|[a-z])/gi, 'sqrt($1)')
+    .replace(/\|([^|]+)\|/g, 'abs($1)');
+  return t;
+}
+const SAMPLES = [-2.7, -1.3, 0.6, 1.9, 3.4];
+
+// Equal VALUE is the point of some questions, which test FORM:
+//   "Write 1,690,000 in scientific notation"  — 16.9 × 10⁵ is the classic
+//     wrong-form distractor next to the key 1.69 × 10⁶;
+//   "Simplify: √3 · √6"                         — √18 is the unsimplified form
+//     next to the key 3√2.
+// Such a pair is allowed only when one member IS the key and the other is
+// the recognisable wrong form. Everything else equal stays a defect: two
+// orderings of one factorisation, x⁶ next to |x⁶|, or 28.8 × 10⁹ next to
+// 2.88 × 10¹⁰ on a question that never asked for scientific notation.
+function hasSquareFactor(n) {
+  for (let k = 2; k * k <= n; k++) if (n % (k * k) === 0) return true;
+  return false;
+}
+function isWrongFormOf(prompt, other) {
+  const t = String(other || '').replace(/−/g, '-');
+  if (/scientific notation/i.test(prompt)) {
+    const m = /^\s*(-?\d+(?:\.\d+)?)\s*[×x*]\s*10/.exec(t);
+    if (m) { const c = Math.abs(parseFloat(m[1])); return c < 1 || c >= 10; }
+  }
+  if (/\bsimplif|simplest/i.test(prompt)) {
+    const m = /√\s*\(?\s*(\d+)\s*\)?/.exec(t);
+    if (m) return hasSquareFactor(parseInt(m[1], 10));
+  }
+  return false;
+}
+// "3 × 4" as an answer is a dimension (a matrix, a rectangle), not a product.
+const DIMENSION = /^\s*\d+\s*[×x]\s*\d+\s*$/;
+function expressionSignature(text) {
+  const math = loadMath();
+  const src = toMathjs(text);
+  if (!math || !src) return null;
+  let node;
+  try { node = math.parse(src); } catch { return null; }
+  const vars = new Set();
+  node.traverse((n) => { if (n.isSymbolNode && !['pi', 'e', 'sqrt', 'abs'].includes(n.name)) vars.add(n.name); });
+  if (vars.size > 1) return null;
+  const v = [...vars][0];
+  let code;
+  try { code = node.compile(); } catch { return null; }
+  const out = [];
+  for (const x of (v ? SAMPLES : [0])) {
+    let y;
+    try { y = code.evaluate(v ? { [v]: x } : {}); } catch { return null; }
+    if (typeof y !== 'number' || !Number.isFinite(y)) return null;
+    out.push(y);
+  }
+  return { variable: v || null, values: out };
+}
+function sameSignature(a, b) {
+  if (!a || !b || a.variable !== b.variable || a.values.length !== b.values.length) return false;
+  return a.values.every((y, i) => Math.abs(y - b.values[i]) <= 1e-9 * Math.max(1, Math.abs(y), Math.abs(b.values[i])));
+}
+
+// A stem that asks for a probability ("What is the probability that…?",
+// "find the probability"). Not one that merely mentions it on the way to a
+// count ("…how many of the 200 days?").
+const ASKS_PROBABILITY = /\b(?:what is the probability|find the probability|probability (?:that|of)[^?]*\?\s*$)/i;
+function asProbability(text) {
+  const t = String(text == null ? '' : text).trim();
+  const v = numericValue(t);
+  if (v == null) return null;
+  return /%$/.test(t) ? v / 100 : v;
+}
+
 function correctOptionIndex(problem) {
   const options = Array.isArray(problem.options) ? problem.options : [];
   const co = problem.correctOption;
@@ -148,7 +236,33 @@ function assessOptions(problem) {
     if (seen.has(key) && lowered[seen.get(key)] !== lowered[i]) equal.push(`${texts[seen.get(key)]} = ${texts[i]}`);
     else seen.set(key, i);
   });
+  // Same idea for expressions: x⁶ and |x⁶|, 2√3 and √12.
+  if (!negated && !equal.length) {
+    const keyIdx = correctOptionIndex(problem);
+    const sigs = texts.map((t) => (DIMENSION.test(t) ? null : expressionSignature(t)));
+    for (let i = 0; i < sigs.length; i++) {
+      for (let j = i + 1; j < sigs.length; j++) {
+        if (lowered[i] === lowered[j] || values[i] != null || !sameSignature(sigs[i], sigs[j])) continue;
+        const formPair = (i === keyIdx && isWrongFormOf(prompt, texts[j]))
+          || (j === keyIdx && isWrongFormOf(prompt, texts[i]));
+        if (!formPair) equal.push(`${texts[i]} = ${texts[j]}`);
+      }
+    }
+  }
   if (equal.length) issues.push({ code: 'equivalent_options', detail: equal.join('; ') });
+
+  // 2c) A probability question offering a "probability" above 1 or below 0
+  //     (23/22, 140%): a free elimination. Only when the key itself is a valid
+  //     probability, so a count asked about in a probability setting is safe.
+  if (ASKS_PROBABILITY.test(prompt)) {
+    const probs = texts.map(asProbability);
+    const keyIdx = correctOptionIndex(problem);
+    const keyP = keyIdx != null ? probs[keyIdx] : null;
+    if (keyP != null && keyP >= 0 && keyP <= 1) {
+      const impossible = texts.filter((t, i) => probs[i] != null && (probs[i] < 0 || probs[i] > 1));
+      if (impossible.length) issues.push({ code: 'impossible_probability', detail: impossible.join(', ') });
+    }
+  }
 
   // 3) Wrong-type distractors: the correct answer is a proper
   //    fraction/decimal but EVERY distractor is a plain integer, so

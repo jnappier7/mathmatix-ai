@@ -71,6 +71,7 @@
    "explanation": "The marked angles are same-side interior angles between parallel lines, so they are supplementary. Thus x = 180 − 68 = 112, choice H. Choice G mistakes them for alternate interior (equal) angles.",
    "verify": "print(180-68)",
    "figure_code": "def draw(ax):\n    ax.plot([0, 10], [2, 2], 'k-', lw=1.5)\n    ax.plot([0, 10], [6, 6], 'k-', lw=1.5)\n    ax.plot([1.5, 8.5], [0.5, 7.5], 'k-', lw=1.5)\n    ax.annotate('', xy=(9.8, 2), xytext=(9.2, 2), arrowprops=dict(arrowstyle='->', lw=1))\n    ax.annotate('', xy=(9.8, 6), xytext=(9.2, 6), arrowprops=dict(arrowstyle='->', lw=1))\n    ax.text(3.9, 2.3, '68\\u00b0', fontsize=12)\n    ax.text(7.9, 5.35, 'x\\u00b0', fontsize=12)\n    ax.set_xlim(-0.5, 10.5)\n    ax.set_ylim(-0.5, 8.5)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Two horizontal parallel lines with arrowheads, crossed by a transversal rising to the right. At the lower line, the angle above the line and to the right of the transversal is labeled 68°. At the upper line, the angle below the line and to the right of the transversal is labeled x°.",
    "skill": "Angles & parallel lines"
   },
   {
@@ -341,6 +342,7 @@
    "explanation": "Because DE ∥ BC, △ADE ~ △ABC with ratio AD/AB = 5/8. So DE/BC = 5/8, giving BC = 10 · (8/5) = 16, choice C. Choice A uses the ratio 5/8 in the wrong direction, and choice B just adds DB to DE.",
    "verify": "print(10*8/5)",
    "figure_code": "def draw(ax):\n    A = (3, 8); B = (0, 0); C = (9, 0)\n    D = (1.125, 3); E = (6.75, 3)\n    ax.plot([A[0], B[0]], [A[1], B[1]], 'k-', lw=1.5)\n    ax.plot([A[0], C[0]], [A[1], C[1]], 'k-', lw=1.5)\n    ax.plot([B[0], C[0]], [B[1], C[1]], 'k-', lw=1.5)\n    ax.plot([D[0], E[0]], [D[1], E[1]], 'k-', lw=1.5)\n    ax.text(3, 8.25, 'A', ha='center', fontsize=12)\n    ax.text(-0.45, -0.55, 'B', fontsize=12)\n    ax.text(9.15, -0.55, 'C', fontsize=12)\n    ax.text(0.45, 2.95, 'D', fontsize=12)\n    ax.text(7.05, 2.95, 'E', fontsize=12)\n    ax.text(1.55, 5.6, '5', fontsize=11)\n    ax.text(0.05, 1.4, '3', fontsize=11)\n    ax.text(3.9, 3.25, '10', ha='center', fontsize=11)\n    ax.set_xlim(-1.2, 10)\n    ax.set_ylim(-1.4, 9)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Triangle ABC with A at the top, B at the bottom left and C at the bottom right. Point D is on side AB and point E is on side AC, with segment DE parallel to BC. AD is labeled 5, DB is labeled 3, and DE is labeled 10.",
    "skill": "Similar & congruent figures"
   },
   {
@@ -431,6 +433,7 @@
    "explanation": "Relative to ∠A, BC is the opposite side and AC is the adjacent side, so tan 34° = BC/50, which gives BC = 50 tan 34°, choice H. Choice F confuses sine (opposite/hypotenuse) with tangent, and choice J inverts the ratio.",
    "verify": "import math\nprint(round(50*math.tan(math.radians(34)), 2))",
    "figure_code": "def draw(ax):\n    A = (0, 0); C = (8, 0); B = (8, 5.4)\n    ax.plot([A[0], C[0]], [A[1], C[1]], 'k-', lw=1.5)\n    ax.plot([C[0], B[0]], [C[1], B[1]], 'k-', lw=1.5)\n    ax.plot([A[0], B[0]], [A[1], B[1]], 'k-', lw=1.5)\n    ax.plot([7.6, 7.6, 8], [0, 0.4, 0.4], 'k-', lw=1)\n    ax.text(-0.4, -0.1, 'A', fontsize=12)\n    ax.text(8.15, -0.4, 'C', fontsize=12)\n    ax.text(8.15, 5.45, 'B', fontsize=12)\n    ax.text(1.35, 0.18, '34\\u00b0', fontsize=11)\n    ax.text(4, -0.6, '50', ha='center', fontsize=11)\n    ax.text(8.3, 2.55, 'x', fontsize=11)\n    ax.set_xlim(-1, 9.6)\n    ax.set_ylim(-1.3, 6.3)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Right triangle ABC with the right angle at C, the bottom right corner. The angle at A, the bottom left corner, measures 34°. Side AC along the bottom is labeled 50, and side BC, the vertical side on the right, is labeled x.",
    "skill": "Right-triangle trigonometry"
   },
   {
@@ -683,6 +686,7 @@
    "explanation": "The period of sin(bt) is 2π/b. Here b = π/6, so the period is 2π/(π/6) = 12 hours, choice J. Choice H is only half the period (crest to trough), choice F is the amplitude, and choice G is the midline value.",
    "verify": "import sympy as sp\nprint(2*sp.pi/(sp.pi/6))",
    "figure_code": "def draw(ax):\n    import numpy as np\n    t = np.linspace(0, 24, 400)\n    h = 4 + 2.5*np.sin(np.pi*t/6)\n    ax.plot(t, h, 'k-', lw=1.5)\n    ax.set_xticks([0, 6, 12, 18, 24])\n    ax.set_yticks([0, 2, 4, 6, 8])\n    ax.set_xlabel('t (hours after midnight)')\n    ax.set_ylabel('h (feet)')\n    ax.set_xlim(0, 24)\n    ax.set_ylim(0, 8)\n    ax.spines['top'].set_visible(False)\n    ax.spines['right'].set_visible(False)",
+   "figure_alt": "Graph of water depth h in feet, from 0 to 8 on the vertical axis, against t in hours after midnight, from 0 to 24 on the horizontal axis. The curve starts at 4, rises to about 6.5 near t = 3, falls to about 1.5 near t = 9, rises to about 6.5 again near t = 15, falls to about 1.5 near t = 21, and ends back at 4 at t = 24.",
    "skill": "Trigonometric functions"
   },
   {
@@ -719,6 +723,7 @@
    "explanation": "An inscribed angle measures half the central angle that intercepts the same arc, so ∠ACB = 100°/2 = 50°, choice G. Choice H forgets to halve the central angle, and choice J uses the major arc (260°/2) instead of the minor arc.",
    "verify": "print(100/2)",
    "figure_code": "def draw(ax):\n    import numpy as np\n    import math\n    th = np.linspace(0, 2*np.pi, 200)\n    ax.plot(np.cos(th), np.sin(th), 'k-', lw=1.5)\n    A = (math.cos(math.radians(130)), math.sin(math.radians(130)))\n    B = (math.cos(math.radians(30)), math.sin(math.radians(30)))\n    C = (math.cos(math.radians(250)), math.sin(math.radians(250)))\n    ax.plot([0, A[0]], [0, A[1]], 'k-', lw=1)\n    ax.plot([0, B[0]], [0, B[1]], 'k-', lw=1)\n    ax.plot([C[0], A[0]], [C[1], A[1]], 'k-', lw=1)\n    ax.plot([C[0], B[0]], [C[1], B[1]], 'k-', lw=1)\n    ax.plot([0], [0], 'ko', ms=3)\n    ax.text(0.06, -0.14, 'O', fontsize=12)\n    ax.text(A[0]-0.2, A[1]+0.07, 'A', fontsize=12)\n    ax.text(B[0]+0.07, B[1]+0.05, 'B', fontsize=12)\n    ax.text(C[0]-0.07, C[1]-0.22, 'C', fontsize=12)\n    ax.text(-0.13, 0.28, '100\\u00b0', fontsize=11)\n    ax.set_xlim(-1.4, 1.4)\n    ax.set_ylim(-1.4, 1.4)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Circle with center O. Points A, B and C lie on the circle: A at the upper left, B at the upper right, and C at the lower left. Radii OA and OB form the central angle AOB, labeled 100°. Chords CA and CB form the inscribed angle ACB.",
    "skill": "Circles"
   },
   {

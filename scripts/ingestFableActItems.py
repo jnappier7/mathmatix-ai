@@ -59,6 +59,10 @@ def slug(name):
     return "act-" + re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", name.lower())).strip("-")
 
 
+def keeps_axes(figure_code):
+    return bool(re.search(r"set_[xy]ticks|set_[xy]ticklabels|set_[xy]label|\.grid\(", figure_code or ""))
+
+
 def render_svg(figure_code):
     if not figure_code:
         return None
@@ -70,10 +74,15 @@ def render_svg(figure_code):
             return None
         fig, ax = plt.subplots(figsize=(2.6, 2.1))
         draw(ax)
-        try:
-            ax.axis("off")
-        except Exception:
-            pass
+        # Geometry figures want no frame. A coordinate graph that sets its own
+        # ticks, gridlines or axis labels NEEDS them: turning the axes off here
+        # used to erase the grid and the +/-3 and pi labels that three graph
+        # items are answered from, leaving those questions unanswerable.
+        if not keeps_axes(figure_code):
+            try:
+                ax.axis("off")
+            except Exception:
+                pass
         buf = io.StringIO()
         fig.savefig(buf, format="svg", bbox_inches="tight")
         plt.close(fig)
@@ -120,6 +129,10 @@ def main():
                 "skillId": skill_id,
                 "prompt": q["stem"],
                 "svg": svg,
+                # A written description of the figure for screen readers. The
+                # SVGs draw their text as shapes, so nothing can be read out
+                # of them; every figure item should carry one.
+                **({"figureAlt": q["figure_alt"]} if svg and q.get("figure_alt") else {}),
                 "answer": {"type": "auto", "value": choices[ai], "equivalents": []},
                 "answerType": "multiple-choice",
                 "options": [{"label": LETTERS[i], "text": c} for i, c in enumerate(choices)],

@@ -20870,7 +20870,7 @@
    },
    {
     "label": "B",
-    "text": "222°"
+    "text": "48°"
    },
    {
     "label": "C",
@@ -20878,14 +20878,14 @@
    },
    {
     "label": "D",
-    "text": "48°"
+    "text": "222°"
    }
   ],
   "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 42 = 138°. Wrong choices: A) 42° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°; D) 48° takes the complement instead of the supplement.",
+  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 42 = 138°. Wrong choices: A) 42° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°; B) 48° takes the complement instead of the supplement.",
   "tags": [
    "act",
    "act-geometry",
@@ -20913,7 +20913,7 @@
   "options": [
    {
     "label": "A",
-    "text": "108°"
+    "text": "36°"
    },
    {
     "label": "B",
@@ -20921,7 +20921,7 @@
    },
    {
     "label": "C",
-    "text": "36°"
+    "text": "108°"
    },
    {
     "label": "D",
@@ -20932,7 +20932,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The exterior angles of ANY polygon total 360°, however many sides it has, so each is 360 ÷ 5 = 72°. Wrong choices: A) 108° gives each INTERIOR angle instead; D) 540° gives the SUM of the interior angles rather than one of them.",
+  "explanation": "The exterior angles of ANY polygon total 360°, however many sides it has, so each is 360 ÷ 5 = 72°. Wrong choices: C) 108° gives each INTERIOR angle instead; D) 540° gives the SUM of the interior angles rather than one of them.",
   "tags": [
    "act",
    "act-geometry",
@@ -21761,11 +21761,11 @@
   "options": [
    {
     "label": "A",
-    "text": "62°"
+    "text": "52°"
    },
    {
     "label": "B",
-    "text": "52°"
+    "text": "62°"
    },
    {
     "label": "C",
@@ -21776,7 +21776,7 @@
     "text": "242°"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
@@ -21808,26 +21808,26 @@
   "options": [
    {
     "label": "A",
-    "text": "55°"
-   },
-   {
-    "label": "B",
     "text": "35°"
    },
    {
+    "label": "B",
+    "text": "55°"
+   },
+   {
     "label": "C",
-    "text": "235°"
+    "text": "125°"
    },
    {
     "label": "D",
-    "text": "125°"
+    "text": "235°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "Corresponding angles across parallel lines are EQUAL, so the angle is 125°. Wrong choices: A) 55° takes the supplement — that is the co-interior relationship, not this one.",
+  "explanation": "Corresponding angles across parallel lines are EQUAL, so the angle is 125°. Wrong choices: B) 55° takes the supplement — that is the co-interior relationship, not this one.",
   "tags": [
    "act",
    "act-geometry",
@@ -21855,26 +21855,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1260°"
-   },
-   {
-    "label": "B",
-    "text": "140°"
-   },
-   {
-    "label": "C",
     "text": "20°"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "40°"
+   },
+   {
+    "label": "C",
+    "text": "140°"
+   },
+   {
+    "label": "D",
+    "text": "1260°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The exterior angles of ANY polygon total 360°, however many sides it has, so each is 360 ÷ 9 = 40°. Wrong choices: A) 1260° gives the SUM of the interior angles rather than one of them; B) 140° gives each INTERIOR angle instead.",
+  "explanation": "The exterior angles of ANY polygon total 360°, however many sides it has, so each is 360 ÷ 9 = 40°. Wrong choices: C) 140° gives each INTERIOR angle instead; D) 1260° gives the SUM of the interior angles rather than one of them.",
   "tags": [
    "act",
    "act-geometry",
@@ -22751,7 +22751,7 @@
   "options": [
    {
     "label": "A",
-    "text": "103°"
+    "text": "67°"
    },
    {
     "label": "B",
@@ -22759,7 +22759,7 @@
    },
    {
     "label": "C",
-    "text": "67°"
+    "text": "103°"
    },
    {
     "label": "D",
@@ -22770,7 +22770,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 48 − 55 = 77°. Wrong choices: A) 103° adds the two given angles and stops, without subtracting from 180; D) 257° subtracts from 360°, which is the angle sum of a quadrilateral.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 48 − 55 = 77°. Wrong choices: C) 103° adds the two given angles and stops, without subtracting from 180; D) 257° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -22802,22 +22802,22 @@
    },
    {
     "label": "B",
-    "text": "108°"
+    "text": "72°"
    },
    {
     "label": "C",
-    "text": "72°"
+    "text": "108°"
    },
    {
     "label": "D",
     "text": "252°"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 72 = 108°. Wrong choices: A) 18° takes the complement instead of the supplement; C) 72° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°.",
+  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 72 = 108°. Wrong choices: A) 18° takes the complement instead of the supplement; B) 72° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°.",
   "tags": [
    "act",
    "act-geometry",
@@ -23552,26 +23552,26 @@
   "options": [
    {
     "label": "A",
-    "text": "232°"
-   },
-   {
-    "label": "B",
-    "text": "128°"
-   },
-   {
-    "label": "C",
     "text": "42°"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "52°"
+   },
+   {
+    "label": "C",
+    "text": "128°"
+   },
+   {
+    "label": "D",
+    "text": "232°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 62 − 66 = 52°. Wrong choices: A) 232° subtracts from 360°, which is the angle sum of a quadrilateral; B) 128° adds the two given angles and stops, without subtracting from 180.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 62 − 66 = 52°. Wrong choices: C) 128° adds the two given angles and stops, without subtracting from 180; D) 232° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -23599,26 +23599,26 @@
   "options": [
    {
     "label": "A",
-    "text": "720°"
-   },
-   {
-    "label": "B",
     "text": "30°"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "60°"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "120°"
+   },
+   {
+    "label": "D",
+    "text": "720°"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The exterior angles of ANY polygon total 360°, however many sides it has, so each is 360 ÷ 6 = 60°. Wrong choices: A) 720° gives the SUM of the interior angles rather than one of them; D) 120° gives each INTERIOR angle instead.",
+  "explanation": "The exterior angles of ANY polygon total 360°, however many sides it has, so each is 360 ÷ 6 = 60°. Wrong choices: C) 120° gives each INTERIOR angle instead; D) 720° gives the SUM of the interior angles rather than one of them.",
   "tags": [
    "act",
    "act-geometry",
@@ -24400,11 +24400,11 @@
   "options": [
    {
     "label": "A",
-    "text": "237°"
+    "text": "47°"
    },
    {
     "label": "B",
-    "text": "47°"
+    "text": "57°"
    },
    {
     "label": "C",
@@ -24412,14 +24412,14 @@
    },
    {
     "label": "D",
-    "text": "57°"
+    "text": "237°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 55 − 68 = 57°. Wrong choices: A) 237° subtracts from 360°, which is the angle sum of a quadrilateral; C) 123° adds the two given angles and stops, without subtracting from 180.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 55 − 68 = 57°. Wrong choices: C) 123° adds the two given angles and stops, without subtracting from 180; D) 237° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -24447,7 +24447,7 @@
   "options": [
    {
     "label": "A",
-    "text": "115°"
+    "text": "25°"
    },
    {
     "label": "B",
@@ -24455,14 +24455,14 @@
    },
    {
     "label": "C",
-    "text": "245°"
+    "text": "115°"
    },
    {
     "label": "D",
-    "text": "25°"
+    "text": "245°"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
@@ -24494,11 +24494,11 @@
   "options": [
    {
     "label": "A",
-    "text": "108°"
+    "text": "72°"
    },
    {
     "label": "B",
-    "text": "72°"
+    "text": "108°"
    },
    {
     "label": "C",
@@ -24509,11 +24509,11 @@
     "text": "540°"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The interior angles total (5 − 2) × 180 = 540°, shared equally among 5 angles: 540 ÷ 5 = 108°. Wrong choices: B) 72° gives each EXTERIOR angle instead; D) 540° gives the SUM of the interior angles rather than one of them.",
+  "explanation": "The interior angles total (5 − 2) × 180 = 540°, shared equally among 5 angles: 540 ÷ 5 = 108°. Wrong choices: A) 72° gives each EXTERIOR angle instead; D) 540° gives the SUM of the interior angles rather than one of them.",
   "tags": [
    "act",
    "act-geometry",
@@ -25248,26 +25248,26 @@
   "options": [
    {
     "label": "A",
-    "text": "76°"
-   },
-   {
-    "label": "B",
-    "text": "284°"
-   },
-   {
-    "label": "C",
     "text": "14°"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "76°"
+   },
+   {
+    "label": "C",
     "text": "104°"
+   },
+   {
+    "label": "D",
+    "text": "284°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 37 − 39 = 104°. Wrong choices: A) 76° adds the two given angles and stops, without subtracting from 180; B) 284° subtracts from 360°, which is the angle sum of a quadrilateral; C) 14° subtracts from 90° instead of 180°.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 37 − 39 = 104°. Wrong choices: A) 14° subtracts from 90° instead of 180°; B) 76° adds the two given angles and stops, without subtracting from 180; D) 284° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -25295,7 +25295,7 @@
   "options": [
    {
     "label": "A",
-    "text": "102°"
+    "text": "12°"
    },
    {
     "label": "B",
@@ -25303,18 +25303,18 @@
    },
    {
     "label": "C",
-    "text": "258°"
+    "text": "102°"
    },
    {
     "label": "D",
-    "text": "12°"
+    "text": "258°"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 78 = 102°. Wrong choices: B) 78° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°; D) 12° takes the complement instead of the supplement.",
+  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 78 = 102°. Wrong choices: A) 12° takes the complement instead of the supplement; B) 78° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°.",
   "tags": [
    "act",
    "act-geometry",
@@ -25342,26 +25342,26 @@
   "options": [
    {
     "label": "A",
-    "text": "144°"
-   },
-   {
-    "label": "B",
     "text": "18°"
    },
    {
+    "label": "B",
+    "text": "36°"
+   },
+   {
     "label": "C",
-    "text": "1440°"
+    "text": "144°"
    },
    {
     "label": "D",
-    "text": "36°"
+    "text": "1440°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The exterior angles of ANY polygon total 360°, however many sides it has, so each is 360 ÷ 10 = 36°. Wrong choices: A) 144° gives each INTERIOR angle instead; C) 1440° gives the SUM of the interior angles rather than one of them.",
+  "explanation": "The exterior angles of ANY polygon total 360°, however many sides it has, so each is 360 ÷ 10 = 36°. Wrong choices: C) 144° gives each INTERIOR angle instead; D) 1440° gives the SUM of the interior angles rather than one of them.",
   "tags": [
    "act",
    "act-geometry",
@@ -26143,7 +26143,7 @@
   "options": [
    {
     "label": "A",
-    "text": "215°"
+    "text": "35°"
    },
    {
     "label": "B",
@@ -26151,18 +26151,18 @@
    },
    {
     "label": "C",
-    "text": "35°"
+    "text": "145°"
    },
    {
     "label": "D",
-    "text": "145°"
+    "text": "215°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 35 = 145°. Wrong choices: B) 55° takes the complement instead of the supplement; C) 35° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°.",
+  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 35 = 145°. Wrong choices: A) 35° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°; B) 55° takes the complement instead of the supplement.",
   "tags": [
    "act",
    "act-geometry",
@@ -26190,7 +26190,7 @@
   "options": [
    {
     "label": "A",
-    "text": "1080°"
+    "text": "135°"
    },
    {
     "label": "B",
@@ -26198,18 +26198,18 @@
    },
    {
     "label": "C",
-    "text": "1440°"
+    "text": "1080°"
    },
    {
     "label": "D",
-    "text": "135°"
+    "text": "1440°"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "Interior angles sum to (n − 2) × 180: (8 − 2) × 180 = 1080°. Wrong choices: C) 1440° multiplies by n instead of (n − 2); D) 135° gives one interior angle rather than the sum of them all.",
+  "explanation": "Interior angles sum to (n − 2) × 180: (8 − 2) × 180 = 1080°. Wrong choices: A) 135° gives one interior angle rather than the sum of them all; D) 1440° multiplies by n instead of (n − 2).",
   "tags": [
    "act",
    "act-geometry",
@@ -26711,22 +26711,22 @@
    },
    {
     "label": "B",
-    "text": "720°"
-   },
-   {
-    "label": "C",
     "text": "120°"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "180°"
+   },
+   {
+    "label": "D",
+    "text": "720°"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The interior angles total (6 − 2) × 180 = 720°, shared equally among 6 angles: 720 ÷ 6 = 120°. Wrong choices: A) 60° gives each EXTERIOR angle instead; B) 720° gives the SUM of the interior angles rather than one of them.",
+  "explanation": "The interior angles total (6 − 2) × 180 = 720°, shared equally among 6 angles: 720 ÷ 6 = 120°. Wrong choices: A) 60° gives each EXTERIOR angle instead; D) 720° gives the SUM of the interior angles rather than one of them.",
   "tags": [
    "act",
    "act-geometry",
@@ -27131,26 +27131,26 @@
   "options": [
    {
     "label": "A",
-    "text": "83°"
-   },
-   {
-    "label": "B",
-    "text": "277°"
-   },
-   {
-    "label": "C",
     "text": "7°"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "83°"
+   },
+   {
+    "label": "C",
     "text": "97°"
+   },
+   {
+    "label": "D",
+    "text": "277°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 42 − 41 = 97°. Wrong choices: A) 83° adds the two given angles and stops, without subtracting from 180; B) 277° subtracts from 360°, which is the angle sum of a quadrilateral; C) 7° subtracts from 90° instead of 180°.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 42 − 41 = 97°. Wrong choices: A) 7° subtracts from 90° instead of 180°; B) 83° adds the two given angles and stops, without subtracting from 180; D) 277° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -27178,11 +27178,11 @@
   "options": [
    {
     "label": "A",
-    "text": "78°"
+    "text": "12°"
    },
    {
     "label": "B",
-    "text": "12°"
+    "text": "78°"
    },
    {
     "label": "C",
@@ -27193,11 +27193,11 @@
     "text": "282°"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "Corresponding angles across parallel lines are EQUAL, so the angle is 78°. Wrong choices: B) 12° takes the complement; C) 102° takes the supplement — that is the co-interior relationship, not this one.",
+  "explanation": "Corresponding angles across parallel lines are EQUAL, so the angle is 78°. Wrong choices: A) 12° takes the complement; C) 102° takes the supplement — that is the co-interior relationship, not this one.",
   "tags": [
    "act",
    "act-geometry",
@@ -27743,26 +27743,26 @@
   "options": [
    {
     "label": "A",
-    "text": "91°"
+    "text": "1°"
    },
    {
     "label": "B",
-    "text": "271°"
-   },
-   {
-    "label": "C",
     "text": "89°"
    },
    {
+    "label": "C",
+    "text": "91°"
+   },
+   {
     "label": "D",
-    "text": "1°"
+    "text": "271°"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 34 − 55 = 91°. Wrong choices: B) 271° subtracts from 360°, which is the angle sum of a quadrilateral; C) 89° adds the two given angles and stops, without subtracting from 180; D) 1° subtracts from 90° instead of 180°.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 34 − 55 = 91°. Wrong choices: A) 1° subtracts from 90° instead of 180°; B) 89° adds the two given angles and stops, without subtracting from 180; D) 271° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -27790,26 +27790,26 @@
   "options": [
    {
     "label": "A",
-    "text": "180°"
-   },
-   {
-    "label": "B",
     "text": "30°"
    },
    {
+    "label": "B",
+    "text": "150°"
+   },
+   {
     "label": "C",
-    "text": "1800°"
+    "text": "180°"
    },
    {
     "label": "D",
-    "text": "150°"
+    "text": "1800°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The interior angles total (12 − 2) × 180 = 1800°, shared equally among 12 angles: 1800 ÷ 12 = 150°. Wrong choices: B) 30° gives each EXTERIOR angle instead; C) 1800° gives the SUM of the interior angles rather than one of them.",
+  "explanation": "The interior angles total (12 − 2) × 180 = 1800°, shared equally among 12 angles: 1800 ÷ 12 = 150°. Wrong choices: A) 30° gives each EXTERIOR angle instead; D) 1800° gives the SUM of the interior angles rather than one of them.",
   "tags": [
    "act",
    "act-geometry",
@@ -28406,22 +28406,22 @@
    },
    {
     "label": "B",
-    "text": "108°"
+    "text": "72°"
    },
    {
     "label": "C",
-    "text": "252°"
+    "text": "108°"
    },
    {
     "label": "D",
-    "text": "72°"
+    "text": "252°"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 60 − 48 = 72°. Wrong choices: B) 108° adds the two given angles and stops, without subtracting from 180; C) 252° subtracts from 360°, which is the angle sum of a quadrilateral.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 60 − 48 = 72°. Wrong choices: C) 108° adds the two given angles and stops, without subtracting from 180; D) 252° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -28449,11 +28449,11 @@
   "options": [
    {
     "label": "A",
-    "text": "55°"
+    "text": "35°"
    },
    {
     "label": "B",
-    "text": "235°"
+    "text": "55°"
    },
    {
     "label": "C",
@@ -28461,14 +28461,14 @@
    },
    {
     "label": "D",
-    "text": "35°"
+    "text": "235°"
    }
   ],
   "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "Alternate interior angles across parallel lines are EQUAL, so the angle is 125°. Wrong choices: A) 55° takes the supplement — that is the co-interior relationship, not this one.",
+  "explanation": "Alternate interior angles across parallel lines are EQUAL, so the angle is 125°. Wrong choices: B) 55° takes the supplement — that is the co-interior relationship, not this one.",
   "tags": [
    "act",
    "act-geometry",
@@ -28496,7 +28496,7 @@
   "options": [
    {
     "label": "A",
-    "text": "900°"
+    "text": "360/7°"
    },
    {
     "label": "B",
@@ -28508,14 +28508,14 @@
    },
    {
     "label": "D",
-    "text": "360/7°"
+    "text": "900°"
    }
   ],
   "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The interior angles total (7 − 2) × 180 = 900°, shared equally among 7 angles: 900 ÷ 7 = 128.57142857142858°. Wrong choices: A) 900° gives the SUM of the interior angles rather than one of them; D) 360/7° gives each EXTERIOR angle instead.",
+  "explanation": "The interior angles total (7 − 2) × 180 = 900°, shared equally among 7 angles: 900 ÷ 7 = 128.57142857142858°. Wrong choices: A) 360/7° gives each EXTERIOR angle instead; D) 900° gives the SUM of the interior angles rather than one of them.",
   "tags": [
    "act",
    "act-geometry",
@@ -29109,26 +29109,26 @@
   "options": [
    {
     "label": "A",
-    "text": "105°"
-   },
-   {
-    "label": "B",
     "text": "65°"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "75°"
+   },
+   {
+    "label": "C",
+    "text": "105°"
    },
    {
     "label": "D",
     "text": "255°"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 29 − 76 = 75°. Wrong choices: A) 105° adds the two given angles and stops, without subtracting from 180; D) 255° subtracts from 360°, which is the angle sum of a quadrilateral.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 29 − 76 = 75°. Wrong choices: C) 105° adds the two given angles and stops, without subtracting from 180; D) 255° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -29156,26 +29156,26 @@
   "options": [
    {
     "label": "A",
-    "text": "125°"
+    "text": "35°"
    },
    {
     "label": "B",
-    "text": "235°"
-   },
-   {
-    "label": "C",
     "text": "55°"
    },
    {
+    "label": "C",
+    "text": "125°"
+   },
+   {
     "label": "D",
-    "text": "35°"
+    "text": "235°"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 55 = 125°. Wrong choices: C) 55° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°; D) 35° takes the complement instead of the supplement.",
+  "explanation": "Co-interior (same-side interior) angles are SUPPLEMENTARY, not equal: 180 − 55 = 125°. Wrong choices: A) 35° takes the complement instead of the supplement; B) 55° assumes the angle is equal — true for alternate interior and corresponding angles, but co-interior angles add to 180°.",
   "tags": [
    "act",
    "act-geometry",
@@ -29822,18 +29822,18 @@
    },
    {
     "label": "C",
-    "text": "252°"
+    "text": "108°"
    },
    {
     "label": "D",
-    "text": "108°"
+    "text": "252°"
    }
   ],
   "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 33 − 75 = 72°. Wrong choices: C) 252° subtracts from 360°, which is the angle sum of a quadrilateral; D) 108° adds the two given angles and stops, without subtracting from 180.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 33 − 75 = 72°. Wrong choices: C) 108° adds the two given angles and stops, without subtracting from 180; D) 252° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -29861,7 +29861,7 @@
   "options": [
    {
     "label": "A",
-    "text": "112°"
+    "text": "22°"
    },
    {
     "label": "B",
@@ -29869,18 +29869,18 @@
    },
    {
     "label": "C",
-    "text": "292°"
+    "text": "112°"
    },
    {
     "label": "D",
-    "text": "22°"
+    "text": "292°"
    }
   ],
   "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "Corresponding angles across parallel lines are EQUAL, so the angle is 68°. Wrong choices: A) 112° takes the supplement — that is the co-interior relationship, not this one; D) 22° takes the complement.",
+  "explanation": "Corresponding angles across parallel lines are EQUAL, so the angle is 68°. Wrong choices: A) 22° takes the complement; C) 112° takes the supplement — that is the co-interior relationship, not this one.",
   "tags": [
    "act",
    "act-geometry",
@@ -30333,26 +30333,26 @@
   "options": [
    {
     "label": "A",
-    "text": "100°"
-   },
-   {
-    "label": "B",
     "text": "70°"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "80°"
+   },
+   {
+    "label": "C",
+    "text": "100°"
    },
    {
     "label": "D",
     "text": "260°"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Geometry",
-  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 39 − 61 = 80°. Wrong choices: A) 100° adds the two given angles and stops, without subtracting from 180; D) 260° subtracts from 360°, which is the angle sum of a quadrilateral.",
+  "explanation": "The three angles of a triangle total 180°, so the third is 180 − 39 − 61 = 80°. Wrong choices: C) 100° adds the two given angles and stops, without subtracting from 180; D) 260° subtracts from 360°, which is the angle sum of a quadrilateral.",
   "tags": [
    "act",
    "act-geometry",
@@ -30621,26 +30621,26 @@
   "options": [
    {
     "label": "A",
-    "text": "5/2 hours"
-   },
-   {
-    "label": "B",
     "text": "2/5 hours"
    },
    {
+    "label": "B",
+    "text": "5/2 hours"
+   },
+   {
     "label": "C",
-    "text": "15125/2 hours"
+    "text": "165/2 hours"
    },
    {
     "label": "D",
-    "text": "165/2 hours"
+    "text": "15125/2 hours"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 275/2 ÷ 55 = 5/2 hours. Wrong choices: B) 2/5 hours divides rate by distance, inverting the relationship; C) 15125/2 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 275/2 ÷ 55 = 5/2 hours. Wrong choices: A) 2/5 hours divides rate by distance, inverting the relationship; D) 15125/2 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -30722,22 +30722,22 @@
    },
    {
     "label": "B",
-    "text": "6 hours"
+    "text": "3 hours"
    },
    {
     "label": "C",
-    "text": "8 hours"
+    "text": "6 hours"
    },
    {
     "label": "D",
-    "text": "3 hours"
+    "text": "8 hours"
    }
   ],
   "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Add RATES, not times. The pumps fill 1/2 and 1/4 of the tank per hour, together 0.75 tanks per hour, so the tank takes 1 ÷ 0.75 = 1.3333 hours. Wrong choices: B) 6 hours adds the two times, which says two pumps are slower than one; D) 3 hours averages the times — always longer than the faster pump alone, which cannot be right.",
+  "explanation": "Add RATES, not times. The pumps fill 1/2 and 1/4 of the tank per hour, together 0.75 tanks per hour, so the tank takes 1 ÷ 0.75 = 1.3333 hours. Wrong choices: B) 3 hours averages the times — always longer than the faster pump alone, which cannot be right; C) 6 hours adds the two times, which says two pumps are slower than one.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -31103,26 +31103,26 @@
   "options": [
    {
     "label": "A",
-    "text": "330 miles"
-   },
-   {
-    "label": "B",
-    "text": "165 miles"
-   },
-   {
-    "label": "C",
     "text": "55/3 miles"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "58 miles"
+   },
+   {
+    "label": "C",
+    "text": "165 miles"
+   },
+   {
+    "label": "D",
+    "text": "330 miles"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Distance = rate × time: 55 × 3 = 165 miles. Wrong choices: C) 55/3 miles divides instead of multiplying; D) 58 miles adds the speed and the time, which have different units and cannot be added.",
+  "explanation": "Distance = rate × time: 55 × 3 = 165 miles. Wrong choices: A) 55/3 miles divides instead of multiplying; B) 58 miles adds the speed and the time, which have different units and cannot be added.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -31151,26 +31151,26 @@
   "options": [
    {
     "label": "A",
-    "text": "15/2 hours"
-   },
-   {
-    "label": "B",
-    "text": "50 hours"
-   },
-   {
-    "label": "C",
     "text": "10/3 hours"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "15/2 hours"
+   },
+   {
+    "label": "C",
     "text": "15 hours"
+   },
+   {
+    "label": "D",
+    "text": "50 hours"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Add RATES, not times. The pumps fill 1/5 and 1/10 of the tank per hour, together 0.3 tanks per hour, so the tank takes 1 ÷ 0.3 = 3.3333 hours. Wrong choices: A) 15/2 hours averages the times — always longer than the faster pump alone, which cannot be right; D) 15 hours adds the two times, which says two pumps are slower than one.",
+  "explanation": "Add RATES, not times. The pumps fill 1/5 and 1/10 of the tank per hour, together 0.3 tanks per hour, so the tank takes 1 ÷ 0.3 = 3.3333 hours. Wrong choices: B) 15/2 hours averages the times — always longer than the faster pump alone, which cannot be right; C) 15 hours adds the two times, which says two pumps are slower than one.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -31637,7 +31637,7 @@
    },
    {
     "label": "B",
-    "text": "7500 hours"
+    "text": "3 hours"
    },
    {
     "label": "C",
@@ -31645,14 +31645,14 @@
    },
    {
     "label": "D",
-    "text": "3 hours"
+    "text": "7500 hours"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 150 ÷ 50 = 3 hours. Wrong choices: A) 1/3 hours divides rate by distance, inverting the relationship; B) 7500 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 150 ÷ 50 = 3 hours. Wrong choices: A) 1/3 hours divides rate by distance, inverting the relationship; D) 7500 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -32212,26 +32212,26 @@
   "options": [
    {
     "label": "A",
-    "text": "7/2 hours"
-   },
-   {
-    "label": "B",
-    "text": "17150 hours"
-   },
-   {
-    "label": "C",
     "text": "2/7 hours"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "7/2 hours"
+   },
+   {
+    "label": "C",
     "text": "175 hours"
+   },
+   {
+    "label": "D",
+    "text": "17150 hours"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 245 ÷ 70 = 7/2 hours. Wrong choices: B) 17150 hours multiplies, which would give distance-times-speed, not a time; C) 2/7 hours divides rate by distance, inverting the relationship.",
+  "explanation": "Time = distance ÷ rate: 245 ÷ 70 = 7/2 hours. Wrong choices: A) 2/7 hours divides rate by distance, inverting the relationship; D) 17150 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -32791,26 +32791,26 @@
   "options": [
    {
     "label": "A",
-    "text": "8 hours"
-   },
-   {
-    "label": "B",
-    "text": "16 hours"
-   },
-   {
-    "label": "C",
     "text": "2 hours"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "4 hours"
+   },
+   {
+    "label": "C",
+    "text": "8 hours"
+   },
+   {
+    "label": "D",
+    "text": "16 hours"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Add RATES, not times. The pumps fill 1/4 and 1/4 of the tank per hour, together 0.5 tanks per hour, so the tank takes 1 ÷ 0.5 = 2 hours. Wrong choices: A) 8 hours adds the two times, which says two pumps are slower than one; D) 4 hours averages the times — always longer than the faster pump alone, which cannot be right.",
+  "explanation": "Add RATES, not times. The pumps fill 1/4 and 1/4 of the tank per hour, together 0.5 tanks per hour, so the tank takes 1 ÷ 0.5 = 2 hours. Wrong choices: B) 4 hours averages the times — always longer than the faster pump alone, which cannot be right; C) 8 hours adds the two times, which says two pumps are slower than one.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -33224,26 +33224,26 @@
   "options": [
    {
     "label": "A",
-    "text": "145/2 miles"
-   },
-   {
-    "label": "B",
     "text": "28 miles"
    },
    {
+    "label": "B",
+    "text": "145/2 miles"
+   },
+   {
     "label": "C",
-    "text": "350 miles"
+    "text": "175 miles"
    },
    {
     "label": "D",
-    "text": "175 miles"
+    "text": "350 miles"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Distance = rate × time: 70 × 5/2 = 175 miles. Wrong choices: A) 145/2 miles adds the speed and the time, which have different units and cannot be added; B) 28 miles divides instead of multiplying.",
+  "explanation": "Distance = rate × time: 70 × 5/2 = 175 miles. Wrong choices: A) 28 miles divides instead of multiplying; B) 145/2 miles adds the speed and the time, which have different units and cannot be added.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -33754,26 +33754,26 @@
   "options": [
    {
     "label": "A",
-    "text": "62 miles"
-   },
-   {
-    "label": "B",
     "text": "30 miles"
    },
    {
+    "label": "B",
+    "text": "62 miles"
+   },
+   {
     "label": "C",
-    "text": "240 miles"
+    "text": "120 miles"
    },
    {
     "label": "D",
-    "text": "120 miles"
+    "text": "240 miles"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Distance = rate × time: 60 × 2 = 120 miles. Wrong choices: A) 62 miles adds the speed and the time, which have different units and cannot be added; B) 30 miles divides instead of multiplying.",
+  "explanation": "Distance = rate × time: 60 × 2 = 120 miles. Wrong choices: A) 30 miles divides instead of multiplying; B) 62 miles adds the speed and the time, which have different units and cannot be added.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -34283,26 +34283,26 @@
   "options": [
    {
     "label": "A",
-    "text": "5/2 hours"
+    "text": "2/5 hours"
    },
    {
     "label": "B",
-    "text": "135/2 hours"
+    "text": "5/2 hours"
    },
    {
     "label": "C",
-    "text": "2/5 hours"
+    "text": "135/2 hours"
    },
    {
     "label": "D",
     "text": "10125/2 hours"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 225/2 ÷ 45 = 5/2 hours. Wrong choices: C) 2/5 hours divides rate by distance, inverting the relationship; D) 10125/2 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 225/2 ÷ 45 = 5/2 hours. Wrong choices: A) 2/5 hours divides rate by distance, inverting the relationship; D) 10125/2 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -34764,11 +34764,11 @@
   "options": [
    {
     "label": "A",
-    "text": "2 hours"
+    "text": "1/2 hours"
    },
    {
     "label": "B",
-    "text": "4050 hours"
+    "text": "2 hours"
    },
    {
     "label": "C",
@@ -34776,14 +34776,14 @@
    },
    {
     "label": "D",
-    "text": "1/2 hours"
+    "text": "4050 hours"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 90 ÷ 45 = 2 hours. Wrong choices: B) 4050 hours multiplies, which would give distance-times-speed, not a time; D) 1/2 hours divides rate by distance, inverting the relationship.",
+  "explanation": "Time = distance ÷ rate: 90 ÷ 45 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 4050 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -34816,11 +34816,11 @@
    },
    {
     "label": "B",
-    "text": "5 hours"
+    "text": "5/2 hours"
    },
    {
     "label": "C",
-    "text": "5/2 hours"
+    "text": "5 hours"
    },
    {
     "label": "D",
@@ -34831,7 +34831,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Add RATES, not times. The pumps fill 1/2 and 1/3 of the tank per hour, together 0.8333 tanks per hour, so the tank takes 1 ÷ 0.8333 = 1.2 hours. Wrong choices: B) 5 hours adds the two times, which says two pumps are slower than one; C) 5/2 hours averages the times — always longer than the faster pump alone, which cannot be right.",
+  "explanation": "Add RATES, not times. The pumps fill 1/2 and 1/3 of the tank per hour, together 0.8333 tanks per hour, so the tank takes 1 ÷ 0.8333 = 1.2 hours. Wrong choices: B) 5/2 hours averages the times — always longer than the faster pump alone, which cannot be right; C) 5 hours adds the two times, which says two pumps are slower than one.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -35873,26 +35873,26 @@
   "options": [
    {
     "label": "A",
-    "text": "6050 hours"
-   },
-   {
-    "label": "B",
     "text": "1/2 hours"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "2 hours"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "55 hours"
+   },
+   {
+    "label": "D",
+    "text": "6050 hours"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 110 ÷ 55 = 2 hours. Wrong choices: A) 6050 hours multiplies, which would give distance-times-speed, not a time; B) 1/2 hours divides rate by distance, inverting the relationship.",
+  "explanation": "Time = distance ÷ rate: 110 ÷ 55 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 6050 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -36452,7 +36452,7 @@
   "options": [
    {
     "label": "A",
-    "text": "12 hours"
+    "text": "9/4 hours"
    },
    {
     "label": "B",
@@ -36460,18 +36460,18 @@
    },
    {
     "label": "C",
-    "text": "27 hours"
+    "text": "12 hours"
    },
    {
     "label": "D",
-    "text": "9/4 hours"
+    "text": "27 hours"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Add RATES, not times. The pumps fill 1/3 and 1/9 of the tank per hour, together 0.4444 tanks per hour, so the tank takes 1 ÷ 0.4444 = 2.25 hours. Wrong choices: A) 12 hours adds the two times, which says two pumps are slower than one; B) 6 hours averages the times — always longer than the faster pump alone, which cannot be right.",
+  "explanation": "Add RATES, not times. The pumps fill 1/3 and 1/9 of the tank per hour, together 0.4444 tanks per hour, so the tank takes 1 ÷ 0.4444 = 2.25 hours. Wrong choices: B) 6 hours averages the times — always longer than the faster pump alone, which cannot be right; C) 12 hours adds the two times, which says two pumps are slower than one.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -36981,26 +36981,26 @@
   "options": [
    {
     "label": "A",
-    "text": "137/2 miles"
+    "text": "130/7 miles"
    },
    {
     "label": "B",
-    "text": "455/2 miles"
+    "text": "137/2 miles"
    },
    {
     "label": "C",
-    "text": "130/7 miles"
+    "text": "455/2 miles"
    },
    {
     "label": "D",
     "text": "455 miles"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Distance = rate × time: 65 × 7/2 = 455/2 miles. Wrong choices: A) 137/2 miles adds the speed and the time, which have different units and cannot be added; C) 130/7 miles divides instead of multiplying.",
+  "explanation": "Distance = rate × time: 65 × 7/2 = 455/2 miles. Wrong choices: A) 130/7 miles divides instead of multiplying; B) 137/2 miles adds the speed and the time, which have different units and cannot be added.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -37462,26 +37462,26 @@
   "options": [
    {
     "label": "A",
-    "text": "220 miles"
-   },
-   {
-    "label": "B",
     "text": "55/4 miles"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "59 miles"
+   },
+   {
+    "label": "C",
+    "text": "220 miles"
    },
    {
     "label": "D",
     "text": "440 miles"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Distance = rate × time: 55 × 4 = 220 miles. Wrong choices: B) 55/4 miles divides instead of multiplying; C) 59 miles adds the speed and the time, which have different units and cannot be added.",
+  "explanation": "Distance = rate × time: 55 × 4 = 220 miles. Wrong choices: A) 55/4 miles divides instead of multiplying; B) 59 miles adds the speed and the time, which have different units and cannot be added.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -38811,26 +38811,26 @@
   "options": [
    {
     "label": "A",
-    "text": "2 hours"
-   },
-   {
-    "label": "B",
     "text": "1/2 hours"
    },
    {
+    "label": "B",
+    "text": "2 hours"
+   },
+   {
     "label": "C",
-    "text": "9800 hours"
+    "text": "70 hours"
    },
    {
     "label": "D",
-    "text": "70 hours"
+    "text": "9800 hours"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 140 ÷ 70 = 2 hours. Wrong choices: B) 1/2 hours divides rate by distance, inverting the relationship; C) 9800 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 140 ÷ 70 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 9800 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -38908,7 +38908,7 @@
   "options": [
    {
     "label": "A",
-    "text": "18 hours"
+    "text": "2 hours"
    },
    {
     "label": "B",
@@ -38916,18 +38916,18 @@
    },
    {
     "label": "C",
-    "text": "2 hours"
+    "text": "9 hours"
    },
    {
     "label": "D",
-    "text": "9 hours"
+    "text": "18 hours"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Add RATES, not times. The pumps fill 1/3 and 1/6 of the tank per hour, together 0.5 tanks per hour, so the tank takes 1 ÷ 0.5 = 2 hours. Wrong choices: B) 9/2 hours averages the times — always longer than the faster pump alone, which cannot be right; D) 9 hours adds the two times, which says two pumps are slower than one.",
+  "explanation": "Add RATES, not times. The pumps fill 1/3 and 1/6 of the tank per hour, together 0.5 tanks per hour, so the tank takes 1 ÷ 0.5 = 2 hours. Wrong choices: B) 9/2 hours averages the times — always longer than the faster pump alone, which cannot be right; C) 9 hours adds the two times, which says two pumps are slower than one.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -39976,14 +39976,14 @@
    },
    {
     "label": "C",
-    "text": "270 miles"
+    "text": "135 miles"
    },
    {
     "label": "D",
-    "text": "135 miles"
+    "text": "270 miles"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
@@ -40787,11 +40787,11 @@
   "options": [
    {
     "label": "A",
-    "text": "10000 hours"
+    "text": "1/4 hours"
    },
    {
     "label": "B",
-    "text": "1/4 hours"
+    "text": "4 hours"
    },
    {
     "label": "C",
@@ -40799,14 +40799,14 @@
    },
    {
     "label": "D",
-    "text": "4 hours"
+    "text": "10000 hours"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 200 ÷ 50 = 4 hours. Wrong choices: A) 10000 hours multiplies, which would give distance-times-speed, not a time; B) 1/4 hours divides rate by distance, inverting the relationship.",
+  "explanation": "Time = distance ÷ rate: 200 ÷ 50 = 4 hours. Wrong choices: A) 1/4 hours divides rate by distance, inverting the relationship; D) 10000 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -41172,26 +41172,26 @@
   "options": [
    {
     "label": "A",
-    "text": "50 hours"
-   },
-   {
-    "label": "B",
-    "text": "5000 hours"
-   },
-   {
-    "label": "C",
     "text": "1/2 hours"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "2 hours"
+   },
+   {
+    "label": "C",
+    "text": "50 hours"
+   },
+   {
+    "label": "D",
+    "text": "5000 hours"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 100 ÷ 50 = 2 hours. Wrong choices: B) 5000 hours multiplies, which would give distance-times-speed, not a time; C) 1/2 hours divides rate by distance, inverting the relationship.",
+  "explanation": "Time = distance ÷ rate: 100 ÷ 50 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 5000 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -41749,26 +41749,26 @@
   "options": [
    {
     "label": "A",
-    "text": "2 hours"
+    "text": "1/2 hours"
    },
    {
     "label": "B",
-    "text": "65 hours"
+    "text": "2 hours"
    },
    {
     "label": "C",
-    "text": "8450 hours"
+    "text": "65 hours"
    },
    {
     "label": "D",
-    "text": "1/2 hours"
+    "text": "8450 hours"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 130 ÷ 65 = 2 hours. Wrong choices: C) 8450 hours multiplies, which would give distance-times-speed, not a time; D) 1/2 hours divides rate by distance, inverting the relationship.",
+  "explanation": "Time = distance ÷ rate: 130 ÷ 65 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 8450 hours multiplies, which would give distance-times-speed, not a time.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -42182,7 +42182,7 @@
   "options": [
    {
     "label": "A",
-    "text": "130 miles"
+    "text": "65/2 miles"
    },
    {
     "label": "B",
@@ -42190,18 +42190,18 @@
    },
    {
     "label": "C",
-    "text": "65/2 miles"
+    "text": "130 miles"
    },
    {
     "label": "D",
     "text": "260 miles"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Distance = rate × time: 65 × 2 = 130 miles. Wrong choices: B) 67 miles adds the speed and the time, which have different units and cannot be added; C) 65/2 miles divides instead of multiplying.",
+  "explanation": "Distance = rate × time: 65 × 2 = 130 miles. Wrong choices: A) 65/2 miles divides instead of multiplying; B) 67 miles adds the speed and the time, which have different units and cannot be added.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -50889,7 +50889,7 @@
  {
   "problemId": "e12d857b-13ae-4eba-9ac1-ae7b02be9d27",
   "skillId": "act-scientific-notation",
-  "prompt": "(2.4 × 10^6)(1.2 × 10^4) = ?",
+  "prompt": "(2.4 × 10^6)(1.2 × 10^4) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -51569,7 +51569,7 @@
  {
   "problemId": "03e3319e-5534-4f59-8bc0-3b57f54c0ae7",
   "skillId": "act-scientific-notation",
-  "prompt": "(2.2 × 10^6)(1.7 × 10^6) = ?",
+  "prompt": "(2.2 × 10^6)(1.7 × 10^6) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -52159,7 +52159,7 @@
  {
   "problemId": "b485498e-0152-4725-973c-90f842a5a3e1",
   "skillId": "act-scientific-notation",
-  "prompt": "(2.8 × 10^7)(2 × 10^5) = ?",
+  "prompt": "(2.8 × 10^7)(2 × 10^5) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -52793,7 +52793,7 @@
  {
   "problemId": "4a6ef22f-0182-40e8-925b-4d6346879e14",
   "skillId": "act-scientific-notation",
-  "prompt": "(2.7 × 10^3)(2.9 × 10^4) = ?",
+  "prompt": "(2.7 × 10^3)(2.9 × 10^4) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -53428,7 +53428,7 @@
  {
   "problemId": "be823d3c-ba86-4227-83e7-d02b888c85c7",
   "skillId": "act-scientific-notation",
-  "prompt": "(1.7 × 10^3)(3 × 10^2) = ?",
+  "prompt": "(1.7 × 10^3)(3 × 10^2) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -53973,7 +53973,7 @@
  {
   "problemId": "44c58648-b6c2-4f47-a82a-be73e1fe6228",
   "skillId": "act-scientific-notation",
-  "prompt": "(1.3 × 10^3)(1.8 × 10^5) = ?",
+  "prompt": "(1.3 × 10^3)(1.8 × 10^5) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -54608,7 +54608,7 @@
  {
   "problemId": "5cc21989-e7fe-4b61-a70a-a10a56ce0592",
   "skillId": "act-scientific-notation",
-  "prompt": "(2.4 × 10^3)(1.7 × 10^2) = ?",
+  "prompt": "(2.4 × 10^3)(1.7 × 10^2) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -55108,7 +55108,7 @@
  {
   "problemId": "db5ab4c3-acf8-42de-b4ee-2fd6f106d0a5",
   "skillId": "act-scientific-notation",
-  "prompt": "(2.2 × 10^8)(1.8 × 10^4) = ?",
+  "prompt": "(2.2 × 10^8)(1.8 × 10^4) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -55561,7 +55561,7 @@
  {
   "problemId": "a3cb17c9-a044-4a30-a1b8-76f335ee8bc9",
   "skillId": "act-scientific-notation",
-  "prompt": "(2 × 10^4)(2.8 × 10^2) = ?",
+  "prompt": "(2 × 10^4)(2.8 × 10^2) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -56105,7 +56105,7 @@
  {
   "problemId": "b8bd195f-a287-4713-afc1-c0bc2c8a079e",
   "skillId": "act-scientific-notation",
-  "prompt": "(3 × 10^6)(1.3 × 10^6) = ?",
+  "prompt": "(3 × 10^6)(1.3 × 10^6) = ? Express the answer in scientific notation.",
   "svg": null,
   "answer": {
    "type": "auto",

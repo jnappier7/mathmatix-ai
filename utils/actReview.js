@@ -9,7 +9,26 @@
 // prompt path (present + advance).
 
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
-const { normalizeOptions, resolveChoice, correctLabelOf, relabelByText, actDisplayLabel } = require('./mcOptions');
+const { normalizeOptions, resolveChoice, correctLabelOf, relabelByText, actDisplayLabel, LABELS } = require('./mcOptions');
+const { remapChoiceLetters } = require('./actChoiceOrder');
+
+/**
+ * Bank letter -> the letter the same choice had on this test, or null when the
+ * two orders agree (the common case) or cannot be matched. The form builder
+ * serves numeric choices sorted (utils/actChoiceOrder.js) whatever the bank's
+ * order, so an explanation written against the bank's letters is remapped
+ * before it is shown next to the test's choices.
+ */
+function bankToTestLetters(bankOptions, testOptions) {
+  if (!Array.isArray(bankOptions) || !bankOptions.length || !Array.isArray(testOptions) || !testOptions.length) return null;
+  const map = {};
+  let moved = false;
+  normalizeOptions(bankOptions).forEach((o, i) => {
+    const to = relabelByText(LABELS[i], bankOptions, testOptions);
+    if (to) { map[LABELS[i]] = to; if (to !== LABELS[i]) moved = true; }
+  });
+  return moved ? map : null;
+}
 
 // Higher category exam-weight => higher-leverage miss => reviewed first.
 // Read from the blueprint rather than copied: this was a hardcoded duplicate of
@@ -94,7 +113,7 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
           || correctLabelOf({ correctOption: p.correctOption, options: rawOptions })
           || p.correctOption || null,
         correctAnswer: (p.answer && p.answer.value) || null,
-        explanation: p.explanation || '',
+        explanation: remapChoiceLetters(p.explanation || '', bankToTestLetters(p.options, it.options)),
         // Drives transfer-item selection: practice has to sit at the difficulty
         // they actually missed, not a generic middle.
         difficulty: Number(it.difficulty) || Number(p.difficulty) || null,
