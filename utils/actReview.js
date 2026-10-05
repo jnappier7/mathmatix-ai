@@ -9,7 +9,7 @@
 // prompt path (present + advance).
 
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
-const { normalizeOptions, resolveChoice, correctLabelOf, actDisplayLabel } = require('./mcOptions');
+const { normalizeOptions, resolveChoice, correctLabelOf, relabelByText, actDisplayLabel } = require('./mcOptions');
 
 // Higher category exam-weight => higher-leverage miss => reviewed first.
 // Read from the blueprint rather than copied: this was a hardcoded duplicate of
@@ -86,7 +86,12 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
         // The options come off the session item, so pair them with the key
         // explicitly. With no options at all there is nothing to reposition
         // against, so the stored letter stands.
-        correctOption: correctLabelOf({ correctOption: p.correctOption, options: rawOptions })
+        // When the session froze its own copy of the choices, find the key by
+        // TEXT in that copy: the bank may have reordered the item since the
+        // test was taken (scripts/sortActNumericChoices.js).
+        correctOption: (it.options && it.options.length && p.options && p.options.length
+          && relabelByText(correctLabelOf(p), p.options, it.options))
+          || correctLabelOf({ correctOption: p.correctOption, options: rawOptions })
           || p.correctOption || null,
         correctAnswer: (p.answer && p.answer.value) || null,
         explanation: p.explanation || '',

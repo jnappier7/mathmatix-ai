@@ -59,7 +59,7 @@ describe('audit warnings', () => {
 
 describe('the seed banks do not gain blocking defects', () => {
   // Known at the time this gate landed; repair them and lower the number.
-  const BASELINE = { 'act-fable': 1, 'act-ies-expansion': 4, 'act-enhanced': 7 };
+  const BASELINE = { 'act-fable': 1, 'act-ies-expansion': 3, 'act-enhanced': 7 };
   const FILES = {
     'act-fable': 'seeds/act-fable-items.generated.json',
     'act-ies-expansion': 'seeds/act-ies-expansion/ies-items.generated.json',

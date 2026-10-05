@@ -12555,22 +12555,22 @@
     "options": [
       {
         "label": "A",
-        "text": "4/11"
+        "text": "4/12"
       },
       {
         "label": "B",
-        "text": "5/12"
+        "text": "4/11"
       },
       {
         "label": "C",
-        "text": "4/12"
+        "text": "5/12"
       },
       {
         "label": "D",
         "text": "5/11"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "After the first red marble is removed, 4 red marbles remain out of 11 total, so the probability is 4/11. Choice 5/12 ignores the first draw, and 4/12 reduces the reds without reducing the total.",
@@ -13039,22 +13039,22 @@
     "options": [
       {
         "label": "A",
-        "text": "2"
-      },
-      {
-        "label": "B",
         "text": "−2"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "−1/2"
+      },
+      {
+        "label": "C",
+        "text": "2"
       },
       {
         "label": "D",
         "text": "8"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "Slope is the change in y over the change in x: (−9 − 7)/(5 − (−3)) = −16/8 = −2. Choice 2 drops the negative sign, and −1/2 inverts rise over run.",
@@ -13083,22 +13083,22 @@
     "options": [
       {
         "label": "A",
-        "text": "15"
+        "text": "13"
       },
       {
         "label": "B",
-        "text": "17"
+        "text": "15"
       },
       {
         "label": "C",
-        "text": "13"
+        "text": "17"
       },
       {
         "label": "D",
         "text": "169"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "A",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "By the distance formula, d = √((7 − 2)² + (11 − (−1))²) = √(25 + 144) = √169 = 13 kilometers. Choice 17 adds the legs 5 and 12 instead of using the Pythagorean relationship, and 169 forgets to take the square root.",
@@ -13127,22 +13127,22 @@
     "options": [
       {
         "label": "A",
-        "text": "5"
-      },
-      {
-        "label": "B",
         "text": "−10"
       },
       {
+        "label": "B",
+        "text": "−5"
+      },
+      {
         "label": "C",
-        "text": "10"
+        "text": "5"
       },
       {
         "label": "D",
-        "text": "−5"
+        "text": "10"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Complete the square: (x² + 10x + 25) + (y² − 4y + 4) = −20 + 25 + 4, so (x + 5)² + (y − 2)² = 9. The center is (−5, 2), so the x-coordinate is −5. Choice 5 uses the wrong sign, since (x + 5)² means x = −5.",
@@ -13175,15 +13175,15 @@
       },
       {
         "label": "B",
-        "text": "3/4"
+        "text": "−3/4"
       },
       {
         "label": "C",
-        "text": "4/3"
+        "text": "3/4"
       },
       {
         "label": "D",
-        "text": "−3/4"
+        "text": "4/3"
       }
     ],
     "correctOption": "A",
@@ -13215,7 +13215,7 @@
     "options": [
       {
         "label": "A",
-        "text": "11"
+        "text": "−7"
       },
       {
         "label": "B",
@@ -13227,7 +13227,7 @@
       },
       {
         "label": "D",
-        "text": "−7"
+        "text": "11"
       }
     ],
     "correctOption": "B",
@@ -13303,11 +13303,11 @@
     "options": [
       {
         "label": "A",
-        "text": "48"
+        "text": "12"
       },
       {
         "label": "B",
-        "text": "12"
+        "text": "24"
       },
       {
         "label": "C",
@@ -13315,10 +13315,10 @@
       },
       {
         "label": "D",
-        "text": "24"
+        "text": "48"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "The side from (0, 0) to (8, 0) lies on the x-axis, so it is a base of length 8. The height is the y-coordinate of (3, 6), which is 6. Area = (1/2)(8)(6) = 24 square units; choice 48 forgets the factor of 1/2.",
@@ -13347,11 +13347,11 @@
     "options": [
       {
         "label": "A",
-        "text": "4"
+        "text": "2"
       },
       {
         "label": "B",
-        "text": "20"
+        "text": "4"
       },
       {
         "label": "C",
@@ -13359,10 +13359,10 @@
       },
       {
         "label": "D",
-        "text": "2"
+        "text": "20"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "The distance from (x₀, y₀) to ax + by + c = 0 is |ax₀ + by₀ + c|/√(a² + b²). Here that is |4(3) − 3(−1) + 5|/√(16 + 9) = 20/5 = 4. Choice 20 is the numerator alone, and 5 is the denominator √25.",
@@ -13392,22 +13392,22 @@
     "options": [
       {
         "label": "A",
-        "text": "10"
-      },
-      {
-        "label": "B",
         "text": "−8"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "−2"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "8"
+      },
+      {
+        "label": "D",
+        "text": "10"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "The slope condition gives (1 − k)/(4 − (−2)) = 3/2, so 1 − k = (3/2)(6) = 9 and k = −8. Choice 10 comes from writing k − 1 = 9, a sign error in the slope ratio, and −2 uses a run of 2 instead of 6.",
@@ -13440,18 +13440,18 @@
       },
       {
         "label": "B",
-        "text": "24"
+        "text": "12"
       },
       {
         "label": "C",
-        "text": "12"
+        "text": "24"
       },
       {
         "label": "D",
         "text": "81"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "By the fundamental counting principle, multiply the number of independent choices: 3 × 4 = 12. Choice 7 adds the options instead of multiplying, and 81 computes 3⁴.",
@@ -13480,7 +13480,7 @@
     "options": [
       {
         "label": "A",
-        "text": "120"
+        "text": "20"
       },
       {
         "label": "B",
@@ -13488,14 +13488,14 @@
       },
       {
         "label": "C",
-        "text": "20"
+        "text": "60"
       },
       {
         "label": "D",
-        "text": "60"
+        "text": "120"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "D",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "There are 5 choices for the first position, 4 for the second, and so on: 5! = 5 × 4 × 3 × 2 × 1 = 120. Choice 25 computes 5², and 20 stops after 5 × 4.",
@@ -13528,18 +13528,18 @@
       },
       {
         "label": "B",
-        "text": "336"
+        "text": "56"
       },
       {
         "label": "C",
-        "text": "56"
+        "text": "336"
       },
       {
         "label": "D",
         "text": "512"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "Order matters, so this is a permutation: 8 choices for gold, 7 for silver, 6 for bronze, giving 8 × 7 × 6 = 336. Choice 56 is the combination 8C3, which ignores order, and 512 is 8³, which allows repeated winners.",
@@ -13568,22 +13568,22 @@
     "options": [
       {
         "label": "A",
-        "text": "210"
-      },
-      {
-        "label": "B",
         "text": "21"
       },
       {
+        "label": "B",
+        "text": "35"
+      },
+      {
         "label": "C",
-        "text": "343"
+        "text": "210"
       },
       {
         "label": "D",
-        "text": "35"
+        "text": "343"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Order does not matter on a committee, so use combinations: 7C3 = (7 × 6 × 5)/(3 × 2 × 1) = 35. Choice 210 is the permutation 7 × 6 × 5, which counts each committee 6 times, and 343 is 7³.",
@@ -13612,22 +13612,22 @@
     "options": [
       {
         "label": "A",
-        "text": "5,040"
+        "text": "4,536"
       },
       {
         "label": "B",
-        "text": "9,000"
+        "text": "5,040"
       },
       {
         "label": "C",
-        "text": "4,536"
+        "text": "9,000"
       },
       {
         "label": "D",
         "text": "10,000"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "A",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "The first digit has 9 options (1–9). The second digit can be any unused digit including 0, so it also has 9 options, then 8 and 7 remain: 9 × 9 × 8 × 7 = 4,536. Choice 5,040 ignores the leading-zero restriction, and 10,000 allows repeats and leading zeros.",
@@ -13656,11 +13656,11 @@
     "options": [
       {
         "label": "A",
-        "text": "30"
+        "text": "20"
       },
       {
         "label": "B",
-        "text": "120"
+        "text": "30"
       },
       {
         "label": "C",
@@ -13668,10 +13668,10 @@
       },
       {
         "label": "D",
-        "text": "20"
+        "text": "120"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "There are 5! = 120 arrangements of 5 letters, but the two L's are identical and the two E's are identical. Divide by 2! for each repeated letter: 120/(2! × 2!) = 30. Choice 120 ignores the repeats, and 60 divides by only one 2!.",
@@ -13700,22 +13700,22 @@
     "options": [
       {
         "label": "A",
-        "text": "36"
+        "text": "12"
       },
       {
         "label": "B",
-        "text": "72"
+        "text": "36"
       },
       {
         "label": "C",
-        "text": "720"
+        "text": "72"
       },
       {
         "label": "D",
-        "text": "12"
+        "text": "720"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "C",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "The pattern is either boy-first or girl-first: 2 options. For each pattern, the 3 boys can fill their seats in 3! = 6 ways and the girls in 3! = 6 ways. Total: 2 × 6 × 6 = 72; choice 36 forgets the 2 possible patterns, and 720 is 6! with no alternating restriction.",
@@ -13744,7 +13744,7 @@
     "options": [
       {
         "label": "A",
-        "text": "150"
+        "text": "11"
       },
       {
         "label": "B",
@@ -13752,14 +13752,14 @@
       },
       {
         "label": "C",
-        "text": "11"
+        "text": "75"
       },
       {
         "label": "D",
-        "text": "75"
+        "text": "150"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "The 2 appetizers are an unordered pair: 6C2 = 15 choices. Multiply by the 5 main dishes: 15 × 5 = 75. Choice 150 counts the appetizers in order (6 × 5 × 5), and 30 pairs each of the 6 appetizers with a main dish, choosing only 1 appetizer.",
@@ -13788,22 +13788,22 @@
     "options": [
       {
         "label": "A",
-        "text": "240"
+        "text": "48"
       },
       {
         "label": "B",
-        "text": "720"
-      },
-      {
-        "label": "C",
         "text": "120"
       },
       {
+        "label": "C",
+        "text": "240"
+      },
+      {
         "label": "D",
-        "text": "48"
+        "text": "720"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Treat the 2 art books as a single block, giving 5 objects to arrange in 5! = 120 ways. The art books can be ordered within the block in 2! = 2 ways, so there are 120 × 2 = 240 arrangements. Choice 720 is 6! with no restriction, and 120 forgets to order the art books within the block.",
@@ -13836,18 +13836,18 @@
       },
       {
         "label": "B",
-        "text": "15"
+        "text": "10"
       },
       {
         "label": "C",
-        "text": "10"
+        "text": "15"
       },
       {
         "label": "D",
         "text": "45"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "With n teams, each of the n(n − 1)/2 pairs plays 2 games, so n(n − 1) = 90. Since 10 × 9 = 90, there are 10 teams. Choice 45 is the number of pairs of teams, not the number of teams.",
@@ -13964,22 +13964,22 @@
     "options": [
       {
         "label": "A",
-        "text": "3"
-      },
-      {
-        "label": "B",
-        "text": "8"
-      },
-      {
-        "label": "C",
         "text": "−3"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "0"
+      },
+      {
+        "label": "C",
+        "text": "3"
+      },
+      {
+        "label": "D",
+        "text": "8"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "The loss occurs with probability 3/4, so the expected value is 12(1/4) − 4(3/4) = 3 − 3 = 0. Choice 3 counts only the expected winnings, and 8 simply subtracts 4 from 12.",
@@ -14052,7 +14052,7 @@
     "options": [
       {
         "label": "A",
-        "text": "100"
+        "text": "−50"
       },
       {
         "label": "B",
@@ -14060,7 +14060,7 @@
       },
       {
         "label": "C",
-        "text": "−50"
+        "text": "100"
       },
       {
         "label": "D",
@@ -14096,11 +14096,11 @@
     "options": [
       {
         "label": "A",
-        "text": "5"
+        "text": "4"
       },
       {
         "label": "B",
-        "text": "4"
+        "text": "5"
       },
       {
         "label": "C",
@@ -14111,7 +14111,7 @@
         "text": "15"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Each guess is correct with probability 1/4, so the expected number correct is 20 × 1/4 = 5. Choice 10 uses probability 1/2, and 15 uses 3/4, the probability of guessing incorrectly.",
@@ -14140,22 +14140,22 @@
     "options": [
       {
         "label": "A",
-        "text": "0.80"
-      },
-      {
-        "label": "B",
         "text": "−2.00"
       },
       {
+        "label": "B",
+        "text": "−1.20"
+      },
+      {
         "label": "C",
-        "text": "1.20"
+        "text": "0.80"
       },
       {
         "label": "D",
-        "text": "−1.20"
+        "text": "1.20"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "The total prize money is 300 + 5(20) = 400 dollars, so a ticket's expected prize is 400/500 = 0.80 dollars. Subtracting the $2 cost gives 0.80 − 2 = −1.20 dollars. Choice 0.80 ignores the ticket price, and 1.20 drops the negative sign.",
@@ -14184,22 +14184,22 @@
     "options": [
       {
         "label": "A",
-        "text": "1/4"
-      },
-      {
-        "label": "B",
         "text": "1/10"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "1/5"
+      },
+      {
+        "label": "C",
+        "text": "1/4"
       },
       {
         "label": "D",
         "text": "4/5"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Set the expected value equal to 0: 8p − 2(1 − p) = 0, so 8p − 2 + 2p = 0, giving 10p = 2 and p = 1/5. Choice 1/4 comes from dropping the +2p term and solving 8p = 2, and choice 4/5 reverses the two payoffs by solving 2p = 8(1 − p).",
@@ -14228,7 +14228,7 @@
     "options": [
       {
         "label": "A",
-        "text": "1/2"
+        "text": "1/8"
       },
       {
         "label": "B",
@@ -14236,11 +14236,11 @@
       },
       {
         "label": "C",
-        "text": "1/8"
+        "text": "3/8"
       },
       {
         "label": "D",
-        "text": "3/8"
+        "text": "1/2"
       }
     ],
     "correctOption": "B",
@@ -14272,22 +14272,22 @@
     "options": [
       {
         "label": "A",
-        "text": "3"
-      },
-      {
-        "label": "B",
         "text": "2"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "2.25"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "2.5"
+      },
+      {
+        "label": "D",
+        "text": "3"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "The series lasts 2 games when one team wins the first two, which has probability (1/2)(1/2) + (1/2)(1/2) = 1/2; otherwise it lasts 3 games. The expected length is 2(1/2) + 3(1/2) = 2.5 games. Choice 3 assumes the maximum length is always played.",
@@ -14324,14 +14324,14 @@
       },
       {
         "label": "C",
-        "text": "8"
+        "text": "1/8"
       },
       {
         "label": "D",
-        "text": "1/8"
+        "text": "8"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "A negative exponent means reciprocal: 2⁻³ = 1/2³ = 1/8. Choice −8 treats the negative exponent as a negative result, and −6 multiplies 2 by −3.",
@@ -14404,22 +14404,22 @@
     "options": [
       {
         "label": "A",
-        "text": "4"
-      },
-      {
-        "label": "B",
         "text": "1/8"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "2"
+      },
+      {
+        "label": "C",
+        "text": "4"
       },
       {
         "label": "D",
         "text": "128"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "A power of a power multiplies exponents: (2³)⁴ = 2¹². Dividing powers subtracts exponents: 2¹²/2¹⁰ = 2² = 4. Choice 1/8 adds 3 and 4 to get 2⁷/2¹⁰ = 2⁻³.",
@@ -14492,22 +14492,22 @@
     "options": [
       {
         "label": "A",
-        "text": "12"
-      },
-      {
-        "label": "B",
         "text": "2"
       },
       {
+        "label": "B",
+        "text": "8"
+      },
+      {
         "label": "C",
-        "text": "64"
+        "text": "12"
       },
       {
         "label": "D",
-        "text": "8"
+        "text": "64"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "A fractional exponent means a root and a power: 16^(3/4) = (16^(1/4))³ = 2³ = 8. Choice 12 multiplies 16 by 3/4, choice 2 is only the fourth root, and 64 uses the exponent 3/2 instead of 3/4.",
@@ -14536,22 +14536,22 @@
     "options": [
       {
         "label": "A",
-        "text": "10"
+        "text": "2"
       },
       {
         "label": "B",
-        "text": "21/2"
-      },
-      {
-        "label": "C",
         "text": "5"
       },
       {
+        "label": "C",
+        "text": "10"
+      },
+      {
         "label": "D",
-        "text": "2"
+        "text": "21/2"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "The right side is 5^(7+3) = 5¹⁰. Setting the exponents equal gives 2x = 10, so x = 5. Choice 10 forgets to divide by 2, and 21/2 multiplies the exponents 7 and 3 instead of adding them.",
@@ -14624,22 +14624,22 @@
     "options": [
       {
         "label": "A",
-        "text": "7/3"
-      },
-      {
-        "label": "B",
         "text": "2"
       },
       {
+        "label": "B",
+        "text": "7/3"
+      },
+      {
         "label": "C",
-        "text": "3"
+        "text": "8/3"
       },
       {
         "label": "D",
-        "text": "8/3"
+        "text": "3"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Rewrite 9 as 3², so 9ˣ = 3^(2x) and the left side becomes 3^(2x) · 3^(x+1) = 3^(3x+1). Setting the exponents equal gives 3x + 1 = 7, so x = 2. Choice 7/3 drops the +1 from the exponent, and 8/3 subtracts 1 instead of adding it when solving.",
@@ -14712,7 +14712,7 @@
     "options": [
       {
         "label": "A",
-        "text": "45"
+        "text": "11"
       },
       {
         "label": "B",
@@ -14720,14 +14720,14 @@
       },
       {
         "label": "C",
-        "text": "11"
+        "text": "45"
       },
       {
         "label": "D",
         "text": "90"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Split the exponent using the product and power rules: 2^(2a+b) = (2ᵃ)² · 2ᵇ = 3² · 5 = 45. Choice 30 computes 2 · 3 · 5, treating the coefficient 2 as a factor rather than an exponent, and 11 computes 2(3) + 5, adding the powers instead of multiplying them.",
@@ -14760,18 +14760,18 @@
       },
       {
         "label": "B",
-        "text": "4,000"
+        "text": "3,000"
       },
       {
         "label": "C",
-        "text": "3,000"
+        "text": "4,000"
       },
       {
         "label": "D",
         "text": "8,000"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "C",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "Doubling 3 times multiplies the count by 2³ = 8, so the video will have 500 × 8 = 4,000 views. Choice 1,500 multiplies 500 by 3 instead of doubling repeatedly, and 8,000 doubles one extra time.",
@@ -14800,11 +14800,11 @@
     "options": [
       {
         "label": "A",
-        "text": "$9,600"
+        "text": "$4,800"
       },
       {
         "label": "B",
-        "text": "$4,800"
+        "text": "$7,200"
       },
       {
         "label": "C",
@@ -14812,7 +14812,7 @@
       },
       {
         "label": "D",
-        "text": "$7,200"
+        "text": "$9,600"
       }
     ],
     "correctOption": "C",
@@ -14888,22 +14888,22 @@
     "options": [
       {
         "label": "A",
-        "text": "10"
+        "text": "5"
       },
       {
         "label": "B",
-        "text": "20"
+        "text": "10"
       },
       {
         "label": "C",
-        "text": "40"
+        "text": "20"
       },
       {
         "label": "D",
-        "text": "5"
+        "text": "40"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "A",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "In 24 hours there are 24/6 = 4 half-lives, so the amount is multiplied by (1/2)⁴ = 1/16. That leaves 80/16 = 5 milligrams. Choice 10 uses only 3 half-lives, and 40 halves the sample just once.",
@@ -14932,22 +14932,22 @@
     "options": [
       {
         "label": "A",
-        "text": "15%"
-      },
-      {
-        "label": "B",
-        "text": "85%"
-      },
-      {
-        "label": "C",
         "text": "0.85%"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "1.5%"
+      },
+      {
+        "label": "C",
+        "text": "15%"
+      },
+      {
+        "label": "D",
+        "text": "85%"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "The yearly factor 0.85 means the population keeps 85% of its size each year, so it loses 100% − 85% = 15% per year. Choice 85% is the portion that remains, not the decrease.",
@@ -15020,22 +15020,22 @@
     "options": [
       {
         "label": "A",
-        "text": "180"
+        "text": "60"
       },
       {
         "label": "B",
-        "text": "240"
+        "text": "180"
       },
       {
         "label": "C",
-        "text": "540"
+        "text": "240"
       },
       {
         "label": "D",
-        "text": "60"
+        "text": "540"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "D",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "In 12 days there are 12/4 = 3 tripling periods, so the count is multiplied by 3³ = 27. That gives 20 × 27 = 540 cells. Choice 180 uses only 2 triplings, and 60 triples just once.",
@@ -15064,22 +15064,22 @@
     "options": [
       {
         "label": "A",
-        "text": "32"
-      },
-      {
-        "label": "B",
-        "text": "48"
-      },
-      {
-        "label": "C",
         "text": "6"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "12"
+      },
+      {
+        "label": "C",
+        "text": "32"
+      },
+      {
+        "label": "D",
+        "text": "48"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Substitute t = 3: a · 2³ = 96, so 8a = 96 and a = 12. Choice 32 divides 96 by 3 instead of by 2³, and 48 divides by 2 only once.",
@@ -15116,11 +15116,11 @@
       },
       {
         "label": "C",
-        "text": "48"
+        "text": "24"
       },
       {
         "label": "D",
-        "text": "24"
+        "text": "48"
       }
     ],
     "correctOption": "B",
@@ -15152,22 +15152,22 @@
     "options": [
       {
         "label": "A",
-        "text": "20%"
+        "text": "10%"
       },
       {
         "label": "B",
-        "text": "40%"
-      },
-      {
-        "label": "C",
         "text": "15%"
       },
       {
+        "label": "C",
+        "text": "20%"
+      },
+      {
         "label": "D",
-        "text": "10%"
+        "text": "40%"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "If r is the annual growth factor, then r⁵ = 2, so r = 2^(1/5) ≈ 1.149, an increase of about 15% per year. Choice 20% divides 100% by 5, ignoring compounding, which would more than double the value in 5 years.",
@@ -15196,11 +15196,11 @@
     "options": [
       {
         "label": "A",
-        "text": "21"
+        "text": "6"
       },
       {
         "label": "B",
-        "text": "6"
+        "text": "7"
       },
       {
         "label": "C",
@@ -15208,7 +15208,7 @@
       },
       {
         "label": "D",
-        "text": "7"
+        "text": "21"
       }
     ],
     "correctOption": "C",
@@ -15240,22 +15240,22 @@
     "options": [
       {
         "label": "A",
-        "text": "31"
-      },
-      {
-        "label": "B",
         "text": "7"
       },
       {
+        "label": "B",
+        "text": "31"
+      },
+      {
         "label": "C",
-        "text": "63"
+        "text": "49"
       },
       {
         "label": "D",
-        "text": "49"
+        "text": "63"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "Work from the inside out: g(4) = 2(4) − 1 = 7, and then f(7) = 7² = 49. Choice 31 is g(f(4)) = 2(16) − 1, the composition in the wrong order, and 7 stops at g(4).",
@@ -15372,22 +15372,22 @@
     "options": [
       {
         "label": "A",
-        "text": "3"
-      },
-      {
-        "label": "B",
         "text": "−1"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "1"
+      },
+      {
+        "label": "C",
+        "text": "3"
       },
       {
         "label": "D",
         "text": "6"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "First f(4) = 2(4) − 5 = 3, and then f(3) = 2(3) − 5 = 1. Choice 3 applies f only once, and 6 doubles 3 without subtracting 5.",
@@ -15416,22 +15416,22 @@
     "options": [
       {
         "label": "A",
-        "text": "32"
-      },
-      {
-        "label": "B",
-        "text": "40"
-      },
-      {
-        "label": "C",
         "text": "22"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "30"
+      },
+      {
+        "label": "C",
+        "text": "32"
+      },
+      {
+        "label": "D",
+        "text": "40"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "First apply the discount: p(50) = 0.8(50) = 40. Then apply the coupon: q(40) = 40 − 10 = 30 dollars. Choice 32 applies the coupon before the discount, p(q(50)) = 0.8(40), and 40 forgets the coupon entirely.",
@@ -15460,22 +15460,22 @@
     "options": [
       {
         "label": "A",
-        "text": "6"
-      },
-      {
-        "label": "B",
         "text": "9/2"
       },
       {
+        "label": "B",
+        "text": "6"
+      },
+      {
         "label": "C",
-        "text": "12"
+        "text": "9"
       },
       {
         "label": "D",
-        "text": "9"
+        "text": "12"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "The composition is f(g(x)) = 2x + 3. Solving 2x + 3 = 15 gives 2x = 12, so x = 6. Choice 9/2 solves g(f(x)) = 2x + 6 = 15, the reverse order, and 12 stops after subtracting 3.",
@@ -15636,11 +15636,11 @@
     "options": [
       {
         "label": "A",
-        "text": "13"
+        "text": "−13"
       },
       {
         "label": "B",
-        "text": "27"
+        "text": "13"
       },
       {
         "label": "C",
@@ -15648,10 +15648,10 @@
       },
       {
         "label": "D",
-        "text": "−13"
+        "text": "27"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "Substitute 5 for x: f(5) = 4(5) − 7 = 20 − 7 = 13. Choice 27 adds 7 instead of subtracting, and 20 stops at 4(5).",
@@ -15680,11 +15680,11 @@
     "options": [
       {
         "label": "A",
-        "text": "18"
+        "text": "−38"
       },
       {
         "label": "B",
-        "text": "−38"
+        "text": "−6"
       },
       {
         "label": "C",
@@ -15692,10 +15692,10 @@
       },
       {
         "label": "D",
-        "text": "−6"
+        "text": "18"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "Substitute −4: g(−4) = (−4)² + 3(−4) − 10 = 16 − 12 − 10 = −6. Choice 18 treats 3(−4) as +12, and −38 uses −16 for (−4)².",
@@ -15724,7 +15724,7 @@
     "options": [
       {
         "label": "A",
-        "text": "7"
+        "text": "3"
       },
       {
         "label": "B",
@@ -15732,11 +15732,11 @@
       },
       {
         "label": "C",
-        "text": "12"
+        "text": "7"
       },
       {
         "label": "D",
-        "text": "3"
+        "text": "12"
       }
     ],
     "correctOption": "B",
@@ -15860,7 +15860,7 @@
       },
       {
         "label": "B",
-        "text": "47"
+        "text": "7"
       },
       {
         "label": "C",
@@ -15868,10 +15868,10 @@
       },
       {
         "label": "D",
-        "text": "7"
+        "text": "47"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Set 3a − 4 = 17. Adding 4 gives 3a = 21, so a = 7. Choice 13/3 subtracts 4 instead of adding it, and 47 evaluates f(17) rather than solving f(a) = 17.",
@@ -15948,18 +15948,18 @@
       },
       {
         "label": "B",
-        "text": "4"
+        "text": "0"
       },
       {
         "label": "C",
-        "text": "6"
+        "text": "4"
       },
       {
         "label": "D",
-        "text": "0"
+        "text": "6"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "D",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Substitute −1: f(−1) = |−1 − 3| + 2 = |−4| + 2 = 4 + 2 = 6. Choice −2 skips the absolute value, and 4 forgets to add 2.",
@@ -15988,22 +15988,22 @@
     "options": [
       {
         "label": "A",
-        "text": "16"
-      },
-      {
-        "label": "B",
         "text": "2"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "4"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "8"
+      },
+      {
+        "label": "D",
+        "text": "16"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Evaluate the function first: f(5) = 25 and f(3) = 9. Then (25 − 9)/(5 − 3) = 16/2 = 8, the average rate of change of f from 3 to 5. Choice 16 forgets to divide by 5 − 3, and 4 evaluates f(5 − 3).",
@@ -16032,22 +16032,22 @@
     "options": [
       {
         "label": "A",
-        "text": "8"
-      },
-      {
-        "label": "B",
         "text": "4"
       },
       {
+        "label": "B",
+        "text": "11/2"
+      },
+      {
         "label": "C",
-        "text": "16"
+        "text": "8"
       },
       {
         "label": "D",
-        "text": "11/2"
+        "text": "16"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Substitute x = 2: k(2)² + 3 = 19, so 4k = 16 and k = 4. Choice 8 divides 16 by 2 instead of by 2² = 4, and 16 forgets to divide at all.",
@@ -19552,22 +19552,22 @@
     "options": [
       {
         "label": "A",
-        "text": "−1"
+        "text": "−3"
       },
       {
         "label": "B",
-        "text": "3"
+        "text": "−1"
       },
       {
         "label": "C",
-        "text": "−3"
+        "text": "3"
       },
       {
         "label": "D",
         "text": "6"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "A",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Since x − 2 is a factor, p(2) = 0 by the Factor Theorem. Substituting gives 2(8) + 4k − 10 + 6 = 0, so 4k + 12 = 0 and k = −3. Choice 3 comes from a sign slip, solving 4k = 12 instead of 4k = −12.",
@@ -19648,14 +19648,14 @@
       },
       {
         "label": "C",
-        "text": "2/3"
+        "text": "1/2"
       },
       {
         "label": "D",
-        "text": "1/2"
+        "text": "2/3"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "The prime numbers from 1 to 6 are 2, 3, and 5, giving 3 favorable outcomes out of 6. The probability is 3/6 = 1/2. Counting 1 as prime adds a fourth outcome and produces the trap 4/6 = 2/3.",
@@ -19684,11 +19684,11 @@
     "options": [
       {
         "label": "A",
-        "text": "1/4"
+        "text": "1/5"
       },
       {
         "label": "B",
-        "text": "1/5"
+        "text": "1/4"
       },
       {
         "label": "C",
@@ -19699,7 +19699,7 @@
         "text": "1/2"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "The multiples of 4 from 1 to 20 are 4, 8, 12, 16, and 20, so there are 5 favorable outcomes out of 20. The probability is 5/20 = 1/4. Choice 1/5 comes from overlooking 20 as a multiple of 4 and counting only 4 favorable outcomes, giving 4/20.",
@@ -19772,11 +19772,11 @@
     "options": [
       {
         "label": "A",
-        "text": "1/6"
+        "text": "1/12"
       },
       {
         "label": "B",
-        "text": "1/12"
+        "text": "1/6"
       },
       {
         "label": "C",
@@ -19787,7 +19787,7 @@
         "text": "2/3"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "The events are independent, so multiply the probabilities: P(heads) = 1/2 and P(number less than 3) = 2/6 = 1/3. The probability of both is (1/2)(1/3) = 1/6. Choice 1/12 uses P(number less than 3) = 1/6, counting only one face instead of the two faces 1 and 2.",
@@ -19816,7 +19816,7 @@
     "options": [
       {
         "label": "A",
-        "text": "2/5"
+        "text": "3/10"
       },
       {
         "label": "B",
@@ -19824,7 +19824,7 @@
       },
       {
         "label": "C",
-        "text": "3/10"
+        "text": "2/5"
       },
       {
         "label": "D",
@@ -19860,22 +19860,22 @@
     "options": [
       {
         "label": "A",
-        "text": "15/56"
+        "text": "15/64"
       },
       {
         "label": "B",
-        "text": "1/2"
+        "text": "15/56"
       },
       {
         "label": "C",
-        "text": "15/28"
+        "text": "1/2"
       },
       {
         "label": "D",
-        "text": "15/64"
+        "text": "15/28"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "D",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "P(chocolate then caramel) = (5/8)(3/7) = 15/56, and P(caramel then chocolate) = (3/8)(5/7) = 15/56. Adding the two orders gives 30/56 = 15/28. Forgetting the second order gives the distractor 15/56.",
@@ -19904,22 +19904,22 @@
     "options": [
       {
         "label": "A",
-        "text": "5/12"
-      },
-      {
-        "label": "B",
         "text": "1/6"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "2/5"
+      },
+      {
+        "label": "C",
+        "text": "5/12"
       },
       {
         "label": "D",
         "text": "5/6"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "This is a conditional probability: restrict attention to the 24 whole-grain loaves. Of those, 10 are sourdough, so the probability is 10/24 = 5/12. Choice 2/5 reverses the condition and computes 10/25, the chance that a sourdough loaf is whole-grain, and choice 1/6 is the unconditional 10/60.",
@@ -19992,22 +19992,22 @@
     "options": [
       {
         "label": "A",
-        "text": "0.36"
-      },
-      {
-        "label": "B",
-        "text": "0.84"
-      },
-      {
-        "label": "C",
         "text": "0.16"
       },
       {
-        "label": "D",
+        "label": "B",
+        "text": "0.36"
+      },
+      {
+        "label": "C",
         "text": "0.60"
+      },
+      {
+        "label": "D",
+        "text": "0.84"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "D",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Use the complement: P(at least one make) = 1 − P(misses both). Each miss has probability 0.4, so P(misses both) = 0.4 × 0.4 = 0.16, and 1 − 0.16 = 0.84. Choice 0.36 is P(makes both) = 0.6 × 0.6, and choice 0.16 is the probability of missing both rather than its complement.",
@@ -20168,22 +20168,22 @@
     "options": [
       {
         "label": "A",
-        "text": "28"
-      },
-      {
-        "label": "B",
         "text": "−28"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "−3"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "3"
+      },
+      {
+        "label": "D",
+        "text": "28"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "For x² + bx + c = 0, the product of the roots is c. Here the equation factors as (x − 7)(x + 4) = 0, so the roots are 7 and −4, and their product is −28. Choice 28 keeps the magnitude of the constant but drops its negative sign, and choice 3 is the sum of the roots rather than the product.",
@@ -20260,18 +20260,18 @@
       },
       {
         "label": "B",
-        "text": "16"
+        "text": "4"
       },
       {
         "label": "C",
-        "text": "4"
+        "text": "16"
       },
       {
         "label": "D",
         "text": "64"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "The rocket is on the ground when h(t) = 0. Factoring gives −16t(t − 4) = 0, so t = 0 (launch) or t = 4. The rocket returns to the ground after 4 seconds; t = 2 is when it reaches its maximum height.",
@@ -20344,7 +20344,7 @@
     "options": [
       {
         "label": "A",
-        "text": "5/2"
+        "text": "−5"
       },
       {
         "label": "B",
@@ -20352,11 +20352,11 @@
       },
       {
         "label": "C",
-        "text": "5"
+        "text": "5/2"
       },
       {
         "label": "D",
-        "text": "−5"
+        "text": "5"
       }
     ],
     "correctOption": "B",
@@ -20436,18 +20436,18 @@
       },
       {
         "label": "B",
-        "text": "8"
+        "text": "5"
       },
       {
         "label": "C",
-        "text": "5"
+        "text": "8"
       },
       {
         "label": "D",
         "text": "10"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Let w be the width, so the length is w + 3 and w(w + 3) = 40. Then w² + 3w − 40 = 0 factors as (w + 8)(w − 5) = 0, so w = 5 (a width cannot be negative). The choice 8 is the length.",
@@ -20528,14 +20528,14 @@
       },
       {
         "label": "C",
-        "text": "3"
+        "text": "2"
       },
       {
         "label": "D",
-        "text": "2"
+        "text": "3"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "D",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "The y-intercept occurs where x = 0. Substituting gives f(0) = 2(0)² − 5(0) + 3 = 3, so the y-intercept is (0, 3). Choice −5 reads off the coefficient of x instead of substituting, and choice 2 reads off the leading coefficient.",
@@ -20612,7 +20612,7 @@
       },
       {
         "label": "B",
-        "text": "11"
+        "text": "2"
       },
       {
         "label": "C",
@@ -20620,10 +20620,10 @@
       },
       {
         "label": "D",
-        "text": "2"
+        "text": "11"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Complete the square: f(x) = (x + 3)² + 2. Since (x + 3)² ≥ 0, the minimum value is 2, attained at x = −3. The value −3 is where the minimum occurs, not the minimum value itself.",
@@ -20740,7 +20740,7 @@
     "options": [
       {
         "label": "A",
-        "text": "2"
+        "text": "−8"
       },
       {
         "label": "B",
@@ -20752,7 +20752,7 @@
       },
       {
         "label": "D",
-        "text": "−8"
+        "text": "2"
       }
     ],
     "correctOption": "B",
@@ -20784,22 +20784,22 @@
     "options": [
       {
         "label": "A",
-        "text": "30"
+        "text": "15"
       },
       {
         "label": "B",
-        "text": "60"
+        "text": "30"
       },
       {
         "label": "C",
-        "text": "120"
+        "text": "60"
       },
       {
         "label": "D",
-        "text": "15"
+        "text": "120"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "The maximum of P(x) = ax² + bx + c with a < 0 occurs at x = −b/(2a). Here x = −120/(2 · (−2)) = 30 lamps. Choice 60 comes from using −b/a and forgetting the factor of 2, and choice 120 simply reads off b.",
@@ -20872,11 +20872,11 @@
     "options": [
       {
         "label": "A",
-        "text": "−12"
+        "text": "−16"
       },
       {
         "label": "B",
-        "text": "−16"
+        "text": "−12"
       },
       {
         "label": "C",
@@ -20887,7 +20887,7 @@
         "text": "16"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "The x-intercepts are −2 and 6, so by symmetry the vertex is at x = (−2 + 6)/2 = 2. Substituting, y = (2 + 2)(2 − 6) = 4(−4) = −16. The value −12 is the y-intercept, not the minimum.",
@@ -20960,22 +20960,22 @@
     "options": [
       {
         "label": "A",
-        "text": "4"
-      },
-      {
-        "label": "B",
-        "text": "36"
-      },
-      {
-        "label": "C",
         "text": "1/4"
       },
       {
-        "label": "D",
+        "label": "B",
+        "text": "4"
+      },
+      {
+        "label": "C",
         "text": "9"
+      },
+      {
+        "label": "D",
+        "text": "36"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "Multiply both sides by x to get 12 = 3x, then divide by 3 to get x = 4. Check: 12/4 = 3. Choice 36 multiplies 12 by 3 instead of dividing, and choice 9 subtracts 3 from 12.",
@@ -21004,22 +21004,22 @@
     "options": [
       {
         "label": "A",
-        "text": "22"
+        "text": "2"
       },
       {
         "label": "B",
-        "text": "28"
-      },
-      {
-        "label": "C",
         "text": "8"
       },
       {
+        "label": "C",
+        "text": "22"
+      },
+      {
         "label": "D",
-        "text": "2"
+        "text": "28"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "D",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "Square both sides: x − 3 = 25, so x = 28. The distractor 22 comes from subtracting 3 instead of adding it after squaring.",
@@ -21048,22 +21048,22 @@
     "options": [
       {
         "label": "A",
-        "text": "4"
-      },
-      {
-        "label": "B",
         "text": "−4"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "2"
+      },
+      {
+        "label": "C",
+        "text": "4"
       },
       {
         "label": "D",
         "text": "8"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Cross-multiply: 3(x + 6) = 5(x + 2), so 3x + 18 = 5x + 10. Then 8 = 2x and x = 4. Check: 3/6 = 5/10 = 1/2. Choice 8 stops at 8 = 2x without dividing by 2, and choice −4 comes from a sign slip when moving 5x across.",
@@ -21100,14 +21100,14 @@
       },
       {
         "label": "C",
-        "text": "17/3"
+        "text": "5"
       },
       {
         "label": "D",
-        "text": "5"
+        "text": "17/3"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Square both sides: 3x + 1 = 16. Then 3x = 15, so x = 5. The distractor 1 comes from setting 3x + 1 equal to 4 without squaring.",
@@ -21268,22 +21268,22 @@
     "options": [
       {
         "label": "A",
-        "text": "4.5"
+        "text": "2"
       },
       {
         "label": "B",
-        "text": "9"
-      },
-      {
-        "label": "C",
         "text": "2.5"
       },
       {
+        "label": "C",
+        "text": "4.5"
+      },
+      {
         "label": "D",
-        "text": "2"
+        "text": "9"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "A",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Together the pipes fill 1/6 + 1/3 = 1/2 of the tank per hour. Solving (1/6 + 1/3)t = 1 gives t = 2 hours. Averaging the two times to get 4.5 is a common error because rates, not times, add.",
@@ -21576,22 +21576,22 @@
     "options": [
       {
         "label": "A",
-        "text": "6"
-      },
-      {
-        "label": "B",
-        "text": "12"
-      },
-      {
-        "label": "C",
         "text": "2"
       },
       {
-        "label": "D",
+        "label": "B",
+        "text": "6"
+      },
+      {
+        "label": "C",
         "text": "8"
+      },
+      {
+        "label": "D",
+        "text": "12"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "A fractional exponent means a root and a power: 4^(3/2) = (√4)³ = 2³ = 8. Multiplying 4 by 3/2 to get 6 is the common error.",
@@ -21928,22 +21928,22 @@
     "options": [
       {
         "label": "A",
-        "text": "11"
+        "text": "4"
       },
       {
         "label": "B",
-        "text": "16"
+        "text": "11"
       },
       {
         "label": "C",
-        "text": "28"
+        "text": "16"
       },
       {
         "label": "D",
-        "text": "4"
+        "text": "28"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "C",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "The ratio 4:7 means 4 + 7 = 11 equal parts in total, so each part is 44/11 = 4 quarts. The red paint is 4 parts: 4 × 4 = 16 quarts. Choice 28 is the white paint, choice 11 is the number of parts rather than quarts, and choice 4 is the size of one part.",
@@ -21972,22 +21972,22 @@
     "options": [
       {
         "label": "A",
-        "text": "135"
-      },
-      {
-        "label": "B",
         "text": "120"
       },
       {
+        "label": "B",
+        "text": "135"
+      },
+      {
         "label": "C",
-        "text": "450"
+        "text": "150"
       },
       {
         "label": "D",
-        "text": "150"
+        "text": "450"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "The rate is 45/3 = 15 pages per minute. In 10 minutes the printer prints 15 × 10 = 150 pages. Choice 450 multiplies 45 by 10 without first dividing by 3, and choice 135 multiplies 45 by 3 instead of using the per-minute rate.",
@@ -22020,7 +22020,7 @@
       },
       {
         "label": "B",
-        "text": "49.5"
+        "text": "30"
       },
       {
         "label": "C",
@@ -22028,7 +22028,7 @@
       },
       {
         "label": "D",
-        "text": "30"
+        "text": "49.5"
       }
     ],
     "correctOption": "A",
@@ -22060,22 +22060,22 @@
     "options": [
       {
         "label": "A",
-        "text": "30"
+        "text": "15"
       },
       {
         "label": "B",
-        "text": "36"
+        "text": "30"
       },
       {
         "label": "C",
-        "text": "45"
+        "text": "36"
       },
       {
         "label": "D",
-        "text": "15"
+        "text": "45"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "D",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Let the original counts be 2x cats and 3x dogs. Then (2x + 6)/(3x) = 4/5, so 10x + 30 = 12x and x = 15. The number of dogs is 3x = 45; check: 36 cats to 45 dogs is 4:5. Choice 36 is the number of cats after the 6 arrive, choice 30 is the original number of cats, and choice 15 is the value of x rather than 3x.",
@@ -22108,18 +22108,18 @@
       },
       {
         "label": "B",
-        "text": "13/5"
-      },
-      {
-        "label": "C",
         "text": "8/13"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "13/8"
+      },
+      {
+        "label": "D",
+        "text": "13/5"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Split the fraction: (a + b)/b = a/b + b/b = a/b + 1. Since a/b = 5/8, the value is 5/8 + 1 = 13/8. Choice 13/5 computes (a + b)/a instead of (a + b)/b, and choice 5/13 inverts that.",
@@ -22148,11 +22148,11 @@
     "options": [
       {
         "label": "A",
-        "text": "$1,400"
+        "text": "$700"
       },
       {
         "label": "B",
-        "text": "$700"
+        "text": "$1,400"
       },
       {
         "label": "C",
@@ -22163,7 +22163,7 @@
         "text": "$3,500"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "The ratio has 3 + 4 + 5 = 12 parts, so each part is 8,400/12 = $700. The largest share is 5 parts and the smallest is 3 parts, a difference of 2 parts: 2 × 700 = $1,400. Choice $700 is the value of a single part, choice $3,500 is the largest share itself rather than the difference, and choice $2,100 is the smallest share.",
@@ -22236,22 +22236,22 @@
     "options": [
       {
         "label": "A",
-        "text": "4/5"
-      },
-      {
-        "label": "B",
         "text": "3/5"
       },
       {
+        "label": "B",
+        "text": "3/4"
+      },
+      {
         "label": "C",
-        "text": "4/3"
+        "text": "4/5"
       },
       {
         "label": "D",
-        "text": "3/4"
+        "text": "4/3"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "The sine of an angle is the ratio of the opposite leg to the hypotenuse. The leg opposite ∠D is EF = 12 and the hypotenuse is DE = 15, so sin D = 12/15 = 4/5. The ratio 3/5 is cos D, and 4/3 is tan D.",
@@ -22280,22 +22280,22 @@
     "options": [
       {
         "label": "A",
-        "text": "8/15"
+        "text": "8/17"
       },
       {
         "label": "B",
-        "text": "15/17"
+        "text": "8/15"
       },
       {
         "label": "C",
-        "text": "15/8"
+        "text": "15/17"
       },
       {
         "label": "D",
-        "text": "8/17"
+        "text": "15/8"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "D",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "Tangent is opposite over adjacent. For ∠A, the opposite leg is BC = 15 and the adjacent leg is AB = 8, so tan A = 15/8. The ratio 8/15 reverses opposite and adjacent, and 15/17 uses the hypotenuse 17 instead of the adjacent leg.",
@@ -22456,11 +22456,11 @@
     "options": [
       {
         "label": "A",
-        "text": "24/7"
+        "text": "7/24"
       },
       {
         "label": "B",
-        "text": "7/24"
+        "text": "24/25"
       },
       {
         "label": "C",
@@ -22468,10 +22468,10 @@
       },
       {
         "label": "D",
-        "text": "24/25"
+        "text": "24/7"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "D",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Treat 7 as the adjacent leg and 25 as the hypotenuse. The Pythagorean theorem gives the opposite leg as √(25² − 7²) = 24, so tan θ = opposite/adjacent = 24/7. The ratio 24/25 is sin θ, and 7/24 inverts the tangent.",
@@ -22500,11 +22500,11 @@
     "options": [
       {
         "label": "A",
-        "text": "32"
+        "text": "24"
       },
       {
         "label": "B",
-        "text": "24"
+        "text": "32"
       },
       {
         "label": "C",
@@ -22515,7 +22515,7 @@
         "text": "66.7"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Since sin P = QR/PR, QR = 40(0.6) = 24 meters. The value 32 is the other leg PQ, found from cos P = 0.8; 66.7 comes from dividing by 0.6 instead of multiplying, and 50 comes from dividing by 0.8.",
@@ -22544,7 +22544,7 @@
     "options": [
       {
         "label": "A",
-        "text": "12/13"
+        "text": "5/13"
       },
       {
         "label": "B",
@@ -22552,14 +22552,14 @@
       },
       {
         "label": "C",
-        "text": "13/5"
+        "text": "12/13"
       },
       {
         "label": "D",
-        "text": "5/13"
+        "text": "13/5"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "A",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Angles A and B are complementary because ∠C is right, and the cosine of an angle equals the sine of its complement. Therefore cos B = sin A = 5/13. The value 12/13 is cos A, which corresponds to sin B instead.",
@@ -22632,7 +22632,7 @@
     "options": [
       {
         "label": "A",
-        "text": "17.8"
+        "text": "8.6"
       },
       {
         "label": "B",
@@ -22640,14 +22640,14 @@
       },
       {
         "label": "C",
-        "text": "22.7"
+        "text": "17.8"
       },
       {
         "label": "D",
-        "text": "8.6"
+        "text": "22.7"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Side RS is adjacent to ∠R and RT is the hypotenuse, so cos 38° = 14/RT and RT = 14/cos 38° ≈ 17.8 inches. The value 10.9 is 14 tan 38°, the opposite leg, and 22.7 comes from dividing by sin 38° instead of cos 38°.",
@@ -22764,22 +22764,22 @@
     "options": [
       {
         "label": "A",
-        "text": "60,200"
-      },
-      {
-        "label": "B",
-        "text": "6,020,000"
-      },
-      {
-        "label": "C",
         "text": "0.0000602"
       },
       {
-        "label": "D",
+        "label": "B",
+        "text": "60,200"
+      },
+      {
+        "label": "C",
         "text": "602,000"
+      },
+      {
+        "label": "D",
+        "text": "6,020,000"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "A positive exponent of 5 moves the decimal point 5 places to the right: 6.02 becomes 602,000. Moving only 4 places gives 60,200, and moving 6 places gives 6,020,000.",
@@ -23072,11 +23072,11 @@
     "options": [
       {
         "label": "A",
-        "text": "−8"
+        "text": "−9"
       },
       {
         "label": "B",
-        "text": "−9"
+        "text": "−8"
       },
       {
         "label": "C",
@@ -23087,7 +23087,7 @@
         "text": "2"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Divide the coefficients and subtract the exponents: 4.2/7 = 0.6 and 10⁻³/10⁵ = 10⁻⁸, giving 0.6 × 10⁻⁸. Because 0.6 is less than 1, rewrite it as 6 × 10⁻¹, so the quotient is 6 × 10⁻⁹ and n = −9. Stopping at 0.6 × 10⁻⁸ gives the trap n = −8.",
@@ -23116,22 +23116,22 @@
     "options": [
       {
         "label": "A",
-        "text": "96"
+        "text": "48"
       },
       {
         "label": "B",
-        "text": "192"
+        "text": "96"
       },
       {
         "label": "C",
-        "text": "48"
+        "text": "192"
       },
       {
         "label": "D",
         "text": "384"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "C",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "Each term is twice the one before it, so the common ratio is 2 and aₙ = 3(2)ⁿ⁻¹. The 7th term is 3(2)⁶ = 3(64) = 192. The value 96 is the 6th term and 384 is the 8th term.",
@@ -23160,22 +23160,22 @@
     "options": [
       {
         "label": "A",
-        "text": "67"
-      },
-      {
-        "label": "B",
         "text": "57"
       },
       {
+        "label": "B",
+        "text": "62"
+      },
+      {
         "label": "C",
-        "text": "78"
+        "text": "67"
       },
       {
         "label": "D",
-        "text": "62"
+        "text": "78"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "The nth term is a₁ + (n − 1)d = −8 + 14(5) = −8 + 70 = 62. Using 15 steps instead of 14 gives the trap 67, using 13 steps gives 57, and dropping the negative sign on the first term gives 78.",
@@ -23204,22 +23204,22 @@
     "options": [
       {
         "label": "A",
-        "text": "31"
+        "text": "−5"
       },
       {
         "label": "B",
-        "text": "35"
-      },
-      {
-        "label": "C",
         "text": "27"
       },
       {
+        "label": "C",
+        "text": "31"
+      },
+      {
         "label": "D",
-        "text": "−5"
+        "text": "35"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "Substitute n = 10 into the formula: a₁₀ = 4(10) − 9 = 40 − 9 = 31. The value −5 is the first term, and 27 comes from using n = 9.",
@@ -23248,22 +23248,22 @@
     "options": [
       {
         "label": "A",
-        "text": "8"
+        "text": "−2"
       },
       {
         "label": "B",
-        "text": "18"
-      },
-      {
-        "label": "C",
         "text": "3"
       },
       {
+        "label": "C",
+        "text": "8"
+      },
+      {
         "label": "D",
-        "text": "−2"
+        "text": "18"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "There are 11 − 5 = 6 steps between the two terms, so d = (53 − 23)/6 = 5. Working back 4 steps from the 5th term gives a₁ = 23 − 4(5) = 3. Backing up 5 steps instead of 4 gives the trap −2.",
@@ -23292,7 +23292,7 @@
     "options": [
       {
         "label": "A",
-        "text": "1,080"
+        "text": "990"
       },
       {
         "label": "B",
@@ -23300,7 +23300,7 @@
       },
       {
         "label": "C",
-        "text": "990"
+        "text": "1,080"
       },
       {
         "label": "D",
@@ -23340,18 +23340,18 @@
       },
       {
         "label": "B",
-        "text": "87"
+        "text": "83"
       },
       {
         "label": "C",
-        "text": "245"
+        "text": "87"
       },
       {
         "label": "D",
-        "text": "83"
+        "text": "245"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Apply the rule repeatedly: a₂ = 3(5) − 4 = 11, a₃ = 3(11) − 4 = 29, and a₄ = 3(29) − 4 = 83. The value 29 is a₃, 87 forgets to subtract 4 on the last step, and 245 takes one step too many.",
@@ -23380,22 +23380,22 @@
     "options": [
       {
         "label": "A",
-        "text": "51"
+        "text": "36"
       },
       {
         "label": "B",
-        "text": "54"
-      },
-      {
-        "label": "C",
         "text": "48"
       },
       {
+        "label": "C",
+        "text": "51"
+      },
+      {
         "label": "D",
-        "text": "36"
+        "text": "54"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "The seat counts form an arithmetic sequence with a₁ = 18 and d = 3, so the 12th row has 18 + 11(3) = 51 seats. Using 12 steps instead of 11 gives the trap 54.",
@@ -23512,22 +23512,22 @@
     "options": [
       {
         "label": "A",
-        "text": "105"
-      },
-      {
-        "label": "B",
         "text": "−315"
       },
       {
+        "label": "B",
+        "text": "−105"
+      },
+      {
         "label": "C",
-        "text": "315"
+        "text": "105"
       },
       {
         "label": "D",
-        "text": "−105"
+        "text": "315"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "The common ratio is −2, so the sum is a₁(1 − rⁿ)/(1 − r) = 5(1 − 64)/3 = −105. Ignoring the alternating signs and summing 5 + 10 + 20 + … gives 315.",
@@ -23556,22 +23556,22 @@
     "options": [
       {
         "label": "A",
-        "text": "3.2"
+        "text": "2.5"
       },
       {
         "label": "B",
-        "text": "17"
+        "text": "3.2"
       },
       {
         "label": "C",
-        "text": "20"
+        "text": "17"
       },
       {
         "label": "D",
-        "text": "2.5"
+        "text": "20"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "D",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "Corresponding sides of similar triangles are proportional: 6/15 = 8/EF. Cross multiplying gives 6·EF = 120, so EF = 20. The value 3.2 comes from setting up the proportion upside down, 17 adds the difference 15 − 6 instead of scaling, and 2.5 is only the scale factor.",
@@ -23600,22 +23600,22 @@
     "options": [
       {
         "label": "A",
-        "text": "55"
-      },
-      {
-        "label": "B",
-        "text": "137.5"
-      },
-      {
-        "label": "C",
         "text": "8.8"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "28"
+      },
+      {
+        "label": "C",
+        "text": "55"
+      },
+      {
+        "label": "D",
+        "text": "137.5"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "In similar figures the ratio of perimeters equals the ratio of corresponding sides, here 10/4 = 2.5. So the larger perimeter is 22(2.5) = 55 cm. Squaring the ratio, which applies to areas rather than perimeters, gives the trap 137.5.",
@@ -23644,22 +23644,22 @@
     "options": [
       {
         "label": "A",
-        "text": "64"
-      },
-      {
-        "label": "B",
-        "text": "32"
-      },
-      {
-        "label": "C",
         "text": "20"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "25"
+      },
+      {
+        "label": "C",
+        "text": "32"
+      },
+      {
+        "label": "D",
+        "text": "64"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "The student and the flagpole form similar right triangles, so height/shadow is the same for both: 5/8 = h/40. Then h = 5(40)/8 = 25 feet. Inverting the proportion gives the trap 64.",
@@ -23732,22 +23732,22 @@
     "options": [
       {
         "label": "A",
-        "text": "16.7"
-      },
-      {
-        "label": "B",
-        "text": "30"
-      },
-      {
-        "label": "C",
         "text": "3.6"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "10"
+      },
+      {
+        "label": "C",
+        "text": "16.7"
+      },
+      {
+        "label": "D",
+        "text": "30"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "For similar figures the ratio of areas is the square of the ratio of corresponding sides: 75/27 = 25/9, so the side ratio is 5/3. The larger side is 6(5/3) = 10 cm. Scaling by the area ratio 25/9 gives about 16.7, scaling by 5 alone gives 30, and inverting the ratio gives 3.6.",
@@ -23776,11 +23776,11 @@
     "options": [
       {
         "label": "A",
-        "text": "11"
+        "text": "5.5"
       },
       {
         "label": "B",
-        "text": "44"
+        "text": "11"
       },
       {
         "label": "C",
@@ -23788,10 +23788,10 @@
       },
       {
         "label": "D",
-        "text": "5.5"
+        "text": "44"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "The segment joining the midpoints of two sides of a triangle is parallel to the third side and half as long. So MN = 22/2 = 11 cm. The value 44 doubles the third side instead of halving it.",
@@ -23820,22 +23820,22 @@
     "options": [
       {
         "label": "A",
-        "text": "21"
+        "text": "14"
       },
       {
         "label": "B",
-        "text": "28"
+        "text": "21"
       },
       {
         "label": "C",
-        "text": "14"
+        "text": "28"
       },
       {
         "label": "D",
         "text": "87.5"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "A",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Because DE ∥ BC, △ADE ~ △ABC with ratio AD/AB = 8/20 = 2/5. Therefore DE = 35(2/5) = 14. Using DB/AB = 12/20 instead of AD/AB = 8/20 gives the trap 21, and inverting the ratio to AB/AD gives 87.5.",
@@ -23864,22 +23864,22 @@
     "options": [
       {
         "label": "A",
-        "text": "80"
-      },
-      {
-        "label": "B",
         "text": "32"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "40"
+      },
+      {
+        "label": "C",
+        "text": "80"
       },
       {
         "label": "D",
         "text": "500"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Areas of similar figures are in the ratio of the squares of corresponding sides, here 2²:5² = 4:25. So the smaller area is 200(4/25) = 32 square inches. Scaling by 2/5 instead of 4/25 gives 80, dividing by 5 alone gives 40, and scaling up by 5/2 gives 500.",
@@ -23908,22 +23908,22 @@
     "options": [
       {
         "label": "A",
-        "text": "6.5"
+        "text": "6"
       },
       {
         "label": "B",
-        "text": "13"
+        "text": "6.5"
       },
       {
         "label": "C",
-        "text": "6"
+        "text": "13"
       },
       {
         "label": "D",
         "text": "36"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "A",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "The altitude to the hypotenuse creates two triangles similar to the original, giving AD/CD = CD/DB. Then CD² = 4(9) = 36, so CD = 6. Averaging the two segments gives 6.5, and forgetting to take the square root gives 36.",
@@ -23952,7 +23952,7 @@
     "options": [
       {
         "label": "A",
-        "text": "18"
+        "text": "9"
       },
       {
         "label": "B",
@@ -23960,14 +23960,14 @@
       },
       {
         "label": "C",
-        "text": "54"
+        "text": "18"
       },
       {
         "label": "D",
-        "text": "9"
+        "text": "54"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "The original area is 4(6) = 24 square inches, so the ratio of areas is 216/24 = 9 and the ratio of corresponding sides is √9 = 3. The longer side becomes 6(3) = 18 inches. Scaling the side by 9 instead of 3 gives 54.",
@@ -24084,11 +24084,11 @@
     "options": [
       {
         "label": "A",
-        "text": "3"
+        "text": "2"
       },
       {
         "label": "B",
-        "text": "2"
+        "text": "3"
       },
       {
         "label": "C",
@@ -24099,7 +24099,7 @@
         "text": "12"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "The y-terms are opposites, so adding the equations gives 8x = 24 and x = 3. Subtracting the equations instead gives 8x = 16 and the trap x = 2; dividing 24 by 2 rather than by 8 gives 12; and 5.5 is the value of y.",
@@ -24128,11 +24128,11 @@
     "options": [
       {
         "label": "A",
-        "text": "5"
+        "text": "3"
       },
       {
         "label": "B",
-        "text": "3"
+        "text": "5"
       },
       {
         "label": "C",
@@ -24216,7 +24216,7 @@
     "options": [
       {
         "label": "A",
-        "text": "10"
+        "text": "−10"
       },
       {
         "label": "B",
@@ -24228,10 +24228,10 @@
       },
       {
         "label": "D",
-        "text": "−10"
+        "text": "10"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "A",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "A system has no solution when the lines are parallel, which happens when the coefficients are proportional but the constants are not. Since 6 = 2(3), we need c = 2(−5) = −10, and 11 ≠ 2(8) confirms the lines are distinct. Dropping the negative sign gives 10, copying the coefficient gives −5, and scaling in the wrong direction gives −2.5.",
@@ -24304,11 +24304,11 @@
     "options": [
       {
         "label": "A",
-        "text": "5"
+        "text": "2.5"
       },
       {
         "label": "B",
-        "text": "2.5"
+        "text": "5"
       },
       {
         "label": "C",
@@ -24319,7 +24319,7 @@
         "text": "30"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Infinitely many solutions means the two equations describe the same line, so every coefficient scales by the same factor. Since 15/6 = 2.5 and 35/14 = 2.5, we need k = 2(2.5) = 5. Using the scale factor itself gives 2.5, dividing 15 by 2 gives 7.5, and multiplying 15 by 2 gives 30.",
@@ -24348,22 +24348,22 @@
     "options": [
       {
         "label": "A",
-        "text": "10"
-      },
-      {
-        "label": "B",
         "text": "−10"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "−4"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "4"
+      },
+      {
+        "label": "D",
+        "text": "10"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Subtracting the second equation from the first gives (3x − 2x) + (2y − 3y) = 5 − 15, which simplifies directly to x − y = −10. Subtracting in the other order gives the trap 10.",
@@ -24484,11 +24484,11 @@
       },
       {
         "label": "B",
-        "text": "205"
+        "text": "185"
       },
       {
         "label": "C",
-        "text": "185"
+        "text": "205"
       },
       {
         "label": "D",
@@ -24704,18 +24704,18 @@
       },
       {
         "label": "B",
-        "text": "36"
-      },
-      {
-        "label": "C",
         "text": "33"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "34"
+      },
+      {
+        "label": "D",
+        "text": "36"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "The machine runs from 9:00 a.m. to 1:24 p.m., which is 4 hours 24 minutes, or 264 minutes. Dividing gives 264/8 = 33 crates. Estimating the run as only 4 hours gives 30, reading 4 hours 24 minutes as 4.8 hours gives 36, and adding one extra crate for the start gives 34.",
@@ -25492,22 +25492,22 @@
     "options": [
       {
         "label": "A",
-        "text": "30"
-      },
-      {
-        "label": "B",
         "text": "10"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "25"
+      },
+      {
+        "label": "C",
+        "text": "30"
       },
       {
         "label": "D",
         "text": "35"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "Set the sum of the three angle measures equal to 180: (2x + 10) + (3x + 5) + (x + 15) = 6x + 30 = 180, so 6x = 150 and x = 25. The angles are 60°, 80°, and 40°. Ignoring the constants gives 30, adding 30 to 180 instead of subtracting gives 35, and using 90° as the total gives 10.",
@@ -25536,22 +25536,22 @@
     "options": [
       {
         "label": "A",
-        "text": "16"
-      },
-      {
-        "label": "B",
         "text": "4"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "5"
+      },
+      {
+        "label": "C",
+        "text": "16"
       },
       {
         "label": "D",
         "text": "19"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "C",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "By the triangle inequality, the third side must be longer than 12 − 7 = 5 and shorter than 12 + 7 = 19. Only 16 falls strictly between 5 and 19; the values 5 and 19 are the excluded endpoints.",
@@ -25896,11 +25896,11 @@
       },
       {
         "label": "C",
-        "text": "4/3"
+        "text": "5/4"
       },
       {
         "label": "D",
-        "text": "5/4"
+        "text": "4/3"
       }
     ],
     "correctOption": "B",
