@@ -305,6 +305,7 @@
    "explanation": "The side labeled x is opposite the 35° angle and the 12-inch side is adjacent, so tan 35° = x/12. Solving gives x = 12 tan 35°. The correct answer is D.",
    "verify": "import math\nprint(round(12*math.tan(math.radians(35)), 3))  # x = 12 tan 35 (~8.403), confirming choice D",
    "figure_code": "def draw(ax):\n    ax.plot([0, 6, 6, 0], [0, 0, 4.2, 0], 'k-')\n    ax.plot([5.55, 5.55, 6], [0, 0.45, 0.45], 'k-')\n    ax.text(3, -0.3, '12', ha='center', va='top')\n    ax.text(6.25, 2.1, 'x', ha='left', va='center')\n    ax.text(1.5, 0.18, '35°', ha='left', va='bottom')\n    ax.set_xlim(-1, 8)\n    ax.set_ylim(-1.3, 5.2)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Right triangle with the right angle at the bottom right. The angle at the bottom left measures 35°. The bottom leg is labeled 12 and the vertical leg on the right is labeled x.",
    "skill": "Right-triangle trigonometry"
   },
   {
@@ -485,6 +486,7 @@
    "explanation": "Because ℓ ∥ m, the 68° angle at line ℓ has a corresponding congruent angle on the same side of the transversal at line m, and the angle marked x° is supplementary to that angle. Therefore x = 180 − 68 = 112. Choice B incorrectly assumes the marked angles are congruent. The correct answer is C.",
    "verify": "print(180 - 68)",
    "figure_code": "def draw(ax):\n    ax.plot([-0.5, 4], [2, 2], 'k-')\n    ax.plot([-0.5, 4], [0, 0], 'k-')\n    ax.plot([0.15, 3.15], [-0.8, 3.2], 'k-')\n    ax.text(4.15, 2, 'ℓ', ha='left', va='center')\n    ax.text(4.15, 0, 'm', ha='left', va='center')\n    ax.text(3.25, 3.25, 't', ha='left', va='bottom')\n    ax.text(2.85, 2.15, '68°', ha='left', va='bottom')\n    ax.text(0.35, 0.15, 'x°', ha='right', va='bottom')\n    ax.set_xlim(-1, 5)\n    ax.set_ylim(-1.3, 3.8)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Two horizontal parallel lines, ℓ on top and m below, crossed by transversal t rising to the right. At line ℓ, the angle above ℓ and to the right of t is labeled 68°. At line m, the angle above m and to the left of t is labeled x°.",
    "skill": "Angles & parallel lines"
   },
   {
@@ -665,6 +667,7 @@
    "explanation": "The rectangle's area is 10 × 6 = 60. The semicircle has diameter 10, so its radius is 5 and its area is (1/2)π(5²) = 12.5π. The total area is 60 + 12.5π square meters. Choice B uses a full circle instead of a semicircle. The correct answer is A.",
    "verify": "import sympy as sp\nprint(sp.nsimplify(10*6) + sp.Rational(1, 2)*sp.pi*5**2)",
    "figure_code": "def draw(ax):\n    import numpy as np\n    ax.plot([0, 10, 10, 0, 0], [0, 0, 6, 6, 0], 'k-')\n    t = np.linspace(0, np.pi, 100)\n    ax.plot(5 + 5*np.cos(t), 6 + 5*np.sin(t), 'k-')\n    ax.text(5, -0.4, '10 m', ha='center', va='top')\n    ax.text(-0.4, 3, '6 m', ha='right', va='center')\n    ax.set_xlim(-2.5, 12.5)\n    ax.set_ylim(-1.8, 12)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "A rectangle 10 m wide and 6 m tall, with a semicircle sitting on its top side. The rectangle's top side is the semicircle's diameter.",
    "skill": "Area & perimeter"
   },
   {
@@ -773,6 +776,7 @@
    "explanation": "Because DE ∥ BC, △ADE is similar to △ABC with ratio AD/AB = 6/(6 + 4) = 3/5. Therefore BC = DE ÷ (3/5) = 9 × (10/6) = 15. Choice C, 13.5, comes from using the ratio 6:4 instead of 6:10. The correct answer is D.",
    "verify": "print(9*(6 + 4)/6)",
    "figure_code": "def draw(ax):\n    ax.plot([0, 6, 2.5, 0], [0, 0, 5, 0], 'k-')\n    ax.plot([1, 4.6], [2, 2], 'k-')\n    ax.text(2.5, 5.15, 'A', ha='center', va='bottom')\n    ax.text(-0.15, -0.15, 'B', ha='right', va='top')\n    ax.text(6.15, -0.15, 'C', ha='left', va='top')\n    ax.text(0.8, 2.0, 'D', ha='right', va='center')\n    ax.text(4.8, 2.0, 'E', ha='left', va='center')\n    ax.text(1.5, 3.6, '6', ha='right', va='center')\n    ax.text(0.3, 1.0, '4', ha='right', va='center')\n    ax.text(2.8, 2.12, '9', ha='center', va='bottom')\n    ax.set_xlim(-1.2, 7.5)\n    ax.set_ylim(-1, 6)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Triangle ABC with A at the top, B at the bottom left and C at the bottom right. Point D is on side AB and point E is on side AC, with segment DE parallel to BC. AD is labeled 6, DB is labeled 4, and DE is labeled 9.",
    "skill": "Similar & congruent figures"
   },
   {
@@ -791,6 +795,7 @@
    "explanation": "Vertex form with vertex (3, −4) is y = a(x − 3)² − 4. Substituting the point (1, 0): 0 = a(−2)² − 4, so 4a = 4 and a = 1, giving y = (x − 3)² − 4. Choice G, with (x + 3)², places the vertex at x = −3. The correct answer is F.",
    "verify": "f = lambda x: (x - 3)**2 - 4\nprint(f(3), f(1), f(5))  # expect -4 0 0",
    "figure_code": "def draw(ax):\n    import numpy as np\n    ax.plot([-1.5, 7], [0, 0], 'k-', linewidth=0.8)\n    ax.plot([0, 0], [-5.5, 7], 'k-', linewidth=0.8)\n    x = np.linspace(-0.2, 6.2, 200)\n    ax.plot(x, (x - 3)**2 - 4, 'k-')\n    ax.plot([1, 5, 3], [0, 0, -4], 'ko', markersize=4)\n    ax.text(1, 0.3, '(1, 0)', ha='right', va='bottom')\n    ax.text(5, 0.3, '(5, 0)', ha='left', va='bottom')\n    ax.text(3, -4.4, '(3, −4)', ha='center', va='top')\n    ax.text(6.9, 0.25, 'x', ha='right', va='bottom')\n    ax.text(0.25, 6.7, 'y', ha='left', va='top')\n    ax.set_xlim(-1.8, 7.3)\n    ax.set_ylim(-5.9, 7.3)\n    ax.axis('off')",
+   "figure_alt": "Coordinate plane with a parabola opening upward. Its lowest point, the vertex, is labeled (3, −4). It crosses the x-axis at two points labeled (1, 0) and (5, 0).",
    "skill": "Quadratic functions & parabolas"
   },
   {

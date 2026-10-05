@@ -158,6 +158,20 @@
   function writeGuest(v) {
     try { if (v) localStorage.setItem(GUEST_KEY, JSON.stringify(v)); else localStorage.removeItem(GUEST_KEY); } catch (_) { /* storage off: no resume/claim */ }
   }
+  // Earlier guest tests in this browser (id + token, newest first). Sent with
+  // /start so a retake never repeats their questions.
+  const GUEST_HISTORY_KEY = 'mathmatix.actGuestHistory';
+  function readGuestHistory() {
+    try { const v = JSON.parse(localStorage.getItem(GUEST_HISTORY_KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (_) { return []; }
+  }
+  function rememberGuestTest(rec) {
+    if (!rec || !rec.sessionId || !rec.token) return;
+    try {
+      const list = readGuestHistory().filter((e) => e && e.sessionId !== rec.sessionId);
+      list.unshift({ sessionId: rec.sessionId, token: rec.token });
+      localStorage.setItem(GUEST_HISTORY_KEY, JSON.stringify(list.slice(0, 5)));
+    } catch (_) { /* best effort */ }
+  }
 
   class ActTest {
     constructor(opts) {
@@ -313,6 +327,12 @@
         // server checks the token); otherwise the server mints a new one.
         const prior = this.guest ? readGuest() : null;
         const startBody = (prior && prior.status === 'in_progress' && prior.sessionId) ? { sessionId: prior.sessionId } : {};
+        if (this.guest) {
+          // Any test this browser took before, finished or not, is history:
+          // its questions are kept out of the next one.
+          if (prior && prior.sessionId) rememberGuestTest(prior);
+          startBody.previous = readGuestHistory();
+        }
         const data = await this._api('/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(startBody) });
         if (data && data.needsGeneration !== undefined) {
           this.el('actt-body').innerHTML = this.guest
@@ -462,7 +482,7 @@
       const evenLab = { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' };
       const disp = (lab) => (this.pos % 2 === 0 ? (evenLab[lab] || lab) : lab);
       const opts = (p.options || []).map(o =>
-        `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}" role="radio" aria-checked="${o.label === this.selected}" aria-label="Choice ${disp(o.label)}: ${escapeHtml(o.text)}"><span class="actt-optlab" aria-hidden="true">${disp(o.label)}</span><span>${keepMath(escapeHtml(o.text))}</span></button>`
+        `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}" role="radio" aria-checked="${o.label === this.selected}" aria-label="Choice ${disp(o.label)}: ${escapeHtml(o.text)}"><span class="actt-optlab" aria-hidden="true">${disp(o.label)}</span><span>${keepMath(prettyMath(escapeHtml(o.text)))}</span></button>`
       ).join('');
       // Figure is our own generated SVG (from the item bank), not user input.
       // Guard: only render a bare <svg> with no scripts.
@@ -474,7 +494,7 @@
       const shortChoices = (p.options || []).length > 0 && (p.options || []).every((o) => String(o.text || '').length <= 12);
       // The figure goes AFTER the stem: items say "in the figure below", and
       // rendering it above contradicted every one of them.
-      this.el('actt-body').innerHTML = `<div class="actt-q" id="actt-qtext">${keepMath(escapeHtml(p.content || ''))}</div>${fig}<div class="actt-opts${shortChoices ? ' actt-opts--grid' : ''}" role="radiogroup" aria-labelledby="actt-qtext">${opts}</div>`;
+      this.el('actt-body').innerHTML = `<div class="actt-q" id="actt-qtext">${keepMath(prettyMath(escapeHtml(p.content || '')))}</div>${fig}<div class="actt-opts${shortChoices ? ' actt-opts--grid' : ''}" role="radiogroup" aria-labelledby="actt-qtext">${opts}</div>`;
       this._labelFigure();
       this.el('actt-body').querySelectorAll('.actt-opt').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -541,8 +561,10 @@
     _labelFigure() {
       const svg = this.el('actt-body').querySelector('.actt-fig svg');
       if (!svg) return;
+      // The item's written description first (bank field figureAlt), then
+      // anything the SVG carries itself.
       const own = svg.querySelector('title, desc');
-      let label = own && own.textContent.trim();
+      let label = (this.current && this.current.figureAlt) || (own && own.textContent.trim());
       if (!label) {
         const parts = Array.prototype.map.call(svg.querySelectorAll('text'), (t) => t.textContent.trim()).filter(Boolean);
         label = parts.length ? `Figure. Labels: ${parts.join(', ')}` : 'Figure for this question';
@@ -1077,8 +1099,24 @@
   // instead of breaking it mid-expression on a narrow screen. Runs on
   // already-escaped text, so it only ever adds a span.
   function keepMath(html) {
-    return String(html).replace(/\([^()<>]{1,24}\)(?:[²³]|\^\d+)?/g, '<span class="actt-nw">$&</span>');
+    return String(html).replace(/\((?:[^()<>]|<\/?su[bp]>){1,40}\)(?:[²³]|<sup>[^<]{1,6}<\/sup>)?/g, '<span class="actt-nw">$&</span>');
   }
+
+  // One notation on screen, whatever the bank typed: x^7 → x⁷ (as <sup>),
+  // log_2 → log₂ (as <sub>), and a hyphen doing a minus sign's job → "−".
+  // Display only — grading, the stored items and screen-reader labels keep
+  // the original text. Runs on already-escaped text.
+  function prettyMath(html) {
+    return String(html)
+      .replace(/\^\(?([-−]?\d{1,3})\)?/g, (m, e) => `<sup>${e.replace('-', '−')}</sup>`)
+      .replace(/\b(log|[A-Za-z])_(\d{1,3}|[a-z])\b/g, '$1<sub>$2</sub>')
+      .replace(/(^|[\s(\[=,+×÷*/<>≤≥])-(?=[\d.(√πA-Za-z])/g, '$1−')
+      .replace(/([\dA-Za-z)²³])\s-\s/g, '$1 − ')
+      .replace(/([\d)])-(?=[\d(])/g, '$1−')
+      .replace(/(^|[^A-Za-z])([a-z])-(?=\d)/g, '$1$2−');
+  }
+  // Exposed for the unit test of the notation rules.
+  if (typeof window !== 'undefined') window.__actPrettyMath = prettyMath;
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

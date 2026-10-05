@@ -13737,17 +13737,17 @@
    },
    {
     "label": "C",
-    "text": "3.8"
+    "text": "0.625"
    },
    {
     "label": "D",
-    "text": "0.625"
+    "text": "3.8"
    }
   ],
   "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
-  "explanation": "3 ÷ 8 = 0.375 exactly. Choice B (0.38) is that value rounded and so is not equal to it. Choice C (3.8) reads the fraction bar as a decimal point. Choice D (0.625) is 5/8, the complement of 3/8.",
+  "explanation": "3 ÷ 8 = 0.375 exactly. Choice B (0.38) is that value rounded and so is not equal to it. Choice D (3.8) reads the fraction bar as a decimal point. Choice C (0.625) is 5/8, the complement of 3/8.",
   "tags": [
    "act",
    "act-math",
@@ -13858,25 +13858,25 @@
   "options": [
    {
     "label": "A",
-    "text": "0.000045"
+    "text": "0.0000045"
    },
    {
     "label": "B",
-    "text": "0.00045"
+    "text": "0.000045"
    },
    {
     "label": "C",
-    "text": "450,000"
+    "text": "0.00045"
    },
    {
     "label": "D",
-    "text": "0.0000045"
+    "text": "450,000"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
-  "explanation": "A negative exponent moves the decimal point left, here 5 places: 4.5 becomes 0.000045. Choice B moves only 4 places. Choice C moves right, which is what a POSITIVE exponent would do and would make a subatomic particle heavier than a person.",
+  "explanation": "A negative exponent moves the decimal point left, here 5 places: 4.5 becomes 0.000045. Choice C moves only 4 places. Choice D moves right, which is what a POSITIVE exponent would do and would make a subatomic particle heavier than a person.",
   "tags": [
    "act",
    "act-math",
@@ -14073,7 +14073,7 @@
   "options": [
    {
     "label": "A",
-    "text": "4/9"
+    "text": "4/99"
    },
    {
     "label": "B",
@@ -14081,17 +14081,17 @@
    },
    {
     "label": "C",
-    "text": "4/10"
+    "text": "44/100"
    },
    {
     "label": "D",
-    "text": "44/100"
+    "text": "4/9"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "D",
   "difficulty": 4,
   "gradeBand": "8-12",
-  "explanation": "For a single repeating digit d, 0.ddd… = d/9, so 0.444… = 4/9 ≈ 0.4444. Choices C (0.4) and D (0.44) are the decimal truncated after one or two places, which is close but not equal. Choice B (2/5) is also exactly 0.4. The repeating bar is what separates the exact value from its roundings.",
+  "explanation": "For a single repeating digit d, 0.ddd… = d/9, so 0.444… = 4/9 ≈ 0.4444. Choices B (2/5 = 0.4) and C (44/100 = 0.44) are the decimal cut off after one or two places, which is close but not equal. Choice A (4/99) applies the two-digit rule, 0.ababab… = ab/99, to a one-digit repeat and gives 0.0404…. The repeating bar is what separates the exact value from its roundings.",
   "tags": [
    "act",
    "act-math",
@@ -14167,17 +14167,17 @@
    },
    {
     "label": "C",
-    "text": "4/3"
+    "text": "7/6"
    },
    {
     "label": "D",
-    "text": "7/6"
+    "text": "4/3"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "D",
   "difficulty": 4,
   "gradeBand": "8-12",
-  "explanation": "A ratio is a quotient: (2/3) ÷ (1/2) = (2/3) × (2/1) = 4/3. Choice B (3/4) inverts the ratio, giving sugar to flour. Choice A multiplies the two fractions instead of dividing. Choice D adds them. Since more flour than sugar is used, the ratio must be greater than 1 — which rules out A and B immediately.",
+  "explanation": "A ratio is a quotient: (2/3) ÷ (1/2) = (2/3) × (2/1) = 4/3. Choice B (3/4) inverts the ratio, giving sugar to flour. Choice A multiplies the two fractions instead of dividing. Choice C adds them. Since more flour than sugar is used, the ratio must be greater than 1 — which rules out A and B immediately.",
   "tags": [
    "act",
    "act-math",

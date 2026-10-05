@@ -24,6 +24,7 @@
 const DEFAULT_BLUEPRINT = require('../seeds/act-math-blueprint.json');
 const { normalizeOptions } = require('./mcOptions');
 const { hasBadDistractors } = require('./distractorQuality');
+const { sortPermutation } = require('./actChoiceOrder');
 // models/problem (mongoose) is required lazily inside assembleForm so the pure
 // helpers (buildSlots / skillPool / rawToScaled) load without a DB connection.
 
@@ -173,6 +174,12 @@ function buildSlots(blueprint, rng) {
 
 /** Trim a Problem doc to the client-safe item payload (no answer key). */
 function toClientItem(slot, problem) {
+  // Numeric choices go out in ascending order, as on the real ACT, whatever
+  // order the bank stored them in. Safe because grading and the review queue
+  // carry a pick to the bank by its text (relabelByText), never by letter.
+  let options = problem.answerType === 'multiple-choice' ? normalizeOptions(problem.options) : undefined;
+  const perm = options && sortPermutation(options.map((o) => o.text));
+  if (perm) options = normalizeOptions(perm.map((i) => ({ text: options[i].text })));
   return {
     position: slot.position,
     category: slot.category,
@@ -180,12 +187,13 @@ function toClientItem(slot, problem) {
     problemId: problem.problemId,          // the string problemId (matches findNearDifficulty excludes)
     content: problem.prompt,               // field is `prompt`; screener sends it as `content`
     svg: problem.svg || undefined,         // optional figure
+    figureAlt: (problem.svg && problem.figureAlt) || undefined,
     answerType: problem.answerType,
     // { label, text } only. These items are stored on the session and echoed to
     // the browser by routes/actTest.js, so the stored shapes' `isCorrect` flag
     // would ride along as an answer key; the labels also have to be positional
     // to agree with how compareAnswer resolves the pick on submit.
-    options: problem.answerType === 'multiple-choice' ? normalizeOptions(problem.options) : undefined,
+    options,
     difficulty: problem.difficulty,
   };
 }
