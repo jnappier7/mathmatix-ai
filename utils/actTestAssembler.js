@@ -39,6 +39,39 @@ function mulberry32(seed) {
   };
 }
 
+/** Seeded Fisher–Yates shuffle, in place. */
+function shuffleInPlace(arr, rng) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+
+/**
+ * A random, seed-reproducible pool of up to `size` items matching `query`.
+ *
+ * This used to be `Problem.find(query).limit(n)` with no sort, which returns
+ * the FIRST n matches in storage order — the same n on every form. The seed
+ * only rotated which skill each slot asked for, so every test drew from the
+ * same front slice of each skill: ten guest tests shared about 12 of 45
+ * questions pairwise (up to 25) and touched only 173 of ~950 items. Now every
+ * matching item is a candidate: read the light fields of all of them, shuffle
+ * with the form's rng, keep `size`, and load just those in full. The shuffled
+ * order also decides pickDiverse's ties, so equally good items rotate too.
+ */
+async function drawPool(Problem, query, rng, size) {
+  const lite = await Problem.find(query).select('_id').lean();
+  if (!lite.length) return [];
+  // Storage order is not guaranteed stable; sort before shuffling so a seed
+  // reproduces its form.
+  lite.sort((a, b) => (String(a._id) < String(b._id) ? -1 : 1));
+  const ids = shuffleInPlace(lite, rng).slice(0, size).map((d) => d._id);
+  const docs = await Problem.find({ _id: { $in: ids } }).lean();
+  const byId = new Map(docs.map((d) => [String(d._id), d]));
+  return ids.map((id) => byId.get(String(id))).filter(Boolean);
+}
+
 function hashSeed(str) {
   let h = 2166136261 >>> 0;
   for (let i = 0; i < str.length; i++) {
@@ -254,13 +287,13 @@ async function assembleForm(opts = {}) {
       const center = Math.round(slot.targetDifficulty);
       const lo = Math.max(1, center - 1);
       const hi = Math.min(5, center + 1);
-      let candidates = await Problem.find({
+      let candidates = await drawPool(Problem, {
         skillId: slot.skillId,
         isActive: true,
         answerType: 'multiple-choice',
         difficulty: { $gte: lo, $lte: hi },
         problemId: { $nin: usedProblemIds },
-      }).limit(16).lean();
+      }, rng, 16);
       if (!candidates.length) {
         // Widen: any difficulty for this skill, still excluding used items.
         const p = await Problem.findNearDifficulty(slot.skillId, center, usedProblemIds, { preferMultipleChoice: true });
@@ -274,12 +307,12 @@ async function assembleForm(opts = {}) {
         // depends on. The item keeps its own fine skillId for personalization.
         const catSkills = byCat[slot.category] || [];
         if (catSkills.length) {
-          candidates = await Problem.find({
+          candidates = await drawPool(Problem, {
             skillId: { $in: catSkills },
             isActive: true,
             answerType: 'multiple-choice',
             problemId: { $nin: usedProblemIds },
-          }).limit(24).lean();
+          }, rng, 24);
         }
       }
       problem = pickDiverse(candidates, usedSignatures, slot.targetDifficulty);
