@@ -63,6 +63,23 @@ function looksFractionalOrDecimal(s) {
 
 // Which option index is correct — prefer the stored letter, fall
 // back to matching option text against the answer value.
+/**
+ * The numeric value of an option that is ONLY a number: an integer, decimal
+ * or simple fraction, optionally signed (hyphen or U+2212), with an optional
+ * leading $ or trailing %. Anything else — units, radicals, π, expressions —
+ * is null, so the checks built on this never guess.
+ */
+function numericValue(text) {
+  const t = String(text == null ? '' : text).trim().replace(/−/g, '-').replace(/,/g, '');
+  const m = /^(-)?\$?(\d+(?:\.\d+)?|\.\d+)(?:\s*\/\s*(\d+(?:\.\d+)?))?%?$/.exec(t);
+  if (!m) return null;
+  const num = parseFloat(m[2]);
+  const den = m[3] != null ? parseFloat(m[3]) : 1;
+  if (!den) return null;
+  const v = num / den;
+  return m[1] ? -v : v;
+}
+
 function correctOptionIndex(problem) {
   const options = Array.isArray(problem.options) ? problem.options : [];
   const co = problem.correctOption;
@@ -115,6 +132,24 @@ function assessOptions(problem) {
     issues.push({ code: 'duplicate_option' });
   }
 
+  // 2b) Two different-looking choices with the same value (2/5 and 4/10,
+  //     0.5 and 1/2). Only one answer can be right, so a student can strike
+  //     both without doing the problem — and if the key is one of them, the
+  //     item has two right answers. Exempt: "Which is NOT equal to…" /
+  //     "EXCEPT" items, where several equal choices are the design.
+  const prompt = String(problem.prompt || problem.content || '');
+  const negated = /\b(NOT|EXCEPT)\b/.test(prompt);
+  const values = negated ? [] : texts.map(numericValue);
+  const seen = new Map();
+  const equal = [];
+  values.forEach((v, i) => {
+    if (v == null) return;
+    const key = v.toFixed(9);
+    if (seen.has(key) && lowered[seen.get(key)] !== lowered[i]) equal.push(`${texts[seen.get(key)]} = ${texts[i]}`);
+    else seen.set(key, i);
+  });
+  if (equal.length) issues.push({ code: 'equivalent_options', detail: equal.join('; ') });
+
   // 3) Wrong-type distractors: the correct answer is a proper
   //    fraction/decimal but EVERY distractor is a plain integer, so
   //    the odd-one-out is trivially identifiable without the math.
@@ -147,6 +182,7 @@ module.exports = {
   assessOptions,
   isPlaceholderOption,
   hasBadDistractors,
+  numericValue,
   // exported for tests / scripts
   correctOptionIndex,
   looksFractionalOrDecimal,

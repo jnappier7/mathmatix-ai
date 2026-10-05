@@ -9,9 +9,9 @@
    student could read. Three implementations, three eval engines, three sets
    of bugs, and cosmetic skins had to be written against each one separately.
 
-   The engine kept is deliberately the simple one: normalize glyphs, insert
-   implicit multiplication, evaluate against a FIXED scope of math helpers
-   with trig honouring DEG/RAD.
+   The engine is a small recursive-descent parser over a fixed set of tokens
+   (numbers, + - × ÷ ^, parentheses, pi, E and six math functions), with
+   implicit multiplication and trig honouring DEG/RAD. No code evaluation.
 
    Usage:
      const calc = MMCalculator.create({ variant: 'float', onSendToChat: fn });
@@ -49,6 +49,12 @@
     '+': '+', '-': '−', '*': '×', '/': '÷', '^': '^',
     'x': '×', 'X': '×',
   };
+
+  // A carried-over number as a single operand: negatives get parentheses.
+  function asOperand(n) {
+    const str = String(n);
+    return str.charAt(0) === '-' ? '(' + str + ')' : str;
+  }
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => (
@@ -162,7 +168,7 @@
   MMCalc.prototype.press = function (tok) {
     if (tok === 'ac') { this.expr = ''; return this.render(); }
     if (tok === 'del') { this.expr = this.expr.slice(0, -1); return this.render(); }
-    if (tok === 'ans') { this.expr += (this.ans || ''); return this.render(); }
+    if (tok === 'ans') { this.expr += asOperand(this.ans || ''); return this.render(); }
     if (tok === 'eq') return this.equals();
     this.expr += tok;
     this.render();
@@ -174,7 +180,10 @@
       this.ans = out;
       this.$expr.textContent = this.expr;
       this.$res.textContent = out;
-      this.expr = out; // chain from the result
+      // Chain from the result. A negative result is carried as one value,
+      // "(-9)", so pressing x² next gives 81 the way a real calculator's ANS
+      // does, not -(9²) by precedence.
+      this.expr = asOperand(out);
     } catch (e) {
       this.$res.textContent = 'Error';
     }
@@ -190,38 +199,122 @@
   };
 
   /**
-   * Normalize glyphs, insert implicit multiplication, evaluate against a FIXED
-   * scope of math helpers (trig honours DEG/RAD). No page globals reachable.
-   * Input is button- or whitelist-derived only — see KEY_MAP.
+   * Evaluate an expression with a small recursive-descent parser.
+   *
+   * This used to normalize the string into JavaScript and hand it to
+   * `new Function`, which had two student-visible bugs on ACT items:
+   *   - `−3²` errored (JS refuses a unary minus directly before `**`), and so
+   *     did `2×−3²`; both are -9 and -18 on any real calculator.
+   *   - `12tan(35)` errored: implicit multiplication was only inserted before
+   *     `(`, never before a function name.
+   * A parser fixes both and removes code evaluation from the calculator
+   * altogether: only the tokens below exist, so `constructor`, `alert(1)` and
+   * friends are simply unknown tokens.
+   *
+   * Grammar (math precedence — exponent binds tighter than unary minus, and
+   * is right-associative; juxtaposition is multiplication):
+   *   expr    := term (('+' | '-') term)*
+   *   term    := unary (('*' | '/') unary | <implicit> unary)*
+   *   unary   := '-' unary | '+' unary | power
+   *   power   := primary ('^' unary)?
+   *   primary := number | pi | E | fn '(' expr ')' | '(' expr ')'
    */
   MMCalc.prototype.evaluate = function (raw) {
-    let js = String(raw)
-      .replace(/π/g, '(pi)').replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
-      .replace(/\^/g, '**');
-    js = js.replace(/(\d|\)|pi|E)\s*\(/g, '$1*(')
-      .replace(/\)\s*(\d|pi|E)/g, ')*$1')
-      .replace(/(\d)\s*(pi|E)\b/g, '$1*$2');
-
-    // Belt and braces behind KEY_MAP: strip the identifiers we define, and
-    // nothing but digits and operators may remain. Whatever the path in, this
-    // is the last thing between the string and the Function constructor —
-    // `alert(1)`, `this` and `constructor` all die here.
-    if (/[^0-9+\-*/().,%\s]/.test(js.replace(/\b(?:pi|E|sin|cos|tan|ln|log|sqrt)\b/g, ''))) {
-      throw new Error('illegal token');
-    }
-
     const D = this.deg ? Math.PI / 180 : 1;
-    const scope = {
-      pi: Math.PI, E: Math.E,
+    const FNS = {
+      sqrt: function (x) { return Math.sqrt(x); },
       sin: function (x) { return Math.sin(x * D); },
       cos: function (x) { return Math.cos(x * D); },
       tan: function (x) { return Math.tan(x * D); },
-      ln: function (x) { return Math.log(x); },
       log: function (x) { return Math.log10(x); },
-      sqrt: function (x) { return Math.sqrt(x); },
+      ln: function (x) { return Math.log(x); },
     };
-    const fn = new Function(...Object.keys(scope), 'return (' + js + ');');
-    const v = fn(...Object.values(scope));
+    const CONSTS = { pi: Math.PI, E: Math.E };
+    // Longest names first so `sqrt` is not read as something shorter.
+    const NAMES = ['sqrt', 'sin', 'cos', 'tan', 'log', 'ln', 'pi', 'E'];
+
+    const src = String(raw)
+      .replace(/π/g, 'pi').replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
+      .replace(/\*\*/g, '^');
+
+    // ---- tokenize ----
+    const toks = [];
+    let i = 0;
+    while (i < src.length) {
+      const c = src[i];
+      if (/\s/.test(c)) { i += 1; continue; }
+      const num = /^(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?/.exec(src.slice(i));
+      if (num) { toks.push({ t: 'num', v: parseFloat(num[0]) }); i += num[0].length; continue; }
+      if ('+-*/^()'.indexOf(c) !== -1) { toks.push({ t: c }); i += 1; continue; }
+      const name = NAMES.find(function (n) { return src.startsWith(n, i); });
+      if (name) { toks.push({ t: 'id', v: name }); i += name.length; continue; }
+      throw new Error('illegal token');
+    }
+
+    // ---- parse + evaluate ----
+    let k = 0;
+    const peek = function () { return toks[k]; };
+    const take = function (t) {
+      if (!toks[k] || toks[k].t !== t) throw new Error('expected ' + t);
+      k += 1;
+    };
+    const startsPrimary = function (tok) {
+      return !!tok && (tok.t === 'num' || tok.t === 'id' || tok.t === '(');
+    };
+
+    function expr() {
+      let v = term();
+      while (peek() && (peek().t === '+' || peek().t === '-')) {
+        const op = peek().t; k += 1;
+        const r = term();
+        v = op === '+' ? v + r : v - r;
+      }
+      return v;
+    }
+    function term() {
+      let v = unary();
+      for (;;) {
+        const tok = peek();
+        if (tok && (tok.t === '*' || tok.t === '/')) {
+          k += 1;
+          const r = unary();
+          v = tok.t === '*' ? v * r : v / r;
+        } else if (startsPrimary(tok)) {
+          v *= unary();                       // 2π, 2(3), (1+1)3, 12tan(35)
+        } else {
+          return v;
+        }
+      }
+    }
+    function unary() {
+      const tok = peek();
+      if (tok && tok.t === '-') { k += 1; return -unary(); }
+      if (tok && tok.t === '+') { k += 1; return unary(); }
+      return power();
+    }
+    function power() {
+      const base = primary();
+      if (peek() && peek().t === '^') { k += 1; return Math.pow(base, unary()); }
+      return base;
+    }
+    function primary() {
+      const tok = peek();
+      if (!tok) throw new Error('unexpected end');
+      if (tok.t === 'num') { k += 1; return tok.v; }
+      if (tok.t === '(') { k += 1; const v = expr(); take(')'); return v; }
+      if (tok.t === 'id') {
+        k += 1;
+        if (Object.prototype.hasOwnProperty.call(CONSTS, tok.v)) return CONSTS[tok.v];
+        take('(');
+        const arg = expr();
+        take(')');
+        return FNS[tok.v](arg);
+      }
+      throw new Error('unexpected ' + tok.t);
+    }
+
+    const v = expr();
+    if (k !== toks.length) throw new Error('trailing input');
     if (typeof v !== 'number' || !isFinite(v)) throw new Error('bad');
     return parseFloat(v.toPrecision(12)); // trim float noise (0.1+0.2 -> 0.3)
   };

@@ -105,7 +105,7 @@
     // loads on its own. mmCalculator (the shared component) must precede
     // chatCalculator (chat's host for it).
     (function () {
-      ['/js/mmCalculator.js?v=20260801a', '/js/chatCalculator.js?v=20260817a'].forEach(function (src) {
+      ['/js/mmCalculator.js?v=20261005a', '/js/chatCalculator.js?v=20260817a'].forEach(function (src) {
         var s = document.createElement('script');
         s.src = src;
         s.async = false; // preserve order: the host needs the component
@@ -2498,7 +2498,7 @@
   <!-- Phase C: executes server-emitted <XP> ceremony commands (confetti + caption) -->
   <script src="/js/xpTagHandler.js"></script>
   <!-- ACT Math practice test runner — window.openActTest() (boot-camp diagnostic) -->
-  <script src="/js/act-test.js?v=7"></script>
+  <script src="/js/act-test.js?v=8"></script>
     <script src="/js/coursePreAssessment.js?v=20260817a"></script>
   <!-- Phase D: executes server-emitted <GRAPH>/<TILES> tab-switch commands -->
   <script src="/dist/js/chat-js5.c6527a5d.js"></script>

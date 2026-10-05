@@ -6,13 +6,13 @@
  * emulations. That consolidation is only safe if the arithmetic is right, so
  * the evaluator is pinned here.
  *
- * The security case is the important one. `evaluate` builds a `new Function`
- * from the expression string. That was safe in its original home because the
- * ACT calculator was tap-only — every character came from a button we defined.
- * Adding keyboard support removes that guarantee, so KEY_MAP whitelists typed
- * characters and `evaluate` re-checks the normalized string before it reaches
- * the Function constructor. Both layers are asserted below; if either is
- * loosened, typing `constructor` into a calculator becomes code execution.
+ * `evaluate` is a recursive-descent parser over a fixed token set. It used to
+ * build a `new Function` from the expression string, which made code
+ * execution the failure mode of any gap in input filtering, and also got two
+ * ACT-relevant answers wrong (-3² and 12tan(35) both errored). The refusal
+ * tests below still hold the line: anything that is not a calculator token is
+ * rejected, whatever the input path. KEY_MAP stays as the typed-input
+ * whitelist.
  *
  * The module is a browser IIFE that assigns window.MMCalculator, and the
  * evaluator itself touches no DOM — so it loads here with a window stub.
@@ -109,9 +109,8 @@ describe('mmCalculator — arithmetic', () => {
   });
 });
 
-describe('mmCalculator — the Function constructor is fenced off', () => {
-  // evaluate() ends in `new Function(...)`. Each of these would be live code
-  // execution if the guard regressed.
+describe('mmCalculator — only calculator tokens are accepted', () => {
+  // None of these is a calculator expression; each must be refused.
   test.each([
     ['alert(1)'],
     ['this'],
@@ -143,6 +142,39 @@ describe('mmCalculator — the Function constructor is fenced off', () => {
     // carelessly — e.g. removing `cos` from the middle of a longer word.
     expect(() => ev('constructor')).toThrow();
     expect(() => ev('Elog')).toThrow();
+  });
+});
+
+describe('mmCalculator — what students type on ACT items', () => {
+  // Reported from a full run of the public practice test: these errored.
+  test('a minus sign before a power follows math precedence', () => {
+    expect(ev('−3^2')).toBe(-9);
+    expect(ev('−3²'.replace('²', '^2'))).toBe(-9);
+    expect(ev('2×−3^2')).toBe(-18);
+    expect(ev('(−3)^2')).toBe(9);
+  });
+
+  test('a number directly before a function multiplies it', () => {
+    expect(ev('12tan(35)', true)).toBeCloseTo(12 * Math.tan(35 * Math.PI / 180), 10);
+    expect(ev('2sqrt(9)')).toBe(6);
+    expect(ev('3sin(30)', true)).toBeCloseTo(1.5, 10);
+  });
+
+  test('exponents are right-associative and take negative powers', () => {
+    expect(ev('2^3^2')).toBe(512);
+    expect(ev('2^−1')).toBe(0.5);
+    expect(ev('4^0.5')).toBe(2);
+  });
+
+  test('a carried result in scientific notation still parses', () => {
+    expect(ev('1e-7×10')).toBe(0.000001);
+  });
+
+  test('a negative result carried forward squares to a positive', () => {
+    engine.deg = true;
+    engine.expr = '';
+    ['0', '−', '9', 'eq', '^2', 'eq'].forEach((t) => engine.press(t));
+    expect(engine.ans).toBe('81');
   });
 });
 
