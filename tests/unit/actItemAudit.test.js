@@ -57,11 +57,10 @@ describe('audit warnings', () => {
   });
 });
 
-describe('the seed banks do not gain blocking defects', () => {
-  // Known at the time this gate landed; repair them and lower the number.
-  // act-enhanced rose 7 -> 17 when the checker learned equal expressions and
-  // impossible probabilities (existing items, all blocked from tests).
-  const BASELINE = { 'act-fable': 1, 'act-ies-expansion': 3, 'act-enhanced': 17 };
+describe('the seed banks have no blocking defects', () => {
+  // The form builder skips a blocked item, so one that ships is a question no
+  // student ever sees. The last 21 were repaired; keep it at zero. A new
+  // finding means fix the item (or the checker, if it is wrong), not this list.
   const FILES = {
     'act-fable': 'seeds/act-fable-items.generated.json',
     'act-ies-expansion': 'seeds/act-ies-expansion/ies-items.generated.json',
@@ -72,11 +71,11 @@ describe('the seed banks do not gain blocking defects', () => {
     const data = JSON.parse(fs.readFileSync(file, 'utf8'));
     const items = Array.isArray(data) ? data : data.items;
     const report = auditBank(items);
-    const blocking = new Set();
-    Object.values(report.byCode)
-      .filter((v) => v.severity === 'blocking')
-      .forEach((v) => v.items.forEach((x) => blocking.add(x.problemId)));
-    expect(blocking.size).toBeLessThanOrEqual(BASELINE[bank]);
+    const blocking = [];
+    Object.entries(report.byCode)
+      .filter(([, v]) => v.severity === 'blocking')
+      .forEach(([code, v]) => v.items.forEach((x) => blocking.push(`${x.problemId} ${code}: ${x.detail}`)));
+    expect(blocking).toEqual([]);
   });
 });
 

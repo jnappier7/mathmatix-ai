@@ -98,3 +98,45 @@ test('the choice that now sits in the key\'s slot does not', async () => {
     .send({ sessionId: String(s._id), answers: [{ position: 1, problemId: 'ro-1', answer: 'C', seq: 1 }] });
   expect(res.body.report.rawScore).toBe(0);
 });
+
+describe('a test frozen before a choice was EDITED (blocked-item repair)', () => {
+  // The bank after the repair: the impossible "7/6" is gone, and sorting put
+  // the key "7/13" at D, the slot "7/6" used to hold.
+  beforeAll(async () => {
+    await Problem.create({
+      problemId: 'ro-edit', skillId: 'ro-skill', prompt: 'P(white)?', answer: { value: '7/13' },
+      answerType: 'multiple-choice', options: opts('3/13', '1/3', '6/13', '7/13'), correctOption: 'D',
+      difficulty: 3, isActive: true, source: 'test',
+    });
+    // A key whose wording changed: frozen "(x - 0)/2" is now "x/2".
+    await Problem.create({
+      problemId: 'ro-rekey', skillId: 'ro-skill', prompt: 'f⁻¹(x)?',
+      answer: { value: 'x/2', equivalents: ['(x - 0)/2'] },
+      answerType: 'multiple-choice', options: opts('1/(2x)', 'x/2', 'x - 2', '-2x'), correctOption: 'B',
+      difficulty: 3, isActive: true, source: 'test',
+    });
+  });
+  const grade = async (problemId, frozen, answer) => {
+    const s = await ActTestSession.create({
+      userId: USER_ID, testId: 'act-math', timeLimitMinutes: 50,
+      items: [{ position: 1, problemId, skillId: 'ro-skill', category: 'algebra', content: '?',
+        answerType: 'multiple-choice', options: opts(...frozen) }],
+    });
+    const res = await supertest(app).post('/api/act-test/complete')
+      .send({ sessionId: String(s._id), answers: [{ position: 1, problemId, answer, seq: 1 }] });
+    return res.body.report.rawScore;
+  };
+  const before = ['1/3', '6/13', '7/13', '7/6'];
+
+  test('the removed distractor is wrong, even though its letter is now the key\'s', async () => {
+    expect(await grade('ro-edit', before, 'D')).toBe(0);
+  });
+  test('the key the student saw is still right', async () => {
+    expect(await grade('ro-edit', before, 'C')).toBe(1);
+  });
+  test('a key reworded since the test was built is still right, through its equivalent', async () => {
+    const old = ['1/(2x)', '(x - 0)/2', '(x + 0)/2', 'x/2 - 0'];
+    expect(await grade('ro-rekey', old, 'B')).toBe(1);
+    expect(await grade('ro-rekey', old, 'A')).toBe(0);
+  });
+});
