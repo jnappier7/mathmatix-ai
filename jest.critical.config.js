@@ -43,6 +43,8 @@ module.exports = {
     '<rootDir>/tests/unit/trueArithmeticVerdict.test.js',
     '<rootDir>/tests/unit/diagnoseMultiLineAnswer.test.js',
     '<rootDir>/tests/unit/observeLatexAnswer.test.js',
+    // Bare-problem-drop and worked-step classification (observe.js).
+    '<rootDir>/tests/unit/bareProblemDrop.test.js',
     '<rootDir>/tests/unit/diagnoseMultiStep.test.js',
     '<rootDir>/tests/unit/derivationVerifier.test.js',
     '<rootDir>/tests/unit/mathSolver*.test.js',
@@ -86,17 +88,19 @@ module.exports = {
     // Measured 100 across the board. It is a pure, bounded label function with no
     // I/O, so full coverage is the steady state, not an aspiration.
     './utils/pipeline/verifyTopic.js': { statements: 98, branches: 96, functions: 100, lines: 98 },
-    // Measured 82.4/80.1/100/88.4 after the LaTeX-answer / last-clause tests
-    // (observeLatexAnswer.test.js) — ratcheted. extractAnswer is the gate that
-    // decides whether a student's claim gets graded at all; a shape it misses
-    // fails silently (general_math, no verdict), so coverage is the alarm.
-    './utils/pipeline/observe.js': { statements: 82, branches: 79, functions: 100, lines: 88 },
-    // Measured 64.4/65.3/100/63.8 after the decideInstructionalMode tests — ratcheted.
+    // Measured 86.0/83.6/100/90.9 once bareProblemDrop.test.js joined the gate
+    // with the worked-step classification — ratcheted. extractAnswer is the gate
+    // that decides whether a student's claim gets graded at all, and the drop
+    // detector decides whether their work is treated as a problem they handed
+    // over; a shape either misses fails silently, so coverage is the alarm.
+    './utils/pipeline/observe.js': { statements: 85, branches: 83, functions: 100, lines: 90 },
+    // Measured 68.4/69.7/100/67.7 once bareProblemDrop.test.js (which drives
+    // decide's ELICIT_FIRST and alignment gates) joined the gate — ratcheted.
     // functions:100 is deliberate and is the lesson from the drop that turned this
     // gate red (81.3% → 77.77% against a 78% floor, from three helpers landing
     // untested). decide.js is where the tutor picks its move; a new decision
     // helper here arrives with a test or it doesn't arrive.
-    './utils/pipeline/decide.js': { statements: 62, branches: 63, functions: 100, lines: 62 },
+    './utils/pipeline/decide.js': { statements: 67, branches: 69, functions: 100, lines: 67 },
     // Measured 67.9/62.6/72.2/68.6 after the true-arithmetic tiers
     // (trueArithmeticVerdict.test.js) — ratcheted. Those tiers are the pipeline's
     // last line between a correct student and a tutor improvising arithmetic, and
