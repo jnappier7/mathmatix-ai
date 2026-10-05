@@ -385,3 +385,83 @@ describe('decide() — alignment gate blocks plan mode on off-plan messages', ()
     expect(decision.action).toBe(ACTIONS.DIRECT_INSTRUCTION);
   });
 });
+
+// ============================================================================
+// A worked step is not a problem drop (production, 2026-10)
+// ============================================================================
+// A student proving 5(x+2) - 3x = 26 => x = 8 typed each step with its reason.
+// Every reply to the tutor's "Now, what will you do next?" was flagged as a
+// fresh problem drop, which put the student's own work under the student-posed
+// anti-giveaway rules. The tutor's "Exactly, x = 8!" was then rewritten as a
+// leak, and the proof restarted from the top four times. Two independent
+// layers fix it, and each is tested here on its own.
+
+describe('worked steps are not problem drops', () => {
+  const G = MESSAGE_TYPES.GENERAL_MATH;
+  const { lastTutorAskedForNextStep } = require('../../utils/pipeline/observe');
+
+  // [tutor's previous message, student's reply] — verbatim from the session.
+  const session = [
+    ["Let's work through the proof together! We want to show that 5(x+2)−3x=26 leads to x=8. What do you think the first step should be to start solving this equation?", '5(x+2)-3x=26 is the given'],
+    ['Great start! What do you get when you distribute the 5 to both terms inside the parentheses?', '5x+10-3x=26 distributive property'],
+    ['Can you combine the 5x and −3x? Give it a try!', '2x+10=26 combine like terms'],
+    ["That's right! Now we have: 2x+10=26 What would be your next step to isolate x?", '-10 on both sides to get 2x=16 subtraction property of equality'],
+    ['Exactly! Subtracting 10 from both sides gives us: 2x=16 Now, how do you isolate x from here? What will you do next?', 'divide by 2 x=8 division property of equality'],
+    ['Exactly! Subtracting 10 from both sides gives us: 2x=16 Now, to isolate x, what will you do next?', 'divide by 2 to get x=8'],
+    ["That's right! We have: 2x+10=26 Now, what will you do next to isolate x?", '-10 on both sides to get 2x=16'],
+  ];
+
+  test.each(session)('observe() after "%s" does not flag the student\'s step', (tutor, reply) => {
+    const o = observe(reply, { recentUserMessages: [], recentAssistantMessages: [{ role: 'assistant', content: tutor }] });
+    expect(o.isBareProblemDrop).toBe(false);
+  });
+
+  describe('layer 1: the tutor asked for the next step', () => {
+    test.each([
+      'Now, how do you isolate x from here? What will you do next?',
+      'Now, to isolate x, what will you do next?',
+      'Now, what will you do next to isolate x?',
+      'Can you walk me through your next step to isolate 2x?',
+    ])('recognises "%s"', (tutor) => {
+      expect(lastTutorAskedForNextStep([{ content: tutor }])).toBe(true);
+    });
+
+    test.each([
+      'What do you want to work on today? Anything specific on your mind?',
+      'What can we do today? Algebra or geometry?',
+      'What will we cover today?',
+      'How do you get to school in the morning?',
+    ])('an open-floor question is not a step ask: "%s"', (tutor) => {
+      expect(lastTutorAskedForNextStep([{ content: tutor }])).toBe(false);
+    });
+  });
+
+  describe('layer 2: the message itself reports an executed step (no tutor context)', () => {
+    test.each([
+      'divide by 2 x=8 division property of equality',
+      'divide by 2 to get x=8',
+      '-10 on both sides to get 2x=16',
+      'subtract 10 2x=16',
+      '2x+10=26 combine like terms',
+      '5x+10-3x=26 distributive property',
+      '5(x+2)-3x=26 is the given',
+      'then multiply both sides by 3 to get x=21',
+      'once you subtract 10 you get 2x=16',
+    ])('"%s" is work, not a drop', (msg) => {
+      expect(detectBareProblemDrop(msg, G, false, [])).toBe(false);
+    });
+
+    test.each([
+      ['4x-5=22', G],
+      ['solve 3x+5=14', G],
+      ['Given 2x+5=17, find x', G],
+      ['solve 3(x+2)=12 using the distributive property', G],
+      ['what do I do to get x by itself in 2x+5=17', MESSAGE_TYPES.QUESTION],
+      ['combine like terms 3x+2x+4', G],
+      ['add 1/2 + 1/4', G],
+      ['what about 4x-5=22', MESSAGE_TYPES.QUESTION],
+    ])('a real drop is still flagged: "%s"', (msg, type) => {
+      expect(detectBareProblemDrop(msg, type, false, [])).toBe(true);
+    });
+  });
+});

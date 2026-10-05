@@ -620,7 +620,16 @@ function lastTutorAskedForNextStep(recentAssistantMessages) {
     // with a bare operation.
     /\b(?:walk|talk|show)\s+me\s+(?:through\s+)?what\s+(?:that|it)\s+(?:looks|would\s+look)\s+like\b/,
     /\bwhat\s+(?:that|it)\s+looks\s+like\s+in\s+your\s+work\b/,
+    // "will"/"can"/"might" are the same ask: "Now, what will you do next?"
+    // was the tutor's most common phrasing in a 2026-10 algebraic-proof
+    // session, and every reply to it was misread as a fresh problem drop.
+    // Only with a step context: "what can we do today?" opens the floor.
     /\bwhat\s+(?:do|should|would|could)\s+(?:we|you)\s+(?:do|try|use|think|get|notice|see|need|start|begin)\b/,
+    /\bwhat\s+(?:will|can|might)\s+(?:we|you)\s+(?:do|try)\s+(?:next|now|first|from\s+here|to\s+(?:isolate|get|solve|undo|eliminate|simplify))\b/,
+    // "how do you isolate x from here?" — asking for the move by its goal.
+    // Math verbs only: "how do you get to school?" is small talk.
+    /\bhow\s+(?:do|would|should|could|can|will)\s+(?:we|you)\s+(?:isolate|undo|eliminate|cancel|clear|solve\s+for)\b/,
+    /\byour\s+next\s+(?:step|move)\b/,
     /\bwhat\s+(?:do|did)\s+you\s+(?:think|get|notice|see|find|come\s+up\s+with)\b/,
     /\bwhat(?:'?s|\s+is|\s+would\s+be)\s+(?:next|the\s+(?:answer|result|value|next\s+step|first\s+step))\b/,
     /\bnow\s+what\b/,
@@ -733,6 +742,37 @@ function detectBareProblemDrop(text, messageType, hasAnswer, recentAssistantMess
     /\b(why|how\s+(?:come|do|does|did|should)|what'?s\s+(?:wrong|the\s+(?:next|first)\s+step))\b/i.test(t);
 
   if (hasReasoning || hasStuckIndicator || hasSpecificQuestion) return false;
+
+  // A step the student CARRIED OUT is work on the problem in front of them, not
+  // a new one handed over: "-10 on both sides to get 2x=16", "divide by 2
+  // x=8", "2x+10=26 combine like terms", "5x+10-3x=26 distributive property".
+  // Flagging these as drops put the student's own work under the student-posed
+  // anti-giveaway rules, so the tutor's "Exactly, x = 8!" was treated as a leak
+  // and the 2026-10 proof session restarted from the top four times. This must
+  // not depend on how the tutor phrased its last question (that guard is above
+  // and can always miss a phrasing). Every form needs a written equation —
+  // without one there is no result, only a proposal — and a message led by a
+  // solve verb ("solve 3x+5=14 using the distributive property") is still a
+  // request, whatever vocabulary it borrows.
+  if (hasEquation && !hasSolveVerb) {
+    // A result connector immediately followed by the equation it produced.
+    // "to get x by itself in 2x+5=17" is a question about a goal, not a
+    // result, so a word may not sit between the connector and the "=".
+    const resultConnector =
+      /\b(?:to\s+get|(?:you|we|i)\s+get|gives?(?:\s+(?:you|us))?|giving|leaves?(?:\s+(?:you|us))?|results?\s+in|becomes|turns\s+into)\s+[^a-z=]{0,12}[a-z]?[^a-z=]{0,12}=/i;
+    const bothSides = /\b(?:on|from|to|by)\s+both\s+sides\b/i;
+    // Two-column proof reasons. "Given 2x+5=17, find x" opens a problem, so
+    // "given" counts only as a trailing reason or "is the given".
+    const justification =
+      /\bpropert(?:y|ies)\b|\blike\s+terms\b|\bthe\s+given\b|\bgiven\s*[.!]?\s*$|\bsubstitution\b|\bdefinition\s+of\b|\binverse\s+operations?\b/i;
+    // An operation leading an equation: "divide by 2 x=8", "subtract 10 2x=16".
+    // A bare "add 1/2 + 1/4" has no "=" and never reaches here.
+    const operationLed =
+      /^\s*(?:then\s+|so\s+|now\s+|next\s+)?(?:add|subtract|multiply|divide|distribute|combine)(?:d|ed|s|ing)?\b[^=]*=/i;
+    if (resultConnector.test(t) || bothSides.test(t) || justification.test(t) || operationLed.test(t)) {
+      return false;
+    }
+  }
 
   return true;
 }
