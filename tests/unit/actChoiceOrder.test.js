@@ -107,3 +107,18 @@ describe('tests taken before the reorder', () => {
     expect(miss.correctOption).toBe('B');
   });
 });
+
+describe('frozenPickForGrading', () => {
+  const { frozenPickForGrading } = require('../../utils/mcOptions');
+  const o = (...t) => t.map((text, i) => ({ label: 'ABCD'[i], text }));
+  test('a pick still in the bank becomes the bank letter', () => {
+    expect(frozenPickForGrading('B', o('1', '3', '2', '4'), o('1', '2', '3', '4'))).toBe('C');
+  });
+  test('a pick edited out of the bank is graded by its text, never by its old letter', () => {
+    expect(frozenPickForGrading('D', o('1/3', '6/13', '7/13', '7/6'), o('3/13', '1/3', '6/13', '7/13'))).toBe('7/6');
+  });
+  test('with no frozen choices the pick is already a bank letter', () => {
+    expect(frozenPickForGrading('C', undefined, o('1', '2', '3', '4'))).toBe('C');
+    expect(frozenPickForGrading('C', [], o('1', '2', '3', '4'))).toBe('C');
+  });
+});

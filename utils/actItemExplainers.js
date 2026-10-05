@@ -263,6 +263,9 @@ const EXPLAINERS = [
         traps: [
           [round(t, 1), 'stops at the total time and reports the hours'],
           [round((s1 + s2) / 2, 1), `averages the two speeds (${s1} and ${s2}) — only correct if equal TIME were spent at each, and here the times differ`],
+          [round((2 * s1 * s2) / (s1 + s2), 1), `uses the equal-distance shortcut 2ab/(a + b) — only correct if the two legs were the same length, and here they are not`],
+          [round((d1 * s1 + d2 * s2) / (d1 + d2), 1), 'weights each speed by its DISTANCE; speeds average by time, not by distance'],
+          [round((d1 + d2) / (d1 / s2 + d2 / s1), 1), 'pairs each distance with the other leg\'s speed'],
           [d1 + d2, 'reports the total distance'],
         ],
       };
@@ -363,6 +366,8 @@ const EXPLAINERS = [
         traps: [
           [frac(k * k, total * total), 'treats the draws as WITH replacement, keeping both denominators at the original total'],
           [frac(k, total), 'gives the probability of just the first draw'],
+          [frac(k - 1, total - 1), 'gives the probability of just the second draw'],
+          [frac(k * (k - 1), total * total), `takes the chip out of the ${want} count but not out of the total, so the second denominator stays ${total}`],
           [frac(2 * k, 2 * total), 'doubles top and bottom, which changes nothing and is the same single-draw probability'],
         ],
       };
@@ -730,7 +735,19 @@ const EXPLAINERS = [
     solve: (m) => {
       const a = Number(m[1]);
       const b = m[2] ? (m[2] === '-' ? -Number(m[3]) : Number(m[3])) : 0;
-      // b === 0 has no sign of its own; the bank writes it as "(x - 0)/a".
+      if (b === 0) {
+        // Nothing is added, so there is one step to undo — no "(x - 0)/a".
+        return {
+          answer: `x/${a}`,
+          steps: `Swap x and y and solve: x = ${a}y gives y = x/${a}. f multiplies by ${a}, so its inverse divides by ${a}.`,
+          traps: [
+            [`1/(${a}x)`, 'takes the RECIPROCAL of f(x); the ⁻¹ in f⁻¹ means inverse function, not "one over"'],
+            [`x - ${a}`, `undoes the multiplication with a subtraction; the inverse of multiplying by ${a} is dividing by ${a}`],
+            [`${-a}x`, 'takes the OPPOSITE of f(x); an inverse undoes f, it does not negate it'],
+          ],
+        };
+      }
+      // A nonzero b is undone first, then the coefficient.
       const undoSign = b >= 0 ? '-' : '+';
       const answer = `(x ${undoSign} ${Math.abs(b)})/${a}`;
       return {
@@ -1096,6 +1113,7 @@ const EXPLAINERS = [
         traps: [
           [exactFrom(mean), 'gives the MEAN. Mean and median answer different questions and only agree on symmetric data'],
           [exactFrom(unsortedMiddle), 'takes the middle of the list AS GIVEN, without sorting it first'],
+          [sorted[n - 1] - sorted[0], 'gives the RANGE (largest minus smallest), a measure of spread, not of center'],
           [sorted[n - 1], 'reports the largest value'],
           [sorted[0], 'reports the smallest value'],
         ],
@@ -1130,6 +1148,8 @@ const EXPLAINERS = [
           [b ** k, `stops at ${c}x = ${b ** k} without dividing by ${c}`],
           [b ** (k * c), 'multiplies the exponent by the coefficient, as though it were inside the power'],
           [round(b ** k * c, 6), `multiplies by ${c} instead of dividing`],
+          [k ** b, `swaps the base and the exponent, computing ${k}^${b} instead of ${b}^${k}`],
+          [exactFrom(b ** k / c ** k), `divides inside the power, (${b}/${c})^${k}, which divides by ${c}^${k} = ${c ** k} instead of by ${c}`],
         ],
       };
     },
@@ -1507,6 +1527,19 @@ const EXPLAINERS = [
       const p1 = (b - r) / 2;
       const p2 = (b + r) / 2;
       const term = (k) => `(x ${k < 0 ? '- ' : '+ '}${Math.abs(k)})`;
+      if (b === 0 && c < 0) {
+        const s = p2;   // x^2 - s^2
+        return {
+          answer: [`${term(-s)}${term(s)}`, `${term(s)}${term(-s)}`],
+          steps: `x^2 - ${-c} is a difference of squares: a² − b² = (a − b)(a + b), with a = x and b = √${-c} = ${s}. So x^2 - ${-c} = ${term(-s)}${term(s)}.`,
+          traps: [
+            [`${term(-s)}${term(-s)}`, `is (x − ${s})², which multiplies out to x² − ${2 * s}x + ${s * s}: it has a middle term and a positive constant`],
+            [`${term(s)}${term(s)}`, `is (x + ${s})², which multiplies out to x² + ${2 * s}x + ${s * s}`],
+            [`${term(c)}${term(-c)}`, `uses ${-c} itself instead of its square root, which multiplies out to x² − ${c * c}`],
+            [`x${term(c)}`, `factors out an x that is not in both terms; x(x − ${-c}) = x² − ${-c}x`],
+          ],
+        };
+      }
       return {
         answer: [`${term(p1)}${term(p2)}`, `${term(p2)}${term(p1)}`],
         steps: `Look for two numbers that multiply to ${c} and add to ${b}: ${p1} and ${p2}. So the factorisation is ${term(p1)}${term(p2)}.`,
@@ -2028,11 +2061,14 @@ const EXPLAINERS = [
       const k = counts[want];
       return {
         answer: frac(k, total),
-        steps: `Probability is favourable ÷ TOTAL, and the total is every marble in the bag: ${m[1]} + ${m[3]} + ${m[5]} = ${total}. So ${k}/${total} = ${frac(k, total)}.`,
+        steps: `Probability is favourable ÷ TOTAL, and the total is every marble in the bag: ${m[1]} + ${m[3]} + ${m[5]} = ${total}. So the probability is ${k}/${total}${frac(k, total) === `${k}/${total}` ? "" : ` = ${frac(k, total)}`}.`,
         traps: [
           [frac(k, total - k), `divides by the marbles that are NOT ${want} (${total - k}) instead of by all ${total} — that is odds, not probability`],
           [frac(total - k, total), `gives the probability of NOT drawing ${want}`],
           [frac(k, 3), 'divides by the number of COLOURS rather than the number of marbles'],
+          ['1/3', 'treats the three colours as equally likely, but the bag holds different numbers of each'],
+          ...Object.entries(counts).filter(([c]) => c !== want)
+            .map(([c, n]) => [frac(n, total), `gives the probability of drawing ${c}, not ${want}`]),
         ],
       };
     },

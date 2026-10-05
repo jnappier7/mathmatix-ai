@@ -44,7 +44,7 @@ const { GUEST_TTL_MS } = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { assembleForm, rawToScaled, getBlueprint } = require('../utils/actTestAssembler');
 const { buildActPlan } = require('../utils/actBootcampPlan');
-const { normalizeOptions, relabelByText, LABELS: MC_LABELS } = require('../utils/mcOptions');
+const { normalizeOptions, frozenPickForGrading, LABELS: MC_LABELS } = require('../utils/mcOptions');
 const CourseSession = require('../models/courseSession');
 const {
   answeredCount, overdueMs, shouldAbandonOnExpiry, isIncompleteAttempt, buildComparison,
@@ -200,10 +200,9 @@ async function gradeSession(session) {
     if (r.answer != null && r.answer !== '') {
       const p = keyByProblemId.get(r.problemId);
       // The pick is a letter on the choices FROZEN into this test. Grade the
-      // choice the student saw, even if the bank has reordered it since.
+      // choice the student saw, even if the bank has reordered or edited it since.
       const item = itemByPos.get(r.position);
-      const bankLabel = (p && item && relabelByText(r.answer, item.options, p.options)) || r.answer;
-      r.correct = p ? !!p.checkAnswer(bankLabel) : false;
+      r.correct = p ? !!p.checkAnswer(frozenPickForGrading(r.answer, item && item.options, p.options)) : false;
       r.skipped = false;
     } else {
       r.correct = false;
@@ -612,8 +611,7 @@ router.post('/submit-answer', async (req, res) => {
     let correct = false;
     if (!skipped) {
       const problem = await Problem.findOne({ problemId });
-      const bankLabel = (problem && relabelByText(answer, item.options, problem.options)) || answer;
-      correct = problem ? !!problem.checkAnswer(bankLabel) : false;
+      correct = problem ? !!problem.checkAnswer(frozenPickForGrading(answer, item.options, problem.options)) : false;
     }
 
     session.responses.push({

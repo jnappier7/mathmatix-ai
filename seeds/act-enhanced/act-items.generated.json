@@ -1111,7 +1111,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 5^4 = 5x, so 5x = 625. Then divide: x = 625 ÷ 5 = 125. Wrong choices: B) 625 stops at 5x = 625 without dividing by 5; D) 3125 multiplies by 5 instead of dividing.",
+  "explanation": "First undo the log: 5^4 = 5x, so 5x = 625. Then divide: x = 625 ÷ 5 = 125. Wrong choices: B) 625 stops at 5x = 625 without dividing by 5; C) 1024 swaps the base and the exponent, computing 4^5 instead of 5^4; D) 3125 multiplies by 5 instead of dividing.",
   "tags": [
    "act",
    "act-algebra",
@@ -1768,7 +1768,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 2^3 = 2x, so 2x = 8. Then divide: x = 8 ÷ 2 = 4. Wrong choices: B) 8 stops at 2x = 8 without dividing by 2; D) 16 multiplies by 2 instead of dividing.",
+  "explanation": "First undo the log: 2^3 = 2x, so 2x = 8. Then divide: x = 8 ÷ 2 = 4. Wrong choices: B) 8 stops at 2x = 8 without dividing by 2; C) 9 swaps the base and the exponent, computing 3^2 instead of 2^3; D) 16 multiplies by 2 instead of dividing.",
   "tags": [
    "act",
    "act-algebra",
@@ -2406,26 +2406,26 @@
   "options": [
    {
     "label": "A",
-    "text": "125/2"
+    "text": "125/8"
    },
    {
     "label": "B",
-    "text": "125"
+    "text": "125/2"
    },
    {
     "label": "C",
-    "text": "243"
+    "text": "125"
    },
    {
     "label": "D",
-    "text": "250"
+    "text": "243"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 5^3 = 2x, so 2x = 125. Then divide: x = 125 ÷ 2 = 125/2. Wrong choices: B) 125 stops at 2x = 125 without dividing by 2; D) 250 multiplies by 2 instead of dividing.",
+  "explanation": "First undo the log: 5^3 = 2x, so 2x = 125. Then divide: x = 125 ÷ 2 = 125/2. Wrong choices: A) 125/8 divides inside the power, (5/2)^3, which divides by 2^3 = 8 instead of by 2; C) 125 stops at 2x = 125 without dividing by 2; D) 243 swaps the base and the exponent, computing 3^5 instead of 5^3.",
   "tags": [
    "act",
    "act-algebra",
@@ -3446,18 +3446,18 @@
    },
    {
     "label": "C",
-    "text": "(x + 3)(x - 3)"
+    "text": "(x - 9)(x + 9)"
    },
    {
     "label": "D",
-    "text": "(x + 0)(x - 9)"
+    "text": "x(x - 9)"
    }
   ],
   "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Look for two numbers that multiply to -9 and add to 0: -3 and 3. So the factorisation is (x - 3)(x + 3). Wrong choices: B) (x - 3)(x - 3) mixes the signs, giving a difference of squares rather than this trinomial; C) (x + 3)(x - 3) flips both signs, which changes the middle term to 0; D) (x + 0)(x - 9) drops the coefficients straight into the factors instead of solving for the pair.",
+  "explanation": "x^2 - 9 is a difference of squares: a² − b² = (a − b)(a + b), with a = x and b = √9 = 3. So x^2 - 9 = (x - 3)(x + 3). Wrong choices: B) (x - 3)(x - 3) is (x − 3)², which multiplies out to x² − 6x + 9: it has a middle term and a positive constant; C) (x - 9)(x + 9) uses 9 itself instead of its square root, which multiplies out to x² − 81; D) x(x - 9) factors out an x that is not in both terms; x(x − 9) = x² − 9x.",
   "tags": [
    "act",
    "act-algebra",
@@ -4095,26 +4095,26 @@
   "options": [
    {
     "label": "A",
-    "text": "8/5"
+    "text": "8/125"
    },
    {
     "label": "B",
-    "text": "8"
+    "text": "8/5"
    },
    {
     "label": "C",
-    "text": "9"
+    "text": "8"
    },
    {
     "label": "D",
-    "text": "40"
+    "text": "9"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 2^3 = 5x, so 5x = 8. Then divide: x = 8 ÷ 5 = 8/5. Wrong choices: B) 8 stops at 5x = 8 without dividing by 5; D) 40 multiplies by 5 instead of dividing.",
+  "explanation": "First undo the log: 2^3 = 5x, so 5x = 8. Then divide: x = 8 ÷ 5 = 8/5. Wrong choices: A) 8/125 divides inside the power, (2/5)^3, which divides by 5^3 = 125 instead of by 5; C) 8 stops at 5x = 8 without dividing by 5; D) 9 swaps the base and the exponent, computing 3^2 instead of 2^3.",
   "tags": [
    "act",
    "act-algebra",
@@ -4658,26 +4658,26 @@
   "options": [
    {
     "label": "A",
-    "text": "81/2"
+    "text": "81/16"
    },
    {
     "label": "B",
-    "text": "64"
+    "text": "81/2"
    },
    {
     "label": "C",
-    "text": "81"
+    "text": "64"
    },
    {
     "label": "D",
-    "text": "162"
+    "text": "81"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 3^4 = 2x, so 2x = 81. Then divide: x = 81 ÷ 2 = 81/2. Wrong choices: C) 81 stops at 2x = 81 without dividing by 2; D) 162 multiplies by 2 instead of dividing.",
+  "explanation": "First undo the log: 3^4 = 2x, so 2x = 81. Then divide: x = 81 ÷ 2 = 81/2. Wrong choices: A) 81/16 divides inside the power, (3/2)^4, which divides by 2^4 = 16 instead of by 2; C) 64 swaps the base and the exponent, computing 4^3 instead of 3^4; D) 81 stops at 2x = 81 without dividing by 2.",
   "tags": [
    "act",
    "act-algebra",
@@ -7379,26 +7379,26 @@
   "options": [
    {
     "label": "A",
-    "text": "81/4"
+    "text": "81/256"
    },
    {
     "label": "B",
-    "text": "64"
+    "text": "81/4"
    },
    {
     "label": "C",
-    "text": "81"
+    "text": "64"
    },
    {
     "label": "D",
-    "text": "324"
+    "text": "81"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 3^4 = 4x, so 4x = 81. Then divide: x = 81 ÷ 4 = 81/4. Wrong choices: C) 81 stops at 4x = 81 without dividing by 4; D) 324 multiplies by 4 instead of dividing.",
+  "explanation": "First undo the log: 3^4 = 4x, so 4x = 81. Then divide: x = 81 ÷ 4 = 81/4. Wrong choices: A) 81/256 divides inside the power, (3/4)^4, which divides by 4^4 = 256 instead of by 4; C) 64 swaps the base and the exponent, computing 4^3 instead of 3^4; D) 81 stops at 4x = 81 without dividing by 4.",
   "tags": [
    "act",
    "act-algebra",
@@ -8993,7 +8993,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 3^2 = 3x, so 3x = 9. Then divide: x = 9 ÷ 3 = 3. Wrong choices: C) 9 stops at 3x = 9 without dividing by 3; D) 27 multiplies by 3 instead of dividing.",
+  "explanation": "First undo the log: 3^2 = 3x, so 3x = 9. Then divide: x = 9 ÷ 3 = 3. Wrong choices: B) 8 swaps the base and the exponent, computing 2^3 instead of 3^2; C) 9 stops at 3x = 9 without dividing by 3; D) 27 multiplies by 3 instead of dividing.",
   "tags": [
    "act",
    "act-algebra",
@@ -12668,8 +12668,12 @@
   "svg": null,
   "answer": {
    "type": "auto",
-   "value": "(x - 0)/2",
-   "equivalents": []
+   "value": "x/2",
+   "equivalents": [
+    "(x - 0)/2",
+    "(x + 0)/2",
+    "x/2 - 0"
+   ]
   },
   "answerType": "multiple-choice",
   "options": [
@@ -12679,22 +12683,22 @@
    },
    {
     "label": "B",
-    "text": "(x - 0)/2"
+    "text": "x/2"
    },
    {
     "label": "C",
-    "text": "(x + 0)/2"
+    "text": "x - 2"
    },
    {
     "label": "D",
-    "text": "x/2 - 0"
+    "text": "-2x"
    }
   ],
   "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "Swap x and y and solve: x = 2y + 0 gives y = (x - 0)/2. An inverse UNDOES the steps in reverse order — undo the addition first, then the multiplication.",
+  "explanation": "Swap x and y and solve: x = 2y gives y = x/2. f multiplies by 2, so its inverse divides by 2. Wrong choices: A) 1/(2x) takes the RECIPROCAL of f(x); the ⁻¹ in f⁻¹ means inverse function, not \"one over\"; C) x - 2 undoes the multiplication with a subtraction; the inverse of multiplying by 2 is dividing by 2; D) -2x takes the OPPOSITE of f(x); an inverse undoes f, it does not negate it.",
   "tags": [
    "act",
    "act-functions",
@@ -12705,7 +12709,7 @@
    "fine:inverse-functions"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "ec28a164ecd9efdc1ba07075c67f2b7b1cacfdbe96058d4b0a1d4bd1cbc8d596",
+  "contentHash": "336b32e9e96e28564acc09e3e6516f961f8c2c039e64a031f43f766130a26a02",
   "isActive": true
  },
  {
@@ -35910,7 +35914,7 @@
  {
   "problemId": "57cbfd4c-8609-46c2-8230-5100a1882efe",
   "skillId": "act-rates-unit-conversion",
-  "prompt": "A driver travels 60 miles at 30 mph, then 120 miles at 20 mph. What is the average speed for the whole trip, in miles per hour?",
+  "prompt": "A driver travels 60 miles at 30 mph, then 120 miles at 20 mph. To the nearest tenth, what is the average speed for the whole trip, in miles per hour?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -35921,26 +35925,26 @@
   "options": [
    {
     "label": "A",
-    "text": "8"
-   },
-   {
-    "label": "B",
     "text": "22.5"
    },
    {
+    "label": "B",
+    "text": "23.3"
+   },
+   {
     "label": "C",
-    "text": "25"
+    "text": "24"
    },
    {
     "label": "D",
-    "text": "180"
+    "text": "25"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Average speed is total distance ÷ total TIME, never the average of the speeds. The legs take 60 ÷ 30 = 2 h and 120 ÷ 20 = 6 h, so 180 miles ÷ 8 h = 22.5 mph. Wrong choices: A) 8 stops at the total time and reports the hours; C) 25 averages the two speeds (30 and 20) — only correct if equal TIME were spent at each, and here the times differ; D) 180 reports the total distance.",
+  "explanation": "Average speed is total distance ÷ total TIME, never the average of the speeds. The legs take 60 ÷ 30 = 2 h and 120 ÷ 20 = 6 h, so 180 miles ÷ 8 h = 22.5 mph. Wrong choices: B) 23.3 weights each speed by its DISTANCE; speeds average by time, not by distance; C) 24 uses the equal-distance shortcut 2ab/(a + b) — only correct if the two legs were the same length, and here they are not; D) 25 averages the two speeds (30 and 20) — only correct if equal TIME were spent at each, and here the times differ.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -35953,7 +35957,7 @@
    "fine:average-speed"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "8053036fba17b0e70f52a973b6683e25159463cc0d9437ef48f883d9548d828f",
+  "contentHash": "ba0a7c6f2bcf4d5b465bd74d522bad2a92f5e2aee2e449515487e5ec2db98ec5",
   "isActive": true
  },
  {
@@ -38366,7 +38370,7 @@
  {
   "problemId": "3c442d12-90e1-47ca-b5a0-b3a6de199c6d",
   "skillId": "act-rates-unit-conversion",
-  "prompt": "A driver travels 180 miles at 60 mph, then 120 miles at 20 mph. What is the average speed for the whole trip, in miles per hour?",
+  "prompt": "A driver travels 180 miles at 60 mph, then 120 miles at 20 mph. To the nearest tenth, what is the average speed for the whole trip, in miles per hour?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -38377,26 +38381,26 @@
   "options": [
    {
     "label": "A",
-    "text": "9"
+    "text": "27.3"
    },
    {
     "label": "B",
-    "text": "33.3"
+    "text": "30"
    },
    {
     "label": "C",
-    "text": "40"
+    "text": "33.3"
    },
    {
     "label": "D",
-    "text": "300"
+    "text": "40"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Average speed is total distance ÷ total TIME, never the average of the speeds. The legs take 180 ÷ 60 = 3 h and 120 ÷ 20 = 6 h, so 300 miles ÷ 9 h = 33.3 mph. Wrong choices: A) 9 stops at the total time and reports the hours; C) 40 averages the two speeds (60 and 20) — only correct if equal TIME were spent at each, and here the times differ; D) 300 reports the total distance.",
+  "explanation": "Average speed is total distance ÷ total TIME, never the average of the speeds. The legs take 180 ÷ 60 = 3 h and 120 ÷ 20 = 6 h, so 300 miles ÷ 9 h = 33.3 mph. Wrong choices: A) 27.3 pairs each distance with the other leg's speed; B) 30 uses the equal-distance shortcut 2ab/(a + b) — only correct if the two legs were the same length, and here they are not; D) 40 averages the two speeds (60 and 20) — only correct if equal TIME were spent at each, and here the times differ.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -38409,7 +38413,7 @@
    "fine:average-speed"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "8b377645d0e9135fda9797b25307bd10d4d8eeefe930b6221a88b5485d050786",
+  "contentHash": "df9dac870896b6ef8277f0e4a6bad7e08bc622f9ab147a8f913ea788833690ad",
   "isActive": true
  },
  {
@@ -43191,26 +43195,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1/3"
+    "text": "3/13"
    },
    {
     "label": "B",
-    "text": "6/13"
+    "text": "1/3"
    },
    {
     "label": "C",
-    "text": "7/13"
+    "text": "6/13"
    },
    {
     "label": "D",
-    "text": "7/6"
+    "text": "7/13"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "D",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 7 + 3 = 13. So 7/13 = 7/13. Wrong choices: B) 6/13 gives the probability of NOT drawing white; D) 7/6 divides by the marbles that are NOT white (6) instead of by all 13 — that is odds, not probability.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 7 + 3 = 13. So the probability is 7/13. Wrong choices: A) 3/13 gives the probability of drawing yellow, not white; B) 1/3 treats the three colours as equally likely, but the bag holds different numbers of each; C) 6/13 gives the probability of NOT drawing white.",
   "tags": [
    "act",
    "act-statistics",
@@ -43237,26 +43241,26 @@
   "options": [
    {
     "label": "A",
-    "text": "7/26"
+    "text": "42/169"
    },
    {
     "label": "B",
-    "text": "49/169"
+    "text": "7/26"
    },
    {
     "label": "C",
-    "text": "1/2"
+    "text": "49/169"
    },
    {
     "label": "D",
-    "text": "27/26"
+    "text": "1/2"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 7/13. Second: only 6 of the red chips are left among 12. So 7/13 × 6/12 = 7/26. Wrong choices: B) 49/169 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 7/13. Second: only 6 of the red chips are left among 12. So 7/13 × 6/12 = 7/26. Wrong choices: A) 42/169 takes the chip out of the red count but not out of the total, so the second denominator stays 13; C) 49/169 treats the draws as WITH replacement, keeping both denominators at the original total; D) 1/2 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -43689,7 +43693,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 7, 18, 19, 21, 33, 44, 51, 58; the middle pair is 21 and 33, so the median is 27. Wrong choices: C) 251/8 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 7, 18, 19, 21, 33, 44, 51, 58; the middle pair is 21 and 33, so the median is 27. Wrong choices: C) 251/8 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 51 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -43736,7 +43740,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 8 + 7 + 5 = 20. So 7/20 = 7/20. Wrong choices: C) 7/13 divides by the marbles that are NOT yellow (13) instead of by all 20 — that is odds, not probability; D) 13/20 gives the probability of NOT drawing yellow.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 8 + 7 + 5 = 20. So the probability is 7/20. Wrong choices: C) 7/13 divides by the marbles that are NOT yellow (13) instead of by all 20 — that is odds, not probability; D) 13/20 gives the probability of NOT drawing yellow.",
   "tags": [
    "act",
    "act-statistics",
@@ -43782,7 +43786,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 6/14. Second: only 5 of the red chips are left among 13. So 6/14 × 5/13 = 15/91. Wrong choices: B) 9/49 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 6/14. Second: only 5 of the red chips are left among 13. So 6/14 × 5/13 = 15/91. Wrong choices: B) 9/49 treats the draws as WITH replacement, keeping both denominators at the original total; C) 5/13 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -44165,7 +44169,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 6, 8, 15, 16, 29, 31, 46, 49, 50, 56; the middle pair is 29 and 31, so the median is 30. Wrong choices: C) 153/5 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 6, 8, 15, 16, 29, 31, 46, 49, 50, 56; the middle pair is 29 and 31, so the median is 30. Wrong choices: C) 153/5 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 50 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -44212,7 +44216,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 7 + 7 + 6 = 20. So 6/20 = 3/10. Wrong choices: C) 3/7 divides by the marbles that are NOT white (14) instead of by all 20 — that is odds, not probability; D) 7/10 gives the probability of NOT drawing white.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 7 + 7 + 6 = 20. So the probability is 6/20 = 3/10. Wrong choices: C) 3/7 divides by the marbles that are NOT white (14) instead of by all 20 — that is odds, not probability; D) 7/10 gives the probability of NOT drawing white.",
   "tags": [
    "act",
    "act-statistics",
@@ -44692,7 +44696,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 2, 5, 10, 13, 22, 31, 32, 36; the middle pair is 13 and 22, so the median is 35/2. Wrong choices: C) 151/8 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 2, 5, 10, 13, 22, 31, 32, 36; the middle pair is 13 and 22, so the median is 35/2. Wrong choices: C) 151/8 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 34 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -44739,7 +44743,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 9 + 6 + 6 = 21. So 6/21 = 2/7. Wrong choices: C) 2/5 divides by the marbles that are NOT red (15) instead of by all 21 — that is odds, not probability; D) 5/7 gives the probability of NOT drawing red.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 9 + 6 + 6 = 21. So the probability is 6/21 = 2/7. Wrong choices: C) 2/5 divides by the marbles that are NOT red (15) instead of by all 21 — that is odds, not probability; D) 5/7 gives the probability of NOT drawing red.",
   "tags": [
    "act",
    "act-statistics",
@@ -44785,7 +44789,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 5/13. Second: only 4 of the red chips are left among 12. So 5/13 × 4/12 = 5/39. Wrong choices: B) 25/169 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 5/13. Second: only 4 of the red chips are left among 12. So 5/13 × 4/12 = 5/39. Wrong choices: B) 25/169 treats the draws as WITH replacement, keeping both denominators at the original total; C) 1/3 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -45217,7 +45221,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 2, 6, 8, 9, 13, 17, 36, 37, 43, 59; the middle pair is 13 and 17, so the median is 15. Wrong choices: B) 23 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 2, 6, 8, 9, 13, 17, 36, 37, 43, 59; the middle pair is 13 and 17, so the median is 15. Wrong choices: B) 23 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 57 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -45264,7 +45268,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 4 + 3 + 3 = 10. So 4/10 = 2/5. Wrong choices: C) 3/5 gives the probability of NOT drawing green; D) 2/3 divides by the marbles that are NOT green (6) instead of by all 10 — that is odds, not probability.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 4 + 3 + 3 = 10. So the probability is 4/10 = 2/5. Wrong choices: A) 1/3 treats the three colours as equally likely, but the bag holds different numbers of each; C) 3/5 gives the probability of NOT drawing green; D) 2/3 divides by the marbles that are NOT green (6) instead of by all 10 — that is odds, not probability.",
   "tags": [
    "act",
    "act-statistics",
@@ -45310,7 +45314,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 3/11. Second: only 2 of the red chips are left among 10. So 3/11 × 2/10 = 3/55. Wrong choices: B) 9/121 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 3/11. Second: only 2 of the red chips are left among 10. So 3/11 × 2/10 = 3/55. Wrong choices: B) 9/121 treats the draws as WITH replacement, keeping both denominators at the original total; C) 1/5 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -45742,7 +45746,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 1, 22, 29, 39, 48, 57; the middle pair is 29 and 39, so the median is 34. Wrong choices: B) 98/3 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 1, 22, 29, 39, 48, 57; the middle pair is 29 and 39, so the median is 34. Wrong choices: B) 98/3 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 56 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -45789,7 +45793,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 4 + 7 + 4 = 15. So 4/15 = 4/15. Wrong choices: C) 4/11 divides by the marbles that are NOT yellow (11) instead of by all 15 — that is odds, not probability; D) 11/15 gives the probability of NOT drawing yellow.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 4 + 7 + 4 = 15. So the probability is 4/15. Wrong choices: C) 4/11 divides by the marbles that are NOT yellow (11) instead of by all 15 — that is odds, not probability; D) 11/15 gives the probability of NOT drawing yellow.",
   "tags": [
    "act",
    "act-statistics",
@@ -45835,7 +45839,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 4/9. Second: only 3 of the red chips are left among 8. So 4/9 × 3/8 = 1/6. Wrong choices: B) 16/81 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 4/9. Second: only 3 of the red chips are left among 8. So 4/9 × 3/8 = 1/6. Wrong choices: B) 16/81 treats the draws as WITH replacement, keeping both denominators at the original total; C) 3/8 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -46267,7 +46271,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 16, 17, 26, 30, 32, 59; the middle pair is 26 and 30, so the median is 28. Wrong choices: A) 16 reports the smallest value; C) 30 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 16, 17, 26, 30, 32, 59; the middle pair is 26 and 30, so the median is 28. Wrong choices: A) 16 reports the smallest value; C) 30 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 43 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -46295,26 +46299,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1/3"
+    "text": "3/14"
    },
    {
     "label": "B",
-    "text": "3/7"
+    "text": "1/3"
    },
    {
     "label": "C",
-    "text": "4/7"
+    "text": "3/7"
    },
    {
     "label": "D",
-    "text": "4/3"
+    "text": "4/7"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "D",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 8 + 3 = 14. So 8/14 = 4/7. Wrong choices: B) 3/7 gives the probability of NOT drawing blue; D) 4/3 divides by the marbles that are NOT blue (6) instead of by all 14 — that is odds, not probability.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 8 + 3 = 14. So the probability is 8/14 = 4/7. Wrong choices: A) 3/14 gives the probability of drawing white, not blue; B) 1/3 treats the three colours as equally likely, but the bag holds different numbers of each; C) 3/7 gives the probability of NOT drawing blue.",
   "tags": [
    "act",
    "act-statistics",
@@ -46341,26 +46345,26 @@
   "options": [
    {
     "label": "A",
-    "text": "7/15"
+    "text": "21/50"
    },
    {
     "label": "B",
-    "text": "49/100"
+    "text": "7/15"
    },
    {
     "label": "C",
-    "text": "2/3"
+    "text": "49/100"
    },
    {
     "label": "D",
-    "text": "41/30"
+    "text": "2/3"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 7/10. Second: only 6 of the red chips are left among 9. So 7/10 × 6/9 = 7/15. Wrong choices: B) 49/100 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 7/10. Second: only 6 of the red chips are left among 9. So 7/10 × 6/9 = 7/15. Wrong choices: A) 21/50 takes the chip out of the red count but not out of the total, so the second denominator stays 10; C) 49/100 treats the draws as WITH replacement, keeping both denominators at the original total; D) 2/3 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -46792,7 +46796,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 22, 27, 37, 39, 41, 58; the middle pair is 37 and 39, so the median is 38. Wrong choices: C) 112/3 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 22, 27, 37, 39, 41, 58; the middle pair is 37 and 39, so the median is 38. Wrong choices: A) 36 gives the RANGE (largest minus smallest), a measure of spread, not of center; C) 112/3 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
   "tags": [
    "act",
    "act-statistics",
@@ -46839,7 +46843,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 5 + 5 = 13. So 3/13 = 3/13. Wrong choices: C) 3/10 divides by the marbles that are NOT yellow (10) instead of by all 13 — that is odds, not probability; D) 10/13 gives the probability of NOT drawing yellow.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 5 + 5 = 13. So the probability is 3/13. Wrong choices: C) 3/10 divides by the marbles that are NOT yellow (10) instead of by all 13 — that is odds, not probability; D) 10/13 gives the probability of NOT drawing yellow.",
   "tags": [
    "act",
    "act-statistics",
@@ -46866,26 +46870,26 @@
   "options": [
    {
     "label": "A",
-    "text": "21/55"
+    "text": "42/121"
    },
    {
     "label": "B",
-    "text": "49/121"
+    "text": "21/55"
    },
    {
     "label": "C",
-    "text": "3/5"
+    "text": "49/121"
    },
    {
     "label": "D",
-    "text": "68/55"
+    "text": "3/5"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 7/11. Second: only 6 of the red chips are left among 10. So 7/11 × 6/10 = 21/55. Wrong choices: B) 49/121 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 7/11. Second: only 6 of the red chips are left among 10. So 7/11 × 6/10 = 21/55. Wrong choices: A) 42/121 takes the chip out of the red count but not out of the total, so the second denominator stays 11; C) 49/121 treats the draws as WITH replacement, keeping both denominators at the original total; D) 3/5 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -47270,7 +47274,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 15, 18, 21, 23, 37, 39, 44, 45, 47, 58; the middle pair is 37 and 39, so the median is 38. Wrong choices: A) 347/10 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 15, 18, 21, 23, 37, 39, 44, 45, 47, 58; the middle pair is 37 and 39, so the median is 38. Wrong choices: A) 347/10 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 43 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -47317,7 +47321,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 6 + 5 = 14. So 6/14 = 3/7. Wrong choices: C) 4/7 gives the probability of NOT drawing green; D) 3/4 divides by the marbles that are NOT green (8) instead of by all 14 — that is odds, not probability.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 6 + 5 = 14. So the probability is 6/14 = 3/7. Wrong choices: A) 1/3 treats the three colours as equally likely, but the bag holds different numbers of each; C) 4/7 gives the probability of NOT drawing green; D) 3/4 divides by the marbles that are NOT green (8) instead of by all 14 — that is odds, not probability.",
   "tags": [
    "act",
    "act-statistics",
@@ -47363,7 +47367,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 4/8. Second: only 3 of the red chips are left among 7. So 4/8 × 3/7 = 3/14. Wrong choices: B) 1/4 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 4/8. Second: only 3 of the red chips are left among 7. So 4/8 × 3/7 = 3/14. Wrong choices: B) 1/4 treats the draws as WITH replacement, keeping both denominators at the original total; C) 3/7 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -47698,7 +47702,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 1, 13, 18, 19, 22, 23, 25, 40, 52, 55; the middle pair is 22 and 23, so the median is 45/2. Wrong choices: C) 134/5 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 1, 13, 18, 19, 22, 23, 25, 40, 52, 55; the middle pair is 22 and 23, so the median is 45/2. Wrong choices: C) 134/5 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 54 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -47745,7 +47749,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 6 + 7 + 6 = 19. So 6/19 = 6/19. Wrong choices: C) 6/13 divides by the marbles that are NOT blue (13) instead of by all 19 — that is odds, not probability; D) 13/19 gives the probability of NOT drawing blue.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 6 + 7 + 6 = 19. So the probability is 6/19. Wrong choices: C) 6/13 divides by the marbles that are NOT blue (13) instead of by all 19 — that is odds, not probability; D) 13/19 gives the probability of NOT drawing blue.",
   "tags": [
    "act",
    "act-statistics",
@@ -47791,7 +47795,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 7/14. Second: only 6 of the red chips are left among 13. So 7/14 × 6/13 = 3/13. Wrong choices: B) 1/4 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 7/14. Second: only 6 of the red chips are left among 13. So 7/14 × 6/13 = 3/13. Wrong choices: B) 1/4 treats the draws as WITH replacement, keeping both denominators at the original total; C) 6/13 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -48076,7 +48080,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 8, 10, 20, 21, 26, 40, 49, 51, 52, 59; the middle pair is 26 and 40, so the median is 33. Wrong choices: B) 168/5 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 8, 10, 20, 21, 26, 40, 49, 51, 52, 59; the middle pair is 26 and 40, so the median is 33. Wrong choices: B) 168/5 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 51 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -48123,7 +48127,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 9 + 6 + 3 = 18. So 3/18 = 1/6. Wrong choices: C) 1/5 divides by the marbles that are NOT red (15) instead of by all 18 — that is odds, not probability; D) 5/6 gives the probability of NOT drawing red.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 9 + 6 + 3 = 18. So the probability is 3/18 = 1/6. Wrong choices: C) 1/5 divides by the marbles that are NOT red (15) instead of by all 18 — that is odds, not probability; D) 5/6 gives the probability of NOT drawing red.",
   "tags": [
    "act",
    "act-statistics",
@@ -48169,7 +48173,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 5/12. Second: only 4 of the red chips are left among 11. So 5/12 × 4/11 = 5/33. Wrong choices: B) 25/144 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 5/12. Second: only 4 of the red chips are left among 11. So 5/12 × 4/11 = 5/33. Wrong choices: B) 25/144 treats the draws as WITH replacement, keeping both denominators at the original total; C) 4/11 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -48601,7 +48605,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 1, 9, 20, 25, 36, 45, 50, 51, 53, 55; the middle pair is 36 and 45, so the median is 81/2. Wrong choices: A) 69/2 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 1, 9, 20, 25, 36, 45, 50, 51, 53, 55; the middle pair is 36 and 45, so the median is 81/2. Wrong choices: A) 69/2 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 54 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -48648,7 +48652,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 5 + 6 = 14. So 5/14 = 5/14. Wrong choices: C) 5/9 divides by the marbles that are NOT green (9) instead of by all 14 — that is odds, not probability; D) 9/14 gives the probability of NOT drawing green.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 5 + 6 = 14. So the probability is 5/14. Wrong choices: C) 5/9 divides by the marbles that are NOT green (9) instead of by all 14 — that is odds, not probability; D) 9/14 gives the probability of NOT drawing green.",
   "tags": [
    "act",
    "act-statistics",
@@ -48694,7 +48698,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 3/6. Second: only 2 of the red chips are left among 5. So 3/6 × 2/5 = 1/5. Wrong choices: B) 1/4 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 3/6. Second: only 2 of the red chips are left among 5. So 3/6 × 2/5 = 1/5. Wrong choices: B) 1/4 treats the draws as WITH replacement, keeping both denominators at the original total; C) 2/5 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -49078,7 +49082,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 7, 13, 18, 19, 20, 24, 30, 39, 40, 47; the middle pair is 20 and 24, so the median is 22. Wrong choices: C) 257/10 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 7, 13, 18, 19, 20, 24, 30, 39, 40, 47; the middle pair is 20 and 24, so the median is 22. Wrong choices: C) 257/10 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 40 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -49125,7 +49129,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 7 + 8 + 4 = 19. So 8/19 = 8/19. Wrong choices: C) 11/19 gives the probability of NOT drawing red; D) 8/11 divides by the marbles that are NOT red (11) instead of by all 19 — that is odds, not probability.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 7 + 8 + 4 = 19. So the probability is 8/19. Wrong choices: A) 1/3 treats the three colours as equally likely, but the bag holds different numbers of each; C) 11/19 gives the probability of NOT drawing red; D) 8/11 divides by the marbles that are NOT red (11) instead of by all 19 — that is odds, not probability.",
   "tags": [
    "act",
    "act-statistics",
@@ -49152,26 +49156,26 @@
   "options": [
    {
     "label": "A",
-    "text": "7/22"
+    "text": "7/24"
    },
    {
     "label": "B",
-    "text": "49/144"
+    "text": "7/22"
    },
    {
     "label": "C",
-    "text": "6/11"
+    "text": "49/144"
    },
    {
     "label": "D",
-    "text": "149/132"
+    "text": "6/11"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 7/12. Second: only 6 of the red chips are left among 11. So 7/12 × 6/11 = 7/22. Wrong choices: B) 49/144 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 7/12. Second: only 6 of the red chips are left among 11. So 7/12 × 6/11 = 7/22. Wrong choices: A) 7/24 takes the chip out of the red count but not out of the total, so the second denominator stays 12; C) 49/144 treats the draws as WITH replacement, keeping both denominators at the original total; D) 6/11 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -49573,26 +49577,26 @@
  {
   "problemId": "3a79e325-ff90-47e4-99e9-30091e6546f4",
   "skillId": "act-average-median",
-  "prompt": "What is the median of this data set: 8, 58, 18, 16, 51, 41?",
+  "prompt": "What is the median of this data set: 8, 58, 18, 17, 51, 43?",
   "svg": null,
   "answer": {
    "type": "auto",
-   "value": "59/2",
+   "value": "61/2",
    "equivalents": []
   },
   "answerType": "multiple-choice",
   "options": [
    {
     "label": "A",
-    "text": "16"
+    "text": "35/2"
    },
    {
     "label": "B",
-    "text": "59/2"
+    "text": "61/2"
    },
    {
     "label": "C",
-    "text": "32"
+    "text": "65/2"
    },
    {
     "label": "D",
@@ -49603,7 +49607,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 8, 16, 18, 41, 51, 58; the middle pair is 18 and 41, so the median is 59/2. Wrong choices: C) 32 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 8, 17, 18, 43, 51, 58; the middle pair is 18 and 43, so the median is 61/2. Wrong choices: A) 35/2 takes the middle of the list AS GIVEN, without sorting it first; C) 65/2 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 50 gives the RANGE (largest minus smallest), a measure of spread, not of center.",
   "tags": [
    "act",
    "act-statistics",
@@ -49614,7 +49618,7 @@
    "fine:median"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "974992c8cc17a3ea55b29fc5879110a74869d2fcbefb4f66a9dcbc8f2f402320",
+  "contentHash": "34c5f0574c10ff44ef346794c15c4d541b7bfa8b62bf034f53eec16cfdb6a599",
   "isActive": true
  },
  {
@@ -49650,7 +49654,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 7 + 4 + 2 = 13. So 2/13 = 2/13. Wrong choices: C) 2/11 divides by the marbles that are NOT red (11) instead of by all 13 — that is odds, not probability; D) 11/13 gives the probability of NOT drawing red.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 7 + 4 + 2 = 13. So the probability is 2/13. Wrong choices: C) 2/11 divides by the marbles that are NOT red (11) instead of by all 13 — that is odds, not probability; D) 11/13 gives the probability of NOT drawing red.",
   "tags": [
    "act",
    "act-statistics",
@@ -49677,26 +49681,26 @@
   "options": [
    {
     "label": "A",
-    "text": "3/11"
+    "text": "30/121"
    },
    {
     "label": "B",
-    "text": "36/121"
+    "text": "3/11"
    },
    {
     "label": "C",
-    "text": "1/2"
+    "text": "36/121"
    },
    {
     "label": "D",
-    "text": "23/22"
+    "text": "1/2"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 6/11. Second: only 5 of the red chips are left among 10. So 6/11 × 5/10 = 3/11. Wrong choices: B) 36/121 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 6/11. Second: only 5 of the red chips are left among 10. So 6/11 × 5/10 = 3/11. Wrong choices: A) 30/121 takes the chip out of the red count but not out of the total, so the second denominator stays 11; C) 36/121 treats the draws as WITH replacement, keeping both denominators at the original total; D) 1/2 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -50128,7 +50132,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 2, 3, 5, 18, 23, 26, 31, 33, 40, 53; the middle pair is 23 and 26, so the median is 49/2. Wrong choices: A) 117/5 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; D) 53 reports the largest value.",
+  "explanation": "Sort first, then average the two middle values. In order: 2, 3, 5, 18, 23, 26, 31, 33, 40, 53; the middle pair is 23 and 26, so the median is 49/2. Wrong choices: A) 117/5 gives the MEAN. Mean and median answer different questions and only agree on symmetric data; C) 51 gives the RANGE (largest minus smallest), a measure of spread, not of center; D) 53 reports the largest value.",
   "tags": [
    "act",
    "act-statistics",
@@ -50175,7 +50179,7 @@
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 4 + 3 + 2 = 9. So 2/9 = 2/9. Wrong choices: C) 2/7 divides by the marbles that are NOT yellow (7) instead of by all 9 — that is odds, not probability; D) 7/9 gives the probability of NOT drawing yellow.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 4 + 3 + 2 = 9. So the probability is 2/9. Wrong choices: C) 2/7 divides by the marbles that are NOT yellow (7) instead of by all 9 — that is odds, not probability; D) 7/9 gives the probability of NOT drawing yellow.",
   "tags": [
    "act",
    "act-statistics",
@@ -50202,26 +50206,26 @@
   "options": [
    {
     "label": "A",
-    "text": "5/14"
+    "text": "5/16"
    },
    {
     "label": "B",
-    "text": "25/64"
+    "text": "5/14"
    },
    {
     "label": "C",
-    "text": "4/7"
+    "text": "25/64"
    },
    {
     "label": "D",
-    "text": "67/56"
+    "text": "4/7"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 5/8. Second: only 4 of the red chips are left among 7. So 5/8 × 4/7 = 5/14. Wrong choices: B) 25/64 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 5/8. Second: only 4 of the red chips are left among 7. So 5/8 × 4/7 = 5/14. Wrong choices: A) 5/16 takes the chip out of the red count but not out of the total, so the second denominator stays 8; C) 25/64 treats the draws as WITH replacement, keeping both denominators at the original total; D) 4/7 gives the probability of just the second draw.",
   "tags": [
    "act",
    "act-statistics",
