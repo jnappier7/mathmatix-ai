@@ -233,4 +233,120 @@ function findValueReveal(reply, problems) {
     return null;
 }
 
-module.exports = { extractPosedEquations, findValueReveal, numberWords };
+// ── What the student already said ────────────────────────────────────────
+// A tutor cannot leak a value the student produced. "divide by 2 to get x=8"
+// answered with "Exactly — x = 8!" is a confirmation, but every check above
+// reads it as a reveal: the student's own steps ("2x+10=26", "2x=16") are
+// parsed as posed equations, all solved by 8, and the reply binds x to 8.
+// That false alarm swapped the confirmation for the canned "first step"
+// fallback, the student answered it with the last step again, and the tutor
+// restarted the proof from distribution — a loop a student reported in
+// 2026-10 after finishing an algebraic proof four times over.
+
+/** word → integer for spelled-out values in [-100, 100]. */
+const WORD_VALUES = (() => {
+    const map = new Map();
+    for (let n = -100; n <= 100; n++) {
+        for (const w of numberWords(n)) map.set(w, n);
+    }
+    return map;
+})();
+
+// The equation is nothing but the binding itself ("x = 8"). It names a value
+// rather than posing a problem, so it never proves the student solved one.
+const TRIVIAL_EQUATION = /^\s*(?:[a-z]\s*=\s*-?\d+(?:\.\d+)?|-?\d+(?:\.\d+)?\s*=\s*[a-z])\s*$/i;
+
+/** Every value `text` binds to `variable` ("x = 8", "x is eight"). */
+function boundValues(text, variable) {
+    const v = escapeRe(variable.toLowerCase());
+    const rx = new RegExp(
+        `(?<![a-z0-9.])${v}\\s*(?:=|is equal to|equals|is)\\s*` +
+        `(${NUM_LITERAL}${NOT_EXPR}${NOT_COMPARE}|[a-z]+(?:[- ][a-z]+)?)`, 'gi');
+    const out = [];
+    for (const m of cleanReply(text).matchAll(rx)) {
+        const raw = m[1].trim();
+        if (/^[a-z]/.test(raw)) {
+            // "x is the number we want" binds nothing; "x is twenty one" does.
+            const n = WORD_VALUES.get(raw) ?? WORD_VALUES.get(raw.split(/[- ]/)[0]);
+            if (n !== undefined) out.push(n);
+            continue;
+        }
+        const n = parseNumber(raw.replace(/\s+/g, '').replace(/^(?:±|\+\/-)/, ''));
+        if (n !== null) out.push(n);
+    }
+    return out;
+}
+
+/**
+ * Split the posed equations by what the student has already stated.
+ *
+ * A message credits a value only when EVERY value it binds to the variable
+ * solves the equation — "x = 1 or x = 8 or x = 20" fishing in one message
+ * credits nothing, and a wrong "x = 5" never credits the real equation.
+ *
+ * @param {ReturnType<typeof extractPosedEquations>} problems
+ * @param {string[]} studentMessages - the student's own recent messages
+ * @returns {{
+ *   open: ReturnType<typeof extractPosedEquations>,
+ *   answered: Array<{variable: string, values: number[], equation: string}>,
+ * }} `open` keeps only the values the student has NOT stated (what a reply
+ *   could still leak); `answered` lists real equations (not a bare "x = 8")
+ *   whose every value the student has stated.
+ */
+function creditStudentStatements(problems, studentMessages) {
+    if (!Array.isArray(problems) || problems.length === 0) return { open: [], answered: [] };
+    const messages = (studentMessages || []).filter((m) => typeof m === 'string' && m.trim());
+    const open = [];
+    const answered = [];
+    for (const p of problems) {
+        const credited = new Set();
+        for (const msg of messages) {
+            const bound = boundValues(msg, p.variable);
+            if (!bound.length) continue;
+            const hits = bound.map((b) => matchedValue(String(b), p.values));
+            if (hits.some((h) => h === null)) continue;
+            for (const h of hits) credited.add(h);
+        }
+        const remaining = p.values.filter((v) => !credited.has(v));
+        if (remaining.length) open.push({ ...p, values: remaining });
+        else if (!TRIVIAL_EQUATION.test(p.equation)) {
+            answered.push({ variable: p.variable, values: p.values, equation: p.equation });
+        }
+    }
+    return { open, answered };
+}
+
+/**
+ * Is the reply only restating an answer the student already gave? True when
+ * the student has stated the solution to a real equation they posed, and the
+ * reply binds that variable to nothing BUT those values. A reply that also
+ * names some other value ("…and for the next one x = 4") is not a restatement.
+ * Callers must still run findValueReveal on `open` — this only speaks for the
+ * values the student produced.
+ *
+ * @param {string} reply
+ * @param {ReturnType<typeof creditStudentStatements>['answered']} answered
+ * @returns {boolean}
+ */
+function restatesStudentAnswer(reply, answered) {
+    if (!reply || !Array.isArray(answered) || answered.length === 0) return false;
+    const byVar = new Map();
+    for (const a of answered) {
+        const key = a.variable.toLowerCase();
+        byVar.set(key, [...(byVar.get(key) || []), ...a.values]);
+    }
+    for (const [variable, known] of byVar) {
+        for (const b of boundValues(reply, variable)) {
+            if (matchedValue(String(b), known) === null) return false;
+        }
+    }
+    return true;
+}
+
+module.exports = {
+    extractPosedEquations,
+    findValueReveal,
+    numberWords,
+    creditStudentStatements,
+    restatesStudentAnswer,
+};

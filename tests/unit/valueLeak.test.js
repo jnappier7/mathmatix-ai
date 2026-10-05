@@ -6,12 +6,21 @@
  * Add each production false alarm or miss to the corpus, not just here.
  */
 
-const { extractPosedEquations, findValueReveal, numberWords } = require('../../utils/pipeline/valueLeak');
+const {
+    extractPosedEquations,
+    findValueReveal,
+    numberWords,
+    creditStudentStatements,
+    restatesStudentAnswer,
+} = require('../../utils/pipeline/valueLeak');
 const { cases } = require('../eval/valueLeak/corpus.json');
 
 describe('labelled corpus', () => {
     test.each(cases.map((c) => [c.id, c]))('%s', (_id, c) => {
-        const found = findValueReveal(c.reply, extractPosedEquations(c.student));
+        // Same path verify.js takes: values the student stated are credited first.
+        const messages = c.student.split('\n');
+        const { open } = creditStudentStatements(extractPosedEquations(c.student), messages);
+        const found = findValueReveal(c.reply, open);
         expect(!!found).toBe(c.leaks);
     });
 
@@ -90,5 +99,57 @@ describe('numberWords', () => {
         expect(numberWords(21)).toContain('twenty-one');
         expect(numberWords(-7)).toContain('negative seven');
         expect(numberWords(2.5)).toEqual([]);
+    });
+});
+
+describe('creditStudentStatements / restatesStudentAnswer', () => {
+    // Production 2026-10: a student finishing an algebraic proof. Every step
+    // they typed is itself an equation solved by 8, so confirming their own
+    // "x=8" was read as revealing it.
+    const proof = [
+        'divide by 2 to get x=8',
+        '5x+10-3x=26 distributive property',
+        '2x+10=26 combine like terms',
+        '-10 on both sides to get 2x=16 subtraction property of equality',
+    ];
+    const credit = (msgs) => creditStudentStatements(extractPosedEquations(msgs.join('\n')), msgs);
+
+    test('a value the student stated is no longer guarded', () => {
+        const { open, answered } = credit(proof);
+        expect(open.flatMap((p) => p.values)).not.toContain(8);
+        expect(answered.map((a) => a.equation)).toContain('2x+10=26');
+    });
+
+    test('a bare "x = 8" never counts as having solved a real equation', () => {
+        const { answered } = credit(['x=8']);
+        expect(answered).toEqual([]);
+    });
+
+    test('a wrong guess credits nothing on the real equation', () => {
+        const { open } = credit(['is it x=5?', 'solve 3x - 7 = 20']);
+        expect(open.find((p) => p.equation === '3x - 7 = 20').values).toEqual([9]);
+    });
+
+    test('several guesses in one message credit nothing', () => {
+        const { open, answered } = credit(['solve 3x - 7 = 20', 'x = 1 or x = 9 or x = 20']);
+        expect(open.find((p) => p.equation === '3x - 7 = 20').values).toEqual([9]);
+        expect(answered).toEqual([]);
+    });
+
+    test('a quadratic stays guarded until the student states every root', () => {
+        const half = credit(['solve x^2+x-6=0', 'x = 2']);
+        expect(half.open.find((p) => p.equation === 'x^2+x-6=0').values).toEqual([-3]);
+        expect(half.answered).toEqual([]);
+        const both = credit(['solve x^2+x-6=0', 'x = 2 and x = -3']);
+        expect(both.open.find((p) => p.equation === 'x^2+x-6=0')).toBeUndefined();
+        expect(both.answered.map((a) => a.equation)).toEqual(['x^2+x-6=0']);
+    });
+
+    test('restating the student\'s value is a restatement; naming another is not', () => {
+        const { answered } = credit(proof);
+        expect(restatesStudentAnswer('Exactly! So x = 8 and your proof is complete.', answered)).toBe(true);
+        expect(restatesStudentAnswer('Nice. Recap: 2x + 10 = 26, then 2x = 16, so x = 8.', answered)).toBe(true);
+        expect(restatesStudentAnswer('So x = 8. For the next one, x = 4.', answered)).toBe(false);
+        expect(restatesStudentAnswer('x = 8', [])).toBe(false);
     });
 });
