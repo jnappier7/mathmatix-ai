@@ -38,6 +38,7 @@
     "act:seed:ies": "node scripts/seedActIesItems.js",
     "act:validate:ies": "node seeds/act-ies-expansion/validate.js seeds/act-ies-expansion/ies-items.generated.json",
     "act:coverage": "node scripts/actTestCoverage.js",
+    "act:audit": "node scripts/actItemAudit.js",
     "alg1:ingest": "python3 scripts/ingestAlg1Items.py",
     "alg1:seed": "node scripts/seedAlg1Items.js --fresh",
     "alg1:audit": "python3 scripts/auditAlg1Items.py",

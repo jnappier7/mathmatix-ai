@@ -26,8 +26,8 @@
   'use strict';
 
   const CSS = `
-  .actt-overlay{position:fixed;inset:0;background:rgba(20,16,40,.55);backdrop-filter:blur(3px);z-index:10000;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding:16px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-  .actt-card{background:#fff;color:#1b1b2b;width:min(640px,100%);max-height:92vh;border-radius:16px;box-shadow:0 24px 70px rgba(30,20,70,.35);display:flex;flex-direction:column;overflow:hidden}
+  .actt-overlay{position:fixed;inset:0;background:rgba(20,16,40,.88);z-index:10000;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding:16px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  .actt-card{background:#fff;color:#1b1b2b;flex:1 1 600px;max-width:900px;height:100%;max-height:100%;border-radius:16px;box-shadow:0 24px 70px rgba(30,20,70,.35);display:flex;flex-direction:column;overflow:hidden}
   .actt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
   .actt-title{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
   .actt-timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:14px;background:rgba(255,255,255,.18);padding:4px 10px;border-radius:8px}
@@ -47,19 +47,21 @@
   .actt-opt.sel{border-color:#764ba2;background:#f3efff;box-shadow:0 0 0 3px rgba(118,75,162,.12)}
   .actt-optlab{flex:0 0 26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:#ece9f5;color:#555}
   .actt-opt.sel .actt-optlab{background:#764ba2;color:#fff}
-  .actt-foot{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid #eee}
+  .actt-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid #eee;margin-top:auto}
+  .actt-nw{white-space:nowrap}
   .actt-btn{appearance:none;border:0;border-radius:10px;padding:11px 20px;font-weight:600;font-size:14px;cursor:pointer}
   .actt-next{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
   .actt-next:disabled{opacity:.5;cursor:not-allowed}
   .actt-skip{background:#f1f0f7;color:#666}
   .actt-skip:disabled{opacity:.45;cursor:not-allowed}
   .actt-flagbtn.on{background:#fdeaea;color:#c0392b}
-  .actt-pal{display:none;flex-wrap:wrap;gap:6px;padding:12px 18px 2px;max-height:132px;overflow-y:auto}
+  .actt-pal{display:none;flex-wrap:wrap;gap:6px;padding:12px 18px 2px;flex:0 0 auto}
   .actt-pal.open{display:flex}
   .actt-cell{position:relative;width:36px;height:32px;border:2px solid #e7e4f1;border-radius:8px;background:#fff;font-size:12px;font-weight:700;color:#666;cursor:pointer;padding:0}
   .actt-cell.ans{background:#f3efff;border-color:#a58fd8;color:#4d3577}
   .actt-cell.cur{border-color:#764ba2;box-shadow:0 0 0 3px rgba(118,75,162,.25)}
-  .actt-cell.flag::after{content:"⚑";position:absolute;top:-8px;right:-4px;font-size:11px;color:#e5484d}
+  .actt-cell.flag{border-color:#e5484d}
+  .actt-cell.flag::after{content:"⚑";position:absolute;top:-9px;right:-7px;font-size:13px;line-height:16px;width:16px;height:16px;border-radius:50%;background:#fff;color:#e5484d;box-shadow:0 0 0 1px #f3c4c5}
   .actt-legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:#888;margin:10px 0 2px}
   .actt-center{padding:40px 18px;text-align:center;color:#555}
   .actt-score{font-size:64px;font-weight:800;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
@@ -113,7 +115,12 @@
     .actt-lockh{color:#ece9f7}.actt-lockp,.actt-cta2{color:#b7b3cc}.actt-cta2 a{color:#b9a6ff}
   }
   @media (max-width:700px){
-    .actt-card{order:1}
+    /* The test takes the whole phone screen: edge to edge, no rounded card. */
+    .actt-overlay{padding:0}
+    .actt-card{order:1;border-radius:0;max-width:none}
+    .actt-foot{padding:10px 12px;gap:6px}
+    .actt-foot .actt-btn{padding:9px 12px;font-size:13px}
+    .actt-foot-spacer{display:none}
     /* A figure must not push the answer choices below the fold: on a phone
        only two of four choices were visible on figure items, and the correct
        one needed a scroll to exist (owner report, 2026-09-09). Cap the figure
@@ -199,7 +206,7 @@
             <span class="actt-title">📐 ACT Math Practice Test</span>
             <span style="display:flex;align-items:center;gap:10px">
               <button class="actt-x" id="actt-calc" aria-label="Calculator" title="Calculator (allowed on the ACT)" style="display:none;font-size:14px;font-weight:600;padding:2px 8px;border:1px solid rgba(255,255,255,.5);border-radius:8px">Calc</button>
-              <span class="actt-timer" id="actt-timer">60:00</span>
+              <span class="actt-timer" id="actt-timer" role="timer" aria-label="Time remaining"></span>
               <button class="actt-x" id="actt-close" aria-label="Close">×</button>
             </span>
           </div>
@@ -207,13 +214,13 @@
             <div class="actt-progrow"><span id="actt-qnum"></span><span id="actt-qpct"></span></div>
             <div class="actt-bar"><div class="actt-fill" id="actt-fill"></div></div>
           </div>
-          <div class="actt-pal" id="actt-pal"></div>
+          <div class="actt-pal" id="actt-pal" role="group" aria-label="Questions"></div>
           <div class="actt-body" id="actt-body"></div>
           <div class="actt-foot" id="actt-foot" style="display:none">
             <button class="actt-btn actt-skip" id="actt-back">◀ Back</button>
-            <button class="actt-btn actt-skip actt-flagbtn" id="actt-flag" title="Flag this question to come back to it">🚩 Flag</button>
-            <span style="flex:1"></span>
-            <button class="actt-btn actt-skip" id="actt-map" title="Jump to any question">Questions</button>
+            <button class="actt-btn actt-skip actt-flagbtn" id="actt-flag" aria-pressed="false" title="Flag this question to come back to it">🚩 Flag</button>
+            <span class="actt-foot-spacer" style="flex:1"></span>
+            <button class="actt-btn actt-skip" id="actt-map" aria-expanded="false" aria-controls="actt-pal" title="Jump to any question">Questions</button>
             <button class="actt-btn actt-next" id="actt-next">Next ▶</button>
           </div>
         </div>
@@ -222,7 +229,10 @@
       this.overlay.querySelector('#actt-close').addEventListener('click', () => this.close());
       this.overlay.querySelector('#actt-back').addEventListener('click', () => this.goTo(this.pos - 1));
       this.overlay.querySelector('#actt-flag').addEventListener('click', () => this.toggleFlag());
-      this.overlay.querySelector('#actt-map').addEventListener('click', () => this.el('actt-pal').classList.toggle('open'));
+      this.overlay.querySelector('#actt-map').addEventListener('click', () => {
+        const open = this.el('actt-pal').classList.toggle('open');
+        this.el('actt-map').setAttribute('aria-expanded', String(open));
+      });
       this.overlay.querySelector('#actt-next').addEventListener('click', () => {
         if (this.pos >= this.total) this.showReview(); else this.goTo(this.pos + 1);
       });
@@ -255,7 +265,7 @@
     // baseline would post an inflated score and mis-target the whole bootcamp.
     async open() {
       this._mount();
-      this.overlay.style.display = 'flex';
+      this._show();
       this.el('actt-timer').style.display = 'none';    // no clock on the intro
       this.el('actt-calc').style.display = 'none';     // calc appears with the test
       this.el('actt-foot').style.display = 'none';
@@ -338,20 +348,48 @@
           : (data.timeLimitMinutes || 50) * 60;
         this._buildPalette();
         if (data.resumed && remainSecs <= 0) return this.complete();
+        // The deadline is the server's (startedAt + limit); the display starts
+        // once the first question is on screen, so the student never watches
+        // a clock tick over a loading message.
         this.deadline = Date.now() + remainSecs * 1000;
-        this._startTimer();
         this.el('actt-progwrap').style.display = '';
         this.el('actt-foot').style.display = 'flex';
         await this.goTo(startPos);
+        this._startTimer();
       } catch (e) {
         this.el('actt-body').innerHTML = `<div class="actt-err">${e.message || 'Something went wrong.'}</div>`;
       }
+    }
+
+    // Open the overlay and take the page behind it out of reach: `inert` keeps
+    // keyboard focus and screen readers inside the test, which aria-modal
+    // alone does not do in every browser.
+    _show() {
+      this.overlay.style.display = 'flex';
+      this._inerted = [];
+      Array.prototype.forEach.call(document.body.children, (el) => {
+        if (el !== this.overlay && !el.inert && el.tagName !== 'SCRIPT') {
+          el.inert = true;
+          this._inerted.push(el);
+        }
+      });
+      const card = this.overlay.querySelector('.actt-card');
+      if (card && !card.contains(document.activeElement)) {
+        card.setAttribute('tabindex', '-1');
+        card.focus({ preventScroll: true });
+      }
+    }
+
+    _releaseInert() {
+      (this._inerted || []).forEach((el) => { el.inert = false; });
+      this._inerted = [];
     }
 
     close() {
       this._stopTimer();
       this._hideCalc();
       if (this.overlay) this.overlay.style.display = 'none';
+      this._releaseInert();
       // If this was a completed baseline, let the course begin teaching now —
       // adapted to the results. Guarded by _completed so cancelling the test
       // (the X, or closing before finishing) never starts the course early.
@@ -424,7 +462,7 @@
       const evenLab = { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' };
       const disp = (lab) => (this.pos % 2 === 0 ? (evenLab[lab] || lab) : lab);
       const opts = (p.options || []).map(o =>
-        `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}"><span class="actt-optlab">${disp(o.label)}</span><span>${escapeHtml(o.text)}</span></button>`
+        `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}" role="radio" aria-checked="${o.label === this.selected}" aria-label="Choice ${disp(o.label)}: ${escapeHtml(o.text)}"><span class="actt-optlab" aria-hidden="true">${disp(o.label)}</span><span>${keepMath(escapeHtml(o.text))}</span></button>`
       ).join('');
       // Figure is our own generated SVG (from the item bank), not user input.
       // Guard: only render a bare <svg> with no scripts.
@@ -434,11 +472,17 @@
       // way a printed ACT lays them out — with a figure above, four stacked
       // rows pushed the last choices below the fold.
       const shortChoices = (p.options || []).length > 0 && (p.options || []).every((o) => String(o.text || '').length <= 12);
-      this.el('actt-body').innerHTML = `${fig}<div class="actt-q">${escapeHtml(p.content || '')}</div><div class="actt-opts${shortChoices ? ' actt-opts--grid' : ''}">${opts}</div>`;
+      // The figure goes AFTER the stem: items say "in the figure below", and
+      // rendering it above contradicted every one of them.
+      this.el('actt-body').innerHTML = `<div class="actt-q" id="actt-qtext">${keepMath(escapeHtml(p.content || ''))}</div>${fig}<div class="actt-opts${shortChoices ? ' actt-opts--grid' : ''}" role="radiogroup" aria-labelledby="actt-qtext">${opts}</div>`;
+      this._labelFigure();
       this.el('actt-body').querySelectorAll('.actt-opt').forEach(btn => {
         btn.addEventListener('click', () => {
           this.selected = btn.getAttribute('data-label');
-          this.el('actt-body').querySelectorAll('.actt-opt').forEach(b => b.classList.toggle('sel', b === btn));
+          this.el('actt-body').querySelectorAll('.actt-opt').forEach(b => {
+            b.classList.toggle('sel', b === btn);
+            b.setAttribute('aria-checked', String(b === btn));
+          });
           const st = this.state.get(this.pos) || {};
           st.answer = this.selected;
           // Per-question change counter. Saves are fire-and-forget, so two can
@@ -491,11 +535,28 @@
       this._syncPalette();
     }
 
+    // A figure is an inline SVG with no text alternative. Give it one: the
+    // item's own <title>/<desc> when it has them, else the labels drawn in it,
+    // so a screen-reader user at least hears "Labels: A, B, C, 116°, x°".
+    _labelFigure() {
+      const svg = this.el('actt-body').querySelector('.actt-fig svg');
+      if (!svg) return;
+      const own = svg.querySelector('title, desc');
+      let label = own && own.textContent.trim();
+      if (!label) {
+        const parts = Array.prototype.map.call(svg.querySelectorAll('text'), (t) => t.textContent.trim()).filter(Boolean);
+        label = parts.length ? `Figure. Labels: ${parts.join(', ')}` : 'Figure for this question';
+      }
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', label);
+    }
+
     _syncFlagBtn() {
       const st = this.state.get(this.pos) || {};
       const btn = this.el('actt-flag');
       if (btn) {
         btn.classList.toggle('on', !!st.flagged);
+        btn.setAttribute('aria-pressed', String(!!st.flagged));
         btn.textContent = st.flagged ? '🚩 Flagged' : '🚩 Flag';
       }
     }
@@ -508,7 +569,13 @@
       for (let i = 1; i <= this.total; i++) cells += `<button class="actt-cell" data-pos="${i}">${i}</button>`;
       pal.innerHTML = cells;
       pal.querySelectorAll('.actt-cell').forEach((c) => {
-        c.addEventListener('click', () => this.goTo(parseInt(c.getAttribute('data-pos'), 10)));
+        // Picking a question closes the list, like the real ACT's: left open,
+        // it pushed choices C and D below the fold on figure items.
+        c.addEventListener('click', () => {
+          pal.classList.remove('open');
+          this.el('actt-map').setAttribute('aria-expanded', 'false');
+          this.goTo(parseInt(c.getAttribute('data-pos'), 10));
+        });
       });
       this._syncPalette();
     }
@@ -519,9 +586,12 @@
         root.querySelectorAll('.actt-cell').forEach((c) => {
           const pos = parseInt(c.getAttribute('data-pos'), 10);
           const st = this.state.get(pos) || {};
-          c.classList.toggle('ans', st.answer != null || !!st.answered);
+          const answered = st.answer != null || !!st.answered;
+          c.classList.toggle('ans', answered);
           c.classList.toggle('flag', !!st.flagged);
           c.classList.toggle('cur', pos === this.pos);
+          c.setAttribute('aria-label', `Question ${pos}, ${answered ? 'answered' : 'not answered'}${st.flagged ? ', flagged' : ''}`);
+          if (pos === this.pos) c.setAttribute('aria-current', 'step'); else c.removeAttribute('aria-current');
         });
       };
       paint(this.el('actt-pal'));
@@ -537,6 +607,7 @@
       let cells = '';
       for (let i = 1; i <= this.total; i++) cells += `<button class="actt-cell" data-pos="${i}">${i}</button>`;
       this.el('actt-foot').style.display = 'none';
+      this.el('actt-progwrap').style.display = 'none';
       this.el('actt-pal').classList.remove('open');
       this.el('actt-body').innerHTML = `
         <div class="actt-center" style="padding:14px 4px 4px">
@@ -714,7 +785,7 @@
       const g = readGuest();
       if (!g || !g.sessionId) return this.open();
       this._mount();
-      this.overlay.style.display = 'flex';
+      this._show();
       this.el('actt-timer').style.display = 'none';
       this.el('actt-calc').style.display = 'none';
       this.el('actt-progwrap').style.display = 'none';
@@ -765,7 +836,7 @@
       const r = data.report || {};
       this._mount();
       this._stopTimer();
-      this.overlay.style.display = 'flex';
+      this._show();
       this.el('actt-timer').style.display = 'none';
       this.el('actt-calc').style.display = 'none';
       this.el('actt-progwrap').style.display = 'none';
@@ -881,7 +952,7 @@
     async showProgress() {
       this._mount();
       this._stopTimer();
-      this.overlay.style.display = 'flex';
+      this._show();
       this.el('actt-timer').style.display = 'none';   // no test running here
       this.el('actt-progwrap').style.display = 'none';
       this.el('actt-foot').style.display = 'none';
@@ -1000,6 +1071,13 @@
         </div>${backBtns(reportFromAttempt(latest).weakSkills.length ? reportFromAttempt(latest) : null)}`;
       wire(reportFromAttempt(latest).weakSkills.length ? reportFromAttempt(latest) : null);
     }
+  }
+
+  // Keep a short parenthesized expression — (x − 4)², (2, −3) — on one line
+  // instead of breaking it mid-expression on a narrow screen. Runs on
+  // already-escaped text, so it only ever adds a span.
+  function keepMath(html) {
+    return String(html).replace(/\([^()<>]{1,24}\)(?:[²³]|\^\d+)?/g, '<span class="actt-nw">$&</span>');
   }
 
   function escapeHtml(s) {
