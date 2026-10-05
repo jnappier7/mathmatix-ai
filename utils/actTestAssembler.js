@@ -23,6 +23,7 @@
 
 const DEFAULT_BLUEPRINT = require('../seeds/act-math-blueprint.json');
 const { normalizeOptions } = require('./mcOptions');
+const { hasBadDistractors } = require('./distractorQuality');
 // models/problem (mongoose) is required lazily inside assembleForm so the pure
 // helpers (buildSlots / skillPool / rawToScaled) load without a DB connection.
 
@@ -69,7 +70,11 @@ async function drawPool(Problem, query, rng, size) {
   const ids = shuffleInPlace(lite, rng).slice(0, size).map((d) => d._id);
   const docs = await Problem.find({ _id: { $in: ids } }).lean();
   const byId = new Map(docs.map((d) => [String(d._id), d]));
-  return ids.map((id) => byId.get(String(id))).filter(Boolean);
+  // Never serve an item whose choices give the answer away or are broken
+  // (equal-valued choices, duplicates, placeholders, an odd-type key) — the
+  // same gate the Starting Point screener applies. scripts/actItemAudit.js
+  // lists them for repair in the bank.
+  return ids.map((id) => byId.get(String(id))).filter((d) => d && !hasBadDistractors(d));
 }
 
 function hashSeed(str) {
@@ -297,7 +302,7 @@ async function assembleForm(opts = {}) {
       if (!candidates.length) {
         // Widen: any difficulty for this skill, still excluding used items.
         const p = await Problem.findNearDifficulty(slot.skillId, center, usedProblemIds, { preferMultipleChoice: true });
-        candidates = p ? [p] : [];
+        candidates = p && !hasBadDistractors(p) ? [p] : [];
       }
       if (!candidates.length) {
         // Same-category fallback: a thin sub-skill can be asked for more times
