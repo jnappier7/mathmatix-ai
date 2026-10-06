@@ -16,6 +16,16 @@
  *      fallback path replaces partial content cleanly.
  */
 
+// This file tests the Work Board itself, which is OFF by default
+// (WORK_BOARD, utils/featureFlags.js). Opt in for this file only, and restore,
+// because process.env is shared with other test files in the same worker.
+const ORIGINAL_WORK_BOARD = process.env.WORK_BOARD;
+process.env.WORK_BOARD = 'on';
+afterAll(() => {
+  if (ORIGINAL_WORK_BOARD === undefined) delete process.env.WORK_BOARD;
+  else process.env.WORK_BOARD = ORIGINAL_WORK_BOARD;
+});
+
 jest.mock('../../utils/llmGateway', () => ({
   callLLM: jest.fn(),
   callLLMStream: jest.fn(),

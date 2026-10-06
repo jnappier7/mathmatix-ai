@@ -1,0 +1,123 @@
+{
+  "_about": "Production 2026-10-05: one problem, 5(x+2) - 3x = 26 => x = 8, sealed as five cards. `observedLedger` is conversation.boardLedger exactly as prod persisted it (math only; no student text). `turns` reconstructs the board commands each turn handed to the guard, derived from that ledger's steps in order. Messages are minimal stand-ins carrying only what the pedagogy guard needs to see (the stated line / the operation word) - not the student's words. `workedExample` marks turns that ran in worked-example mode.",
+  "problem": "5(x+2) - 3x = 26",
+  "turns": [
+    { "message": "can you help me with 5(x+2) - 3x = 26", "workedExample": true,
+      "commands": [
+        { "action": "pose", "tex": "5(x+2) - 3x = 26" },
+        { "action": "example", "tex": "5(x+2) - 3x = 26" },
+        { "action": "example", "tex": "x = 8" }
+      ] },
+    { "message": "combine like terms 2x+10 = 26",
+      "commands": [
+        { "action": "apply", "op": "combine like terms" },
+        { "action": "resolve", "tex": "2x+10 = 26" },
+        { "action": "verify", "tex": "2x + 10 = 26", "check": "2x + 10 = 26" }
+      ] },
+    { "message": "-10 on both sides 2x = 16",
+      "commands": [
+        { "action": "pose", "tex": "2x = 16" },
+        { "action": "apply", "op": "-10 on both sides" },
+        { "action": "resolve", "tex": "2x = 16" }
+      ] },
+    { "message": "ok",
+      "commands": [
+        { "action": "clear" },
+        { "action": "pose", "tex": "2x + 10 = 26" }
+      ] },
+    { "message": "subtract 10 from both sides 2x = 16",
+      "commands": [
+        { "action": "apply", "op": "subtract 10 from both sides" },
+        { "action": "resolve", "tex": "2x = 16" }
+      ] },
+    { "message": "divide by 2 x = 8",
+      "commands": [
+        { "action": "apply", "op": "divide by 2" },
+        { "action": "verify", "tex": "x = 8" }
+      ] },
+    { "message": "distribute?",
+      "commands": [
+        { "action": "apply", "op": "distribute 5 across the terms in the parentheses" },
+        { "action": "scaffold", "tex": "5(x) + 5(2) - 3x = \\boxed{}" }
+      ] },
+    { "message": "5x + 10 - 3x = 26",
+      "commands": [
+        { "action": "pose", "tex": "5x + 10 - 3x = 26" }
+      ] },
+    { "message": "2x+10 = 26",
+      "commands": [
+        { "action": "resolve", "tex": "2x+10 = 26" }
+      ] },
+    { "message": "subtract 10 from both sides 2x = 16",
+      "commands": [
+        { "action": "apply", "op": "subtract 10 from both sides" },
+        { "action": "resolve", "tex": "2x = 16" }
+      ] },
+    { "message": "ok",
+      "commands": [
+        { "action": "clear" },
+        { "action": "pose", "tex": "5(x + 2) - 3x = 26" }
+      ] },
+    { "message": "2x+10 = 26 and 2(8) + 10 = 26",
+      "commands": [
+        { "action": "resolve", "tex": "2x+10 = 26" },
+        { "action": "verify", "tex": "2x + 10 = 26", "check": "2(8) + 10 = 26" }
+      ] },
+    { "message": "-10 on both sides 2x = 16",
+      "commands": [
+        { "action": "pose", "tex": "2x = 16" },
+        { "action": "apply", "op": "-10 on both sides" },
+        { "action": "resolve", "tex": "2x = 16" }
+      ] },
+    { "message": "x = 8",
+      "commands": [
+        { "action": "verify", "tex": "x = 8" }
+      ] }
+  ],
+  "observedLedger": {
+    "current": {
+      "problemTex": "2x = 16",
+      "steps": [
+        { "action": "apply", "op": "-10 on both sides" },
+        { "action": "resolve", "tex": "2x = 16" },
+        { "action": "verify", "tex": "x = 8" }
+      ],
+      "assistance": 2
+    },
+    "completed": [
+      { "problemTex": "5(x+2) - 3x = 26", "solved": true, "assistance": 8, "completedAt": "2026-10-05T15:11:06.434Z",
+        "steps": [
+          { "action": "example", "tex": "5(x+2) - 3x = 26" },
+          { "action": "example", "tex": "x = 8" },
+          { "action": "apply", "op": "combine like terms" },
+          { "action": "resolve", "tex": "2x+10 = 26" },
+          { "action": "verify", "tex": "2x + 10 = 26", "check": "2x + 10 = 26" }
+        ] },
+      { "problemTex": "2x = 16", "solved": false, "assistance": 2, "completedAt": "2026-10-05T15:12:28.616Z",
+        "steps": [
+          { "action": "apply", "op": "-10 on both sides" },
+          { "action": "resolve", "tex": "2x = 16" }
+        ] },
+      { "problemTex": "2x + 10 = 26", "solved": true, "assistance": 7, "completedAt": "2026-10-05T15:16:22.184Z",
+        "steps": [
+          { "action": "apply", "op": "subtract 10 from both sides" },
+          { "action": "resolve", "tex": "2x = 16" },
+          { "action": "apply", "op": "divide by 2" },
+          { "action": "verify", "tex": "x = 8" },
+          { "action": "apply", "op": "distribute 5 across the terms in the parentheses" },
+          { "action": "scaffold", "tex": "5(x) + 5(2) - 3x = \\boxed{}" }
+        ] },
+      { "problemTex": "5x + 10 - 3x = 26", "solved": false, "assistance": 2, "completedAt": "2026-10-05T15:18:52.446Z",
+        "steps": [
+          { "action": "resolve", "tex": "2x+10 = 26" },
+          { "action": "apply", "op": "subtract 10 from both sides" },
+          { "action": "resolve", "tex": "2x = 16" }
+        ] },
+      { "problemTex": "5(x + 2) - 3x = 26", "solved": true, "assistance": 2, "completedAt": "2026-10-05T15:20:54.564Z",
+        "steps": [
+          { "action": "resolve", "tex": "2x+10 = 26" },
+          { "action": "verify", "tex": "2x + 10 = 26", "check": "2(8) + 10 = 26" }
+        ] }
+    ]
+  }
+}

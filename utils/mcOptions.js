@@ -142,6 +142,42 @@ function correctLabelOf(problem) {
   return pos !== -1 && pos < stored.length ? LABELS[pos] : null;
 }
 
+/**
+ * Carry a picked letter from one copy of an item's choices to another, by the
+ * choice's TEXT. A test freezes its items' choices when it is assembled; the
+ * bank can later reorder them (scripts/sortActNumericChoices.js put 120 items'
+ * numeric choices in ascending order). Grading a frozen pick against the
+ * reordered bank by letter would mark the wrong choice, so the letter is
+ * translated first. Returns null when the text is not found in `to`.
+ */
+function relabelByText(label, from, to) {
+  const a = normalizeOptions(from);
+  const b = normalizeOptions(to);
+  const i = LABELS.indexOf(String(label == null ? '' : label).trim().toUpperCase());
+  if (i < 0 || i >= a.length) return null;
+  const want = String(a[i].text).trim();
+  const j = b.findIndex((o) => String(o.text).trim() === want);
+  return j >= 0 ? LABELS[j] : null;
+}
+
+/**
+ * What to hand problem.checkAnswer() for a pick made on a test's FROZEN
+ * choices. The bank letter when the picked text is still in the bank (the bank
+ * may only have reordered it). Otherwise the choice was edited after the test
+ * was built, and its old letter would now name whatever moved into that slot —
+ * a replaced distractor's letter can be the new key's — so grade the picked
+ * TEXT instead: right only if it is the key's value or a stored equivalent.
+ * With no frozen choices (legacy sessions) the pick already is a bank letter.
+ */
+function frozenPickForGrading(pick, frozenOptions, bankOptions) {
+  const label = relabelByText(pick, frozenOptions, bankOptions);
+  if (label) return label;
+  const frozen = normalizeOptions(frozenOptions);
+  const i = LABELS.indexOf(String(pick == null ? '' : pick).trim().toUpperCase());
+  if (frozen.length && i >= 0 && i < frozen.length) return String(frozen[i].text).trim();
+  return pick;
+}
+
 // The real ACT alternates answer letters by question number: odd questions are
 // lettered A–D(–E), even questions F–G–H–J(–K) — no "I". Storage, the wire
 // protocol, and grading all stay on positional A–D; this alias is applied ONLY
@@ -156,4 +192,4 @@ function actDisplayLabel(position, label) {
   return ACT_EVEN_LABELS[String(label || '').toUpperCase()] || label;
 }
 
-module.exports = { LABELS, optionText, storedLabel, normalizeOptions, resolveChoice, correctLabelOf, actDisplayLabel };
+module.exports = { LABELS, optionText, storedLabel, normalizeOptions, resolveChoice, correctLabelOf, relabelByText, frozenPickForGrading, actDisplayLabel };

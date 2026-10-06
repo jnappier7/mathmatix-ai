@@ -16,6 +16,8 @@
 
 'use strict';
 
+const { residualRatio, scaffoldBlankIsGiven } = require('./pipeline/boardContinuity');
+
 // Verbs that map to allowed `apply` operations. Match fuzzy: we only
 // need ONE of these words to appear in the student's recent message
 // somewhere near the tag's `op` string.
@@ -151,6 +153,13 @@ function texHasBlank(tex) {
     return false;
 }
 
+// A side of an equation that is NOTHING but one blank ("\\boxed{}").
+function isWholeBlank(side) {
+    const t = String(side || '').trim();
+    return /^\\boxed\s*\{\s*(?:\\(?:[;,:!\s]|quad|qquad)\s*)*\}$/.test(t)
+        || /^\\square$/.test(t) || /^_{3,}$/.test(t) || /^(?:\\_){3,}$/.test(t);
+}
+
 /**
  * Enforce the #1-rule guard on a parsed list of board commands.
  *
@@ -270,6 +279,11 @@ function enforcePedagogyRule({
     pinnedProblemTex = null,
     pinnedAnswer = null,
     tutorReplyText = null,
+    // The problem the card in focus holds (conversation.boardLedger.current).
+    // Survives a verify, which drops the pin — a restart scaffold arriving
+    // after the answer must still be judged against the problem it restates.
+    // Used only by the scaffold-blank and example checks.
+    focusProblemTex = null,
 } = {}) {
     const allowed = [];
     const dropped = [];
@@ -293,6 +307,13 @@ function enforcePedagogyRule({
     // so a `pose` followed by an immediate `apply` in the same response
     // is judged against the student's message, not the in-batch pose.
     let runningLastAction = lastBoardActionInConversation;
+    // The problem the student is answering once this batch lands: the newest
+    // pose in the batch, else the pin. A posed problem IS the graded problem
+    // (the PROBLEM card and the grading pin both follow it), so an example
+    // card deriving it is a solve — even on the turn it is posed, when the pin
+    // is still empty (production 2026-10-05: the pose turn carried example
+    // cards "5(x+2) - 3x = 26" and "x = 8", the answer above the first step).
+    let activeProblemTex = pinnedProblemTex || focusProblemTex;
 
     for (let i = 0; i < commands.length; i++) {
         const original = commands[i];
@@ -318,12 +339,24 @@ function enforcePedagogyRule({
             pinnedProblemTex,
             pinnedAnswer,
             tutorReplyText,
+            activeProblemTex,
         });
 
         if (decision.allowed) {
             allowed.push(command);
+            if (command.action === 'pose' && command.tex) activeProblemTex = command.tex;
         } else {
             dropped.push({ command, reason: decision.reason });
+            // An apply that only introduced this scaffold ("distribute 5 …"
+            // over "5(x) + 5(2) - 3x = \boxed{}") names a move the board no
+            // longer asks for. Alone it renders as a stray label — after the
+            // answer, in production 2026-10-05 — and on a reload it glues onto
+            // the next turn's line instead. It goes with its scaffold.
+            const prev = allowed[allowed.length - 1];
+            if (command.action === 'scaffold' && prev && prev.action === 'apply'
+                    && commands[i - 1] && commands[i - 1].action === 'apply') {
+                dropped.push({ command: allowed.pop(), reason: 'apply_orphaned_by_scaffold' });
+            }
         }
         runningLastAction = command.action;
     }
@@ -413,7 +446,13 @@ function evaluate(command, ctx) {
         if (!ctx.workedExample) {
             return { allowed: false, reason: 'example_outside_worked_example_mode' };
         }
-        if (revealsPinnedProblem(command.tex, ctx)) {
+        const active = { ...ctx, pinnedProblemTex: ctx.activeProblemTex || ctx.pinnedProblemTex };
+        if (revealsPinnedProblem(command.tex, active)) {
+            return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+        }
+        // Any line equivalent to the active problem — "x = 8" for
+        // 5(x+2) - 3x = 26 — is a step of solving it, worded or not.
+        if (active.pinnedProblemTex && residualRatio(active.pinnedProblemTex, command.tex) !== null) {
             return { allowed: false, reason: 'worked_example_reveals_active_problem' };
         }
         return { allowed: true, reason: 'worked_example_step' };
@@ -466,6 +505,13 @@ function evaluate(command, ctx) {
         // (missing-factor problems: "what times 0.3 gives 300?").
         if (scaffoldShowsUnstatedResult(command.tex, ctx)) {
             return { allowed: false, reason: 'scaffold_reveals_unstated_result' };
+        }
+        // A blank whose only consistent value is a number the problem already
+        // gives — "5(x) + 5(2) - 3x = \\boxed{}" under 5(x+2) - 3x = 26 —
+        // quizzes the student on copying the 26, and the filled-in "26" then
+        // reads to the tutor like a worked step (production 2026-10-05).
+        if (scaffoldBlankIsGiven(command.tex, ctx.activeProblemTex || ctx.pinnedProblemTex, isWholeBlank)) {
+            return { allowed: false, reason: 'scaffold_blank_is_given' };
         }
         return { allowed: true };
     }
@@ -526,6 +572,7 @@ module.exports = {
     opMatchesStudentText,
     hasStartOverIntent,
     texHasBlank,
+    isWholeBlank,
     cleanField,
     sanitizeCommand,
 };

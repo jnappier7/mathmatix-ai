@@ -48,7 +48,7 @@ const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 const { generateSuggestions } = require('./suggestions');
 const { assembleEvidence } = require('./evidenceAccumulator');
-const { applyTurnToLedger } = require('./boardLedger');
+const { settleBoardTurn } = require('./boardSettle');
 const { assistanceLevelForTurn } = require('./assistanceLadder');
 const { buildBoardStateBlock } = require('./boardStateBlock');
 
@@ -69,11 +69,11 @@ const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../s
 const { parseBoardTags } = require('../boardTagParser');
 const { stripInternalTags, hasInternalTags, stripOrphanMathDelims } = require('../internalTagSanitizer');
 const { parseBoardJsonCommands } = require('../boardJsonParser');
-const { enforcePedagogyRule } = require('../boardCommandGuard');
+const { enforcePedagogyRule, hasStartOverIntent } = require('../boardCommandGuard');
 const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, dropScratchFragmentPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeTilesTab, synthesizeAutoClear, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeTilesTab, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
 const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
 const { gateInlineGraphTags, containsInlineGraphTag } = require('./inlineGraphGate');
@@ -905,6 +905,7 @@ async function runPipeline(message, ctx) {
       // the graded problem instead of a parallel one).
       pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
       pinnedAnswer: diagnosis.correctAnswer || null,
+      focusProblemTex: ctx.conversation?.boardLedger?.current?.problemTex || null,
       // Lets the scaffold guard tell a legit missing-factor card (result
       // stated in this very reply) from a backwards one that leaks it.
       tutorReplyText: verified.text || null,
@@ -1018,7 +1019,7 @@ async function runPipeline(message, ctx) {
   // final answer. Keep the pin; drop the echo.
   {
     const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
-    const { kept, dropped } = dropRedundantPoses(verified.boardCommands, pinnedTex);
+    const { kept, dropped } = dropRedundantPoses(verified.boardCommands, pinnedTex, { startOver: hasStartOverIntent(message) });
     if (dropped.length > 0) {
       verified.boardCommands = kept;
       boardLogger.info('Dropped redundant pose(s)', {
@@ -1055,7 +1056,14 @@ async function runPipeline(message, ctx) {
         recentUserMessages: recentUserMessagesForBoard,
         lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
         workedExample: workedExampleBoard,
-        pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
+        // "No pin" is read BEFORE this turn's pose, so on the turn a problem is
+        // posed the backfill took the tutor's own math spans for a free
+        // derivation and mirrored the problem and its answer as example cards
+        // (2026-10-05: "5(x+2) - 3x = 26", then "x = 8" above the first step).
+        // The problem posed this turn is the one the backstop protects.
+        pinnedProblemTex: ctx.conversation?.boardProblem?.tex
+          || (verified.boardCommands.find(c => c.action === 'pose' && c.tex) || {}).tex
+          || null,
         pinnedAnswer: diagnosis.correctAnswer || null,
       });
       if (workedGuard.allowed.length > 0) {
@@ -1397,92 +1405,69 @@ async function runPipeline(message, ctx) {
     }
   }
 
-  // ── Stage 5c.1b: SCRATCH-FRAGMENT POSE GUARD ──
-  // All pose sources have spoken. A pose whose tex is a line of the student's
-  // own working — arithmetic their message states as one side of an equation
-  // ("3x = 11 - 7 = 4" → pose "11 - 7") — is never the problem, whoever
-  // emitted it. The pedagogy guard allows `pose` unconditionally, so this is
-  // the one place that rule is enforced. Production, 2026-09-09: that exact
-  // pose replaced the PROBLEM card and the grading pin, and the student's
-  // sign error was certified correct twice (with XP) against 11 - 7 = 4.
-  if (verified.boardCommands.some(c => c.action === 'pose')) {
-    const { kept, dropped } = dropScratchFragmentPoses(verified.boardCommands, message);
-    if (dropped.length > 0) {
-      verified.boardCommands = kept;
-      boardLogger.warn('Dropped scratch-fragment pose(s)', {
-        dropped: dropped.map(c => ({ action: c.action, tex: c.tex || null })),
-        pinnedTex: ctx.conversation?.boardProblem?.tex || null,
-      });
-    }
-  }
-
-  // ── Stage 5c.2: AUTO-CLEAR ON NEW PROBLEM ──
-  // All pose sources are final now. If this turn poses a genuinely NEW
-  // problem while an older one is pinned, prepend the `clear` the model
-  // should have emitted — otherwise the previous problem's cards (including
-  // interactive tools) stay stacked above the new work.
-  {
-    const beforeLen = verified.boardCommands.length;
-    verified.boardCommands = synthesizeAutoClear({
-      commands: verified.boardCommands,
-      previousProblemTex: ctx.conversation?.boardProblem?.tex || null,
-    });
-    if (verified.boardCommands.length > beforeLen) {
-      boardLogger.info('Auto-clear prepended for new problem pose', {
-        previous: ctx.conversation?.boardProblem?.tex || null,
-      });
-    }
-  }
-
-  // Read-only `example` cards are teaching aids, not moves in the student's
-  // solve cycle — they must not advance lastBoardAction (which gates clear-after-
-  // verify and the synthesizer's cycle-closed logic) or touch the pin. Track
-  // state on the solve-cycle cards only; a turn that emitted ONLY example cards
-  // leaves conversation state exactly as it was.
-  const cycleCards = verified.boardCommands.filter(c => c.action !== 'example');
-  if (cycleCards.length > 0 && ctx.conversation) {
-    const lastEmitted = cycleCards[cycleCards.length - 1].action;
-    ctx.conversation.lastBoardAction = lastEmitted;
-
-    // Pin / unpin the canonical board problem so future turns anchor to
-    // it instead of re-parsing intermediate scratch work (or leaving a
-    // stale problem on the board). A pose — including an auto-advance
-    // clear+pose or a turn-type backfill — sets the pin; a verify/clear
-    // that ends the cycle drops it.
-    const poseCard = [...cycleCards].reverse().find(c => c.action === 'pose');
-    if (poseCard && poseCard.tex) {
-      ctx.conversation.boardProblem = { tex: poseCard.tex, posedAt: new Date() };
-      ctx.conversation.markModified?.('boardProblem');
-    } else if (lastEmitted === 'verify' || lastEmitted === 'clear') {
-      ctx.conversation.boardProblem = null;
-      ctx.conversation.markModified?.('boardProblem');
-    }
-  }
-
-  // Persistent Problem Card lifecycle (Live Workspace spec §4, MVP #20): fold
-  // this turn's board into conversation.boardLedger so a reload / session
-  // switch can replay the board — the in-focus derivation AND the rail of
-  // finished problems — instead of coming back blank. ALL verified commands
-  // are folded (not just cycleCards): the client renders example/scaffold
-  // lines too, and a faithful replay must include them. Non-fatal by design.
-  if (verified.boardCommands.length > 0 && ctx.conversation) {
+  // ── Stage 5c.1b–5c.3: SETTLE THE TURN'S BOARD ──
+  // All pose sources have spoken. settleBoardTurn (boardSettle.js) owns what is
+  // left, in one order the replay fixtures share: a verify that is not an
+  // answer is demoted to a resolve (it used to close the card and drop the
+  // pin); a pose of the student's scratch arithmetic is dropped (2026-09-09,
+  // "11 - 7" became the PROBLEM); a pose RESTATING the problem in focus folds
+  // back into its card instead of sealing it (2026-10-05: one problem, five
+  // cards); a genuinely new pose gets its `clear`; then lastBoardAction, the
+  // pin and the persisted ledger follow. Non-fatal by design.
+  if (ctx.conversation) {
     try {
-      // How much help THIS turn gave (spec §12 ladder) — max-folded onto the
-      // problem in focus, so the completed card records the heaviest support
-      // the student needed anywhere in the problem. Read back by persist's
-      // mastery update: an answer reached at ladder ≥5 is not independent.
-      const turnAssistance = assistanceLevelForTurn({
-        decisionAction: decision?.action,
-        scaffoldLevel: decision?.scaffoldLevel,
-        boardCommands: verified.boardCommands,
+      const pinTexBefore = ctx.conversation?.boardProblem?.tex || null;
+      const settled = settleBoardTurn({
+        commands: verified.boardCommands,
+        message,
+        pinTex: pinTexBefore,
+        lastBoardAction: ctx.conversation.lastBoardAction || null,
+        ledger: ctx.conversation.boardLedger || null,
+        now: new Date(),
+        // How much help THIS turn gave (spec §12 ladder) — max-folded onto the
+        // problem in focus, so the completed card records the heaviest support
+        // the student needed anywhere in the problem.
+        assistanceFor: (cmds) => assistanceLevelForTurn({
+          decisionAction: decision?.action,
+          scaffoldLevel: decision?.scaffoldLevel,
+          boardCommands: cmds,
+        }),
+        sourceRef: ctx.sourceRef || null,
       });
-      ctx.conversation.boardLedger = applyTurnToLedger(
-        ctx.conversation.boardLedger, verified.boardCommands, new Date(),
-        { assistance: turnAssistance, sourceRef: ctx.sourceRef || null }
-      );
-      ctx.conversation.markModified?.('boardLedger');
-    } catch (ledgerErr) {
-      boardLogger.warn('Board ledger update failed (non-fatal)', { error: ledgerErr.message });
+      const ev = settled.events;
+      if (ev.demoted.length) {
+        boardLogger.warn('Demoted non-answer verify card(s) to resolve', { tex: ev.demoted.map(c => c.tex) });
+      }
+      if (ev.scratchDropped.length) {
+        boardLogger.warn('Dropped scratch-fragment pose(s)', {
+          dropped: ev.scratchDropped.map(c => ({ action: c.action, tex: c.tex || null })),
+          pinnedTex: pinTexBefore,
+        });
+      }
+      if (ev.folded.length) {
+        boardLogger.info('Folded restated pose(s) into the card in focus', {
+          folded: ev.folded.map(c => ({ action: c.action, tex: c.tex || null })),
+          focus: ctx.conversation.boardLedger?.current?.problemTex || null,
+        });
+      }
+      if (ev.autoCleared) {
+        boardLogger.info('Auto-clear prepended for new problem pose', { previous: pinTexBefore });
+      }
+
+      verified.boardCommands = settled.commands;
+      ctx.conversation.lastBoardAction = settled.lastBoardAction;
+      // Pin / unpin the canonical board problem so future turns anchor to it
+      // instead of re-parsing intermediate scratch work.
+      if (settled.pin !== 'keep') {
+        ctx.conversation.boardProblem = settled.pin ? { tex: settled.pin.tex, posedAt: new Date() } : null;
+        ctx.conversation.markModified?.('boardProblem');
+      }
+      if (settled.ledger !== ctx.conversation.boardLedger) {
+        ctx.conversation.boardLedger = settled.ledger;
+        ctx.conversation.markModified?.('boardLedger');
+      }
+    } catch (settleErr) {
+      boardLogger.warn('Board settle failed (non-fatal)', { error: settleErr.message });
     }
   }
 

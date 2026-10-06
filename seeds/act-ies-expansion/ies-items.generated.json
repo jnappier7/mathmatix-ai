@@ -5337,25 +5337,25 @@
   "options": [
    {
     "label": "A",
-    "text": "4.8"
+    "text": "2.2"
    },
    {
     "label": "B",
-    "text": "5"
+    "text": "4.8"
    },
    {
     "label": "C",
-    "text": "11"
+    "text": "5"
    },
    {
     "label": "D",
     "text": "24"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
-  "explanation": "Together the machines finish 1/3 of the order per hour, and A alone finishes 1/8 per hour, so B finishes 1/3 − 1/8 = 5/24 per hour — meaning B alone needs 24/5 = 4.8 hours. Choice B (5) simply subtracts 8 − 3, treating the times as if they combine additively, and C (11) adds them. D (24) stops at the denominator of the rate.",
+  "explanation": "Together the machines finish 1/3 of the order per hour, and A alone finishes 1/8 per hour, so B finishes 1/3 − 1/8 = 5/24 per hour, meaning B alone needs 24/5 = 4.8 hours. Choice A (2.2) adds the two rates instead of subtracting them: 1/3 + 1/8 = 11/24, and 24/11 ≈ 2.2. Choice C (5) simply subtracts 8 − 3, treating the times as if they combine additively. D (24) stops at the denominator of the rate.",
   "tags": [
    "act",
    "act-math",
@@ -11233,25 +11233,25 @@
   "options": [
    {
     "label": "A",
-    "text": "7.5"
+    "text": "3.75"
    },
    {
     "label": "B",
-    "text": "8"
+    "text": "7.5"
    },
    {
     "label": "C",
-    "text": "15"
+    "text": "8"
    },
    {
     "label": "D",
-    "text": "30"
+    "text": "15"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
-  "explanation": "A triangle's area is (1/2) × base × height = (1/2) × 3 × 5 = 7.5 square feet. Choice C (15) multiplies base by height but forgets the 1/2. A (8) adds the base and height, and D (30) doubles the product instead of halving it.",
+  "explanation": "A triangle's area is (1/2) × base × height = (1/2) × 3 × 5 = 7.5 square feet. Choice D (15) multiplies base by height but forgets the 1/2. A (3.75) halves both the base and the height, (3/2) × (5/2), which halves the area twice. C (8) adds the base and height.",
   "tags": [
    "act",
    "act-math",
@@ -11941,11 +11941,11 @@
    },
    {
     "label": "B",
-    "text": "4"
+    "text": "1.6"
    },
    {
     "label": "C",
-    "text": "12"
+    "text": "4"
    },
    {
     "label": "D",
@@ -11955,7 +11955,7 @@
   "correctOption": "A",
   "difficulty": 4,
   "gradeBand": "8-12",
-  "explanation": "The volume is 12 × 9 × 1/3 = 36 cubic feet, and a cubic yard is 3 × 3 × 3 = 27 cubic feet, so 36 ÷ 27 ≈ 1.3 cubic yards. Choice D (36) stops at cubic feet. C (12) divides by 3, converting only one dimension, and B (4) divides by 9, converting only two.",
+  "explanation": "The volume is 12 × 9 × 1/3 = 36 cubic feet, since 4 inches is 1/3 of a foot, and a cubic yard is 3 × 3 × 3 = 27 cubic feet, so 36 ÷ 27 ≈ 1.3 cubic yards. Choice D (36) stops at cubic feet. B (1.6) writes 4 inches as 0.4 foot: 12 × 9 × 0.4 = 43.2 cubic feet, and 43.2 ÷ 27 = 1.6. C (4) divides by 9, as if a cubic yard were 9 cubic feet.",
   "tags": [
    "act",
    "act-math",
@@ -13737,17 +13737,17 @@
    },
    {
     "label": "C",
-    "text": "3.8"
+    "text": "0.625"
    },
    {
     "label": "D",
-    "text": "0.625"
+    "text": "3.8"
    }
   ],
   "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
-  "explanation": "3 ÷ 8 = 0.375 exactly. Choice B (0.38) is that value rounded and so is not equal to it. Choice C (3.8) reads the fraction bar as a decimal point. Choice D (0.625) is 5/8, the complement of 3/8.",
+  "explanation": "3 ÷ 8 = 0.375 exactly. Choice B (0.38) is that value rounded and so is not equal to it. Choice D (3.8) reads the fraction bar as a decimal point. Choice C (0.625) is 5/8, the complement of 3/8.",
   "tags": [
    "act",
    "act-math",
@@ -13858,25 +13858,25 @@
   "options": [
    {
     "label": "A",
-    "text": "0.000045"
+    "text": "0.0000045"
    },
    {
     "label": "B",
-    "text": "0.00045"
+    "text": "0.000045"
    },
    {
     "label": "C",
-    "text": "450,000"
+    "text": "0.00045"
    },
    {
     "label": "D",
-    "text": "0.0000045"
+    "text": "450,000"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
-  "explanation": "A negative exponent moves the decimal point left, here 5 places: 4.5 becomes 0.000045. Choice B moves only 4 places. Choice C moves right, which is what a POSITIVE exponent would do and would make a subatomic particle heavier than a person.",
+  "explanation": "A negative exponent moves the decimal point left, here 5 places: 4.5 becomes 0.000045. Choice C moves only 4 places. Choice D moves right, which is what a POSITIVE exponent would do and would make a subatomic particle heavier than a person.",
   "tags": [
    "act",
    "act-math",
@@ -14073,7 +14073,7 @@
   "options": [
    {
     "label": "A",
-    "text": "4/9"
+    "text": "4/99"
    },
    {
     "label": "B",
@@ -14081,17 +14081,17 @@
    },
    {
     "label": "C",
-    "text": "4/10"
+    "text": "44/100"
    },
    {
     "label": "D",
-    "text": "44/100"
+    "text": "4/9"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "D",
   "difficulty": 4,
   "gradeBand": "8-12",
-  "explanation": "For a single repeating digit d, 0.ddd… = d/9, so 0.444… = 4/9 ≈ 0.4444. Choices C (0.4) and D (0.44) are the decimal truncated after one or two places, which is close but not equal. Choice B (2/5) is also exactly 0.4. The repeating bar is what separates the exact value from its roundings.",
+  "explanation": "For a single repeating digit d, 0.ddd… = d/9, so 0.444… = 4/9 ≈ 0.4444. Choices B (2/5 = 0.4) and C (44/100 = 0.44) are the decimal cut off after one or two places, which is close but not equal. Choice A (4/99) applies the two-digit rule, 0.ababab… = ab/99, to a one-digit repeat and gives 0.0404…. The repeating bar is what separates the exact value from its roundings.",
   "tags": [
    "act",
    "act-math",
@@ -14167,17 +14167,17 @@
    },
    {
     "label": "C",
-    "text": "4/3"
+    "text": "7/6"
    },
    {
     "label": "D",
-    "text": "7/6"
+    "text": "4/3"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "D",
   "difficulty": 4,
   "gradeBand": "8-12",
-  "explanation": "A ratio is a quotient: (2/3) ÷ (1/2) = (2/3) × (2/1) = 4/3. Choice B (3/4) inverts the ratio, giving sugar to flour. Choice A multiplies the two fractions instead of dividing. Choice D adds them. Since more flour than sugar is used, the ratio must be greater than 1 — which rules out A and B immediately.",
+  "explanation": "A ratio is a quotient: (2/3) ÷ (1/2) = (2/3) × (2/1) = 4/3. Choice B (3/4) inverts the ratio, giving sugar to flour. Choice A multiplies the two fractions instead of dividing. Choice C adds them. Since more flour than sugar is used, the ratio must be greater than 1 — which rules out A and B immediately.",
   "tags": [
    "act",
    "act-math",

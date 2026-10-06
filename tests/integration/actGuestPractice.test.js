@@ -236,6 +236,24 @@ describe('guest rail: take the test with no account', () => {
   });
 });
 
+describe('a guest retake is fresh', () => {
+  test('questions from this browser\'s earlier test are excluded; a bad token excludes nothing', async () => {
+    const first = await startGuest();
+    const firstIds = (await ActTestSession.findById(first.sid).lean()).items.map((it) => it.problemId);
+
+    const res = await supertest(app).post('/api/act-practice/start')
+      .send({ previous: [{ sessionId: first.sid, token: first.token }] });
+    expect(res.status).toBe(200);
+    const nextIds = (await ActTestSession.findById(res.body.sessionId).lean()).items.map((it) => it.problemId);
+    nextIds.forEach((id) => expect(firstIds).not.toContain(id));
+
+    // Someone else's test id with the wrong token proves nothing.
+    const forged = await supertest(app).post('/api/act-practice/start')
+      .send({ previous: [{ sessionId: first.sid, token: 'd'.repeat(64) }] });
+    expect(forged.status).toBe(200);
+  });
+});
+
 describe('claim: signing up unlocks what you missed', () => {
   test('an unfinished guest test cannot be claimed', async () => {
     const { sid, token } = await startGuest();

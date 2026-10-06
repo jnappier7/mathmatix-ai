@@ -1089,12 +1089,12 @@
       "difficulty": 1,
       "stem": "A bag contains 5 red marbles and 7 blue marbles. One marble is drawn at random and is red; it is NOT put back. What is the probability that a second marble drawn at random is also red?",
       "choices": [
+        "4/12",
         "4/11",
         "5/12",
-        "4/12",
         "5/11"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "After the first red marble is removed, 4 red marbles remain out of 11 total, so the probability is 4/11. Choice 5/12 ignores the first draw, and 4/12 reduces the reds without reducing the total.",
       "verify": "from fractions import Fraction\nf=Fraction(5-1,12-1)\nf\"{f.numerator}/{f.denominator}\"",
       "figure_code": null
@@ -1287,12 +1287,12 @@
       "difficulty": 2,
       "stem": "What is the slope of the line that passes through the points (−3, 7) and (5, −9) in the standard (x, y) coordinate plane?",
       "choices": [
-        "2",
         "−2",
         "−1/2",
+        "2",
         "8"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "Slope is the change in y over the change in x: (−9 − 7)/(5 − (−3)) = −16/8 = −2. Choice 2 drops the negative sign, and −1/2 inverts rise over run.",
       "verify": "s = (-9 - 7)/(5 - (-3))\nstr(int(s)).replace('-','−')",
       "figure_code": null
@@ -1305,12 +1305,12 @@
       "difficulty": 2,
       "stem": "On a city map in the standard (x, y) coordinate plane, each grid unit represents 1 kilometer. A delivery drone flies in a straight line from a warehouse at (2, −1) to a stadium at (7, 11). How many kilometers long is the drone's flight?",
       "choices": [
+        "13",
         "15",
         "17",
-        "13",
         "169"
       ],
-      "answer": 2,
+      "answer": 0,
       "explanation": "By the distance formula, d = √((7 − 2)² + (11 − (−1))²) = √(25 + 144) = √169 = 13 kilometers. Choice 17 adds the legs 5 and 12 instead of using the Pythagorean relationship, and 169 forgets to take the square root.",
       "verify": "import math\nint(math.dist((2,-1),(7,11)))",
       "figure_code": null
@@ -1323,12 +1323,12 @@
       "difficulty": 3,
       "stem": "A circle in the standard (x, y) coordinate plane has the equation x² + y² + 10x − 4y + 20 = 0. What is the x-coordinate of the center of the circle?",
       "choices": [
-        "5",
         "−10",
-        "10",
-        "−5"
+        "−5",
+        "5",
+        "10"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "Complete the square: (x² + 10x + 25) + (y² − 4y + 4) = −20 + 25 + 4, so (x + 5)² + (y − 2)² = 9. The center is (−5, 2), so the x-coordinate is −5. Choice 5 uses the wrong sign, since (x + 5)² means x = −5.",
       "verify": "str(-(10//2)).replace('-','−')",
       "figure_code": null
@@ -1342,9 +1342,9 @@
       "stem": "In the standard (x, y) coordinate plane, what is the slope of any line perpendicular to the line 3x − 4y = 8?",
       "choices": [
         "−4/3",
+        "−3/4",
         "3/4",
-        "4/3",
-        "−3/4"
+        "4/3"
       ],
       "answer": 0,
       "explanation": "Solving 3x − 4y = 8 for y gives y = (3/4)x − 2, so the line has slope 3/4. A perpendicular line has the opposite reciprocal slope, −4/3. Choice 3/4 is the slope of the given line itself, and −3/4 changes the sign without taking the reciprocal.",
@@ -1359,10 +1359,10 @@
       "difficulty": 3,
       "stem": "In the standard (x, y) coordinate plane, a line passes through the point (2, 5) and is parallel to the line y = 3x − 4. What is the y-intercept of this line?",
       "choices": [
-        "11",
+        "−7",
         "−1",
         "1",
-        "−7"
+        "11"
       ],
       "answer": 1,
       "explanation": "A parallel line has the same slope, 3, so the line is y = 3x + b. Substituting (2, 5) gives 5 = 3(2) + b, so b = −1. Choice 11 adds 3(2) to 5 instead of subtracting.",
@@ -1395,12 +1395,12 @@
       "difficulty": 4,
       "stem": "In the standard (x, y) coordinate plane, a triangle has vertices (0, 0), (8, 0), and (3, 6). What is the area, in square coordinate units, of the triangle?",
       "choices": [
-        "48",
         "12",
+        "24",
         "30",
-        "24"
+        "48"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "The side from (0, 0) to (8, 0) lies on the x-axis, so it is a base of length 8. The height is the y-coordinate of (3, 6), which is 6. Area = (1/2)(8)(6) = 24 square units; choice 48 forgets the factor of 1/2.",
       "verify": "int(0.5*8*6)",
       "figure_code": null
@@ -1413,12 +1413,12 @@
       "difficulty": 5,
       "stem": "In the standard (x, y) coordinate plane, what is the distance from the point (3, −1) to the line 4x − 3y + 5 = 0?",
       "choices": [
+        "2",
         "4",
-        "20",
         "5",
-        "2"
+        "20"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The distance from (x₀, y₀) to ax + by + c = 0 is |ax₀ + by₀ + c|/√(a² + b²). Here that is |4(3) − 3(−1) + 5|/√(16 + 9) = 20/5 = 4. Choice 20 is the numerator alone, and 5 is the denominator √25.",
       "verify": "d = abs(4*3 - 3*(-1) + 5)/(4**2 + 3**2)**0.5\nstr(round(d))",
       "figure_code": null
@@ -1431,12 +1431,12 @@
       "difficulty": 5,
       "stem": "In the standard (x, y) coordinate plane, the points (−2, k) and (4, 1) lie on a line with slope 3/2. What is the value of k?",
       "choices": [
-        "10",
         "−8",
         "−2",
-        "8"
+        "8",
+        "10"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "The slope condition gives (1 − k)/(4 − (−2)) = 3/2, so 1 − k = (3/2)(6) = 9 and k = −8. Choice 10 comes from writing k − 1 = 9, a sign error in the slope ratio, and −2 uses a run of 2 instead of 6.",
       "verify": "str(int(1 - (3/2)*(4 - (-2)))).replace('-','−')",
       "figure_code": null
@@ -1450,11 +1450,11 @@
       "stem": "A food truck makes each taco with exactly 1 of 3 shell types and exactly 1 of 4 salsas. How many different tacos are possible?",
       "choices": [
         "7",
-        "24",
         "12",
+        "24",
         "81"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "By the fundamental counting principle, multiply the number of independent choices: 3 × 4 = 12. Choice 7 adds the options instead of multiplying, and 81 computes 3⁴.",
       "verify": "3*4",
       "figure_code": null
@@ -1467,12 +1467,12 @@
       "difficulty": 2,
       "stem": "In how many different orders can 5 students stand in a single line for a photograph?",
       "choices": [
-        "120",
-        "25",
         "20",
-        "60"
+        "25",
+        "60",
+        "120"
       ],
-      "answer": 0,
+      "answer": 3,
       "explanation": "There are 5 choices for the first position, 4 for the second, and so on: 5! = 5 × 4 × 3 × 2 × 1 = 120. Choice 25 computes 5², and 20 stops after 5 × 4.",
       "verify": "import math\nmath.factorial(5)",
       "figure_code": null
@@ -1486,11 +1486,11 @@
       "stem": "Eight sprinters compete in a race in which gold, silver, and bronze medals are awarded to the top 3 finishers. In how many different ways can the 3 medals be awarded?",
       "choices": [
         "24",
-        "336",
         "56",
+        "336",
         "512"
       ],
-      "answer": 1,
+      "answer": 2,
       "explanation": "Order matters, so this is a permutation: 8 choices for gold, 7 for silver, 6 for bronze, giving 8 × 7 × 6 = 336. Choice 56 is the combination 8C3, which ignores order, and 512 is 8³, which allows repeated winners.",
       "verify": "8*7*6",
       "figure_code": null
@@ -1503,12 +1503,12 @@
       "difficulty": 3,
       "stem": "A principal will choose 3 of the school's 7 teachers to serve on a committee. How many different committees of 3 teachers are possible?",
       "choices": [
-        "210",
         "21",
-        "343",
-        "35"
+        "35",
+        "210",
+        "343"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "Order does not matter on a committee, so use combinations: 7C3 = (7 × 6 × 5)/(3 × 2 × 1) = 35. Choice 210 is the permutation 7 × 6 × 5, which counts each committee 6 times, and 343 is 7³.",
       "verify": "import math\nmath.comb(7,3)",
       "figure_code": null
@@ -1521,12 +1521,12 @@
       "difficulty": 3,
       "stem": "A gym assigns each member a 4-digit locker code using the digits 0 through 9. No digit may be repeated, and the first digit cannot be 0. How many different locker codes are possible?",
       "choices": [
+        "4,536",
         "5,040",
         "9,000",
-        "4,536",
         "10,000"
       ],
-      "answer": 2,
+      "answer": 0,
       "explanation": "The first digit has 9 options (1–9). The second digit can be any unused digit including 0, so it also has 9 options, then 8 and 7 remain: 9 × 9 × 8 × 7 = 4,536. Choice 5,040 ignores the leading-zero restriction, and 10,000 allows repeats and leading zeros.",
       "verify": "f\"{9*9*8*7:,}\"",
       "figure_code": null
@@ -1539,12 +1539,12 @@
       "difficulty": 3,
       "stem": "How many distinct arrangements can be made using all 5 letters of the word LEVEL?",
       "choices": [
+        "20",
         "30",
-        "120",
         "60",
-        "20"
+        "120"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "There are 5! = 120 arrangements of 5 letters, but the two L's are identical and the two E's are identical. Divide by 2! for each repeated letter: 120/(2! × 2!) = 30. Choice 120 ignores the repeats, and 60 divides by only one 2!.",
       "verify": "import math\nmath.factorial(5)//(math.factorial(2)*math.factorial(2))",
       "figure_code": null
@@ -1557,12 +1557,12 @@
       "difficulty": 4,
       "stem": "In a school play, 3 boys and 3 girls will sit in a row of 6 chairs so that boys and girls alternate seats. How many such seating arrangements are possible?",
       "choices": [
+        "12",
         "36",
         "72",
-        "720",
-        "12"
+        "720"
       ],
-      "answer": 1,
+      "answer": 2,
       "explanation": "The pattern is either boy-first or girl-first: 2 options. For each pattern, the 3 boys can fill their seats in 3! = 6 ways and the girls in 3! = 6 ways. Total: 2 × 6 × 6 = 72; choice 36 forgets the 2 possible patterns, and 720 is 6! with no alternating restriction.",
       "verify": "import math\n2*math.factorial(3)*math.factorial(3)",
       "figure_code": null
@@ -1575,12 +1575,12 @@
       "difficulty": 4,
       "stem": "A caterer will select 2 different appetizers from a list of 6 and 1 main dish from a list of 5. How many different selections of 2 appetizers and 1 main dish are possible?",
       "choices": [
-        "150",
-        "30",
         "11",
-        "75"
+        "30",
+        "75",
+        "150"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "The 2 appetizers are an unordered pair: 6C2 = 15 choices. Multiply by the 5 main dishes: 15 × 5 = 75. Choice 150 counts the appetizers in order (6 × 5 × 5), and 30 pairs each of the 6 appetizers with a main dish, choosing only 1 appetizer.",
       "verify": "import math\nmath.comb(6,2)*5",
       "figure_code": null
@@ -1593,12 +1593,12 @@
       "difficulty": 5,
       "stem": "Four different math books and 2 different art books will be arranged on a shelf so that the 2 art books are next to each other. How many such arrangements are possible?",
       "choices": [
-        "240",
-        "720",
+        "48",
         "120",
-        "48"
+        "240",
+        "720"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "Treat the 2 art books as a single block, giving 5 objects to arrange in 5! = 120 ways. The art books can be ordered within the block in 2! = 2 ways, so there are 120 × 2 = 240 arrangements. Choice 720 is 6! with no restriction, and 120 forgets to order the art books within the block.",
       "verify": "import math\nmath.factorial(5)*math.factorial(2)",
       "figure_code": null
@@ -1612,11 +1612,11 @@
       "stem": "In a soccer league, each pair of teams plays exactly 2 games against each other, one at each team's home field. A total of 90 games are played. How many teams are in the league?",
       "choices": [
         "9",
-        "15",
         "10",
+        "15",
         "45"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "With n teams, each of the n(n − 1)/2 pairs plays 2 games, so n(n − 1) = 90. Since 10 × 9 = 90, there are 10 teams. Choice 45 is the number of pairs of teams, not the number of teams.",
       "verify": "next(n for n in range(2,50) if n*(n-1)==90)",
       "figure_code": null
@@ -1665,12 +1665,12 @@
       "difficulty": 2,
       "stem": "In a game, a player wins $12 with probability 1/4 and loses $4 otherwise. What is the expected value, in dollars, of the game for one play?",
       "choices": [
-        "3",
-        "8",
         "−3",
-        "0"
+        "0",
+        "3",
+        "8"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "The loss occurs with probability 3/4, so the expected value is 12(1/4) − 4(3/4) = 3 − 3 = 0. Choice 3 counts only the expected winnings, and 8 simply subtracts 4 from 12.",
       "verify": "str(round(12*(1/4) - 4*(3/4)))",
       "figure_code": null
@@ -1701,9 +1701,9 @@
       "difficulty": 3,
       "stem": "An insurance company sells a 1-year policy for $150. The company estimates a 0.01 probability that it will pay out a $10,000 claim on the policy, and no other payouts are possible. What is the company's expected profit, in dollars, on one policy?",
       "choices": [
-        "100",
-        "50",
         "−50",
+        "50",
+        "100",
         "140"
       ],
       "answer": 1,
@@ -1719,12 +1719,12 @@
       "difficulty": 3,
       "stem": "A student randomly guesses on each of 20 multiple-choice questions. Each question has 4 answer choices, exactly 1 of which is correct. What is the expected number of questions the student answers correctly?",
       "choices": [
-        "5",
         "4",
+        "5",
         "10",
         "15"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "Each guess is correct with probability 1/4, so the expected number correct is 20 × 1/4 = 5. Choice 10 uses probability 1/2, and 15 uses 3/4, the probability of guessing incorrectly.",
       "verify": "int(20*(1/4))",
       "figure_code": null
@@ -1737,12 +1737,12 @@
       "difficulty": 4,
       "stem": "For a school fundraiser, exactly 500 raffle tickets are sold at $2 each. One ticket wins a $300 prize, and 5 other tickets each win a $20 prize. What is the expected net value, in dollars, of buying one ticket?",
       "choices": [
-        "0.80",
         "−2.00",
-        "1.20",
-        "−1.20"
+        "−1.20",
+        "0.80",
+        "1.20"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "The total prize money is 300 + 5(20) = 400 dollars, so a ticket's expected prize is 400/500 = 0.80 dollars. Subtracting the $2 cost gives 0.80 − 2 = −1.20 dollars. Choice 0.80 ignores the ticket price, and 1.20 drops the negative sign.",
       "verify": "f\"{(300 + 5*20)/500 - 2:.2f}\".replace('-','−')",
       "figure_code": null
@@ -1755,12 +1755,12 @@
       "difficulty": 4,
       "stem": "In a game, a player wins $8 with probability p and loses $2 with probability 1 − p. For what value of p is the expected value of the game equal to $0?",
       "choices": [
-        "1/4",
         "1/10",
         "1/5",
+        "1/4",
         "4/5"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "Set the expected value equal to 0: 8p − 2(1 − p) = 0, so 8p − 2 + 2p = 0, giving 10p = 2 and p = 1/5. Choice 1/4 comes from dropping the +2p term and solving 8p = 2, and choice 4/5 reverses the two payoffs by solving 2p = 8(1 − p).",
       "verify": "from fractions import Fraction\nstr(Fraction(2,10))",
       "figure_code": null
@@ -1773,10 +1773,10 @@
       "difficulty": 5,
       "stem": "A random variable takes the value 0 with probability 0.5, the value 2 with probability p, and the value 6 with probability 0.5 − p. If the expected value of the random variable is 2, what is the value of p?",
       "choices": [
-        "1/2",
-        "1/4",
         "1/8",
-        "3/8"
+        "1/4",
+        "3/8",
+        "1/2"
       ],
       "answer": 1,
       "explanation": "The expected value is 0(0.5) + 2p + 6(0.5 − p) = 3 − 4p. Setting 3 − 4p = 2 gives 4p = 1, so p = 1/4. Choice 1/2 exceeds the total probability available to the values 2 and 6.",
@@ -1791,12 +1791,12 @@
       "difficulty": 5,
       "stem": "Two evenly matched teams play a series that ends as soon as one team has won 2 games, and each team is equally likely to win each game. What is the expected number of games in the series?",
       "choices": [
-        "3",
         "2",
         "2.25",
-        "2.5"
+        "2.5",
+        "3"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "The series lasts 2 games when one team wins the first two, which has probability (1/2)(1/2) + (1/2)(1/2) = 1/2; otherwise it lasts 3 games. The expected length is 2(1/2) + 3(1/2) = 2.5 games. Choice 3 assumes the maximum length is always played.",
       "verify": "2*0.5 + 3*0.5",
       "figure_code": null
@@ -1811,10 +1811,10 @@
       "choices": [
         "−8",
         "−6",
-        "8",
-        "1/8"
+        "1/8",
+        "8"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "A negative exponent means reciprocal: 2⁻³ = 1/2³ = 1/8. Choice −8 treats the negative exponent as a negative result, and −6 multiplies 2 by −3.",
       "verify": "from fractions import Fraction\nstr(Fraction(1, 2**3))",
       "figure_code": null
@@ -1845,12 +1845,12 @@
       "difficulty": 2,
       "stem": "What is the value of (2³)⁴ / 2¹⁰?",
       "choices": [
-        "4",
         "1/8",
         "2",
+        "4",
         "128"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "A power of a power multiplies exponents: (2³)⁴ = 2¹². Dividing powers subtracts exponents: 2¹²/2¹⁰ = 2² = 4. Choice 1/8 adds 3 and 4 to get 2⁷/2¹⁰ = 2⁻³.",
       "verify": "(2**3)**4 // 2**10",
       "figure_code": null
@@ -1881,12 +1881,12 @@
       "difficulty": 3,
       "stem": "What is the value of 16^(3/4)?",
       "choices": [
-        "12",
         "2",
-        "64",
-        "8"
+        "8",
+        "12",
+        "64"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "A fractional exponent means a root and a power: 16^(3/4) = (16^(1/4))³ = 2³ = 8. Choice 12 multiplies 16 by 3/4, choice 2 is only the fourth root, and 64 uses the exponent 3/2 instead of 3/4.",
       "verify": "round(16**(3/4))",
       "figure_code": null
@@ -1899,12 +1899,12 @@
       "difficulty": 3,
       "stem": "If 5^(2x) = 5⁷ · 5³, then x = ?",
       "choices": [
-        "10",
-        "21/2",
+        "2",
         "5",
-        "2"
+        "10",
+        "21/2"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "The right side is 5^(7+3) = 5¹⁰. Setting the exponents equal gives 2x = 10, so x = 5. Choice 10 forgets to divide by 2, and 21/2 multiplies the exponents 7 and 3 instead of adding them.",
       "verify": "from sympy import symbols, Eq, solve\nx = symbols(\"x\")\nint(solve(Eq(2*x, 7 + 3), x)[0])",
       "figure_code": null
@@ -1935,12 +1935,12 @@
       "difficulty": 4,
       "stem": "If 9ˣ · 3^(x+1) = 3⁷, then x = ?",
       "choices": [
-        "7/3",
         "2",
-        "3",
-        "8/3"
+        "7/3",
+        "8/3",
+        "3"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "Rewrite 9 as 3², so 9ˣ = 3^(2x) and the left side becomes 3^(2x) · 3^(x+1) = 3^(3x+1). Setting the exponents equal gives 3x + 1 = 7, so x = 2. Choice 7/3 drops the +1 from the exponent, and 8/3 subtracts 1 instead of adding it when solving.",
       "verify": "next(x for x in range(-20,21) if 9**x * 3**(x+1) == 3**7)",
       "figure_code": null
@@ -1971,12 +1971,12 @@
       "difficulty": 5,
       "stem": "If 2ᵃ = 3 and 2ᵇ = 5, what is the value of 2^(2a+b)?",
       "choices": [
-        "45",
-        "30",
         "11",
+        "30",
+        "45",
         "90"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "Split the exponent using the product and power rules: 2^(2a+b) = (2ᵃ)² · 2ᵇ = 3² · 5 = 45. Choice 30 computes 2 · 3 · 5, treating the coefficient 2 as a factor rather than an exponent, and 11 computes 2(3) + 5, adding the powers instead of multiplying them.",
       "verify": "3**2 * 5",
       "figure_code": null
@@ -1990,11 +1990,11 @@
       "stem": "A video posted online currently has 500 views, and the number of views is doubling every hour. At this rate, how many views will the video have 3 hours from now?",
       "choices": [
         "1,500",
-        "4,000",
         "3,000",
+        "4,000",
         "8,000"
       ],
-      "answer": 1,
+      "answer": 2,
       "explanation": "Doubling 3 times multiplies the count by 2³ = 8, so the video will have 500 × 8 = 4,000 views. Choice 1,500 multiplies 500 by 3 instead of doubling repeatedly, and 8,000 doubles one extra time.",
       "verify": "f\"{500 * 2**3:,}\"",
       "figure_code": null
@@ -2007,10 +2007,10 @@
       "difficulty": 2,
       "stem": "The value of a car t years after it is purchased is modeled by v(t) = 12,000(0.8)ᵗ dollars. According to the model, what is the value of the car exactly 2 years after purchase?",
       "choices": [
-        "$9,600",
         "$4,800",
+        "$7,200",
         "$7,680",
-        "$7,200"
+        "$9,600"
       ],
       "answer": 2,
       "explanation": "Evaluate the model at t = 2: v(2) = 12,000(0.8)² = 12,000(0.64) = 7,680 dollars. Choice $9,600 is the value after only 1 year, and $7,200 subtracts 20% of the original price twice (linear decay).",
@@ -2043,12 +2043,12 @@
       "difficulty": 3,
       "stem": "A laboratory sample contains 80 milligrams of a substance that has a half-life of 6 hours. How many milligrams of the substance will remain after 24 hours?",
       "choices": [
+        "5",
         "10",
         "20",
-        "40",
-        "5"
+        "40"
       ],
-      "answer": 3,
+      "answer": 0,
       "explanation": "In 24 hours there are 24/6 = 4 half-lives, so the amount is multiplied by (1/2)⁴ = 1/16. That leaves 80/16 = 5 milligrams. Choice 10 uses only 3 half-lives, and 40 halves the sample just once.",
       "verify": "80 // 2**(24//6)",
       "figure_code": null
@@ -2061,12 +2061,12 @@
       "difficulty": 3,
       "stem": "The number of fish in a pond is modeled by A(t) = 900(0.85)ᵗ, where t is the number of years from now. According to the model, by what percent does the fish population decrease each year?",
       "choices": [
-        "15%",
-        "85%",
         "0.85%",
-        "1.5%"
+        "1.5%",
+        "15%",
+        "85%"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "The yearly factor 0.85 means the population keeps 85% of its size each year, so it loses 100% − 85% = 15% per year. Choice 85% is the portion that remains, not the decrease.",
       "verify": "f\"{round((1 - 0.85)*100)}%\"",
       "figure_code": null
@@ -2097,12 +2097,12 @@
       "difficulty": 4,
       "stem": "The number of cells in a culture triples every 4 days. The culture currently contains 20 cells. How many cells will the culture contain 12 days from now?",
       "choices": [
+        "60",
         "180",
         "240",
-        "540",
-        "60"
+        "540"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "In 12 days there are 12/4 = 3 tripling periods, so the count is multiplied by 3³ = 27. That gives 20 × 27 = 540 cells. Choice 180 uses only 2 triplings, and 60 triples just once.",
       "verify": "20 * 3**(12//4)",
       "figure_code": null
@@ -2115,12 +2115,12 @@
       "difficulty": 4,
       "stem": "For the function f(t) = a · 2ᵗ, where a is a constant, f(3) = 96. What is the value of a?",
       "choices": [
-        "32",
-        "48",
         "6",
-        "12"
+        "12",
+        "32",
+        "48"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "Substitute t = 3: a · 2³ = 96, so 8a = 96 and a = 12. Choice 32 divides 96 by 3 instead of by 2³, and 48 divides by 2 only once.",
       "verify": "from sympy import symbols, Eq, solve\na = symbols(\"a\")\nf = lambda t: a * 2**t\nint(solve(Eq(f(3), 96), a)[0])",
       "figure_code": null
@@ -2135,8 +2135,8 @@
       "choices": [
         "4",
         "12",
-        "48",
-        "24"
+        "24",
+        "48"
       ],
       "answer": 1,
       "explanation": "Divide both sides by 5: 2^(t/3) = 16 = 2⁴. So t/3 = 4 and t = 12. Choice 4 forgets to multiply by 3, and 48 multiplies 16 by 3 instead of the exponent 4.",
@@ -2151,12 +2151,12 @@
       "difficulty": 5,
       "stem": "The value of an investment doubles every 5 years. Which of the following is closest to the percent by which the investment increases each year?",
       "choices": [
-        "20%",
-        "40%",
+        "10%",
         "15%",
-        "10%"
+        "20%",
+        "40%"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "If r is the annual growth factor, then r⁵ = 2, so r = 2^(1/5) ≈ 1.149, an increase of about 15% per year. Choice 20% divides 100% by 5, ignoring compounding, which would more than double the value in 5 years.",
       "verify": "f\"{round((2**(1/5) - 1)*100)}%\"",
       "figure_code": null
@@ -2169,10 +2169,10 @@
       "difficulty": 1,
       "stem": "The functions f and g are defined by f(x) = x + 5 and g(x) = 3x. What is the value of f(g(2))?",
       "choices": [
-        "21",
         "6",
+        "7",
         "11",
-        "7"
+        "21"
       ],
       "answer": 2,
       "explanation": "Work from the inside out: g(2) = 3(2) = 6, and then f(6) = 6 + 5 = 11. Choice 21 computes g(f(2)) instead, and 6 stops after evaluating g(2).",
@@ -2187,12 +2187,12 @@
       "difficulty": 2,
       "stem": "If f(x) = x² and g(x) = 2x − 1, what is the value of f(g(4))?",
       "choices": [
-        "31",
         "7",
-        "63",
-        "49"
+        "31",
+        "49",
+        "63"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "Work from the inside out: g(4) = 2(4) − 1 = 7, and then f(7) = 7² = 49. Choice 31 is g(f(4)) = 2(16) − 1, the composition in the wrong order, and 7 stops at g(4).",
       "verify": "(2*4 - 1)**2",
       "figure_code": null
@@ -2241,12 +2241,12 @@
       "difficulty": 3,
       "stem": "If f(x) = 2x − 5, what is the value of f(f(4))?",
       "choices": [
-        "3",
         "−1",
         "1",
+        "3",
         "6"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "First f(4) = 2(4) − 5 = 3, and then f(3) = 2(3) − 5 = 1. Choice 3 applies f only once, and 6 doubles 3 without subtracting 5.",
       "verify": "2*(2*4 - 5) - 5",
       "figure_code": null
@@ -2259,12 +2259,12 @@
       "difficulty": 3,
       "stem": "At a shoe store, p(x) = 0.8x gives the price, in dollars, after a 20% discount on an original price of x dollars, and q(x) = x − 10 gives the price after a $10 coupon. What is q(p(50)), the final cost in dollars of a $50 pair of shoes when the discount is applied first and then the coupon?",
       "choices": [
-        "32",
-        "40",
         "22",
-        "30"
+        "30",
+        "32",
+        "40"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "First apply the discount: p(50) = 0.8(50) = 40. Then apply the coupon: q(40) = 40 − 10 = 30 dollars. Choice 32 applies the coupon before the discount, p(q(50)) = 0.8(40), and 40 forgets the coupon entirely.",
       "verify": "int(0.8*50 - 10)",
       "figure_code": null
@@ -2277,12 +2277,12 @@
       "difficulty": 4,
       "stem": "Given f(x) = x + 3 and g(x) = 2x, for what value of x is f(g(x)) = 15?",
       "choices": [
-        "6",
         "9/2",
-        "12",
-        "9"
+        "6",
+        "9",
+        "12"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The composition is f(g(x)) = 2x + 3. Solving 2x + 3 = 15 gives 2x = 12, so x = 6. Choice 9/2 solves g(f(x)) = 2x + 6 = 15, the reverse order, and 12 stops after subtracting 3.",
       "verify": "from sympy import symbols, Eq, solve\nx = symbols(\"x\")\nf = lambda u: u + 3\ng = lambda u: 2*u\nint(solve(Eq(f(g(x)), 15), x)[0])",
       "figure_code": null
@@ -2349,12 +2349,12 @@
       "difficulty": 1,
       "stem": "If f(x) = 4x − 7, what is the value of f(5)?",
       "choices": [
+        "−13",
         "13",
-        "27",
         "20",
-        "−13"
+        "27"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "Substitute 5 for x: f(5) = 4(5) − 7 = 20 − 7 = 13. Choice 27 adds 7 instead of subtracting, and 20 stops at 4(5).",
       "verify": "4*5 - 7",
       "figure_code": null
@@ -2367,12 +2367,12 @@
       "difficulty": 2,
       "stem": "If g(x) = x² + 3x − 10, what is the value of g(−4)?",
       "choices": [
-        "18",
         "−38",
+        "−6",
         "6",
-        "−6"
+        "18"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "Substitute −4: g(−4) = (−4)² + 3(−4) − 10 = 16 − 12 − 10 = −6. Choice 18 treats 3(−4) as +12, and −38 uses −16 for (−4)².",
       "verify": "str((-4)**2 + 3*(-4) - 10).replace('-','−')",
       "figure_code": null
@@ -2385,10 +2385,10 @@
       "difficulty": 2,
       "stem": "The function f is defined by f(x) = 2x + 1 for x < 3 and by f(x) = x² − 4 for x ≥ 3. What is the value of f(3)?",
       "choices": [
-        "7",
+        "3",
         "5",
-        "12",
-        "3"
+        "7",
+        "12"
       ],
       "answer": 1,
       "explanation": "Since 3 satisfies x ≥ 3, use the second rule: f(3) = 3² − 4 = 5. Choice 7 uses the rule 2x + 1, which applies only when x < 3.",
@@ -2440,11 +2440,11 @@
       "stem": "The function f is defined by f(x) = 3x − 4. If f(a) = 17, what is the value of a?",
       "choices": [
         "13/3",
-        "47",
+        "7",
         "21",
-        "7"
+        "47"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "Set 3a − 4 = 17. Adding 4 gives 3a = 21, so a = 7. Choice 13/3 subtracts 4 instead of adding it, and 47 evaluates f(17) rather than solving f(a) = 17.",
       "verify": "from sympy import symbols, Eq, solve\na = symbols(\"a\")\nf = lambda t: 3*t - 4\nint(solve(Eq(f(a), 17), a)[0])",
       "figure_code": null
@@ -2476,11 +2476,11 @@
       "stem": "If f(x) = |x − 3| + 2, what is the value of f(−1)?",
       "choices": [
         "−2",
+        "0",
         "4",
-        "6",
-        "0"
+        "6"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "Substitute −1: f(−1) = |−1 − 3| + 2 = |−4| + 2 = 4 + 2 = 6. Choice −2 skips the absolute value, and 4 forgets to add 2.",
       "verify": "abs(-1 - 3) + 2",
       "figure_code": null
@@ -2493,12 +2493,12 @@
       "difficulty": 5,
       "stem": "For the function f(x) = x², what is the value of (f(5) − f(3))/(5 − 3)?",
       "choices": [
-        "16",
         "2",
         "4",
-        "8"
+        "8",
+        "16"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "Evaluate the function first: f(5) = 25 and f(3) = 9. Then (25 − 9)/(5 − 3) = 16/2 = 8, the average rate of change of f from 3 to 5. Choice 16 forgets to divide by 5 − 3, and 4 evaluates f(5 − 3).",
       "verify": "(5**2 - 3**2)//(5 - 3)",
       "figure_code": null
@@ -2511,12 +2511,12 @@
       "difficulty": 5,
       "stem": "For the function f(x) = kx² + 3, where k is a constant, f(2) = 19. What is the value of k?",
       "choices": [
-        "8",
         "4",
-        "16",
-        "11/2"
+        "11/2",
+        "8",
+        "16"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "Substitute x = 2: k(2)² + 3 = 19, so 4k = 16 and k = 4. Choice 8 divides 16 by 2 instead of by 2² = 4, and 16 forgets to divide at all.",
       "verify": "from sympy import symbols, Eq, solve\nk = symbols(\"k\")\nf = lambda t: k*t**2 + 3\nint(solve(Eq(f(2), 19), k)[0])",
       "figure_code": null
@@ -3951,12 +3951,12 @@
       "difficulty": 5,
       "stem": "The polynomial p(x) = 2x³ + kx² − 5x + 6 has a factor of x − 2. What is the value of k?",
       "choices": [
+        "−3",
         "−1",
         "3",
-        "−3",
         "6"
       ],
-      "answer": 2,
+      "answer": 0,
       "explanation": "Since x − 2 is a factor, p(2) = 0 by the Factor Theorem. Substituting gives 2(8) + 4k − 10 + 6 = 0, so 4k + 12 = 0 and k = −3. Choice 3 comes from a sign slip, solving 4k = 12 instead of 4k = −12.",
       "verify": "# solve 2*8 + 4k - 10 + 6 = 0\nv=(-(16-10+6))//4\nf\"−{abs(v)}\" if v<0 else str(v)",
       "figure_code": null
@@ -3989,10 +3989,10 @@
       "choices": [
         "1/6",
         "1/3",
-        "2/3",
-        "1/2"
+        "1/2",
+        "2/3"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "The prime numbers from 1 to 6 are 2, 3, and 5, giving 3 favorable outcomes out of 6. The probability is 3/6 = 1/2. Counting 1 as prime adds a fourth outcome and produces the trap 4/6 = 2/3.",
       "verify": "from fractions import Fraction as F\nr=F(len([n for n in [2,3,5]]),6)\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -4005,12 +4005,12 @@
       "difficulty": 2,
       "stem": "A box contains 20 raffle tickets numbered 1 through 20. One ticket is drawn at random. What is the probability that the number on the ticket is a multiple of 4?",
       "choices": [
-        "1/4",
         "1/5",
+        "1/4",
         "3/10",
         "1/2"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The multiples of 4 from 1 to 20 are 4, 8, 12, 16, and 20, so there are 5 favorable outcomes out of 20. The probability is 5/20 = 1/4. Choice 1/5 comes from overlooking 20 as a multiple of 4 and counting only 4 favorable outcomes, giving 4/20.",
       "verify": "from fractions import Fraction as F\nr=F(len([n for n in range(1,21) if n%4==0]),20)\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -4041,12 +4041,12 @@
       "difficulty": 3,
       "stem": "A fair coin is flipped and a fair six-sided die is rolled. What is the probability that the coin shows heads AND the die shows a number less than 3?",
       "choices": [
-        "1/6",
         "1/12",
+        "1/6",
         "1/3",
         "2/3"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The events are independent, so multiply the probabilities: P(heads) = 1/2 and P(number less than 3) = 2/6 = 1/3. The probability of both is (1/2)(1/3) = 1/6. Choice 1/12 uses P(number less than 3) = 1/6, counting only one face instead of the two faces 1 and 2.",
       "verify": "from fractions import Fraction as F\nr=F(1,2)*F(2,6)\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -4059,9 +4059,9 @@
       "difficulty": 3,
       "stem": "The table below shows how the 50 students in a club travel to school.\n\nGrade | Bus | Walk | Total\nJuniors | 18 | 12 | 30\nSeniors | 14 | 6 | 20\nTotal | 32 | 18 | 50\n\nIf one of these 50 students is selected at random, what is the probability that the student walks to school?",
       "choices": [
-        "2/5",
-        "9/25",
         "3/10",
+        "9/25",
+        "2/5",
         "9/16"
       ],
       "answer": 1,
@@ -4077,12 +4077,12 @@
       "difficulty": 4,
       "stem": "A gift bag contains exactly 5 chocolate candies and 3 caramel candies. Two candies are drawn at random, one at a time and without replacement. What is the probability that one candy of each type is drawn?",
       "choices": [
+        "15/64",
         "15/56",
         "1/2",
-        "15/28",
-        "15/64"
+        "15/28"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "P(chocolate then caramel) = (5/8)(3/7) = 15/56, and P(caramel then chocolate) = (3/8)(5/7) = 15/56. Adding the two orders gives 30/56 = 15/28. Forgetting the second order gives the distractor 15/56.",
       "verify": "from fractions import Fraction as F\nr=F(5,8)*F(3,7)+F(3,8)*F(5,7)\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -4095,12 +4095,12 @@
       "difficulty": 4,
       "stem": "A bakery made 60 loaves of bread today: 25 are sourdough, and 10 of those sourdough loaves are whole-grain. In total, 24 of the 60 loaves are whole-grain. If a whole-grain loaf is selected at random, what is the probability that it is sourdough?",
       "choices": [
-        "5/12",
         "1/6",
         "2/5",
+        "5/12",
         "5/6"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "This is a conditional probability: restrict attention to the 24 whole-grain loaves. Of those, 10 are sourdough, so the probability is 10/24 = 5/12. Choice 2/5 reverses the condition and computes 10/25, the chance that a sourdough loaf is whole-grain, and choice 1/6 is the unconditional 10/60.",
       "verify": "from fractions import Fraction as F\nr=F(10,24)\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -4131,12 +4131,12 @@
       "difficulty": 5,
       "stem": "A basketball player makes each free throw with probability 0.6, independently of other attempts. If the player attempts 2 free throws, what is the probability that she makes at least one of them?",
       "choices": [
-        "0.36",
-        "0.84",
         "0.16",
-        "0.60"
+        "0.36",
+        "0.60",
+        "0.84"
       ],
-      "answer": 1,
+      "answer": 3,
       "explanation": "Use the complement: P(at least one make) = 1 − P(misses both). Each miss has probability 0.4, so P(misses both) = 0.4 × 0.4 = 0.16, and 1 − 0.16 = 0.84. Choice 0.36 is P(makes both) = 0.6 × 0.6, and choice 0.16 is the probability of missing both rather than its complement.",
       "verify": "round(1-0.4**2,2)",
       "figure_code": null
@@ -4203,12 +4203,12 @@
       "difficulty": 3,
       "stem": "What is the product of the two solutions of the equation x² − 3x − 28 = 0?",
       "choices": [
-        "28",
         "−28",
         "−3",
-        "3"
+        "3",
+        "28"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "For x² + bx + c = 0, the product of the roots is c. Here the equation factors as (x − 7)(x + 4) = 0, so the roots are 7 and −4, and their product is −28. Choice 28 keeps the magnitude of the constant but drops its negative sign, and choice 3 is the sum of the roots rather than the product.",
       "verify": "sols=[x for x in range(-20,21) if x*x-3*x-28==0]\nv=sols[0]*sols[1]\nf\"−{abs(v)}\" if v<0 else str(v)",
       "figure_code": null
@@ -4240,11 +4240,11 @@
       "stem": "A model rocket is launched from the ground, and its height, in feet, t seconds after launch is given by h(t) = −16t² + 64t. After how many seconds does the rocket return to the ground?",
       "choices": [
         "2",
-        "16",
         "4",
+        "16",
         "64"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "The rocket is on the ground when h(t) = 0. Factoring gives −16t(t − 4) = 0, so t = 0 (launch) or t = 4. The rocket returns to the ground after 4 seconds; t = 2 is when it reaches its maximum height.",
       "verify": "sols=[t for t in range(1,100) if -16*t*t+64*t==0]\nsols[0]",
       "figure_code": null
@@ -4275,10 +4275,10 @@
       "difficulty": 4,
       "stem": "What is the positive solution of the equation 2x² + 7x − 15 = 0?",
       "choices": [
-        "5/2",
+        "−5",
         "3/2",
-        "5",
-        "−5"
+        "5/2",
+        "5"
       ],
       "answer": 1,
       "explanation": "Factor: 2x² + 7x − 15 = (2x − 3)(x + 5) = 0, so x = 3/2 or x = −5. The positive solution is 3/2. Choice 5/2 attaches the 5 to the 2x factor instead of the x factor, and choice 5 flips the sign of the root of x + 5.",
@@ -4312,11 +4312,11 @@
       "stem": "The length of a rectangular patio is 3 meters more than its width, and the area of the patio is 40 square meters. What is the width, in meters, of the patio?",
       "choices": [
         "4",
-        "8",
         "5",
+        "8",
         "10"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "Let w be the width, so the length is w + 3 and w(w + 3) = 40. Then w² + 3w − 40 = 0 factors as (w + 8)(w − 5) = 0, so w = 5 (a width cannot be negative). The choice 8 is the length.",
       "verify": "sols=[w for w in range(1,50) if w*(w+3)==40]\nsols[0]",
       "figure_code": null
@@ -4349,10 +4349,10 @@
       "choices": [
         "−5",
         "0",
-        "3",
-        "2"
+        "2",
+        "3"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "The y-intercept occurs where x = 0. Substituting gives f(0) = 2(0)² − 5(0) + 3 = 3, so the y-intercept is (0, 3). Choice −5 reads off the coefficient of x instead of substituting, and choice 2 reads off the leading coefficient.",
       "verify": "2*0**2-5*0+3",
       "figure_code": null
@@ -4384,11 +4384,11 @@
       "stem": "What is the minimum value of the function f(x) = x² + 6x + 11?",
       "choices": [
         "−3",
-        "11",
+        "2",
         "3",
-        "2"
+        "11"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "Complete the square: f(x) = (x + 3)² + 2. Since (x + 3)² ≥ 0, the minimum value is 2, attained at x = −3. The value −3 is where the minimum occurs, not the minimum value itself.",
       "verify": "min((x*x+6*x+11) for x in range(-100,101))",
       "figure_code": null
@@ -4437,10 +4437,10 @@
       "difficulty": 4,
       "stem": "In the standard (x, y) coordinate plane, the parabola y = a(x − 2)² + 9 passes through the point (0, 1). What is the value of a?",
       "choices": [
-        "2",
+        "−8",
         "−2",
         "−1/2",
-        "−8"
+        "2"
       ],
       "answer": 1,
       "explanation": "Substitute the point (0, 1): 1 = a(0 − 2)² + 9 = 4a + 9. Solving gives 4a = −8, so a = −2. Choice −8 stops at 4a = −8 without dividing by 4, and choice 2 loses the negative sign.",
@@ -4455,12 +4455,12 @@
       "difficulty": 4,
       "stem": "A company's daily profit, in dollars, from selling x handmade lamps is modeled by P(x) = −2x² + 120x − 400. How many lamps should the company sell each day to maximize its profit?",
       "choices": [
+        "15",
         "30",
         "60",
-        "120",
-        "15"
+        "120"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The maximum of P(x) = ax² + bx + c with a < 0 occurs at x = −b/(2a). Here x = −120/(2 · (−2)) = 30 lamps. Choice 60 comes from using −b/a and forgetting the factor of 2, and choice 120 simply reads off b.",
       "verify": "int(-120/(2*-2))",
       "figure_code": null
@@ -4491,12 +4491,12 @@
       "difficulty": 5,
       "stem": "In the standard (x, y) coordinate plane, what is the minimum value of y for the parabola y = (x + 2)(x − 6)?",
       "choices": [
-        "−12",
         "−16",
+        "−12",
         "2",
         "16"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "The x-intercepts are −2 and 6, so by symmetry the vertex is at x = (−2 + 6)/2 = 2. Substituting, y = (2 + 2)(2 − 6) = 4(−4) = −16. The value −12 is the y-intercept, not the minimum.",
       "verify": "v=min(((x+2)*(x-6)) for x in range(-100,101))\nf\"−{abs(v)}\" if v<0 else str(v)",
       "figure_code": null
@@ -4527,12 +4527,12 @@
       "difficulty": 2,
       "stem": "What is the solution of the equation 12/x = 3?",
       "choices": [
-        "4",
-        "36",
         "1/4",
-        "9"
+        "4",
+        "9",
+        "36"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "Multiply both sides by x to get 12 = 3x, then divide by 3 to get x = 4. Check: 12/4 = 3. Choice 36 multiplies 12 by 3 instead of dividing, and choice 9 subtracts 3 from 12.",
       "verify": "from sympy import symbols, Eq, solve\nx = symbols(\"x\", nonzero=True)\nint(solve(Eq(12/x, 3), x)[0])",
       "figure_code": null
@@ -4545,12 +4545,12 @@
       "difficulty": 2,
       "stem": "What is the solution of the equation √(x − 3) = 5?",
       "choices": [
-        "22",
-        "28",
+        "2",
         "8",
-        "2"
+        "22",
+        "28"
       ],
-      "answer": 1,
+      "answer": 3,
       "explanation": "Square both sides: x − 3 = 25, so x = 28. The distractor 22 comes from subtracting 3 instead of adding it after squaring.",
       "verify": "from sympy import symbols, Eq, solve, sqrt\nx = symbols(\"x\")\nsols = solve(Eq(sqrt(x - 3), 5), x)\nint([s for s in sols if abs(float((s - 3)**0.5) - 5) < 1e-9][0])",
       "figure_code": null
@@ -4563,12 +4563,12 @@
       "difficulty": 3,
       "stem": "What is the solution of the equation 3/(x + 2) = 5/(x + 6)?",
       "choices": [
-        "4",
         "−4",
         "2",
+        "4",
         "8"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "Cross-multiply: 3(x + 6) = 5(x + 2), so 3x + 18 = 5x + 10. Then 8 = 2x and x = 4. Check: 3/6 = 5/10 = 1/2. Choice 8 stops at 8 = 2x without dividing by 2, and choice −4 comes from a sign slip when moving 5x across.",
       "verify": "[x for x in range(-20,21) if x not in (-2,-6) and 3*(x+6)==5*(x+2)][0]",
       "figure_code": null
@@ -4583,10 +4583,10 @@
       "choices": [
         "1",
         "3",
-        "17/3",
-        "5"
+        "5",
+        "17/3"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "Square both sides: 3x + 1 = 16. Then 3x = 15, so x = 5. The distractor 1 comes from setting 3x + 1 equal to 4 without squaring.",
       "verify": "from sympy import symbols, Eq, solve, sqrt\nx = symbols(\"x\")\nsols = solve(Eq(sqrt(3*x + 1), 4), x)\nint([s for s in sols if abs(float((3*s + 1)**0.5) - 4) < 1e-9][0])",
       "figure_code": null
@@ -4653,12 +4653,12 @@
       "difficulty": 5,
       "stem": "Working alone, Pipe A can fill a storage tank in 6 hours, and Pipe B can fill the same tank in 3 hours. If both pipes are opened together, how many hours will it take to fill the tank?",
       "choices": [
-        "4.5",
-        "9",
+        "2",
         "2.5",
-        "2"
+        "4.5",
+        "9"
       ],
-      "answer": 3,
+      "answer": 0,
       "explanation": "Together the pipes fill 1/6 + 1/3 = 1/2 of the tank per hour. Solving (1/6 + 1/3)t = 1 gives t = 2 hours. Averaging the two times to get 4.5 is a common error because rates, not times, add.",
       "verify": "from fractions import Fraction as F\nrate=F(1,6)+F(1,3)\nint(1/rate)",
       "figure_code": null
@@ -4779,12 +4779,12 @@
       "difficulty": 3,
       "stem": "Which of the following is equal to 4^(3/2)?",
       "choices": [
-        "6",
-        "12",
         "2",
-        "8"
+        "6",
+        "8",
+        "12"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "A fractional exponent means a root and a power: 4^(3/2) = (√4)³ = 2³ = 8. Multiplying 4 by 3/2 to get 6 is the common error.",
       "verify": "round(4**1.5)",
       "figure_code": null
@@ -4923,12 +4923,12 @@
       "difficulty": 3,
       "stem": "A painter mixes red and white paint in the ratio 4:7 to make 44 quarts of pink paint. How many quarts of red paint does the painter use?",
       "choices": [
+        "4",
         "11",
         "16",
-        "28",
-        "4"
+        "28"
       ],
-      "answer": 1,
+      "answer": 2,
       "explanation": "The ratio 4:7 means 4 + 7 = 11 equal parts in total, so each part is 44/11 = 4 quarts. The red paint is 4 parts: 4 × 4 = 16 quarts. Choice 28 is the white paint, choice 11 is the number of parts rather than quarts, and choice 4 is the size of one part.",
       "verify": "(44//(4+7))*4",
       "figure_code": null
@@ -4941,12 +4941,12 @@
       "difficulty": 3,
       "stem": "A printer prints 45 pages in 3 minutes. At this rate, how many pages will it print in 10 minutes?",
       "choices": [
-        "135",
         "120",
-        "450",
-        "150"
+        "135",
+        "150",
+        "450"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "The rate is 45/3 = 15 pages per minute. In 10 minutes the printer prints 15 × 10 = 150 pages. Choice 450 multiplies 45 by 10 without first dividing by 3, and choice 135 multiplies 45 by 3 instead of using the per-minute rate.",
       "verify": "(45//3)*10",
       "figure_code": null
@@ -4960,9 +4960,9 @@
       "stem": "A person 6 feet tall casts a shadow 9 feet long at the same time a nearby tree casts a shadow 33 feet long. What is the height, in feet, of the tree?",
       "choices": [
         "22",
-        "49.5",
+        "30",
         "36",
-        "30"
+        "49.5"
       ],
       "answer": 0,
       "explanation": "The ratios of height to shadow length are equal: 6/9 = h/33. Solving gives h = 33 · 6/9 = 22 feet. Setting up the proportion upside down gives 49.5.",
@@ -4977,12 +4977,12 @@
       "difficulty": 4,
       "stem": "The ratio of cats to dogs at an animal shelter is 2:3. After 6 more cats arrive and no other animals arrive or leave, the ratio of cats to dogs becomes 4:5. How many dogs are at the shelter?",
       "choices": [
+        "15",
         "30",
         "36",
-        "45",
-        "15"
+        "45"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "Let the original counts be 2x cats and 3x dogs. Then (2x + 6)/(3x) = 4/5, so 10x + 30 = 12x and x = 15. The number of dogs is 3x = 45; check: 36 cats to 45 dogs is 4:5. Choice 36 is the number of cats after the 6 arrive, choice 30 is the original number of cats, and choice 15 is the value of x rather than 3x.",
       "verify": "x=[t for t in range(1,100) if 5*(2*t+6)==4*(3*t)][0]\n3*x",
       "figure_code": null
@@ -4996,11 +4996,11 @@
       "stem": "If a/b = 5/8, what is the value of (a + b)/b?",
       "choices": [
         "5/13",
-        "13/5",
         "8/13",
-        "13/8"
+        "13/8",
+        "13/5"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "Split the fraction: (a + b)/b = a/b + b/b = a/b + 1. Since a/b = 5/8, the value is 5/8 + 1 = 13/8. Choice 13/5 computes (a + b)/a instead of (a + b)/b, and choice 5/13 inverts that.",
       "verify": "from fractions import Fraction as F\nr=F(5,8)+1\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -5013,12 +5013,12 @@
       "difficulty": 5,
       "stem": "Three business partners split a profit of $8,400 in the ratio 3:4:5. How many dollars more does the partner with the largest share receive than the partner with the smallest share?",
       "choices": [
-        "$1,400",
         "$700",
+        "$1,400",
         "$2,100",
         "$3,500"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The ratio has 3 + 4 + 5 = 12 parts, so each part is 8,400/12 = $700. The largest share is 5 parts and the smallest is 3 parts, a difference of 2 parts: 2 × 700 = $1,400. Choice $700 is the value of a single part, choice $3,500 is the largest share itself rather than the difference, and choice $2,100 is the smallest share.",
       "verify": "d=(8400//12)*(5-3)\nf\"${d:,}\"",
       "figure_code": null
@@ -5049,12 +5049,12 @@
       "difficulty": 1,
       "stem": "In right triangle DEF, the right angle is at F, DF = 9 units, EF = 12 units, and DE = 15 units. What is the value of sin D?",
       "choices": [
-        "4/5",
         "3/5",
-        "4/3",
-        "3/4"
+        "3/4",
+        "4/5",
+        "4/3"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "The sine of an angle is the ratio of the opposite leg to the hypotenuse. The leg opposite ∠D is EF = 12 and the hypotenuse is DE = 15, so sin D = 12/15 = 4/5. The ratio 3/5 is cos D, and 4/3 is tan D.",
       "verify": "from fractions import Fraction as F\nr=F(12,15)\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -5067,12 +5067,12 @@
       "difficulty": 2,
       "stem": "In right triangle ABC, the right angle is at B, AB = 8 cm, and BC = 15 cm. What is the value of tan A?",
       "choices": [
+        "8/17",
         "8/15",
         "15/17",
-        "15/8",
-        "8/17"
+        "15/8"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "Tangent is opposite over adjacent. For ∠A, the opposite leg is BC = 15 and the adjacent leg is AB = 8, so tan A = 15/8. The ratio 8/15 reverses opposite and adjacent, and 15/17 uses the hypotenuse 17 instead of the adjacent leg.",
       "verify": "from fractions import Fraction as F\nr=F(15,8)\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -5139,12 +5139,12 @@
       "difficulty": 3,
       "stem": "For an acute angle θ in a right triangle, cos θ = 7/25. What is the value of tan θ?",
       "choices": [
-        "24/7",
         "7/24",
+        "24/25",
         "25/24",
-        "24/25"
+        "24/7"
       ],
-      "answer": 0,
+      "answer": 3,
       "explanation": "Treat 7 as the adjacent leg and 25 as the hypotenuse. The Pythagorean theorem gives the opposite leg as √(25² − 7²) = 24, so tan θ = opposite/adjacent = 24/7. The ratio 24/25 is sin θ, and 7/24 inverts the tangent.",
       "verify": "import math\nfrom fractions import Fraction as F\nopp=int(math.isqrt(25*25-7*7))\nr=F(opp,7)\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -5157,12 +5157,12 @@
       "difficulty": 4,
       "stem": "In right triangle PQR, the right angle is at Q, sin P = 0.6, and the hypotenuse PR measures 40 meters. What is the length, in meters, of QR?",
       "choices": [
-        "32",
         "24",
+        "32",
         "50",
         "66.7"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "Since sin P = QR/PR, QR = 40(0.6) = 24 meters. The value 32 is the other leg PQ, found from cos P = 0.8; 66.7 comes from dividing by 0.6 instead of multiplying, and 50 comes from dividing by 0.8.",
       "verify": "v=40*0.6\nstr(int(v))",
       "figure_code": null
@@ -5175,12 +5175,12 @@
       "difficulty": 4,
       "stem": "In right triangle ABC, the right angle is at C. If sin A = 5/13, what is the value of cos B?",
       "choices": [
-        "12/13",
+        "5/13",
         "5/12",
-        "13/5",
-        "5/13"
+        "12/13",
+        "13/5"
       ],
-      "answer": 3,
+      "answer": 0,
       "explanation": "Angles A and B are complementary because ∠C is right, and the cosine of an angle equals the sine of its complement. Therefore cos B = sin A = 5/13. The value 12/13 is cos A, which corresponds to sin B instead.",
       "verify": "from fractions import Fraction as F\nr=F(5,13)\nf\"{r.numerator}/{r.denominator}\"",
       "figure_code": null
@@ -5211,12 +5211,12 @@
       "difficulty": 5,
       "stem": "In right triangle RST, the right angle is at S, RS = 14 inches, and m∠R = 38°. What is the length, in inches, of RT, to the nearest tenth of an inch?",
       "choices": [
-        "17.8",
+        "8.6",
         "10.9",
-        "22.7",
-        "8.6"
+        "17.8",
+        "22.7"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "Side RS is adjacent to ∠R and RT is the hypotenuse, so cos 38° = 14/RT and RT = 14/cos 38° ≈ 17.8 inches. The value 10.9 is 14 tan 38°, the opposite leg, and 22.7 comes from dividing by sin 38° instead of cos 38°.",
       "verify": "import math\nf\"{14/math.cos(math.radians(38)):.1f}\"",
       "figure_code": null
@@ -5265,12 +5265,12 @@
       "difficulty": 2,
       "stem": "The population of a county is 6.02 × 10⁵ people. What is this number written in standard form?",
       "choices": [
-        "60,200",
-        "6,020,000",
         "0.0000602",
-        "602,000"
+        "60,200",
+        "602,000",
+        "6,020,000"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "A positive exponent of 5 moves the decimal point 5 places to the right: 6.02 becomes 602,000. Moving only 4 places gives 60,200, and moving 6 places gives 6,020,000.",
       "verify": "f\"{int(6.02e5):,}\"",
       "figure_code": null
@@ -5391,12 +5391,12 @@
       "difficulty": 5,
       "stem": "The quotient (4.2 × 10⁻³)/(7 × 10⁵) is written in scientific notation as c × 10ⁿ, where 1 ≤ c < 10 and n is an integer. What is the value of n?",
       "choices": [
-        "−8",
         "−9",
+        "−8",
         "−2",
         "2"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "Divide the coefficients and subtract the exponents: 4.2/7 = 0.6 and 10⁻³/10⁵ = 10⁻⁸, giving 0.6 × 10⁻⁸. Because 0.6 is less than 1, rewrite it as 6 × 10⁻¹, so the quotient is 6 × 10⁻⁹ and n = −9. Stopping at 0.6 × 10⁻⁸ gives the trap n = −8.",
       "verify": "import math\nv=4.2e-3/(7e5)\nn=math.floor(math.log10(v))\n(\"−\" if n<0 else \"\")+str(abs(n))",
       "figure_code": null
@@ -5409,12 +5409,12 @@
       "difficulty": 1,
       "stem": "The first 4 terms of a geometric sequence are 3, 6, 12, and 24. What is the 7th term of the sequence?",
       "choices": [
+        "48",
         "96",
         "192",
-        "48",
         "384"
       ],
-      "answer": 1,
+      "answer": 2,
       "explanation": "Each term is twice the one before it, so the common ratio is 2 and aₙ = 3(2)ⁿ⁻¹. The 7th term is 3(2)⁶ = 3(64) = 192. The value 96 is the 6th term and 384 is the 8th term.",
       "verify": "3*2**6",
       "figure_code": null
@@ -5427,12 +5427,12 @@
       "difficulty": 2,
       "stem": "What is the 15th term of the arithmetic sequence whose first term is −8 and whose common difference is 5?",
       "choices": [
-        "67",
         "57",
-        "78",
-        "62"
+        "62",
+        "67",
+        "78"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "The nth term is a₁ + (n − 1)d = −8 + 14(5) = −8 + 70 = 62. Using 15 steps instead of 14 gives the trap 67, using 13 steps gives 57, and dropping the negative sign on the first term gives 78.",
       "verify": "-8+14*5",
       "figure_code": null
@@ -5445,12 +5445,12 @@
       "difficulty": 2,
       "stem": "The nth term of a sequence is given by aₙ = 4n − 9. What is the 10th term of the sequence?",
       "choices": [
-        "31",
-        "35",
+        "−5",
         "27",
-        "−5"
+        "31",
+        "35"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "Substitute n = 10 into the formula: a₁₀ = 4(10) − 9 = 40 − 9 = 31. The value −5 is the first term, and 27 comes from using n = 9.",
       "verify": "4*10-9",
       "figure_code": null
@@ -5463,12 +5463,12 @@
       "difficulty": 3,
       "stem": "In an arithmetic sequence, the 5th term is 23 and the 11th term is 53. What is the 1st term of the sequence?",
       "choices": [
-        "8",
-        "18",
+        "−2",
         "3",
-        "−2"
+        "8",
+        "18"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "There are 11 − 5 = 6 steps between the two terms, so d = (53 − 23)/6 = 5. Working back 4 steps from the 5th term gives a₁ = 23 − 4(5) = 3. Backing up 5 steps instead of 4 gives the trap −2.",
       "verify": "d=(53-23)//6\n23-4*d",
       "figure_code": null
@@ -5481,9 +5481,9 @@
       "difficulty": 3,
       "stem": "What is the sum of the first 20 terms of the arithmetic sequence 4, 9, 14, 19, … ?",
       "choices": [
-        "1,080",
-        "1,030",
         "990",
+        "1,030",
+        "1,080",
         "2,060"
       ],
       "answer": 1,
@@ -5500,11 +5500,11 @@
       "stem": "A sequence is defined by a₁ = 5 and aₙ = 3aₙ₋₁ − 4 for every integer n ≥ 2. What is the value of a₄?",
       "choices": [
         "29",
+        "83",
         "87",
-        "245",
-        "83"
+        "245"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "Apply the rule repeatedly: a₂ = 3(5) − 4 = 11, a₃ = 3(11) − 4 = 29, and a₄ = 3(29) − 4 = 83. The value 29 is a₃, 87 forgets to subtract 4 on the last step, and 245 takes one step too many.",
       "verify": "a=5\nfor _ in range(3): a=3*a-4\na",
       "figure_code": null
@@ -5517,12 +5517,12 @@
       "difficulty": 4,
       "stem": "A theater has 18 seats in the first row, and each row after the first has 3 more seats than the row before it. How many seats are in the 12th row?",
       "choices": [
-        "51",
-        "54",
+        "36",
         "48",
-        "36"
+        "51",
+        "54"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "The seat counts form an arithmetic sequence with a₁ = 18 and d = 3, so the 12th row has 18 + 11(3) = 51 seats. Using 12 steps instead of 11 gives the trap 54.",
       "verify": "18+11*3",
       "figure_code": null
@@ -5571,12 +5571,12 @@
       "difficulty": 5,
       "stem": "What is the sum of the first 6 terms of the geometric sequence 5, −10, 20, −40, … ?",
       "choices": [
-        "105",
         "−315",
-        "315",
-        "−105"
+        "−105",
+        "105",
+        "315"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "The common ratio is −2, so the sum is a₁(1 − rⁿ)/(1 − r) = 5(1 − 64)/3 = −105. Ignoring the alternating signs and summing 5 + 10 + 20 + … gives 315.",
       "verify": "t=5\ns=0\nfor _ in range(6):\n    s+=t\n    t*=-2\nf\"−{abs(s)}\" if s<0 else str(s)",
       "figure_code": null
@@ -5589,12 +5589,12 @@
       "difficulty": 1,
       "stem": "△ABC is similar to △DEF, with side AB corresponding to side DE and side BC corresponding to side EF. If AB = 6, DE = 15, and BC = 8, what is the length of EF?",
       "choices": [
+        "2.5",
         "3.2",
         "17",
-        "20",
-        "2.5"
+        "20"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "Corresponding sides of similar triangles are proportional: 6/15 = 8/EF. Cross multiplying gives 6·EF = 120, so EF = 20. The value 3.2 comes from setting up the proportion upside down, 17 adds the difference 15 − 6 instead of scaling, and 2.5 is only the scale factor.",
       "verify": "from fractions import Fraction as F\nv=F(15,6)*8\nstr(v) if v.denominator!=1 else str(v.numerator)",
       "figure_code": null
@@ -5607,12 +5607,12 @@
       "difficulty": 2,
       "stem": "Two similar rectangles have widths of 4 cm and 10 cm. The perimeter of the smaller rectangle is 22 cm. What is the perimeter, in centimeters, of the larger rectangle?",
       "choices": [
-        "55",
-        "137.5",
         "8.8",
-        "28"
+        "28",
+        "55",
+        "137.5"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "In similar figures the ratio of perimeters equals the ratio of corresponding sides, here 10/4 = 2.5. So the larger perimeter is 22(2.5) = 55 cm. Squaring the ratio, which applies to areas rather than perimeters, gives the trap 137.5.",
       "verify": "v=22*(10/4)\nstr(int(v)) if v==int(v) else str(v)",
       "figure_code": null
@@ -5625,12 +5625,12 @@
       "difficulty": 2,
       "stem": "A 5-foot-tall student casts a shadow 8 feet long at the same time that a nearby flagpole casts a shadow 40 feet long. How tall, in feet, is the flagpole?",
       "choices": [
-        "64",
-        "32",
         "20",
-        "25"
+        "25",
+        "32",
+        "64"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "The student and the flagpole form similar right triangles, so height/shadow is the same for both: 5/8 = h/40. Then h = 5(40)/8 = 25 feet. Inverting the proportion gives the trap 64.",
       "verify": "from fractions import Fraction as F\nv=F(5,8)*40\nstr(v.numerator) if v.denominator==1 else str(v)",
       "figure_code": null
@@ -5661,12 +5661,12 @@
       "difficulty": 3,
       "stem": "Two similar pentagons have areas of 27 cm² and 75 cm². The shortest side of the smaller pentagon is 6 cm. What is the length, in centimeters, of the shortest side of the larger pentagon?",
       "choices": [
-        "16.7",
-        "30",
         "3.6",
-        "10"
+        "10",
+        "16.7",
+        "30"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "For similar figures the ratio of areas is the square of the ratio of corresponding sides: 75/27 = 25/9, so the side ratio is 5/3. The larger side is 6(5/3) = 10 cm. Scaling by the area ratio 25/9 gives about 16.7, scaling by 5 alone gives 30, and inverting the ratio gives 3.6.",
       "verify": "import math\nk=math.sqrt(75/27)\nv=6*k\nstr(round(v)) if abs(v-round(v))<1e-9 else f\"{v:.1f}\"",
       "figure_code": null
@@ -5679,12 +5679,12 @@
       "difficulty": 3,
       "stem": "In △XYZ, point M is the midpoint of side XY and point N is the midpoint of side XZ. If YZ = 22 cm, what is the length, in centimeters, of MN?",
       "choices": [
+        "5.5",
         "11",
-        "44",
         "22",
-        "5.5"
+        "44"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The segment joining the midpoints of two sides of a triangle is parallel to the third side and half as long. So MN = 22/2 = 11 cm. The value 44 doubles the third side instead of halving it.",
       "verify": "str(22//2)",
       "figure_code": null
@@ -5697,12 +5697,12 @@
       "difficulty": 4,
       "stem": "In △ABC, point D lies on side AB and point E lies on side AC so that DE ∥ BC. If AD = 8, AB = 20, and BC = 35, what is the length of DE?",
       "choices": [
+        "14",
         "21",
         "28",
-        "14",
         "87.5"
       ],
-      "answer": 2,
+      "answer": 0,
       "explanation": "Because DE ∥ BC, △ADE ~ △ABC with ratio AD/AB = 8/20 = 2/5. Therefore DE = 35(2/5) = 14. Using DB/AB = 12/20 instead of AD/AB = 8/20 gives the trap 21, and inverting the ratio to AB/AD gives 87.5.",
       "verify": "from fractions import Fraction as F\nv=F(8,20)*35\nstr(v.numerator) if v.denominator==1 else str(v)",
       "figure_code": null
@@ -5715,12 +5715,12 @@
       "difficulty": 4,
       "stem": "The ratio of the lengths of corresponding sides of two similar triangles is 2:5. The area of the larger triangle is 200 square inches. What is the area, in square inches, of the smaller triangle?",
       "choices": [
-        "80",
         "32",
         "40",
+        "80",
         "500"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "Areas of similar figures are in the ratio of the squares of corresponding sides, here 2²:5² = 4:25. So the smaller area is 200(4/25) = 32 square inches. Scaling by 2/5 instead of 4/25 gives 80, dividing by 5 alone gives 40, and scaling up by 5/2 gives 500.",
       "verify": "from fractions import Fraction as F\nv=F(4,25)*200\nstr(v.numerator) if v.denominator==1 else str(v)",
       "figure_code": null
@@ -5733,12 +5733,12 @@
       "difficulty": 5,
       "stem": "In right triangle ABC, the right angle is at C, and D is the point on hypotenuse AB such that CD ⊥ AB. If AD = 4 and DB = 9, what is the length of CD?",
       "choices": [
+        "6",
         "6.5",
         "13",
-        "6",
         "36"
       ],
-      "answer": 2,
+      "answer": 0,
       "explanation": "The altitude to the hypotenuse creates two triangles similar to the original, giving AD/CD = CD/DB. Then CD² = 4(9) = 36, so CD = 6. Averaging the two segments gives 6.5, and forgetting to take the square root gives 36.",
       "verify": "import math\nv=math.sqrt(4*9)\nstr(int(v))",
       "figure_code": null
@@ -5751,12 +5751,12 @@
       "difficulty": 5,
       "stem": "A rectangular photograph measuring 4 inches by 6 inches is enlarged so that the enlargement is similar to the original and has an area of 216 square inches. What is the length, in inches, of the longer side of the enlargement?",
       "choices": [
-        "18",
+        "9",
         "12",
-        "54",
-        "9"
+        "18",
+        "54"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "The original area is 4(6) = 24 square inches, so the ratio of areas is 216/24 = 9 and the ratio of corresponding sides is √9 = 3. The longer side becomes 6(3) = 18 inches. Scaling the side by 9 instead of 3 gives 54.",
       "verify": "import math\nk=math.sqrt(216/24)\nstr(int(round(6*k)))",
       "figure_code": null
@@ -5805,12 +5805,12 @@
       "difficulty": 2,
       "stem": "What is the value of x in the solution of the system 5x − 2y = 4 and 3x + 2y = 20?",
       "choices": [
-        "3",
         "2",
+        "3",
         "5.5",
         "12"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The y-terms are opposites, so adding the equations gives 8x = 24 and x = 3. Subtracting the equations instead gives 8x = 16 and the trap x = 2; dividing 24 by 2 rather than by 8 gives 12; and 5.5 is the value of y.",
       "verify": "x=(4+20)//8\nstr(x)",
       "figure_code": null
@@ -5823,8 +5823,8 @@
       "difficulty": 3,
       "stem": "If 4x + y = 23 and x + 4y = 17, what is the value of x + y?",
       "choices": [
-        "5",
         "3",
+        "5",
         "8",
         "40"
       ],
@@ -5859,12 +5859,12 @@
       "difficulty": 3,
       "stem": "For what value of c does the system 3x − 5y = 8 and 6x + cy = 11 have no solution?",
       "choices": [
-        "10",
+        "−10",
         "−5",
         "−2.5",
-        "−10"
+        "10"
       ],
-      "answer": 3,
+      "answer": 0,
       "explanation": "A system has no solution when the lines are parallel, which happens when the coefficients are proportional but the constants are not. Since 6 = 2(3), we need c = 2(−5) = −10, and 11 ≠ 2(8) confirms the lines are distinct. Dropping the negative sign gives 10, copying the coefficient gives −5, and scaling in the wrong direction gives −2.5.",
       "verify": "c=2*(-5)\nf\"−{abs(c)}\" if c<0 else str(c)",
       "figure_code": null
@@ -5895,12 +5895,12 @@
       "difficulty": 4,
       "stem": "The system 2x + 6y = 14 and kx + 15y = 35 has infinitely many solutions. What is the value of k?",
       "choices": [
-        "5",
         "2.5",
+        "5",
         "7.5",
         "30"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "Infinitely many solutions means the two equations describe the same line, so every coefficient scales by the same factor. Since 15/6 = 2.5 and 35/14 = 2.5, we need k = 2(2.5) = 5. Using the scale factor itself gives 2.5, dividing 15 by 2 gives 7.5, and multiplying 15 by 2 gives 30.",
       "verify": "from fractions import Fraction as F\nk=2*F(15,6)\nstr(k.numerator) if k.denominator==1 else str(float(k))",
       "figure_code": null
@@ -5913,12 +5913,12 @@
       "difficulty": 5,
       "stem": "For real numbers x and y, 3x + 2y = 5 and 2x + 3y = 15. What is the value of x − y?",
       "choices": [
-        "10",
         "−10",
         "−4",
-        "4"
+        "4",
+        "10"
       ],
-      "answer": 1,
+      "answer": 0,
       "explanation": "Subtracting the second equation from the first gives (3x − 2x) + (2y − 3y) = 5 − 15, which simplifies directly to x − y = −10. Subtracting in the other order gives the trap 10.",
       "verify": "from sympy import symbols, Eq, solve\nx, y = symbols(\"x y\")\nsol = solve([Eq(3*x + 2*y, 5), Eq(2*x + 3*y, 15)], [x, y])\nv = int(sol[x] - sol[y])\nf\"−{abs(v)}\" if v < 0 else str(v)",
       "figure_code": null
@@ -5968,8 +5968,8 @@
       "stem": "A student begins studying at 3:20 p.m. and finishes at 6:05 p.m. For how many minutes did the student study?",
       "choices": [
         "165",
-        "205",
         "185",
+        "205",
         "285"
       ],
       "answer": 0,
@@ -6058,11 +6058,11 @@
       "stem": "A packaging machine fills 1 crate every 8 minutes and runs without stopping from 9:00 a.m. until 1:24 p.m. How many crates does the machine fill?",
       "choices": [
         "30",
-        "36",
         "33",
-        "34"
+        "34",
+        "36"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "The machine runs from 9:00 a.m. to 1:24 p.m., which is 4 hours 24 minutes, or 264 minutes. Dividing gives 264/8 = 33 crates. Estimating the run as only 4 hours gives 30, reading 4 hours 24 minutes as 4.8 hours gives 36, and adding one extra crate for the start gives 34.",
       "verify": "mins=(13*60+24)-(9*60)\nmins//8",
       "figure_code": null
@@ -6310,11 +6310,11 @@
       "stem": "In △XYZ, m∠X = 25° and m∠Y = 90°. What is the measure of ∠Z?",
       "choices": [
         "25°",
-        "155°",
         "65°",
-        "115°"
+        "115°",
+        "155°"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "The three interior angles of a triangle sum to 180°, so m∠Z = 180 − 25 − 90 = 65°. The value 115° is the sum of the two given angles, and 155° subtracts only ∠X from 180°.",
       "verify": "str(180-25-90)+\"°\"",
       "figure_code": null
@@ -6327,12 +6327,12 @@
       "difficulty": 2,
       "stem": "In an isosceles triangle, each of the two base angles measures 52°. What is the measure of the vertex angle?",
       "choices": [
+        "52°",
         "76°",
         "104°",
-        "52°",
         "128°"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "The base angles account for 2(52) = 104°, so the vertex angle measures 180 − 104 = 76°. Subtracting only one 52° angle gives 128°, and 104° is the combined measure of the base angles.",
       "verify": "str(180-2*52)+\"°\"",
       "figure_code": null
@@ -6346,11 +6346,11 @@
       "stem": "In △ABC, the exterior angle at vertex C measures 115° and m∠A = 48°. What is the measure of ∠B?",
       "choices": [
         "17°",
-        "132°",
+        "67°",
         "115°",
-        "67°"
+        "132°"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "An exterior angle equals the sum of the two remote interior angles, so 115 = 48 + m∠B and m∠B = 67°. Treating 115° as an interior angle gives 180 − 115 − 48 = 17°, and 132° is the interior angle at C subtracted incorrectly from 180°.",
       "verify": "str(115-48)+\"°\"",
       "figure_code": null
@@ -6381,12 +6381,12 @@
       "difficulty": 3,
       "stem": "In △DEF, m∠D = (2x + 10)°, m∠E = (3x + 5)°, and m∠F = (x + 15)°. What is the value of x?",
       "choices": [
-        "30",
         "10",
         "25",
+        "30",
         "35"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "Set the sum of the three angle measures equal to 180: (2x + 10) + (3x + 5) + (x + 15) = 6x + 30 = 180, so 6x = 150 and x = 25. The angles are 60°, 80°, and 40°. Ignoring the constants gives 30, adding 30 to 180 instead of subtracting gives 35, and using 90° as the total gives 10.",
       "verify": "[x for x in range(1,200) if (2*x+10)+(3*x+5)+(x+15)==180][0]",
       "figure_code": null
@@ -6399,12 +6399,12 @@
       "difficulty": 3,
       "stem": "A triangular brace is built from two beams of lengths 7 feet and 12 feet joined at a corner. Which of the following could be the length, in feet, of the third beam?",
       "choices": [
-        "16",
         "4",
         "5",
+        "16",
         "19"
       ],
-      "answer": 0,
+      "answer": 2,
       "explanation": "By the triangle inequality, the third side must be longer than 12 − 7 = 5 and shorter than 12 + 7 = 19. Only 16 falls strictly between 5 and 19; the values 5 and 19 are the excluded endpoints.",
       "verify": "opts=[16,4,5,19]\nstr([v for v in opts if 5<v<19][0])",
       "figure_code": null
@@ -6417,12 +6417,12 @@
       "difficulty": 4,
       "stem": "In isosceles △ABC, AB = AC, and the exterior angle formed at vertex B by extending side CB measures 118°. What is the measure of ∠A?",
       "choices": [
-        "62°",
-        "118°",
         "28°",
-        "56°"
+        "56°",
+        "62°",
+        "118°"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "The interior angle at B is 180 − 118 = 62°, and since AB = AC, the base angles at B and C are equal, so m∠C = 62° as well. Then m∠A = 180 − 62 − 62 = 56°. Stopping at the base angle gives the trap 62°.",
       "verify": "b=180-118\nstr(180-2*b)+\"°\"",
       "figure_code": null
@@ -6435,10 +6435,10 @@
       "difficulty": 4,
       "stem": "In △PQR, m∠P = 44° and m∠Q = 76°. Ray RS bisects ∠R, where point S lies on side PQ. What is the measure of ∠PRS?",
       "choices": [
-        "60°",
+        "22°",
         "30°",
         "38°",
-        "22°"
+        "60°"
       ],
       "answer": 1,
       "explanation": "First find m∠R = 180 − 44 − 76 = 60°. A bisector splits that angle into two congruent parts, so m∠PRS = 60/2 = 30°. The value 60° is the full ∠R, while 22° and 38° come from halving ∠P or ∠Q instead.",
@@ -6455,10 +6455,10 @@
       "choices": [
         "32°",
         "52°",
-        "96°",
-        "64°"
+        "64°",
+        "96°"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "Let m∠B = b. Then 3b + b + (b + 20) = 180, so 5b = 160 and b = 32. Therefore m∠A = 3(32) = 96°. The value 32° is ∠B and 52° is ∠C.",
       "verify": "b=(180-20)//5\nstr(3*b)+\"°\"",
       "figure_code": null
@@ -6471,12 +6471,12 @@
       "difficulty": 5,
       "stem": "The three interior angles of a triangular garden plot measure (x + 15)°, (2x − 5)°, and (3x + 20)°. What is the measure of the largest angle?",
       "choices": [
-        "45°",
-        "95°",
+        "25°",
         "40°",
-        "25°"
+        "45°",
+        "95°"
       ],
-      "answer": 1,
+      "answer": 3,
       "explanation": "The angles sum to 180°: (x + 15) + (2x − 5) + (3x + 20) = 6x + 30 = 180, so x = 25. The three angles are 40°, 45°, and 95°, and the largest is 95°. The values 40° and 45° are the other two angles, and 25° is x itself.",
       "verify": "x=(180-30)//6\nstr(max(x+15,2*x-5,3*x+20))+\"°\"",
       "figure_code": null
@@ -6545,8 +6545,8 @@
       "choices": [
         "3/5",
         "3/4",
-        "4/3",
-        "5/4"
+        "5/4",
+        "4/3"
       ],
       "answer": 1,
       "explanation": "Since sin θ = 3/5, the Pythagorean identity gives cos θ = √(1 − 9/25) = 4/5 in the first quadrant. Then tan θ = sin θ / cos θ = (3/5)/(4/5) = 3/4. The value 4/3 is the reciprocal (cotangent), and 5/4 is sec θ.",
@@ -7065,13 +7065,13 @@
       "difficulty": 2,
       "stem": "A delivery van travels at an average speed of 55 miles per hour for 2.5 hours. How many miles does the van travel?",
       "choices": [
+        "57.5",
         "110",
-        "132",
         "137.5",
-        "140"
+        "165"
       ],
       "answer": 2,
-      "explanation": "Distance equals rate times time, so the van travels 55 × 2.5 = 137.5 miles. The answer 110 uses only 2 hours, ignoring the extra half hour.",
+      "explanation": "Distance equals rate times time, so the van travels 55 × 2.5 = 137.5 miles. The answer 57.5 adds the speed and the time instead of multiplying them. The answer 110 uses only the 2 whole hours, ignoring the extra half hour, and 165 rounds the time up to 3 hours.",
       "verify": "v = 55 * 2.5\nstr(int(v)) if v == int(v) else str(v)",
       "figure_code": null
     },

@@ -14,6 +14,10 @@
 //                          order — the real ACT lists numeric choices in order
 //     figure_position      a "figure below/above" stem; the runner draws the
 //                          figure below the stem, so "above" is now wrong
+//     figure_missing_alt   a figure with no written description (figureAlt)
+//   info
+//     raw_notation         typed ^ or _; the runner shows them as super- and
+//                          subscripts, but the bank should say what it means
 //
 // Also prints each bank's difficulty distribution, the lever behind "the test
 // plays easier than the ACT".
@@ -22,7 +26,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const { assessOptions, numericValue } = require('../utils/distractorQuality');
+const { assessOptions } = require('../utils/distractorQuality');
+const { sortPermutation } = require('../utils/actChoiceOrder');
 
 const BANKS = [
   ['act-fable', 'seeds/act-fable-items.generated.json'],
@@ -55,9 +60,16 @@ function auditItem(item) {
   for (const issue of assessOptions(mc).issues) {
     findings.push({ code: issue.code, severity: 'blocking', detail: issue.detail || '' });
   }
-  const values = options.map((o) => numericValue(o && o.text));
-  if (values.length >= 3 && values.every((v) => v != null) && !isMonotonic(values)) {
+  // Same rule the form builder applies (utils/actChoiceOrder), units included.
+  if (sortPermutation(options.map((o) => o && o.text))) {
     findings.push({ code: 'unsorted_numeric', severity: 'warning', detail: options.map((o) => o.text).join(', ') });
+  }
+  if (item.svg && !item.figureAlt) {
+    findings.push({ code: 'figure_missing_alt', severity: 'warning', detail: 'no written description for screen readers' });
+  }
+  const typed = [item.prompt || ''].concat(options.map((o) => (o && o.text) || '')).join(' ');
+  if (/\^|\b\w_\w/.test(typed)) {
+    findings.push({ code: 'raw_notation', severity: 'info', detail: 'typed ^ or _ (the runner displays it as super/subscript)' });
   }
   if (item.svg && /\bfigure\s+above\b/i.test(item.prompt || '')) {
     findings.push({ code: 'figure_position', severity: 'warning', detail: 'stem says "figure above"' });

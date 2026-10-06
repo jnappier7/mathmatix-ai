@@ -304,7 +304,12 @@ describe('the script can actually write what it reports', () => {
   });
 
   test('it refuses to write thin or suspect items', () => {
-    expect(script).toMatch(/i\.enoughData && !i\.suspectKey/);
+    // The tiers decide what is writable (utils/itemCalibration.js
+    // calibratePooled); the script writes only what resolved to a level.
+    const lib = fs.readFileSync(path.join(__dirname, '../../utils/itemCalibration.js'), 'utf8');
+    expect(lib).toMatch(/i && i\.enoughData && !i\.suspectKey/);
+    expect(lib).toMatch(/e && e\.enoughData && !e\.suspectKey/);
+    expect(script).toMatch(/resolved\.filter\(\(r\) => r\.level\)/);
   });
 
   test('it drops not-reached items before calibrating', () => {
@@ -449,15 +454,19 @@ describe('the cron can be run unattended', () => {
   });
 
   test('it shrinks toward the authored prior, not the live difficulty', () => {
-    expect(script).toMatch(/authoredPrior/);
+    const lib = fs.readFileSync(path.join(__dirname, '../../utils/itemCalibration.js'), 'utf8');
+    expect(lib).toMatch(/authoredPrior\(p\)/);
     expect(script).not.toMatch(/priors\[p\.problemId\] = p\.difficulty/);
     // calibration must be selected, or authoredPrior has nothing to read.
-    expect(script).toMatch(/\.select\('problemId difficulty skillId isActive calibration'\)/);
+    expect(script).toMatch(/\.select\('problemId difficulty skillId source prompt isActive calibration'\)/);
   });
 
   test('a fit that did not settle writes nothing unless forced', () => {
-    expect(script).toMatch(/if \(!fit\.converged && !FORCE\)/);
-    expect(script.indexOf('if (!fit.converged && !FORCE)')).toBeLessThan(script.indexOf('updateOne'));
+    // Per tier: a band fit that settled writes even while the item fit is
+    // still moving, and vice versa.
+    expect(script).toMatch(/const levelOk = \(level\) => FORCE \|\| levels\[level\]\.converged;/);
+    expect(script).toMatch(/measured\.filter\(\(r\) => levelOk\(r\.level\) && changed\(r\)\)/);
+    expect(script.indexOf('const levelOk')).toBeLessThan(script.indexOf('updateOne'));
   });
 
   test('the two things a human must see are pushed out of the log', () => {
@@ -469,6 +478,94 @@ describe('the cron can be run unattended', () => {
   test('a no-op run is not reported as work', () => {
     // An item already sitting at its estimate must not be rewritten every
     // month just to re-stamp calibratedAt.
-    expect(script).toMatch(/i\.difficulty !== \(live\[i\.problemId\]/);
+    expect(script).toMatch(/return p\.difficulty !== r\.difficulty \|\| round2\(c\.theta\) !== round2\(r\.theta\) \|\| c\.method !== methodFor\(r\.level\);/);
+  });
+});
+
+describe('pooled calibration: banks authored on different scales are equated', () => {
+  // Two banks. "ref" is authored on the true scale. "shifted" was authored a
+  // whole level low (its 2 is really a 3) on a 1-3 scale, in templates of
+  // three near-identical items. 40 students each see 45 random items — far too
+  // few for any single item to reach n=25, which is the real situation.
+  const { calibratePooled, thetaToDifficultyExact } = require('../../utils/itemCalibration');
+  const rng = mulberry32(7);
+  const problems = [];
+  const truth = {};
+  for (let i = 0; i < 100; i++) {
+    const d = 1 + (i % 5);
+    problems.push({ problemId: `r${i}`, source: 'ref', skillId: 's', prompt: `Reference question ${i}`, difficulty: d });
+    truth[`r${i}`] = difficultyToTheta(d);
+  }
+  for (let t = 0; t < 40; t++) {
+    const d = 1 + (t % 3);
+    for (let k = 0; k < 3; k++) {
+      const id = `s${t}-${k}`;
+      problems.push({ problemId: id, source: 'shifted', skillId: 's', prompt: `Template ${'x'.repeat(t + 1)} with ${k + 2} apples`, difficulty: d });
+      truth[id] = difficultyToTheta(d + 1) + (rng() - 0.5) * 0.3;
+    }
+  }
+  problems.push({ problemId: 'unseen', source: 'shifted', skillId: 's', prompt: 'Never served', difficulty: 2 });
+
+  const rows = [];
+  const servable = problems.filter((p) => p.problemId !== 'unseen');
+  for (let j = 0; j < 40; j++) {
+    const theta = (rng() + rng() + rng() - 1.5) * 1.5;
+    const pool = servable.slice();
+    for (let q = 0; q < 45; q++) {
+      const [p] = pool.splice(Math.floor(rng() * pool.length), 1);
+      rows.push({ userId: `u${j}`, problemId: p.problemId, correct: rng() < 1 / (1 + Math.exp(-(theta - truth[p.problemId]))) });
+    }
+  }
+  const { resolved, levels } = calibratePooled(rows, problems, { minResponses: 25, referenceSource: 'ref' });
+  const by = new Map(resolved.map((r) => [r.problemId, r]));
+  const mean = (ids) => ids.reduce((a, id) => a + by.get(id).exact, 0) / ids.length;
+  const shiftedAt = (d) => problems.filter((p) => p.source === 'shifted' && p.difficulty === d && p.problemId !== 'unseen').map((p) => p.problemId);
+
+  test('no single item has enough data, yet every item is resolved by a pool', () => {
+    expect(levels.item.writableItems).toBe(0);
+    expect(resolved.filter((r) => r.level === 'item')).toHaveLength(0);
+    expect(resolved.every((r) => r.level === 'band' || r.level === 'template')).toBe(true);
+  });
+
+  test('the shifted bank moves up a level, onto the reference scale', () => {
+    [1, 2, 3].forEach((d) => expect(Math.abs(mean(shiftedAt(d)) - (d + 1))).toBeLessThan(0.45));
+  });
+
+  test('the reference bank stays where its authors put it, on average', () => {
+    const ref = problems.filter((p) => p.source === 'ref');
+    const authored = ref.reduce((a, p) => a + p.difficulty, 0) / ref.length;
+    expect(Math.abs(mean(ref.map((p) => p.problemId)) - authored)).toBeLessThan(0.15);
+  });
+
+  test('an item nobody has answered still takes its band\'s measured value', () => {
+    const u = by.get('unseen');
+    expect(u.level).toBe('band');
+    expect(Math.abs(u.exact - 3)).toBeLessThan(0.45);
+  });
+
+  test('the result is on the same 1-5 scale the assembler reads', () => {
+    resolved.forEach((r) => {
+      expect(r.difficulty).toBe(Math.round(r.exact));
+      expect(thetaToDifficultyExact(r.theta)).toBeCloseTo(r.exact, 1);
+    });
+  });
+
+  test('a second run over its own output lands in the same place (no ratchet)', () => {
+    // What --apply writes: the measured integer live, the authored one kept.
+    const written = problems.map((p) => {
+      const r = by.get(p.problemId);
+      return r.level
+        ? { ...p, difficulty: r.difficulty, calibration: { priorDifficulty: p.difficulty, calibratedAt: new Date(), theta: r.theta } }
+        : p;
+    });
+    const again = new Map(calibratePooled(rows, written, { minResponses: 25, referenceSource: 'ref' }).resolved.map((r) => [r.problemId, r]));
+    resolved.forEach((r) => expect(again.get(r.problemId).exact).toBeCloseTo(r.exact, 6));
+  });
+
+  test('a thin or suspect item is never resolved at the item level', () => {
+    resolved.filter((r) => r.level === 'item').forEach((r) => {
+      expect(r.n).toBeGreaterThanOrEqual(25);
+      expect(r.suspectKey).toBe(false);
+    });
   });
 });

@@ -20,6 +20,7 @@
  */
 'use strict';
 
+const { isWorkBoardEnabled } = require('../featureFlags');
 const MAX_STEPS_SHOWN = 6;
 const MAX_TEX = 90;
 
@@ -60,6 +61,12 @@ function buildBoardStateBlock(ledger, now = new Date()) {
   const cur = ledger.current;
   const railCount = Array.isArray(ledger.completed) ? ledger.completed.length : 0;
   if (!cur && railCount === 0) return '';
+
+  // Board off: the student sees no board, so a block that says "the student
+  // sees every line above" and offers <BOARD_POINT/> would be false. What
+  // stays true and useful is WHICH problem is in focus (the server still pins
+  // it from chat) — that anchor survives conversation summarization.
+  if (!isWorkBoardEnabled()) return buildProblemInFocusBlock(cur, now);
 
   const lines = ['== THE STUDENT\'S BOARD (visible to them RIGHT NOW) =='];
 
@@ -117,4 +124,28 @@ function buildBoardStateBlock(ledger, now = new Date()) {
   return lines.join('\n');
 }
 
-module.exports = { buildBoardStateBlock, MAX_STEPS_SHOWN };
+/**
+ * Board-off version: the pinned problem and whether it is solved, nothing
+ * about a board the student cannot see.
+ */
+function buildProblemInFocusBlock(cur, now = new Date()) {
+  if (!cur || !cur.problemTex) return '';
+  const posedAtMs = cur.posedAt ? Date.parse(cur.posedAt) : NaN;
+  const ageMs = Number.isFinite(posedAtMs) ? (now.getTime() - posedAtMs) : 0;
+  const stale = ageMs > STALE_AFTER_MS;
+  const steps = Array.isArray(cur.steps) ? cur.steps : [];
+  const solved = steps.some(c => c && c.action === 'verify');
+  const lines = ['== PROBLEM IN FOCUS =='];
+  lines.push('Problem: ' + trunc(cur.problemTex)
+    + (cur.sourceRef ? ' (from their uploaded worksheet)' : '')
+    + (stale ? ' — posed ' + Math.round(ageMs / (60 * 60 * 1000)) + 'h ago, likely from EARLIER work' : ''));
+  lines.push(solved
+    ? 'Status: SOLVED — do not keep working it; celebrate briefly and move forward.'
+    : 'Status: in progress.');
+  if (stale) {
+    lines.push('If the current lesson is a DIFFERENT topic, do not force this problem back in.');
+  }
+  return lines.join('\n');
+}
+
+module.exports = { buildBoardStateBlock, buildProblemInFocusBlock, MAX_STEPS_SHOWN };

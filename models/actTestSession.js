@@ -16,6 +16,7 @@ const actItemSchema = new Schema({
   category: { type: String },
   content: { type: String },                 // the prompt shown to the student
   svg: { type: String },                     // optional figure
+  figureAlt: { type: String },               // its text description (screen readers)
   answerType: { type: String },
   options: [{ label: String, text: String }],
   difficulty: { type: Number },

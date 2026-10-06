@@ -165,6 +165,31 @@ describe('worked examples, end to end', () => {
     expect(r.explanation).toMatch(/D\) 180 reports the total distance/);
   });
 
+  test('x^2 - 9 is explained as a difference of squares, not as a trinomial', () => {
+    const r = run('Factor completely: x^2 - 9',
+      ['(x - 3)(x + 3)', '(x - 3)(x - 3)', '(x - 9)(x + 9)', 'x(x - 9)'], 'A');
+    expect(r.status).toBe('ok');
+    expect(r.explanation).toMatch(/difference of squares/);
+    expect(r.explanation).toMatch(/C\) \(x - 9\)\(x \+ 9\) uses 9 itself instead of its square root/);
+    expect(r.explanation).not.toMatch(/middle term to 0|trinomial/);
+    expect(r.namedDistractors).toBe(3);
+  });
+
+  test('the inverse of f(x) = ax has no "+ 0" to undo', () => {
+    const r = run('If f(x) = 2x, what is f⁻¹(x)?', ['1/(2x)', 'x/2', 'x - 2', '-2x'], 'B');
+    expect(r.status).toBe('ok');
+    expect(r.explanation).not.toMatch(/\b0\b|addition/);
+    expect(r.namedDistractors).toBe(3);
+  });
+
+  test('without replacement: the half-adjusted product and the second draw are named', () => {
+    const r = run('A jar holds 7 red and 6 blue chips. Two chips are drawn at random without replacement. What is the probability that both are red?',
+      ['42/169', '7/26', '49/169', '1/2'], 'B');
+    expect(r.status).toBe('ok');
+    expect(r.namedDistractors).toBe(3);
+    expect(r.explanation).toMatch(/A\) 42\/169 takes the chip out of the red count but not out of the total/);
+  });
+
   test('a mis-keyed item gets no explanation at all', () => {
     // Same question, key deliberately moved to the wrong choice.
     const r = run('A triangle has a base of 10 and a height of 7. What is its area?',

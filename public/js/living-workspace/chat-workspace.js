@@ -52,6 +52,23 @@
   var MODE = resolveMode();
   var ON = MODE === 'dev' || MODE === 'beta' || MODE === 'live';
 
+  // The Work Board — the derivation dock above the composer and the sealed
+  // cards in the transcript — is OFF unless the server says otherwise
+  // (WORK_BOARD env → /api/features.js → MM_FEATURES.workBoard). With it off
+  // the tutor writes the math in its message; this module still mounts the
+  // Notebook and the Source Dock, so isOn() stays true (script.js would
+  // otherwise fall back to the legacy board) and only the board calls go quiet.
+  // ?workBoard=1 forces it on for a session.
+  function resolveBoard() {
+    try {
+      var q = new URLSearchParams(window.location.search || '').get('workBoard');
+      if (q === '1' || q === 'on') return true;
+      if (q === '0' || q === 'off') return false;
+    } catch { /* no URL */ }
+    return !!(window.MM_FEATURES && window.MM_FEATURES.workBoard === true);
+  }
+  var BOARD = resolveBoard();
+
   // Chat context for the student-move loop (P7). Chat refines it via
   // window.LWS_CHAT.setContext({ conversationId, workspaceId }).
   var ctx = { conversationId: null, workspaceId: 'chat' };
@@ -347,6 +364,7 @@
   }
 
   api.applyBoardCommands = function (cmds) {
+    if (!BOARD) return;
     if (!Array.isArray(cmds) || cmds.length === 0) return;
     render(cmds);
   };
@@ -356,6 +374,7 @@
   // during a voice session instead of freezing after the first (text-posed)
   // problem. No-op if the translator or payload is empty.
   api.applyVoiceBoard = function (payload) {
+    if (!BOARD) return;
     if (!window.LWS || typeof window.LWS.voiceToBoardCommands !== 'function') return;
     var cmds;
     try { cmds = window.LWS.voiceToBoardCommands(payload); }
@@ -571,6 +590,7 @@
   }
 
   api.hydrate = function (ledger) {
+    if (!BOARD) return;             // no board → nothing to replay
     pending = null;                 // queued live turns belong to the old view
     if (!ready || !dv) { pendingLedger = ledger || null; return; }
     doHydrate(ledger);
@@ -579,13 +599,17 @@
   function boot() {
     injectCss();
     loadNext(0, function () {
-      if (!window.LWS || !window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
-      var mount = buildDock();
-      dv = new window.LWS.DerivationView(mount, {
-        renderers: makeRenderers(),
-        onOpenSource: openLinkedSource,
-        onSeal: onSeal,
-      });
+      if (!window.LWS) { console.error('[LWS_CHAT] workspace modules not available after load'); return; }
+      var mount = null;
+      if (BOARD) {
+        if (!window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
+        mount = buildDock();
+        dv = new window.LWS.DerivationView(mount, {
+          renderers: makeRenderers(),
+          onOpenSource: openLinkedSource,
+          onSeal: onSeal,
+        });
+      }
       // The derivation's A−/A+ text-size control pins itself to its own
       // top-right corner. In a full-height rail that read as board chrome; over
       // a short dock whose card is left-aligned it reads as an orphan floating
@@ -593,19 +617,19 @@
       // Handlers are closures over the buttons, so re-parenting is safe.
       try {
         var bar = document.querySelector('#cr-work-dock .lws-dock-bar');
-        var az = dv.el && dv.el.root && dv.el.root.querySelector('.lws-dv-az');
+        var az = dv && dv.el && dv.el.root && dv.el.root.querySelector('.lws-dv-az');
         if (bar && az) bar.insertBefore(az, bar.querySelector('.lws-dock-toggle'));
       } catch (e) { console.error('[LWS_CHAT] text-size relocate failed', e); }
 
-      var widgetHost = buildOverlayHost() || (dv.el && dv.el.root) || mount;
-      if (window.LWS.SourceDock) {
+      var widgetHost = buildOverlayHost() || (dv && dv.el && dv.el.root) || mount;
+      if (widgetHost && window.LWS.SourceDock) {
         try { dock = new window.LWS.SourceDock(widgetHost, {
           onAskRegion: askAboutRegion,
           // New uploads fly from the composer into the "My materials" tab.
           flyFrom: function () { return document.querySelector('.imessage-compose-bar') || document.getElementById('user-input'); },
         }); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
       }
-      if (window.LWS.NotebookPanel) {
+      if (widgetHost && window.LWS.NotebookPanel) {
         try {
           var notebook = new window.LWS.NotebookPanel(widgetHost);
           api.captureToNotebook = function (text) {
@@ -621,7 +645,7 @@
       // arrived AFTER the hydrate and renders on top of the rebuilt board.
       if (pendingLedger !== undefined) { var l = pendingLedger; pendingLedger = undefined; doHydrate(l); }
       if (pending) { var p = pending; pending = null; render(p); }
-      console.log('[LWS_CHAT] mounted (inline work dock, mode=' + MODE + ')');
+      console.log('[LWS_CHAT] mounted (' + (BOARD ? 'inline work dock' : 'notebook + sources only, board off') + ', mode=' + MODE + ')');
     });
   }
 

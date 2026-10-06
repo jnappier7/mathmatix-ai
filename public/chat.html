@@ -34,10 +34,14 @@
     // Render to 'off' — /api/features.js (loaded above) overrides this default
     // from the dashboard, no code change needed. Editing here still works too.
     // courses: true — the "My Courses" sidebar entry point is live (structure-everywhere).
+    // workBoard: false — the Work Board (derivation dock + sealed cards) is off;
+    // the tutor writes the math in its message. The server owns this flag
+    // (WORK_BOARD env, emitted by /api/features.js above) because the prompt
+    // and the dock must agree. ?workBoard=1 forces it on for a session.
     // Kill switch: set courses:false here, or load with ?courses=0 to hide it for a session.
     // bottomNav: phone-only (≤900px) tab bar — Tutor/Courses/Practice/Progress/More.
     // Kill switch: set bottomNav:false here (desktop is untouched either way).
-    window.MM_FEATURES = Object.assign({ boardPanel: true, livingWorkspace: 'live', courses: true, bottomNav: true }, window.MM_FEATURES || {});
+    window.MM_FEATURES = Object.assign({ boardPanel: true, livingWorkspace: 'live', workBoard: false, courses: true, bottomNav: true }, window.MM_FEATURES || {});
     if (window.MM_FEATURES.boardPanel === false) {
       document.documentElement.classList.add('mm-board-hidden');
     }
@@ -170,7 +174,7 @@
        it lazy-loads the workspace, mounts the derivation into #cr-work-dock,
        and seals each finished problem into the transcript.
        Default OFF → zero impact. -->
-  <script defer src="/js/living-workspace/chat-workspace.js?v=20260924a"></script>
+  <script defer src="/js/living-workspace/chat-workspace.js?v=20261004a"></script>
   <!-- Final safety net: strips any inline visual tag no renderer handled -->
   <script defer src="/js/stripVisualTags.js?v=20260731"></script>
   <!-- Non-core libs (lazy-loaded after first interaction) -->
@@ -2498,7 +2502,7 @@
   <!-- Phase C: executes server-emitted <XP> ceremony commands (confetti + caption) -->
   <script src="/js/xpTagHandler.js"></script>
   <!-- ACT Math practice test runner — window.openActTest() (boot-camp diagnostic) -->
-  <script src="/js/act-test.js?v=8"></script>
+  <script src="/js/act-test.js?v=9"></script>
     <script src="/js/coursePreAssessment.js?v=20260817a"></script>
   <!-- Phase D: executes server-emitted <GRAPH>/<TILES> tab-switch commands -->
   <script src="/dist/js/chat-js5.c6527a5d.js"></script>

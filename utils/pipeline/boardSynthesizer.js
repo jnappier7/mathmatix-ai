@@ -888,11 +888,18 @@ function mergeWithLlmCommands(llmCommands, synthesized) {
  * already pinned. A genuinely NEW problem (different normalized tex) is kept —
  * the synthesizer pairs it with a `clear`, so the board still resets cleanly.
  *
+ * A `clear` sitting right in front of a dropped pose is that pose's pair and
+ * goes with it: on its own it seals the very card the re-pose restated
+ * (2026-10-05 — the tutor restarted the pinned problem as clear + pose, and
+ * one problem became a second card). An explicit start-over from the student
+ * keeps the clear; that wipe was asked for.
+ *
  * @param {Array} commands - merged board commands for this turn
  * @param {string|null} pinnedTex - conversation.boardProblem.tex (current pin)
+ * @param {{startOver?: boolean}} [opts]
  * @returns {{ kept: Array, dropped: Array }}
  */
-function dropRedundantPoses(commands, pinnedTex) {
+function dropRedundantPoses(commands, pinnedTex, { startOver = false } = {}) {
   const list = Array.isArray(commands) ? commands : [];
   const pinKey = pinnedTex ? normalizeForCompare(pinnedTex) : null;
   const seen = new Set();
@@ -903,6 +910,8 @@ function dropRedundantPoses(commands, pinnedTex) {
     const key = normalizeForCompare(c.tex || '');
     if ((pinKey && key === pinKey) || seen.has(key)) {
       dropped.push(c);
+      const prev = kept[kept.length - 1];
+      if (!startOver && prev && prev.action === 'clear') dropped.push(kept.pop());
       continue;
     }
     seen.add(key);

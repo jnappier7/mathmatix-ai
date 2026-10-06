@@ -620,10 +620,16 @@ function lastTutorAskedForNextStep(recentAssistantMessages) {
     // with a bare operation.
     /\b(?:walk|talk|show)\s+me\s+(?:through\s+)?what\s+(?:that|it)\s+(?:looks|would\s+look)\s+like\b/,
     /\bwhat\s+(?:that|it)\s+looks\s+like\s+in\s+your\s+work\b/,
-    // "will"/"can" belong here too: "Now, to isolate x, what will you do
-    // next?" matched nothing, so the student's "divide by 2 to get x=8" was
-    // read as a fresh problem drop and run through the giveaway guard.
-    /\bwhat\s+(?:do|should|would|could|will|can)\s+(?:we|you)\s+(?:do|try|use|think|get|notice|see|need|start|begin)\b/,
+    // "will"/"can"/"might" are the same ask: "Now, what will you do next?"
+    // was the tutor's most common phrasing in a 2026-10 algebraic-proof
+    // session, and every reply to it was misread as a fresh problem drop.
+    // Only with a step context: "what can we do today?" opens the floor.
+    /\bwhat\s+(?:do|should|would|could)\s+(?:we|you)\s+(?:do|try|use|think|get|notice|see|need|start|begin)\b/,
+    /\bwhat\s+(?:will|can|might)\s+(?:we|you)\s+(?:do|try)\s+(?:next|now|first|from\s+here|to\s+(?:isolate|get|solve|undo|eliminate|simplify))\b/,
+    // "how do you isolate x from here?" — asking for the move by its goal.
+    // Math verbs only: "how do you get to school?" is small talk.
+    /\bhow\s+(?:do|would|should|could|can|will)\s+(?:we|you)\s+(?:isolate|undo|eliminate|cancel|clear|solve\s+for)\b/,
+    /\byour\s+next\s+(?:step|move)\b/,
     /\bwhat\s+(?:do|did)\s+you\s+(?:think|get|notice|see|find|come\s+up\s+with)\b/,
     /\bwhat(?:'?s|\s+is|\s+would\s+be)\s+(?:next|the\s+(?:answer|result|value|next\s+step|first\s+step))\b/,
     /\bnow\s+what\b/,
@@ -742,44 +748,51 @@ function detectBareProblemDrop(text, messageType, hasAnswer, recentAssistantMess
   return true;
 }
 
-// Step operations a student performs ON an equation. Deliberately not the
-// problem-statement verbs (solve/factor/simplify/evaluate — "solve 3x-7=20"
-// is the canonical drop) and not plus/minus/times, which spell out a problem
-// in words ("2x plus 5 = 17").
-const STEP_OP = /\b(?:divid(?:e|es|ed|ing)|multipl(?:y|ies|ied|ying)|add(?:s|ed|ing)?|subtract(?:s|ed|ing)?|take\s+away|distribut(?:e|es|ed|ing)|combin(?:e|es|ed|ing)|cancel(?:s|led|ed|ling|ing)?|isolat(?:e|es|ed|ing)|substitut(?:e|es|ed|ing)|plug(?:s|ged|ging)?)\b/i;
-
-// What the operation produced: "to get", "gives", "which leaves", "results in".
-const STEP_RESULT_CONNECTOR = /\b(?:to\s+get|(?:you|we|i)\s+get|gets?|gives?|giving|leaves?|leaving|which\s+is|results?\s+in|equals|turns?\s+into|becomes?)\b/i;
-
-// Naming the justification ("division property of equality") is reasoning —
-// nobody posing a new problem cites the property that licenses the step.
-const PROPERTY_NAME = /\b(?:addition|subtraction|multiplication|division|distributive|commutative|associative|identity|inverse|substitution|zero[\s-]+product)\s+property\b/i;
-
 /**
- * Does this message describe a step the student CARRIED OUT — an operation
- * plus what it produced — rather than hand over a problem?
+ * A step the student CARRIED OUT is work on the problem in front of them, not
+ * a new one handed over: "-10 on both sides to get 2x=16", "divide by 2
+ * x=8", "2x+10=26 combine like terms", "5x+10-3x=26 distributive property".
+ * Flagging these as drops put the student's own work under the student-posed
+ * anti-giveaway rules, so the tutor's "Exactly, x = 8!" was treated as a leak
+ * and the 2026-10 proof session restarted from the top four times. This must
+ * not depend on how the tutor phrased its last question (that guard is in
+ * detectBareProblemDrop and can always miss a phrasing). Every form needs a
+ * written equation — without one there is no result, only a proposal — and a
+ * message led by a solve verb ("solve 3x+5=14 using the distributive
+ * property") is still a request, whatever vocabulary it borrows.
  *
- *   "divide by 2 to get x=8"                       → operation + "to get"
- *   "2x=16 divided by 2 is x=8"                    → operation, then a solved form
- *   "divide by 2 x=8 division property of equality" → operation + property name
+ * Also read by observe()'s conceptualReply: a carried-out step is computation,
+ * not an idea in words, and the prose verifier can only misgrade it.
  *
- * The equation in these is the student's own result, which is why they used
- * to trip the bare-drop gate (any "=" counted as a problem signal). A real drop
- * names no operation ("2x+5=17") or only the problem verb ("solve 3x-7=20"),
- * and an operation with no result ("add 1/2 + 1/4") is still a computation to
- * hand over — so both halves are required. A word problem uses the same
- * vocabulary ("if you divide a number by 3 you get 10, what is it?"), so
- * anything that reads as a question is left to the drop gate.
+ * @param {string} t trimmed message text
+ * @returns {boolean}
  */
-function describesStepWork(text) {
-  if (/\?\s*$/.test(text) || /^\s*if\b|\b(?:what|find|how\s+(?:many|much))\b/i.test(text)) return false;
-  const opMatch = text.match(STEP_OP);
-  if (!opMatch) return false;
-  if (STEP_RESULT_CONNECTOR.test(text) || PROPERTY_NAME.test(text)) return true;
-  // A solved form AFTER the operation ("... divided by 2 is x=8") is its
-  // result. Before it, "x=8" would be the problem the operation acts on.
-  // `\b` keeps "2x=16" (a coefficient term) from counting as solved.
-  return /\b[a-z]\s*=\s*-?\d/i.test(text.slice(opMatch.index + opMatch[0].length));
+function describesStepWork(t) {
+  if (!/=/.test(t)) return false;
+  if (/^(solve|factor|simplify|evaluate|compute|graph|find)\s+/i.test(t)) return false;
+
+  // A result connector immediately followed by the equation it produced.
+  // "to get x by itself in 2x+5=17" is a question about a goal, not a
+  // result, so a word may not sit between the connector and the "=".
+  const resultConnector =
+    /\b(?:to\s+get|(?:you|we|i)\s+get|gives?(?:\s+(?:you|us))?|giving|leaves?(?:\s+(?:you|us))?|results?\s+in|becomes|turns\s+into)\s+[^a-z=]{0,12}[a-z]?[^a-z=]{0,12}=/i;
+  const bothSides = /\b(?:on|from|to|by)\s+both\s+sides\b/i;
+  // Two-column proof reasons. "Given 2x+5=17, find x" opens a problem, so
+  // "given" counts only as a trailing reason or "is the given".
+  const justification =
+    /\bpropert(?:y|ies)\b|\blike\s+terms\b|\bthe\s+given\b|\bgiven\s*[.!]?\s*$|\bsubstitution\b|\bdefinition\s+of\b|\binverse\s+operations?\b/i;
+  // An operation leading an equation: "divide by 2 x=8", "subtract 10 2x=16".
+  // A bare "add 1/2 + 1/4" has no "=" and never reaches here.
+  const operationLed =
+    /^\s*(?:then\s+|so\s+|now\s+|next\s+)?(?:add|subtract|multiply|divide|distribute|combine)(?:d|ed|s|ing)?\b[^=]*=/i;
+  // An operation mid-message with a SOLVED form after it: "2x=16 divided by 2
+  // is x=8". The `\b` keeps a coefficient term ("2x=16") from counting as
+  // solved, and a trailing "?" leaves a question to the drop gate.
+  const operationThenSolved =
+    /\b(?:add|subtract|multipl(?:y|ied|ies|ying)|divid(?:e|ed|es|ing)|distribut(?:e|ed|es|ing)|combin(?:e|ed|es|ing))\b.*\b[a-z]\s*=\s*-?\d[^?]*$/i;
+
+  return resultConnector.test(t) || bothSides.test(t) || justification.test(t)
+    || operationLed.test(t) || operationThenSolved.test(t);
 }
 
 /**

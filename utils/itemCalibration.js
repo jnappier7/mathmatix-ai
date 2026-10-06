@@ -197,6 +197,16 @@ function calibrateItems(rows, priors = {}, options = {}) {
     shrinkK = 20,
     maxIterations = 30,
     tolerance = 1e-3,
+    // Which items define the scale (see the anchor below). Default: all of them.
+    anchorIds = null,
+    // Weight per anchor id (default 1). A pooled fit passes how many distinct
+    // items each pool stands for, so its anchor lands where an item-level fit
+    // over the same items would put it.
+    anchorWeights = null,
+    // What a thin estimate is shrunk toward, per id. Default: its prior. A
+    // pooled fit (a template's, a bank level's) is a better target than the
+    // authored number when the authored scale is the thing in doubt.
+    shrinkTo = null,
   } = options;
 
   // ── Index the matrix ──
@@ -235,7 +245,18 @@ function calibrateItems(rows, priors = {}, options = {}) {
   // scale has to be pinned to something. Pinning it to the priors' mean keeps
   // a recalibrated item comparable to one that was never calibrated — centre
   // on 0 instead and a strong cohort would quietly re-rate the whole bank.
-  const anchor = [...b.values()].reduce((a, x) => a + x, 0) / (b.size || 1);
+  //
+  // anchorIds narrows that to a reference set. With several banks authored on
+  // different scales (one bank's "2" is another's "3"), the mean over ALL of
+  // them is an arbitrary blend; pinning to one bank's authored mean makes that
+  // bank the reference and equates the others to it — the role a reference
+  // form plays in ACT's own equating.
+  const anchorSet = anchorIds ? [...b.keys()].filter((id) => anchorIds.has(id)) : [];
+  const anchorKeys = anchorSet.length ? anchorSet : [...b.keys()];
+  const weightOf = (id) => (anchorWeights && Number(anchorWeights[id]) > 0 ? Number(anchorWeights[id]) : 1);
+  const totalWeight = anchorKeys.reduce((a, id) => a + weightOf(id), 0) || 1;
+  const meanOver = (keys) => keys.reduce((a, id) => a + weightOf(id) * b.get(id), 0) / totalWeight;
+  const anchor = meanOver(anchorKeys);
 
   // Convergence is judged ONLY over the items this run could write. An item
   // with one response has no finite MLE and jitters at the edge of the scale
@@ -278,8 +299,7 @@ function calibrateItems(rows, priors = {}, options = {}) {
     }
 
     // Re-pin the scale after each sweep.
-    const mean = [...b.values()].reduce((a, x) => a + x, 0) / (b.size || 1);
-    const shift = anchor - mean;
+    const shift = anchor - meanOver(anchorKeys);
     for (const [id, v] of b) b.set(id, v + shift);
     for (const [p, v] of theta) theta.set(p, v + shift);
 
@@ -311,7 +331,8 @@ function calibrateItems(rows, priors = {}, options = {}) {
     const usableN = obs.filter((o) => usablePeople.has(o.person)).length;
     const pValue = n ? nCorrect / n : null;
     const priorDifficulty = Number(priors[id]) || 3;
-    const bPrior = difficultyToTheta(priorDifficulty);
+    const target = shrinkTo && Number.isFinite(Number(shrinkTo[id])) ? Number(shrinkTo[id]) : priorDifficulty;
+    const bPrior = difficultyToTheta(target);
     const bEstimate = b.get(id);
     // Empirical-Bayes shrinkage: a 30-response estimate is not a 300-response
     // estimate, and pretending otherwise makes the bank jitter on every run.
@@ -355,6 +376,7 @@ function calibrateItems(rows, priors = {}, options = {}) {
       convergenceBasis,
       writableItems: convergenceIds.size,
       anchor,
+      anchoredOn: anchorSet.length ? 'reference-set' : 'all',
       meanItemsPerPerson,
       biasCorrection,
       minResponses,
@@ -363,7 +385,163 @@ function calibrateItems(rows, priors = {}, options = {}) {
   };
 }
 
+function thetaToDifficultyExact(theta) {
+  const t = Number.isFinite(theta) ? theta : 0;
+  return Math.max(DIFFICULTY_MIN, Math.min(DIFFICULTY_MAX, ((t + 3) / 6) * 4 + 1));
+}
+
+/**
+ * The wording an item shares with the rest of its template: numbers out.
+ * "Solve for x: log_5(2x) = 3" and "Solve for x: log_3(4x) = 4" are one shape.
+ */
+function promptShape(prompt) {
+  return String(prompt || '').replace(/\d+(\.\d+)?/g, '#').replace(/\s+/g, ' ').trim();
+}
+const templateKey = (p) => `${p.source || ''}|${p.skillId || ''}|${promptShape(p.prompt)}`;
+const bandKey = (p) => `${p.source || ''}|${authoredPrior(p)}`;
+
+/**
+ * Calibrate in three tiers, so a difficulty can be MEASURED long before every
+ * item has its own 25 responses.
+ *
+ * WHY
+ * The banks were authored on different scales. On the same skills, the
+ * enhanced drop (rated 1-3, one rating per template) averages almost a whole
+ * point below the Fable bank (rated 1-5 per item), so the form builder, which
+ * orders a test by difficulty, interleaves them wrong: an enhanced "2" lands
+ * beside a Fable "2" it is not equal to. Per-item calibration fixes that only
+ * once an item has n >= 25; across ~2,100 items that is thousands of tests.
+ * ACT never meets this problem: no item reaches a scored slot until it has
+ * been field-tested. We have to serve un-pretested items, so pool them:
+ *
+ *   band      one bank's authored level ("enhanced, authored 2"): hundreds of
+ *             items, so it reaches n >= minResponses within tens of tests. This
+ *             is what maps each bank's scale onto the reference bank's.
+ *   template  items that differ only in their numbers ("Solve for x:
+ *             log_#(#x) = #"), which are near-equal in difficulty by
+ *             construction.
+ *   item      the existing per-item estimate, once an item has its own data.
+ *
+ * Each tier shrinks toward the one above it rather than to the authored number,
+ * so a thin template inherits its bank's corrected scale, not the bias being
+ * corrected. All three are pinned to the reference source's AUTHORED mean
+ * (weighted by items), so they share one scale and the reference bank stays
+ * where its authors put it on average — the others are equated to it.
+ *
+ * Every problem in `problems` gets a resolution, including ones nobody has
+ * answered yet: an unseen item in a measured band takes the band's value.
+ * Resolution order: item, then template (2+ members), then band.
+ *
+ * @param {Array} rows      {userId, problemId, correct}
+ * @param {Array} problems  lean docs: {problemId, source, skillId, prompt, difficulty, calibration}
+ * @param {Object} [options] minResponses, shrinkK, referenceSource
+ * @returns {{resolved: Array, levels: {band, template, item}}}
+ */
+function calibratePooled(rows, problems, options = {}) {
+  const { minResponses = 25, shrinkK = 20, referenceSource = null } = options;
+  const byId = new Map((problems || []).map((p) => [p.problemId, p]));
+  const usable = (rows || []).filter((r) => r && byId.has(r.problemId));
+  const isRef = (p) => referenceSource != null && p.source === referenceSource;
+
+  // Distinct ANSWERED reference items behind each pool, the anchor weight.
+  const seen = new Set(usable.map((r) => r.problemId));
+  const refWeights = (keyOf) => {
+    const w = {};
+    for (const id of seen) {
+      const p = byId.get(id);
+      if (isRef(p)) w[keyOf(p)] = (w[keyOf(p)] || 0) + 1;
+    }
+    return w;
+  };
+  const fitLevel = (keyOf, shrinkTo) => {
+    const priors = {};
+    const sums = {};
+    for (const p of byId.values()) {
+      const k = keyOf(p);
+      (sums[k] = sums[k] || []).push(Number(authoredPrior(p)) || 3);
+    }
+    for (const [k, v] of Object.entries(sums)) priors[k] = v.reduce((a, x) => a + x, 0) / v.length;
+    const weights = refWeights(keyOf);
+    const out = calibrateItems(
+      usable.map((r) => ({ userId: r.userId, correct: r.correct, problemId: keyOf(byId.get(r.problemId)) })),
+      priors,
+      {
+        minResponses,
+        shrinkK,
+        anchorIds: Object.keys(weights).length ? new Set(Object.keys(weights)) : null,
+        anchorWeights: weights,
+        shrinkTo,
+      },
+    );
+    const est = new Map(out.items.map((i) => [i.problemId, i]));
+    const members = {};
+    for (const p of byId.values()) members[keyOf(p)] = (members[keyOf(p)] || 0) + 1;
+    return { est, meta: out.meta, members };
+  };
+  const exactOf = (e) => thetaToDifficultyExact(e.shrunkTheta);
+
+  const band = fitLevel(bandKey, null);
+  const bandTarget = (key) => { const e = band.est.get(key); return e && e.enoughData ? exactOf(e) : undefined; };
+
+  const tShrink = {};
+  for (const p of byId.values()) {
+    const t = bandTarget(bandKey(p));
+    if (t !== undefined) tShrink[templateKey(p)] = t;
+  }
+  const template = fitLevel(templateKey, tShrink);
+  const templateUsable = (key) => {
+    const e = template.est.get(key);
+    return e && e.enoughData && !e.suspectKey && template.members[key] >= 2 ? e : null;
+  };
+
+  const iShrink = {};
+  for (const p of byId.values()) {
+    const t = templateUsable(templateKey(p));
+    const target = t ? exactOf(t) : bandTarget(bandKey(p));
+    if (target !== undefined) iShrink[p.problemId] = target;
+  }
+  const item = fitLevel((p) => p.problemId, iShrink);
+
+  const resolved = [];
+  for (const p of byId.values()) {
+    const authored = Number(authoredPrior(p)) || 3;
+    const i = item.est.get(p.problemId);
+    const t = templateUsable(templateKey(p));
+    const bd = band.est.get(bandKey(p));
+    let level = null;
+    let e = null;
+    if (i && i.enoughData && !i.suspectKey) { level = 'item'; e = i; }
+    else if (t) { level = 'template'; e = t; }
+    else if (bd && bd.enoughData) { level = 'band'; e = bd; }
+    resolved.push({
+      problemId: p.problemId,
+      level,
+      priorDifficulty: authored,
+      difficulty: e ? thetaToDifficulty(e.shrunkTheta) : null,
+      exact: e ? Math.round(exactOf(e) * 100) / 100 : null,
+      theta: e ? e.shrunkTheta : null,
+      n: e ? e.usableN : (i ? i.usableN : 0),
+      pValue: e ? e.pValue : (i ? i.pValue : null),
+      suspectKey: !!(i && i.suspectKey) || !!(template.est.get(templateKey(p)) || {}).suspectKey,
+    });
+  }
+  // Each bank's authored levels on the common scale: the equating table.
+  const bands = [...band.est.values()].map((e) => ({
+    key: e.problemId,
+    authored: e.priorDifficulty,
+    exact: Math.round(exactOf(e) * 100) / 100,
+    n: e.usableN,
+    pValue: e.pValue,
+    enoughData: e.enoughData,
+    members: band.members[e.problemId] || 0,
+  })).sort((x, y) => x.key.localeCompare(y.key, 'en', { numeric: true }));
+  return { resolved, bands, levels: { band: band.meta, template: template.meta, item: item.meta } };
+}
+
 module.exports = {
+  calibratePooled,
+  promptShape,
+  thetaToDifficultyExact,
   calibrateItems,
   authoredPrior,
   estimateItemDifficulty,

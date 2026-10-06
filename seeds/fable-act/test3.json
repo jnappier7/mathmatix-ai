@@ -161,6 +161,7 @@
    "explanation": "By the Pythagorean theorem, x² = 9² + 12² = 81 + 144 = 225, so x = 15, choice B. Choosing √63 comes from subtracting the squares, 21 from adding the legs, and 225 from forgetting to take the square root.",
    "verify": "print((9**2 + 12**2) ** 0.5)",
    "figure_code": "def draw(ax):\n    ax.plot([0, 12, 0, 0], [0, 0, 9, 0], 'k-', lw=1.5)\n    ax.plot([0.7, 0.7, 0], [0, 0.7, 0.7], 'k-', lw=1)\n    ax.text(6, -0.5, '12', ha='center', va='top')\n    ax.text(-0.4, 4.5, '9', ha='right', va='center')\n    ax.text(6.7, 5.2, 'x', ha='left', va='bottom')\n    ax.set_xlim(-2.5, 14)\n    ax.set_ylim(-2, 11)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Right triangle with the right angle at the bottom left. The vertical leg is labeled 9, the bottom leg is labeled 12, and the hypotenuse is labeled x.",
    "skill": "Triangles & Pythagorean theorem"
   },
   {
@@ -268,7 +269,8 @@
    "answer": 1,
    "explanation": "The 116° angle and the x° angle are same-side interior angles, which are supplementary when the lines are parallel. So x = 180 − 116 = 64, choice B. Choosing 116 treats the angles as congruent, and 26 comes from using 90° instead of 180°.",
    "verify": "print(180 - 116)",
-   "figure_code": "def draw(ax):\n    ax.plot([-6, 6], [2, 2], 'k-', lw=1.5)\n    ax.plot([-6, 6], [-2, -2], 'k-', lw=1.5)\n    ax.plot([-4.5, 4.5], [-4.5, 4.5], 'k-', lw=1.2)\n    ax.text(2.9, 1.35, '116\\u00b0', ha='left', va='top')\n    ax.text(-1.1, -1.75, 'x\\u00b0', ha='left', va='bottom')\n    ax.text(6.3, 2, '\\u2113', ha='left', va='center')\n    ax.text(6.3, -2, 'm', ha='left', va='center')\n    ax.set_xlim(-7, 8.5)\n    ax.set_ylim(-6, 6)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_code": "def draw(ax):\n    ax.plot([-6, 6], [2, 2], 'k-', lw=1.5)\n    ax.plot([-6, 6], [-2, -2], 'k-', lw=1.5)\n    ax.plot([-4.5, 4.5], [-4.5, 4.5], 'k-', lw=1.2)\n    ax.text(2.9, 1.35, '116\\u00b0', ha='left', va='top')\n    ax.text(-0.3, -1.75, 'x\\u00b0', ha='left', va='bottom')\n    ax.text(6.3, 2, '\\u2113', ha='left', va='center')\n    ax.text(6.3, -2, 'm', ha='left', va='center')\n    ax.set_xlim(-7, 8.5)\n    ax.set_ylim(-6, 6)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Two horizontal parallel lines, ℓ on top and m below, crossed by a transversal rising to the right. At line ℓ, the angle below ℓ and to the right of the transversal is labeled 116°. At line m, the angle above m and to the right of the transversal is labeled x°.",
    "skill": "Angles & parallel lines"
   },
   {
@@ -467,6 +469,7 @@
    "explanation": "Arc length is the fraction of the circumference: (80/360)(2π · 9) = (2/9)(18π) = 4π, choice G. Choosing 2π uses πr instead of 2πr for the circumference, 9π is half the circumference, and 18π is the area of the sector, not the arc length.",
    "verify": "import sympy as sp; print(sp.Rational(80, 360) * 2 * sp.pi * 9)",
    "figure_code": "def draw(ax):\n    import numpy as np\n    t = np.linspace(0, 2*np.pi, 240)\n    ax.plot(9*np.cos(t), 9*np.sin(t), 'k-', lw=1.2)\n    a = np.radians(80)\n    ax.plot([0, 9], [0, 0], 'k-', lw=1.2)\n    ax.plot([0, 9*np.cos(a)], [0, 9*np.sin(a)], 'k-', lw=1.2)\n    ta = np.linspace(0, a, 60)\n    ax.plot(1.8*np.cos(ta), 1.8*np.sin(ta), 'k-', lw=0.8)\n    ax.text(2.9*np.cos(a/2), 2.9*np.sin(a/2), '80\\u00b0', ha='center', va='center')\n    ax.plot([0], [0], 'ko', ms=3)\n    ax.text(-0.9, -0.7, 'O', ha='center', va='center')\n    ax.text(4.5, -1.1, '9', ha='center', va='center')\n    ax.set_xlim(-11, 11)\n    ax.set_ylim(-11, 11)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Circle with center O. Two radii form a central angle labeled 80°. One radius points straight right and is labeled 9; the other points up and slightly right.",
    "skill": "Circles"
   },
   {
@@ -557,6 +560,7 @@
    "explanation": "The height is the side opposite the 62° angle and 40 m is the adjacent side, so tan 62° = h/40, which gives h = 40 tan 62°, choice C. Choosing 40 sin 62° confuses the adjacent side with the hypotenuse, and 40/tan 62° inverts the ratio.",
    "verify": "import math; print(round(40 * math.tan(math.radians(62)), 1))",
    "figure_code": "def draw(ax):\n    import numpy as np\n    ax.plot([0, 40, 40, 0], [0, 0, 75, 0], 'k-', lw=1.5)\n    ax.plot([37, 37, 40], [0, 3, 3], 'k-', lw=1)\n    t = np.linspace(0, np.radians(62), 40)\n    ax.plot(9*np.cos(t), 9*np.sin(t), 'k-', lw=0.8)\n    ax.text(12.5, 3.5, '62\\u00b0', ha='left', va='bottom')\n    ax.text(20, -3, '40 m', ha='center', va='top')\n    ax.text(42, 37, 'h', ha='left', va='center')\n    ax.set_xlim(-6, 52)\n    ax.set_ylim(-10, 82)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Right triangle. The bottom side, 40 m long, runs from the club member on the left to the launch pad on the right. The vertical side at the launch pad is the rocket's height, labeled h. The angle of elevation at the member's corner measures 62°.",
    "skill": "Right-triangle trigonometry"
   },
   {
@@ -629,6 +633,7 @@
    "explanation": "Vertex form with vertex (2, −1) is f(x) = a(x − 2)² − 1, and the parabola opens upward, so a > 0. Checking a = 1: f(0) = 4 − 1 = 3, matching the y-intercept, so choice A is correct. Choice B has vertex (−2, −1), C opens downward, and D has vertex (2, 1).",
    "verify": "f = lambda x: (x - 2)**2 - 1; print(f(2), f(0))",
    "figure_code": "def draw(ax):\n    import numpy as np\n    x = np.linspace(-0.7, 4.7, 120)\n    ax.plot(x, (x - 2)**2 - 1, 'k-', lw=1.6)\n    ax.plot([-2, 6], [0, 0], 'k-', lw=0.8)\n    ax.plot([0, 0], [-2.5, 6.5], 'k-', lw=0.8)\n    ax.plot([2], [-1], 'ko', ms=4)\n    ax.text(2.15, -1.5, '(2, \\u22121)', ha='left', va='top')\n    ax.plot([0], [3], 'ko', ms=4)\n    ax.text(-0.25, 3.1, '(0, 3)', ha='right', va='center')\n    ax.text(5.8, -0.6, 'x', ha='center', va='top')\n    ax.text(0.35, 6.3, 'y', ha='left', va='center')\n    ax.set_xlim(-2.5, 6.5)\n    ax.set_ylim(-3, 7)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "figure_alt": "Coordinate plane with a parabola opening upward. Its vertex is labeled (2, −1), and it crosses the y-axis at the point labeled (0, 3).",
    "skill": "Quadratic functions & parabolas"
   },
   {
