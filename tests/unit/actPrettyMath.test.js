@@ -15,9 +15,11 @@ function loadPrettyMath() {
   const doc = { getElementById: () => null, createElement: () => ({}), head: { appendChild() {} }, addEventListener() {} };
   // eslint-disable-next-line no-new-func
   new Function('window', 'document', 'location', 'localStorage', src)(win, doc, { search: '' }, { getItem: () => null });
-  return win.__actPrettyMath;
+  return win;
 }
-const pm = loadPrettyMath();
+const win = loadPrettyMath();
+const pm = win.__actPrettyMath;
+const stem = win.__actStemHtml;
 
 test('exponents and subscripts display as super- and subscripts', () => {
   expect(pm('x^7 + 2x^-3')).toBe('x<sup>7</sup> + 2x<sup>−3</sup>');
@@ -34,4 +36,46 @@ test('a hyphen doing a minus sign\'s job becomes a minus sign', () => {
 
 test('hyphenated words are left alone', () => {
   expect(pm('x-axis, two-step, T-shirt, 20-sided, e-mail')).toBe('x-axis, two-step, T-shirt, 20-sided, e-mail');
+});
+
+// External audit 2026-10-05: exponent division and scientific-notation
+// products showed unmatched parentheses. The bank text was balanced; the
+// optional ")" in the superscript rule ate each group's closing paren.
+test('a group that ends in an exponent keeps its closing paren', () => {
+  expect(pm('(x^5)/(x^2)')).toBe('(x<sup>5</sup>)/(x<sup>2</sup>)');
+  expect(pm('(2.4 × 10^6)(1.2 × 10^4)')).toBe('(2.4 × 10<sup>6</sup>)(1.2 × 10<sup>4</sup>)');
+  expect(pm('(3a^2b)^3')).toBe('(3a<sup>2</sup>b)<sup>3</sup>');
+});
+
+test('every displayed stem and choice in a sample keeps its parens balanced', () => {
+  const bal = (s) => {
+    const t = s.replace(/<[^>]+>/g, '');
+    let d = 0;
+    for (const c of t) { if (c === '(') d++; if (c === ')' && --d < 0) return false; }
+    return d === 0;
+  };
+  ['x^(2/3) · x^(1/2)', '(x^12)/(x^4)', '(4.5 × 10^-3)(2 × 10^8)', 'f(x) = (x - 1)^(2) + 3', '(2^3)^(4)']
+    .forEach((s) => expect(bal(pm(s))).toBe(true));
+});
+
+test('pipe-separated lines in a stem render as a table', () => {
+  const html = stem('The table below gives values of f.\n\nx | 2 | 4 | 6\nf(x) | 11 | 19 | 27\n\nWhat is f(10)?');
+  expect(html).toBe(
+    'The table below gives values of f.'
+    + '<table class="actt-table"><thead><tr><th scope="col">x</th><th scope="col">2</th><th scope="col">4</th><th scope="col">6</th></tr></thead>'
+    + '<tbody><tr><th scope="row">f(x)</th><td>11</td><td>19</td><td>27</td></tr></tbody></table>'
+    + 'What is f(10)?');
+});
+
+test('absolute value bars and a lone pipe line are not tables', () => {
+  expect(stem('Solve |2x - 5| = 9')).toBe('Solve |2x - 5| = 9');
+  expect(stem('y = -2|x + 3| + 5\nWhich is true?')).toBe('y = -2|x + 3| + 5\nWhich is true?');
+  expect(stem('a | b\nnext line')).toBe('a | b\nnext line');
+});
+
+test('fractional and variable exponents display whole', () => {
+  expect(pm('x^(2/3) · x^(1/2)')).toBe('x<sup>2/3</sup> · x<sup>1/2</sup>');
+  expect(pm('5^(2x) = 5^10')).toBe('5<sup>2x</sup> = 5<sup>10</sup>');
+  expect(pm('2^x + e^-x')).toBe('2<sup>x</sup> + e<sup>−x</sup>');
+  expect(pm('(x+1)^(n-1)')).toBe('(x+1)<sup>n−1</sup>');
 });
