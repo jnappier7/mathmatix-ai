@@ -47,6 +47,7 @@ module.exports = {
     '<rootDir>/tests/unit/bareProblemDrop.test.js',
     '<rootDir>/tests/unit/diagnoseMultiStep.test.js',
     '<rootDir>/tests/unit/derivationVerifier.test.js',
+    '<rootDir>/tests/unit/stepSolveCredit.test.js',
     '<rootDir>/tests/unit/mathSolver*.test.js',
     '<rootDir>/tests/golden/goldenTranscripts.test.js',
   ],

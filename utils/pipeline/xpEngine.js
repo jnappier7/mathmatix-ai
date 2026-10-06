@@ -22,9 +22,11 @@ const HINT_REGEX = /\b(hint|help|stuck|don'?t know|idk|confused)\b/i;
  * @param {Object}  [params.extracted] - Verified extracted data (coreBehaviorXp, legacyXp)
  * @param {number}  [params.userLevel] - Current user level (for boost factor)
  * @param {boolean} [params.isCourseSession] - Whether this is a course session (1.5x boost)
+ * @param {boolean} [params.firstTry=true] - false when this problem already had a wrong
+ *   attempt; "clean" means first try AND no hint, so a re-worked problem earns 'correct'
  * @returns {Object} XP breakdown { tier1, tier2, tier2Type, tier3, tier3Behavior, total, courseBoost? }
  */
-function computeXpBreakdown({ wasCorrect, recentMessages, extracted, userLevel, isCourseSession }) {
+function computeXpBreakdown({ wasCorrect, recentMessages, extracted, userLevel, isCourseSession, firstTry = true }) {
   const xpLadder = BRAND_CONFIG.xpLadder;
   const breakdown = { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 };
 
@@ -36,8 +38,9 @@ function computeXpBreakdown({ wasCorrect, recentMessages, extracted, userLevel, 
     const askedForHint = (recentMessages || []).some(msg =>
       msg.role === 'user' && HINT_REGEX.test(msg.content)
     );
-    breakdown.tier2 = askedForHint ? xpLadder.tier2.correct : xpLadder.tier2.clean;
-    breakdown.tier2Type = askedForHint ? 'correct' : 'clean';
+    const isClean = !askedForHint && firstTry !== false;
+    breakdown.tier2 = isClean ? xpLadder.tier2.clean : xpLadder.tier2.correct;
+    breakdown.tier2Type = isClean ? 'clean' : 'correct';
   }
 
   // Tier 3: core behavior XP — AI-awarded for learning behaviors
