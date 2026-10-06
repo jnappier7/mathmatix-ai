@@ -620,7 +620,10 @@ function lastTutorAskedForNextStep(recentAssistantMessages) {
     // with a bare operation.
     /\b(?:walk|talk|show)\s+me\s+(?:through\s+)?what\s+(?:that|it)\s+(?:looks|would\s+look)\s+like\b/,
     /\bwhat\s+(?:that|it)\s+looks\s+like\s+in\s+your\s+work\b/,
-    /\bwhat\s+(?:do|should|would|could)\s+(?:we|you)\s+(?:do|try|use|think|get|notice|see|need|start|begin)\b/,
+    // "will"/"can" belong here too: "Now, to isolate x, what will you do
+    // next?" matched nothing, so the student's "divide by 2 to get x=8" was
+    // read as a fresh problem drop and run through the giveaway guard.
+    /\bwhat\s+(?:do|should|would|could|will|can)\s+(?:we|you)\s+(?:do|try|use|think|get|notice|see|need|start|begin)\b/,
     /\bwhat\s+(?:do|did)\s+you\s+(?:think|get|notice|see|find|come\s+up\s+with)\b/,
     /\bwhat(?:'?s|\s+is|\s+would\s+be)\s+(?:next|the\s+(?:answer|result|value|next\s+step|first\s+step))\b/,
     /\bnow\s+what\b/,
@@ -734,7 +737,49 @@ function detectBareProblemDrop(text, messageType, hasAnswer, recentAssistantMess
 
   if (hasReasoning || hasStuckIndicator || hasSpecificQuestion) return false;
 
+  if (describesStepWork(t)) return false;
+
   return true;
+}
+
+// Step operations a student performs ON an equation. Deliberately not the
+// problem-statement verbs (solve/factor/simplify/evaluate — "solve 3x-7=20"
+// is the canonical drop) and not plus/minus/times, which spell out a problem
+// in words ("2x plus 5 = 17").
+const STEP_OP = /\b(?:divid(?:e|es|ed|ing)|multipl(?:y|ies|ied|ying)|add(?:s|ed|ing)?|subtract(?:s|ed|ing)?|take\s+away|distribut(?:e|es|ed|ing)|combin(?:e|es|ed|ing)|cancel(?:s|led|ed|ling|ing)?|isolat(?:e|es|ed|ing)|substitut(?:e|es|ed|ing)|plug(?:s|ged|ging)?)\b/i;
+
+// What the operation produced: "to get", "gives", "which leaves", "results in".
+const STEP_RESULT_CONNECTOR = /\b(?:to\s+get|(?:you|we|i)\s+get|gets?|gives?|giving|leaves?|leaving|which\s+is|results?\s+in|equals|turns?\s+into|becomes?)\b/i;
+
+// Naming the justification ("division property of equality") is reasoning —
+// nobody posing a new problem cites the property that licenses the step.
+const PROPERTY_NAME = /\b(?:addition|subtraction|multiplication|division|distributive|commutative|associative|identity|inverse|substitution|zero[\s-]+product)\s+property\b/i;
+
+/**
+ * Does this message describe a step the student CARRIED OUT — an operation
+ * plus what it produced — rather than hand over a problem?
+ *
+ *   "divide by 2 to get x=8"                       → operation + "to get"
+ *   "2x=16 divided by 2 is x=8"                    → operation, then a solved form
+ *   "divide by 2 x=8 division property of equality" → operation + property name
+ *
+ * The equation in these is the student's own result, which is why they used
+ * to trip the bare-drop gate (any "=" counted as a problem signal). A real drop
+ * names no operation ("2x+5=17") or only the problem verb ("solve 3x-7=20"),
+ * and an operation with no result ("add 1/2 + 1/4") is still a computation to
+ * hand over — so both halves are required. A word problem uses the same
+ * vocabulary ("if you divide a number by 3 you get 10, what is it?"), so
+ * anything that reads as a question is left to the drop gate.
+ */
+function describesStepWork(text) {
+  if (/\?\s*$/.test(text) || /^\s*if\b|\b(?:what|find|how\s+(?:many|much))\b/i.test(text)) return false;
+  const opMatch = text.match(STEP_OP);
+  if (!opMatch) return false;
+  if (STEP_RESULT_CONNECTOR.test(text) || PROPERTY_NAME.test(text)) return true;
+  // A solved form AFTER the operation ("... divided by 2 is x=8") is its
+  // result. Before it, "x=8" would be the problem the operation acts on.
+  // `\b` keeps "2x=16" (a coefficient term) from counting as solved.
+  return /\b[a-z]\s*=\s*-?\d/i.test(text.slice(opMatch.index + opMatch[0].length));
 }
 
 /**
@@ -949,8 +994,11 @@ function observe(message, context = {}) {
   const lastAssistant = (context.recentAssistantMessages || []).slice(-1)[0];
   const tutorAskedAQuestion = typeof lastAssistant?.content === 'string'
     && lastAssistant.content.includes('?');
+  // A carried-out step ("divide by 2 to get x=8") is computation, not an idea
+  // in words — the prose verifier can only misgrade it.
   const conceptualReply = !answer
     && !isBareProblemDrop
+    && !describesStepWork(text.trim())
     && tutorAskedAQuestion
     && messageType === MESSAGE_TYPES.GENERAL_MATH
     && text.length <= 400
