@@ -25,6 +25,7 @@ const DEFAULT_BLUEPRINT = require('../seeds/act-math-blueprint.json');
 const { normalizeOptions } = require('./mcOptions');
 const { hasBadDistractors } = require('./distractorQuality');
 const { sortPermutation } = require('./actChoiceOrder');
+const { thetaToDifficultyExact } = require('./itemCalibration');
 // models/problem (mongoose) is required lazily inside assembleForm so the pure
 // helpers (buildSlots / skillPool / rawToScaled) load without a DB connection.
 
@@ -199,6 +200,21 @@ function toClientItem(slot, problem) {
 }
 
 /**
+ * The finest difficulty an item has. `difficulty` is an integer 1-5; once
+ * scripts/calibrateItemDifficulty.js has measured an item, calibration.theta
+ * holds the estimate behind it, which places the item WITHIN its level. The
+ * form is ordered by this, so two measured 3s still come out in the order
+ * students found them, and an unmeasured item keeps its authored integer.
+ */
+function preciseDifficulty(problem) {
+  const c = problem && problem.calibration;
+  if (c && c.calibratedAt && c.theta != null && Number.isFinite(Number(c.theta))) {
+    return Math.round(thetaToDifficultyExact(Number(c.theta)) * 100) / 100;
+  }
+  return problem ? problem.difficulty : undefined;
+}
+
+/**
  * A prompt's "shape" — the wording with all numbers blanked — so two problems
  * that read the same except for their numbers collapse to one signature. Used
  * to keep a single form from repeating the same-looking question.
@@ -221,11 +237,10 @@ function promptSignature(s) {
  */
 function pickDiverse(candidates, usedSignatures, targetDifficulty) {
   if (!candidates || !candidates.length) return null;
-  const distance = (c) => (
-    targetDifficulty == null || c.difficulty == null
-      ? 0
-      : Math.abs(c.difficulty - targetDifficulty)
-  );
+  const distance = (c) => {
+    const d = preciseDifficulty(c);
+    return targetDifficulty == null || d == null ? 0 : Math.abs(d - targetDifficulty);
+  };
   let best = null, bestCount = Infinity, bestDist = Infinity;
   for (const c of candidates) {
     const count = usedSignatures.get(promptSignature(c.prompt)) || 0;
@@ -285,6 +300,7 @@ async function assembleForm(opts = {}) {
   const usedSignatures = new Map();   // prompt-shape -> count, to avoid look-alikes
   const items = [];
   const gaps = [];
+  const precise = new Map();          // problemId -> measured-or-authored difficulty, for ordering
 
   for (const slot of slots) {
     if (!slot.skillId) { gaps.push(toGenerationSpec(slot)); continue; }
@@ -337,6 +353,7 @@ async function assembleForm(opts = {}) {
       problem = null;
     }
     if (!problem) { gaps.push(toGenerationSpec(slot)); continue; }
+    precise.set(problem.problemId, preciseDifficulty(problem));
     usedProblemIds.push(problem.problemId);
     usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
     items.push(toClientItem(slot, problem));
@@ -350,7 +367,7 @@ async function assembleForm(opts = {}) {
   // ramps, and pacing is taught on that assumption — move fast early, bank
   // time for the end. Stable, so the category interleave survives within
   // each difficulty band.
-  const ordered = orderByDifficulty(items);
+  const ordered = orderByDifficulty(items, (it) => precise.get(it.problemId));
 
   return {
     items: ordered,
@@ -380,9 +397,10 @@ async function assembleForm(opts = {}) {
  * pushed to either end. Positions are rewritten 1..n because the position IS
  * the question number the student sees, grades against, and reviews by.
  */
-function orderByDifficulty(items) {
+function orderByDifficulty(items, keyOf) {
   const d = (it) => {
-    const n = Number(it && it.difficulty);
+    const k = keyOf ? keyOf(it) : undefined;
+    const n = Number(k != null ? k : it && it.difficulty);
     return Number.isFinite(n) ? n : 3;
   };
   return (items || [])
@@ -439,5 +457,6 @@ module.exports = {
   promptSignature,
   pickDiverse,
   orderByDifficulty,
+  preciseDifficulty,
   getBlueprint: () => DEFAULT_BLUEPRINT,
 };

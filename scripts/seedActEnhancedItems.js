@@ -41,6 +41,7 @@ async function main() {
 
   await mongoose.connect(process.env.MONGO_URI);
   const Problem = require('../models/problem');
+  const { upsertSeedProblems } = require('../utils/seedProblemUpsert');
 
   if (fresh) {
     // Scoped to THIS bank's source — never a blanket delete.
@@ -48,14 +49,11 @@ async function main() {
     console.log(`Cleared ${del.deletedCount} prior ${SOURCE} items (--fresh).`);
   }
 
-  let up = 0;
-  for (const it of items) {
-    await Problem.updateOne({ problemId: it.problemId }, { $set: it }, { upsert: true });
-    up += 1;
-  }
+  // Keeps a measured difficulty measured (utils/seedProblemUpsert.js).
+  const up = await upsertSeedProblems(Problem, items);
 
   const bySkill = items.reduce((acc, i) => { acc[i.skillId] = (acc[i.skillId] || 0) + 1; return acc; }, {});
-  console.log(`Processed ${up} ACT IES expansion items across ${Object.keys(bySkill).length} skills.`);
+  console.log(`Processed ${up} ${SOURCE} items across ${Object.keys(bySkill).length} skills.`);
   Object.entries(bySkill).sort().forEach(([s, n]) => console.log(`  ${s}: ${n}`));
 
   const inDb = await Problem.countDocuments({ source: SOURCE });

@@ -224,3 +224,28 @@ describe('actTestAssembler.orderByDifficulty', () => {
     expect(A.orderByDifficulty(null)).toEqual([]);
   });
 });
+
+describe('a measured difficulty orders the form more finely than the integer', () => {
+  const { preciseDifficulty, orderByDifficulty } = require('../../utils/actTestAssembler');
+  const { difficultyToTheta } = require('../../utils/itemCalibration');
+  const measured = (d, exact) => ({ difficulty: d, calibration: { calibratedAt: new Date(), theta: difficultyToTheta(exact) } });
+
+  test('a measured item reads its estimate, an authored one its integer', () => {
+    expect(preciseDifficulty(measured(3, 3.4))).toBeCloseTo(3.4, 2);
+    expect(preciseDifficulty({ difficulty: 3 })).toBe(3);
+    expect(preciseDifficulty({ difficulty: 3, calibration: { theta: 1 } })).toBe(3);   // never applied
+  });
+
+  test('two items stored as 3 come out in the order students found them', () => {
+    const items = [{ problemId: 'hard3', difficulty: 3 }, { problemId: 'easy3', difficulty: 3 }];
+    const exact = { hard3: 3.4, easy3: 2.6 };
+    const out = orderByDifficulty(items, (it) => exact[it.problemId]);
+    expect(out.map((i) => i.problemId)).toEqual(['easy3', 'hard3']);
+    expect(out.map((i) => i.position)).toEqual([1, 2]);
+  });
+
+  test('without a key the integer order is unchanged', () => {
+    const out = orderByDifficulty([{ problemId: 'a', difficulty: 4 }, { problemId: 'b', difficulty: 2 }]);
+    expect(out.map((i) => i.problemId)).toEqual(['b', 'a']);
+  });
+});

@@ -9,6 +9,22 @@
 //   node scripts/calibrateItemDifficulty.js --min=40         # require 40 responses to write
 //   node scripts/calibrateItemDifficulty.js --out=report.json
 //   node scripts/calibrateItemDifficulty.js --apply --force   # write despite a shaky fit
+//   node scripts/calibrateItemDifficulty.js --reference=act-fable  # the bank others are equated to
+//
+// THREE TIERS (utils/itemCalibration.js calibratePooled)
+// The ACT banks were authored on different scales: on the same skills the
+// enhanced drop (rated 1-3, per template) sits almost a level below the Fable
+// bank (rated 1-5, per item), and the form builder orders every test by
+// difficulty, so the two interleave wrong. Waiting for every item to reach
+// --min responses on its own would take thousands of tests. So difficulty is
+// measured at the finest level that has the data:
+//   item      the item's own responses (n >= --min)
+//   template  items that differ only in their numbers, pooled
+//   band      one bank's authored level ("enhanced, authored 2"), pooled —
+//             matures within tens of tests and equates each bank to the
+//             reference bank's authored scale (default act-fable)
+// An item nobody has answered yet takes its template's or band's value. The
+// dry run prints the band table: what each bank's "2" actually means.
 //
 // AS A CRON (monthly)
 //   npm run cron:calibrate-items
@@ -42,7 +58,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const mongoose = require('mongoose');
-const { calibrateItems, dropNotReached, authoredPrior } = require('../utils/itemCalibration');
+const { calibratePooled, dropNotReached } = require('../utils/itemCalibration');
 
 const args = process.argv.slice(2);
 const APPLY = args.includes('--apply');
@@ -51,6 +67,8 @@ const SOURCE = (args.find((a) => a.startsWith('--source=')) || '--source=act').s
 const MIN = Number((args.find((a) => a.startsWith('--min=')) || '--min=25').split('=')[1]) || 25;
 const OUT = (args.find((a) => a.startsWith('--out=')) || '').split('=')[1] || null;
 const LIMIT = Number((args.find((a) => a.startsWith('--top=')) || '--top=40').split('=')[1]) || 40;
+// The bank the others are equated to. Its authored levels define the scale.
+const REFERENCE = (args.find((a) => a.startsWith('--reference=')) || '--reference=act-fable').split('=')[1];
 
 /**
  * Send one line somewhere a human will actually see it.
@@ -159,66 +177,84 @@ async function main() {
     return;
   }
 
-  // Authored difficulties are the prior every estimate is shrunk toward — the
-  // AUTHORED one, which is not the same as the one in the `difficulty` field
-  // once this job has run before. authoredPrior recovers it from
-  // calibration.priorDifficulty; see the comment there for what goes wrong
-  // otherwise on the second and every later run.
-  const ids = [...new Set(rows.map((r) => r.problemId))];
-  const problems = await Problem.find({ problemId: { $in: ids } })
-    .select('problemId difficulty skillId isActive calibration').lean();
-  const priors = {};
-  const live = {};
-  const meta = {};
-  problems.forEach((p) => {
-    priors[p.problemId] = authoredPrior(p);
-    live[p.problemId] = p.difficulty;         // what the assembler reads TODAY
-    meta[p.problemId] = p;
-  });
+  // The pools (utils/itemCalibration.js calibratePooled) need the WHOLE bank,
+  // not just the items somebody answered: an unseen item in a measured band
+  // takes that band's value. So: every problem from any source that has data.
+  const answeredIds = [...new Set(rows.map((r) => r.problemId))];
+  const sources = await Problem.distinct('source', { problemId: { $in: answeredIds } });
+  const problems = await Problem.find({ source: { $in: sources } })
+    .select('problemId difficulty skillId source prompt isActive calibration').lean();
+  const live = new Map(problems.map((p) => [p.problemId, p]));
   const recalibrated = problems.filter((p) => p.calibration && p.calibration.calibratedAt).length;
 
   // A response to an item that is no longer in the bank tells us nothing we can
   // write back, and its presence would still tug on every student's ability.
-  const known = new Set(problems.map((p) => p.problemId));
   const orphaned = rows.length;
-  rows = rows.filter((r) => known.has(r.problemId));
+  rows = rows.filter((r) => live.has(r.problemId));
 
-  const { items, meta: fit } = calibrateItems(rows, priors, { minResponses: MIN });
+  const { resolved, bands, levels } = calibratePooled(rows, problems, { minResponses: MIN, referenceSource: REFERENCE });
 
-  // `delta` is measured against the AUTHORED difficulty, which is the right
-  // frame for the report ("this item is not what its author thought") and the
-  // wrong one for the write: an item already sitting at the estimated value
-  // from a previous run would be rewritten every month, re-stamping
-  // calibratedAt and reporting work that changed nothing.
-  const writable = items.filter((i) => i.enoughData && !i.suspectKey
-    && i.difficulty !== (live[i.problemId] !== undefined ? live[i.problemId] : i.priorDifficulty));
-  const suspect = items.filter((i) => i.suspectKey);
-  const thin = items.filter((i) => !i.enoughData);
+  const methodFor = (level) => (level === 'item' ? 'rasch-jmle' : `rasch-jmle-${level}`);
+  const round2 = (x) => Math.round(Number(x) * 100) / 100;
+  // A level writes only if its own fit settled (or --force). The fit behind a
+  // band is not the fit behind an item; one wobbling must not hold up the other.
+  const levelOk = (level) => FORCE || levels[level].converged;
+  const changed = (r) => {
+    const p = live.get(r.problemId);
+    const c = (p && p.calibration) || {};
+    return p.difficulty !== r.difficulty || round2(c.theta) !== round2(r.theta) || c.method !== methodFor(r.level);
+  };
+  const measured = resolved.filter((r) => r.level);
+  const writable = measured.filter((r) => levelOk(r.level) && changed(r));
+  const heldBack = measured.filter((r) => !levelOk(r.level) && changed(r));
+  const suspect = resolved.filter((r) => r.suspectKey);
+  const byLevel = {};
+  measured.forEach((r) => { byLevel[r.level] = (byLevel[r.level] || 0) + 1; });
 
   console.log('\n=== ITEM DIFFICULTY CALIBRATION ===');
   console.log('Provenance:', JSON.stringify(provenance));
   console.log(`Responses used: ${rows.length} (dropped ${orphaned - rows.length} for items no longer in the bank)`);
-  console.log(`Students: ${fit.people} (${fit.usablePeople} usable, ${fit.droppedPeople} all-right or all-wrong)`);
-  console.log(`Items with any data: ${fit.items}  (${fit.writableItems} at or above n=${MIN}; ${recalibrated} carry a previous calibration)`);
-  console.log(`Converged: ${fit.converged} in ${fit.iterations} iterations  [basis: ${fit.convergenceBasis}]`);
-  console.log(`Mean items per student: ${fit.meanItemsPerPerson.toFixed(1)} (JMLE bias correction ${fit.biasCorrection.toFixed(4)})`);
-  console.log(`\nWould change: ${writable.length}   Too thin to write (<${MIN}): ${thin.length}   Flagged as possibly mis-keyed: ${suspect.length}`);
+  const im = levels.item;
+  console.log(`Students: ${im.people} (${im.usablePeople} usable, ${im.droppedPeople} all-right or all-wrong)`);
+  console.log(`Bank: ${problems.length} items across ${sources.length} source(s); ${recalibrated} carry a previous calibration`);
+  console.log(`Reference scale: ${REFERENCE} (the other banks are equated to its authored levels)`);
+  for (const level of ['band', 'template', 'item']) {
+    const m = levels[level];
+    console.log(`  ${level.padEnd(8)} pools with n>=${MIN}: ${String(m.writableItems).padStart(4)}   converged: ${m.converged} in ${m.iterations} [basis: ${m.convergenceBasis}]`);
+  }
+  console.log(`\nMeasured: ${measured.length} of ${problems.length} items  ${JSON.stringify(byLevel)}`);
+  console.log(`Would change: ${writable.length}   Held back (fit not settled): ${heldBack.length}   Flagged as possibly mis-keyed: ${suspect.length}`);
+
+  // The equating table: what each bank's authored levels turn out to mean.
+  console.log('\n--- each bank\'s authored levels, on the common scale ---');
+  console.log('source | authored'.padEnd(34), 'items'.padStart(6), 'n'.padStart(6), 'p'.padStart(6), 'measured'.padStart(9));
+  bands.forEach((b) => {
+    console.log(
+      b.key.padEnd(34),
+      String(b.members).padStart(6),
+      String(b.n).padStart(6),
+      (b.pValue == null ? '-' : b.pValue.toFixed(2)).padStart(6),
+      (b.enoughData ? b.exact.toFixed(2) : `(${b.exact.toFixed(2)})`).padStart(9),
+    );
+  });
+  console.log(`(a measured value in parentheses is below n=${MIN} and is not written)`);
 
   if (writable.length) {
+    const movers = writable.slice().sort((a, b) => Math.abs(b.exact - b.priorDifficulty) - Math.abs(a.exact - a.priorDifficulty));
     console.log(`\n--- biggest movers (top ${LIMIT}) ---`);
-    // Three columns, not two: after this job has run once, "was" is ambiguous.
     // auth = what the author said (the shrinkage prior, fixed forever),
     // live = what the assembler is reading right now, new = what we would set.
-    console.log('problemId'.padEnd(34), 'n'.padStart(5), 'p'.padStart(6), 'auth'.padStart(5), 'live'.padStart(5), 'new'.padStart(4), '  skill');
-    writable.slice(0, LIMIT).forEach((i) => {
+    console.log('problemId'.padEnd(38), 'level'.padEnd(9), 'n'.padStart(5), 'auth'.padStart(5), 'live'.padStart(5), 'new'.padStart(6), '  skill');
+    movers.slice(0, LIMIT).forEach((r) => {
+      const p = live.get(r.problemId);
       console.log(
-        String(i.problemId).padEnd(34),
-        String(i.usableN).padStart(5),
-        i.pValue.toFixed(2).padStart(6),
-        String(i.priorDifficulty).padStart(5),
-        String(live[i.problemId]).padStart(5),
-        String(i.difficulty).padStart(4),
-        '  ' + ((meta[i.problemId] || {}).skillId || ''),
+        String(r.problemId).padEnd(38),
+        r.level.padEnd(9),
+        String(r.n).padStart(5),
+        String(r.priorDifficulty).padStart(5),
+        String(p.difficulty).padStart(5),
+        r.exact.toFixed(2).padStart(6),
+        '  ' + (p.skillId || ''),
       );
     });
   }
@@ -226,20 +262,20 @@ async function main() {
   if (suspect.length) {
     console.log('\n--- NOT rewritten: authored easy, almost nobody gets them right ---');
     console.log('These look mis-keyed rather than hard. Check the key before trusting any difficulty.');
-    suspect.forEach((i) => {
-      console.log(`  ${i.problemId}  n=${i.usableN}  p=${i.pValue.toFixed(2)}  authored=${i.priorDifficulty}  skill=${(meta[i.problemId] || {}).skillId || ''}`);
+    suspect.forEach((r) => {
+      console.log(`  ${r.problemId}  n=${r.n}  p=${r.pValue == null ? '-' : r.pValue.toFixed(2)}  authored=${r.priorDifficulty}  skill=${(live.get(r.problemId) || {}).skillId || ''}`);
     });
     // These never get written, so they stay flagged run after run until someone
     // fixes or retires the item. Unattended, that means silence forever unless
     // it leaves the log.
     notify('warning', `[calibrateItemDifficulty] ${suspect.length} item(s) flagged as possibly mis-keyed`, {
-      problemIds: suspect.map((i) => i.problemId),
-      detail: suspect.map((i) => ({ problemId: i.problemId, n: i.usableN, p: Number(i.pValue.toFixed(2)), authored: i.priorDifficulty })),
+      problemIds: suspect.map((r) => r.problemId),
+      detail: suspect.map((r) => ({ problemId: r.problemId, n: r.n, p: r.pValue == null ? null : Number(r.pValue.toFixed(2)), authored: r.priorDifficulty })),
     });
   }
 
   if (OUT) {
-    fs.writeFileSync(OUT, `${JSON.stringify({ provenance, fit, items }, null, 2)}\n`);
+    fs.writeFileSync(OUT, `${JSON.stringify({ provenance, reference: REFERENCE, levels, bands, resolved }, null, 2)}\n`);
     console.log(`\nFull report written to ${OUT}`);
   }
 
@@ -249,49 +285,42 @@ async function main() {
     return;
   }
 
-  // An unattended run has nobody to eyeball the numbers, so the fit has to
-  // vouch for itself. A fit that has not settled over the items it would write
-  // means the person abilities are still moving, and every item estimate is
+  // An unattended run has nobody to eyeball the numbers, so each fit has to
+  // vouch for itself. A fit that has not settled over the pools it would write
+  // means the person abilities are still moving, and every estimate is
   // downstream of those — n>=MIN on a wobbling scale is a confident number
-  // built on an unstable one. A human reading a dry run can weigh that;
-  // a cron cannot, so it declines and says why.
-  if (!fit.converged && !FORCE) {
-    const why = fit.convergenceBasis === 'none'
-      ? `no item has reached n=${MIN} yet, so there is nothing stable to measure`
-      : `the fit was still moving after ${fit.iterations} iterations over ${fit.writableItems} writable item(s)`;
-    console.log(`\nNOT WRITTEN — ${why}.`);
-    console.log(`${writable.length} item(s) would otherwise have been updated. Re-run with --force to write anyway.`);
+  // built on an unstable one. A human reading a dry run can weigh that; a cron
+  // cannot, so it declines that level and says why.
+  if (heldBack.length) {
+    const levelsHeld = [...new Set(heldBack.map((r) => r.level))];
+    console.log(`\nNOT WRITTEN for ${levelsHeld.join(', ')} — the fit did not settle. ${heldBack.length} item(s) held back. Re-run with --force to write anyway.`);
     notify('warning', '[calibrateItemDifficulty] declined to write: fit did not converge', {
-      convergenceBasis: fit.convergenceBasis,
-      iterations: fit.iterations,
-      writableItems: fit.writableItems,
-      wouldHaveWritten: writable.length,
+      levels: Object.fromEntries(levelsHeld.map((l) => [l, { iterations: levels[l].iterations, basis: levels[l].convergenceBasis }])),
+      wouldHaveWritten: heldBack.length,
       minResponses: MIN,
     });
-    await mongoose.disconnect();
-    return;                                   // exit 0: the job ran, it just had nothing it trusted
   }
 
   let written = 0;
-  for (const i of writable) {
-    await Problem.updateOne({ problemId: i.problemId }, {
+  for (const r of writable) {
+    await Problem.updateOne({ problemId: r.problemId }, {
       $set: {
-        difficulty: i.difficulty,
+        difficulty: r.difficulty,
         // Keep the evidence beside the number, so the next person can see
-        // whether it was measured or guessed, and on how much data.
+        // whether it was measured or guessed, how, and on how much data.
         calibration: {
-          method: 'rasch-jmle',
-          n: i.usableN,
-          pValue: i.pValue,
-          theta: Number(i.shrunkTheta.toFixed(3)),
-          priorDifficulty: i.priorDifficulty,
+          method: methodFor(r.level),
+          n: r.n,
+          pValue: r.pValue,
+          theta: Number(r.theta.toFixed(3)),
+          priorDifficulty: r.priorDifficulty,
           calibratedAt: new Date(),
         },
       },
     });
     written += 1;
   }
-  console.log(`\nApplied: ${written} item difficulties updated${FORCE && !fit.converged ? ' (FORCED past a non-converged fit)' : ''}.`);
+  console.log(`\nApplied: ${written} item difficulties updated${FORCE ? ' (--force)' : ''}.`);
   await mongoose.disconnect();
 }
 
