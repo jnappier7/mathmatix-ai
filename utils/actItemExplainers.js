@@ -219,17 +219,25 @@ const EXPLAINERS = [
   },
   {
     id: 'systems-word-problems',
-    match: /^Adult tickets cost \$([\d.]+) and child tickets cost \$([\d.]+)\. A group bought (\d+) tickets for a total of \$([\d.]+)\. How many adult tickets/,
+    // Either half can be asked. The bank used to price CHILD tickets above
+    // adult ones and always ask for adults; the 18 items now price adults
+    // higher and ask for children (external audit, 2026-10-05), with the same
+    // numbers and keys. With `asked` = adult this writes exactly what it
+    // always wrote.
+    match: /^Adult tickets cost \$([\d.]+) and child tickets cost \$([\d.]+)\. A group bought (\d+) tickets for a total of \$([\d.]+)\. How many (adult|child) tickets/,
     solve: (m) => {
       const [a, c, n, total] = [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4])];
-      const adults = (total - c * n) / (a - c);
+      const asked = m[5];
+      const other = asked === 'adult' ? 'child' : 'adult';
+      const [p, q] = asked === 'adult' ? [a, c] : [c, a];   // asked price, other price
+      const x = (total - q * n) / (p - q);
       return {
-        answer: round(adults, 4),
-        steps: `Let x be the adult tickets, so ${n} − x are child tickets: ${a}x + ${c}(${n} − x) = ${total}. That gives ${a}x + ${c * n} − ${c}x = ${total}, so ${a - c}x = ${total - c * n} and x = ${round(adults, 4)}.`,
+        answer: round(x, 4),
+        steps: `Let x be the ${asked} tickets, so ${n} − x are ${other} tickets: ${p}x + ${q}(${n} − x) = ${total}. That gives ${p}x + ${q * n} − ${q}x = ${total}, so ${p - q}x = ${total - q * n} and x = ${round(x, 4)}.`,
         traps: [
-          [round(n - adults, 4), 'solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half'],
-          [round(total / a, 4), 'divides the total by the adult price alone, ignoring that the group is mixed'],
-          [round(total / c, 4), 'divides the total by the child price alone'],
+          [round(n - x, 4), `solves correctly and then reports the ${other.toUpperCase()} tickets — the commonest slip on this type is answering the wrong half`],
+          [round(total / p, 4), `divides the total by the ${asked} price alone, ignoring that the group is mixed`],
+          [round(total / q, 4), `divides the total by the ${other} price alone`],
         ],
       };
     },

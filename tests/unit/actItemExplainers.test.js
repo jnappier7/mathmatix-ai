@@ -199,3 +199,30 @@ describe('worked examples, end to end', () => {
     expect(r.derived).toBe(35);
   });
 });
+
+// External audit 2026-10-05: every ticket item priced child tickets ABOVE adult
+// ones ($2 adult, $6 child). The 18 now price adults higher and ask for the
+// child count, with unchanged numbers and keys. The explainer handles either
+// half; asked about adults it writes exactly what it always wrote.
+describe('ticket items read like real pricing', () => {
+  const tickets = items.filter((it) => /^Adult tickets cost \$/.test(it.prompt));
+
+  test('no item prices a child ticket above an adult ticket', () => {
+    expect(tickets.length).toBeGreaterThan(0);
+    for (const it of tickets) {
+      const [adult, child] = it.prompt.match(/\$(\d+(?:\.\d+)?)/g).slice(0, 2).map((s) => Number(s.slice(1)));
+      expect(adult).toBeGreaterThan(child);
+    }
+  });
+
+  test('the explainer solves for whichever half is asked', () => {
+    const base = { answerType: 'multiple-choice', options: ['3', '4', '9', '18'].map((t, i) => ({ label: 'ABCD'[i], text: t })) };
+    const child = explainItem({ ...base, prompt: 'Adult tickets cost $6 and child tickets cost $2. A group bought 12 tickets for a total of $36. How many child tickets did they buy?', answer: { value: '9' }, correctOption: 'C' });
+    expect(child.status).toBe('ok');
+    expect(child.explanation).toMatch(/^Let x be the child tickets, so 12 − x are adult tickets: 2x \+ 6\(12 − x\) = 36/);
+    expect(child.explanation).toMatch(/A\) 3 solves correctly and then reports the ADULT tickets/);
+    const adult = explainItem({ ...base, prompt: 'Adult tickets cost $2 and child tickets cost $6. A group bought 12 tickets for a total of $36. How many adult tickets did they buy?', answer: { value: '9' }, correctOption: 'C' });
+    expect(adult.explanation).toMatch(/^Let x be the adult tickets, so 12 − x are child tickets/);
+    expect(adult.explanation).toMatch(/reports the CHILD tickets/);
+  });
+});

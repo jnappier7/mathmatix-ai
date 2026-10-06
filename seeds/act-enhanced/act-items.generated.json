@@ -31384,7 +31384,7 @@
  {
   "problemId": "413284ae-b747-4a6c-b159-9dda2ceb0c9b",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $2 and child tickets cost $6. A group bought 12 tickets for a total of $36. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $6 and child tickets cost $2. A group bought 12 tickets for a total of $36. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -31414,7 +31414,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 12 − x are child tickets: 2x + 6(12 − x) = 36. That gives 2x + 72 − 6x = 36, so -4x = -36 and x = 9. Wrong choices: A) 3 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 18 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 12 − x are adult tickets: 2x + 6(12 − x) = 36. That gives 2x + 72 − 6x = 36, so -4x = -36 and x = 9. Wrong choices: A) 3 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 18 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -31427,7 +31427,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "2faa0218041d331ded683e698e818a8feb97bbab91dd52031d00be3ab81aeb1b",
+  "contentHash": "3d83fd67f848c9dc1388bd96326644af58c08e26c487b95230fdf1627e356f15",
   "isActive": true
  },
  {
@@ -31915,7 +31915,7 @@
  {
   "problemId": "da1235ef-1720-437f-ad4b-e14e06cf5e3a",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $6 and child tickets cost $9. A group bought 19 tickets for a total of $138. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $9 and child tickets cost $6. A group bought 19 tickets for a total of $138. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -31945,7 +31945,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 19 − x are child tickets: 6x + 9(19 − x) = 138. That gives 6x + 171 − 9x = 138, so -3x = -33 and x = 11. Wrong choices: A) 8 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 23 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 19 − x are adult tickets: 6x + 9(19 − x) = 138. That gives 6x + 171 − 9x = 138, so -3x = -33 and x = 11. Wrong choices: A) 8 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 23 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -31958,7 +31958,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "b03bc44fda44232e1336f8836b330c02e6dc9a52252c53a50cbe31cf957288cb",
+  "contentHash": "bc6d6d335535ac3192956cbe921a08d23746b3c9f61bab09ac7b391db976506a",
   "isActive": true
  },
  {
@@ -32494,7 +32494,7 @@
  {
   "problemId": "00a63da2-36f7-40c7-8162-eba9650f0b71",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $4 and child tickets cost $7. A group bought 18 tickets for a total of $102. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $7 and child tickets cost $4. A group bought 18 tickets for a total of $102. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -32524,7 +32524,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 18 − x are child tickets: 4x + 7(18 − x) = 102. That gives 4x + 126 − 7x = 102, so -3x = -24 and x = 8. Wrong choices: C) 10 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 25 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 18 − x are adult tickets: 4x + 7(18 − x) = 102. That gives 4x + 126 − 7x = 102, so -3x = -24 and x = 8. Wrong choices: C) 10 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 25 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -32537,7 +32537,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "6da1dff747a927a1ba00b46c72e7174f409148cf97efe383e3c36161cf57c46f",
+  "contentHash": "f59dee0a32d5d070ffd8e29deceb3bb9522f6054d90961b5ce3c9d14d5e8f60a",
   "isActive": true
  },
  {
@@ -33024,7 +33024,7 @@
  {
   "problemId": "ecfccefd-87ff-4fda-bc1d-58e3df026ce3",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $6 and child tickets cost $9. A group bought 15 tickets for a total of $123. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $9 and child tickets cost $6. A group bought 15 tickets for a total of $123. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -33054,7 +33054,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 15 − x are child tickets: 6x + 9(15 − x) = 123. That gives 6x + 135 − 9x = 123, so -3x = -12 and x = 4. Wrong choices: C) 11 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 20 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 15 − x are adult tickets: 6x + 9(15 − x) = 123. That gives 6x + 135 − 9x = 123, so -3x = -12 and x = 4. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 20 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -33067,7 +33067,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "f421e94db6507020a906004a487b39a65ebe79e37a50347a59dfd84360ca5569",
+  "contentHash": "83e25a123a983a2634ed8287ef34d590b1d947a1a2dd7af981ac7edb63da828d",
   "isActive": true
  },
  {
@@ -33457,7 +33457,7 @@
  {
   "problemId": "8d20969e-39bb-492c-a7f9-2cc4061c4eba",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $5 and child tickets cost $8. A group bought 15 tickets for a total of $111. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $8 and child tickets cost $5. A group bought 15 tickets for a total of $111. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -33487,7 +33487,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 15 − x are child tickets: 5x + 8(15 − x) = 111. That gives 5x + 120 − 8x = 111, so -3x = -9 and x = 3. Wrong choices: C) 12 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 22 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 15 − x are adult tickets: 5x + 8(15 − x) = 111. That gives 5x + 120 − 8x = 111, so -3x = -9 and x = 3. Wrong choices: C) 12 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 22 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -33500,7 +33500,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "3e709909c201c9709e946eec3f4b8e3dec6e83edbf8a08b15a633758d8ebd5f5",
+  "contentHash": "6fe83bc61913d9955d5c68102edeb1421f0100212aeb2c9dd8b7e81944cbd5e9",
   "isActive": true
  },
  {
@@ -35045,7 +35045,7 @@
  {
   "problemId": "504c1d8a-29df-433c-bfe0-c86eb3f4cdd2",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $6 and child tickets cost $9. A group bought 20 tickets for a total of $153. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $9 and child tickets cost $6. A group bought 20 tickets for a total of $153. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -35075,7 +35075,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 20 − x are child tickets: 6x + 9(20 − x) = 153. That gives 6x + 180 − 9x = 153, so -3x = -27 and x = 9. Wrong choices: C) 11 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 25 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 20 − x are adult tickets: 6x + 9(20 − x) = 153. That gives 6x + 180 − 9x = 153, so -3x = -27 and x = 9. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 25 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -35088,7 +35088,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "9158d6049a6fa4d996ee8a209d3a992c5a5414e78c8770388135f5984a366e14",
+  "contentHash": "214f959f868fe3cbec48f4eafbacad2cc469b6281423c9fa9dc8f3728a0d96bf",
   "isActive": true
  },
  {
@@ -35623,7 +35623,7 @@
  {
   "problemId": "35929b64-c4fa-4b4e-99cc-78a0e21c21d4",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $6 and child tickets cost $9. A group bought 16 tickets for a total of $123. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $9 and child tickets cost $6. A group bought 16 tickets for a total of $123. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -35653,7 +35653,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 16 − x are child tickets: 6x + 9(16 − x) = 123. That gives 6x + 144 − 9x = 123, so -3x = -21 and x = 7. Wrong choices: C) 9 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 20 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 16 − x are adult tickets: 6x + 9(16 − x) = 123. That gives 6x + 144 − 9x = 123, so -3x = -21 and x = 7. Wrong choices: C) 9 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 20 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -35666,7 +35666,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "efb6ea43b4bd2b24845a5fa79baf43b057a7887f070b82e961d0c1ef8b2fbf46",
+  "contentHash": "dd9eacbaae0bf1283a0c50f8873edc43a32b5c106e5896c319a974db5790f408",
   "isActive": true
  },
  {
@@ -36685,7 +36685,7 @@
  {
   "problemId": "f0addb05-8721-4f7d-b461-9c8423b7efdc",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $6 and child tickets cost $9. A group bought 18 tickets for a total of $141. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $9 and child tickets cost $6. A group bought 18 tickets for a total of $141. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -36715,7 +36715,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 18 − x are child tickets: 6x + 9(18 − x) = 141. That gives 6x + 162 − 9x = 141, so -3x = -21 and x = 7. Wrong choices: C) 11 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 23 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 18 − x are adult tickets: 6x + 9(18 − x) = 141. That gives 6x + 162 − 9x = 141, so -3x = -21 and x = 7. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 23 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -36728,7 +36728,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "4036de2c1f990a545eacd6706d2bdf790c0a740208b156fc38b6db045360dfff",
+  "contentHash": "6e2da7000764400d34920d402cd33b86ecc36a280c4bd0cc9cb5fb0b734ac0e1",
   "isActive": true
  },
  {
@@ -37214,7 +37214,7 @@
  {
   "problemId": "d96fe0b7-a671-41f2-affd-ee536bce176a",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $4 and child tickets cost $7. A group bought 19 tickets for a total of $109. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $7 and child tickets cost $4. A group bought 19 tickets for a total of $109. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -37244,7 +37244,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 19 − x are child tickets: 4x + 7(19 − x) = 109. That gives 4x + 133 − 7x = 109, so -3x = -24 and x = 8. Wrong choices: C) 11 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 27 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 19 − x are adult tickets: 4x + 7(19 − x) = 109. That gives 4x + 133 − 7x = 109, so -3x = -24 and x = 8. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 27 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -37257,7 +37257,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "f7d44f55da4c469028b2c7b63a5318cb73a309e3432a94fe5e495c3253734ac6",
+  "contentHash": "470574b8ade9e7c8419e8c7b238ef4d3036da4115b51a20d90581f7d37d0a795",
   "isActive": true
  },
  {
@@ -37647,7 +37647,7 @@
  {
   "problemId": "67b7b01d-6e9d-4800-a77b-4390f9b2845b",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $5 and child tickets cost $8. A group bought 11 tickets for a total of $79. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $8 and child tickets cost $5. A group bought 11 tickets for a total of $79. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -37677,7 +37677,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 11 − x are child tickets: 5x + 8(11 − x) = 79. That gives 5x + 88 − 8x = 79, so -3x = -9 and x = 3. Wrong choices: C) 8 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half.",
+  "explanation": "Let x be the child tickets, so 11 − x are adult tickets: 5x + 8(11 − x) = 79. That gives 5x + 88 − 8x = 79, so -3x = -9 and x = 3. Wrong choices: C) 8 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -37690,7 +37690,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "9b000829e9467e877aabe2b131cd8a5241ef3e17e59c62eaea1d5e82b5d2367b",
+  "contentHash": "572aa4579113d337aa93f4111401345005cdd57770532c2aa557602658f43fba",
   "isActive": true
  },
  {
@@ -38081,7 +38081,7 @@
  {
   "problemId": "deb83e6d-4bf1-4975-9ad3-d392a109dab4",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $5 and child tickets cost $8. A group bought 12 tickets for a total of $69. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $8 and child tickets cost $5. A group bought 12 tickets for a total of $69. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -38111,7 +38111,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 12 − x are child tickets: 5x + 8(12 − x) = 69. That gives 5x + 96 − 8x = 69, so -3x = -27 and x = 9. Wrong choices: A) 3 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half.",
+  "explanation": "Let x be the child tickets, so 12 − x are adult tickets: 5x + 8(12 − x) = 69. That gives 5x + 96 − 8x = 69, so -3x = -27 and x = 9. Wrong choices: A) 3 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -38124,7 +38124,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "18d8a21493b8601c438b599413f971e32d630840d5ac27d5dcaff3d002bef237",
+  "contentHash": "7fa8d930b0e18444b34f64c23a97d3b4f2743755139222382e3a00d6ad7cd0fb",
   "isActive": true
  },
  {
@@ -39093,7 +39093,7 @@
  {
   "problemId": "ddf20a32-b7e1-4065-a354-c50343044536",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $2 and child tickets cost $6. A group bought 15 tickets for a total of $78. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $6 and child tickets cost $2. A group bought 15 tickets for a total of $78. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -39123,7 +39123,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 15 − x are child tickets: 2x + 6(15 − x) = 78. That gives 2x + 90 − 6x = 78, so -4x = -12 and x = 3. Wrong choices: C) 12 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 39 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 15 − x are adult tickets: 2x + 6(15 − x) = 78. That gives 2x + 90 − 6x = 78, so -4x = -12 and x = 3. Wrong choices: C) 12 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 39 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -39136,7 +39136,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "5176ed1894250cdc2f43b6fd2b895a7a91f4f19220d088d87b7fbd1c0fd84500",
+  "contentHash": "cd019d2cf9ac76dfdeb1b13a44ef862b18f27c4f84582095d9b23d8a05809c99",
   "isActive": true
  },
  {
@@ -39624,7 +39624,7 @@
  {
   "problemId": "da01b07e-6c60-4a36-ba6e-b0fccad92cf3",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $5 and child tickets cost $8. A group bought 17 tickets for a total of $121. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $8 and child tickets cost $5. A group bought 17 tickets for a total of $121. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -39654,7 +39654,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 17 − x are child tickets: 5x + 8(17 − x) = 121. That gives 5x + 136 − 8x = 121, so -3x = -15 and x = 5. Wrong choices: C) 12 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 24 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 17 − x are adult tickets: 5x + 8(17 − x) = 121. That gives 5x + 136 − 8x = 121, so -3x = -15 and x = 5. Wrong choices: C) 12 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 24 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -39667,7 +39667,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "9e536dc9f1223d2787275c028d2aace59648d2b3d17fa727d87ee25a24ec4c40",
+  "contentHash": "dbad6a8910821ec830a126d4745d82cfdeac4001c21a3eaaf3a7d7181a22e9a4",
   "isActive": true
  },
  {
@@ -40586,7 +40586,7 @@
  {
   "problemId": "f5d9527b-14d1-488e-9596-b0d83ce08552",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $6 and child tickets cost $9. A group bought 8 tickets for a total of $63. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $9 and child tickets cost $6. A group bought 8 tickets for a total of $63. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -40616,7 +40616,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 8 − x are child tickets: 6x + 9(8 − x) = 63. That gives 6x + 72 − 9x = 63, so -3x = -9 and x = 3. Wrong choices: C) 5 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 10 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 8 − x are adult tickets: 6x + 9(8 − x) = 63. That gives 6x + 72 − 9x = 63, so -3x = -9 and x = 3. Wrong choices: C) 5 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 10 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -40629,7 +40629,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "53cf8e797d18555ee4d8c428a8b3bb7aed9930cd86f8f38d2aa8feadc2917047",
+  "contentHash": "0565c102e36823f253ccc96a1ec1862daca6d8c22daf4ad2c747a85dca8c176f",
   "isActive": true
  },
  {
@@ -41454,7 +41454,7 @@
  {
   "problemId": "53fbbcd0-4731-4b0f-b0dd-2aceb58872bd",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $4 and child tickets cost $7. A group bought 11 tickets for a total of $65. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $7 and child tickets cost $4. A group bought 11 tickets for a total of $65. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -41484,7 +41484,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 11 − x are child tickets: 4x + 7(11 − x) = 65. That gives 4x + 77 − 7x = 65, so -3x = -12 and x = 4. Wrong choices: C) 7 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 16 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 11 − x are adult tickets: 4x + 7(11 − x) = 65. That gives 4x + 77 − 7x = 65, so -3x = -12 and x = 4. Wrong choices: C) 7 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 16 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -41497,7 +41497,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "5ed3022cf514c5f8e560b50bcc78e4bb16a40c9a13bec78c585c0404f165f8e4",
+  "contentHash": "6fbc4e158d9cb3f77a830046645b04954773a6f6eadb4469d19548f958565905",
   "isActive": true
  },
  {
@@ -41886,7 +41886,7 @@
  {
   "problemId": "7730e16f-63dd-441c-bdd2-dd84fb986134",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $4 and child tickets cost $7. A group bought 18 tickets for a total of $105. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $7 and child tickets cost $4. A group bought 18 tickets for a total of $105. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -41916,7 +41916,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 18 − x are child tickets: 4x + 7(18 − x) = 105. That gives 4x + 126 − 7x = 105, so -3x = -21 and x = 7. Wrong choices: C) 11 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 26 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 18 − x are adult tickets: 4x + 7(18 − x) = 105. That gives 4x + 126 − 7x = 105, so -3x = -21 and x = 7. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 26 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -41929,7 +41929,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "0a29ddde4f12b5c6e96c5f10aa7058161861eaed008acbb6b7bc5973223a6af8",
+  "contentHash": "5252004223c3be460e118d604d7e4c39101c3fa89c8996c926de2513714a5a11",
   "isActive": true
  },
  {
@@ -42416,7 +42416,7 @@
  {
   "problemId": "b84d015c-9955-4bba-875d-f2aac633ceb8",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $4 and child tickets cost $7. A group bought 15 tickets for a total of $69. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $7 and child tickets cost $4. A group bought 15 tickets for a total of $69. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -42446,7 +42446,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 15 − x are child tickets: 4x + 7(15 − x) = 69. That gives 4x + 105 − 7x = 69, so -3x = -36 and x = 12. Wrong choices: A) 3 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 17 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 15 − x are adult tickets: 4x + 7(15 − x) = 69. That gives 4x + 105 − 7x = 69, so -3x = -36 and x = 12. Wrong choices: A) 3 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 17 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -42459,7 +42459,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "18134445134675b1128798d1b5aa54ff517fdbc9cb10e93f0b92841dedb9f02d",
+  "contentHash": "4dc60b8d11b97b1f13c8fd0c274b436113e1e961df521fbb8fd8fdc0207dcb07",
   "isActive": true
  },
  {
@@ -42944,7 +42944,7 @@
  {
   "problemId": "a3a0046f-07f2-40fe-ad05-9379e4ea91d3",
   "skillId": "act-systems-of-equations",
-  "prompt": "Adult tickets cost $2 and child tickets cost $6. A group bought 14 tickets for a total of $64. How many adult tickets did they buy?",
+  "prompt": "Adult tickets cost $6 and child tickets cost $2. A group bought 14 tickets for a total of $64. How many child tickets did they buy?",
   "svg": null,
   "answer": {
    "type": "auto",
@@ -42974,7 +42974,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the adult tickets, so 14 − x are child tickets: 2x + 6(14 − x) = 64. That gives 2x + 84 − 6x = 64, so -4x = -20 and x = 5. Wrong choices: C) 9 solves correctly and then reports the CHILD tickets — the commonest slip on this type is answering the wrong half; D) 32 divides the total by the adult price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 14 − x are adult tickets: 2x + 6(14 − x) = 64. That gives 2x + 84 − 6x = 64, so -4x = -20 and x = 5. Wrong choices: C) 9 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 32 divides the total by the child price alone, ignoring that the group is mixed.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -42987,7 +42987,7 @@
    "fine:systems-word-problems"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "3cde2e6a3e174778a6f02c41f91ce9a44c929926ed21450c650ffd93ba1650a6",
+  "contentHash": "aa5e0fde18582aec48364fe7ef4fb78e716ef36b7bbbb0c7ff6b98f87f7f1ae6",
   "isActive": true
  },
  {
