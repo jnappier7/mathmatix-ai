@@ -19,6 +19,11 @@
     "statistics-probability": 6,
     "number-quantity": 5
   },
+  "_visualTargetComment": "Visual items per 45-item form: questions answered from a graph, chart, table or diagram. The 2026-27 official practice form has ten (four diagrams, six tables); an external audit (2026-10-05) recommended 8-12 pending more official forms. utils/actTestAssembler.js paces toward min and stops adding visuals at max; category counts are never changed to meet it. Supply: seeds/act-visual plus the figures and tables in the other banks.",
+  "visualTarget": {
+    "min": 8,
+    "max": 12
+  },
   "_difficultyRampComment": "Target difficulty by position: ANCHORS, interpolated piecewise-linearly between them (utils/actTestAssembler.difficultyForPosition). Real ACT Math is ordered by ascending difficulty -- approximately, and as a smooth curve, which the three flat plateaus this replaced (15@2 / 15@3 / 15@4) could not express: a student met a full difficulty step between Q15 and Q16 and then nothing for fifteen questions. Two properties are deliberate. (1) The TAIL is steeper than the body. On a real form the last ~5 items are markedly harder than items 31-40 -- that is where students run out of clock -- so a flat 4 through Q45 understated the baseline for exactly the strong students the bootcamp most needs to target precisely. (2) The MEAN target is 3.02 against the old ramp's 3.00, held equal on purpose: scaledScore.scaledByRaw below is calibrated to a form of this average difficulty. Reshape the curve freely, but if you move the mean, re-derive that table too or every practice score shifts. ACT-Math-only: English/Reading/Science are ordered by passage and question-to-line reference, NOT difficulty, so do not copy this ramp into another section's blueprint.",
   "difficultyRamp": [
     {
