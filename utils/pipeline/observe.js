@@ -743,38 +743,56 @@ function detectBareProblemDrop(text, messageType, hasAnswer, recentAssistantMess
 
   if (hasReasoning || hasStuckIndicator || hasSpecificQuestion) return false;
 
-  // A step the student CARRIED OUT is work on the problem in front of them, not
-  // a new one handed over: "-10 on both sides to get 2x=16", "divide by 2
-  // x=8", "2x+10=26 combine like terms", "5x+10-3x=26 distributive property".
-  // Flagging these as drops put the student's own work under the student-posed
-  // anti-giveaway rules, so the tutor's "Exactly, x = 8!" was treated as a leak
-  // and the 2026-10 proof session restarted from the top four times. This must
-  // not depend on how the tutor phrased its last question (that guard is above
-  // and can always miss a phrasing). Every form needs a written equation —
-  // without one there is no result, only a proposal — and a message led by a
-  // solve verb ("solve 3x+5=14 using the distributive property") is still a
-  // request, whatever vocabulary it borrows.
-  if (hasEquation && !hasSolveVerb) {
-    // A result connector immediately followed by the equation it produced.
-    // "to get x by itself in 2x+5=17" is a question about a goal, not a
-    // result, so a word may not sit between the connector and the "=".
-    const resultConnector =
-      /\b(?:to\s+get|(?:you|we|i)\s+get|gives?(?:\s+(?:you|us))?|giving|leaves?(?:\s+(?:you|us))?|results?\s+in|becomes|turns\s+into)\s+[^a-z=]{0,12}[a-z]?[^a-z=]{0,12}=/i;
-    const bothSides = /\b(?:on|from|to|by)\s+both\s+sides\b/i;
-    // Two-column proof reasons. "Given 2x+5=17, find x" opens a problem, so
-    // "given" counts only as a trailing reason or "is the given".
-    const justification =
-      /\bpropert(?:y|ies)\b|\blike\s+terms\b|\bthe\s+given\b|\bgiven\s*[.!]?\s*$|\bsubstitution\b|\bdefinition\s+of\b|\binverse\s+operations?\b/i;
-    // An operation leading an equation: "divide by 2 x=8", "subtract 10 2x=16".
-    // A bare "add 1/2 + 1/4" has no "=" and never reaches here.
-    const operationLed =
-      /^\s*(?:then\s+|so\s+|now\s+|next\s+)?(?:add|subtract|multiply|divide|distribute|combine)(?:d|ed|s|ing)?\b[^=]*=/i;
-    if (resultConnector.test(t) || bothSides.test(t) || justification.test(t) || operationLed.test(t)) {
-      return false;
-    }
-  }
+  if (describesStepWork(t)) return false;
 
   return true;
+}
+
+/**
+ * A step the student CARRIED OUT is work on the problem in front of them, not
+ * a new one handed over: "-10 on both sides to get 2x=16", "divide by 2
+ * x=8", "2x+10=26 combine like terms", "5x+10-3x=26 distributive property".
+ * Flagging these as drops put the student's own work under the student-posed
+ * anti-giveaway rules, so the tutor's "Exactly, x = 8!" was treated as a leak
+ * and the 2026-10 proof session restarted from the top four times. This must
+ * not depend on how the tutor phrased its last question (that guard is in
+ * detectBareProblemDrop and can always miss a phrasing). Every form needs a
+ * written equation — without one there is no result, only a proposal — and a
+ * message led by a solve verb ("solve 3x+5=14 using the distributive
+ * property") is still a request, whatever vocabulary it borrows.
+ *
+ * Also read by observe()'s conceptualReply: a carried-out step is computation,
+ * not an idea in words, and the prose verifier can only misgrade it.
+ *
+ * @param {string} t trimmed message text
+ * @returns {boolean}
+ */
+function describesStepWork(t) {
+  if (!/=/.test(t)) return false;
+  if (/^(solve|factor|simplify|evaluate|compute|graph|find)\s+/i.test(t)) return false;
+
+  // A result connector immediately followed by the equation it produced.
+  // "to get x by itself in 2x+5=17" is a question about a goal, not a
+  // result, so a word may not sit between the connector and the "=".
+  const resultConnector =
+    /\b(?:to\s+get|(?:you|we|i)\s+get|gives?(?:\s+(?:you|us))?|giving|leaves?(?:\s+(?:you|us))?|results?\s+in|becomes|turns\s+into)\s+[^a-z=]{0,12}[a-z]?[^a-z=]{0,12}=/i;
+  const bothSides = /\b(?:on|from|to|by)\s+both\s+sides\b/i;
+  // Two-column proof reasons. "Given 2x+5=17, find x" opens a problem, so
+  // "given" counts only as a trailing reason or "is the given".
+  const justification =
+    /\bpropert(?:y|ies)\b|\blike\s+terms\b|\bthe\s+given\b|\bgiven\s*[.!]?\s*$|\bsubstitution\b|\bdefinition\s+of\b|\binverse\s+operations?\b/i;
+  // An operation leading an equation: "divide by 2 x=8", "subtract 10 2x=16".
+  // A bare "add 1/2 + 1/4" has no "=" and never reaches here.
+  const operationLed =
+    /^\s*(?:then\s+|so\s+|now\s+|next\s+)?(?:add|subtract|multiply|divide|distribute|combine)(?:d|ed|s|ing)?\b[^=]*=/i;
+  // An operation mid-message with a SOLVED form after it: "2x=16 divided by 2
+  // is x=8". The `\b` keeps a coefficient term ("2x=16") from counting as
+  // solved, and a trailing "?" leaves a question to the drop gate.
+  const operationThenSolved =
+    /\b(?:add|subtract|multipl(?:y|ied|ies|ying)|divid(?:e|ed|es|ing)|distribut(?:e|ed|es|ing)|combin(?:e|ed|es|ing))\b.*\b[a-z]\s*=\s*-?\d[^?]*$/i;
+
+  return resultConnector.test(t) || bothSides.test(t) || justification.test(t)
+    || operationLed.test(t) || operationThenSolved.test(t);
 }
 
 /**
@@ -989,8 +1007,11 @@ function observe(message, context = {}) {
   const lastAssistant = (context.recentAssistantMessages || []).slice(-1)[0];
   const tutorAskedAQuestion = typeof lastAssistant?.content === 'string'
     && lastAssistant.content.includes('?');
+  // A carried-out step ("divide by 2 to get x=8") is computation, not an idea
+  // in words — the prose verifier can only misgrade it.
   const conceptualReply = !answer
     && !isBareProblemDrop
+    && !describesStepWork(text.trim())
     && tutorAskedAQuestion
     && messageType === MESSAGE_TYPES.GENERAL_MATH
     && text.length <= 400

@@ -200,6 +200,73 @@ describe('observe() — isBareProblemDrop flag', () => {
 });
 
 // ============================================================================
+// A carried-out step is not a drop — the exact report, plus what #1635 left
+//
+// Production: the tutor asked "Exactly! 2x=16. Now, to isolate x, what will
+// you do next?" and the student's answer — the step plus its result — was
+// flagged as a fresh problem drop because it contains an equation, sending it
+// through verify.js's student-posed giveaway guard (2a-bis). #1635 closed the
+// drop flag (see "worked steps are not problem drops" below). Two things it
+// left: a step whose operation sits mid-message ("2x=16 divided by 2 is x=8")
+// was still a drop cold, and with the drop flag gone these turns qualified as
+// conceptualReply — routed to the prose verifier, which can only misgrade a
+// computation.
+// ============================================================================
+
+describe('observe() — a step answer with its result is not a bare drop', () => {
+  const tutorAsked = {
+    recentUserMessages: [],
+    recentAssistantMessages: [
+      { content: 'Exactly! 2x=16. Now, to isolate x, what will you do next?' },
+    ],
+    hasRecentUpload: false,
+  };
+  const coldCtx = { recentUserMessages: [], recentAssistantMessages: [], hasRecentUpload: false };
+
+  const STEP_ANSWERS = [
+    'divide by 2 x=8 division property of equality',
+    'divide by 2 to get x=8',
+    '2x=16 divided by 2 is x=8',
+    'divide by 2',
+  ];
+
+  test.each(STEP_ANSWERS)('"%s" after "what will you do next?" is not a drop', (msg) => {
+    const result = observe(msg, tutorAsked);
+    expect(result.isBareProblemDrop).toBe(false);
+    // Computation, not a prose idea — must not be routed to the conceptual verifier.
+    expect(result.conceptualReply).toBe(false);
+  });
+
+  test.each(STEP_ANSWERS.slice(0, 3))('"%s" is not a drop even cold (operation + result)', (msg) => {
+    expect(observe(msg, coldCtx).isBareProblemDrop).toBe(false);
+  });
+
+  test('"what will you do next?" reads as a next-step question', () => {
+    const { lastTutorAskedForNextStep } = require('../../utils/pipeline/observe');
+    expect(lastTutorAskedForNextStep(tutorAsked.recentAssistantMessages)).toBe(true);
+  });
+
+  // Real drops must survive the step-work carve-out.
+  const REAL_DROPS = [
+    '2x+5=17',
+    'solve 3x-7=20',
+    '4x-5=22',
+    '2x plus 5 = 17',
+    'add 1/2 + 1/4',
+    // Operation + "you get" in a word problem — no written result, still a drop.
+    'if you divide 2x+4 by 3 you get 10, what is x',
+  ];
+
+  test.each(REAL_DROPS)('"%s" is still a drop with no tutor question in play', (msg) => {
+    expect(detectBareProblemDrop(msg, MESSAGE_TYPES.GENERAL_MATH, false, [])).toBe(true);
+  });
+
+  test.each(['2x+5=17', 'solve 3x-7=20'])('"%s" is still a drop through observe()', (msg) => {
+    expect(observe(msg, coldCtx).isBareProblemDrop).toBe(true);
+  });
+});
+
+// ============================================================================
 // decide() — bare-drop routes to ELICIT_FIRST with anti-leak directives
 // ============================================================================
 
