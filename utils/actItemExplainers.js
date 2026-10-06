@@ -1188,6 +1188,19 @@ const EXPLAINERS = [
     },
   },
   {
+    // The same survey, as the ACT presents it: the counts in a two-way table
+    // (scripts/addActEnhancedFigures.js moved them there). Rebuilds the
+    // sentence form's match so both read through one solver.
+    id: 'conditional-probability-table',
+    match: /^The table below shows the results of a survey of (\d+) students\.\n\nGrade \| Yes \| No\n(\w+) \| (\d+) \| (\d+)\n(\w+) \| (\d+) \| (\d+)\n\n(If a (\w+) is selected at random, what is the probability that this student said (yes|no)\?)/,
+    solve: (m) => {
+      const lower = (w) => w.toLowerCase();
+      // [_, total, aYes, groupA, bYes, groupB, aNo, bNo, pick, want]
+      const asSentence = [m[0], m[1], m[3], lower(m[2]), m[6], lower(m[5]), m[4], m[7], m[9], m[10]];
+      return EXPLAINER_BY_ID['conditional-probability-survey'].solve(asSentence);
+    },
+  },
+  {
     id: 'circle-garden',
     match: /^A circular garden has a (radius|diameter) of ([\d.]+) feet\. What is its (area|circumference)/,
     solve: (m) => {
@@ -2370,7 +2383,16 @@ const EXPLAINERS = [
       };
     },
   },
+  {
+    // The payout game with its payouts and probabilities in a table.
+    id: 'expected-value-table',
+    match: /^The table below shows the possible payouts of a game and the probability of each\.\n\nPayout \| \$([\d.]+) \| \$([\d.]+) \| \$([\d.]+)\nProbability \| (\d+)\/(\d+) \| (\d+)\/(\d+) \| (\d+)\/(\d+)/,
+    solve: (m) => EXPLAINER_BY_ID['expected-value-three'].solve([m[0], m[1], m[4], m[5], m[2], m[6], m[7], m[3], m[8], m[9]]),
+  },
 ];
+
+// The table-form explainers delegate to their sentence-form twins.
+const EXPLAINER_BY_ID = Object.fromEntries(EXPLAINERS.map((e) => [e.id, e]));
 
 /**
  * Build the explanation for one bank item.
