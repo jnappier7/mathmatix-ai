@@ -221,13 +221,20 @@ describe('pipeline wiring (source contract)', () => {
   const src = fs.readFileSync(require.resolve('../../utils/pipeline/index.js'), 'utf8');
 
   test('the guard runs after every pose source and BEFORE the auto-clear and the pin update', () => {
-    const guard = src.indexOf('dropScratchFragmentPoses(verified.boardCommands, message)');
-    const autoClear = src.indexOf('synthesizeAutoClear({');
-    const pinUpdate = src.indexOf('ctx.conversation.boardProblem = { tex: poseCard.tex');
+    // The board tail lives in boardSettle.js (settleBoardTurn) so the pipeline
+    // and the replay fixtures share one order; index.js calls it once every
+    // pose source — the board-reference backstop last — has spoken.
+    const settleCall = src.indexOf('settleBoardTurn({');
     const backstop = src.indexOf('Board-reference backstop posed problem');
-    expect(guard).toBeGreaterThan(-1);
+    expect(settleCall).toBeGreaterThan(-1);
     expect(backstop).toBeGreaterThan(-1);
-    expect(backstop).toBeLessThan(guard);
+    expect(backstop).toBeLessThan(settleCall);
+
+    const settle = fs.readFileSync(require.resolve('../../utils/pipeline/boardSettle.js'), 'utf8');
+    const guard = settle.indexOf('dropScratchFragmentPoses(cmds, message)');
+    const autoClear = settle.indexOf('synthesizeAutoClear({');
+    const pinUpdate = settle.indexOf('pin = { tex: poseCard.tex }');
+    expect(guard).toBeGreaterThan(-1);
     expect(guard).toBeLessThan(autoClear);
     expect(autoClear).toBeLessThan(pinUpdate);
   });

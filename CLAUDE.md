@@ -454,6 +454,16 @@ npm run seed:all:dry   # preflight + plan, no writes
   as …". A failed read falls back to the single-pass vision grader; `CHECK_WORK_PIPELINE=legacy` forces
   it. The step checker is one-sided by design (anything it can't prove is `unknown`, never `broken`) —
   keep it that way. Pinned by `tests/unit/checkWorkGrader.test.js`.
+- **One problem, one card — the board's tail lives in `pipeline/boardSettle.js`.** A `pose` of
+  different tex SEALS the card in focus, and a `verify` closes it and drops the pin — so on
+  2026-10-05 a model `verify` of `2x + 10 = 26` (not an answer) closed the card, and every
+  restated line after it (`2x = 16`, `5x + 10 - 3x = 26`) was posed as a new problem: one solve,
+  five cards. `settleBoardTurn` now demotes a non-answer verify to a resolve, and folds a pose
+  whose equation is a line of the problem in focus (`pipeline/boardContinuity.js`: proportional
+  residual while open; identical residual or a line on the card once solved) back into that card,
+  re-pinning it. The guard also drops a scaffold blank whose only value is a given, and `example`
+  cards deriving the problem posed that turn. Change any of it through the replay:
+  `tests/helpers/fiveCardSolve.fixture.json` → `inlineWorkDock.test.js` "one problem stays one card".
 - **Conversations >100 msgs are summarized** before hitting the LLM — mind token budgets.
 - **IEP is split** (collection + cached copy on user) — update both / sync on read.
 - **`learningProfile.growthCheckHistory` has exactly ONE writer** — the `isGrowth` block in
