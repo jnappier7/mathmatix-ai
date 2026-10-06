@@ -249,3 +249,47 @@ describe('a measured difficulty orders the form more finely than the integer', (
     expect(out.map((i) => i.problemId)).toEqual(['b', 'a']);
   });
 });
+
+// External audit 2026-10-05: garage pricing then taxi pricing, back to back.
+describe('actTestAssembler.spreadFamilies', () => {
+  const { spreadFamilies, familiesOf } = A;
+  const item = (skillId, content = 'Q?') => ({ skillId, content });
+
+  test('two dollar-rate scenarios are one family across skills', () => {
+    const garage = item('act-multi-step-arithmetic', 'A parking garage charges $6.00 for the first hour and $2.50 for each additional hour.');
+    const taxi = item('act-linear-equations', 'A taxi ride costs $3 plus $2 for each mile traveled.');
+    expect(familiesOf(garage)).toContain('money-rates');
+    expect(familiesOf(taxi)).toContain('money-rates');
+    expect(familiesOf(item('act-circles', 'A circle has radius $r$.'))).not.toContain('money-rates');
+  });
+
+  test('adjacent look-alikes are pulled apart and positions renumbered', () => {
+    const garage = item('s1', 'A garage charges $6 for the first hour and $2.50 for each additional hour.');
+    const taxi = item('s2', 'A taxi costs $3 plus $2 for each mile.');
+    const out = spreadFamilies([item('a'), garage, taxi, item('b'), item('c')]);
+    const at = (x) => out.findIndex((o) => o.content === x.content);
+    expect(Math.abs(at(garage) - at(taxi))).toBeGreaterThan(1);
+    expect(out.map((o) => o.position)).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  test('same skill back to back is spread too; a clean form is untouched', () => {
+    const out = spreadFamilies([item('x'), item('x'), item('y'), item('z')]);
+    expect(out[0].skillId).not.toBe(out[1].skillId);
+    const clean = [item('a'), item('b'), item('c')];
+    expect(spreadFamilies(clean).map((o) => o.skillId)).toEqual(['a', 'b', 'c']);
+  });
+
+  test('moves stay within the short look-ahead (the ramp barely shifts)', () => {
+    const out = spreadFamilies([item('x'), item('x'), item('x'), item('x'), item('y')]);
+    expect(out).toHaveLength(5);
+    expect(out[out.length - 1].position).toBe(5);
+  });
+});
+
+describe('actTestAssembler.NOT_ON_FORMS', () => {
+  test('the bulk low-volume expansions are kept off forms; ACT banks are not', () => {
+    expect(A.NOT_ON_FORMS.test('low-volume-expansion-2026-07')).toBe(true);
+    expect(A.NOT_ON_FORMS.test('low-volume-2026-08')).toBe(true);
+    ['act-fable', 'act-ies-expansion', 'act-enhanced-2026-09'].forEach((s) => expect(A.NOT_ON_FORMS.test(s)).toBe(false));
+  });
+});

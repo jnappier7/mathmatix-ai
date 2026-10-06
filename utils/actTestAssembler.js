@@ -79,6 +79,22 @@ async function drawPool(Problem, query, rng, size) {
   return ids.map((id) => byId.get(String(id))).filter((d) => d && !hasBadDistractors(d));
 }
 
+/**
+ * Banks that carry `act-*` skill tags but were not written as ACT items.
+ *
+ * The low-volume expansions (seeds/low-volume-items.generated.json, sources
+ * `low-volume-expansion-2026-07` and `low-volume-2026-08`) were bulk-generated
+ * to give thin skills SOME practice — imperative "Solve:" stems, definition
+ * recall, unsorted choices, and joke distractors ("multiply both by zero",
+ * "graph a circle"). An external audit of five public forms (2026-10-05)
+ * traced its two worst item findings to this bank. They stay in the DB for
+ * tutoring practice; they never sit on a form that claims to be ACT-like.
+ * Every blueprint skill keeps at least 11 ACT-authored items without them.
+ */
+const NOT_ON_FORMS = /^low-volume/;
+const FORM_SOURCE_FILTER = { source: { $not: NOT_ON_FORMS } };
+const formEligible = (p) => !!p && !NOT_ON_FORMS.test(String(p.source || ''));
+
 function hashSeed(str) {
   let h = 2166136261 >>> 0;
   for (let i = 0; i < str.length; i++) {
@@ -322,11 +338,12 @@ async function assembleForm(opts = {}) {
         answerType: 'multiple-choice',
         difficulty: { $gte: lo, $lte: hi },
         problemId: { $nin: usedProblemIds },
+        ...FORM_SOURCE_FILTER,
       }, rng, 16);
       if (!candidates.length) {
         // Widen: any difficulty for this skill, still excluding used items.
         const p = await Problem.findNearDifficulty(slot.skillId, center, usedProblemIds, { preferMultipleChoice: true });
-        candidates = p && !hasBadDistractors(p) ? [p] : [];
+        candidates = formEligible(p) && !hasBadDistractors(p) ? [p] : [];
       }
       if (!candidates.length) {
         // Same-category fallback: a thin sub-skill can be asked for more times
@@ -341,6 +358,7 @@ async function assembleForm(opts = {}) {
             isActive: true,
             answerType: 'multiple-choice',
             problemId: { $nin: usedProblemIds },
+            ...FORM_SOURCE_FILTER,
           }, rng, 24);
         }
       }
@@ -367,7 +385,7 @@ async function assembleForm(opts = {}) {
   // ramps, and pacing is taught on that assumption — move fast early, bank
   // time for the end. Stable, so the category interleave survives within
   // each difficulty band.
-  const ordered = orderByDifficulty(items, (it) => precise.get(it.problemId));
+  const ordered = spreadFamilies(orderByDifficulty(items, (it) => precise.get(it.problemId)));
 
   return {
     items: ordered,
@@ -387,6 +405,47 @@ async function assembleForm(opts = {}) {
       seed,
     },
   };
+}
+
+// Two dollar amounts priced per unit: $6 for the first hour and $2.50 for each hour,
+// $3 plus $2 for each mile. Garage pricing then taxi pricing back to back
+// read as one question asked twice (external audit, 2026-10-05), though they
+// sit under different skills.
+const FEE_PLUS_RATE = /\$\s?[\d.,]+[^.?]{0,60}?\$\s?[\d.,]+\s*(?:per|for each|each|an?)\b/i;
+
+/** What makes two neighbouring items feel like the same task. */
+function familiesOf(item) {
+  const fam = [];
+  if (item && item.skillId) fam.push(`skill:${item.skillId}`);
+  if (item && FEE_PLUS_RATE.test(String(item.content || ''))) fam.push('money-rates');
+  return fam;
+}
+
+/**
+ * Keep look-alike tasks off adjacent positions. Walks the ordered form; when
+ * an item shares a family with the one before it, it trades places with the
+ * nearest of the next few items that shares a family with neither neighbour.
+ * The look-ahead is short (3) so the difficulty ramp barely moves. Positions
+ * are renumbered because the position IS the question number.
+ */
+function spreadFamilies(items, lookAhead = 3) {
+  const out = (items || []).slice();
+  const clash = (a, b) => {
+    if (!a || !b) return false;
+    const fb = familiesOf(b);
+    return familiesOf(a).some((f) => fb.includes(f));
+  };
+  for (let i = 1; i < out.length; i++) {
+    if (!clash(out[i - 1], out[i])) continue;
+    for (let j = i + 1; j < Math.min(out.length, i + 1 + lookAhead); j++) {
+      // The swapped-in item must fit between out[i-1] and out[i+1], and the
+      // displaced one must fit between out[j-1] and out[j+1] (when j > i+1).
+      const fitsHere = !clash(out[i - 1], out[j]) && (j === i + 1 ? !clash(out[j], out[i]) : !clash(out[j], out[i + 1]));
+      const fitsThere = j === i + 1 || (!clash(out[j - 1], out[i]) && !clash(out[i], out[j + 1]));
+      if (fitsHere && fitsThere) { const t = out[i]; out[i] = out[j]; out[j] = t; break; }
+    }
+  }
+  return out.map((it, idx) => ({ ...it, position: idx + 1 }));
 }
 
 /**
@@ -457,6 +516,9 @@ module.exports = {
   promptSignature,
   pickDiverse,
   orderByDifficulty,
+  spreadFamilies,
+  familiesOf,
   preciseDifficulty,
+  NOT_ON_FORMS,
   getBlueprint: () => DEFAULT_BLUEPRINT,
 };
