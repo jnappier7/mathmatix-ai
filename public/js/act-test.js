@@ -49,6 +49,9 @@
   .actt-opt.sel .actt-optlab{background:#764ba2;color:#fff}
   .actt-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid #eee;margin-top:auto}
   .actt-nw{white-space:nowrap}
+  .actt-table{border-collapse:collapse;margin:10px 0 4px;font-size:15px;white-space:normal}
+  .actt-table th,.actt-table td{border:1px solid #d9d5e8;padding:5px 12px;text-align:center}
+  .actt-table thead th,.actt-table tbody th{background:#f3f1fa;font-weight:600}
   .actt-btn{appearance:none;border:0;border-radius:10px;padding:11px 20px;font-weight:600;font-size:14px;cursor:pointer}
   .actt-next{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
   .actt-next:disabled{opacity:.5;cursor:not-allowed}
@@ -494,7 +497,7 @@
       const shortChoices = (p.options || []).length > 0 && (p.options || []).every((o) => String(o.text || '').length <= 12);
       // The figure goes AFTER the stem: items say "in the figure below", and
       // rendering it above contradicted every one of them.
-      this.el('actt-body').innerHTML = `<div class="actt-q" id="actt-qtext">${keepMath(prettyMath(escapeHtml(p.content || '')))}</div>${fig}<div class="actt-opts${shortChoices ? ' actt-opts--grid' : ''}" role="radiogroup" aria-labelledby="actt-qtext">${opts}</div>`;
+      this.el('actt-body').innerHTML = `<div class="actt-q" id="actt-qtext">${stemHtml(keepMath(prettyMath(escapeHtml(p.content || ''))))}</div>${fig}<div class="actt-opts${shortChoices ? ' actt-opts--grid' : ''}" role="radiogroup" aria-labelledby="actt-qtext">${opts}</div>`;
       this._labelFigure();
       this.el('actt-body').querySelectorAll('.actt-opt').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -762,6 +765,10 @@
      */
     renderGuestResults(r) {
       const missed = Number(r.missedCount) || 0;
+      // Remembered with the guest record so signup and onboarding can say
+      // "your results are saved" with the numbers (public/js/act-handoff.js).
+      const g = readGuest();
+      if (g) writeGuest(Object.assign({}, g, { score: r.scaledScore != null ? r.scaledScore : null, missed }));
       const rows = '<div class="actt-lockrow" style="width:72%"></div><div class="actt-lockrow" style="width:48%"></div>'
         + '<div class="actt-lockrow" style="width:64%"></div><div class="actt-lockrow" style="width:40%"></div>'
         + '<div class="actt-lockrow" style="width:58%"></div>';
@@ -771,14 +778,14 @@
             <div class="actt-lockover">
               <div class="actt-lockh">🔒 You missed ${missed} question${missed === 1 ? '' : 's'}</div>
               <div class="actt-lockp">Create a free account to see exactly which ones, grouped by skill, then work through each one with your AI tutor until it clicks.</div>
-              <a class="actt-cta" href="/signup.html" id="actt-signup">See what I missed — free</a>
+              <a class="actt-cta" href="/signup.html?from=act" id="actt-signup">See what I missed — free</a>
               <div class="actt-cta2">Already have an account? <a href="/login.html" id="actt-login">Log in</a></div>
             </div>
           </div>`
         : `<div class="actt-lock" style="padding:18px 16px;text-align:center">
             <div class="actt-lockh">A perfect section 🎯</div>
             <div class="actt-lockp" style="margin:6px auto 12px">Create a free account to save this score and get a fresh test that pushes you further.</div>
-            <a class="actt-cta" href="/signup.html" id="actt-signup">Save my score — free</a>
+            <a class="actt-cta" href="/signup.html?from=act" id="actt-signup">Save my score — free</a>
           </div>`;
       const short = r.shortForm
         ? `<div style="font-size:11.5px;color:#8578ab;margin-top:10px;text-align:center">This form ran ${r.totalItems} questions instead of ${r.blueprintItems}, so the score is projected from fewer items.</div>`
@@ -1108,15 +1115,51 @@
   // the original text. Runs on already-escaped text.
   function prettyMath(html) {
     return String(html)
-      .replace(/\^\(?([-−]?\d{1,3})\)?/g, (m, e) => `<sup>${e.replace('-', '−')}</sup>`)
+      // Parens around an exponent are eaten only as a PAIR — ^(2/3) → ²ᐟ³. An
+      // optional ")" on its own swallowed the group's closing paren, so
+      // (x^5)/(x^2) showed as "(x⁵/(x²" and (2.4 × 10^6)(1.2 × 10^4) lost
+      // both closers (external audit, 2026-10-05).
+      .replace(/\^(?:\(([^()<>]{1,12})\)|([-−]?\d{1,3}|[-−]?[a-z](?![a-z])))/g, (m, a, b) => `<sup>${(a || b).replace(/-/g, '−')}</sup>`)
       .replace(/\b(log|[A-Za-z])_(\d{1,3}|[a-z])\b/g, '$1<sub>$2</sub>')
       .replace(/(^|[\s(\[=,+×÷*/<>≤≥])-(?=[\d.(√πA-Za-z])/g, '$1−')
       .replace(/([\dA-Za-z)²³])\s-\s/g, '$1 − ')
       .replace(/([\d)])-(?=[\d(])/g, '$1−')
       .replace(/(^|[^A-Za-z])([a-z])-(?=\d)/g, '$1$2−');
   }
+  // A stem's data table. The banks type tables as pipe-separated lines
+  // ("x | 2 | 4 | 6"), which showed as raw text with ragged columns. Two or
+  // more consecutive lines with the same number of " | " cells become a real
+  // table: first line the header row, first cell of each later line a row
+  // header. Absolute value (|x + 3|) never matches — cells need space-pipe-
+  // space separators on at least two lines. Runs on already-formatted HTML.
+  function stemHtml(html) {
+    const lines = String(html).split('\n');
+    const cells = (ln) => (/ \| /.test(ln) ? ln.split(' | ').map((c) => c.trim()) : null);
+    const out = [];
+    for (let i = 0; i < lines.length;) {
+      const first = cells(lines[i]);
+      let j = i + 1;
+      if (first && first.length >= 2) {
+        while (j < lines.length && (cells(lines[j]) || []).length === first.length) j++;
+      }
+      if (first && j - i >= 2) {
+        const rows = lines.slice(i, j).map(cells);
+        const head = `<tr>${rows[0].map((c) => `<th scope="col">${c}</th>`).join('')}</tr>`;
+        const body = rows.slice(1).map((r) => `<tr><th scope="row">${r[0]}</th>${r.slice(1).map((c) => `<td>${c}</td>`).join('')}</tr>`).join('');
+        out.push(`<table class="actt-table"><thead>${head}</thead><tbody>${body}</tbody></table>`);
+        i = j;
+      } else {
+        out.push(lines[i]);
+        i++;
+      }
+    }
+    // The stem is white-space:pre-wrap: newlines touching a table would
+    // render as blank lines around it.
+    return out.join('\n').replace(/\n+(<table class="actt-table">)/g, '$1').replace(/(<\/table>)\n+/g, '$1');
+  }
+
   // Exposed for the unit test of the notation rules.
-  if (typeof window !== 'undefined') window.__actPrettyMath = prettyMath;
+  if (typeof window !== 'undefined') { window.__actPrettyMath = prettyMath; window.__actStemHtml = stemHtml; }
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
