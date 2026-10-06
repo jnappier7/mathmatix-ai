@@ -569,3 +569,28 @@ describe('pooled calibration: banks authored on different scales are equated', (
     });
   });
 });
+
+describe('an item nobody (or everybody) gets right cannot hold the fit hostage', () => {
+  // Found on a real-bank dry run: one pool every student missed kept
+  // `converged` false through 300 iterations, so --apply wrote nothing.
+  const trueB = { a: -1, b: 0, c: 1 };
+  const { rows } = simulate({ nPeople: 200, trueB, seed: 3 });
+  const people = [...new Set(rows.map((r) => r.userId))];
+
+  test('all wrong', () => {
+    const extra = people.slice(0, 40).map((u) => ({ userId: u, problemId: 'nobody', correct: false }));
+    const { meta, items } = calibrateItems(rows.concat(extra), { a: 3, b: 3, c: 3, nobody: 3 });
+    expect(meta.converged).toBe(true);
+    const nobody = items.find((i) => i.problemId === 'nobody');
+    expect(nobody.extreme).toBe(true);
+    expect(nobody.enoughData).toBe(true);
+    expect(nobody.difficulty).toBeGreaterThanOrEqual(4);
+  });
+
+  test('all right', () => {
+    const extra = people.slice(0, 40).map((u) => ({ userId: u, problemId: 'everybody', correct: true }));
+    const { meta, items } = calibrateItems(rows.concat(extra), { a: 3, b: 3, c: 3, everybody: 3 });
+    expect(meta.converged).toBe(true);
+    expect(items.find((i) => i.problemId === 'everybody').difficulty).toBeLessThanOrEqual(2);
+  });
+});
