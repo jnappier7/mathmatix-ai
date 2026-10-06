@@ -79,6 +79,23 @@ describe('parent invite lifetime', () => {
     expect(isParentInviteActive({}, now)).toBe(false);
     expect(isParentInviteActive(null, now)).toBe(false);
   });
+
+  test('the lifetime is exact across a DST change, whatever zone the server runs in', () => {
+    // 2026-10-06 + 30 days crosses the US fall-back (Nov 1). Calendar-day math
+    // in a DST zone made this code live 30 days + 1 hour.
+    const prevTZ = process.env.TZ;
+    try {
+      for (const tz of ['America/New_York', 'Europe/London', 'UTC']) {
+        process.env.TZ = tz;
+        for (const iso of ['2026-10-06T15:00:00Z', '2026-03-01T15:00:00Z']) {
+          const now = new Date(iso);
+          expect(parentInviteExpiry(now) - now).toBe(PARENT_INVITE_TTL_DAYS * 86400000);
+        }
+      }
+    } finally {
+      if (prevTZ === undefined) delete process.env.TZ; else process.env.TZ = prevTZ;
+    }
+  });
 });
 
 describe('explainParentInviteFailure (child entering a parent code)', () => {

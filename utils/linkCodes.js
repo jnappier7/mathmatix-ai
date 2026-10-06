@@ -68,10 +68,11 @@ function looksLikeParentInviteCode(raw) {
   return PARENT_CODE_RE.test(squash(raw));
 }
 
+// A fixed duration, not "the same wall-clock time N calendar days on":
+// setDate() works in the server's local zone, so across a DST change the code
+// lived N days ± 1 hour — and how long it lived depended on where it ran.
 function parentInviteExpiry(now = new Date()) {
-  const d = new Date(now);
-  d.setDate(d.getDate() + PARENT_INVITE_TTL_DAYS);
-  return d;
+  return new Date(new Date(now).getTime() + PARENT_INVITE_TTL_DAYS * 86400000);
 }
 
 function isParentInviteActive(invite, now = new Date()) {
