@@ -65,6 +65,7 @@ describe('the seed banks have no blocking defects', () => {
     'act-fable': 'seeds/act-fable-items.generated.json',
     'act-ies-expansion': 'seeds/act-ies-expansion/ies-items.generated.json',
     'act-enhanced': 'seeds/act-enhanced/act-items.generated.json',
+    'act-visual': 'seeds/act-visual/act-visual-items.generated.json',
   };
   test.each(Object.keys(FILES))('%s', (bank) => {
     const file = path.join(__dirname, '..', '..', FILES[bank]);

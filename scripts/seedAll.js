@@ -187,6 +187,16 @@ const STEPS = [
     ids: jsonIds('act-enhanced/act-items.generated.json', 'problemId'),
   },
   {
+    key: 'act-visual-items',
+    label: 'ACT visual bank (graphs, charts, tables, diagrams the question is answered from)',
+    script: 'seedActVisualItems.js',
+    supportsFresh: true,
+    files: ['act-visual/act-visual-items.generated.json'],
+    model: 'Problem',
+    idField: 'problemId',
+    ids: jsonIds('act-visual/act-visual-items.generated.json', 'problemId'),
+  },
+  {
     key: 'answer-equivalents',
     label: 'Backfill answer.equivalents (must follow the banks)',
     script: 'backfillAnswerEquivalents.js',

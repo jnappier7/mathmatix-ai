@@ -95,6 +95,20 @@ const NOT_ON_FORMS = /^low-volume/;
 const FORM_SOURCE_FILTER = { source: { $not: NOT_ON_FORMS } };
 const formEligible = (p) => !!p && !NOT_ON_FORMS.test(String(p.source || ''));
 
+/**
+ * An item the student answers from a picture or a table: it carries a figure,
+ * or its stem holds a pipe-separated table (two or more " | " lines, the shape
+ * public/js/act-test.js stemHtml renders as a real table).
+ *
+ * An official form has about ten; ours averaged 1.9 until the visual bank
+ * (seeds/act-visual, scripts/generateActVisualItems.js) gave the assembler
+ * enough to pace (external audit, 2026-10-05). See blueprint.visualTarget.
+ */
+const TABLE_STEM = /\n[^\n]* \| [^\n]*\n[^\n]* \| /;
+const VISUAL_FILTER = { $or: [{ svg: { $nin: [null, ''] } }, { prompt: TABLE_STEM }] };
+const PLAIN_FILTER = { $nor: [{ svg: { $nin: [null, ''] } }, { prompt: TABLE_STEM }] };
+const isVisualItem = (p) => !!(p && (p.svg || TABLE_STEM.test(String(p.prompt || ''))));
+
 function hashSeed(str) {
   let h = 2166136261 >>> 0;
   for (let i = 0; i < str.length; i++) {
@@ -318,7 +332,18 @@ async function assembleForm(opts = {}) {
   const gaps = [];
   const precise = new Map();          // problemId -> measured-or-authored difficulty, for ordering
 
-  for (const slot of slots) {
+  // Visual pacing (blueprint.visualTarget = { min, max }). After slot i the
+  // form should hold about min × (i + 1) / n visual items. A slot that finds
+  // the form behind that pace looks for a visual candidate on its own skill
+  // first; one that finds it two or more behind may take a visual item from
+  // any skill in its CATEGORY (category counts — what the scaled score
+  // depends on — never move). Once the form holds max, visual candidates are
+  // passed over while a plain one exists. No target: no change at all.
+  const vt = blueprint.visualTarget || null;
+  let visuals = 0;
+
+  for (let si = 0; si < slots.length; si++) {
+    const slot = slots[si];
     if (!slot.skillId) { gaps.push(toGenerationSpec(slot)); continue; }
     let problem = null;
     try {
@@ -332,14 +357,45 @@ async function assembleForm(opts = {}) {
       const center = Math.round(slot.targetDifficulty);
       const lo = Math.max(1, center - 1);
       const hi = Math.min(5, center + 1);
-      let candidates = await drawPool(Problem, {
-        skillId: slot.skillId,
+      const inWindow = {
         isActive: true,
         answerType: 'multiple-choice',
         difficulty: { $gte: lo, $lte: hi },
         problemId: { $nin: usedProblemIds },
         ...FORM_SOURCE_FILTER,
-      }, rng, 16);
+      };
+      let candidates = [];
+      const due = vt ? Math.ceil((vt.min * (si + 1)) / slots.length) : 0;
+      if (vt && visuals < due) {
+        candidates = await drawPool(Problem, { ...inWindow, skillId: slot.skillId, ...VISUAL_FILTER }, rng, 8);
+        // Urgent: two or more behind pace, or so few slots left that the
+        // shortfall must be made up now. Then any skill in the category will
+        // do, and as a last resort any difficulty.
+        const short = vt.min - visuals;
+        const urgent = visuals < due - 1 || (short > 0 && slots.length - si <= short + 3);
+        const catSkills = byCat[slot.category] || [];
+        if (!candidates.length && urgent && catSkills.length) {
+          candidates = await drawPool(Problem, { ...inWindow, skillId: { $in: catSkills }, ...VISUAL_FILTER }, rng, 8);
+          if (!candidates.length) {
+            const { difficulty: _ignored, ...anyDifficulty } = inWindow;
+            candidates = await drawPool(Problem, { ...anyDifficulty, skillId: { $in: catSkills }, ...VISUAL_FILTER }, rng, 8);
+          }
+        }
+      }
+      // At the cap, ask for plain items in the query itself (filtering a
+      // drawn pool afterwards let a visual-heavy pool slip a 13th through).
+      // When only visual items are left in this skill's window, a plain item
+      // at another difficulty, then one from the same category, beats a 13th.
+      if (!candidates.length && vt && visuals >= vt.max) {
+        const { difficulty: _d, ...anyDifficulty } = inWindow;
+        const catSkills = byCat[slot.category] || [];
+        candidates = await drawPool(Problem, { ...inWindow, skillId: slot.skillId, ...PLAIN_FILTER }, rng, 16);
+        if (!candidates.length) candidates = await drawPool(Problem, { ...anyDifficulty, skillId: slot.skillId, ...PLAIN_FILTER }, rng, 16);
+        if (!candidates.length && catSkills.length) candidates = await drawPool(Problem, { ...inWindow, skillId: { $in: catSkills }, ...PLAIN_FILTER }, rng, 16);
+      }
+      if (!candidates.length) {
+        candidates = await drawPool(Problem, { ...inWindow, skillId: slot.skillId }, rng, 16);
+      }
       if (!candidates.length) {
         // Widen: any difficulty for this skill, still excluding used items.
         const p = await Problem.findNearDifficulty(slot.skillId, center, usedProblemIds, { preferMultipleChoice: true });
@@ -371,6 +427,7 @@ async function assembleForm(opts = {}) {
       problem = null;
     }
     if (!problem) { gaps.push(toGenerationSpec(slot)); continue; }
+    if (isVisualItem(problem)) visuals += 1;
     precise.set(problem.problemId, preciseDifficulty(problem));
     usedProblemIds.push(problem.problemId);
     usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
@@ -396,6 +453,7 @@ async function assembleForm(opts = {}) {
       missing: gaps.length,
       pct: slots.length ? Math.round((items.length / slots.length) * 100) : 0,
       excluded: excludedCount,   // items withheld as already-seen (re-test freshness)
+      visuals,                   // items answered from a figure or table
     },
     meta: {
       testId: blueprint.testId,

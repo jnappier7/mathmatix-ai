@@ -259,14 +259,14 @@ B.similarTriangles = ({ ab, de, bc }) => {
  * Two parallel lines cut by a transversal; the given angle and the asked one.
  * relation: 'co-interior' | 'alternate interior' | 'corresponding' | 'vertical'.
  */
-B.parallelLines = ({ given, relation }) => {
+B.parallelLines = ({ given, relation, labelAt = 30, halo = false, gap = 70 }) => {
   // The given angle sits at the TOP intersection, below the line, right of the
   // transversal; its measure is 180 − φ where φ is the transversal's angle to
   // the lines. Every asked angle is then placed where its measure is right.
   let phi = 180 - given;
   phi = Math.max(28, Math.min(152, phi));   // keep the drawing legible
   const t = (phi * Math.PI) / 180;
-  const h = 70;                               // gap between the lines
+  const h = gap;                              // gap between the lines
   const y1 = 45, y2 = y1 + h;
   const cx = W / 2;
   const dx = h / Math.tan(t);                 // horizontal shift between the two crossings
@@ -280,14 +280,16 @@ B.parallelLines = ({ given, relation }) => {
   [[W - 34, y1], [W - 34, y2]].forEach(([x, y]) => { body += `<polyline points="${x - 6},${y - 5} ${x},${y} ${x - 6},${y + 5}" fill="none" stroke="${INK}" stroke-width="1.4"/>`; });
   const right = (p) => [p[0] + 30, p[1]], left = (p) => [p[0] - 30, p[1]];
   const up = (p) => [p[0] + u[0] * 30, p[1] + u[1] * 30], down = (p) => [p[0] - u[0] * 30, p[1] - u[1] * 30];
-  body += angleArc(P1, right(P1), down(P1), `${given}°`, { radius: 15, labelAt: 30 });
+  body += angleArc(P1, right(P1), down(P1), `${given}°`, { radius: 15, labelAt });
   const asked = {
     'co-interior': [P2, right(P2), up(P2)],
     'alternate interior': [P2, left(P2), up(P2)],
     corresponding: [P2, right(P2), down(P2)],
     vertical: [P1, left(P1), up(P1)],
   }[relation];
-  if (asked) body += angleArc(asked[0], asked[1], asked[2], 'x°', { radius: 15, labelAt: 30 });
+  if (asked) body += angleArc(asked[0], asked[1], asked[2], 'x°', { radius: 15, labelAt });
+  // Long labels (algebraic expressions) cross the lines; a white halo keeps them legible.
+  if (halo) body = body.replace(/<text ([^>]*)>/g, '<text $1 stroke="#fff" stroke-width="3.5" paint-order="stroke">');
   const where = {
     'co-interior': 'on the same side of the transversal, between the parallel lines',
     'alternate interior': 'on the opposite side of the transversal, between the parallel lines',
@@ -463,4 +465,8 @@ B.pyramid = ({ edge, height }) => {
   return { svg: svgDoc(156, body), alt: `Square pyramid with base edge ${edge} and a dashed height of ${height} from the apex to the center of the base.` };
 };
 
-module.exports = { ...B, _internal: { svgDoc, fitter, rightTriangle, triangleFromAngles } };
+module.exports = {
+  ...B,
+  // Shared drawing primitives, so utils/actCharts.js draws in the same hand.
+  _internal: { svgDoc, fitter, rightTriangle, triangleFromAngles, text, line, poly, dot, esc, num, r1, angleArc, rightMark, centroidOf, sideLabel, vertexLabel, W, INK, SOFT, FILL },
+};
