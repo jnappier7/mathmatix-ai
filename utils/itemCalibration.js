@@ -251,8 +251,19 @@ function calibrateItems(rows, priors = {}, options = {}) {
   // them is an arbitrary blend; pinning to one bank's authored mean makes that
   // bank the reference and equates the others to it — the role a reference
   // form plays in ACT's own equating.
-  const anchorSet = anchorIds ? [...b.keys()].filter((id) => anchorIds.has(id)) : [];
-  const anchorKeys = anchorSet.length ? anchorSet : [...b.keys()];
+  //
+  // An item every usable student got right (or wrong) has no finite estimate:
+  // it sits at the edge of the scale and moves whenever the scale does. In the
+  // anchor it drags the pin around with it, so it stays out of the anchor —
+  // unless nothing else is left to pin to.
+  const isExtreme = (id) => {
+    const usable = byItem.get(id).filter((o) => usablePeople.has(o.person));
+    const right = usable.filter((o) => o.correct).length;
+    return usable.length > 0 && (right === 0 || right === usable.length);
+  };
+  const finite = (ids) => { const f = ids.filter((id) => !isExtreme(id)); return f.length ? f : ids; };
+  const anchorSet = anchorIds ? finite([...b.keys()].filter((id) => anchorIds.has(id))) : [];
+  const anchorKeys = anchorSet.length ? anchorSet : finite([...b.keys()]);
   const weightOf = (id) => (anchorWeights && Number(anchorWeights[id]) > 0 ? Number(anchorWeights[id]) : 1);
   const totalWeight = anchorKeys.reduce((a, id) => a + weightOf(id), 0) || 1;
   const meanOver = (keys) => keys.reduce((a, id) => a + weightOf(id) * b.get(id), 0) / totalWeight;
@@ -266,9 +277,19 @@ function calibrateItems(rows, priors = {}, options = {}) {
   // a gate for an unattended --apply, which is what it now feeds. Thin items
   // still get fitted and reported; they just do not get a vote on whether the
   // fit is stable, because nothing acts on them.
+  //
+  // Likewise an item every usable student got right (or wrong): it has no
+  // finite MLE either, however many responses it has, and is held at the edge
+  // of the scale, where each re-pin knocks it off and the next sweep puts it
+  // back. Given a vote it reports a shift every iteration, so ONE such item
+  // (an easy question all 30 of its takers got right) kept `converged` false
+  // forever and an unattended --apply wrote nothing at all. It is still fitted,
+  // reported and writable; it just does not decide whether the fit settled.
   const convergenceIds = new Set();
   for (const [id, obs] of byItem) {
-    if (obs.filter((o) => usablePeople.has(o.person)).length >= minResponses) convergenceIds.add(id);
+    const usable = obs.filter((o) => usablePeople.has(o.person));
+    const right = usable.filter((o) => o.correct).length;
+    if (usable.length >= minResponses && right > 0 && right < usable.length) convergenceIds.add(id);
   }
   // Nothing is writable yet -> there is nothing to be stable ABOUT. Report
   // converged:false rather than letting an empty max() report success.
@@ -287,7 +308,7 @@ function calibrateItems(rows, priors = {}, options = {}) {
     }
 
     // Item step — difficulty given current abilities.
-    let maxShift = 0;
+    const before = new Map(b);
     for (const [id, obs] of byItem) {
       const usable = obs.filter((o) => usablePeople.has(o.person))
         .map((o) => ({ theta: theta.get(o.person), correct: o.correct }));
@@ -295,13 +316,19 @@ function calibrateItems(rows, priors = {}, options = {}) {
       const prev = b.get(id);
       const next = estimateItemDifficulty(usable, { initial: prev }).b;
       b.set(id, next);
-      if (convergenceIds.has(id)) maxShift = Math.max(maxShift, Math.abs(next - prev));
     }
 
     // Re-pin the scale after each sweep.
     const shift = anchor - meanOver(anchorKeys);
     for (const [id, v] of b) b.set(id, v + shift);
     for (const [p, v] of theta) theta.set(p, v + shift);
+
+    // Settled = the PINNED scale stopped moving. Measured before the re-pin,
+    // an item held at the edge of the scale (snapped back there every sweep)
+    // shows up as a constant translation of everything else, which the re-pin
+    // undoes — the fit has settled and the old check said it never would.
+    let maxShift = 0;
+    for (const id of convergenceIds) maxShift = Math.max(maxShift, Math.abs(b.get(id) - before.get(id)));
 
     if (convergenceBasis !== 'none' && maxShift < tolerance) { converged = true; break; }
   }
