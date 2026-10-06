@@ -1373,9 +1373,10 @@ async function runStudentTurn(req, res) {
                             const Problem = require('../models/problem');
                             const { normalizeOptions } = require('../utils/mcOptions');
                             const doc = await Problem.findOne({ problemId: miss.problemId })
-                                .select('problemId prompt options explanation answer').lean();
+                                .select('problemId prompt options explanation answer svg figureAlt').lean();
                             if (doc && doc.prompt) {
                                 miss.prompt = doc.prompt;
+                                if (!miss.svg && doc.svg) { miss.svg = doc.svg; miss.figureAlt = doc.figureAlt || null; }
                                 if (!(miss.options || []).length) miss.options = normalizeOptions(doc.options);
                                 if (!miss.explanation) miss.explanation = doc.explanation || '';
                                 logger.info('ACT review: recovered a missing question text from the bank', { problemId: miss.problemId, position: miss.position });
@@ -1384,6 +1385,18 @@ async function runStudentTurn(req, res) {
                             }
                         } catch (pErr) {
                             logger.warn('ACT review: question-text recovery failed', { problemId: miss.problemId, error: pErr.message });
+                        }
+                    }
+                    // A queue built before misses carried figureAlt has the
+                    // picture but no description of it: fetch the description
+                    // so the tutor can talk about the graph it is reviewing.
+                    if (miss && miss.svg && !miss.figureAlt && miss.problemId) {
+                        try {
+                            const Problem = require('../models/problem');
+                            const doc = await Problem.findOne({ problemId: miss.problemId }).select('figureAlt').lean();
+                            if (doc && doc.figureAlt) miss.figureAlt = doc.figureAlt;
+                        } catch (fErr) {
+                            logger.warn('ACT review: figure description lookup failed', { problemId: miss.problemId, error: fErr.message });
                         }
                     }
                     if (miss) {

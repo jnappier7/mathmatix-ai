@@ -78,7 +78,7 @@ async function seedBootcampFromTest(cs, session, { userId, plan } = {}) {
     const problemsById = {};
     if (missedIds.length) {
       const probs = await Problem.find({ problemId: { $in: missedIds } })
-        .select('problemId correctOption answer explanation prompt options').lean();
+        .select('problemId correctOption answer explanation prompt options svg figureAlt').lean();
       probs.forEach((p) => { problemsById[p.problemId] = p; });
     }
     const queue = buildReviewQueue(session, problemsById);
@@ -99,6 +99,9 @@ async function seedBootcampFromTest(cs, session, { userId, plan } = {}) {
           skillId: { $in: skills },
           isActive: true,
           problemId: { $nin: [...seen] },
+          // Practice is posed in chat, as text. An item answered from a
+          // figure cannot be posed there, so it is never chosen as practice.
+          svg: { $in: [null, ''] },
         }).select('problemId skillId difficulty').lean();
         const bySkill = {};
         pool.forEach((p) => { (bySkill[p.skillId] = bySkill[p.skillId] || []).push(p); });
