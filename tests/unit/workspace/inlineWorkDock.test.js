@@ -316,6 +316,73 @@ describe('short viewports get more of the dock, not less', () => {
   });
 });
 
+describe('one problem stays one card (production 2026-10-05)', () => {
+  // A student worked 5(x+2) − 3x = 26 ⇒ x = 8 while the tutor restarted the
+  // problem, and the dock sealed it as FIVE cards — three titled with a line of
+  // the student's own working, the first opening with the answer above the
+  // first step, one carrying a blank whose only value was the given 26. The
+  // probe replays the turns (reconstructed from the persisted ledger) through
+  // the server's board tail and the real client render path. See
+  // tests/helpers/fiveCardSolve.fixture.json and tests/unit/boardContinuity.test.js.
+  let out;
+  beforeAll(() => {
+    out = JSON.parse(execFileSync('node', [path.join(ROOT, 'tests/helpers/fiveCardSolveProbe.js')], {
+      encoding: 'utf8',
+      maxBuffer: 8 * 1024 * 1024,
+      env: { ...process.env, OPENAI_API_KEY: process.env.OPENAI_API_KEY || 'test' },
+    }));
+  });
+
+  test('the harness reproduces the bug: the persisted ledger hydrates as five cards', () => {
+    expect(out.before.sealedProblems).toEqual([
+      '5(x+2) - 3x = 26', '2x = 16', '2x + 10 = 26', '5x + 10 - 3x = 26', '5(x + 2) - 3x = 26',
+    ]);
+    expect(out.before.focusProblem).toBe('2x = 16');
+  });
+
+  test('replayed today, the whole session is ONE card titled with the original problem', () => {
+    for (const view of [out.after.live, out.after.hydrated]) {
+      expect(view.sealCount).toBe(0);
+      expect(view.focusProblem).toBe('5(x+2) - 3x = 26');
+      expect(view.solved).toBe(true);
+    }
+    expect(out.after.ledger).toEqual({ completed: 0, currentProblem: '5(x+2) - 3x = 26', solved: true });
+  });
+
+  test('a live session and a reload show the same card, row for row', () => {
+    expect(out.after.hydrated.rows).toEqual(out.after.live.rows);
+  });
+
+  test('the work reads in order: the first step leads, the answer comes after the work', () => {
+    const rows = out.after.live.rows;
+    expect(rows[0]).toEqual({ kind: 'step', op: '↳combine like terms', tex: '2x+10 = 26' });
+    const firstAnswer = rows.findIndex((r) => r.kind === 'solution');
+    expect(rows[firstAnswer - 1].tex).toBe('2x = 16');
+    // No echo of the problem and no answer posing as a worked example.
+    expect(rows.some((r) => r.kind === 'example')).toBe(false);
+  });
+
+  test('no blank stands in for the given 26, and no stray move label survives it', () => {
+    const rows = out.after.live.rows;
+    expect(rows.some((r) => r.kind === 'scaffold')).toBe(false);
+    expect(rows.some((r) => r.kind === 'operation')).toBe(false);
+    expect(out.after.guardDrops.map((d) => d.reason)).toEqual([
+      'worked_example_reveals_active_problem',
+      'worked_example_reveals_active_problem',
+      'scaffold_blank_is_given',
+      'apply_orphaned_by_scaffold',
+    ]);
+  });
+
+  test('no line of working ever becomes the Problem', () => {
+    // Every intermediate pose was folded back into the card in focus.
+    const folded = out.after.settleEvents.flatMap((e) => e.folded).filter((t) => t !== 'clear');
+    expect(folded).toEqual(['2x = 16', '2x + 10 = 26', '5x + 10 - 3x = 26', '2x = 16']);
+    // The two "verify 2x + 10 = 26" cards that closed the problem early became steps.
+    expect(out.after.settleEvents.flatMap((e) => e.demoted)).toEqual(['2x + 10 = 26', '2x + 10 = 26']);
+  });
+});
+
 describe('sealed cards are placed by when the work happened', () => {
   test('history messages are stamped with the timestamp the placement reads', () => {
     const script = read('public', 'js', 'script.js');
