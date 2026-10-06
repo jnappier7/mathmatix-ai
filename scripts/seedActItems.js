@@ -30,6 +30,7 @@ async function main() {
 
   await mongoose.connect(process.env.MONGO_URI);
   const Problem = require('../models/problem');
+  const { upsertSeedProblems } = require('../utils/seedProblemUpsert');
 
   if (fresh) {
     // Clear any prior generated ACT items (Fable + legacy templates) so a
@@ -38,11 +39,8 @@ async function main() {
     console.log(`Cleared ${del.deletedCount} prior ACT items (--fresh).`);
   }
 
-  let up = 0;
-  for (const it of items) {
-    await Problem.updateOne({ problemId: it.problemId }, { $set: it }, { upsert: true });
-    up += 1;
-  }
+  // Keeps a measured difficulty measured (utils/seedProblemUpsert.js).
+  const up = await upsertSeedProblems(Problem, items);
   console.log(`Upserted ${up} ACT items into MongoDB (source: act-fable).`);
 
   const withFig = items.filter(i => i.svg).length;
