@@ -19,6 +19,7 @@ const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
 const { parseCleanProblem } = require('../mathSolver');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
+const { classifyTurn, problemKey, solveAnswer, isRepeatSolve, appendSolve, liveTextsFor } = require('./solveCredit');
 const { emitGamificationEvent, bumpDailyStreak } = require('../gamificationEvents');
 const { canonicalProblemId, contentHash, recordShownProblem } = require('../problemTracking');
 const { getNextActions } = require('../nextActionSuggestions');
@@ -121,6 +122,9 @@ async function persist(params) {
     user, conversation, extracted, diagnosis, observation,
     decision, responseText, originalMessage, aiProcessingSeconds,
     sessionMood, evidence, masteryAttempt,
+    // The board pin as it stood when the student sent this turn (before this
+    // turn's board commands re-pinned or dropped it). Identifies the problem.
+    pinnedProblemTex = null,
   } = params;
 
   const results = {
@@ -137,21 +141,45 @@ async function persist(params) {
   };
 
   // ── 1. Process problem result ──
-  // Prefer structured diagnosis over tag-based detection
-  if (diagnosis && diagnosis.type === 'correct_partial') {
-    // Correct-but-incomplete multi-root answer: the problem is still in
-    // progress. Do NOT count it as a completed attempt and do NOT record it as
-    // 'incorrect' — that would poison recentWrongCount and trigger a false
-    // difficulty downgrade. Progress is tracked via lastProblemState below.
+  // Prefer structured diagnosis over tag-based detection. Which turns FINISH a
+  // problem lives in solveCredit: a correct step is not a solve (it used to be —
+  // every step of 5(x+2) − 3x = 26 paid "clean solve"), and one problem pays out
+  // once, so re-reaching an answer already credited after a restart earns nothing.
+  //
+  // correct_partial — a correct-but-incomplete multi-root answer — is still in
+  // progress. Do NOT count it as a completed attempt and do NOT record it as
+  // 'incorrect' — that would poison recentWrongCount and trigger a false
+  // difficulty downgrade. Progress is tracked via lastProblemState below.
+  const turnOutcome = classifyTurn({
+    diagnosis,
+    extracted,
+    message: originalMessage,
+    liveTexts: liveTextsFor(conversation, pinnedProblemTex),
+  });
+  const priorProblemState = conversation.lastProblemState || null;
+  const solveKey = problemKey({ pinnedProblemTex, lastProblemState: priorProblemState, diagnosis });
+  results.correctStep = turnOutcome.outcome === 'step';
+  results.repeatSolve = false;
+  if (turnOutcome.outcome === 'partial') {
     results.problemPartial = true;
-  } else if (diagnosis && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
+  } else if (turnOutcome.outcome === 'answered') {
     results.problemAnswered = true;
-    results.wasCorrect = diagnosis.isCorrect === true;
-  } else if (extracted.problemResult) {
-    results.problemAnswered = true;
-    results.wasCorrect = extracted.problemResult === 'correct';
-    results.wasSkipped = extracted.problemResult === 'skipped';
+    results.wasCorrect = turnOutcome.correct;
+    results.wasSkipped = turnOutcome.skipped;
   }
+  let solvedAnswer = null;
+  if (results.wasCorrect) {
+    solvedAnswer = solveAnswer({ diagnosis, observation, message: originalMessage });
+    if (isRepeatSolve(conversation.solveLog, solveKey, solvedAnswer)) {
+      // Already credited — a restart or re-check reaching the same answer. The
+      // problem is finished (state clears below) but nothing is counted twice.
+      results.repeatSolve = true;
+      results.problemAnswered = false;
+      results.wasCorrect = false;
+    }
+  }
+  // "Clean" is first try: no earlier wrong attempt on this problem.
+  const firstTry = !isSameProblemRetry(priorProblemState, diagnosis);
 
   // ── 2. Safety concern handling ──
   if (extracted.safetyConcern) {
@@ -392,10 +420,26 @@ async function persist(params) {
       updatedAt: new Date(),
     };
     conversation.markModified?.('lastProblemState');
-  } else if (results.wasCorrect) {
+  } else if (results.correctStep) {
+    // A correct step: the problem stays open, and its attempt history with it.
+    // Clearing here is what let every later step — and the final answer — read
+    // as a first try on a problem already gotten wrong.
+    const existingState = conversation.lastProblemState || {};
+    conversation.lastProblemState = {
+      ...existingState,
+      problemText: existingState.problemText || (pinnedProblemTex ? String(pinnedProblemTex).substring(0, 200) : null),
+      attemptCount: existingState.attemptCount || 0,
+      updatedAt: new Date(),
+    };
+    conversation.markModified?.('lastProblemState');
+  } else if (results.wasCorrect || results.repeatSolve) {
     // Problem solved — clear state
     conversation.lastProblemState = null;
     conversation.markModified?.('lastProblemState');
+  }
+  if (results.wasCorrect && solvedAnswer) {
+    conversation.solveLog = appendSolve(conversation.solveLog, solveKey, solvedAnswer);
+    conversation.markModified?.('solveLog');
   }
 
   conversation.lastActivity = new Date();
@@ -457,6 +501,7 @@ async function persist(params) {
     extracted,
     userLevel: user.level,
     isCourseSession: !!user.activeCourseSessionId,
+    firstTry,
   });
 
   const xpResult = applyXpToUser(user, results.xpBreakdown);

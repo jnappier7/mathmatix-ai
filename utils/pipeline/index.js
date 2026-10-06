@@ -332,6 +332,7 @@ async function runPipeline(message, ctx) {
   }
 
   // ── Stage 2: DIAGNOSE ──
+  const pinnedAtTurnStart = ctx.conversation?.boardProblem?.tex || null;
   const diagnosis = await diagnose(observation, {
     recentAssistantMessages: recentAssistantMessages.map(msg => ({
       content: msg.content,
@@ -342,7 +343,7 @@ async function runPipeline(message, ctx) {
     activeSkill: ctx.activeSkill || null,
     user: ctx.user,
     lastProblemState: ctx.conversation?.lastProblemState || null,
-    pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
+    pinnedProblemTex: pinnedAtTurnStart,
     verificationCandidate,
     llmVerificationPromise,
     conceptualVerificationPromise,
@@ -1676,6 +1677,9 @@ async function runPipeline(message, ctx) {
         sessionMood,
         evidence,
         masteryAttempt,
+        // The pin diagnose graded against — read before this turn's board
+        // commands re-pinned or dropped it (Stage 5b, above).
+        pinnedProblemTex: pinnedAtTurnStart,
       });
     } catch (persistErr) {
       console.error('[Pipeline] Persist stage failed (non-fatal):', persistErr.message);

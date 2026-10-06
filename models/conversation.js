@@ -238,6 +238,13 @@ const conversationSchema = new Schema({
         type: Schema.Types.Mixed,
         default: null
     },
+    // Recent credited solves, [{ key, answer, at }] (last 10). Written only by
+    // persist via utils/pipeline/solveCredit.js, so a problem re-solved after a
+    // restart is not paid twice.
+    solveLog: {
+        type: Schema.Types.Mixed,
+        default: undefined
+    },
     // Canonical problem currently pinned on the WorkBoard PROBLEM card.
     // { tex, posedAt }. Set when a problem is posed, cleared on verify/clear.
     // The board synthesizer reads this so it never re-parses an

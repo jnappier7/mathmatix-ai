@@ -15,6 +15,7 @@ const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer, tr
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 const { hasMathematicalContent } = require('./verificationState');
 const { verifyDerivation } = require('../derivationVerifier');
+const { isFinalForm } = require('./solveCredit');
 const { llmVerifyMethod, articulatesMethod } = require('./llmVerifier');
 
 /**
@@ -211,6 +212,11 @@ async function diagnoseTransformation(observation, context) {
   // never "how did you do it?"). correctAnswer stays null so nothing is revealed.
   const chain = verifyDerivation(rawText, context.pinnedProblemTex);
   if (chain.verifiable) {
+    // A chain that stops short of the answer ("2(x+3)=10 / 2x+6=10") still
+    // "reaches" it in the solver's sense — every line solves to the target — but
+    // the student has not stated it. That is good work, not a finished problem.
+    const solvedLines = chain.steps.filter(s => s.solved !== null);
+    const lastLine = solvedLines.length ? solvedLines[solvedLines.length - 1].line : '';
     console.log(`[Diagnose] Derivation ${chain.valid ? 'valid' : `${chain.answerCorrect ? 'answer correct, work' : ''} broke at "${chain.firstBadStep}"`}`);
     return {
       type: chain.answerCorrect ? 'correct' : 'incorrect',
@@ -231,6 +237,7 @@ async function diagnoseTransformation(observation, context) {
       derivation: { valid: chain.valid, firstBadStep: chain.firstBadStep, finalAnswer: chain.finalAnswer },
       // Right answer via broken work — same signal Step 2c derives on the
       // answer-attempt path, so decide can affirm-then-probe here too.
+      isStep: chain.answerCorrect === true && !isFinalForm(lastLine),
       methodAudit: chain.answerCorrect && chain.valid === false
         ? {
           suspect: true,
@@ -333,6 +340,8 @@ async function diagnoseTransformation(observation, context) {
       },
       verificationSource: 'symbolic:step_equivalence',
       isTransformation: true,
+      // A correct step, not a solve — persist keeps the problem open (solveCredit).
+      isStep: true,
     };
   }
 
@@ -356,6 +365,7 @@ async function diagnoseTransformation(observation, context) {
           correctAnswer: verdict.modelAnswer || null,
           verificationSource: 'llm:step',
           isTransformation: true,
+          isStep: true,
         };
       }
     } catch (err) {
