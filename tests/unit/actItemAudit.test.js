@@ -58,10 +58,10 @@ describe('audit warnings', () => {
 });
 
 describe('the seed banks do not gain blocking defects', () => {
-  // Known at the time this gate landed; repair them and lower the number.
-  // act-enhanced rose 7 -> 17 when the checker learned equal expressions and
-  // impossible probabilities (existing items, all blocked from tests).
-  const BASELINE = { 'act-fable': 1, 'act-ies-expansion': 3, 'act-enhanced': 17 };
+  // Started at 1 / 3 / 17 when this gate landed; all 21 were repaired with
+  // misconception-based distractors, so every bank is now clean. A new
+  // blocking item fails here — repair it rather than raising the number.
+  const BASELINE = { 'act-fable': 0, 'act-ies-expansion': 0, 'act-enhanced': 0 };
   const FILES = {
     'act-fable': 'seeds/act-fable-items.generated.json',
     'act-ies-expansion': 'seeds/act-ies-expansion/ies-items.generated.json',

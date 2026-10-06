@@ -27189,11 +27189,11 @@
     "options": [
       {
         "label": "A",
-        "text": "110"
+        "text": "57.5"
       },
       {
         "label": "B",
-        "text": "132"
+        "text": "110"
       },
       {
         "label": "C",
@@ -27201,13 +27201,13 @@
       },
       {
         "label": "D",
-        "text": "140"
+        "text": "165"
       }
     ],
     "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
-    "explanation": "Distance equals rate times time, so the van travels 55 × 2.5 = 137.5 miles. The answer 110 uses only 2 hours, ignoring the extra half hour.",
+    "explanation": "Distance equals rate times time, so the van travels 55 × 2.5 = 137.5 miles. The answer 110 uses only 2 hours, ignoring the extra half hour, and 165 rounds the time up to 3 hours. The answer 57.5 adds the speed and the time instead of multiplying them.",
     "tags": [
       "act",
       "act-math",

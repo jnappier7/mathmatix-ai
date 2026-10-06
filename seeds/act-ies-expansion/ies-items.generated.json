@@ -5337,25 +5337,25 @@
   "options": [
    {
     "label": "A",
-    "text": "4.8"
+    "text": "2.2"
    },
    {
     "label": "B",
-    "text": "5"
+    "text": "4.8"
    },
    {
     "label": "C",
-    "text": "11"
+    "text": "5"
    },
    {
     "label": "D",
     "text": "24"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
-  "explanation": "Together the machines finish 1/3 of the order per hour, and A alone finishes 1/8 per hour, so B finishes 1/3 − 1/8 = 5/24 per hour — meaning B alone needs 24/5 = 4.8 hours. Choice B (5) simply subtracts 8 − 3, treating the times as if they combine additively, and C (11) adds them. D (24) stops at the denominator of the rate.",
+  "explanation": "Together the machines finish 1/3 of the order per hour, and A alone finishes 1/8 per hour, so B finishes 1/3 − 1/8 = 5/24 per hour — meaning B alone needs 24/5 = 4.8 hours. Choice A (2.2) applies the shared-work formula to the two given times, 8 × 3 ÷ (8 + 3) ≈ 2.2, which combines them instead of separating B out. C (5) simply subtracts 8 − 3, treating the times as if they combine additively. D (24) stops at the denominator of the rate.",
   "tags": [
    "act",
    "act-math",
@@ -11233,25 +11233,25 @@
   "options": [
    {
     "label": "A",
-    "text": "7.5"
+    "text": "3.75"
    },
    {
     "label": "B",
-    "text": "8"
+    "text": "7.5"
    },
    {
     "label": "C",
-    "text": "15"
+    "text": "8"
    },
    {
     "label": "D",
-    "text": "30"
+    "text": "15"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
-  "explanation": "A triangle's area is (1/2) × base × height = (1/2) × 3 × 5 = 7.5 square feet. Choice C (15) multiplies base by height but forgets the 1/2. A (8) adds the base and height, and D (30) doubles the product instead of halving it.",
+  "explanation": "A triangle's area is (1/2) × base × height = (1/2) × 3 × 5 = 7.5 square feet. Choice D (15) multiplies base by height but forgets the 1/2. C (8) adds the base and height, and A (3.75) halves both the base and the height, applying the 1/2 twice.",
   "tags": [
    "act",
    "act-math",
@@ -11941,11 +11941,11 @@
    },
    {
     "label": "B",
-    "text": "4"
+    "text": "1.6"
    },
    {
     "label": "C",
-    "text": "12"
+    "text": "4"
    },
    {
     "label": "D",
@@ -11955,7 +11955,7 @@
   "correctOption": "A",
   "difficulty": 4,
   "gradeBand": "8-12",
-  "explanation": "The volume is 12 × 9 × 1/3 = 36 cubic feet, and a cubic yard is 3 × 3 × 3 = 27 cubic feet, so 36 ÷ 27 ≈ 1.3 cubic yards. Choice D (36) stops at cubic feet. C (12) divides by 3, converting only one dimension, and B (4) divides by 9, converting only two.",
+  "explanation": "The volume is 12 × 9 × 1/3 = 36 cubic feet, and a cubic yard is 3 × 3 × 3 = 27 cubic feet, so 36 ÷ 27 ≈ 1.3 cubic yards. Choice D (36) stops at cubic feet. B (1.6) writes 4 inches as 0.4 foot instead of 1/3 foot (12 × 9 × 0.4 = 43.2, and 43.2 ÷ 27 = 1.6), and C (4) divides by 9, converting only two dimensions.",
   "tags": [
    "act",
    "act-math",

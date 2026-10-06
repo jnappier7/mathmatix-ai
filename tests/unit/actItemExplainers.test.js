@@ -165,6 +165,21 @@ describe('worked examples, end to end', () => {
     expect(r.explanation).toMatch(/D\) 180 reports the total distance/);
   });
 
+  test('no constant term: the traps do not collapse into the key', () => {
+    // With b = 0 the general traps for x² + bx + c and ax + b produced the key
+    // itself in another order ((x + 3)(x - 3), x/2 + 0), so items shipped two
+    // right answers. The b = 0 branches name real wrong turns instead.
+    const dos = run('Factor completely: x^2 - 9',
+      ['(x - 3)(x + 3)', '(x - 3)(x - 3)', '(x + 3)(x + 3)', '(x + 0)(x - 9)'], 'A');
+    expect(dos.status).toBe('ok');
+    expect(dos.explanation).toMatch(/difference of squares/);
+    expect(dos.namedDistractors).toBe(3);
+    const inv = run('If f(x) = 2x, what is f⁻¹(x)?', ['1/(2x)', '(x - 0)/2', 'x - 2', '-2x'], 'B');
+    expect(inv.status).toBe('ok');
+    expect(inv.explanation).toMatch(/C\) x - 2 undoes the multiplication with subtraction/);
+    expect(inv.namedDistractors).toBe(3);
+  });
+
   test('a mis-keyed item gets no explanation at all', () => {
     // Same question, key deliberately moved to the wrong choice.
     const r = run('A triangle has a base of 10 and a height of 7. What is its area?',

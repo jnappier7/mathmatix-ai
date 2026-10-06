@@ -2410,11 +2410,11 @@
    },
    {
     "label": "B",
-    "text": "125"
+    "text": "243/2"
    },
    {
     "label": "C",
-    "text": "243"
+    "text": "125"
    },
    {
     "label": "D",
@@ -2425,7 +2425,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 5^3 = 2x, so 2x = 125. Then divide: x = 125 ÷ 2 = 125/2. Wrong choices: B) 125 stops at 2x = 125 without dividing by 2; D) 250 multiplies by 2 instead of dividing.",
+  "explanation": "First undo the log: 5^3 = 2x, so 2x = 125. Then divide: x = 125 ÷ 2 = 125/2. Wrong choices: B) 243/2 swaps the base and the exponent, writing 2x = 3^5 instead of 5^3; C) 125 stops at 2x = 125 without dividing by 2; D) 250 multiplies by 2 instead of dividing.",
   "tags": [
    "act",
    "act-algebra",
@@ -3446,7 +3446,7 @@
    },
    {
     "label": "C",
-    "text": "(x + 3)(x - 3)"
+    "text": "(x + 3)(x + 3)"
    },
    {
     "label": "D",
@@ -3457,7 +3457,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Look for two numbers that multiply to -9 and add to 0: -3 and 3. So the factorisation is (x - 3)(x + 3). Wrong choices: B) (x - 3)(x - 3) mixes the signs, giving a difference of squares rather than this trinomial; C) (x + 3)(x - 3) flips both signs, which changes the middle term to 0; D) (x + 0)(x - 9) drops the coefficients straight into the factors instead of solving for the pair.",
+  "explanation": "There is no x term, so this is a difference of squares: x² − 9 = x² − 3² = (x − 3)(x + 3). Check: the two numbers must multiply to -9 and add to 0, and only −3 and 3 do. Wrong choices: B) (x - 3)(x - 3) is (x − 3)², which expands to x² − 6x + 9; a difference of squares needs one plus and one minus; C) (x + 3)(x + 3) is (x + 3)², which expands to x² + 6x + 9 — the constant comes out positive, not -9; D) (x + 0)(x - 9) drops the coefficients straight into the factors instead of solving for the pair.",
   "tags": [
    "act",
    "act-algebra",
@@ -4099,11 +4099,11 @@
    },
    {
     "label": "B",
-    "text": "8"
+    "text": "9/5"
    },
    {
     "label": "C",
-    "text": "9"
+    "text": "8"
    },
    {
     "label": "D",
@@ -4114,7 +4114,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 2^3 = 5x, so 5x = 8. Then divide: x = 8 ÷ 5 = 8/5. Wrong choices: B) 8 stops at 5x = 8 without dividing by 5; D) 40 multiplies by 5 instead of dividing.",
+  "explanation": "First undo the log: 2^3 = 5x, so 5x = 8. Then divide: x = 8 ÷ 5 = 8/5. Wrong choices: B) 9/5 swaps the base and the exponent, writing 5x = 3^2 instead of 2^3; C) 8 stops at 5x = 8 without dividing by 5; D) 40 multiplies by 5 instead of dividing.",
   "tags": [
    "act",
    "act-algebra",
@@ -4658,11 +4658,11 @@
   "options": [
    {
     "label": "A",
-    "text": "81/2"
+    "text": "2/81"
    },
    {
     "label": "B",
-    "text": "64"
+    "text": "81/2"
    },
    {
     "label": "C",
@@ -4673,11 +4673,11 @@
     "text": "162"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 3^4 = 2x, so 2x = 81. Then divide: x = 81 ÷ 2 = 81/2. Wrong choices: C) 81 stops at 2x = 81 without dividing by 2; D) 162 multiplies by 2 instead of dividing.",
+  "explanation": "First undo the log: 3^4 = 2x, so 2x = 81. Then divide: x = 81 ÷ 2 = 81/2. Wrong choices: A) 2/81 divides the wrong way round: 2 ÷ 81 instead of 81 ÷ 2; C) 81 stops at 2x = 81 without dividing by 2; D) 162 multiplies by 2 instead of dividing.",
   "tags": [
    "act",
    "act-algebra",
@@ -7379,11 +7379,11 @@
   "options": [
    {
     "label": "A",
-    "text": "81/4"
+    "text": "4/81"
    },
    {
     "label": "B",
-    "text": "64"
+    "text": "81/4"
    },
    {
     "label": "C",
@@ -7394,11 +7394,11 @@
     "text": "324"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "First undo the log: 3^4 = 4x, so 4x = 81. Then divide: x = 81 ÷ 4 = 81/4. Wrong choices: C) 81 stops at 4x = 81 without dividing by 4; D) 324 multiplies by 4 instead of dividing.",
+  "explanation": "First undo the log: 3^4 = 4x, so 4x = 81. Then divide: x = 81 ÷ 4 = 81/4. Wrong choices: A) 4/81 divides the wrong way round: 4 ÷ 81 instead of 81 ÷ 4; C) 81 stops at 4x = 81 without dividing by 4; D) 324 multiplies by 4 instead of dividing.",
   "tags": [
    "act",
    "act-algebra",
@@ -12683,18 +12683,18 @@
    },
    {
     "label": "C",
-    "text": "(x + 0)/2"
+    "text": "x - 2"
    },
    {
     "label": "D",
-    "text": "x/2 - 0"
+    "text": "-2x"
    }
   ],
   "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "Swap x and y and solve: x = 2y + 0 gives y = (x - 0)/2. An inverse UNDOES the steps in reverse order — undo the addition first, then the multiplication.",
+  "explanation": "Swap x and y and solve: x = 2y gives y = x/2, written here as (x - 0)/2. An inverse UNDOES what f does: f multiplies by 2, so f⁻¹ divides by 2. Wrong choices: A) 1/(2x) takes the RECIPROCAL of f(x); the ⁻¹ in f⁻¹ means inverse function, not \"one over\"; C) x - 2 undoes the multiplication with subtraction; the inverse of multiplying by 2 is dividing by 2; D) -2x negates f — that is the opposite of f, not its inverse function.",
   "tags": [
    "act",
    "act-functions",
@@ -35929,18 +35929,18 @@
    },
    {
     "label": "C",
-    "text": "25"
+    "text": "23.3"
    },
    {
     "label": "D",
-    "text": "180"
+    "text": "25"
    }
   ],
   "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Average speed is total distance ÷ total TIME, never the average of the speeds. The legs take 60 ÷ 30 = 2 h and 120 ÷ 20 = 6 h, so 180 miles ÷ 8 h = 22.5 mph. Wrong choices: A) 8 stops at the total time and reports the hours; C) 25 averages the two speeds (30 and 20) — only correct if equal TIME were spent at each, and here the times differ; D) 180 reports the total distance.",
+  "explanation": "Average speed is total distance ÷ total TIME, never the average of the speeds. The legs take 60 ÷ 30 = 2 h and 120 ÷ 20 = 6 h, so 180 miles ÷ 8 h = 22.5 mph. Wrong choices: A) 8 stops at the total time and reports the hours; C) 23.3 weights each speed by its DISTANCE; average speed weights by time, and the slower leg takes longer; D) 25 averages the two speeds (30 and 20) — only correct if equal TIME were spent at each, and here the times differ.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -38381,22 +38381,22 @@
    },
    {
     "label": "B",
-    "text": "33.3"
+    "text": "27.3"
    },
    {
     "label": "C",
-    "text": "40"
+    "text": "33.3"
    },
    {
     "label": "D",
-    "text": "300"
+    "text": "40"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Average speed is total distance ÷ total TIME, never the average of the speeds. The legs take 180 ÷ 60 = 3 h and 120 ÷ 20 = 6 h, so 300 miles ÷ 9 h = 33.3 mph. Wrong choices: A) 9 stops at the total time and reports the hours; C) 40 averages the two speeds (60 and 20) — only correct if equal TIME were spent at each, and here the times differ; D) 300 reports the total distance.",
+  "explanation": "Average speed is total distance ÷ total TIME, never the average of the speeds. The legs take 180 ÷ 60 = 3 h and 120 ÷ 20 = 6 h, so 300 miles ÷ 9 h = 33.3 mph. Wrong choices: A) 9 stops at the total time and reports the hours; B) 27.3 pairs each distance with the other leg's speed (180 ÷ 20 and 120 ÷ 60); D) 40 averages the two speeds (60 and 20) — only correct if equal TIME were spent at each, and here the times differ.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -43191,26 +43191,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1/3"
+    "text": "1/13"
    },
    {
     "label": "B",
-    "text": "6/13"
+    "text": "1/3"
    },
    {
     "label": "C",
-    "text": "7/13"
+    "text": "6/13"
    },
    {
     "label": "D",
-    "text": "7/6"
+    "text": "7/13"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "D",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 7 + 3 = 13. So 7/13 = 7/13. Wrong choices: B) 6/13 gives the probability of NOT drawing white; D) 7/6 divides by the marbles that are NOT white (6) instead of by all 13 — that is odds, not probability.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 7 + 3 = 13. So 7/13 = 7/13. Wrong choices: A) 1/13 is the chance of drawing one PARTICULAR marble; any of the 7 white marbles counts; C) 6/13 gives the probability of NOT drawing white.",
   "tags": [
    "act",
    "act-statistics",
@@ -43249,14 +43249,14 @@
    },
    {
     "label": "D",
-    "text": "27/26"
+    "text": "7/13"
    }
   ],
   "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 7/13. Second: only 6 of the red chips are left among 12. So 7/13 × 6/12 = 7/26. Wrong choices: B) 49/169 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 7/13. Second: only 6 of the red chips are left among 12. So 7/13 × 6/12 = 7/26. Wrong choices: B) 49/169 treats the draws as WITH replacement, keeping both denominators at the original total; D) 7/13 gives the probability of just the first draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -46295,26 +46295,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1/3"
+    "text": "1/14"
    },
    {
     "label": "B",
-    "text": "3/7"
+    "text": "1/3"
    },
    {
     "label": "C",
-    "text": "4/7"
+    "text": "3/7"
    },
    {
     "label": "D",
-    "text": "4/3"
+    "text": "4/7"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "D",
   "difficulty": 1,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 8 + 3 = 14. So 8/14 = 4/7. Wrong choices: B) 3/7 gives the probability of NOT drawing blue; D) 4/3 divides by the marbles that are NOT blue (6) instead of by all 14 — that is odds, not probability.",
+  "explanation": "Probability is favourable ÷ TOTAL, and the total is every marble in the bag: 3 + 8 + 3 = 14. So 8/14 = 4/7. Wrong choices: A) 1/14 is the chance of drawing one PARTICULAR marble; any of the 8 blue marbles counts; C) 3/7 gives the probability of NOT drawing blue.",
   "tags": [
    "act",
    "act-statistics",
@@ -46353,14 +46353,14 @@
    },
    {
     "label": "D",
-    "text": "41/30"
+    "text": "7/10"
    }
   ],
   "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 7/10. Second: only 6 of the red chips are left among 9. So 7/10 × 6/9 = 7/15. Wrong choices: B) 49/100 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 7/10. Second: only 6 of the red chips are left among 9. So 7/10 × 6/9 = 7/15. Wrong choices: B) 49/100 treats the draws as WITH replacement, keeping both denominators at the original total; D) 7/10 gives the probability of just the first draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -46878,14 +46878,14 @@
    },
    {
     "label": "D",
-    "text": "68/55"
+    "text": "7/11"
    }
   ],
   "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 7/11. Second: only 6 of the red chips are left among 10. So 7/11 × 6/10 = 21/55. Wrong choices: B) 49/121 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 7/11. Second: only 6 of the red chips are left among 10. So 7/11 × 6/10 = 21/55. Wrong choices: B) 49/121 treats the draws as WITH replacement, keeping both denominators at the original total; D) 7/11 gives the probability of just the first draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -49164,14 +49164,14 @@
    },
    {
     "label": "D",
-    "text": "149/132"
+    "text": "7/12"
    }
   ],
   "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 7/12. Second: only 6 of the red chips are left among 11. So 7/12 × 6/11 = 7/22. Wrong choices: B) 49/144 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 7/12. Second: only 6 of the red chips are left among 11. So 7/12 × 6/11 = 7/22. Wrong choices: B) 49/144 treats the draws as WITH replacement, keeping both denominators at the original total; D) 7/12 gives the probability of just the first draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -49584,26 +49584,26 @@
   "options": [
    {
     "label": "A",
-    "text": "16"
+    "text": "7/2"
    },
    {
     "label": "B",
-    "text": "59/2"
+    "text": "17"
    },
    {
     "label": "C",
-    "text": "32"
+    "text": "59/2"
    },
    {
     "label": "D",
-    "text": "50"
+    "text": "32"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Sort first, then average the two middle values. In order: 8, 16, 18, 41, 51, 58; the middle pair is 18 and 41, so the median is 59/2. Wrong choices: C) 32 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
+  "explanation": "Sort first, then average the two middle values. In order: 8, 16, 18, 41, 51, 58; the middle pair is 18 and 41, so the median is 59/2. Wrong choices: A) 7/2 reports WHERE the median sits — position (6 + 1)/2 in the sorted list — rather than the value found there; B) 17 takes the middle of the list AS GIVEN, without sorting it first; D) 32 gives the MEAN. Mean and median answer different questions and only agree on symmetric data.",
   "tags": [
    "act",
    "act-statistics",
@@ -49689,14 +49689,14 @@
    },
    {
     "label": "D",
-    "text": "23/22"
+    "text": "6/11"
    }
   ],
   "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 6/11. Second: only 5 of the red chips are left among 10. So 6/11 × 5/10 = 3/11. Wrong choices: B) 36/121 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 6/11. Second: only 5 of the red chips are left among 10. So 6/11 × 5/10 = 3/11. Wrong choices: B) 36/121 treats the draws as WITH replacement, keeping both denominators at the original total; D) 6/11 gives the probability of just the first draw.",
   "tags": [
    "act",
    "act-statistics",
@@ -50214,14 +50214,14 @@
    },
    {
     "label": "D",
-    "text": "67/56"
+    "text": "5/8"
    }
   ],
   "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Statistics & Probability",
-  "explanation": "Without replacement the jar changes between draws. First draw: 5/8. Second: only 4 of the red chips are left among 7. So 5/8 × 4/7 = 5/14. Wrong choices: B) 25/64 treats the draws as WITH replacement, keeping both denominators at the original total.",
+  "explanation": "Without replacement the jar changes between draws. First draw: 5/8. Second: only 4 of the red chips are left among 7. So 5/8 × 4/7 = 5/14. Wrong choices: B) 25/64 treats the draws as WITH replacement, keeping both denominators at the original total; D) 5/8 gives the probability of just the first draw.",
   "tags": [
    "act",
    "act-statistics",

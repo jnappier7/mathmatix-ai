@@ -7065,13 +7065,13 @@
       "difficulty": 2,
       "stem": "A delivery van travels at an average speed of 55 miles per hour for 2.5 hours. How many miles does the van travel?",
       "choices": [
+        "57.5",
         "110",
-        "132",
         "137.5",
-        "140"
+        "165"
       ],
       "answer": 2,
-      "explanation": "Distance equals rate times time, so the van travels 55 × 2.5 = 137.5 miles. The answer 110 uses only 2 hours, ignoring the extra half hour.",
+      "explanation": "Distance equals rate times time, so the van travels 55 × 2.5 = 137.5 miles. The answer 110 uses only 2 hours, ignoring the extra half hour, and 165 rounds the time up to 3 hours. The answer 57.5 adds the speed and the time instead of multiplying them.",
       "verify": "v = 55 * 2.5\nstr(int(v)) if v == int(v) else str(v)",
       "figure_code": null
     },

@@ -264,6 +264,8 @@ const EXPLAINERS = [
           [round(t, 1), 'stops at the total time and reports the hours'],
           [round((s1 + s2) / 2, 1), `averages the two speeds (${s1} and ${s2}) — only correct if equal TIME were spent at each, and here the times differ`],
           [d1 + d2, 'reports the total distance'],
+          [round((d1 * s1 + d2 * s2) / (d1 + d2), 1), 'weights each speed by its DISTANCE; average speed weights by time, and the slower leg takes longer'],
+          [round((d1 + d2) / (d1 / s2 + d2 / s1), 1), `pairs each distance with the other leg's speed (${d1} ÷ ${s2} and ${d2} ÷ ${s1})`],
         ],
       };
     },
@@ -733,6 +735,20 @@ const EXPLAINERS = [
       // b === 0 has no sign of its own; the bank writes it as "(x - 0)/a".
       const undoSign = b >= 0 ? '-' : '+';
       const answer = `(x ${undoSign} ${Math.abs(b)})/${a}`;
+      // f(x) = ax with no constant: the general traps all equal x/a, so
+      // describe the step and the wrong turns that remain.
+      if (b === 0) {
+        return {
+          answer,
+          steps: `Swap x and y and solve: x = ${a}y gives y = x/${a}, written here as ${answer}. An inverse UNDOES what f does: f multiplies by ${a}, so f⁻¹ divides by ${a}.`,
+          traps: [
+            [`1/(${a}x)`, 'takes the RECIPROCAL of f(x); the ⁻¹ in f⁻¹ means inverse function, not "one over"'],
+            [`x - ${a}`, `undoes the multiplication with subtraction; the inverse of multiplying by ${a} is dividing by ${a}`],
+            [`${-a}x`, 'negates f — that is the opposite of f, not its inverse function'],
+            [`${a}x`, 'is f itself; an inverse has to undo f, not repeat it'],
+          ],
+        };
+      }
       return {
         answer,
         steps: `Swap x and y and solve: x = ${a}y ${b < 0 ? '−' : '+'} ${Math.abs(b)} gives y = (x ${undoSign} ${Math.abs(b)})/${a}. An inverse UNDOES the steps in reverse order — undo the ${b < 0 ? 'subtraction' : 'addition'} first, then the multiplication.`,
@@ -1098,6 +1114,7 @@ const EXPLAINERS = [
           [exactFrom(unsortedMiddle), 'takes the middle of the list AS GIVEN, without sorting it first'],
           [sorted[n - 1], 'reports the largest value'],
           [sorted[0], 'reports the smallest value'],
+          [exactFrom((n + 1) / 2), `reports WHERE the median sits — position (${n} + 1)/2 in the sorted list — rather than the value found there`],
         ],
       };
     },
@@ -1130,6 +1147,8 @@ const EXPLAINERS = [
           [b ** k, `stops at ${c}x = ${b ** k} without dividing by ${c}`],
           [b ** (k * c), 'multiplies the exponent by the coefficient, as though it were inside the power'],
           [round(b ** k * c, 6), `multiplies by ${c} instead of dividing`],
+          [k ** b / c, `swaps the base and the exponent, writing ${c}x = ${k}^${b} instead of ${b}^${k}`],
+          [c / b ** k, `divides the wrong way round: ${c} ÷ ${b ** k} instead of ${b ** k} ÷ ${c}`],
         ],
       };
     },
@@ -1507,6 +1526,21 @@ const EXPLAINERS = [
       const p1 = (b - r) / 2;
       const p2 = (b + r) / 2;
       const term = (k) => `(x ${k < 0 ? '- ' : '+ '}${Math.abs(k)})`;
+      // No x term: a difference of squares. The general traps collapse here —
+      // "flip both signs" IS the key reordered, and "mix the signs" is the key
+      // shape — so it gets its own.
+      if (b === 0 && c < 0) {
+        const s = p2;
+        return {
+          answer: [`${term(-s)}${term(s)}`, `${term(s)}${term(-s)}`],
+          steps: `There is no x term, so this is a difference of squares: x² − ${s * s} = x² − ${s}² = (x − ${s})(x + ${s}). Check: the two numbers must multiply to ${c} and add to 0, and only −${s} and ${s} do.`,
+          traps: [
+            [`${term(-s)}${term(-s)}`, `is (x − ${s})², which expands to x² − ${2 * s}x + ${s * s}; a difference of squares needs one plus and one minus`],
+            [`${term(s)}${term(s)}`, `is (x + ${s})², which expands to x² + ${2 * s}x + ${s * s} — the constant comes out positive, not ${c}`],
+            [`${term(b)}${term(c)}`, 'drops the coefficients straight into the factors instead of solving for the pair'],
+          ],
+        };
+      }
       return {
         answer: [`${term(p1)}${term(p2)}`, `${term(p2)}${term(p1)}`],
         steps: `Look for two numbers that multiply to ${c} and add to ${b}: ${p1} and ${p2}. So the factorisation is ${term(p1)}${term(p2)}.`,
@@ -2033,6 +2067,7 @@ const EXPLAINERS = [
           [frac(k, total - k), `divides by the marbles that are NOT ${want} (${total - k}) instead of by all ${total} — that is odds, not probability`],
           [frac(total - k, total), `gives the probability of NOT drawing ${want}`],
           [frac(k, 3), 'divides by the number of COLOURS rather than the number of marbles'],
+          [frac(1, total), `is the chance of drawing one PARTICULAR marble; any of the ${k} ${want} marbles counts`],
         ],
       };
     },
