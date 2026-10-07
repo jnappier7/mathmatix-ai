@@ -197,6 +197,16 @@ const STEPS = [
     ids: jsonIds('act-visual/act-visual-items.generated.json', 'problemId'),
   },
   {
+    key: 'act-reasoning-items',
+    label: 'ACT reasoning bank (multi-step items: hidden heights, successive changes, model choice)',
+    script: 'seedActReasoningItems.js',
+    supportsFresh: true,
+    files: ['act-reasoning/act-reasoning-items.generated.json'],
+    model: 'Problem',
+    idField: 'problemId',
+    ids: jsonIds('act-reasoning/act-reasoning-items.generated.json', 'problemId'),
+  },
+  {
     key: 'answer-equivalents',
     label: 'Backfill answer.equivalents (must follow the banks)',
     script: 'backfillAnswerEquivalents.js',

@@ -42,7 +42,7 @@ const guestRouter = express.Router();
 const ActTestSession = require('../models/actTestSession');
 const { GUEST_TTL_MS } = require('../models/actTestSession');
 const Problem = require('../models/problem');
-const { assembleForm, rawToScaled, getBlueprint } = require('../utils/actTestAssembler');
+const { assembleForm, rawToScaled, scaledRange, getBlueprint } = require('../utils/actTestAssembler');
 const { buildActPlan } = require('../utils/actBootcampPlan');
 const { normalizeOptions, frozenPickForGrading, LABELS: MC_LABELS } = require('../utils/mcOptions');
 const CourseSession = require('../models/courseSession');
@@ -819,6 +819,8 @@ function buildFullReport(session, { raw, total, scaled, byCategory, weakSkills, 
     rawScore: raw,
     totalItems: total,
     scaledScore: scaled ? scaled.scaled : null,
+    // The likely band around it — one sitting is an estimate, not a verdict.
+    scaledRange: scaledRange(raw, total),
     scaledApproximate: true,
     // The bank could not fill the whole blueprint for this student, so the
     // estimate is projected from fewer questions. Say so rather than
@@ -850,6 +852,8 @@ function buildGuestReport(session, { raw, total, scaled, byCategory }) {
     rawScore: raw,
     totalItems: total,
     scaledScore: scaled ? scaled.scaled : null,
+    // The likely band around it — one sitting is an estimate, not a verdict.
+    scaledRange: scaledRange(raw, total),
     scaledApproximate: true,
     shortForm: !!(scaled && scaled.shortForm),
     blueprintItems: scaled ? scaled.blueprintLength : null,
