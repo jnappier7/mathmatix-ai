@@ -633,18 +633,18 @@
    },
    {
     "label": "B",
-    "text": "36 - 6π"
+    "text": "36 - 9π"
    },
    {
     "label": "C",
-    "text": "9π"
+    "text": "36 - 6π"
    },
    {
     "label": "D",
-    "text": "36 - 9π"
+    "text": "9π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The circle's diameter equals the side, 6, so its radius is 3 and its area is π(3)² = 9π. Square minus circle: 36 − 9π. Wrong choices: 36 - 36π uses the side, 6, as the circle's radius; the radius is half the side; 9π gives the area of the circle, not the region outside it; 36 - 6π uses πd for the circle's area — that is its circumference.",
@@ -673,22 +673,22 @@
   "options": [
    {
     "label": "A",
-    "text": "4 - 2π"
+    "text": "4 - 4π"
    },
    {
     "label": "B",
-    "text": "4 - 1π"
+    "text": "4 - 2π"
    },
    {
     "label": "C",
-    "text": "1π"
+    "text": "4 - 1π"
    },
    {
     "label": "D",
-    "text": "4 - 4π"
+    "text": "1π"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The circle's diameter equals the side, 2, so its radius is 1 and its area is π(1)² = 1π. Square minus circle: 4 − 1π. Wrong choices: 4 - 4π uses the side, 2, as the circle's radius; the radius is half the side; 1π gives the area of the circle, not the region outside it; 4 - 2π uses πd for the circle's area — that is its circumference.",
@@ -717,22 +717,22 @@
   "options": [
    {
     "label": "A",
-    "text": "36π"
-   },
-   {
-    "label": "B",
     "text": "36"
    },
    {
+    "label": "B",
+    "text": "72"
+   },
+   {
     "label": "C",
-    "text": "144"
+    "text": "36π"
    },
    {
     "label": "D",
-    "text": "72"
+    "text": "144"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The square's diagonal is a diameter, 12. A square with diagonal d has area d²/2 = 144/2 = 72. Wrong choices: 144 uses the diameter, 12, as the side of the square; the diameter is the square's DIAGONAL; 36 uses the radius as the side; 36π finds the area of the circle instead.",
@@ -761,22 +761,22 @@
   "options": [
    {
     "label": "A",
-    "text": "144 - 36π"
+    "text": "144 - 144π"
    },
    {
     "label": "B",
-    "text": "144 - 12π"
+    "text": "144 - 36π"
    },
    {
     "label": "C",
-    "text": "36π"
+    "text": "144 - 12π"
    },
    {
     "label": "D",
-    "text": "144 - 144π"
+    "text": "36π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The circle's diameter equals the side, 12, so its radius is 6 and its area is π(6)² = 36π. Square minus circle: 144 − 36π. Wrong choices: 144 - 144π uses the side, 12, as the circle's radius; the radius is half the side; 36π gives the area of the circle, not the region outside it; 144 - 12π uses πd for the circle's area — that is its circumference.",
@@ -805,22 +805,22 @@
   "options": [
    {
     "label": "A",
-    "text": "81π"
-   },
-   {
-    "label": "B",
-    "text": "324"
-   },
-   {
-    "label": "C",
     "text": "81"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "162"
+   },
+   {
+    "label": "C",
+    "text": "81π"
+   },
+   {
+    "label": "D",
+    "text": "324"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The square's diagonal is a diameter, 18. A square with diagonal d has area d²/2 = 324/2 = 162. Wrong choices: 324 uses the diameter, 18, as the side of the square; the diameter is the square's DIAGONAL; 81 uses the radius as the side; 81π finds the area of the circle instead.",
@@ -849,11 +849,11 @@
   "options": [
    {
     "label": "A",
-    "text": "8"
+    "text": "4"
    },
    {
     "label": "B",
-    "text": "16"
+    "text": "8"
    },
    {
     "label": "C",
@@ -861,10 +861,10 @@
    },
    {
     "label": "D",
-    "text": "4"
+    "text": "16"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The square's diagonal is a diameter, 4. A square with diagonal d has area d²/2 = 16/2 = 8. Wrong choices: 16 uses the diameter, 4, as the side of the square; the diameter is the square's DIAGONAL; 4 uses the radius as the side; 4π finds the area of the circle instead.",
@@ -897,18 +897,18 @@
    },
    {
     "label": "B",
-    "text": "100 - 10π"
+    "text": "100 - 25π"
    },
    {
     "label": "C",
-    "text": "100 - 25π"
+    "text": "100 - 10π"
    },
    {
     "label": "D",
     "text": "25π"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The circle's diameter equals the side, 10, so its radius is 5 and its area is π(5)² = 25π. Square minus circle: 100 − 25π. Wrong choices: 100 - 100π uses the side, 10, as the circle's radius; the radius is half the side; 25π gives the area of the circle, not the region outside it; 100 - 10π uses πd for the circle's area — that is its circumference.",
@@ -937,22 +937,22 @@
   "options": [
    {
     "label": "A",
-    "text": "128"
-   },
-   {
-    "label": "B",
     "text": "64"
    },
    {
+    "label": "B",
+    "text": "128"
+   },
+   {
     "label": "C",
-    "text": "256"
+    "text": "64π"
    },
    {
     "label": "D",
-    "text": "64π"
+    "text": "256"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The square's diagonal is a diameter, 16. A square with diagonal d has area d²/2 = 256/2 = 128. Wrong choices: 256 uses the diameter, 16, as the side of the square; the diameter is the square's DIAGONAL; 64 uses the radius as the side; 64π finds the area of the circle instead.",
@@ -985,7 +985,7 @@
    },
    {
     "label": "B",
-    "text": "36"
+    "text": "18"
    },
    {
     "label": "C",
@@ -993,10 +993,10 @@
    },
    {
     "label": "D",
-    "text": "18"
+    "text": "36"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The square's diagonal is a diameter, 6. A square with diagonal d has area d²/2 = 36/2 = 18. Wrong choices: 36 uses the diameter, 6, as the side of the square; the diameter is the square's DIAGONAL; 9 uses the radius as the side; 9π finds the area of the circle instead.",
@@ -1025,11 +1025,11 @@
   "options": [
    {
     "label": "A",
-    "text": "64 - 16π"
+    "text": "64 - 64π"
    },
    {
     "label": "B",
-    "text": "16π"
+    "text": "64 - 16π"
    },
    {
     "label": "C",
@@ -1037,10 +1037,10 @@
    },
    {
     "label": "D",
-    "text": "64 - 64π"
+    "text": "16π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The circle's diameter equals the side, 8, so its radius is 4 and its area is π(4)² = 16π. Square minus circle: 64 − 16π. Wrong choices: 64 - 64π uses the side, 8, as the circle's radius; the radius is half the side; 16π gives the area of the circle, not the region outside it; 64 - 8π uses πd for the circle's area — that is its circumference.",
@@ -1069,22 +1069,22 @@
   "options": [
    {
     "label": "A",
-    "text": "100"
-   },
-   {
-    "label": "B",
     "text": "25"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "50"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "25π"
+   },
+   {
+    "label": "D",
+    "text": "100"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "The square's diagonal is a diameter, 10. A square with diagonal d has area d²/2 = 100/2 = 50. Wrong choices: 100 uses the diameter, 10, as the side of the square; the diameter is the square's DIAGONAL; 25 uses the radius as the side; 25π finds the area of the circle instead.",
@@ -1113,7 +1113,7 @@
   "options": [
    {
     "label": "A",
-    "text": "196"
+    "text": "49"
    },
    {
     "label": "B",
@@ -1125,7 +1125,7 @@
    },
    {
     "label": "D",
-    "text": "49"
+    "text": "196"
    }
   ],
   "correctOption": "B",
@@ -1157,7 +1157,7 @@
   "options": [
    {
     "label": "A",
-    "text": "16π"
+    "text": "16"
    },
    {
     "label": "B",
@@ -1165,7 +1165,7 @@
    },
    {
     "label": "C",
-    "text": "16"
+    "text": "16π"
    },
    {
     "label": "D",

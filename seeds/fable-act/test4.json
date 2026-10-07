@@ -189,13 +189,13 @@
    "difficulty": 2,
    "stem": "Which of the following is equal to √48?",
    "choices": [
-    "4√3",
     "2√6",
+    "4√3",
     "6√2",
     "16√3"
    ],
-   "answer": 0,
-   "explanation": "Factor out the largest perfect square: √48 = √(16·3) = 4√3, choice A. Choice B equals √24 and choice C equals √72; choice D confuses 16 with √16.",
+   "answer": 1,
+   "explanation": "Factor out the largest perfect square: √48 = √(16·3) = 4√3, choice B. Choice A equals √24 and choice C equals √72; choice D confuses 16 with √16.",
    "verify": "print(abs(48**0.5 - 4*3**0.5) < 1e-12)",
    "figure_code": null,
    "skill": "Radicals & roots"

@@ -62,6 +62,17 @@ const actTestSessionSchema = new Schema({
   // claim, so a claimed test is permanent like any other. Rows without the
   // field (every signed-in test) are never touched by the TTL monitor.
   guestExpiresAt: { type: Date },
+  // Who took an unclaimed guest test, for keeping its questions out of that
+  // guest's NEXT test. The browser's own list of past tests lives in
+  // localStorage and is lost to a private window or cleared storage, and then
+  // retakes repeated: five repeats a form, one item on three of four forms
+  // (external audit, 2026-10-07). So the server keeps its own record:
+  //   guestBrowserHash  keyed hash of a random httpOnly cookie (this browser)
+  //   guestNetHash      keyed hash of the client IP (fallback when cookies go)
+  // Keyed HMACs (SESSION_SECRET), never the raw values; never selected by
+  // default; cleared on claim; deleted with the session by the TTL above.
+  guestBrowserHash: { type: String, select: false, index: true },
+  guestNetHash: { type: String, select: false, index: true },
   // When a guest test was attached to an account — the hook's conversion mark.
   claimedAt: { type: Date },
   testId: { type: String, default: 'act-math' },

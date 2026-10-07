@@ -2206,9 +2206,9 @@
       "stem": "If f(x) = 2x + 3 and g(x) = √(x − 1), what is the value of g(f(1))?",
       "choices": [
         "2",
+        "√5",
         "3",
-        "5",
-        "√5"
+        "5"
       ],
       "answer": 0,
       "explanation": "First f(1) = 2(1) + 3 = 5, and then g(5) = √(5 − 1) = √4 = 2. Choice 5 stops at f(1), and √5 forgets to subtract 1 inside the radical.",
@@ -2836,8 +2836,8 @@
       "stem": "In △RST, the measure of ∠R is 45°, the measure of ∠S is 60°, and r = 8. What is the length of side s?",
       "choices": [
         "4√2",
-        "4√3",
         "8√6/3",
+        "4√3",
         "4√6"
       ],
       "answer": 3,
@@ -3625,7 +3625,7 @@
       "category": "NQ",
       "modeling": false,
       "difficulty": 2,
-      "stem": "If A = [[3, −2], [1, 5]], where the matrix is written as [row 1, row 2], what is the matrix 4A ?",
+      "stem": "If A = [[3, −2], [1, 5]], what is the matrix 4A ?",
       "choices": [
         "[[7, 2], [5, 9]]",
         "[[12, −2], [1, 20]]",
@@ -3715,7 +3715,7 @@
       "category": "NQ",
       "modeling": false,
       "difficulty": 4,
-      "stem": "If A = [[1, 2], [3, 4]] and B = [[0, 1], [5, −2]], each written as [row 1, row 2], what is the matrix product AB ?",
+      "stem": "If A = [[1, 2], [3, 4]] and B = [[0, 1], [5, −2]], what is the matrix product AB ?",
       "choices": [
         "[[0, 2], [15, −8]]",
         "[[3, 4], [−1, 2]]",
@@ -3733,7 +3733,7 @@
       "category": "NQ",
       "modeling": false,
       "difficulty": 4,
-      "stem": "The matrices A = [[2, −1], [4, 3]] and B = [[7, 0], [1, 5]] are each written as [row 1, row 2]. If A + X = B, what is the matrix X ?",
+      "stem": "Let A = [[2, −1], [4, 3]] and B = [[7, 0], [1, 5]]. If A + X = B, what is the matrix X ?",
       "choices": [
         "[[−5, −1], [3, −2]]",
         "[[5, 1], [−3, 2]]",
@@ -3769,7 +3769,7 @@
       "category": "NQ",
       "modeling": false,
       "difficulty": 5,
-      "stem": "For what positive value of k does the matrix [[k, 2], [8, k]], written as [row 1, row 2], have a determinant of 0 ?",
+      "stem": "For what positive value of k does the matrix [[k, 2], [8, k]] have a determinant of 0 ?",
       "choices": [
         "2",
         "4",
@@ -4509,12 +4509,12 @@
       "difficulty": 1,
       "stem": "If √x = 6, what is the value of x?",
       "choices": [
+        "√6",
         "3",
         "12",
-        "36",
-        "√6"
+        "36"
       ],
-      "answer": 2,
+      "answer": 3,
       "explanation": "Square both sides of the equation: (√x)² = 6², so x = 36. Check: √36 = 6. Choice 12 doubles 6 instead of squaring it, and choice 3 halves it.",
       "verify": "from sympy import symbols, Eq, solve, sqrt\nx = symbols(\"x\", nonnegative=True)\nint(solve(Eq(sqrt(x), 6), x)[0])",
       "figure_code": null
@@ -4689,12 +4689,12 @@
       "difficulty": 1,
       "stem": "What is the value of √81 + √16?",
       "choices": [
-        "13",
         "√97",
-        "97",
-        "25"
+        "13",
+        "25",
+        "97"
       ],
-      "answer": 0,
+      "answer": 1,
       "explanation": "Evaluate each square root separately: √81 = 9 and √16 = 4, so the sum is 13. Note that √81 + √16 is not equal to √(81 + 16) = √97.",
       "verify": "import math\nint(math.sqrt(81)+math.sqrt(16))",
       "figure_code": null
@@ -4708,11 +4708,11 @@
       "stem": "Which of the following is equivalent to √72?",
       "choices": [
         "2√6",
+        "4√3",
         "6√2",
-        "36√2",
-        "4√3"
+        "36√2"
       ],
-      "answer": 1,
+      "answer": 2,
       "explanation": "Factor out the largest perfect square: 72 = 36 · 2, so √72 = √36 · √2 = 6√2. Choice 36√2 pulls the 36 out of the radical without taking its square root, and choice 4√3 = √48 comes from mis-factoring 72 as 16 · 3.",
       "verify": "import math\nt=math.sqrt(72)\nc={\"2√6\":2*math.sqrt(6),\"6√2\":6*math.sqrt(2),\"36√2\":36*math.sqrt(2),\"4√3\":4*math.sqrt(3)}\n[k for k,v in c.items() if abs(v-t)<1e-9][0]",
       "figure_code": null
@@ -4743,12 +4743,12 @@
       "difficulty": 3,
       "stem": "What is the value of (√5 + √3)(√5 − √3)?",
       "choices": [
-        "8",
         "√2",
         "2",
+        "8",
         "15"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "This is a difference of squares: (√5 + √3)(√5 − √3) = (√5)² − (√3)² = 5 − 3 = 2. The middle terms cancel. Choice 8 adds the radicands instead of subtracting them, and choice 15 multiplies them.",
       "verify": "import math\nround((math.sqrt(5)+math.sqrt(3))*(math.sqrt(5)-math.sqrt(3)))",
       "figure_code": null
@@ -4797,12 +4797,12 @@
       "difficulty": 4,
       "stem": "Which of the following is equivalent to 6/√12?",
       "choices": [
-        "3",
-        "2√3",
+        "√3/2",
         "√3",
-        "√3/2"
+        "3",
+        "2√3"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "Simplify the denominator first: √12 = 2√3, so 6/√12 = 6/(2√3) = 3/√3. Rationalizing gives 3√3/3 = √3. Choice 3 cancels the 2 in 2√3 but then drops the radical, and choice 2√3 is just the simplified denominator.",
       "verify": "import math\nt=6/math.sqrt(12)\nc={\"3\":3,\"2√3\":2*math.sqrt(3),\"√3\":math.sqrt(3),\"√3/2\":math.sqrt(3)/2}\n[k for k,v in c.items() if abs(v-t)<1e-9][0]",
       "figure_code": null
@@ -4833,10 +4833,10 @@
       "difficulty": 5,
       "stem": "What is the value of (√6 · √8)/√3?",
       "choices": [
-        "2√6",
+        "√11",
         "4",
-        "16",
-        "√11"
+        "2√6",
+        "16"
       ],
       "answer": 1,
       "explanation": "Combine under one radical: (√6 · √8)/√3 = √(6 · 8/3) = √16 = 4. Multiplying and dividing radicands first often reveals a perfect square. Choice 16 is the radicand before the square root is taken, and choice √11 combines the numbers as 6 + 8 − 3 under one radical.",
@@ -4851,12 +4851,12 @@
       "difficulty": 5,
       "stem": "Which of the following numbers is greatest?",
       "choices": [
-        "2√7",
-        "3√3",
         "5",
-        "√26"
+        "√26",
+        "3√3",
+        "2√7"
       ],
-      "answer": 0,
+      "answer": 3,
       "explanation": "Compare by squaring each value: (2√7)² = 28, (3√3)² = 27, 5² = 25, and (√26)² = 26. Since 28 is the largest square, 2√7 is the greatest number.",
       "verify": "import math\nc={\"2√7\":2*math.sqrt(7),\"3√3\":3*math.sqrt(3),\"5\":5,\"√26\":math.sqrt(26)}\nmax(c,key=c.get)",
       "figure_code": null
@@ -5104,11 +5104,11 @@
       "stem": "The hypotenuse of an isosceles right triangle measures 10√2 inches. What is the length, in inches, of each leg?",
       "choices": [
         "5√2",
+        "10",
         "10√2",
-        "20",
-        "10"
+        "20"
       ],
-      "answer": 3,
+      "answer": 1,
       "explanation": "In a 45°-45°-90° triangle the hypotenuse is √2 times a leg, so each leg is (10√2)/√2 = 10 inches. Multiplying by √2 instead of dividing gives 20, and halving the hypotenuse gives 5√2.",
       "verify": "import math\nh=10*math.sqrt(2)\nleg=h/math.sqrt(2)\nc={\"5√2\":5*math.sqrt(2),\"10√2\":10*math.sqrt(2),\"20\":20,\"10\":10}\n[k for k,v in c.items() if abs(v-leg)<1e-9][0]",
       "figure_code": null
@@ -5121,12 +5121,12 @@
       "difficulty": 3,
       "stem": "In right triangle JKL, the right angle is at K, m∠J = 30°, and the hypotenuse JL measures 18 cm. What is the length, in centimeters, of KL?",
       "choices": [
-        "9√3",
-        "36",
         "9",
-        "6√3"
+        "6√3",
+        "9√3",
+        "36"
       ],
-      "answer": 2,
+      "answer": 0,
       "explanation": "In a 30°-60°-90° triangle the leg opposite the 30° angle is half the hypotenuse. Since KL is opposite ∠J = 30°, KL = 18/2 = 9 cm. The value 9√3 is the other leg, which is opposite the 60° angle.",
       "verify": "import math\nv=18*math.sin(math.radians(30))\nc={\"9√3\":9*math.sqrt(3),\"36\":36,\"9\":9,\"6√3\":6*math.sqrt(3)}\n[k for k,x in c.items() if abs(x-v)<1e-9][0]",
       "figure_code": null
@@ -6148,11 +6148,11 @@
       "stem": "A 25-foot ladder leans against a vertical wall with its base on level ground 7 feet from the wall. How far up the wall, in feet, does the ladder reach?",
       "choices": [
         "18",
-        "√674",
         "24",
+        "√674",
         "32"
       ],
-      "answer": 2,
+      "answer": 1,
       "explanation": "The ladder, wall, and ground form a right triangle with hypotenuse 25 and one leg 7. The height is √(25² − 7²) = √(625 − 49) = √576 = 24 feet. Subtracting 25 − 7 = 18 or adding the squares to get √674 both misuse the Pythagorean theorem.",
       "verify": "import math\nmath.isqrt(25**2 - 7**2)",
       "figure_code": null
@@ -6220,11 +6220,11 @@
       "stem": "In a 30°-60°-90° triangle, the hypotenuse is 14 units long. What is the length, in units, of the longer leg?",
       "choices": [
         "7",
-        "14√3",
         "7√2",
-        "7√3"
+        "7√3",
+        "14√3"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "In a 30°-60°-90° triangle, the shorter leg is half the hypotenuse, so it is 7, and the longer leg is √3 times the shorter leg, or 7√3. Choosing 7 stops at the shorter leg, and 7√2 mixes this up with the 45°-45°-90° ratio.",
       "verify": "import math\nn = 147\nk = 1\ni = 2\nwhile i * i <= n:\n    while n % (i * i) == 0:\n        n //= i * i\n        k *= i\n    i += 1\nf\"{k}√{n}\" if n > 1 else str(k)",
       "figure_code": null
@@ -6273,12 +6273,12 @@
       "difficulty": 5,
       "stem": "Starting at camp, a hiker walks 8 kilometers due north, then 3 kilometers due east, then 4 kilometers due north. What is the straight-line distance, in kilometers, from the hiker's final position back to camp?",
       "choices": [
-        "15",
-        "12",
         "√73",
-        "3√17"
+        "12",
+        "3√17",
+        "15"
       ],
-      "answer": 3,
+      "answer": 2,
       "explanation": "The hiker ends 8 + 4 = 12 kilometers north and 3 kilometers east of camp. The straight-line distance is √(12² + 3²) = √153 = 3√17 kilometers by the Pythagorean theorem. Adding all three legs gives 15, and using only the first two legs gives √73.",
       "verify": "import math\nn = 153\nk = 1\ni = 2\nwhile i * i <= n:\n    while n % (i * i) == 0:\n        n //= i * i\n        k *= i\n    i += 1\nf\"{k}√{n}\" if n > 1 else str(k)",
       "figure_code": null

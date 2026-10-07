@@ -816,6 +816,7 @@ async function applyCompletionEffects(req, session, { bySkill, weakSkills, plan 
 /** The full (signed-in) results report. */
 function buildFullReport(session, { raw, total, scaled, byCategory, weakSkills, plan }, extras = {}) {
   return {
+    timeLimitMinutes: session.timeLimitMinutes || null,   // so "3 min" reads "3 of 50 min"
     rawScore: raw,
     totalItems: total,
     scaledScore: scaled ? scaled.scaled : null,
@@ -849,6 +850,7 @@ function buildFullReport(session, { raw, total, scaled, byCategory, weakSkills, 
 function buildGuestReport(session, { raw, total, scaled, byCategory }) {
   const missed = session.responses.filter((r) => r && !r.correct);
   return {
+    timeLimitMinutes: session.timeLimitMinutes || null,   // so "3 min" reads "3 of 50 min"
     rawScore: raw,
     totalItems: total,
     scaledScore: scaled ? scaled.scaled : null,
@@ -975,7 +977,7 @@ router.post('/claim', async (req, res) => {
     // document that still carries this token hash and no owner.
     const upd = await ActTestSession.updateOne(
       { _id: sessionId, guestTokenHash: tokenHash, userId: null, status: 'completed' },
-      { $set: { userId, claimedAt: new Date() }, $unset: { guestTokenHash: 1, guestExpiresAt: 1 } }
+      { $set: { userId, claimedAt: new Date() }, $unset: { guestTokenHash: 1, guestExpiresAt: 1, guestBrowserHash: 1, guestNetHash: 1 } }
     );
     const firstClaim = upd.modifiedCount === 1;
     // Either we just claimed it, or this same account already had (a second
@@ -1017,6 +1019,50 @@ router.post('/claim', async (req, res) => {
     return res.status(500).json({ message: 'Could not load your practice test.' });
   }
 });
+
+// ── Who is this guest? ──────────────────────────────────────
+// A random id in an httpOnly cookie (set on first /start) and the client IP,
+// each stored only as a keyed hash. Used solely to keep a guest's earlier
+// questions out of their next test when the browser's own list is gone.
+const GUEST_COOKIE = 'mm_act_guest';
+function guestHash(kind, value) {
+  if (!value) return null;
+  const key = process.env.SESSION_SECRET || 'act-guest';
+  return crypto.createHmac('sha256', key).update(`${kind}:${value}`).digest('hex').slice(0, 32);
+}
+function guestPrints(req, res) {
+  let id = req.cookies && req.cookies[GUEST_COOKIE];
+  if (!id || !/^[a-f0-9]{32}$/.test(id)) {
+    id = crypto.randomBytes(16).toString('hex');
+    res.cookie(GUEST_COOKIE, id, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: GUEST_TTL_MS,
+      path: '/api/act-practice',
+    });
+  }
+  return { browser: guestHash('browser', id), net: guestHash('net', req.ip) };
+}
+
+// Questions from this guest's recent tests, found by the server's own record
+// (cookie, then network) rather than the browser's list. At most
+// GUEST_HISTORY_MAX tests per signal, newest first, inside the guest TTL.
+async function guestRecordSeenProblemIds(prints) {
+  const seen = new Set();
+  const since = new Date(Date.now() - GUEST_TTL_MS);
+  for (const [field, value] of [['guestBrowserHash', prints.browser], ['guestNetHash', prints.net]]) {
+    if (!value) continue;
+    try {
+      const docs = await ActTestSession.find({ userId: null, [field]: value, createdAt: { $gte: since } })
+        .sort({ createdAt: -1 }).limit(GUEST_HISTORY_MAX).select('items.problemId').lean();
+      docs.forEach((d) => (d.items || []).forEach((it) => it && it.problemId && seen.add(it.problemId)));
+    } catch (err) {
+      console.error('[actTest] guest record lookup failed (non-fatal):', err.message);
+    }
+  }
+  return [...seen];
+}
 
 // Questions this browser's earlier guest tests already showed. `previous` is
 // [{ sessionId, token }] from the browser; at most GUEST_HISTORY_MAX are read,
@@ -1085,7 +1131,14 @@ guestRouter.post('/start', async (req, res) => {
     // excluded, so a retake is fresh — the same promise a signed-in student
     // gets. Each entry must prove ownership with its token; anything else is
     // ignored rather than refused.
-    const excludeIds = await guestSeenProblemIds(previous);
+    // Two records, unioned: the browser's list (tokens prove each entry) and
+    // the server's own (cookie, then network) — the browser's list alone was
+    // lost to cleared storage and retakes repeated questions.
+    const prints = guestPrints(req, res);
+    const excludeIds = [...new Set([
+      ...(await guestSeenProblemIds(previous)),
+      ...(await guestRecordSeenProblemIds(prints)),
+    ])];
     const form = await assembleForm({
       seed: `guest-${crypto.randomBytes(8).toString('hex')}-${Date.now()}`,
       excludeIds,
@@ -1109,6 +1162,8 @@ guestRouter.post('/start', async (req, res) => {
       coverage: form.coverage,
       guestTokenHash: hashGuestToken(guestToken),
       guestExpiresAt: new Date(Date.now() + GUEST_TTL_MS),
+      guestBrowserHash: prints.browser,
+      guestNetHash: prints.net,
     });
     recordConversionEvent('act_guest_started', {
       sessionKey: String(session._id),

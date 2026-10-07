@@ -494,7 +494,7 @@
    "category": "NQ",
    "modeling": false,
    "difficulty": 3,
-   "stem": "Given the matrices A = [[1, 3], [2, 0]] and B = [[4, −1], [2, 5]], where each matrix is written as [row 1, row 2], what is 2A − B?",
+   "stem": "Given the matrices A = [[1, 3], [2, 0]] and B = [[4, −1], [2, 5]], what is 2A − B?",
    "choices": [
     "[[−2, 7], [2, −5]]",
     "[[−3, 4], [0, −5]]",
@@ -660,8 +660,8 @@
    "choices": [
     "60 + 12.5π",
     "60 + 25π",
-    "60 + 50π",
-    "120 + 25π"
+    "120 + 25π",
+    "60 + 50π"
    ],
    "answer": 0,
    "explanation": "The rectangle's area is 10 × 6 = 60. The semicircle has diameter 10, so its radius is 5 and its area is (1/2)π(5²) = 12.5π. The total area is 60 + 12.5π square meters. Choice B uses a full circle instead of a semicircle. The correct answer is A.",

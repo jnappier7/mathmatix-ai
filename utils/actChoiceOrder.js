@@ -19,11 +19,37 @@ const { numericValue } = require('./distractorQuality');
  * followed by a unit — "540°", "12 cm", "3.5 ft²" — when every choice in the
  * set carries the same unit. Returns null per choice when not sortable.
  */
+/**
+ * A choice that is a number written with radicals or π — 5√3, √2/2, 3 + √5,
+ * 2π, (√3)/2 — evaluated for SORTING only. numericValue reads plain numbers
+ * and fractions, so a set like 5√3, 5/2, 5√2, 10 was left unsorted (external
+ * audit, 2026-10-07). Only digits, + − × / ( ) √ π and spaces are accepted, so
+ * nothing else ever reaches mathjs.
+ */
+let mathjs = null;
+function exactValue(text) {
+  const s = String(text == null ? '' : text).trim();
+  if (!/[√π]/.test(s) || !/^[\d.\s+\-−×*/()√π]+$/.test(s)) return null;
+  if (mathjs === null) { try { mathjs = require('mathjs'); } catch { mathjs = false; } }
+  if (!mathjs) return null;
+  const expr = s
+    .replace(/−/g, '-').replace(/×/g, '*')
+    .replace(/√\s*(\d+(?:\.\d+)?|\([^()]*\))/g, 'sqrt($1)')
+    .replace(/π/g, 'pi')
+    .replace(/(\d|\))\s*(?=sqrt|pi|\()/g, '$1*');
+  try {
+    const v = mathjs.evaluate(expr);
+    return typeof v === 'number' && Number.isFinite(v) ? v : null;
+  } catch { return null; }
+}
+
 function sortValues(texts) {
   const parts = texts.map((t) => {
     const s = String(t == null ? '' : t).trim();
     const plain = numericValue(s);
     if (plain != null) return { v: plain, unit: '' };
+    const radical = exactValue(s);
+    if (radical != null) return { v: radical, unit: '' };
     const m = /^(.*?\d)\s*(°|[A-Za-z]{1,12}\.?[²³]?)$/.exec(s);
     if (!m) return null;
     const v = numericValue(m[1]);
@@ -75,4 +101,4 @@ function remapChoiceLetters(text, map) {
   }).join('');
 }
 
-module.exports = { sortValues, isMonotonic, sortPermutation, remapChoiceLetters };
+module.exports = { sortValues, isMonotonic, sortPermutation, remapChoiceLetters, exactValue };

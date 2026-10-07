@@ -586,7 +586,7 @@
    "category": "NQ",
    "modeling": false,
    "difficulty": 4,
-   "stem": "Let A = [[2, −1], [3, 0]] and B = [[1, 4], [−2, 6]] be 2×2 matrices, where each matrix is listed by rows. What is the entry in row 1, column 2 of the matrix product AB?",
+   "stem": "Let A = [[2, −1], [3, 0]] and B = [[1, 4], [−2, 6]] be 2×2 matrices. What is the entry in row 1, column 2 of the matrix product AB?",
    "choices": [
     "−4",
     "−1",

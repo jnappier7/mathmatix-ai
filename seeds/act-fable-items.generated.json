@@ -884,7 +884,7 @@
   {
     "problemId": "act-fable-t1q21",
     "skillId": "act-matrices-vectors",
-    "prompt": "The 2×2 matrices A = [2 −1; 3 0] and B = [−4 5; 1 2] are written with their rows separated by semicolons. Which of the following is the matrix 2A + B?",
+    "prompt": "Let A = [2 −1; 3 0] and B = [−4 5; 1 2] be 2×2 matrices. Which of the following is the matrix 2A + B?",
     "svg": null,
     "answer": {
       "type": "auto",
@@ -922,7 +922,7 @@
       "NQ"
     ],
     "source": "act-fable",
-    "contentHash": "65d9a06ca6c930ccca33e8f3aacd1e174ce9dd31a71a5e62a683beb9c5461a87",
+    "contentHash": "98bbf6c0c53ae707966f9be59c3c6b361d55361d8bf128626492f4edf35f0e82",
     "isActive": true
   },
   {
@@ -1557,22 +1557,22 @@
     "options": [
       {
         "label": "A",
-        "text": "√7 + √2"
-      },
-      {
-        "label": "B",
         "text": "2√7 − 2√2"
       },
       {
+        "label": "B",
+        "text": "√7 + √2"
+      },
+      {
         "label": "C",
-        "text": "10√7 + 10√2"
+        "text": "2√7 + 2√2"
       },
       {
         "label": "D",
-        "text": "2√7 + 2√2"
+        "text": "10√7 + 10√2"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Multiply numerator and denominator by the conjugate √7 + √2: the denominator becomes 7 − 2 = 5, so the expression equals 10(√7 + √2)/5 = 2√7 + 2√2, choice J. Forgetting to divide by 5 gives choice H.",
@@ -3177,7 +3177,7 @@
   {
     "problemId": "act-fable-t2q28",
     "skillId": "act-matrices-vectors",
-    "prompt": "Given the matrices A = [[1, 3], [2, 0]] and B = [[4, −1], [2, 5]], where each matrix is written as [row 1, row 2], what is 2A − B?",
+    "prompt": "Given the matrices A = [[1, 3], [2, 0]] and B = [[4, −1], [2, 5]], what is 2A − B?",
     "svg": null,
     "answer": {
       "type": "auto",
@@ -3215,7 +3215,7 @@
       "NQ"
     ],
     "source": "act-fable",
-    "contentHash": "86d7aa2a0130dde9ee78b236fbdc69c7f8255c19975e40f6dfb403d87fb9a507",
+    "contentHash": "2df9a15a6c723f870dbb5ec26067849ce37c39a748c87a6b43607df2e06686cf",
     "isActive": true
   },
   {
@@ -3593,11 +3593,11 @@
       },
       {
         "label": "C",
-        "text": "60 + 50π"
+        "text": "120 + 25π"
       },
       {
         "label": "D",
-        "text": "120 + 25π"
+        "text": "60 + 50π"
       }
     ],
     "correctOption": "A",
@@ -5384,7 +5384,7 @@
   {
     "problemId": "act-fable-t3q33",
     "skillId": "act-matrices-vectors",
-    "prompt": "Let A = [[2, −1], [3, 0]] and B = [[1, 4], [−2, 6]] be 2×2 matrices, where each matrix is listed by rows. What is the entry in row 1, column 2 of the matrix product AB?",
+    "prompt": "Let A = [[2, −1], [3, 0]] and B = [[1, 4], [−2, 6]] be 2×2 matrices. What is the entry in row 1, column 2 of the matrix product AB?",
     "svg": null,
     "answer": {
       "type": "auto",
@@ -5422,7 +5422,7 @@
       "NQ"
     ],
     "source": "act-fable",
-    "contentHash": "98410ff2ab083f5cbe710a4eb2174d274fb5c6896ece8db425318014ac46ad1b",
+    "contentHash": "982bda1530b3c9b2a9f9b4453a35378da4776a5843303fde2c6e2fa0994c2d80",
     "isActive": true
   },
   {
@@ -6410,11 +6410,11 @@
     "options": [
       {
         "label": "A",
-        "text": "4√3"
+        "text": "2√6"
       },
       {
         "label": "B",
-        "text": "2√6"
+        "text": "4√3"
       },
       {
         "label": "C",
@@ -6425,10 +6425,10 @@
         "text": "16√3"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
-    "explanation": "Factor out the largest perfect square: √48 = √(16·3) = 4√3, choice A. Choice B equals √24 and choice C equals √72; choice D confuses 16 with √16.",
+    "explanation": "Factor out the largest perfect square: √48 = √(16·3) = 4√3, choice B. Choice A equals √24 and choice C equals √72; choice D confuses 16 with √16.",
     "tags": [
       "act",
       "act-math",
@@ -15313,15 +15313,15 @@
       },
       {
         "label": "B",
-        "text": "3"
+        "text": "√5"
       },
       {
         "label": "C",
-        "text": "5"
+        "text": "3"
       },
       {
         "label": "D",
-        "text": "√5"
+        "text": "5"
       }
     ],
     "correctOption": "A",
@@ -16853,11 +16853,11 @@
       },
       {
         "label": "B",
-        "text": "4√3"
+        "text": "8√6/3"
       },
       {
         "label": "C",
-        "text": "8√6/3"
+        "text": "4√3"
       },
       {
         "label": "D",
@@ -18774,7 +18774,7 @@
   {
     "problemId": "act-fable-topup1q202",
     "skillId": "act-matrices-vectors",
-    "prompt": "If A = [[3, −2], [1, 5]], where the matrix is written as [row 1, row 2], what is the matrix 4A ?",
+    "prompt": "If A = [[3, −2], [1, 5]], what is the matrix 4A ?",
     "svg": null,
     "answer": {
       "type": "auto",
@@ -18812,7 +18812,7 @@
       "NQ"
     ],
     "source": "act-fable",
-    "contentHash": "47fd7a1dbe499777edd78bfaa9214266685cff9042f54b3ad47a121404000307",
+    "contentHash": "7096d5d42419516710f6af6f3eea3335f01d058a315dcff39838d7afb611f834",
     "isActive": true
   },
   {
@@ -18994,7 +18994,7 @@
   {
     "problemId": "act-fable-topup1q207",
     "skillId": "act-matrices-vectors",
-    "prompt": "If A = [[1, 2], [3, 4]] and B = [[0, 1], [5, −2]], each written as [row 1, row 2], what is the matrix product AB ?",
+    "prompt": "If A = [[1, 2], [3, 4]] and B = [[0, 1], [5, −2]], what is the matrix product AB ?",
     "svg": null,
     "answer": {
       "type": "auto",
@@ -19032,13 +19032,13 @@
       "NQ"
     ],
     "source": "act-fable",
-    "contentHash": "1d458efd2fb25908f801372ba64c38637ef9c08e30e1524bc1f93e5d1373bd7a",
+    "contentHash": "db8ed848bd9d4973d37e1793829c0bc4b7e71cdc33a3ac5790039bb2b1fa7bcc",
     "isActive": true
   },
   {
     "problemId": "act-fable-topup1q208",
     "skillId": "act-matrices-vectors",
-    "prompt": "The matrices A = [[2, −1], [4, 3]] and B = [[7, 0], [1, 5]] are each written as [row 1, row 2]. If A + X = B, what is the matrix X ?",
+    "prompt": "Let A = [[2, −1], [4, 3]] and B = [[7, 0], [1, 5]]. If A + X = B, what is the matrix X ?",
     "svg": null,
     "answer": {
       "type": "auto",
@@ -19076,7 +19076,7 @@
       "NQ"
     ],
     "source": "act-fable",
-    "contentHash": "ab5d1c78f739a4e135559c4fbeff9e683c7e46ac24b12be248907e1b39f15e20",
+    "contentHash": "c7184dc1e0784c98ef3b02f2e8b956d6527798b20150b3bcd3957a920ba5ff02",
     "isActive": true
   },
   {
@@ -19126,7 +19126,7 @@
   {
     "problemId": "act-fable-topup1q210",
     "skillId": "act-matrices-vectors",
-    "prompt": "For what positive value of k does the matrix [[k, 2], [8, k]], written as [row 1, row 2], have a determinant of 0 ?",
+    "prompt": "For what positive value of k does the matrix [[k, 2], [8, k]] have a determinant of 0 ?",
     "svg": null,
     "answer": {
       "type": "auto",
@@ -19164,7 +19164,7 @@
       "NQ"
     ],
     "source": "act-fable",
-    "contentHash": "bef35fdda7f728bfa3b5433b450fcc2f9185c5c618686fbd4476ebe154757e4d",
+    "contentHash": "0c3baf210efdf78131f709915244b6750a74a4659e8a5ca2ab608bb395209753",
     "isActive": true
   },
   {
@@ -20941,22 +20941,22 @@
     "options": [
       {
         "label": "A",
-        "text": "3"
+        "text": "√6"
       },
       {
         "label": "B",
-        "text": "12"
+        "text": "3"
       },
       {
         "label": "C",
-        "text": "36"
+        "text": "12"
       },
       {
         "label": "D",
-        "text": "√6"
+        "text": "36"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "D",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "Square both sides of the equation: (√x)² = 6², so x = 36. Check: √36 = 6. Choice 12 doubles 6 instead of squaring it, and choice 3 halves it.",
@@ -21381,22 +21381,22 @@
     "options": [
       {
         "label": "A",
-        "text": "13"
-      },
-      {
-        "label": "B",
         "text": "√97"
       },
       {
+        "label": "B",
+        "text": "13"
+      },
+      {
         "label": "C",
-        "text": "97"
+        "text": "25"
       },
       {
         "label": "D",
-        "text": "25"
+        "text": "97"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 1,
     "gradeBand": "8-12",
     "explanation": "Evaluate each square root separately: √81 = 9 and √16 = 4, so the sum is 13. Note that √81 + √16 is not equal to √(81 + 16) = √97.",
@@ -21429,18 +21429,18 @@
       },
       {
         "label": "B",
-        "text": "6√2"
+        "text": "4√3"
       },
       {
         "label": "C",
-        "text": "36√2"
+        "text": "6√2"
       },
       {
         "label": "D",
-        "text": "4√3"
+        "text": "36√2"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "Factor out the largest perfect square: 72 = 36 · 2, so √72 = √36 · √2 = 6√2. Choice 36√2 pulls the 36 out of the radical without taking its square root, and choice 4√3 = √48 comes from mis-factoring 72 as 16 · 3.",
@@ -21513,22 +21513,22 @@
     "options": [
       {
         "label": "A",
-        "text": "8"
-      },
-      {
-        "label": "B",
         "text": "√2"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "2"
+      },
+      {
+        "label": "C",
+        "text": "8"
       },
       {
         "label": "D",
         "text": "15"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "This is a difference of squares: (√5 + √3)(√5 − √3) = (√5)² − (√3)² = 5 − 3 = 2. The middle terms cancel. Choice 8 adds the radicands instead of subtracting them, and choice 15 multiplies them.",
@@ -21645,22 +21645,22 @@
     "options": [
       {
         "label": "A",
-        "text": "3"
+        "text": "√3/2"
       },
       {
         "label": "B",
-        "text": "2√3"
-      },
-      {
-        "label": "C",
         "text": "√3"
       },
       {
+        "label": "C",
+        "text": "3"
+      },
+      {
         "label": "D",
-        "text": "√3/2"
+        "text": "2√3"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 4,
     "gradeBand": "8-12",
     "explanation": "Simplify the denominator first: √12 = 2√3, so 6/√12 = 6/(2√3) = 3/√3. Rationalizing gives 3√3/3 = √3. Choice 3 cancels the 2 in 2√3 but then drops the radical, and choice 2√3 is just the simplified denominator.",
@@ -21733,7 +21733,7 @@
     "options": [
       {
         "label": "A",
-        "text": "2√6"
+        "text": "√11"
       },
       {
         "label": "B",
@@ -21741,11 +21741,11 @@
       },
       {
         "label": "C",
-        "text": "16"
+        "text": "2√6"
       },
       {
         "label": "D",
-        "text": "√11"
+        "text": "16"
       }
     ],
     "correctOption": "B",
@@ -21777,22 +21777,22 @@
     "options": [
       {
         "label": "A",
-        "text": "2√7"
-      },
-      {
-        "label": "B",
-        "text": "3√3"
-      },
-      {
-        "label": "C",
         "text": "5"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "√26"
+      },
+      {
+        "label": "C",
+        "text": "3√3"
+      },
+      {
+        "label": "D",
+        "text": "2√7"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "D",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "Compare by squaring each value: (2√7)² = 28, (3√3)² = 27, 5² = 25, and (√26)² = 26. Since 28 is the largest square, 2√7 is the greatest number.",
@@ -22397,18 +22397,18 @@
       },
       {
         "label": "B",
-        "text": "10√2"
+        "text": "10"
       },
       {
         "label": "C",
-        "text": "20"
+        "text": "10√2"
       },
       {
         "label": "D",
-        "text": "10"
+        "text": "20"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "In a 45°-45°-90° triangle the hypotenuse is √2 times a leg, so each leg is (10√2)/√2 = 10 inches. Multiplying by √2 instead of dividing gives 20, and halving the hypotenuse gives 5√2.",
@@ -22437,22 +22437,22 @@
     "options": [
       {
         "label": "A",
-        "text": "9√3"
-      },
-      {
-        "label": "B",
-        "text": "36"
-      },
-      {
-        "label": "C",
         "text": "9"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "6√3"
+      },
+      {
+        "label": "C",
+        "text": "9√3"
+      },
+      {
+        "label": "D",
+        "text": "36"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "A",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "In a 30°-60°-90° triangle the leg opposite the 30° angle is half the hypotenuse. Since KL is opposite ∠J = 30°, KL = 18/2 = 9 cm. The value 9√3 is the other leg, which is opposite the 60° angle.",
@@ -24949,18 +24949,18 @@
       },
       {
         "label": "B",
-        "text": "√674"
+        "text": "24"
       },
       {
         "label": "C",
-        "text": "24"
+        "text": "√674"
       },
       {
         "label": "D",
         "text": "32"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "explanation": "The ladder, wall, and ground form a right triangle with hypotenuse 25 and one leg 7. The height is √(25² − 7²) = √(625 − 49) = √576 = 24 feet. Subtracting 25 − 7 = 18 or adding the squares to get √674 both misuse the Pythagorean theorem.",
@@ -25125,18 +25125,18 @@
       },
       {
         "label": "B",
-        "text": "14√3"
-      },
-      {
-        "label": "C",
         "text": "7√2"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "7√3"
+      },
+      {
+        "label": "D",
+        "text": "14√3"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 3,
     "gradeBand": "8-12",
     "explanation": "In a 30°-60°-90° triangle, the shorter leg is half the hypotenuse, so it is 7, and the longer leg is √3 times the shorter leg, or 7√3. Choosing 7 stops at the shorter leg, and 7√2 mixes this up with the 45°-45°-90° ratio.",
@@ -25253,7 +25253,7 @@
     "options": [
       {
         "label": "A",
-        "text": "15"
+        "text": "√73"
       },
       {
         "label": "B",
@@ -25261,14 +25261,14 @@
       },
       {
         "label": "C",
-        "text": "√73"
+        "text": "3√17"
       },
       {
         "label": "D",
-        "text": "3√17"
+        "text": "15"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "C",
     "difficulty": 5,
     "gradeBand": "8-12",
     "explanation": "The hiker ends 8 + 4 = 12 kilometers north and 3 kilometers east of camp. The straight-line distance is √(12² + 3²) = √153 = 3√17 kilometers by the Pythagorean theorem. Adding all three legs gives 15, and using only the first two legs gives √73.",

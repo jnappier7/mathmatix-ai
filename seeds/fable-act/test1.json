@@ -368,7 +368,7 @@
    "category": "NQ",
    "modeling": false,
    "difficulty": 3,
-   "stem": "The 2×2 matrices A = [2 −1; 3 0] and B = [−4 5; 1 2] are written with their rows separated by semicolons. Which of the following is the matrix 2A + B?",
+   "stem": "Let A = [2 −1; 3 0] and B = [−4 5; 1 2] be 2×2 matrices. Which of the following is the matrix 2A + B?",
    "choices": [
     "[0 3; 7 2]",
     "[−4 8; 8 4]",
@@ -642,12 +642,12 @@
    "difficulty": 4,
    "stem": "Which of the following is equivalent to 10/(√7 − √2) ?",
    "choices": [
-    "√7 + √2",
     "2√7 − 2√2",
-    "10√7 + 10√2",
-    "2√7 + 2√2"
+    "√7 + √2",
+    "2√7 + 2√2",
+    "10√7 + 10√2"
    ],
-   "answer": 3,
+   "answer": 2,
    "explanation": "Multiply numerator and denominator by the conjugate √7 + √2: the denominator becomes 7 − 2 = 5, so the expression equals 10(√7 + √2)/5 = 2√7 + 2√2, choice J. Forgetting to divide by 5 gives choice H.",
    "verify": "import sympy as sp; print(sp.simplify(10/(sp.sqrt(7)-sp.sqrt(2)) - (2*sp.sqrt(7)+2*sp.sqrt(2))))",
    "figure_code": null,

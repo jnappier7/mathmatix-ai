@@ -122,3 +122,21 @@ describe('frozenPickForGrading', () => {
     expect(frozenPickForGrading('C', [], o('1', '2', '3', '4'))).toBe('C');
   });
 });
+
+// External audit 2026-10-07: Q12's choices were 5√3, 5/2, 5√2, 10. Radicals and
+// π were unreadable to the sorter, so the whole set was left as written.
+describe('choices with radicals and π sort by value', () => {
+  const { sortPermutation, exactValue } = require('../../utils/actChoiceOrder');
+  const order = (t) => { const p = sortPermutation(t); return p ? p.map((i) => t[i]) : t; };
+
+  test('the audit set', () => {
+    expect(order(['5√3', '5/2', '5√2', '10'])).toEqual(['5/2', '5√2', '5√3', '10']);
+  });
+  test('π and mixed radical expressions', () => {
+    expect(order(['12π', '6π', '36', '9π'])).toEqual(['6π', '9π', '36', '12π']);
+    expect(order(['3 + √5', '√2/2', '(√3)/2', '2'])).toEqual(['√2/2', '(√3)/2', '2', '3 + √5']);
+  });
+  test('anything else is never evaluated', () => {
+    ['x√2', '√', 'Math.PI', '2π; process.exit()', 'y = 2x'].forEach((t) => expect(exactValue(t)).toBeNull());
+  });
+});
