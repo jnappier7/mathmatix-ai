@@ -67,6 +67,7 @@
   .actt-cell.flag::after{content:"⚑";position:absolute;top:-9px;right:-7px;font-size:13px;line-height:16px;width:16px;height:16px;border-radius:50%;background:#fff;color:#e5484d;box-shadow:0 0 0 1px #f3c4c5}
   .actt-legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:#888;margin:10px 0 2px}
   .actt-center{padding:40px 18px;text-align:center;color:#555}
+  .actt-range{font-size:13px;font-weight:600;color:#6b5ca5;margin:2px 0 4px}
   .actt-score{font-size:64px;font-weight:800;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
   .actt-scorelab{font-size:13px;color:#888;letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
   .actt-sub{color:#666;margin:10px 0 20px;font-size:14px}
@@ -740,6 +741,14 @@
       }
     }
 
+    // "Likely range 21–25": a single sitting is an estimate, and saying so
+    // beside the number keeps a 23 from reading as a prediction.
+    _rangeHtml(r) {
+      const g = r && r.scaledRange;
+      if (!g || g.low == null || g.high == null || g.low === g.high) return '';
+      return `<div class="actt-range" title="Where your score would likely land on another sitting of this test. It is an estimate of ACT performance, not a prediction.">Likely range ${g.low}–${g.high}</div>`;
+    }
+
     // Score + category bars — the top of every results screen (signed-in,
     // guest, and claimed).
     _scoreHeadHtml(r) {
@@ -752,6 +761,7 @@
           <div class="actt-center" style="padding-bottom:12px">
             <div class="actt-score">${r.scaledScore != null ? r.scaledScore : '—'}</div>
             <div class="actt-scorelab">Estimated ACT Math score${r.scaledApproximate ? ' (approx.)' : ''}</div>
+            ${this._rangeHtml(r)}
             <div class="actt-sub">${r.rawScore}/${r.totalItems} correct · ${r.accuracy}%${r.durationMinutes != null ? ' · ' + r.durationMinutes + ' min' : ''}</div>
             ${r.plannedSkills ? `<div style="font-size:13px;color:#8b6fd6;margin-top:2px">✓ Your tutor will now focus on your ${r.plannedSkills} weakest skill${r.plannedSkills > 1 ? 's' : ''}.</div>` : ''}
           </div>

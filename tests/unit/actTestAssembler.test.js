@@ -334,3 +334,27 @@ describe('templates and near-copies', () => {
     expect(A.pickDiverse([copy, other], new Map(), 3, form).problemId).toBe(other.problemId);
   });
 });
+
+// "Treat its 1-36 score as a rough estimate" (external review, 2026-10-07):
+// results show the likely band, not just a point.
+describe('actTestAssembler.scaledRange', () => {
+  test('a mid-range sitting gets a band around its score', () => {
+    const r = A.scaledRange(26, 45);
+    const s = A.rawToScaled(26, undefined, 45).scaled;
+    expect(r.low).toBeLessThan(s);
+    expect(r.high).toBeGreaterThan(s);
+    expect(r.high - r.low).toBeLessThanOrEqual(8);
+  });
+  test('the band never leaves 1-36 and is ordered', () => {
+    for (let raw = 0; raw <= 45; raw++) {
+      const r = A.scaledRange(raw, 45);
+      expect(r.low).toBeGreaterThanOrEqual(1);
+      expect(r.high).toBeLessThanOrEqual(36);
+      expect(r.low).toBeLessThanOrEqual(r.high);
+    }
+  });
+  test('a bad input gives no band rather than a wrong one', () => {
+    expect(A.scaledRange(10, 0)).toBeNull();
+    expect(A.scaledRange(NaN, 45)).toBeNull();
+  });
+});

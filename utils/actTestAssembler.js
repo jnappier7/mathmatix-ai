@@ -645,7 +645,39 @@ function rawToScaled(raw, blueprint = DEFAULT_BLUEPRINT, formLength = null) {
   return { scaled: table[r], approximate: true, shortForm, formLength: usable, blueprintLength: full };
 }
 
+/**
+ * The likely band around an estimated score: what one 45-question sitting can
+ * actually say. A single number read as a prediction ("you're a 23"); the
+ * honest statement is a range (external review, 2026-10-07: "treat the 1-36
+ * score as a rough estimate").
+ *
+ * The raw score is a count of independent right/wrong answers, so its
+ * standard error is the binomial √(n·p·(1−p)). p is shrunk toward ½
+ * ((raw + 1) / (n + 2)) so a perfect or zero score still gets a band. The
+ * band is raw ± one standard error (about two in three sittings land inside
+ * it), mapped through the same conversion table as the score itself.
+ *
+ * This is measurement noise only. How well the scale predicts the REAL ACT
+ * is a separate question that needs paired official scores.
+ *
+ * @returns {{low:number, high:number}|null}
+ */
+function scaledRange(raw, total, blueprint = DEFAULT_BLUEPRINT) {
+  const n = Number(total);
+  if (!Number.isFinite(n) || n <= 0 || !Number.isFinite(Number(raw))) return null;
+  const p = (Number(raw) + 1) / (n + 2);
+  const se = Math.sqrt(n * p * (1 - p));
+  const at = (r) => {
+    const s = rawToScaled(Math.max(0, Math.min(n, r)), blueprint, n);
+    return s ? s.scaled : null;
+  };
+  const low = at(Math.floor(Number(raw) - se));
+  const high = at(Math.ceil(Number(raw) + se));
+  return low == null || high == null ? null : { low, high };
+}
+
 module.exports = {
+  scaledRange,
   assembleForm,
   buildSlots,
   skillPool,
