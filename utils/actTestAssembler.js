@@ -26,6 +26,7 @@ const { normalizeOptions } = require('./mcOptions');
 const { hasBadDistractors } = require('./distractorQuality');
 const { sortPermutation } = require('./actChoiceOrder');
 const { thetaToDifficultyExact } = require('./itemCalibration');
+const { estimatedDifficulty } = require('./actDifficultyEstimates');
 // models/problem (mongoose) is required lazily inside assembleForm so the pure
 // helpers (buildSlots / skillPool / rawToScaled) load without a DB connection.
 
@@ -258,6 +259,17 @@ function preciseDifficulty(problem) {
     return Math.round(thetaToDifficultyExact(Number(c.theta)) * 100) / 100;
   }
   if (!problem) return undefined;
+  // Next best: the content-based estimate on the Fable scale
+  // (utils/actDifficultyEstimates.js), which every bank has. The Fable bank
+  // was also rated item by item by its author, so there the two independent
+  // ratings are averaged (they agree only moderately, ρ ≈ 0.6, and two
+  // raters beat either alone). Elsewhere the authored rating is a position
+  // quota (IES) or per template (enhanced), so the estimate stands alone.
+  const est = estimatedDifficulty(problem.problemId);
+  if (est != null) {
+    const d = Number(problem.difficulty);
+    return problem.source === 'act-fable' && Number.isFinite(d) ? Math.round(((est + d) / 2) * 100) / 100 : est;
+  }
   // A bank whose authored ratings say little about the item gets its scale
   // narrowed until calibration measures it (blueprint.authoredScale). The IES
   // expansion rated by POSITION within each skill (items 1-4 → 1, 5-10 → 2,
