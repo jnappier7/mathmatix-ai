@@ -32,6 +32,11 @@ const SLUG = 'proof-scramble';
 beforeAll(async () => {
   mem = await MongoMemoryServer.create();
   await mongoose.connect(mem.getUri());
+  // The 409 on a repeat assign comes from the unique {classId, activitySlug}
+  // index, which mongoose builds in the background after connect. Under a
+  // loaded full-suite run the duplicate insert could land before the build
+  // finished and come back 201 — wait for it.
+  await ActivityAssignment.init();
 
   const router = require('../../routes/activities');
   app = express();
