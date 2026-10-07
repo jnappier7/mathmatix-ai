@@ -107,6 +107,7 @@ describe('the item bank can actually fill the blueprint', () => {
     ...read('seeds/act-enhanced/act-items.generated.json'),
     ...read('seeds/act-visual/act-visual-items.generated.json'),
     ...read('seeds/act-reasoning/act-reasoning-items.generated.json'),
+    ...read('seeds/act-sets/act-set-items.generated.json'),
   ];
   const skillToCat = {};
   Object.entries(blueprint.skillsByCategory).forEach(([cat, skills]) => {

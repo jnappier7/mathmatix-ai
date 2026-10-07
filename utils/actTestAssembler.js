@@ -260,6 +260,7 @@ function toClientItem(slot, problem) {
     // to agree with how compareAnswer resolves the pick on submit.
     options,
     difficulty: problem.difficulty,
+    ...(problem.setId ? { setId: problem.setId, setOrder: problem.setOrder } : {}),
   };
 }
 
@@ -499,8 +500,46 @@ async function assembleForm(opts = {}) {
     return seenPrints.some((f) => nearCopy(f, fp)) || formPrints.some((f) => nearCopy(f, fp));
   };
 
+  // Shared-stimulus sets: when a slot draws a set member, its siblings are
+  // RESERVED into later slots of their own categories (category counts never
+  // move); a reserved slot takes its sibling as-is. After ordering, the set
+  // is pulled together under one header (groupSets below).
+  const skillCat = {};
+  Object.entries(byCat).forEach(([c, ss]) => ss.forEach((sk) => { skillCat[sk] = c; }));
+  const reserved = new Map();   // slot index -> Problem doc
+  const place = (slot, problem) => {
+    if (isVisualItem(problem)) visuals += 1;
+    if (isReasoningItem(problem)) reasoning += 1;
+    quotas.forEach((q) => { if (q.member(problem)) q.count += 1; });
+    formPrints.push(fingerprint(problem));
+    precise.set(problem.problemId, preciseDifficulty(problem));
+    usedProblemIds.push(problem.problemId);
+    usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
+    items.push(toClientItem(slot, problem));
+  };
+  const reserveSiblings = async (problem, si) => {
+    const sibs = await Problem.find({
+      setId: problem.setId, isActive: true, answerType: 'multiple-choice',
+      problemId: { $nin: [...usedProblemIds, problem.problemId] }, ...FORM_SOURCE_FILTER,
+    }).lean();
+    sibs.sort((a, b) => (a.setOrder || 0) - (b.setOrder || 0));
+    for (const sib of sibs) {
+      if (isNearCopy(sib) || hasBadDistractors(sib)) continue;
+      const cat = skillCat[sib.skillId];
+      const j = slots.findIndex((sl, k) => k > si && !reserved.has(k) && sl.category === cat);
+      if (j >= 0) { reserved.set(j, sib); usedProblemIds.push(sib.problemId); }
+    }
+  };
+
   for (let si = 0; si < slots.length; si++) {
     const slot = slots[si];
+    if (reserved.has(si)) {
+      const sib = reserved.get(si);
+      usedProblemIds.splice(usedProblemIds.indexOf(sib.problemId), 1);   // place() re-adds it
+      slot.skillId = sib.skillId;
+      place(slot, sib);
+      continue;
+    }
     if (!slot.skillId) { gaps.push(toGenerationSpec(slot, blueprint)); continue; }
     let problem = null;
     try {
@@ -594,14 +633,10 @@ async function assembleForm(opts = {}) {
       problem = null;
     }
     if (!problem) { gaps.push(toGenerationSpec(slot, blueprint)); continue; }
-    if (isVisualItem(problem)) visuals += 1;
-    if (isReasoningItem(problem)) reasoning += 1;
-    quotas.forEach((q) => { if (q.member(problem)) q.count += 1; });
-    formPrints.push(fingerprint(problem));
-    precise.set(problem.problemId, preciseDifficulty(problem));
-    usedProblemIds.push(problem.problemId);
-    usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
-    items.push(toClientItem(slot, problem));
+    if (problem.setId) {
+      try { await reserveSiblings(problem, si); } catch { /* the item still stands alone */ }
+    }
+    place(slot, problem);
   }
 
   // Sequence the FILLED form by the items' own difficulty. The ramp above
@@ -612,7 +647,7 @@ async function assembleForm(opts = {}) {
   // ramps, and pacing is taught on that assumption — move fast early, bank
   // time for the end. Stable, so the category interleave survives within
   // each difficulty band.
-  const ordered = spreadFamilies(orderByDifficulty(items, (it) => precise.get(it.problemId)));
+  const ordered = groupSets(spreadFamilies(orderByDifficulty(items, (it) => precise.get(it.problemId))));
 
   return {
     items: ordered,
@@ -675,6 +710,34 @@ function spreadFamilies(items, lookAhead = 3) {
     }
   }
   return out.map((it, idx) => ({ ...it, position: idx + 1 }));
+}
+
+/**
+ * Pull each shared-stimulus set together, in its own order, at the position of
+ * its first member, and give every member the ACT's header:
+ * "Use the following information to answer questions 12–14." A set that only
+ * placed one member is an ordinary item. Positions are renumbered.
+ */
+function groupSets(items) {
+  const bySet = new Map();
+  (items || []).forEach((it) => { if (it.setId) (bySet.get(it.setId) || bySet.set(it.setId, []).get(it.setId)).push(it); });
+  const groups = new Map([...bySet].filter(([, m]) => m.length >= 2));
+  if (!groups.size) return items;
+  const out = [];
+  const done = new Set();
+  for (const it of items) {
+    if (!it.setId || !groups.has(it.setId)) { out.push(it); continue; }
+    if (done.has(it.setId)) continue;
+    done.add(it.setId);
+    groups.get(it.setId).slice().sort((a, b) => (a.setOrder || 0) - (b.setOrder || 0)).forEach((m) => out.push(m));
+  }
+  const renumbered = out.map((it, idx) => ({ ...it, position: idx + 1 }));
+  for (const [setId] of groups) {
+    const pos = renumbered.filter((it) => it.setId === setId).map((it) => it.position);
+    const header = `Use the following information to answer questions ${pos[0]}–${pos[pos.length - 1]}.`;
+    renumbered.forEach((it) => { if (it.setId === setId) it.content = `${header}\n\n${it.content}`; });
+  }
+  return renumbered;
 }
 
 /**
@@ -778,6 +841,7 @@ module.exports = {
   pickDiverse,
   orderByDifficulty,
   spreadFamilies,
+  groupSets,
   familiesOf,
   preciseDifficulty,
   NOT_ON_FORMS,

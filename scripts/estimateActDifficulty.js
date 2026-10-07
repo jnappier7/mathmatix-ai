@@ -46,6 +46,7 @@ const BANK_FILES = {
   enhanced: 'seeds/act-enhanced/act-items.generated.json',
   visual: 'seeds/act-visual/act-visual-items.generated.json',
   reasoning: 'seeds/act-reasoning/act-reasoning-items.generated.json',
+  sets: 'seeds/act-sets/act-set-items.generated.json',
 };
 
 const args = process.argv.slice(2);
