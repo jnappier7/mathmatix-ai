@@ -34,6 +34,7 @@ const BANKS = [
   ['act-ies-expansion', 'seeds/act-ies-expansion/ies-items.generated.json'],
   ['act-enhanced', 'seeds/act-enhanced/act-items.generated.json'],
   ['act-visual', 'seeds/act-visual/act-visual-items.generated.json'],
+  ['act-reasoning', 'seeds/act-reasoning/act-reasoning-items.generated.json'],
 ];
 
 function loadItems(rel) {

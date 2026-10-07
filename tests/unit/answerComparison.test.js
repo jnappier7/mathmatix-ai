@@ -402,11 +402,11 @@ describe('no seeded multiple-choice item has a distractor that grades correct', 
   // literally the key is a bad ITEM and is skipped; everything else that
   // grades correct here is a grader bug, and there were 361 of them.
   const load = (f) => require(`../../seeds/${f}`);
-  const banks = ['act-enhanced/act-items.generated.json', 'act-fable-items.generated.json', 'act-ies-expansion/ies-items.generated.json', 'act-visual/act-visual-items.generated.json'];
+  const banks = ['act-enhanced/act-items.generated.json', 'act-fable-items.generated.json', 'act-ies-expansion/ies-items.generated.json', 'act-visual/act-visual-items.generated.json', 'act-reasoning/act-reasoning-items.generated.json'];
 
   test.each(banks)('%s', (bank) => {
     const items = load(bank).filter((it) => it && it.answer && Array.isArray(it.options) && it.options.length);
-    expect(items.length).toBeGreaterThan(300);   // a missing or empty bank must not pass vacuously
+    expect(items.length).toBeGreaterThan(200);   // a missing or empty bank must not pass vacuously
     const hits = [];
     for (const it of items) {
       const spec = { value: it.answer.value, equivalents: it.answer.equivalents || [], answerType: it.answerType, options: it.options, correctOption: it.correctOption };

@@ -109,6 +109,22 @@ const VISUAL_FILTER = { $or: [{ svg: { $nin: [null, ''] } }, { prompt: TABLE_STE
 const PLAIN_FILTER = { $nor: [{ svg: { $nin: [null, ''] } }, { prompt: TABLE_STEM }] };
 const isVisualItem = (p) => !!(p && (p.svg || TABLE_STEM.test(String(p.prompt || ''))));
 
+/**
+ * A multi-step reasoning item (seeds/act-reasoning): tagged `reasoning` by
+ * scripts/generateActReasoningItems.js. Paced like visuals
+ * (blueprint.reasoningTarget) because the bank is a small share of the pool,
+ * and unpaced a form drew anywhere from 0 to 6 of them.
+ */
+const REASONING_FILTER = { tags: 'reasoning' };
+const NOT_REASONING_FILTER = { tags: { $ne: 'reasoning' } };
+const isReasoningItem = (p) => !!(p && Array.isArray(p.tags) && p.tags.includes('reasoning'));
+
+/** What each paced kind of item is, and how to ask the DB for it or for anything else. */
+const PACED_KINDS = {
+  visual: { member: isVisualItem, filter: VISUAL_FILTER, notFilter: PLAIN_FILTER },
+  reasoning: { member: isReasoningItem, filter: REASONING_FILTER, notFilter: NOT_REASONING_FILTER },
+};
+
 function hashSeed(str) {
   let h = 2166136261 >>> 0;
   for (let i = 0; i < str.length; i++) {
@@ -392,15 +408,18 @@ async function assembleForm(opts = {}) {
   const gaps = [];
   const precise = new Map();          // problemId -> measured-or-authored difficulty, for ordering
 
-  // Visual pacing (blueprint.visualTarget = { min, max }). After slot i the
-  // form should hold about min × (i + 1) / n visual items. A slot that finds
-  // the form behind that pace looks for a visual candidate on its own skill
-  // first; one that finds it two or more behind may take a visual item from
-  // any skill in its CATEGORY (category counts — what the scaled score
-  // depends on — never move). Once the form holds max, visual candidates are
-  // passed over while a plain one exists. No target: no change at all.
-  const vt = blueprint.visualTarget || null;
-  let visuals = 0;
+  // Pacing (blueprint.visualTarget, blueprint.reasoningTarget = { min, max }).
+  // After slot i the form should hold about min × (i + 1) / n of each paced
+  // kind. A slot that finds the form behind that pace looks for one on its own
+  // skill first — the kind furthest behind first; one that finds it two or
+  // more behind (or out of slots to catch up in) may take one from any skill
+  // in its CATEGORY (category counts — what the scaled score depends on —
+  // never move). A kind at its max is passed over while anything else exists.
+  // No targets: no change at all.
+  const quotas = [['visual', blueprint.visualTarget], ['reasoning', blueprint.reasoningTarget]]
+    .filter(([, t]) => t && Number.isFinite(t.min))
+    .map(([key, t]) => ({ key, ...PACED_KINDS[key], min: t.min, max: Number.isFinite(t.max) ? t.max : Infinity, count: 0 }));
+  let visuals = 0, reasoning = 0;
 
   // Near-copies: what the student has already seen (by content, not just id)
   // and what this form already holds. See nearCopy above.
@@ -440,33 +459,38 @@ async function assembleForm(opts = {}) {
         ...FORM_SOURCE_FILTER,
       };
       let candidates = [];
-      const due = vt ? Math.ceil((vt.min * (si + 1)) / slots.length) : 0;
-      if (vt && visuals < due) {
-        candidates = await drawPool(Problem, { ...inWindow, skillId: slot.skillId, ...VISUAL_FILTER }, rng, 8);
+      const { difficulty: _anyD, ...anyDifficulty } = inWindow;
+      const catSkills = byCat[slot.category] || [];
+      // Kinds already at their max are kept out of every paced draw.
+      const capped = quotas.filter((q) => q.count >= q.max);
+      const avoidCapped = capped.length ? capped.map((q) => q.notFilter) : [];
+      const query = (base, extra) => ({ ...base, ...(extra.length ? { $and: extra } : {}) });
+      const behind = quotas
+        .map((q) => ({ q, due: Math.ceil((q.min * (si + 1)) / slots.length) }))
+        .filter(({ q, due }) => q.count < due && q.count < q.max)
+        .sort((a, b) => (b.due - b.q.count) - (a.due - a.q.count));
+      for (const { q, due } of behind) {
+        const want = [q.filter, ...avoidCapped];
+        candidates = await drawPool(Problem, query({ ...inWindow, skillId: slot.skillId }, want), rng, 8);
         // Urgent: two or more behind pace, or so few slots left that the
         // shortfall must be made up now. Then any skill in the category will
         // do, and as a last resort any difficulty.
-        const short = vt.min - visuals;
-        const urgent = visuals < due - 1 || (short > 0 && slots.length - si <= short + 3);
-        const catSkills = byCat[slot.category] || [];
+        const short = q.min - q.count;
+        const urgent = q.count < due - 1 || (short > 0 && slots.length - si <= short + 3);
         if (!candidates.length && urgent && catSkills.length) {
-          candidates = await drawPool(Problem, { ...inWindow, skillId: { $in: catSkills }, ...VISUAL_FILTER }, rng, 8);
-          if (!candidates.length) {
-            const { difficulty: _ignored, ...anyDifficulty } = inWindow;
-            candidates = await drawPool(Problem, { ...anyDifficulty, skillId: { $in: catSkills }, ...VISUAL_FILTER }, rng, 8);
-          }
+          candidates = await drawPool(Problem, query({ ...inWindow, skillId: { $in: catSkills } }, want), rng, 8);
+          if (!candidates.length) candidates = await drawPool(Problem, query({ ...anyDifficulty, skillId: { $in: catSkills } }, want), rng, 8);
         }
+        if (candidates.length) break;
       }
-      // At the cap, ask for plain items in the query itself (filtering a
-      // drawn pool afterwards let a visual-heavy pool slip a 13th through).
-      // When only visual items are left in this skill's window, a plain item
-      // at another difficulty, then one from the same category, beats a 13th.
-      if (!candidates.length && vt && visuals >= vt.max) {
-        const { difficulty: _d, ...anyDifficulty } = inWindow;
-        const catSkills = byCat[slot.category] || [];
-        candidates = await drawPool(Problem, { ...inWindow, skillId: slot.skillId, ...PLAIN_FILTER }, rng, 16);
-        if (!candidates.length) candidates = await drawPool(Problem, { ...anyDifficulty, skillId: slot.skillId, ...PLAIN_FILTER }, rng, 16);
-        if (!candidates.length && catSkills.length) candidates = await drawPool(Problem, { ...inWindow, skillId: { $in: catSkills }, ...PLAIN_FILTER }, rng, 16);
+      // A capped kind is asked to stay out in the query itself (filtering a
+      // drawn pool afterwards let a 13th visual slip through). When only
+      // capped items are left in this skill's window, an uncapped item at
+      // another difficulty, then one from the same category, beats going over.
+      if (!candidates.length && capped.length) {
+        candidates = await drawPool(Problem, query({ ...inWindow, skillId: slot.skillId }, avoidCapped), rng, 16);
+        if (!candidates.length) candidates = await drawPool(Problem, query({ ...anyDifficulty, skillId: slot.skillId }, avoidCapped), rng, 16);
+        if (!candidates.length && catSkills.length) candidates = await drawPool(Problem, query({ ...inWindow, skillId: { $in: catSkills } }, avoidCapped), rng, 16);
       }
       if (!candidates.length) {
         candidates = await drawPool(Problem, { ...inWindow, skillId: slot.skillId }, rng, 16);
@@ -507,6 +531,8 @@ async function assembleForm(opts = {}) {
     }
     if (!problem) { gaps.push(toGenerationSpec(slot)); continue; }
     if (isVisualItem(problem)) visuals += 1;
+    if (isReasoningItem(problem)) reasoning += 1;
+    quotas.forEach((q) => { if (q.member(problem)) q.count += 1; });
     formPrints.push(fingerprint(problem));
     precise.set(problem.problemId, preciseDifficulty(problem));
     usedProblemIds.push(problem.problemId);
@@ -534,6 +560,7 @@ async function assembleForm(opts = {}) {
       pct: slots.length ? Math.round((items.length / slots.length) * 100) : 0,
       excluded: excludedCount,   // items withheld as already-seen (re-test freshness)
       visuals,                   // items answered from a figure or table
+      reasoning,                 // multi-step reasoning items
     },
     meta: {
       testId: blueprint.testId,
@@ -690,6 +717,8 @@ module.exports = {
   familiesOf,
   preciseDifficulty,
   NOT_ON_FORMS,
+  isVisualItem,
+  isReasoningItem,
   templateTokens,
   fingerprint,
   sameTemplate,
