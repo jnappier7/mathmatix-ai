@@ -10074,5 +10074,7045 @@
   "source": "act-reasoning-2026-10",
   "contentHash": "f6f333be885ccce14807cd1eb2d52c54372a50361558eda23d1a608c287b8546",
   "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-01",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (-4, -1). Which of the following points must lie on the graph of y = 3f(x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(-4, -3)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(-12, -1)"
+   },
+   {
+    "label": "B",
+    "text": "(-4, -3)"
+   },
+   {
+    "label": "C",
+    "text": "(-4, -2)"
+   },
+   {
+    "label": "D",
+    "text": "(-4, 2)"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "3f(x) multiplies every output by 3 and leaves the inputs alone: (-4, -1) becomes (-4, -3). Wrong choices: (-12, -1) applies the factor to the input instead of the output; (-4, 2) adds 3 to the output instead of multiplying; (-4, -2) misses a step while scaling the output.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "cb7129f30cef7e8ad9e6beea69dc60cb9730b80333abeb69ae14fa5766e30bee",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-02",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (4, 5). Which of the following points must lie on the graph of y = f(-x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(-4, 5)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(4, -5)"
+   },
+   {
+    "label": "B",
+    "text": "(-4, 5)"
+   },
+   {
+    "label": "C",
+    "text": "(-4, -5)"
+   },
+   {
+    "label": "D",
+    "text": "(5, 4)"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "f(−x) feeds in the opposite input, so the point at x = 4 appears at x = -4: (-4, 5). That reflects the graph across the y-axis. Wrong choices: (4, -5) reflects across the x-axis instead of the y-axis; (-4, -5) reflects across both axes; (5, 4) swaps the coordinates, which reflects across y = x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "cfb5c3a837c0073f972e8af1c3223d5fc3fc25b4d5333462bb0b747ee9c78825",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-03",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (-4, 5). Which of the following points must lie on the graph of y = -f(x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(-4, -5)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(4, -5)"
+   },
+   {
+    "label": "B",
+    "text": "(-4, -5)"
+   },
+   {
+    "label": "C",
+    "text": "(4, 5)"
+   },
+   {
+    "label": "D",
+    "text": "(5, -4)"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "−f(x) negates every output: (-4, 5) becomes (-4, -5), a reflection across the x-axis. Wrong choices: (4, 5) reflects across the y-axis instead of the x-axis; (4, -5) reflects across both axes; (5, -4) swaps the coordinates, which reflects across y = x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "32e6608d1a79c2ba8fde2d2f12f4ad3cb9037fb27b69997f5e7b530499890cf2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-04",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (-4, 3). Which of the following points must lie on the graph of y = f(2x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(-2, 3)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(-2, 1.5)"
+   },
+   {
+    "label": "B",
+    "text": "(-8, 3)"
+   },
+   {
+    "label": "C",
+    "text": "(-2, 3)"
+   },
+   {
+    "label": "D",
+    "text": "(-4, 6)"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "On y = f(2x), the output 3 comes from an input where 2x = -4, so x = -2. The point (-4, 3) moves to (-2, 3): the graph is compressed horizontally by a factor of 2. Wrong choices: (-8, 3) stretches horizontally; f(2x) COMPRESSES the graph toward the y-axis; (-4, 6) applies the factor to the output instead of the input; (-2, 1.5) divides both coordinates.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b7425f1c55ee632fac1e0d8bc659c4997ac6d9e5ec4000fad6366c3cdebecc85",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-05",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (-4, 5). Which of the following points must lie on the graph of y = f(-x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(4, 5)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(4, 5)"
+   },
+   {
+    "label": "B",
+    "text": "(-4, -5)"
+   },
+   {
+    "label": "C",
+    "text": "(5, -4)"
+   },
+   {
+    "label": "D",
+    "text": "(4, -5)"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "f(−x) feeds in the opposite input, so the point at x = -4 appears at x = 4: (4, 5). That reflects the graph across the y-axis. Wrong choices: (-4, -5) reflects across the x-axis instead of the y-axis; (4, -5) reflects across both axes; (5, -4) swaps the coordinates, which reflects across y = x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e2fb2b4e14544e9906e621e933110d16ecd7cfcf4415e3cf3ccdb48f43c44359",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-06",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (-4, -5). Which of the following points must lie on the graph of y = f(-x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(4, -5)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(-5, -4)"
+   },
+   {
+    "label": "B",
+    "text": "(4, -5)"
+   },
+   {
+    "label": "C",
+    "text": "(4, 5)"
+   },
+   {
+    "label": "D",
+    "text": "(-4, 5)"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "f(−x) feeds in the opposite input, so the point at x = -4 appears at x = 4: (4, -5). That reflects the graph across the y-axis. Wrong choices: (-4, 5) reflects across the x-axis instead of the y-axis; (4, 5) reflects across both axes; (-5, -4) swaps the coordinates, which reflects across y = x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e00d517bb9768eae18c191e53cca05b5b0ac969808d9c948e0bec4ed29215147",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-07",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (-6, 3). Which of the following points must lie on the graph of y = f(-x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(6, 3)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(-6, -3)"
+   },
+   {
+    "label": "B",
+    "text": "(6, -3)"
+   },
+   {
+    "label": "C",
+    "text": "(3, -6)"
+   },
+   {
+    "label": "D",
+    "text": "(6, 3)"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "f(−x) feeds in the opposite input, so the point at x = -6 appears at x = 6: (6, 3). That reflects the graph across the y-axis. Wrong choices: (-6, -3) reflects across the x-axis instead of the y-axis; (6, -3) reflects across both axes; (3, -6) swaps the coordinates, which reflects across y = x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "bfd6ea22bb2b40ba3dee20d3c7df9777bd7176b4fe2cb1dfba12d42de56c36f7",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-08",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (8, 7). Which of the following points must lie on the graph of y = f(-x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(-8, 7)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(7, 8)"
+   },
+   {
+    "label": "B",
+    "text": "(-8, 7)"
+   },
+   {
+    "label": "C",
+    "text": "(-8, -7)"
+   },
+   {
+    "label": "D",
+    "text": "(8, -7)"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "f(−x) feeds in the opposite input, so the point at x = 8 appears at x = -8: (-8, 7). That reflects the graph across the y-axis. Wrong choices: (8, -7) reflects across the x-axis instead of the y-axis; (-8, -7) reflects across both axes; (7, 8) swaps the coordinates, which reflects across y = x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "08c3a08629c650dad58c864e407dc7c03e8cd19b1698ca261b1602f9712cb37f",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-09",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (-6, -3). Which of the following points must lie on the graph of y = 3f(x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(-6, -9)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(-18, -3)"
+   },
+   {
+    "label": "B",
+    "text": "(-2, -3)"
+   },
+   {
+    "label": "C",
+    "text": "(-6, 0)"
+   },
+   {
+    "label": "D",
+    "text": "(-6, -9)"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "3f(x) multiplies every output by 3 and leaves the inputs alone: (-6, -3) becomes (-6, -9). Wrong choices: (-18, -3) applies the factor to the input instead of the output; (-6, 0) adds 3 to the output instead of multiplying; (-2, -3) treats 3f(x) like f(3x).",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "083b7261299a37be6d2f882ab366e21e341b2d16f2137562426c31269e3d0b78",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-10",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (-4, 7). Which of the following points must lie on the graph of y = 2f(x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(-4, 14)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(-8, 7)"
+   },
+   {
+    "label": "B",
+    "text": "(-4, 9)"
+   },
+   {
+    "label": "C",
+    "text": "(-4, 14)"
+   },
+   {
+    "label": "D",
+    "text": "(-2, 7)"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "2f(x) multiplies every output by 2 and leaves the inputs alone: (-4, 7) becomes (-4, 14). Wrong choices: (-8, 7) applies the factor to the input instead of the output; (-4, 9) adds 2 to the output instead of multiplying; (-2, 7) treats 2f(x) like f(2x).",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "9933a85cc54f61da253bacb458a7b4c8eb74cf24b9c31fd76c3db8539f56818b",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-11",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (8, 1). Which of the following points must lie on the graph of y = f(x - 4) - 2?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(12, -1)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(12, 3)"
+   },
+   {
+    "label": "B",
+    "text": "(4, -1)"
+   },
+   {
+    "label": "C",
+    "text": "(4, 3)"
+   },
+   {
+    "label": "D",
+    "text": "(12, -1)"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Inside, x - 4 shifts the graph right 4; outside, − 2 shifts it down 2. (8, 1) moves to (12, -1). Wrong choices: (4, -1) moves the graph the wrong way horizontally: x − h shifts RIGHT by h; (12, 3) moves it the wrong way vertically; (4, 3) reverses both shifts.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "829c898218cfda738cccb6353650c99018467aee7c47a4be990c7c69fda713b9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-12",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (8, 1). Which of the following points must lie on the graph of y = f(2x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(4, 1)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(16, 1)"
+   },
+   {
+    "label": "B",
+    "text": "(4, 1)"
+   },
+   {
+    "label": "C",
+    "text": "(4, 0.5)"
+   },
+   {
+    "label": "D",
+    "text": "(8, 2)"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "On y = f(2x), the output 1 comes from an input where 2x = 8, so x = 4. The point (8, 1) moves to (4, 1): the graph is compressed horizontally by a factor of 2. Wrong choices: (16, 1) stretches horizontally; f(2x) COMPRESSES the graph toward the y-axis; (8, 2) applies the factor to the output instead of the input; (4, 0.5) divides both coordinates.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "637171513909013529cd5cd908277b8fef227afcdcb1a07e53d3ce1625c9f091",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-13",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (8, -5). Which of the following points must lie on the graph of y = f(-x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(-8, -5)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(8, 5)"
+   },
+   {
+    "label": "B",
+    "text": "(-5, 8)"
+   },
+   {
+    "label": "C",
+    "text": "(-8, 5)"
+   },
+   {
+    "label": "D",
+    "text": "(-8, -5)"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "f(−x) feeds in the opposite input, so the point at x = 8 appears at x = -8: (-8, -5). That reflects the graph across the y-axis. Wrong choices: (8, 5) reflects across the x-axis instead of the y-axis; (-8, 5) reflects across both axes; (-5, 8) swaps the coordinates, which reflects across y = x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "323927b6d82d36b8129fffb0452ad2ee28e128c7296fc3f79c89f902c35276e0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-transform-point-14",
+  "skillId": "act-graph-transformations",
+  "prompt": "The graph of y = f(x) passes through the point (2, -1). Which of the following points must lie on the graph of y = f(-x)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "(-2, -1)",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "(-2, -1)"
+   },
+   {
+    "label": "B",
+    "text": "(2, 1)"
+   },
+   {
+    "label": "C",
+    "text": "(-1, 2)"
+   },
+   {
+    "label": "D",
+    "text": "(-2, 1)"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "f(−x) feeds in the opposite input, so the point at x = 2 appears at x = -2: (-2, -1). That reflects the graph across the y-axis. Wrong choices: (2, 1) reflects across the x-axis instead of the y-axis; (-2, 1) reflects across both axes; (-1, 2) swaps the coordinates, which reflects across y = x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:transform-point"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "c0e73e48f34884ae46900eea0fa6a951a68d12c81aa5d8bdc0dc0320bbe23245",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-01",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (6 + 18i)/(3 - 3i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-2 + 4i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-2 + 4i"
+   },
+   {
+    "label": "B",
+    "text": "2 - 6i"
+   },
+   {
+    "label": "C",
+    "text": "-2 - 4i"
+   },
+   {
+    "label": "D",
+    "text": "-36 + 72i"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 3 + 3i. The denominator becomes 3² + (-3)² = 18, and the numerator (6 + 18i)(3 + 3i) = -36 + 72i. Divide by 18: -2 + 4i. Wrong choices: -2 - 4i multiplies by the conjugate but drops a sign in the imaginary part; -36 + 72i multiplies by the conjugate and forgets to divide by 3² + -3² = 18; 2 - 6i divides real by real and imaginary by imaginary, which is not how division works.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "57766e2ef4ce386396e8a46e2a4dc0473c7ab5544dc38742d2f3f3569b641dd0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-02",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (19 + 7i)/(3 - i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5 + 4i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "50 + 40i"
+   },
+   {
+    "label": "B",
+    "text": "4 + 5i"
+   },
+   {
+    "label": "C",
+    "text": "5 - 4i"
+   },
+   {
+    "label": "D",
+    "text": "5 + 4i"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 3 + i. The denominator becomes 3² + (-1)² = 10, and the numerator (19 + 7i)(3 + i) = 50 + 40i. Divide by 10: 5 + 4i. Wrong choices: 5 - 4i multiplies by the conjugate but drops a sign in the imaginary part; 50 + 40i multiplies by the conjugate and forgets to divide by 3² + -1² = 10; 4 + 5i swaps the real and imaginary parts.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e58c3204fcf2fb581aaecf1d9761710e906fccefde8d5504059141402ad89ebb",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-03",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (9 + 3i)/(3 - 3i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1 + 2i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1 + 2i"
+   },
+   {
+    "label": "B",
+    "text": "1 - 2i"
+   },
+   {
+    "label": "C",
+    "text": "3 - i"
+   },
+   {
+    "label": "D",
+    "text": "18 + 36i"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 3 + 3i. The denominator becomes 3² + (-3)² = 18, and the numerator (9 + 3i)(3 + 3i) = 18 + 36i. Divide by 18: 1 + 2i. Wrong choices: 1 - 2i multiplies by the conjugate but drops a sign in the imaginary part; 18 + 36i multiplies by the conjugate and forgets to divide by 3² + -3² = 18; 3 - i divides real by real and imaginary by imaginary, which is not how division works.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "592c06b8b8011d9ad70e646208445c7b73d394e7a80931839e0c7d36d5c5011e",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-04",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (8 - 2i)/(1 - i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5 + 3i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8 + 2i"
+   },
+   {
+    "label": "B",
+    "text": "5 + 3i"
+   },
+   {
+    "label": "C",
+    "text": "10 + 6i"
+   },
+   {
+    "label": "D",
+    "text": "5 - 3i"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 1 + i. The denominator becomes 1² + (-1)² = 2, and the numerator (8 - 2i)(1 + i) = 10 + 6i. Divide by 2: 5 + 3i. Wrong choices: 5 - 3i multiplies by the conjugate but drops a sign in the imaginary part; 10 + 6i multiplies by the conjugate and forgets to divide by 1² + -1² = 2; 8 + 2i divides real by real and imaginary by imaginary, which is not how division works.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d5bcf67044e161a18b9e9f74f912c015faab621318d402575e3c3779973fc2ca",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-05",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (17 + 6i)/(4 - 3i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2 + 3i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3 + 2i"
+   },
+   {
+    "label": "B",
+    "text": "50 + 75i"
+   },
+   {
+    "label": "C",
+    "text": "2 + 3i"
+   },
+   {
+    "label": "D",
+    "text": "2 - 3i"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 4 + 3i. The denominator becomes 4² + (-3)² = 25, and the numerator (17 + 6i)(4 + 3i) = 50 + 75i. Divide by 25: 2 + 3i. Wrong choices: 2 - 3i multiplies by the conjugate but drops a sign in the imaginary part; 50 + 75i multiplies by the conjugate and forgets to divide by 4² + -3² = 25; 3 + 2i swaps the real and imaginary parts.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2921525091ac21a2231dab7b92460c0d3b013803d3703a2d820b2c13060b5f30",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-06",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (18 - i)/(4 - 3i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3 + 2i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2 + 3i"
+   },
+   {
+    "label": "B",
+    "text": "75 + 50i"
+   },
+   {
+    "label": "C",
+    "text": "3 - 2i"
+   },
+   {
+    "label": "D",
+    "text": "3 + 2i"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 4 + 3i. The denominator becomes 4² + (-3)² = 25, and the numerator (18 - i)(4 + 3i) = 75 + 50i. Divide by 25: 3 + 2i. Wrong choices: 3 - 2i multiplies by the conjugate but drops a sign in the imaginary part; 75 + 50i multiplies by the conjugate and forgets to divide by 4² + -3² = 25; 2 + 3i swaps the real and imaginary parts.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "48d67dece67a41af90296fd537cfdd2769c4e69cb7705abf7551d089b26dc396",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-07",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (-3 - 11i)/(3 + i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-2 - 3i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-20 - 30i"
+   },
+   {
+    "label": "B",
+    "text": "-2 - 3i"
+   },
+   {
+    "label": "C",
+    "text": "-1 - 11i"
+   },
+   {
+    "label": "D",
+    "text": "-2 + 3i"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 3 - i. The denominator becomes 3² + 1² = 10, and the numerator (-3 - 11i)(3 - i) = -20 - 30i. Divide by 10: -2 - 3i. Wrong choices: -2 + 3i multiplies by the conjugate but drops a sign in the imaginary part; -20 - 30i multiplies by the conjugate and forgets to divide by 3² + 1² = 10; -1 - 11i divides real by real and imaginary by imaginary, which is not how division works.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "7cb9c4f672bcc45ae3f30e8e45ae622e539471bb49501419f9ddef4e155918d2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-08",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (10i)/(3 + i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1 + 3i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "10i"
+   },
+   {
+    "label": "B",
+    "text": "1 - 3i"
+   },
+   {
+    "label": "C",
+    "text": "1 + 3i"
+   },
+   {
+    "label": "D",
+    "text": "10 + 30i"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 3 - i. The denominator becomes 3² + 1² = 10, and the numerator (10i)(3 - i) = 10 + 30i. Divide by 10: 1 + 3i. Wrong choices: 1 - 3i multiplies by the conjugate but drops a sign in the imaginary part; 10 + 30i multiplies by the conjugate and forgets to divide by 3² + 1² = 10; 10i divides real by real and imaginary by imaginary, which is not how division works.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f34dd4682fd3402845e799e08c74cddea68b0c3a726a8fe0f45de0ef7df0a1f2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-09",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (8 - 12i)/(2 - 2i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5 - i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4 + 6i"
+   },
+   {
+    "label": "B",
+    "text": "5 - i"
+   },
+   {
+    "label": "C",
+    "text": "5 + i"
+   },
+   {
+    "label": "D",
+    "text": "40 - 8i"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 2 + 2i. The denominator becomes 2² + (-2)² = 8, and the numerator (8 - 12i)(2 + 2i) = 40 - 8i. Divide by 8: 5 - i. Wrong choices: 5 + i multiplies by the conjugate but drops a sign in the imaginary part; 40 - 8i multiplies by the conjugate and forgets to divide by 2² + -2² = 8; 4 + 6i divides real by real and imaginary by imaginary, which is not how division works.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "fbb779d95b8e361fa4524e9c3c9598032ce3233dd5b40335952e2013b823e38d",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-10",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (5 + 10i)/(4 + 3i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2 + i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1 + 2i"
+   },
+   {
+    "label": "B",
+    "text": "2 + i"
+   },
+   {
+    "label": "C",
+    "text": "50 + 25i"
+   },
+   {
+    "label": "D",
+    "text": "2 - i"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 4 - 3i. The denominator becomes 4² + 3² = 25, and the numerator (5 + 10i)(4 - 3i) = 50 + 25i. Divide by 25: 2 + i. Wrong choices: 2 - i multiplies by the conjugate but drops a sign in the imaginary part; 50 + 25i multiplies by the conjugate and forgets to divide by 4² + 3² = 25; 1 + 2i swaps the real and imaginary parts.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ecc46d7ae829eb57552793a17d5181e0d7824899e3948e6c2e25ac2cd4613b16",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-11",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (19 + 9i)/(2 + 3i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5 - 3i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "65 - 39i"
+   },
+   {
+    "label": "B",
+    "text": "5 + 3i"
+   },
+   {
+    "label": "C",
+    "text": "5 - 3i"
+   },
+   {
+    "label": "D",
+    "text": "-3 + 5i"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 2 - 3i. The denominator becomes 2² + 3² = 13, and the numerator (19 + 9i)(2 - 3i) = 65 - 39i. Divide by 13: 5 - 3i. Wrong choices: 5 + 3i multiplies by the conjugate but drops a sign in the imaginary part; 65 - 39i multiplies by the conjugate and forgets to divide by 2² + 3² = 13; -3 + 5i swaps the real and imaginary parts.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f5cdc396be6e86047aba8f2a5a768cf9108a93976cead42d2b33f89032f68d86",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-12",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (-5 - 15i)/(3 + i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-3 - 4i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-30 - 40i"
+   },
+   {
+    "label": "B",
+    "text": "-4 - 3i"
+   },
+   {
+    "label": "C",
+    "text": "-3 - 4i"
+   },
+   {
+    "label": "D",
+    "text": "-3 + 4i"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 3 - i. The denominator becomes 3² + 1² = 10, and the numerator (-5 - 15i)(3 - i) = -30 - 40i. Divide by 10: -3 - 4i. Wrong choices: -3 + 4i multiplies by the conjugate but drops a sign in the imaginary part; -30 - 40i multiplies by the conjugate and forgets to divide by 3² + 1² = 10; -4 - 3i swaps the real and imaginary parts.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e24a7975fe6a4999dab0d15d29c20b96b7ac4982996c769695bea695f11792b4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-13",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (-5i)/(2 - i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1 - 2i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5i"
+   },
+   {
+    "label": "B",
+    "text": "1 + 2i"
+   },
+   {
+    "label": "C",
+    "text": "1 - 2i"
+   },
+   {
+    "label": "D",
+    "text": "5 - 10i"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 2 + i. The denominator becomes 2² + (-1)² = 5, and the numerator (-5i)(2 + i) = 5 - 10i. Divide by 5: 1 - 2i. Wrong choices: 1 + 2i multiplies by the conjugate but drops a sign in the imaginary part; 5 - 10i multiplies by the conjugate and forgets to divide by 2² + -1² = 5; 5i divides real by real and imaginary by imaginary, which is not how division works.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "419209f81f4d16ac10e34490d4da13fff7647b2c440730b5e25e0d7ffcf9e104",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-complex-division-14",
+  "skillId": "act-complex-numbers",
+  "prompt": "For i = √(−1), which of the following is equal to (-3 - 9i)/(1 - 2i)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3 - 3i",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-3 + 3i"
+   },
+   {
+    "label": "B",
+    "text": "3 - 3i"
+   },
+   {
+    "label": "C",
+    "text": "15 - 15i"
+   },
+   {
+    "label": "D",
+    "text": "3 + 3i"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Multiply top and bottom by the conjugate, 1 + 2i. The denominator becomes 1² + (-2)² = 5, and the numerator (-3 - 9i)(1 + 2i) = 15 - 15i. Divide by 5: 3 - 3i. Wrong choices: 3 + 3i multiplies by the conjugate but drops a sign in the imaginary part; 15 - 15i multiplies by the conjugate and forgets to divide by 1² + -2² = 5; -3 + 3i swaps the real and imaginary parts.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:complex-division"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "28038c591796cb411994a2294e5e3f06b4ea831075d349fe8248ea4fa0caa6c8",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-01",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_2(x) + log_2(x - 14) = 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-2"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "16"
+   },
+   {
+    "label": "D",
+    "text": "32"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_2(x(x − 14)) = 5, so x(x − 14) = 2^5 = 32. Then x² − 14x − 32 = 0 has roots 16 and -2. Only 16 keeps both x and x − 14 positive, so x = 16. Wrong choices: -2 solves x(x − 14) = 32 but keeps the negative root; a logarithm of a negative number is undefined; 32 stops at 2^5 = 32, the value of x(x − 14); 2 gives x − 14 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d9e68d46eb4a011436640ab7e5c56260fdaa6f9267e55b2f694d5e485726dc62",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-02",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_6(x) + log_6(x - 6) = 3?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-12"
+   },
+   {
+    "label": "B",
+    "text": "12"
+   },
+   {
+    "label": "C",
+    "text": "18"
+   },
+   {
+    "label": "D",
+    "text": "216"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_6(x(x − 6)) = 3, so x(x − 6) = 6^3 = 216. Then x² − 6x − 216 = 0 has roots 18 and -12. Only 18 keeps both x and x − 6 positive, so x = 18. Wrong choices: -12 solves x(x − 6) = 216 but keeps the negative root; a logarithm of a negative number is undefined; 216 stops at 6^3 = 216, the value of x(x − 6); 12 gives x − 6 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "47a50a21992890a5ddab954445a18e9bc46dd24792f864c03035c317c5786210",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-03",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_6(x) + log_6(x - 15) = 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "96",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-81"
+   },
+   {
+    "label": "B",
+    "text": "81"
+   },
+   {
+    "label": "C",
+    "text": "96"
+   },
+   {
+    "label": "D",
+    "text": "7776"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_6(x(x − 15)) = 5, so x(x − 15) = 6^5 = 7776. Then x² − 15x − 7776 = 0 has roots 96 and -81. Only 96 keeps both x and x − 15 positive, so x = 96. Wrong choices: -81 solves x(x − 15) = 7776 but keeps the negative root; a logarithm of a negative number is undefined; 7776 stops at 6^5 = 7776, the value of x(x − 15); 81 gives x − 15 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "07324f9886421bc0ba93e386d0180aa2a6d09f944f8528e0ebbe5d9c62cea35e",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-04",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_4(x) + log_4(x - 15) = 2?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-1"
+   },
+   {
+    "label": "B",
+    "text": "1"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_4(x(x − 15)) = 2, so x(x − 15) = 4^2 = 16. Then x² − 15x − 16 = 0 has roots 16 and -1. Only 16 keeps both x and x − 15 positive, so x = 16. Wrong choices: -1 solves x(x − 15) = 16 but keeps the negative root; a logarithm of a negative number is undefined; 1 gives x − 15 rather than x; 8 treats 4^2 as 4 × 2.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "5479ea7c992d2ef3b6cd016c16160c9add95c30da4a5f7f6f7d517926262091b",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-05",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_4(x) + log_4(x - 6) = 2?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-2"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_4(x(x − 6)) = 2, so x(x − 6) = 4^2 = 16. Then x² − 6x − 16 = 0 has roots 8 and -2. Only 8 keeps both x and x − 6 positive, so x = 8. Wrong choices: -2 solves x(x − 6) = 16 but keeps the negative root; a logarithm of a negative number is undefined; 16 stops at 4^2 = 16, the value of x(x − 6); 2 gives x − 6 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "aded213e0badff50423316300d9c70f13ed37fcbfae457f44e079fcf04685d06",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-06",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_10(x) + log_10(x - 15) = 3?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "40",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-25"
+   },
+   {
+    "label": "B",
+    "text": "25"
+   },
+   {
+    "label": "C",
+    "text": "40"
+   },
+   {
+    "label": "D",
+    "text": "1000"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_10(x(x − 15)) = 3, so x(x − 15) = 10^3 = 1000. Then x² − 15x − 1000 = 0 has roots 40 and -25. Only 40 keeps both x and x − 15 positive, so x = 40. Wrong choices: -25 solves x(x − 15) = 1000 but keeps the negative root; a logarithm of a negative number is undefined; 1000 stops at 10^3 = 1000, the value of x(x − 15); 25 gives x − 15 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "164f65c15d8265a3f8bcd6721b03a4732a55501689d42675de5c89edfcd85fc7",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-07",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_10(x) + log_10(x - 3) = 1?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-2"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "5"
+   },
+   {
+    "label": "D",
+    "text": "10"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_10(x(x − 3)) = 1, so x(x − 3) = 10^1 = 10. Then x² − 3x − 10 = 0 has roots 5 and -2. Only 5 keeps both x and x − 3 positive, so x = 5. Wrong choices: -2 solves x(x − 3) = 10 but keeps the negative root; a logarithm of a negative number is undefined; 10 stops at 10^1 = 10, the value of x(x − 3); 2 gives x − 3 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "70fafc261e1c4b2387f210e996e7a2e5d451cb1050c27805d15f727cf658b8ef",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-08",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_2(x) + log_2(x - 15) = 4?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-1"
+   },
+   {
+    "label": "B",
+    "text": "1"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_2(x(x − 15)) = 4, so x(x − 15) = 2^4 = 16. Then x² − 15x − 16 = 0 has roots 16 and -1. Only 16 keeps both x and x − 15 positive, so x = 16. Wrong choices: -1 solves x(x − 15) = 16 but keeps the negative root; a logarithm of a negative number is undefined; 1 gives x − 15 rather than x; 8 treats 2^4 as 2 × 4.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "eb11358f6b4b6f708ecf39a2c8222f24c6c0cc983d189d3f892aff0b9dde432b",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-09",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_6(x) + log_6(x - 15) = 3?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-9"
+   },
+   {
+    "label": "B",
+    "text": "9"
+   },
+   {
+    "label": "C",
+    "text": "24"
+   },
+   {
+    "label": "D",
+    "text": "216"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_6(x(x − 15)) = 3, so x(x − 15) = 6^3 = 216. Then x² − 15x − 216 = 0 has roots 24 and -9. Only 24 keeps both x and x − 15 positive, so x = 24. Wrong choices: -9 solves x(x − 15) = 216 but keeps the negative root; a logarithm of a negative number is undefined; 216 stops at 6^3 = 216, the value of x(x − 15); 9 gives x − 15 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "eaed5aece760006a0b88fb8f9c0efaa0279426584393d07d2a0954ef02428c28",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-10",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_3(x) + log_3(x - 8) = 2?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-1"
+   },
+   {
+    "label": "B",
+    "text": "1"
+   },
+   {
+    "label": "C",
+    "text": "6"
+   },
+   {
+    "label": "D",
+    "text": "9"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_3(x(x − 8)) = 2, so x(x − 8) = 3^2 = 9. Then x² − 8x − 9 = 0 has roots 9 and -1. Only 9 keeps both x and x − 8 positive, so x = 9. Wrong choices: -1 solves x(x − 8) = 9 but keeps the negative root; a logarithm of a negative number is undefined; 1 gives x − 8 rather than x; 6 treats 3^2 as 3 × 2.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "41f88580348797f8d834f9c2b044e46672b3e206ef7e5992fcbb2f19a2c59c7a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-11",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_2(x) + log_2(x - 12) = 6?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "64"
+   },
+   {
+    "label": "B",
+    "text": "16"
+   },
+   {
+    "label": "C",
+    "text": "4"
+   },
+   {
+    "label": "D",
+    "text": "-4"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_2(x(x − 12)) = 6, so x(x − 12) = 2^6 = 64. Then x² − 12x − 64 = 0 has roots 16 and -4. Only 16 keeps both x and x − 12 positive, so x = 16. Wrong choices: -4 solves x(x − 12) = 64 but keeps the negative root; a logarithm of a negative number is undefined; 64 stops at 2^6 = 64, the value of x(x − 12); 4 gives x − 12 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e372848fcf2a20eb1a090e203defa28fb6e5f26fdc672335c1ffb8cbaddc769e",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-12",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_2(x) + log_2(x - 6) = 4?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-2"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_2(x(x − 6)) = 4, so x(x − 6) = 2^4 = 16. Then x² − 6x − 16 = 0 has roots 8 and -2. Only 8 keeps both x and x − 6 positive, so x = 8. Wrong choices: -2 solves x(x − 6) = 16 but keeps the negative root; a logarithm of a negative number is undefined; 16 stops at 2^4 = 16, the value of x(x − 6); 2 gives x − 6 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2649a7bdff5b85bd209fd71d2174a47d5fc2359632d45cf39d67b9b3e685d7ab",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-13",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_6(x) + log_6(x - 5) = 2?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-4"
+   },
+   {
+    "label": "B",
+    "text": "4"
+   },
+   {
+    "label": "C",
+    "text": "9"
+   },
+   {
+    "label": "D",
+    "text": "36"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_6(x(x − 5)) = 2, so x(x − 5) = 6^2 = 36. Then x² − 5x − 36 = 0 has roots 9 and -4. Only 9 keeps both x and x − 5 positive, so x = 9. Wrong choices: -4 solves x(x − 5) = 36 but keeps the negative root; a logarithm of a negative number is undefined; 36 stops at 6^2 = 36, the value of x(x − 5); 4 gives x − 5 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "c2810333dad48eab98552a28e84c16d359abe9939de51fde27e622fd09eeed07",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-log-equation-14",
+  "skillId": "act-logarithms",
+  "prompt": "What is the solution of the equation log_6(x) + log_6(x - 9) = 2?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-3"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "12"
+   },
+   {
+    "label": "D",
+    "text": "36"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Combine the logs: log_6(x(x − 9)) = 2, so x(x − 9) = 6^2 = 36. Then x² − 9x − 36 = 0 has roots 12 and -3. Only 12 keeps both x and x − 9 positive, so x = 12. Wrong choices: -3 solves x(x − 9) = 36 but keeps the negative root; a logarithm of a negative number is undefined; 36 stops at 6^2 = 36, the value of x(x − 9); 3 gives x − 9 rather than x.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:log-equation"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "87f5450f490a539a2db77fd854ecc530daaa7bab1f8cd606eca7a0333da987a1",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-01",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 4^(3/2)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/8"
+   },
+   {
+    "label": "B",
+    "text": "6"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "64"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 2 is a root: √4 = 2. The numerator 3 is a power: 2^3 = 8. Wrong choices: 1/8 takes a reciprocal, which only a NEGATIVE exponent calls for; 6 multiplies 4 by 3/2; 64 raises 4 to the 3 instead of taking the root first.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e65104a8563917a8726ede2645aca9e5db70d3c2fe15baf0b65f91c127a35604",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-02",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 16^(-5/4)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/32",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-32"
+   },
+   {
+    "label": "B",
+    "text": "-1/32"
+   },
+   {
+    "label": "C",
+    "text": "1/32"
+   },
+   {
+    "label": "D",
+    "text": "32"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 4 is a root: the 4th root of 16 = 2. The numerator 5 is a power: 2^5 = 32. The negative sign means take the reciprocal: 1/32. Wrong choices: 32 ignores the negative sign in the exponent; -1/32 treats the negative exponent as a negative number; -32 makes the answer negative instead of taking a reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d9cf0c77764a9350d77f25026ca745ff4a247453a406d53fbd1d1986d1565af7",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-03",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 16^(3/4)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/8"
+   },
+   {
+    "label": "B",
+    "text": "8"
+   },
+   {
+    "label": "C",
+    "text": "12"
+   },
+   {
+    "label": "D",
+    "text": "4096"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 4 is a root: the 4th root of 16 = 2. The numerator 3 is a power: 2^3 = 8. Wrong choices: 1/8 takes a reciprocal, which only a NEGATIVE exponent calls for; 12 multiplies 16 by 3/4; 4096 raises 16 to the 3 instead of taking the root first.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "486bcc6c708f810482b7d0717993904295f6a5093590505319ba6930631814ea",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-04",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 16^(-3/2)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/64",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-64"
+   },
+   {
+    "label": "B",
+    "text": "-1/64"
+   },
+   {
+    "label": "C",
+    "text": "1/64"
+   },
+   {
+    "label": "D",
+    "text": "64"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 2 is a root: √16 = 4. The numerator 3 is a power: 4^3 = 64. The negative sign means take the reciprocal: 1/64. Wrong choices: 64 ignores the negative sign in the exponent; -1/64 treats the negative exponent as a negative number; -64 makes the answer negative instead of taking a reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b3457a1d810fb1c11747a0d78295e6b3be29d07f96da10c826ec69f0d4b9b004",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-05",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 16^(5/4)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "32",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/32"
+   },
+   {
+    "label": "B",
+    "text": "20"
+   },
+   {
+    "label": "C",
+    "text": "32"
+   },
+   {
+    "label": "D",
+    "text": "64"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 4 is a root: the 4th root of 16 = 2. The numerator 5 is a power: 2^5 = 32. Wrong choices: 1/32 takes a reciprocal, which only a NEGATIVE exponent calls for; 20 multiplies 16 by 5/4; 64 raises 16 to the 5 instead of taking the root first.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "685de7b6453c0b63ecf6e6bdd8a4b7fbbe7af9b677319b0c7c544d2346331832",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-06",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 16^(-3/4)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-8"
+   },
+   {
+    "label": "B",
+    "text": "-1/8"
+   },
+   {
+    "label": "C",
+    "text": "1/8"
+   },
+   {
+    "label": "D",
+    "text": "8"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 4 is a root: the 4th root of 16 = 2. The numerator 3 is a power: 2^3 = 8. The negative sign means take the reciprocal: 1/8. Wrong choices: 8 ignores the negative sign in the exponent; -1/8 treats the negative exponent as a negative number; -8 makes the answer negative instead of taking a reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "02e0bf4f248056f50cee7c96e5a092ac14800eda6a586692b19604d7b7665cdc",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-07",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 32^(-3/5)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-8"
+   },
+   {
+    "label": "B",
+    "text": "-1/8"
+   },
+   {
+    "label": "C",
+    "text": "1/8"
+   },
+   {
+    "label": "D",
+    "text": "8"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 5 is a root: the 5th root of 32 = 2. The numerator 3 is a power: 2^3 = 8. The negative sign means take the reciprocal: 1/8. Wrong choices: 8 ignores the negative sign in the exponent; -1/8 treats the negative exponent as a negative number; -8 makes the answer negative instead of taking a reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d09725248f4bb20182e07eb2cfe16f33a012ec641e2d7aa983fae26c48ebde97",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-08",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 1000^(-2/3)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/100",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-100"
+   },
+   {
+    "label": "B",
+    "text": "-1/100"
+   },
+   {
+    "label": "C",
+    "text": "1/100"
+   },
+   {
+    "label": "D",
+    "text": "100"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 3 is a root: the cube root of 1000 = 10. The numerator 2 is a power: 10^2 = 100. The negative sign means take the reciprocal: 1/100. Wrong choices: 100 ignores the negative sign in the exponent; -1/100 treats the negative exponent as a negative number; -100 makes the answer negative instead of taking a reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "7ec2d2bcd21225a119dee1e80ae51111547274165e2c121e7bb6f9c67a2cc163",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-09",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 25^(-3/2)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/125",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-125"
+   },
+   {
+    "label": "B",
+    "text": "-1/125"
+   },
+   {
+    "label": "C",
+    "text": "1/125"
+   },
+   {
+    "label": "D",
+    "text": "125"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 2 is a root: √25 = 5. The numerator 3 is a power: 5^3 = 125. The negative sign means take the reciprocal: 1/125. Wrong choices: 125 ignores the negative sign in the exponent; -1/125 treats the negative exponent as a negative number; -125 makes the answer negative instead of taking a reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "9ef71632741ce581ccc74418d031f8938b0f87614a8e584e64367abb83cc0eb6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-10",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 49^(-3/2)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/343",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-343"
+   },
+   {
+    "label": "B",
+    "text": "-1/343"
+   },
+   {
+    "label": "C",
+    "text": "1/343"
+   },
+   {
+    "label": "D",
+    "text": "343"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 2 is a root: √49 = 7. The numerator 3 is a power: 7^3 = 343. The negative sign means take the reciprocal: 1/343. Wrong choices: 343 ignores the negative sign in the exponent; -1/343 treats the negative exponent as a negative number; -343 makes the answer negative instead of taking a reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "798bef7566db0c1c597964c5b374d3379880b1d86edcbf027d2beaf68f14f0d9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-11",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 36^(-3/2)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/216",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-216"
+   },
+   {
+    "label": "B",
+    "text": "-1/216"
+   },
+   {
+    "label": "C",
+    "text": "1/216"
+   },
+   {
+    "label": "D",
+    "text": "216"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 2 is a root: √36 = 6. The numerator 3 is a power: 6^3 = 216. The negative sign means take the reciprocal: 1/216. Wrong choices: 216 ignores the negative sign in the exponent; -1/216 treats the negative exponent as a negative number; -216 makes the answer negative instead of taking a reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "0d9d96ffe17fe32f10baf689a1e7a51bebce64b6c34ee5db8b769ea21c179ad9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-12",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 27^(2/3)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/9"
+   },
+   {
+    "label": "B",
+    "text": "9"
+   },
+   {
+    "label": "C",
+    "text": "18"
+   },
+   {
+    "label": "D",
+    "text": "729"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 3 is a root: the cube root of 27 = 3. The numerator 2 is a power: 3^2 = 9. Wrong choices: 1/9 takes a reciprocal, which only a NEGATIVE exponent calls for; 18 multiplies 27 by 2/3; 729 raises 27 to the 2 instead of taking the root first.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b2cac9478dfce88a4e44b4118c284b6956f1e74c43754feb250c0db84722cae6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-13",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 36^(3/2)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "216",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/216"
+   },
+   {
+    "label": "B",
+    "text": "54"
+   },
+   {
+    "label": "C",
+    "text": "216"
+   },
+   {
+    "label": "D",
+    "text": "46656"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 2 is a root: √36 = 6. The numerator 3 is a power: 6^3 = 216. Wrong choices: 1/216 takes a reciprocal, which only a NEGATIVE exponent calls for; 54 multiplies 36 by 3/2; 46656 raises 36 to the 3 instead of taking the root first.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ad1d0b66e971132b8407604a4d648b069f9d00742e3996fa14c0e789983155a9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-fractional-exponent-14",
+  "skillId": "act-exponent-rules",
+  "prompt": "What is the value of 8^(-2/3)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-4"
+   },
+   {
+    "label": "B",
+    "text": "-1/4"
+   },
+   {
+    "label": "C",
+    "text": "1/4"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The denominator 3 is a root: the cube root of 8 = 2. The numerator 2 is a power: 2^2 = 4. The negative sign means take the reciprocal: 1/4. Wrong choices: 4 ignores the negative sign in the exponent; -1/4 treats the negative exponent as a negative number; -4 makes the answer negative instead of taking a reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:fractional-exponent"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f08f99ac99d12d6a704e62cd2bc414dabfa6fe630a350c8a431ead91d97226c3",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-01",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 3 red marbles and 8 blue marbles. Two marbles are drawn at random without replacement. What is the probability that one is red and one is blue?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "24/55",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "24/121"
+   },
+   {
+    "label": "B",
+    "text": "12/55"
+   },
+   {
+    "label": "C",
+    "text": "48/121"
+   },
+   {
+    "label": "D",
+    "text": "24/55"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Red then blue: 3/11 × 8/10. Blue then red: 8/11 × 3/10. Add the two orders: 2 × 3 × 8 / (11 × 10) = 24/55. Wrong choices: 12/55 counts only red-then-blue and misses blue-then-red; 48/121 puts the first marble back; 24/121 puts the marble back AND counts only one order.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "0e899a27aedb5e452facb91c83b960255f16df7a02c80f1996855be9df5fb502",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 7 red marbles and 7 blue marbles. Two marbles are drawn at random without replacement. What is the probability that one is red and one is blue?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7/13",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/4"
+   },
+   {
+    "label": "B",
+    "text": "7/26"
+   },
+   {
+    "label": "C",
+    "text": "1/2"
+   },
+   {
+    "label": "D",
+    "text": "7/13"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Red then blue: 7/14 × 7/13. Blue then red: 7/14 × 7/13. Add the two orders: 2 × 7 × 7 / (14 × 13) = 7/13. Wrong choices: 7/26 counts only red-then-blue and misses blue-then-red; 1/2 puts the first marble back; 1/4 puts the marble back AND counts only one order.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b752d788d614436d1e7d4a09008de409933307d463b54ae4df106c13cbbbba64",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-03",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 6 red marbles and 7 blue marbles. Two marbles are drawn at random without replacement. What is the probability that one is red and one is blue?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7/13",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "42/169"
+   },
+   {
+    "label": "B",
+    "text": "7/26"
+   },
+   {
+    "label": "C",
+    "text": "84/169"
+   },
+   {
+    "label": "D",
+    "text": "7/13"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Red then blue: 6/13 × 7/12. Blue then red: 7/13 × 6/12. Add the two orders: 2 × 6 × 7 / (13 × 12) = 7/13. Wrong choices: 7/26 counts only red-then-blue and misses blue-then-red; 84/169 puts the first marble back; 42/169 puts the marble back AND counts only one order.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "0a9225d56ca9c63f09e7f26408a4f4348041247f01ccd47aae82b81351d62aa9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-04",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 3 red marbles and 8 blue marbles. Two marbles are drawn at random without replacement. What is the probability that both are red?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3/55",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3/55"
+   },
+   {
+    "label": "B",
+    "text": "9/121"
+   },
+   {
+    "label": "C",
+    "text": "1/5"
+   },
+   {
+    "label": "D",
+    "text": "6/11"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "First red: 3/11. Then, with one red gone, 2/10. Multiply: 3/11 × 2/10 = 3/55. Wrong choices: 9/121 puts the first marble back (with replacement); 1/5 gives only the second draw, given the first was red; 6/11 adds the two draws instead of multiplying.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "1d27d05e0f94d757f1096cb0e20f5b0fa178952cebdf849c0f4ac77543ea59b8",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-05",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 8 red marbles and 3 blue marbles. Two marbles are drawn at random, one after the other, without replacement. Given that the first marble is red, what is the probability that the second marble is also red?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7/10",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "28/55"
+   },
+   {
+    "label": "B",
+    "text": "7/11"
+   },
+   {
+    "label": "C",
+    "text": "7/10"
+   },
+   {
+    "label": "D",
+    "text": "8/11"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "After a red marble is drawn, 7 red remain out of 10 marbles: 7/10. Wrong choices: 8/11 ignores that one red marble is already gone; 28/55 gives the probability that BOTH are red, not the second given the first; 7/11 removes the red marble from the count but not from the total.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "89474a36f8e2e965884da74c9a55a01aef6ba5217bb77738648d58bf0ba5ee40",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-06",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 6 red marbles and 7 blue marbles. Two marbles are drawn at random, one after the other, without replacement. Given that the first marble is red, what is the probability that the second marble is also red?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5/12",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5/26"
+   },
+   {
+    "label": "B",
+    "text": "5/13"
+   },
+   {
+    "label": "C",
+    "text": "5/12"
+   },
+   {
+    "label": "D",
+    "text": "6/13"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "After a red marble is drawn, 5 red remain out of 12 marbles: 5/12. Wrong choices: 6/13 ignores that one red marble is already gone; 5/26 gives the probability that BOTH are red, not the second given the first; 5/13 removes the red marble from the count but not from the total.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e95d9ced836ee0fc34685e39c8be1282940ebce7f045bad70006349bb7f76077",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-07",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 4 red marbles and 5 blue marbles. Two marbles are drawn at random without replacement. What is the probability that one is red and one is blue?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5/9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "20/81"
+   },
+   {
+    "label": "B",
+    "text": "5/18"
+   },
+   {
+    "label": "C",
+    "text": "40/81"
+   },
+   {
+    "label": "D",
+    "text": "5/9"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Red then blue: 4/9 × 5/8. Blue then red: 5/9 × 4/8. Add the two orders: 2 × 4 × 5 / (9 × 8) = 5/9. Wrong choices: 5/18 counts only red-then-blue and misses blue-then-red; 40/81 puts the first marble back; 20/81 puts the marble back AND counts only one order.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "1807e11d6fba04bf69982c3194c062cdc739d68d2c6b66a5ae6f151756954ae4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-08",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 5 red marbles and 6 blue marbles. Two marbles are drawn at random, one after the other, without replacement. Given that the first marble is red, what is the probability that the second marble is also red?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2/5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2/11"
+   },
+   {
+    "label": "B",
+    "text": "4/11"
+   },
+   {
+    "label": "C",
+    "text": "2/5"
+   },
+   {
+    "label": "D",
+    "text": "5/11"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "After a red marble is drawn, 4 red remain out of 10 marbles: 2/5. Wrong choices: 5/11 ignores that one red marble is already gone; 2/11 gives the probability that BOTH are red, not the second given the first; 4/11 removes the red marble from the count but not from the total.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "73c0a7ae3b3ada9615779d401b46a36b33690af4ba149c9925e4af26b67924ac",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-09",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 6 red marbles and 6 blue marbles. Two marbles are drawn at random, one after the other, without replacement. Given that the first marble is red, what is the probability that the second marble is also red?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5/11",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5/22"
+   },
+   {
+    "label": "B",
+    "text": "5/12"
+   },
+   {
+    "label": "C",
+    "text": "5/11"
+   },
+   {
+    "label": "D",
+    "text": "1/2"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "After a red marble is drawn, 5 red remain out of 11 marbles: 5/11. Wrong choices: 1/2 ignores that one red marble is already gone; 5/22 gives the probability that BOTH are red, not the second given the first; 5/12 removes the red marble from the count but not from the total.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "48eee997e585c31d0317ea76a684b6cbb75c392c3365b8711524c681e1a664e4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-10",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 5 red marbles and 8 blue marbles. Two marbles are drawn at random without replacement. What is the probability that both are red?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5/39",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5/39"
+   },
+   {
+    "label": "B",
+    "text": "25/169"
+   },
+   {
+    "label": "C",
+    "text": "1/3"
+   },
+   {
+    "label": "D",
+    "text": "10/13"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "First red: 5/13. Then, with one red gone, 4/12. Multiply: 5/13 × 4/12 = 5/39. Wrong choices: 25/169 puts the first marble back (with replacement); 1/3 gives only the second draw, given the first was red; 10/13 adds the two draws instead of multiplying.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "9c458ddf3b6cf8a2810a3ea913995c4fef5519bd7b0230e76273a781a2f83dd8",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-11",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 5 red marbles and 3 blue marbles. Two marbles are drawn at random without replacement. What is the probability that one is red and one is blue?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "15/28",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "15/64"
+   },
+   {
+    "label": "B",
+    "text": "15/56"
+   },
+   {
+    "label": "C",
+    "text": "15/32"
+   },
+   {
+    "label": "D",
+    "text": "15/28"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Red then blue: 5/8 × 3/7. Blue then red: 3/8 × 5/7. Add the two orders: 2 × 5 × 3 / (8 × 7) = 15/28. Wrong choices: 15/56 counts only red-then-blue and misses blue-then-red; 15/32 puts the first marble back; 15/64 puts the marble back AND counts only one order.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "08bfee5ff996fbb63bb66a38bcf8624c12ff2c60224bb011b1e43d1f5c1a9131",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-12",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 7 red marbles and 5 blue marbles. Two marbles are drawn at random, one after the other, without replacement. Given that the first marble is red, what is the probability that the second marble is also red?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "6/11",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7/22"
+   },
+   {
+    "label": "B",
+    "text": "1/2"
+   },
+   {
+    "label": "C",
+    "text": "6/11"
+   },
+   {
+    "label": "D",
+    "text": "7/12"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "After a red marble is drawn, 6 red remain out of 11 marbles: 6/11. Wrong choices: 7/12 ignores that one red marble is already gone; 7/22 gives the probability that BOTH are red, not the second given the first; 1/2 removes the red marble from the count but not from the total.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b208c02f943f49ca61ee979d6048dccfcd3fa5b1cf8cc3ac93446a7578749396",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-13",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 4 red marbles and 4 blue marbles. Two marbles are drawn at random, one after the other, without replacement. Given that the first marble is red, what is the probability that the second marble is also red?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3/7",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3/14"
+   },
+   {
+    "label": "B",
+    "text": "3/8"
+   },
+   {
+    "label": "C",
+    "text": "3/7"
+   },
+   {
+    "label": "D",
+    "text": "1/2"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "After a red marble is drawn, 3 red remain out of 7 marbles: 3/7. Wrong choices: 1/2 ignores that one red marble is already gone; 3/14 gives the probability that BOTH are red, not the second given the first; 3/8 removes the red marble from the count but not from the total.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "4e36620cc1a80c6f3a2585bf2610e21aa7aed692924be0358f5257e1eea0c8da",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-draw-without-replacement-14",
+  "skillId": "act-conditional-probability",
+  "prompt": "A bag holds 5 red marbles and 6 blue marbles. Two marbles are drawn at random without replacement. What is the probability that one is red and one is blue?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "6/11",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "30/121"
+   },
+   {
+    "label": "B",
+    "text": "3/11"
+   },
+   {
+    "label": "C",
+    "text": "60/121"
+   },
+   {
+    "label": "D",
+    "text": "6/11"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Red then blue: 5/11 × 6/10. Blue then red: 6/11 × 5/10. Add the two orders: 2 × 5 × 6 / (11 × 10) = 6/11. Wrong choices: 3/11 counts only red-then-blue and misses blue-then-red; 60/121 puts the first marble back; 30/121 puts the marble back AND counts only one order.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:draw-without-replacement"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b9a5e366d6f7bd5cf0d52a49c18219fcaacba62d248b0eb0a24d8618121a54e2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-01",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 5, AC = 21, and the measure of ∠A is 60°. What is the length of BC? (Note: cos 60° = 1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "19",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "16"
+   },
+   {
+    "label": "B",
+    "text": "19"
+   },
+   {
+    "label": "C",
+    "text": "√466"
+   },
+   {
+    "label": "D",
+    "text": "√571"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 5² + 21² − 2(5)(21)cos 60° = 466 − 105 = 361, so BC = 19. Wrong choices: √466 uses the Pythagorean theorem; ∠A is 60°, not 90°; √571 gets the sign of cos 60° wrong; 16 uses cos 60° = 1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "30aa19babb99e0ec5938b9ff22d305a0cbfbf8661f5cd42bd941eff4f9e72af8",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-02",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 15, AC = 7, and the measure of ∠A is 60°. What is the length of BC? (Note: cos 60° = 1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8"
+   },
+   {
+    "label": "B",
+    "text": "13"
+   },
+   {
+    "label": "C",
+    "text": "√274"
+   },
+   {
+    "label": "D",
+    "text": "√379"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 15² + 7² − 2(15)(7)cos 60° = 274 − 105 = 169, so BC = 13. Wrong choices: √274 uses the Pythagorean theorem; ∠A is 60°, not 90°; √379 gets the sign of cos 60° wrong; 8 uses cos 60° = 1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "45fe911f66d2c111378af7b4c37800312dde6cb7db5e81f12223ee3e6e3fc41e",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-03",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 3, AC = 8, and the measure of ∠A is 60°. What is the length of BC? (Note: cos 60° = 1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5"
+   },
+   {
+    "label": "B",
+    "text": "7"
+   },
+   {
+    "label": "C",
+    "text": "√73"
+   },
+   {
+    "label": "D",
+    "text": "√97"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 3² + 8² − 2(3)(8)cos 60° = 73 − 24 = 49, so BC = 7. Wrong choices: √73 uses the Pythagorean theorem; ∠A is 60°, not 90°; √97 gets the sign of cos 60° wrong; 5 uses cos 60° = 1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "c58b61cd1de1c43eef4c752840c794c33cc9963d84afaf95bfe2195e434a44a7",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-04",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 6, AC = 10, and the measure of ∠A is 120°. What is the length of BC? (Note: cos 120° = -1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "√76"
+   },
+   {
+    "label": "B",
+    "text": "√136"
+   },
+   {
+    "label": "C",
+    "text": "14"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 6² + 10² − 2(6)(10)cos 120° = 136 + 60 = 196, so BC = 14. Wrong choices: √136 uses the Pythagorean theorem; ∠A is 120°, not 90°; √76 gets the sign of cos 120° wrong; 16 uses cos 120° = −1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "abbc33693205390f3880e9d7acb33a33856a5c388425177991bd8b58381f10f5",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-05",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 16, AC = 6, and the measure of ∠A is 60°. What is the length of BC? (Note: cos 60° = 1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "√388"
+   },
+   {
+    "label": "B",
+    "text": "√292"
+   },
+   {
+    "label": "C",
+    "text": "14"
+   },
+   {
+    "label": "D",
+    "text": "10"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 16² + 6² − 2(16)(6)cos 60° = 292 − 96 = 196, so BC = 14. Wrong choices: √292 uses the Pythagorean theorem; ∠A is 60°, not 90°; √388 gets the sign of cos 60° wrong; 10 uses cos 60° = 1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "7e6b398c048d824141c997ca2d25c0a31b42aa8b73ca13e425edc01165168ca2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-06",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 5, AC = 8, and the measure of ∠A is 60°. What is the length of BC? (Note: cos 60° = 1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3"
+   },
+   {
+    "label": "B",
+    "text": "7"
+   },
+   {
+    "label": "C",
+    "text": "√89"
+   },
+   {
+    "label": "D",
+    "text": "√129"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 5² + 8² − 2(5)(8)cos 60° = 89 − 40 = 49, so BC = 7. Wrong choices: √89 uses the Pythagorean theorem; ∠A is 60°, not 90°; √129 gets the sign of cos 60° wrong; 3 uses cos 60° = 1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "39412eb69c1b811135fc904935a4da199443c19f1889ac61e3d5fc7f49c17a9f",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-07",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 16, AC = 5, and the measure of ∠A is 120°. What is the length of BC? (Note: cos 120° = -1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "19",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "√201"
+   },
+   {
+    "label": "B",
+    "text": "√281"
+   },
+   {
+    "label": "C",
+    "text": "19"
+   },
+   {
+    "label": "D",
+    "text": "21"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 16² + 5² − 2(16)(5)cos 120° = 281 + 80 = 361, so BC = 19. Wrong choices: √281 uses the Pythagorean theorem; ∠A is 120°, not 90°; √201 gets the sign of cos 120° wrong; 21 uses cos 120° = −1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "a9f582e8978136aebb7e0ca726c971e2ca818bb392ce99b46d0469ef389b7a95",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-08",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 5, AC = 16, and the measure of ∠A is 120°. What is the length of BC? (Note: cos 120° = -1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "19",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "√201"
+   },
+   {
+    "label": "B",
+    "text": "√281"
+   },
+   {
+    "label": "C",
+    "text": "19"
+   },
+   {
+    "label": "D",
+    "text": "21"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 5² + 16² − 2(5)(16)cos 120° = 281 + 80 = 361, so BC = 19. Wrong choices: √281 uses the Pythagorean theorem; ∠A is 120°, not 90°; √201 gets the sign of cos 120° wrong; 21 uses cos 120° = −1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "aa8f0a50022f730a4fff687b083b7d2676e07ba897106a422d30674d8112189e",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-09",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 21, AC = 5, and the measure of ∠A is 60°. What is the length of BC? (Note: cos 60° = 1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "19",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "16"
+   },
+   {
+    "label": "B",
+    "text": "19"
+   },
+   {
+    "label": "C",
+    "text": "√466"
+   },
+   {
+    "label": "D",
+    "text": "√571"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 21² + 5² − 2(21)(5)cos 60° = 466 − 105 = 361, so BC = 19. Wrong choices: √466 uses the Pythagorean theorem; ∠A is 60°, not 90°; √571 gets the sign of cos 60° wrong; 16 uses cos 60° = 1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e1ae3991882cad8c8b015c97f09a207f584502db80bd523799c01e7ddea125e0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-10",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 8, AC = 15, and the measure of ∠A is 60°. What is the length of BC? (Note: cos 60° = 1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7"
+   },
+   {
+    "label": "B",
+    "text": "13"
+   },
+   {
+    "label": "C",
+    "text": "17"
+   },
+   {
+    "label": "D",
+    "text": "√409"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 8² + 15² − 2(8)(15)cos 60° = 289 − 120 = 169, so BC = 13. Wrong choices: 17 uses the Pythagorean theorem; ∠A is 60°, not 90°; √409 gets the sign of cos 60° wrong; 7 uses cos 60° = 1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "0c3d42532a845970248bac00596d71eeb82c93d7b36798c9dd6f13c6d24efbab",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-11",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 10, AC = 16, and the measure of ∠A is 60°. What is the length of BC? (Note: cos 60° = 1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6"
+   },
+   {
+    "label": "B",
+    "text": "14"
+   },
+   {
+    "label": "C",
+    "text": "√356"
+   },
+   {
+    "label": "D",
+    "text": "√516"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 10² + 16² − 2(10)(16)cos 60° = 356 − 160 = 196, so BC = 14. Wrong choices: √356 uses the Pythagorean theorem; ∠A is 60°, not 90°; √516 gets the sign of cos 60° wrong; 6 uses cos 60° = 1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "930ede0a57af4e41220f64720df38c94fcb2ca5130d04065a34bd1dc3e194f51",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-law-of-cosines-12",
+  "skillId": "act-law-of-sines-cosines",
+  "prompt": "In triangle ABC, AB = 10, AC = 6, and the measure of ∠A is 120°. What is the length of BC? (Note: cos 120° = -1/2.)",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "√76"
+   },
+   {
+    "label": "B",
+    "text": "√136"
+   },
+   {
+    "label": "C",
+    "text": "14"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 5,
+  "gradeBand": "8-12",
+  "explanation": "Law of cosines: BC² = 10² + 6² − 2(10)(6)cos 120° = 136 + 60 = 196, so BC = 14. Wrong choices: √136 uses the Pythagorean theorem; ∠A is 120°, not 90°; √76 gets the sign of cos 120° wrong; 16 uses cos 120° = −1.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:law-of-cosines"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "42a4d1fcd33405a91df1b7a86c2fa4f3359c57f12986fcd9ebd672ff19f0c1ac",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-01",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If sin θ = 7/25 and θ is in quadrant II, what is the value of cos θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-24/25",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-25/24"
+   },
+   {
+    "label": "B",
+    "text": "-24/25"
+   },
+   {
+    "label": "C",
+    "text": "7/25"
+   },
+   {
+    "label": "D",
+    "text": "24/25"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 7 and 24 and hypotenuse 25. In quadrant II, x is negative and y is positive, so cos θ = -24/25. Wrong choices: 24/25 has the right size but the wrong sign; in quadrant II, cos is negative; -25/24 gives the reciprocal (sec θ); 7/25 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "dc368841373c4a00212318c34d6037f3eadf1f376b554a07a383ea5333f1ec9c",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-02",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If sin θ = -5/13 and θ is in quadrant IV, what is the value of cos θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12/13",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-12/13"
+   },
+   {
+    "label": "B",
+    "text": "-5/13"
+   },
+   {
+    "label": "C",
+    "text": "12/13"
+   },
+   {
+    "label": "D",
+    "text": "13/12"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 5 and 12 and hypotenuse 13. In quadrant IV, x is positive and y is negative, so cos θ = 12/13. Wrong choices: -12/13 has the right size but the wrong sign; in quadrant IV, cos is positive; 13/12 gives the reciprocal (sec θ); -5/13 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "33a834275488c04c50de2a940a127d104de448ef9b2d3af6e57dfac102de923c",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-03",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If cos θ = -4/5 and θ is in quadrant II, what is the value of tan θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-3/4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-4/3"
+   },
+   {
+    "label": "B",
+    "text": "-3/4"
+   },
+   {
+    "label": "C",
+    "text": "3/4"
+   },
+   {
+    "label": "D",
+    "text": "4/3"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 3 and 4 and hypotenuse 5. In quadrant II, x is negative and y is positive, so tan θ = -3/4. Wrong choices: 3/4 has the right size but the wrong sign; in quadrant II, tan is negative; -4/3 gives the reciprocal (cot θ); 4/3 takes the reciprocal and flips the sign.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "c7fde51b0396280bf437812e8425909a0843eaa9632f3f31502cc35087d3dcdd",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-04",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If sin θ = -3/5 and θ is in quadrant III, what is the value of cos θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-4/5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-5/4"
+   },
+   {
+    "label": "B",
+    "text": "-4/5"
+   },
+   {
+    "label": "C",
+    "text": "-3/5"
+   },
+   {
+    "label": "D",
+    "text": "4/5"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 3 and 4 and hypotenuse 5. In quadrant III, x is negative and y is negative, so cos θ = -4/5. Wrong choices: 4/5 has the right size but the wrong sign; in quadrant III, cos is negative; -5/4 gives the reciprocal (sec θ); -3/5 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "711f68a39d4982bc18c19f4e1c6e106ac00681c243751d2a32a984226044b76a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-05",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If cos θ = 15/17 and θ is in quadrant IV, what is the value of tan θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-8/15",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-15/8"
+   },
+   {
+    "label": "B",
+    "text": "-8/15"
+   },
+   {
+    "label": "C",
+    "text": "8/15"
+   },
+   {
+    "label": "D",
+    "text": "15/8"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 8 and 15 and hypotenuse 17. In quadrant IV, x is positive and y is negative, so tan θ = -8/15. Wrong choices: 8/15 has the right size but the wrong sign; in quadrant IV, tan is negative; -15/8 gives the reciprocal (cot θ); 15/8 takes the reciprocal and flips the sign.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "c6a4e43d4ea28aae01234f21bef7dfbc84e3fff6e0e194c54bb2628bfdf22b9b",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-06",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If cos θ = -12/13 and θ is in quadrant III, what is the value of sin θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-5/13",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-13/5"
+   },
+   {
+    "label": "B",
+    "text": "-12/13"
+   },
+   {
+    "label": "C",
+    "text": "-5/13"
+   },
+   {
+    "label": "D",
+    "text": "5/13"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 5 and 12 and hypotenuse 13. In quadrant III, x is negative and y is negative, so sin θ = -5/13. Wrong choices: 5/13 has the right size but the wrong sign; in quadrant III, sin is negative; -13/5 gives the reciprocal (csc θ); -12/13 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "baea350b0c8dd4be8c3296daf18cf30af152d362d10b41559708262a819dd79b",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-07",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If sin θ = 8/17 and θ is in quadrant II, what is the value of tan θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-8/15",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-15/8"
+   },
+   {
+    "label": "B",
+    "text": "-8/15"
+   },
+   {
+    "label": "C",
+    "text": "8/15"
+   },
+   {
+    "label": "D",
+    "text": "15/8"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 8 and 15 and hypotenuse 17. In quadrant II, x is negative and y is positive, so tan θ = -8/15. Wrong choices: 8/15 has the right size but the wrong sign; in quadrant II, tan is negative; -15/8 gives the reciprocal (cot θ); 15/8 takes the reciprocal and flips the sign.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "6cdf605f817646044137bccecf194b70b78e6aed7842154bcda8999d6355dec1",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-08",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If cos θ = -12/13 and θ is in quadrant II, what is the value of sin θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5/13",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-12/13"
+   },
+   {
+    "label": "B",
+    "text": "-5/13"
+   },
+   {
+    "label": "C",
+    "text": "5/13"
+   },
+   {
+    "label": "D",
+    "text": "13/5"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 5 and 12 and hypotenuse 13. In quadrant II, x is negative and y is positive, so sin θ = 5/13. Wrong choices: -5/13 has the right size but the wrong sign; in quadrant II, sin is positive; 13/5 gives the reciprocal (csc θ); -12/13 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "7c374df305f6bfcbd73d86a12a70516e4e3363105026c909c1479b88caa233d7",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-09",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If cos θ = -24/25 and θ is in quadrant II, what is the value of sin θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7/25",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-24/25"
+   },
+   {
+    "label": "B",
+    "text": "-7/25"
+   },
+   {
+    "label": "C",
+    "text": "7/25"
+   },
+   {
+    "label": "D",
+    "text": "25/7"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 7 and 24 and hypotenuse 25. In quadrant II, x is negative and y is positive, so sin θ = 7/25. Wrong choices: -7/25 has the right size but the wrong sign; in quadrant II, sin is positive; 25/7 gives the reciprocal (csc θ); -24/25 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "3d6c080d5b66d0f414b328559e6367962f5e4fa236e8dffc336a2a723ef65276",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-10",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If cos θ = 4/5 and θ is in quadrant IV, what is the value of sin θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-3/5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-5/3"
+   },
+   {
+    "label": "B",
+    "text": "-3/5"
+   },
+   {
+    "label": "C",
+    "text": "3/5"
+   },
+   {
+    "label": "D",
+    "text": "4/5"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 3 and 4 and hypotenuse 5. In quadrant IV, x is positive and y is negative, so sin θ = -3/5. Wrong choices: 3/5 has the right size but the wrong sign; in quadrant IV, sin is negative; -5/3 gives the reciprocal (csc θ); 4/5 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "a5c716eb32723afb530e769b1aab0e7910f1c0cf105904c845266230327feb9d",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-11",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If sin θ = 8/17 and θ is in quadrant II, what is the value of cos θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-15/17",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-17/15"
+   },
+   {
+    "label": "B",
+    "text": "-15/17"
+   },
+   {
+    "label": "C",
+    "text": "8/17"
+   },
+   {
+    "label": "D",
+    "text": "15/17"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 8 and 15 and hypotenuse 17. In quadrant II, x is negative and y is positive, so cos θ = -15/17. Wrong choices: 15/17 has the right size but the wrong sign; in quadrant II, cos is negative; -17/15 gives the reciprocal (sec θ); 8/17 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "3eef27a2c6fc69c426b69d7abaf127693c3ed5760913ecbd6f67a7078f622244",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-12",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If sin θ = -7/25 and θ is in quadrant IV, what is the value of cos θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "24/25",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-24/25"
+   },
+   {
+    "label": "B",
+    "text": "-7/25"
+   },
+   {
+    "label": "C",
+    "text": "24/25"
+   },
+   {
+    "label": "D",
+    "text": "25/24"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 7 and 24 and hypotenuse 25. In quadrant IV, x is positive and y is negative, so cos θ = 24/25. Wrong choices: -24/25 has the right size but the wrong sign; in quadrant IV, cos is positive; 25/24 gives the reciprocal (sec θ); -7/25 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "33e95aa6699bd1408f163007295e3a6e710338aa1c31b4339511d5f8ddc65643",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-13",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If sin θ = -3/5 and θ is in quadrant IV, what is the value of cos θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4/5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-4/5"
+   },
+   {
+    "label": "B",
+    "text": "-3/5"
+   },
+   {
+    "label": "C",
+    "text": "4/5"
+   },
+   {
+    "label": "D",
+    "text": "5/4"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 3 and 4 and hypotenuse 5. In quadrant IV, x is positive and y is negative, so cos θ = 4/5. Wrong choices: -4/5 has the right size but the wrong sign; in quadrant IV, cos is positive; 5/4 gives the reciprocal (sec θ); -3/5 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "3b3231dd10e58dcba39acb4457f13e37e8bc071212ad11abeb49dbb19d548077",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-quadrant-trig-14",
+  "skillId": "act-trigonometric-functions",
+  "prompt": "If sin θ = 5/13 and θ is in quadrant II, what is the value of cos θ?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-12/13",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-13/12"
+   },
+   {
+    "label": "B",
+    "text": "-12/13"
+   },
+   {
+    "label": "C",
+    "text": "5/13"
+   },
+   {
+    "label": "D",
+    "text": "12/13"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The reference triangle has legs 5 and 12 and hypotenuse 13. In quadrant II, x is negative and y is positive, so cos θ = -12/13. Wrong choices: 12/13 has the right size but the wrong sign; in quadrant II, cos is negative; -13/12 gives the reciprocal (sec θ); 5/13 uses the wrong side of the reference triangle.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:quadrant-trig"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "3352b0ba2407af3dd804dda4435158795e56da51fbee3ff659deb711ac4372d6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-01",
+  "skillId": "act-exponential-models",
+  "prompt": "A patient takes a 480 mg dose of a medicine whose amount is cut in half every 6 hours. How many milligrams of the medicine remain in the body after 30 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7.5"
+   },
+   {
+    "label": "B",
+    "text": "15"
+   },
+   {
+    "label": "C",
+    "text": "30"
+   },
+   {
+    "label": "D",
+    "text": "48"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "30 hours is 30 ÷ 6 = 5 half-lives. Halving 5 times: 480 × (1/2)^5 = 480 ÷ 32 = 15. Wrong choices: 48 divides by 2 × 5 instead of halving 5 times; 30 counts one half-life too few; 7.5 counts one half-life too many.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b78f872f9e83459bcbc9fce0186ccc0bc124f887fc3c872adf441f658b906e11",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-02",
+  "skillId": "act-exponential-models",
+  "prompt": "A patient takes a 96 mg dose of a medicine whose amount is cut in half every 5 hours. How many milligrams of the medicine remain in the body after 15 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6"
+   },
+   {
+    "label": "B",
+    "text": "12"
+   },
+   {
+    "label": "C",
+    "text": "16"
+   },
+   {
+    "label": "D",
+    "text": "24"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "15 hours is 15 ÷ 5 = 3 half-lives. Halving 3 times: 96 × (1/2)^3 = 96 ÷ 8 = 12. Wrong choices: 16 divides by 2 × 3 instead of halving 3 times; 24 counts one half-life too few; 6 counts one half-life too many.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2f307d6477eb4922c517e22915280d074b9f300928e30830e46d6693f9d773ca",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-03",
+  "skillId": "act-exponential-models",
+  "prompt": "A patient takes a 480 mg dose of a medicine whose amount is cut in half every 12 hours. How many milligrams of the medicine remain in the body after 36 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "60",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "30"
+   },
+   {
+    "label": "B",
+    "text": "60"
+   },
+   {
+    "label": "C",
+    "text": "80"
+   },
+   {
+    "label": "D",
+    "text": "120"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "36 hours is 36 ÷ 12 = 3 half-lives. Halving 3 times: 480 × (1/2)^3 = 480 ÷ 8 = 60. Wrong choices: 80 divides by 2 × 3 instead of halving 3 times; 120 counts one half-life too few; 30 counts one half-life too many.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "edbb3f15de7f5e4911e9d94aea73561a77eab1db8361dc22383690a3d7659ef6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-04",
+  "skillId": "act-exponential-models",
+  "prompt": "A lab sample contains 160 grams of a radioactive isotope whose amount is cut in half every 8 hours. How many grams of the isotope remain after 40 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2.5"
+   },
+   {
+    "label": "B",
+    "text": "5"
+   },
+   {
+    "label": "C",
+    "text": "10"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "40 hours is 40 ÷ 8 = 5 half-lives. Halving 5 times: 160 × (1/2)^5 = 160 ÷ 32 = 5. Wrong choices: 16 divides by 2 × 5 instead of halving 5 times; 10 counts one half-life too few; 2.5 counts one half-life too many.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "fc4228ec7dfb40f7cfabb72e4e18935ffabb242585abee7f97e04996efd05ba6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-05",
+  "skillId": "act-exponential-models",
+  "prompt": "A patient takes a 192 mg dose of a medicine whose amount is cut in half every 6 hours. How many milligrams of the medicine remain in the body after 24 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6"
+   },
+   {
+    "label": "B",
+    "text": "12"
+   },
+   {
+    "label": "C",
+    "text": "24"
+   },
+   {
+    "label": "D",
+    "text": "48"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "24 hours is 24 ÷ 6 = 4 half-lives. Halving 4 times: 192 × (1/2)^4 = 192 ÷ 16 = 12. Wrong choices: 24 divides by 2 × 4 instead of halving 4 times; 6 counts one half-life too many; 48 divides by the 4 half-lives.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e6b75c05ee6206c4b3c00700c5d6e57cc608ee166a6e5136b6a7eab20b72a4f0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-06",
+  "skillId": "act-exponential-models",
+  "prompt": "A lab sample contains 480 grams of a radioactive isotope whose amount is cut in half every 12 hours. How many grams of the isotope remain after 36 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "60",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "30"
+   },
+   {
+    "label": "B",
+    "text": "60"
+   },
+   {
+    "label": "C",
+    "text": "80"
+   },
+   {
+    "label": "D",
+    "text": "120"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "36 hours is 36 ÷ 12 = 3 half-lives. Halving 3 times: 480 × (1/2)^3 = 480 ÷ 8 = 60. Wrong choices: 80 divides by 2 × 3 instead of halving 3 times; 120 counts one half-life too few; 30 counts one half-life too many.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "afd0fb559613a0b84327129e2bf32a1708286456c9c04ebb4972b9116e81de6f",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-07",
+  "skillId": "act-exponential-models",
+  "prompt": "A patient takes a 160 mg dose of a medicine whose amount is cut in half every 6 hours. How many milligrams of the medicine remain in the body after 30 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2.5"
+   },
+   {
+    "label": "B",
+    "text": "5"
+   },
+   {
+    "label": "C",
+    "text": "10"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "30 hours is 30 ÷ 6 = 5 half-lives. Halving 5 times: 160 × (1/2)^5 = 160 ÷ 32 = 5. Wrong choices: 16 divides by 2 × 5 instead of halving 5 times; 10 counts one half-life too few; 2.5 counts one half-life too many.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e25ac07957194d7857d35176889236c676b7294d02884d59a4dff6dd9ec84a70",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-08",
+  "skillId": "act-exponential-models",
+  "prompt": "A patient takes a 160 mg dose of a medicine whose amount is cut in half every 8 hours. How many milligrams of the medicine remain in the body after 32 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5"
+   },
+   {
+    "label": "B",
+    "text": "10"
+   },
+   {
+    "label": "C",
+    "text": "20"
+   },
+   {
+    "label": "D",
+    "text": "40"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "32 hours is 32 ÷ 8 = 4 half-lives. Halving 4 times: 160 × (1/2)^4 = 160 ÷ 16 = 10. Wrong choices: 20 divides by 2 × 4 instead of halving 4 times; 5 counts one half-life too many; 40 divides by the 4 half-lives.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "cbb34a29765794402aff8c1857d08938a1039ae5372a8758d2196e6dbb16cd53",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-09",
+  "skillId": "act-exponential-models",
+  "prompt": "A lab sample contains 480 grams of a radioactive isotope whose amount is cut in half every 6 hours. How many grams of the isotope remain after 24 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "15"
+   },
+   {
+    "label": "B",
+    "text": "30"
+   },
+   {
+    "label": "C",
+    "text": "60"
+   },
+   {
+    "label": "D",
+    "text": "120"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "24 hours is 24 ÷ 6 = 4 half-lives. Halving 4 times: 480 × (1/2)^4 = 480 ÷ 16 = 30. Wrong choices: 60 divides by 2 × 4 instead of halving 4 times; 15 counts one half-life too many; 120 divides by the 4 half-lives.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "0a5915ef27b4b8c677523c7c092bfb17449f916c0382c2617707175446a29275",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-10",
+  "skillId": "act-exponential-models",
+  "prompt": "A lab sample contains 256 grams of a radioactive isotope whose amount is cut in half every 4 hours. How many grams of the isotope remain after 16 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8"
+   },
+   {
+    "label": "B",
+    "text": "16"
+   },
+   {
+    "label": "C",
+    "text": "32"
+   },
+   {
+    "label": "D",
+    "text": "64"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "16 hours is 16 ÷ 4 = 4 half-lives. Halving 4 times: 256 × (1/2)^4 = 256 ÷ 16 = 16. Wrong choices: 32 divides by 2 × 4 instead of halving 4 times; 8 counts one half-life too many; 64 divides by the 4 half-lives.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "788d4176a1f8de859e4e4986e41854ee0795c8191b8615356c89f14c449b9ade",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-11",
+  "skillId": "act-exponential-models",
+  "prompt": "A lab sample contains 160 grams of a radioactive isotope whose amount is cut in half every 5 hours. How many grams of the isotope remain after 25 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2.5"
+   },
+   {
+    "label": "B",
+    "text": "5"
+   },
+   {
+    "label": "C",
+    "text": "10"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "25 hours is 25 ÷ 5 = 5 half-lives. Halving 5 times: 160 × (1/2)^5 = 160 ÷ 32 = 5. Wrong choices: 16 divides by 2 × 5 instead of halving 5 times; 10 counts one half-life too few; 2.5 counts one half-life too many.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f57399045576969f004e537f3fbb1ba9b9cb41216bf72ca28ee9b774bb943242",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-12",
+  "skillId": "act-exponential-models",
+  "prompt": "A patient takes a 480 mg dose of a medicine whose amount is cut in half every 8 hours. How many milligrams of the medicine remain in the body after 32 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "15"
+   },
+   {
+    "label": "B",
+    "text": "30"
+   },
+   {
+    "label": "C",
+    "text": "60"
+   },
+   {
+    "label": "D",
+    "text": "120"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "32 hours is 32 ÷ 8 = 4 half-lives. Halving 4 times: 480 × (1/2)^4 = 480 ÷ 16 = 30. Wrong choices: 60 divides by 2 × 4 instead of halving 4 times; 15 counts one half-life too many; 120 divides by the 4 half-lives.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "06ec43d60ddba277b8a45b97777617b9382aec0d8e7ea637cb74349b23c19c97",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-13",
+  "skillId": "act-exponential-models",
+  "prompt": "A patient takes a 192 mg dose of a medicine whose amount is cut in half every 5 hours. How many milligrams of the medicine remain in the body after 15 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "12"
+   },
+   {
+    "label": "B",
+    "text": "24"
+   },
+   {
+    "label": "C",
+    "text": "32"
+   },
+   {
+    "label": "D",
+    "text": "48"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "15 hours is 15 ÷ 5 = 3 half-lives. Halving 3 times: 192 × (1/2)^3 = 192 ÷ 8 = 24. Wrong choices: 32 divides by 2 × 3 instead of halving 3 times; 48 counts one half-life too few; 12 counts one half-life too many.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "c4b8411445ac93f105e7b756561a44e5695a3817cef57dd980eae8ec322e8528",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-half-life-14",
+  "skillId": "act-exponential-models",
+  "prompt": "A lab sample contains 64 grams of a radioactive isotope whose amount is cut in half every 6 hours. How many grams of the isotope remain after 24 hours?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "4"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "24 hours is 24 ÷ 6 = 4 half-lives. Halving 4 times: 64 × (1/2)^4 = 64 ÷ 16 = 4. Wrong choices: 8 divides by 2 × 4 instead of halving 4 times; 2 counts one half-life too many; 16 divides by the 4 half-lives.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:half-life"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "579e305a6ab6ae0058a523220902c8e70c41df7dfc2851b26a36eda0370a1584",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-01",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[-2, -2], [3, 0]]    B = [[4, -1], [1, 4]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[-10, -6], [12, -3]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[-11, -8], [10, -2]]"
+   },
+   {
+    "label": "B",
+    "text": "[[-10, -6], [12, -3]]"
+   },
+   {
+    "label": "C",
+    "text": "[[-8, 2], [3, 0]]"
+   },
+   {
+    "label": "D",
+    "text": "[[-6, -10], [12, 3]]"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (-2)(4) + (-2)(1) = -10, and so on: AB = [[-10, -6], [12, -3]]. Wrong choices: [[-11, -8], [10, -2]] multiplies in the other order; matrix multiplication is not commutative; [[-8, 2], [3, 0]] multiplies matching entries, which is not matrix multiplication; [[-6, -10], [12, 3]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "5665754caf4cf03803ba4395e64fb80ac910ca352086189a5cf87da23a60bcc6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-02",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[-3, 1], [3, 4]]    B = [[4, 2], [1, 3]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[-11, -3], [16, 18]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[-6, 12], [6, 13]]"
+   },
+   {
+    "label": "B",
+    "text": "[[-11, -3], [16, 18]]"
+   },
+   {
+    "label": "C",
+    "text": "[[-10, 0], [20, 15]]"
+   },
+   {
+    "label": "D",
+    "text": "[[-12, 2], [3, 12]]"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (-3)(4) + (1)(1) = -11, and so on: AB = [[-11, -3], [16, 18]]. Wrong choices: [[-6, 12], [6, 13]] multiplies in the other order; matrix multiplication is not commutative; [[-12, 2], [3, 12]] multiplies matching entries, which is not matrix multiplication; [[-10, 0], [20, 15]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f00b857ea80e632c964494ed03d91ef62c9c88fea171370cf56dcf064543c551",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-03",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[-2, 1], [1, -3]]    B = [[1, -1], [3, -3]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[1, -1], [-8, 8]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[-3, 4], [-9, 12]]"
+   },
+   {
+    "label": "B",
+    "text": "[[-2, -1], [3, 9]]"
+   },
+   {
+    "label": "C",
+    "text": "[[-3, -9], [4, 12]]"
+   },
+   {
+    "label": "D",
+    "text": "[[1, -1], [-8, 8]]"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (-2)(1) + (1)(3) = 1, and so on: AB = [[1, -1], [-8, 8]]. Wrong choices: [[-3, 4], [-9, 12]] multiplies in the other order; matrix multiplication is not commutative; [[-2, -1], [3, 9]] multiplies matching entries, which is not matrix multiplication; [[-3, -9], [4, 12]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ffbda54103136f5f0b83b77b7ffa7755f730cd95292853142760e4b114f0ac77",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-04",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[4, 4], [0, 4]]    B = [[1, -1], [-3, 1]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[-8, 0], [-12, 4]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[-8, 0], [-12, 4]]"
+   },
+   {
+    "label": "B",
+    "text": "[[0, -8], [-4, 4]]"
+   },
+   {
+    "label": "C",
+    "text": "[[4, 0], [-12, -8]]"
+   },
+   {
+    "label": "D",
+    "text": "[[4, -4], [0, 4]]"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (4)(1) + (4)(-3) = -8, and so on: AB = [[-8, 0], [-12, 4]]. Wrong choices: [[4, 0], [-12, -8]] multiplies in the other order; matrix multiplication is not commutative; [[4, -4], [0, 4]] multiplies matching entries, which is not matrix multiplication; [[0, -8], [-4, 4]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "1baeddcd8b4f58907764d874f213e6d354b4f87425cc17f53d65184b853b7785",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-05",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[-1, 2], [0, 1]]    B = [[1, -1], [-2, -1]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[-5, -1], [-2, -1]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[-5, -1], [-2, -1]]"
+   },
+   {
+    "label": "B",
+    "text": "[[-1, -2], [0, -1]]"
+   },
+   {
+    "label": "C",
+    "text": "[[-3, 0], [-1, -1]]"
+   },
+   {
+    "label": "D",
+    "text": "[[-1, 1], [2, -5]]"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (-1)(1) + (2)(-2) = -5, and so on: AB = [[-5, -1], [-2, -1]]. Wrong choices: [[-1, 1], [2, -5]] multiplies in the other order; matrix multiplication is not commutative; [[-1, -2], [0, -1]] multiplies matching entries, which is not matrix multiplication; [[-3, 0], [-1, -1]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "80a9d6b94c091f48e5a3b7094b8bc09d1cd9f5b967045cb060740cfd2f271683",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-06",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[1, 2], [4, 1]]    B = [[-3, -2], [-3, 1]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[-9, 0], [-15, -7]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[-3, -4], [-12, 1]]"
+   },
+   {
+    "label": "B",
+    "text": "[[-11, -8], [1, -5]]"
+   },
+   {
+    "label": "C",
+    "text": "[[-7, -1], [-14, -11]]"
+   },
+   {
+    "label": "D",
+    "text": "[[-9, 0], [-15, -7]]"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (1)(-3) + (2)(-3) = -9, and so on: AB = [[-9, 0], [-15, -7]]. Wrong choices: [[-11, -8], [1, -5]] multiplies in the other order; matrix multiplication is not commutative; [[-3, -4], [-12, 1]] multiplies matching entries, which is not matrix multiplication; [[-7, -1], [-14, -11]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ab345341f3d0858e1f446ff6f33f1ef793a703856e84a044af42bc4595cdd1cc",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-07",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[-3, 4], [-1, 4]]    B = [[1, 2], [1, 4]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[1, 10], [3, 14]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[-5, 12], [-7, 20]]"
+   },
+   {
+    "label": "B",
+    "text": "[[1, 10], [3, 14]]"
+   },
+   {
+    "label": "C",
+    "text": "[[-3, 8], [-1, 16]]"
+   },
+   {
+    "label": "D",
+    "text": "[[5, 13], [7, 15]]"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (-3)(1) + (4)(1) = 1, and so on: AB = [[1, 10], [3, 14]]. Wrong choices: [[-5, 12], [-7, 20]] multiplies in the other order; matrix multiplication is not commutative; [[-3, 8], [-1, 16]] multiplies matching entries, which is not matrix multiplication; [[5, 13], [7, 15]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "702dbd01b5f4456626c7a2be57d6fb30fb8d544681f786f42ffd4d51b50a95da",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-08",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[1, -1], [4, 2]]    B = [[4, -2], [-3, -3]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[7, 1], [10, -14]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[7, 1], [10, -14]]"
+   },
+   {
+    "label": "B",
+    "text": "[[6, 0], [12, -18]]"
+   },
+   {
+    "label": "C",
+    "text": "[[4, 2], [-12, -6]]"
+   },
+   {
+    "label": "D",
+    "text": "[[-4, -8], [-15, -3]]"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (1)(4) + (-1)(-3) = 7, and so on: AB = [[7, 1], [10, -14]]. Wrong choices: [[-4, -8], [-15, -3]] multiplies in the other order; matrix multiplication is not commutative; [[4, 2], [-12, -6]] multiplies matching entries, which is not matrix multiplication; [[6, 0], [12, -18]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "8cbcc13d4d881a77aea2254e200a4d5d6867074dc21a321849a2e2d83f0d252e",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-09",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[-2, 1], [-3, 2]]    B = [[0, -1], [1, 1]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[1, 3], [2, 5]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[0, -1], [-3, 2]]"
+   },
+   {
+    "label": "B",
+    "text": "[[-1, -1], [-2, -1]]"
+   },
+   {
+    "label": "C",
+    "text": "[[1, 3], [2, 5]]"
+   },
+   {
+    "label": "D",
+    "text": "[[3, -2], [-5, 3]]"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (-2)(0) + (1)(1) = 1, and so on: AB = [[1, 3], [2, 5]]. Wrong choices: [[3, -2], [-5, 3]] multiplies in the other order; matrix multiplication is not commutative; [[0, -1], [-3, 2]] multiplies matching entries, which is not matrix multiplication; [[-1, -1], [-2, -1]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "c92d853168cc458542a8eb4f673ed64c77cfe2789e0b2ddfeb4f640a5e6ac3e2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-10",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[3, -3], [3, 0]]    B = [[2, 3], [-2, -3]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[12, 18], [6, 9]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[6, -9], [-6, 0]]"
+   },
+   {
+    "label": "B",
+    "text": "[[15, -6], [-15, 6]]"
+   },
+   {
+    "label": "C",
+    "text": "[[12, 18], [6, 9]]"
+   },
+   {
+    "label": "D",
+    "text": "[[-3, 3], [6, -6]]"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (3)(2) + (-3)(-2) = 12, and so on: AB = [[12, 18], [6, 9]]. Wrong choices: [[15, -6], [-15, 6]] multiplies in the other order; matrix multiplication is not commutative; [[6, -9], [-6, 0]] multiplies matching entries, which is not matrix multiplication; [[-3, 3], [6, -6]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "3da9e5f1b462560105a06b26b3c723638e6fb8ab7fd2c855444f8cec536e87f0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-11",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[0, 3], [1, -3]]    B = [[0, -2], [3, -2]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[9, -6], [-9, 4]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[9, -6], [-9, 4]]"
+   },
+   {
+    "label": "B",
+    "text": "[[-2, 6], [-2, 15]]"
+   },
+   {
+    "label": "C",
+    "text": "[[0, -6], [3, 6]]"
+   },
+   {
+    "label": "D",
+    "text": "[[-6, -6], [6, 9]]"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (0)(0) + (3)(3) = 9, and so on: AB = [[9, -6], [-9, 4]]. Wrong choices: [[-2, 6], [-2, 15]] multiplies in the other order; matrix multiplication is not commutative; [[0, -6], [3, 6]] multiplies matching entries, which is not matrix multiplication; [[-6, -6], [6, 9]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "0562267fb69511c77909bf81904d33780cdd4ae5cfec3f96a8584d44dbc19c7a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-12",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[0, 4], [-1, 2]]    B = [[-3, 1], [4, 2]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[16, 8], [11, 3]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[0, 4], [-4, 4]]"
+   },
+   {
+    "label": "B",
+    "text": "[[4, 8], [5, 0]]"
+   },
+   {
+    "label": "C",
+    "text": "[[16, 8], [11, 3]]"
+   },
+   {
+    "label": "D",
+    "text": "[[-1, -10], [-2, 20]]"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (0)(-3) + (4)(4) = 16, and so on: AB = [[16, 8], [11, 3]]. Wrong choices: [[-1, -10], [-2, 20]] multiplies in the other order; matrix multiplication is not commutative; [[0, 4], [-4, 4]] multiplies matching entries, which is not matrix multiplication; [[4, 8], [5, 0]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "71ac78383c9adbf5e93be03ec9320bc00d3e17ad6a257574359c3ae5fd55a7be",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-13",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[3, 4], [-2, 4]]    B = [[1, 0], [4, 1]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[19, 4], [14, 4]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[3, 16], [-2, -4]]"
+   },
+   {
+    "label": "B",
+    "text": "[[3, 0], [-8, 4]]"
+   },
+   {
+    "label": "C",
+    "text": "[[19, 4], [14, 4]]"
+   },
+   {
+    "label": "D",
+    "text": "[[3, 4], [10, 20]]"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (3)(1) + (4)(4) = 19, and so on: AB = [[19, 4], [14, 4]]. Wrong choices: [[3, 4], [10, 20]] multiplies in the other order; matrix multiplication is not commutative; [[3, 0], [-8, 4]] multiplies matching entries, which is not matrix multiplication; [[3, 16], [-2, -4]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "5e618004eeab672ba3728d007776fa7b2dff2a1eb7ca5630774dee7070cbbcc4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-matrix-product-14",
+  "skillId": "act-matrices-vectors",
+  "prompt": "Matrices A and B are given below. What is the matrix product AB?\n\nA = [[2, 0], [-3, 1]]    B = [[3, 0], [-1, 0]]",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "[[6, 0], [-10, 0]]",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "[[6, 0], [-2, 0]]"
+   },
+   {
+    "label": "B",
+    "text": "[[6, 0], [-10, 0]]"
+   },
+   {
+    "label": "C",
+    "text": "[[6, 0], [3, 0]]"
+   },
+   {
+    "label": "D",
+    "text": "[[6, -2], [-9, 3]]"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Each entry of AB is a row of A times a column of B. Row 1 · column 1: (2)(3) + (0)(-1) = 6, and so on: AB = [[6, 0], [-10, 0]]. Wrong choices: [[6, 0], [-2, 0]] multiplies in the other order; matrix multiplication is not commutative; [[6, 0], [3, 0]] multiplies matching entries, which is not matrix multiplication; [[6, -2], [-9, 3]] pairs rows of A with rows of B instead of with columns.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:matrix-product"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "9fc8a68f948f19e08d7efba7377c81a9e240ebaddece3ab5cda01edb123b95b9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-01",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = 3x - 3, what is the value of f⁻¹(-12)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-39"
+   },
+   {
+    "label": "B",
+    "text": "-5"
+   },
+   {
+    "label": "C",
+    "text": "-3"
+   },
+   {
+    "label": "D",
+    "text": "-1/39"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(-12) is the x with f(x) = -12: 3x - 3 = -12, so 3x = -9 and x = -3. Wrong choices: -39 evaluates f(-12) instead of the inverse; -5 undoes the operations but adds where it should subtract; -1/39 gives 1/f(-12); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2f6d258102fbe231e260a7558849eca4c464ef621657e85b03c99cf9d8caecb5",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-02",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = 5x + 5, what is the value of f⁻¹(15)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/80"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "4"
+   },
+   {
+    "label": "D",
+    "text": "80"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(15) is the x with f(x) = 15: 5x + 5 = 15, so 5x = 10 and x = 2. Wrong choices: 80 evaluates f(15) instead of the inverse; 4 undoes the operations but adds where it should subtract; 1/80 gives 1/f(15); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2b8282a8360f3d4e7f10f51c3e7dcebbed36e1d39d82a9d9b1b525fc2573fa1b",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-03",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = -3x - 5, what is the value of f⁻¹(4)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-17"
+   },
+   {
+    "label": "B",
+    "text": "-3"
+   },
+   {
+    "label": "C",
+    "text": "-1/17"
+   },
+   {
+    "label": "D",
+    "text": "1/3"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(4) is the x with f(x) = 4: -3x - 5 = 4, so -3x = 9 and x = -3. Wrong choices: -17 evaluates f(4) instead of the inverse; 1/3 undoes the operations but adds where it should subtract; -1/17 gives 1/f(4); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "4b691f9f88c0eb1167ce068e53b7254e35a8bb36b3fb9fa4663231a957cb9c71",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-04",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = 4x - 4, what is the value of f⁻¹(28)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/108"
+   },
+   {
+    "label": "B",
+    "text": "6"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "108"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(28) is the x with f(x) = 28: 4x - 4 = 28, so 4x = 32 and x = 8. Wrong choices: 108 evaluates f(28) instead of the inverse; 6 undoes the operations but adds where it should subtract; 1/108 gives 1/f(28); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f6ac909b8e70510892a018a2fd46ad795c358a5afd40c0cd764ef7c61f0ca62c",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-05",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = (3x + 1)/2, what is the value of f⁻¹(5)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/8"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "11/3"
+   },
+   {
+    "label": "D",
+    "text": "8"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(5) is the x with f(x) = 5: (3x + 1)/2 = 5 gives 3x + 1 = 10, so 3x = 9 and x = 3. Wrong choices: 8 evaluates f(5) instead of the inverse; 11/3 undoes the operations but adds where it should subtract; 1/8 gives 1/f(5); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "5c1800f229534b0f435cd633aaf53990acdc54d9f23ecaa141b72c71fdc8c5c4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-06",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = (3x + 9)/3, what is the value of f⁻¹(9)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/12"
+   },
+   {
+    "label": "B",
+    "text": "6"
+   },
+   {
+    "label": "C",
+    "text": "9"
+   },
+   {
+    "label": "D",
+    "text": "12"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(9) is the x with f(x) = 9: (3x + 9)/3 = 9 gives 3x + 9 = 27, so 3x = 18 and x = 6. Wrong choices: 12 evaluates f(9) instead of the inverse; 1/12 gives 1/f(9); the inverse is not the reciprocal; 9 returns the input unchanged.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "787b50bfc7fee7cca7bf3c0bee10c609ad0097ed01a829de1d8d83088a77f80a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-07",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = (-3x + 6)/3, what is the value of f⁻¹(0)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-2"
+   },
+   {
+    "label": "B",
+    "text": "0"
+   },
+   {
+    "label": "C",
+    "text": "1/2"
+   },
+   {
+    "label": "D",
+    "text": "2"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(0) is the x with f(x) = 0: (-3x + 6)/3 = 0 gives -3x + 6 = 0, so -3x = -6 and x = 2. Wrong choices: -2 undoes the operations but adds where it should subtract; 1/2 gives 1/f(0); the inverse is not the reciprocal; 0 returns the input unchanged.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "cc12ea64a5ac93d7be75c333752c118d9d2668b1c2472f284242d1e0ad7eeb07",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-08",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = 2x + 6, what is the value of f⁻¹(18)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/42"
+   },
+   {
+    "label": "B",
+    "text": "6"
+   },
+   {
+    "label": "C",
+    "text": "12"
+   },
+   {
+    "label": "D",
+    "text": "42"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(18) is the x with f(x) = 18: 2x + 6 = 18, so 2x = 12 and x = 6. Wrong choices: 42 evaluates f(18) instead of the inverse; 12 undoes the operations but adds where it should subtract; 1/42 gives 1/f(18); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "278a4e7ebf6052224938ae17670411cebb1218a2a59220b4a0df4dded66b65bb",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-09",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = -3x + 4, what is the value of f⁻¹(13)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-35"
+   },
+   {
+    "label": "B",
+    "text": "-17/3"
+   },
+   {
+    "label": "C",
+    "text": "-3"
+   },
+   {
+    "label": "D",
+    "text": "-1/35"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(13) is the x with f(x) = 13: -3x + 4 = 13, so -3x = 9 and x = -3. Wrong choices: -35 evaluates f(13) instead of the inverse; -17/3 undoes the operations but adds where it should subtract; -1/35 gives 1/f(13); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "825683b1dc73b0b3193c821be1b82c6b9332a66b99229923aee67f5bd38c108d",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-10",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = (5x - 9)/2, what is the value of f⁻¹(-12)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-69/2"
+   },
+   {
+    "label": "B",
+    "text": "-33/5"
+   },
+   {
+    "label": "C",
+    "text": "-3"
+   },
+   {
+    "label": "D",
+    "text": "-2/69"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(-12) is the x with f(x) = -12: (5x - 9)/2 = -12 gives 5x - 9 = -24, so 5x = -15 and x = -3. Wrong choices: -69/2 evaluates f(-12) instead of the inverse; -33/5 undoes the operations but adds where it should subtract; -2/69 gives 1/f(-12); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "cbf26386c8c871936b26b9bedad1e11c26513b0e1cb20e5640a38cc4325d10bf",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-11",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = 5x - 6, what is the value of f⁻¹(-26)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "-4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "-136"
+   },
+   {
+    "label": "B",
+    "text": "-32/5"
+   },
+   {
+    "label": "C",
+    "text": "-4"
+   },
+   {
+    "label": "D",
+    "text": "-1/136"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(-26) is the x with f(x) = -26: 5x - 6 = -26, so 5x = -20 and x = -4. Wrong choices: -136 evaluates f(-26) instead of the inverse; -32/5 undoes the operations but adds where it should subtract; -1/136 gives 1/f(-26); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "67a9b4bd956b2a175d0ea01c11747589281f03b724836eaef92f6aa217949fb5",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-12",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = -3x - 3, what is the value of f⁻¹(-15)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/42"
+   },
+   {
+    "label": "B",
+    "text": "4"
+   },
+   {
+    "label": "C",
+    "text": "6"
+   },
+   {
+    "label": "D",
+    "text": "42"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(-15) is the x with f(x) = -15: -3x - 3 = -15, so -3x = -12 and x = 4. Wrong choices: 42 evaluates f(-15) instead of the inverse; 6 undoes the operations but adds where it should subtract; 1/42 gives 1/f(-15); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "80eaa7e588ed83dc059eb9a0d427e3501ebab0ab68e362e48d2fa39aa6f952a7",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-13",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = (3x - 6)/2, what is the value of f⁻¹(3)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "2/3"
+   },
+   {
+    "label": "C",
+    "text": "3/2"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(3) is the x with f(x) = 3: (3x - 6)/2 = 3 gives 3x - 6 = 6, so 3x = 12 and x = 4. Wrong choices: 3/2 evaluates f(3) instead of the inverse; 0 undoes the operations but adds where it should subtract; 2/3 gives 1/f(3); the inverse is not the reciprocal.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "a3e0e308ece84898918a67ce43a204640819c71971dde8a8cb03d101bab08a48",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-inverse-value-14",
+  "skillId": "act-function-composition",
+  "prompt": "If f(x) = (-2x - 6)/2, what is the value of f⁻¹(-3)?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6"
+   },
+   {
+    "label": "B",
+    "text": "-3"
+   },
+   {
+    "label": "C",
+    "text": "0"
+   },
+   {
+    "label": "D",
+    "text": "1/0"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "f⁻¹(-3) is the x with f(x) = -3: (-2x - 6)/2 = -3 gives -2x - 6 = -6, so -2x = 0 and x = 0. Wrong choices: 6 undoes the operations but adds where it should subtract; 1/0 gives 1/f(-3); the inverse is not the reciprocal; -3 returns the input unchanged.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:inverse-value"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d549c2d4d8697cd07c202d98c78febfc4d7c9a8509df69f5a7e385cd1360bca5",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-01",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of sound is about 3.4 × 10^2 meters per second. The distance traveled by the sound of a distant explosion is about 6.8 × 10^3 meters. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2 × 10^1",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2 × 10^1"
+   },
+   {
+    "label": "B",
+    "text": "5 × 10^-2"
+   },
+   {
+    "label": "C",
+    "text": "2 × 10^5"
+   },
+   {
+    "label": "D",
+    "text": "2.312 × 10^6"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (6.8 × 10^3) ÷ (3.4 × 10^2) = (6.8 ÷ 3.4) × 10^(3 − 2) = 2 × 10^1 seconds. Wrong choices: 5 × 10^-2 divides the speed by the distance — upside down; 2 × 10^5 adds the exponents when dividing; division subtracts them; 2.312 × 10^6 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "9fc55d78d1ed196a4740c9e93db09f283971b3416533c39d72f537f62e0889e0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-02",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of light is about 3 × 10^5 kilometers per second. The distance traveled by a radio signal from Earth to a rover on Mars is about 2.25 × 10^8 kilometers. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7.5 × 10^2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7.5 × 10^2"
+   },
+   {
+    "label": "B",
+    "text": "7.5 × 10^12"
+   },
+   {
+    "label": "C",
+    "text": "1.333 × 10^-3"
+   },
+   {
+    "label": "D",
+    "text": "6.75 × 10^13"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (2.25 × 10^8) ÷ (3 × 10^5) = (2.25 ÷ 3) × 10^(8 − 5) = 7.5 × 10^2 seconds. Wrong choices: 1.333 × 10^-3 divides the speed by the distance — upside down; 7.5 × 10^12 adds the exponents when dividing; division subtracts them; 6.75 × 10^13 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "52759f40a7beb6736f3d03c5bc074365c57df671b6b632861fba431a5b75baba",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-03",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of light is about 3 × 10^5 kilometers per second. The distance traveled by sunlight from the Sun to Saturn is about 1.44 × 10^9 kilometers. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4.8 × 10^3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2.083 × 10^-4"
+   },
+   {
+    "label": "B",
+    "text": "4.8 × 10^3"
+   },
+   {
+    "label": "C",
+    "text": "4.32 × 10^14"
+   },
+   {
+    "label": "D",
+    "text": "4.8 × 10^13"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (1.44 × 10^9) ÷ (3 × 10^5) = (1.44 ÷ 3) × 10^(9 − 5) = 4.8 × 10^3 seconds. Wrong choices: 2.083 × 10^-4 divides the speed by the distance — upside down; 4.8 × 10^13 adds the exponents when dividing; division subtracts them; 4.32 × 10^14 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "4e7ae5b706588d667f70578b99e48640e11da795fd8b987d23ab285e3099fb37",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-04",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of light is about 3 × 10^5 kilometers per second. The distance traveled by sunlight from the Sun to Mercury is about 5.7 × 10^7 kilometers. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1.9 × 10^2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5.263 × 10^-3"
+   },
+   {
+    "label": "B",
+    "text": "1.71 × 10^13"
+   },
+   {
+    "label": "C",
+    "text": "1.9 × 10^12"
+   },
+   {
+    "label": "D",
+    "text": "1.9 × 10^2"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (5.7 × 10^7) ÷ (3 × 10^5) = (5.7 ÷ 3) × 10^(7 − 5) = 1.9 × 10^2 seconds. Wrong choices: 5.263 × 10^-3 divides the speed by the distance — upside down; 1.9 × 10^12 adds the exponents when dividing; division subtracts them; 1.71 × 10^13 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "594652002251c837aee3bffc8e55462af58322ec5c11c1d03e9ddf1d328125e6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-05",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of sound in seawater is about 1.5 × 10^3 meters per second. The distance traveled by a sonar ping through seawater to the ocean floor is about 4.5 × 10^3 meters. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3 × 10^0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3 × 10^0"
+   },
+   {
+    "label": "B",
+    "text": "3.333 × 10^-1"
+   },
+   {
+    "label": "C",
+    "text": "3 × 10^6"
+   },
+   {
+    "label": "D",
+    "text": "6.75 × 10^6"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (4.5 × 10^3) ÷ (1.5 × 10^3) = (4.5 ÷ 1.5) × 10^(3 − 3) = 3 × 10^0 seconds. Wrong choices: 3.333 × 10^-1 divides the speed by the distance — upside down; 3 × 10^6 adds the exponents when dividing; division subtracts them; 6.75 × 10^6 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "fcfe403ca007411571c8cd23912e3e6523f99dff7ee503b653dd6f562e4af7f2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-06",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of light is about 3 × 10^5 kilometers per second. The distance traveled by a signal from a satellite to a ground station is about 3.6 × 10^4 kilometers. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1.2 × 10^-1",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1.08 × 10^10"
+   },
+   {
+    "label": "B",
+    "text": "1.2 × 10^-1"
+   },
+   {
+    "label": "C",
+    "text": "1.2 × 10^9"
+   },
+   {
+    "label": "D",
+    "text": "8.333 × 10^0"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (3.6 × 10^4) ÷ (3 × 10^5) = (3.6 ÷ 3) × 10^(4 − 5) = 1.2 × 10^-1 seconds. Wrong choices: 8.333 × 10^0 divides the speed by the distance — upside down; 1.2 × 10^9 adds the exponents when dividing; division subtracts them; 1.08 × 10^10 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "5a696aa97475b22674bef516772bfecf90657f0510f8eb62efcaac187e014166",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-07",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of light is about 3 × 10^5 kilometers per second. The distance traveled by a radio signal from Earth to a probe near Saturn is about 1.35 × 10^9 kilometers. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4.5 × 10^3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4.5 × 10^13"
+   },
+   {
+    "label": "B",
+    "text": "4.05 × 10^14"
+   },
+   {
+    "label": "C",
+    "text": "4.5 × 10^3"
+   },
+   {
+    "label": "D",
+    "text": "2.222 × 10^-4"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (1.35 × 10^9) ÷ (3 × 10^5) = (1.35 ÷ 3) × 10^(9 − 5) = 4.5 × 10^3 seconds. Wrong choices: 2.222 × 10^-4 divides the speed by the distance — upside down; 4.5 × 10^13 adds the exponents when dividing; division subtracts them; 4.05 × 10^14 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "1980dd4a5a398afa939eb9d4dfe4deb736883c6df9d84b67feadec2ca0503983",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-08",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of light is about 3 × 10^5 kilometers per second. The distance traveled by a laser pulse from Earth to the Moon and back is about 7.68 × 10^5 kilometers. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2.56 × 10^0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2.304 × 10^11"
+   },
+   {
+    "label": "B",
+    "text": "3.906 × 10^-1"
+   },
+   {
+    "label": "C",
+    "text": "2.56 × 10^0"
+   },
+   {
+    "label": "D",
+    "text": "2.56 × 10^10"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (7.68 × 10^5) ÷ (3 × 10^5) = (7.68 ÷ 3) × 10^(5 − 5) = 2.56 × 10^0 seconds. Wrong choices: 3.906 × 10^-1 divides the speed by the distance — upside down; 2.56 × 10^10 adds the exponents when dividing; division subtracts them; 2.304 × 10^11 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "3e1ede005cdc0a83612330ef612f4b1063701f95f0dda073fdb6e8a4c15f3bb8",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-09",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of sound is about 3.4 × 10^2 meters per second. The distance traveled by the sound of thunder from a lightning strike is about 1.7 × 10^3 meters. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5 × 10^0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5 × 10^4"
+   },
+   {
+    "label": "B",
+    "text": "2 × 10^-1"
+   },
+   {
+    "label": "C",
+    "text": "5 × 10^0"
+   },
+   {
+    "label": "D",
+    "text": "5.78 × 10^5"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (1.7 × 10^3) ÷ (3.4 × 10^2) = (1.7 ÷ 3.4) × 10^(3 − 2) = 5 × 10^0 seconds. Wrong choices: 2 × 10^-1 divides the speed by the distance — upside down; 5 × 10^4 adds the exponents when dividing; division subtracts them; 5.78 × 10^5 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "84b86227e74157cd678ef79aa0ee85901cc5cd99c73f46b4243ef2662935ad7d",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-signal-travel-10",
+  "skillId": "act-scientific-notation",
+  "prompt": "The speed of sound in seawater is about 1.5 × 10^3 meters per second. The distance traveled by a sonar ping through seawater to a submarine is about 7.5 × 10^3 meters. About how many seconds does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5 × 10^0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5 × 10^6"
+   },
+   {
+    "label": "B",
+    "text": "2 × 10^-1"
+   },
+   {
+    "label": "C",
+    "text": "5 × 10^0"
+   },
+   {
+    "label": "D",
+    "text": "1.125 × 10^7"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Time = distance ÷ speed = (7.5 × 10^3) ÷ (1.5 × 10^3) = (7.5 ÷ 1.5) × 10^(3 − 3) = 5 × 10^0 seconds. Wrong choices: 2 × 10^-1 divides the speed by the distance — upside down; 5 × 10^6 adds the exponents when dividing; division subtracts them; 1.125 × 10^7 multiplies distance by speed.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:signal-travel"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "873c28d85ce155512b46fbb92d00ccd5a5e5c91269d30ebdce5160f55ad74169",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-01",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 3-digit code uses the digits 0 through 9 with no digit repeated, and the digit 0 is not used. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "504",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "504"
+   },
+   {
+    "label": "B",
+    "text": "720"
+   },
+   {
+    "label": "C",
+    "text": "729"
+   },
+   {
+    "label": "D",
+    "text": "810"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Only the digits 1-9 are allowed, with no repeats: 504 arrangements. Wrong choices: 720 ignores the restriction; 729 lets digits repeat; 810 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ce4531817cd4d0315e7c712e1e0ab2229e8bd2f8c76fea3a2f61c15947597a6c",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-02",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 4-digit code uses the digits 0 through 9 with no digit repeated, and the digit 0 is not used. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3024",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3024"
+   },
+   {
+    "label": "B",
+    "text": "5040"
+   },
+   {
+    "label": "C",
+    "text": "6480"
+   },
+   {
+    "label": "D",
+    "text": "6561"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Only the digits 1-9 are allowed, with no repeats: 3024 arrangements. Wrong choices: 5040 ignores the restriction; 6561 lets digits repeat; 6480 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "0d3f85eba3ed3e8ca5b7260a8fb6367fb40b6eda25a900492528d2f606455adb",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-03",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 3-digit code uses the digits 0 through 9 with no digit repeated, and the first and last digits must both be odd. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "160",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "160"
+   },
+   {
+    "label": "B",
+    "text": "200"
+   },
+   {
+    "label": "C",
+    "text": "500"
+   },
+   {
+    "label": "D",
+    "text": "720"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Fill the two restricted places first: 5 odd digits for the first, 4 left for the last. The middle 1 places take the 8 unused digits in order: 8. Total: 160. Wrong choices: 720 ignores the restriction; 500 lets digits repeat; 200 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "487b23de86731be40d6ac9a6cd6fd53c3fc2f954510aba45af79ce7d70c63bad",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-04",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 5-digit code uses the digits 0 through 9 with no digit repeated, and the first and last digits must both be odd. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "6720",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6720"
+   },
+   {
+    "label": "B",
+    "text": "8400"
+   },
+   {
+    "label": "C",
+    "text": "30240"
+   },
+   {
+    "label": "D",
+    "text": "50000"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Fill the two restricted places first: 5 odd digits for the first, 4 left for the last. The middle 3 places take the 8 unused digits in order: 336. Total: 6720. Wrong choices: 30240 ignores the restriction; 50000 lets digits repeat; 8400 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "fbff2c2463ab1f41d4c7eb6b6cc69c003fe643318d11d83166cb1b4c0d6ea9d2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-05",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 4-digit code uses the digits 0 through 9 with no digit repeated, and the last digit must be odd. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2520",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2520"
+   },
+   {
+    "label": "B",
+    "text": "3600"
+   },
+   {
+    "label": "C",
+    "text": "5000"
+   },
+   {
+    "label": "D",
+    "text": "5040"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Fill the last place first: 5 odd digits. The other 3 places take any of the 9 unused digits in order: 504. Total: 2520. Wrong choices: 5040 ignores the restriction; 5000 lets digits repeat; 3600 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "325a8b08c5634a8647cc492b8862c84e614eedf4e816999fa78d2fe41b10c380",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-06",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 3-digit code uses the digits 0 through 9 with no digit repeated, and the last digit must be odd. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "360",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "360"
+   },
+   {
+    "label": "B",
+    "text": "450"
+   },
+   {
+    "label": "C",
+    "text": "500"
+   },
+   {
+    "label": "D",
+    "text": "720"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Fill the last place first: 5 odd digits. The other 2 places take any of the 9 unused digits in order: 72. Total: 360. Wrong choices: 720 ignores the restriction; 500 lets digits repeat; 450 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "50bec3a208ebcd40a2fdd16b591ec973f49390dd4935b39c3e99d91776b1d0f6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-07",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 5-digit code uses the digits 0 through 9 with no digit repeated, and the first digit must be an even digit other than 0. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12096",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "12096"
+   },
+   {
+    "label": "B",
+    "text": "20160"
+   },
+   {
+    "label": "C",
+    "text": "30240"
+   },
+   {
+    "label": "D",
+    "text": "40000"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Fill the first place first: 4 choices (2, 4, 6, 8). The other 4 places take any of the 9 unused digits in order: 3024. Total: 12096. Wrong choices: 30240 ignores the restriction; 40000 lets digits repeat; 20160 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "1711a04c67f87df6323c673918c796884bbfaea20bd59835a3dbd088da63f739",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-08",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 5-digit code uses the digits 0 through 9 with no digit repeated, and the last digit must be odd. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "15120",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "15120"
+   },
+   {
+    "label": "B",
+    "text": "25200"
+   },
+   {
+    "label": "C",
+    "text": "30240"
+   },
+   {
+    "label": "D",
+    "text": "50000"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Fill the last place first: 5 odd digits. The other 4 places take any of the 9 unused digits in order: 3024. Total: 15120. Wrong choices: 30240 ignores the restriction; 50000 lets digits repeat; 25200 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ff6d9dc5cdb744b410cf8337fd264b55dcf7078cb79063523a222949f8c48829",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-09",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 3-digit code uses the digits 0 through 9 with no digit repeated, and the first digit must be an even digit other than 0. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "288",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "288"
+   },
+   {
+    "label": "B",
+    "text": "360"
+   },
+   {
+    "label": "C",
+    "text": "400"
+   },
+   {
+    "label": "D",
+    "text": "720"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Fill the first place first: 4 choices (2, 4, 6, 8). The other 2 places take any of the 9 unused digits in order: 72. Total: 288. Wrong choices: 720 ignores the restriction; 400 lets digits repeat; 360 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2b39fd17d681044bbfe76401de4b63bd71ddc6fff4cd09548719c8453b2c9155",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-10",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 4-digit code uses the digits 0 through 9 with no digit repeated, and the first and last digits must both be odd. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1120",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1120"
+   },
+   {
+    "label": "B",
+    "text": "1400"
+   },
+   {
+    "label": "C",
+    "text": "5000"
+   },
+   {
+    "label": "D",
+    "text": "5040"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Fill the two restricted places first: 5 odd digits for the first, 4 left for the last. The middle 2 places take the 8 unused digits in order: 56. Total: 1120. Wrong choices: 5040 ignores the restriction; 5000 lets digits repeat; 1400 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ec137c00ea200c7164b7d6d0f02cf8090d1e5878267cb4e55eda2fe2d26cc8de",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-11",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 4-digit code uses the digits 0 through 9 with no digit repeated, and the first digit must be an even digit other than 0. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2016",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2016"
+   },
+   {
+    "label": "B",
+    "text": "2880"
+   },
+   {
+    "label": "C",
+    "text": "4000"
+   },
+   {
+    "label": "D",
+    "text": "5040"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Fill the first place first: 4 choices (2, 4, 6, 8). The other 3 places take any of the 9 unused digits in order: 504. Total: 2016. Wrong choices: 5040 ignores the restriction; 4000 lets digits repeat; 2880 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "74ac5316f235c27b3e7bc4bee61ab4eb163c0db29880808d45ec66174ff3c095",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-restricted-codes-2-12",
+  "skillId": "act-counting-arrangements",
+  "prompt": "A 5-digit code uses the digits 0 through 9 with no digit repeated, and the digit 0 is not used. How many different codes are possible?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "15120",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "15120"
+   },
+   {
+    "label": "B",
+    "text": "30240"
+   },
+   {
+    "label": "C",
+    "text": "45360"
+   },
+   {
+    "label": "D",
+    "text": "59049"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "Only the digits 1-9 are allowed, with no repeats: 15120 arrangements. Wrong choices: 30240 ignores the restriction; 59049 lets digits repeat; 45360 forgets that the restricted digit is used up.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:restricted-codes-2"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "1ff66888e468d654cffbc2a5660c4667be0189dc8f99d802767160f94a8e57cc",
+  "isActive": true
  }
 ]

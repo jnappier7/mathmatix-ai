@@ -16,7 +16,7 @@ const familyOf = (it) => it.tags.find((t) => t.startsWith('family:')).slice(7);
 const keyText = (it) => it.options.find((o) => o.label === it.correctOption).text;
 const nums = (s) => (String(s).replace(/−/g, '-').match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
 const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
-const fr = (p, q) => { const g = gcd(p, q) || 1; return q / g === 1 ? `${p / g}` : `${p / g}/${q / g}`; };
+const fr = (p, q) => { if (q < 0) { p = -p; q = -q; } const g = gcd(p, q) || 1; return q / g === 1 ? `${p / g}` : `${p / g}/${q / g}`; };
 const tableRows = (prompt) => prompt.split('\n').filter((l) => / \| /.test(l)).map((l) => l.split(' | '));
 const lin = (m, b, lhs = 'y') => {
   const c = m === 1 ? '' : m === -1 ? '-' : `${m}`;
@@ -127,10 +127,112 @@ const SOLVE = {
     while (v < 1) { v *= 10; e--; }
     return `${Math.round(v * 1000) / 1000} × 10^${e}`;
   },
+  // ── Upper-level families (2026-10-07) ──
+  'transform-point': (it) => {
+    const [a, b] = it.prompt.match(/point \((-?\d+), (-?\d+)\)/).slice(1).map(Number);
+    const g = it.prompt.split('graph of y = ').pop().replace(/\?$/, '');   // the transformed one is the LAST
+    let x = a, y = b, m;
+    if ((m = g.match(/^f\((\d+)x\)$/))) x = a / Number(m[1]);
+    else if ((m = g.match(/^(\d+)f\(x\)$/))) y = b * Number(m[1]);
+    else if ((m = g.match(/^f\(x ([+-]) (\d+)\) ([+-]) (\d+)$/))) { x = a + (m[1] === '-' ? 1 : -1) * Number(m[2]); y = b + (m[3] === '+' ? 1 : -1) * Number(m[4]); }
+    else if (g === 'f(-x)') x = -a;
+    else if (g === '-f(x)') y = -b;
+    return `(${x}, ${y})`;
+  },
+  'complex-division': (it) => {
+    // Parse "a + bi", "a - i", "bi", "-i" or "a" into [re, im].
+    const parseZ = (t) => {
+      const u = t.replace(/\s+/g, '');
+      const m = u.match(/^(-?\d+)?(?:([+-]?)(\d*)i)?$/);
+      const re = m[1] && (m[2] !== undefined || !u.endsWith('i')) ? Number(m[1]) : 0;
+      let im = 0;
+      if (u.endsWith('i')) {
+        if (m[2] === undefined || (m[1] && m[2] === '')) {   // "bi" / "-i" with no real part
+          const only = u.match(/^(-?)(\d*)i$/);
+          return [0, (only[1] ? -1 : 1) * Number(only[2] || 1)];
+        }
+        im = (m[2] === '-' ? -1 : 1) * Number(m[3] || 1);
+      }
+      return [re, im];
+    };
+    const [num, den] = it.prompt.match(/equal to \(([^)]+)\)\/\(([^)]+)\)\?/).slice(1);
+    const [A, B] = parseZ(num), [c, d] = parseZ(den);
+    const n2 = c * c + d * d, re = (A * c + B * d) / n2, im = (B * c - A * d) / n2;
+    if (re === 0) return `${im === 1 ? '' : im === -1 ? '-' : im}i`;
+    return `${re} ${im < 0 ? '-' : '+'} ${Math.abs(im) === 1 ? '' : Math.abs(im)}i`;
+  },
+  'log-equation': (it) => {
+    const [b, k, n] = it.prompt.match(/log_(\d+)\(x\) \+ log_\d+\(x - (\d+)\) = (\d+)/).slice(1).map(Number);
+    for (let x = k + 1; x < 1e6; x++) if (x * (x - k) === b ** n) return `${x}`;
+    return null;
+  },
+  'fractional-exponent': (it) => {
+    const [B, sgn, m, n] = it.prompt.match(/value of (\d+)\^\((-?)(\d+)\/(\d+)\)/).slice(1).map((v, i) => (i === 1 ? v : Number(v)));
+    const v = Math.round(Math.pow(B, m / n));
+    return sgn ? `1/${v}` : `${v}`;
+  },
+  'draw-without-replacement': (it) => {
+    const [r, b] = nums(it.prompt);
+    const n = r + b;
+    if (/Given that the first marble is red/.test(it.prompt)) return fr(r - 1, n - 1);
+    if (/both are red/.test(it.prompt)) return fr(r * (r - 1), n * (n - 1));
+    return fr(r * b * 2, n * (n - 1));
+  },
+  'law-of-cosines': (it) => {
+    const [p, q, ang] = it.prompt.match(/AB = (\d+), AC = (\d+), and the measure of ∠A is (\d+)°/).slice(1).map(Number);
+    return `${Math.round(Math.sqrt(p * p + q * q - 2 * p * q * Math.cos((ang * Math.PI) / 180)))}`;
+  },
+  'quadrant-trig': (it) => {
+    const m = it.prompt.match(/If (sin|cos) θ = (-?\d+)\/(\d+) and θ is in quadrant (II|III|IV), what is the value of (sin|cos|tan) θ/);
+    const [given, num, hyp, quad, ask] = [m[1], Math.abs(Number(m[2])), Number(m[3]), m[4], m[5]];
+    const other = Math.round(Math.sqrt(hyp * hyp - num * num));
+    const sx = quad === 'IV' ? 1 : -1, sy = quad === 'II' ? 1 : -1;
+    const x = sx * (given === 'cos' ? num : other), y = sy * (given === 'sin' ? num : other);
+    return ask === 'sin' ? fr(y, hyp) : ask === 'cos' ? fr(x, hyp) : fr(y, x);
+  },
+  'half-life': (it) => {
+    const D = Number(it.prompt.match(/ (\d+) (?:mg|grams)/)[1]);
+    const h = Number(it.prompt.match(/every (\d+) hours/)[1]), t = Number(it.prompt.match(/after (\d+) hours/)[1]);
+    return `${D / 2 ** (t / h)}`;
+  },
+  'matrix-product': (it) => {
+    const mats = [...it.prompt.matchAll(/\[\[(-?\d+), (-?\d+)\], \[(-?\d+), (-?\d+)\]\]/g)].map((m) => m.slice(1).map(Number));
+    const [[a, b, c, d], [e, f, g, h]] = mats;
+    return `[[${a * e + b * g}, ${a * f + b * h}], [${c * e + d * g}, ${c * f + d * h}]]`;
+  },
+  'inverse-value': (it) => {
+    const m = it.prompt.match(/f\(x\) = \(?(-?\d+)x ([+-]) (\d+)\)?(?:\/(\d+))?, what is the value of f⁻¹\((-?\d+)\)/);
+    const a = Number(m[1]), b = (m[2] === '-' ? -1 : 1) * Number(m[3]), c = m[4] ? Number(m[4]) : 1, k = Number(m[5]);
+    return `${(c * k - b) / a}`;
+  },
+  'signal-travel': (it) => {
+    const [sc, sp] = it.prompt.match(/about ([\d.]+) × 10\^(\d+) (?:kilo)?meters per second/).slice(1).map(Number);
+    const [dc, dp] = it.prompt.match(/is about ([\d.]+) × 10\^(\d+) (?:kilo)?meters\./).slice(1).map(Number);
+    let v = (dc / sc) * 10 ** (dp - sp), e = 0;
+    while (v >= 10) { v /= 10; e++; }
+    while (v < 1) { v *= 10; e--; }
+    return `${Math.round(v * 1000) / 1000} × 10^${e}`;
+  },
+  'restricted-codes-2': (it) => {
+    const len = Number(it.prompt.match(/A (\d)-digit/)[1]);
+    let count = 0;
+    const rule = (d) => {
+      if (/last digit must be odd/.test(it.prompt)) return d[len - 1] % 2 === 1;
+      if (/first digit must be an even digit other than 0/.test(it.prompt)) return d[0] % 2 === 0 && d[0] !== 0;
+      if (/digit 0 is not used/.test(it.prompt)) return !d.includes(0);
+      return d[0] % 2 === 1 && d[len - 1] % 2 === 1;
+    };
+    const walk = (d) => {
+      if (d.length === len) { if (rule(d)) count++; return; }
+      for (let x = 0; x <= 9; x++) if (!d.includes(x)) walk([...d, x]);
+    };
+    walk([]);   // brute force: enumerate every code
+    return `${count}`;
+  },
 };
 
 test('the bank is at least the size it shipped at, on blueprint skills in every category', () => {
-  expect(items.length).toBeGreaterThanOrEqual(225);
+  expect(items.length).toBeGreaterThanOrEqual(385);
   const blueprint = require('../../seeds/act-math-blueprint.json');
   const catOf = {};
   Object.entries(blueprint.skillsByCategory).forEach(([c, ss]) => ss.forEach((s) => { catOf[s] = c; }));

@@ -399,6 +399,293 @@ const FAMILIES = [
       };
     },
   },
+
+  // ─── Upper-level depth (added 2026-10-07) ─────────────────────────────────
+  // An advanced 8th-grader profile in the fourth external audit lost its
+  // points on trig, horizontal compression, fractional exponents, complex
+  // division, logarithms and harder probability, and the bank was thinnest at
+  // exactly that end (3 hard conditional-probability items, 6 matrix, 8 graph
+  // transformation). These families are the hard end of those skills. NEW
+  // families rather than wider old ones: changing an old family's draws would
+  // re-key items under ids students have already seen.
+  {
+    id: 'transform-point', skillId: 'act-graph-transformations', count: 14, kind: 'multi-step',
+    gen(rng) {
+      const kind = pick(rng, ['hcomp', 'vstretch', 'shift', 'reflect-y', 'reflect-x']);
+      const P = (x, y) => `(${x}, ${y})`;
+      const a = pick(rng, [-6, -4, -2, 2, 4, 6, 8]), b = pick(rng, [-5, -3, -1, 1, 3, 5, 7]);
+      if (kind === 'hcomp') {
+        const k = pick(rng, [2]);
+        return {
+          params: `${kind},${a},${b},${k}`, difficulty: 4,
+          prompt: `The graph of y = f(x) passes through the point ${P(a, b)}. Which of the following points must lie on the graph of y = f(${k}x)?`,
+          key: P(a / k, b),
+          wrong: [[P(a * k, b), `stretches horizontally; f(${k}x) COMPRESSES the graph toward the y-axis`], [P(a, k * b), 'applies the factor to the output instead of the input'], [P(a / k, b / k), 'divides both coordinates']],
+          explain: `On y = f(${k}x), the output ${b} comes from an input where ${k}x = ${a}, so x = ${a / k}. The point ${P(a, b)} moves to ${P(a / k, b)}: the graph is compressed horizontally by a factor of ${k}.`,
+        };
+      }
+      if (kind === 'vstretch') {
+        const k = pick(rng, [2, 3]);
+        return {
+          params: `${kind},${a},${b},${k}`, difficulty: 3,
+          prompt: `The graph of y = f(x) passes through the point ${P(a, b)}. Which of the following points must lie on the graph of y = ${k}f(x)?`,
+          key: P(a, k * b),
+          wrong: [[P(a * k, b), 'applies the factor to the input instead of the output'], [P(a, b + k), `adds ${k} to the output instead of multiplying`], [a % k === 0 ? P(a / k, b) : null, `treats ${k}f(x) like f(${k}x)`], [P(a, b * k + (b < 0 ? 1 : -1)), 'misses a step while scaling the output']],
+          explain: `${k}f(x) multiplies every output by ${k} and leaves the inputs alone: ${P(a, b)} becomes ${P(a, k * b)}.`,
+        };
+      }
+      if (kind === 'shift') {
+        const h = pick(rng, [-4, -3, -2, 2, 3, 4]), v = pick(rng, [-3, -2, 2, 3, 5]);
+        const fx = `f(x ${h < 0 ? '+' : '-'} ${Math.abs(h)}) ${v < 0 ? '-' : '+'} ${Math.abs(v)}`;
+        return {
+          params: `${kind},${a},${b},${h},${v}`, difficulty: 3,
+          prompt: `The graph of y = f(x) passes through the point ${P(a, b)}. Which of the following points must lie on the graph of y = ${fx}?`,
+          key: P(a + h, b + v),
+          wrong: [[P(a - h, b + v), 'moves the graph the wrong way horizontally: x − h shifts RIGHT by h'], [P(a + h, b - v), 'moves it the wrong way vertically'], [P(a - h, b - v), 'reverses both shifts']],
+          explain: `Inside, x ${h < 0 ? '+' : '-'} ${Math.abs(h)} shifts the graph ${h > 0 ? 'right' : 'left'} ${Math.abs(h)}; outside, ${v < 0 ? '−' : '+'} ${Math.abs(v)} shifts it ${v > 0 ? 'up' : 'down'} ${Math.abs(v)}. ${P(a, b)} moves to ${P(a + h, b + v)}.`,
+        };
+      }
+      const xref = kind === 'reflect-y';
+      return {
+        params: `${kind},${a},${b}`, difficulty: 3,
+        prompt: `The graph of y = f(x) passes through the point ${P(a, b)}. Which of the following points must lie on the graph of y = ${xref ? 'f(-x)' : '-f(x)'}?`,
+        key: xref ? P(-a, b) : P(a, -b),
+        wrong: [[xref ? P(a, -b) : P(-a, b), `reflects across the ${xref ? 'x' : 'y'}-axis instead of the ${xref ? 'y' : 'x'}-axis`], [P(-a, -b), 'reflects across both axes'], [P(b, a), 'swaps the coordinates, which reflects across y = x']],
+        explain: xref ? `f(−x) feeds in the opposite input, so the point at x = ${a} appears at x = ${-a}: ${P(-a, b)}. That reflects the graph across the y-axis.` : `−f(x) negates every output: ${P(a, b)} becomes ${P(a, -b)}, a reflection across the x-axis.`,
+      };
+    },
+  },
+  {
+    id: 'complex-division', skillId: 'act-complex-numbers', count: 14, kind: 'multi-step',
+    gen(rng) {
+      const z = (re, im) => (im === 0 ? `${re}` : re === 0 ? `${im === 1 ? '' : im === -1 ? '-' : im}i` : `${re} ${im < 0 ? '-' : '+'} ${Math.abs(im) === 1 ? '' : Math.abs(im)}i`);
+      const p = ri(rng, -3, 5), q = ri(rng, -4, 4), c = ri(rng, 1, 4), d = pick(rng, [-3, -2, -1, 1, 2, 3]);
+      if (!q || !p) return null;
+      const A = p * c - q * d, B = p * d + q * c;          // (p + qi)(c + di)
+      const n2 = c * c + d * d;
+      const split = Number.isInteger(A / c) && Number.isInteger(B / d) ? z(A / c, B / d) : null;
+      return {
+        params: `${p},${q},${c},${d}`, difficulty: 4,
+        prompt: `For i = √(−1), which of the following is equal to (${z(A, B)})/(${z(c, d)})?`,
+        key: z(p, q),
+        wrong: [[z(p, -q), 'multiplies by the conjugate but drops a sign in the imaginary part'], [z(n2 * p, n2 * q), `multiplies by the conjugate and forgets to divide by ${c}² + ${d}² = ${n2}`], [split, 'divides real by real and imaginary by imaginary, which is not how division works'], [z(q, p), 'swaps the real and imaginary parts']],
+        explain: `Multiply top and bottom by the conjugate, ${z(c, -d)}. The denominator becomes ${c}² + ${d < 0 ? `(${d})` : d}² = ${n2}, and the numerator (${z(A, B)})(${z(c, -d)}) = ${z(n2 * p, n2 * q)}. Divide by ${n2}: ${z(p, q)}.`,
+      };
+    },
+  },
+  {
+    id: 'log-equation', skillId: 'act-logarithms', count: 14, kind: 'multi-step',
+    gen(rng) {
+      const b = pick(rng, [2, 3, 4, 5, 6, 10]), n = ri(rng, 1, 7), N = b ** n;
+      const k = ri(rng, 1, 15);
+      // x(x − k) = N with x > k: x = (k + √(k² + 4N)) / 2
+      const disc = k * k + 4 * N, r = Math.round(Math.sqrt(disc));
+      if (r * r !== disc || (k + r) % 2) return null;
+      const x = (k + r) / 2, neg = (k - r) / 2;
+      if (x <= k || N > 100000) return null;
+      return {
+        params: `${b},${n},${k}`, difficulty: 5,
+        prompt: `What is the solution of the equation log_${b}(x) + log_${b}(x - ${k}) = ${n}?`,
+        key: `${x}`,
+        wrong: [[`${neg}`, `solves x(x − ${k}) = ${N} but keeps the negative root; a logarithm of a negative number is undefined`], [`${N}`, `stops at ${b}^${n} = ${N}, the value of x(x − ${k})`], [`${x - k}`, `gives x − ${k} rather than x`], [`${b * n}`, `treats ${b}^${n} as ${b} × ${n}`]],
+        explain: `Combine the logs: log_${b}(x(x − ${k})) = ${n}, so x(x − ${k}) = ${b}^${n} = ${N}. Then x² − ${k}x − ${N} = 0 has roots ${x} and ${neg}. Only ${x} keeps both x and x − ${k} positive, so x = ${x}.`,
+      };
+    },
+  },
+  {
+    id: 'fractional-exponent', skillId: 'act-exponent-rules', count: 14, kind: 'multi-step',
+    gen(rng) {
+      const [r, nn] = pick(rng, [[2, 3], [3, 2], [2, 2], [4, 2], [3, 3], [5, 2], [2, 4], [2, 5], [10, 3], [6, 2], [7, 2]]);
+      const m = pick(rng, [2, 3, 5]);
+      if (m === nn || gcd(m, nn) !== 1) return null;   // the ACT writes exponents in lowest terms
+      const B = r ** nn, val = r ** m, neg = rng() < 0.5;
+      if (val > 1000) return null;
+      const exp = `${neg ? '-' : ''}${m}/${nn}`;
+      return {
+        params: `${r},${nn},${m},${neg}`, difficulty: 4,
+        prompt: `What is the value of ${B}^(${exp})?`,
+        key: neg ? `1/${val}` : `${val}`,
+        wrong: neg
+          ? [[`${val}`, 'ignores the negative sign in the exponent'], [`-1/${val}`, 'treats the negative exponent as a negative number'], [`-${val}`, 'makes the answer negative instead of taking a reciprocal']]
+          : [[`1/${val}`, 'takes a reciprocal, which only a NEGATIVE exponent calls for'], [Number.isInteger((B * m) / nn) ? `${(B * m) / nn}` : null, `multiplies ${B} by ${m}/${nn}`], [`${r ** (nn * m) > 100000 ? r ** m * r : r ** (nn * m)}`, `raises ${B} to the ${m} instead of taking the root first`]],
+        explain: `The denominator ${nn} is a root: ${nn === 2 ? '√' : `the ${nn === 3 ? 'cube' : `${nn}th`} root of `}${B} = ${r}. The numerator ${m} is a power: ${r}^${m} = ${val}.${neg ? ` The negative sign means take the reciprocal: 1/${val}.` : ''}`,
+      };
+    },
+  },
+  {
+    id: 'draw-without-replacement', skillId: 'act-conditional-probability', count: 14, kind: 'multi-step',
+    gen(rng) {
+      const r = ri(rng, 3, 8), bl = ri(rng, 3, 8), n = r + bl;
+      const ask = pick(rng, ['second-given-first', 'both', 'one-each']);
+      const fr = (p, q) => frac(p, q);
+      if (ask === 'second-given-first') {
+        return {
+          params: `${r},${bl},${ask}`, difficulty: 4,
+          prompt: `A bag holds ${r} red marbles and ${bl} blue marbles. Two marbles are drawn at random, one after the other, without replacement. Given that the first marble is red, what is the probability that the second marble is also red?`,
+          key: fr(r - 1, n - 1),
+          wrong: [[fr(r, n), 'ignores that one red marble is already gone'], [fr(r * (r - 1), n * (n - 1)), 'gives the probability that BOTH are red, not the second given the first'], [fr(r - 1, n), 'removes the red marble from the count but not from the total']],
+          explain: `After a red marble is drawn, ${r - 1} red remain out of ${n - 1} marbles: ${fr(r - 1, n - 1)}.`,
+        };
+      }
+      if (ask === 'both') {
+        return {
+          params: `${r},${bl},${ask}`, difficulty: 4,
+          prompt: `A bag holds ${r} red marbles and ${bl} blue marbles. Two marbles are drawn at random without replacement. What is the probability that both are red?`,
+          key: fr(r * (r - 1), n * (n - 1)),
+          wrong: [[fr(r * r, n * n), 'puts the first marble back (with replacement)'], [fr(r - 1, n - 1), 'gives only the second draw, given the first was red'], [fr(2 * r, n), 'adds the two draws instead of multiplying']]
+            // A "probability" of 1 or more is not a distractor anyone picks.
+            .filter(([t]) => { const [p, q] = t.split('/').map(Number); return q ? p < q : Number(t) < 1; }),
+          explain: `First red: ${r}/${n}. Then, with one red gone, ${r - 1}/${n - 1}. Multiply: ${r}/${n} × ${r - 1}/${n - 1} = ${fr(r * (r - 1), n * (n - 1))}.`,
+        };
+      }
+      return {
+        params: `${r},${bl},${ask}`, difficulty: 5,
+        prompt: `A bag holds ${r} red marbles and ${bl} blue marbles. Two marbles are drawn at random without replacement. What is the probability that one is red and one is blue?`,
+        key: fr(2 * r * bl, n * (n - 1)),
+        wrong: [[fr(r * bl, n * (n - 1)), 'counts only red-then-blue and misses blue-then-red'], [fr(2 * r * bl, n * n), 'puts the first marble back'], [fr(r * bl, n * n), 'puts the marble back AND counts only one order']],
+        explain: `Red then blue: ${r}/${n} × ${bl}/${n - 1}. Blue then red: ${bl}/${n} × ${r}/${n - 1}. Add the two orders: 2 × ${r} × ${bl} / (${n} × ${n - 1}) = ${fr(2 * r * bl, n * (n - 1))}.`,
+      };
+    },
+  },
+  {
+    id: 'law-of-cosines', skillId: 'act-law-of-sines-cosines', count: 12, kind: 'multi-step',
+    gen(rng) {
+      const [a, b, c, ang] = pick(rng, [[3, 8, 7, 60], [5, 8, 7, 60], [5, 21, 19, 60], [7, 15, 13, 60], [8, 15, 13, 60], [16, 21, 19, 60], [3, 5, 7, 120], [5, 16, 19, 120], [7, 8, 13, 120], [6, 10, 14, 120], [6, 16, 14, 60], [10, 16, 14, 60]]);
+      const flip = rng() < 0.5;
+      const [s1, s2] = flip ? [b, a] : [a, b];
+      const rad = (v) => { const q = Math.round(Math.sqrt(v)); return q * q === v ? `${q}` : `√${v}`; };
+      const sumSq = a * a + b * b, ab = a * b;
+      return {
+        params: `${a},${b},${ang},${flip}`, difficulty: 5,
+        prompt: `In triangle ABC, AB = ${s1}, AC = ${s2}, and the measure of ∠A is ${ang}°. What is the length of BC? (Note: cos ${ang}° = ${ang === 60 ? '1/2' : '-1/2'}.)`,
+        key: `${c}`,
+        wrong: [[rad(sumSq), `uses the Pythagorean theorem; ∠A is ${ang}°, not 90°`], [rad(ang === 60 ? sumSq + ab : sumSq - ab), `gets the sign of cos ${ang}° wrong`], [`${ang === 60 ? Math.abs(a - b) : a + b}`, `uses cos ${ang}° = ${ang === 60 ? '1' : '−1'}`]],
+        explain: `Law of cosines: BC² = ${s1}² + ${s2}² − 2(${s1})(${s2})cos ${ang}° = ${sumSq} ${ang === 60 ? '−' : '+'} ${ab} = ${c * c}, so BC = ${c}.`,
+      };
+    },
+  },
+  {
+    id: 'quadrant-trig', skillId: 'act-trigonometric-functions', count: 14, kind: 'multi-step',
+    gen(rng) {
+      const [o, h, hyp] = pick(rng, [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25]]);
+      const quad = pick(rng, ['II', 'III', 'IV']);
+      const sx = quad === 'II' || quad === 'III' ? -1 : 1, sy = quad === 'III' || quad === 'IV' ? -1 : 1;
+      const given = rng() < 0.5 ? 'sin' : 'cos';
+      const ask = given === 'sin' ? pick(rng, ['cos', 'tan']) : pick(rng, ['sin', 'tan']);
+      const vals = { sin: [sy * o, hyp], cos: [sx * h, hyp], tan: [sy * o, sx * h] };
+      const f = ([p, q]) => frac(p, q);
+      const key = f(vals[ask]);
+      const neg = ([p, q]) => frac(-p, q);
+      const recip = ([p, q]) => frac(q, p);
+      return {
+        params: `${o},${quad},${given},${ask}`, difficulty: 4,
+        prompt: `If ${given} θ = ${f(vals[given])} and θ is in quadrant ${quad}, what is the value of ${ask} θ?`,
+        key,
+        wrong: [[neg(vals[ask]), `has the right size but the wrong sign; in quadrant ${quad}, ${ask} is ${f(vals[ask]).startsWith('-') ? 'negative' : 'positive'}`], [recip(vals[ask]), `gives the reciprocal (${ask === 'tan' ? 'cot' : ask === 'sin' ? 'csc' : 'sec'} θ)`], [ask === 'tan' ? f([vals.tan[1], vals.tan[0]].map((x, i) => (i === 0 ? x : x))) : f(vals[ask === 'sin' ? 'cos' : 'sin']), 'uses the wrong side of the reference triangle'], [neg([vals[ask][1], vals[ask][0]]), 'takes the reciprocal and flips the sign']],
+        explain: `The reference triangle has legs ${o} and ${h} and hypotenuse ${hyp}. In quadrant ${quad}, x is ${sx < 0 ? 'negative' : 'positive'} and y is ${sy < 0 ? 'negative' : 'positive'}, so ${ask} θ = ${key}.`,
+      };
+    },
+  },
+  {
+    id: 'half-life', skillId: 'act-exponential-models', count: 14, kind: 'multi-step',
+    gen(rng) {
+      const k = ri(rng, 2, 5), h = pick(rng, [3, 4, 5, 6, 8, 12]), D = pick(rng, [64, 96, 128, 160, 192, 256, 320, 400, 480]);
+      const t = k * h, key = D / 2 ** k;
+      if (!Number.isInteger(key)) return null;
+      const what = pick(rng, [['A patient takes a', 'mg dose of a medicine', 'milligrams', 'of the medicine remain in the body'], ['A lab sample contains', 'grams of a radioactive isotope', 'grams', 'of the isotope remain']]);
+      return {
+        params: `${k},${h},${D},${what[1]}`, difficulty: 4,
+        prompt: `${what[0]} ${D} ${what[1]} whose amount is cut in half every ${h} hours. How many ${what[2]} ${what[3]} after ${t} hours?`,
+        key: `${key}`,
+        wrong: [[Number.isInteger(D / (2 * k)) ? `${D / (2 * k)}` : null, `divides by 2 × ${k} instead of halving ${k} times`], [`${D / 2 ** (k - 1)}`, 'counts one half-life too few'], [`${D / 2 ** (k + 1)}`, 'counts one half-life too many'], [Number.isInteger(D / k) ? `${D / k}` : null, `divides by the ${k} half-lives`]],
+        explain: `${t} hours is ${t} ÷ ${h} = ${k} half-lives. Halving ${k} times: ${D} × (1/2)^${k} = ${D} ÷ ${2 ** k} = ${key}.`,
+      };
+    },
+  },
+  {
+    id: 'matrix-product', skillId: 'act-matrices-vectors', count: 14, kind: 'multi-step',
+    gen(rng) {
+      const v = () => ri(rng, -3, 4);
+      const A = [[v(), v()], [v(), v()]], Bm = [[v(), v()], [v(), v()]];
+      const mul = (X, Y) => [[X[0][0] * Y[0][0] + X[0][1] * Y[1][0], X[0][0] * Y[0][1] + X[0][1] * Y[1][1]], [X[1][0] * Y[0][0] + X[1][1] * Y[1][0], X[1][0] * Y[0][1] + X[1][1] * Y[1][1]]];
+      const M = (X) => `[[${X[0][0]}, ${X[0][1]}], [${X[1][0]}, ${X[1][1]}]]`;
+      const AB = mul(A, Bm), BA = mul(Bm, A), EW = [[A[0][0] * Bm[0][0], A[0][1] * Bm[0][1]], [A[1][0] * Bm[1][0], A[1][1] * Bm[1][1]]];
+      const rowRow = [[A[0][0] * Bm[0][0] + A[0][1] * Bm[0][1], A[0][0] * Bm[1][0] + A[0][1] * Bm[1][1]], [A[1][0] * Bm[0][0] + A[1][1] * Bm[0][1], A[1][0] * Bm[1][0] + A[1][1] * Bm[1][1]]];
+      if (M(AB) === M(BA)) return null;
+      return {
+        params: `${M(A)}${M(Bm)}`, difficulty: 4,
+        prompt: `Matrices A and B are given below. What is the matrix product AB?\n\nA = ${M(A)}    B = ${M(Bm)}`,
+        key: M(AB),
+        wrong: [[M(BA), 'multiplies in the other order; matrix multiplication is not commutative'], [M(EW), 'multiplies matching entries, which is not matrix multiplication'], [M(rowRow), 'pairs rows of A with rows of B instead of with columns']],
+        explain: `Each entry of AB is a row of A times a column of B. Row 1 · column 1: (${A[0][0]})(${Bm[0][0]}) + (${A[0][1]})(${Bm[1][0]}) = ${AB[0][0]}, and so on: AB = ${M(AB)}.`,
+      };
+    },
+  },
+  {
+    id: 'inverse-value', skillId: 'act-function-composition', count: 14, kind: 'multi-step',
+    gen(rng) {
+      const a = pick(rng, [2, 3, 4, 5, -2, -3]), b = ri(rng, -9, 9), c = pick(rng, [1, 2, 3]);
+      const x0 = ri(rng, -5, 8);
+      const k = (a * x0 + b) / c;
+      if (!Number.isInteger(k) || b === 0 || k === x0) return null;
+      const fText = c === 1 ? `${a}x ${b < 0 ? '-' : '+'} ${Math.abs(b)}` : `(${a}x ${b < 0 ? '-' : '+'} ${Math.abs(b)})/${c}`;
+      return {
+        params: `${a},${b},${c},${x0}`, difficulty: 4,
+        prompt: `If f(x) = ${fText}, what is the value of f⁻¹(${k})?`,
+        key: `${x0}`,
+        wrong: [[frac(a * k + b, c), `evaluates f(${k}) instead of the inverse`], [frac(c * k + b, a), 'undoes the operations but adds where it should subtract'], [frac(c, a * k + b), `gives 1/f(${k}); the inverse is not the reciprocal`], [`${k}`, 'returns the input unchanged']],
+        explain: `f⁻¹(${k}) is the x with f(x) = ${k}: ${c === 1 ? `${fText} = ${k}` : `${fText} = ${k} gives ${a}x ${b < 0 ? '-' : '+'} ${Math.abs(b)} = ${c * k}`}, so ${a}x = ${c * k - b} and x = ${x0}.`,
+      };
+    },
+  },
+
+  // ─── Thin families, widened (new ids; the originals are unchanged) ─────────
+  {
+    id: 'signal-travel', skillId: 'act-scientific-notation', count: 10, kind: 'multi-step',
+    gen(rng) {
+      const [what, speed, sc, sp, dc, dp, unit] = pick(rng, [
+        ['a radio signal from Earth to a rover on Mars', 'light', 3, 5, 2.25, 8, 'kilometers'],
+        ['a radio signal from Earth to a probe near Saturn', 'light', 3, 5, 1.35, 9, 'kilometers'],
+        ['sunlight from the Sun to Mercury', 'light', 3, 5, 5.7, 7, 'kilometers'],
+        ['a laser pulse from Earth to the Moon and back', 'light', 3, 5, 7.68, 5, 'kilometers'],
+        ['the sound of thunder from a lightning strike', 'sound', 3.4, 2, 1.7, 3, 'meters'],
+        ['the sound of a distant explosion', 'sound', 3.4, 2, 6.8, 3, 'meters'],
+        ['a sonar ping through seawater to the ocean floor', 'sound in seawater', 1.5, 3, 4.5, 3, 'meters'],
+        ['a signal from a satellite to a ground station', 'light', 3, 5, 3.6, 4, 'kilometers'],
+        ['sunlight from the Sun to Saturn', 'light', 3, 5, 1.44, 9, 'kilometers'],
+        ['a sonar ping through seawater to a submarine', 'sound in seawater', 1.5, 3, 7.5, 3, 'meters'],
+      ]);
+      const per = unit === 'kilometers' ? 'kilometers per second' : 'meters per second';
+      const sec = (dc / sc) * 10 ** (dp - sp);
+      const sn = (x) => { let e = 0, c = x; while (c >= 10) { c /= 10; e += 1; } while (c < 1) { c *= 10; e -= 1; } return `${Math.round(c * 1000) / 1000} × 10^${e}`; };
+      return {
+        params: what, difficulty: 3,
+        prompt: `The speed of ${speed} is about ${sc} × 10^${sp} ${per}. The distance traveled by ${what} is about ${dc} × 10^${dp} ${unit}. About how many seconds does the trip take?`,
+        key: sn(sec),
+        wrong: [[sn((sc / dc) * 10 ** (sp - dp)), 'divides the speed by the distance — upside down'], [sn((dc / sc) * 10 ** (dp + sp)), 'adds the exponents when dividing; division subtracts them'], [sn(dc * sc * 10 ** (dp + sp)), 'multiplies distance by speed']],
+        explain: `Time = distance ÷ speed = (${dc} × 10^${dp}) ÷ (${sc} × 10^${sp}) = (${dc} ÷ ${sc}) × 10^(${dp} − ${sp}) = ${sn(sec)} seconds.`,
+      };
+    },
+  },
+  {
+    id: 'restricted-codes-2', skillId: 'act-counting-arrangements', count: 12, kind: 'multi-step',
+    gen(rng) {
+      const len = pick(rng, [3, 4, 5]), rule = pick(rng, ['last-odd', 'first-even-nonzero', 'no-zero', 'first-and-last-odd']);
+      const P = (n, k) => { let r = 1; for (let i = 0; i < k; i++) r *= n - i; return r; };
+      let key, words, first, how;
+      if (rule === 'last-odd') { first = 5; key = 5 * P(9, len - 1); words = 'the last digit must be odd'; how = `Fill the last place first: 5 odd digits. The other ${len - 1} places take any of the 9 unused digits in order: ${P(9, len - 1)}.`; }
+      else if (rule === 'first-even-nonzero') { first = 4; key = 4 * P(9, len - 1); words = 'the first digit must be an even digit other than 0'; how = `Fill the first place first: 4 choices (2, 4, 6, 8). The other ${len - 1} places take any of the 9 unused digits in order: ${P(9, len - 1)}.`; }
+      else if (rule === 'no-zero') { first = 9; key = P(9, len); words = 'the digit 0 is not used'; how = `Only the digits 1-9 are allowed, with no repeats: ${P(9, len)} arrangements.`; }
+      else { first = 5; key = 5 * 4 * P(8, len - 2); words = 'the first and last digits must both be odd'; how = `Fill the two restricted places first: 5 odd digits for the first, 4 left for the last. The middle ${len - 2} places take the 8 unused digits in order: ${P(8, len - 2)}.`; }
+      return {
+        params: `${len},${rule}`, difficulty: 4,
+        prompt: `A ${len}-digit code uses the digits 0 through 9 with no digit repeated, and ${words}. How many different codes are possible?`,
+        key: `${key}`,
+        wrong: [[`${P(10, len)}`, 'ignores the restriction'], [`${rule === 'no-zero' ? 9 ** len : first * 10 ** (len - 1)}`, 'lets digits repeat'], [rule === 'first-and-last-odd' ? `${5 * 5 * P(8, len - 2)}` : `${first * P(10, len - 1)}`, 'forgets that the restricted digit is used up'], [`${first * (len - 1)}`, 'multiplies the restricted choices by the number of remaining places']],
+        explain: rule === 'no-zero' ? how : `${how} Total: ${key}.`,
+      };
+    },
+  },
 ];
 
 const bank = makeBank({
