@@ -293,3 +293,44 @@ describe('actTestAssembler.NOT_ON_FORMS', () => {
     ['act-fable', 'act-ies-expansion', 'act-enhanced-2026-09'].forEach((s) => expect(A.NOT_ON_FORMS.test(s)).toBe(false));
   });
 });
+
+// External audit 2026-10-07: one form served the "DE ∥ BC" similarity setup
+// twice in different words, and a retake re-served "product of the solutions
+// of |2x − 5| = 11", which sits in two Fable practice tests under two ids.
+describe('templates and near-copies', () => {
+  const fable = require('../../seeds/act-fable-items.generated.json');
+  const get = (id) => fable.find((p) => p.problemId === id);
+
+  test('vertex names and numbers are not part of a template', () => {
+    const t = A.templateTokens('In △ABC, D lies on AB and DE ∥ BC. If AD = 5, what is BC?');
+    expect([...t]).toEqual(expect.arrayContaining(['triangle', 'parallel']));
+    expect([...t].some((w) => /abc|^bc$|^ad$/.test(w))).toBe(false);
+  });
+
+  test('the three "DE ∥ BC" wordings are one template', () => {
+    const [a, b, c] = ['act-fable-t2q43', 'act-fable-t5q19', 'act-fable-topup1q317'].map((id) => A.fingerprint(get(id)));
+    expect(A.sameTemplate(a, b)).toBe(true);
+    expect(A.sameTemplate(b, c)).toBe(true);
+  });
+
+  test('the |2x − 5| = 11 item in tests 3 and 4 is one question under two ids', () => {
+    const a = A.fingerprint(get('act-fable-t3q32')), b = A.fingerprint(get('act-fable-t4q33'));
+    expect(A.nearCopy(a, b)).toBe(true);
+  });
+
+  test('a different skill, different choices, or a different figure is not a copy', () => {
+    const base = { skillId: 's', prompt: 'What is the slope of the line graphed below?', options: [{ text: '1' }, { text: '2' }, { text: '3' }, { text: '4' }], svg: '<svg>a</svg>' };
+    const fp = A.fingerprint(base);
+    expect(A.nearCopy(fp, A.fingerprint({ ...base, skillId: 't' }))).toBe(false);
+    expect(A.nearCopy(fp, A.fingerprint({ ...base, options: [{ text: '1' }, { text: '2' }, { text: '3' }, { text: '5' }] }))).toBe(false);
+    expect(A.nearCopy(fp, A.fingerprint({ ...base, svg: '<svg>b</svg>' }))).toBe(false);
+    expect(A.nearCopy(fp, A.fingerprint({ ...base }))).toBe(true);
+  });
+
+  test('pickDiverse passes over a template the form already has', () => {
+    const form = [A.fingerprint(get('act-fable-t2q43'))];
+    const copy = { ...get('act-fable-t5q19'), difficulty: 3 };
+    const other = { ...get('act-fable-topup1q311'), difficulty: 3 };
+    expect(A.pickDiverse([copy, other], new Map(), 3, form).problemId).toBe(other.problemId);
+  });
+});

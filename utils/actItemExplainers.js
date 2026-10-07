@@ -86,11 +86,28 @@ function sameValue(computed, optionText) {
     return Math.abs(computed - optNum) <= 1e-9 * Math.max(1, Math.abs(optNum));
   }
   const decimals = (cleaned.split('.')[1] || '').length;
-  const tol = Math.max(10 ** -decimals / 2 + 1e-9, Math.abs(optNum) * 1e-9);
+  // Strictly LESS than half a unit. At exactly half (902.5 against a choice of
+  // 902) the value is on a rounding boundary, and "to the nearest whole
+  // number" means it rounds UP; a half-unit slack accepted the wrong key.
+  // Three items shipped keyed down that way (1000 × 0.95² = 902.5 keyed 902,
+  // external audit 2026-10-07). A solver whose prompt asks for rounding must
+  // round, with roundHalfUp below.
+  const tol = Math.max(10 ** -decimals / 2 - 1e-9, Math.abs(optNum) * 1e-9);
   return Math.abs(computed - optNum) <= tol;
 }
 
 const round = (x, d = 2) => Math.round(x * 10 ** d) / 10 ** d;
+/**
+ * Round half up, the convention "to the nearest …" means, robust to binary
+ * floating point: 4000 × 0.85³ computes as 2456.4999999999995, which a bare
+ * Math.round sends to 2456. Twelve significant digits first absorbs that
+ * representation error without touching any value a bank can state.
+ */
+const roundHalfUp = (x, d = 0) => {
+  const f = 10 ** d;
+  const scaled = Number((x * f).toPrecision(12));
+  return (Math.sign(scaled) * Math.floor(Math.abs(scaled) + 0.5)) / f;
+};
 /** Read a number out of a PROMPT, where the bank also writes fractions ("275/2"). */
 const num = (t) => {
   const f = /^(-?\d+)\/(\d+)$/.exec(String(t).trim());
@@ -1010,16 +1027,19 @@ const EXPLAINERS = [
       const r = Number(m[3]) / 100;
       const t = Number(m[4]);
       const factor = up ? 1 + r : 1 - r;
+      const exactValue = p0 * factor ** t;
+      const key = roundHalfUp(exactValue);
+      // The prompt asks for the nearest whole number, so the key is ROUNDED,
+      // half up. 1000 × 0.95² = 902.5 is 903, not 902.
+      const shown = Number.isInteger(roundHalfUp(exactValue, 6)) ? `${key}` : `${roundHalfUp(exactValue, 4)}, which rounds to ${key}`;
       return {
-        // Left unrounded on purpose. 1000 × 0.95² lands on 902.5 and which way
-        // that tips is a rounding convention, not a disagreement about the
-        // maths — sameValue matches to the option's own precision.
-        answer: p0 * factor ** t,
-        steps: `Each year multiplies by ${factor}, so after ${t} years: ${p0} × ${factor}^${t} = ${Math.round(p0 * factor ** t)}. Percent change compounds — it is not the same amount subtracted each year.`,
+        answer: key,
+        steps: `Each year multiplies by ${factor}, so after ${t} years: ${p0} × ${factor}^${t} = ${shown}. Percent change compounds — it is not the same amount subtracted each year.`,
         traps: [
-          [Math.round(p0 * (up ? 1 + r * t : 1 - r * t)), `applies ${Math.round(r * 100)}% of the ORIGINAL ${t} times over, as if the change were the same size each year`],
-          [Math.round(p0 * (up ? 1 - r : 1 + r) ** t), 'moves the population the wrong direction'],
-          [Math.round(p0 * factor), 'applies the change only once rather than for all ' + t + ' years'],
+          [roundHalfUp(p0 * (up ? 1 + r * t : 1 - r * t)), `applies ${Math.round(r * 100)}% of the ORIGINAL ${t} times over, as if the change were the same size each year`],
+          [roundHalfUp(p0 * (up ? 1 - r : 1 + r) ** t), 'moves the population the wrong direction'],
+          [roundHalfUp(p0 * factor), 'applies the change only once rather than for all ' + t + ' years'],
+          [Math.floor(roundHalfUp(exactValue, 6)), 'drops the decimal instead of rounding to the nearest whole number'],
         ],
       };
     },
@@ -1765,21 +1785,19 @@ const EXPLAINERS = [
   {
     id: 'discount-then-tax',
     match: /buys a (\w+) originally priced at \$([\d.]+)\. It is on sale for ([\d.]+)% off, and a ([\d.]+)% sales tax is applied to the sale pric/,
-    solve: (m, item) => {
+    solve: (m) => {
       const price = Number(m[2]);
       const off = Number(m[3]) / 100;
       const tax = Number(m[4]) / 100;
       const sale = price * (1 - off);
       const final = sale * (1 + tax);
-      // These land on a half-cent often enough to matter ($72.225), and which
-      // way that tips is a rounding convention rather than a disagreement about
-      // the arithmetic. Leave the value unrounded so the precision tolerance
-      // accepts either, and quote the choice's own rendering in the steps so
-      // the explanation matches what the student is looking at.
-      const keyed = ((item && item.options) || []).find((o) => o.label === item.correctOption);
-      const shown = keyed ? keyed.text : money(round(final, 2));
+      // A price is quoted to the cent, half up: $72.225 is $72.23. This used to
+      // stay unrounded and quote the stored choice, which let a key of $72.22
+      // pass and then explained the wrong total as if it were right.
+      const cents = roundHalfUp(final, 2);
+      const shown = money(cents);
       return {
-        answer: final,
+        answer: cents,
         steps: `Discount first, then tax on the DISCOUNTED price: ${money(price)} × ${(1 - off).toFixed(2)} = ${money(round(sale, 2))}, then × ${(1 + tax).toFixed(2)} = ${shown}.`,
         traps: [
           [round(sale, 2), 'stops at the sale price and never adds the tax'],
