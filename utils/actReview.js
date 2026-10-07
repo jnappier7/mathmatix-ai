@@ -96,6 +96,10 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
         category,
         prompt: it.content || p.prompt || '',
         svg: it.svg || null,               // figure, when the item has one (card preview)
+        // What the figure shows, in words. The tutor never sees the picture,
+        // and a visual item is answered FROM it (seeds/act-visual), so without
+        // this the tutor would be reviewing a graph it cannot read.
+        figureAlt: (it.svg || p.svg) ? (it.figureAlt || p.figureAlt || null) : null,
         options,
         skipped: !!r.skipped,
         theirAnswer: r.skipped ? null : (r.answer || null),
@@ -340,6 +344,21 @@ has in front of them. Once they give it to you, coach it normally.
 ====================================================================`;
 }
 
+/**
+ * The figure, described for the tutor. The student sees the picture on the
+ * review card (public/js/lessonTracker.js); the tutor gets its description,
+ * which for the visual bank states the data in full. Without it a "read the
+ * slope off the graph" miss was unreviewable: the tutor had the question and
+ * none of what it is answered from.
+ */
+function figureLine(miss) {
+  if (!miss || !(miss.svg || miss.figureAlt)) return '';
+  if (!miss.figureAlt) {
+    return 'FIGURE: this question has a figure the student can see on their review card. You do not have a description of it; ask them what it shows rather than guessing.\n';
+  }
+  return `FIGURE (on the student's review card — refer to it, don't re-describe it all; this is what it shows): ${miss.figureAlt}\n`;
+}
+
 function reviewPromptSection(miss, index, total, transfer = []) {
   if (!miss) return '';
   if (!hasQuestionText(miss)) return missingQuestionSection(miss, index, total);
@@ -371,7 +390,7 @@ Work THIS one question with them, then advance. Do not move to a different topic
 ${groupLine(miss)}
 
 QUESTION: ${miss.prompt}
-${opts ? `OPTIONS: ${opts}` : ''}
+${figureLine(miss)}${opts ? `OPTIONS: ${opts}` : ''}
 ${chose}
 STORED KEY: ${correct}.
 The stored key is for YOUR reference only. Do not state it, hint at it, or call it

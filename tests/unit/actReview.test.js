@@ -181,3 +181,49 @@ describe('advanceReview / currentMiss', () => {
     expect(reviewPromptSection(queue[1], 1, queue.length)).toMatch(/#3 from their test/);
   });
 });
+
+// A visual item is answered FROM its figure, which the tutor never sees. The
+// review prompt has to carry the figure's description, or a "read the slope
+// off the graph" miss is unreviewable (seeds/act-visual, 2026-10-06).
+describe('a missed question with a figure', () => {
+  const alt = 'Coordinate grid from -6 to 6 on each axis, one unit per square. A line is graphed through the marked lattice points (-4, -3) and (4, 3).';
+  const figSession = {
+    items: [
+      { position: 7, problemId: 'v1', skillId: 'act-linear-functions-models', category: 'functions', content: 'What is the slope of the line graphed below?', svg: '<svg></svg>', figureAlt: alt, options: [{ label: 'A', text: '3/4' }, { label: 'B', text: '4/3' }, { label: 'C', text: '-3/4' }, { label: 'D', text: '0' }] },
+      { position: 8, problemId: 'v2', skillId: 'act-circles', category: 'geometry', content: 'In the figure below, what is x?', svg: '<svg></svg>', options: [{ label: 'A', text: '1' }, { label: 'B', text: '2' }, { label: 'C', text: '3' }, { label: 'D', text: '4' }] },
+      { position: 9, problemId: 't1', skillId: 'act-percentages', category: 'integrating-essential-skills', content: 'What is 10% of 50?', options: [{ label: 'A', text: '5' }, { label: 'B', text: '10' }, { label: 'C', text: '50' }, { label: 'D', text: '500' }] },
+    ],
+    responses: [
+      { position: 7, problemId: 'v1', answer: 'B', correct: false },
+      { position: 8, problemId: 'v2', answer: 'A', correct: false },
+      { position: 9, problemId: 't1', answer: 'B', correct: false },
+    ],
+  };
+  const queue = buildReviewQueue(figSession, {
+    v1: { correctOption: 'A', answer: { value: '3/4' } },
+    v2: { correctOption: 'C', answer: { value: '3' }, figureAlt: 'Circle with radius 3.' },
+    t1: { correctOption: 'A', answer: { value: '5' } },
+  });
+  const byId = Object.fromEntries(queue.map((m) => [m.problemId, m]));
+
+  test('the queue carries the description, from the session item or else the bank', () => {
+    expect(byId.v1.figureAlt).toBe(alt);
+    expect(byId.v2.figureAlt).toBe('Circle with radius 3.');
+    expect(byId.t1.figureAlt).toBeNull();
+  });
+
+  test('the tutor is told what the figure shows', () => {
+    const s = reviewPromptSection(byId.v1, 0, queue.length);
+    expect(s).toContain(`FIGURE (on the student's review card`);
+    expect(s).toContain('(-4, -3) and (4, 3)');
+  });
+
+  test('a figure with no description is named, not ignored', () => {
+    const s = reviewPromptSection({ ...byId.v2, figureAlt: null }, 1, queue.length);
+    expect(s).toMatch(/FIGURE: this question has a figure .* ask them what it shows/);
+  });
+
+  test('a question with no figure gets no figure line', () => {
+    expect(reviewPromptSection(byId.t1, 2, queue.length)).not.toContain('FIGURE');
+  });
+});
