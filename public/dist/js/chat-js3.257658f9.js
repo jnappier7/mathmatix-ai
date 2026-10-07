@@ -5412,7 +5412,8 @@ class LessonTracker {
         const chips = (dp && (dp.focusCategories || dp.masteredCategories)) ? `
             <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
               ${(dp.focusCategories || []).map((c) => `<span style="background:rgba(255,255,255,.2);color:#fff;font-size:11.5px;padding:3px 9px;border-radius:20px">${label(c)}</span>`).join('')}
-              ${(dp.masteredCategories || []).map((c) => `<span style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);font-size:11.5px;padding:3px 9px;border-radius:20px"><i class="fas fa-check" style="font-size:10px"></i> ${label(c)}</span>`).join('')}
+              ${(dp.masteredCategories || []).length ? '<span style="color:rgba(255,255,255,.7);font-size:11px;margin-left:2px">Strong on your latest test:</span>' : ''}
+              ${(dp.masteredCategories || []).map((c) => `<span title="85% or more right in this category on your latest test" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);font-size:11.5px;padding:3px 9px;border-radius:20px"><i class="fas fa-check" style="font-size:10px"></i> ${label(c)}</span>`).join('')}
             </div>` : '';
 
         // Collapsed: one slim row that still says where the student is, so the
@@ -5590,8 +5591,16 @@ class LessonTracker {
     /** Repaint the bootcamp panel from a chat-turn payload (data.actBootcamp). */
     updateBootcamp(bc) {
         if (!bc || !this._lastUpdate) return;
+        const prev = this._lastUpdate.bootcamp;
         this._lastUpdate.bootcamp = bc;
         this._renderBootcamp(this._lastUpdate);
+        // A new test means a new round AND a new category plan, but a chat turn
+        // carries only the bootcamp — the checkmarks stayed on the first test.
+        // On a round change pull the whole state, and the sidebar card with it.
+        if (prev && (prev.round !== bc.round || String(prev.testSessionId || '') !== String(bc.testSessionId || ''))) {
+            if (this._sessionId) this.rehydrate(this._sessionId);
+            if (window.courseManager && typeof window.courseManager.loadMySessions === 'function') window.courseManager.loadMySessions();
+        }
     }
 
     /**

@@ -24,9 +24,11 @@
 // short of the hours/days the polluting sessions sat idle.
 const EXPIRED_AWAY_MS = 5 * 60 * 1000;
 
-// Fewer items than this in a category and a first→latest delta is reported as
-// "not comparable" rather than as a number. Rule of thumb: one question must be
-// worth less than ~13 percentage points before a delta can mean anything.
+// Fewer items than this in a category and a first→latest delta is flagged
+// low-confidence. Rule of thumb: one question must be worth less than ~13
+// percentage points before a one-point change means much. The delta is still
+// REPORTED: hiding it showed "n/a" for 6/6 → 1/6, a collapse no student should
+// have to work out for themselves (external audit, 2026-10-07).
 const MIN_COMPARE_ITEMS = 8;
 
 function deadlineOf(session) {
@@ -127,10 +129,12 @@ function buildComparison(attempts, { minCompareItems = MIN_COMPARE_ITEMS } = {})
     .map((c) => {
       const f = firstCats[c], l = latestCats[c];
       const fTotal = Number(f.total) || 0, lTotal = Number(l.total) || 0;
-      let reason = null;
-      if (!isSameForm || fTotal !== lTotal) reason = 'different-forms';
-      else if (lTotal < minCompareItems) reason = 'too-few-items';
+      // Different forms: no delta at all. Same form but a small category: the
+      // delta is real and shown, marked lowConfidence so the screen can say
+      // that one question moves it a lot.
+      const reason = (!isSameForm || fTotal !== lTotal) ? 'different-forms' : null;
       const comparable = reason === null;
+      const lowConfidence = comparable && lTotal < minCompareItems;
       const fp = fTotal ? f.correct / fTotal : 0;
       const lp = lTotal ? l.correct / lTotal : 0;
       return {
@@ -140,6 +144,7 @@ function buildComparison(attempts, { minCompareItems = MIN_COMPARE_ITEMS } = {})
         comparable,
         deltaCorrect: comparable ? (Number(l.correct) || 0) - (Number(f.correct) || 0) : null,
         deltaPct: comparable ? Math.round((lp - fp) * 100) : null,
+        lowConfidence,
         reason,
       };
     })

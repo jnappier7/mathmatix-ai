@@ -3481,8 +3481,14 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             let response;
 
-            // RAPPORT BUILDING MODE: Route to rapport endpoint
-            if (isRapportBuilding && queuedFiles.length === 0) {
+            // RAPPORT BUILDING MODE: Route to rapport endpoint — but never from
+            // inside a course. Rapport is the open-tutoring get-to-know-you, and
+            // it ends in a placement pitch; a new account that went straight
+            // into the ACT course had its review turns sent here instead of to
+            // the course, then got "What would you like to work on?" (external
+            // audit, 2026-10-07).
+            const inCourse = !!(window.courseManager && window.courseManager.activeCourseSessionId);
+            if (isRapportBuilding && !inCourse && queuedFiles.length === 0) {
                 response = await csrfFetch('/api/rapport/respond', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
