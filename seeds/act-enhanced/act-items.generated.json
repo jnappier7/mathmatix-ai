@@ -10898,26 +10898,26 @@
   "options": [
    {
     "label": "A",
-    "text": "2"
+    "text": "π/2"
    },
    {
     "label": "B",
-    "text": "π"
+    "text": "2"
    },
    {
     "label": "C",
-    "text": "8π"
+    "text": "π"
    },
    {
     "label": "D",
-    "text": "π/2"
+    "text": "8π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 4 = π/2. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: A) 2 gives the amplitude instead of the period; C) 8π multiplies by b instead of dividing, stretching the wave when it should compress.",
+  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 4 = π/2. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: B) 2 gives the amplitude instead of the period; D) 8π multiplies by b instead of dividing, stretching the wave when it should compress.",
   "tags": [
    "act",
    "act-functions",
@@ -11274,26 +11274,26 @@
   "options": [
    {
     "label": "A",
-    "text": "6"
-   },
-   {
-    "label": "B",
     "text": "π/2"
    },
    {
+    "label": "B",
+    "text": "π"
+   },
+   {
     "label": "C",
-    "text": "8π"
+    "text": "6"
    },
    {
     "label": "D",
-    "text": "π"
+    "text": "8π"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 4 = π/2. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: A) 6 gives the amplitude instead of the period; C) 8π multiplies by b instead of dividing, stretching the wave when it should compress.",
+  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 4 = π/2. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: C) 6 gives the amplitude instead of the period; D) 8π multiplies by b instead of dividing, stretching the wave when it should compress.",
   "tags": [
    "act",
    "act-functions",
@@ -11700,22 +11700,22 @@
    },
    {
     "label": "B",
-    "text": "6π"
-   },
-   {
-    "label": "C",
     "text": "2π/3"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "π"
+   },
+   {
+    "label": "D",
+    "text": "6π"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 3 = 2π/3. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: A) 2 gives the amplitude instead of the period; B) 6π multiplies by b instead of dividing, stretching the wave when it should compress.",
+  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 3 = 2π/3. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: A) 2 gives the amplitude instead of the period; D) 6π multiplies by b instead of dividing, stretching the wave when it should compress.",
   "tags": [
    "act",
    "act-functions",
@@ -14562,26 +14562,26 @@
   "options": [
    {
     "label": "A",
-    "text": "π"
+    "text": "2π/3"
    },
    {
     "label": "B",
-    "text": "6"
+    "text": "π"
    },
    {
     "label": "C",
-    "text": "6π"
+    "text": "6"
    },
    {
     "label": "D",
-    "text": "2π/3"
+    "text": "6π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 3 = 2π/3. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: B) 6 gives the amplitude instead of the period; C) 6π multiplies by b instead of dividing, stretching the wave when it should compress.",
+  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 3 = 2π/3. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: C) 6 gives the amplitude instead of the period; D) 6π multiplies by b instead of dividing, stretching the wave when it should compress.",
   "tags": [
    "act",
    "act-functions",
@@ -15686,26 +15686,26 @@
   "options": [
    {
     "label": "A",
-    "text": "π"
-   },
-   {
-    "label": "B",
-    "text": "6π"
-   },
-   {
-    "label": "C",
     "text": "2"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "2π/3"
+   },
+   {
+    "label": "C",
+    "text": "π"
+   },
+   {
+    "label": "D",
+    "text": "6π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 3 = 2π/3. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: B) 6π multiplies by b instead of dividing, stretching the wave when it should compress; C) 2 gives the amplitude instead of the period.",
+  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 3 = 2π/3. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: A) 2 gives the amplitude instead of the period; D) 6π multiplies by b instead of dividing, stretching the wave when it should compress.",
   "tags": [
    "act",
    "act-functions",
@@ -16061,26 +16061,26 @@
   "options": [
    {
     "label": "A",
-    "text": "5"
-   },
-   {
-    "label": "B",
     "text": "π/2"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "π"
+   },
+   {
+    "label": "C",
+    "text": "5"
    },
    {
     "label": "D",
     "text": "8π"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Functions",
-  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 4 = π/2. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: A) 5 gives the amplitude instead of the period; D) 8π multiplies by b instead of dividing, stretching the wave when it should compress.",
+  "explanation": "Period is 2π ÷ |b|, where b is the coefficient on x: 2π ÷ 4 = π/2. A bigger b squeezes the wave, so the period SHRINKS. Wrong choices: C) 5 gives the amplitude instead of the period; D) 8π multiplies by b instead of dividing, stretching the wave when it should compress.",
   "tags": [
    "act",
    "act-functions",
@@ -20332,22 +20332,22 @@
    },
    {
     "label": "B",
-    "text": "8√3"
+    "text": "8√2"
    },
    {
     "label": "C",
-    "text": "8√2"
+    "text": "8√3"
    },
    {
     "label": "D",
     "text": "16"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 8√2. (Check: 8² + 8² = 128, and √128 = 8√2.) Wrong choices: A) 4√2 halves the leg before scaling; B) 8√3 uses the √3 from the 30°-60°-90° triangle; D) 16 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice.",
+  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 8√2. (Check: 8² + 8² = 128, and √128 = 8√2.) Wrong choices: A) 4√2 halves the leg before scaling; C) 8√3 uses the √3 from the 30°-60°-90° triangle; D) 16 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice.",
   "tags": [
    "act",
    "act-geometry",
@@ -20376,26 +20376,26 @@
   "options": [
    {
     "label": "A",
-    "text": "3√3"
-   },
-   {
-    "label": "B",
     "text": "3/2"
    },
    {
+    "label": "B",
+    "text": "3√2"
+   },
+   {
     "label": "C",
-    "text": "6"
+    "text": "3√3"
    },
    {
     "label": "D",
-    "text": "3√2"
+    "text": "6"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "D",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 3 = 6. Wrong choices: A) 3√3 gives the side opposite the 60° angle, not the hypotenuse; B) 3/2 halves the short side instead of doubling it; D) 3√2 uses the √2 from the 45°-45°-90° triangle.",
+  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 3 = 6. Wrong choices: A) 3/2 halves the short side instead of doubling it; B) 3√2 uses the √2 from the 45°-45°-90° triangle; C) 3√3 gives the side opposite the 60° angle, not the hypotenuse.",
   "tags": [
    "act",
    "act-geometry",
@@ -20526,18 +20526,18 @@
    },
    {
     "label": "B",
-    "text": "π"
+    "text": "π/2"
    },
    {
     "label": "C",
-    "text": "2π"
+    "text": "π"
    },
    {
     "label": "D",
-    "text": "π/2"
+    "text": "2π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
@@ -20569,7 +20569,7 @@
   "options": [
    {
     "label": "A",
-    "text": "√3/2"
+    "text": "-√3/2"
    },
    {
     "label": "B",
@@ -20581,7 +20581,7 @@
    },
    {
     "label": "D",
-    "text": "-√3/2"
+    "text": "√3/2"
    }
   ],
   "correctOption": "B",
@@ -20667,18 +20667,18 @@
    },
    {
     "label": "B",
-    "text": "200π"
+    "text": "100π"
    },
    {
     "label": "C",
-    "text": "100π"
+    "text": "200π"
    },
    {
     "label": "D",
     "text": "400π"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
@@ -20711,26 +20711,26 @@
   "options": [
    {
     "label": "A",
-    "text": "100π"
-   },
-   {
-    "label": "B",
     "text": "10π"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "20π"
+   },
+   {
+    "label": "C",
+    "text": "100π"
    },
    {
     "label": "D",
     "text": "400π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The diameter is 20, so the radius is 10. Area = πr² = π × 10² = 100π square feet. Wrong choices: B) 10π uses r rather than r² or 2r; C) 20π gives the circumference instead of the area; D) 400π uses the diameter where the formula wants the radius.",
+  "explanation": "The diameter is 20, so the radius is 10. Area = πr² = π × 10² = 100π square feet. Wrong choices: A) 10π uses r rather than r² or 2r; B) 20π gives the circumference instead of the area; D) 400π uses the diameter where the formula wants the radius.",
   "tags": [
    "act",
    "act-geometry",
@@ -20760,26 +20760,26 @@
   "options": [
    {
     "label": "A",
-    "text": "64π/3"
-   },
-   {
-    "label": "B",
     "text": "16π/3"
    },
    {
+    "label": "B",
+    "text": "32π/3"
+   },
+   {
     "label": "C",
-    "text": "64π"
+    "text": "64π/3"
    },
    {
     "label": "D",
-    "text": "32π/3"
+    "text": "64π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "A sector is just a slice: 120° out of 360° is 120/360 of the circle. Whole area is πr² = 64π, so the sector is 120/360 × 64π = 64π/3. Wrong choices: B) 16π/3 computes the ARC LENGTH instead of the sector area; C) 64π gives the whole circle, forgetting to take the fraction.",
+  "explanation": "A sector is just a slice: 120° out of 360° is 120/360 of the circle. Whole area is πr² = 64π, so the sector is 120/360 × 64π = 64π/3. Wrong choices: A) 16π/3 computes the ARC LENGTH instead of the sector area; D) 64π gives the whole circle, forgetting to take the fraction.",
   "tags": [
    "act",
    "act-geometry",
@@ -21049,11 +21049,11 @@
    },
    {
     "label": "B",
-    "text": "729π"
+    "text": "324π"
    },
    {
     "label": "C",
-    "text": "324π"
+    "text": "729π"
    },
    {
     "label": "D",
@@ -21064,7 +21064,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "Volume of a sphere is (4/3)πr³: (4/3) × 9³ = (4/3) × 729 = 972π. Wrong choices: A) 243π keeps the 1/3 but loses the 4; B) 729π drops the 4/3; C) 324π uses the SURFACE AREA formula 4πr² instead of the volume.",
+  "explanation": "Volume of a sphere is (4/3)πr³: (4/3) × 9³ = (4/3) × 729 = 972π. Wrong choices: A) 243π keeps the 1/3 but loses the 4; B) 324π uses the SURFACE AREA formula 4πr² instead of the volume; C) 729π drops the 4/3.",
   "tags": [
    "3d-shapes",
    "act",
@@ -21333,7 +21333,7 @@
   "options": [
    {
     "label": "A",
-    "text": "7√3"
+    "text": "7/2√2"
    },
    {
     "label": "B",
@@ -21341,7 +21341,7 @@
    },
    {
     "label": "C",
-    "text": "7/2√2"
+    "text": "7√3"
    },
    {
     "label": "D",
@@ -21352,7 +21352,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 7√2. (Check: 7² + 7² = 98, and √98 = 7√2.) Wrong choices: A) 7√3 uses the √3 from the 30°-60°-90° triangle; D) 14 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice.",
+  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 7√2. (Check: 7² + 7² = 98, and √98 = 7√2.) Wrong choices: C) 7√3 uses the √3 from the 30°-60°-90° triangle; D) 14 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice.",
   "tags": [
    "act",
    "act-geometry",
@@ -21381,15 +21381,15 @@
   "options": [
    {
     "label": "A",
-    "text": "5√3"
-   },
-   {
-    "label": "B",
     "text": "5/2"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "5√2"
+   },
+   {
+    "label": "C",
+    "text": "5√3"
    },
    {
     "label": "D",
@@ -21400,7 +21400,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 5 = 10. Wrong choices: A) 5√3 gives the side opposite the 60° angle, not the hypotenuse; B) 5/2 halves the short side instead of doubling it; C) 5√2 uses the √2 from the 45°-45°-90° triangle.",
+  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 5 = 10. Wrong choices: A) 5/2 halves the short side instead of doubling it; B) 5√2 uses the √2 from the 45°-45°-90° triangle; C) 5√3 gives the side opposite the 60° angle, not the hypotenuse.",
   "tags": [
    "act",
    "act-geometry",
@@ -21525,7 +21525,7 @@
   "options": [
    {
     "label": "A",
-    "text": "√2/2"
+    "text": "0"
    },
    {
     "label": "B",
@@ -21533,7 +21533,7 @@
    },
    {
     "label": "C",
-    "text": "0"
+    "text": "√2/2"
    },
    {
     "label": "D",
@@ -21544,7 +21544,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "90° sits in quadrant II (on an axis), where sin is 1. Wrong choices: C) 0 gives cos(90°) instead of sin.",
+  "explanation": "90° sits in quadrant II (on an axis), where sin is 1. Wrong choices: A) 0 gives cos(90°) instead of sin.",
   "tags": [
    "act",
    "act-geometry",
@@ -21619,26 +21619,26 @@
   "options": [
    {
     "label": "A",
-    "text": "26π"
-   },
-   {
-    "label": "B",
-    "text": "169π"
-   },
-   {
-    "label": "C",
     "text": "13π"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "26π"
+   },
+   {
+    "label": "C",
     "text": "52π"
+   },
+   {
+    "label": "D",
+    "text": "169π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "Radius is 13, and circumference is 2πr = 2π × 13 = 26π. Wrong choices: B) 169π gives the AREA (πr²) instead of the circumference.",
+  "explanation": "Radius is 13, and circumference is 2πr = 2π × 13 = 26π. Wrong choices: D) 169π gives the AREA (πr²) instead of the circumference.",
   "tags": [
    "act",
    "act-geometry",
@@ -21667,26 +21667,26 @@
   "options": [
    {
     "label": "A",
-    "text": "10π"
-   },
-   {
-    "label": "B",
     "text": "5π"
    },
    {
+    "label": "B",
+    "text": "10π"
+   },
+   {
     "label": "C",
-    "text": "100π"
+    "text": "25π"
    },
    {
     "label": "D",
-    "text": "25π"
+    "text": "100π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The diameter is 10, so the radius is 5. Area = πr² = π × 5² = 25π square feet. Wrong choices: A) 10π gives the circumference instead of the area; B) 5π uses r rather than r² or 2r; C) 100π uses the diameter where the formula wants the radius.",
+  "explanation": "The diameter is 10, so the radius is 5. Area = πr² = π × 5² = 25π square feet. Wrong choices: A) 5π uses r rather than r² or 2r; B) 10π gives the circumference instead of the area; D) 100π uses the diameter where the formula wants the radius.",
   "tags": [
    "act",
    "act-geometry",
@@ -21716,11 +21716,11 @@
   "options": [
    {
     "label": "A",
-    "text": "6π"
+    "text": "3π"
    },
    {
     "label": "B",
-    "text": "3π"
+    "text": "6π"
    },
    {
     "label": "C",
@@ -21731,7 +21731,7 @@
     "text": "24π"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
@@ -22049,26 +22049,26 @@
   "options": [
    {
     "label": "A",
-    "text": "96π"
+    "text": "80π"
    },
    {
     "label": "B",
-    "text": "112π"
+    "text": "96π"
    },
    {
     "label": "C",
-    "text": "160π"
+    "text": "112π"
    },
    {
     "label": "D",
-    "text": "80π"
+    "text": "160π"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "TOTAL surface area is the curved side plus BOTH circular ends: 2πrh + 2πr² = 80π + 32π = 112π. Wrong choices: A) 96π counts only one end; C) 160π computes the volume; D) 80π gives only the curved side, leaving off the two ends.",
+  "explanation": "TOTAL surface area is the curved side plus BOTH circular ends: 2πrh + 2πr² = 80π + 32π = 112π. Wrong choices: A) 80π gives only the curved side, leaving off the two ends; B) 96π counts only one end; D) 160π computes the volume.",
   "tags": [
    "3d-shapes",
    "act",
@@ -22337,26 +22337,26 @@
   "options": [
    {
     "label": "A",
-    "text": "10√2"
-   },
-   {
-    "label": "B",
-    "text": "20"
-   },
-   {
-    "label": "C",
     "text": "5"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "10√2"
+   },
+   {
+    "label": "C",
     "text": "10√3"
+   },
+   {
+    "label": "D",
+    "text": "20"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "D",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 10 = 20. Wrong choices: A) 10√2 uses the √2 from the 45°-45°-90° triangle; C) 5 halves the short side instead of doubling it; D) 10√3 gives the side opposite the 60° angle, not the hypotenuse.",
+  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 10 = 20. Wrong choices: A) 5 halves the short side instead of doubling it; B) 10√2 uses the √2 from the 45°-45°-90° triangle; C) 10√3 gives the side opposite the 60° angle, not the hypotenuse.",
   "tags": [
    "act",
    "act-geometry",
@@ -22483,22 +22483,22 @@
   "options": [
    {
     "label": "A",
-    "text": "π/3"
-   },
-   {
-    "label": "B",
-    "text": "3π"
-   },
-   {
-    "label": "C",
     "text": "π/6"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "π/3"
+   },
+   {
+    "label": "C",
     "text": "2π/3"
+   },
+   {
+    "label": "D",
+    "text": "3π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
@@ -22534,22 +22534,22 @@
    },
    {
     "label": "B",
-    "text": "1"
-   },
-   {
-    "label": "C",
     "text": "√2/2"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "√3/2"
+   },
+   {
+    "label": "D",
+    "text": "1"
    }
   ],
   "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "135° sits in quadrant II with reference angle 45°, where tan is -1. Wrong choices: B) 1 has the right size but the wrong SIGN for quadrant II; C) √2/2 gives sin(135°) instead of tan.",
+  "explanation": "135° sits in quadrant II with reference angle 45°, where tan is -1. Wrong choices: B) √2/2 gives sin(135°) instead of tan; D) 1 has the right size but the wrong SIGN for quadrant II.",
   "tags": [
    "act",
    "act-geometry",
@@ -22628,18 +22628,18 @@
    },
    {
     "label": "B",
-    "text": "128π"
+    "text": "64π"
    },
    {
     "label": "C",
-    "text": "64π"
+    "text": "128π"
    },
    {
     "label": "D",
     "text": "256π"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
@@ -22676,22 +22676,22 @@
    },
    {
     "label": "B",
-    "text": "144π"
-   },
-   {
-    "label": "C",
     "text": "12π"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "36π"
+   },
+   {
+    "label": "D",
+    "text": "144π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The diameter is 12, so the radius is 6. Area = πr² = π × 6² = 36π square feet. Wrong choices: A) 6π uses r rather than r² or 2r; B) 144π uses the diameter where the formula wants the radius; C) 12π gives the circumference instead of the area.",
+  "explanation": "The diameter is 12, so the radius is 6. Area = πr² = π × 6² = 36π square feet. Wrong choices: A) 6π uses r rather than r² or 2r; B) 12π gives the circumference instead of the area; D) 144π uses the diameter where the formula wants the radius.",
   "tags": [
    "act",
    "act-geometry",
@@ -22721,7 +22721,7 @@
   "options": [
    {
     "label": "A",
-    "text": "3π"
+    "text": "π"
    },
    {
     "label": "B",
@@ -22729,18 +22729,18 @@
    },
    {
     "label": "C",
-    "text": "π"
+    "text": "3π"
    },
    {
     "label": "D",
     "text": "12π"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "A sector is just a slice: 30° out of 360° is 30/360 of the circle. Whole circumference is 2πr = 12π, so the arc is 30/360 × 12π = π. Wrong choices: A) 3π computes the sector AREA instead of the arc length; D) 12π gives the whole circle, forgetting to take the fraction.",
+  "explanation": "A sector is just a slice: 30° out of 360° is 30/360 of the circle. Whole circumference is 2πr = 12π, so the arc is 30/360 × 12π = π. Wrong choices: C) 3π computes the sector AREA instead of the arc length; D) 12π gives the whole circle, forgetting to take the fraction.",
   "tags": [
    "act",
    "act-geometry",
@@ -23399,14 +23399,14 @@
    },
    {
     "label": "C",
-    "text": "11π/3"
+    "text": "11π/6"
    },
    {
     "label": "D",
-    "text": "11π/6"
+    "text": "11π/3"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
@@ -23485,26 +23485,26 @@
   "options": [
    {
     "label": "A",
-    "text": "9π"
+    "text": "3π"
    },
    {
     "label": "B",
-    "text": "36π"
-   },
-   {
-    "label": "C",
     "text": "6π"
    },
    {
+    "label": "C",
+    "text": "9π"
+   },
+   {
     "label": "D",
-    "text": "3π"
+    "text": "36π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The diameter is 6, so the radius is 3. Area = πr² = π × 3² = 9π square feet. Wrong choices: B) 36π uses the diameter where the formula wants the radius; C) 6π gives the circumference instead of the area; D) 3π uses r rather than r² or 2r.",
+  "explanation": "The diameter is 6, so the radius is 3. Area = πr² = π × 3² = 9π square feet. Wrong choices: A) 3π uses r rather than r² or 2r; B) 6π gives the circumference instead of the area; D) 36π uses the diameter where the formula wants the radius.",
   "tags": [
    "act",
    "act-geometry",
@@ -23534,7 +23534,7 @@
   "options": [
    {
     "label": "A",
-    "text": "24π"
+    "text": "6π"
    },
    {
     "label": "B",
@@ -23542,18 +23542,18 @@
    },
    {
     "label": "C",
-    "text": "6π"
+    "text": "16π"
    },
    {
     "label": "D",
-    "text": "16π"
+    "text": "24π"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "A sector is just a slice: 135° out of 360° is 135/360 of the circle. Whole circumference is 2πr = 16π, so the arc is 135/360 × 16π = 6π. Wrong choices: A) 24π computes the sector AREA instead of the arc length; D) 16π gives the whole circle, forgetting to take the fraction.",
+  "explanation": "A sector is just a slice: 135° out of 360° is 135/360 of the circle. Whole circumference is 2πr = 16π, so the arc is 135/360 × 16π = 6π. Wrong choices: C) 16π gives the whole circle, forgetting to take the fraction; D) 24π computes the sector AREA instead of the arc length.",
   "tags": [
    "act",
    "act-geometry",
@@ -23771,7 +23771,7 @@
   "options": [
    {
     "label": "A",
-    "text": "128π"
+    "text": "48π"
    },
    {
     "label": "B",
@@ -23779,7 +23779,7 @@
    },
    {
     "label": "C",
-    "text": "48π"
+    "text": "128π"
    },
    {
     "label": "D",
@@ -23790,7 +23790,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "Volume of a cylinder is the base area times the height: πr²h = π × 64 × 6 = 384π. Wrong choices: A) 128π takes a third, which is the CONE formula; B) 96π computes the curved surface area (2πrh) instead of the volume; C) 48π uses r rather than r².",
+  "explanation": "Volume of a cylinder is the base area times the height: πr²h = π × 64 × 6 = 384π. Wrong choices: A) 48π uses r rather than r²; B) 96π computes the curved surface area (2πrh) instead of the volume; C) 128π takes a third, which is the CONE formula.",
   "tags": [
    "3d-shapes",
    "act",
@@ -24059,7 +24059,7 @@
   "options": [
    {
     "label": "A",
-    "text": "6"
+    "text": "3/2√2"
    },
    {
     "label": "B",
@@ -24071,14 +24071,14 @@
    },
    {
     "label": "D",
-    "text": "3/2√2"
+    "text": "6"
    }
   ],
   "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 3√2. (Check: 3² + 3² = 18, and √18 = 3√2.) Wrong choices: A) 6 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice; C) 3√3 uses the √3 from the 30°-60°-90° triangle.",
+  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 3√2. (Check: 3² + 3² = 18, and √18 = 3√2.) Wrong choices: C) 3√3 uses the √3 from the 30°-60°-90° triangle; D) 6 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice.",
   "tags": [
    "act",
    "act-geometry",
@@ -24205,26 +24205,26 @@
   "options": [
    {
     "label": "A",
-    "text": "0"
+    "text": "-1"
    },
    {
     "label": "B",
-    "text": "1"
-   },
-   {
-    "label": "C",
     "text": "-√3/2"
    },
    {
+    "label": "C",
+    "text": "0"
+   },
+   {
     "label": "D",
-    "text": "-1"
+    "text": "1"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "D",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "45° sits in quadrant I with reference angle 45°, where tan is 1. Wrong choices: D) -1 has the right size but the wrong SIGN for quadrant I.",
+  "explanation": "45° sits in quadrant I with reference angle 45°, where tan is 1. Wrong choices: A) -1 has the right size but the wrong SIGN for quadrant I.",
   "tags": [
    "act",
    "act-geometry",
@@ -24347,7 +24347,7 @@
   "options": [
    {
     "label": "A",
-    "text": "64π"
+    "text": "4π"
    },
    {
     "label": "B",
@@ -24355,18 +24355,18 @@
    },
    {
     "label": "C",
-    "text": "4π"
+    "text": "16π"
    },
    {
     "label": "D",
-    "text": "16π"
+    "text": "64π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The diameter is 8, so the radius is 4. Area = πr² = π × 4² = 16π square feet. Wrong choices: A) 64π uses the diameter where the formula wants the radius; B) 8π gives the circumference instead of the area; C) 4π uses r rather than r² or 2r.",
+  "explanation": "The diameter is 8, so the radius is 4. Area = πr² = π × 4² = 16π square feet. Wrong choices: A) 4π uses r rather than r² or 2r; B) 8π gives the circumference instead of the area; D) 64π uses the diameter where the formula wants the radius.",
   "tags": [
    "act",
    "act-geometry",
@@ -24396,7 +24396,7 @@
   "options": [
    {
     "label": "A",
-    "text": "27π/4"
+    "text": "3π/2"
    },
    {
     "label": "B",
@@ -24404,18 +24404,18 @@
    },
    {
     "label": "C",
-    "text": "3π/2"
+    "text": "27π/4"
    },
    {
     "label": "D",
     "text": "81π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "A sector is just a slice: 30° out of 360° is 30/360 of the circle. Whole area is πr² = 81π, so the sector is 30/360 × 81π = 27π/4. Wrong choices: C) 3π/2 computes the ARC LENGTH instead of the sector area; D) 81π gives the whole circle, forgetting to take the fraction.",
+  "explanation": "A sector is just a slice: 30° out of 360° is 30/360 of the circle. Whole area is πr² = 81π, so the sector is 30/360 × 81π = 27π/4. Wrong choices: A) 3π/2 computes the ARC LENGTH instead of the sector area; D) 81π gives the whole circle, forgetting to take the fraction.",
   "tags": [
    "act",
    "act-geometry",
@@ -24969,26 +24969,26 @@
   "options": [
    {
     "label": "A",
-    "text": "5√3"
-   },
-   {
-    "label": "B",
     "text": "5/2√2"
    },
    {
+    "label": "B",
+    "text": "5√2"
+   },
+   {
     "label": "C",
-    "text": "10"
+    "text": "5√3"
    },
    {
     "label": "D",
-    "text": "5√2"
+    "text": "10"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 5√2. (Check: 5² + 5² = 50, and √50 = 5√2.) Wrong choices: A) 5√3 uses the √3 from the 30°-60°-90° triangle; C) 10 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice.",
+  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 5√2. (Check: 5² + 5² = 50, and √50 = 5√2.) Wrong choices: C) 5√3 uses the √3 from the 30°-60°-90° triangle; D) 10 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice.",
   "tags": [
    "act",
    "act-geometry",
@@ -25017,26 +25017,26 @@
   "options": [
    {
     "label": "A",
-    "text": "3√3"
+    "text": "3√2"
    },
    {
     "label": "B",
-    "text": "6"
+    "text": "3√3"
    },
    {
     "label": "C",
-    "text": "6√3"
+    "text": "6"
    },
    {
     "label": "D",
-    "text": "3√2"
+    "text": "6√3"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The sides are x : x√3 : 2x, with x opposite the 30°, x√3 opposite the 60°, and 2x the hypotenuse. The LONGER LEG is opposite the 60°, so 3√3. Wrong choices: B) 6 gives the hypotenuse (2x), which is the longest side but not a leg; C) 6√3 multiplies both the doubling and the √3; D) 3√2 uses the √2 from the 45°-45°-90° triangle.",
+  "explanation": "The sides are x : x√3 : 2x, with x opposite the 30°, x√3 opposite the 60°, and 2x the hypotenuse. The LONGER LEG is opposite the 60°, so 3√3. Wrong choices: A) 3√2 uses the √2 from the 45°-45°-90° triangle; C) 6 gives the hypotenuse (2x), which is the longest side but not a leg; D) 6√3 multiplies both the doubling and the √3.",
   "tags": [
    "act",
    "act-geometry",
@@ -25167,7 +25167,7 @@
    },
    {
     "label": "B",
-    "text": "7π/3"
+    "text": "6π/7"
    },
    {
     "label": "C",
@@ -25175,7 +25175,7 @@
    },
    {
     "label": "D",
-    "text": "6π/7"
+    "text": "7π/3"
    }
   ],
   "correctOption": "C",
@@ -25257,11 +25257,11 @@
   "options": [
    {
     "label": "A",
-    "text": "36π"
+    "text": "12π"
    },
    {
     "label": "B",
-    "text": "12π"
+    "text": "36π"
    },
    {
     "label": "C",
@@ -25272,11 +25272,11 @@
     "text": "144π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "Radius is 6, and area is πr² = π × 6² = 36π. Wrong choices: B) 12π gives the CIRCUMFERENCE (2πr) instead of the area.",
+  "explanation": "Radius is 6, and area is πr² = π × 6² = 36π. Wrong choices: A) 12π gives the CIRCUMFERENCE (2πr) instead of the area.",
   "tags": [
    "act",
    "act-geometry",
@@ -25638,11 +25638,11 @@
   "options": [
    {
     "label": "A",
-    "text": "40"
+    "text": "4√2"
    },
    {
     "label": "B",
-    "text": "4√2"
+    "text": "2√10"
    },
    {
     "label": "C",
@@ -25650,14 +25650,14 @@
    },
    {
     "label": "D",
-    "text": "2√10"
+    "text": "40"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The distance formula is the Pythagorean theorem on the legs Δx and Δy: Δx = 6, Δy = -2, so d = √(6² + -2²) = √(36 + 4) = √40 = 2√10. Wrong choices: A) 40 stops at d² and never takes the square root; C) 8 adds the two legs instead of combining them at right angles.",
+  "explanation": "The distance formula is the Pythagorean theorem on the legs Δx and Δy: Δx = 6, Δy = -2, so d = √(6² + -2²) = √(36 + 4) = √40 = 2√10. Wrong choices: C) 8 adds the two legs instead of combining them at right angles; D) 40 stops at d² and never takes the square root.",
   "tags": [
    "act",
    "act-geometry",
@@ -25782,26 +25782,26 @@
   "options": [
    {
     "label": "A",
-    "text": "7√3"
+    "text": "7√2"
    },
    {
     "label": "B",
-    "text": "14"
+    "text": "7√3"
    },
    {
     "label": "C",
-    "text": "14√3"
+    "text": "14"
    },
    {
     "label": "D",
-    "text": "7√2"
+    "text": "14√3"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The sides are x : x√3 : 2x, with x opposite the 30°, x√3 opposite the 60°, and 2x the hypotenuse. The LONGER LEG is opposite the 60°, so 7√3. Wrong choices: B) 14 gives the hypotenuse (2x), which is the longest side but not a leg; C) 14√3 multiplies both the doubling and the √3; D) 7√2 uses the √2 from the 45°-45°-90° triangle.",
+  "explanation": "The sides are x : x√3 : 2x, with x opposite the 30°, x√3 opposite the 60°, and 2x the hypotenuse. The LONGER LEG is opposite the 60°, so 7√3. Wrong choices: A) 7√2 uses the √2 from the 45°-45°-90° triangle; C) 14 gives the hypotenuse (2x), which is the longest side but not a leg; D) 14√3 multiplies both the doubling and the √3.",
   "tags": [
    "act",
    "act-geometry",
@@ -25887,11 +25887,11 @@
    },
    {
     "label": "C",
-    "text": "6π"
+    "text": "π/3"
    },
    {
     "label": "D",
-    "text": "π/3"
+    "text": "6π"
    }
   ],
   "correctOption": "B",
@@ -26068,26 +26068,26 @@
   "options": [
    {
     "label": "A",
-    "text": "18π"
+    "text": "9π"
    },
    {
     "label": "B",
-    "text": "81π"
+    "text": "18π"
    },
    {
     "label": "C",
-    "text": "324π"
+    "text": "81π"
    },
    {
     "label": "D",
-    "text": "9π"
+    "text": "324π"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The diameter is 18, so the radius is 9. Area = πr² = π × 9² = 81π square feet. Wrong choices: A) 18π gives the circumference instead of the area; C) 324π uses the diameter where the formula wants the radius; D) 9π uses r rather than r² or 2r.",
+  "explanation": "The diameter is 18, so the radius is 9. Area = πr² = π × 9² = 81π square feet. Wrong choices: A) 9π uses r rather than r² or 2r; B) 18π gives the circumference instead of the area; D) 324π uses the diameter where the formula wants the radius.",
   "tags": [
    "act",
    "act-geometry",
@@ -26121,7 +26121,7 @@
    },
    {
     "label": "B",
-    "text": "64π"
+    "text": "8π"
    },
    {
     "label": "C",
@@ -26129,14 +26129,14 @@
    },
    {
     "label": "D",
-    "text": "8π"
+    "text": "64π"
    }
   ],
   "correctOption": "C",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "A sector is just a slice: 90° out of 360° is 90/360 of the circle. Whole area is πr² = 64π, so the sector is 90/360 × 64π = 16π. Wrong choices: A) 4π computes the ARC LENGTH instead of the sector area; B) 64π gives the whole circle, forgetting to take the fraction.",
+  "explanation": "A sector is just a slice: 90° out of 360° is 90/360 of the circle. Whole area is πr² = 64π, so the sector is 90/360 × 64π = 16π. Wrong choices: A) 4π computes the ARC LENGTH instead of the sector area; D) 64π gives the whole circle, forgetting to take the fraction.",
   "tags": [
    "act",
    "act-geometry",
@@ -26690,7 +26690,7 @@
   "options": [
    {
     "label": "A",
-    "text": "2√3"
+    "text": "1"
    },
    {
     "label": "B",
@@ -26698,18 +26698,18 @@
    },
    {
     "label": "C",
-    "text": "4"
+    "text": "2√3"
    },
    {
     "label": "D",
-    "text": "1"
+    "text": "4"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "D",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 2 = 4. Wrong choices: A) 2√3 gives the side opposite the 60° angle, not the hypotenuse; B) 2√2 uses the √2 from the 45°-45°-90° triangle; D) 1 halves the short side instead of doubling it.",
+  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 2 = 4. Wrong choices: A) 1 halves the short side instead of doubling it; B) 2√2 uses the √2 from the 45°-45°-90° triangle; C) 2√3 gives the side opposite the 60° angle, not the hypotenuse.",
   "tags": [
    "act",
    "act-geometry",
@@ -27598,26 +27598,26 @@
   "options": [
    {
     "label": "A",
-    "text": "18"
-   },
-   {
-    "label": "B",
-    "text": "9√3"
-   },
-   {
-    "label": "C",
     "text": "9/2√2"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "9√2"
+   },
+   {
+    "label": "C",
+    "text": "9√3"
+   },
+   {
+    "label": "D",
+    "text": "18"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 9√2. (Check: 9² + 9² = 162, and √162 = 9√2.) Wrong choices: A) 18 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice; B) 9√3 uses the √3 from the 30°-60°-90° triangle.",
+  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 9√2. (Check: 9² + 9² = 162, and √162 = 9√2.) Wrong choices: C) 9√3 uses the √3 from the 30°-60°-90° triangle; D) 18 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice.",
   "tags": [
    "act",
    "act-geometry",
@@ -27799,18 +27799,18 @@
    },
    {
     "label": "C",
-    "text": "144π"
+    "text": "48π"
    },
    {
     "label": "D",
-    "text": "48π"
+    "text": "144π"
    }
   ],
   "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "Radius is 12, and circumference is 2πr = 2π × 12 = 24π. Wrong choices: C) 144π gives the AREA (πr²) instead of the circumference.",
+  "explanation": "Radius is 12, and circumference is 2πr = 2π × 12 = 24π. Wrong choices: D) 144π gives the AREA (πr²) instead of the circumference.",
   "tags": [
    "act",
    "act-geometry",
@@ -27839,26 +27839,26 @@
   "options": [
    {
     "label": "A",
-    "text": "12π"
+    "text": "4π"
    },
    {
     "label": "B",
-    "text": "36π"
-   },
-   {
-    "label": "C",
     "text": "8π"
    },
    {
+    "label": "C",
+    "text": "12π"
+   },
+   {
     "label": "D",
-    "text": "4π"
+    "text": "36π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "C",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "A sector is just a slice: 120° out of 360° is 120/360 of the circle. Whole area is πr² = 36π, so the sector is 120/360 × 36π = 12π. Wrong choices: B) 36π gives the whole circle, forgetting to take the fraction; D) 4π computes the ARC LENGTH instead of the sector area.",
+  "explanation": "A sector is just a slice: 120° out of 360° is 120/360 of the circle. Whole area is πr² = 36π, so the sector is 120/360 × 36π = 12π. Wrong choices: A) 4π computes the ARC LENGTH instead of the sector area; D) 36π gives the whole circle, forgetting to take the fraction.",
   "tags": [
    "act",
    "act-geometry",
@@ -28269,7 +28269,7 @@
   "options": [
    {
     "label": "A",
-    "text": "8√3"
+    "text": "4√2"
    },
    {
     "label": "B",
@@ -28281,14 +28281,14 @@
    },
    {
     "label": "D",
-    "text": "4√2"
+    "text": "8√3"
    }
   ],
   "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The sides are x : x√3 : 2x, with x opposite the 30°, x√3 opposite the 60°, and 2x the hypotenuse. The LONGER LEG is opposite the 60°, so 4√3. Wrong choices: A) 8√3 multiplies both the doubling and the √3; C) 8 gives the hypotenuse (2x), which is the longest side but not a leg; D) 4√2 uses the √2 from the 45°-45°-90° triangle.",
+  "explanation": "The sides are x : x√3 : 2x, with x opposite the 30°, x√3 opposite the 60°, and 2x the hypotenuse. The LONGER LEG is opposite the 60°, so 4√3. Wrong choices: A) 4√2 uses the √2 from the 45°-45°-90° triangle; C) 8 gives the hypotenuse (2x), which is the longest side but not a leg; D) 8√3 multiplies both the doubling and the √3.",
   "tags": [
    "act",
    "act-geometry",
@@ -28321,18 +28321,18 @@
    },
    {
     "label": "B",
-    "text": "√2/2"
+    "text": "0"
    },
    {
     "label": "C",
-    "text": "0"
+    "text": "√2/2"
    },
    {
     "label": "D",
     "text": "√3/2"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
@@ -28411,11 +28411,11 @@
   "options": [
    {
     "label": "A",
-    "text": "324π"
+    "text": "18π"
    },
    {
     "label": "B",
-    "text": "18π"
+    "text": "81π"
    },
    {
     "label": "C",
@@ -28423,14 +28423,14 @@
    },
    {
     "label": "D",
-    "text": "81π"
+    "text": "324π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "Radius is 9, and area is πr² = π × 9² = 81π. Wrong choices: B) 18π gives the CIRCUMFERENCE (2πr) instead of the area.",
+  "explanation": "Radius is 9, and area is πr² = π × 9² = 81π. Wrong choices: A) 18π gives the CIRCUMFERENCE (2πr) instead of the area.",
   "tags": [
    "act",
    "act-geometry",
@@ -28463,22 +28463,22 @@
    },
    {
     "label": "B",
-    "text": "49π"
+    "text": "14π"
    },
    {
     "label": "C",
-    "text": "14π"
+    "text": "49π"
    },
    {
     "label": "D",
     "text": "196π"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The diameter is 14, so the radius is 7. Area = πr² = π × 7² = 49π square feet. Wrong choices: A) 7π uses r rather than r² or 2r; C) 14π gives the circumference instead of the area; D) 196π uses the diameter where the formula wants the radius.",
+  "explanation": "The diameter is 14, so the radius is 7. Area = πr² = π × 7² = 49π square feet. Wrong choices: A) 7π uses r rather than r² or 2r; B) 14π gives the circumference instead of the area; D) 196π uses the diameter where the formula wants the radius.",
   "tags": [
    "act",
    "act-geometry",
@@ -28745,11 +28745,11 @@
   "options": [
    {
     "label": "A",
-    "text": "72π"
+    "text": "12π"
    },
    {
     "label": "B",
-    "text": "288π"
+    "text": "72π"
    },
    {
     "label": "C",
@@ -28757,14 +28757,14 @@
    },
    {
     "label": "D",
-    "text": "12π"
+    "text": "288π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "A cone is one THIRD of the cylinder that contains it: (1/3)πr²h = (1/3) × 36 × 6 = 72π. Wrong choices: C) 216π forgets the 1/3 — that is the CYLINDER of the same radius and height; D) 12π uses r rather than r².",
+  "explanation": "A cone is one THIRD of the cylinder that contains it: (1/3)πr²h = (1/3) × 36 × 6 = 72π. Wrong choices: A) 12π uses r rather than r²; C) 216π forgets the 1/3 — that is the CYLINDER of the same radius and height.",
   "tags": [
    "3d-shapes",
    "act",
@@ -28985,26 +28985,26 @@
   "options": [
    {
     "label": "A",
-    "text": "6√3"
-   },
-   {
-    "label": "B",
-    "text": "12√3"
-   },
-   {
-    "label": "C",
     "text": "6√2"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "6√3"
+   },
+   {
+    "label": "C",
     "text": "12"
+   },
+   {
+    "label": "D",
+    "text": "12√3"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The sides are x : x√3 : 2x, with x opposite the 30°, x√3 opposite the 60°, and 2x the hypotenuse. The LONGER LEG is opposite the 60°, so 6√3. Wrong choices: B) 12√3 multiplies both the doubling and the √3; C) 6√2 uses the √2 from the 45°-45°-90° triangle; D) 12 gives the hypotenuse (2x), which is the longest side but not a leg.",
+  "explanation": "The sides are x : x√3 : 2x, with x opposite the 30°, x√3 opposite the 60°, and 2x the hypotenuse. The LONGER LEG is opposite the 60°, so 6√3. Wrong choices: A) 6√2 uses the √2 from the 45°-45°-90° triangle; C) 12 gives the hypotenuse (2x), which is the longest side but not a leg; D) 12√3 multiplies both the doubling and the √3.",
   "tags": [
    "act",
    "act-geometry",
@@ -29131,7 +29131,7 @@
   "options": [
    {
     "label": "A",
-    "text": "0"
+    "text": "-√3/2"
    },
    {
     "label": "B",
@@ -29139,7 +29139,7 @@
    },
    {
     "label": "C",
-    "text": "-√3/2"
+    "text": "0"
    },
    {
     "label": "D",
@@ -29150,7 +29150,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "150° sits in quadrant II with reference angle 30°, where sin is 1/2. Wrong choices: B) -1/2 has the right size but the wrong SIGN for quadrant II; C) -√3/2 gives cos(150°) instead of sin.",
+  "explanation": "150° sits in quadrant II with reference angle 30°, where sin is 1/2. Wrong choices: A) -√3/2 gives cos(150°) instead of sin; B) -1/2 has the right size but the wrong SIGN for quadrant II.",
   "tags": [
    "act",
    "act-geometry",
@@ -29233,11 +29233,11 @@
    },
    {
     "label": "C",
-    "text": "784π"
+    "text": "392π"
    },
    {
     "label": "D",
-    "text": "392π"
+    "text": "784π"
    }
   ],
   "correctOption": "B",
@@ -29416,7 +29416,7 @@
   "options": [
    {
     "label": "A",
-    "text": "16π"
+    "text": "8π/3"
    },
    {
     "label": "B",
@@ -29428,14 +29428,14 @@
    },
    {
     "label": "D",
-    "text": "8π/3"
+    "text": "16π"
    }
   ],
   "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "Volume of a sphere is (4/3)πr³: (4/3) × 2³ = (4/3) × 8 = 32π/3. Wrong choices: A) 16π uses the SURFACE AREA formula 4πr² instead of the volume; B) 8π drops the 4/3; D) 8π/3 keeps the 1/3 but loses the 4.",
+  "explanation": "Volume of a sphere is (4/3)πr³: (4/3) × 2³ = (4/3) × 8 = 32π/3. Wrong choices: A) 8π/3 keeps the 1/3 but loses the 4; B) 8π drops the 4/3; D) 16π uses the SURFACE AREA formula 4πr² instead of the volume.",
   "tags": [
    "3d-shapes",
    "act",
@@ -29608,26 +29608,26 @@
   "options": [
    {
     "label": "A",
-    "text": "4√2"
-   },
-   {
-    "label": "B",
     "text": "2√2"
    },
    {
+    "label": "B",
+    "text": "4√2"
+   },
+   {
     "label": "C",
-    "text": "8"
+    "text": "4√3"
    },
    {
     "label": "D",
-    "text": "4√3"
+    "text": "8"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 4√2. (Check: 4² + 4² = 32, and √32 = 4√2.) Wrong choices: B) 2√2 halves the leg before scaling; C) 8 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice; D) 4√3 uses the √3 from the 30°-60°-90° triangle.",
+  "explanation": "In a 45°-45°-90° triangle the sides are x : x : x√2, so the hypotenuse is 4√2. (Check: 4² + 4² = 32, and √32 = 4√2.) Wrong choices: A) 2√2 halves the leg before scaling; C) 4√3 uses the √3 from the 30°-60°-90° triangle; D) 8 doubles the leg — the hypotenuse is about 1.41 times a leg, not twice.",
   "tags": [
    "act",
    "act-geometry",
@@ -29664,18 +29664,18 @@
    },
    {
     "label": "C",
-    "text": "14"
+    "text": "7√3"
    },
    {
     "label": "D",
-    "text": "7√3"
+    "text": "14"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "D",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 7 = 14. Wrong choices: A) 7/2 halves the short side instead of doubling it; B) 7√2 uses the √2 from the 45°-45°-90° triangle; D) 7√3 gives the side opposite the 60° angle, not the hypotenuse.",
+  "explanation": "In a 30°-60°-90° triangle the sides are x : x√3 : 2x, with x opposite the 30°. So the hypotenuse is 2 × 7 = 14. Wrong choices: A) 7/2 halves the short side instead of doubling it; B) 7√2 uses the √2 from the 45°-45°-90° triangle; C) 7√3 gives the side opposite the 60° angle, not the hypotenuse.",
   "tags": [
    "act",
    "act-geometry",
@@ -29753,7 +29753,7 @@
   "options": [
    {
     "label": "A",
-    "text": "5π/3"
+    "text": "5π/12"
    },
    {
     "label": "B",
@@ -29761,11 +29761,11 @@
    },
    {
     "label": "C",
-    "text": "5π/12"
+    "text": "6π/5"
    },
    {
     "label": "D",
-    "text": "6π/5"
+    "text": "5π/3"
    }
   ],
   "correctOption": "B",
@@ -29800,26 +29800,26 @@
   "options": [
    {
     "label": "A",
-    "text": "√3/2"
-   },
-   {
-    "label": "B",
-    "text": "1"
-   },
-   {
-    "label": "C",
     "text": "-1"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "-1/2"
+   },
+   {
+    "label": "C",
+    "text": "√3/2"
+   },
+   {
+    "label": "D",
+    "text": "1"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "180° sits in quadrant III (on an axis), where cos is -1. Wrong choices: B) 1 has the right size but the wrong SIGN for quadrant III.",
+  "explanation": "180° sits in quadrant III (on an axis), where cos is -1. Wrong choices: D) 1 has the right size but the wrong SIGN for quadrant III.",
   "tags": [
    "act",
    "act-geometry",
@@ -29894,26 +29894,26 @@
   "options": [
    {
     "label": "A",
-    "text": "16π"
-   },
-   {
-    "label": "B",
-    "text": "64π"
-   },
-   {
-    "label": "C",
     "text": "8π"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "16π"
+   },
+   {
+    "label": "C",
     "text": "32π"
+   },
+   {
+    "label": "D",
+    "text": "64π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "Radius is 8, and circumference is 2πr = 2π × 8 = 16π. Wrong choices: B) 64π gives the AREA (πr²) instead of the circumference.",
+  "explanation": "Radius is 8, and circumference is 2πr = 2π × 8 = 16π. Wrong choices: D) 64π gives the AREA (πr²) instead of the circumference.",
   "tags": [
    "act",
    "act-geometry",
@@ -29946,7 +29946,7 @@
    },
    {
     "label": "B",
-    "text": "64π/3"
+    "text": "32π/3"
    },
    {
     "label": "C",
@@ -29954,14 +29954,14 @@
    },
    {
     "label": "D",
-    "text": "32π/3"
+    "text": "64π/3"
    }
   ],
   "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "A sector is just a slice: 120° out of 360° is 120/360 of the circle. Whole circumference is 2πr = 16π, so the arc is 120/360 × 16π = 16π/3. Wrong choices: B) 64π/3 computes the sector AREA instead of the arc length; C) 16π gives the whole circle, forgetting to take the fraction.",
+  "explanation": "A sector is just a slice: 120° out of 360° is 120/360 of the circle. Whole circumference is 2πr = 16π, so the arc is 120/360 × 16π = 16π/3. Wrong choices: C) 16π gives the whole circle, forgetting to take the fraction; D) 64π/3 computes the sector AREA instead of the arc length.",
   "tags": [
    "act",
    "act-geometry",
@@ -30421,11 +30421,11 @@
   "options": [
    {
     "label": "A",
-    "text": "576π"
+    "text": "12π"
    },
    {
     "label": "B",
-    "text": "12π"
+    "text": "24π"
    },
    {
     "label": "C",
@@ -30433,14 +30433,14 @@
    },
    {
     "label": "D",
-    "text": "24π"
+    "text": "576π"
    }
   ],
   "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "The diameter is 24, so the radius is 12. Area = πr² = π × 12² = 144π square feet. Wrong choices: A) 576π uses the diameter where the formula wants the radius; B) 12π uses r rather than r² or 2r; D) 24π gives the circumference instead of the area.",
+  "explanation": "The diameter is 24, so the radius is 12. Area = πr² = π × 12² = 144π square feet. Wrong choices: A) 12π uses r rather than r² or 2r; B) 24π gives the circumference instead of the area; D) 576π uses the diameter where the formula wants the radius.",
   "tags": [
    "act",
    "act-geometry",
@@ -30470,26 +30470,26 @@
   "options": [
    {
     "label": "A",
-    "text": "6π"
-   },
-   {
-    "label": "B",
     "text": "9π/4"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "27π/8"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "9π/2"
+   },
+   {
+    "label": "D",
+    "text": "6π"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Geometry",
-  "explanation": "A sector is just a slice: 135° out of 360° is 135/360 of the circle. Whole circumference is 2πr = 6π, so the arc is 135/360 × 6π = 9π/4. Wrong choices: A) 6π gives the whole circle, forgetting to take the fraction; C) 27π/8 computes the sector AREA instead of the arc length.",
+  "explanation": "A sector is just a slice: 135° out of 360° is 135/360 of the circle. Whole circumference is 2πr = 6π, so the arc is 135/360 × 6π = 9π/4. Wrong choices: B) 27π/8 computes the sector AREA instead of the arc length; D) 6π gives the whole circle, forgetting to take the fraction.",
   "tags": [
    "act",
    "act-geometry",
@@ -50906,22 +50906,22 @@
   "options": [
    {
     "label": "A",
-    "text": "24"
-   },
-   {
-    "label": "B",
     "text": "√48"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "4√6"
+   },
+   {
+    "label": "C",
+    "text": "24"
    },
    {
     "label": "D",
     "text": "24√6"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
@@ -51000,7 +51000,7 @@
    },
    {
     "label": "B",
-    "text": "10"
+    "text": "√10"
    },
    {
     "label": "C",
@@ -51008,14 +51008,14 @@
    },
    {
     "label": "D",
-    "text": "√10"
+    "text": "10"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √5 · √2 = √(5 × 2) = √10. Wrong choices: A) √7 adds what is under the radicals instead of multiplying; B) 10 multiplies correctly but forgets the answer is still a square root; C) 7 adds and drops the radical entirely.",
+  "explanation": "Radicals multiply straight across: √5 · √2 = √(5 × 2) = √10. Wrong choices: A) √7 adds what is under the radicals instead of multiplying; C) 7 adds and drops the radical entirely; D) 10 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -51586,26 +51586,26 @@
   "options": [
    {
     "label": "A",
-    "text": "4"
+    "text": "√4"
    },
    {
     "label": "B",
-    "text": "4√2"
-   },
-   {
-    "label": "C",
     "text": "2√2"
    },
    {
+    "label": "C",
+    "text": "4"
+   },
+   {
     "label": "D",
-    "text": "√4"
+    "text": "4√2"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Pull out the largest perfect square: 8 = 4 × 2, and √4 = 2, so √8 = 2√2. Wrong choices: A) 4 halves the number, as though the radical were a division by 2.",
+  "explanation": "Pull out the largest perfect square: 8 = 4 × 2, and √4 = 2, so √8 = 2√2. Wrong choices: C) 4 halves the number, as though the radical were a division by 2.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -51631,26 +51631,26 @@
   "options": [
    {
     "label": "A",
-    "text": "11√6"
+    "text": "11√3"
    },
    {
     "label": "B",
-    "text": "11√9"
+    "text": "11√6"
    },
    {
     "label": "C",
-    "text": "30√3"
+    "text": "11√9"
    },
    {
     "label": "D",
-    "text": "11√3"
+    "text": "30√3"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "√3 behaves like a variable here: 6 of them plus 5 of them is 11 of them. Add the COEFFICIENTS and leave the radical alone: 11√3. Wrong choices: A) 11√6 adds the numbers under the radical as well as in front; C) 30√3 multiplies the coefficients instead of adding them.",
+  "explanation": "√3 behaves like a variable here: 6 of them plus 5 of them is 11 of them. Add the COEFFICIENTS and leave the radical alone: 11√3. Wrong choices: B) 11√6 adds the numbers under the radical as well as in front; D) 30√3 multiplies the coefficients instead of adding them.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -51676,26 +51676,26 @@
   "options": [
    {
     "label": "A",
-    "text": "18"
-   },
-   {
-    "label": "B",
-    "text": "3√2"
-   },
-   {
-    "label": "C",
     "text": "√9"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "√18"
+   },
+   {
+    "label": "C",
+    "text": "3√2"
+   },
+   {
+    "label": "D",
+    "text": "18"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √3 · √6 = √(3 × 6) = √18, and √18 still has a perfect square in it: 18 = 9 × 2, so √18 = 3√2. Wrong choices: A) 18 multiplies correctly but forgets the answer is still a square root; C) √9 adds what is under the radicals instead of multiplying; D) √18 multiplies correctly but leaves a perfect square trapped under the radical.",
+  "explanation": "Radicals multiply straight across: √3 · √6 = √(3 × 6) = √18, and √18 still has a perfect square in it: 18 = 9 × 2, so √18 = 3√2. Wrong choices: A) √9 adds what is under the radicals instead of multiplying; B) √18 multiplies correctly but leaves a perfect square trapped under the radical; D) 18 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -52221,22 +52221,22 @@
   "options": [
    {
     "label": "A",
-    "text": "6√10"
+    "text": "√180"
    },
    {
     "label": "B",
-    "text": "60"
+    "text": "6√10"
    },
    {
     "label": "C",
-    "text": "60√10"
+    "text": "60"
    },
    {
     "label": "D",
-    "text": "√180"
+    "text": "60√10"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
@@ -52274,18 +52274,18 @@
    },
    {
     "label": "C",
-    "text": "18√3"
+    "text": "9√9"
    },
    {
     "label": "D",
-    "text": "9√9"
+    "text": "18√3"
    }
   ],
   "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "√3 behaves like a variable here: 3 of them plus 6 of them is 9 of them. Add the COEFFICIENTS and leave the radical alone: 9√3. Wrong choices: B) 9√6 adds the numbers under the radical as well as in front; C) 18√3 multiplies the coefficients instead of adding them.",
+  "explanation": "√3 behaves like a variable here: 3 of them plus 6 of them is 9 of them. Add the COEFFICIENTS and leave the radical alone: 9√3. Wrong choices: B) 9√6 adds the numbers under the radical as well as in front; D) 18√3 multiplies the coefficients instead of adding them.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -52859,22 +52859,22 @@
    },
    {
     "label": "B",
-    "text": "12√7"
+    "text": "8√14"
    },
    {
     "label": "C",
-    "text": "8√49"
+    "text": "12√7"
    },
    {
     "label": "D",
-    "text": "8√14"
+    "text": "8√49"
    }
   ],
   "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "√7 behaves like a variable here: 2 of them plus 6 of them is 8 of them. Add the COEFFICIENTS and leave the radical alone: 8√7. Wrong choices: B) 12√7 multiplies the coefficients instead of adding them; D) 8√14 adds the numbers under the radical as well as in front.",
+  "explanation": "√7 behaves like a variable here: 2 of them plus 6 of them is 8 of them. Add the COEFFICIENTS and leave the radical alone: 8√7. Wrong choices: B) 8√14 adds the numbers under the radical as well as in front; C) 12√7 multiplies the coefficients instead of adding them.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -52900,26 +52900,26 @@
   "options": [
    {
     "label": "A",
-    "text": "2√15"
-   },
-   {
-    "label": "B",
-    "text": "60"
-   },
-   {
-    "label": "C",
     "text": "√16"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "2√15"
+   },
+   {
+    "label": "C",
     "text": "√60"
+   },
+   {
+    "label": "D",
+    "text": "60"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √10 · √6 = √(10 × 6) = √60, and √60 still has a perfect square in it: 60 = 4 × 15, so √60 = 2√15. Wrong choices: B) 60 multiplies correctly but forgets the answer is still a square root; C) √16 adds what is under the radicals instead of multiplying; D) √60 multiplies correctly but leaves a perfect square trapped under the radical.",
+  "explanation": "Radicals multiply straight across: √10 · √6 = √(10 × 6) = √60, and √60 still has a perfect square in it: 60 = 4 × 15, so √60 = 2√15. Wrong choices: A) √16 adds what is under the radicals instead of multiplying; C) √60 multiplies correctly but leaves a perfect square trapped under the radical; D) 60 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -53445,22 +53445,22 @@
   "options": [
    {
     "label": "A",
-    "text": "33"
-   },
-   {
-    "label": "B",
     "text": "3√11"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "3√22"
+   },
+   {
+    "label": "C",
+    "text": "33"
    },
    {
     "label": "D",
     "text": "33√11"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
@@ -53490,26 +53490,26 @@
   "options": [
    {
     "label": "A",
-    "text": "11√49"
+    "text": "11√7"
    },
    {
     "label": "B",
-    "text": "30√7"
-   },
-   {
-    "label": "C",
     "text": "11√14"
    },
    {
+    "label": "C",
+    "text": "11√49"
+   },
+   {
     "label": "D",
-    "text": "11√7"
+    "text": "30√7"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "√7 behaves like a variable here: 5 of them plus 6 of them is 11 of them. Add the COEFFICIENTS and leave the radical alone: 11√7. Wrong choices: B) 30√7 multiplies the coefficients instead of adding them; C) 11√14 adds the numbers under the radical as well as in front.",
+  "explanation": "√7 behaves like a variable here: 5 of them plus 6 of them is 11 of them. Add the COEFFICIENTS and leave the radical alone: 11√7. Wrong choices: B) 11√14 adds the numbers under the radical as well as in front; D) 30√7 multiplies the coefficients instead of adding them.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -53535,26 +53535,26 @@
   "options": [
    {
     "label": "A",
-    "text": "√42"
+    "text": "√13"
    },
    {
     "label": "B",
-    "text": "13"
+    "text": "√42"
    },
    {
     "label": "C",
-    "text": "√13"
+    "text": "13"
    },
    {
     "label": "D",
     "text": "42"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √7 · √6 = √(7 × 6) = √42. Wrong choices: B) 13 adds and drops the radical entirely; C) √13 adds what is under the radicals instead of multiplying; D) 42 multiplies correctly but forgets the answer is still a square root.",
+  "explanation": "Radicals multiply straight across: √7 · √6 = √(7 × 6) = √42. Wrong choices: A) √13 adds what is under the radicals instead of multiplying; C) 13 adds and drops the radical entirely; D) 42 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -53990,22 +53990,22 @@
   "options": [
    {
     "label": "A",
-    "text": "36"
-   },
-   {
-    "label": "B",
-    "text": "36√6"
-   },
-   {
-    "label": "C",
     "text": "√108"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "6√6"
+   },
+   {
+    "label": "C",
+    "text": "36"
+   },
+   {
+    "label": "D",
+    "text": "36√6"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
@@ -54039,22 +54039,22 @@
    },
    {
     "label": "B",
-    "text": "9√49"
-   },
-   {
-    "label": "C",
     "text": "9√14"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "20√7"
+   },
+   {
+    "label": "D",
+    "text": "9√49"
    }
   ],
   "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "√7 behaves like a variable here: 5 of them plus 4 of them is 9 of them. Add the COEFFICIENTS and leave the radical alone: 9√7. Wrong choices: C) 9√14 adds the numbers under the radical as well as in front; D) 20√7 multiplies the coefficients instead of adding them.",
+  "explanation": "√7 behaves like a variable here: 5 of them plus 4 of them is 9 of them. Add the COEFFICIENTS and leave the radical alone: 9√7. Wrong choices: B) 9√14 adds the numbers under the radical as well as in front; C) 20√7 multiplies the coefficients instead of adding them.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -54080,26 +54080,26 @@
   "options": [
    {
     "label": "A",
-    "text": "5√2"
-   },
-   {
-    "label": "B",
     "text": "√15"
    },
    {
+    "label": "B",
+    "text": "5√2"
+   },
+   {
     "label": "C",
-    "text": "50"
+    "text": "√50"
    },
    {
     "label": "D",
-    "text": "√50"
+    "text": "50"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √5 · √10 = √(5 × 10) = √50, and √50 still has a perfect square in it: 50 = 25 × 2, so √50 = 5√2. Wrong choices: B) √15 adds what is under the radicals instead of multiplying; C) 50 multiplies correctly but forgets the answer is still a square root; D) √50 multiplies correctly but leaves a perfect square trapped under the radical.",
+  "explanation": "Radicals multiply straight across: √5 · √10 = √(5 × 10) = √50, and √50 still has a perfect square in it: 50 = 25 × 2, so √50 = 5√2. Wrong choices: A) √15 adds what is under the radicals instead of multiplying; C) √50 multiplies correctly but leaves a perfect square trapped under the radical; D) 50 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -54625,11 +54625,11 @@
   "options": [
    {
     "label": "A",
-    "text": "4√10"
+    "text": "√80"
    },
    {
     "label": "B",
-    "text": "√80"
+    "text": "4√10"
    },
    {
     "label": "C",
@@ -54640,7 +54640,7 @@
     "text": "40√10"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
@@ -54670,26 +54670,26 @@
   "options": [
    {
     "label": "A",
-    "text": "35√6"
-   },
-   {
-    "label": "B",
     "text": "12√6"
    },
    {
-    "label": "C",
+    "label": "B",
     "text": "12√12"
    },
    {
-    "label": "D",
+    "label": "C",
     "text": "12√36"
+   },
+   {
+    "label": "D",
+    "text": "35√6"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "√6 behaves like a variable here: 5 of them plus 7 of them is 12 of them. Add the COEFFICIENTS and leave the radical alone: 12√6. Wrong choices: A) 35√6 multiplies the coefficients instead of adding them; C) 12√12 adds the numbers under the radical as well as in front.",
+  "explanation": "√6 behaves like a variable here: 5 of them plus 7 of them is 12 of them. Add the COEFFICIENTS and leave the radical alone: 12√6. Wrong choices: B) 12√12 adds the numbers under the radical as well as in front; D) 35√6 multiplies the coefficients instead of adding them.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -54715,26 +54715,26 @@
   "options": [
    {
     "label": "A",
-    "text": "2√5"
-   },
-   {
-    "label": "B",
-    "text": "20"
-   },
-   {
-    "label": "C",
     "text": "√12"
    },
    {
-    "label": "D",
+    "label": "B",
+    "text": "2√5"
+   },
+   {
+    "label": "C",
     "text": "√20"
+   },
+   {
+    "label": "D",
+    "text": "20"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √2 · √10 = √(2 × 10) = √20, and √20 still has a perfect square in it: 20 = 4 × 5, so √20 = 2√5. Wrong choices: B) 20 multiplies correctly but forgets the answer is still a square root; C) √12 adds what is under the radicals instead of multiplying; D) √20 multiplies correctly but leaves a perfect square trapped under the radical.",
+  "explanation": "Radicals multiply straight across: √2 · √10 = √(2 × 10) = √20, and √20 still has a perfect square in it: 20 = 4 × 5, so √20 = 2√5. Wrong choices: A) √12 adds what is under the radicals instead of multiplying; C) √20 multiplies correctly but leaves a perfect square trapped under the radical; D) 20 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -55170,11 +55170,11 @@
   "options": [
    {
     "label": "A",
-    "text": "3√6"
+    "text": "3√3"
    },
    {
     "label": "B",
-    "text": "9√3"
+    "text": "3√6"
    },
    {
     "label": "C",
@@ -55182,10 +55182,10 @@
    },
    {
     "label": "D",
-    "text": "3√3"
+    "text": "9√3"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
@@ -55215,26 +55215,26 @@
   "options": [
    {
     "label": "A",
-    "text": "20√7"
-   },
-   {
-    "label": "B",
-    "text": "9√49"
-   },
-   {
-    "label": "C",
     "text": "9√7"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "9√14"
+   },
+   {
+    "label": "C",
+    "text": "20√7"
+   },
+   {
+    "label": "D",
+    "text": "9√49"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "√7 behaves like a variable here: 4 of them plus 5 of them is 9 of them. Add the COEFFICIENTS and leave the radical alone: 9√7. Wrong choices: A) 20√7 multiplies the coefficients instead of adding them; D) 9√14 adds the numbers under the radical as well as in front.",
+  "explanation": "√7 behaves like a variable here: 4 of them plus 5 of them is 9 of them. Add the COEFFICIENTS and leave the radical alone: 9√7. Wrong choices: B) 9√14 adds the numbers under the radical as well as in front; C) 20√7 multiplies the coefficients instead of adding them.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -55623,11 +55623,11 @@
   "options": [
    {
     "label": "A",
-    "text": "10√25"
+    "text": "10√5"
    },
    {
     "label": "B",
-    "text": "10√5"
+    "text": "10√10"
    },
    {
     "label": "C",
@@ -55635,14 +55635,14 @@
    },
    {
     "label": "D",
-    "text": "10√10"
+    "text": "10√25"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "√5 behaves like a variable here: 3 of them plus 7 of them is 10 of them. Add the COEFFICIENTS and leave the radical alone: 10√5. Wrong choices: C) 21√5 multiplies the coefficients instead of adding them; D) 10√10 adds the numbers under the radical as well as in front.",
+  "explanation": "√5 behaves like a variable here: 3 of them plus 7 of them is 10 of them. Add the COEFFICIENTS and leave the radical alone: 10√5. Wrong choices: B) 10√10 adds the numbers under the radical as well as in front; C) 21√5 multiplies the coefficients instead of adding them.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -56167,11 +56167,11 @@
   "options": [
    {
     "label": "A",
-    "text": "12√2"
+    "text": "√36"
    },
    {
     "label": "B",
-    "text": "√36"
+    "text": "6√2"
    },
    {
     "label": "C",
@@ -56179,10 +56179,10 @@
    },
    {
     "label": "D",
-    "text": "6√2"
+    "text": "12√2"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
@@ -56216,11 +56216,11 @@
    },
    {
     "label": "B",
-    "text": "11√49"
+    "text": "11√14"
    },
    {
     "label": "C",
-    "text": "11√14"
+    "text": "11√49"
    },
    {
     "label": "D",
@@ -56231,7 +56231,7 @@
   "difficulty": 1,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "√7 behaves like a variable here: 6 of them plus 5 of them is 11 of them. Add the COEFFICIENTS and leave the radical alone: 11√7. Wrong choices: C) 11√14 adds the numbers under the radical as well as in front; D) 30√7 multiplies the coefficients instead of adding them.",
+  "explanation": "√7 behaves like a variable here: 6 of them plus 5 of them is 11 of them. Add the COEFFICIENTS and leave the radical alone: 11√7. Wrong choices: B) 11√14 adds the numbers under the radical as well as in front; D) 30√7 multiplies the coefficients instead of adding them.",
   "tags": [
    "act",
    "act-number-quantity",

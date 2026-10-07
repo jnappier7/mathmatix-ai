@@ -7108,22 +7108,22 @@
   "options": [
    {
     "label": "A",
-    "text": "48 + 32π"
-   },
-   {
-    "label": "B",
-    "text": "48 + 16π"
-   },
-   {
-    "label": "C",
     "text": "48 + 4π"
    },
    {
-    "label": "D",
+    "label": "B",
     "text": "48 + 8π"
+   },
+   {
+    "label": "C",
+    "text": "48 + 16π"
+   },
+   {
+    "label": "D",
+    "text": "48 + 32π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "Rectangle: 8 × 6 = 48. The semicircle has radius 8 ÷ 2 = 4, so its area is ½π(4)² = 8π. Total: 48 + 8π. Wrong choices: 48 + 16π adds a whole circle instead of half of one; 48 + 32π uses the diameter, 8, as the radius; 48 + 4π uses πr instead of ½πr² for the semicircle.",
@@ -7157,7 +7157,7 @@
    },
    {
     "label": "B",
-    "text": "60 + 72π"
+    "text": "60 + 18π"
    },
    {
     "label": "C",
@@ -7165,10 +7165,10 @@
    },
    {
     "label": "D",
-    "text": "60 + 18π"
+    "text": "60 + 72π"
    }
   ],
-  "correctOption": "D",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "Rectangle: 12 × 5 = 60. The semicircle has radius 12 ÷ 2 = 6, so its area is ½π(6)² = 18π. Total: 60 + 18π. Wrong choices: 60 + 36π adds a whole circle instead of half of one; 60 + 72π uses the diameter, 12, as the radius; 60 + 6π uses πr instead of ½πr² for the semicircle.",
@@ -7288,11 +7288,11 @@
   "options": [
    {
     "label": "A",
-    "text": "36 + 18π"
+    "text": "36 + 6π"
    },
    {
     "label": "B",
-    "text": "36 + 72π"
+    "text": "36 + 18π"
    },
    {
     "label": "C",
@@ -7300,10 +7300,10 @@
    },
    {
     "label": "D",
-    "text": "36 + 6π"
+    "text": "36 + 72π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "Rectangle: 12 × 3 = 36. The semicircle has radius 12 ÷ 2 = 6, so its area is ½π(6)² = 18π. Total: 36 + 18π. Wrong choices: 36 + 36π adds a whole circle instead of half of one; 36 + 72π uses the diameter, 12, as the radius; 36 + 6π uses πr instead of ½πr² for the semicircle.",
@@ -7513,22 +7513,22 @@
   "options": [
    {
     "label": "A",
-    "text": "64 + 8π"
-   },
-   {
-    "label": "B",
     "text": "64 + 4π"
    },
    {
+    "label": "B",
+    "text": "64 + 8π"
+   },
+   {
     "label": "C",
-    "text": "64 + 32π"
+    "text": "64 + 16π"
    },
    {
     "label": "D",
-    "text": "64 + 16π"
+    "text": "64 + 32π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "Rectangle: 8 × 8 = 64. The semicircle has radius 8 ÷ 2 = 4, so its area is ½π(4)² = 8π. Total: 64 + 8π. Wrong choices: 64 + 16π adds a whole circle instead of half of one; 64 + 32π uses the diameter, 8, as the radius; 64 + 4π uses πr instead of ½πr² for the semicircle.",
@@ -7603,22 +7603,22 @@
   "options": [
    {
     "label": "A",
-    "text": "108 + 18π"
+    "text": "108 + 6π"
    },
    {
     "label": "B",
-    "text": "108 + 36π"
+    "text": "108 + 18π"
    },
    {
     "label": "C",
-    "text": "108 + 72π"
+    "text": "108 + 36π"
    },
    {
     "label": "D",
-    "text": "108 + 6π"
+    "text": "108 + 72π"
    }
   ],
-  "correctOption": "A",
+  "correctOption": "B",
   "difficulty": 4,
   "gradeBand": "8-12",
   "explanation": "Rectangle: 12 × 9 = 108. The semicircle has radius 12 ÷ 2 = 6, so its area is ½π(6)² = 18π. Total: 108 + 18π. Wrong choices: 108 + 36π adds a whole circle instead of half of one; 108 + 72π uses the diameter, 12, as the radius; 108 + 6π uses πr instead of ½πr² for the semicircle.",

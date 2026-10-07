@@ -157,9 +157,31 @@
 
 /* ---- Host: docked (ACT practice test) ------------------------------------
    A sibling of the test card inside the runner's centred overlay, so it sits
-   beside the card with no fixed-position clipping. */
+   beside the card with no fixed-position clipping.
+
+   On a phone it is a BOTTOM SHEET. It used to be laid out after the test
+   card (`order: 2`), but the card fills the screen and the overlay does not
+   scroll, so the open calculator sat below the viewport: on a 375×812 phone
+   its top edge was at y = 828 and nothing could reach it (external audit,
+   2026-10-07, flagged twice). Pinned to the bottom like the chat calculator,
+   it is always in reach; the test card's body gets matching bottom padding
+   while it is open (act-test.js .actt-body) so the question can still be
+   scrolled into view above it. */
 @media (max-width: 700px) {
-  .mmc-dock { width: 100%; order: 2; }
+  .mmc-dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 58dvh;
+    overflow-y: auto;
+    z-index: 10001;
+    border-radius: 18px 18px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mmc-dock .mmc-k { height: 44px; } /* thumb targets */
 }
 
 /* ---- Host: floating (chat) -----------------------------------------------

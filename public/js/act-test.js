@@ -49,6 +49,13 @@
   .actt-opt.sel .actt-optlab{background:#764ba2;color:#fff}
   .actt-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid #eee;margin-top:auto}
   .actt-nw{white-space:nowrap}
+  .actt-mat{display:inline-flex;vertical-align:middle;position:relative;margin:3px 6px;padding:3px 8px;white-space:nowrap}
+  .actt-mat::before,.actt-mat::after{content:"";position:absolute;top:0;bottom:0;width:6px;border:2px solid currentColor}
+  .actt-mat::before{left:0;border-right:0}
+  .actt-mat::after{right:0;border-left:0}
+  .actt-det::before,.actt-det::after{width:0;border-width:0 0 0 2px}
+  .actt-matg{display:inline-grid;column-gap:14px;row-gap:3px;text-align:center;font-variant-numeric:tabular-nums}
+  .actt-matc2{grid-template-columns:auto auto}.actt-matc3{grid-template-columns:auto auto auto}.actt-matc4{grid-template-columns:auto auto auto auto}
   .actt-table{border-collapse:collapse;margin:10px 0 4px;font-size:15px;white-space:normal}
   .actt-table th,.actt-table td{border:1px solid #d9d5e8;padding:5px 12px;text-align:center}
   .actt-table thead th,.actt-table tbody th{background:#f3f1fa;font-weight:600}
@@ -121,6 +128,9 @@
   @media (max-width:700px){
     /* The test takes the whole phone screen: edge to edge, no rounded card. */
     .actt-overlay{padding:0}
+    /* The calculator is a bottom sheet on phones (css/mm-calculator.css):
+       leave room under the question so it can scroll clear of the sheet. */
+    .actt-overlay:has(.mmc-dock.is-open) .actt-body{padding-bottom:60dvh}
     .actt-card{order:1;border-radius:0;max-width:none}
     .actt-foot{padding:10px 12px;gap:6px}
     .actt-foot .actt-btn{padding:9px 12px;font-size:13px}
@@ -486,7 +496,7 @@
       const evenLab = { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' };
       const disp = (lab) => (this.pos % 2 === 0 ? (evenLab[lab] || lab) : lab);
       const opts = (p.options || []).map(o =>
-        `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}" role="radio" aria-checked="${o.label === this.selected}" aria-label="Choice ${disp(o.label)}: ${escapeHtml(o.text)}"><span class="actt-optlab" aria-hidden="true">${disp(o.label)}</span><span>${keepMath(prettyMath(escapeHtml(o.text)))}</span></button>`
+        `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}" role="radio" aria-checked="${o.label === this.selected}" aria-label="Choice ${disp(o.label)}: ${escapeHtml(o.text)}"><span class="actt-optlab" aria-hidden="true">${disp(o.label)}</span><span>${keepMath(prettyMath(matrixHtml(escapeHtml(o.text))))}</span></button>`
       ).join('');
       // Figure is our own generated SVG (from the item bank), not user input.
       // Guard: only render a bare <svg> with no scripts.
@@ -498,7 +508,7 @@
       const shortChoices = (p.options || []).length > 0 && (p.options || []).every((o) => String(o.text || '').length <= 12);
       // The figure goes AFTER the stem: items say "in the figure below", and
       // rendering it above contradicted every one of them.
-      this.el('actt-body').innerHTML = `<div class="actt-q" id="actt-qtext">${stemHtml(keepMath(prettyMath(escapeHtml(p.content || ''))))}</div>${fig}<div class="actt-opts${shortChoices ? ' actt-opts--grid' : ''}" role="radiogroup" aria-labelledby="actt-qtext">${opts}</div>`;
+      this.el('actt-body').innerHTML = `<div class="actt-q" id="actt-qtext">${stemHtml(keepMath(prettyMath(matrixHtml(escapeHtml(p.content || '')))))}</div>${fig}<div class="actt-opts${shortChoices ? ' actt-opts--grid' : ''}" role="radiogroup" aria-labelledby="actt-qtext">${opts}</div>`;
       this._labelFigure();
       this.el('actt-body').querySelectorAll('.actt-opt').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -762,7 +772,7 @@
             <div class="actt-score">${r.scaledScore != null ? r.scaledScore : '—'}</div>
             <div class="actt-scorelab">Estimated ACT Math score${r.scaledApproximate ? ' (approx.)' : ''}</div>
             ${this._rangeHtml(r)}
-            <div class="actt-sub">${r.rawScore}/${r.totalItems} correct · ${r.accuracy}%${r.durationMinutes != null ? ' · ' + r.durationMinutes + ' min' : ''}</div>
+            <div class="actt-sub">${r.rawScore}/${r.totalItems} correct · ${r.accuracy}%${r.durationMinutes != null ? ' · ' + r.durationMinutes + (r.timeLimitMinutes ? ` of ${r.timeLimitMinutes}` : '') + ' min' : ''}</div>
             ${r.plannedSkills ? `<div style="font-size:13px;color:#8b6fd6;margin-top:2px">✓ Your tutor will now focus on your ${r.plannedSkills} weakest skill${r.plannedSkills > 1 ? 's' : ''}.</div>` : ''}
           </div>
           <div style="max-width:520px;margin:0 auto">${cats}</div>`;
@@ -1158,6 +1168,39 @@
     return String(html).replace(/\((?:[^()<>]|<\/?su[bp]>){1,40}\)(?:[²³]|<sup>[^<]{1,6}<\/sup>)?/g, '<span class="actt-nw">$&</span>');
   }
 
+  // Matrices as bracketed grids. The banks type them three ways —
+  // [[1, 3], [2, 0]], [2 −1; 3 0], and a determinant as lines of |5 −2| —
+  // and a junior does not read any of those as a matrix; the ACT draws a grid
+  // (external audit, 2026-10-07). Runs on already-escaped text, before
+  // prettyMath; a set that does not form a clean rectangle is left as typed.
+  function matrixHtml(html) {
+    const cell = (c) => c.trim();
+    const okCell = (c) => /^[−-]?[\w.]+$/.test(c) || /^[−-]?\d+\/\d+$/.test(c);
+    const grid = (rows, det) => {
+      const n = rows[0].length;
+      if (rows.length < 2 || n < 2 || n > 4 || rows.some((r) => r.length !== n || !r.every(okCell))) return null;
+      const label = rows.map((r, i) => `row ${i + 1}: ${r.join(', ')}`).join('; ');
+      return `<span class="actt-mat${det ? ' actt-det' : ''}" role="img" aria-label="${det ? 'determinant' : 'matrix'}, ${label}">`
+        // A class per column count, not an inline style: keepMath wraps any
+        // short (…) it finds, and "repeat(2,auto)" in an attribute would be one.
+        + `<span class="actt-matg actt-matc${Math.min(n, 4)}">${rows.flat().map((c) => `<span>${c}</span>`).join('')}</span></span>`;
+    };
+    let out = String(html)
+      // [[a, b], [c, d]]
+      .replace(/\[\[([^\[\]]+(?:\],\s*\[[^\[\]]+)+)\]\]/g, (m, body) =>
+        grid(body.split(/\],\s*\[/).map((r) => r.split(',').map(cell))) || m)
+      // [a b; c d]
+      .replace(/\[([^\[\];]+(?:;[^\[\];]+)+)\]/g, (m, body) =>
+        grid(body.split(';').map((r) => r.trim().split(/\s+/).map(cell))) || m);
+    // |a b| on consecutive lines: a determinant.
+    out = out.replace(/(^|\n)((?:\|[^|\n]+\|(?:\n|$)){2,})/g, (m, pre, block) => {
+      const rows = block.trim().split('\n').map((l) => l.trim().replace(/^\||\|$/g, '').trim().split(/\s+/).map(cell));
+      const g = grid(rows, true);
+      return g ? `${pre}${g}${block.endsWith('\n') ? '\n' : ''}` : m;
+    });
+    return out;
+  }
+
   // One notation on screen, whatever the bank typed: x^7 → x⁷ (as <sup>),
   // log_2 → log₂ (as <sub>), and a hyphen doing a minus sign's job → "−".
   // Display only — grading, the stored items and screen-reader labels keep
@@ -1208,7 +1251,7 @@
   }
 
   // Exposed for the unit test of the notation rules.
-  if (typeof window !== 'undefined') { window.__actPrettyMath = prettyMath; window.__actStemHtml = stemHtml; }
+  if (typeof window !== 'undefined') { window.__actPrettyMath = prettyMath; window.__actStemHtml = stemHtml; window.__actMatrixHtml = matrixHtml; }
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
