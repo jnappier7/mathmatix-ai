@@ -921,10 +921,15 @@ router.post('/complete', async (req, res) => {
     // (weakness x ACT exam-weight), and pick a prerequisite-aware starting module.
     // This is the plan the course opening + module ordering consume.
     const plan = buildActPlan(byCategory);
-    const { plannedSkills } = await applyCompletionEffects(req, session, { bySkill, weakSkills, plan });
+    const { plannedSkills, actPrepSessionId } = await applyCompletionEffects(req, session, { bySkill, weakSkills, plan });
 
     return res.json({
       success: true,
+      // The student's ACT course session, when they are enrolled: "Review with
+      // my tutor" opens THAT chat, where the review queue this test just
+      // seeded is waiting. Dropping it sent the button to the open tutoring
+      // chat, which knew nothing of the misses (external audit, 2026-10-07).
+      actPrepSessionId: actPrepSessionId || null,
       report: buildFullReport(session, { raw, total, scaled, byCategory, weakSkills, plan }, {
         plannedSkills,
         sheetApplied: done.sheetApplied,   // answers the submitted sheet corrected on the server

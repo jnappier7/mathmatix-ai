@@ -310,6 +310,10 @@ describe('/history keeps auto-submitted partials off the trend', () => {
     expect(res.body.comparison.trend).toEqual([30, 34]);
     expect(res.body.comparison.delta).toBe(4);
     expect(res.body.comparison.hidden).toBe(1);
-    expect(res.body.comparison.categories[0].comparable).toBe(false);   // 4 items — too few
+    // 4 items: the delta is reported but flagged low-confidence (it used to be
+    // hidden as n/a, which hid real collapses — external audit, 2026-10-07).
+    expect(res.body.comparison.categories[0].comparable).toBe(true);
+    expect(res.body.comparison.categories[0].lowConfidence).toBe(true);
+    expect(typeof res.body.comparison.categories[0].deltaCorrect).toBe('number');
   });
 });

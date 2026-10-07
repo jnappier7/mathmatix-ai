@@ -101,20 +101,30 @@ describe('buildComparison', () => {
     expect(c.attempts).toBe(2);
   });
 
-  test('a six-item category gets no delta — one question is not a trend', () => {
+  test('a six-item category reports its delta, flagged low-confidence', () => {
+    // It used to report n/a, which hid 6/6 → 1/6 (external audit, 2026-10-07).
     const c = buildComparison([attempt(33, 45, cats(6, 16)), attempt(34, 45, cats(5, 18))]);
     const geo = c.categories.find((x) => x.category === 'geometry');
-    expect(geo.comparable).toBe(false);
-    expect(geo.reason).toBe('too-few-items');
-    expect(geo.deltaPct).toBeNull();
+    expect(geo.comparable).toBe(true);
+    expect(geo.lowConfidence).toBe(true);
+    expect(geo.reason).toBeNull();
+    expect(geo.deltaCorrect).toBe(-1);
     expect(geo.first).toEqual({ correct: 6, total: 6 });
     expect(geo.latest).toEqual({ correct: 5, total: 6 });
+  });
+
+  test('a collapse in a small category is a number, not n/a', () => {
+    const c = buildComparison([attempt(36, 45, cats(6, 19)), attempt(17, 45, cats(1, 10))]);
+    const geo = c.categories.find((x) => x.category === 'geometry');
+    expect(geo.deltaCorrect).toBe(-5);
+    expect(geo.lowConfidence).toBe(true);
   });
 
   test('a 19-item category is comparable and reports the change in questions right', () => {
     const c = buildComparison([attempt(33, 45, cats(6, 16)), attempt(34, 45, cats(5, 18))]);
     const ies = c.categories.find((x) => x.category === 'integrating-essential-skills');
     expect(ies.comparable).toBe(true);
+    expect(ies.lowConfidence).toBe(false);
     expect(ies.deltaCorrect).toBe(2);
     expect(ies.deltaPct).toBe(11);
     expect(c.categories[0].category).toBe('integrating-essential-skills');   // comparable rows first

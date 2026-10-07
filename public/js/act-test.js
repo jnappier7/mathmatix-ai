@@ -306,7 +306,7 @@
       this.el('actt-body').innerHTML = `
         <div style="max-width:520px;margin:0 auto;padding:6px 4px 4px">
           <h2 style="margin:0 0 10px;font-size:20px">Your baseline ACT Math test</h2>
-          <p style="margin:0 0 14px;line-height:1.5">This is your <strong>baseline</strong> — a full, timed ACT Math section (about 45 minutes). Your tutor uses the results to focus your prep on exactly what you need, and marks anything you ace as done so you don't re-grind it.</p>
+          <p style="margin:0 0 14px;line-height:1.5">This is your <strong>baseline</strong> — a full, timed ACT Math section (45 questions, 50 minutes). Your tutor uses the results to focus your prep on exactly what you need, and marks anything you ace as done so you don't re-grind it.</p>
           <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
             <li><strong>It's timed and can't be paused</strong> — just like the real ACT. Pacing is part of the score.</li>
             <li>Do it in <strong>one sitting</strong>. Find a quiet spot and grab scratch paper first.</li>
@@ -710,6 +710,7 @@
         // it so close() lets the course begin teaching — only on a real
         // completion, never on a cancelled/closed test.
         this._completed = true;
+        this._refreshCourseCards(data && data.actPrepSessionId);
         // On a RE-TEST the payoff is the COMPARISON, so lead with growth instead
         // of a standalone score. (The first/baseline test has nothing to compare
         // against, so it falls through to the single-test results below.)
@@ -732,7 +733,7 @@
           </div>`;
         this.el('actt-done').addEventListener('click', () => this.close());
         this.el('actt-retake').addEventListener('click', () => { this.sessionId = null; this.open(); });
-        this.el('actt-tutor').addEventListener('click', () => this.sendToTutor(r));
+        this.el('actt-tutor').addEventListener('click', () => this.reviewWithTutor(data, r));
         this.el('actt-progress').addEventListener('click', () => this.showProgress());
       } catch (e) {
         this.el('actt-body').innerHTML = `<div class="actt-err">${e.message || 'Could not score the test.'}</div>`;
@@ -885,6 +886,25 @@
       if (bc) bc.addEventListener('click', () => this.startBootcampReview(data, r));
     }
 
+    // "Review with my tutor" after a signed-in test. This used to type the
+    // score into whatever chat was on screen — usually open tutoring, which
+    // knew nothing of the review queue, and for a new account the rapport
+    // questions and a placement pitch ("What would you like to work on?").
+    // The misses live in the ACT course's bootcamp, so open THAT: the course
+    // greeting presents the first missed question.
+    reviewWithTutor(data, r) {
+      const cm = window.courseManager;
+      const enrolled = cm && (cm.courseSessions || []).find((s) => s && s.courseId === 'act-prep' && s.status === 'active');
+      const id = (data && data.actPrepSessionId) || (enrolled && enrolled._id) || null;
+      if (cm && id && String(cm.activeCourseSessionId) === String(id)) {
+        // Already in the ACT course chat: closing hands the turn back to it
+        // (close() refreshes the review card, below).
+        this.close();
+        return;
+      }
+      this.startBootcampReview({ ...(data || {}), actPrepSessionId: id }, r);
+    }
+
     // Open the ACT boot camp on this test's misses. Enrolling builds the
     // review queue from the claimed test (routes/courseSession.js /enroll →
     // utils/actBootcampSeed.js); an existing enrollment was already seeded
@@ -964,6 +984,20 @@
       return `${head} My weakest areas were ${cats.map(c => `${c.name} (${c.correct}/${c.total})`).join(' and ')}. Can we start going over the ones I missed?`;
     }
 
+    // The server just reseeded the bootcamp (new round, new misses, new
+    // category plan). The sidebar card and the review card only reloaded on
+    // page load, so a retest left the sidebar on "Round 1 · Ready to re-test"
+    // and the category checkmarks on the FIRST test (external audit,
+    // 2026-10-07). Pull both fresh now.
+    _refreshCourseCards(actPrepSessionId) {
+      try {
+        const cm = window.courseManager;
+        if (cm && typeof cm.loadMySessions === 'function') cm.loadMySessions();
+        const id = actPrepSessionId || (cm && cm.activeCourseSessionId);
+        if (id && window.lessonTracker && typeof window.lessonTracker.rehydrate === 'function') window.lessonTracker.rehydrate(id);
+      } catch { /* cosmetic: the next page load shows the same state */ }
+    }
+
     sendToTutor(r) {
       const msg = this.buildTutorMessage(r);
       this.close();
@@ -1019,7 +1053,7 @@
       const wire = (reviewReport) => {
         this.el('actt-close2').addEventListener('click', () => this.close());
         this.el('actt-newtest').addEventListener('click', () => { this.sessionId = null; this.open(); });
-        if (reviewReport && this.el('actt-review')) this.el('actt-review').addEventListener('click', () => this.sendToTutor(reviewReport));
+        if (reviewReport && this.el('actt-review')) this.el('actt-review').addEventListener('click', () => this.reviewWithTutor(null, reviewReport));
       };
 
       if (attempts.length === 0) {
@@ -1043,11 +1077,13 @@
       const cmp = data.comparison || null;
       const first = attempts[0];
       const delta = cmp ? cmp.delta : latest.scaledScore - first.scaledScore;
-      const deltaChip = (d) => {
+      const deltaChip = (d, caveat) => {
         const v = Number(d) || 0;
         const cls = v > 0 ? 'actt-up' : v < 0 ? 'actt-down' : 'actt-same';
         const sign = v > 0 ? `▲ +${v}` : v < 0 ? `▼ ${v}` : '= 0';
-        return `<span class="actt-delta ${cls}">${sign}</span>`;
+        return caveat
+          ? `<span class="actt-delta ${cls}" style="opacity:.7" title="${escapeHtml(caveat)}">${sign}</span>`
+          : `<span class="actt-delta ${cls}">${sign}</span>`;
       };
       const naChip = (why) => `<span class="actt-delta actt-same" title="${escapeHtml(why)}">n/a</span>`;
 
@@ -1055,10 +1091,13 @@
       if (cmp && Array.isArray(cmp.categories)) {
         catRows = cmp.categories.map((x) => {
           const name = CATEGORY_LABELS[x.category] || x.category;
-          const why = x.reason === 'too-few-items'
-            ? `Only ${x.latest.total} questions in this category — one question moves it ${Math.round(100 / Math.max(1, x.latest.total))} points, so a change here is noise`
+          // A small category still shows its change (6/6 → 1/6 is news), muted,
+          // with the caveat on hover; only different forms get n/a.
+          const small = x.lowConfidence || x.reason === 'too-few-items';
+          const why = small
+            ? `Only ${x.latest.total} questions in this category — one question moves it ${Math.round(100 / Math.max(1, x.latest.total))} points, so read a small change with care`
             : 'Different test forms — not comparable';
-          const chip = x.comparable ? deltaChip(x.deltaCorrect) : naChip(why);
+          const chip = x.comparable ? deltaChip(x.deltaCorrect, small ? why : null) : naChip(why);
           return `
         <div class="actt-cmp">
           <span class="actt-cmpname">${name}</span>
