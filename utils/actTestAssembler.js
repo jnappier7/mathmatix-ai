@@ -253,6 +253,51 @@ function promptSignature(s) {
   return String(s || '').replace(/\d+(\.\d+)?/g, '#').replace(/\s+/g, ' ').trim().slice(0, 90);
 }
 
+// ── Templates and near-copies ───────────────────────────────────────────────
+//
+// promptSignature (above) masks numbers in the first 90 characters, so it
+// only catches the SAME wording. Two items can be one task in different words:
+// "D lies on AB, E lies on AC, DE ∥ BC" was served twice in one form, and the
+// same question sits in two Fable practice tests ("product of the two
+// solutions of |2x − 5| = 11" / "... all real solutions ..."), so a retake
+// served it again under a fresh id (external audit, 2026-10-07).
+//
+// A template is the set of CONTENT words, with numbers, vertex names (ABC,
+// DEF) and filler removed. Two items of the same skill whose word sets overlap
+// by TEMPLATE_OVERLAP are the same template.
+const TEMPLATE_STOP = new Set(('the a an of in on at to is are be by for and or with that this what which value its it as from '
+  + 'shown below above figure note not drawn scale following each one two three if then than has have how many much does do '
+  + 'lies lie point points side sides segment segments length lengths measure measures measured units unit nearest whole number').split(' '));
+const TEMPLATE_OVERLAP = 0.6;
+
+function templateTokens(prompt) {
+  const t = String(prompt || '')
+    .replace(/\b[A-Z]{2,}\b/g, ' ')          // vertex and segment names: ABC, DE
+    .toLowerCase()
+    .replace(/note:[^.]*\./g, ' ')
+    .replace(/△/g, ' triangle ').replace(/∥/g, ' parallel ').replace(/∠/g, ' angle ')
+    .replace(/[^a-z\s]/g, ' ');
+  return new Set(t.split(/\s+/).filter((w) => w.length >= 3 && !TEMPLATE_STOP.has(w)));
+}
+
+function overlap(a, b) {
+  let shared = 0;
+  for (const w of a) if (b.has(w)) shared += 1;
+  const union = a.size + b.size - shared;
+  return union ? shared / union : 0;
+}
+
+/** What two items are compared on. */
+function fingerprint(p) {
+  const norm = (t) => String(t == null ? '' : t).replace(/\s+/g, '').replace(/−/g, '-').toLowerCase();
+  const choices = (p.options || []).map((o) => norm(o && typeof o === 'object' ? o.text : o)).sort().join('|');
+  return { skillId: p.skillId, tokens: templateTokens(p.prompt), choices, svg: p.svg || '' };
+}
+
+const sameTemplate = (a, b) => a.skillId === b.skillId && overlap(a.tokens, b.tokens) >= TEMPLATE_OVERLAP;
+/** The same QUESTION under another id: same template, same choices, same (or no) figure. */
+const nearCopy = (a, b) => sameTemplate(a, b) && a.choices === b.choices && a.svg === b.svg;
+
 /**
  * From a candidate pool, pick the problem whose shape has appeared LEAST in the
  * form so far — so repeated draws of the same skill surface different wordings.
@@ -265,21 +310,36 @@ function promptSignature(s) {
  * item, and the curve collapses back into the step function it replaced.
  * Omit the argument and the old first-wins tie-break is preserved.
  */
-function pickDiverse(candidates, usedSignatures, targetDifficulty) {
+/** Lexicographic: the first position that differs decides. */
+function compareRank(a, b) {
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return a[i] - b[i];
+  return 0;
+}
+
+function pickDiverse(candidates, usedSignatures, targetDifficulty, formPrints = []) {
   if (!candidates || !candidates.length) return null;
   const distance = (c) => {
     const d = preciseDifficulty(c);
     return targetDifficulty == null || d == null ? 0 : Math.abs(d - targetDifficulty);
   };
-  let best = null, bestCount = Infinity, bestDist = Infinity;
+  // Ranked, in order: a template the form already has goes last; then a skill
+  // the form already has (only differs when a fallback pool spans a whole
+  // category); then wording-shape novelty; then nearness to the ramp target.
+  const rank = (c) => {
+    const fp = formPrints.length ? fingerprint(c) : null;
+    return [
+      fp && formPrints.some((f) => sameTemplate(f, fp)) ? 1 : 0,
+      formPrints.filter((f) => f.skillId === c.skillId).length,
+      usedSignatures.get(promptSignature(c.prompt)) || 0,
+      distance(c),
+    ];
+  };
+  let best = null, bestRank = null;
   for (const c of candidates) {
-    const count = usedSignatures.get(promptSignature(c.prompt)) || 0;
-    const dist = distance(c);
-    // No early exit on count 0: a later candidate with the same novelty may sit
-    // closer to the target, and that is the whole point of the tie-break.
-    if (count < bestCount || (count === bestCount && dist < bestDist)) {
-      best = c; bestCount = count; bestDist = dist;
-    }
+    const r = rank(c);
+    // No early exit on a perfect rank: a later candidate may tie on novelty
+    // and sit closer to the target, which is the whole point of the tie-break.
+    if (!bestRank || compareRank(r, bestRank) < 0) { best = c; bestRank = r; }
   }
   return best;
 }
@@ -341,6 +401,21 @@ async function assembleForm(opts = {}) {
   // passed over while a plain one exists. No target: no change at all.
   const vt = blueprint.visualTarget || null;
   let visuals = 0;
+
+  // Near-copies: what the student has already seen (by content, not just id)
+  // and what this form already holds. See nearCopy above.
+  const seenPrints = [];
+  if (excludeIds.length) {
+    try {
+      const seenDocs = await Problem.find({ problemId: { $in: excludeIds } }).select('skillId prompt options svg').lean();
+      seenDocs.forEach((d) => seenPrints.push(fingerprint(d)));
+    } catch { /* the id exclusion still applies */ }
+  }
+  const formPrints = [];
+  const isNearCopy = (c) => {
+    const fp = fingerprint(c);
+    return seenPrints.some((f) => nearCopy(f, fp)) || formPrints.some((f) => nearCopy(f, fp));
+  };
 
   for (let si = 0; si < slots.length; si++) {
     const slot = slots[si];
@@ -418,7 +493,11 @@ async function assembleForm(opts = {}) {
           }, rng, 24);
         }
       }
-      problem = pickDiverse(candidates, usedSignatures, slot.targetDifficulty);
+      // Drop near-copies of anything already seen or already on this form;
+      // only if that empties the pool does a near-copy beat a gap.
+      const fresh = candidates.filter((c) => !isNearCopy(c));
+      if (fresh.length) candidates = fresh;
+      problem = pickDiverse(candidates, usedSignatures, slot.targetDifficulty, formPrints);
       // Record the item's OWN fine skill (fallback may cross sub-skills within
       // the category), so scoring & personalization attribute to the real skill.
       if (problem && problem.skillId) slot.skillId = problem.skillId;
@@ -428,6 +507,7 @@ async function assembleForm(opts = {}) {
     }
     if (!problem) { gaps.push(toGenerationSpec(slot)); continue; }
     if (isVisualItem(problem)) visuals += 1;
+    formPrints.push(fingerprint(problem));
     precise.set(problem.problemId, preciseDifficulty(problem));
     usedProblemIds.push(problem.problemId);
     usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
@@ -578,5 +658,9 @@ module.exports = {
   familiesOf,
   preciseDifficulty,
   NOT_ON_FORMS,
+  templateTokens,
+  fingerprint,
+  sameTemplate,
+  nearCopy,
   getBlueprint: () => DEFAULT_BLUEPRINT,
 };

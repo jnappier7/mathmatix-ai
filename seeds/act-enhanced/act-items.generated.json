@@ -2472,7 +2472,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 0.88, so after 4 years: 4000 × 0.88^4 = 2399. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 2,080 applies 12% of the ORIGINAL 4 times over, as if the change were the same size each year; D) 6,294 moves the population the wrong direction.",
+  "explanation": "Each year multiplies by 0.88, so after 4 years: 4000 × 0.88^4 = 2398.7814, which rounds to 2399. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 2,080 applies 12% of the ORIGINAL 4 times over, as if the change were the same size each year; D) 6,294 moves the population the wrong direction.",
   "tags": [
    "act",
    "act-algebra",
@@ -3598,7 +3598,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 0.85, so after 4 years: 1500 × 0.85^4 = 783. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 600 applies 15% of the ORIGINAL 4 times over, as if the change were the same size each year; D) 2,624 moves the population the wrong direction.",
+  "explanation": "Each year multiplies by 0.85, so after 4 years: 1500 × 0.85^4 = 783.0094, which rounds to 783. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 600 applies 15% of the ORIGINAL 4 times over, as if the change were the same size each year; D) 2,624 moves the population the wrong direction.",
   "tags": [
    "act",
    "act-algebra",
@@ -4161,7 +4161,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 1.15, so after 4 years: 2500 × 1.15^4 = 4373. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 1,305 moves the population the wrong direction; B) 4,000 applies 15% of the ORIGINAL 4 times over, as if the change were the same size each year.",
+  "explanation": "Each year multiplies by 1.15, so after 4 years: 2500 × 1.15^4 = 4372.5156, which rounds to 4373. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 1,305 moves the population the wrong direction; B) 4,000 applies 15% of the ORIGINAL 4 times over, as if the change were the same size each year.",
   "tags": [
    "act",
    "act-algebra",
@@ -4724,7 +4724,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 1.05, so after 4 years: 2500 × 1.05^4 = 3039. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 2,036 moves the population the wrong direction; B) 3,000 applies 5% of the ORIGINAL 4 times over, as if the change were the same size each year.",
+  "explanation": "Each year multiplies by 1.05, so after 4 years: 2500 × 1.05^4 = 3038.7656, which rounds to 3039. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 2,036 moves the population the wrong direction; B) 3,000 applies 5% of the ORIGINAL 4 times over, as if the change were the same size each year.",
   "tags": [
    "act",
    "act-algebra",
@@ -5287,7 +5287,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 1.08, so after 3 years: 500 × 1.08^3 = 630. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 389 moves the population the wrong direction; B) 620 applies 8% of the ORIGINAL 3 times over, as if the change were the same size each year.",
+  "explanation": "Each year multiplies by 1.08, so after 3 years: 500 × 1.08^3 = 629.856, which rounds to 630. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 389 moves the population the wrong direction; B) 620 applies 8% of the ORIGINAL 3 times over, as if the change were the same size each year.",
   "tags": [
    "act",
    "act-algebra",
@@ -5824,7 +5824,7 @@
   "svg": null,
   "answer": {
    "type": "auto",
-   "value": "2,456",
+   "value": "2,457",
    "equivalents": []
   },
   "answerType": "multiple-choice",
@@ -5839,7 +5839,7 @@
    },
    {
     "label": "C",
-    "text": "2,456"
+    "text": "2,457"
    },
    {
     "label": "D",
@@ -5850,7 +5850,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 0.85, so after 3 years: 4000 × 0.85^3 = 2456. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 2,200 applies 15% of the ORIGINAL 3 times over, as if the change were the same size each year; D) 6,083 moves the population the wrong direction.",
+  "explanation": "Each year multiplies by 0.85, so after 3 years: 4000 × 0.85^3 = 2456.5, which rounds to 2457. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 2,200 applies 15% of the ORIGINAL 3 times over, as if the change were the same size each year.",
   "tags": [
    "act",
    "act-algebra",
@@ -5862,7 +5862,7 @@
    "fine:exponential-functions"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "641cc905fa1ca82250d81662741f725032ff7aa3e7b41cf3ca1121620b71ddfc",
+  "contentHash": "4c022897e50b527c198fd7408532d7014c6b6279f46a189ab97281f682659d40",
   "isActive": true
  },
  {
@@ -6413,7 +6413,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 0.88, so after 3 years: 200 × 0.88^3 = 136. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 128 applies 12% of the ORIGINAL 3 times over, as if the change were the same size each year; D) 281 moves the population the wrong direction.",
+  "explanation": "Each year multiplies by 0.88, so after 3 years: 200 × 0.88^3 = 136.2944, which rounds to 136. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 128 applies 12% of the ORIGINAL 3 times over, as if the change were the same size each year; D) 281 moves the population the wrong direction.",
   "tags": [
    "act",
    "act-algebra",
@@ -7445,7 +7445,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 0.95, so after 3 years: 2500 × 0.95^3 = 2143. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 2,125 applies 5% of the ORIGINAL 3 times over, as if the change were the same size each year; D) 2,894 moves the population the wrong direction.",
+  "explanation": "Each year multiplies by 0.95, so after 3 years: 2500 × 0.95^3 = 2143.4375, which rounds to 2143. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 2,125 applies 5% of the ORIGINAL 3 times over, as if the change were the same size each year; D) 2,894 moves the population the wrong direction.",
   "tags": [
    "act",
    "act-algebra",
@@ -7935,7 +7935,7 @@
   "svg": null,
   "answer": {
    "type": "auto",
-   "value": "902",
+   "value": "903",
    "equivalents": []
   },
   "answerType": "multiple-choice",
@@ -7950,7 +7950,7 @@
    },
    {
     "label": "C",
-    "text": "902"
+    "text": "903"
    },
    {
     "label": "D",
@@ -7961,7 +7961,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 0.95, so after 2 years: 1000 × 0.95^2 = 903. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 900 applies 5% of the ORIGINAL 2 times over, as if the change were the same size each year.",
+  "explanation": "Each year multiplies by 0.95, so after 2 years: 1000 × 0.95^2 = 902.5, which rounds to 903. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 900 applies 5% of the ORIGINAL 2 times over, as if the change were the same size each year.",
   "tags": [
    "act",
    "act-algebra",
@@ -7973,7 +7973,7 @@
    "fine:exponential-functions"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "7329ce42395a6590cfbf8e43d567429bbc966320ce7391e717648c71d58394fd",
+  "contentHash": "499839af9edbfc666714758e06e020b614d8dd70531154d19cc77c35920136de",
   "isActive": true
  },
  {
@@ -8477,7 +8477,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 0.92, so after 2 years: 500 × 0.92^2 = 423. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 420 applies 8% of the ORIGINAL 2 times over, as if the change were the same size each year; D) 583 moves the population the wrong direction.",
+  "explanation": "Each year multiplies by 0.92, so after 2 years: 500 × 0.92^2 = 423.2, which rounds to 423. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: B) 420 applies 8% of the ORIGINAL 2 times over, as if the change were the same size each year; D) 583 moves the population the wrong direction.",
   "tags": [
    "act",
    "act-algebra",
@@ -9040,7 +9040,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 1.08, so after 4 years: 4000 × 1.08^4 = 5442. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 2,866 moves the population the wrong direction; B) 5,280 applies 8% of the ORIGINAL 4 times over, as if the change were the same size each year.",
+  "explanation": "Each year multiplies by 1.08, so after 4 years: 4000 × 1.08^4 = 5441.9558, which rounds to 5442. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 2,866 moves the population the wrong direction; B) 5,280 applies 8% of the ORIGINAL 4 times over, as if the change were the same size each year.",
   "tags": [
    "act",
    "act-algebra",
@@ -9603,7 +9603,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Algebra",
-  "explanation": "Each year multiplies by 1.15, so after 4 years: 500 × 1.15^4 = 875. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 261 moves the population the wrong direction; B) 800 applies 15% of the ORIGINAL 4 times over, as if the change were the same size each year.",
+  "explanation": "Each year multiplies by 1.15, so after 4 years: 500 × 1.15^4 = 874.5031, which rounds to 875. Percent change compounds — it is not the same amount subtracted each year. Wrong choices: A) 261 moves the population the wrong direction; B) 800 applies 15% of the ORIGINAL 4 times over, as if the change were the same size each year.",
   "tags": [
    "act",
    "act-algebra",
@@ -31983,7 +31983,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "The ratio 2:3 splits the group into 5 equal parts, so one part is 25 ÷ 5 = 5. The cats take 2 parts: 2 × 5 = 10. Wrong choices: B) 12 splits the total evenly, ignoring the ratio; C) 25/2 splits the total evenly, ignoring the ratio; D) 15 gives the dogs instead — the other side of the ratio.",
+  "explanation": "The ratio 2:3 splits the group into 5 equal parts, so one part is 25 ÷ 5 = 5. The cats take 2 parts: 2 × 5 = 10. Wrong choices: C) 25/2 splits the total evenly, ignoring the ratio; D) 15 gives the dogs instead — the other side of the ratio.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -32706,7 +32706,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the child tickets, so 18 − x are adult tickets: 4x + 7(18 − x) = 102. That gives 4x + 126 − 7x = 102, so -3x = -24 and x = 8. Wrong choices: C) 10 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 25 divides the total by the child price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 18 − x are adult tickets: 4x + 7(18 − x) = 102. That gives 4x + 126 − 7x = 102, so -3x = -24 and x = 8. Wrong choices: C) 10 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -33236,7 +33236,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the child tickets, so 15 − x are adult tickets: 6x + 9(15 − x) = 123. That gives 6x + 135 − 9x = 123, so -3x = -12 and x = 4. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 20 divides the total by the child price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 15 − x are adult tickets: 6x + 9(15 − x) = 123. That gives 6x + 135 − 9x = 123, so -3x = -12 and x = 4. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -35257,7 +35257,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the child tickets, so 20 − x are adult tickets: 6x + 9(20 − x) = 153. That gives 6x + 180 − 9x = 153, so -3x = -27 and x = 9. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 25 divides the total by the child price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 20 − x are adult tickets: 6x + 9(20 − x) = 153. That gives 6x + 180 − 9x = 153, so -3x = -27 and x = 9. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -35835,7 +35835,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the child tickets, so 16 − x are adult tickets: 6x + 9(16 − x) = 123. That gives 6x + 144 − 9x = 123, so -3x = -21 and x = 7. Wrong choices: C) 9 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 20 divides the total by the child price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 16 − x are adult tickets: 6x + 9(16 − x) = 123. That gives 6x + 144 − 9x = 123, so -3x = -21 and x = 7. Wrong choices: C) 9 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -36223,7 +36223,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "The ratio 3:4 splits the group into 7 equal parts, so one part is 35 ÷ 7 = 5. The cats take 3 parts: 3 × 5 = 15. Wrong choices: B) 35/2 splits the total evenly, ignoring the ratio; C) 18 splits the total evenly, ignoring the ratio; D) 20 gives the dogs instead — the other side of the ratio.",
+  "explanation": "The ratio 3:4 splits the group into 7 equal parts, so one part is 35 ÷ 7 = 5. The cats take 3 parts: 3 × 5 = 15. Wrong choices: B) 35/2 splits the total evenly, ignoring the ratio; D) 20 gives the dogs instead — the other side of the ratio.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -36897,7 +36897,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the child tickets, so 18 − x are adult tickets: 6x + 9(18 − x) = 141. That gives 6x + 162 − 9x = 141, so -3x = -21 and x = 7. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 23 divides the total by the child price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 18 − x are adult tickets: 6x + 9(18 − x) = 141. That gives 6x + 162 − 9x = 141, so -3x = -21 and x = 7. Wrong choices: C) 11 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -37282,7 +37282,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "The ratio 5:8 splits the group into 13 equal parts, so one part is 39 ÷ 13 = 3. The cats take 5 parts: 5 × 3 = 15. Wrong choices: B) 39/2 splits the total evenly, ignoring the ratio; C) 20 splits the total evenly, ignoring the ratio; D) 24 gives the dogs instead — the other side of the ratio.",
+  "explanation": "The ratio 5:8 splits the group into 13 equal parts, so one part is 39 ÷ 13 = 3. The cats take 5 parts: 5 × 3 = 15. Wrong choices: B) 39/2 splits the total evenly, ignoring the ratio; D) 24 gives the dogs instead — the other side of the ratio.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -38797,7 +38797,7 @@
   "svg": null,
   "answer": {
    "type": "auto",
-   "value": "$72.22",
+   "value": "$72.23",
    "equivalents": []
   },
   "answerType": "multiple-choice",
@@ -38808,7 +38808,7 @@
    },
    {
     "label": "B",
-    "text": "$72.22"
+    "text": "$72.23"
    },
    {
     "label": "C",
@@ -38823,7 +38823,7 @@
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Discount first, then tax on the DISCOUNTED price: $75.00 × 0.90 = $67.50, then × 1.07 = $72.22. Wrong choices: A) $67.50 stops at the sale price and never adds the tax; C) $72.75 combines the two percentages into one, which is not how successive percentages work.",
+  "explanation": "Discount first, then tax on the DISCOUNTED price: $75.00 × 0.90 = $67.50, then × 1.07 = $72.23. Wrong choices: A) $67.50 stops at the sale price and never adds the tax; C) $72.75 combines the two percentages into one, which is not how successive percentages work.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -38835,7 +38835,7 @@
    "fine:percent-applications"
   ],
   "source": "act-enhanced-2026-09",
-  "contentHash": "ebf0f2cd48a8bb1ce9cf415fefc073d1d47e8b3a09ab6a7b6f57687b7879d406",
+  "contentHash": "5065b184403d41719f74d05af54c197f3788ddc79f0b5aea507cb644e2c9bf23",
   "isActive": true
  },
  {
@@ -40798,7 +40798,7 @@
   "difficulty": 3,
   "gradeBand": "8-12",
   "ohioDomain": "Expressions & Equations",
-  "explanation": "Let x be the child tickets, so 8 − x are adult tickets: 6x + 9(8 − x) = 63. That gives 6x + 72 − 9x = 63, so -3x = -9 and x = 3. Wrong choices: C) 5 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half; D) 10 divides the total by the child price alone, ignoring that the group is mixed.",
+  "explanation": "Let x be the child tickets, so 8 − x are adult tickets: 6x + 9(8 − x) = 63. That gives 6x + 72 − 9x = 63, so -3x = -9 and x = 3. Wrong choices: C) 5 solves correctly and then reports the ADULT tickets — the commonest slip on this type is answering the wrong half.",
   "tags": [
    "act",
    "act-essential-skills",
