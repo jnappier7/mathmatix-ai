@@ -257,7 +257,19 @@ function preciseDifficulty(problem) {
   if (c && c.calibratedAt && c.theta != null && Number.isFinite(Number(c.theta))) {
     return Math.round(thetaToDifficultyExact(Number(c.theta)) * 100) / 100;
   }
-  return problem ? problem.difficulty : undefined;
+  if (!problem) return undefined;
+  // A bank whose authored ratings say little about the item gets its scale
+  // narrowed until calibration measures it (blueprint.authoredScale). The IES
+  // expansion rated by POSITION within each skill (items 1-4 → 1, 5-10 → 2,
+  // …, by quota, not content), so an easy recipe ratio rated 4 landed at #41
+  // after logarithms and complex division (external audit, 2026-10-07).
+  const scale = (DEFAULT_BLUEPRINT.authoredScale || {})[problem.source];
+  const d = Number(problem.difficulty);
+  if (scale && Number.isFinite(d)) {
+    const t = (Math.min(5, Math.max(1, d)) - 1) / 4;
+    return Math.round((scale.min + t * (scale.max - scale.min)) * 100) / 100;
+  }
+  return problem.difficulty;
 }
 
 /**
@@ -293,8 +305,23 @@ function templateTokens(prompt) {
     .replace(/note:[^.]*\./g, ' ')
     .replace(/△/g, ' triangle ').replace(/∥/g, ' parallel ').replace(/∠/g, ' angle ')
     .replace(/[^a-z\s]/g, ' ');
-  return new Set(t.split(/\s+/).filter((w) => w.length >= 3 && !TEMPLATE_STOP.has(w)));
+  return new Set(t.split(/\s+/).filter((w) => w.length >= 3 && !TEMPLATE_STOP.has(w)).map((w) => SYNONYM[w] || w));
 }
+// One word for one idea, so "average" and "mean" count as the same task.
+const SYNONYM = { average: 'mean', averages: 'mean', means: 'mean', tests: 'test', scores: 'score', numbers: 'number', triangles: 'triangle' };
+
+// Tasks that read differently but ask the same thing. Two of these on one form
+// "consume substantial space" (external audit, 2026-10-07): a mean-after-
+// removal item next to a what-score-raises-my-average item, a trig-ratio area
+// next to a Pythagorean area. Word overlap misses them (they share almost no
+// content words), so each is named.
+const TASK_CONCEPTS = [
+  ['changing-mean', (p) => /\b(mean|average)\b/i.test(p) && /(removed|added|another|next test|\d+(st|nd|rd|th) test|over \d+ tests|new (score|number|test)|wants (her|his|their|the) (average|mean))/i.test(p)],
+  ['right-triangle-area', (p) => /\bright triangle\b/i.test(p) && /\barea\b/i.test(p)],
+];
+const conceptsOf = (prompt) => new Set(TASK_CONCEPTS.filter(([, test]) => test(String(prompt || ''))).map(([id]) => id));
+// Across skills, a higher bar than within one: only near-identical wording.
+const CROSS_SKILL_OVERLAP = 0.5;
 
 function overlap(a, b) {
   let shared = 0;
@@ -307,8 +334,13 @@ function overlap(a, b) {
 function fingerprint(p) {
   const norm = (t) => String(t == null ? '' : t).replace(/\s+/g, '').replace(/−/g, '-').toLowerCase();
   const choices = (p.options || []).map((o) => norm(o && typeof o === 'object' ? o.text : o)).sort().join('|');
-  return { skillId: p.skillId, tokens: templateTokens(p.prompt), choices, svg: p.svg || '' };
+  return { skillId: p.skillId, tokens: templateTokens(p.prompt), concepts: conceptsOf(p.prompt), choices, svg: p.svg || '' };
 }
+
+/** The same TASK, whatever the skill: one template, near-identical wording, or a shared named concept. */
+const similarTask = (a, b) => sameTemplate(a, b)
+  || overlap(a.tokens, b.tokens) >= CROSS_SKILL_OVERLAP
+  || [...a.concepts].some((c) => b.concepts.has(c));
 
 const sameTemplate = (a, b) => a.skillId === b.skillId && overlap(a.tokens, b.tokens) >= TEMPLATE_OVERLAP;
 /** The same QUESTION under another id: same template, same choices, same (or no) figure. */
@@ -344,7 +376,7 @@ function pickDiverse(candidates, usedSignatures, targetDifficulty, formPrints = 
   const rank = (c) => {
     const fp = formPrints.length ? fingerprint(c) : null;
     return [
-      fp && formPrints.some((f) => sameTemplate(f, fp)) ? 1 : 0,
+      fp && formPrints.some((f) => similarTask(f, fp)) ? 1 : 0,
       formPrints.filter((f) => f.skillId === c.skillId).length,
       usedSignatures.get(promptSignature(c.prompt)) || 0,
       distance(c),
@@ -722,6 +754,7 @@ module.exports = {
   templateTokens,
   fingerprint,
   sameTemplate,
+  similarTask,
   nearCopy,
   getBlueprint: () => DEFAULT_BLUEPRINT,
 };

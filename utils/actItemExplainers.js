@@ -834,8 +834,16 @@ const EXPLAINERS = [
       return {
         answer: exactFrom(d / s) || round(d / s, 4),
         steps: `Time = distance ÷ rate: ${m[1]} ÷ ${m[2]} = ${exactFrom(d / s) || round(d / s, 4)} hours.`,
+        // Near-miss slips, not absurd magnitudes. "D × S hours" (7,500 hours
+        // for a 150-mile trip) and "D − S hours" were eliminated on sight
+        // (external audit, 2026-10-07); every wrong choice here is a time a
+        // student could actually arrive at.
         traps: [
           [exactFrom(s / d) || round(s / d, 4), 'divides rate by distance, inverting the relationship'],
+          [exactFrom(d / s - 1) || round(d / s - 1, 4), `takes off the first hour's ${m[2]} miles but never adds that hour back`],
+          ...(Number.isInteger(d / s)
+            ? [[d / s + 1, 'counts the starting hour as an extra hour of travel']]
+            : [[exactFrom(Math.floor(d / s) + 5 / 6) || round(Math.floor(d / s) + 5 / 6, 4), `reads the leftover ${exactFrom(d / s - Math.floor(d / s))} hour as 50 minutes`]]),
           [round(d * s, 4), 'multiplies, which would give distance-times-speed, not a time'],
         ],
       };

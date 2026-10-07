@@ -30811,22 +30811,22 @@
    },
    {
     "label": "B",
-    "text": "5/2 hours"
+    "text": "3/2 hours"
    },
    {
     "label": "C",
-    "text": "165/2 hours"
+    "text": "5/2 hours"
    },
    {
     "label": "D",
-    "text": "15125/2 hours"
+    "text": "17/6 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 275/2 ÷ 55 = 5/2 hours. Wrong choices: A) 2/5 hours divides rate by distance, inverting the relationship; D) 15125/2 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 275/2 ÷ 55 = 5/2 hours. Wrong choices: A) 2/5 hours divides rate by distance, inverting the relationship; B) 3/2 hours takes off the first hour's 55 miles but never adds that hour back; D) 17/6 hours reads the leftover 1/2 hour as 50 minutes.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -31823,22 +31823,22 @@
    },
    {
     "label": "B",
-    "text": "3 hours"
+    "text": "2 hours"
    },
    {
     "label": "C",
-    "text": "100 hours"
+    "text": "3 hours"
    },
    {
     "label": "D",
-    "text": "7500 hours"
+    "text": "4 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 150 ÷ 50 = 3 hours. Wrong choices: A) 1/3 hours divides rate by distance, inverting the relationship; D) 7500 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 150 ÷ 50 = 3 hours. Wrong choices: A) 1/3 hours divides rate by distance, inverting the relationship; B) 2 hours takes off the first hour's 50 miles but never adds that hour back; D) 4 hours counts the starting hour as an extra hour of travel.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -32402,22 +32402,22 @@
    },
    {
     "label": "B",
-    "text": "7/2 hours"
+    "text": "5/2 hours"
    },
    {
     "label": "C",
-    "text": "175 hours"
+    "text": "7/2 hours"
    },
    {
     "label": "D",
-    "text": "17150 hours"
+    "text": "23/6 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 245 ÷ 70 = 7/2 hours. Wrong choices: A) 2/7 hours divides rate by distance, inverting the relationship; D) 17150 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 245 ÷ 70 = 7/2 hours. Wrong choices: A) 2/7 hours divides rate by distance, inverting the relationship; B) 5/2 hours takes off the first hour's 70 miles but never adds that hour back; D) 23/6 hours reads the leftover 1/2 hour as 50 minutes.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -34473,22 +34473,22 @@
    },
    {
     "label": "B",
-    "text": "5/2 hours"
+    "text": "3/2 hours"
    },
    {
     "label": "C",
-    "text": "135/2 hours"
+    "text": "5/2 hours"
    },
    {
     "label": "D",
-    "text": "10125/2 hours"
+    "text": "17/6 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 225/2 ÷ 45 = 5/2 hours. Wrong choices: A) 2/5 hours divides rate by distance, inverting the relationship; D) 10125/2 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 225/2 ÷ 45 = 5/2 hours. Wrong choices: A) 2/5 hours divides rate by distance, inverting the relationship; B) 3/2 hours takes off the first hour's 45 miles but never adds that hour back; D) 17/6 hours reads the leftover 1/2 hour as 50 minutes.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -34950,26 +34950,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1/2 hours"
-   },
-   {
-    "label": "B",
     "text": "2 hours"
    },
    {
+    "label": "B",
+    "text": "1/2 hours"
+   },
+   {
     "label": "C",
-    "text": "45 hours"
+    "text": "1 hour"
    },
    {
     "label": "D",
-    "text": "4050 hours"
+    "text": "3 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 90 ÷ 45 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 4050 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 90 ÷ 45 = 2 hours. Wrong choices: B) 1/2 hours divides rate by distance, inverting the relationship; C) 1 hour takes off the first hour's 45 miles but never adds that hour back; D) 3 hours counts the starting hour as an extra hour of travel.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -36059,26 +36059,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1/2 hours"
-   },
-   {
-    "label": "B",
     "text": "2 hours"
    },
    {
+    "label": "B",
+    "text": "1/2 hours"
+   },
+   {
     "label": "C",
-    "text": "55 hours"
+    "text": "1 hour"
    },
    {
     "label": "D",
-    "text": "6050 hours"
+    "text": "3 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 110 ÷ 55 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 6050 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 110 ÷ 55 = 2 hours. Wrong choices: B) 1/2 hours divides rate by distance, inverting the relationship; C) 1 hour takes off the first hour's 55 miles but never adds that hour back; D) 3 hours counts the starting hour as an extra hour of travel.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -38085,22 +38085,22 @@
    },
    {
     "label": "B",
-    "text": "7/2 hours"
+    "text": "5/2 hours"
    },
    {
     "label": "C",
-    "text": "100 hours"
+    "text": "7/2 hours"
    },
    {
     "label": "D",
-    "text": "5600 hours"
+    "text": "23/6 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 140 ÷ 40 = 7/2 hours. Wrong choices: A) 2/7 hours divides rate by distance, inverting the relationship; D) 5600 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 140 ÷ 40 = 7/2 hours. Wrong choices: A) 2/7 hours divides rate by distance, inverting the relationship; B) 5/2 hours takes off the first hour's 40 miles but never adds that hour back; D) 23/6 hours reads the leftover 1/2 hour as 50 minutes.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -38997,26 +38997,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1/2 hours"
-   },
-   {
-    "label": "B",
     "text": "2 hours"
    },
    {
+    "label": "B",
+    "text": "1/2 hours"
+   },
+   {
     "label": "C",
-    "text": "70 hours"
+    "text": "1 hour"
    },
    {
     "label": "D",
-    "text": "9800 hours"
+    "text": "3 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 140 ÷ 70 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 9800 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 140 ÷ 70 = 2 hours. Wrong choices: B) 1/2 hours divides rate by distance, inverting the relationship; C) 1 hour takes off the first hour's 70 miles but never adds that hour back; D) 3 hours counts the starting hour as an extra hour of travel.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -40977,22 +40977,22 @@
    },
    {
     "label": "B",
-    "text": "4 hours"
+    "text": "3 hours"
    },
    {
     "label": "C",
-    "text": "150 hours"
+    "text": "4 hours"
    },
    {
     "label": "D",
-    "text": "10000 hours"
+    "text": "5 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 200 ÷ 50 = 4 hours. Wrong choices: A) 1/4 hours divides rate by distance, inverting the relationship; D) 10000 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 200 ÷ 50 = 4 hours. Wrong choices: A) 1/4 hours divides rate by distance, inverting the relationship; B) 3 hours takes off the first hour's 50 miles but never adds that hour back; D) 5 hours counts the starting hour as an extra hour of travel.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -41358,26 +41358,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1/2 hours"
-   },
-   {
-    "label": "B",
     "text": "2 hours"
    },
    {
+    "label": "B",
+    "text": "1/2 hours"
+   },
+   {
     "label": "C",
-    "text": "50 hours"
+    "text": "1 hour"
    },
    {
     "label": "D",
-    "text": "5000 hours"
+    "text": "3 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 100 ÷ 50 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 5000 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 100 ÷ 50 = 2 hours. Wrong choices: B) 1/2 hours divides rate by distance, inverting the relationship; C) 1 hour takes off the first hour's 50 miles but never adds that hour back; D) 3 hours counts the starting hour as an extra hour of travel.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -41935,26 +41935,26 @@
   "options": [
    {
     "label": "A",
-    "text": "1/2 hours"
-   },
-   {
-    "label": "B",
     "text": "2 hours"
    },
    {
+    "label": "B",
+    "text": "1/2 hours"
+   },
+   {
     "label": "C",
-    "text": "65 hours"
+    "text": "1 hour"
    },
    {
     "label": "D",
-    "text": "8450 hours"
+    "text": "3 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "A",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 130 ÷ 65 = 2 hours. Wrong choices: A) 1/2 hours divides rate by distance, inverting the relationship; D) 8450 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 130 ÷ 65 = 2 hours. Wrong choices: B) 1/2 hours divides rate by distance, inverting the relationship; C) 1 hour takes off the first hour's 65 miles but never adds that hour back; D) 3 hours counts the starting hour as an extra hour of travel.",
   "tags": [
    "act",
    "act-essential-skills",
@@ -42901,22 +42901,22 @@
    },
    {
     "label": "B",
-    "text": "3 hours"
+    "text": "2 hours"
    },
    {
     "label": "C",
-    "text": "120 hours"
+    "text": "3 hours"
    },
    {
     "label": "D",
-    "text": "10800 hours"
+    "text": "4 hours"
    }
   ],
-  "correctOption": "B",
+  "correctOption": "C",
   "difficulty": 2,
   "gradeBand": "5-8",
   "ohioDomain": "Ratios & Proportional Relationships",
-  "explanation": "Time = distance ÷ rate: 180 ÷ 60 = 3 hours. Wrong choices: A) 1/3 hours divides rate by distance, inverting the relationship; D) 10800 hours multiplies, which would give distance-times-speed, not a time.",
+  "explanation": "Time = distance ÷ rate: 180 ÷ 60 = 3 hours. Wrong choices: A) 1/3 hours divides rate by distance, inverting the relationship; B) 2 hours takes off the first hour's 60 miles but never adds that hour back; D) 4 hours counts the starting hour as an extra hour of travel.",
   "tags": [
    "act",
    "act-essential-skills",
