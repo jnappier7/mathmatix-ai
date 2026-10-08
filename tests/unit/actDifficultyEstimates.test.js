@@ -22,6 +22,7 @@ const items = [
   ...read('act-enhanced/act-items.generated.json'),
   ...read('act-visual/act-visual-items.generated.json'),
   ...read('act-reasoning/act-reasoning-items.generated.json'),
+  ...read('act-sets/act-set-items.generated.json'),
 ];
 
 test('every item that can reach a form has an estimate', () => {

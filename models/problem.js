@@ -115,6 +115,13 @@ const problemSchema = new mongoose.Schema({
     type: String
   },
 
+  // Shared-stimulus sets (ACT "Use the following information to answer
+  // questions 12-14"): items with the same setId share one table, figure or
+  // scenario and are served together (utils/actTestAssembler.js). Each item's
+  // prompt still carries the full stimulus, so it stands alone in review.
+  setId: { type: String, index: true },
+  setOrder: { type: Number },
+
   // Tags for filtering/searching
   tags: [{
     type: String
