@@ -488,7 +488,9 @@ async function serveProblem(req, res) {
         options: normalizeOptions(item.options),
         questionNumber: item.position,
       },
-      response: saved ? { answer: saved.answer || null, flagged: !!saved.flagged } : null,
+      // seq: the stored change counter, so a runner that reloaded mid-test
+      // continues counting from it instead of from 0 (see writeResponse).
+      response: saved ? { answer: saved.answer || null, flagged: !!saved.flagged, seq: Number(saved.seq) || 0 } : null,
       total: session.items.length,
       remainingSeconds: secondsRemaining(session),
     });

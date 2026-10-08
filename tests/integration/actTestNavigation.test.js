@@ -129,7 +129,7 @@ test('navigate anywhere, change an answer, flag — final state is what gets gra
 
   // Revisit shows the saved selection.
   res = await supertest(app).get(`/api/act-test/problem?sessionId=${sid}&position=2`);
-  expect(res.body.response).toEqual({ answer: 'B', flagged: false });
+  expect(res.body.response).toEqual({ answer: 'B', flagged: false, seq: 0 });
 
   // Go back and change it to the right answer — the change must stick.
   res = await supertest(app).post('/api/act-test/save-answer')
@@ -169,6 +169,43 @@ test('navigate anywhere, change an answer, flag — final state is what gets gra
   expect(byPos[3].flagged).toBe(true);
   expect(byPos[4].skipped).toBe(true);
   expect(byPos[4].correct).toBe(false);
+});
+
+// The change counter has to survive a revisit. The runner rebuilt a revisited
+// question's state without it, so the count restarted at 1: a student who had
+// changed an answer three times (stored seq 3) and came back to change it again
+// sent seq 1, the save was refused as stale, the answer sheet at submit was
+// refused the same way, and they were graded on the old pick while the screen
+// showed the new one. /problem now returns the stored seq so the runner can
+// continue from it, even after a reload (public/js/act-test.js goTo).
+test('a revisited question continues its change counter, so the last pick is graded', async () => {
+  const session = await makeSession();
+  const sid = String(session._id);
+  const save = (answer, seq) => supertest(app).post('/api/act-test/save-answer')
+    .send({ sessionId: sid, problemId: 'nav-p1', position: 1, answer, seq });
+
+  await save('B', 1); await save('C', 2); await save('D', 3);
+  let res = await supertest(app).get(`/api/act-test/problem?sessionId=${sid}&position=1`);
+  expect(res.body.response).toEqual({ answer: 'D', flagged: false, seq: 3 });
+
+  // What the old runner sent after a revisit: a restarted count. Refused.
+  res = await save('A', 1);
+  expect(res.body.stale).toBe(true);
+
+  // What the runner sends now: one past the stored count. Taken, and graded.
+  res = await save('A', 4);
+  expect(res.body.saved).toBe(true);
+  res = await supertest(app).post('/api/act-test/complete')
+    .send({ sessionId: sid, answers: [{ position: 1, problemId: 'nav-p1', answer: 'A', seq: 4 }] });
+  const row = (await ActTestSession.findById(sid).lean()).responses.find((r) => r.position === 1);
+  expect(row.answer).toBe('A');
+  expect(row.correct).toBe(true);
+});
+
+test('the runner keeps the change counter when it rebuilds a revisited question', () => {
+  const src = require('fs').readFileSync(require('path').join(__dirname, '..', '..', 'public', 'js', 'act-test.js'), 'utf8');
+  const goTo = src.slice(src.indexOf('async goTo(pos)'), src.indexOf('render() {'));
+  expect(goTo).toMatch(/seq:\s*Math\.max\(Number\(local\.seq\)\s*\|\|\s*0,\s*Number\(remote\.seq\)\s*\|\|\s*0\)/);
 });
 
 test('position out of range and problemId mismatch are rejected', async () => {
