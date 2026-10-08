@@ -97,6 +97,23 @@ const FORM_SOURCE_FILTER = { source: { $not: NOT_ON_FORMS } };
 const formEligible = (p) => !!p && !NOT_ON_FORMS.test(String(p.source || ''));
 
 /**
+ * Which bank rows a blueprint's forms may draw from, beyond skill and
+ * difficulty. ACT names neither key and keeps exactly the query it always had:
+ * multiple choice only, low-volume banks off. A blueprint may widen the answer
+ * types (SAT has grid-ins) and pin the sources — and a blueprint whose skills
+ * are unified-taxonomy ids MUST pin them: those ids are shared with the whole
+ * tutoring bank, so a skill-only query would put worksheet practice on a form.
+ */
+function bankFilter(blueprint) {
+  const types = Array.isArray(blueprint.answerTypes) && blueprint.answerTypes.length
+    ? blueprint.answerTypes : ['multiple-choice'];
+  const filter = { answerType: types.length === 1 ? types[0] : { $in: types } };
+  if (Array.isArray(blueprint.sources) && blueprint.sources.length) filter.source = { $in: blueprint.sources };
+  else Object.assign(filter, FORM_SOURCE_FILTER);
+  return filter;
+}
+
+/**
  * An item the student answers from a picture or a table: it carries a figure,
  * or its stem holds a pipe-separated table (two or more " | " lines, the shape
  * public/js/act-test.js stemHtml renders as a real table).
@@ -405,7 +422,7 @@ function pickDiverse(candidates, usedSignatures, targetDifficulty, formPrints = 
 }
 
 /** A spec the problem generator can fulfill for an unfillable slot. */
-function toGenerationSpec(slot) {
+function toGenerationSpec(slot, blueprint = DEFAULT_BLUEPRINT) {
   return {
     position: slot.position,
     skillId: slot.skillId,
@@ -414,7 +431,7 @@ function toGenerationSpec(slot) {
     // coverage worklist groups by this key (scripts/actTestCoverage.js).
     targetDifficulty: Math.round(slot.targetDifficulty),
     answerType: 'multiple-choice',
-    optionCount: (DEFAULT_BLUEPRINT.choicesPerItem || 4),
+    optionCount: (blueprint.choicesPerItem || 4),
   };
 }
 
@@ -441,6 +458,8 @@ async function assembleForm(opts = {}) {
 
   const Problem = require('../models/problem');
   const byCat = blueprint.skillsByCategory || {};
+  const bank = bankFilter(blueprint);
+  const sourcePinned = Array.isArray(blueprint.sources) && blueprint.sources.length > 0;
   const slots = buildSlots(blueprint, rng);
   // Never re-serve an item the student has already seen (cross-session), on top
   // of the within-form dedup this array already provides.
@@ -482,7 +501,7 @@ async function assembleForm(opts = {}) {
 
   for (let si = 0; si < slots.length; si++) {
     const slot = slots[si];
-    if (!slot.skillId) { gaps.push(toGenerationSpec(slot)); continue; }
+    if (!slot.skillId) { gaps.push(toGenerationSpec(slot, blueprint)); continue; }
     let problem = null;
     try {
       // Fetch a POOL of candidates near the target difficulty, then pick the
@@ -497,10 +516,9 @@ async function assembleForm(opts = {}) {
       const hi = Math.min(5, center + 1);
       const inWindow = {
         isActive: true,
-        answerType: 'multiple-choice',
         difficulty: { $gte: lo, $lte: hi },
         problemId: { $nin: usedProblemIds },
-        ...FORM_SOURCE_FILTER,
+        ...bank,
       };
       let candidates = [];
       const { difficulty: _anyD, ...anyDifficulty } = inWindow;
@@ -539,8 +557,11 @@ async function assembleForm(opts = {}) {
       if (!candidates.length) {
         candidates = await drawPool(Problem, { ...inWindow, skillId: slot.skillId }, rng, 16);
       }
-      if (!candidates.length) {
+      if (!candidates.length && !sourcePinned) {
         // Widen: any difficulty for this skill, still excluding used items.
+        // Not for a source-pinned blueprint: findNearDifficulty searches the
+        // whole bank. The category fallback below draws any difficulty from
+        // the pinned bank instead.
         const p = await Problem.findNearDifficulty(slot.skillId, center, usedProblemIds, { preferMultipleChoice: true });
         candidates = formEligible(p) && !hasBadDistractors(p) ? [p] : [];
       }
@@ -555,9 +576,8 @@ async function assembleForm(opts = {}) {
           candidates = await drawPool(Problem, {
             skillId: { $in: catSkills },
             isActive: true,
-            answerType: 'multiple-choice',
             problemId: { $nin: usedProblemIds },
-            ...FORM_SOURCE_FILTER,
+            ...bank,
           }, rng, 24);
         }
       }
@@ -573,7 +593,7 @@ async function assembleForm(opts = {}) {
       // DB/query error — treat as a gap, keep assembling the rest.
       problem = null;
     }
-    if (!problem) { gaps.push(toGenerationSpec(slot)); continue; }
+    if (!problem) { gaps.push(toGenerationSpec(slot, blueprint)); continue; }
     if (isVisualItem(problem)) visuals += 1;
     if (isReasoningItem(problem)) reasoning += 1;
     quotas.forEach((q) => { if (q.member(problem)) q.count += 1; });
@@ -768,5 +788,6 @@ module.exports = {
   sameTemplate,
   similarTask,
   nearCopy,
+  bankFilter,
   getBlueprint: () => DEFAULT_BLUEPRINT,
 };

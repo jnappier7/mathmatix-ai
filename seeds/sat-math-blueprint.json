@@ -1,0 +1,130 @@
+{
+  "_comment": "Digital SAT Math blueprint (2024+ digital SAT): 44 questions, 70 minutes, multiple choice (4 choices, A-D) plus student-produced response (grid-in). Content = Fable-authored, sympy-verified items (seeds/sat-items.generated.json, source sat-fable; spec in seeds/sat-math/SAT_SPEC.md). All items are original. This blueprint delivers the section as ONE fixed 44-item form; the real section is two 22-item adaptive modules, which is a later step.",
+  "testId": "sat-math",
+  "title": "SAT Math Practice Test",
+  "subject": "sat-math",
+  "totalItems": 44,
+  "timeLimitMinutes": 70,
+  "choicesPerItem": 4,
+  "_answerTypesComment": "About 75% multiple choice, 25% grid-in on the real section. The assembler does not pace the mix; the bank's own share (101 MC / 31 grid-in = 23% grid-in) carries through the draw.",
+  "answerTypes": [
+    "multiple-choice",
+    "constructed-response"
+  ],
+  "_sourcesComment": "REQUIRED for this blueprint. The skills below are unified-taxonomy ids shared with the whole tutoring bank; without a source pin a SAT form would draw worksheet practice items. See utils/actTestAssembler.js bankFilter.",
+  "sources": [
+    "sat-fable"
+  ],
+  "scoreScale": {
+    "min": 200,
+    "max": 800
+  },
+  "_categoryWeightsComment": "College Board's published domain shares for the Math section: Algebra ~35% (13-15 of 44), Advanced Math ~35% (13-15), Problem-Solving and Data Analysis ~15% (5-7), Geometry and Trigonometry ~15% (5-7). 15/15/7/7 sums to 44. Bank depth at authoring (2026-10-07): 40/39/27/26 items, so a student gets two full forms before forms run short.",
+  "categoryWeights": {
+    "algebra": 15,
+    "advanced-math": 15,
+    "problem-solving-data": 7,
+    "geometry-trig": 7
+  },
+  "skillsByCategory": {
+    "algebra": [
+      "ALG1.EQV.1",
+      "ALG1.EQV.3",
+      "ALG1.EQV.7",
+      "ALG1.FNC.1",
+      "ALG1.FNC.4",
+      "ALG1.FNC.5"
+    ],
+    "advanced-math": [
+      "ALG1.EQV.10",
+      "ALG1.EQV.15",
+      "ALG1.FNC.10",
+      "ALG1.FNC.8",
+      "ALG2.EQV.12",
+      "ALG2.EQV.13",
+      "ALG2.EQV.15",
+      "ALG2.EQV.16",
+      "ALG2.EQV.6",
+      "ALG2.FNC.6",
+      "MS.QNT.9"
+    ],
+    "problem-solving-data": [
+      "ALG1.DTA.1",
+      "ALG1.DTA.2",
+      "ALG1.DTA.3",
+      "ALG2.DTA.1",
+      "ALG2.DTA.3",
+      "MS.PRP.5",
+      "MS.PRP.7"
+    ],
+    "geometry-trig": [
+      "GEO.PRP.5",
+      "GEO.SPC.11",
+      "GEO.SPC.16",
+      "GEO.SPC.18",
+      "GEO.SPC.4",
+      "MS.SPC.6"
+    ]
+  },
+  "_difficultyRampComment": "Bank difficulties run 2-4. One smooth easy-to-hard ramp across the form, mean 3. The real section ramps within each 22-item module; that arrives with the two-module delivery.",
+  "difficultyRamp": [
+    {
+      "position": 1,
+      "targetDifficulty": 2
+    },
+    {
+      "position": 44,
+      "targetDifficulty": 4
+    }
+  ],
+  "scaledScore": {
+    "_comment": "APPROXIMATE, and labelled so to the student (scaledApproximate). College Board publishes no raw-to-scale table for the digital SAT: its scores come from IRT on adaptive modules. This is a straight line from 0 -> 200 to 44 -> 800 rounded to 10, which is roughly how released digital practice tests convert in the middle of the range but compresses the ends less. Replace it with a calibrated table once real scores can be paired with practice results.",
+    "scaledByRaw": [
+      200,
+      210,
+      230,
+      240,
+      250,
+      270,
+      280,
+      300,
+      310,
+      320,
+      340,
+      350,
+      360,
+      380,
+      390,
+      400,
+      420,
+      430,
+      450,
+      460,
+      470,
+      490,
+      500,
+      510,
+      530,
+      540,
+      550,
+      570,
+      580,
+      600,
+      610,
+      620,
+      640,
+      650,
+      660,
+      680,
+      690,
+      700,
+      720,
+      730,
+      750,
+      760,
+      770,
+      790,
+      800
+    ]
+  }
+}

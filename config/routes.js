@@ -115,6 +115,7 @@ const assessmentRoutes = require('../routes/assessment');
 const screenerRoutes = require('../routes/screener');
 const checkpointRoutes = require('../routes/checkpoint');
 const actTestRoutes = require('../routes/actTest');
+const { useTest } = require('../utils/practiceTests');
 const calcBootcampRoutes = require('../routes/calcBootcamp');
 const masteryRoutes = require('../routes/mastery');
 const nudgeRoutes = require('../routes/nudges');
@@ -355,6 +356,11 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // /act-practice-test. Bearer-token ownership, locked results; signing up
   // claims the test through /api/act-test/claim above. See routes/actTest.js.
   app.use('/api/act-practice', actGuestStartLimiter, actTestRoutes.guestRouter);
+  // SAT Math practice test — the SAME runner, mounted as the SAT. Every
+  // ACT-specific choice (blueprint, scale, skill names, prep course) comes from
+  // utils/practiceTests.js; sessions are scoped by testId, so the two tests
+  // never resume, abandon or report each other's attempts. No guest rail yet.
+  app.use('/api/sat-test', isAuthenticated, useTest('sat-math'), actTestRoutes);
   app.use('/api/calc-bootcamp', isAuthenticated, calcBootcampRoutes);
   app.use('/api/mastery', isAuthenticated, masteryRoutes);
   app.use('/api/nudges', isAuthenticated, nudgeRoutes);
