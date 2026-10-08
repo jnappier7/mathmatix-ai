@@ -207,6 +207,16 @@ const STEPS = [
     ids: jsonIds('act-reasoning/act-reasoning-items.generated.json', 'problemId'),
   },
   {
+    key: 'act-set-items',
+    label: 'ACT shared-stimulus sets (2-3 questions on one table or scenario)',
+    script: 'seedActSetItems.js',
+    supportsFresh: true,
+    files: ['act-sets/act-set-items.generated.json'],
+    model: 'Problem',
+    idField: 'problemId',
+    ids: jsonIds('act-sets/act-set-items.generated.json', 'problemId'),
+  },
+  {
     key: 'answer-equivalents',
     label: 'Backfill answer.equivalents (must follow the banks)',
     script: 'backfillAnswerEquivalents.js',

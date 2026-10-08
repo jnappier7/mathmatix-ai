@@ -1,0 +1,6302 @@
+[
+ {
+  "problemId": "act-set-two-plans-01-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $30\nPremium | $150 | $20\n\nWhat is the total cost of the Basic plan for 7 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$240",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$210"
+   },
+   {
+    "label": "B",
+    "text": "$240"
+   },
+   {
+    "label": "C",
+    "text": "$290"
+   },
+   {
+    "label": "D",
+    "text": "$420"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 7 months: $30 + $30 × 7 = $240. Wrong choices: $210 leaves out the joining fee; $420 charges the joining fee every month; $290 prices the Premium plan instead.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "9423a22f7a47d6654295cfab7b3aa87d2073409c1e6e75f7d1f75725bcccf0c6",
+  "isActive": true,
+  "setId": "act-set-two-plans-01",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-01-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $30\nPremium | $150 | $20\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4"
+   },
+   {
+    "label": "B",
+    "text": "10"
+   },
+   {
+    "label": "C",
+    "text": "12"
+   },
+   {
+    "label": "D",
+    "text": "13"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 30 + 30x = 150 + 20x, so 10x = 120 and x = 12. Wrong choices: 4 divides the fee difference by the Basic charge instead of by the difference in charges; 13 counts one too many; 10 gives the difference in the monthly charges.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "5a30bc9062fcf88e1c0e280570b73b8bd3f1718d7c1a219a63ff506897ff45dc",
+  "isActive": true,
+  "setId": "act-set-two-plans-01",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-01-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $30\nPremium | $150 | $20\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 150 + 20x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 150 + 20x"
+   },
+   {
+    "label": "B",
+    "text": "C = 170x"
+   },
+   {
+    "label": "C",
+    "text": "C = 20 + 150x"
+   },
+   {
+    "label": "D",
+    "text": "C = 150 + 30x"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $150 plus $20 for each of x months: C = 150 + 20x. Wrong choices: C = 20 + 150x swaps the joining fee and the per-month charge; C = 170x charges the joining fee every month; C = 150 + 30x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "6bc5db496505e967bfd3dbfe838b0db1e3bdf0319c9d103bc9dd4de92bc5f628",
+  "isActive": true,
+  "setId": "act-set-two-plans-01",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-two-plans-02-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A streaming service offers two plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $25 | $30\nPremium | $205 | $15\n\nWhat is the total cost of the Basic plan for 10 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$325",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$295"
+   },
+   {
+    "label": "B",
+    "text": "$300"
+   },
+   {
+    "label": "C",
+    "text": "$325"
+   },
+   {
+    "label": "D",
+    "text": "$550"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 10 months: $25 + $30 × 10 = $325. Wrong choices: $300 leaves out the joining fee; $295 charges only 9 months; $550 charges the joining fee every month.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a5af2d6d15484a0165d2e3f448f466681d4b049d06213086fac724c0d7925808",
+  "isActive": true,
+  "setId": "act-set-two-plans-02",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-02-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A streaming service offers two plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $25 | $30\nPremium | $205 | $15\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6"
+   },
+   {
+    "label": "B",
+    "text": "12"
+   },
+   {
+    "label": "C",
+    "text": "13"
+   },
+   {
+    "label": "D",
+    "text": "15"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 25 + 30x = 205 + 15x, so 15x = 180 and x = 12. Wrong choices: 6 divides the fee difference by the Basic charge instead of by the difference in charges; 13 counts one too many; 15 gives the difference in the monthly charges.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "15fb8ecd8d623c0a68e98dc167b208dc995721e67f6addfc538e917ad9c89dac",
+  "isActive": true,
+  "setId": "act-set-two-plans-02",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-02-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A streaming service offers two plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $25 | $30\nPremium | $205 | $15\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 205 + 15x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 15 + 205x"
+   },
+   {
+    "label": "B",
+    "text": "C = 205 + 30x"
+   },
+   {
+    "label": "C",
+    "text": "C = 220x"
+   },
+   {
+    "label": "D",
+    "text": "C = 205 + 15x"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $205 plus $15 for each of x months: C = 205 + 15x. Wrong choices: C = 15 + 205x swaps the joining fee and the per-month charge; C = 220x charges the joining fee every month; C = 205 + 30x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "f30495e3d85a4de5db278e27510f4c5d8d0c8676dd250699b40eb43eacb765ad",
+  "isActive": true,
+  "setId": "act-set-two-plans-02",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-two-plans-03-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $20 | $45\nPremium | $130 | $35\n\nWhat is the total cost of the Basic plan for 6 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$290",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$245"
+   },
+   {
+    "label": "B",
+    "text": "$270"
+   },
+   {
+    "label": "C",
+    "text": "$290"
+   },
+   {
+    "label": "D",
+    "text": "$390"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 6 months: $20 + $45 × 6 = $290. Wrong choices: $270 leaves out the joining fee; $245 charges only 5 months; $390 charges the joining fee every month.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "1f3079d0837feddb7d02d169e67c1fbd2c49448578b75bfc0bd6ef92a5150785",
+  "isActive": true,
+  "setId": "act-set-two-plans-03",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-03-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $20 | $45\nPremium | $130 | $35\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "10"
+   },
+   {
+    "label": "B",
+    "text": "11"
+   },
+   {
+    "label": "C",
+    "text": "12"
+   },
+   {
+    "label": "D",
+    "text": "13"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 20 + 45x = 130 + 35x, so 10x = 110 and x = 11. Wrong choices: 12 counts one too many; 10 gives the difference in the monthly charges; 13 ignores the Basic plan's joining fee.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "52d162c749872048d20b40152111d41d3b9021f9871c1a11dcbfc7197a82a28c",
+  "isActive": true,
+  "setId": "act-set-two-plans-03",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-03-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $20 | $45\nPremium | $130 | $35\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 130 + 35x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 130 + 45x"
+   },
+   {
+    "label": "B",
+    "text": "C = 35 + 130x"
+   },
+   {
+    "label": "C",
+    "text": "C = 165x"
+   },
+   {
+    "label": "D",
+    "text": "C = 130 + 35x"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $130 plus $35 for each of x months: C = 130 + 35x. Wrong choices: C = 35 + 130x swaps the joining fee and the per-month charge; C = 165x charges the joining fee every month; C = 130 + 45x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "744f5d35bb58e288551436b771fc5c337e02a88883629b26fd507b0157e0640e",
+  "isActive": true,
+  "setId": "act-set-two-plans-03",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-two-plans-04-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $50\nPremium | $150 | $40\n\nWhat is the total cost of the Basic plan for 8 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$430",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$380"
+   },
+   {
+    "label": "B",
+    "text": "$400"
+   },
+   {
+    "label": "C",
+    "text": "$430"
+   },
+   {
+    "label": "D",
+    "text": "$640"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 8 months: $30 + $50 × 8 = $430. Wrong choices: $400 leaves out the joining fee; $380 charges only 7 months; $640 charges the joining fee every month.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "182f57e60efc76bdfd3cd1dd20ced50e2e2f2fbb27e01e828b16fe4a2d2904b1",
+  "isActive": true,
+  "setId": "act-set-two-plans-04",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-04-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $50\nPremium | $150 | $40\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "10"
+   },
+   {
+    "label": "B",
+    "text": "12"
+   },
+   {
+    "label": "C",
+    "text": "13"
+   },
+   {
+    "label": "D",
+    "text": "15"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 30 + 50x = 150 + 40x, so 10x = 120 and x = 12. Wrong choices: 13 counts one too many; 10 gives the difference in the monthly charges; 15 ignores the Basic plan's joining fee.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "05becbdda69a10e728254ca7c7199c9d1cb8de03e3c37589ab678922d7f05970",
+  "isActive": true,
+  "setId": "act-set-two-plans-04",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-04-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $50\nPremium | $150 | $40\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 150 + 40x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 150 + 40x"
+   },
+   {
+    "label": "B",
+    "text": "C = 40 + 150x"
+   },
+   {
+    "label": "C",
+    "text": "C = 190x"
+   },
+   {
+    "label": "D",
+    "text": "C = 150 + 50x"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $150 plus $40 for each of x months: C = 150 + 40x. Wrong choices: C = 40 + 150x swaps the joining fee and the per-month charge; C = 190x charges the joining fee every month; C = 150 + 50x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "8dcf98cd8eb82061715d6ac61f46d088da00df9013aca894009abdf93095c651",
+  "isActive": true,
+  "setId": "act-set-two-plans-04",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-two-plans-05-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $25 | $40\nPremium | $65 | $35\n\nWhat is the total cost of the Basic plan for 9 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$385",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$345"
+   },
+   {
+    "label": "B",
+    "text": "$360"
+   },
+   {
+    "label": "C",
+    "text": "$385"
+   },
+   {
+    "label": "D",
+    "text": "$585"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 9 months: $25 + $40 × 9 = $385. Wrong choices: $360 leaves out the joining fee; $345 charges only 8 months; $585 charges the joining fee every month.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "0dd6ff59b7e5d6e39275cf5a2cdd306e970da38988c0b6eb4bfa4ad6f3abf0e0",
+  "isActive": true,
+  "setId": "act-set-two-plans-05",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-05-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $25 | $40\nPremium | $65 | $35\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "5"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "9"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 25 + 40x = 65 + 35x, so 5x = 40 and x = 8. Wrong choices: 1 divides the fee difference by the Basic charge instead of by the difference in charges; 9 counts one too many; 5 gives the difference in the monthly charges.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "3ffb2da584d87199f0234bd4fc7a4ec6a3b069f94dbf5f25c4ba626d046d20b7",
+  "isActive": true,
+  "setId": "act-set-two-plans-05",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-05-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $25 | $40\nPremium | $65 | $35\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 65 + 35x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 35 + 65x"
+   },
+   {
+    "label": "B",
+    "text": "C = 65 + 40x"
+   },
+   {
+    "label": "C",
+    "text": "C = 100x"
+   },
+   {
+    "label": "D",
+    "text": "C = 65 + 35x"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $65 plus $35 for each of x months: C = 65 + 35x. Wrong choices: C = 35 + 65x swaps the joining fee and the per-month charge; C = 100x charges the joining fee every month; C = 65 + 40x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "2d33b6f828cb4accc3ff871e992c79e564ca153f3d546fb4467c5802f3d04361",
+  "isActive": true,
+  "setId": "act-set-two-plans-05",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-two-plans-06-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A climbing gym sells two passes. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $50 | $30\nPremium | $130 | $20\n\nWhat is the total cost of the Basic plan for 10 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$350",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$300"
+   },
+   {
+    "label": "B",
+    "text": "$320"
+   },
+   {
+    "label": "C",
+    "text": "$350"
+   },
+   {
+    "label": "D",
+    "text": "$800"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 10 months: $50 + $30 × 10 = $350. Wrong choices: $300 leaves out the joining fee; $320 charges only 9 months; $800 charges the joining fee every month.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "571ac260cadc4e57096541739185464b6bd1c615a5986c501c74b730712a51e4",
+  "isActive": true,
+  "setId": "act-set-two-plans-06",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-06-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A climbing gym sells two passes. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $50 | $30\nPremium | $130 | $20\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8"
+   },
+   {
+    "label": "B",
+    "text": "9"
+   },
+   {
+    "label": "C",
+    "text": "10"
+   },
+   {
+    "label": "D",
+    "text": "13"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 50 + 30x = 130 + 20x, so 10x = 80 and x = 8. Wrong choices: 9 counts one too many; 10 gives the difference in the monthly charges; 13 ignores the Basic plan's joining fee.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "c6f4879816d348af1b83f91d6ed1525fa1387f6c79763ba32b1ae7dc3da4f577",
+  "isActive": true,
+  "setId": "act-set-two-plans-06",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-06-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A climbing gym sells two passes. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $50 | $30\nPremium | $130 | $20\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 130 + 20x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 130 + 20x"
+   },
+   {
+    "label": "B",
+    "text": "C = 130 + 30x"
+   },
+   {
+    "label": "C",
+    "text": "C = 20 + 130x"
+   },
+   {
+    "label": "D",
+    "text": "C = 150x"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $130 plus $20 for each of x months: C = 130 + 20x. Wrong choices: C = 20 + 130x swaps the joining fee and the per-month charge; C = 150x charges the joining fee every month; C = 130 + 30x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "c420736096be9679f068f2e2593159b5b48a2fd19e8398d6663600e75553c776",
+  "isActive": true,
+  "setId": "act-set-two-plans-06",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-two-plans-07-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $40\nPremium | $140 | $30\n\nWhat is the total cost of the Basic plan for 9 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$390",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$350"
+   },
+   {
+    "label": "B",
+    "text": "$360"
+   },
+   {
+    "label": "C",
+    "text": "$390"
+   },
+   {
+    "label": "D",
+    "text": "$630"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 9 months: $30 + $40 × 9 = $390. Wrong choices: $360 leaves out the joining fee; $350 charges only 8 months; $630 charges the joining fee every month.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "6bde275e5d4376f8a9693d294a6a347c9108e2497023df5c4f60b7840fd1fa39",
+  "isActive": true,
+  "setId": "act-set-two-plans-07",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-07-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $40\nPremium | $140 | $30\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "10"
+   },
+   {
+    "label": "B",
+    "text": "11"
+   },
+   {
+    "label": "C",
+    "text": "12"
+   },
+   {
+    "label": "D",
+    "text": "14"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 30 + 40x = 140 + 30x, so 10x = 110 and x = 11. Wrong choices: 12 counts one too many; 10 gives the difference in the monthly charges; 14 ignores the Basic plan's joining fee.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "20d791518788168dbcd0b193951d395434baa826508e9f9e5ba830b17ef864ff",
+  "isActive": true,
+  "setId": "act-set-two-plans-07",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-07-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $40\nPremium | $140 | $30\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 140 + 30x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 170x"
+   },
+   {
+    "label": "B",
+    "text": "C = 140 + 40x"
+   },
+   {
+    "label": "C",
+    "text": "C = 30 + 140x"
+   },
+   {
+    "label": "D",
+    "text": "C = 140 + 30x"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $140 plus $30 for each of x months: C = 140 + 30x. Wrong choices: C = 30 + 140x swaps the joining fee and the per-month charge; C = 170x charges the joining fee every month; C = 140 + 40x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "1a28bb8480e7674b34ff16f9bb531586fa61d4b046daf30d524e79292c913e81",
+  "isActive": true,
+  "setId": "act-set-two-plans-07",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-two-plans-08-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $50 | $40\nPremium | $110 | $35\n\nWhat is the total cost of the Basic plan for 4 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$210",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$160"
+   },
+   {
+    "label": "B",
+    "text": "$170"
+   },
+   {
+    "label": "C",
+    "text": "$210"
+   },
+   {
+    "label": "D",
+    "text": "$360"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 4 months: $50 + $40 × 4 = $210. Wrong choices: $160 leaves out the joining fee; $170 charges only 3 months; $360 charges the joining fee every month.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a5dea5872fbbfe062f8a2f128eb0b9f9b488d5974bbecdfbcc4919cf4240fdab",
+  "isActive": true,
+  "setId": "act-set-two-plans-08",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-08-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $50 | $40\nPremium | $110 | $35\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5"
+   },
+   {
+    "label": "B",
+    "text": "12"
+   },
+   {
+    "label": "C",
+    "text": "13"
+   },
+   {
+    "label": "D",
+    "text": "22"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 50 + 40x = 110 + 35x, so 5x = 60 and x = 12. Wrong choices: 13 counts one too many; 5 gives the difference in the monthly charges; 22 ignores the Basic plan's joining fee.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "8fc3e14c93d57b8bb8803b4f188703d49e5beb082061d003cef2d90d52075311",
+  "isActive": true,
+  "setId": "act-set-two-plans-08",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-08-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $50 | $40\nPremium | $110 | $35\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 110 + 35x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 145x"
+   },
+   {
+    "label": "B",
+    "text": "C = 35 + 110x"
+   },
+   {
+    "label": "C",
+    "text": "C = 110 + 40x"
+   },
+   {
+    "label": "D",
+    "text": "C = 110 + 35x"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $110 plus $35 for each of x months: C = 110 + 35x. Wrong choices: C = 35 + 110x swaps the joining fee and the per-month charge; C = 145x charges the joining fee every month; C = 110 + 40x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "c7c8b42187b0a38b8327c2efa4bd88ed18d93b0be0c6a8519b654dd554ffbbe3",
+  "isActive": true,
+  "setId": "act-set-two-plans-08",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-two-plans-09-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A streaming service offers two plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $50 | $40\nPremium | $120 | $30\n\nWhat is the total cost of the Basic plan for 10 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$450",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$400"
+   },
+   {
+    "label": "B",
+    "text": "$410"
+   },
+   {
+    "label": "C",
+    "text": "$450"
+   },
+   {
+    "label": "D",
+    "text": "$900"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 10 months: $50 + $40 × 10 = $450. Wrong choices: $400 leaves out the joining fee; $410 charges only 9 months; $900 charges the joining fee every month.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "6cdf935552ec61ad9a3582576fc637378b0063aa7dda57730073e0ee39ffd366",
+  "isActive": true,
+  "setId": "act-set-two-plans-09",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-09-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A streaming service offers two plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $50 | $40\nPremium | $120 | $30\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7"
+   },
+   {
+    "label": "B",
+    "text": "8"
+   },
+   {
+    "label": "C",
+    "text": "10"
+   },
+   {
+    "label": "D",
+    "text": "12"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 50 + 40x = 120 + 30x, so 10x = 70 and x = 7. Wrong choices: 8 counts one too many; 10 gives the difference in the monthly charges; 12 ignores the Basic plan's joining fee.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "8a37f0264bf039b91c8aa41d331b6dd3b70398693d99ff6d509c48b3d486a4f7",
+  "isActive": true,
+  "setId": "act-set-two-plans-09",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-09-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A streaming service offers two plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $50 | $40\nPremium | $120 | $30\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 120 + 30x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 120 + 30x"
+   },
+   {
+    "label": "B",
+    "text": "C = 30 + 120x"
+   },
+   {
+    "label": "C",
+    "text": "C = 120 + 40x"
+   },
+   {
+    "label": "D",
+    "text": "C = 150x"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $120 plus $30 for each of x months: C = 120 + 30x. Wrong choices: C = 30 + 120x swaps the joining fee and the per-month charge; C = 150x charges the joining fee every month; C = 120 + 40x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "d4eb8d66762de2e3fa329a64ee744cbc7189beade3aa660c19f3d90cd2047f0f",
+  "isActive": true,
+  "setId": "act-set-two-plans-09",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-two-plans-10-01",
+  "skillId": "act-multi-step-arithmetic",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $40\nPremium | $75 | $35\n\nWhat is the total cost of the Basic plan for 8 months, including the joining fee?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$350",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$310"
+   },
+   {
+    "label": "B",
+    "text": "$320"
+   },
+   {
+    "label": "C",
+    "text": "$350"
+   },
+   {
+    "label": "D",
+    "text": "$560"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Joining fee plus 8 months: $30 + $40 × 8 = $350. Wrong choices: $320 leaves out the joining fee; $310 charges only 7 months; $560 charges the joining fee every month.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "fb5a0895009769e8410aebfa163c1b0152692fa04212e30b3644f5999761e62b",
+  "isActive": true,
+  "setId": "act-set-two-plans-10",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-two-plans-10-02",
+  "skillId": "act-systems-of-equations",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $40\nPremium | $75 | $35\n\nAfter how many months will the total cost of the two plans be equal?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5"
+   },
+   {
+    "label": "B",
+    "text": "9"
+   },
+   {
+    "label": "C",
+    "text": "10"
+   },
+   {
+    "label": "D",
+    "text": "15"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Set the totals equal: 30 + 40x = 75 + 35x, so 5x = 45 and x = 9. Wrong choices: 10 counts one too many; 5 gives the difference in the monthly charges; 15 ignores the Basic plan's joining fee.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "cf685980a74ab76b5e289b84c337a06f053f7d5edd78e2129896f84132418394",
+  "isActive": true,
+  "setId": "act-set-two-plans-10",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-two-plans-10-03",
+  "skillId": "act-linear-functions-models",
+  "prompt": "A gym offers two membership plans. Each plan charges a one-time joining fee plus a fixed charge per month.\n\nPlan | Joining fee | Charge per month\nBasic | $30 | $40\nPremium | $75 | $35\n\nWhich of the following equations gives the total cost C, in dollars, of the Premium plan for x months?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "C = 75 + 35x",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "C = 75 + 40x"
+   },
+   {
+    "label": "B",
+    "text": "C = 75 + 35x"
+   },
+   {
+    "label": "C",
+    "text": "C = 35 + 75x"
+   },
+   {
+    "label": "D",
+    "text": "C = 110x"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "A one-time $75 plus $35 for each of x months: C = 75 + 35x. Wrong choices: C = 35 + 75x swaps the joining fee and the per-month charge; C = 110x charges the joining fee every month; C = 75 + 40x uses the Basic plan's monthly charge.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:two-plans"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "4f75593e27a22762afe862af7f4bc10323b826b26798e3d23e08b22d9a16e593",
+  "isActive": true,
+  "setId": "act-set-two-plans-10",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-01-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 88 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 8 | 24 | 32\n10th grade | 32 | 24 | 56\nTotal | 40 | 48 | 88\n\nIf one of the 88 students is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5/11",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/11"
+   },
+   {
+    "label": "B",
+    "text": "5/11"
+   },
+   {
+    "label": "C",
+    "text": "6/11"
+   },
+   {
+    "label": "D",
+    "text": "5/6"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "40 of the 88 students answered \"Yes\": 5/11. Wrong choices: 5/6 compares the two answers (odds) instead of dividing by the total; 1/11 counts only the 9th graders; 6/11 gives the probability of \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "7723ca6aa3b0f0d7938d1f0d07eac515d3b18b28abf9c51f43662740b7b47bb5",
+  "isActive": true,
+  "setId": "act-set-survey-01",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-01-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 88 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 8 | 24 | 32\n10th grade | 32 | 24 | 56\nTotal | 40 | 48 | 88\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4/7",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4/11"
+   },
+   {
+    "label": "B",
+    "text": "3/7"
+   },
+   {
+    "label": "C",
+    "text": "4/7"
+   },
+   {
+    "label": "D",
+    "text": "4/5"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 56 10th graders count; 32 of them answered \"Yes\": 4/7. Wrong choices: 4/11 divides by every student, ignoring the condition; 4/5 divides by everyone who answered \"Yes\", which reverses the condition; 3/7 gives the 10th graders who answered \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "98593e16e91e9b64fdc6d72672145f45ca7b106c73651aaf6ef343a4094561f6",
+  "isActive": true,
+  "setId": "act-set-survey-01",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-01-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 88 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 8 | 24 | 32\n10th grade | 32 | 24 | 56\nTotal | 40 | 48 | 88\n\nWhat percent of the 9th graders answered \"No\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "75%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "24%"
+   },
+   {
+    "label": "B",
+    "text": "25%"
+   },
+   {
+    "label": "C",
+    "text": "50%"
+   },
+   {
+    "label": "D",
+    "text": "75%"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "24 of the 32 9th graders: 24 ÷ 32 = 75%. Wrong choices: 24% reports the count as a percent; 25% gives the percent who answered \"Yes\"; 50% divides by everyone who answered \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "b5a3c4f798f0b5c0c58b4eb93ab632224cc67dec28d94eeabd9807df09868489",
+  "isActive": true,
+  "setId": "act-set-survey-01",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-02-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 90 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 14 | 36 | 50\n10th grade | 30 | 10 | 40\nTotal | 44 | 46 | 90\n\nIf one of the 90 students is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "22/45",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7/45"
+   },
+   {
+    "label": "B",
+    "text": "22/45"
+   },
+   {
+    "label": "C",
+    "text": "23/45"
+   },
+   {
+    "label": "D",
+    "text": "22/23"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "44 of the 90 students answered \"Yes\": 22/45. Wrong choices: 22/23 compares the two answers (odds) instead of dividing by the total; 7/45 counts only the 9th graders; 23/45 gives the probability of \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "84ecdad10338b400898bfac7ee736d6a996c65e424bd7930db9874777466138b",
+  "isActive": true,
+  "setId": "act-set-survey-02",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-02-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 90 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 14 | 36 | 50\n10th grade | 30 | 10 | 40\nTotal | 44 | 46 | 90\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3/4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/4"
+   },
+   {
+    "label": "B",
+    "text": "1/3"
+   },
+   {
+    "label": "C",
+    "text": "15/22"
+   },
+   {
+    "label": "D",
+    "text": "3/4"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 40 10th graders count; 30 of them answered \"Yes\": 3/4. Wrong choices: 1/3 divides by every student, ignoring the condition; 15/22 divides by everyone who answered \"Yes\", which reverses the condition; 1/4 gives the 10th graders who answered \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "1d8e93d5824a47732f660fc5ee6ba2d516ab0d240cbd8ecf801e43bb03cf47f6",
+  "isActive": true,
+  "setId": "act-set-survey-02",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-02-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 90 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 14 | 36 | 50\n10th grade | 30 | 10 | 40\nTotal | 44 | 46 | 90\n\nWhat percent of the 9th graders answered \"No\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "72%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "28%"
+   },
+   {
+    "label": "B",
+    "text": "36%"
+   },
+   {
+    "label": "C",
+    "text": "40%"
+   },
+   {
+    "label": "D",
+    "text": "72%"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "36 of the 50 9th graders: 36 ÷ 50 = 72%. Wrong choices: 40% divides by all the students, not the 9th graders; 36% reports the count as a percent; 28% gives the percent who answered \"Yes\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "29aa10dc6d1ddc756112c5da5f4f7c217fb63766a70f5fa04cf114ee018e1b7e",
+  "isActive": true,
+  "setId": "act-set-survey-02",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-03-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 78 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 8 | 24 | 32\n10th grade | 10 | 36 | 46\nTotal | 18 | 60 | 78\n\nIf one of the 78 students is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3/13",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4/39"
+   },
+   {
+    "label": "B",
+    "text": "3/13"
+   },
+   {
+    "label": "C",
+    "text": "3/10"
+   },
+   {
+    "label": "D",
+    "text": "10/13"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "18 of the 78 students answered \"Yes\": 3/13. Wrong choices: 3/10 compares the two answers (odds) instead of dividing by the total; 4/39 counts only the 9th graders; 10/13 gives the probability of \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "1f00941d3a3d53d188810d7a6b576bcb757b9aeaa785251bc91a323cb4a9cee1",
+  "isActive": true,
+  "setId": "act-set-survey-03",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-03-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 78 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 8 | 24 | 32\n10th grade | 10 | 36 | 46\nTotal | 18 | 60 | 78\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5/23",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5/39"
+   },
+   {
+    "label": "B",
+    "text": "5/23"
+   },
+   {
+    "label": "C",
+    "text": "5/9"
+   },
+   {
+    "label": "D",
+    "text": "18/23"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 46 10th graders count; 10 of them answered \"Yes\": 5/23. Wrong choices: 5/39 divides by every student, ignoring the condition; 5/9 divides by everyone who answered \"Yes\", which reverses the condition; 18/23 gives the 10th graders who answered \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "e60bd3117e02c35b7b62bebd082382f538c2639eac19ae6e4c6dc3dab9743d1d",
+  "isActive": true,
+  "setId": "act-set-survey-03",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-03-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 78 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 8 | 24 | 32\n10th grade | 10 | 36 | 46\nTotal | 18 | 60 | 78\n\nWhat percent of the 9th graders answered \"No\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "75%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "24%"
+   },
+   {
+    "label": "B",
+    "text": "25%"
+   },
+   {
+    "label": "C",
+    "text": "40%"
+   },
+   {
+    "label": "D",
+    "text": "75%"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "24 of the 32 9th graders: 24 ÷ 32 = 75%. Wrong choices: 24% reports the count as a percent; 25% gives the percent who answered \"Yes\"; 40% divides by everyone who answered \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "d1004053cef3855507dda9424d8b9da6fe70ae6aa1e276c94322a1f01ec4fbda",
+  "isActive": true,
+  "setId": "act-set-survey-03",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-04-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 70 students about whether they prefer online or printed books. The results are shown in the table below.\n\nGrade | Online | Printed | Total\n9th grade | 12 | 18 | 30\n10th grade | 18 | 22 | 40\nTotal | 30 | 40 | 70\n\nIf one of the 70 students is chosen at random, what is the probability that the student answered \"Online\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3/7",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6/35"
+   },
+   {
+    "label": "B",
+    "text": "3/7"
+   },
+   {
+    "label": "C",
+    "text": "4/7"
+   },
+   {
+    "label": "D",
+    "text": "3/4"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "30 of the 70 students answered \"Online\": 3/7. Wrong choices: 3/4 compares the two answers (odds) instead of dividing by the total; 6/35 counts only the 9th graders; 4/7 gives the probability of \"Printed\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "f09582bd27ee6130b1578deca948ea3eb21eebb188813eb7c379080a011bfceb",
+  "isActive": true,
+  "setId": "act-set-survey-04",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-04-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 70 students about whether they prefer online or printed books. The results are shown in the table below.\n\nGrade | Online | Printed | Total\n9th grade | 12 | 18 | 30\n10th grade | 18 | 22 | 40\nTotal | 30 | 40 | 70\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Online\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9/20",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "9/35"
+   },
+   {
+    "label": "B",
+    "text": "9/20"
+   },
+   {
+    "label": "C",
+    "text": "11/20"
+   },
+   {
+    "label": "D",
+    "text": "3/5"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 40 10th graders count; 18 of them answered \"Online\": 9/20. Wrong choices: 9/35 divides by every student, ignoring the condition; 3/5 divides by everyone who answered \"Online\", which reverses the condition; 11/20 gives the 10th graders who answered \"Printed\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "653e035222c8d05061e6d089a40bbc85750f1076acf5d62cb9d954aa8016003f",
+  "isActive": true,
+  "setId": "act-set-survey-04",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-04-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 70 students about whether they prefer online or printed books. The results are shown in the table below.\n\nGrade | Online | Printed | Total\n9th grade | 12 | 18 | 30\n10th grade | 18 | 22 | 40\nTotal | 30 | 40 | 70\n\nWhat percent of the 9th graders answered \"Printed\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "60%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "18%"
+   },
+   {
+    "label": "B",
+    "text": "40%"
+   },
+   {
+    "label": "C",
+    "text": "45%"
+   },
+   {
+    "label": "D",
+    "text": "60%"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "18 of the 30 9th graders: 18 ÷ 30 = 60%. Wrong choices: 18% reports the count as a percent; 40% gives the percent who answered \"Online\"; 45% divides by everyone who answered \"Printed\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "0f2231cd85e0416dc7a624fde28d92212bf33ff79d4504b0212c1a2ede07239d",
+  "isActive": true,
+  "setId": "act-set-survey-04",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-05-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 80 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 22 | 28 | 50\n10th grade | 14 | 16 | 30\nTotal | 36 | 44 | 80\n\nIf one of the 80 students is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9/20",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "11/40"
+   },
+   {
+    "label": "B",
+    "text": "9/20"
+   },
+   {
+    "label": "C",
+    "text": "11/20"
+   },
+   {
+    "label": "D",
+    "text": "9/11"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "36 of the 80 students answered \"Yes\": 9/20. Wrong choices: 9/11 compares the two answers (odds) instead of dividing by the total; 11/40 counts only the 9th graders; 11/20 gives the probability of \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "f04ea6df5e9d568b9091e7bebb6abdef237c1dd616b64993c7132ba81f890fab",
+  "isActive": true,
+  "setId": "act-set-survey-05",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-05-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 80 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 22 | 28 | 50\n10th grade | 14 | 16 | 30\nTotal | 36 | 44 | 80\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7/15",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7/40"
+   },
+   {
+    "label": "B",
+    "text": "7/18"
+   },
+   {
+    "label": "C",
+    "text": "7/15"
+   },
+   {
+    "label": "D",
+    "text": "8/15"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 30 10th graders count; 14 of them answered \"Yes\": 7/15. Wrong choices: 7/40 divides by every student, ignoring the condition; 7/18 divides by everyone who answered \"Yes\", which reverses the condition; 8/15 gives the 10th graders who answered \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "cb2341ae4ead4e49feae0748a936447d6a3d9a8f73133d1a2bb9e0e881dd6187",
+  "isActive": true,
+  "setId": "act-set-survey-05",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-05-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 80 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 22 | 28 | 50\n10th grade | 14 | 16 | 30\nTotal | 36 | 44 | 80\n\nWhat percent of the 9th graders answered \"No\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "56%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "28%"
+   },
+   {
+    "label": "B",
+    "text": "35%"
+   },
+   {
+    "label": "C",
+    "text": "44%"
+   },
+   {
+    "label": "D",
+    "text": "56%"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "28 of the 50 9th graders: 28 ÷ 50 = 56%. Wrong choices: 35% divides by all the students, not the 9th graders; 28% reports the count as a percent; 44% gives the percent who answered \"Yes\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "0b8166891770b99dee6c8ff72cb635222078427b60095c0496a5721b3ff325c3",
+  "isActive": true,
+  "setId": "act-set-survey-05",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-06-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 90 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 26 | 14 | 40\n10th grade | 14 | 36 | 50\nTotal | 40 | 50 | 90\n\nIf one of the 90 students is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4/9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "13/45"
+   },
+   {
+    "label": "B",
+    "text": "4/9"
+   },
+   {
+    "label": "C",
+    "text": "5/9"
+   },
+   {
+    "label": "D",
+    "text": "4/5"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "40 of the 90 students answered \"Yes\": 4/9. Wrong choices: 4/5 compares the two answers (odds) instead of dividing by the total; 13/45 counts only the 9th graders; 5/9 gives the probability of \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a55fcacc22c7654f0023fe7ca43453adb6d15494273aed8113ca2b20260aa5b8",
+  "isActive": true,
+  "setId": "act-set-survey-06",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-06-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 90 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 26 | 14 | 40\n10th grade | 14 | 36 | 50\nTotal | 40 | 50 | 90\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Yes\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7/25",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7/45"
+   },
+   {
+    "label": "B",
+    "text": "7/25"
+   },
+   {
+    "label": "C",
+    "text": "7/20"
+   },
+   {
+    "label": "D",
+    "text": "18/25"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 50 10th graders count; 14 of them answered \"Yes\": 7/25. Wrong choices: 7/45 divides by every student, ignoring the condition; 7/20 divides by everyone who answered \"Yes\", which reverses the condition; 18/25 gives the 10th graders who answered \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "ab281b42fada06f729c168e5f65c99cf45485fafcbd430451775777a7581d10c",
+  "isActive": true,
+  "setId": "act-set-survey-06",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-06-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 90 students about whether they would join a robotics club. The results are shown in the table below.\n\nGrade | Yes | No | Total\n9th grade | 26 | 14 | 40\n10th grade | 14 | 36 | 50\nTotal | 40 | 50 | 90\n\nWhat percent of the 9th graders answered \"No\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "35%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "14%"
+   },
+   {
+    "label": "B",
+    "text": "28%"
+   },
+   {
+    "label": "C",
+    "text": "35%"
+   },
+   {
+    "label": "D",
+    "text": "65%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "14 of the 40 9th graders: 14 ÷ 40 = 35%. Wrong choices: 14% reports the count as a percent; 65% gives the percent who answered \"Yes\"; 28% divides by everyone who answered \"No\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "46667425877fab9465bdce0c4b508ee13d49d9cebe3d2303a3406ee9df8696f9",
+  "isActive": true,
+  "setId": "act-set-survey-06",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-07-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 60 students about whether they ride the bus to school. The results are shown in the table below.\n\nGrade | Bus | No bus | Total\n9th grade | 12 | 18 | 30\n10th grade | 10 | 20 | 30\nTotal | 22 | 38 | 60\n\nIf one of the 60 students is chosen at random, what is the probability that the student answered \"Bus\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "11/30",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/5"
+   },
+   {
+    "label": "B",
+    "text": "11/30"
+   },
+   {
+    "label": "C",
+    "text": "11/19"
+   },
+   {
+    "label": "D",
+    "text": "19/30"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "22 of the 60 students answered \"Bus\": 11/30. Wrong choices: 11/19 compares the two answers (odds) instead of dividing by the total; 1/5 counts only the 9th graders; 19/30 gives the probability of \"No bus\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "b84d784efbf88bed90d03756f122fba58a828084277cddbc57afc1d81184abd3",
+  "isActive": true,
+  "setId": "act-set-survey-07",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-07-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 60 students about whether they ride the bus to school. The results are shown in the table below.\n\nGrade | Bus | No bus | Total\n9th grade | 12 | 18 | 30\n10th grade | 10 | 20 | 30\nTotal | 22 | 38 | 60\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Bus\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/6"
+   },
+   {
+    "label": "B",
+    "text": "1/3"
+   },
+   {
+    "label": "C",
+    "text": "5/11"
+   },
+   {
+    "label": "D",
+    "text": "2/3"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 30 10th graders count; 10 of them answered \"Bus\": 1/3. Wrong choices: 1/6 divides by every student, ignoring the condition; 5/11 divides by everyone who answered \"Bus\", which reverses the condition; 2/3 gives the 10th graders who answered \"No bus\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "3b95b08575c43c79c159d96c2f20534c7fe07cda12442cbe0538cda5a6bb499f",
+  "isActive": true,
+  "setId": "act-set-survey-07",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-07-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 60 students about whether they ride the bus to school. The results are shown in the table below.\n\nGrade | Bus | No bus | Total\n9th grade | 12 | 18 | 30\n10th grade | 10 | 20 | 30\nTotal | 22 | 38 | 60\n\nWhat percent of the 9th graders answered \"No bus\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "60%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "18%"
+   },
+   {
+    "label": "B",
+    "text": "30%"
+   },
+   {
+    "label": "C",
+    "text": "40%"
+   },
+   {
+    "label": "D",
+    "text": "60%"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "18 of the 30 9th graders: 18 ÷ 30 = 60%. Wrong choices: 30% divides by all the students, not the 9th graders; 18% reports the count as a percent; 40% gives the percent who answered \"Bus\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "180a655ce6d4670692e5a64891e0c875d821f6856f75fedc5082c6e5b96185f6",
+  "isActive": true,
+  "setId": "act-set-survey-07",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-08-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 80 students about whether they prefer online or printed books. The results are shown in the table below.\n\nGrade | Online | Printed | Total\n9th grade | 14 | 36 | 50\n10th grade | 10 | 20 | 30\nTotal | 24 | 56 | 80\n\nIf one of the 80 students is chosen at random, what is the probability that the student answered \"Online\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3/10",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7/40"
+   },
+   {
+    "label": "B",
+    "text": "3/10"
+   },
+   {
+    "label": "C",
+    "text": "3/7"
+   },
+   {
+    "label": "D",
+    "text": "7/10"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "24 of the 80 students answered \"Online\": 3/10. Wrong choices: 3/7 compares the two answers (odds) instead of dividing by the total; 7/40 counts only the 9th graders; 7/10 gives the probability of \"Printed\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "49a9854460c56f3127908e0c1ca83f6fa97fa68e0137051a53268bd945383464",
+  "isActive": true,
+  "setId": "act-set-survey-08",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-08-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 80 students about whether they prefer online or printed books. The results are shown in the table below.\n\nGrade | Online | Printed | Total\n9th grade | 14 | 36 | 50\n10th grade | 10 | 20 | 30\nTotal | 24 | 56 | 80\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Online\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1/3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/8"
+   },
+   {
+    "label": "B",
+    "text": "1/3"
+   },
+   {
+    "label": "C",
+    "text": "5/12"
+   },
+   {
+    "label": "D",
+    "text": "2/3"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 30 10th graders count; 10 of them answered \"Online\": 1/3. Wrong choices: 1/8 divides by every student, ignoring the condition; 5/12 divides by everyone who answered \"Online\", which reverses the condition; 2/3 gives the 10th graders who answered \"Printed\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "678414c26ec743cd5cba18cfb0c83f6438d7dbafece6d2af9e35c638bd575abc",
+  "isActive": true,
+  "setId": "act-set-survey-08",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-08-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 80 students about whether they prefer online or printed books. The results are shown in the table below.\n\nGrade | Online | Printed | Total\n9th grade | 14 | 36 | 50\n10th grade | 10 | 20 | 30\nTotal | 24 | 56 | 80\n\nWhat percent of the 9th graders answered \"Printed\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "72%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "28%"
+   },
+   {
+    "label": "B",
+    "text": "36%"
+   },
+   {
+    "label": "C",
+    "text": "45%"
+   },
+   {
+    "label": "D",
+    "text": "72%"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "36 of the 50 9th graders: 36 ÷ 50 = 72%. Wrong choices: 45% divides by all the students, not the 9th graders; 36% reports the count as a percent; 28% gives the percent who answered \"Online\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a15bbf102a20afb6eaac8eaa69b2b6f350e20adfaba5ce41166d0057ecf41a28",
+  "isActive": true,
+  "setId": "act-set-survey-08",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-09-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 120 students about whether they ride the bus to school. The results are shown in the table below.\n\nGrade | Bus | No bus | Total\n9th grade | 20 | 30 | 50\n10th grade | 34 | 36 | 70\nTotal | 54 | 66 | 120\n\nIf one of the 120 students is chosen at random, what is the probability that the student answered \"Bus\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9/20",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/6"
+   },
+   {
+    "label": "B",
+    "text": "9/20"
+   },
+   {
+    "label": "C",
+    "text": "11/20"
+   },
+   {
+    "label": "D",
+    "text": "9/11"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "54 of the 120 students answered \"Bus\": 9/20. Wrong choices: 9/11 compares the two answers (odds) instead of dividing by the total; 1/6 counts only the 9th graders; 11/20 gives the probability of \"No bus\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "7b0f9587aea75e376c273b31cd825efe42616c30cf7b9630b5136746ffa0ccf8",
+  "isActive": true,
+  "setId": "act-set-survey-09",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-09-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 120 students about whether they ride the bus to school. The results are shown in the table below.\n\nGrade | Bus | No bus | Total\n9th grade | 20 | 30 | 50\n10th grade | 34 | 36 | 70\nTotal | 54 | 66 | 120\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Bus\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "17/35",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "17/60"
+   },
+   {
+    "label": "B",
+    "text": "17/35"
+   },
+   {
+    "label": "C",
+    "text": "18/35"
+   },
+   {
+    "label": "D",
+    "text": "17/27"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 70 10th graders count; 34 of them answered \"Bus\": 17/35. Wrong choices: 17/60 divides by every student, ignoring the condition; 17/27 divides by everyone who answered \"Bus\", which reverses the condition; 18/35 gives the 10th graders who answered \"No bus\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "beaa962f18c0ecc80e8f7767077c0efb4593b30009468b270bd5145558651637",
+  "isActive": true,
+  "setId": "act-set-survey-09",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-09-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 120 students about whether they ride the bus to school. The results are shown in the table below.\n\nGrade | Bus | No bus | Total\n9th grade | 20 | 30 | 50\n10th grade | 34 | 36 | 70\nTotal | 54 | 66 | 120\n\nWhat percent of the 9th graders answered \"No bus\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "60%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "25%"
+   },
+   {
+    "label": "B",
+    "text": "30%"
+   },
+   {
+    "label": "C",
+    "text": "40%"
+   },
+   {
+    "label": "D",
+    "text": "60%"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "30 of the 50 9th graders: 30 ÷ 50 = 60%. Wrong choices: 25% divides by all the students, not the 9th graders; 30% reports the count as a percent; 40% gives the percent who answered \"Bus\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "5193d262099d9cec880e2f18bfb7c25d5d43da7e7ffafc18fcd7dfc593fe1556",
+  "isActive": true,
+  "setId": "act-set-survey-09",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-survey-10-01",
+  "skillId": "act-probability",
+  "prompt": "A school surveyed 88 students about whether they prefer online or printed books. The results are shown in the table below.\n\nGrade | Online | Printed | Total\n9th grade | 16 | 24 | 40\n10th grade | 22 | 26 | 48\nTotal | 38 | 50 | 88\n\nIf one of the 88 students is chosen at random, what is the probability that the student answered \"Online\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "19/44",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2/11"
+   },
+   {
+    "label": "B",
+    "text": "19/44"
+   },
+   {
+    "label": "C",
+    "text": "25/44"
+   },
+   {
+    "label": "D",
+    "text": "19/25"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "38 of the 88 students answered \"Online\": 19/44. Wrong choices: 19/25 compares the two answers (odds) instead of dividing by the total; 2/11 counts only the 9th graders; 25/44 gives the probability of \"Printed\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "432dea76311b8b6449004b1f68df127a718aa2d15661ba831394b97a7fd4c344",
+  "isActive": true,
+  "setId": "act-set-survey-10",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-survey-10-02",
+  "skillId": "act-conditional-probability",
+  "prompt": "A school surveyed 88 students about whether they prefer online or printed books. The results are shown in the table below.\n\nGrade | Online | Printed | Total\n9th grade | 16 | 24 | 40\n10th grade | 22 | 26 | 48\nTotal | 38 | 50 | 88\n\nIf one of the 10th graders is chosen at random, what is the probability that the student answered \"Online\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "11/24",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/4"
+   },
+   {
+    "label": "B",
+    "text": "11/24"
+   },
+   {
+    "label": "C",
+    "text": "13/24"
+   },
+   {
+    "label": "D",
+    "text": "11/19"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Only the 48 10th graders count; 22 of them answered \"Online\": 11/24. Wrong choices: 1/4 divides by every student, ignoring the condition; 11/19 divides by everyone who answered \"Online\", which reverses the condition; 13/24 gives the 10th graders who answered \"Printed\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "8d5a4a8706b567a05fabb8985698e48d51953ce91c1181e4fc62045c827c0127",
+  "isActive": true,
+  "setId": "act-set-survey-10",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-survey-10-03",
+  "skillId": "act-percentages",
+  "prompt": "A school surveyed 88 students about whether they prefer online or printed books. The results are shown in the table below.\n\nGrade | Online | Printed | Total\n9th grade | 16 | 24 | 40\n10th grade | 22 | 26 | 48\nTotal | 38 | 50 | 88\n\nWhat percent of the 9th graders answered \"Printed\"?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "60%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "24%"
+   },
+   {
+    "label": "B",
+    "text": "40%"
+   },
+   {
+    "label": "C",
+    "text": "48%"
+   },
+   {
+    "label": "D",
+    "text": "60%"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "24 of the 40 9th graders: 24 ÷ 40 = 60%. Wrong choices: 24% reports the count as a percent; 40% gives the percent who answered \"Online\"; 48% divides by everyone who answered \"Printed\".",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:survey"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "0adcefe439527a7a28b47781a4bb0ac168fcef668158cdfb8b1d67b1af7b7459",
+  "isActive": true,
+  "setId": "act-set-survey-10",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-garden-path-01-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 16 feet long and 6 feet wide. A path 4 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "240",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "104"
+   },
+   {
+    "label": "B",
+    "text": "176"
+   },
+   {
+    "label": "C",
+    "text": "240"
+   },
+   {
+    "label": "D",
+    "text": "336"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 16 + 2(4) = 24 by 6 + 2(4) = 14, so its area is 336. Subtract the garden, 96: the path is 240 square feet. Wrong choices: 336 gives the area of the garden and path together; 176 leaves out the four corner squares of the path; 104 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "e8fceba100634b766be98d4a3a19f1c1c16171b63c12ef2dcc1b09c74d40234a",
+  "isActive": true,
+  "setId": "act-set-garden-path-01",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-01-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 16 feet long and 6 feet wide. A path 4 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $8 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$608",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$304"
+   },
+   {
+    "label": "B",
+    "text": "$352"
+   },
+   {
+    "label": "C",
+    "text": "$480"
+   },
+   {
+    "label": "D",
+    "text": "$608"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(24 + 14) = 76 feet; at $8 per foot that is $608. Wrong choices: $352 fences the garden instead of the outer edge of the path; $480 adds the path width only once in total; $304 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "740b8b4dd1d67aee7cafed7cf33d0e8a9503abefdd9eb8d581abe57242d1fa4d",
+  "isActive": true,
+  "setId": "act-set-garden-path-01",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-garden-path-02-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 22 feet long and 10 feet wide. A path 2 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "144",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "68"
+   },
+   {
+    "label": "B",
+    "text": "128"
+   },
+   {
+    "label": "C",
+    "text": "144"
+   },
+   {
+    "label": "D",
+    "text": "364"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 22 + 2(2) = 26 by 10 + 2(2) = 14, so its area is 364. Subtract the garden, 220: the path is 144 square feet. Wrong choices: 364 gives the area of the garden and path together; 128 leaves out the four corner squares of the path; 68 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "4a247a5cb04003ba8eb6c559da7a7b907c1838fb86da4da6bafb2deba3b1d145",
+  "isActive": true,
+  "setId": "act-set-garden-path-02",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-02-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 22 feet long and 10 feet wide. A path 2 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $8 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$640",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$320"
+   },
+   {
+    "label": "B",
+    "text": "$512"
+   },
+   {
+    "label": "C",
+    "text": "$576"
+   },
+   {
+    "label": "D",
+    "text": "$640"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(26 + 14) = 80 feet; at $8 per foot that is $640. Wrong choices: $512 fences the garden instead of the outer edge of the path; $576 adds the path width only once in total; $320 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "204c160e2055d0d5e2e739cd77d6d039acecc697c782556850c1c705906cac96",
+  "isActive": true,
+  "setId": "act-set-garden-path-02",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-garden-path-03-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 24 feet long and 14 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "264",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "600"
+   },
+   {
+    "label": "B",
+    "text": "264"
+   },
+   {
+    "label": "C",
+    "text": "228"
+   },
+   {
+    "label": "D",
+    "text": "123"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 24 + 2(3) = 30 by 14 + 2(3) = 20, so its area is 600. Subtract the garden, 336: the path is 264 square feet. Wrong choices: 600 gives the area of the garden and path together; 228 leaves out the four corner squares of the path; 123 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "d7cea7eb05c3ea3be494629a747c207b0e2262f96d898d907426d832d97e7b7c",
+  "isActive": true,
+  "setId": "act-set-garden-path-03",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-03-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 24 feet long and 14 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $8 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$800",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$400"
+   },
+   {
+    "label": "B",
+    "text": "$608"
+   },
+   {
+    "label": "C",
+    "text": "$704"
+   },
+   {
+    "label": "D",
+    "text": "$800"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(30 + 20) = 100 feet; at $8 per foot that is $800. Wrong choices: $608 fences the garden instead of the outer edge of the path; $704 adds the path width only once in total; $400 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "07bfdcd0a93c65c110f6907d9644a8fddf98f03553449370e46bf3c3302b58ae",
+  "isActive": true,
+  "setId": "act-set-garden-path-03",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-garden-path-04-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 10 feet long and 6 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "132",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "57"
+   },
+   {
+    "label": "B",
+    "text": "96"
+   },
+   {
+    "label": "C",
+    "text": "132"
+   },
+   {
+    "label": "D",
+    "text": "192"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 10 + 2(3) = 16 by 6 + 2(3) = 12, so its area is 192. Subtract the garden, 60: the path is 132 square feet. Wrong choices: 192 gives the area of the garden and path together; 96 leaves out the four corner squares of the path; 57 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "6875b5802dd41d20b366c949fc547c4a96f8dff4307532e7a93004640960907c",
+  "isActive": true,
+  "setId": "act-set-garden-path-04",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-04-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 10 feet long and 6 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $8 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$448",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$448"
+   },
+   {
+    "label": "B",
+    "text": "$352"
+   },
+   {
+    "label": "C",
+    "text": "$256"
+   },
+   {
+    "label": "D",
+    "text": "$224"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(16 + 12) = 56 feet; at $8 per foot that is $448. Wrong choices: $256 fences the garden instead of the outer edge of the path; $352 adds the path width only once in total; $224 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "ca5f29bcb78634eeb6fe4df44a8b58577944fbcb0a0bbddc078b853ebed595b6",
+  "isActive": true,
+  "setId": "act-set-garden-path-04",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-garden-path-05-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 22 feet long and 8 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "216",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "392"
+   },
+   {
+    "label": "B",
+    "text": "216"
+   },
+   {
+    "label": "C",
+    "text": "180"
+   },
+   {
+    "label": "D",
+    "text": "99"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 22 + 2(3) = 28 by 8 + 2(3) = 14, so its area is 392. Subtract the garden, 176: the path is 216 square feet. Wrong choices: 392 gives the area of the garden and path together; 180 leaves out the four corner squares of the path; 99 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "3e101cb738696b3c4cc1b7c67320a8638628c47c6c40edce413e22ad8ac7fbab",
+  "isActive": true,
+  "setId": "act-set-garden-path-05",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-05-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 22 feet long and 8 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $4 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$336",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$168"
+   },
+   {
+    "label": "B",
+    "text": "$240"
+   },
+   {
+    "label": "C",
+    "text": "$288"
+   },
+   {
+    "label": "D",
+    "text": "$336"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(28 + 14) = 84 feet; at $4 per foot that is $336. Wrong choices: $240 fences the garden instead of the outer edge of the path; $288 adds the path width only once in total; $168 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "e19ed6fad5e9787f5cbd577d248ff455662bc29774b2c992015bd090f288bd42",
+  "isActive": true,
+  "setId": "act-set-garden-path-05",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-garden-path-06-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 24 feet long and 8 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "228",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "105"
+   },
+   {
+    "label": "B",
+    "text": "192"
+   },
+   {
+    "label": "C",
+    "text": "228"
+   },
+   {
+    "label": "D",
+    "text": "420"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 24 + 2(3) = 30 by 8 + 2(3) = 14, so its area is 420. Subtract the garden, 192: the path is 228 square feet. Wrong choices: 420 gives the area of the garden and path together; 192 leaves out the four corner squares of the path; 105 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "d7ab756b114bed6fd0af996ae7ef1eb04d36f5fb3079ab7db8096f75dbd5aa89",
+  "isActive": true,
+  "setId": "act-set-garden-path-06",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-06-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 24 feet long and 8 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $8 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$704",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$352"
+   },
+   {
+    "label": "B",
+    "text": "$512"
+   },
+   {
+    "label": "C",
+    "text": "$608"
+   },
+   {
+    "label": "D",
+    "text": "$704"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(30 + 14) = 88 feet; at $8 per foot that is $704. Wrong choices: $512 fences the garden instead of the outer edge of the path; $608 adds the path width only once in total; $352 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "9af3292b8f0a228130da0147a0f53c816db98e5611cbda6f93583eda41e86f10",
+  "isActive": true,
+  "setId": "act-set-garden-path-06",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-garden-path-07-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 10 feet long and 6 feet wide. A path 2 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "80",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "36"
+   },
+   {
+    "label": "B",
+    "text": "64"
+   },
+   {
+    "label": "C",
+    "text": "80"
+   },
+   {
+    "label": "D",
+    "text": "140"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 10 + 2(2) = 14 by 6 + 2(2) = 10, so its area is 140. Subtract the garden, 60: the path is 80 square feet. Wrong choices: 140 gives the area of the garden and path together; 64 leaves out the four corner squares of the path; 36 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "6a6a3e6371a8c8bf2a8779289027dda95c94b1957226cbb91829e52885540dbd",
+  "isActive": true,
+  "setId": "act-set-garden-path-07",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-07-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 10 feet long and 6 feet wide. A path 2 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $3 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$144",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$72"
+   },
+   {
+    "label": "B",
+    "text": "$96"
+   },
+   {
+    "label": "C",
+    "text": "$120"
+   },
+   {
+    "label": "D",
+    "text": "$144"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(14 + 10) = 48 feet; at $3 per foot that is $144. Wrong choices: $96 fences the garden instead of the outer edge of the path; $120 adds the path width only once in total; $72 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "49e655d8d91e9a14bc6895df990087639ef1e9440acaef5f49f807e7c806d787",
+  "isActive": true,
+  "setId": "act-set-garden-path-07",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-garden-path-08-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 22 feet long and 14 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "252",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "117"
+   },
+   {
+    "label": "B",
+    "text": "216"
+   },
+   {
+    "label": "C",
+    "text": "252"
+   },
+   {
+    "label": "D",
+    "text": "560"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 22 + 2(3) = 28 by 14 + 2(3) = 20, so its area is 560. Subtract the garden, 308: the path is 252 square feet. Wrong choices: 560 gives the area of the garden and path together; 216 leaves out the four corner squares of the path; 117 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "034e3b3a7a99bfb7e64b4a2556bd4bb5bd0d3196322912e5b1008582d3522855",
+  "isActive": true,
+  "setId": "act-set-garden-path-08",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-08-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 22 feet long and 14 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $4 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$384",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$192"
+   },
+   {
+    "label": "B",
+    "text": "$288"
+   },
+   {
+    "label": "C",
+    "text": "$336"
+   },
+   {
+    "label": "D",
+    "text": "$384"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(28 + 20) = 96 feet; at $4 per foot that is $384. Wrong choices: $288 fences the garden instead of the outer edge of the path; $336 adds the path width only once in total; $192 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a6a80a2e56ac5933e88758ac54cb996dcde9fc1f6279f83fbc8345d650f3c184",
+  "isActive": true,
+  "setId": "act-set-garden-path-08",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-garden-path-09-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 24 feet long and 18 feet wide. A path 2 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "184",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "88"
+   },
+   {
+    "label": "B",
+    "text": "168"
+   },
+   {
+    "label": "C",
+    "text": "184"
+   },
+   {
+    "label": "D",
+    "text": "616"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 24 + 2(2) = 28 by 18 + 2(2) = 22, so its area is 616. Subtract the garden, 432: the path is 184 square feet. Wrong choices: 616 gives the area of the garden and path together; 168 leaves out the four corner squares of the path; 88 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a37c709fba365ed96dfc9563275121536525d071ed17bb150edabf9b33825e1e",
+  "isActive": true,
+  "setId": "act-set-garden-path-09",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-09-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 24 feet long and 18 feet wide. A path 2 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $5 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$500",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$250"
+   },
+   {
+    "label": "B",
+    "text": "$420"
+   },
+   {
+    "label": "C",
+    "text": "$460"
+   },
+   {
+    "label": "D",
+    "text": "$500"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(28 + 22) = 100 feet; at $5 per foot that is $500. Wrong choices: $420 fences the garden instead of the outer edge of the path; $460 adds the path width only once in total; $250 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "cd0a58da8caef4ced3ccac581595add568b50c137995c3da3686ae7742bff20d",
+  "isActive": true,
+  "setId": "act-set-garden-path-09",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-garden-path-10-01",
+  "skillId": "act-area-perimeter",
+  "prompt": "A rectangular garden is 14 feet long and 8 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nWhat is the area of the path alone, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "168",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "75"
+   },
+   {
+    "label": "B",
+    "text": "132"
+   },
+   {
+    "label": "C",
+    "text": "168"
+   },
+   {
+    "label": "D",
+    "text": "280"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer rectangle is 14 + 2(3) = 20 by 8 + 2(3) = 14, so its area is 280. Subtract the garden, 112: the path is 168 square feet. Wrong choices: 280 gives the area of the garden and path together; 132 leaves out the four corner squares of the path; 75 adds the path width only once to each dimension.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "80c6da52c43377673e7ae1e9ec7c386ac08a5309dfe4389dc9a2885e8071ce00",
+  "isActive": true,
+  "setId": "act-set-garden-path-10",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-garden-path-10-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A rectangular garden is 14 feet long and 8 feet wide. A path 3 feet wide surrounds the garden on all four sides, so the garden and path together form a larger rectangle.\n\nFencing will go around the OUTER edge of the path and costs $6 per foot. What is the cost of the fencing?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$408",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$204"
+   },
+   {
+    "label": "B",
+    "text": "$264"
+   },
+   {
+    "label": "C",
+    "text": "$336"
+   },
+   {
+    "label": "D",
+    "text": "$408"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The outer edge is 2(20 + 14) = 68 feet; at $6 per foot that is $408. Wrong choices: $264 fences the garden instead of the outer edge of the path; $336 adds the path width only once in total; $204 counts only two sides.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:garden-path"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "5d6609058fe965f891d97d72435e9ec42bc7c03aac03879388d52946ac4a4290",
+  "isActive": true,
+  "setId": "act-set-garden-path-10",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-01-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 3 | 9 | 27 | 81\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "6"
+   },
+   {
+    "label": "D",
+    "text": "9"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 9 ÷ 3 = 3, and the same for every step. Wrong choices: 6 gives the first year's increase, not the factor; 2 gives the growth RATE (the factor minus 1); 9 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "0a4ebfee3e387bb68076117630543e1655e0da74f6460d97378838e60b28f300",
+  "isActive": true,
+  "setId": "act-set-growth-table-01",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-01-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 3 | 9 | 27 | 81\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "729",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "162"
+   },
+   {
+    "label": "B",
+    "text": "189"
+   },
+   {
+    "label": "C",
+    "text": "243"
+   },
+   {
+    "label": "D",
+    "text": "729"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3: 81 × 3 × 3 = 729. Wrong choices: 189 continues by adding the last increase, as if the growth were linear; 243 stops at year 4; 162 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "d07e86d2f1456b46e9f81211d7b46be4d933d650680b1cc2b8eaafb71a1fe709",
+  "isActive": true,
+  "setId": "act-set-growth-table-01",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-01-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 3 | 9 | 27 | 81\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 33^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = 3 + 6t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 3(3)^t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = 93^t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = 33^t"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 3 (year 0) and multiply by 3 each year: N(t) = 33^t. Wrong choices: N(t) = 3 + 6t is the line through the first two points; the table multiplies, it does not add; N(t) = 3(3)^t swaps the starting value and the factor; N(t) = 93^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "2a9754b5b913b6fde58d751985f0cea4906877a5af00360109150d2d3ad19fb9",
+  "isActive": true,
+  "setId": "act-set-growth-table-01",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-growth-table-02-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of members of an online club at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nMembers | 64 | 96 | 144 | 216\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/2"
+   },
+   {
+    "label": "B",
+    "text": "3/2"
+   },
+   {
+    "label": "C",
+    "text": "9/4"
+   },
+   {
+    "label": "D",
+    "text": "32"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 96 ÷ 64 = 3/2, and the same for every step. Wrong choices: 32 gives the first year's increase, not the factor; 1/2 gives the growth RATE (the factor minus 1); 9/4 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "6b857b52caa741afadeb909b4482cc6c4c236e1ec03ae830f1ecf42b64c80762",
+  "isActive": true,
+  "setId": "act-set-growth-table-02",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-02-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of members of an online club at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nMembers | 64 | 96 | 144 | 216\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "486",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "324"
+   },
+   {
+    "label": "B",
+    "text": "360"
+   },
+   {
+    "label": "C",
+    "text": "432"
+   },
+   {
+    "label": "D",
+    "text": "486"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3/2: 216 × 3/2 × 3/2 = 486. Wrong choices: 360 continues by adding the last increase, as if the growth were linear; 324 stops at year 4; 432 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "45d72aee41222973baa843f10107b23a5a3254895f77ba2ca70bf56406b87875",
+  "isActive": true,
+  "setId": "act-set-growth-table-02",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-02-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of members of an online club at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nMembers | 64 | 96 | 144 | 216\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 64(3/2)^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = 96(3/2)^t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 64(3/2)^t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = 64 + 32t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = (3/2)(64)^t"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 64 (year 0) and multiply by 3/2 each year: N(t) = 64(3/2)^t. Wrong choices: N(t) = 64 + 32t is the line through the first two points; the table multiplies, it does not add; N(t) = (3/2)(64)^t swaps the starting value and the factor; N(t) = 96(3/2)^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "c0fdc6a02990b9914654de0f397e18ac0ef566de78d2e2fabf31168d196c1d1b",
+  "isActive": true,
+  "setId": "act-set-growth-table-02",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-growth-table-03-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of bacteria in a lab culture at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nBacteria | 5 | 15 | 45 | 135\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "9"
+   },
+   {
+    "label": "D",
+    "text": "10"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 15 ÷ 5 = 3, and the same for every step. Wrong choices: 10 gives the first year's increase, not the factor; 2 gives the growth RATE (the factor minus 1); 9 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "7ac9ff1644fa3bd85fc83a676a397fc53f8142c417c826e0bf84046b9c36994b",
+  "isActive": true,
+  "setId": "act-set-growth-table-03",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-03-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of bacteria in a lab culture at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nBacteria | 5 | 15 | 45 | 135\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1215",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "270"
+   },
+   {
+    "label": "B",
+    "text": "315"
+   },
+   {
+    "label": "C",
+    "text": "405"
+   },
+   {
+    "label": "D",
+    "text": "1215"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3: 135 × 3 × 3 = 1215. Wrong choices: 315 continues by adding the last increase, as if the growth were linear; 405 stops at year 4; 270 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "73c3a02dd7edc794618682b61a0898064b572ab8eb156bdc9a73cd509b261d23",
+  "isActive": true,
+  "setId": "act-set-growth-table-03",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-03-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of bacteria in a lab culture at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nBacteria | 5 | 15 | 45 | 135\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 53^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = 3(5)^t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 53^t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = 5 + 10t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = 153^t"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 5 (year 0) and multiply by 3 each year: N(t) = 53^t. Wrong choices: N(t) = 5 + 10t is the line through the first two points; the table multiplies, it does not add; N(t) = 3(5)^t swaps the starting value and the factor; N(t) = 153^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "dc9ef804ca40072f130effae26c76462c5b242367d1a47fabab73401c76c3e77",
+  "isActive": true,
+  "setId": "act-set-growth-table-03",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-growth-table-04-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of bacteria in a lab culture at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nBacteria | 10 | 30 | 90 | 270\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "9"
+   },
+   {
+    "label": "D",
+    "text": "20"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 30 ÷ 10 = 3, and the same for every step. Wrong choices: 20 gives the first year's increase, not the factor; 2 gives the growth RATE (the factor minus 1); 9 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a3c31099eb1a248110b4a33aa58c72be2b91996133bc24eacf83b837ab5f7002",
+  "isActive": true,
+  "setId": "act-set-growth-table-04",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-04-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of bacteria in a lab culture at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nBacteria | 10 | 30 | 90 | 270\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2430",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "540"
+   },
+   {
+    "label": "B",
+    "text": "630"
+   },
+   {
+    "label": "C",
+    "text": "810"
+   },
+   {
+    "label": "D",
+    "text": "2430"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3: 270 × 3 × 3 = 2430. Wrong choices: 630 continues by adding the last increase, as if the growth were linear; 810 stops at year 4; 540 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "60e3365868cde5d3012f4b65001c0528f8a05d6b8b90a64eff5a42554d0628ef",
+  "isActive": true,
+  "setId": "act-set-growth-table-04",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-04-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of bacteria in a lab culture at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nBacteria | 10 | 30 | 90 | 270\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 103^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = 303^t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 3(10)^t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = 10 + 20t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = 103^t"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 10 (year 0) and multiply by 3 each year: N(t) = 103^t. Wrong choices: N(t) = 10 + 20t is the line through the first two points; the table multiplies, it does not add; N(t) = 3(10)^t swaps the starting value and the factor; N(t) = 303^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "b583bb290a262d8be83afe3efeb38cfc149ab11904aa4ebb7a3d21cbdc55d89b",
+  "isActive": true,
+  "setId": "act-set-growth-table-04",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-growth-table-05-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of bacteria in a lab culture at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nBacteria | 6 | 18 | 54 | 162\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "9"
+   },
+   {
+    "label": "D",
+    "text": "12"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 18 ÷ 6 = 3, and the same for every step. Wrong choices: 12 gives the first year's increase, not the factor; 2 gives the growth RATE (the factor minus 1); 9 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "960ca6d9e540db6a952c57cc1552a4f0f539191fb7dbe739eb7d9909a2031700",
+  "isActive": true,
+  "setId": "act-set-growth-table-05",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-05-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of bacteria in a lab culture at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nBacteria | 6 | 18 | 54 | 162\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1458",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "324"
+   },
+   {
+    "label": "B",
+    "text": "378"
+   },
+   {
+    "label": "C",
+    "text": "486"
+   },
+   {
+    "label": "D",
+    "text": "1458"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3: 162 × 3 × 3 = 1458. Wrong choices: 378 continues by adding the last increase, as if the growth were linear; 486 stops at year 4; 324 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a533d3341dcc3cf5393f4077ed4df723bc51902f7c9ce4493d5ea77dcc1096c3",
+  "isActive": true,
+  "setId": "act-set-growth-table-05",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-05-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of bacteria in a lab culture at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nBacteria | 6 | 18 | 54 | 162\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 63^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = 3(6)^t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 63^t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = 6 + 12t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = 183^t"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 6 (year 0) and multiply by 3 each year: N(t) = 63^t. Wrong choices: N(t) = 6 + 12t is the line through the first two points; the table multiplies, it does not add; N(t) = 3(6)^t swaps the starting value and the factor; N(t) = 183^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "5dc9c87b395f47184b56b06db823e30badd68c2858d5c5b9ac44caa46b5c2e6c",
+  "isActive": true,
+  "setId": "act-set-growth-table-05",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-growth-table-06-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of members of an online club at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nMembers | 5 | 15 | 45 | 135\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "9"
+   },
+   {
+    "label": "D",
+    "text": "10"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 15 ÷ 5 = 3, and the same for every step. Wrong choices: 10 gives the first year's increase, not the factor; 2 gives the growth RATE (the factor minus 1); 9 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "c680cfa45fd2d2dc3568e12335b1d91201623e7e468bc3e2291076adc7e5f240",
+  "isActive": true,
+  "setId": "act-set-growth-table-06",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-06-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of members of an online club at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nMembers | 5 | 15 | 45 | 135\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1215",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "270"
+   },
+   {
+    "label": "B",
+    "text": "315"
+   },
+   {
+    "label": "C",
+    "text": "405"
+   },
+   {
+    "label": "D",
+    "text": "1215"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3: 135 × 3 × 3 = 1215. Wrong choices: 315 continues by adding the last increase, as if the growth were linear; 405 stops at year 4; 270 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "dfe13c3e3be4198c9160c977a4fd03d545871819daf77a5448310ad90b584cf2",
+  "isActive": true,
+  "setId": "act-set-growth-table-06",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-06-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of members of an online club at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nMembers | 5 | 15 | 45 | 135\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 53^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = 3(5)^t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 53^t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = 153^t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = 5 + 10t"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 5 (year 0) and multiply by 3 each year: N(t) = 53^t. Wrong choices: N(t) = 5 + 10t is the line through the first two points; the table multiplies, it does not add; N(t) = 3(5)^t swaps the starting value and the factor; N(t) = 153^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "bc043910640026a1c4514247970113fc274917332b2a6c73a34aff9763b76a36",
+  "isActive": true,
+  "setId": "act-set-growth-table-06",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-growth-table-07-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 64 | 96 | 144 | 216\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "32"
+   },
+   {
+    "label": "B",
+    "text": "9/4"
+   },
+   {
+    "label": "C",
+    "text": "3/2"
+   },
+   {
+    "label": "D",
+    "text": "1/2"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 96 ÷ 64 = 3/2, and the same for every step. Wrong choices: 32 gives the first year's increase, not the factor; 1/2 gives the growth RATE (the factor minus 1); 9/4 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "71cd309fc494bc27f14e4701d5fb37c04d12ebf4340a4fe19122e7328dba9d7d",
+  "isActive": true,
+  "setId": "act-set-growth-table-07",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-07-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 64 | 96 | 144 | 216\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "486",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "324"
+   },
+   {
+    "label": "B",
+    "text": "360"
+   },
+   {
+    "label": "C",
+    "text": "432"
+   },
+   {
+    "label": "D",
+    "text": "486"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3/2: 216 × 3/2 × 3/2 = 486. Wrong choices: 360 continues by adding the last increase, as if the growth were linear; 324 stops at year 4; 432 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "350c35278ff54c28d9ddd1f144498e35d5c8d831cac9c134e6756d086bbbbd78",
+  "isActive": true,
+  "setId": "act-set-growth-table-07",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-07-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 64 | 96 | 144 | 216\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 64(3/2)^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = (3/2)(64)^t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 64 + 32t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = 64(3/2)^t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = 96(3/2)^t"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 64 (year 0) and multiply by 3/2 each year: N(t) = 64(3/2)^t. Wrong choices: N(t) = 64 + 32t is the line through the first two points; the table multiplies, it does not add; N(t) = (3/2)(64)^t swaps the starting value and the factor; N(t) = 96(3/2)^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "d13cfc2209857d14c3a5942b965a3c6a009f3980f52fda3baf2d01acdc947a73",
+  "isActive": true,
+  "setId": "act-set-growth-table-07",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-growth-table-08-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 5 | 15 | 45 | 135\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "9"
+   },
+   {
+    "label": "D",
+    "text": "10"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 15 ÷ 5 = 3, and the same for every step. Wrong choices: 10 gives the first year's increase, not the factor; 2 gives the growth RATE (the factor minus 1); 9 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "b217b7eca0045592dc36670ca275d6bb6f630e1a5478f5135b3c373a44765936",
+  "isActive": true,
+  "setId": "act-set-growth-table-08",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-08-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 5 | 15 | 45 | 135\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1215",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "270"
+   },
+   {
+    "label": "B",
+    "text": "315"
+   },
+   {
+    "label": "C",
+    "text": "405"
+   },
+   {
+    "label": "D",
+    "text": "1215"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3: 135 × 3 × 3 = 1215. Wrong choices: 315 continues by adding the last increase, as if the growth were linear; 405 stops at year 4; 270 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "31097dffa6d03722a76ae7092c6c14dddec922d23bfb3ef4a8b2ff108b606842",
+  "isActive": true,
+  "setId": "act-set-growth-table-08",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-08-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 5 | 15 | 45 | 135\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 53^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = 153^t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 53^t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = 5 + 10t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = 3(5)^t"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 5 (year 0) and multiply by 3 each year: N(t) = 53^t. Wrong choices: N(t) = 5 + 10t is the line through the first two points; the table multiplies, it does not add; N(t) = 3(5)^t swaps the starting value and the factor; N(t) = 153^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "7aaadf917cd40cbf0b37efef459c6eb000f9bbd5d9145d0af55f9a2e883d4e2f",
+  "isActive": true,
+  "setId": "act-set-growth-table-08",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-growth-table-09-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 32 | 48 | 72 | 108\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/2"
+   },
+   {
+    "label": "B",
+    "text": "3/2"
+   },
+   {
+    "label": "C",
+    "text": "9/4"
+   },
+   {
+    "label": "D",
+    "text": "16"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 48 ÷ 32 = 3/2, and the same for every step. Wrong choices: 16 gives the first year's increase, not the factor; 1/2 gives the growth RATE (the factor minus 1); 9/4 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "59b1f9b8e8e21e1fd324373ffacddb858692c30b5fa075ab7665d8929da03f5f",
+  "isActive": true,
+  "setId": "act-set-growth-table-09",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-09-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 32 | 48 | 72 | 108\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "243",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "162"
+   },
+   {
+    "label": "B",
+    "text": "180"
+   },
+   {
+    "label": "C",
+    "text": "216"
+   },
+   {
+    "label": "D",
+    "text": "243"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3/2: 108 × 3/2 × 3/2 = 243. Wrong choices: 180 continues by adding the last increase, as if the growth were linear; 162 stops at year 4; 216 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "0f1f6dae9d06f48d6efd38a5fd6096f505f2163be1b3e4408ca618b0c35d1278",
+  "isActive": true,
+  "setId": "act-set-growth-table-09",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-09-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of downloads of a new app (in thousands) at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nThousand downloads | 32 | 48 | 72 | 108\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 32(3/2)^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = 48(3/2)^t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 32 + 16t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = (3/2)(32)^t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = 32(3/2)^t"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 32 (year 0) and multiply by 3/2 each year: N(t) = 32(3/2)^t. Wrong choices: N(t) = 32 + 16t is the line through the first two points; the table multiplies, it does not add; N(t) = (3/2)(32)^t swaps the starting value and the factor; N(t) = 48(3/2)^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "2829e51dcfa55b54c4a5e8bda61065d152174cf96a2e96d477c0512c176894bc",
+  "isActive": true,
+  "setId": "act-set-growth-table-09",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-growth-table-10-01",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of members of an online club at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nMembers | 3 | 9 | 27 | 81\n\nBy what factor does the number grow each year?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "9"
+   },
+   {
+    "label": "B",
+    "text": "6"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "2"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Each year's value divided by the year before: 9 ÷ 3 = 3, and the same for every step. Wrong choices: 6 gives the first year's increase, not the factor; 2 gives the growth RATE (the factor minus 1); 9 compares years 0 and 2, two steps apart.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "848bb4fff952f347006b52ed7655ef72dfa82bc0b4f6c80f4ba00c6b143f8510",
+  "isActive": true,
+  "setId": "act-set-growth-table-10",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-growth-table-10-02",
+  "skillId": "act-exponential-models",
+  "prompt": "The number of members of an online club at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nMembers | 3 | 9 | 27 | 81\n\nIf the pattern continues, what will the number be at the start of year 5?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "729",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "162"
+   },
+   {
+    "label": "B",
+    "text": "189"
+   },
+   {
+    "label": "C",
+    "text": "243"
+   },
+   {
+    "label": "D",
+    "text": "729"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Two more years of growth by 3: 81 × 3 × 3 = 729. Wrong choices: 189 continues by adding the last increase, as if the growth were linear; 243 stops at year 4; 162 doubles year 3 instead of applying the factor twice.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "164cc524cf5f83d95c0a6443bc052442ed57bc59d1f643630904f566ce92b665",
+  "isActive": true,
+  "setId": "act-set-growth-table-10",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-growth-table-10-03",
+  "skillId": "act-function-evaluation-notation",
+  "prompt": "The number of members of an online club at the start of each year is shown in the table below. The number grows exponentially.\n\nYear | 0 | 1 | 2 | 3\nMembers | 3 | 9 | 27 | 81\n\nWhich of the following functions gives the number N(t) at the start of year t?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "N(t) = 33^t",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "N(t) = 3(3)^t"
+   },
+   {
+    "label": "B",
+    "text": "N(t) = 93^t"
+   },
+   {
+    "label": "C",
+    "text": "N(t) = 3 + 6t"
+   },
+   {
+    "label": "D",
+    "text": "N(t) = 33^t"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Start at 3 (year 0) and multiply by 3 each year: N(t) = 33^t. Wrong choices: N(t) = 3 + 6t is the line through the first two points; the table multiplies, it does not add; N(t) = 3(3)^t swaps the starting value and the factor; N(t) = 93^t starts from year 1 instead of year 0.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:growth-table"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "dd1e48afb26f81906467d9699527ea166e07f41b08f1865d7cbd21a8767bf1b1",
+  "isActive": true,
+  "setId": "act-set-growth-table-10",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-01-01",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 88, 62, 67, 81, 84, 70, 80.\n\nWhat is the median of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "80",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "75"
+   },
+   {
+    "label": "B",
+    "text": "76"
+   },
+   {
+    "label": "C",
+    "text": "80"
+   },
+   {
+    "label": "D",
+    "text": "81"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 62, 67, 70, 80, 81, 84, 88. The middle (4th) score is 80. Wrong choices: 81 takes the middle score in the order given, without sorting; 76 gives the mean; 75 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "5b3028dfd5a5dc27b2fc7fd4b39180e9fee1f6745361944220cafa7305acb798",
+  "isActive": true,
+  "setId": "act-set-score-list-01",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-01-02",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 88, 62, 67, 81, 84, 70, 80.\n\nWhat is the mean of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "76",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "89"
+   },
+   {
+    "label": "B",
+    "text": "80"
+   },
+   {
+    "label": "C",
+    "text": "76"
+   },
+   {
+    "label": "D",
+    "text": "75"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 532; divided by 7, the mean is 76. Wrong choices: 80 gives the median; 89 divides by 6 instead of 7; 75 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "fb8db17f02c09d281a9f7c1d58f28481c0054099d9c48b23ee2d92ee00548b7a",
+  "isActive": true,
+  "setId": "act-set-score-list-01",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-01-03",
+  "skillId": "act-center-spread",
+  "prompt": "Sam's scores on 7 quizzes this term were: 88, 62, 67, 81, 84, 70, 80.\n\nWhat is the range of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "26",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8"
+   },
+   {
+    "label": "B",
+    "text": "17"
+   },
+   {
+    "label": "C",
+    "text": "26"
+   },
+   {
+    "label": "D",
+    "text": "88"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 88 − 62 = 26. Wrong choices: 88 gives the highest score; 8 subtracts the first and last scores as listed, without sorting; 17 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a2971440f3d0c411ba8f2970c58dc2a4ea1612653de4989ebe02db07c2203d6f",
+  "isActive": true,
+  "setId": "act-set-score-list-01",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-02-01",
+  "skillId": "act-average-median",
+  "prompt": "Maya's scores on 7 quizzes this term were: 99, 84, 66, 94, 70, 64, 69.\n\nWhat is the median of Maya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "70",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "70"
+   },
+   {
+    "label": "B",
+    "text": "78"
+   },
+   {
+    "label": "C",
+    "text": "82"
+   },
+   {
+    "label": "D",
+    "text": "94"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 64, 66, 69, 70, 84, 94, 99. The middle (4th) score is 70. Wrong choices: 94 takes the middle score in the order given, without sorting; 78 gives the mean; 82 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "23fcf2e0f2091102697e985ccaeded4d3a8a9de74f618d903ae515af7528bc10",
+  "isActive": true,
+  "setId": "act-set-score-list-02",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-02-02",
+  "skillId": "act-average-median",
+  "prompt": "Maya's scores on 7 quizzes this term were: 99, 84, 66, 94, 70, 64, 69.\n\nWhat is the mean of Maya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "78",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "70"
+   },
+   {
+    "label": "B",
+    "text": "78"
+   },
+   {
+    "label": "C",
+    "text": "82"
+   },
+   {
+    "label": "D",
+    "text": "91"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 546; divided by 7, the mean is 78. Wrong choices: 70 gives the median; 91 divides by 6 instead of 7; 82 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "16b5250ca1b171ab4d1001aec57787650385914eb2faea6ec6a5e4e945ed4a68",
+  "isActive": true,
+  "setId": "act-set-score-list-02",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-02-03",
+  "skillId": "act-center-spread",
+  "prompt": "Maya's scores on 7 quizzes this term were: 99, 84, 66, 94, 70, 64, 69.\n\nWhat is the range of Maya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "35",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "28"
+   },
+   {
+    "label": "B",
+    "text": "30"
+   },
+   {
+    "label": "C",
+    "text": "35"
+   },
+   {
+    "label": "D",
+    "text": "99"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 99 − 64 = 35. Wrong choices: 99 gives the highest score; 30 subtracts the first and last scores as listed, without sorting; 28 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "d981a21f0c5eb3ef729deee8ef081cae7543de2d109e661495adc85a5944daf0",
+  "isActive": true,
+  "setId": "act-set-score-list-02",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-03-01",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 77, 91, 96, 79, 74, 98, 94.\n\nWhat is the median of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "91",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "79"
+   },
+   {
+    "label": "B",
+    "text": "86"
+   },
+   {
+    "label": "C",
+    "text": "87"
+   },
+   {
+    "label": "D",
+    "text": "91"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 74, 77, 79, 91, 94, 96, 98. The middle (4th) score is 91. Wrong choices: 79 takes the middle score in the order given, without sorting; 87 gives the mean; 86 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "cec7657f549ff0d42b3a00b436d453842d2368c8d343f83ed246b04451cf4be9",
+  "isActive": true,
+  "setId": "act-set-score-list-03",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-03-02",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 77, 91, 96, 79, 74, 98, 94.\n\nWhat is the mean of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "87",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "86"
+   },
+   {
+    "label": "B",
+    "text": "87"
+   },
+   {
+    "label": "C",
+    "text": "91"
+   },
+   {
+    "label": "D",
+    "text": "102"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 609; divided by 7, the mean is 87. Wrong choices: 91 gives the median; 102 divides by 6 instead of 7; 86 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "592878acd7e864639b277f8eb23ed87e4be4791ccb6d79f9ada0b2ed5ff6ff84",
+  "isActive": true,
+  "setId": "act-set-score-list-03",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-03-03",
+  "skillId": "act-center-spread",
+  "prompt": "Sam's scores on 7 quizzes this term were: 77, 91, 96, 79, 74, 98, 94.\n\nWhat is the range of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "17"
+   },
+   {
+    "label": "B",
+    "text": "19"
+   },
+   {
+    "label": "C",
+    "text": "24"
+   },
+   {
+    "label": "D",
+    "text": "98"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 98 − 74 = 24. Wrong choices: 98 gives the highest score; 17 subtracts the first and last scores as listed, without sorting; 19 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "bb968ab0b373fb4e392e7a2ed777188f3944044dca0483e987d501c019042f60",
+  "isActive": true,
+  "setId": "act-set-score-list-03",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-04-01",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 85, 80, 78, 84, 64, 66, 75.\n\nWhat is the median of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "78",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "75"
+   },
+   {
+    "label": "B",
+    "text": "76"
+   },
+   {
+    "label": "C",
+    "text": "78"
+   },
+   {
+    "label": "D",
+    "text": "84"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 64, 66, 75, 78, 80, 84, 85. The middle (4th) score is 78. Wrong choices: 84 takes the middle score in the order given, without sorting; 76 gives the mean; 75 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a2480b962a6de77b8ae5efcfc881931242a2e6655017b594058e7acee29fd523",
+  "isActive": true,
+  "setId": "act-set-score-list-04",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-04-02",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 85, 80, 78, 84, 64, 66, 75.\n\nWhat is the mean of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "76",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "75"
+   },
+   {
+    "label": "B",
+    "text": "76"
+   },
+   {
+    "label": "C",
+    "text": "78"
+   },
+   {
+    "label": "D",
+    "text": "89"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 532; divided by 7, the mean is 76. Wrong choices: 78 gives the median; 89 divides by 6 instead of 7; 75 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "1c6ff17083db55ca71e85c3498f23ad6c84ea55f4cfccc1cedfbeb642693a6b7",
+  "isActive": true,
+  "setId": "act-set-score-list-04",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-04-03",
+  "skillId": "act-center-spread",
+  "prompt": "Sam's scores on 7 quizzes this term were: 85, 80, 78, 84, 64, 66, 75.\n\nWhat is the range of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "21",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "10"
+   },
+   {
+    "label": "B",
+    "text": "18"
+   },
+   {
+    "label": "C",
+    "text": "21"
+   },
+   {
+    "label": "D",
+    "text": "85"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 85 − 64 = 21. Wrong choices: 85 gives the highest score; 10 subtracts the first and last scores as listed, without sorting; 18 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "8aab00b0004f1570e7b9835ed7c4cb32fdecba84345d8c60b8d9e6c9cbaa760b",
+  "isActive": true,
+  "setId": "act-set-score-list-04",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-05-01",
+  "skillId": "act-average-median",
+  "prompt": "Maya's scores on 7 quizzes this term were: 73, 90, 60, 89, 74, 67, 86.\n\nWhat is the median of Maya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "74",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "74"
+   },
+   {
+    "label": "B",
+    "text": "75"
+   },
+   {
+    "label": "C",
+    "text": "77"
+   },
+   {
+    "label": "D",
+    "text": "89"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 60, 67, 73, 74, 86, 89, 90. The middle (4th) score is 74. Wrong choices: 89 takes the middle score in the order given, without sorting; 77 gives the mean; 75 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "ba41c343230f93517c5171f4c65c98eefa6b5f95edfe4d4f1c8b6752b759aaa9",
+  "isActive": true,
+  "setId": "act-set-score-list-05",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-05-02",
+  "skillId": "act-average-median",
+  "prompt": "Maya's scores on 7 quizzes this term were: 73, 90, 60, 89, 74, 67, 86.\n\nWhat is the mean of Maya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "77",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "74"
+   },
+   {
+    "label": "B",
+    "text": "75"
+   },
+   {
+    "label": "C",
+    "text": "77"
+   },
+   {
+    "label": "D",
+    "text": "90"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 539; divided by 7, the mean is 77. Wrong choices: 74 gives the median; 90 divides by 6 instead of 7; 75 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "cab54f3332463aedc7030e8a82f5d716fb9ee6e20b18c14fe4557ad0620e891c",
+  "isActive": true,
+  "setId": "act-set-score-list-05",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-05-03",
+  "skillId": "act-center-spread",
+  "prompt": "Maya's scores on 7 quizzes this term were: 73, 90, 60, 89, 74, 67, 86.\n\nWhat is the range of Maya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "13"
+   },
+   {
+    "label": "B",
+    "text": "22"
+   },
+   {
+    "label": "C",
+    "text": "30"
+   },
+   {
+    "label": "D",
+    "text": "90"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 90 − 60 = 30. Wrong choices: 90 gives the highest score; 13 subtracts the first and last scores as listed, without sorting; 22 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "626fdb386fe1daab7ae2ccff0198a6fc5122b4a61df11db3b8a1d6fb4d365f13",
+  "isActive": true,
+  "setId": "act-set-score-list-05",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-06-01",
+  "skillId": "act-average-median",
+  "prompt": "Priya's scores on 7 quizzes this term were: 87, 97, 71, 75, 69, 76, 78.\n\nWhat is the median of Priya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "76",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "75"
+   },
+   {
+    "label": "B",
+    "text": "76"
+   },
+   {
+    "label": "C",
+    "text": "79"
+   },
+   {
+    "label": "D",
+    "text": "83"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 69, 71, 75, 76, 78, 87, 97. The middle (4th) score is 76. Wrong choices: 75 takes the middle score in the order given, without sorting; 79 gives the mean; 83 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "b1d70cc16e892edea6ee85b30f26502ffa9e58b743bdadb6b4d2afe572828f6d",
+  "isActive": true,
+  "setId": "act-set-score-list-06",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-06-02",
+  "skillId": "act-average-median",
+  "prompt": "Priya's scores on 7 quizzes this term were: 87, 97, 71, 75, 69, 76, 78.\n\nWhat is the mean of Priya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "79",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "76"
+   },
+   {
+    "label": "B",
+    "text": "79"
+   },
+   {
+    "label": "C",
+    "text": "83"
+   },
+   {
+    "label": "D",
+    "text": "92"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 553; divided by 7, the mean is 79. Wrong choices: 76 gives the median; 92 divides by 6 instead of 7; 83 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "84e55f8ae5ed3325acaa3b2f92c377d5d98c30ffef5924fcd862ef25456b4a22",
+  "isActive": true,
+  "setId": "act-set-score-list-06",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-06-03",
+  "skillId": "act-center-spread",
+  "prompt": "Priya's scores on 7 quizzes this term were: 87, 97, 71, 75, 69, 76, 78.\n\nWhat is the range of Priya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "28",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "97"
+   },
+   {
+    "label": "B",
+    "text": "28"
+   },
+   {
+    "label": "C",
+    "text": "16"
+   },
+   {
+    "label": "D",
+    "text": "9"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 97 − 69 = 28. Wrong choices: 97 gives the highest score; 9 subtracts the first and last scores as listed, without sorting; 16 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "4da97169d0368732ba162af0288eae80e363396e0dcc3907f72d682ce8b8ab75",
+  "isActive": true,
+  "setId": "act-set-score-list-06",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-07-01",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 95, 77, 97, 69, 93, 91, 87.\n\nWhat is the median of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "91",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "69"
+   },
+   {
+    "label": "B",
+    "text": "83"
+   },
+   {
+    "label": "C",
+    "text": "87"
+   },
+   {
+    "label": "D",
+    "text": "91"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 69, 77, 87, 91, 93, 95, 97. The middle (4th) score is 91. Wrong choices: 69 takes the middle score in the order given, without sorting; 87 gives the mean; 83 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "a5d9f5cbf08dc8e0e1ead69b3e657e1b01e6de070b4f8c929afeef1d18e486ba",
+  "isActive": true,
+  "setId": "act-set-score-list-07",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-07-02",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 95, 77, 97, 69, 93, 91, 87.\n\nWhat is the mean of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "87",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "83"
+   },
+   {
+    "label": "B",
+    "text": "87"
+   },
+   {
+    "label": "C",
+    "text": "91"
+   },
+   {
+    "label": "D",
+    "text": "102"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 609; divided by 7, the mean is 87. Wrong choices: 91 gives the median; 102 divides by 6 instead of 7; 83 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "856f523454f05e419476b82fa2537b37f38cf8915c1844fb7ac890d9de0e01df",
+  "isActive": true,
+  "setId": "act-set-score-list-07",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-07-03",
+  "skillId": "act-center-spread",
+  "prompt": "Sam's scores on 7 quizzes this term were: 95, 77, 97, 69, 93, 91, 87.\n\nWhat is the range of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "28",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8"
+   },
+   {
+    "label": "B",
+    "text": "18"
+   },
+   {
+    "label": "C",
+    "text": "28"
+   },
+   {
+    "label": "D",
+    "text": "97"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 97 − 69 = 28. Wrong choices: 97 gives the highest score; 8 subtracts the first and last scores as listed, without sorting; 18 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "8587124ae21b1f8d0ad58066f68593f5fdb7f3af2c99f4cb64828e18486c76f5",
+  "isActive": true,
+  "setId": "act-set-score-list-07",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-08-01",
+  "skillId": "act-average-median",
+  "prompt": "Priya's scores on 7 quizzes this term were: 95, 87, 96, 61, 67, 62, 99.\n\nWhat is the median of Priya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "87",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "61"
+   },
+   {
+    "label": "B",
+    "text": "80"
+   },
+   {
+    "label": "C",
+    "text": "81"
+   },
+   {
+    "label": "D",
+    "text": "87"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 61, 62, 67, 87, 95, 96, 99. The middle (4th) score is 87. Wrong choices: 61 takes the middle score in the order given, without sorting; 81 gives the mean; 80 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "9b747186d998d86c45526a098af764dc98a20dc37ef6b2d2e5eef9dcb563de4f",
+  "isActive": true,
+  "setId": "act-set-score-list-08",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-08-02",
+  "skillId": "act-average-median",
+  "prompt": "Priya's scores on 7 quizzes this term were: 95, 87, 96, 61, 67, 62, 99.\n\nWhat is the mean of Priya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "81",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "80"
+   },
+   {
+    "label": "B",
+    "text": "81"
+   },
+   {
+    "label": "C",
+    "text": "87"
+   },
+   {
+    "label": "D",
+    "text": "95"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 567; divided by 7, the mean is 81. Wrong choices: 87 gives the median; 95 divides by 6 instead of 7; 80 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "11847b2d273625c6aa1d2f94295594046537aa096fad652d3d0f07e5581a6509",
+  "isActive": true,
+  "setId": "act-set-score-list-08",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-08-03",
+  "skillId": "act-center-spread",
+  "prompt": "Priya's scores on 7 quizzes this term were: 95, 87, 96, 61, 67, 62, 99.\n\nWhat is the range of Priya's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "38",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4"
+   },
+   {
+    "label": "B",
+    "text": "34"
+   },
+   {
+    "label": "C",
+    "text": "38"
+   },
+   {
+    "label": "D",
+    "text": "99"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 99 − 61 = 38. Wrong choices: 99 gives the highest score; 4 subtracts the first and last scores as listed, without sorting; 34 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "18a0359ec6b29b0b68e338282b61a4128810c9735c43c576e46eb2de27120d3e",
+  "isActive": true,
+  "setId": "act-set-score-list-08",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-09-01",
+  "skillId": "act-average-median",
+  "prompt": "Ari's scores on 7 quizzes this term were: 78, 94, 79, 95, 62, 98, 82.\n\nWhat is the median of Ari's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "82",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "80"
+   },
+   {
+    "label": "B",
+    "text": "82"
+   },
+   {
+    "label": "C",
+    "text": "84"
+   },
+   {
+    "label": "D",
+    "text": "95"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 62, 78, 79, 82, 94, 95, 98. The middle (4th) score is 82. Wrong choices: 95 takes the middle score in the order given, without sorting; 84 gives the mean; 80 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "f42c9b9b70067ecb41ecc05105568e2c9eff5a583aacadd96471156a4a8d096a",
+  "isActive": true,
+  "setId": "act-set-score-list-09",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-09-02",
+  "skillId": "act-average-median",
+  "prompt": "Ari's scores on 7 quizzes this term were: 78, 94, 79, 95, 62, 98, 82.\n\nWhat is the mean of Ari's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "84",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "80"
+   },
+   {
+    "label": "B",
+    "text": "82"
+   },
+   {
+    "label": "C",
+    "text": "84"
+   },
+   {
+    "label": "D",
+    "text": "98"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 588; divided by 7, the mean is 84. Wrong choices: 82 gives the median; 98 divides by 6 instead of 7; 80 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "21c3f6f56ea919261ccefa6dabd519445bcf8c03ee9d47ab10065f986595a5d0",
+  "isActive": true,
+  "setId": "act-set-score-list-09",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-09-03",
+  "skillId": "act-center-spread",
+  "prompt": "Ari's scores on 7 quizzes this term were: 78, 94, 79, 95, 62, 98, 82.\n\nWhat is the range of Ari's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "36",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4"
+   },
+   {
+    "label": "B",
+    "text": "17"
+   },
+   {
+    "label": "C",
+    "text": "36"
+   },
+   {
+    "label": "D",
+    "text": "98"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 98 − 62 = 36. Wrong choices: 98 gives the highest score; 4 subtracts the first and last scores as listed, without sorting; 17 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "fb531d6614ae37ab24da25e3083557a4fad3975bec23d35d316482c2ab95568c",
+  "isActive": true,
+  "setId": "act-set-score-list-09",
+  "setOrder": 3
+ },
+ {
+  "problemId": "act-set-score-list-10-01",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 81, 74, 68, 84, 91, 61, 80.\n\nWhat is the median of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "80",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "76"
+   },
+   {
+    "label": "B",
+    "text": "77"
+   },
+   {
+    "label": "C",
+    "text": "80"
+   },
+   {
+    "label": "D",
+    "text": "84"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Sorted: 61, 68, 74, 80, 81, 84, 91. The middle (4th) score is 80. Wrong choices: 84 takes the middle score in the order given, without sorting; 77 gives the mean; 76 takes the midpoint of the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "b4a24c94036b421a106d874e1b3db7905afb8aae4df18978bbebe9795be9475e",
+  "isActive": true,
+  "setId": "act-set-score-list-10",
+  "setOrder": 1
+ },
+ {
+  "problemId": "act-set-score-list-10-02",
+  "skillId": "act-average-median",
+  "prompt": "Sam's scores on 7 quizzes this term were: 81, 74, 68, 84, 91, 61, 80.\n\nWhat is the mean of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "77",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "76"
+   },
+   {
+    "label": "B",
+    "text": "77"
+   },
+   {
+    "label": "C",
+    "text": "80"
+   },
+   {
+    "label": "D",
+    "text": "90"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "The scores add to 539; divided by 7, the mean is 77. Wrong choices: 80 gives the median; 90 divides by 6 instead of 7; 76 averages only the lowest and highest scores.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "fee5e12eb27900912549679924241c7c7386ddd99d4aba9409b003505cb06516",
+  "isActive": true,
+  "setId": "act-set-score-list-10",
+  "setOrder": 2
+ },
+ {
+  "problemId": "act-set-score-list-10-03",
+  "skillId": "act-center-spread",
+  "prompt": "Sam's scores on 7 quizzes this term were: 81, 74, 68, 84, 91, 61, 80.\n\nWhat is the range of Sam's quiz scores?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "91"
+   },
+   {
+    "label": "B",
+    "text": "30"
+   },
+   {
+    "label": "C",
+    "text": "16"
+   },
+   {
+    "label": "D",
+    "text": "1"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "8-12",
+  "explanation": "Highest minus lowest: 91 − 61 = 30. Wrong choices: 91 gives the highest score; 1 subtracts the first and last scores as listed, without sorting; 16 drops the highest and lowest scores first.",
+  "tags": [
+   "act",
+   "act-math",
+   "shared-stimulus",
+   "family:score-list"
+  ],
+  "source": "act-sets-2026-10",
+  "contentHash": "e82cd516b069f4f7c9452cc28ca6e9006b330371d57a8ee8b124cf81cc330f9f",
+  "isActive": true,
+  "setId": "act-set-score-list-10",
+  "setOrder": 3
+ }
+]
