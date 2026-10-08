@@ -242,9 +242,17 @@ describe('the course describes the test it actually administers', () => {
   });
 
   test('the runner fallbacks agree with the blueprint', () => {
+    // The fallbacks live in each exam's config (EXAMS in act-test.js); the
+    // runner reads them as this.exam.items / this.exam.minutes.
     const src = read('public/js/act-test.js');
-    expect(src).toContain(`data.totalItems || ${blueprint.totalItems}`);
-    expect(src).toContain(`data.timeLimitMinutes || ${blueprint.timeLimitMinutes}`);
+    expect(src).toContain('data.totalItems || this.exam.items');
+    expect(src).toContain('data.timeLimitMinutes || this.exam.minutes');
+    const examBlock = (key) => src.slice(src.indexOf(`    ${key}: {\n      key: '${key}'`), src.indexOf('categoryLabels', src.indexOf(`key: '${key}'`)));
+    expect(examBlock('act')).toContain(`minutes: ${blueprint.timeLimitMinutes},`);
+    expect(examBlock('act')).toContain(`items: ${blueprint.totalItems},`);
+    const sat = JSON.parse(read('seeds/sat-math-blueprint.json'));
+    expect(examBlock('sat')).toContain(`minutes: ${sat.timeLimitMinutes},`);
+    expect(examBlock('sat')).toContain(`items: ${sat.totalItems},`);
   });
 });
 
@@ -267,7 +275,11 @@ describe('real-ACT answer-letter alternation (odd A–D, even F–G–H–J)', (
     // data-label / theirAnswer on the stored A–D letters — grading and the
     // wire protocol must never see an F.
     const runner = read('public/js/act-test.js');
-    expect(runner).toMatch(/evenLab = \{ A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' \}/);
+    // The ACT's exam config carries the alias; the SAT's carries none (the
+    // SAT letters every question A–D).
+    expect(runner).toMatch(/evenLetters: \{ A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' \}/);
+    expect(runner).toMatch(/evenLetters: null/);
+    expect(runner).toMatch(/const evenLab = this\.exam\.evenLetters;/);
     expect(runner).toMatch(/data-label="\$\{o\.label\}"/);   // stored label on the wire
     const card = read('public/js/lessonTracker.js');
     expect(card).toMatch(/evenLab = \{ A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' \}/);

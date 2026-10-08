@@ -133,7 +133,8 @@
     sheet.innerHTML =
       '<h3>🎯 Practice</h3>' +
       '<button class="mbn-act" id="mbn-warmup" type="button">🔁 Review warm-up<span class="d">Quick spaced review of skills coming due</span></button>' +
-      '<button class="mbn-act" id="mbn-acttest" type="button">📝 ACT practice test<span class="d">Full timed section · all-new questions</span></button>';
+      '<button class="mbn-act" id="mbn-acttest" type="button">📝 ACT practice test<span class="d">Full timed section · all-new questions</span></button>' +
+      '<button class="mbn-act" id="mbn-sattest" type="button">📝 SAT practice test<span class="d">Full timed section · 44 questions, 70 minutes</span></button>';
     document.body.appendChild(sheet);
 
     document.body.classList.add('mbn-space');
@@ -195,6 +196,11 @@
     acttest.addEventListener('click', function () {
       closeSheet();
       if (window.openActTest) window.openActTest();
+    });
+    var sattest = sheet.querySelector('#mbn-sattest');
+    sattest.addEventListener('click', function () {
+      closeSheet();
+      if (window.openSatTest) window.openSatTest();
     });
 
     // The composer owns the bottom edge: hide while the student is typing.

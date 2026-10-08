@@ -92,6 +92,22 @@
   .actt-down{background:#fdeaea;color:#c0392b}
   .actt-same{background:#eee;color:#888}
   .actt-err{color:#c0392b;padding:24px;text-align:center}
+  .actt-hbtn{font-size:14px;font-weight:600;padding:2px 8px;border:1px solid rgba(255,255,255,.5);border-radius:8px}
+  .actt-gi{max-width:420px}
+  .actt-gilab{display:block;font-size:13px;font-weight:600;color:#555;margin:0 0 6px}
+  .actt-gin{width:9.5em;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.04em;padding:10px 12px;border:2px solid #cfc8ea;border-radius:10px;background:#fff;color:inherit}
+  .actt-gin:focus{outline:none;border-color:#764ba2;box-shadow:0 0 0 3px rgba(118,75,162,.15)}
+  .actt-giprev{min-height:44px;display:flex;align-items:center;gap:6px;margin:10px 0 6px;font-size:15px}
+  .actt-gimuted{color:#999;font-size:13px}
+  .actt-giwarn{color:#b4570f;font-size:13px}
+  .actt-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 2px;font-size:15px;line-height:1.15}
+  .actt-frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 3px}
+  .actt-girules{font-size:13px;color:#555;margin-top:4px}
+  .actt-girules summary{cursor:pointer;color:#764ba2;font-weight:600}
+  .actt-girules ul{margin:8px 0 0;padding-left:18px;line-height:1.55}
+  .actt-refpanel{margin:10px 18px 0;padding:12px 14px;border:1px solid #e2dcf6;border-radius:12px;background:#faf9ff;font-size:13px;line-height:1.45;flex:0 0 auto;max-height:40vh;overflow-y:auto}
+  .actt-refgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px 14px}
+  .actt-reffacts{margin-top:10px;color:#666}
   .actt-lock{display:grid;max-width:520px;margin:22px auto 0;border:2px solid #e2dcf6;border-radius:14px;overflow:hidden;background:#faf9ff}
   /* Rows and message share one grid cell, so the card is as tall as the
      taller of the two and the message can never spill out of it. */
@@ -124,6 +140,10 @@
     .actt-lockrow{background:#3a3555}
     .actt-lockover{background:rgba(28,26,43,.6)}
     .actt-lockh{color:#ece9f7}.actt-lockp,.actt-cta2{color:#b7b3cc}.actt-cta2 a{color:#b9a6ff}
+    .actt-gin{background:#211e32;border-color:#3d3858}
+    .actt-gilab,.actt-girules{color:#cbc7e0}.actt-girules summary{color:#b9a6ff}
+    .actt-refpanel{background:#211e32;border-color:#302c45}.actt-reffacts{color:#b7b3cc}
+    .actt-giwarn{color:#f0a868}
   }
   @media (max-width:700px){
     /* The test takes the whole phone screen: edge to edge, no rounded card. */
@@ -135,6 +155,8 @@
     .actt-foot{padding:10px 12px;gap:6px}
     .actt-foot .actt-btn{padding:9px 12px;font-size:13px}
     .actt-foot-spacer{display:none}
+    /* Room for the header's tools: the exam name alone on a phone. */
+    .actt-title-long{display:none}
     /* A figure must not push the answer choices below the fold: on a phone
        only two of four choices were visible on figure items, and the correct
        one needed a scroll to exist (owner report, 2026-09-09). Cap the figure
@@ -148,14 +170,56 @@
     .actt-body{padding:12px 14px}
   }`;
 
-  const CATEGORY_LABELS = {
-    'integrating-essential-skills': 'Essential skills',
-    'number-quantity': 'Number & quantity',
-    'algebra': 'Algebra',
-    'functions': 'Functions',
-    'geometry': 'Geometry',
-    'statistics-probability': 'Statistics & probability',
-    'unknown': 'Other',
+  // Everything that differs between the exams this runner delivers. The
+  // server's twin is utils/practiceTests.js; the runner only needs what it
+  // shows. One runner, so a fix to navigation, saving or the answer sheet
+  // reaches every exam at once.
+  const EXAMS = {
+    act: {
+      key: 'act',
+      name: 'ACT',
+      apiBase: '/api/act-test',
+      guestApiBase: '/api/act-practice',
+      minutes: 50,
+      items: 45,
+      choices: 'four answer choices',
+      scale: '1–36',
+      // Real-ACT letter alternation: even question numbers show F–G–H–J.
+      evenLetters: { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' },
+      referenceSheet: false,
+      courseId: 'act-prep',
+      seedHint: 'npm run act:seed',
+      categoryLabels: {
+        'integrating-essential-skills': 'Essential skills',
+        'number-quantity': 'Number & quantity',
+        'algebra': 'Algebra',
+        'functions': 'Functions',
+        'geometry': 'Geometry',
+        'statistics-probability': 'Statistics & probability',
+        'unknown': 'Other',
+      },
+    },
+    sat: {
+      key: 'sat',
+      name: 'SAT',
+      apiBase: '/api/sat-test',
+      guestApiBase: null,
+      minutes: 70,
+      items: 44,
+      choices: 'multiple choice plus questions where you type your own answer',
+      scale: '200–800',
+      evenLetters: null,              // the SAT letters every question A–D
+      referenceSheet: true,
+      courseId: null,
+      seedHint: 'npm run seed:all -- --only=sat-items',
+      categoryLabels: {
+        'algebra': 'Algebra',
+        'advanced-math': 'Advanced math',
+        'problem-solving-data': 'Problem-solving & data',
+        'geometry-trig': 'Geometry & trig',
+        'unknown': 'Other',
+      },
+    },
   };
 
   function api(url, opts) {
@@ -190,8 +254,11 @@
   class ActTest {
     constructor(opts) {
       opts = opts || {};
-      this.guest = !!opts.guest;
-      this.apiBase = this.guest ? '/api/act-practice' : '/api/act-test';
+      this.exam = EXAMS[opts.exam] || EXAMS.act;
+      // Only the ACT has a public guest rail.
+      this.guest = !!opts.guest && !!this.exam.guestApiBase;
+      this.apiBase = this.guest ? this.exam.guestApiBase : this.exam.apiBase;
+      this.catLabel = (k) => this.exam.categoryLabels[k] || k;
       this.sessionId = null;
       this.current = null;
       this.selected = null;
@@ -229,11 +296,12 @@
       this.overlay = document.createElement('div');
       this.overlay.className = 'actt-overlay';
       this.overlay.innerHTML = `
-        <div class="actt-card" role="dialog" aria-modal="true" aria-label="ACT Math Practice Test">
+        <div class="actt-card" role="dialog" aria-modal="true" aria-label="${this.exam.name} Math Practice Test">
           <div class="actt-head">
-            <span class="actt-title">📐 ACT Math Practice Test</span>
+            <span class="actt-title">📐 ${this.exam.name}<span class="actt-title-long">&nbsp;Math Practice Test</span></span>
             <span style="display:flex;align-items:center;gap:10px">
-              <button class="actt-x" id="actt-calc" aria-label="Calculator" title="Calculator (allowed on the ACT)" style="display:none;font-size:14px;font-weight:600;padding:2px 8px;border:1px solid rgba(255,255,255,.5);border-radius:8px">Calc</button>
+              ${this.exam.referenceSheet ? '<button class="actt-x actt-hbtn" id="actt-ref" aria-label="Reference sheet" aria-expanded="false" aria-controls="actt-refpanel" title="Formulas the SAT gives you" style="display:none">Reference</button>' : ''}
+              <button class="actt-x actt-hbtn" id="actt-calc" aria-label="Calculator" title="Calculator (allowed on the ${this.exam.name})" style="display:none">Calc</button>
               <span class="actt-timer" id="actt-timer" role="timer" aria-label="Time remaining"></span>
               <button class="actt-x" id="actt-close" aria-label="Close">×</button>
             </span>
@@ -243,6 +311,7 @@
             <div class="actt-bar"><div class="actt-fill" id="actt-fill"></div></div>
           </div>
           <div class="actt-pal" id="actt-pal" role="group" aria-label="Questions"></div>
+          ${this.exam.referenceSheet ? `<div class="actt-refpanel" id="actt-refpanel" role="region" aria-label="Reference sheet" hidden>${REFERENCE_SHEET_HTML}</div>` : ''}
           <div class="actt-body" id="actt-body"></div>
           <div class="actt-foot" id="actt-foot" style="display:none">
             <button class="actt-btn actt-skip" id="actt-back">◀ Back</button>
@@ -266,6 +335,7 @@
       });
       this.overlay.querySelector('#actt-calc').addEventListener('click', () => this._toggleCalc());
       this.el = (id) => this.overlay.querySelector('#' + id);
+      if (this.exam.referenceSheet) this.el('actt-ref').addEventListener('click', () => this._toggleRef());
 
       // The calculator is the shared component (js/mmCalculator.js) — the same
       // one chat and /calculator.html use. It used to be built inline here,
@@ -284,7 +354,26 @@
     // choice, not a test condition. Dismissed on close()/complete() so it
     // never strands over the results screen.
     _toggleCalc() { if (this.calc) this.calc.toggle(); }
-    _hideCalc() { if (this.calc) this.calc.hide(); }
+    _hideCalc() { if (this.calc) this.calc.hide(); this._hideRef(); }
+
+    // The SAT prints a formula sheet with every test; Bluebook keeps it one
+    // tap away. It opens above the question and never covers the choices.
+    _toggleRef() {
+      const panel = this.el('actt-refpanel');
+      if (!panel) return;
+      panel.hidden = !panel.hidden;
+      this.el('actt-ref').setAttribute('aria-expanded', String(!panel.hidden));
+    }
+    _hideRef() {
+      const panel = this.el && this.el('actt-refpanel');
+      if (panel && !panel.hidden) this._toggleRef();
+    }
+    _showTestTools(on) {
+      this.el('actt-calc').style.display = on ? '' : 'none';
+      const ref = this.el('actt-ref');
+      if (ref) ref.style.display = on ? '' : 'none';
+      if (!on) this._hideRef();
+    }
 
     // Intro / "Begin" screen. The timer starts only when the student clicks
     // Begin — never on open() — so a baseline can be presented (or auto-opened as
@@ -295,8 +384,25 @@
       this._mount();
       this._show();
       this.el('actt-timer').style.display = 'none';    // no clock on the intro
-      this.el('actt-calc').style.display = 'none';     // calc appears with the test
+      this._showTestTools(false);                      // calc + reference appear with the test
       this.el('actt-foot').style.display = 'none';
+      if (this.exam.key === 'sat') {
+        this.el('actt-body').innerHTML = `
+        <div style="max-width:540px;margin:0 auto;padding:6px 4px 4px">
+          <h2 style="margin:0 0 10px;font-size:20px">SAT Math practice test</h2>
+          <p style="margin:0 0 14px;line-height:1.5">A full, timed SAT Math section: <strong>44 questions, 70 minutes</strong>, calculator and reference sheet allowed throughout. You get an estimated 200–800 score the moment you finish, and every question you miss is waiting for you and your tutor afterward.</p>
+          <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
+            <li>Most questions are multiple choice. About a quarter ask you to <strong>type your own answer</strong> — the box shows a preview and the rules for what it accepts.</li>
+            <li><strong>It's timed and can't be paused.</strong> Pacing is part of the score. Find a quiet spot and grab scratch paper first.</li>
+            <li><strong>Move freely</strong> — go back, change answers, and 🚩 flag anything you want to revisit.</li>
+            <li>There's no penalty for guessing, so answer everything before time runs out.</li>
+          </ul>
+          <button id="actt-begin" style="width:100%;padding:13px 16px;font-size:16px;font-weight:700;border:0;border-radius:12px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6)">Begin when ready</button>
+        </div>`;
+        const sb = this.overlay.querySelector('#actt-begin');
+        if (sb) sb.addEventListener('click', () => this._begin());
+        return;
+      }
       if (this.guest) {
         this.el('actt-body').innerHTML = `
         <div style="max-width:520px;margin:0 auto;padding:6px 4px 4px">
@@ -334,7 +440,7 @@
     // Begin button, so the timer never starts behind the student's back.
     async _begin() {
       this.el('actt-timer').style.display = '';
-      this.el('actt-calc').style.display = '';
+      this._showTestTools(true);
       this.el('actt-body').innerHTML = '<div class="actt-center">Building your practice test…</div>';
       try {
         // A guest resumes the test this browser already has in progress (the
@@ -351,7 +457,7 @@
         if (data && data.needsGeneration !== undefined) {
           this.el('actt-body').innerHTML = this.guest
             ? `<div class="actt-err">${escapeHtml(data.message || 'The practice test is not available right now.')}</div>`
-            : `<div class="actt-err">The ACT item bank isn't loaded yet.<br><small>Ask an admin to run <code>npm run act:seed</code>.</small></div>`;
+            : `<div class="actt-err">The ${this.exam.name} item bank isn't loaded yet.<br><small>Ask an admin to run <code>${this.exam.seedHint}</code>.</small></div>`;
           return;
         }
         if (!data || !data.sessionId) throw new Error((data && data.message) || 'Could not start.');
@@ -359,7 +465,7 @@
         if (this.guest && data.guestToken) {
           writeGuest({ sessionId: String(data.sessionId), token: data.guestToken, status: 'in_progress' });
         }
-        this.total = data.totalItems || 45;
+        this.total = data.totalItems || this.exam.items;
         this.state = new Map();
 
         // On a resume, rebuild the palette state and land on the first
@@ -379,7 +485,7 @@
         // the hour. (Fallback covers an old server during a deploy window.)
         const remainSecs = (data.remainingSeconds != null)
           ? data.remainingSeconds
-          : (data.timeLimitMinutes || 50) * 60;
+          : (data.timeLimitMinutes || this.exam.minutes) * 60;
         this._buildPalette();
         if (data.resumed && remainSecs <= 0) return this.complete();
         // The deadline is the server's (startedAt + limit); the display starts
@@ -427,7 +533,7 @@
       // If this was a completed baseline, let the course begin teaching now —
       // adapted to the results. Guarded by _completed so cancelling the test
       // (the X, or closing before finishing) never starts the course early.
-      if (this._completed && window.courseManager && typeof window.courseManager.onBaselineComplete === 'function') {
+      if (this._completed && this.exam.courseId && window.courseManager && typeof window.courseManager.onBaselineComplete === 'function') {
         this._completed = false;
         window.courseManager.onBaselineComplete();
       }
@@ -460,6 +566,7 @@
     // Jump to any question (Back, Next, palette, review screen). Answers save
     // on click, so navigating away never loses work.
     async goTo(pos) {
+      this._flushGridIn();
       pos = Math.min(Math.max(1, pos), this.total);
       const data = await this._api(`/problem?sessionId=${encodeURIComponent(this.sessionId)}&position=${pos}`);
       if (!data || !data.problem) {
@@ -474,6 +581,13 @@
       const st = {
         answer: local.answer !== undefined ? local.answer : (remote.answer != null ? remote.answer : null),
         flagged: local.flagged !== undefined ? local.flagged : !!remote.flagged,
+        // The change counter MUST survive a revisit. Rebuilding this object
+        // without it restarted the count at 1, so the next change on a
+        // question already saved at seq 3 was refused as stale — by the save
+        // AND by the answer sheet at submit — and the student was graded on
+        // the old pick while the screen showed the new one. The server's
+        // stored seq covers a reload, where nothing local survives.
+        seq: Math.max(Number(local.seq) || 0, Number(remote.seq) || 0),
       };
       this.state.set(pos, st);
       this.selected = st.answer;
@@ -492,9 +606,11 @@
       this.el('actt-fill').style.width = `${Math.round((answered / this.total) * 100)}%`;
       // Real-ACT letter alternation: even question numbers show F–G–H–J (no
       // "I"), odd show A–D. Display alias ONLY — data-label / save-answer /
-      // grading all stay on the stored positional A–D letters.
-      const evenLab = { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' };
-      const disp = (lab) => (this.pos % 2 === 0 ? (evenLab[lab] || lab) : lab);
+      // grading all stay on the stored positional A–D letters. The SAT has
+      // no alternation.
+      const evenLab = this.exam.evenLetters;
+      const disp = (lab) => (evenLab && this.pos % 2 === 0 ? (evenLab[lab] || lab) : lab);
+      if (p.answerType && p.answerType !== 'multiple-choice') return this._renderGridIn(p);
       const opts = (p.options || []).map(o =>
         `<button class="actt-opt${o.label === this.selected ? ' sel' : ''}" data-label="${o.label}" role="radio" aria-checked="${o.label === this.selected}" aria-label="Choice ${disp(o.label)}: ${escapeHtml(o.text)}"><span class="actt-optlab" aria-hidden="true">${disp(o.label)}</span><span>${keepMath(prettyMath(matrixHtml(escapeHtml(o.text))))}</span></button>`
       ).join('');
@@ -542,14 +658,19 @@
     // failure must not eject the student from a timed test — the final state is
     // whatever /complete finds on the server, and re-touching the question
     // re-saves it.
-    _save() {
-      const st = this.state.get(this.pos) || {};
+    _save() { return this._saveFor(this.pos, this.current.problemId); }
+
+    // Save one question by its own position and id, not whatever is on screen
+    // when the request goes out: a grid-in saves on a short delay, and the
+    // student may have moved on by then.
+    _saveFor(pos, problemId) {
+      const st = this.state.get(pos) || {};
       return this._api('/save-answer', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId: this.sessionId,
-          problemId: this.current.problemId,
-          position: this.pos,
+          problemId,
+          position: pos,
           answer: st.answer != null ? st.answer : null,
           flagged: !!st.flagged,
           seq: st.seq || 0,
@@ -567,6 +688,72 @@
       this._save();
       this._syncFlagBtn();
       this._syncPalette();
+    }
+
+    /**
+     * A student-produced response ("grid-in"): the SAT's typed answer.
+     *
+     * Behaves like Bluebook's: only digits, one decimal point, one fraction
+     * bar and a leading minus can be typed; the field holds 5 characters (6
+     * with a minus), so a fraction that won't fit has to go in as a decimal —
+     * exactly the decision the real test makes the student take. The preview
+     * shows the answer as it will be read (3/4 as a stacked fraction), and the
+     * entry rules are one tap away. Grading never happens here; the server
+     * compares against the key and its accepted equivalents at /complete.
+     */
+    _renderGridIn(p) {
+      const fig = (p.svg && /^<svg[\s>]/.test(p.svg) && !/<script/i.test(p.svg))
+        ? `<div class="actt-fig">${p.svg}</div>` : '';
+      const val = this.selected != null ? String(this.selected) : '';
+      this.el('actt-body').innerHTML = `
+        <div class="actt-q" id="actt-qtext">${stemHtml(keepMath(prettyMath(matrixHtml(escapeHtml(p.content || '')))))}</div>${fig}
+        <div class="actt-gi">
+          <label class="actt-gilab" for="actt-gin">Your answer</label>
+          <input class="actt-gin" id="actt-gin" type="text" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false"
+            value="${escapeHtml(val)}" aria-describedby="actt-giprev actt-girules" />
+          <div class="actt-giprev" id="actt-giprev" aria-live="polite">${gridInPreviewHtml(val)}</div>
+          <details class="actt-girules" id="actt-girules">
+            <summary>How to enter your answer</summary>
+            <ul>
+              <li>Numbers only — no units, %, $, or commas.</li>
+              <li>A fraction or a decimal both work: <b>7/2</b> or <b>3.5</b>. No mixed numbers — <b>2 1/2</b> goes in as <b>5/2</b> or <b>2.5</b>.</li>
+              <li>The box fits 5 characters (6 with a minus sign). If a fraction doesn't fit, enter it as a decimal, rounded or cut off to fill the box: <b>2/3</b> → <b>.6666</b> or <b>.6667</b>.</li>
+              <li>If more than one answer is correct, enter just one.</li>
+            </ul>
+          </details>
+        </div>`;
+      this._labelFigure();
+      const input = this.el('actt-gin');
+      input.addEventListener('input', () => {
+        const clean = sanitizeGridIn(input.value);
+        if (clean !== input.value) input.value = clean;
+        this.el('actt-giprev').innerHTML = gridInPreviewHtml(clean);
+        this.selected = clean === '' ? null : clean;
+        const st = this.state.get(this.pos) || {};
+        st.answer = this.selected;
+        st.seq = (st.seq || 0) + 1;
+        this.state.set(this.pos, st);
+        this._syncPalette();
+        const n = this._answeredCount();
+        this.el('actt-qpct').textContent = `${n}/${this.total} answered`;
+        this.el('actt-fill').style.width = `${Math.round((n / this.total) * 100)}%`;
+        // Save after a short pause in typing, for THIS question (see _saveFor).
+        const pos = this.pos, problemId = p.problemId;
+        clearTimeout(this._giTimer);
+        this._giPending = () => this._saveFor(pos, problemId);
+        this._giTimer = setTimeout(() => this._flushGridIn(), 500);
+      });
+      this.el('actt-back').disabled = this.pos <= 1;
+      this.el('actt-next').textContent = (this.pos >= this.total) ? 'Review ▶' : 'Next ▶';
+      this._syncFlagBtn();
+      this._syncPalette();
+    }
+
+    _flushGridIn() {
+      clearTimeout(this._giTimer);
+      const pending = this._giPending;
+      this._giPending = null;
+      if (pending) pending();
     }
 
     // A figure is an inline SVG with no text alternative. Give it one: the
@@ -636,6 +823,7 @@
 
     // ── Review screen — shown before submitting, like the online ACT ──
     showReview() {
+      this._flushGridIn();
       const answered = this._answeredCount();
       const unanswered = this.total - answered;
       let flagged = 0;
@@ -649,7 +837,7 @@
         <div class="actt-center" style="padding:14px 4px 4px">
           <h2 style="margin:0 0 8px;font-size:20px">Review before you submit</h2>
           <div class="actt-sub">${answered} answered · ${unanswered} unanswered${flagged ? ` · ${flagged} flagged 🚩` : ''}</div>
-          ${unanswered ? '<div style="font-size:13px;color:#c0392b;margin-bottom:6px">Unanswered questions count as wrong — on the real ACT there’s no penalty for guessing.</div>' : ''}
+          ${unanswered ? `<div style="font-size:13px;color:#c0392b;margin-bottom:6px">Unanswered questions count as wrong — on the real ${this.exam.name} there’s no penalty for guessing.</div>` : ''}
           <div class="actt-legend"><span>▢ unanswered</span><span style="color:#764ba2">▣ answered</span><span>⚑ flagged</span></div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:540px;margin:0 auto">${cells}</div>
@@ -673,6 +861,7 @@
     }
 
     async complete() {
+      this._flushGridIn();
       this._stopTimer();
       this._hideCalc();   // done answering — the calc has no place on the results screen
       this.el('actt-timer').style.display = 'none';
@@ -721,12 +910,12 @@
         // it so close() lets the course begin teaching — only on a real
         // completion, never on a cancelled/closed test.
         this._completed = true;
-        this._refreshCourseCards(data && data.actPrepSessionId);
+        if (this.exam.courseId) this._refreshCourseCards(data && data.actPrepSessionId);
         // On a RE-TEST the payoff is the COMPARISON, so lead with growth instead
         // of a standalone score. (The first/baseline test has nothing to compare
         // against, so it falls through to the single-test results below.)
         try {
-          const hist = await api('/api/act-test/history');
+          const hist = await api(this.exam.apiBase + '/history');
           if (hist && (hist.attempts || []).filter((a) => a.scaledScore != null && !a.incomplete).length >= 2) {
             this.renderProgress(hist);
             return;
@@ -756,7 +945,7 @@
     _rangeHtml(r) {
       const g = r && r.scaledRange;
       if (!g || g.low == null || g.high == null || g.low === g.high) return '';
-      return `<div class="actt-range" title="Where your score would likely land on another sitting of this test. It is an estimate of ACT performance, not a prediction.">Likely range ${g.low}–${g.high}</div>`;
+      return `<div class="actt-range" title="Where your score would likely land on another sitting of this test. It is an estimate of ${this.exam.name} performance, not a prediction.">Likely range ${g.low}–${g.high}</div>`;
     }
 
     // Score + category bars — the top of every results screen (signed-in,
@@ -764,13 +953,13 @@
     _scoreHeadHtml(r) {
       const cats = Object.entries(r.byCategory || {}).map(([k, v]) => {
         const pct = v.total ? Math.round((v.correct / v.total) * 100) : 0;
-        const name = escapeHtml(CATEGORY_LABELS[k] || k);
+        const name = escapeHtml(this.catLabel(k));
         return `<div class="actt-cat"><span class="actt-catname">${name}</span><span class="actt-catbar"><span class="actt-catfill" style="width:${pct}%"></span></span><span class="actt-catpct">${v.correct}/${v.total}</span></div>`;
       }).join('');
       return `
           <div class="actt-center" style="padding-bottom:12px">
             <div class="actt-score">${r.scaledScore != null ? r.scaledScore : '—'}</div>
-            <div class="actt-scorelab">Estimated ACT Math score${r.scaledApproximate ? ' (approx.)' : ''}</div>
+            <div class="actt-scorelab">Estimated ${this.exam.name} Math score${r.scaledApproximate ? ' (approx.)' : ''}</div>
             ${this._rangeHtml(r)}
             <div class="actt-sub">${r.rawScore}/${r.totalItems} correct · ${r.accuracy}%${r.durationMinutes != null ? ' · ' + r.durationMinutes + (r.timeLimitMinutes ? ` of ${r.timeLimitMinutes}` : '') + ' min' : ''}</div>
             ${r.plannedSkills ? `<div style="font-size:13px;color:#8b6fd6;margin-top:2px">✓ Your tutor will now focus on your ${r.plannedSkills} weakest skill${r.plannedSkills > 1 ? 's' : ''}.</div>` : ''}
@@ -913,8 +1102,10 @@
     // The misses live in the ACT course's bootcamp, so open THAT: the course
     // greeting presents the first missed question.
     reviewWithTutor(data, r) {
+      // No prep course for this exam yet: hand the results to the tutor in chat.
+      if (!this.exam.courseId) { this.sendToTutor(r); return; }
       const cm = window.courseManager;
-      const enrolled = cm && (cm.courseSessions || []).find((s) => s && s.courseId === 'act-prep' && s.status === 'active');
+      const enrolled = cm && (cm.courseSessions || []).find((s) => s && s.courseId === this.exam.courseId && s.status === 'active');
       const id = (data && data.actPrepSessionId) || (enrolled && enrolled._id) || null;
       if (cm && id && String(cm.activeCourseSessionId) === String(id)) {
         // Already in the ACT course chat: closing hands the turn back to it
@@ -936,7 +1127,7 @@
       if (cm && data.actPrepSessionId && typeof cm.activateCourse === 'function') {
         cm.activateCourse(data.actPrepSessionId);
       } else if (cm && typeof cm.enrollInCourse === 'function') {
-        cm.enrollInCourse('act-prep');
+        cm.enrollInCourse(this.exam.courseId);
       } else {
         this.sendToTutor(r);
       }
@@ -968,7 +1159,7 @@
         : '';
       return `<div style="max-width:520px;margin:20px auto 0">
           <div style="font-size:13.5px;font-weight:700;color:#3a3160;margin-bottom:4px">What you missed</div>
-          <div style="font-size:11.5px;color:#8578ab;margin-bottom:6px">Grouped by skill — this is the order you'll review them in.</div>
+          <div style="font-size:11.5px;color:#8578ab;margin-bottom:6px">Grouped by skill${this.exam.courseId ? ' — this is the order you\'ll review them in' : ''}.</div>
           ${rows}
           ${short}
         </div>`;
@@ -977,7 +1168,7 @@
     // Compose a student-voiced results summary and hand it to the chat tutor so
     // the conversation has context and remediation can start on the weak areas.
     buildTutorMessage(r) {
-      const head = `I just finished an ACT Math practice test — estimated score ${r.scaledScore != null ? r.scaledScore : '?'} (${r.rawScore}/${r.totalItems} correct).`;
+      const head = `I just finished an ${this.exam.name} Math practice test — estimated score ${r.scaledScore != null ? r.scaledScore : '?'} (${r.rawScore}/${r.totalItems} correct).`;
 
       // Prefer EXACT skills (e.g. "Quadratic Equations") over broad categories.
       //
@@ -995,7 +1186,7 @@
 
       // Fallback: category level (if the backend didn't send per-skill data).
       const cats = Object.entries(r.byCategory || {})
-        .map(([k, v]) => ({ name: CATEGORY_LABELS[k] || k, correct: v.correct, total: v.total, pct: v.total ? v.correct / v.total : 1 }))
+        .map(([k, v]) => ({ name: this.catLabel(k), correct: v.correct, total: v.total, pct: v.total ? v.correct / v.total : 1 }))
         .sort((a, b) => a.pct - b.pct)
         .filter(c => c.correct < c.total).slice(0, 2);
       if (!cats.length) {
@@ -1041,7 +1232,7 @@
       this.el('actt-foot').style.display = 'none';
       this.el('actt-body').innerHTML = '<div class="actt-center">Loading your progress…</div>';
       try {
-        const data = await api('/api/act-test/history');
+        const data = await api(this.exam.apiBase + '/history');
         this.renderProgress(data || { count: 0, attempts: [] });
       } catch (e) {
         this.el('actt-body').innerHTML = `<div class="actt-err">${e.message || 'Could not load your progress.'}</div>`;
@@ -1084,7 +1275,7 @@
         const a = attempts[0];
         const rev = reportFromAttempt(a);
         this.el('actt-body').innerHTML = `
-          <div class="actt-center"><div class="actt-score">${a.scaledScore}</div><div class="actt-scorelab">Your first ACT Math score (approx.)</div>
+          <div class="actt-center"><div class="actt-score">${a.scaledScore}</div><div class="actt-scorelab">Your first ${this.exam.name} Math score (approx.)</div>
           <div class="actt-sub">Take the test again after some practice to see your growth here.</div></div>${backBtns(rev.weakSkills.length ? rev : null)}`;
         return wire(rev.weakSkills.length ? rev : null);
       }
@@ -1110,7 +1301,7 @@
       let catRows;
       if (cmp && Array.isArray(cmp.categories)) {
         catRows = cmp.categories.map((x) => {
-          const name = CATEGORY_LABELS[x.category] || x.category;
+          const name = this.catLabel(x.category);
           // A small category still shows its change (6/6 → 1/6 is news), muted,
           // with the caveat on hover; only different forms get n/a.
           const small = x.lowConfidence || x.reason === 'too-few-items';
@@ -1128,7 +1319,7 @@
       } else {
         const cats = Object.keys(latest.byCategory).filter(c => first.byCategory[c]).map(c => {
           const f = first.byCategory[c], l = latest.byCategory[c];
-          return { c, name: CATEGORY_LABELS[c] || c, f, l };
+          return { c, name: this.catLabel(c), f, l };
         });
         catRows = cats.map(x => `
         <div class="actt-cmp">
@@ -1148,7 +1339,7 @@
       this.el('actt-body').innerHTML = `
         <div class="actt-center" style="padding-bottom:6px">
           <div class="actt-score">${latest.scaledScore}</div>
-          <div class="actt-scorelab">Latest ACT Math score (approx.)</div>
+          <div class="actt-scorelab">Latest ${this.exam.name} Math score (approx.)</div>
           <div class="actt-sub">${deltaChip(delta)} &nbsp;${sinceLabel} &nbsp;·&nbsp; ${attempts.length} attempts</div>
           <div class="actt-trend">${trend}</div>
           ${hiddenNote}
@@ -1251,7 +1442,62 @@
   }
 
   // Exposed for the unit test of the notation rules.
-  if (typeof window !== 'undefined') { window.__actPrettyMath = prettyMath; window.__actStemHtml = stemHtml; window.__actMatrixHtml = matrixHtml; }
+  if (typeof window !== 'undefined') {
+    window.__actPrettyMath = prettyMath; window.__actStemHtml = stemHtml; window.__actMatrixHtml = matrixHtml;
+    window.__actSanitizeGridIn = sanitizeGridIn; window.__actGridInPreviewHtml = gridInPreviewHtml;
+  }
+
+  // ── Grid-in helpers (SAT student-produced response) ──
+  // What the box accepts as you type: digits, a "-" only in front, and
+  // EITHER one "." (a decimal) OR one "/" (a fraction) — never both, because
+  // the grader reads 7/2.0 as no number at all. 5 characters, or 6 when the
+  // first is a minus.
+  function sanitizeGridIn(raw) {
+    let out = '';
+    for (const ch of String(raw || '').replace(/−/g, '-')) {
+      if (/\d/.test(ch)) out += ch;
+      else if (ch === '-' && out === '') out += ch;
+      else if (ch === '.' && !out.includes('.') && !out.includes('/')) out += ch;
+      else if (ch === '/' && !out.includes('/') && !out.includes('.') && /\d$/.test(out)) out += ch;
+    }
+    const max = out.startsWith('-') ? 6 : 5;
+    return out.slice(0, max);
+  }
+
+  // The answer as it will be read: a fraction stacked, a negative with a
+  // real minus sign. An entry that is not a finished number yet ("3/", "-")
+  // says so instead of guessing.
+  function gridInPreviewHtml(val) {
+    const v = String(val || '');
+    if (!v) return '<span class="actt-gimuted">Answer preview appears here</span>';
+    const neg = v.startsWith('-');
+    const body = neg ? v.slice(1) : v;
+    const sign = neg ? '−' : '';
+    const num = /^(\d+\.?\d*|\.\d+)$/;
+    if (num.test(body)) return `Answer preview: <b>${sign}${escapeHtml(body)}</b>`;
+    const f = body.split('/');
+    if (f.length === 2 && /^\d+$/.test(f[0]) && /^\d+$/.test(f[1])) {
+      if (Number(f[1]) === 0) return '<span class="actt-giwarn">A fraction can’t have 0 on the bottom.</span>';
+      return `Answer preview: <b>${sign}<span class="actt-frac" role="math" aria-label="${escapeHtml(sign + f[0] + ' over ' + f[1])}"><span>${escapeHtml(f[0])}</span><span>${escapeHtml(f[1])}</span></span></b>`;
+    }
+    return '<span class="actt-giwarn">Finish the number — this isn’t a complete answer yet.</span>';
+  }
+
+  // The SAT's reference sheet (the formulas and facts the test provides).
+  const REFERENCE_SHEET_HTML = `
+    <div class="actt-refgrid">
+      <div><b>Circle</b><br>A = πr² · C = 2πr</div>
+      <div><b>Rectangle</b><br>A = ℓw</div>
+      <div><b>Triangle</b><br>A = ½bh</div>
+      <div><b>Right triangle</b><br>c² = a² + b²</div>
+      <div><b>Special right triangles</b><br>30°-60°-90°: x, x√3, 2x<br>45°-45°-90°: s, s, s√2</div>
+      <div><b>Rectangular prism</b><br>V = ℓwh</div>
+      <div><b>Cylinder</b><br>V = πr²h</div>
+      <div><b>Sphere</b><br>V = (4/3)πr³</div>
+      <div><b>Cone</b><br>V = (1/3)πr²h</div>
+      <div><b>Pyramid</b><br>V = (1/3)ℓwh</div>
+    </div>
+    <div class="actt-reffacts">A circle has 360° of arc, or 2π radians. The angles of a triangle add to 180°.</div>`;
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -1263,6 +1509,16 @@
   window.actTest = new ActTest({ guest: GUEST_PAGE });
   window.openActTest = function () { window.actTest.open(); };
   window.openActProgress = function () { window.actTest.showProgress(); };
+  // The SAT: the same runner on /api/sat-test (signed-in only). Created on
+  // first use so a page that never opens it builds nothing for it.
+  window.openSatTest = function () {
+    if (!window.satTest) window.satTest = new ActTest({ exam: 'sat' });
+    window.satTest.open();
+  };
+  window.openSatProgress = function () {
+    if (!window.satTest) window.satTest = new ActTest({ exam: 'sat' });
+    window.satTest.showProgress();
+  };
 
   // Signed-in page: a guest test finished in this browser before signup is
   // claimed on load. (On the public page there is no account to claim into.)
@@ -1276,8 +1532,11 @@
   // and it's an easy way to try the flow. (A visible button lives with the
   // boot-camp card once that UI exists.)
   try {
-    if (new URLSearchParams(location.search).get('acttest') === '1') {
+    const qs = new URLSearchParams(location.search);
+    if (qs.get('acttest') === '1') {
       window.addEventListener('load', () => window.openActTest());
+    } else if (qs.get('sattest') === '1' && !GUEST_PAGE) {
+      window.addEventListener('load', () => window.openSatTest());
     }
   } catch (e) { /* noop */ }
 })();
