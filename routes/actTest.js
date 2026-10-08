@@ -27,6 +27,12 @@
 // were missed — the report the signed-in /complete returns — unlocks on
 // /claim, after signup. No per-item correctness ever reaches a guest.
 //
+// The SAT (and any later timed test) runs on this SAME router, mounted at
+// /api/sat-test behind useTest('sat-math'). Everything that differs between
+// tests — blueprint, scale, skill names, prep course — is in
+// utils/practiceTests.js; sessions are scoped by testId. The guest rail and
+// /claim are the ACT's only.
+//
 // Navigation matches the real ACT: within the timed section a student can move
 // back and forth, change answers, and flag questions for review — so grading
 // happens ONCE, at /complete, never mid-test. Mid-test responses store only the
@@ -42,8 +48,8 @@ const guestRouter = express.Router();
 const ActTestSession = require('../models/actTestSession');
 const { GUEST_TTL_MS } = require('../models/actTestSession');
 const Problem = require('../models/problem');
-const { assembleForm, rawToScaled, scaledRange, getBlueprint } = require('../utils/actTestAssembler');
-const { buildActPlan } = require('../utils/actBootcampPlan');
+const { assembleForm, rawToScaled, scaledRange } = require('../utils/actTestAssembler');
+const { getTestDef, testScope } = require('../utils/practiceTests');
 const { normalizeOptions, frozenPickForGrading, LABELS: MC_LABELS } = require('../utils/mcOptions');
 const CourseSession = require('../models/courseSession');
 const {
@@ -56,7 +62,7 @@ const { recordConversionEvent } = require('../utils/conversionEvents');
 // user; the guest rail by the bearer token. Set per router so a signed-in
 // browser hitting the guest rail is still treated as a guest — and can only
 // reach a guest session with its token.
-router.use((req, _res, next) => { req.actOwner = { userId: req.user && req.user._id }; next(); });
+router.use((req, _res, next) => { req.actOwner = { userId: req.user && req.user._id, testId: defOfReq(req).testId }; next(); });
 guestRouter.use((req, _res, next) => {
   req.actOwner = { guestToken: String(req.get('X-Act-Guest-Token') || '') };
   next();
@@ -77,33 +83,18 @@ function guestTokenMatches(token, storedHash) {
 // still accepted — absorbs client-tick vs server-clock skew on the last click.
 const DEADLINE_GRACE_MS = 10000;
 
-// skillId → human-readable name, so the report can name EXACT weak skills
-// (e.g. "Quadratic Equations") rather than just the broad category.
-const ACT_SKILL_NAMES = (() => {
-  // Broad category names — fallback if an item lacks a fine sub-skill tag.
-  const map = {
-    'act-number-quantity': 'Number & Quantity',
-    'act-algebra': 'Algebra',
-    'act-functions': 'Functions',
-    'act-geometry': 'Geometry',
-    'act-statistics-probability': 'Statistics & Probability',
-    'act-integrating-essential-skills': 'Integrating Essential Skills',
-  };
-  // Fine-grained skill names generated from the Fable bank's per-item `skill`
-  // tags (scripts/ingestFableActItems.py) — e.g. act-quadratic-equations →
-  // "Quadratic equations". Lets the report name EXACT weak skills.
-  try {
-    const fine = require('../seeds/act-skill-names.json');
-    for (const [id, name] of Object.entries(fine)) map[id] = name;
-  } catch { /* fine-grained names optional */ }
-  // Legacy prep-skill catalog, if present (superset of names).
-  try {
-    const seed = require('../seeds/skills-act-math-prep.json');
-    const arr = Array.isArray(seed) ? seed : (seed.skills || []);
-    for (const s of arr) map[s.skillId] = s.displayName || s.skillId;
-  } catch { /* optional */ }
-  return map;
-})();
+// The longest typed (grid-in) answer the answer sheet accepts. The real SAT
+// field takes 5 characters (6 for a negative); this leaves room for spacing.
+const GRID_IN_MAX_CHARS = 16;
+
+// Which practice test a request or a stored session belongs to. A mount sets
+// req.testDef (config/routes.js); a stored session carries its own testId, so
+// grading and reporting a session never depend on which URL reached it.
+const defOfReq = (req) => req.testDef || getTestDef();
+const defOfSession = (session) => getTestDef(session && session.testId);
+
+// A weak skill's name in the report; the raw id when the test has none.
+const skillNameOf = (def, id) => def.skillName(id) || id;
 
 // Seconds left on the section clock, anchored to startedAt — NOT to whenever
 // the client happened to reopen the page. The real ACT has no pause; without
@@ -249,7 +240,7 @@ function tallyResponses(session) {
   // 28-item form used to score 24. Forms shrink as the ledger grows, so that
   // capped the re-test harder than the baseline and turned real improvement
   // into a downward trend line.
-  const scaled = rawToScaled(raw, undefined, total);
+  const scaled = rawToScaled(raw, defOfSession(session).blueprint, total);
 
   const byCategory = {};
   const bySkill = {};
@@ -291,7 +282,10 @@ function applyAnswerSheet(session, sheet) {
     if (!item) continue;
     if (entry.problemId && entry.problemId !== item.problemId) continue;
     const value = normalizeAnswer(entry.answer);
-    if (value !== null) {
+    if (value !== null && item.answerType && item.answerType !== 'multiple-choice') {
+      // A typed answer (SAT grid-in): any short value; grading decides.
+      if (value.length > GRID_IN_MAX_CHARS) continue;
+    } else if (value !== null) {
       const label = value.toUpperCase();
       const optionCount = Array.isArray(item.options) ? item.options.length : 0;
       const idx = MC_LABELS.indexOf(label);
@@ -336,10 +330,11 @@ router.post('/start', async (req, res) => {
   try {
     const userId = req.user._id;
     const { restart } = req.body || {};
+    const def = defOfReq(req);
 
     // Resume an in-progress test unless restarting.
     if (!restart) {
-      const active = await ActTestSession.getActiveSession(userId);
+      const active = await ActTestSession.findOne({ userId, status: 'in_progress', ...testScope(def) }).sort({ createdAt: -1 });
       // A test whose clock ran out while nobody was here is NOT resumed. It
       // used to be: the runner reopened it, saw 0:00, and auto-submitted a form
       // with 1, 3 or 6 answers as a completed attempt — scores of 3, 7 and 10
@@ -365,19 +360,20 @@ router.post('/start', async (req, res) => {
       }
     }
 
-    // Abandon any stale in-progress sessions before starting fresh.
+    // Abandon any stale in-progress sessions of THIS test before starting
+    // fresh. Another test's in-progress session is left alone.
     await ActTestSession.updateMany(
-      { userId, status: 'in_progress' },
+      { userId, status: 'in_progress', ...testScope(def) },
       { $set: { status: 'abandoned' } }
     );
 
-    const blueprint = getBlueprint();
+    const { blueprint } = def;
     const seed = `${userId}-${Date.now()}`;
     // Every re-test must be FRESH — no item this student has already been served
     // (any prior session) may reappear, or the re-test measures memory of the
     // question, not the skill. Exclude their whole seen-history.
     const excludeIds = await seenProblemIdsForUser(userId);
-    const form = await assembleForm({ seed, excludeIds });
+    const form = await assembleForm({ blueprint, seed, excludeIds });
 
     if (form.coverage.filled === 0) {
       if (excludeIds.length > 0) {
@@ -386,7 +382,7 @@ router.post('/start', async (req, res) => {
         // so the UI can say "you've worked through everything" and content gen
         // can be prioritized. Never silently re-serve seen items.
         return res.status(409).json({
-          message: "You've worked through every ACT practice question we have — nice. Fresh questions are being added.",
+          message: `You've worked through every ${def.label} practice question we have — nice. Fresh questions are being added.`,
           exhausted: true,
           seenCount: excludeIds.length,
           coverage: form.coverage,
@@ -395,7 +391,7 @@ router.post('/start', async (req, res) => {
       // Honest failure: the ACT item bank isn't populated yet. The gaps array
       // is the generation worklist (skill + difficulty per missing slot).
       return res.status(503).json({
-        message: 'The ACT practice-test item bank is not populated yet.',
+        message: `The ${def.label} practice-test item bank is not populated yet.`,
         coverage: form.coverage,
         needsGeneration: form.gaps.length,
       });
@@ -646,12 +642,12 @@ router.post('/submit-answer', async (req, res) => {
 // ── Report pieces shared by /complete and /claim ─────────────
 
 // Exact weak skills (by name), worst first — the precise remediation targets.
-function weakSkillsFrom(bySkill) {
+function weakSkillsFrom(bySkill, def = getTestDef()) {
   return Object.entries(bySkill)
     .filter(([, v]) => v.correct < v.total)
     .map(([skillId, v]) => ({
       skillId,
-      name: ACT_SKILL_NAMES[skillId] || skillId,
+      name: skillNameOf(def, skillId),
       missed: v.total - v.correct,
       total: v.total,
     }))
@@ -666,6 +662,7 @@ function weakSkillsFrom(bySkill) {
 // and 3 were fused; this un-fuses them. Grouped the same way review runs
 // (by skill), so the list the student reads here is the list they then work.
 function missedGroupsFrom(session) {
+  const def = defOfSession(session);
   const byKey = new Map();
   const order = [];
   for (const r of session.responses) {
@@ -674,7 +671,7 @@ function missedGroupsFrom(session) {
     if (!byKey.has(key)) {
       byKey.set(key, {
         key,
-        label: ACT_SKILL_NAMES[r.skillId] || ACT_SKILL_NAMES[r.category] || 'Other',
+        label: def.skillName(r.skillId) || def.skillName(r.category) || 'Other',
         category: r.category || null,
         positions: [],
       });
@@ -698,6 +695,7 @@ function missedGroupsFrom(session) {
  * bookkeeping. Returns { plannedSkills, actPrepSessionId }.
  */
 async function applyCompletionEffects(req, session, { bySkill, weakSkills, plan }) {
+  const def = defOfSession(session);
   // ── Credit what the baseline PROVED ──
   // The pretest already knows which skills the student answered cleanly, but
   // only the weak ones were ever used. A baseline that establishes strength and
@@ -715,7 +713,7 @@ async function applyCompletionEffects(req, session, { bySkill, weakSkills, plan 
   // crosswalks).
   const creditedSkills = [];
   const clearedFromBaseline = [];
-  try {
+  if (def.creditSkills) try {
     const { creditFromTallies } = require('../utils/coursePreAssessment');
     const { mergeTalliesToCourse } = require('../utils/actCrosswalk');
     const { advanceRung } = require('../utils/skillRung');
@@ -776,8 +774,8 @@ async function applyCompletionEffects(req, session, { bySkill, weakSkills, plan 
   // (utils/actBootcampSeed.js). A student who is NOT enrolled yet gets the same
   // seeding when they enroll — see routes/courseSession.js /enroll.
   let actPrepSessionId = null;
-  try {
-    const cs = await CourseSession.findOne({ userId: req.user._id, courseId: 'act-prep', status: 'active' });
+  if (def.courseId) try {
+    const cs = await CourseSession.findOne({ userId: req.user._id, courseId: def.courseId, status: 'active' });
     if (cs) {
       await seedBootcampFromTest(cs, session, { userId: req.user._id, plan });
       await cs.save();
@@ -821,7 +819,7 @@ function buildFullReport(session, { raw, total, scaled, byCategory, weakSkills, 
     totalItems: total,
     scaledScore: scaled ? scaled.scaled : null,
     // The likely band around it — one sitting is an estimate, not a verdict.
-    scaledRange: scaledRange(raw, total),
+    scaledRange: scaledRange(raw, total, defOfSession(session).blueprint),
     scaledApproximate: true,
     // The bank could not fill the whole blueprint for this student, so the
     // estimate is projected from fewer questions. Say so rather than
@@ -855,7 +853,7 @@ function buildGuestReport(session, { raw, total, scaled, byCategory }) {
     totalItems: total,
     scaledScore: scaled ? scaled.scaled : null,
     // The likely band around it — one sitting is an estimate, not a verdict.
-    scaledRange: scaledRange(raw, total),
+    scaledRange: scaledRange(raw, total, defOfSession(session).blueprint),
     scaledApproximate: true,
     shortForm: !!(scaled && scaled.shortForm),
     blueprintItems: scaled ? scaled.blueprintLength : null,
@@ -922,11 +920,13 @@ router.post('/complete', async (req, res) => {
     if (done.abandoned) return;
     const { raw, total, scaled, byCategory, bySkill } = done.tally;
 
-    const weakSkills = weakSkillsFrom(bySkill);
+    const def = defOfSession(session);
+    const weakSkills = weakSkillsFrom(bySkill, def);
     // "Great tutor" triage: skip mastered domains, rank the rest by leverage
     // (weakness x ACT exam-weight), and pick a prerequisite-aware starting module.
-    // This is the plan the course opening + module ordering consume.
-    const plan = buildActPlan(byCategory);
+    // This is the plan the course opening + module ordering consume. A test
+    // with no prep course has no plan.
+    const plan = def.buildPlan ? def.buildPlan(byCategory) : null;
     const { plannedSkills, actPrepSessionId } = await applyCompletionEffects(req, session, { bySkill, weakSkills, plan });
 
     return res.json({
@@ -989,9 +989,10 @@ router.post('/claim', async (req, res) => {
       return res.status(404).json({ message: 'That practice test is no longer available to claim.', gone: true });
     }
 
+    const def = defOfSession(session);
     const { raw, total, scaled, byCategory, bySkill } = tallyResponses(session);
-    const weakSkills = weakSkillsFrom(bySkill);
-    const plan = buildActPlan(byCategory);
+    const weakSkills = weakSkillsFrom(bySkill, def);
+    const plan = def.buildPlan ? def.buildPlan(byCategory) : null;
     let effects = { plannedSkills: 0, actPrepSessionId: null };
     if (firstClaim) {
       effects = await applyCompletionEffects(req, session, { bySkill, weakSkills, plan });
@@ -1001,7 +1002,9 @@ router.post('/claim', async (req, res) => {
         context: { scaledScore: session.scaledScore, totalItems: total },
       });
     } else {
-      const cs = await CourseSession.findOne({ userId, courseId: 'act-prep', status: 'active' }).select('_id').lean();
+      const cs = def.courseId
+        ? await CourseSession.findOne({ userId, courseId: def.courseId, status: 'active' }).select('_id').lean()
+        : null;
       effects.actPrepSessionId = cs ? String(cs._id) : null;
     }
 
@@ -1125,7 +1128,8 @@ guestRouter.post('/start', async (req, res) => {
       }
     }
 
-    const blueprint = getBlueprint();
+    // The public guest rail is the ACT's (no test mount sets req.testDef here).
+    const { blueprint } = defOfReq(req);
     // A guest has no account to keep a seen-ledger on, so the browser sends
     // the tests it took before (id + token, last few). Their questions are
     // excluded, so a retake is fresh — the same promise a signed-in student
@@ -1140,6 +1144,7 @@ guestRouter.post('/start', async (req, res) => {
       ...(await guestRecordSeenProblemIds(prints)),
     ])];
     const form = await assembleForm({
+      blueprint,
       seed: `guest-${crypto.randomBytes(8).toString('hex')}-${Date.now()}`,
       excludeIds,
     });
@@ -1220,7 +1225,8 @@ guestRouter.post('/complete', async (req, res) => {
 // ── GET /history — completed attempts for the growth report ──
 router.get('/history', async (req, res) => {
   try {
-    const sessions = await ActTestSession.find({ userId: req.user._id, status: 'completed' })
+    const def = defOfReq(req);
+    const sessions = await ActTestSession.find({ userId: req.user._id, status: 'completed', ...testScope(def) })
       .sort({ completedAt: 1 })
       .lean();
 
@@ -1234,7 +1240,7 @@ router.get('/history', async (req, res) => {
         if (r.correct) byCategory[c].correct += 1;
 
         const sk = r.skillId || 'unknown';
-        bySkill[sk] = bySkill[sk] || { correct: 0, total: 0, name: ACT_SKILL_NAMES[sk] || sk };
+        bySkill[sk] = bySkill[sk] || { correct: 0, total: 0, name: skillNameOf(def, sk) };
         bySkill[sk].total += 1;
         if (r.correct) bySkill[sk].correct += 1;
       }
@@ -1285,6 +1291,12 @@ async function loadOwnedSession(sessionId, owner, res) {
   }
   const session = await ActTestSession.findById(sessionId);
   if (!session) { res.status(404).json({ message: 'Practice-test session not found.' }); return null; }
+  // Another test's session is not found on this mount (an SAT session through
+  // /api/act-test, or the reverse). A pre-testId ACT session is the ACT's.
+  if (owner.testId && (session.testId || getTestDef().testId) !== owner.testId) {
+    res.status(404).json({ message: 'Practice-test session not found.' });
+    return null;
+  }
   if (!owner.userId || String(session.userId) !== String(owner.userId)) { res.status(403).json({ message: 'Not your session.' }); return null; }
   return session;
 }
