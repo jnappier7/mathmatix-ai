@@ -28,6 +28,7 @@ RULES = {
         (r".", "ALG1.EQV.1"),                         # default: solving linear equations
     ],
     "ADV": [
+        (r"absolute value", "ALG1.EQV.5"),            # absolute value equations
         (r"exponent rules", "MS.QNT.9"),              # integer/algebraic exponent properties
         (r"equivalent expressions.*rational|rational.*expression", "ALG2.EQV.13"),  # simplify rational expressions
         # function-context first, so "functions (quadratic)" ≠ "equations (quadratic)"
@@ -60,6 +61,7 @@ RULES = {
     "PSDA": [
         (r"percent", "MS.PRP.7"),                     # multi-step percent problems
         (r"ratio|rate|proportional|units", "MS.PRP.5"),  # proportional relationships
+        (r"residual", "ALG1.DTA.4"),                  # residuals and correlation
         (r"two-variable|scatterplot|scatterplots", "ALG1.DTA.3"),  # scatter plots / fit
         (r"two-way|conditional", "ALG1.DTA.2"),       # two-way frequency tables
         (r"probability", "GEO.DTA.1"),                # probability foundations

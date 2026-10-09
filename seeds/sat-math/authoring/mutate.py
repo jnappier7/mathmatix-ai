@@ -1,7 +1,8 @@
 import io, contextlib, importlib, re
 from sat_author import Batch
 b = Batch('p1', 't')
-for m in ['p1_alg', 'p1_adv', 'p1_psda_geo']:
+import sys as _s
+for m in (_s.argv[1:] or ['p1_alg', 'p1_adv', 'p1_psda_geo']):
     importlib.import_module(m).add(b)
 def runs(code):
     try:
