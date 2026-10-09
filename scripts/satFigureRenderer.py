@@ -158,7 +158,9 @@ def _geometry(p):
 
 
 def render(kind, params):
-    if kind in ("fgraph", "table"):
+    # "region" is two curves on one grid (expr1, expr2; shaded only when a/b
+    # are given) — what a "the graphs of the system are shown" item needs.
+    if kind in ("fgraph", "table", "region"):
         return calc.render(kind, params)
     fn = {"scatter": _scatter, "bar": _bar, "geometry": _geometry}.get(kind)
     if not fn or params is None:

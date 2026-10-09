@@ -19,10 +19,10 @@ def P(t):
         l, r = s.split('=', 1)
         return P(l) - P(r)
     s = s.replace('−','-').replace('–','-').replace('·','*').replace('×','*').replace('÷','/')
-    s = re.sub(r'√(\d+(?:\.\d+)?|[a-z])', r'sqrt(\1)', s)
+    s = re.sub(r'√(\d+(?:\.\d+)?|[a-z])', r' sqrt(\1)', s)
     _SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹'
     s = re.sub('[' + _SUP + ']+', lambda m: '^(' + ''.join(str(_SUP.index(c)) for c in m.group(0)) + ')', s)
-    s = s.replace('π','pi').replace('√','sqrt').replace(',','')
+    s = s.replace('π','pi').replace('√',' sqrt').replace(',','')
     s = s.replace('$','').replace('%','')
     s = re.sub(r'\bpi\b', ' pi ', s)
     return parse_expr(s, local_dict={'x':sp.Symbol('x'),'y':sp.Symbol('y'),'pi':sp.pi,'sqrt':sp.sqrt,'e':sp.E}, transformations=_T)
