@@ -15,6 +15,9 @@ import math
 
 import matplotlib
 matplotlib.use("Agg")
+# Byte-stable SVG: a fixed id salt and no timestamp, so re-running ingest
+# only changes the figures whose content changed.
+matplotlib.rcParams["svg.hashsalt"] = "mathmatix-figures"
 import matplotlib.pyplot as plt
 
 import calcFigureRenderer as calc   # reuse fgraph + table
@@ -28,7 +31,7 @@ GRID = "#e2e8f0"
 
 def _mpl_svg(fig):
     buf = io.StringIO()
-    fig.savefig(buf, format="svg", bbox_inches="tight")
+    fig.savefig(buf, format="svg", bbox_inches="tight", metadata={"Date": None})
     plt.close(fig)
     svg = buf.getvalue()
     i = svg.find("<svg")

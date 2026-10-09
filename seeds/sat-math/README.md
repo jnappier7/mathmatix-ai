@@ -31,6 +31,26 @@ SAT Math section is machine-scored):
   type, stem, choices?, answer?, spr_answer?, equivalents, answer_any, explanation,
   verify, figure }] }`.
 
+## Bank batches (full-form depth)
+
+`sat_bank_<batch>.json` files add practice-test depth beyond the weekly
+diagnostics: same item schema, ids `sat-math-<batch>q<n>`, tagged
+`bank-<batch>`, and **never** on the weekly rail (`sat-assessment-map.json`).
+They are authored in `authoring/` (`build_<batch>.py` writes the JSON): every
+item carries a self-contained sympy `verify` that recomputes the key
+independently and, for MC, proves no distractor also equals it.
+Before shipping a batch:
+
+1. `runcheck.py` — every verify passes;
+2. `mutate.py` — move each MC key to every wrong choice and alter each grid-in:
+   every mutation must FAIL its verify (proves the checks have teeth);
+3. a blind re-solve by a separate solver from stems alone (no keys);
+4. `scripts/auditSatItems.py`, then `scripts/ingestSatItems.py`.
+
+| Batch | Items | ALG / ADV / PSDA / GEO | MC / grid-in | E / M / H | Figures |
+|-------|-------|------------------------|--------------|-----------|---------|
+| p1 (2026-10-08) | 89 | 27 / 30 / 16 / 16 | 66 / 23 | 21 / 37 / 31 | 16 |
+
 ## Pipeline
 
 ```

@@ -10,6 +10,7 @@ Exits non-zero on any failure. Requires sympy for the verify snippets.
 Usage: python3 scripts/auditSatItems.py
 """
 
+import glob
 import json
 import os
 import io
@@ -45,10 +46,13 @@ def main():
     total = passed = skipped = 0
     fails = []
     struct = []
-    for wk in WEEKS:
-        data = json.load(open(os.path.join(SRC, "sat_w%d.json" % wk)))
+    sources = [("W%d" % wk, os.path.join(SRC, "sat_w%d.json" % wk)) for wk in WEEKS]
+    sources += [(os.path.basename(p)[len("sat_bank_"):-len(".json")], p)
+                for p in sorted(glob.glob(os.path.join(SRC, "sat_bank_*.json")))]
+    for tag, path in sources:
+        data = json.load(open(path))
         for it in data["items"]:
-            loc = "W%d Q%d (%s)" % (wk, it["n"], it["type"])
+            loc = "%s Q%d (%s)" % (tag, it["n"], it["type"])
             si = structural_issue(it)
             if si:
                 struct.append((loc, si))

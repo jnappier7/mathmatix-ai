@@ -17,10 +17,19 @@ const amap = seed('sat-assessment-map.json');
 const taxIds = new Set(taxonomy.skills.map((s) => s.skill_id));
 
 describe('SAT Math bank (unified taxonomy)', () => {
-  test('132 Problem docs, unique ids, valid against the Problem schema', () => {
-    expect(items).toHaveLength(132);
+  // 132 weekly-diagnostic items (sat_w1..5) plus every bank batch
+  // (seeds/sat-math/sat_bank_*.json) — bank batches add full-form depth.
+  const fs = require('fs');
+  const bankDir = path.join(__dirname, '../../seeds/sat-math');
+  const bankItems = fs.readdirSync(bankDir)
+    .filter((f) => /^sat_bank_.+\.json$/.test(f))
+    .reduce((n, f) => n + JSON.parse(fs.readFileSync(path.join(bankDir, f), 'utf8')).items.length, 0);
+
+  test('every weekly and bank item is a Problem doc: unique ids, valid against the schema', () => {
+    expect(items.filter((i) => /^sat-math-w\d+q\d+$/.test(i.problemId))).toHaveLength(132);
+    expect(items).toHaveLength(132 + bankItems);
     const ids = new Set(items.map((i) => i.problemId));
-    expect(ids.size).toBe(132);
+    expect(ids.size).toBe(items.length);
     const failures = items
       .map((it) => new Problem(it).validateSync())
       .filter(Boolean)
@@ -66,6 +75,19 @@ describe('SAT Math bank (unified taxonomy)', () => {
       for (const eq of it.answer.equivalents) {
         expect(doc.checkAnswer(eq)).toBe(true);
       }
+    }
+  });
+
+  test('bank items are on no weekly diagnostic, and every bank item is tagged with its batch', () => {
+    const onRail = new Set(Object.values(amap).flatMap((wk) => wk.items.map((r) => r.problemId)));
+    const bank = items.filter((i) => !/^sat-math-w\d+q\d+$/.test(i.problemId));
+    expect(bank.length).toBe(bankItems);
+    expect(bank.filter((i) => onRail.has(i.problemId))).toEqual([]);
+    for (const it of bank) {
+      const m = it.problemId.match(/^sat-math-(.+)q\d+$/);
+      expect(m).toBeTruthy();
+      expect(it.tags).toContain(`bank-${m[1]}`);
+      expect(it.source).toBe('sat-fable');
     }
   });
 
