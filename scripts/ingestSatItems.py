@@ -21,8 +21,10 @@ Outputs:
 Usage: python3 scripts/ingestSatItems.py   (requires matplotlib for figures)
 """
 
+import glob
 import json
 import os
+import re
 import hashlib
 from collections import defaultdict
 
@@ -68,14 +70,18 @@ def _dedupe(seq):
     return out
 
 
-def problem_doc(wk, it):
+def problem_doc(wk, it, batch=None):
+    """One Problem doc. A weekly diagnostic item is keyed by week (sat-math-w3q7);
+    a BANK item (seeds/sat-math/sat_bank_<batch>.json, practice-form depth only)
+    by its batch (sat-math-p1q7) and tagged bank-<batch> instead of week<N>."""
     n = it["n"]
     domain = it["domain"]
     label = it["skill"]
     skill_id = unified_skill(domain, label) or "unmapped"
-    pid = "sat-math-w%dq%d" % (wk, n)
+    pid = ("sat-math-%sq%d" % (batch, n)) if batch else ("sat-math-w%dq%d" % (wk, n))
     svg = render_fig(it.get("figure"))
-    tags = ["sat-math", DOMAIN_NAME.get(domain, domain.lower()), "week%d" % wk,
+    tags = ["sat-math", DOMAIN_NAME.get(domain, domain.lower()),
+            ("bank-%s" % batch) if batch else ("week%d" % wk),
             it["type"], "subskill:%s" % label]
 
     doc = {
@@ -149,6 +155,28 @@ def main():
             "items": refs,
         }
 
+    # Bank batches: full-form depth for the practice test. Same Problem docs,
+    # but NOT on the weekly diagnostic rail (no entry in the assessment map).
+    banks = sorted(glob.glob(os.path.join(SRC, "sat_bank_*.json")))
+    n_bank = 0
+    for path in banks:
+        data = json.load(open(path))
+        batch = data.get("batch") or re.sub(r"^sat_bank_|\.json$", "", os.path.basename(path))
+        for it in data["items"]:
+            doc = problem_doc(None, it, batch=batch)
+            if doc["svg"]:
+                figs += 1
+            if doc["skillId"] == "unmapped":
+                unmapped.append((batch, it["n"], it["domain"], it["skill"]))
+            if doc["answerType"] == "multiple-choice":
+                n_mc += 1
+            else:
+                n_spr += 1
+            items.append(doc)
+            n_bank += 1
+            by_skill[doc["skillId"]] += 1
+            by_domain[it["domain"]].add(doc["skillId"])
+
     json.dump(items, open(ITEMS_OUT, "w"), indent=2, ensure_ascii=False)
     json.dump(amap, open(MAP_OUT, "w"), indent=2, ensure_ascii=False)
     json.dump({
@@ -160,8 +188,8 @@ def main():
     n_expl = sum(1 for i in items if i["explanation"])
     print("Ingested %d Problem docs (%d MC + %d SPR) -> %s"
           % (len(items), n_mc, n_spr, os.path.relpath(ITEMS_OUT, os.getcwd())))
-    print("  weeks: %d | figures (svg): %d | explanations: %d | unified skills used: %d"
-          % (len(WEEKS), figs, n_expl, len({i["skillId"] for i in items})))
+    print("  weeks: %d | bank batches: %d (%d items) | figures (svg): %d | explanations: %d | unified skills used: %d"
+          % (len(WEEKS), len(banks), n_bank, figs, n_expl, len({i["skillId"] for i in items})))
     if unmapped:
         print("  [warn] %d items with an UNMAPPED skill: %s" % (len(unmapped), unmapped[:6]))
     else:

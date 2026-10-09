@@ -16,6 +16,9 @@ import math
 
 import matplotlib
 matplotlib.use("Agg")
+# Byte-stable SVG: a fixed id salt and no timestamp, so re-running ingest
+# only changes the figures whose content changed.
+matplotlib.rcParams["svg.hashsalt"] = "mathmatix-figures"
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -52,7 +55,7 @@ def _finish(fig, ax, p, axes_through_origin=True):
         s.set_visible(False)
     ax.tick_params(labelsize=6, colors=AXIS, length=2)
     buf = io.StringIO()
-    fig.savefig(buf, format="svg", bbox_inches="tight")
+    fig.savefig(buf, format="svg", bbox_inches="tight", metadata={"Date": None})
     plt.close(fig)
     svg = buf.getvalue()
     i = svg.find("<svg")
