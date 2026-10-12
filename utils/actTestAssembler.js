@@ -376,6 +376,51 @@ const sameTemplate = (a, b) => a.skillId === b.skillId && overlap(a.tokens, b.to
 /** The same QUESTION under another id: same template, same choices, same (or no) figure. */
 const nearCopy = (a, b) => sameTemplate(a, b) && a.choices === b.choices && a.svg === b.svg;
 
+// ── Structural look-alikes (SAT) ───────────────────────────────────────────
+//
+// The template logic above was tuned on ACT wording, where a stem carries a
+// story. SAT stems are mostly math: "If √(x + 7) = 5, what is the value of x?"
+// has two content words after stop-words, so one 44-item form carried it next
+// to "If √(x − 4) + 3 = 8, what is the value of x?", and "P(t) = 200·2^(t/3) …
+// reach 6,400" next to "N(t) = 512(1/2)^(t/3) … exactly 64" (owner report,
+// 2026-10-12). Word overlap never fires on either pair.
+//
+// structuralSignature names the TASK an item asks: a named SAT task when one
+// applies (across skills — the mass-remaining item is ALG1.FNC.8, the
+// population one ALG2.EQV.16), otherwise the skill plus the stem with its
+// numbers, coefficients and constant terms masked, so "If 4x − 9 = 19" and
+// "If 3x + 7 = 25" are one shape. A blueprint opts in with
+// `structuralLookAlikes: true`; then a form never holds two items of one
+// signature while the category has anything else. ACT blueprints don't set
+// it, so ACT assembly is unchanged.
+const EXPONENTIAL_MODEL = /\^\s*\(?\s*t\b/;
+const STRUCTURAL_TASKS = [
+  ['radical-equation', (p) => /√\s*\(/.test(p) && /=/.test(p)],
+  ['circle-general-form', (p) => /x²\s*\+\s*y²\s*[+\-−]\s*\d*\s*[xy]\b/.test(p) && /\bcircle\b/i.test(p)],
+  ['exponential-model-time', (p) => EXPONENTIAL_MODEL.test(p)
+    && /\b(after how many|how many (seconds|minutes|hours|days|weeks|months|years)|when will|in what year)\b/i.test(p)],
+  ['exponential-model-rate', (p) => EXPONENTIAL_MODEL.test(p) && /\b(by )?what percent\b/i.test(p)],
+  ['exponential-model-value', (p) => EXPONENTIAL_MODEL.test(p)],
+];
+
+/** The stem with numbers, coefficients and additive constants masked out. */
+function equationShape(prompt) {
+  return String(prompt || '').toLowerCase()
+    .replace(/[−–]/g, '-')
+    .replace(/\d[\d,]*(\.\d+)?/g, '#')
+    .replace(/#\s*(?=[a-z(√])/g, '')                 // coefficients: 4x, 3(x − 4)
+    .replace(/\s*[+-]\s*#(?![a-z(^²³#])/g, '')       // constant terms: + 7, − 9
+    .replace(/\(\s*([a-z])\s*\)/g, '$1')             // (x) left behind → x
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function structuralSignature(p) {
+  const prompt = String((p && p.prompt) || '');
+  const task = STRUCTURAL_TASKS.find(([, test]) => test(prompt));
+  return task ? `task:${task[0]}` : `${p && p.skillId}|${equationShape(prompt)}`;
+}
+
 /**
  * From a candidate pool, pick the problem whose shape has appeared LEAST in the
  * form so far — so repeated draws of the same skill surface different wordings.
@@ -495,6 +540,8 @@ async function assembleForm(opts = {}) {
     } catch { /* the id exclusion still applies */ }
   }
   const formPrints = [];
+  const strictShapes = blueprint.structuralLookAlikes === true;
+  const formShapes = new Set();   // structuralSignature of every placed item
   const isNearCopy = (c) => {
     const fp = fingerprint(c);
     return seenPrints.some((f) => nearCopy(f, fp)) || formPrints.some((f) => nearCopy(f, fp));
@@ -512,6 +559,7 @@ async function assembleForm(opts = {}) {
     if (isReasoningItem(problem)) reasoning += 1;
     quotas.forEach((q) => { if (q.member(problem)) q.count += 1; });
     formPrints.push(fingerprint(problem));
+    formShapes.add(structuralSignature(problem));
     precise.set(problem.problemId, preciseDifficulty(problem));
     usedProblemIds.push(problem.problemId);
     usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
@@ -624,6 +672,19 @@ async function assembleForm(opts = {}) {
       // only if that empties the pool does a near-copy beat a gap.
       const fresh = candidates.filter((c) => !isNearCopy(c));
       if (fresh.length) candidates = fresh;
+      // Structural look-alikes (opt-in, SAT): never a second item of a task
+      // the form already holds. If this skill has nothing else, any skill in
+      // the category — near the target first, then at any difficulty — beats
+      // the repeat; only an exhausted category lets one through.
+      if (strictShapes && candidates.length) {
+        const distinct = (pool) => pool.filter((c) => !formShapes.has(structuralSignature(c)) && !isNearCopy(c));
+        let wider = distinct(candidates);
+        if (!wider.length && catSkills.length) {
+          wider = distinct(await drawPool(Problem, query({ ...inWindow, skillId: { $in: catSkills } }, avoidCapped), rng, 48));
+          if (!wider.length) wider = distinct(await drawPool(Problem, query({ ...anyDifficulty, skillId: { $in: catSkills } }, avoidCapped), rng, 96));
+        }
+        if (wider.length) candidates = wider;
+      }
       problem = pickDiverse(candidates, usedSignatures, slot.targetDifficulty, formPrints);
       // Record the item's OWN fine skill (fallback may cross sub-skills within
       // the category), so scoring & personalization attribute to the real skill.
@@ -851,6 +912,7 @@ module.exports = {
   fingerprint,
   sameTemplate,
   similarTask,
+  structuralSignature,
   nearCopy,
   bankFilter,
   getBlueprint: () => DEFAULT_BLUEPRINT,
