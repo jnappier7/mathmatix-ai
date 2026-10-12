@@ -174,7 +174,7 @@ input[type=text]{font:inherit;background:var(--night);color:var(--chalk);border:
    40px mark all come from there, exactly as on a generated chapter page. No
    brand colour is repeated here — var(--sc-red) resolves from brand.css. */
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:10px 20px;margin:-16px -16px 16px;background:var(--sc-red,#230E15)}
+  padding:10px 20px;margin:-16px -16px 16px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
 .brand>span{display:flex;flex-direction:column;line-height:1.15;min-width:0}
 .brand strong{font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:.02em}
@@ -193,6 +193,14 @@ input[type=text]{font:inherit;background:var(--night);color:var(--chalk);border:
 html body{font-family:var(--body)}
 html .hero h1{letter-spacing:.01em}
 html .go{color:var(--ink)}
+/* brand.css reverses the mark out of a blood-red field, which is right on a
+   chapter page and wrong here — a red band across the top of a night-time
+   scoreboard reads as an error. The mark stays (white reverse type is what it
+   is drawn for); the field it sits on becomes the scoreboard's own rail. */
+html .topbar{background:var(--board);border-bottom:1px solid var(--rail)}
+html .topbar .tutor-top{background:var(--led);color:var(--ink)}
+html .topbar .tutor-top:hover{background:var(--led);filter:brightness(1.07);color:var(--ink)}
+html .brand em{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
