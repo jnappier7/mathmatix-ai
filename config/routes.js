@@ -366,6 +366,13 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/sat-test', isAuthenticated, useTest('sat-math'), actTestRoutes);
   // ...and its public guest rail for /sat, exactly like the ACT's above.
   app.use('/api/sat-practice', actGuestStartLimiter, useTest('sat-math'), actTestRoutes.guestRouter);
+  // The junior tests: the PSAT (the SAT's shape on a lower curve, 160–760) and
+  // the PreACT 10 (36 ACT questions, 1–35). Same runner, same guest rails;
+  // each feeds its senior exam's prep course (utils/practiceTests.js prepFor).
+  app.use('/api/psat-test', isAuthenticated, useTest('psat-math'), actTestRoutes);
+  app.use('/api/psat-practice', actGuestStartLimiter, useTest('psat-math'), actTestRoutes.guestRouter);
+  app.use('/api/preact-test', isAuthenticated, useTest('preact-math'), actTestRoutes);
+  app.use('/api/preact-practice', actGuestStartLimiter, useTest('preact-math'), actTestRoutes.guestRouter);
   app.use('/api/calc-bootcamp', isAuthenticated, calcBootcampRoutes);
   app.use('/api/mastery', isAuthenticated, masteryRoutes);
   app.use('/api/nudges', isAuthenticated, nudgeRoutes);
@@ -880,13 +887,6 @@ function registerHtmlRoutes(app) {
   // buttons: /quiz?a=14 · /quiz?a=2 · /quiz?a=other. Public, works whether
   // or not the visitor is signed in.
   app.get('/quiz', sendHtml('quiz.html'));
-  // Pacing labs, named for the test they rehearse so the URL can go on a board:
-  // mathmatix.ai/preact and /presat. Twelve questions, each on the clock the
-  // real section gives it (60s PreACT, 95s PSAT). No login — a class of thirty
-  // has to be able to start in one minute — so results are a code the student
-  // hands in rather than a write to any record.
-  app.get('/preact', sendHtml('preact.html'));
-  app.get('/presat', sendHtml('presat.html'));
   // Readable answer aliases for organic posts, where the raw URL is the link
   // text: /quiz/14 · /quiz/2 · /quiz/other → /quiz?a=<answer>. The quiz page
   // validates the value and just ignores anything that isn't a real option.
@@ -917,6 +917,26 @@ function registerHtmlRoutes(app) {
   app.get('/sat-practice-test', satPracticePage);
   app.get('/sat-practice-test.html', satPracticePage);
   app.get('/sat', (req, res) => res.redirect(302, '/sat-practice-test'));
+  // The PSAT and PreACT — the same funnel. The short URLs go on a board:
+  // mathmatix.ai/preact and /presat (and /psat) open the full tests. They were
+  // twelve-question pacing sprints (#1670) until the full tests replaced them.
+  const juniorPracticePage = (file, qs) => (req, res) => {
+    if (req.isAuthenticated && req.isAuthenticated() && req.user && userHasRole(req.user, 'student')) {
+      return res.redirect(302, `/chat.html?${qs}=1`);
+    }
+    return res.sendFile(path.join(publicDir, file));
+  };
+  app.get('/psat-practice-test', juniorPracticePage('psat-practice-test.html', 'psattest'));
+  app.get('/psat-practice-test.html', juniorPracticePage('psat-practice-test.html', 'psattest'));
+  app.get('/psat', (req, res) => res.redirect(302, '/psat-practice-test'));
+  app.get('/preact-practice-test', juniorPracticePage('preact-practice-test.html', 'preacttest'));
+  app.get('/preact-practice-test.html', juniorPracticePage('preact-practice-test.html', 'preacttest'));
+  app.get('/preact', (req, res) => res.redirect(302, '/preact-practice-test'));
+  app.get('/presat', (req, res) => res.redirect(302, '/psat-practice-test'));
+  // Every test we offer on one page: the four full practice tests. Public;
+  // the cards link to the pages above.
+  app.get('/testprep', sendHtml('testprep.html'));
+  app.get('/test-prep', (req, res) => res.redirect(302, '/testprep'));
   // The SAT test's Desmos graphing calculator: a redirect that attaches our
   // API key (DESMOS_API_KEY), or a 404 the runner falls back from. Public —
   // the guest test at /sat uses it too. See utils/desmos.js.

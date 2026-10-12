@@ -66,6 +66,12 @@ const CONVERSION_EVENTS = [
   'sat_guest_started',     // the same three for the public SAT test (/sat)
   'sat_guest_completed',
   'sat_guest_claimed',
+  'psat_guest_started',    // ...the public PSAT test (/psat)
+  'psat_guest_completed',
+  'psat_guest_claimed',
+  'preact_guest_started',  // ...and the public PreACT test (/preact)
+  'preact_guest_completed',
+  'preact_guest_claimed',
 ];
 
 const conversionEventSchema = new mongoose.Schema({

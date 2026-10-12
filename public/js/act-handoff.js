@@ -20,7 +20,8 @@
 //     for the student who took the test).
 //
 // The SAT's public test (/sat) arrives as ?from=sat and works the same way,
-// reading its own guest record.
+// reading its own guest record; so do the PSAT (?from=psat) and PreACT
+// (?from=preact).
 //
 // Reads only what act-test.js wrote to localStorage. Display-only: the claim
 // itself is still /api/act-test/claim on chat.html, authorised by the guest
@@ -32,6 +33,8 @@
   var EXAMS = {
     act: { name: 'ACT', guestKey: 'mathmatix.actGuestTest' },
     sat: { name: 'SAT', guestKey: 'mathmatix.satGuestTest' },
+    psat: { name: 'PSAT', guestKey: 'mathmatix.psatGuestTest' },
+    preact: { name: 'PreACT', guestKey: 'mathmatix.preactGuestTest' },
   };
   var FLAG_KEY = 'mathmatix.actHandoff';
   var GUEST_TTL_MS = 14 * 24 * 60 * 60 * 1000; // models/actTestSession GUEST_TTL_MS
@@ -41,13 +44,13 @@
   function fromExam() {
     try {
       var q = new URLSearchParams(window.location.search || '').get('from');
-      if (q === 'act' || q === 'sat') {
+      if (Object.prototype.hasOwnProperty.call(EXAMS, q)) {
         sessionStorage.setItem(FLAG_KEY, q);
         return q;
       }
       var f = sessionStorage.getItem(FLAG_KEY);
       if (f === '1') return 'act';
-      return f === 'act' || f === 'sat' ? f : null;
+      return f && Object.prototype.hasOwnProperty.call(EXAMS, f) ? f : null;
     } catch { return null; }
   }
 

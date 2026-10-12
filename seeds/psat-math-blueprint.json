@@ -1,0 +1,165 @@
+{
+  "_comment": "Digital PSAT/NMSQT (and PSAT 10) Math blueprint. The College Board builds the PSAT to the SAT's own shape: 44 questions, two adaptive 22-question, 35-minute modules, the same four content domains in the same shares, Desmos and the reference sheet. What differs is reach: fewer of the hardest questions, and a 160-760 Math scale that sits on the SAT's own scale (a PSAT score predicts the SAT score the same student would earn that day). So this draws the SAT bank (source sat-fable) on a lower difficulty curve and scores with the SAT's IRT line, clamped to 160-760. Forms share the bank with the SAT; the seen-ledger keeps a signed-in student from meeting a PSAT question again on a later SAT.",
+  "testId": "psat-math",
+  "title": "PSAT Math Practice Test",
+  "subject": "psat-math",
+  "totalItems": 44,
+  "timeLimitMinutes": 70,
+  "choicesPerItem": 4,
+  "_answerTypesComment": "About 75% multiple choice, 25% grid-in on the real section. The assembler does not pace the mix; the bank's own share (101 MC / 31 grid-in = 23% grid-in) carries through the draw.",
+  "answerTypes": [
+    "multiple-choice",
+    "constructed-response"
+  ],
+  "_sourcesComment": "REQUIRED for this blueprint. The skills below are unified-taxonomy ids shared with the whole tutoring bank; without a source pin a SAT form would draw worksheet practice items. See utils/actTestAssembler.js bankFilter.",
+  "sources": [
+    "sat-fable"
+  ],
+  "_structuralLookAlikesComment": "SAT stems are mostly math, so the ACT-tuned word-overlap template check never fires on them: one form carried both 'If √(x + 7) = 5' and 'If √(x − 4) + 3 = 8'. With this on, a form never holds two items of one structuralSignature (utils/actTestAssembler.js) while the category has anything else. Pinned by tests/integration/satLookAlikes.test.js.",
+  "structuralLookAlikes": true,
+  "scoreScale": {
+    "min": 160,
+    "max": 760
+  },
+  "_categoryWeightsComment": "The PSAT tests the SAT's four Math domains in approximately the SAT's shares, so this keeps the SAT's 15/15/7/7 split and the two reports read alike.",
+  "categoryWeights": {
+    "algebra": 15,
+    "advanced-math": 15,
+    "problem-solving-data": 7,
+    "geometry-trig": 7
+  },
+  "skillsByCategory": {
+    "algebra": [
+      "ALG1.EQV.1",
+      "ALG1.EQV.3",
+      "ALG1.EQV.7",
+      "ALG1.FNC.1",
+      "ALG1.FNC.4",
+      "ALG1.FNC.5"
+    ],
+    "advanced-math": [
+      "ALG1.EQV.10",
+      "ALG1.EQV.15",
+      "ALG1.FNC.10",
+      "ALG1.FNC.8",
+      "ALG2.EQV.12",
+      "ALG2.EQV.13",
+      "ALG2.EQV.15",
+      "ALG2.EQV.16",
+      "ALG2.EQV.6",
+      "ALG2.FNC.6",
+      "MS.QNT.9"
+    ],
+    "problem-solving-data": [
+      "ALG1.DTA.1",
+      "ALG1.DTA.2",
+      "ALG1.DTA.3",
+      "ALG2.DTA.1",
+      "ALG2.DTA.3",
+      "MS.PRP.5",
+      "MS.PRP.7"
+    ],
+    "geometry-trig": [
+      "GEO.PRP.5",
+      "GEO.SPC.11",
+      "GEO.SPC.16",
+      "GEO.SPC.18",
+      "GEO.SPC.4",
+      "MS.SPC.6"
+    ]
+  },
+  "_difficultyRampComment": "Lower than the SAT's (2 -> 4): the PSAT tops out a band below it. Targets read against the bank's 1-5 difficulty (calibrated theta where measured).",
+  "difficultyRamp": [
+    {
+      "position": 1,
+      "targetDifficulty": 1.8
+    },
+    {
+      "position": 44,
+      "targetDifficulty": 3.5
+    }
+  ],
+  "_modulesComment": "The digital SAT Math section is two modules of 22 questions and 35 minutes each. Module 1 is the same mixed-difficulty module for everyone; Module 2 is HARDER or EASIER depending on Module 1, and once it starts Module 1 is closed. Domain counts are split across the two modules so the section still totals 15/15/7/7. The top-level categoryWeights/difficultyRamp/timeLimitMinutes describe the whole section; each module's own values are what its form is assembled from.",
+  "modules": [
+    {
+      "n": 1,
+      "items": 22,
+      "timeLimitMinutes": 35,
+      "categoryWeights": {
+        "algebra": 8,
+        "advanced-math": 7,
+        "problem-solving-data": 4,
+        "geometry-trig": 3
+      },
+      "difficultyRamp": [
+        {
+          "position": 1,
+          "targetDifficulty": 1.8
+        },
+        {
+          "position": 22,
+          "targetDifficulty": 3.4
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "items": 22,
+      "timeLimitMinutes": 35,
+      "categoryWeights": {
+        "algebra": 7,
+        "advanced-math": 8,
+        "problem-solving-data": 3,
+        "geometry-trig": 4
+      },
+      "difficultyRamp": [
+        {
+          "position": 1,
+          "targetDifficulty": 2.2
+        },
+        {
+          "position": 22,
+          "targetDifficulty": 3.2
+        }
+      ],
+      "routes": {
+        "harder": {
+          "difficultyRamp": [
+            {
+              "position": 1,
+              "targetDifficulty": 2.6
+            },
+            {
+              "position": 22,
+              "targetDifficulty": 3.6
+            }
+          ]
+        },
+        "easier": {
+          "difficultyRamp": [
+            {
+              "position": 1,
+              "targetDifficulty": 1.8
+            },
+            {
+              "position": 22,
+              "targetDifficulty": 2.8
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "_routingComment": "Module 2 is harder when the Module 1 ability estimate (MAP, Rasch, bank difficulty 1-5 mapped to -3..+3 logits) is at least harderIfTheta. College Board does not publish its cut; 0 means 'did about as well as an average student on a mixed module' (roughly half right). Move it once real practice results can be compared with official scores.",
+  "routing": {
+    "harderIfTheta": 0
+  },
+  "_irtScaleComment": "The SAT's line (center 510, 120 per logit), clamped to the PSAT/NMSQT's 160-760: the PSAT reports on the SAT scale, so one ability reads as one number on both.",
+  "irtScale": {
+    "center": 510,
+    "perLogit": 120,
+    "min": 160,
+    "max": 760,
+    "round": 10
+  }
+}

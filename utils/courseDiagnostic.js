@@ -118,11 +118,13 @@ async function buildCourseDiagnostic(user, courseId) {
 
   try {
     if (card.type === 'act-practice' || card.type === 'sat-practice') {
-      // That exam's own test: a completed SAT is not an ACT baseline (or the
-      // reverse) — each prep course measures from its own test.
-      const { getTestDef, testScope } = require('./practiceTests');
-      const def = getTestDef(card.type === 'sat-practice' ? 'sat-math' : 'act-math');
-      const taken = await ActTestSession.countDocuments({ userId: user._id, status: 'completed', ...testScope(def) });
+      // That exam family's own tests: a completed SAT is not an ACT baseline
+      // (or the reverse) — each prep course measures from its own exam. A
+      // PSAT is an SAT-prep baseline and a PreACT an ACT-prep one: they feed
+      // those courses (utils/practiceTests.js prepFor).
+      const { courseTestScope } = require('./practiceTests');
+      const prepCourse = card.type === 'sat-practice' ? 'sat-prep' : 'act-prep';
+      const taken = await ActTestSession.countDocuments({ userId: user._id, status: 'completed', ...courseTestScope(prepCourse) });
       if (taken > 0) return null;                 // already took this exam's practice test
     } else if (card.type === 'starting-point') {
       const expired = user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) < new Date();
