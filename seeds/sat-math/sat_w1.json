@@ -446,7 +446,7 @@
    "skill": "Right triangles & trigonometry",
    "difficulty": "H",
    "type": "mc",
-   "stem": "In right triangle ABC shown, the right angle is at C. If sin A = 3/5, what is the value of tan B?",
+   "stem": "In right triangle ABC shown, the right angle is at C. If sin A = 3/5, what is the value of tan B?\nNote: Figure not drawn to scale.",
    "choices": [
     "3/5",
     "3/4",

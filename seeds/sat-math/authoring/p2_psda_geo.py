@@ -143,7 +143,7 @@ def add(b):
          custom="assert C[K] == '12'\n")
 
     b.mc('GEO', 'Right triangles (Pythagorean theorem)', 'E',
-         'In the right triangle shown, the legs have lengths 7 and 24. What is the length c of the hypotenuse?',
+         'In the right triangle shown, the legs have lengths 7 and 24. What is the length c of the hypotenuse?\nNote: Figure not drawn to scale.',
          '25', ['31', '17', '√527'],
          'c² = 7² + 24² = 49 + 576 = 625, so c = 25. (√527 subtracts the squares.)',
          "ans = sp.sqrt(7**2 + 24**2)\n",

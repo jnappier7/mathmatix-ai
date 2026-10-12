@@ -189,14 +189,14 @@ def add(b):
           "ans = sp.Rational(360, 24)\n")
 
     b.mc('GEO', 'Right triangles (Pythagorean theorem)', 'E',
-         'In the right triangle shown, the legs have lengths 9 and 12. What is the length h of the hypotenuse?',
+         'In the right triangle shown, the legs have lengths 9 and 12. What is the length h of the hypotenuse?\nNote: Figure not drawn to scale.',
          '15', ['21', '3√7', '13'],
          'h² = 9² + 12² = 81 + 144 = 225, so h = 15. (3√7 comes from subtracting the squares instead of adding them.)',
          "ans = sp.sqrt(9**2 + 12**2)\n",
          figure={'kind': 'geometry', 'params': {'shape': 'triangle', 'labels': {'horizontal_leg': '12', 'vertical_leg': '9', 'hypotenuse': 'h'}, 'marks': {'right_angle': 'between legs'}}})
 
     b.mc('GEO', RT, 'M',
-         'In the right triangle shown, the hypotenuse has length 14, and the angle at the lower right measures 30°. What is the length x of the side opposite the 30° angle?',
+         'In the right triangle shown, the hypotenuse has length 14, and the angle at the lower right measures 30°. What is the length x of the side opposite the 30° angle?\nNote: Figure not drawn to scale.',
          '7', ['7√3', '14√3', '28'],
          'The side opposite 30° is hypotenuse × sin 30° = 14 × 1/2 = 7. (7√3 is the side adjacent to the 30° angle.)',
          "ans = 14 * sp.sin(sp.pi/6)\n",

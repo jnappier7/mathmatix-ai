@@ -8,7 +8,7 @@
    "skill": "Lines, angles, and triangles",
    "difficulty": "E",
    "type": "mc",
-   "stem": "In the figure, lines p and q are parallel and are cut by a transversal t. One of the angles formed measures 65°. What is the value of x?",
+   "stem": "In the figure, lines p and q are parallel and are cut by a transversal t. One of the angles formed measures 65°. What is the value of x?\nNote: Figure not drawn to scale.",
    "choices": [
     "65",
     "115",
@@ -51,7 +51,7 @@
    "skill": "Area and volume",
    "difficulty": "E",
    "type": "mc",
-   "stem": "The side panel of a small skate ramp is a triangle with a base of 8 feet and a height of 3.5 feet, as shown. What is the area, in square feet, of the side panel?",
+   "stem": "The side panel of a small skate ramp is a triangle with a base of 8 feet and a height of 3.5 feet, as shown. What is the area, in square feet, of the side panel?\nNote: Figure not drawn to scale.",
    "choices": [
     "5.75",
     "11.5",
@@ -226,7 +226,7 @@
    "skill": "Right triangles and trigonometry",
    "difficulty": "M",
    "type": "mc",
-   "stem": "A guy-wire supports a cell tower. The wire is anchored to level ground at a point 9 meters from the base of the tower and is attached to the tower at a point 12 meters above the ground, as shown. What is the length, in meters, of the guy-wire?",
+   "stem": "A guy-wire supports a cell tower. The wire is anchored to level ground at a point 9 meters from the base of the tower and is attached to the tower at a point 12 meters above the ground, as shown. What is the length, in meters, of the guy-wire?\nNote: Figure not drawn to scale.",
    "choices": [
     "3",
     "15",
@@ -276,7 +276,7 @@
    "skill": "Right triangles and trigonometry",
    "difficulty": "M",
    "type": "mc",
-   "stem": "A person is flying a kite on level ground. The 50-meter string is fully extended and pulled taut, and it makes an angle of 37° with the horizontal, as shown. Which expression gives the height, in meters, of the kite above the level of the person's hand?",
+   "stem": "A person is flying a kite on level ground. The 50-meter string is fully extended and pulled taut, and it makes an angle of 37° with the horizontal, as shown. Which expression gives the height, in meters, of the kite above the level of the person's hand?\nNote: Figure not drawn to scale.",
    "choices": [
     "50 sin 37°",
     "50 cos 37°",

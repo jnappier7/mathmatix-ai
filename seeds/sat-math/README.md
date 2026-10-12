@@ -49,12 +49,17 @@ Before shipping a batch:
    every mutation must FAIL its verify (proves the checks have teeth);
 3. a blind re-solve by a separate solver from stems alone (no keys);
 4. `scripts/auditSatItems.py`, then `scripts/ingestSatItems.py`.
+5. Look at every figure (a contact sheet of the batch's SVGs): automated checks
+   cannot see a label on the wrong side or a schematic that contradicts the
+   stem. Geometry figures are schematic — their stems must say "Note: Figure
+   not drawn to scale." (pinned by tests/unit/satItems.test.js).
 
 | Batch | Items | ALG / ADV / PSDA / GEO | MC / grid-in | E / M / H | Figures |
 |-------|-------|------------------------|--------------|-----------|---------|
 | p1 (2026-10-08) | 89 | 27 / 30 / 16 / 16 | 66 / 23 | 21 / 37 / 31 | 16 |
 | p2 (2026-10-09) | 92 | 33 / 33 / 13 / 13 | 68 / 24 | 22 / 39 / 31 | 18 |
 | p3 (2026-10-13) | 92 | 34 / 34 / 12 / 12 | 65 / 27 | 10 / 43 / 39 | 12 |
+| p4 (2026-10-13) | 92 | 30 / 30 / 16 / 16 | 68 / 24 | 14 / 45 / 33 | 36 |
 
 ## Pipeline
 

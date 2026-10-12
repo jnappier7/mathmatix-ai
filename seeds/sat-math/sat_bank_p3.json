@@ -1934,7 +1934,7 @@
       "skill": "Right triangles and trigonometry",
       "difficulty": "H",
       "type": "spr",
-      "stem": "In the right triangle shown, the side opposite the 30° angle has length 8. What is the length h of the hypotenuse?",
+      "stem": "In the right triangle shown, the side opposite the 30° angle has length 8. What is the length h of the hypotenuse?\nNote: Figure not drawn to scale.",
       "choices": null,
       "answer": null,
       "spr_answer": "16",

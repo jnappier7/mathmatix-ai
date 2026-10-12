@@ -2004,7 +2004,7 @@
       "skill": "Right triangles (Pythagorean theorem)",
       "difficulty": "E",
       "type": "mc",
-      "stem": "In the right triangle shown, the legs have lengths 7 and 24. What is the length c of the hypotenuse?",
+      "stem": "In the right triangle shown, the legs have lengths 7 and 24. What is the length c of the hypotenuse?\nNote: Figure not drawn to scale.",
       "choices": [
         "31",
         "17",

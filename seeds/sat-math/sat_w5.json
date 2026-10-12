@@ -337,7 +337,7 @@
    "difficulty": "M",
    "type": "mc",
    "module": 1,
-   "stem": "In a physics lab, a cart rolls down a straight ramp. As shown, the ramp, the floor, and a vertical support form a right triangle: the ramp is 13 meters long, the support is 5 meters tall, and the base along the floor is 12 meters. What is the sine of the angle the ramp makes with the floor?",
+   "stem": "In a physics lab, a cart rolls down a straight ramp. As shown, the ramp, the floor, and a vertical support form a right triangle: the ramp is 13 meters long, the support is 5 meters tall, and the base along the floor is 12 meters. What is the sine of the angle the ramp makes with the floor?\nNote: Figure not drawn to scale.",
    "choices": [
     "5/13",
     "5/12",
