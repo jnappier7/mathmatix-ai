@@ -117,7 +117,7 @@ input[type=text]{font:inherit;background:var(--night);color:var(--chalk);border:
 .fb .why b{color:var(--led)}
 .fb .idle{color:var(--muted)}
 .next{background:var(--led);color:var(--ink);border:0;border-radius:6px;padding:10px 18px;font-family:var(--display);font-weight:900;font-size:1.15rem;text-transform:uppercase;letter-spacing:.05em}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.playbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .quit{background:transparent;color:var(--muted);border:1px solid var(--rail);border-radius:6px;padding:6px 12px;font-size:.88rem}
 
 /* ---------- touchdown ---------- */
@@ -243,7 +243,7 @@ html .go{color:var(--ink)}
 <!-- ================= PLAY ================= -->
 <section id="play" hidden>
   <div style="display:flex;flex-direction:column;gap:12px">
-    <div class="topbar"><div class="eyebrow" id="pbname"></div><button class="quit" id="quit">End game</button></div>
+    <div class="playbar"><div class="eyebrow" id="pbname"></div><button class="quit" id="quit">End game</button></div>
     <div class="sb">
       <div><span class="k" id="clk-k">Clock</span><span class="v" id="clock">2:00</span></div>
       <div><span class="k">Score</span><span class="v" id="score">0</span></div>
