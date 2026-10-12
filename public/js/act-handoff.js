@@ -1,6 +1,6 @@
 // public/js/act-handoff.js
 //
-// Carry a finished guest ACT test through signup.
+// Carry a finished guest ACT or SAT test through signup.
 //
 // The public test (/act, public/js/act-test.js) ends on "See what I missed —
 // free", which led to signup -> onboarding -> the account form with no sign
@@ -19,36 +19,48 @@
 //     still changeable; "who" is NOT preselected — a parent may be signing up
 //     for the student who took the test).
 //
+// The SAT's public test (/sat) arrives as ?from=sat and works the same way,
+// reading its own guest record.
+//
 // Reads only what act-test.js wrote to localStorage. Display-only: the claim
 // itself is still /api/act-test/claim on chat.html, authorised by the guest
 // token, never by anything this file shows.
 (function () {
   'use strict';
 
-  var GUEST_KEY = 'mathmatix.actGuestTest';   // public/js/act-test.js GUEST_KEY
+  // public/js/act-test.js EXAMS[*].guestKey
+  var EXAMS = {
+    act: { name: 'ACT', guestKey: 'mathmatix.actGuestTest' },
+    sat: { name: 'SAT', guestKey: 'mathmatix.satGuestTest' },
+  };
   var FLAG_KEY = 'mathmatix.actHandoff';
   var GUEST_TTL_MS = 14 * 24 * 60 * 60 * 1000; // models/actTestSession GUEST_TTL_MS
 
-  function fromAct() {
+  // Which test the visitor came from: 'act', 'sat', or null. The flag held
+  // '1' before the SAT existed; that still means the ACT.
+  function fromExam() {
     try {
-      if (new URLSearchParams(window.location.search || '').get('from') === 'act') {
-        sessionStorage.setItem(FLAG_KEY, '1');
-        return true;
+      var q = new URLSearchParams(window.location.search || '').get('from');
+      if (q === 'act' || q === 'sat') {
+        sessionStorage.setItem(FLAG_KEY, q);
+        return q;
       }
-      return sessionStorage.getItem(FLAG_KEY) === '1';
-    } catch { return false; }
+      var f = sessionStorage.getItem(FLAG_KEY);
+      if (f === '1') return 'act';
+      return f === 'act' || f === 'sat' ? f : null;
+    } catch { return null; }
   }
 
-  function finishedGuestTest() {
+  function finishedGuestTest(exam) {
     try {
-      var g = JSON.parse(localStorage.getItem(GUEST_KEY) || 'null');
+      var g = JSON.parse(localStorage.getItem(exam.guestKey) || 'null');
       if (!g || g.status !== 'completed' || !g.sessionId || !g.token) return null;
       if (g.completedAt && Date.now() - g.completedAt > GUEST_TTL_MS) return null;
       return g;
     } catch { return null; }
   }
 
-  function banner(g) {
+  function banner(g, exam) {
     var el = document.createElement('div');
     el.className = 'act-handoff';
     el.setAttribute('role', 'status');
@@ -59,7 +71,7 @@
     if (missed != null) facts.push(missed === 0 ? 'a perfect section' : missed + ' question' + (missed === 1 ? '' : 's') + ' to review');
     var title = document.createElement('div');
     title.className = 'act-handoff-title';
-    title.textContent = '✓ Your ACT results are saved';
+    title.textContent = '✓ Your ' + exam.name + ' results are saved';
     var body = document.createElement('div');
     body.className = 'act-handoff-body';
     body.textContent = (facts.length ? facts.join(' · ') + '. ' : '')
@@ -83,15 +95,17 @@
   }
 
   function run() {
-    if (!fromAct()) return;
-    var g = finishedGuestTest();
+    var key = fromExam();
+    if (!key) return;
+    var exam = EXAMS[key];
+    var g = finishedGuestTest(exam);
     if (!g) return;
     injectStyles();
 
     // Onboarding: banner above the questions, ACT preselected on the goal.
     var onboarding = document.querySelector('.onboarding-body');
     if (onboarding) {
-      onboarding.insertBefore(banner(g), onboarding.firstChild);
+      onboarding.insertBefore(banner(g, exam), onboarding.firstChild);
       var goal = document.querySelector('input[name="onboarding-goal"][value="act_sat"]');
       if (goal && !document.querySelector('input[name="onboarding-goal"]:checked')) {
         goal.checked = true;
@@ -104,7 +118,7 @@
 
     // Signup: banner above the account form.
     var heading = document.querySelector('.signup-container h2');
-    if (heading && heading.parentNode) heading.parentNode.insertBefore(banner(g), heading.nextSibling);
+    if (heading && heading.parentNode) heading.parentNode.insertBefore(banner(g, exam), heading.nextSibling);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);

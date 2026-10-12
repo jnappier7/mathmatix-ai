@@ -63,6 +63,9 @@ const CONVERSION_EVENTS = [
   'act_guest_started',     // guest assembled a form (context: totalItems)
   'act_guest_completed',   // guest scored (context: scaledScore, totalItems)
   'act_guest_claimed',     // test attached to an account (context: scaledScore, totalItems)
+  'sat_guest_started',     // the same three for the public SAT test (/sat)
+  'sat_guest_completed',
+  'sat_guest_claimed',
 ];
 
 const conversionEventSchema = new mongoose.Schema({

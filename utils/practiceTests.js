@@ -68,6 +68,7 @@ const TESTS = {
   'act-math': {
     testId: 'act-math',
     label: 'ACT',
+    eventPrefix: 'act',            // conversion events: act_guest_started, ...
     blueprint: ACT_BLUEPRINT,
     // Missing ids fall through to the raw id, as they always have.
     skillName: (id) => ACT_SKILL_NAMES[id],
@@ -78,6 +79,7 @@ const TESTS = {
   'sat-math': {
     testId: 'sat-math',
     label: 'SAT',
+    eventPrefix: 'sat',
     blueprint: SAT_BLUEPRINT,
     // Unified-taxonomy ids: the shared student-facing label file, never the
     // raw id (a dotted id once reached a student as a skill name).

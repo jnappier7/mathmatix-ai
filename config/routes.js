@@ -359,8 +359,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // SAT Math practice test — the SAME runner, mounted as the SAT. Every
   // ACT-specific choice (blueprint, scale, skill names, prep course) comes from
   // utils/practiceTests.js; sessions are scoped by testId, so the two tests
-  // never resume, abandon or report each other's attempts. No guest rail yet.
+  // never resume, abandon or report each other's attempts.
   app.use('/api/sat-test', isAuthenticated, useTest('sat-math'), actTestRoutes);
+  // ...and its public guest rail for /sat, exactly like the ACT's above.
+  app.use('/api/sat-practice', actGuestStartLimiter, useTest('sat-math'), actTestRoutes.guestRouter);
   app.use('/api/calc-bootcamp', isAuthenticated, calcBootcampRoutes);
   app.use('/api/mastery', isAuthenticated, masteryRoutes);
   app.use('/api/nudges', isAuthenticated, nudgeRoutes);
@@ -895,6 +897,16 @@ function registerHtmlRoutes(app) {
   app.get('/act-practice-test', actPracticePage);
   app.get('/act-practice-test.html', actPracticePage);
   app.get('/act', (req, res) => res.redirect(302, '/act-practice-test'));
+  // The free SAT Math practice test — the same funnel as the ACT's.
+  const satPracticePage = (req, res) => {
+    if (req.isAuthenticated && req.isAuthenticated() && req.user && userHasRole(req.user, 'student')) {
+      return res.redirect(302, '/chat.html?sattest=1');
+    }
+    return res.sendFile(path.join(publicDir, 'sat-practice-test.html'));
+  };
+  app.get('/sat-practice-test', satPracticePage);
+  app.get('/sat-practice-test.html', satPracticePage);
+  app.get('/sat', (req, res) => res.redirect(302, '/sat-practice-test'));
   // Audience pages. The homepage speaks to parents; the student and teacher
   // pitches used to be two of three tabs in the middle of it, which asked every
   // parent to read past them. Short aliases because these get linked directly.
