@@ -50,6 +50,7 @@ const { GUEST_TTL_MS } = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { assembleForm, rawToScaled, scaledRange } = require('../utils/actTestAssembler');
 const { getTestDef, testScope } = require('../utils/practiceTests');
+const { isModular, moduleRange, moduleBlueprint, routeFor, irtScaled } = require('../utils/testModules');
 const { normalizeOptions, frozenPickForGrading, LABELS: MC_LABELS } = require('../utils/mcOptions');
 const CourseSession = require('../models/courseSession');
 const {
@@ -95,6 +96,48 @@ const defOfSession = (session) => getTestDef(session && session.testId);
 
 // A weak skill's name in the report; the raw id when the test has none.
 const skillNameOf = (def, id) => def.skillName(id) || id;
+
+// ── Modular tests (the SAT's two adaptive modules) ─────────────────────────
+// A test whose blueprint declares `modules` is served one module at a time:
+// only the current module's questions are reachable, and finishing it
+// (/next-module) assembles the next one for the route the last one earned.
+// A blueprint without modules (the ACT) never reaches any of this.
+
+/** { current, count, first, last, totalItems } for a modular session, else null. */
+function moduleInfo(session) {
+  const bp = defOfSession(session).blueprint;
+  if (!isModular(bp)) return null;
+  const n = session.currentModule || 1;
+  const r = moduleRange(bp, n);
+  return { current: n, count: bp.modules.length, first: r.first, last: r.last, totalItems: bp.totalItems };
+}
+
+/** Is this position answerable now? Always, for a test without modules. */
+function inCurrentModule(session, position) {
+  const m = moduleInfo(session);
+  return !m || (position >= m.first && position <= m.last);
+}
+
+/**
+ * What /start assembles: the whole form, or Module 1 of a modular test.
+ * Returns the items and clock for the session, plus the fields to store.
+ */
+async function assembleOpening(def, { seed, excludeIds }) {
+  const bp = def.blueprint;
+  if (!isModular(bp)) {
+    const form = await assembleForm({ blueprint: bp, seed, excludeIds });
+    return { form, items: form.items, timeLimitMinutes: bp.timeLimitMinutes, fields: {} };
+  }
+  const mod1 = bp.modules[0];
+  const form = await assembleForm({ blueprint: moduleBlueprint(bp, mod1.n), seed, excludeIds });
+  const items = form.items.map((it) => ({ ...it, module: mod1.n }));
+  return {
+    form,
+    items,
+    timeLimitMinutes: mod1.timeLimitMinutes,
+    fields: { currentModule: mod1.n, modules: [{ n: mod1.n, startedAt: new Date(), timeLimitMinutes: mod1.timeLimitMinutes }] },
+  };
+}
 
 // Seconds left on the section clock, anchored to startedAt — NOT to whenever
 // the client happened to reopen the page. The real ACT has no pause; without
@@ -179,6 +222,28 @@ async function writeResponse(session, item, { answer, flagged, responseTime, seq
  * ACT too), tallies by category and skill, and stamps the session completed.
  * Mutates `session`; the caller saves it.
  */
+async function gradeRows(session, inScope = () => true) {
+  const answeredRows = session.responses.filter((r) => inScope(r.position) && r.answer != null && r.answer !== '');
+  const keyByProblemId = new Map();
+  if (answeredRows.length) {
+    const probs = await Problem.find({ problemId: { $in: answeredRows.map((r) => r.problemId) } });
+    probs.forEach((p) => keyByProblemId.set(p.problemId, p));
+  }
+  const itemByPos = new Map(session.items.map((it) => [it.position, it]));
+  for (const r of session.responses) {
+    if (!inScope(r.position)) continue;
+    if (r.answer != null && r.answer !== '') {
+      const p = keyByProblemId.get(r.problemId);
+      const item = itemByPos.get(r.position);
+      r.correct = p ? !!p.checkAnswer(frozenPickForGrading(r.answer, item && item.options, p.options)) : false;
+      r.skipped = false;
+    } else {
+      r.correct = false;
+      r.skipped = true;
+    }
+  }
+}
+
 async function gradeSession(session) {
   const answeredRows = session.responses.filter((r) => r.answer != null && r.answer !== '');
   const keyByProblemId = new Map();
@@ -240,7 +305,11 @@ function tallyResponses(session) {
   // 28-item form used to score 24. Forms shrink as the ledger grows, so that
   // capped the re-test harder than the baseline and turned real improvement
   // into a downward trend line.
-  const scaled = rawToScaled(raw, defOfSession(session).blueprint, total);
+  // A modular test (the SAT) is scored from the whole response pattern with
+  // IRT, so which Module 2 the student earned is priced in; a fixed form
+  // (the ACT) keeps its raw-to-scale table. See utils/testModules.js.
+  const bp = defOfSession(session).blueprint;
+  const scaled = bp.irtScale ? irtScaled(session.items, session.responses, bp) : rawToScaled(raw, bp, total);
 
   const byCategory = {};
   const bySkill = {};
@@ -280,6 +349,7 @@ function applyAnswerSheet(session, sheet) {
     const pos = parseInt(entry.position, 10);
     const item = byPos.get(pos);
     if (!item) continue;
+    if (!inCurrentModule(session, pos)) continue;          // a closed module's answers are final
     if (entry.problemId && entry.problemId !== item.problemId) continue;
     const value = normalizeAnswer(entry.answer);
     if (value !== null && item.answerType && item.answerType !== 'multiple-choice') {
@@ -356,6 +426,7 @@ router.post('/start', async (req, res) => {
           answered: active.responses.length,
           timeLimitMinutes: active.timeLimitMinutes,
           remainingSeconds: secondsRemaining(active),
+          module: moduleInfo(active),
         });
       }
     }
@@ -373,7 +444,8 @@ router.post('/start', async (req, res) => {
     // (any prior session) may reappear, or the re-test measures memory of the
     // question, not the skill. Exclude their whole seen-history.
     const excludeIds = await seenProblemIdsForUser(userId);
-    const form = await assembleForm({ blueprint, seed, excludeIds });
+    const opening = await assembleOpening(def, { seed, excludeIds });
+    const { form } = opening;
 
     if (form.coverage.filled === 0) {
       if (excludeIds.length > 0) {
@@ -401,18 +473,20 @@ router.post('/start', async (req, res) => {
       userId,
       testId: blueprint.testId,
       seed: form.meta.seed,
-      items: form.items,
-      timeLimitMinutes: blueprint.timeLimitMinutes,
+      items: opening.items,
+      timeLimitMinutes: opening.timeLimitMinutes,
       coverage: form.coverage,
+      ...opening.fields,
     });
 
     return res.json({
       sessionId: session._id,
       started: true,
-      totalItems: form.items.length,
-      timeLimitMinutes: blueprint.timeLimitMinutes,
-      remainingSeconds: blueprint.timeLimitMinutes * 60,
+      totalItems: opening.items.length,
+      timeLimitMinutes: opening.timeLimitMinutes,
+      remainingSeconds: opening.timeLimitMinutes * 60,
       coverage: form.coverage,           // surfaces partial coverage honestly
+      module: moduleInfo(session),
     });
   } catch (err) {
     console.error('[actTest] start error:', err.message);
@@ -473,6 +547,10 @@ async function serveProblem(req, res) {
     if (!Number.isInteger(position) || position < 1 || position > session.items.length) {
       return res.status(400).json({ message: 'position must be between 1 and ' + session.items.length + '.' });
     }
+    // A finished module is closed, as on the real SAT: no going back.
+    if (!inCurrentModule(session, position)) {
+      return res.status(409).json({ message: 'That module is closed.', moduleLocked: true, module: moduleInfo(session) });
+    }
     const item = session.items.find((it) => it.position === position) || session.items[position - 1];
     const saved = session.responses.find((r) => r.position === item.position);
 
@@ -493,6 +571,7 @@ async function serveProblem(req, res) {
       response: saved ? { answer: saved.answer || null, flagged: !!saved.flagged, seq: Number(saved.seq) || 0 } : null,
       total: session.items.length,
       remainingSeconds: secondsRemaining(session),
+      module: moduleInfo(session),
     });
   } catch (err) {
     console.error('[actTest] problem error:', err.message);
@@ -537,6 +616,9 @@ async function saveAnswer(req, res) {
     if (!item || item.problemId !== problemId) {
       return res.status(409).json({ message: 'Question mismatch; refetch the question.' });
     }
+    if (!inCurrentModule(session, pos)) {
+      return res.status(409).json({ message: 'That module is closed.', moduleLocked: true });
+    }
 
     const result = await writeResponse(session, item, {
       answer, flagged, responseTime, seq,
@@ -576,7 +658,8 @@ async function serveOverview(req, res) {
       status: session.status,
       timeLimitMinutes: session.timeLimitMinutes,
       remainingSeconds: secondsRemaining(session),
-      items: session.items.map((it) => {
+      module: moduleInfo(session),
+      items: session.items.filter((it) => inCurrentModule(session, it.position)).map((it) => {
         const r = byPos.get(it.position);
         return {
           position: it.position,
@@ -816,13 +899,14 @@ async function applyCompletionEffects(req, session, { bySkill, weakSkills, plan 
 /** The full (signed-in) results report. */
 function buildFullReport(session, { raw, total, scaled, byCategory, weakSkills, plan }, extras = {}) {
   return {
-    timeLimitMinutes: session.timeLimitMinutes || null,   // so "3 min" reads "3 of 50 min"
+    timeLimitMinutes: sectionMinutes(session),   // so "3 min" reads "3 of 50 min"
     rawScore: raw,
     totalItems: total,
     scaledScore: scaled ? scaled.scaled : null,
     // The likely band around it — one sitting is an estimate, not a verdict.
-    scaledRange: scaledRange(raw, total, defOfSession(session).blueprint),
+    scaledRange: (scaled && scaled.range) || scaledRange(raw, total, defOfSession(session).blueprint),
     scaledApproximate: true,
+    moduleRoute: moduleRouteOf(session),
     // The bank could not fill the whole blueprint for this student, so the
     // estimate is projected from fewer questions. Say so rather than
     // presenting it as an equal comparison to a full-length attempt.
@@ -833,8 +917,8 @@ function buildFullReport(session, { raw, total, scaled, byCategory, weakSkills, 
     weakSkills,
     missedByGroup: missedGroupsFrom(session),
     plan,
-    durationMinutes: session.startedAt && session.completedAt
-      ? Math.round((session.completedAt - session.startedAt) / 60000)
+    durationMinutes: sectionStart(session) && session.completedAt
+      ? Math.round((session.completedAt - sectionStart(session)) / 60000)
       : null,
     ...extras,
   };
@@ -850,21 +934,22 @@ function buildFullReport(session, { raw, total, scaled, byCategory, weakSkills, 
 function buildGuestReport(session, { raw, total, scaled, byCategory }) {
   const missed = session.responses.filter((r) => r && !r.correct);
   return {
-    timeLimitMinutes: session.timeLimitMinutes || null,   // so "3 min" reads "3 of 50 min"
+    timeLimitMinutes: sectionMinutes(session),   // so "3 min" reads "3 of 50 min"
     rawScore: raw,
     totalItems: total,
     scaledScore: scaled ? scaled.scaled : null,
     // The likely band around it — one sitting is an estimate, not a verdict.
-    scaledRange: scaledRange(raw, total, defOfSession(session).blueprint),
+    scaledRange: (scaled && scaled.range) || scaledRange(raw, total, defOfSession(session).blueprint),
     scaledApproximate: true,
+    moduleRoute: moduleRouteOf(session),
     shortForm: !!(scaled && scaled.shortForm),
     blueprintItems: scaled ? scaled.blueprintLength : null,
     accuracy: total ? Math.round((raw / total) * 100) : 0,
     byCategory,
     missedCount: missed.length,
     skippedCount: missed.filter((r) => r.skipped).length,
-    durationMinutes: session.startedAt && session.completedAt
-      ? Math.round((session.completedAt - session.startedAt) / 60000)
+    durationMinutes: sectionStart(session) && session.completedAt
+      ? Math.round((session.completedAt - sectionStart(session)) / 60000)
       : null,
     locked: true,
   };
@@ -910,6 +995,105 @@ async function finishSession(session, answers, res) {
   await session.save();
   return { tally, sheetApplied };
 }
+
+// The whole section's clock for the report. A modular session's startedAt /
+// timeLimitMinutes describe only its CURRENT module, so a finished SAT read
+// "0 of 35 min" — the last module's clock, not the test's.
+function sectionStart(session) {
+  const first = (session.modules || []).find((m) => m && m.startedAt);
+  return first ? new Date(first.startedAt) : session.startedAt;
+}
+function sectionMinutes(session) {
+  return moduleInfo(session) ? defOfSession(session).blueprint.timeLimitMinutes : (session.timeLimitMinutes || null);
+}
+
+/** The route the last module was assembled for ('harder' | 'easier'), or null. */
+function moduleRouteOf(session) {
+  const mods = (session && session.modules) || [];
+  const routed = mods.filter((m) => m && m.route);
+  return routed.length ? routed[routed.length - 1].route : null;
+}
+
+// ── POST /next-module ───────────────────────────────────────
+// Close the current module and open the next — the SAT's adaptive step.
+// The closing module's answer sheet is applied (same rules as /complete),
+// its answers are graded HERE, privately, and the ability they show picks
+// the next module's route: harder or easier. Nothing about the grading or
+// the route is returned; like Bluebook, the student just gets Module 2.
+// The next module is assembled fresh, excluding everything already served
+// to this student, and starts its own clock (startedAt / timeLimitMinutes
+// are reset, so every existing clock rule applies to it unchanged).
+async function nextModule(req, res) {
+  try {
+    const { sessionId, answers } = req.body || {};
+    const session = await loadOwnedSession(sessionId, req.actOwner, res);
+    if (!session) return;
+    const m = moduleInfo(session);
+    if (!m) return res.status(400).json({ message: 'This test has no modules.' });
+    if (session.status !== 'in_progress') return res.status(409).json({ message: 'This test is already finished.' });
+    if (m.current >= m.count) return res.status(409).json({ message: 'This is the last module; submit the test.', lastModule: true });
+
+    // Away until the clock ran out with a mostly blank module: not an
+    // attempt, exactly as /complete treats it.
+    if (shouldAbandonOnExpiry(session)) {
+      session.status = 'abandoned';
+      session.abandonedReason = 'expired';
+      await session.save();
+      return res.json({ success: false, abandoned: true, reason: 'expired', message: "That test's clock ran out while you were away, so it wasn't scored. Start a fresh one when you're ready." });
+    }
+
+    applyAnswerSheet(session, answers);
+    const inThis = (pos) => pos >= m.first && pos <= m.last;
+    await gradeRows(session, inThis);
+    const def = defOfSession(session);
+    const bp = def.blueprint;
+    // Every question of the module counts toward routing — an unanswered one
+    // is wrong, as it will be in the score.
+    const modItems = session.items.filter((it) => inThis(it.position));
+    const byPos = new Map(session.responses.map((r) => [r.position, r]));
+    const graded = modItems.map((it) => ({ position: it.position, correct: !!(byPos.get(it.position) || {}).correct }));
+    const { route } = routeFor(bp, modItems, graded);
+
+    const next = m.current + 1;
+    const nextBp = moduleBlueprint(bp, next, route);
+    const served = session.items.map((it) => it.problemId);
+    const seen = session.userId ? await seenProblemIdsForUser(session.userId) : [];
+    const form = await assembleForm({
+      blueprint: nextBp,
+      seed: `${session._id}-m${next}`,
+      excludeIds: [...new Set([...served, ...seen])],
+    });
+    if (!form.items.length) {
+      return res.status(503).json({ message: 'The next module could not be built right now. Please try again.' });
+    }
+    const offset = moduleRange(bp, next).first - 1;
+    const now = new Date();
+    form.items.forEach((it) => session.items.push({ ...it, position: it.position + offset, module: next }));
+    session.modules = (session.modules || []).map((x) => (x.n === m.current ? { ...(x.toObject ? x.toObject() : x), submittedAt: now } : x));
+    session.modules.push({ n: next, route, startedAt: now, timeLimitMinutes: nextBp.timeLimitMinutes });
+    session.currentModule = next;
+    session.startedAt = now;
+    session.timeLimitMinutes = nextBp.timeLimitMinutes;
+    session.markModified('items');
+    session.markModified('modules');
+    session.markModified('responses');
+    await session.save();
+
+    return res.json({
+      success: true,
+      sessionId: session._id,
+      module: moduleInfo(session),
+      totalItems: session.items.length,
+      timeLimitMinutes: session.timeLimitMinutes,
+      remainingSeconds: secondsRemaining(session),
+    });
+  } catch (err) {
+    console.error('[actTest] next-module error:', err.message);
+    return res.status(500).json({ message: 'Could not start the next module.' });
+  }
+}
+router.post('/next-module', nextModule);
+guestRouter.post('/next-module', nextModule);
 
 // ── POST /complete ──────────────────────────────────────────
 router.post('/complete', async (req, res) => {
@@ -1129,6 +1313,7 @@ guestRouter.post('/start', async (req, res) => {
             answered: active.responses.length,
             timeLimitMinutes: active.timeLimitMinutes,
             remainingSeconds: secondsRemaining(active),
+            module: moduleInfo(active),
           });
         }
         // Otherwise (expired with a full sheet) fall through to a fresh test;
@@ -1150,11 +1335,11 @@ guestRouter.post('/start', async (req, res) => {
       ...(await guestSeenProblemIds(previous)),
       ...(await guestRecordSeenProblemIds(prints, def)),
     ])];
-    const form = await assembleForm({
-      blueprint,
+    const opening = await assembleOpening(def, {
       seed: `guest-${crypto.randomBytes(8).toString('hex')}-${Date.now()}`,
       excludeIds,
     });
+    const { form } = opening;
     if (form.coverage.filled === 0) {
       return res.status(503).json({
         message: `The ${def.label} practice test is not available right now. Please try again later.`,
@@ -1169,9 +1354,10 @@ guestRouter.post('/start', async (req, res) => {
     const session = await ActTestSession.create({
       testId: blueprint.testId,
       seed: form.meta.seed,
-      items: form.items,
-      timeLimitMinutes: blueprint.timeLimitMinutes,
+      items: opening.items,
+      timeLimitMinutes: opening.timeLimitMinutes,
       coverage: form.coverage,
+      ...opening.fields,
       guestTokenHash: hashGuestToken(guestToken),
       guestExpiresAt: new Date(Date.now() + GUEST_TTL_MS),
       guestBrowserHash: prints.browser,
@@ -1179,16 +1365,17 @@ guestRouter.post('/start', async (req, res) => {
     });
     recordConversionEvent(`${def.eventPrefix}_guest_started`, {
       sessionKey: String(session._id),
-      context: { totalItems: form.items.length },
+      context: { totalItems: opening.items.length },
     });
 
     return res.json({
       sessionId: session._id,
       guestToken,
       started: true,
-      totalItems: form.items.length,
-      timeLimitMinutes: blueprint.timeLimitMinutes,
-      remainingSeconds: blueprint.timeLimitMinutes * 60,
+      totalItems: opening.items.length,
+      timeLimitMinutes: opening.timeLimitMinutes,
+      remainingSeconds: opening.timeLimitMinutes * 60,
+      module: moduleInfo(session),
       coverage: form.coverage,
     });
   } catch (err) {
