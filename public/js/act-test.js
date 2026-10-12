@@ -75,6 +75,7 @@
   .actt-legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:#888;margin:10px 0 2px}
   .actt-center{padding:40px 18px;text-align:center;color:#555}
   .actt-range{font-size:13px;font-weight:600;color:#6b5ca5;margin:2px 0 4px}
+  .actt-route{font-size:12.5px;color:#5b5480;max-width:420px;margin:4px auto 0;line-height:1.4}
   .actt-score{font-size:64px;font-weight:800;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
   .actt-scorelab{font-size:13px;color:#888;letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
   .actt-sub{color:#666;margin:10px 0 20px;font-size:14px}
@@ -152,6 +153,7 @@
     .actt-gilab,.actt-girules{color:#cbc7e0}.actt-girules summary{color:#b9a6ff}
     .actt-refpanel{background:#211e32;border-color:#302c45}.actt-reffacts{color:#b7b3cc}
     .actt-giwarn{color:#f0a868}
+    .actt-route{color:#b7b3cc}
   }
   @media (max-width:700px){
     /* The test takes the whole phone screen: edge to edge, no rounded card. */
@@ -301,6 +303,19 @@
       return api(this.apiBase + path, opts);
     }
 
+    // ── Modules (the SAT's two adaptive halves) ──────────────────
+    // A modular test reports `module` = { current, count, first, last }.
+    // Only the current module's positions are reachable, and question numbers
+    // restart at 1 in each module, as in Bluebook. Without `module` (the ACT)
+    // these collapse to the whole form, positions 1..total.
+    _first() { return this.mod ? this.mod.first : 1; }
+    _last() { return this.mod ? this.mod.last : this.total; }
+    _count() { return this._last() - this._first() + 1; }
+    _num(pos) { return pos - this._first() + 1; }
+    _moreModules() { return !!(this.mod && this.mod.current < this.mod.count); }
+    // Time ran out (or the server says it did): the next module, or the end.
+    _timeUp() { if (this._moreModules()) this.nextModule(true); else this.complete(); }
+
     _injectCss() {
       if (document.getElementById('actt-style')) return;
       const s = document.createElement('style');
@@ -349,7 +364,7 @@
         this.el('actt-map').setAttribute('aria-expanded', String(open));
       });
       this.overlay.querySelector('#actt-next').addEventListener('click', () => {
-        if (this.pos >= this.total) this.showReview(); else this.goTo(this.pos + 1);
+        if (this.pos >= this._last()) this.showReview(); else this.goTo(this.pos + 1);
       });
       this.overlay.querySelector('#actt-calc').addEventListener('click', () => this._toggleCalc());
       this.el = (id) => this.overlay.querySelector('#' + id);
@@ -475,7 +490,7 @@
         this.el('actt-body').innerHTML = `
         <div style="max-width:540px;margin:0 auto;padding:6px 4px 4px">
           <h2 style="margin:0 0 10px;font-size:20px">${this.guest ? 'Free SAT Math practice test' : 'SAT Math practice test'}</h2>
-          <p style="margin:0 0 14px;line-height:1.5">A full, timed SAT Math section: <strong>44 questions, 70 minutes</strong>, calculator and reference sheet allowed throughout. You get an estimated 200–800 score the moment you finish${this.guest ? '.' : ', and every question you miss is waiting for you and your tutor afterward.'}</p>
+          <p style="margin:0 0 14px;line-height:1.5">A full, timed SAT Math section: <strong>two modules of 22 questions, 35 minutes each</strong>, calculator and reference sheet allowed throughout. Like the real SAT, how you do on Module 1 decides whether Module 2 is harder or easier. You get an estimated 200–800 score the moment you finish${this.guest ? '.' : ', and every question you miss is waiting for you and your tutor afterward.'}</p>
           <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
             <li>Most questions are multiple choice. About a quarter ask you to <strong>type your own answer</strong> — the box shows a preview and the rules for what it accepts.</li>
             <li><strong>It's timed and can't be paused.</strong> Pacing is part of the score. Find a quiet spot and grab scratch paper first.</li>
@@ -553,18 +568,19 @@
           writeGuest(this.exam, { sessionId: String(data.sessionId), token: data.guestToken, status: 'in_progress' });
         }
         this.total = data.totalItems || this.exam.items;
+        this.mod = data.module || null;
         this.state = new Map();
 
         // On a resume, rebuild the palette state and land on the first
         // unanswered question rather than question 1.
-        let startPos = 1;
+        let startPos = this._first();
         if (data.resumed) {
           const ov = await this._api(`/overview?sessionId=${encodeURIComponent(this.sessionId)}`);
           (ov && ov.items || []).forEach((it) => {
             if (it.answered || it.flagged) this.state.set(it.position, { answered: !!it.answered, flagged: !!it.flagged });
           });
           const firstUnanswered = (ov && ov.items || []).find((it) => !it.answered);
-          startPos = firstUnanswered ? firstUnanswered.position : 1;
+          startPos = firstUnanswered ? firstUnanswered.position : this._first();
           if (ov && ov.remainingSeconds != null) data.remainingSeconds = ov.remainingSeconds;
         }
 
@@ -574,7 +590,7 @@
           ? data.remainingSeconds
           : (data.timeLimitMinutes || this.exam.minutes) * 60;
         this._buildPalette();
-        if (data.resumed && remainSecs <= 0) return this.complete();
+        if (data.resumed && remainSecs <= 0) return this._timeUp();
         // The deadline is the server's (startedAt + limit); the display starts
         // once the first question is on screen, so the student never watches
         // a clock tick over a loading message.
@@ -637,7 +653,7 @@
           t.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
           t.classList.toggle('low', remain <= 120000);
         }
-        if (remain <= 0) { this._stopTimer(); this.complete(); }
+        if (remain <= 0) { this._stopTimer(); this._timeUp(); }
       };
       tick();
       this.timerId = setInterval(tick, 1000);
@@ -646,7 +662,9 @@
 
     _answeredCount() {
       let n = 0;
-      this.state.forEach((s) => { if (s.answer != null || s.answered) n += 1; });
+      this.state.forEach((s, pos) => {
+        if (pos >= this._first() && pos <= this._last() && (s.answer != null || s.answered)) n += 1;
+      });
       return n;
     }
 
@@ -654,7 +672,7 @@
     // on click, so navigating away never loses work.
     async goTo(pos) {
       this._flushGridIn();
-      pos = Math.min(Math.max(1, pos), this.total);
+      pos = Math.min(Math.max(this._first(), pos), this._last());
       const data = await this._api(`/problem?sessionId=${encodeURIComponent(this.sessionId)}&position=${pos}`);
       if (!data || !data.problem) {
         this.el('actt-body').innerHTML = `<div class="actt-err">${(data && data.message) || 'Could not load that question.'}</div>`;
@@ -688,9 +706,9 @@
     render() {
       const p = this.current;
       const answered = this._answeredCount();
-      this.el('actt-qnum').textContent = `Question ${this.pos} of ${this.total}`;
-      this.el('actt-qpct').textContent = `${answered}/${this.total} answered`;
-      this.el('actt-fill').style.width = `${Math.round((answered / this.total) * 100)}%`;
+      this.el('actt-qnum').textContent = `${this.mod ? `Module ${this.mod.current} · ` : ''}Question ${this._num(this.pos)} of ${this._count()}`;
+      this.el('actt-qpct').textContent = `${answered}/${this._count()} answered`;
+      this.el('actt-fill').style.width = `${Math.round((answered / this._count()) * 100)}%`;
       // Real-ACT letter alternation: even question numbers show F–G–H–J (no
       // "I"), odd show A–D. Display alias ONLY — data-label / save-answer /
       // grading all stay on the stored positional A–D letters. The SAT has
@@ -731,12 +749,12 @@
           this._save();
           this._syncPalette();
           const n = this._answeredCount();
-          this.el('actt-qpct').textContent = `${n}/${this.total} answered`;
-          this.el('actt-fill').style.width = `${Math.round((n / this.total) * 100)}%`;
+          this.el('actt-qpct').textContent = `${n}/${this._count()} answered`;
+          this.el('actt-fill').style.width = `${Math.round((n / this._count()) * 100)}%`;
         });
       });
-      this.el('actt-back').disabled = this.pos <= 1;
-      this.el('actt-next').textContent = (this.pos >= this.total) ? 'Review ▶' : 'Next ▶';
+      this.el('actt-back').disabled = this.pos <= this._first();
+      this.el('actt-next').textContent = (this.pos >= this._last()) ? 'Review ▶' : 'Next ▶';
       this._syncFlagBtn();
       this._syncPalette();
     }
@@ -763,7 +781,7 @@
           seq: st.seq || 0,
           responseTime: Date.now() - this.itemStart,
         }),
-      }).then((d) => { if (d && d.timeUp) this.complete(); })
+      }).then((d) => { if (d && d.timeUp) this._timeUp(); })
         .catch((e) => console.error('[act-test] save failed (will re-save on revisit):', e));
     }
 
@@ -822,16 +840,16 @@
         this.state.set(this.pos, st);
         this._syncPalette();
         const n = this._answeredCount();
-        this.el('actt-qpct').textContent = `${n}/${this.total} answered`;
-        this.el('actt-fill').style.width = `${Math.round((n / this.total) * 100)}%`;
+        this.el('actt-qpct').textContent = `${n}/${this._count()} answered`;
+        this.el('actt-fill').style.width = `${Math.round((n / this._count()) * 100)}%`;
         // Save after a short pause in typing, for THIS question (see _saveFor).
         const pos = this.pos, problemId = p.problemId;
         clearTimeout(this._giTimer);
         this._giPending = () => this._saveFor(pos, problemId);
         this._giTimer = setTimeout(() => this._flushGridIn(), 500);
       });
-      this.el('actt-back').disabled = this.pos <= 1;
-      this.el('actt-next').textContent = (this.pos >= this.total) ? 'Review ▶' : 'Next ▶';
+      this.el('actt-back').disabled = this.pos <= this._first();
+      this.el('actt-next').textContent = (this.pos >= this._last()) ? 'Review ▶' : 'Next ▶';
       this._syncFlagBtn();
       this._syncPalette();
     }
@@ -876,7 +894,7 @@
       const pal = this.el('actt-pal');
       pal.classList.remove('open');
       let cells = '';
-      for (let i = 1; i <= this.total; i++) cells += `<button class="actt-cell" data-pos="${i}">${i}</button>`;
+      for (let i = this._first(); i <= this._last(); i++) cells += `<button class="actt-cell" data-pos="${i}">${this._num(i)}</button>`;
       pal.innerHTML = cells;
       pal.querySelectorAll('.actt-cell').forEach((c) => {
         // Picking a question closes the list, like the real ACT's: left open,
@@ -900,7 +918,7 @@
           c.classList.toggle('ans', answered);
           c.classList.toggle('flag', !!st.flagged);
           c.classList.toggle('cur', pos === this.pos);
-          c.setAttribute('aria-label', `Question ${pos}, ${answered ? 'answered' : 'not answered'}${st.flagged ? ', flagged' : ''}`);
+          c.setAttribute('aria-label', `Question ${this._num(pos)}, ${answered ? 'answered' : 'not answered'}${st.flagged ? ', flagged' : ''}`);
           if (pos === this.pos) c.setAttribute('aria-current', 'step'); else c.removeAttribute('aria-current');
         });
       };
@@ -912,17 +930,18 @@
     showReview() {
       this._flushGridIn();
       const answered = this._answeredCount();
-      const unanswered = this.total - answered;
+      const unanswered = this._count() - answered;
       let flagged = 0;
-      this.state.forEach((s) => { if (s.flagged) flagged += 1; });
+      this.state.forEach((s, pos) => { if (s.flagged && pos >= this._first() && pos <= this._last()) flagged += 1; });
+      const more = this._moreModules();
       let cells = '';
-      for (let i = 1; i <= this.total; i++) cells += `<button class="actt-cell" data-pos="${i}">${i}</button>`;
+      for (let i = this._first(); i <= this._last(); i++) cells += `<button class="actt-cell" data-pos="${i}">${this._num(i)}</button>`;
       this.el('actt-foot').style.display = 'none';
       this.el('actt-progwrap').style.display = 'none';
       this.el('actt-pal').classList.remove('open');
       this.el('actt-body').innerHTML = `
         <div class="actt-center" style="padding:14px 4px 4px">
-          <h2 style="margin:0 0 8px;font-size:20px">Review before you submit</h2>
+          <h2 style="margin:0 0 8px;font-size:20px">${more ? `Review Module ${this.mod.current}` : 'Review before you submit'}</h2>
           <div class="actt-sub">${answered} answered · ${unanswered} unanswered${flagged ? ` · ${flagged} flagged 🚩` : ''}</div>
           ${unanswered ? `<div style="font-size:13px;color:#c0392b;margin-bottom:6px">Unanswered questions count as wrong — on the real ${this.exam.name} there’s no penalty for guessing.</div>` : ''}
           <div class="actt-legend"><span>▢ unanswered</span><span style="color:#764ba2">▣ answered</span><span>⚑ flagged</span></div>
@@ -930,21 +949,86 @@
         <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:540px;margin:0 auto">${cells}</div>
         <div style="text-align:center;margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
           <button class="actt-btn actt-skip" id="actt-keepgoing">◀ Keep working</button>
-          <button class="actt-btn actt-next" id="actt-submit-test">Submit test</button>
+          <button class="actt-btn actt-next" id="actt-submit-test">${more ? `Submit Module ${this.mod.current}` : 'Submit test'}</button>
         </div>`;
       this.el('actt-body').querySelectorAll('.actt-cell').forEach((c) => {
         c.addEventListener('click', () => this.goTo(parseInt(c.getAttribute('data-pos'), 10)));
       });
       this.el('actt-keepgoing').addEventListener('click', () => {
         let firstUn = 0;
-        for (let i = 1; i <= this.total; i++) {
+        for (let i = this._first(); i <= this._last(); i++) {
           const st = this.state.get(i) || {};
           if (st.answer == null && !st.answered) { firstUn = i; break; }
         }
         this.goTo(firstUn || this.pos);
       });
-      this.el('actt-submit-test').addEventListener('click', () => this.complete());
+      this.el('actt-submit-test').addEventListener('click', () => (more ? this._confirmNextModule() : this.complete()));
       this._syncPalette();
+    }
+
+    // "You can't come back": the one decision Module 1 asks the student to
+    // make. The real SAT moves on without asking; a practice test should say
+    // so plainly before it happens.
+    _confirmNextModule() {
+      const nextN = this.mod.current + 1;
+      this.el('actt-body').innerHTML = `
+        <div class="actt-center" style="padding:24px 8px">
+          <h2 style="margin:0 0 10px;font-size:20px">Ready for Module ${nextN}?</h2>
+          <p style="max-width:440px;margin:0 auto 18px;line-height:1.5">Once Module ${nextN} starts, you can't go back to Module ${this.mod.current}.
+          Module ${nextN} has 22 questions and its own 35-minute clock. How you did on Module ${this.mod.current} decides whether it's the harder or the easier version — just like the real SAT.</p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="actt-btn actt-skip" id="actt-backtomod">◀ Back to Module ${this.mod.current}</button>
+            <button class="actt-btn actt-next" id="actt-startnext">Start Module ${nextN}</button>
+          </div>
+        </div>`;
+      this.el('actt-backtomod').addEventListener('click', () => this.showReview());
+      this.el('actt-startnext').addEventListener('click', () => this.nextModule(false));
+    }
+
+    /**
+     * Close this module and open the next (POST /next-module). The server
+     * grades the module privately and picks the route; the runner just gets
+     * the next module's range and clock. `timedOut`: the clock ran out, so
+     * say so briefly instead of asking.
+     */
+    async nextModule(timedOut) {
+      if (this._advancing) return;
+      this._advancing = true;
+      this._flushGridIn();
+      this._stopTimer();
+      this._hideCalc();
+      this.el('actt-foot').style.display = 'none';
+      this.el('actt-progwrap').style.display = 'none';
+      const pal = this.el('actt-pal');
+      if (pal) pal.classList.remove('open');
+      this.el('actt-body').innerHTML = `<div class="actt-center">${timedOut ? `Time's up for Module ${this.mod.current}. ` : ''}Starting Module ${this.mod.current + 1}…</div>`;
+      try {
+        const answers = [];
+        this.state.forEach((st, position) => {
+          if (position >= this._first() && position <= this._last() && st && (st.answer != null || st.flagged || st.seq)) {
+            answers.push({ position, answer: st.answer != null ? st.answer : null, flagged: !!st.flagged, seq: st.seq || 0 });
+          }
+        });
+        const data = await this._api('/next-module', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: this.sessionId, answers }) });
+        if (data && data.abandoned) { this._advancing = false; return this.complete(); }
+        if (data && data.lastModule) { this._advancing = false; return this.complete(); }
+        if (!data || !data.module) throw new Error((data && data.message) || 'Could not start the next module.');
+        if (timedOut) await new Promise((r) => setTimeout(r, 1200));
+        this.mod = data.module;
+        this.total = data.totalItems || this.total;
+        this.state = new Map();
+        this._buildPalette();
+        this.deadline = Date.now() + (data.remainingSeconds != null ? data.remainingSeconds : 35 * 60) * 1000;
+        this.el('actt-progwrap').style.display = '';
+        this.el('actt-foot').style.display = 'flex';
+        this._advancing = false;
+        await this.goTo(this._first());
+        this._startTimer();
+      } catch (e) {
+        this._advancing = false;
+        this.el('actt-body').innerHTML = `<div class="actt-err">${escapeHtml(e.message || 'Could not start the next module.')}<br><button class="actt-btn actt-next" id="actt-retrynext" style="margin-top:12px">Try again</button></div>`;
+        this.el('actt-retrynext').addEventListener('click', () => this.nextModule(false));
+      }
     }
 
     async complete() {
@@ -1036,6 +1120,16 @@
       return `<div class="actt-range" title="Where your score would likely land on another sitting of this test. It is an estimate of ${this.exam.name} performance, not a prediction.">Likely range ${g.low}–${g.high}</div>`;
     }
 
+    // Which Module 2 the student earned. The real SAT never says; a tutor
+    // would, because it is the single biggest lever on the score.
+    _routeHtml(r) {
+      if (!r || !r.moduleRoute) return '';
+      const msg = r.moduleRoute === 'harder'
+        ? 'Your Module 1 earned the harder Module 2 — the route the top scores come from.'
+        : 'Module 2 was the easier version. A stronger Module 1 unlocks the harder module, which is where the higher scores are.';
+      return `<div class="actt-route">${msg}</div>`;
+    }
+
     // Score + category bars — the top of every results screen (signed-in,
     // guest, and claimed).
     _scoreHeadHtml(r) {
@@ -1049,6 +1143,7 @@
             <div class="actt-score">${r.scaledScore != null ? r.scaledScore : '—'}</div>
             <div class="actt-scorelab">Estimated ${this.exam.name} Math score${r.scaledApproximate ? ' (approx.)' : ''}</div>
             ${this._rangeHtml(r)}
+            ${this._routeHtml(r)}
             <div class="actt-sub">${r.rawScore}/${r.totalItems} correct · ${r.accuracy}%${r.durationMinutes != null ? ' · ' + r.durationMinutes + (r.timeLimitMinutes ? ` of ${r.timeLimitMinutes}` : '') + ' min' : ''}</div>
             ${r.plannedSkills ? `<div style="font-size:13px;color:#8b6fd6;margin-top:2px">✓ Your tutor will now focus on your ${r.plannedSkills} weakest skill${r.plannedSkills > 1 ? 's' : ''}.</div>` : ''}
           </div>

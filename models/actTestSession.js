@@ -20,6 +20,7 @@ const actItemSchema = new Schema({
   answerType: { type: String },
   options: [{ label: String, text: String }],
   difficulty: { type: Number },
+  module: { type: Number },                  // modular tests (SAT): which module served it
 }, { _id: false });
 
 const actResponseSchema = new Schema({
@@ -95,6 +96,20 @@ const actTestSessionSchema = new Schema({
   abandonedReason: { type: String },
 
   timeLimitMinutes: { type: Number, default: 60 },
+
+  // Modular tests (the SAT's two adaptive modules; utils/testModules.js).
+  // startedAt / timeLimitMinutes always describe the CURRENT module, so every
+  // clock rule in this file applies per module unchanged. Module 1's own
+  // timing stays here, with the route Module 2 was assembled for.
+  currentModule: { type: Number },
+  modules: [{
+    _id: false,
+    n: Number,
+    route: String,                // 'harder' | 'easier' (Module 2+)
+    startedAt: Date,
+    submittedAt: Date,
+    timeLimitMinutes: Number,
+  }],
   startedAt: { type: Date, default: Date.now },
   completedAt: { type: Date },
 

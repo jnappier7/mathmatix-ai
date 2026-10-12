@@ -1,5 +1,5 @@
 {
-  "_comment": "Digital SAT Math blueprint (2024+ digital SAT): 44 questions, 70 minutes, multiple choice (4 choices, A-D) plus student-produced response (grid-in). Content = Fable-authored, sympy-verified items (seeds/sat-items.generated.json, source sat-fable; spec in seeds/sat-math/SAT_SPEC.md). All items are original. This blueprint delivers the section as ONE fixed 44-item form; the real section is two 22-item adaptive modules, which is a later step.",
+  "_comment": "Digital SAT Math blueprint (2024+ digital SAT): 44 questions, 70 minutes, multiple choice (4 choices, A-D) plus student-produced response (grid-in). Content = Fable-authored, sympy-verified items (seeds/sat-items.generated.json, source sat-fable; spec in seeds/sat-math/SAT_SPEC.md). All items are original. Delivered as the real section is: two 22-item, 35-minute modules, Module 2 routed harder or easier on Module 1 (utils/testModules.js), scored with IRT over all 44 items.",
   "testId": "sat-math",
   "title": "SAT Math Practice Test",
   "subject": "sat-math",
@@ -79,54 +79,87 @@
       "targetDifficulty": 4
     }
   ],
-  "scaledScore": {
-    "_comment": "APPROXIMATE, and labelled so to the student (scaledApproximate). College Board publishes no raw-to-scale table for the digital SAT: its scores come from IRT on adaptive modules. This is a straight line from 0 -> 200 to 44 -> 800 rounded to 10, which is roughly how released digital practice tests convert in the middle of the range but compresses the ends less. Replace it with a calibrated table once real scores can be paired with practice results.",
-    "scaledByRaw": [
-      200,
-      210,
-      230,
-      240,
-      250,
-      270,
-      280,
-      300,
-      310,
-      320,
-      340,
-      350,
-      360,
-      380,
-      390,
-      400,
-      420,
-      430,
-      450,
-      460,
-      470,
-      490,
-      500,
-      510,
-      530,
-      540,
-      550,
-      570,
-      580,
-      600,
-      610,
-      620,
-      640,
-      650,
-      660,
-      680,
-      690,
-      700,
-      720,
-      730,
-      750,
-      760,
-      770,
-      790,
-      800
-    ]
+  "_modulesComment": "The digital SAT Math section is two modules of 22 questions and 35 minutes each. Module 1 is the same mixed-difficulty module for everyone; Module 2 is HARDER or EASIER depending on Module 1, and once it starts Module 1 is closed. Domain counts are split across the two modules so the section still totals 15/15/7/7. The top-level categoryWeights/difficultyRamp/timeLimitMinutes describe the whole section; each module's own values are what its form is assembled from.",
+  "modules": [
+    {
+      "n": 1,
+      "items": 22,
+      "timeLimitMinutes": 35,
+      "categoryWeights": {
+        "algebra": 8,
+        "advanced-math": 7,
+        "problem-solving-data": 4,
+        "geometry-trig": 3
+      },
+      "difficultyRamp": [
+        {
+          "position": 1,
+          "targetDifficulty": 2
+        },
+        {
+          "position": 22,
+          "targetDifficulty": 4
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "items": 22,
+      "timeLimitMinutes": 35,
+      "categoryWeights": {
+        "algebra": 7,
+        "advanced-math": 8,
+        "problem-solving-data": 3,
+        "geometry-trig": 4
+      },
+      "difficultyRamp": [
+        {
+          "position": 1,
+          "targetDifficulty": 2.5
+        },
+        {
+          "position": 22,
+          "targetDifficulty": 3.5
+        }
+      ],
+      "routes": {
+        "harder": {
+          "difficultyRamp": [
+            {
+              "position": 1,
+              "targetDifficulty": 3
+            },
+            {
+              "position": 22,
+              "targetDifficulty": 4
+            }
+          ]
+        },
+        "easier": {
+          "difficultyRamp": [
+            {
+              "position": 1,
+              "targetDifficulty": 2
+            },
+            {
+              "position": 22,
+              "targetDifficulty": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "_routingComment": "Module 2 is harder when the Module 1 ability estimate (MAP, Rasch, bank difficulty 1-5 mapped to -3..+3 logits) is at least harderIfTheta. College Board does not publish its cut; 0 means 'did about as well as an average student on a mixed module' (roughly half right). Move it once real practice results can be compared with official scores.",
+  "routing": {
+    "harderIfTheta": 0
+  },
+  "_irtScaleComment": "APPROXIMATE, and labelled so to the student. Scaled score = center + perLogit x theta, from the MAP ability over all 44 answers, clamped to 200-800 and rounded to 10; the likely range is theta +/- one standard error. Because the score comes from WHICH items were answered, the route is priced in: a perfect easier Module 2 after a weak Module 1 lands near 600, never 800. center 510 / perLogit 120 put an average student near the national SAT Math mean. Replace with a calibrated scale once real scores can be paired with practice results.",
+  "irtScale": {
+    "center": 510,
+    "perLogit": 120,
+    "min": 200,
+    "max": 800,
+    "round": 10
   }
 }

@@ -69,8 +69,10 @@ async function guestStart() {
 
 test('a guest gets a full SAT form, and the guest cookie belongs to the SAT rail', async () => {
   const res = await guestStart();
-  expect(res.body.totalItems).toBe(44);
-  expect(res.body.timeLimitMinutes).toBe(70);
+  // Module 1 of 2, as on the real SAT.
+  expect(res.body.totalItems).toBe(22);
+  expect(res.body.timeLimitMinutes).toBe(35);
+  expect(res.body.module).toMatchObject({ current: 1, count: 2, totalItems: 44 });
   expect(res.body.guestToken).toMatch(/^[a-f0-9]{64}$/);
   const session = await ActTestSession.findById(res.body.sessionId).lean();
   expect(session.testId).toBe('sat-math');
@@ -84,6 +86,12 @@ test('the guest result is the locked report: score and domains, never which ques
   const start = await guestStart();
   const sid = String(start.body.sessionId);
   const token = start.body.guestToken;
+  // The guest rail runs the adaptive step too.
+  const next = await supertest(app).post('/api/sat-practice/next-module')
+    .set('X-Act-Guest-Token', token).send({ sessionId: sid, answers: [] });
+  expect(next.status).toBe(200);
+  expect(next.body.module.current).toBe(2);
+  expect(next.body).not.toHaveProperty('route');      // the route is never told mid-test
   const res = await supertest(app).post('/api/sat-practice/complete')
     .set('X-Act-Guest-Token', token).send({ sessionId: sid, answers: [] });
   expect(res.status).toBe(200);
@@ -107,7 +115,7 @@ test('the SAT and ACT guest rails never open each other\'s tests', async () => {
   // And through its own rail it is fine.
   res = await supertest(app).get(`/api/sat-practice/overview?sessionId=${sid}`).set('X-Act-Guest-Token', token);
   expect(res.status).toBe(200);
-  expect(res.body.total).toBe(44);
+  expect(res.body.items).toHaveLength(22);            // Module 1's questions
   // Resuming on the ACT rail with the SAT session's id never resumes it.
   res = await supertest(app).post('/api/act-practice/start').set('X-Act-Guest-Token', token).send({ sessionId: sid });
   expect(res.body.resumed).toBeFalsy();

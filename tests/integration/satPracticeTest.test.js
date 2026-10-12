@@ -95,19 +95,27 @@ async function startSat(body = {}) {
   return ActTestSession.findById(res.body.sessionId).lean();
 }
 
-test('a form is the SAT shape, drawn only from the SAT bank', async () => {
+test('a form is the SAT shape, module by module, drawn only from the SAT bank', async () => {
   const res = await supertest(app).post('/api/sat-test/start').send({});
   expect(res.status).toBe(200);
-  expect(res.body.totalItems).toBe(44);
-  expect(res.body.timeLimitMinutes).toBe(70);
+  // Module 1 first: 22 questions on a 35-minute clock.
+  expect(res.body.totalItems).toBe(22);
+  expect(res.body.timeLimitMinutes).toBe(35);
+  expect(res.body.module).toEqual({ current: 1, count: 2, first: 1, last: 22, totalItems: 44 });
+
+  // Close Module 1 (blank) and Module 2 joins the form.
+  const next = await supertest(app).post('/api/sat-test/next-module').send({ sessionId: String(res.body.sessionId), answers: [] });
+  expect(next.status).toBe(200);
+  expect(next.body.module).toEqual({ current: 2, count: 2, first: 23, last: 44, totalItems: 44 });
 
   const session = await ActTestSession.findById(res.body.sessionId).lean();
   expect(session.testId).toBe('sat-math');
   expect(session.items).toHaveLength(44);
+  expect(new Set(session.items.map((it) => it.problemId)).size).toBe(44);
   // Only SAT items — no decoy under a shared skill id.
   session.items.forEach((it) => expect(it.problemId).toMatch(/^sat-math-/));
-  // Domain counts are the blueprint's, and the category stored on each item
-  // is the domain the item was written for.
+  // Domain counts over the whole section are the blueprint's, and the
+  // category stored on each item is the domain the item was written for.
   const counts = {};
   session.items.forEach((it) => {
     counts[it.category] = (counts[it.category] || 0) + 1;
@@ -171,11 +179,24 @@ test('a typed grid-in grades, and the report is on the SAT scale with no ACT pla
   });
   expect(paddedOne).toBe(true);
 
-  const res = await supertest(app).post('/api/sat-test/complete').send({ sessionId: String(session._id), answers });
+  // Module 1, all correct, earns the harder Module 2; answer that correctly too.
+  const sid = String(session._id);
+  const next = await supertest(app).post('/api/sat-test/next-module').send({ sessionId: sid, answers });
+  expect(next.status).toBe(200);
+  const full = await ActTestSession.findById(sid).lean();
+  const m2 = full.items.filter((it) => it.module === 2).map((it) => {
+    const key = keyOf(it.problemId);
+    const answer = it.answerType === 'constructed-response'
+      ? String(key.answer.value)
+      : it.options.find((o) => o.text === key.options.find((x) => x.label === key.correctOption).text).label;
+    return { position: it.position, problemId: it.problemId, answer, seq: 1 };
+  });
+  const res = await supertest(app).post('/api/sat-test/complete').send({ sessionId: sid, answers: m2 });
   expect(res.status).toBe(200);
   const { report } = res.body;
   expect(report.rawScore).toBe(44);
   expect(report.scaledScore).toBe(800);
+  expect(report.moduleRoute).toBe('harder');
   expect(report.scaledApproximate).toBe(true);
   expect(report.plan).toBeNull();
   expect(res.body.actPrepSessionId).toBeNull();
