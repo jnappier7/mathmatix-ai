@@ -207,6 +207,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
     // — it is the kill switch — so it never changes `status`; it is here because
     // an unset variable is indistinguishable from a bug at every other surface.
     checks.foundingSchool = healthReport.foundingSchoolReport();
+    // DESMOS_API_KEY: the SAT test's graphing calculator. 'off' falls back to
+    // the scientific calculator, so like foundingSchool it never sets `status`.
+    checks.desmos = require('../utils/desmos').desmosReport();
     // Deliberately 'degraded', never 'unhealthy'. 'degraded' is a 200 below, so
     // Render keeps routing here — a verifier grading without independence is a
     // quality problem, and answering 503 would turn it into an outage.
@@ -907,6 +910,10 @@ function registerHtmlRoutes(app) {
   app.get('/sat-practice-test', satPracticePage);
   app.get('/sat-practice-test.html', satPracticePage);
   app.get('/sat', (req, res) => res.redirect(302, '/sat-practice-test'));
+  // The SAT test's Desmos graphing calculator: a redirect that attaches our
+  // API key (DESMOS_API_KEY), or a 404 the runner falls back from. Public —
+  // the guest test at /sat uses it too. See utils/desmos.js.
+  app.get('/vendor/desmos-calculator.js', require('../utils/desmos').desmosScriptHandler);
   // Audience pages. The homepage speaks to parents; the student and teacher
   // pitches used to be two of three tabs in the middle of it, which asked every
   // parent to read past them. Short aliases because these get linked directly.

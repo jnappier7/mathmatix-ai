@@ -93,6 +93,14 @@
   .actt-same{background:#eee;color:#888}
   .actt-err{color:#c0392b;padding:24px;text-align:center}
   .actt-hbtn{font-size:14px;font-weight:600;padding:2px 8px;border:1px solid rgba(255,255,255,.5);border-radius:8px}
+  .actt-desmos{display:none;flex:1 1 420px;max-width:560px;height:100%;max-height:100%;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 24px 70px rgba(30,20,70,.35)}
+  .actt-desmos.open{display:flex}
+  /* Side by side whenever it is open: wrapping would drop it below the question. */
+  .actt-overlay.actt-desmos-on{flex-wrap:nowrap}
+  .actt-overlay.actt-desmos-on .actt-card{min-width:0}
+  .actt-desmos-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-weight:700;font-size:14px}
+  .actt-desmos-x{background:transparent;border:0;color:#fff;font-size:20px;line-height:1;cursor:pointer}
+  .actt-desmos-body{flex:1;min-height:0;position:relative}
   .actt-gi{max-width:420px}
   .actt-gilab{display:block;font-size:13px;font-weight:600;color:#555;margin:0 0 6px}
   .actt-gin{width:9.5em;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.04em;padding:10px 12px;border:2px solid #cfc8ea;border-radius:10px;background:#fff;color:inherit}
@@ -151,6 +159,9 @@
     /* The calculator is a bottom sheet on phones (css/mm-calculator.css):
        leave room under the question so it can scroll clear of the sheet. */
     .actt-overlay:has(.mmc-dock.is-open) .actt-body{padding-bottom:60dvh}
+    /* Desmos as a bottom sheet on phones, the question scrolling clear of it. */
+    .actt-desmos{position:fixed;left:0;right:0;bottom:0;height:58dvh;max-width:none;border-radius:14px 14px 0 0;z-index:2}
+    .actt-overlay.actt-desmos-on .actt-body{padding-bottom:60dvh}
     .actt-card{order:1;border-radius:0;max-width:none}
     .actt-foot{padding:10px 12px;gap:6px}
     .actt-foot .actt-btn{padding:9px 12px;font-size:13px}
@@ -189,6 +200,7 @@
       // Real-ACT letter alternation: even question numbers show F–G–H–J.
       evenLetters: { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' },
       referenceSheet: false,
+      calculator: 'scientific',      // the shared mmCalculator
       courseId: 'act-prep',
       seedHint: 'npm run act:seed',
       categoryLabels: {
@@ -214,6 +226,9 @@
       scale: '200–800',
       evenLetters: null,              // the SAT letters every question A–D
       referenceSheet: true,
+      // The digital SAT has Desmos built in, so the practice test does too.
+      // Falls back to the scientific calculator if Desmos cannot load.
+      calculator: 'desmos',
       courseId: null,
       seedHint: 'npm run seed:all -- --only=sat-items',
       categoryLabels: {
@@ -356,8 +371,75 @@
     // tutoring-time restriction, because that restriction is a practice
     // choice, not a test condition. Dismissed on close()/complete() so it
     // never strands over the results screen.
-    _toggleCalc() { if (this.calc) this.calc.toggle(); }
-    _hideCalc() { if (this.calc) this.calc.hide(); this._hideRef(); }
+    _toggleCalc() {
+      if (this.exam.calculator === 'desmos' && !this._desmosFailed) return this._toggleDesmos();
+      if (this.calc) this.calc.toggle();
+    }
+    _hideCalc() { if (this.calc) this.calc.hide(); this._hideDesmos(); this._hideRef(); }
+
+    // ── Desmos (SAT) ──────────────────────────────────────────────
+    // Loaded on the first tap — the script is ~4 MB — through
+    // /vendor/desmos-calculator.js, which attaches our API key server-side
+    // (utils/desmos.js). One calculator per runner, so graphs and expressions
+    // survive moving between questions, as in Bluebook; a fresh test clears it.
+    _loadDesmos() {
+      if (window.Desmos && window.Desmos.GraphingCalculator) return Promise.resolve(window.Desmos);
+      if (!ActTest._desmosLoad) {
+        ActTest._desmosLoad = new Promise((resolve, reject) => {
+          const sc = document.createElement('script');
+          sc.src = '/vendor/desmos-calculator.js';
+          sc.async = true;
+          sc.onload = () => (window.Desmos && window.Desmos.GraphingCalculator ? resolve(window.Desmos) : reject(new Error('Desmos missing')));
+          sc.onerror = () => reject(new Error('Desmos unavailable'));
+          document.head.appendChild(sc);
+        }).catch((e) => { ActTest._desmosLoad = null; throw e; });
+      }
+      return ActTest._desmosLoad;
+    }
+
+    _mountDesmosPanel() {
+      if (this._desmosPanel) return this._desmosPanel;
+      const panel = document.createElement('div');
+      panel.className = 'actt-desmos';
+      panel.setAttribute('role', 'region');
+      panel.setAttribute('aria-label', 'Graphing calculator');
+      panel.innerHTML = '<div class="actt-desmos-head"><span>Graphing calculator</span>'
+        + '<button type="button" class="actt-desmos-x" aria-label="Close calculator">×</button></div>'
+        + '<div class="actt-desmos-body"><div class="actt-center">Loading the calculator…</div></div>';
+      panel.querySelector('.actt-desmos-x').addEventListener('click', () => this._hideDesmos());
+      this.overlay.appendChild(panel);
+      this._desmosPanel = panel;
+      return panel;
+    }
+
+    async _toggleDesmos() {
+      const panel = this._mountDesmosPanel();
+      if (panel.classList.contains('open')) return this._hideDesmos();
+      panel.classList.add('open');
+      this.overlay.classList.add('actt-desmos-on');
+      if (this._desmosCalc) { this._desmosCalc.resize(); return; }
+      try {
+        const Desmos = await this._loadDesmos();
+        const body = panel.querySelector('.actt-desmos-body');
+        body.innerHTML = '';
+        this._desmosCalc = Desmos.GraphingCalculator(body, {
+          keypad: true, expressions: true, settingsMenu: false, zoomButtons: true,
+          border: false, links: false, pasteGraphLink: false, images: false,
+          folders: false, notes: false, sliders: true, expressionsCollapsed: false,
+        });
+      } catch {
+        // No key, offline, or blocked: the scientific calculator still works.
+        this._desmosFailed = true;
+        this._hideDesmos();
+        if (this.calc) this.calc.show();
+      }
+    }
+
+    _hideDesmos() {
+      if (!this._desmosPanel) return;
+      this._desmosPanel.classList.remove('open');
+      if (this.overlay) this.overlay.classList.remove('actt-desmos-on');
+    }
 
     // The SAT prints a formula sheet with every test; Bluebook keeps it one
     // tap away. It opens above the question and never covers the choices.
@@ -465,6 +547,8 @@
         }
         if (!data || !data.sessionId) throw new Error((data && data.message) || 'Could not start.');
         this.sessionId = data.sessionId;
+        // A new test starts with a blank calculator; a resumed one keeps it.
+        if (!data.resumed && this._desmosCalc) this._desmosCalc.setBlank();
         if (this.guest && data.guestToken) {
           writeGuest(this.exam, { sessionId: String(data.sessionId), token: data.guestToken, status: 'in_progress' });
         }
