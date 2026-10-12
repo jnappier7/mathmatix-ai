@@ -296,6 +296,9 @@ function configureMiddleware(app) {
           'https://cdn.jsdelivr.net',
           'https://www.googletagmanager.com',
           'https://connect.facebook.net',
+          // The SAT test's graphing calculator (utils/desmos.js). Loaded only
+          // when a student opens it; it also pulls its fonts and assets from here.
+          'https://www.desmos.com',
         ],
         // unpkg.com was removed: it appeared exactly once in the whole repo —
         // this line — and a runtime sweep of 12 pages (including the lazy
@@ -316,12 +319,12 @@ function configureMiddleware(app) {
         // Re-adding cdnjs here would silently re-enable loading fonts from a CDN
         // we no longer depend on; if a future stylesheet needs it, add it back
         // deliberately with a note saying why.
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com'],
-        fontSrc: ["'self'", 'https://cdn.jsdelivr.net', 'https://fonts.gstatic.com', 'data:'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com', 'https://www.desmos.com'],
+        fontSrc: ["'self'", 'https://cdn.jsdelivr.net', 'https://fonts.gstatic.com', 'https://www.desmos.com', 'data:'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
         // www.facebook.com: Meta Pixel event beacons (fbevents.js sendBeacon → /tr).
         // The pixel itself lives ONLY on public marketing pages (quiz.html).
-        connectSrc: ["'self'", 'https://api.openai.com', 'https://api.mathpix.com', 'https://api.cartesia.ai', 'https://cdn.jsdelivr.net', 'https://clever.com', 'https://api.clever.com', 'https://www.google-analytics.com', 'https://www.googletagmanager.com', 'https://connect.facebook.net', 'https://www.facebook.com', 'https://*.google.com'],
+        connectSrc: ["'self'", 'https://api.openai.com', 'https://api.mathpix.com', 'https://api.cartesia.ai', 'https://cdn.jsdelivr.net', 'https://clever.com', 'https://api.clever.com', 'https://www.google-analytics.com', 'https://www.googletagmanager.com', 'https://connect.facebook.net', 'https://www.facebook.com', 'https://*.google.com', 'https://www.desmos.com'],
         workerSrc: ["'self'", 'blob:'],
         mediaSrc: ["'self'", 'blob:', 'data:'],
         objectSrc: ["'none'"],

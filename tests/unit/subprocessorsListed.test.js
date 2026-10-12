@@ -56,6 +56,7 @@ const VENDOR_BY_ENV = {
     SMTP_HOST: 'Transactional email',
     SENTRY_DSN: 'Sentry',
     LOGTAIL_SOURCE_TOKEN: 'Better Stack',
+    DESMOS_API_KEY: 'Desmos',
     GEMINI_API_KEY: 'Gemini', // dead integration — must NOT be live; see test below
 };
 
