@@ -17,6 +17,7 @@ import re
 # First match wins. Targets are ids in the unified taxonomy.
 RULES = {
     "ALG": [
+        (r"solving for a variable|literal", "ALG1.EQV.2"),  # rearrange a formula
         (r"system", "ALG1.EQV.7"),                    # systems of two linear equations
         (r"inequalit.*two variab|two variab.*inequalit", "ALG1.FNC.5"),
         (r"inequalit", "ALG1.EQV.3"),                 # one-variable linear inequalities
@@ -28,6 +29,8 @@ RULES = {
         (r".", "ALG1.EQV.1"),                         # default: solving linear equations
     ],
     "ADV": [
+        (r"composition", "ALG2.FNC.2"),               # f(g(x))
+        (r"transformation", "ALG1.FNC.11"),           # shifts/reflections of a graph
         (r"absolute value", "ALG1.EQV.5"),            # absolute value equations
         (r"exponent rules", "MS.QNT.9"),              # integer/algebraic exponent properties
         (r"equivalent expressions.*rational|rational.*expression", "ALG2.EQV.13"),  # simplify rational expressions

@@ -41,7 +41,10 @@ item carries a self-contained sympy `verify` that recomputes the key
 independently and, for MC, proves no distractor also equals it.
 Before shipping a batch:
 
-1. `runcheck.py` — every verify passes;
+1. `runcheck.py` — every verify passes. A hand-written (`custom=`) check must
+   prove the key is the ONLY right choice, not just that the key is right: p3
+   caught an item whose check passed with two correct choices (10 and 0 both
+   gave "no solution");
 2. `mutate.py` — move each MC key to every wrong choice and alter each grid-in:
    every mutation must FAIL its verify (proves the checks have teeth);
 3. a blind re-solve by a separate solver from stems alone (no keys);
@@ -51,6 +54,7 @@ Before shipping a batch:
 |-------|-------|------------------------|--------------|-----------|---------|
 | p1 (2026-10-08) | 89 | 27 / 30 / 16 / 16 | 66 / 23 | 21 / 37 / 31 | 16 |
 | p2 (2026-10-09) | 92 | 33 / 33 / 13 / 13 | 68 / 24 | 22 / 39 / 31 | 18 |
+| p3 (2026-10-13) | 92 | 34 / 34 / 12 / 12 | 65 / 27 | 10 / 43 / 39 | 12 |
 
 ## Pipeline
 
