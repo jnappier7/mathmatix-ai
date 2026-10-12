@@ -198,8 +198,10 @@ test('a typed grid-in grades, and the report is on the SAT scale with no ACT pla
   expect(report.scaledScore).toBe(800);
   expect(report.moduleRoute).toBe('harder');
   expect(report.scaledApproximate).toBe(true);
-  expect(report.plan).toBeNull();
-  expect(res.body.actPrepSessionId).toBeNull();
+  // The SAT has a prep course now: a perfect test masters every domain.
+  expect(report.plan.summary.masteredCategories.sort()).toEqual([...DOMAINS].sort());
+  expect(report.plan.startModuleId).toBeNull();
+  expect(res.body.actPrepSessionId).toBeNull();          // not enrolled in sat-prep
   expect(Object.keys(report.byCategory).sort()).toEqual([...DOMAINS].sort());
 });
 

@@ -137,7 +137,8 @@ test('signing up claims the SAT test on the SAT rail only, and unlocks the full 
   expect(res.status).toBe(200);
   expect(res.body.claimed).toBe(true);
   expect(res.body.report.missedByGroup.length).toBeGreaterThan(0);
-  expect(res.body.report.plan).toBeNull();
+  // A blank test: every SAT domain is a target, and Algebra (the foundation) opens the course.
+  expect(res.body.report.plan.startModuleId).toBe('algebra');
   const saved = await ActTestSession.findById(sid).lean();
   expect(String(saved.userId)).toBe(String(USER));
 

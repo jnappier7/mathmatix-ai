@@ -15,8 +15,9 @@
 
 const ActTestSession = require('../models/actTestSession');
 const Problem = require('../models/problem');
-const { buildActPlan, planStartModule, planSummary } = require('./actBootcampPlan');
+const { planStartModule, planSummary } = require('./actBootcampPlan');
 const { isIncompleteAttempt } = require('./actProgress');
+const { getTestDef, getTestDefByCourse, testScope } = require('./practiceTests');
 
 // Every problemId this student has ever been served, across ALL their ACT test
 // sessions (any status — an item shown in an abandoned test still "burns" it).
@@ -59,7 +60,11 @@ function categoryTally(session) {
  * @param {Object} opts     { userId, plan? } — plan defaults to one built from the session
  */
 async function seedBootcampFromTest(cs, session, { userId, plan } = {}) {
-  const actPlan = plan || buildActPlan(categoryTally(session));
+  // The plan is the test's own (ACT categories → act-prep modules, SAT
+  // domains → sat-prep modules), decided by the test that was taken.
+  const def = getTestDef(session && session.testId);
+  const actPlan = plan || (def.buildPlan ? def.buildPlan(categoryTally(session)) : null);
+  if (!actPlan) return cs;
   const jumpTo = planStartModule(cs, actPlan);
   if (jumpTo) cs.currentModuleId = jumpTo;
   cs.diagnosticPlan = planSummary(actPlan, session.completedAt);
@@ -133,14 +138,17 @@ async function seedBootcampFromTest(cs, session, { userId, plan } = {}) {
     try {
       // Only real attempts count — a legacy auto-submitted 3-answer form
       // is not a round of the bootcamp.
-      const completedDocs = await ActTestSession.find({ userId, status: 'completed' })
+      // This exam's attempts only: an SAT test is not a round of ACT prep.
+      const completedDocs = await ActTestSession.find({ userId, status: 'completed', ...testScope(def) })
         .select('status startedAt completedAt timeLimitMinutes items.position responses.answer').lean();
       const completed = completedDocs.filter((s) => !isIncompleteAttempt(s)).length;
       if (completed > 0) round = completed;   // this session is already saved as completed
     } catch (_countErr) { /* keep the increment fallback */ }
+    // testId: which exam this bootcamp is on — the retest it launches, the
+    // letters and numbering its review shows, the history its card reads.
     cs.bootcamp = queue.length
-      ? { phase: 'review', round, testSessionId: String(session._id), queue, index: 0 }
-      : { phase: 'reassess', round, testSessionId: String(session._id), queue: [], index: 0 };
+      ? { phase: 'review', round, testId: def.testId, testSessionId: String(session._id), queue, index: 0 }
+      : { phase: 'reassess', round, testId: def.testId, testSessionId: String(session._id), queue: [], index: 0 };
     cs.markModified('bootcamp');
   } catch (reviewErr) {
     console.error('[actTest] review-queue build error (non-fatal):', reviewErr.message);
@@ -157,7 +165,10 @@ async function seedBootcampFromTest(cs, session, { userId, plan } = {}) {
  */
 async function seedBootcampFromLatestTest(cs, userId) {
   if (!cs || (cs.bootcamp && cs.bootcamp.phase)) return false;
-  const completed = await ActTestSession.find({ userId, status: 'completed' })
+  // The course's own exam: a new sat-prep enrollment seeds from the latest
+  // SAT, never from an ACT the student also took.
+  const def = getTestDefByCourse(cs.courseId) || getTestDef();
+  const completed = await ActTestSession.find({ userId, status: 'completed', ...testScope(def) })
     .sort({ completedAt: -1 })
     .limit(5);
   const latest = completed.find((s) => !isIncompleteAttempt(s));

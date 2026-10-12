@@ -123,7 +123,11 @@ describe('the ACT loop view can actually be reached', () => {
   });
 
   test('the client still switches on courseId (contract intact)', () => {
-    expect(read('public/js/lessonTracker.js')).toMatch(/pu\.courseId === 'act-prep'/);
+    // The loop view is chosen per prep course; ACT and SAT prep both have one.
+    const tracker = read('public/js/lessonTracker.js');
+    expect(tracker).toMatch(/if \(pu && PREP_EXAMS\[pu\.courseId\]\)/);
+    expect(tracker).toMatch(/'act-prep': \{/);
+    expect(tracker).toMatch(/'sat-prep': \{/);
   });
 
   test('a non-ACT course reports courseId with no bootcamp state', () => {
@@ -192,7 +196,7 @@ describe('the UI tells the truth about the loop (owner report, 2026-08-23)', () 
     // (a 3-answer form that expired while the student was away is not a round).
     // Built in utils/actBootcampSeed.js (shared by /complete, /claim, enroll).
     const src = read('utils/actBootcampSeed.js');
-    expect(src).toMatch(/ActTestSession\.find\(\{ userId, status: 'completed' \}\)/);
+    expect(src).toMatch(/ActTestSession\.find\(\{ userId, status: 'completed', \.\.\.testScope\(def\) \}\)/);
     expect(src).toMatch(/completedDocs\.filter\(\(s\) => !isIncompleteAttempt\(s\)\)/);
     expect(src).not.toMatch(/round: prevRound \+ 1/);
   });
@@ -216,7 +220,7 @@ describe('the UI tells the truth about the loop (owner report, 2026-08-23)', () 
     // bar through steps the student never saw — and flipping the module to
     // in_progress disarmed planStartModule's round-2+ retargeting.
     const src = read('routes/chat.js');
-    expect(src).toMatch(/csDoc\.status === 'active' && csDoc\.courseId !== 'act-prep'/);
+    expect(src).toMatch(/csDoc\.status === 'active' && !require\('\.\.\/utils\/practiceTests'\)\.isPrepCourse\(csDoc\.courseId\)/);
   });
 
   test('sidebar + header chrome switch to loop language for act-prep', () => {
@@ -282,7 +286,10 @@ describe('real-ACT answer-letter alternation (odd A–D, even F–G–H–J)', (
     expect(runner).toMatch(/const evenLab = this\.exam\.evenLetters;/);
     expect(runner).toMatch(/data-label="\$\{o\.label\}"/);   // stored label on the wire
     const card = read('public/js/lessonTracker.js');
-    expect(card).toMatch(/evenLab = \{ A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' \}/);
+    // The card's alias lives in its per-exam profile: ACT letters, SAT none.
+    expect(card).toMatch(/evenLetters: \{ A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' \}/);
+    expect(card).toMatch(/evenLetters: null/);
+    expect(card).toMatch(/const evenLab = \(this\._exam \|\| PREP_EXAMS\['act-prep'\]\)\.evenLetters;/);
     expect(card).toMatch(/o\.label === cur\.theirAnswer/);   // match on stored labels
   });
 });

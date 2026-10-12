@@ -178,7 +178,7 @@ class CourseManager {
             // Build breadcrumb from module/lesson data
             const currentMod = (s.modules || []).find(m => m.moduleId === s.currentModuleId);
             let modLabel = '';
-            if (s.courseId === 'act-prep' && s.status !== 'paused') {
+            if ((s.courseId === 'act-prep' || s.courseId === 'sat-prep') && s.status !== 'paused') {
                 // ACT prep is the test → review → re-test loop, not chapters:
                 // "0/11 modules" described a scaffold the bootcamp never shows.
                 const bc = s.bootcamp || {};
@@ -302,7 +302,7 @@ class CourseManager {
         // ACT prep header reflects the bootcamp loop, not the chapter scaffold —
         // "Unit 1 › Number & Quantity · 0%" described a curriculum the loop
         // never presents.
-        if (session.courseId === 'act-prep') {
+        if (session.courseId === 'act-prep' || session.courseId === 'sat-prep') {
             const bc = session.bootcamp || {};
             const qTotal = Array.isArray(bc.queue) ? bc.queue.length : 0;
             const qDone = Array.isArray(bc.queue)
@@ -1089,6 +1089,9 @@ class CourseManager {
             if (diagnostic.type === 'act-practice' && typeof window !== 'undefined' && window.openActTest) {
                 setTimeout(() => { try { window.openActTest(); } catch (e) {} }, 350);
             }
+            if (diagnostic.type === 'sat-practice' && typeof window !== 'undefined' && window.openSatTest) {
+                setTimeout(() => { try { window.openSatTest(); } catch (e) {} }, 350);
+            }
             return;
         }
         this._baselinePending = false;
@@ -1392,6 +1395,7 @@ class CourseManager {
         const sessionId = this.activeCourseSessionId || '';
         const launchers = {
             'act-practice': 'if (window.openActTest) { window.openActTest(); }',
+            'sat-practice': 'if (window.openSatTest) { window.openSatTest(); }',
             'starting-point': "if (window.floatingScreener) { Promise.resolve(window.floatingScreener.checkAssessmentStatus()).then(function(){ window.floatingScreener.open(); }).catch(function(){}); } else if (window.openStartingPoint) { window.openStartingPoint(); }",
             'course-preassessment': `if (window.openCoursePreAssessment) { window.openCoursePreAssessment('${sessionId}', { required: ${!!diag.required} }); }`,
         };

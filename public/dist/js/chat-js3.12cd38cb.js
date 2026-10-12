@@ -3720,7 +3720,7 @@ class CourseManager {
             // Build breadcrumb from module/lesson data
             const currentMod = (s.modules || []).find(m => m.moduleId === s.currentModuleId);
             let modLabel = '';
-            if (s.courseId === 'act-prep' && s.status !== 'paused') {
+            if ((s.courseId === 'act-prep' || s.courseId === 'sat-prep') && s.status !== 'paused') {
                 // ACT prep is the test → review → re-test loop, not chapters:
                 // "0/11 modules" described a scaffold the bootcamp never shows.
                 const bc = s.bootcamp || {};
@@ -3844,7 +3844,7 @@ class CourseManager {
         // ACT prep header reflects the bootcamp loop, not the chapter scaffold —
         // "Unit 1 › Number & Quantity · 0%" described a curriculum the loop
         // never presents.
-        if (session.courseId === 'act-prep') {
+        if (session.courseId === 'act-prep' || session.courseId === 'sat-prep') {
             const bc = session.bootcamp || {};
             const qTotal = Array.isArray(bc.queue) ? bc.queue.length : 0;
             const qDone = Array.isArray(bc.queue)
@@ -4631,6 +4631,9 @@ class CourseManager {
             if (diagnostic.type === 'act-practice' && typeof window !== 'undefined' && window.openActTest) {
                 setTimeout(() => { try { window.openActTest(); } catch (e) {} }, 350);
             }
+            if (diagnostic.type === 'sat-practice' && typeof window !== 'undefined' && window.openSatTest) {
+                setTimeout(() => { try { window.openSatTest(); } catch (e) {} }, 350);
+            }
             return;
         }
         this._baselinePending = false;
@@ -4934,6 +4937,7 @@ class CourseManager {
         const sessionId = this.activeCourseSessionId || '';
         const launchers = {
             'act-practice': 'if (window.openActTest) { window.openActTest(); }',
+            'sat-practice': 'if (window.openSatTest) { window.openSatTest(); }',
             'starting-point': "if (window.floatingScreener) { Promise.resolve(window.floatingScreener.checkAssessmentStatus()).then(function(){ window.floatingScreener.open(); }).catch(function(){}); } else if (window.openStartingPoint) { window.openStartingPoint(); }",
             'course-preassessment': `if (window.openCoursePreAssessment) { window.openCoursePreAssessment('${sessionId}', { required: ${!!diag.required} }); }`,
         };
@@ -5193,6 +5197,41 @@ if (typeof module !== 'undefined' && module.exports) {
 // on page load via the rehydration endpoint.
 // ============================================
 
+// The test-prep bootcamps share one loop view; what differs is the exam.
+// Keep in step with utils/practiceTests.js (server) and act-test.js EXAMS.
+const PREP_EXAMS = {
+    'act-prep': {
+        name: 'ACT',
+        runner: 'openActTest', progress: 'openActProgress', history: '/api/act-test/history',
+        evenLetters: { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' },   // the real ACT letters even questions F–J
+        cat: { 'integrating-essential-skills': 'Essential skills', 'number-quantity': 'Number & Quantity', algebra: 'Algebra', functions: 'Functions', geometry: 'Geometry', 'statistics-probability': 'Statistics & Probability' },
+    },
+    'sat-prep': {
+        name: 'SAT',
+        runner: 'openSatTest', progress: 'openSatProgress', history: '/api/sat-test/history',
+        evenLetters: null,                                          // A–D on every SAT question
+        cat: { algebra: 'Algebra', 'advanced-math': 'Advanced Math', 'problem-solving-data': 'Problem-Solving & Data', 'geometry-trig': 'Geometry & Trig' },
+    },
+};
+
+/**
+ * A missed question, named the way the student saw it. The ACT is one form
+ * ("#12"); the SAT restarts numbering in each module, so its stored position 23
+ * is "Module 2, question 1" — the server stamps that as qLabel.
+ */
+function prepQuestionShort(m) {
+    if (!m) return '';
+    const mm = /^Module (\d+), question (\d+)$/.exec(m.qLabel || '');
+    if (mm) return `M${mm[1]}·${mm[2]}`;
+    return m.position != null ? String(m.position) : '';
+}
+function prepQuestionLong(m) {
+    if (!m) return '';
+    const mm = /^Module (\d+), question (\d+)$/.exec(m.qLabel || '');
+    if (mm) return `Module ${mm[1]} · Question ${mm[2]}`;
+    return m.position != null ? `Question #${m.position}` : 'Question';
+}
+
 class LessonTracker {
     constructor() {
         this._lastUpdate = null;
@@ -5286,7 +5325,8 @@ class LessonTracker {
         // gradual-release scaffold, so render the loop view instead of the
         // Warm-up/Learn/Practice stepper — for act-prep ALWAYS, even before the
         // first baseline (pre-baseline shows a "start your baseline" state).
-        if (pu && pu.courseId === 'act-prep') {
+        if (pu && PREP_EXAMS[pu.courseId]) {
+            this._exam = PREP_EXAMS[pu.courseId];
             return this._renderBootcamp(pu);
         }
         // Not in bootcamp mode — restore the standard tracker chrome if the
@@ -5354,7 +5394,8 @@ class LessonTracker {
 
     _bootcampHtml(bc, dp) {
         bc = bc || {};
-        const CAT = { 'integrating-essential-skills': 'Essential skills', 'number-quantity': 'Number & Quantity', algebra: 'Algebra', functions: 'Functions', geometry: 'Geometry', 'statistics-probability': 'Statistics & Probability' };
+        const exam = this._exam || PREP_EXAMS['act-prep'];
+        const CAT = exam.cat;
         const label = (c) => CAT[c] || String(c || '').replace(/-/g, ' ');
         const hasBaseline = !!bc.phase;   // bootcamp state only exists once a test is scored
         const total = Array.isArray(bc.queue) ? bc.queue.length : 0;
@@ -5388,7 +5429,7 @@ class LessonTracker {
 
         const phaseCard = !hasBaseline ? `
             <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-              <span style="color:#fff;font-size:13.5px;font-weight:500">Start with your baseline ACT — a full timed test that sets your starting score and shows exactly what to work on.</span>
+              <span style="color:#fff;font-size:13.5px;font-weight:500">Start with your baseline ${exam.name} — a full timed test that sets your starting score and shows exactly what to work on.</span>
               <button id="lt-bc-start" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Start baseline</button>
             </div>` : isReview ? `
             <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px">
@@ -5422,14 +5463,14 @@ class LessonTracker {
         const compact = !hasBaseline
             ? 'Start your baseline'
             : isReview
-                ? `${reviewed} of ${total} reviewed${cur && cur.position != null ? ` · next #${cur.position}` : ''}`
+                ? `${reviewed} of ${total} reviewed${cur && cur.position != null ? ` · next ${prepQuestionLong(cur).replace('Question #', '#')}` : ''}`
                 : 'Ready to re-test';
 
         return `
           <div style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;padding:${collapsed ? '10px 16px' : '14px 16px'};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
             <button id="lt-bc-head" aria-expanded="${!collapsed}" title="${collapsed ? 'Expand' : 'Collapse'}"
               style="background:transparent;border:0;padding:0;width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer;text-align:left;font:inherit">
-              <span style="color:#fff;font-size:15px;font-weight:700">🎯 ACT bootcamp <span style="font-weight:500;font-size:12px;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:20px;margin-left:4px">Round ${round}</span>${collapsed ? `<span style="font-weight:500;font-size:12.5px;color:rgba(255,255,255,.85);margin-left:10px">${compact}</span>` : ''}</span>
+              <span style="color:#fff;font-size:15px;font-weight:700">🎯 ${exam.name} bootcamp <span style="font-weight:500;font-size:12px;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:20px;margin-left:4px">Round ${round}</span>${collapsed ? `<span style="font-weight:500;font-size:12.5px;color:rgba(255,255,255,.85);margin-left:10px">${compact}</span>` : ''}</span>
               <span style="display:flex;align-items:center;gap:10px">
                 <span id="lt-bc-score" style="color:#fff;font-size:13px;opacity:.9"></span>
                 <i class="fas fa-chevron-${collapsed ? 'down' : 'up'}" style="color:rgba(255,255,255,.75);font-size:12px"></i>
@@ -5475,7 +5516,7 @@ class LessonTracker {
                     ? 'background:rgba(88,214,141,.28);color:#eafff2;cursor:pointer'
                     : 'background:rgba(255,255,255,.2);color:#fff;cursor:pointer';
             const title = done ? 'Reviewed \u2713 — tap to revisit' : (it.current ? 'Working this one now' : 'Tap to work this one next');
-            return `<button data-bc-jump="${it.queueIndex}" title="${title}" style="border:0;border-radius:8px;min-width:30px;padding:4px 7px;font-size:12px;cursor:pointer;${style}">${done ? '\u2713 ' : ''}${it.position}</button>`;
+            return `<button data-bc-jump="${it.queueIndex}" title="${title}" style="border:0;border-radius:8px;min-width:30px;padding:4px 7px;font-size:12px;cursor:pointer;${style}">${done ? '\u2713 ' : ''}${esc(it.short || it.position)}</button>`;
         };
         const block = (g) => {
             // Name the pattern where there IS one. A lone miss on a skill is
@@ -5503,7 +5544,7 @@ class LessonTracker {
     _reviewGroups(bc) {
         const queue = Array.isArray(bc && bc.queue) ? bc.queue : [];
         if (!queue.length || !queue.some((q) => q && q.position != null)) return [];
-        const CAT = { 'integrating-essential-skills': 'Essential skills', 'number-quantity': 'Number & Quantity', algebra: 'Algebra', functions: 'Functions', geometry: 'Geometry', 'statistics-probability': 'Statistics & Probability' };
+        const CAT = (this._exam || PREP_EXAMS['act-prep']).cat;
         const cur = bc.index || 0;
         const out = [];
         const byKey = new Map();
@@ -5522,6 +5563,7 @@ class LessonTracker {
             g.items.push({
                 queueIndex: i,
                 position: m.position != null ? m.position : null,
+                short: prepQuestionShort(m),
                 status: m.status || 'pending',
                 current: i === cur,
             });
@@ -5555,15 +5597,16 @@ class LessonTracker {
             // so the student saw "#30 · up next" over blank space and no
             // surface anywhere admitted the gap.
             return `<div style="background:rgba(255,255,255,.96);border-radius:10px;padding:11px 13px;margin-bottom:10px">
-                <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">Question ${cur.position != null ? '#' + cur.position : ''} · ${esc(label(cur.category))}</div>
+                <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">${esc(prepQuestionLong(cur))} · ${esc(label(cur.category))}</div>
                 <div style="font-size:13px;line-height:1.5;color:#6b6480">We couldn't load this question's text. Your tutor will ask you to read it out so you can still work it.</div>
               </div>`;
         }
         // Show the letters the student SAW on their form: the real ACT (and
         // the test runner) letter even question numbers F–G–H–J. Stored labels
         // and theirAnswer stay A–D — display alias only.
-        const evenLab = { A: 'F', B: 'G', C: 'H', D: 'J', E: 'K' };
-        const disp = (lab) => ((Number(cur.position) >= 1 && Number(cur.position) % 2 === 0) ? (evenLab[lab] || lab) : lab);
+        // The SAT letters every question A–D (evenLetters null).
+        const evenLab = (this._exam || PREP_EXAMS['act-prep']).evenLetters;
+        const disp = (lab) => ((evenLab && Number(cur.position) >= 1 && Number(cur.position) % 2 === 0) ? (evenLab[lab] || lab) : lab);
         // Figure is our own generated SVG from the item bank — same guard as
         // the test runner: bare <svg>, no scripts.
         const fig = (cur.svg && /^<svg[\s>]/.test(cur.svg) && !/<script/i.test(cur.svg))
@@ -5580,7 +5623,7 @@ class LessonTracker {
               </div>`;
         }).join('');
         return `<div style="background:rgba(255,255,255,.96);border-radius:10px;padding:11px 13px;margin-bottom:10px">
-            <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">Question ${cur.position != null ? '#' + cur.position : ''} · ${esc(label(cur.category))}</div>
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">${esc(prepQuestionLong(cur))} · ${esc(label(cur.category))}</div>
             ${fig}
             <div style="font-size:13.5px;line-height:1.5;color:#1f1a33;white-space:pre-wrap;margin-bottom:${rows ? '8px' : '0'}">${esc(cur.prompt)}</div>
             ${rows ? `<div style="display:flex;flex-direction:column;gap:5px">${rows}</div>` : ''}
@@ -5694,7 +5737,7 @@ class LessonTracker {
             const bc = this._bc || {};
             const cur = Array.isArray(bc.queue) ? bc.queue[bc.index || 0] : null;
             const msg = (cur && cur.position != null)
-                ? `Let's go over question ${cur.position}.`
+                ? `Let's go over ${cur.qLabel && /^Module/.test(cur.qLabel) ? cur.qLabel.replace(/^Module/, 'module') : `question ${cur.position}`}.`
                 : "I'm ready to review my missed questions.";
             const sent = (typeof window.mmSendChatMessage === 'function') && window.mmSendChatMessage(msg);
             if (!sent) {
@@ -5706,18 +5749,21 @@ class LessonTracker {
         if (next) next.addEventListener('click', () => this._advance(false));
         const doneLink = document.getElementById('lt-bc-done');
         if (doneLink) doneLink.addEventListener('click', (e) => { e.preventDefault(); this._advance(true); });
+        // This course's own runner: the SAT bootcamp retests on the SAT.
+        const exam = this._exam || PREP_EXAMS['act-prep'];
+        const openTest = () => { if (typeof window[exam.runner] === 'function') window[exam.runner](); };
         const retest = document.getElementById('lt-bc-retest');
-        if (retest) retest.addEventListener('click', () => { if (window.openActTest) window.openActTest(); });
+        if (retest) retest.addEventListener('click', openTest);
         const start = document.getElementById('lt-bc-start');
-        if (start) start.addEventListener('click', () => { if (window.openActTest) window.openActTest(); });
+        if (start) start.addEventListener('click', openTest);
         const prog = document.getElementById('lt-bc-progress');
-        if (prog) prog.addEventListener('click', (e) => { e.preventDefault(); if (window.openActProgress) window.openActProgress(); });
+        if (prog) prog.addEventListener('click', (e) => { e.preventDefault(); if (typeof window[exam.progress] === 'function') window[exam.progress](); });
     }
 
     async _loadBootcampScore() {
         try {
             const fetcher = window.csrfFetch || window.fetch;
-            const r = await fetcher('/api/act-test/history').then((x) => x.json()).catch(() => null);
+            const r = await fetcher((this._exam || PREP_EXAMS['act-prep']).history).then((x) => x.json()).catch(() => null);
             // Expired-while-away tests are flagged incomplete by /history and
             // never make the trend — that is how "33 → 7 ▼ −26" got on the card.
             const a = ((r && r.attempts) || []).filter((x) => x.scaledScore != null && !x.incomplete);

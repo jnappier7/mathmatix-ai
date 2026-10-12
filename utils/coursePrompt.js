@@ -8,6 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
+const { getTestDefByCourse } = require('./practiceTests');
 const { SHARED_VOICE_BLOCKS } = require('./promptCompact');
 
 // Course mode's mirror of the open-tutoring "student's lead" rule: here the
@@ -33,28 +34,31 @@ This is a course lesson: the direction is SET by the module. Never ask "did you 
  * @returns {string} the directive, or '' when not an ACT-prep course
  */
 function buildActPracticeGuidance(courseSession) {
-  if (!courseSession || courseSession.courseId !== 'act-prep') return '';
+  const def = courseSession && getTestDefByCourse(courseSession.courseId);
+  if (!def) return '';
+  const T = def.label;
+  // The tag keeps its historical name for both exams: it means "open THIS
+  // course's practice test", and the server tells the client which one.
   return `
 
 ====================================================================
-PRACTICE ACT — USE THE REAL TOOL, NEVER IMPROVISE ONE
+PRACTICE ${T} — USE THE REAL TOOL, NEVER IMPROVISE ONE
 ====================================================================
-This course has a real, full-length, auto-scored practice ACT Math test built
-in. It is the ONLY thing that produces a real diagnostic and targets this
-student's bootcamp. When the student asks to take a practice ACT / practice test
-/ diagnostic (or you decide it's time):
+This course has a real, full-length, auto-scored ${def.testName} built in. It is
+the ONLY thing that produces a real diagnostic and targets this student's
+bootcamp. When the student asks to take a ${def.testName} / practice test /
+diagnostic (or you decide it's time):
 - DO NOT write your own quiz or "short practice set." That produces no score and
   targets nothing.
-- NEVER say the test must be set up by a teacher or "the ACT platform" — it is
+- NEVER say the test must be set up by a teacher or "the ${T} platform" — it is
   built into THIS chat and you launch it yourself.
-- Briefly set expectations in YOUR voice: it's a full timed ACT Math section
-  (~45 questions) and you'll use the results to focus their sessions. Ask if they
-  want to start it now (a quick informal warm-up with you is fine if they're not
-  ready for the full thing).
+- Briefly set expectations in YOUR voice: it's ${def.testShape}, and you'll use the
+  results to focus their sessions. Ask if they want to start it now (a quick
+  informal warm-up with you is fine if they're not ready for the full thing).
 - ONLY once the student confirms they want to start the real test, emit the
   control tag <LAUNCH_PRACTICE_ACT> on its own line. It is hidden from the student
   and opens the test. Never describe the tag, and never emit it without an
-  explicit confirmation or just because the ACT was mentioned in passing.
+  explicit confirmation or just because the ${T} was mentioned in passing.
 ====================================================================`;
 }
 
@@ -879,11 +883,14 @@ function formatScaffoldStep(step, index, total) {
 function buildActBootcampGreetingInstruction({ firstName, courseSession }) {
   const bc = courseSession.bootcamp || {};
   const dp = courseSession.diagnosticPlan || {};
-  const list = (arr) => (arr || []).map(c => CATEGORY_LABEL[c] || c).join(', ');
+  const def = getTestDefByCourse(courseSession.courseId) || getTestDefByCourse('act-prep');
+  const labels = def.categoryLabel || CATEGORY_LABEL;
+  const list = (arr) => (arr || []).map(c => labels[c] || CATEGORY_LABEL[c] || c).join(', ');
+  const T = def.testName;
   const focus = (dp.focusCategories || []).length ? list(dp.focusCategories) : '';
   const strong = (dp.masteredCategories || []).length ? list(dp.masteredCategories) : '';
 
-  let instruction = `The student just opened their **ACT Math Prep** bootcamp. This is a diagnostic-driven bootcamp, NOT a lecture course — you already have their real practice-ACT results and you work from the questions THEY actually missed.
+  let instruction = `The student just opened their **${def.courseName}** bootcamp. This is a diagnostic-driven bootcamp, NOT a lecture course — you already have their real ${T} results and you work from the questions THEY actually missed.
 
 HARD RULES for this greeting:
 - Do NOT open by teaching a generic concept or defining vocabulary (never "let's learn what a real number is").
@@ -892,7 +899,7 @@ HARD RULES for this greeting:
 `;
 
   if (bc.phase === 'reassess') {
-    instruction += `\nWHERE THEY ARE: They have finished going back over the questions they missed. The next move is a FRESH timed practice ACT to measure their gains. Your greeting: welcome ${firstName} back, tell them they've worked through their misses and it's time to re-test to see how much they've moved, and invite them to start the fresh test when ready. Do NOT teach anything.`;
+    instruction += `\nWHERE THEY ARE: They have finished going back over the questions they missed. The next move is a FRESH timed ${T} to measure their gains. Your greeting: welcome ${firstName} back, tell them they've worked through their misses and it's time to re-test to see how much they've moved, and invite them to start the fresh test when ready. Do NOT teach anything.`;
   } else if (bc.phase === 'review') {
     const total = Array.isArray(bc.queue) ? bc.queue.length : 0;
     // Count the items actually REVIEWED, never bc.index. The index is a
@@ -904,12 +911,12 @@ HARD RULES for this greeting:
     const done = Array.isArray(bc.queue)
       ? bc.queue.filter((q) => q && q.status === 'reviewed').length
       : 0;
-    instruction += `\nWHERE THEY ARE: REVIEW phase — going back through the questions they missed on their practice ACT (${done} of ${total} done so far). Your greeting:
+    instruction += `\nWHERE THEY ARE: REVIEW phase — going back through the questions they missed on their ${T} (${done} of ${total} done so far). Your greeting:
 1. Welcome ${firstName}${bc.round > 1 ? ' back' : ''} in one line.
 ${strong ? `2. Give a quick nod to what they're already strong on (${strong}).\n` : ''}${focus ? `${strong ? '3' : '2'}. Name where you're focusing — ${focus} — because that's where they lost the most points.\n` : ''}Then tell them you'll go through their missed questions one at a time and invite them to say "ready" (or ask you anything) to pull up the first one. Do NOT present the question yourself — the next turn does that.`;
   } else {
     // Post-baseline but bootcamp state not populated yet (defensive).
-    instruction += `\nWHERE THEY ARE: Their practice ACT is scored and it's time to begin. Your greeting: welcome ${firstName}, ${focus ? `tell them you'll aim the bootcamp at ${focus}, ` : ''}and invite them to start going over what they missed. Do NOT teach a concept or present a problem.`;
+    instruction += `\nWHERE THEY ARE: Their ${T} is scored and it's time to begin. Your greeting: welcome ${firstName}, ${focus ? `tell them you'll aim the bootcamp at ${focus}, ` : ''}and invite them to start going over what they missed. Do NOT teach a concept or present a problem.`;
   }
 
   instruction += `\n\nREMINDER: All math MUST use LaTeX: \\\\( x + 3 \\\\) for inline, \\\\[ x^2 \\\\] for display. Never write bare math.`;
@@ -926,7 +933,7 @@ function buildCourseGreetingInstruction({ userProfile, courseSession, pathway, s
   // learn what a real number is"), which is exactly the off-key open the generic
   // scaffold greeting below produces for act-prep. (Pre-baseline students never
   // reach this — the server baseline gate withholds the greeting entirely.)
-  if (courseSession.courseId === 'act-prep') {
+  if (getTestDefByCourse(courseSession.courseId)) {
     return buildActBootcampGreetingInstruction({ firstName, courseSession });
   }
 

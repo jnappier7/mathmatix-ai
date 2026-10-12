@@ -1,0 +1,82 @@
+{
+  "moduleId": "test_strategies",
+  "course": "SAT Math Prep",
+  "unit": 5,
+  "title": "Test Day Strategies",
+  "estimatedDuration": 20,
+  "description": "Desmos, the grid-in rules, and pacing across two adaptive modules.",
+  "skills": [],
+  "goals": [
+    "Know when graphing in Desmos is faster than algebra",
+    "Enter grid-in answers the way the SAT accepts them",
+    "Pace two 35-minute modules, knowing Module 1 decides Module 2"
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Desmos, grid-ins and pacing",
+      "content": "Two adaptive modules: Module 1 decides whether Module 2 is the harder version, and the harder version is where the top scores are. Careful work early is worth more than speed early.",
+      "keyPoints": [
+        "Graph it: systems (intersection), zeros, vertex, \"how many solutions\" — type both sides as y = … and look",
+        "Grid-in: 5 characters (6 with a minus sign); fraction or decimal; never a mixed number (2 1/2 reads as 21/2)",
+        "A repeating decimal fills the box: 2/3 → .6666 or .6667",
+        "No penalty for guessing — never leave a question blank"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Desmos in action",
+      "examples": [
+        {
+          "problem": "y = x² − 4 and y = 3x intersect at two points. What are they?",
+          "solution": "Type y = x^2 − 4 and y = 3x into Desmos and tap the intersections: (−1, −3) and (4, 12). By algebra: x² − 3x − 4 = 0 → (x − 4)(x + 1) = 0."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Grid-in rules — we do",
+      "problems": [
+        {
+          "id": "sat-strat-wp1",
+          "problem": "The answer is 3 1/2. What do you type?",
+          "hints": [
+            "Mixed numbers are not allowed",
+            "Use an improper fraction or a decimal"
+          ],
+          "answer": "7/2 or 3.5 — typing \"3 1/2\" without the space reads as 31/2."
+        },
+        {
+          "id": "sat-strat-wp2",
+          "problem": "The answer is 2/3. What fits the box?",
+          "hints": [
+            "The box holds 5 characters",
+            "Fill it with the decimal"
+          ],
+          "answer": "2/3, .6666 or .6667 (0.666 also fits)."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Strategy check",
+      "problems": [
+        {
+          "id": "sat-strat-yp1",
+          "problem": "You have 4 minutes left and 6 questions unanswered in Module 2. What should you do?",
+          "answer": "Answer all 6 — guess on any you cannot finish. There is no penalty for a wrong answer."
+        },
+        {
+          "id": "sat-strat-yp2",
+          "problem": "When is it worth graphing a quadratic in Desmos?",
+          "answer": "When you need its zeros, vertex, or intersections with another graph, and the algebra would take longer than typing it in."
+        }
+      ]
+    }
+  ]
+}

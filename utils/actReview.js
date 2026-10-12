@@ -11,6 +11,36 @@
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
 const { normalizeOptions, resolveChoice, correctLabelOf, relabelByText, actDisplayLabel, LABELS } = require('./mcOptions');
 const { remapChoiceLetters } = require('./actChoiceOrder');
+const { getTestDef } = require('./practiceTests');
+const { isModular, moduleRange } = require('./testModules');
+
+// The exam a miss came from. Review items carry their testId (stamped by
+// buildReviewQueue); items queued before that are the ACT's.
+const examOf = (miss) => getTestDef(miss && miss.testId);
+const catLabelOf = (miss, fallback) => {
+  const def = examOf(miss);
+  return (def.categoryLabel && def.categoryLabel[miss.category]) || CATEGORY_LABEL[miss.category] || miss.category || fallback;
+};
+// The letter the student saw: the ACT's F–G–H–J alias on even questions, the
+// SAT's plain A–D.
+const shownLetter = (miss, label) => (examOf(miss).letterAlias ? actDisplayLabel(miss.position, label) : label);
+
+/**
+ * The question as the student knew it. The ACT is one form, so "#12". The SAT
+ * restarts numbering in each module, and its stored position 23 was "Module 2,
+ * question 1" on their screen — "#23" would point at nothing they saw.
+ */
+function questionLabel(testId, position) {
+  if (position == null) return null;
+  const bp = getTestDef(testId).blueprint;
+  if (isModular(bp)) {
+    for (const m of bp.modules) {
+      const r = moduleRange(bp, m.n);
+      if (position >= r.first && position <= r.last) return `Module ${m.n}, question ${position - r.first + 1}`;
+    }
+  }
+  return `#${position}`;
+}
 
 /**
  * Bank letter -> the letter the same choice had on this test, or null when the
@@ -47,8 +77,10 @@ const SKILL_NAME = (() => {
 /** The name to head a review group with: the fine skill, else the category. */
 function groupLabelFor(miss) {
   if (!miss) return 'Review';
+  const def = examOf(miss);
   return SKILL_NAME[miss.skillId]
-    || CATEGORY_LABEL[miss.category]
+    || (def.testId !== 'act-math' && def.skillName(miss.skillId))
+    || catLabelOf(miss, null)
     || (miss.category ? String(miss.category).replace(/-/g, ' ') : 'Review');
 }
 
@@ -71,7 +103,10 @@ function optionText(options, label) {
  * @param {Object} [weights]  category -> exam weight (leverage)
  * @returns {Array} ranked queue of review items
  */
-function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY_WEIGHTS) {
+function buildReviewQueue(session, problemsById = {}, weights = null) {
+  const def = getTestDef(session && session.testId);
+  // Leverage comes from THIS exam's blueprint (ACT categories ≠ SAT domains).
+  weights = weights || (def.blueprint && def.blueprint.categoryWeights) || DEFAULT_CATEGORY_WEIGHTS;
   const itemsById = {};
   (session.items || []).forEach((it) => { if (it && it.problemId) itemsById[it.problemId] = it; });
 
@@ -91,6 +126,10 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
         // The question number on THEIR test ("you missed #12") — drives the
         // on-screen number rail and the default review order.
         position: Number.isFinite(r.position) ? r.position : (Number.isFinite(it.position) ? it.position : null),
+        // Which exam, and the question as the student knew it ("#12" on the
+        // ACT, "Module 2, question 1" on the SAT) — for prompts and the rail.
+        testId: def.testId,
+        qLabel: questionLabel(def.testId, Number.isFinite(r.position) ? r.position : it.position),
         problemId: r.problemId,
         skillId: it.skillId || r.skillId || null,
         category,
@@ -322,8 +361,9 @@ function hasQuestionText(miss) {
  * silent deadlock.
  */
 function missingQuestionSection(miss, index, total) {
-  const cat = CATEGORY_LABEL[miss.category] || miss.category || 'ACT Math';
-  const where = miss.position != null ? `#${miss.position} from their test` : 'a question from their test';
+  const cat = catLabelOf(miss, `${examOf(miss).label} Math`);
+  const ql = miss.qLabel || questionLabel(miss.testId, miss.position);
+  const where = ql ? `${ql} from their test` : 'a question from their test';
   return `
 
 ====================================================================
@@ -334,7 +374,7 @@ case where you must ask the student for it.
 ${groupLine(miss)}
 What you DO know: it was ${where}, the topic is ${cat}${miss.skipped
     ? ', and they SKIPPED it — no answer was recorded'
-    : (miss.theirAnswer ? `, and they answered ${actDisplayLabel(miss.position, miss.theirAnswer)}` : '')}.
+    : (miss.theirAnswer ? `, and they answered ${shownLetter(miss, miss.theirAnswer)}` : '')}.
 
 Say so plainly and in ONE sentence — "I've got ${where} on your list as ${cat},
 but the question text didn't come through on my end" — then ask them to read it
@@ -362,11 +402,13 @@ function figureLine(miss) {
 function reviewPromptSection(miss, index, total, transfer = []) {
   if (!miss) return '';
   if (!hasQuestionText(miss)) return missingQuestionSection(miss, index, total);
-  const cat = CATEGORY_LABEL[miss.category] || miss.category || 'ACT Math';
+  const def = examOf(miss);
+  const cat = catLabelOf(miss, `${def.label} Math`);
+  const ql = miss.qLabel || questionLabel(miss.testId, miss.position);
   // Letters shown to the tutor must be the letters the student SAW on their
   // form — the real ACT letters even questions F–G–H–J, and the runner
-  // displays the same alias. Stored labels stay A–D underneath.
-  const disp = (label) => actDisplayLabel(miss.position, label);
+  // displays the same alias; the SAT is A–D throughout. Stored labels stay A–D.
+  const disp = (label) => shownLetter(miss, label);
   const opts = (miss.options || []).map((o) => `${disp(o.label)}) ${o.text}`).join('   ');
   // A skipped item has NO recorded answer. Say so in words the model cannot
   // repurpose: told to "remind them which letter they picked" and handed a
@@ -383,9 +425,9 @@ function reviewPromptSection(miss, index, total, transfer = []) {
   return `
 
 ====================================================================
-REVIEWING A MISSED QUESTION — ${miss.position != null ? `#${miss.position} from their test  ·  ` : ''}${index + 1} of ${total}  ·  ${cat}
+REVIEWING A MISSED QUESTION — ${ql ? `${ql} from their test  ·  ` : ''}${index + 1} of ${total}  ·  ${cat}
 ====================================================================
-The student is going over a question the test marked wrong on their practice ACT.
+The student is going over a question the test marked wrong on their ${def.testName}.
 Work THIS one question with them, then advance. Do not move to a different topic.
 ${groupLine(miss)}
 
@@ -431,7 +473,7 @@ How to coach it:
    a picture, a number line — have THEM do that version, and only then name it and
    show the textbook form. (Expected value is a weighted average: "2 students got 0,
    3 got 1, 4 got 2, 1 got 3 — what's the class average?" — not Σ x·P(x).)
-4. Teach the ACT MOVE for this question type — backsolving, plugging in numbers, estimating, eliminating, spotting the trap, or when to skip.
+4. ${def.strategy}
 ${transferBlock(transfer)}
 ${transfer && transfer.length
     ? '6. Emit the control tag <REVIEW_NEXT> on its own line to move to the next missed question — once the transfer check above is settled. NEVER emit it while they still owe you a practice attempt; never describe the tag.'
@@ -449,7 +491,7 @@ ${transfer && transfer.length
  */
 function groupLine(miss) {
   if (!miss || !miss.groupSize || miss.groupSize < 2) return '';
-  const cat = CATEGORY_LABEL[miss.category] || miss.category || 'this topic';
+  const cat = catLabelOf(miss, 'this topic');
   const first = miss.groupIndex === 1
     ? ` TELL THEM the pattern before you start this one — they cannot see it themselves, the questions were scattered across their test.`
     : '';
@@ -497,16 +539,17 @@ ${items}
  */
 function reassessPromptSection(bootcamp) {
   const reviewed = (bootcamp && Array.isArray(bootcamp.queue)) ? bootcamp.queue.length : 0;
+  const def = getTestDef((bootcamp && bootcamp.testId) || ((bootcamp && bootcamp.queue && bootcamp.queue[0]) || {}).testId);
   return `
 
 ====================================================================
 BOOTCAMP — TIME TO RE-TEST
 ====================================================================
 The student has now worked through all ${reviewed} question(s) they missed on
-their last practice ACT. Close the loop: it's time to measure whether it stuck.
+their last ${def.testName}. Close the loop: it's time to measure whether it stuck.
 - Congratulate them briefly on finishing the review.
-- Offer a FRESH, full timed practice ACT — it draws all-new questions (nothing
-  they've seen), so the score is a real comparison to last time.
+- Offer a FRESH ${def.testName} — ${def.testShape} — that draws all-new
+  questions (nothing they've seen), so the score is a real comparison to last time.
 - ONLY after they confirm they want to start it, emit <LAUNCH_PRACTICE_ACT> on
   its own line to open the test. Never emit it without confirmation.
 ====================================================================`;
@@ -627,6 +670,7 @@ function markReviewedAndAdvance(bootcamp) {
 }
 
 module.exports = {
+  questionLabel,
   buildReviewQueue,
   reviewGroups,
   groupLabelFor,

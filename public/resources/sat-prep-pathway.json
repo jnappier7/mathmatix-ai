@@ -1,0 +1,119 @@
+{
+  "courseId": "sat-prep",
+  "track": "SAT Math Prep",
+  "overview": "Preparation for the digital SAT Math section, run as a test-review-retest loop: a full adaptive practice SAT sets your baseline, your tutor walks you through every question you missed and gives you fresh practice on each weak skill, then you retest with all-new questions and watch your score move.",
+  "prerequisites": [
+    "algebra-1"
+  ],
+  "naturalProgression": [
+    "Lock in linear equations, functions, systems and inequalities (Algebra)",
+    "Master equivalent expressions, quadratics, exponentials and nonlinear equations (Advanced Math)",
+    "Read data with confidence: rates, percentages, scatterplots, probability and inference (Problem-Solving & Data Analysis)",
+    "Cover area, volume, triangles, trigonometry and circles (Geometry & Trigonometry)",
+    "Use Desmos, grid-in rules and two-module pacing the way top scorers do"
+  ],
+  "examAlignment": {
+    "exam": "Digital SAT Mathematics",
+    "totalQuestions": 44,
+    "totalTime": "70 minutes",
+    "format": "Two adaptive 22-question modules; multiple choice (4 options) and student-produced response",
+    "calculator": "Desmos graphing calculator permitted for the entire section",
+    "scoringRange": "200-800",
+    "domains": {
+      "algebra": "~35%",
+      "advancedMath": "~35%",
+      "problemSolvingDataAnalysis": "~15%",
+      "geometryTrigonometry": "~15%"
+    }
+  },
+  "aiInstructionModel": {
+    "approach": "Test, review every miss with the tutor, transfer practice, retest",
+    "description": "The student's own misses are the curriculum. The tutor reviews one missed question at a time — diagnose the error, reteach only what is missing, show the fastest SAT method (including when to graph it in Desmos) — then gives fresh practice on the same skill before moving on. When the review is done, the student retests with all-new questions."
+  },
+  "modules": [
+    {
+      "moduleId": "algebra",
+      "unit": 1,
+      "title": "Algebra",
+      "preview": "Linear equations, functions, systems and inequalities — about 35% of SAT Math",
+      "satDomain": "algebra",
+      "skills": [
+        "ALG1.EQV.1",
+        "ALG1.EQV.3",
+        "ALG1.EQV.7",
+        "ALG1.FNC.1",
+        "ALG1.FNC.4",
+        "ALG1.FNC.5"
+      ],
+      "moduleFile": "/modules/sat-prep/algebra_module.json"
+    },
+    {
+      "moduleId": "advanced_math",
+      "unit": 2,
+      "title": "Advanced Math",
+      "preview": "Equivalent expressions, quadratics, exponentials and nonlinear equations — about 35% of SAT Math",
+      "satDomain": "advanced-math",
+      "skills": [
+        "ALG1.EQV.10",
+        "ALG1.EQV.15",
+        "ALG1.FNC.8",
+        "ALG1.FNC.10",
+        "ALG2.EQV.6",
+        "ALG2.EQV.12",
+        "ALG2.EQV.13",
+        "ALG2.EQV.15",
+        "ALG2.EQV.16",
+        "ALG2.FNC.6",
+        "MS.QNT.9",
+        "ALG1.EQV.5"
+      ],
+      "moduleFile": "/modules/sat-prep/advanced_math_module.json"
+    },
+    {
+      "moduleId": "problem_solving_data",
+      "unit": 3,
+      "title": "Problem-Solving & Data Analysis",
+      "preview": "Ratios, rates, percentages, data, probability and inference — about 15% of SAT Math",
+      "satDomain": "problem-solving-data",
+      "skills": [
+        "MS.PRP.5",
+        "MS.PRP.7",
+        "ALG1.DTA.1",
+        "ALG1.DTA.2",
+        "ALG1.DTA.3",
+        "ALG1.DTA.4",
+        "ALG2.DTA.1",
+        "ALG2.DTA.3",
+        "GEO.DTA.1"
+      ],
+      "moduleFile": "/modules/sat-prep/problem_solving_data_module.json"
+    },
+    {
+      "moduleId": "geometry_trig",
+      "unit": 4,
+      "title": "Geometry & Trigonometry",
+      "preview": "Area, volume, lines, triangles, right-triangle trig and circles — about 15% of SAT Math",
+      "satDomain": "geometry-trig",
+      "skills": [
+        "GEO.PRP.5",
+        "GEO.SPC.4",
+        "GEO.SPC.11",
+        "GEO.SPC.16",
+        "GEO.SPC.17",
+        "GEO.SPC.18",
+        "MS.SPC.6"
+      ],
+      "moduleFile": "/modules/sat-prep/geometry_trig_module.json"
+    },
+    {
+      "moduleId": "test_strategies",
+      "unit": 5,
+      "title": "Test Day Strategies",
+      "preview": "Desmos, grid-in rules, and pacing across two adaptive modules",
+      "satDomain": null,
+      "skills": [],
+      "moduleFile": "/modules/sat-prep/test_strategies_module.json"
+    }
+  ],
+  "aiGuidanceNotes": "For SAT prep, every review ends in the fastest reliable method a student can use under time. Teach Desmos as a first-class tool — graph to solve systems, find intersections, zeros and vertices, and run regressions — but make sure the student can also do it by hand when graphing is slower. Grid-in answers must follow the entry rules (5 characters, 6 with a minus sign; fractions or decimals; no mixed numbers). Module 1 decides whether Module 2 is the harder version, so careful work early is worth more than speed. Never reveal an answer before the student has tried the question."
+}

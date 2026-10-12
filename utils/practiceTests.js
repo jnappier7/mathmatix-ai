@@ -26,7 +26,7 @@
 
 const ACT_BLUEPRINT = require('../seeds/act-math-blueprint.json');
 const SAT_BLUEPRINT = require('../seeds/sat-math-blueprint.json');
-const { buildActPlan } = require('./actBootcampPlan');
+const { buildActPlan, CATEGORY_LABEL: ACT_CATEGORY_LABEL } = require('./actBootcampPlan');
 const { studentLabel } = require('./studentLabels');
 
 // skillId → human-readable name, so the report can name EXACT weak skills
@@ -57,6 +57,22 @@ const ACT_SKILL_NAMES = (() => {
   return map;
 })();
 
+// The sat-prep course (public/resources/sat-prep-pathway.json): one module per
+// SAT domain. Algebra is the foundation the other three build on, so a weak
+// Algebra opens the course even when another domain is weaker.
+const SAT_CATEGORY_MODULE = {
+  'algebra': 'algebra',
+  'advanced-math': 'advanced_math',
+  'problem-solving-data': 'problem_solving_data',
+  'geometry-trig': 'geometry_trig',
+};
+const SAT_FOUNDATION_ORDER = {
+  'algebra': 0,
+  'problem-solving-data': 1,
+  'advanced-math': 1,
+  'geometry-trig': 1,
+};
+
 const SAT_CATEGORY_NAMES = {
   'algebra': 'Algebra',
   'advanced-math': 'Advanced Math',
@@ -73,6 +89,14 @@ const TESTS = {
     // Missing ids fall through to the raw id, as they always have.
     skillName: (id) => ACT_SKILL_NAMES[id],
     courseId: 'act-prep',
+    courseName: 'ACT Math Prep',
+    testName: 'practice ACT',
+    testShape: 'a full timed ACT Math section (45 questions, 50 minutes)',
+    categoryLabel: ACT_CATEGORY_LABEL,
+    // The real ACT letters even-numbered questions F–G–H–J; review shows the
+    // letters the student saw (utils/mcOptions.js actDisplayLabel).
+    letterAlias: true,
+    strategy: 'Teach the ACT MOVE for this question type — backsolving, plugging in numbers, estimating, eliminating, spotting the trap, or when to skip.',
     buildPlan: buildActPlan,
     creditSkills: true,
   },
@@ -84,13 +108,39 @@ const TESTS = {
     // Unified-taxonomy ids: the shared student-facing label file, never the
     // raw id (a dotted id once reached a student as a skill name).
     skillName: (id) => SAT_CATEGORY_NAMES[id] || (id && id !== 'unknown' ? studentLabel(id) : undefined),
-    courseId: null,
-    buildPlan: null,
+    courseId: 'sat-prep',
+    courseName: 'SAT Math Prep',
+    testName: 'practice SAT',
+    testShape: 'a full timed, adaptive SAT Math section (two 22-question modules, 35 minutes each)',
+    letterAlias: false,
+    strategy: 'Teach the SAT MOVE for this question type — graphing it in Desmos when that is faster (systems, intersections, zeros, vertices, regressions), backsolving from the choices, plugging in numbers, or spotting the trap. For a typed (grid-in) answer, check it against the entry rules: 5 characters (6 with a minus sign), a fraction or a decimal, never a mixed number.',
+    buildPlan: (byCategory) => buildActPlan(byCategory, {
+      blueprint: SAT_BLUEPRINT,
+      categoryModule: SAT_CATEGORY_MODULE,
+      foundationOrder: SAT_FOUNDATION_ORDER,
+    }),
+    categoryLabel: SAT_CATEGORY_NAMES,
     creditSkills: false,
   },
 };
 
 const DEFAULT_TEST_ID = 'act-math';
+
+/** The test a prep course is built on ('act-prep' → ACT, 'sat-prep' → SAT), or null. */
+function getTestDefByCourse(courseId) {
+  return Object.values(TESTS).find((d) => d.courseId && d.courseId === courseId) || null;
+}
+
+/** The client runner key for a prep course's exam: 'act' | 'sat' (ACT by default). */
+function practiceTestKeyForCourse(courseId) {
+  const def = getTestDefByCourse(courseId);
+  return def ? def.label.toLowerCase() : 'act';
+}
+
+/** Is this one of the test-prep bootcamp courses? */
+function isPrepCourse(courseId) {
+  return !!getTestDefByCourse(courseId);
+}
 
 /** The definition for a testId; unknown or missing ids are the ACT. */
 function getTestDef(testId) {
@@ -120,4 +170,8 @@ module.exports = {
   getTestDef,
   testScope,
   useTest,
+  getTestDefByCourse,
+  isPrepCourse,
+  practiceTestKeyForCourse,
+  SAT_CATEGORY_MODULE,
 };

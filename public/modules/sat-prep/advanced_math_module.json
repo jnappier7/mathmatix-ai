@@ -1,0 +1,117 @@
+{
+  "moduleId": "advanced_math",
+  "course": "SAT Math Prep",
+  "unit": 2,
+  "title": "Advanced Math",
+  "estimatedDuration": 35,
+  "description": "About 35% of SAT Math. Equivalent expressions, quadratic and exponential functions, and nonlinear equations and systems.",
+  "skills": [
+    "ALG1.EQV.10",
+    "ALG1.EQV.15",
+    "ALG1.FNC.8",
+    "ALG1.FNC.10",
+    "ALG2.EQV.6",
+    "ALG2.EQV.12",
+    "ALG2.EQV.16",
+    "MS.QNT.9"
+  ],
+  "goals": [
+    "Rewrite expressions to reveal what a question needs (factored, vertex, expanded)",
+    "Solve quadratic, radical, rational and exponential equations, and check for extraneous solutions",
+    "Read the vertex, zeros and growth factor of a function from its form or its graph",
+    "Use the discriminant to count solutions"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Choosing the right form",
+      "skill": "ALG1.FNC.10",
+      "content": "Advanced Math questions often hand you one form of an expression and ask about a feature another form shows directly. Factored form shows zeros; vertex form a(x − h)² + k shows the vertex (h, k); an exponential a·bˣ shows the starting value a and growth factor b.",
+      "keyPoints": [
+        "Zeros → factored form; vertex → vertex form or x = −b/(2a)",
+        "b > 1 is growth by (b − 1)·100%; 0 < b < 1 is decay",
+        "Square a radical equation, then CHECK — squaring can create extraneous solutions",
+        "Discriminant b² − 4ac: positive → 2 real solutions, zero → 1, negative → none"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Advanced Math — worked examples",
+      "skill": "ALG1.EQV.10",
+      "examples": [
+        {
+          "problem": "Which expression is equivalent to (2x − 3)(x + 4)?",
+          "solution": "FOIL: 2x² + 8x − 3x − 12 = 2x² + 5x − 12."
+        },
+        {
+          "problem": "What is the minimum value of f(x) = x² − 6x + 5?",
+          "solution": "The vertex is at x = −(−6)/(2·1) = 3, and f(3) = 9 − 18 + 5 = −4. In Desmos, graph it and tap the lowest point: (3, −4)."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Advanced Math — we do",
+      "problems": [
+        {
+          "id": "sat-adv-wp1",
+          "problem": "What is the sum of the solutions of x² − 5x − 14 = 0?",
+          "hints": [
+            "Factor: (x − 7)(x + 2)",
+            "Or: sum of roots = −b/a"
+          ],
+          "answer": "5. The solutions are 7 and −2; their sum is 5 (also −b/a = 5)."
+        },
+        {
+          "id": "sat-adv-wp2",
+          "problem": "If √(x + 6) = 4, what is x?",
+          "hints": [
+            "Square both sides",
+            "Check your answer in the original"
+          ],
+          "answer": "x = 10. x + 6 = 16, and √16 = 4 ✓"
+        },
+        {
+          "id": "sat-adv-wp3",
+          "problem": "f(x) = 3·2ˣ. What is f(4)?",
+          "hints": [
+            "Exponent before multiplication",
+            "2⁴ = 16"
+          ],
+          "answer": "48. 3 · 16 = 48 (not 6⁴)."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Advanced Math — SAT-style practice",
+      "problems": [
+        {
+          "id": "sat-adv-yp1",
+          "problem": "If 3^(2x) = 3^(x + 3), what is x?",
+          "answer": "x = 3. Same base, so 2x = x + 3."
+        },
+        {
+          "id": "sat-adv-yp2",
+          "problem": "(x + 5)² = x² + bx + c for all x. What is c?",
+          "answer": "c = 25. (x + 5)² = x² + 10x + 25."
+        },
+        {
+          "id": "sat-adv-yp3",
+          "problem": "What is the maximum value of g(x) = −(x − 2)² + 9?",
+          "answer": "9, at x = 2. The squared term is never positive."
+        },
+        {
+          "id": "sat-adv-yp4",
+          "problem": "How many real solutions does x² + 6x + 9 = 0 have?",
+          "answer": "Exactly one. The discriminant is 36 − 36 = 0 (it is (x + 3)² = 0)."
+        }
+      ]
+    }
+  ]
+}
