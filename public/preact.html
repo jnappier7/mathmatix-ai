@@ -164,6 +164,16 @@ input[type=text]{font:inherit;background:var(--night);color:var(--chalk);border:
 .posed-ans{margin-top:12px;padding-top:10px;border-top:1px solid var(--rule);
   font-family:var(--math);font-size:1.15rem;color:#17643c;font-weight:700}
 .film .ctx small{display:inline-block;margin-bottom:2px;color:var(--ink2)}
+
+/* Figures and tables inside a posed question. ACT geometry is mostly "here is a
+   diagram, find the angle", so the figure is the question — it sits above the
+   text and keeps its own scale rather than inheriting the 1.9rem body size. */
+.figq{display:block;max-width:230px;margin:0 auto 12px}
+.figq svg{display:block;width:100%;height:auto}
+table.twoway{border-collapse:collapse;margin:0 auto;font-size:.8em}
+table.twoway td{border:1px solid var(--ink2);padding:6px 14px;text-align:center}
+table.twoway td:first-child{text-align:left}
+@media (max-width:760px){.figq{max-width:190px}}
 @media (max-width:760px){
   .books{grid-template-columns:repeat(2,minmax(0,1fr))}
   .rules{grid-template-columns:1fr}
@@ -419,6 +429,21 @@ const nearFrac = (f) => (i) => (f === null
 // line just restated the question back at them. Keyed by template id so the
 // templates stay readable.
 const DOTELL = {
+  angpair:       "A linear pair adds to 180\u00b0. Solve for x first, then put it back \u2014 x is not the answer.",
+  tri:           "The three angles of a triangle add to 180\u00b0, not 90\u00b0.",
+  pyth:          "a\u00b2 + b\u00b2 = c\u00b2. Take the square root at the end \u2014 the legs do not simply add.",
+  area:          "Area is length \u00d7 width. Perimeter is the distance around. Read which one it asked for.",
+  coord:         "Midpoint is the AVERAGE of the x's and the average of the y's.",
+  mean:          "Mean is add-them-up-and-divide. Median is the middle one after sorting.",
+  median:        "Sort the list FIRST. The middle of the list as printed is not the median.",
+  missing:       "Total needed = average \u00d7 how many. Subtract what you already have.",
+  prob:          "Favourable over TOTAL. The total includes the ones you want.",
+  twoway:        "The question names the group \u2014 that group is the denominator, not the whole table.",
+  percent:       "Percent means per hundred: multiply by the percent and divide by 100.",
+  percentchange: "Percent change divides by the ORIGINAL amount, not the new one.",
+  rate:          "Find the per-one rate first, then multiply up.",
+  prop:          "Set up the proportion and scale both sides by the same factor.",
+  drt:           "Distance = rate \u00d7 time. Read which of the three it is asking for.",
   gems:        "Multiply before you add. The + does not go first just because it is written first.",
   gemspow:     "The exponent binds to its own base only, and it goes before the multiply.",
   evalneg:     "Square the negative FIRST: (\u22122)\u00b2 is +4, not \u22124.",
@@ -815,6 +840,296 @@ def("m6", "compound", () => {
   };
 });
 
+// =====================================================================
+// The three categories the Algebra bank had nothing for.
+//
+// Measured against the ACT blueprint this page's own practice test is built
+// to, the module playbooks above cover Algebra (18%), Functions (18%) and some
+// of Number & Quantity (11%) — and leave Geometry (20%), Statistics &
+// Probability (13%) and Integrating Essential Skills (20%) at zero. That is
+// over half the form. These fifteen close it.
+//
+// Two things the module templates never needed and these do:
+//   * FIGURES. ACT geometry is mostly "here is a diagram, find the angle."
+//     A text-only item tests something else.
+//   * CONTEXT. Integrating Essential Skills is middle-school arithmetic wrapped
+//     in a sentence; the sentence is the difficulty. Stripping it to a bare
+//     calculation removes the thing being measured.
+// =====================================================================
+
+const INKC = "#14212a";
+/** An inline figure. Sized by CSS; the viewBox is the only geometry here. */
+const fig = (w, hgt, body) =>
+  `<span class="figq"><svg viewBox="0 0 ${w} ${hgt}" role="img" aria-label="figure" ` +
+  `fill="none" stroke="${INKC}" stroke-width="2" stroke-linecap="round">${body}</svg></span>`;
+const lbl = (x, y, s, o = {}) =>
+  `<text x="${x}" y="${y}" fill="${INKC}" stroke="none" font-size="${o.sz || 15}" ` +
+  `font-style="${o.it ? "italic" : "normal"}" text-anchor="${o.a || "middle"}" ` +
+  `dominant-baseline="central" font-family="Atkinson Hyperlegible, sans-serif">${s}</text>`;
+const deg = (n) => `${n}°`;
+
+// ---------------------------------------------------------------- Geometry
+def("geo", "angpair", () => {
+  // A linear pair, given as two expressions. The trap is answering with x.
+  let x, a, b, c, d;
+  do { x = ri(6, 20); a = ri(2, 7); b = ri(5, 40); c = ri(2, 7); d = 180 - (a + c) * x - b; }
+  while (d < 1 || d > 90);
+  const m1 = a * x + b;
+  const th = ((180 - m1) * Math.PI) / 180, RLEN = 72;
+  const rx = 115 + RLEN * Math.cos(th), ry = 74 - RLEN * Math.sin(th);
+  const figure = fig(230, 100,
+    `<line x1="15" y1="74" x2="215" y2="74"/>` +
+    `<line x1="115" y1="74" x2="${rx.toFixed(1)}" y2="${ry.toFixed(1)}"/>` +
+    lbl(84, 64, "1", { sz: 13 }) + lbl(146, 64, "2", { sz: 13 }));
+  return {
+    kind: "do", ask: "∠1 and ∠2 form a linear pair. Find m∠1.",
+    prompt: `${figure}m∠1 = ${t(a)}${sg(b)} ··· m∠2 = ${t(c)}${sg(d)}`,
+    ans: deg(m1), ansKey: String(m1),
+    ...choices(String(m1), [I(x), I(180 - m1), I(a * x)], nearInt(m1)),
+    check: () => String(a * ((180 - b - d) / (a + c)) + b),
+  };
+});
+
+def("geo", "tri", () => {
+  // Angle sum. The common wrong answer is 90 − A − B (right-triangle habit).
+  const A = ri(25, 80), B = ri(25, 80), C = 180 - A - B;
+  // The apex is placed from A and B by the law of sines, so a 25° angle is
+  // drawn as a 25° angle. A schematic triangle labelled with real measures is
+  // a figure that lies.
+  const rad = (d0) => (d0 * Math.PI) / 180, base = 185;
+  const sideL = (base * Math.sin(rad(B))) / Math.sin(rad(C));
+  const ax = 22 + sideL * Math.cos(rad(A)), ay = 118 - sideL * Math.sin(rad(A));
+  const top = Math.min(ay, 14);
+  const figure = fig(232, 150 - top,
+    `<polygon points="22,${118 - top} ${22 + base},${118 - top} ${ax.toFixed(1)},${(ay - top).toFixed(1)}" stroke-linejoin="round"/>` +
+    lbl(22 + 34 * Math.cos(rad(A / 2)), 118 - top - 34 * Math.sin(rad(A / 2)), deg(A), { sz: 13 }) +
+    lbl(22 + base - 34 * Math.cos(rad(B / 2)), 118 - top - 34 * Math.sin(rad(B / 2)), deg(B), { sz: 13 }));
+  return {
+    kind: "do", ask: "Find the third angle of the triangle.",
+    prompt: `${figure}`,
+    ans: deg(C), ansKey: String(C),
+    ...choices(String(C), [I(A + B), I(180 - A), I(90 - A)], nearInt(C)),
+    check: () => String(180 - A - B),
+  };
+});
+
+def("geo", "pyth", () => {
+  // Pythagorean triples only, so the answer is always exact.
+  const [a0, b0, c0] = pick([[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25], [9, 40, 41], [20, 21, 29]]);
+  const k = pick([1, 1, 1, 2, 3]);
+  const [a, b, c] = [a0 * k, b0 * k, c0 * k];
+  // Drawn to scale. A fixed triangle put the 9 side longer than the 40 side,
+  // which teaches a student to ignore the picture — the opposite of the habit
+  // the geometry questions need.
+  const S0 = 125 / Math.max(a, b), aw = a * S0, bh = b * S0;
+  const x0 = 46, y0 = 24 + bh;
+  const figure = fig(46 + aw + 24, y0 + 26,
+    `<polygon points="${x0},${y0} ${x0 + aw},${y0} ${x0},${y0 - bh}" stroke-linejoin="round"/>` +
+    `<polyline points="${x0},${y0 - 14} ${x0 + 14},${y0 - 14} ${x0 + 14},${y0}"/>` +
+    lbl(x0 - 9, y0 - bh / 2, String(b), { a: "end", sz: 14 }) +
+    lbl(x0 + aw / 2, y0 + 16, String(a), { sz: 14 }));
+  return {
+    kind: "do", ask: "Find the length of the hypotenuse.",
+    prompt: `${figure}`,
+    ans: String(c), ansKey: String(c),
+    ...choices(String(c), [I(a + b), I(b), I(Math.abs(b - a))], nearInt(c)),
+    check: () => String(Math.round(Math.sqrt(a * a + b * b))),
+  };
+});
+
+def("geo", "area", () => {
+  // Area vs perimeter is the single most common slip on this item type.
+  const L = ri(4, 18), W = ri(3, L - 1 > 3 ? L - 1 : 4), wantArea = Math.random() < 0.5;
+  const ans = wantArea ? L * W : 2 * (L + W);
+  const S0 = 150 / Math.max(L, W), lw = L * S0, wh = W * S0;
+  const figure = fig(40 + lw + 20, 24 + wh + 26,
+    `<rect x="40" y="24" width="${lw}" height="${wh}"/>` +
+    lbl(40 + lw / 2, 24 + wh + 15, String(L), { sz: 14 }) +
+    lbl(32, 24 + wh / 2, String(W), { a: "end", sz: 14 }));
+  return {
+    kind: "do", ask: wantArea ? "Find the AREA of the rectangle." : "Find the PERIMETER of the rectangle.",
+    prompt: `${figure}`,
+    ans: String(ans), ansKey: String(ans),
+    ...choices(String(ans), wantArea ? [I(2 * (L + W)), I(L + W), I(2 * L * W)]
+                                     : [I(L * W), I(L + W), I(4 * (L + W))], nearInt(ans)),
+    check: () => String(wantArea ? L * W : 2 * L + 2 * W),
+  };
+});
+
+def("geo", "coord", () => {
+  // Midpoint, kept to even sums so the answer is a lattice point.
+  const x1 = nz(-8, 8), y1 = nz(-8, 8);
+  const x2 = x1 + 2 * nz(-5, 5), y2 = y1 + 2 * nz(-5, 5);
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  const pt = (a, b) => `(${N(a)}, ${N(b)})`;
+  const P = (a, b) => ({ d: pt(a, b), k: `${a},${b}` });
+  return {
+    kind: "do", ask: "Find the midpoint of the segment.",
+    prompt: `${pt(x1, y1)} &nbsp;and&nbsp; ${pt(x2, y2)}`,
+    ans: pt(mx, my), ansKey: `${mx},${my}`,
+    ...choices(`${mx},${my}`, [P(x2 - x1, y2 - y1), P(x1 + x2, y1 + y2), P(my, mx)],
+               (i) => P(mx + i + 1, my)),
+    check: () => `${(x1 + x2) / 2},${(y1 + y2) / 2}`,
+  };
+});
+
+// ------------------------------------------------- Statistics & Probability
+def("stat", "mean", () => {
+  const n = 5, base = ri(4, 20);
+  const xs = Array.from({ length: n }, () => base + ri(-3, 3));
+  const sum = xs.reduce((a, b) => a + b, 0);
+  xs[n - 1] += (n - (sum % n)) % n;                 // nudge the last so the mean is whole
+  const tot = xs.reduce((a, b) => a + b, 0), mean = tot / n;
+  const sorted = xs.slice().sort((a, b) => a - b);
+  return {
+    kind: "do", ask: "Find the mean.",
+    prompt: xs.join(", "),
+    ans: String(mean), ansKey: String(mean),
+    ...choices(String(mean), [I(sorted[2]), I(tot), I(sorted[n - 1] - sorted[0])], nearInt(mean)),
+    check: () => String(xs.reduce((a, b) => a + b, 0) / xs.length),
+  };
+});
+
+def("stat", "median", () => {
+  // Deliberately unsorted. Taking the middle of the list as written is the slip.
+  let xs = [];
+  while (new Set(xs).size !== 7) xs = Array.from({ length: 7 }, () => ri(2, 40));
+  const sorted = xs.slice().sort((a, b) => a - b), med = sorted[3];
+  const mid = xs[3];
+  return {
+    kind: "do", ask: "Find the median.",
+    prompt: xs.join(", "),
+    ans: String(med), ansKey: String(med),
+    ...choices(String(med), [I(mid), I(Math.round(xs.reduce((a, b) => a + b, 0) / 7)),
+                             I(sorted[6] - sorted[0])], nearInt(med)),
+    check: () => String(xs.slice().sort((a, b) => a - b)[Math.floor(xs.length / 2)]),
+  };
+});
+
+def("stat", "missing", () => {
+  const n = 4, target = ri(78, 94);
+  let first, need;
+  do { first = Array.from({ length: n - 1 }, () => ri(65, 100));
+       need = target * n - first.reduce((a, b) => a + b, 0); }
+  while (need < 40 || need > 100);
+  return {
+    kind: "do", ask: `Four tests average ${target}. Three of them are below. Find the fourth.`,
+    prompt: first.join(", "),
+    ans: String(need), ansKey: String(need),
+    ...choices(String(need), [I(target), I(target * n), I(Math.round(first.reduce((a, b) => a + b, 0) / 3))],
+               nearInt(need)),
+    check: () => String(target * 4 - first[0] - first[1] - first[2]),
+  };
+});
+
+def("stat", "prob", () => {
+  const r = ri(2, 9), b = ri(2, 9), g = ri(2, 9), tot = r + b + g;
+  const wantNot = Math.random() < 0.4;
+  const f = frac(wantNot ? tot - r : r, tot);
+  return {
+    kind: "do",
+    ask: wantNot ? "One marble is drawn. P(NOT red)?" : "One marble is drawn. P(red)?",
+    prompt: `${r} red, ${b} blue, ${g} green`,
+    ans: fracStr(f), ansKey: fracKey(f),
+    ...choices(fracKey(f), [F(frac(wantNot ? r : tot - r, tot)), F(frac(r, b + g)), F(frac(r, r + b))],
+               (i) => F(frac(wantNot ? tot - r : r, tot + i + 1))),
+    check: () => fracKey(frac(wantNot ? b + g : r, r + b + g)),
+  };
+});
+
+def("stat", "twoway", () => {
+  // Reading a two-way table: the denominator is the row, not the grand total.
+  const a = ri(6, 20), b = ri(6, 20), c = ri(6, 20), d = ri(6, 20);
+  const f = frac(a, a + b);
+  const tbl = `<table class="twoway"><tbody>` +
+    `<tr><td></td><td><b>Yes</b></td><td><b>No</b></td></tr>` +
+    `<tr><td><b>9th</b></td><td>${a}</td><td>${b}</td></tr>` +
+    `<tr><td><b>10th</b></td><td>${c}</td><td>${d}</td></tr></tbody></table>`;
+  return {
+    kind: "do", ask: "Of the 9th graders, what fraction answered Yes?",
+    prompt: tbl,
+    ans: fracStr(f), ansKey: fracKey(f),
+    ...choices(fracKey(f), [F(frac(a, a + b + c + d)), F(frac(a, a + c)), F(frac(b, a + b))], nearFrac(f)),
+    check: () => fracKey(frac(a, a + b)),
+  };
+});
+
+// ------------------------------------------- Integrating Essential Skills
+def("ies", "percent", () => {
+  let pct, n, ans;
+  do { pct = pick([5, 10, 12, 15, 20, 25, 30, 40, 60, 75]);
+       n = pick([20, 40, 60, 80, 120, 140, 160, 200, 240, 300]);
+       ans = (pct * n) / 100; }
+  while (!Number.isInteger(ans));
+  return {
+    kind: "do", ask: "Work it out.",
+    prompt: `What is ${pct}% of ${n}?`,
+    ans: String(ans), ansKey: String(ans),
+    ...choices(String(ans), [I(n - ans), I(pct * n), I(Math.round(n / pct))], nearInt(ans)),
+    check: () => String(n * pct / 100),
+  };
+});
+
+def("ies", "percentchange", () => {
+  const up = Math.random() < 0.5;
+  let from, pct, to;
+  do { from = pick([20, 25, 40, 50, 80, 120, 200]); pct = pick([10, 20, 25, 50]);
+       to = up ? from + (from * pct) / 100 : from - (from * pct) / 100; }
+  while (!Number.isInteger(to));
+  return {
+    kind: "do", ask: `By what percent did it ${up ? "increase" : "decrease"}?`,
+    prompt: `A price went from $${from} to $${to}.`,
+    ans: pct + "%", ansKey: String(pct),
+    // the classic: dividing the change by the NEW amount instead of the old
+    ...choices(String(pct), [I(Math.round((100 * Math.abs(to - from)) / to)),
+                             I(Math.abs(to - from)), I(100 - pct)], nearInt(pct)),
+    check: () => String(Math.round((100 * Math.abs(to - from)) / from)),
+  };
+});
+
+def("ies", "rate", () => {
+  const per = ri(3, 12), hrs = ri(2, 6), want = ri(7, 15);
+  const made = per * hrs;
+  return {
+    kind: "do", ask: "At the same rate, how many in the second time?",
+    prompt: `A machine makes ${made} parts in ${hrs} hours. How many in ${want} hours?`,
+    ans: String(per * want), ansKey: String(per * want),
+    ...choices(String(per * want), [I(made + want), I(made * want), I(per)], nearInt(per * want)),
+    check: () => String((made * want) / hrs),
+  };
+});
+
+def("ies", "prop", () => {
+  const cups = ri(2, 5), per = ri(6, 15), batches = ri(2, 6);
+  return {
+    kind: "do", ask: "Scale the recipe.",
+    prompt: `${cups} cups of flour makes ${per} cookies. How many cups for ${per * batches} cookies?`,
+    ans: String(cups * batches), ansKey: String(cups * batches),
+    ...choices(String(cups * batches), [I(cups + batches), I(per * batches), I(batches)],
+               nearInt(cups * batches)),
+    check: () => String((cups * (per * batches)) / per),   // cross-multiply: ratio-first loses exactness
+  };
+});
+
+def("ies", "drt", () => {
+  const rate = pick([30, 35, 40, 45, 50, 55, 60, 65]), hrs = pick([2, 3, 4, 5, 6]);
+  const dist = rate * hrs;
+  const forRate = Math.random() < 0.5;
+  return {
+    kind: "do", ask: forRate ? "Find the average speed." : "Find the distance.",
+    prompt: forRate
+      ? `A car travels ${dist} miles in ${hrs} hours.`
+      : `A car travels ${rate} miles per hour for ${hrs} hours.`,
+    ans: forRate ? rate + " mph" : dist + " miles",
+    ansKey: String(forRate ? rate : dist),
+    ...choices(String(forRate ? rate : dist),
+               forRate ? [I(dist), I(dist * hrs), I(Math.round(hrs / dist) || hrs)]
+                       : [I(rate), I(rate + hrs), I(Math.round(rate / hrs))],
+               nearInt(forRate ? rate : dist)),
+    check: () => String(forRate ? dist / hrs : rate * hrs),
+  };
+});
+
 // ---------- playbooks ----------
 const BOOKS = {
   m1: { name: "Expressions", ch: "Mod 1", blurb: "Order of operations, evaluating with negatives, absolute value, and naming the properties." },
@@ -823,7 +1138,10 @@ const BOOKS = {
   m4: { name: "Slope & Lines", ch: "Mod 4", blurb: "Slope from two points, zero vs. undefined, slope-intercept and standard form." },
   m5: { name: "Writing Equations", ch: "Mod 5", blurb: "From a point and a slope, from two points, and parallel vs. perpendicular." },
   m6: { name: "Inequalities", ch: "Mod 6", blurb: "Two-step, the flip on a negative, absolute value, and compound." },
-  all: { name: "Full Season", ch: "Mod 1–6", blurb: "Everything, mixed. The real test." },
+  geo: { name: "Geometry", ch: "ACT/PSAT", blurb: "Angles, triangles, Pythagorean, area vs. perimeter, midpoint. Read the figure." },
+  stat: { name: "Data & Chance", ch: "ACT/PSAT", blurb: "Mean and median, a missing score, probability, and reading a two-way table." },
+  ies: { name: "Word Problems", ch: "ACT/PSAT", blurb: "Percents, rates, proportions and distance–rate–time — easy maths, wrapped in a sentence." },
+  all: { name: "Full Season", ch: "Everything", blurb: "All six modules plus the geometry, data and word problems the real test weights at half the form." },
 };
 
 function makePlay(book, recent) {
