@@ -415,6 +415,34 @@ const nearFrac = (f) => (i) => (f === null
   ? I(i + 1)
   : F(frac(f.n + (i % 2 ? 1 : -1) * (Math.floor(i / 2) + 1), f.d)));
 
+// The one-line tell for a posed play — the clue a student should carry into the
+// next one. "Solve." is an instruction, not a tell; without these the feedback
+// line just restated the question back at them. Keyed by template id so the
+// templates stay readable.
+const DOTELL = {
+  gems:        "Multiply before you add. The + does not go first just because it is written first.",
+  gemspow:     "The exponent binds to its own base only, and it goes before the multiply.",
+  evalneg:     "Square the negative FIRST: (\u22122)\u00b2 is +4, not \u22124.",
+  absval:      "The bars hold the whole subtraction. Work inside first, then take it positive.",
+  translate:   "Read the order the words give you. \"Less than\" and \"quotient of\" both reverse it.",
+  isfn:        "A function allows no input to repeat with two different outputs. Outputs may repeat freely.",
+  domain:      "The domain is the INPUTS \u2014 the first number in each pair.",
+  range:       "The range is the OUTPUTS \u2014 the second number in each pair.",
+  fnotation:   "f(\u22123) means substitute \u22123 for x. The name of the function is not a factor.",
+  slope2pt:    "Rise over run: (y\u2082 \u2212 y\u2081) on top, (x\u2082 \u2212 x\u2081) underneath, and in the same order.",
+  slopeflat:   "Flat line, slope 0. Vertical line, slope undefined \u2014 you cannot divide by a run of 0.",
+  slopeint:    "In y = mx + b the slope is the number ON x; b is where it crosses the y-axis.",
+  standard:    "From Ax + By = C the slope is \u2212A/B. Solve for y if you would rather see it.",
+  xint:        "The x-intercept is where y = 0. Set y to 0 and solve.",
+  fromptslope: "Find b by putting the point into y = mx + b. The y of the point is not b.",
+  from2pt:     "Slope first, then use either point to find b.",
+  parperp:     "Parallel keeps the slope. Perpendicular flips it AND changes the sign.",
+  twostep:     "Undo the + first, then the coefficient. The symbol only turns on a negative.",
+  flip:        "Dividing (or multiplying) by a negative REVERSES the inequality symbol.",
+  absineq:     "Less than is a band between. Greater than is two pieces heading out.",
+  compound:    "\"and\" is the overlap \u2014 between. \"or\" is everything outside.",
+};
+
 const T = [];
 const def = (pb, id, f) => T.push({ pb, id, f });
 
@@ -805,6 +833,7 @@ function makePlay(book, recent) {
   if (fresh.length) pool = fresh;
   const tpl = pick(pool), it = tpl.f();
   it.id = tpl.id; it.pb = tpl.pb;
+  if (it.kind === "do") it.tell = DOTELL[tpl.id] || it.ask;
   // choices carry [display, key] together so the renderer and the grader never
   // have to re-derive one from the other.
   it.choices = shuffle([{ d: it.ans, k: it.ansKey }, ...it.dis.map((d, i) => ({ d, k: it.disKeys[i] }))]);
@@ -925,9 +954,8 @@ function nextPlay() {
 /** The one-line explanation shown after a play, for either kind. */
 function tellFor(it) {
   if (it.kind === "why") return `<b>${R[it.ans]}.</b> ${TELL[it.ans]}`;
-  return `<b>${it.ansShort || stripTags(it.ans)}</b> &mdash; ${it.ask}`;
+  return `<b>${it.ans}</b> &mdash; ${it.tell}`;
 }
-const stripTags = (s) => String(s).replace(/<[^>]*>/g, "");
 
 function answer(k) {
   if (G0.lock) return; G0.lock = true;
@@ -961,7 +989,7 @@ function answer(k) {
     G0.streak = 0; G0.pos = Math.max(1, G0.pos - 5); G0.yards -= 5;
     const label = (key) => { const c = it.choices.find((x) => String(x.k) === String(key)); return it.kind === "why" ? R[key] : (c ? c.d : key); };
     G0.missed.push({ kind: it.kind, rows: it.rows, stmt: it.stmt, prompt: it.prompt, ask: it.ask,
-                     pickLabel: label(k), ansLabel: label(it.ansKey), tell: it.kind === "why" ? TELL[it.ans] : it.ask });
+                     pickLabel: label(k), ansLabel: label(it.ansKey), tell: it.kind === "why" ? TELL[it.ans] : it.tell });
     if (S.mode === "game") stopClock();
     updBoard();
     $("fb").className = "fb bad";
