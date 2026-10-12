@@ -64,7 +64,7 @@ const { recordConversionEvent } = require('../utils/conversionEvents');
 // reach a guest session with its token.
 router.use((req, _res, next) => { req.actOwner = { userId: req.user && req.user._id, testId: defOfReq(req).testId }; next(); });
 guestRouter.use((req, _res, next) => {
-  req.actOwner = { guestToken: String(req.get('X-Act-Guest-Token') || '') };
+  req.actOwner = { guestToken: String(req.get('X-Act-Guest-Token') || ''), testId: defOfReq(req).testId };
   next();
 });
 
@@ -977,14 +977,17 @@ router.post('/claim', async (req, res) => {
 
     // The conditional update IS the claim: only one request can match a
     // document that still carries this token hash and no owner.
+    // Scoped to this mount's test: /api/act-test/claim cannot claim an SAT
+    // test (or the reverse) — each runner claims only its own.
+    const scope = testScope(defOfReq(req));
     const upd = await ActTestSession.updateOne(
-      { _id: sessionId, guestTokenHash: tokenHash, userId: null, status: 'completed' },
+      { _id: sessionId, guestTokenHash: tokenHash, userId: null, status: 'completed', ...scope },
       { $set: { userId, claimedAt: new Date() }, $unset: { guestTokenHash: 1, guestExpiresAt: 1, guestBrowserHash: 1, guestNetHash: 1 } }
     );
     const firstClaim = upd.modifiedCount === 1;
     // Either we just claimed it, or this same account already had (a second
     // tab, a reload) — a no-op that returns the report again.
-    const session = await ActTestSession.findOne({ _id: sessionId, userId, claimedAt: { $ne: null } });
+    const session = await ActTestSession.findOne({ _id: sessionId, userId, claimedAt: { $ne: null }, ...scope });
     if (!session) {
       // Not completed yet, expired by TTL, someone else's, or a bad token.
       // One answer for all of them — the browser should forget the claim.
@@ -998,7 +1001,7 @@ router.post('/claim', async (req, res) => {
     let effects = { plannedSkills: 0, actPrepSessionId: null };
     if (firstClaim) {
       effects = await applyCompletionEffects(req, session, { bySkill, weakSkills, plan });
-      recordConversionEvent('act_guest_claimed', {
+      recordConversionEvent(`${def.eventPrefix}_guest_claimed`, {
         userId,
         sessionKey: String(session._id),
         context: { scaledScore: session.scaledScore, totalItems: total },
@@ -1044,7 +1047,8 @@ function guestPrints(req, res) {
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
       maxAge: GUEST_TTL_MS,
-      path: '/api/act-practice',
+      // Each guest rail (/api/act-practice, /api/sat-practice) keeps its own.
+      path: req.baseUrl || '/api/act-practice',
     });
   }
   return { browser: guestHash('browser', id), net: guestHash('net', req.ip) };
@@ -1053,13 +1057,13 @@ function guestPrints(req, res) {
 // Questions from this guest's recent tests, found by the server's own record
 // (cookie, then network) rather than the browser's list. At most
 // GUEST_HISTORY_MAX tests per signal, newest first, inside the guest TTL.
-async function guestRecordSeenProblemIds(prints) {
+async function guestRecordSeenProblemIds(prints, def = getTestDef()) {
   const seen = new Set();
   const since = new Date(Date.now() - GUEST_TTL_MS);
   for (const [field, value] of [['guestBrowserHash', prints.browser], ['guestNetHash', prints.net]]) {
     if (!value) continue;
     try {
-      const docs = await ActTestSession.find({ userId: null, [field]: value, createdAt: { $gte: since } })
+      const docs = await ActTestSession.find({ userId: null, [field]: value, createdAt: { $gte: since }, ...testScope(def) })
         .sort({ createdAt: -1 }).limit(GUEST_HISTORY_MAX).select('items.problemId').lean();
       docs.forEach((d) => (d.items || []).forEach((it) => it && it.problemId && seen.add(it.problemId)));
     } catch (err) {
@@ -1103,10 +1107,12 @@ guestRouter.post('/start', async (req, res) => {
   try {
     const { sessionId, restart, previous } = req.body || {};
     const token = req.actOwner.guestToken;
+    const def = defOfReq(req);
 
     if (!restart && sessionId && token && mongoose.isValidObjectId(sessionId)) {
       const active = await ActTestSession.findById(sessionId).select('+guestTokenHash');
       if (active && !active.userId && active.status === 'in_progress' && active.items.length > 0
+        && (active.testId || getTestDef().testId) === def.testId
         && guestTokenMatches(token, active.guestTokenHash)) {
         // Same rules as the signed-in resume (see /start above): an expired
         // partial sheet is abandoned, an expired full sheet is graded, and a
@@ -1130,8 +1136,7 @@ guestRouter.post('/start', async (req, res) => {
       }
     }
 
-    // The public guest rail is the ACT's (no test mount sets req.testDef here).
-    const { blueprint } = defOfReq(req);
+    const { blueprint } = def;
     // A guest has no account to keep a seen-ledger on, so the browser sends
     // the tests it took before (id + token, last few). Their questions are
     // excluded, so a retake is fresh — the same promise a signed-in student
@@ -1143,7 +1148,7 @@ guestRouter.post('/start', async (req, res) => {
     const prints = guestPrints(req, res);
     const excludeIds = [...new Set([
       ...(await guestSeenProblemIds(previous)),
-      ...(await guestRecordSeenProblemIds(prints)),
+      ...(await guestRecordSeenProblemIds(prints, def)),
     ])];
     const form = await assembleForm({
       blueprint,
@@ -1152,7 +1157,7 @@ guestRouter.post('/start', async (req, res) => {
     });
     if (form.coverage.filled === 0) {
       return res.status(503).json({
-        message: 'The ACT practice test is not available right now. Please try again later.',
+        message: `The ${def.label} practice test is not available right now. Please try again later.`,
         coverage: form.coverage,
         needsGeneration: form.gaps.length,
       });
@@ -1172,7 +1177,7 @@ guestRouter.post('/start', async (req, res) => {
       guestBrowserHash: prints.browser,
       guestNetHash: prints.net,
     });
-    recordConversionEvent('act_guest_started', {
+    recordConversionEvent(`${def.eventPrefix}_guest_started`, {
       sessionKey: String(session._id),
       context: { totalItems: form.items.length },
     });
@@ -1213,7 +1218,7 @@ guestRouter.post('/complete', async (req, res) => {
     const done = await finishSession(session, answers, res);
     if (done.abandoned) return;
 
-    recordConversionEvent('act_guest_completed', {
+    recordConversionEvent(`${defOfSession(session).eventPrefix}_guest_completed`, {
       sessionKey: String(session._id),
       context: { scaledScore: session.scaledScore, totalItems: done.tally.total },
     });
@@ -1285,7 +1290,8 @@ async function loadOwnedSession(sessionId, owner, res) {
   if (owner.guestToken !== undefined) {
     const session = await ActTestSession.findById(sessionId).select('+guestTokenHash');
     // 404 either way: a guest probing ids learns nothing about which exist.
-    if (!session || session.userId || !guestTokenMatches(owner.guestToken, session.guestTokenHash)) {
+    if (!session || session.userId || !guestTokenMatches(owner.guestToken, session.guestTokenHash)
+      || (owner.testId && (session.testId || getTestDef().testId) !== owner.testId)) {
       res.status(404).json({ message: 'Practice-test session not found.' });
       return null;
     }
