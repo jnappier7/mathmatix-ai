@@ -231,7 +231,7 @@
       // The digital SAT has Desmos built in, so the practice test does too.
       // Falls back to the scientific calculator if Desmos cannot load.
       calculator: 'desmos',
-      courseId: null,
+      courseId: 'sat-prep',
       seedHint: 'npm run seed:all -- --only=sat-items',
       categoryLabels: {
         'algebra': 'Algebra',

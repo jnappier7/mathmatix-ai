@@ -1,0 +1,114 @@
+{
+  "moduleId": "geometry_trig",
+  "course": "SAT Math Prep",
+  "unit": 4,
+  "title": "Geometry & Trigonometry",
+  "estimatedDuration": 30,
+  "description": "About 15% of SAT Math. Area and volume, lines and angles, similar and right triangles, trigonometric ratios, and circles — with the reference sheet in reach.",
+  "skills": [
+    "GEO.PRP.5",
+    "GEO.SPC.4",
+    "GEO.SPC.11",
+    "GEO.SPC.16",
+    "GEO.SPC.17",
+    "GEO.SPC.18",
+    "MS.SPC.6"
+  ],
+  "goals": [
+    "Use the reference sheet for area and volume formulas instead of memorizing them",
+    "Use angle relationships and similar triangles",
+    "Use the Pythagorean theorem, special right triangles, and SOH-CAH-TOA",
+    "Work with arcs, sectors, radians, and the equation of a circle"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Triangles, trig and circles",
+      "skill": "GEO.PRP.5",
+      "content": "The SAT gives you a reference sheet with every area and volume formula and the special right triangles — use it. What it cannot give you is which relationship the figure is hinting at.",
+      "keyPoints": [
+        "SOH-CAH-TOA: sin = opposite/hypotenuse, cos = adjacent/hypotenuse, tan = opposite/adjacent",
+        "Complementary angles: sin x° = cos(90 − x)°",
+        "Arc length = (angle/360) × 2πr; in radians, arc = r·θ",
+        "Circle (x − h)² + (y − k)² = r²: complete the square to find the center and radius"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Geometry & Trig — worked examples",
+      "skill": "GEO.SPC.11",
+      "examples": [
+        {
+          "problem": "A right triangle has legs 6 and 8. How long is the hypotenuse?",
+          "solution": "√(6² + 8²) = √100 = 10 (a 3-4-5 triangle scaled by 2)."
+        },
+        {
+          "problem": "In a right triangle, the hypotenuse is 10 and one acute angle is 30°. How long is the side opposite that angle?",
+          "solution": "opposite = 10 · sin 30° = 10 · 1/2 = 5 (the short leg of a 30-60-90 triangle)."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Geometry & Trig — we do",
+      "problems": [
+        {
+          "id": "sat-geo-wp1",
+          "problem": "Two angles of a triangle are 50° and 60°. What is the third?",
+          "hints": [
+            "Angles of a triangle sum to 180°"
+          ],
+          "answer": "70°."
+        },
+        {
+          "id": "sat-geo-wp2",
+          "problem": "A cylinder has radius 3 and height 4. What is its volume?",
+          "hints": [
+            "V = πr²h (reference sheet)"
+          ],
+          "answer": "36π."
+        },
+        {
+          "id": "sat-geo-wp3",
+          "problem": "A circle has radius 8. What is the length of a 90° arc?",
+          "hints": [
+            "A 90° arc is 1/4 of the circle",
+            "Circumference = 2πr"
+          ],
+          "answer": "4π. (1/4)(2π · 8) = 4π."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Geometry & Trig — SAT-style practice",
+      "problems": [
+        {
+          "id": "sat-geo-yp1",
+          "problem": "In a right triangle with legs 5 and 12, what is sin of the angle opposite the leg of length 5?",
+          "answer": "5/13. The hypotenuse is 13."
+        },
+        {
+          "id": "sat-geo-yp2",
+          "problem": "A circle has radius 7. What is its circumference?",
+          "answer": "14π."
+        },
+        {
+          "id": "sat-geo-yp3",
+          "problem": "x² + y² − 4x + 6y = 12 is a circle. What is its radius?",
+          "answer": "5. (x − 2)² + (y + 3)² = 12 + 4 + 9 = 25."
+        },
+        {
+          "id": "sat-geo-yp4",
+          "problem": "Two similar triangles have corresponding sides 4 and 6. A side of the smaller triangle is 10. How long is the matching side of the larger one?",
+          "answer": "15. The scale factor is 6/4 = 1.5."
+        }
+      ]
+    }
+  ]
+}

@@ -230,7 +230,10 @@ function applyVisualDirective(decision, observation, context) {
 function applyActReviewDirective(decision, context) {
   const miss = context && context.actReviewMiss;
   if (!miss) return;
-  const where = miss.position != null ? `Question #${miss.position} from their practice test` : 'The missed practice-test question';
+  const exam = require('../practiceTests').getTestDef(miss.testId).label;
+  const where = miss.qLabel
+    ? `${miss.qLabel.charAt(0).toUpperCase()}${miss.qLabel.slice(1).replace(/^#/, 'Question #')} from their practice test`
+    : (miss.position != null ? `Question #${miss.position} from their practice test` : 'The missed practice-test question');
 
   // The queue can carry a miss whose question text never resolved (see
   // actReview.hasQuestionText). The directive below is the one the model reads
@@ -241,7 +244,7 @@ function applyActReviewDirective(decision, context) {
   // system prompt's matching section is useless if the directives contradict it.
   if (miss.hasPrompt === false) {
     decision.directives.unshift(
-      `ACT REVIEW — THE QUESTION TEXT DID NOT LOAD. You do NOT have ${where.toLowerCase()}; the student does. Tell them so in one sentence and ask them to read it to you or send a photo. Do NOT pretend to hold it, do NOT invent a question on the topic, and do NOT ask what they tried on a question neither of you can see.`
+      `${exam} REVIEW — THE QUESTION TEXT DID NOT LOAD. You do NOT have ${where.toLowerCase()}; the student does. Tell them so in one sentence and ask them to read it to you or send a photo. Do NOT pretend to hold it, do NOT invent a question on the topic, and do NOT ask what they tried on a question neither of you can see.`
     );
     return;
   }
@@ -252,7 +255,7 @@ function applyActReviewDirective(decision, context) {
     ? 'the fact that they SKIPPED it — no letter was recorded for them'
     : 'the letter recorded for them';
   decision.directives.unshift(
-    `ACT REVIEW — YOU HAVE THE QUESTION. ${where} is in your system prompt under "REVIEWING A MISSED QUESTION" (the question, its lettered choices, ${recorded}, and the stored key). The student CANNOT see it in this chat. If you have not yet presented it this review, present it now, verbatim, with its lettered choices. Do NOT ask them to share, paste, remember, or describe the question — you are holding it. Do NOT reveal the stored key, or call it their recorded answer, before they have made their own attempt.`,
+    `${exam} REVIEW — YOU HAVE THE QUESTION. ${where} is in your system prompt under "REVIEWING A MISSED QUESTION" (the question, its lettered choices, ${recorded}, and the stored key). The student CANNOT see it in this chat. If you have not yet presented it this review, present it now, verbatim, with its lettered choices. Do NOT ask them to share, paste, remember, or describe the question — you are holding it. Do NOT reveal the stored key, or call it their recorded answer, before they have made their own attempt.`,
     'VERIFY THE KEY BEFORE YOU USE IT. Solve the question yourself, completely, before you call any answer right or wrong. Your own derivation outranks the stored key. If they disagree: say what you got, say the stored answer differs, tell the student you are flagging the question, and put <KEY_DISPUTE: your answer> on its own line. If the student\'s pick matches YOUR answer, tell them plainly their answer looks right. Never tell a student they were wrong on the strength of a key you have not checked.'
   );
 }

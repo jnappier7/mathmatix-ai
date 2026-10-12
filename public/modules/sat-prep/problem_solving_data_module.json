@@ -1,0 +1,115 @@
+{
+  "moduleId": "problem_solving_data",
+  "course": "SAT Math Prep",
+  "unit": 3,
+  "title": "Problem-Solving & Data Analysis",
+  "estimatedDuration": 30,
+  "description": "About 15% of SAT Math. Ratios, rates and units, percentages, one- and two-variable data, probability, and what a study can and cannot conclude.",
+  "skills": [
+    "MS.PRP.5",
+    "MS.PRP.7",
+    "ALG1.DTA.1",
+    "ALG1.DTA.2",
+    "ALG1.DTA.3",
+    "ALG2.DTA.1",
+    "ALG2.DTA.3"
+  ],
+  "goals": [
+    "Convert units and set up rates without losing track of what is \"per\" what",
+    "Find percent change from the right base, and chain percent changes by multiplying",
+    "Read a scatterplot and its line of best fit; interpret slope and intercept",
+    "Find conditional probabilities from a two-way table",
+    "Tell apart random sampling (generalize) and random assignment (cause and effect)"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Percents, rates and data",
+      "skill": "MS.PRP.7",
+      "content": "These questions are short on algebra and long on reading. Most misses come from the base of a percent, a unit left unconverted, or the wrong denominator in a two-way table.",
+      "keyPoints": [
+        "Percent change = (new − old) ÷ OLD",
+        "Successive changes multiply: up 20% then down 20% is 1.2 × 0.8 = 0.96",
+        "\"Given\" in a probability names the denominator: P(A given B) = count(A and B) ÷ count(B)",
+        "Random sample → generalize to the population; random assignment → cause and effect"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Problem-Solving & Data — worked examples",
+      "skill": "MS.PRP.7",
+      "examples": [
+        {
+          "problem": "A price rose from $160 to $200. By what percent did it increase?",
+          "solution": "(200 − 160) ÷ 160 = 40/160 = 25%. Dividing by 200 (the new price) gives 20%, the classic trap."
+        },
+        {
+          "problem": "Of 30 students who own a bike, 18 ride to school. If one bike owner is chosen at random, what is the probability they ride to school?",
+          "solution": "The condition \"owns a bike\" makes 30 the denominator: 18/30 = 3/5."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Problem-Solving & Data — we do",
+      "problems": [
+        {
+          "id": "sat-psda-wp1",
+          "problem": "A car travels 60 miles per hour. How far does it go in 2.5 hours?",
+          "hints": [
+            "distance = rate × time"
+          ],
+          "answer": "150 miles. 60 × 2.5 = 150."
+        },
+        {
+          "id": "sat-psda-wp2",
+          "problem": "A $80 jacket is 15% off. What is the sale price?",
+          "hints": [
+            "Keep 85% of the price",
+            "0.85 × 80"
+          ],
+          "answer": "$68. 80 × 0.85 = 68."
+        },
+        {
+          "id": "sat-psda-wp3",
+          "problem": "What is the mean of 4, 6, 8, 10, 12?",
+          "hints": [
+            "Add them, then divide by how many"
+          ],
+          "answer": "8. 40 ÷ 5 = 8."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Problem-Solving & Data — SAT-style practice",
+      "problems": [
+        {
+          "id": "sat-psda-yp1",
+          "problem": "A machine fills 45 bottles in 3 minutes. At this rate, how many bottles does it fill in 8 minutes?",
+          "answer": "120. 15 bottles per minute × 8."
+        },
+        {
+          "id": "sat-psda-yp2",
+          "problem": "After a 50% increase, a price is $120. What was the original price?",
+          "answer": "$80. 1.5 × p = 120."
+        },
+        {
+          "id": "sat-psda-yp3",
+          "problem": "A line of best fit is y = 3x + 2. What does it predict when x = 5?",
+          "answer": "17."
+        },
+        {
+          "id": "sat-psda-yp4",
+          "problem": "In a survey, 40 people own a dog, and 12 of them also own a cat. If a dog owner is chosen at random, what is the probability they also own a cat?",
+          "answer": "3/10 (12/40)."
+        }
+      ]
+    }
+  ]
+}

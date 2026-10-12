@@ -1,5 +1,6 @@
 // routes/chat.js
 
+const { practiceTestKeyForCourse } = require('../utils/practiceTests');
 const express = require('express');
 const router = express.Router();
 const log = require('../utils/logger');
@@ -1216,7 +1217,12 @@ async function runStudentTurn(req, res) {
                     // guides) opened with teaching allowed but the greeting withheld.
                     // The rule lives in utils/courseDiagnostic.js now — one place.
                     if (pending) {
-                        const gateText = "Before we dig into any lessons, let's lock in your baseline. Take the full practice ACT so I can see exactly where you're starting and aim your prep at what you actually need — tap **Take the Practice ACT** below to begin. Once it's done, we'll build your plan around your results.";
+                        // Named for the course's own exam (ACT or SAT prep); the card's
+                        // button text comes from the same diagnostic.
+                        const gateDef = require('../utils/practiceTests').getTestDefByCourse(gateSession.courseId);
+                        const gateTest = gateDef ? gateDef.testName : 'practice test';
+                        const gateCta = (diagnostic && diagnostic.cta) || `Take the ${gateTest}`;
+                        const gateText = `Before we dig into any lessons, let's lock in your baseline. Take the full ${gateTest} so I can see exactly where you're starting and aim your prep at what you actually need — tap **${gateCta}** below to begin. Once it's done, we'll build your plan around your results.`;
                         logger.info('Baseline gate: withholding course teaching until baseline complete', { userId, courseId: gateSession.courseId });
                         return res.json({
                             text: gateText,
@@ -1337,7 +1343,7 @@ async function runStudentTurn(req, res) {
         // point every path converges, guarded so it is never duplicated.
         {
             const courseIdForPrompt = conversationContextForPrompt?.courseSession?.courseId;
-            if (courseIdForPrompt === 'act-prep' && systemPrompt && !/LAUNCH_PRACTICE_ACT/.test(systemPrompt)) {
+            if (require('../utils/practiceTests').isPrepCourse(courseIdForPrompt) && systemPrompt && !/LAUNCH_PRACTICE_ACT/.test(systemPrompt)) {
                 systemPrompt += buildActPracticeGuidance({ courseId: courseIdForPrompt });
             }
         }
@@ -1402,6 +1408,10 @@ async function runStudentTurn(req, res) {
                     if (miss) {
                         actReviewMiss = {
                             position: miss.position != null ? miss.position : null,
+                            // The exam and the question as the student knew it
+                            // ("Module 2, question 1" on the SAT).
+                            testId: miss.testId || bc.testId || null,
+                            qLabel: miss.qLabel || null,
                             problemId: miss.problemId || null,
                             theirAnswer: miss.theirAnswer || null,
                             skipped: !!miss.skipped,
@@ -2053,7 +2063,7 @@ async function runStudentTurn(req, res) {
                 // bootcamp turns advanced the module bar through content the
                 // student never saw — and flipping the module to in_progress
                 // permanently disarmed planStartModule's round-2+ retargeting.
-                if (csDoc && csDoc.status === 'active' && csDoc.courseId !== 'act-prep') {
+                if (csDoc && csDoc.status === 'active' && !require('../utils/practiceTests').isPrepCourse(csDoc.courseId)) {
                     const courseCtx = loadCourseContext(csDoc);
                     if (courseCtx) {
                         const { advanceCourseProgress } = require('../utils/pipeline/courseAdapter');
@@ -2129,6 +2139,10 @@ async function runStudentTurn(req, res) {
             // Set from the pipeline (verify extracts <LAUNCH_PRACTICE_ACT>); the
             // tag itself is already stripped from aiResponseText.
             launchPracticeAct: pipelineResult.launchPracticeAct || false,
+            // WHICH practice test: the active prep course's exam ('act' | 'sat').
+            launchPracticeTest: pipelineResult.launchPracticeAct
+                ? practiceTestKeyForCourse(conversationContextForPrompt?.courseSession?.courseId)
+                : null,
             // Tells the browser this turn belongs to a NEW session, so it can
             // drop the previous one's transcript and board before painting.
             sessionRolled,

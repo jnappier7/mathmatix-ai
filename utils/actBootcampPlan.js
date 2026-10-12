@@ -62,6 +62,10 @@ const MAX_TARGETS = 3;           // a focused plan, not a laundry list
  * }}
  */
 function buildActPlan(byCategory, opts = {}) {
+  // An exam's prep course passes its own map (the SAT's four domains → the
+  // sat-prep modules); with none, these are the ACT's.
+  const categoryModule = opts.categoryModule || CATEGORY_MODULE;
+  const foundationOrder = opts.foundationOrder || FOUNDATION_ORDER;
   const weights = (opts.blueprint || DEFAULT_BLUEPRINT).categoryWeights || {};
   const masteredAt = opts.masteredAccuracy != null ? opts.masteredAccuracy : MASTERED_ACCURACY;
   const maxTargets = opts.maxTargets != null ? opts.maxTargets : MAX_TARGETS;
@@ -75,13 +79,13 @@ function buildActPlan(byCategory, opts = {}) {
       const examWeight = weights[category] || 0;
       return {
         category,
-        moduleId: CATEGORY_MODULE[category] || null,
+        moduleId: categoryModule[category] || null,
         correct,
         total,
         accuracy,
         examWeight,
         mastered: total > 0 && accuracy >= masteredAt,
-        foundation: FOUNDATION_ORDER[category] != null ? FOUNDATION_ORDER[category] : 9,
+        foundation: foundationOrder[category] != null ? foundationOrder[category] : 9,
         // leverage: how weak x how much the test rewards it
         priority: priorityScore(accuracy, examWeight || 1),
       };

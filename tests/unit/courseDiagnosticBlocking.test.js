@@ -36,8 +36,16 @@ beforeEach(() => {
 });
 
 describe('only a verified baseline runner may block', () => {
-  test('the ACT practice test is the one blocking type', () => {
-    expect([...BLOCKING_DIAGNOSTIC_TYPES]).toEqual(['act-practice']);
+  test('only the verified practice-test runners block: the ACT and (since 2026-10-12) the SAT', () => {
+    // Widen deliberately, and only for a runner verified end to end — see the
+    // note on BLOCKING_DIAGNOSTIC_TYPES in utils/courseDiagnostic.js.
+    expect([...BLOCKING_DIAGNOSTIC_TYPES]).toEqual(['act-practice', 'sat-practice']);
+  });
+
+  test('sat-prep: required AND blocking', async () => {
+    const d = await buildCourseDiagnostic(user, 'sat-prep');
+    expect(d).toMatchObject({ type: 'sat-practice', required: true, blocking: true });
+    expect((await isRequiredBaselinePending(user, 'sat-prep')).pending).toBe(true);
   });
 
   test('act-prep: required AND blocking', async () => {

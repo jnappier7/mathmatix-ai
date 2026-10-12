@@ -3927,8 +3927,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // Launch the real practice-ACT runner when the course tutor signalled
             // it (student confirmed). Opens the timed, auto-scored test that feeds
             // the bootcamp plan — instead of the tutor improvising questions.
-            if (data.launchPracticeAct && window.openActTest) {
-                setTimeout(() => window.openActTest(), 400); // let the tutor's confirming reply render first
+            // launchPracticeTest says WHICH test: the active prep course's
+            // exam ('act' | 'sat'); older servers send only the flag (ACT).
+            if (data.launchPracticeAct) {
+                const openTest = data.launchPracticeTest === 'sat' ? window.openSatTest : window.openActTest;
+                if (openTest) setTimeout(() => openTest(), 400); // let the tutor's confirming reply render first
             }
 
             // Test-out (Fix B): the student asked to prove they know this skill.

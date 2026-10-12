@@ -1,0 +1,114 @@
+{
+  "moduleId": "algebra",
+  "course": "SAT Math Prep",
+  "unit": 1,
+  "title": "Algebra",
+  "estimatedDuration": 30,
+  "description": "About 35% of SAT Math. Linear equations and functions, systems of two linear equations, and linear inequalities — and when to graph instead of solve.",
+  "skills": [
+    "ALG1.EQV.1",
+    "ALG1.EQV.3",
+    "ALG1.EQV.7",
+    "ALG1.FNC.1",
+    "ALG1.FNC.4",
+    "ALG1.FNC.5"
+  ],
+  "goals": [
+    "Solve linear equations in one variable, including ones with no solution or infinitely many",
+    "Write and interpret linear functions from a context, a table, or a graph",
+    "Solve systems of two linear equations by elimination, substitution, or graphing in Desmos",
+    "Write and solve linear inequalities from a context"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Linear equations and functions",
+      "skill": "ALG1.FNC.4",
+      "content": "On the SAT, linear questions reward reading the structure: slope is a rate of change, the y-intercept is a starting value, and an equation with the same x-coefficient on both sides has either no solution or infinitely many.",
+      "keyPoints": [
+        "Slope = change in y ÷ change in x; in context it is \"per\" something",
+        "The y-intercept is the value when the input is 0 — a fee, a starting amount",
+        "Same x-coefficient on both sides: equal constants → infinitely many solutions; different constants → no solution"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Linear equations — worked examples",
+      "skill": "ALG1.EQV.1",
+      "examples": [
+        {
+          "problem": "If 4(x − 2) + 3 = 2x + 9, what is the value of x?",
+          "solution": "Distribute: 4x − 8 + 3 = 2x + 9, so 4x − 5 = 2x + 9. Subtract 2x and add 5: 2x = 14, x = 7. Check: 4(5) + 3 = 23 and 2(7) + 9 = 23 ✓"
+        },
+        {
+          "problem": "2x + y = 11 and x − y = 1. What is x?",
+          "solution": "Add the equations to eliminate y: 3x = 12, so x = 4 (and y = 3). In Desmos, graph both lines and tap the intersection: (4, 3)."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Algebra — we do",
+      "problems": [
+        {
+          "id": "sat-alg-wp1",
+          "problem": "If (1/2)x + 4 = 10, what is x?",
+          "hints": [
+            "Subtract 4 first: (1/2)x = 6",
+            "Multiply by 2"
+          ],
+          "answer": "x = 12. Subtract 4: (1/2)x = 6, then multiply both sides by 2."
+        },
+        {
+          "id": "sat-alg-wp2",
+          "problem": "A line passes through (1, 5) and (4, 11). What is its slope?",
+          "hints": [
+            "Slope = (change in y)/(change in x)",
+            "(11 − 5)/(4 − 1)"
+          ],
+          "answer": "The slope is 2: (11 − 5)/(4 − 1) = 6/3."
+        },
+        {
+          "id": "sat-alg-wp3",
+          "problem": "A shop sold 30 items: x mugs at $3 and y shirts at $5, for $110 in all. How many shirts?",
+          "hints": [
+            "x + y = 30 and 3x + 5y = 110",
+            "Substitute x = 30 − y"
+          ],
+          "answer": "10 shirts. 3(30 − y) + 5y = 110 → 90 + 2y = 110 → y = 10."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Algebra — SAT-style practice",
+      "problems": [
+        {
+          "id": "sat-alg-yp1",
+          "problem": "If 5 − 2x = x − 13, what is x?",
+          "answer": "x = 6. Add 2x and 13 to both sides: 18 = 3x."
+        },
+        {
+          "id": "sat-alg-yp2",
+          "problem": "The line y = 3x + b passes through (2, 7). What is b?",
+          "answer": "b = 1. 7 = 3(2) + b."
+        },
+        {
+          "id": "sat-alg-yp3",
+          "problem": "A line with slope −2/3 is parallel to a line with slope −k/6. What is k?",
+          "answer": "k = 4. Parallel lines have equal slopes: −k/6 = −2/3."
+        },
+        {
+          "id": "sat-alg-yp4",
+          "problem": "A plan costs $25 plus $12 per month. What is the greatest number of months n so that the total is at most $150?",
+          "answer": "n = 10. 25 + 12n ≤ 150 → 12n ≤ 125 → n ≤ 10.4, so 10 whole months."
+        }
+      ]
+    }
+  ]
+}

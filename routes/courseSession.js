@@ -56,6 +56,7 @@ const CATALOG_META = {
   'calculus-bc':            { group: 'Advanced & AP', difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '\uD83D\uDE80', sortOrder: 9 },
   'consumer-math':          { group: 'Applied & Test Prep', difficulty: 'Applied', tagline: 'Real-world money math: paychecks, budgets, credit, and investing', icon: '\uD83D\uDCB0', sortOrder: 10 },
   'act-prep':               { group: 'Applied & Test Prep', difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT Math question type', icon: '\uD83C\uDFAF', sortOrder: 11 },
+  'sat-prep':               { group: 'Applied & Test Prep', difficulty: 'Test Prep', tagline: 'Adaptive practice SATs, then your tutor on every miss', icon: '\uD83D\uDCDD', sortOrder: 12 },
   'parent-math-k2':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Number bonds, ten frames, and visual models for K\u20132 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 0 },
   'parent-math-35':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Area models, fractions, and tape diagrams for 3\u20135 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 1 },
   'parent-math-68':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Ratios, algebra tiles, and integers for 6\u20138 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 2 }
@@ -296,12 +297,13 @@ router.post('/enroll', async (req, res) => {
     // baseline gate, so the course will not ask for one — build the bootcamp
     // review from it now, or the course opens with nothing to review.
     // Non-fatal: an unseeded bootcamp is the pre-existing behaviour.
-    if (courseId === 'act-prep') {
+    // Same for SAT prep (sat-prep, seeded from the latest SAT only).
+    if (require('../utils/practiceTests').isPrepCourse(courseId)) {
       try {
         const { seedBootcampFromLatestTest } = require('../utils/actBootcampSeed');
         await seedBootcampFromLatestTest(session, req.user._id);
       } catch (seedErr) {
-        console.error('[CourseSession] ACT bootcamp seed on enroll failed (non-fatal):', seedErr.message);
+        console.error('[CourseSession] test-prep bootcamp seed on enroll failed (non-fatal):', seedErr.message);
       }
     }
     await session.save();

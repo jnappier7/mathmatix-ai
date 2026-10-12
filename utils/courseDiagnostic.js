@@ -37,7 +37,10 @@ const ActTestSession = require('../models/actTestSession');
 // have been, and the free-chat opener ("what do you want to work on today?")
 // filled the gap. One rule, one place: widen this set only when a diagnostic's
 // runner is confirmed working end to end.
-const BLOCKING_DIAGNOSTIC_TYPES = new Set(['act-practice']);
+// 'sat-practice' joined 2026-10-12: the SAT runner (adaptive modules, grid-ins,
+// Desmos), its auto-open on the gate (courseCatalog.js), the sat-prep loop card
+// (lessonTracker.js) and the retest launch were all verified end to end.
+const BLOCKING_DIAGNOSTIC_TYPES = new Set(['act-practice', 'sat-practice']);
 
 const STARTING_POINT_CARD = {
   type: 'starting-point',
@@ -67,6 +70,17 @@ const COURSE_DIAGNOSTICS = {
     // ACT prep BEGINS with a full timed baseline. The scaled score is the number
     // the student is trying to move, so a partial substitute gives them nothing
     // to measure against.
+    required: true,
+  },
+  'sat-prep': {
+    type: 'sat-practice',
+    title: 'Start with a full practice SAT',
+    body: 'Take a timed, adaptive practice SAT Math section first — this is your baseline. Your tutor '
+      + 'uses the results to walk you through every question you missed, then you retest with '
+      + 'all-new questions and watch your score move.',
+    cta: 'Take the practice SAT',
+    // Like ACT prep, the score is the number the student is trying to move,
+    // so the bootcamp starts from a full timed baseline.
     required: true,
   },
   'algebra-1': STARTING_POINT_CARD,
@@ -103,9 +117,13 @@ async function buildCourseDiagnostic(user, courseId) {
   }
 
   try {
-    if (card.type === 'act-practice') {
-      const taken = await ActTestSession.countDocuments({ userId: user._id, status: 'completed' });
-      if (taken > 0) return null;                 // already took a practice ACT
+    if (card.type === 'act-practice' || card.type === 'sat-practice') {
+      // That exam's own test: a completed SAT is not an ACT baseline (or the
+      // reverse) — each prep course measures from its own test.
+      const { getTestDef, testScope } = require('./practiceTests');
+      const def = getTestDef(card.type === 'sat-practice' ? 'sat-math' : 'act-math');
+      const taken = await ActTestSession.countDocuments({ userId: user._id, status: 'completed', ...testScope(def) });
+      if (taken > 0) return null;                 // already took this exam's practice test
     } else if (card.type === 'starting-point') {
       const expired = user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) < new Date();
       if (user.assessmentCompleted && !expired) return null; // already placed (and current)
