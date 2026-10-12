@@ -23,6 +23,28 @@ const PREP_EXAMS = {
     },
 };
 
+// A course seeded from a junior test works from THAT test: a sat-prep bootcamp
+// that started on the PSAT names the PSAT, retests on it and charts its
+// history (the server's twin is practiceTests.testDefForCourseSession).
+const JUNIOR_EXAMS = {
+    'psat-math': {
+        course: 'sat-prep', name: 'PSAT',
+        runner: 'openPsatTest', progress: 'openPsatProgress', history: '/api/psat-test/history',
+        evenLetters: null,
+    },
+    'preact-math': {
+        course: 'act-prep', name: 'PreACT',
+        runner: 'openPreactTest', progress: 'openPreactProgress', history: '/api/preact-test/history',
+        evenLetters: null,                                          // A–D throughout; F–J is the ACT's
+    },
+};
+function prepExamFor(pu) {
+    const base = pu && PREP_EXAMS[pu.courseId];
+    if (!base) return null;
+    const junior = pu.bootcamp && JUNIOR_EXAMS[pu.bootcamp.testId];
+    return junior && junior.course === pu.courseId ? Object.assign({}, base, junior) : base;
+}
+
 /**
  * A missed question, named the way the student saw it. The ACT is one form
  * ("#12"); the SAT restarts numbering in each module, so its stored position 23
@@ -135,7 +157,7 @@ class LessonTracker {
         // Warm-up/Learn/Practice stepper — for act-prep ALWAYS, even before the
         // first baseline (pre-baseline shows a "start your baseline" state).
         if (pu && PREP_EXAMS[pu.courseId]) {
-            this._exam = PREP_EXAMS[pu.courseId];
+            this._exam = prepExamFor(pu);
             return this._renderBootcamp(pu);
         }
         // Not in bootcamp mode — restore the standard tracker chrome if the

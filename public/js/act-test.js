@@ -191,6 +191,7 @@
     act: {
       key: 'act',
       name: 'ACT',
+      article: 'an',
       apiBase: '/api/act-test',
       guestApiBase: '/api/act-practice',
       guestKey: 'mathmatix.actGuestTest',            // public/js/act-handoff.js reads this
@@ -218,6 +219,8 @@
     sat: {
       key: 'sat',
       name: 'SAT',
+      article: 'an',
+      modular: true,                  // two adaptive modules (the intro says so)
       apiBase: '/api/sat-test',
       guestApiBase: '/api/sat-practice',             // the public test at /sat
       guestKey: 'mathmatix.satGuestTest',            // public/js/act-handoff.js reads this
@@ -238,6 +241,61 @@
         'advanced-math': 'Advanced math',
         'problem-solving-data': 'Problem-solving & data',
         'geometry-trig': 'Geometry & trig',
+        'unknown': 'Other',
+      },
+    },
+    // The junior tests. Each is its senior exam's runner with its own rail,
+    // scale and storage keys; each feeds that exam's prep course.
+    psat: {
+      key: 'psat',
+      name: 'PSAT',
+      article: 'a',
+      modular: true,
+      apiBase: '/api/psat-test',
+      guestApiBase: '/api/psat-practice',            // the public test at /psat
+      guestKey: 'mathmatix.psatGuestTest',           // public/js/act-handoff.js reads this
+      guestHistoryKey: 'mathmatix.psatGuestHistory',
+      minutes: 70,
+      items: 44,
+      choices: 'multiple choice plus questions where you type your own answer',
+      scale: '160–760',
+      evenLetters: null,
+      referenceSheet: true,
+      calculator: 'desmos',           // built into the digital PSAT, as on the SAT
+      courseId: 'sat-prep',
+      seedHint: 'npm run seed:all -- --only=sat-items',
+      categoryLabels: {
+        'algebra': 'Algebra',
+        'advanced-math': 'Advanced math',
+        'problem-solving-data': 'Problem-solving & data',
+        'geometry-trig': 'Geometry & trig',
+        'unknown': 'Other',
+      },
+    },
+    preact: {
+      key: 'preact',
+      name: 'PreACT',
+      article: 'a',
+      apiBase: '/api/preact-test',
+      guestApiBase: '/api/preact-practice',
+      guestKey: 'mathmatix.preactGuestTest',         // public/js/act-handoff.js reads this
+      guestHistoryKey: 'mathmatix.preactGuestHistory',
+      minutes: 45,
+      items: 36,
+      choices: 'four answer choices',
+      scale: '1–35',
+      evenLetters: null,              // A–D throughout; F–J is the ACT's
+      referenceSheet: false,
+      calculator: 'scientific',
+      courseId: 'act-prep',
+      seedHint: 'npm run act:seed',
+      categoryLabels: {
+        'integrating-essential-skills': 'Essential skills',
+        'number-quantity': 'Number & quantity',
+        'algebra': 'Algebra',
+        'functions': 'Functions',
+        'geometry': 'Geometry',
+        'statistics-probability': 'Statistics & probability',
         'unknown': 'Other',
       },
     },
@@ -333,7 +391,7 @@
           <div class="actt-head">
             <span class="actt-title">📐 ${this.exam.name}<span class="actt-title-long">&nbsp;Math Practice Test</span></span>
             <span style="display:flex;align-items:center;gap:10px">
-              ${this.exam.referenceSheet ? '<button class="actt-x actt-hbtn" id="actt-ref" aria-label="Reference sheet" aria-expanded="false" aria-controls="actt-refpanel" title="Formulas the SAT gives you" style="display:none">Reference</button>' : ''}
+              ${this.exam.referenceSheet ? `<button class="actt-x actt-hbtn" id="actt-ref" aria-label="Reference sheet" aria-expanded="false" aria-controls="actt-refpanel" title="Formulas the ${this.exam.name} gives you" style="display:none">Reference</button>` : ''}
               <button class="actt-x actt-hbtn" id="actt-calc" aria-label="Calculator" title="Calculator (allowed on the ${this.exam.name})" style="display:none">Calc</button>
               <span class="actt-timer" id="actt-timer" role="timer" aria-label="Time remaining"></span>
               <button class="actt-x" id="actt-close" aria-label="Close">×</button>
@@ -486,11 +544,12 @@
       this.el('actt-timer').style.display = 'none';    // no clock on the intro
       this._showTestTools(false);                      // calc + reference appear with the test
       this.el('actt-foot').style.display = 'none';
-      if (this.exam.key === 'sat') {
+      const N = this.exam.name;
+      if (this.exam.modular) {
         this.el('actt-body').innerHTML = `
         <div style="max-width:540px;margin:0 auto;padding:6px 4px 4px">
-          <h2 style="margin:0 0 10px;font-size:20px">${this.guest ? 'Free SAT Math practice test' : 'SAT Math practice test'}</h2>
-          <p style="margin:0 0 14px;line-height:1.5">A full, timed SAT Math section: <strong>two modules of 22 questions, 35 minutes each</strong>, calculator and reference sheet allowed throughout. Like the real SAT, how you do on Module 1 decides whether Module 2 is harder or easier. You get an estimated 200–800 score the moment you finish${this.guest ? '.' : ', and every question you miss is waiting for you and your tutor afterward.'}</p>
+          <h2 style="margin:0 0 10px;font-size:20px">${this.guest ? `Free ${N} Math practice test` : `${N} Math practice test`}</h2>
+          <p style="margin:0 0 14px;line-height:1.5">A full, timed ${N} Math section: <strong>two modules of 22 questions, 35 minutes each</strong>, calculator and reference sheet allowed throughout. Like the real ${N}, how you do on Module 1 decides whether Module 2 is harder or easier. You get an estimated ${this.exam.scale} score the moment you finish${this.guest ? '.' : ', and every question you miss is waiting for you and your tutor afterward.'}</p>
           <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
             <li>Most questions are multiple choice. About a quarter ask you to <strong>type your own answer</strong> — the box shows a preview and the rules for what it accepts.</li>
             <li><strong>It's timed and can't be paused.</strong> Pacing is part of the score. Find a quiet spot and grab scratch paper first.</li>
@@ -506,10 +565,10 @@
       if (this.guest) {
         this.el('actt-body').innerHTML = `
         <div style="max-width:520px;margin:0 auto;padding:6px 4px 4px">
-          <h2 style="margin:0 0 10px;font-size:20px">Free ACT Math practice test</h2>
-          <p style="margin:0 0 14px;line-height:1.5">A full, timed ACT Math section: <strong>45 questions, 50 minutes</strong>, four answer choices, calculator allowed. You get an estimated 1–36 score the moment you finish.</p>
+          <h2 style="margin:0 0 10px;font-size:20px">Free ${N} Math practice test</h2>
+          <p style="margin:0 0 14px;line-height:1.5">A full, timed ${N} Math section: <strong>${this.exam.items} questions, ${this.exam.minutes} minutes</strong>, four answer choices, calculator allowed. You get an estimated ${this.exam.scale} score the moment you finish.</p>
           <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
-            <li><strong>It's timed and can't be paused</strong> — just like the real ACT. Pacing is part of the score.</li>
+            <li><strong>It's timed and can't be paused</strong> — just like the real ${N}. Pacing is part of the score.</li>
             <li>Do it in <strong>one sitting</strong>. Find a quiet spot and grab scratch paper first.</li>
             <li><strong>Move freely</strong> — go back, change answers, and 🚩 flag anything you want to revisit.</li>
             <li>Unanswered questions count as wrong, so guess before time runs out.</li>
@@ -522,12 +581,12 @@
       }
       this.el('actt-body').innerHTML = `
         <div style="max-width:520px;margin:0 auto;padding:6px 4px 4px">
-          <h2 style="margin:0 0 10px;font-size:20px">Your baseline ACT Math test</h2>
-          <p style="margin:0 0 14px;line-height:1.5">This is your <strong>baseline</strong> — a full, timed ACT Math section (45 questions, 50 minutes). Your tutor uses the results to focus your prep on exactly what you need, and marks anything you ace as done so you don't re-grind it.</p>
+          <h2 style="margin:0 0 10px;font-size:20px">Your baseline ${N} Math test</h2>
+          <p style="margin:0 0 14px;line-height:1.5">This is your <strong>baseline</strong> — a full, timed ${N} Math section (${this.exam.items} questions, ${this.exam.minutes} minutes). Your tutor uses the results to focus your prep on exactly what you need, and marks anything you ace as done so you don't re-grind it.</p>
           <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
-            <li><strong>It's timed and can't be paused</strong> — just like the real ACT. Pacing is part of the score.</li>
+            <li><strong>It's timed and can't be paused</strong> — just like the real ${N}. Pacing is part of the score.</li>
             <li>Do it in <strong>one sitting</strong>. Find a quiet spot and grab scratch paper first.</li>
-            <li><strong>Move freely</strong> — go back, change answers, and 🚩 flag anything you want to revisit, just like the real ACT. Nothing is locked in until time's up.</li>
+            <li><strong>Move freely</strong> — go back, change answers, and 🚩 flag anything you want to revisit, just like the real ${N}. Nothing is locked in until time's up.</li>
             <li>Don't stress any single question — answer (or flag it), move on, keep the clock moving.</li>
           </ul>
           <button id="actt-begin" style="width:100%;padding:13px 16px;font-size:16px;font-weight:700;border:0;border-radius:12px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6)">Begin when ready</button>
@@ -975,7 +1034,7 @@
         <div class="actt-center" style="padding:24px 8px">
           <h2 style="margin:0 0 10px;font-size:20px">Ready for Module ${nextN}?</h2>
           <p style="max-width:440px;margin:0 auto 18px;line-height:1.5">Once Module ${nextN} starts, you can't go back to Module ${this.mod.current}.
-          Module ${nextN} has 22 questions and its own 35-minute clock. How you did on Module ${this.mod.current} decides whether it's the harder or the easier version — just like the real SAT.</p>
+          Module ${nextN} has 22 questions and its own 35-minute clock. How you did on Module ${this.mod.current} decides whether it's the harder or the easier version — just like the real ${this.exam.name}.</p>
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
             <button class="actt-btn actt-skip" id="actt-backtomod">◀ Back to Module ${this.mod.current}</button>
             <button class="actt-btn actt-next" id="actt-startnext">Start Module ${nextN}</button>
@@ -1353,7 +1412,7 @@
     // Compose a student-voiced results summary and hand it to the chat tutor so
     // the conversation has context and remediation can start on the weak areas.
     buildTutorMessage(r) {
-      const head = `I just finished an ${this.exam.name} Math practice test — estimated score ${r.scaledScore != null ? r.scaledScore : '?'} (${r.rawScore}/${r.totalItems} correct).`;
+      const head = `I just finished ${this.exam.article} ${this.exam.name} Math practice test — estimated score ${r.scaledScore != null ? r.scaledScore : '?'} (${r.rawScore}/${r.totalItems} correct).`;
 
       // Prefer EXACT skills (e.g. "Quadratic Equations") over broad categories.
       //
@@ -1692,21 +1751,34 @@
   // script: same runner, guest rail, locked results.
   // Public pages set one of these before loading the script: the same
   // runner on that exam's guest rail, with locked results.
-  const SAT_GUEST_PAGE = !!window.MM_SAT_GUEST;
-  const GUEST_PAGE = !!window.MM_ACT_GUEST || SAT_GUEST_PAGE;
+  // Which public page this is (each sets its flag before loading the script).
+  const GUEST_FLAGS = { sat: 'MM_SAT_GUEST', psat: 'MM_PSAT_GUEST', preact: 'MM_PREACT_GUEST' };
+  const GUEST_EXAM = Object.keys(GUEST_FLAGS).find((k) => !!window[GUEST_FLAGS[k]]) || null;
+  const GUEST_PAGE = !!window.MM_ACT_GUEST || !!GUEST_EXAM;
   window.actTest = new ActTest({ guest: !!window.MM_ACT_GUEST });
-  if (SAT_GUEST_PAGE) window.satTest = new ActTest({ exam: 'sat', guest: true });
+
+  // The other exams: the same runner on /api/<exam>-test (signed-in), created
+  // on first use so a page that never opens one builds nothing for it. On an
+  // exam's own public page its runner is the guest one instead.
+  const RUNNER_NAMES = { sat: 'satTest', psat: 'psatTest', preact: 'preactTest' };
+  const OPENERS = { sat: 'Sat', psat: 'Psat', preact: 'Preact' };
+  const runnerFor = (key) => {
+    const name = RUNNER_NAMES[key];
+    if (!window[name]) window[name] = new ActTest({ exam: key, guest: key === GUEST_EXAM });
+    return window[name];
+  };
+  if (GUEST_EXAM) runnerFor(GUEST_EXAM);
   window.openActTest = function () { window.actTest.open(); };
   window.openActProgress = function () { window.actTest.showProgress(); };
-  // The SAT: the same runner on /api/sat-test (signed-in only). Created on
-  // first use so a page that never opens it builds nothing for it.
-  window.openSatTest = function () {
-    if (!window.satTest) window.satTest = new ActTest({ exam: 'sat' });
-    window.satTest.open();
-  };
-  window.openSatProgress = function () {
-    if (!window.satTest) window.satTest = new ActTest({ exam: 'sat' });
-    window.satTest.showProgress();
+  Object.keys(RUNNER_NAMES).forEach((key) => {
+    window['open' + OPENERS[key] + 'Test'] = function () { runnerFor(key).open(); };
+    window['open' + OPENERS[key] + 'Progress'] = function () { runnerFor(key).showProgress(); };
+  });
+  // One opener for any exam key — what the server's launchPracticeTest names.
+  window.openPracticeTest = function (key) {
+    if (!key || key === 'act') return window.openActTest();
+    if (RUNNER_NAMES[key]) return runnerFor(key).open();
+    return window.openActTest();
   };
 
   // Signed-in page: a guest test finished in this browser before signup is
@@ -1714,26 +1786,29 @@
   if (!GUEST_PAGE) {
     window.addEventListener('load', () => {
       setTimeout(async () => {
-        // One results screen at a time: the SAT's waits for the ACT's.
+        // One results screen at a time: the others wait for the ACT's, then
+        // the first exam with a guest test in this browser claims it.
         const claimedAct = await window.actTest.claimGuestTest().catch(() => false);
         if (claimedAct) return;
-        if (readGuest(EXAMS.sat)) {
-          if (!window.satTest) window.satTest = new ActTest({ exam: 'sat' });
-          window.satTest.claimGuestTest().catch(() => {});
+        for (const key of Object.keys(RUNNER_NAMES)) {
+          if (!readGuest(EXAMS[key])) continue;
+          const claimed = await runnerFor(key).claimGuestTest().catch(() => false);
+          if (claimed) return;
         }
       }, 600);
     });
   }
 
-  // Reachable entry point: a boot-camp CTA can link to /chat.html?acttest=1,
-  // and it's an easy way to try the flow. (A visible button lives with the
-  // boot-camp card once that UI exists.)
+  // Reachable entry points: /chat.html?acttest=1 (and ?sattest / ?psattest /
+  // ?preacttest) open that exam's runner on load — the public pages send a
+  // signed-in student here.
   try {
     const qs = new URLSearchParams(location.search);
     if (qs.get('acttest') === '1') {
       window.addEventListener('load', () => window.openActTest());
-    } else if (qs.get('sattest') === '1' && !GUEST_PAGE) {
-      window.addEventListener('load', () => window.openSatTest());
+    } else if (!GUEST_PAGE) {
+      const key = Object.keys(RUNNER_NAMES).find((k) => qs.get(k + 'test') === '1');
+      if (key) window.addEventListener('load', () => runnerFor(key).open());
     }
   } catch (e) { /* noop */ }
 })();

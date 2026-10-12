@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
-const { getTestDefByCourse } = require('./practiceTests');
+const { getTestDefByCourse, testDefForCourseSession } = require('./practiceTests');
 const { SHARED_VOICE_BLOCKS } = require('./promptCompact');
 
 // Course mode's mirror of the open-tutoring "student's lead" rule: here the
@@ -34,7 +34,9 @@ This is a course lesson: the direction is SET by the module. Never ask "did you 
  * @returns {string} the directive, or '' when not an ACT-prep course
  */
 function buildActPracticeGuidance(courseSession) {
-  const def = courseSession && getTestDefByCourse(courseSession.courseId);
+  // The test this bootcamp works from: a sat-prep student who came in through
+  // the PSAT is offered (and launched into) another PSAT.
+  const def = testDefForCourseSession(courseSession);
   if (!def) return '';
   const T = def.label;
   // The tag keeps its historical name for both exams: it means "open THIS
@@ -883,7 +885,7 @@ function formatScaffoldStep(step, index, total) {
 function buildActBootcampGreetingInstruction({ firstName, courseSession }) {
   const bc = courseSession.bootcamp || {};
   const dp = courseSession.diagnosticPlan || {};
-  const def = getTestDefByCourse(courseSession.courseId) || getTestDefByCourse('act-prep');
+  const def = testDefForCourseSession(courseSession) || getTestDefByCourse('act-prep');
   const labels = def.categoryLabel || CATEGORY_LABEL;
   const list = (arr) => (arr || []).map(c => labels[c] || CATEGORY_LABEL[c] || c).join(', ');
   const T = def.testName;

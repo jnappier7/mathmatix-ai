@@ -2139,9 +2139,12 @@ async function runStudentTurn(req, res) {
             // Set from the pipeline (verify extracts <LAUNCH_PRACTICE_ACT>); the
             // tag itself is already stripped from aiResponseText.
             launchPracticeAct: pipelineResult.launchPracticeAct || false,
-            // WHICH practice test: the active prep course's exam ('act' | 'sat').
+            // WHICH practice test: the active prep course's exam ('act' | 'sat' | 'psat' | 'preact').
             launchPracticeTest: pipelineResult.launchPracticeAct
-                ? practiceTestKeyForCourse(conversationContextForPrompt?.courseSession?.courseId)
+                ? practiceTestKeyForCourse(
+                    conversationContextForPrompt?.courseSession?.courseId,
+                    // A bootcamp seeded from a PSAT/PreACT retests on that test.
+                    conversationContextForPrompt?.courseSession?.bootcamp?.testId)
                 : null,
             // Tells the browser this turn belongs to a NEW session, so it can
             // drop the previous one's transcript and board before painting.

@@ -134,7 +134,9 @@
       '<h3>🎯 Practice</h3>' +
       '<button class="mbn-act" id="mbn-warmup" type="button">🔁 Review warm-up<span class="d">Quick spaced review of skills coming due</span></button>' +
       '<button class="mbn-act" id="mbn-acttest" type="button">📝 ACT practice test<span class="d">Full timed section · all-new questions</span></button>' +
-      '<button class="mbn-act" id="mbn-sattest" type="button">📝 SAT practice test<span class="d">Full timed section · 44 questions, 70 minutes</span></button>';
+      '<button class="mbn-act" id="mbn-sattest" type="button">📝 SAT practice test<span class="d">Full timed section · 44 questions, 70 minutes</span></button>' +
+      '<button class="mbn-act" id="mbn-psattest" type="button">📝 PSAT practice test<span class="d">Full timed section · 44 questions, 70 minutes</span></button>' +
+      '<button class="mbn-act" id="mbn-preacttest" type="button">📝 PreACT practice test<span class="d">Full timed section · 36 questions, 45 minutes</span></button>';
     document.body.appendChild(sheet);
 
     document.body.classList.add('mbn-space');
@@ -201,6 +203,12 @@
     sattest.addEventListener('click', function () {
       closeSheet();
       if (window.openSatTest) window.openSatTest();
+    });
+    [['#mbn-psattest', 'openPsatTest'], ['#mbn-preacttest', 'openPreactTest']].forEach(function (p) {
+      sheet.querySelector(p[0]).addEventListener('click', function () {
+        closeSheet();
+        if (window[p[1]]) window[p[1]]();
+      });
     });
 
     // The composer owns the bottom edge: hide while the student is typing.

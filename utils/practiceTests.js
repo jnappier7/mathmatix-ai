@@ -20,12 +20,20 @@
  *                  no plan (the report carries plan: null).
  *   creditSkills — whether a clean category credits course skills through the
  *                  ACT crosswalk. ACT only: the crosswalk is ACT's.
+ *   key          — the client runner's name for it ('act' | 'sat' | 'psat' |
+ *                  'preact'): public/js/act-test.js EXAMS, launchPracticeTest.
+ *   prepFor      — set on a junior test (PSAT, PreACT): the testId of the exam
+ *                  whose prep course it feeds. It shares that course, but the
+ *                  course still BELONGS to the senior exam (getTestDefByCourse),
+ *                  and the junior test keeps its own history and scale.
  *
  * @module utils/practiceTests
  */
 
 const ACT_BLUEPRINT = require('../seeds/act-math-blueprint.json');
 const SAT_BLUEPRINT = require('../seeds/sat-math-blueprint.json');
+const PSAT_BLUEPRINT = require('../seeds/psat-math-blueprint.json');
+const PREACT_BLUEPRINT = require('../seeds/preact-math-blueprint.json');
 const { buildActPlan, CATEGORY_LABEL: ACT_CATEGORY_LABEL } = require('./actBootcampPlan');
 const { studentLabel } = require('./studentLabels');
 
@@ -83,6 +91,7 @@ const SAT_CATEGORY_NAMES = {
 const TESTS = {
   'act-math': {
     testId: 'act-math',
+    key: 'act',
     label: 'ACT',
     eventPrefix: 'act',            // conversion events: act_guest_started, ...
     blueprint: ACT_BLUEPRINT,
@@ -102,6 +111,7 @@ const TESTS = {
   },
   'sat-math': {
     testId: 'sat-math',
+    key: 'sat',
     label: 'SAT',
     eventPrefix: 'sat',
     blueprint: SAT_BLUEPRINT,
@@ -122,19 +132,97 @@ const TESTS = {
     categoryLabel: SAT_CATEGORY_NAMES,
     creditSkills: false,
   },
+  // The PSAT/NMSQT: the SAT's shape and bank on a lower curve, reported on
+  // the SAT's scale clamped to 160–760. Feeds sat-prep: its misses are the
+  // course's review, its retest is another PSAT.
+  'psat-math': {
+    testId: 'psat-math',
+    key: 'psat',
+    label: 'PSAT',
+    prepFor: 'sat-math',
+    eventPrefix: 'psat',
+    blueprint: PSAT_BLUEPRINT,
+    skillName: (id) => SAT_CATEGORY_NAMES[id] || (id && id !== 'unknown' ? studentLabel(id) : undefined),
+    courseId: 'sat-prep',
+    courseName: 'SAT Math Prep',
+    testName: 'practice PSAT',
+    testShape: 'a full timed, adaptive PSAT Math section (two 22-question modules, 35 minutes each)',
+    letterAlias: false,
+    strategy: 'Teach the PSAT MOVE for this question type — graphing it in Desmos when that is faster (systems, intersections, zeros, vertices, regressions), backsolving from the choices, plugging in numbers, or spotting the trap. For a typed (grid-in) answer, check it against the entry rules: 5 characters (6 with a minus sign), a fraction or a decimal, never a mixed number.',
+    buildPlan: (byCategory) => buildActPlan(byCategory, {
+      blueprint: PSAT_BLUEPRINT,
+      categoryModule: SAT_CATEGORY_MODULE,
+      foundationOrder: SAT_FOUNDATION_ORDER,
+    }),
+    categoryLabel: SAT_CATEGORY_NAMES,
+    creditSkills: false,
+  },
+  // PreACT 10: the ACT bank without the topics a tenth grader has not met, on
+  // a lower curve, scored onto the ACT's own curve (top score 35). Feeds
+  // act-prep the same way the PSAT feeds sat-prep. No skill credit: a clean
+  // category on an easier test is not evidence for the ACT's course skills.
+  'preact-math': {
+    testId: 'preact-math',
+    key: 'preact',
+    label: 'PreACT',
+    prepFor: 'act-math',
+    eventPrefix: 'preact',
+    blueprint: PREACT_BLUEPRINT,
+    skillName: (id) => ACT_SKILL_NAMES[id],
+    courseId: 'act-prep',
+    courseName: 'ACT Math Prep',
+    testName: 'practice PreACT',
+    testShape: 'a full timed PreACT Math section (36 questions, 45 minutes)',
+    categoryLabel: ACT_CATEGORY_LABEL,
+    // The PreACT letters every question A–D (the F–J alternation is the ACT's).
+    letterAlias: false,
+    strategy: 'Teach the test MOVE for this question type — backsolving, plugging in numbers, estimating, eliminating, spotting the trap, or when to skip.',
+    buildPlan: (byCategory) => buildActPlan(byCategory, { blueprint: PREACT_BLUEPRINT }),
+    creditSkills: false,
+  },
 };
 
 const DEFAULT_TEST_ID = 'act-math';
 
-/** The test a prep course is built on ('act-prep' → ACT, 'sat-prep' → SAT), or null. */
+/**
+ * The test a prep course is built on ('act-prep' → ACT, 'sat-prep' → SAT), or
+ * null. Always the senior exam: the PSAT and PreACT feed a course, never own it.
+ */
 function getTestDefByCourse(courseId) {
-  return Object.values(TESTS).find((d) => d.courseId && d.courseId === courseId) || null;
+  return Object.values(TESTS).find((d) => d.courseId && d.courseId === courseId && !d.prepFor) || null;
 }
 
-/** The client runner key for a prep course's exam: 'act' | 'sat' (ACT by default). */
-function practiceTestKeyForCourse(courseId) {
+/**
+ * The client runner key for a prep course's practice test ('act' | 'sat' |
+ * 'psat' | 'preact'; ACT by default). A course seeded from a junior test
+ * retests on that test — a sophomore who came in through the PSAT re-takes
+ * the PSAT, whose score sits on the same scale as their baseline — so the
+ * bootcamp's own testId wins over the course's exam when it belongs here.
+ */
+function practiceTestKeyForCourse(courseId, bootcampTestId) {
   const def = getTestDefByCourse(courseId);
-  return def ? def.label.toLowerCase() : 'act';
+  if (!def) return 'act';
+  const seeded = bootcampTestId && TESTS[bootcampTestId];
+  if (seeded && seeded.courseId === def.courseId) return seeded.key;
+  return def.key;
+}
+
+/**
+ * The test a prep-course session is working from: the one its bootcamp was
+ * seeded from when that test feeds this course (a PSAT in sat-prep), else the
+ * course's own exam. Null for a course that is not a prep course. What the
+ * tutor calls the test and what the retest opens must agree, so both read this.
+ */
+function testDefForCourseSession(courseSession) {
+  const def = courseSession && getTestDefByCourse(courseSession.courseId);
+  if (!def) return null;
+  const seeded = courseSession.bootcamp && TESTS[courseSession.bootcamp.testId];
+  return seeded && seeded.courseId === def.courseId ? seeded : def;
+}
+
+/** Every test that feeds a prep course: the course's exam and its junior test. */
+function testsForCourse(courseId) {
+  return Object.values(TESTS).filter((d) => d.courseId && d.courseId === courseId);
 }
 
 /** Is this one of the test-prep bootcamp courses? */
@@ -158,6 +246,21 @@ function testScope(def) {
     : { testId: d.testId };
 }
 
+/**
+ * The session filter for every test that feeds a prep course. A prep course's
+ * baseline is any of them: a PSAT is a real baseline for SAT prep.
+ */
+function courseTestScope(courseId) {
+  const defs = testsForCourse(courseId);
+  if (!defs.length) return testScope(getTestDef());
+  const ids = [];
+  for (const d of defs) {
+    const t = testScope(d).testId;              // the ACT's claims null too
+    ids.push(...(t && t.$in ? t.$in : [t]));
+  }
+  return { testId: { $in: ids } };
+}
+
 /** Express middleware: every request on this mount runs as `testId`. */
 function useTest(testId) {
   if (!TESTS[testId]) throw new Error(`Unknown practice test: ${testId}`);
@@ -173,5 +276,8 @@ module.exports = {
   getTestDefByCourse,
   isPrepCourse,
   practiceTestKeyForCourse,
+  testsForCourse,
+  courseTestScope,
+  testDefForCourseSession,
   SAT_CATEGORY_MODULE,
 };

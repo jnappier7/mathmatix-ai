@@ -17,7 +17,7 @@ const ActTestSession = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { planStartModule, planSummary } = require('./actBootcampPlan');
 const { isIncompleteAttempt } = require('./actProgress');
-const { getTestDef, getTestDefByCourse, testScope } = require('./practiceTests');
+const { getTestDef, getTestDefByCourse, testScope, courseTestScope } = require('./practiceTests');
 
 // Every problemId this student has ever been served, across ALL their ACT test
 // sessions (any status — an item shown in an abandoned test still "burns" it).
@@ -165,10 +165,10 @@ async function seedBootcampFromTest(cs, session, { userId, plan } = {}) {
  */
 async function seedBootcampFromLatestTest(cs, userId) {
   if (!cs || (cs.bootcamp && cs.bootcamp.phase)) return false;
-  // The course's own exam: a new sat-prep enrollment seeds from the latest
-  // SAT, never from an ACT the student also took.
-  const def = getTestDefByCourse(cs.courseId) || getTestDef();
-  const completed = await ActTestSession.find({ userId, status: 'completed', ...testScope(def) })
+  // The course's own exam family: a new sat-prep enrollment seeds from the
+  // latest SAT or PSAT, never from an ACT the student also took.
+  const scope = getTestDefByCourse(cs.courseId) ? courseTestScope(cs.courseId) : testScope(getTestDef());
+  const completed = await ActTestSession.find({ userId, status: 'completed', ...scope })
     .sort({ completedAt: -1 })
     .limit(5);
   const latest = completed.find((s) => !isIncompleteAttempt(s));
