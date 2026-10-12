@@ -145,7 +145,7 @@ def add(b):
          "X_ = sp.acos(sp.Rational(6, 10))\nY_ = sp.pi/2 - X_\nans = sp.simplify(sp.sin(Y_))\n")
 
     b.spr('GEO', RT, 'H',
-          'In the right triangle shown, the side opposite the 30° angle has length 8. What is the length h of the hypotenuse?',
+          'In the right triangle shown, the side opposite the 30° angle has length 8. What is the length h of the hypotenuse?\nNote: Figure not drawn to scale.',
           '16', [],
           'sin 30° = 8/h = 1/2, so h = 16. (A 30°-60°-90° triangle\'s hypotenuse is twice its short leg.)',
           "h = sp.Symbol('h', positive=True)\nans = sp.solve(8/h - sp.sin(sp.pi/6), h)[0]\n",

@@ -91,6 +91,20 @@ describe('SAT Math bank (unified taxonomy)', () => {
     }
   });
 
+  test('every schematic geometry figure says it is not drawn to scale', () => {
+    // The geometry renderer draws a schematic right triangle whatever the
+    // numbers, so "both legs are 7" was drawn with one leg visibly longer and a
+    // "60°" angle looked like 35°. The real SAT prints this note; ours must too.
+    const dir = path.join(__dirname, '../../seeds/sat-math');
+    const missing = [];
+    fs.readdirSync(dir).filter((f) => /^sat_(w\d+|bank_.+)\.json$/.test(f)).forEach((f) => {
+      JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')).items.forEach((it) => {
+        if (it.figure && it.figure.kind === 'geometry' && !/not drawn to scale/i.test(it.stem)) missing.push(`${f}#${it.n}`);
+      });
+    });
+    expect(missing).toEqual([]);
+  });
+
   test('5 weekly diagnostics, each ~22 auto-scored items with matching refs', () => {
     const weeks = Object.keys(amap).sort();
     expect(weeks).toEqual(['1', '2', '3', '4', '5']);

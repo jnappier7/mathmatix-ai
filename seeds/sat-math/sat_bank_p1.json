@@ -1911,7 +1911,7 @@
       "skill": "Right triangles (Pythagorean theorem)",
       "difficulty": "E",
       "type": "mc",
-      "stem": "In the right triangle shown, the legs have lengths 9 and 12. What is the length h of the hypotenuse?",
+      "stem": "In the right triangle shown, the legs have lengths 9 and 12. What is the length h of the hypotenuse?\nNote: Figure not drawn to scale.",
       "choices": [
         "15",
         "21",
@@ -1945,7 +1945,7 @@
       "skill": "Right triangles and trigonometry",
       "difficulty": "M",
       "type": "mc",
-      "stem": "In the right triangle shown, the hypotenuse has length 14, and the angle at the lower right measures 30°. What is the length x of the side opposite the 30° angle?",
+      "stem": "In the right triangle shown, the hypotenuse has length 14, and the angle at the lower right measures 30°. What is the length x of the side opposite the 30° angle?\nNote: Figure not drawn to scale.",
       "choices": [
         "7√3",
         "7",
