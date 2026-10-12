@@ -200,7 +200,12 @@ html .go{color:var(--ink)}
 html .topbar{background:var(--board);border-bottom:1px solid var(--rail)}
 html .topbar .tutor-top{background:var(--led);color:var(--ink)}
 html .topbar .tutor-top:hover{background:var(--led);filter:brightness(1.07);color:var(--ink)}
-html .brand em{color:var(--muted)}
+/* The tagline carries the school red. Blood red straight off the brand book is
+   #EA1D2D, which is only 3.5:1 on this dark rail — under AA for 12px type — so
+   it is lifted toward white until it clears 4.5:1. Derived from --sc-red rather
+   than a second hex, so if brand.css ever moves the red this follows it. */
+html .brand em{color:color-mix(in srgb, var(--sc-red, #EA1D2D) 75%, white);
+  font-weight:700;letter-spacing:.02em}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
