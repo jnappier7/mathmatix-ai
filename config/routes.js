@@ -880,6 +880,13 @@ function registerHtmlRoutes(app) {
   // buttons: /quiz?a=14 · /quiz?a=2 · /quiz?a=other. Public, works whether
   // or not the visitor is signed in.
   app.get('/quiz', sendHtml('quiz.html'));
+  // Pacing labs, named for the test they rehearse so the URL can go on a board:
+  // mathmatix.ai/preact and /presat. Twelve questions, each on the clock the
+  // real section gives it (60s PreACT, 95s PSAT). No login — a class of thirty
+  // has to be able to start in one minute — so results are a code the student
+  // hands in rather than a write to any record.
+  app.get('/preact', sendHtml('preact.html'));
+  app.get('/presat', sendHtml('presat.html'));
   // Readable answer aliases for organic posts, where the raw URL is the link
   // text: /quiz/14 · /quiz/2 · /quiz/other → /quiz?a=<answer>. The quiz page
   // validates the value and just ignores anything that isn't a real option.
