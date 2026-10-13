@@ -62,6 +62,7 @@ Before shipping a batch:
 | p4 (2026-10-13) | 92 | 30 / 30 / 16 / 16 | 68 / 24 | 14 / 45 / 33 | 36 |
 | p5 (2026-10-13) | 92 | 28 / 28 / 18 / 18 | 62 / 30 | 38 / 37 / 17 | 13 |
 | p6 (2026-10-13) | 92 | 32 / 32 / 14 / 14 | 60 / 32 | 28 / 33 / 31 | 12 |
+| p7 (2026-10-13) | 92 | 34 / 34 / 12 / 12 | 60 / 32 | 29 / 33 / 30 | 13 |
 
 p5 leans easy on purpose: the PSAT (`psat-math`) draws this bank on a lower
 curve, and easy items were the thinnest band (109 of 497). Every p5 graph is
