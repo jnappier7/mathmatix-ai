@@ -40,6 +40,14 @@
   .actt-body{padding:18px;overflow-y:auto}
   .actt-fig{display:flex;justify-content:center;margin:2px 0 14px}
   .actt-fig svg{background:#faf9ff;border:1px solid #efedf8;border-radius:10px;padding:8px}
+  /* Tap a figure to see it full size (a phone caps it at ~160px tall). */
+  .actt-figwrap{display:inline-flex;flex-direction:column;align-items:flex-end;gap:4px;max-width:100%}
+  .actt-fig svg{cursor:zoom-in}
+  .actt-figzoom{display:inline-flex;align-items:center;gap:4px;border:1px solid #d9d2f0;border-radius:8px;background:rgba(255,255,255,.92);color:#4d3577;font:600 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:5px 8px;cursor:pointer}
+  .actt-zoom{position:fixed;inset:0;z-index:10003;background:rgba(14,10,30,.9);display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+  .actt-zoom-panel{position:relative;background:#fff;border-radius:14px;padding:44px 14px 14px;max-width:min(96vw,900px);max-height:92vh;display:flex;cursor:default}
+  .actt-zoom-panel svg{width:min(90vw,860px);height:auto;max-height:84vh}
+  .actt-zoom-x{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:50%;border:0;background:#f1eefb;color:#2b2547;font-size:22px;line-height:36px;cursor:pointer}
   .actt-q{font-size:17px;line-height:1.5;margin:4px 0 16px;white-space:pre-wrap}
   .actt-opts{display:flex;flex-direction:column;gap:8px}
   .actt-opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border:2px solid #e7e4f1;border-radius:11px;cursor:pointer;font-size:15px;background:#fff;text-align:left;transition:all .12s}
@@ -154,6 +162,7 @@
     .actt-refpanel{background:#211e32;border-color:#302c45}.actt-reffacts{color:#b7b3cc}
     .actt-giwarn{color:#f0a868}
     .actt-route{color:#b7b3cc}
+    .actt-figzoom{background:rgba(33,30,50,.92);border-color:#3d3858;color:#d9d2f5}
     /* A stem's data table: the light header ground would leave the dark
        theme's pale text unreadable on it (owner report, 2026-10-12). */
     .actt-table th,.actt-table td{border-color:#4a4566}
@@ -692,6 +701,7 @@
     }
 
     close() {
+      this._closeFigureZoom();
       this._stopTimer();
       this._hideCalc();
       if (this.overlay) this.overlay.style.display = 'none';
@@ -734,6 +744,7 @@
     // Jump to any question (Back, Next, palette, review screen). Answers save
     // on click, so navigating away never loses work.
     async goTo(pos) {
+      this._closeFigureZoom();
       this._flushGridIn();
       pos = Math.min(Math.max(this._first(), pos), this._last());
       const data = await this._api(`/problem?sessionId=${encodeURIComponent(this.sessionId)}&position=${pos}`);
@@ -940,6 +951,82 @@
       }
       svg.setAttribute('role', 'img');
       svg.setAttribute('aria-label', label);
+      this._wireFigureZoom(svg, label);
+    }
+
+    // Tap a figure to see it full size. A phone caps the inline figure at
+    // about 160px so the choices stay on screen, which leaves small labels and
+    // tick marks hard to read. The real tests zoom the whole screen (Bluebook)
+    // or offer a magnifier (ACT); this is the one-tap version of both. The
+    // clock keeps running, as it does there.
+    _wireFigureZoom(svg, label) {
+      const fig = svg.closest('.actt-fig');
+      if (!fig || fig.querySelector('.actt-figzoom')) return;
+      // The button sits under the figure's own corner — never over the
+      // figure, where it hid a label — not at the edge of the full-width row.
+      const wrap = document.createElement('span');
+      wrap.className = 'actt-figwrap';
+      svg.parentNode.insertBefore(wrap, svg);
+      wrap.appendChild(svg);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'actt-figzoom';
+      btn.setAttribute('aria-label', 'Enlarge figure');
+      btn.innerHTML = '<span aria-hidden="true">⤢</span> Enlarge';
+      wrap.appendChild(btn);
+      const open = () => this._openFigureZoom(svg, label, btn);
+      btn.addEventListener('click', open);
+      svg.addEventListener('click', open);
+    }
+
+    _openFigureZoom(svg, label, returnFocus) {
+      this._closeFigureZoom();
+      const big = svg.cloneNode(true);
+      // Scale by viewBox, not the fixed pt size the renderer stamped on it.
+      if (!big.getAttribute('viewBox')) {
+        const w = parseFloat(big.getAttribute('width'));
+        const h = parseFloat(big.getAttribute('height'));
+        if (w && h) big.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      }
+      big.removeAttribute('width');
+      big.removeAttribute('height');
+      big.removeAttribute('style');
+      big.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      const layer = document.createElement('div');
+      layer.className = 'actt-zoom';
+      layer.setAttribute('role', 'dialog');
+      layer.setAttribute('aria-modal', 'true');
+      layer.setAttribute('aria-label', 'Enlarged figure');
+      const panel = document.createElement('div');
+      panel.className = 'actt-zoom-panel';
+      panel.appendChild(big);
+      const x = document.createElement('button');
+      x.type = 'button';
+      x.className = 'actt-zoom-x';
+      x.setAttribute('aria-label', 'Close enlarged figure');
+      x.textContent = '×';
+      panel.appendChild(x);
+      layer.appendChild(panel);
+      const close = () => this._closeFigureZoom();
+      x.addEventListener('click', close);
+      layer.addEventListener('click', (e) => { if (e.target === layer) close(); });
+      this._zoomKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); close(); } };
+      document.addEventListener('keydown', this._zoomKey, true);
+      this._zoomReturn = returnFocus || null;
+      (this.overlay || document.body).appendChild(layer);
+      this._zoomLayer = layer;
+      x.focus();
+    }
+
+    _closeFigureZoom() {
+      if (!this._zoomLayer) return;
+      this._zoomLayer.remove();
+      this._zoomLayer = null;
+      if (this._zoomKey) document.removeEventListener('keydown', this._zoomKey, true);
+      this._zoomKey = null;
+      const back = this._zoomReturn;
+      this._zoomReturn = null;
+      if (back && back.isConnected) back.focus();
     }
 
     _syncFlagBtn() {
@@ -1055,6 +1142,7 @@
      * say so briefly instead of asking.
      */
     async nextModule(timedOut) {
+      this._closeFigureZoom();
       if (this._advancing) return;
       this._advancing = true;
       this._flushGridIn();
@@ -1098,6 +1186,7 @@
     }
 
     async complete() {
+      this._closeFigureZoom();
       this._flushGridIn();
       this._stopTimer();
       this._hideCalc();   // done answering — the calc has no place on the results screen
