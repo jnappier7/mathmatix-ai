@@ -63,20 +63,29 @@ def add(b):
          "ans = 6*84 - 5*82\n")
 
     b.mc('PSDA', TV, 'M',
-         'The scatterplot shows the number of weeks x since planting and the height y, in centimeters, of a sunflower, with the line of best fit y = 4.6x + 32. Which statement best interprets the slope of the line?',
-         'The sunflower is predicted to grow about 4.6 centimeters each week.',
-         ['The sunflower was about 4.6 centimeters tall when planted.', 'The sunflower is predicted to be 32 centimeters tall after 4.6 weeks.', 'The sunflower grows about 32 centimeters each week.'],
-         'The slope 4.6 is the predicted change in height for each additional week. The 32 is the predicted height at week 0.',
-         "x = sp.Symbol('x')\ny = sp.Rational(46, 10)*x + 32\nassert y.subs(x, 3) - y.subs(x, 2) == sp.Rational(46, 10)\n",
-         custom="assert C[K].startswith('The sunflower is predicted to grow about 4.6')\n",
+         'The scatterplot shows the number of weeks x since planting and the height y, in centimeters, of a sunflower, along with a line of best fit. According to the line of best fit, about how much does the sunflower grow each week?',
+         'About 5 centimeters',
+         ['About 1 centimeter', 'About 10 centimeters', 'About 32 centimeters'],
+         'The slope is the growth per week. The line rises from about 41 centimeters at week 2 to about 60 at week 6: about 19 centimeters in 4 weeks, close to 5 per week. (32 centimeters is where the line would start, at week 0.)',
+         "x = sp.Symbol('x')\ny = sp.Rational(46, 10)*x + 32\nslope = y.subs(x, 3) - y.subs(x, 2)\nopts = {'About 1 centimeter': 1, 'About 5 centimeters': 5, 'About 10 centimeters': 10, 'About 32 centimeters': 32}\n",
+         custom="assert min(C, key=lambda c: abs(opts[c] - slope)) == C[K]\nassert sorted(abs(opts[c] - slope) for c in C)[1] > 2 * abs(opts[C[K]] - slope)\n",
          figure={'kind': 'scatter', 'params': {'pts': GARDEN, 'xlabel': 'Weeks since planting', 'ylabel': 'Height (cm)', 'line': {'slope': 4.6, 'yint': 32}}})
 
-    b.spr('PSDA', TV, 'H',
-          'Using the line of best fit y = 4.6x + 32 for the sunflower data shown, what is the predicted height, in centimeters, at 5 weeks? (The plotted height at 5 weeks was 57 centimeters.)',
-          '55', [],
-          'y = 4.6(5) + 32 = 23 + 32 = 55 centimeters. The actual 57 is 2 above the prediction (a residual of 2).',
-          "ans = sp.Rational(46, 10)*5 + 32\nassert [5, 57] in " + repr(GARDEN) + "\n",
-          figure={'kind': 'scatter', 'params': {'pts': GARDEN, 'xlabel': 'Weeks since planting', 'ylabel': 'Height (cm)', 'line': {'slope': 4.6, 'yint': 32}}})
+    # Was a grid-in asking for the line's value at 5 weeks — a number the
+    # graph cannot give exactly once the equation is gone (2026-10-13). Now the
+    # residual's sign and size, which the picture does show. Its key is pinned
+    # and the rotation stepped back so every later p3 key stays where it shipped.
+    b.mc('PSDA', TV, 'H',
+         'The scatterplot shows the sunflower data, along with a line of best fit. At 5 weeks, the sunflower\'s actual height was 57 centimeters. Which statement best describes the data point for 5 weeks compared with the line of best fit?',
+         'It is about 2 centimeters above the line.',
+         ['It is about 2 centimeters below the line.', 'It is about 10 centimeters above the line.', 'It is about 10 centimeters below the line.'],
+         'At 5 weeks the line is at about 55 centimeters (it rises about 4.6 per week from 41 at week 2), and the point is at 57: a small distance above the line, about 2 centimeters. That is a residual of +2.',
+         "pred = sp.Rational(46, 10)*5 + 32\nassert [5, 57] in " + repr(GARDEN) + "\nres = 57 - pred\n"
+         "opts = {'It is about 2 centimeters above the line.': 2, 'It is about 2 centimeters below the line.': -2, 'It is about 10 centimeters above the line.': 10, 'It is about 10 centimeters below the line.': -10}\n",
+         custom="assert min(C, key=lambda c: abs(opts[c] - res)) == C[K] and opts[C[K]] == res\n",
+         key='C',
+         figure={'kind': 'scatter', 'params': {'pts': GARDEN, 'xlabel': 'Weeks since planting', 'ylabel': 'Height (cm)', 'line': {'slope': 4.6, 'yint': 32}}})
+    b._rot -= 1
 
     b.mc('PSDA', PR, 'M',
          'The table shows the results of a survey of 160 students about whether they play an instrument. If a student who plays an instrument is chosen at random, what is the probability that the student is in 11th grade?',

@@ -80,21 +80,21 @@ def add(b):
          figure={'kind': 'table', 'params': {'headers': ['Data set', 'Values'], 'rows': [['A', '10, 20, 30, 40, 50'], ['B', '28, 29, 30, 31, 32']]}})
 
     b.mc('PSDA', TV, 'M',
-         'The scatterplot shows the number of hours each of 9 students studied for a test and the student\'s score. The line of best fit is y = 4x + 58. Based on the line of best fit, what is the predicted score for a student who studies 6 hours?',
-         '82', ['76', '88', '62'],
-         'Substitute x = 6: y = 4(6) + 58 = 82.',
+         'The scatterplot shows the number of hours each of 9 students studied for a test and the student\'s score, along with a line of best fit. Based on the line of best fit, which of the following is closest to the predicted score for a student who studies 6 hours?',
+         '82', ['70', '94', '62'],
+         'Go up from 6 hours to the line, then across: the line is a little above 80 there, at about 82. (It passes through (2, 66) and (6, 82), rising 4 points per hour.)',
          "ans = 4*6 + 58\n",
          figure={'kind': 'scatter', 'params': {'pts': [[1, 63], [2, 65], [2, 68], [3, 69], [4, 75], [5, 77], [6, 81], [7, 87], [8, 89]], 'xlabel': 'Hours studied', 'ylabel': 'Test score', 'line': {'slope': 4, 'yint': 58}}})
 
     b.mc('PSDA', TV, 'M',
-         'The scatterplot shows the weight, in pounds, of a puppy at several ages, in weeks. The line of best fit is y = 1.8x + 12. Which statement best interprets the number 1.8 in this context?',
-         'The predicted weight gain is 1.8 pounds per week.',
-         ['The puppy weighed 1.8 pounds at birth.',
-          'The predicted weight at 1.8 weeks is 12 pounds.',
-          'The puppy gains 12 pounds every 1.8 weeks.'],
-         '1.8 is the slope: for each additional week of age, the predicted weight increases by 1.8 pounds. The 12 is the predicted weight at week 0.',
-         "x = sp.Symbol('x')\ny = sp.Rational(18, 10)*x + 12\nassert y.subs(x, 5) - y.subs(x, 4) == sp.Rational(18, 10)\n",
-         custom="assert C[K].startswith('The predicted weight gain is 1.8')\n",
+         'The scatterplot shows the weight, in pounds, of a puppy at several ages, in weeks, along with a line of best fit. Based on the line of best fit, which of the following is closest to the puppy\'s predicted weight gain per week?',
+         'About 1.8 pounds',
+         ['About 0.5 pound',
+          'About 5 pounds',
+          'About 12 pounds'],
+         'Read two points on the line: at 5 weeks it is at about 21 pounds and at 10 weeks at 30 pounds. That is 9 pounds over 5 weeks, about 1.8 pounds per week — the slope. (12 pounds is where the line would start, at week 0.)',
+         "x = sp.Symbol('x')\ny = sp.Rational(18, 10)*x + 12\nslope = (y.subs(x, 10) - y.subs(x, 5)) / 5\nopts = {'About 0.5 pound': sp.Rational(1, 2), 'About 1.8 pounds': sp.Rational(18, 10), 'About 5 pounds': 5, 'About 12 pounds': 12}\n",
+         custom="assert min(C, key=lambda c: abs(opts[c] - slope)) == C[K] and opts[C[K]] == slope\n",
          figure={'kind': 'scatter', 'params': {'pts': [[2, 15.5], [4, 19.6], [6, 22.4], [8, 26.8], [10, 29.5], [12, 33.9], [14, 36.8]], 'xlabel': 'Age (weeks)', 'ylabel': 'Weight (pounds)', 'line': {'slope': 1.8, 'yint': 12}}})
 
     b.mc('PSDA', TV, 'H',

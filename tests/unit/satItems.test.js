@@ -105,6 +105,20 @@ describe('SAT Math bank (unified taxonomy)', () => {
     expect(missing).toEqual([]);
   });
 
+  test('no scatterplot stem states its own line of best fit', () => {
+    // With the equation in the stem the plot is decoration: "y = 4x + 58 ...
+    // predict at 6 hours" is answered without looking at it (external PSAT
+    // test report, 2026-10-13). The line is drawn; the student reads it.
+    const dir = path.join(__dirname, '../../seeds/sat-math');
+    const giveaways = [];
+    fs.readdirSync(dir).filter((f) => /^sat_(w\d+|bank_.+)\.json$/.test(f)).forEach((f) => {
+      JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')).items.forEach((it) => {
+        if (it.figure && it.figure.kind === 'scatter' && /\by\s*=\s*[−-]?\d/.test(it.stem)) giveaways.push(`${f}#${it.n}`);
+      });
+    });
+    expect(giveaways).toEqual([]);
+  });
+
   test('5 weekly diagnostics, each ~22 auto-scored items with matching refs', () => {
     const weeks = Object.keys(amap).sort();
     expect(weeks).toEqual(['1', '2', '3', '4', '5']);

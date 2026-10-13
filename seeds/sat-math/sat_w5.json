@@ -372,19 +372,19 @@
    "difficulty": "M",
    "type": "mc",
    "module": 1,
-   "stem": "The scatterplot shows the weekly lettuce yield y, in kilograms, of an aquaponics farm x weeks after planting, along with the line of best fit y = 2.5x + 4. Based on the line of best fit, what is the predicted yield, in kilograms, 8 weeks after planting?",
+   "stem": "The scatterplot shows the weekly lettuce yield y, in kilograms, of an aquaponics farm x weeks after planting, along with a line of best fit. Based on the line of best fit, which of the following is closest to the predicted yield, in kilograms, 6 weeks after planting?",
    "choices": [
-    "12",
-    "20",
+    "11",
+    "19",
     "24",
-    "26.5"
+    "29"
    ],
-   "answer": 2,
+   "answer": 1,
    "spr_answer": null,
    "equivalents": [],
    "answer_any": null,
-   "explanation": "Substitute x = 8 into the line of best fit: y = 2.5(8) + 4 = 20 + 4 = 24. Choice B uses the slope term only and forgets the intercept, and choice A adds 8 to the intercept instead of multiplying by the slope.",
-   "verify": "assert 2.5*8+4==24",
+   "explanation": "Go up from 6 weeks to the line, then across: the line is between the 17.5 and 20 gridlines, at about 19 kilograms. (It rises 2.5 kilograms per week, from 14 at week 4.) Read the line, not the dot: the actual yield at 6 weeks was 19.5.",
+   "verify": "y = lambda x: 2.5*x + 4\nC = [11, 19, 24, 29]\nassert y(6) == 19 and min(C, key=lambda c: abs(c - y(6))) == C[1]\nassert sorted(abs(c - y(6)) for c in C)[1] >= 5",
    "figure": {
     "kind": "scatter",
     "params": {
