@@ -53,12 +53,13 @@
     @media (max-width: 720px) {
       .tp-grid { grid-template-columns: 1fr; }
     }
-    @media (prefers-color-scheme: dark) {
-      .tp-card { background: #1d1a2c; border-color: #302c45; }
-      .tp-card p, .tp-family > p { color: #c4c0d8; }
-      .tp-who { color: #b9a8ef; }
-      .tp-facts li { background: rgba(154, 128, 255, 0.16); color: #d9d2f5; }
-    }
+    /* Dark only when the site theme is dark (css/dark-mode.css): these pages
+       stay light on a dark-mode phone, so an OS-level override put pale text
+       on a white page. */
+    [data-theme="dark"] .tp-card { background: #1d1a2c; border-color: #302c45; }
+    [data-theme="dark"] .tp-card p, [data-theme="dark"] .tp-family > p { color: #c4c0d8; }
+    [data-theme="dark"] .tp-who { color: #b9a8ef; }
+    [data-theme="dark"] .tp-facts li { background: rgba(154, 128, 255, 0.16); color: #d9d2f5; }
   </style>
 </head>
 <body>
