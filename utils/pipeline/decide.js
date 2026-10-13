@@ -256,7 +256,7 @@ function applyActReviewDirective(decision, context, observation) {
     : 'the letter recorded for them';
   decision.directives.unshift(
     `${exam} REVIEW — YOU HAVE THE QUESTION. ${where} is in your system prompt under "REVIEWING A MISSED QUESTION" (the question, its lettered choices, ${recorded}, and the stored key). The student CANNOT see it in this chat. If you have not yet presented it this review, present it now, verbatim, with its lettered choices. Do NOT ask them to share, paste, remember, or describe the question — you are holding it. Do NOT reveal the stored key, or call it their recorded answer, before they have made their own attempt.`,
-    'VERIFY THE KEY BEFORE YOU USE IT. Solve the question yourself, completely, before you call any answer right or wrong. Your own derivation outranks the stored key. If they disagree: say what you got, say the stored answer differs, tell the student you are flagging the question, and put <KEY_DISPUTE: your answer> on its own line. If the student\'s pick matches YOUR answer, tell them plainly their answer looks right. Never tell a student they were wrong on the strength of a key you have not checked.',
+    verifyKeyDirective(decision),
     // Owner transcript, 2026-10-13: the tutor confirmed "x − 5, option C",
     // never emitted the tag, asked "another problem?", and on "yes please"
     // wrote its own look-alike polynomial — a duplicated choice and no correct
@@ -266,6 +266,20 @@ function applyActReviewDirective(decision, context, observation) {
 
   const solved = reviewSolvedDirective(miss, observation, context);
   if (solved) decision.directives.unshift(solved);
+}
+
+// The key check is about the student's FINAL letter against the stored key.
+// Worded as a blanket "solve it all before you call ANY answer right or wrong",
+// it sat at the top of the directives on every review turn — including the
+// sub-steps the answer engine had just verified — and the first draft hedged
+// on all of them: 7 of 7 verified-correct long-division steps tripped the
+// false-rejection guard and were regenerated (owner logs, 2026-10-13).
+function verifyKeyDirective(decision) {
+  const stepVerified = decision && (decision.action === ACTIONS.CONFIRM_CORRECT
+    || decision.action === ACTIONS.AFFIRM_THEN_PROBE);
+  const keyRule = 'VERIFY THE KEY BEFORE YOU USE IT — for their final answer choice. Solve the question yourself before you rule on the letter they pick. Your own derivation outranks the stored key. If they disagree: say what you got, say the stored answer differs, tell the student you are flagging the question, and put <KEY_DISPUTE: your answer> on its own line. If the student\'s pick matches YOUR answer, tell them plainly their answer looks right. Never tell a student they were wrong on the strength of a key you have not checked.';
+  if (!stepVerified) return keyRule;
+  return 'THIS TURN\'S STEP IS VERIFIED CORRECT by the answer engine. Open by affirming it plainly — no "on the right track", no "let\'s double-check" — then take the next step. ' + keyRule;
 }
 
 // Typed forms of an answer, flattened so "x − 5", "x-5" and "$x - 5$." compare

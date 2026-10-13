@@ -74,6 +74,19 @@ const PATTERNS = {
   // for "x = 8". Without it, the x= form fell through to QUESTION and the
   // attempt was lost (eval-harness finding, 2026-07-29).
   proposedAnswer: /\b(?:right|correct|is\s*it|isn'?t\s*it|is\s*that|isn'?t\s*that|equals?|equal\s*to|so\s*it'?s|so\s*is\s*it|would\s*it\s*be|would\s*that\s*be|maybe\s*it'?s)[\s:=?()'"]{0,4}(?:[a-z]\s*=\s*)?(-?\d+\s*\/\s*\d+|-?\d+(?:\.\d+)?)\s*[?.!]*$|\b(?:[a-z]\s*=\s*)?(-?\d+\s*\/\s*\d+|-?\d+(?:\.\d+)?)\s*[,.]?\s*(?:right|correct)\b\s*[?.!]*$/i,
+  // A factored product — "(x+2)(x-5)", "2(x+3)", "(x-1)(x+2)(x-5)", "(2x-1)^2".
+  // The answer to every "factor this" step, and it matched NOTHING: the turn
+  // classified general_math, was never graded, and the tutor — barred from a
+  // verdict it didn't have — answered a correct (x+2)(x-5) with "let's take a
+  // closer look" (owner transcript, 2026-10-13). Every group must hold a
+  // variable so "(3)(4)" and "2(3)" stay arithmetic.
+  factoredExpr: /^(-?\d*\s*(?:\((?=[^()]*[a-z])[^()]+\)(?:\^\d+)?\s*){1,4})[.!?]*$/i,
+  // A step stated with its RESULT at the end — "subtract which is -3x^2",
+  // "multiply to get x^3 - x^2", "that leaves -10x + 10". The operation words
+  // used to win (proposed_step), so the result was never graded and a correct
+  // -3x^2 got "you're on the right track, show me the full step". End-anchored
+  // like answerPhraseAlgebraic: the result must close the message.
+  stepResult: /(?:\bwhich\s+is|\bthat\s+is|\bto\s+get|\b(?:you|i|we)\s+get|\bgives?|\bgiving|\bleaves|\bleaving|\bmakes)\s+(-?\d*[a-z](?:\^\{?-?\d+\}?)?(?:\s*[+\-]\s*\d*[a-z]?\d*(?:\^\{?-?\d+\}?)?)*|-?\d+(?:\.\d+)?(?:\s*\/\s*\d+)?)\s*[.!?]*$/i,
   // Algebraic expression answers: 3x^2-3, x+2, -2x+5, 2x^2+3x-1
   algebraicExpr: /^(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)\s*$/i,
   // "3 times 12 is 36", "36 divided by 2 is 18" — student states a full arithmetic result
@@ -91,7 +104,7 @@ const PATTERNS = {
   // answer is definitely q" extracted "d" (production transcript, 2026-07-29).
   // "it\s+is" joins the cue list so "so it is x+2" captures x+2, not the "i"
   // of "is".
-  embeddedAnswerConclusive: /(?:(?:the\s+)?(?:limit|answer|result|derivative|solution|value)\s+(?:is|equals?|=|would\s+be|comes?\s+(?:out\s+)?to)\s+|(?:so|which\s+means|meaning|therefore|thus)\s+(?:it'?s?\s+|it\s+is\s+|the\s+\w+\s+is\s+))(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)(?=[\s,.:;!?)}\]]|$)/gi,
+  embeddedAnswerConclusive: /(?:(?:the\s+)?(?:limit|answer|result|derivative|solution|value|quotient|remainder|product|sum|difference|slope)\s+(?:is|equals?|=|would\s+be|comes?\s+(?:out\s+)?to)\s+|(?:so|which\s+means|meaning|therefore|thus)\s+(?:it'?s?\s+|it\s+is\s+|the\s+\w+\s+is\s+))(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)(?=[\s,.:;!?)}\]]|$)/gi,
 
   // "Intermediate" patterns (lower priority): "you get x+2", "gives 3x"
   // These may be intermediate steps, not the final answer.
@@ -174,6 +187,7 @@ function matchAnswerLine(line) {
   if ((match = line.match(PATTERNS.fraction))) return match[1].replace(/\s/g, '');
   if ((match = line.match(PATTERNS.mixedNumber))) return `${match[1]} ${match[2].replace(/\s/g, '')}`;
   if ((match = line.match(PATTERNS.algebraicExpr))) return match[1].replace(/\s/g, '');
+  if ((match = line.match(PATTERNS.factoredExpr))) return match[1].replace(/\s/g, '');
   return null;
 }
 
@@ -292,6 +306,8 @@ function extractAnswer(message) {
     if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw };
     if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw };
     if ((match = text.match(PATTERNS.algebraicExpr))) return { value: match[1].replace(/\s/g, ''), raw };
+    if ((match = text.match(PATTERNS.factoredExpr))) return { value: match[1].replace(/\s/g, ''), raw };
+    if ((match = text.match(PATTERNS.stepResult))) return { value: match[1].replace(/\s/g, ''), raw, hasExplanation: true };
     if ((match = text.match(PATTERNS.answerPhraseAlgebraic))) return { value: match[1].replace(/\s/g, ''), raw };
     if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw };
     if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw };
