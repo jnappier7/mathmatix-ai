@@ -35,9 +35,9 @@ def add(b):
           figure={'kind': 'bar', 'params': {'labels': ['A', 'B', 'C', 'D'], 'values': [24, 36, 30, 30], 'xlabel': 'Option', 'ylabel': 'Votes'}})
 
     b.mc('PSDA', TV, 'H',
-         'The scatterplot shows the daily low temperature x, in degrees Celsius, and the number of cups of hot cocoa y sold at a café, with the line of best fit y = −1.5x + 40. Based on the line, how many cups are predicted to sell on a day with a low of 12°C?',
-         '22', ['18', '28', '52'],
-         'y = −1.5(12) + 40 = −18 + 40 = 22. (52 adds the 18 instead of subtracting it.)',
+         'The scatterplot shows the daily low temperature x, in degrees Celsius, and the number of cups of hot cocoa y sold at a café, along with a line of best fit. Based on the line, which of the following is closest to the number of cups predicted to sell on a day with a low of 12°C?',
+         '22', ['10', '34', '52'],
+         'Go up from 12°C to the line and across: it is a little above the 20 gridline, at about 22 cups. (The line falls 1.5 cups per degree, from 25 at 10°C.)',
          "ans = sp.Rational(-3, 2)*12 + 40\n",
          figure={'kind': 'scatter', 'params': {'pts': COCOA, 'xlabel': 'Low temperature (°C)', 'ylabel': 'Cups sold', 'line': {'slope': -1.5, 'yint': 40}}})
 

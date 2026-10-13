@@ -259,19 +259,19 @@
    "skill": "Two-variable data (scatterplots & models)",
    "difficulty": "M",
    "type": "mc",
-   "stem": "The scatterplot shows the daily energy output, in kilowatt-hours (kWh), of a solar panel array versus the number of peak sun hours that day, along with a line of best fit. The equation of the line is y = 2.5x + 1. Based on the line of best fit, what is the predicted output, in kWh, on a day with 6 peak sun hours?",
+   "stem": "The scatterplot shows the daily energy output, in kilowatt-hours (kWh), of a solar panel array versus the number of peak sun hours that day, along with a line of best fit. Based on the line of best fit, which of the following is closest to the predicted output, in kWh, on a day with 6 peak sun hours?",
    "choices": [
     "8.5",
-    "15",
     "16",
-    "17.5"
+    "21",
+    "26"
    ],
-   "answer": 2,
+   "answer": 1,
    "spr_answer": null,
    "equivalents": [],
    "answer_any": null,
-   "explanation": "Substitute x = 6 into the equation of the line of best fit: y = 2.5(6) + 1 = 15 + 1 = 16 kWh. Choice B forgets to add the y-intercept, choice D adds 1 to x before multiplying, and choice A adds the slope and x-value instead of multiplying.",
-   "verify": "assert 2.5*6+1==16",
+   "explanation": "Go up from 6 sun hours to the line, then across: the line is between the 15 and 17.5 gridlines, at about 16 kWh. (It rises 2.5 kWh per sun hour, from about 11 at 4 hours.) 21 is the line's value at 8 hours, not 6.",
+   "verify": "y = lambda x: 2.5*x + 1\nC = [8.5, 16, 21, 26]\nassert y(6) == 16 and min(C, key=lambda c: abs(c - y(6))) == C[1]\nassert sorted(abs(c - y(6)) for c in C)[1] >= 5",
    "figure": {
     "kind": "scatter",
     "params": {

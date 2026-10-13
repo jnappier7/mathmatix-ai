@@ -282,7 +282,7 @@
    "skill": "Two-variable data: scatterplots and models",
    "difficulty": "M",
    "type": "mc",
-   "stem": "The scatterplot shows the air temperature and the relative humidity recorded at a weather station on 9 afternoons, along with a line of best fit, y = −2x + 95. Which of the following is closest to the relative humidity, as a percent, predicted by the line of best fit for an afternoon with a temperature of 30°C?",
+   "stem": "The scatterplot shows the air temperature and the relative humidity recorded at a weather station on 9 afternoons, along with a line of best fit. Which of the following is closest to the relative humidity, as a percent, predicted by the line of best fit for an afternoon with a temperature of 30°C?",
    "choices": [
     "35",
     "65",
@@ -293,8 +293,8 @@
    "spr_answer": null,
    "equivalents": [],
    "answer_any": null,
-   "explanation": "Use the line of best fit, not an individual data point. At x = 30, y = −2(30) + 95 = 35, so the predicted relative humidity is 35%. Choosing 95 confuses the y-intercept with the prediction, and 155 comes from a sign error, computing 2(30) + 95.",
-   "verify": "assert -2*30+95==35\nassert 2*30+95==155",
+   "explanation": "Use the line of best fit, not an individual data point. Go up from 30°C to the line: it crosses the 35 gridline there, so the predicted relative humidity is about 35%. (The data point at 30°C sits a little below the line, at 33.) 65 and 95 are where the line would be at much lower temperatures.",
+   "verify": "y = lambda x: -2*x + 95\nC = [35, 65, 95, 155]\nassert y(30) == 35 and min(C, key=lambda c: abs(c - y(30))) == C[0]\nassert sorted(abs(c - y(30)) for c in C)[1] >= 10",
    "figure": {
     "kind": "scatter",
     "params": {

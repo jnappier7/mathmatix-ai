@@ -71,16 +71,16 @@ def add(b):
          custom="assert C[K] == 'The mean increases, and the median stays the same.'\n")
 
     b.mc('PSDA', TV, 'M',
-         'The scatterplot shows the daily high temperature x, in degrees Celsius, and the number of ice pops y sold at a beach stand on 9 days. The line of best fit is y = 12x − 300. Based on the line of best fit, how many ice pops are predicted to be sold on a day with a high temperature of 35°C?',
-         '120', ['105', '135', '420'],
-         'Substitute x = 35: 12(35) − 300 = 420 − 300 = 120. (420 forgets to subtract 300.)',
+         'The scatterplot shows the daily high temperature x, in degrees Celsius, and the number of ice pops y sold at a beach stand on 9 days, along with a line of best fit. Based on the line of best fit, which of the following is closest to the number of ice pops predicted to be sold on a day with a high temperature of 35°C?',
+         '120', ['60', '90', '420'],
+         'Halfway between 34°C and 36°C, the line crosses the 120 gridline: about 120 ice pops. (The line rises 12 ice pops per degree, from 60 at 30°C to 120 at 35°C.)',
          "ans = 12*35 - 300\n",
          figure={'kind': 'scatter', 'params': {'pts': ICE, 'xlabel': 'High temperature (°C)', 'ylabel': 'Ice pops sold', 'line': {'slope': 12, 'yint': -300}}})
 
     b.mc('PSDA', TVR, 'H',
-         'The scatterplot shows the daily high temperature x, in degrees Celsius, and the number of ice pops y sold at a beach stand, with the line of best fit y = 12x − 300. On the day the high temperature was 30°C, the stand sold 70 ice pops. What is the residual for that day (actual minus predicted)?',
+         'The scatterplot shows the daily high temperature x, in degrees Celsius, and the number of ice pops y sold at a beach stand, along with a line of best fit. On the day the high temperature was 30°C, the stand sold 70 ice pops. Based on the line of best fit, what is the residual for that day (actual minus predicted)?',
          '10', ['−10', '70', '60'],
-         'The line predicts 12(30) − 300 = 60. The residual is actual − predicted = 70 − 60 = 10: that day sold 10 more than the model predicted.',
+         'At 30°C the line crosses the 60 gridline, so the model predicts 60. The residual is actual − predicted = 70 − 60 = 10: that day sold 10 more than the model predicted.',
          "pred = 12*30 - 300\nassert [30, 70] in " + repr(ICE) + "\nans = 70 - pred\n",
          figure={'kind': 'scatter', 'params': {'pts': ICE, 'xlabel': 'High temperature (°C)', 'ylabel': 'Ice pops sold', 'line': {'slope': 12, 'yint': -300}}})
 
