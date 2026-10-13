@@ -196,6 +196,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
     // TUTOR_MODEL on OpenAI (llmVerifier's tier 1 is hard-pinned to Claude).
     const keys = healthReport.providerKeys();
     for (const [name, keyStatus] of Object.entries(keys)) checks[name] = { status: keyStatus };
+    // `openai` reports the observed balance, not just key presence: an empty
+    // balance took every tutor turn down on 2026-10-13 while this said 'ok'.
+    checks.openai = healthReport.openaiReport(keys.openai);
     // `verifier` is the one check a key-presence test cannot make: the key can
     // be present and valid while the balance is empty, and grading then falls
     // back to the tutor's own model — still grading, no longer a second opinion.
