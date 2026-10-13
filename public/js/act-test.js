@@ -1072,7 +1072,10 @@
             answers.push({ position, answer: st.answer != null ? st.answer : null, flagged: !!st.flagged, seq: st.seq || 0 });
           }
         });
-        const data = await this._api('/next-module', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: this.sessionId, answers }) });
+        // A guest's earlier tests in this browser, so Module 2 stays fresh too.
+        const nextBody = { sessionId: this.sessionId, answers };
+        if (this.guest) nextBody.previous = readGuestHistory(this.exam);
+        const data = await this._api('/next-module', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(nextBody) });
         if (data && data.abandoned) { this._advancing = false; return this.complete(); }
         if (data && data.lastModule) { this._advancing = false; return this.complete(); }
         if (!data || !data.module) throw new Error((data && data.message) || 'Could not start the next module.');
@@ -1177,10 +1180,18 @@
 
     // "Likely range 21–25": a single sitting is an estimate, and saying so
     // beside the number keeps a 23 from reading as a prediction.
+    // Always shown when the server sends one: a range that collapses onto a
+    // scale end used to vanish, so a near-perfect paper read as more certain
+    // than any other score (external PSAT test report, 2026-10-13).
     _rangeHtml(r) {
       const g = r && r.scaledRange;
-      if (!g || g.low == null || g.high == null || g.low === g.high) return '';
-      return `<div class="actt-range" title="Where your score would likely land on another sitting of this test. It is an estimate of ${this.exam.name} performance, not a prediction.">Likely range ${g.low}–${g.high}</div>`;
+      if (!g || g.low == null || g.high == null) return '';
+      const ends = String(this.exam.scale || '').split('–').map(Number);
+      const text = g.low !== g.high ? `Likely range ${g.low}–${g.high}`
+        : g.high === ends[1] ? `Likely range: the top of the ${this.exam.scale} scale`
+          : g.low === ends[0] ? `Likely range: the bottom of the ${this.exam.scale} scale`
+            : `Likely range ${g.low}`;
+      return `<div class="actt-range" title="Where your score would likely land on another sitting of this test. It is an estimate of ${this.exam.name} performance, not a prediction.">${text}</div>`;
     }
 
     // Which Module 2 the student earned. The real SAT never says; a tutor

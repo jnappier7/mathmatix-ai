@@ -1057,7 +1057,14 @@ async function nextModule(req, res) {
     const next = m.current + 1;
     const nextBp = moduleBlueprint(bp, next, route);
     const served = session.items.map((it) => it.problemId);
-    const seen = session.userId ? await seenProblemIdsForUser(session.userId) : [];
+    // What this student has seen before: the account's ledger, or — for a
+    // guest — the earlier tests this browser sends, exactly as /start reads
+    // them. Without the guest half, only Module 1 was kept fresh and Module 2
+    // repeated questions from the browser's earlier attempts (external PSAT
+    // test report, 2026-10-13).
+    const seen = session.userId
+      ? await seenProblemIdsForUser(session.userId)
+      : await guestSeenProblemIds((req.body || {}).previous);
     const form = await assembleForm({
       blueprint: nextBp,
       seed: `${session._id}-m${next}`,

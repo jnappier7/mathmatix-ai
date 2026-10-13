@@ -139,9 +139,15 @@ function irtScaled(items, responses, blueprint) {
   const { theta, se } = abilityFrom(items, responses);
   const total = (items || []).length;
   const full = blueprint.totalItems || total;
+  // A blank paper is the floor, as on the real test. The prior keeps an
+  // all-wrong estimate finite, which on a line set from the form's extremes
+  // can land a step above it.
+  const blank = !(responses || []).some((r) => r && r.correct);
   return {
-    scaled: thetaToScale(theta, scale),
-    range: { low: thetaToScale(theta - se, scale), high: thetaToScale(theta + se, scale) },
+    scaled: blank ? scale.min : thetaToScale(theta, scale),
+    range: blank
+      ? { low: scale.min, high: thetaToScale(theta + se, scale) }
+      : { low: thetaToScale(theta - se, scale), high: thetaToScale(theta + se, scale) },
     approximate: true,
     shortForm: total < full,
     formLength: total,
