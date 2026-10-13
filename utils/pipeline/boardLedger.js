@@ -297,6 +297,35 @@ function promoteLeadingResolveToPose(ledger, commands) {
 }
 
 /**
+ * Voice moved on to a DIFFERENT problem: its cumulative board now opens on a
+ * "Given" that is neither the problem in focus nor any line already worked.
+ * Without this the new problem's lines were appended as steps of the OLD one
+ * (promoteLeadingResolveToPose only fires on an empty ledger), so the next
+ * turn's board ghost described problem A with problem B's steps under it —
+ * a board that itself tells the tutor two equations are one. Gated on the
+ * "Given"/"Problem" label so a model that sends only its newest line (not the
+ * cumulative board) can't be mistaken for a switch. Pure.
+ *
+ * @param {object|null} ledger
+ * @param {Array} commands   - voiceToBoardCommands output for this turn
+ * @param {object} [firstStep] - the turn's first raw math step ({label, latex})
+ */
+function promoteSwitchedProblemToPose(ledger, commands, firstStep) {
+  const cmds = Array.isArray(commands) ? commands : [];
+  const cur = ledger && ledger.current;
+  if (!cur || !cur.problemTex || !cmds.length) return cmds;
+  const head = cmds[0];
+  if (!head || head.action !== 'resolve' || !head.tex) return cmds;
+  if (!firstStep || !/^\s*(given|problem)\b/i.test(String(firstStep.label || ''))) return cmds;
+  const k = normTex(head.tex);
+  if (k === normTex(cur.problemTex)) return cmds;
+  const worked = (Array.isArray(cur.steps) ? cur.steps : [])
+    .some(st => st && st.tex && normTex(st.tex) === k);
+  if (worked) return cmds;
+  return [{ action: 'pose', tex: head.tex }].concat(cmds.slice(1));
+}
+
+/**
  * Voice re-sends its board CUMULATIVELY every turn (its protocol: the full
  * step list, typically one new line at the end). Folding that raw into the
  * ledger would re-append the problem and every prior step each turn. Drop
@@ -323,6 +352,7 @@ function dedupeCumulativeResolves(ledger, commands) {
 module.exports = {
   applyTurnToLedger,
   promoteLeadingResolveToPose,
+  promoteSwitchedProblemToPose,
   dedupeCumulativeResolves,
   problemAssistance,
   sanitizeSourceRef,

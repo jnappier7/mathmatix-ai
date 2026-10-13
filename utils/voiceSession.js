@@ -21,7 +21,7 @@ const { createToolCallAccumulator } = require('./toolCallStream');
 // client renders with (UMD, requireable in node), folded into the same
 // ledger chat writes, described to the model by the same board ghost.
 const { voiceToBoardCommands } = require('../public/js/living-workspace/dom/voiceBoardTranslate');
-const { applyTurnToLedger, promoteLeadingResolveToPose, dedupeCumulativeResolves } = require('./pipeline/boardLedger');
+const { applyTurnToLedger, promoteLeadingResolveToPose, promoteSwitchedProblemToPose, dedupeCumulativeResolves } = require('./pipeline/boardLedger');
 const { assistanceLevelForTurn } = require('./pipeline/assistanceLadder');
 const { buildBoardStateBlock } = require('./pipeline/boardStateBlock');
 const { loadActiveBoardLedger } = require('./activeConversation');
@@ -30,7 +30,7 @@ const ttsStream = require('./ttsStream');
 const ttsProvider = require('./ttsProvider');
 const { speakMathInProse, createMathSpeechStreamFilter } = require('./mathTTS');
 const metrics = require('./voiceMetrics');
-const { classifyInterruption } = require('./voiceBackchannel');
+const { classifyInterruption, tokenize } = require('./voiceBackchannel');
 const orchestrator = require('./orchestrator');
 const { Dispatcher } = require('./orchestrator/dispatcher');
 const { loadOrCreatePlan, resolveCurrentTarget } = require('./tutorPlanManager');
@@ -91,10 +91,34 @@ const BARGE_DUCK_RESOLVE_MS = 900;
 // 300ms is Deepgram's own default and errs toward responsiveness; the
 // backchannel classifier and barge-in duck make an early cut cheap to
 // recover from, which is what lets us sit at the fast end.
-const STT_ENDPOINTING_MS = Number(process.env.VOICE_ENDPOINTING_MS) || 300;
+//
+// 500, not Deepgram's 300: until 2026-10-13 the speech_final signal never
+// reached _onFinal (the STT wiring dropped every argument after the text), so
+// prod has only ever answered on the 1000ms UtteranceEnd. Going live at 300
+// would swing straight from "slow" to "cuts me off mid-thought" — 500 keeps
+// most of the latency win while leaving room for "so x equals... uh... four".
+const STT_ENDPOINTING_MS = Number(process.env.VOICE_ENDPOINTING_MS) || 500;
 // UtteranceEnd is now only the fallback for when endpointing never fires,
 // so its floor costs nothing on the common path. Deepgram rejects <1000.
 const STT_UTTERANCE_END_MS = Math.max(1000, Number(process.env.VOICE_UTTERANCE_END_MS) || 1000);
+
+// ─── Whose voice is this? ───────────────────────────────────────────────
+// The mic hears the whole room. A TV, a sibling, or the tutor's own voice
+// leaking past echo cancellation all arrive as transcripts, and each used to
+// be treated as the student — stopping the tutor mid-sentence, then getting
+// an answer of its own (owner report, 2026-10-13). Deepgram's confidence is
+// the cheapest signal that a voice is far-field or muffled: near-field speech
+// into the device mic sits well above these floors, background speech often
+// does not. Two floors because the costs differ — a missed barge-in costs a
+// second of tutor speech, a dropped utterance costs the student their turn.
+//
+// Confidence a partial needs before it may STOP the tutor.
+const BARGE_MIN_CONFIDENCE = Number(process.env.VOICE_BARGE_MIN_CONFIDENCE) || 0.5;
+// Word-weighted confidence a whole utterance needs to become a turn.
+const MIN_UTTERANCE_CONFIDENCE = Number(process.env.VOICE_MIN_UTTERANCE_CONFIDENCE) || 0.4;
+// Slack on the client-playback estimate: jitter, scheduling, and Deepgram's
+// own lag in transcribing the last words the tutor said.
+const PLAYBACK_GRACE_MS = 1500;
 
 // Streaming voice prompt — natural English first, then tagged math at the
 // end. The orchestrator forwards everything before <math> to TTS in real
@@ -120,6 +144,8 @@ PEDAGOGY (CRITICAL):
 - The math array is the cumulative board — only steps the student has
   derived or confirmed. Never include the next step the student hasn't
   worked through yet.
+- The FIRST entry is always the problem itself, labelled "Given". Keep it
+  first, unchanged, on every turn until that problem is finished.
 - Wrong answer: do NOT add the wrong step. Repeat the prior steps unchanged.
 - Pure small talk: include the most recent prior board state (or [] if
   no math has happened yet this session).
@@ -134,6 +160,9 @@ Exactly right! Now we have 2x equals 4. What's next? <math>[{"label":"Given","la
 
 User: "multiply by 2" (WRONG)
 Hmm, not quite. We have 2 times x. What's the opposite of multiplying by 2? <math>[{"label":"Given","latex":"2x - 4 = 0"},{"label":"Add 4","latex":"2x = 4"}]</math>
+
+User: "can you help me with fractions?"
+Of course! What problem are you working on? Read it to me and we'll start there. <math>[]</math>
 
 REMEMBER: never speak math notation. The LaTeX goes in the math tag only.
 Never put system tags or JSON inside the spoken portion.
@@ -376,8 +405,11 @@ class VoiceSession {
             sampleRate: 16000,
             endpointing: STT_ENDPOINTING_MS,
             utteranceEndMs: STT_UTTERANCE_END_MS,
-            onPartial: (text) => { this._lastSttActivity = Date.now(); this._onPartial(text); },
-            onFinal: (text) => { this._lastSttActivity = Date.now(); this._onFinal(text); },
+            // Pass EVERY argument through. These wrappers used to forward only
+            // the text, which silently disabled the speech_final fast path and
+            // left the barge-in logic blind to confidence.
+            onPartial: (text, confidence) => { this._lastSttActivity = Date.now(); this._onPartial(text, confidence); },
+            onFinal: (text, confidence, speechFinal) => { this._lastSttActivity = Date.now(); this._onFinal(text, confidence, speechFinal); },
             onUtteranceEnd: () => { this._lastSttActivity = Date.now(); this._onUtteranceEnd(); },
             onError: (err) => {
                 const detail = err?.message || err?.reason || String(err);
@@ -419,7 +451,7 @@ class VoiceSession {
         // room got loud, this is the first look at what was actually said.
         // It also stands alone as the server-side detector when the client
         // missed the local VAD trigger entirely.
-        if (this.currentTurn && this.currentTurn.status === 'speaking') {
+        if (tutorAudible(this)) {
             const verdict = classifyInterruption(text);
             if (verdict.isBackchannel) {
                 // "mm-hm" / "yeah" / "okay" — the student is nodding along.
@@ -427,8 +459,16 @@ class VoiceSession {
                 // of voice friction, so keep talking and lift the duck the
                 // client applied on its local VAD.
                 this._resolveBargeDuck('backchannel');
-            } else {
+            } else if (isTutorEcho(this, text)) {
+                // The mic picked up the tutor's own words. Not an
+                // interruption; the duck watchdog brings the volume back.
+            } else if (typeof confidence === 'number' && confidence < BARGE_MIN_CONFIDENCE) {
+                // Probably not the student (far-field / background). Don't
+                // stop on it; a clearer partial or the watchdog decides.
+            } else if (this.currentTurn) {
                 this._abortCurrentTurn('user_barge_in_server_detected');
+            } else {
+                this._interruptPlaybackTail('user_barge_in_server_detected');
             }
         }
         // Confidence rides along so the client can decline to display
@@ -445,6 +485,10 @@ class VoiceSession {
         this._accumulatedFinal = this._accumulatedFinal
             ? `${this._accumulatedFinal} ${text}`
             : text;
+        if (typeof confidence === 'number') {
+            (this._accumulatedConfidence || (this._accumulatedConfidence = []))
+                .push({ confidence, words: Math.max(1, tokenize(text).length) });
+        }
         const msg = { type: 'transcript_final_segment', text };
         if (typeof confidence === 'number') msg.confidence = confidence;
         this._send(msg);
@@ -475,6 +519,8 @@ class VoiceSession {
     _commitUtterance(reason) {
         const utterance = this._accumulatedFinal.trim();
         this._accumulatedFinal = '';
+        const confidence = weightedConfidence(this._accumulatedConfidence);
+        this._accumulatedConfidence = [];
         if (!utterance) return;
 
         // A backchannel spoken *over* the tutor is not a turn. Answering
@@ -482,10 +528,31 @@ class VoiceSession {
         // which is how a nod used to cost them the rest of the sentence.
         // Swallow it and keep speaking. (Once the tutor has finished, the
         // same word IS a turn — "okay" then means "I'm ready", so this
-        // only applies while a turn is live.)
-        if (this.currentTurn && classifyInterruption(utterance).isBackchannel) {
+        // only applies while the tutor is live or still audible.)
+        const tutorLive = !!this.currentTurn || tutorAudible(this);
+        if (tutorLive && classifyInterruption(utterance).isBackchannel) {
             this._resolveBargeDuck('backchannel_utterance');
             logger.debug('backchannel swallowed', { userId: this.userId, utterance });
+            return;
+        }
+
+        // The tutor transcribing itself: its own sentence came back through
+        // the mic. Answering it is the tutor arguing with its echo.
+        if (tutorAudible(this, PLAYBACK_GRACE_MS) && isTutorEcho(this, utterance)) {
+            if (tutorLive) this._resolveBargeDuck('tutor_echo');
+            logger.info('voice utterance ignored: tutor echo', { userId: this.userId });
+            this._send({ type: 'utterance_ignored', reason: 'echo' });
+            return;
+        }
+
+        // Too uncertain to be the student talking into their device — most
+        // often a TV or someone across the room.
+        if (confidence !== null && confidence < MIN_UTTERANCE_CONFIDENCE) {
+            if (tutorLive) this._resolveBargeDuck('low_confidence');
+            logger.info('voice utterance ignored: low confidence', {
+                userId: this.userId, confidence: Number(confidence.toFixed(2)),
+            });
+            this._send({ type: 'utterance_ignored', reason: 'low_confidence' });
             return;
         }
 
@@ -512,7 +579,7 @@ class VoiceSession {
     // never be left permanently quiet but still streaming.
 
     _openBargeDuck() {
-        if (!this.currentTurn) {
+        if (!this.currentTurn && !tutorAudible(this)) {
             // Nothing to duck — the turn already ended between the client's
             // VAD firing and this message landing. Tell the client to come
             // back up so the next turn isn't born at 15% volume.
@@ -525,7 +592,7 @@ class VoiceSession {
             // No transcript resolved this duck in time — nobody actually
             // spoke. Lift it rather than stranding the student in a tutor
             // that has gone mysteriously quiet mid-sentence.
-            if (this.currentTurn) this._resolveBargeDuck('no_speech_detected');
+            if (this.currentTurn || tutorAudible(this)) this._resolveBargeDuck('no_speech_detected');
         }, BARGE_DUCK_RESOLVE_MS);
         this._bargeDuckTimer.unref?.();
     }
@@ -543,12 +610,42 @@ class VoiceSession {
         this._send({ type: 'resume_speaking', reason });
     }
 
+    /**
+     * Stop the tutor's audio after its turn has already ended server-side.
+     *
+     * Cartesia synthesizes faster than real time, so a turn's LLM stream,
+     * verify and response_final all finish while the client is still
+     * PLAYING the reply — often for several seconds. currentTurn is null for
+     * that whole tail, and the barge-in path used to require a live turn: the
+     * duck was answered "no_active_turn", the client came back to full volume,
+     * and the tutor talked straight over the student to the end of the
+     * sentence. The tail is now interruptible exactly like the live turn.
+     */
+    _interruptPlaybackTail(reason) {
+        const audioTag = this._playbackTag;
+        this._playbackUntil = 0;
+        this._clearBargeDuckTimer();
+        // The reply is in history whole, but the student did not hear the
+        // end of it. Say so, the way an aborted live turn does.
+        for (let i = this.history.length - 1; i >= 0; i--) {
+            const m = this.history[i];
+            if (m.role !== 'assistant') continue;
+            if (typeof m.content === 'string' && !m.content.endsWith('[INTERRUPTED]')) {
+                this.history[i] = { ...m, content: `${m.content} [INTERRUPTED]` };
+            }
+            break;
+        }
+        this._send({ type: 'interrupted', audioTag, reason, spokenSoFar: '' });
+        this._setStatus('listening');
+    }
+
     _cancelPendingDebounce() {
         if (this._pendingTurnDebounce) {
             clearTimeout(this._pendingTurnDebounce);
             this._pendingTurnDebounce = null;
         }
         this._accumulatedFinal = '';
+        this._accumulatedConfidence = [];
     }
 
     // ─── Turn lifecycle ──────────────────────────────────────────────────
@@ -594,6 +691,8 @@ class VoiceSession {
         // A duck belonging to the turn we just replaced must not outlive it,
         // or the new turn speaks at 15% volume until its watchdog fires.
         this._clearBargeDuckTimer();
+        // turn_start stops the client's playback, so the old tail is gone.
+        this._playbackUntil = 0;
 
         // audioTag is the same 32-bit value stamped into every binary audio
         // frame for this turn (see _sendAudioChunk). The client accepts PCM
@@ -662,11 +761,10 @@ class VoiceSession {
 
         // Board awareness (same ghost chat uses): what the student's board
         // shows RIGHT NOW, so the voice tutor references lines instead of
-        // re-deriving them. Empty board contributes zero tokens.
-        try {
-            const boardBlock = buildBoardStateBlock(this.boardLedger);
-            if (boardBlock) systemContent += '\n\n' + boardBlock;
-        } catch (_) { /* non-fatal */ }
+        // re-deriving them. Empty board contributes zero tokens. Then the
+        // continuity anchor — see buildVoiceFocusBlock.
+        systemContent += this._boardGhost();
+        systemContent += '\n\n' + buildVoiceFocusBlock(this.lastBoardSteps, this.boardLedger, { ledgerIsLive: this.mode === 'board-actions' });
 
         // board-actions mode: enrich prompt with current whiteboard state
         if (this.mode === 'board-actions' && this.boardContext) {
@@ -835,6 +933,7 @@ class VoiceSession {
                 // Audio already streamed — abort current TTS, re-synthesize redirected text.
                 if (turn.tts) turn.tts.abort();
                 this._send({ type: 'tts_flush', turnId: turn.metric.turnId });
+                this._playbackUntil = 0; // client dropped it all; re-synthesis restarts the clock
                 verifiedText = verified.text;
                 mathStepsForBoard = []; // drop board content alongside redirect
                 boardActionsForFinal = []; // drop board actions alongside redirect
@@ -912,6 +1011,18 @@ class VoiceSession {
             visualCommands: visualCommands,
         });
 
+        // A change of "Given" is a change of problem. Legitimate when the
+        // last one was finished or the student asked for another — but it is
+        // also the exact shape of the drift bug, so it is always logged (turnId
+        // finds the transcript; the student's words stay out of the log).
+        const priorGiven = this.lastBoardSteps[0] && this.lastBoardSteps[0].latex;
+        const nextGiven = mathStepsForBoard[0] && mathStepsForBoard[0].latex;
+        if (priorGiven && nextGiven && String(priorGiven).replace(/\s+/g, '') !== String(nextGiven).replace(/\s+/g, '')) {
+            logger.info('voice problem switched', {
+                userId: this.userId, turnId: turn.metric.turnId, from: priorGiven, to: nextGiven,
+            });
+        }
+
         // Update local state for next turn's pedagogy (math-steps mode only)
         if (mathStepsForBoard.length > 0) this.lastBoardSteps = mathStepsForBoard;
 
@@ -920,6 +1031,7 @@ class VoiceSession {
         // and get serialized at end-session. Storing <math>JSON</math> in
         // the message content pollutes downstream chat tutor context.
         const assistantContent = verifiedText;
+        this._lastTutorSpoken = verifiedText;
         this.history.push({ role: 'user', content: turn.userMessage });
         this.history.push({ role: 'assistant', content: assistantContent });
         if (this.history.length > HISTORY_DEPTH * 2) {
@@ -931,6 +1043,7 @@ class VoiceSession {
         try {
             let cmds = voiceToBoardCommands({ mathSteps: mathStepsForBoard, boardActions: boardActionsForFinal });
             cmds = promoteLeadingResolveToPose(this.boardLedger, cmds);
+            cmds = promoteSwitchedProblemToPose(this.boardLedger, cmds, mathStepsForBoard[0]);
             // Voice's protocol is cumulative (full board re-sent each turn) —
             // only genuinely new lines may fold, or steps duplicate every turn.
             cmds = dedupeCumulativeResolves(this.boardLedger, cmds);
@@ -990,7 +1103,8 @@ not on the board is lost the moment it's said.
 Never speak math notation. Never include system tags. Always valid JSON.`;
 
         const messages = [
-            { role: 'system', content: this.systemPrompt + ORCH_VOICE_INSTRUCTIONS + this._boardGhost() },
+            { role: 'system', content: this.systemPrompt + ORCH_VOICE_INSTRUCTIONS + this._boardGhost()
+                + '\n\n' + buildVoiceFocusBlock(this.lastBoardSteps, this.boardLedger, { ledgerIsLive: this.mode === 'board-actions' }) },
             ...this.history,
             { role: 'user', content: turn.userMessage },
         ];
@@ -1175,6 +1289,7 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         });
 
         turn.metric.spokenChars = verifiedSpoken.length;
+        this._lastTutorSpoken = verifiedSpoken;
         this._send({ type: 'ai_speaking_ended', turnId: turn.metric.turnId });
     }
 
@@ -1492,6 +1607,7 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         turn.metric.t_turn_end = Date.now();
         metrics.record(turn.metric);
 
+        this._playbackUntil = 0;
         this._send({
             type: 'interrupted',
             turnId: turn.metric.turnId,
@@ -1520,6 +1636,11 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
                 : [];
             const boardActions = turn.boardActions || [];
             const spoken = (turn.spokenAcc || '').trim();
+            // A board that fully arrived before the interruption is the board
+            // now — the focus block must anchor the next turn on it.
+            if (this.mode === 'math-steps' && turn.mathBuffer && !turn.inMathTag && mathSteps.length) {
+                this.lastBoardSteps = mathSteps;
+            }
             if (!spoken && !mathSteps.length && !boardActions.length) return;
             this._send({
                 type: 'response_final',
@@ -1553,6 +1674,13 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         this._ttsSamples = (this._ttsSamples || 0) + i16.length;
         this._ttsSampleRate = sampleRate;
         if (this.ws.readyState !== 1) return;
+        // Mirror the client's scheduler (each chunk starts where the last one
+        // ends, or now if it ran dry) so the server knows when the student
+        // stops HEARING this turn — which is long after it stops generating.
+        const now = Date.now();
+        const chunkMs = sampleRate ? (i16.length / sampleRate) * 1000 : 0;
+        this._playbackUntil = Math.max(this._playbackUntil || 0, now) + chunkMs;
+        this._playbackTag = hash32(turnId);
         // Frame protocol: [1 byte type=0x01][8 bytes turnId hash][2 bytes sr][N bytes pcm s16]
         // Simpler: send a small JSON header followed by binary frame is
         // multiple round-trips. Use a tagged binary buffer instead.
@@ -1580,12 +1708,15 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         });
     }
 
-    // The board ghost for prompt assembly — one guarded call site for the
-    // orchestrated path (the streaming path inlines the same block).
+    // The board ghost for prompt assembly — one guarded call site for both
+    // voice paths. The POINTING instruction is chat-only: it teaches a
+    // <BOARD_POINT/> tag that no voice parser consumes, so in voice the model
+    // emitted it into the spoken stream and the student heard markup.
     _boardGhost() {
         try {
             const block = buildBoardStateBlock(this.boardLedger);
-            return block ? '\n\n' + block : '';
+            if (!block) return '';
+            return '\n\n' + block.split('\n').filter(l => !l.startsWith('POINTING:')).join('\n');
         } catch (_) { return ''; }
     }
 
@@ -1708,6 +1839,103 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
     }
 }
 
+/**
+ * Is the student hearing the tutor right now? True while a turn is speaking,
+ * and also after it ends server-side until the client's estimated playback
+ * runs out (see _interruptPlaybackTail). `graceMs` widens the tail for
+ * checks against Deepgram's lag. Module-level so prototype-borrowing tests
+ * of the barge-in policy don't need to stub it.
+ */
+function tutorAudible(session, graceMs = 0) {
+    if (session.currentTurn && session.currentTurn.status === 'speaking') return true;
+    return !!session._playbackUntil && Date.now() < session._playbackUntil + graceMs;
+}
+
+/**
+ * Did the mic just hear the tutor itself? Three or more words that appear,
+ * in order and contiguous, in what the tutor is saying or just said. Short
+ * fragments never match — "x equals four" from a student answering over the
+ * tutor must stay an interruption, so the bar is a run, not a word.
+ */
+function isTutorEcho(session, text) {
+    const heard = tokenize(text);
+    if (heard.length < 3) return false;
+    const said = tokenize(`${session._lastTutorSpoken || ''} ${(session.currentTurn && session.currentTurn.spokenAcc) || ''}`);
+    if (said.length < heard.length) return false;
+    return ` ${said.join(' ')} `.includes(` ${heard.join(' ')} `);
+}
+
+/** Word-weighted mean STT confidence, or null when STT sent none. */
+function weightedConfidence(parts) {
+    if (!Array.isArray(parts) || !parts.length) return null;
+    let sum = 0;
+    let words = 0;
+    for (const p of parts) { sum += p.confidence * p.words; words += p.words; }
+    return words ? sum / words : null;
+}
+
+// How many board lines the voice focus block quotes back.
+const FOCUS_STEPS_SHOWN = 6;
+
+/**
+ * The problem-continuity anchor for one voice turn.
+ *
+ * Voice history stores SPOKEN TEXT ONLY (the <math> trailer is stripped so it
+ * can't pollute chat context), so on any given turn the model could not see
+ * which equation it was working: the board it had been re-sending lived only
+ * in this.lastBoardSteps and was never put back in front of it. With a dozen
+ * turns of prose and no equation, it drifted — Ms. Maria moved from one
+ * fraction problem to a different equation mid-solve without noticing, and
+ * on a fresh call she made one up before the student had given her anything
+ * (owner report, 2026-10-13). This block is rebuilt every turn from what is
+ * actually on the voice board, and states the two rules that failed:
+ * stay on the problem in focus, and never invent one.
+ *
+ * @param {Array} lastBoardSteps - the most recent cumulative <math> array
+ * @param {object|null} ledger   - shared board ledger (chat's board)
+ * @param {object} [opts]
+ * @param {boolean} [opts.ledgerIsLive] - the ledger is the board on screen (chat orb)
+ * @returns {string}
+ */
+function buildVoiceFocusBlock(lastBoardSteps, ledger, { ledgerIsLive = false } = {}) {
+    let steps = (Array.isArray(lastBoardSteps) ? lastBoardSteps : [])
+        .filter(st => st && typeof st.latex === 'string' && st.latex.trim());
+    const ledgerProblem = ledger && ledger.current && ledger.current.problemTex;
+    // The chat orb (board-actions) draws on the chat page's own board, so
+    // there the ledger IS the live board rather than a leftover from chat.
+    if (!steps.length && ledgerIsLive && ledgerProblem) {
+        steps = [{ latex: String(ledgerProblem) }].concat(
+            (Array.isArray(ledger.current.steps) ? ledger.current.steps : [])
+                .filter(c => c && (c.action === 'resolve' || c.action === 'verify') && c.tex)
+                .map(c => ({ latex: String(c.tex) })));
+    }
+
+    if (steps.length) {
+        const lines = ['== PROBLEM IN FOCUS (this voice call) ==',
+            'You and the student are working on: ' + steps[0].latex.trim()];
+        const rest = steps.slice(1).slice(-FOCUS_STEPS_SHOWN).map(st => st.latex.trim());
+        if (rest.length) lines.push('Steps so far, in order: ' + rest.join('  ->  '));
+        lines.push('STAY ON THIS PROBLEM. Every step you say must follow from the steps above. '
+            + 'Do NOT switch to a different equation, change its numbers, or start "another one" '
+            + 'unless the student asks for a new problem or this one is finished. If you do move '
+            + 'on, say so out loud first ("That one\'s done, here\'s a new one") and start a fresh '
+            + 'math array whose Given is the new problem.');
+        lines.push('If what the student says does not fit this problem, ask what they mean. '
+            + 'Never quietly re-anchor on a different equation.');
+        return lines.join('\n');
+    }
+
+    const lines = ['== NO PROBLEM SET YET (this voice call) =='];
+    if (ledgerProblem) {
+        lines.push('Their chat board shows ' + String(ledgerProblem).trim() + ', but it has not '
+            + 'been discussed on this call. Ask whether they want to keep working it before you do.');
+    }
+    lines.push('The student has not given you a problem on this call. Do NOT invent, assume, or '
+        + 'start solving any equation. Ask what they are working on, or offer to give them one '
+        + 'and WAIT for a yes before you say it. Until a problem is set, the math array is [].');
+    return lines.join('\n');
+}
+
 function hash32(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) {
@@ -1736,4 +1964,4 @@ async function createVoiceSession({ ws, user, sessionId, mode, loginSessionId })
     return session;
 }
 
-module.exports = { createVoiceSession, VoiceSession, CLOSE_SUPERSEDED };
+module.exports = { createVoiceSession, VoiceSession, CLOSE_SUPERSEDED, buildVoiceFocusBlock, tutorAudible, isTutorEcho };
