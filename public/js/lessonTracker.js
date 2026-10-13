@@ -240,21 +240,26 @@ class LessonTracker {
         const isReview = bc.phase === 'review' && total > 0;
         const cur = isReview && Array.isArray(bc.queue) ? bc.queue[bc.index] : null;
 
+        // A read-only progress line. These used to be four filled boxes with the
+        // active one highlighted — they looked exactly like tabs, so students
+        // clicked them and nothing happened.
         const step = (icon, name, state, id) => {
             const style = state === 'active'
-                ? 'background:rgba(255,255,255,.22);color:#fff;font-weight:600'
+                ? 'color:#fff;font-weight:700'
                 : state === 'done' ? 'color:rgba(255,255,255,.85)' : 'color:rgba(255,255,255,.5)';
-            return `<div ${id ? `id="${id}" ` : ''}style="flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:12px;${style}"><i class="fas ${icon}"></i> ${name}</div>`;
+            const mark = state === 'done' ? '<i class="fas fa-check" style="font-size:10px"></i>' : `<i class="fas ${icon}" style="font-size:10.5px"></i>`;
+            return `<span ${id ? `id="${id}" ` : ''}style="white-space:nowrap;font-size:12px;cursor:default;${style}">${mark} ${name}</span>`;
         };
+        const sep = '<span aria-hidden="true" style="color:rgba(255,255,255,.4);font-size:11px">&rsaquo;</span>';
         // Compare is done once there are two scored tests to compare — the
         // comparison screen auto-shows on every 2nd+ completion. The attempt
         // count arrives async from /history (_loadBootcampScore), which also
         // patches the step live on first load; _bcAttempts covers re-renders.
         const compareDone = (this._bcAttempts || 0) >= 2;
-        const loop = `<div style="display:flex;gap:6px;margin:10px 0 14px">
-            ${step('fa-flag-checkered', 'Baseline', hasBaseline ? 'done' : 'active')}
-            ${step('fa-bullseye', 'Review', isReview ? 'active' : (hasBaseline ? 'done' : 'todo'))}
-            ${step('fa-clipboard-list', 'Re-test', bc.phase === 'reassess' ? 'active' : 'todo')}
+        const loop = `<div role="list" aria-label="Bootcamp steps" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 12px">
+            ${step('fa-flag-checkered', 'Baseline', hasBaseline ? 'done' : 'active')}${sep}
+            ${step('fa-bullseye', 'Review', isReview ? 'active' : (hasBaseline ? 'done' : 'todo'))}${sep}
+            ${step('fa-clipboard-list', 'Re-test', bc.phase === 'reassess' ? 'active' : 'todo')}${sep}
             ${step('fa-chart-line', 'Compare', compareDone ? 'done' : 'todo', 'lt-bc-step-compare')}
           </div>`;
 
@@ -264,14 +269,18 @@ class LessonTracker {
               <button id="lt-bc-start" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Start baseline</button>
             </div>` : isReview ? `
             <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px">
-              <div style="display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:14px;font-weight:600;margin-bottom:8px"><span>Going over what you missed</span><span style="font-weight:500;font-size:12.5px;opacity:.85">${reviewed} of ${total} done</span></div>
-              <div style="height:7px;background:rgba(255,255,255,.22);border-radius:5px;overflow:hidden;margin-bottom:10px"><div style="width:${pct}%;height:100%;background:#fff;border-radius:5px"></div></div>
-              ${this._numberRailHtml(bc)}
+              <div style="color:#fff;font-size:14px;font-weight:600;margin-bottom:3px">${reviewed === 0 ? `Let's go over the ${total} question${total === 1 ? '' : 's'} you missed` : 'Next question to go over'}</div>
+              <div style="color:rgba(255,255,255,.82);font-size:12px;margin-bottom:9px">${reviewed === 0 ? `One at a time, with ${this._tutorName()}. Here's the first one.` : `${reviewed} of ${total} done — keep going.`}</div>
               ${this._missPreviewHtml(cur, label)}
-              <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap">
-                <button id="lt-bc-continue" style="background:rgba(255,255,255,.22);color:#fff;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Work it with my tutor</button>
-                <button id="lt-bc-next" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Got it &mdash; next &#9654;</button>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <button id="lt-bc-continue" style="background:#fff;color:#5b3ea8;border:0;border-radius:9px;padding:9px 16px;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(40,20,90,.25)">Work it with ${this._tutorName()} &#9654;</button>
+                <button id="lt-bc-next" title="Mark this one reviewed and move to the next" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:9px;padding:8px 13px;font-size:12.5px;font-weight:600;cursor:pointer">I've got this one &mdash; skip ahead</button>
               </div>
+              <div style="display:flex;align-items:center;gap:10px;margin:13px 0 9px">
+                <div style="flex:1;height:6px;background:rgba(255,255,255,.22);border-radius:5px;overflow:hidden"><div style="width:${pct}%;height:100%;background:#fff;border-radius:5px"></div></div>
+                <span style="color:rgba(255,255,255,.88);font-size:12px;white-space:nowrap">${reviewed} of ${total} done</span>
+              </div>
+              ${this._numberRailHtml(bc)}
               <div style="margin-top:9px;text-align:right">
                 <a id="lt-bc-done" href="#" style="color:rgba(255,255,255,.8);font-size:11.5px;text-decoration:underline">I'm done reviewing &mdash; re-test me</a>
               </div>
@@ -344,26 +353,40 @@ class LessonTracker {
             const style = it.current
                 ? 'background:#fff;color:#5b3ea8;font-weight:700'
                 : done
-                    ? 'background:rgba(88,214,141,.28);color:#eafff2;cursor:pointer'
-                    : 'background:rgba(255,255,255,.2);color:#fff;cursor:pointer';
+                    ? 'background:rgba(88,214,141,.28);color:#eafff2'
+                    : 'background:rgba(255,255,255,.22);color:#fff';
             const title = done ? 'Reviewed \u2713 — tap to revisit' : (it.current ? 'Working this one now' : 'Tap to work this one next');
-            return `<button data-bc-jump="${it.queueIndex}" title="${title}" style="border:0;border-radius:8px;min-width:30px;padding:4px 7px;font-size:12px;cursor:pointer;${style}">${done ? '\u2713 ' : ''}${esc(it.short || it.position)}</button>`;
+            return `<button data-bc-jump="${it.queueIndex}" title="${title}" style="border:0;border-radius:6px;min-width:26px;padding:2px 6px;font-size:11.5px;cursor:pointer;${style}">${done ? '\u2713 ' : ''}${esc(it.short || it.position)}</button>`;
         };
+        // One skill = one compact pill (name + its numbers), wrapped several to a
+        // row. A heading per skill on its own line made a 16-miss test a column
+        // taller than the screen, and the question + buttons fell below it.
         const block = (g) => {
             // Name the pattern where there IS one. A lone miss on a skill is
             // just a question; three is the thing worth telling them about.
             const head = g.total > 1
-                ? `${esc(g.label)} <span style="opacity:.75;font-weight:400">· ${g.total} missed</span>`
+                ? `${esc(g.label)} <span style="opacity:.75;font-weight:400">×${g.total}</span>`
                 : esc(g.label);
-            return `<div style="margin-bottom:7px">
-                <div style="color:${g.allDone ? 'rgba(234,255,242,.85)' : 'rgba(255,255,255,.92)'};font-size:11.5px;font-weight:600;margin-bottom:4px">${g.allDone ? '\u2713 ' : ''}${head}</div>
-                <div style="display:flex;flex-wrap:wrap;gap:5px">${g.items.map(chip).join('')}</div>
-              </div>`;
+            return `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border-radius:8px;padding:3px 4px 3px 8px">
+                <span style="color:${g.allDone ? 'rgba(234,255,242,.9)' : 'rgba(255,255,255,.92)'};font-size:11.5px;font-weight:600;white-space:nowrap">${g.allDone ? '\u2713 ' : ''}${head}</span>
+                ${g.items.map(chip).join('')}
+              </span>`;
         };
-        return `<div style="margin-bottom:10px">
-            <div style="color:rgba(255,255,255,.8);font-size:11.5px;margin-bottom:6px">What you missed, grouped by skill — we work down this list:</div>
-            <div id="lt-bc-numbers">${groups.map(block).join('')}</div>
-          </div>`;
+        const open = this._bcListOpen ? ' open' : '';
+        return `<details id="lt-bc-list"${open} style="color:#fff">
+            <summary style="cursor:pointer;font-size:12px;color:rgba(255,255,255,.88);list-style-position:inside">What you missed, grouped by skill (${groups.length} skill${groups.length === 1 ? '' : 's'}) &mdash; tap a number to jump to it</summary>
+            <div id="lt-bc-numbers" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${groups.map(block).join('')}</div>
+          </details>`;
+    }
+
+    /** The student's tutor, by name, for the review buttons. */
+    _tutorName() {
+        try {
+            const id = window.currentUser && window.currentUser.selectedTutorId;
+            const t = id && window.TUTOR_CONFIG && window.TUTOR_CONFIG[id];
+            if (t && t.name) return this._esc(t.name);
+        } catch (e) { /* globals not ready */ }
+        return 'your tutor';
     }
 
     /**
@@ -428,7 +451,7 @@ class LessonTracker {
             // so the student saw "#30 · up next" over blank space and no
             // surface anywhere admitted the gap.
             return `<div style="background:rgba(255,255,255,.96);border-radius:10px;padding:11px 13px;margin-bottom:10px">
-                <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">${esc(prepQuestionLong(cur))} · ${esc(label(cur.category))}</div>
+                <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">${esc(prepQuestionLong(cur))} · ${esc(cur.groupLabel || label(cur.category))}</div>
                 <div style="font-size:13px;line-height:1.5;color:#6b6480">We couldn't load this question's text. Your tutor will ask you to read it out so you can still work it.</div>
               </div>`;
         }
@@ -454,7 +477,7 @@ class LessonTracker {
               </div>`;
         }).join('');
         return `<div style="background:rgba(255,255,255,.96);border-radius:10px;padding:11px 13px;margin-bottom:10px">
-            <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">${esc(prepQuestionLong(cur))} · ${esc(label(cur.category))}</div>
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#8578ab;text-transform:uppercase;margin-bottom:6px">${esc(prepQuestionLong(cur))} · ${esc(cur.groupLabel || label(cur.category))}</div>
             ${fig}
             <div style="font-size:13.5px;line-height:1.5;color:#1f1a33;white-space:pre-wrap;margin-bottom:${rows ? '8px' : '0'}">${esc(cur.prompt)}</div>
             ${rows ? `<div style="display:flex;flex-direction:column;gap:5px">${rows}</div>` : ''}
@@ -554,6 +577,8 @@ class LessonTracker {
             try { localStorage.setItem('mm-bc-collapsed', this._bcCollapsed ? '1' : '0'); } catch (e) { /* private mode */ }
             if (this._lastUpdate) this._renderBootcamp(this._lastUpdate);
         });
+        const list = document.getElementById('lt-bc-list');
+        if (list) list.addEventListener('toggle', () => { this._bcListOpen = list.open; });
         const rail = document.getElementById('lt-bc-numbers');
         if (rail) rail.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-bc-jump]');
