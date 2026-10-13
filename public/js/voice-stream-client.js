@@ -42,6 +42,9 @@
 
     // Reconnect tuning
     const RECONNECT_MAX_ATTEMPTS = 4;
+    // Server close code: this user's voice session was taken over by another tab
+    // (utils/voiceSession.js CLOSE_SUPERSEDED). Never reconnect on it.
+    const CLOSE_SUPERSEDED = 4409;
     const RECONNECT_BASE_DELAY_MS = 500;     // doubled per attempt: 500, 1000, 2000, 4000
 
     class VoiceStreamClient {
@@ -130,17 +133,36 @@
             this.connected = true;
             this._reconnectAttempts = 0;
             this.ws.addEventListener('message', (ev) => this._onWsMessage(ev));
-            this.ws.addEventListener('close', () => {
-                this.connected = false;
-                if (this._intentionalDisconnect) {
-                    this.on({ type: 'disconnected' });
-                    return;
-                }
-                this._scheduleReconnect();
-            });
+            this.ws.addEventListener('close', (ev) => this._onWsClose(ev));
             this.ws.addEventListener('error', (err) => {
                 this.on({ type: 'error', message: 'connection_error', detail: err?.message || '' });
             });
+        }
+
+        /**
+         * Reconnect only after an ABNORMAL drop (network loss, a deploy's 1001).
+         * A server that closes on purpose — 1000 normal, 1008 policy, 4409
+         * superseded by this user's other tab — must not be reconnected to:
+         * every reconnect resets the attempt counter on open, so a server that
+         * keeps closing on purpose was an endless loop, and for 4409 two tabs
+         * superseded each other forever (owner console, 2026-10-13).
+         */
+        _onWsClose(ev) {
+            this.connected = false;
+            const code = ev && ev.code;
+            if (this._intentionalDisconnect) {
+                this.on({ type: 'disconnected' });
+                return;
+            }
+            if (code === CLOSE_SUPERSEDED || code === 1000 || code === 1008) {
+                if (code === CLOSE_SUPERSEDED) {
+                    console.info('[VoiceStreamClient] voice moved to another tab — not reconnecting');
+                    this.on({ type: 'superseded' });
+                }
+                this.on({ type: 'disconnected', code, reason: (ev && ev.reason) || '' });
+                return;
+            }
+            this._scheduleReconnect();
         }
 
         _scheduleReconnect() {
@@ -191,14 +213,7 @@
             this.connected = true;
             this._reconnectAttempts = 0;
             this.ws.addEventListener('message', (ev) => this._onWsMessage(ev));
-            this.ws.addEventListener('close', () => {
-                this.connected = false;
-                if (this._intentionalDisconnect) {
-                    this.on({ type: 'disconnected' });
-                    return;
-                }
-                this._scheduleReconnect();
-            });
+            this.ws.addEventListener('close', (ev) => this._onWsClose(ev));
             this.ws.addEventListener('error', (err) => {
                 this.on({ type: 'error', message: 'connection_error', detail: err?.message || '' });
             });

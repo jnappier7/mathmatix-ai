@@ -60,6 +60,8 @@ const METER_WARN_SECONDS = 120;
 // (immersive page) AND one board-actions session (chat orb) open at the
 // same time without colliding. Two of the same mode → newer one wins.
 const activeSessions = new Map();
+// WebSocket close code for "another session for this user+mode took over".
+const CLOSE_SUPERSEDED = 4409;
 
 // Idle-STT thresholds. Keeping a Deepgram session open while a student
 // walks away from their tab burns money. We close after STT_IDLE_MS of
@@ -1696,7 +1698,13 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         if (this.currentTurn) this._abortCurrentTurn(reason);
         try { this.stt?.close(); } catch (_) {}
         try { this.ttsPool?.close(); } catch (_) {}
-        try { this.ws.close(1000, reason); } catch (_) {}
+        // A superseded socket gets its own code so the client can tell "another
+        // tab took over" from a dropped connection. With a plain 1000 the client
+        // reconnected, superseded the other tab, which reconnected in turn — an
+        // endless ping-pong opening a Deepgram stream every second (owner
+        // console, 2026-10-13).
+        const code = reason === 'superseded_by_new_session' ? CLOSE_SUPERSEDED : 1000;
+        try { this.ws.close(code, reason); } catch (_) {}
     }
 }
 
@@ -1728,4 +1736,4 @@ async function createVoiceSession({ ws, user, sessionId, mode, loginSessionId })
     return session;
 }
 
-module.exports = { createVoiceSession, VoiceSession };
+module.exports = { createVoiceSession, VoiceSession, CLOSE_SUPERSEDED };
