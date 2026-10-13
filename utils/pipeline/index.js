@@ -421,6 +421,11 @@ async function runPipeline(message, ctx) {
     const resolved = await resolveCurrentTarget(tutorPlan, {
       user: ctx.user,
       activeSkillId: ctx.activeSkill?.skillId || null,
+      // A test-prep review is working ONE missed item; its skill is the focus.
+      // Without this the plan kept whatever target it last had (2026-10-13:
+      // an SAT polynomial review ran every turn as "act-sequences", left over
+      // from the ACT course, and decide read that skill's BKT as the evidence).
+      courseSkillId: ctx.actReviewMiss?.skillId || null,
     });
     tutorPlan = resolved.plan;
     skillResolution = resolved.skillResolution;
@@ -1619,7 +1624,13 @@ async function runPipeline(message, ctx) {
     // directly keyed BKT/FSRS/SmartScore state under "undefined" whenever activeSkill
     // lacked a skillId but a target existed — so a whole session's mastery evidence
     // pooled into one bogus bucket instead of the skill being taught.
-    const resolvedSkillId = ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId || null;
+    // A review miss's skill outranks the plan target: the target can be stale
+    // from another course, and crediting it wrote polynomial-division steps
+    // into the student's ACT sequences BKT/FSRS (owner logs, 2026-10-13).
+    const resolvedSkillId = ctx.activeSkill?.skillId
+      || ctx.actReviewMiss?.skillId
+      || tutorPlan?.currentTarget?.skillId
+      || null;
     // Resilience (mode-A attribution): currentTarget goes transiently null — it's
     // cleared when a skill reads as mastered (tutorPlanManager) and isn't re-set on
     // a turn that resolves no skill. On such a turn a clean, verified solve would
