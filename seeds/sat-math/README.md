@@ -60,6 +60,12 @@ Before shipping a batch:
 | p2 (2026-10-09) | 92 | 33 / 33 / 13 / 13 | 68 / 24 | 22 / 39 / 31 | 18 |
 | p3 (2026-10-13) | 92 | 34 / 34 / 12 / 12 | 65 / 27 | 10 / 43 / 39 | 12 |
 | p4 (2026-10-13) | 92 | 30 / 30 / 16 / 16 | 68 / 24 | 14 / 45 / 33 | 36 |
+| p5 (2026-10-13) | 92 | 28 / 28 / 18 / 18 | 62 / 30 | 38 / 37 / 17 | 13 |
+
+p5 leans easy on purpose: the PSAT (`psat-math`) draws this bank on a lower
+curve, and easy items were the thinnest band (109 of 497). Every p5 graph is
+needed to answer its question (no stem restates the graph), and every point a
+student must read sits on a gridline.
 
 ## Pipeline
 
