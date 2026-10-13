@@ -76,3 +76,52 @@ describe('createMathSpeechStreamFilter', () => {
     expect(f.flush()).toBe('');
   });
 });
+
+// Owner report 2026-10-13: Ms. Maria said "six c dot frac" aloud. The voice
+// stream only knew "=" and "^", so leaked LaTeX reached Cartesia verbatim.
+describe('leaked markup never reaches the speaker', () => {
+  function run(text, size) {
+    const f = createMathSpeechStreamFilter();
+    let out = '';
+    for (let i = 0; i < text.length; i += size) out += f.push(text.slice(i, i + size));
+    return out + f.flush();
+  }
+
+  const CASES = [
+    ['So we have 6 \\cdot \\frac{x}{3} here.', 'So we have 6 times x over 3 here.'],
+    ['Look at \\(6x = 18\\) and tell me.', 'Look at 6x equals 18 and tell me.'],
+    ['Then $\\frac{6x}{3} = 2x$, right?', 'Then 6x over 3 equals 2x, right?'],
+    ['Multiply \\frac{2}{3} by \\frac{3}{4} now.', 'Multiply two thirds by three fourths now.'],
+    ['It is \\text{12 cm} wide and \\sqrt{16} is 4.', 'It is 12 cm wide and the square root of 16 is 4.'],
+    ['Nice! <BOARD_POINT step="2"/> What next?', 'Nice! What next?'],
+  ];
+
+  test.each(CASES)('whole: %s', (input, expected) => {
+    expect(speakMathInProse(input)).toBe(expected);
+  });
+
+  // Token boundaries land anywhere — mid-command, between a fraction's two
+  // groups, inside a tag. Every split must say the same thing.
+  test.each(CASES)('streamed in 1-, 3- and 7-char fragments: %s', (input, expected) => {
+    for (const size of [1, 3, 7]) expect(run(input, size)).toBe(expected);
+  });
+
+  test('no backslash, brace or tag survives into speech', () => {
+    const out = run('Now \\left( \\frac{1}{2} \\right) \\times \\mathrm{x} \\unknowncmd{y} </math>', 2);
+    expect(out).not.toMatch(/[\\{}<>]|frac|cdot|mathrm|unknowncmd/);
+  });
+
+  test('prices and comparisons are not mistaken for markup', () => {
+    expect(speakMathInProse('It costs $5 and $6 at the store.')).toBe('It costs $5 and $6 at the store.');
+    expect(speakMathInProse('x <= 5 and x < 3 and 3<4.')).toBe('x <= 5 and x < 3 and 3<4.');
+    expect(run('It costs $5 and $6 at the store.', 2)).toBe('It costs $5 and $6 at the store.');
+  });
+
+  test('an unclosed delimiter cannot silence the tutor forever', () => {
+    const long = 'That will cost $5 ' + 'and then we keep talking about it '.repeat(15);
+    const f = createMathSpeechStreamFilter();
+    let midStream = '';
+    for (let i = 0; i < long.length; i += 10) midStream += f.push(long.slice(i, i + 10));
+    expect(midStream.length).toBeGreaterThan(0);
+  });
+});

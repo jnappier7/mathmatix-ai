@@ -463,6 +463,82 @@ function cleanTextForTTS(text) {
 // "equal sign" mid-equation, and a variable product like "ax" or "Ax" is
 // pronounced as the word "axe" (owner report, 2026-07-29).
 
+// A delimited span only counts as math when it has math inside it — "$5 and $"
+// is two prices, not a formula, and must not be read as one.
+const DELIMITED_MATH_BODY = /[\\^_{}=+*/<>]|\d\s*[a-zA-Z]\b|^\s*[a-zA-Z]\s*$|\d\s*-\s*\d/;
+
+/**
+ * Turn LaTeX that leaked into the spoken channel into words.
+ *
+ * The voice prompt says "never speak math notation", and the model obeys until
+ * it doesn't: "6 \cdot \frac{x}{3}" reached Cartesia verbatim and the student
+ * heard "six c dot frac" (owner report, 2026-10-13). speakMathInProse used to
+ * handle only "=" and "^", so nothing between the model and the speaker knew
+ * what a backslash command was. This is that layer: delimited spans go through
+ * the full convertLatexToSpeech; undelimited commands get the structural
+ * reorder plus the operator words; anything still unrecognised is DROPPED
+ * rather than spelled out — silence beats "backslash mathrm".
+ *
+ * Also removes markup tags that belong to other channels (<BOARD_POINT/>, a
+ * stray </math>) — an XML tag read aloud is the same failure.
+ */
+function speakMarkupInProse(text) {
+  let s = text;
+
+  // Angle-bracket control tags. Requires a letter or "/" right after "<", so
+  // comparisons ("x < 5", "x <= 5", "3<4") are untouched.
+  s = s.replace(/<\/?[A-Za-z][\w-]*(?:\s[^<>]*)?\/?>/g, ' ');
+
+  if (!/[\\$]/.test(s)) return s;
+
+  const speakIfMath = (whole, body) => (DELIMITED_MATH_BODY.test(body) ? ` ${convertLatexToSpeech(body)} ` : whole);
+  s = s.replace(/\\\[([\s\S]+?)\\\]/g, speakIfMath);
+  s = s.replace(/\$\$([^$]+)\$\$/g, speakIfMath);
+  s = s.replace(/\\\(([\s\S]+?)\\\)/g, speakIfMath);
+  s = s.replace(/(?<![\\$])\$([^$\n]+?)\$/g, speakIfMath);
+
+  if (/\\[a-zA-Z]/.test(s)) s = speakBareLatex(s);
+  // Reordering leaves " , right?" — close the gap a listener would hear as a stall.
+  return s.replace(/ +([,;.!?])/g, '$1');
+}
+
+/**
+ * Undelimited LaTeX in otherwise-plain prose. Narrower than
+ * convertLatexToSpeech on purpose: that function also rewrites "-" and "+",
+ * which is right inside a formula and wrong across a whole sentence
+ * ("well-known" must not become "well minus known").
+ */
+function speakBareLatex(text) {
+  let s = text;
+  // Text wrappers keep their words: \text{cm} → "cm".
+  s = s.replace(/\\(?:text|mathrm|textbf|mathbf|textit|mathit|operatorname)\s*\{([^{}]*)\}/g, ' $1 ');
+  s = s.replace(/\\(?:left|right)\b\s*/g, '');
+  s = s.replace(/\^\s*(?:\{\s*)?\\circ(?:\s*\})?/g, ' degrees');
+  s = speakStructuralLatex(s);
+
+  const WORDS = {
+    cdot: 'times', times: 'times', div: 'divided by',
+    le: 'is less than or equal to', leq: 'is less than or equal to',
+    ge: 'is greater than or equal to', geq: 'is greater than or equal to',
+    ne: 'is not equal to', neq: 'is not equal to', approx: 'is approximately',
+    lt: 'is less than', gt: 'is greater than',
+    infty: 'infinity', circ: 'degrees', degree: 'degrees', percent: 'percent',
+    pi: 'pi', theta: 'theta', alpha: 'alpha', beta: 'beta', gamma: 'gamma',
+    delta: 'delta', Delta: 'delta', lambda: 'lambda', mu: 'mu', sigma: 'sigma',
+    Sigma: 'sigma', phi: 'phi', omega: 'omega', epsilon: 'epsilon',
+    sin: 'sine', cos: 'cosine', tan: 'tangent', ln: 'natural log of', log: 'log',
+    rightarrow: 'leads to', Rightarrow: 'which means', to: 'approaches',
+  };
+  s = s.replace(/\\([a-zA-Z]+)\b/g, (whole, cmd) => (WORDS[cmd] ? ` ${WORDS[cmd]} ` : ' '));
+  s = s.replace(/\\[%,;:! ]/g, ' ');
+
+  s = s.replace(/\^\{([^{}]+)\}/g, (_, e) => (e.trim() === '2' ? ' squared' : e.trim() === '3' ? ' cubed' : ` to the ${e} power`));
+  s = s.replace(/_\{([^{}]+)\}/g, ' sub $1');
+  s = s.replace(/[{}]/g, '');
+  s = s.replace(/\\/g, ' ');
+  return s.replace(/ {2,}/g, ' ');
+}
+
 /**
  * Normalize light math notation inside spoken prose. Deliberately narrower
  * than cleanTextForTTS: it must be safe on ordinary sentences, so every rule
@@ -470,7 +546,7 @@ function cleanTextForTTS(text) {
  */
 function speakMathInProse(text) {
   if (!text) return text;
-  let s = text;
+  let s = speakMarkupInProse(text);
 
   // Variable products: a letter pair ending in x/y/z adjacent to a math
   // operator (or glued to a leading digit) is algebra, not a word —
@@ -501,6 +577,53 @@ function speakMathInProse(text) {
   return s;
 }
 
+// Longest stretch the stream filter will hold waiting for markup to close.
+const MARKUP_HOLD_CAP = 400;
+
+/** Index of the first character that opens LaTeX or a control tag, or -1. */
+function findMarkupStart(s) {
+  const m = /\\[a-zA-Z([]|\$|<[A-Za-z/]/.exec(s);
+  return m ? m.index : -1;
+}
+
+/**
+ * Where the markup opening at `at` is complete and safe to normalize, or -1.
+ *
+ * A tag ends at its ">". Delimited math ends at its closing delimiter. Bare
+ * LaTeX has no closer of its own, so it runs to the next sentence break taken
+ * at brace depth zero — "\\frac{x}{3} is" can't be cut between its groups,
+ * and by the end of the sentence every argument has arrived.
+ */
+function findMarkupEnd(s, at) {
+  if (s[at] === '<') {
+    const close = s.indexOf('>', at);
+    return close === -1 ? -1 : close + 1;
+  }
+  if (s.startsWith('$$', at)) {
+    const close = s.indexOf('$$', at + 2);
+    return close === -1 ? -1 : close + 2;
+  }
+  if (s[at] === '$') {
+    const close = s.indexOf('$', at + 1);
+    return close === -1 ? -1 : close + 1;
+  }
+  if (s.startsWith('\\(', at) || s.startsWith('\\[', at)) {
+    const closer = s[at + 1] === '(' ? '\\)' : '\\]';
+    const close = s.indexOf(closer, at + 2);
+    return close === -1 ? -1 : close + 2;
+  }
+  let depth = 0;
+  for (let i = at; i < s.length; i++) {
+    const c = s[i];
+    if (c === '{') depth++;
+    else if (c === '}') depth = Math.max(0, depth - 1);
+    else if (depth === 0 && (c === '\n' || (/[.!?;]/.test(c) && /\s/.test(s[i + 1] || '')))) {
+      return i + 1;
+    }
+  }
+  return -1;
+}
+
 /**
  * Streaming wrapper for speakMathInProse. The voice session forwards
  * token-level fragments to Cartesia, and the prose rules need one token of
@@ -510,15 +633,26 @@ function speakMathInProse(text) {
  */
 function createMathSpeechStreamFilter() {
   let buffer = '';
-  let endedWithSpace = false;
+  // A trailing space is held until the next emission, so the seam between
+  // two chunks can be decided with both sides in view: collapsed when
+  // normalization added a leading space too ("= 20" → " equals 20"), dropped
+  // before punctuation (a spoken span ending "2x " followed by ", right?").
+  let pendingSpace = false;
 
-  // Normalization can add a leading space ("= 20" → " equals 20"); when the
-  // previous emission already ended in one, collapse the seam.
   function emitNormalized(raw) {
     if (!raw) return '';
     let out = speakMathInProse(raw);
-    if (endedWithSpace) out = out.replace(/^ +/, '');
-    if (out) endedWithSpace = / $/.test(out);
+    if (pendingSpace) {
+      out = out.replace(/^ +/, '');
+      if (!out) return '';
+      if (!/^[,;.!?]/.test(out)) out = ' ' + out;
+      pendingSpace = false;
+    }
+    const trailing = / +$/.exec(out);
+    if (trailing) {
+      out = out.slice(0, trailing.index);
+      pendingSpace = true;
+    }
     return out;
   }
 
@@ -526,14 +660,44 @@ function createMathSpeechStreamFilter() {
     /** Append a fragment; returns normalized text that is safe to emit now. */
     push(fragment) {
       if (fragment) buffer += fragment;
+
+      // Markup (LaTeX or a control tag) can only be spoken correctly once
+      // it is whole — "\frac{x}" with the denominator still in flight would
+      // be read as just "x", and "<BOARD" + "_POINT .../>" slips past a
+      // whole-tag strip if the halves are emitted separately. So from the
+      // first markup character onward, hold until the construct closes.
+      let out = '';
+      for (;;) {
+        const at = findMarkupStart(buffer);
+        if (at === -1) break;
+        // Prose before the markup's token is safe to release now.
+        const tokenStart = Math.max(buffer.lastIndexOf(' ', at), buffer.lastIndexOf('\n', at)) + 1;
+        if (tokenStart > 0) {
+          out += emitNormalized(buffer.slice(0, tokenStart));
+          buffer = buffer.slice(tokenStart);
+        }
+        const end = findMarkupEnd(buffer, at - tokenStart);
+        if (end === -1) {
+          // Still open. A runaway (an unmatched "$" in a price, say) must
+          // not silence the tutor, so past the cap it goes out as-is and
+          // speakMathInProse does what it can with it.
+          if (buffer.length < MARKUP_HOLD_CAP) return out;
+          out += emitNormalized(buffer);
+          buffer = '';
+          return out;
+        }
+        out += emitNormalized(buffer.slice(0, end));
+        buffer = buffer.slice(end);
+      }
+
       // Hold back the final \S+ run (a token possibly still being streamed)
       // plus any trailing operator cluster whose right operand hasn't arrived.
       const m = buffer.match(/(?:[\s]|^)(?:[+\-=*/^×÷≤≥≠]\s*)?\S*$/);
       const holdFrom = m ? m.index + (m[0].startsWith(' ') || m[0].startsWith('\n') ? 1 : 0) : buffer.length;
-      if (holdFrom <= 0) return '';
+      if (holdFrom <= 0) return out;
       const emit = buffer.slice(0, holdFrom);
       buffer = buffer.slice(holdFrom);
-      return emitNormalized(emit);
+      return out + emitNormalized(emit);
     },
     /** Drain whatever is held back (end of turn). */
     flush() {
@@ -546,6 +710,7 @@ function createMathSpeechStreamFilter() {
 
 module.exports = {
   cleanTextForTTS,
+  speakMarkupInProse,
   convertLatexToSpeech,
   pauseNumberedListItems,
   speakMathInProse,
