@@ -154,10 +154,10 @@
   "routing": {
     "harderIfTheta": 0
   },
-  "_irtScaleComment": "APPROXIMATE, and labelled so to the student. Scaled score = center + perLogit x theta, from the MAP ability over all 44 answers, clamped to 200-800 and rounded to 10; the likely range is theta +/- one standard error. Because the score comes from WHICH items were answered, the route is priced in: a perfect easier Module 2 after a weak Module 1 lands near 600, never 800. center 510 / perLogit 120 put an average student near the national SAT Math mean. Replace with a calibrated scale once real scores can be paired with practice results.",
+  "_irtScaleComment": "APPROXIMATE, and labelled so to the student. Scaled score = center + perLogit x theta, from the MAP ability over all 44 answers, clamped to 200-800 and rounded to 10; the likely range is theta +/- one standard error. Because the score comes from WHICH items were answered, the route is priced in: a perfect easier Module 2 after a weak Module 1 cannot reach 800. THE LINE IS SET FROM THE FORM'S OWN EXTREMES (2026-10-13): a perfect paper on the harder route (theta ~ +3.5 over these ramps) reaches 800 and a blank paper on the easier route (theta ~ -3.5) reaches 200, so center 500 and 85 per logit, and every miss in between costs points (44 -> 800, 43 -> 770, 42 -> 750, 40 -> 710, 30 -> 600 on the harder route). The previous 510 / 120 put the ceiling at theta 2.4, which a 40-of-44 paper already exceeds: 0 to 4 misses all read 800 and the likely range collapsed to a single number (external PSAT test report). A blank paper is the scale minimum (utils/testModules.js irtScaled), as on the real test. Replace with a calibrated scale once real scores can be paired with practice results.",
   "irtScale": {
-    "center": 510,
-    "perLogit": 120,
+    "center": 500,
+    "perLogit": 85,
     "min": 200,
     "max": 800,
     "round": 10

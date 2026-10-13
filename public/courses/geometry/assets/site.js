@@ -55,9 +55,15 @@
           // wants the sheet, and the lesson block is where the sheet, the notes
           // and the video all sit. Keep .witem a <div> either way so the
           // :first-of-type border rule below still matches.
+          // Outside the .wlink on purpose: the whole card is already an <a>,
+          // and an <a> inside an <a> is not nesting the browser honours — it
+          // splits them, and the inner link stops being clickable.
+          var lk=(e.links||[]).map(function(l){
+            return '<a class="wgo" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+
+                   '<span class="ic">&#8599;</span>'+esc(l.label||l.url)+'</a>';}).join('');
           h+='<div class="witem">'+(e.href
                ?'<a class="wlink" href="'+esc(e.href)+'">'+inner+'</a>'
-               :inner)+'</div>';
+               :inner)+lk+'</div>';
         });
         if(!off&&!items.length) h+='<div class="empty">Nothing scheduled</div>';
         box.innerHTML=h; g.appendChild(box);
