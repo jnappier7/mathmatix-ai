@@ -4,6 +4,16 @@
    Phase dots + step bar + expandable details.
    ============================================ */
 
+/* Test-prep bootcamp card. It shares the chat column with the transcript, so
+   expanded it must never take the whole column: past this height it scrolls
+   inside itself and the conversation keeps the rest. It also folds to one line
+   when the student sends (LessonTracker.onStudentSend). */
+#lt-bootcamp {
+  max-height: min(48vh, 460px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 /* Container */
 .lt-container {
   background: linear-gradient(135deg, #667eea08, #764ba208);

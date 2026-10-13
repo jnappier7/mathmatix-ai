@@ -2,7 +2,7 @@
   "chat.html": {
     "css": [
       {
-        "href": "/dist/css/chat-css0.bdea1705.css",
+        "href": "/dist/css/chat-css0.a2188bcc.css",
         "files": [
           "/css/file-upload.css",
           "/css/responsive-resources.css",
@@ -70,7 +70,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js3.85681e38.js",
+        "src": "/dist/js/chat-js3.47cee45f.js",
         "files": [
           "/js/chat-board-integration.js",
           "/js/placementLadder.js",

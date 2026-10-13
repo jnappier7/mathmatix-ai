@@ -3123,6 +3123,12 @@ document.addEventListener("DOMContentLoaded", () => {
             responseTime = getResponseTimeAndStop();
         }
 
+        // A test-prep review card above the transcript must not hide the reply
+        // this message is about to get: fold it to its one-line summary.
+        if (window.lessonTracker && typeof window.lessonTracker.onStudentSend === 'function') {
+            window.lessonTracker.onStudentSend();
+        }
+
         // Clear input immediately for responsive UX
         userInput.textContent = "";
         userInput.setAttribute('data-placeholder', "Ask a math question...");

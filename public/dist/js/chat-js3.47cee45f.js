@@ -5692,6 +5692,24 @@ class LessonTracker {
     }
 
     /**
+     * Called by script.js sendMessage() on every student send.
+     *
+     * The card sits above the transcript in the same column, so expanded it
+     * pushed the conversation out of view and a student working a miss could
+     * not see the tutor's reply arrive. The card is the launchpad and the
+     * conversation is where the work happens, so the moment the student talks
+     * (typed, or via "Work it" / a number tap, which send a message) it folds
+     * to its one-line summary. Session-only: the saved preference is the
+     * student's own choice, so this does not overwrite it.
+     */
+    onStudentSend() {
+        const panel = document.getElementById('lt-bootcamp');
+        if (!panel || panel.style.display === 'none' || this._bcCollapsed) return;
+        this._bcCollapsed = true;
+        if (this._lastUpdate) this._renderBootcamp(this._lastUpdate);
+    }
+
+    /**
      * The student's own advance. <REVIEW_NEXT> from the tutor performs the same
      * transition, but it was the ONLY thing that could: a turn where the model
      * forgot the tag left the student re-reading a question they were finished
