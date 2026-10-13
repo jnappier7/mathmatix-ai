@@ -1422,6 +1422,11 @@ async function runStudentTurn(req, res) {
                             // asking the student for the question, which is only
                             // right when we have it.
                             hasPrompt: hasQuestionText(miss),
+                            // The key in the forms a student would type it, so
+                            // decide can see the turn the miss is SOLVED and
+                            // have the tutor advance (see applyActReviewDirective).
+                            key: require('../utils/actReview').keyForms(miss),
+                            transferOwed: Array.isArray(miss.transferIds) && miss.transferIds.length > 0,
                         };
                     }
                     // Transfer practice: the queue stores only problemIds, so the

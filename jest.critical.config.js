@@ -33,6 +33,7 @@ module.exports = {
     '<rootDir>/tests/unit/verifierPinnedProblem.test.js',
     '<rootDir>/tests/unit/affirmThenProbe.test.js',
     '<rootDir>/tests/unit/decideInstructionalMode.test.js',
+    '<rootDir>/tests/unit/actReviewSolvedAdvance.test.js',
     '<rootDir>/tests/unit/conceptualAnswerVerdict.test.js',
     '<rootDir>/tests/unit/verifyMetrics.test.js',
     '<rootDir>/tests/unit/verifyTopic.test.js',
@@ -101,7 +102,7 @@ module.exports = {
     // gate red (81.3% → 77.77% against a 78% floor, from three helpers landing
     // untested). decide.js is where the tutor picks its move; a new decision
     // helper here arrives with a test or it doesn't arrive.
-    './utils/pipeline/decide.js': { statements: 67, branches: 69, functions: 100, lines: 67 },
+    './utils/pipeline/decide.js': { statements: 70, branches: 70, functions: 100, lines: 70 },
     // Measured 67.9/62.6/72.2/68.6 after the true-arithmetic tiers
     // (trueArithmeticVerdict.test.js) — ratcheted. Those tiers are the pipeline's
     // last line between a correct student and a tutor improvising arithmetic, and
