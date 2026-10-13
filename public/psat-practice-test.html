@@ -44,10 +44,11 @@
     .actp-steps { counter-reset: actp; list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
     .actp-steps li { counter-increment: actp; position: relative; padding-left: 44px; line-height: 1.5; }
     .actp-steps li::before { content: counter(actp); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: #fff; background: linear-gradient(135deg, #667eea, #764ba2); }
-    @media (prefers-color-scheme: dark) {
-      .actp-facts li { background: rgba(154, 128, 255, 0.16); color: #d9d2f5; }
-      .actp-note { color: #b7b3cc; }
-    }
+    /* Dark only when the site theme is dark (css/dark-mode.css): these pages
+       stay light on a dark-mode phone, so an OS-level override put pale text
+       on a white page. */
+    [data-theme="dark"] .actp-facts li { background: rgba(154, 128, 255, 0.16); color: #d9d2f5; }
+    [data-theme="dark"] .actp-note { color: #b7b3cc; }
   </style>
 </head>
 <body>
@@ -146,7 +147,7 @@
   <script>window.MM_PSAT_GUEST = true;</script>
   <script src="/js/csrf.js"></script>
   <script src="/js/mmCalculator.js?v=20261005a"></script>
-  <script src="/js/act-test.js?v=19"></script>
+  <script src="/js/act-test.js?v=20"></script>
   <script>
     (function () {
       var start = document.getElementById('actp-start');

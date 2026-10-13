@@ -154,6 +154,10 @@
     .actt-refpanel{background:#211e32;border-color:#302c45}.actt-reffacts{color:#b7b3cc}
     .actt-giwarn{color:#f0a868}
     .actt-route{color:#b7b3cc}
+    /* A stem's data table: the light header ground would leave the dark
+       theme's pale text unreadable on it (owner report, 2026-10-12). */
+    .actt-table th,.actt-table td{border-color:#4a4566}
+    .actt-table thead th,.actt-table tbody th{background:#2f2a4a;color:#f4f2fb}
   }
   @media (max-width:700px){
     /* The test takes the whole phone screen: edge to edge, no rounded card. */
