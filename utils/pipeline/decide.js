@@ -1780,6 +1780,7 @@ function initPhase(skillId, warmupData = { skillName: 'prerequisite', concepts: 
 module.exports = {
   decide,
   initPhase,
+  namesKey,
   ACTIONS,
   INSTRUCTIONAL_MODES,
 };

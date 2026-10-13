@@ -343,9 +343,127 @@ function restatesStudentAnswer(reply, answered) {
     return true;
 }
 
+// ── A KNOWN answer the student has not earned ───────────────────────────
+// Everything above guards an equation the STUDENT typed, solved here. The
+// other half of the boundary is an answer the pipeline already holds: the
+// verified answer to a problem the student just got wrong, or the stored key
+// of a multiple-choice item under review. A wrong guess must never unlock it,
+// and a rewrite that was handed the answer to steer by must not print it.
+
+// Flatten for comparing an answer's typed forms: "x − 5", "x-5", "$x - 5$."
+function flatForm(s) {
+    return normalizeMathOperators(String(s || ''))
+        .toLowerCase()
+        .replace(/\\[()[\]]|\$/g, '')
+        .replace(/\s+/g, '')
+        .replace(/[.!?]+$/, '');
+}
+
+/**
+ * Does the reply reveal `answer` — a value the pipeline knows and the student
+ * has not produced? `answer` is whatever diagnose / the LLM verifier computed:
+ * "10", "x = 10", "x = 2, x = -2", "3/4", or a non-numeric form ("(x+2)(x-5)").
+ *
+ * Numeric answers reuse findValueReveal's shapes (bound to a variable, named
+ * as the answer, substituted in). The variable is the one the answer names,
+ * else any single letter the reply binds — "the answer is 10" is caught
+ * whatever letter the problem used. Non-numeric answers are only caught when
+ * announced ("the answer is …") or as the right side of a line-ending "= …";
+ * a bare mention is the honest hint's territory.
+ *
+ * @param {string} reply
+ * @param {string|number|null} answer
+ * @returns {null | {how: string, value: number|string}}
+ */
+function findKnownValueReveal(reply, answer) {
+    if (!reply || answer == null) return null;
+    const ans = normalizeMathOperators(String(answer)).trim();
+    if (!ans) return null;
+
+    const sides = ans.split(/\s*(?:,|;|\bor\b|\band\b)\s*/i).filter(Boolean);
+    const values = [];
+    let variable = null;
+    for (const side of sides) {
+        const m = side.match(/^([a-z])\s*=\s*(.+)$/i);
+        if (m) variable = variable || m[1].toLowerCase();
+        const n = parseNumber((m ? m[2] : side).replace(/^(?:±|\+\/-)/, ''));
+        if (n === null) { values.length = 0; break; }
+        values.push(n);
+        if (/^(?:±|\+\/-)/.test(m ? m[2] : side)) values.push(-n);
+    }
+
+    if (values.length) {
+        const cleaned = cleanReply(reply);
+        const vars = variable
+            ? [variable]
+            : [...new Set([...cleaned.matchAll(/(?<![a-z0-9.])([a-z])\s*(?:=|is equal to|equals)/g)].map((m) => m[1]))];
+        if (!vars.length) vars.push('x');
+        const hit = findValueReveal(reply, vars.map((v) => ({
+            equation: ans, variable: v, values, coefficients: [],
+        })));
+        return hit ? { how: hit.how, value: hit.value } : null;
+    }
+
+    // Non-numeric: an expression, a factored form, an interval.
+    const flat = flatForm(ans);
+    if (flat.length < 2) return null;
+    for (const line of String(reply).split('\n')) {
+        const fl = flatForm(line);
+        const at = fl.indexOf(flat);
+        if (at < 0) continue;
+        const before = fl.slice(0, at);
+        if (/(?:answer|solution|result|form)s?(?:is|are|:|=|wouldbe|shouldbe)$/.test(before)) return { how: 'answer', value: ans };
+        if (before.endsWith('=') && fl.slice(at + flat.length) === '') return { how: 'assignment', value: ans };
+    }
+    return null;
+}
+
+/**
+ * Does the reply give away a multiple-choice key the student has not named?
+ * `key` is actReview.keyForms(miss): `{ letters: ['C'], text: 'x − 5' }`.
+ *
+ * Presenting the question names every letter, and "look at option C" is a
+ * legitimate pointer, so a letter alone never counts. It must be announced:
+ * "the answer is C", "C is correct", "it's choice C", "go with C".
+ * The choice TEXT counts only when announced the same way — "x − 5" turns up
+ * in the factoring step one move before the student picks it.
+ *
+ * @param {string} reply
+ * @param {{letters: string[], text: string|null}|null} key
+ * @returns {null | {how: string, value: string}}
+ */
+function findChoiceKeyReveal(reply, key) {
+    if (!reply || !key) return null;
+    const text = normalizeMathOperators(String(reply)).replace(/\*\*|__/g, '');
+    for (const letter of (key.letters || []).filter(Boolean)) {
+        const L = escapeRe(String(letter).toUpperCase());
+        const opt = `(?:option|choice|letter|answer)?\\s*\\(?(${L})\\)?(?![\\w])`;
+        const shapes = [
+            ['announced', `\\b(?:the\\s+)?(?:correct|right|best)?\\s*(?:answer|choice|option|pick)\\s*(?:is|was|would\\s+be|should\\s+be|:)\\s*${opt}`],
+            ['declared', `(?<![\\w])(?:(?:option|choice|letter|answer)\\s*)?\\(?(${L})\\)?\\s*(?:is|was|would\\s+be)\\s+(?:the\\s+)?(?:correct|right|best|answer|one)\\b`],
+            ['declared', `\\bit(?:'|\u2019)?s\\s+(?:option|choice|letter|answer)\\s*\\(?(${L})\\)?(?![\\w])`],
+            ['directed', `\\b(?:go\\s+with|pick|choose|select|circle|mark)\\s+(?:option\\s+|choice\\s+|letter\\s+)?\\(?(${L})\\)?(?![\\w])(?!\\s*(?:or\\b|,|\\/))`],
+        ];
+        for (const [how, src] of shapes) {
+            // The words around the letter are case-insensitive; the letter is
+            // not — a lowercase "a" is an article, not choice A.
+            for (const m of text.matchAll(new RegExp(src, 'gi'))) {
+                if (m[1] === String(letter).toUpperCase()) return { how, value: m[1] };
+            }
+        }
+    }
+    if (key.text) {
+        const hit = findKnownValueReveal(reply, key.text);
+        if (hit) return { how: `text-${hit.how}`, value: key.text };
+    }
+    return null;
+}
+
 module.exports = {
     extractPosedEquations,
     findValueReveal,
+    findKnownValueReveal,
+    findChoiceKeyReveal,
     numberWords,
     creditStudentStatements,
     restatesStudentAnswer,

@@ -17,7 +17,7 @@ const { parseVisualTeaching } = require('../visualTeachingParser');
 const { processAIResponse } = require('../chatBoardParser');
 const { replaceDashes } = require('../dashNormalizer');
 const { callLLM } = require('../llmGateway');
-const { ACTIONS } = require('./decide');
+const { ACTIONS, namesKey } = require('./decide');
 const { MESSAGE_TYPES, detectBareProblemDrop } = require('./observe');
 const { isSheetCheckable, findRevealedCorrections, buildSheetCheckFallback } = require('./checkWorkVerifier');
 const {
@@ -25,6 +25,8 @@ const {
   findValueReveal,
   creditStudentStatements,
   restatesStudentAnswer,
+  findKnownValueReveal,
+  findChoiceKeyReveal,
 } = require('./valueLeak');
 const {
   VERIFICATION_STATES,
@@ -216,6 +218,106 @@ function handsOverSolution(text) {
   return detectAnswerAnnouncement(text).detected ||
     trailingAssignment.test(text) ||
     detectWorkedSolution(text).isWorkedSolution;
+}
+
+// ── The answer boundary: what the student has NOT earned this turn ──
+//
+// The student supplies the answer first. A WRONG answer unlocks nothing, so
+// the verified answer to the problem they just missed stays guarded — every
+// rewrite below is handed that answer to steer by, and none of them may print
+// it. Same for the stored key of a multiple-choice item under review until the
+// student names it. Values the student typed themselves are guarded by
+// valueLeak's own crediting in §2a-bis; these are the ones the pipeline holds.
+function reviewKeyToGuard(context, extracted) {
+  const miss = context.actReviewMiss;
+  if (!miss || !miss.key || miss.hasPrompt === false) return null;
+  // A disputed key is reported to the student by design (VERIFY THE KEY).
+  if (extracted && extracted.keyDispute) return null;
+  const said = [context.userMessage, ...(context.recentUserMessages || [])]
+    .filter((m) => typeof m === 'string' && m);
+  if (said.some((m) => namesKey(m, miss.key))) return null;
+  return miss.key;
+}
+
+function buildProtectedReveal(context, extracted) {
+  const answers = [];
+  const wrong = context.diagnosisType === 'incorrect'
+    || context.verificationState === VERIFICATION_STATES.VERIFIED_INCORRECT;
+  if (wrong && context.correctAnswer != null && String(context.correctAnswer).trim()) {
+    answers.push(String(context.correctAnswer));
+  }
+  const v = context.llmVerdict;
+  if (v && v.isCorrect === false && v.modelAnswer
+      && context.verificationState !== VERIFICATION_STATES.VERIFIED_CORRECT) {
+    answers.push(String(v.modelAnswer));
+  }
+  const key = reviewKeyToGuard(context, extracted);
+  if (!answers.length && !key) return () => null;
+  return (t) => {
+    if (!t) return null;
+    for (const a of answers) {
+      const hit = findKnownValueReveal(t, a);
+      if (hit) return { kind: 'wrong-answer', ...hit };
+    }
+    if (key) {
+      const hit = findChoiceKeyReveal(t, key);
+      if (hit) return { kind: 'choice-key', ...hit };
+    }
+    return null;
+  };
+}
+
+// What ships when the final gate's rewrite fails or leaks again. Neutral on
+// the verdict (the assertion invariant has already run) and specific to why
+// the answer is being held.
+const DISCLOSURE_FALLBACK = {
+  'wrong-answer': "Let's check this one step at a time instead of me handing you the answer. Walk me through your first step, and we'll look at it together.",
+  'choice-key': "I'll let you make the call on this one. Pick the choice you think works and test it against the question — what do you get?",
+};
+
+/**
+ * Rewrite a reply that disclosed an answer the student has not supplied, as
+ * instruction that leaves the answer with the student.
+ * @returns {Promise<string|null>}
+ */
+async function disclosureRegenerate(originalText, leak) {
+  const avoid = leak.kind === 'choice-key'
+    ? ' Do NOT say which choice is correct, and do not rule choices in or out for them.'
+    : leak.value != null ? ` Do NOT write "${leak.value}" or anything equivalent to it.` : '';
+  const systemPrompt = `You are a math tutor. Your previous response ${leak.reason}. The student must supply the answer themselves — you may explain, demonstrate the same move on a DIFFERENT problem with different numbers, and check their work, but you never complete the problem they were given. Rewrite the response in the same warm voice. Keep whatever you said about the student's own work exactly as it was — do not change a verdict. Name the specific step or idea that needs attention, teach it if they need it, and end with one question that asks the student to take that one step.${avoid} Do not state, confirm, or substitute in the final answer. Keep it to 2–4 sentences.`;
+  try {
+    const completion = await callLLM(PRIMARY_CHAT_MODEL,
+      [{ role: 'system', content: systemPrompt },
+       { role: 'assistant', content: originalText },
+       { role: 'user', content: 'Rewrite this response without the answer. One step, one question.' }],
+      { temperature: 0.4, max_tokens: 600 }
+    );
+    const rewritten = completion?.choices?.[0]?.message?.content?.trim();
+    return rewritten && rewritten.length > 10 ? rewritten : null;
+  } catch (err) {
+    console.error('[Verify] Disclosure regenerate failed:', err.message);
+    return null;
+  }
+}
+
+// 2c-leak's form test: an announced answer, or a bare "x = 2" ending a line.
+function announcesTutorPosedAnswer(text) {
+  return detectAnswerAnnouncement(text).detected ||
+    /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m.test(text);
+}
+
+/**
+ * The upload-context giveaway test: an answer key (2+ problems solved), a
+ * structurally worked solution, or an announced answer with no question at
+ * all. Shared by the upload guard and the final disclosure gate so a rewrite
+ * is held to the same bar as the reply it replaced.
+ */
+function uploadSolutionLeaks(text) {
+  if (!text) return false;
+  if (detectAnswerKeyResponse(text, { minProblems: 2 }).isAnswerKey) return true;
+  const worked = detectWorkedSolution(text);
+  const hasQuestion = /\?\s*$|\?\s*\n/m.test(text);
+  return worked.isWorkedSolution || (worked.breakdown.hasCompleteSolution && !hasQuestion);
 }
 
 /**
@@ -567,6 +669,7 @@ async function verify(responseText, context = {}) {
   // ── 1. Extract system tags (structured sidecar data) ──
   const { text: tagStrippedText, extracted } = extractSystemTags(text);
   text = tagStrippedText;
+  const protectedReveal = buildProtectedReveal(context, extracted);
 
   // ── 2. Anti-answer-key filter (upload-gated) ──
   //
@@ -589,6 +692,10 @@ async function verify(responseText, context = {}) {
   // handed over. A mostly-blank sheet never gets here (isSheetCheckable) and
   // keeps the strict path below.
   const checkWorkProblems = Array.isArray(context.checkWork?.problems) ? context.checkWork.problems : null;
+  // Set when a giveaway guard below governs this turn, so the final
+  // disclosure gate (§3a) can hold any LATER rewrite to the same test.
+  let uploadLeaks = null;
+  let studentPosedLeaks = null;
   if (checkWorkProblems && isSheetCheckable(checkWorkProblems)) {
     const revealed = findRevealedCorrections(text, checkWorkProblems);
     if (revealed.length) {
@@ -609,12 +716,14 @@ async function verify(responseText, context = {}) {
       }
     }
   } else if (context.hasRecentUpload || context.isWorksheetFollowUp) {
+    uploadLeaks = uploadSolutionLeaks;
     const strictCheck = detectAnswerKeyResponse(text, { minProblems: 2 });
 
     if (strictCheck.isAnswerKey) {
       console.warn(`[Verify] UPLOAD CONTEXT: Answer-key pattern detected (${strictCheck.problemCount} problems, ${strictCheck.matchedPattern}). Regenerating in voice.`);
       const rewritten = await socraticRegenerate(text, context, 'looked like an answer key — multiple problems solved at once');
-      if (rewritten) {
+      // The rewrite is an LLM too — hold it to the same test.
+      if (rewritten && !uploadSolutionLeaks(rewritten)) {
         text = rewritten;
         flags.push('upload_answer_giveaway_regenerated');
       } else {
@@ -643,22 +752,20 @@ async function verify(responseText, context = {}) {
       if ((hasCompleteSolution && !hasQuestion) || hasFullWorkedSolution) {
         console.warn(`[Verify] UPLOAD CONTEXT: Complete solution detected (signals=${worked.signalCount}, breakdown=${JSON.stringify(worked.breakdown)}). Regenerating.`);
         const rewritten = await socraticRegenerate(text, context, 'gave a complete solution');
-        if (rewritten) {
+        if (rewritten && !uploadSolutionLeaks(rewritten)) {
           text = rewritten;
           flags.push('upload_solution_redirected');
-          if (context.isStreaming && context.res) {
-            try {
-              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
-            } catch (e) { /* client disconnected */ }
-          }
         } else {
-          // Regen failed — append a guiding question rather than emit the full solution as-is.
-          text += "\n\nWhat do you think the first step should be?";
-          flags.push('upload_solution_redirect_fallback');
+          // Replace, never append: a guiding question tacked onto the end of
+          // the full solution still handed the student the full solution.
+          text = GIVEAWAY_FALLBACK_TEXT;
+          flags.push(rewritten ? 'upload_solution_redirect_still_leaked' : 'upload_solution_redirect_fallback');
         }
+        sendReplacement(context, text);
       }
     }
   }
+  const textAfterUploadGuard = text;
 
   // ── 2a-bis. Answer giveaway guard for student-posed problems ──
   // When a student asks a math question (not answering a posed problem) and
@@ -731,6 +838,10 @@ async function verify(responseText, context = {}) {
     const restatesStudent = !valueReveal && restatesStudentAnswer(text, answered);
     if (restatesStudent && handsOverSolution(text)) flags.push('answer_restates_student_value');
     const hasCompleteSolution = !restatesStudent && (handsOverSolution(text) || !!valueReveal);
+    // The same test, for any rewrite a later guard makes. In I-DO the tutor
+    // may work a parallel example, so there only the student's value counts.
+    studentPosedLeaks = (t) => !!findValueReveal(t, unstated) ||
+      (!isIDoPhase && !restatesStudentAnswer(t, answered) && handsOverSolution(t));
 
     // A trailing question ("Does that make sense?") does NOT excuse dumping the answer.
     // The guard fires whenever the AI reveals a complete solution to a student-posed problem.
@@ -781,6 +892,8 @@ async function verify(responseText, context = {}) {
       sendReplacement(context, text);
     }
   }
+
+  const textAfterPosedGuard = text;
 
   // ── 2b. False-affirmation guard ──
   // When the student didn't answer (IDK, give-up, etc.), the AI must NOT
@@ -868,12 +981,11 @@ async function verify(responseText, context = {}) {
   // OR a trailing bare assignment like "x = 2." on its own line.
   // Action: regenerate through the LLM so the reply stays in voice and
   // doesn't leak the answer. Reuses socraticRegenerate for consistency.
-  if (!regeneratedThisPass &&
-      (context.action === ACTIONS.GUIDE_INCORRECT || context.action === ACTIONS.RETEACH_MISCONCEPTION)) {
-    const announcement = detectAnswerAnnouncement(text);
-    const trailingAssignment = /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m;
-    if (announcement.detected || trailingAssignment.test(text)) {
-      console.warn(`[Verify] ANSWER LEAK on tutor-posed problem (action=${context.action}, pattern=${announcement.pattern || 'trailing-assignment'}). Regenerating in voice.`);
+  const tutorPosedWrong = context.action === ACTIONS.GUIDE_INCORRECT || context.action === ACTIONS.RETEACH_MISCONCEPTION;
+  let textAfterTutorPosedGuard = null;
+  if (!regeneratedThisPass && tutorPosedWrong) {
+    if (announcesTutorPosedAnswer(text)) {
+      console.warn(`[Verify] ANSWER LEAK on tutor-posed problem (action=${context.action}, pattern=${detectAnswerAnnouncement(text).pattern || 'trailing-assignment'}). Regenerating in voice.`);
       flags.push('answer_leak_on_tutor_posed_detected');
       const rewritten = await socraticRegenerate(
         text,
@@ -885,7 +997,7 @@ async function verify(responseText, context = {}) {
       if (!rewritten) {
         text = GIVEAWAY_FALLBACK_TEXT;
         flags.push('answer_leak_on_tutor_posed_regeneration_failed');
-      } else if (handsOverSolution(rewritten)) {
+      } else if (handsOverSolution(rewritten) || protectedReveal(rewritten)) {
         text = GIVEAWAY_FALLBACK_TEXT;
         flags.push('answer_leak_on_tutor_posed_regeneration_still_leaked');
       } else {
@@ -895,6 +1007,7 @@ async function verify(responseText, context = {}) {
       regeneratedThisPass = true;
       sendReplacement(context, text);
     }
+    textAfterTutorPosedGuard = text;
   }
 
   // ── 2d. False-rejection guard (CRITICAL — protects correct answers) ──
@@ -1349,6 +1462,56 @@ async function verify(responseText, context = {}) {
         flags.push('reading_level_simplification_failed');
       }
     }
+  }
+
+  // ── 3a. FINAL DISCLOSURE GATE (post-condition on every rewrite) ──
+  //
+  // Each giveaway guard above checks the reply it was given, but seven later
+  // stages rewrite through the model — false-confirmation, the LLM-verdict
+  // cross-checks, self-contradiction, the assertion invariant, the math
+  // contradiction fix, reading level — and four of them are HANDED the
+  // correct answer to steer by. None were re-checked, and 2c's rewrite even
+  // switched 2c-leak off for the turn. So the answer boundary is enforced
+  // once more here, on the text that will actually ship:
+  //   • a verified answer the student got WRONG is never revealed (by value,
+  //     not phrasing — "x = 10", "x is ten", "plug in 10" all count);
+  //   • a review item's key is never named before the student picks it;
+  //   • a reply rewritten after a giveaway guard ran meets that guard's bar.
+  const disclosureIn = (t) => {
+    const p = protectedReveal(t);
+    if (p) {
+      return {
+        kind: p.kind,
+        value: p.value,
+        reason: p.kind === 'choice-key'
+          ? 'named the correct answer choice before the student picked it'
+          : 'revealed the correct answer after the student got it wrong',
+      };
+    }
+    if (uploadLeaks && t !== textAfterUploadGuard && uploadLeaks(t)) {
+      return { kind: 'solution', reason: 'solved the uploaded problem for the student' };
+    }
+    if (studentPosedLeaks && t !== textAfterPosedGuard && studentPosedLeaks(t)) {
+      return { kind: 'solution', reason: "solved the student's own problem for them" };
+    }
+    if (tutorPosedWrong && t !== textAfterTutorPosedGuard && announcesTutorPosedAnswer(t)) {
+      return { kind: 'wrong-answer', reason: 'named the answer after the student got it wrong' };
+    }
+    return null;
+  };
+  const leak = disclosureIn(text);
+  if (leak) {
+    flags.push('final_disclosure_detected');
+    console.warn(`[Verify] FINAL DISCLOSURE GATE: reply ${leak.reason} (kind=${leak.kind}${leak.value != null ? `, value=${leak.value}` : ''}). Regenerating.`);
+    const rewritten = await disclosureRegenerate(text, leak);
+    if (rewritten && !disclosureIn(rewritten)) {
+      text = rewritten;
+      flags.push('final_disclosure_regenerated');
+    } else {
+      text = DISCLOSURE_FALLBACK[leak.kind] || GIVEAWAY_FALLBACK_TEXT;
+      flags.push(rewritten ? 'final_disclosure_still_leaked' : 'final_disclosure_fallback');
+    }
+    sendReplacement(context, text);
   }
 
   // ── 3b. Merge LLM tool_calls (structured visual tools) ──

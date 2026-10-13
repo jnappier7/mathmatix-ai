@@ -770,6 +770,9 @@ async function runPipeline(message, ctx) {
     studentAnswer: observation.answer?.value || null,
     llmVerdict,
     checkWork: ctx.checkWork || null,
+    // The item under ACT/SAT review: its stored key stays guarded until the
+    // student names it (verify §3a).
+    actReviewMiss: ctx.actReviewMiss || null,
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);
