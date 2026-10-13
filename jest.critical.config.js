@@ -34,6 +34,7 @@ module.exports = {
     '<rootDir>/tests/unit/affirmThenProbe.test.js',
     '<rootDir>/tests/unit/decideInstructionalMode.test.js',
     '<rootDir>/tests/unit/actReviewSolvedAdvance.test.js',
+    '<rootDir>/tests/unit/stepGradingTranscript.test.js',
     '<rootDir>/tests/unit/conceptualAnswerVerdict.test.js',
     '<rootDir>/tests/unit/verifyMetrics.test.js',
     '<rootDir>/tests/unit/verifyTopic.test.js',
@@ -95,14 +96,14 @@ module.exports = {
     // that decides whether a student's claim gets graded at all, and the drop
     // detector decides whether their work is treated as a problem they handed
     // over; a shape either misses fails silently, so coverage is the alarm.
-    './utils/pipeline/observe.js': { statements: 85, branches: 83, functions: 100, lines: 90 },
+    './utils/pipeline/observe.js': { statements: 87, branches: 84, functions: 100, lines: 92 },
     // Measured 68.4/69.7/100/67.7 once bareProblemDrop.test.js (which drives
     // decide's ELICIT_FIRST and alignment gates) joined the gate — ratcheted.
     // functions:100 is deliberate and is the lesson from the drop that turned this
     // gate red (81.3% → 77.77% against a 78% floor, from three helpers landing
     // untested). decide.js is where the tutor picks its move; a new decision
     // helper here arrives with a test or it doesn't arrive.
-    './utils/pipeline/decide.js': { statements: 70, branches: 70, functions: 100, lines: 70 },
+    './utils/pipeline/decide.js': { statements: 71, branches: 72, functions: 100, lines: 71 },
     // Measured 67.9/62.6/72.2/68.6 after the true-arithmetic tiers
     // (trueArithmeticVerdict.test.js) — ratcheted. Those tiers are the pipeline's
     // last line between a correct student and a tutor improvising arithmetic, and

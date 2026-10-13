@@ -99,6 +99,26 @@ async function classifyAssertionLLM(text, studentAnswer) {
 }
 
 /**
+ * The reply when a rewrite STILL asserts a verdict the pipeline doesn't hold.
+ * Keeps the tutor's own next question when that question is itself neutral —
+ * the lesson moves on in the tutor's voice — and states only what the verdict
+ * licenses: affirm a verified-correct step, nothing for an unverified one.
+ */
+function invariantFallbackText(text, state) {
+  const questions = String(text || '').match(/[^.!?\n]*\?/g) || [];
+  const last = questions.length ? questions[questions.length - 1].trim() : '';
+  const neutral = last && classifyAssertionFast(last) !== ASSERTIONS.INCORRECT
+    && classifyAssertionFast(last) !== ASSERTIONS.CORRECT;
+  if (state === VERIFICATION_STATES.VERIFIED_CORRECT) {
+    return `That's right. ${neutral ? last : 'What comes next?'}`;
+  }
+  if (state === VERIFICATION_STATES.VERIFIED_INCORRECT) {
+    return `Let's look at that step together. ${neutral ? last : 'Walk me through how you got it.'}`;
+  }
+  return neutral ? last : 'Walk me through that step — what do you get when you carry it out?';
+}
+
+/**
  * Build the corrective instruction for a response that broke the invariant.
  * Each case names what the tutor wrongly claimed and what it is permitted to
  * say instead — a rewrite instruction, not a scolding.
@@ -1214,6 +1234,21 @@ async function verify(responseText, context = {}) {
           flags.push('assertion_invariant_regenerated');
           regeneratedThisPass = true;
 
+          // The rewrite is fresh model output — check it too. It was never
+          // re-checked, and the rewrite of a no-verdict "bring down the −7x"
+          // still went out as "it looks like you might have missed that…"
+          // (owner transcript, 2026-10-13). One retry already happened; a
+          // second miss gets a deterministic reply instead of a third roll.
+          if (mayAssertCorrectness(text)) {
+            let again = classifyAssertionFast(text);
+            if (again === null) again = await classifyAssertionLLM(text, context.studentAnswer);
+            if (!checkInvariant(again, context.verificationState).ok) {
+              text = invariantFallbackText(text, context.verificationState);
+              flags.push('assertion_invariant_fallback');
+              console.log(`[Verify] ASSERTION INVARIANT: rewrite still asserted ${again} (state=${context.verificationState}) — deterministic fallback`);
+            }
+          }
+
           if (context.isStreaming && context.res) {
             try {
               context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
@@ -1860,6 +1895,7 @@ module.exports = {
   extractSystemTags,
   normalizeLatex,
   leadsWithDoubtOnCorrect,
+  invariantFallbackText,
   stripPresupposedError,
   repairStrippedHead,
 };

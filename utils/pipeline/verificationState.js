@@ -184,9 +184,9 @@ function deriveVerificationState(diagnosis, mathPresent) {
 // without breaking the invariant — the LLM pass is the backstop. They must not
 // produce false POSITIVES, so each one is anchored and specific.
 
-const ASSERTS_CORRECT = /^(that'?s\s+(?:right|correct|it)\b|correct\b|exactly\b|perfect\b|precisely\b|yes[,!.]?\s+(?:that'?s|you(?:'re|\s+are))\s+(?:right|correct)\b|you\s+(?:got|nailed)\s+it\b|nailed\s+it\b|bingo\b|spot\s+on\b)/i;
+const ASSERTS_CORRECT = /^(that'?s\s+(?:right|correct|it)\b|correct\b|exactly\b|perfect\b|precisely\b|yes[,!.]?\s+(?:that'?s|you(?:'re|\s+are))\s+(?:right|correct)\b|you(?:'re|\s+are)\s+(?:right|correct)\b|yes[,!.]?\s+[^.!?]{0,30}?\bis\s+(?:right|correct)\b|you\s+(?:got|nailed)\s+it\b|nailed\s+it\b|bingo\b|spot\s+on\b)/i;
 
-const ASSERTS_INCORRECT = /(\bnot\s+(?:quite|right|correct)\b|\bthat'?s\s+not\s+(?:it|right|correct)\b|\bincorrect\b|\bwrong\b|\bclose[,!.]\s*but\b|\bnice\s+try\b|\bgood\s+try\b|\byou\s+made\s+an?\s+(?:error|mistake)\b|\bthere'?s\s+an?\s+(?:error|mistake)\b|\bcheck\s+(?:that|your)\s+(?:again|work|arithmetic)\b)/i;
+const ASSERTS_INCORRECT = /(\bnot\s+(?:quite|right|correct)\b|\bthat'?s\s+not\s+(?:it|right|correct)\b|\bincorrect\b|\bwrong\b|\bclose[,!.]\s*but\b|\bnice\s+try\b|\bgood\s+try\b|\byou\s+made\s+an?\s+(?:error|mistake)\b|\bthere'?s\s+an?\s+(?:error|mistake)\b|\bcheck\s+(?:that|your)\s+(?:again|work|arithmetic)\b|\b(?:might|may)\s+have\s+(?:missed|made|forgotten|mixed|dropped|skipped)\b|\b(?:small|slight|little|tiny)\s+(?:mistake|error|mix-?up|slip)\b|\bmix-?up\b)/i;
 
 // High-RECALL, low-precision pre-filter: could this response be making a
 // correctness judgement at all? Deliberately over-triggers. Anything it misses

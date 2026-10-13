@@ -113,7 +113,12 @@ describe('asserting anything with NO verdict', () => {
     );
 
     expect(result.flags).toContain('assertion_invariant_violated');
-    expect(result.text).toBe(REWRITE);
+    // The stock rewrite here ("You are right, nice work…") is itself an
+    // unlicensed AFFIRMATION — the old code shipped it unchecked. The rewrite
+    // is now re-checked, and a second violation gets the neutral fallback,
+    // which keeps the tutor's own next question.
+    expect(result.flags).toContain('assertion_invariant_fallback');
+    expect(result.text).toBe('Now what comes next?');
   });
 
   test('an unlicensed affirmation is rewritten — the more dangerous direction', async () => {
