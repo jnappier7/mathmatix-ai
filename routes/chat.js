@@ -1413,6 +1413,9 @@ async function runStudentTurn(req, res) {
                             testId: miss.testId || bc.testId || null,
                             qLabel: miss.qLabel || null,
                             problemId: miss.problemId || null,
+                            // The skill being reviewed — the pipeline keys
+                            // BKT/FSRS/mastery on it (see pipeline/index.js).
+                            skillId: miss.skillId || null,
                             theirAnswer: miss.theirAnswer || null,
                             skipped: !!miss.skipped,
                             correctOption: miss.correctOption || null,
