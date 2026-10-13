@@ -163,7 +163,7 @@ function decide(observation, diagnosis, context = {}) {
 
   // The tutor is holding a missed ACT question this turn: say so where it is
   // read first, and make it verify the key before using it.
-  applyActReviewDirective(decision, context);
+  applyActReviewDirective(decision, context, observation);
 
   // "The test marked it wrong" / "isn't 52 exactly right?" — the verdict comes
   // from the math, not from whatever marked it and not from who insists.
@@ -227,7 +227,7 @@ function applyVisualDirective(decision, observation, context) {
 // same evaluation caught the tutor calling 52° "close but not quite right" for
 // the supplement of 128° because a stored record said the student had missed
 // it. Both fixes ride here, in the slot the model reads first.
-function applyActReviewDirective(decision, context) {
+function applyActReviewDirective(decision, context, observation) {
   const miss = context && context.actReviewMiss;
   if (!miss) return;
   const exam = require('../practiceTests').getTestDef(miss.testId).label;
@@ -256,8 +256,80 @@ function applyActReviewDirective(decision, context) {
     : 'the letter recorded for them';
   decision.directives.unshift(
     `${exam} REVIEW — YOU HAVE THE QUESTION. ${where} is in your system prompt under "REVIEWING A MISSED QUESTION" (the question, its lettered choices, ${recorded}, and the stored key). The student CANNOT see it in this chat. If you have not yet presented it this review, present it now, verbatim, with its lettered choices. Do NOT ask them to share, paste, remember, or describe the question — you are holding it. Do NOT reveal the stored key, or call it their recorded answer, before they have made their own attempt.`,
-    'VERIFY THE KEY BEFORE YOU USE IT. Solve the question yourself, completely, before you call any answer right or wrong. Your own derivation outranks the stored key. If they disagree: say what you got, say the stored answer differs, tell the student you are flagging the question, and put <KEY_DISPUTE: your answer> on its own line. If the student\'s pick matches YOUR answer, tell them plainly their answer looks right. Never tell a student they were wrong on the strength of a key you have not checked.'
+    'VERIFY THE KEY BEFORE YOU USE IT. Solve the question yourself, completely, before you call any answer right or wrong. Your own derivation outranks the stored key. If they disagree: say what you got, say the stored answer differs, tell the student you are flagging the question, and put <KEY_DISPUTE: your answer> on its own line. If the student\'s pick matches YOUR answer, tell them plainly their answer looks right. Never tell a student they were wrong on the strength of a key you have not checked.',
+    // Owner transcript, 2026-10-13: the tutor confirmed "x − 5, option C",
+    // never emitted the tag, asked "another problem?", and on "yes please"
+    // wrote its own look-alike polynomial — a duplicated choice and no correct
+    // answer among the four — while the real next miss sat in the queue.
+    'THE ONLY REVIEW QUESTION IS THIS ONE. Never write, paraphrase, or invent a different practice question during the review — not a look-alike, not "one more like it". The next question comes from their test, and it loads only after you emit <REVIEW_NEXT> on its own line.'
   );
+
+  const solved = reviewSolvedDirective(miss, observation, context);
+  if (solved) decision.directives.unshift(solved);
+}
+
+// Typed forms of an answer, flattened so "x − 5", "x-5" and "$x - 5$." compare
+// equal. Parentheses survive on purpose: "(x+2)(x-5)" is the factoring step,
+// not choice C, and must not read as the student naming the key.
+function flatAnswer(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[\u2212\u2013\u2014]/g, '-')
+    .replace(/\\[()[\]]|\$/g, '')
+    .replace(/\s+/g, '')
+    .replace(/[.!?]+$/, '');
+}
+const ANSWER_LEAD_RX = /^(?:(?:so|ok(?:ay)?|oh|i think|i got|it'?s|it is|its|the answer is|answer is|answer:?|my answer is|that'?s|that would be|option|choice|letter)[\s,:]*)+/i;
+
+/** Did the student just name the stored key — by letter or by the choice? */
+function namesKey(text, key) {
+  if (!text || !key) return false;
+  const body = String(text).trim().replace(ANSWER_LEAD_RX, '').trim();
+  const letter = body.replace(/^\(|[).!?]+$/g, '').trim();
+  if (/^[a-k]$/i.test(letter) && key.letters.some((l) => l && l.toUpperCase() === letter.toUpperCase())) return true;
+  return !!key.text && flatAnswer(body) === flatAnswer(key.text);
+}
+
+const NEXT_ASK_RX = /^(?:yes|yeah|yep|yup|sure|ok(?:ay)?|ready|next|let'?s (?:go|do it|keep going)|another|go(?: ahead)?|sounds good|i'?m ready)\b[^?]{0,30}$/i;
+
+/**
+ * The miss is SOLVED — this is the turn to advance.
+ *
+ * <REVIEW_NEXT> was the model's call alone, and it is easy to forget on the
+ * turn that matters: the student lands the answer, the tutor celebrates, and
+ * the queue stays put. Two deterministic signals:
+ *   1. the student's message names the stored key (letter or choice text);
+ *   2. the tutor's LAST reply already confirmed the key, and the student is
+ *      now asking for the next one ("yes please", "next", "ready").
+ * The key is not trusted blindly — VERIFY THE KEY still stands above this, so
+ * a disputed key routes to <KEY_DISPUTE>, not a congratulation.
+ */
+function reviewSolvedDirective(miss, observation, context) {
+  const key = miss && miss.key;
+  if (!key || miss.hasPrompt === false) return null;
+  const text = ((observation && observation.raw) || '').trim();
+  const advance = miss.transferOwed
+    ? 'If the miss was a real CONCEPT GAP, start the TRANSFER CHECK from your system prompt (PRACTICE 1, from the bank — never one you make up); otherwise say it was a slip and emit <REVIEW_NEXT> on its own line.'
+    : 'Emit <REVIEW_NEXT> on its own line in THIS reply so their next missed question loads.';
+  const letter = key.letters[key.letters.length - 1];
+  const label = letter && key.text ? `${letter} (${key.text})` : (letter || key.text);
+
+  if (namesKey(text, key)) {
+    return `REVIEW QUESTION SOLVED — the student just gave ${label}, the stored key. Once your own derivation agrees, confirm it plainly in a sentence or two and name the move that cracked it. ${advance} Do NOT ask whether they want another problem, and do NOT write a new question yourself.`;
+  }
+
+  if (text.length <= 40 && NEXT_ASK_RX.test(text)) {
+    const prev = lastAssistantText(context);
+    const letterHit = key.letters.some((l) => new RegExp(`\\b(?:option|choice|answer(?: is)?)\\s*\\(?${l}\\b`, 'i').test(prev));
+    // Choice TEXT alone is too loose when there are letters — "(x+2)(x−5),
+    // correct!" contains "x−5" one step before the student has picked C. A
+    // grid-in has no letter, so there the confirmed value is all we have.
+    const textHit = !key.letters.length && !!key.text && flatAnswer(prev).includes(flatAnswer(key.text));
+    if (letterHit || (textHit && /\b(?:right|correct|exactly|got it|nailed|yes)\b/i.test(prev))) {
+      return `REVIEW QUESTION ALREADY SOLVED — your last reply confirmed ${label} and the student is asking to move on. ${advance} Do NOT invent a practice question, and do NOT re-pose the one they just finished.`;
+    }
+  }
+  return null;
 }
 
 // The student says something marked their answer wrong — a test, a key, an

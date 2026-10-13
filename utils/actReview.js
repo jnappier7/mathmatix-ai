@@ -590,6 +590,21 @@ function jumpToReview(bootcamp, target) {
   return { ok: true, index: i };
 }
 
+/**
+ * The key as the student would say it: every letter that names it (the stored
+ * one and, on the ACT's even questions, the F–J alias they saw) and the
+ * choice's text. decide matches the student's message against this to know
+ * the miss is SOLVED — the turn the tutor has to emit <REVIEW_NEXT>.
+ */
+function keyForms(miss) {
+  if (!miss) return null;
+  // A grid-in (the SAT's student-produced response) has no letter — its key
+  // is the value itself.
+  if (!miss.correctOption) return miss.correctAnswer ? { letters: [], text: String(miss.correctAnswer) } : null;
+  const letters = [...new Set([miss.correctOption, shownLetter(miss, miss.correctOption)].filter(Boolean))];
+  return { letters, text: optionText(miss.options, miss.correctOption) || null };
+}
+
 function currentMiss(bootcamp) {
   if (!bootcamp || !Array.isArray(bootcamp.queue)) return null;
   return bootcamp.queue[bootcamp.index || 0] || null;
@@ -685,5 +700,6 @@ module.exports = {
   advanceReview,
   jumpToReview,
   currentMiss,
+  keyForms,
   DEFAULT_CATEGORY_WEIGHTS,
 };
