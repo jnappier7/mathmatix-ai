@@ -16,6 +16,7 @@
 
 const { crossProviderHealth, aggregate } = require('./verifyMetrics');
 const { foundingSchoolDomains } = require('./foundingSchool');
+const llmQuota = require('./llmQuota');
 
 const iso = (ms) => (ms ? new Date(ms).toISOString() : null);
 
@@ -31,6 +32,23 @@ function providerKeys() {
     anthropic: process.env.ANTHROPIC_API_KEY ? 'ok' : 'missing',
     mathpix: (process.env.MATHPIX_APP_ID && process.env.MATHPIX_APP_KEY) ? 'ok' : 'missing',
   };
+}
+
+/**
+ * OpenAI's observed balance state — the check key presence cannot make.
+ *
+ * On 2026-10-13 the key was present and the balance was empty: every tutor
+ * turn failed, and this endpoint reported `openai: ok` throughout. 'no_credits'
+ * is set by the retry layer the moment OpenAI answers "no credits remaining"
+ * and clears on the next successful call, so it recovers without a restart.
+ * Like the verifier, a fresh process reads 'ok' until it has made a call.
+ */
+function openaiReport(keyStatus = providerKeys().openai) {
+  if (keyStatus !== 'ok') return { status: keyStatus };
+  const q = llmQuota.quotaReport('openai');
+  return q.exhausted
+    ? { status: 'no_credits', since: q.exhaustedAt, lastOkAt: q.lastOkAt }
+    : { status: 'ok' };
 }
 
 /** The keys whose absence is a degradation, as opposed to a note. */
@@ -124,11 +142,13 @@ function verifierReport({ includeDetail = false } = {}) {
 function isDegraded({ dbConnected = true } = {}) {
   return !dbConnected
     || missingRequiredKeys().length > 0
+    || llmQuota.isExhausted('openai')
     || crossProviderHealth().degraded;
 }
 
 module.exports = {
   providerKeys,
+  openaiReport,
   missingRequiredKeys,
   foundingSchoolReport,
   verifierReport,

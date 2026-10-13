@@ -1537,6 +1537,8 @@ router.get('/health-check', isAdmin, (req, res) => {
     timestamp: new Date().toISOString(),
     database: { connected: dbConnected, state: mongoose.connection.readyState },
     providers: healthReport.providerKeys(),
+    // Observed balance: 'no_credits' when OpenAI last answered with an empty balance.
+    openai: healthReport.openaiReport(),
     // includeDetail: admin-only. Carries the provider's own error sentence and
     // the verifier's outcome rates — unverifiableRate next to the cross-provider
     // state, because the rate means two different things depending on whether

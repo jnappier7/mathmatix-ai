@@ -1,6 +1,7 @@
 // utils/openaiClient.js - OpenAI-only LLM client with retry logic
 
 const OpenAI = require("openai");
+const llmQuota = require("./llmQuota");
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -23,13 +24,26 @@ if (process.env.OPENAI_API_KEY) {
 // pass options.timeoutMs.
 const DEFAULT_CHAT_TIMEOUT_MS = 90 * 1000;
 
-// Utility for exponential backoff and retry
+// Utility for exponential backoff and retry.
+// Every caller in this file wraps an OpenAI request, so outcomes here are
+// recorded against the 'openai' provider for the health check (utils/llmQuota).
 async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
     let attempts = 0;
     while (attempts < retries) {
         try {
-            return await fn();
+            const result = await fn();
+            llmQuota.recordProviderOk('openai');
+            return result;
         } catch (error) {
+            // An empty balance is also a 429, but no amount of waiting fixes it.
+            // Retrying it cost every tutor turn ~31s per call (2026-10-13 outage);
+            // fail at once so the caller's apology reaches the student promptly.
+            if (llmQuota.isQuotaExhausted(error)) {
+                llmQuota.recordQuotaExhausted('openai');
+                error.quotaExhausted = true;
+                console.error(`AI Service out of credits (Status: 429) — not retrying: ${error.message}`);
+                throw error;
+            }
             // Check for 429 (Too Many Requests) or other transient errors
             const isRateLimit = (error.status === 429 || (error.response && error.response.status === 429));
             const isTransientError = isRateLimit || (error.status >= 500 && error.status < 600); // 5xx errors
@@ -404,6 +418,10 @@ async function callLLMStreamRaw(model, messages, options = {}) {
         });
         return stream;
     } catch (openAiError) {
+        if (llmQuota.isQuotaExhausted(openAiError)) {
+            llmQuota.recordQuotaExhausted('openai');
+            openAiError.quotaExhausted = true;
+        }
         console.error(`ERROR: OpenAI streaming failed for ${model}:`, openAiError.message);
         throw openAiError;
     }
