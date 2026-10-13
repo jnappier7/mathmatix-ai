@@ -337,8 +337,21 @@ class VoiceController {
             case 'turn_end':
                 break;
 
+            case 'superseded':
+                // Voice moved to this student's other tab. Stand down quietly —
+                // no legacy fallback (that would leave two tabs listening); a tap
+                // on the orb here opens a fresh stream and takes it back.
+                this._superseded = true;
+                this._reclaimOnTap = true;
+                break;
+
             case 'disconnected':
                 this.streamClient = null;
+                if (this._superseded) {
+                    this._superseded = false;
+                    this.updateUI('idle');
+                    break;
+                }
                 if (this._quotaExhausted) {
                     // Expected close — the student is out of AI minutes, not
                     // hitting a transport failure. Don't fall back, don't warn.
@@ -774,6 +787,12 @@ class VoiceController {
         // Opening the mic — by tap, by entering voice mode, or by the
         // hands-free loop — always clears a previous mute.
         this._userMuted = false;
+
+        // Voice moved to another tab earlier; this tap takes it back.
+        if (this.useStreamingPipeline && !this.streamClient && this._reclaimOnTap) {
+            this._reclaimOnTap = false;
+            await this.setupStreamingPipeline();
+        }
 
         // ── Streaming pipeline path (Phase 2) ──
         if (this.useStreamingPipeline && this.streamClient) {
