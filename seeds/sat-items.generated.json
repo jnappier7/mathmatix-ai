@@ -2245,11 +2245,11 @@
   {
     "problemId": "sat-math-w3q13",
     "skillId": "ALG1.DTA.1",
-    "prompt": "A hospital recorded the wait times, in minutes, of 15 patients. The mean of the 15 wait times is 42, and the median is 34. The longest recorded wait time, 180 minutes, is discovered to be a data-entry error and is removed from the data set. Which of the following best describes how removing this value affects the mean and the median?",
+    "prompt": "A hospital recorded the wait times, in minutes, of 15 patients: 20, 22, 25, 28, 30, 31, 33, 34, 35, 36, 36, 38, 40, 42, and 180. The mean of the 15 wait times is 42, and the median is 34. The longest recorded wait time, 180 minutes, is discovered to be a data-entry error and is removed from the data set. Which of the following best describes how removing this value affects the mean and the median?",
     "svg": null,
     "difficulty": 3,
     "gradeBand": "8-12",
-    "explanation": "The value 180 is a high outlier, far above the mean of 42. Removing it lowers the total substantially, so the mean drops by several minutes. The median, the middle value of the ordered list, shifts position by at most half a step, so it changes very little. Therefore the mean decreases much more than the median.",
+    "explanation": "The value 180 is a high outlier, far above the mean of 42. Without it, the remaining 14 times total 450, so the mean falls to about 32.1, a drop of about 10 minutes. The median becomes the average of the two middle values, 33 and 34: 33.5, a drop of only 0.5. Therefore the mean decreases much more than the median.",
     "tags": [
       "sat-math",
       "problem-solving-data",
@@ -2258,7 +2258,7 @@
       "subskill:One-variable data: center and spread"
     ],
     "source": "sat-fable",
-    "contentHash": "b36d7a5a36a07b1cba18c10585f55a5f9765da70d8a057d2045d2e391f7e179f",
+    "contentHash": "12e7effa02c073ab7ac3b3fbae0b68c885f3c1604c08f0001901fe75ec1995ee",
     "isActive": true,
     "answerType": "multiple-choice",
     "answer": {

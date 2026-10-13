@@ -351,7 +351,7 @@
    "skill": "One-variable data: center and spread",
    "difficulty": "M",
    "type": "mc",
-   "stem": "A hospital recorded the wait times, in minutes, of 15 patients. The mean of the 15 wait times is 42, and the median is 34. The longest recorded wait time, 180 minutes, is discovered to be a data-entry error and is removed from the data set. Which of the following best describes how removing this value affects the mean and the median?",
+   "stem": "A hospital recorded the wait times, in minutes, of 15 patients: 20, 22, 25, 28, 30, 31, 33, 34, 35, 36, 36, 38, 40, 42, and 180. The mean of the 15 wait times is 42, and the median is 34. The longest recorded wait time, 180 minutes, is discovered to be a data-entry error and is removed from the data set. Which of the following best describes how removing this value affects the mean and the median?",
    "choices": [
     "The mean and the median will both stay approximately the same.",
     "The mean will decrease much more than the median will.",
@@ -362,7 +362,7 @@
    "spr_answer": null,
    "equivalents": [],
    "answer_any": null,
-   "explanation": "The value 180 is a high outlier, far above the mean of 42. Removing it lowers the total substantially, so the mean drops by several minutes. The median, the middle value of the ordered list, shifts position by at most half a step, so it changes very little. Therefore the mean decreases much more than the median.",
+   "explanation": "The value 180 is a high outlier, far above the mean of 42. Without it, the remaining 14 times total 450, so the mean falls to about 32.1, a drop of about 10 minutes. The median becomes the average of the two middle values, 33 and 34: 33.5, a drop of only 0.5. Therefore the mean decreases much more than the median.",
    "verify": "d=[20,22,25,28,30,31,33,34,35,36,36,38,40,42,180]\nassert len(d)==15 and sum(d)/15==42 and sorted(d)[7]==34 and max(d)==180\nr=sorted(d)[:-1]\nmean_drop=42-sum(r)/14\nmed_drop=34-(r[6]+r[7])/2\nassert mean_drop>5\nassert 0<=med_drop<=1\nassert mean_drop>med_drop",
    "figure": null
   },

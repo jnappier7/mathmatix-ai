@@ -154,10 +154,10 @@
   "routing": {
     "harderIfTheta": 0
   },
-  "_irtScaleComment": "The SAT's line (center 510, 120 per logit), clamped to the PSAT/NMSQT's 160-760: the PSAT reports on the SAT scale, so one ability reads as one number on both.",
+  "_irtScaleComment": "The SAT's line (center 500, 85 per logit; see sat-math-blueprint.json for how it is set), clamped to the PSAT/NMSQT's 160-760: the PSAT reports on the SAT scale, so one ability reads as one number on both. Over the PSAT's lower ramps a perfect harder-route paper lands at 760 and each miss costs points (42 -> about 700); a blank paper is 160.",
   "irtScale": {
-    "center": 510,
-    "perLogit": 120,
+    "center": 500,
+    "perLogit": 85,
     "min": 160,
     "max": 760,
     "round": 10
