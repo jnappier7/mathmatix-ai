@@ -535,7 +535,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (e) { return null; }
             })();
 
-            if (trialState && trialState.history && trialState.history.length > 0) {
+            // Carry over only a trial the visitor actually USED. The landing
+            // page greets on load and saves that greeting, so a returning
+            // student who merely passed through the homepage arrived with a
+            // one-message "trial" — which replaced their real welcome (and
+            // with it Starting Point, Growth Check, review warm-up and the
+            // returning-student continuity) for an hour after every visit.
+            const trialWasUsed = !!(trialState && Array.isArray(trialState.history)
+                && trialState.history.some(m => m && m.role === 'user' && String(m.content || '').trim()));
+            if (trialState && !trialWasUsed) StorageUtils.local.removeItem('mathmatix_trial_chat');
+            if (trialWasUsed) {
                 // Persist the trial conversation server-side FIRST, so the tutor
                 // actually has it as context on the next turn — not just a visual
                 // replay. Fails soft: if seeding errors, we still show the UI
