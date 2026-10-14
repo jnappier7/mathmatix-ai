@@ -171,7 +171,51 @@ async function seed(now = Date.now()) {
     tutorAssignment: { active: true, pushedAt: new Date(now - DAY), startsAt: new Date(now - DAY), endsAt: new Date(now + 10 * DAY),
       note: 'We just learned undoing operations in reverse order. Start with #1 and #2.', starts: [] },
   });
+  await seedPracticeTests(now);
   return { teacher, counts };
+}
+
+/* Practice-test history for the Test Prep tab: growth, a rushed attempt, an
+   easier SAT route, an unfinished one — every flag the teacher view shows. */
+async function seedPracticeTests(now) {
+  const User = require('../models/user');
+  const ActTestSession = require('../models/actTestSession');
+  const students = await User.find({ email: /students\.mathmatix\.test|sandbox\.student/ }).sort({ _id: 1 }).limit(10).lean();
+  const ACT = ['number-quantity', 'algebra', 'functions', 'geometry', 'statistics-probability', 'integrating-essential-skills'];
+  const SAT = ['algebra', 'advanced-math', 'problem-solving-data', 'geometry-trig'];
+  const shape = {
+    'act-math': { n: 45, limit: 50, cats: ACT }, 'preact-math': { n: 36, limit: 45, cats: ACT },
+    'sat-math': { n: 44, limit: 70, cats: SAT, modular: true }, 'psat-math': { n: 44, limit: 70, cats: SAT, modular: true },
+  };
+  const docs = [];
+  const take = (u, testId, daysAgo, { pct = 0.6, minutes, scaled, weak = 'statistics-probability', blanks = 0, route } = {}) => {
+    const sh = shape[testId];
+    const start = new Date(now - daysAgo * DAY);
+    const used = minutes || Math.round(sh.limit * 0.85);
+    const responses = Array.from({ length: sh.n }, (_, i) => {
+      const category = sh.cats[i % sh.cats.length];
+      const p = category === weak || (weak === 'statistics-probability' && category === 'problem-solving-data') ? pct - 0.3 : pct;
+      return { position: i, problemId: `${testId}-${i}`, category, answer: i < blanks ? '' : 'A', correct: i >= blanks && ((i * 37) % 100) / 100 < p };
+    });
+    const raw = responses.filter(r => r.correct).length;
+    docs.push({
+      userId: u._id, testId, status: 'completed', startedAt: start, completedAt: new Date(start.getTime() + used * 60000),
+      timeLimitMinutes: sh.modular ? 35 : sh.limit,
+      modules: sh.modular ? [{ n: 1, startedAt: start }, { n: 2, route: route || 'harder', startedAt: new Date(start.getTime() + used * 30000) }] : [],
+      items: responses.map(r => ({ position: r.position, problemId: r.problemId, category: r.category })),
+      responses, rawScore: raw, scaledScore: scaled, createdAt: start, updatedAt: start,
+    });
+  };
+  const [a, b, c, d, e, f, g, h] = students;
+  if (a) { take(a, 'act-math', 30, { pct: 0.55, scaled: 21 }); take(a, 'act-math', 6, { pct: 0.7, scaled: 25 }); take(a, 'sat-math', 12, { pct: 0.65, scaled: 590 }); }
+  if (b) { take(b, 'act-math', 20, { pct: 0.5, scaled: 19 }); take(b, 'act-math', 2, { pct: 0.8, minutes: 9, scaled: 27 }); }
+  if (c) { take(c, 'sat-math', 9, { pct: 0.45, scaled: 470, route: 'easier' }); take(c, 'psat-math', 40, { pct: 0.4, scaled: 430 }); }
+  if (d) { take(d, 'preact-math', 15, { pct: 0.6, scaled: 22 }); take(d, 'preact-math', 3, { pct: 0.68, scaled: 24, weak: 'geometry' }); }
+  if (e) { take(e, 'act-math', 4, { pct: 0.6, scaled: 23, blanks: 8 }); }
+  if (f) { take(f, 'psat-math', 10, { pct: 0.6, scaled: 520 }); take(f, 'psat-math', 1, { pct: 0.7, scaled: 560 }); }
+  if (g) { take(g, 'act-math', 8, { pct: 0.75, scaled: 28, weak: 'functions' }); }
+  if (h) { take(h, 'sat-math', 5, { pct: 0.72, scaled: 640 }); }
+  if (docs.length) await ActTestSession.collection.insertMany(docs);
 }
 
 async function main() {

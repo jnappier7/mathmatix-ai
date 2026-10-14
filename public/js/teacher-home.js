@@ -98,7 +98,9 @@
   // ============================================================
   // LAYOUT: nav, hero, Today container, table container
   // ============================================================
-  var PRIMARY = ['today', 'students', 'classes', 'insights', 'activities', 'messages'];
+  // Classes lives under More: day to day, the year bar and the new-year
+  // wizard cover class setup, and Test Prep earned the primary slot.
+  var PRIMARY = ['today', 'students', 'testprep', 'insights', 'activities', 'messages'];
   var LABELS = { today: 'Today', activities: 'Assign', insights: 'Insights', classes: 'Classes', students: 'Students', messages: 'Messages' };
 
   function restructureNav() {
@@ -639,7 +641,7 @@
     if (!drawer.querySelector('.td-mobile-tabs')) {
       var box = document.createElement('div');
       box.className = 'td-mobile-tabs';
-      box.innerHTML = ['classes', 'activities', 'messages', 'announcements', 'curriculum', 'resources', 'schedule', 'analytics', 'monitor'].map(function (t) {
+      box.innerHTML = ['testprep', 'classes', 'activities', 'messages', 'announcements', 'curriculum', 'resources', 'schedule', 'analytics', 'monitor'].map(function (t) {
         var b = document.querySelector('.tab-btn[data-tab="' + t + '"]');
         return b ? '<button type="button" data-td-goto="' + t + '">' + esc(b.textContent.trim().replace(/\s+\d+$/, '').replace(/\s*\(\d+\)$/, '')) + '</button>' : '';
       }).join('');
