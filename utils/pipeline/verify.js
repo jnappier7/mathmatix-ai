@@ -252,12 +252,21 @@ function buildProtectedReveal(context, extracted) {
     answers.push(String(v.modelAnswer));
   }
   const key = reviewKeyToGuard(context, extracted);
-  if (!answers.length && !key) return () => null;
+  // The active problem's parts the student has not supplied (activeProblem.js)
+  // — guarded on every turn, whatever the student just said.
+  const open = Array.isArray(context.guardedProblemAnswers)
+    ? context.guardedProblemAnswers.filter((a) => a != null && String(a).trim())
+    : [];
+  if (!answers.length && !key && !open.length) return () => null;
   return (t) => {
     if (!t) return null;
     for (const a of answers) {
       const hit = findKnownValueReveal(t, a);
       if (hit) return { kind: 'wrong-answer', ...hit };
+    }
+    for (const a of open) {
+      const hit = findKnownValueReveal(t, a);
+      if (hit) return { kind: 'active-problem', ...hit };
     }
     if (key) {
       const hit = findChoiceKeyReveal(t, key);
@@ -1485,7 +1494,9 @@ async function verify(responseText, context = {}) {
         value: p.value,
         reason: p.kind === 'choice-key'
           ? 'named the correct answer choice before the student picked it'
-          : 'revealed the correct answer after the student got it wrong',
+          : p.kind === 'active-problem'
+            ? 'revealed the answer to the problem the student is working on before they supplied it'
+            : 'revealed the correct answer after the student got it wrong',
       };
     }
     if (uploadLeaks && t !== textAfterUploadGuard && uploadLeaks(t)) {

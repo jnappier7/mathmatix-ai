@@ -238,6 +238,14 @@ const conversationSchema = new Schema({
         type: Schema.Types.Mixed,
         default: null
     },
+    // The problem the student is working on and which of its answers they
+    // have supplied, per part — the answer boundary's memory. Written only by
+    // utils/pipeline/activeProblem.js (via the pipeline); verify guards every
+    // part the student has not supplied. See that module for the shape.
+    activeProblem: {
+        type: Schema.Types.Mixed,
+        default: null
+    },
     // Recent credited solves, [{ key, answer, at }] (last 10). Written only by
     // persist via utils/pipeline/solveCredit.js, so a problem re-solved after a
     // restart is not paid twice.
