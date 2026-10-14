@@ -53,6 +53,13 @@ jest.mock('../../models/skill', () => {
 });
 
 // Mock ScreenerSession
+// The report lists the child's active courses (profile line).
+jest.mock('../../models/courseSession', () => {
+    const mock = function() {};
+    mock.find = jest.fn().mockReturnValue({ select: jest.fn().mockReturnValue({ lean: jest.fn().mockResolvedValue([]) }) });
+    return mock;
+});
+
 jest.mock('../../models/screenerSession', () => {
     const mock = function() {};
     mock.find = jest.fn();
@@ -225,14 +232,11 @@ describe('Parent Learning Report - GET /api/parent/child/:childId/learning-repor
     });
 
     test('generates correct headline for excellent progress', async () => {
+        // Mastery growth = a practiced skill mastered this week (skillMastery is the
+        // source; a BKT flag alone no longer counts — it disagreed with the card).
         const child = makeChild({
-            learningEngines: {
-                bkt: {
-                    'fractions': { pLearned: 0.98, mastered: true, lastObservation: new Date().toISOString() },
-                },
-                fsrs: {},
-                consistency: {},
-                cognitiveLoadHistory: []
+            skillMastery: {
+                'fractions': { status: 'mastered', totalAttempts: 12, masteryScore: 95, masteredDate: new Date().toISOString(), lastPracticed: new Date().toISOString() },
             }
         });
         const parent = makeParent(child._id);
@@ -274,18 +278,24 @@ describe('Parent Learning Report - GET /api/parent/child/:childId/learning-repor
         expect(res.status).toBe(200);
         expect(res.body.memoryHealth.totalTracked).toBe(3);
         expect(res.body.memoryHealth.strong).toBeGreaterThanOrEqual(1);
-        // Should have some fading skills listed
-        expect(res.body.memoryHealth.fadingSkills.length).toBeGreaterThan(0);
+        // Should have some not-strong skills listed, by name
+        const weak = res.body.memoryHealth.skills.filter(s => s.status !== 'strong');
+        expect(weak.length).toBeGreaterThan(0);
+        for (const s of weak) expect(s.displayName).not.toMatch(/undefined|^[a-z]+(-[a-z]+)+$/);
     });
 
     test('includes mastery counts and categorization', async () => {
         const child = makeChild({
             skillMastery: {
-                'fractions': { status: 'mastered', masteryScore: 95, currentTier: 'gold' },
-                'decimals': { status: 'mastered', masteryScore: 88, currentTier: 'silver' },
-                'algebra-basics': { status: 'learning', masteryScore: 45 },
-                'geometry': { status: 'needs-review', masteryScore: 20 },
-                'ratios': { status: 'practicing', masteryScore: 65 },
+                'fractions': { status: 'mastered', masteryScore: 95, currentTier: 'gold', totalAttempts: 20 },
+                'decimals': { status: 'mastered', masteryScore: 88, currentTier: 'silver', totalAttempts: 15 },
+                'algebra-basics': { status: 'learning', masteryScore: 45, totalAttempts: 6 },
+                'geometry': { status: 'needs-review', masteryScore: 20, totalAttempts: 9 },
+                'ratios': { status: 'practicing', masteryScore: 65, totalAttempts: 7 },
+                // placed out by the screener — not earned mastery, counted apart
+                'place-value': { status: 'mastered', provenBy: 'placement', totalAttempts: 0 },
+                // a "mastered" record with no practice behind it (legacy seed)
+                'addition-within-100': { status: 'mastered', totalAttempts: 0 },
             }
         });
         const parent = makeParent(child._id);
@@ -294,14 +304,13 @@ describe('Parent Learning Report - GET /api/parent/child/:childId/learning-repor
 
         const res = await request(app).get(`/api/parent/child/${child._id}/learning-report`);
         expect(res.status).toBe(200);
-        expect(res.body.mastery.counts.mastered).toBe(2);
-        expect(res.body.mastery.counts.learning).toBe(1);
-        expect(res.body.mastery.counts.practicing).toBe(1);
-        expect(res.body.mastery.counts.needsReview).toBe(1);
-        expect(res.body.mastery.counts.total).toBe(5);
-        expect(res.body.mastery.topStrengths.length).toBe(2);
+        expect(res.body.mastery.counts).toEqual({
+            practiced: 5, practicedMastered: 2, learning: 2, needsReview: 1, placedOut: 2,
+        });
+        // strengths are earned: the placed-out / seed "mastered" skills aren't in it
+        expect(res.body.mastery.topStrengths.map(s => s.skillId).sort()).toEqual(['decimals', 'fractions']);
         expect(res.body.mastery.growthAreas.length).toBe(1);
-        expect(res.body.mastery.growthAreas[0].status).toBe('needs-review');
+        expect(res.body.mastery.growthAreas[0].reason).toBe('mastery');
     });
 
     test('includes cognitive load trend', async () => {
@@ -353,9 +362,10 @@ describe('Parent Learning Report - GET /api/parent/child/:childId/learning-repor
 
     test('includes engagement and streak data', async () => {
         const child = makeChild({
-            streak: { current: 7, longest: 15 },
+            // The streak lives in dailyQuests — the old top-level `streak` read
+            // didn't exist on the schema and always reported 0.
+            dailyQuests: { currentStreak: 7, longestStreak: 15, lastPracticeDate: new Date().toISOString(), quests: [{ completed: true }, { completed: true }, { completed: false }] },
             totalActiveTutoringMinutes: 500,
-            dailyQuests: { quests: [{ completed: true }, { completed: true }, { completed: false }] },
             weeklyChallenges: { challenges: [{ completed: true }, { completed: false }] },
         });
         const parent = makeParent(child._id);
@@ -489,31 +499,27 @@ describe('Parent Learning Report - GET /api/parent/child/:childId/learning-repor
         expect(trends.accuracyDelta).toBe(10);    // 80% - 70%
     });
 
-    test('knowledge by category groups BKT data correctly', async () => {
+    test('categories group the PRACTICED skills, named from the catalog', async () => {
         const child = makeChild({
-            learningEngines: {
-                bkt: {
-                    'add-fractions': { pLearned: 0.98, mastered: true },
-                    'sub-fractions': { pLearned: 0.6, mastered: false },
-                    'solve-linear': { pLearned: 0.1, mastered: false },
-                },
-                fsrs: {},
-                consistency: {},
-                cognitiveLoadHistory: []
+            skillMastery: {
+                'add-fractions': { status: 'mastered', totalAttempts: 10 },
+                'sub-fractions': { status: 'learning', totalAttempts: 4 },
+                'solve-linear': { status: 'needs-review', totalAttempts: 6 },
+                'place-value': { status: 'mastered', provenBy: 'placement' }, // not practiced
             }
         });
         const parent = makeParent(child._id);
         mockFindById.mockResolvedValueOnce(parent);
         mockFindById.mockResolvedValueOnce(child);
 
-        // Mock Skill.find to return category info
         const Skill = require('../../models/skill');
         Skill.find.mockReturnValue({
             select: jest.fn().mockReturnValue({
                 lean: jest.fn().mockResolvedValue([
-                    { skillId: 'add-fractions', displayName: 'Adding Fractions', category: 'Fractions' },
-                    { skillId: 'sub-fractions', displayName: 'Subtracting Fractions', category: 'Fractions' },
-                    { skillId: 'solve-linear', displayName: 'Solving Linear Equations', category: 'Algebra' },
+                    { skillId: 'add-fractions', displayName: 'Adding Fractions', category: 'fractions' },
+                    { skillId: 'sub-fractions', displayName: 'Subtracting Fractions', category: 'fractions' },
+                    { skillId: 'solve-linear', displayName: 'Solving Linear Equations', category: 'algebra' },
+                    { skillId: 'place-value', displayName: 'Place Value', category: 'place-value' },
                 ])
             })
         });
@@ -521,11 +527,9 @@ describe('Parent Learning Report - GET /api/parent/child/:childId/learning-repor
         const res = await request(app).get(`/api/parent/child/${child._id}/learning-report`);
         expect(res.status).toBe(200);
 
-        const cats = res.body.mastery.knowledgeByCategory;
-        expect(cats['Fractions']).toBeDefined();
-        expect(cats['Fractions'].mastered).toBe(1);
-        expect(cats['Fractions'].learning).toBe(1);
-        expect(cats['Algebra']).toBeDefined();
-        expect(cats['Algebra'].needsWork).toBe(1);
+        const cats = Object.fromEntries(res.body.mastery.categories.map(c => [c.name, c]));
+        expect(cats['Fractions']).toMatchObject({ mastered: 1, learning: 1, total: 2 });
+        expect(cats['Algebra']).toMatchObject({ needsReview: 1, total: 1 });
+        expect(cats['Place Value']).toBeUndefined();
     });
 });

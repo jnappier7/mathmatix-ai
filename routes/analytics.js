@@ -22,6 +22,7 @@ const { calculateRetrievability } = require('../utils/fsrsScheduler');
 
 const { anyRole } = require('../utils/roleQuery');
 const { engineEntries } = require('../utils/engineStore');
+const { skillPictureFor } = require('../utils/parentSkillPicture');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 // ---------------------------------------------------------------------------
 // Helpers
@@ -480,48 +481,22 @@ router.get('/child/:childId/memory-health', isParent, async (req, res) => {
     const child = await verifyParentChildAccess(req.user._id, childId);
     if (!child) return res.status(403).json({ message: 'Access denied or child not found.' });
 
-    const fsrs = child.learningEngines?.fsrs;
-    const entries = mapEntries(fsrs);
-    const skillIds = entries.map(([id]) => id);
-    const skillInfo = await getSkillInfoMap(skillIds);
-
-    let strong = 0;
-    let fading = 0;
-    let needsReview = 0;
-    const skills = [];
-
-    for (const [skillId, data] of entries) {
-      const info = skillInfo[skillId] || { displayName: skillId };
-      const elapsed = fsrsElapsedDays(data);
-      const retrievability = calculateRetrievability(elapsed, data.stability ?? 0);
-
-      let status;
-      if (retrievability >= 0.85) {
-        status = 'strong';
-        strong++;
-      } else if (retrievability >= 0.5) {
-        status = 'fading';
-        fading++;
-      } else {
-        status = 'needs-review';
-        needsReview++;
-      }
-
-      skills.push({
-        skillId,
-        displayName: info.displayName,
-        status,
-        retrievability: Math.round(retrievability * 1000) / 1000,
-      });
-    }
-
+    // Same classification the dashboard card and Learning Report use, so the
+    // three can't disagree (utils/parentSkillPicture).
+    const { memory } = await skillPictureFor(child);
     res.json({
       childId,
-      strong,
-      fading,
-      needsReview,
-      totalSkills: entries.length,
-      skills,
+      strong: memory.strong,
+      fading: memory.fading,
+      needsReview: memory.needsReview,
+      totalSkills: memory.tracked,
+      scope: 'practiced-with-review-data',
+      skills: memory.skills.map(m => ({
+        skillId: m.key,
+        displayName: m.name,
+        status: m.status,
+        retrievability: Math.round(m.retrievability * 10) / 1000,
+      })),
     });
   } catch (err) {
     console.error('Error in memory-health:', err);
@@ -622,27 +597,21 @@ router.get('/child/:childId/strength-map', isParent, async (req, res) => {
     const child = await verifyParentChildAccess(req.user._id, childId);
     if (!child) return res.status(403).json({ message: 'Access denied or child not found.' });
 
-    const bkt = child.learningEngines?.bkt;
-    const entries = mapEntries(bkt);
-    const skillIds = entries.map(([id]) => id);
-    const skillInfo = await getSkillInfoMap(skillIds);
-
-    // Group by category
-    const categories = {};
-    for (const [skillId, data] of entries) {
-      const info = skillInfo[skillId] || { displayName: skillId, category: 'Uncategorized' };
-      const cat = info.category;
-      if (!categories[cat]) {
-        categories[cat] = { name: cat, mastered: 0, learning: 0, needsWork: 0, totalSkills: 0 };
-      }
-      const pLearned = data.pLearned ?? 0;
-      categories[cat].totalSkills++;
-      if (pLearned >= 0.95) categories[cat].mastered++;
-      else if (pLearned >= 0.3) categories[cat].learning++;
-      else categories[cat].needsWork++;
-    }
-
-    res.json({ childId, categories: Object.values(categories) });
+    // Categories of the skills the child has actually PRACTICED, named from the
+    // catalog (falls back to seed files) — placed-out skills aren't strengths
+    // shown, and an unresolvable id never reaches the chart as "Uncategorized".
+    const picture = await skillPictureFor(child);
+    res.json({
+      childId,
+      totalPracticed: picture.counts.practiced,
+      categories: picture.categories.map(c => ({
+        name: c.name,
+        mastered: c.mastered,
+        learning: c.learning,
+        needsWork: c.needsReview,
+        totalSkills: c.total,
+      })),
+    });
   } catch (err) {
     console.error('Error in strength-map:', err);
     res.status(500).json({ message: 'Server error fetching strength map.' });

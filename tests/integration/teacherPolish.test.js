@@ -91,7 +91,9 @@ describe('analytics', () => {
     expect(radar.noDataCount).toBe(2);
     const { body: heat } = await supertest(app).get('/api/analytics/class/knowledge-heatmap').expect(200);
     expect(heat.skillIds).toEqual(['one-step-equations']);
-    expect(heat.skillNames['one-step-equations']).toBe('One Step Equations');
+    // The catalog is mocked empty here; the resolver falls back to the shipped
+    // seed files' real name before prettifying the id.
+    expect(heat.skillNames['one-step-equations']).toBe('One-Step Equations');
     expect(heat.studentsWithData).toBe(1);
   });
 });

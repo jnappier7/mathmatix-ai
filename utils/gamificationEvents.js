@@ -462,4 +462,4 @@ function getWeekStart(date = new Date()) {
   return d;
 }
 
-module.exports = { emitGamificationEvent, bumpDailyStreak };
+module.exports = { emitGamificationEvent, bumpDailyStreak, canUseStreakFreeze };

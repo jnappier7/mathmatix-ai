@@ -3,22 +3,27 @@
 
 const express = require('express');
 const router = express.Router();
+
+// "A", "A and B", "A, B, and C"
+function listOf(names) {
+    if (names.length <= 1) return names[0] || '';
+    if (names.length === 2) return `${names[0]} and ${names[1]}`;
+    return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`;
+}
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const { applyFamilySupportsUpdate, readFamilySupports, lockedBySchool } = require('../utils/familySupports');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
-const Skill = require('../models/skill');
+const CourseSession = require('../models/courseSession');
 const { isParent, isAuthenticated } = require('../middleware/auth');
 const { cleanupStaleSessions } = require('../services/sessionService');
 const ScreenerSession = require('../models/screenerSession');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
-const { calculateRetrievability } = require('../utils/fsrsScheduler');
-const { engineEntries } = require('../utils/engineStore');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 
 const { userHasRole, anyRole } = require('../utils/roleQuery');
-const { getEffectiveWeeklyMinutes } = require('../utils/studentActivity');
-const { normalizedMasteryScore } = require('../utils/masteryScore');
+const { skillPictureFor } = require('../utils/parentSkillPicture');
+const { buildChildProfile, readStreak } = require('../utils/parentChildProfile');
 const {
     normalizeStudentLinkCode,
     parentInviteExpiry,
@@ -319,23 +324,24 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, logRecordAcces
             }
         }
 
-        // Get skill mastery summary
-        let skillsSummary = { mastered: 0, learning: 0, needsReview: 0 };
-        if (child.skillMastery && child.skillMastery instanceof Map) {
-            for (const [skillId, mastery] of child.skillMastery) {
-                if (mastery.status === 'mastered') skillsSummary.mastered++;
-                else if (mastery.status === 'learning' || mastery.status === 'practicing') skillsSummary.learning++;
-                else if (mastery.status === 'needs-review' || mastery.status === 're-fragile') skillsSummary.needsReview++;
-            }
-        } else if (child.skillMastery && typeof child.skillMastery === 'object') {
-            // Handle if skillMastery is a plain object (from .lean())
-            for (const skillId in child.skillMastery) {
-                const mastery = child.skillMastery[skillId];
-                if (mastery.status === 'mastered') skillsSummary.mastered++;
-                else if (mastery.status === 'learning' || mastery.status === 'practicing') skillsSummary.learning++;
-                else if (mastery.status === 'needs-review' || mastery.status === 're-fragile') skillsSummary.needsReview++;
-            }
-        }
+        // One classification for every skill surface (utils/parentSkillPicture):
+        // placement / never-practised "mastered" entries are counted as placed out,
+        // not as mastered, and memory's needs-review is folded into the same count.
+        const [picture, activeCourses] = await Promise.all([
+            skillPictureFor(child),
+            CourseSession.find({ userId: childId, status: { $in: ['active', 'paused'] } }).select('courseId courseName').lean(),
+        ]);
+        const studentCourseNames = activeCourses
+            .filter(c => !/^parent-/.test(c.courseId || ''))
+            .map(c => c.courseName);
+        const skillsSummary = {
+            practiced: picture.counts.practiced,
+            mastered: picture.counts.practicedMastered,
+            learning: picture.counts.learning,
+            needsReview: picture.counts.needsReview,
+            placedOut: picture.counts.placedOut,
+            memoryTracked: picture.memory.tracked,
+        };
 
         const progressData = {
             _id: child._id,
@@ -346,13 +352,21 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, logRecordAcces
             xp: child.xp || 0,
             gradeLevel: child.gradeLevel,
             mathCourse: child.mathCourse,
+            // Labeled facts for the card line (school grade ≠ assessed level).
+            profile: buildChildProfile(child, studentCourseNames),
+            streak: readStreak(child),
             totalActiveTutoringMinutes: child.totalActiveTutoringMinutes || 0,
-            weeklyActiveTutoringMinutes: getEffectiveWeeklyMinutes(child),
-            // Weekly performance stats
+            // Weekly performance stats — the last 7 days of conversations, the same
+            // rolling window and ground truth the teacher dashboard uses
+            // (utils/studentActivity.js). The stored weekly counter is not read:
+            // it lags until the child is next active.
             weeklyStats: {
+                period: 'last-7-days',
                 problemsAttempted: stats.totalProblems,
                 problemsCorrect: stats.totalCorrect,
-                accuracy: stats.totalProblems > 0 ? Math.round((stats.totalCorrect / stats.totalProblems) * 100) : 0,
+                // null, not 0, when nothing was graded — "0% accuracy" on zero
+                // problems reads as failing every one.
+                accuracy: stats.totalProblems > 0 ? Math.round((stats.totalCorrect / stats.totalProblems) * 100) : null,
                 activeMinutes: stats.totalMinutes,
                 sessionCount: stats.sessionCount
             },
@@ -638,113 +652,20 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
             : null;
 
         // ------------------------------------------------------------------
-        // 2. SKILL MASTERY — 4-pillar breakdown and skill-level details
+        // 2-4. SKILLS, MEMORY, CATEGORIES — one classification (utils/parentSkillPicture)
+        // shared with the dashboard card and the analytics endpoints, so the report
+        // can't contradict the card it opens from. Placed-out skills are counted
+        // apart from mastered ones; strengths are earned + recent.
         // ------------------------------------------------------------------
-        const skillMasteryEntries = Object.entries(child.skillMastery || {});
-        const skillIds = skillMasteryEntries.map(([id]) => id);
-
-        // Also collect BKT and FSRS skill IDs for lookup
         const engines = child.learningEngines || {};
-        const bktEntries = engineEntries(engines.bkt);
-        const fsrsEntries = engineEntries(engines.fsrs);
-
-        const allSkillIds = new Set([
-            ...skillIds,
-            ...bktEntries.map(([id]) => id),
-            ...fsrsEntries.map(([id]) => id)
+        const [picture, reportCourses] = await Promise.all([
+            skillPictureFor(child, now.getTime()),
+            CourseSession.find({ userId: childId, status: { $in: ['active', 'paused'] } }).select('courseId courseName').lean(),
         ]);
-
-        // Fetch display names for all skills in one query
-        const skillInfoMap = {};
-        if (allSkillIds.size > 0) {
-            const skillDocs = await Skill.find({ skillId: { $in: Array.from(allSkillIds) } })
-                .select('skillId displayName category')
-                .lean();
-            for (const s of skillDocs) {
-                skillInfoMap[s.skillId] = { displayName: s.displayName || s.skillId, category: s.category || 'Uncategorized' };
-            }
-        }
-
-        // Mastery status counts
-        const masteryCounts = { mastered: 0, practicing: 0, learning: 0, needsReview: 0, total: 0 };
-        const topStrengths = [];
-        const growthAreas = [];
-
-        for (const [skillId, data] of skillMasteryEntries) {
-            masteryCounts.total++;
-            const info = skillInfoMap[skillId] || { displayName: skillId, category: 'Uncategorized' };
-            const score = normalizedMasteryScore(data.masteryScore);
-            const status = data.status || 'learning';
-
-            if (status === 'mastered') {
-                masteryCounts.mastered++;
-                topStrengths.push({ skillId, displayName: info.displayName, category: info.category, score, tier: data.currentTier || 'none' });
-            } else if (status === 'practicing') {
-                masteryCounts.practicing++;
-            } else if (status === 'learning') {
-                masteryCounts.learning++;
-            } else if (status === 'needs-review' || status === 're-fragile') {
-                masteryCounts.needsReview++;
-                growthAreas.push({ skillId, displayName: info.displayName, category: info.category, score, status });
-            }
-        }
-
-        // Sort strengths by score descending, growth areas by score ascending
-        topStrengths.sort((a, b) => b.score - a.score);
-        growthAreas.sort((a, b) => a.score - b.score);
-
-        // ------------------------------------------------------------------
-        // 3. MEMORY HEALTH — FSRS retrievability analysis
-        // ------------------------------------------------------------------
-        let memoryStrong = 0;
-        let memoryFading = 0;
-        let memoryNeedsReview = 0;
-        const fadingSkills = [];
-
-        for (const [skillId, data] of fsrsEntries) {
-            const elapsed = data.lastReview
-                ? (Date.now() - new Date(data.lastReview).getTime()) / 86400000
-                : 0;
-            const retrievability = calculateRetrievability(elapsed, data.stability ?? 0);
-            const info = skillInfoMap[skillId] || { displayName: skillId };
-
-            if (retrievability >= 0.85) {
-                memoryStrong++;
-            } else if (retrievability >= 0.5) {
-                memoryFading++;
-                fadingSkills.push({ skillId, displayName: info.displayName, retrievability: Math.round(retrievability * 100) });
-            } else {
-                memoryNeedsReview++;
-                fadingSkills.push({ skillId, displayName: info.displayName, retrievability: Math.round(retrievability * 100) });
-            }
-        }
-
-        // Sort fading skills by retrievability ascending (most urgent first)
-        fadingSkills.sort((a, b) => a.retrievability - b.retrievability);
-
-        // ------------------------------------------------------------------
-        // 4. BKT — Knowledge state summary by category
-        // ------------------------------------------------------------------
-        const knowledgeByCategory = {};
-        let bktMasteredThisWeek = 0;
-
-        for (const [skillId, data] of bktEntries) {
-            const info = skillInfoMap[skillId] || { displayName: skillId, category: 'Uncategorized' };
-            const cat = info.category;
-            if (!knowledgeByCategory[cat]) {
-                knowledgeByCategory[cat] = { mastered: 0, learning: 0, needsWork: 0, total: 0 };
-            }
-            const pLearned = data.pLearned ?? 0;
-            knowledgeByCategory[cat].total++;
-            if (pLearned >= 0.95) knowledgeByCategory[cat].mastered++;
-            else if (pLearned >= 0.3) knowledgeByCategory[cat].learning++;
-            else knowledgeByCategory[cat].needsWork++;
-
-            // Check if mastered this week
-            if (data.mastered && data.lastObservation && new Date(data.lastObservation) >= oneWeekAgo) {
-                bktMasteredThisWeek++;
-            }
-        }
+        const reportCourseNames = reportCourses.filter(c => !/^parent-/.test(c.courseId || '')).map(c => c.courseName);
+        const fadingSkills = picture.memory.skills.filter(m => m.status === 'fading');
+        const reviewSkills = picture.growthAreas;
+        const masteredThisWeek = picture.masteredThisWeek;
 
         // ------------------------------------------------------------------
         // 5. COGNITIVE LOAD — Recent trend
@@ -810,7 +731,8 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
         // ------------------------------------------------------------------
         // 8. STREAKS & ENGAGEMENT
         // ------------------------------------------------------------------
-        const streak = child.streak || {};
+        // The User schema has no top-level `streak` — this read was always 0.
+        const streak = readStreak(child, now);
         const dailyQuests = child.dailyQuests || {};
         const weeklyChallenges = child.weeklyChallenges || {};
 
@@ -854,12 +776,13 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
             insights.push({ type: 'accuracy', tone: 'neutral', message: `Accuracy this week: ${thisWeekAccuracy}% across ${thisWeek.totalProblems} problems.` });
         }
 
-        // Memory health insight
+        // Memory health insight — fading (50-85% recall) and due-for-review are
+        // different asks, so they get different sentences.
         if (fadingSkills.length > 0) {
-            const topFading = fadingSkills.slice(0, 3).map(s => s.displayName);
-            insights.push({ type: 'memory', tone: 'actionable', message: `${topFading.join(', ')} ${topFading.length === 1 ? 'is' : 'are'} starting to fade from memory. A quick review session would help lock ${topFading.length === 1 ? 'it' : 'them'} in.` });
-        } else if (memoryStrong > 0) {
-            insights.push({ type: 'memory', tone: 'positive', message: `${memoryStrong} skill${memoryStrong > 1 ? 's are' : ' is'} well-retained in long-term memory. The spaced practice is working!` });
+            const names = fadingSkills.slice(0, 3).map(s => s.name);
+            insights.push({ type: 'memory', tone: 'actionable', message: `${listOf(names)} ${names.length === 1 ? 'is' : 'are'} starting to fade from memory. A quick review session would help lock ${names.length === 1 ? 'it' : 'them'} in.` });
+        } else if (picture.memory.strong > 0) {
+            insights.push({ type: 'memory', tone: 'positive', message: `${picture.memory.strong} practiced skill${picture.memory.strong > 1 ? 's are' : ' is'} well-retained in long-term memory. The spaced practice is working!` });
         }
 
         // Cognitive load insight
@@ -869,15 +792,15 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
             insights.push({ type: 'cognitive', tone: 'positive', message: `The material is getting easier for ${child.firstName} — a sign that learning is sinking in.` });
         }
 
-        // Mastery milestone insight
-        if (bktMasteredThisWeek > 0) {
-            insights.push({ type: 'milestone', tone: 'positive', message: `${child.firstName} mastered ${bktMasteredThisWeek} new skill${bktMasteredThisWeek > 1 ? 's' : ''} this week!` });
+        // Mastery milestone insight — earned this week, never placement.
+        if (masteredThisWeek > 0) {
+            insights.push({ type: 'milestone', tone: 'positive', message: `${child.firstName} mastered ${masteredThisWeek} new skill${masteredThisWeek > 1 ? 's' : ''} this week!` });
         }
 
-        // Growth areas insight
-        if (growthAreas.length > 0) {
-            const topGrowth = growthAreas.slice(0, 3).map(s => s.displayName);
-            insights.push({ type: 'growth', tone: 'actionable', message: `${topGrowth.join(', ')} could use more practice. Encourage ${child.firstName} to revisit ${topGrowth.length === 1 ? 'this topic' : 'these topics'}.` });
+        // Review insight
+        if (reviewSkills.length > 0) {
+            const names = reviewSkills.slice(0, 3).map(s => s.name);
+            insights.push({ type: 'growth', tone: 'actionable', message: `${listOf(names)} could use a review. Encourage ${child.firstName} to revisit ${names.length === 1 ? 'this topic' : 'these topics'}.` });
         }
 
         // ------------------------------------------------------------------
@@ -888,7 +811,7 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
 
         // Weight multiple signals for overall assessment
         const hasActivity = thisWeek.sessionCount > 0;
-        const hasMasteryGrowth = bktMasteredThisWeek > 0 || (thetaGrowthThisMonth !== null && thetaGrowthThisMonth > 0);
+        const hasMasteryGrowth = masteredThisWeek > 0 || (thetaGrowthThisMonth !== null && thetaGrowthThisMonth > 0);
         const hasStrongAccuracy = thisWeekAccuracy !== null && thisWeekAccuracy >= 70;
         const hasHighCogLoad = cognitiveLoadTrend === 'rising';
 
@@ -918,12 +841,14 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
         res.json({
             success: true,
             reportDate: now.toISOString(),
+            period: { from: oneWeekAgo.toISOString(), to: now.toISOString() },
             child: {
                 id: child._id,
                 firstName: child.firstName,
                 lastName: child.lastName,
                 gradeLevel: child.gradeLevel,
                 mathCourse: child.mathCourse,
+                profile: buildChildProfile(child, reportCourseNames),
                 level: child.level || 1,
                 xp: child.xp || 0
             },
@@ -956,18 +881,20 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
             },
 
             mastery: {
-                counts: masteryCounts,
-                topStrengths: topStrengths.slice(0, 5),
-                growthAreas: growthAreas.slice(0, 5),
-                knowledgeByCategory
+                counts: picture.counts,
+                topStrengths: picture.topStrengths.map(t => ({ skillId: t.key, displayName: t.name, category: t.category, score: t.score })),
+                growthAreas: reviewSkills.map(g => ({ skillId: g.key, displayName: g.name, category: g.category, reason: g.reason })),
+                categories: picture.categories
             },
 
             memoryHealth: {
-                strong: memoryStrong,
-                fading: memoryFading,
-                needsReview: memoryNeedsReview,
-                totalTracked: fsrsEntries.length,
-                fadingSkills: fadingSkills.slice(0, 5)
+                strong: picture.memory.strong,
+                fading: picture.memory.fading,
+                needsReview: picture.memory.needsReview,
+                totalTracked: picture.memory.tracked,
+                // Only skills with review data have a memory reading — say so.
+                scope: 'practiced-with-review-data',
+                skills: picture.memory.skills.slice(0, 5).map(m => ({ skillId: m.key, displayName: m.name, retrievability: m.retrievability, status: m.status }))
             },
 
             cognitiveLoad: {
@@ -993,12 +920,12 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
             milestones: {
                 badges: recentBadges,
                 strategyBadges: recentStrategyBadges,
-                skillsMasteredThisWeek: bktMasteredThisWeek
+                skillsMasteredThisWeek: masteredThisWeek
             },
 
             engagement: {
-                currentStreak: streak.current || 0,
-                longestStreak: streak.longest || 0,
+                currentStreak: streak.current,
+                longestStreak: streak.longest,
                 totalTutoringMinutes: child.totalActiveTutoringMinutes || 0,
                 questsCompleted: dailyQuests.quests ? dailyQuests.quests.filter(q => q.completed).length : 0,
                 challengesCompleted: weeklyChallenges.challenges ? weeklyChallenges.challenges.filter(c => c.completed).length : 0
