@@ -63,6 +63,12 @@ Before shipping a batch:
 | p5 (2026-10-13) | 92 | 28 / 28 / 18 / 18 | 62 / 30 | 38 / 37 / 17 | 13 |
 | p6 (2026-10-13) | 92 | 32 / 32 / 14 / 14 | 60 / 32 | 28 / 33 / 31 | 12 |
 | p7 (2026-10-13) | 92 | 34 / 34 / 12 / 12 | 60 / 32 | 29 / 33 / 30 | 13 |
+| p8 (2026-10-13) | 92 | 35 / 35 / 11 / 11 | 62 / 30 | 27 / 35 / 30 | 11 |
+
+p8 targets the thinnest unified skills. Labels decide the skill (scripts/satSkillMap.py,
+first match wins), so check a new label with `unified_skill(domain, label)` before
+authoring under it: every inequality label before p8 read "one or two variables", which
+files under two-variable inequalities, leaving one-variable inequalities with 2 items.
 
 p5 leans easy on purpose: the PSAT (`psat-math`) draws this bank on a lower
 curve, and easy items were the thinnest band (109 of 497). Every p5 graph is
