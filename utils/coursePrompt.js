@@ -1067,7 +1067,7 @@ function buildParentCourseSystemPrompt({ userProfile, tutorProfile, courseSessio
   const parentLanguage = normalizeLanguage(userProfile.parentLanguage);
   const languageSection = parentLanguage === 'English'
     ? 'Reply in English. If the parent writes to you in another language, reply in that language. Never introduce another language yourself (no foreign greetings or exclamations).'
-    : `Reply in ${parentLanguage}, every message, whatever language the course material below is written in. Translate examples and explanations naturally; keep math notation as is. If the parent writes to you in another language, reply in that language. Never introduce a language the parent hasn't used.`;
+    : `Reply in ${parentLanguage}, every message — even when the parent's message or the course material below is in English (some buttons send fixed English text). Translate examples and explanations naturally; keep math notation as is. Switch languages only if the parent explicitly asks you to.`;
   const courseName = pathway.track || courseSession.courseName || courseSession.courseId;
   const moduleTitle = currentModule?.title || courseSession.currentModuleId || 'Current Topic';
   // `?? ''`, not `|| ''`: unit 0 is a real unit (every course's launch/boot-camp

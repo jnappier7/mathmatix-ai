@@ -3,6 +3,37 @@
 
 const { callLLM } = require('./llmGateway');
 const { createAnonymizationContext } = require('./piiAnonymizer');
+const { sanitizeSummary, describeAccuracy, MIN_PROBLEMS_FOR_ACCURACY } = require('./summaryText');
+
+// Message content is not always a string: upload and vision turns carry an
+// array of parts. Interpolating those directly is how "undefined" and
+// "[object Object]" reached summaries a parent reads.
+function messageText(content) {
+    if (typeof content === 'string') return content;
+    if (Array.isArray(content)) {
+        const text = content
+            .map(p => (p && typeof p.text === 'string' ? p.text : ''))
+            .filter(Boolean)
+            .join(' ');
+        const hasImage = content.some(p => p && (p.type === 'image_url' || p.type === 'image'));
+        return [text, hasImage ? '[image upload]' : ''].filter(Boolean).join(' ') || '[image upload]';
+    }
+    return content == null ? '' : '[attachment]';
+}
+
+// Transcript lines for a summary prompt. Roles are relabelled so the model
+// reads a transcript ABOUT a tutor and a student, rather than "assistant:"
+// lines it is tempted to continue in the first person.
+function transcriptLines(messages) {
+    return (messages || [])
+        .filter(m => m && (m.role === 'user' || m.role === 'assistant'))
+        .map(m => `${m.role === 'assistant' ? 'Tutor' : 'Student'}: ${messageText(m.content)}`)
+        .join('\n');
+}
+
+function firstNameOf(studentName) {
+    return String(studentName || '').trim().split(/\s+/)[0] || '';
+}
 
 // Callers hand us "First Last" for the teacher-facing text. The provider
 // gets [Student]: this context strips the name from the transcript we send
@@ -56,7 +87,7 @@ ${statsSection}
 ${strugglingWith ? `- Currently struggling with: ${strugglingWith}` : ''}
 
 Recent conversation:
-${recentMessages.map(m => `${m.role}: ${m.content}`).join('\n')}
+${transcriptLines(recentMessages)}
 
 Format: "[Student] is working on [topic]. [Progress/struggle summary]"
 ${problemsAttempted > 0 ? 'Example: "Sarah is solving linear equations (2x+3=7). Completed 3/5 problems correctly, struggling with negative coefficients."' : 'Example: "Sarah is exploring linear equations, working through examples of solving for x."'}
@@ -137,7 +168,7 @@ function detectStruggle(recentMessages) {
  * Detect current topic from conversation
  */
 function detectTopic(messages) {
-    const recentText = messages.slice(-5).map(m => m.content).join(' ').toLowerCase();
+    const recentText = (messages || []).slice(-5).map(m => messageText(m && m.content)).join(' ').toLowerCase();
 
     const topics = {
         'calculus': /calculus|derivative|integral|limit|differenti|antiderivative|d\/dx/i,
@@ -197,7 +228,7 @@ function calculateProblemStats(messages) {
  */
 async function generateSessionSummary(conversation, studentName) {
     try {
-        const messages = conversation.messages;
+        const messages = conversation.messages || [];
 
         // IMPROVED: Use stored stats from conversation record first (more accurate)
         // Fall back to calculateProblemStats only if stored stats are missing
@@ -231,54 +262,68 @@ async function generateSessionSummary(conversation, studentName) {
             return assessmentSummary;
         }
 
-        // Calculate accuracy for the summary
-        const accuracy = stats.attempted > 0 ?
-            Math.round((stats.correct / stats.attempted) * 100) : 0;
+        const minutes = Number(conversation.activeMinutes) > 0 ? Math.round(Number(conversation.activeMinutes)) : 0;
+        const firstName = firstNameOf(studentName);
+        const anonContext = contextForStudentName(studentName);
 
         // Build problem stats section only when we have actual tracked data.
         // When problemsAttempted is 0, it likely means tracking didn't fire
-        // (AI didn't emit tags and keyword fallback didn't match) rather than
-        // the student truly attempting 0 problems. Omit to avoid false reports.
+        // rather than the student truly attempting 0 problems. Omit to avoid
+        // false reports. Under MIN_PROBLEMS_FOR_ACCURACY the count is given
+        // without a percentage: "100%" for one problem reads as a verdict.
+        const accuracyText = describeAccuracy(stats.correct, stats.attempted);
         const problemStatsSection = stats.attempted > 0
-            ? `- Problems attempted: ${stats.attempted}\n- Problems correct: ${stats.correct} (${accuracy}% accuracy)`
+            ? `- Problems: ${accuracyText}`
             : '- Problem statistics were not tracked for this session';
 
-        // Regular session summary for non-assessment sessions
-        const summaryPrompt = `Summarize this math tutoring session in 2-3 sentences for a teacher. Focus on:
+        // Read by parents as well as teachers, so neutral and third person.
+        // The model is handed a transcript the TUTOR wrote in the first
+        // person; without the explicit rule it summarised as the tutor
+        // ("the student and I worked on…").
+        const summaryPrompt = `Summarize this math tutoring session in 2-3 sentences for the student's parent or teacher. Focus on:
 - Main topic covered
-${stats.attempted > 0 ? '- Number of problems attempted and success rate' : '- What the student worked on and discussed'}
+${stats.attempted > 0 ? '- How the student did on the problems they attempted' : '- What the student worked on and discussed'}
 - Any concepts the student mastered or struggled with
 
 Session details:
 - Student: [Student]
 - Topic: ${topic}
 ${problemStatsSection}
-- Duration: ${conversation.activeMinutes} minutes
+${minutes > 0 ? `- Duration: ${minutes} minute${minutes === 1 ? '' : 's'}` : ''}
 ${conversation.strugglingWith ? `- Struggled with: ${conversation.strugglingWith}` : ''}
 
 Recent conversation (last 15 messages):
-${messages.slice(-15).map(m => `${m.role}: ${m.content}`).join('\n')}
+${transcriptLines(messages.slice(-15))}
 
-${stats.attempted === 0 ? 'IMPORTANT: Do NOT mention "0 problems attempted" or "0% accuracy" in the summary. Problem tracking data is unavailable for this session. Focus on topics discussed and learning activities instead.' : ''}
-Generate a concise teacher summary:`;
+WRITING RULES:
+- Write in third person about the student. Never write as the tutor (no I, we, our, us, me).
+- Refer to the student by the placeholder exactly as given: [Student]. Do not write "the student".
+- Write math in plain text a parent can read (5x - 7 = 13, 3/4, x^2), not LaTeX.
+${stats.attempted === 0 ? '- Do NOT mention "0 problems attempted" or "0% accuracy". Problem tracking data is unavailable for this session. Focus on topics discussed and learning activities instead.' : ''}
+${stats.attempted > 0 && stats.attempted < MIN_PROBLEMS_FOR_ACCURACY ? `- Only ${stats.attempted} problem${stats.attempted === 1 ? ' was' : 's were'} attempted: give the count, never a percentage, and do not call the result "perfect".` : ''}
+Summary:`;
+
+        const fallbackSummary = [
+            `${firstName || 'The student'} worked on ${topic}${minutes > 0 ? ` for ${minutes} minute${minutes === 1 ? '' : 's'}` : ''}.`,
+            stats.attempted > 0 ? `They ${accuracyText}.` : ''
+        ].filter(Boolean).join(' ');
 
         const response = await callLLM('gpt-4o-mini', [
-            { role: 'system', content: 'You are creating session summaries for teachers to review student progress.' },
+            { role: 'system', content: 'You write short, factual, third-person summaries of math tutoring sessions for a student\'s parent or teacher.' },
             { role: 'user', content: summaryPrompt }
         ], {
             temperature: 0.3,
             max_tokens: 150,
-            anonContext: contextForStudentName(studentName)
+            anonContext
         });
 
-        const fallbackSummary = stats.attempted > 0
-            ? `${studentName} worked on ${topic} for ${conversation.activeMinutes} minutes. Attempted ${stats.attempted} problems with ${stats.correct} correct (${accuracy}% accuracy).`
-            : `${studentName} worked on ${topic} for ${conversation.activeMinutes} minutes.`;
-
-        return response.choices[0]?.message?.content?.trim() || fallbackSummary;
+        // callLLM rehydrates [Student] when outbound PII stripping is on;
+        // doing it here too keeps the name right when it is switched off.
+        const raw = anonContext.rehydrate(response.choices[0]?.message?.content?.trim() || '');
+        return sanitizeSummary(raw, { name: firstName, fallback: fallbackSummary });
     } catch (error) {
         console.error('Error generating session summary:', error);
-        const m = conversation.activeMinutes;
+        const m = Number(conversation && conversation.activeMinutes) || 0;
         return `Session completed - ${m} minute${m === 1 ? '' : 's'} of active learning`;
     }
 }
@@ -379,5 +424,7 @@ module.exports = {
     detectTopic,
     calculateProblemStats,
     generateSessionSummary,
-    generateStudentRecap
+    generateStudentRecap,
+    transcriptLines,
+    messageText
 };

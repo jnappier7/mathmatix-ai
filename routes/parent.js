@@ -14,6 +14,8 @@ const { cleanupStaleSessions } = require('../services/sessionService');
 const ScreenerSession = require('../models/screenerSession');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
+const { shapeRecentSessions } = require('../utils/parentSessionList');
+const { normalizeParentLanguage } = require('../utils/parentConferencePrompt');
 
 const { userHasRole, anyRole } = require('../utils/roleQuery');
 const { skillPictureFor } = require('../utils/parentSkillPicture');
@@ -233,38 +235,23 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, logRecordAcces
         if (activeConversation) {
             completedFilter._id = { $ne: activeConversation._id };
         }
+        // Fetch a wider window than we list: empty sessions (no minutes, no
+        // real summary) are collapsed into a count rather than shown, so six
+        // rows would often leave the list half-empty.
         const completedSessions = await Conversation.find(completedFilter)
             .sort({ lastActivity: -1 })
-            .limit(6)  // Limit to 6 since active session might be added
-            .select('summary lastActivity activeMinutes startDate problemsAttempted problemsCorrect currentTopic');
+            .limit(20)
+            .select('summary lastActivity activeMinutes startDate problemsAttempted problemsCorrect currentTopic')
+            .lean();
 
-        // Build recent sessions array with active session at the top if it exists
-        let recentSessions = [];
-
-        // Add active session first (most recent) with a live summary
-        if (activeConversation && activeConversation.lastActivity) {
-            const activeSessionEntry = {
-                date: activeConversation.lastActivity || activeConversation.startDate,
-                summary: activeConversation.liveSummary ||
-                    `Currently working on ${activeConversation.currentTopic || 'mathematics'}. ` +
-                    (activeConversation.problemsAttempted > 0
-                        ? `${activeConversation.problemsAttempted} problems attempted with ${activeConversation.problemsCorrect || 0} correct.`
-                        : 'Session in progress.'),
-                duration: activeConversation.activeMinutes || 0,
-                isActive: true  // Flag to indicate this is a live session
-            };
-            recentSessions.push(activeSessionEntry);
-        }
-
-        // Add completed sessions
-        recentSessions = recentSessions.concat(completedSessions.map(session => ({
-            date: session.lastActivity || session.startDate,
-            summary: session.summary,
-            duration: session.activeMinutes,
-            problemsAttempted: session.problemsAttempted,
-            problemsCorrect: session.problemsCorrect,
-            isActive: false
-        })));
+        // Live session first, then completed ones — cleaned for a parent to
+        // read (plain math, no tutor first person). See utils/parentSessionList.js.
+        const { sessions: recentSessions, hiddenShortSessions } = shapeRecentSessions({
+            active: activeConversation,
+            completed: completedSessions,
+            firstName: child.firstName,
+            limit: 6
+        });
 
         // NEW: Build live stats object
         const liveStats = activeConversation ? {
@@ -373,6 +360,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, logRecordAcces
             // Live activity
             liveStats: liveStats,
             recentSessions: recentSessions, // Already formatted with active session first
+            hiddenShortSessions,
             iepPlan: child.iepPlan || null,
         };
 
@@ -453,7 +441,7 @@ router.get('/settings', isAuthenticated, isParent, async (req, res) => {
             reportFrequency: parent.reportFrequency || 'weekly',
             goalViewPreference: parent.goalViewPreference || 'progress',
             parentTone: parent.parentTone || '',
-            parentLanguage: parent.parentLanguage || 'English',
+            parentLanguage: normalizeParentLanguage(parent.parentLanguage),
             // Where progress reports go (shown on the Email Reports card).
             email: parent.email || ''
         });
@@ -481,7 +469,9 @@ router.put('/settings', isAuthenticated, isParent, async (req, res) => {
         if (reportFrequency) parent.reportFrequency = reportFrequency;
         if (goalViewPreference) parent.goalViewPreference = goalViewPreference;
         if (parentTone !== undefined) parent.parentTone = parentTone; // Allow empty string
-        if (parentLanguage) parent.parentLanguage = parentLanguage;
+        // Allowlisted: this value is read into the parent-chat system prompt,
+        // so an arbitrary string is an injection vector. Unknown → English.
+        if (parentLanguage) parent.parentLanguage = normalizeParentLanguage(parentLanguage);
 
         await parent.save();
 

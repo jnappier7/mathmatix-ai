@@ -14,7 +14,10 @@ const build = (userProfile) => buildCourseSystemPrompt({
 });
 
 test('a Spanish-speaking parent is answered in Spanish', () => {
-  expect(build({ parentLanguage: 'Spanish' })).toMatch(/Reply in Spanish, every message/);
+  const p = build({ parentLanguage: 'Spanish' });
+  expect(p).toMatch(/Reply in Spanish, every message/);
+  // fixed-English button text must not flip a Spanish-speaking parent to English
+  expect(p).toMatch(/even when the parent's message .* is in English/);
 });
 
 test('the child-side preferredLanguage does not set the guide language', () => {

@@ -839,8 +839,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Build growth sparkline
         const growthSparklineHTML = growthData ? buildGrowthSparkline(growthData) : '';
 
-        // Build sessions
-        const sessionsHTML = progress.recentSessions && progress.recentSessions.length > 0 ? progress.recentSessions
+        // Build sessions. The server has already cleaned each summary for a
+        // parent (plain-text math, no tutor first person — see
+        // utils/parentSessionList.js) and dropped empty sessions into
+        // hiddenShortSessions. Summaries are LLM output: escape, never trust.
+        const escapeSessionText = (v) => String(v == null ? '' : v)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        const sessionDurationLabel = (d) => {
+            const n = Number(d);
+            if (!Number.isFinite(n) || n <= 0) return '';
+            return n < 1 ? '<1 min' : `${Math.round(n)} min`;
+        };
+        const noSessionsHTML = '<p style="color: var(--color-text-muted); font-size: 0.85em;">No recent sessions with summaries.</p>';
+        const sessionRows = (progress.recentSessions || [])
             .filter(s => {
                 if (!s.date) return false;
                 if (!s.summary) return false;
@@ -857,13 +869,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const isLive = s.isActive;
                 const liveBadge = isLive ? '<span class="live-badge"><span class="live-badge-dot"></span> LIVE</span>' : '';
                 const entryClass = isLive ? 'session-entry live-session' : 'session-entry';
+                const dur = sessionDurationLabel(s.duration);
                 return `
                     <div class="${entryClass}">
-                        ${liveBadge}<strong>${dateStr}:</strong> ${s.summary} <em>(${s.duration ? s.duration.toFixed(0) : 'N/A'} min)</em>
+                        ${liveBadge}<strong>${escapeSessionText(dateStr)}:</strong> ${escapeSessionText(s.summary)}${dur ? ` <em>(${dur})</em>` : ''}
                     </div>
                 `;
-            }).join('') || '<p style="color: var(--color-text-muted); font-size: 0.85em;">No recent sessions with summaries.</p>'
-        : '<p style="color: var(--color-text-muted); font-size: 0.85em;">No recent sessions with summaries.</p>';
+            }).join('');
+        const hiddenShort = Number(progress.hiddenShortSessions) || 0;
+        const hiddenShortHTML = hiddenShort > 0
+            ? `<p class="session-entry-hidden" style="color: var(--color-text-muted); font-size: 0.85em; margin: 4px 0 0;">+${hiddenShort} short session${hiddenShort === 1 ? '' : 's'}</p>`
+            : '';
+        const sessionsHTML = sessionRows
+            ? sessionRows + hiddenShortHTML
+            : noSessionsHTML + hiddenShortHTML;
 
         const childAvatarHtml = window.AvatarFullBody
             ? `<div class="child-avatar-fb">${window.AvatarFullBody.html(progress, { size: 'sm', readOnly: true, emptyLabel: 'No character yet' })}</div>`
