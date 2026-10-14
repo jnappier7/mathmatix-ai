@@ -2448,6 +2448,16 @@ window.addEventListener('beforeunload', () => {
   function mountTable() {
     var list = document.getElementById('student-list');
     if (!list || document.getElementById('td-roster')) return;
+    var tools = document.querySelector('#students-tab .student-search-container');
+    if (tools && !document.getElementById('td-setgrades')) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.id = 'td-setgrades';
+      b.className = 'td-btn td-btn-quiet';
+      b.hidden = true;
+      b.setAttribute('data-td-do', 'set-grades');
+      tools.appendChild(b);
+    }
     var wrap = document.createElement('div');
     wrap.id = 'td-roster';
     wrap.className = 'td-roster';
@@ -2680,7 +2690,10 @@ window.addEventListener('beforeunload', () => {
       var sum = s.skillSummary || {};
       var focus = TM.strugglingSkills(s)[0];
       var iep = s.iepPlan && s.iepPlan.accommodations && Object.keys(s.iepPlan.accommodations).some(function (k) { return s.iepPlan.accommodations[k] === true; });
-      var sub = [s.gradeLevel ? 'Grade ' + esc(s.gradeLevel) : '', (cls[id] || []).map(esc).join(', ')].filter(Boolean).join(' · ');
+      var gradeBit = s.gradeLevel
+        ? 'Grade ' + esc(s.gradeLevel)
+        : '<button type="button" class="td-addgrade" data-td-grade="' + esc(id) + '" aria-label="Add grade for ' + esc(name) + '">+ Add grade</button>';
+      var sub = [gradeBit, (cls[id] || []).map(esc).join(', ')].filter(Boolean).join(' · ');
       return '<tr data-id="' + esc(id) + '" tabindex="0" aria-label="' + esc(name) + ', ' + STATUS_LABEL[status] + '">' +
         '<td class="td-c-name">' + avatar(id, name) + '<div><span class="td-row-name">' + esc(name) + '</span>' + (iep ? ' <span class="td-iep" title="Has IEP accommodations">IEP</span>' : '') +
           (sub ? '<div class="td-muted">' + sub + '</div>' : '') + '</div></td>' +
@@ -2694,6 +2707,78 @@ window.addEventListener('beforeunload', () => {
     }).join('');
     wrap.innerHTML = '<div class="td-table-meta">' + plural(rows.length, 'student') + (state.rendered.total !== rows.length ? ' of ' + state.rendered.total : '') + '</div>' +
       '<div class="td-table-scroll"><table class="td-table"><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table></div>';
+  }
+
+  // ---- school grade: inline + bulk ----------------------------------------
+  var GRADES = ['K', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', 'College'];
+  function gradeOptions(selected) {
+    return GRADES.map(function (g) { return '<option value="' + g + '"' + (g === selected ? ' selected' : '') + '>' + (g === 'K' || g === 'College' ? g : 'Grade ' + g) + '</option>'; }).join('');
+  }
+  function saveGrades(ids, grade) {
+    var f = window.csrfFetch || fetch;
+    return f('/api/teacher/roster/grade', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ studentIds: ids, gradeLevel: grade }) })
+      .then(function (r) { return r.json().then(function (b) { if (!r.ok) throw new Error(b.message || 'Failed'); return b; }); })
+      .then(function (b) {
+        var set = new Set(ids.map(String));
+        ((D().students && D().students()) || []).forEach(function (st) { if (set.has(String(st._id))) st.gradeLevel = grade; });
+        renderTable();
+        updateGradeButton();
+        if (D().toast) D().toast('Grade saved for ' + b.updated + ' student' + (b.updated === 1 ? '' : 's'), 'success');
+      });
+  }
+  function inlineGrade(btn) {
+    var id = btn.getAttribute('data-td-grade');
+    var sel = document.createElement('select');
+    sel.className = 'td-gradesel';
+    sel.setAttribute('aria-label', 'Grade');
+    sel.innerHTML = '<option value="">Pick a grade…</option>' + gradeOptions('');
+    btn.replaceWith(sel);
+    sel.focus();
+    sel.addEventListener('click', function (e) { e.stopPropagation(); });
+    sel.addEventListener('change', function () { if (sel.value) saveGrades([id], sel.value).catch(function (err) { if (D().toast) D().toast(err.message, 'error'); }); });
+    sel.addEventListener('blur', function () { if (!sel.value) renderTable(); });
+  }
+  function missingGrade() {
+    return ((D().students && D().students()) || []).filter(function (st) { return !st.gradeLevel; });
+  }
+  function updateGradeButton() {
+    var b = document.getElementById('td-setgrades');
+    if (!b) return;
+    var n = missingGrade().length;
+    b.hidden = n === 0;
+    b.innerHTML = '<i class="fas fa-graduation-cap" aria-hidden="true"></i> Set grades (' + n + ' missing)';
+  }
+  function openGradeDialog() {
+    var list = missingGrade().sort(function (a, b) { return TM.fullName(a).localeCompare(TM.fullName(b)); });
+    if (!list.length) return;
+    var w = document.createElement('div');
+    w.id = 'td-grade-dialog';
+    w.className = 'td-overlay';
+    w.innerHTML = '<div class="td-dialog" role="dialog" aria-modal="true" aria-labelledby="td-grade-h">' +
+      '<h3 id="td-grade-h">Set school grades</h3>' +
+      '<p class="td-muted">' + list.length + ' student' + (list.length === 1 ? ' has' : 's have') + ' no grade on file. It sets reading level and IEP templates — the tutor still meets them at their own math level.</p>' +
+      '<label class="td-dlabel">Grade <select id="td-grade-pick">' + gradeOptions('9') + '</select></label>' +
+      '<label class="td-dcheck"><input type="checkbox" id="td-grade-all" checked> Select all</label>' +
+      '<ul class="td-dlist">' + list.map(function (st) {
+        return '<li><label><input type="checkbox" class="td-grade-cb" value="' + esc(st._id) + '" checked> ' + esc(TM.fullName(st)) + '</label></li>';
+      }).join('') + '</ul>' +
+      '<div class="td-dactions"><button type="button" class="td-btn td-btn-quiet" data-td-gclose>Cancel</button><button type="button" class="td-btn td-btn-primary" data-td-gsave>Save grades</button></div></div>';
+    document.body.appendChild(w);
+    w.querySelector('#td-grade-pick').focus();
+    w.querySelector('#td-grade-all').addEventListener('change', function (e) {
+      w.querySelectorAll('.td-grade-cb').forEach(function (c) { c.checked = e.target.checked; });
+    });
+    w.addEventListener('click', function (e) {
+      if (e.target === w || e.target.closest('[data-td-gclose]')) return w.remove();
+      var save = e.target.closest('[data-td-gsave]');
+      if (!save) return;
+      var ids = Array.prototype.map.call(w.querySelectorAll('.td-grade-cb:checked'), function (c) { return c.value; });
+      if (!ids.length) return;
+      save.disabled = true;
+      saveGrades(ids, w.querySelector('#td-grade-pick').value).then(function () { w.remove(); })
+        .catch(function (err) { save.disabled = false; if (D().toast) D().toast(err.message, 'error'); });
+    });
+    w.addEventListener('keydown', function (e) { if (e.key === 'Escape') w.remove(); });
   }
 
   // ⋯ menu for a row: frequent first, risky last and separated.
@@ -2751,6 +2836,7 @@ window.addEventListener('beforeunload', () => {
         return renderQueue();
       }
       case 'plan': return planMiniLesson(Number(el.getAttribute('data-i')));
+      case 'set-grades': return openGradeDialog();
     }
   }
 
@@ -2777,6 +2863,8 @@ window.addEventListener('beforeunload', () => {
       state.sort = { key: key, dir: state.sort.key === key ? -state.sort.dir : 1 };
       return renderTable();
     }
+    var gradeBtn = e.target.closest('[data-td-grade]');
+    if (gradeBtn) { e.stopPropagation(); return inlineGrade(gradeBtn); }
     var menuBtn = e.target.closest('[data-td-menu]');
     if (menuBtn) { e.stopPropagation(); return openRowMenu(menuBtn); }
     var doBtn = e.target.closest('[data-td-do]');
@@ -2862,6 +2950,7 @@ window.addEventListener('beforeunload', () => {
   function onRoster(e) {
     state.students = (e.detail && e.detail.students) || [];
     renderToday();
+    updateGradeButton();
     var badge = document.getElementById('td-mobile-badge');
     if (badge) { var n = TM.buildActionQueue(state.students, state.live, Date.now(), snoozed()).length; badge.textContent = String(n); badge.hidden = !n; }
   }
@@ -6514,10 +6603,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <div class="skill-gap-bar-not-started" style="width: ${notStartedPct}%"></div>
                     </div>
                     <div class="skill-gap-meta">
-                        <span><strong>${gap.mastered}</strong> mastered</span>
-                        <span><strong>${gap.learning}</strong> learning</span>
-                        <span><strong>${gap.notMasteredCount}</strong> not mastered</span>
-                        ${gap.avgMasteryScore > 0 ? `<span>Avg: <strong>${gap.avgMasteryScore}%</strong></span>` : ''}
+                        ${gap.totalStudents === 1
+                            ? '<span>Only 1 student has worked on this so far</span>'
+                            : `<span><strong>${gap.totalStudents}</strong> students worked on it</span>
+                        ${gap.struggling ? `<span class="skill-gap-stuck"><strong>${gap.struggling}</strong> stuck</span>` : ''}
+                        <span><strong>${gap.learning}</strong> still learning</span>
+                        <span><strong>${gap.mastered}</strong> mastered</span>`}
                     </div>
                 </div>
             `;
@@ -8399,24 +8490,48 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const aiSettingsBtn = document.getElementById('qa-ai-settings');
     let currentSettings = null;
+    // Which settings the modal is editing: null = my defaults (all classes),
+    // or a class id (stores only what differs — routes/teacher.js).
+    let editingClassId = null;
+    let editingMeta = { hasOverride: false, className: '' };
 
     // Open AI Settings modal
     if (aiSettingsBtn) {
         aiSettingsBtn.addEventListener('click', openAISettingsModal);
     }
 
-    async function openAISettingsModal() {
-        // Fetch current settings
+    async function openAISettingsModal(arg) {
+        editingClassId = typeof arg === 'string' && arg ? arg : null;
+        // Fetch current settings (this class's effective settings, or my defaults)
+        let classes = [];
         try {
-            const response = await fetch('/api/teacher/class-ai-settings', {
-                credentials: 'include'
-            });
+            const [response, classRes] = await Promise.all([
+                fetch('/api/teacher/class-ai-settings' + (editingClassId ? '?classId=' + encodeURIComponent(editingClassId) : ''), { credentials: 'include' }),
+                fetch('/api/teacher/classes', { credentials: 'include' }),
+            ]);
             const data = await response.json();
             currentSettings = data.settings || {};
+            editingMeta = { hasOverride: !!data.hasOverride, className: data.className || '' };
+            const cbody = classRes.ok ? await classRes.json() : {};
+            const thisYear = window.TeacherSchoolYear && window.TeacherSchoolYear.currentYear();
+            classes = (cbody.classes || []).filter(c => !thisYear || !c.schoolYear || c.schoolYear === thisYear);
         } catch (error) {
             console.error('Error fetching AI settings:', error);
             currentSettings = {};
         }
+        const escAttr = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const scopeHtml = classes.length ? `
+                <div class="ai-scope">
+                    <label for="ai-settings-scope"><strong>Settings for</strong></label>
+                    <select id="ai-settings-scope">
+                        <option value="">All my classes (my defaults)</option>
+                        ${classes.map(c => `<option value="${escAttr(c._id)}" ${String(c._id) === editingClassId ? 'selected' : ''}>${escAttr(c.className)}${c.period ? ' · ' + escAttr(c.period) : ''}</option>`).join('')}
+                    </select>
+                    <span class="ai-scope-note">${editingClassId
+                        ? (editingMeta.hasOverride ? 'This class has its own settings. Anything you leave as-is still follows your defaults.' : 'This class follows your defaults. Change anything below to give it its own.')
+                        : 'Every class uses these unless you set something different for it.'}</span>
+                    ${editingClassId && editingMeta.hasOverride ? '<button type="button" class="btn btn-link" id="ai-reset-class">Reset this class to my defaults</button>' : ''}
+                </div>` : '';
 
         // Create modal
         const modal = document.createElement('div');
@@ -8426,7 +8541,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="modal-content">
                 <span class="modal-close-button" id="close-ai-settings">&times;</span>
                 <h2><i class="fas fa-robot" style="color: #27ae60;"></i> Class AI Settings</h2>
-                <p style="color: #666; margin-bottom: 24px;">Configure how the AI tutor interacts with your students. These settings apply to all students in your class.</p>
+                <p style="color: #666; margin-bottom: 16px;">Configure how the AI tutor works with your students.</p>
+                ${scopeHtml}
 
                 <!-- Calculator Access -->
                 <div class="ai-settings-section">
@@ -8638,6 +8754,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.body.appendChild(modal);
 
+        // Switching scope reloads the modal for that class (or my defaults).
+        const scopeSel = modal.querySelector('#ai-settings-scope');
+        if (scopeSel) scopeSel.addEventListener('change', () => { modal.remove(); openAISettingsModal(scopeSel.value || null); });
+        const resetBtn = modal.querySelector('#ai-reset-class');
+        if (resetBtn) resetBtn.addEventListener('click', async () => {
+            const res = await csrfFetch('/api/teacher/class-ai-settings/class/' + encodeURIComponent(editingClassId), { method: 'DELETE' });
+            const body = await res.json().catch(() => ({}));
+            if (typeof showToast === 'function') showToast(body.message || 'Reset', res.ok ? 'success' : 'error');
+            modal.remove();
+            openAISettingsModal(editingClassId);
+        });
+
         // Pre-select current dashboard language from the user record
         fetch('/user', { credentials: 'include' })
             .then(r => r.ok ? r.json() : null)
@@ -8735,7 +8863,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await csrfFetch('/api/teacher/class-ai-settings', {
+            const response = await csrfFetch('/api/teacher/class-ai-settings' + (editingClassId ? '?classId=' + encodeURIComponent(editingClassId) : ''), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(settings)
@@ -8764,7 +8892,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (typeof showToast === 'function') {
-                    showToast('AI Settings saved successfully!', 'success');
+                    showToast(editingClassId ? (result.message || 'Saved for this class') : 'AI Settings saved successfully!', 'success');
                 } else {
                     alert('Settings saved successfully!');
                 }

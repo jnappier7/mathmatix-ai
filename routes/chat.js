@@ -1,6 +1,7 @@
 // routes/chat.js
 
 const { practiceTestKeyForCourse } = require('../utils/practiceTests');
+const { getEffectiveAISettings } = require('../utils/effectiveAISettings');
 const { shouldCountTutoringTime } = require('../utils/tutoringTimeEligibility');
 const express = require('express');
 const router = express.Router();
@@ -793,9 +794,11 @@ async function runStudentTurn(req, res) {
             contextPromises.push(
                 scopePromise.then(scope => {
                     if (!scope.primaryTeacherId) return null;
-                    return contextCache.getOrFetch('teacherSettings', scope.primaryTeacherId.toString(), async () => {
-                        const teacher = await User.findById(scope.primaryTeacherId).select('classAISettings').lean();
-                        return teacher?.classAISettings || null;
+                    // Teacher defaults + this student's class override (utils/effectiveAISettings).
+                    const key = `${scope.primaryTeacherId}:${scope.primaryClassId || '-'}`;
+                    return contextCache.getOrFetch('teacherSettings', key, async () => {
+                        const eff = await getEffectiveAISettings(user, { scope });
+                        return eff.settings || null;
                     });
                 }).catch(err => { logger.error('Error fetching teacher settings', { error: err.message }); return null; })
             );

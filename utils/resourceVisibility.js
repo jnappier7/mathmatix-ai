@@ -73,10 +73,14 @@ async function getStudentScope(user) {
         teacherIds.push(id);
     }
 
+    const primaryTeacherId = pickPrimaryTeacher(user, codes);
     return {
         teacherIds,
         classIds,
-        primaryTeacherId: pickPrimaryTeacher(user, codes)
+        primaryTeacherId,
+        // The primary teacher's class this student joined most recently —
+        // whose per-class AI settings override apply (utils/effectiveAISettings).
+        primaryClassId: pickPrimaryClass(user, codes, primaryTeacherId)
     };
 }
 
@@ -127,6 +131,20 @@ function pickPrimaryTeacher(user, codes) {
     }
 
     return newest || user.teacherId || null;
+}
+
+/** The primary teacher's most recently joined class for this student, or null. */
+function pickPrimaryClass(user, codes, teacherId) {
+    if (!teacherId) return null;
+    let best = null;
+    let bestAt = -Infinity;
+    for (const code of codes || []) {
+        if (String(code.teacherId) !== String(teacherId)) continue;
+        const entry = (code.enrolledStudents || []).find(e => e.studentId && String(e.studentId) === String(user._id));
+        const at = entry && entry.enrolledAt ? new Date(entry.enrolledAt).getTime() : 0;
+        if (at > bestAt) { bestAt = at; best = code._id; }
+    }
+    return best;
 }
 
 /**
@@ -226,5 +244,6 @@ module.exports = {
     getStudentClassIds,
     resourceVisibleToStudent,
     pickPrimaryTeacher,
+    pickPrimaryClass,
     teacherResourceFileAccess,
 };

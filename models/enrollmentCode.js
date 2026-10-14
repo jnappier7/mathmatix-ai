@@ -53,6 +53,14 @@ const enrollmentCodeSchema = new Schema({
     index: true
   },
 
+  // Per-class AI settings: ONLY the keys this class overrides (same shape as
+  // user.classAISettings). Everything absent falls through to the teacher's
+  // defaults — utils/effectiveAISettings.js is the one merge.
+  aiSettings: {
+    type: Schema.Types.Mixed,
+    default: undefined
+  },
+
   // Period / section label within the year ("P3", "Block A")
   period: {
     type: String,
