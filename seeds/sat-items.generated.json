@@ -2544,7 +2544,7 @@
   },
   {
     "problemId": "sat-math-w3q20",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "A commuter's bike-share membership costs $12 per month and includes 8 free rides; each ride after the first 8 costs $0.75. The commuter budgets at most $27 for bike-share in a month. What is the greatest number of rides the commuter can take that month without exceeding the budget?",
     "svg": null,
     "difficulty": 4,
@@ -2555,7 +2555,7 @@
       "algebra",
       "week3",
       "spr",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "6c5c42ce4cb80f67652173a7cfd972c040c4ef5474266c3918b672243f1f6cc3",
@@ -3245,7 +3245,7 @@
   },
   {
     "problemId": "sat-math-w4q16",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "A community group is building a skate ramp. Renting a workshop space costs a flat fee of $40 plus $15 per hour. The group can spend at most $250 on the rental. What is the greatest whole number of hours the group can rent the workshop?",
     "svg": null,
     "difficulty": 3,
@@ -3256,7 +3256,7 @@
       "algebra",
       "week4",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "7640b6e9256002a10af46fd95b5507256d5f38085bd17f19e120d2d1e37ceed7",
@@ -6090,7 +6090,7 @@
   },
   {
     "problemId": "sat-math-p1q23",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "Which of the following values of x satisfies the inequality 4x − 7 > 21?",
     "svg": null,
     "difficulty": 2,
@@ -6101,7 +6101,7 @@
       "algebra",
       "bank-p1",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "68d08de38aa476dd2b6a56d99dffd97ced326a9261fcd745f0311113aec1d241",
@@ -6134,7 +6134,7 @@
   },
   {
     "problemId": "sat-math-p1q24",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "A delivery van can safely carry at most 1,800 pounds. The driver weighs 180 pounds, and each box loaded into the van weighs 45 pounds. What is the greatest number of boxes the van can carry with the driver on board?",
     "svg": null,
     "difficulty": 3,
@@ -6145,7 +6145,7 @@
       "algebra",
       "bank-p1",
       "spr",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "41d1fddb5d2da4d2f771dc085e318c01427a1332b822be38bc6533a64efd2f8b",
@@ -6203,7 +6203,7 @@
   },
   {
     "problemId": "sat-math-p1q26",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "A caterer charges a $250 booking fee plus $32 per guest. A family wants to invite at least 40 guests and spend no more than $2,000. Which inequality gives all possible numbers of guests g?",
     "svg": null,
     "difficulty": 4,
@@ -6214,7 +6214,7 @@
       "algebra",
       "bank-p1",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "e61957794ce9896a561eab24bf17b021705967ba8c9d650c1fe8cdd21ddbd6d9",
@@ -6247,7 +6247,7 @@
   },
   {
     "problemId": "sat-math-p1q27",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "How many integers x satisfy −3 ≤ 2x − 5 < 9 ?",
     "svg": null,
     "difficulty": 4,
@@ -6258,7 +6258,7 @@
       "algebra",
       "bank-p1",
       "spr",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "d2efc9b055f0b225ea1ecbcf72c5497ddd6b4fde20fa3590c823c1526714b474",
@@ -9802,7 +9802,7 @@
   },
   {
     "problemId": "sat-math-p2q28",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "Which of the following is a solution to the inequality −2x + 5 ≥ 13?",
     "svg": null,
     "difficulty": 2,
@@ -9813,7 +9813,7 @@
       "algebra",
       "bank-p2",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "0c732661984e2ee606712482c22af435a5563053ee2ba2b774a7d3dbba951937",
@@ -9846,7 +9846,7 @@
   },
   {
     "problemId": "sat-math-p2q29",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "Ana has $50 in savings and adds $15 each week. Which inequality gives the numbers of weeks w after which she will have at least $200?",
     "svg": null,
     "difficulty": 3,
@@ -9857,7 +9857,7 @@
       "algebra",
       "bank-p2",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "29e690ab0add644f1f9c92901cc898e9ad053cc3e3abc715b6b1c5319af8a4b1",
@@ -9890,7 +9890,7 @@
   },
   {
     "problemId": "sat-math-p2q30",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "An online ticket order has a $6 service fee plus $4.50 per ticket. What is the greatest number of tickets that can be ordered for a total of at most $60?",
     "svg": null,
     "difficulty": 3,
@@ -9901,7 +9901,7 @@
       "algebra",
       "bank-p2",
       "spr",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "ecb52f139bd79febc297c1d397913083c90eafd915d3ba9deec41657e5336bb2",
@@ -13443,7 +13443,7 @@
   },
   {
     "problemId": "sat-math-p3q29",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "Which of the following is equivalent to 6 − 3x ≤ 18?",
     "svg": null,
     "difficulty": 2,
@@ -13454,7 +13454,7 @@
       "algebra",
       "bank-p3",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "fcd8ba097bb968ff6b9a80c62e35bb4f4306e87119c824cec9adb99af63554be",
@@ -13487,7 +13487,7 @@
   },
   {
     "problemId": "sat-math-p3q30",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "A rideshare driver earns $1.40 per mile plus $3 per trip. On one trip, what is the least whole number of miles the driver must cover to earn more than $25?",
     "svg": null,
     "difficulty": 3,
@@ -13498,7 +13498,7 @@
       "algebra",
       "bank-p3",
       "spr",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "3c96271651e470c4e62087002419e359362f4456fb24442cda740f3e221e8dd7",
@@ -13600,7 +13600,7 @@
   },
   {
     "problemId": "sat-math-p3q33",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "What is the greatest integer x that satisfies 3(x − 2) − 4 < x + 5 ?",
     "svg": null,
     "difficulty": 4,
@@ -13611,7 +13611,7 @@
       "algebra",
       "bank-p3",
       "spr",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "5233d4e591043f7da13b70bc0d9b8337a6fe60a7d450b8509e66eaf2d1841c6b",
@@ -13625,7 +13625,7 @@
   },
   {
     "problemId": "sat-math-p3q34",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "A library charges a late fee of $0.25 per day for a book, up to a maximum fee of $10. For how many days late d is the fee less than the maximum?",
     "svg": null,
     "difficulty": 3,
@@ -13636,7 +13636,7 @@
       "algebra",
       "bank-p3",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "91e6f16198a007fbdb7f1f0a5567767dbb9e2abfd8565abf0437705a2f559d71",
@@ -16950,7 +16950,7 @@
   },
   {
     "problemId": "sat-math-p4q27",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "Which of the following describes all solutions to x/3 + 2 < 5 ?",
     "svg": null,
     "difficulty": 2,
@@ -16961,7 +16961,7 @@
       "algebra",
       "bank-p4",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "2122cb73a38a73c332777ef27a5b716b8ea8526a61417ae6e787b8616a322151",
@@ -16994,7 +16994,7 @@
   },
   {
     "problemId": "sat-math-p4q28",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "An elevator can carry at most 1,100 kilograms. Its operator weighs 80 kilograms, and each box to be loaded weighs 34 kilograms. What is the greatest number of boxes the elevator can carry with the operator aboard?",
     "svg": null,
     "difficulty": 3,
@@ -17005,7 +17005,7 @@
       "algebra",
       "bank-p4",
       "spr",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "bbd6b5bbd9af094beef32dfbc7fcc5969436cddabdff37e0df38ff36e88b9ddb",
@@ -17063,7 +17063,7 @@
   },
   {
     "problemId": "sat-math-p4q30",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "How many integers x satisfy −5 < 2x + 1 ≤ 9 ?",
     "svg": null,
     "difficulty": 4,
@@ -17074,7 +17074,7 @@
       "algebra",
       "bank-p4",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "cc3973cbc3e9c78245cf8e1f6dd30f65fa413fde13523a2a310293dd083a3088",
@@ -19831,7 +19831,7 @@
   },
   {
     "problemId": "sat-math-p5q7",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "Which of the following values of x satisfies the inequality 3x − 5 > 10?",
     "svg": null,
     "difficulty": 2,
@@ -19842,7 +19842,7 @@
       "algebra",
       "bank-p5",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "1939c0e02292a9b1995b358d63adf40c4bcebc7bb90916d96a571321edeea5f1",
@@ -20241,7 +20241,7 @@
   },
   {
     "problemId": "sat-math-p5q18",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "Dana has $50 saved and adds $15 to her savings each week. What is the minimum number of whole weeks she must save to have at least $200 for a bike?",
     "svg": null,
     "difficulty": 3,
@@ -20252,7 +20252,7 @@
       "algebra",
       "bank-p5",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "717115d977f01a6bf770627e682a1a919a81f690e761a720719eefef05cfaffb",
@@ -23262,7 +23262,7 @@
   },
   {
     "problemId": "sat-math-p6q6",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "Which of the following values of x is NOT a solution to the inequality 2x + 1 ≤ 11?",
     "svg": null,
     "difficulty": 2,
@@ -23273,7 +23273,7 @@
       "algebra",
       "bank-p6",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "74d90c76428c00c8dc3a01860f975833a1067f2c90c3e3f944d29c6c1f667b8a",
@@ -23666,7 +23666,7 @@
   },
   {
     "problemId": "sat-math-p6q16",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "A delivery truck can carry at most 2,000 pounds. The driver weighs 180 pounds, and each box weighs 45 pounds. What is the greatest number of boxes the truck can carry on a trip with the driver?",
     "svg": null,
     "difficulty": 3,
@@ -23677,7 +23677,7 @@
       "algebra",
       "bank-p6",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "4a56a0fc0079f6610033d96c13ed2e7053649c92e942e3bd6e45c07a8f39fd4c",
@@ -24031,7 +24031,7 @@
   },
   {
     "problemId": "sat-math-p6q26",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "If 4 < 2x − 6 < 10, which of the following could be the value of x?",
     "svg": null,
     "difficulty": 4,
@@ -24042,7 +24042,7 @@
       "algebra",
       "bank-p6",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "139df0e19ce738c43f63ca7a64dcc787ab4456a8c992c1a730e0eb60c18d31d0",
@@ -24257,7 +24257,7 @@
   },
   {
     "problemId": "sat-math-p6q32",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "The line y = 2x + b passes through the point (3, 1). For which values of x is y greater than 7?",
     "svg": null,
     "difficulty": 4,
@@ -24268,7 +24268,7 @@
       "algebra",
       "bank-p6",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "00419c8e75a4b456bf508f2efe5a248faa39211f01a442c0feace5ae6670ef29",
@@ -26718,7 +26718,7 @@
   },
   {
     "problemId": "sat-math-p7q6",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "A tour runs only if at least 18 people sign up. Which inequality represents the numbers of people p for which the tour runs?",
     "svg": null,
     "difficulty": 2,
@@ -26729,7 +26729,7 @@
       "algebra",
       "bank-p7",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "e8e13be7064ddb6eeede0ca9d1302f3aa4f579723dc14d265984ef131d5ae9b3",
@@ -27103,7 +27103,7 @@
   },
   {
     "problemId": "sat-math-p7q16",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "A student’s scores on three tests are 80, 88, and 84. What is the minimum score the student needs on a fourth test to have a mean score of at least 85 on all four tests?",
     "svg": null,
     "difficulty": 3,
@@ -27114,7 +27114,7 @@
       "algebra",
       "bank-p7",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "09cc1399dc673411e8cd954ee66418249337667c577c03ca5a1d03e8fc57f494",
@@ -27531,7 +27531,7 @@
   },
   {
     "problemId": "sat-math-p7q27",
-    "skillId": "ALG1.FNC.5",
+    "skillId": "ALG1.EQV.3",
     "prompt": "3x − 7 < 2x + 5 < 4x − 1\nWhich of the following values of x satisfies both inequalities above?",
     "svg": null,
     "difficulty": 4,
@@ -27542,7 +27542,7 @@
       "algebra",
       "bank-p7",
       "mc",
-      "subskill:Linear inequalities in one or two variables"
+      "subskill:Linear inequalities in one variable"
     ],
     "source": "sat-fable",
     "contentHash": "a1236597c872b90150aa274ec8ad2bef445b17d965eddf498e0e43668de78445",

@@ -31,6 +31,7 @@
   "skillsByCategory": {
     "algebra": [
       "ALG1.EQV.1",
+      "ALG1.EQV.2",
       "ALG1.EQV.3",
       "ALG1.EQV.7",
       "ALG1.FNC.1",
@@ -40,13 +41,16 @@
     "advanced-math": [
       "ALG1.EQV.10",
       "ALG1.EQV.15",
+      "ALG1.EQV.5",
       "ALG1.FNC.10",
+      "ALG1.FNC.11",
       "ALG1.FNC.8",
       "ALG2.EQV.12",
       "ALG2.EQV.13",
       "ALG2.EQV.15",
       "ALG2.EQV.16",
       "ALG2.EQV.6",
+      "ALG2.FNC.2",
       "ALG2.FNC.6",
       "MS.QNT.9"
     ],
@@ -54,6 +58,7 @@
       "ALG1.DTA.1",
       "ALG1.DTA.2",
       "ALG1.DTA.3",
+      "ALG1.DTA.4",
       "ALG2.DTA.1",
       "ALG2.DTA.3",
       "MS.PRP.5",
@@ -169,5 +174,6 @@
     "min": 160,
     "max": 760,
     "round": 10
-  }
+  },
+  "_skillsByCategoryComment": "Every unified skill the SAT bank files an item under, by domain. A form draws slot by slot from these lists, so a skill missing here makes its items unreachable: absolute value, composition, transformations, literal equations and residuals (41 items) were off every form until 2026-10-14. Pinned by tests/unit/satItems.test.js (every bank skill is listed)."
 }

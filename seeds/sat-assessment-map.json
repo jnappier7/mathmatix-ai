@@ -595,8 +595,8 @@
         "problemId": "sat-math-w3q20",
         "n": 20,
         "domain": "ALG",
-        "skill": "Linear inequalities in one or two variables",
-        "skillId": "ALG1.FNC.5",
+        "skill": "Linear inequalities in one variable",
+        "skillId": "ALG1.EQV.3",
         "type": "spr",
         "difficulty": "H"
       },
@@ -766,8 +766,8 @@
         "problemId": "sat-math-w4q16",
         "n": 16,
         "domain": "ALG",
-        "skill": "Linear inequalities in one or two variables",
-        "skillId": "ALG1.FNC.5",
+        "skill": "Linear inequalities in one variable",
+        "skillId": "ALG1.EQV.3",
         "type": "mc",
         "difficulty": "M"
       },

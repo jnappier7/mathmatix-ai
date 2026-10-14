@@ -366,7 +366,7 @@
   {
    "n": 16,
    "domain": "ALG",
-   "skill": "Linear inequalities in one or two variables",
+   "skill": "Linear inequalities in one variable",
    "difficulty": "M",
    "type": "mc",
    "stem": "A community group is building a skate ramp. Renting a workshop space costs a flat fee of $40 plus $15 per hour. The group can spend at most $250 on the rental. What is the greatest whole number of hours the group can rent the workshop?",

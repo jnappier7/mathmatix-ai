@@ -5,6 +5,9 @@ L2 = 'Linear equations in two variables'
 LF = 'Linear functions'
 SY = 'Systems of two linear equations'
 IN = 'Linear inequalities in one or two variables'
+# A one-variable inequality: the 'one or two variables' label above maps to
+# two-variable inequalities (ALG1.FNC.5) in scripts/satSkillMap.py.
+IN1 = 'Linear inequalities in one variable'
 
 X = "x = sp.Symbol('x')\n"
 
@@ -159,14 +162,14 @@ def add(b):
          "a, bb = sp.symbols('a bb')\nans = sp.solve([a + bb - 50, sp.Rational(1, 10)*a + sp.Rational(3, 10)*bb - sp.Rational(16, 100)*50], [a, bb])[bb]\n")
 
     # ── Linear inequalities ───────────────────────────────────────────
-    b.mc('ALG', IN, 'E',
+    b.mc('ALG', IN1, 'E',
          'Which of the following values of x satisfies the inequality 4x − 7 > 21?',
          '8', ['5', '6', '7'],
          '4x − 7 > 21 means 4x > 28, so x > 7. Of the choices, only 8 is greater than 7.',
          "ok = [v for v in [5, 6, 7, 8] if 4*v - 7 > 21]\nassert ok == [8]\n",
          key='D', custom="assert C[K] == '8' and sorted(C) == ['5', '6', '7', '8']\n")
 
-    b.spr('ALG', IN, 'M',
+    b.spr('ALG', IN1, 'M',
           'A delivery van can safely carry at most 1,800 pounds. The driver weighs 180 pounds, and each box loaded into the van weighs 45 pounds. What is the greatest number of boxes the van can carry with the driver on board?',
           '36', [],
           '180 + 45b ≤ 1,800 means 45b ≤ 1,620, so b ≤ 36. The greatest whole number of boxes is 36.',
@@ -180,14 +183,14 @@ def add(b):
          "good = [k for k, (x, y) in pts.items() if y < 2*x - 3]\nassert good == ['(2, 0)']\n",
          custom="assert C[K] == '(2, 0)'\n")
 
-    b.mc('ALG', IN, 'H',
+    b.mc('ALG', IN1, 'H',
          'A caterer charges a $250 booking fee plus $32 per guest. A family wants to invite at least 40 guests and spend no more than $2,000. Which inequality gives all possible numbers of guests g?',
          '40 ≤ g ≤ 54', ['40 ≤ g ≤ 55', '40 ≤ g ≤ 62', '54 ≤ g ≤ 62'],
          '250 + 32g ≤ 2,000 gives 32g ≤ 1,750, so g ≤ 54.6875. Guests are whole people, so g ≤ 54, and the family wants g ≥ 40.',
          "ok = [g for g in range(0, 200) if g >= 40 and 250 + 32*g <= 2000]\nassert (min(ok), max(ok)) == (40, 54)\n",
          custom="assert C[K] == '40 ≤ g ≤ 54'\n")
 
-    b.spr('ALG', IN, 'H',
+    b.spr('ALG', IN1, 'H',
           'How many integers x satisfy −3 ≤ 2x − 5 < 9 ?',
           '6', [],
           'Add 5: 2 ≤ 2x < 14. Divide by 2: 1 ≤ x < 7. The integers are 1, 2, 3, 4, 5, and 6 — six of them.',
