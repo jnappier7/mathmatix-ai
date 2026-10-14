@@ -56,3 +56,14 @@ describe('archive candidate selection', () => {
     expect(selectArchiveCandidates(roster, cutoff).map(s => s._id)).toEqual(['old', 'never-old']);
   });
 });
+
+describe('nextGradeLevel — moving a student up keeps their own format', () => {
+  test.each([
+    ['8', '9'], ['8th Grade', '9th Grade'], ['1st Grade', '2nd Grade'], ['2nd Grade', '3rd Grade'],
+    ['11th Grade', '12th Grade'], ['Grade 9', 'Grade 10'], ['K', '1'], ['Kindergarten', '1st Grade'],
+  ])('%s → %s', (from, to) => expect(sy.nextGradeLevel(from)).toEqual({ next: to, reason: null }));
+  test.each([
+    ['12', 'graduating'], ['12th Grade', 'graduating'], ['Grade 12', 'graduating'],
+    ['College', 'unrecognized'], ['Algebra 1', 'unrecognized'], ['', 'no-grade'], [null, 'no-grade'],
+  ])('%s is left alone (%s)', (from, reason) => expect(sy.nextGradeLevel(from)).toEqual({ next: null, reason }));
+});
