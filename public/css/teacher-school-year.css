@@ -32,6 +32,14 @@
 .ty-banner-text { flex: 1 1 320px; font-size: 14px; line-height: 1.45; }
 .ty-banner-actions { display: flex; gap: 6px; align-items: center; }
 
+/* carry forward */
+.ty-carry-controls { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin: 0 0 12px; padding: 12px; border-radius: 12px; background: var(--color-bg); border: 1px solid var(--color-border); }
+.ty-field { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--color-text-secondary); flex: 1 1 220px; }
+.ty-check { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; min-height: 40px; }
+.ty-check input { width: 18px; height: 18px; accent-color: var(--color-primary-dark); }
+.ty-grade { margin-left: auto; font-size: 12.5px; color: var(--color-text-secondary); white-space: nowrap; }
+.ty-grade strong { color: #047857; }
+
 /* modal */
 .ty-modal-overlay { position: fixed; inset: 0; z-index: 10050; background: rgba(15, 23, 42, .45); display: flex; align-items: center; justify-content: center; padding: 16px; }
 .ty-modal { width: min(620px, 100%); max-height: calc(100vh - 32px); display: flex; flex-direction: column; border-radius: 16px;
@@ -82,6 +90,8 @@
 .ty-toast-success { background: #047857; }
 
 @media (max-width: 600px) {
+  .ty-steps li:not(.is-active) { font-size: 0; padding: 4px; gap: 0; }
+  .ty-steps li:not(.is-active) span { font-size: 12px; }
   .ty-class-row { grid-template-columns: 1fr 1fr; }
   .ty-class-row .ty-cname { grid-column: 1 / -1; }
   .ty-modal-foot { justify-content: stretch; }

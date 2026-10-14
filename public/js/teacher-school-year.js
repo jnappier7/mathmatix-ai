@@ -79,6 +79,8 @@
       '<div class="ty-bar-actions">' +
         (info.counts.lastYearCandidates > 0 && !viewingArchive
           ? '<button type="button" class="ty-btn ty-btn-ghost" data-ty="wizard"><i class="fas fa-box-archive" aria-hidden="true"></i> Roll over last year (' + info.counts.lastYearCandidates + ')</button>' : '') +
+        (info.hasCurrentYearClass && info.counts.unplaced > 0 && !viewingArchive
+          ? '<button type="button" class="ty-btn ty-btn-ghost" data-ty="carry"><i class="fas fa-arrow-up-right-dots" aria-hidden="true"></i> Carry students forward (' + info.counts.unplaced + ')</button>' : '') +
         (archived ? '<button type="button" class="ty-btn ty-btn-ghost" data-ty="manage"><i class="fas fa-rotate-left" aria-hidden="true"></i> Manage archived</button>' : '') +
       '</div></div>';
 
@@ -143,7 +145,7 @@
 
   // ---------- wizard ----------
   function steps(active) {
-    var names = ['Last year\'s students', 'This year\'s classes', 'Share codes'];
+    var names = ['Last year\'s students', 'This year\'s classes', 'Continuing students', 'Share codes'];
     return '<ol class="ty-steps">' + names.map(function (n, i) {
       return '<li class="' + (i === active ? 'is-active' : (i < active ? 'is-done' : '')) + '"' + (i === active ? ' aria-current="step"' : '') + '><span>' + (i + 1) + '</span>' + n + '</li>';
     }).join('') + '</ol>';
@@ -239,7 +241,7 @@
   function wizardStep3() {
     var created = state.wizard.created;
     var joinBase = window.location.origin + '/signup.html?code=';
-    var body = steps(2) + (created.length
+    var body = steps(3) + (created.length
       ? '<p class="ty-lead">Share the link (or the code) with each class. The link opens sign-up with the code already filled in.</p>' +
         '<ul class="ty-codes">' + created.map(function (c) {
           return '<li><div><div class="ty-name">' + esc(c.className) + (c.period ? ' · ' + esc(c.period) : '') + '</div>' +
@@ -249,6 +251,68 @@
       : '<p class="ty-lead">You\'re set. Create classes any time from the Classes tab — each one gets a join code.</p>');
     openModal('You\'re ready for ' + esc(yearLabel(state.info.currentYear)), body,
       '<button type="button" class="ty-btn ty-btn-primary" data-ty="finish">Done</button>');
+  }
+
+  // ---------- continuing students (carry forward) ----------
+  var GRADE_NOTE = {
+    graduating: 'graduating — grade left as is',
+    unrecognized: 'grade not recognized — left as is',
+    'no-grade': 'no grade on file',
+    'already-promoted': 'already moved up this year'
+  };
+
+  function wizardCarry(standalone) {
+    state.wizard = state.wizard || { created: [] };
+    state.wizard.standalone = !!standalone;
+    openModal(standalone ? 'Carry students forward' : 'Start ' + esc(yearLabel(state.info.currentYear)),
+      (standalone ? '' : steps(2)) + '<div class="ty-loading">Finding your continuing students…</div>');
+    api('/api/teacher/roster/continuing').then(function (data) {
+      var students = data.students || [];
+      if (!students.length) {
+        if (standalone) { toast('Everyone is already in one of this year\'s classes.', 'success'); closeModal(); return; }
+        return wizardStep3();
+      }
+      var classes = data.classes || [];
+      var promotable = students.filter(function (s) { return s.nextGrade; }).length;
+      var body = (standalone ? '' : steps(2)) +
+        '<p class="ty-lead">These students are staying with you. Put them in one of this year\'s classes' +
+        (promotable ? ', and move them up a grade' : '') + '. You can do this per class — run it again for the next group.</p>' +
+        '<div class="ty-carry-controls">' +
+          '<label class="ty-field"><span>Put them in</span><select id="ty-carry-class" class="ty-in">' +
+            (classes.length ? classes.map(function (c) { return '<option value="' + esc(c._id) + '">' + esc(c.className) + (c.period ? ' · ' + esc(c.period) : '') + ' (' + c.studentCount + ')</option>'; }).join('') : '') +
+            '<option value="">Don\'t change classes</option></select></label>' +
+          (promotable ? '<label class="ty-check"><input type="checkbox" id="ty-carry-grade" checked> Move each up one grade</label>' : '') +
+        '</div>' +
+        '<div class="ty-checklist-head"><label><input type="checkbox" id="ty-all" checked> Select all (' + students.length + ')</label></div>' +
+        '<ul class="ty-checklist">' + students.map(function (s) {
+          var grade = s.nextGrade
+            ? '<span class="ty-grade">' + esc(s.gradeLevel) + ' <i class="fas fa-arrow-right" aria-hidden="true"></i> <strong>' + esc(s.nextGrade) + '</strong></span>'
+            : '<span class="ty-meta">' + esc(GRADE_NOTE[s.gradeNote] || '') + '</span>';
+          return '<li><label><input type="checkbox" class="ty-pick" value="' + esc(s._id) + '" checked> <span class="ty-name">' + esc(s.name) + '</span>' + grade + '</label></li>';
+        }).join('') + '</ul>';
+      var foot = (standalone ? '<button type="button" class="ty-btn ty-btn-link" data-ty="close">Cancel</button>'
+        : '<button type="button" class="ty-btn ty-btn-link" data-ty="skip3">Skip</button>') +
+        '<button type="button" class="ty-btn ty-btn-primary" data-ty="carrygo">Apply</button>';
+      openModal(standalone ? 'Carry students forward' : 'Start ' + esc(yearLabel(state.info.currentYear)), body, foot);
+      var all = document.getElementById('ty-all');
+      all.addEventListener('change', function () { document.querySelectorAll('.ty-pick').forEach(function (c) { c.checked = all.checked; }); });
+    }).catch(function (err) { toast(err.message, 'error'); closeModal(); });
+  }
+
+  function doCarry() {
+    var ids = Array.prototype.map.call(document.querySelectorAll('.ty-pick:checked'), function (c) { return c.value; });
+    var classSel = document.getElementById('ty-carry-class');
+    var gradeBox = document.getElementById('ty-carry-grade');
+    var payload = { studentIds: ids, classId: classSel && classSel.value ? classSel.value : undefined, advanceGrade: !!(gradeBox && gradeBox.checked) };
+    if (!ids.length) { toast('Choose at least one student.', 'error'); return Promise.reject(new Error('empty')); }
+    if (!payload.classId && !payload.advanceGrade) { toast('Pick a class or "Move each up one grade".', 'error'); return Promise.reject(new Error('empty')); }
+    return api('/api/teacher/roster/carry-forward', { method: 'POST', body: JSON.stringify(payload) }).then(function (r) {
+      var parts = [];
+      if (r.placed) parts.push('added ' + r.placed + ' to the class');
+      if (r.promoted && r.promoted.length) parts.push('moved ' + r.promoted.length + ' up a grade');
+      toast(parts.length ? 'Done — ' + parts.join(' and ') + '.' : 'Nothing to change.', 'success');
+      return r;
+    });
   }
 
   // ---------- archive manager ----------
@@ -330,10 +394,19 @@
         rows.lastElementChild.querySelector('.ty-cname').focus();
         break;
       }
-      case 'skip2': wizardStep3(); break;
+      case 'skip2': wizardCarry(false); break;
+      case 'skip3': wizardStep3(); break;
+      case 'carry': state.wizard = { created: [] }; wizardCarry(true); break;
+      case 'carrygo':
+        busy(true);
+        doCarry().then(function () {
+          afterRosterChange();
+          if (state.wizard && state.wizard.standalone) closeModal(); else wizardCarry(false);
+        }).catch(function (err) { busy(false); if (err.message !== 'empty') toast(err.message, 'error'); });
+        break;
       case 'next2':
         busy(true);
-        doCreateClasses().then(function () { afterRosterChange(); wizardStep3(); })
+        doCreateClasses().then(function () { afterRosterChange(); wizardCarry(false); })
           .catch(function (err) { busy(false); if (err.message !== 'empty') toast(err.message, 'error'); });
         break;
       case 'finish': closeModal(); break;

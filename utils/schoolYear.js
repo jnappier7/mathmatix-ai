@@ -76,3 +76,40 @@ module.exports = {
   isNewYearPromptSeason,
   classSchoolYear,
 };
+
+/* ---------- moving a student up a grade ----------
+   user.gradeLevel is free text in several shapes ("8", "8th Grade",
+   "Grade 8", "K", "Kindergarten", "College"). Promotion keeps the student's
+   own shape. Seniors and anything unrecognized are left alone and reported —
+   a wrong grade is worse than an unchanged one (it drives reading level and
+   IEP templates; see utils/gradeLevel.js for why the math level is separate). */
+function ordinal(n) {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+function nextGradeLevel(grade) {
+  if (grade == null) return { next: null, reason: 'no-grade' };
+  const g = String(grade).trim();
+  if (!g) return { next: null, reason: 'no-grade' };
+  if (/^(k|kindergarten)$/i.test(g)) return { next: /^k$/i.test(g) ? '1' : '1st Grade', reason: null };
+  let m = /^(\d{1,2})$/.exec(g);
+  if (m) {
+    const n = Number(m[1]);
+    return n >= 12 ? { next: null, reason: 'graduating' } : { next: String(n + 1), reason: null };
+  }
+  m = /^(\d{1,2})(st|nd|rd|th)\s+grade$/i.exec(g);
+  if (m) {
+    const n = Number(m[1]);
+    return n >= 12 ? { next: null, reason: 'graduating' } : { next: `${ordinal(n + 1)} Grade`, reason: null };
+  }
+  m = /^grade\s+(\d{1,2})$/i.exec(g);
+  if (m) {
+    const n = Number(m[1]);
+    return n >= 12 ? { next: null, reason: 'graduating' } : { next: `Grade ${n + 1}`, reason: null };
+  }
+  return { next: null, reason: 'unrecognized' };
+}
+
+module.exports.nextGradeLevel = nextGradeLevel;
