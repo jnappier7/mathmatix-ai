@@ -55,7 +55,7 @@
       "targetDifficulty": 3.8
     }
   ],
-  "_skillsByCategoryComment": "The ACT's skills minus the ones beyond a typical tenth grader: complex numbers, matrices and vectors, logarithms, the laws of sines and cosines, and trigonometric functions (right-triangle trig stays). Every category keeps at least three.",
+  "_skillsByCategoryComment": "The ACT's skills minus the ones beyond a typical tenth grader: matrices and vectors, logarithms, the laws of sines and cosines, and trigonometric functions (right-triangle trig stays). Every category keeps at least three. Complex numbers are IN: ACT's PreACT guide puts real and complex number systems under Number & Quantity, and students who sat the real PreACT 10 (fall 2026) met powers of i (i^3) that this form never served. They were excluded at launch on a guess about tenth-grade scope; don't remove them again without the real test's word.",
   "skillsByCategory": {
     "integrating-essential-skills": [
       "act-average-median",
@@ -106,6 +106,7 @@
       "act-probability"
     ],
     "number-quantity": [
+      "act-complex-numbers",
       "act-exponent-rules",
       "act-radicals-roots",
       "act-scientific-notation"
