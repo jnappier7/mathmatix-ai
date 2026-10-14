@@ -898,7 +898,7 @@ const userSchema = new Schema({
   termsAcceptedAt: { type: Date, default: null },
 
   /* Parent-specific fields */
-  reportFrequency:   { type: String, enum: ['daily','weekly','biweekly','monthly'], default: 'weekly' },
+  reportFrequency:   { type: String, enum: ['daily','weekly','biweekly','monthly','never'], default: 'weekly' },   // 'never' = scheduled reports off (utils/reportFrequency.js)
   lastWeeklyReportSentAt: { type: Date, default: null },   // idempotency guard for the digest cron (prevents duplicate progress emails on retry/double-run)
   goalViewPreference:{ type: String, enum: ['progress','gaps','goals'], default: 'progress' },
   parentTone:        { type: String, trim: true },
