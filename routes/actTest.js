@@ -59,6 +59,7 @@ const {
 const { seenLedgerForUser, ledgerFromSessions, seedBootcampFromTest } = require('../utils/actBootcampSeed');
 const { recordConversionEvent } = require('../utils/conversionEvents');
 const { makeRunnerLimiters } = require('../middleware/practiceTestLimiter');
+const { isRushed } = require('../utils/rushedAttempt');
 
 // Who owns the session a request is about. The signed-in rail is owned by the
 // user; the guest rail by the bearer token. Set per router so a signed-in
@@ -933,6 +934,9 @@ function buildFullReport(session, { raw, total, scaled, byCategory, weakSkills, 
     durationMinutes: sectionStart(session) && session.completedAt
       ? Math.round((session.completedAt - sectionStart(session)) / 60000)
       : null,
+    // Finished in under a quarter of the time: shown as "not a reliable
+    // estimate", and left out of anything that averages scores.
+    rushed: rushedSession(session),
     ...extras,
   };
 }
@@ -964,6 +968,9 @@ function buildGuestReport(session, { raw, total, scaled, byCategory }) {
     durationMinutes: sectionStart(session) && session.completedAt
       ? Math.round((session.completedAt - sectionStart(session)) / 60000)
       : null,
+    // Finished in under a quarter of the time: shown as "not a reliable
+    // estimate", and left out of anything that averages scores.
+    rushed: rushedSession(session),
     locked: true,
   };
 }
@@ -1007,6 +1014,12 @@ async function finishSession(session, answers, res) {
   const tally = await gradeSession(session);
   await session.save();
   return { tally, sheetApplied };
+}
+
+function rushedSession(session) {
+  const start = sectionStart(session);
+  if (!start || !session.completedAt) return false;
+  return isRushed(new Date(session.completedAt) - new Date(start), sectionMinutes(session));
 }
 
 // The whole section's clock for the report. A modular session's startedAt /
@@ -1505,6 +1518,11 @@ router.get('/history', async (req, res) => {
         // Auto-submitted after expiring while away, with under half the form
         // answered: kept in the list (it happened) but off the trend line.
         incomplete: isIncompleteAttempt(s),
+        durationMinutes: sectionStart(s) && s.completedAt
+          ? Math.round((new Date(s.completedAt) - new Date(sectionStart(s))) / 60000)
+          : null,
+        timeLimitMinutes: sectionMinutes(s),
+        rushed: rushedSession(s),
         byCategory,
         bySkill,
       };

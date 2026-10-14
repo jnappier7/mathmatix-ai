@@ -134,9 +134,41 @@
   .actt-girules{font-size:13px;color:#555;margin-top:4px}
   .actt-girules summary{cursor:pointer;color:#764ba2;font-weight:600}
   .actt-girules ul{margin:8px 0 0;padding-left:18px;line-height:1.55}
-  .actt-refpanel{margin:10px 18px 0;padding:12px 14px;border:1px solid #e2dcf6;border-radius:12px;background:#faf9ff;font-size:13px;line-height:1.45;flex:0 0 auto;max-height:40vh;overflow-y:auto}
-  .actt-refgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px 14px}
-  .actt-reffacts{margin-top:10px;color:#666}
+  /* The reference sheet floats over the test (like Bluebook's), so opening
+     it never pushes the question or the choices off screen. */
+  .actt-refpanel{position:fixed;z-index:10002;top:72px;right:24px;width:min(460px,calc(100vw - 32px));max-height:calc(100dvh - 150px);display:flex;flex-direction:column;border:1px solid #d9d2f0;border-radius:14px;background:#fff;color:#1b1b2b;box-shadow:0 18px 50px rgba(30,20,70,.35);font-size:13px;line-height:1.45}
+  .actt-refpanel[hidden]{display:none}
+  .actt-refhead{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 8px 14px;border-bottom:1px solid #eee;font-weight:700;font-size:14px;cursor:move;touch-action:none;user-select:none}
+  .actt-refx{width:32px;height:32px;border:0;border-radius:50%;background:#f1eefb;color:#2b2547;font-size:20px;line-height:32px;cursor:pointer}
+  .actt-refbody{padding:12px 14px;overflow-y:auto}
+  .actt-refgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:12px 14px}
+  .actt-refgrid figure{margin:0;text-align:center}
+  .actt-refgrid svg{display:block;margin:0 auto 4px;width:112px;height:auto;overflow:visible}
+  .actt-refgrid svg .s{fill:none;stroke:currentColor;stroke-width:1.6}
+  .actt-refgrid svg .d{fill:none;stroke:currentColor;stroke-width:1.2;stroke-dasharray:4 3}
+  .actt-refgrid svg text{fill:currentColor;font:italic 13px Georgia,"Times New Roman",serif}
+  .actt-refgrid svg text.n{font-style:normal;font-size:11px}
+  .actt-refgrid figcaption{font-size:12.5px}
+  .actt-reffacts{margin-top:12px;color:#666}
+  /* Five minutes left: said out loud (role=alert), not just a color change. */
+  .actt-timewarn{display:flex;align-items:center;gap:10px;padding:9px 14px;background:#fff4e0;color:#7a4300;font-size:13.5px;font-weight:600;border-bottom:1px solid #f0d9b4}
+  .actt-timewarn[hidden]{display:none}
+  .actt-timewarn span{flex:1}
+  .actt-timewarn button{border:0;background:transparent;color:inherit;font-size:18px;cursor:pointer;line-height:1}
+  /* Leave-the-test confirmation, drawn inside the overlay. */
+  .actt-confirm{position:fixed;inset:0;z-index:10004;background:rgba(14,10,30,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+  .actt-confirm-card{background:#fff;color:#1b1b2b;border-radius:14px;max-width:420px;width:100%;padding:20px 20px 16px;box-shadow:0 24px 70px rgba(30,20,70,.4)}
+  .actt-confirm-card h2{margin:0 0 8px;font-size:18px}
+  .actt-confirm-card p{margin:0 0 16px;line-height:1.5;font-size:14px;color:#444}
+  .actt-confirm-btns{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+  .actt-resume-note{margin:0 0 10px;font-size:13.5px;color:#5b5480;line-height:1.45}
+  /* "Not a reliable estimate": a rushed attempt's score, muted. */
+  .actt-score.rushed{font-size:40px;background:none;color:#9a94b5;-webkit-text-fill-color:#9a94b5}
+  .actt-rushed{max-width:420px;margin:8px auto 0;font-size:13.5px;font-weight:600;color:#7a4300;background:#fff4e0;border:1px solid #f0d9b4;border-radius:10px;padding:8px 12px;line-height:1.45}
+  .actt-gihint{color:#b4570f;font-size:13px;font-weight:600;margin:0 0 6px}
+  .actt-gihint:empty{display:none}
+  /* Desmos sheet's drag handle (phones). */
+  .actt-desmos-grip{display:none}
   .actt-lock{display:grid;max-width:520px;margin:22px auto 0;border:2px solid #e2dcf6;border-radius:14px;overflow:hidden;background:#faf9ff}
   /* Rows and message share one grid cell, so the card is as tall as the
      taller of the two and the message can never spill out of it. */
@@ -171,7 +203,11 @@
     .actt-lockh{color:#ece9f7}.actt-lockp,.actt-cta2{color:#b7b3cc}.actt-cta2 a{color:#b9a6ff}
     .actt-gin{background:#211e32;border-color:#3d3858}
     .actt-gilab,.actt-girules{color:#cbc7e0}.actt-girules summary{color:#b9a6ff}
-    .actt-refpanel{background:#211e32;border-color:#302c45}.actt-reffacts{color:#b7b3cc}
+    .actt-refpanel{background:#1c1a2b;border-color:#302c45;color:#ece9f7}.actt-refhead{border-color:#2d2a40}.actt-refx{background:#2b2547;color:#ece9f7}.actt-reffacts{color:#b7b3cc}
+    .actt-timewarn,.actt-rushed{background:#3a2a12;color:#f5c27a;border-color:#5a4220}
+    .actt-confirm-card{background:#1c1a2b;color:#ece9f7}.actt-confirm-card p{color:#cbc7e0}
+    .actt-resume-note{color:#b7b3cc}
+    .actt-gihint{color:#f0a868}
     .actt-giwarn{color:#f0a868}
     .actt-route{color:#b7b3cc}
     .actt-figzoom{background:rgba(33,30,50,.92);border-color:#3d3858;color:#d9d2f5}
@@ -186,9 +222,19 @@
     /* The calculator is a bottom sheet on phones (css/mm-calculator.css):
        leave room under the question so it can scroll clear of the sheet. */
     .actt-overlay:has(.mmc-dock.is-open) .actt-body{padding-bottom:60dvh}
-    /* Desmos as a bottom sheet on phones, the question scrolling clear of it. */
-    .actt-desmos{position:fixed;left:0;right:0;bottom:0;height:58dvh;max-width:none;border-radius:14px 14px 0 0;z-index:2}
-    .actt-overlay.actt-desmos-on .actt-body{padding-bottom:60dvh}
+    /* Desmos as a bottom sheet on phones that stops ABOVE the Back / Flag /
+       Questions / Next bar — it used to cover 471 of 812px including the
+       nav (QA, 2026-10-13). Its height is draggable from the grip; the
+       question scrolls clear of it. --actt-foot-h / --actt-sheet-h are set
+       by the runner (_layoutDesmosSheet). */
+    .actt-desmos{position:fixed;left:0;right:0;bottom:var(--actt-foot-h,60px);height:var(--actt-sheet-h,45dvh);max-width:none;border-radius:14px 14px 0 0;z-index:2;box-shadow:0 -8px 30px rgba(30,20,70,.3)}
+    .actt-overlay.actt-desmos-on .actt-body{padding-bottom:calc(var(--actt-sheet-h,45dvh) + 8px)}
+    .actt-desmos-grip{display:block;width:44px;height:5px;border-radius:3px;background:rgba(255,255,255,.7);margin:0 auto}
+    .actt-desmos-head{cursor:ns-resize;touch-action:none;flex-wrap:wrap;row-gap:4px}
+    .actt-desmos-head .actt-desmos-gripwrap{flex:1 1 100%;padding:2px 0 0}
+    /* The reference sheet as a sheet on a phone, the nav still reachable. */
+    .actt-refpanel{top:auto;right:0;left:0;bottom:var(--actt-foot-h,60px);width:auto;max-height:55dvh;border-radius:14px 14px 0 0}
+    .actt-refhead{cursor:default}
     .actt-card{order:1;border-radius:0;max-width:none}
     .actt-foot{padding:10px 12px;gap:6px}
     /* The save line gets its own row on a phone rather than truncating. */
@@ -356,6 +402,28 @@
   function writeGuest(exam, v) {
     try { if (v) localStorage.setItem(exam.guestKey, JSON.stringify(v)); else localStorage.removeItem(exam.guestKey); } catch (_) { /* storage off: no resume/claim */ }
   }
+  // The signed-in runner's test in progress (just its id — the server checks
+  // the account), so reopening the runner can offer "Resume test (N answered,
+  // mm:ss left)" instead of the full intro. Guests keep theirs in guestKey.
+  function activeKey(exam) { return `mathmatix.${exam.key}ActiveTest`; }
+  function readActive(exam) {
+    try { const raw = localStorage.getItem(activeKey(exam)); return raw ? JSON.parse(raw) : null; } catch (_) { return null; }
+  }
+  function writeActive(exam, v) {
+    try { if (v) localStorage.setItem(activeKey(exam), JSON.stringify(v)); else localStorage.removeItem(activeKey(exam)); } catch (_) { /* storage off */ }
+  }
+  function fmtClock(secs) {
+    const t = Math.max(0, Math.round(Number(secs) || 0));
+    return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+  }
+  // Touch screen? (The Desmos keypad is for these; a keyboard doesn't need it.)
+  function isTouchDevice() {
+    try {
+      if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return true;
+      return Number(navigator.maxTouchPoints) > 0 && !(window.matchMedia && window.matchMedia('(pointer: fine)').matches);
+    } catch (_) { return false; }
+  }
+
   // Earlier guest tests in this browser (id + token, newest first). Sent with
   // /start so a retake never repeats their questions.
   function readGuestHistory(exam) {
@@ -488,7 +556,8 @@
             <div class="actt-bar"><div class="actt-fill" id="actt-fill"></div></div>
           </div>
           <div class="actt-pal" id="actt-pal" role="group" aria-label="Questions"></div>
-          ${this.exam.referenceSheet ? `<div class="actt-refpanel" id="actt-refpanel" role="region" aria-label="Reference sheet" hidden>${REFERENCE_SHEET_HTML}</div>` : ''}
+          <div class="actt-timewarn" id="actt-timewarn" role="alert" hidden><span id="actt-timewarn-text"></span><button type="button" id="actt-timewarn-x" aria-label="Dismiss time warning">×</button></div>
+          ${this.exam.referenceSheet ? `<div class="actt-refpanel" id="actt-refpanel" role="dialog" aria-label="Reference sheet" hidden><div class="actt-refhead" id="actt-refhead"><span>Reference sheet</span><button type="button" class="actt-refx" id="actt-refx" aria-label="Close reference sheet">×</button></div><div class="actt-refbody">${REFERENCE_SHEET_HTML}</div></div>` : ''}
           <div class="actt-body" id="actt-body"></div>
           <div class="actt-foot" id="actt-foot" style="display:none">
             <button class="actt-btn actt-skip" id="actt-back">◀ Back</button>
@@ -500,7 +569,8 @@
         </div>
         `;
       document.body.appendChild(this.overlay);
-      this.overlay.querySelector('#actt-close').addEventListener('click', () => this.close());
+      this.overlay.querySelector('#actt-close').addEventListener('click', () => this._requestClose());
+      this.overlay.querySelector('#actt-timewarn-x').addEventListener('click', () => { this.el('actt-timewarn').hidden = true; });
       this.overlay.querySelector('#actt-back').addEventListener('click', () => this.goTo(this._here() - 1));
       this.overlay.querySelector('#actt-flag').addEventListener('click', () => this.toggleFlag());
       this.overlay.querySelector('#actt-map').addEventListener('click', () => {
@@ -513,7 +583,11 @@
       });
       this.overlay.querySelector('#actt-calc').addEventListener('click', () => this._toggleCalc());
       this.el = (id) => this.overlay.querySelector('#' + id);
-      if (this.exam.referenceSheet) this.el('actt-ref').addEventListener('click', () => this._toggleRef());
+      if (this.exam.referenceSheet) {
+        this.el('actt-ref').addEventListener('click', () => this._toggleRef());
+        this.el('actt-refx').addEventListener('click', () => this._hideRef());
+        this._wireRefDrag();
+      }
 
       // The calculator is the shared component (js/mmCalculator.js) — the same
       // one chat and /calculator.html use. It used to be built inline here,
@@ -563,13 +637,47 @@
       panel.className = 'actt-desmos';
       panel.setAttribute('role', 'region');
       panel.setAttribute('aria-label', 'Graphing calculator');
-      panel.innerHTML = '<div class="actt-desmos-head"><span>Graphing calculator</span>'
+      panel.innerHTML = '<div class="actt-desmos-head"><span class="actt-desmos-gripwrap" aria-hidden="true"><span class="actt-desmos-grip"></span></span><span>Graphing calculator</span>'
         + '<button type="button" class="actt-desmos-x" aria-label="Close calculator">×</button></div>'
         + '<div class="actt-desmos-body"><div class="actt-center">Loading the calculator…</div></div>';
       panel.querySelector('.actt-desmos-x').addEventListener('click', () => this._hideDesmos());
       this.overlay.appendChild(panel);
       this._desmosPanel = panel;
+      this._wireSheetResize(panel.querySelector('.actt-desmos-head'));
       return panel;
+    }
+
+    // Phones: the Desmos sheet (and the reference sheet) sit on top of the
+    // nav bar, never over it. Measure the bar; keep the sheet's height inside
+    // what is left.
+    _isPhone() { return !!(window.matchMedia && window.matchMedia('(max-width:700px)').matches); }
+    _layoutDesmosSheet(heightPx) {
+      if (!this.overlay) return;
+      const foot = this.el('actt-foot');
+      const footH = foot && foot.offsetParent !== null ? foot.offsetHeight : 0;
+      this.overlay.style.setProperty('--actt-foot-h', `${footH}px`);
+      const vh = window.innerHeight || 800;
+      const min = Math.round(vh * 0.25);
+      const max = Math.max(min, vh - footH - 120);   // the question's top stays visible
+      const h = heightPx != null ? heightPx : (this._sheetH || Math.round(vh * 0.45));
+      this._sheetH = Math.min(max, Math.max(min, h));
+      this.overlay.style.setProperty('--actt-sheet-h', `${this._sheetH}px`);
+      if (this._desmosCalc) this._desmosCalc.resize();
+    }
+    // Drag the sheet's header up or down to resize it (phones only).
+    _wireSheetResize(handle) {
+      if (!handle) return;
+      handle.addEventListener('pointerdown', (e) => {
+        if (!this._isPhone() || e.target.closest('button')) return;
+        const startY = e.clientY;
+        const startH = this._sheetH || Math.round((window.innerHeight || 800) * 0.45);
+        handle.setPointerCapture && handle.setPointerCapture(e.pointerId);
+        const move = (ev) => this._layoutDesmosSheet(startH + (startY - ev.clientY));
+        const up = () => { handle.removeEventListener('pointermove', move); handle.removeEventListener('pointerup', up); handle.removeEventListener('pointercancel', up); };
+        handle.addEventListener('pointermove', move);
+        handle.addEventListener('pointerup', up);
+        handle.addEventListener('pointercancel', up);
+      });
     }
 
     async _toggleDesmos() {
@@ -577,13 +685,16 @@
       if (panel.classList.contains('open')) return this._hideDesmos();
       panel.classList.add('open');
       this.overlay.classList.add('actt-desmos-on');
+      if (this._isPhone()) this._layoutDesmosSheet();
       if (this._desmosCalc) { this._desmosCalc.resize(); return; }
       try {
         const Desmos = await this._loadDesmos();
         const body = panel.querySelector('.actt-desmos-body');
         body.innerHTML = '';
         this._desmosCalc = Desmos.GraphingCalculator(body, {
-          keypad: true, expressions: true, settingsMenu: false, zoomButtons: true,
+          // The on-screen keypad is for touch screens; with a keyboard it
+          // only takes room from the graph.
+          keypad: isTouchDevice(), expressions: true, settingsMenu: false, zoomButtons: true,
           border: false, links: false, pasteGraphLink: false, images: false,
           folders: false, notes: false, sliders: true, expressionsCollapsed: false,
         });
@@ -602,12 +713,35 @@
     }
 
     // The SAT prints a formula sheet with every test; Bluebook keeps it one
-    // tap away. It opens above the question and never covers the choices.
+    // tap away. It floats over the test — it used to open inline above the
+    // question and push the choices off screen — and can be dragged aside.
     _toggleRef() {
       const panel = this.el('actt-refpanel');
       if (!panel) return;
       panel.hidden = !panel.hidden;
       this.el('actt-ref').setAttribute('aria-expanded', String(!panel.hidden));
+      if (!panel.hidden && this._isPhone()) this._layoutDesmosSheet();
+    }
+    _wireRefDrag() {
+      const panel = this.el('actt-refpanel');
+      const head = this.el('actt-refhead');
+      if (!panel || !head) return;
+      head.addEventListener('pointerdown', (e) => {
+        if (this._isPhone() || e.target.closest('button')) return;
+        const r = panel.getBoundingClientRect();
+        const dx = e.clientX - r.left;
+        const dy = e.clientY - r.top;
+        head.setPointerCapture && head.setPointerCapture(e.pointerId);
+        const move = (ev) => {
+          const x = Math.min(Math.max(0, ev.clientX - dx), window.innerWidth - 80);
+          const y = Math.min(Math.max(0, ev.clientY - dy), window.innerHeight - 60);
+          panel.style.left = `${x}px`; panel.style.top = `${y}px`; panel.style.right = 'auto';
+        };
+        const up = () => { head.removeEventListener('pointermove', move); head.removeEventListener('pointerup', up); head.removeEventListener('pointercancel', up); };
+        head.addEventListener('pointermove', move);
+        head.addEventListener('pointerup', up);
+        head.addEventListener('pointercancel', up);
+      });
     }
     _hideRef() {
       const panel = this.el && this.el('actt-refpanel');
@@ -628,7 +762,8 @@
     async open() {
       this._mount();
       this._show();
-      this.el('actt-timer').style.display = 'none';    // no clock on the intro
+      this._clearTimer();                               // no clock on the intro
+      this._offerResume();                              // async: relabels Begin when a test is waiting
       this._showTestTools(false);                      // calc + reference appear with the test
       this.el('actt-foot').style.display = 'none';
       const N = this.exam.name;
@@ -682,10 +817,94 @@
       if (beginBtn) beginBtn.addEventListener('click', () => this._begin());
     }
 
+    // A test is waiting in this browser (closed mid-test, or the page was
+    // reloaded): say so, with how far along it is and how long is left, and
+    // make Begin a Resume. It used to show "Start the free test" and the
+    // whole intro, as if nothing had happened (QA, 2026-10-13).
+    async _offerResume() {
+      const rec = this.guest ? readGuest(this.exam) : readActive(this.exam);
+      const sid = rec && rec.sessionId && (!this.guest || rec.status === 'in_progress') ? rec.sessionId : null;
+      if (!sid) return;
+      const res = await this._apiRaw(`/overview?sessionId=${encodeURIComponent(sid)}`);
+      const ov = res && res.ok ? res.body : null;
+      if (!ov || ov.status !== 'in_progress' || !(ov.remainingSeconds > 0)) {
+        if (!this.guest && res && (res.status === 404 || res.status === 403 || (ov && ov.status && ov.status !== 'in_progress'))) writeActive(this.exam, null);
+        return;
+      }
+      const btn = this.el('actt-begin');
+      if (!btn || !btn.isConnected) return;
+      const answered = (ov.items || []).filter((it) => it.answered).length;
+      const mod = ov.module && ov.module.count > 1 ? ` · Module ${ov.module.current}` : '';
+      btn.textContent = `Resume test (${answered} answered, ${fmtClock(ov.remainingSeconds)} left)`;
+      if (!btn.parentNode.querySelector('.actt-resume-note')) {
+        const note = document.createElement('p');
+        note.className = 'actt-resume-note';
+        note.textContent = `You have a test in progress${mod}. The clock kept running while you were away, just like the real ${this.exam.name}.`;
+        btn.parentNode.insertBefore(note, btn);
+      }
+    }
+
+    // The ×: mid-test, ask first — closing does not pause the clock.
+    _requestClose() {
+      if (!this._running) return this.close();
+      if (this._confirmLayer) return;
+      const answered = this._answeredCount();
+      const layer = document.createElement('div');
+      layer.className = 'actt-confirm';
+      layer.innerHTML = `<div class="actt-confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="actt-confirm-h" aria-describedby="actt-confirm-p">
+          <h2 id="actt-confirm-h">Leave the test?</h2>
+          <p id="actt-confirm-p">The clock keeps running while you're away — like the real ${this.exam.name}, this test can't be paused. Your ${answered} answer${answered === 1 ? ' is' : 's are'} saved, and you can come back and resume until time runs out.</p>
+          <div class="actt-confirm-btns">
+            <button type="button" class="actt-btn actt-skip" id="actt-confirm-leave">Leave test</button>
+            <button type="button" class="actt-btn actt-next" id="actt-confirm-stay">Keep working</button>
+          </div>
+        </div>`;
+      const done = () => {
+        layer.remove();
+        this._confirmLayer = null;
+        document.removeEventListener('keydown', key, true);
+      };
+      const key = (e) => { if (e.key === 'Escape') { e.stopPropagation(); done(); } };
+      document.addEventListener('keydown', key, true);
+      this.overlay.appendChild(layer);
+      this._confirmLayer = layer;
+      layer.querySelector('#actt-confirm-stay').addEventListener('click', done);
+      layer.querySelector('#actt-confirm-leave').addEventListener('click', () => {
+        done();
+        this._flushGridIn();
+        this.saves.flush({ timeoutMs: 3000 });   // best effort; the server has the rest
+        this.close();
+      });
+      layer.querySelector('#actt-confirm-stay').focus();
+    }
+
+    // A test is under way: the × asks first, and leaving the page warns.
+    _setRunning(on) {
+      this._running = !!on;
+      if (on && !this._unloadGuard) {
+        this._unloadGuard = (e) => { if (this._running) { e.preventDefault(); e.returnValue = ''; } };
+        window.addEventListener('beforeunload', this._unloadGuard);
+      } else if (!on && this._unloadGuard) {
+        window.removeEventListener('beforeunload', this._unloadGuard);
+        this._unloadGuard = null;
+      }
+    }
+
+    // No clock on screen until a test's own deadline is known. The header
+    // used to show the PREVIOUS test's remaining time under "Building your
+    // practice test…" (QA, 2026-10-13).
+    _clearTimer() {
+      this._stopTimer();
+      const t = this.el('actt-timer');
+      if (t) { t.textContent = ''; t.classList.remove('low'); t.style.display = 'none'; }
+      const w = this.el('actt-timewarn');
+      if (w) w.hidden = true;
+    }
+
     // Actually start (or resume) the test + the clock. Only reached via the
     // Begin button, so the timer never starts behind the student's back.
     async _begin() {
-      this.el('actt-timer').style.display = '';
+      this._clearTimer();
       this._showTestTools(true);
       this.el('actt-body').innerHTML = '<div class="actt-center">Building your practice test…</div>';
       try {
@@ -714,6 +933,7 @@
         if (this.guest && data.guestToken) {
           writeGuest(this.exam, { sessionId: String(data.sessionId), token: data.guestToken, status: 'in_progress' });
         }
+        if (!this.guest) writeActive(this.exam, { sessionId: String(data.sessionId) });
         this.total = data.totalItems || this.exam.items;
         this.mod = data.module || null;
         this.state = new Map();
@@ -744,6 +964,7 @@
         this.deadline = Date.now() + remainSecs * 1000;
         this.el('actt-progwrap').style.display = '';
         this.el('actt-foot').style.display = 'flex';
+        this._setRunning(true);
         await this.goTo(startPos);
         this._startTimer();
       } catch (e) {
@@ -777,6 +998,7 @@
 
     close() {
       this._closeFigureZoom();
+      this._setRunning(false);
       this._stopTimer();
       this._hideCalc();
       if (this.overlay) this.overlay.style.display = 'none';
@@ -798,8 +1020,15 @@
         const s = Math.floor((remain % 60000) / 1000);
         const t = this.el('actt-timer');
         if (t) {
+          t.style.display = '';
           t.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
           t.classList.toggle('low', remain <= 120000);
+        }
+        // Five minutes left: a banner a screen reader announces, once per
+        // clock (each SAT module has its own).
+        if (remain > 0 && remain <= 300000 && this._warnedFor !== this.deadline) {
+          this._warnedFor = this.deadline;
+          this._showTimeWarning(Math.ceil(remain / 60000));
         }
         if (remain <= 0) { this._stopTimer(); this._timeUp(); }
       };
@@ -807,6 +1036,18 @@
       this.timerId = setInterval(tick, 1000);
     }
     _stopTimer() { if (this.timerId) { clearInterval(this.timerId); this.timerId = null; } }
+
+    _showTimeWarning(mins) {
+      const w = this.el('actt-timewarn');
+      if (!w) return;
+      const where = this._moreModules() ? ` in Module ${this.mod.current}` : '';
+      const n = Math.min(5, Math.max(1, mins));
+      // Set the text AFTER unhiding, so role=alert is announced.
+      w.hidden = false;
+      this.el('actt-timewarn-text').textContent = `${n} minute${n === 1 ? '' : 's'} left${where}. Answer anything you skipped — a guess can't cost you.`;
+      clearTimeout(this._warnTimer);
+      this._warnTimer = setTimeout(() => { w.hidden = true; }, 15000);
+    }
 
     _answeredCount() {
       let n = 0;
@@ -1059,8 +1300,9 @@
         <div class="actt-gi">
           <label class="actt-gilab" for="actt-gin">Your answer</label>
           <input class="actt-gin" id="actt-gin" type="text" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false"
-            value="${escapeHtml(val)}" aria-describedby="actt-giprev actt-girules" />
+            value="${escapeHtml(val)}" aria-label="Your answer to question ${this._num(this.pos)}" aria-describedby="actt-gihint actt-giprev actt-girules" />
           <div class="actt-giprev" id="actt-giprev" aria-live="polite">${gridInPreviewHtml(val)}</div>
+          <div class="actt-gihint" id="actt-gihint" role="status" aria-live="polite"></div>
           <details class="actt-girules" id="actt-girules">
             <summary>How to enter your answer</summary>
             <ul>
@@ -1074,9 +1316,21 @@
       this._labelFigure();
       const input = this.el('actt-gin');
       input.addEventListener('input', () => {
-        const clean = sanitizeGridIn(input.value);
-        if (clean !== input.value) input.value = clean;
-        this.el('actt-giprev').innerHTML = gridInPreviewHtml(clean);
+        // A space after a digit is a mixed number on its way ("1 1/2"). Say
+        // so, and leave the box as typed — it is not an answer, so nothing is
+        // recorded — instead of silently reading it as 11/2.
+        const hint = mixedNumberHint(input.value);
+        this.el('actt-gihint').textContent = hint || '';
+        let clean;
+        if (hint) {
+          if (input.value.length > 12) input.value = input.value.slice(0, 12);
+          this.el('actt-giprev').innerHTML = '<span class="actt-gimuted">Not an answer yet</span>';
+          clean = '';
+        } else {
+          clean = sanitizeGridIn(input.value);
+          if (clean !== input.value) input.value = clean;
+          this.el('actt-giprev').innerHTML = gridInPreviewHtml(clean);
+        }
         if ((clean === '' ? null : clean) === (this.selected != null ? String(this.selected) : null)) return;
         this.selected = clean === '' ? null : clean;
         const st = this.state.get(this.pos) || {};
@@ -1318,7 +1572,7 @@
       if (this._advancing) return;
       this._advancing = true;
       this._flushGridIn();
-      this._stopTimer();
+      this._clearTimer();
       this._hideCalc();
       this.el('actt-foot').style.display = 'none';
       this.el('actt-progwrap').style.display = 'none';
@@ -1375,11 +1629,12 @@
 
     async _complete() {
       this._closeFigureZoom();
+      this._setRunning(false);
       this._flushGridIn();
       this._stopTimer();
       this._hideCalc();   // done answering — the calc has no place on the results screen
       this._showTestTools(false);   // nor do the Calc / Reference buttons
-      this.el('actt-timer').style.display = 'none';
+      this._clearTimer();
       this.el('actt-progwrap').style.display = 'none';
       this.el('actt-foot').style.display = 'none';
       const pal = this.el('actt-pal');
@@ -1408,6 +1663,7 @@
           return;
         }
         const data = res.body;
+        if (!this.guest && data && (data.success || data.abandoned)) writeActive(this.exam, null);
         if (this.guest && data && data.abandoned) writeGuest(this.exam, null);
         if (this.guest && data && data.success) {
           const g = readGuest(this.exam);
@@ -1500,11 +1756,14 @@
         const name = escapeHtml(this.catLabel(k));
         return `<div class="actt-cat"><span class="actt-catname">${name}</span><span class="actt-catbar"><span class="actt-catfill" style="width:${pct}%"></span></span><span class="actt-catpct">${v.correct}/${v.total}</span></div>`;
       }).join('');
+      // Finished in under a quarter of the time: the number is not an
+      // estimate of anything, and the screen must not present it as one.
+      const rushed = rushedNote(r);
       return `
           <div class="actt-center" style="padding-bottom:12px">
-            <div class="actt-score">${r.scaledScore != null ? r.scaledScore : '—'}</div>
-            <div class="actt-scorelab">Estimated ${this.exam.name} Math score${r.scaledApproximate ? ' (approx.)' : ''}</div>
-            ${this._rangeHtml(r)}
+            <div class="actt-score${rushed ? ' rushed' : ''}">${r.scaledScore != null ? r.scaledScore : '—'}</div>
+            <div class="actt-scorelab">${rushed ? 'Score on this attempt' : `Estimated ${this.exam.name} Math score${r.scaledApproximate ? ' (approx.)' : ''}`}</div>
+            ${rushed ? `<div class="actt-rushed">${escapeHtml(rushed)}<br><span style="font-weight:400">A practice score only means something at test pace. Take it again with the full ${escapeHtml(String(r.timeLimitMinutes || this.exam.minutes))} minutes for a real estimate.</span></div>` : this._rangeHtml(r)}
             ${this._routeHtml(r)}
             <div class="actt-sub">${r.rawScore}/${r.totalItems} correct · ${r.accuracy}%${r.durationMinutes != null ? ' · ' + r.durationMinutes + (r.timeLimitMinutes ? ` of ${r.timeLimitMinutes}` : '') + ' min' : ''}</div>
             ${r.plannedSkills ? `<div style="font-size:13px;color:#8b6fd6;margin-top:2px">✓ Your tutor will now focus on your ${r.plannedSkills} weakest skill${r.plannedSkills > 1 ? 's' : ''}.</div>` : ''}
@@ -1570,7 +1829,7 @@
       if (!g || !g.sessionId) return this.open();
       this._mount();
       this._show();
-      this.el('actt-timer').style.display = 'none';
+      this._clearTimer();
       this._showTestTools(false);
       this.el('actt-progwrap').style.display = 'none';
       this.el('actt-foot').style.display = 'none';
@@ -1621,7 +1880,7 @@
       this._mount();
       this._stopTimer();
       this._show();
-      this.el('actt-timer').style.display = 'none';
+      this._clearTimer();
       this._showTestTools(false);
       this.el('actt-progwrap').style.display = 'none';
       this.el('actt-foot').style.display = 'none';
@@ -1774,7 +2033,7 @@
       this._mount();
       this._stopTimer();
       this._show();
-      this.el('actt-timer').style.display = 'none';   // no test running here
+      this._clearTimer();   // no test running here
       this.el('actt-progwrap').style.display = 'none';
       this.el('actt-foot').style.display = 'none';
       this.el('actt-body').innerHTML = '<div class="actt-center">Loading your progress…</div>';
@@ -2165,6 +2424,41 @@
     };
   }
 
+  // "Not a reliable estimate — you finished in N minutes" when a test was
+  // submitted in under a quarter of its time limit; null otherwise. The
+  // server sends `rushed` (utils/rushedAttempt.js); an older server's report
+  // is judged from its rounded minutes.
+  function rushedNote(r) {
+    if (!r) return null;
+    const mins = Number(r.durationMinutes);
+    const limit = Number(r.timeLimitMinutes);
+    const rushed = r.rushed != null
+      ? !!r.rushed
+      : (Number.isFinite(mins) && limit > 0 && mins < 0.25 * limit);
+    if (!rushed) return null;
+    const took = !Number.isFinite(mins) || mins < 1 ? 'less than a minute' : `${mins} minute${mins === 1 ? '' : 's'}`;
+    return `Not a reliable estimate — you finished in ${took}.`;
+  }
+
+  // Grid-in: a mixed number ("1 1/2") is not an answer the box can hold. The
+  // box used to drop the space and read it as 11/2. Returns the hint to show
+  // (with the student's own number converted when it is complete), or null.
+  function mixedNumberHint(raw) {
+    const v = String(raw || '').replace(/−/g, '-');
+    // A whole number, a space, then more digits (or nothing yet).
+    if (!/^\s*-?\d+\s+(\d|$)/.test(v)) return null;
+    const m = v.match(/^\s*(-?)(\d+)\s+(\d+)\s*\/\s*(\d+)\s*$/);
+    if (m && Number(m[4]) > 0 && Number(m[3]) < Number(m[4])) {
+      const sign = m[1] ? '-' : '';
+      const num = Number(m[2]) * Number(m[4]) + Number(m[3]);
+      const den = Number(m[4]);
+      const dec = num / den;
+      const decStr = Math.abs(dec * 10000 - Math.round(dec * 10000)) < 1e-9 ? String(Math.round(dec * 10000) / 10000) : null;
+      return `Mixed numbers aren't allowed — enter ${sign}${num}/${den}${decStr ? ` or ${sign}${decStr}` : ''}.`;
+    }
+    return "Mixed numbers aren't allowed — enter 3/2 or 1.5.";
+  }
+
   // How long to wait before retrying a request the server refused with 429:
   // its own retryAfter (seconds), capped so a student is never told to wait
   // minutes for a page that might be ready in seconds.
@@ -2176,6 +2470,7 @@
   // Exposed for the unit test of the notation rules.
   if (typeof window !== 'undefined') {
     window.__actCreateSaveQueue = createSaveQueue; window.__actRetryAfterMs = retryAfterMs;
+    window.__actRushedNote = rushedNote; window.__actMixedNumberHint = mixedNumberHint;
     window.__actPrettyMath = prettyMath; window.__actStemHtml = stemHtml; window.__actMatrixHtml = matrixHtml;
     window.__actSanitizeGridIn = sanitizeGridIn; window.__actGridInPreviewHtml = gridInPreviewHtml;
   }
@@ -2217,20 +2512,39 @@
   }
 
   // The SAT's reference sheet (the formulas and facts the test provides).
+  // The SAT's reference sheet — the formulas AND the labeled figures that
+  // say what each letter means (which side is ℓ, w, h; which leg of a
+  // 30°-60°-90° is x√3). Formulas alone left that ambiguous (QA, 2026-10-13).
+  // Inline SVG drawn in currentColor so it reads in both themes.
+  const REF_FIG = (label, caption, formula, body) =>
+    `<figure><svg viewBox="0 0 120 90" role="img" aria-label="${label}">${body}</svg><figcaption><b>${caption}</b><br>${formula}</figcaption></figure>`;
+  const RIGHT = (x, y, dx, dy) => `<path class="s" d="M${x + dx} ${y} L${x + dx} ${y + dy} L${x} ${y + dy}" />`;
   const REFERENCE_SHEET_HTML = `
     <div class="actt-refgrid">
-      <div><b>Circle</b><br>A = πr² · C = 2πr</div>
-      <div><b>Rectangle</b><br>A = ℓw</div>
-      <div><b>Triangle</b><br>A = ½bh</div>
-      <div><b>Right triangle</b><br>c² = a² + b²</div>
-      <div><b>Special right triangles</b><br>30°-60°-90°: x, x√3, 2x<br>45°-45°-90°: s, s, s√2</div>
-      <div><b>Rectangular prism</b><br>V = ℓwh</div>
-      <div><b>Cylinder</b><br>V = πr²h</div>
-      <div><b>Sphere</b><br>V = (4/3)πr³</div>
-      <div><b>Cone</b><br>V = (1/3)πr²h</div>
-      <div><b>Pyramid</b><br>V = (1/3)ℓwh</div>
+      ${REF_FIG('Circle with radius r', 'Circle', 'A = πr²<br>C = 2πr',
+        '<circle class="s" cx="60" cy="45" r="32"/><circle cx="60" cy="45" r="2" fill="currentColor"/><line class="s" x1="60" y1="45" x2="92" y2="45"/><text x="72" y="40">r</text>')}
+      ${REF_FIG('Rectangle with length l and width w', 'Rectangle', 'A = ℓw',
+        '<rect class="s" x="18" y="22" width="84" height="46"/><text x="56" y="83">ℓ</text><text x="106" y="50">w</text>')}
+      ${REF_FIG('Triangle with base b and height h drawn as a dashed line', 'Triangle', 'A = ½bh',
+        '<polygon class="s" points="14,72 106,72 74,14"/><line class="d" x1="74" y1="14" x2="74" y2="72"/>' + '<path class="s" d="M74 64 L82 64 L82 72"/>' + '<text x="78" y="46">h</text><text x="56" y="86">b</text>')}
+      ${REF_FIG('Right triangle with legs a and b and hypotenuse c', 'Right triangle', 'c² = a² + b²',
+        '<polygon class="s" points="22,72 100,72 22,18"/>' + RIGHT(22, 64, 8, 8) + '<text x="10" y="50">a</text><text x="58" y="86">b</text><text x="64" y="40">c</text>')}
+      ${REF_FIG('30-60-90 triangle: the side opposite 30 degrees is x, opposite 60 degrees is x root 3, the hypotenuse is 2x', 'Special right triangle', '30°-60°-90°',
+        '<polygon class="s" points="22,74 102,74 22,28"/>' + RIGHT(22, 66, 8, 8) + '<text x="10" y="56">x</text><text x="48" y="88">x√3</text><text x="64" y="44">2x</text><text class="n" x="62" y="71">30°</text><text class="n" x="25" y="50">60°</text>')}
+      ${REF_FIG('45-45-90 triangle: both legs are s, the hypotenuse is s root 2', 'Special right triangle', '45°-45°-90°',
+        '<polygon class="s" points="26,74 84,74 26,16"/>' + RIGHT(26, 66, 8, 8) + '<text x="14" y="50">s</text><text x="52" y="88">s</text><text x="58" y="40">s√2</text><text class="n" x="52" y="71">45°</text><text class="n" x="29" y="47">45°</text>')}
+      ${REF_FIG('Rectangular prism with length l, width w and height h', 'Rectangular prism', 'V = ℓwh',
+        '<rect class="s" x="16" y="34" width="62" height="42"/><path class="s" d="M16 34 L40 16 L102 16 L102 58 L78 76 M78 34 L102 16"/><path class="d" d="M40 16 L40 58 L102 58 M40 58 L16 76"/>' + '<text x="44" y="89">ℓ</text><text x="92" y="74">w</text><text x="5" y="58">h</text>')}
+      ${REF_FIG('Cylinder with radius r and height h', 'Cylinder', 'V = πr²h',
+        '<ellipse class="s" cx="60" cy="18" rx="34" ry="8"/><path class="s" d="M26 18 L26 70 A34 8 0 0 0 94 70 L94 18"/><path class="d" d="M26 70 A34 8 0 0 1 94 70"/><line class="s" x1="60" y1="18" x2="94" y2="18"/><circle cx="60" cy="18" r="1.6" fill="currentColor"/><text x="74" y="31">r</text><text x="99" y="48">h</text>')}
+      ${REF_FIG('Sphere with radius r', 'Sphere', 'V = (4/3)πr³',
+        '<circle class="s" cx="60" cy="45" r="32"/><path class="d" d="M28 45 A32 9 0 0 1 92 45"/><path class="s" d="M28 45 A32 9 0 0 0 92 45"/><line class="s" x1="60" y1="45" x2="82.6" y2="22.4"/><circle cx="60" cy="45" r="2" fill="currentColor"/><text x="62" y="30">r</text>')}
+      ${REF_FIG('Cone with radius r and height h', 'Cone', 'V = (1/3)πr²h',
+        '<path class="s" d="M26 68 L60 10 L94 68 A34 12 0 0 1 26 68"/><path class="d" d="M26 68 A34 12 0 0 1 94 68"/><line class="d" x1="60" y1="10" x2="60" y2="68"/><line class="s" x1="60" y1="68" x2="94" y2="68"/><text x="64" y="44">h</text><text x="74" y="78">r</text>')}
+      ${REF_FIG('Rectangular pyramid with base length l, base width w and height h', 'Pyramid', 'V = (1/3)ℓwh',
+        '<path class="s" d="M16 74 L78 74 L102 56 M16 74 L58 12 L78 74 M58 12 L102 56"/><path class="d" d="M16 74 L40 56 L102 56 M40 56 L58 12"/><line class="d" x1="58" y1="12" x2="59" y2="65"/><text x="44" y="87">ℓ</text><text x="94" y="72">w</text><text x="49" y="46">h</text>')}
     </div>
-    <div class="actt-reffacts">A circle has 360° of arc, or 2π radians. The angles of a triangle add to 180°.</div>`;
+    <div class="actt-reffacts">The number of degrees of arc in a circle is 360. The number of radians of arc in a circle is 2π. The sum of the measures in degrees of the angles of a triangle is 180.</div>`;
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

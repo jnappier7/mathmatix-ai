@@ -1,6 +1,18 @@
 (function () {
   'use strict';
 
+  /* Trial-chat carryover key. Declared FIRST: the page greets on load —
+     showTrialChat() → saveTrialState() runs during this IIFE — and with the
+     `var` further down, that first save ran while the name was hoisted but
+     still undefined, writing the trial state under a localStorage key
+     literally named "undefined" (QA on prod, 2026-10-13). */
+  var TRIAL_STORAGE_KEY = 'mathmatix_trial_chat';
+  // Sweep the stray copy that bug left behind in returning browsers.
+  try {
+    var stray = localStorage.getItem('undefined');
+    if (stray && /"tutorId"/.test(stray) && /"history"/.test(stray)) localStorage.removeItem('undefined');
+  } catch (e) { /* storage off */ }
+
   /* ── Pi Day Countdown Timer ─────────────────────────── */
   (function initCountdown() {
     var banner = document.getElementById('lp-countdown');
@@ -868,7 +880,7 @@
   showTrialChat();
 
   /* ── Session Carryover (localStorage) ────────────── */
-  var TRIAL_STORAGE_KEY = 'mathmatix_trial_chat';
+  // TRIAL_STORAGE_KEY is declared at the top of this file — see there.
 
   function saveTrialState() {
     try {
