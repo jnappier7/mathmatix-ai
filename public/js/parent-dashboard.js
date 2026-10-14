@@ -1285,6 +1285,57 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
     }
 
+    // --- Email Reports card copy ---
+    // The card describes the cadence the parent actually chose (and where the
+    // reports go), not a hard-coded "weekly". i18n keys carry the wording so the
+    // language setting still applies; MathmatixI18n.apply re-renders them.
+    let reportDestinationEmail = '';
+    function updateEmailReportsCopy(frequency) {
+        const known = ['daily', 'weekly', 'biweekly', 'monthly', 'never'];
+        const freq = known.includes(frequency) ? frequency : 'weekly';
+        const key = freq === 'weekly' ? 'parent.emailReportsDesc' : `parent.emailReportsDesc.${freq}`;
+        document.querySelectorAll('.js-email-reports-desc').forEach(el => {
+            el.setAttribute('data-i18n', key);
+            if (window.MathmatixI18n && typeof window.MathmatixI18n.apply === 'function') {
+                window.MathmatixI18n.apply(el.parentNode || document);
+            }
+        });
+        document.querySelectorAll('.js-email-reports-dest').forEach(el => {
+            if (reportDestinationEmail && freq !== 'never') {
+                el.textContent = `Reports are sent to ${reportDestinationEmail}`;
+                el.style.display = '';
+            } else if (reportDestinationEmail) {
+                el.textContent = `"Send report now" emails ${reportDestinationEmail}`;
+                el.style.display = '';
+            } else {
+                el.textContent = '';
+                el.style.display = 'none';
+            }
+        });
+    }
+
+    // Lets the mobile settings drawer (inline script in parent-dashboard.html)
+    // report the server's real answer instead of assuming success.
+    function announceSettingsSaved(ok, message) {
+        document.dispatchEvent(new CustomEvent('mm:parent-settings-saved', { detail: { ok, message } }));
+    }
+
+    // Show the "email unavailable" note only when the server says email can't
+    // go out. Non-admins get just { configured } from this endpoint.
+    async function loadEmailStatus() {
+        try {
+            const res = await fetch('/api/email/status', { credentials: 'include' });
+            if (!res.ok) return;
+            const status = await res.json();
+            const unavailable = status && status.configured === false;
+            document.querySelectorAll('.js-email-unavailable').forEach(el => {
+                el.style.display = unavailable ? '' : 'none';
+            });
+        } catch (error) {
+            console.warn('Could not check email status:', error);
+        }
+    }
+
     // --- Load Parent Settings ---
     async function loadParentSettings() {
         try {
@@ -1298,6 +1349,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (document.getElementById('reportFrequency')) {
                 document.getElementById('reportFrequency').value = settings.reportFrequency || 'weekly';
             }
+            if (settings.email) reportDestinationEmail = settings.email;
+            updateEmailReportsCopy(settings.reportFrequency || 'weekly');
             if (document.getElementById('goalViewPreference')) {
                 document.getElementById('goalViewPreference').value = settings.goalViewPreference || 'progress';
             }
@@ -1548,6 +1601,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     settingsSaveMessage.className = "mt-2 text-sm text-green-600";
                     settingsSaveMessage.textContent = data.message;
                     showToast("Settings saved!", "success", 3500);
+                    updateEmailReportsCopy((data.settings && data.settings.reportFrequency) || formData.reportFrequency);
+                    announceSettingsSaved(true, data.message);
                     setTimeout(() => {
                         settingsSaveMessage.textContent = '';
                     }, 3000);
@@ -1555,12 +1610,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     settingsSaveMessage.className = "mt-2 text-sm text-red-600";
                     settingsSaveMessage.textContent = data.message || 'Failed to save settings';
                     showToast("Failed to save settings.", "error");
+                    announceSettingsSaved(false, data.message || 'Failed to save settings');
                 }
             } catch (error) {
                 console.error("ERROR: Save settings error:", error);
                 settingsSaveMessage.className = "mt-2 text-sm text-red-600";
                 settingsSaveMessage.textContent = "An error occurred while saving settings.";
                 showToast("An error occurred while saving settings.", "error");
+                announceSettingsSaved(false, "An error occurred while saving settings.");
             }
         });
     }
@@ -1601,9 +1658,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }, 5000);
             } catch (error) {
                 console.error("Error sending test email:", error);
-                emailStatusMessage.textContent = "Error: Email not configured on server";
+                emailStatusMessage.textContent = "Could not send the email. Please try again.";
                 emailStatusMessage.style.color = "var(--color-danger)";
-                showToast("Email not configured on server.", "error");
+                showToast("Could not send the email.", "error");
                 testEmailBtn.disabled = false;
             }
         });
@@ -1630,9 +1687,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const data = await response.json();
 
                 if (data.success) {
-                    emailStatusMessage.textContent = "Weekly report sent! Check your inbox.";
+                    emailStatusMessage.textContent = "Report sent! Check your inbox.";
                     emailStatusMessage.style.color = "var(--color-success)";
-                    showToast("Weekly report sent!", "success");
+                    showToast("Report sent!", "success");
                 } else {
                     emailStatusMessage.textContent = data.message;
                     emailStatusMessage.style.color = "var(--color-danger)";
@@ -1644,10 +1701,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     emailStatusMessage.textContent = '';
                 }, 5000);
             } catch (error) {
-                console.error("Error sending weekly report:", error);
-                emailStatusMessage.textContent = "Error: Email not configured on server";
+                console.error("Error sending report:", error);
+                emailStatusMessage.textContent = "Could not send the email. Please try again.";
                 emailStatusMessage.style.color = "var(--color-danger)";
-                showToast("Email not configured on server.", "error");
+                showToast("Could not send the email.", "error");
                 sendWeeklyReportBtn.disabled = false;
             }
         });
@@ -1737,7 +1794,80 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Enroll in a parent course
+    function escHtml(str) {
+        return String(str == null ? '' : str)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    const START_COURSE_LABEL = '<i class="fas fa-play-circle"></i> Start Course';
+
+    // Enrollment errors render IN THE CARD and stay until the next attempt —
+    // not inside the button and not on a timer (a 3-second flash was the only
+    // place the course-cap message ever appeared). When the server says the
+    // cap is reached, the card also lists the open courses it counted, each
+    // with a Drop control, so the parent can resolve it without leaving.
+    function clearEnrollError(btnElement) {
+        const card = btnElement && btnElement.closest('.parent-course-card');
+        const box = card && card.querySelector('.parent-course-error');
+        if (box) box.remove();
+    }
+
+    function showEnrollError(btnElement, data) {
+        const card = btnElement && btnElement.closest('.parent-course-card');
+        if (!card) return;
+        clearEnrollError(btnElement);
+        const box = document.createElement('div');
+        box.className = 'parent-course-error';
+        box.setAttribute('role', 'alert');
+        const message = (data && data.message) || 'Enrollment failed. Please try again.';
+        let manageHtml = '';
+        const open = (data && Array.isArray(data.activeCourses)) ? data.activeCourses : [];
+        if (data && data.code === 'COURSE_CAP_REACHED' && open.length) {
+            manageHtml = `
+                <div class="parent-course-error-manage">
+                    <div class="parent-course-error-manage-title">Manage courses</div>
+                    <ul>
+                        ${open.map(c => `
+                            <li>
+                                <span>${escHtml(c.courseName || c.courseId)}</span>
+                                ${c.sessionId ? `<button type="button" class="parent-course-drop-btn" data-session-id="${escHtml(c.sessionId)}">Drop</button>` : ''}
+                            </li>`).join('')}
+                    </ul>
+                </div>`;
+        }
+        box.innerHTML = `<div><i class="fas fa-exclamation-circle" aria-hidden="true"></i> ${escHtml(message)}</div>${manageHtml}`;
+        box.querySelectorAll('.parent-course-drop-btn').forEach(dropBtn => {
+            dropBtn.addEventListener('click', async () => {
+                // Two-step: first click arms, second click drops (a dropped course
+                // starts fresh if re-enrolled, so make it deliberate).
+                if (dropBtn.dataset.armed !== '1') {
+                    dropBtn.dataset.armed = '1';
+                    dropBtn.textContent = 'Confirm drop';
+                    return;
+                }
+                dropBtn.disabled = true;
+                try {
+                    const res = await csrfFetch(`/api/course-sessions/${encodeURIComponent(dropBtn.dataset.sessionId)}/drop`, {
+                        method: 'POST', credentials: 'include'
+                    });
+                    const out = await res.json().catch(() => ({}));
+                    if (!res.ok || !out.success) throw new Error(out.message || 'Could not drop course');
+                    showToast('Course dropped. You can start a new one now.', 'success');
+                    loadParentCourses();
+                } catch (err) {
+                    dropBtn.disabled = false;
+                    dropBtn.dataset.armed = '';
+                    dropBtn.textContent = 'Drop';
+                    showToast(err.message || 'Could not drop course.', 'error');
+                }
+            });
+        });
+        btnElement.insertAdjacentElement('afterend', box);
+    }
+
     window.enrollParentCourse = async function(courseId, btnElement) {
+        clearEnrollError(btnElement);
         try {
             btnElement.disabled = true;
             btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enrolling...';
@@ -1766,22 +1896,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                     btnElement.disabled = false;
                     btnElement.onclick = () => { window.location.href = `/parent-course.html?courseId=${courseId}`; };
                 } else {
-                    btnElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'Error'}`;
+                    btnElement.innerHTML = START_COURSE_LABEL;
                     btnElement.disabled = false;
-                    showToast(data.message || 'Enrollment failed.', 'error');
-                    setTimeout(() => {
-                        btnElement.innerHTML = '<i class="fas fa-play-circle"></i> Start Course';
-                    }, 3000);
+                    showEnrollError(btnElement, data);
                 }
             }
         } catch (error) {
             console.error('Error enrolling in course:', error);
-            btnElement.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error';
+            btnElement.innerHTML = START_COURSE_LABEL;
             btnElement.disabled = false;
-            showToast('Error enrolling in course.', 'error');
-            setTimeout(() => {
-                btnElement.innerHTML = '<i class="fas fa-play-circle"></i> Start Course';
-            }, 3000);
+            showEnrollError(btnElement, { message: 'Could not reach the server. Please try again.' });
         }
     };
 
@@ -1798,6 +1922,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // "LIVE NOW" indicator + session notifications never start on load.
         await loadChildren();
         loadParentSettings();
+        loadEmailStatus();
         loadParentCourses();
 
         // If we arrived from a student's invite email (?acceptInvite=<token>),

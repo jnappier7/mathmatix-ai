@@ -1206,6 +1206,27 @@
       border-color: var(--color-success);
     }
 
+    .parent-course-error {
+      margin-top: var(--space-sm);
+      padding: var(--space-sm);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-danger, #dc2626);
+      background: #fef2f2;
+      color: #991b1b;
+      font-size: var(--text-sm);
+      line-height: 1.4;
+    }
+    .parent-course-error-manage { margin-top: var(--space-sm); }
+    .parent-course-error-manage-title { font-weight: 600; margin-bottom: 4px; }
+    .parent-course-error-manage ul { list-style: none; margin: 0; padding: 0; }
+    .parent-course-error-manage li {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 0;
+    }
+    .parent-course-drop-btn {
+      border: 1px solid currentColor; background: white; color: inherit;
+      border-radius: var(--radius-sm); padding: 2px 10px; font-size: var(--text-xs, 12px); cursor: pointer;
+    }
+
     .parent-course-card.enrolled {
       border-color: var(--color-warning-dark);
       background: linear-gradient(135deg, #fffbf5, #fff8f0);
@@ -1785,7 +1806,7 @@
       return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
     };
   </script>
-  <script src="/dist/js/parent-js0.08f701d8.js"></script>
+  <script src="/dist/js/parent-js0.194e687c.js"></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
 </head>
 <body>
@@ -2015,6 +2036,7 @@
                 <option value="weekly" data-i18n="parent.weekly">Weekly</option>
                 <option value="biweekly" data-i18n="parent.biweekly">Bi-weekly</option>
                 <option value="monthly" data-i18n="parent.monthly">Monthly</option>
+                <option value="never" data-i18n="parent.reportOff">Off</option>
               </select>
               <p class="text-xs text-gray-500 mt-2" data-i18n="parent.reportFrequencyHelp">How often you receive progress reports</p>
             </div>
@@ -2079,22 +2101,23 @@
           <div class="dashboard-panel-header" data-i18n="parent.emailReports">
             <i class="fas fa-envelope"></i> Email Reports
           </div>
-          <p style="font-size: 0.85em; color: #666; margin-bottom: 15px;" data-i18n="parent.emailReportsDesc">
+          <p id="email-reports-desc" class="js-email-reports-desc" style="font-size: 0.85em; color: #666; margin-bottom: 6px;" data-i18n="parent.emailReportsDesc">
             Get weekly progress reports delivered to your inbox.
           </p>
+          <p class="js-email-reports-dest" style="font-size: 0.8em; color: #666; margin-bottom: 15px; display: none;"></p>
 
           <button id="test-email-btn" class="btn btn-secondary main-action-btn" data-i18n="parent.sendTestEmail">
             <i class="fas fa-paper-plane"></i> Send Test Email
           </button>
 
-          <button id="send-weekly-report-btn" class="btn btn-primary main-action-btn" style="margin-top: 10px;" data-i18n="parent.sendWeeklyNow">
-            <i class="fas fa-chart-line"></i> Send Weekly Report Now
+          <button id="send-weekly-report-btn" class="btn btn-primary main-action-btn" style="margin-top: 10px;" data-i18n="parent.sendReportNow">
+            <i class="fas fa-chart-line"></i> Send Report Now
           </button>
 
           <div id="email-status-message" class="mt-2 text-sm text-center" style="margin-top: 10px;"></div>
 
-          <p style="font-size: 0.75em; color: #999; margin-top: 15px; text-align: center;" data-i18n="parent.emailConfigNote">
-            <i class="fas fa-info-circle"></i> Email must be configured in server settings
+          <p class="js-email-unavailable" style="font-size: 0.75em; color: #999; margin-top: 15px; text-align: center; display: none;" data-i18n="parent.emailUnavailable">
+            <i class="fas fa-info-circle"></i> Email reports are temporarily unavailable. Please check back later.
           </p>
         </div>
       </aside>
@@ -2163,7 +2186,7 @@
         <p style="font-size: 0.85em; color: #666; margin-bottom: 12px;" data-i18n="parent.mobileLinkHelp">Enter the code from your child&rsquo;s &ldquo;Share Progress&rdquo; menu (looks like MATH-A1B2C3).</p>
         <form id="mobile-link-student-form">
           <div class="form-group" style="margin-bottom: 12px;">
-            <input type="text" id="mobile-studentLinkCode" placeholder="MATH-A1B2C3" autocapitalize="characters" autocomplete="off" spellcheck="false" data-i18n-placeholder="parent.linkCodePlaceholder" required style="width: 100%;">
+            <input type="text" id="mobile-studentLinkCode" aria-label="Student link code" placeholder="MATH-A1B2C3" autocapitalize="characters" autocomplete="off" spellcheck="false" data-i18n-placeholder="parent.linkCodePlaceholder" required style="width: 100%;">
           </div>
           <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;" data-i18n="parent.linkStudent">
             <i class="fas fa-link"></i> Link Student
@@ -2183,18 +2206,19 @@
     <div class="drawer-content">
       <form id="mobile-parent-settings-form">
         <div class="drawer-section">
-          <div class="drawer-section-title" data-i18n="parent.reportFrequency"><i class="fas fa-calendar-alt" style="color: #3498db;"></i> Report Frequency</div>
+          <label for="mobile-reportFrequency" class="drawer-section-title" data-i18n="parent.reportFrequency"><i class="fas fa-calendar-alt" style="color: #3498db;"></i> Report Frequency</label>
           <select id="mobile-reportFrequency" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
             <option value="daily" data-i18n="parent.daily">Daily</option>
             <option value="weekly" data-i18n="parent.weekly">Weekly</option>
             <option value="biweekly" data-i18n="parent.biweekly">Bi-weekly</option>
             <option value="monthly" data-i18n="parent.monthly">Monthly</option>
+            <option value="never" data-i18n="parent.reportOff">Off</option>
           </select>
           <p style="font-size: 0.75em; color: #999; margin-top: 6px;" data-i18n="parent.reportFrequencyHelp">How often you receive progress reports</p>
         </div>
 
         <div class="drawer-section">
-          <div class="drawer-section-title" data-i18n="parent.dashboardView"><i class="fas fa-chart-line" style="color: #3498db;"></i> Dashboard View</div>
+          <label for="mobile-goalViewPreference" class="drawer-section-title" data-i18n="parent.dashboardView"><i class="fas fa-chart-line" style="color: #3498db;"></i> Dashboard View</label>
           <select id="mobile-goalViewPreference" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
             <option value="progress" data-i18n="parent.viewProgress">Progress Overview</option>
             <option value="gaps" data-i18n="parent.viewGaps">Learning Gaps</option>
@@ -2204,7 +2228,7 @@
         </div>
 
         <div class="drawer-section">
-          <div class="drawer-section-title" data-i18n="parent.tone"><i class="fas fa-comments" style="color: #3498db;"></i> Communication Tone</div>
+          <label for="mobile-parentTone" class="drawer-section-title" data-i18n="parent.tone"><i class="fas fa-comments" style="color: #3498db;"></i> Communication Tone</label>
           <select id="mobile-parentTone" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
             <option value="" data-i18n="parent.toneStandard">Standard (default)</option>
             <option value="detailed" data-i18n="parent.toneDetailed">Detailed & Technical</option>
@@ -2215,7 +2239,7 @@
         </div>
 
         <div class="drawer-section">
-          <div class="drawer-section-title" data-i18n="parent.language"><i class="fas fa-language" style="color: #3498db;"></i> Language</div>
+          <label for="mobile-parentLanguage" class="drawer-section-title" data-i18n="parent.language"><i class="fas fa-language" style="color: #3498db;"></i> Language</label>
           <select id="mobile-parentLanguage" style="width: 100%; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 16px;">
             <option value="English">English</option>
             <option value="Spanish">Spanish (Español)</option>
@@ -2233,7 +2257,7 @@
         <button type="submit" class="btn btn-primary main-action-btn" style="width: 100%;" data-i18n="parent.saveSettings">
           <i class="fas fa-save"></i> Save Settings
         </button>
-        <div id="mobile-settings-save-message" style="margin-top: 8px; font-size: 0.85em; text-align: center;"></div>
+        <div id="mobile-settings-save-message" role="status" aria-live="polite" style="margin-top: 8px; font-size: 0.85em; text-align: center;"></div>
       </form>
     </div>
   </div>
@@ -2246,22 +2270,23 @@
     </div>
     <div class="drawer-content">
       <div class="drawer-section">
-        <p style="font-size: 0.85em; color: #666; margin-bottom: 16px;" data-i18n="parent.emailReportsDesc">
+        <p id="mobile-email-reports-desc" class="js-email-reports-desc" style="font-size: 0.85em; color: #666; margin-bottom: 6px;" data-i18n="parent.emailReportsDesc">
           Get weekly progress reports delivered to your inbox.
         </p>
+        <p class="js-email-reports-dest" style="font-size: 0.8em; color: #666; margin-bottom: 16px; display: none;"></p>
         <div class="mobile-actions-grid">
           <button class="mobile-action-btn" id="mobile-test-email-btn" data-i18n="parent.sendTestEmail">
             <i class="fas fa-paper-plane" style="color: #3498db;"></i>
             Send Test Email
           </button>
-          <button class="mobile-action-btn" id="mobile-weekly-report-btn" data-i18n="parent.weeklyReportNow">
+          <button class="mobile-action-btn" id="mobile-weekly-report-btn" data-i18n="parent.reportNow">
             <i class="fas fa-chart-line" style="color: #3498db;"></i>
-            Weekly Report Now
+            Report Now
           </button>
         </div>
         <div id="mobile-email-status-message" style="margin-top: 12px; font-size: 0.85em; text-align: center;"></div>
-        <p style="font-size: 0.75em; color: #999; margin-top: 16px; text-align: center;" data-i18n="parent.emailConfigNote">
-          <i class="fas fa-info-circle"></i> Email must be configured in server settings
+        <p class="js-email-unavailable" style="font-size: 0.75em; color: #999; margin-top: 16px; text-align: center; display: none;" data-i18n="parent.emailUnavailable">
+          <i class="fas fa-info-circle"></i> Email reports are temporarily unavailable. Please check back later.
         </p>
       </div>
     </div>
@@ -2368,12 +2393,22 @@
               const mobile = document.getElementById('mobile-' + field);
               if (desktop && mobile) desktop.value = mobile.value;
             });
-            // Trigger the desktop form submit
+            // Trigger the desktop form submit. Its handler (parent-dashboard.js)
+            // reports the SERVER's answer via 'mm:parent-settings-saved' — only
+            // say "saved" when the save actually succeeded.
             const desktopForm = document.getElementById('parent-settings-form');
             if (desktopForm) {
-              desktopForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
               const msg = document.getElementById('mobile-settings-save-message');
-              if (msg) { msg.textContent = 'Settings saved!'; msg.style.color = '#27ae60'; setTimeout(() => msg.textContent = '', 3000); }
+              if (msg) { msg.textContent = 'Saving…'; msg.style.color = '#666'; }
+              document.addEventListener('mm:parent-settings-saved', function onSaved(ev) {
+                const ok = !!(ev.detail && ev.detail.ok);
+                if (msg) {
+                  msg.textContent = ok ? 'Settings saved!' : ((ev.detail && ev.detail.message) || 'Could not save settings. Please try again.');
+                  msg.style.color = ok ? '#27ae60' : '#c0392b';
+                  if (ok) setTimeout(() => { msg.textContent = ''; }, 3000);
+                }
+              }, { once: true });
+              desktopForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
             }
           });
         }
@@ -2453,7 +2488,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-  <script src="/dist/js/parent-js1.90622a53.js"></script>
+  <script src="/dist/js/parent-js1.c4691eb0.js"></script>
 <script>
     // Mount once the dashboard script has established the session.
     document.addEventListener('DOMContentLoaded', function () {

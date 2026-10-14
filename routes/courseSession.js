@@ -13,6 +13,7 @@ const ActTestSession = require('../models/actTestSession');
 const { calculateOverallProgress, parseExamWeight } = require('../utils/coursePrompt');
 const { isAuthenticated } = require('../middleware/auth');
 const { userHasRole } = require('../utils/roleQuery');
+const { pathwayAudience, sessionAudience, maxConcurrentFor } = require('../utils/courseAudience');
 const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const { configCache } = require('../utils/cache');
@@ -75,8 +76,7 @@ router.get('/catalog', async (req, res) => {
 
         // Filter by audience: default shows student courses, ?audience=parent shows parent courses
         const requestedAudience = req.query.audience || 'student';
-        const pathwayAudience = pathway.audience || 'student';
-        if (pathwayAudience !== requestedAudience) continue;
+        if (pathwayAudience(pathway) !== requestedAudience) continue;
 
         const cid = pathway.courseId || file.replace('-pathway.json', '');
         const meta = CATALOG_META[cid] || {};
@@ -219,33 +219,45 @@ router.post('/enroll', async (req, res) => {
       });
     }
 
-    // Cap concurrent enrollments at 2
-    const MAX_CONCURRENT_COURSES = 2;
-    const activeCount = await CourseSession.countDocuments({
-      userId: req.user._id,
-      status: { $in: ['active', 'paused'] }
-    });
-    if (activeCount >= MAX_CONCURRENT_COURSES) {
-      return res.status(400).json({
-        success: false,
-        message: `You can take up to ${MAX_CONCURRENT_COURSES} courses at a time. Drop a course to enroll in a new one.`
-      });
-    }
-
-    // Load pathway to build module progress
+    // Load the pathway FIRST: the concurrent-course cap is per audience, and the
+    // audience comes from the pathway. (Counting before this check is how a parent
+    // who also holds the student role, with two student courses running, got
+    // "You can take up to 2 courses" on every parent guide.)
     const pathwayFile = path.join(__dirname, '../public/resources', `${courseId}-pathway.json`);
-    if (!fs.existsSync(pathwayFile)) {
+    if (!/^[a-z0-9][a-z0-9-]*$/i.test(String(courseId)) || !fs.existsSync(pathwayFile)) {
       return res.status(404).json({ success: false, message: 'Course pathway not found' });
     }
 
     const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+    const audience = pathwayAudience(pathway);
 
     // Prevent students from enrolling in parent-audience courses (parents can
     // enroll). Roles HELD, not the active dashboard (CLAUDE.md §12) — a parent
     // who also holds student was refused a parent course whenever they had the
     // student view open.
-    if (pathway.audience === 'parent' && !userHasRole(req.user, 'parent')) {
+    if (audience === 'parent' && !userHasRole(req.user, 'parent')) {
       return res.status(403).json({ success: false, message: 'This course is not available for student enrollment.' });
+    }
+
+    // Cap concurrent enrollments per audience (utils/courseAudience.js): student
+    // courses count only against student courses, parent guides only against
+    // parent guides. Old sessions have no stored audience — resolve from courseId.
+    const maxConcurrent = maxConcurrentFor(audience);
+    if (maxConcurrent != null) {
+      const openSessions = await CourseSession.find(
+        { userId: req.user._id, status: { $in: ['active', 'paused'] } },
+        { courseId: 1, audience: 1, courseName: 1 }
+      ).lean();
+      const sameAudience = openSessions.filter(s => sessionAudience(s) === audience);
+      if (sameAudience.length >= maxConcurrent) {
+        return res.status(400).json({
+          success: false,
+          code: 'COURSE_CAP_REACHED',
+          maxConcurrent,
+          activeCourses: sameAudience.map(s => ({ sessionId: String(s._id), courseId: s.courseId, courseName: s.courseName })),
+          message: `You can take up to ${maxConcurrent} courses at a time. Drop a course to enroll in a new one.`
+        });
+      }
     }
 
     const modules = (pathway.modules || []).map((m, i) => ({
@@ -289,7 +301,8 @@ router.post('/enroll', async (req, res) => {
       overallProgress: 0,
       status: 'active',
       conversationId: conversation._id,
-      createdBy: 'self'
+      createdBy: 'self',
+      audience
     });
 
     // ACT prep with a test ALREADY taken (the public no-account test claimed at
