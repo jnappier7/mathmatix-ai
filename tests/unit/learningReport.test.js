@@ -96,13 +96,13 @@ const express = require('express');
 const request = require('supertest');
 
 // Build a minimal Express app with the parent routes
-function createApp() {
+function createApp(userExtra = {}) {
     const app = express();
     app.use(express.json());
     // Simulate the isAuthenticated + isParent middleware from config/routes.js
     app.use((req, res, next) => {
         req.isAuthenticated = () => true;
-        req.user = { _id: new mongoose.Types.ObjectId(), role: 'parent', children: [] };
+        req.user = { _id: new mongoose.Types.ObjectId(), role: 'parent', children: [], ...userExtra };
         next();
     });
     const parentRoutes = require('../../routes/parent');
@@ -531,5 +531,29 @@ describe('Parent Learning Report - GET /api/parent/child/:childId/learning-repor
         expect(cats['Fractions']).toMatchObject({ mastered: 1, learning: 1, total: 2 });
         expect(cats['Algebra']).toMatchObject({ needsReview: 1, total: 1 });
         expect(cats['Place Value']).toBeUndefined();
+    });
+});
+
+describe('Learning Report in the parent\'s language', () => {
+    const spanishApp = createApp({ parentLanguage: 'Spanish' });
+    test('a Spanish-speaking parent gets the headline and insights in Spanish, with keys kept', async () => {
+        const child = makeChild({});
+        const parent = makeParent(child._id);
+        mockFindById.mockResolvedValueOnce(parent);
+        mockFindById.mockResolvedValueOnce(child);
+        mockAggregate
+            .mockResolvedValueOnce([{ _id: null, totalProblems: 2, totalCorrect: 2, totalMinutes: 12, sessionCount: 1 }])
+            .mockResolvedValueOnce([]);
+
+        const res = await request(spanishApp).get(`/api/parent/child/${child._id}/learning-report`);
+        expect(res.status).toBe(200);
+        expect(res.body.language).toBe('Spanish');
+        expect(res.body.headline.text).toMatch(/está poniendo de su parte/);
+        const keys = res.body.insights.map(i => i.key);
+        expect(keys).toContain('insight.activity.some');
+        // 2 problems: a count, never "100%"
+        expect(keys).toContain('insight.accuracy.small');
+        expect(res.body.insights.map(i => i.message).join(' ')).not.toMatch(/100\s?%/);
+        expect(res.body.insights.find(i => i.key === 'insight.activity.some').message).toMatch(/1 sesión/);
     });
 });
