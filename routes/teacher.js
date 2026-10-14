@@ -27,6 +27,12 @@ const { requireActiveConsent } = require('../middleware/consentGate');
 const { anyRole, userHasRole } = require('../utils/roleQuery');
 const { buildActivityIndex, applyActivity, getEffectiveWeeklyMinutes } = require('../utils/studentActivity');
 const { summarizeSkillMastery } = require('../utils/skillSummary');
+const { currentSchoolYear, isValidSchoolYear, classSchoolYear } = require('../utils/schoolYear');
+// ?scope=current (default) | archived | all — the year switcher's three views.
+function rosterScope(req) {
+  return ['current', 'archived', 'all'].includes(req.query.scope) ? req.query.scope : 'current';
+}
+
 // Fetches students assigned to the logged-in teacher (via teacherId OR enrollment codes)
 router.get('/students', isTeacher, async (req, res) => {
   try {
@@ -41,7 +47,7 @@ router.get('/students', isTeacher, async (req, res) => {
     // is all the cards, tiles and alerts need.
     const projection = 'firstName lastName username email gradeLevel mathCourse level xp lastLogin createdAt totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds lastWeeklyReset iepPlan currentStreak skillMastery';
 
-    const studentIds = await getStudentIdsForTeacher(teacherId);
+    const studentIds = await getStudentIdsForTeacher(teacherId, { scope: rosterScope(req) });
     const students = await User.find(
       { _id: { $in: studentIds }, ...anyRole('student') },
       projection
@@ -298,7 +304,7 @@ router.get('/live-feed', isTeacher, async (req, res) => {
     });
 
     // Get all students assigned to this teacher (via teacherId or enrollment codes)
-    const studentIds = await getStudentIdsForTeacher(teacherId);
+    const studentIds = await getStudentIdsForTeacher(teacherId, { scope: 'current' });
     const students = await User.find(
       { _id: { $in: studentIds }, ...anyRole('student') },
       '_id firstName lastName username'
@@ -393,7 +399,7 @@ router.get('/activity-feed', isTeacher, async (req, res) => {
     });
 
     // Get all students assigned to this teacher (via teacherId or enrollment codes)
-    const studentIds = await getStudentIdsForTeacher(teacherId);
+    const studentIds = await getStudentIdsForTeacher(teacherId, { scope: 'current' });
     const students = await User.find(
       { _id: { $in: studentIds }, ...anyRole('student') },
       '_id firstName lastName username'
@@ -1079,7 +1085,7 @@ router.get('/classes', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
 
     const codes = await EnrollmentCode.find({ teacherId })
-      .select('code className description gradeLevel mathCourse isActive expiresAt maxUses useCount enrolledStudents createdAt')
+      .select('code className description gradeLevel mathCourse schoolYear period isActive expiresAt maxUses useCount enrolledStudents createdAt')
       .sort({ createdAt: -1 })
       .lean();
 
@@ -1106,6 +1112,8 @@ router.get('/classes', isTeacher, async (req, res) => {
       description: c.description,
       gradeLevel: c.gradeLevel,
       mathCourse: c.mathCourse,
+      schoolYear: classSchoolYear(c),
+      period: c.period || null,
       isActive: c.isActive,
       expiresAt: c.expiresAt,
       maxUses: c.maxUses,
@@ -1179,7 +1187,9 @@ router.get('/classes/:codeId/students', isTeacher, async (req, res) => {
 router.post('/classes', isTeacher, async (req, res) => {
   try {
     const teacherId = req.user._id;
-    const { className, gradeLevel, mathCourse } = req.body;
+    const { className, gradeLevel, mathCourse, period } = req.body;
+    // Every new class belongs to a school year (default: this one).
+    const schoolYear = isValidSchoolYear(req.body.schoolYear) ? req.body.schoolYear : currentSchoolYear();
 
     if (!className || !className.trim()) {
       return res.status(400).json({ message: 'Class name is required.' });
@@ -1199,6 +1209,8 @@ router.post('/classes', isTeacher, async (req, res) => {
       className: className.trim(),
       gradeLevel: gradeLevel?.trim() || undefined,
       mathCourse: mathCourse?.trim() || undefined,
+      schoolYear,
+      period: typeof period === 'string' && period.trim() ? period.trim().slice(0, 20) : undefined,
       isActive: true,
       createdBy: teacherId
     });
@@ -1213,6 +1225,8 @@ router.post('/classes', isTeacher, async (req, res) => {
         className: enrollmentCode.className,
         gradeLevel: enrollmentCode.gradeLevel,
         mathCourse: enrollmentCode.mathCourse,
+        schoolYear: enrollmentCode.schoolYear,
+        period: enrollmentCode.period || null,
         isActive: true,
         studentIds: [],
         studentCount: 0,
@@ -1308,8 +1322,10 @@ router.get('/course-progress', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
 
     // Get all students with their skill mastery
+    // Same roster as every other panel (direct links AND class codes), current year.
+    const rosterIds = await getStudentIdsForTeacher(teacherId, { scope: 'current' });
     const students = await User.find(
-      { ...anyRole('student'), teacherId },
+      { _id: { $in: rosterIds }, ...anyRole('student') },
       'firstName lastName username skillMastery mathCourse gradeLevel'
     ).lean();
 
@@ -1427,8 +1443,10 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
 
     // Get all students with their skill mastery data
+    // Same roster as every other panel (direct links AND class codes), current year.
+    const rosterIds = await getStudentIdsForTeacher(teacherId, { scope: 'current' });
     const students = await User.find(
-      { ...anyRole('student'), teacherId },
+      { _id: { $in: rosterIds }, ...anyRole('student') },
       'firstName lastName username skillMastery gradeLevel mathCourse'
     ).lean();
 
@@ -1572,7 +1590,7 @@ function goalProgressBand(pct) {
  * it feeds the teacher's own dashboard, which never leaves the app.
  */
 async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
-  const studentIds = await getStudentIdsForTeacher(teacherId);
+  const studentIds = await getStudentIdsForTeacher(teacherId, { scope: 'current' });
   const students = await User.find(
     { _id: { $in: studentIds }, ...anyRole('student') },
     'firstName lastName gradeLevel mathCourse iepPlan skillMastery learningProfile lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds lastWeeklyReset currentStreak level xp'
@@ -1960,7 +1978,7 @@ router.get('/class-snapshot', isTeacher, logRosterAccess('iep_plan', 'teaching_i
 router.get('/intervention-alerts', isTeacher, async (req, res) => {
   try {
     const teacherId = req.user._id;
-    const studentIds = await getStudentIdsForTeacher(teacherId);
+    const studentIds = await getStudentIdsForTeacher(teacherId, { scope: 'current' });
     const students = await User.find(
       { _id: { $in: studentIds }, ...anyRole('student') },
       'firstName lastName learningEngines lastInterventionAlert gradeLevel mathCourse'

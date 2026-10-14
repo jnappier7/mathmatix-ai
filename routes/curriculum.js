@@ -46,6 +46,7 @@ router.get('/teacher/curriculum', isAuthenticated, isTeacher, async (req, res) =
                 courseLevel: curriculum.courseLevel,
                 gradeLevel: curriculum.gradeLevel,
                 schoolYear: curriculum.schoolYear,
+                scheduleUrl: curriculum.commonCurriculumUrl || null,
                 lessonsCount: curriculum.lessons.length,
                 currentLesson: curriculum.getCurrentLesson(),
                 lessons: curriculum.lessons.sort((a, b) => a.weekNumber - b.weekNumber),

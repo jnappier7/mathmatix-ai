@@ -88,6 +88,7 @@ const passwordResetRoutes = require('../routes/passwordReset');
 const authRoutes = require('../routes/auth');
 const studentRoutes = require('../routes/student');
 const teacherRoutes = require('../routes/teacher');
+const teacherRosterRoutes = require('../routes/teacherRoster');
 const analyticsRoutes = require('../routes/analytics');
 const adminRoutes = require('../routes/admin');
 const parentRoutes = require('../routes/parent');
@@ -271,6 +272,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);
   app.get('/api/admin/error-metrics', isAuthenticated, isAdmin, errorMetricsHandler);
   app.get('/api/admin/consent-metrics', isAuthenticated, isAdmin, consentMetricsHandler);
+  app.use('/api/teacher/roster', isAuthenticated, isTeacher, teacherRosterRoutes);
   app.use('/api/teacher', isAuthenticated, isTeacher, teacherRoutes);
   app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
   app.use('/api/analytics', isAuthenticated, analyticsRoutes);

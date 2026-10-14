@@ -904,6 +904,17 @@ const userSchema = new Schema({
   studentToParentLinkCode:   { type: studentToParentLinkCodeSchema, default: () => ({}) },
 
   /* Teacher Class AI Settings - Controls how AI tutors students in this teacher's class */
+  // TEACHER: students rolled off this teacher's CURRENT roster at a school-year
+  // change. The link itself is never deleted — history stays readable under
+  // the past year and a restore is one call. getStudentIdsForTeacher()
+  // excludes these from every current-year aggregate (scope 'current').
+  archivedStudents: [{
+    _id: false,
+    studentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    archivedAt: { type: Date, default: Date.now },
+    schoolYear: { type: String }   // the year they were archived OUT of
+  }],
+
   classAISettings: {
     // Calculator access
     calculatorAccess: {
