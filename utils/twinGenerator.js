@@ -62,6 +62,23 @@ function parseJson(raw) {
 
 function norm(s) { return String(s == null ? '' : s).replace(/\s+/g, '').toLowerCase(); }
 
+/** The constants a problem uses — not exponents ("x^2"), not 0 or 1. */
+function constants(s) {
+  const text = String(s == null ? '' : s).replace(/\^\s*\{?\s*\d+\s*\}?/g, ' ');
+  return [...text.matchAll(/\d+(?:\.\d+)?/g)].map((m) => m[0]).filter((n) => n !== '0' && n !== '1');
+}
+
+/**
+ * Does the twin use ONLY numbers the student's problem already has? A twin
+ * with none of its own constants is the student's problem rearranged.
+ */
+function reusesStudentNumbers(studentProblem, twinText) {
+  const theirs = new Set(constants(studentProblem));
+  const ours = constants(twinText);
+  if (!theirs.size || !ours.length) return false;
+  return ours.every((n) => theirs.has(n));
+}
+
 /**
  * Independently confirm a proposed twin's answer with the CAS.
  * @returns {{verified: boolean, method: string}}
@@ -117,6 +134,12 @@ async function generateVerifiedTwin(problemText, opts) {
       logger.info({ attempt }, 'twin identical to student problem — rejecting');
       continue;
     }
+    // Rearranged is not different: "x + 6 = 4" for "x − 4 = 6" works the
+    // student's own numbers. A parallel problem must bring numbers of its own.
+    if (reusesStudentNumbers(problemText, `${t.twin} ${t.problemTex || ''}`)) {
+      logger.info({ attempt }, 'twin reuses the student\'s numbers — rejecting');
+      continue;
+    }
 
     const v = verifyTwin(t);
     if (v.verified) {
@@ -148,4 +171,4 @@ async function attachVerifiedTwin(decision, problemText) {
   return decision;
 }
 
-module.exports = { generateVerifiedTwin, verifyTwin, attachVerifiedTwin, TWIN_MODEL };
+module.exports = { generateVerifiedTwin, verifyTwin, attachVerifiedTwin, reusesStudentNumbers, TWIN_MODEL };

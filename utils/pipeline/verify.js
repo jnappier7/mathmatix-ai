@@ -585,6 +585,13 @@ const CANNED_OPENER_PHRASES = [
   String.raw`certainly`,
   String.raw`of\s+course`,
   String.raw`no\s+problem`,
+  // Generic effort praise says nothing about the work in front of the
+  // student. Dropped only when it is the whole opening sentence, so what the
+  // tutor says next — "Your division step is right." — leads instead.
+  String.raw`i\s+(?:really\s+|truly\s+)?appreciate\s+(?:your|the|all\s+your)\s+(?:effort|hard\s+work|attempt|work)(?:\s+(?:here|on\s+this(?:\s+one)?))?`,
+  String.raw`(?:good|great|nice)\s+(?:effort|attempt)`,
+  String.raw`thanks?(?:\s+you)?\s+for\s+(?:trying|giving\s+it\s+a\s+(?:try|shot|go)|your\s+effort|sharing\s+(?:your|that))(?:\s+(?:that|this))?`,
+  String.raw`i\s+can\s+see\s+you(?:'?re|\s+are)\s+(?:working|trying)\s+(?:really\s+)?hard(?:\s+on\s+this)?`,
 ];
 // The trailing `[.!?]+` is the whole safety property: the phrase must END a
 // sentence. Without it the pattern can stop mid-word or mid-clause. Keep it.
