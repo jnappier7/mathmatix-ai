@@ -5,6 +5,9 @@ L2 = 'Linear equations in two variables'
 LF = 'Linear functions'
 SY = 'Systems of two linear equations'
 IN = 'Linear inequalities in one or two variables'
+# A one-variable inequality: the 'one or two variables' label above maps to
+# two-variable inequalities (ALG1.FNC.5) in scripts/satSkillMap.py.
+IN1 = 'Linear inequalities in one variable'
 
 X = "x = sp.Symbol('x')\n"
 
@@ -207,14 +210,14 @@ def add(b):
           "g, s = sp.symbols('g s')\nsol = sp.solve([g + s - 18, 4*g + 11*s - 114], [g, s])\nans = sol[g] - sol[s]\n")
 
     # ── Linear inequalities (6) ───────────────────────────────────────
-    b.mc('ALG', IN, 'E',
+    b.mc('ALG', IN1, 'E',
          'Which of the following is equivalent to 6 − 3x ≤ 18?',
          'x ≥ −4', ['x ≤ −4', 'x ≥ 4', 'x ≤ 4'],
          '−3x ≤ 12. Dividing by −3 reverses the inequality: x ≥ −4.',
          "for xv in [-5, -4, -3, 0, 10]:\n    assert (6 - 3*xv <= 18) == (xv >= -4)\n",
          custom="assert C[K] == 'x ≥ −4'\n")
 
-    b.spr('ALG', IN, 'M',
+    b.spr('ALG', IN1, 'M',
           'A rideshare driver earns $1.40 per mile plus $3 per trip. On one trip, what is the least whole number of miles the driver must cover to earn more than $25?',
           '16', [],
           '1.40m + 3 > 25 means 1.40m > 22, so m > 15.71…; the least whole number of miles is 16.',
@@ -235,13 +238,13 @@ def add(b):
          "ok = [(f, bb) for f in range(0, 301, 10) for bb in range(0, 301, 10) if 60*f + 35*bb >= 14000 and f + bb <= 300]\nassert (220, 50) in ok and (100, 200) not in ok\n",
          custom="assert C[K] == '60f + 35b ≥ 14,000 and f + b ≤ 300'\n")
 
-    b.spr('ALG', IN, 'H',
+    b.spr('ALG', IN1, 'H',
           'What is the greatest integer x that satisfies 3(x − 2) − 4 < x + 5 ?',
           '7', [],
           '3x − 10 < x + 5 gives 2x < 15, so x < 7.5. The greatest integer is 7.',
           "ans = max(xv for xv in range(-50, 50) if 3*(xv - 2) - 4 < xv + 5)\n")
 
-    b.mc('ALG', IN, 'M',
+    b.mc('ALG', IN1, 'M',
          'A library charges a late fee of $0.25 per day for a book, up to a maximum fee of $10. For how many days late d is the fee less than the maximum?',
          'd < 40', ['d < 10', 'd ≤ 40', 'd > 40'],
          '0.25d < 10 gives d < 40. At exactly 40 days the fee reaches the $10 maximum.',

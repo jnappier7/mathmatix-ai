@@ -493,7 +493,7 @@
   {
    "n": 20,
    "domain": "ALG",
-   "skill": "Linear inequalities in one or two variables",
+   "skill": "Linear inequalities in one variable",
    "difficulty": "H",
    "type": "spr",
    "stem": "A commuter's bike-share membership costs $12 per month and includes 8 free rides; each ride after the first 8 costs $0.75. The commuter budgets at most $27 for bike-share in a month. What is the greatest number of rides the commuter can take that month without exceeding the budget?",

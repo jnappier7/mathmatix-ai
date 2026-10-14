@@ -33,7 +33,7 @@ def add(b):
 
     b.mc('PSDA', RR, 'H',
          'On a map, 2 centimeters represent 15 kilometers. Two towns are 9 centimeters apart on the map. How far apart are the towns, in kilometers?',
-         '67.5', ['30', '135', '60'],
+         '67.5', ['1.2', '135', '60'],
          'Each centimeter is 15/2 = 7.5 km, so 9 cm is 9 × 7.5 = 67.5 km.',
          "ans = sp.Rational(15, 2) * 9\n")
 

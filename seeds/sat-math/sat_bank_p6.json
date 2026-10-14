@@ -109,7 +109,7 @@
     {
       "n": 6,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "E",
       "type": "mc",
       "stem": "Which of the following values of x is NOT a solution to the inequality 2x + 1 ≤ 11?",
@@ -341,7 +341,7 @@
     {
       "n": 16,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "M",
       "type": "mc",
       "stem": "A delivery truck can carry at most 2,000 pounds. The driver weighs 180 pounds, and each box weighs 45 pounds. What is the greatest number of boxes the truck can carry on a trip with the driver?",
@@ -540,7 +540,7 @@
     {
       "n": 26,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "H",
       "type": "mc",
       "stem": "If 4 < 2x − 6 < 10, which of the following could be the value of x?",
@@ -656,7 +656,7 @@
     {
       "n": 32,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "H",
       "type": "mc",
       "stem": "The line y = 2x + b passes through the point (3, 1). For which values of x is y greater than 7?",

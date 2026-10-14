@@ -21,7 +21,7 @@ def add(b):
     # ── PSDA ─────────────────────────────────────────────────────────
     b.mc('PSDA', RR, 'E',
          'A recipe uses 3 cups of rice to make 8 servings. At this rate, how many cups of rice are needed to make 20 servings?',
-         '7.5', ['6', '9', '12'],
+         '7.5', ['6', '9', '53.3'],
          'Each serving needs 3/8 cup, so 20 servings need 20 × 3/8 = 7.5 cups.',
          "ans = sp.Rational(3, 8) * 20\n")
 

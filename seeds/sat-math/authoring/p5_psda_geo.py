@@ -34,7 +34,7 @@ def add(b):
 
     b.mc('PSDA', RR, 'E',
          'A recipe uses 3 cups of flour to make 12 cookies. At this rate, how many cups of flour are needed to make 30 cookies?',
-         '7.5', ['10', '9', '6'],
+         '7.5', ['2.5', '9', '6'],
          'That is 3/12 = 0.25 cup per cookie, so 30 cookies need 30(0.25) = 7.5 cups.',
          "ans = sp.Rational(3, 12) * 30\n")
 

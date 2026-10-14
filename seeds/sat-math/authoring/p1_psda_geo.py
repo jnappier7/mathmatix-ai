@@ -55,7 +55,7 @@ def add(b):
 
     b.mc('PSDA', OV, 'M',
          'The bar graph shows the number of siblings reported by each of 20 students. What is the median number of siblings?',
-         '1.5', ['2', '1', '5'],
+         '1.5', ['2', '1', '1.7'],
          'In order, the 20 values have 3 zeros and 7 ones (positions 1–10), then 5 twos (positions 11–15). The median is the mean of the 10th and 11th values: (1 + 2)/2 = 1.5.',
          "counts = {0: 3, 1: 7, 2: 5, 3: 3, 4: 2}\nvals = sorted(v for v, c in counts.items() for _ in range(c))\nassert len(vals) == 20\n"
          "ans = sp.Rational(vals[9] + vals[10], 2)\n",
