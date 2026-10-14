@@ -105,6 +105,19 @@ describe('SAT Math bank (unified taxonomy)', () => {
     expect(missing).toEqual([]);
   });
 
+  test('every bank item sits on a skill the SAT and PSAT forms draw', () => {
+    // A form draws slot by slot from blueprint.skillsByCategory, so an item on
+    // an unlisted skill can never be served: 41 items (absolute value,
+    // composition, transformations, literal equations, residuals) sat off every
+    // form until 2026-10-14.
+    for (const f of ['sat-math-blueprint.json', 'psat-math-blueprint.json']) {
+      const bp = require(path.join(__dirname, '../../seeds', f));
+      const listed = new Set(Object.values(bp.skillsByCategory).flat());
+      const unreachable = items.filter((i) => !listed.has(i.skillId)).map((i) => `${i.problemId} (${i.skillId})`);
+      expect({ blueprint: f, unreachable }).toEqual({ blueprint: f, unreachable: [] });
+    }
+  });
+
   test('no scatterplot stem states its own line of best fit', () => {
     // With the equation in the stem the plot is decoration: "y = 4x + 58 ...
     // predict at 6 hours" is answered without looking at it (external PSAT

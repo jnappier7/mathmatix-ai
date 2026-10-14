@@ -109,7 +109,7 @@
     {
       "n": 6,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "E",
       "type": "mc",
       "stem": "A tour runs only if at least 18 people sign up. Which inequality represents the numbers of people p for which the tour runs?",
@@ -340,7 +340,7 @@
     {
       "n": 16,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "M",
       "type": "mc",
       "stem": "A student’s scores on three tests are 80, 88, and 84. What is the minimum score the student needs on a fourth test to have a mean score of at least 85 on all four tests?",
@@ -565,7 +565,7 @@
     {
       "n": 27,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "H",
       "type": "mc",
       "stem": "3x − 7 < 2x + 5 < 4x − 1\nWhich of the following values of x satisfies both inequalities above?",

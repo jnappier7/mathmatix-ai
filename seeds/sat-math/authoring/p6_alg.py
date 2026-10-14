@@ -8,6 +8,9 @@ L2 = 'Linear equations in two variables'
 LF = 'Linear functions'
 SY = 'Systems of two linear equations'
 IN = 'Linear inequalities in one or two variables'
+# A one-variable inequality: the 'one or two variables' label above maps to
+# two-variable inequalities (ALG1.FNC.5) in scripts/satSkillMap.py.
+IN1 = 'Linear inequalities in one variable'
 
 X = "x = sp.Symbol('x')\n"
 
@@ -58,7 +61,7 @@ def add(b):
          'Add 9 to both sides: x = −4 + 9 = 5.',
          X + "ans = sp.solve(x - 9 + 4, x)[0]\n")
 
-    b.mc('ALG', IN, 'E',
+    b.mc('ALG', IN1, 'E',
          'Which of the following values of x is NOT a solution to the inequality 2x + 1 ≤ 11?',
          '6', ['5', '0', '−3'],
          '2x + 1 ≤ 11 means 2x ≤ 10, so x ≤ 5. Every choice is at most 5 except 6.',
@@ -123,7 +126,7 @@ def add(b):
          X + "ans = None\n",
          custom=rhs_is("-3*sp.Symbol('x')"))
 
-    b.mc('ALG', IN, 'M',
+    b.mc('ALG', IN1, 'M',
          'A delivery truck can carry at most 2,000 pounds. The driver weighs 180 pounds, and each box weighs 45 pounds. What is the greatest number of boxes the truck can carry on a trip with the driver?',
          '40', ['41', '44', '45'],
          '180 + 45b ≤ 2,000, so 45b ≤ 1,820 and b ≤ 40.4. The greatest whole number of boxes is 40. (Rounding 40.4 up to 41 would put the truck over its limit.)',
@@ -191,7 +194,7 @@ def add(b):
           'Let s be the smaller: s + (3s + 2) = 38, so 4s = 36 and s = 9. The larger is 3(9) + 2 = 29.',
           "s = sp.Symbol('s')\ns0 = sp.solve(s + 3*s + 2 - 38, s)[0]\nans = 3*s0 + 2\n")
 
-    b.mc('ALG', IN, 'H',
+    b.mc('ALG', IN1, 'H',
          'If 4 < 2x − 6 < 10, which of the following could be the value of x?',
          '6', ['5', '8', '4'],
          'Add 6 to each part: 10 < 2x < 16. Divide by 2: 5 < x < 8. Only 6 is strictly between 5 and 8.',
@@ -230,7 +233,7 @@ def add(b):
           'Multiply both sides by 12: 8(x + 6) = 3(x + 26), so 8x + 48 = 3x + 78, 5x = 30, and x = 6.',
           X + "ans = sp.solve(sp.Rational(2, 3)*(x + 6) - sp.Rational(1, 4)*(x + 26), x)[0]\n")
 
-    b.mc('ALG', IN, 'H',
+    b.mc('ALG', IN1, 'H',
          'The line y = 2x + b passes through the point (3, 1). For which values of x is y greater than 7?',
          'x > 6', ['x > 1', 'x < 6', 'x > 4'],
          '1 = 2(3) + b gives b = −5, so y = 2x − 5. Then 2x − 5 > 7 means 2x > 12, or x > 6.',

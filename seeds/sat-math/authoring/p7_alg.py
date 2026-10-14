@@ -6,6 +6,9 @@ L2 = 'Linear equations in two variables'
 LF = 'Linear functions'
 SY = 'Systems of two linear equations'
 IN = 'Linear inequalities in one or two variables'
+# A one-variable inequality: the 'one or two variables' label above maps to
+# two-variable inequalities (ALG1.FNC.5) in scripts/satSkillMap.py.
+IN1 = 'Linear inequalities in one variable'
 
 X = "x = sp.Symbol('x')\n"
 POINT = "(lambda c: [sp.Integer(v) for v in c.strip('()').replace('−', '-').split(',')])"
@@ -52,7 +55,7 @@ def add(b):
           'Distribute: 4y + 4 = 2y + 10. Subtract 2y and 4: 2y = 6, so y = 3.',
           "y = sp.Symbol('y')\nans = sp.solve(4*(y + 1) - (2*y + 10), y)[0]\n")
 
-    b.mc('ALG', IN, 'E',
+    b.mc('ALG', IN1, 'E',
          'A tour runs only if at least 18 people sign up. Which inequality represents the numbers of people p for which the tour runs?',
          'p ≥ 18', ['p > 18', 'p ≤ 18', 'p < 18'],
          '"At least 18" includes 18 itself and anything more: p ≥ 18. (p > 18 would cancel a tour with exactly 18 people.)',
@@ -119,7 +122,7 @@ def add(b):
           'The pool is empty when V = 0: 400t = 12,000, so t = 30.',
           "t = sp.Symbol('t')\nans = sp.solve(12000 - 400*t, t)[0]\n")
 
-    b.mc('ALG', IN, 'M',
+    b.mc('ALG', IN1, 'M',
          'A student’s scores on three tests are 80, 88, and 84. What is the minimum score the student needs on a fourth test to have a mean score of at least 85 on all four tests?',
          '88', ['85', '84', '92'],
          'The four scores must total at least 4 × 85 = 340. The first three total 252, so the fourth must be at least 340 − 252 = 88.',
@@ -191,7 +194,7 @@ def add(b):
          'Slope = (11 − 5)/(k − 2) = 3, so 6 = 3(k − 2) and k = 4.',
          "k = sp.Symbol('k')\nans = sp.solve(sp.Rational(1)*(11 - 5) - 3*(k - 2), k)[0]\n")
 
-    b.mc('ALG', IN, 'H',
+    b.mc('ALG', IN1, 'H',
          '3x − 7 < 2x + 5 < 4x − 1\nWhich of the following values of x satisfies both inequalities above?',
          '5', ['3', '12', '2'],
          'The left inequality gives x < 12. The right one gives 6 < 2x, so x > 3. Only 5 is strictly between 3 and 12.',

@@ -661,7 +661,7 @@
     {
       "n": 27,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "E",
       "type": "mc",
       "stem": "Which of the following describes all solutions to x/3 + 2 < 5 ?",
@@ -682,7 +682,7 @@
     {
       "n": 28,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "M",
       "type": "spr",
       "stem": "An elevator can carry at most 1,100 kilograms. Its operator weighs 80 kilograms, and each box to be loaded weighs 34 kilograms. What is the greatest number of boxes the elevator can carry with the operator aboard?",
@@ -719,7 +719,7 @@
     {
       "n": 30,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "H",
       "type": "mc",
       "stem": "How many integers x satisfy −5 < 2x + 1 ≤ 9 ?",

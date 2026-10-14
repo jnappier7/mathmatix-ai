@@ -5,6 +5,9 @@ L2 = 'Linear equations in two variables'
 LF = 'Linear functions'
 SY = 'Systems of two linear equations'
 IN = 'Linear inequalities in one or two variables'
+# A one-variable inequality: the 'one or two variables' label above maps to
+# two-variable inequalities (ALG1.FNC.5) in scripts/satSkillMap.py.
+IN1 = 'Linear inequalities in one variable'
 
 X = "x = sp.Symbol('x')\n"
 
@@ -194,21 +197,21 @@ def add(b):
          "x, y = sp.symbols('x y')\ns = sp.solve([3*x + 4*y - 31, 4*x + 3*y - 32], [x, y])\nans = s[x] + s[y]\n")
 
     # ── Linear inequalities ───────────────────────────────────────────
-    b.mc('ALG', IN, 'E',
+    b.mc('ALG', IN1, 'E',
          'Which of the following is a solution to the inequality −2x + 5 ≥ 13?',
          '−5', ['−3', '0', '4'],
          '−2x ≥ 8. Dividing by −2 REVERSES the inequality: x ≤ −4. Only −5 is at most −4.',
          "good = [v for v in [-5, -3, 0, 4] if -2*v + 5 >= 13]\nassert good == [-5]\n",
          custom="assert C[K] == '−5'\n")
 
-    b.mc('ALG', IN, 'M',
+    b.mc('ALG', IN1, 'M',
          'Ana has $50 in savings and adds $15 each week. Which inequality gives the numbers of weeks w after which she will have at least $200?',
          '50 + 15w ≥ 200', ['50 + 15w ≤ 200', '15 + 50w ≥ 200', '50w + 15 ≤ 200'],
          'After w weeks she has 50 + 15w dollars, and "at least $200" means ≥ 200.',
          "w = sp.Symbol('w')\nassert sp.solve(50 + 15*w - 200, w) == [10]\n",
          custom="assert C[K] == '50 + 15w ≥ 200'\n")
 
-    b.spr('ALG', IN, 'M',
+    b.spr('ALG', IN1, 'M',
           'An online ticket order has a $6 service fee plus $4.50 per ticket. What is the greatest number of tickets that can be ordered for a total of at most $60?',
           '12', [],
           '6 + 4.50n ≤ 60 means 4.50n ≤ 54, so n ≤ 12.',

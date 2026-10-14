@@ -8,6 +8,9 @@ L2 = 'Linear equations in two variables'
 LF = 'Linear functions'
 SY = 'Systems of two linear equations'
 IN = 'Linear inequalities in one or two variables'
+# A one-variable inequality: the 'one or two variables' label above maps to
+# two-variable inequalities (ALG1.FNC.5) in scripts/satSkillMap.py.
+IN1 = 'Linear inequalities in one variable'
 
 X = "x = sp.Symbol('x')\n"
 
@@ -57,7 +60,7 @@ def add(b):
          'Subtract 1: x/4 = 5. Multiply by 4: x = 20. (28 adds the 1 instead of subtracting it.)',
          X + "ans = sp.solve(x/4 + 1 - 6, x)[0]\n")
 
-    b.mc('ALG', IN, 'E',
+    b.mc('ALG', IN1, 'E',
          'Which of the following values of x satisfies the inequality 3x − 5 > 10?',
          '6', ['5', '4', '0'],
          '3x − 5 > 10 means 3x > 15, so x > 5. Only 6 is greater than 5 (x = 5 gives 10 > 10, which is false).',
@@ -129,7 +132,7 @@ def add(b):
           'The left side is 3x + 3k. The equation holds for every x exactly when 3k = 12, so k = 4.',
           X + "k = sp.Symbol('k')\nans = sp.solve(sp.expand(3*(x + k) - (3*x + 12)).coeff(x, 0), k)[0]\nassert sp.expand(3*(x + ans) - (3*x + 12)) == 0\n")
 
-    b.mc('ALG', IN, 'M',
+    b.mc('ALG', IN1, 'M',
          'Dana has $50 saved and adds $15 to her savings each week. What is the minimum number of whole weeks she must save to have at least $200 for a bike?',
          '10', ['14', '13', '9'],
          '50 + 15w ≥ 200, so 15w ≥ 150 and w ≥ 10. After exactly 10 weeks she has $200. (14 ignores the $50 she already has.)',

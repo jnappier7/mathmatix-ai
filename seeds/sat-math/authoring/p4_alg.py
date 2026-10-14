@@ -6,6 +6,9 @@ L2 = 'Linear equations in two variables'
 LF = 'Linear functions'
 SY = 'Systems of two linear equations'
 IN = 'Linear inequalities in one or two variables'
+# A one-variable inequality: the 'one or two variables' label above maps to
+# two-variable inequalities (ALG1.FNC.5) in scripts/satSkillMap.py.
+IN1 = 'Linear inequalities in one variable'
 
 X = "x = sp.Symbol('x')\n"
 
@@ -201,14 +204,14 @@ def add(b):
           "k = sp.Symbol('k')\nkv = sp.solve(-k/3 - sp.Rational(4, 6), k)[0]\nx, y = sp.symbols('x y')\nassert sp.solve([kv*x + 3*y - 7, 4*x - 6*y - 2], [x, y], dict=True) == []\nans = kv\n")
 
     # ── Inequalities ──────────────────────────────────────────────────
-    b.mc('ALG', IN, 'E',
+    b.mc('ALG', IN1, 'E',
          'Which of the following describes all solutions to x/3 + 2 < 5 ?',
          'x < 9', ['x < 3', 'x > 9', 'x < 21'],
          'Subtract 2: x/3 < 3. Multiply by 3: x < 9.',
          "for xv in [8, 9, 10, -5]:\n    assert (sp.Rational(xv, 3) + 2 < 5) == (xv < 9)\n",
          custom="assert C[K] == 'x < 9'\n")
 
-    b.spr('ALG', IN, 'M',
+    b.spr('ALG', IN1, 'M',
           'An elevator can carry at most 1,100 kilograms. Its operator weighs 80 kilograms, and each box to be loaded weighs 34 kilograms. What is the greatest number of boxes the elevator can carry with the operator aboard?',
           '30', [],
           '80 + 34b ≤ 1,100 gives 34b ≤ 1,020, so b ≤ 30.',
@@ -222,7 +225,7 @@ def add(b):
          "notsol = [k for k, (px, py) in pts.items() if not (py >= -px + 3)]\nassert notsol == ['(1, 1)']\n",
          custom="assert C[K] == '(1, 1)'\n")
 
-    b.mc('ALG', IN, 'H',
+    b.mc('ALG', IN1, 'H',
          'How many integers x satisfy −5 < 2x + 1 ≤ 9 ?',
          '7', ['6', '8', '5'],
          'Subtract 1: −6 < 2x ≤ 8. Divide by 2: −3 < x ≤ 4. The integers are −2, −1, 0, 1, 2, 3, 4 — seven of them.',

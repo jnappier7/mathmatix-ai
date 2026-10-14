@@ -600,7 +600,7 @@
     {
       "n": 29,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "E",
       "type": "mc",
       "stem": "Which of the following is equivalent to 6 − 3x ≤ 18?",
@@ -621,7 +621,7 @@
     {
       "n": 30,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "M",
       "type": "spr",
       "stem": "A rideshare driver earns $1.40 per mile plus $3 per trip. On one trip, what is the least whole number of miles the driver must cover to earn more than $25?",
@@ -679,7 +679,7 @@
     {
       "n": 33,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "H",
       "type": "spr",
       "stem": "What is the greatest integer x that satisfies 3(x − 2) − 4 < x + 5 ?",
@@ -695,7 +695,7 @@
     {
       "n": 34,
       "domain": "ALG",
-      "skill": "Linear inequalities in one or two variables",
+      "skill": "Linear inequalities in one variable",
       "difficulty": "M",
       "type": "mc",
       "stem": "A library charges a late fee of $0.25 per day for a book, up to a maximum fee of $10. For how many days late d is the fee less than the maximum?",
@@ -1467,7 +1467,7 @@
       "equivalents": [],
       "answer_any": null,
       "explanation": "Each centimeter is 15/2 = 7.5 km, so 9 cm is 9 × 7.5 = 67.5 km.",
-      "verify": "\nimport sympy as sp, re\nfrom sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor\n_T = standard_transformations + (implicit_multiplication_application, convert_xor)\ndef P(t):\n    s = str(t).strip()\n    s = re.sub(r'^\\s*(?:[a-zA-Z]\\(x\\)|y)\\s*=\\s*', '', s)   # \"f(x) = ...\", \"y = ...\" -> the expression\n    if '=' in s:                                             # an equation -> lhs - rhs\n        l, r = s.split('=', 1)\n        return P(l) - P(r)\n    s = s.replace('−','-').replace('–','-').replace('·','*').replace('×','*').replace('÷','/')\n    s = re.sub(r'√(\\d+(?:\\.\\d+)?|[a-z])', r' sqrt(\\1)', s)\n    _SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹'\n    s = re.sub('[' + _SUP + ']+', lambda m: '^(' + ''.join(str(_SUP.index(c)) for c in m.group(0)) + ')', s)\n    s = s.replace('π','pi').replace('√',' sqrt').replace(',','')\n    s = s.replace('$','').replace('%','')\n    s = re.sub(r'\\bpi\\b', ' pi ', s)\n    return parse_expr(s, local_dict={'x':sp.Symbol('x'),'y':sp.Symbol('y'),'pi':sp.pi,'sqrt':sp.sqrt,'e':sp.E}, transformations=_T)\ndef EQN(a, b):\n    # Two equations agree when one is a nonzero constant multiple of the other.\n    a, b = sp.expand(a), sp.expand(b)\n    if b == 0: return a == 0\n    r = sp.simplify(a / b)\n    return r.free_symbols == set() and r != 0\ndef EQ(a, b, tol=1e-9):\n    d = sp.simplify(sp.nsimplify(a) - sp.nsimplify(b)) if not (isinstance(a,(int,float)) and isinstance(b,(int,float))) else a-b\n    try:\n        return abs(complex(sp.N(d))) < tol\n    except TypeError:\n        return sp.simplify(d) == 0\nans = sp.Rational(15, 2) * 9\n\nC = ['30', '67.5', '135', '60']\nK = 1\nSAME = (lambda a, b: EQN(a, b)) if any('=' in c.replace('f(x) =','').replace('y =','') for c in C) else (lambda a, b: EQ(a, b))\nassert SAME(P(C[K]), ans), ('key', C[K], ans)\nfor _i,_c in enumerate(C):\n    if _i != K: assert not SAME(P(_c), ans), ('distractor equals answer', _c)\n",
+      "verify": "\nimport sympy as sp, re\nfrom sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor\n_T = standard_transformations + (implicit_multiplication_application, convert_xor)\ndef P(t):\n    s = str(t).strip()\n    s = re.sub(r'^\\s*(?:[a-zA-Z]\\(x\\)|y)\\s*=\\s*', '', s)   # \"f(x) = ...\", \"y = ...\" -> the expression\n    if '=' in s:                                             # an equation -> lhs - rhs\n        l, r = s.split('=', 1)\n        return P(l) - P(r)\n    s = s.replace('−','-').replace('–','-').replace('·','*').replace('×','*').replace('÷','/')\n    s = re.sub(r'√(\\d+(?:\\.\\d+)?|[a-z])', r' sqrt(\\1)', s)\n    _SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹'\n    s = re.sub('[' + _SUP + ']+', lambda m: '^(' + ''.join(str(_SUP.index(c)) for c in m.group(0)) + ')', s)\n    s = s.replace('π','pi').replace('√',' sqrt').replace(',','')\n    s = s.replace('$','').replace('%','')\n    s = re.sub(r'\\bpi\\b', ' pi ', s)\n    return parse_expr(s, local_dict={'x':sp.Symbol('x'),'y':sp.Symbol('y'),'pi':sp.pi,'sqrt':sp.sqrt,'e':sp.E}, transformations=_T)\ndef EQN(a, b):\n    # Two equations agree when one is a nonzero constant multiple of the other.\n    a, b = sp.expand(a), sp.expand(b)\n    if b == 0: return a == 0\n    r = sp.simplify(a / b)\n    return r.free_symbols == set() and r != 0\ndef EQ(a, b, tol=1e-9):\n    d = sp.simplify(sp.nsimplify(a) - sp.nsimplify(b)) if not (isinstance(a,(int,float)) and isinstance(b,(int,float))) else a-b\n    try:\n        return abs(complex(sp.N(d))) < tol\n    except TypeError:\n        return sp.simplify(d) == 0\nans = sp.Rational(15, 2) * 9\n\nC = ['1.2', '67.5', '135', '60']\nK = 1\nSAME = (lambda a, b: EQN(a, b)) if any('=' in c.replace('f(x) =','').replace('y =','') for c in C) else (lambda a, b: EQ(a, b))\nassert SAME(P(C[K]), ans), ('key', C[K], ans)\nfor _i,_c in enumerate(C):\n    if _i != K: assert not SAME(P(_c), ans), ('distractor equals answer', _c)\n",
       "figure": null
     },
     {
