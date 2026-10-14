@@ -219,6 +219,35 @@ function applyVisualDirective(decision, observation, context) {
   if (directive) decision.directives.push(directive);
 }
 
+// ── Teaching moves shared by several branches ──
+
+// "I don't know" asks for instruction. Teach the one missing idea, then hand
+// over ONE step — never the same question again in smaller words.
+const TEACH_THEN_ONE_STEP =
+  'The student said they don\'t know. Do NOT re-ask the question or repeat it in different words. TEACH the one idea they are missing in 1–2 plain sentences — what the move is and WHY it works (e.g. "We want x by itself. Adding 4 makes the −4 disappear because opposites make zero."). Then ask for ONE manageable step that uses it ("Add 4 on the right too. What do you get?"). Do not carry out that step for them, and do not go past it.';
+
+// A tutor that got something wrong owns it — and the correction is of the
+// EXPLANATION. Owning an error is not a license to finish the problem.
+const OWN_IT_WITHOUT_ANSWERING =
+  'Whichever way it lands, correcting the record never means finishing their problem: do NOT supply the result of any step they have not done yet, or the final answer. Fix the explanation, then hand the next step back to them.';
+
+/**
+ * Wrong answer → name the FIRST step that went wrong, and what was right
+ * before it. When the student showed work, diagnose already found the exact
+ * line (derivation.firstBadStep); without work, the tutor works out which
+ * move produces their number.
+ */
+function firstWrongStepDirective(diagnosis) {
+  const bad = diagnosis && diagnosis.derivation && diagnosis.derivation.firstBadStep;
+  const tail = ' Ask about that ONE move. Do not fix it for them, and do not go on to the final answer.';
+  const praise = ' Open with what was specifically right ("Your division step is right"), never generic praise ("I appreciate your effort", "good try").';
+  if (bad) {
+    return `FIRST WRONG STEP: their work is right up to the line "${String(bad).slice(0, 120)}" — that is the first step that breaks.${praise} Then point at that line and name what went wrong in it.${tail}`;
+  }
+  return `FIND THE FIRST WRONG STEP: work out which move produces their answer (or check their value in the original problem) and name that step specifically — "The trouble is subtracting 4: we need to undo the −4."${praise}${tail}`;
+}
+
+
 // ── ACT review context (owner evaluation, 2026-09-09) ──
 // The missed question sat in the system prompt while the ACTION DIRECTIVES in
 // the last user turn said, in effect, "ask what problem they mean" — and the
@@ -392,7 +421,8 @@ function applyGradeDisputeGuard(decision, observation, context) {
 
   if (VERDICT_RX.test(lastAssistantText(context)) && PUSHBACK_RX.test(text)) {
     decision.directives.push(
-      'THE STUDENT IS PUSHING BACK ON YOUR VERDICT. Re-derive from scratch and show the derivation. Change your verdict ONLY if the math changes it: if you were wrong, say so plainly and correct yourself in the first sentence; if you were right, hold the line kindly and point to the exact step where their reasoning breaks. Insistence is not evidence in either direction.'
+      'THE STUDENT IS PUSHING BACK ON YOUR VERDICT. Re-derive from scratch. Change your verdict ONLY if the math changes it: if you were wrong, say so plainly and correct yourself in the first sentence; if you were right, hold the line kindly and point to the exact step where their reasoning breaks. Insistence is not evidence in either direction.',
+      OWN_IT_WITHOUT_ANSWERING
     );
   }
 }
@@ -568,7 +598,7 @@ function decideCore(observation, diagnosis, context) {
         'FRUSTRATION RECOVERY — MODERATE. Student is struggling but still here. Emotion first, math second — and "second" means the NEXT message, not later in this one.',
         'Acknowledge briefly and genuinely: "This one is tricky."',
         'HARD RULE: do NOT pose a new problem, restate the current one, or demand a step in THIS reply.',
-        'Offer a different way in as ONE opt-in question they can decline — e.g. seeing it with concrete numbers, a picture, or a much smaller piece. No problem text, no numbers in the offer.',
+        'Offer a different way in as ONE opt-in question they can decline — a picture, concrete numbers, or SHRINKING the task to its one next piece, named plainly ("Want to just handle the −4?"). Never restate the whole problem in the offer.',
         'If they say yes next turn, THEN switch representation and break the problem into the smallest possible piece.'
       );
     } else {
@@ -576,7 +606,7 @@ function decideCore(observation, diagnosis, context) {
       decision.directives.push(
         'The student is frustrated or down on themselves. Acknowledging the feeling IS the job of this reply — briefly, genuinely, without judgment.',
         'HARD RULE: do NOT pose a new problem, assign an easier one, demand a step, or re-explain the math in THIS same reply. Stacking work onto frustration reads as ignoring the feeling, even when kindly worded.',
-        'You MAY end with ONE small opt-in question offering a choice (a tiny piece together, a different angle, or a short break). An offer, not an assignment — no problem text, no numbers, no "what\'s the first step".',
+        'You MAY end with ONE small opt-in question that shrinks the task — name the one tiny piece you would do together ("Want to just handle the −4?"), or offer a different angle or a short break. An offer, not an assignment — never restate the whole problem, never "what\'s the first step".',
         'Do NOT be condescending or use banned phrases. 1-2 sentences total.'
       );
     }
@@ -748,24 +778,31 @@ function decideCore(observation, diagnosis, context) {
       return decision;
     }
 
-    // Progressive IDK handling
+    // Progressive IDK handling. "I don't know" is a request for instruction,
+    // not a cue to re-ask: the old first rung was "a simpler sub-question",
+    // which in practice was the same question in smaller words, and the second
+    // was multiple choice — a student who lacks the idea was quizzed twice
+    // before anyone taught it. The ladder now: teach the missing idea, then
+    // ONE step (1st); show the move on a parallel problem and hand it back
+    // (still stuck, 2nd); then the exit ramp.
     if (streaks.idkCount >= 3) {
       decision.action = ACTIONS.EXIT_RAMP;
       decision.directives.push(
         'Student has said IDK 3+ times. Use exit ramp.',
-        'Work a parallel problem, then retry. If still stuck, skip.'
+        'Work a parallel problem, then retry. If still stuck, offer a choice between two concrete moves, or to skip.'
       );
     } else if (streaks.idkCount >= 2) {
-      decision.action = ACTIONS.SCAFFOLD_DOWN;
+      decision.action = ACTIONS.WORKED_EXAMPLE;
       decision.scaffoldLevel = 5;
       decision.directives.push(
-        'Lower the barrier: rephrase as multiple choice or yes/no.',
-        'Change approach entirely from what was tried before.'
+        'STILL STUCK after an explanation. Show the move on a PARALLEL problem with DIFFERENT numbers — e.g. "Let me show that move on a different equation: y − 3 = 8. Adding 3 to both sides gives y = 11." Then hand it straight back: "Now try that same move on yours."',
+        'Never work their own problem. The parallel example is the demonstration; their problem stays theirs.',
+        'You may offer them a choice of how to see it next — a picture or a different example.'
       );
     } else {
       decision.action = ACTIONS.SCAFFOLD_DOWN;
       decision.scaffoldLevel = 4;
-      decision.directives.push('Scaffold with a simpler sub-question.');
+      decision.directives.push(TEACH_THEN_ONE_STEP);
     }
     return decision;
   }
@@ -1011,7 +1048,7 @@ function decideCore(observation, diagnosis, context) {
         decision.action = ACTIONS.GUIDE_INCORRECT;
         decision.scaffoldLevel = 4;
         decision.directives.push(
-          'Guide with a question that exposes WHY the answer is wrong.',
+          firstWrongStepDirective(diagnosis),
           'ADAPTATION: This is the 2nd wrong answer. Your previous guidance didn\'t land.',
           'Try a DIFFERENT angle: if you asked a conceptual question last time, try a concrete number check this time.',
           'Example: "Let\'s test your answer — if x = [their answer], does the equation balance?"',
@@ -1020,7 +1057,7 @@ function decideCore(observation, diagnosis, context) {
       } else {
         decision.action = ACTIONS.GUIDE_INCORRECT;
         decision.directives.push(
-          'Guide with a question that exposes WHY the answer is wrong.',
+          firstWrongStepDirective(diagnosis),
           'Let THEM arrive at the fix. Do not hand them the correction.'
         );
       }
@@ -1181,7 +1218,8 @@ function decideCore(observation, diagnosis, context) {
       'The student is telling you that YOU are wrong. Take that seriously — you may well be.',
       'Do NOT repeat your previous claim, and do NOT re-ask the same question in different words or with a more concrete analogy. Restating a disputed claim more simply is not re-examining it.',
       'Actually re-work the specific step under dispute from scratch, and say plainly what you find.',
-      'If you were wrong: say so directly and simply ("You\'re right, I made a mistake — ..."). Do not bury it or soften it into a teaching moment. Then continue from their correct work.',
+      'If you were wrong: say so directly and simply ("You\'re right. I incorrectly approved that step."). Do not bury it or soften it into a teaching moment. Correct the EXPLANATION, then continue from their correct work.',
+      OWN_IT_WITHOUT_ANSWERING,
       'If you are confident you were right, and the system has verified it, explain the specific point of disagreement — do not just assert it again.',
       'Never imply the student is being difficult, and never treat disagreement itself as a misconception to correct.'
     );
@@ -1780,6 +1818,7 @@ function initPhase(skillId, warmupData = { skillName: 'prerequisite', concepts: 
 module.exports = {
   decide,
   initPhase,
+  firstWrongStepDirective,
   namesKey,
   ACTIONS,
   INSTRUCTIONAL_MODES,

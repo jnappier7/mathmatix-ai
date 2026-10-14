@@ -105,8 +105,8 @@ function buildActionPrompt(decision) {
       break;
 
     case ACTIONS.GUIDE_INCORRECT:
-      parts.push(`The student answered "${observation.answer?.value}" but the correct answer is "${diagnosis.correctAnswer}".`);
-      parts.push('Do NOT reveal the correct answer. Ask a question that exposes why their approach went wrong.');
+      parts.push(`The student answered "${observation.answer?.value}" but the correct answer is "${diagnosis.correctAnswer}". That is for YOUR diagnosis only.`);
+      parts.push('Do NOT reveal the correct answer, and do not finish the problem in any form — no "so x = …", no substituting it in. Identify the FIRST step that went wrong, say specifically what was right before it, and ask about that one move (see the FIRST WRONG STEP directive).');
       break;
 
     case ACTIONS.RETEACH_MISCONCEPTION:
@@ -116,7 +116,7 @@ function buildActionPrompt(decision) {
         if (diagnosis.misconception.description) parts.push(`What happened: ${diagnosis.misconception.description}`);
         if (diagnosis.misconception.fix) parts.push(`Reteaching strategy: ${diagnosis.misconception.fix}`);
         if (diagnosis.misconception.testQuestion) parts.push(`Follow-up problem: ${diagnosis.misconception.testQuestion}`);
-        parts.push('Address the root cause, not just the symptom. Do NOT reveal the answer.');
+        parts.push('Address the root cause, not just the symptom: name the first step where the misconception showed up, teach the idea it needs, and ask them to redo that one step. Do NOT reveal the answer.');
       }
       break;
 
@@ -127,10 +127,10 @@ function buildActionPrompt(decision) {
       // when no twin was produced (unverifiable type / generation failed).
       const twinBlock = decision.verifiedTwin ? formatVerifiedTwinInstruction(decision.verifiedTwin) : '';
       if (twinBlock) {
-        parts.push('Student has struggled with multiple attempts. Show a WORKED EXAMPLE using the verified parallel problem below.');
+        parts.push('Student is stuck. Show a WORKED EXAMPLE using the verified parallel problem below, then hand the move back for their own problem.');
         parts.push(twinBlock);
       } else {
-        parts.push('Student has struggled with multiple attempts. Show a WORKED EXAMPLE using a PARALLEL problem (same skill, DIFFERENT numbers).');
+        parts.push('Student is stuck. Show a WORKED EXAMPLE using a PARALLEL problem (same skill, DIFFERENT numbers).');
         parts.push('ANTI-CHEAT RULE: You MUST change the numbers. If the original problem is "3x + 5 = 14", your example might use "2x + 7 = 15". NEVER use the student\'s exact numbers.');
         parts.push('Walk through step by step with think-aloud. Show your reasoning at each step.');
         parts.push('After the example, say: "Now try applying the same method to your problem."');
@@ -169,11 +169,11 @@ function buildActionPrompt(decision) {
     }
 
     case ACTIONS.SCAFFOLD_DOWN:
-      parts.push('The student said they don\'t know or needs more support. Lower the barrier:');
+      parts.push('The student said they don\'t know or needs more support.');
       if (decision.scaffoldLevel >= 5) {
-        parts.push('Rephrase as a yes/no or multiple-choice question.');
+        parts.push('Lower the barrier: rephrase the next move as a yes/no or a choice between two moves.');
       } else {
-        parts.push('Break the problem into a simpler sub-question.');
+        parts.push('Teach first: explain the ONE idea they are missing in 1–2 plain sentences (what the move is and why it works), then ask for ONE manageable step that uses it. Do NOT re-ask the original question in different words.');
       }
       parts.push('CRITICAL: The student did NOT answer the question. Do NOT say "That\'s right", "Correct", "Exactly", "Great job", or any affirmation. They did not provide an answer to affirm.');
       break;
