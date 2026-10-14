@@ -15,6 +15,7 @@
  */
 
 const { calculateRetrievability } = require('./fsrsScheduler');
+const { engineEntries } = require('./engineStore');
 const _logger = require('./logger').child({ module: 'interventionAlerts' });
 
 // Thresholds for alert tiers
@@ -39,7 +40,7 @@ function computeRiskScore(user) {
 
     // Avg pLearned (BKT)
     const bkt = engines.bkt;
-    const bktEntries = bkt ? (typeof bkt.entries === 'function' ? Array.from(bkt.entries()) : Object.entries(bkt)) : [];
+    const bktEntries = engineEntries(bkt);
     let avgPLearned = 0;
     if (bktEntries.length > 0) {
         avgPLearned = bktEntries.reduce((sum, [, d]) => sum + (d.pLearned ?? 0), 0) / bktEntries.length;
@@ -47,7 +48,7 @@ function computeRiskScore(user) {
 
     // Avg retrievability (FSRS)
     const fsrs = engines.fsrs;
-    const fsrsEntries = fsrs ? (typeof fsrs.entries === 'function' ? Array.from(fsrs.entries()) : Object.entries(fsrs)) : [];
+    const fsrsEntries = engineEntries(fsrs);
     let avgRetrievability = 1;
     if (fsrsEntries.length > 0) {
         avgRetrievability = fsrsEntries.reduce((sum, [, d]) => {

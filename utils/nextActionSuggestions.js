@@ -8,6 +8,7 @@
  */
 
 const { calculateRetrievability } = require('./fsrsScheduler');
+const { engineEntries } = require('./engineStore');
 
 /**
  * Generate a prioritized list of next-action suggestions for a student.
@@ -65,7 +66,7 @@ function getNextActions(user, context = {}) {
     const fsrs = engines.fsrs;
     if (fsrs) {
         const fadingSkills = [];
-        const entries = typeof fsrs.entries === 'function' ? Array.from(fsrs.entries()) : Object.entries(fsrs);
+        const entries = engineEntries(fsrs);
 
         for (const [skillId, data] of entries) {
             if (!data || !data.lastReview) continue;

@@ -25,6 +25,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { sendParentWeeklyReport } = require('../utils/emailService');
 const { calculateRetrievability } = require('../utils/fsrsScheduler');
+const { engineEntries } = require('../utils/engineStore');
 
 // Constants
 const BATCH_SIZE = 50; // Process parents in batches
@@ -143,8 +144,7 @@ async function calculateStudentProgress(studentId) {
     const engines = student.learningEngines || {};
     const fsrs = engines.fsrs;
     if (fsrs) {
-        const fsrsEntries = typeof fsrs.entries === 'function'
-            ? Array.from(fsrs.entries()) : Object.entries(fsrs);
+        const fsrsEntries = engineEntries(fsrs);
         for (const [skillId, card] of fsrsEntries) {
             if (!card || !card.lastReview) continue;
             const elapsed = (Date.now() - new Date(card.lastReview).getTime()) / 86400000;

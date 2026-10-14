@@ -21,6 +21,7 @@ const { getStudentIdsForTeacher } = require('../services/userService');
 const { calculateRetrievability } = require('../utils/fsrsScheduler');
 
 const { anyRole } = require('../utils/roleQuery');
+const { engineEntries } = require('../utils/engineStore');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 // ---------------------------------------------------------------------------
 // Helpers
@@ -57,12 +58,10 @@ function isRealSkillKey(k) {
 /**
  * Safely convert a Mongoose Map (or plain object) into an array of [key, value] pairs.
  */
+// Every caller iterates a learningEngines store, so this is engineEntries:
+// decoded skill ids, junk keys ("undefined"/"null") dropped.
 function mapEntries(mapOrObj) {
-  if (!mapOrObj) return [];
-  if (typeof mapOrObj.entries === 'function') {
-    return Array.from(mapOrObj.entries());
-  }
-  return Object.entries(mapOrObj);
+  return engineEntries(mapOrObj);
 }
 
 /**

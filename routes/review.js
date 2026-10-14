@@ -11,7 +11,7 @@
  */
 
 const express = require('express');
-const { canonicalSkillId, skillLookupCandidates, expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
+const { skillLookupCandidates, expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
@@ -25,6 +25,7 @@ const {
 } = require('../utils/spacedRepetition');
 const { buildSmartQueue, getReviewSummary } = require('../utils/smartReviewQueue');
 const { initializeCard, updateCard, rateAttempt } = require('../utils/fsrsScheduler');
+const { readEngineEntry, writeEngineEntry } = require('../utils/engineStore');
 const { resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
 const logger = require('../utils/catLogger');
 const { normalizeOptions } = require('../utils/mcOptions');
@@ -435,27 +436,13 @@ async function findProblemForSkill(skillId, user, excludeIds) {
  * @param {Object} attempt - { correct, hintUsed, responseTime, expectedTime }
  */
 function syncFsrsCard(user, skillId, attempt) {
-  if (!user.learningEngines) {
-    user.learningEngines = { bkt: new Map(), fsrs: new Map(), consistency: new Map() };
-  }
-  const store = user.learningEngines.fsrs;
-  const get = (k) => (typeof store?.get === 'function' ? store.get(k) : store?.[k]);
-
-  const canon = canonicalSkillId(skillId) || skillId;
-  const key = get(canon) != null ? canon
-    : get(skillId) != null ? skillId
-    : canon;
-
-  const existing = get(key);
+  // engineStore owns the key: canonical id, encoded for the Mongoose Map (a dotted
+  // unified id like "MS.EQV.10" would throw on store.set), falling back to — and
+  // folding in — a card stored under the legacy id.
+  const existing = readEngineEntry(user.learningEngines?.fsrs, skillId);
   const rating = rateAttempt(attempt);
   const card = existing ? updateCard(existing, rating) : initializeCard(rating);
-
-  if (typeof store?.set === 'function') {
-    store.set(key, card);
-  } else {
-    user.learningEngines.fsrs = { ...(store || {}), [key]: card };
-  }
-  user.markModified('learningEngines');
+  writeEngineEntry(user, 'fsrs', skillId, card);
 }
 
 /**
