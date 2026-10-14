@@ -514,8 +514,7 @@ window.I18N_TRANSLATIONS = {
     Vietnamese: 'Mã liên kết của học sinh', Arabic: 'رمز ربط الطالب', Somali: 'Koodhka xiriirinta ardayga', French: 'Code de liaison de l\'élève', German: 'Verknüpfungscode des Schülers'
   },
   'parent.linkCodePlaceholder': {
-    English: 'MATH-A1B2C3', Spanish: 'MATH-A1B2C3', Russian: 'MATH-A1B2C3', Chinese: 'MATH-A1B2C3',
-    Vietnamese: 'MATH-A1B2C3', Arabic: 'MATH-A1B2C3', Somali: 'MATH-A1B2C3', French: 'MATH-A1B2C3', German: 'MATH-A1B2C3'
+    English: "e.g. MATH-A1B2C3", Spanish: "p. ej., MATH-A1B2C3", Russian: "например, MATH-A1B2C3", Chinese: "例如 MATH-A1B2C3", Vietnamese: "vd: MATH-A1B2C3", Arabic: "مثال: MATH-A1B2C3", Somali: "tusaale: MATH-A1B2C3", French: "ex. : MATH-A1B2C3", German: "z. B. MATH-A1B2C3"
   },
   'parent.linkStudent': {
     English: 'Link Student', Spanish: 'Vincular estudiante', Russian: 'Привязать ученика', Chinese: '关联学生',
@@ -1423,5 +1422,87 @@ window.I18N_TRANSLATIONS = {
   },
   'parent.report.emailFailed': {
     English: "Couldn't send the email. Please try again later.", Spanish: "No se pudo enviar el correo. Inténtelo más tarde.", Russian: "Не удалось отправить письмо. Попробуйте позже.", Chinese: "邮件发送失败，请稍后重试。", Vietnamese: "Không gửi được email. Vui lòng thử lại sau.", Arabic: "تعذّر إرسال البريد. يُرجى المحاولة لاحقًا.", Somali: "Iimaylka lama diri karin. Fadlan isku day mar dambe.", French: "Impossible d'envoyer l'e-mail. Veuillez réessayer plus tard.", German: "Die E-Mail konnte nicht gesendet werden. Bitte später erneut versuchen."
+  },
+
+  /* --- Parent dashboard Phase 3: tour, card, view-as, add child --- */
+  'tour.welcomeTitle': {
+    English: "Welcome! New here?", Spanish: "¡Bienvenido! ¿Es nuevo aquí?", Russian: "Добро пожаловать! Вы здесь впервые?", Chinese: "欢迎！第一次来吗？", Vietnamese: "Chào mừng! Bạn mới đến?", Arabic: "مرحبًا! هل أنت جديد هنا؟", Somali: "Soo dhawoow! Ma cusub tahay?", French: "Bienvenue ! Vous êtes nouveau ?", German: "Willkommen! Neu hier?"
+  },
+  'tour.welcomeBody': {
+    English: "Take a quick tour to learn about all the features available to you.", Spanish: "Haga un recorrido rápido para conocer todas las funciones disponibles.", Russian: "Пройдите короткую экскурсию, чтобы узнать обо всех возможностях.", Chinese: "快速浏览一下，了解所有可用功能。", Vietnamese: "Xem nhanh hướng dẫn để biết tất cả tính năng dành cho bạn.", Arabic: "قم بجولة سريعة للتعرّف على جميع الميزات المتاحة لك.", Somali: "Booqasho degdeg ah samee si aad u barato dhammaan sifooyinka laguu heli karo.", French: "Faites une visite rapide pour découvrir toutes les fonctionnalités disponibles.", German: "Machen Sie eine kurze Tour, um alle verfügbaren Funktionen kennenzulernen."
+  },
+  'tour.take': {
+    English: "Take Tour", Spanish: "Iniciar recorrido", Russian: "Начать экскурсию", Chinese: "开始浏览", Vietnamese: "Bắt đầu", Arabic: "ابدأ الجولة", Somali: "Bilow booqashada", French: "Faire la visite", German: "Tour starten"
+  },
+  'tour.later': {
+    English: "Maybe Later", Spanish: "Quizás después", Russian: "Позже", Chinese: "以后再说", Vietnamese: "Để sau", Arabic: "ربما لاحقًا", Somali: "Mar dambe", French: "Plus tard", German: "Vielleicht später"
+  },
+  'tour.button': {
+    English: "Tour", Spanish: "Recorrido", Russian: "Экскурсия", Chinese: "导览", Vietnamese: "Hướng dẫn", Arabic: "جولة", Somali: "Booqasho", French: "Visite", German: "Tour"
+  },
+  'parent.card.level': {
+    English: "Level {level} — {xp} XP", Spanish: "Nivel {level} — {xp} XP", Russian: "Уровень {level} — {xp} XP", Chinese: "等级 {level} — {xp} XP", Vietnamese: "Cấp {level} — {xp} XP", Arabic: "المستوى {level} — {xp} XP", Somali: "Heerka {level} — {xp} XP", French: "Niveau {level} — {xp} XP", German: "Level {level} — {xp} XP"
+  },
+  'parent.card.report': {
+    English: "Report", Spanish: "Informe", Russian: "Отчёт", Chinese: "报告", Vietnamese: "Báo cáo", Arabic: "التقرير", Somali: "Warbixin", French: "Rapport", German: "Bericht"
+  },
+  'parent.card.view': {
+    English: "View", Spanish: "Ver", Russian: "Просмотр", Chinese: "查看", Vietnamese: "Xem", Arabic: "عرض", Somali: "Eeg", French: "Voir", German: "Ansehen"
+  },
+  'parent.card.liveNow': {
+    English: "LIVE NOW", Spanish: "EN VIVO", Russian: "СЕЙЧАС ЗАНИМАЕТСЯ", Chinese: "正在学习", Vietnamese: "ĐANG HỌC", Arabic: "يتعلّم الآن", Somali: "HADDA WAA TOOS", French: "EN DIRECT", German: "GERADE AKTIV"
+  },
+  'parent.viewAs.title': {
+    English: "View the app as {name}?", Spanish: "¿Ver la aplicación como {name}?", Russian: "Посмотреть приложение глазами {name}?", Chinese: "以{name}的身份查看应用？", Vietnamese: "Xem ứng dụng dưới góc nhìn của {name}?", Arabic: "هل تريد عرض التطبيق كما يراه {name}؟", Somali: "Ma rabtaa inaad app-ka u aragto sida {name}?", French: "Voir l’application comme {name} ?", German: "Die App als {name} ansehen?"
+  },
+  'parent.viewAs.message': {
+    English: "You'll see exactly what {name} sees. It's look-only: nothing you do there changes {name}'s account.", Spanish: "Verá exactamente lo que ve {name}. Es solo para mirar: nada de lo que haga cambia la cuenta de {name}.", Russian: "Вы увидите ровно то же, что видит {name}. Это только просмотр: ваши действия не изменят аккаунт {name}.", Chinese: "您将看到{name}所看到的内容。仅供查看：您的任何操作都不会更改{name}的账户。", Vietnamese: "Bạn sẽ thấy đúng những gì {name} thấy. Chỉ để xem: mọi thao tác của bạn không thay đổi tài khoản của {name}.", Arabic: "سترى بالضبط ما يراه {name}. للعرض فقط: لن يغيّر أي شيء تفعله حساب {name}.", Somali: "Waxaad arki doontaa waxa uu {name} arko. Waa eegis keliya: waxaad samayso ma beddelaan akoonka {name}.", French: "Vous verrez exactement ce que voit {name}. C’est en lecture seule : rien de ce que vous faites ne modifie le compte de {name}.", German: "Sie sehen genau, was {name} sieht. Nur zum Ansehen: Nichts, was Sie dort tun, ändert das Konto von {name}."
+  },
+  'parent.viewAs.confirm': {
+    English: "View as {name}", Spanish: "Ver como {name}", Russian: "Смотреть как {name}", Chinese: "以{name}身份查看", Vietnamese: "Xem như {name}", Arabic: "العرض كـ {name}", Somali: "U eeg sida {name}", French: "Voir comme {name}", German: "Als {name} ansehen"
+  },
+  'parent.common.cancel': {
+    English: "Cancel", Spanish: "Cancelar", Russian: "Отмена", Chinese: "取消", Vietnamese: "Hủy", Arabic: "إلغاء", Somali: "Ka noqo", French: "Annuler", German: "Abbrechen"
+  },
+  'parent.addChildTitle': {
+    English: "Add a child", Spanish: "Agregar un hijo", Russian: "Добавить ребёнка", Chinese: "添加孩子", Vietnamese: "Thêm con", Arabic: "إضافة طفل", Somali: "Ku dar ilmo", French: "Ajouter un enfant", German: "Kind hinzufügen"
+  },
+  'parent.addChildQuestion': {
+    English: "Does your child already have a Mathmatix account?", Spanish: "¿Su hijo ya tiene una cuenta de Mathmatix?", Russian: "У вашего ребёнка уже есть аккаунт Mathmatix?", Chinese: "您的孩子已经有Mathmatix账户了吗？", Vietnamese: "Con bạn đã có tài khoản Mathmatix chưa?", Arabic: "هل لدى طفلك حساب على Mathmatix بالفعل؟", Somali: "Ilmahaagu ma horay u leeyahay akoon Mathmatix?", French: "Votre enfant a-t-il déjà un compte Mathmatix ?", German: "Hat Ihr Kind bereits ein Mathmatix-Konto?"
+  },
+  'parent.addChildYes': {
+    English: "Yes, link their account", Spanish: "Sí, vincular su cuenta", Russian: "Да, привязать аккаунт", Chinese: "是的，关联其账户", Vietnamese: "Có, liên kết tài khoản", Arabic: "نعم، اربط حسابه", Somali: "Haa, isku xir akoonkiisa", French: "Oui, lier son compte", German: "Ja, Konto verknüpfen"
+  },
+  'parent.addChildNo': {
+    English: "No, not yet", Spanish: "Todavía no", Russian: "Нет, ещё нет", Chinese: "还没有", Vietnamese: "Chưa có", Arabic: "ليس بعد", Somali: "Maya, weli", French: "Pas encore", German: "Noch nicht"
+  },
+  'parent.inviteChildHelp2': {
+    English: "Get a code, then sign your child up with the link below (or have them enter the code when they sign up). Their account is linked to yours as soon as it exists.", Spanish: "Obtenga un código y registre a su hijo con el enlace de abajo (o pídale que introduzca el código al registrarse). Su cuenta quedará vinculada a la suya en cuanto exista.", Russian: "Получите код и зарегистрируйте ребёнка по ссылке ниже (или пусть он введёт код при регистрации). Его аккаунт привяжется к вашему сразу после создания.", Chinese: "获取一个代码，然后用下方链接为孩子注册（或让孩子注册时输入代码）。账户一创建就会与您的账户关联。", Vietnamese: "Lấy mã, rồi đăng ký cho con bằng liên kết bên dưới (hoặc cho con nhập mã khi đăng ký). Tài khoản của con sẽ được liên kết với bạn ngay khi được tạo.", Arabic: "احصل على رمز، ثم سجّل طفلك عبر الرابط أدناه (أو اطلب منه إدخال الرمز عند التسجيل). سيُربط حسابه بحسابك فور إنشائه.", Somali: "Hel koodh, kadib ilmahaaga ku diiwaangeli xiriirka hoose (ama ha geliyo koodhka marka uu is diiwaangelinayo). Akoonkiisu wuxuu ku xirmayaa kaaga isla marka la sameeyo.", French: "Obtenez un code, puis inscrivez votre enfant avec le lien ci-dessous (ou demandez-lui de saisir le code à l’inscription). Son compte sera lié au vôtre dès sa création.", German: "Holen Sie einen Code und melden Sie Ihr Kind über den Link unten an (oder es gibt den Code bei der Anmeldung ein). Sein Konto wird mit Ihrem verknüpft, sobald es existiert."
+  },
+  'parent.signupLink': {
+    English: "Sign-up link:", Spanish: "Enlace de registro:", Russian: "Ссылка для регистрации:", Chinese: "注册链接：", Vietnamese: "Liên kết đăng ký:", Arabic: "رابط التسجيل:", Somali: "Xiriirka diiwaangelinta:", French: "Lien d’inscription :", German: "Anmeldelink:"
+  },
+  'parent.closeSettings': {
+    English: "Close settings", Spanish: "Cerrar configuración", Russian: "Закрыть настройки", Chinese: "关闭设置", Vietnamese: "Đóng cài đặt", Arabic: "إغلاق الإعدادات", Somali: "Xir dejinta", French: "Fermer les paramètres", German: "Einstellungen schließen"
+  },
+
+  /* --- Messaging: who each contact is --- */
+  'messages.teacherOf': {
+    English: "Teacher of {names}", Spanish: "Docente de {names}", Russian: "Учитель: {names}", Chinese: "{names}的老师", Vietnamese: "Giáo viên của {names}", Arabic: "معلّم {names}", Somali: "Macallinka {names}", French: "Enseignant de {names}", German: "Lehrkraft von {names}"
+  },
+  'messages.parentOf': {
+    English: "Parent of {names}", Spanish: "Padre/madre de {names}", Russian: "Родитель: {names}", Chinese: "{names}的家长", Vietnamese: "Phụ huynh của {names}", Arabic: "وليّ أمر {names}", Somali: "Waalidka {names}", French: "Parent de {names}", German: "Elternteil von {names}"
+  },
+  'messages.noTeacherYet': {
+    English: "{names} isn't linked to a teacher on Mathmatix yet. Their teacher can share a class code for them to join.", Spanish: "{names} todavía no está vinculado a un docente en Mathmatix. Su docente puede compartir un código de clase para unirse.", Russian: "{names}: пока нет привязанного учителя в Mathmatix. Учитель может дать код класса для подключения.", Chinese: "{names}尚未在Mathmatix上关联老师。老师可以分享班级代码让孩子加入。", Vietnamese: "{names} chưa được liên kết với giáo viên trên Mathmatix. Giáo viên có thể chia sẻ mã lớp để con tham gia.", Arabic: "{names} غير مرتبط بمعلّم على Mathmatix بعد. يمكن للمعلّم مشاركة رمز الصف للانضمام.", Somali: "{names} weli laguma xirin macallin Mathmatix. Macallinkiisu wuxuu wadaagi karaa koodhka fasalka si uu ugu biiro.", French: "{names} n’est pas encore relié à un enseignant sur Mathmatix. Son enseignant peut partager un code de classe pour le rejoindre.", German: "{names} ist auf Mathmatix noch mit keiner Lehrkraft verknüpft. Die Lehrkraft kann einen Klassencode zum Beitreten teilen."
+  },
+  'messages.noContacts': {
+    English: "No one to message yet.", Spanish: "Aún no hay nadie a quien escribir.", Russian: "Пока некому написать.", Chinese: "暂时没有可以发消息的人。", Vietnamese: "Chưa có ai để nhắn tin.", Arabic: "لا يوجد أحد لمراسلته بعد.", Somali: "Weli cid aad farriin u dirto ma jirto.", French: "Personne à qui écrire pour l’instant.", German: "Noch niemand zum Schreiben."
+  },
+  'messages.noContactsHint': {
+    English: "Contacts appear once your account is linked to a teacher or a student.", Spanish: "Los contactos aparecen cuando su cuenta está vinculada a un docente o a un estudiante.", Russian: "Контакты появятся, когда ваш аккаунт будет связан с учителем или учеником.", Chinese: "账户与老师或学生关联后，联系人就会出现。", Vietnamese: "Danh bạ sẽ xuất hiện khi tài khoản của bạn được liên kết với giáo viên hoặc học sinh.", Arabic: "تظهر جهات الاتصال بعد ربط حسابك بمعلّم أو طالب.", Somali: "Xiriirradu waxay soo muuqdaan marka akoonkaaga lagu xiro macallin ama arday.", French: "Les contacts apparaissent une fois votre compte relié à un enseignant ou à un élève.", German: "Kontakte erscheinen, sobald Ihr Konto mit einer Lehrkraft oder einem Kind verknüpft ist."
+  },
+  'parent.signupLinkAria': {
+    English: "Sign-up link for your child", Spanish: "Enlace de registro para su hijo", Russian: "Ссылка для регистрации ребёнка", Chinese: "孩子的注册链接", Vietnamese: "Liên kết đăng ký cho con", Arabic: "رابط تسجيل طفلك", Somali: "Xiriirka diiwaangelinta ilmahaaga", French: "Lien d’inscription pour votre enfant", German: "Anmeldelink für Ihr Kind"
   },
 };

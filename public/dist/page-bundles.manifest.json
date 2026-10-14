@@ -133,7 +133,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js9.a50104d6.js",
+        "src": "/dist/js/chat-js9.f1273322.js",
         "files": [
           "/js/sessionManager.js",
           "/js/feedback.js",
@@ -161,7 +161,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/admin-js0.0f77390e.js",
+        "src": "/dist/js/admin-js0.c3fa1ba4.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/admin-analytics.js",
@@ -195,7 +195,7 @@
         ]
       },
       {
-        "href": "/dist/css/parent-css1.f9f23586.css",
+        "href": "/dist/css/parent-css1.995a75a5.css",
         "files": [
           "/css/messaging.css",
           "/css/dashboard-mobile.css",
@@ -205,14 +205,14 @@
     ],
     "js": [
       {
-        "src": "/dist/js/parent-js0.670a41f0.js",
+        "src": "/dist/js/parent-js0.403e9b4f.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
         ]
       },
       {
-        "src": "/dist/js/parent-js1.3646cc98.js",
+        "src": "/dist/js/parent-js1.5c3e50b6.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/parent-analytics.js",
@@ -231,7 +231,7 @@
         ]
       },
       {
-        "src": "/dist/js/parent-js2.7eefa750.js",
+        "src": "/dist/js/parent-js2.77ca88d2.js",
         "files": [
           "/js/guided-tour.js?v=20260728",
           "/js/idle-dialog.js",
@@ -267,7 +267,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/teacher-js0.670a41f0.js",
+        "src": "/dist/js/teacher-js0.403e9b4f.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
@@ -286,7 +286,7 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.d35d95a5.js",
+        "src": "/dist/js/teacher-js2.a4431fb8.js",
         "files": [
           "/js/idle-dialog.js",
           "/js/auto-logout.js",

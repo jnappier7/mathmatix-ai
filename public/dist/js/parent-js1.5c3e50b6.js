@@ -2980,6 +2980,68 @@ document.addEventListener("DOMContentLoaded", async () => {
         return params ? text.replace(/\{(\w+)\}/g, (m, k) => (params[k] != null ? params[k] : '')) : text;
     }
 
+    // Accessible confirm on the page's own theme (native <dialog>: focus moves in,
+    // Escape cancels). Resolves true only on the confirm button.
+    function confirmDialog({ title, message, confirmText, cancelText }) {
+        return new Promise((resolve) => {
+            const dlg = document.createElement('dialog');
+            dlg.className = 'mm-confirm-dialog';
+            dlg.setAttribute('aria-labelledby', 'mm-confirm-title');
+            dlg.innerHTML = `
+                <h2 id="mm-confirm-title">${escText(title)}</h2>
+                <p>${escText(message)}</p>
+                <div class="mm-confirm-actions">
+                    <button type="button" class="btn mm-confirm-cancel">${escText(cancelText)}</button>
+                    <button type="button" class="btn btn-primary mm-confirm-ok">${escText(confirmText)}</button>
+                </div>`;
+            document.body.appendChild(dlg);
+            let result = false;
+            dlg.querySelector('.mm-confirm-ok').addEventListener('click', () => { result = true; dlg.close(); });
+            dlg.querySelector('.mm-confirm-cancel').addEventListener('click', () => dlg.close());
+            dlg.addEventListener('close', () => { dlg.remove(); resolve(result); });
+            dlg.showModal();
+            dlg.querySelector('.mm-confirm-ok').focus();
+        });
+    }
+
+    // "Add a child": one question, one path each (desktop panel and the mobile
+    // drawer share the markup pattern). Yes → link their account with the code
+    // from their tutor; No → an invite code + a sign-up link with it pre-filled.
+    document.querySelectorAll('[data-add-child]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const scope = btn.closest('.add-child-panel');
+            if (!scope) return;
+            scope.querySelectorAll('[data-add-child]').forEach((b) => {
+                const on = b === btn;
+                b.setAttribute('aria-expanded', String(on));
+                b.classList.toggle('is-selected', on);
+            });
+            scope.querySelectorAll('.add-child-path').forEach((path) => {
+                path.hidden = path.dataset.path !== btn.dataset.addChild;
+            });
+            const firstField = scope.querySelector(`.add-child-path[data-path="${btn.dataset.addChild}"] input, .add-child-path[data-path="${btn.dataset.addChild}"] button`);
+            if (firstField) firstField.focus();
+        });
+    });
+
+    // Settings live behind the header gear on desktop (they used to hold a whole
+    // column permanently). Phones keep the bottom-nav Settings drawer.
+    const settingsDialog = document.getElementById('parent-settings-dialog');
+    const openSettingsBtn = document.getElementById('open-settings-btn');
+    if (settingsDialog && openSettingsBtn) {
+        openSettingsBtn.addEventListener('click', () => {
+            settingsDialog.showModal();
+            openSettingsBtn.setAttribute('aria-expanded', 'true');
+        });
+        settingsDialog.addEventListener('close', () => {
+            openSettingsBtn.setAttribute('aria-expanded', 'false');
+            openSettingsBtn.focus();
+        });
+        settingsDialog.querySelector('[data-close-settings]')?.addEventListener('click', () => settingsDialog.close());
+        // Click on the backdrop closes it.
+        settingsDialog.addEventListener('click', (e) => { if (e.target === settingsDialog) settingsDialog.close(); });
+    }
+
     function escText(v) {
         return String(v == null ? '' : v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     }
@@ -3665,20 +3727,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             : '';
 
         card.innerHTML = `
-            <div class="child-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="child-header">
+                <div class="child-header-id">
                     ${childAvatarHtml}
                     <div>
-                        <h3>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h3>
-                        <span style="font-size: 0.85em; color: var(--color-text-secondary);">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
+                        <h3>${escText(progress.firstName || 'Unknown')} ${escText(progress.lastName || '')}</h3>
+                        <span style="font-size: 0.85em; color: var(--color-text-secondary);">${escText(tr('parent.card.level', 'Level {level} — {xp} XP', { level: progress.level || 1, xp: progress.xp || 0 }))}</span>
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
+                <div class="child-header-actions">
                     <button class="learning-report-btn btn" data-childid="${progress._id}" data-childname="${progress.firstName || 'Child'}" title="View ${progress.firstName || 'your child'}'s learning report" aria-label="View learning report for ${progress.firstName || 'child'}" style="background: var(--color-primary); color: white; font-size: 0.85em; padding: 8px 14px;">
-                        <i class="fas fa-chart-line"></i> Report
+                        <i class="fas fa-chart-line" aria-hidden="true"></i> ${escText(tr('parent.card.report', 'Report'))}
                     </button>
                     <button class="view-as-child-btn btn" data-childid="${progress._id}" data-childname="${progress.firstName || 'Child'}" title="See what ${progress.firstName || 'your child'} sees" aria-label="View dashboard as ${progress.firstName || 'child'}" style="background: var(--color-purple); color: white; font-size: 0.85em; padding: 8px 14px;">
-                        <i class="fas fa-eye"></i> View
+                        <i class="fas fa-eye" aria-hidden="true"></i> ${escText(tr('parent.card.view', 'View'))}
                     </button>
                 </div>
             </div>
@@ -3788,9 +3850,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const childId = e.currentTarget.dataset.childid;
                 const childName = e.currentTarget.dataset.childname;
 
-                if (!confirm(`View the app as ${childName}?\n\nYou'll see exactly what your child sees.\nChanges are disabled in view mode.`)) {
-                    return;
-                }
+                const ok = await confirmDialog({
+                    title: tr('parent.viewAs.title', 'View the app as {name}?', { name: childName }),
+                    message: tr('parent.viewAs.message', "You'll see exactly what {name} sees. It's look-only: nothing you do there changes {name}'s account.", { name: childName }),
+                    confirmText: tr('parent.viewAs.confirm', 'View as {name}', { name: childName }),
+                    cancelText: tr('parent.common.cancel', 'Cancel'),
+                });
+                if (!ok) return;
 
                 try {
                     viewAsChildBtn.disabled = true;
@@ -3801,7 +3867,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     console.error('Failed to start child view:', error);
                     showToast(error.message || 'Failed to start child view. Please try again.', 'error');
                     viewAsChildBtn.disabled = false;
-                    viewAsChildBtn.innerHTML = '<i class="fas fa-eye"></i> View';
+                    viewAsChildBtn.innerHTML = `<i class="fas fa-eye" aria-hidden="true"></i> ${escText(tr('parent.card.view', 'View'))}`;
                 }
             });
         }
@@ -4451,6 +4517,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const mobileCodeEl = document.getElementById('mobile-generated-code-value');
                     if (mobileCodeEl) mobileCodeEl.textContent = data.code;
 
+                    // A sign-up link with the code pre-filled (signup-form.js
+                    // prefillParentCode) — the "my child has no account yet" path,
+                    // including a parent signing a younger child up themselves.
+                    const signupUrl = `${window.location.origin}/signup.html?parentCode=${encodeURIComponent(data.code)}`;
+                    document.querySelectorAll('.js-signup-link').forEach((wrap) => {
+                        const a = wrap.querySelector('a');
+                        if (a) { a.href = signupUrl; a.textContent = signupUrl.replace(/^https?:\/\//, ''); }
+                        wrap.hidden = false;
+                    });
+
                     showToast("Invite code generated! Share it with your child.", "success");
                 } else {
                     showToast("Failed to generate code: " + data.message, "error");
@@ -4963,8 +5039,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (isLive && !liveIndicator) {
                 liveIndicator = document.createElement('span');
                 liveIndicator.className = 'live-indicator';
-                liveIndicator.innerHTML = '<span class="live-badge-dot"></span> LIVE NOW';
-                liveIndicator.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; background: var(--color-success); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-left: 10px;';
+                liveIndicator.innerHTML = `<span class="live-badge-dot"></span> ${escText(tr('parent.card.liveNow', 'LIVE NOW'))}`;
+                liveIndicator.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; background: var(--color-success); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-left: 10px; vertical-align: middle; white-space: nowrap;';
                 cardHeader.appendChild(liveIndicator);
 
                 card.style.borderLeft = '4px solid var(--color-success)';
@@ -5047,6 +5123,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   function fullName(u) {
     if (!u) return 'Unknown';
     return esc([u.firstName, u.lastName].filter(Boolean).join(' ') || u.email || 'Unknown');
+  }
+
+  // Page language when the translation engine is loaded (parent pages follow the
+  // parent's language); English otherwise.
+  function t(key, english, params) {
+    var I = window.MathmatixI18n;
+    var text = (I && I.t(key)) || english;
+    return params ? text.replace(/\{(\w+)\}/g, function (m, k) { return params[k] != null ? params[k] : ''; }) : text;
+  }
+
+  // Children with no teacher on Mathmatix yet — so a parent knows why that
+  // child's teacher isn't in the list, and what to do about it.
+  function unlinkedNote(children) {
+    var names = (children || []).map(function (k) { return k.firstName || ''; }).filter(Boolean).join(', ');
+    if (!names) return '';
+    return '<p class="mm-msg-unlinked">' + esc(t('messages.noTeacherYet',
+      "{names} isn't linked to a teacher on Mathmatix yet. Their teacher can share a class code for them to join.", { names: names })) + '</p>';
   }
 
   function initials(u) {
@@ -5247,19 +5340,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         self.contacts = (d && d.contacts) || [];
         if (!self.contacts.length) {
           self.paneEl.innerHTML =
-            '<div class="mm-msg-empty">No one to message yet.<br>' +
-            '<small>Contacts appear once your account is linked to a teacher or a student.</small></div>';
+            '<div class="mm-msg-empty">' + esc(t('messages.noContacts', 'No one to message yet.')) + '<br>' +
+            '<small>' + esc(t('messages.noContactsHint', 'Contacts appear once your account is linked to a teacher or a student.')) + '</small></div>' +
+            unlinkedNote(d && d.unlinkedChildren);
           return;
         }
         self.paneEl.innerHTML =
           '<header class="mm-msg-pane-head"><h4>New message</h4></header>' +
           '<div class="mm-msg-contacts">' + self.contacts.map(function (c) {
-            var kids = (c.children || []).map(function (k) { return fullName(k); }).join(', ');
-            return '<button type="button" class="mm-msg-contact" data-uid="' + esc(c._id) + '" data-name="' + fullName(c) + '">' +
+            // Say who each contact IS to this family: "Teacher of Jason" — a bare
+            // name can't tell a child's teacher from the child (they can share one).
+            var kids = (c.children || []).map(function (k) { return k.firstName || ''; }).filter(Boolean).join(', ');
+            var relation = c.role === 'teacher' ? t('messages.teacherOf', 'Teacher of {names}', { names: kids })
+              : c.role === 'parent' ? t('messages.parentOf', 'Parent of {names}', { names: kids })
+              : kids;
+            return '<button type="button" class="mm-msg-contact" data-uid="' + esc(c._id) + '" data-name="' + fullName(c) + '"' +
+              ' aria-label="' + esc([c.firstName, c.lastName].filter(Boolean).join(' ') + (kids ? ' — ' + relation : '')) + '">' +
               '<span class="mm-msg-avatar" aria-hidden="true">' + initials(c) + '</span>' +
               '<span><strong>' + fullName(c) + '</strong>' +
-              (kids ? '<small>' + esc(kids) + '</small>' : '') + '</span></button>';
-          }).join('') + '</div>';
+              (kids ? '<small>' + esc(relation) + '</small>' : '') + '</span></button>';
+          }).join('') + '</div>' + unlinkedNote(d && d.unlinkedChildren);
 
         Array.prototype.forEach.call(self.paneEl.querySelectorAll('.mm-msg-contact'), function (btn) {
           btn.addEventListener('click', function () {

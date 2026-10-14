@@ -34,6 +34,23 @@
     return esc([u.firstName, u.lastName].filter(Boolean).join(' ') || u.email || 'Unknown');
   }
 
+  // Page language when the translation engine is loaded (parent pages follow the
+  // parent's language); English otherwise.
+  function t(key, english, params) {
+    var I = window.MathmatixI18n;
+    var text = (I && I.t(key)) || english;
+    return params ? text.replace(/\{(\w+)\}/g, function (m, k) { return params[k] != null ? params[k] : ''; }) : text;
+  }
+
+  // Children with no teacher on Mathmatix yet — so a parent knows why that
+  // child's teacher isn't in the list, and what to do about it.
+  function unlinkedNote(children) {
+    var names = (children || []).map(function (k) { return k.firstName || ''; }).filter(Boolean).join(', ');
+    if (!names) return '';
+    return '<p class="mm-msg-unlinked">' + esc(t('messages.noTeacherYet',
+      "{names} isn't linked to a teacher on Mathmatix yet. Their teacher can share a class code for them to join.", { names: names })) + '</p>';
+  }
+
   function initials(u) {
     if (!u) return '?';
     var a = (u.firstName || u.email || '?')[0] || '?';
@@ -232,19 +249,26 @@
         self.contacts = (d && d.contacts) || [];
         if (!self.contacts.length) {
           self.paneEl.innerHTML =
-            '<div class="mm-msg-empty">No one to message yet.<br>' +
-            '<small>Contacts appear once your account is linked to a teacher or a student.</small></div>';
+            '<div class="mm-msg-empty">' + esc(t('messages.noContacts', 'No one to message yet.')) + '<br>' +
+            '<small>' + esc(t('messages.noContactsHint', 'Contacts appear once your account is linked to a teacher or a student.')) + '</small></div>' +
+            unlinkedNote(d && d.unlinkedChildren);
           return;
         }
         self.paneEl.innerHTML =
           '<header class="mm-msg-pane-head"><h4>New message</h4></header>' +
           '<div class="mm-msg-contacts">' + self.contacts.map(function (c) {
-            var kids = (c.children || []).map(function (k) { return fullName(k); }).join(', ');
-            return '<button type="button" class="mm-msg-contact" data-uid="' + esc(c._id) + '" data-name="' + fullName(c) + '">' +
+            // Say who each contact IS to this family: "Teacher of Jason" — a bare
+            // name can't tell a child's teacher from the child (they can share one).
+            var kids = (c.children || []).map(function (k) { return k.firstName || ''; }).filter(Boolean).join(', ');
+            var relation = c.role === 'teacher' ? t('messages.teacherOf', 'Teacher of {names}', { names: kids })
+              : c.role === 'parent' ? t('messages.parentOf', 'Parent of {names}', { names: kids })
+              : kids;
+            return '<button type="button" class="mm-msg-contact" data-uid="' + esc(c._id) + '" data-name="' + fullName(c) + '"' +
+              ' aria-label="' + esc([c.firstName, c.lastName].filter(Boolean).join(' ') + (kids ? ' — ' + relation : '')) + '">' +
               '<span class="mm-msg-avatar" aria-hidden="true">' + initials(c) + '</span>' +
               '<span><strong>' + fullName(c) + '</strong>' +
-              (kids ? '<small>' + esc(kids) + '</small>' : '') + '</span></button>';
-          }).join('') + '</div>';
+              (kids ? '<small>' + esc(relation) + '</small>' : '') + '</span></button>';
+          }).join('') + '</div>' + unlinkedNote(d && d.unlinkedChildren);
 
         Array.prototype.forEach.call(self.paneEl.querySelectorAll('.mm-msg-contact'), function (btn) {
           btn.addEventListener('click', function () {

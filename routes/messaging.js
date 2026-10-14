@@ -485,6 +485,7 @@ router.get('/unread-count', isAuthenticated, canMessage, async (req, res) => {
 router.get('/contacts', isAuthenticated, canMessage, async (req, res) => {
     try {
         let contacts = [];
+        let unlinkedChildren = [];
 
         const viewRole = messagingViewRole(req.user);
 
@@ -535,6 +536,10 @@ router.get('/contacts', isAuthenticated, canMessage, async (req, res) => {
                     'firstName lastName email'
                 ).lean();
 
+                unlinkedChildren = parent.children
+                    .filter(c => !c.teacherId)
+                    .map(c => ({ _id: c._id, firstName: c.firstName }));
+
                 // Add which children each teacher is connected to
                 contacts = teachers.map(teacher => ({
                     ...teacher,
@@ -548,7 +553,9 @@ router.get('/contacts', isAuthenticated, canMessage, async (req, res) => {
 
         res.json({
             success: true,
-            contacts
+            contacts,
+            // Parents: children with no teacher yet, so the compose list can say why.
+            unlinkedChildren
         });
     } catch (error) {
         console.error('[Messaging] Error getting contacts:', error);
