@@ -979,9 +979,12 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
     parts.push(`--- RECENT GRADING ---\n${gradingContext.slice(0, 5).map(r => `${r.skill || 'problem'}: ${r.isCorrect ? 'correct' : 'incorrect'}`).join(', ')}`);
   }
 
-  // Resource context
+  // Teacher resources — chat.js renders this with usage rules
+  // (utils/teacherAssignments.js). An object here means an older caller:
+  // render it the same way rather than dumping JSON at the model.
   if (resourceContext) {
-    parts.push(`--- RESOURCES ---\n${typeof resourceContext === 'string' ? resourceContext : JSON.stringify(resourceContext)}`);
+    const { renderReferencedResource } = require('./teacherAssignments');
+    parts.push(`--- TEACHER RESOURCES ---\n${typeof resourceContext === 'string' ? resourceContext : renderReferencedResource(resourceContext)}`);
   }
 
   // Teacher AI settings — honor the teacher's classAISettings (the object chat.js

@@ -40,6 +40,7 @@ const { parseVisualTeaching } = require('../utils/visualTeachingParser');
 const { enforceVisualTeaching } = require('../utils/visualCommandEnforcer');
 const { injectFewShotExamples } = require('../utils/visualCommandExamples');
 const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
+const { getActiveAssignments, renderTeacherResourceSection, pickAssignmentOffer } = require('../utils/teacherAssignments');
 const { getStudentScope } = require('../utils/resourceVisibility');
 const GradingResult = require('../models/gradingResult');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
@@ -890,11 +891,21 @@ async function runStudentTurn(req, res) {
                     .catch(err => { logger.error('Error fetching active worksheet image', { error: err.message }); return null; })
         );
 
+        // 9. Work the student's teachers pushed to the tutor (same scope, same
+        //    visibility rule as the name-triggered lookup above).
+        contextPromises.push(
+            user.teacherId
+                ? scopePromise
+                    .then(scope => getActiveAssignments(user, { scope }))
+                    .catch(err => { logger.error('Teacher assignment lookup error', { error: err.message }); return []; })
+                : Promise.resolve([])
+        );
+
         // 8. Math verification (runs in parallel with everything else)
         const mathResult = processMathMessage(message);
 
         // Execute all fetches in parallel
-        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns, activeWorksheetDoc, activeWorksheetImageDoc] = await Promise.all(contextPromises);
+        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns, activeWorksheetDoc, activeWorksheetImageDoc, teacherAssignments] = await Promise.all(contextPromises);
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
@@ -927,6 +938,11 @@ async function runStudentTurn(req, res) {
                 logger.debug('Resource mentioned but not in DB — injecting stub', { displayName: resourceContext.displayName });
             }
         }
+
+        // What the free-chat tutor gets: the resource named this turn plus
+        // anything a teacher pushed, rendered with category-aware instructions
+        // (tests/quizzes → parallel practice only). Replaces a raw JSON dump.
+        const teacherResourceSection = renderTeacherResourceSection(resourceContext, teacherAssignments || []);
 
         // Process uploads into context
         let uploadContext = null;
@@ -1327,13 +1343,13 @@ async function runStudentTurn(req, res) {
                 });
             } else {
                 ({ prompt: systemPrompt, cacheableChars: cacheableSystemChars } =
-                    buildSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet));
+                    buildSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, teacherResourceSection, message, formattedMessagesForLLM, activeWorksheet));
             }
         }
 
         if (!systemPrompt) {
             ({ prompt: systemPrompt, cacheableChars: cacheableSystemChars } =
-                buildSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet));
+                buildSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, teacherResourceSection, message, formattedMessagesForLLM, activeWorksheet));
         }
 
         // Guarantee the ACT-prep "use the REAL practice test" directive is present
@@ -3763,12 +3779,42 @@ If they were struggling with something, mention it like you've been thinking abo
 End with something they can respond to. ${warmUpInstruction}`;
             }
 
+            // Work a teacher pushed to the tutor (utils/teacherAssignments.js).
+            // FIRST in the CTA order: the teacher asked for this work. Starting
+            // Point waits for the next session (it's only stamped "offered"
+            // when it was actually offered — see below). One offer per ~20h
+            // across all assignments; never repeated for work the student opened.
+            try {
+                if (!greetingInlineCta && !debriefPending && user.teacherId) {
+                    const pushed = await getActiveAssignments(user);
+                    const offer = pickAssignmentOffer(pushed, user);
+                    logger.debug('Greeting teacher-assignment check', { userId, active: pushed.length, offering: offer ? offer.id : null });
+                    if (offer) {
+                        greetingInlineCta = {
+                            type: 'start-teacher-resource',
+                            label: `Open ${offer.displayName}`.slice(0, 60),
+                            emoji: '📄',
+                            resourceId: offer.id,
+                            resourceName: offer.displayName,
+                        };
+                        const assessment = ['test', 'quiz'].includes(offer.category);
+                        greetingInstruction += `
+
+${offer.teacherName} shared "${offer.displayName}" for this student to work on with you${offer.note ? ` (their note: ${offer.note})` : ''}. A button labeled "${greetingInlineCta.label}" is rendered below your greeting. Mention it in ONE friendly sentence in your own voice${assessment ? ' — it is a practice test/quiz, so you\'ll help with similar problems, not the actual items' : ''}. Never make it feel mandatory; if they bring their own question, follow their lead and don't bring it up again this greeting.`;
+                        await User.findByIdAndUpdate(userId, { teacherAssignmentOfferedAt: new Date() })
+                            .catch(err => logger.warn('Could not stamp teacher assignment offer time', { error: err.message }));
+                    }
+                }
+            } catch (err) {
+                logger.warn('Greeting teacher assignment check error (non-fatal)', { error: err.message });
+            }
+
             // Add Starting Point offer (only on first session, never again).
             // We render a tappable button right below the greeting (works on
             // desktop AND mobile) instead of pointing at the sidebar button,
             // which is hidden inside a collapsed section on desktop and
             // off-canvas on mobile.
-            if (shouldOfferStartingPoint) {
+            if (shouldOfferStartingPoint && !greetingInlineCta) {
                 greetingInlineCta = {
                     type: 'launch-starting-point',
                     label: 'Find My Starting Point',
@@ -3794,7 +3840,7 @@ This is the student's first session. A button labeled "${greetingInlineCta.label
                 const growthOverdue = nudges.find(n =>
                     n.type === NUDGE_TYPES.GROWTH_CHECK && n.severity === 'overdue'
                 );
-                if (growthOverdue && !shouldOfferStartingPoint && !debriefPending) {
+                if (growthOverdue && !shouldOfferStartingPoint && !debriefPending && !greetingInlineCta) {
                     const daysPastDue = growthOverdue.meta?.daysPastDue ?? 0;
                     const timingPhrase = daysPastDue >= 14
                         ? "it's been a while"
@@ -3942,7 +3988,7 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
                 await activeConversation.save();
 
                 // Mark Starting Point as offered (only do this once, ever)
-                if (!isCourseGreeting && !user.startingPointOffered && !user.assessmentCompleted) {
+                if (!isCourseGreeting && !user.startingPointOffered && !user.assessmentCompleted && greetingInlineCta && greetingInlineCta.type === 'launch-starting-point') {
                     await User.findByIdAndUpdate(userId, {
                         startingPointOffered: true,
                         startingPointOfferedAt: new Date()
@@ -4024,7 +4070,7 @@ The student has ${stats.dueNow === 1 ? 'a skill' : 'a few skills'} from earlier 
             await activeConversation.save();
 
             // Mark Starting Point as offered (only do this once, ever)
-            if (!isCourseGreeting && !user.startingPointOffered && !user.assessmentCompleted) {
+            if (!isCourseGreeting && !user.startingPointOffered && !user.assessmentCompleted && greetingInlineCta && greetingInlineCta.type === 'launch-starting-point') {
                 await User.findByIdAndUpdate(userId, {
                     startingPointOffered: true,
                     startingPointOfferedAt: new Date()

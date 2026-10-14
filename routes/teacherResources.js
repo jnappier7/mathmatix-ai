@@ -18,6 +18,20 @@ const cloudStorage = require('../utils/cloudStorage');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { getStudentScope, resourceVisibleToStudent } = require('../utils/resourceVisibility');
 const { userHasRole } = require('../utils/roleQuery');
+const { getStudentIdsForTeacher } = require('../services/userService');
+const { inWindow } = require('../utils/teacherAssignments');
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_ASSIGNMENT_DAYS = 14;
+
+/** Students a resource reaches on the teacher's CURRENT roster (for "N of M started"). */
+async function audienceIds(teacherId, classIds) {
+    const roster = new Set(await getStudentIdsForTeacher(teacherId, { scope: 'current' }));
+    if (!classIds || classIds.length === 0) return [...roster];
+    const codes = await EnrollmentCode.find({ _id: { $in: classIds }, teacherId }, 'enrolledStudents').lean();
+    const inClasses = new Set(codes.flatMap(c => (c.enrolledStudents || []).map(e => String(e.studentId))));
+    return [...roster].filter(id => inClasses.has(id));
+}
 
 /**
  * Normalize a class-targeting payload and verify every class belongs to the
@@ -258,6 +272,22 @@ router.post('/upload', isAuthenticated, isTeacher, requireDurableStorage, upload
             sharedWithClassIds: classTargets
         });
 
+        // "Push to the tutor" in the same step as the upload.
+        if (String(req.body.pushToTutor) === 'true') {
+            const now = new Date();
+            const end = req.body.tutorEndsAt ? new Date(req.body.tutorEndsAt) : null;
+            const validEnd = end && !Number.isNaN(end.getTime()) && end > now && end.getTime() - now.getTime() <= 180 * DAY_MS;
+            resource.tutorAssignment = {
+                active: true,
+                pushedAt: now,
+                startsAt: now,
+                endsAt: validEnd ? end : new Date(now.getTime() + DEFAULT_ASSIGNMENT_DAYS * DAY_MS),
+                note: typeof req.body.tutorNote === 'string' ? req.body.tutorNote.trim().slice(0, 500) : '',
+                starts: [],
+            };
+            resource.isPublished = true;
+        }
+
         await resource.save();
 
         res.json({
@@ -298,6 +328,23 @@ router.get('/list', isAuthenticated, isTeacher, async (req, res) => {
             classes.map(c => [String(c._id), c.className || c.code])
         );
 
+        // "N of M started" for pushed work, counted on the CURRENT roster.
+        const now = new Date();
+        const assignmentStatus = new Map();
+        for (const r of resources) {
+            const a = r.tutorAssignment;
+            if (!a || !a.active) continue;
+            const audience = new Set(await audienceIds(req.user._id, r.sharedWithClassIds));
+            const started = (a.starts || []).filter(st => audience.has(String(st.studentId))).length;
+            assignmentStatus.set(String(r._id), {
+                active: inWindow(a, now),
+                scheduled: a.startsAt && new Date(a.startsAt) > now,
+                expired: a.endsAt && new Date(a.endsAt) <= now,
+                pushedAt: a.pushedAt, startsAt: a.startsAt, endsAt: a.endsAt, note: a.note || '',
+                startedCount: started, audienceCount: audience.size,
+            });
+        }
+
         res.json({
             success: true,
             classes: classes.map(c => ({
@@ -321,6 +368,7 @@ router.get('/list', isAuthenticated, isTeacher, async (req, res) => {
                     publicUrl: r.publicUrl,
                     isPublished: r.isPublished !== false, // Default true for backwards compatibility
                     sharedWithClassIds: targets,
+                    tutorAssignment: assignmentStatus.get(String(r._id)) || null,
                     // Empty list = every student of this teacher (see the model).
                     // Names are resolved through the map so a class deleted after
                     // sharing degrades to nothing rather than a dangling id.
@@ -368,6 +416,89 @@ router.patch('/:id/toggle-publish', isAuthenticated, isTeacher, validateObjectId
 // Re-target an existing resource at a different set of classes.
 // Separate from upload so a teacher can fix the audience without re-uploading
 // the file (and losing its extracted text, embedding and access count).
+/**
+ * PATCH /api/teacher-resources/:id/assign — push to (or pull from) the tutor.
+ *   { active: true, note?, endsAt?, startsAt?, sharedWithClassIds? }
+ *   { active: false }
+ * The audience is the resource's sharing (optionally updated here), so "who
+ * sees it" and "who the tutor offers it to" can never disagree.
+ */
+router.patch('/:id/assign', isAuthenticated, isTeacher, validateObjectId('id'), async (req, res) => {
+    try {
+        const resource = await TeacherResource.findOne({ _id: req.params.id, teacherId: req.user._id });
+        if (!resource) return res.status(404).json({ success: false, message: 'Resource not found' });
+
+        const body = req.body || {};
+        const active = body.active === true;
+        if (!active) {
+            resource.set('tutorAssignment.active', false);
+            await resource.save();
+            return res.json({ success: true, message: 'Removed from the tutor', tutorAssignment: resource.tutorAssignment });
+        }
+
+        if (body.sharedWithClassIds !== undefined) {
+            try {
+                resource.sharedWithClassIds = await resolveSharedClassIds(body.sharedWithClassIds, req.user._id);
+            } catch (err) {
+                return res.status(400).json({ success: false, message: err.message });
+            }
+        }
+        const now = new Date();
+        const parseDate = v => { if (!v) return null; const d = new Date(v); return Number.isNaN(d.getTime()) ? undefined : d; };
+        const startsAt = parseDate(body.startsAt);
+        const endsAt = parseDate(body.endsAt);
+        if (startsAt === undefined || endsAt === undefined) return res.status(400).json({ success: false, message: 'Invalid date' });
+        const finalEnd = endsAt || new Date(now.getTime() + DEFAULT_ASSIGNMENT_DAYS * DAY_MS);
+        if (finalEnd <= (startsAt || now)) return res.status(400).json({ success: false, message: 'The end date must be after the start.' });
+        if (finalEnd.getTime() - now.getTime() > 180 * DAY_MS) return res.status(400).json({ success: false, message: 'Pick an end date within 6 months.' });
+        const note = typeof body.note === 'string' ? body.note.trim().slice(0, 500) : '';
+
+        const prev = resource.tutorAssignment || {};
+        resource.tutorAssignment = {
+            active: true,
+            pushedAt: now,
+            startsAt: startsAt || now,
+            endsAt: finalEnd,
+            note,
+            starts: prev.starts || [],
+        };
+        // Pushing something to students means they can see it.
+        resource.isPublished = true;
+        await resource.save();
+        const audience = await audienceIds(req.user._id, resource.sharedWithClassIds);
+        res.json({
+            success: true,
+            message: `The tutor will offer it to ${audience.length} student${audience.length === 1 ? '' : 's'}`,
+            tutorAssignment: resource.tutorAssignment,
+            audienceCount: audience.length,
+        });
+    } catch (error) {
+        console.error('Error assigning resource to tutor:', error);
+        res.status(500).json({ success: false, message: 'Failed to update the assignment' });
+    }
+});
+
+/**
+ * POST /api/teacher-resources/:id/start — a student opened pushed work with
+ * the tutor. Only for students who can see it, only while it's active.
+ */
+router.post('/:id/start', isAuthenticated, validateObjectId('id'), async (req, res) => {
+    try {
+        const resource = await TeacherResource.findById(req.params.id).select('teacherId isPublished sharedWithClassIds tutorAssignment').lean();
+        if (!resource || !inWindow(resource.tutorAssignment, new Date())) return res.status(404).json({ success: false });
+        const scope = await getStudentScope(req.user);
+        if (!resourceVisibleToStudent(resource, scope)) return res.status(404).json({ success: false });
+        await TeacherResource.updateOne(
+            { _id: resource._id, 'tutorAssignment.starts.studentId': { $ne: req.user._id } },
+            { $push: { 'tutorAssignment.starts': { studentId: req.user._id, at: new Date() } } }
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error recording assignment start:', error);
+        res.status(500).json({ success: false });
+    }
+});
+
 router.patch('/:id/share', isAuthenticated, isTeacher, validateObjectId('id'), async (req, res) => {
     try {
         const resource = await TeacherResource.findOne({

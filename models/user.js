@@ -671,7 +671,9 @@ const userSchema = new Schema({
   // The school year this student was last moved up a grade FOR ("2026-27").
   // Makes year-rollover promotion idempotent: two teachers (or one teacher
   // running the wizard twice) can't bump the same student twice.
-  gradePromotedForYear: { type: String },              // e.g., '7th Grade', '9th Grade', 'College'
+  gradePromotedForYear: { type: String },
+  // Last time the greeting offered teacher-pushed work (20h throttle).
+  teacherAssignmentOfferedAt: { type: Date },              // e.g., '7th Grade', '9th Grade', 'College'
   mathCourse: { type: String, trim: true },              // e.g., 'Algebra 1', 'Geometry', 'Pre-Calculus'
   dateOfBirth: { type: Date },                           // For COPPA compliance (under 13 requires parental consent)
   hasParentalConsent: { type: Boolean, default: false }, // True when linked to a parent account (required for under 13)

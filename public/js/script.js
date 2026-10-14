@@ -539,8 +539,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // page greets on load and saves that greeting, so a returning
             // student who merely passed through the homepage arrived with a
             // one-message "trial" — which replaced their real welcome (and
-            // with it Starting Point, Growth Check, review warm-up and the
-            // returning-student continuity) for an hour after every visit.
+            // with it Starting Point, Growth Check, review warm-up, teacher-
+            // assigned work and the returning-student continuity) for an hour
+            // after every visit.
             const trialWasUsed = !!(trialState && Array.isArray(trialState.history)
                 && trialState.history.some(m => m && m.role === 'user' && String(m.content || '').trim()));
             if (trialState && !trialWasUsed) StorageUtils.local.removeItem('mathmatix_trial_chat');
@@ -1156,6 +1157,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         .catch(err => console.error('[InlineCta] open failed', err));
                 } else if (typeof window.openStartingPoint === 'function') {
                     window.openStartingPoint();
+                }
+                break;
+            case 'start-teacher-resource':
+                // Record the start for the teacher ("5 of 14 started"), then load
+                // the file through the normal upload path — the same worksheet
+                // pipeline (and no-answer-key guard) as a student's own upload.
+                if (cta.resourceId) {
+                    Promise.resolve(window.csrfFetch ? window.csrfFetch(`/api/teacher-resources/${encodeURIComponent(cta.resourceId)}/start`, { method: 'POST' }) : null)
+                        .catch(() => { /* the count is a nicety; never block the student */ });
+                    if (typeof window.fetchAndUploadTeacherResource === 'function') {
+                        window.fetchAndUploadTeacherResource(cta.resourceId, cta.resourceName || 'Assignment');
+                    }
                 }
                 break;
             case 'start-review-warmup':

@@ -80,6 +80,24 @@ const teacherResourceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'EnrollmentCode'
     }],
+    // PUSHED TO THE TUTOR. When active (and inside the window), every student
+    // who can see this resource (visibleToStudentFilter) gets it offered at
+    // the start of a tutoring session, and the tutor works from it with the
+    // teacher's note. The audience is the resource's own sharing above — one
+    // rule for who sees it, whether they ask for it or the tutor offers it.
+    tutorAssignment: {
+        active: { type: Boolean, default: false },
+        pushedAt: { type: Date },
+        startsAt: { type: Date },
+        endsAt: { type: Date },
+        note: { type: String, trim: true, maxlength: 500 },
+        // Students who opened it with the tutor (from the session offer).
+        starts: [{
+            _id: false,
+            studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            at: { type: Date, default: Date.now }
+        }]
+    },
     // Extracted text content (for searchability and AI context)
     extractedText: {
         type: String,
@@ -125,6 +143,9 @@ teacherResourceSchema.index({ teacherId: 1, displayName: 1 });
 
 // Index for keyword search
 teacherResourceSchema.index({ teacherId: 1, keywords: 1 });
+
+// Active tutor assignments for a student's teachers
+teacherResourceSchema.index({ teacherId: 1, 'tutorAssignment.active': 1 });
 
 // Class-scoped student lookups
 teacherResourceSchema.index({ teacherId: 1, isPublished: 1, sharedWithClassIds: 1 });

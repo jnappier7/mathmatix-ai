@@ -4553,7 +4553,7 @@
       border: 1px solid #FDE68A;
     }
   </style>
-  <link rel="stylesheet" href="/dist/css/teacher-css1.d0bdbad8.css" />
+  <link rel="stylesheet" href="/dist/css/teacher-css1.dc8370c0.css" />
   <script src="/dist/js/teacher-js0.08f701d8.js"></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
 </head>
@@ -5986,7 +5986,7 @@
       <span id="close-upload-resource-modal" class="modal-close-button">&times;</span>
       <div>
         <h2><i class="fas fa-upload"></i> Upload Student Resource</h2>
-        <p>Upload files that students can reference in chat. Use clear, descriptive names!</p>
+        <p>Upload files your students — and their tutor — can work from. Use clear, descriptive names!</p>
 
         <form id="upload-resource-form" enctype="multipart/form-data">
           <label for="resource-file">File * (PDF, Word, PowerPoint, Images)</label>
@@ -6027,6 +6027,22 @@
             </label>
             <div id="resource-class-list" class="resource-class-list" hidden>
               <p class="resource-class-empty">Loading your classes…</p>
+            </div>
+          </div>
+
+          <!-- Push to the tutor (utils/teacherAssignments.js): offered at the
+               start of these students' sessions, and the tutor works from it. -->
+          <div class="resource-push-box">
+            <label class="resource-class-option">
+              <input type="checkbox" name="pushToTutor" value="true" id="resource-push">
+              <span><strong>Push to the tutor</strong> — offer it to these students when they start a session, and have the tutor work from it with them</span>
+            </label>
+            <div id="resource-push-fields" hidden>
+              <label for="resource-tutor-note">Note to the tutor (optional)</label>
+              <textarea id="resource-tutor-note" name="tutorNote" rows="2" maxlength="500" placeholder="e.g., We're on distributing negatives — start with #1–10."></textarea>
+              <label for="resource-tutor-until">Offer it until</label>
+              <input type="date" id="resource-tutor-until" name="tutorEndsAt">
+              <p class="resource-push-hint">Tests and quizzes: the tutor helps with similar problems only and never works the actual items.</p>
             </div>
           </div>
 
@@ -6201,7 +6217,7 @@
   })();
   </script>
 
-  <script src="/dist/js/teacher-js2.b3479e76.js"></script>
+  <script src="/dist/js/teacher-js2.0ac4a0cd.js"></script>
   <link rel="stylesheet" href="/css/teacher-activities.css?v=20260923a">
   <script defer src="/js/teacher-activities.js?v=20261014"></script>
 </body>
