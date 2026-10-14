@@ -13,8 +13,10 @@
     .then((r) => (r.ok ? r.json() : null))
     .then((data) => {
       const list = data && Array.isArray(data.assignments) ? data.assignments : [];
-      if (!list.length) return;
-      const open = list.filter((a) => a.itemsSolved < a.itemsTotal).length;
+      const tests = data && Array.isArray(data.practiceTests) ? data.practiceTests : [];
+      if (!list.length && !tests.length) return;
+      const open = list.filter((a) => a.itemsSolved < a.itemsTotal).length
+        + tests.filter((t) => t.status !== 'done').length;
       const badge = document.getElementById('sidebar-activities-count');
       if (badge && open) { badge.textContent = String(open); badge.style.display = ''; }
       link.style.display = '';

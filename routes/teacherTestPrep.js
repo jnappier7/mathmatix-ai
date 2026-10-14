@@ -18,8 +18,11 @@ const { getStudentIdsForTeacher } = require('../services/userService');
 const { anyRole } = require('../utils/roleQuery');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { currentSchoolYear, classSchoolYear } = require('../utils/schoolYear');
+const PracticeTestAssignment = require('../models/practiceTestAssignment');
+const ActTestSession = require('../models/actTestSession');
 const {
   EXAM_ORDER, KNOWN_EXAMS, examMeta, buildStudentExams, buildClassSummary, loadTestScores,
+  RUNNER_URL, assignmentStatus,
 } = require('../utils/testPrepScores');
 
 const logRead = (action) => logRecordAccess('assessment_results', 'teaching_instruction', {
@@ -161,4 +164,108 @@ router.get('/export.csv', logRead('export'), async (req, res) => {
   }
 });
 
+// ── Assigning a practice test to a class ────────────────────────────────
+
+/**
+ * GET /api/teacher/test-prep/assignments
+ * My assigned practice tests, each with every current student in the class
+ * marked done / in-progress / not-started (derived from their sessions).
+ */
+router.get('/assignments', logRead('api_read'), async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+    const [assignments, roster] = await Promise.all([
+      PracticeTestAssignment.find({ teacherId }).sort({ assignedAt: -1 }).lean(),
+      getStudentIdsForTeacher(teacherId, { scope: 'current' }),
+    ]);
+    if (!assignments.length) return res.json({ success: true, assignments: [] });
+    const current = new Set(roster);
+    const classes = await EnrollmentCode.find({ _id: { $in: assignments.map(a => a.classId) }, teacherId }, 'className period enrolledStudents').lean();
+    const classById = new Map(classes.map(c => [String(c._id), c]));
+    const studentIds = [...new Set(classes.flatMap(c => (c.enrolledStudents || []).map(e => String(e.studentId))))].filter(id => current.has(id));
+    const [users, sessions] = await Promise.all([
+      User.find({ _id: { $in: studentIds }, ...anyRole('student') }, 'firstName lastName username').lean(),
+      ActTestSession.find(
+        { userId: { $in: studentIds }, status: { $in: ['completed', 'in_progress'] }, startedAt: { $gte: new Date(Math.min(...assignments.map(a => new Date(a.assignedAt).getTime()))) } },
+        'userId testId status startedAt completedAt scaledScore'
+      ).lean(),
+    ]);
+    const nameById = new Map(users.map(u => [String(u._id), `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.username]));
+    const sessionsBy = new Map();
+    for (const s of sessions) {
+      const k = `${s.userId}|${s.testId || 'act-math'}`;
+      if (!sessionsBy.has(k)) sessionsBy.set(k, []);
+      sessionsBy.get(k).push(s);
+    }
+    const out = assignments.map(a => {
+      const cls = classById.get(String(a.classId));
+      const members = cls ? (cls.enrolledStudents || []).map(e => String(e.studentId)).filter(id => nameById.has(id)) : [];
+      const students = members.map(id => ({
+        _id: id,
+        name: nameById.get(id),
+        ...assignmentStatus(sessionsBy.get(`${id}|${a.testId}`), a.assignedAt),
+      })).sort((x, y) => x.name.localeCompare(y.name));
+      const counts = { done: 0, 'in-progress': 0, 'not-started': 0 };
+      students.forEach(st => { counts[st.status] += 1; });
+      return {
+        _id: a._id,
+        ...examMeta(a.testId),
+        classId: a.classId,
+        className: cls ? cls.className + (cls.period ? ` · ${cls.period}` : '') : '(deleted class)',
+        dueDate: a.dueDate,
+        note: a.note,
+        assignedAt: a.assignedAt,
+        counts,
+        students,
+      };
+    });
+    req.accessedStudentIds = studentIds;
+    res.json({ success: true, assignments: out });
+  } catch (err) {
+    console.error('[test-prep] list assignments failed:', err);
+    res.status(500).json({ success: false, message: 'Could not load assigned practice tests.' });
+  }
+});
+
+/** POST /api/teacher/test-prep/assignments { testId, classId, dueDate?, note? } */
+router.post('/assignments', async (req, res) => {
+  try {
+    const { testId, classId, dueDate, note } = req.body || {};
+    if (!KNOWN_EXAMS.includes(testId)) return res.status(400).json({ success: false, message: 'Pick a test.' });
+    if (!mongoose.Types.ObjectId.isValid(String(classId))) return res.status(400).json({ success: false, message: 'Pick a class.' });
+    const cls = await EnrollmentCode.findOne({ _id: classId, teacherId: req.user._id }, '_id className').lean();
+    if (!cls) return res.status(404).json({ success: false, message: 'Class not found.' });
+    let due = null;
+    if (dueDate) {
+      due = parseDate(dueDate, true);
+      if (!due) return res.status(400).json({ success: false, message: 'Invalid due date.' });
+    }
+    const cleanNote = typeof note === 'string' ? note.trim().slice(0, 500) : '';
+    // Re-assigning the same test to the same class starts a fresh window.
+    const assignment = await PracticeTestAssignment.findOneAndUpdate(
+      { classId: cls._id, testId },
+      { $set: { teacherId: req.user._id, dueDate: due, note: cleanNote, assignedAt: new Date() } },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    res.status(201).json({ success: true, assignment: { ...assignment.toObject(), ...examMeta(testId), className: cls.className } });
+  } catch (err) {
+    console.error('[test-prep] assign failed:', err);
+    res.status(500).json({ success: false, message: 'Could not assign the practice test.' });
+  }
+});
+
+/** DELETE /api/teacher/test-prep/assignments/:id — attempts are kept. */
+router.delete('/assignments/:id', async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ success: false, message: 'Invalid id.' });
+    const r = await PracticeTestAssignment.deleteOne({ _id: req.params.id, teacherId: req.user._id });
+    if (!r.deletedCount) return res.status(404).json({ success: false, message: 'Assignment not found.' });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[test-prep] unassign failed:', err);
+    res.status(500).json({ success: false, message: 'Could not remove the assignment.' });
+  }
+});
+
 module.exports = router;
+module.exports.RUNNER_URL = RUNNER_URL;

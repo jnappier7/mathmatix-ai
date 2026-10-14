@@ -213,7 +213,44 @@ async function loadTestScores(studentIds, { from = null, to = null, exam = null 
   return byStudent;
 }
 
+/** Where a signed-in student takes each exam (config/routes.js). */
+const RUNNER_URL = {
+  'act-math': '/act-practice-test',
+  'sat-math': '/sat-practice-test',
+  'psat-math': '/psat-practice-test',
+  'preact-math': '/preact-practice-test',
+};
+
+/**
+ * Status of one assigned test for one student, from their sessions of that
+ * exam: anything started at or after the assignment counts toward it.
+ * 'done' wins over 'in-progress' (a finished attempt is the answer to the
+ * assignment even if they've started another).
+ */
+function assignmentStatus(sessions, assignedAt) {
+  const since = new Date(assignedAt || 0).getTime();
+  let status = 'not-started';
+  let completedAt = null;
+  let scaledScore = null;
+  for (const s of sessions || []) {
+    const t = new Date(s.startedAt || s.completedAt || 0).getTime();
+    if (t < since) continue;
+    if (s.status === 'completed') {
+      if (!completedAt || new Date(s.completedAt) > completedAt) {
+        completedAt = new Date(s.completedAt);
+        scaledScore = s.scaledScore != null ? s.scaledScore : null;
+      }
+      status = 'done';
+    } else if (s.status === 'in_progress' && status !== 'done') {
+      status = 'in-progress';
+    }
+  }
+  return { status, completedAt, scaledScore };
+}
+
 module.exports = {
+  RUNNER_URL,
+  assignmentStatus,
   EXAM_ORDER,
   UNFINISHED_SKIPS,
   examMeta,

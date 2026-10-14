@@ -45,13 +45,31 @@
     try {
       const res = await fetch('/api/activities/mine', { credentials: 'same-origin' });
       if (!res.ok) throw new Error(res.status);
-      const { assignments } = await res.json();
+      const { assignments, practiceTests = [] } = await res.json();
       status.textContent = '';
       const list = $('act-list');
       list.textContent = '';
-      if (!assignments.length) {
-        status.textContent = 'Nothing assigned right now. When your teacher assigns an activity it will show up here.';
+      if (!assignments.length && !practiceTests.length) {
+        status.textContent = 'Nothing assigned right now. When your teacher assigns an activity or a practice test it will show up here.';
         return;
+      }
+      // Practice tests first: they're timed, so they need the most planning.
+      const STATUS_TEXT = { done: 'Done', 'in-progress': 'In progress — pick up where you left off', 'not-started': 'Not started' };
+      for (const t of practiceTests) {
+        const li = el('li', 'act-card act-card-test');
+        const link = el('a', 'act-card-link');
+        link.href = t.url;
+        link.appendChild(el('span', 'act-card-title', `${t.label} practice test`));
+        const meta = ['Timed math section', t.className].filter(Boolean).join(' · ');
+        link.appendChild(el('span', 'act-card-meta', meta));
+        if (t.note) link.appendChild(el('span', 'act-card-note', t.note));
+        const foot = el('span', 'act-card-foot');
+        foot.appendChild(el('span', 'act-progress' + (t.status === 'done' ? ' done' : ''),
+          STATUS_TEXT[t.status] + (t.status === 'done' && t.scaledScore != null ? ` · scored ${t.scaledScore}` : '')));
+        if (t.dueDate && t.status !== 'done') foot.appendChild(el('span', 'act-due', fmtDue(t.dueDate)));
+        link.appendChild(foot);
+        li.appendChild(link);
+        list.appendChild(li);
       }
       for (const a of assignments) {
         const li = el('li', 'act-card');

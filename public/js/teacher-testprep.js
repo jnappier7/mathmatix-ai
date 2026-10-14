@@ -15,7 +15,8 @@
 (function () {
   'use strict';
 
-  var state = { exam: '', classId: '', from: '', to: '', data: null, sort: { key: 'name', dir: 1 }, showUntested: false };
+  var state = { exam: '', classId: '', from: '', to: '', data: null, assigned: [], openAssignment: null, sort: { key: 'name', dir: 1 }, showUntested: false };
+  var STATUS_TEXT = { done: 'Done', 'in-progress': 'In progress', 'not-started': 'Not started' };
   // Junior tests first — the order students take them (utils/testPrepScores EXAM_ORDER).
   var ALL_EXAMS = [{ testId: '', label: 'All tests' }, { testId: 'preact-math', label: 'PreACT' }, { testId: 'psat-math', label: 'PSAT' }, { testId: 'sat-math', label: 'SAT' }, { testId: 'act-math', label: 'ACT' }];
   var FLAG_TEXT = { rushed: 'Rushed', unfinished: 'Unfinished', 'easier-route': 'Easier route' };
@@ -48,9 +49,12 @@
     var el = root();
     if (!el) return;
     if (!state.data) el.innerHTML = '<div class="tp-loading">Loading practice-test results…</div>';
-    fetch('/api/teacher/test-prep/scores?' + qs(), { credentials: 'same-origin' })
-      .then(function (r) { return r.json().then(function (b) { if (!r.ok) throw new Error(b.message || 'Failed'); return b; }); })
-      .then(function (data) { state.data = data; render(); })
+    var json = function (r) { return r.json().then(function (b) { if (!r.ok) throw new Error(b.message || 'Failed'); return b; }); };
+    Promise.all([
+      fetch('/api/teacher/test-prep/scores?' + qs(), { credentials: 'same-origin' }).then(json),
+      fetch('/api/teacher/test-prep/assignments', { credentials: 'same-origin' }).then(json).catch(function () { return { assignments: [] }; }),
+    ])
+      .then(function (r) { state.data = r[0]; state.assigned = r[1].assignments || []; render(); })
       .catch(function (err) { el.innerHTML = '<div class="tp-error">Couldn\'t load practice-test results. ' + esc(err.message) + '</div>'; });
   }
 
@@ -60,7 +64,7 @@
     var d = state.data;
     if (!el || !d) return;
     var anyAttempts = d.students.some(function (s) { return Object.keys(s.exams).length; });
-    el.innerHTML = toolbar(d) + summaries(d) + (anyAttempts ? grid(d) : emptyState()) +
+    el.innerHTML = toolbar(d) + assignedPanel() + summaries(d) + (anyAttempts ? grid(d) : emptyState()) +
       '<p class="tp-foot">Flagged attempts (<strong>Rushed</strong>, <strong>Unfinished</strong>) are shown but left out of class averages and growth. ' +
       '<strong>Easier route</strong> scores count — the student just couldn\'t reach the top of the scale on that attempt.</p>';
   }
@@ -79,7 +83,77 @@
         '<label class="tp-date">From <input type="date" id="tp-from" value="' + esc(state.from) + '"></label>' +
         '<label class="tp-date">To <input type="date" id="tp-to" value="' + esc(state.to) + '"></label>' +
         '<a class="tp-btn tp-btn-quiet" href="/api/teacher/test-prep/export.csv?' + esc(qs()) + '" download><i class="fas fa-download" aria-hidden="true"></i> Export CSV</a>' +
+        '<button type="button" class="tp-btn tp-btn-primary" data-tp-assign><i class="fas fa-plus" aria-hidden="true"></i> Assign a test</button>' +
       '</div></div>';
+  }
+
+  // ---------- assigned practice tests ----------
+  function assignedPanel() {
+    if (!state.assigned.length) return '';
+    return '<section class="tp-assigned" aria-label="Assigned practice tests"><h3>Assigned</h3><ul>' + state.assigned.map(function (a) {
+      var open = state.openAssignment === String(a._id);
+      var total = a.students.length;
+      var pct = total ? Math.round((a.counts.done / total) * 100) : 0;
+      var due = a.dueDate ? 'due ' + fmtDate(a.dueDate) : 'no due date';
+      return '<li class="tp-asg' + (open ? ' is-open' : '') + '">' +
+        '<div class="tp-asg-row">' +
+          '<button type="button" class="tp-asg-main" data-tp-asg="' + esc(a._id) + '" aria-expanded="' + open + '">' +
+            '<span class="tp-asg-title">' + esc(a.label) + ' · ' + esc(a.className) + '</span>' +
+            '<span class="tp-muted">' + esc(due) + '</span>' +
+            '<span class="tp-progress" role="img" aria-label="' + a.counts.done + ' of ' + total + ' done"><span style="width:' + pct + '%"></span></span>' +
+            '<span class="tp-asg-counts"><strong>' + a.counts.done + '</strong> done · ' + a.counts['in-progress'] + ' in progress · ' + a.counts['not-started'] + ' not started</span>' +
+          '</button>' +
+          '<button type="button" class="tp-x tp-asg-remove" data-tp-unassign="' + esc(a._id) + '" aria-label="Remove assignment ' + esc(a.label + ' for ' + a.className) + '" title="Remove (attempts are kept)">&times;</button>' +
+        '</div>' +
+        (open ? '<ul class="tp-asg-students">' + a.students.map(function (st) {
+          return '<li><span>' + esc(st.name) + '</span><span class="tp-status tp-st-' + st.status + '">' + STATUS_TEXT[st.status] +
+            (st.status === 'done' && st.scaledScore != null ? ' · ' + st.scaledScore : '') + '</span></li>';
+        }).join('') + (a.note ? '<li class="tp-muted">Note to students: “' + esc(a.note) + '”</li>' : '') + '</ul>' : '') +
+      '</li>';
+    }).join('') + '</ul></section>';
+  }
+
+  function inDaysYmd(days) {
+    var d = new Date(Date.now() + days * 86400000);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function openAssignDialog() {
+    closeDrawer();
+    var classes = (state.data && state.data.classes) || [];
+    var w = document.createElement('div');
+    w.id = 'tp-drawer';
+    w.className = 'tp-drawer-overlay tp-center';
+    w.innerHTML = '<div class="tp-dialog" role="dialog" aria-modal="true" aria-labelledby="tp-assign-h">' +
+      '<header><h3 id="tp-assign-h">Assign a practice test</h3><button type="button" class="tp-x" data-tp-close aria-label="Close">&times;</button></header>' +
+      (classes.length
+        ? '<p class="tp-muted">Students see it with their class activities and take it signed in, so every result lands here.</p>' +
+          '<label>Test<select id="tp-a-test">' + ALL_EXAMS.filter(function (e) { return e.testId; }).map(function (e) {
+            return '<option value="' + e.testId + '"' + (e.testId === (state.exam || 'act-math') ? ' selected' : '') + '>' + esc(e.label) + '</option>';
+          }).join('') + '</select></label>' +
+          '<label>Class<select id="tp-a-class">' + classes.map(function (c) {
+            return '<option value="' + esc(c._id) + '"' + (String(c._id) === state.classId ? ' selected' : '') + '>' + esc(c.className) + (c.period ? ' · ' + esc(c.period) : '') + ' (' + c.studentCount + ')</option>';
+          }).join('') + '</select></label>' +
+          '<label>Due date (optional)<input type="date" id="tp-a-due" min="' + inDaysYmd(0) + '" value="' + inDaysYmd(7) + '"></label>' +
+          '<label>Note to students (optional)<textarea id="tp-a-note" rows="2" maxlength="500" placeholder="e.g., Take it in one sitting — it\'s timed, just like the real one."></textarea></label>' +
+          '<div class="tp-actions"><button type="button" class="tp-btn tp-btn-quiet" data-tp-close>Cancel</button><button type="button" class="tp-btn tp-btn-primary" data-tp-assign-go>Assign</button></div>'
+        : '<p>Practice tests are assigned to a class. Create one first — it takes a few seconds.</p><div class="tp-actions"><button type="button" class="tp-btn tp-btn-primary" data-open-create-class data-tp-close>Create a class</button></div>') +
+      '</div>';
+    document.body.appendChild(w);
+    var first = w.querySelector('select, button');
+    if (first) first.focus();
+  }
+
+  function submitAssign(btn) {
+    btn.disabled = true;
+    var f = window.csrfFetch || fetch;
+    f('/api/teacher/test-prep/assignments', {
+      method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ testId: document.getElementById('tp-a-test').value, classId: document.getElementById('tp-a-class').value,
+        dueDate: document.getElementById('tp-a-due').value || null, note: document.getElementById('tp-a-note').value })
+    }).then(function (r) { return r.json().then(function (b) { if (!r.ok) throw new Error(b.message || 'Failed'); return b; }); })
+      .then(function (b) { closeDrawer(); toast(b.assignment.label + ' assigned to ' + b.assignment.className); load(); })
+      .catch(function (err) { btn.disabled = false; toast(err.message, 'error'); });
   }
 
   function summaries(d) {
@@ -256,6 +330,26 @@
       var k = t.getAttribute('data-tp-sort');
       state.sort = { key: k, dir: state.sort.key === k ? -state.sort.dir : 1 };
       return render();
+    }
+    if (e.target.closest('[data-tp-assign]')) return openAssignDialog();
+    if ((t = e.target.closest('[data-tp-assign-go]'))) return submitAssign(t);
+    if ((t = e.target.closest('[data-tp-asg]'))) {
+      var id = t.getAttribute('data-tp-asg');
+      state.openAssignment = state.openAssignment === id ? null : id;
+      return render();
+    }
+    if ((t = e.target.closest('[data-tp-unassign]'))) {
+      var aid = t.getAttribute('data-tp-unassign');
+      var go = function () {
+        (window.csrfFetch || fetch)('/api/teacher/test-prep/assignments/' + encodeURIComponent(aid), { method: 'DELETE', credentials: 'same-origin' })
+          .then(function (r) { if (!r.ok) throw new Error('Failed'); toast('Assignment removed — attempts are kept'); load(); })
+          .catch(function () { toast('Could not remove it', 'error'); });
+      };
+      if (typeof window.showConfirmDialog === 'function') {
+        window.showConfirmDialog({ title: 'Remove this assignment?', message: 'Students stop seeing it. Any attempts they made stay in Test Prep.', confirmText: 'Remove', type: 'warning' })
+          .then(function (ok) { if (ok) go(); });
+      } else go();
+      return;
     }
     if (e.target.closest('[data-tp-untested]')) { state.showUntested = !state.showUntested; return render(); }
     if ((t = e.target.closest('[data-tp-open]'))) { var p = t.getAttribute('data-tp-open').split('|'); return openDrawer(p[0], p[1]); }

@@ -118,3 +118,18 @@ describe('Test Prep tab wiring', () => {
     expect(read('config/routes.js')).toMatch(/app\.use\('\/api\/teacher\/test-prep', isAuthenticated, isTeacher, teacherTestPrepRoutes\)/);
   });
 });
+
+describe('assignmentStatus', () => {
+  const at = new Date('2026-10-10T00:00:00Z');
+  test('only attempts started on/after the assignment count; done beats in-progress', () => {
+    expect(TP.assignmentStatus([{ status: 'completed', startedAt: new Date('2026-10-01'), completedAt: new Date('2026-10-01') }], at).status).toBe('not-started');
+    expect(TP.assignmentStatus([{ status: 'in_progress', startedAt: new Date('2026-10-11') }], at).status).toBe('in-progress');
+    expect(TP.assignmentStatus([
+      { status: 'completed', startedAt: new Date('2026-10-11'), completedAt: new Date('2026-10-11'), scaledScore: 24 },
+      { status: 'in_progress', startedAt: new Date('2026-10-12') },
+    ], at)).toMatchObject({ status: 'done', scaledScore: 24 });
+  });
+  test('every exam has a runner URL', () => {
+    expect(Object.keys(TP.RUNNER_URL).sort()).toEqual([...TP.KNOWN_EXAMS].sort());
+  });
+});

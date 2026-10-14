@@ -27,6 +27,7 @@ beforeAll(async () => {
   app.use(express.json());
   app.use((req, _res, next) => { req.user = currentUser; req.isAuthenticated = () => true; next(); });
   app.use('/api/teacher/test-prep', require('../../routes/teacherTestPrep'));
+  app.use('/api/activities', require('../../routes/activities'));
 }, 60000);
 
 afterAll(async () => {
@@ -119,4 +120,55 @@ test('another teacher sees none of my students', async () => {
   currentUser = other;
   const { body } = await supertest(app).get('/api/teacher/test-prep/scores').expect(200);
   expect(body.students.map(s => s.name.split(' ')[0])).toEqual(['Zed']);
+});
+
+describe('assigning a practice test to a class', () => {
+  const PracticeTestAssignment = require('../../models/practiceTestAssignment');
+  beforeEach(() => PracticeTestAssignment.deleteMany({}));
+
+  test('assign → the student sees it with their activities; status follows their attempts', async () => {
+    const { body: made } = await supertest(app).post('/api/teacher/test-prep/assignments')
+      .send({ testId: 'sat-math', classId: cls._id, dueDate: '2099-01-15', note: 'One sitting' }).expect(201);
+    expect(made.assignment).toMatchObject({ label: 'SAT', className: 'Alg 1' });
+
+    currentUser = kidA;
+    let mine = (await supertest(app).get('/api/activities/mine').expect(200)).body;
+    expect(mine.practiceTests).toEqual([expect.objectContaining({ testId: 'sat-math', url: '/sat-practice-test', status: 'not-started', note: 'One sitting' })]);
+
+    await ActTestSession.create({ userId: kidA._id, testId: 'sat-math', status: 'in_progress', startedAt: new Date(), items: [], responses: [] });
+    mine = (await supertest(app).get('/api/activities/mine').expect(200)).body;
+    expect(mine.practiceTests[0].status).toBe('in-progress');
+
+    await take(kidA._id, { testId: 'sat-math', scaled: 610, start: new Date() });
+    mine = (await supertest(app).get('/api/activities/mine').expect(200)).body;
+    expect(mine.practiceTests[0]).toMatchObject({ status: 'done', scaledScore: 610 });
+
+    currentUser = kidB; // not in the class
+    expect((await supertest(app).get('/api/activities/mine').expect(200)).body.practiceTests || []).toEqual([]);
+  });
+
+  test('teacher list: per-student status, attempts from BEFORE the assignment do not count', async () => {
+    await supertest(app).post('/api/teacher/test-prep/assignments').send({ testId: 'act-math', classId: cls._id }).expect(201);
+    const { body } = await supertest(app).get('/api/teacher/test-prep/assignments').expect(200);
+    expect(body.assignments).toHaveLength(1);
+    // Ada's two ACT attempts were days before the assignment.
+    expect(body.assignments[0]).toMatchObject({ label: 'ACT', counts: { done: 0, 'in-progress': 0, 'not-started': 1 } });
+    expect(body.assignments[0].students.map(s => s.name.split(' ')[0])).toEqual(['Ada']);
+  });
+
+  test('another teacher\'s class is a 404; re-assigning restarts the window; remove keeps attempts', async () => {
+    const theirs = await EnrollmentCode.create({ code: `Y${n}${Date.now()}`.slice(0, 12), teacherId: other._id, className: 'Theirs' });
+    await supertest(app).post('/api/teacher/test-prep/assignments').send({ testId: 'act-math', classId: theirs._id }).expect(404);
+    await supertest(app).post('/api/teacher/test-prep/assignments').send({ testId: 'nope', classId: cls._id }).expect(400);
+    const a1 = (await supertest(app).post('/api/teacher/test-prep/assignments').send({ testId: 'act-math', classId: cls._id }).expect(201)).body.assignment;
+    const a2 = (await supertest(app).post('/api/teacher/test-prep/assignments').send({ testId: 'act-math', classId: cls._id, note: 'again' }).expect(201)).body.assignment;
+    expect(String(a2._id)).toBe(String(a1._id));
+    expect(new Date(a2.assignedAt) >= new Date(a1.assignedAt)).toBe(true);
+    expect(await PracticeTestAssignment.countDocuments()).toBe(1);
+    currentUser = other;
+    await supertest(app).delete(`/api/teacher/test-prep/assignments/${a1._id}`).expect(404);
+    currentUser = teacher;
+    await supertest(app).delete(`/api/teacher/test-prep/assignments/${a1._id}`).expect(200);
+    expect(await ActTestSession.countDocuments({ userId: kidA._id })).toBe(2);
+  });
 });
