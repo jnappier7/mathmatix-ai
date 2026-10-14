@@ -75,13 +75,15 @@ const FAMILIES = [
       }
       const s = ri(rng, 1, 6) * 2;
       const q = (s * s) / 4;
-      const key = `${s * s} - ${q}π`;
+      // A coefficient of 1 is not written: "4 - π", never "4 - 1π".
+      const pi = (c) => (c === 1 ? 'π' : `${c}π`);
+      const key = `${s * s} - ${pi(q)}`;
       return {
         params: `circle-in-sq,${s}`, difficulty: 4,
         prompt: `A circle is inscribed in a square with sides ${s} feet long, so the circle touches all four sides. What is the area, in square feet, of the region inside the square but outside the circle?`,
         key,
-        wrong: [[`${s * s} - ${s * s}π`, `uses the side, ${s}, as the circle's radius; the radius is half the side`], [`${q}π`, 'gives the area of the circle, not the region outside it'], [`${s * s} - ${s}π`, 'uses πd for the circle\'s area — that is its circumference']],
-        explain: `The circle's diameter equals the side, ${s}, so its radius is ${s / 2} and its area is π(${s / 2})² = ${q}π. Square minus circle: ${s * s} − ${q}π.`,
+        wrong: [[`${s * s} - ${pi(s * s)}`, `uses the side, ${s}, as the circle's radius; the radius is half the side`], [pi(q), 'gives the area of the circle, not the region outside it'], [`${s * s} - ${pi(s)}`, 'uses πd for the circle\'s area — that is its circumference']],
+        explain: `The circle's diameter equals the side, ${s}, so its radius is ${s / 2} and its area is π(${s / 2})² = ${pi(q)}. Square minus circle: ${s * s} − ${pi(q)}.`,
       };
     },
   },

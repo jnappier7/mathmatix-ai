@@ -6,6 +6,8 @@
 // discovered by a student:
 //
 //   blocking   (the form builder already skips these — utils/distractorQuality)
+//     equivalent_to_key    a choice equal in value to the key (2√5 next to √20):
+//                          two right answers, one of them graded wrong
 //     equivalent_options   two different-looking choices with the same value
 //     duplicate_option / blank_option / placeholder_option / too_few_options
 //     wrong_type_distractors
@@ -15,6 +17,7 @@
 //     figure_position      a "figure below/above" stem; the runner draws the
 //                          figure below the stem, so "above" is now wrong
 //     figure_missing_alt   a figure with no written description (figureAlt)
+//     coefficient_one      "1π", "4 − 1π", "1x": a coefficient of 1 written out
 //   info
 //     raw_notation         typed ^ or _; the runner shows them as super- and
 //                          subscripts, but the bank should say what it means
@@ -36,7 +39,13 @@ const BANKS = [
   ['act-visual', 'seeds/act-visual/act-visual-items.generated.json'],
   ['act-reasoning', 'seeds/act-reasoning/act-reasoning-items.generated.json'],
   ['act-sets', 'seeds/act-sets/act-set-items.generated.json'],
+  // The SAT/PSAT bank: same choice checks (grid-ins have no choices to check).
+  ['sat-fable', 'seeds/sat-items.generated.json'],
 ];
+
+// A written-out coefficient of 1 before π, a radical or a variable: "1π",
+// "4 - 1π", "1√3", "1x". Not "11π", "0.1π" or "1/2π".
+const COEFFICIENT_ONE = /(^|[^\d.\/])1\s*(?=[π√]|[a-z]\b)/;
 
 function loadItems(rel) {
   const file = path.join(__dirname, '..', rel);
@@ -66,6 +75,11 @@ function auditItem(item) {
   // Same rule the form builder applies (utils/actChoiceOrder), units included.
   if (sortPermutation(options.map((o) => o && o.text))) {
     findings.push({ code: 'unsorted_numeric', severity: 'warning', detail: options.map((o) => o.text).join(', ') });
+  }
+  const choiceTexts = options.map((o) => String((o && o.text) || ''));
+  const ones = choiceTexts.concat(String((item.answer && item.answer.value) || '')).filter((t) => COEFFICIENT_ONE.test(t));
+  if (ones.length) {
+    findings.push({ code: 'coefficient_one', severity: 'warning', detail: ones.join(', ') });
   }
   if (item.svg && !item.figureAlt) {
     findings.push({ code: 'figure_missing_alt', severity: 'warning', detail: 'no written description for screen readers' });
@@ -117,4 +131,4 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { auditItem, auditBank, isMonotonic };
+module.exports = { auditItem, auditBank, isMonotonic, BANKS, COEFFICIENT_ONE };

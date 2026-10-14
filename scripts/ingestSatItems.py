@@ -195,6 +195,11 @@ def main():
     else:
         print("  all items mapped to a unified skillId")
     print("  wrote %s and %s" % (os.path.basename(MAP_OUT), os.path.basename(COVERAGE_OUT)))
+    # Graphs are redrawn in the house SVG style and every figure gets a written
+    # description (figureAlt) by utils/satCharts.js — one renderer for the
+    # ingest and the bank, so the two never drift (QA pass, 2026-10-13).
+    import subprocess
+    subprocess.run(["node", os.path.join(ROOT, "scripts", "refreshSatFigures.js")], check=True)
 
 
 if __name__ == "__main__":

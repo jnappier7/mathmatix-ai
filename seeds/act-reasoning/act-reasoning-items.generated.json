@@ -666,7 +666,7 @@
   "svg": null,
   "answer": {
    "type": "auto",
-   "value": "4 - 1π",
+   "value": "4 - π",
    "equivalents": []
   },
   "answerType": "multiple-choice",
@@ -681,17 +681,17 @@
    },
    {
     "label": "C",
-    "text": "4 - 1π"
+    "text": "4 - π"
    },
    {
     "label": "D",
-    "text": "1π"
+    "text": "π"
    }
   ],
   "correctOption": "C",
   "difficulty": 4,
   "gradeBand": "8-12",
-  "explanation": "The circle's diameter equals the side, 2, so its radius is 1 and its area is π(1)² = 1π. Square minus circle: 4 − 1π. Wrong choices: 4 - 4π uses the side, 2, as the circle's radius; the radius is half the side; 1π gives the area of the circle, not the region outside it; 4 - 2π uses πd for the circle's area — that is its circumference.",
+  "explanation": "The circle's diameter equals the side, 2, so its radius is 1 and its area is π(1)² = π. Square minus circle: 4 − π. Wrong choices: 4 - 4π uses the side, 2, as the circle's radius; the radius is half the side; π gives the area of the circle, not the region outside it; 4 - 2π uses πd for the circle's area — that is its circumference.",
   "tags": [
    "act",
    "act-math",
@@ -700,7 +700,7 @@
    "family:inscribed-figures"
   ],
   "source": "act-reasoning-2026-10",
-  "contentHash": "e4f933be0068d11a53ab59218ede11ad98b39bc18d5c7db0a84d16301fe93130",
+  "contentHash": "3f6f3e8dbcc2c4494fc135ec506de2df6480f58b14ab568c820248a33aa84f43",
   "isActive": true
  },
  {

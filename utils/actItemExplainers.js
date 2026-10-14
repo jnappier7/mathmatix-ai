@@ -1022,6 +1022,10 @@ const EXPLAINERS = [
           [`${a + b}`, 'adds and drops the radical entirely'],
           [`${a * b}`, 'multiplies correctly but forgets the answer is still a square root'],
           [`√${prod}`, 'multiplies correctly but leaves a perfect square trapped under the radical'],
+          // √20 is EQUAL to 2√5, so it can't be a distractor (a second right
+          // answer; utils/distractorQuality equivalent_to_key). The bank now
+          // uses the slip of moving the square out without rooting it: 4√5.
+          ...(needed ? [[`${simp.k * simp.k}√${simp.rest}`, `moves the perfect square ${simp.k * simp.k} out of the radical without taking its square root (√${simp.k * simp.k} = ${simp.k})`]] : []),
         ],
       };
     },

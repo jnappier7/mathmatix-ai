@@ -62,6 +62,7 @@ describe('the seed banks have no blocking defects', () => {
   // student ever sees. The last 21 were repaired; keep it at zero. A new
   // finding means fix the item (or the checker, if it is wrong), not this list.
   const FILES = {
+    'sat-fable': 'seeds/sat-items.generated.json',
     'act-fable': 'seeds/act-fable-items.generated.json',
     'act-ies-expansion': 'seeds/act-ies-expansion/ies-items.generated.json',
     'act-enhanced': 'seeds/act-enhanced/act-items.generated.json',
@@ -79,6 +80,11 @@ describe('the seed banks have no blocking defects', () => {
       .filter(([, v]) => v.severity === 'blocking')
       .forEach(([code, v]) => v.items.forEach((x) => blocking.push(`${x.problemId} ${code}: ${x.detail}`)));
     expect(blocking).toEqual([]);
+    // "4 − 1π" reached a PreACT form (QA pass, 2026-10-13): no written-out
+    // coefficient of 1, and every figure carries a written description.
+    const warn = (code) => ((report.byCode[code] || {}).items || []).map((x) => `${x.problemId}: ${x.detail}`);
+    expect(warn('coefficient_one')).toEqual([]);
+    expect(warn('figure_missing_alt')).toEqual([]);
   });
 });
 
@@ -102,8 +108,22 @@ describe('equal expressions and impossible probabilities', () => {
   test('a form question keeps its wrong-form distractor', () => {
     expect(issueCodes(key(['1.69 × 10^6', '1.69 × 10^7', '1.69 × 10^-6', '16.9 × 10^5'], 0, 'Write 1,690,000 in scientific notation.')))
       .not.toContain('equivalent_options');
-    expect(issueCodes(key(['18', '3√2', '√9', '√18'], 1, 'Simplify: √3 · √6'))).not.toContain('equivalent_options');
     expect(issueCodes(key(['2 × 2', '2 × 3', '3 × 4', '4 × 3'], 2, 'What are the dimensions of AB?'))).not.toContain('equivalent_options');
+  });
+
+  // "Simplify √2 · √10" offered 2√5 AND √20, and a student who chose √20 was
+  // marked wrong (QA pass, 2026-10-13). An unsimplified radical equal to the
+  // key is a second right answer, not a wrong form.
+  test('a choice equal in value to the key is double-keyed, radicals included', () => {
+    expect(issueCodes(key(['√12', '2√5', '√20', '20'], 1, 'Simplify: √2 · √10'))).toEqual(expect.arrayContaining(['equivalent_options', 'equivalent_to_key']));
+    expect(issueCodes(key(['18', '3√2', '√9', '√18'], 1, 'Simplify: √3 · √6'))).toContain('equivalent_to_key');
+    expect(issueCodes(key(['4', '√16', '8', '2'], 2, 'What is 2³?'))).toContain('equivalent_options');   // a plain number next to an expression
+    expect(issueCodes(key(['4', '√16', '8', '2'], 0, 'What is √16?'))).toContain('equivalent_to_key');
+    expect(issueCodes(key(['0.5', '1/2', '2', '3'], 0, 'Half of 1?'))).toContain('equivalent_to_key');
+    // Equal distractors that are not the key: a defect, but not double-keyed.
+    expect(issueCodes(key(['3', '0.5', '1/2', '2'], 0, 'What is 1 + 2?'))).not.toContain('equivalent_to_key');
+    // The fixed items: the unsimplified form became the pull-out-without-rooting error.
+    expect(issueCodes(key(['√12', '2√5', '4√5', '20'], 1, 'Simplify: √2 · √10'))).toEqual([]);
   });
 
   test('a probability above 1 is flagged only when a probability is asked for', () => {
