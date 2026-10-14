@@ -29,6 +29,11 @@
     "min": 6,
     "max": 10
   },
+  "_integratedTargetComment": "Integrating Essential Skills items that combine concepts in one real-world setting (seeds/act-reasoning families tagged `integrated`); of the 9 IES slots. They are reasoning items too, so they count toward reasoningTarget. Same reason as the PreACT's (2026-10-14).",
+  "integratedTarget": {
+    "min": 3,
+    "max": 6
+  },
   "_authoredScaleComment": "Until calibration measures an item (calibration.theta), its authored 1-5 difficulty orders the form. act-ies-expansion rated by position within each skill (a fixed 8/12/14/10/6 quota per skill), not by content, so its 4s and 5s include easy items that landed among the hardest questions. Its authored scale is mapped onto [min, max] for ordering only; calibrated items ignore this. Remove the entry once the bank is calibrated from real responses.",
   "authoredScale": {
     "act-ies-expansion": {

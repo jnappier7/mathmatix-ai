@@ -641,6 +641,229 @@ const FAMILIES = [
     },
   },
 
+
+  // ─── Integrating Essential Skills: two or three concepts in one setting ──
+  // The enhanced ACT/PreACT's IES category is "combining multiple math concepts
+  // simultaneously (e.g., using ratio and proportion to solve a geometric area
+  // problem)". The bank's IES reasoning items came from four single-concept
+  // templates, so no form ever asked a ratio-then-area or scale-then-cost
+  // question (audit, 2026-10-14). Each family below needs one concept's result
+  // as the next concept's input; its wrong choices stop at, or skip, the link.
+  {
+    id: 'ratio-to-area', skillId: 'act-ratios-proportions', count: 14, kind: 'multi-step', integrated: true,
+    gen(rng) {
+      const [a, b] = pick(rng, [[2, 3], [3, 4], [3, 5], [4, 5], [2, 5], [5, 7], [3, 7], [1, 2], [1, 3], [4, 7]]);
+      const k = ri(rng, 2, 6);
+      const P = 2 * (a + b) * k;
+      const thing = pick(rng, ['garden', 'patio', 'playground', 'parking lot', 'dog run']);
+      const key = a * k * b * k;
+      const half = P / (a + b);   // treats the perimeter as one length plus one width
+      return {
+        params: `${a},${b},${k},${thing}`, difficulty: 3,
+        prompt: `The width and length of a rectangular ${thing} are in the ratio ${a}:${b}. The perimeter of the ${thing} is ${P} feet. What is the area of the ${thing}, in square feet?`,
+        key: `${key}`,
+        wrong: [
+          [`${a * half * b * half}`, 'splits the whole perimeter in the ratio, as if it were one width plus one length'],
+          [`${a * b}`, 'multiplies the ratio numbers instead of the actual sides'],
+          [`${b * k * P}`, 'multiplies the length by the perimeter'],
+          [`${(P / 4) ** 2}`, 'treats the rectangle as a square with the same perimeter'],
+        ],
+        explain: `Call the sides ${a}k and ${b}k. The perimeter is 2(${a}k + ${b}k) = ${2 * (a + b)}k = ${P}, so k = ${k}: the ${thing} is ${a * k} feet by ${b * k} feet, and its area is ${a * k} × ${b * k} = ${key} square feet.`,
+      };
+    },
+  },
+  {
+    id: 'scale-plan-cost', skillId: 'act-ratios-proportions', count: 14, kind: 'multi-step', integrated: true,
+    gen(rng) {
+      const s = pick(rng, [2, 3, 4, 5, 6, 8]);
+      const w = ri(rng, 2, 5), l = w + ri(rng, 1, 4);
+      const c = pick(rng, [2, 3, 4, 5, 6]);
+      const what = pick(rng, [['a bedroom', 'carpet'], ['a kitchen', 'tile'], ['a classroom', 'flooring'], ['an office', 'carpet'], ['a studio', 'flooring']]);
+      const key = w * s * l * s * c;
+      return {
+        params: `${s},${w},${l},${c},${what[0]}`, difficulty: 3,
+        prompt: `On a floor plan, 1 inch represents ${s} feet. On the plan, ${what[0]} is a rectangle ${w} inches by ${l} inches. If ${what[1]} costs $${c} per square foot, how much does it cost to cover the whole floor of the room?`,
+        key: `$${key}`,
+        wrong: [
+          [`$${w * l * s * c}`, `applies the scale once to the area; each DIMENSION is ${s} times as long, so the area is ${s * s} times as large`],
+          [`$${w * l * c}`, 'uses the plan measurements as if they were feet'],
+          [`$${2 * (w + l) * s * c}`, 'uses the perimeter of the room instead of its area'],
+          [`$${w * s * l * s}`, `finds the area, ${w * s * l * s} square feet, but never multiplies by the price`],
+        ],
+        explain: `The room is ${w} × ${s} = ${w * s} feet by ${l} × ${s} = ${l * s} feet, so its floor is ${w * s * l * s} square feet. At $${c} per square foot: ${w * s * l * s} × $${c} = $${key}.`,
+      };
+    },
+  },
+  {
+    id: 'percent-sides-area', skillId: 'act-percentages', count: 14, kind: 'multi-step', integrated: true,
+    gen(rng) {
+      const p = pick(rng, [10, 20, 30, 40, 50]), q = pick(rng, [10, 20, 30, 40, 50]);
+      const key = p + q + (p * q) / 100;
+      if (!Number.isInteger(key)) return null;
+      const both = p === q;
+      const prompt = both
+        ? `The length and the width of a rectangle are each increased by ${p}%. By what percent does the area of the rectangle increase?`
+        : `The length of a rectangle is increased by ${p}%, and its width is increased by ${q}%. By what percent does the area of the rectangle increase?`;
+      return {
+        params: `${p},${q}`, difficulty: 4,
+        prompt,
+        key: `${key}%`,
+        wrong: [
+          [`${p + q}%`, 'adds the two percents; the increases multiply'],
+          [`${100 + key}%`, 'gives the new area as a percent of the old one, not the increase'],
+          [`${(p * q) / 100}%`, 'keeps only the extra piece from multiplying the increases'],
+          [`${Math.max(p, q)}%`, 'uses only the larger increase'],
+        ],
+        explain: `The new area is (1 + ${p / 100})(1 + ${q / 100}) = ${(100 + key) / 100} times the old area, an increase of ${key}%. Check with a ${100} by ${100} rectangle: ${100 + p} × ${100 + q} = ${(100 + p) * (100 + q)}, which is ${key}% more than ${100 * 100}.`,
+      };
+    },
+  },
+  {
+    id: 'square-yard-cost', skillId: 'act-rates-unit-conversion', count: 14, kind: 'multi-step', integrated: true,
+    gen(rng) {
+      const L = 3 * ri(rng, 3, 8), W = 3 * ri(rng, 2, 6);
+      if (W >= L) return null;
+      const c = pick(rng, [12, 15, 18, 20, 24, 25, 30]);
+      const key = ((L * W) / 9) * c;
+      return {
+        params: `${L},${W},${c}`, difficulty: 3,
+        prompt: `A rectangular room measures ${L} feet by ${W} feet. Carpet costs $${c} per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?`,
+        key: `$${key}`,
+        wrong: [
+          [`$${((L * W) / 3) * c}`, 'divides the square feet by 3; a square yard is 3 × 3 = 9 square feet'],
+          [`$${L * W * c}`, 'never converts square feet to square yards'],
+          [`$${(2 * (L + W) / 3) * c}`, 'uses the perimeter instead of the area'],
+          [`$${L * W * 9 * c}`, 'multiplies by 9 instead of dividing'],
+        ],
+        explain: `The floor is ${L} × ${W} = ${L * W} square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is ${L * W} ÷ 9 = ${(L * W) / 9} square yards. Cost: ${(L * W) / 9} × $${c} = $${key}.`,
+      };
+    },
+  },
+  {
+    id: 'paint-gallons', skillId: 'act-basic-geometry-measures', count: 14, kind: 'multi-step', integrated: true,
+    gen(rng) {
+      const L = ri(rng, 10, 20), W = ri(rng, 8, 14), H = pick(rng, [8, 9, 10]);
+      const G = pick(rng, [300, 350, 400]);
+      const coats = pick(rng, [1, 2]);
+      const walls = 2 * (L + W) * H;
+      const key = Math.ceil((coats * walls) / G);
+      const raw = (coats * walls) / G;
+      if (Number.isInteger(raw)) return null;   // the rounding step must matter
+      return {
+        params: `${L},${W},${H},${G},${coats}`, difficulty: 4,
+        prompt: `A room is ${L} feet long and ${W} feet wide, and its walls are ${H} feet high. All four walls will be painted with ${coats === 2 ? 'two coats' : 'one coat'} of paint (ignore doors and windows), and one gallon covers ${G} square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?`,
+        key: `${key}`,
+        wrong: [
+          [`${Math.floor(raw)}`, `rounds ${Math.round(raw * 100) / 100} gallons down; that would leave part of a wall unpainted`],
+          [`${Math.ceil((coats * L * W) / G)}`, 'paints the floor area instead of the walls'],
+          [`${Math.ceil((coats * (L + W) * H) / G)}`, 'paints only two of the four walls'],
+          [coats === 2 ? `${Math.ceil(walls / G)}` : `${Math.ceil((2 * walls) / G)}`, coats === 2 ? 'forgets the second coat' : 'paints a second coat that was not asked for'],
+        ],
+        explain: `The four walls are 2(${L} + ${W}) × ${H} = ${walls} square feet${coats === 2 ? `; two coats cover ${2 * walls} square feet` : ''}. That takes ${coats * walls} ÷ ${G} ≈ ${Math.round(raw * 100) / 100} gallons, and since paint comes in whole gallons, ${key} must be bought.`,
+      };
+    },
+  },
+  {
+    id: 'tank-volume-rate', skillId: 'act-rates-unit-conversion', count: 14, kind: 'multi-step', integrated: true,
+    gen(rng) {
+      const a = ri(rng, 2, 6), b = ri(rng, 2, 6), c = pick(rng, [2, 3, 4]);
+      const r = pick(rng, [5, 6, 10, 12, 15, 20, 25, 30]);
+      const gal = a * b * c * 7.5;
+      const key = gal / r;
+      if (!Number.isInteger(key) || a > b) return null;
+      // A wrong choice that comes out fractional (60 ÷ 9 = 6.666…) is dropped,
+      // not rounded: next to whole-number choices it would give itself away.
+      const whole = (x) => (Number.isInteger(x) ? `${x}` : null);
+      return {
+        params: `${a},${b},${c},${r}`, difficulty: 4,
+        prompt: `An empty tank shaped like a rectangular box is ${a} feet wide, ${b} feet long, and ${c} feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at ${r} gallons per minute. How many minutes does it take to fill the tank?`,
+        key: `${key}`,
+        wrong: [
+          [whole((a * b * c) / r), 'divides the cubic feet by the flow rate without converting to gallons'],
+          [`${gal}`, 'stops at the number of gallons the tank holds'],
+          [whole((a * b * c * r) / 7.5), 'multiplies by the flow rate and divides by 7.5, both upside down'],
+          [whole((2 * (a * b + b * c + a * c) * 7.5) / r), 'uses the surface area of the tank instead of its volume'],
+          [whole(a * b * c * 7.5 * r), 'multiplies the gallons by the flow rate instead of dividing'],
+          [whole(a * b * c), 'stops at the volume in cubic feet'],
+        ],
+        explain: `The tank holds ${a} × ${b} × ${c} = ${a * b * c} cubic feet, which is ${a * b * c} × 7.5 = ${gal} gallons. At ${r} gallons per minute it fills in ${gal} ÷ ${r} = ${key} minutes.`,
+      };
+    },
+  },
+  {
+    id: 'combined-mean', skillId: 'act-average-median', count: 14, kind: 'multi-step', integrated: true,
+    gen(rng) {
+      const n1 = pick(rng, [10, 12, 15, 18, 20, 24, 25, 30]), n2 = pick(rng, [10, 12, 15, 18, 20, 24, 25, 30]);
+      if (n1 === n2) return null;
+      const m1 = ri(rng, 70, 92), m2 = ri(rng, 70, 92);
+      if (m1 === m2) return null;
+      const key = (n1 * m1 + n2 * m2) / (n1 + n2);
+      if (!Number.isInteger(key)) return null;
+      const avg = (m1 + m2) / 2;
+      return {
+        params: `${n1},${m1},${n2},${m2}`, difficulty: 3,
+        prompt: `On a test, the ${n1} students in one class had a mean score of ${m1}, and the ${n2} students in a second class had a mean score of ${m2}. What is the mean score of all ${n1 + n2} students together?`,
+        key: `${key}`,
+        wrong: [
+          [Number.isInteger(avg) ? `${avg}` : `${avg.toFixed(1)}`, 'averages the two means as if the classes were the same size'],
+          [`${n1 * m1 + n2 * m2}`, 'finds the total of all the scores but never divides by the number of students'],
+          [`${Math.round((n2 * m1 + n1 * m2) / (n1 + n2))}`, 'weights each mean by the OTHER class\'s size'],
+          [`${Math.max(m1, m2)}`, 'takes the larger class mean'],
+        ],
+        explain: `Total of all scores: ${n1} × ${m1} + ${n2} × ${m2} = ${n1 * m1} + ${n2 * m2} = ${n1 * m1 + n2 * m2}. Dividing by all ${n1 + n2} students gives ${key}. The larger class pulls the mean toward its own.`,
+      };
+    },
+  },
+  {
+    id: 'map-scale-time', skillId: 'act-rates-unit-conversion', count: 14, kind: 'multi-step', integrated: true,
+    gen(rng) {
+      const k = pick(rng, [5, 10, 15, 20, 25]);
+      const d = ri(rng, 3, 12);
+      const v = pick(rng, [40, 45, 50, 60, 75, 80]);
+      const km = d * k;
+      const key = (km / v) * 60;
+      if (!Number.isInteger(key) || km === v) return null;
+      const hrs = km / v;
+      return {
+        params: `${k},${d},${v}`, difficulty: 3,
+        prompt: `On a map, 1 centimeter represents ${k} kilometers. Two towns are ${d} centimeters apart on the map. A bus travels the straight road between them at an average speed of ${v} kilometers per hour. How many minutes does the trip take?`,
+        key: `${key}`,
+        wrong: [
+          [Number.isInteger(hrs) ? `${hrs}` : `${Math.round(hrs * 100) / 100}`, 'gives the time in hours, not minutes'],
+          [`${km}`, 'stops at the distance in kilometers'],
+          [`${Math.round((d / v) * 60)}`, 'uses the map distance without the scale'],
+          [`${Math.round((v / km) * 60)}`, 'divides the speed by the distance — upside down'],
+        ],
+        explain: `The real distance is ${d} × ${k} = ${km} kilometers. At ${v} km per hour that takes ${km} ÷ ${v} = ${Math.round(hrs * 100) / 100} hours, which is ${Math.round(hrs * 100) / 100} × 60 = ${key} minutes.`,
+      };
+    },
+  },
+  {
+    id: 'percent-of-area', skillId: 'act-percentages', count: 14, kind: 'multi-step', integrated: true,
+    gen(rng) {
+      const L = pick(rng, [20, 25, 30, 40, 50]), W = pick(rng, [10, 15, 20, 25, 30]);
+      if (W >= L) return null;
+      const a = ri(rng, 2, 10), b = ri(rng, 2, 10);
+      if (a >= W || b >= L) return null;
+      const key = (a * b * 100) / (L * W);
+      if (!Number.isInteger(key)) return null;
+      const per = ((a + b) * 100) / (L + W);
+      if (!Number.isInteger(per)) return null;
+      return {
+        params: `${L},${W},${a},${b}`, difficulty: 3,
+        prompt: `A rectangular yard is ${L} feet by ${W} feet. A rectangular patio inside the yard is ${a} feet by ${b} feet. What percent of the yard's area does the patio cover?`,
+        key: `${key}%`,
+        wrong: [
+          [`${per}%`, 'compares the sums of the sides (the half-perimeters) instead of the areas'],
+          [`${a * b}%`, 'gives the patio\'s area in square feet as the percent'],
+          [`${100 - key}%`, 'finds the part of the yard the patio does NOT cover'],
+          [`${(key * 10) % 100 === 0 ? key / 10 : key * 10}%`, 'misplaces the decimal point when converting to a percent'],
+        ],
+        explain: `The yard's area is ${L} × ${W} = ${L * W} square feet and the patio's is ${a} × ${b} = ${a * b}. ${a * b} ÷ ${L * W} = ${key / 100}, which is ${key}%.`,
+      };
+    },
+  },
+
   // ─── Thin families, widened (new ids; the originals are unchanged) ─────────
   {
     id: 'signal-travel', skillId: 'act-scientific-notation', count: 10, kind: 'multi-step',
@@ -693,7 +916,9 @@ const FAMILIES = [
 const bank = makeBank({
   source: SOURCE,
   idPrefix: 'act-reasoning-',
-  tags: (fam) => ['act', 'act-math', 'reasoning', `reasoning:${fam.kind}`, `family:${fam.id}`],
+  // `integrated` + `modeling` mark the IES families that combine concepts in a
+  // real-world setting; every other family's tags are unchanged.
+  tags: (fam) => ['act', 'act-math', 'reasoning', `reasoning:${fam.kind}`, `family:${fam.id}`, ...(fam.integrated ? ['integrated', 'modeling'] : [])],
 });
 const generate = () => bank.generate(FAMILIES);
 

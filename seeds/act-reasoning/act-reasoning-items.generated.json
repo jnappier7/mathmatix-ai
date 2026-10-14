@@ -16148,6 +16148,5802 @@
   "isActive": true
  },
  {
+  "problemId": "act-reasoning-ratio-to-area-01",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular parking lot are in the ratio 5:7. The perimeter of the parking lot is 96 feet. What is the area of the parking lot, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "560",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "35"
+   },
+   {
+    "label": "B",
+    "text": "560"
+   },
+   {
+    "label": "C",
+    "text": "2240"
+   },
+   {
+    "label": "D",
+    "text": "2688"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 5k and 7k. The perimeter is 2(5k + 7k) = 24k = 96, so k = 4: the parking lot is 20 feet by 28 feet, and its area is 20 × 28 = 560 square feet. Wrong choices: 2240 splits the whole perimeter in the ratio, as if it were one width plus one length; 35 multiplies the ratio numbers instead of the actual sides; 2688 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e5167f3db4d34fcfef4d3b15e5ba9d78044d254a07526e0cb836b25d83175ec9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-02",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular garden are in the ratio 4:5. The perimeter of the garden is 108 feet. What is the area of the garden, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "720",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "20"
+   },
+   {
+    "label": "B",
+    "text": "720"
+   },
+   {
+    "label": "C",
+    "text": "2880"
+   },
+   {
+    "label": "D",
+    "text": "3240"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 4k and 5k. The perimeter is 2(4k + 5k) = 18k = 108, so k = 6: the garden is 24 feet by 30 feet, and its area is 24 × 30 = 720 square feet. Wrong choices: 2880 splits the whole perimeter in the ratio, as if it were one width plus one length; 20 multiplies the ratio numbers instead of the actual sides; 3240 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e3994ecfb02551ea64f32b44361ddca374100e985677f11cd10808249165c794",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-03",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular playground are in the ratio 5:7. The perimeter of the playground is 48 feet. What is the area of the playground, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "140",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "35"
+   },
+   {
+    "label": "B",
+    "text": "140"
+   },
+   {
+    "label": "C",
+    "text": "560"
+   },
+   {
+    "label": "D",
+    "text": "672"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 5k and 7k. The perimeter is 2(5k + 7k) = 24k = 48, so k = 2: the playground is 10 feet by 14 feet, and its area is 10 × 14 = 140 square feet. Wrong choices: 560 splits the whole perimeter in the ratio, as if it were one width plus one length; 35 multiplies the ratio numbers instead of the actual sides; 672 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d2b5a79030f17c3df124d0c7ac2c687b5e80c04e030c88367ebad2f28ec17f83",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-04",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular playground are in the ratio 5:7. The perimeter of the playground is 96 feet. What is the area of the playground, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "560",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "35"
+   },
+   {
+    "label": "B",
+    "text": "560"
+   },
+   {
+    "label": "C",
+    "text": "2240"
+   },
+   {
+    "label": "D",
+    "text": "2688"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 5k and 7k. The perimeter is 2(5k + 7k) = 24k = 96, so k = 4: the playground is 20 feet by 28 feet, and its area is 20 × 28 = 560 square feet. Wrong choices: 2240 splits the whole perimeter in the ratio, as if it were one width plus one length; 35 multiplies the ratio numbers instead of the actual sides; 2688 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "00e31b6fda94dac8b4cccef016462089261f377134ff329a5728b72b7f162d92",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-05",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular garden are in the ratio 2:3. The perimeter of the garden is 40 feet. What is the area of the garden, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "96",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6"
+   },
+   {
+    "label": "B",
+    "text": "96"
+   },
+   {
+    "label": "C",
+    "text": "384"
+   },
+   {
+    "label": "D",
+    "text": "480"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 2k and 3k. The perimeter is 2(2k + 3k) = 10k = 40, so k = 4: the garden is 8 feet by 12 feet, and its area is 8 × 12 = 96 square feet. Wrong choices: 384 splits the whole perimeter in the ratio, as if it were one width plus one length; 6 multiplies the ratio numbers instead of the actual sides; 480 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "a0b2236e5e423ddf85cd9ca266fdc0670e81532301bdca72979da937730e423d",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-06",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular parking lot are in the ratio 3:4. The perimeter of the parking lot is 56 feet. What is the area of the parking lot, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "192",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "12"
+   },
+   {
+    "label": "B",
+    "text": "192"
+   },
+   {
+    "label": "C",
+    "text": "768"
+   },
+   {
+    "label": "D",
+    "text": "896"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 3k and 4k. The perimeter is 2(3k + 4k) = 14k = 56, so k = 4: the parking lot is 12 feet by 16 feet, and its area is 12 × 16 = 192 square feet. Wrong choices: 768 splits the whole perimeter in the ratio, as if it were one width plus one length; 12 multiplies the ratio numbers instead of the actual sides; 896 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "185f0f9fc53477dae55c948a3c9fc25d20b8372ce39c0631f94b0ee5e36dd423",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-07",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular garden are in the ratio 1:2. The perimeter of the garden is 18 feet. What is the area of the garden, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "18"
+   },
+   {
+    "label": "C",
+    "text": "72"
+   },
+   {
+    "label": "D",
+    "text": "108"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 1k and 2k. The perimeter is 2(1k + 2k) = 6k = 18, so k = 3: the garden is 3 feet by 6 feet, and its area is 3 × 6 = 18 square feet. Wrong choices: 72 splits the whole perimeter in the ratio, as if it were one width plus one length; 2 multiplies the ratio numbers instead of the actual sides; 108 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "70488dd2739e63a2e454b4a38bf3a401ca5c999832bff51d997b17d46f70a756",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-08",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular garden are in the ratio 2:5. The perimeter of the garden is 42 feet. What is the area of the garden, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "90",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "10"
+   },
+   {
+    "label": "B",
+    "text": "90"
+   },
+   {
+    "label": "C",
+    "text": "360"
+   },
+   {
+    "label": "D",
+    "text": "630"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 2k and 5k. The perimeter is 2(2k + 5k) = 14k = 42, so k = 3: the garden is 6 feet by 15 feet, and its area is 6 × 15 = 90 square feet. Wrong choices: 360 splits the whole perimeter in the ratio, as if it were one width plus one length; 10 multiplies the ratio numbers instead of the actual sides; 630 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "69ffed13c0db39f7aca64b3e6e16d152d07e06495914575c310534e7a421422a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-09",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular garden are in the ratio 1:3. The perimeter of the garden is 48 feet. What is the area of the garden, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "108",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3"
+   },
+   {
+    "label": "B",
+    "text": "108"
+   },
+   {
+    "label": "C",
+    "text": "432"
+   },
+   {
+    "label": "D",
+    "text": "864"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 1k and 3k. The perimeter is 2(1k + 3k) = 8k = 48, so k = 6: the garden is 6 feet by 18 feet, and its area is 6 × 18 = 108 square feet. Wrong choices: 432 splits the whole perimeter in the ratio, as if it were one width plus one length; 3 multiplies the ratio numbers instead of the actual sides; 864 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "4048bb3c0128f8db8c6da1551d69a57579ea0f2afd26a1a62abe42d4b7a268fd",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-10",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular patio are in the ratio 5:7. The perimeter of the patio is 144 feet. What is the area of the patio, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1260",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "35"
+   },
+   {
+    "label": "B",
+    "text": "1260"
+   },
+   {
+    "label": "C",
+    "text": "5040"
+   },
+   {
+    "label": "D",
+    "text": "6048"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 5k and 7k. The perimeter is 2(5k + 7k) = 24k = 144, so k = 6: the patio is 30 feet by 42 feet, and its area is 30 × 42 = 1260 square feet. Wrong choices: 5040 splits the whole perimeter in the ratio, as if it were one width plus one length; 35 multiplies the ratio numbers instead of the actual sides; 6048 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "8ade2189bb23a66c2a0cc1cff0770cd175b8418bb8453d7a13f0e7dba5a336dc",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-11",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular parking lot are in the ratio 3:4. The perimeter of the parking lot is 28 feet. What is the area of the parking lot, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "48",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "12"
+   },
+   {
+    "label": "B",
+    "text": "48"
+   },
+   {
+    "label": "C",
+    "text": "192"
+   },
+   {
+    "label": "D",
+    "text": "224"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 3k and 4k. The perimeter is 2(3k + 4k) = 14k = 28, so k = 2: the parking lot is 6 feet by 8 feet, and its area is 6 × 8 = 48 square feet. Wrong choices: 192 splits the whole perimeter in the ratio, as if it were one width plus one length; 12 multiplies the ratio numbers instead of the actual sides; 224 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "527a917b6407af02960fcd127d7656eb14378cc4e0245172699dfd962144fb79",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-12",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular garden are in the ratio 1:3. The perimeter of the garden is 24 feet. What is the area of the garden, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "27",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3"
+   },
+   {
+    "label": "B",
+    "text": "27"
+   },
+   {
+    "label": "C",
+    "text": "108"
+   },
+   {
+    "label": "D",
+    "text": "216"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 1k and 3k. The perimeter is 2(1k + 3k) = 8k = 24, so k = 3: the garden is 3 feet by 9 feet, and its area is 3 × 9 = 27 square feet. Wrong choices: 108 splits the whole perimeter in the ratio, as if it were one width plus one length; 3 multiplies the ratio numbers instead of the actual sides; 216 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "a626418c6a253820982d76afdc3d6f1525e4442a5f91332eaf8d2d12e918ea14",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-13",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular garden are in the ratio 1:3. The perimeter of the garden is 32 feet. What is the area of the garden, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "48",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3"
+   },
+   {
+    "label": "B",
+    "text": "48"
+   },
+   {
+    "label": "C",
+    "text": "192"
+   },
+   {
+    "label": "D",
+    "text": "384"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 1k and 3k. The perimeter is 2(1k + 3k) = 8k = 32, so k = 4: the garden is 4 feet by 12 feet, and its area is 4 × 12 = 48 square feet. Wrong choices: 192 splits the whole perimeter in the ratio, as if it were one width plus one length; 3 multiplies the ratio numbers instead of the actual sides; 384 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "220e4b3dc6da8ebe1764377864c391ded3a793484463b80294e2fda77d62e5df",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-ratio-to-area-14",
+  "skillId": "act-ratios-proportions",
+  "prompt": "The width and length of a rectangular parking lot are in the ratio 4:7. The perimeter of the parking lot is 66 feet. What is the area of the parking lot, in square feet?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "252",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "28"
+   },
+   {
+    "label": "B",
+    "text": "252"
+   },
+   {
+    "label": "C",
+    "text": "1008"
+   },
+   {
+    "label": "D",
+    "text": "1386"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Call the sides 4k and 7k. The perimeter is 2(4k + 7k) = 22k = 66, so k = 3: the parking lot is 12 feet by 21 feet, and its area is 12 × 21 = 252 square feet. Wrong choices: 1008 splits the whole perimeter in the ratio, as if it were one width plus one length; 28 multiplies the ratio numbers instead of the actual sides; 1386 multiplies the length by the perimeter.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:ratio-to-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "c5a58a54d5ee777febfc600097c8e08fd6607cc00e30a190cdea1d4b57f85707",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-01",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 3 feet. On the plan, an office is a rectangle 3 inches by 4 inches. If carpet costs $5 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$540",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$60"
+   },
+   {
+    "label": "B",
+    "text": "$180"
+   },
+   {
+    "label": "C",
+    "text": "$210"
+   },
+   {
+    "label": "D",
+    "text": "$540"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 3 × 3 = 9 feet by 4 × 3 = 12 feet, so its floor is 108 square feet. At $5 per square foot: 108 × $5 = $540. Wrong choices: $180 applies the scale once to the area; each DIMENSION is 3 times as long, so the area is 9 times as large; $60 uses the plan measurements as if they were feet; $210 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f4cb1090bfec2dd6bf939d99f1737d237f3186ea055a74ca9310e9804fb5b5b9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-02",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 2 feet. On the plan, a studio is a rectangle 5 inches by 6 inches. If flooring costs $5 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$600",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$150"
+   },
+   {
+    "label": "B",
+    "text": "$220"
+   },
+   {
+    "label": "C",
+    "text": "$300"
+   },
+   {
+    "label": "D",
+    "text": "$600"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 5 × 2 = 10 feet by 6 × 2 = 12 feet, so its floor is 120 square feet. At $5 per square foot: 120 × $5 = $600. Wrong choices: $300 applies the scale once to the area; each DIMENSION is 2 times as long, so the area is 4 times as large; $150 uses the plan measurements as if they were feet; $220 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "20e3033b4c20a4f30531bce7bcb4c8b28c616f62972ec6e9146830ab2b81538d",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-03",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 6 feet. On the plan, a kitchen is a rectangle 5 inches by 6 inches. If tile costs $5 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$5400",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$150"
+   },
+   {
+    "label": "B",
+    "text": "$660"
+   },
+   {
+    "label": "C",
+    "text": "$900"
+   },
+   {
+    "label": "D",
+    "text": "$5400"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 5 × 6 = 30 feet by 6 × 6 = 36 feet, so its floor is 1080 square feet. At $5 per square foot: 1080 × $5 = $5400. Wrong choices: $900 applies the scale once to the area; each DIMENSION is 6 times as long, so the area is 36 times as large; $150 uses the plan measurements as if they were feet; $660 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "8641f14d6f390ded0714af1630a1f1d1b09550b4ee7e9a9019e4de1257361932",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-04",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 2 feet. On the plan, a kitchen is a rectangle 5 inches by 6 inches. If tile costs $5 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$600",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$150"
+   },
+   {
+    "label": "B",
+    "text": "$220"
+   },
+   {
+    "label": "C",
+    "text": "$300"
+   },
+   {
+    "label": "D",
+    "text": "$600"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 5 × 2 = 10 feet by 6 × 2 = 12 feet, so its floor is 120 square feet. At $5 per square foot: 120 × $5 = $600. Wrong choices: $300 applies the scale once to the area; each DIMENSION is 2 times as long, so the area is 4 times as large; $150 uses the plan measurements as if they were feet; $220 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "cffe8f7dc8b46ef7f74eb617fb5231295ec0a4a489e8e662c2c0eefebed61781",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-05",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 5 feet. On the plan, a bedroom is a rectangle 4 inches by 8 inches. If carpet costs $2 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$1600",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$64"
+   },
+   {
+    "label": "B",
+    "text": "$240"
+   },
+   {
+    "label": "C",
+    "text": "$320"
+   },
+   {
+    "label": "D",
+    "text": "$1600"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 4 × 5 = 20 feet by 8 × 5 = 40 feet, so its floor is 800 square feet. At $2 per square foot: 800 × $2 = $1600. Wrong choices: $320 applies the scale once to the area; each DIMENSION is 5 times as long, so the area is 25 times as large; $64 uses the plan measurements as if they were feet; $240 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "eb480cc9bee5453d970c9ac8b8926597430d773c2dcf516bc6ef59482288889a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-06",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 8 feet. On the plan, a bedroom is a rectangle 3 inches by 6 inches. If carpet costs $6 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$6912",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$108"
+   },
+   {
+    "label": "B",
+    "text": "$864"
+   },
+   {
+    "label": "C",
+    "text": "$1152"
+   },
+   {
+    "label": "D",
+    "text": "$6912"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 3 × 8 = 24 feet by 6 × 8 = 48 feet, so its floor is 1152 square feet. At $6 per square foot: 1152 × $6 = $6912. Wrong choices: $864 applies the scale once to the area; each DIMENSION is 8 times as long, so the area is 64 times as large; $108 uses the plan measurements as if they were feet; $1152 finds the area, 1152 square feet, but never multiplies by the price.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f16b44e53327021a5775e7e6c49f81ee720cb0d527c9d24d28f898b926ff0d2d",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-07",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 8 feet. On the plan, an office is a rectangle 4 inches by 8 inches. If carpet costs $6 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$12288",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$192"
+   },
+   {
+    "label": "B",
+    "text": "$1152"
+   },
+   {
+    "label": "C",
+    "text": "$1536"
+   },
+   {
+    "label": "D",
+    "text": "$12288"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 4 × 8 = 32 feet by 8 × 8 = 64 feet, so its floor is 2048 square feet. At $6 per square foot: 2048 × $6 = $12288. Wrong choices: $1536 applies the scale once to the area; each DIMENSION is 8 times as long, so the area is 64 times as large; $192 uses the plan measurements as if they were feet; $1152 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "4a086c71afedc7977a0710e1fef6c49a89140648f2cb7c6b36d77df401df5e96",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-08",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 2 feet. On the plan, an office is a rectangle 5 inches by 9 inches. If carpet costs $3 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$540",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$135"
+   },
+   {
+    "label": "B",
+    "text": "$168"
+   },
+   {
+    "label": "C",
+    "text": "$270"
+   },
+   {
+    "label": "D",
+    "text": "$540"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 5 × 2 = 10 feet by 9 × 2 = 18 feet, so its floor is 180 square feet. At $3 per square foot: 180 × $3 = $540. Wrong choices: $270 applies the scale once to the area; each DIMENSION is 2 times as long, so the area is 4 times as large; $135 uses the plan measurements as if they were feet; $168 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b23d7c132db9b55e446f48f5af1e1761ff38430b3bd1026c3dfb3c75344a06a2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-09",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 4 feet. On the plan, a kitchen is a rectangle 4 inches by 8 inches. If tile costs $6 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$3072",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$192"
+   },
+   {
+    "label": "B",
+    "text": "$576"
+   },
+   {
+    "label": "C",
+    "text": "$768"
+   },
+   {
+    "label": "D",
+    "text": "$3072"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 4 × 4 = 16 feet by 8 × 4 = 32 feet, so its floor is 512 square feet. At $6 per square foot: 512 × $6 = $3072. Wrong choices: $768 applies the scale once to the area; each DIMENSION is 4 times as long, so the area is 16 times as large; $192 uses the plan measurements as if they were feet; $576 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "647e51c210ed100e45d9f712c7668c84b2a15b5ea89c5902f31a8a1a2dc53837",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-10",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 8 feet. On the plan, a bedroom is a rectangle 2 inches by 3 inches. If carpet costs $4 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$1536",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$24"
+   },
+   {
+    "label": "B",
+    "text": "$192"
+   },
+   {
+    "label": "C",
+    "text": "$320"
+   },
+   {
+    "label": "D",
+    "text": "$1536"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 2 × 8 = 16 feet by 3 × 8 = 24 feet, so its floor is 384 square feet. At $4 per square foot: 384 × $4 = $1536. Wrong choices: $192 applies the scale once to the area; each DIMENSION is 8 times as long, so the area is 64 times as large; $24 uses the plan measurements as if they were feet; $320 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "26f07188d4f623d4e40a3c85682bc4b154f0db09f31fa02ffad800831802e040",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-11",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 3 feet. On the plan, a studio is a rectangle 4 inches by 7 inches. If flooring costs $3 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$756",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$84"
+   },
+   {
+    "label": "B",
+    "text": "$198"
+   },
+   {
+    "label": "C",
+    "text": "$252"
+   },
+   {
+    "label": "D",
+    "text": "$756"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 4 × 3 = 12 feet by 7 × 3 = 21 feet, so its floor is 252 square feet. At $3 per square foot: 252 × $3 = $756. Wrong choices: $252 applies the scale once to the area; each DIMENSION is 3 times as long, so the area is 9 times as large; $84 uses the plan measurements as if they were feet; $198 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b4e8e26bfbca8ecb3e89979e77be75b534690310dcf36db51acde39f66f24124",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-12",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 8 feet. On the plan, a studio is a rectangle 4 inches by 8 inches. If flooring costs $4 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$8192",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$128"
+   },
+   {
+    "label": "B",
+    "text": "$768"
+   },
+   {
+    "label": "C",
+    "text": "$1024"
+   },
+   {
+    "label": "D",
+    "text": "$8192"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 4 × 8 = 32 feet by 8 × 8 = 64 feet, so its floor is 2048 square feet. At $4 per square foot: 2048 × $4 = $8192. Wrong choices: $1024 applies the scale once to the area; each DIMENSION is 8 times as long, so the area is 64 times as large; $128 uses the plan measurements as if they were feet; $768 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "fd02641fb1f882a747892744dd57d59226621ebbcab4b57f3dbb8010c45d6399",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-13",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 5 feet. On the plan, a bedroom is a rectangle 3 inches by 6 inches. If carpet costs $4 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$1800",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$72"
+   },
+   {
+    "label": "B",
+    "text": "$360"
+   },
+   {
+    "label": "C",
+    "text": "$450"
+   },
+   {
+    "label": "D",
+    "text": "$1800"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 3 × 5 = 15 feet by 6 × 5 = 30 feet, so its floor is 450 square feet. At $4 per square foot: 450 × $4 = $1800. Wrong choices: $360 applies the scale once to the area; each DIMENSION is 5 times as long, so the area is 25 times as large; $72 uses the plan measurements as if they were feet; $450 finds the area, 450 square feet, but never multiplies by the price.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "08d784a3fca4b8e77f4d06e5fd1d6021f2ab956200c72fe73177ad4eb0d1d8ee",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-scale-plan-cost-14",
+  "skillId": "act-ratios-proportions",
+  "prompt": "On a floor plan, 1 inch represents 8 feet. On the plan, a bedroom is a rectangle 4 inches by 7 inches. If carpet costs $2 per square foot, how much does it cost to cover the whole floor of the room?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$3584",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$56"
+   },
+   {
+    "label": "B",
+    "text": "$352"
+   },
+   {
+    "label": "C",
+    "text": "$448"
+   },
+   {
+    "label": "D",
+    "text": "$3584"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The room is 4 × 8 = 32 feet by 7 × 8 = 56 feet, so its floor is 1792 square feet. At $2 per square foot: 1792 × $2 = $3584. Wrong choices: $448 applies the scale once to the area; each DIMENSION is 8 times as long, so the area is 64 times as large; $56 uses the plan measurements as if they were feet; $352 uses the perimeter of the room instead of its area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:scale-plan-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ac5d88b04bb29a6913bd80479e34ab4ee93c67359605cf48d95975f15e3fc916",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-01",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 20%, and its width is increased by 50%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "80%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "10%"
+   },
+   {
+    "label": "B",
+    "text": "70%"
+   },
+   {
+    "label": "C",
+    "text": "80%"
+   },
+   {
+    "label": "D",
+    "text": "180%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.2)(1 + 0.5) = 1.8 times the old area, an increase of 80%. Check with a 100 by 100 rectangle: 120 × 150 = 18000, which is 80% more than 10000. Wrong choices: 70% adds the two percents; the increases multiply; 180% gives the new area as a percent of the old one, not the increase; 10% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "dcc15f11669ca747448030485ff3b630714995c5f59dd1b0df81a1c36f718a33",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-02",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 30%, and its width is increased by 50%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "95%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "15%"
+   },
+   {
+    "label": "B",
+    "text": "80%"
+   },
+   {
+    "label": "C",
+    "text": "95%"
+   },
+   {
+    "label": "D",
+    "text": "195%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.3)(1 + 0.5) = 1.95 times the old area, an increase of 95%. Check with a 100 by 100 rectangle: 130 × 150 = 19500, which is 95% more than 10000. Wrong choices: 80% adds the two percents; the increases multiply; 195% gives the new area as a percent of the old one, not the increase; 15% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "1080934d9740efcbbafad7037729676db2f4f52d2805b902611bde0a37940def",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-03",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 50%, and its width is increased by 40%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "110%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "20%"
+   },
+   {
+    "label": "B",
+    "text": "90%"
+   },
+   {
+    "label": "C",
+    "text": "110%"
+   },
+   {
+    "label": "D",
+    "text": "210%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.5)(1 + 0.4) = 2.1 times the old area, an increase of 110%. Check with a 100 by 100 rectangle: 150 × 140 = 21000, which is 110% more than 10000. Wrong choices: 90% adds the two percents; the increases multiply; 210% gives the new area as a percent of the old one, not the increase; 20% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "0c47e7dd6b4ba7d42280b75396c49118cf030bb0929ec53712c7afc8ce66039a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-04",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 20%, and its width is increased by 10%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "32%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2%"
+   },
+   {
+    "label": "B",
+    "text": "30%"
+   },
+   {
+    "label": "C",
+    "text": "32%"
+   },
+   {
+    "label": "D",
+    "text": "132%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.2)(1 + 0.1) = 1.32 times the old area, an increase of 32%. Check with a 100 by 100 rectangle: 120 × 110 = 13200, which is 32% more than 10000. Wrong choices: 30% adds the two percents; the increases multiply; 132% gives the new area as a percent of the old one, not the increase; 2% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "79423ae50b7b7e650357e21bda95403a05268b9b8ba03314b69b173161ea99f2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-05",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 40%, and its width is increased by 10%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "54%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4%"
+   },
+   {
+    "label": "B",
+    "text": "50%"
+   },
+   {
+    "label": "C",
+    "text": "54%"
+   },
+   {
+    "label": "D",
+    "text": "154%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.4)(1 + 0.1) = 1.54 times the old area, an increase of 54%. Check with a 100 by 100 rectangle: 140 × 110 = 15400, which is 54% more than 10000. Wrong choices: 50% adds the two percents; the increases multiply; 154% gives the new area as a percent of the old one, not the increase; 4% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "667f41e1c05f51252c6042e1ad2d9265c52f1a51d4379bb7500426f9c28917c9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-06",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 50%, and its width is increased by 10%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "65%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5%"
+   },
+   {
+    "label": "B",
+    "text": "60%"
+   },
+   {
+    "label": "C",
+    "text": "65%"
+   },
+   {
+    "label": "D",
+    "text": "165%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.5)(1 + 0.1) = 1.65 times the old area, an increase of 65%. Check with a 100 by 100 rectangle: 150 × 110 = 16500, which is 65% more than 10000. Wrong choices: 60% adds the two percents; the increases multiply; 165% gives the new area as a percent of the old one, not the increase; 5% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d3e28b8bf9d8c68cf0526aef2233705d9329335e2442c08b3e079f4cae055f2e",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-07",
+  "skillId": "act-percentages",
+  "prompt": "The length and the width of a rectangle are each increased by 10%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "21%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1%"
+   },
+   {
+    "label": "B",
+    "text": "20%"
+   },
+   {
+    "label": "C",
+    "text": "21%"
+   },
+   {
+    "label": "D",
+    "text": "121%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.1)(1 + 0.1) = 1.21 times the old area, an increase of 21%. Check with a 100 by 100 rectangle: 110 × 110 = 12100, which is 21% more than 10000. Wrong choices: 20% adds the two percents; the increases multiply; 121% gives the new area as a percent of the old one, not the increase; 1% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "8d1fea5a1d49966798abb92f1853e24ccb6b0c4f47885f588f2dc02652cc1001",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-08",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 40%, and its width is increased by 50%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "110%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "20%"
+   },
+   {
+    "label": "B",
+    "text": "90%"
+   },
+   {
+    "label": "C",
+    "text": "110%"
+   },
+   {
+    "label": "D",
+    "text": "210%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.4)(1 + 0.5) = 2.1 times the old area, an increase of 110%. Check with a 100 by 100 rectangle: 140 × 150 = 21000, which is 110% more than 10000. Wrong choices: 90% adds the two percents; the increases multiply; 210% gives the new area as a percent of the old one, not the increase; 20% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "4bdb6477863b594d824241c8ddcad0338996f29ed30c7bb6c10b31d14000a735",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-09",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 20%, and its width is increased by 30%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "56%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6%"
+   },
+   {
+    "label": "B",
+    "text": "50%"
+   },
+   {
+    "label": "C",
+    "text": "56%"
+   },
+   {
+    "label": "D",
+    "text": "156%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.2)(1 + 0.3) = 1.56 times the old area, an increase of 56%. Check with a 100 by 100 rectangle: 120 × 130 = 15600, which is 56% more than 10000. Wrong choices: 50% adds the two percents; the increases multiply; 156% gives the new area as a percent of the old one, not the increase; 6% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "60a13a9d5b158c90b544364d2d2e68cd25babf78981347e89d2f4b0f5a80634f",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-10",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 50%, and its width is increased by 30%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "95%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "15%"
+   },
+   {
+    "label": "B",
+    "text": "80%"
+   },
+   {
+    "label": "C",
+    "text": "95%"
+   },
+   {
+    "label": "D",
+    "text": "195%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.5)(1 + 0.3) = 1.95 times the old area, an increase of 95%. Check with a 100 by 100 rectangle: 150 × 130 = 19500, which is 95% more than 10000. Wrong choices: 80% adds the two percents; the increases multiply; 195% gives the new area as a percent of the old one, not the increase; 15% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ef65f9a88df73042f96cfe6194227213242e3ec4800be986e4630d156f819e10",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-11",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 10%, and its width is increased by 50%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "65%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5%"
+   },
+   {
+    "label": "B",
+    "text": "60%"
+   },
+   {
+    "label": "C",
+    "text": "65%"
+   },
+   {
+    "label": "D",
+    "text": "165%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.1)(1 + 0.5) = 1.65 times the old area, an increase of 65%. Check with a 100 by 100 rectangle: 110 × 150 = 16500, which is 65% more than 10000. Wrong choices: 60% adds the two percents; the increases multiply; 165% gives the new area as a percent of the old one, not the increase; 5% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "cdd46ca98d8840fbbf06f9627bf888b8d81322f6b488c86a53165014516335fa",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-12",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 30%, and its width is increased by 40%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "82%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "12%"
+   },
+   {
+    "label": "B",
+    "text": "70%"
+   },
+   {
+    "label": "C",
+    "text": "82%"
+   },
+   {
+    "label": "D",
+    "text": "182%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.3)(1 + 0.4) = 1.82 times the old area, an increase of 82%. Check with a 100 by 100 rectangle: 130 × 140 = 18200, which is 82% more than 10000. Wrong choices: 70% adds the two percents; the increases multiply; 182% gives the new area as a percent of the old one, not the increase; 12% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e824cab42716bee158ab9e609152ac3049afec5250dc5bcee2f878dcabb82538",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-13",
+  "skillId": "act-percentages",
+  "prompt": "The length of a rectangle is increased by 10%, and its width is increased by 30%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "43%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3%"
+   },
+   {
+    "label": "B",
+    "text": "40%"
+   },
+   {
+    "label": "C",
+    "text": "43%"
+   },
+   {
+    "label": "D",
+    "text": "143%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.1)(1 + 0.3) = 1.43 times the old area, an increase of 43%. Check with a 100 by 100 rectangle: 110 × 130 = 14300, which is 43% more than 10000. Wrong choices: 40% adds the two percents; the increases multiply; 143% gives the new area as a percent of the old one, not the increase; 3% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2fdd6c294b76e7b107b7edca4f1fd6a5de6200f32100e5ffff71bc3fff8979f5",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-sides-area-14",
+  "skillId": "act-percentages",
+  "prompt": "The length and the width of a rectangle are each increased by 30%. By what percent does the area of the rectangle increase?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "69%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "9%"
+   },
+   {
+    "label": "B",
+    "text": "60%"
+   },
+   {
+    "label": "C",
+    "text": "69%"
+   },
+   {
+    "label": "D",
+    "text": "169%"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The new area is (1 + 0.3)(1 + 0.3) = 1.69 times the old area, an increase of 69%. Check with a 100 by 100 rectangle: 130 × 130 = 16900, which is 69% more than 10000. Wrong choices: 60% adds the two percents; the increases multiply; 169% gives the new area as a percent of the old one, not the increase; 9% keeps only the extra piece from multiplying the increases.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-sides-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "9dffe430540165d79a9fd2598494306df068ab1da2d64427d8028dbe550e6687",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-01",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 24 feet by 9 feet. Carpet costs $30 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$720",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$660"
+   },
+   {
+    "label": "B",
+    "text": "$720"
+   },
+   {
+    "label": "C",
+    "text": "$2160"
+   },
+   {
+    "label": "D",
+    "text": "$6480"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 24 × 9 = 216 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 216 ÷ 9 = 24 square yards. Cost: 24 × $30 = $720. Wrong choices: $2160 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $6480 never converts square feet to square yards; $660 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "7bef6dd21757e7c689b5ac3103c2a3c81db06440c7749d186b8eb020f2f391a7",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-02",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 15 feet by 12 feet. Carpet costs $20 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$400",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$360"
+   },
+   {
+    "label": "B",
+    "text": "$400"
+   },
+   {
+    "label": "C",
+    "text": "$1200"
+   },
+   {
+    "label": "D",
+    "text": "$3600"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 15 × 12 = 180 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 180 ÷ 9 = 20 square yards. Cost: 20 × $20 = $400. Wrong choices: $1200 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $3600 never converts square feet to square yards; $360 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "bd7847ece1919cb9d1ade77af96d9fe097781e971ddedbe3985850035eb78124",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-03",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 24 feet by 12 feet. Carpet costs $25 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$800",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$600"
+   },
+   {
+    "label": "B",
+    "text": "$800"
+   },
+   {
+    "label": "C",
+    "text": "$2400"
+   },
+   {
+    "label": "D",
+    "text": "$7200"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 24 × 12 = 288 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 288 ÷ 9 = 32 square yards. Cost: 32 × $25 = $800. Wrong choices: $2400 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $7200 never converts square feet to square yards; $600 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "377aa7ed3ee339e85a4772c8d670a30f7d9595d03322b1a5c6b094de82bacb5d",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-04",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 24 feet by 15 feet. Carpet costs $25 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$1000",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$650"
+   },
+   {
+    "label": "B",
+    "text": "$1000"
+   },
+   {
+    "label": "C",
+    "text": "$3000"
+   },
+   {
+    "label": "D",
+    "text": "$9000"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 24 × 15 = 360 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 360 ÷ 9 = 40 square yards. Cost: 40 × $25 = $1000. Wrong choices: $3000 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $9000 never converts square feet to square yards; $650 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "99004c2b03b48da43a0eb5f91275cb3e289859ff8bbaec006704623956be8083",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-05",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 18 feet by 15 feet. Carpet costs $12 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$360",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$264"
+   },
+   {
+    "label": "B",
+    "text": "$360"
+   },
+   {
+    "label": "C",
+    "text": "$1080"
+   },
+   {
+    "label": "D",
+    "text": "$3240"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 18 × 15 = 270 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 270 ÷ 9 = 30 square yards. Cost: 30 × $12 = $360. Wrong choices: $1080 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $3240 never converts square feet to square yards; $264 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d78485814b52b5e7fbfec19ee6667214e6c87b25d603207b528df4d9d425c633",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-06",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 12 feet by 9 feet. Carpet costs $30 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$360",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$3240"
+   },
+   {
+    "label": "B",
+    "text": "$1080"
+   },
+   {
+    "label": "C",
+    "text": "$420"
+   },
+   {
+    "label": "D",
+    "text": "$360"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 12 × 9 = 108 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 108 ÷ 9 = 12 square yards. Cost: 12 × $30 = $360. Wrong choices: $1080 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $3240 never converts square feet to square yards; $420 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "432859d9ec513292345eba4c14e999e019fabfd0b264d481ee4d3e747d8a02c4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-07",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 18 feet by 15 feet. Carpet costs $25 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$750",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$550"
+   },
+   {
+    "label": "B",
+    "text": "$750"
+   },
+   {
+    "label": "C",
+    "text": "$2250"
+   },
+   {
+    "label": "D",
+    "text": "$6750"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 18 × 15 = 270 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 270 ÷ 9 = 30 square yards. Cost: 30 × $25 = $750. Wrong choices: $2250 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $6750 never converts square feet to square yards; $550 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e821965503627119bc05518ec90d92e7fdd7139cdd005ea680d20068e1232627",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-08",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 21 feet by 9 feet. Carpet costs $12 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$252",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$240"
+   },
+   {
+    "label": "B",
+    "text": "$252"
+   },
+   {
+    "label": "C",
+    "text": "$756"
+   },
+   {
+    "label": "D",
+    "text": "$2268"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 21 × 9 = 189 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 189 ÷ 9 = 21 square yards. Cost: 21 × $12 = $252. Wrong choices: $756 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $2268 never converts square feet to square yards; $240 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "1febb11225976afd1f3e47920515767ab055caef14c965a2746331c7013f4776",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-09",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 21 feet by 18 feet. Carpet costs $20 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$840",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$520"
+   },
+   {
+    "label": "B",
+    "text": "$840"
+   },
+   {
+    "label": "C",
+    "text": "$2520"
+   },
+   {
+    "label": "D",
+    "text": "$7560"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 21 × 18 = 378 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 378 ÷ 9 = 42 square yards. Cost: 42 × $20 = $840. Wrong choices: $2520 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $7560 never converts square feet to square yards; $520 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "460f44e9e5ef337dfc83557ffe5729bf8eb1dfff1de0d6775056722650eb9917",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-10",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 21 feet by 9 feet. Carpet costs $18 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$378",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$360"
+   },
+   {
+    "label": "B",
+    "text": "$378"
+   },
+   {
+    "label": "C",
+    "text": "$1134"
+   },
+   {
+    "label": "D",
+    "text": "$3402"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 21 × 9 = 189 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 189 ÷ 9 = 21 square yards. Cost: 21 × $18 = $378. Wrong choices: $1134 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $3402 never converts square feet to square yards; $360 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "488ef6e87daa4c506c6305e3ee0b5fa82a71fb2f4d0722460cbf17e49edf3114",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-11",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 18 feet by 9 feet. Carpet costs $18 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$324",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$324"
+   },
+   {
+    "label": "B",
+    "text": "$972"
+   },
+   {
+    "label": "C",
+    "text": "$2916"
+   },
+   {
+    "label": "D",
+    "text": "$26244"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 18 × 9 = 162 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 162 ÷ 9 = 18 square yards. Cost: 18 × $18 = $324. Wrong choices: $972 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $2916 never converts square feet to square yards; $26244 multiplies by 9 instead of dividing.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "328fd6394a3ce11dbd909ab50fe87517859485f71e56176719fc67447235abc0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-12",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 9 feet by 6 feet. Carpet costs $12 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$72",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$72"
+   },
+   {
+    "label": "B",
+    "text": "$120"
+   },
+   {
+    "label": "C",
+    "text": "$216"
+   },
+   {
+    "label": "D",
+    "text": "$648"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 9 × 6 = 54 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 54 ÷ 9 = 6 square yards. Cost: 6 × $12 = $72. Wrong choices: $216 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $648 never converts square feet to square yards; $120 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "4b8ba39052503976d2d9845009bcd3e0cb3c3b61690eef25a77127602dfa0170",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-13",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 18 feet by 15 feet. Carpet costs $20 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$600",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$440"
+   },
+   {
+    "label": "B",
+    "text": "$600"
+   },
+   {
+    "label": "C",
+    "text": "$1800"
+   },
+   {
+    "label": "D",
+    "text": "$5400"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 18 × 15 = 270 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 270 ÷ 9 = 30 square yards. Cost: 30 × $20 = $600. Wrong choices: $1800 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $5400 never converts square feet to square yards; $440 uses the perimeter instead of the area.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "9400dac867adc0e0ec57b656e6f614fb13634b2326cd42b0b10d7464da5e88b3",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-square-yard-cost-14",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "A rectangular room measures 18 feet by 9 feet. Carpet costs $20 per square yard, and 1 yard = 3 feet. What is the cost of carpet to cover the entire floor?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "$360",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "$360"
+   },
+   {
+    "label": "B",
+    "text": "$1080"
+   },
+   {
+    "label": "C",
+    "text": "$3240"
+   },
+   {
+    "label": "D",
+    "text": "$29160"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The floor is 18 × 9 = 162 square feet. A square yard is 3 ft × 3 ft = 9 square feet, so the floor is 162 ÷ 9 = 18 square yards. Cost: 18 × $20 = $360. Wrong choices: $1080 divides the square feet by 3; a square yard is 3 × 3 = 9 square feet; $3240 never converts square feet to square yards; $29160 multiplies by 9 instead of dividing.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:square-yard-cost",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "86009f506b4ce8736fab09605971b49e19c307ae5cd74de7ad1283309c7e289c",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-01",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 18 feet long and 13 feet wide, and its walls are 10 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "4"
+   },
+   {
+    "label": "D",
+    "text": "5"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(18 + 13) × 10 = 620 square feet; two coats cover 1240 square feet. That takes 1240 ÷ 300 ≈ 4.13 gallons, and since paint comes in whole gallons, 5 must be bought. Wrong choices: 4 rounds 4.13 gallons down; that would leave part of a wall unpainted; 2 paints the floor area instead of the walls; 3 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "089832291f0ac936c373f13ef5799d1ecdc3d2bda09de488fe3e8b8b41c02e45",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-02",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 20 feet long and 13 feet wide, and its walls are 10 feet high. All four walls will be painted with one coat of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "5"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(20 + 13) × 10 = 660 square feet. That takes 660 ÷ 300 ≈ 2.2 gallons, and since paint comes in whole gallons, 3 must be bought. Wrong choices: 2 rounds 2.2 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 5 paints a second coat that was not asked for.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "64095cd46447527bc8935468e03d474a6c2098287581980f818f51239eb79cf3",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-03",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 17 feet long and 10 feet wide, and its walls are 10 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 350 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(17 + 10) × 10 = 540 square feet; two coats cover 1080 square feet. That takes 1080 ÷ 350 ≈ 3.09 gallons, and since paint comes in whole gallons, 4 must be bought. Wrong choices: 3 rounds 3.09 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 2 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "89377490d348ff325d0f1b42cea352a32062f994edbed73b42755deb42accf1c",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-04",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 13 feet long and 11 feet wide, and its walls are 10 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(13 + 11) × 10 = 480 square feet; two coats cover 960 square feet. That takes 960 ÷ 300 ≈ 3.2 gallons, and since paint comes in whole gallons, 4 must be bought. Wrong choices: 3 rounds 3.2 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 2 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "152ddc8fb43bcb87cd1f4d15202938b1090871fe73aceed9e0a5c69ff9df7af3",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-05",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 13 feet long and 10 feet wide, and its walls are 10 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(13 + 10) × 10 = 460 square feet; two coats cover 920 square feet. That takes 920 ÷ 300 ≈ 3.07 gallons, and since paint comes in whole gallons, 4 must be bought. Wrong choices: 3 rounds 3.07 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 2 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "db8ec70a38f693cb6cbc111402a9e71f8ae1735638a356b8d4116ecd0a790856",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-06",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 20 feet long and 12 feet wide, and its walls are 10 feet high. All four walls will be painted with one coat of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "5"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(20 + 12) × 10 = 640 square feet. That takes 640 ÷ 300 ≈ 2.13 gallons, and since paint comes in whole gallons, 3 must be bought. Wrong choices: 2 rounds 2.13 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 5 paints a second coat that was not asked for.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "a2b47961bddd9903176736b00f6e6f4e40a3a2ebc59282449626527993437993",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-07",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 20 feet long and 11 feet wide, and its walls are 10 feet high. All four walls will be painted with one coat of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "5"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(20 + 11) × 10 = 620 square feet. That takes 620 ÷ 300 ≈ 2.07 gallons, and since paint comes in whole gallons, 3 must be bought. Wrong choices: 2 rounds 2.07 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 5 paints a second coat that was not asked for.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "071fec22e87d5a2a44db54f7749337b64dd806ca34f4796753d70ca2fe16c8f0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-08",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 11 feet long and 13 feet wide, and its walls are 10 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(11 + 13) × 10 = 480 square feet; two coats cover 960 square feet. That takes 960 ÷ 300 ≈ 3.2 gallons, and since paint comes in whole gallons, 4 must be bought. Wrong choices: 3 rounds 3.2 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 2 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2ab3606620c23535aaf0b97e9374801c8633b03dc23a340780505947e2d7c2a7",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-09",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 20 feet long and 14 feet wide, and its walls are 9 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "4"
+   },
+   {
+    "label": "D",
+    "text": "5"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(20 + 14) × 9 = 612 square feet; two coats cover 1224 square feet. That takes 1224 ÷ 300 ≈ 4.08 gallons, and since paint comes in whole gallons, 5 must be bought. Wrong choices: 4 rounds 4.08 gallons down; that would leave part of a wall unpainted; 2 paints the floor area instead of the walls; 3 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "c710e0b455d6b1838aea3b487fb402607c495f5bdd37a7021f673ced58248cf7",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-10",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 19 feet long and 9 feet wide, and its walls are 10 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 350 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(19 + 9) × 10 = 560 square feet; two coats cover 1120 square feet. That takes 1120 ÷ 350 ≈ 3.2 gallons, and since paint comes in whole gallons, 4 must be bought. Wrong choices: 3 rounds 3.2 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 2 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "08265ddc6c4552eac2ac4735917de5d76a239e8f61291d647a04ec4bd98668e0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-11",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 19 feet long and 8 feet wide, and its walls are 10 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 350 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(19 + 8) × 10 = 540 square feet; two coats cover 1080 square feet. That takes 1080 ÷ 350 ≈ 3.09 gallons, and since paint comes in whole gallons, 4 must be bought. Wrong choices: 3 rounds 3.09 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 2 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ca7e32d1aa0aa4c6eb9c0cf6107e32ef2757c748bdf609d27289cdb0305d62d4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-12",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 18 feet long and 14 feet wide, and its walls are 10 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "4"
+   },
+   {
+    "label": "D",
+    "text": "5"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(18 + 14) × 10 = 640 square feet; two coats cover 1280 square feet. That takes 1280 ÷ 300 ≈ 4.27 gallons, and since paint comes in whole gallons, 5 must be bought. Wrong choices: 4 rounds 4.27 gallons down; that would leave part of a wall unpainted; 2 paints the floor area instead of the walls; 3 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "90be1fe4f4ebf20976e3ea43c371f53e2657daa8ebfddb61674185b3eb3305c8",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-13",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 19 feet long and 14 feet wide, and its walls are 10 feet high. All four walls will be painted with one coat of paint (ignore doors and windows), and one gallon covers 300 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "5"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(19 + 14) × 10 = 660 square feet. That takes 660 ÷ 300 ≈ 2.2 gallons, and since paint comes in whole gallons, 3 must be bought. Wrong choices: 2 rounds 2.2 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 5 paints a second coat that was not asked for.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "17c7bb900e637852b7594fc3029a15761f5b8e341c5d695408e4c2a28248fb37",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-paint-gallons-14",
+  "skillId": "act-basic-geometry-measures",
+  "prompt": "A room is 18 feet long and 9 feet wide, and its walls are 10 feet high. All four walls will be painted with two coats of paint (ignore doors and windows), and one gallon covers 350 square feet. Paint is sold only in whole gallons. What is the least number of gallons that must be bought?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The four walls are 2(18 + 9) × 10 = 540 square feet; two coats cover 1080 square feet. That takes 1080 ÷ 350 ≈ 3.09 gallons, and since paint comes in whole gallons, 4 must be bought. Wrong choices: 3 rounds 3.09 gallons down; that would leave part of a wall unpainted; 1 paints the floor area instead of the walls; 2 paints only two of the four walls.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:paint-gallons",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d2c6c2c0ed01ec62f8906ee43fbccbb43a138c3390f9ef5ea8e9eea4e4fd4f3a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-01",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 4 feet wide, 5 feet long, and 3 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 10 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "45",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6"
+   },
+   {
+    "label": "B",
+    "text": "45"
+   },
+   {
+    "label": "C",
+    "text": "80"
+   },
+   {
+    "label": "D",
+    "text": "450"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 4 × 5 × 3 = 60 cubic feet, which is 60 × 7.5 = 450 gallons. At 10 gallons per minute it fills in 450 ÷ 10 = 45 minutes. Wrong choices: 6 divides the cubic feet by the flow rate without converting to gallons; 450 stops at the number of gallons the tank holds; 80 multiplies by the flow rate and divides by 7.5, both upside down.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "103bde219eae0f3cea36ae56102b56bc931e63e27805eb91b152c1916e96e0af",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-02",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 2 feet wide, 2 feet long, and 2 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 10 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "6"
+   },
+   {
+    "label": "B",
+    "text": "18"
+   },
+   {
+    "label": "C",
+    "text": "60"
+   },
+   {
+    "label": "D",
+    "text": "600"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 2 × 2 × 2 = 8 cubic feet, which is 8 × 7.5 = 60 gallons. At 10 gallons per minute it fills in 60 ÷ 10 = 6 minutes. Wrong choices: 60 stops at the number of gallons the tank holds; 18 uses the surface area of the tank instead of its volume; 600 multiplies the gallons by the flow rate instead of dividing.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "9c61a9bd35566fd7aeae49ad356e3ab97ed1c2064fd18c2ee65818dc1c3acb73",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-03",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 4 feet wide, 4 feet long, and 4 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 5 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "96",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "96"
+   },
+   {
+    "label": "B",
+    "text": "144"
+   },
+   {
+    "label": "C",
+    "text": "480"
+   },
+   {
+    "label": "D",
+    "text": "2400"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 4 × 4 × 4 = 64 cubic feet, which is 64 × 7.5 = 480 gallons. At 5 gallons per minute it fills in 480 ÷ 5 = 96 minutes. Wrong choices: 480 stops at the number of gallons the tank holds; 144 uses the surface area of the tank instead of its volume; 2400 multiplies the gallons by the flow rate instead of dividing.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "946e7223aaf5cdf5944194632e847e0734aee807a903597fb75f55e9444fc9ae",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-04",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 3 feet wide, 4 feet long, and 4 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 12 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4"
+   },
+   {
+    "label": "B",
+    "text": "30"
+   },
+   {
+    "label": "C",
+    "text": "50"
+   },
+   {
+    "label": "D",
+    "text": "360"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 3 × 4 × 4 = 48 cubic feet, which is 48 × 7.5 = 360 gallons. At 12 gallons per minute it fills in 360 ÷ 12 = 30 minutes. Wrong choices: 4 divides the cubic feet by the flow rate without converting to gallons; 360 stops at the number of gallons the tank holds; 50 uses the surface area of the tank instead of its volume.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "5def2d98cb5b564419d5e8994cef8d62c79c586a2dcb128f1aa49fc4b531d70e",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-05",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 4 feet wide, 4 feet long, and 3 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 6 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "60",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8"
+   },
+   {
+    "label": "B",
+    "text": "60"
+   },
+   {
+    "label": "C",
+    "text": "100"
+   },
+   {
+    "label": "D",
+    "text": "360"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 4 × 4 × 3 = 48 cubic feet, which is 48 × 7.5 = 360 gallons. At 6 gallons per minute it fills in 360 ÷ 6 = 60 minutes. Wrong choices: 8 divides the cubic feet by the flow rate without converting to gallons; 360 stops at the number of gallons the tank holds; 100 uses the surface area of the tank instead of its volume.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "745dfeb721096b1d3106534c0d5092268921154fa33de7438ae54dd6a5ce187d",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-06",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 2 feet wide, 2 feet long, and 3 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 5 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8"
+   },
+   {
+    "label": "B",
+    "text": "18"
+   },
+   {
+    "label": "C",
+    "text": "48"
+   },
+   {
+    "label": "D",
+    "text": "90"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 2 × 2 × 3 = 12 cubic feet, which is 12 × 7.5 = 90 gallons. At 5 gallons per minute it fills in 90 ÷ 5 = 18 minutes. Wrong choices: 90 stops at the number of gallons the tank holds; 8 multiplies by the flow rate and divides by 7.5, both upside down; 48 uses the surface area of the tank instead of its volume.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d01d480a93c55e10d43a6ff3dfa591d281d886dda2549e543e2caa384b2b669a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-07",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 2 feet wide, 6 feet long, and 2 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 20 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "9"
+   },
+   {
+    "label": "B",
+    "text": "21"
+   },
+   {
+    "label": "C",
+    "text": "64"
+   },
+   {
+    "label": "D",
+    "text": "180"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 2 × 6 × 2 = 24 cubic feet, which is 24 × 7.5 = 180 gallons. At 20 gallons per minute it fills in 180 ÷ 20 = 9 minutes. Wrong choices: 180 stops at the number of gallons the tank holds; 64 multiplies by the flow rate and divides by 7.5, both upside down; 21 uses the surface area of the tank instead of its volume.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "7f98f3d2f5143f98a43cfb1c20e4069fa402e8f8a9f9597cfabb6ee38bf9dc6b",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-08",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 3 feet wide, 5 feet long, and 2 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 25 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "9"
+   },
+   {
+    "label": "B",
+    "text": "100"
+   },
+   {
+    "label": "C",
+    "text": "225"
+   },
+   {
+    "label": "D",
+    "text": "5625"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 3 × 5 × 2 = 30 cubic feet, which is 30 × 7.5 = 225 gallons. At 25 gallons per minute it fills in 225 ÷ 25 = 9 minutes. Wrong choices: 225 stops at the number of gallons the tank holds; 100 multiplies by the flow rate and divides by 7.5, both upside down; 5625 multiplies the gallons by the flow rate instead of dividing.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "390d2105d1971d2447861a09232fe3960c96aeead73ac31f38ad514a6fac05d3",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-09",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 3 feet wide, 4 feet long, and 3 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 30 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "9"
+   },
+   {
+    "label": "B",
+    "text": "144"
+   },
+   {
+    "label": "C",
+    "text": "270"
+   },
+   {
+    "label": "D",
+    "text": "8100"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 3 × 4 × 3 = 36 cubic feet, which is 36 × 7.5 = 270 gallons. At 30 gallons per minute it fills in 270 ÷ 30 = 9 minutes. Wrong choices: 270 stops at the number of gallons the tank holds; 144 multiplies by the flow rate and divides by 7.5, both upside down; 8100 multiplies the gallons by the flow rate instead of dividing.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "4add51d174e9ff0c3c66e4212e101093c4e2eb5f1d547c91b2663a942ad7ffde",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-10",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 2 feet wide, 6 feet long, and 2 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 5 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "36",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "16"
+   },
+   {
+    "label": "B",
+    "text": "36"
+   },
+   {
+    "label": "C",
+    "text": "84"
+   },
+   {
+    "label": "D",
+    "text": "180"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 2 × 6 × 2 = 24 cubic feet, which is 24 × 7.5 = 180 gallons. At 5 gallons per minute it fills in 180 ÷ 5 = 36 minutes. Wrong choices: 180 stops at the number of gallons the tank holds; 16 multiplies by the flow rate and divides by 7.5, both upside down; 84 uses the surface area of the tank instead of its volume.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "602b482ab95d295da3c263c34719a5ede7c838ffb695e12adf403325630a5b9c",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-11",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 2 feet wide, 2 feet long, and 4 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 12 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "10"
+   },
+   {
+    "label": "B",
+    "text": "25"
+   },
+   {
+    "label": "C",
+    "text": "120"
+   },
+   {
+    "label": "D",
+    "text": "1440"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 2 × 2 × 4 = 16 cubic feet, which is 16 × 7.5 = 120 gallons. At 12 gallons per minute it fills in 120 ÷ 12 = 10 minutes. Wrong choices: 120 stops at the number of gallons the tank holds; 25 uses the surface area of the tank instead of its volume; 1440 multiplies the gallons by the flow rate instead of dividing.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "3f0bacae518b61be654c1d4404e3f5d1f9f79b97d0b388c13d32d574b95087b4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-12",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 2 feet wide, 4 feet long, and 4 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 20 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "12"
+   },
+   {
+    "label": "B",
+    "text": "24"
+   },
+   {
+    "label": "C",
+    "text": "240"
+   },
+   {
+    "label": "D",
+    "text": "4800"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 2 × 4 × 4 = 32 cubic feet, which is 32 × 7.5 = 240 gallons. At 20 gallons per minute it fills in 240 ÷ 20 = 12 minutes. Wrong choices: 240 stops at the number of gallons the tank holds; 24 uses the surface area of the tank instead of its volume; 4800 multiplies the gallons by the flow rate instead of dividing.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "aa3f7d0b89b32ca6a05d0d3000d9c317f6245121184cd1f76bfe2e8e82938b87",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-13",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 2 feet wide, 4 feet long, and 4 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 15 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "16"
+   },
+   {
+    "label": "B",
+    "text": "32"
+   },
+   {
+    "label": "C",
+    "text": "64"
+   },
+   {
+    "label": "D",
+    "text": "240"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 2 × 4 × 4 = 32 cubic feet, which is 32 × 7.5 = 240 gallons. At 15 gallons per minute it fills in 240 ÷ 15 = 16 minutes. Wrong choices: 240 stops at the number of gallons the tank holds; 64 multiplies by the flow rate and divides by 7.5, both upside down; 32 uses the surface area of the tank instead of its volume.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "3d1f27dc68285c87a91832beabb6b3a03190f912036e98f349bf86453cd73274",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-tank-volume-rate-14",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "An empty tank shaped like a rectangular box is 5 feet wide, 5 feet long, and 4 feet deep. One cubic foot holds 7.5 gallons of water. Water flows into the tank at 15 gallons per minute. How many minutes does it take to fill the tank?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "50",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "50"
+   },
+   {
+    "label": "B",
+    "text": "65"
+   },
+   {
+    "label": "C",
+    "text": "200"
+   },
+   {
+    "label": "D",
+    "text": "750"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "8-12",
+  "explanation": "The tank holds 5 × 5 × 4 = 100 cubic feet, which is 100 × 7.5 = 750 gallons. At 15 gallons per minute it fills in 750 ÷ 15 = 50 minutes. Wrong choices: 750 stops at the number of gallons the tank holds; 200 multiplies by the flow rate and divides by 7.5, both upside down; 65 uses the surface area of the tank instead of its volume.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:tank-volume-rate",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2a31c1b1fb15080d728b0297f097c2015b37fb4890629bf5b7296275acdaf213",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-01",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 12 students in one class had a mean score of 82, and the 30 students in a second class had a mean score of 75. What is the mean score of all 42 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "77",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "77"
+   },
+   {
+    "label": "B",
+    "text": "78.5"
+   },
+   {
+    "label": "C",
+    "text": "80"
+   },
+   {
+    "label": "D",
+    "text": "3234"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 12 × 82 + 30 × 75 = 984 + 2250 = 3234. Dividing by all 42 students gives 77. The larger class pulls the mean toward its own. Wrong choices: 78.5 averages the two means as if the classes were the same size; 3234 finds the total of all the scores but never divides by the number of students; 80 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "833a0e068a458f51ed97a55610f6b866d2b769aece7d635d97c9f6d5b9026209",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-02",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 12 students in one class had a mean score of 72, and the 30 students in a second class had a mean score of 79. What is the mean score of all 42 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "77",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "74"
+   },
+   {
+    "label": "B",
+    "text": "75.5"
+   },
+   {
+    "label": "C",
+    "text": "77"
+   },
+   {
+    "label": "D",
+    "text": "3234"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 12 × 72 + 30 × 79 = 864 + 2370 = 3234. Dividing by all 42 students gives 77. The larger class pulls the mean toward its own. Wrong choices: 75.5 averages the two means as if the classes were the same size; 3234 finds the total of all the scores but never divides by the number of students; 74 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "a285fe25a16bc232c4e8e6af73790cd4a9082c9d89d8c76f8d20f32b73939e7f",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-03",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 18 students in one class had a mean score of 70, and the 15 students in a second class had a mean score of 81. What is the mean score of all 33 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "75",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "75"
+   },
+   {
+    "label": "B",
+    "text": "75.5"
+   },
+   {
+    "label": "C",
+    "text": "76"
+   },
+   {
+    "label": "D",
+    "text": "2475"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 18 × 70 + 15 × 81 = 1260 + 1215 = 2475. Dividing by all 33 students gives 75. The larger class pulls the mean toward its own. Wrong choices: 75.5 averages the two means as if the classes were the same size; 2475 finds the total of all the scores but never divides by the number of students; 76 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "74dc04266c1aed659496990f50b43a8c833fb175a8b8d5f20f0f7d5dcfdca2ee",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-04",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 12 students in one class had a mean score of 74, and the 30 students in a second class had a mean score of 81. What is the mean score of all 42 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "79",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "76"
+   },
+   {
+    "label": "B",
+    "text": "77.5"
+   },
+   {
+    "label": "C",
+    "text": "79"
+   },
+   {
+    "label": "D",
+    "text": "3318"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 12 × 74 + 30 × 81 = 888 + 2430 = 3318. Dividing by all 42 students gives 79. The larger class pulls the mean toward its own. Wrong choices: 77.5 averages the two means as if the classes were the same size; 3318 finds the total of all the scores but never divides by the number of students; 76 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "8615d87d9d94889ce5e929e7b88bcb985ced799cfec30530837872bcde32e18a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-05",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 30 students in one class had a mean score of 87, and the 18 students in a second class had a mean score of 71. What is the mean score of all 48 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "81",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "77"
+   },
+   {
+    "label": "B",
+    "text": "79"
+   },
+   {
+    "label": "C",
+    "text": "81"
+   },
+   {
+    "label": "D",
+    "text": "3888"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 30 × 87 + 18 × 71 = 2610 + 1278 = 3888. Dividing by all 48 students gives 81. The larger class pulls the mean toward its own. Wrong choices: 79 averages the two means as if the classes were the same size; 3888 finds the total of all the scores but never divides by the number of students; 77 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b588fed28444055d7d7108350c0489dfd286c11445d6e9ed79bcdbd3befd32ad",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-06",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 20 students in one class had a mean score of 74, and the 25 students in a second class had a mean score of 83. What is the mean score of all 45 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "79",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "78"
+   },
+   {
+    "label": "B",
+    "text": "78.5"
+   },
+   {
+    "label": "C",
+    "text": "79"
+   },
+   {
+    "label": "D",
+    "text": "3555"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 20 × 74 + 25 × 83 = 1480 + 2075 = 3555. Dividing by all 45 students gives 79. The larger class pulls the mean toward its own. Wrong choices: 78.5 averages the two means as if the classes were the same size; 3555 finds the total of all the scores but never divides by the number of students; 78 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "6dd72c60d7fc31fbf09ee9e1cb94f3ca3fd6c73e683c38808854bebe8dffb699",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-07",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 30 students in one class had a mean score of 78, and the 15 students in a second class had a mean score of 84. What is the mean score of all 45 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "80",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "80"
+   },
+   {
+    "label": "B",
+    "text": "81"
+   },
+   {
+    "label": "C",
+    "text": "82"
+   },
+   {
+    "label": "D",
+    "text": "3600"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 30 × 78 + 15 × 84 = 2340 + 1260 = 3600. Dividing by all 45 students gives 80. The larger class pulls the mean toward its own. Wrong choices: 81 averages the two means as if the classes were the same size; 3600 finds the total of all the scores but never divides by the number of students; 82 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "6905b7f4bd75baf0bd86e79a22a3537ef2cf22c835ad2f54e46dd600f72b7dba",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-08",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 10 students in one class had a mean score of 89, and the 20 students in a second class had a mean score of 86. What is the mean score of all 30 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "87",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "87"
+   },
+   {
+    "label": "B",
+    "text": "87.5"
+   },
+   {
+    "label": "C",
+    "text": "88"
+   },
+   {
+    "label": "D",
+    "text": "2610"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 10 × 89 + 20 × 86 = 890 + 1720 = 2610. Dividing by all 30 students gives 87. The larger class pulls the mean toward its own. Wrong choices: 87.5 averages the two means as if the classes were the same size; 2610 finds the total of all the scores but never divides by the number of students; 88 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "a7bc423f7719945328f920d6e7939909530196b1f317ff7d718b8bd2dbb40b7f",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-09",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 24 students in one class had a mean score of 85, and the 12 students in a second class had a mean score of 88. What is the mean score of all 36 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "86",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "86"
+   },
+   {
+    "label": "B",
+    "text": "86.5"
+   },
+   {
+    "label": "C",
+    "text": "87"
+   },
+   {
+    "label": "D",
+    "text": "3096"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 24 × 85 + 12 × 88 = 2040 + 1056 = 3096. Dividing by all 36 students gives 86. The larger class pulls the mean toward its own. Wrong choices: 86.5 averages the two means as if the classes were the same size; 3096 finds the total of all the scores but never divides by the number of students; 87 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f83ea75ad185693a436b4bb2ee84efbcf769d2f03436416c3eb22e14d3e8986c",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-10",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 15 students in one class had a mean score of 87, and the 24 students in a second class had a mean score of 74. What is the mean score of all 39 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "79",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "79"
+   },
+   {
+    "label": "B",
+    "text": "80.5"
+   },
+   {
+    "label": "C",
+    "text": "82"
+   },
+   {
+    "label": "D",
+    "text": "3081"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 15 × 87 + 24 × 74 = 1305 + 1776 = 3081. Dividing by all 39 students gives 79. The larger class pulls the mean toward its own. Wrong choices: 80.5 averages the two means as if the classes were the same size; 3081 finds the total of all the scores but never divides by the number of students; 82 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d1251608787986d9714c030159b32175e1b43e036e137ece03828ba16377596f",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-11",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 30 students in one class had a mean score of 90, and the 20 students in a second class had a mean score of 80. What is the mean score of all 50 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "86",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "84"
+   },
+   {
+    "label": "B",
+    "text": "85"
+   },
+   {
+    "label": "C",
+    "text": "86"
+   },
+   {
+    "label": "D",
+    "text": "4300"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 30 × 90 + 20 × 80 = 2700 + 1600 = 4300. Dividing by all 50 students gives 86. The larger class pulls the mean toward its own. Wrong choices: 85 averages the two means as if the classes were the same size; 4300 finds the total of all the scores but never divides by the number of students; 84 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "69ba638fc5ce13c584c5a2b5f66966294b9e2c0dfe4050339cc61b763ba6d710",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-12",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 20 students in one class had a mean score of 86, and the 30 students in a second class had a mean score of 91. What is the mean score of all 50 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "89",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4450"
+   },
+   {
+    "label": "B",
+    "text": "89"
+   },
+   {
+    "label": "C",
+    "text": "88.5"
+   },
+   {
+    "label": "D",
+    "text": "88"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 20 × 86 + 30 × 91 = 1720 + 2730 = 4450. Dividing by all 50 students gives 89. The larger class pulls the mean toward its own. Wrong choices: 88.5 averages the two means as if the classes were the same size; 4450 finds the total of all the scores but never divides by the number of students; 88 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "25d18a802a9ef08b476c2dc9406a230e003a66c62e3f91689a222624e85f52fe",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-13",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 10 students in one class had a mean score of 78, and the 30 students in a second class had a mean score of 82. What is the mean score of all 40 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "81",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "79"
+   },
+   {
+    "label": "B",
+    "text": "80"
+   },
+   {
+    "label": "C",
+    "text": "81"
+   },
+   {
+    "label": "D",
+    "text": "3240"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 10 × 78 + 30 × 82 = 780 + 2460 = 3240. Dividing by all 40 students gives 81. The larger class pulls the mean toward its own. Wrong choices: 80 averages the two means as if the classes were the same size; 3240 finds the total of all the scores but never divides by the number of students; 79 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "e2cc1d8ac1a02dd3c0fc1b3b3ff3231b5d8b0ec72232f399a237ca4dca1ac5f5",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-combined-mean-14",
+  "skillId": "act-average-median",
+  "prompt": "On a test, the 30 students in one class had a mean score of 74, and the 20 students in a second class had a mean score of 79. What is the mean score of all 50 students together?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "76",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "76"
+   },
+   {
+    "label": "B",
+    "text": "76.5"
+   },
+   {
+    "label": "C",
+    "text": "77"
+   },
+   {
+    "label": "D",
+    "text": "3800"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "Total of all scores: 30 × 74 + 20 × 79 = 2220 + 1580 = 3800. Dividing by all 50 students gives 76. The larger class pulls the mean toward its own. Wrong choices: 76.5 averages the two means as if the classes were the same size; 3800 finds the total of all the scores but never divides by the number of students; 77 weights each mean by the OTHER class's size.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:combined-mean",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "869bf49d7f3ea04208e517894e0ae4cfab0b0a8fd3bd7feeb029eddae5852a97",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-01",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 20 kilometers. Two towns are 5 centimeters apart on the map. A bus travels the straight road between them at an average speed of 50 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "120",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2"
+   },
+   {
+    "label": "B",
+    "text": "6"
+   },
+   {
+    "label": "C",
+    "text": "100"
+   },
+   {
+    "label": "D",
+    "text": "120"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 5 × 20 = 100 kilometers. At 50 km per hour that takes 100 ÷ 50 = 2 hours, which is 2 × 60 = 120 minutes. Wrong choices: 2 gives the time in hours, not minutes; 100 stops at the distance in kilometers; 6 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "08c02f699966ced1332eecc93a31fac4966abbe3553478bddfd41f1da703a996",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-02",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 15 kilometers. Two towns are 9 centimeters apart on the map. A bus travels the straight road between them at an average speed of 45 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "180",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3"
+   },
+   {
+    "label": "B",
+    "text": "12"
+   },
+   {
+    "label": "C",
+    "text": "135"
+   },
+   {
+    "label": "D",
+    "text": "180"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 9 × 15 = 135 kilometers. At 45 km per hour that takes 135 ÷ 45 = 3 hours, which is 3 × 60 = 180 minutes. Wrong choices: 3 gives the time in hours, not minutes; 135 stops at the distance in kilometers; 12 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "3481f699dcdedab1d4ea2a6e98f48a6b61811cf4b90bdfba9baf0448acec5a8a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-03",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 5 kilometers. Two towns are 4 centimeters apart on the map. A bus travels the straight road between them at an average speed of 80 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0.25"
+   },
+   {
+    "label": "B",
+    "text": "3"
+   },
+   {
+    "label": "C",
+    "text": "15"
+   },
+   {
+    "label": "D",
+    "text": "20"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 4 × 5 = 20 kilometers. At 80 km per hour that takes 20 ÷ 80 = 0.25 hours, which is 0.25 × 60 = 15 minutes. Wrong choices: 0.25 gives the time in hours, not minutes; 20 stops at the distance in kilometers; 3 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d07735b5f81e7625a90eca19938f901e3253b21a62f13c5e1a0b565628ecfc86",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-04",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 5 kilometers. Two towns are 7 centimeters apart on the map. A bus travels the straight road between them at an average speed of 75 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "28",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0.47"
+   },
+   {
+    "label": "B",
+    "text": "6"
+   },
+   {
+    "label": "C",
+    "text": "28"
+   },
+   {
+    "label": "D",
+    "text": "35"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 7 × 5 = 35 kilometers. At 75 km per hour that takes 35 ÷ 75 = 0.47 hours, which is 0.47 × 60 = 28 minutes. Wrong choices: 0.47 gives the time in hours, not minutes; 35 stops at the distance in kilometers; 6 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "bd57f895cf1b0e1d58dfc6c022c01b49bffaa2a929782767f15ae35974143098",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-05",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 25 kilometers. Two towns are 8 centimeters apart on the map. A bus travels the straight road between them at an average speed of 60 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "200",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3.33"
+   },
+   {
+    "label": "B",
+    "text": "8"
+   },
+   {
+    "label": "C",
+    "text": "18"
+   },
+   {
+    "label": "D",
+    "text": "200"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 8 × 25 = 200 kilometers. At 60 km per hour that takes 200 ÷ 60 = 3.33 hours, which is 3.33 × 60 = 200 minutes. Wrong choices: 3.33 gives the time in hours, not minutes; 8 uses the map distance without the scale; 18 divides the speed by the distance — upside down.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "fedd5beff8b65bdc06a254994cd378f013bb0ca314e93ef10985db85eaf123c3",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-06",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 20 kilometers. Two towns are 11 centimeters apart on the map. A bus travels the straight road between them at an average speed of 60 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "220",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3.67"
+   },
+   {
+    "label": "B",
+    "text": "11"
+   },
+   {
+    "label": "C",
+    "text": "16"
+   },
+   {
+    "label": "D",
+    "text": "220"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 11 × 20 = 220 kilometers. At 60 km per hour that takes 220 ÷ 60 = 3.67 hours, which is 3.67 × 60 = 220 minutes. Wrong choices: 3.67 gives the time in hours, not minutes; 11 uses the map distance without the scale; 16 divides the speed by the distance — upside down.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b496bf3fb9c249681281dc9ba8cdb162346917232819637b0e03868e74a721a4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-07",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 20 kilometers. Two towns are 8 centimeters apart on the map. A bus travels the straight road between them at an average speed of 50 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "192",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3.2"
+   },
+   {
+    "label": "B",
+    "text": "10"
+   },
+   {
+    "label": "C",
+    "text": "160"
+   },
+   {
+    "label": "D",
+    "text": "192"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 8 × 20 = 160 kilometers. At 50 km per hour that takes 160 ÷ 50 = 3.2 hours, which is 3.2 × 60 = 192 minutes. Wrong choices: 3.2 gives the time in hours, not minutes; 160 stops at the distance in kilometers; 10 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "647a027473b612b85fde871767664aee352a86d35d3787c323dcf3393ee04adb",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-08",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 10 kilometers. Two towns are 12 centimeters apart on the map. A bus travels the straight road between them at an average speed of 80 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "90",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1.5"
+   },
+   {
+    "label": "B",
+    "text": "9"
+   },
+   {
+    "label": "C",
+    "text": "90"
+   },
+   {
+    "label": "D",
+    "text": "120"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 12 × 10 = 120 kilometers. At 80 km per hour that takes 120 ÷ 80 = 1.5 hours, which is 1.5 × 60 = 90 minutes. Wrong choices: 1.5 gives the time in hours, not minutes; 120 stops at the distance in kilometers; 9 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "046b5c957b62c71a8c33e8b8dfbe0a2119012cc9f534e88973be52d6ffeac76f",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-09",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 10 kilometers. Two towns are 11 centimeters apart on the map. A bus travels the straight road between them at an average speed of 75 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "88",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1.47"
+   },
+   {
+    "label": "B",
+    "text": "9"
+   },
+   {
+    "label": "C",
+    "text": "88"
+   },
+   {
+    "label": "D",
+    "text": "110"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 11 × 10 = 110 kilometers. At 75 km per hour that takes 110 ÷ 75 = 1.47 hours, which is 1.47 × 60 = 88 minutes. Wrong choices: 1.47 gives the time in hours, not minutes; 110 stops at the distance in kilometers; 9 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d2e5cd55130f42de1e8ab952b3a418aeae1089abd685be24c0eb666e150cc722",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-10",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 25 kilometers. Two towns are 5 centimeters apart on the map. A bus travels the straight road between them at an average speed of 50 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "150",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2.5"
+   },
+   {
+    "label": "B",
+    "text": "6"
+   },
+   {
+    "label": "C",
+    "text": "125"
+   },
+   {
+    "label": "D",
+    "text": "150"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 5 × 25 = 125 kilometers. At 50 km per hour that takes 125 ÷ 50 = 2.5 hours, which is 2.5 × 60 = 150 minutes. Wrong choices: 2.5 gives the time in hours, not minutes; 125 stops at the distance in kilometers; 6 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "fc50f579480b744a511b8ad39ec6d24884e5693810d738749c1d4b0bde27671a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-11",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 10 kilometers. Two towns are 3 centimeters apart on the map. A bus travels the straight road between them at an average speed of 40 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "45",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0.75"
+   },
+   {
+    "label": "B",
+    "text": "5"
+   },
+   {
+    "label": "C",
+    "text": "30"
+   },
+   {
+    "label": "D",
+    "text": "45"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 3 × 10 = 30 kilometers. At 40 km per hour that takes 30 ÷ 40 = 0.75 hours, which is 0.75 × 60 = 45 minutes. Wrong choices: 0.75 gives the time in hours, not minutes; 30 stops at the distance in kilometers; 5 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "8d256d7c2eb976cec6757dd34b7fc226d255e0981088731ea543e3d34724e0f6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-12",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 15 kilometers. Two towns are 10 centimeters apart on the map. A bus travels the straight road between them at an average speed of 50 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "180",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3"
+   },
+   {
+    "label": "B",
+    "text": "12"
+   },
+   {
+    "label": "C",
+    "text": "150"
+   },
+   {
+    "label": "D",
+    "text": "180"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 10 × 15 = 150 kilometers. At 50 km per hour that takes 150 ÷ 50 = 3 hours, which is 3 × 60 = 180 minutes. Wrong choices: 3 gives the time in hours, not minutes; 150 stops at the distance in kilometers; 12 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "9e5f163951da4b6a0445a774935c66b555760263179c191cec273cfcd82e27bf",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-13",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 20 kilometers. Two towns are 10 centimeters apart on the map. A bus travels the straight road between them at an average speed of 40 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "300",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5"
+   },
+   {
+    "label": "B",
+    "text": "15"
+   },
+   {
+    "label": "C",
+    "text": "200"
+   },
+   {
+    "label": "D",
+    "text": "300"
+   }
+  ],
+  "correctOption": "D",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 10 × 20 = 200 kilometers. At 40 km per hour that takes 200 ÷ 40 = 5 hours, which is 5 × 60 = 300 minutes. Wrong choices: 5 gives the time in hours, not minutes; 200 stops at the distance in kilometers; 15 uses the map distance without the scale.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "1040adabbddd9ad56e6d854ae5a94efdd37edea73c9b651ef70e012946a5ac30",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-map-scale-time-14",
+  "skillId": "act-rates-unit-conversion",
+  "prompt": "On a map, 1 centimeter represents 5 kilometers. Two towns are 11 centimeters apart on the map. A bus travels the straight road between them at an average speed of 60 kilometers per hour. How many minutes does the trip take?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "55",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0.92"
+   },
+   {
+    "label": "B",
+    "text": "11"
+   },
+   {
+    "label": "C",
+    "text": "55"
+   },
+   {
+    "label": "D",
+    "text": "65"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The real distance is 11 × 5 = 55 kilometers. At 60 km per hour that takes 55 ÷ 60 = 0.92 hours, which is 0.92 × 60 = 55 minutes. Wrong choices: 0.92 gives the time in hours, not minutes; 11 uses the map distance without the scale; 65 divides the speed by the distance — upside down.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:map-scale-time",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "dccf6570b55da15db773b7006335fbc9d6c50cfe54a49e03737ff001375e6c63",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-01",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 30 feet by 20 feet. A rectangular patio inside the yard is 8 feet by 3 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4%"
+   },
+   {
+    "label": "B",
+    "text": "22%"
+   },
+   {
+    "label": "C",
+    "text": "24%"
+   },
+   {
+    "label": "D",
+    "text": "96%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 30 × 20 = 600 square feet and the patio's is 8 × 3 = 24. 24 ÷ 600 = 0.04, which is 4%. Wrong choices: 22% compares the sums of the sides (the half-perimeters) instead of the areas; 24% gives the patio's area in square feet as the percent; 96% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d1670af3ad790de7de35dbe0436dc33a013109846662ce203e89bc5295866dc4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-02",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 20 feet by 10 feet. A rectangular patio inside the yard is 8 feet by 7 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "28%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "28%"
+   },
+   {
+    "label": "B",
+    "text": "50%"
+   },
+   {
+    "label": "C",
+    "text": "56%"
+   },
+   {
+    "label": "D",
+    "text": "72%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 20 × 10 = 200 square feet and the patio's is 8 × 7 = 56. 56 ÷ 200 = 0.28, which is 28%. Wrong choices: 50% compares the sums of the sides (the half-perimeters) instead of the areas; 56% gives the patio's area in square feet as the percent; 72% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "cf807c1feee0834fde577a1135af0d094aefa654ad86bbafe9ab35e7425742f0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-03",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 50 feet by 30 feet. A rectangular patio inside the yard is 6 feet by 10 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4%"
+   },
+   {
+    "label": "B",
+    "text": "20%"
+   },
+   {
+    "label": "C",
+    "text": "60%"
+   },
+   {
+    "label": "D",
+    "text": "96%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 50 × 30 = 1500 square feet and the patio's is 6 × 10 = 60. 60 ÷ 1500 = 0.04, which is 4%. Wrong choices: 20% compares the sums of the sides (the half-perimeters) instead of the areas; 60% gives the patio's area in square feet as the percent; 96% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "b6771c19d867e9ebf193a416f82fb8982abfa72eab7adce65e7d8344ceb6f35a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-04",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 30 feet by 20 feet. A rectangular patio inside the yard is 3 feet by 4 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "2%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2%"
+   },
+   {
+    "label": "B",
+    "text": "12%"
+   },
+   {
+    "label": "C",
+    "text": "14%"
+   },
+   {
+    "label": "D",
+    "text": "98%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 30 × 20 = 600 square feet and the patio's is 3 × 4 = 12. 12 ÷ 600 = 0.02, which is 2%. Wrong choices: 14% compares the sums of the sides (the half-perimeters) instead of the areas; 12% gives the patio's area in square feet as the percent; 98% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "19823d3a3a48f9e6b96897de4ef7fb77e63e96cc22c3e07340e9cb70861a550e",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-05",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 40 feet by 10 feet. A rectangular patio inside the yard is 2 feet by 2 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1%"
+   },
+   {
+    "label": "B",
+    "text": "4%"
+   },
+   {
+    "label": "C",
+    "text": "8%"
+   },
+   {
+    "label": "D",
+    "text": "99%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 40 × 10 = 400 square feet and the patio's is 2 × 2 = 4. 4 ÷ 400 = 0.01, which is 1%. Wrong choices: 8% compares the sums of the sides (the half-perimeters) instead of the areas; 4% gives the patio's area in square feet as the percent; 99% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "2b9eebfe141b28454f8c971db7425ce77203c1c245545979d93fed425449d8b0",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-06",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 40 feet by 10 feet. A rectangular patio inside the yard is 4 feet by 8 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "8%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8%"
+   },
+   {
+    "label": "B",
+    "text": "24%"
+   },
+   {
+    "label": "C",
+    "text": "32%"
+   },
+   {
+    "label": "D",
+    "text": "92%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 40 × 10 = 400 square feet and the patio's is 4 × 8 = 32. 32 ÷ 400 = 0.08, which is 8%. Wrong choices: 24% compares the sums of the sides (the half-perimeters) instead of the areas; 32% gives the patio's area in square feet as the percent; 92% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "ebe0a7d8d148e94d998a4a77b44ff06621197b922c2d5d0d9fddc9bb01134534",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-07",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 30 feet by 20 feet. A rectangular patio inside the yard is 3 feet by 2 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "1%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1%"
+   },
+   {
+    "label": "B",
+    "text": "6%"
+   },
+   {
+    "label": "C",
+    "text": "10%"
+   },
+   {
+    "label": "D",
+    "text": "99%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 30 × 20 = 600 square feet and the patio's is 3 × 2 = 6. 6 ÷ 600 = 0.01, which is 1%. Wrong choices: 10% compares the sums of the sides (the half-perimeters) instead of the areas; 6% gives the patio's area in square feet as the percent; 99% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "f1b82f9eebbef230ed016b919675a621090442a07485dc85050171356d2000e2",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-08",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 30 feet by 20 feet. A rectangular patio inside the yard is 4 feet by 6 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "4%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4%"
+   },
+   {
+    "label": "B",
+    "text": "20%"
+   },
+   {
+    "label": "C",
+    "text": "24%"
+   },
+   {
+    "label": "D",
+    "text": "96%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 30 × 20 = 600 square feet and the patio's is 4 × 6 = 24. 24 ÷ 600 = 0.04, which is 4%. Wrong choices: 20% compares the sums of the sides (the half-perimeters) instead of the areas; 24% gives the patio's area in square feet as the percent; 96% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "7045067a64cfa4c2ba8089b80a0f53cbaf3745095774299a323cb7d8d768adb6",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-09",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 30 feet by 20 feet. A rectangular patio inside the yard is 10 feet by 3 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "5%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "5%"
+   },
+   {
+    "label": "B",
+    "text": "26%"
+   },
+   {
+    "label": "C",
+    "text": "30%"
+   },
+   {
+    "label": "D",
+    "text": "95%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 30 × 20 = 600 square feet and the patio's is 10 × 3 = 30. 30 ÷ 600 = 0.05, which is 5%. Wrong choices: 26% compares the sums of the sides (the half-perimeters) instead of the areas; 30% gives the patio's area in square feet as the percent; 95% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "edbd68ff89bd01c1b44adcb5b2371a5f9166250f69ee5d7a735a3fbc0ec8669f",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-10",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 30 feet by 10 feet. A rectangular patio inside the yard is 3 feet by 3 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "3%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "3%"
+   },
+   {
+    "label": "B",
+    "text": "9%"
+   },
+   {
+    "label": "C",
+    "text": "15%"
+   },
+   {
+    "label": "D",
+    "text": "97%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 30 × 10 = 300 square feet and the patio's is 3 × 3 = 9. 9 ÷ 300 = 0.03, which is 3%. Wrong choices: 15% compares the sums of the sides (the half-perimeters) instead of the areas; 9% gives the patio's area in square feet as the percent; 97% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "67a01c802040be5f236b3243dd8c64a9361dcf1bf8d7f4e983269fa00c0563b9",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-11",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 30 feet by 20 feet. A rectangular patio inside the yard is 10 feet by 6 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "10%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "10%"
+   },
+   {
+    "label": "B",
+    "text": "32%"
+   },
+   {
+    "label": "C",
+    "text": "60%"
+   },
+   {
+    "label": "D",
+    "text": "90%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 30 × 20 = 600 square feet and the patio's is 10 × 6 = 60. 60 ÷ 600 = 0.1, which is 10%. Wrong choices: 32% compares the sums of the sides (the half-perimeters) instead of the areas; 60% gives the patio's area in square feet as the percent; 90% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "d551271b74bf66c8c15a5acd95addff9960ce0977ea00a9d35532848cb7d70f4",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-12",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 20 feet by 15 feet. A rectangular patio inside the yard is 5 feet by 9 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "15%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "15%"
+   },
+   {
+    "label": "B",
+    "text": "40%"
+   },
+   {
+    "label": "C",
+    "text": "45%"
+   },
+   {
+    "label": "D",
+    "text": "85%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 20 × 15 = 300 square feet and the patio's is 5 × 9 = 45. 45 ÷ 300 = 0.15, which is 15%. Wrong choices: 40% compares the sums of the sides (the half-perimeters) instead of the areas; 45% gives the patio's area in square feet as the percent; 85% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "a6a5860b59af41347e430e20e473baca41fced4f6a969fe365883a8572b7414a",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-13",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 30 feet by 10 feet. A rectangular patio inside the yard is 6 feet by 8 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "16%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "16%"
+   },
+   {
+    "label": "B",
+    "text": "35%"
+   },
+   {
+    "label": "C",
+    "text": "48%"
+   },
+   {
+    "label": "D",
+    "text": "84%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 30 × 10 = 300 square feet and the patio's is 6 × 8 = 48. 48 ÷ 300 = 0.16, which is 16%. Wrong choices: 35% compares the sums of the sides (the half-perimeters) instead of the areas; 48% gives the patio's area in square feet as the percent; 84% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "0920142f0911d906a5b68b3e3dbdd2c87f4c412d97a0e0036e022b07af0e0945",
+  "isActive": true
+ },
+ {
+  "problemId": "act-reasoning-percent-of-area-14",
+  "skillId": "act-percentages",
+  "prompt": "A rectangular yard is 30 feet by 10 feet. A rectangular patio inside the yard is 7 feet by 3 feet. What percent of the yard's area does the patio cover?",
+  "svg": null,
+  "answer": {
+   "type": "auto",
+   "value": "7%",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "7%"
+   },
+   {
+    "label": "B",
+    "text": "21%"
+   },
+   {
+    "label": "C",
+    "text": "25%"
+   },
+   {
+    "label": "D",
+    "text": "93%"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "8-12",
+  "explanation": "The yard's area is 30 × 10 = 300 square feet and the patio's is 7 × 3 = 21. 21 ÷ 300 = 0.07, which is 7%. Wrong choices: 25% compares the sums of the sides (the half-perimeters) instead of the areas; 21% gives the patio's area in square feet as the percent; 93% finds the part of the yard the patio does NOT cover.",
+  "tags": [
+   "act",
+   "act-math",
+   "reasoning",
+   "reasoning:multi-step",
+   "family:percent-of-area",
+   "integrated",
+   "modeling"
+  ],
+  "source": "act-reasoning-2026-10",
+  "contentHash": "15070444de21ce5abd78a9dfef40104ad02a204c45ea240a4b1ffd0133f1df15",
+  "isActive": true
+ },
+ {
   "problemId": "act-reasoning-signal-travel-01",
   "skillId": "act-scientific-notation",
   "prompt": "The speed of sound is about 3.4 × 10^2 meters per second. The distance traveled by the sound of a distant explosion is about 6.8 × 10^3 meters. About how many seconds does the trip take?",

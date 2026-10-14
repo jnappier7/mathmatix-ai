@@ -178,10 +178,19 @@ const REASONING_FILTER = { tags: 'reasoning' };
 const NOT_REASONING_FILTER = { tags: { $ne: 'reasoning' } };
 const isReasoningItem = (p) => !!(p && Array.isArray(p.tags) && p.tags.includes('reasoning'));
 
+/**
+ * An Integrating Essential Skills item that combines concepts in one setting
+ * (ratio then area, scale then cost; seeds/act-reasoning `integrated`
+ * families). Paced separately (blueprint.integratedTarget): only IES skills
+ * carry it, so reasoningTarget alone left most forms with one or none.
+ */
+const isIntegratedItem = (p) => !!(p && Array.isArray(p.tags) && p.tags.includes('integrated'));
+
 /** What each paced kind of item is, and how to ask the DB for it or for anything else. */
 const PACED_KINDS = {
   visual: { member: isVisualItem, filter: VISUAL_FILTER, notFilter: PLAIN_FILTER },
   reasoning: { member: isReasoningItem, filter: REASONING_FILTER, notFilter: NOT_REASONING_FILTER },
+  integrated: { member: isIntegratedItem, filter: { tags: 'integrated' }, notFilter: { tags: { $ne: 'integrated' } } },
 };
 
 function hashSeed(str) {
@@ -597,7 +606,7 @@ async function assembleForm(opts = {}) {
   const precise = new Map();          // problemId -> measured-or-authored difficulty, for ordering
   const keyText = new Map();          // problemId -> the key's choice TEXT (never sent to the client)
 
-  // Pacing (blueprint.visualTarget, blueprint.reasoningTarget = { min, max }).
+  // Pacing (blueprint.visualTarget, reasoningTarget, integratedTarget = { min, max }).
   // After slot i the form should hold about min × (i + 1) / n of each paced
   // kind. A slot that finds the form behind that pace looks for one on its own
   // skill first — the kind furthest behind first; one that finds it two or
@@ -605,10 +614,10 @@ async function assembleForm(opts = {}) {
   // in its CATEGORY (category counts — what the scaled score depends on —
   // never move). A kind at its max is passed over while anything else exists.
   // No targets: no change at all.
-  const quotas = [['visual', blueprint.visualTarget], ['reasoning', blueprint.reasoningTarget]]
+  const quotas = [['visual', blueprint.visualTarget], ['reasoning', blueprint.reasoningTarget], ['integrated', blueprint.integratedTarget]]
     .filter(([, t]) => t && Number.isFinite(t.min))
     .map(([key, t]) => ({ key, ...PACED_KINDS[key], min: t.min, max: Number.isFinite(t.max) ? t.max : Infinity, count: 0 }));
-  let visuals = 0, reasoning = 0;
+  let visuals = 0, reasoning = 0, integrated = 0;
 
   // Near-copies: what the student has already seen (by content, not just id)
   // and what this form already holds. See nearCopy above.
@@ -639,6 +648,7 @@ async function assembleForm(opts = {}) {
   const place = (slot, problem) => {
     if (isVisualItem(problem)) visuals += 1;
     if (isReasoningItem(problem)) reasoning += 1;
+    if (isIntegratedItem(problem)) integrated += 1;
     quotas.forEach((q) => { if (q.member(problem)) q.count += 1; });
     formPrints.push(fingerprint(problem));
     formShapes.add(structuralSignature(problem));
@@ -884,6 +894,7 @@ async function assembleForm(opts = {}) {
       reused,                    // slots filled with a least-recently-seen item (pool exhausted)
       visuals,                   // items answered from a figure or table
       reasoning,                 // multi-step reasoning items
+      integrated,                // IES items that combine concepts (counted in reasoning too)
     },
     meta: {
       testId: blueprint.testId,
