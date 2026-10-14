@@ -1,6 +1,7 @@
 /**
  * Every ACT form carries 8–12 questions answered from a figure or table, and
- * 6–10 multi-step reasoning questions (seeds/act-reasoning).
+ * 6–10 multi-step reasoning questions (seeds/act-reasoning), 3–6 of them
+ * Integrating Essential Skills items that combine concepts.
  *
  * An official form has about ten; ours averaged 1.9 (external audit,
  * 2026-10-05). The visual bank (seeds/act-visual) supplies them and
@@ -47,6 +48,9 @@ test('five retakes in a row each hold 8–12 visual items, with exact category c
     // Multi-step reasoning items are paced the same way (blueprint.reasoningTarget).
     expect(form.coverage.reasoning).toBeGreaterThanOrEqual(blueprint.reasoningTarget.min);
     expect(form.coverage.reasoning).toBeLessThanOrEqual(blueprint.reasoningTarget.max);
+    // So are IES items that combine concepts (blueprint.integratedTarget).
+    expect(form.coverage.integrated).toBeGreaterThanOrEqual(blueprint.integratedTarget.min);
+    expect(form.coverage.integrated).toBeLessThanOrEqual(blueprint.integratedTarget.max);
     const perCat = {};
     form.items.forEach((it) => { perCat[it.category] = (perCat[it.category] || 0) + 1; });
     expect(perCat).toEqual(blueprint.categoryWeights);
@@ -54,9 +58,10 @@ test('five retakes in a row each hold 8–12 visual items, with exact category c
 }, 120000);
 
 test('without targets the assembler does not pace', async () => {
-  const { visualTarget, reasoningTarget, ...plain } = blueprint;
+  const { visualTarget, reasoningTarget, integratedTarget, ...plain } = blueprint;
   expect(visualTarget).toBeDefined();
   expect(reasoningTarget).toBeDefined();
+  expect(integratedTarget).toBeDefined();
   const a = await assembleForm({ blueprint: plain, seed: 'plain-1' });
   const b = await assembleForm({ blueprint: plain, seed: 'plain-1' });
   expect(a.items.map((x) => x.problemId)).toEqual(b.items.map((x) => x.problemId));

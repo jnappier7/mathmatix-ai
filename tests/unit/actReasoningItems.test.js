@@ -214,6 +214,54 @@ const SOLVE = {
     while (v < 1) { v *= 10; e--; }
     return `${Math.round(v * 1000) / 1000} × 10^${e}`;
   },
+  // Integrated IES families: each solver re-derives the linking value the stem
+  // withholds (k, the real dimensions, gallons, kilometers) before the answer.
+  'ratio-to-area': (it) => {
+    const [a, b, P] = nums(it.prompt);
+    const k = P / (2 * (a + b));
+    return `${a * k * b * k}`;
+  },
+  'scale-plan-cost': (it) => {
+    const [, s, w, l, c] = nums(it.prompt);   // "1 inch represents s feet … w inches by l inches … $c"
+    return `$${w * s * (l * s) * c}`;
+  },
+  'percent-sides-area': (it) => {
+    const ps = nums(it.prompt);
+    const [p, q] = ps.length === 1 ? [ps[0], ps[0]] : ps;
+    const before = 100 * 100, after = (100 + p) * (100 + q);   // a 100-by-100 rectangle
+    return `${Math.round(((after - before) / before) * 10000) / 100}%`;
+  },
+  'square-yard-cost': (it) => {
+    const [L, W, c] = nums(it.prompt);
+    const sqYd = (L / 3) * (W / 3);   // convert each side to yards first
+    return `$${sqYd * c}`;
+  },
+  'paint-gallons': (it) => {
+    const [L, W, H, G] = nums(it.prompt);
+    const coats = /two coats/.test(it.prompt) ? 2 : 1;
+    let gallons = 0;
+    while (gallons * G < coats * (L * H * 2 + W * H * 2)) gallons += 1;   // whole gallons until covered
+    return `${gallons}`;
+  },
+  'tank-volume-rate': (it) => {
+    const [a, b, c, , r] = nums(it.prompt);   // the "7.5" gallons per cubic foot is the 4th number
+    let filled = 0, minutes = 0;
+    while (filled < a * b * c * 7.5) { filled += r; minutes += 1; }
+    return `${minutes}`;
+  },
+  'combined-mean': (it) => {
+    const [n1, m1, n2, m2] = nums(it.prompt);
+    const scores = [...Array(n1).fill(m1), ...Array(n2).fill(m2)];
+    return `${scores.reduce((t, x) => t + x, 0) / scores.length}`;
+  },
+  'map-scale-time': (it) => {
+    const [, k, d, v] = nums(it.prompt);   // "1 centimeter represents k km … d cm … v km per hour"
+    return `${((d * k) / v) * 60}`;
+  },
+  'percent-of-area': (it) => {
+    const [L, W, a, b] = nums(it.prompt);
+    return `${Math.round(((a * b) / (L * W)) * 10000) / 100}%`;
+  },
   'restricted-codes-2': (it) => {
     const len = Number(it.prompt.match(/A (\d)-digit/)[1]);
     let count = 0;
@@ -233,7 +281,7 @@ const SOLVE = {
 };
 
 test('the bank is at least the size it shipped at, on blueprint skills in every category', () => {
-  expect(items.length).toBeGreaterThanOrEqual(385);
+  expect(items.length).toBeGreaterThanOrEqual(515);
   const blueprint = require('../../seeds/act-math-blueprint.json');
   const catOf = {};
   Object.entries(blueprint.skillsByCategory).forEach(([c, ss]) => ss.forEach((s) => { catOf[s] = c; }));
@@ -244,6 +292,19 @@ test('the bank is at least the size it shipped at, on blueprint skills in every 
 
 test('the seed file is exactly what the generator writes', () => {
   expect(JSON.parse(JSON.stringify(generate().items))).toEqual(items);
+});
+
+test('Integrating Essential Skills has families that combine concepts, tagged so', () => {
+  const integrated = items.filter((it) => it.tags.includes('integrated'));
+  const ies = require('../../seeds/act-math-blueprint.json').skillsByCategory['integrating-essential-skills'];
+  expect(new Set(integrated.map(familyOf)).size).toBeGreaterThanOrEqual(9);
+  integrated.forEach((it) => {
+    expect(ies).toContain(it.skillId);
+    expect(it.tags).toEqual(expect.arrayContaining(['reasoning', 'modeling']));
+  });
+  // The PreACT draws them too: every integrated skill is on its blueprint.
+  const preact = require('../../seeds/preact-math-blueprint.json').skillsByCategory['integrating-essential-skills'];
+  integrated.forEach((it) => expect(preact).toContain(it.skillId));
 });
 
 test('every family has an independent solver', () => {

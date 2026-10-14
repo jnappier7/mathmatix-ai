@@ -29,6 +29,11 @@
     "min": 5,
     "max": 8
   },
+  "_integratedTargetComment": "Integrating Essential Skills items that combine concepts in one real-world setting (ratio then area, scale then cost, volume then rate: seeds/act-reasoning families tagged `integrated`). ACT describes the category as combining multiple concepts simultaneously; before this target a form averaged 1.3 of its 7 IES slots that way and some had none (2026-10-14). They are reasoning items too, so they count toward reasoningTarget.",
+  "integratedTarget": {
+    "min": 3,
+    "max": 5
+  },
   "_authoredScaleComment": "Until calibration measures an item (calibration.theta), its authored 1-5 difficulty orders the form. act-ies-expansion rated by position within each skill (a fixed 8/12/14/10/6 quota per skill), not by content, so its 4s and 5s include easy items that landed among the hardest questions. Its authored scale is mapped onto [min, max] for ordering only; calibrated items ignore this. Remove the entry once the bank is calibrated from real responses.",
   "authoredScale": {
     "act-ies-expansion": {

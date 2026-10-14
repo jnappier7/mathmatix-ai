@@ -188,11 +188,17 @@ async function validate(banks, anchors, n) {
 async function run(banks, anchors) {
   const existing = fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, 'utf8')) : { _meta: {}, estimates: {} };
   const wanted = (arg('bank') ? String(arg('bank')).split(',') : Object.keys(BANK_FILES));
-  const todo = wanted.flatMap((b) => banks[b]).filter((it) => arg('force') || !existing.estimates[it.problemId]);
+  // A provisional estimate (_meta.provisional: a stand-in written without the
+  // rater, e.g. where no API key was available) counts as unrated, so a plain
+  // --run replaces it and drops it from the list.
+  const provisional = new Set((existing._meta.provisional && existing._meta.provisional.ids) || []);
+  const todo = wanted.flatMap((b) => banks[b]).filter((it) => arg('force') || !existing.estimates[it.problemId] || provisional.has(it.problemId));
   console.log(`rating ${todo.length} items from ${wanted.join(', ')} with ${MODEL}…`);
   const save = (est) => {
-    for (const [id, d] of est) existing.estimates[id] = d;
-    existing._meta = { ...existing._meta, model: MODEL, rubricVersion: RUBRIC_VERSION, anchors: anchors.map((a) => a.problemId), scale: 'act-fable authored 1-5', updatedAt: new Date().toISOString().slice(0, 10) };
+    for (const [id, d] of est) { existing.estimates[id] = d; provisional.delete(id); }
+    const { provisional: _p, ...meta } = existing._meta;
+    existing._meta = { ...meta, model: MODEL, rubricVersion: RUBRIC_VERSION, anchors: anchors.map((a) => a.problemId), scale: 'act-fable authored 1-5', updatedAt: new Date().toISOString().slice(0, 10) };
+    if (provisional.size) existing._meta.provisional = { ..._p, ids: [...provisional].sort() };
     const sorted = Object.fromEntries(Object.entries(existing.estimates).sort(([a], [b]) => (a < b ? -1 : 1)));
     fs.writeFileSync(OUT, JSON.stringify({ _meta: existing._meta, estimates: sorted }, null, 1) + '\n');
   };
