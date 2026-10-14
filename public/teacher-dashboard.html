@@ -4553,7 +4553,7 @@
       border: 1px solid #FDE68A;
     }
   </style>
-  <link rel="stylesheet" href="/dist/css/teacher-css1.dc8370c0.css" />
+  <link rel="stylesheet" href="/dist/css/teacher-css1.fcda2daf.css" />
   <script src="/dist/js/teacher-js0.08f701d8.js"></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
 </head>
@@ -4836,6 +4836,9 @@
           <button class="tab-btn active" data-tab="students">
             <i class="fas fa-users"></i> My Students <span class="tab-count" id="tab-student-count"></span>
           </button>
+          <button class="tab-btn" data-tab="testprep">
+            <i class="fas fa-clipboard-check"></i> Test Prep
+          </button>
           <button class="tab-btn" data-tab="classes">
             <i class="fas fa-chalkboard"></i> Classes <span class="tab-count" id="tab-class-count"></span>
           </button>
@@ -5003,6 +5006,15 @@
               </button>
             </div>
           </div>
+        </div>
+
+        <!-- Test Prep Tab (js/teacher-testprep.js, routes/teacherTestPrep.js) -->
+        <div class="tab-content" id="testprep-tab" role="tabpanel">
+          <div class="tp-head">
+            <h2>Practice tests</h2>
+            <p>PreACT, PSAT, SAT and ACT practice tests your students have taken while logged in.</p>
+          </div>
+          <div id="testprep-content"></div>
         </div>
 
         <!-- Classes Tab -->
@@ -6217,7 +6229,7 @@
   })();
   </script>
 
-  <script src="/dist/js/teacher-js2.0ac4a0cd.js"></script>
+  <script src="/dist/js/teacher-js2.6224ed42.js"></script>
   <link rel="stylesheet" href="/css/teacher-activities.css?v=20260923a">
   <script defer src="/js/teacher-activities.js?v=20261014"></script>
 </body>

@@ -38,6 +38,9 @@ const ActivityAttempt = require('../models/activityAttempt');
 const { listActivities, getActivity, getActivityHtml, toPublic } = require('../utils/activityRegistry');
 const { anyRole, userHasRole } = require('../utils/roleQuery');
 const logger = require('../utils/logger');
+const PracticeTestAssignment = require('../models/practiceTestAssignment');
+const ActTestSession = require('../models/actTestSession');
+const { RUNNER_URL, assignmentStatus, examMeta } = require('../utils/testPrepScores');
 
 // Per-student, per-activity ceiling on stored events. A real student on a
 // five-proof activity uses a few dozen; this only stops a runaway loop.
@@ -137,7 +140,7 @@ router.get('/mine', async (req, res) => {
       { 'enrolledStudents.studentId': req.user._id },
       '_id className teacherId'
     ).lean();
-    if (classes.length === 0) return res.json({ success: true, assignments: [] });
+    if (classes.length === 0) return res.json({ success: true, assignments: [], practiceTests: [] });
 
     const classById = new Map(classes.map((c) => [String(c._id), c]));
     const assignments = await ActivityAssignment.find({ classId: { $in: classes.map((c) => c._id) } })
@@ -169,7 +172,7 @@ router.get('/mine', async (req, res) => {
         itemsTotal: activity.items.length
       });
     }
-    res.json({ success: true, assignments: out });
+    res.json({ success: true, assignments: out, practiceTests: await myPracticeTests(req.user._id, classes, classById) });
   } catch (err) {
     logger.error('[activities] /mine failed', { error: err.message });
     res.status(500).json({ success: false, message: 'Could not load your activities.' });
@@ -246,6 +249,38 @@ router.post('/:slug/events', async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────── Teacher ──
+
+/**
+ * Practice tests a teacher assigned to one of my classes, newest first, with
+ * my status (done / in-progress / not-started) and where to take it. One per
+ * exam: if two classes assigned the same test, the most recent wins.
+ */
+async function myPracticeTests(userId, classes, classById) {
+  const assigned = await PracticeTestAssignment.find({ classId: { $in: classes.map((c) => c._id) } }).sort({ assignedAt: -1 }).lean();
+  if (!assigned.length) return [];
+  const sessions = await ActTestSession.find(
+    { userId, status: { $in: ['completed', 'in_progress'] }, testId: { $in: [...new Set(assigned.map((a) => a.testId))].concat(null) } },
+    'testId status startedAt completedAt scaledScore'
+  ).lean();
+  const seen = new Set();
+  const out = [];
+  for (const a of assigned) {
+    if (seen.has(a.testId)) continue;
+    seen.add(a.testId);
+    const mine = sessions.filter((s) => (s.testId || 'act-math') === a.testId);
+    out.push({
+      assignmentId: a._id,
+      ...examMeta(a.testId),
+      url: RUNNER_URL[a.testId],
+      className: classById.get(String(a.classId))?.className || '',
+      dueDate: a.dueDate,
+      note: a.note,
+      assignedAt: a.assignedAt,
+      ...assignmentStatus(mine, a.assignedAt),
+    });
+  }
+  return out;
+}
 
 router.get('/catalog', isTeacher, (req, res) => {
   res.json({ success: true, activities: listActivities() });

@@ -59,7 +59,7 @@ const {
 const { seenLedgerForUser, ledgerFromSessions, seedBootcampFromTest } = require('../utils/actBootcampSeed');
 const { recordConversionEvent } = require('../utils/conversionEvents');
 const { makeRunnerLimiters } = require('../middleware/practiceTestLimiter');
-const { isRushed } = require('../utils/rushedAttempt');
+const { isRushedSession } = require('../utils/testPrepScores');
 
 // Who owns the session a request is about. The signed-in rail is owned by the
 // user; the guest rail by the bearer token. Set per router so a signed-in
@@ -1016,10 +1016,9 @@ async function finishSession(session, answers, res) {
   return { tally, sheetApplied };
 }
 
+// One rushed rule for the student report AND the teacher Test Prep view.
 function rushedSession(session) {
-  const start = sectionStart(session);
-  if (!start || !session.completedAt) return false;
-  return isRushed(new Date(session.completedAt) - new Date(start), sectionMinutes(session));
+  return isRushedSession(session);
 }
 
 // The whole section's clock for the report. A modular session's startedAt /
