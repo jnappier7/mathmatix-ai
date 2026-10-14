@@ -162,6 +162,145 @@
     return m;
   }
 
+  /**
+   * LaTeX in tutor-written summaries → readable plain text for teacher views.
+   * "\\( M(2,1) \\)" showed up raw in session history. No KaTeX on this page,
+   * and a summary is prose, so plain math reads better than typeset islands.
+   */
+  function plainMath(text) {
+    if (text == null) return '';
+    var s = String(text);
+    s = s.replace(/\\[()\[\]]/g, '').replace(/\$\$?/g, '');
+    for (var i = 0; i < 3; i++) {
+      s = s.replace(/\\[dt]?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, '($1)/($2)')
+           .replace(/\\sqrt\s*\{([^{}]*)\}/g, '√($1)');
+    }
+    var sym = { cdot: '·', times: '×', div: '÷', le: '≤', leq: '≤', ge: '≥', geq: '≥', ne: '≠', neq: '≠', pm: '±', pi: 'π',
+      theta: 'θ', alpha: 'α', beta: 'β', infty: '∞', approx: '≈', degree: '°', circ: '°', left: '', right: '' };
+    s = s.replace(/\\([a-zA-Z]+)/g, function (m, name) { return Object.prototype.hasOwnProperty.call(sym, name) ? sym[name] : name; });
+    s = s.replace(/\^\{([^{}]*)\}/g, '^$1').replace(/_\{([^{}]*)\}/g, '_$1').replace(/[{}]/g, '');
+    s = s.replace(/\(\(([^()]*)\)\)/g, '($1)').replace(/\(([A-Za-z0-9.]+)\)\/\(([A-Za-z0-9.]+)\)/g, '$1/$2');
+    s = s.replace(/√\(([A-Za-z0-9.]+)\)/g, '√$1');
+    return s.replace(/[ \t]{2,}/g, ' ').replace(/ ([,.;:])/g, '$1').trim();
+  }
+
+  function fullName(s) {
+    return ((s.firstName || '') + ' ' + (s.lastName || '')).trim() || s.username || 'Student';
+  }
+
+  var REASON_TEXT = {
+    'tutor-flagged': function (sk) { return sk.detail ? 'tutor noticed: ' + sk.detail : 'the tutor flagged it'; },
+    'missed-on-check': function () { return 'missed it on a direct check'; },
+    'low-accuracy': function (sk) { return (sk.detail || 'low accuracy') + ' correct'; }
+  };
+
+  /**
+   * "Needs you" — the ranked to-do list a teacher opens the dashboard for.
+   * Every item says WHO, WHY (evidence, in teacher words) and offers the next
+   * action. Order: struggling right now (live) → stuck on a skill → lapsed
+   * after working → slipping on review → new and never started. Nothing
+   * here is generated for students the teacher can't act on (last year's
+   * long tail lives in the archive, not the to-do list).
+   *
+   * @param live  /api/teacher/live-feed rows (optional)
+   * @param snoozed  { [itemKey]: untilMs } — teacher's "not now"s
+   */
+  function buildActionQueue(students, live, now, snoozed) {
+    now = now || Date.now();
+    snoozed = snoozed || {};
+    var items = [];
+    var liveById = {};
+    (live || []).forEach(function (l) { if (l && l.studentId) liveById[String(l.studentId)] = l; });
+
+    (students || []).forEach(function (s) {
+      var id = String(s._id);
+      var name = fullName(s);
+      var l = liveById[id];
+      var liveAlerts = l ? (l.alerts || []).filter(function (a) { return a && !a.acknowledged; }) : [];
+      if (l && (l.isStruggling || liveAlerts.length)) {
+        items.push({ kind: 'live', priority: 0, studentId: id, name: name,
+          title: 'is struggling right now',
+          detail: l.strugglingWith ? 'with ' + l.strugglingWith : (liveAlerts[0] && liveAlerts[0].message) || l.currentTopic || 'in an active session',
+          at: time(l.lastActivity) || now, conversationId: l.conversationId || null });
+        return;
+      }
+      var status = studentStatus(s, now);
+      if (status === 'struggling') {
+        var sk = strugglingSkills(s)[0];
+        var more = strugglingSkills(s).length - 1;
+        items.push({ kind: 'stuck', priority: 1, studentId: id, name: name,
+          title: 'is stuck on ' + (sk.name || sk.skillId),
+          detail: (REASON_TEXT[sk.reason] ? REASON_TEXT[sk.reason](sk) : '') + (more > 0 ? ' · +' + more + ' more skill' + (more > 1 ? 's' : '') : ''),
+          at: time(sk.lastPracticed) || lastActiveAt(s) || now, skill: sk.name || sk.skillId });
+        return;
+      }
+      if (status === 'inactive') {
+        var days = daysSinceActive(s, now);
+        var createdAgo = s.createdAt ? (now - time(s.createdAt)) / DAY_MS : Infinity;
+        if (days !== null && days <= 30) {
+          items.push({ kind: 'lapsed', priority: 2, studentId: id, name: name,
+            title: "hasn't been on in " + days + ' days',
+            detail: 'last active ' + formatLastActive(s, now) + (weekMinutes(s, 1) + weekMinutes(s, 2) + weekMinutes(s, 3) > 0 ? ' · was working before' : ''),
+            at: lastActiveAt(s) });
+        } else if (days === null && createdAgo <= 30) {
+          items.push({ kind: 'not-started', priority: 4, studentId: id, name: name,
+            title: "hasn't started yet", detail: 'joined ' + Math.max(0, Math.round(createdAgo)) + ' day' + (Math.round(createdAgo) === 1 ? '' : 's') + ' ago',
+            at: time(s.createdAt) });
+        }
+        return;
+      }
+      var sum = s.skillSummary;
+      if (sum && sum.slipping > 0) {
+        items.push({ kind: 'slipping', priority: 3, studentId: id, name: name,
+          title: 'is due for review', detail: sum.slipping + ' skill' + (sum.slipping > 1 ? 's' : '') + ' slipping since they were learned',
+          at: lastActiveAt(s) || now });
+      }
+    });
+
+    return items
+      .map(function (it) { it.key = it.kind + ':' + it.studentId; return it; })
+      .filter(function (it) { return !(snoozed[it.key] > now); })
+      .sort(function (a, b) { return a.priority - b.priority || (b.at || 0) - (a.at || 0); });
+  }
+
+  /**
+   * "Teach this next": skills where several current students are stuck right
+   * now — worth a whole-class or small-group moment rather than N separate
+   * nudges. Counts only recent, evidence-backed struggle (skillSummary).
+   */
+  function teachNext(students, now, limit) {
+    now = now || Date.now();
+    var bySkill = {};
+    (students || []).forEach(function (s) {
+      if (studentStatus(s, now) === 'inactive') return;
+      strugglingSkills(s).forEach(function (sk) {
+        var k = sk.skillId;
+        if (!bySkill[k]) bySkill[k] = { skillId: k, name: sk.name || k, students: [], reasons: [] };
+        bySkill[k].students.push({ id: String(s._id), name: fullName(s) });
+        if (sk.reason === 'tutor-flagged' && sk.detail) bySkill[k].reasons.push(sk.detail);
+      });
+    });
+    // A "group" is two or more — one stuck student is a queue item, not a lesson.
+    return Object.keys(bySkill).map(function (k) { return bySkill[k]; })
+      .filter(function (g) { return g.students.length >= 2; })
+      .sort(function (a, b) { return b.students.length - a.students.length || a.name.localeCompare(b.name); })
+      .slice(0, limit || 3);
+  }
+
+  /** Skills mastered in the window, newest first. */
+  function recentWins(students, now, days) {
+    now = now || Date.now();
+    var cutoff = now - (days || 30) * DAY_MS;
+    var wins = [];
+    (students || []).forEach(function (s) {
+      ((s.skillSummary && s.skillSummary.recentlyMastered) || []).forEach(function (r) {
+        var t = time(r.masteredDate);
+        if (t >= cutoff) wins.push({ studentId: String(s._id), name: fullName(s), skill: r.name || r.skillId, at: t });
+      });
+    });
+    return wins.sort(function (a, b) { return b.at - a.at; });
+  }
+
   /** {current, previous, pct} — pct null when there is no baseline to compare to. */
   function trend(current, previous) {
     current = Number(current) || 0;
@@ -180,7 +319,12 @@
     daysSinceActive: daysSinceActive,
     normalizeMastery: normalizeMastery,
     classMetrics: classMetrics,
-    trend: trend
+    trend: trend,
+    plainMath: plainMath,
+    fullName: fullName,
+    buildActionQueue: buildActionQueue,
+    teachNext: teachNext,
+    recentWins: recentWins
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
