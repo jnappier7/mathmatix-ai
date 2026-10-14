@@ -34,7 +34,8 @@ const SOLVE = {
   'inscribed-figures': (it) => {
     if (/square is inscribed in a circle/.test(it.prompt)) { const [r] = nums(it.prompt); return `${(2 * r) ** 2 / 2}`; }
     const [s] = nums(it.prompt);
-    return `${s * s} - ${(s / 2) ** 2}π`;
+    const q = (s / 2) ** 2;
+    return `${s * s} - ${q === 1 ? '' : q}π`;   // a coefficient of 1 is not written
   },
   'shadow-similar': (it) => { const [p, sp, st] = nums(it.prompt); return `${(p * st) / sp}`; },
   'trig-to-area': (it) => {

@@ -51680,22 +51680,22 @@
    },
    {
     "label": "B",
-    "text": "√18"
+    "text": "3√2"
    },
    {
     "label": "C",
-    "text": "3√2"
+    "text": "9√2"
    },
    {
     "label": "D",
     "text": "18"
    }
   ],
-  "correctOption": "C",
+  "correctOption": "B",
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √3 · √6 = √(3 × 6) = √18, and √18 still has a perfect square in it: 18 = 9 × 2, so √18 = 3√2. Wrong choices: A) √9 adds what is under the radicals instead of multiplying; B) √18 multiplies correctly but leaves a perfect square trapped under the radical; D) 18 multiplies correctly but forgets the answer is still a square root.",
+  "explanation": "Radicals multiply straight across: √3 · √6 = √(3 × 6) = √18, and √18 still has a perfect square in it: 18 = 9 × 2, so √18 = 3√2. Wrong choices: A) √9 adds what is under the radicals instead of multiplying; C) 9√2 moves the perfect square 9 out of the radical without taking its square root (√9 = 3); D) 18 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -52908,7 +52908,7 @@
    },
    {
     "label": "C",
-    "text": "√60"
+    "text": "4√15"
    },
    {
     "label": "D",
@@ -52919,7 +52919,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √10 · √6 = √(10 × 6) = √60, and √60 still has a perfect square in it: 60 = 4 × 15, so √60 = 2√15. Wrong choices: A) √16 adds what is under the radicals instead of multiplying; C) √60 multiplies correctly but leaves a perfect square trapped under the radical; D) 60 multiplies correctly but forgets the answer is still a square root.",
+  "explanation": "Radicals multiply straight across: √10 · √6 = √(10 × 6) = √60, and √60 still has a perfect square in it: 60 = 4 × 15, so √60 = 2√15. Wrong choices: A) √16 adds what is under the radicals instead of multiplying; C) 4√15 moves the perfect square 4 out of the radical without taking its square root (√4 = 2); D) 60 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -54088,7 +54088,7 @@
    },
    {
     "label": "C",
-    "text": "√50"
+    "text": "25√2"
    },
    {
     "label": "D",
@@ -54099,7 +54099,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √5 · √10 = √(5 × 10) = √50, and √50 still has a perfect square in it: 50 = 25 × 2, so √50 = 5√2. Wrong choices: A) √15 adds what is under the radicals instead of multiplying; C) √50 multiplies correctly but leaves a perfect square trapped under the radical; D) 50 multiplies correctly but forgets the answer is still a square root.",
+  "explanation": "Radicals multiply straight across: √5 · √10 = √(5 × 10) = √50, and √50 still has a perfect square in it: 50 = 25 × 2, so √50 = 5√2. Wrong choices: A) √15 adds what is under the radicals instead of multiplying; C) 25√2 moves the perfect square 25 out of the radical without taking its square root (√25 = 5); D) 50 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",
@@ -54723,7 +54723,7 @@
    },
    {
     "label": "C",
-    "text": "√20"
+    "text": "4√5"
    },
    {
     "label": "D",
@@ -54734,7 +54734,7 @@
   "difficulty": 2,
   "gradeBand": "8-12",
   "ohioDomain": "The Number System",
-  "explanation": "Radicals multiply straight across: √2 · √10 = √(2 × 10) = √20, and √20 still has a perfect square in it: 20 = 4 × 5, so √20 = 2√5. Wrong choices: A) √12 adds what is under the radicals instead of multiplying; C) √20 multiplies correctly but leaves a perfect square trapped under the radical; D) 20 multiplies correctly but forgets the answer is still a square root.",
+  "explanation": "Radicals multiply straight across: √2 · √10 = √(2 × 10) = √20, and √20 still has a perfect square in it: 20 = 4 × 5, so √20 = 2√5. Wrong choices: A) √12 adds what is under the radicals instead of multiplying; C) 4√5 moves the perfect square 4 out of the radical without taking its square root (√4 = 2); D) 20 multiplies correctly but forgets the answer is still a square root.",
   "tags": [
    "act",
    "act-number-quantity",

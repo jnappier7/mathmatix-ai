@@ -104,28 +104,23 @@ function toMathjs(text) {
 }
 const SAMPLES = [-2.7, -1.3, 0.6, 1.9, 3.4];
 
-// Equal VALUE is the point of some questions, which test FORM:
+// Equal VALUE is the point of one kind of question, which tests a FORM that
+// is defined, not a matter of taste:
 //   "Write 1,690,000 in scientific notation"  — 16.9 × 10⁵ is the classic
-//     wrong-form distractor next to the key 1.69 × 10⁶;
-//   "Simplify: √3 · √6"                         — √18 is the unsimplified form
-//     next to the key 3√2.
+//     wrong-form distractor next to the key 1.69 × 10⁶. A coefficient outside
+//     [1, 10) is not scientific notation, so it is plainly wrong.
 // Such a pair is allowed only when one member IS the key and the other is
-// the recognisable wrong form. Everything else equal stays a defect: two
-// orderings of one factorisation, x⁶ next to |x⁶|, or 28.8 × 10⁹ next to
-// 2.88 × 10¹⁰ on a question that never asked for scientific notation.
-function hasSquareFactor(n) {
-  for (let k = 2; k * k <= n; k++) if (n % (k * k) === 0) return true;
-  return false;
-}
+// that wrong form. Everything else equal stays a defect: two orderings of one
+// factorisation, x⁶ next to |x⁶|, 28.8 × 10⁹ next to 2.88 × 10¹⁰ on a question
+// that never asked for scientific notation — and an unsimplified radical next
+// to its simplified key. "Simplify √2 · √10" offered 2√5 AND √20; a student
+// who answered √20 was marked wrong for a true statement (QA pass,
+// 2026-10-13), so a radical is no longer exempt: the item is double-keyed.
 function isWrongFormOf(prompt, other) {
   const t = String(other || '').replace(/−/g, '-');
   if (/scientific notation/i.test(prompt)) {
     const m = /^\s*(-?\d+(?:\.\d+)?)\s*[×x*]\s*10/.exec(t);
     if (m) { const c = Math.abs(parseFloat(m[1])); return c < 1 || c >= 10; }
-  }
-  if (/\bsimplif|simplest/i.test(prompt)) {
-    const m = /√\s*\(?\s*(\d+)\s*\)?/.exec(t);
-    if (m) return hasSquareFactor(parseInt(m[1], 10));
   }
   return false;
 }
@@ -236,13 +231,14 @@ function assessOptions(problem) {
     if (seen.has(key) && lowered[seen.get(key)] !== lowered[i]) equal.push(`${texts[seen.get(key)]} = ${texts[i]}`);
     else seen.set(key, i);
   });
-  // Same idea for expressions: x⁶ and |x⁶|, 2√3 and √12.
+  // Same idea for expressions: x⁶ and |x⁶|, 2√3 and √12, 4 and √16.
+  const keyIdx = correctOptionIndex(problem);
   if (!negated && !equal.length) {
-    const keyIdx = correctOptionIndex(problem);
     const sigs = texts.map((t) => (DIMENSION.test(t) ? null : expressionSignature(t)));
     for (let i = 0; i < sigs.length; i++) {
       for (let j = i + 1; j < sigs.length; j++) {
-        if (lowered[i] === lowered[j] || values[i] != null || !sameSignature(sigs[i], sigs[j])) continue;
+        // Two plain numbers were compared above; any other pair is compared here.
+        if (lowered[i] === lowered[j] || (values[i] != null && values[j] != null) || !sameSignature(sigs[i], sigs[j])) continue;
         const formPair = (i === keyIdx && isWrongFormOf(prompt, texts[j]))
           || (j === keyIdx && isWrongFormOf(prompt, texts[i]));
         if (!formPair) equal.push(`${texts[i]} = ${texts[j]}`);
@@ -250,6 +246,14 @@ function assessOptions(problem) {
     }
   }
   if (equal.length) issues.push({ code: 'equivalent_options', detail: equal.join('; ') });
+  // When one of an equal pair is the KEY, the item is double-keyed: it has two
+  // right answers and grades one of them wrong. Reported on its own as well,
+  // so the audit names the worse defect.
+  if (keyIdx != null) {
+    const k = texts[keyIdx];
+    const toKey = equal.filter((pair) => pair.split(' = ').includes(k));
+    if (toKey.length) issues.push({ code: 'equivalent_to_key', detail: toKey.join('; ') });
+  }
 
   // 2c) A probability question offering a "probability" above 1 or below 0
   //     (23/22, 140%): a free elimination. Only when the key itself is a valid
