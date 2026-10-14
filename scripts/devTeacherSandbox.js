@@ -78,7 +78,9 @@ function roster(now) {
     skills: { 'slope-from-two-points': entry('practicing', { masteryScore: 41, lastPracticed: at(1.2), pillars: { accuracy: { correct: 3, total: 9, percentage: 0.33 } } }),
       'graphing-linear-equations': entry('learning', { masteryScore: 30, lastPracticed: at(1.3) }) } });
   people.push({ ...next(), kind: 'stuck-check', grade: '9', lastLogin: at(2.5), sessions: [[2.5, 11]],
-    skills: { 'fraction-operations': entry('learning', { masteryScore: 50, explicitlyFailed: true, failureDate: at(2.5), lastPracticed: at(2.5) }) } });
+    // Same skill as stuck-flagged: two students stuck on one skill is a small group ("Teach this next").
+    skills: { 'two-step-equations': entry('learning', { masteryScore: 50, explicitlyFailed: true, failureDate: at(2.5), lastPracticed: at(2.5) }),
+      'fraction-operations': entry('practicing', { masteryScore: 60, lastPracticed: at(2.5) }) } });
   // Just started a skill (seeded at 30) — must NOT read as needing help.
   people.push({ ...next(), kind: 'just-started', grade: '8', lastLogin: at(0.3), sessions: [[0.3, 9]],
     skills: { 'combining-like-terms': entry('learning', { masteryScore: 30, lastPracticed: at(0.3) }) } });

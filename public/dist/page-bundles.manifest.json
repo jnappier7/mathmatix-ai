@@ -252,11 +252,12 @@
         ]
       },
       {
-        "href": "/dist/css/teacher-css1.9ed509d9.css",
+        "href": "/dist/css/teacher-css1.69b1da38.css",
         "files": [
           "/css/dashboard-mobile.css",
           "/css/demo-mode.css",
-          "/css/teacher-school-year.css"
+          "/css/teacher-school-year.css",
+          "/css/teacher-home.css"
         ]
       }
     ],
@@ -281,7 +282,7 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.734169d0.js",
+        "src": "/dist/js/teacher-js2.90442901.js",
         "files": [
           "/js/idle-dialog.js",
           "/js/auto-logout.js",
@@ -289,6 +290,7 @@
           "/js/teacher-live-monitor.js",
           "/js/teacher-metrics.js",
           "/js/teacher-school-year.js",
+          "/js/teacher-home.js",
           "/js/teacher-dashboard.js?v=2.3",
           "/js/teacher-transcripts.js",
           "/js/teacher-curriculum.js",
