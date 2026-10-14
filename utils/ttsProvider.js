@@ -4,6 +4,7 @@
 const axios = require('axios');
 const { retryWithExponentialBackoff } = require('./openaiClient');
 const ttsStream = require('./ttsStream');
+const { applyPronunciations } = require('./ttsPronunciation');
 
 const TTS_PROVIDER = 'cartesia';
 
@@ -117,7 +118,7 @@ async function generateCartesiaAudioResponse(text, voiceId, language = 'en') {
             `${CARTESIA_BASE_URL}/tts/bytes`,
             {
                 model_id: CARTESIA_MODEL,
-                transcript: text,
+                transcript: applyPronunciations(text),
                 voice: {
                     mode: "id",
                     id: voiceId

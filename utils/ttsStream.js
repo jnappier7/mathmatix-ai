@@ -6,6 +6,7 @@
 const WebSocket = require('ws');
 const crypto = require('crypto');
 const logger = require('./logger').child({ module: 'ttsStream' });
+const { applyPronunciations } = require('./ttsPronunciation');
 
 const CARTESIA_API_KEY = process.env.CARTESIA_API_KEY;
 const CARTESIA_VERSION = '2025-04-16';
@@ -120,7 +121,7 @@ function createSynthesizer(opts) {
             ws.send(JSON.stringify({
                 model_id: CARTESIA_MODEL,
                 voice: { mode: 'id', id: voiceId },
-                transcript: text,
+                transcript: applyPronunciations(text),
                 continue: !isFinal,
                 context_id: contextId,
                 language,
@@ -313,7 +314,7 @@ function createPool({ voiceId, language = 'en' }) {
                 ws.send(JSON.stringify({
                     model_id: CARTESIA_MODEL,
                     voice: { mode: 'id', id: voiceId },
-                    transcript: text,
+                    transcript: applyPronunciations(text),
                     continue: !isFinal,
                     context_id: cid,
                     language,
