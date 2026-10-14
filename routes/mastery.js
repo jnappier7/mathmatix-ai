@@ -2522,7 +2522,7 @@ router.get('/skill-graph', isAuthenticated, async (req, res) => {
             // Get mastery status for this skill
             const mastery = skillMastery?.get?.(skillId) || skillMastery?.[skillId] || {};
             const status = mastery.status || 'locked';
-            const masteryScore = mastery.masteryScore || 0;
+            const masteryScore = require('../utils/masteryScore').normalizedMasteryScore(mastery.masteryScore);
 
             // Determine visual state
             let nodeState = 'locked';

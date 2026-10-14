@@ -435,10 +435,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             const students = await response.json();
             currentStudentsData = students; // Store for detail lookup
-            renderStudentList(students);
+            const searchQuery = studentSearchInput ? studentSearchInput.value : '';
+            const filterType = studentFilterSelect ? studentFilterSelect.value : 'all';
+            renderStudentList(students, filterType, searchQuery);
             // Re-paint the class-chip rail so "All Classes" count reflects
             // the now-loaded roster size.
             if (typeof renderClassChips === 'function') renderClassChips();
+            // Every tile, list and alert repaints from the same payload. This
+            // used to be bolted on by a later reassignment of this function,
+            // which ran only AFTER the initial load had already awaited the
+            // original — so on load every tile sat at "--" until the first
+            // 30-second poll.
+            refreshDashboardStats(students);
         } catch (error) {
             console.error("Failed to fetch students:", error);
             studentListDiv.innerHTML = "<p>Error loading student data. Please refresh.</p>";
@@ -467,14 +475,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     return nameB.localeCompare(nameA);
                 }
                 case 'last-login':
-                    return new Date(b.lastLogin || 0) - new Date(a.lastLogin || 0);
+                    return (TeacherMetrics.lastActiveAt(b) || 0) - (TeacherMetrics.lastActiveAt(a) || 0);
                 case 'grade': {
                     const gradeA = parseInt(a.gradeLevel) || 0;
                     const gradeB = parseInt(b.gradeLevel) || 0;
                     return gradeA - gradeB;
                 }
                 case 'weekly-minutes':
-                    return (b.weeklyActiveTutoringMinutes || 0) - (a.weeklyActiveTutoringMinutes || 0);
+                    return TeacherMetrics.weekMinutes(b, 0) - TeacherMetrics.weekMinutes(a, 0);
                 case 'level':
                     return (b.level || 0) - (a.level || 0);
                 default:
@@ -736,8 +744,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
-        const lastLoginDate = student.lastLogin ? new Date(student.lastLogin) : null;
-        const lastLoginText = lastLoginDate ? formatTimeAgo(lastLoginDate) : 'Never';
+        // Last ACTIVE, not last password entry: long sessions and older
+        // accounts left real students reading "Never".
+        const lastLoginText = TeacherMetrics.formatLastActive(student);
 
         const badgeClass = status === 'active' ? 'badge-active' : status === 'struggling' ? 'badge-struggling' : 'badge-inactive';
         const badgeText = status === 'active' ? 'Active' : status === 'struggling' ? 'Needs Help' : 'Inactive';
@@ -785,7 +794,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <span class="student-metric"><i class="fas fa-graduation-cap" aria-hidden="true"></i> Grade ${student.gradeLevel || 'N/A'}</span>
                 <span class="student-metric"><i class="fas fa-trophy" aria-hidden="true"></i> Level ${student.level || 1}</span>
                 <span class="student-metric"><i class="fas fa-clock" aria-hidden="true"></i> ${lastLoginText}</span>
-                <span class="student-metric"><i class="fas fa-bolt" aria-hidden="true"></i> ${student.weeklyActiveTutoringMinutes || 0} min/wk</span>
+                <span class="student-metric"><i class="fas fa-bolt" aria-hidden="true"></i> ${TeacherMetrics.weekMinutes(student, 0)} min/wk</span>
                 ${currentSkillHtml}
             </div>
             <div class="card-buttons">
@@ -973,37 +982,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Determine student status based on activity and performance
+    // Status has ONE definition, shared by every surface (js/teacher-metrics.js).
     function getStudentStatus(student) {
-        const lastLogin = student.lastLogin ? new Date(student.lastLogin) : null;
-        const daysSinceLogin = lastLogin ? (Date.now() - lastLogin) / (1000 * 60 * 60 * 24) : Infinity;
-
-        // Check if inactive (7+ days since login)
-        if (daysSinceLogin > 7) return 'inactive';
-
-        // Check if struggling (low weekly minutes or flagged)
-        const weeklyMinutes = student.weeklyActiveTutoringMinutes || 0;
-        if (weeklyMinutes < 10 && daysSinceLogin <= 7) return 'struggling';
-
-        // Active and doing well
-        if (daysSinceLogin <= 1) return 'active';
-
-        return 'active';
+        return TeacherMetrics.studentStatus(student);
     }
 
-    // Format time ago helper
-    function formatTimeAgo(date) {
-        const seconds = Math.floor((Date.now() - date) / 1000);
-        if (seconds < 60) return 'Just now';
-        const minutes = Math.floor(seconds / 60);
-        if (minutes < 60) return `${minutes}m ago`;
-        const hours = Math.floor(minutes / 60);
-        if (hours < 24) return `${hours}h ago`;
-        const days = Math.floor(hours / 24);
-        if (days === 1) return 'Yesterday';
-        if (days < 7) return `${days}d ago`;
-        return date.toLocaleDateString();
-    }
 
     function addEventListenersToButtons() {
         document.querySelectorAll('.view-as-student-btn').forEach(button => {
@@ -1122,12 +1105,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Populate stats
         document.getElementById('detail-level').textContent = student.level || 1;
         document.getElementById('detail-xp').textContent = (student.xp || 0).toLocaleString();
-        document.getElementById('detail-weekly-minutes').textContent = student.weeklyActiveTutoringMinutes || 0;
+        document.getElementById('detail-weekly-minutes').textContent = TeacherMetrics.weekMinutes(student, 0);
         document.getElementById('detail-total-minutes').textContent = student.totalActiveTutoringMinutes || 0;
         document.getElementById('detail-email').textContent = student.email || '-';
-        document.getElementById('detail-last-login').textContent = student.lastLogin
-            ? new Date(student.lastLogin).toLocaleString()
-            : 'Never';
+        const lastActive = TeacherMetrics.lastActiveAt(student);
+        document.getElementById('detail-last-login').textContent = lastActive
+            ? `Last active ${new Date(lastActive).toLocaleString()}`
+            : 'Not active yet';
 
         // Reset to overview tab
         document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
@@ -1210,15 +1194,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const barsDiv = document.getElementById('sparkline-bars');
         if (!barsDiv) return;
 
-        // Simulate 4-week trend using weekly minutes
-        // In production, this would come from a real API
-        const currentWeek = student.weeklyActiveTutoringMinutes || 0;
-        const weeks = [
-            { label: '3 wks ago', value: Math.round(currentWeek * (0.6 + Math.random() * 0.4)) },
-            { label: '2 wks ago', value: Math.round(currentWeek * (0.7 + Math.random() * 0.4)) },
-            { label: 'Last wk', value: Math.round(currentWeek * (0.8 + Math.random() * 0.3)) },
-            { label: 'This wk', value: currentWeek }
-        ];
+        // Real rolling weeks from the student's tutoring sessions
+        // (activity.weeklyMinutes, utils/studentActivity.js). This chart used
+        // to be random numbers around this week's figure.
+        const labels = ['3 wks ago', '2 wks ago', 'Last wk', 'This wk'];
+        const weeks = [3, 2, 1, 0].map((i, k) => ({ label: labels[k], value: TeacherMetrics.weekMinutes(student, i) }));
 
         const maxVal = Math.max(...weeks.map(w => w.value), 1);
 
@@ -1544,47 +1524,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ============================================
 
     function updateClassOverview(students) {
-        // Total students
-        document.getElementById('stat-total-students').textContent = students.length;
+        const m = TeacherMetrics.classMetrics(students);
+        const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-        // Count by status
-        let activeCount = 0;
-        let strugglingCount = 0;
-        let inactiveCount = 0;
-        let totalLevel = 0;
-        let totalWeeklyMinutes = 0;
+        setText('stat-total-students', m.total);
+        // "Active Today" means today (local midnight), from real activity.
+        setText('stat-active-now', m.activeToday);
+        // "Need Attention" counts what it says: active students with recent
+        // evidence of struggle. Inactive students are their own list.
+        setText('stat-needs-attention', m.needHelp);
+        setText('stat-avg-progress', m.avgLevel != null ? m.avgLevel.toFixed(1) : '--');
+        // Average over students who actually worked this week — dividing by
+        // a roster full of last year's accounts made every class look idle.
+        setText('stat-weekly-minutes', m.activeByWeek[0] > 0 ? Math.round(m.minutesByWeek[0] / m.activeByWeek[0]) : 0);
+        setText('overview-updated', 'Updated just now');
 
-        students.forEach(student => {
-            const status = getStudentStatus(student);
-            if (status === 'active') activeCount++;
-            else if (status === 'struggling') strugglingCount++;
-            else if (status === 'inactive') inactiveCount++;
-
-            totalLevel += student.level || 1;
-            totalWeeklyMinutes += student.weeklyActiveTutoringMinutes || 0;
-        });
-
-        document.getElementById('stat-active-now').textContent = activeCount;
-        document.getElementById('stat-needs-attention').textContent = strugglingCount + inactiveCount;
-        document.getElementById('stat-avg-progress').textContent = students.length > 0
-            ? (totalLevel / students.length).toFixed(1)
-            : '--';
-        document.getElementById('stat-weekly-minutes').textContent = students.length > 0
-            ? Math.round(totalWeeklyMinutes / students.length)
-            : '--';
-
-        // Update timestamp
-        document.getElementById('overview-updated').textContent = 'Updated just now';
-
-        // Make clickable cards work
-        document.getElementById('attention-card').onclick = () => {
+        const attentionCard = document.getElementById('attention-card');
+        if (attentionCard) attentionCard.onclick = () => {
             studentFilterSelect.value = 'struggling';
             applyFilters();
-            showToast('Showing students who need attention', 'info');
+            showToast('Showing students who need help', 'info');
         };
 
-        // Calculate and display average mastery from skill data
-        updateAvgMastery(students);
+        updateAvgMastery(students, m);
     }
 
     // ============================================
@@ -1592,27 +1554,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ============================================
 
     function updateMasteryOverview(students) {
-        let totalMastered = 0;
-        let totalLearning = 0;
+        const m = TeacherMetrics.classMetrics(students);
+        const totalMastered = m.skills.mastered;
+        // "Learning" covers every in-flight state, not just status==='learning'
+        // (practicing / re-fragile / needs-review were silently dropped).
+        const totalLearning = m.skills.inProgress + m.skills.slipping;
         let totalReady = 0;
-        let studentsWithSkills = 0;
-
         students.forEach(student => {
-            const mastery = student.skillMastery || {};
-            const skills = Object.values(mastery);
-            if (skills.length > 0) {
-                studentsWithSkills++;
-                skills.forEach(skill => {
-                    if (skill.status === 'mastered') totalMastered++;
-                    else if (skill.status === 'learning') totalLearning++;
-                    else if (skill.status === 'ready') totalReady++;
-                });
-            }
+            Object.values(student.skillMastery || {}).forEach(skill => { if (skill && skill.status === 'ready') totalReady++; });
         });
-
+        const studentsWithSkills = m.skills.studentsWithData;
         const totalSkills = totalMastered + totalLearning + totalReady;
 
-        // Update counts
         const masteredEl = document.getElementById('mastery-count-mastered');
         const learningEl = document.getElementById('mastery-count-learning');
         const readyEl = document.getElementById('mastery-count-ready');
@@ -1627,7 +1580,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             ? `${studentsWithSkills} student${studentsWithSkills !== 1 ? 's' : ''} with data`
             : '';
 
-        // Update ring charts
         const maxVal = Math.max(totalSkills, 1);
         updateMasteryRing('mastery-ring-mastered', totalMastered, maxVal);
         updateMasteryRing('mastery-ring-learning', totalLearning, maxVal);
@@ -1641,29 +1593,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         ring.setAttribute('stroke-dasharray', `${pct} ${100 - pct}`);
     }
 
-    function updateAvgMastery(students) {
+    function updateAvgMastery(students, metrics) {
         const el = document.getElementById('stat-avg-accuracy');
         if (!el) return;
-
-        let totalScore = 0;
-        let skillCount = 0;
-
-        students.forEach(student => {
-            const mastery = student.skillMastery || {};
-            Object.values(mastery).forEach(skill => {
-                if (typeof skill.masteryScore === 'number') {
-                    totalScore += skill.masteryScore;
-                    skillCount++;
-                }
-            });
-        });
-
-        if (skillCount > 0) {
-            const avg = (totalScore / skillCount * 100).toFixed(0);
-            el.textContent = `${avg}%`;
-        } else {
-            el.textContent = '--';
-        }
+        // Normalized 0-100 (legacy rows are 0-1) — this tile read 287%.
+        const m = metrics || TeacherMetrics.classMetrics(students);
+        el.textContent = m.avgMastery != null ? `${m.avgMastery}%` : '--';
     }
 
     // ============================================
@@ -1679,14 +1614,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (strugglingStudents.length > 0) {
             let html = strugglingStudents.map(s => {
                 const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
-                return `<span class="insight-chip" data-student-id="${s._id}">${name}</span>`;
+                const skill = TeacherMetrics.strugglingSkills(s)[0];
+                const title = skill ? ` title="${escapeHtml(skill.name || skill.skillId)}"` : '';
+                return `<span class="insight-chip" data-student-id="${s._id}"${title}>${escapeHtml(name)}</span>`;
             }).join('');
             if (allStruggling.length > 5) {
                 html += `<span class="insight-chip" style="background:#fff3e0;border-color:#f57c00;color:#f57c00;font-weight:600;">+${allStruggling.length - 5} more</span>`;
             }
             strugglingList.innerHTML = html;
         } else {
-            strugglingList.innerHTML = '<span class="insight-empty">No students struggling</span>';
+            strugglingList.innerHTML = '<span class="insight-empty">No one is stuck right now</span>';
         }
 
         // Show/hide "view all" link
@@ -1700,19 +1637,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             };
         }
 
-        // Top performers (highest level)
+        // Top performers: real recent progress (skills mastered in the last 30
+        // days), among students active this week. Level is lifetime XP — it
+        // ranked a test account and a "needs help" student at the top.
         const excellingList = document.getElementById('excelling-list');
-        const excellingStudents = [...students]
-            .sort((a, b) => (b.level || 1) - (a.level || 1))
+        const excellingStudents = students
+            .filter(s => TeacherMetrics.studentStatus(s) !== 'inactive')
+            .map(s => ({ s, n: (s.skillSummary && s.skillSummary.recentlyMastered || []).length }))
+            .filter(x => x.n > 0)
+            .sort((a, b) => b.n - a.n || TeacherMetrics.weekMinutes(b.s, 0) - TeacherMetrics.weekMinutes(a.s, 0))
             .slice(0, 5);
 
         if (excellingStudents.length > 0) {
-            excellingList.innerHTML = excellingStudents.map(s => {
+            excellingList.innerHTML = excellingStudents.map(({ s, n }) => {
                 const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
-                return `<span class="insight-chip" data-student-id="${s._id}">${name} (L${s.level || 1})</span>`;
+                return `<span class="insight-chip" data-student-id="${s._id}">${escapeHtml(name)} (+${n} skill${n !== 1 ? 's' : ''})</span>`;
             }).join('');
         } else {
-            excellingList.innerHTML = '<span class="insight-empty">No data yet</span>';
+            excellingList.innerHTML = '<span class="insight-empty">No new skills mastered this month yet</span>';
         }
 
         // Inactive students
@@ -1723,7 +1665,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (inactiveStudents.length > 0) {
             let html = inactiveStudents.map(s => {
                 const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
-                return `<span class="insight-chip" data-student-id="${s._id}">${name}</span>`;
+                return `<span class="insight-chip" data-student-id="${s._id}">${escapeHtml(name)}</span>`;
             }).join('');
             if (allInactive.length > 5) {
                 html += `<span class="insight-chip" style="background:#f5f5f5;color:#666;font-weight:600;">+${allInactive.length - 5} more</span>`;
@@ -1840,22 +1782,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         // Create CSV content
-        const headers = ['Name', 'Username', 'Grade', 'Level', 'XP', 'Weekly Minutes', 'Total Minutes', 'Last Login', 'Status'];
+        const headers = ['Name', 'Username', 'Grade', 'Level', 'XP', 'Minutes (last 7 days)', 'Total Minutes', 'Last Active', 'Status'];
+        const statusLabel = { active: 'Active', struggling: 'Needs help', inactive: 'Inactive' };
         const rows = currentStudentsData.map(s => {
             const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
-            const lastLogin = s.lastLogin ? new Date(s.lastLogin).toLocaleDateString() : 'Never';
-            const status = getStudentStatus(s);
+            const last = TeacherMetrics.lastActiveAt(s);
             return [
                 name,
                 s.username,
                 s.gradeLevel || 'N/A',
                 s.level || 1,
                 s.xp || 0,
-                s.weeklyActiveTutoringMinutes || 0,
+                TeacherMetrics.weekMinutes(s, 0),
                 s.totalActiveTutoringMinutes || 0,
-                lastLogin,
-                status
-            ].join(',');
+                last ? new Date(last).toLocaleDateString() : 'Never',
+                statusLabel[getStudentStatus(s)] || getStudentStatus(s)
+            ].map(csvCell).join(',');
         });
 
         const csv = [headers.join(','), ...rows].join('\n');
@@ -1956,107 +1898,38 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 3000);
     }
 
-    // ============================================
-    // UPDATE RIGHT SIDEBAR
-    // ============================================
-
-    function updateRightSidebar(students) {
-        // Today's summary (simulated data - would need real API)
-        const today = new Date().toDateString();
-        const loginsToday = students.filter(s => {
-            const lastLogin = s.lastLogin ? new Date(s.lastLogin).toDateString() : null;
-            return lastLogin === today;
-        }).length;
-
-        document.getElementById('summary-logins').textContent = loginsToday;
-
-        // Calculate approximate problems solved (would need real data)
-        const totalMinutesToday = students.reduce((sum, s) => {
-            const lastLogin = s.lastLogin ? new Date(s.lastLogin) : null;
-            if (lastLogin && lastLogin.toDateString() === today) {
-                return sum + (s.weeklyActiveTutoringMinutes || 0) / 7; // Rough daily estimate
-            }
-            return sum;
-        }, 0);
-
-        document.getElementById('summary-problems').textContent = Math.round(totalMinutesToday * 2); // ~2 problems per minute
-        document.getElementById('summary-time').textContent = Math.round(totalMinutesToday);
-
-        // Milestones (would need real milestone data)
-        const milestonesDiv = document.getElementById('recent-milestones');
-        const topStudents = [...students]
-            .filter(s => (s.level || 1) >= 3)
-            .sort((a, b) => (b.level || 1) - (a.level || 1))
-            .slice(0, 3);
-
-        if (topStudents.length > 0) {
-            milestonesDiv.innerHTML = topStudents.map(s => {
-                const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
-                return `
-                    <div class="milestone-item">
-                        <span class="milestone-icon">🏆</span>
-                        <div class="milestone-content">
-                            <div class="milestone-student">${name}</div>
-                            <div class="milestone-text">Reached Level ${s.level || 1}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
+    // One repaint path for every stat surface. Each painter is isolated so one
+    // failure can't leave the rest of the page on placeholders.
+    function refreshDashboardStats(students) {
+        [updateClassOverview, updateInsightsCards, updateRightSidebar, updateWeeklyComparison,
+            renderSmartAlerts, updateMasteryOverview, checkForStrugglingAlerts].forEach(paint => {
+            try { paint(students); } catch (err) { console.error('[Dashboard] stat painter failed:', paint.name, err); }
+        });
     }
-
-    // Update the fetchAssignedStudents to call our new update functions
-    const originalFetchAssignedStudents = fetchAssignedStudents;
-    fetchAssignedStudents = async function() {
-        if (!studentListDiv) return;
-        studentListDiv.innerHTML = 'Loading students...';
-        try {
-            const response = await fetch("/api/teacher/students");
-            if (!response.ok) {
-                if (response.status === 401 || response.status === 403) window.location.href = "/login.html";
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const students = await response.json();
-            currentStudentsData = students;
-
-            // Render student list with current filters
-            const searchQuery = studentSearchInput ? studentSearchInput.value : '';
-            const filterType = studentFilterSelect ? studentFilterSelect.value : 'all';
-            renderStudentList(students, filterType, searchQuery);
-            // Refresh chips so the All Classes count reflects polled data
-            if (typeof renderClassChips === 'function') renderClassChips();
-
-            // Update all the UX components
-            updateClassOverview(students);
-            updateInsightsCards(students);
-            updateRightSidebar(students);
-            updateWeeklyComparison(students);
-            renderSmartAlerts(students);
-            updateMasteryOverview(students);
-
-            // Check for new struggling alerts
-            checkForStrugglingAlerts(students);
-
-        } catch (error) {
-            console.error("Failed to fetch students:", error);
-            studentListDiv.innerHTML = "<p>Error loading student data. Please refresh.</p>";
-        }
-    };
 
     // ============================================
     // REAL-TIME POLLING (3x Better UX)
     // ============================================
 
-    let pollingInterval = null;
-    let previousStrugglingCount = 0;
+    var pollingInterval = null;
+    var previousStrugglingCount = 0;
 
     function startRealtimePolling() {
         // Poll every 30 seconds for updates
         pollingInterval = setInterval(async () => {
             try {
-                const response = await fetch("/api/teacher/students");
+                // Roster mode: every stat now reads skillSummary, so the 30s
+                // poll no longer re-downloads every student's full skill map.
+                const response = await fetch("/api/teacher/students?fields=roster");
                 if (response.ok) {
                     const students = await response.json();
+                    // Keep full skillMastery from the background load for the
+                    // features that still need it (current-skill chips, IEP).
+                    const fullById = new Map(currentStudentsData.map(st => [String(st._id), st]));
+                    students.forEach(st => {
+                        const prev = fullById.get(String(st._id));
+                        if (prev && prev.skillMastery && !st.skillMastery) st.skillMastery = prev.skillMastery;
+                    });
                     currentStudentsData = students;
 
                     // Silent update - don't replace list if user is searching/filtering
@@ -2064,20 +1937,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const filterType = studentFilterSelect ? studentFilterSelect.value : 'all';
 
                     // Update stats without disrupting user
-                    updateClassOverview(students);
-                    updateInsightsCards(students);
-                    updateRightSidebar(students);
-                    updateWeeklyComparison(students);
-                    renderSmartAlerts(students);
-                    updateMasteryOverview(students);
+                    refreshDashboardStats(students);
 
                     // Only re-render list if no active search
                     if (!searchQuery) {
                         renderStudentList(students, filterType, searchQuery);
                     }
-
-                    // Check for new alerts
-                    checkForStrugglingAlerts(students);
 
                     // Update timestamp
                     const timestampEl = document.getElementById('overview-updated');
@@ -2173,7 +2038,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // BULK SELECTION
     // ============================================
 
-    let selectedStudents = new Set();
+    var selectedStudents = new Set();
 
     function toggleStudentSelection(studentId, cardElement) {
         if (selectedStudents.has(studentId)) {
@@ -2222,11 +2087,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const selected = currentStudentsData.filter(s => selectedStudents.has(s._id));
         if (selected.length === 0) return;
 
-        const headers = ['Name', 'Username', 'Grade', 'Level', 'XP', 'Weekly Minutes', 'Status'];
+        const headers = ['Name', 'Username', 'Grade', 'Level', 'XP', 'Minutes (last 7 days)', 'Status'];
         const rows = selected.map(s => {
             const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
             const status = getStudentStatus(s);
-            return [name, s.username, s.gradeLevel || 'N/A', s.level || 1, s.xp || 0, s.weeklyActiveTutoringMinutes || 0, status].join(',');
+            return [name, s.username, s.gradeLevel || 'N/A', s.level || 1, s.xp || 0, TeacherMetrics.weekMinutes(s, 0), status].map(csvCell).join(',');
         });
 
         const csv = [headers.join(','), ...rows].join('\n');
@@ -2321,39 +2186,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ============================================
 
     function updateWeeklyComparison(students) {
-        // Calculate current week metrics
-        const currentMetrics = {
-            totalMinutes: students.reduce((sum, s) => sum + (s.weeklyActiveTutoringMinutes || 0), 0),
-            activeCount: students.filter(s => getStudentStatus(s) === 'active').length,
-            needHelp: students.filter(s => getStudentStatus(s) === 'struggling' || getStudentStatus(s) === 'inactive').length,
-            avgLevel: students.length > 0 ? students.reduce((sum, s) => sum + (s.level || 1), 0) / students.length : 0
-        };
+        // Real rolling weeks (activity.weeklyMinutes). "Last week" used to be
+        // random numbers around this week. Where there is no honest history
+        // (need-help, avg level), the tile shows the value with no trend.
+        const m = TeacherMetrics.classMetrics(students);
+        setComparisonCard('cmp-minutes', m.minutesByWeek[0], m.minutesByWeek[1], 'cmp-minutes-trend');
+        setComparisonCard('cmp-active', m.activeByWeek[0], m.activeByWeek[1], 'cmp-active-trend');
+        setComparisonCard('cmp-attention', m.needHelp, null, 'cmp-attention-trend', true);
+        setComparisonCard('cmp-avg-level', m.avgLevel != null ? m.avgLevel.toFixed(1) : '--', null, 'cmp-level-trend');
 
-        // Estimate last week (in production this would come from API)
-        // Use a stored snapshot or slight variance
-        if (!previousWeekData) {
-            previousWeekData = {
-                totalMinutes: Math.round(currentMetrics.totalMinutes * (0.8 + Math.random() * 0.3)),
-                activeCount: Math.max(0, currentMetrics.activeCount + Math.floor(Math.random() * 5 - 2)),
-                needHelp: Math.max(0, currentMetrics.needHelp + Math.floor(Math.random() * 4 - 1)),
-                avgLevel: Math.max(1, currentMetrics.avgLevel - (Math.random() * 0.3))
-            };
-        }
-
-        // Update display
-        setComparisonCard('cmp-minutes', currentMetrics.totalMinutes, previousWeekData.totalMinutes, 'cmp-minutes-trend');
-        setComparisonCard('cmp-active', currentMetrics.activeCount, previousWeekData.activeCount, 'cmp-active-trend');
-        setComparisonCard('cmp-attention', currentMetrics.needHelp, previousWeekData.needHelp, 'cmp-attention-trend', true);
-        setComparisonCard('cmp-avg-level', currentMetrics.avgLevel.toFixed(1), previousWeekData.avgLevel, 'cmp-level-trend');
-
-        // Update period text
         const periodEl = document.getElementById('comparison-period');
-        if (periodEl) {
-            const now = new Date();
-            const weekStart = new Date(now);
-            weekStart.setDate(now.getDate() - now.getDay());
-            periodEl.textContent = `Week of ${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-        }
+        if (periodEl) periodEl.textContent = 'Last 7 days vs the 7 before';
     }
 
     function setComparisonCard(valueId, current, previous, trendId, invertColors = false) {
@@ -2363,10 +2206,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         valueEl.textContent = typeof current === 'string' ? current : current.toLocaleString();
 
+        if (previous === null || previous === undefined) {
+            trendEl.style.display = 'none';
+            return;
+        }
+        trendEl.style.display = '';
+
         const numCurrent = parseFloat(current);
         const numPrevious = parseFloat(previous);
         const diff = numCurrent - numPrevious;
-        const pct = numPrevious > 0 ? Math.round((diff / numPrevious) * 100) : 0;
+        const pct = numPrevious > 0 ? Math.round((diff / numPrevious) * 100) : (numCurrent > 0 ? 100 : 0);
 
         const arrow = trendEl.querySelector('.trend-arrow');
         const pctEl = trendEl.querySelector('.trend-pct');
@@ -2387,7 +2236,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         // Show previous week value for context
-        if (prevEl && numPrevious > 0) {
+        if (prevEl) {
             const prevDisplay = typeof previous === 'string' ? previous : Math.round(numPrevious).toLocaleString();
             prevEl.textContent = `vs ${prevDisplay}`;
         }
@@ -2440,11 +2289,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
 
             if (status === 'struggling') {
-                const mins = student.weeklyActiveTutoringMinutes || 0;
+                const skill = TeacherMetrics.strugglingSkills(student)[0];
+                const what = skill ? escapeHtml(skill.name || skill.skillId) : 'a skill';
+                const why = skill && skill.reason === 'low-accuracy' ? ` (${escapeHtml(skill.detail || '')} correct)`
+                    : skill && skill.reason === 'missed-on-check' ? ' (missed it on a check)' : '';
                 alerts.push({
                     type: 'struggling',
                     student,
-                    message: `<strong>${escapeHtml(fullName)}</strong> has only ${mins} min this week`,
+                    message: `<strong>${escapeHtml(fullName)}</strong> is stuck on ${what}${why}`,
                     actionLabel: 'Send encouragement',
                     actionClass: 'action-encourage',
                     actionType: 'encourage',
@@ -2453,17 +2305,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             if (status === 'inactive') {
-                const lastLogin = student.lastLogin ? new Date(student.lastLogin) : null;
-                const days = lastLogin ? Math.floor((Date.now() - lastLogin) / (1000 * 60 * 60 * 24)) : 999;
-                alerts.push({
-                    type: 'inactive',
-                    student,
-                    message: `<strong>${escapeHtml(fullName)}</strong> hasn't logged in for ${days} days`,
-                    actionLabel: 'Send reminder',
-                    actionClass: 'action-remind',
-                    actionType: 'remind',
-                    priority: 2
-                });
+                // Alert only on a LAPSE a teacher can act on: was working, then
+                // stopped (7-30 days), or a new account that never started.
+                // Months-gone accounts are roster cleanup, not a to-do — they
+                // flooded this feed with 90 "hasn't logged in for 999 days".
+                const days = TeacherMetrics.daysSinceActive(student);
+                const createdDaysAgo = student.createdAt ? (Date.now() - new Date(student.createdAt)) / 86400000 : Infinity;
+                const lapsed = days !== null && days <= 30;
+                const newNeverStarted = days === null && createdDaysAgo <= 30;
+                if (lapsed || newNeverStarted) {
+                    alerts.push({
+                        type: 'inactive',
+                        student,
+                        message: days === null
+                            ? `<strong>${escapeHtml(fullName)}</strong> hasn't started yet`
+                            : `<strong>${escapeHtml(fullName)}</strong> hasn't been on in ${days} days`,
+                        actionLabel: 'Send reminder',
+                        actionClass: 'action-remind',
+                        actionType: 'remind',
+                        priority: 2
+                    });
+                }
             }
 
             // Milestone: high level students
@@ -2599,7 +2461,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Which half of the left sidebar the mobile drawer is mirroring.
     // 'alerts' = #smart-alerts-feed, 'activity' = #live-feed-panel's raw feed.
-    let mobileFeedView = 'alerts';
+    var mobileFeedView = 'alerts';
 
     /**
      * Repaint the mobile drawer from whichever desktop panel is selected.
@@ -2995,11 +2857,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const rows = students.map(s => {
             const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
-            const lastLogin = s.lastLogin ? new Date(s.lastLogin) : null;
-            const isActive = lastLogin && lastLogin > sevenDaysAgo;
-            const lastLoginText = lastLogin
-                ? lastLogin.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                : 'Never';
+            const lastActive = TeacherMetrics.lastActiveAt(s);
+            const isActive = !!lastActive && lastActive > sevenDaysAgo.getTime();
+            const lastLoginText = TeacherMetrics.formatLastActive(s);
             const statusDot = isActive
                 ? '<span style="width:8px;height:8px;border-radius:50%;background:#27ae60;display:inline-block;margin-right:6px;" title="Active"></span>'
                 : '<span style="width:8px;height:8px;border-radius:50%;background:#e0e0e0;display:inline-block;margin-right:6px;" title="Inactive"></span>';
@@ -3010,7 +2870,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <td style="padding: 10px 12px; font-size: 13px; color: #888;">${escapeHtml(s.username || '')}</td>
                     <td style="padding: 10px 12px; font-size: 13px; color: #888;">${s.gradeLevel || '—'}</td>
                     <td style="padding: 10px 12px; font-size: 13px;">Lv ${s.level || 1}</td>
-                    <td style="padding: 10px 12px; font-size: 13px; color: #888;">${s.weeklyActiveTutoringMinutes || 0} min</td>
+                    <td style="padding: 10px 12px; font-size: 13px; color: #888;">${TeacherMetrics.weekMinutes(s, 0)} min</td>
                     <td style="padding: 10px 12px; font-size: 13px; color: #888;">${lastLoginText}</td>
                 </tr>
             `;
@@ -3031,6 +2891,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <tbody>${rows}</tbody>
             </table>
         `;
+    }
+
+    // RFC 4180 quoting + formula-injection guard for spreadsheet exports.
+    function csvCell(value) {
+        let v = value === null || value === undefined ? '' : String(value);
+        if (/^[=+\-@\t\r]/.test(v)) v = "'" + v;
+        return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
     }
 
     function escapeHtml(text) {
@@ -3530,65 +3397,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ============================================
 
     function updateRightSidebar(students) {
-        // Calculate real stats for today
-        const today = new Date().toDateString();
-        const loginsToday = students.filter(s => {
-            const lastLogin = s.lastLogin ? new Date(s.lastLogin).toDateString() : null;
-            return lastLogin === today;
-        }).length;
-
-        document.getElementById('summary-logins').textContent = loginsToday;
-
-        // Count students with mastered skills this week
-        let recentMastery = 0;
-        students.forEach(s => {
-            const mastery = s.skillMastery || {};
-            Object.values(mastery).forEach(skill => {
-                if (skill.masteredDate) {
-                    const masteredDate = new Date(skill.masteredDate);
-                    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-                    if (masteredDate > weekAgo) recentMastery++;
-                }
-            });
-        });
-
-        document.getElementById('summary-problems').textContent = recentMastery;
-        document.getElementById('summary-time').textContent =
-            Math.round(students.reduce((sum, s) => sum + (s.weeklyActiveTutoringMinutes || 0), 0));
-
-        // Milestones - show students who recently mastered skills
-        const milestonesDiv = document.getElementById('recent-milestones');
+        const m = TeacherMetrics.classMetrics(students);
+        const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        setText('summary-logins', m.activeToday);
+        let masteredThisWeek = 0;
+        const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
         const milestones = [];
         students.forEach(s => {
-            const mastery = s.skillMastery || {};
             const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
-            Object.entries(mastery).forEach(([skillId, skill]) => {
-                if (skill.status === 'mastered' && skill.masteredDate) {
-                    milestones.push({
-                        name,
-                        skill: skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                        date: new Date(skill.masteredDate)
-                    });
-                }
+            ((s.skillSummary && s.skillSummary.recentlyMastered) || []).forEach(r => {
+                const at = new Date(r.masteredDate).getTime();
+                if (at > weekAgo) masteredThisWeek++;
+                milestones.push({ name, skill: r.name || r.skillId, date: at });
             });
         });
+        setText('summary-problems', masteredThisWeek);
+        setText('summary-time', m.minutesByWeek[0].toLocaleString());
 
-        // Sort by most recent and take top 5
+        const milestonesDiv = document.getElementById('recent-milestones');
+        if (!milestonesDiv) return;
         milestones.sort((a, b) => b.date - a.date);
         const recentMilestones = milestones.slice(0, 5);
-
         if (recentMilestones.length > 0) {
-            milestonesDiv.innerHTML = recentMilestones.map(m => `
+            milestonesDiv.innerHTML = recentMilestones.map(ms => `
                 <div class="milestone-item">
                     <span class="milestone-icon" aria-hidden="true">&#127942;</span>
                     <div class="milestone-content">
-                        <div class="milestone-student">${escapeHtml(m.name)}</div>
-                        <div class="milestone-text">Mastered ${escapeHtml(m.skill)}</div>
+                        <div class="milestone-student">${escapeHtml(ms.name)}</div>
+                        <div class="milestone-text">Mastered ${escapeHtml(ms.skill)}</div>
                     </div>
                 </div>
             `).join('');
         } else {
-            milestonesDiv.innerHTML = '<span class="milestone-empty">No recent skill milestones yet</span>';
+            milestonesDiv.innerHTML = '<span class="milestone-empty">No skills mastered in the last 30 days</span>';
         }
     }
 });

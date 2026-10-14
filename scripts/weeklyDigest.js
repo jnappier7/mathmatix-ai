@@ -20,6 +20,7 @@ try {
   if (err.code !== 'MODULE_NOT_FOUND') throw err;
 }
 const mongoose = require('mongoose');
+const { getEffectiveWeeklyMinutes } = require('../utils/studentActivity');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { sendParentWeeklyReport } = require('../utils/emailService');
@@ -200,7 +201,7 @@ async function calculateStudentProgress(studentId) {
         currentLevel: student.level || 1,
         xpEarned: student.xp || 0,
         activeMinutes: stats.totalMinutes,
-        weeklyActiveMinutes: student.weeklyActiveTutoringMinutes || 0,
+        weeklyActiveMinutes: getEffectiveWeeklyMinutes(student),
         sessionCount: stats.sessionCount,
         masteryGained,
         strugglingSkills: strugglingSkills.slice(0, 5),

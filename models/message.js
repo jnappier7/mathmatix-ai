@@ -151,8 +151,8 @@ messageSchema.statics.getConversations = async function(userId, options = {}) {
         {
             $match: {
                 $or: [
-                    { senderId: mongoose.Types.ObjectId(userId), deletedBySender: false },
-                    { recipientId: mongoose.Types.ObjectId(userId), deletedByRecipient: false }
+                    { senderId: new mongoose.Types.ObjectId(userId), deletedBySender: false },
+                    { recipientId: new mongoose.Types.ObjectId(userId), deletedByRecipient: false }
                 ]
             }
         },
@@ -164,7 +164,7 @@ messageSchema.statics.getConversations = async function(userId, options = {}) {
             $group: {
                 _id: {
                     $cond: {
-                        if: { $eq: ['$senderId', mongoose.Types.ObjectId(userId)] },
+                        if: { $eq: ['$senderId', new mongoose.Types.ObjectId(userId)] },
                         then: '$recipientId',
                         else: '$senderId'
                     }
@@ -175,7 +175,7 @@ messageSchema.statics.getConversations = async function(userId, options = {}) {
                         $cond: [
                             {
                                 $and: [
-                                    { $eq: ['$recipientId', mongoose.Types.ObjectId(userId)] },
+                                    { $eq: ['$recipientId', new mongoose.Types.ObjectId(userId)] },
                                     { $ne: ['$status', 'read'] }
                                 ]
                             },

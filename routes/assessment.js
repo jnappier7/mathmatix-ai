@@ -312,7 +312,7 @@ async function completeAssessment(user, conversation, aiResponse) {
         status: 'mastered',
         rung: 'proved',
         provenBy: 'placement',
-        masteryScore: 1.0,
+        masteryScore: 100, // canonical 0-100 (utils/masteryScore.js)
         masteredDate: new Date(),
         notes: 'Demonstrated in initial assessment'
       });
@@ -322,7 +322,7 @@ async function completeAssessment(user, conversation, aiResponse) {
       setSkillMasteryEntry(user, rawId, {
         status: 'learning',
         rung: 'learned',
-        masteryScore: 0.5,
+        masteryScore: 50,
         learningStarted: new Date(),
         notes: 'Partially demonstrated in assessment'
       });
