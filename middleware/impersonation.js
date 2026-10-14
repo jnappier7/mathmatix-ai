@@ -74,7 +74,10 @@ async function handleImpersonation(req, res, next) {
     req.originalUser = req.user;
     req.user = targetUser;
     req.isImpersonating = true;
-    req.impersonationReadOnly = impersonation.readOnly !== false;
+    // Always read-only, whatever the session record says: a session started
+    // before the server stopped honouring a client-sent readOnly:false must not
+    // keep its write access.
+    req.impersonationReadOnly = true;
     req.impersonationLogId = impersonation.logId;
 
     // Track page visit for audit log
@@ -164,10 +167,11 @@ function logBlockedAction(req, blocked) {
  * @param {Object} req - Express request
  * @param {Object} actor - The user initiating impersonation (admin/teacher/parent)
  * @param {Object} target - The user being impersonated
- * @param {Boolean} readOnly - Whether to enforce read-only mode
+ * Impersonation is always read-only — there is deliberately no parameter for it.
  * @returns {Object} The created impersonation log entry
  */
-async function startImpersonation(req, actor, target, readOnly = true) {
+async function startImpersonation(req, actor, target) {
+  const readOnly = true;
   // Create audit log entry
   const log = await ImpersonationLog.create({
     actorId: actor._id,
@@ -324,7 +328,7 @@ function getImpersonationStatus(req) {
     targetId: impersonation.targetId,
     targetName: impersonation.targetName,
     targetRole: impersonation.targetRole,
-    readOnly: impersonation.readOnly,
+    readOnly: true,
     startedAt: impersonation.startedAt,
     remainingMinutes: Math.ceil(remainingMs / 60000),
     timeoutMs: IMPERSONATION_TIMEOUT_MS
