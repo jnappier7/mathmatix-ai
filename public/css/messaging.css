@@ -159,6 +159,7 @@
 }
 .mm-msg-contact:hover { background: rgba(18, 179, 179, 0.08); }
 .mm-msg-contact small { display: block; color: #5b6876; font-size: 0.78rem; }
+.mm-msg-unlinked { margin: 10px 4px 0; padding: 10px 12px; border-radius: 8px; background: #f6f8fa; color: #4a5560; font-size: 0.82rem; line-height: 1.45; }
 
 /* Screen-reader-only helper, in case the host page has not defined one. */
 .mm-msg .sr-only,

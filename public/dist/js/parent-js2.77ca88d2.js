@@ -819,20 +819,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Distance to keep floating tour UI above the bottom edge. On phones the
+// dashboards pin a bottom nav (~70px); a fixed `bottom: 20px` put the prompt and
+// the Tour button on top of it.
+function tourBottomInset() {
+    const nav = document.getElementById('mobile-bottom-nav');
+    if (nav && nav.offsetHeight > 0 && getComputedStyle(nav).display !== 'none' &&
+        getComputedStyle(nav).position === 'fixed') {
+        return nav.offsetHeight + 12;
+    }
+    return 20;
+}
+
+// The page's language when it has the translation engine (parent pages follow
+// the parent's language); English otherwise.
+function tourText(key, english) {
+    const I = window.MathmatixI18n;
+    return (I && I.t(key)) || english;
+}
+
+const escTour = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 // Show prompt asking if user wants to take the tour
 function showTourPrompt(tour) {
     const prompt = document.createElement('div');
     prompt.id = 'tour-prompt';
     prompt.innerHTML = `
-        <div style="position: fixed; bottom: 20px; right: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); padding: 20px; max-width: 320px; z-index: 9999; animation: slideUp 0.3s ease;">
+        <div role="dialog" aria-labelledby="tour-prompt-title" style="position: fixed; bottom: ${tourBottomInset()}px; right: 16px; left: auto; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); padding: 20px; max-width: min(320px, calc(100vw - 32px)); z-index: 9999; animation: slideUp 0.3s ease;">
             <div style="display: flex; align-items: flex-start; gap: 12px;">
                 <div style="font-size: 32px;">👋</div>
                 <div>
-                    <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #2c3e50;">Welcome! New here?</h3>
-                    <p style="margin: 0 0 16px 0; font-size: 14px; color: #666; line-height: 1.5;">Take a quick tour to learn about all the features available to you.</p>
+                    <h3 id="tour-prompt-title" style="margin: 0 0 8px 0; font-size: 16px; color: #2c3e50;">${escTour(tourText('tour.welcomeTitle', 'Welcome! New here?'))}</h3>
+                    <p style="margin: 0 0 16px 0; font-size: 14px; color: #666; line-height: 1.5;">${escTour(tourText('tour.welcomeBody', 'Take a quick tour to learn about all the features available to you.'))}</p>
                     <div style="display: flex; gap: 10px;">
-                        <button id="tour-start-btn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Take Tour</button>
-                        <button id="tour-dismiss-btn" style="background: #f5f5f5; color: #666; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Maybe Later</button>
+                        <button id="tour-start-btn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">${escTour(tourText('tour.take', 'Take Tour'))}</button>
+                        <button id="tour-dismiss-btn" style="background: #f5f5f5; color: #666; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">${escTour(tourText('tour.later', 'Maybe Later'))}</button>
                     </div>
                 </div>
             </div>
@@ -859,6 +880,9 @@ function showTourPrompt(tour) {
     document.getElementById('tour-dismiss-btn').addEventListener('click', () => {
         prompt.remove();
         tour.markCompleted(); // Don't show again
+        // "If dismissed, it goes" — the floating Tour pill too, now (it used to
+        // linger until the next load, over the phone drawers).
+        document.querySelectorAll('.tour-help-btn').forEach((b) => b.remove());
     });
 
     // Auto-dismiss after 30 seconds. Previously this just removed the
@@ -891,11 +915,11 @@ function addTourButton(tour) {
 
     const btn = document.createElement('button');
     btn.className = 'tour-help-btn';
-    btn.innerHTML = '<i class="fas fa-question-circle"></i> Tour';
+    btn.innerHTML = `<i class="fas fa-question-circle" aria-hidden="true"></i> ${escTour(tourText('tour.button', 'Tour'))}`;
     btn.style.cssText = `
         position: fixed;
-        bottom: 20px;
-        left: 20px;
+        bottom: ${tourBottomInset()}px;
+        left: 16px;
         background: white;
         border: 1px solid #e0e0e0;
         padding: 10px 16px;

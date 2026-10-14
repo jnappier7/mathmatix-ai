@@ -109,6 +109,20 @@ function updateCodeFields() {
   if (field) field.value = code.toUpperCase();
 })();
 
+// Parent's sign-up link for their child (/signup.html?parentCode=MATH-…), from
+// the parent dashboard's "My child doesn't have an account yet" path: arrive as
+// a student with the parent's invite code filled in, so the account is linked
+// to the parent the moment it exists.
+(function prefillParentCode() {
+  const code = new URLSearchParams(window.location.search).get("parentCode");
+  if (!code || !/^[A-Za-z0-9-]{3,24}$/.test(code)) return;
+  const studentRadio = roleRadios.find(r => r.value === "student");
+  if (studentRadio) studentRadio.checked = true;
+  if (hasCodeCheckbox) hasCodeCheckbox.checked = true;
+  const field = document.getElementById("parentInviteCode");
+  if (field) field.value = code.toUpperCase();
+})();
+
 // Initial state
 updateCodeFields();
 
