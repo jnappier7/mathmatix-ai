@@ -497,19 +497,23 @@ function compareRank(a, b) {
   return 0;
 }
 
-function pickDiverse(candidates, usedSignatures, targetDifficulty, formPrints = []) {
+function pickDiverse(candidates, usedSignatures, targetDifficulty, formPrints = [], keyCrowded = null) {
   if (!candidates || !candidates.length) return null;
   const distance = (c) => {
     const d = preciseDifficulty(c);
     return targetDifficulty == null || d == null ? 0 : Math.abs(d - targetDifficulty);
   };
-  // Ranked, in order: a template the form already has goes last; then a skill
-  // the form already has (only differs when a fallback pool spans a whole
-  // category); then wording-shape novelty; then nearness to the ramp target.
+  // Ranked, in order: a template the form already has goes last; then an item
+  // whose fixed-order key would land on a letter the form already has its
+  // share of (see balanceAnswerPositions — nothing after selection can move
+  // it); then a skill the form already has (only differs when a fallback pool
+  // spans a whole category); then wording-shape novelty; then nearness to the
+  // ramp target.
   const rank = (c) => {
     const fp = formPrints.length ? fingerprint(c) : null;
     return [
       fp && formPrints.some((f) => similarTask(f, fp)) ? 1 : 0,
+      keyCrowded && keyCrowded(c) ? 1 : 0,
       formPrints.filter((f) => f.skillId === c.skillId).length,
       usedSignatures.get(promptSignature(c.prompt)) || 0,
       distance(c),
@@ -643,9 +647,31 @@ async function assembleForm(opts = {}) {
     precise.set(problem.problemId, preciseDifficulty(problem));
     const ki = problem.answerType === 'multiple-choice' ? correctOptionIndex(problem) : null;
     if (ki != null) keyText.set(problem.problemId, normalizeOptions(problem.options)[ki].text);
+    const fk = fixedKeyOf(problem);
+    if (fk != null && fk >= 0) fixedKeys[fk] = (fixedKeys[fk] || 0) + 1;
     usedProblemIds.push(problem.problemId);
     usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
     items.push(toClientItem(slot, problem));
+  };
+  // Fixed-order keys (numeric choices served ascending, I/II/III lists) can't
+  // be moved by balanceAnswerPositions, so a form that DRAWS too many on one
+  // letter is stuck there: 15 of 36 PreACT keys on one letter before a single
+  // free item was placed (2026-10-14; about one form in five). Past a fair
+  // share per letter, selection prefers another item — preferred, never
+  // required, and only behind template novelty.
+  const fixedKeys = [];
+  const fairShare = Math.ceil(slots.length / (blueprint.choicesPerItem || 4));
+  const fixedKeyOf = (problem) => {
+    if (problem.answerType !== 'multiple-choice') return null;
+    const ki = correctOptionIndex(problem);
+    if (ki == null) return null;
+    const keyTxt = normalizeOptions(problem.options)[ki].text;
+    const served = toClientItem({}, problem).options.map((o) => o.text);
+    return choiceOrderFixed(served) ? served.indexOf(keyTxt) : null;
+  };
+  const keyCrowded = (problem) => {
+    const fk = fixedKeyOf(problem);
+    return fk != null && fk >= 0 && (fixedKeys[fk] || 0) >= fairShare;
   };
   const reserveSiblings = async (problem, si) => {
     const sibs = await Problem.find({
@@ -813,7 +839,7 @@ async function assembleForm(opts = {}) {
         if (!fresh.length) fresh = await wideDraw(unmet, pacedWant || avoidCapped);
         if (fresh.length) candidates = fresh;
       }
-      problem = pickDiverse(candidates, usedSignatures, slot.targetDifficulty, formPrints);
+      problem = pickDiverse(candidates, usedSignatures, slot.targetDifficulty, formPrints, keyCrowded);
       if (!problem && reuseSeen) {
         problem = await reuseLeastRecent(slot, catSkills);
         if (problem) reused += 1;
