@@ -25,17 +25,40 @@ const { getTestDef, getTestDefByCourse, testScope, courseTestScope } = require('
 // item. Computed on the fly from the sessions themselves — no separate store to
 // drift out of sync.
 async function seenProblemIdsForUser(userId) {
+  return (await seenLedgerForUser(userId)).ids;
+}
+
+/**
+ * The same ledger with WHEN: { ids, seenAt } where seenAt maps problemId -> the
+ * latest time (ms) a test that served it was started. The assembler reuses the
+ * least recently seen item only once a student has seen everything else
+ * (utils/actTestAssembler.js reuseSeen). `exceptSessionId` leaves one session
+ * out of seenAt (the test being built), so its own items are never "reused".
+ */
+async function seenLedgerForUser(userId, { exceptSessionId } = {}) {
   try {
-    const sessions = await ActTestSession.find({ userId }).select('items.problemId').lean();
-    const seen = new Set();
-    for (const s of sessions) {
-      for (const it of (s.items || [])) if (it && it.problemId) seen.add(it.problemId);
-    }
-    return [...seen];
+    const sessions = await ActTestSession.find({ userId }).select('items.problemId createdAt').lean();
+    return ledgerFromSessions(sessions, exceptSessionId);
   } catch (err) {
     console.error('[actTest] seen-ledger lookup failed (non-fatal, no exclusion):', err.message);
-    return [];   // fail open: better a possible repeat than a blocked test
+    return { ids: [], seenAt: {} };   // fail open: better a possible repeat than a blocked test
   }
+}
+
+/** { ids, seenAt } from session docs carrying items.problemId (+ createdAt). */
+function ledgerFromSessions(sessions, exceptSessionId) {
+  const seen = new Set();
+  const seenAt = {};
+  for (const s of sessions || []) {
+    const mine = exceptSessionId && String(s._id) === String(exceptSessionId);
+    const t = s.createdAt ? new Date(s.createdAt).getTime() : 0;
+    for (const it of (s.items || [])) {
+      if (!it || !it.problemId) continue;
+      seen.add(it.problemId);
+      if (!mine && (seenAt[it.problemId] == null || t > seenAt[it.problemId])) seenAt[it.problemId] = t;
+    }
+  }
+  return { ids: [...seen], seenAt };
 }
 
 /** Per-category correct/total from a graded session's responses. */
@@ -179,6 +202,8 @@ async function seedBootcampFromLatestTest(cs, userId) {
 
 module.exports = {
   seenProblemIdsForUser,
+  seenLedgerForUser,
+  ledgerFromSessions,
   categoryTally,
   seedBootcampFromTest,
   seedBootcampFromLatestTest,

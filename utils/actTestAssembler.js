@@ -23,8 +23,8 @@
 
 const DEFAULT_BLUEPRINT = require('../seeds/act-math-blueprint.json');
 const { normalizeOptions } = require('./mcOptions');
-const { hasBadDistractors } = require('./distractorQuality');
-const { sortPermutation } = require('./actChoiceOrder');
+const { hasBadDistractors, correctOptionIndex } = require('./distractorQuality');
+const { sortPermutation, sortValues } = require('./actChoiceOrder');
 const { thetaToDifficultyExact } = require('./itemCalibration');
 const { estimatedDifficulty } = require('./actDifficultyEstimates');
 // models/problem (mongoose) is required lazily inside assembleForm so the pure
@@ -110,7 +110,48 @@ function bankFilter(blueprint) {
   const filter = { answerType: types.length === 1 ? types[0] : { $in: types } };
   if (Array.isArray(blueprint.sources) && blueprint.sources.length) filter.source = { $in: blueprint.sources };
   else Object.assign(filter, FORM_SOURCE_FILTER);
+  const band = difficultyBand(blueprint);
+  if (band) filter.difficulty = { $gte: band.min, $lte: band.max };
+  const outOfScope = excludedPrompts(blueprint);
+  if (outOfScope.length) filter.$nor = outOfScope.map((re) => ({ prompt: re }));
   return filter;
+}
+
+/**
+ * The difficulty band a blueprint (or a routed module) may draw from at all:
+ * { min, max } on the bank's 1-5 scale, or null for no band.
+ *
+ * The ramp only CENTRES each slot's ±1 window, so a harder Module 2 at target
+ * 3 drew 2s, and an easier one at target 3 drew 4s: the "harder" module held
+ * f(5)-level items and the two routes overlapped most of their range (QA pass,
+ * 2026-10-13). A routed module's band is a hard floor and ceiling on every
+ * draw, fallbacks included (seeds/sat-math-blueprint.json modules[].routes).
+ */
+function difficultyBand(blueprint) {
+  const b = blueprint && blueprint.difficultyBand;
+  if (!b || !Number.isFinite(Number(b.min)) || !Number.isFinite(Number(b.max))) return null;
+  return { min: Number(b.min), max: Number(b.max) };
+}
+
+/**
+ * Items a blueprint keeps off its forms by what they ASK, when the skill tag is
+ * too coarse: the PreACT draws act-radical-rational-equations (rational
+ * equations are in scope) but not the rational-function asymptote items in the
+ * same skill, and act-graph-transformations but not f(−x). Case-insensitive
+ * regex sources in blueprint.excludePrompts.
+ */
+function excludedPrompts(blueprint) {
+  const list = (blueprint && blueprint.excludePrompts) || [];
+  return list.map((src) => new RegExp(src, 'i'));
+}
+
+/** Does a doc pass the blueprint's band and scope (for paths that don't query through bankFilter)? */
+function inBlueprintScope(blueprint, p) {
+  if (!p) return false;
+  const band = difficultyBand(blueprint);
+  const d = Number(p.difficulty);
+  if (band && Number.isFinite(d) && (d < band.min || d > band.max)) return false;
+  return !excludedPrompts(blueprint).some((re) => re.test(String(p.prompt || '')));
 }
 
 /**
@@ -421,6 +462,23 @@ function structuralSignature(p) {
   return task ? `task:${task[0]}` : `${p && p.skillId}|${equationShape(prompt)}`;
 }
 
+// ── Template families ──────────────────────────────────────────────────────
+//
+// The generated banks write one TEMPLATE many times with new numbers, and name
+// the copies after it: act-reasoning-light-travel-01 … -14, act-set-garden-
+// path-03-01, act-visual-graph-slope-07. Two of one template on a form read as
+// the same question twice (light-travel at Q17 and Q20 of one ACT form), and
+// one on a retake reads as a repeat even under a new id ($2 game, path around
+// the garden, tile patterns: QA pass, 2026-10-13). An item from a bank that
+// does not name its templates (the Fable, enhanced and SAT banks) falls back
+// to its structuralSignature: a named task, or skill + masked equation shape.
+const NAMED_TEMPLATE = /^(act-(?:reasoning|visual|set))-(.+?)-\d+(?:-\d+)?$/;
+
+function templateFamily(p) {
+  const m = NAMED_TEMPLATE.exec(String((p && p.problemId) || ''));
+  return m ? `${m[1]}:${m[2]}` : structuralSignature(p);
+}
+
 /**
  * From a candidate pool, pick the problem whose shape has appeared LEAST in the
  * form so far — so repeated draws of the same skill surface different wordings.
@@ -494,6 +552,14 @@ function toGenerationSpec(slot, blueprint = DEFAULT_BLUEPRINT) {
  *   a skill, the same-category fallback keeps drawing fresh items; when a whole
  *   category is exhausted those slots become gaps (coverage drops), which the
  *   caller surfaces honestly instead of silently repeating.
+ * @param {Object} [opts.seenAt] - problemId -> when the student last saw it (ms),
+ *   for items seen on EARLIER tests. Only read with `reuseSeen`: these are the
+ *   items it may reuse, least recently seen first.
+ * @param {string[]} [opts.neverReuse] - ids never to reuse (served earlier in
+ *   this same sitting, e.g. Module 1 when building Module 2).
+ * @param {boolean} [opts.reuseSeen=false] - when a slot has no unseen item left
+ *   anywhere in its category, fill it with the least recently seen one instead
+ *   of leaving a gap. Counted in coverage.reused, so the caller can say so.
  * @returns {Promise<{items, gaps, coverage, meta}>}
  */
 async function assembleForm(opts = {}) {
@@ -512,10 +578,20 @@ async function assembleForm(opts = {}) {
   const excludeIds = Array.isArray(opts.excludeIds) ? opts.excludeIds : [];
   const usedProblemIds = excludeIds.slice();
   const excludedCount = usedProblemIds.length;
+  const seenAt = opts.seenAt || {};
+  // Reusable: seen on an EARLIER test (a key of seenAt), never one already
+  // served in this sitting (opts.neverReuse — Module 1 of the same test).
+  const neverReuse = new Set(opts.neverReuse || []);
+  const reusable = Object.keys(seenAt).filter((id) => !neverReuse.has(id));
+  const reuseSeen = opts.reuseSeen === true && reusable.length > 0;
+  const band = difficultyBand(blueprint);
+  const formIds = new Set();          // problemIds on THIS form (placed or reserved)
+  let reused = 0;
   const usedSignatures = new Map();   // prompt-shape -> count, to avoid look-alikes
   const items = [];
   const gaps = [];
   const precise = new Map();          // problemId -> measured-or-authored difficulty, for ordering
+  const keyText = new Map();          // problemId -> the key's choice TEXT (never sent to the client)
 
   // Pacing (blueprint.visualTarget, blueprint.reasoningTarget = { min, max }).
   // After slot i the form should hold about min × (i + 1) / n of each paced
@@ -533,15 +609,17 @@ async function assembleForm(opts = {}) {
   // Near-copies: what the student has already seen (by content, not just id)
   // and what this form already holds. See nearCopy above.
   const seenPrints = [];
+  const seenFamilies = new Set();     // templates met on an earlier test
   if (excludeIds.length) {
     try {
-      const seenDocs = await Problem.find({ problemId: { $in: excludeIds } }).select('skillId prompt options svg').lean();
-      seenDocs.forEach((d) => seenPrints.push(fingerprint(d)));
+      const seenDocs = await Problem.find({ problemId: { $in: excludeIds } }).select('problemId skillId prompt options svg').lean();
+      seenDocs.forEach((d) => { seenPrints.push(fingerprint(d)); seenFamilies.add(templateFamily(d)); });
     } catch { /* the id exclusion still applies */ }
   }
   const formPrints = [];
   const strictShapes = blueprint.structuralLookAlikes === true;
   const formShapes = new Set();   // structuralSignature of every placed item
+  const formFamilies = new Set(); // templateFamily of every placed item
   const isNearCopy = (c) => {
     const fp = fingerprint(c);
     return seenPrints.some((f) => nearCopy(f, fp)) || formPrints.some((f) => nearCopy(f, fp));
@@ -560,7 +638,11 @@ async function assembleForm(opts = {}) {
     quotas.forEach((q) => { if (q.member(problem)) q.count += 1; });
     formPrints.push(fingerprint(problem));
     formShapes.add(structuralSignature(problem));
+    formFamilies.add(templateFamily(problem));
+    formIds.add(problem.problemId);
     precise.set(problem.problemId, preciseDifficulty(problem));
+    const ki = problem.answerType === 'multiple-choice' ? correctOptionIndex(problem) : null;
+    if (ki != null) keyText.set(problem.problemId, normalizeOptions(problem.options)[ki].text);
     usedProblemIds.push(problem.problemId);
     usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
     items.push(toClientItem(slot, problem));
@@ -572,11 +654,29 @@ async function assembleForm(opts = {}) {
     }).lean();
     sibs.sort((a, b) => (a.setOrder || 0) - (b.setOrder || 0));
     for (const sib of sibs) {
-      if (isNearCopy(sib) || hasBadDistractors(sib)) continue;
+      if (isNearCopy(sib) || hasBadDistractors(sib) || !inBlueprintScope(blueprint, sib)) continue;
       const cat = skillCat[sib.skillId];
       const j = slots.findIndex((sl, k) => k > si && !reserved.has(k) && sl.category === cat);
-      if (j >= 0) { reserved.set(j, sib); usedProblemIds.push(sib.problemId); }
+      if (j >= 0) { reserved.set(j, sib); usedProblemIds.push(sib.problemId); formIds.add(sib.problemId); }
     }
+  };
+
+  // The pool is exhausted for this student (every eligible item in the
+  // category already seen): the least recently seen item, of a template not
+  // already on this form, nearest the slot's target. Better than a short form,
+  // and honest — coverage.reused counts it so the caller can say so.
+  const reuseLeastRecent = async (slot, catSkills) => {
+    const skills = catSkills.length ? catSkills : [slot.skillId];
+    const ids = reusable.filter((id) => !formIds.has(id));
+    if (!ids.length) return null;
+    const docs = await Problem.find({ isActive: true, ...bank, skillId: { $in: skills }, problemId: { $in: ids } }).lean();
+    const ok = docs.filter((d) => !hasBadDistractors(d) && !formFamilies.has(templateFamily(d)));
+    const pool = ok.length ? ok : docs.filter((d) => !hasBadDistractors(d));
+    if (!pool.length) return null;
+    const when = (d) => Number(seenAt[d.problemId]) || 0;
+    const dist = (d) => Math.abs((preciseDifficulty(d) || 3) - slot.targetDifficulty);
+    pool.sort((a, b) => (when(a) - when(b)) || (dist(a) - dist(b)) || (String(a.problemId) < String(b.problemId) ? -1 : 1));
+    return pool[0];
   };
 
   for (let si = 0; si < slots.length; si++) {
@@ -599,16 +699,24 @@ async function assembleForm(opts = {}) {
       // (2.87 ± 1 spans only 3 and 4), thinning every pool and manufacturing
       // gaps; the fraction is spent below, on picking within the window.
       const center = Math.round(slot.targetDifficulty);
-      const lo = Math.max(1, center - 1);
-      const hi = Math.min(5, center + 1);
+      let lo = Math.max(1, center - 1);
+      let hi = Math.min(5, center + 1);
+      // A routed module's band bounds every window (see difficultyBand).
+      if (band) {
+        lo = Math.max(lo, band.min);
+        hi = Math.min(hi, band.max);
+        if (lo > hi) { lo = band.min; hi = band.max; }
+      }
       const inWindow = {
         isActive: true,
-        difficulty: { $gte: lo, $lte: hi },
         problemId: { $nin: usedProblemIds },
         ...bank,
+        difficulty: { $gte: lo, $lte: hi },
       };
       let candidates = [];
       const { difficulty: _anyD, ...anyDifficulty } = inWindow;
+      // "Any difficulty" still means inside the band.
+      if (band) anyDifficulty.difficulty = { $gte: band.min, $lte: band.max };
       const catSkills = byCat[slot.category] || [];
       // Kinds already at their max are kept out of every paced draw.
       const capped = quotas.filter((q) => q.count >= q.max);
@@ -618,6 +726,7 @@ async function assembleForm(opts = {}) {
         .map((q) => ({ q, due: Math.ceil((q.min * (si + 1)) / slots.length) }))
         .filter(({ q, due }) => q.count < due && q.count < q.max)
         .sort((a, b) => (b.due - b.q.count) - (a.due - a.q.count));
+      let pacedWant = null;   // the paced kind this slot's pool was drawn for
       for (const { q, due } of behind) {
         const want = [q.filter, ...avoidCapped];
         candidates = await drawPool(Problem, query({ ...inWindow, skillId: slot.skillId }, want), rng, 8);
@@ -630,7 +739,7 @@ async function assembleForm(opts = {}) {
           candidates = await drawPool(Problem, query({ ...inWindow, skillId: { $in: catSkills } }, want), rng, 8);
           if (!candidates.length) candidates = await drawPool(Problem, query({ ...anyDifficulty, skillId: { $in: catSkills } }, want), rng, 8);
         }
-        if (candidates.length) break;
+        if (candidates.length) { pacedWant = want; break; }
       }
       // A capped kind is asked to stay out in the query itself (filtering a
       // drawn pool afterwards let a 13th visual slip through). When only
@@ -650,7 +759,7 @@ async function assembleForm(opts = {}) {
         // whole bank. The category fallback below draws any difficulty from
         // the pinned bank instead.
         const p = await Problem.findNearDifficulty(slot.skillId, center, usedProblemIds, { preferMultipleChoice: true });
-        candidates = formEligible(p) && !hasBadDistractors(p) ? [p] : [];
+        candidates = formEligible(p) && !hasBadDistractors(p) && inBlueprintScope(blueprint, p) ? [p] : [];
       }
       if (!candidates.length) {
         // Same-category fallback: a thin sub-skill can be asked for more times
@@ -672,20 +781,43 @@ async function assembleForm(opts = {}) {
       // only if that empties the pool does a near-copy beat a gap.
       const fresh = candidates.filter((c) => !isNearCopy(c));
       if (fresh.length) candidates = fresh;
-      // Structural look-alikes (opt-in, SAT): never a second item of a task
-      // the form already holds. If this skill has nothing else, any skill in
-      // the category — near the target first, then at any difficulty — beats
-      // the repeat; only an exhausted category lets one through.
-      if (strictShapes && candidates.length) {
-        const distinct = (pool) => pool.filter((c) => !formShapes.has(structuralSignature(c)) && !isNearCopy(c));
+      // One item per template per form: never a second item of a template
+      // the form already holds (templateFamily), and for a blueprint that
+      // opts in (SAT) never a second of one structural task either. If this
+      // skill has nothing else, any skill in the category — near the target
+      // first, then at any difficulty — beats the repeat; only an exhausted
+      // category lets one through.
+      const distinct = (pool) => pool.filter((c) => !formFamilies.has(templateFamily(c))
+        && !(strictShapes && formShapes.has(structuralSignature(c))) && !isNearCopy(c));
+      // A pool drawn to keep a paced kind (visuals, reasoning) on pace widens
+      // within that kind first.
+      const wideDraw = async (filterFn, extra) => {
+        if (!catSkills.length) return [];
+        let pool = filterFn(await drawPool(Problem, query({ ...inWindow, skillId: { $in: catSkills } }, extra), rng, 48));
+        if (!pool.length) pool = filterFn(await drawPool(Problem, query({ ...anyDifficulty, skillId: { $in: catSkills } }, extra), rng, 96));
+        return pool;
+      };
+      if (candidates.length) {
         let wider = distinct(candidates);
-        if (!wider.length && catSkills.length) {
-          wider = distinct(await drawPool(Problem, query({ ...inWindow, skillId: { $in: catSkills } }, avoidCapped), rng, 48));
-          if (!wider.length) wider = distinct(await drawPool(Problem, query({ ...anyDifficulty, skillId: { $in: catSkills } }, avoidCapped), rng, 96));
-        }
+        if (!wider.length && pacedWant) wider = await wideDraw(distinct, pacedWant);
+        if (!wider.length) wider = await wideDraw(distinct, avoidCapped);
         if (wider.length) candidates = wider;
       }
+      // Then a template the student has not met on an earlier test: a new id
+      // with new numbers on a familiar template is a repeat to the student.
+      // Preferred, never required — a seen template beats a gap, and beats
+      // losing a paced visual or reasoning item.
+      if (candidates.length && seenFamilies.size) {
+        const unmet = (pool) => distinct(pool).filter((c) => !seenFamilies.has(templateFamily(c)));
+        let fresh = unmet(candidates);
+        if (!fresh.length) fresh = await wideDraw(unmet, pacedWant || avoidCapped);
+        if (fresh.length) candidates = fresh;
+      }
       problem = pickDiverse(candidates, usedSignatures, slot.targetDifficulty, formPrints);
+      if (!problem && reuseSeen) {
+        problem = await reuseLeastRecent(slot, catSkills);
+        if (problem) reused += 1;
+      }
       // Record the item's OWN fine skill (fallback may cross sub-skills within
       // the category), so scoring & personalization attribute to the real skill.
       if (problem && problem.skillId) slot.skillId = problem.skillId;
@@ -708,7 +840,11 @@ async function assembleForm(opts = {}) {
   // ramps, and pacing is taught on that assumption — move fast early, bank
   // time for the end. Stable, so the category interleave survives within
   // each difficulty band.
-  const ordered = groupSets(spreadFamilies(orderByDifficulty(items, (it) => precise.get(it.problemId))));
+  const ordered = balanceAnswerPositions(
+    groupSets(spreadFamilies(orderByDifficulty(items, (it) => precise.get(it.problemId)))),
+    (it) => keyText.get(it.problemId),
+    rng,
+  );
 
   return {
     items: ordered,
@@ -719,6 +855,7 @@ async function assembleForm(opts = {}) {
       missing: gaps.length,
       pct: slots.length ? Math.round((items.length / slots.length) * 100) : 0,
       excluded: excludedCount,   // items withheld as already-seen (re-test freshness)
+      reused,                    // slots filled with a least-recently-seen item (pool exhausted)
       visuals,                   // items answered from a figure or table
       reasoning,                 // multi-step reasoning items
     },
@@ -801,6 +938,105 @@ function groupSets(items) {
   return renumbered;
 }
 
+// ── Answer-position balance ────────────────────────────────────────────────
+//
+// Forms came out B-heavy (a PreACT form keyed 16 of 36 at B; an ACT form 15 of
+// 45, Q29-35 all B: QA pass, 2026-10-13). Numeric choices are served
+// ascending (utils/actChoiceOrder), and a generator that writes its distractors
+// around the answer puts the key second more often than not. A student who
+// notices "when unsure, pick B" is scoring the bank, not the math.
+//
+// Two levers, in order:
+//   1. An item whose choice ORDER is fixed — numeric (ascending, as on the real
+//      test) or a conventional list (I only / I and II only, None of these) —
+//      keeps its order; a run of more than 3 fixed keys on one letter is broken
+//      by trading places with a nearby item (selection, not reordering).
+//   2. Every other item's key is moved (one swap of two choices) to the letter
+//      the form is shortest of, never extending a run past 3.
+// Grading, review and explanations carry a pick by choice TEXT
+// (mcOptions.relabelByText / actReview.bankToTestLetters), so serving a
+// different order from the bank's is safe.
+const FIXED_LIST = /^(?:none of|all of|cannot be determined|not enough|it cannot be)|^(?:I{1,3}|IV)(?:\s*(?:,|and|or)\s*(?:I{1,3}|IV))*(?:\s+only)?$/i;
+const MAX_RUN = 3;
+const SWAP_REACH = 6;
+
+/** Must this item's choices stay in the order they are served? */
+function choiceOrderFixed(texts) {
+  if (!Array.isArray(texts) || texts.length < 2) return true;
+  if (sortValues(texts)) return true;
+  return texts.some((t) => FIXED_LIST.test(String(t == null ? '' : t).trim()));
+}
+
+/**
+ * Rebalance key positions across a finished form. `keyTextOf(item)` is the
+ * key's choice text (assembleForm keeps it server-side). Items without one
+ * (grid-ins, unknown keys) are left alone and break no runs. Positions are
+ * renumbered; shared-stimulus set members never move.
+ */
+function balanceAnswerPositions(items, keyTextOf, rng = Math.random) {
+  const out = (items || []).map((it) => ({ ...it }));
+  const keyAt = (it) => {
+    const k = keyTextOf ? keyTextOf(it) : undefined;
+    return k != null && Array.isArray(it.options) ? it.options.findIndex((o) => o && o.text === k) : -1;
+  };
+  const isMc = (it) => keyAt(it) >= 0;
+  const fixed = (it) => isMc(it) && choiceOrderFixed(it.options.map((o) => o.text));
+  const free = (it) => isMc(it) && !fixed(it);
+  // The letter a position is locked to: a fixed item's key, else null.
+  const locked = (i) => (out[i] && fixed(out[i]) ? keyAt(out[i]) : null);
+  const clash = (a, b) => !!a && !!b && familiesOf(a).some((f) => familiesOf(b).includes(f));
+  const fitsAt = (it, i) => !clash(out[i - 1], it) && !clash(it, out[i + 1]);
+
+  // 1. Break runs of fixed keys by trading places.
+  for (let i = MAX_RUN; i < out.length; i++) {
+    const L = locked(i);
+    if (L == null || out[i].setId) continue;
+    let run = 1;
+    while (run <= MAX_RUN && i - run >= 0 && locked(i - run) === L) run += 1;
+    if (run <= MAX_RUN) continue;
+    // Look a few questions ahead (the ramp barely moves) for one to trade.
+    for (let j = i + 1; j < Math.min(out.length, i + 1 + SWAP_REACH); j++) {
+      if (out[j].setId || locked(j) === L) continue;
+      const a = out[i], b = out[j];
+      out[i] = b; out[j] = a;
+      if (fitsAt(out[i], i) && fitsAt(out[j], j)) break;
+      out[i] = a; out[j] = b;
+    }
+  }
+
+  // 2. Place every free key where the form is shortest.
+  const width = Math.max(4, ...out.filter(isMc).map((it) => it.options.length));
+  const count = new Array(width).fill(0);
+  out.forEach((it) => { if (fixed(it)) count[keyAt(it)] += 1; });
+  const total = out.filter(isMc).length;
+  const letterAt = new Array(out.length).fill(null);
+  out.forEach((it, i) => { if (fixed(it)) letterAt[i] = keyAt(it); });
+  const runIf = (i, L) => {
+    let n = 1;
+    for (let k = i - 1; k >= 0 && letterAt[k] === L; k--) n += 1;
+    for (let k = i + 1; k < out.length && letterAt[k] === L && fixed(out[k]); k++) n += 1;
+    return n;
+  };
+  for (let i = 0; i < out.length; i++) {
+    const it = out[i];
+    if (!free(it)) continue;
+    const n = it.options.length;
+    const options = [];
+    for (let L = 0; L < n; L++) options.push({ L, deficit: total / n - count[L], tie: rng(), ok: runIf(i, L) <= MAX_RUN });
+    options.sort((a, b) => (Number(b.ok) - Number(a.ok)) || (b.deficit - a.deficit) || (a.tie - b.tie));
+    const to = options[0].L;
+    const from = keyAt(it);
+    if (to !== from) {
+      const texts = it.options.map((o) => o.text);
+      const t = texts[to]; texts[to] = texts[from]; texts[from] = t;
+      out[i] = { ...it, options: normalizeOptions(texts.map((text) => ({ text }))) };
+    }
+    letterAt[i] = to;
+    count[to] += 1;
+  }
+  return out.map((it, idx) => ({ ...it, position: idx + 1 }));
+}
+
 /**
  * Re-sequence assembled items easiest-first and renumber their positions.
  *
@@ -875,24 +1111,56 @@ function rawToScaled(raw, blueprint = DEFAULT_BLUEPRINT, formLength = null) {
  * This is measurement noise only. How well the scale predicts the REAL ACT
  * is a separate question that needs paired official scores.
  *
+ * ONE rule for every test, raw-table and IRT alike (bandAround): the band is
+ * the score ± one standard error in SCALE points, at least one scale step,
+ * clamped to the scale. Mapping raw ± SE through the table directly made the
+ * band lopsided wherever the table is flat (an ACT 18 read 17–21) and made a
+ * perfect paper a point on one test and a range on another (PreACT 36/36 read
+ * "34–35" while an ACT 45/45 read "36"; QA pass, 2026-10-13). Now the band
+ * always contains the score, is symmetric away from the ends of the scale, and
+ * a perfect paper reads "a bit below the top – the top" on every test.
+ *
  * @returns {{low:number, high:number}|null}
  */
 function scaledRange(raw, total, blueprint = DEFAULT_BLUEPRINT) {
   const n = Number(total);
   if (!Number.isFinite(n) || n <= 0 || !Number.isFinite(Number(raw))) return null;
-  const p = (Number(raw) + 1) / (n + 2);
+  const r = Math.max(0, Math.min(n, Number(raw)));
+  const p = (r + 1) / (n + 2);
   const se = Math.sqrt(n * p * (1 - p));
-  const at = (r) => {
-    const s = rawToScaled(Math.max(0, Math.min(n, r)), blueprint, n);
+  const at = (x) => {
+    const s = rawToScaled(Math.max(0, Math.min(n, x)), blueprint, n);
     return s ? s.scaled : null;
   };
-  const low = at(Math.floor(Number(raw) - se));
-  const high = at(Math.ceil(Number(raw) + se));
-  return low == null || high == null ? null : { low, high };
+  const score = at(r);
+  const lowSide = at(Math.floor(r - se));
+  const highSide = at(Math.ceil(r + se));
+  if (score == null || lowSide == null || highSide == null) return null;
+  // A side the scale cut short (raw + SE past a perfect paper, raw − SE below
+  // a blank one) says nothing about the error; read the other side alone.
+  const cutHigh = r + se > n;
+  const cutLow = r - se < 0;
+  let half;
+  if (cutHigh && !cutLow) half = score - lowSide;
+  else if (cutLow && !cutHigh) half = highSide - score;
+  else half = (highSide - lowSide) / 2;
+  const table = blueprint.scaledScore.scaledByRaw;
+  return bandAround(score, half, { min: table[0], max: table[table.length - 1], step: 1 });
+}
+
+/**
+ * score ± half, half rounded to the scale's step and at least one step,
+ * clamped to [min, max]. Shared with utils/testModules.js irtScaled so every
+ * practice test states its likely range the same way.
+ */
+function bandAround(score, half, { min, max, step = 1 }) {
+  const h = Math.max(step, Math.round(Math.abs(Number(half) || 0) / step) * step);
+  return { low: Math.max(min, score - h), high: Math.min(max, score + h) };
 }
 
 module.exports = {
   scaledRange,
+  bandAround,
   assembleForm,
   buildSlots,
   skillPool,
@@ -904,6 +1172,8 @@ module.exports = {
   spreadFamilies,
   groupSets,
   familiesOf,
+  balanceAnswerPositions,
+  choiceOrderFixed,
   preciseDifficulty,
   NOT_ON_FORMS,
   isVisualItem,
@@ -913,7 +1183,10 @@ module.exports = {
   sameTemplate,
   similarTask,
   structuralSignature,
+  templateFamily,
   nearCopy,
   bankFilter,
+  difficultyBand,
+  inBlueprintScope,
   getBlueprint: () => DEFAULT_BLUEPRINT,
 };

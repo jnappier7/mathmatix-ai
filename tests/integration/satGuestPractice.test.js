@@ -67,7 +67,7 @@ async function guestStart() {
   return res;
 }
 
-test('a guest gets a full SAT form, and the guest cookie belongs to the SAT rail', async () => {
+test('a guest gets a full SAT form, and one guest cookie serves every rail', async () => {
   const res = await guestStart();
   // Module 1 of 2, as on the real SAT.
   expect(res.body.totalItems).toBe(22);
@@ -79,7 +79,9 @@ test('a guest gets a full SAT form, and the guest cookie belongs to the SAT rail
   expect(session.userId == null).toBe(true);
   expect(session.items.some((it) => it.answerType === 'constructed-response')).toBe(true);
   const cookie = (res.headers['set-cookie'] || []).join(';');
-  expect(cookie).toMatch(/Path=\/api\/sat-practice/);
+  // Shared across rails (/api): the SAT and the PSAT draw one bank, so a
+  // PSAT retake must know what this browser saw on the SAT.
+  expect(cookie).toMatch(/mm_tp_guest=[a-f0-9]{32}; .*Path=\/api;/);
 });
 
 test('the guest result is the locked report: score and domains, never which questions', async () => {
