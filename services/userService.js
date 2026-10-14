@@ -340,7 +340,40 @@ function validatePassword(password) {
  *  2. Students enrolled via this teacher's enrollment codes
  * Returns deduplicated string ID array.
  */
-async function getStudentIdsForTeacher(teacherId) {
+/**
+ * Every student linked to a teacher (direct teacherId or any of their classes).
+ *
+ * scope:
+ *   'all'      (default) — ACCESS checks. An archived student is still this
+ *              teacher's student for reading history; never narrow this.
+ *   'current'  — AGGREGATES (roster, tiles, alerts, analytics, exports):
+ *              excludes students the teacher archived at a year change.
+ *   'archived' — only the archived ones (the past-year view).
+ */
+async function getStudentIdsForTeacher(teacherId, { scope = 'all' } = {}) {
+  const ids = await getAllStudentIdsForTeacher(teacherId);
+  if (scope === 'all') return ids;
+  const teacher = await User.findById(teacherId, 'archivedStudents').lean();
+  const entries = (teacher && teacher.archivedStudents) || [];
+  const archived = new Set(entries.map(a => String(a.studentId)));
+  if (archived.size > 0) {
+    // A student who signs in AFTER being archived is back in class — they
+    // rejoin the current roster on their own instead of vanishing from it.
+    const archivedAt = new Map(entries.map(a => [String(a.studentId), new Date(a.archivedAt || 0).getTime()]));
+    const returned = await User.find(
+      { _id: { $in: [...archived] }, lastLogin: { $gt: new Date(Math.min(...archivedAt.values())) } },
+      'lastLogin'
+    ).lean();
+    for (const r of returned) {
+      if (new Date(r.lastLogin).getTime() > archivedAt.get(String(r._id))) archived.delete(String(r._id));
+    }
+  }
+  return scope === 'archived'
+    ? ids.filter(id => archived.has(id))
+    : ids.filter(id => !archived.has(id));
+}
+
+async function getAllStudentIdsForTeacher(teacherId) {
   const EnrollmentCode = require('../models/enrollmentCode');
 
   // 1. Direct teacherId assignment
@@ -354,7 +387,7 @@ async function getStudentIdsForTeacher(teacherId) {
   const codes = await EnrollmentCode.find({ teacherId }, 'enrolledStudents').lean();
   for (const code of codes) {
     for (const e of (code.enrolledStudents || [])) {
-      idSet.add(e.studentId.toString());
+      if (e && e.studentId) idSet.add(e.studentId.toString());
     }
   }
 

@@ -20,8 +20,45 @@ document.addEventListener('DOMContentLoaded', () => {
         announcementsTab.addEventListener('click', () => {
             loadStudentsForSelection();
             loadSentAnnouncements();
+            loadRecipientOptions();
         });
     }
+
+    // Recipients default to ONE CLASS from this school year — not the whole
+    // roster. "All My Students" as the default sent last year's students
+    // this year's reminders.
+    async function loadRecipientOptions() {
+        if (!targetSelect || targetSelect.dataset.loaded === '1') return;
+        try {
+            const res = await fetch('/api/teacher/classes', { credentials: 'same-origin' });
+            const body = res.ok ? await res.json() : {};
+            const classes = Array.isArray(body) ? body : (body.classes || []);
+            const thisYear = window.TeacherSchoolYear && window.TeacherSchoolYear.currentYear();
+            const current = classes.filter(c => !thisYear || c.schoolYear === thisYear);
+            const prior = classes.filter(c => thisYear && c.schoolYear !== thisYear);
+            const opt = (value, label) => { const o = document.createElement('option'); o.value = value; o.textContent = label; return o; };
+            targetSelect.textContent = '';
+            const group = (label, list) => {
+                if (!list.length) return;
+                const g = document.createElement('optgroup');
+                g.label = label;
+                list.forEach(c => g.appendChild(opt(`code:${c._id}`, `${c.className}${c.period ? ' · ' + c.period : ''} (${c.studentCount})`)));
+                targetSelect.appendChild(g);
+            };
+            group(thisYear ? `Classes ${thisYear}` : 'Classes', current);
+            targetSelect.appendChild(opt('class', 'All my current students'));
+            targetSelect.appendChild(opt('individual', 'Select students...'));
+            group('Earlier years', prior);
+            targetSelect.value = current.length ? `code:${current[0]._id}` : 'class';
+            targetSelect.dataset.loaded = '1';
+            targetSelect.dispatchEvent(new Event('change'));
+        } catch (err) {
+            console.error('[Announcements] Could not load classes:', err);
+        }
+    }
+    document.addEventListener('mm:class-created', () => {
+        if (targetSelect) { targetSelect.dataset.loaded = ''; loadRecipientOptions(); }
+    });
 
     // Target selection change handler
     if (targetSelect) {
@@ -94,7 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
         announcementForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const targetType = targetSelect.value;
+            const targetValue = targetSelect.value;
+            const isClassCode = targetValue.startsWith('code:');
+            const targetType = isClassCode ? 'enrollment_code' : targetValue;
+            const enrollmentCodeId = isClassCode ? targetValue.slice(5) : undefined;
             const title = document.getElementById('announcement-title').value.trim();
             const body = document.getElementById('announcement-body').value.trim();
             const priority = document.getElementById('announcement-priority').value;
@@ -129,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         targetType,
+                        enrollmentCodeId,
                         recipientIds: targetType === 'individual' ? recipientIds : undefined,
                         title,
                         body,

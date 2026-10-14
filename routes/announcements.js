@@ -18,6 +18,7 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const { isAuthenticated, isTeacher, isStudent } = require('../middleware/auth');
 
 const { anyRole } = require('../utils/roleQuery');
+const { getStudentIdsForTeacher } = require('../services/userService');
 // ============================================
 // TEACHER ROUTES
 // ============================================
@@ -97,8 +98,11 @@ router.get('/teacher/classes', isAuthenticated, isTeacher, async (req, res) => {
  */
 router.get('/teacher/students', isAuthenticated, isTeacher, async (req, res) => {
     try {
+        // The teacher's CURRENT roster (direct links and class codes; not
+        // students archived at a year change).
+        const rosterIds = await getStudentIdsForTeacher(req.user._id, { scope: 'current' });
         const students = await User.find({
-            teacherId: req.user._id,
+            _id: { $in: rosterIds },
             ...anyRole('student')
         }).select('_id firstName lastName username gradeLevel').lean();
 
@@ -158,10 +162,12 @@ router.post('/teacher/send', isAuthenticated, isTeacher, async (req, res) => {
                     message: 'At least one recipient is required for individual messages'
                 });
             }
-            // Verify all recipients are students of this teacher
+            // Verify all recipients are students of this teacher — linked
+            // either way. Checking teacherId alone 403'd every student who
+            // joined with a class code.
+            const rosterIds = await getStudentIdsForTeacher(req.user._id);
             const validStudents = await User.find({
-                _id: { $in: recipientIds },
-                teacherId: req.user._id,
+                _id: { $in: recipientIds.filter(id => rosterIds.includes(String(id))) },
                 ...anyRole('student')
             }).select('_id');
 
@@ -194,9 +200,10 @@ router.post('/teacher/send', isAuthenticated, isTeacher, async (req, res) => {
             finalRecipientIds = code.enrolledStudents.map(s => s.studentId);
 
         } else if (targetType === 'class') {
-            // All students of this teacher
+            // All of this teacher's CURRENT students (not last year's).
+            const rosterIds = await getStudentIdsForTeacher(req.user._id, { scope: 'current' });
             const allStudents = await User.find({
-                teacherId: req.user._id,
+                _id: { $in: rosterIds },
                 ...anyRole('student')
             }).select('_id');
             finalRecipientIds = allStudents.map(s => s._id);

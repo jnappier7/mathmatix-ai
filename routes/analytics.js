@@ -324,7 +324,7 @@ router.get('/student/:studentId/learning-trajectory', isTeacher, async (req, res
 router.get('/class/knowledge-heatmap', isTeacher, async (req, res) => {
   try {
     const teacherId = req.user._id;
-    const studentIds = await getStudentIdsForTeacher(teacherId);
+    const studentIds = await getStudentIdsForTeacher(teacherId, { scope: 'current' });
     const students = await User.find(
       { _id: { $in: studentIds }, ...anyRole('student') },
       'firstName lastName learningEngines.bkt'
@@ -367,7 +367,7 @@ router.get('/class/knowledge-heatmap', isTeacher, async (req, res) => {
 router.get('/class/risk-radar', isTeacher, async (req, res) => {
   try {
     const teacherId = req.user._id;
-    const studentIds = await getStudentIdsForTeacher(teacherId);
+    const studentIds = await getStudentIdsForTeacher(teacherId, { scope: 'current' });
     const students = await User.find(
       { _id: { $in: studentIds }, ...anyRole('student') },
       'firstName lastName learningEngines'

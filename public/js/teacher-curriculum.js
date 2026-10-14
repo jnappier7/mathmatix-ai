@@ -27,6 +27,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Schedule tab: THIS teacher's synced Common Curriculum page. It used to
+    // be one school's hard-coded 2025-26 URL for every teacher on the platform.
+    const scheduleTab = document.querySelector('[data-tab="schedule"]');
+    if (scheduleTab) {
+        scheduleTab.addEventListener('click', async () => {
+            const wrap = document.getElementById('schedule-frame-wrap');
+            const frame = document.getElementById('schedule-iframe');
+            const empty = document.getElementById('schedule-empty');
+            const title = document.getElementById('schedule-title');
+            try {
+                const res = await fetch('/api/curriculum/teacher/curriculum', { credentials: 'same-origin' });
+                const data = res.ok ? await res.json() : {};
+                const url = data.curriculum && data.curriculum.scheduleUrl;
+                const safe = url && /^https:\/\/www\.commoncurriculum\.com\//.test(url);
+                if (safe) {
+                    if (frame.getAttribute('src') !== url) frame.setAttribute('src', url);
+                    if (title) title.textContent = data.curriculum.name ? `${data.curriculum.name} schedule` : 'Schedule';
+                }
+                wrap.hidden = !safe;
+                empty.hidden = !!safe;
+            } catch (err) {
+                wrap.hidden = true;
+                empty.hidden = false;
+            }
+        });
+    }
+    const scheduleConnectBtn = document.getElementById('schedule-connect-btn');
+    if (scheduleConnectBtn && curriculumTab) {
+        scheduleConnectBtn.addEventListener('click', () => curriculumTab.click());
+    }
+
     // Open sync modal
     if (syncCommonBtn) {
         syncCommonBtn.addEventListener('click', () => {

@@ -4553,7 +4553,7 @@
       border: 1px solid #FDE68A;
     }
   </style>
-  <link rel="stylesheet" href="/dist/css/teacher-css1.94ad845e.css" />
+  <link rel="stylesheet" href="/dist/css/teacher-css1.9ed509d9.css" />
   <script src="/dist/js/teacher-js0.08f701d8.js"></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
 </head>
@@ -4987,6 +4987,17 @@
                     style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
                 </div>
               </div>
+              <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <div style="flex: 1;">
+                  <label for="new-class-year" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #2c3e50;">School Year</label>
+                  <select id="new-class-year" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box;"></select>
+                </div>
+                <div style="flex: 1;">
+                  <label for="new-class-period" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #2c3e50;">Period / Section</label>
+                  <input type="text" id="new-class-period" placeholder="e.g. P3" maxlength="20"
+                    style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                </div>
+              </div>
               <button id="submit-create-class" class="submit-btn" style="width: 100%; padding: 12px; font-size: 15px; font-weight: 600;">
                 <i class="fas fa-plus"></i> Create Class
               </button>
@@ -4997,8 +5008,9 @@
         <!-- Classes Tab -->
         <div class="tab-content" id="classes-tab">
           <div class="dashboard-panel flex-panel-content">
-            <div class="dashboard-panel-header">
+            <div class="dashboard-panel-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
               <span><i class="fas fa-chalkboard"></i> My Classes & Enrollment Codes</span>
+              <button type="button" class="btn btn-primary btn-sm" data-open-create-class><i class="fas fa-plus"></i> New Class</button>
             </div>
             <div id="classes-list" style="padding: 16px;">
               <div style="text-align: center; color: #999; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Loading classes...</div>
@@ -5199,11 +5211,19 @@
         <div class="tab-content" id="schedule-tab">
           <div class="dashboard-panel flex-panel-content">
             <div class="dashboard-panel-header">
-              <i class="fas fa-calendar-alt"></i> Tentative Schedule
+              <i class="fas fa-calendar-alt"></i> <span id="schedule-title">Schedule</span>
             </div>
             <div style="padding: 20px;">
-              <div class="schedule-iframe-container">
-                <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" title="Common Curriculum Tentative Schedule"></iframe>
+              <!-- Each teacher's OWN Common Curriculum schedule (saved by Curriculum → Sync).
+                   This used to hard-code one school's 2025-26 page for every teacher. -->
+              <div class="schedule-iframe-container" id="schedule-frame-wrap" hidden>
+                <iframe id="schedule-iframe" title="Your Common Curriculum schedule" loading="lazy"></iframe>
+              </div>
+              <div class="empty-state" id="schedule-empty" style="text-align:center;padding:40px 20px;">
+                <i class="fas fa-calendar-plus" style="font-size:36px;color:#94a3b8;margin-bottom:12px;display:block;" aria-hidden="true"></i>
+                <p style="margin:0 0 6px;font-weight:600;">Connect your Common Curriculum schedule</p>
+                <p style="margin:0 0 16px;color:#64748b;">Sync it once from the Curriculum tab and it shows up here for planning.</p>
+                <button type="button" class="btn btn-primary" id="schedule-connect-btn"><i class="fas fa-link"></i> Go to Curriculum</button>
               </div>
             </div>
           </div>
@@ -5317,7 +5337,7 @@
                   <div class="form-group" style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #333;">Send To</label>
                     <select id="announcement-target" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
-                      <option value="class">All My Students</option>
+                      <option value="class">All my current students</option>
                       <option value="individual">Select Students...</option>
                     </select>
                   </div>
@@ -6181,8 +6201,8 @@
   })();
   </script>
 
-  <script src="/dist/js/teacher-js2.091dbb2b.js"></script>
+  <script src="/dist/js/teacher-js2.734169d0.js"></script>
   <link rel="stylesheet" href="/css/teacher-activities.css?v=20260923a">
-  <script defer src="/js/teacher-activities.js?v=20260923a"></script>
+  <script defer src="/js/teacher-activities.js?v=20261014"></script>
 </body>
 </html>

@@ -96,6 +96,19 @@ function updateCodeFields() {
   }
 }
 
+// Class join link from a teacher (/signup.html?code=ALG1-3F9A): arrive as a
+// student with the code already filled in, so joining is one tap, not a
+// code read aloud and retyped.
+(function prefillClassCode() {
+  const code = new URLSearchParams(window.location.search).get("code");
+  if (!code || !/^[A-Za-z0-9-]{3,24}$/.test(code)) return;
+  const studentRadio = roleRadios.find(r => r.value === "student");
+  if (studentRadio) studentRadio.checked = true;
+  if (hasCodeCheckbox) hasCodeCheckbox.checked = true;
+  const field = document.getElementById("enrollmentCode");
+  if (field) field.value = code.toUpperCase();
+})();
+
 // Initial state
 updateCodeFields();
 
