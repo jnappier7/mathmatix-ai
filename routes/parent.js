@@ -13,6 +13,7 @@ const { cleanupStaleSessions } = require('../services/sessionService');
 const ScreenerSession = require('../models/screenerSession');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { calculateRetrievability } = require('../utils/fsrsScheduler');
+const { engineEntries } = require('../utils/engineStore');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 
 const { userHasRole, anyRole } = require('../utils/roleQuery');
@@ -644,9 +645,8 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
 
         // Also collect BKT and FSRS skill IDs for lookup
         const engines = child.learningEngines || {};
-        const bktEntries = engines.bkt ? Object.entries(engines.bkt) : [];
-        const fsrsEntries = engines.fsrs ? Object.entries(engines.fsrs) : [];
-        const _consistencyEntries = engines.consistency ? Object.entries(engines.consistency) : [];
+        const bktEntries = engineEntries(engines.bkt);
+        const fsrsEntries = engineEntries(engines.fsrs);
 
         const allSkillIds = new Set([
             ...skillIds,

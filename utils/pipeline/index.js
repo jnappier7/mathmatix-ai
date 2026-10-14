@@ -56,6 +56,7 @@ const { buildBoardStateBlock } = require('./boardStateBlock');
 // New data-driven engines
 const { updateBKT, initializeBKT } = require('../knowledgeTracer');
 const { canonicalSkillId } = require('../skillCanonicalizer');
+const { readEngineEntry, writeEngineEntry, isValidSkillKey } = require('../engineStore');
 const { updateCard, initializeCard, rateAttempt, RATINGS } = require('../fsrsScheduler');
 const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDifficulty } = require('../consistencyScorer');
 
@@ -497,12 +498,7 @@ async function runPipeline(message, ctx) {
     // Read per-skill engine state keyed by the canonical (unified) skill id to
     // match how updateLearningEngines writes it; fall back to the raw id so
     // historical legacy-keyed state still resolves. Handles Map or plain object.
-    const readEngine = (store, id) => {
-      if (!store || !id) return null;
-      const get = (k) => (typeof store.get === 'function' ? store.get(k) : store[k]);
-      const canon = canonicalSkillId(id);
-      return get(canon) ?? (canon !== id ? get(id) : null) ?? null;
-    };
+    const readEngine = (store, id) => readEngineEntry(store, id);
     // Fall back to the plan's current target, mirroring the persist-side
     // attribution (updateLearningEngines). Without the fallback, free chat —
     // where ctx.activeSkill is always null — WRITES BKT/FSRS evidence under
@@ -2214,44 +2210,33 @@ async function runPipeline(message, ctx) {
 function updateLearningEngines(user, skillId, diagnosis, observation) {
   // key BKT / FSRS / consistency state on the canonical unified skill id, so a
   // concept's learning state never splits across a legacy id and its unified id
+  // engineStore canonicalizes + encodes the key itself; it gets the raw id so a
+  // pre-migration entry stored under the legacy id is still found (and folded in).
+  const rawSkillId = skillId;
   skillId = canonicalSkillId(skillId);
   // Safety net: never key per-skill learning state under an undefined id. Callers
   // should pass a resolved skill, but if none is in focus there's nothing to track.
-  // (Belt and braces with the caller's guard — every write below is state[skillId].)
-  if (!skillId) return;
+  if (!skillId || !isValidSkillKey(rawSkillId)) return;
   const isCorrect = diagnosis.isCorrect === true;
   const hintUsed = observation.contextSignals?.some(s => s.type === 'uncertainty') || false;
 
-  // Initialize learningEngines on user if not exists
-  if (!user.learningEngines) {
-    user.learningEngines = { bkt: {}, fsrs: {}, consistency: {} };
-  }
-
   // ── 1. Update BKT (Bayesian Knowledge Tracing) ──
-  let bktStates = user.learningEngines.bkt;
-  if (bktStates instanceof Map) {
-    // Convert Map to plain object for compatibility
-    bktStates = Object.fromEntries(bktStates);
-  }
-
-  let bktState = bktStates[skillId];
+  // Every keyed engine read/write goes through utils/engineStore: these stores are
+  // Mongoose Maps and the canonical id is often dotted ("MS.EQV.10"), which a Map
+  // key cannot hold — assigning one made the whole user doc unsaveable.
+  const engines = user.learningEngines || {};
+  let bktState = readEngineEntry(engines.bkt, rawSkillId);
   if (!bktState) {
     bktState = initializeBKT(skillId, 'default');
   }
 
   bktState = updateBKT(bktState, isCorrect, { hintUsed });
-  bktStates[skillId] = bktState;
-  user.learningEngines.bkt = bktStates;
+  writeEngineEntry(user, 'bkt', rawSkillId, bktState);
 
   console.log(`[LearningEngines] BKT ${skillId}: P(L)=${bktState.pLearned.toFixed(3)} (${isCorrect ? '✓' : '✗'})`);
 
   // ── 2. Update FSRS (Spaced Repetition) ──
-  let fsrsCards = user.learningEngines.fsrs;
-  if (fsrsCards instanceof Map) {
-    fsrsCards = Object.fromEntries(fsrsCards);
-  }
-
-  let fsrsCard = fsrsCards[skillId];
+  let fsrsCard = readEngineEntry(user.learningEngines.fsrs, rawSkillId);
   const rating = rateAttempt({
     correct: isCorrect,
     hintUsed,
@@ -2264,18 +2249,12 @@ function updateLearningEngines(user, skillId, diagnosis, observation) {
     fsrsCard = updateCard(fsrsCard, rating);
   }
 
-  fsrsCards[skillId] = fsrsCard;
-  user.learningEngines.fsrs = fsrsCards;
+  writeEngineEntry(user, 'fsrs', rawSkillId, fsrsCard);
 
   console.log(`[LearningEngines] FSRS ${skillId}: S=${fsrsCard.stability.toFixed(1)}, next=${fsrsCard.scheduledDays}d`);
 
   // ── 3. Update ConsistencyScorer ──
-  let consistencyStates = user.learningEngines.consistency;
-  if (consistencyStates instanceof Map) {
-    consistencyStates = Object.fromEntries(consistencyStates);
-  }
-
-  let consistencyState = consistencyStates[skillId];
+  let consistencyState = readEngineEntry(user.learningEngines.consistency, rawSkillId);
   if (!consistencyState) {
     consistencyState = initializeScore(skillId);
   }
@@ -2285,8 +2264,7 @@ function updateLearningEngines(user, skillId, diagnosis, observation) {
     difficulty: categorizeDifficulty(diagnosis.problemInfo?.difficulty || 0),
   });
 
-  consistencyStates[skillId] = consistencyState;
-  user.learningEngines.consistency = consistencyStates;
+  writeEngineEntry(user, 'consistency', rawSkillId, consistencyState);
 
   console.log(`[LearningEngines] SmartScore ${skillId}: ${consistencyState.smartScore}${consistencyState.productiveStruggleDetected ? ' (productive struggle!)' : ''}`);
 
@@ -2320,6 +2298,8 @@ function shouldBackfillProblemPose({ structuredTurnType, decisionAction, pinnedT
 module.exports = {
   runPipeline,
   shouldBackfillProblemPose,
+  // exported for tests/unit/engineStoreDottedKeys.test.js — it runs against the real User model
+  updateLearningEngines,
   // Re-export for direct access when needed
   observe,
   diagnose,

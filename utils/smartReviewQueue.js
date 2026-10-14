@@ -11,6 +11,7 @@
  */
 
 const { calculateRetrievability } = require('./fsrsScheduler');
+const { engineEntries } = require('./engineStore');
 
 // Session size limits based on cognitive load
 const SESSION_CONFIG = {
@@ -43,9 +44,7 @@ function buildSmartQueue(user, options = {}) {
     const now = Date.now();
 
     // ── Gather all FSRS cards ──
-    const entries = fsrs
-        ? (typeof fsrs.entries === 'function' ? Array.from(fsrs.entries()) : Object.entries(fsrs))
-        : [];
+    const entries = engineEntries(fsrs);
 
     if (entries.length === 0) {
         return { queue: [], stats: emptyStats(), sessionPlan: emptyPlan() };
@@ -235,9 +234,7 @@ function buildSessionPlan(queue, cognitiveLoad) {
 function getReviewSummary(user) {
     const engines = user.learningEngines || {};
     const fsrs = engines.fsrs;
-    const entries = fsrs
-        ? (typeof fsrs.entries === 'function' ? Array.from(fsrs.entries()) : Object.entries(fsrs))
-        : [];
+    const entries = engineEntries(fsrs);
 
     const now = Date.now();
     let dueNow = 0;
