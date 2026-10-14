@@ -19,6 +19,7 @@ const { handleImpersonation, enforceReadOnly } = require('../middleware/imperson
 const { outboundPiiScope } = require('../middleware/outboundPii');
 const { trackErrors, clientErrorHandler } = require('../middleware/errorTracking');
 const { requestId } = require('../middleware/requestId');
+const { isPracticeTestRunnerPath } = require('../middleware/practiceTestLimiter');
 
 require('../auth/passport-config');
 
@@ -384,7 +385,9 @@ function configureMiddleware(app) {
     '/chat/track-time',
   ]);
   app.use('/api/', (req, res, next) => {
-    if (rateLimitExemptPaths.has(req.path)) {
+    // The practice-test runner has its own limiter, keyed on the session
+    // owner and sized for a timed test (middleware/practiceTestLimiter.js).
+    if (rateLimitExemptPaths.has(req.path) || isPracticeTestRunnerPath(req.path)) {
       return next();
     }
     return apiLimiter(req, res, next);

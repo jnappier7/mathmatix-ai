@@ -34,7 +34,19 @@
   .actt-timer.low{background:#e5484d}
   .actt-x{background:transparent;border:0;color:#fff;font-size:20px;cursor:pointer;line-height:1;opacity:.9}
   .actt-progwrap{padding:10px 18px 0}
-  .actt-progrow{display:flex;justify-content:space-between;font-size:12px;color:#777;margin-bottom:6px}
+  .actt-progrow{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#777;margin-bottom:6px}
+  /* Non-blocking save state: "Saving…", "Saved", "Not saved — retrying". */
+  .actt-save{flex:1;min-width:0;text-align:center;font-size:11.5px;color:#8a83a8;min-height:1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .3s}
+  .actt-save.retry{color:#b4570f;font-weight:600}
+  .actt-save.done{opacity:0}
+  /* Loading the next question: the old one is hidden (never answerable
+     under the new number) and its controls are disabled. */
+  .actt-body.actt-busy>*{visibility:hidden}
+  .actt-body.actt-busy>.actt-loading{visibility:visible}
+  .actt-body{position:relative}
+  .actt-loading{position:absolute;left:0;right:0;top:0;padding:40px 18px;text-align:center;color:#777;opacity:0;transition:opacity .2s}
+  .actt-loading.show{opacity:1}
+  .actt-retrybox{padding:36px 18px;text-align:center;color:#555;line-height:1.5}
   .actt-bar{height:6px;background:#ece9f5;border-radius:3px;overflow:hidden}
   .actt-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);width:0;transition:width .25s}
   .actt-body{padding:18px;overflow-y:auto}
@@ -179,6 +191,10 @@
     .actt-overlay.actt-desmos-on .actt-body{padding-bottom:60dvh}
     .actt-card{order:1;border-radius:0;max-width:none}
     .actt-foot{padding:10px 12px;gap:6px}
+    /* The save line gets its own row on a phone rather than truncating. */
+    .actt-progrow{flex-wrap:wrap;row-gap:2px}
+    .actt-save{order:3;flex:1 1 100%;text-align:left;min-height:0}
+    .actt-save:empty{display:none}
     .actt-foot .actt-btn{padding:9px 12px;font-size:13px}
     .actt-foot-spacer{display:none}
     /* Room for the header's tools: the exam name alone on a phone. */
@@ -319,6 +335,18 @@
     return fetcher(url, opts).then(r => r.json());
   }
 
+  // The same call, keeping the HTTP status: { ok, status, body }. Never
+  // rejects — a network failure is status 0 — so a caller can tell "the
+  // server said 429, retry in N seconds" from "here is your question" and
+  // never shows an error body as if it were content.
+  function apiRaw(url, opts) {
+    const fetcher = window.csrfFetch || window.fetch;
+    return Promise.resolve()
+      .then(() => fetcher(url, opts))
+      .then((r) => r.json().catch(() => null).then((body) => ({ ok: r.ok, status: r.status, body })))
+      .catch(() => ({ ok: false, status: 0, body: null }));
+  }
+
   // Where a guest test's id + bearer token live between page loads: resume a
   // test after a refresh, and claim a finished one after signup.
   // Per exam: an ACT and an SAT guest test in one browser never touch each other.
@@ -359,6 +387,26 @@
       this.itemStart = 0;
       this.deadline = 0;
       this.timerId = null;
+      this._navSeq = 0;             // bumps on every navigation; stale /problem replies are dropped
+      this._navPos = null;          // the question being loaded, while one is
+      this.saves = createSaveQueue({
+        send: (entry) => this._apiRaw('/save-answer', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId: entry.sessionId,
+            problemId: entry.problemId,
+            position: entry.position,
+            answer: entry.answer,
+            flagged: entry.flagged,
+            seq: entry.seq,
+            responseTime: entry.responseTime,
+          }),
+        }),
+        onStatus: (st) => this._renderSaveStatus(st),
+        onTerminal: (entry, body) => {
+          if (body && body.timeUp && entry.sessionId === this.sessionId) this._timeUp();
+        },
+      });
       this._injectCss();
     }
 
@@ -366,12 +414,37 @@
     // bearer token on the guest rail. (/history is signed-in only and keeps
     // calling api() directly.)
     _api(path, opts) {
+      return api(this.apiBase + path, this._withGuest(opts));
+    }
+    _apiRaw(path, opts) {
+      return apiRaw(this.apiBase + path, this._withGuest(opts));
+    }
+    _withGuest(opts) {
       opts = Object.assign({}, opts || {});
       if (this.guest) {
         const g = readGuest(this.exam);
         opts.headers = Object.assign({}, opts.headers || {}, g && g.token ? { 'X-Act-Guest-Token': g.token } : {});
       }
-      return api(this.apiBase + path, opts);
+      return opts;
+    }
+
+    /**
+     * POST that survives a busy server: a 429 waits the server's retryAfter,
+     * a network error or 5xx backs off, up to `attempts` tries. `onWait(ms)`
+     * lets the screen say what is happening. Resolves { ok, status, body }.
+     */
+    async _postWithRetry(path, payload, onWait, attempts) {
+      const max = attempts || 6;
+      let res = null;
+      for (let i = 0; i < max; i++) {
+        res = await this._apiRaw(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const busy = res.status === 429 || res.status === 0 || res.status >= 500;
+        if (!busy || i === max - 1) return res;
+        const waitMs = res.status === 429 ? retryAfterMs(res, 60000) : Math.min(16000, 1000 * Math.pow(2, i));
+        if (onWait) onWait(waitMs);
+        await new Promise((r) => setTimeout(r, waitMs));
+      }
+      return res;
     }
 
     // ── Modules (the SAT's two adaptive halves) ──────────────────
@@ -411,7 +484,7 @@
             </span>
           </div>
           <div class="actt-progwrap" id="actt-progwrap" style="display:none">
-            <div class="actt-progrow"><span id="actt-qnum"></span><span id="actt-qpct"></span></div>
+            <div class="actt-progrow"><span id="actt-qnum"></span><span class="actt-save" id="actt-save" role="status" aria-live="polite"></span><span id="actt-qpct"></span></div>
             <div class="actt-bar"><div class="actt-fill" id="actt-fill"></div></div>
           </div>
           <div class="actt-pal" id="actt-pal" role="group" aria-label="Questions"></div>
@@ -428,13 +501,14 @@
         `;
       document.body.appendChild(this.overlay);
       this.overlay.querySelector('#actt-close').addEventListener('click', () => this.close());
-      this.overlay.querySelector('#actt-back').addEventListener('click', () => this.goTo(this.pos - 1));
+      this.overlay.querySelector('#actt-back').addEventListener('click', () => this.goTo(this._here() - 1));
       this.overlay.querySelector('#actt-flag').addEventListener('click', () => this.toggleFlag());
       this.overlay.querySelector('#actt-map').addEventListener('click', () => {
         const open = this.el('actt-pal').classList.toggle('open');
         this.el('actt-map').setAttribute('aria-expanded', String(open));
       });
       this.overlay.querySelector('#actt-next').addEventListener('click', () => {
+        if (this._navPos != null) { this.goTo(this._navPos + 1); return; }
         if (this.pos >= this._last()) this.showReview(); else this.goTo(this.pos + 1);
       });
       this.overlay.querySelector('#actt-calc').addEventListener('click', () => this._toggleCalc());
@@ -633,6 +707,7 @@
           return;
         }
         if (!data || !data.sessionId) throw new Error((data && data.message) || 'Could not start.');
+        if (String(data.sessionId) !== String(this.sessionId)) this.saves.reset();
         this.sessionId = data.sessionId;
         // A new test starts with a blank calculator; a resumed one keeps it.
         if (!data.resumed && this._desmosCalc) this._desmosCalc.setBlank();
@@ -741,17 +816,36 @@
       return n;
     }
 
+    // The question the student is on — or headed to, while it loads.
+    _here() { return this._navPos != null ? this._navPos : this.pos; }
+
     // Jump to any question (Back, Next, palette, review screen). Answers save
     // on click, so navigating away never loses work.
+    //
+    // The label and the content move TOGETHER. "Question N" used to change
+    // while question N−1's stem and choices were still on screen, so on a
+    // slow network a student could answer the wrong item under the right
+    // number (QA on prod, 2026-10-13). Now the old content is hidden and its
+    // controls disabled the moment navigation starts, and a reply for a
+    // question the student has already moved past is dropped.
     async goTo(pos) {
       this._closeFigureZoom();
       this._flushGridIn();
+      clearTimeout(this._retryTimer);
       pos = Math.min(Math.max(this._first(), pos), this._last());
-      const data = await this._api(`/problem?sessionId=${encodeURIComponent(this.sessionId)}&position=${pos}`);
-      if (!data || !data.problem) {
-        this.el('actt-body').innerHTML = `<div class="actt-err">${(data && data.message) || 'Could not load that question.'}</div>`;
+      const req = ++this._navSeq;
+      this._navPos = pos;
+      this._showLoading(pos);
+      const res = await this._apiRaw(`/problem?sessionId=${encodeURIComponent(this.sessionId)}&position=${pos}`);
+      if (req !== this._navSeq) return;          // superseded by a newer navigation
+      const data = res.body;
+      if (!res.ok || !data || !data.problem) {
+        this._showLoadFailed(pos, res);
         return;
       }
+      this._navPos = null;
+      this.el('actt-body').classList.remove('actt-busy');
+      this.el('actt-body').removeAttribute('aria-busy');
       this.pos = pos;
       this.current = data.problem;
       // Merge server truth with local state; local wins (it has in-flight edits).
@@ -769,12 +863,75 @@
         seq: Math.max(Number(local.seq) || 0, Number(remote.seq) || 0),
       };
       this.state.set(pos, st);
+      // What the server holds is the dedupe baseline: revisiting a question
+      // re-sends nothing. If the screen holds something the server does not
+      // (a save that was refused for good), send it again now.
+      this.saves.markSaved(pos, { answer: data.response ? data.response.answer : null, flagged: data.response ? data.response.flagged : false });
+      if (st.seq > (Number(remote.seq) || 0)) this._saveFor(pos, data.problem.problemId);
       this.selected = st.answer;
       this.itemStart = Date.now();
       // Re-entering from the review screen: restore the test chrome.
       this.el('actt-progwrap').style.display = '';
       this.el('actt-foot').style.display = 'flex';
       this.render();
+    }
+
+    // Navigation started: the label says where we are going, the old question
+    // is hidden and inert, and a "Loading…" line appears if it takes a beat.
+    _showLoading(pos) {
+      this.el('actt-qnum').textContent = `${this.mod ? `Module ${this.mod.current} · ` : ''}Question ${this._num(pos)} of ${this._count()}`;
+      const body = this.el('actt-body');
+      body.classList.add('actt-busy');
+      body.setAttribute('aria-busy', 'true');
+      body.querySelectorAll('button, input, textarea, select').forEach((c) => { c.disabled = true; });
+      const flag = this.el('actt-flag');
+      if (flag) flag.disabled = true;
+      const old = body.querySelector('.actt-loading');
+      if (old) old.remove();
+      const note = document.createElement('div');
+      note.className = 'actt-loading';
+      note.textContent = `Loading question ${this._num(pos)}…`;
+      body.insertBefore(note, body.firstChild);
+      // Only show the words if the question is slow; a fast load never flashes.
+      setTimeout(() => { if (note.isConnected) note.classList.add('show'); }, 250);
+    }
+
+    // The question did not load. Never show the server's error text where
+    // the question goes — a 429 once printed "Too many requests, please try
+    // again shortly." as the stem. Say what happened and retry: on a 429
+    // after the server's retryAfter, otherwise on a tap.
+    _showLoadFailed(pos, res) {
+      const body = this.el('actt-body');
+      body.classList.remove('actt-busy');
+      body.removeAttribute('aria-busy');
+      const n = this._num(pos);
+      const busy = res && res.status === 429;
+      const waitMs = busy ? retryAfterMs(res, 30000) : 0;
+      body.innerHTML = `<div class="actt-retrybox">
+          <div>${busy ? `Question ${n} is taking a moment to load.` : `Question ${n} didn't load.`}</div>
+          <div style="font-size:13px;color:#888;margin-top:4px">${busy ? `Trying again in ${Math.ceil(waitMs / 1000)} seconds. Your answers are safe.` : 'Check your connection, then try again. Your answers are safe.'}</div>
+          <button class="actt-btn actt-next" id="actt-retryq" style="margin-top:14px">Try again now</button>
+        </div>`;
+      this.el('actt-retryq').addEventListener('click', () => this.goTo(pos));
+      if (busy) this._retryTimer = setTimeout(() => { if (this._navPos === pos) this.goTo(pos); }, waitMs);
+    }
+
+    // The small "Saving… / Not saved — retrying" line beside the question
+    // number. Non-blocking by design: the student keeps working.
+    _renderSaveStatus(st) {
+      const el = this.el && this.el('actt-save');
+      if (!el) return;
+      clearTimeout(this._saveFade);
+      el.classList.remove('retry', 'done');
+      if (st.state === 'retrying') {
+        el.classList.add('retry');
+        el.textContent = st.pending > 1 ? `${st.pending} not saved — retrying` : 'Not saved — retrying';
+      } else if (st.state === 'saving') {
+        el.textContent = 'Saving…';
+      } else if (el.textContent) {
+        el.textContent = 'Saved';
+        this._saveFade = setTimeout(() => { el.classList.add('done'); }, 1200);
+      }
     }
 
     render() {
@@ -807,6 +964,9 @@
       this._labelFigure();
       this.el('actt-body').querySelectorAll('.actt-opt').forEach(btn => {
         btn.addEventListener('click', () => {
+          // Tapping the choice that is already picked changes nothing — and
+          // sends nothing.
+          if (btn.getAttribute('data-label') === this.selected) return;
           this.selected = btn.getAttribute('data-label');
           this.el('actt-body').querySelectorAll('.actt-opt').forEach(b => {
             b.classList.toggle('sel', b === btn);
@@ -842,21 +1002,31 @@
     // Save one question by its own position and id, not whatever is on screen
     // when the request goes out: a grid-in saves on a short delay, and the
     // student may have moved on by then.
+    //
+    // Through the save queue (createSaveQueue): unchanged answers are not
+    // re-sent, a 429 or a dropped connection is retried, and /complete and
+    // /next-module wait for it to drain.
     _saveFor(pos, problemId) {
       const st = this.state.get(pos) || {};
-      return this._api('/save-answer', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId: this.sessionId,
-          problemId,
-          position: pos,
-          answer: st.answer != null ? st.answer : null,
-          flagged: !!st.flagged,
-          seq: st.seq || 0,
-          responseTime: Date.now() - this.itemStart,
-        }),
-      }).then((d) => { if (d && d.timeUp) this._timeUp(); })
-        .catch((e) => console.error('[act-test] save failed (will re-save on revisit):', e));
+      return this.saves.enqueue({
+        sessionId: this.sessionId,
+        problemId,
+        position: pos,
+        answer: st.answer != null ? st.answer : null,
+        flagged: !!st.flagged,
+        seq: st.seq || 0,
+        responseTime: Date.now() - this.itemStart,
+      });
+    }
+
+    // Before a module or the test is submitted: let queued saves land. The
+    // submit itself carries the whole answer sheet (applyAnswerSheet on the
+    // server), so this is belt and braces — bounded, never a hang.
+    async _flushSaves(timeoutMs) {
+      if (!this.saves.size()) return true;
+      const el = this.el('actt-body');
+      if (el) el.innerHTML = '<div class="actt-center">Saving your answers…</div>';
+      return this.saves.flush({ timeoutMs });
     }
 
     toggleFlag() {
@@ -907,6 +1077,7 @@
         const clean = sanitizeGridIn(input.value);
         if (clean !== input.value) input.value = clean;
         this.el('actt-giprev').innerHTML = gridInPreviewHtml(clean);
+        if ((clean === '' ? null : clean) === (this.selected != null ? String(this.selected) : null)) return;
         this.selected = clean === '' ? null : clean;
         const st = this.state.get(this.pos) || {};
         st.answer = this.selected;
@@ -1033,6 +1204,7 @@
       const st = this.state.get(this.pos) || {};
       const btn = this.el('actt-flag');
       if (btn) {
+        btn.disabled = false;
         btn.classList.toggle('on', !!st.flagged);
         btn.setAttribute('aria-pressed', String(!!st.flagged));
         btn.textContent = st.flagged ? '🚩 Flagged' : '🚩 Flag';
@@ -1152,7 +1324,11 @@
       this.el('actt-progwrap').style.display = 'none';
       const pal = this.el('actt-pal');
       if (pal) pal.classList.remove('open');
-      this.el('actt-body').innerHTML = `<div class="actt-center">${timedOut ? `Time's up for Module ${this.mod.current}. ` : ''}Starting Module ${this.mod.current + 1}…</div>`;
+      // Let any queued answer saves land first (bounded: the sheet below
+      // carries every answer anyway).
+      await this._flushSaves(timedOut ? 6000 : 15000);
+      const startingMsg = `${timedOut ? `Time's up for Module ${this.mod.current}. ` : ''}Starting Module ${this.mod.current + 1}…`;
+      this.el('actt-body').innerHTML = `<div class="actt-center">${startingMsg}</div>`;
       try {
         const answers = [];
         this.state.forEach((st, position) => {
@@ -1163,7 +1339,11 @@
         // A guest's earlier tests in this browser, so Module 2 stays fresh too.
         const nextBody = { sessionId: this.sessionId, answers };
         if (this.guest) nextBody.previous = readGuestHistory(this.exam);
-        const data = await this._api('/next-module', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(nextBody) });
+        const res = await this._postWithRetry('/next-module', nextBody, (ms) => {
+          this.el('actt-body').innerHTML = `<div class="actt-center">${startingMsg}<br><small>The server is busy — trying again in ${Math.ceil(ms / 1000)} seconds. Your answers are safe.</small></div>`;
+        });
+        const data = res.body;
+        if (res.status === 429 || res.status === 0 || res.status >= 500) throw new Error('Could not reach the server to start the next module.');
         if (data && data.abandoned) { this._advancing = false; return this.complete(); }
         if (data && data.lastModule) { this._advancing = false; return this.complete(); }
         if (!data || !data.module) throw new Error((data && data.message) || 'Could not start the next module.');
@@ -1185,7 +1365,15 @@
       }
     }
 
+    // One submission at a time: the clock, a refused save ("time is up") and
+    // the Submit button can all ask for it while it is already under way.
     async complete() {
+      if (this._completing) return;
+      this._completing = true;
+      try { await this._complete(); } finally { this._completing = false; }
+    }
+
+    async _complete() {
       this._closeFigureZoom();
       this._flushGridIn();
       this._stopTimer();
@@ -1196,6 +1384,9 @@
       this.el('actt-foot').style.display = 'none';
       const pal = this.el('actt-pal');
       if (pal) { pal.classList.remove('open'); pal.innerHTML = ''; }
+      // Queued answer saves land first (bounded: the sheet below carries
+      // every answer, so a save that still can't get through is not lost).
+      await this._flushSaves(this.deadline && Date.now() >= this.deadline ? 6000 : 15000);
       this.el('actt-body').innerHTML = '<div class="actt-center">Scoring…</div>';
       try {
         // The answer sheet on screen is the answer sheet that gets graded. Every
@@ -1208,7 +1399,15 @@
             answers.push({ position, answer: st.answer != null ? st.answer : null, flagged: !!st.flagged, seq: st.seq || 0 });
           }
         });
-        const data = await this._api('/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: this.sessionId, answers }) });
+        const res = await this._postWithRetry('/complete', { sessionId: this.sessionId, answers }, (ms) => {
+          this.el('actt-body').innerHTML = `<div class="actt-center">Scoring…<br><small>The server is busy — trying again in ${Math.ceil(ms / 1000)} seconds. Your answers are safe.</small></div>`;
+        });
+        if (res.status === 429 || res.status === 0 || res.status >= 500) {
+          this.el('actt-body').innerHTML = `<div class="actt-err">We couldn't reach the server to score your test. Your answers are saved.<br><button class="actt-btn actt-next" id="actt-retrycomplete" style="margin-top:12px">Try again</button></div>`;
+          this.el('actt-retrycomplete').addEventListener('click', () => this.complete());
+          return;
+        }
+        const data = res.body;
         if (this.guest && data && data.abandoned) writeGuest(this.exam, null);
         if (this.guest && data && data.success) {
           const g = readGuest(this.exam);
@@ -1789,8 +1988,194 @@
     return out.join('\n').replace(/\n+(<table class="actt-table">)/g, '$1').replace(/(<\/table>)\n+/g, '$1');
   }
 
+  /**
+   * The answer-save queue. Every answer and flag change goes through here on
+   * its way to POST /save-answer.
+   *
+   * Saves used to be fire-and-forget: a 429 ("Too many requests") or a
+   * dropped connection lost the answer silently — the choice stayed selected
+   * on screen, never reached the server, and the report counted the question
+   * as skipped (QA on prod, 2026-10-13). This queue:
+   *
+   *   - DEDUPES: a save whose answer + flag equal what the server already
+   *     holds (or what is already queued / on the wire) is not sent at all.
+   *   - COALESCES: one pending save per question; a newer change replaces an
+   *     unsent older one (the server keeps the higher seq anyway).
+   *   - RETRIES: a 429 pauses every save for the server's `retryAfter`; a
+   *     network error or 5xx backs off exponentially. Nothing is dropped
+   *     except on a definitive refusal (409 time-up / module closed /
+   *     question mismatch, 4xx), which is reported through onTerminal.
+   *   - FLUSHES: flush() resolves once everything queued has landed (or the
+   *     timeout passes), so /complete and /next-module wait for it.
+   *
+   * Pure logic with injected I/O and clock, so jest can drive it without a
+   * DOM (tests/unit/actSaveQueue.test.js).
+   *
+   * opts.send(entry) → Promise<{ status, body }>   (status 0 = network error)
+   */
+  function createSaveQueue(opts) {
+    opts = opts || {};
+    const send = opts.send;
+    const now = opts.now || (() => Date.now());
+    const setT = opts.setTimeout || ((f, ms) => setTimeout(f, ms));
+    const clearT = opts.clearTimeout || ((id) => clearTimeout(id));
+    const onStatus = opts.onStatus || (() => {});
+    const onTerminal = opts.onTerminal || (() => {});
+    const baseDelay = opts.baseDelayMs || 1000;
+    const maxDelay = opts.maxDelayMs || 30000;
+    const maxRetryAfterMs = opts.maxRetryAfterMs || 600000;   // sanity cap only
+
+    const saved = new Map();     // position → { answer, flagged } the server holds
+    const pending = new Map();   // position → entry waiting to go (latest wins)
+    const inflight = new Map();  // position → entry on the wire
+    let pausedUntil = 0;         // no sends before this (429 or backoff)
+    let rateLimited = false;     // the pause came from the server's retryAfter
+    let failures = 0;            // consecutive failed sends
+    let timer = null;
+    let waiters = [];
+
+    const norm = (v) => (v === undefined || v === '' ? null : v);
+    const same = (a, b) => !!a && !!b && norm(a.answer) === norm(b.answer) && !!a.flagged === !!b.flagged;
+    const latestFor = (pos) => pending.get(pos) || inflight.get(pos) || saved.get(pos) || null;
+    const size = () => pending.size + inflight.size;
+
+    function status() {
+      const n = size();
+      const state = n === 0 ? 'idle' : (failures > 0 ? 'retrying' : 'saving');
+      onStatus({ state, pending: n, retryInMs: state === 'retrying' ? Math.max(0, pausedUntil - now()) : 0 });
+    }
+
+    function settleWaiters() {
+      if (size() > 0) return;
+      const ws = waiters;
+      waiters = [];
+      ws.forEach((w) => w.resolve(true));
+    }
+
+    function schedule() {
+      if (timer || pending.size === 0) return;
+      const delay = Math.max(0, pausedUntil - now());
+      timer = setT(() => { timer = null; pump(); }, delay);
+    }
+
+    function pump() {
+      if (pending.size === 0) { status(); settleWaiters(); return; }
+      if (now() < pausedUntil) { schedule(); status(); return; }
+      rateLimited = false;
+      pending.forEach((entry, pos) => {
+        if (inflight.has(pos)) return;   // one request per question on the wire
+        pending.delete(pos);
+        inflight.set(pos, entry);
+        sendOne(entry);
+      });
+      status();
+    }
+
+    function requeue(entry) {
+      // A newer change for this question may have queued meanwhile; it wins.
+      if (!pending.has(entry.position)) pending.set(entry.position, entry);
+    }
+
+    function sendOne(entry) {
+      Promise.resolve()
+        .then(() => send(entry))
+        .catch(() => ({ status: 0, body: null }))
+        .then((res) => {
+          res = res || { status: 0, body: null };
+          inflight.delete(entry.position);
+          const code = Number(res.status) || 0;
+          if (code >= 200 && code < 300) {
+            failures = 0;
+            // `stale: true` means a newer save already landed: also done.
+            saved.set(entry.position, { answer: norm(entry.answer), flagged: !!entry.flagged });
+          } else if (code === 429) {
+            failures += 1;
+            const secs = Number(res.body && res.body.retryAfter);
+            const waitMs = Math.min(maxRetryAfterMs, (Number.isFinite(secs) && secs > 0 ? secs : 5) * 1000);
+            pausedUntil = Math.max(pausedUntil, now() + waitMs);
+            rateLimited = true;
+            requeue(entry);
+          } else if (code >= 400 && code < 500) {
+            // Definitive: time is up, the module closed, the test is over, or
+            // the question changed under us. Retrying cannot help.
+            onTerminal(entry, res.body || {}, code);
+          } else {
+            failures += 1;
+            const backoff = Math.min(maxDelay, baseDelay * Math.pow(2, failures - 1));
+            pausedUntil = Math.max(pausedUntil, now() + backoff);
+            requeue(entry);
+          }
+          if (pending.size) {
+            if (now() < pausedUntil) schedule(); else pump();
+          }
+          status();
+          settleWaiters();
+        });
+    }
+
+    return {
+      /**
+       * Queue one question's save. Returns false (and sends nothing) when the
+       * answer and flag are what the server holds or will hold already.
+       * entry: { position, problemId, answer, flagged, seq, ... }
+       */
+      enqueue(entry) {
+        if (!entry || entry.position == null) return false;
+        if (same(latestFor(entry.position), entry)) return false;
+        pending.set(entry.position, entry);
+        pump();
+        return true;
+      },
+      /** What the server holds for a question (from GET /problem) — the dedupe baseline. */
+      markSaved(position, st) {
+        if (pending.has(position) || inflight.has(position)) return;
+        saved.set(position, { answer: norm(st && st.answer), flagged: !!(st && st.flagged) });
+      },
+      /** Is this question's on-screen state still on its way to the server? */
+      isUnsaved(position) { return pending.has(position) || inflight.has(position); },
+      size,
+      /**
+       * Resolve true once every queued save has landed, false if `timeoutMs`
+       * passes first. A backoff pause is skipped (try now); a server-ordered
+       * 429 pause is honored.
+       */
+      flush(flushOpts) {
+        const timeoutMs = (flushOpts && flushOpts.timeoutMs) || 20000;
+        if (size() === 0) return Promise.resolve(true);
+        if (!rateLimited && pausedUntil > now()) {
+          pausedUntil = now();
+          if (timer) { clearT(timer); timer = null; }
+          pump();
+        }
+        return new Promise((resolve) => {
+          const w = { resolve: (v) => { clearT(w.t); resolve(v); } };
+          w.t = setT(() => { waiters = waiters.filter((x) => x !== w); resolve(false); }, timeoutMs);
+          waiters.push(w);
+          settleWaiters();
+        });
+      },
+      /** A new test: forget everything. */
+      reset() {
+        pending.clear(); inflight.clear(); saved.clear();
+        pausedUntil = 0; rateLimited = false; failures = 0;
+        if (timer) { clearT(timer); timer = null; }
+        const ws = waiters; waiters = []; ws.forEach((w) => w.resolve(true));
+        status();
+      },
+    };
+  }
+
+  // How long to wait before retrying a request the server refused with 429:
+  // its own retryAfter (seconds), capped so a student is never told to wait
+  // minutes for a page that might be ready in seconds.
+  function retryAfterMs(res, capMs) {
+    const secs = Number(res && res.body && res.body.retryAfter);
+    return Math.min(capMs || 30000, (Number.isFinite(secs) && secs > 0 ? secs : 5) * 1000);
+  }
+
   // Exposed for the unit test of the notation rules.
   if (typeof window !== 'undefined') {
+    window.__actCreateSaveQueue = createSaveQueue; window.__actRetryAfterMs = retryAfterMs;
     window.__actPrettyMath = prettyMath; window.__actStemHtml = stemHtml; window.__actMatrixHtml = matrixHtml;
     window.__actSanitizeGridIn = sanitizeGridIn; window.__actGridInPreviewHtml = gridInPreviewHtml;
   }
