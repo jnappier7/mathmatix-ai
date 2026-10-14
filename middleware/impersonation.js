@@ -20,18 +20,15 @@ const ALWAYS_BLOCKED_ROUTES = [
 // Routes that modify data - blocked in read-only mode
 const WRITE_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
-// Routes allowed even in read-only mode (necessary for viewing)
+// The ONLY writes allowed while viewing as another user. "View as" is strictly
+// look-only (owner decision, 2026-10-14): it used to let POSTs to /api/chat,
+// /api/user, /api/mastery, /api/conversations … through, so a parent "viewing"
+// could chat as the child — writing the child's transcript, XP and mastery and
+// spending their AI minutes. The chat page renders the child's transcript via
+// GET /api/conversations/:id/view instead (public/js/script.js, look-only mode).
 const READ_ONLY_ALLOWED_ROUTES = [
-  '/api/chat',           // Need to see chat interface
-  '/api/session/heartbeat',
-  '/api/user',
-  '/api/avatars',
-  '/api/curriculum',
-  '/api/conversations',
-  '/api/mastery',
-  '/api/fact-fluency',
-  '/api/leaderboard',
-  '/api/impersonation/end' // Must allow exiting impersonation in read-only mode
+  '/api/session/heartbeat', // keeps the viewer's own login alive; writes nothing of the child's
+  '/api/impersonation/end'  // must always be able to leave
 ];
 
 /**

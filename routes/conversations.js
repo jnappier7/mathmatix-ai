@@ -398,42 +398,69 @@ router.post('/:id/switch', isAuthenticated, validateObjectId('id'), async (req, 
     user.activeConversationId = conversationId;
     await user.save();
 
-    // Get recent messages (last 50). Strip the server-only worksheet-continuity
-    // fields (attachments[].extractedText / imageData) — the browser only needs
-    // the uploadId + type to re-render the file, and shipping the OCR text +
-    // base64 image would bloat the history payload (and re-regress chat load).
-    const recentMessages = conversation.messages.slice(-50).map(m => {
-      const obj = (m && typeof m.toObject === 'function') ? m.toObject() : { ...m };
-      if (Array.isArray(obj.attachments)) {
-        obj.attachments = obj.attachments.map(a => ({
-          uploadId: a.uploadId,
-          fileType: a.fileType,
-          mimeType: a.mimeType,
-        }));
-      }
-      return obj;
-    });
-
-    res.json({
-      conversation: {
-        _id: conversation._id,
-        topic: conversation.topic,
-        topicEmoji: conversation.topicEmoji,
-        name: conversation.conversationName || conversation.topic || 'General Chat',
-        conversationType: conversation.conversationType,
-        currentTopic: conversation.currentTopic,
-        // Rides inside `conversation` (not a sibling) so sidebar.js can stay
-        // untouched — it forwards this object verbatim to updateChatForSession,
-        // which replays the board from it.
-        boardLedger: conversation.boardLedger || null
-      },
-      messages: recentMessages
-    });
+    res.json(sessionPayload(conversation));
   } catch (error) {
     logger.error('Failed to switch conversation', { error });
     res.status(500).json({ message: 'Failed to switch conversation' });
   }
 });
+
+/**
+ * GET /api/conversations/:id/view
+ * The same payload as /switch, with NO writes — for look-only "view as"
+ * (impersonation blocks every POST, so /switch is unavailable there).
+ */
+router.get('/:id/view', isAuthenticated, validateObjectId('id'), async (req, res) => {
+  try {
+    const conversation = await Conversation.findOne({
+      _id: req.params.id,
+      userId: req.user._id,
+      isActive: true
+    });
+    if (!conversation) {
+      return res.status(404).json({ message: 'Conversation not found' });
+    }
+    res.json(sessionPayload(conversation));
+  } catch (error) {
+    logger.error('Failed to load conversation', { error });
+    res.status(500).json({ message: 'Failed to load conversation' });
+  }
+});
+
+// The transcript payload /switch and /view share.
+function sessionPayload(conversation) {
+  // Recent messages (last 50). Strip the server-only worksheet-continuity
+  // fields (attachments[].extractedText / imageData) — the browser only needs
+  // the uploadId + type to re-render the file, and shipping the OCR text +
+  // base64 image would bloat the history payload (and re-regress chat load).
+  const recentMessages = conversation.messages.slice(-50).map(m => {
+    const obj = (m && typeof m.toObject === 'function') ? m.toObject() : { ...m };
+    if (Array.isArray(obj.attachments)) {
+      obj.attachments = obj.attachments.map(a => ({
+        uploadId: a.uploadId,
+        fileType: a.fileType,
+        mimeType: a.mimeType,
+      }));
+    }
+    return obj;
+  });
+
+  return {
+    conversation: {
+      _id: conversation._id,
+      topic: conversation.topic,
+      topicEmoji: conversation.topicEmoji,
+      name: conversation.conversationName || conversation.topic || 'General Chat',
+      conversationType: conversation.conversationType,
+      currentTopic: conversation.currentTopic,
+      // Rides inside `conversation` (not a sibling) so sidebar.js can stay
+      // untouched — it forwards this object verbatim to updateChatForSession,
+      // which replays the board from it.
+      boardLedger: conversation.boardLedger || null
+    },
+    messages: recentMessages
+  };
+}
 
 /**
  * PATCH /api/conversations/:id/rename

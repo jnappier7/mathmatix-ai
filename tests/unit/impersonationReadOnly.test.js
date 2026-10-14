@@ -98,3 +98,37 @@ describe('a session stored with readOnly:false (started before this fix)', () =>
     expect(res.status).toHaveBeenCalledWith(403);
   });
 });
+
+describe('look-only: the only writes allowed while viewing are heartbeat and exit', () => {
+  const run = (method, originalUrl) => {
+    const req = { isImpersonating: true, impersonationReadOnly: true, method, originalUrl };
+    const res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+    const next = jest.fn();
+    enforceReadOnly(req, res, next);
+    return next.mock.calls.length > 0;
+  };
+
+  test.each([
+    ['POST', '/api/chat'],                       // greeting / sending as the child
+    ['POST', '/api/chat/track-time'],            // charging the child's minutes
+    ['POST', '/api/conversations/abc/switch'],   // records activeConversationId
+    ['POST', '/api/conversations'],
+    ['PUT', '/api/user/settings'],
+    ['POST', '/api/mastery/start-skill'],
+    ['POST', '/api/avatars/equip'],
+    ['POST', '/api/fact-fluency/session'],
+    ['POST', '/api/leaderboard/opt-in'],
+    ['POST', '/api/curriculum/x'],
+  ])('%s %s is blocked', (method, url) => {
+    expect(run(method, url)).toBe(false);
+  });
+
+  test.each([
+    ['POST', '/api/session/heartbeat'],
+    ['POST', '/api/impersonation/end'],
+    ['GET', '/api/conversations/abc/view'],
+    ['GET', '/api/conversations'],
+  ])('%s %s is allowed', (method, url) => {
+    expect(run(method, url)).toBe(true);
+  });
+});
