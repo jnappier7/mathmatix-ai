@@ -22,12 +22,16 @@ const { renderMessage, listOf, normalizeLanguage } = require('./parentReportText
  * @param {string} [opts.language]  the PARENT's language (parentLanguage)
  * @param {Date}   [opts.now]
  */
-async function buildLearningReport(child, { language, now = new Date() } = {}) {
+async function buildLearningReport(child, { language, now = new Date(), windowDays = 7 } = {}) {
+    // The report window: 7 days on the dashboard; the digest passes its cadence
+    // (1/7/14/30 — utils/reportFrequency.windowDaysFor). The comparison window is
+    // the same length immediately before it.
+    const days = Number.isFinite(Number(windowDays)) && Number(windowDays) > 0 ? Number(windowDays) : 7;
     const lang = normalizeLanguage(language);
     const childId = child._id;
     const childObjectId = new mongoose.Types.ObjectId(childId);
-    const oneWeekAgo = new Date(now.getTime() - 7 * 86400000);
-    const twoWeeksAgo = new Date(now.getTime() - 14 * 86400000);
+    const oneWeekAgo = new Date(now.getTime() - days * 86400000);
+    const twoWeeksAgo = new Date(now.getTime() - 2 * days * 86400000);
 
     // ------------------------------------------------------------------
     // 1. SESSION DATA — this week and previous week for trend comparison
@@ -73,7 +77,7 @@ async function buildLearningReport(child, { language, now = new Date() } = {}) {
     // ------------------------------------------------------------------
     const engines = child.learningEngines || {};
     const [picture, reportCourses] = await Promise.all([
-        skillPictureFor(child, now.getTime()),
+        skillPictureFor(child, now.getTime(), days),
         CourseSession.find({ userId: childId, status: { $in: ['active', 'paused'] } }).select('courseId courseName').lean(),
     ]);
     const reportCourseNames = reportCourses.filter(c => !/^parent-/.test(c.courseId || '')).map(c => c.courseName);
@@ -170,7 +174,7 @@ async function buildLearningReport(child, { language, now = new Date() } = {}) {
     // Each insight keeps its key + params so another renderer (email, print)
     // can re-render it; `message` is the parent's language.
     const say = (type, tone, key, params = {}) => insights.push({
-        type, tone, key, params, message: renderMessage(key, { name, ...params }, lang),
+        type, tone, key, params, message: renderMessage(key, { name, days, ...params }, lang),
     });
     // Accuracy needs a real sample: under MIN_FOR_ACCURACY checked problems a
     // percentage reads as a verdict ("100%" for 1 of 1) — count instead.
@@ -218,6 +222,16 @@ async function buildLearningReport(child, { language, now = new Date() } = {}) {
         say('milestone', 'positive', 'insight.milestone', { count: masteredThisWeek });
     }
 
+    // Consistency and badges (carried over from the old email digest, which had
+    // its own copy of this logic).
+    if (streak.current >= 7) {
+        say('engagement', 'positive', 'insight.streak', { count: streak.current });
+    }
+    const badgeCount = recentBadges.length + recentStrategyBadges.length;
+    if (badgeCount > 0) {
+        say('milestone', 'positive', 'insight.badges', { count: badgeCount });
+    }
+
     // Review
     if (reviewSkills.length > 0) {
         const names = reviewSkills.slice(0, 3).map(s => s.name);
@@ -241,7 +255,7 @@ async function buildLearningReport(child, { language, now = new Date() } = {}) {
         'needs-attention': 'headline.none', excellent: 'headline.excellent', good: 'headline.good',
         growing: 'headline.growing', building: 'headline.building',
     };
-    const headline = renderMessage(HEADLINE_KEY[headlineTone], { name }, lang);
+    const headline = renderMessage(HEADLINE_KEY[headlineTone], { name, days }, lang);
 
     // ------------------------------------------------------------------
     // BUILD RESPONSE
@@ -249,7 +263,7 @@ async function buildLearningReport(child, { language, now = new Date() } = {}) {
     return {
         success: true,
         reportDate: now.toISOString(),
-        period: { from: oneWeekAgo.toISOString(), to: now.toISOString() },
+        period: { from: oneWeekAgo.toISOString(), to: now.toISOString(), days },
         child: {
             id: child._id,
             firstName: child.firstName,

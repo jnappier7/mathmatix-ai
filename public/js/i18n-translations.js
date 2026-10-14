@@ -1401,4 +1401,27 @@ window.I18N_TRANSLATIONS = {
   'parent.analytics.mapEmpty': {
     English: "Strength map appears once your child starts practicing skills.", Spanish: "El mapa de fortalezas aparece cuando su hijo empieza a practicar.", Russian: "Карта сильных сторон появится, когда ребёнок начнёт заниматься.", Chinese: "孩子开始练习技能后会显示优势图。", Vietnamese: "Bản đồ điểm mạnh sẽ hiện khi con bắt đầu luyện tập.", Arabic: "تظهر خريطة نقاط القوة عندما يبدأ طفلك التدرّب على المهارات.", Somali: "Khariidadda awoodaha waxay soo baxaysaa marka ilmahaagu bilaabo tababarka xirfadaha.", French: "La carte des forces apparaît dès que votre enfant commence à s’entraîner.", German: "Die Stärkenkarte erscheint, sobald Ihr Kind mit dem Üben beginnt."
   },
+
+  /* --- Parent report: print / email actions --- */
+  'parent.report.loading': {
+    English: "Generating learning report...", Spanish: "Generando el informe de aprendizaje...", Russian: "Формируем отчёт об обучении...", Chinese: "正在生成学习报告...", Vietnamese: "Đang tạo báo cáo học tập...", Arabic: "جارٍ إعداد تقرير التعلّم...", Somali: "Warbixinta waxbarashada ayaa la diyaarinayaa...", French: "Création du rapport d'apprentissage...", German: "Lernbericht wird erstellt..."
+  },
+  'parent.report.loadError': {
+    English: "Could not load the learning report. Please try again.", Spanish: "No se pudo cargar el informe. Inténtelo de nuevo.", Russian: "Не удалось загрузить отчёт. Попробуйте ещё раз.", Chinese: "无法加载学习报告，请重试。", Vietnamese: "Không tải được báo cáo. Vui lòng thử lại.", Arabic: "تعذّر تحميل التقرير. يُرجى المحاولة مرة أخرى.", Somali: "Warbixinta lama soo gelin karin. Fadlan isku day mar kale.", French: "Impossible de charger le rapport. Veuillez réessayer.", German: "Der Bericht konnte nicht geladen werden. Bitte versuchen Sie es erneut."
+  },
+  'parent.report.actions': {
+    English: "Report actions", Spanish: "Acciones del informe", Russian: "Действия с отчётом", Chinese: "报告操作", Vietnamese: "Thao tác với báo cáo", Arabic: "إجراءات التقرير", Somali: "Ficilada warbixinta", French: "Actions sur le rapport", German: "Berichtsaktionen"
+  },
+  'parent.report.print': {
+    English: "Print / Save as PDF", Spanish: "Imprimir / Guardar como PDF", Russian: "Печать / Сохранить в PDF", Chinese: "打印 / 另存为PDF", Vietnamese: "In / Lưu thành PDF", Arabic: "طباعة / حفظ كملف PDF", Somali: "Daabac / U kaydi PDF ahaan", French: "Imprimer / Enregistrer en PDF", German: "Drucken / Als PDF speichern"
+  },
+  'parent.report.emailMe': {
+    English: "Email to me", Spanish: "Enviármelo por correo", Russian: "Отправить мне на почту", Chinese: "发送到我的邮箱", Vietnamese: "Gửi email cho tôi", Arabic: "أرسله إلى بريدي", Somali: "Ii soo dir iimayl ahaan", French: "M'envoyer par e-mail", German: "Per E-Mail an mich"
+  },
+  'parent.report.emailSent': {
+    English: "Sent! Check your inbox.", Spanish: "¡Enviado! Revise su bandeja de entrada.", Russian: "Отправлено! Проверьте почту.", Chinese: "已发送！请查看收件箱。", Vietnamese: "Đã gửi! Hãy kiểm tra hộp thư.", Arabic: "تم الإرسال! تحقّق من بريدك الوارد.", Somali: "Waa la diray! Hubi sanduuqaaga iimaylka.", French: "Envoyé ! Consultez votre boîte de réception.", German: "Gesendet! Schauen Sie in Ihr Postfach."
+  },
+  'parent.report.emailFailed': {
+    English: "Couldn't send the email. Please try again later.", Spanish: "No se pudo enviar el correo. Inténtelo más tarde.", Russian: "Не удалось отправить письмо. Попробуйте позже.", Chinese: "邮件发送失败，请稍后重试。", Vietnamese: "Không gửi được email. Vui lòng thử lại sau.", Arabic: "تعذّر إرسال البريد. يُرجى المحاولة لاحقًا.", Somali: "Iimaylka lama diri karin. Fadlan isku day mar dambe.", French: "Impossible d'envoyer l'e-mail. Veuillez réessayer plus tard.", German: "Die E-Mail konnte nicht gesendet werden. Bitte später erneut versuchen."
+  },
 };

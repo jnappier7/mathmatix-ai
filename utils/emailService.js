@@ -2,6 +2,7 @@
 // Email service for parent reports, consent emails, and notifications
 
 const nodemailer = require('nodemailer');
+const { renderReportEmail } = require('./parentReportEmail');
 // One phrase for the free tier everywhere it is stated (docs/CONTENT_STANDARDS.md).
 const { freeTierPhrase } = require('./aiTimeMeter');
 const { messagingThreadRoles } = require('./messagingAccess');
@@ -59,28 +60,33 @@ function initializeTransporter() {
  * @param {Object} parent - Parent user object
  * @param {Object} studentData - Student progress data
  */
-async function sendParentWeeklyReport(parent, studentData) {
+/**
+ * Send a parent their child's progress report. `report` is the Learning Report
+ * (utils/parentReport.buildLearningReport) — the same object the dashboard
+ * shows — rendered in the parent's language (utils/parentReportEmail).
+ */
+async function sendParentProgressReport(parent, report) {
   const transport = initializeTransporter();
   if (!transport) {
-    console.warn('Email not configured - skipping weekly report');
+    console.warn('Email not configured - skipping progress report');
     return { success: false, error: 'Email not configured' };
   }
 
   try {
     const emailConfig = getEmailConfig();
-    const mailOptions = {
+    const { subject, html, text } = renderReportEmail(parent, report);
+    const info = await transport.sendMail({
       from: getFromAddress(),
       replyTo: emailConfig.replyTo,
       to: parent.email,
-      subject: `${studentData.studentName}'s ${(studentData.period && studentData.period.title) || 'Weekly'} Math Progress`,
-      html: getWeeklyReportTemplate(parent, studentData)
-    };
-
-    const info = await transport.sendMail(mailOptions);
-    console.log(`✅ Weekly report sent to ${parent.email}:`, info.messageId);
+      subject,
+      html,
+      text,
+    });
+    console.log(`✅ Progress report sent to ${parent.email}:`, info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('❌ Error sending weekly report:', error);
+    console.error('❌ Error sending progress report:', error);
     return { success: false, error: error.message };
   }
 }
@@ -563,208 +569,6 @@ async function sendTestEmail(recipientEmail) {
 // ============================================
 // EMAIL TEMPLATES
 // ============================================
-
-function getWeeklyReportTemplate(parent, studentData) {
-  const {
-    studentName,
-    problemsCompleted = 0,
-    currentLevel = 1,
-    xpEarned = 0,
-    activeMinutes = 0,
-    accuracy = 0,
-    strugglingSkills = [],
-    achievements = [],
-    memoryHealth,
-    cognitiveLoad,
-    mastery,
-    currentStreak = 0,
-    insights = [],
-  } = studentData;
-
-  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
-
-  // Build insights HTML
-  const insightToneColors = {
-    positive: { bg: '#f0fdf4', border: '#27ae60', icon: '&#10003;' },
-    concern: { bg: '#fff5f5', border: '#e74c3c', icon: '&#9888;' },
-    actionable: { bg: '#eff6ff', border: '#3b82f6', icon: '&#9733;' },
-    neutral: { bg: '#f8f9fa', border: '#6c757d', icon: '&#8226;' },
-  };
-
-  const insightsHtml = insights.length > 0 ? insights.map(ins => {
-    const style = insightToneColors[ins.tone] || insightToneColors.neutral;
-    return `<div style="padding: 12px 16px; background: ${style.bg}; border-left: 3px solid ${style.border}; border-radius: 4px; margin-bottom: 8px; font-size: 14px; color: #333;">
-      ${ins.message}
-    </div>`;
-  }).join('') : '';
-
-  // Memory health bar
-  const memTotal = memoryHealth ? (memoryHealth.strong + memoryHealth.fading + memoryHealth.needsReview) : 0;
-  const memStrongPct = memTotal > 0 ? Math.round((memoryHealth.strong / memTotal) * 100) : 0;
-  const memFadingPct = memTotal > 0 ? Math.round((memoryHealth.fading / memTotal) * 100) : 0;
-
-  // Mastery bar
-  const masteryTotal = mastery ? (mastery.mastered + mastery.practicing + mastery.learning) : 0;
-  const masteryPct = masteryTotal > 0 ? Math.round((mastery.mastered / masteryTotal) * 100) : 0;
-  const practicingPct = masteryTotal > 0 ? Math.round((mastery.practicing / masteryTotal) * 100) : 0;
-
-  return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
-  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px;">
-
-    <!-- Header -->
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center;">
-      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">MATHMATIX AI</h1>
-      <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 14px;">Unlock the Pattern. Learn for Life.</p>
-    </div>
-
-    <!-- Greeting -->
-    <div style="padding: 30px 20px 20px 20px;">
-      <h2 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 22px;">Hi ${parent.firstName || 'Parent'},</h2>
-      <p style="margin: 0; color: #555; font-size: 16px; line-height: 1.6;">
-        Here's how <strong>${studentName}</strong> did ${(studentData.period && studentData.period.phrase) || 'this week'} in math:
-      </p>
-    </div>
-
-    ${insightsHtml ? `
-    <!-- Key Insights -->
-    <div style="padding: 0 20px 15px 20px;">
-      <h3 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 16px;">Key Insights</h3>
-      ${insightsHtml}
-    </div>
-    ` : ''}
-
-    <!-- Stats Grid -->
-    <div style="padding: 0 20px 20px 20px;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 20px; color: white;">
-          <div style="font-size: 32px; font-weight: 700; margin-bottom: 5px;">${problemsCompleted > 0 ? problemsCompleted : '—'}</div>
-          <div style="font-size: 14px; opacity: 0.9;">Problems Solved</div>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; padding: 20px; color: white;">
-          <div style="font-size: 32px; font-weight: 700; margin-bottom: 5px;">${accuracy > 0 ? accuracy + '%' : '—'}</div>
-          <div style="font-size: 14px; opacity: 0.9;">Accuracy</div>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; padding: 20px; color: white;">
-          <div style="font-size: 32px; font-weight: 700; margin-bottom: 5px;">Level ${currentLevel}</div>
-          <div style="font-size: 14px; opacity: 0.9;">${xpEarned} XP Earned</div>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border-radius: 12px; padding: 20px; color: white;">
-          <div style="font-size: 32px; font-weight: 700; margin-bottom: 5px;">${activeMinutes} min</div>
-          <div style="font-size: 14px; opacity: 0.9;">Active Learning</div>
-        </div>
-
-      </div>
-    </div>
-
-    ${currentStreak > 0 ? `
-    <!-- Streak -->
-    <div style="padding: 0 20px 15px 20px; text-align: center;">
-      <span style="display: inline-block; background: #fff3e0; border: 1px solid #ffb74d; border-radius: 20px; padding: 6px 18px; font-size: 14px; color: #e65100;">
-        &#128293; ${currentStreak}-day practice streak
-      </span>
-    </div>
-    ` : ''}
-
-    ${memTotal > 0 ? `
-    <!-- Memory Health -->
-    <div style="padding: 0 20px 15px 20px;">
-      <h3 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 16px;">Memory Health</h3>
-      <div style="height: 14px; border-radius: 7px; overflow: hidden; background: #fecaca; display: flex;">
-        <div style="width: ${memStrongPct}%; background: #22c55e; height: 100%;"></div>
-        <div style="width: ${memFadingPct}%; background: #fbbf24; height: 100%;"></div>
-      </div>
-      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-top: 4px;">
-        <span>&#9679; Strong: ${memoryHealth.strong}</span>
-        <span>&#9679; Fading: ${memoryHealth.fading}</span>
-        <span>&#9679; Needs Review: ${memoryHealth.needsReview}</span>
-      </div>
-    </div>
-    ` : ''}
-
-    ${masteryTotal > 0 ? `
-    <!-- Skill Mastery -->
-    <div style="padding: 0 20px 15px 20px;">
-      <h3 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 16px;">Skill Mastery</h3>
-      <div style="height: 14px; border-radius: 7px; overflow: hidden; background: #e5e7eb; display: flex;">
-        <div style="width: ${masteryPct}%; background: #8b5cf6; height: 100%;"></div>
-        <div style="width: ${practicingPct}%; background: #a78bfa; height: 100%;"></div>
-      </div>
-      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-top: 4px;">
-        <span>Mastered: ${mastery.mastered}</span>
-        <span>Practicing: ${mastery.practicing}</span>
-        <span>Learning: ${mastery.learning}</span>
-      </div>
-    </div>
-    ` : ''}
-
-    ${cognitiveLoad && cognitiveLoad.trend !== 'no-data' ? `
-    <!-- Cognitive Load -->
-    <div style="padding: 0 20px 15px 20px;">
-      <h3 style="margin: 0 0 4px 0; color: #2c3e50; font-size: 16px;">Mental Effort</h3>
-      <p style="margin: 0; font-size: 14px; color: #555;">
-        ${cognitiveLoad.average}% average load —
-        ${cognitiveLoad.trend === 'improving' ? 'trending down (good!)' : cognitiveLoad.trend === 'rising' ? 'trending up (tutor adjusting)' : 'steady'}
-      </p>
-    </div>
-    ` : ''}
-
-    ${achievements.length > 0 ? `
-    <!-- Achievements -->
-    <div style="padding: 15px 20px; background: #f0fdf4; margin: 0 20px; border-radius: 8px; border-left: 4px solid #27ae60;">
-      <h3 style="margin: 0 0 10px 0; color: #27ae60; font-size: 16px;">Recent Achievements</h3>
-      <ul style="margin: 0; padding-left: 20px; color: #555; font-size: 14px;">
-        ${achievements.map(a => `<li style="margin-bottom: 4px;">${typeof a === 'string' ? a : (a.key || a.badgeId || 'Badge')}</li>`).join('')}
-      </ul>
-    </div>
-    ` : ''}
-
-    ${strugglingSkills.length > 0 ? `
-    <!-- Areas for Growth -->
-    <div style="padding: 15px 20px; background: #fff5f5; margin: 15px 20px 0 20px; border-radius: 8px; border-left: 4px solid #e74c3c;">
-      <h3 style="margin: 0 0 10px 0; color: #e74c3c; font-size: 16px;">Areas for Extra Practice</h3>
-      <ul style="margin: 0; padding-left: 20px; color: #555; font-size: 14px;">
-        ${strugglingSkills.map(skill => `<li style="margin-bottom: 4px;">${skill}</li>`).join('')}
-      </ul>
-      <p style="margin: 10px 0 0 0; color: #666; font-size: 13px;">
-        <em>The AI tutor is providing extra support in these areas.</em>
-      </p>
-    </div>
-    ` : ''}
-
-    <!-- CTA Button -->
-    <div style="padding: 25px 20px; text-align: center;">
-      <a href="${baseUrl}/parent-dashboard.html"
-         style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
-        View Full Report
-      </a>
-    </div>
-
-    <!-- Footer -->
-    <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
-      <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">
-        Update your notification preferences in your <a href="${baseUrl}/parent-dashboard.html" style="color: #667eea; text-decoration: none;">parent dashboard</a>
-      </p>
-      <p style="margin: 0; font-size: 12px; color: #999;">
-        &copy; ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.
-      </p>
-    </div>
-
-  </div>
-</body>
-</html>
-  `;
-}
 
 function getPasswordResetTemplate(resetUrl) {
   return `
@@ -1870,7 +1674,7 @@ function getCancellationConfirmationTemplate(firstName, accessUntilDate, baseUrl
 }
 
 module.exports = {
-  sendParentWeeklyReport,
+  sendParentProgressReport,
   sendParentInvite,
   sendReactivationParentEmail,
   sendReactivationKidEmail,

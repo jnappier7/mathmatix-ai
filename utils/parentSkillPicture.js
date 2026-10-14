@@ -74,7 +74,7 @@ function scoreOf(data) {
  * @param {Object}     args.info          key -> { name, category } for both stores' keys
  * @param {number}     [args.now]
  */
-function buildSkillPicture({ skillMastery, fsrs, info = {}, now = Date.now() } = {}) {
+function buildSkillPicture({ skillMastery, fsrs, info = {}, now = Date.now(), windowDays = 7 } = {}) {
   const label = (key) => (info[key] && info[key].name) || null;
   const categoryOf = (key) => (info[key] && info[key].category) || 'Other';
 
@@ -152,7 +152,8 @@ function buildSkillPicture({ skillMastery, fsrs, info = {}, now = Date.now() } =
     else c.learning++;
   }
 
-  const weekAgo = now - 7 * DAY_MS;
+  // "Mastered this week" follows the report window (the digest may cover 1-30 days).
+  const weekAgo = now - windowDays * DAY_MS;
   return {
     counts: {
       practiced: practiced.length,
@@ -176,7 +177,7 @@ function buildSkillPicture({ skillMastery, fsrs, info = {}, now = Date.now() } =
 }
 
 /** Resolve names for both stores, then build. What the routes call. */
-async function skillPictureFor(child, now = Date.now()) {
+async function skillPictureFor(child, now = Date.now(), windowDays = 7) {
   const { resolveSkillInfo } = require('./skillDisplayNames');
   const skillMastery = child && child.skillMastery;
   const fsrs = child && child.learningEngines && child.learningEngines.fsrs;
@@ -185,7 +186,7 @@ async function skillPictureFor(child, now = Date.now()) {
     ...engineEntries(fsrs).map(([k]) => k),
   ];
   const info = await resolveSkillInfo(keys);
-  return buildSkillPicture({ skillMastery, fsrs, info, now });
+  return buildSkillPicture({ skillMastery, fsrs, info, now, windowDays });
 }
 
 module.exports = { buildSkillPicture, skillPictureFor, classifySkill, MEMORY_STRONG, MEMORY_FADING };

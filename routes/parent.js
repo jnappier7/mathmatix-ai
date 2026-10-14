@@ -15,6 +15,7 @@ const ScreenerSession = require('../models/screenerSession');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 const { shapeRecentSessions } = require('../utils/parentSessionList');
+const { localizeSessionSummaries } = require('../utils/summaryTranslation');
 const { normalizeParentLanguage } = require('../utils/parentConferencePrompt');
 
 const { userHasRole, anyRole } = require('../utils/roleQuery');
@@ -253,6 +254,9 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, logRecordAcces
             firstName: child.firstName,
             limit: 6
         });
+        // Summaries are written in English; show them in the parent's language
+        // (cached per conversation; English stays on any failure or slow model).
+        await localizeSessionSummaries(recentSessions, { language: req.user.parentLanguage, childFirstName: child.firstName });
 
         // NEW: Build live stats object
         const liveStats = activeConversation ? {

@@ -1349,6 +1349,40 @@
       margin: auto;
       animation: lrSlideUp 0.3s ease;
     }
+    /* Print / Email-me bar — left of the × so the two never overlap */
+    .lr-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 16px 64px 0 20px;
+    }
+    .lr-action-btn {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      font-size: 0.85em;
+      padding: 6px 12px;
+      border-radius: var(--radius-md, 8px);
+      cursor: pointer;
+    }
+    .lr-action-btn:disabled { opacity: 0.6; cursor: wait; }
+    [dir="rtl"] .lr-actions { padding: 16px 20px 0 64px; }
+    /* Print only the report: everything else on the page is hidden while
+       body.lr-printing is set (parent-dashboard.js renderReportActions). */
+    @media print {
+      body.lr-printing > *:not(#learning-report-modal) { display: none !important; }
+      body.lr-printing #learning-report-modal {
+        position: static !important; display: block !important;
+        background: none !important; padding: 0 !important; overflow: visible !important;
+      }
+      body.lr-printing .lr-modal {
+        box-shadow: none !important; max-width: none !important;
+        margin: 0 !important; animation: none !important; border-radius: 0 !important;
+      }
+      body.lr-printing .lr-modal-close,
+      body.lr-printing .lr-actions { display: none !important; }
+      body.lr-printing .lr-section { break-inside: avoid; }
+    }
     @keyframes lrSlideUp {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -1844,7 +1878,7 @@
       return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
     };
   </script>
-  <script src="/dist/js/parent-js0.60898853.js"></script>
+  <script src="/dist/js/parent-js0.670a41f0.js"></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
 </head>
 <body>
@@ -2526,7 +2560,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-  <script src="/dist/js/parent-js1.5bfc3eb1.js"></script>
+  <script src="/dist/js/parent-js1.3646cc98.js"></script>
 <script>
     // Mount once the dashboard script has established the session.
     document.addEventListener('DOMContentLoaded', function () {

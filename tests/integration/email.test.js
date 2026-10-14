@@ -13,7 +13,7 @@ jest.mock('../../utils/demoClone', () => ({
 
 jest.mock('../../utils/emailService', () => ({
   sendTestEmail: jest.fn(),
-  sendParentWeeklyReport: jest.fn(),
+  sendParentProgressReport: jest.fn(),
   getEmailConfig: jest.fn().mockReturnValue({
     from: 'noreply@mathmatix.ai',
     fromName: 'Mathmatix',
@@ -22,13 +22,13 @@ jest.mock('../../utils/emailService', () => ({
 }));
 
 jest.mock('../../models/user', () => ({ findById: jest.fn() }));
-jest.mock('../../models/conversation', () => ({ aggregate: jest.fn() }));
+jest.mock('../../utils/parentReport', () => ({ buildLearningReport: jest.fn() }));
 
 const express = require('express');
 const supertest = require('supertest');
 const User = require('../../models/user');
-const Conversation = require('../../models/conversation');
-const { sendTestEmail, sendParentWeeklyReport } = require('../../utils/emailService');
+const { buildLearningReport } = require('../../utils/parentReport');
+const { sendTestEmail, sendParentProgressReport } = require('../../utils/emailService');
 const router = require('../../routes/email');
 
 function makeApp(currentUser) {
@@ -96,50 +96,31 @@ describe('POST /api/email/weekly-report', () => {
   });
 
   test('returns 404 when child does not exist', async () => {
-    User.findById.mockResolvedValue(null);
+    User.findById.mockReturnValue({ lean: () => Promise.resolve(null) });
     const app = makeApp({ _id: 'p1', role: 'parent', children: ['kid-1'] });
     const res = await supertest(app).post('/api/email/weekly-report').send({ studentId: 'kid-1' });
     expect(res.status).toBe(404);
   });
 
-  test('aggregates stats and sends report on success', async () => {
-    User.findById.mockResolvedValue({
-      _id: 'kid-1',
-      firstName: 'Sam',
-      lastName: 'Lee',
-      level: 5,
-      xp: 200,
-      totalActiveTutoringMinutes: 90,
-      skillMastery: new Map([
-        ['add', { status: 'mastered', masteredDate: new Date() }],
-        ['sub', { status: 'practicing' }],
-        ['mul', { status: 'needs-review' }]
-      ]),
-      badges: [],
-      dailyQuests: { currentStreak: 3 }
-    });
-    Conversation.aggregate.mockResolvedValue([{ totalProblems: 50, totalCorrect: 40 }]);
-    sendParentWeeklyReport.mockResolvedValue({ success: true, messageId: '<rep-1>' });
+  test('sends the shared Learning Report, in the parent\'s language and cadence window', async () => {
+    const kid = { _id: 'kid-1', firstName: 'Sam', lastName: 'Lee' };
+    User.findById.mockReturnValue({ lean: () => Promise.resolve(kid) });
+    const report = { child: { firstName: 'Sam' }, insights: [] };
+    buildLearningReport.mockResolvedValue(report);
+    sendParentProgressReport.mockResolvedValue({ success: true, messageId: '<rep-1>' });
 
-    const app = makeApp({ _id: 'p1', role: 'parent', email: 'parent@x.io', children: ['kid-1'] });
-    const res = await supertest(app).post('/api/email/weekly-report').send({ studentId: 'kid-1' });
+    const parent = { _id: 'p1', role: 'parent', email: 'parent@x.io', children: ['kid-1'], parentLanguage: 'Spanish', reportFrequency: 'monthly' };
+    const res = await supertest(makeApp(parent)).post('/api/email/weekly-report').send({ studentId: 'kid-1' });
 
     expect(res.status).toBe(200);
-    expect(sendParentWeeklyReport).toHaveBeenCalled();
-    const studentData = sendParentWeeklyReport.mock.calls[0][1];
-    expect(studentData.studentName).toBe('Sam Lee');
-    expect(studentData.accuracy).toBe(80);
-    expect(studentData.strugglingSkills).toContain('mul');
-    expect(studentData.currentStreak).toBe(3);
+    expect(buildLearningReport).toHaveBeenCalledWith(kid, { language: 'Spanish', windowDays: 30 });
+    expect(sendParentProgressReport).toHaveBeenCalledWith(parent, report);
   });
 
   test('returns 500 when sender fails', async () => {
-    User.findById.mockResolvedValue({
-      _id: 'kid-1', firstName: 'A', lastName: 'B', level: 1, xp: 0,
-      skillMastery: new Map(), badges: [], dailyQuests: {}
-    });
-    Conversation.aggregate.mockResolvedValue([]);
-    sendParentWeeklyReport.mockResolvedValue({ success: false, error: 'failed' });
+    User.findById.mockReturnValue({ lean: () => Promise.resolve({ _id: 'kid-1', firstName: 'A' }) });
+    buildLearningReport.mockResolvedValue({ child: { firstName: 'A' }, insights: [] });
+    sendParentProgressReport.mockResolvedValue({ success: false, error: 'failed' });
 
     const app = makeApp({ _id: 'p1', role: 'parent', children: ['kid-1'], email: 'p@x.io' });
     const res = await supertest(app).post('/api/email/weekly-report').send({ studentId: 'kid-1' });

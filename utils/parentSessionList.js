@@ -54,6 +54,7 @@ function shapeRecentSessions({ active = null, completed = [], firstName = '', li
 
     if (active && active.lastActivity) {
         sessions.push({
+            conversationId: active._id ? String(active._id) : null,
             date: active.lastActivity || active.startDate,
             summary: cleanForParent(active.liveSummary || liveFallbackSummary(active), firstName),
             duration: minutesOf(active.activeMinutes),
@@ -72,6 +73,7 @@ function shapeRecentSessions({ active = null, completed = [], firstName = '', li
         if (listed >= limit) continue;
         listed++;
         sessions.push({
+            conversationId: s._id ? String(s._id) : null,
             date: s.lastActivity || s.startDate,
             summary: placeholder ? NO_SUMMARY_TEXT : cleanForParent(s.summary, firstName),
             duration: minutes,
