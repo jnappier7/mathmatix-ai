@@ -144,7 +144,7 @@ const userSchema = new Schema({ //
     needsProfileCompletion: { type: Boolean, default: true }, //
 
     // Parent-specific fields
-    reportFrequency: { type: String, enum: ['daily', 'weekly', 'biweekly', 'monthly'], default: 'weekly' }, //
+    reportFrequency: { type: String, enum: ['daily', 'weekly', 'biweekly', 'monthly', 'never'], default: 'weekly' }, //
     goalViewPreference: { type: String, enum: ['progress', 'gaps', 'goals'], default: 'progress' }, //
     parentTone: { type: String, trim: true }, //
     parentLanguage: { type: String, trim: true, default: 'English' }, //

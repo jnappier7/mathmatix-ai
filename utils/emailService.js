@@ -72,7 +72,7 @@ async function sendParentWeeklyReport(parent, studentData) {
       from: getFromAddress(),
       replyTo: emailConfig.replyTo,
       to: parent.email,
-      subject: `${studentData.studentName}'s Weekly Math Progress`,
+      subject: `${studentData.studentName}'s ${(studentData.period && studentData.period.title) || 'Weekly'} Math Progress`,
       html: getWeeklyReportTemplate(parent, studentData)
     };
 
@@ -628,7 +628,7 @@ function getWeeklyReportTemplate(parent, studentData) {
     <div style="padding: 30px 20px 20px 20px;">
       <h2 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 22px;">Hi ${parent.firstName || 'Parent'},</h2>
       <p style="margin: 0; color: #555; font-size: 16px; line-height: 1.6;">
-        Here's how <strong>${studentName}</strong> did this week in math:
+        Here's how <strong>${studentName}</strong> did ${(studentData.period && studentData.period.phrase) || 'this week'} in math:
       </p>
     </div>
 

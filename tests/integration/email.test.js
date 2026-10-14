@@ -156,14 +156,31 @@ describe('GET /api/email/status', () => {
     expect(res.body.configured).toBe(false);
   });
 
-  test('reports configured=true and includes sender info when configured', async () => {
+  test('admins get configured=true plus SMTP/sender detail', async () => {
     process.env.SMTP_HOST = 'smtp.x.io';
     process.env.SMTP_USER = 'u';
     process.env.SMTP_PASS = 'p';
-    const app = makeApp({ _id: 'u1' });
+    const app = makeApp({ _id: 'u1', role: 'parent', roles: ['parent', 'admin'] });
     const res = await supertest(app).get('/api/email/status');
     expect(res.body.configured).toBe(true);
     expect(res.body.sender.from).toBe('noreply@mathmatix.ai');
+    expect(res.body.smtp.host).toBe('smtp.x.io');
+    delete process.env.SMTP_HOST; delete process.env.SMTP_USER; delete process.env.SMTP_PASS;
+  });
+
+  test.each([
+    ['parent', { _id: 'p1', role: 'parent', roles: ['parent'] }],
+    ['student', { _id: 's1', role: 'student', roles: ['student'] }],
+    // Active dashboard 'admin' is not enough without holding the role.
+    ['stale active role', { _id: 'x1', role: 'admin', roles: ['parent'] }],
+  ])('non-admins (%s) learn only whether email is configured', async (_label, user) => {
+    process.env.SMTP_HOST = 'smtp.x.io';
+    process.env.SMTP_USER = 'u';
+    process.env.SMTP_PASS = 'p';
+    const app = makeApp(user);
+    const res = await supertest(app).get('/api/email/status');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ configured: true });
     delete process.env.SMTP_HOST; delete process.env.SMTP_USER; delete process.env.SMTP_PASS;
   });
 });

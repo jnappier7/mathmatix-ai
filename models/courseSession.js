@@ -52,6 +52,10 @@ const courseSessionSchema = new Schema({
   courseId: { type: String, required: true },      // e.g., 'ap-calculus-ab'
   courseName: { type: String, required: true },    // e.g., 'AP Calculus AB'
   pathwayId: { type: String, required: true },     // e.g., 'ap-calculus-ab-pathway'
+  // Who the course is for (copied from the pathway at enrollment). Drives the
+  // per-audience concurrent-course cap. Absent on sessions created before this
+  // field — read it via utils/courseAudience.sessionAudience(), never directly.
+  audience: { type: String, enum: ['student', 'parent'] },
 
   // Current position
   currentModuleId: { type: String },
