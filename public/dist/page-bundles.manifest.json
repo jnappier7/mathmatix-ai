@@ -205,14 +205,14 @@
     ],
     "js": [
       {
-        "src": "/dist/js/parent-js0.dc20e10e.js",
+        "src": "/dist/js/parent-js0.60898853.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
         ]
       },
       {
-        "src": "/dist/js/parent-js1.02497a40.js",
+        "src": "/dist/js/parent-js1.5bfc3eb1.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/parent-analytics.js",
@@ -224,6 +224,7 @@
           "/js/auto-logout.js",
           "/js/avatarFullBody.js",
           "/js/test-prep-report.js",
+          "/js/parentGuideBands.js",
           "/js/parent-dashboard.js",
           "/js/modules/messaging.js",
           "/js/modules/learningSupports.js"
@@ -266,7 +267,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/teacher-js0.dc20e10e.js",
+        "src": "/dist/js/teacher-js0.60898853.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"

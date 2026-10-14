@@ -60,7 +60,9 @@ const CATALOG_META = {
   'sat-prep':               { group: 'Applied & Test Prep', difficulty: 'Test Prep', tagline: 'Adaptive practice SATs, then your tutor on every miss', icon: '\uD83D\uDCDD', sortOrder: 12 },
   'parent-math-k2':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Number bonds, ten frames, and visual models for K\u20132 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 0 },
   'parent-math-35':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Area models, fractions, and tape diagrams for 3\u20135 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 1 },
-  'parent-math-68':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Ratios, algebra tiles, and integers for 6\u20138 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 2 }
+  'parent-math-68':         { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Ratios, algebra tiles, and integers for 6\u20138 math', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 2 },
+  'parent-math-910':        { group: 'Parent Guides', difficulty: 'Parent', tagline: 'Functions, factoring, proof, and helping with homework you don\u2019t remember (grades 9\u201310)', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 3 },
+  'parent-test-prep':       { group: 'Parent Guides', difficulty: 'Parent', tagline: 'How the ACT, SAT and PSAT work, what scores mean, and a healthy practice plan', icon: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67', sortOrder: 4 }
 };
 
 router.get('/catalog', async (req, res) => {

@@ -1,0 +1,204 @@
+{
+  "courseId": "parent-test-prep",
+  "track": "Parent Guide: ACT / SAT / PSAT",
+  "audience": "parent",
+  "courseType": "mini-course",
+  "overview": "A mini-course for parents of high schoolers facing the PSAT, SAT, PreACT or ACT. These tests have changed a lot: the SAT and PSAT are now digital and adaptive with a graphing calculator built in, and the ACT moved to a shorter 'enhanced' format in 2025 with Science optional. This guide explains how each test works, what the scores actually mean (and what 'good' means for YOUR teen's goals), what a healthy practice plan looks like, and how to support your teen through it without becoming their tutor—or their source of stress.",
+  "prerequisites": [],
+  "naturalProgression": [
+    "Learn how today's tests work—sections, timing, the adaptive digital SAT and PSAT, the enhanced ACT, calculator rules—and how they differ from the tests you may have taken (Unit 1)",
+    "Decode the scores—scales, percentiles, how the PSAT and PreACT preview the SAT and ACT, superscoring, and what a 'good' score means relative to your teen's goals (Unit 2)",
+    "Build a healthy practice plan—short spaced practice, a few full-length timed practice tests, and careful review of every miss (Unit 3)",
+    "Help without tutoring—registration and logistics, accommodations, mindset, test anxiety and avoiding burnout (Unit 4)"
+  ],
+  "aiInstructionModel": {
+    "approach": "Parent-focused conversational learning",
+    "description": "The AI guides parents as adult learners who want accurate, current information about college admissions tests and practical ways to support their teen. Each lesson covers WHAT the test or score is today, HOW it compares with what the parent may remember, WHY it matters (or matters less than feared), and WHAT the parent can do this week. Accuracy comes first: the AI states well-established facts plainly, says when something varies by college, state or year, and points parents to the College Board, ACT and each college's admissions page for dates, fees, cutoffs and policies rather than guessing. The 'traditional vs. modern' comparison in this guide is the test the parent took vs. the test their teen will take.",
+    "phases": [
+      {
+        "phase": "context-setting",
+        "aiRole": "Explain what this part of the testing process is, when it happens in high school, and how it has changed since the parent took these tests.",
+        "parentRole": "Share what you remember about these tests and where your teen is in the process"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2–3 concrete examples—a test-day timeline, a sample score report, a practice week—so the parent sees exactly how it works.",
+        "parentRole": "Follow along and connect each example to your teen's situation"
+      },
+      {
+        "phase": "why-it-works",
+        "aiRole": "Explain the reasoning: why the test is designed this way, why spaced practice and reviewing mistakes beat cramming, why calm support outperforms pressure.",
+        "parentRole": "Understand the 'why' so you can explain it to your teen"
+      },
+      {
+        "phase": "try-it",
+        "aiRole": "Offer realistic scenarios (reading a score, planning a schedule, responding to a stressed teen) and talk through good responses.",
+        "parentRole": "Practice the decisions and conversations before they happen for real"
+      },
+      {
+        "phase": "homework-tips",
+        "aiRole": "Give specific actions for this week and things to avoid saying or doing, respecting that the teen owns their own prep.",
+        "parentRole": "Leave with a short, concrete list you can act on"
+      }
+    ],
+    "aiDecisionRights": [
+      "Focus on the test(s) the parent's teen is actually taking—skip the ACT details for an SAT-only family and vice versa",
+      "Adjust depth to the parent's goals: a parent of a 9th grader needs the big picture; a parent of a junior with a test date needs the plan",
+      "Use the parent's teen's real practice or official scores if they share them, to explain percentiles and next steps—without promising a score outcome",
+      "Say clearly when a fact depends on the college, state or year, and point to the official source instead of guessing",
+      "Connect to Mathmatix's own math practice tests and prep courses where relevant, while being clear they cover the Math section and give estimated scores",
+      "Address anxiety and family stress directly when the parent raises it"
+    ]
+  },
+  "modules": [
+    {
+      "moduleId": "how_the_tests_work",
+      "unit": 1,
+      "quarter": 1,
+      "title": "How the Tests Work: Sections, Timing and Calculators",
+      "preview": "The digital adaptive SAT and PSAT, the shorter enhanced ACT, the PreACT—what's on each, how long it takes, and what changed since you took them",
+      "moduleFile": "/modules/parent-test-prep/how_the_tests_work_module.json",
+      "skills": ["test-structure", "adaptive-testing", "calculator-rules", "sat-vs-act"],
+      "essentialQuestions": [
+        "What's actually on the SAT, PSAT, ACT and PreACT today?",
+        "How does the adaptive digital SAT work—and is it unfair?",
+        "Should my teen take the SAT, the ACT, or both?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "the-digital-sat-and-psat",
+          "title": "The Digital SAT and PSAT",
+          "order": 1,
+          "concepts": ["Two sections: Reading and Writing, and Math", "Two modules per section; the second adapts to performance on the first", "Taken in the Bluebook app with the Desmos graphing calculator built in"],
+          "teachingNotes": "Most parents took a paper SAT. Lead with what changed: digital, shorter, adaptive, calculator allowed on all of Math."
+        },
+        {
+          "lessonId": "the-enhanced-act-and-preact",
+          "title": "The Enhanced ACT and the PreACT",
+          "order": 2,
+          "concepts": ["English, Math and Reading make the composite; Science is optional", "Shorter than the ACT parents remember, with fewer questions per section", "Math: 45 questions in 50 minutes, four answer choices, calculator allowed"],
+          "teachingNotes": "Parents who took the ACT remember a required Science section and 60 math questions. Both changed in 2025."
+        },
+        {
+          "lessonId": "choosing-a-test",
+          "title": "SAT, ACT, or Both?",
+          "order": 3,
+          "concepts": ["Colleges that accept tests generally accept either", "A practice test of each is the best way to choose", "Pick one to focus on rather than prepping for both at once"],
+          "teachingNotes": "Reassure parents there is no 'better' test for admissions. The right test is the one where the teen does better and feels more comfortable."
+        }
+      ]
+    },
+    {
+      "moduleId": "what_scores_mean",
+      "unit": 2,
+      "quarter": 1,
+      "title": "What Scores Mean: Scales, Percentiles and 'Good'",
+      "preview": "Read a score report, understand percentiles, see how the PSAT and PreACT preview the real test, and define 'good' by your teen's goals—not by the internet",
+      "moduleFile": "/modules/parent-test-prep/what_scores_mean_module.json",
+      "skills": ["score-scales", "percentiles", "score-ranges", "superscoring"],
+      "essentialQuestions": [
+        "What do these numbers mean—and what's a 'good' score?",
+        "How well does a PSAT or PreACT score predict the SAT or ACT?",
+        "What is superscoring, and how many times should my teen test?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "scales-and-percentiles",
+          "title": "Scales and Percentiles",
+          "order": 1,
+          "concepts": ["SAT 400–1600; PSAT/NMSQT 320–1520; ACT composite 1–36", "Percentile = the share of test-takers scoring at or below you", "Every score is really a range"],
+          "teachingNotes": "Percentiles are the most useful number on the report and the least understood. Spend time here."
+        },
+        {
+          "lessonId": "psat-preact-as-previews",
+          "title": "The PSAT and PreACT as Previews",
+          "order": 2,
+          "concepts": ["PSAT scores sit on the SAT scale", "PreACT scores sit on the ACT scale", "The junior-year PSAT/NMSQT is also the National Merit qualifying test"],
+          "teachingNotes": "Frame the PSAT/PreACT as a free diagnostic, not a verdict. Explain National Merit honestly—it matters for a small share of very high scorers."
+        },
+        {
+          "lessonId": "what-good-means",
+          "title": "What 'Good' Means for Your Teen",
+          "order": 3,
+          "concepts": ["Compare to the middle 50% range at the colleges your teen is considering", "Test-optional, test-required and test-flexible policies vary by college and change", "Superscoring and score choice: policies vary by college"],
+          "teachingNotes": "Steer parents away from internet benchmarks and toward their teen's actual college list."
+        }
+      ]
+    },
+    {
+      "moduleId": "healthy_practice_plan",
+      "unit": 3,
+      "quarter": 1,
+      "title": "A Healthy Practice Plan",
+      "preview": "Short spaced practice beats cramming. Learn how many full-length practice tests make sense, why reviewing misses is where the points are, and what a realistic timeline looks like",
+      "moduleFile": "/modules/parent-test-prep/healthy_practice_plan_module.json",
+      "skills": ["spaced-practice", "full-length-practice-tests", "error-review", "prep-timeline"],
+      "essentialQuestions": [
+        "How much should my teen practice, and for how long?",
+        "How many full-length practice tests are useful?",
+        "What should my teen do after a practice test?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "spaced-not-crammed",
+          "title": "Spaced, Not Crammed",
+          "order": 1,
+          "concepts": ["Several short sessions a week over a couple of months", "Why spaced practice and retrieval beat marathon sessions", "Fitting prep around school, sports and sleep"],
+          "teachingNotes": "Parents often picture a summer boot camp or a weekend of 8-hour sessions. Show the evidence for short and steady."
+        },
+        {
+          "lessonId": "full-length-practice-tests",
+          "title": "Full-Length Practice Tests",
+          "order": 2,
+          "concepts": ["A baseline test, a few checkpoints, and a final dress rehearsal", "Official practice tests from College Board and ACT", "Timed, in one sitting, on the same format as test day"],
+          "teachingNotes": "More tests is not better. A test without review is mostly wasted time."
+        },
+        {
+          "lessonId": "reviewing-misses",
+          "title": "Reviewing Every Miss",
+          "order": 3,
+          "concepts": ["Sort misses: didn't know it, careless, misread, ran out of time", "Re-work each miss before looking at the explanation", "Turn patterns into the next week's practice"],
+          "teachingNotes": "This is where score gains come from. Show a concrete error log."
+        }
+      ]
+    },
+    {
+      "moduleId": "helping_without_tutoring",
+      "unit": 4,
+      "quarter": 1,
+      "title": "Helping Without Tutoring: Logistics, Mindset and Stress",
+      "preview": "Your most valuable roles: logistics manager, calm presence, and guard against burnout. Registration, accommodations, test-day prep, anxiety, and what to say after a disappointing score",
+      "moduleFile": "/modules/parent-test-prep/helping_without_tutoring_module.json",
+      "skills": ["registration-logistics", "accommodations", "test-anxiety", "burnout-prevention"],
+      "essentialQuestions": [
+        "What's my role if I'm not the tutor?",
+        "How do I help with test anxiety?",
+        "What should I say when the score is lower than hoped?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "logistics-manager",
+          "title": "Be the Logistics Manager",
+          "order": 1,
+          "concepts": ["Registration deadlines, test dates and school-day testing", "Accommodations for students with IEPs or 504 plans take time to approve—start early", "Fee waivers for eligible students"],
+          "teachingNotes": "This is where parents add the most value with the least friction."
+        },
+        {
+          "lessonId": "mindset-and-anxiety",
+          "title": "Mindset and Test Anxiety",
+          "order": 2,
+          "concepts": ["Some nerves help; too much hurts", "Familiarity reduces anxiety: practice on the real format", "Sleep, food and a calm morning"],
+          "teachingNotes": "Give concrete, evidence-informed steps. Refer to the school counselor if anxiety is significant."
+        },
+        {
+          "lessonId": "avoiding-burnout",
+          "title": "Avoiding Burnout—Yours and Theirs",
+          "order": 3,
+          "concepts": ["A test score is one part of an application", "Knowing when to stop testing", "Keeping the relationship bigger than the score"],
+          "teachingNotes": "End the course on perspective: support, structure and calm matter more than any single score."
+        }
+      ]
+    }
+  ],
+  "aiGuidanceNotes": "Parents come to this guide anxious, often carrying memories of tests that no longer exist (the paper SAT, a required ACT Science section, a 2400-point SAT scale). Your first job is to replace outdated facts with current, correct ones; your second is to lower the temperature. Facts to rely on: the digital SAT has two sections (Reading and Writing, Math), each in two modules where the second adapts to performance on the first; it is scored 400–1600 (200–800 per section) and taken in College Board's Bluebook app with the Desmos graphing calculator built in, and a calculator is allowed on all of Math. The PSAT/NMSQT has the same structure and is scored 320–1520 (160–760 per section) on the SAT's scale; the junior-year PSAT/NMSQT is the National Merit qualifying test. The enhanced ACT (rolled out in 2025) is shorter; its composite (1–36) is the average of English, Math and Reading; Science is optional and reported separately; ACT Math is 45 questions in 50 minutes with four answer choices and a calculator allowed. The PreACT is ACT's practice test for younger students and reports on the ACT's scale. Neither the SAT nor the ACT penalizes wrong answers, so students should answer every question. When a question depends on a specific college, state, year or date—test-optional policies, superscoring, National Merit cutoffs, registration deadlines, fees—say that it varies and point to College Board, ACT, or the college's admissions website; never invent a number, date or policy. Mathmatix's own practice tests (ACT, SAT, PSAT and PreACT) cover the Math section only, follow each test's current math format, and give estimated scores, not official ones; Mathmatix's ACT and SAT prep courses use a test → review misses with the tutor → re-test loop. Never promise a score increase. Keep the teen at the center: it's their test and their plan, and the parent's best roles are logistics, encouragement and protecting sleep and balance. If a parent describes significant anxiety, distress or burnout in their teen, encourage involving the school counselor."
+}

@@ -103,3 +103,107 @@ describe('course pathway integrity', () => {
     });
   });
 });
+
+/**
+ * Parent guides (audience: 'parent') are played by a different prompt branch —
+ * utils/coursePrompt.js buildParentCoursePrompt + formatParentScaffoldStep —
+ * which reads its own set of fields. A guide authored with a student-course
+ * shape (step.content instead of step.text, a step type the parent formatter
+ * has no case for, a lessonPhase the pathway never declares) renders as an
+ * empty or generic step with no error. Pin the shape the parent player reads.
+ */
+describe('parent guide pathways', () => {
+  const parentFiles = pathwayFiles.filter((f) => {
+    const p = JSON.parse(fs.readFileSync(path.join(RESOURCES, f), 'utf8'));
+    return p.audience === 'parent';
+  });
+  const PARENT_STEP_TYPES = ['explanation', 'model', 'guided_practice', 'independent_practice'];
+  const catalogSrc = fs.readFileSync(path.join(__dirname, '..', '..', 'routes', 'courseSession.js'), 'utf8');
+
+  it('ships every parent guide, K–2 through test prep', () => {
+    expect(parentFiles).toEqual(expect.arrayContaining([
+      'parent-math-k2-pathway.json', 'parent-math-35-pathway.json', 'parent-math-68-pathway.json',
+      'parent-math-910-pathway.json', 'parent-test-prep-pathway.json',
+    ]));
+  });
+
+  describe.each(parentFiles)('%s', (file) => {
+    const pathway = JSON.parse(fs.readFileSync(path.join(RESOURCES, file), 'utf8'));
+    const modules = loadModules(file);
+    const phases = ((pathway.aiInstructionModel || {}).phases || []).map((p) => p.phase);
+
+    it('is named for its courseId (enroll and courseChat load `${courseId}-pathway.json`)', () => {
+      expect(file).toBe(`${pathway.courseId}-pathway.json`);
+    });
+
+    it('carries the top-level fields the catalog and the parent prompt read', () => {
+      expect(pathway.courseType).toBe('mini-course');
+      for (const k of ['courseId', 'track', 'overview', 'aiGuidanceNotes']) {
+        expect(typeof pathway[k]).toBe('string');
+        expect(pathway[k].trim()).not.toBe('');
+      }
+      expect(Array.isArray(pathway.naturalProgression)).toBe(true);
+      expect(phases.length).toBeGreaterThan(0);
+      for (const p of pathway.aiInstructionModel.phases) expect(typeof p.aiRole).toBe('string');
+      expect((pathway.aiInstructionModel.aiDecisionRights || []).length).toBeGreaterThan(0);
+      expect(pathway.modules.length).toBeGreaterThan(0);
+    });
+
+    it('is listed in the catalog under "Parent Guides"', () => {
+      const row = new RegExp(`'${pathway.courseId}':\\s*\\{[^}]*group: 'Parent Guides'[^}]*sortOrder: \\d+`);
+      expect(catalogSrc).toMatch(row);
+    });
+
+    it('gives every pathway module the fields the sidebar and prompt read', () => {
+      const ids = new Set();
+      pathway.modules.forEach((m, i) => {
+        expect(ids.has(m.moduleId)).toBe(false);
+        ids.add(m.moduleId);
+        expect(m.unit).toBe(i + 1);
+        for (const k of ['moduleId', 'title', 'preview', 'moduleFile']) expect(typeof m[k]).toBe('string');
+        expect(m.moduleFile).toMatch(/^\/modules\/[a-z0-9-]+\/[a-z0-9_]+_module\.json$/);
+        expect((m.essentialQuestions || []).length).toBeGreaterThan(0);
+        expect((m.lessons || []).length).toBeGreaterThan(0);
+      });
+    });
+
+    it('module files parse and match their pathway entry', () => {
+      for (const { pathwayModule, moduleData } of modules) {
+        expect(moduleData).not.toBeNull();
+        expect(moduleData.moduleId).toBe(pathwayModule.moduleId);
+        expect(moduleData.course).toBe(pathway.track);
+        expect(moduleData.unit).toBe(pathwayModule.unit);
+        expect(moduleData.title).toBe(pathwayModule.title);
+        expect(typeof moduleData.description).toBe('string');
+        expect((moduleData.goals || []).length).toBeGreaterThan(0);
+        expect((moduleData.instructionalStrategy || []).length).toBeGreaterThan(0);
+        expect(Array.isArray(moduleData.skills)).toBe(true);
+      }
+    });
+
+    it('every scaffold step is a shape formatParentScaffoldStep renders', () => {
+      const bad = [];
+      for (const { pathwayModule, moduleData } of modules) {
+        (moduleData.scaffold || []).forEach((step, i) => {
+          const at = `${pathwayModule.moduleId}[${i}]`;
+          if (!PARENT_STEP_TYPES.includes(step.type)) bad.push(`${at}: type ${step.type}`);
+          if (!phases.includes(step.lessonPhase)) bad.push(`${at}: lessonPhase ${step.lessonPhase} not in pathway phases`);
+          if (!step.title) bad.push(`${at}: no title`);
+          if (!step.initialPrompt) bad.push(`${at}: no initialPrompt`);
+          if (step.type === 'explanation' && !String(step.text || '').trim()) bad.push(`${at}: explanation without text`);
+          if (step.type === 'model') {
+            const ex = step.examples || [];
+            if (!ex.length) bad.push(`${at}: model without examples`);
+            ex.forEach((e, j) => { if (!e.problem || !e.solution) bad.push(`${at}.examples[${j}]: needs problem + solution`); });
+          }
+          if (step.type === 'guided_practice' || step.type === 'independent_practice') {
+            const ps = step.problems || [];
+            if (!ps.length) bad.push(`${at}: practice without problems`);
+            ps.forEach((p, j) => { if (!p.question || !p.answer) bad.push(`${at}.problems[${j}]: needs question + answer`); });
+          }
+        });
+      }
+      expect(bad).toEqual([]);
+    });
+  });
+});

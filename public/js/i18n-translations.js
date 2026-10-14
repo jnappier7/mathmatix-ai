@@ -936,6 +936,13 @@ window.I18N_TRANSLATIONS = {
     French: 'Erreur de connexion au tuteur. Veuillez réessayer.',
     German: 'Verbindung zum Tutor fehlgeschlagen. Bitte erneut versuchen.'
   },
+  'parent.guides.forChild': {
+    // Parent Learning Center badge on the guide that fits a linked child's
+    // grade (js/parentGuideBands.js). {name} and {grade} are filled in by the
+    // dashboard; {grade} is "K" or a number.
+    English: 'For {name} (grade {grade})', Spanish: 'Para {name} (grado {grade})', Russian: 'Для {name} (класс {grade})', Chinese: '适合{name}（{grade}年级）',
+    Vietnamese: 'Dành cho {name} (lớp {grade})', Arabic: 'لـ{name} (الصف {grade})', Somali: 'Loogu talagalay {name} (fasalka {grade})', French: 'Pour {name} (niveau {grade})', German: 'Für {name} (Klasse {grade})'
+  },
 
   /* ─── Settings modal ─── */
   'settings.title': {

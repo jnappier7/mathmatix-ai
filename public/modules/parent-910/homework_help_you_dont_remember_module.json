@@ -1,0 +1,120 @@
+{
+  "moduleId": "homework_help_you_dont_remember",
+  "course": "Parent Guide: Algebra 1 & Geometry (Grades 9–10)",
+  "unit": 4,
+  "quarter": 1,
+  "title": "Helping With Homework You Don't Remember",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "This is the module most parents of high schoolers need most. You don't have to remember how to solve a system of equations to help your teen with one. The most effective homework help at this age isn't explaining—it's asking good questions, checking work with simple arithmetic, protecting the struggle that produces learning, and knowing when to send your teen to the teacher. This module gives you a repeatable routine and the exact words to use.",
+  "skills": ["questioning-strategies", "checking-work", "productive-struggle", "self-advocacy"],
+  "standardsAlignment": ["MP.1", "MP.3", "MP.6"],
+  "goals": [
+    "Use five questions that work on any math problem, whether or not you remember the topic",
+    "Check an answer by substitution, estimation and common sense—without solving the problem",
+    "Tell productive struggle apart from unproductive frustration, and respond to each",
+    "Help your teen advocate for themselves with their teacher"
+  ],
+  "instructionalStrategy": [
+    "This is a coaching module: the 'math' is mostly arithmetic checks, and the real content is what to say.",
+    "Model full parent–teen exchanges so the parent hears what asking-not-telling sounds like.",
+    "Reassure parents who don't remember the content—they are often better coaches than parents who do.",
+    "End the whole guide with permission: the parent's job is support and structure, not being the teacher."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "questioning-strategies",
+      "title": "You Don't Need to Know the Answer",
+      "text": "Here's the situation most parents of high schoolers know well: your teen is stuck, it's 9:30 p.m., and the problem on the page involves something you haven't seen in twenty years.\n\n**The reassuring truth:** the most helpful thing you can do is not explain the math. Research on tutoring and on learning in general points the same way—students learn most when THEY do the thinking: retrieving what they know, explaining it, and checking it. A parent who explains the whole method can make tonight's homework go faster while making next week's test harder, because the teen practiced watching, not doing.\n\n**What actually helps:**\n1. **Asking questions** that get your teen to organize what they already know\n2. **Checking work** with simple arithmetic so they find their own errors\n3. **Protecting productive struggle**—being stuck for a while is part of learning, not a sign something's wrong\n4. **Handling the 'outside' stuff:** time, sleep, organization, and knowing when to contact the teacher\n\nNone of those require you to remember Algebra 1 or Geometry. In fact, parents who DON'T remember the math often coach better—because they can't take over.\n\n**This is also how a great human tutor works.** It's how Mathmatix's AI tutor is built: it asks before it tells, and it won't just hand over answers. When you coach this way at home, your teen hears the same message from every direction: *you can figure this out, and here's how to check.*",
+      "initialPrompt": "What usually happens at your house when your teen gets stuck on math homework? There's no wrong answer—it helps to know where we're starting."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "questioning-strategies",
+      "title": "I-Do: Ask, Don't Tell—and Check Without Solving",
+      "examples": [
+        {
+          "problem": "Your teen is stuck on: 'Solve the system x + y = 10 and x − y = 4.' You don't remember how. What does asking-not-telling sound like?",
+          "solution": "**The five questions (work on any math problem):**\n1. **'What is the problem asking you to find?'** → 'Two numbers, x and y.'\n2. **'What do you know?'** → 'They add to 10, and their difference is 4.'\n3. **'Is there an example in your notes or textbook that looks like this?'** → Teens almost always have one.\n4. **'What have you tried so far?'** → Even a wrong attempt gives you something to work with.\n5. **'How could you check your answer?'** → Saved for the end.\n\n**A sample exchange:**\n- Parent: 'What's it asking for?'\n- Teen: 'x and y.'\n- Parent: 'What do you know about them?'\n- Teen: 'They add to 10 and subtract to 4… oh—if I add the two equations, the y's cancel.' (2x = 14, so x = 7, and y = 3.)\n- Parent: 'How could you check?'\n- Teen: '7 + 3 = 10 and 7 − 3 = 4. Yep.'\n\nYou never explained elimination. Your teen got there by organizing what they already knew.\n\n**If they'd said x = 6, y = 4:** 'Let's check both equations: 6 + 4 = 10 ✓… 6 − 4 = 2, but it's supposed to be 4.' That's enough—send them back to their work.",
+          "tip": "Wait at least five seconds after asking a question. Silence feels long to a parent and is exactly when a teen's thinking happens."
+        },
+        {
+          "problem": "Your teen says: 'A rectangle's length is 3 more than its width and its perimeter is 26. I got width = 13.' Check it without doing the algebra.",
+          "solution": "**Check 1 — Plug it in (substitution):**\n- Width 13 means length 13 + 3 = 16.\n- Perimeter = 13 + 16 + 13 + 16 = 58. The problem says 26. ✗\n\n**Check 2 — Does it make sense? (estimation):**\n- The perimeter is only 26, so the width plus the length is 13. A width of 13 by itself already uses up all of that. Too big.\n\n**What to say:** 'If the width is 13, what's the perimeter? … So does 13 work?' Then: 'Where in your setup could the 26 have gone wrong?'\n\n(A likely cause: writing w + (w + 3) = 26 instead of 2w + 2(w + 3) = 26—forgetting that a rectangle has two lengths and two widths. The correct width is 5 and length 8: 5 + 8 + 5 + 8 = 26 ✓.)\n\n**Three checks any parent can run:**\n- **Substitution:** put the answer back into the problem\n- **Estimation:** is the answer roughly the right size?\n- **Common sense:** a negative length, a probability of 1.4, or a 300-mph walker means something went wrong",
+          "tip": "The question 'Does that answer make sense?' is one of the most valuable things you can teach. Tests reward students who catch their own unreasonable answers."
+        },
+        {
+          "problem": "Your teen wants to look up the answer online or use an app that solves it. How do you handle it?",
+          "solution": "**Tools are fine as checkers, not as answer machines.** A practical rule many families use:\n- **Work the problem first.** Then use the back-of-book answer, a graphing tool like Desmos, or a calculator to **check**.\n- **If it doesn't match,** the job is to find the error, not to copy the right answer.\n- **Worked examples are fair game** when they're for a DIFFERENT but similar problem—studying an example and then doing your own problem is genuine learning.\n\n**Why copied answers backfire:** homework is practice for the test, and the test has no answer key. A teen who copies tonight's solutions gets full homework credit and then meets those problem types cold on test day—often the first time the gap becomes visible, when it's hardest to fix.\n\n**What to say:** 'Use it to check, not to do. If your answer and the app disagree, show me where you think the difference starts.'",
+          "tip": "If your teen uses Mathmatix, the tutor follows the same rule: it will ask what they've tried and give hints, not hand over a finished answer. You and the tutor reinforce each other."
+        }
+      ],
+      "initialPrompt": "Of the five questions, which do you think your teen would find least annoying? Starting with that one makes it easier to keep going."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "productive-struggle",
+      "title": "Why Struggle (the Right Kind) Is the Point",
+      "text": "**Productive struggle** is being stuck while still making progress: trying things, noticing what doesn't work, getting closer. It's uncomfortable—and it's when learning sticks. Learning research consistently finds that ideas students work to retrieve and figure out are remembered longer than ideas they're simply shown.\n\n**Unproductive struggle** is different: the same wrong step over and over, no idea where to start, rising frustration, tears or shutdown.\n\n**How to tell them apart—and respond:**\n\n| You see… | It's probably… | Try… |\n|---|---|---|\n| Trying different things, muttering, erasing | Productive | Stay out of it. Offer a snack. |\n| Stuck on one step, but has notes | Productive with a nudge | 'Is there an example in your notes like this one?' |\n| Can't start at all | Unproductive | 'What's it asking? What do you know?' |\n| The same error on every problem | A skill gap | Note it; mention it to the teacher |\n| Tears, anger, 'I'm stupid' | Unproductive and emotional | Stop. Take a break. Math can wait 20 minutes. |\n\n**Why a skill gap needs the teacher, not you:** high school math stacks. If your teen keeps making integer sign errors or fraction mistakes, the issue may be a gap from 6th or 7th grade showing up in Algebra 1. That's very common, very fixable—and much easier for a teacher (or a tutor) to address with targeted practice than for a parent to fix at 10 p.m.\n\n**The mindset message:** praise the process—'You stuck with that one for a long time'—more than speed or being 'smart.' Teens who believe ability grows with effort are more willing to keep trying on hard problems.",
+      "initialPrompt": "Thinking about your teen, which of those rows do you see most often?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "checking-work",
+      "title": "Try It: Coaching Scenarios",
+      "problems": [
+        {
+          "id": "hh-p1",
+          "question": "Your teen solved 5x − 7 = 18 and got x = 5. Check it without solving the equation yourself.",
+          "answer": "Substitute: 5(5) − 7 = 25 − 7 = 18 ✓. It checks, so x = 5 is correct. All you needed was arithmetic.",
+          "hints": [
+            "Replace x with 5 on the left side.",
+            "Does the left side come out to 18?"
+          ]
+        },
+        {
+          "id": "hh-p2",
+          "question": "Your teen says, 'I don't even know where to start.' Which questions would you ask first?",
+          "answer": "Start with the first two of the five: 'What is the problem asking you to find?' and 'What do you know?' Then: 'Is there an example in your notes that looks like this one?' Those three get most teens moving without you explaining anything.",
+          "hints": [
+            "Think about the five questions from earlier in this module.",
+            "The first step is helping your teen organize what the problem says, not showing a method."
+          ]
+        },
+        {
+          "id": "hh-p3",
+          "question": "Your teen has made the same sign error on six problems in a row and is getting angry. What do you do?",
+          "answer": "Stop for now—this has become unproductive. Say something like 'Let's take a ten-minute break.' Afterward, point out the pattern kindly ('I noticed the same thing happens when you subtract a negative') rather than re-teaching it. Then suggest your teen ask the teacher about it, or write a short note or email to the teacher yourself. A repeated error is a skill gap, best addressed with targeted practice rather than a late-night lesson.",
+          "hints": [
+            "Is this productive or unproductive struggle?",
+            "A repeated error is usually a skill gap. Who is best placed to fix that?"
+          ]
+        },
+        {
+          "id": "hh-p4",
+          "question": "Your teen wants you to email the teacher for them. What could you do instead to build their independence?",
+          "answer": "Help them write it themselves. A simple template: 'Hi [teacher], I'm stuck on [specific problem or topic]. I tried [what they tried]. Could I come in for help, or is there a resource you'd recommend?' Offer to read it before they send it. Teachers usually respond well to students who ask specifically, and it's a skill your teen will need in college and at work.",
+          "hints": [
+            "What would a short, specific email from your teen look like?",
+            "Your role can be the editor, not the author."
+          ]
+        }
+      ],
+      "initialPrompt": "These are mostly about what you'd say and do. Want to try the first one—it's just a quick arithmetic check?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "self-advocacy",
+      "title": "Your Homework-Help Routine",
+      "text": "**A routine you can use tonight (and every night):**\n\n**Before homework:**\n- Agree on a time and place. Phone in another room during focus time helps more than almost anything else.\n- Ask: 'What's due, and what looks hardest?'\n\n**When your teen is stuck:**\n1. 'What's it asking? What do you know?'\n2. 'Is there an example in your notes like this one?'\n3. 'What have you tried?'\n4. Wait. Then wait a little longer.\n\n**When your teen has an answer:**\n- 'How could you check it?' (substitution, estimation, common sense)\n- If it checks: done. If not: 'Which step do you trust least?'\n\n**When it's going badly:**\n- Take a break. Protect sleep—a well-rested teen learns more from 30 minutes than a tired one does from 90.\n- Write a note on the assignment: 'Spent 40 minutes; stuck on #12–15.' Teachers want to know.\n- Help your teen email or talk to the teacher (they write it; you edit).\n\n**Things to keep saying:**\n- 'How do you know?'\n- 'Does that make sense?'\n- 'You stuck with that—nice persistence.'\n\n**Things to stop saying:**\n- 'Here, let me show you.'\n- 'That's easy.'\n- 'I was never a math person.'\n\n**You've finished the Algebra 1 & Geometry guide.** You don't have to be your teen's math teacher. Your job is to be their math coach: curious, calm, focused on questions and checking, and quick to bring in the teacher when a gap shows up. That role matters more than remembering any formula. If your teen is starting to think about the PSAT, SAT, PreACT or ACT, the **Parent Guide: ACT / SAT / PSAT** covers how those tests work and how to support a healthy prep plan.",
+      "initialPrompt": "What's the one thing from this guide you'll try at homework time this week?"
+    }
+  ]
+}

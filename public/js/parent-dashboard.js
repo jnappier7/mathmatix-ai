@@ -1856,8 +1856,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            const html = courses.map(course => {
+            // Guides that fit a linked child's grade come first, badged
+            // "For Jason (grade 9)" (js/parentGuideBands.js — pure, unit-tested).
+            const bands = window.ParentGuideBands;
+            const ranked = bands
+                ? bands.rankGuides(courses, children)
+                : { courses, badges: {} };
+            const forChildTemplate = (window.MathmatixI18n && MathmatixI18n.t('parent.guides.forChild')) || 'For {name} (grade {grade})';
+
+            const html = ranked.courses.map(course => {
                 const gradeBand = course.gradeBand || '';
+                const childBadges = (ranked.badges[course.courseId] || []).map(b =>
+                    `<span class="parent-course-badge badge-grade badge-for-child">${bands.escapeHtml(bands.badgeText(forChildTemplate, b))}</span>`
+                ).join('');
                 const desc = course.description || course.tagline || '';
                 const truncatedDesc = desc.length > 100 ? desc.substring(0, 100) + '...' : desc;
                 const enrolled = enrolledMap[course.courseId];
@@ -1889,6 +1900,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         </div>
                         <div class="parent-course-card-desc">${truncatedDesc}</div>
                         <div class="parent-course-card-meta">
+                            ${childBadges}
                             ${gradeBand ? `<span class="parent-course-badge badge-grade">${gradeBand}</span>` : ''}
                             <span class="parent-course-badge badge-units">${course.moduleCount || 4} topics</span>
                         </div>

@@ -1,0 +1,106 @@
+{
+  "moduleId": "geometry_reasoning_proof",
+  "course": "Parent Guide: Algebra 1 & Geometry (Grades 9–10)",
+  "unit": 3,
+  "quarter": 1,
+  "title": "Geometry Reasoning & Proof: The 'Why' Talk",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "High school geometry is less about calculating and more about explaining—and that shift catches many teens off guard. Suddenly 'the angle is 65°' isn't enough; the question is 'how do you KNOW it's 65°?' This module shows you what a proof actually is (a careful argument where every step has a reason), walks through two short ones slowly, explains the triangle congruence shortcuts your teen keeps mentioning, and gives you the one question that makes you a good geometry coach even if you remember no theorems at all.",
+  "skills": ["deductive-reasoning", "two-column-proof", "congruence-similarity", "angle-relationships"],
+  "standardsAlignment": ["G-CO.C.9", "G-CO.C.10", "G-CO.B.7", "G-CO.B.8", "G-SRT.A.2", "G-SRT.B.5"],
+  "goals": [
+    "Understand a proof as an argument: given facts, a chain of steps, and a reason for every step",
+    "Follow a short two-column proof and see where the reasons come from",
+    "Know the triangle congruence shortcuts (SSS, SAS, ASA, AAS) and why SSA isn't one",
+    "Coach geometry homework with 'How do you know?'—no theorem memory required"
+  ],
+  "instructionalStrategy": [
+    "Frame proof as structured persuasion—the same skill as a good essay or argument.",
+    "Walk through ONE short proof slowly; the goal is the shape of reasoning, not memorizing theorems.",
+    "Reassure parents that teens are given the theorem list; they don't need to recall it.",
+    "Emphasize that parents who don't know the answer can be excellent proof coaches because their questions are honest."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "deductive-reasoning",
+      "title": "Why Geometry Suddenly Cares About 'Why'",
+      "text": "In middle school, geometry was mostly measuring and calculating: find the area, find the missing angle. In high school geometry, the central question changes:\n\n**Not 'what is it?' but 'how do you know?'**\n\nThat's what a **proof** is: a step-by-step argument that something MUST be true, where every step is backed by a reason your teen is allowed to use:\n- a **given** fact (stated in the problem),\n- a **definition** (e.g., 'a midpoint divides a segment into two equal parts'),\n- a **postulate** (a basic assumption everyone agrees on), or\n- a **theorem** (something already proven, like 'vertical angles are congruent').\n\nMany classes write proofs in a **two-column format**: statements on the left, reasons on the right. Others use paragraph proofs or flowcharts. Same idea, different layouts.\n\n**Why teens find it hard:**\n- It's the first time math asks them to write an argument rather than produce a number.\n- They often 'see' that something is true and don't understand why they have to prove it.\n- Choosing which reason applies feels like a vocabulary test.\n- There's usually more than one valid path, so it can feel like there's no clear 'method.'\n\n**Why it matters:** proof is training in logical argument—the same thinking used in writing a persuasive essay, debugging code, making a legal case, or spotting a bad argument online. Geometry is just the playground where it's practiced most cleanly.",
+      "initialPrompt": "Do you remember doing proofs in high school? For many parents it's the one part of geometry they remember—often not fondly. What do you remember about it?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "two-column-proof",
+      "title": "I-Do: Two Short Proofs, Slowly",
+      "examples": [
+        {
+          "problem": "Two lines cross, making angles 1, 2 and 3 in a row (angle 2 sits between angles 1 and 3). Prove that angle 1 = angle 3 (vertical angles are equal).",
+          "solution": "**First, the plain-language argument:** Angles 1 and 2 together make a straight line, so they add to 180°. Angles 2 and 3 also make a straight line, so they add to 180° too. Both pairs share angle 2—so angle 1 and angle 3 must be the same size.\n\n**Now as a two-column proof:**\n```\nStatement                         │ Reason\n──────────────────────────────────┼──────────────────────────────\n1. ∠1 + ∠2 = 180°                 │ Angles forming a straight line\n                                  │ (linear pair) add to 180°\n2. ∠2 + ∠3 = 180°                 │ Same reason\n3. ∠1 + ∠2 = ∠2 + ∠3              │ Both equal 180° (substitution)\n4. ∠1 = ∠3                        │ Subtract ∠2 from both sides\n```\n\n**Notice:** every statement has a reason. The proof is just the plain-language argument written very carefully. Once this is proven, your teen can use 'vertical angles are congruent' as a reason in future proofs—that's how theorems build on each other.",
+          "tip": "Encourage your teen to say the argument in plain words FIRST, then turn it into statements and reasons. Most proof struggles are really 'I don't know what my argument is yet.'"
+        },
+        {
+          "problem": "Segments AB and CD cross at point M, and M is the midpoint of both. Prove that triangle AMC is congruent to triangle BMD.",
+          "solution": "**Plain language:** M cuts each segment in half, so two pairs of sides match. The angles at M are vertical angles, so they match too. Two sides and the angle between them match—that's enough to guarantee the triangles are identical.\n\n**Two-column proof:**\n```\nStatement                         │ Reason\n──────────────────────────────────┼──────────────────────────────\n1. M is the midpoint of AB and CD │ Given\n2. AM = MB                        │ Definition of midpoint\n3. CM = MD                        │ Definition of midpoint\n4. ∠AMC ≅ ∠BMD                    │ Vertical angles are congruent\n5. △AMC ≅ △BMD                    │ SAS (side-angle-side)\n```\n\n**The congruence shortcuts your teen will mention:**\n- **SSS:** all three sides match\n- **SAS:** two sides and the angle BETWEEN them match\n- **ASA / AAS:** two angles and a side match\n- (For right triangles, also **HL:** hypotenuse and a leg)\n\n**And the famous non-shortcut: SSA.** Two sides and an angle that is NOT between them can produce two different triangles—so it doesn't prove congruence. (Teachers sometimes joke about the backwards spelling to help students remember not to use it.)",
+          "tip": "Drawing and labeling the diagram is step zero. If your teen is stuck on a proof, the first question is: 'Can you mark everything you know on the picture—equal sides with tick marks, equal angles with arcs?'"
+        }
+      ],
+      "initialPrompt": "Try the plain-language version yourself: if two angles together make a straight line and one of them is 70°, how big is the other one—and how do you know?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "congruence-similarity",
+      "title": "Why Proof Is Worth the Frustration",
+      "text": "**Geometry is where students learn that 'it looks true' isn't the same as 'it IS true.'** Diagrams can mislead—two angles that look equal may not be. A proof replaces 'it looks like' with 'it must be, because…'\n\n**How the course builds:**\n- **Transformations first:** In the 6–8 guide you saw that congruent shapes are ones you can slide, flip or turn onto each other. High school geometry formalizes that, and the congruence shortcuts (SSS, SAS, ASA, AAS) come from it.\n- **Similarity:** Shapes with the same angles and proportional sides. A 3-4-5 triangle and a 6-8-10 triangle are similar with a scale factor of 2. Similarity leads straight to **trigonometry** (sine, cosine, tangent), usually later in Geometry or in Algebra 2.\n- **Coordinate geometry:** using algebra (slope, distance, midpoint) to prove geometric facts—where Units 1 and 3 of this guide meet.\n\n**Where proof thinking shows up later:**\n- Every later math course expects students to justify answers.\n- The SAT and ACT include geometry questions where seeing a relationship (similar triangles, angle facts) is faster than calculating.\n- Writing, science labs, computer programming and law all use the same 'claim → evidence → reasoning' structure.\n\n**What changed since you were in school:** many classrooms now accept paragraph proofs and flowchart proofs alongside two-column proofs, and put more weight on whether the argument is logically sound than on exact wording. That's good news for teens who get stuck on format.",
+      "initialPrompt": "Have you ever had to convince someone of something at work using a careful chain of reasons? That's a proof—it might be a useful example to share with your teen."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "angle-relationships",
+      "title": "Try It: Reasoning and Coaching",
+      "problems": [
+        {
+          "id": "gp-p1",
+          "question": "Two lines cross. One angle is 65°. Find the other three angles, and give a reason for each.",
+          "answer": "The angle across from it (its vertical angle) is 65°, because vertical angles are congruent. The two angles next to it are each 115°, because each forms a straight line with the 65° angle and 180° − 65° = 115°. Check: 65 + 115 + 65 + 115 = 360°, a full turn ✓.",
+          "hints": [
+            "Angles that make a straight line add up to 180°.",
+            "The angle directly across the intersection is equal to the one you started with."
+          ]
+        },
+        {
+          "id": "gp-p2",
+          "question": "A triangle has angles of 40° and 75°. What's the third angle, and what's the reason?",
+          "answer": "65°, because the angles in any triangle add to 180°: 180 − 40 − 75 = 65. In a proof, the reason would be written as the Triangle Angle Sum Theorem.",
+          "hints": [
+            "What do the three angles of every triangle add up to?",
+            "Subtract the two known angles from 180°."
+          ]
+        },
+        {
+          "id": "gp-p3",
+          "question": "Your teen writes 'the triangles are congruent by SSA' and the teacher marked it wrong. They're upset. What's a helpful thing to ask?",
+          "answer": "Ask a question that sends them to the list rather than giving the answer: 'Which shortcuts are on your class's list?' (SSS, SAS, ASA, AAS, HL—SSA isn't one, because two sides and a non-included angle can make two different triangles.) Then: 'Is the angle you used BETWEEN the two sides? If not, is there another pair of sides or angles you can show is equal?' That keeps your teen doing the reasoning.",
+          "hints": [
+            "SSA is not a valid congruence shortcut.",
+            "A good question points your teen toward the reference list and toward looking for one more fact, instead of fixing the proof for them."
+          ]
+        }
+      ],
+      "initialPrompt": "Want to try a couple? The first two are straight reasoning; the third is about what you'd say."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "two-column-proof",
+      "title": "Being a Great Geometry Coach (Without Remembering Theorems)",
+      "text": "**Your secret weapon: you don't know the answer.** That makes your questions honest—and honest questions are what proof needs.\n\n**The one question that works on every geometry problem:**\n**'How do you know?'**\nAsk it after every claim your teen makes. If they can name a reason (given, definition, theorem), great. If they can't, they've found exactly where their proof needs work.\n\n**A routine for when your teen is stuck on a proof:**\n1. **'What are you given, and what are you trying to prove?'** Have them say both out loud.\n2. **'Can you mark the diagram?'** Tick marks for equal sides, arcs for equal angles. Many proofs become obvious once the picture is marked.\n3. **'Say the argument in plain words first.'** Don't worry about the two-column format yet.\n4. **'Which reason from your notes fits this step?'** Teens are almost always given a list of definitions, postulates and theorems—it's a reference, not a cheat sheet.\n5. **Work backwards:** 'To prove the triangles are congruent, what would you need to know?'\n\n**What NOT to say:**\n- 'It's obviously true—just write it down.' (Obvious isn't the same as proven; that's the whole lesson.)\n- 'I hated proofs too.' (Try: 'Proofs are hard for almost everyone at first. Let's figure out your argument in plain words.')\n- Reading the proof out of an answer key. (Copied reasons don't transfer to the test.)\n\n**Signs of real understanding:** your teen can explain a proof in plain language, can tell you why SSA doesn't work, and can say which fact in the diagram they'd want to know next. Speed and perfect wording come later.",
+      "initialPrompt": "If your teen brought you a proof tonight, which step of that routine would you start with?"
+    }
+  ]
+}
