@@ -9,6 +9,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 
 const { userHasRole } = require('../utils/roleQuery');
+const { windowDaysFor, periodFor } = require('../utils/reportFrequency');
 /**
  * POST /api/email/test
  * Send a test email to verify configuration
@@ -78,9 +79,11 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Calculate one week ago
+    // Report window follows the parent's chosen cadence (1/7/14/30 days;
+    // 'never' only turns off the SCHEDULED report — send-now uses 7).
+    const period = periodFor(parent.reportFrequency);
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - windowDaysFor(parent.reportFrequency));
 
     // Calculate problemsCompleted from Conversation collection
     const conversationStats = await Conversation.aggregate([
@@ -160,7 +163,8 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
         : null,
       currentStreak: currentStreak,
       strugglingSkills: strugglingSkills,
-      achievements: achievements
+      achievements: achievements,
+      period
     };
 
     const result = await sendParentWeeklyReport(parent, studentData);
@@ -168,7 +172,7 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
     if (result.success) {
       res.json({
         success: true,
-        message: `Weekly report sent to ${parent.email}`,
+        message: `Progress report sent to ${parent.email}`,
         messageId: result.messageId
       });
     } else {
@@ -192,8 +196,15 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
  */
 router.get('/status', isAuthenticated, async (req, res) => {
   const isConfigured = !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
-  const emailConfig = getEmailConfig();
 
+  // Non-admins (parents checking whether reports can go out) learn only
+  // whether email works. The SMTP host and sender addresses are server
+  // configuration — admins only.
+  if (!userHasRole(req.user, 'admin')) {
+    return res.json({ configured: isConfigured });
+  }
+
+  const emailConfig = getEmailConfig();
   res.json({
     configured: isConfigured,
     smtp: {

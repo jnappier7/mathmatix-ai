@@ -19,6 +19,7 @@ const { userHasRole, anyRole } = require('../utils/roleQuery');
 const { skillPictureFor } = require('../utils/parentSkillPicture');
 const { buildLearningReport } = require('../utils/parentReport');
 const { buildChildProfile, readStreak } = require('../utils/parentChildProfile');
+const { REPORT_FREQUENCIES } = require('../utils/reportFrequency');
 const {
     normalizeStudentLinkCode,
     parentInviteExpiry,
@@ -444,7 +445,7 @@ router.get('/child/:childId/growth-history', isAuthenticated, isParent, logRecor
 router.get('/settings', isAuthenticated, isParent, async (req, res) => {
     const parentId = req.user._id;
     try {
-        const parent = await User.findById(parentId).select('reportFrequency goalViewPreference parentTone parentLanguage');
+        const parent = await User.findById(parentId).select('reportFrequency goalViewPreference parentTone parentLanguage email');
         if (!parent) {
             return res.status(404).json({ message: "Parent not found." });
         }
@@ -452,7 +453,9 @@ router.get('/settings', isAuthenticated, isParent, async (req, res) => {
             reportFrequency: parent.reportFrequency || 'weekly',
             goalViewPreference: parent.goalViewPreference || 'progress',
             parentTone: parent.parentTone || '',
-            parentLanguage: parent.parentLanguage || 'English'
+            parentLanguage: parent.parentLanguage || 'English',
+            // Where progress reports go (shown on the Email Reports card).
+            email: parent.email || ''
         });
     } catch (error) {
         console.error("ERROR: Failed to fetch parent settings:", error);
@@ -472,6 +475,9 @@ router.put('/settings', isAuthenticated, isParent, async (req, res) => {
         }
 
         // Update fields if provided
+        if (reportFrequency && !REPORT_FREQUENCIES.includes(reportFrequency)) {
+            return res.status(400).json({ message: "Invalid report frequency." });
+        }
         if (reportFrequency) parent.reportFrequency = reportFrequency;
         if (goalViewPreference) parent.goalViewPreference = goalViewPreference;
         if (parentTone !== undefined) parent.parentTone = parentTone; // Allow empty string

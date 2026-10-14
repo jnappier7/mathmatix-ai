@@ -26,57 +26,55 @@ const Conversation = require('../models/conversation');
 const { sendParentWeeklyReport } = require('../utils/emailService');
 const { calculateRetrievability } = require('../utils/fsrsScheduler');
 const { engineEntries } = require('../utils/engineStore');
+const { anyRole } = require('../utils/roleQuery');
+const { shouldSendDigest, windowDaysFor, periodFor } = require('../utils/reportFrequency');
 
 // Constants
 const BATCH_SIZE = 50; // Process parents in batches
 const DELAY_BETWEEN_EMAILS = 1000; // 1 second delay between emails to avoid rate limits
-// Idempotency window: skip a parent who already received a report within this
-// many hours. Prevents duplicate emails from a cron retry or an accidental
-// double-run on the same day, while never blocking the next scheduled send
-// (daily ≥24h later, weekly ≥7d later).
-const DEDUP_WINDOW_MS = 20 * 60 * 60 * 1000; // 20 hours
+// Cadence + idempotency (same-day dedup, biweekly 14-day gap) live in
+// utils/reportFrequency.js — shouldSendDigest().
 
 /**
- * Determine if a parent should receive a report today
+ * Determine if a parent should receive a report now — every reportFrequency
+ * value is honored ('never' = off), and the last-sent stamp enforces both the
+ * same-day dedup guard and the biweekly 14-day cadence.
  * @param {Object} parent - Parent user object
+ * @param {Date} [now]
  * @returns {boolean} - Whether to send report
  */
-function shouldSendReport(parent) {
-    const frequency = parent.reportFrequency || 'weekly';
-    const today = new Date();
-    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+function shouldSendReport(parent, now = new Date()) {
+    return shouldSendDigest(parent && parent.reportFrequency, now, parent && parent.lastWeeklyReportSentAt);
+}
 
-    switch (frequency) {
-        case 'daily':
-            return true;
-        case 'weekly':
-            // Send on Sundays
-            return dayOfWeek === 0;
-        case 'biweekly':
-            // Send on 1st and 3rd Sundays
-            const weekOfMonth = Math.ceil(today.getDate() / 7);
-            return dayOfWeek === 0 && (weekOfMonth === 1 || weekOfMonth === 3);
-        case 'monthly':
-            // Send on 1st of each month
-            return today.getDate() === 1;
-        case 'never':
-            return false;
-        default:
-            return dayOfWeek === 0; // Default to weekly
-    }
+/**
+ * The parent-digest audience: users who HOLD the parent role (roles[] or the
+ * legacy role string — CLAUDE.md §12), not just those whose active dashboard
+ * is parent right now, with linked children and an email address.
+ */
+function digestParentFilter() {
+    return {
+        ...anyRole('parent'),
+        children: { $exists: true, $ne: [] },
+        email: { $exists: true, $ne: null }
+    };
 }
 
 /**
  * Calculate student progress data for report
  * @param {string} studentId - Student's MongoDB ID
+ * @param {number} [windowDays=7] - Days of activity to cover (windowDaysFor(frequency))
  * @returns {Promise<Object>} - Student progress data
  */
-async function calculateStudentProgress(studentId) {
+async function calculateStudentProgress(studentId, windowDays = 7) {
     const student = await User.findById(studentId);
     if (!student) return null;
 
+    const days = Number.isFinite(windowDays) && windowDays > 0 ? windowDays : 7;
+    const period = periodFor({ 1: 'daily', 14: 'biweekly', 30: 'monthly' }[days] || 'weekly');
+    // Start of the report window (name kept from when it was always 7 days).
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - days);
 
     // Get conversation stats
     const conversationStats = await Conversation.aggregate([
@@ -191,6 +189,7 @@ async function calculateStudentProgress(studentId) {
         stats, accuracy: stats.totalProblems > 0 ? Math.round((stats.totalCorrect / stats.totalProblems) * 100) : 0,
         masteryGained, memoryHealth, avgCogLoad, cognitiveLoadTrend,
         achievements, currentStreak, sessionCount: stats.sessionCount,
+        periodPhrase: period.phrase,
     });
 
     return {
@@ -213,6 +212,8 @@ async function calculateStudentProgress(studentId) {
         mastery: { mastered: masteredCount, practicing: practicingCount, learning: learningCount },
         currentStreak,
         insights,
+        // Report period, for the email subject/body ("Weekly", "this week", …).
+        period,
         // True if the student did anything worth reporting this week. The digest
         // skips sending when this is false, so parents aren't emailed a
         // "your child did nothing" report every week for an inactive kid.
@@ -228,19 +229,21 @@ async function calculateStudentProgress(studentId) {
  */
 function buildDigestInsights(data) {
     const insights = [];
+    // Report period wording ("this week" / "today" / "this month" / …).
+    const when = data.periodPhrase || 'this week';
 
     // Engagement
     if (data.sessionCount >= 5) {
-        insights.push({ type: 'engagement', tone: 'positive', message: `Great week! ${data.sessionCount} practice sessions completed.` });
+        insights.push({ type: 'engagement', tone: 'positive', message: `Great work! ${data.sessionCount} practice sessions completed ${when}.` });
     } else if (data.sessionCount === 0) {
-        insights.push({ type: 'engagement', tone: 'actionable', message: 'No practice sessions this week. Even 10 minutes a day makes a big difference!' });
+        insights.push({ type: 'engagement', tone: 'actionable', message: `No practice sessions ${when}. Even 10 minutes a day makes a big difference!` });
     }
 
     // Accuracy
     if (data.accuracy >= 85) {
         insights.push({ type: 'accuracy', tone: 'positive', message: `${data.accuracy}% accuracy — showing strong understanding of the material.` });
     } else if (data.accuracy > 0 && data.accuracy < 60) {
-        insights.push({ type: 'accuracy', tone: 'concern', message: `Accuracy was ${data.accuracy}% this week. The AI tutor is adjusting difficulty to help build confidence.` });
+        insights.push({ type: 'accuracy', tone: 'concern', message: `Accuracy was ${data.accuracy}% ${when}. The AI tutor is adjusting difficulty to help build confidence.` });
     }
 
     // Memory
@@ -257,7 +260,7 @@ function buildDigestInsights(data) {
 
     // Mastery
     if (data.masteryGained > 0) {
-        insights.push({ type: 'mastery', tone: 'positive', message: `${data.masteryGained} new skill${data.masteryGained > 1 ? 's' : ''} mastered this week!` });
+        insights.push({ type: 'mastery', tone: 'positive', message: `${data.masteryGained} new skill${data.masteryGained > 1 ? 's' : ''} mastered ${when}!` });
     }
 
     // Streak
@@ -267,7 +270,7 @@ function buildDigestInsights(data) {
 
     // Badges
     if (data.achievements.length > 0) {
-        insights.push({ type: 'badges', tone: 'positive', message: `Earned ${data.achievements.length} new badge${data.achievements.length > 1 ? 's' : ''} this week.` });
+        insights.push({ type: 'badges', tone: 'positive', message: `Earned ${data.achievements.length} new badge${data.achievements.length > 1 ? 's' : ''} ${when}.` });
     }
 
     return insights.slice(0, 4); // Top 4 most relevant
@@ -288,7 +291,7 @@ async function processBatch(parents) {
 
     for (const parent of parents) {
         try {
-            // Check if parent should receive report today
+            // Check if parent should receive a report now (cadence + dedup)
             if (!shouldSendReport(parent)) {
                 results.skipped++;
                 continue;
@@ -300,17 +303,10 @@ async function processBatch(parents) {
                 continue;
             }
 
-            // Idempotency: skip if this parent already got a report very recently
-            // (cron retry / accidental double-run on the same day).
-            if (parent.lastWeeklyReportSentAt &&
-                (Date.now() - new Date(parent.lastWeeklyReportSentAt).getTime()) < DEDUP_WINDOW_MS) {
-                results.skipped++;
-                continue;
-            }
-
+            const windowDays = windowDaysFor(parent.reportFrequency);
             let sentForParent = false;
             for (const childId of parent.children) {
-                const studentData = await calculateStudentProgress(childId);
+                const studentData = await calculateStudentProgress(childId, windowDays);
                 if (!studentData) {
                     console.log(`  ⚠️ Student ${childId} not found, skipping`);
                     continue;
@@ -370,11 +366,7 @@ async function main() {
         console.log('✅ Connected to MongoDB');
 
         // Get all parents who have children linked
-        const totalParents = await User.countDocuments({
-            role: 'parent',
-            children: { $exists: true, $ne: [] },
-            email: { $exists: true, $ne: null }
-        });
+        const totalParents = await User.countDocuments(digestParentFilter());
 
         console.log(`📊 Found ${totalParents} parents with linked children`);
         console.log('');
@@ -384,11 +376,8 @@ async function main() {
         const results = { sent: 0, skipped: 0, failed: 0, errors: [] };
 
         while (processed < totalParents) {
-            const parents = await User.find({
-                role: 'parent',
-                children: { $exists: true, $ne: [] },
-                email: { $exists: true, $ne: null }
-            })
+            const parents = await User.find(digestParentFilter())
+            .sort({ _id: 1 })
             .skip(processed)
             .limit(BATCH_SIZE)
             .lean();
@@ -435,4 +424,7 @@ if (require.main === module) {
     main();
 }
 
-module.exports = { main, calculateStudentProgress, shouldSendReport, buildDigestInsights };
+module.exports = {
+    main, calculateStudentProgress, shouldSendReport, buildDigestInsights,
+    digestParentFilter, shouldSendDigest, windowDaysFor,
+};

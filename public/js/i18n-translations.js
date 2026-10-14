@@ -776,6 +776,73 @@ window.I18N_TRANSLATIONS = {
     English: 'Weekly Report Now', Spanish: 'Informe semanal ahora', Russian: 'Недельный отчёт сейчас', Chinese: '立即发送周报',
     Vietnamese: 'Báo cáo tuần ngay', Arabic: 'التقرير الأسبوعي الآن', Somali: 'Warbixinta toddobaadlaha hadda', French: 'Rapport hebdomadaire', German: 'Wochenbericht jetzt'
   },
+  'parent.reportOff': {
+    English: 'Off', Spanish: 'Desactivado', Russian: 'Выключено', Chinese: '关闭',
+    Vietnamese: 'Tắt', Arabic: 'إيقاف', Somali: 'Dansan', French: 'Désactivé', German: 'Aus'
+  },
+  'parent.emailReportsDesc.daily': {
+    English: 'Get daily progress reports delivered to your inbox.',
+    Spanish: 'Reciba informes diarios de progreso en su bandeja de entrada.',
+    Russian: 'Получайте ежедневные отчёты об успеваемости на почту.',
+    Chinese: '每天将进度报告发送到您的邮箱。',
+    Vietnamese: 'Nhận báo cáo tiến trình hằng ngày qua hộp thư của bạn.',
+    Arabic: 'احصل على تقارير التقدّم اليومية في بريدك الإلكتروني.',
+    Somali: 'Ku hel warbixinnada horumarka maalinlaha ah sanduuqaaga iimaylka.',
+    French: 'Recevez chaque jour les rapports de progrès dans votre boîte mail.',
+    German: 'Erhalten Sie tägliche Fortschrittsberichte in Ihrem Posteingang.'
+  },
+  'parent.emailReportsDesc.biweekly': {
+    English: 'Get progress reports every two weeks, delivered to your inbox.',
+    Spanish: 'Reciba informes de progreso cada dos semanas en su bandeja de entrada.',
+    Russian: 'Получайте отчёты об успеваемости раз в две недели на почту.',
+    Chinese: '每两周将进度报告发送到您的邮箱。',
+    Vietnamese: 'Nhận báo cáo tiến trình hai tuần một lần qua hộp thư của bạn.',
+    Arabic: 'احصل على تقارير التقدّم كل أسبوعين في بريدك الإلكتروني.',
+    Somali: 'Ku hel warbixinnada horumarka labadii toddobaadba mar sanduuqaaga iimaylka.',
+    French: 'Recevez les rapports de progrès toutes les deux semaines dans votre boîte mail.',
+    German: 'Erhalten Sie alle zwei Wochen Fortschrittsberichte in Ihrem Posteingang.'
+  },
+  'parent.emailReportsDesc.monthly': {
+    English: 'Get monthly progress reports delivered to your inbox.',
+    Spanish: 'Reciba informes mensuales de progreso en su bandeja de entrada.',
+    Russian: 'Получайте ежемесячные отчёты об успеваемости на почту.',
+    Chinese: '每月将进度报告发送到您的邮箱。',
+    Vietnamese: 'Nhận báo cáo tiến trình hằng tháng qua hộp thư của bạn.',
+    Arabic: 'احصل على تقارير التقدّم الشهرية في بريدك الإلكتروني.',
+    Somali: 'Ku hel warbixinnada horumarka bil kasta sanduuqaaga iimaylka.',
+    French: 'Recevez chaque mois les rapports de progrès dans votre boîte mail.',
+    German: 'Erhalten Sie monatliche Fortschrittsberichte in Ihrem Posteingang.'
+  },
+  'parent.emailReportsDesc.never': {
+    English: 'Scheduled email reports are off. You can still send one now, or turn them back on in Settings.',
+    Spanish: 'Los informes programados por correo están desactivados. Aún puede enviar uno ahora o reactivarlos en Configuración.',
+    Russian: 'Плановые отчёты по почте отключены. Вы можете отправить отчёт сейчас или снова включить их в настройках.',
+    Chinese: '定期邮件报告已关闭。您仍可立即发送一份，或在设置中重新开启。',
+    Vietnamese: 'Báo cáo email định kỳ đang tắt. Bạn vẫn có thể gửi ngay hoặc bật lại trong Cài đặt.',
+    Arabic: 'التقارير المجدولة عبر البريد متوقفة. لا يزال بإمكانك إرسال تقرير الآن أو إعادة تشغيلها من الإعدادات.',
+    Somali: 'Warbixinnada iimaylka ee jadwalaysan waa dansan yihiin. Weli hadda waad diri kartaa mid, ama dib uga shid Dejinta.',
+    French: 'Les rapports programmés par e-mail sont désactivés. Vous pouvez en envoyer un maintenant ou les réactiver dans les paramètres.',
+    German: 'Geplante E-Mail-Berichte sind ausgeschaltet. Sie können jetzt einen senden oder sie in den Einstellungen wieder aktivieren.'
+  },
+  'parent.sendReportNow': {
+    English: 'Send Report Now', Spanish: 'Enviar informe ahora', Russian: 'Отправить отчёт сейчас', Chinese: '立即发送报告',
+    Vietnamese: 'Gửi báo cáo ngay', Arabic: 'إرسال التقرير الآن', Somali: 'Hadda dir warbixinta', French: 'Envoyer le rapport maintenant', German: 'Bericht jetzt senden'
+  },
+  'parent.reportNow': {
+    English: 'Report Now', Spanish: 'Informe ahora', Russian: 'Отчёт сейчас', Chinese: '立即报告',
+    Vietnamese: 'Báo cáo ngay', Arabic: 'التقرير الآن', Somali: 'Warbixin hadda', French: 'Rapport maintenant', German: 'Bericht jetzt'
+  },
+  'parent.emailUnavailable': {
+    English: 'Email reports are temporarily unavailable. Please check back later.',
+    Spanish: 'Los informes por correo no están disponibles temporalmente. Vuelva a intentarlo más tarde.',
+    Russian: 'Отчёты по почте временно недоступны. Пожалуйста, попробуйте позже.',
+    Chinese: '邮件报告暂时不可用，请稍后再试。',
+    Vietnamese: 'Báo cáo qua email tạm thời không khả dụng. Vui lòng quay lại sau.',
+    Arabic: 'تقارير البريد الإلكتروني غير متاحة مؤقتًا. يرجى المحاولة لاحقًا.',
+    Somali: 'Warbixinnada iimaylka si ku meel gaar ah looma heli karo. Fadlan dib u eeg mar dambe.',
+    French: 'Les rapports par e-mail sont temporairement indisponibles. Veuillez réessayer plus tard.',
+    German: 'E-Mail-Berichte sind vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.'
+  },
   'parent.emailConfigNote': {
     English: 'Email must be configured in server settings',
     Spanish: 'El correo debe estar configurado en los ajustes del servidor',

@@ -511,7 +511,7 @@
             welcomeEl.innerHTML = `
                 <i class="fas fa-exclamation-circle" style="color: #e74c3c;"></i>
                 <h3>Oops</h3>
-                <p>${msg}</p>
+                <p>${escapeHtml(msg)}</p>
                 <a href="/parent-dashboard.html" style="margin-top: 16px; color: #e67e22;">Go to Dashboard</a>
             `;
         }
