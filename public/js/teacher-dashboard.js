@@ -460,7 +460,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             switch (sortBy) {
                 case 'status': {
                     const statusOrder = { struggling: 0, active: 1, inactive: 2 };
-                    return (statusOrder[getStudentStatus(a)] || 1) - (statusOrder[getStudentStatus(b)] || 1);
+                    // `?? 1`, not `|| 1`: struggling is 0, and `0 || 1` sorted the
+                    // students who need help into the middle instead of the top.
+                    return (statusOrder[getStudentStatus(a)] ?? 1) - (statusOrder[getStudentStatus(b)] ?? 1);
                 }
                 case 'newest':
                     return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
@@ -506,13 +508,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (filteredStudents.length === 0) {
             studentListDiv.innerHTML = searchQuery || filterType !== 'all'
                 ? "<p style='padding: 20px; color: #7f8c8d; text-align: center;'>No students match your search/filter criteria.</p>"
-                : "<p>No students have been assigned to you. Please contact an administrator.</p>";
+                : "<div style='padding: 32px 20px; text-align: center;'><p style='margin:0 0 12px;'>No students yet. Create a class and share its join link.</p><button type='button' class='btn btn-primary' data-open-create-class><i class='fas fa-plus'></i> Create a class</button></div>";
+            document.dispatchEvent(new CustomEvent('mm:roster-rendered', { detail: { students: [], total: students.length, filterType, searchQuery } }));
             return;
         }
 
         // Sort based on selected sort option
         const sortBy = document.getElementById('student-sort')?.value || 'status';
         filteredStudents = sortStudentsList(filteredStudents, sortBy);
+        // The Today/table view (js/teacher-home.js) renders exactly this list —
+        // one filter, one search, one class scope for every roster surface.
+        document.dispatchEvent(new CustomEvent('mm:roster-rendered', { detail: { students: filteredStudents, total: students.length, filterType, searchQuery } }));
 
         // Render based on view mode. If the teacher has scoped to a
         // single class via the chip rail, fall back to flat — grouped
@@ -1432,9 +1438,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const studentId = event.target.closest('button').dataset.studentId;
         const studentName = event.target.closest('button').dataset.studentName;
 
-        if (!confirm(`View the app as ${studentName}?\n\nYou'll see exactly what this student sees. Changes are disabled in view mode.`)) {
-            return;
-        }
+        const ok = await window.showConfirmDialog({
+            title: `View the app as ${studentName}?`,
+            message: 'You\'ll see exactly what this student sees. Nothing can be changed in view mode, and it ends after 20 minutes.',
+            confirmText: 'View as student',
+            type: 'info'
+        });
+        if (!ok) return;
 
         try {
             await window.ImpersonationBanner.start(studentId, { readOnly: true });
@@ -1485,7 +1495,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                      tabindex="0"
                      title="View full transcript">
                     <h4>Session on <span class="session-date">${new Date(convo.date || convo.startDate).toLocaleDateString()}</span></h4>
-                    <p>${convo.summary || 'No summary available.'}</p>
+                    <p>${escapeHtml(TeacherMetrics.plainMath(convo.summary || 'No summary available.'))}</p>
                 </div>
             `).join('');
         } catch (error) {
@@ -1914,15 +1924,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 3000);
     }
 
-    // The year module re-fetches when the teacher switches years or archives.
+    // The year module and the Today view drive these. Each action reuses the
+    // existing handler, so there is still exactly one code path per action.
+    const asEvent = (studentId, studentName) => {
+        const dataset = { studentId, studentName };
+        return { target: { dataset, closest: () => ({ dataset }) } };
+    };
     window.TeacherDashboard = Object.assign(window.TeacherDashboard || {}, {
         reloadRoster: () => fetchAssignedStudents(false),
-        students: () => currentStudentsData
+        students: () => currentStudentsData,
+        classes: () => classesData,
+        rerender: () => applyFilters(),
+        openProfile: (id) => openStudentProfile(id),
+        openHistory: (id, name) => handleViewHistory(asEvent(id, name)),
+        openIep: (id, name) => handleViewIep(asEvent(id, name)),
+        viewAsStudent: (id, name) => handleViewAsStudent(asEvent(id, name)),
+        resetScreener: (id, name) => handleResetScreener(asEvent(id, name)),
+        draftMessage: (id, name, kind) => draftMessage(id, name, kind),
+        toast: (msg, type) => showToast(msg, type),
+        openTab: (tab) => document.querySelector(`.tab-btn[data-tab="${tab}"]`)?.click()
     });
 
     // One repaint path for every stat surface. Each painter is isolated so one
     // failure can't leave the rest of the page on placeholders.
     function refreshDashboardStats(students) {
+        document.dispatchEvent(new CustomEvent('mm:roster-updated', { detail: { students } }));
         [updateClassOverview, updateInsightsCards, updateRightSidebar, updateWeeklyComparison,
             renderSmartAlerts, updateMasteryOverview, checkForStrugglingAlerts].forEach(paint => {
             try { paint(students); } catch (err) { console.error('[Dashboard] stat painter failed:', paint.name, err); }
@@ -2441,41 +2467,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         if (action === 'encourage' || action === 'remind' || action === 'celebrate') {
-            // Pre-fill announcement for this student
-            const announcementsTabBtn = document.querySelector('[data-tab="announcements"]');
-            if (announcementsTabBtn) announcementsTabBtn.click();
-
-            // Set target to individual and pre-fill
-            setTimeout(() => {
-                const targetSelect = document.getElementById('announcement-target');
-                const titleInput = document.getElementById('announcement-title');
-                const bodyInput = document.getElementById('announcement-body');
-
-                if (targetSelect) {
-                    targetSelect.value = 'individual';
-                    targetSelect.dispatchEvent(new Event('change'));
-                }
-
-                if (action === 'encourage' && titleInput && bodyInput) {
-                    titleInput.value = `Keep going, ${studentName}!`;
-                    bodyInput.value = `Hey ${studentName}, I noticed you've been working hard. Keep it up! Let me know if you need help with anything.`;
-                } else if (action === 'remind' && titleInput && bodyInput) {
-                    titleInput.value = `We miss you, ${studentName}!`;
-                    bodyInput.value = `Hey ${studentName}, I noticed you haven't logged in for a while. Jump back in when you can - there's great stuff waiting for you!`;
-                } else if (action === 'celebrate' && titleInput && bodyInput) {
-                    titleInput.value = `Amazing work, ${studentName}!`;
-                    bodyInput.value = `Congratulations ${studentName}! You've been making incredible progress. Keep pushing forward!`;
-                }
-
-                // Try to check the student's checkbox
-                setTimeout(() => {
-                    const checkbox = document.querySelector(`#student-checkboxes input[value="${studentId}"]`);
-                    if (checkbox) checkbox.checked = true;
-                }, 200);
-            }, 100);
-
-            showToast(`Drafting message for ${studentName}`, 'success');
+            draftMessage(studentId, studentName, action);
         }
+    }
+
+    // Pre-written drafts a teacher edits before sending (nothing auto-sends).
+    function draftMessage(studentId, studentName, kind) {
+        const first = String(studentName || '').split(' ')[0] || studentName;
+        const drafts = {
+            encourage: [`Keep going, ${first}!`, `Hi ${first}, I saw you working through some tough problems. That effort is exactly how it clicks. Ask me in class if you want to go over it together.`],
+            remind: [`We miss you, ${first}!`, `Hi ${first}, it's been a little while since you logged in. Jump back in when you can, even 10 minutes helps.`],
+            celebrate: [`Amazing work, ${first}!`, `Congratulations ${first}! You've been making real progress. Keep it up!`],
+            start: [`Welcome, ${first}!`, `Hi ${first}, your account is ready. Log in and say hi to your tutor, it only takes a minute to get started.`]
+        };
+        const [title, body] = drafts[kind] || drafts.encourage;
+        if (window.TeacherAnnouncements) window.TeacherAnnouncements.draftTo({ studentIds: [studentId], title, body });
+        showToast(`Drafting a message to ${first}. Review and send.`, 'success');
     }
 
     // ============================================

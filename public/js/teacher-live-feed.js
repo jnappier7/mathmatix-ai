@@ -107,6 +107,8 @@ class TeacherLiveFeed {
             const feed = await response.json();
             this.cachedFeed = feed;
             this.renderFeed(feed);
+            // The Today view reads the same poll instead of running its own.
+            document.dispatchEvent(new CustomEvent('mm:live-feed', { detail: { feed } }));
         } catch (error) {
             console.error('Error fetching live feed:', error);
             this.showError('Unable to load activity feed. Retrying...');

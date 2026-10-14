@@ -27,8 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Recipients default to ONE CLASS from this school year — not the whole
     // roster. "All My Students" as the default sent last year's students
     // this year's reminders.
-    async function loadRecipientOptions() {
-        if (!targetSelect || targetSelect.dataset.loaded === '1') return;
+    let recipientOptionsPromise = null;
+    function loadRecipientOptions() {
+        if (!targetSelect) return Promise.resolve();
+        if (targetSelect.dataset.loaded === '1' && recipientOptionsPromise) return recipientOptionsPromise;
+        recipientOptionsPromise = buildRecipientOptions();
+        return recipientOptionsPromise;
+    }
+    async function buildRecipientOptions() {
         try {
             const res = await fetch('/api/teacher/classes', { credentials: 'same-origin' });
             const body = res.ok ? await res.json() : {};
@@ -57,8 +63,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     document.addEventListener('mm:class-created', () => {
-        if (targetSelect) { targetSelect.dataset.loaded = ''; loadRecipientOptions(); }
+        if (targetSelect) { targetSelect.dataset.loaded = ''; recipientOptionsPromise = null; loadRecipientOptions(); }
     });
+
+    // Draft a message to specific students, in order: open the tab, wait for
+    // the recipient picker to finish loading (it would otherwise reset the
+    // choice), switch to individual, tick the students, fill the text.
+    // Everything that says "message this student" goes through here.
+    window.TeacherAnnouncements = {
+        draftTo: async ({ studentIds = [], title = '', body = '' } = {}) => {
+            if (announcementsTab) announcementsTab.click();
+            await loadRecipientOptions();
+            await loadStudentsForSelection();
+            targetSelect.value = 'individual';
+            targetSelect.dispatchEvent(new Event('change'));
+            await loadStudentsForSelection();
+            studentIds.forEach(id => {
+                const cb = studentCheckboxes.querySelector(`input[value="${CSS.escape(String(id))}"]`);
+                if (cb) cb.checked = true;
+            });
+            const titleEl = document.getElementById('announcement-title');
+            const bodyEl = document.getElementById('announcement-body');
+            if (titleEl) titleEl.value = title;
+            if (bodyEl) { bodyEl.value = body; bodyEl.focus(); }
+        }
+    };
 
     // Target selection change handler
     if (targetSelect) {

@@ -278,7 +278,8 @@ Generate a concise teacher summary:`;
         return response.choices[0]?.message?.content?.trim() || fallbackSummary;
     } catch (error) {
         console.error('Error generating session summary:', error);
-        return `Session completed - ${conversation.activeMinutes} minutes of active learning`;
+        const m = conversation.activeMinutes;
+        return `Session completed - ${m} minute${m === 1 ? '' : 's'} of active learning`;
     }
 }
 
