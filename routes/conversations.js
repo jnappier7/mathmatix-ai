@@ -343,6 +343,11 @@ router.post('/seed-trial', isAuthenticated, async (req, res) => {
     if (messages.length === 0) {
       return res.status(400).json({ message: 'No valid trial messages to seed.' });
     }
+    // A greeting alone is not a conversation: seeding it would replace the
+    // student's real welcome (and its offers). Only a trial they engaged with.
+    if (!messages.some(m => m.role === 'user')) {
+      return res.json({ seeded: false, reason: 'no-student-messages' });
+    }
 
     const conversation = new Conversation({
       userId,

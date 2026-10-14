@@ -20,6 +20,7 @@
 // Sign in (local accounts, sandbox only):
 //   teacher  sandbox.teacher@mathmatix.test  /  sandbox-teacher-pass
 //   teacher  empty.teacher@mathmatix.test    /  sandbox-teacher-pass   (no students — empty states)
+//   student  sandbox.student@mathmatix.test  /  sandbox-teacher-pass   (sees the pushed worksheet)
 
 const path = require('path');
 const fs = require('fs');
@@ -121,6 +122,7 @@ async function seed(now = Date.now()) {
   await mkTeacher('empty.teacher@mathmatix.test', 'Emery', 'Empty');
 
   const counts = {};
+  let firstStudent = null;
   for (const p of roster(now)) {
     counts[p.kind] = (counts[p.kind] || 0) + 1;
     const level = 1 + Math.floor(((p.i * 37) % 11) * (p.kind === 'thriving' ? 1.5 : 0.6));
@@ -135,6 +137,7 @@ async function seed(now = Date.now()) {
       skillMastery: p.skills, selectedTutorId: 'mr-nappier', needsProfileCompletion: false,
     });
     if (p.createdAt) await User.collection.updateOne({ _id: student._id }, { $set: { createdAt: p.createdAt } });
+    if (!firstStudent && p.kind === 'thriving') firstStudent = student;
     if (p.sessions.length) {
       await Conversation.collection.insertMany(p.sessions.map(([daysAgo, minutes], s) => ({
         userId: student._id, conversationName: 'Math Session', isActive: false,
@@ -147,6 +150,27 @@ async function seed(now = Date.now()) {
       })));
     }
   }
+  // Sign-in-able student (the first "thriving" one) for testing the student side.
+  if (firstStudent) {
+    firstStudent.email = 'sandbox.student@mathmatix.test';
+    firstStudent.passwordHash = SANDBOX_PASSWORD;
+    await firstStudent.save();
+  }
+
+  // A worksheet the teacher pushed to the tutor, with a real local file.
+  const TeacherResource = require('../models/teacherResource');
+  const dir = path.join(__dirname, '..', 'uploads', 'teacher-resources');
+  fs.mkdirSync(dir, { recursive: true });
+  const stored = 'sandbox-two-step-practice.png';
+  // 1x1 PNG — the file only has to download; the tutor works from extractedText.
+  fs.writeFileSync(path.join(dir, stored), Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64'));
+  await TeacherResource.create({
+    teacherId: teacher._id, displayName: 'Two-Step Equations Practice', originalFilename: stored, storedFilename: stored,
+    fileType: 'png', mimeType: 'image/png', fileSize: 68, category: 'practice', isPublished: true,
+    extractedText: '1) 3x - 7 = 11\n2) 5x + 4 = 29\n3) -2x + 9 = 1\n4) x/4 - 3 = 2\n5) 7 - 3x = 22',
+    tutorAssignment: { active: true, pushedAt: new Date(now - DAY), startsAt: new Date(now - DAY), endsAt: new Date(now + 10 * DAY),
+      note: 'We just learned undoing operations in reverse order. Start with #1 and #2.', starts: [] },
+  });
   return { teacher, counts };
 }
 
@@ -158,6 +182,12 @@ async function main() {
   process.env.NODE_ENV = 'development';
   process.env.PORT = process.env.SANDBOX_PORT || '3077';
   delete process.env.SENTRY_DSN;
+  // The main .env carries LIVE outbound credentials. A sandbox must never send
+  // mail through the production SMTP server, charge through Stripe, or write
+  // to a storage bucket — strip them all so those paths fall back to local/no-op.
+  Object.keys(process.env)
+    .filter(k => /^(SMTP_|EMAIL_|STRIPE_|S3_|AWS_|R2_|SENDGRID|POSTMARK|SES_)/.test(k))
+    .forEach(k => { delete process.env[k]; });
   if (/mongodb\.net/.test(process.env.MONGO_URI)) throw new Error('refusing to run against Atlas');
 
   const mongoose = require('mongoose');

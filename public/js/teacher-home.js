@@ -201,6 +201,7 @@
         '</section>' +
         '<div class="td-side">' +
           '<section class="td-card" aria-labelledby="td-live-h"><header class="td-card-head"><h2 id="td-live-h"><span class="td-live-dot" aria-hidden="true"></span>Live now</h2></header><div id="td-live" class="td-live"></div></section>' +
+          '<section class="td-card" aria-labelledby="td-assigned-h"><header class="td-card-head"><h2 id="td-assigned-h"><i class="fas fa-robot" aria-hidden="true"></i> With the tutor</h2></header><div id="td-assigned"></div></section>' +
           '<section class="td-card" aria-labelledby="td-teach-h"><header class="td-card-head"><h2 id="td-teach-h">Teach this next</h2></header><div id="td-teach"></div></section>' +
           '<section class="td-card" aria-labelledby="td-wins-h"><header class="td-card-head"><h2 id="td-wins-h">Wins this month</h2></header><div id="td-wins"></div></section>' +
         '</div>' +
@@ -405,7 +406,28 @@
     }).join('') + '</ul>';
   }
 
+  // Work pushed to the tutor (js/teacher-resources.js announces mm:resources).
+  function renderAssigned() {
+    var el = document.getElementById('td-assigned');
+    if (!el) return;
+    var live = (state.resources || []).filter(function (r) { return r.tutorAssignment && r.tutorAssignment.active; });
+    if (!live.length) {
+      el.innerHTML = '<p class="td-muted">Push a worksheet from Resources and the tutor offers it when students start a session, then works from it with them.</p>' +
+        '<button type="button" class="td-btn td-btn-soft td-btn-sm" data-td-tab="resources"><i class="fas fa-upload" aria-hidden="true"></i> Go to Resources</button>';
+      return;
+    }
+    el.innerHTML = '<ul class="td-assigned-list">' + live.map(function (r) {
+      var a = r.tutorAssignment;
+      var pct = a.audienceCount ? Math.round((a.startedCount / a.audienceCount) * 100) : 0;
+      var until = a.endsAt ? new Date(a.endsAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+      return '<li><div class="td-assigned-name">' + esc(r.displayName) + '</div>' +
+        '<div class="td-progress" role="img" aria-label="' + a.startedCount + ' of ' + a.audienceCount + ' students started"><span style="width:' + pct + '%"></span></div>' +
+        '<div class="td-muted">' + a.startedCount + ' of ' + a.audienceCount + ' started' + (until ? ' · until ' + esc(until) : '') + '</div></li>';
+    }).join('') + '</ul>';
+  }
+
   function renderToday() {
+    renderAssigned();
     renderPulse();
     renderQueue();
     renderLive();
@@ -661,6 +683,7 @@
     document.addEventListener('mm:roster-updated', onRoster);
     document.addEventListener('mm:roster-rendered', onRendered);
     document.addEventListener('mm:live-feed', onLive);
+    document.addEventListener('mm:resources', function (e) { state.resources = (e.detail && e.detail.resources) || []; renderAssigned(); });
     document.addEventListener('click', onClick);
     document.addEventListener('keydown', onKey);
     window.addEventListener('scroll', closeRowMenu, { passive: true });

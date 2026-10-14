@@ -122,4 +122,22 @@ describe('POST /api/conversations/seed-trial', () => {
 
     expect(res.status).toBe(400);
   });
+
+  // The landing page greets on load and saves that greeting as "trial
+  // history". Seeding it replaced a returning student's real welcome — and
+  // every offer that rides on it — for an hour after any homepage visit.
+  test('a greeting the visitor never answered is not seeded', async () => {
+    const app = buildApp();
+    const res = await request(app)
+      .post('/api/conversations/seed-trial')
+      .send({ tutorId: 'mr-nappier', history: [{ role: 'assistant', content: 'Hey! What are you working on?' }] });
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ seeded: false, reason: 'no-student-messages' });
+  });
+
+  test('the chat page only carries over a trial the visitor used', () => {
+    const src = require('fs').readFileSync(require('path').join(__dirname, '../../public/js/script.js'), 'utf8');
+    expect(src).toMatch(/trialState\.history\.some\(m => m && m\.role === 'user'/);
+    expect(src).toMatch(/if \(trialWasUsed\) \{/);
+  });
 });

@@ -122,6 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // targeting reaches the server.
             formData.delete('shareScope');
             formData.set('sharedWithClassIds', JSON.stringify(classIds));
+            if (formData.get('pushToTutor') === 'true') {
+                formData.set('tutorEndsAt', endOfLocalDayIso(formData.get('tutorEndsAt')));
+            } else {
+                formData.delete('tutorNote');
+                formData.delete('tutorEndsAt');
+            }
 
             try {
                 submitBtn.disabled = true;
@@ -171,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             teacherClasses = data.classes || [];
 
             if (resources.length === 0) {
+                document.dispatchEvent(new CustomEvent('mm:resources', { detail: { resources: [] } }));
                 resourcesList.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #666;">
                         <i class="fas fa-folder-open" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
@@ -182,59 +189,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Display resources as cards
+            // Display resources as cards. Everything user-supplied is escaped,
+            // and actions use data attributes + one delegated handler — the old
+            // inline onclick="deleteResource('${name}')" broke on any name with
+            // a quote and was an injection point.
+            lastResources = resources;
+            document.dispatchEvent(new CustomEvent('mm:resources', { detail: { resources } }));
             resourcesList.innerHTML = `
                 <div class="resources-grid">
-                    ${resources.map(resource => `
-                        <div class="resource-card ${resource.isPublished ? '' : 'resource-unpublished'}" data-resource-id="${resource.id}">
-                            <div class="resource-icon">
-                                <i class="fas ${getFileIcon(resource.fileType)}"></i>
-                            </div>
-                            <div class="resource-info">
-                                <h4>
-                                    ${resource.displayName}
-                                    ${resource.isPublished
-                                        ? '<span class="publish-badge published" title="Visible to students"><i class="fas fa-eye"></i></span>'
-                                        : '<span class="publish-badge unpublished" title="Hidden from students"><i class="fas fa-eye-slash"></i></span>'}
-                                </h4>
-                                <p class="resource-meta">
-                                    <span class="resource-type">${resource.fileType.toUpperCase()}</span>
-                                    <span>•</span>
-                                    <span>${formatFileSize(resource.fileSize)}</span>
-                                    <span>•</span>
-                                    <span>${formatDate(resource.uploadedAt)}</span>
-                                </p>
-                                ${resource.description ? `<p class="resource-description">${resource.description}</p>` : ''}
-                                <p class="resource-stats">
-                                    <i class="fas fa-chart-bar"></i> Accessed ${resource.accessCount} times
-                                </p>
-                                <p class="resource-audience" title="Who can see this resource">
-                                    <i class="fas fa-users"></i>
-                                    ${(resource.sharedWithClassNames || []).length > 0
-                                        ? escapeHtml(resource.sharedWithClassNames.join(', '))
-                                        : 'All my students'}
-                                </p>
-                                ${resource.keywords && resource.keywords.length > 0 ? `
-                                    <div class="resource-keywords">
-                                        ${resource.keywords.slice(0, 5).map(kw => `<span class="keyword-tag">${kw}</span>`).join('')}
-                                    </div>
-                                ` : ''}
-                            </div>
-                            <div class="resource-actions">
-                                <button class="btn-icon ${resource.isPublished ? 'btn-published' : 'btn-unpublished'}"
-                                    title="${resource.isPublished ? 'Click to hide from students' : 'Click to publish to students'}"
-                                    onclick="togglePublish('${resource.id}', ${resource.isPublished})">
-                                    <i class="fas ${resource.isPublished ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
-                                </button>
-                                <button class="btn-icon" title="Download" onclick="window.open('/api/teacher-resources/download/${resource.id}', '_blank')">
-                                    <i class="fas fa-download"></i>
-                                </button>
-                                <button class="btn-icon btn-danger" title="Delete" onclick="deleteResource('${resource.id}', '${resource.displayName}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `).join('')}
+                    ${resources.map(renderResourceCard).join('')}
                 </div>
             `;
 
@@ -247,6 +210,159 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }
+    }
+
+    let lastResources = [];
+
+    function tutorStatusHtml(r) {
+        const a = r.tutorAssignment;
+        if (!a) return '';
+        const until = a.endsAt ? new Date(a.endsAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+        if (a.expired) return `<p class="resource-tutor resource-tutor-ended"><i class="fas fa-robot"></i> Tutor offer ended ${escapeHtml(until)} · ${a.startedCount} of ${a.audienceCount} started</p>`;
+        if (a.scheduled) return `<p class="resource-tutor"><i class="fas fa-robot"></i> With the tutor from ${escapeHtml(new Date(a.startsAt).toLocaleDateString())}</p>`;
+        return `<p class="resource-tutor resource-tutor-on"><i class="fas fa-robot"></i> With the tutor until ${escapeHtml(until)} · <strong>${a.startedCount} of ${a.audienceCount}</strong> started</p>` +
+            (a.note ? `<p class="resource-tutor-note">“${escapeHtml(a.note)}”</p>` : '');
+    }
+
+    function renderResourceCard(resource) {
+        const id = escapeHtml(resource.id);
+        const pushedLive = resource.tutorAssignment && resource.tutorAssignment.active;
+        return `
+            <div class="resource-card ${resource.isPublished ? '' : 'resource-unpublished'}" data-resource-id="${id}">
+                <div class="resource-icon"><i class="fas ${getFileIcon(resource.fileType || '')}"></i></div>
+                <div class="resource-info">
+                    <h4>
+                        ${escapeHtml(resource.displayName)}
+                        ${resource.isPublished
+                            ? '<span class="publish-badge published" title="Visible to students"><i class="fas fa-eye"></i></span>'
+                            : '<span class="publish-badge unpublished" title="Hidden from students"><i class="fas fa-eye-slash"></i></span>'}
+                        ${resource.category ? `<span class="resource-cat">${escapeHtml(resource.category)}</span>` : ''}
+                    </h4>
+                    <p class="resource-meta">
+                        <span class="resource-type">${escapeHtml(String(resource.fileType || '').toUpperCase())}</span>
+                        <span>•</span><span>${formatFileSize(resource.fileSize || 0)}</span>
+                        <span>•</span><span>${formatDate(resource.uploadedAt)}</span>
+                    </p>
+                    ${resource.description ? `<p class="resource-description">${escapeHtml(resource.description)}</p>` : ''}
+                    ${tutorStatusHtml(resource)}
+                    <p class="resource-audience" title="Who can see this resource">
+                        <i class="fas fa-users"></i>
+                        ${(resource.sharedWithClassNames || []).length > 0 ? escapeHtml(resource.sharedWithClassNames.join(', ')) : 'All my students'}
+                    </p>
+                    ${resource.keywords && resource.keywords.length > 0 ? `
+                        <div class="resource-keywords">
+                            ${resource.keywords.slice(0, 5).map(kw => `<span class="keyword-tag">${escapeHtml(kw)}</span>`).join('')}
+                        </div>` : ''}
+                </div>
+                <div class="resource-actions">
+                    <button type="button" class="btn-push ${pushedLive ? 'is-on' : ''}" data-res-act="${pushedLive ? 'unpush' : 'push'}" data-id="${id}">
+                        <i class="fas fa-robot"></i> ${pushedLive ? 'Stop' : 'Push to tutor'}
+                    </button>
+                    <button type="button" class="btn-icon ${resource.isPublished ? 'btn-published' : 'btn-unpublished'}" data-res-act="publish" data-id="${id}"
+                        title="${resource.isPublished ? 'Hide from students' : 'Show to students'}" aria-label="${resource.isPublished ? 'Hide from students' : 'Show to students'}">
+                        <i class="fas ${resource.isPublished ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
+                    </button>
+                    <button type="button" class="btn-icon" data-res-act="download" data-id="${id}" title="Download" aria-label="Download"><i class="fas fa-download"></i></button>
+                    <button type="button" class="btn-icon btn-danger" data-res-act="delete" data-id="${id}" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+    }
+
+    function notify(msg, type) {
+        if (window.TeacherDashboard && window.TeacherDashboard.toast) window.TeacherDashboard.toast(msg, type || 'success');
+        else if (typeof showToast === 'function') showToast(msg, type || 'success');
+    }
+
+    function endOfLocalDayIso(yyyyMmDd) {
+        if (!yyyyMmDd) return '';
+        const [y, m, d] = yyyyMmDd.split('-').map(Number);
+        return new Date(y, m - 1, d, 23, 59, 0).toISOString();
+    }
+    function inDaysYmd(days) {
+        const d = new Date(Date.now() + days * 86400000);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function openPushDialog(resource) {
+        const existing = document.getElementById('push-dialog');
+        if (existing) existing.remove();
+        const isAssessment = ['test', 'quiz'].includes(resource.category);
+        const wrap = document.createElement('div');
+        wrap.id = 'push-dialog';
+        wrap.className = 'push-overlay';
+        wrap.innerHTML = `
+            <div class="push-dialog" role="dialog" aria-modal="true" aria-labelledby="push-title">
+                <h3 id="push-title"><i class="fas fa-robot"></i> Push “${escapeHtml(resource.displayName)}” to the tutor</h3>
+                <p class="push-lead">Students who can see it (${(resource.sharedWithClassNames || []).length ? escapeHtml(resource.sharedWithClassNames.join(', ')) : 'all your students'}) will be offered it when they start a session, and the tutor will work from it with them.</p>
+                ${isAssessment ? '<p class="push-warn"><i class="fas fa-shield-halved"></i> This is a ' + escapeHtml(resource.category) + ': the tutor helps with similar problems only and never works the actual items.</p>' : ''}
+                <label for="push-note">Note to the tutor (optional)</label>
+                <textarea id="push-note" rows="3" maxlength="500" placeholder="e.g., Focus on #1–10. Several kids are mixing up the order of operations.">${escapeHtml((resource.tutorAssignment && resource.tutorAssignment.note) || '')}</textarea>
+                <label for="push-until">Offer it until</label>
+                <input type="date" id="push-until" value="${inDaysYmd(14)}" min="${inDaysYmd(0)}" max="${inDaysYmd(180)}">
+                <div class="push-actions">
+                    <button type="button" class="btn cancel-btn" data-push="cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" data-push="go"><i class="fas fa-robot"></i> Push to tutor</button>
+                </div>
+            </div>`;
+        document.body.appendChild(wrap);
+        wrap.querySelector('#push-note').focus();
+        const close = () => wrap.remove();
+        wrap.addEventListener('click', async (e) => {
+            if (e.target === wrap || e.target.closest('[data-push="cancel"]')) return close();
+            const go = e.target.closest('[data-push="go"]');
+            if (!go) return;
+            go.disabled = true;
+            try {
+                const res = await csrfFetch(`/api/teacher-resources/${encodeURIComponent(resource.id)}/assign`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ active: true, note: wrap.querySelector('#push-note').value, endsAt: endOfLocalDayIso(wrap.querySelector('#push-until').value) })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) throw new Error(data.message || 'Could not push it');
+                notify(data.message);
+                close();
+                loadResources();
+            } catch (err) {
+                go.disabled = false;
+                notify(err.message, 'error');
+            }
+        });
+        wrap.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    }
+
+    if (resourcesList) {
+        resourcesList.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-res-act]');
+            if (!btn) return;
+            const id = btn.getAttribute('data-id');
+            const resource = lastResources.find(r => String(r.id) === id);
+            if (!resource) return;
+            switch (btn.getAttribute('data-res-act')) {
+                case 'push': return openPushDialog(resource);
+                case 'unpush': {
+                    const res = await csrfFetch(`/api/teacher-resources/${encodeURIComponent(id)}/assign`, {
+                        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ active: false })
+                    });
+                    if (res.ok) { notify('Removed from the tutor'); loadResources(); } else notify('Could not update', 'error');
+                    return;
+                }
+                case 'publish': return window.togglePublish(id, resource.isPublished);
+                case 'download': return window.open(`/api/teacher-resources/download/${encodeURIComponent(id)}`, '_blank');
+                case 'delete': return window.deleteResource(id, resource.displayName);
+            }
+        });
+    }
+
+    // Upload form: push-to-tutor fields
+    const pushBox = document.getElementById('resource-push');
+    const pushFields = document.getElementById('resource-push-fields');
+    if (pushBox && pushFields) {
+        pushBox.addEventListener('change', () => {
+            pushFields.hidden = !pushBox.checked;
+            const until = document.getElementById('resource-tutor-until');
+            if (pushBox.checked && until && !until.value) until.value = inDaysYmd(14);
+        });
     }
 
     // Toggle publish status
@@ -279,9 +395,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delete resource
     window.deleteResource = async function(resourceId, resourceName) {
-        if (!confirm(`Are you sure you want to delete "${resourceName}"? This cannot be undone.`)) {
-            return;
-        }
+        const ok = typeof window.showConfirmDialog === 'function'
+            ? await window.showConfirmDialog({ title: `Delete "${resourceName}"?`, message: 'Students and the tutor will lose access. This cannot be undone.', confirmText: 'Delete', type: 'danger' })
+            : window.confirm(`Delete "${resourceName}"? This cannot be undone.`);
+        if (!ok) return;
 
         try {
             const response = await csrfFetch(`/api/teacher-resources/${resourceId}`, {
