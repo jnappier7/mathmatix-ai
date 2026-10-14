@@ -155,6 +155,18 @@ describe('actTestAssembler diversity (no look-alike problems in one form)', () =
     expect(A.pickDiverse(pool, used).problemId).toBe('2');
   });
 
+  test('pickDiverse passes over an item whose fixed key would crowd a letter, but never leaves the slot empty', () => {
+    const pool = [
+      { problemId: '1', prompt: 'A cyclist rides at 5 mph for 3 hours' },
+      { problemId: '2', prompt: 'A printer prints at 5 ppm for 3 minutes' },
+    ];
+    // Without the hint the novel shape wins; with it, the crowded item loses
+    // even though its shape is novel.
+    const used = new Map([[A.promptSignature(pool[0].prompt), 1]]);
+    expect(A.pickDiverse(pool, used, null, [], (c) => c.problemId === '2').problemId).toBe('1');
+    expect(A.pickDiverse([pool[1]], new Map(), null, [], () => true).problemId).toBe('2');
+  });
+
   test('pickDiverse returns null on an empty pool', () => {
     expect(A.pickDiverse([], new Map())).toBeNull();
   });

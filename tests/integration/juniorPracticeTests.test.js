@@ -143,8 +143,11 @@ describe('the PreACT', () => {
     expect(s.testId).toBe('preact-math');
     const allowed = new Set(Object.values(PREACT_BLUEPRINT.skillsByCategory).flat());
     s.items.forEach((it) => expect(allowed.has(it.skillId)).toBe(true));
-    ['act-logarithms', 'act-complex-numbers', 'act-matrices-vectors', 'act-law-of-sines-cosines', 'act-trigonometric-functions']
+    ['act-logarithms', 'act-matrices-vectors', 'act-law-of-sines-cosines', 'act-trigonometric-functions']
       .forEach((skill) => expect(allowed.has(skill)).toBe(false));
+    // The real PreACT 10 asks about i (students met i^3 on it), so complex
+    // numbers are in scope even though the rest of upper-level N&Q is not.
+    expect(allowed.has('act-complex-numbers')).toBe(true);
   });
 
   test('is an easier form than the ACT', async () => {
