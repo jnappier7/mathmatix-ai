@@ -21,6 +21,7 @@ const { userHasRole, anyRole } = require('../utils/roleQuery');
 const { skillPictureFor } = require('../utils/parentSkillPicture');
 const { buildLearningReport } = require('../utils/parentReport');
 const { buildChildProfile, readStreak } = require('../utils/parentChildProfile');
+const { loadTestScores, buildChildExamList } = require('../utils/testPrepScores');
 const { REPORT_FREQUENCIES } = require('../utils/reportFrequency');
 const {
     normalizeStudentLinkCode,
@@ -426,6 +427,21 @@ router.get('/child/:childId/growth-history', isAuthenticated, isParent, logRecor
     } catch (error) {
         console.error("ERROR: Failed to fetch child's growth history:", error);
         res.status(500).json({ message: "Could not fetch growth history." });
+    }
+});
+
+// Practice-test results (PreACT / PSAT / SAT / ACT) for ONE linked child.
+// Same numbers and Rushed / Unfinished rules as the teacher's Test Prep tab
+// (utils/testPrepScores.js), scoped to this child only — no class data.
+router.get('/child/:childId/test-prep', isAuthenticated, isParent, logRecordAccess('assessment_results', 'parental_right_of_access', { getStudentId: req => req.params.childId }), async (req, res) => {
+    try {
+        const child = await verifyParentChildAccess(req.user._id, req.params.childId);
+        if (!child) return res.status(403).json({ success: false, message: 'Not authorized to view this child.' });
+        const byStudent = await loadTestScores([child._id]);
+        res.json({ success: true, exams: buildChildExamList(byStudent.get(String(child._id)) || []) });
+    } catch (error) {
+        console.error('Error fetching child test-prep results:', error);
+        res.status(500).json({ success: false, message: 'Could not load practice-test results.' });
     }
 });
 

@@ -1030,6 +1030,147 @@ window.I18N_TRANSLATIONS = {
     English: 'Level', Spanish: 'Nivel', Russian: 'Уровень', Chinese: '等级',
     Vietnamese: 'Cấp độ', Arabic: 'المستوى', Somali: 'Heerka', French: 'Niveau', German: 'Stufe'
   },
+  /* ─── Parent: Test Prep card (js/parent-dashboard.js + shared js/test-prep-report.js) ───
+     Exam names (ACT, SAT, PSAT, PreACT) are never translated. {placeholders} must survive. */
+  'parent.testPrep.title': {
+    English: 'Practice tests', Spanish: 'Exámenes de práctica', Russian: 'Пробные тесты', Chinese: '模拟考试',
+    Vietnamese: 'Bài thi thử', Arabic: 'اختبارات تدريبية', Somali: 'Imtixaannada tababarka', French: 'Tests d\'entraînement', German: 'Übungstests'
+  },
+  'parent.testPrep.latest': {
+    English: 'Latest', Spanish: 'Más reciente', Russian: 'Последний', Chinese: '最近一次',
+    Vietnamese: 'Gần nhất', Arabic: 'الأحدث', Somali: 'Kii ugu dambeeyay', French: 'Le plus récent', German: 'Zuletzt'
+  },
+  'parent.testPrep.attempts': {
+    English: '{n} attempts', Spanish: '{n} intentos', Russian: 'попыток: {n}', Chinese: '{n} 次尝试',
+    Vietnamese: '{n} lần làm', Arabic: '{n} محاولات', Somali: '{n} isku day', French: '{n} tentatives', German: '{n} Versuche'
+  },
+  'parent.testPrep.changeSince': {
+    English: '{change} since first full attempt', Spanish: '{change} desde el primer intento completo', Russian: '{change} с первой полной попытки', Chinese: '较首次完整作答 {change}',
+    Vietnamese: '{change} so với lần làm đầy đủ đầu tiên', Arabic: '{change} منذ أول محاولة كاملة', Somali: '{change} tan iyo isku daygii ugu horreeyay ee dhammaystiran', French: '{change} depuis la première tentative complète', German: '{change} seit dem ersten vollständigen Versuch'
+  },
+  'parent.testPrep.changeHelp': {
+    English: 'Compares only attempts that were not rushed or unfinished.', Spanish: 'Solo compara intentos que no fueron apresurados ni quedaron sin terminar.', Russian: 'Сравниваются только попытки, выполненные не наспех и до конца.', Chinese: '只比较没有仓促完成、也没有中途未完成的作答。',
+    Vietnamese: 'Chỉ so sánh các lần làm không vội vàng và đã hoàn thành.', Arabic: 'تتم المقارنة فقط بين المحاولات غير المتسرعة والمكتملة.', Somali: 'Waxaa la isbarbardhigaa oo keliya isku dayada aan la degdegin oo la dhammeeyay.', French: 'Ne compare que les tentatives ni bâclées ni inachevées.', German: 'Vergleicht nur Versuche, die weder überhastet noch unvollständig waren.'
+  },
+  'parent.testPrep.printReport': {
+    English: 'Print report', Spanish: 'Imprimir informe', Russian: 'Распечатать отчёт', Chinese: '打印报告',
+    Vietnamese: 'In báo cáo', Arabic: 'طباعة التقرير', Somali: 'Daabac warbixinta', French: 'Imprimer le rapport', German: 'Bericht drucken'
+  },
+  'parent.testPrep.popupBlocked': {
+    English: 'Allow pop-ups to print the report', Spanish: 'Permite las ventanas emergentes para imprimir el informe', Russian: 'Разрешите всплывающие окна, чтобы распечатать отчёт', Chinese: '请允许弹出窗口以打印报告',
+    Vietnamese: 'Hãy cho phép cửa sổ bật lên để in báo cáo', Arabic: 'اسمح بالنوافذ المنبثقة لطباعة التقرير', Somali: 'Oggolow daaqadaha soo booda si aad u daabacdo warbixinta', French: 'Autorisez les fenêtres pop-up pour imprimer le rapport', German: 'Erlauben Sie Pop-ups, um den Bericht zu drucken'
+  },
+  'parent.testPrep.footnote': {
+    English: 'Rushed or unfinished attempts are shown but not used to measure change.', Spanish: 'Los intentos apresurados o sin terminar se muestran, pero no se usan para medir el cambio.', Russian: 'Попытки наспех или незавершённые показаны, но не учитываются при оценке изменений.', Chinese: '仓促或未完成的作答会显示出来，但不用于衡量变化。',
+    Vietnamese: 'Các lần làm vội vàng hoặc chưa hoàn thành vẫn được hiển thị nhưng không dùng để đo sự thay đổi.', Arabic: 'تُعرض المحاولات المتسرعة أو غير المكتملة، لكنها لا تُستخدم لقياس التغيّر.', Somali: 'Isku dayada la degdegay ama aan la dhammaystirin waa la muujiyaa, laakiin looma isticmaalo cabbirka isbeddelka.', French: 'Les tentatives bâclées ou inachevées sont affichées mais ne servent pas à mesurer l\'évolution.', German: 'Überhastete oder unvollständige Versuche werden angezeigt, aber nicht zur Messung der Veränderung verwendet.'
+  },
+  'parent.testPrep.flagRushed': {
+    English: 'Rushed', Spanish: 'Apresurado', Russian: 'Наспех', Chinese: '仓促',
+    Vietnamese: 'Làm vội', Arabic: 'متسرّع', Somali: 'La degdegay', French: 'Bâclé', German: 'Überhastet'
+  },
+  'parent.testPrep.flagUnfinished': {
+    English: 'Unfinished', Spanish: 'Sin terminar', Russian: 'Не завершён', Chinese: '未完成',
+    Vietnamese: 'Chưa hoàn thành', Arabic: 'غير مكتمل', Somali: 'Lama dhammaystirin', French: 'Inachevé', German: 'Unvollständig'
+  },
+  'parent.testPrep.flagEasierRoute': {
+    English: 'Easier route', Spanish: 'Ruta más fácil', Russian: 'Облегчённый путь', Chinese: '较易路线',
+    Vietnamese: 'Lộ trình dễ hơn', Arabic: 'المسار الأسهل', Somali: 'Waddada fudud', French: 'Parcours plus facile', German: 'Leichterer Weg'
+  },
+  'parent.testPrep.flagRushedHelp': {
+    English: 'Finished in under a quarter of the time limit — not a reliable estimate.', Spanish: 'Terminado en menos de una cuarta parte del tiempo límite: no es una estimación confiable.', Russian: 'Завершён менее чем за четверть отведённого времени — оценка ненадёжна.', Chinese: '用时不到时限的四分之一——这个分数不可靠。',
+    Vietnamese: 'Hoàn thành trong chưa đến một phần tư thời gian cho phép — không phải ước tính đáng tin cậy.', Arabic: 'أُنجز في أقل من ربع الوقت المحدد — ليس تقديرًا موثوقًا.', Somali: 'Waxaa lagu dhammeeyay wax ka yar rubuc waqtiga loo qabtay — qiyaas lagu kalsoonaan karo maaha.', French: 'Terminé en moins d\'un quart du temps imparti — estimation peu fiable.', German: 'In weniger als einem Viertel der Zeit beendet — keine verlässliche Einschätzung.'
+  },
+  'parent.testPrep.flagUnfinishedHelp': {
+    English: 'Left 5+ questions blank or ran out of time while away.', Spanish: 'Dejó 5 o más preguntas en blanco o se le acabó el tiempo mientras estaba ausente.', Russian: 'Оставлено 5+ вопросов без ответа или время вышло во время отсутствия.', Chinese: '有 5 道或以上题目未作答，或离开期间时间用完。',
+    Vietnamese: 'Bỏ trống từ 5 câu trở lên hoặc hết giờ khi đang rời đi.', Arabic: 'ترك 5 أسئلة أو أكثر دون إجابة أو انتهى الوقت أثناء غيابه.', Somali: 'Wuxuu ka tagay 5 su\'aalood ama ka badan oo bannaan, ama waqtigu wuu ka dhammaaday intuu maqnaa.', French: 'A laissé 5 questions ou plus sans réponse, ou le temps s\'est écoulé pendant une absence.', German: '5 oder mehr Fragen unbeantwortet gelassen oder die Zeit lief während einer Abwesenheit ab.'
+  },
+  'parent.testPrep.flagEasierRouteHelp': {
+    English: 'Took the easier second module, which caps the top score.', Spanish: 'Hizo el segundo módulo más fácil, lo que limita la puntuación máxima.', Russian: 'Выполнен облегчённый второй модуль, что ограничивает максимальный балл.', Chinese: '进入了较容易的第二模块，最高分因此受限。',
+    Vietnamese: 'Đã làm mô-đun thứ hai dễ hơn, nên điểm tối đa bị giới hạn.', Arabic: 'أدّى الوحدة الثانية الأسهل، مما يحدّ من أعلى درجة ممكنة.', Somali: 'Wuxuu qaatay qaybta labaad ee fudud, taas oo xaddidaysa dhibcaha ugu sarreeya.', French: 'A passé le second module plus facile, ce qui plafonne le score maximal.', German: 'Hat das leichtere zweite Modul bearbeitet, was die Höchstpunktzahl begrenzt.'
+  },
+  'parent.testPrep.latestAttempt': {
+    English: 'Latest attempt', Spanish: 'Intento más reciente', Russian: 'Последняя попытка', Chinese: '最近一次作答',
+    Vietnamese: 'Lần làm gần nhất', Arabic: 'أحدث محاولة', Somali: 'Isku daygii ugu dambeeyay', French: 'Dernière tentative', German: 'Letzter Versuch'
+  },
+  'parent.testPrep.likelyRange': {
+    English: 'likely {low}–{high}', Spanish: 'probable {low}–{high}', Russian: 'вероятно {low}–{high}', Chinese: '可能区间 {low}–{high}',
+    Vietnamese: 'khả năng {low}–{high}', Arabic: 'المرجّح {low}–{high}', Somali: 'suurtagal {low}–{high}', French: 'probable {low}–{high}', German: 'wahrscheinlich {low}–{high}'
+  },
+  'parent.testPrep.correct': {
+    English: 'Correct', Spanish: 'Correctas', Russian: 'Верно', Chinese: '答对',
+    Vietnamese: 'Đúng', Arabic: 'صحيحة', Somali: 'Sax', French: 'Correctes', German: 'Richtig'
+  },
+  'parent.testPrep.nOfM': {
+    English: '{n} of {m}', Spanish: '{n} de {m}', Russian: '{n} из {m}', Chinese: '{n} / {m}',
+    Vietnamese: '{n} trên {m}', Arabic: '{n} من {m}', Somali: '{n} ka mid ah {m}', French: '{n} sur {m}', German: '{n} von {m}'
+  },
+  'parent.testPrep.timeUsed': {
+    English: 'Time used', Spanish: 'Tiempo usado', Russian: 'Затрачено времени', Chinese: '用时',
+    Vietnamese: 'Thời gian đã dùng', Arabic: 'الوقت المستخدم', Somali: 'Waqtiga la isticmaalay', French: 'Temps utilisé', German: 'Benötigte Zeit'
+  },
+  'parent.testPrep.minutes': {
+    English: '{n} min', Spanish: '{n} min', Russian: '{n} мин', Chinese: '{n} 分钟',
+    Vietnamese: '{n} phút', Arabic: '{n} دقيقة', Somali: '{n} daqiiqo', French: '{n} min', German: '{n} Min.'
+  },
+  'parent.testPrep.ofLimit': {
+    English: 'of {n}', Spanish: 'de {n}', Russian: 'из {n}', Chinese: '（限时 {n}）',
+    Vietnamese: 'trên {n}', Arabic: 'من {n}', Somali: 'ee {n}', French: 'sur {n}', German: 'von {n}'
+  },
+  'parent.testPrep.leftBlank': {
+    English: 'Left blank', Spanish: 'En blanco', Russian: 'Без ответа', Chinese: '未作答',
+    Vietnamese: 'Bỏ trống', Arabic: 'دون إجابة', Somali: 'La dhaafay', French: 'Sans réponse', German: 'Unbeantwortet'
+  },
+  'parent.testPrep.module2': {
+    English: 'Module 2', Spanish: 'Módulo 2', Russian: 'Модуль 2', Chinese: '第二模块',
+    Vietnamese: 'Mô-đun 2', Arabic: 'الوحدة 2', Somali: 'Qaybta 2', French: 'Module 2', German: 'Modul 2'
+  },
+  'parent.testPrep.easier': {
+    English: 'Easier', Spanish: 'Más fácil', Russian: 'Легче', Chinese: '较易',
+    Vietnamese: 'Dễ hơn', Arabic: 'أسهل', Somali: 'Ka fudud', French: 'Plus facile', German: 'Leichter'
+  },
+  'parent.testPrep.harder': {
+    English: 'Harder', Spanish: 'Más difícil', Russian: 'Сложнее', Chinese: '较难',
+    Vietnamese: 'Khó hơn', Arabic: 'أصعب', Somali: 'Ka adag', French: 'Plus difficile', German: 'Schwerer'
+  },
+  'parent.testPrep.byArea': {
+    English: 'By area (weakest first)', Spanish: 'Por área (la más débil primero)', Russian: 'По разделам (сначала самые слабые)', Chinese: '按领域（最弱的在前）',
+    Vietnamese: 'Theo lĩnh vực (yếu nhất trước)', Arabic: 'حسب المجال (الأضعف أولًا)', Somali: 'Qayb-qayb (kan ugu daciifsan marka hore)', French: 'Par domaine (le plus faible d\'abord)', German: 'Nach Bereich (schwächster zuerst)'
+  },
+  'parent.testPrep.barAria': {
+    English: '{label}: {correct} of {total} correct ({pct}%)', Spanish: '{label}: {correct} de {total} correctas ({pct} %)', Russian: '{label}: верно {correct} из {total} ({pct}%)', Chinese: '{label}：{total} 题中答对 {correct} 题（{pct}%）',
+    Vietnamese: '{label}: đúng {correct} trên {total} ({pct}%)', Arabic: '{label}: {correct} صحيحة من {total} ({pct}%)', Somali: '{label}: {correct} sax ah oo ka mid ah {total} ({pct}%)', French: '{label} : {correct} sur {total} correctes ({pct} %)', German: '{label}: {correct} von {total} richtig ({pct} %)'
+  },
+  'parent.testPrep.everyAttempt': {
+    English: 'Every attempt', Spanish: 'Todos los intentos', Russian: 'Все попытки', Chinese: '全部作答记录',
+    Vietnamese: 'Tất cả các lần làm', Arabic: 'كل المحاولات', Somali: 'Isku day kasta', French: 'Toutes les tentatives', German: 'Alle Versuche'
+  },
+  'parent.testPrep.scoresOverTime': {
+    English: 'Scores over time: {scores}', Spanish: 'Puntuaciones a lo largo del tiempo: {scores}', Russian: 'Баллы по времени: {scores}', Chinese: '分数变化：{scores}',
+    Vietnamese: 'Điểm theo thời gian: {scores}', Arabic: 'الدرجات عبر الوقت: {scores}', Somali: 'Dhibcaha muddo ka dib: {scores}', French: 'Scores au fil du temps : {scores}', German: 'Punktzahlen im Zeitverlauf: {scores}'
+  },
+  'parent.testPrep.changeSinceFirst': {
+    English: 'Change since the first fair attempt: {change}', Spanish: 'Cambio desde el primer intento válido: {change}', Russian: 'Изменение с первой полноценной попытки: {change}', Chinese: '较首次有效作答的变化：{change}',
+    Vietnamese: 'Thay đổi so với lần làm hợp lệ đầu tiên: {change}', Arabic: 'التغيّر منذ أول محاولة صالحة: {change}', Somali: 'Isbeddelka tan iyo isku daygii ugu horreeyay ee sax ah: {change}', French: 'Évolution depuis la première tentative valable : {change}', German: 'Veränderung seit dem ersten gültigen Versuch: {change}'
+  },
+  'parent.testPrep.reportTitle': {
+    English: '{name} — {exam} practice', Spanish: '{name} — práctica de {exam}', Russian: '{name} — подготовка к {exam}', Chinese: '{name} — {exam} 模拟练习',
+    Vietnamese: '{name} — luyện thi {exam}', Arabic: '{name} — تدريب {exam}', Somali: '{name} — tababarka {exam}', French: '{name} — entraînement {exam}', German: '{name} — {exam}-Übung'
+  },
+  'parent.testPrep.reportSubtitle': {
+    English: '{exam} practice tests · report printed {date}', Spanish: 'Exámenes de práctica de {exam} · informe impreso el {date}', Russian: 'Пробные тесты {exam} · отчёт распечатан {date}', Chinese: '{exam} 模拟考试 · 报告打印于 {date}',
+    Vietnamese: 'Bài thi thử {exam} · báo cáo in ngày {date}', Arabic: 'اختبارات {exam} التدريبية · طُبع التقرير في {date}', Somali: 'Imtixaannada tababarka {exam} · warbixinta la daabacay {date}', French: 'Tests d\'entraînement {exam} · rapport imprimé le {date}', German: '{exam}-Übungstests · Bericht gedruckt am {date}'
+  },
+  'parent.testPrep.reportFooter': {
+    English: 'Practice tests on MATHMATIX.AI estimate the real exam; the "likely" range reflects how much a single attempt can vary. Rushed or unfinished attempts are marked and are not used to judge growth.',
+    Spanish: 'Los exámenes de práctica de MATHMATIX.AI estiman el examen real; el rango "probable" refleja cuánto puede variar un solo intento. Los intentos apresurados o sin terminar se marcan y no se usan para evaluar el progreso.',
+    Russian: 'Пробные тесты MATHMATIX.AI оценивают результат настоящего экзамена; «вероятный» диапазон показывает, насколько может колебаться одна попытка. Попытки наспех или незавершённые отмечены и не используются для оценки роста.',
+    Chinese: 'MATHMATIX.AI 的模拟考试用于估计真实考试成绩；“可能区间”反映单次作答可能的波动幅度。仓促或未完成的作答会被标记，不用于评估进步。',
+    Vietnamese: 'Các bài thi thử trên MATHMATIX.AI ước tính kỳ thi thật; khoảng "khả năng" cho biết một lần làm có thể dao động bao nhiêu. Các lần làm vội vàng hoặc chưa hoàn thành được đánh dấu và không dùng để đánh giá sự tiến bộ.',
+    Arabic: 'تقدّر الاختبارات التدريبية على MATHMATIX.AI نتيجة الاختبار الحقيقي؛ ويعكس النطاق "المرجّح" مدى تفاوت المحاولة الواحدة. تُميَّز المحاولات المتسرعة أو غير المكتملة ولا تُستخدم للحكم على التقدّم.',
+    Somali: 'Imtixaannada tababarka ee MATHMATIX.AI waxay qiyaasaan imtixaanka dhabta ah; xadka "suurtagal" wuxuu muujinayaa inta uu isku day keliya kala duwanaan karo. Isku dayada la degdegay ama aan la dhammaystirin waa la calaamadeeyaa looma isticmaalo qiimaynta horumarka.',
+    French: 'Les tests d\'entraînement MATHMATIX.AI donnent une estimation de l\'examen réel ; la fourchette « probable » indique de combien une seule tentative peut varier. Les tentatives bâclées ou inachevées sont signalées et ne servent pas à juger les progrès.',
+    German: 'Die Übungstests auf MATHMATIX.AI schätzen die echte Prüfung ab; der „wahrscheinliche“ Bereich zeigt, wie stark ein einzelner Versuch schwanken kann. Überhastete oder unvollständige Versuche werden markiert und nicht zur Beurteilung des Fortschritts herangezogen.'
+  },
 
   /* ─── Parent dashboard: dynamic text (card, ring, report) ─── */
   'parent.ring.placedOut': {

@@ -213,6 +213,18 @@ async function loadTestScores(studentIds, { from = null, to = null, exam = null 
   return byStudent;
 }
 
+/**
+ * One student's exams as an ordered list — the parent's read of their own
+ * child. Same per-exam numbers as the teacher grid (buildStudentExams: latest,
+ * best and change between FAIR attempts only), junior tests first, and nothing
+ * class-level: a parent sees their child, never a class average.
+ */
+function buildChildExamList(attempts) {
+  const exams = buildStudentExams(attempts || []);
+  const order = EXAM_ORDER.concat(Object.keys(exams).filter(t => !EXAM_ORDER.includes(t)).sort());
+  return order.filter(t => exams[t]).map(t => ({ ...examMeta(t), ...exams[t] }));
+}
+
 /** Where a signed-in student takes each exam (config/routes.js). */
 const RUNNER_URL = {
   'act-math': '/act-practice-test',
@@ -261,6 +273,7 @@ module.exports = {
   summarizeAttempt,
   buildStudentExams,
   buildClassSummary,
+  buildChildExamList,
   likelyRange,
   loadTestScores,
   KNOWN_EXAMS: Object.keys(TESTS),
