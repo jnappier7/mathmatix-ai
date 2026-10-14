@@ -140,3 +140,52 @@ describe('announcements reach the right students', () => {
     expect(a.recipientIds.map(String).sort()).toEqual([String(fresh._id), String(coded._id)].sort());
   });
 });
+
+describe('carrying continuing students forward', () => {
+  let cls;
+  beforeEach(async () => {
+    await User.updateMany({ _id: { $in: [fresh._id, coded._id] } }, { $set: { gradeLevel: '8th Grade' } });
+    const { body } = await supertest(app).post('/api/teacher/classes').send({ className: 'Algebra 1', period: 'P2' }).expect(200);
+    cls = body.class;
+  });
+
+  test('continuing = current students not yet in a class this year, with the grade step previewed', async () => {
+    const { body } = await supertest(app).get('/api/teacher/roster/continuing').expect(200);
+    const byName = Object.fromEntries(body.students.map(s => [s.name.split(' ')[0], s]));
+    expect(Object.keys(byName).sort()).toEqual(['Coded', 'Fresh', 'OldA', 'OldB']);
+    expect(byName.Fresh).toMatchObject({ gradeLevel: '8th Grade', nextGrade: '9th Grade' });
+    expect(body.classes.map(c => c.className)).toEqual(['Algebra 1']);
+  });
+
+  test('places into this year\'s class and moves up a grade — once per year', async () => {
+    const send = () => supertest(app).post('/api/teacher/roster/carry-forward')
+      .send({ studentIds: [fresh._id, coded._id], classId: cls._id, advanceGrade: true }).expect(200);
+    const first = (await send()).body;
+    expect(first.placed).toBe(2);
+    expect(first.promoted.map(p => p.to)).toEqual(['9th Grade', '9th Grade']);
+    const again = (await send()).body;
+    expect(again.placed).toBe(0);
+    expect(again.promoted).toHaveLength(0);
+    expect(again.skipped.map(s => s.reason)).toEqual(['already-promoted', 'already-promoted']);
+    expect((await User.findById(fresh._id).lean()).gradeLevel).toBe('9th Grade');
+    const { body } = await supertest(app).get('/api/teacher/roster/continuing').expect(200);
+    expect(body.students.map(s => s.name.split(' ')[0]).sort()).toEqual(['OldA', 'OldB']);
+  });
+
+  test('seniors are not promoted past 12th grade', async () => {
+    await User.updateOne({ _id: fresh._id }, { $set: { gradeLevel: '12' } });
+    const { body } = await supertest(app).post('/api/teacher/roster/carry-forward')
+      .send({ studentIds: [fresh._id], advanceGrade: true }).expect(200);
+    expect(body.skipped).toEqual([expect.objectContaining({ reason: 'graduating' })]);
+    expect((await User.findById(fresh._id).lean()).gradeLevel).toBe('12');
+  });
+
+  test('cannot place students into another teacher\'s class, or carry someone else\'s student', async () => {
+    currentUser = otherTeacher;
+    const { body: theirs } = await supertest(app).post('/api/teacher/classes').send({ className: 'Theirs' }).expect(200);
+    currentUser = teacher;
+    await supertest(app).post('/api/teacher/roster/carry-forward').send({ studentIds: [fresh._id], classId: theirs.class._id }).expect(404);
+    await supertest(app).post('/api/teacher/roster/carry-forward').send({ studentIds: [stranger._id], advanceGrade: true }).expect(404);
+    expect((await User.findById(stranger._id).lean()).gradeLevel).toBeUndefined();
+  });
+});
