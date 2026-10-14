@@ -3939,7 +3939,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         lrModalContent.innerHTML = `
             <div class="lr-loading">
                 <i class="fas fa-spinner fa-spin"></i>
-                <p>Generating learning report...</p>
+                <p>${escText(tr('parent.report.loading', 'Generating learning report...'))}</p>
             </div>
         `;
         lrModal.classList.add('is-visible');
@@ -3948,16 +3948,64 @@ document.addEventListener("DOMContentLoaded", async () => {
             const res = await fetch(`/api/parent/child/${childId}/learning-report`, { credentials: 'include' });
             if (!res.ok) throw new Error('Failed to load report');
             const report = await res.json();
-            lrModalContent.innerHTML = renderLearningReport(report);
+            lrModalContent.innerHTML = renderReportActions(childId) + renderLearningReport(report);
         } catch (err) {
             console.error('Learning report error:', err);
             lrModalContent.innerHTML = `
                 <div class="lr-loading">
                     <i class="fas fa-exclamation-triangle" style="color: var(--color-danger);"></i>
-                    <p>Could not load the learning report. Please try again.</p>
+                    <p>${escText(tr('parent.report.loadError', 'Could not load the learning report. Please try again.'))}</p>
                 </div>
             `;
         }
+    }
+
+    // Print / Email-me bar on the report. Email goes through the same send-now
+    // endpoint as Settings, which now sends this exact report (utils/parentReport).
+    function renderReportActions(childId) {
+        return `
+            <div class="lr-actions" role="toolbar" aria-label="${escText(tr('parent.report.actions', 'Report actions'))}">
+                <button type="button" class="btn lr-action-btn" data-lr-action="print">
+                    <i class="fas fa-print" aria-hidden="true"></i> ${escText(tr('parent.report.print', 'Print / Save as PDF'))}
+                </button>
+                <button type="button" class="btn lr-action-btn" data-lr-action="email" data-childid="${escText(childId)}">
+                    <i class="fas fa-envelope" aria-hidden="true"></i> ${escText(tr('parent.report.emailMe', 'Email to me'))}
+                </button>
+            </div>`;
+    }
+
+    if (lrModalContent) {
+        lrModalContent.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-lr-action]');
+            if (!btn) return;
+            if (btn.dataset.lrAction === 'print') {
+                // Print only the report (see the @media print block in the page CSS).
+                document.body.classList.add('lr-printing');
+                const done = () => { document.body.classList.remove('lr-printing'); window.removeEventListener('afterprint', done); };
+                window.addEventListener('afterprint', done);
+                window.print();
+                return;
+            }
+            if (btn.dataset.lrAction === 'email') {
+                btn.disabled = true;
+                try {
+                    const res = await csrfFetch('/api/email/weekly-report', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ studentId: btn.dataset.childid })
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok || !data.success) throw new Error(data.message || 'send failed');
+                    showToast(tr('parent.report.emailSent', 'Sent! Check your inbox.'), 'success', 4000);
+                } catch (err) {
+                    console.error('Email report error:', err);
+                    showToast(tr('parent.report.emailFailed', "Couldn't send the email. Please try again later."), 'error', 5000);
+                } finally {
+                    btn.disabled = false;
+                }
+            }
+        });
     }
 
     function formatPeriod(period) {

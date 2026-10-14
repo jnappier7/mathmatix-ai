@@ -159,6 +159,14 @@ const conversationSchema = new Schema({
         type: String,
         default: null // Updated during session for live feed
     },
+    // Parent-language copies of `summary`, keyed by language name:
+    // { Spanish: { h: <hash of the English summary>, text } }. Filled lazily by
+    // utils/summaryTranslation.js the first time a parent who reads that
+    // language opens the dashboard; a changed summary (hash mismatch) re-translates.
+    summaryTranslations: {
+        type: mongoose.Schema.Types.Mixed,
+        default: undefined
+    },
     currentTopic: {
         type: String,
         default: null // e.g., "Linear Equations", "Fractions"

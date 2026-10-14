@@ -4,12 +4,12 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
-const { sendTestEmail, sendParentWeeklyReport, getEmailConfig } = require('../utils/emailService');
+const { sendTestEmail, sendParentProgressReport, getEmailConfig } = require('../utils/emailService');
+const { buildLearningReport } = require('../utils/parentReport');
 const User = require('../models/user');
-const Conversation = require('../models/conversation');
 
 const { userHasRole } = require('../utils/roleQuery');
-const { windowDaysFor, periodFor } = require('../utils/reportFrequency');
+const { windowDaysFor } = require('../utils/reportFrequency');
 /**
  * POST /api/email/test
  * Send a test email to verify configuration
@@ -70,8 +70,7 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Get student data
-    const student = await User.findById(studentId);
+    const student = await User.findById(studentId).lean();
     if (!student) {
       return res.status(404).json({
         success: false,
@@ -79,95 +78,16 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Report window follows the parent's chosen cadence (1/7/14/30 days;
-    // 'never' only turns off the SCHEDULED report — send-now uses 7).
-    const period = periodFor(parent.reportFrequency);
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - windowDaysFor(parent.reportFrequency));
-
-    // Calculate problemsCompleted from Conversation collection
-    const conversationStats = await Conversation.aggregate([
-      { $match: { userId: student._id } },
-      { $group: {
-        _id: null,
-        totalProblems: { $sum: '$problemsAttempted' },
-        totalCorrect: { $sum: '$problemsCorrect' }
-      }}
-    ]);
-    const problemsCompleted = conversationStats.length > 0 ? conversationStats[0].totalCorrect : 0;
-
-    // Calculate masteryGained from skillMastery (count skills with status 'mastered')
-    let masteryGained = 0;
-    if (student.skillMastery && student.skillMastery.size > 0) {
-      for (const [skillId, mastery] of student.skillMastery) {
-        if (mastery.status === 'mastered' && mastery.masteredDate && mastery.masteredDate >= oneWeekAgo) {
-          masteryGained++;
-        }
-      }
-    }
-
-    // Get strugglingSkills from skillMastery where status === 'needs-review'
-    const strugglingSkills = [];
-    if (student.skillMastery && student.skillMastery.size > 0) {
-      for (const [skillId, mastery] of student.skillMastery) {
-        if (mastery.status === 'needs-review' || mastery.status === 're-fragile') {
-          strugglingSkills.push(skillId);
-        }
-      }
-    }
-
-    // Get recent achievements (badges earned in the last week)
-    const achievements = [];
-    if (student.badges && student.badges.length > 0) {
-      for (const badge of student.badges) {
-        if (badge.unlockedAt && badge.unlockedAt >= oneWeekAgo) {
-          achievements.push({
-            key: badge.key,
-            badgeId: badge.badgeId,
-            unlockedAt: badge.unlockedAt
-          });
-        }
-      }
-    }
-
-    // Calculate accuracy from conversation stats
-    const totalProblems = conversationStats.length > 0 ? conversationStats[0].totalProblems : 0;
-    const totalCorrect = conversationStats.length > 0 ? conversationStats[0].totalCorrect : 0;
-    const accuracy = totalProblems > 0 ? Math.round((totalCorrect / totalProblems) * 100) : 0;
-
-    // Calculate mastery breakdown from skillMastery
-    let masteredCount = 0;
-    let practicingCount = 0;
-    let learningCount = 0;
-    if (student.skillMastery && student.skillMastery.size > 0) {
-      for (const [, m] of student.skillMastery) {
-        if (m.status === 'mastered') masteredCount++;
-        else if (m.status === 'practicing' || m.status === 'fragile') practicingCount++;
-        else learningCount++;
-      }
-    }
-
-    // Current streak from daily quests
-    const currentStreak = student.dailyQuests?.currentStreak || 0;
-
-    // Calculate weekly stats
-    const studentData = {
-      studentName: `${student.firstName} ${student.lastName}`,
-      problemsCompleted: problemsCompleted,
-      currentLevel: student.level || 1,
-      xpEarned: student.xp || 0,
-      activeMinutes: student.totalActiveTutoringMinutes || 0,
-      accuracy: accuracy,
-      mastery: masteredCount + practicingCount + learningCount > 0
-        ? { mastered: masteredCount, practicing: practicingCount, learning: learningCount }
-        : null,
-      currentStreak: currentStreak,
-      strugglingSkills: strugglingSkills,
-      achievements: achievements,
-      period
-    };
-
-    const result = await sendParentWeeklyReport(parent, studentData);
+    // The same Learning Report the dashboard shows (utils/parentReport), over the
+    // parent's cadence window ('never' only stops the SCHEDULED email; send-now
+    // still works), in the parent's language. This route used to keep its own
+    // copy of the stats — placement counted as mastered, raw skill ids, lifetime
+    // minutes under a weekly heading.
+    const report = await buildLearningReport(student, {
+      language: parent.parentLanguage,
+      windowDays: windowDaysFor(parent.reportFrequency),
+    });
+    const result = await sendParentProgressReport(parent, report);
 
     if (result.success) {
       res.json({

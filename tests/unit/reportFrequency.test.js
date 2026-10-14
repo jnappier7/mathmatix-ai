@@ -14,7 +14,7 @@
 
 jest.mock('../../models/user', () => ({}));
 jest.mock('../../models/conversation', () => ({}));
-jest.mock('../../utils/emailService', () => ({ sendParentWeeklyReport: jest.fn() }));
+jest.mock('../../utils/emailService', () => ({ sendParentProgressReport: jest.fn() }));
 jest.mock('../../utils/fsrsScheduler', () => ({ calculateRetrievability: jest.fn() }));
 
 const {
