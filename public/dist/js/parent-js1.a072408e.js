@@ -1210,8 +1210,18 @@
         const container = document.getElementById(containerId);
         if (container && data.totalSkills > 0) {
           window.AnalyticsCharts.createMemoryHealthBar(containerId, data);
+          // Memory only covers practiced skills with review data — say so, so
+          // "1 fading" isn't read against the whole skill count above it.
+          const n = data.totalSkills;
+          const caption = document.createElement('p');
+          caption.style.cssText = 'font-size:0.75em; color:#666; margin:0 0 6px;';
+          caption.textContent = `Memory check on ${n} practiced skill${n === 1 ? '' : 's'}`;
+          container.prepend(caption);
+          container.setAttribute('role', 'img');
+          container.setAttribute('aria-label',
+            `Memory check on ${n} practiced skill${n === 1 ? '' : 's'}: ${data.strong} strong, ${data.fading} fading, ${data.needsReview} need review`);
         } else if (container) {
-          container.innerHTML = '<p style="font-size:0.8em; color:#666;">No memory data yet — skills appear as your child practices.</p>';
+          container.innerHTML = '<p style="font-size:0.8em; color:#666;">No memory data yet — it builds as your child practices.</p>';
         }
       }
 
@@ -1219,17 +1229,26 @@
       if (strengthRes.ok) {
         const data = await strengthRes.json();
         const canvasId = `strength-map-${childId}`;
-        if (data.categories && data.categories.length > 0) {
+        const canvas = document.getElementById(canvasId);
+        const cats = data.categories || [];
+        const practiced = cats.reduce((n, c) => n + (c.totalSkills || 0), 0);
+        // A donut of one or two skills is a full circle that says nothing; under
+        // MIN_FOR_CHART practiced skills, list the categories in words instead.
+        const MIN_FOR_CHART = 5;
+        if (practiced >= MIN_FOR_CHART) {
           window.AnalyticsCharts.createStrengthDonut(canvasId, data);
-        } else {
-          const canvas = document.getElementById(canvasId);
           if (canvas) {
-            canvas.style.display = 'none';
-            const msg = document.createElement('p');
-            msg.style.cssText = 'font-size:0.8em; color:#666; text-align:center; padding:10px;';
-            msg.textContent = 'Strength map appears once your child starts practicing skills.';
-            canvas.parentNode.appendChild(msg);
+            canvas.setAttribute('role', 'img');
+            canvas.setAttribute('aria-label', 'Practiced skills by area: ' + cats.map(c => `${c.name} ${c.mastered} of ${c.totalSkills} mastered`).join('; '));
           }
+        } else if (canvas) {
+          canvas.style.display = 'none';
+          const msg = document.createElement('p');
+          msg.style.cssText = 'font-size:0.8em; color:#666; text-align:center; padding:10px;';
+          msg.textContent = practiced > 0
+            ? 'Practicing: ' + cats.map(c => c.name + (c.totalSkills > 1 ? ` (${c.totalSkills})` : '')).join(', ') + '. The strength map fills in as more skills are practiced.'
+            : 'Strength map appears once your child starts practicing skills.';
+          canvas.parentNode.appendChild(msg);
         }
       }
     } catch (err) {
@@ -2575,52 +2594,61 @@ document.addEventListener("DOMContentLoaded", async () => {
     // SVG SKILL MASTERY RING
     // ============================================
 
+    function escText(v) {
+        return String(v == null ? '' : v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    }
+
+    // Skills the child has PRACTICED, split by state, with placed-out skills
+    // stated apart — placement isn't mastery the child earned here
+    // (server: utils/parentSkillPicture.js).
     function buildSkillMasteryRing(skillsSummary) {
         const mastered = skillsSummary?.mastered || 0;
         const learning = skillsSummary?.learning || 0;
         const needsReview = skillsSummary?.needsReview || 0;
-        const total = mastered + learning + needsReview;
+        const placedOut = skillsSummary?.placedOut || 0;
+        const practiced = skillsSummary?.practiced ?? (mastered + learning);
+        // needs-review skills are practiced skills too; the ring shows each once.
+        const inProgress = Math.max(0, practiced - mastered - needsReview);
+        const total = mastered + inProgress + needsReview;
 
-        if (total === 0) return '';
+        const placedLine = placedOut > 0
+            ? `<div class="skill-legend-item" style="color: var(--color-text-muted);" title="Skills the placement test showed are already known — not practiced here">
+                   <span class="skill-legend-dot" style="background: #bdc3c7;"></span>
+                   <span>${placedOut} placed out (placement test)</span>
+               </div>`
+            : '';
+
+        if (total === 0) {
+            return placedOut > 0
+                ? `<div class="skill-mastery-container"><div class="skill-legend">${placedLine}
+                     <div class="skill-legend-item" style="color: var(--color-text-muted);"><span>No skills practiced yet</span></div></div></div>`
+                : '';
+        }
 
         const radius = 32;
         const circumference = 2 * Math.PI * radius;
-
-        // Calculate stroke segments
-        const masteredPct = mastered / total;
-        const learningPct = learning / total;
-        const reviewPct = needsReview / total;
-
-        const masteredLen = masteredPct * circumference;
-        const learningLen = learningPct * circumference;
-        const reviewLen = reviewPct * circumference;
-
-        const masteredOffset = 0;
-        const learningOffset = masteredLen;
-        const reviewOffset = masteredLen + learningLen;
+        const masteredLen = (mastered / total) * circumference;
+        const learningLen = (inProgress / total) * circumference;
+        const reviewLen = (needsReview / total) * circumference;
+        const arc = (len, offset, color) => len > 0
+            ? `<circle cx="40" cy="40" r="${radius}" fill="none" stroke="${color}" stroke-width="8"
+                   stroke-dasharray="${len} ${circumference - len}" stroke-dashoffset="${-offset}"
+                   transform="rotate(-90 40 40)" stroke-linecap="round"/>`
+            : '';
+        const summary = `${total} practiced skill${total === 1 ? '' : 's'}: ${mastered} mastered, ${inProgress} in progress, ${needsReview} need${needsReview === 1 ? 's' : ''} review`;
 
         return `
             <div class="skill-mastery-container">
                 <div class="skill-ring-wrapper">
-                    <svg viewBox="0 0 80 80" width="80" height="80">
-                        <!-- Background circle -->
+                    <svg viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="${summary}">
                         <circle cx="40" cy="40" r="${radius}" fill="none" stroke="#e9ecef" stroke-width="8"/>
-                        ${mastered > 0 ? `<circle cx="40" cy="40" r="${radius}" fill="none" stroke="#27ae60" stroke-width="8"
-                            stroke-dasharray="${masteredLen} ${circumference - masteredLen}"
-                            stroke-dashoffset="${-masteredOffset}"
-                            transform="rotate(-90 40 40)" stroke-linecap="round"/>` : ''}
-                        ${learning > 0 ? `<circle cx="40" cy="40" r="${radius}" fill="none" stroke="#3498db" stroke-width="8"
-                            stroke-dasharray="${learningLen} ${circumference - learningLen}"
-                            stroke-dashoffset="${-learningOffset}"
-                            transform="rotate(-90 40 40)" stroke-linecap="round"/>` : ''}
-                        ${needsReview > 0 ? `<circle cx="40" cy="40" r="${radius}" fill="none" stroke="#f39c12" stroke-width="8"
-                            stroke-dasharray="${reviewLen} ${circumference - reviewLen}"
-                            stroke-dashoffset="${-reviewOffset}"
-                            transform="rotate(-90 40 40)" stroke-linecap="round"/>` : ''}
+                        ${arc(masteredLen, 0, '#27ae60')}
+                        ${arc(learningLen, masteredLen, '#3498db')}
+                        ${arc(reviewLen, masteredLen + learningLen, '#f39c12')}
                     </svg>
-                    <div class="skill-ring-center">
+                    <div class="skill-ring-center" aria-hidden="true">
                         <div class="skill-ring-number">${total}</div>
-                        <div class="skill-ring-label">skills</div>
+                        <div class="skill-ring-label">practiced</div>
                     </div>
                 </div>
                 <div class="skill-legend">
@@ -2630,15 +2658,36 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
                     <div class="skill-legend-item">
                         <span class="skill-legend-dot" style="background: #3498db;"></span>
-                        <span>${learning} learning</span>
+                        <span>${inProgress} in progress</span>
                     </div>
                     <div class="skill-legend-item">
                         <span class="skill-legend-dot" style="background: #f39c12;"></span>
-                        <span>${needsReview} needs review</span>
+                        <span>${needsReview} need${needsReview === 1 ? 's' : ''} review</span>
                     </div>
+                    ${placedLine}
                 </div>
             </div>
         `;
+    }
+
+    // School grade, courses, and placement — labeled, because the stored
+    // mathCourse is the screener's assessed level, not the class the child is in.
+    function buildProfileLine(progress) {
+        const p = progress.profile || {};
+        const parts = [];
+        if (p.schoolGrade) parts.push(escText(p.schoolGrade));
+        if (p.courses && p.courses.length) parts.push(`Course${p.courses.length > 1 ? 's' : ''}: ${escText(p.courses.join(', '))}`);
+        if (p.placement && p.placement.level) {
+            const when = p.placement.date
+                ? ` (${new Date(p.placement.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })})`
+                : '';
+            parts.push(`Placement: ${escText(p.placement.level)} level${when}`);
+        }
+        if (progress.streak && progress.streak.current > 0) {
+            parts.push(`${progress.streak.current}-day streak`);
+        }
+        parts.push(`${progress.totalActiveTutoringMinutes || 0} min total`);
+        return parts.join(' · ');
     }
 
     // ============================================
@@ -2647,7 +2696,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function buildWeeklySummary(weeklyStats) {
         if (!weeklyStats) return '';
-        const accuracy = weeklyStats.accuracy || 0;
+        // null when no answers were graded — never "0%" for zero problems.
+        const accuracy = typeof weeklyStats.accuracy === 'number' ? weeklyStats.accuracy : null;
         const problems = weeklyStats.problemsAttempted || 0;
         const minutes = weeklyStats.activeMinutes || 0;
         const sessions = weeklyStats.sessionCount || 0;
@@ -2657,24 +2707,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             return `
                 <div class="weekly-summary" style="justify-content: center;">
                     <div style="grid-column: 1 / -1; text-align: center; color: var(--color-text-muted); font-size: 0.85em; padding: 8px;">
-                        <i class="fas fa-calendar-week"></i> No activity this week yet
+                        <i class="fas fa-calendar-week"></i> No activity in the last 7 days
                     </div>
                 </div>
             `;
         }
 
         return `
-            <div class="weekly-summary" role="region" aria-label="This week's summary">
+            <div class="weekly-summary-period" style="font-size: 0.75em; color: var(--color-text-muted); margin: 4px 0 2px;">Last 7 days</div>
+            <div class="weekly-summary" role="region" aria-label="Last 7 days">
                 <div class="weekly-stat">
                     <div class="weekly-stat-value">${sessions}</div>
                     <div class="weekly-stat-label">Sessions</div>
                 </div>
                 <div class="weekly-stat">
-                    <div class="weekly-stat-value">${problems}</div>
-                    <div class="weekly-stat-label">Problems</div>
+                    <div class="weekly-stat-value">${problems === 0 && sessions > 0 ? '—' : problems}</div>
+                    <div class="weekly-stat-label"${problems === 0 && sessions > 0 ? ' title="No answers were checked in these sessions"' : ''}>Problems</div>
                 </div>
                 <div class="weekly-stat">
-                    <div class="weekly-stat-value">${accuracy}%</div>
+                    <div class="weekly-stat-value">${accuracy === null ? '—' : accuracy + '%'}</div>
                     <div class="weekly-stat-label">Accuracy</div>
                 </div>
                 <div class="weekly-stat">
@@ -3221,7 +3272,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>
             </div>
             <div style="font-size: 0.85em; color: var(--color-text-muted); margin-bottom: 8px;">
-                ${progress.gradeLevel || 'N/A'} · ${progress.mathCourse || 'N/A'} · ${progress.totalActiveTutoringMinutes || '0'} min total
+                ${buildProfileLine(progress)}
             </div>
 
             ${weeklySummaryHTML}
@@ -3404,6 +3455,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    function formatPeriod(period) {
+        const opts = { month: 'short', day: 'numeric' };
+        return `${new Date(period.from).toLocaleDateString(undefined, opts)} – ${new Date(period.to).toLocaleDateString(undefined, opts)}`;
+    }
+
     function renderLearningReport(r) {
         const toneClass = `lr-tone-${r.headline.tone}`;
         const toneLabels = {
@@ -3418,7 +3474,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // --- Insights ---
         const insightsHTML = r.insights.map(i => {
             const toneMap = { positive: 'lr-insight-positive', concern: 'lr-insight-concern', actionable: 'lr-insight-actionable', neutral: 'lr-insight-neutral' };
-            return `<div class="lr-insight ${toneMap[i.tone] || 'lr-insight-neutral'}">${i.message}</div>`;
+            return `<div class="lr-insight ${toneMap[i.tone] || 'lr-insight-neutral'}">${escText(i.message)}</div>`;
         }).join('');
 
         // --- Weekly Snapshot ---
@@ -3457,36 +3513,41 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
         `;
 
-        // --- Mastery ---
+        // --- Mastery --- (practiced skills only; placement stated separately)
         const m = r.mastery.counts;
-        const total = m.total || 1;
-        const masteryBarHTML = m.total > 0 ? `
-            <div class="lr-mastery-bar">
-                <div class="lr-mastery-bar-segment" style="width: ${(m.mastered / total * 100).toFixed(1)}%; background: var(--color-success);"></div>
-                <div class="lr-mastery-bar-segment" style="width: ${(m.practicing / total * 100).toFixed(1)}%; background: #3498db;"></div>
-                <div class="lr-mastery-bar-segment" style="width: ${(m.learning / total * 100).toFixed(1)}%; background: var(--color-warning);"></div>
-                <div class="lr-mastery-bar-segment" style="width: ${(m.needsReview / total * 100).toFixed(1)}%; background: var(--color-danger);"></div>
+        const practiced = m.practiced || 0;
+        const inProgress = Math.max(0, practiced - m.practicedMastered - m.needsReview);
+        const pct = (n) => (practiced ? (n / practiced * 100).toFixed(1) : 0);
+        const placedNote = m.placedOut > 0
+            ? `<p style="font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 6px;">Plus ${m.placedOut} skill${m.placedOut === 1 ? '' : 's'} placed out of by the placement test.</p>`
+            : '';
+        const masteryBarHTML = practiced > 0 ? `
+            <div class="lr-mastery-bar" role="img" aria-label="${practiced} practiced skills: ${m.practicedMastered} mastered, ${inProgress} in progress, ${m.needsReview} need review">
+                <div class="lr-mastery-bar-segment" style="width: ${pct(m.practicedMastered)}%; background: var(--color-success);"></div>
+                <div class="lr-mastery-bar-segment" style="width: ${pct(inProgress)}%; background: #3498db;"></div>
+                <div class="lr-mastery-bar-segment" style="width: ${pct(m.needsReview)}%; background: var(--color-danger);"></div>
             </div>
             <div class="lr-mastery-legend">
-                <span class="lr-legend-mastered">Mastered (${m.mastered})</span>
-                <span class="lr-legend-practicing">Practicing (${m.practicing})</span>
-                <span class="lr-legend-learning">Learning (${m.learning})</span>
-                <span class="lr-legend-needs-review">Needs Review (${m.needsReview})</span>
+                <span class="lr-legend-mastered">Mastered (${m.practicedMastered})</span>
+                <span class="lr-legend-practicing">In progress (${inProgress})</span>
+                <span class="lr-legend-needs-review">Needs review (${m.needsReview})</span>
             </div>
-        ` : '<p style="font-size: var(--text-sm); color: var(--color-text-muted);">No skills tracked yet.</p>';
+            ${placedNote}
+        ` : `<p style="font-size: var(--text-sm); color: var(--color-text-muted);">No skills practiced yet.</p>${placedNote}`;
 
         const strengthsHTML = r.mastery.topStrengths.length > 0
-            ? r.mastery.topStrengths.map(s => `<span class="lr-skill-tag lr-skill-strength"><i class="fas fa-star" style="font-size: 0.8em;"></i> ${s.displayName}</span>`).join('')
+            ? r.mastery.topStrengths.map(s => `<span class="lr-skill-tag lr-skill-strength"><i class="fas fa-star" style="font-size: 0.8em;"></i> ${escText(s.displayName)}</span>`).join('')
             : '';
 
         const growthAreasHTML = r.mastery.growthAreas.length > 0
-            ? r.mastery.growthAreas.map(s => `<span class="lr-skill-tag lr-skill-growth"><i class="fas fa-seedling" style="font-size: 0.8em;"></i> ${s.displayName}</span>`).join('')
+            ? r.mastery.growthAreas.map(s => `<span class="lr-skill-tag lr-skill-growth"><i class="fas fa-seedling" style="font-size: 0.8em;"></i> ${escText(s.displayName)}</span>`).join('')
             : '';
 
         // --- Memory Health ---
         const mem = r.memoryHealth;
         const memoryHTML = mem.totalTracked > 0 ? `
-            <div class="lr-memory-bar">
+            <p style="font-size: var(--text-xs); color: var(--color-text-muted); margin: 0 0 6px;">How well ${escText(r.child.firstName)} remembers the ${mem.totalTracked} practiced skill${mem.totalTracked === 1 ? '' : 's'} with review data.</p>
+            <div class="lr-memory-bar" role="img" aria-label="${mem.strong} strong, ${mem.fading} fading, ${mem.needsReview} need review">
                 ${Array(mem.strong).fill('<div class="lr-memory-segment lr-memory-strong"></div>').join('')}
                 ${Array(mem.fading).fill('<div class="lr-memory-segment lr-memory-fading"></div>').join('')}
                 ${Array(mem.needsReview).fill('<div class="lr-memory-segment lr-memory-weak"></div>').join('')}
@@ -3496,9 +3557,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <span><span style="color: var(--color-warning); font-weight: 700;">${mem.fading}</span> Fading</span>
                 <span><span style="color: var(--color-danger); font-weight: 700;">${mem.needsReview}</span> Needs Review</span>
             </div>
-            ${mem.fadingSkills.length > 0 ? `
+            ${(mem.skills || []).some(s => s.status !== 'strong') ? `
                 <div style="margin-top: 8px;">
-                    ${mem.fadingSkills.map(s => `<span class="lr-skill-tag lr-skill-fading">${s.displayName} (${s.retrievability}%)</span>`).join('')}
+                    ${mem.skills.filter(s => s.status !== 'strong').map(s => `<span class="lr-skill-tag lr-skill-fading" title="Estimated chance of recalling it today">${escText(s.displayName)} (${s.retrievability}% recall)</span>`).join('')}
                 </div>
             ` : ''}
         ` : '<p style="font-size: var(--text-sm); color: var(--color-text-muted);">No memory data yet — it builds as your child practices.</p>';
@@ -3553,7 +3614,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     ${toneLabels[r.headline.tone] ? `<span class="lr-headline-tone ${toneClass}">${toneLabels[r.headline.tone]}</span>` : ''}
                 </div>
                 <div class="lr-child-info">
-                    ${r.child.firstName} ${r.child.lastName} · Grade ${r.child.gradeLevel} · ${r.child.mathCourse || 'N/A'} · Level ${r.child.level}
+                    ${escText(r.child.firstName)} ${escText(r.child.lastName)} · ${buildProfileLine({ profile: r.child.profile, totalActiveTutoringMinutes: r.engagement.totalTutoringMinutes })}
                 </div>
             </div>
             <div class="lr-body">
@@ -3565,7 +3626,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ` : ''}
 
                 <div class="lr-section">
-                    <div class="lr-section-title"><i class="fas fa-chart-bar"></i> This Week</div>
+                    <div class="lr-section-title"><i class="fas fa-chart-bar"></i> Last 7 days${r.period ? ` <span style="font-weight: 400; color: var(--color-text-muted);">(${escText(formatPeriod(r.period))})</span>` : ''}</div>
                     ${snapshotHTML}
                 </div>
 
