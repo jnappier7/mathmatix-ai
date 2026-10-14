@@ -86,6 +86,39 @@
   /** Register a newly created chart so destroyChart can find it. */
   function registerChart(canvasId, chart) {
     _chartRegistry[canvasId] = chart;
+    describeChart(canvasId, chart);
+  }
+
+  /**
+   * A canvas chart is invisible to a screen reader. Every chart registered
+   * here gets its DATA written into its accessible name: the static label
+   * says what the chart is, this appends what it shows.
+   */
+  function describeChart(canvasId, chart) {
+    try {
+      var canvas = document.getElementById(canvasId);
+      if (!canvas || !chart || !chart.data) return;
+      if (!canvas.getAttribute('role')) canvas.setAttribute('role', 'img');
+      var base = canvas.getAttribute('data-a11y-base');
+      if (base === null) {
+        base = canvas.getAttribute('aria-label') || '';
+        canvas.setAttribute('data-a11y-base', base);
+      }
+      var labels = chart.data.labels || [];
+      var parts = [];
+      (chart.data.datasets || []).forEach(function (ds) {
+        var pts = (ds.data || []).slice(0, 15).map(function (v, i) {
+          if (v && typeof v === 'object') {
+            if (v.name) return v.name + ' (' + Math.round((v.y || 0) * 100) + '%)';
+            return (labels[i] || ('point ' + (i + 1))) + ': ' + (v.y != null ? v.y : v.x);
+          }
+          var num = typeof v === 'number' ? (Math.abs(v) <= 1 && v !== 0 ? Math.round(v * 100) + '%' : Math.round(v * 10) / 10) : v;
+          return (labels[i] != null ? labels[i] + ': ' : '') + num;
+        });
+        if (pts.length) parts.push((ds.label ? ds.label + ' — ' : '') + pts.join(', ') + ((ds.data || []).length > 15 ? ', and more' : ''));
+      });
+      if (parts.length) canvas.setAttribute('aria-label', (base ? base.replace(/[.\s]+$/, '') + '. ' : '') + parts.join('. '));
+    } catch (e) { /* a11y description must never break a chart */ }
   }
 
   /** Return the canvas element; show "No data" and return null when data is empty. */
@@ -758,6 +791,7 @@
           y: s.avgPLearned || 0,
           r: Math.max(3, (s.avgSmartScore || 50) / 10),
           name: s.name,
+          id: s.id,
         };
       });
     }
@@ -789,11 +823,11 @@
 
         // Bottom-left: Disengaged
         cctx.textAlign = 'left';
-        cctx.fillText('Disengaged', xScale.left + 8, yScale.bottom - 8);
+        cctx.fillText('Coasting', xScale.left + 8, yScale.bottom - 8);
 
         // Bottom-right: Struggling
         cctx.textAlign = 'right';
-        cctx.fillText('Struggling', xScale.right - 8, yScale.bottom - 8);
+        cctx.fillText('Stuck — check in', xScale.right - 8, yScale.bottom - 8);
 
         cctx.restore();
       },
@@ -824,7 +858,7 @@
           x: cleanAxis({
             min: 0,
             max: 1,
-            title: { display: true, text: 'Cognitive Load', font: { family: FONT_FAMILY } },
+            title: { display: true, text: 'Struggle level (how hard recent work felt)', font: { family: FONT_FAMILY } },
             ticks: {
               callback: function (v) {
                 return (v * 100) + '%';
@@ -834,7 +868,7 @@
           y: cleanAxis({
             min: 0,
             max: 1,
-            title: { display: true, text: 'Avg pLearned', font: { family: FONT_FAMILY } },
+            title: { display: true, text: 'Skill mastery', font: { family: FONT_FAMILY } },
             ticks: {
               callback: function (v) {
                 return (v * 100) + '%';
@@ -842,17 +876,29 @@
             },
           }),
         },
+        // A dot is a student: clicking it opens their profile on the teacher
+        // dashboard (no-op on surfaces without one).
+        onClick: function (evt, elements, ch) {
+          if (!elements || !elements.length) return;
+          var el = elements[0];
+          var pt = ch.data.datasets[el.datasetIndex].data[el.index];
+          if (pt && pt.id && window.TeacherDashboard && window.TeacherDashboard.openProfile) window.TeacherDashboard.openProfile(String(pt.id));
+        },
+        onHover: function (evt, elements) {
+          if (evt && evt.native && evt.native.target) evt.native.target.style.cursor = elements && elements.length ? 'pointer' : 'default';
+        },
         plugins: {
           tooltip: {
             callbacks: {
               label: function (tip) {
                 var pt = tip.raw;
                 return (
-                  (pt.name || '') +
-                  ' — Load: ' +
+                  (pt.name || 'Student') +
+                  ' — mastery ' +
+                  formatProbability(pt.y) +
+                  ', struggle ' +
                   formatProbability(pt.x) +
-                  ', pLearned: ' +
-                  formatProbability(pt.y)
+                  (pt.id && window.TeacherDashboard && window.TeacherDashboard.openProfile ? ' (click for profile)' : '')
                 );
               },
             },

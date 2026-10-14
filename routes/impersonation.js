@@ -41,7 +41,11 @@ router.get('/status', (req, res) => {
  */
 router.post('/start', async (req, res) => {
   try {
-    const { targetId, readOnly = true } = req.body;
+    // Impersonation is ALWAYS read-only. `readOnly` used to come from the request
+    // body and was passed straight through, so any parent or teacher could POST
+    // {readOnly:false} and act as the child with full write access. Every client
+    // already sends true; the server no longer asks.
+    const { targetId } = req.body;
 
     // Get the actual actor (originalUser if already impersonating, otherwise req.user)
     const actor = req.originalUser || req.user;
@@ -50,8 +54,9 @@ router.post('/start', async (req, res) => {
       return res.status(401).json({ message: 'Authentication required.' });
     }
 
-    // Check if user has impersonation privileges
-    if (!['admin', 'teacher', 'parent'].includes(actor.role)) {
+    // Check if user has impersonation privileges — roles HELD, not the dashboard
+    // currently open (CLAUDE.md §12); canImpersonate below decides reach.
+    if (!['admin', 'teacher', 'parent'].some(r => userHasRole(actor, r))) {
       return res.status(403).json({
         message: 'You do not have permission to view as another user.'
       });
@@ -81,7 +86,7 @@ router.post('/start', async (req, res) => {
     }
 
     // Start impersonation
-    const log = await startImpersonation(req, actor, target, readOnly);
+    const log = await startImpersonation(req, actor, target);
 
     res.json({
       success: true,
@@ -90,7 +95,7 @@ router.post('/start', async (req, res) => {
         targetId: target._id,
         targetName: `${target.firstName || ''} ${target.lastName || ''}`.trim() || target.username,
         targetRole: target.role,
-        readOnly,
+        readOnly: true,
         logId: log._id
       }
     });

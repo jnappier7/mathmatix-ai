@@ -3218,10 +3218,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <div class="skill-gap-bar-not-started" style="width: ${notStartedPct}%"></div>
                     </div>
                     <div class="skill-gap-meta">
-                        <span><strong>${gap.mastered}</strong> mastered</span>
-                        <span><strong>${gap.learning}</strong> learning</span>
-                        <span><strong>${gap.notMasteredCount}</strong> not mastered</span>
-                        ${gap.avgMasteryScore > 0 ? `<span>Avg: <strong>${gap.avgMasteryScore}%</strong></span>` : ''}
+                        ${gap.totalStudents === 1
+                            ? '<span>Only 1 student has worked on this so far</span>'
+                            : `<span><strong>${gap.totalStudents}</strong> students worked on it</span>
+                        ${gap.struggling ? `<span class="skill-gap-stuck"><strong>${gap.struggling}</strong> stuck</span>` : ''}
+                        <span><strong>${gap.learning}</strong> still learning</span>
+                        <span><strong>${gap.mastered}</strong> mastered</span>`}
                     </div>
                 </div>
             `;

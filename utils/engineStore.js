@@ -31,7 +31,7 @@ const ENCODED_SHAPE = /^[A-Z0-9]+(_[A-Z0-9]+)+$/;
 function isValidSkillKey(key) {
   if (key == null) return false;
   const s = String(key).trim();
-  return s !== '' && s !== 'undefined' && s !== 'null';
+  return s !== '' && !['undefined', 'null', 'unknown', 'NaN'].includes(s);
 }
 
 // A key as stored, or an id as a caller passes it, → the logical (dotted) id.

@@ -865,7 +865,78 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // ── Look-only "view as" ──
+    // A parent / teacher / admin viewing as a student may not write anything of
+    // the student's (server: middleware/impersonation.js blocks every POST but
+    // heartbeat + exit). So no greeting turn — that would run the tutor, spend
+    // the child's AI minutes and roll their session. Show the child's latest
+    // conversation through the write-free GET /view instead, and lock the composer.
+    async function detectLookOnlyView() {
+        try {
+            const res = await fetch('/api/impersonation/status', { credentials: 'include' });
+            if (!res.ok) return null;
+            const status = await res.json();
+            window.__mmLookOnly = !!status.active;
+            return status.active ? status : null;
+        } catch (_err) {
+            return null;
+        }
+    }
+
+    function lockComposerForLookOnly(name) {
+        const input = document.getElementById('user-input');
+        if (input) {
+            input.setAttribute('contenteditable', 'false');
+            input.setAttribute('aria-disabled', 'true');
+            input.setAttribute('data-placeholder', `Viewing as ${name} — look-only`);
+        }
+        ['send-button', 'mic-button', 'attach-button', 'camera-button'].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) { el.disabled = true; el.setAttribute('aria-disabled', 'true'); }
+        });
+    }
+
+    function showLookOnlyNotice(text) {
+        if (!chatBox) return;
+        const note = document.createElement('div');
+        note.className = 'look-only-notice';
+        note.setAttribute('role', 'status');
+        // Paints its own opaque ground: the chat panel and board theme differently
+        // (CLAUDE.md §12), so a transparent notice can land light-on-dark.
+        note.style.cssText = 'margin:8px auto 12px;max-width:640px;padding:10px 14px;border-radius:10px;'
+            + 'background:var(--cr-surface-2,#fff7e0);color:var(--cr-text,#3a2e00);'
+            + 'border:1px solid var(--cr-border,#e8d48a);font-size:0.9rem;text-align:center;';
+        note.textContent = text;
+        chatBox.prepend(note);
+    }
+
+    async function showLookOnlyTranscript(status) {
+        const name = (status.targetName || 'this student').split(' ')[0];
+        lockComposerForLookOnly(name);
+        try {
+            const list = await fetch('/api/conversations', { credentials: 'include' }).then((r) => (r.ok ? r.json() : null));
+            const id = list && (list.activeConversationId || (list.conversations && list.conversations[0] && list.conversations[0]._id));
+            const data = id
+                ? await fetch(`/api/conversations/${id}/view`, { credentials: 'include' }).then((r) => (r.ok ? r.json() : null))
+                : null;
+            if (data && data.messages && data.messages.length && typeof window.updateChatForSession === 'function') {
+                window.updateChatForSession(data.conversation, data.messages);
+                showLookOnlyNotice(`You're viewing ${name}'s most recent conversation. Look-only — nothing you do here changes ${name}'s account.`);
+            } else {
+                showLookOnlyNotice(`${name} hasn't had a conversation yet. Look-only — nothing you do here changes ${name}'s account.`);
+            }
+        } catch (err) {
+            console.error('[LookOnly] Could not load transcript', err);
+            showLookOnlyNotice(`Look-only view of ${name}'s account.`);
+        }
+    }
+
     async function getWelcomeMessage() {
+        const lookOnly = await detectLookOnlyView();
+        if (lookOnly) {
+            await showLookOnlyTranscript(lookOnly);
+            return;
+        }
         try {
             // New logins always start in general chat with a fresh session.
             // Clear any pending session from sidebar — users can click sidebar

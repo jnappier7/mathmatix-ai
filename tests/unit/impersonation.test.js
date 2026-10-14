@@ -258,7 +258,9 @@ describe('enforceReadOnly', () => {
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ readOnly: true }));
   });
 
-  test('allows /api/chat write in read-only mode (whitelisted)', () => {
+  // "View as" is strictly look-only: chatting as the student used to be
+  // whitelisted, which wrote their transcript, XP and mastery.
+  test('blocks /api/chat writes in read-only mode', () => {
     const req = {
       isImpersonating: true,
       impersonationReadOnly: true,
@@ -268,7 +270,8 @@ describe('enforceReadOnly', () => {
     const res = makeRes();
     const next = jest.fn();
     enforceReadOnly(req, res, next);
-    expect(next).toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(403);
   });
 
   test('allows GET requests in read-only mode', () => {
