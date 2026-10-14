@@ -1,0 +1,111 @@
+{
+  "moduleId": "healthy_practice_plan",
+  "course": "Parent Guide: ACT / SAT / PSAT",
+  "unit": 3,
+  "quarter": 1,
+  "title": "A Healthy Practice Plan",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "The most effective test prep looks surprisingly undramatic: short, regular practice sessions spread over a couple of months, a handful of full-length timed practice tests, and careful review of every question missed. This module shows you what that plan looks like week by week, why it works better than cramming, how to use practice tests well, and how to turn mistakes into points.",
+  "skills": ["spaced-practice", "full-length-practice-tests", "error-review", "prep-timeline"],
+  "standardsAlignment": [],
+  "goals": [
+    "Sketch a realistic prep plan that fits around school, activities and sleep",
+    "Understand why spaced practice and retrieval beat cramming",
+    "Use full-length practice tests as checkpoints, not as the whole plan",
+    "Help your teen keep an error log and review misses productively"
+  ],
+  "instructionalStrategy": [
+    "Show a concrete week-by-week example; parents want a plan they can picture.",
+    "Explain the learning science briefly and plainly: spacing, retrieval, feedback.",
+    "Make review of misses the centerpiece—it's where the score gains come from.",
+    "Keep the teen in charge of the plan; the parent helps with structure, not content."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "spaced-practice",
+      "title": "What Good Prep Actually Looks Like",
+      "text": "When parents picture test prep, they often imagine one of two things: an expensive course, or a teen grinding through practice books for hours every weekend.\n\nThe most effective approach is calmer than either:\n\n**1. Short, regular sessions.** Several sessions a week of roughly 30–60 minutes, spread over about two to three months, typically beat a few marathon sessions.\n\n**2. A few full-length practice tests.** A baseline at the start, a couple of checkpoints along the way, and a final dress rehearsal a week or two before test day. Taken timed, in one sitting, in the real format.\n\n**3. Careful review of every miss.** This is where the points come from. A practice test without review is mostly wasted time.\n\n**4. Targeted skill practice in between.** Based on what the reviews show—not on working through a book from page one.\n\n**Free, official materials are excellent.** College Board provides full-length practice tests in the Bluebook app (the real digital format), and ACT offers free practice tests on its website. Many students prepare well with these alone. Paid courses and tutors can help, especially with motivation and structure, but they aren't required.",
+      "initialPrompt": "What does your teen's schedule look like during a typical week? Fitting prep around what's already there is the first step."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "prep-timeline",
+      "title": "I-Do: A Sample Plan and an Error Log",
+      "examples": [
+        {
+          "problem": "Your junior has a test date about 10 weeks away. What might a healthy plan look like?",
+          "solution": "**Week 1 — Baseline:** One full-length, timed official practice test. Review every miss (see the error log below). Pick the 2–3 skill areas with the most misses.\n\n**Weeks 2–4 — Targeted practice:** 3–4 sessions a week, 30–45 minutes each, on those skill areas. Mix in a few questions from earlier weeks to keep them fresh.\n\n**Week 5 — Checkpoint test:** Second full-length practice test + full review. Adjust the focus areas.\n\n**Weeks 6–8 — Targeted practice:** Same rhythm. Add timing practice: short timed sets so pacing becomes automatic.\n\n**Week 9 — Dress rehearsal:** Final full-length test, ideally at the same time of day as the real test, with the real break.\n\n**Week 10 — Taper:** Light review only. Get logistics ready. Protect sleep.\n\n**Total:** about 3–4 hours a week. That's sustainable alongside school—and far more effective than 12 hours the weekend before.",
+          "tip": "Put the sessions on the family calendar like practices or appointments. A plan that has fixed times survives busy weeks; 'I'll do it when I have time' usually doesn't."
+        },
+        {
+          "problem": "After a practice test, how should my teen review the questions they missed?",
+          "solution": "**Use a simple error log** (a notebook or a spreadsheet works fine):\n\n| # | Topic | Why I missed it | What I'll do differently |\n|---|---|---|---|\n| 12 | Linear equations | Careless—dropped a negative | Check by plugging back in |\n| 19 | Percent change | Didn't know the method | Review percent increase/decrease |\n| 27 | Reading inference | Misread the question | Underline what's being asked |\n| 41 | Circles | Ran out of time | Practice pacing; skip and return |\n\n**The four reasons for a miss:**\n1. **Didn't know it** → learn the skill, then practice it\n2. **Careless** → build a checking habit\n3. **Misread** → slow down on the question stem\n4. **Ran out of time** → pacing practice and a skip-and-return strategy\n\n**The most important rule:** before reading the explanation, your teen should **re-try the question on their own**, untimed. If they can solve it now, it was likely careless or timing. If they still can't, it's a genuine skill gap.\n\nAfter a few practice tests, patterns appear: 'I keep missing percent questions' or 'most of my misses are careless.' That's the plan for the next few weeks.",
+          "tip": "Guessed questions that happened to be right belong in the log too. A lucky guess is a miss waiting to happen."
+        },
+        {
+          "problem": "How does Mathmatix fit into a practice plan?",
+          "solution": "**Mathmatix covers the Math section.** It has free, timed, full-length practice versions of the ACT, SAT, PSAT and PreACT **Math** sections, each built to that test's current format (for example, the SAT and PSAT versions are adaptive, with Desmos built in).\n\n**The loop it uses is the same one in this module:**\n1. **Take a practice test** → get an estimated score, a likely range, and results by content area.\n2. **Review the misses with the tutor** → the AI tutor walks through each missed question, teaches the skill behind it and the test-taking move that would have helped, and asks your teen to do the thinking rather than handing over answers.\n3. **Practice** the weak skills.\n4. **Re-test** on a fresh form that leaves out questions already seen, so the change in score reflects learning, not memory.\n\n**Keep in mind:** practice scores are estimates, not official scores. For Reading and Writing, English, Reading and Science, use the free official practice from College Board and ACT.",
+          "tip": "Whatever tools your teen uses, the principle is the same: test, review every miss, practice the gaps, re-test."
+        }
+      ],
+      "initialPrompt": "Looking at that 10-week example, which part would be hardest to fit into your teen's schedule?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "error-review",
+      "title": "Why Spacing and Review Work",
+      "text": "**Spacing.** Learning that is spread out over time is remembered far better than the same amount of learning crammed together. This is one of the most consistently replicated findings in learning research. Cramming can feel productive—everything seems familiar at the end of a long session—but familiarity fades fast.\n\n**Retrieval.** Actively pulling information out of memory (answering questions, re-solving a missed problem) builds stronger memory than re-reading notes or watching someone else solve it. Practice questions are not just measurement—they ARE the learning.\n\n**Feedback.** Reviewing a mistake right after making it, and understanding WHY, is how errors stop repeating. Without review, a practice test mostly rehearses the same mistakes.\n\n**Mixing.** Shuffling different kinds of problems together, rather than doing twenty of one type in a row, is harder in the moment—but it trains the skill the test actually requires: recognizing *which* kind of problem you're looking at.\n\n**Why more full-length tests isn't better:** a full-length test takes over two hours plus review time. Doing one every weekend leaves no time for the targeted practice that actually fixes the gaps—and it's a fast route to burnout. A few, well reviewed, is the sweet spot.\n\n**Sleep is part of the plan.** Memory consolidates during sleep. A teen who sleeps well during prep, and especially the week before the test, will perform closer to their real ability.",
+      "initialPrompt": "Does any of that match your own experience—something you learned slowly over time that stuck, versus something you crammed and forgot?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "full-length-practice-tests",
+      "title": "Try It: Planning Scenarios",
+      "problems": [
+        {
+          "id": "pp-p1",
+          "question": "Your teen wants to take a full-length practice test every Saturday for the next eight weeks. What would you suggest instead?",
+          "answer": "Fewer tests, more review and targeted practice. For example: a baseline test now, a checkpoint test around the middle, and a dress rehearsal near the end—three or four in total. Use the other weeks for short sessions on the skills each test's review reveals. Eight tests in eight weeks leaves little time to fix anything and raises burnout risk.",
+          "hints": [
+            "What happens to review and targeted practice if every weekend is a full test?",
+            "Think baseline, checkpoint(s), and a dress rehearsal."
+          ]
+        },
+        {
+          "id": "pp-p2",
+          "question": "Your teen's error log shows that 8 of 12 math misses were 'careless.' What should their next two weeks focus on?",
+          "answer": "Checking habits and pacing, not new content. For example: plug answers back in, re-read what the question actually asks before choosing, and practice timed sets that leave a minute or two at the end to check. Since most misses weren't knowledge gaps, slowing down slightly and checking is likely the fastest way to gain points.",
+          "hints": [
+            "If most misses were careless, is the problem knowledge or process?",
+            "What habits catch careless errors?"
+          ]
+        },
+        {
+          "id": "pp-p3",
+          "question": "It's two days before the test and your teen wants to stay up late doing practice problems. What do you say?",
+          "answer": "Encourage a light review at most, then rest. Something like: 'You've done the work. A good night's sleep will help you more now than more problems.' Help with logistics instead—device charged, ID, admission ticket, directions, breakfast plan.",
+          "hints": [
+            "What helps performance more in the last 48 hours: more practice or more sleep?",
+            "What can you help with instead of content?"
+          ]
+        }
+      ],
+      "initialPrompt": "Want to try a few planning decisions? These come up in almost every family."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "prep-timeline",
+      "title": "Your Role in the Plan",
+      "text": "**Help with structure, not content.** Your teen owns the plan; you help it happen.\n\n**This week:**\n- Sit down together with a calendar. Mark the test date, then count back. Pencil in a baseline practice test and 3–4 short sessions a week.\n- Make sure your teen has the free official materials set up (Bluebook for the SAT/PSAT; ACT's practice tests for the ACT).\n- Offer a quiet space and phone-free time for practice tests.\n\n**Ongoing:**\n- Ask about **process**, not scores: 'What did your review show?' 'What are you working on this week?'\n- Notice effort: 'You stuck with your plan this week even with practice every night—that's impressive.'\n- Watch for signs of overload: dropping sleep, irritability, falling grades in classes. If you see them, scale the plan back. A slightly lower score is better than a burned-out junior year.\n\n**What NOT to do:**\n- Check every practice score and react to each one. (Watch the trend across several tests.)\n- Add more hours when a score disappoints. (Look at the error log first—maybe the plan needs to change, not grow.)\n- Re-teach the math yourself at 10 p.m. (If a skill gap is the issue, point your teen to their tutor, teacher or targeted practice. The Algebra 1 & Geometry Parent Guide shows how to coach without solving.)\n\n**A good sign the plan is working:** your teen can tell you what kinds of questions they used to miss and what they now do differently. That self-awareness is worth more than any single practice score.",
+      "initialPrompt": "What's one small step you could take with your teen this week—setting up a calendar, finding the official practice tests, or something else?"
+    }
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "courseId": "parent-math-910",
+  "track": "Parent Guide: Algebra 1 & Geometry (Grades 9–10)",
+  "audience": "parent",
+  "courseType": "mini-course",
+  "overview": "A mini-course for parents of 9th and 10th graders. High school math is where many parents quietly step back—'I haven't factored a quadratic in twenty years.' You don't need to re-learn Algebra 1 and Geometry to help. This course shows you what your teen is actually being asked to do (functions as patterns, factoring as un-multiplying, proof as explaining why), where students most often get stuck, and how to help with homework you don't remember by asking the right questions instead of supplying answers.",
+  "prerequisites": [],
+  "naturalProgression": [
+    "See linear equations and functions as patterns you already understand—tables, graphs and 'starting value plus rate of change'—so slope stops being a formula and becomes a story (Unit 1)",
+    "Demystify quadratics and factoring—why a parabola has the shape it does, what factoring is really undoing, and why 'just use the quadratic formula' isn't the whole answer (Unit 2)",
+    "Understand geometry reasoning and proof as structured 'why' talk—the same skill as making a good argument—and why two-column proofs frustrate so many teens (Unit 3)",
+    "Learn a repeatable way to help with homework you don't remember: read the problem together, ask instead of tell, check work without solving it, and know when to send your teen back to the teacher (Unit 4)"
+  ],
+  "aiInstructionModel": {
+    "approach": "Parent-focused conversational learning",
+    "description": "The AI teaches parents as adult learners, many of whom have not used algebra or geometry since their own school years and some of whom never felt confident in it. Each lesson covers WHAT the topic is (in plain language first, notation second), HOW a teen typically works it, WHERE teens most commonly get stuck, and HOW a parent can help without re-teaching or giving answers. The AI never assumes the parent remembers procedures, never makes the parent feel tested, and always ties the math back to a question the parent can ask their teen tonight. The product's core belief applies to parents too: a great tutor asks, doesn't tell.",
+    "phases": [
+      {
+        "phase": "context-setting",
+        "aiRole": "Explain where this topic shows up in 9th–10th grade, what it looks like on homework and tests, the most common sticking points, and how the teaching emphasis has shifted since the parent was in school.",
+        "parentRole": "Recall what you remember (or don't) about this topic, and notice what your teen has been bringing home"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Walk through 2–3 worked examples at the level of a typical homework problem, in plain language first and symbols second. Show the 'old way' a parent may remember next to the reasoning-first way teens are taught now.",
+        "parentRole": "Follow along and notice the reasoning behind each step, not just the steps"
+      },
+      {
+        "phase": "why-it-works",
+        "aiRole": "Explain why the topic is taught this way and where it leads (Algebra 2, physics, statistics, the SAT/ACT), so the parent can answer 'when will I ever use this?' honestly.",
+        "parentRole": "Connect the idea to the bigger picture of your teen's math path"
+      },
+      {
+        "phase": "try-it",
+        "aiRole": "Offer low-pressure problems and homework scenarios—some math, some 'what would you say to your teen?'—so the parent builds confidence with both the content and the coaching.",
+        "parentRole": "Try a few yourself, including the conversations, without any grading"
+      },
+      {
+        "phase": "homework-tips",
+        "aiRole": "Give specific questions to ask, things to avoid saying, and signs of real understanding vs. copied steps—respecting a teenager's independence.",
+        "parentRole": "Leave with words you can use at the kitchen table tonight"
+      }
+    ],
+    "aiDecisionRights": [
+      "Adjust complexity based on how much algebra and geometry the parent remembers—some will want the symbols, some only the ideas",
+      "Skip the worked examples entirely if the parent says they only want the homework-help strategies",
+      "Use the parent's own teen's homework problem if they share one—but coach the parent toward questions, never hand over a finished solution to copy",
+      "Generate examples that mirror typical Algebra 1 and Geometry homework",
+      "Connect topics to Algebra 2, the PSAT/SAT/ACT and real-world uses when it helps motivation",
+      "Name common misconceptions explicitly so the parent can recognize them"
+    ]
+  },
+  "modules": [
+    {
+      "moduleId": "linear_functions_patterns",
+      "unit": 1,
+      "quarter": 1,
+      "title": "Linear Equations & Functions: Patterns, Tables and Graphs",
+      "preview": "See slope and y = mx + b as a story about a starting amount and a steady change—and learn the tables-graphs-equations connection your teen is expected to make",
+      "moduleFile": "/modules/parent-910/linear_functions_patterns_module.json",
+      "skills": ["linear-functions", "slope-as-rate", "multiple-representations", "solving-linear-equations"],
+      "essentialQuestions": [
+        "Why does my teen keep switching between tables, graphs and equations?",
+        "What is slope really, and why do so many students mix up rise and run?",
+        "What does 'function' mean, and why is it such a big deal in high school?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "start-plus-change",
+          "title": "Starting Value Plus Rate of Change",
+          "order": 1,
+          "concepts": ["y = mx + b as 'start with b, add m every step'", "Reading slope and intercept from a real situation", "Why a table with a constant difference is linear"],
+          "teachingNotes": "Parents often remember y = mx + b as letters to memorize. Rebuild it as a phone plan or a savings jar before any symbols."
+        },
+        {
+          "lessonId": "four-representations",
+          "title": "One Relationship, Four Representations",
+          "order": 2,
+          "concepts": ["Situation, table, graph and equation describe the same thing", "Slope from a table vs. from a graph vs. from two points", "Why teachers ask students to translate between them"],
+          "teachingNotes": "This is the heart of Algebra 1. Show one example in all four forms so parents see they are the same relationship wearing different clothes."
+        },
+        {
+          "lessonId": "solving-and-checking",
+          "title": "Solving Equations—and Checking Them",
+          "order": 3,
+          "concepts": ["Multi-step equations with variables on both sides", "The distributive-property and sign errors that cause most wrong answers", "Substitution as a self-check any parent can ask for"],
+          "teachingNotes": "The single most useful habit a parent can encourage: plug the answer back in. It turns 'is this right?' into something the teen can answer themselves."
+        }
+      ]
+    },
+    {
+      "moduleId": "quadratics_factoring",
+      "unit": 2,
+      "quarter": 1,
+      "title": "Quadratics & Factoring Without Tears",
+      "preview": "Understand what a parabola is, what factoring is really undoing, and why teens learn several ways to solve the same quadratic",
+      "moduleFile": "/modules/parent-910/quadratics_factoring_module.json",
+      "skills": ["quadratic-functions", "factoring", "zero-product-property", "solving-quadratics"],
+      "essentialQuestions": [
+        "What is factoring actually for?",
+        "Why does my teen learn three or four different ways to solve a quadratic?",
+        "How do I help when I don't remember any of this?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "parabola-shape",
+          "title": "Why Quadratics Make a U",
+          "order": 1,
+          "concepts": ["Quadratics model things that speed up or slow down: a thrown ball, area as a side grows", "Vertex, axis of symmetry and x-intercepts in plain language", "The table of a quadratic: differences that change by the same amount"],
+          "teachingNotes": "Start with a ball thrown in the air. Parents understand the physical shape long before the algebra."
+        },
+        {
+          "lessonId": "factoring-as-unmultiplying",
+          "title": "Factoring Is Un-Multiplying",
+          "order": 2,
+          "concepts": ["Multiplying (x + 2)(x + 3) with an area model", "Factoring x² + 5x + 6 as running that backwards", "The 'what multiplies to c and adds to b?' search", "Why factoring only helps when one side is zero"],
+          "teachingNotes": "The area-model picture connects directly to the 3–5 and 6–8 guides. Parents who saw it there will recognize it immediately."
+        },
+        {
+          "lessonId": "choosing-a-method",
+          "title": "Factoring, Square Roots, the Formula, or a Graph?",
+          "order": 3,
+          "concepts": ["The quadratic formula always works but hides the structure", "Graphing tools (like Desmos) show the solutions as x-intercepts", "Choosing a method is itself a skill teachers assess"],
+          "teachingNotes": "Parents sometimes say 'just use the formula.' Validate that it works, then show why teachers want students to see structure first."
+        }
+      ]
+    },
+    {
+      "moduleId": "geometry_reasoning_proof",
+      "unit": 3,
+      "quarter": 1,
+      "title": "Geometry Reasoning & Proof: The 'Why' Talk",
+      "preview": "Learn why proofs frustrate so many teens, how a proof is just a careful argument, and how to talk about geometry homework without remembering a single theorem",
+      "moduleFile": "/modules/parent-910/geometry_reasoning_proof_module.json",
+      "skills": ["deductive-reasoning", "two-column-proof", "congruence-similarity", "angle-relationships"],
+      "essentialQuestions": [
+        "Why does geometry suddenly care so much about 'why' instead of 'what'?",
+        "What is a two-column proof and why is it so hard?",
+        "How can I help with geometry if I don't remember the theorems?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "argument-not-answer",
+          "title": "A Proof Is an Argument, Not an Answer",
+          "order": 1,
+          "concepts": ["Given, prove, and the chain of reasons in between", "Every step needs a reason: a definition, a postulate or a theorem", "Proof as the same skill as a strong essay or a legal argument"],
+          "teachingNotes": "Many parents who disliked proofs were never told what they were for. Frame proof as structured persuasion."
+        },
+        {
+          "lessonId": "angle-and-triangle-reasoning",
+          "title": "Angle and Triangle Reasoning Step by Step",
+          "order": 2,
+          "concepts": ["Vertical angles, linear pairs and parallel-line angle relationships", "Triangle congruence shortcuts (SSS, SAS, ASA, AAS) and why SSA isn't one", "Similarity and scale factor"],
+          "teachingNotes": "Walk through one short proof slowly. The goal is for parents to see the shape of the reasoning, not memorize theorems."
+        },
+        {
+          "lessonId": "why-talk-at-home",
+          "title": "Having the 'Why' Conversation at Home",
+          "order": 3,
+          "concepts": ["'How do you know?' as the universal geometry question", "Drawing and labeling the diagram as the first step", "Using the textbook's theorem list as a reference, not a cheat"],
+          "teachingNotes": "Parents can be excellent proof coaches precisely because they don't know the answer—they ask honest questions."
+        }
+      ]
+    },
+    {
+      "moduleId": "homework_help_you_dont_remember",
+      "unit": 4,
+      "quarter": 1,
+      "title": "Helping With Homework You Don't Remember",
+      "preview": "A repeatable routine for high school homework: read it together, ask instead of tell, check work without solving it, and know when to send your teen to the teacher",
+      "moduleFile": "/modules/parent-910/homework_help_you_dont_remember_module.json",
+      "skills": ["questioning-strategies", "checking-work", "productive-struggle", "self-advocacy"],
+      "essentialQuestions": [
+        "How do I help with math I can't do myself anymore?",
+        "How can I tell whether my teen's answer is right without solving the problem?",
+        "When should I step back and let them struggle—or send them to the teacher?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "ask-dont-tell",
+          "title": "Ask, Don't Tell",
+          "order": 1,
+          "concepts": ["Five questions that work on any math problem", "Why giving the answer (or the method) backfires on tests", "The difference between productive struggle and spinning wheels"],
+          "teachingNotes": "This is the most important lesson in the guide. Parents who don't remember the math are often BETTER at this than parents who do."
+        },
+        {
+          "lessonId": "checking-without-solving",
+          "title": "Checking Work Without Solving It",
+          "order": 2,
+          "concepts": ["Substitution, estimation and 'does this make sense?' checks", "Using the back-of-the-book answers and worked examples well", "Graphing calculators and online tools as checkers, not answer machines"],
+          "teachingNotes": "Give parents concrete checks they can run with no algebra at all—plugging a number in is arithmetic."
+        },
+        {
+          "lessonId": "when-to-step-back",
+          "title": "When to Step Back and Who to Call",
+          "order": 3,
+          "concepts": ["Signs of a gap from an earlier grade vs. a one-night confusion", "Helping your teen email or talk to their teacher", "Protecting sleep, mood and the relationship"],
+          "teachingNotes": "End with permission: the parent's job is not to be the math teacher. It's to keep the teen supported, organized and willing to ask."
+        }
+      ]
+    }
+  ],
+  "aiGuidanceNotes": "High school parents often arrive with one of two feelings: 'I was never good at this' or 'I used to be good at this and now I can't help.' Both deserve validation—and both parents can help effectively, because the most powerful homework support at this age is asking good questions, not knowing the answers. Never make the parent feel quizzed. Use plain language first and notation second; when you show algebra, show what each step means. For linear functions, the big idea is 'starting value plus a steady rate of change' across tables, graphs and equations. For quadratics, factoring is un-multiplying and the zero-product property is why one side must be zero. For geometry, proof is structured 'why' talk. Throughout, model the product's core ethos: a great tutor asks, doesn't tell. If a parent shares a specific homework problem, coach them on what to ASK their teen and how to CHECK the teen's work—do not produce a finished solution for the parent to hand over, even if asked; explain kindly that a copied solution won't be there on the test and offer the questions instead. Teens value independence—frame every tip so the teen stays in charge of their own work. When a parent's teen is also preparing for the PSAT, SAT, PreACT or ACT, mention that the Parent Guide: ACT / SAT / PSAT covers the tests themselves."
+}

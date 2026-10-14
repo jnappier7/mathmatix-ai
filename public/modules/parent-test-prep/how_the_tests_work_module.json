@@ -1,0 +1,111 @@
+{
+  "moduleId": "how_the_tests_work",
+  "course": "Parent Guide: ACT / SAT / PSAT",
+  "unit": 1,
+  "quarter": 1,
+  "title": "How the Tests Work: Sections, Timing and Calculators",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "If you took the SAT or ACT, the test your teen takes is not the one you remember. The SAT and PSAT are now digital, shorter and adaptive, with a graphing calculator built in. The ACT moved to a shorter 'enhanced' format in 2025 in which Science is optional. This module walks through what's on each test today, how the adaptive SAT actually works, what the calculator rules are, and how to decide between the SAT and the ACT.",
+  "skills": ["test-structure", "adaptive-testing", "calculator-rules", "sat-vs-act"],
+  "standardsAlignment": [],
+  "goals": [
+    "Know the sections, approximate timing and format of the digital SAT/PSAT and the enhanced ACT",
+    "Understand how the adaptive two-module design works, and why it isn't something to game",
+    "Know the calculator rules for each test",
+    "Help your teen choose between the SAT and the ACT using practice-test results"
+  ],
+  "instructionalStrategy": [
+    "Lead with 'then vs. now'—most parents' mental model of these tests is out of date.",
+    "Be precise about well-established structure; point to College Board and ACT for dates, fees and policy details.",
+    "Defuse fears about adaptive testing: it measures more efficiently, it doesn't punish.",
+    "Keep the decision practical: take one practice test of each, then focus on one."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "test-structure",
+      "title": "Not the Test You Took",
+      "text": "**Then vs. now at a glance:**\n\n| | What many parents took | What your teen takes |\n|---|---|---|\n| **SAT** | Paper, about 3 hours; depending on the year, scored out of 1600 or 2400; a no-calculator math portion | Digital (in the **Bluebook** app), about 2 hours 15 minutes, scored **400–1600**, **adaptive**, calculator allowed on all of Math with **Desmos built in** |\n| **ACT** | English, Math, Reading and Science all required; 60 math questions with 5 answer choices | **Enhanced ACT** (rolled out in 2025): shorter, **Science optional**, composite from English + Math + Reading, Math has **45 questions in 50 minutes** with **4 answer choices** |\n| **PSAT** | Paper practice SAT | Digital and adaptive like the SAT, scored **320–1520** |\n\n**The digital SAT (and PSAT/NMSQT):**\n- **Reading and Writing:** 54 questions in two 32-minute modules (short passages, one question each)\n- **Math:** 44 questions in two 35-minute modules—mostly multiple choice (four options), with some 'student-produced response' questions where your teen types the answer\n- A short break between the sections\n- A formula reference sheet and the **Desmos graphing calculator** are built into the app; students may also bring their own approved calculator\n\n**The enhanced ACT:**\n- **English, Math and Reading** make up the **composite score** (1–36)\n- **Science** is optional and reported separately (it also feeds a STEM score); **Writing** (the essay) is optional too\n- The core test runs about two hours, noticeably shorter than the old ACT\n- A calculator is allowed on the whole Math section (ACT publishes a list of prohibited models—check it before test day)\n\n**The PreACT** is ACT's practice test for younger students (there are versions for 8th–9th and for 10th grade). Like the PSAT for the SAT, it reports on its big sibling's scale.\n\n**One thing that hasn't changed:** neither the SAT nor the ACT takes off points for wrong answers. Your teen should answer every question.",
+      "initialPrompt": "Which test did you take, if any—and which one is your teen looking at? I'll focus on what's most useful for your family."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "adaptive-testing",
+      "title": "I-Do: How the Adaptive SAT Works, and Choosing a Test",
+      "examples": [
+        {
+          "problem": "How does the 'adaptive' digital SAT decide what my teen sees?",
+          "solution": "**Each section has two modules.**\n\n1. **Module 1** is the same mix of easier, medium and harder questions for everyone.\n2. Based on how your teen does on Module 1, **Module 2** is either a **harder** or an **easier** set.\n3. The final score is based on all the questions—not just how many were right, but which ones, since questions differ in difficulty.\n\n**What this means in practice:**\n- A strong Module 1 opens the harder Module 2, which is where the highest scores live. The easier Module 2 generally limits how high a score can go.\n- But an easier Module 2 is NOT a failing grade. Many students land there and still earn solid, mid-range scores.\n- Within a module, students can skip questions, flag them and come back. Once a module ends, they can't return to it.\n\n**What NOT to do:** try to figure out mid-test which Module 2 you got. Students can't reliably tell, and it only adds stress. The right strategy is always the same: do your best on every question, and answer every question before time runs out.\n\n**Why it's designed this way:** an adaptive test can measure a student about as precisely as a longer fixed test, in less time. That's a big part of why the digital SAT is shorter than the one you took.",
+          "tip": "The single best way to make the digital format feel normal is a full-length practice test in the Bluebook app itself. College Board offers free official practice tests there."
+        },
+        {
+          "problem": "What does test day look like for the digital SAT?",
+          "solution": "**Before test day:**\n- Install **Bluebook** on the device your teen will use (their own laptop or tablet, or a school-issued one; College Board can lend a device if you request it in advance) and complete the exam setup\n- Print or save the **admission ticket** Bluebook generates\n- Check the test center's start time and the ID requirements\n\n**On test day:**\n- Arrive early with: a fully charged device and charger, the admission ticket, acceptable photo ID, pencils (for scratch work) and, if they want, an approved calculator\n- **Reading and Writing** (two modules) → short break → **Math** (two modules)\n- Total testing time is a little over two hours plus check-in\n\n**After:**\n- Scores typically arrive in days to a couple of weeks (much faster than the paper test was)\n\n(Registration deadlines, fees and dates change—always check College Board's site for the current ones.)",
+          "tip": "The most common test-day problems are logistical: a dead battery, a forgotten ID, or an app that wasn't set up. Those are exactly the things a parent can help prevent."
+        },
+        {
+          "problem": "Should my teen take the SAT or the ACT?",
+          "solution": "**Good news first:** colleges that accept test scores generally accept either one, and they don't prefer one over the other.\n\n**A practical way to decide:**\n1. Take **one full-length timed practice test of each** (official ones are free from College Board and ACT; Mathmatix has free practice versions of each Math section).\n2. Compare **percentiles**, not raw numbers—SAT and ACT scores are on different scales. (ACT and College Board also publish an official 'concordance' table that lines the two scales up.)\n3. Ask your teen which one *felt* better. Some prefer the SAT's shorter passages and built-in Desmos; others prefer the ACT's straightforward format.\n4. **Pick one and focus on it.** Prepping for both at once splits limited time.\n\n**Example:** your teen's practice SAT lands at about the 70th percentile and their practice ACT at about the 82nd, and they say the ACT felt more comfortable. That's a reasonable signal to focus on the ACT—though if the results were close, either would be fine.",
+          "tip": "Don't over-think this decision. A teen who prepares steadily for either test will do better than one who switches back and forth."
+        }
+      ],
+      "initialPrompt": "Has your teen taken a practice test of either kind yet—or a PSAT or PreACT at school? That's often the best starting point."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "calculator-rules",
+      "title": "Why the Tests Look Like This Now",
+      "text": "**Why shorter?** Both organizations redesigned their tests partly in response to feedback that the old versions were long and tiring. A shorter, adaptive test can measure about as precisely in less time, and stamina matters less.\n\n**Why a calculator on all of the SAT Math?** The digital SAT assumes students have a graphing calculator and tests whether they can **reason** with math—choose a method, interpret a graph, model a situation. A built-in Desmos calculator also levels the playing field: students no longer need to own an expensive graphing calculator to get the same tool as their classmates.\n\n**This changes good test strategy:**\n- On the SAT, graphing an equation in Desmos can be the fastest route on some questions (systems of equations, finding where a graph crosses the x-axis, finding a vertex). It's worth practicing.\n- But a calculator doesn't replace understanding. Questions are designed so that knowing the math is still what earns the point.\n\n**Why Science became optional on the ACT:** the composite now reflects English, Math and Reading, and students who want to show science strength can still take it. Some colleges or programs may want it—your teen should check the colleges they're considering.\n\n**What's on the Math sections (both tests):** mostly Algebra 1, Geometry and Algebra 2 content—linear equations and functions, quadratics and other nonlinear functions, data and statistics, and geometry and trigonometry. The ACT also includes a strand of everyday-math questions (rates, percentages, proportions, averages) that it calls 'Integrating Essential Skills.' In other words: the math your teen takes in 9th–11th grade *is* the test prep. The Algebra 1 & Geometry Parent Guide covers that core.",
+      "initialPrompt": "Does the built-in calculator change how you think about the math section? Many parents assume it makes the test easier—it mostly changes WHAT is tested."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "test-structure",
+      "title": "Try It: Test-Format Scenarios",
+      "problems": [
+        {
+          "id": "tw-p1",
+          "question": "Your teen is running out of time on a practice test and asks whether to leave the last few questions blank. What do you tell them?",
+          "answer": "Never leave a question blank. Neither the SAT nor the ACT takes off points for wrong answers, so a guess can only help. A good habit: in the last minute, make sure every question has an answer.",
+          "hints": [
+            "Is there a penalty for a wrong answer on either test?",
+            "If there's no penalty, what does a blank answer cost compared with a guess?"
+          ]
+        },
+        {
+          "id": "tw-p2",
+          "question": "After the digital SAT, your teen says, 'I think I got the easy second module. I bombed it.' What's a good response?",
+          "answer": "Something like: 'You can't really tell which module you got, and even if it was the easier one, plenty of students earn solid scores from there. You did your best—let's wait and see the score, and use it to plan.' An easier Module 2 does generally limit the top of the range, but it isn't a verdict on your teen, and they can retest.",
+          "hints": [
+            "Can students reliably tell which Module 2 they got?",
+            "Does an easier second module mean a failing score?"
+          ]
+        },
+        {
+          "id": "tw-p3",
+          "question": "Your teen's practice SAT came out around the 60th percentile and their practice ACT around the 62nd. They liked the SAT's built-in calculator. Which test should they focus on?",
+          "answer": "Either would be fine—the results are essentially the same—so let preference decide: the SAT. The important thing is to choose one and prepare steadily for it, rather than splitting time between both.",
+          "hints": [
+            "Compare percentiles, not raw scores.",
+            "When results are close, what's a sensible tie-breaker?"
+          ]
+        }
+      ],
+      "initialPrompt": "Want to try a few situations that come up a lot? There's no grading—just talk through what you'd say."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "sat-vs-act",
+      "title": "What to Do This Week",
+      "text": "**If your teen is in 9th or 10th grade:**\n- No need to start formal prep. Strong grades in Algebra 1, Geometry and English **are** the best preparation.\n- If your school offers the **PSAT** or **PreACT**, encourage your teen to take it seriously but calmly—it's a free preview, not a high-stakes test.\n\n**If your teen is in 11th grade:**\n- Have them take **one full-length practice test of each** (or of the test their school gives) to choose a focus.\n- Look at the calendar together: when are test dates, and when are the busy seasons (sports, finals, AP exams)?\n- Remember the **junior-year PSAT/NMSQT** (usually in October) is the National Merit qualifying test—relevant mainly for very high scorers.\n\n**If your teen is in 12th grade:**\n- Check each college's current testing policy and application deadlines, then work backward to a final test date.\n\n**Questions to ask your teen (instead of telling):**\n- 'Which test do you think suits you better? Why?'\n- 'Have you tried the official practice in Bluebook (or on ACT's site)?'\n- 'When do you want to take it, and what else is going on that month?'\n\n**What NOT to say:**\n- 'When I took the SAT…' (It's a different test now.)\n- 'Everyone needs a tutor.' (Many students prepare well with free official materials and a steady plan.)\n- 'This test decides your future.' (It's one part of an application—and at many colleges, an optional one.)\n\n**Mathmatix can help on the math side:** free, timed, full-length practice versions of the ACT, SAT, PSAT and PreACT **Math** sections, built to each test's current format, with an estimated score and a tutor who reviews every miss. For Reading/Writing, English and Science, use the free official practice from College Board and ACT.",
+      "initialPrompt": "Where is your teen in this process right now—just starting to think about it, or already looking at a test date?"
+    }
+  ]
+}

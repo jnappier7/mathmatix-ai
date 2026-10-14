@@ -1,0 +1,111 @@
+{
+  "moduleId": "quadratics_factoring",
+  "course": "Parent Guide: Algebra 1 & Geometry (Grades 9–10)",
+  "unit": 2,
+  "quarter": 1,
+  "title": "Quadratics & Factoring Without Tears",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "Quadratics are where many students—and many parents, years ago—decided they were 'not a math person.' Usually that happened because factoring was taught as a bag of tricks with no reason behind it. This module explains what a quadratic is (anything that speeds up or slows down—like a thrown ball), what factoring is really doing (un-multiplying), why one side has to equal zero, and why your teen learns several solving methods. You'll come away able to check a quadratic answer with nothing but arithmetic.",
+  "skills": ["quadratic-functions", "factoring", "zero-product-property", "solving-quadratics"],
+  "standardsAlignment": ["A-SSE.A.2", "A-SSE.B.3", "A-REI.B.4", "F-IF.B.4", "F-IF.C.7", "F-IF.C.8"],
+  "goals": [
+    "Describe a parabola in plain language: vertex, symmetry and where it crosses the x-axis",
+    "See factoring as multiplying in reverse, using the same area model from earlier grades",
+    "Understand why factoring only solves an equation when one side is zero",
+    "Know why teens learn factoring, square roots, the quadratic formula and graphing—and how to check any of them"
+  ],
+  "instructionalStrategy": [
+    "Start with a physical image—a ball thrown in the air—before any algebra.",
+    "Use the area model for multiplying binomials; parents from the 3–5 and 6–8 guides will recognize it.",
+    "Name the zero-product property and the 'forgot the negative root' error explicitly.",
+    "Keep the take-away as checking by substitution, which every parent can do."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "quadratic-functions",
+      "title": "What Is a Quadratic, Really?",
+      "text": "A **quadratic** is any expression where the variable gets squared: x², 3x² − 2x + 1, and so on. On a graph, a quadratic makes a **parabola**—a U shape (or an upside-down U).\n\n**Where parabolas show up:**\n- The path of a thrown ball, a basketball shot, a water fountain's arc\n- The area of a square as its side grows (double the side, and the area goes up four times)\n- Profit that rises with price… until the price gets too high and sales drop\n\n**The key difference from Unit 1:** a linear function changes by the same amount every step. A quadratic's change itself changes—it speeds up or slows down. Look at y = x²:\n```\n  x  │ 0   1   2   3   4\n  y  │ 0   1   4   9  16\nchange │  +1  +3  +5  +7\n```\nThe changes grow by 2 each time. That steady 'change in the change' is the fingerprint of a quadratic—your teen may be asked to spot it in a table.\n\n**What 9th–10th graders do with quadratics:**\n- Graph them and identify the **vertex** (the turning point), the **axis of symmetry**, and the **x-intercepts** (where the graph crosses the x-axis)\n- **Factor** them (rewrite as a multiplication)\n- **Solve** quadratic equations by factoring, square roots, the quadratic formula, or graphing\n\n**Where teens get stuck:** factoring feels like guessing, the zero-product rule is applied when one side isn't zero, and negative signs go missing.",
+      "initialPrompt": "Did factoring ever 'click' for you, or did it feel like guess-and-check? Most parents say the second—which is exactly why it's taught differently now."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "factoring",
+      "title": "I-Do: Factoring Is Un-Multiplying",
+      "examples": [
+        {
+          "problem": "Multiply (x + 2)(x + 3) with an area model, then run it backwards to factor x² + 5x + 6.",
+          "solution": "**Multiplying first—the area model:** Draw a rectangle with sides (x + 2) and (x + 3), split into four boxes:\n```\n          x        3\n     ┌────────┬────────┐\n  x  │   x²   │   3x   │\n     ├────────┼────────┤\n  2  │   2x   │    6   │\n     └────────┴────────┘\n```\nAdd the boxes: x² + 3x + 2x + 6 = **x² + 5x + 6**\n\n(You may remember this as FOIL. Same result—the area model just shows WHY there are four pieces.)\n\n**Factoring is the same picture, backwards.** Given x² + 5x + 6, your teen asks:\n- What two numbers **multiply** to 6 (the corner box)?\n- …and **add** to 5 (the two middle boxes together)?\n- 1 and 6 multiply to 6 but add to 7. **2 and 3** multiply to 6 and add to 5. ✓\n\nSo x² + 5x + 6 = **(x + 2)(x + 3)**.\n\nFactoring isn't a trick—it's asking 'what rectangle has this area?'",
+          "tip": "If your child used area models in elementary or middle school, this is the same picture with an x on the sides. Saying 'this is the box method you used for 23 × 14' can be a lightbulb moment."
+        },
+        {
+          "problem": "Solve x² + 5x + 6 = 0, and see why the zero matters.",
+          "solution": "**Factor:** (x + 2)(x + 3) = 0\n\n**The zero-product property:** If two numbers multiply to zero, at least one of them must BE zero. (There's no other way to get a product of 0.)\n\nSo either x + 2 = 0 → **x = −2**, or x + 3 = 0 → **x = −3**.\n\n**Check by substitution (arithmetic only):**\n- x = −2: (−2)² + 5(−2) + 6 = 4 − 10 + 6 = 0 ✓\n- x = −3: (−3)² + 5(−3) + 6 = 9 − 15 + 6 = 0 ✓\n\n**The very common mistake:** solving x² + 5x + 6 = 12 by writing (x + 2)(x + 3) = 12 and then setting x + 2 = 12. That doesn't work—two numbers can multiply to 12 in endless ways. The fix is to subtract 12 first so one side is zero: x² + 5x − 6 = 0 → (x + 6)(x − 1) = 0 → x = −6 or x = 1. (Check: 36 − 30 + 6 = 12 ✓ and 1 + 5 + 6 = 12 ✓.)",
+          "tip": "A great question when your teen is factoring to solve: 'Is one side equal to zero yet?' It catches the most common quadratic error without you doing any algebra."
+        },
+        {
+          "problem": "Solve x² − 4x − 5 = 0 two ways: factoring and the quadratic formula.",
+          "solution": "**Factoring:** Two numbers that multiply to −5 and add to −4: **−5 and +1**.\n(x − 5)(x + 1) = 0 → **x = 5 or x = −1**\n\n**Quadratic formula** (works on every quadratic ax² + bx + c = 0):\nx = (−b ± √(b² − 4ac)) / 2a, with a = 1, b = −4, c = −5\n- b² − 4ac = 16 − 4(1)(−5) = 16 + 20 = 36\n- x = (4 ± √36) / 2 = (4 ± 6) / 2\n- x = 10/2 = **5** or x = −2/2 = **−1** ✓ Same answers.\n\n**So why learn factoring at all?** The formula always works, but it hides the structure. Factoring shows that this parabola crosses the x-axis at 5 and −1, and it trains the 'un-multiplying' thinking used later for rational expressions and polynomials. Teachers want students to choose: factor when it's quick, use the formula when it isn't.\n\n**And graphing:** type y = x² − 4x − 5 into a graphing tool and the parabola crosses the x-axis at exactly −1 and 5. Same answers, third way.",
+          "tip": "Many teachers—and the digital SAT, which has the Desmos graphing calculator built in—reward knowing that 'solutions' and 'x-intercepts' are the same thing. A graph is a great way for your teen to check their algebra."
+        }
+      ],
+      "initialPrompt": "Try the square-root kind: if x² = 49, what are ALL the values of x? (Hint: there are two—forgetting one of them is one of the most common quadratic slips.)"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "solving-quadratics",
+      "title": "Why Several Methods—and Why It's Worth It",
+      "text": "**Why your teen learns four ways to solve one kind of equation:**\n\n| Method | Best when… | What it shows |\n|---|---|---|\n| Square roots | No middle x term (x² = 49) | Two answers: ±7 |\n| Factoring | Numbers are friendly | Structure: where the graph crosses |\n| Quadratic formula | Anything—especially messy numbers | Always works |\n| Graphing | Checking, or estimating | The whole picture at once |\n\nChoosing a method is itself a skill teachers assess. A student who only knows the formula can solve every quadratic but may not understand any of them.\n\n**Why quadratics matter beyond Algebra 1:**\n- **Physics:** projectile motion (how high, how far, when it lands) is quadratic.\n- **Algebra 2 and precalculus:** polynomials, rational functions and conic sections all build on factoring and parabolas.\n- **The SAT and ACT:** both math sections test quadratics—factoring, the vertex, and connecting equations to graphs come up often.\n- **Optimization:** 'what price makes the most profit?' or 'what dimensions give the most area?' is finding a vertex.\n\n**Why the area model again?** It's deliberate. The same picture explains 23 × 14 in 4th grade, (x + 2)(x + 3) in 9th grade, and polynomial multiplication in Algebra 2. Students who see the connection don't have to memorize FOIL as a separate rule—and FOIL only works for two-term-by-two-term products anyway. The area model works for everything.",
+      "initialPrompt": "Does seeing factoring as 'un-multiplying' change how it feels compared with how you learned it?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "factoring",
+      "title": "Try It: Factoring and Checking",
+      "problems": [
+        {
+          "id": "qf-p1",
+          "question": "Factor x² + 7x + 12. (What two numbers multiply to 12 and add to 7?)",
+          "answer": "3 and 4 multiply to 12 and add to 7, so x² + 7x + 12 = (x + 3)(x + 4). Check by multiplying back: x² + 4x + 3x + 12 = x² + 7x + 12 ✓.",
+          "hints": [
+            "List pairs that multiply to 12: 1 and 12, 2 and 6, 3 and 4.",
+            "Which pair adds to 7?"
+          ]
+        },
+        {
+          "id": "qf-p2",
+          "question": "Solve x² − 9 = 0. How many solutions are there?",
+          "answer": "Two: x = 3 and x = −3. Either way: x² = 9, so x = ±3; or factor as (x − 3)(x + 3) = 0. Check: 3² − 9 = 0 ✓ and (−3)² − 9 = 9 − 9 = 0 ✓.",
+          "hints": [
+            "Add 9 to both sides: x² = 9. What numbers squared give 9?",
+            "Don't forget that a negative number squared is positive."
+          ]
+        },
+        {
+          "id": "qf-p3",
+          "question": "Your teen solved x² + 6x + 8 = 0 and wrote x = 2 and x = 4. Check one answer by substitution. What would you say next?",
+          "answer": "Substitute x = 2: 4 + 12 + 8 = 24, not 0—so it doesn't check. (The factoring (x + 2)(x + 4) is right, but setting x + 2 = 0 gives x = −2, not 2—a sign slip. The solutions are −2 and −4: 4 − 12 + 8 = 0 ✓.) What to say: 'When I plug in 2, I get 24, not 0. Can you look at the step where you set each factor equal to zero?'",
+          "hints": [
+            "Replace x with 2: 2² + 6(2) + 8. Is it 0?",
+            "If it isn't zero, it isn't a solution. Point your teen to the last step without fixing it for them."
+          ]
+        }
+      ],
+      "initialPrompt": "Want to give these a try? The last one is the kind of check you can do at the kitchen table with a phone calculator."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "zero-product-property",
+      "title": "Supporting Quadratics at Home",
+      "text": "**Questions that help (no factoring required on your part):**\n- 'Is one side equal to zero yet?' (catches the most common error)\n- 'Can you multiply your factors back out to see if you get the original?' (checks factoring)\n- 'Did you get two answers? Does it make sense that there are two?' (catches the missing ±)\n- 'What does the graph look like? Where does it cross the x-axis?' (connects algebra to the picture)\n- 'Which method did you pick, and why?' (builds the choosing skill teachers assess)\n\n**Check by substitution.** Every quadratic answer can be checked by plugging it in—that's arithmetic, and a phone calculator handles it. Remember that a negative number squared is positive: (−3)² = 9. Typing −3² into some calculators gives −9, which can make a correct answer look wrong; using parentheses fixes it.\n\n**Signs your teen understands vs. just follows steps:**\n- ✓ Can explain why factoring needs a zero on one side\n- ✓ Can say what the solutions mean on a graph\n- ✓ Picks a method on purpose\n- ✗ Only knows the formula and can't say what the answers represent\n- ✗ Gets one answer when there should be two\n\n**What NOT to say:**\n- 'Just use the quadratic formula for everything.' (It works—but it skips the understanding the class is building.)\n- 'FOIL it.' (Fine for two binomials, but the area model your teen uses works for every product.)\n- 'I was never good at this part.' (Try: 'This is the part a lot of people find tricky. Let's check your answer together.')\n\n**When frustration is high:** quadratics are often where an earlier gap shows up—usually integer signs or the distributive property. If the same kind of error keeps appearing, it's worth asking the teacher whether a quick review of those skills would help.",
+      "initialPrompt": "Which of those questions feels most natural for you to ask? Picking just one to use consistently is more effective than trying all five."
+    }
+  ]
+}

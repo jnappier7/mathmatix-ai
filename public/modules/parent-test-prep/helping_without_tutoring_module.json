@@ -1,0 +1,106 @@
+{
+  "moduleId": "helping_without_tutoring",
+  "course": "Parent Guide: ACT / SAT / PSAT",
+  "unit": 4,
+  "quarter": 1,
+  "title": "Helping Without Tutoring: Logistics, Mindset and Stress",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "You don't have to teach your teen anything to make a real difference in how test season goes. Parents add the most value in three roles: logistics manager (dates, registration, accommodations, test-day readiness), calm presence (mindset and anxiety), and guardian of balance (sleep, perspective, knowing when to stop). This module covers all three, including exactly what to say before the test and after a disappointing score.",
+  "skills": ["registration-logistics", "accommodations", "test-anxiety", "burnout-prevention"],
+  "standardsAlignment": [],
+  "goals": [
+    "Handle the logistics that most often derail test day",
+    "Know that accommodations and fee waivers exist and need to be arranged early",
+    "Support your teen through test anxiety with practical, evidence-informed steps",
+    "Keep perspective—and the relationship—bigger than any single score"
+  ],
+  "instructionalStrategy": [
+    "Position the parent as manager and supporter, not tutor.",
+    "Be specific about logistics; be general (and point to official sources) about dates, fees and policies.",
+    "Give concrete words for the hardest moments: the night before, the morning of, and a disappointing score.",
+    "Refer to the school counselor for significant anxiety or distress."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "registration-logistics",
+      "title": "Your Three Roles",
+      "text": "Many parents feel they should be doing more: hiring a tutor, quizzing vocabulary, checking practice scores. In practice, the most helpful parent roles in test season have nothing to do with content.\n\n**1. Logistics manager**\n- Test dates and registration deadlines (they come earlier than people expect)\n- Whether your teen's school offers the SAT, ACT, PSAT or PreACT **during the school day**—many states and districts do, often at no cost\n- **Accommodations** for students with an IEP or 504 plan (extended time, breaks and more) are available on all of these tests, but they must be **requested and approved in advance**, usually through the school, and approval can take several weeks\n- **Fee waivers** are available from both College Board and ACT for eligible students—ask the school counselor\n- Test-day readiness: device, ID, admission ticket, transportation\n\n**2. Calm presence**\n- Your tone sets the temperature. Teens borrow calm (and anxiety) from the adults around them.\n\n**3. Guardian of balance**\n- Sleep, meals, downtime, and the reminder that a score is one part of a much bigger picture.\n\nDates, fees and policies change—always confirm current details on the College Board and ACT websites or with the school counselor.",
+      "initialPrompt": "Which of those three roles feels most natural for you—and which feels hardest?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "test-anxiety",
+      "title": "I-Do: The Night Before, the Morning Of, and a Disappointing Score",
+      "examples": [
+        {
+          "problem": "What should the night before and the morning of the test look like?",
+          "solution": "**The night before:**\n- No new studying. A light look at notes is fine; a cram session isn't.\n- Pack the bag together (not for them—with them): admission ticket, acceptable photo ID, charged device and charger (for the digital SAT/PSAT), approved calculator, pencils, a water bottle and a snack for the break.\n- Confirm the route and the arrival time.\n- Aim for a normal bedtime. Doing something relaxing and ordinary is better than talking about the test all evening.\n\n**The morning of:**\n- A real breakfast.\n- Leave with time to spare—rushing spikes stress.\n- Keep conversation light. Skip the pep talk about how important today is.\n\n**What to say on the way:**\n- 'You've prepared. Just do what you've practiced.'\n- 'Answer every question—no penalty for guessing.'\n- 'Whatever happens, we'll figure out next steps together.'\n\n**What NOT to say:**\n- 'This is really important.' (They know.)\n- 'Your sister got a 1450.'\n- 'Don't be nervous.' (Try instead: 'A few nerves are normal—they mean you care.')",
+          "tip": "A checklist taped to the door the night before takes the pressure off both of you. Make it with your teen a week ahead."
+        },
+        {
+          "problem": "Your teen's score comes back lower than they hoped and they're upset. What do you say?",
+          "solution": "**First, listen.** Let them be disappointed. Resist the urge to fix it right away.\n\n- 'That's disappointing. You worked hard for this.'\n- 'How are you feeling about it?'\n\n**Later (hours or a day later), get practical together:**\n- 'Do you want to look at the section scores and see where the points are?'\n- 'Does this score fit the colleges you're looking at?' (Often it fits better than the teen thinks.)\n- 'Do you want to take it again? If so, what would you do differently this time?'\n\n**Keep perspective visible:**\n- A score is one part of an application—and at many colleges an optional one.\n- Every score is a range; a disappointing day is not a ceiling.\n- Many students retake and improve with a focused plan.\n\n**What NOT to say:**\n- 'What happened?' (Sounds like an accusation.)\n- 'You should have studied more.' (Even if true, it isn't useful today.)\n- 'It's fine, it doesn't matter.' (It matters to them—acknowledge that first.)",
+          "tip": "Your reaction to a disappointing score is remembered much longer than the score itself. Leading with support keeps your teen willing to try again."
+        }
+      ],
+      "initialPrompt": "Which of those moments do you expect to be hardest in your house—the night before, or after the score comes back?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "test-anxiety",
+      "title": "Understanding Test Anxiety",
+      "text": "**Some nerves are useful.** A moderate level of arousal sharpens focus. The problem is when anxiety rises high enough to crowd out working memory—the 'my mind went blank' experience.\n\n**What helps (and why):**\n- **Familiarity.** Anxiety feeds on the unknown. Practicing on the real format (the Bluebook app for the SAT/PSAT; ACT's official practice tests) makes test day feel like something your teen has done before.\n- **A plan for getting stuck.** 'If I'm stuck for more than a minute or so, I guess, flag it, and move on.' Having a rule removes the panic of the moment.\n- **Reframing.** Research suggests that viewing a racing heart as the body getting ready ('I'm energized') rather than as a threat ('I'm panicking') can improve performance.\n- **Breathing.** A few slow breaths with a long exhale is a simple, portable way to calm the body—worth practicing before test day.\n- **Sleep and food.** Tired and hungry brains are more anxious brains.\n\n**What doesn't help:**\n- Emphasizing the stakes ('This decides your college').\n- Constant check-ins about how prep is going.\n- Comparing to siblings or friends.\n\n**When to get help:** if anxiety is intense, frequent, or spilling into school, sleep or daily life, talk to the school counselor. Significant test anxiety is common and treatable, and if your teen has a documented condition, it may also be relevant to testing accommodations.\n\n**Burnout** looks different from anxiety: fatigue, cynicism ('what's the point'), slipping grades. The fix is usually *less*—a lighter plan, a break, or deciding the current score is good enough.",
+      "initialPrompt": "Has your teen described what test anxiety feels like for them? Their own words are the best guide to what will help."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "burnout-prevention",
+      "title": "Try It: Support Scenarios",
+      "problems": [
+        {
+          "id": "ht-p1",
+          "question": "Your teen has an IEP with extended time in class and their SAT is in about a month. Nobody has requested testing accommodations yet. What should you do?",
+          "answer": "Contact the school counselor (or the school's testing/accommodations coordinator) right away. Accommodations for the SAT and ACT must be requested and approved in advance, usually through the school, and approval can take several weeks. If approval won't arrive in time for this date, it may be worth moving to a later test date so your teen tests with the accommodations they're entitled to.",
+          "hints": [
+            "Do classroom accommodations carry over to the SAT/ACT automatically?",
+            "Who at school usually submits the request, and how long can approval take?"
+          ]
+        },
+        {
+          "id": "ht-p2",
+          "question": "Your teen says, 'On the practice test my mind went blank and I panicked on question 5.' What could you suggest?",
+          "answer": "Normalize it, then give them a plan: 'That happens to a lot of people. What if you had a rule: if a question stumps you, guess, flag it and move on—you can come back.' Suggest a couple of slow breaths when they notice the panic starting, and more practice in the real format so test day feels familiar. If it keeps happening or feels overwhelming, involve the school counselor.",
+          "hints": [
+            "What's a simple rule for getting unstuck mid-test?",
+            "What makes the test feel more familiar?"
+          ]
+        },
+        {
+          "id": "ht-p3",
+          "question": "Your senior has taken the ACT three times, with scores of 27, 28 and 28. They're exhausted and their grades are slipping, but they want to try a fourth time 'just in case.' What questions might you ask?",
+          "answer": "Ask questions that help them decide rather than deciding for them: 'How does 28 compare with the middle 50% at the colleges on your list?' 'What would you do differently this time—is there a real plan, or would it be the same test again?' 'What would a fourth test cost you in grades, sleep and stress?' With little change between the last attempts and grades slipping, it's often reasonable to decide the score is good enough and put the energy into classes and applications.",
+          "hints": [
+            "How much did the score change between attempts two and three?",
+            "What is the cost of another attempt, and is there a new plan that would change the result?"
+          ]
+        }
+      ],
+      "initialPrompt": "Let's try a few real-life situations. Just talk through what you'd say or do."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "burnout-prevention",
+      "title": "Keeping It in Perspective",
+      "text": "**Your checklist for test season:**\n\n**Logistics (your lane):**\n- ☐ Test date chosen, with registration deadline on the calendar\n- ☐ School-day testing, fee waivers and accommodations checked with the counselor\n- ☐ Official practice materials set up (Bluebook for the SAT/PSAT; ACT practice tests)\n- ☐ Test-day checklist made together a week ahead\n\n**Support (your tone):**\n- ☐ Ask about the plan and the process, not every score\n- ☐ Praise effort and consistency\n- ☐ Keep the stakes in proportion\n\n**Balance (your watch):**\n- ☐ Sleep protected, especially the week before\n- ☐ Watch for burnout: fatigue, cynicism, slipping grades\n- ☐ Agree in advance on a 'good enough' score tied to the college list\n\n**Things worth saying often:**\n- 'I'm proud of how you're handling this.'\n- 'It's one part of the picture.'\n- 'Whatever the score, we'll figure out the next step together.'\n\n**You've completed the ACT / SAT / PSAT Parent Guide.** You now know how today's tests work, what the scores mean, what a healthy plan looks like, and how to support your teen without becoming their tutor. Test season is temporary; the trust your teen feels from you through it lasts much longer. If your teen is also working through Algebra 1 or Geometry, the **Algebra 1 & Geometry Parent Guide** shows how to coach math homework by asking rather than telling—the same skill, used every night.",
+      "initialPrompt": "What's the one thing from this guide you most want to do differently—or keep doing—this test season?"
+    }
+  ]
+}

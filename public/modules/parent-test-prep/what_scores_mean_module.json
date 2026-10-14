@@ -1,0 +1,111 @@
+{
+  "moduleId": "what_scores_mean",
+  "course": "Parent Guide: ACT / SAT / PSAT",
+  "unit": 2,
+  "quarter": 1,
+  "title": "What Scores Mean: Scales, Percentiles and 'Good'",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "A score report is full of numbers, and the internet is full of opinions about which ones are 'good.' This module explains the scales (SAT 400–1600, PSAT/NMSQT 320–1520, ACT 1–36), why percentiles and score ranges matter more than a single number, how the PSAT and PreACT preview the real tests, how superscoring works, and how to define 'good' by the colleges and goals your teen actually has.",
+  "skills": ["score-scales", "percentiles", "score-ranges", "superscoring"],
+  "standardsAlignment": [],
+  "goals": [
+    "Read an SAT, PSAT or ACT score report: total/composite, section scores, ranges and percentiles",
+    "Understand what PSAT and PreACT scores say about future SAT and ACT scores",
+    "Know what superscoring and score choice are—and that policies vary by college",
+    "Judge a score against your teen's own college list instead of internet benchmarks"
+  ],
+  "instructionalStrategy": [
+    "Percentiles are the most useful and least understood number—spend time on them.",
+    "Emphasize that every score is really a range; small differences are mostly noise.",
+    "Be explicit that college policies (test-optional, superscoring) vary and change; point to each college's site.",
+    "Never promise a score gain; describe typical patterns honestly."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "score-scales",
+      "title": "The Scales, Side by Side",
+      "text": "**The score scales today:**\n\n| Test | Total | Sections |\n|---|---|---|\n| **SAT** | 400–1600 | Reading and Writing 200–800, Math 200–800 |\n| **PSAT/NMSQT** (and PSAT 10) | 320–1520 | Each section 160–760 |\n| **ACT** | Composite 1–36 | English, Math, Reading each 1–36; the composite is their average. Science (optional) is scored separately and feeds a STEM score |\n| **PreACT** | Reports on the ACT's 1–36 scale (the top reportable score is a bit below 36) | |\n\n**If you took the SAT between 2005 and 2016**, it was scored out of 2400, so your own number won't compare directly. If you took the ACT, the 1–36 scale is the same—but the test itself has changed.\n\n**Rough national context:** in recent years the average SAT total has been roughly 1000–1050 and the average ACT composite roughly 19–20. Those are just context—averages shift from year to year, and they say nothing about what's right for your teen.\n\n**The three numbers that matter most on a report:**\n1. **The score** (total or composite)\n2. **The percentile:** the percentage of test-takers who scored at or below it\n3. **The score range:** the band your teen would likely score within if they took the test again on a similar day\n\nMost families look only at #1. The other two tell you much more.",
+      "initialPrompt": "Has your teen already received a PSAT, PreACT, SAT or ACT score? If so, we can use it as our example—or I'll use a sample report."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "percentiles",
+      "title": "I-Do: Reading a Score Report",
+      "examples": [
+        {
+          "problem": "Sample SAT report: Total 1210 (Reading and Writing 600, Math 610). The report lists a percentile around the 75th–80th. What does it mean?",
+          "solution": "**The total:** 600 + 610 = 1210. Section scores always add up to the total.\n\n**The percentile:** 'About the 78th percentile' means your teen scored as high as or higher than about 78 out of every 100 test-takers in the comparison group. (College Board reports more than one comparison group—check which one you're reading.)\n\n**The score range:** reports show a band around the score—several dozen points wide on the SAT. A teen who scored 1210 could reasonably score somewhat above or below that on another day **without learning anything new**.\n\n**What this means for you:**\n- A 1210 and a 1240 are much closer than they look. Don't celebrate or despair over small differences.\n- The percentile is the best quick answer to 'how did I do?'\n- The section scores show where effort is likely to pay off most.",
+          "tip": "Before looking at whether a score is 'good,' look at the section split. A big gap between sections usually points to the most efficient place to practice."
+        },
+        {
+          "problem": "Your teen took the PSAT/NMSQT in 10th grade and scored 1000. What does that tell you about the SAT?",
+          "solution": "**The PSAT is reported on the SAT's scale.** A 1000 on the PSAT is roughly the score your teen would have earned on the SAT if they'd taken it that same day.\n\n**But it's a snapshot, not a prediction of the future.** Between 10th and 11th grade, your teen will take more math and keep reading and writing, and scores typically rise with that schooling alone—plus whatever focused practice they do.\n\n**How to use a PSAT (or PreACT) score:**\n- It's a **free diagnostic**: the section scores and question-level feedback show which skills to strengthen.\n- It's **low stakes** in 9th and 10th grade.\n- The **junior-year** PSAT/NMSQT is also the qualifying test for the **National Merit Scholarship Program**. Only a small share of very high scorers (roughly the top 1% of juniors in each state) become semifinalists, and the cutoff varies by state and year—so for most students it's just good practice.\n\n**The PreACT works the same way for the ACT:** it reports on the ACT's scale, so a PreACT score is a rough preview of where your teen would land on the ACT today.",
+          "tip": "Mathmatix's practice PSAT and PreACT Math tests report the same way—on the SAT's and ACT's scales—so a practice score reads as an estimate of where your teen would land today."
+        },
+        {
+          "problem": "Your teen took the ACT twice. Test 1: English 24, Math 28, Reading 26. Test 2: English 27, Math 26, Reading 25. What's the composite each time, and what is a superscore?",
+          "solution": "**Composite = average of English, Math and Reading:**\n- Test 1: (24 + 28 + 26) ÷ 3 = 78 ÷ 3 = **26**\n- Test 2: (27 + 26 + 25) ÷ 3 = 78 ÷ 3 = **26**\n\nSame composite—but different strengths each time.\n\n**Superscore:** take the **best score in each section** across test dates, then average them:\n- Best English 27, best Math 28, best Reading 26 → (27 + 28 + 26) ÷ 3 = 81 ÷ 3 = **27**\n\n**Who uses superscores?** That depends on the college. Many colleges superscore the SAT (best Reading and Writing + best Math across dates), and many accept ACT superscores—but some don't, and policies change. Check each college's admissions page.\n\n**Score choice:** both College Board and ACT generally let students choose which test dates to send, though some colleges ask to see all scores.",
+          "tip": "Superscoring is one reason a planned second test can make sense: a teen can focus practice on their weaker section the second time."
+        }
+      ],
+      "initialPrompt": "Try the superscore idea: if your teen's SAT Math was 590 on one date and 640 on another, and Reading and Writing was 620 and then 600, what would the superscore be?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "score-ranges",
+      "title": "What 'Good' Really Means",
+      "text": "**There is no universal 'good' score.** A good score is one that fits the colleges and programs your teen is considering.\n\n**How to find that out:**\n1. Make a list of colleges your teen is genuinely interested in.\n2. Look up each one's **middle 50% score range**—the 25th to 75th percentile of scores for admitted or enrolled students. Colleges publish this on their admissions pages and in their 'Common Data Set.'\n3. Compare:\n   - **Above the 75th percentile:** the score is a strength for that college.\n   - **Inside the range:** the score fits; the rest of the application does the work.\n   - **Below the 25th percentile:** consider whether to retest, or—at a test-optional college—whether to submit at all.\n\n**Test-optional, test-required, test-flexible:** policies vary a lot, and several selective colleges have changed theirs in recent years (some reinstating requirements). Always check the current policy on each college's own site, for the year your teen applies.\n\n**Beyond admissions:** some states, scholarship programs and colleges use scores for merit aid, course placement or honors programs. If money matters (it usually does), check whether your teen's target colleges tie merit scholarships to scores.\n\n**On retakes:** many students take the SAT or ACT two or three times. Scores often rise a bit on a retake, especially after targeted practice—but large jumps usually come from real skill-building, not from simply taking the test again. A third or fourth attempt without new preparation rarely moves much.\n\n**Why small differences don't matter:** because every score is a range, colleges know a 1280 and a 1300 are essentially the same performance. Chasing the last 20 points is rarely worth the time, stress or lost sleep.",
+      "initialPrompt": "Does your teen have a few colleges in mind yet? Looking up one or two middle-50% ranges together is a great, low-stress first conversation."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "score-ranges",
+      "title": "Try It: Reading Scores and Making Calls",
+      "problems": [
+        {
+          "id": "sm-p1",
+          "question": "Your teen's SAT superscore question: Math 590 then 640; Reading and Writing 620 then 600. What's the superscore?",
+          "answer": "Best Reading and Writing (620) + best Math (640) = 1260. Whether a college uses it depends on that college's superscoring policy.",
+          "hints": [
+            "Take the highest score in each section across the two dates.",
+            "Add the two best section scores together."
+          ]
+        },
+        {
+          "id": "sm-p2",
+          "question": "Your teen scored 1150 on the SAT. Their top-choice college's middle 50% range is 1120–1300. Is a retake necessary?",
+          "answer": "Not necessarily. 1150 is inside the range, so the score fits that college; the rest of the application does the work. A retake could help if your teen has time and energy to prepare and wants to move toward the upper half—especially if the college superscores or offers merit aid tied to scores—but it's a choice, not an emergency.",
+          "hints": [
+            "Where does 1150 fall relative to 1120 and 1300?",
+            "Inside the middle 50% means the score fits. What would a retake add, and at what cost?"
+          ]
+        },
+        {
+          "id": "sm-p3",
+          "question": "An ACT report shows English 22, Math 30, Reading 26. What's the composite, and where would you suggest your teen focus?",
+          "answer": "Composite = (22 + 30 + 26) ÷ 3 = 78 ÷ 3 = 26. The biggest opportunity is English (22), well below the other two. Because the composite is an average, raising the weakest section often moves it most efficiently.",
+          "hints": [
+            "Average the three section scores: English, Math and Reading.",
+            "Which section is furthest below the others?"
+          ]
+        }
+      ],
+      "initialPrompt": "Want to try a few? They're quick, and they mirror real decisions families make."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "superscoring",
+      "title": "Talking About Scores at Home",
+      "text": "**When the score arrives:**\n- **Let your teen open it and react first.** Ask, 'How do you feel about it?' before sharing your own reaction.\n- **Look at the percentile and the section split together.** 'Where do you think the next points are?'\n- **Compare to their college list, not to friends, siblings or the internet.**\n\n**Questions that help:**\n- 'Does this fit the colleges you're looking at?'\n- 'Do you want to take it again? If so, what would you do differently?'\n- 'Which section do you think has the most room to grow?'\n\n**What NOT to say:**\n- 'Your cousin got a 1400.' (Comparisons hurt and tell you nothing about fit.)\n- 'That's not good enough.' (Good enough for what? Use the college list.)\n- 'Just take it again.' (Retakes help most when there's a plan between attempts.)\n\n**Key facts to keep handy:**\n- SAT 400–1600; PSAT/NMSQT 320–1520; ACT composite 1–36\n- Every score is a range; small differences are noise\n- Superscoring and test-optional policies **vary by college**—check each one's admissions page\n\n**About practice-test scores:** practice scores, including Mathmatix's, are **estimates**. They're excellent for tracking direction and finding weak spots, but they aren't official scores and won't match the real test exactly. Watch the trend across several practice tests rather than any single number.",
+      "initialPrompt": "If your teen's next score came in lower than hoped, what would you want your first sentence to be?"
+    }
+  ]
+}

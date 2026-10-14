@@ -1,0 +1,120 @@
+{
+  "moduleId": "linear_functions_patterns",
+  "course": "Parent Guide: Algebra 1 & Geometry (Grades 9–10)",
+  "unit": 1,
+  "quarter": 1,
+  "title": "Linear Equations & Functions: Patterns, Tables and Graphs",
+  "weeks": "1",
+  "estimatedDuration": 25,
+  "description": "You may remember y = mx + b as a formula to memorize. Your teen is being asked to do something bigger: see one relationship as a situation, a table, a graph and an equation—and move between them. This module rebuilds linear functions as 'a starting amount plus a steady change,' shows where teens most often get stuck (slope, signs, the distributive property), and gives you one checking habit that works on almost every Algebra 1 equation.",
+  "skills": ["linear-functions", "slope-as-rate", "multiple-representations", "solving-linear-equations"],
+  "standardsAlignment": ["A-CED.A.1", "A-CED.A.2", "A-REI.B.3", "F-IF.B.4", "F-IF.B.6", "F-LE.A.1", "F-LE.A.2"],
+  "goals": [
+    "Read y = mx + b as 'start with b, change by m each step' in a real situation",
+    "See how a table, a graph, an equation and a word problem describe the same relationship",
+    "Recognize the most common Algebra 1 errors: slope upside down, sign slips, and partial distribution",
+    "Use substitution to check an answer—without having to solve the problem yourself"
+  ],
+  "instructionalStrategy": [
+    "Lead with a real situation (a phone plan, a savings jar) before any symbols.",
+    "Show the same relationship in all four representations so the parent sees they are one idea.",
+    "Name the common errors explicitly—parents who can spot them can ask the right question.",
+    "Make substitution the take-away habit: it requires only arithmetic, so every parent can use it."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "context-setting",
+      "skill": "linear-functions",
+      "title": "Why Tables, Graphs AND Equations?",
+      "text": "If you took Algebra 1 a while ago, you probably spent most of your time solving equations: get x by itself, box the answer, move on.\n\nYour teen still does that—but Algebra 1 today is organized around **functions**: rules that turn one number into another. And the course asks students to see every function four ways:\n\n1. **A situation:** 'A phone plan costs $20 a month plus $5 per gigabyte of data.'\n2. **A table:**\n```\nGB used │ Monthly cost\n────────┼─────────────\n   0    │   $20\n   1    │   $25\n   2    │   $30\n   3    │   $35\n```\n3. **A graph:** a straight line that starts at 20 on the cost axis and rises 5 for every 1 step to the right.\n4. **An equation:** y = 5x + 20\n\nThese are not four topics. They're **one relationship wearing four outfits**. A big part of your teen's homework is translating between them: 'Here's a table—write the equation.' 'Here's a graph—what does the slope mean in this situation?'\n\n**Where teens get stuck:**\n- Treating each representation as a separate procedure instead of the same idea\n- Mixing up which number is the starting value and which is the rate\n- Computing slope upside down (run over rise) or with the wrong sign\n- Partial distribution: writing 3(x − 4) as 3x − 4\n\nThe good news: every one of these can be caught with a question, not a lecture.",
+      "initialPrompt": "When you think back to Algebra 1, what do you remember—solving for x, graphing lines, or mostly that it was confusing? Either answer is fine; it helps me pitch this right."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "slope-as-rate",
+      "title": "I-Do: Starting Value Plus Rate of Change",
+      "examples": [
+        {
+          "problem": "The phone plan: $20 a month plus $5 per GB. Write the equation and explain what each number means.",
+          "solution": "**Plain language first:** You pay $20 no matter what. Then every gigabyte adds $5.\n\n- **Starting value** (what you pay at 0 GB): $20 → this is **b**, the y-intercept\n- **Rate of change** (how much the cost goes up per GB): $5 per GB → this is **m**, the slope\n\n**Equation:** y = 5x + 20, where x = gigabytes and y = monthly cost.\n\n**On the graph:** the line crosses the cost axis at 20 (the start), and for every 1 step right it climbs 5 (the rate).\n\n**The way you might remember it:** 'm is slope, b is the y-intercept'—correct, but just labels. Your teen is asked to say what the slope MEANS: '$5 more for each additional gigabyte.' Teachers grade that sentence, because it shows understanding rather than memorization.",
+          "tip": "Ask your teen: 'What would this cost if you used zero data?' That one question finds the starting value in almost any linear word problem."
+        },
+        {
+          "problem": "A line passes through the points (2, 7) and (6, 15). Find its equation.",
+          "solution": "**Step 1 — Slope (rate of change):** How much does y change compared with x?\n- y goes from 7 to 15: a change of 8\n- x goes from 2 to 6: a change of 4\n- Slope = 8 ÷ 4 = **2** (y goes up 2 for every 1 step in x)\n\nThe formula version: m = (y₂ − y₁) / (x₂ − x₁) = (15 − 7) / (6 − 2) = 2. Notice it's **change in y on top**—'rise over run.' Flipping it (4 ÷ 8) is one of the most common Algebra 1 errors.\n\n**Step 2 — Starting value:** Use either point. With (2, 7): 7 = 2(2) + b, so 7 = 4 + b, and b = 3.\n\n**Equation:** y = 2x + 3\n\n**Step 3 — Check (the habit to teach):** Plug in the OTHER point. x = 6 → 2(6) + 3 = 15 ✓. It matches, so the equation is right.",
+          "tip": "Checking with the second point is pure arithmetic. You can ask for it even if you don't remember how to find slope: 'Does your equation work for both points?'"
+        },
+        {
+          "problem": "Solve 3(x − 4) = x + 6, and see the most common mistake.",
+          "solution": "**Correct solution:**\n- Distribute: 3x − 12 = x + 6 (the 3 multiplies BOTH the x and the 4)\n- Subtract x from both sides: 2x − 12 = 6\n- Add 12 to both sides: 2x = 18\n- Divide by 2: **x = 9**\n- **Check:** left side 3(9 − 4) = 3(5) = 15; right side 9 + 6 = 15 ✓\n\n**The common mistake (partial distribution):**\n- 3x − 4 = x + 6 → 2x = 10 → x = 5\n- **Check:** left side 3(5 − 4) = 3; right side 5 + 6 = 11 ✗\n\nThe check catches the error immediately—and your teen finds it themselves, which is exactly what you want.",
+          "tip": "When an answer fails the check, don't point at the wrong line. Ask: 'It didn't check—which step do you trust least?' Teens usually find it in under a minute."
+        }
+      ],
+      "initialPrompt": "Try the check yourself: if a teen says the answer to 2(x + 5) = 18 is x = 6.5, what do you get when you put 6.5 back in on the left side?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "why-it-works",
+      "skill": "multiple-representations",
+      "title": "Why Linear Functions Matter So Much",
+      "text": "**'When will I ever use this?'** For linear functions, the honest answer is: constantly—you just don't call it algebra.\n\n- A taxi fare (flag drop + per-mile rate)\n- An hourly wage plus a sign-on bonus\n- A savings plan (starting balance + monthly deposit)\n- Converting temperatures (°F = 1.8 × °C + 32)\n\nEvery one of those is 'starting value plus steady rate of change.'\n\n**Why teachers insist on all four representations:**\n- **Tables** show the pattern (the constant difference IS the slope).\n- **Graphs** show the big picture (steeper = faster change; where two lines cross = when two plans cost the same).\n- **Equations** let you compute anything exactly.\n- **Words** force you to say what the numbers mean.\n\nA student who can move between all four doesn't need to memorize separate procedures—they can reason their way to whichever one they need.\n\n**Where this leads:**\n- **Systems of equations** (later in Algebra 1): when do two plans cost the same? Where the lines cross.\n- **Quadratics and exponentials** (Unit 2 and Algebra 2): functions whose rate of change is NOT steady—so understanding 'steady' first is the foundation.\n- **The SAT and ACT:** linear relationships are among the most heavily tested topics on both math sections.\n- **Science:** speed, density and rates in physics and chemistry are slopes.\n\nSo when your teen spends a week turning tables into graphs into equations, they're not wasting time on 'easy' material—they're building the idea the rest of high school math stands on.",
+      "initialPrompt": "Can you think of something in your own life—a bill, a paycheck, a subscription—that works like 'a starting amount plus the same amount each time'? Those make great examples to share with your teen."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "try-it",
+      "skill": "linear-functions",
+      "title": "Try It: Patterns, Equations and Checks",
+      "problems": [
+        {
+          "id": "lf-p1",
+          "question": "A table shows x = 0, 1, 2, 3 and y = 4, 7, 10, 13. Is this linear? If so, what is the equation?",
+          "answer": "Yes. y goes up by 3 every time x goes up by 1 (a constant difference), so it's linear with slope 3. At x = 0, y = 4, so the starting value is 4. Equation: y = 3x + 4. Check: x = 3 → 3(3) + 4 = 13 ✓.",
+          "hints": [
+            "Look at how much y changes each time x goes up by 1. Is it the same every time?",
+            "The change per step is the slope; the y-value when x = 0 is the starting value."
+          ]
+        },
+        {
+          "id": "lf-p2",
+          "question": "A gym charges a $30 sign-up fee and $15 per month. Write the equation for total cost after x months. What does the 15 mean in words?",
+          "answer": "y = 15x + 30. The 15 is the rate of change: the total cost goes up $15 for each additional month. (The 30 is the starting value—what you pay at month 0.) After 6 months: 15(6) + 30 = $120.",
+          "hints": [
+            "What do you pay before any months have passed? That's the starting value.",
+            "What gets added every single month? That's the rate."
+          ]
+        },
+        {
+          "id": "lf-p3",
+          "question": "Your teen solved 2(x + 5) = 18 and wrote x = 6.5. Without solving it yourself, how can you tell whether that's right—and what would you say?",
+          "answer": "Substitute: 2(6.5 + 5) = 2(11.5) = 23, not 18—so it doesn't check. (The likely error is partial distribution: 2x + 5 instead of 2x + 10. The correct answer is x = 4, since 2(4 + 5) = 18.) What to say: 'Let's plug it back in… it gives 23, not 18. Which step do you want to look at again?' You haven't given the answer or the method—your teen finds the fix.",
+          "hints": [
+            "Put 6.5 in place of x on the left side and do the arithmetic.",
+            "If it doesn't come out to 18, the answer isn't right. Instead of fixing it, ask a question that sends your teen back to their own steps."
+          ]
+        },
+        {
+          "id": "lf-p4",
+          "question": "Your teen says, 'I just don't get slope.' What's one question you could ask instead of explaining it?",
+          "answer": "Any question that turns slope into a story works. For example: 'If you walk one step to the right along this line, how far up or down do you go?' or 'In this problem, what goes up by the same amount each time?' or 'If this were a phone plan, what's the per-gigabyte charge?' The goal is for your teen to put the rate into their own words.",
+          "hints": [
+            "Slope is 'how much y changes for each 1 step in x.'",
+            "Think of a question that asks your teen to describe that change in their own words, rather than recite a formula."
+          ]
+        }
+      ],
+      "initialPrompt": "Want to try a couple? These are about the level of a typical Algebra 1 homework set—and one is about what you'd SAY, not what you'd calculate."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "homework-tips",
+      "skill": "solving-linear-equations",
+      "title": "Supporting Algebra 1 at Home",
+      "text": "**You don't need to remember how to solve these to help.** You need three questions and one habit.\n\n**Three questions that work on almost any linear problem:**\n1. 'What's the starting amount, and what changes each time?'\n2. 'Can you show me that in a table (or on a graph)?'\n3. 'What does that number mean in this situation?'\n\n**The one habit: plug it back in.**\nWhenever your teen gets an answer to an equation, ask: 'Does it check?' Substituting is just arithmetic—you can verify it with a phone calculator. If it checks, they're done. If it doesn't, ask 'Which step do you trust least?' and let them hunt.\n\n**Errors worth knowing by sight:**\n- **Slope upside down:** change in x on top instead of change in y\n- **Sign slips:** subtracting a negative, or moving a term across the equals sign and forgetting to change its sign\n- **Partial distribution:** 3(x − 4) written as 3x − 4\n- **Starting value confusion:** using the first number in the problem as b, even when it's the rate\n\nYou don't have to correct these. Just knowing they're common lets you ask, 'Can you double-check how you distributed that?' instead of 'This is wrong.'\n\n**What NOT to say:**\n- 'Just memorize y = mx + b.' (Memorized labels without meaning fall apart on word problems.)\n- 'Here, let me do it.' (Your teen learns that the way out of struggle is a parent.)\n- 'I was never good at math either.' (Well-meant, but it tells your teen that math ability is fixed. Try 'This is tricky—let's figure out what the question is asking.')\n\n**Free tools that help:** A graphing tool like Desmos (free online) lets your teen type an equation and see the line instantly—great for checking whether a graph matches the equation they wrote. Encourage it as a **checker**, after they've worked the problem.",
+      "initialPrompt": "Which of those three questions do you think your teen would respond to best? Some teens love the 'what does it mean' question; others need the table first."
+    }
+  ]
+}
