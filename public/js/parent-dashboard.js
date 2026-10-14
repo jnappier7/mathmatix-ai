@@ -913,6 +913,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             ${weeklySummaryHTML}
             ${skillRingHTML}
             ${growthSparklineHTML}
+            <div class="child-testprep" id="testprep-${escText(progress._id)}" hidden></div>
 
             <!-- Learning Analytics Section -->
             <div class="child-analytics-section" style="margin-top: 16px; padding: 14px; background: #f0f7ff; border-radius: 10px; border: 1px solid #d6eaf8;">
@@ -996,6 +997,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         }
 
+        // Practice-test results (fills the slot only when there are attempts)
+        loadChildTestPrep(card, progress._id, `${progress.firstName || ''} ${progress.lastName || ''}`.trim());
+
         // Fetch and render learning analytics for this child
         if (window.AnalyticsCharts) {
             fetchChildAnalytics(progress._id);
@@ -1035,6 +1039,96 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         }
     }
+
+    // ============================================
+    // TEST PREP CARD — PreACT / PSAT / SAT / ACT practice-test results
+    // Server: GET /api/parent/child/:childId/test-prep (routes/parent.js), the
+    // same numbers and Rushed / Unfinished rules as the teacher's Test Prep tab.
+    // Rendering of flags, bars and the printable report is shared with the
+    // teacher page (js/test-prep-report.js). Silent when there are no attempts.
+    // ============================================
+
+    const TP_LOCALES = { English: 'en-US', Spanish: 'es', Russian: 'ru', Chinese: 'zh-CN', Vietnamese: 'vi', Arabic: 'ar', Somali: 'so', French: 'fr', German: 'de' };
+    const testPrepByChild = new Map();
+
+    function testPrepRenderer() {
+        const lang = (window.MathmatixI18n && window.MathmatixI18n.getLanguage()) || 'English';
+        return window.TestPrepReport.create({
+            t: (key, english) => t('parent.testPrep.' + key, english),
+            locale: TP_LOCALES[lang] || 'en-US',
+            dir: lang === 'Arabic' ? 'rtl' : 'ltr'
+        });
+    }
+
+    function buildTestPrepCard(childId, exams) {
+        const R = testPrepRenderer();
+        const headingId = `ptp-h-${escText(childId)}`;
+        const rows = exams.map(e => {
+            const a = e.latest || {};
+            const change = e.change != null && e.change !== 0
+                ? `<span class="ptp-change ${e.change > 0 ? 'up' : 'down'}" title="${escText(t('parent.testPrep.changeHelp', 'Compares only attempts that were not rushed or unfinished.'))}">${escText(window.TestPrepReport.fill(t('parent.testPrep.changeSince', '{change} since first full attempt'), { change: (e.change > 0 ? '+' : '−') + Math.abs(e.change) }))}</span>`
+                : '';
+            const meta = [
+                R.fmtDate(a.completedAt),
+                e.attemptCount > 1
+                    ? window.TestPrepReport.fill(t('parent.testPrep.attempts', '{n} attempts'), { n: e.attemptCount })
+                    : ''
+            ].filter(Boolean).join(' · ');
+            const flags = (a.flags || []).length
+                ? `<ul class="tp-flag-list">${a.flags.map(f => `<li>${R.flagChip(f)} ${escText(R.flagHelp(f))}</li>`).join('')}</ul>`
+                : '';
+            const bars = R.barsList(a);
+            return `
+                <div class="ptp-exam">
+                    <div class="ptp-row">
+                        <span class="ptp-label">${escText(e.label)}</span>
+                        <span class="ptp-score">${a.scaledScore != null ? escText(a.scaledScore) : '—'}</span>
+                        ${a.range ? `<span class="tp-range">${escText(R.s('likelyRange', { low: a.range.low, high: a.range.high }))}</span>` : ''}
+                        ${change}
+                    </div>
+                    <div class="ptp-meta">${escText(t('parent.testPrep.latest', 'Latest'))} · ${escText(meta)}</div>
+                    ${flags}
+                    ${bars ? `<div class="ptp-bars-h">${escText(R.s('byArea'))}</div>${bars}` : ''}
+                    <button type="button" class="btn btn-tertiary ptp-print" data-child-id="${escText(childId)}" data-test-id="${escText(e.testId)}">
+                        <i class="fas fa-print" aria-hidden="true"></i> ${escText(t('parent.testPrep.printReport', 'Print report'))}
+                    </button>
+                </div>`;
+        }).join('');
+        return `
+            <section class="ptp" aria-labelledby="${headingId}">
+                <strong class="ptp-title" id="${headingId}"><i class="fas fa-clipboard-check" aria-hidden="true"></i> ${escText(t('parent.testPrep.title', 'Practice tests'))}</strong>
+                ${rows}
+                <p class="ptp-foot">${escText(t('parent.testPrep.footnote', 'Rushed or unfinished attempts are shown but not used to measure change.'))}</p>
+            </section>`;
+    }
+
+    async function loadChildTestPrep(card, childId, childName) {
+        const slot = card.querySelector('.child-testprep');
+        if (!slot || !window.TestPrepReport) return;
+        try {
+            const res = await fetch(`/api/parent/child/${encodeURIComponent(childId)}/test-prep`, { credentials: 'include' });
+            if (!res.ok) return;
+            const body = await res.json();
+            const exams = (body && body.exams) || [];
+            if (!exams.length) return; // no attempts → stay quiet
+            testPrepByChild.set(String(childId), { name: childName, exams });
+            slot.innerHTML = buildTestPrepCard(childId, exams);
+            slot.hidden = false;
+        } catch (err) {
+            console.warn('[test-prep] could not load practice-test results:', err);
+        }
+    }
+
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest && e.target.closest('.ptp-print');
+        if (!btn) return;
+        const entry = testPrepByChild.get(btn.dataset.childId);
+        const exam = entry && entry.exams.find(x => x.testId === btn.dataset.testId);
+        if (!exam) return;
+        if (!testPrepRenderer().printReport(entry.name, exam.label, exam)) {
+            showToast(t('parent.testPrep.popupBlocked', 'Allow pop-ups to print the report'), 'error');
+        }
+    });
 
     // ============================================
     // LEARNING REPORT MODAL

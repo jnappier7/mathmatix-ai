@@ -133,3 +133,23 @@ describe('assignmentStatus', () => {
     expect(Object.keys(TP.RUNNER_URL).sort()).toEqual([...TP.KNOWN_EXAMS].sort());
   });
 });
+
+describe('buildChildExamList (the parent read of one child)', () => {
+  test('ordered junior-first, same per-exam numbers as the teacher grid, nothing class-level', () => {
+    const attempts = [
+      TP.summarizeAttempt(session({ testId: 'act-math', scaledScore: 20, completedAt: new Date(T0 + 45 * MIN) })),
+      TP.summarizeAttempt(session({ testId: 'act-math', scaledScore: 26, startedAt: new Date(T0 + 86400000), completedAt: new Date(T0 + 86400000 + 45 * MIN) })),
+      TP.summarizeAttempt(session({ testId: 'psat-math', scaledScore: 480, timeLimitMinutes: 70 })),
+    ];
+    const list = TP.buildChildExamList(attempts);
+    expect(list.map(e => e.testId)).toEqual(['psat-math', 'act-math']);
+    const act = list[1];
+    expect(act).toMatchObject({ label: 'ACT', attemptCount: 2, change: 6 });
+    expect(act.latest.scaledScore).toBe(26);
+    expect(act).not.toHaveProperty('classAverage');
+  });
+  test('no attempts → empty list', () => {
+    expect(TP.buildChildExamList([])).toEqual([]);
+    expect(TP.buildChildExamList(undefined)).toEqual([]);
+  });
+});

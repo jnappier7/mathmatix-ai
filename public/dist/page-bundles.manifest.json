@@ -205,14 +205,14 @@
     ],
     "js": [
       {
-        "src": "/dist/js/parent-js0.1bfe818a.js",
+        "src": "/dist/js/parent-js0.dc20e10e.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
         ]
       },
       {
-        "src": "/dist/js/parent-js1.0ae4dd96.js",
+        "src": "/dist/js/parent-js1.02497a40.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/parent-analytics.js",
@@ -223,6 +223,7 @@
           "/js/storage-utils.js",
           "/js/auto-logout.js",
           "/js/avatarFullBody.js",
+          "/js/test-prep-report.js",
           "/js/parent-dashboard.js",
           "/js/modules/messaging.js",
           "/js/modules/learningSupports.js"
@@ -265,7 +266,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/teacher-js0.1bfe818a.js",
+        "src": "/dist/js/teacher-js0.dc20e10e.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
@@ -284,7 +285,7 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.c147c21d.js",
+        "src": "/dist/js/teacher-js2.d35d95a5.js",
         "files": [
           "/js/idle-dialog.js",
           "/js/auto-logout.js",
@@ -293,6 +294,7 @@
           "/js/teacher-metrics.js",
           "/js/teacher-school-year.js",
           "/js/teacher-home.js",
+          "/js/test-prep-report.js",
           "/js/teacher-testprep.js",
           "/js/teacher-dashboard.js?v=2.3",
           "/js/teacher-transcripts.js",
