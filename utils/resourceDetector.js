@@ -197,8 +197,11 @@ async function fetchAndProcessResource(resource) {
         return {
             success: true,
             resource: {
+                id: String(resource._id),
                 displayName: resource.displayName,
                 description: resource.description,
+                // Drives how the tutor may use it (tests/quizzes: parallel practice only).
+                category: resource.category,
                 fileType: resource.fileType,
                 content: finalContent, // Limit to 3000 chars for AI context
                 publicUrl: resource.publicUrl
