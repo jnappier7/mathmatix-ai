@@ -22,6 +22,7 @@ const { decide, ACTIONS } = require('./decide');
 const { generate, assemblePrompt } = require('./generate');
 const { attachVerifiedTwin } = require('../twinGenerator');
 const { verify } = require('./verify');
+const activeProblemState = require('./activeProblem');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { judgeReply, PROD_JUDGES } = require('../replyJudges');
 const judgeMetrics = require('../judgeMetrics');
@@ -744,6 +745,26 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // ── Active problem: what the student is working on, per part ──
+  // Adopt a problem they brought this turn, credit any answer they stated,
+  // and hand verify the answers they have NOT supplied — on every turn, not
+  // only graded-wrong ones (verify §3a). Never allowed to cost a turn.
+  const messageCountAtTurn = (ctx.conversation.messages || []).length;
+  let activeProblem = ctx.conversation.activeProblem || null;
+  let guardedProblemAnswers = [];
+  try {
+    activeProblem = activeProblemState.beforeReply(activeProblem, {
+      message,
+      messageType: observation.messageType,
+      isBareProblemDrop: observation.isBareProblemDrop || false,
+      studentAnswer: observation.answer?.value || null,
+      messageCount: messageCountAtTurn,
+    });
+    guardedProblemAnswers = activeProblemState.guardedAnswers(activeProblem, messageCountAtTurn);
+  } catch (err) {
+    console.error('[Pipeline] Active-problem update failed (non-fatal):', err.message);
+  }
+
   // ── Stage 5: VERIFY ──
   const verified = await verify(rawResponseText, {
     resolvedTools,
@@ -773,7 +794,23 @@ async function runPipeline(message, ctx) {
     // The item under ACT/SAT review: its stored key stays guarded until the
     // student names it (verify §3a).
     actReviewMiss: ctx.actReviewMiss || null,
+    guardedProblemAnswers,
   });
+
+  // A problem the tutor just posed becomes the active one (persist saves it).
+  try {
+    activeProblem = activeProblemState.adoptFromTutor(activeProblem, {
+      reply: verified.text,
+      recentUserMessages: [message],
+      messageCount: messageCountAtTurn + 1,
+    });
+    if (activeProblem !== (ctx.conversation.activeProblem || null)) {
+      ctx.conversation.activeProblem = activeProblem;
+      ctx.conversation.markModified?.('activeProblem');
+    }
+  } catch (err) {
+    console.error('[Pipeline] Active-problem adopt failed (non-fatal):', err.message);
+  }
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);
 
