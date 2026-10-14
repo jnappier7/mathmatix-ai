@@ -49,14 +49,14 @@ const ActTestSession = require('../models/actTestSession');
 const { GUEST_TTL_MS } = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { assembleForm, rawToScaled, scaledRange } = require('../utils/actTestAssembler');
-const { getTestDef, testScope } = require('../utils/practiceTests');
+const { getTestDef, testScope, courseTestScope } = require('../utils/practiceTests');
 const { isModular, moduleRange, moduleBlueprint, routeFor, irtScaled } = require('../utils/testModules');
 const { normalizeOptions, frozenPickForGrading, LABELS: MC_LABELS } = require('../utils/mcOptions');
 const CourseSession = require('../models/courseSession');
 const {
   answeredCount, overdueMs, shouldAbandonOnExpiry, isIncompleteAttempt, buildComparison,
 } = require('../utils/actProgress');
-const { seenProblemIdsForUser, seedBootcampFromTest } = require('../utils/actBootcampSeed');
+const { seenLedgerForUser, ledgerFromSessions, seedBootcampFromTest } = require('../utils/actBootcampSeed');
 const { recordConversionEvent } = require('../utils/conversionEvents');
 const { makeRunnerLimiters } = require('../middleware/practiceTestLimiter');
 
@@ -131,14 +131,17 @@ function inCurrentModule(session, position) {
  * What /start assembles: the whole form, or Module 1 of a modular test.
  * Returns the items and clock for the session, plus the fields to store.
  */
-async function assembleOpening(def, { seed, excludeIds }) {
+async function assembleOpening(def, { seed, excludeIds, seenAt }) {
   const bp = def.blueprint;
+  // reuseSeen: once a student has seen everything a slot could hold, the least
+  // recently seen item fills it instead of a gap (coverage.reused says so).
+  const common = { seed, excludeIds, seenAt, reuseSeen: true };
   if (!isModular(bp)) {
-    const form = await assembleForm({ blueprint: bp, seed, excludeIds });
+    const form = await assembleForm({ blueprint: bp, ...common });
     return { form, items: form.items, timeLimitMinutes: bp.timeLimitMinutes, fields: {} };
   }
   const mod1 = bp.modules[0];
-  const form = await assembleForm({ blueprint: moduleBlueprint(bp, mod1.n), seed, excludeIds });
+  const form = await assembleForm({ blueprint: moduleBlueprint(bp, mod1.n), ...common });
   const items = form.items.map((it) => ({ ...it, module: mod1.n }));
   return {
     form,
@@ -452,8 +455,9 @@ router.post('/start', async (req, res) => {
     // Every re-test must be FRESH — no item this student has already been served
     // (any prior session) may reappear, or the re-test measures memory of the
     // question, not the skill. Exclude their whole seen-history.
-    const excludeIds = await seenProblemIdsForUser(userId);
-    const opening = await assembleOpening(def, { seed, excludeIds });
+    const ledger = await seenLedgerForUser(userId);
+    const excludeIds = ledger.ids;
+    const opening = await assembleOpening(def, { seed, excludeIds, seenAt: ledger.seenAt });
     const { form } = opening;
 
     if (form.coverage.filled === 0) {
@@ -1067,17 +1071,21 @@ async function nextModule(req, res) {
     const nextBp = moduleBlueprint(bp, next, route);
     const served = session.items.map((it) => it.problemId);
     // What this student has seen before: the account's ledger, or — for a
-    // guest — the earlier tests this browser sends, exactly as /start reads
-    // them. Without the guest half, only Module 1 was kept fresh and Module 2
-    // repeated questions from the browser's earlier attempts (external PSAT
-    // test report, 2026-10-13).
-    const seen = session.userId
-      ? await seenProblemIdsForUser(session.userId)
-      : await guestSeenProblemIds((req.body || {}).previous);
+    // guest — BOTH records /start reads: the earlier tests this browser sends
+    // and the server's own (the cookie and network hashes stored on this
+    // session). The browser list alone left Module 2 repeating: every repeat
+    // across a guest's PSAT retakes was in Module 2, "Kavi's marathon" on 7
+    // of 7 forms (prod sessions, QA pass 2026-10-13).
+    const ledger = session.userId
+      ? await seenLedgerForUser(session.userId, { exceptSessionId: session._id })
+      : await guestLedger((req.body || {}).previous, await storedGuestPrints(session._id), def, session._id);
     const form = await assembleForm({
       blueprint: nextBp,
       seed: `${session._id}-m${next}`,
-      excludeIds: [...new Set([...served, ...seen])],
+      excludeIds: [...new Set([...served, ...ledger.ids])],
+      seenAt: ledger.seenAt,
+      neverReuse: served,
+      reuseSeen: true,
     });
     if (!form.items.length) {
       return res.status(503).json({ message: 'The next module could not be built right now. Please try again.' });
@@ -1233,51 +1241,90 @@ router.post('/claim', async (req, res) => {
 // each stored only as a keyed hash. Used solely to keep a guest's earlier
 // questions out of their next test when the browser's own list is gone.
 const GUEST_COOKIE = 'mm_act_guest';
+// One id for every guest rail. The old cookie was scoped to its rail's path
+// (/api/sat-practice, /api/psat-practice …), so the SAT and the PSAT — which
+// draw on ONE bank — saw two strangers and a PSAT retake repeated the SAT
+// questions the same browser had just answered. The shared cookie adopts the
+// rail cookie's id when one exists, so history recorded under it still links.
+const SHARED_GUEST_COOKIE = 'mm_tp_guest';
+const GUEST_ID = /^[a-f0-9]{32}$/;
 function guestHash(kind, value) {
   if (!value) return null;
   const key = process.env.SESSION_SECRET || 'act-guest';
   return crypto.createHmac('sha256', key).update(`${kind}:${value}`).digest('hex').slice(0, 32);
 }
 function guestPrints(req, res) {
-  let id = req.cookies && req.cookies[GUEST_COOKIE];
-  if (!id || !/^[a-f0-9]{32}$/.test(id)) {
-    id = crypto.randomBytes(16).toString('hex');
-    res.cookie(GUEST_COOKIE, id, {
+  const shared = req.cookies && req.cookies[SHARED_GUEST_COOKIE];
+  const rail = req.cookies && req.cookies[GUEST_COOKIE];
+  let id = GUEST_ID.test(shared || '') ? shared : (GUEST_ID.test(rail || '') ? rail : null);
+  if (!GUEST_ID.test(shared || '')) {
+    id = id || crypto.randomBytes(16).toString('hex');
+    res.cookie(SHARED_GUEST_COOKIE, id, {
       httpOnly: true,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
       maxAge: GUEST_TTL_MS,
-      // Each guest rail (/api/act-practice, /api/sat-practice) keeps its own.
-      path: req.baseUrl || '/api/act-practice',
+      path: '/api',
     });
   }
   return { browser: guestHash('browser', id), net: guestHash('net', req.ip) };
 }
 
+/**
+ * Sessions of every test that draws on this test's bank: the SAT and the PSAT
+ * share one, the ACT and the PreACT another (each pair feeds one prep course).
+ * A guest's seen-record is read across the pair, as a signed-in student's
+ * ledger already is across everything.
+ */
+function bankFamilyScope(def) {
+  return def && def.courseId ? courseTestScope(def.courseId) : testScope(def);
+}
+
 // Questions from this guest's recent tests, found by the server's own record
 // (cookie, then network) rather than the browser's list. At most
 // GUEST_HISTORY_MAX tests per signal, newest first, inside the guest TTL.
-async function guestRecordSeenProblemIds(prints, def = getTestDef()) {
-  const seen = new Set();
+async function guestRecordSessions(prints, def = getTestDef()) {
+  const out = [];
   const since = new Date(Date.now() - GUEST_TTL_MS);
   for (const [field, value] of [['guestBrowserHash', prints.browser], ['guestNetHash', prints.net]]) {
     if (!value) continue;
     try {
-      const docs = await ActTestSession.find({ userId: null, [field]: value, createdAt: { $gte: since }, ...testScope(def) })
-        .sort({ createdAt: -1 }).limit(GUEST_HISTORY_MAX).select('items.problemId').lean();
-      docs.forEach((d) => (d.items || []).forEach((it) => it && it.problemId && seen.add(it.problemId)));
+      const docs = await ActTestSession.find({ userId: null, [field]: value, createdAt: { $gte: since }, ...bankFamilyScope(def) })
+        .sort({ createdAt: -1 }).limit(GUEST_HISTORY_MAX).select('items.problemId createdAt').lean();
+      out.push(...docs);
     } catch (err) {
       console.error('[actTest] guest record lookup failed (non-fatal):', err.message);
     }
   }
-  return [...seen];
+  return out;
+}
+
+/** The cookie and network hashes /start stored on a guest session (select: false fields). */
+async function storedGuestPrints(sessionId) {
+  try {
+    const d = await ActTestSession.findById(sessionId).select('+guestBrowserHash +guestNetHash').lean();
+    return { browser: d && d.guestBrowserHash, net: d && d.guestNetHash };
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Everything a guest has seen: the browser's list and the server's record,
+ * as { ids, seenAt } (ledgerFromSessions). `exceptSessionId` is the test
+ * being built — its own items never count as "seen before".
+ */
+async function guestLedger(previous, prints, def, exceptSessionId) {
+  const docs = [...(await guestPreviousSessions(previous)), ...(await guestRecordSessions(prints, def))];
+  const others = exceptSessionId ? docs.filter((d) => String(d._id) !== String(exceptSessionId)) : docs;
+  return ledgerFromSessions(others);
 }
 
 // Questions this browser's earlier guest tests already showed. `previous` is
 // [{ sessionId, token }] from the browser; at most GUEST_HISTORY_MAX are read,
 // and only entries whose token matches an unclaimed guest session count.
 const GUEST_HISTORY_MAX = 5;
-async function guestSeenProblemIds(previous) {
+async function guestPreviousSessions(previous) {
   if (!Array.isArray(previous) || !previous.length) return [];
   const entries = previous
     .filter((p) => p && typeof p === 'object' && mongoose.isValidObjectId(p.sessionId) && typeof p.token === 'string')
@@ -1285,14 +1332,11 @@ async function guestSeenProblemIds(previous) {
   if (!entries.length) return [];
   try {
     const docs = await ActTestSession.find({ _id: { $in: entries.map((e) => e.sessionId) }, userId: null })
-      .select('+guestTokenHash items.problemId').lean();
-    const seen = new Set();
-    for (const d of docs) {
+      .select('+guestTokenHash items.problemId createdAt').lean();
+    return docs.filter((d) => {
       const e = entries.find((x) => String(x.sessionId) === String(d._id));
-      if (!e || !guestTokenMatches(e.token, d.guestTokenHash)) continue;
-      (d.items || []).forEach((it) => it && it.problemId && seen.add(it.problemId));
-    }
-    return [...seen];
+      return e && guestTokenMatches(e.token, d.guestTokenHash);
+    });
   } catch (err) {
     console.error('[actTest] guest history lookup failed (non-fatal, no exclusion):', err.message);
     return [];
@@ -1347,13 +1391,11 @@ guestRouter.post('/start', async (req, res) => {
     // the server's own (cookie, then network) — the browser's list alone was
     // lost to cleared storage and retakes repeated questions.
     const prints = guestPrints(req, res);
-    const excludeIds = [...new Set([
-      ...(await guestSeenProblemIds(previous)),
-      ...(await guestRecordSeenProblemIds(prints, def)),
-    ])];
+    const ledger = await guestLedger(previous, prints, def);
     const opening = await assembleOpening(def, {
       seed: `guest-${crypto.randomBytes(8).toString('hex')}-${Date.now()}`,
-      excludeIds,
+      excludeIds: ledger.ids,
+      seenAt: ledger.seenAt,
     });
     const { form } = opening;
     if (form.coverage.filled === 0) {

@@ -17,6 +17,7 @@
 
 const { probabilityCorrect } = require('./irt');
 const { difficultyToTheta } = require('./itemCalibration');
+const { bandAround } = require('./actTestAssembler');
 
 /** Does this blueprint run as modules? */
 function isModular(blueprint) {
@@ -41,14 +42,19 @@ function moduleRange(blueprint, n) {
 function moduleBlueprint(blueprint, n, route) {
   const mod = blueprint.modules.find((m) => m.n === n);
   if (!mod) throw new Error(`No module ${n} in ${blueprint.testId}`);
-  const ramp = (route && mod.routes && mod.routes[route] && mod.routes[route].difficultyRamp) || mod.difficultyRamp;
-  const { modules: _m, routing: _r, irtScale: _s, ...rest } = blueprint;
+  const routed = route && mod.routes && mod.routes[route];
+  const ramp = (routed && routed.difficultyRamp) || mod.difficultyRamp;
+  // A route's band keeps the harder and easier modules apart: the ramp only
+  // centres each draw, the band bounds it (utils/actTestAssembler.js).
+  const band = (routed && routed.difficultyBand) || mod.difficultyBand;
+  const { modules: _m, routing: _r, irtScale: _s, difficultyBand: _b, ...rest } = blueprint;
   return {
     ...rest,
     totalItems: mod.items,
     timeLimitMinutes: mod.timeLimitMinutes,
     categoryWeights: mod.categoryWeights,
     difficultyRamp: ramp,
+    ...(band ? { difficultyBand: band } : {}),
   };
 }
 
@@ -143,11 +149,14 @@ function irtScaled(items, responses, blueprint) {
   // all-wrong estimate finite, which on a line set from the form's extremes
   // can land a step above it.
   const blank = !(responses || []).some((r) => r && r.correct);
+  const scaled = blank ? scale.min : thetaToScale(theta, scale);
+  // The likely range: score ± one SE in scale points, clamped to the scale,
+  // by the rule every practice test shares (actTestAssembler.bandAround). It
+  // used to be thetaToScale(theta ± se), which clamps BOTH ends, so a perfect
+  // paper whose theta − se still cleared the top read as a single point.
   return {
-    scaled: blank ? scale.min : thetaToScale(theta, scale),
-    range: blank
-      ? { low: scale.min, high: thetaToScale(theta + se, scale) }
-      : { low: thetaToScale(theta - se, scale), high: thetaToScale(theta + se, scale) },
+    scaled,
+    range: bandAround(scaled, scale.perLogit * se, { min: scale.min, max: scale.max, step: scale.round || 10 }),
     approximate: true,
     shortForm: total < full,
     formLength: total,

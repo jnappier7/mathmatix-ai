@@ -86,9 +86,11 @@ test('cookie gone too: the network record still keeps a retake fresh', async () 
 
 test('only keyed hashes are stored, hidden from ordinary reads, and the cookie is httpOnly', async () => {
   const res = await supertest(app).post('/api/act-practice/start').send({});
-  const cookie = (res.headers['set-cookie'] || []).find((c) => c.startsWith('mm_act_guest='));
+  // One cookie for every guest rail (the SAT and PSAT, the ACT and PreACT,
+  // share banks), so it lives on /api rather than one rail's path.
+  const cookie = (res.headers['set-cookie'] || []).find((c) => c.startsWith('mm_tp_guest='));
   expect(cookie).toMatch(/HttpOnly/i);
-  expect(cookie).toMatch(/Path=\/api\/act-practice/);
+  expect(cookie).toMatch(/Path=\/api;/);
   const plain = await ActTestSession.findById(res.body.sessionId).lean();
   expect(plain.guestBrowserHash).toBeUndefined();          // select: false
   const full = await ActTestSession.findById(res.body.sessionId).select('+guestBrowserHash +guestNetHash').lean();

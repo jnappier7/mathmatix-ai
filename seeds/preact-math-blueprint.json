@@ -111,6 +111,12 @@
       "act-scientific-notation"
     ]
   },
+  "_excludePromptsComment": "Items inside an in-scope skill whose TASK is beyond the PreACT 10: rational-function asymptotes (act-radical-rational-equations keeps its rational equations) and f(-x) reflections (act-graph-transformations keeps shifts, stretches and -f(x)). Two of four PreACT forms carried an asymptote item (QA pass, 2026-10-13). Case-insensitive regex sources matched against the prompt (utils/actTestAssembler.js excludedPrompts); the ACT blueprint draws them as before.",
+  "excludePrompts": [
+    "asymptot",
+    "f\\(\\s*[−-]\\s*x\\s*\\)",
+    "\\bgraph of [^.?]*reflected (?:across|over|in) the y-axis"
+  ],
   "scaledScore": {
     "_comment": "Raw (0..36 on THIS form) -> estimated score on the ACT 1-36 scale, capped at 35 (the PreACT 10 top score). Equated through the ACT form: each raw score is the ability at which this 36-item ramp expects that many right, read off our ACT form's published raw-to-scale table (act-math-blueprint.json scaledScore) at the raw that ability earns there. So a PreACT score reads as the ACT score that ability would earn, which is what the PreACT is for. A blank sheet is 1, as on the ACT.",
     "approximate": true,

@@ -79,7 +79,7 @@
       "targetDifficulty": 4
     }
   ],
-  "_modulesComment": "The digital SAT Math section is two modules of 22 questions and 35 minutes each. Module 1 is the same mixed-difficulty module for everyone; Module 2 is HARDER or EASIER depending on Module 1, and once it starts Module 1 is closed. Domain counts are split across the two modules so the section still totals 15/15/7/7. The top-level categoryWeights/difficultyRamp/timeLimitMinutes describe the whole section; each module's own values are what its form is assembled from.",
+  "_modulesComment": "The digital SAT Math section is two modules of 22 questions and 35 minutes each. Module 1 is the same mixed-difficulty module for everyone; Module 2 is HARDER or EASIER depending on Module 1, and once it starts Module 1 is closed. Domain counts are split across the two modules so the section still totals 15/15/7/7. The top-level categoryWeights/difficultyRamp/timeLimitMinutes describe the whole section; each module's own values are what its form is assembled from. Each route's difficultyBand is a hard floor and ceiling on every Module 2 draw, fallbacks included (utils/actTestAssembler.js difficultyBand). The ramp only centres a +/-1 window, so before the bands a harder Module 2 at target 3 drew difficulty-2 items (an f(5)-level question on the harder route) and the two routes overlapped across most of their range (QA pass, 2026-10-13). The bank is rated 2-4, so the routes still share the 3s; the ramps steer the harder route to its 4s and the easier route to its 2s within them.",
   "modules": [
     {
       "n": 1,
@@ -133,7 +133,11 @@
               "position": 22,
               "targetDifficulty": 4
             }
-          ]
+          ],
+          "difficultyBand": {
+            "min": 3,
+            "max": 4
+          }
         },
         "easier": {
           "difficultyRamp": [
@@ -145,7 +149,11 @@
               "position": 22,
               "targetDifficulty": 3
             }
-          ]
+          ],
+          "difficultyBand": {
+            "min": 2,
+            "max": 3
+          }
         }
       }
     }

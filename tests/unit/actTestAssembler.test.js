@@ -358,3 +358,83 @@ describe('actTestAssembler.scaledRange', () => {
     expect(A.scaledRange(NaN, 45)).toBeNull();
   });
 });
+
+// One rule for the likely range on every practice test (QA pass, 2026-10-13):
+// an ACT 18 read 17–21 (lopsided where the table is flat), a PreACT 36/36 read
+// "34–35" while an ACT 45/45 read "36", and a perfect SAT a single point.
+describe('the likely range is one rule everywhere', () => {
+  const ACT = require('../../seeds/act-math-blueprint.json');
+  const PRE = require('../../seeds/preact-math-blueprint.json');
+  const { irtScaled } = require('../../utils/testModules');
+
+  test.each([[ACT, 45], [PRE, 36]])('raw-table tests: contains the score, symmetric away from the ends', (bp, n) => {
+    for (let raw = 0; raw <= n; raw++) {
+      const s = A.rawToScaled(raw, bp, n).scaled;
+      const r = A.scaledRange(raw, n, bp);
+      expect(r.low).toBeLessThanOrEqual(s);
+      expect(r.high).toBeGreaterThanOrEqual(s);
+      expect(r.high - r.low).toBeGreaterThanOrEqual(1);
+      const top = bp.scaledScore.scaledByRaw[n];
+      const bottom = bp.scaledScore.scaledByRaw[0];
+      if (r.low > bottom && r.high < top) expect(s - r.low).toBe(r.high - s);
+    }
+  });
+
+  test('the ACT 18 reported in QA is symmetric now', () => {
+    const r = A.scaledRange(20, 45, ACT);
+    expect(A.rawToScaled(20, ACT, 45).scaled).toBe(18);
+    expect(18 - r.low).toBe(r.high - 18);
+  });
+
+  test('a perfect paper reads "below the top – the top" on every test', () => {
+    const act = A.scaledRange(45, 45, ACT);
+    const pre = A.scaledRange(36, 36, PRE);
+    expect(act).toEqual({ low: 35, high: 36 });
+    expect(pre.high).toBe(35);
+    expect(pre.low).toBeLessThan(35);
+    const bp = require('../../seeds/psat-math-blueprint.json');
+    const items = Array.from({ length: 44 }, (_, i) => ({ position: i + 1, difficulty: i < 22 ? 3 : 4 }));
+    const perfect = irtScaled(items, items.map((it) => ({ position: it.position, correct: true })), bp);
+    expect(perfect.range.high).toBe(perfect.scaled);
+    expect(perfect.range.low).toBeLessThan(perfect.scaled);
+  });
+
+  test('bandAround: at least one step, clamped', () => {
+    expect(A.bandAround(500, 0, { min: 200, max: 800, step: 10 })).toEqual({ low: 490, high: 510 });
+    expect(A.bandAround(800, 47, { min: 200, max: 800, step: 10 })).toEqual({ low: 750, high: 800 });
+    expect(A.bandAround(1, 3.4, { min: 1, max: 36 })).toEqual({ low: 1, high: 4 });
+  });
+});
+
+describe('balanceAnswerPositions', () => {
+  const item = (pos, texts, extra = {}) => ({ position: pos, options: texts.map((text, i) => ({ label: 'ABCD'[i], text })), ...extra });
+  const keyOf = (it) => it._key;
+
+  test('free items move their key to the letter the form is short of; numeric items keep their order', () => {
+    const items = [];
+    // Eight numeric items keyed at B (index 1) — fixed order.
+    for (let i = 0; i < 8; i++) items.push({ ...item(i + 1, ['1', '2', '3', '4'].map((x) => `${Number(x) + i * 10}`)), _key: `${2 + i * 10}` });
+    // Eight free items keyed at B too.
+    for (let i = 0; i < 8; i++) items.push({ ...item(i + 9, [`x + ${i}`, `x − ${i + 1}`, `2x + ${i}`, `3x − ${i}`]), _key: `x − ${i + 1}` });
+    const out = A.balanceAnswerPositions(items, keyOf, () => 0.5);
+    const keys = out.map((it) => it.options.findIndex((o) => o.text === it._key));
+    // Fixed numeric items: still ascending, still B.
+    out.slice(0, 8).forEach((it) => expect(it.options.map((o) => Number(o.text))).toEqual(it.options.map((o) => Number(o.text)).sort((a, b) => a - b)));
+    // No run of more than three on one letter.
+    let r = 1;
+    for (let i = 1; i < keys.length; i++) { r = keys[i] === keys[i - 1] ? r + 1 : 1; expect(r).toBeLessThanOrEqual(3); }
+    // The free half went to A, C and D, which the fixed half left empty.
+    const counts = [0, 0, 0, 0];
+    keys.forEach((k) => { counts[k] += 1; });
+    expect(counts[1]).toBe(8);
+    [0, 2, 3].forEach((k) => expect(counts[k]).toBeGreaterThanOrEqual(2));
+    // Labels stay positional; positions renumbered 1..n.
+    out.forEach((it, i) => { expect(it.position).toBe(i + 1); expect(it.options.map((o) => o.label)).toEqual(['A', 'B', 'C', 'D']); });
+  });
+
+  test('conventional lists keep their order', () => {
+    expect(A.choiceOrderFixed(['I only', 'II only', 'I and II only', 'I, II, and III'])).toBe(true);
+    expect(A.choiceOrderFixed(['5', '7', '9', '11'])).toBe(true);
+    expect(A.choiceOrderFixed(['x + 1', 'x − 1', '2x', 'x²'])).toBe(false);
+  });
+});
