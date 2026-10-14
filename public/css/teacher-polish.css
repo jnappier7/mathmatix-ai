@@ -1,0 +1,50 @@
+/* teacher-polish.css — QA polish pass: the Analytics knowledge table and
+   check-in list (js/teacher-analytics.js), inline grade editing, per-class
+   AI settings. Uses the shared --td-* tokens (css/teacher-home.css). */
+
+.kt-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.kt-muted { color: var(--td-ink-3, #64748B); font-size: 12.5px; }
+.kt-legend { display: flex; align-items: center; gap: 6px 10px; flex-wrap: wrap; font-size: 12px; color: var(--td-ink-2, #475569); margin: 2px 0 10px; }
+.kt-key { width: 12px; height: 12px; border-radius: 3px; display: inline-block; margin-left: 6px; }
+.kt-scroll { overflow: auto; max-height: 520px; border: 1px solid var(--td-line, #E2E8F0); border-radius: 10px; background: var(--td-card, #fff); }
+.kt-table { border-collapse: separate; border-spacing: 2px; font-size: 12.5px; }
+.kt-table thead th { position: sticky; top: 0; background: var(--td-card, #fff); z-index: 1; padding: 4px 2px; }
+.kt-table th.kt-skill { position: sticky; left: 0; background: var(--td-card, #fff); text-align: left; font-weight: 600; max-width: 220px; min-width: 160px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 4px 8px; color: var(--td-ink, #0F172A); z-index: 1; }
+.kt-table thead th.kt-skill { z-index: 2; }
+.kt-table td { width: 34px; min-width: 34px; height: 24px; border-radius: 4px; }
+.kt-high { background: #10B981; }
+.kt-mid { background: #FBBF24; }
+.kt-low { background: #F87171; }
+.kt-none { background: #E2E8F0; }
+.kt-student { border: 0; background: none; padding: 2px 4px; font: 600 12px inherit; color: var(--td-brand-ink, #065F46); cursor: pointer; border-radius: 6px; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kt-student:hover { text-decoration: underline; }
+.kt-student:focus-visible, .kt-btn:focus-visible { outline: 2px solid var(--td-brand, #059669); outline-offset: 1px; }
+.kt-nav { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; font-size: 12.5px; color: var(--td-ink-2, #475569); }
+.kt-btn { border: 1px solid var(--td-line, #E2E8F0); background: var(--td-card, #fff); color: var(--td-ink, #0F172A); border-radius: 8px; padding: 5px 10px; font: 600 12.5px inherit; cursor: pointer; }
+.kt-btn:disabled { opacity: .45; cursor: default; }
+.kt-link { border: 0; background: none; color: var(--td-brand-ink, #065F46); }
+.kt-h4 { margin: 12px 0 4px; font-size: 13px; }
+.kt-checkin { list-style: none; margin: 0; padding: 0; }
+.kt-checkin li { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--td-line, #E2E8F0); }
+.kt-checkin li:first-child { border-top: 0; }
+.kt-checkin .kt-student { max-width: none; }
+
+/* school grade: inline + bulk (js/teacher-home.js) */
+.td-addgrade { border: 1px dashed var(--td-line, #CBD5E1); background: none; color: var(--td-brand-ink, #065F46); font: 600 11.5px inherit; padding: 1px 7px; border-radius: 999px; cursor: pointer; }
+.td-addgrade:hover { border-color: var(--td-brand, #059669); }
+.td-gradesel { font-size: 12.5px; padding: 3px 6px; border-radius: 7px; border: 1px solid var(--td-line, #E2E8F0); }
+.td-overlay { position: fixed; inset: 0; z-index: 10050; background: rgba(15,23,42,.45); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.td-dialog { width: min(480px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: var(--td-card, #fff); color: var(--td-ink, #0F172A); border-radius: 16px; padding: 20px; box-shadow: 0 24px 60px rgba(15,23,42,.25); }
+.td-dialog h3 { margin: 0 0 6px; font-size: 18px; }
+.td-dlabel { display: flex; align-items: center; gap: 8px; margin: 12px 0 6px; font-weight: 600; font-size: 14px; }
+.td-dlabel select { padding: 7px 10px; border-radius: 9px; border: 1px solid var(--td-line, #E2E8F0); font-size: 14px; }
+.td-dcheck { display: flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 600; padding: 6px 0; border-bottom: 1px solid var(--td-line, #E2E8F0); }
+.td-dlist { list-style: none; margin: 0; padding: 0; max-height: 280px; overflow: auto; }
+.td-dlist li label { display: flex; gap: 8px; align-items: center; padding: 6px 0; font-size: 14px; }
+.td-dactions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+
+/* per-class AI settings scope (js/teacher-ai-settings.js) */
+.ai-scope { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 14px; margin: 0 0 20px; border-radius: 12px; background: #F0FDF4; border: 1px solid #BBF7D0; }
+.ai-scope select { padding: 7px 10px; border-radius: 9px; border: 1px solid #D1D5DB; font-size: 14px; background: #fff; }
+.ai-scope-note { flex: 1 1 100%; font-size: 12.5px; color: #475569; }

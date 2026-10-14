@@ -1144,6 +1144,8 @@ class CourseManager {
     // No user message is shown — it appears tutor-initiated.
     // --------------------------------------------------
     async sendCourseGreeting() {
+        // Look-only "view as": a greeting is a tutor turn on the student's account.
+        if (window.__mmLookOnly) return;
         try {
             // Show thinking indicator while greeting loads
             if (window.showThinkingIndicator) window.showThinkingIndicator(true);
@@ -1158,6 +1160,11 @@ class CourseManager {
             if (window.showThinkingIndicator) window.showThinkingIndicator(false);
 
             const data = await res.json();
+
+            // Impersonation is look-only and refuses the write. Render nothing —
+            // falling through would reconcile against an id-less body and could
+            // blank the transcript the look-only view just painted.
+            if (res.status === 403 && data.impersonating) return;
 
             // The server withheld the greeting because a required baseline is not
             // done. Show the baseline card and teach nothing — the server is the

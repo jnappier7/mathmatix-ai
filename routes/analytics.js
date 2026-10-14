@@ -22,6 +22,7 @@ const { calculateRetrievability } = require('../utils/fsrsScheduler');
 
 const { anyRole } = require('../utils/roleQuery');
 const { engineEntries } = require('../utils/engineStore');
+const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -33,14 +34,25 @@ const { engineEntries } = require('../utils/engineStore');
  */
 async function getSkillInfoMap(skillIds) {
   if (!skillIds || skillIds.length === 0) return {};
-  const skills = await Skill.find({ skillId: { $in: skillIds } })
-    .select('skillId displayName category')
-    .lean();
+  // Names through the shared resolver: it decodes storage keys ("MS_QNT_8" is
+  // "MS.QNT.8" stored), canonicalizes, and prettifies what the catalog lacks.
+  // Looking up the raw key here put ids like MS_QNT_8 in front of teachers.
+  const [names, skills] = await Promise.all([
+    resolveSkillDisplayNames(skillIds),
+    Skill.find({ skillId: { $in: skillIds } }).select('skillId category').lean(),
+  ]);
+  const categoryById = new Map(skills.map(s => [s.skillId, s.category]));
   const map = {};
-  for (const s of skills) {
-    map[s.skillId] = { displayName: s.displayName || s.skillId, category: s.category || 'Uncategorized' };
+  for (const id of skillIds) {
+    map[id] = { displayName: names[id] || id, category: categoryById.get(id) || 'Uncategorized' };
   }
   return map;
+}
+
+// BKT/FSRS maps have collected junk keys ("undefined", "null") from callers
+// that keyed on a missing skill id — a heatmap row literally named "undefined".
+function isRealSkillKey(k) {
+  return typeof k === 'string' && k.trim() !== '' && !['undefined', 'null', 'unknown', 'NaN'].includes(k);
 }
 
 /**
@@ -334,27 +346,34 @@ router.get('/class/knowledge-heatmap', isTeacher, async (req, res) => {
       const bkt = s.learningEngines?.bkt;
       const skills = {};
       for (const [skillId, data] of mapEntries(bkt)) {
-        skills[skillId] = data.pLearned ?? 0;
+        if (!isRealSkillKey(skillId) || !data || typeof data.pLearned !== 'number') continue;
+        skills[skillId] = data.pLearned;
         allSkillIds.add(skillId);
       }
       return {
         id: s._id,
         name: `${s.firstName || ''} ${s.lastName || ''}`.trim(),
         skills,
+        hasData: Object.keys(skills).length > 0,
       };
     });
 
-    const skillIdArray = Array.from(allSkillIds);
+    // Most-practiced skills first: the rows a teacher can actually read across.
+    const coverage = {};
+    for (const st of studentsData) for (const k of Object.keys(st.skills)) coverage[k] = (coverage[k] || 0) + 1;
+    const skillIdArray = Array.from(allSkillIds).sort((a, b) => coverage[b] - coverage[a]);
     const skillInfo = await getSkillInfoMap(skillIdArray);
     const skillNames = {};
     for (const id of skillIdArray) {
       skillNames[id] = skillInfo[id]?.displayName || id;
     }
 
+    studentsData.sort((a, b) => (b.hasData - a.hasData) || a.name.localeCompare(b.name));
     res.json({
       students: studentsData,
       skillIds: skillIdArray,
       skillNames,
+      studentsWithData: studentsData.filter(s => s.hasData).length,
     });
   } catch (err) {
     console.error('Error in knowledge-heatmap:', err);
@@ -405,8 +424,17 @@ router.get('/class/risk-radar', isTeacher, async (req, res) => {
         avgSmartScore = consistencyEntries.reduce((sum, [, d]) => sum + (d.smartScore ?? 0), 0) / consistencyEntries.length;
       }
 
+      // No learning data is NOT risk. A student who never practiced averaged
+      // pLearned 0 and was plotted "at risk" — every untouched account an alarm.
+      const hasData = bktEntries.length > 0 || cogHistory.length > 0 || consistencyEntries.length > 0;
+
       // Risk flags
-      const atRisk = avgPLearned < 0.4 || recentCognitiveLoad > 0.7 || avgSmartScore < 40;
+      // Each signal only counts when it was measured (a missing BKT map is not 0%).
+      const atRisk = hasData && (
+        (bktEntries.length > 0 && avgPLearned < 0.4) ||
+        recentCognitiveLoad > 0.7 ||
+        (consistencyEntries.length > 0 && avgSmartScore < 40)
+      );
 
       // Composite risk score (higher = more at risk, 0-1 scale)
       const riskScore =
@@ -423,14 +451,18 @@ router.get('/class/risk-radar', isTeacher, async (req, res) => {
         recentCognitiveLoad: Math.round(recentCognitiveLoad * 1000) / 1000,
         avgSmartScore: Math.round(avgSmartScore * 100) / 100,
         atRisk,
-        riskScore: Math.round(riskScore * 1000) / 1000,
+        hasData,
+        riskScore: hasData ? Math.round(riskScore * 1000) / 1000 : 0,
       };
     });
 
     // Sort by risk score descending (most at-risk first)
     riskReport.sort((a, b) => b.riskScore - a.riskScore);
 
-    res.json({ students: riskReport });
+    res.json({
+      students: riskReport.filter(r => r.hasData),
+      noDataCount: riskReport.filter(r => !r.hasData).length,
+    });
   } catch (err) {
     console.error('Error in risk-radar:', err);
     res.status(500).json({ message: 'Server error fetching risk radar.' });

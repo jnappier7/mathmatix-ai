@@ -92,6 +92,8 @@ export function getActiveSeconds() {
 
 export async function sendTimeHeartbeat(getCurrentUser, isFinal = false) {
     if (window.__sessionExpired) return;
+    // Look-only "view as": the viewer's time is not the student's tutoring time.
+    if (window.__mmLookOnly) return;
     const currentUser = getCurrentUser();
     if (!currentUser || !currentUser._id) return;
 

@@ -111,7 +111,7 @@ async function seed(now = Date.now()) {
   const Conversation = require('../models/conversation');
   const Skill = require('../models/skill');
 
-  await Skill.collection.insertMany(SKILLS.map(([skillId, displayName]) => ({ skillId, displayName, category: 'linear-equations', course: 'Algebra 1' })));
+  await Skill.collection.insertMany(SKILLS.map(([skillId, displayName]) => ({ skillId, displayName, category: 'linear-equations', course: skillId.startsWith('integer') || skillId.startsWith('fraction') || skillId.startsWith('percent') ? 'Grade 7-8 Math' : 'Algebra 1', isActive: true })));
 
   const mkTeacher = (email, firstName, lastName) => User.create({
     username: email.split('@')[0].replace(/\W/g, ''), email, firstName, lastName,
@@ -172,7 +172,26 @@ async function seed(now = Date.now()) {
       note: 'We just learned undoing operations in reverse order. Start with #1 and #2.', starts: [] },
   });
   await seedPracticeTests(now);
+  await seedLearningEngines(now);
   return { teacher, counts };
+}
+
+/* BKT / cognitive-load data for the Analytics tab: the active students get
+   per-skill mastery estimates; last year's tail gets none (and must not show
+   as "at risk"). One junk "undefined" key reproduces the prod row. */
+async function seedLearningEngines(now) {
+  const User = require('../models/user');
+  const active = await User.find({ email: /students\.mathmatix\.test|sandbox\.student/, lastLogin: { $gte: new Date(now - 30 * DAY) } }).lean();
+  const ids = SKILLS.map(([id]) => id).slice(0, 10);
+  for (const [i, u] of active.entries()) {
+    const bkt = {};
+    ids.forEach((id, k) => { if ((i + k) % 3 !== 0) bkt[id] = { pLearned: Math.round((((i * 17 + k * 29) % 100) / 100) * 100) / 100 }; });
+    if (i === 0) bkt.undefined = { pLearned: 0.5 };
+    await User.updateOne({ _id: u._id }, { $set: {
+      'learningEngines.bkt': bkt,
+      'learningEngines.cognitiveLoadHistory': [{ avgLoad: ((i * 23) % 100) / 100, at: new Date(now - DAY) }],
+    } });
+  }
 }
 
 /* Practice-test history for the Test Prep tab: growth, a rushed attempt, an

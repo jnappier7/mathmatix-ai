@@ -20,18 +20,15 @@ const ALWAYS_BLOCKED_ROUTES = [
 // Routes that modify data - blocked in read-only mode
 const WRITE_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
-// Routes allowed even in read-only mode (necessary for viewing)
+// The ONLY writes allowed while viewing as another user. "View as" is strictly
+// look-only (owner decision, 2026-10-14): it used to let POSTs to /api/chat,
+// /api/user, /api/mastery, /api/conversations … through, so a parent "viewing"
+// could chat as the child — writing the child's transcript, XP and mastery and
+// spending their AI minutes. The chat page renders the child's transcript via
+// GET /api/conversations/:id/view instead (public/js/script.js, look-only mode).
 const READ_ONLY_ALLOWED_ROUTES = [
-  '/api/chat',           // Need to see chat interface
-  '/api/session/heartbeat',
-  '/api/user',
-  '/api/avatars',
-  '/api/curriculum',
-  '/api/conversations',
-  '/api/mastery',
-  '/api/fact-fluency',
-  '/api/leaderboard',
-  '/api/impersonation/end' // Must allow exiting impersonation in read-only mode
+  '/api/session/heartbeat', // keeps the viewer's own login alive; writes nothing of the child's
+  '/api/impersonation/end'  // must always be able to leave
 ];
 
 /**
@@ -74,7 +71,10 @@ async function handleImpersonation(req, res, next) {
     req.originalUser = req.user;
     req.user = targetUser;
     req.isImpersonating = true;
-    req.impersonationReadOnly = impersonation.readOnly !== false;
+    // Always read-only, whatever the session record says: a session started
+    // before the server stopped honouring a client-sent readOnly:false must not
+    // keep its write access.
+    req.impersonationReadOnly = true;
     req.impersonationLogId = impersonation.logId;
 
     // Track page visit for audit log
@@ -164,10 +164,11 @@ function logBlockedAction(req, blocked) {
  * @param {Object} req - Express request
  * @param {Object} actor - The user initiating impersonation (admin/teacher/parent)
  * @param {Object} target - The user being impersonated
- * @param {Boolean} readOnly - Whether to enforce read-only mode
+ * Impersonation is always read-only — there is deliberately no parameter for it.
  * @returns {Object} The created impersonation log entry
  */
-async function startImpersonation(req, actor, target, readOnly = true) {
+async function startImpersonation(req, actor, target) {
+  const readOnly = true;
   // Create audit log entry
   const log = await ImpersonationLog.create({
     actorId: actor._id,
@@ -324,7 +325,7 @@ function getImpersonationStatus(req) {
     targetId: impersonation.targetId,
     targetName: impersonation.targetName,
     targetRole: impersonation.targetRole,
-    readOnly: impersonation.readOnly,
+    readOnly: true,
     startedAt: impersonation.startedAt,
     remainingMinutes: Math.ceil(remainingMs / 60000),
     timeoutMs: IMPERSONATION_TIMEOUT_MS

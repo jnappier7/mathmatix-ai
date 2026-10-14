@@ -4,24 +4,48 @@
 document.addEventListener('DOMContentLoaded', () => {
     const aiSettingsBtn = document.getElementById('qa-ai-settings');
     let currentSettings = null;
+    // Which settings the modal is editing: null = my defaults (all classes),
+    // or a class id (stores only what differs — routes/teacher.js).
+    let editingClassId = null;
+    let editingMeta = { hasOverride: false, className: '' };
 
     // Open AI Settings modal
     if (aiSettingsBtn) {
         aiSettingsBtn.addEventListener('click', openAISettingsModal);
     }
 
-    async function openAISettingsModal() {
-        // Fetch current settings
+    async function openAISettingsModal(arg) {
+        editingClassId = typeof arg === 'string' && arg ? arg : null;
+        // Fetch current settings (this class's effective settings, or my defaults)
+        let classes = [];
         try {
-            const response = await fetch('/api/teacher/class-ai-settings', {
-                credentials: 'include'
-            });
+            const [response, classRes] = await Promise.all([
+                fetch('/api/teacher/class-ai-settings' + (editingClassId ? '?classId=' + encodeURIComponent(editingClassId) : ''), { credentials: 'include' }),
+                fetch('/api/teacher/classes', { credentials: 'include' }),
+            ]);
             const data = await response.json();
             currentSettings = data.settings || {};
+            editingMeta = { hasOverride: !!data.hasOverride, className: data.className || '' };
+            const cbody = classRes.ok ? await classRes.json() : {};
+            const thisYear = window.TeacherSchoolYear && window.TeacherSchoolYear.currentYear();
+            classes = (cbody.classes || []).filter(c => !thisYear || !c.schoolYear || c.schoolYear === thisYear);
         } catch (error) {
             console.error('Error fetching AI settings:', error);
             currentSettings = {};
         }
+        const escAttr = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const scopeHtml = classes.length ? `
+                <div class="ai-scope">
+                    <label for="ai-settings-scope"><strong>Settings for</strong></label>
+                    <select id="ai-settings-scope">
+                        <option value="">All my classes (my defaults)</option>
+                        ${classes.map(c => `<option value="${escAttr(c._id)}" ${String(c._id) === editingClassId ? 'selected' : ''}>${escAttr(c.className)}${c.period ? ' · ' + escAttr(c.period) : ''}</option>`).join('')}
+                    </select>
+                    <span class="ai-scope-note">${editingClassId
+                        ? (editingMeta.hasOverride ? 'This class has its own settings. Anything you leave as-is still follows your defaults.' : 'This class follows your defaults. Change anything below to give it its own.')
+                        : 'Every class uses these unless you set something different for it.'}</span>
+                    ${editingClassId && editingMeta.hasOverride ? '<button type="button" class="btn btn-link" id="ai-reset-class">Reset this class to my defaults</button>' : ''}
+                </div>` : '';
 
         // Create modal
         const modal = document.createElement('div');
@@ -31,7 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="modal-content">
                 <span class="modal-close-button" id="close-ai-settings">&times;</span>
                 <h2><i class="fas fa-robot" style="color: #27ae60;"></i> Class AI Settings</h2>
-                <p style="color: #666; margin-bottom: 24px;">Configure how the AI tutor interacts with your students. These settings apply to all students in your class.</p>
+                <p style="color: #666; margin-bottom: 16px;">Configure how the AI tutor works with your students.</p>
+                ${scopeHtml}
 
                 <!-- Calculator Access -->
                 <div class="ai-settings-section">
@@ -243,6 +268,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.body.appendChild(modal);
 
+        // Switching scope reloads the modal for that class (or my defaults).
+        const scopeSel = modal.querySelector('#ai-settings-scope');
+        if (scopeSel) scopeSel.addEventListener('change', () => { modal.remove(); openAISettingsModal(scopeSel.value || null); });
+        const resetBtn = modal.querySelector('#ai-reset-class');
+        if (resetBtn) resetBtn.addEventListener('click', async () => {
+            const res = await csrfFetch('/api/teacher/class-ai-settings/class/' + encodeURIComponent(editingClassId), { method: 'DELETE' });
+            const body = await res.json().catch(() => ({}));
+            if (typeof showToast === 'function') showToast(body.message || 'Reset', res.ok ? 'success' : 'error');
+            modal.remove();
+            openAISettingsModal(editingClassId);
+        });
+
         // Pre-select current dashboard language from the user record
         fetch('/user', { credentials: 'include' })
             .then(r => r.ok ? r.json() : null)
@@ -340,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await csrfFetch('/api/teacher/class-ai-settings', {
+            const response = await csrfFetch('/api/teacher/class-ai-settings' + (editingClassId ? '?classId=' + encodeURIComponent(editingClassId) : ''), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(settings)
@@ -369,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (typeof showToast === 'function') {
-                    showToast('AI Settings saved successfully!', 'success');
+                    showToast(editingClassId ? (result.message || 'Saved for this class') : 'AI Settings saved successfully!', 'success');
                 } else {
                     alert('Settings saved successfully!');
                 }

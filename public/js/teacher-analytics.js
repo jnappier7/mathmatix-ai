@@ -48,6 +48,71 @@
   });
 
   // ── Class-Level Analytics ──
+  // ---- knowledge table -------------------------------------------------
+  const PAGE = 12;
+  let heatmapData = null;
+  let heatmapPage = 0;
+  let showNoData = false;
+  const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const BAND = (p) => p == null ? ['none', 'Not practiced'] : p >= 0.8 ? ['high', 'Got it'] : p >= 0.4 ? ['mid', 'Getting there'] : ['low', 'Needs work'];
+
+  function renderKnowledgeTable() {
+    const box = document.getElementById('class-knowledge-table');
+    const d = heatmapData;
+    if (!box || !d) return;
+    if (!d.skillIds || !d.skillIds.length) { box.innerHTML = ''; return; }
+    const withData = d.students.filter(s => s.hasData);
+    const pool = showNoData ? d.students : withData;
+    const pages = Math.max(1, Math.ceil(pool.length / PAGE));
+    heatmapPage = Math.min(heatmapPage, pages - 1);
+    const cols = pool.slice(heatmapPage * PAGE, heatmapPage * PAGE + PAGE);
+    const skills = d.skillIds.slice(0, 25);
+    const head = '<tr><th scope="col" class="kt-skill">Skill</th>' + cols.map(s =>
+      `<th scope="col"><button type="button" class="kt-student" data-kt-open="${esc(s.id)}" title="${esc(s.name)}">${esc((s.name || '').split(' ')[0])}</button></th>`).join('') + '</tr>';
+    const body = skills.map(id => {
+      const name = d.skillNames[id] || id;
+      return `<tr><th scope="row" class="kt-skill" title="${esc(name)}">${esc(name)}</th>` + cols.map(s => {
+        const p = s.skills[id];
+        const [cls, label] = BAND(p);
+        const pct = p == null ? '' : ` (${Math.round(p * 100)}%)`;
+        return `<td class="kt-${cls}" title="${esc(s.name)} — ${esc(name)}: ${label}${pct}"><span class="kt-sr">${label}${pct}</span></td>`;
+      }).join('') + '</tr>';
+    }).join('');
+    const noData = d.students.length - withData.length;
+    box.innerHTML =
+      '<div class="kt-legend" aria-hidden="true"><span class="kt-key kt-high"></span>Got it<span class="kt-key kt-mid"></span>Getting there<span class="kt-key kt-low"></span>Needs work<span class="kt-key kt-none"></span>Not practiced</div>' +
+      `<div class="kt-scroll"><table class="kt-table"><caption class="kt-sr">How well each student knows each skill, students ${heatmapPage * PAGE + 1}–${heatmapPage * PAGE + cols.length} of ${pool.length}</caption><thead>${head}</thead><tbody>${body}</tbody></table></div>` +
+      '<div class="kt-nav">' +
+        (pages > 1 ? `<button type="button" class="kt-btn" data-kt-page="-1" ${heatmapPage === 0 ? 'disabled' : ''}>‹ Prev</button><span>Students ${heatmapPage * PAGE + 1}–${heatmapPage * PAGE + cols.length} of ${pool.length}</span><button type="button" class="kt-btn" data-kt-page="1" ${heatmapPage >= pages - 1 ? 'disabled' : ''}>Next ›</button>` : `<span>${pool.length} student${pool.length === 1 ? '' : 's'}</span>`) +
+        (noData ? `<button type="button" class="kt-btn kt-link" data-kt-nodata>${showNoData ? 'Hide' : 'Show'} ${noData} without practice yet</button>` : '') +
+        (d.skillIds.length > skills.length ? `<span class="kt-muted">Top ${skills.length} of ${d.skillIds.length} skills</span>` : '') +
+      '</div>';
+  }
+
+  // ---- who to check in with (text alternative to the scatter) ----------
+  function renderCheckinList(data) {
+    const box = document.getElementById('risk-checkin-list');
+    if (!box) return;
+    const atRisk = (data.students || []).filter(s => s.atRisk).slice(0, 6);
+    const note = data.noDataCount ? `<p class="kt-muted">${data.noDataCount} student${data.noDataCount === 1 ? ' hasn\'t' : 's haven\'t'} practiced enough to place yet.</p>` : '';
+    if (!atRisk.length) { box.innerHTML = '<p class="kt-muted">No one stands out as needing a check-in right now.</p>' + note; return; }
+    box.innerHTML = '<h4 class="kt-h4">Check in first</h4><ul class="kt-checkin">' + atRisk.map(s => {
+      const why = [];
+      if (s.avgPLearned < 0.4) why.push(`mastery ${Math.round(s.avgPLearned * 100)}%`);
+      if (s.recentCognitiveLoad > 0.7) why.push('working very hard lately');
+      if (s.avgSmartScore < 40) why.push('inconsistent answers');
+      return `<li><button type="button" class="kt-student" data-kt-open="${esc(s.id)}">${esc(s.name)}</button><span class="kt-muted">${esc(why.join(' · '))}</span></li>`;
+    }).join('') + '</ul>' + note;
+  }
+
+  document.addEventListener('click', (e) => {
+    const page = e.target.closest('[data-kt-page]');
+    if (page) { heatmapPage += Number(page.getAttribute('data-kt-page')); return renderKnowledgeTable(); }
+    if (e.target.closest('[data-kt-nodata]')) { showNoData = !showNoData; heatmapPage = 0; return renderKnowledgeTable(); }
+    const open = e.target.closest('[data-kt-open]');
+    if (open && window.TeacherDashboard && window.TeacherDashboard.openProfile) window.TeacherDashboard.openProfile(open.getAttribute('data-kt-open'));
+  });
+
   async function loadClassAnalytics() {
     try {
       const [heatmapRes, riskRes, studentsRes] = await Promise.all([
@@ -72,18 +137,16 @@
         }
       }
 
-      // Knowledge Heatmap
+      // Knowledge table (was a canvas capped at 20 students)
       if (heatmapRes.ok) {
-        const data = await heatmapRes.json();
-        if (data.students && data.students.length > 0 && data.skillIds.length > 0) {
-          document.getElementById('heatmap-empty').style.display = 'none';
-          window.AnalyticsCharts.createKnowledgeHeatmap('class-knowledge-heatmap', data);
-        } else {
-          document.getElementById('heatmap-empty').style.display = 'block';
-        }
+        heatmapData = await heatmapRes.json();
+        heatmapPage = 0;
+        const has = heatmapData.students && heatmapData.studentsWithData > 0 && heatmapData.skillIds.length > 0;
+        document.getElementById('heatmap-empty').style.display = has ? 'none' : 'block';
+        renderKnowledgeTable();
       }
 
-      // Risk Radar
+      // Who to check in with
       if (riskRes.ok) {
         const data = await riskRes.json();
         if (data.students && data.students.length > 0) {
@@ -92,6 +155,7 @@
         } else {
           document.getElementById('risk-empty').style.display = 'block';
         }
+        renderCheckinList(data);
       }
     } catch (err) {
       console.error('[TeacherAnalytics] Failed to load class analytics:', err);
