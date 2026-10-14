@@ -26,6 +26,10 @@ const {
 } = require('../utils/schoolYear');
 
 const MAX_BATCH = 500;
+const { logRecordAccess } = require('../middleware/ferpaAccessLog');
+// School grades a teacher can set (stored in the platform's most common
+// shape: bare numbers, "K", "College").
+const GRADE_VALUES = ['K', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', 'College'];
 
 function displayName(s) {
   return `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username || 'Student';
@@ -305,5 +309,32 @@ router.post('/carry-forward', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/teacher/roster/grade  { studentIds: [...], gradeLevel: '9' }
+ * Set the SCHOOL grade (identity: rosters, reading level, IEP templates —
+ * not the assessed math level, see utils/gradeLevel.js) for students this
+ * teacher teaches. 81 of a real 105-student roster read "Grade N/A".
+ */
+router.post('/grade',
+  logRecordAccess('profile', 'teaching_instruction', { getStudentIds: (req) => req.accessedStudentIds, accessType: 'modify' }),
+  async (req, res) => {
+    try {
+      const gradeLevel = String((req.body && req.body.gradeLevel) || '').trim();
+      if (!GRADE_VALUES.includes(gradeLevel)) return res.status(400).json({ success: false, message: 'Pick a grade (K–12 or College).' });
+      const requested = cleanIds(req.body && req.body.studentIds);
+      if (!requested.length) return res.status(400).json({ success: false, message: 'Choose at least one student.' });
+      const mine = new Set(await getStudentIdsForTeacher(req.user._id));
+      const ids = requested.filter(id => mine.has(id));
+      if (!ids.length) return res.status(404).json({ success: false, message: 'None of those students are yours.' });
+      const r = await User.updateMany({ _id: { $in: ids }, ...anyRole('student') }, { $set: { gradeLevel } });
+      req.accessedStudentIds = ids;
+      res.json({ success: true, updated: r.modifiedCount, skipped: requested.length - ids.length, gradeLevel });
+    } catch (err) {
+      console.error('[roster] set grade failed:', err);
+      res.status(500).json({ success: false, message: 'Could not update grades.' });
+    }
+  });
+
 module.exports = router;
+module.exports.GRADE_VALUES = GRADE_VALUES;
 module.exports.selectArchiveCandidates = selectArchiveCandidates;

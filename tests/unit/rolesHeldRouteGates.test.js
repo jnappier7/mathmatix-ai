@@ -188,7 +188,18 @@ describe('teacher /my-calculator-access', () => {
     }));
   });
 
-  afterEach(() => jest.dontMock('../../models/user'));
+  // Calculator access now resolves through utils/effectiveAISettings (primary
+  // teacher + class override), which reads the student's classes. No classes
+  // here: the teacher pointer is the fallback, exactly as before.
+  beforeEach(() => {
+    jest.doMock('../../models/enrollmentCode', () => ({
+      find: jest.fn().mockReturnValue({ select: jest.fn().mockReturnThis(), lean: jest.fn().mockResolvedValue([]) }),
+      findById: jest.fn().mockReturnValue({ select: jest.fn().mockReturnThis(), lean: jest.fn().mockResolvedValue(null) }),
+      findOne: jest.fn(),
+    }));
+  });
+
+  afterEach(() => { jest.dontMock('../../models/user'); jest.dontMock('../../models/enrollmentCode'); });
 
   function calcApp(user) {
     return makeApp('/api/teacher', require('../../routes/teacher'), user);

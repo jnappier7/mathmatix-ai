@@ -709,10 +709,21 @@ class Sidebar {
     async switchSession(conversationId) {
         console.log('[Sidebar] switchSession called with:', conversationId);
         try {
-            const response = await window.csrfFetch(`/api/conversations/${conversationId}/switch`, {
-                method: 'POST',
-                credentials: 'include'
-            });
+            // Look-only "view as" blocks every POST; /view is the same payload
+            // without recording the switch on the student's account.
+            const view = () => fetch(`/api/conversations/${conversationId}/view`, { credentials: 'include' });
+            let response = window.__mmLookOnly
+                ? await view()
+                : await window.csrfFetch(`/api/conversations/${conversationId}/switch`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            // Look-only flag not known yet (it's fetched async on load): the
+            // server refused the write, so read the same payload instead.
+            if (response.status === 403) {
+                window.__mmLookOnly = true;
+                response = await view();
+            }
 
             const data = await response.json();
             console.log('[Sidebar] Switch response:', data);

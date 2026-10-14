@@ -26,7 +26,11 @@ const { requireActiveConsent } = require('../middleware/consentGate');
 
 const { anyRole, userHasRole } = require('../utils/roleQuery');
 const { buildActivityIndex, applyActivity, getEffectiveWeeklyMinutes } = require('../utils/studentActivity');
-const { summarizeSkillMastery } = require('../utils/skillSummary');
+const { summarizeSkillMastery, struggleReason } = require('../utils/skillSummary');
+const { mergeSettings, diffSettings, getEffectiveAISettings } = require('../utils/effectiveAISettings');
+const { courseBucket } = require('../utils/courseBuckets');
+const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+const { decodedMasteryMap } = require('../utils/masteryGuard');
 const { currentSchoolYear, isValidSchoolYear, classSchoolYear } = require('../utils/schoolYear');
 // ?scope=current (default) | archived | all — the year switcher's three views.
 function rosterScope(req) {
@@ -789,9 +793,26 @@ router.get('/class-ai-settings', isTeacher, async (req, res) => {
       }
     };
 
+    const teacherDefaults = teacher.classAISettings || defaultSettings;
+    // ?classId= → that class's EFFECTIVE settings (defaults + its override),
+    // plus which keys it overrides so the UI can show "class-specific".
+    if (req.query.classId) {
+      const cls = await ownedClass(req.user._id, req.query.classId);
+      if (!cls) return res.status(404).json({ message: 'Class not found' });
+      const override = cls.aiSettings || {};
+      return res.json({
+        success: true,
+        classId: cls._id,
+        className: cls.className,
+        settings: mergeSettings(teacherDefaults, override),
+        override,
+        hasOverride: Object.keys(override).length > 0,
+      });
+    }
+
     res.json({
       success: true,
-      settings: teacher.classAISettings || defaultSettings
+      settings: teacherDefaults
     });
 
   } catch (error) {
@@ -809,6 +830,17 @@ router.get('/class-ai-settings', isTeacher, async (req, res) => {
 router.put('/class-ai-settings', isTeacher, async (req, res) => {
   try {
     const settings = req.body;
+
+    // ?classId= → store ONLY what differs from the teacher's defaults, so a
+    // later change to the defaults still reaches every key this class kept.
+    if (req.query.classId) {
+      const cls = await ownedClass(req.user._id, req.query.classId);
+      if (!cls) return res.status(404).json({ message: 'Class not found' });
+      const teacher = await User.findById(req.user._id).select('classAISettings').lean();
+      const override = diffSettings((teacher && teacher.classAISettings) || {}, settings || {}) || {};
+      await EnrollmentCode.updateOne({ _id: cls._id }, Object.keys(override).length ? { $set: { aiSettings: override } } : { $unset: { aiSettings: 1 } });
+      return res.json({ success: true, message: `Saved for ${cls.className}`, override, hasOverride: Object.keys(override).length > 0 });
+    }
 
     // Add timestamp
     settings.lastUpdated = new Date();
@@ -836,6 +868,24 @@ router.put('/class-ai-settings', isTeacher, async (req, res) => {
     res.status(500).json({ message: 'Error saving class AI settings' });
   }
 });
+
+/** DELETE /api/teacher/class-ai-settings/class/:classId — back to my defaults. */
+router.delete('/class-ai-settings/class/:classId', isTeacher, async (req, res) => {
+  try {
+    const cls = await ownedClass(req.user._id, req.params.classId);
+    if (!cls) return res.status(404).json({ message: 'Class not found' });
+    await EnrollmentCode.updateOne({ _id: cls._id }, { $unset: { aiSettings: 1 } });
+    res.json({ success: true, message: `${cls.className} now uses your default settings` });
+  } catch (error) {
+    console.error('Error resetting class AI settings:', error);
+    res.status(500).json({ message: 'Error resetting class AI settings' });
+  }
+});
+
+async function ownedClass(teacherId, classId) {
+  if (!classId || !require('mongoose').Types.ObjectId.isValid(String(classId))) return null;
+  return EnrollmentCode.findOne({ _id: classId, teacherId }, 'className aiSettings').lean();
+}
 
 /**
  * Get class AI settings for a student's teacher (used by AI during tutoring)
@@ -869,16 +919,16 @@ router.get('/class-ai-settings/for-student/:studentId', isAuthenticated, async (
       return res.json({ success: true, settings: null, message: 'Student has no assigned teacher' });
     }
 
-    // Get teacher's settings
-    const teacher = await User.findById(student.teacherId).select('classAISettings firstName lastName').lean();
-    if (!teacher) {
+    // The same settings the tutor uses: primary teacher + class override.
+    const eff = await getEffectiveAISettings({ _id: student._id, teacherId: student.teacherId });
+    if (!eff.teacherId) {
       return res.json({ success: true, settings: null, message: 'Teacher not found' });
     }
 
     res.json({
       success: true,
-      teacherName: `${teacher.firstName} ${teacher.lastName}`,
-      settings: teacher.classAISettings || null
+      teacherName: eff.teacherName,
+      settings: eff.settings || null
     });
 
   } catch (error) {
@@ -906,40 +956,8 @@ router.get('/my-calculator-access', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Check if student has a teacher
-    if (!req.user.teacherId) {
-      return res.json({
-        success: true,
-        calculatorAccess: 'always', // No teacher = no restrictions
-        message: 'No assigned teacher'
-      });
-    }
-
-    // Get teacher's calculator settings
-    const teacher = await User.findById(req.user.teacherId)
-      .select('classAISettings.calculatorAccess classAISettings.calculatorNote firstName lastName')
-      .lean();
-
-    if (!teacher || !teacher.classAISettings) {
-      return res.json({
-        success: true,
-        calculatorAccess: 'skill-based', // Default
-        message: 'Teacher has not configured settings'
-      });
-    }
-
-    const calcAccess = teacher.classAISettings.calculatorAccess || 'skill-based';
-    const calcNote = teacher.classAISettings.calculatorNote || '';
-
-    console.log(`🧮 [Calculator] ${req.user.firstName} checked access: ${calcAccess} (Teacher: ${teacher.firstName})`);
-
-    res.json({
-      success: true,
-      calculatorAccess: calcAccess,
-      calculatorNote: calcNote,
-      teacherName: `${teacher.firstName} ${teacher.lastName}`
-    });
-
+    // Same teacher + class override as the tutor (utils/effectiveAISettings).
+    res.json(await require('../utils/effectiveAISettings').calculatorAccessFor(req.user));
   } catch (error) {
     console.error('Error fetching calculator access:', error);
     res.status(500).json({
@@ -1333,72 +1351,53 @@ router.get('/course-progress', isTeacher, async (req, res) => {
       return res.json({ courses: [], studentCount: 0 });
     }
 
-    // Get all active skills grouped by course
-    const skillsByCourse = await Skill.aggregate([
-      { $match: { course: { $exists: true, $ne: null }, isActive: true } },
-      { $group: {
-        _id: '$course',
-        totalSkills: { $sum: 1 },
-        skillIds: { $push: '$skillId' }
-      }}
-    ]);
-
-    // Build a map: course -> { totalSkills, skillIds set }
+    // Catalog skills grouped into canonical courses (utils/courseBuckets.js):
+    // the catalog carries 49 overlapping labels, which showed a high-school
+    // roster 31 "courses". Ids canonicalized so legacy- and unified-keyed
+    // mastery both land (see utils/masteryGuard decodedMasteryMap).
+    const catalog = await Skill.find({ course: { $exists: true, $ne: null }, isActive: true }, 'skillId course').lean();
     const courseMap = {};
-    skillsByCourse.forEach(c => {
-      courseMap[c._id] = {
-        course: c._id,
-        totalSkills: c.totalSkills,
-        skillIdSet: new Set(c.skillIds)
-      };
-    });
+    for (const sk of catalog) {
+      const bucket = courseBucket(sk.course);
+      if (!bucket) continue;
+      const c = courseMap[bucket.key] || (courseMap[bucket.key] = { course: bucket.label, key: bucket.key, order: bucket.order, skillIdSet: new Set() });
+      c.skillIdSet.add(canonicalSkillId(sk.skillId));
+    }
+    for (const c of Object.values(courseMap)) c.totalSkills = c.skillIdSet.size;
 
-    // For each course, compute per-student mastery
     const courseProgress = {};
-    for (const [courseName, courseData] of Object.entries(courseMap)) {
-      courseProgress[courseName] = {
-        course: courseName,
-        totalSkills: courseData.totalSkills,
-        students: [],
-        totalMastered: 0,
-        totalLearning: 0,
-        enrolledCount: 0
-      };
+    for (const [key, c] of Object.entries(courseMap)) {
+      courseProgress[key] = { course: c.course, key, order: c.order, totalSkills: c.totalSkills, students: [], totalMastered: 0, totalLearning: 0, enrolledCount: 0 };
     }
 
+    // Mastery only counts when it was DEMONSTRATED. Prerequisite inference
+    // marks whole grade bands "mastered" for a student who never touched them,
+    // which is how a 10th grader appeared in eight elementary "courses".
+    const NOT_DEMONSTRATED = new Set(['inference', 'legacy']);
     students.forEach(student => {
-      const mastery = student.skillMastery || {};
+      const mastery = decodedMasteryMap(student);
       const name = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
+      const ownBucket = courseBucket(student.mathCourse);
 
-      for (const [courseName, courseData] of Object.entries(courseMap)) {
+      for (const [key, courseData] of Object.entries(courseMap)) {
         let mastered = 0;
         let learning = 0;
-
-        for (const [skillId, skillData] of Object.entries(mastery)) {
-          if (!courseData.skillIdSet.has(skillId)) continue;
-
+        for (const [skillId, skillData] of mastery) {
+          if (!skillData || !courseData.skillIdSet.has(skillId)) continue;
           if (skillData.status === 'mastered') {
+            if (skillData.masteryType === 'inferred' || NOT_DEMONSTRATED.has(skillData.provenBy)) continue;
             mastered++;
-          } else if (skillData.status === 'learning' || skillData.status === 'practicing') {
+          } else if (['learning', 'practicing', 're-fragile', 'needs-review'].includes(skillData.status)) {
             learning++;
           }
         }
-
-        // Only include if student has any interaction with this course's skills
-        // or if it's their assigned math course
-        const isEnrolled = student.mathCourse === courseName;
+        const isEnrolled = !!ownBucket && ownBucket.key === key;
         if (mastered > 0 || learning > 0 || isEnrolled) {
-          const pct = Math.round((mastered / courseData.totalSkills) * 100);
-          courseProgress[courseName].students.push({
-            studentId: student._id,
-            name,
-            mastered,
-            learning,
-            progressPct: pct
-          });
-          courseProgress[courseName].totalMastered += mastered;
-          courseProgress[courseName].totalLearning += learning;
-          if (isEnrolled) courseProgress[courseName].enrolledCount++;
+          const pct = courseData.totalSkills ? Math.round((mastered / courseData.totalSkills) * 100) : 0;
+          courseProgress[key].students.push({ studentId: student._id, name, mastered, learning, progressPct: pct });
+          courseProgress[key].totalMastered += mastered;
+          courseProgress[key].totalLearning += learning;
+          if (isEnrolled) courseProgress[key].enrolledCount++;
         }
       }
     });
@@ -1412,6 +1411,8 @@ router.get('/course-progress', isTeacher, async (req, res) => {
           : 0;
         return {
           course: c.course,
+          key: c.key,
+          order: c.order,
           totalSkills: c.totalSkills,
           enrolledCount: c.enrolledCount,
           activeStudents: c.students.length,
@@ -1421,7 +1422,8 @@ router.get('/course-progress', isTeacher, async (req, res) => {
           students: c.students.sort((a, b) => b.progressPct - a.progressPct).slice(0, 20)
         };
       })
-      .sort((a, b) => b.activeStudents - a.activeStudents);
+      // Students' own courses first, then where the activity is.
+      .sort((a, b) => b.enrolledCount - a.enrolledCount || b.activeStudents - a.activeStudents || a.order - b.order);
 
     res.json({
       courses,
@@ -1457,9 +1459,15 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
     // Aggregate skill data across all students
     const skillAggregation = {};
 
+    const nowMs = Date.now();
     students.forEach(student => {
-      const mastery = student.skillMastery || {};
-      for (const [skillId, data] of Object.entries(mastery)) {
+      // Canonical ids, so a legacy key and its unified twin are one skill.
+      const mastery = decodedMasteryMap(student);
+      for (const [skillId, data] of mastery) {
+        if (!data) continue;
+        // Inferred mastery is not something the class DID — counting it made
+        // every prerequisite of a placed student a "gap" row of its own.
+        if (data.status === 'mastered' && (data.masteryType === 'inferred' || data.provenBy === 'inference')) continue;
         if (!skillAggregation[skillId]) {
           skillAggregation[skillId] = {
             skillId,
@@ -1488,11 +1496,13 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
           agg.notStarted++;
         }
 
-        // Track struggling students (low mastery score or explicitly struggling)
-        if (data.strugglingAreas && data.strugglingAreas.length > 0) {
+        // Struggling = the one evidence-based, recent rule (utils/skillSummary.js),
+        // the same one Today's "Needs you" and the roster use.
+        const reason = struggleReason(data, nowMs);
+        if (reason) {
           agg.struggling++;
           const name = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
-          agg.strugglingStudents.push({ name, areas: data.strugglingAreas });
+          agg.strugglingStudents.push({ name, areas: (data.strugglingAreas || []).filter(Boolean), reason: reason.kind });
         }
 
         if (typeof data.masteryScore === 'number') {
@@ -1513,6 +1523,7 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
 
     const skillMap = {};
     skillDetails.forEach(s => { skillMap[s.skillId] = s; });
+    const gapNames = await resolveSkillDisplayNames(skillIds);
 
     const gaps = Object.values(skillAggregation)
       .filter(agg => agg.attempted > 0) // Only include skills that students have actually attempted
@@ -1524,7 +1535,7 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
 
       return {
         skillId: agg.skillId,
-        displayName: detail.displayName || agg.skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        displayName: gapNames[agg.skillId] || detail.displayName || agg.skillId,
         category: detail.category || 'unknown',
         course: detail.course || null,
         difficultyLevel: detail.difficultyLevel || null,
@@ -1541,8 +1552,14 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
       };
     });
 
-    // Sort: most "not mastered" students first (biggest class gaps)
-    gaps.sort((a, b) => b.notMasteredCount - a.notMasteredCount);
+    // A class gap is something SEVERAL students share: most stuck first, then
+    // most still learning, and one-student skills last (they are individual
+    // to-dos, already on Today, not class-wide gaps).
+    gaps.sort((a, b) =>
+      ((b.totalStudents > 1) - (a.totalStudents > 1)) ||
+      (b.struggling - a.struggling) ||
+      (b.notMasteredCount - a.notMasteredCount) ||
+      (b.totalStudents - a.totalStudents));
 
     res.json({
       gaps: gaps.slice(0, 50), // Top 50 skill gaps

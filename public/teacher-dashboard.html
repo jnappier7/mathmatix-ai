@@ -4553,7 +4553,7 @@
       border: 1px solid #FDE68A;
     }
   </style>
-  <link rel="stylesheet" href="/dist/css/teacher-css1.fcda2daf.css" />
+  <link rel="stylesheet" href="/dist/css/teacher-css1.88223794.css" />
   <script src="/dist/js/teacher-js0.08f701d8.js"></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
 </head>
@@ -4920,8 +4920,8 @@
                     <i class="fas fa-list" aria-hidden="true"></i>
                   </button>
                 </div>
-                <input type="text" id="student-search" placeholder="Search students..." class="student-search-input">
-                <select id="student-filter" class="student-filter-select">
+                <input type="text" id="student-search" placeholder="Search students..." class="student-search-input" aria-label="Search students">
+                <select id="student-filter" class="student-filter-select" aria-label="Filter students">
                   <option value="all">All Students</option>
                   <option value="active">Active Today</option>
                   <option value="struggling">Needs Attention</option>
@@ -5137,11 +5137,13 @@
           <div class="analytics-overview-row">
             <div class="dashboard-panel analytics-card" style="flex:2;">
               <div class="dashboard-panel-header">
-                <h3><i class="fas fa-th"></i> Class Knowledge Heatmap</h3>
-                <span class="analytics-subtitle">BKT mastery probability by student &times; skill</span>
+                <h3><i class="fas fa-th"></i> What each student knows</h3>
+                <span class="analytics-subtitle">From their practice — most-practiced skills first</span>
               </div>
-              <div class="analytics-chart-container" style="min-height:350px; position:relative;">
-                <canvas id="class-knowledge-heatmap"></canvas>
+              <div class="analytics-chart-container" style="min-height:200px; position:relative;">
+                <!-- An HTML table, not a canvas: readable by screen readers, every
+                     student reachable (paged), names instead of skill ids. -->
+                <div id="class-knowledge-table"></div>
                 <div class="analytics-empty" id="heatmap-empty" style="display:none;">
                   <i class="fas fa-th" style="font-size:2em; color:var(--color-text-muted); margin-bottom:10px;"></i>
                   <p>No knowledge data yet. Students need to practice to populate the heatmap.</p>
@@ -5150,11 +5152,12 @@
             </div>
             <div class="dashboard-panel analytics-card" style="flex:1;">
               <div class="dashboard-panel-header">
-                <h3><i class="fas fa-exclamation-triangle"></i> Risk Radar</h3>
-                <span class="analytics-subtitle">Students who may need intervention</span>
+                <h3><i class="fas fa-exclamation-triangle"></i> Who to check in with</h3>
+                <span class="analytics-subtitle">Each dot is a student — lower = less mastered, further right = working harder. Click a dot for their profile.</span>
               </div>
               <div class="analytics-chart-container" style="min-height:350px; position:relative;">
-                <canvas id="class-risk-scatter"></canvas>
+                <canvas id="class-risk-scatter" role="img" aria-label="Scatter chart of students by skill mastery and struggle level. The same students are listed below the chart."></canvas>
+                <div id="risk-checkin-list"></div>
                 <div class="analytics-empty" id="risk-empty" style="display:none;">
                   <i class="fas fa-shield-alt" style="font-size:2em; color:var(--color-text-muted); margin-bottom:10px;"></i>
                   <p>Not enough data to calculate risk profiles yet.</p>
@@ -5179,7 +5182,7 @@
                   <h4><i class="fas fa-clock"></i> Memory Forecast</h4>
                   <p class="analytics-drill-desc">FSRS retrievability — when skills will fade</p>
                   <div class="analytics-chart-container" style="min-height:260px;">
-                    <canvas id="student-memory-forecast"></canvas>
+                    <canvas id="student-memory-forecast" role="img" aria-label="Memory forecast: how well the student is likely to remember each skill over the coming days"></canvas>
                   </div>
                 </div>
 
@@ -5188,7 +5191,7 @@
                   <h4><i class="fas fa-brain"></i> Cognitive Load</h4>
                   <p class="analytics-drill-desc">Session-over-session mental load trend</p>
                   <div class="analytics-chart-container" style="min-height:260px;">
-                    <canvas id="student-cognitive-load"></canvas>
+                    <canvas id="student-cognitive-load" role="img" aria-label="How hard recent sessions felt for the student, over time"></canvas>
                   </div>
                 </div>
 
@@ -5197,7 +5200,7 @@
                   <h4><i class="fas fa-bullseye"></i> Consistency Profile</h4>
                   <p class="analytics-drill-desc">SmartScore breakdown across skills</p>
                   <div class="analytics-chart-container" style="min-height:260px;">
-                    <canvas id="student-consistency-radar"></canvas>
+                    <canvas id="student-consistency-radar" role="img" aria-label="How consistently the student answers in each skill area"></canvas>
                   </div>
                 </div>
 
@@ -5206,7 +5209,7 @@
                   <h4><i class="fas fa-map"></i> Knowledge Map</h4>
                   <p class="analytics-drill-desc">BKT mastery probability per skill</p>
                   <div class="analytics-chart-container" style="min-height:260px;">
-                    <canvas id="student-knowledge-bars"></canvas>
+                    <canvas id="student-knowledge-bars" role="img" aria-label="How well the student knows each skill"></canvas>
                   </div>
                 </div>
               </div>
@@ -5976,11 +5979,11 @@
             </div>
             <div class="profile-analytics-card">
               <h5><i class="fas fa-bullseye"></i> Performance Radar</h5>
-              <div style="height:200px;"><canvas id="profile-consistency-radar"></canvas></div>
+              <div style="height:200px;"><canvas id="profile-consistency-radar" role="img" aria-label="How consistently the student answers in each skill area"></canvas></div>
             </div>
             <div class="profile-analytics-card" style="grid-column: 1 / -1;">
               <h5><i class="fas fa-brain"></i> Cognitive Load Trend</h5>
-              <div style="height:200px;"><canvas id="profile-cognitive-timeline"></canvas></div>
+              <div style="height:200px;"><canvas id="profile-cognitive-timeline" role="img" aria-label="How hard recent sessions felt for the student, over time"></canvas></div>
             </div>
           </div>
         </div>
@@ -6070,7 +6073,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-  <script src="/dist/js/teacher-js1.f49d4013.js"></script>
+  <script src="/dist/js/teacher-js1.db27eee9.js"></script>
 <!-- Practice Pack Modal for Teachers -->
   <div id="practice-pack-modal" class="modal-overlay">
     <div class="modal-content" style="max-width:520px;">
@@ -6229,7 +6232,7 @@
   })();
   </script>
 
-  <script src="/dist/js/teacher-js2.6224ed42.js"></script>
+  <script src="/dist/js/teacher-js2.c147c21d.js"></script>
   <link rel="stylesheet" href="/css/teacher-activities.css?v=20260923a">
   <script defer src="/js/teacher-activities.js?v=20261014"></script>
 </body>

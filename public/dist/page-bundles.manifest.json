@@ -70,7 +70,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js3.85681e38.js",
+        "src": "/dist/js/chat-js3.9c5fbed0.js",
         "files": [
           "/js/chat-board-integration.js",
           "/js/placementLadder.js",
@@ -161,7 +161,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/admin-js0.43d4251c.js",
+        "src": "/dist/js/admin-js0.0f77390e.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/admin-analytics.js",
@@ -212,7 +212,7 @@
         ]
       },
       {
-        "src": "/dist/js/parent-js1.73582c00.js",
+        "src": "/dist/js/parent-js1.90622a53.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/parent-analytics.js",
@@ -252,13 +252,14 @@
         ]
       },
       {
-        "href": "/dist/css/teacher-css1.fcda2daf.css",
+        "href": "/dist/css/teacher-css1.88223794.css",
         "files": [
           "/css/dashboard-mobile.css",
           "/css/demo-mode.css",
           "/css/teacher-school-year.css",
           "/css/teacher-home.css",
-          "/css/teacher-testprep.css"
+          "/css/teacher-testprep.css",
+          "/css/teacher-polish.css"
         ]
       }
     ],
@@ -271,7 +272,7 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js1.f49d4013.js",
+        "src": "/dist/js/teacher-js1.db27eee9.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/teacher-analytics.js",
@@ -283,7 +284,7 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.6224ed42.js",
+        "src": "/dist/js/teacher-js2.c147c21d.js",
         "files": [
           "/js/idle-dialog.js",
           "/js/auto-logout.js",

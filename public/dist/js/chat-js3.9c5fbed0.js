@@ -3357,10 +3357,21 @@ class Sidebar {
     async switchSession(conversationId) {
         console.log('[Sidebar] switchSession called with:', conversationId);
         try {
-            const response = await window.csrfFetch(`/api/conversations/${conversationId}/switch`, {
-                method: 'POST',
-                credentials: 'include'
-            });
+            // Look-only "view as" blocks every POST; /view is the same payload
+            // without recording the switch on the student's account.
+            const view = () => fetch(`/api/conversations/${conversationId}/view`, { credentials: 'include' });
+            let response = window.__mmLookOnly
+                ? await view()
+                : await window.csrfFetch(`/api/conversations/${conversationId}/switch`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            // Look-only flag not known yet (it's fetched async on load): the
+            // server refused the write, so read the same payload instead.
+            if (response.status === 403) {
+                window.__mmLookOnly = true;
+                response = await view();
+            }
 
             const data = await response.json();
             console.log('[Sidebar] Switch response:', data);
@@ -4686,6 +4697,8 @@ class CourseManager {
     // No user message is shown — it appears tutor-initiated.
     // --------------------------------------------------
     async sendCourseGreeting() {
+        // Look-only "view as": a greeting is a tutor turn on the student's account.
+        if (window.__mmLookOnly) return;
         try {
             // Show thinking indicator while greeting loads
             if (window.showThinkingIndicator) window.showThinkingIndicator(true);
@@ -4700,6 +4713,11 @@ class CourseManager {
             if (window.showThinkingIndicator) window.showThinkingIndicator(false);
 
             const data = await res.json();
+
+            // Impersonation is look-only and refuses the write. Render nothing —
+            // falling through would reconcile against an id-less body and could
+            // blank the transcript the look-only view just painted.
+            if (res.status === 403 && data.impersonating) return;
 
             // The server withheld the greeting because a required baseline is not
             // done. Show the baseline card and teach nothing — the server is the
