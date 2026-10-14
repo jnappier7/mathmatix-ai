@@ -926,7 +926,7 @@ router.get('/skills', isAuthenticated, async (req, res) => {
           skillId: sid,
           displayName: data.displayName || sid.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
           status: data.status,
-          masteryScore: data.masteryScore || 0
+          masteryScore: normalizedMasteryScore(data.masteryScore)
         });
       }
     }

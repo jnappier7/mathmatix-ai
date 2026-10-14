@@ -16,6 +16,8 @@ const { calculateRetrievability } = require('../utils/fsrsScheduler');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 
 const { userHasRole, anyRole } = require('../utils/roleQuery');
+const { getEffectiveWeeklyMinutes } = require('../utils/studentActivity');
+const { normalizedMasteryScore } = require('../utils/masteryScore');
 const {
     normalizeStudentLinkCode,
     parentInviteExpiry,
@@ -344,7 +346,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, logRecordAcces
             gradeLevel: child.gradeLevel,
             mathCourse: child.mathCourse,
             totalActiveTutoringMinutes: child.totalActiveTutoringMinutes || 0,
-            weeklyActiveTutoringMinutes: child.weeklyActiveTutoringMinutes || 0,
+            weeklyActiveTutoringMinutes: getEffectiveWeeklyMinutes(child),
             // Weekly performance stats
             weeklyStats: {
                 problemsAttempted: stats.totalProblems,
@@ -671,7 +673,7 @@ router.get('/child/:childId/learning-report', isAuthenticated, isParent, logReco
         for (const [skillId, data] of skillMasteryEntries) {
             masteryCounts.total++;
             const info = skillInfoMap[skillId] || { displayName: skillId, category: 'Uncategorized' };
-            const score = data.masteryScore || 0;
+            const score = normalizedMasteryScore(data.masteryScore);
             const status = data.status || 'learning';
 
             if (status === 'mastered') {

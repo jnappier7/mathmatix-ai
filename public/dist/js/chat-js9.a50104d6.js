@@ -50,6 +50,11 @@ class SessionManager {
       masteryProgress: null
     };
 
+    // Only student surfaces accrue TUTORING time. The dashboards load this
+    // same class for heartbeats/idle handling; their browsing is not study
+    // time (the server enforces this too — utils/tutoringTimeEligibility.js).
+    this.tracksTutoringTime = !/\/(teacher|parent|admin)[\w-]*-dashboard(\.html)?$/.test(window.location.pathname);
+
     this.stopped = false;
     this.init();
   }
@@ -225,7 +230,7 @@ class SessionManager {
       this.handleHeartbeatSuccess();
 
       // Send active time tracking if we have any active seconds
-      if (activeSecondsToSend > 0) {
+      if (activeSecondsToSend > 0 && this.tracksTutoringTime) {
         const trackTimeResponse = await csrfFetch('/api/chat/track-time', {
           method: 'POST',
           headers: {
@@ -326,7 +331,7 @@ class SessionManager {
 
     // IMPROVED: Send any remaining active time before logging out
     this.checkAndUpdateActiveTime();
-    if (this.accumulatedActiveSeconds > 0) {
+    if (this.accumulatedActiveSeconds > 0 && this.tracksTutoringTime) {
       try {
         await csrfFetch('/api/chat/track-time', {
           method: 'POST',
@@ -571,7 +576,7 @@ class SessionManager {
 
       // Track remaining active time
       this.checkAndUpdateActiveTime();
-      if (this.accumulatedActiveSeconds > 0) {
+      if (this.accumulatedActiveSeconds > 0 && this.tracksTutoringTime) {
         const timeBlob = new Blob(
           [JSON.stringify({ activeSeconds: this.accumulatedActiveSeconds })],
           { type: 'application/json' }

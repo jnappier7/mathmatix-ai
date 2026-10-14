@@ -1,6 +1,7 @@
 // routes/chat.js
 
 const { practiceTestKeyForCourse } = require('../utils/practiceTests');
+const { shouldCountTutoringTime } = require('../utils/tutoringTimeEligibility');
 const express = require('express');
 const router = express.Router();
 const log = require('../utils/logger');
@@ -2619,6 +2620,12 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         if (!userId) return res.status(401).json({ message: "Not authenticated." });
         if (activeSeconds === undefined || activeSeconds < 0) {
             return res.status(400).json({ message: "Valid activeSeconds is required" });
+        }
+
+        // Dashboards load the same SessionManager; only a student studying
+        // accrues tutoring time (utils/tutoringTimeEligibility.js).
+        if (!shouldCountTutoringTime(req)) {
+            return res.status(200).json({ message: "Not tutoring time (not counted)", counted: false });
         }
 
         // Don't track if less than 1 second

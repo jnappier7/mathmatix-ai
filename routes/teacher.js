@@ -25,6 +25,8 @@ const { checkConsent } = require('../utils/consentManager');
 const { requireActiveConsent } = require('../middleware/consentGate');
 
 const { anyRole, userHasRole } = require('../utils/roleQuery');
+const { buildActivityIndex, applyActivity, getEffectiveWeeklyMinutes } = require('../utils/studentActivity');
+const { summarizeSkillMastery } = require('../utils/skillSummary');
 // Fetches students assigned to the logged-in teacher (via teacherId OR enrollment codes)
 router.get('/students', isTeacher, async (req, res) => {
   try {
@@ -34,15 +36,27 @@ router.get('/students', isTeacher, async (req, res) => {
     // Full data is fetched on-demand when the teacher needs insights or skill details
     const isLightweight = req.query.fields === 'roster';
 
-    const projection = isLightweight
-      ? 'firstName lastName username email gradeLevel mathCourse level xp lastLogin createdAt totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak'
-      : 'firstName lastName username email gradeLevel mathCourse level xp lastLogin createdAt totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak skillMastery';
+    // skillMastery is always READ (the summary needs it) but only SENT in
+    // full mode — roster mode ships the compact skillSummary instead, which
+    // is all the cards, tiles and alerts need.
+    const projection = 'firstName lastName username email gradeLevel mathCourse level xp lastLogin createdAt totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds lastWeeklyReset iepPlan currentStreak skillMastery';
 
     const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
       { _id: { $in: studentIds }, ...anyRole('student') },
       projection
     ).lean();
+    // Real per-week minutes + last-active from conversations; the stored
+    // weekly counter is stale for anyone who stopped showing up.
+    const now = Date.now();
+    applyActivity(students, await buildActivityIndex(students.map(s => s._id), { now }), now);
+    const skillNames = await resolveSkillDisplayNames(
+      students.flatMap(s => (s.skillMastery ? Object.keys(s.skillMastery) : []))
+    );
+    for (const s of students) {
+      s.skillSummary = summarizeSkillMastery(s.skillMastery, skillNames, now);
+      if (isLightweight) delete s.skillMastery;
+    }
     res.json(students);
   } catch (err) {
     console.error('Error fetching students for teacher dashboard:', err);
@@ -1124,8 +1138,10 @@ router.get('/classes/:codeId/students', isTeacher, async (req, res) => {
 
     const studentIds = code.enrolledStudents.map(e => e.studentId);
     const students = await User.find({ _id: { $in: studentIds } })
-      .select('firstName lastName username gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes currentStreak')
+      .select('firstName lastName username gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds lastWeeklyReset currentStreak')
       .lean();
+    const activityNow = Date.now();
+    applyActivity(students, await buildActivityIndex(studentIds, { now: activityNow }), activityNow);
 
     // Merge enrollment info
     const enrollMap = {};
@@ -1462,7 +1478,7 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
         }
 
         if (typeof data.masteryScore === 'number') {
-          agg.totalMasteryScore += data.masteryScore;
+          agg.totalMasteryScore += normalizedMasteryScore(data.masteryScore);
           agg.scoreCount++;
         }
       }
@@ -1485,7 +1501,7 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
       .map(agg => {
       const detail = skillMap[agg.skillId] || {};
       agg.avgMasteryScore = agg.scoreCount > 0
-        ? Math.round((agg.totalMasteryScore / agg.scoreCount) * 100)
+        ? Math.round(agg.totalMasteryScore / agg.scoreCount)
         : 0;
 
       return {
@@ -1559,8 +1575,10 @@ async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
   const studentIds = await getStudentIdsForTeacher(teacherId);
   const students = await User.find(
     { _id: { $in: studentIds }, ...anyRole('student') },
-    'firstName lastName gradeLevel mathCourse iepPlan skillMastery learningProfile lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds currentStreak level xp'
+    'firstName lastName gradeLevel mathCourse iepPlan skillMastery learningProfile lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds lastWeeklyReset currentStreak level xp'
   ).lean();
+  const activityNow = Date.now();
+  applyActivity(students, await buildActivityIndex(students.map(s => s._id), { now: activityNow }), activityNow);
 
   if (students.length === 0) return { students: [], roster: [], summary: 'No students enrolled yet.', studentProfiles: '', classHealth: '', needsAttention: [], topPerformers: [], risingStars: [] };
 
@@ -1582,9 +1600,9 @@ async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
     const mastery = s.skillMastery ? Object.entries(s.skillMastery) : [];
     const masteredCount = mastery.filter(([, d]) => d.status === 'mastered').length;
     const learningCount = mastery.filter(([, d]) => ['learning', 'practicing', 're-fragile', 'needs-review'].includes(d.status)).length;
-    const strugglingSkills = mastery
-      .filter(([, d]) => d.status === 'learning' && d.masteryScore !== undefined && normalizedMasteryScore(d.masteryScore) < 40)
-      .map(([id]) => allSkillNames[id] || id)
+    // One definition of "struggling" — evidence-based, recent (utils/skillSummary.js).
+    const strugglingSkills = summarizeSkillMastery(s.skillMastery, allSkillNames, activityNow).struggling
+      .map(sk => sk.name || sk.skillId)
       .slice(0, 3);
 
     // IEP info
@@ -1595,10 +1613,10 @@ async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
     const iepGoals = s.iepPlan?.goals?.filter(g => g.status === 'active') || [];
 
     // Activity
-    const lastActive = s.lastLogin ? new Date(s.lastLogin) : null;
+    const lastActive = s.activity?.lastActiveAt ? new Date(s.activity.lastActiveAt) : null;
     const isActive = lastActive && lastActive > twoDaysAgo;
     const isInactive = !lastActive || lastActive < oneWeekAgo;
-    const weeklyMinutes = s.weeklyActiveTutoringMinutes || Math.round((s.weeklyActiveSeconds || 0) / 60);
+    const weeklyMinutes = s.activity?.weeklyMinutes?.[0] ?? getEffectiveWeeklyMinutes(s);
 
     // Growth
     const theta = s.learningProfile?.currentTheta;

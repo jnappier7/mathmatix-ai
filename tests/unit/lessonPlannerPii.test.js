@@ -34,6 +34,7 @@ jest.mock('../../models/user', () => ({
 jest.mock('../../models/conversation', () => ({
   find: jest.fn(), findOne: jest.fn(), findById: jest.fn(),
   findByIdAndUpdate: jest.fn(), findOneAndUpdate: jest.fn(),
+  aggregate: jest.fn(),
 }));
 jest.mock('../../models/enrollmentCode', () => ({ find: jest.fn(), findOne: jest.fn(), findById: jest.fn() }));
 jest.mock('../../models/screenerSession', () => ({ find: jest.fn(), findOne: jest.fn() }));
@@ -75,6 +76,7 @@ const request = require('supertest');
 const express = require('express');
 
 const User = require('../../models/user');
+const Conversation = require('../../models/conversation');
 const EducationRecordAccessLog = require('../../models/educationRecordAccessLog');
 const { callLLMStream } = require('../../utils/openaiClient');
 const { getStudentIdsForTeacher } = require('../../services/userService');
@@ -123,6 +125,9 @@ beforeEach(() => {
   getStudentIdsForTeacher.mockResolvedValue(ROSTER.map((s) => s._id));
   User.find.mockReturnValue({ lean: jest.fn().mockResolvedValue(ROSTER) });
   User.findById.mockReturnValue({ lean: jest.fn().mockResolvedValue(TEACHER) });
+  // The snapshot reads real activity from conversations (utils/studentActivity.js).
+  Conversation.find.mockReturnValue({ lean: jest.fn().mockResolvedValue([]) });
+  Conversation.aggregate.mockResolvedValue([]);
 });
 
 async function plan(body, chunks = ['Pair [Student 1] with [Student 2].']) {

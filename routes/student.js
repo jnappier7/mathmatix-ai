@@ -367,7 +367,7 @@ router.get('/progress', isAuthenticated, isStudent, async (req, res) => {
                     skillId,
                     displayName,
                     status: data.status,
-                    masteryScore: data.masteryScore,
+                    masteryScore: require('../utils/masteryScore').normalizedMasteryScore(data.masteryScore),
                     lastPracticed: data.lastPracticed,
                     notes: data.notes
                 };
@@ -719,7 +719,7 @@ router.post('/start-skill', isAuthenticated, isStudent, async (req, res) => {
         setSkillMasteryEntry(student, masteryKey, {
             status: 'learning',
             rung: currentStatus?.rung || 'learned',
-            masteryScore: currentStatus?.masteryScore || 0.1,
+            masteryScore: currentStatus?.masteryScore || 10, // canonical 0-100
             learningStarted: currentStatus?.learningStarted || new Date(),
             lastPracticed: new Date()
         });

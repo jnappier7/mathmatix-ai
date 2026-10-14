@@ -133,7 +133,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js9.e24c9da4.js",
+        "src": "/dist/js/chat-js9.a50104d6.js",
         "files": [
           "/js/sessionManager.js",
           "/js/feedback.js",
@@ -161,7 +161,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/admin-js0.cd5bc4e0.js",
+        "src": "/dist/js/admin-js0.43d4251c.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/admin-analytics.js",
@@ -229,7 +229,7 @@
         ]
       },
       {
-        "src": "/dist/js/parent-js2.40f8bf42.js",
+        "src": "/dist/js/parent-js2.7eefa750.js",
         "files": [
           "/js/guided-tour.js?v=20260728",
           "/js/idle-dialog.js",
@@ -280,12 +280,13 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.9ebbcb8a.js",
+        "src": "/dist/js/teacher-js2.091dbb2b.js",
         "files": [
           "/js/idle-dialog.js",
           "/js/auto-logout.js",
           "/js/teacher-live-feed.js",
           "/js/teacher-live-monitor.js",
+          "/js/teacher-metrics.js",
           "/js/teacher-dashboard.js?v=2.3",
           "/js/teacher-transcripts.js",
           "/js/teacher-curriculum.js",

@@ -44,6 +44,7 @@ const {
   resolvePaging,
   clearStaleWeeklyMinutes,
 } = require('../utils/adminUserQuery');
+const { getEffectiveWeeklyMinutes } = require('../utils/studentActivity');
 // Configure multer for CSV uploads (in-memory)
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -3057,7 +3058,7 @@ function resolveStudentStatus(student) {
     ? (Date.now() - lastLogin.getTime()) / (1000 * 60 * 60 * 24)
     : Infinity;
   if (daysSinceLogin > 7) return 'inactive';
-  const weeklyMinutes = student.weeklyActiveTutoringMinutes || 0;
+  const weeklyMinutes = getEffectiveWeeklyMinutes(student);
   if (weeklyMinutes < 10 && daysSinceLogin <= 7) return 'struggling';
   return 'active';
 }
@@ -3208,7 +3209,7 @@ router.get('/classes/:classId/students', isAdmin, async (req, res) => {
     const studentIds = code.enrolledStudents.map(e => e.studentId).filter(Boolean);
     const students = studentIds.length > 0
       ? await User.find({ _id: { $in: studentIds } })
-          .select('firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes')
+          .select('firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds lastWeeklyReset')
           .lean()
       : [];
 
@@ -3223,7 +3224,7 @@ router.get('/classes/:classId/students', isAdmin, async (req, res) => {
       level: s.level || 0,
       xp: s.xp || 0,
       lastLogin: s.lastLogin,
-      weeklyMinutes: s.weeklyActiveTutoringMinutes || 0,
+      weeklyMinutes: getEffectiveWeeklyMinutes(s),
       totalMinutes: s.totalActiveTutoringMinutes || 0,
       status: resolveStudentStatus(s)
     }));

@@ -237,7 +237,7 @@ async function persist(params) {
       const entry = initializeSkillMastery(startedId);
       advanceRung(entry, 'learned', { via: 'lesson' });
       delete entry.__rungResult;
-      entry.masteryScore = 0.3;
+      entry.masteryScore = 30; // canonical 0-100 (utils/masteryScore.js)
       entry.notes = 'Currently learning with AI';
       setSkillMasteryEntry(user, startedId, entry);
     } else if (currentRung(prior) === 'none') {

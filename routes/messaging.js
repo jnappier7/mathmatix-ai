@@ -61,19 +61,23 @@ router.get('/conversations', isAuthenticated, canMessage, async (req, res) => {
         });
 
         // Format response
-        const formattedConversations = conversations.map(conv => ({
-            participant: participantMap[conv._id.toString()],
+        const formattedConversations = conversations.map(conv => {
+            const body = String(conv.lastMessage.body || '');
+            return {
+            // A deleted counterpart must not take the whole inbox down.
+            participant: participantMap[conv._id.toString()] || { _id: conv._id, firstName: 'Former', lastName: 'user', deleted: true },
             lastMessage: {
                 _id: conv.lastMessage._id,
                 subject: conv.lastMessage.subject,
-                body: conv.lastMessage.body.substring(0, 100) + (conv.lastMessage.body.length > 100 ? '...' : ''),
+                body: body.substring(0, 100) + (body.length > 100 ? '...' : ''),
                 createdAt: conv.lastMessage.createdAt,
-                isFromMe: conv.lastMessage.senderId._id.toString() === req.user._id.toString(),
+                isFromMe: String(conv.lastMessage.senderId) === req.user._id.toString(),
                 category: conv.lastMessage.category
             },
             unreadCount: conv.unreadCount,
             studentId: conv.lastMessage.studentId
-        }));
+            };
+        });
 
         res.json({
             success: true,
