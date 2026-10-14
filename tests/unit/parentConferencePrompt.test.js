@@ -55,7 +55,9 @@ describe('parent conference prompt — persona isolation', () => {
   test('an English parent gets an explicit English-only rule', () => {
     const prompt = generateParentTeacherPrompt(child, [], null, parent, TUTOR_CONFIG['ms-maria']);
     expect(prompt).toMatch(/LANGUAGE — ENGLISH ONLY/);
-    expect(prompt).toMatch(/in English only\. Never use greetings, exclamations, or phrases from another language/);
+    expect(prompt).toMatch(/in English\. Never introduce another language yourself/);
+        // a bilingual parent who writes in Spanish is answered in Spanish
+        expect(prompt).toMatch(/writes to you in another language, reply in that language/);
     expect(prompt).not.toMatch(/LANGUAGE \(NON-NEGOTIABLE\)/);
   });
 

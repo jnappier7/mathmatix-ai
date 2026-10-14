@@ -205,14 +205,14 @@
     ],
     "js": [
       {
-        "src": "/dist/js/parent-js0.194e687c.js",
+        "src": "/dist/js/parent-js0.1bfe818a.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
         ]
       },
       {
-        "src": "/dist/js/parent-js1.c4691eb0.js",
+        "src": "/dist/js/parent-js1.0ae4dd96.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/parent-analytics.js",
@@ -265,7 +265,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/teacher-js0.194e687c.js",
+        "src": "/dist/js/teacher-js0.1bfe818a.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"

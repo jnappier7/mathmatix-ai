@@ -82,7 +82,7 @@ Write every reply to ${parentName} in ${parentLanguage}. They chose ${parentLang
 `
         : `
 LANGUAGE — ENGLISH ONLY:
-Write every reply to ${parentName} in English only. Never use greetings, exclamations, or phrases from another language (no "¡Hola!", "¡Perfecto!", "¡Muy bien!") — even if you use other languages with students.
+Write every reply to ${parentName} in English. Never introduce another language yourself — no greetings, exclamations, or phrases from another language (no "¡Hola!", "¡Perfecto!", "¡Muy bien!") — even if you use other languages with students. The one exception: if ${parentName} writes to you in another language, reply in that language (many families are bilingual).
 `;
 
     // Build session summaries section - this is the CORE data the AI must reference

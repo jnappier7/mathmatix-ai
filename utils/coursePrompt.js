@@ -5,6 +5,7 @@
 // following the gradual-release model — it LEADS instruction, never asks
 // "what do you want to work on?"
 
+const { normalizeLanguage } = require('./parentReportText');
 const fs = require('fs');
 const path = require('path');
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
@@ -1060,6 +1061,13 @@ function loadCourseContext(courseSession) {
  */
 function buildParentCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule }) {
   const firstName = userProfile.firstName || 'there';
+  // The PARENT's language (parentLanguage, allowlisted) — never preferredLanguage,
+  // which is the child-side tutoring language on a multi-role account. Guide
+  // content is authored in English; the guide explains it in the parent's language.
+  const parentLanguage = normalizeLanguage(userProfile.parentLanguage);
+  const languageSection = parentLanguage === 'English'
+    ? 'Reply in English. If the parent writes to you in another language, reply in that language. Never introduce another language yourself (no foreign greetings or exclamations).'
+    : `Reply in ${parentLanguage}, every message — even when the parent's message or the course material below is in English (some buttons send fixed English text). Translate examples and explanations naturally; keep math notation as is. Switch languages only if the parent explicitly asks you to.`;
   const courseName = pathway.track || courseSession.courseName || courseSession.courseId;
   const moduleTitle = currentModule?.title || courseSession.currentModuleId || 'Current Topic';
   // `?? ''`, not `|| ''`: unit 0 is a real unit (every course's launch/boot-camp
@@ -1242,6 +1250,12 @@ or "got it," that's genuine engagement — the system will advance.
 
 When all steps in a topic are done, summarize what they learned and
 preview what's coming next. Make it feel like a natural wrap-up.
+
+====================================================================
+LANGUAGE
+====================================================================
+
+${languageSection}
 
 ====================================================================
 RESPONSE FORMAT

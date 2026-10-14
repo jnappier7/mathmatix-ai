@@ -16,7 +16,14 @@
 window.MathmatixI18n = (function () {
   'use strict';
 
-  var STORAGE_KEY = 'mathmatix_ui_lang';
+  // Whose language this page speaks. Parent pages mark <html data-i18n-audience="parent">
+  // and follow the parent's own setting (parentLanguage); everything else follows the
+  // student's preferredLanguage. They're separate on purpose: a parent who reads
+  // Spanish must not switch their child's tutor to Spanish — and on a shared family
+  // browser the cached choice of one must not repaint the other's page.
+  var AUDIENCE = (document.documentElement.getAttribute('data-i18n-audience') || 'student');
+  var STORAGE_KEY = AUDIENCE === 'parent' ? 'mathmatix_ui_lang_parent' : 'mathmatix_ui_lang';
+  var SERVER_FIELD = AUDIENCE === 'parent' ? 'parentLanguage' : 'preferredLanguage';
   var currentLang = 'English'; // default
 
   /** Look up a translation string. Returns English fallback if missing. */
@@ -159,8 +166,8 @@ window.MathmatixI18n = (function () {
         return res.json();
       })
       .then(function (data) {
-        if (data && data.user && data.user.preferredLanguage) {
-          var serverLang = data.user.preferredLanguage;
+        if (data && data.user && data.user[SERVER_FIELD]) {
+          var serverLang = data.user[SERVER_FIELD];
           if (serverLang !== currentLang) {
             currentLang = serverLang;
             _setItem(STORAGE_KEY, currentLang);
@@ -186,6 +193,7 @@ window.MathmatixI18n = (function () {
     apply: apply,
     setLanguage: setLanguage,
     getLanguage: getLanguage,
+    audience: AUDIENCE,
     init: init
   };
 })();
