@@ -793,24 +793,8 @@ function registerUserRoutes(app) {
       if (!userHasRole(req.user, 'student')) {
         return res.json({ success: true, calculatorAccess: 'always', message: 'Non-student users have full calculator access' });
       }
-      if (!req.user.teacherId) {
-        return res.json({ success: true, calculatorAccess: 'always', message: 'No assigned teacher' });
-      }
-
-      const teacher = await User.findById(req.user.teacherId)
-        .select('classAISettings.calculatorAccess classAISettings.calculatorNote firstName lastName')
-        .lean();
-
-      if (!teacher || !teacher.classAISettings) {
-        return res.json({ success: true, calculatorAccess: 'skill-based', message: 'Teacher has not configured settings' });
-      }
-
-      res.json({
-        success: true,
-        calculatorAccess: teacher.classAISettings.calculatorAccess || 'skill-based',
-        calculatorNote: teacher.classAISettings.calculatorNote || '',
-        teacherName: `${teacher.firstName} ${teacher.lastName}`,
-      });
+      // Same teacher + class override as the tutor (utils/effectiveAISettings).
+      res.json(await require('../utils/effectiveAISettings').calculatorAccessFor(req.user));
     } catch (error) {
       logger.error('Error fetching calculator access:', error);
       res.status(500).json({ success: false, calculatorAccess: 'skill-based', message: 'Error fetching settings' });
