@@ -58,6 +58,7 @@ const {
 } = require('../utils/actProgress');
 const { seenProblemIdsForUser, seedBootcampFromTest } = require('../utils/actBootcampSeed');
 const { recordConversionEvent } = require('../utils/conversionEvents');
+const { makeRunnerLimiters } = require('../middleware/practiceTestLimiter');
 
 // Who owns the session a request is about. The signed-in rail is owned by the
 // user; the guest rail by the bearer token. Set per router so a signed-in
@@ -68,6 +69,14 @@ guestRouter.use((req, _res, next) => {
   req.actOwner = { guestToken: String(req.get('X-Act-Guest-Token') || ''), testId: defOfReq(req).testId };
   next();
 });
+
+// The runner's per-question calls (problem, save-answer, overview,
+// next-module, complete) are exempt from the global apiLimiter and limited
+// here instead, per session owner and sized for a timed 44–45 item test —
+// see middleware/practiceTestLimiter.js for why and how big.
+const runnerLimiters = makeRunnerLimiters();
+router.use(runnerLimiters);
+guestRouter.use(runnerLimiters);
 
 function hashGuestToken(token) {
   return crypto.createHash('sha256').update(String(token)).digest('hex');
