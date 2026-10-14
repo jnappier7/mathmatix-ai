@@ -62,15 +62,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const clsSel = $('ta-class');
     clsSel.textContent = '';
-    if (!classes.length) {
-      const o = el('option', null, 'Create a class in the Classes tab first');
+    // This year's classes first; older ones stay assignable but are labeled.
+    const thisYear = window.TeacherSchoolYear && window.TeacherSchoolYear.currentYear();
+    const ordered = classes.slice().sort((a, b) => (b.schoolYear === thisYear) - (a.schoolYear === thisYear));
+    if (!ordered.length) {
+      const o = el('option', null, 'No classes yet');
       o.value = '';
       clsSel.appendChild(o);
     }
-    for (const c of classes) {
-      const o = el('option', null, `${c.className || c.code} (${c.studentCount})`);
+    for (const c of ordered) {
+      const yr = thisYear && c.schoolYear && c.schoolYear !== thisYear ? ` · ${c.schoolYear}` : '';
+      const per = c.period ? ` · ${c.period}` : '';
+      const o = el('option', null, `${c.className || c.code}${per}${yr} (${c.studentCount})`);
       o.value = c._id;
       clsSel.appendChild(o);
+    }
+    // No dead end: the empty state opens the same New Class modal in place.
+    let createLink = $('ta-create-class');
+    if (!ordered.length && !createLink) {
+      createLink = el('button', 'btn btn-link', 'Create a class');
+      createLink.type = 'button';
+      createLink.id = 'ta-create-class';
+      createLink.setAttribute('data-open-create-class', '');
+      clsSel.insertAdjacentElement('afterend', createLink);
+    } else if (ordered.length && createLink) {
+      createLink.remove();
     }
     syncActivityDesc();
   }
@@ -252,5 +268,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loaded = true;
     loadCatalogAndClasses().catch(() => setStatus('Could not load activities or classes.', 'err'));
     loadAssignments();
+  });
+
+  // A class made from the empty state should be pickable immediately.
+  document.addEventListener('mm:class-created', () => {
+    if (loaded) loadCatalogAndClasses().catch(() => {});
   });
 });

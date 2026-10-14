@@ -427,7 +427,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function fetchAssignedStudents(lightweight = false) {
         if (!studentListDiv) return;
         try {
-            const url = lightweight ? '/api/teacher/students?fields=roster' : '/api/teacher/students';
+            // Year switcher (js/teacher-school-year.js): current | archived | all.
+            const scope = (window.TeacherSchoolYear && window.TeacherSchoolYear.scope()) || 'current';
+            const url = lightweight ? `/api/teacher/students?fields=roster&scope=${scope}` : `/api/teacher/students?scope=${scope}`;
             const response = await fetch(url);
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) window.location.href = "/login.html";
@@ -916,12 +918,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (!createBtn || !modal) return;
 
-        createBtn.addEventListener('click', () => {
+        const openModal = () => {
             modal.style.display = 'flex';
             nameInput.value = '';
             document.getElementById('new-class-grade').value = '';
             document.getElementById('new-class-course').value = '';
+            const periodInput = document.getElementById('new-class-period');
+            if (periodInput) periodInput.value = '';
+            // School-year options come from the year module (js/teacher-school-year.js).
+            if (window.TeacherSchoolYear) window.TeacherSchoolYear.fillYearSelect(document.getElementById('new-class-year'));
             nameInput.focus();
+        };
+        createBtn.addEventListener('click', openModal);
+        // Every "New Class" entry point (Classes tab, empty states, the
+        // new-year wizard) opens the same modal.
+        window.openCreateClassModal = openModal;
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('[data-open-create-class]')) { e.preventDefault(); openModal(); }
         });
 
         closeBtn.addEventListener('click', () => {
@@ -953,7 +966,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     body: JSON.stringify({
                         className,
                         gradeLevel: document.getElementById('new-class-grade').value || undefined,
-                        mathCourse: document.getElementById('new-class-course').value.trim() || undefined
+                        mathCourse: document.getElementById('new-class-course').value.trim() || undefined,
+                        schoolYear: document.getElementById('new-class-year')?.value || undefined,
+                        period: document.getElementById('new-class-period')?.value.trim() || undefined
                     })
                 });
 
@@ -972,6 +987,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 // Also refresh the Classes tab if it was loaded
                 if (classesLoaded) fetchClasses();
+                document.dispatchEvent(new CustomEvent('mm:class-created', { detail: data.class }));
             } catch (err) {
                 console.error('Error creating class:', err);
                 showToast(err.message || 'Failed to create class', 'error');
@@ -1898,6 +1914,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         }, 3000);
     }
 
+    // The year module re-fetches when the teacher switches years or archives.
+    window.TeacherDashboard = Object.assign(window.TeacherDashboard || {}, {
+        reloadRoster: () => fetchAssignedStudents(false),
+        students: () => currentStudentsData
+    });
+
     // One repaint path for every stat surface. Each painter is isolated so one
     // failure can't leave the rest of the page on placeholders.
     function refreshDashboardStats(students) {
@@ -1920,7 +1942,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             try {
                 // Roster mode: every stat now reads skillSummary, so the 30s
                 // poll no longer re-downloads every student's full skill map.
-                const response = await fetch("/api/teacher/students?fields=roster");
+                const scope = (window.TeacherSchoolYear && window.TeacherSchoolYear.scope()) || 'current';
+                const response = await fetch(`/api/teacher/students?fields=roster&scope=${scope}`);
                 if (response.ok) {
                     const students = await response.json();
                     // Keep full skillMastery from the background load for the
@@ -2758,7 +2781,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div style="text-align: center; padding: 60px 20px; color: #888;">
                     <i class="fas fa-chalkboard-teacher" style="font-size: 48px; color: #ddd; margin-bottom: 16px; display: block;"></i>
                     <h3 style="margin: 0 0 8px; color: #666;">No Classes Yet</h3>
-                    <p style="margin: 0; font-size: 14px;">Classes are created when an administrator generates an enrollment code for you.<br>Contact your school admin to get started.</p>
+                    <p style="margin: 0 0 16px; font-size: 14px;">Create a class to get a join code for your students, then group, assign and monitor by class.</p>
+                    <button type="button" class="btn btn-primary" data-open-create-class><i class="fas fa-plus"></i> Create your first class</button>
                 </div>
             `;
             return;

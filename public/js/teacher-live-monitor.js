@@ -44,13 +44,18 @@
       const res = await csrfFetch('/api/teacher/classes');
       if (!res.ok) return;
 
-      const classes = await res.json();
-      select.innerHTML = '<option value="">-- Select a class --</option>';
+      // /api/teacher/classes answers { success, classes } — iterating the
+      // envelope threw "classes is not iterable" and left this picker empty.
+      const body = await res.json();
+      const classes = Array.isArray(body) ? body : (body.classes || []);
+      select.innerHTML = classes.length
+        ? '<option value="">-- Select a class --</option>'
+        : '<option value="">Create a class first (Classes tab)</option>';
 
       for (const cls of classes) {
         const opt = document.createElement('option');
         opt.value = cls._id;
-        opt.textContent = `${cls.className} (${cls.enrolledStudents?.length || 0} students)`;
+        opt.textContent = `${cls.className}${cls.period ? ` · ${cls.period}` : ""} (${cls.studentCount ?? cls.enrolledStudents?.length ?? 0} students)`;
         select.appendChild(opt);
       }
     } catch (e) {

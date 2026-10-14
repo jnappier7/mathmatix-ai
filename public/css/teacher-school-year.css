@@ -1,0 +1,90 @@
+/* teacher-school-year.css — year bar, new-year banner, rollover wizard,
+   archive manager (js/teacher-school-year.js). Built only on the page's
+   theme tokens (--color-*, which map onto design-system --cr-*), so it
+   follows light/dark with everything else. Every surface paints its own
+   ground — never inherit a transparent one (CLAUDE.md §12, theme seams). */
+
+.ty-visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.ty-bar { margin: 0 0 14px; }
+.ty-bar-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.ty-year { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 10px;
+  background: var(--color-bg-white); border: 1px solid var(--color-border); color: var(--color-text); font-weight: 600; font-size: 14px; }
+.ty-year i { color: var(--color-primary-dark); }
+.ty-year select { border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; padding: 2px 4px; max-width: 70vw; }
+.ty-year select:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; border-radius: 6px; }
+.ty-bar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.ty-btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 9px; padding: 8px 14px; font: 600 14px/1.2 inherit;
+  cursor: pointer; border: 1px solid transparent; transition: background .15s, border-color .15s, color .15s; min-height: 36px; }
+.ty-btn:disabled { opacity: .6; cursor: progress; }
+.ty-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.ty-btn-primary { background: var(--color-primary-dark); color: #fff; }
+.ty-btn-primary:hover:not(:disabled) { background: #047857; }
+.ty-btn-ghost { background: var(--color-bg-white); color: var(--color-text); border-color: var(--color-border); }
+.ty-btn-ghost:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary-dark); }
+.ty-btn-link { background: transparent; color: var(--color-primary-dark); padding: 6px 8px; }
+.ty-btn-link:hover { text-decoration: underline; }
+
+.ty-banner { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  padding: 14px 16px; border-radius: 12px; background: var(--color-primary-light); border: 1px solid var(--color-primary-bg); color: #064E3B; }
+.ty-banner-muted { background: var(--color-bg-white); border-color: var(--color-border); color: var(--color-text); font-size: 14px; }
+.ty-banner-text { flex: 1 1 320px; font-size: 14px; line-height: 1.45; }
+.ty-banner-actions { display: flex; gap: 6px; align-items: center; }
+
+/* modal */
+.ty-modal-overlay { position: fixed; inset: 0; z-index: 10050; background: rgba(15, 23, 42, .45); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.ty-modal { width: min(620px, 100%); max-height: calc(100vh - 32px); display: flex; flex-direction: column; border-radius: 16px;
+  background: var(--color-bg-white); color: var(--color-text); box-shadow: 0 24px 60px rgba(15, 23, 42, .25); border: 1px solid var(--color-border); }
+.ty-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 6px; }
+.ty-modal-head h3 { margin: 0; font-size: 18px; }
+.ty-close { border: 0; background: transparent; font-size: 26px; line-height: 1; cursor: pointer; color: var(--color-text-secondary); padding: 4px 8px; border-radius: 8px; }
+.ty-close:focus-visible { outline: 2px solid var(--color-primary); }
+.ty-modal-body { padding: 8px 20px 12px; overflow: auto; }
+.ty-modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px 18px; border-top: 1px solid var(--color-border); flex-wrap: wrap; }
+
+.ty-steps { list-style: none; display: flex; gap: 6px; padding: 0; margin: 4px 0 16px; counter-reset: s; flex-wrap: wrap; }
+.ty-steps li { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--color-text-secondary); padding: 4px 10px 4px 4px; border-radius: 999px; background: var(--color-bg); }
+.ty-steps li span { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; background: var(--color-border); color: var(--color-text); }
+.ty-steps li.is-active { color: var(--color-text); font-weight: 600; }
+.ty-steps li.is-active span { background: var(--color-primary-dark); color: #fff; }
+.ty-steps li.is-done span { background: var(--color-primary-bg); color: #065F46; }
+
+.ty-lead { margin: 0 0 12px; line-height: 1.5; font-size: 14px; }
+.ty-reassure { color: var(--color-text-secondary); }
+.ty-empty { color: var(--color-text-secondary); padding: 16px 0; }
+.ty-keep, .ty-success { font-size: 14px; margin: 12px 0 0; color: var(--color-text-secondary); }
+.ty-success { color: #047857; margin: 0 0 10px; font-weight: 600; }
+.ty-loading { padding: 24px 0; color: var(--color-text-secondary); }
+
+.ty-checklist-head { padding: 6px 2px; font-size: 13px; font-weight: 600; border-bottom: 1px solid var(--color-border); }
+.ty-checklist { list-style: none; margin: 0; padding: 0; max-height: 300px; overflow: auto; }
+.ty-checklist li label, .ty-checklist-head label { display: flex; align-items: center; gap: 10px; padding: 8px 2px; cursor: pointer; }
+.ty-checklist li + li { border-top: 1px solid var(--color-border-light); }
+.ty-name { font-weight: 600; font-size: 14px; }
+.ty-meta { margin-left: auto; font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; }
+.ty-checklist input[type=checkbox], .ty-checklist-head input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--color-primary-dark); }
+
+.ty-class-row { display: grid; grid-template-columns: 1fr 96px 92px; gap: 8px; margin-bottom: 8px; }
+.ty-in { padding: 10px 12px; border-radius: 9px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); font: 14px inherit; min-width: 0; }
+.ty-in:focus { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+
+.ty-codes { list-style: none; padding: 0; margin: 0; }
+.ty-codes li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; }
+.ty-codes li + li { border-top: 1px solid var(--color-border); }
+.ty-code { font: 700 16px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .06em; padding: 10px 12px; border-radius: 9px;
+  border: 1px dashed var(--color-primary); background: var(--color-primary-light); color: #065F46; cursor: pointer; white-space: nowrap; }
+.ty-linkcopy { padding-left: 0; font-size: 13px; }
+
+.ty-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10060; padding: 10px 16px; border-radius: 10px;
+  background: #0F172A; color: #fff; font-size: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+.ty-toast-error { background: #B91C1C; }
+.ty-toast-success { background: #047857; }
+
+@media (max-width: 600px) {
+  .ty-class-row { grid-template-columns: 1fr 1fr; }
+  .ty-class-row .ty-cname { grid-column: 1 / -1; }
+  .ty-modal-foot { justify-content: stretch; }
+  .ty-modal-foot .ty-btn { flex: 1 1 auto; justify-content: center; }
+  .ty-meta { display: none; }
+}

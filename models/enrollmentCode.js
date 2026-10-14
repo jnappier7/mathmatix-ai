@@ -44,6 +44,22 @@ const enrollmentCodeSchema = new Schema({
     trim: true
   },
 
+  // School year this class belongs to ("2026-27", utils/schoolYear.js).
+  // Older classes predate the field; classSchoolYear() derives it from createdAt.
+  schoolYear: {
+    type: String,
+    trim: true,
+    match: /^\d{4}-\d{2}$/,
+    index: true
+  },
+
+  // Period / section label within the year ("P3", "Block A")
+  period: {
+    type: String,
+    trim: true,
+    maxlength: 20
+  },
+
   // Math course for the class (helps with defaults)
   mathCourse: {
     type: String,
