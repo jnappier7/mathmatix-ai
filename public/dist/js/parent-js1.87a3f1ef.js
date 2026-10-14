@@ -1239,6 +1239,13 @@
 (function () {
   'use strict';
 
+  // Parent's language (i18n.js follows parentLanguage on this page); English fallback.
+  function tr(key, english, params, n) {
+    var I = window.MathmatixI18n;
+    var text = (I && n === 1 && I.t(key + '_one')) || (I && I.t(key)) || english;
+    return params ? text.replace(/\{(\w+)\}/g, function (m, k) { return params[k] != null ? params[k] : ''; }) : text;
+  }
+
   // Exposed globally so parent-dashboard.js can call it
   window.fetchChildAnalytics = async function (childId) {
     if (!window.AnalyticsCharts) return;
@@ -1261,13 +1268,17 @@
           const n = data.totalSkills;
           const caption = document.createElement('p');
           caption.style.cssText = 'font-size:0.75em; color:#666; margin:0 0 6px;';
-          caption.textContent = `Memory check on ${n} practiced skill${n === 1 ? '' : 's'}`;
+          caption.textContent = tr('parent.analytics.memoryCaption', 'Memory check on {n} practiced skills', { n: n }, n);
           container.prepend(caption);
           container.setAttribute('role', 'img');
           container.setAttribute('aria-label',
-            `Memory check on ${n} practiced skill${n === 1 ? '' : 's'}: ${data.strong} strong, ${data.fading} fading, ${data.needsReview} need review`);
+            tr('parent.analytics.memoryCaption', 'Memory check on {n} practiced skills', { n: n }, n) + ': ' +
+            tr('parent.report.memoryAria', '{strong} strong, {fading} fading, {review} need review', { strong: data.strong, fading: data.fading, review: data.needsReview }));
         } else if (container) {
-          container.innerHTML = '<p style="font-size:0.8em; color:#666;">No memory data yet — it builds as your child practices.</p>';
+          const p = document.createElement('p');
+          p.style.cssText = 'font-size:0.8em; color:#666;';
+          p.textContent = tr('parent.analytics.noMemory', 'No memory data yet — it builds as your child practices.');
+          container.replaceChildren(p);
         }
       }
 
@@ -1292,8 +1303,9 @@
           const msg = document.createElement('p');
           msg.style.cssText = 'font-size:0.8em; color:#666; text-align:center; padding:10px;';
           msg.textContent = practiced > 0
-            ? 'Practicing: ' + cats.map(c => c.name + (c.totalSkills > 1 ? ` (${c.totalSkills})` : '')).join(', ') + '. The strength map fills in as more skills are practiced.'
-            : 'Strength map appears once your child starts practicing skills.';
+            ? tr('parent.analytics.practicing', 'Practicing: {list}. The strength map fills in as more skills are practiced.',
+              { list: cats.map(c => c.name + (c.totalSkills > 1 ? ` (${c.totalSkills})` : '')).join(', ') })
+            : tr('parent.analytics.mapEmpty', 'Strength map appears once your child starts practicing skills.');
           canvas.parentNode.appendChild(msg);
         }
       }
@@ -2640,6 +2652,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     // SVG SKILL MASTERY RING
     // ============================================
 
+    // Translate a dashboard string into the parent's language (i18n.js, which on
+    // this page follows parentLanguage). English fallback when a key is missing.
+    // `n` picks the `_one` key for a count of 1; {placeholders} fill from params.
+    function tr(key, english, params, n) {
+        const I = window.MathmatixI18n;
+        let text = null;
+        if (I && n === 1) text = I.t(key + '_one');
+        if (!text && I) text = I.t(key);
+        if (!text) text = english;
+        return params ? text.replace(/\{(\w+)\}/g, (m, k) => (params[k] != null ? params[k] : '')) : text;
+    }
+
     function escText(v) {
         return String(v == null ? '' : v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     }
@@ -2658,16 +2682,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         const total = mastered + inProgress + needsReview;
 
         const placedLine = placedOut > 0
-            ? `<div class="skill-legend-item" style="color: var(--color-text-muted);" title="Skills the placement test showed are already known — not practiced here">
+            ? `<div class="skill-legend-item" style="color: var(--color-text-muted);" title="${escText(tr('parent.ring.placedOutTip', 'Skills the placement test showed are already known — not practiced here'))}">
                    <span class="skill-legend-dot" style="background: #bdc3c7;"></span>
-                   <span>${placedOut} placed out (placement test)</span>
+                   <span>${escText(tr('parent.ring.placedOut', '{n} placed out (placement test)', { n: placedOut }))}</span>
                </div>`
             : '';
 
         if (total === 0) {
             return placedOut > 0
                 ? `<div class="skill-mastery-container"><div class="skill-legend">${placedLine}
-                     <div class="skill-legend-item" style="color: var(--color-text-muted);"><span>No skills practiced yet</span></div></div></div>`
+                     <div class="skill-legend-item" style="color: var(--color-text-muted);"><span>${escText(tr('parent.ring.noneYet', 'No skills practiced yet'))}</span></div></div></div>`
                 : '';
         }
 
@@ -2681,7 +2705,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                    stroke-dasharray="${len} ${circumference - len}" stroke-dashoffset="${-offset}"
                    transform="rotate(-90 40 40)" stroke-linecap="round"/>`
             : '';
-        const summary = `${total} practiced skill${total === 1 ? '' : 's'}: ${mastered} mastered, ${inProgress} in progress, ${needsReview} need${needsReview === 1 ? 's' : ''} review`;
+        const summary = tr('parent.ring.summary', '{total} practiced skills: {mastered} mastered, {inProgress} in progress, {review} need review',
+            { total, mastered, inProgress, review: needsReview });
 
         return `
             <div class="skill-mastery-container">
@@ -2694,21 +2719,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </svg>
                     <div class="skill-ring-center" aria-hidden="true">
                         <div class="skill-ring-number">${total}</div>
-                        <div class="skill-ring-label">practiced</div>
+                        <div class="skill-ring-label">${escText(tr('parent.ring.practiced', 'practiced'))}</div>
                     </div>
                 </div>
                 <div class="skill-legend">
                     <div class="skill-legend-item">
                         <span class="skill-legend-dot" style="background: #27ae60;"></span>
-                        <span>${mastered} mastered</span>
+                        <span>${escText(tr('parent.ring.mastered', '{n} mastered', { n: mastered }))}</span>
                     </div>
                     <div class="skill-legend-item">
                         <span class="skill-legend-dot" style="background: #3498db;"></span>
-                        <span>${inProgress} in progress</span>
+                        <span>${escText(tr('parent.ring.inProgress', '{n} in progress', { n: inProgress }))}</span>
                     </div>
                     <div class="skill-legend-item">
                         <span class="skill-legend-dot" style="background: #f39c12;"></span>
-                        <span>${needsReview} need${needsReview === 1 ? 's' : ''} review</span>
+                        <span>${escText(tr('parent.ring.needsReview', '{n} need review', { n: needsReview }, needsReview))}</span>
                     </div>
                     ${placedLine}
                 </div>
@@ -2721,18 +2746,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     function buildProfileLine(progress) {
         const p = progress.profile || {};
         const parts = [];
-        if (p.schoolGrade) parts.push(escText(p.schoolGrade));
-        if (p.courses && p.courses.length) parts.push(`Course${p.courses.length > 1 ? 's' : ''}: ${escText(p.courses.join(', '))}`);
+        const g = progress.gradeLevel;
+        if (g != null && g !== '') {
+            parts.push(/^\d{1,2}$/.test(String(g))
+                ? escText(tr('parent.profile.grade', 'Grade {g}', { g }))
+                : /^(k|kindergarten)$/i.test(String(g)) ? escText(tr('parent.profile.kindergarten', 'Kindergarten')) : escText(p.schoolGrade || g));
+        }
+        if (p.courses && p.courses.length) parts.push(escText(tr('parent.profile.courses', 'Courses: {list}', { list: p.courses.join(', ') }, p.courses.length)));
         if (p.placement && p.placement.level) {
             const when = p.placement.date
                 ? ` (${new Date(p.placement.date).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })})`
                 : '';
-            parts.push(`Placement: ${escText(p.placement.level)} level${when}`);
+            parts.push(escText(tr('parent.profile.placement', 'Placement: {level} level', { level: p.placement.level })) + escText(when));
         }
         if (progress.streak && progress.streak.current > 0) {
-            parts.push(`${progress.streak.current}-day streak`);
+            parts.push(escText(tr('parent.profile.streak', '{n}-day streak', { n: progress.streak.current })));
         }
-        parts.push(`${progress.totalActiveTutoringMinutes || 0} min total`);
+        parts.push(escText(tr('parent.profile.minTotal', '{n} min total', { n: progress.totalActiveTutoringMinutes || 0 })));
         return parts.join(' · ');
     }
 
@@ -2753,30 +2783,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             return `
                 <div class="weekly-summary" style="justify-content: center;">
                     <div style="grid-column: 1 / -1; text-align: center; color: var(--color-text-muted); font-size: 0.85em; padding: 8px;">
-                        <i class="fas fa-calendar-week"></i> No activity in the last 7 days
+                        <i class="fas fa-calendar-week"></i> ${escText(tr('parent.week.none', 'No activity in the last 7 days'))}
                     </div>
                 </div>
             `;
         }
 
         return `
-            <div class="weekly-summary-period" style="font-size: 0.75em; color: var(--color-text-muted); margin: 4px 0 2px;">Last 7 days</div>
-            <div class="weekly-summary" role="region" aria-label="Last 7 days">
+            <div class="weekly-summary-period" style="font-size: 0.75em; color: var(--color-text-muted); margin: 4px 0 2px;">${escText(tr('parent.week.last7', 'Last 7 days'))}</div>
+            <div class="weekly-summary" role="region" aria-label="${escText(tr('parent.week.last7', 'Last 7 days'))}">
                 <div class="weekly-stat">
                     <div class="weekly-stat-value">${sessions}</div>
-                    <div class="weekly-stat-label">Sessions</div>
+                    <div class="weekly-stat-label">${escText(tr('parent.stat.sessions', 'Sessions'))}</div>
                 </div>
                 <div class="weekly-stat">
                     <div class="weekly-stat-value">${problems === 0 && sessions > 0 ? '—' : problems}</div>
-                    <div class="weekly-stat-label"${problems === 0 && sessions > 0 ? ' title="No answers were checked in these sessions"' : ''}>Problems</div>
+                    <div class="weekly-stat-label"${problems === 0 && sessions > 0 ? ` title="${escText(tr('parent.stat.problemsUntracked', 'No answers were checked in these sessions'))}"` : ''}>${escText(tr('parent.stat.problems', 'Problems'))}</div>
                 </div>
                 <div class="weekly-stat">
                     <div class="weekly-stat-value">${accuracy === null ? '—' : accuracy + '%'}</div>
-                    <div class="weekly-stat-label">Accuracy</div>
+                    <div class="weekly-stat-label">${escText(tr('parent.stat.accuracy', 'Accuracy'))}</div>
                 </div>
                 <div class="weekly-stat">
                     <div class="weekly-stat-value">${Math.round(minutes)}</div>
-                    <div class="weekly-stat-label">Minutes</div>
+                    <div class="weekly-stat-label">${escText(tr('parent.stat.minutes', 'Minutes'))}</div>
                 </div>
             </div>
         `;
@@ -3327,7 +3357,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             <!-- Learning Analytics Section -->
             <div class="child-analytics-section" style="margin-top: 16px; padding: 14px; background: #f0f7ff; border-radius: 10px; border: 1px solid #d6eaf8;">
-              <strong style="font-size: 0.9em; color: #21618c;"><i class="fas fa-brain"></i> Learning Analytics</strong>
+              <strong style="font-size: 0.9em; color: #21618c;"><i class="fas fa-brain"></i> ${escText(tr('parent.card.analytics', 'Learning Analytics'))}</strong>
               <div id="memory-health-${progress._id}" style="margin-top: 10px;"></div>
               <div style="margin-top: 12px;">
                 <canvas id="strength-map-${progress._id}" style="max-height: 180px;"></canvas>
@@ -3358,7 +3388,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             ${goalsHTML}
 
             <div style="margin-top: 12px;">
-                <strong style="font-size: 0.9em;"><i class="fas fa-history"></i> Recent Sessions:</strong>
+                <strong style="font-size: 0.9em;"><i class="fas fa-history"></i> ${escText(tr('parent.card.recentSessions', 'Recent Sessions:'))}</strong>
                 <div style="margin-top: 8px;">
                     ${sessionsHTML}
                 </div>
@@ -3509,11 +3539,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     function renderLearningReport(r) {
         const toneClass = `lr-tone-${r.headline.tone}`;
         const toneLabels = {
-            excellent: 'Excellent',
-            good: 'On Track',
-            growing: 'Growing',
-            building: 'Building',
-            'needs-attention': 'Needs Attention',
+            excellent: tr('parent.report.tone.excellent', 'Excellent'),
+            good: tr('parent.report.tone.good', 'On Track'),
+            growing: tr('parent.report.tone.growing', 'Growing'),
+            building: tr('parent.report.tone.building', 'Building'),
+            'needs-attention': tr('parent.report.tone.attention', 'Needs Attention'),
             neutral: ''
         };
 
@@ -3538,22 +3568,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div class="lr-stat-grid">
                 <div class="lr-stat-card">
                     <div class="lr-stat-value">${tw.sessions}</div>
-                    <div class="lr-stat-label">Sessions</div>
+                    <div class="lr-stat-label">${escText(tr('parent.stat.sessions', 'Sessions'))}</div>
                     ${deltaHTML(trends.sessionsDelta)}
                 </div>
                 <div class="lr-stat-card">
                     <div class="lr-stat-value">${tw.minutes}</div>
-                    <div class="lr-stat-label">Minutes</div>
+                    <div class="lr-stat-label">${escText(tr('parent.stat.minutes', 'Minutes'))}</div>
                     ${deltaHTML(trends.minutesDelta)}
                 </div>
                 <div class="lr-stat-card">
                     <div class="lr-stat-value">${tw.problemsAttempted}</div>
-                    <div class="lr-stat-label">Problems</div>
+                    <div class="lr-stat-label">${escText(tr('parent.stat.problems', 'Problems'))}</div>
                     ${deltaHTML(trends.problemsDelta)}
                 </div>
                 <div class="lr-stat-card">
                     <div class="lr-stat-value">${tw.accuracy !== null ? tw.accuracy + '%' : '—'}</div>
-                    <div class="lr-stat-label">Accuracy</div>
+                    <div class="lr-stat-label">${escText(tr('parent.stat.accuracy', 'Accuracy'))}</div>
                     ${deltaHTML(trends.accuracyDelta, '%')}
                 </div>
             </div>
@@ -3565,21 +3595,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         const inProgress = Math.max(0, practiced - m.practicedMastered - m.needsReview);
         const pct = (n) => (practiced ? (n / practiced * 100).toFixed(1) : 0);
         const placedNote = m.placedOut > 0
-            ? `<p style="font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 6px;">Plus ${m.placedOut} skill${m.placedOut === 1 ? '' : 's'} placed out of by the placement test.</p>`
+            ? `<p style="font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 6px;">${escText(tr('parent.report.placedNote', 'Plus {n} skills placed out of by the placement test.', { n: m.placedOut }, m.placedOut))}</p>`
             : '';
         const masteryBarHTML = practiced > 0 ? `
-            <div class="lr-mastery-bar" role="img" aria-label="${practiced} practiced skills: ${m.practicedMastered} mastered, ${inProgress} in progress, ${m.needsReview} need review">
+            <div class="lr-mastery-bar" role="img" aria-label="${escText(tr('parent.ring.summary', '{total} practiced skills: {mastered} mastered, {inProgress} in progress, {review} need review', { total: practiced, mastered: m.practicedMastered, inProgress, review: m.needsReview }))}">
                 <div class="lr-mastery-bar-segment" style="width: ${pct(m.practicedMastered)}%; background: var(--color-success);"></div>
                 <div class="lr-mastery-bar-segment" style="width: ${pct(inProgress)}%; background: #3498db;"></div>
                 <div class="lr-mastery-bar-segment" style="width: ${pct(m.needsReview)}%; background: var(--color-danger);"></div>
             </div>
             <div class="lr-mastery-legend">
-                <span class="lr-legend-mastered">Mastered (${m.practicedMastered})</span>
-                <span class="lr-legend-practicing">In progress (${inProgress})</span>
-                <span class="lr-legend-needs-review">Needs review (${m.needsReview})</span>
+                <span class="lr-legend-mastered">${escText(tr('parent.report.legendMastered', 'Mastered ({n})', { n: m.practicedMastered }))}</span>
+                <span class="lr-legend-practicing">${escText(tr('parent.report.legendInProgress', 'In progress ({n})', { n: inProgress }))}</span>
+                <span class="lr-legend-needs-review">${escText(tr('parent.report.legendReview', 'Needs review ({n})', { n: m.needsReview }))}</span>
             </div>
             ${placedNote}
-        ` : `<p style="font-size: var(--text-sm); color: var(--color-text-muted);">No skills practiced yet.</p>${placedNote}`;
+        ` : `<p style="font-size: var(--text-sm); color: var(--color-text-muted);">${escText(tr('parent.report.noneYet', 'No skills practiced yet.'))}</p>${placedNote}`;
 
         const strengthsHTML = r.mastery.topStrengths.length > 0
             ? r.mastery.topStrengths.map(s => `<span class="lr-skill-tag lr-skill-strength"><i class="fas fa-star" style="font-size: 0.8em;"></i> ${escText(s.displayName)}</span>`).join('')
@@ -3592,45 +3622,51 @@ document.addEventListener("DOMContentLoaded", async () => {
         // --- Memory Health ---
         const mem = r.memoryHealth;
         const memoryHTML = mem.totalTracked > 0 ? `
-            <p style="font-size: var(--text-xs); color: var(--color-text-muted); margin: 0 0 6px;">How well ${escText(r.child.firstName)} remembers the ${mem.totalTracked} practiced skill${mem.totalTracked === 1 ? '' : 's'} with review data.</p>
-            <div class="lr-memory-bar" role="img" aria-label="${mem.strong} strong, ${mem.fading} fading, ${mem.needsReview} need review">
+            <p style="font-size: var(--text-xs); color: var(--color-text-muted); margin: 0 0 6px;">${escText(tr('parent.report.memoryScope', 'How well {name} remembers the {n} practiced skills with review data.', { name: r.child.firstName, n: mem.totalTracked }, mem.totalTracked))}</p>
+            <div class="lr-memory-bar" role="img" aria-label="${escText(tr('parent.report.memoryAria', '{strong} strong, {fading} fading, {review} need review', { strong: mem.strong, fading: mem.fading, review: mem.needsReview }))}">
                 ${Array(mem.strong).fill('<div class="lr-memory-segment lr-memory-strong"></div>').join('')}
                 ${Array(mem.fading).fill('<div class="lr-memory-segment lr-memory-fading"></div>').join('')}
                 ${Array(mem.needsReview).fill('<div class="lr-memory-segment lr-memory-weak"></div>').join('')}
             </div>
             <div style="display: flex; gap: 16px; font-size: var(--text-xs); color: var(--color-text-secondary);">
-                <span><span style="color: var(--color-success); font-weight: 700;">${mem.strong}</span> Strong</span>
-                <span><span style="color: var(--color-warning); font-weight: 700;">${mem.fading}</span> Fading</span>
-                <span><span style="color: var(--color-danger); font-weight: 700;">${mem.needsReview}</span> Needs Review</span>
+                <span><span style="color: var(--color-success); font-weight: 700;">${mem.strong}</span> ${escText(tr('parent.report.strong', 'Strong'))}</span>
+                <span><span style="color: var(--color-warning); font-weight: 700;">${mem.fading}</span> ${escText(tr('parent.report.fading', 'Fading'))}</span>
+                <span><span style="color: var(--color-danger); font-weight: 700;">${mem.needsReview}</span> ${escText(tr('parent.report.needsReview', 'Needs Review'))}</span>
             </div>
             ${(mem.skills || []).some(s => s.status !== 'strong') ? `
                 <div style="margin-top: 8px;">
-                    ${mem.skills.filter(s => s.status !== 'strong').map(s => `<span class="lr-skill-tag lr-skill-fading" title="Estimated chance of recalling it today">${escText(s.displayName)} (${s.retrievability}% recall)</span>`).join('')}
+                    ${mem.skills.filter(s => s.status !== 'strong').map(s => `<span class="lr-skill-tag lr-skill-fading" title="${escText(tr('parent.report.recallTip', 'Estimated chance of recalling it today'))}">${escText(s.displayName)} (${escText(tr('parent.report.recall', '{p}% recall', { p: s.retrievability }))})</span>`).join('')}
                 </div>
             ` : ''}
-        ` : '<p style="font-size: var(--text-sm); color: var(--color-text-muted);">No memory data yet — it builds as your child practices.</p>';
+        ` : `<p style="font-size: var(--text-sm); color: var(--color-text-muted);">${escText(tr('parent.report.noMemory', 'No memory data yet — it builds as your child practices.'))}</p>`;
 
         // --- Cognitive Load ---
         const cogTrendClass = { improving: 'lr-cog-improving', rising: 'lr-cog-rising', stable: 'lr-cog-stable', 'no-data': 'lr-cog-no-data' };
-        const cogHTML = `<span class="lr-cog-label ${cogTrendClass[r.cognitiveLoad.trend] || 'lr-cog-no-data'}">${r.cognitiveLoad.label}</span>`;
+        const cogLabels = {
+            improving: tr('parent.report.cog.improving', 'Getting easier'),
+            rising: tr('parent.report.cog.rising', 'Working harder'),
+            stable: tr('parent.report.cog.stable', 'Steady effort'),
+            'no-data': tr('parent.report.cog.none', 'Not enough data yet'),
+        };
+        const cogHTML = `<span class="lr-cog-label ${cogTrendClass[r.cognitiveLoad.trend] || 'lr-cog-no-data'}">${escText(cogLabels[r.cognitiveLoad.trend] || r.cognitiveLoad.label)}</span>`;
 
         // --- Milestones ---
         const allBadges = [...(r.milestones.badges || []), ...(r.milestones.strategyBadges || [])];
         const milestonesHTML = allBadges.length > 0 || r.milestones.skillsMasteredThisWeek > 0
             ? `<div class="lr-badge-list">
-                ${r.milestones.skillsMasteredThisWeek > 0 ? `<span class="lr-badge-item"><i class="fas fa-trophy"></i> ${r.milestones.skillsMasteredThisWeek} skill${r.milestones.skillsMasteredThisWeek > 1 ? 's' : ''} mastered</span>` : ''}
+                ${r.milestones.skillsMasteredThisWeek > 0 ? `<span class="lr-badge-item"><i class="fas fa-trophy"></i> ${escText(tr('parent.report.skillsMastered', '{n} skills mastered', { n: r.milestones.skillsMasteredThisWeek }, r.milestones.skillsMasteredThisWeek))}</span>` : ''}
                 ${allBadges.map(b => `<span class="lr-badge-item"><i class="fas fa-medal"></i> ${b.badgeName || b.key || b.badgeId}</span>`).join('')}
               </div>`
-            : '<p style="font-size: var(--text-sm); color: var(--color-text-muted);">No new milestones this week — they\'ll come!</p>';
+            : `<p style="font-size: var(--text-sm); color: var(--color-text-muted);">${escText(tr('parent.report.noMilestones', "No new milestones this week — they'll come!"))}</p>`;
 
         // --- Engagement ---
         const eng = r.engagement;
         const engagementHTML = `
             <div class="lr-engagement-row">
-                <div class="lr-engagement-item"><i class="fas fa-fire"></i> <strong>${eng.currentStreak}</strong> day streak</div>
-                <div class="lr-engagement-item"><i class="fas fa-clock"></i> <strong>${eng.totalTutoringMinutes}</strong> min lifetime</div>
-                <div class="lr-engagement-item"><i class="fas fa-scroll"></i> <strong>${eng.questsCompleted}</strong> quests done</div>
-                <div class="lr-engagement-item"><i class="fas fa-shield-alt"></i> <strong>${eng.challengesCompleted}</strong> challenges</div>
+                <div class="lr-engagement-item"><i class="fas fa-fire"></i> <strong>${eng.currentStreak}</strong> ${escText(tr('parent.report.dayStreak', 'day streak'))}</div>
+                <div class="lr-engagement-item"><i class="fas fa-clock"></i> <strong>${eng.totalTutoringMinutes}</strong> ${escText(tr('parent.report.minLifetime', 'min lifetime'))}</div>
+                <div class="lr-engagement-item"><i class="fas fa-scroll"></i> <strong>${eng.questsCompleted}</strong> ${escText(tr('parent.report.quests', 'quests done'))}</div>
+                <div class="lr-engagement-item"><i class="fas fa-shield-alt"></i> <strong>${eng.challengesCompleted}</strong> ${escText(tr('parent.report.challenges', 'challenges'))}</div>
             </div>
         `;
 
@@ -3638,16 +3674,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         const ff = r.factFluency;
         const fluencyHTML = ff.total > 0 ? `
             <div style="display: flex; gap: 16px; font-size: var(--text-sm); color: var(--color-text-secondary);">
-                <span><strong>${ff.mastered}</strong> of <strong>${ff.total}</strong> fact families mastered</span>
-                ${ff.overallAccuracy ? `<span>Accuracy: <strong>${ff.overallAccuracy}%</strong></span>` : ''}
-                <span><strong>${ff.totalSessions}</strong> practice sessions</span>
+                <span>${escText(tr('parent.report.factFamilies', '{m} of {t} fact families mastered', { m: ff.mastered, t: ff.total }))}</span>
+                ${ff.overallAccuracy ? `<span>${escText(tr('parent.stat.accuracy', 'Accuracy'))}: <strong>${ff.overallAccuracy}%</strong></span>` : ''}
+                <span>${escText(tr('parent.report.practiceSessions', '{n} practice sessions', { n: ff.totalSessions }, ff.totalSessions))}</span>
             </div>
         ` : '';
 
         // --- Growth ---
         const growthSection = r.growth.thetaGrowthThisMonth !== null ? `
             <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
-                Math ability growth this month:
+                ${escText(tr('parent.report.thetaGrowth', 'Math ability growth this month:'))}
                 <strong style="color: ${r.growth.thetaGrowthThisMonth > 0 ? 'var(--color-success)' : r.growth.thetaGrowthThisMonth < 0 ? 'var(--color-danger)' : 'var(--color-text)'}">${r.growth.thetaGrowthThisMonth > 0 ? '+' : ''}${r.growth.thetaGrowthThisMonth}</strong>
             </div>
         ` : '';
@@ -3656,7 +3692,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return `
             <div class="lr-header">
                 <div class="lr-headline">
-                    ${r.headline.text}
+                    ${escText(r.headline.text)}
                     ${toneLabels[r.headline.tone] ? `<span class="lr-headline-tone ${toneClass}">${toneLabels[r.headline.tone]}</span>` : ''}
                 </div>
                 <div class="lr-child-info">
@@ -3666,47 +3702,47 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div class="lr-body">
                 ${insightsHTML ? `
                     <div class="lr-section">
-                        <div class="lr-section-title"><i class="fas fa-lightbulb"></i> Key Insights</div>
+                        <div class="lr-section-title"><i class="fas fa-lightbulb"></i> ${escText(tr('parent.report.section.insights', 'Key Insights'))}</div>
                         ${insightsHTML}
                     </div>
                 ` : ''}
 
                 <div class="lr-section">
-                    <div class="lr-section-title"><i class="fas fa-chart-bar"></i> Last 7 days${r.period ? ` <span style="font-weight: 400; color: var(--color-text-muted);">(${escText(formatPeriod(r.period))})</span>` : ''}</div>
+                    <div class="lr-section-title"><i class="fas fa-chart-bar"></i> ${escText(tr('parent.week.last7', 'Last 7 days'))}${r.period ? ` <span style="font-weight: 400; color: var(--color-text-muted);">(${escText(formatPeriod(r.period))})</span>` : ''}</div>
                     ${snapshotHTML}
                 </div>
 
                 <div class="lr-section">
-                    <div class="lr-section-title"><i class="fas fa-puzzle-piece"></i> Skill Mastery</div>
+                    <div class="lr-section-title"><i class="fas fa-puzzle-piece"></i> ${escText(tr('parent.report.section.mastery', 'Skill Mastery'))}</div>
                     ${masteryBarHTML}
-                    ${strengthsHTML ? `<div style="margin-top: 12px;"><strong style="font-size: var(--text-xs); color: var(--color-text-muted);">Top Strengths</strong><div style="margin-top: 4px;">${strengthsHTML}</div></div>` : ''}
-                    ${growthAreasHTML ? `<div style="margin-top: 10px;"><strong style="font-size: var(--text-xs); color: var(--color-text-muted);">Needs Practice</strong><div style="margin-top: 4px;">${growthAreasHTML}</div></div>` : ''}
+                    ${strengthsHTML ? `<div style="margin-top: 12px;"><strong style="font-size: var(--text-xs); color: var(--color-text-muted);">${escText(tr('parent.report.strengths', 'Top Strengths'))}</strong><div style="margin-top: 4px;">${strengthsHTML}</div></div>` : ''}
+                    ${growthAreasHTML ? `<div style="margin-top: 10px;"><strong style="font-size: var(--text-xs); color: var(--color-text-muted);">${escText(tr('parent.report.needsPractice', 'Needs Practice'))}</strong><div style="margin-top: 4px;">${growthAreasHTML}</div></div>` : ''}
                 </div>
 
                 <div class="lr-section">
-                    <div class="lr-section-title"><i class="fas fa-brain"></i> Memory Health</div>
+                    <div class="lr-section-title"><i class="fas fa-brain"></i> ${escText(tr('parent.report.section.memory', 'Memory Health'))}</div>
                     ${memoryHTML}
                 </div>
 
                 <div class="lr-section">
-                    <div class="lr-section-title"><i class="fas fa-battery-half"></i> Mental Effort</div>
+                    <div class="lr-section-title"><i class="fas fa-battery-half"></i> ${escText(tr('parent.report.section.effort', 'Mental Effort'))}</div>
                     ${cogHTML}
                     ${growthSection}
                 </div>
 
                 <div class="lr-section">
-                    <div class="lr-section-title"><i class="fas fa-trophy"></i> Milestones This Week</div>
+                    <div class="lr-section-title"><i class="fas fa-trophy"></i> ${escText(tr('parent.report.section.milestones', 'Milestones This Week'))}</div>
                     ${milestonesHTML}
                 </div>
 
                 <div class="lr-section">
-                    <div class="lr-section-title"><i class="fas fa-gamepad"></i> Engagement</div>
+                    <div class="lr-section-title"><i class="fas fa-gamepad"></i> ${escText(tr('parent.report.section.engagement', 'Engagement'))}</div>
                     ${engagementHTML}
                 </div>
 
                 ${fluencyHTML ? `
                     <div class="lr-section">
-                        <div class="lr-section-title"><i class="fas fa-bolt"></i> Fact Fluency</div>
+                        <div class="lr-section-title"><i class="fas fa-bolt"></i> ${escText(tr('parent.report.section.fluency', 'Fact Fluency'))}</div>
                         ${fluencyHTML}
                     </div>
                 ` : ''}
@@ -3790,10 +3826,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 document.getElementById('parentLanguage').value = settings.parentLanguage || 'English';
             }
 
-            // parentLanguage is the setting this page actually exposes, so it wins here.
-            // i18n.js boots off preferredLanguage (the student-side field); saving syncs the
-            // two, but an account that set a language before that sync existed still has them
-            // out of step, and then the dashboard renders in the wrong language with no clue why.
+            // parentLanguage is this page's language (i18n.js reads it on parent pages
+            // too); applying it here as well covers the first paint before /user returns.
             if (window.MathmatixI18n && settings.parentLanguage &&
                 settings.parentLanguage !== window.MathmatixI18n.getLanguage()) {
                 window.MathmatixI18n.setLanguage(settings.parentLanguage);
@@ -4013,13 +4047,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     body: JSON.stringify(formData)
                 });
 
-                // Also sync to preferredLanguage so the i18n system picks it up
-                await csrfFetch('/api/user/settings', {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ preferredLanguage: selectedLang })
-                });
+                // parentLanguage is the parent's own setting; it is NOT copied to
+                // preferredLanguage any more — that field is the child-side tutoring
+                // language, and on a multi-role account the copy switched the
+                // account's tutor too. i18n.js reads parentLanguage on parent pages.
 
                 const data = await res.json();
                 if (data.success) {

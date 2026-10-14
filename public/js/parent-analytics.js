@@ -5,6 +5,13 @@
 (function () {
   'use strict';
 
+  // Parent's language (i18n.js follows parentLanguage on this page); English fallback.
+  function tr(key, english, params, n) {
+    var I = window.MathmatixI18n;
+    var text = (I && n === 1 && I.t(key + '_one')) || (I && I.t(key)) || english;
+    return params ? text.replace(/\{(\w+)\}/g, function (m, k) { return params[k] != null ? params[k] : ''; }) : text;
+  }
+
   // Exposed globally so parent-dashboard.js can call it
   window.fetchChildAnalytics = async function (childId) {
     if (!window.AnalyticsCharts) return;
@@ -27,13 +34,17 @@
           const n = data.totalSkills;
           const caption = document.createElement('p');
           caption.style.cssText = 'font-size:0.75em; color:#666; margin:0 0 6px;';
-          caption.textContent = `Memory check on ${n} practiced skill${n === 1 ? '' : 's'}`;
+          caption.textContent = tr('parent.analytics.memoryCaption', 'Memory check on {n} practiced skills', { n: n }, n);
           container.prepend(caption);
           container.setAttribute('role', 'img');
           container.setAttribute('aria-label',
-            `Memory check on ${n} practiced skill${n === 1 ? '' : 's'}: ${data.strong} strong, ${data.fading} fading, ${data.needsReview} need review`);
+            tr('parent.analytics.memoryCaption', 'Memory check on {n} practiced skills', { n: n }, n) + ': ' +
+            tr('parent.report.memoryAria', '{strong} strong, {fading} fading, {review} need review', { strong: data.strong, fading: data.fading, review: data.needsReview }));
         } else if (container) {
-          container.innerHTML = '<p style="font-size:0.8em; color:#666;">No memory data yet — it builds as your child practices.</p>';
+          const p = document.createElement('p');
+          p.style.cssText = 'font-size:0.8em; color:#666;';
+          p.textContent = tr('parent.analytics.noMemory', 'No memory data yet — it builds as your child practices.');
+          container.replaceChildren(p);
         }
       }
 
@@ -58,8 +69,9 @@
           const msg = document.createElement('p');
           msg.style.cssText = 'font-size:0.8em; color:#666; text-align:center; padding:10px;';
           msg.textContent = practiced > 0
-            ? 'Practicing: ' + cats.map(c => c.name + (c.totalSkills > 1 ? ` (${c.totalSkills})` : '')).join(', ') + '. The strength map fills in as more skills are practiced.'
-            : 'Strength map appears once your child starts practicing skills.';
+            ? tr('parent.analytics.practicing', 'Practicing: {list}. The strength map fills in as more skills are practiced.',
+              { list: cats.map(c => c.name + (c.totalSkills > 1 ? ` (${c.totalSkills})` : '')).join(', ') })
+            : tr('parent.analytics.mapEmpty', 'Strength map appears once your child starts practicing skills.');
           canvas.parentNode.appendChild(msg);
         }
       }

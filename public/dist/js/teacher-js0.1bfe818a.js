@@ -1029,7 +1029,231 @@ window.I18N_TRANSLATIONS = {
   'misc.level': {
     English: 'Level', Spanish: 'Nivel', Russian: 'Уровень', Chinese: '等级',
     Vietnamese: 'Cấp độ', Arabic: 'المستوى', Somali: 'Heerka', French: 'Niveau', German: 'Stufe'
-  }
+  },
+
+  /* ─── Parent dashboard: dynamic text (card, ring, report) ─── */
+  'parent.ring.placedOut': {
+    English: "{n} placed out (placement test)", Spanish: "{n} superadas en la prueba de nivel", Russian: "Зачтено по входному тесту: {n}", Chinese: "{n}项通过分级测试免修", Vietnamese: "{n} kỹ năng miễn học (bài kiểm tra xếp lớp)", Arabic: "تم تجاوز {n} (اختبار تحديد المستوى)", Somali: "{n} laga gudbay (imtixaanka heerka)", French: "{n} validées (test de positionnement)", German: "{n} durch Einstufungstest erledigt"
+  },
+  'parent.ring.placedOutTip': {
+    English: "Skills the placement test showed are already known — not practiced here", Spanish: "Habilidades que la prueba de nivel mostró que ya domina; no se practicaron aquí", Russian: "Навыки, которые по входному тесту уже освоены, — здесь не отрабатывались", Chinese: "分级测试显示已掌握的技能——未在此练习", Vietnamese: "Những kỹ năng bài kiểm tra xếp lớp cho thấy đã biết — không luyện tập ở đây", Arabic: "مهارات أظهر اختبار تحديد المستوى أنها معروفة مسبقًا — لم يُتدرَّب عليها هنا", Somali: "Xirfado imtixaanka heerka muujiyey in horay loo yaqaan — halkan laguma tababaran", French: "Compétences déjà acquises selon le test de positionnement — pas travaillées ici", German: "Fähigkeiten, die laut Einstufungstest schon sitzen — hier nicht geübt"
+  },
+  'parent.ring.noneYet': {
+    English: "No skills practiced yet", Spanish: "Aún no ha practicado habilidades", Russian: "Навыки пока не отрабатывались", Chinese: "还没有练习过任何技能", Vietnamese: "Chưa luyện tập kỹ năng nào", Arabic: "لم يتم التدرّب على أي مهارة بعد", Somali: "Weli xirfad lama tababarin", French: "Aucune compétence travaillée pour l’instant", German: "Noch keine Fähigkeiten geübt"
+  },
+  'parent.ring.summary': {
+    English: "{total} practiced skills: {mastered} mastered, {inProgress} in progress, {review} need review", Spanish: "{total} habilidades practicadas: {mastered} dominadas, {inProgress} en progreso, {review} para repasar", Russian: "Отработано навыков: {total}. Освоено: {mastered}, в процессе: {inProgress}, нужно повторить: {review}", Chinese: "已练习{total}项技能：掌握{mastered}项，进行中{inProgress}项，需复习{review}项", Vietnamese: "{total} kỹ năng đã luyện: {mastered} thành thạo, {inProgress} đang học, {review} cần ôn lại", Arabic: "عدد المهارات المتدرَّب عليها {total}: متقنة {mastered}، قيد التعلّم {inProgress}، تحتاج مراجعة {review}", Somali: "{total} xirfadood oo la tababaray: {mastered} la xafiday, {inProgress} socda, {review} u baahan dib-u-eegis", French: "{total} compétences travaillées : {mastered} maîtrisées, {inProgress} en cours, {review} à revoir", German: "{total} geübte Fähigkeiten: {mastered} gemeistert, {inProgress} in Arbeit, {review} zu wiederholen"
+  },
+  'parent.ring.practiced': {
+    English: "practiced", Spanish: "practicadas", Russian: "отработано", Chinese: "已练习", Vietnamese: "đã luyện", Arabic: "متدرَّب عليها", Somali: "la tababaray", French: "travaillées", German: "geübt"
+  },
+  'parent.ring.mastered': {
+    English: "{n} mastered", Spanish: "{n} dominadas", Russian: "Освоено: {n}", Chinese: "掌握{n}项", Vietnamese: "{n} thành thạo", Arabic: "متقنة: {n}", Somali: "{n} la xafiday", French: "{n} maîtrisées", German: "{n} gemeistert"
+  },
+  'parent.ring.inProgress': {
+    English: "{n} in progress", Spanish: "{n} en progreso", Russian: "В процессе: {n}", Chinese: "进行中{n}项", Vietnamese: "{n} đang học", Arabic: "قيد التعلّم: {n}", Somali: "{n} socda", French: "{n} en cours", German: "{n} in Arbeit"
+  },
+  'parent.ring.needsReview': {
+    English: "{n} need review", Spanish: "{n} para repasar", Russian: "Нужно повторить: {n}", Chinese: "需复习{n}项", Vietnamese: "{n} cần ôn lại", Arabic: "تحتاج مراجعة: {n}", Somali: "{n} u baahan dib-u-eegis", French: "{n} à revoir", German: "{n} zu wiederholen"
+  },
+  'parent.ring.needsReview_one': {
+    English: "1 needs review", Spanish: "1 para repasar", Russian: "Нужно повторить: {n}", Chinese: "需复习{n}项", Vietnamese: "{n} cần ôn lại", Arabic: "تحتاج مراجعة: {n}", Somali: "1 u baahan dib-u-eegis", French: "1 à revoir", German: "1 zu wiederholen"
+  },
+  'parent.profile.grade': {
+    English: "Grade {g}", Spanish: "Grado {g}", Russian: "{g} класс", Chinese: "{g}年级", Vietnamese: "Lớp {g}", Arabic: "الصف {g}", Somali: "Fasalka {g}", French: "{g}e année", German: "Klasse {g}"
+  },
+  'parent.profile.kindergarten': {
+    English: "Kindergarten", Spanish: "Kínder", Russian: "Подготовительная группа", Chinese: "幼儿园", Vietnamese: "Mẫu giáo", Arabic: "الروضة", Somali: "Xannaanada", French: "Maternelle", German: "Kindergarten"
+  },
+  'parent.profile.courses': {
+    English: "Courses: {list}", Spanish: "Cursos: {list}", Russian: "Курсы: {list}", Chinese: "课程：{list}", Vietnamese: "Khóa học: {list}", Arabic: "الدورات: {list}", Somali: "Koorsooyin: {list}", French: "Cours : {list}", German: "Kurse: {list}"
+  },
+  'parent.profile.courses_one': {
+    English: "Course: {list}", Spanish: "Curso: {list}", Russian: "Курс: {list}", Chinese: "课程：{list}", Vietnamese: "Khóa học: {list}", Arabic: "الدورة: {list}", Somali: "Koorso: {list}", French: "Cours : {list}", German: "Kurs: {list}"
+  },
+  'parent.profile.placement': {
+    English: "Placement: {level} level", Spanish: "Nivel según la prueba: {level}", Russian: "Уровень по входному тесту: {level}", Chinese: "分级测试水平：{level}", Vietnamese: "Xếp lớp: trình độ {level}", Arabic: "مستوى تحديد المستوى: {level}", Somali: "Heerka imtixaanka: {level}", French: "Positionnement : niveau {level}", German: "Einstufung: Niveau {level}"
+  },
+  'parent.profile.streak': {
+    English: "{n}-day streak", Spanish: "Racha de {n} días", Russian: "Серия дней подряд: {n}", Chinese: "连续{n}天", Vietnamese: "Chuỗi {n} ngày", Arabic: "سلسلة {n} أيام", Somali: "Taxane {n} maalmood", French: "Série de {n} jours", German: "{n} Tage in Folge"
+  },
+  'parent.profile.minTotal': {
+    English: "{n} min total", Spanish: "{n} min en total", Russian: "Всего минут: {n}", Chinese: "共{n}分钟", Vietnamese: "Tổng {n} phút", Arabic: "المجموع {n} دقيقة", Somali: "Wadarta {n} daqiiqo", French: "{n} min au total", German: "{n} Min. insgesamt"
+  },
+  'parent.week.none': {
+    English: "No activity in the last 7 days", Spanish: "Sin actividad en los últimos 7 días", Russian: "За последние 7 дней занятий не было", Chinese: "过去7天没有学习", Vietnamese: "Không có hoạt động trong 7 ngày qua", Arabic: "لا يوجد نشاط خلال الأيام السبعة الماضية", Somali: "Wax hawl ah ma jirin 7-dii maalmood ee la soo dhaafay", French: "Aucune activité ces 7 derniers jours", German: "Keine Aktivität in den letzten 7 Tagen"
+  },
+  'parent.week.last7': {
+    English: "Last 7 days", Spanish: "Últimos 7 días", Russian: "Последние 7 дней", Chinese: "过去7天", Vietnamese: "7 ngày qua", Arabic: "آخر 7 أيام", Somali: "7-dii maalmood ee u dambeeyay", French: "7 derniers jours", German: "Letzte 7 Tage"
+  },
+  'parent.stat.sessions': {
+    English: "Sessions", Spanish: "Sesiones", Russian: "Занятия", Chinese: "学习次数", Vietnamese: "Buổi học", Arabic: "الجلسات", Somali: "Fadhiyo", French: "Séances", German: "Sitzungen"
+  },
+  'parent.stat.problems': {
+    English: "Problems", Spanish: "Problemas", Russian: "Задачи", Chinese: "题目", Vietnamese: "Bài tập", Arabic: "المسائل", Somali: "Su’aalo", French: "Problèmes", German: "Aufgaben"
+  },
+  'parent.stat.problemsUntracked': {
+    English: "No answers were checked in these sessions", Spanish: "En estas sesiones no se revisaron respuestas", Russian: "В этих занятиях ответы не проверялись", Chinese: "这些学习中没有批改答案", Vietnamese: "Không có câu trả lời nào được kiểm tra trong các buổi này", Arabic: "لم يتم التحقق من أي إجابات في هذه الجلسات", Somali: "Jawaabo lama hubin fadhiyadan", French: "Aucune réponse n’a été vérifiée pendant ces séances", German: "In diesen Sitzungen wurden keine Antworten geprüft"
+  },
+  'parent.stat.accuracy': {
+    English: "Accuracy", Spanish: "Precisión", Russian: "Точность", Chinese: "正确率", Vietnamese: "Độ chính xác", Arabic: "الدقة", Somali: "Saxnaanta", French: "Précision", German: "Genauigkeit"
+  },
+  'parent.stat.minutes': {
+    English: "Minutes", Spanish: "Minutos", Russian: "Минуты", Chinese: "分钟", Vietnamese: "Phút", Arabic: "الدقائق", Somali: "Daqiiqado", French: "Minutes", German: "Minuten"
+  },
+  'parent.card.analytics': {
+    English: "Learning Analytics", Spanish: "Análisis del aprendizaje", Russian: "Аналитика обучения", Chinese: "学习分析", Vietnamese: "Phân tích học tập", Arabic: "تحليلات التعلّم", Somali: "Falanqaynta waxbarashada", French: "Analyse de l’apprentissage", German: "Lernanalyse"
+  },
+  'parent.card.recentSessions': {
+    English: "Recent Sessions:", Spanish: "Sesiones recientes:", Russian: "Последние занятия:", Chinese: "最近学习：", Vietnamese: "Buổi học gần đây:", Arabic: "الجلسات الأخيرة:", Somali: "Fadhiyadii u dambeeyay:", French: "Séances récentes :", German: "Letzte Sitzungen:"
+  },
+  'parent.report.tone.excellent': {
+    English: "Excellent", Spanish: "Excelente", Russian: "Отлично", Chinese: "优秀", Vietnamese: "Xuất sắc", Arabic: "ممتاز", Somali: "Aad u fiican", French: "Excellent", German: "Ausgezeichnet"
+  },
+  'parent.report.tone.good': {
+    English: "On Track", Spanish: "Va bien", Russian: "По плану", Chinese: "进展顺利", Vietnamese: "Đúng hướng", Arabic: "على المسار الصحيح", Somali: "Waddada saxda ah", French: "Sur la bonne voie", German: "Auf Kurs"
+  },
+  'parent.report.tone.growing': {
+    English: "Growing", Spanish: "Creciendo", Russian: "Растёт", Chinese: "成长中", Vietnamese: "Đang tiến bộ", Arabic: "في تقدّم", Somali: "Koraya", French: "En progrès", German: "Im Wachstum"
+  },
+  'parent.report.tone.building': {
+    English: "Building", Spanish: "Construyendo", Russian: "Набирает темп", Chinese: "打基础", Vietnamese: "Đang xây dựng", Arabic: "في طور البناء", Somali: "Dhisaya", French: "En construction", German: "Im Aufbau"
+  },
+  'parent.report.tone.attention': {
+    English: "Needs Attention", Spanish: "Necesita atención", Russian: "Нужно внимание", Chinese: "需要关注", Vietnamese: "Cần quan tâm", Arabic: "يحتاج إلى اهتمام", Somali: "U baahan fiiro", French: "À surveiller", German: "Braucht Aufmerksamkeit"
+  },
+  'parent.report.placedNote': {
+    English: "Plus {n} skills placed out of by the placement test.", Spanish: "Además, {n} habilidades superadas en la prueba de nivel.", Russian: "Плюс зачтено по входному тесту: {n}.", Chinese: "另有{n}项技能通过分级测试免修。", Vietnamese: "Ngoài ra còn {n} kỹ năng được miễn qua bài kiểm tra xếp lớp.", Arabic: "بالإضافة إلى {n} مهارات تم تجاوزها في اختبار تحديد المستوى.", Somali: "Iyo {n} xirfadood oo laga gudbay imtixaanka heerka.", French: "Plus {n} compétences validées par le test de positionnement.", German: "Dazu {n} Fähigkeiten, die der Einstufungstest bereits abdeckt."
+  },
+  'parent.report.placedNote_one': {
+    English: "Plus 1 skill placed out of by the placement test.", Spanish: "Además, 1 habilidad superada en la prueba de nivel.", Russian: "Плюс зачтено по входному тесту: {n}.", Chinese: "另有{n}项技能通过分级测试免修。", Vietnamese: "Ngoài ra còn {n} kỹ năng được miễn qua bài kiểm tra xếp lớp.", Arabic: "بالإضافة إلى {n} مهارات تم تجاوزها في اختبار تحديد المستوى.", Somali: "Iyo 1 xirfad oo laga gudbay imtixaanka heerka.", French: "Plus 1 compétence validée par le test de positionnement.", German: "Dazu 1 Fähigkeit, die der Einstufungstest bereits abdeckt."
+  },
+  'parent.report.legendMastered': {
+    English: "Mastered ({n})", Spanish: "Dominadas ({n})", Russian: "Освоено ({n})", Chinese: "已掌握（{n}）", Vietnamese: "Thành thạo ({n})", Arabic: "متقنة ({n})", Somali: "La xafiday ({n})", French: "Maîtrisées ({n})", German: "Gemeistert ({n})"
+  },
+  'parent.report.legendInProgress': {
+    English: "In progress ({n})", Spanish: "En progreso ({n})", Russian: "В процессе ({n})", Chinese: "进行中（{n}）", Vietnamese: "Đang học ({n})", Arabic: "قيد التعلّم ({n})", Somali: "Socda ({n})", French: "En cours ({n})", German: "In Arbeit ({n})"
+  },
+  'parent.report.legendReview': {
+    English: "Needs review ({n})", Spanish: "Para repasar ({n})", Russian: "Повторить ({n})", Chinese: "需复习（{n}）", Vietnamese: "Cần ôn lại ({n})", Arabic: "تحتاج مراجعة ({n})", Somali: "Dib-u-eegis ({n})", French: "À revoir ({n})", German: "Wiederholen ({n})"
+  },
+  'parent.report.noneYet': {
+    English: "No skills practiced yet.", Spanish: "Aún no ha practicado habilidades.", Russian: "Навыки пока не отрабатывались.", Chinese: "还没有练习过任何技能。", Vietnamese: "Chưa luyện tập kỹ năng nào.", Arabic: "لم يتم التدرّب على أي مهارة بعد.", Somali: "Weli xirfad lama tababarin.", French: "Aucune compétence travaillée pour l’instant.", German: "Noch keine Fähigkeiten geübt."
+  },
+  'parent.report.memoryScope': {
+    English: "How well {name} remembers the {n} practiced skills with review data.", Spanish: "Qué tan bien recuerda {name} las {n} habilidades practicadas con datos de repaso.", Russian: "Насколько хорошо {name} помнит отработанные навыки с данными повторения (навыков: {n}).", Chinese: "{name}对{n}项有复习数据的已练技能的记忆情况。", Vietnamese: "{name} nhớ {n} kỹ năng đã luyện (có dữ liệu ôn tập) tốt đến mức nào.", Arabic: "مدى تذكّر {name} للمهارات المتدرَّب عليها التي لها بيانات مراجعة (العدد: {n}).", Somali: "Sida uu {name} u xasuusto {n} xirfadood ee la tababaray oo leh xog dib-u-eegis.", French: "Dans quelle mesure {name} retient les {n} compétences travaillées ayant des données de révision.", German: "Wie gut {name} sich an die {n} geübten Fähigkeiten mit Wiederholungsdaten erinnert."
+  },
+  'parent.report.memoryScope_one': {
+    English: "How well {name} remembers the 1 practiced skill with review data.", Spanish: "Qué tan bien recuerda {name} la habilidad practicada con datos de repaso.", Russian: "Насколько хорошо {name} помнит отработанные навыки с данными повторения (навыков: {n}).", Chinese: "{name}对{n}项有复习数据的已练技能的记忆情况。", Vietnamese: "{name} nhớ {n} kỹ năng đã luyện (có dữ liệu ôn tập) tốt đến mức nào.", Arabic: "مدى تذكّر {name} للمهارات المتدرَّب عليها التي لها بيانات مراجعة (العدد: {n}).", Somali: "Sida uu {name} u xasuusto 1 xirfad oo la tababaray oo leh xog dib-u-eegis.", French: "Dans quelle mesure {name} retient la compétence travaillée ayant des données de révision.", German: "Wie gut {name} sich an die eine geübte Fähigkeit mit Wiederholungsdaten erinnert."
+  },
+  'parent.report.memoryAria': {
+    English: "{strong} strong, {fading} fading, {review} need review", Spanish: "{strong} sólidas, {fading} olvidándose, {review} para repasar", Russian: "Прочно: {strong}, забывается: {fading}, повторить: {review}", Chinese: "牢固{strong}项，渐忘{fading}项，需复习{review}项", Vietnamese: "{strong} vững, {fading} đang quên, {review} cần ôn lại", Arabic: "قوية: {strong}، تتلاشى: {fading}، تحتاج مراجعة: {review}", Somali: "{strong} adag, {fading} libdhaya, {review} u baahan dib-u-eegis", French: "{strong} solides, {fading} qui s’estompent, {review} à revoir", German: "{strong} gefestigt, {fading} verblassend, {review} zu wiederholen"
+  },
+  'parent.report.strong': {
+    English: "Strong", Spanish: "Sólidas", Russian: "Прочно", Chinese: "牢固", Vietnamese: "Vững", Arabic: "قوية", Somali: "Adag", French: "Solides", German: "Gefestigt"
+  },
+  'parent.report.fading': {
+    English: "Fading", Spanish: "Olvidándose", Russian: "Забывается", Chinese: "渐忘", Vietnamese: "Đang quên", Arabic: "تتلاشى", Somali: "Libdhaya", French: "S’estompent", German: "Verblassend"
+  },
+  'parent.report.needsReview': {
+    English: "Needs Review", Spanish: "Para repasar", Russian: "Нужно повторить", Chinese: "需复习", Vietnamese: "Cần ôn lại", Arabic: "تحتاج مراجعة", Somali: "U baahan dib-u-eegis", French: "À revoir", German: "Zu wiederholen"
+  },
+  'parent.report.recallTip': {
+    English: "Estimated chance of recalling it today", Spanish: "Probabilidad estimada de recordarlo hoy", Russian: "Оценка вероятности вспомнить сегодня", Chinese: "估计今天能回忆起来的概率", Vietnamese: "Khả năng ước tính nhớ lại được hôm nay", Arabic: "الاحتمال المقدَّر لتذكّرها اليوم", Somali: "Fursadda la qiyaasay in maanta la xasuusto", French: "Probabilité estimée de s’en souvenir aujourd’hui", German: "Geschätzte Wahrscheinlichkeit, es heute abzurufen"
+  },
+  'parent.report.recall': {
+    English: "{p}% recall", Spanish: "{p}% de recuerdo", Russian: "{p}% запоминания", Chinese: "记忆{p}%", Vietnamese: "nhớ {p}%", Arabic: "تذكّر {p}%", Somali: "{p}% xasuus", French: "{p} % de rappel", German: "{p} % Erinnerung"
+  },
+  'parent.report.noMemory': {
+    English: "No memory data yet — it builds as your child practices.", Spanish: "Aún no hay datos de memoria; se irán generando con la práctica.", Russian: "Данных о памяти пока нет — они появятся по мере занятий.", Chinese: "暂时没有记忆数据——会随着孩子的练习逐步生成。", Vietnamese: "Chưa có dữ liệu ghi nhớ — sẽ có dần khi con luyện tập.", Arabic: "لا توجد بيانات ذاكرة بعد — تتكوّن مع تدرّب طفلك.", Somali: "Weli xog xusuuseed ma jirto — way samaysmaysaa marka ilmahaagu tababarto.", French: "Pas encore de données de mémoire — elles se construisent au fil de l’entraînement.", German: "Noch keine Gedächtnisdaten — sie entstehen, während Ihr Kind übt."
+  },
+  'parent.report.cog.improving': {
+    English: "Getting easier", Spanish: "Cada vez más fácil", Russian: "Становится легче", Chinese: "越来越轻松", Vietnamese: "Đang dễ dần", Arabic: "تصبح أسهل", Somali: "Way fududaanaysaa", French: "De plus en plus facile", German: "Wird leichter"
+  },
+  'parent.report.cog.rising': {
+    English: "Working harder", Spanish: "Más esfuerzo", Russian: "Требует больше усилий", Chinese: "更费力了", Vietnamese: "Đang cố gắng nhiều hơn", Arabic: "جهد أكبر", Somali: "Dadaal badan", French: "Plus d’efforts", German: "Mehr Anstrengung"
+  },
+  'parent.report.cog.stable': {
+    English: "Steady effort", Spanish: "Esfuerzo constante", Russian: "Ровные усилия", Chinese: "努力程度稳定", Vietnamese: "Nỗ lực đều đặn", Arabic: "جهد ثابت", Somali: "Dadaal joogto ah", French: "Effort régulier", German: "Gleichmäßige Anstrengung"
+  },
+  'parent.report.cog.none': {
+    English: "Not enough data yet", Spanish: "Aún no hay suficientes datos", Russian: "Пока недостаточно данных", Chinese: "数据还不够", Vietnamese: "Chưa đủ dữ liệu", Arabic: "لا توجد بيانات كافية بعد", Somali: "Weli xog ku filan ma jirto", French: "Pas encore assez de données", German: "Noch nicht genug Daten"
+  },
+  'parent.report.skillsMastered': {
+    English: "{n} skills mastered", Spanish: "{n} habilidades dominadas", Russian: "Освоено навыков: {n}", Chinese: "掌握{n}项技能", Vietnamese: "{n} kỹ năng thành thạo", Arabic: "مهارات متقنة: {n}", Somali: "{n} xirfadood oo la xafiday", French: "{n} compétences maîtrisées", German: "{n} Fähigkeiten gemeistert"
+  },
+  'parent.report.skillsMastered_one': {
+    English: "1 skill mastered", Spanish: "1 habilidad dominada", Russian: "Освоено навыков: {n}", Chinese: "掌握{n}项技能", Vietnamese: "{n} kỹ năng thành thạo", Arabic: "مهارات متقنة: {n}", Somali: "1 xirfad oo la xafiday", French: "1 compétence maîtrisée", German: "1 Fähigkeit gemeistert"
+  },
+  'parent.report.noMilestones': {
+    English: "No new milestones this week — they'll come!", Spanish: "No hay nuevos logros esta semana; ¡ya llegarán!", Russian: "На этой неделе новых достижений нет — они ещё будут!", Chinese: "本周没有新的里程碑——会有的！", Vietnamese: "Tuần này chưa có cột mốc mới — rồi sẽ đến thôi!", Arabic: "لا إنجازات جديدة هذا الأسبوع — ستأتي!", Somali: "Toddobaadkan guul cusub ma jirto — way iman doontaa!", French: "Pas de nouvelle étape cette semaine — ça viendra !", German: "Diese Woche keine neuen Meilensteine — die kommen noch!"
+  },
+  'parent.report.dayStreak': {
+    English: "day streak", Spanish: "días seguidos", Russian: "дней подряд", Chinese: "天连续", Vietnamese: "ngày liên tiếp", Arabic: "أيام متتالية", Somali: "maalmood oo isku xigta", French: "jours d’affilée", German: "Tage in Folge"
+  },
+  'parent.report.minLifetime': {
+    English: "min lifetime", Spanish: "min en total", Russian: "мин всего", Chinese: "分钟（累计）", Vietnamese: "phút tổng cộng", Arabic: "دقيقة إجمالًا", Somali: "daqiiqo guud ahaan", French: "min au total", German: "Min. insgesamt"
+  },
+  'parent.report.quests': {
+    English: "quests done", Spanish: "misiones completadas", Russian: "заданий выполнено", Chinese: "个任务完成", Vietnamese: "nhiệm vụ đã xong", Arabic: "مهام مكتملة", Somali: "hawlo la dhammeeyay", French: "quêtes terminées", German: "Aufgaben erledigt"
+  },
+  'parent.report.challenges': {
+    English: "challenges", Spanish: "desafíos", Russian: "испытаний", Chinese: "个挑战", Vietnamese: "thử thách", Arabic: "تحديات", Somali: "caqabado", French: "défis", German: "Herausforderungen"
+  },
+  'parent.report.factFamilies': {
+    English: "{m} of {t} fact families mastered", Spanish: "{m} de {t} familias de operaciones dominadas", Russian: "Освоено семейств фактов: {m} из {t}", Chinese: "掌握了{t}个数族中的{m}个", Vietnamese: "Thành thạo {m}/{t} họ phép tính", Arabic: "أُتقنت {m} من أصل {t} من عائلات الحقائق", Somali: "{m} ka mid ah {t} qoysaska xisaabta ayaa la xafiday", French: "{m} familles de faits sur {t} maîtrisées", German: "{m} von {t} Aufgabenfamilien gemeistert"
+  },
+  'parent.report.practiceSessions': {
+    English: "{n} practice sessions", Spanish: "{n} sesiones de práctica", Russian: "Тренировок: {n}", Chinese: "{n}次练习", Vietnamese: "{n} buổi luyện tập", Arabic: "جلسات تدريب: {n}", Somali: "{n} fadhi oo tababar ah", French: "{n} séances d’entraînement", German: "{n} Übungseinheiten"
+  },
+  'parent.report.practiceSessions_one': {
+    English: "1 practice session", Spanish: "1 sesión de práctica", Russian: "Тренировок: {n}", Chinese: "{n}次练习", Vietnamese: "{n} buổi luyện tập", Arabic: "جلسات تدريب: {n}", Somali: "1 fadhi oo tababar ah", French: "1 séance d’entraînement", German: "1 Übungseinheit"
+  },
+  'parent.report.thetaGrowth': {
+    English: "Math ability growth this month:", Spanish: "Crecimiento en matemáticas este mes:", Russian: "Рост математических навыков за месяц:", Chinese: "本月数学能力增长：", Vietnamese: "Mức tăng năng lực toán tháng này:", Arabic: "نمو القدرة الرياضية هذا الشهر:", Somali: "Kobaca awoodda xisaabta bishan:", French: "Progression en maths ce mois-ci :", German: "Mathe-Zuwachs diesen Monat:"
+  },
+  'parent.report.section.insights': {
+    English: "Key Insights", Spanish: "Puntos clave", Russian: "Главное", Chinese: "关键洞察", Vietnamese: "Điểm chính", Arabic: "أبرز الملاحظات", Somali: "Aragtiyo muhiim ah", French: "Points clés", German: "Wichtigste Erkenntnisse"
+  },
+  'parent.report.section.mastery': {
+    English: "Skill Mastery", Spanish: "Dominio de habilidades", Russian: "Освоение навыков", Chinese: "技能掌握", Vietnamese: "Mức thành thạo kỹ năng", Arabic: "إتقان المهارات", Somali: "Xafidaadda xirfadaha", French: "Maîtrise des compétences", German: "Beherrschte Fähigkeiten"
+  },
+  'parent.report.section.memory': {
+    English: "Memory Health", Spanish: "Memoria", Russian: "Память", Chinese: "记忆状况", Vietnamese: "Tình trạng ghi nhớ", Arabic: "صحة الذاكرة", Somali: "Caafimaadka xusuusta", French: "Mémoire", German: "Gedächtnis"
+  },
+  'parent.report.section.effort': {
+    English: "Mental Effort", Spanish: "Esfuerzo mental", Russian: "Умственные усилия", Chinese: "脑力投入", Vietnamese: "Nỗ lực tư duy", Arabic: "الجهد الذهني", Somali: "Dadaalka maskaxda", French: "Effort mental", German: "Geistige Anstrengung"
+  },
+  'parent.report.section.milestones': {
+    English: "Milestones This Week", Spanish: "Logros de esta semana", Russian: "Достижения недели", Chinese: "本周里程碑", Vietnamese: "Cột mốc tuần này", Arabic: "إنجازات هذا الأسبوع", Somali: "Guulaha toddobaadkan", French: "Étapes de la semaine", German: "Meilensteine dieser Woche"
+  },
+  'parent.report.section.engagement': {
+    English: "Engagement", Spanish: "Participación", Russian: "Вовлечённость", Chinese: "参与度", Vietnamese: "Mức độ tham gia", Arabic: "المشاركة", Somali: "Ka qaybgalka", French: "Engagement", German: "Engagement"
+  },
+  'parent.report.section.fluency': {
+    English: "Fact Fluency", Spanish: "Fluidez en operaciones", Russian: "Беглость счёта", Chinese: "计算熟练度", Vietnamese: "Tính nhẩm thành thạo", Arabic: "الطلاقة في الحقائق الحسابية", Somali: "Xawliga xisaabta", French: "Automatismes de calcul", German: "Rechenflüssigkeit"
+  },
+  'parent.report.strengths': {
+    English: "Top Strengths", Spanish: "Principales fortalezas", Russian: "Сильные стороны", Chinese: "主要优势", Vietnamese: "Điểm mạnh nổi bật", Arabic: "أبرز نقاط القوة", Somali: "Awoodaha ugu sarreeya", French: "Points forts", German: "Größte Stärken"
+  },
+  'parent.report.needsPractice': {
+    English: "Needs Practice", Spanish: "Necesita práctica", Russian: "Нужна практика", Chinese: "需要练习", Vietnamese: "Cần luyện thêm", Arabic: "تحتاج تدريبًا", Somali: "U baahan tababar", French: "À travailler", German: "Braucht Übung"
+  },
+  'parent.analytics.memoryCaption': {
+    English: "Memory check on {n} practiced skills", Spanish: "Revisión de memoria de {n} habilidades practicadas", Russian: "Проверка памяти по отработанным навыкам: {n}", Chinese: "{n}项已练技能的记忆检查", Vietnamese: "Kiểm tra ghi nhớ {n} kỹ năng đã luyện", Arabic: "فحص الذاكرة لعدد {n} من المهارات المتدرَّب عليها", Somali: "Hubinta xusuusta {n} xirfadood oo la tababaray", French: "Contrôle de mémoire sur {n} compétences travaillées", German: "Gedächtnischeck für {n} geübte Fähigkeiten"
+  },
+  'parent.analytics.memoryCaption_one': {
+    English: "Memory check on 1 practiced skill", Spanish: "Revisión de memoria de 1 habilidad practicada", Russian: "Проверка памяти по отработанным навыкам: {n}", Chinese: "{n}项已练技能的记忆检查", Vietnamese: "Kiểm tra ghi nhớ {n} kỹ năng đã luyện", Arabic: "فحص الذاكرة لعدد {n} من المهارات المتدرَّب عليها", Somali: "Hubinta xusuusta 1 xirfad oo la tababaray", French: "Contrôle de mémoire sur 1 compétence travaillée", German: "Gedächtnischeck für 1 geübte Fähigkeit"
+  },
+  'parent.analytics.noMemory': {
+    English: "No memory data yet — it builds as your child practices.", Spanish: "Aún no hay datos de memoria; se irán generando con la práctica.", Russian: "Данных о памяти пока нет — они появятся по мере занятий.", Chinese: "暂时没有记忆数据——会随着孩子的练习逐步生成。", Vietnamese: "Chưa có dữ liệu ghi nhớ — sẽ có dần khi con luyện tập.", Arabic: "لا توجد بيانات ذاكرة بعد — تتكوّن مع تدرّب طفلك.", Somali: "Weli xog xusuuseed ma jirto — way samaysmaysaa marka ilmahaagu tababarto.", French: "Pas encore de données de mémoire — elles se construisent au fil de l’entraînement.", German: "Noch keine Gedächtnisdaten — sie entstehen, während Ihr Kind übt."
+  },
+  'parent.analytics.practicing': {
+    English: "Practicing: {list}. The strength map fills in as more skills are practiced.", Spanish: "Practicando: {list}. El mapa de fortalezas se completa a medida que practica más habilidades.", Russian: "Отрабатывается: {list}. Карта сильных сторон заполнится по мере занятий.", Chinese: "正在练习：{list}。随着练习更多技能，优势图会逐步完善。", Vietnamese: "Đang luyện: {list}. Bản đồ điểm mạnh sẽ đầy dần khi luyện thêm kỹ năng.", Arabic: "قيد التدريب: {list}. تكتمل خريطة نقاط القوة مع التدرّب على مهارات أكثر.", Somali: "Waa la tababarayaa: {list}. Khariidadda awoodaha way buuxsamaysaa marka xirfado badan la tababaro.", French: "En cours : {list}. La carte des forces se complète au fil des compétences travaillées.", German: "Wird geübt: {list}. Die Stärkenkarte füllt sich, je mehr Fähigkeiten geübt werden."
+  },
+  'parent.analytics.mapEmpty': {
+    English: "Strength map appears once your child starts practicing skills.", Spanish: "El mapa de fortalezas aparece cuando su hijo empieza a practicar.", Russian: "Карта сильных сторон появится, когда ребёнок начнёт заниматься.", Chinese: "孩子开始练习技能后会显示优势图。", Vietnamese: "Bản đồ điểm mạnh sẽ hiện khi con bắt đầu luyện tập.", Arabic: "تظهر خريطة نقاط القوة عندما يبدأ طفلك التدرّب على المهارات.", Somali: "Khariidadda awoodaha waxay soo baxaysaa marka ilmahaagu bilaabo tababarka xirfadaha.", French: "La carte des forces apparaît dès que votre enfant commence à s’entraîner.", German: "Die Stärkenkarte erscheint, sobald Ihr Kind mit dem Üben beginnt."
+  },
 };
 
 ;
@@ -1052,7 +1276,14 @@ window.I18N_TRANSLATIONS = {
 window.MathmatixI18n = (function () {
   'use strict';
 
-  var STORAGE_KEY = 'mathmatix_ui_lang';
+  // Whose language this page speaks. Parent pages mark <html data-i18n-audience="parent">
+  // and follow the parent's own setting (parentLanguage); everything else follows the
+  // student's preferredLanguage. They're separate on purpose: a parent who reads
+  // Spanish must not switch their child's tutor to Spanish — and on a shared family
+  // browser the cached choice of one must not repaint the other's page.
+  var AUDIENCE = (document.documentElement.getAttribute('data-i18n-audience') || 'student');
+  var STORAGE_KEY = AUDIENCE === 'parent' ? 'mathmatix_ui_lang_parent' : 'mathmatix_ui_lang';
+  var SERVER_FIELD = AUDIENCE === 'parent' ? 'parentLanguage' : 'preferredLanguage';
   var currentLang = 'English'; // default
 
   /** Look up a translation string. Returns English fallback if missing. */
@@ -1195,8 +1426,8 @@ window.MathmatixI18n = (function () {
         return res.json();
       })
       .then(function (data) {
-        if (data && data.user && data.user.preferredLanguage) {
-          var serverLang = data.user.preferredLanguage;
+        if (data && data.user && data.user[SERVER_FIELD]) {
+          var serverLang = data.user[SERVER_FIELD];
           if (serverLang !== currentLang) {
             currentLang = serverLang;
             _setItem(STORAGE_KEY, currentLang);
@@ -1222,6 +1453,7 @@ window.MathmatixI18n = (function () {
     apply: apply,
     setLanguage: setLanguage,
     getLanguage: getLanguage,
+    audience: AUDIENCE,
     init: init
   };
 })();
