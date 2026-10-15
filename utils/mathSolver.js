@@ -995,8 +995,31 @@ function solveGeneralLinear(problem) {
  * Returns a problem object or null.
  */
 function detectSystem(message) {
-    // Strip preamble like "solve the system:", "solve:", etc.
-    const cleaned = message.replace(/^.*?(?:solve\s+(?:the\s+)?(?:system|equations?)\s*:?\s*|find\s+x\s+and\s+y\s*:?\s*)/i, '').trim();
+    // The tutor usually poses a system as a numbered LaTeX list:
+    //   "Solve the following system of equations using substitution:\n\n
+    //    1. \\( y = 2x + 3 \\)\n2. \\( 3x - y = 7 \\)\n\nStart by …"
+    // Unstripped, the list numbers were read as COEFFICIENTS ("2. 3x" → 2.3x):
+    // that system "solved" to x = 33.33, y = 69.67, so a correct (10, 23) could
+    // never verify (QA handoff 2026-10-14 §2.3, real prod transcript). Strip the
+    // delimiters and line-leading list markers first; "1.5x" (no space) is kept.
+    const normalized = String(message)
+        .replace(/\\[()[\]]/g, ' ')
+        .replace(/^[ \t]*(?:\d+[.)]|[-*•])[ \t]+/gm, '');
+
+    // Strip preamble like "solve the system:", "solve the following system of
+    // equations using substitution:", "find x and y:".
+    const cleaned = normalized.replace(/^[\s\S]*?(?:solve\s+(?:the\s+)?(?:following\s+)?(?:system(?:\s+of\s+(?:linear\s+)?equations)?|equations?)(?:\s+(?:using|by|with)\s+[a-z]+)?\s*:?\s*|find\s+x\s+and\s+y\s*:?\s*)/i, '').trim();
+
+    // Exactly two lines that are equations, and nothing else that is: the
+    // numbered-list form, even with a trailing instruction paragraph.
+    const eqLines = cleaned.split(/\n+/).map(l => l.trim()).filter(l => /=/.test(l));
+    if (eqLines.length === 2) {
+        const eq1 = parseSystemEquation(eqLines[0]);
+        const eq2 = parseSystemEquation(eqLines[1]);
+        if (eq1 && eq2) {
+            return { type: 'system_of_equations', eq1, eq2, eq1Text: eqLines[0], eq2Text: eqLines[1] };
+        }
+    }
 
     // Try splitting on: "and", comma, semicolon, or newline
     const separators = [/\s+and\s+/i, /\s*,\s*/, /\s*;\s*/, /\s*\n\s*/];
