@@ -86,3 +86,26 @@ describe('internalTagSanitizer', () => {
     });
   });
 });
+
+// QA handoff 2026-10-14 §4: a verify-stage rewrite reached a student with its
+// own preamble — verbatim from the prod ACT-review transcript below.
+describe('rewrite preambles', () => {
+  test.each([
+    ['Sure! Here’s the revised question and response:\n\nIn triangle PQR, m∠P = 44°.', 'In triangle PQR, m∠P = 44°.'],
+    ["Here is the rewritten response:\nGreat work!", 'Great work!'],
+    ["Certainly, here's my updated explanation: the slope is rise over run.", 'the slope is rise over run.'],
+    ["OK. Here's the corrected reply:\n\nLet's look at step 2.", "Let's look at step 2."],
+  ])('strips: %s', (dirty, clean) => {
+    expect(hasInternalTags(dirty)).toBe(true);
+    expect(stripInternalTags(dirty)).toBe(clean);
+  });
+
+  test.each([
+    "Sure! Here's a new problem for you: 3x + 2 = 11.",
+    "Here's the revised plan — let's try factoring.",
+    "Great job! Here's the revised question: what is 2+2?",
+  ])('leaves ordinary prose alone: %s', (text) => {
+    expect(hasInternalTags(text)).toBe(false);
+    expect(stripInternalTags(text)).toBe(text);
+  });
+});
