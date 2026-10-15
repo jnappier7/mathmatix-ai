@@ -75,6 +75,9 @@ body.cr-resizing .cr-workspace { pointer-events: none; }
    nothing to drag against, so hide the handle. */
 @media (max-width: 1200px) { .cr-ws-resizer { display: none; } }
 html.mm-board-hidden .cr-ws-resizer { display: none; }
+/* Inline work mode (CLAUDE.md §8) drops the workspace column this handle
+   resizes — left in, it drew a divider through the middle of the chat panel. */
+html.mm-work-inline .cr-ws-resizer { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .cr-ws-resizer::before { transition: none; }

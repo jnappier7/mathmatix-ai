@@ -124,7 +124,7 @@
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
   <link rel="stylesheet" href="/css/design-system.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
-  <link rel="stylesheet" href="/css/chat-redesign.css?v=20261014ts" />
+  <link rel="stylesheet" href="/css/chat-redesign.css?v=20261015ui" />
   <!-- Gamification surfacing: combo meter + identity chip -->
   <link rel="stylesheet" href="/css/mm-calculator.css?v=20261007a" />
   <link rel="stylesheet" href="/css/gamification-surfacing.css?v=20260731b" />
@@ -144,7 +144,7 @@
   <link rel="stylesheet" href="/css/challenge-card.css?v=20260725f" />
   <link rel="stylesheet" href="/css/floating-review.css?v=20260807" />
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
-  <link rel="stylesheet" href="/css/adjustable-panels.css?v=20260721" />
+  <link rel="stylesheet" href="/css/adjustable-panels.css?v=20261015ui" />
   <!-- Voice mode (layout mode of the chat stage) -->
   <link rel="stylesheet" href="/css/voice-mode.css?v=20260904a" />
   <!-- Fresh styling for rendered math (equation cards) -->
@@ -174,7 +174,7 @@
        it lazy-loads the workspace, mounts the derivation into #cr-work-dock,
        and seals each finished problem into the transcript.
        Default OFF → zero impact. -->
-  <script defer src="/js/living-workspace/chat-workspace.js?v=20261014a"></script>
+  <script defer src="/js/living-workspace/chat-workspace.js?v=20261015ui"></script>
   <!-- Final safety net: strips any inline visual tag no renderer handled -->
   <script defer src="/js/stripVisualTags.js?v=20260731"></script>
   <!-- Non-core libs (lazy-loaded after first interaction) -->
@@ -1151,6 +1151,25 @@
         <button id="calculator-toolbar-btn" title="Calculator" aria-label="Calculator" class="imessage-tool-btn">
           <i class="fas fa-calculator"></i>
         </button>
+        <!-- Shortcuts live in the composer's own toolbar (owner decision
+             2026-10-15): same buttons and data-action handlers
+             (chat-redesign.js), compact chips instead of a row floating
+             under the chat card. Phones hide them — the bottom nav carries
+             these entry points there. -->
+        <div class="cr-quick-actions cr-qa-inline" role="group" aria-label="Shortcuts">
+          <button class="cr-qa-btn" type="button" data-action="upload" aria-label="Upload homework">
+            <i class="fas fa-upload" aria-hidden="true"></i> Homework
+          </button>
+          <button class="cr-qa-btn" type="button" data-action="practice" aria-label="Practice a skill">
+            <i class="fas fa-bullseye" aria-hidden="true"></i> Practice
+          </button>
+          <button class="cr-qa-btn" type="button" data-action="test" aria-label="Prep for a test">
+            <i class="fas fa-book" aria-hidden="true"></i> Test prep
+          </button>
+          <button class="cr-qa-btn cr-qa-more" type="button" data-action="more" aria-label="More tools">
+            <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
+          </button>
+        </div>
         <button id="break-toolbar-btn" title="Take a Break" aria-label="Take a break" class="imessage-tool-btn imessage-tool-btn-right" style="display: none;">
           <i class="fas fa-pause-circle"></i>
         </button>
@@ -1314,21 +1333,6 @@
       </aside>
     </div><!-- /.cr-stage -->
 
-    <!-- Quick action chips -->
-    <div class="cr-quick-actions" role="toolbar" aria-label="Quick actions">
-      <button class="cr-qa-btn" type="button" data-action="upload">
-        <i class="fas fa-upload"></i> Upload Homework
-      </button>
-      <button class="cr-qa-btn" type="button" data-action="practice">
-        <i class="fas fa-bullseye"></i> Practice a Skill
-      </button>
-      <button class="cr-qa-btn" type="button" data-action="test">
-        <i class="fas fa-book"></i> Prep for a Test
-      </button>
-      <button class="cr-qa-btn" type="button" data-action="more">
-        <i class="fas fa-ellipsis-h"></i> More
-      </button>
-    </div>
   </main>
   
   <!-- Mobile Drawers -->
@@ -2479,7 +2483,7 @@
   <script defer src="/js/voice-subtitles.js?v=20260718b"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
-  <script src="/dist/js/chat-js3.9635c449.js"></script>
+  <script src="/dist/js/chat-js3.4346a325.js"></script>
 <!-- returningUserModal.js removed — no longer used -->
   <script src="/dist/js/chat-js4.56a45792.js"></script>
 <link rel="stylesheet" href="/css/algebra-tiles.css">
@@ -2561,7 +2565,7 @@
 </script>
 <script src="/js/challengeCard.js?v=20260804a"></script>
 <script defer src="/js/floating-review.js?v=20260915"></script>
-<script src="/js/script.js?v=20261015y" type="module"></script>
+<script src="/js/script.js?v=20261015z" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.f1273322.js"></script>
   <!-- Bottom tab bar (phones only; MM_FEATURES.bottomNav) -->

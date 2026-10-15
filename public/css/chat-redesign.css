@@ -446,7 +446,9 @@ html.mm-work-inline #mathmatix-whiteboard-panel { display: none !important; }
    .courses-toggle / .course-sidebar-item styles from courseCatalog.css were
    designed for a light sidebar and are reused as-is). */
 .cr-courses-card {
-  flex: 0 1 auto;
+  /* Never shrink below its content: as a shrinkable flex child the tutor
+     panel squeezed it and clipped the course's progress line. */
+  flex: 0 0 auto;
   overflow-y: auto;
   background: #FFFFFF;
   border: 1px solid rgba(15, 23, 42, 0.08);
@@ -897,6 +899,42 @@ body.cr-mode .imessage-send-btn:hover {
 .cr-qa-btn:active { transform: scale(0.97); }
 .cr-qa-btn i { color: var(--cr-text-dim); }
 
+/* Shortcuts inside the composer toolbar: quiet pills after the tool icons,
+   divided from them by a hairline. Light like the composer itself. */
+.imessage-tool-btns .cr-qa-inline {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 0 0 0 10px;
+  margin-left: 6px;
+  border-left: 1px solid rgba(15, 23, 42, 0.12);
+}
+.imessage-tool-btns .cr-qa-inline .cr-qa-btn {
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.imessage-tool-btns .cr-qa-inline .cr-qa-btn:hover {
+  background: #EEF2FF;
+  border-color: rgba(102, 126, 234, 0.45);
+  color: #3B4CB8;
+}
+.imessage-tool-btns .cr-qa-inline .cr-qa-btn i { color: inherit; font-size: 11px; }
+.imessage-tool-btns .cr-qa-inline .cr-qa-btn:focus-visible { outline: 2px solid #667eea; outline-offset: 2px; }
+.imessage-tool-btns .cr-qa-inline .cr-qa-more { padding: 5px 9px; }
+@media (max-width: 900px) {
+  .imessage-tool-btns .cr-qa-inline { display: none; }
+}
+
 /* ----- Footer adjustments ----- */
 body.cr-mode footer {
   background: var(--cr-bg-0) !important;
@@ -981,8 +1019,15 @@ body.cr-mode .inline-equation-palette {
   box-shadow: 0 2px 8px rgba(15, 26, 36, 0.08);
 }
 .cr-encourage-card {
-  background: rgba(238, 241, 247, 0.92);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  /* A caption strip across the panel's bottom edge, opaque and flush — as a
+     translucent chip inset 12px it floated over the tutor's chest with the
+     desk band poking out around it. */
+  margin: 0;
+  border: 0;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 0;
+  background: #F4F6FA;
+  backdrop-filter: none;
 }
 .cr-encourage-title { color: #18202B; }
 .cr-encourage-body  { color: #5B6876; }
