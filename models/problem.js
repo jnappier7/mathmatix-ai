@@ -165,7 +165,18 @@ const problemSchema = new mongoose.Schema({
     theta: { type: Number },           // shrunk difficulty in logits
     priorDifficulty: { type: Number }, // what it was authored at
     calibratedAt: { type: Date },
-  }
+  },
+
+  // A person checked the key against the stem and it is right
+  // (scripts/verifyItemKey.js). Stops calibration treating a low p-value on an
+  // easy-authored item as a mis-key (utils/itemCalibration.js isKeyVerified).
+  // Records WHICH key was checked: a re-seed that changes it voids this.
+  keyVerification: {
+    correctOption: { type: String },
+    answerValue: { type: String },
+    verifiedAt: { type: Date },
+    note: { type: String },
+  },
 
 }, {
   timestamps: true
