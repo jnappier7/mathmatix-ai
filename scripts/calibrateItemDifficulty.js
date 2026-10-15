@@ -221,6 +221,13 @@ async function main() {
   for (const level of ['band', 'template', 'item']) {
     const m = levels[level];
     console.log(`  ${level.padEnd(8)} pools with n>=${MIN}: ${String(m.writableItems).padStart(4)}   converged: ${m.converged} in ${m.iterations} [basis: ${m.convergenceBasis}]`);
+    // Why it did not settle: the last few sweeps' largest move, and the
+    // pools making it. A shift that shrinks wants more sweeps; one that
+    // repeats or alternates is a cycle in the fit.
+    if (!m.converged && m.convergenceBasis !== 'none') {
+      console.log(`           last shifts: ${(m.lastShifts || []).map((x) => x.toFixed(4)).join(' ')}`);
+      (m.unsettled || []).forEach((u) => console.log(`           moving: ${u.id}  ${u.move >= 0 ? '+' : ''}${u.move.toFixed(4)}  (n=${u.n})`));
+    }
   }
   console.log(`\nMeasured: ${measured.length} of ${problems.length} items  ${JSON.stringify(byLevel)}`);
   console.log(`Would change: ${writable.length}   Held back (fit not settled): ${heldBack.length}   Flagged as possibly mis-keyed: ${suspect.length}`);

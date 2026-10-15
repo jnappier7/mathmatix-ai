@@ -311,6 +311,10 @@ function calibrateItems(rows, priors = {}, options = {}) {
 
   let iterations = 0;
   let converged = false;
+  // Diagnostics for a fit that does not settle: how far the scale was still
+  // moving, and which pools were moving it (meta.unsettled).
+  const shiftTrace = [];
+  let lastMoves = [];
   for (let it = 0; it < maxIterations; it++) {
     iterations = it + 1;
 
@@ -343,6 +347,8 @@ function calibrateItems(rows, priors = {}, options = {}) {
     // undoes — the fit has settled and the old check said it never would.
     let maxShift = 0;
     for (const id of convergenceIds) maxShift = Math.max(maxShift, Math.abs(b.get(id) - before.get(id)));
+    shiftTrace.push(maxShift);
+    lastMoves = [...convergenceIds].map((id) => ({ id, move: b.get(id) - before.get(id), n: byItem.get(id).length }));
 
     if (convergenceBasis !== 'none' && maxShift < tolerance) { converged = true; break; }
   }
@@ -415,6 +421,10 @@ function calibrateItems(rows, priors = {}, options = {}) {
       iterations,
       converged,
       convergenceBasis,
+      lastShifts: shiftTrace.slice(-4),
+      unsettled: converged ? [] : lastMoves
+        .sort((x, y) => Math.abs(y.move) - Math.abs(x.move))
+        .slice(0, 5),
       writableItems: convergenceIds.size,
       anchor,
       anchoredOn: anchorSet.length ? 'reference-set' : 'all',

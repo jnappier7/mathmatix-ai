@@ -279,6 +279,25 @@ describe('not-reached items are missing data, not wrong answers', () => {
   });
 });
 
+describe('a fit that does not settle says why', () => {
+  const rows = [];
+  for (let u = 0; u < 40; u += 1) for (let i = 0; i < 5; i += 1) rows.push({ userId: `u${u}`, problemId: `i${i}`, correct: (u * 7 + i * 3) % 5 < 2 + (i % 2) });
+
+  test('cut short, it reports its last shifts and the pools still moving', () => {
+    const { meta } = calibrateItems(rows, {}, { maxIterations: 2, minResponses: 10 });
+    expect(meta.converged).toBe(false);
+    expect(meta.lastShifts.length).toBeGreaterThan(0);
+    expect(meta.unsettled.length).toBeGreaterThan(0);
+    expect(meta.unsettled[0]).toEqual({ id: expect.any(String), move: expect.any(Number), n: expect.any(Number) });
+  });
+
+  test('settled, it has nothing to blame', () => {
+    const { meta } = calibrateItems(rows, {}, { minResponses: 10 });
+    expect(meta.converged).toBe(true);
+    expect(meta.unsettled).toEqual([]);
+  });
+});
+
 describe('degenerate input does not throw', () => {
   test('no rows at all', () => {
     const { items, meta } = calibrateItems([], {});
