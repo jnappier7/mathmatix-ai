@@ -61,6 +61,7 @@ const { updateCard, initializeCard, rateAttempt, RATINGS } = require('../fsrsSch
 const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDifficulty } = require('../consistencyScorer');
 
 // Backbone: Tutor Plan + Skill Familiarity
+const { guardAttribution } = require('../attributionGuard');
 const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase, recentPracticeSkillId } = require('../tutorPlanManager');
 
 // Test-prep skills are attributable only while a review item (or a course /
@@ -1577,6 +1578,28 @@ async function runPipeline(message, ctx) {
   // Unbalanced \( / \[ delimiters render as raw source in the bubble —
   // drop the orphans (balanced math is untouched). Cheap, so unconditional.
   verified.text = stripOrphanMathDelims(verified.text);
+
+  // ── Stage 5f.1: ATTRIBUTION GUARD ──
+  // "You substituted y = 2x + 3…" to a student who typed only "(10, 23)";
+  // "You correctly noted that RS bisects ∠R" to one who said ∠Q. A claim
+  // about the student's work that names math they never wrote is rewritten
+  // to "Let's …" (utils/attributionGuard.js, QA handoff 2026-10-14 §2.5).
+  // Runs on the authoritative text, so the `complete` event and the saved
+  // message both carry the fix.
+  {
+    // chat.js appends this turn's message before the pipeline runs, so the
+    // last two user entries are this turn and the one before it; `message`
+    // is included too for callers that don't append first.
+    const studentSaid = recentUserMessages.slice(-2).map(m => m?.content).concat(message).filter(Boolean);
+    const attribution = guardAttribution(verified.text, studentSaid);
+    if (attribution.rewrites.length) {
+      boardLogger.warn('Tutor credited the student with work they did not write; rewritten', {
+        conversationId: ctx.conversation?._id ? String(ctx.conversation._id) : null,
+        claims: attribution.rewrites.map(r => r.claim),
+      });
+      verified.text = attribution.text;
+    }
+  }
 
   // ── Stage 5g: REPLY-JUDGE TELEMETRY ──
   // Score the final student-facing text against the eval harness's reply
