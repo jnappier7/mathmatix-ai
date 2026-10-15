@@ -124,7 +124,7 @@
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
   <link rel="stylesheet" href="/css/design-system.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
-  <link rel="stylesheet" href="/css/chat-redesign.css?v=20260904a" />
+  <link rel="stylesheet" href="/css/chat-redesign.css?v=20261014a" />
   <!-- Gamification surfacing: combo meter + identity chip -->
   <link rel="stylesheet" href="/css/mm-calculator.css?v=20261007a" />
   <link rel="stylesheet" href="/css/gamification-surfacing.css?v=20260731b" />
@@ -669,7 +669,7 @@
                 <div id="course-progress-fill" style="height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 3px; width: 0%; transition: width 0.3s;"></div>
               </div>
               <span id="course-progress-pct" style="font-size: 12px; color: #888; min-width: 30px;">0%</span>
-              <button id="course-exit-lesson-btn" class="course-exit-lesson-btn" title="Exit lesson and return to general chat" onclick="event.stopPropagation(); window.courseManager?.exitCourse();">
+              <button id="course-exit-lesson-btn" class="course-exit-lesson-btn" title="Exit lesson and return to general chat" aria-label="Exit lesson and return to general chat" onclick="event.stopPropagation(); window.courseManager?.exitCourse();">
                 <i class="fas fa-sign-out-alt"></i> Exit Lesson
               </button>
               <i class="fas fa-chevron-down" id="course-dropdown-arrow" style="color: #888; font-size: 11px; transition: transform 0.2s;"></i>
@@ -2479,7 +2479,7 @@
   <script defer src="/js/voice-subtitles.js?v=20260718b"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
-  <script src="/dist/js/chat-js3.9c5fbed0.js"></script>
+  <script src="/dist/js/chat-js3.06eb6bc3.js"></script>
 <!-- returningUserModal.js removed — no longer used -->
   <script src="/dist/js/chat-js4.56a45792.js"></script>
 <link rel="stylesheet" href="/css/algebra-tiles.css">
