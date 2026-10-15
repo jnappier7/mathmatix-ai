@@ -154,15 +154,20 @@ function applyTurnRewards(data) {
                         'taught_back': 'Teaching mastery!'
                     };
                     const label = behaviorLabels[xp.tier3Behavior] || 'Exceptional!';
-                    triggerXpAnimation(`+${xp.tier3} XP - ${label}`, false, true);
+                    // Every surface shows the turn's TOTAL — the toast used to
+                    // show only this tier while the chat chip and the XP bar
+                    // showed the total ("+5 XP Correct!" beside "+7 XP", QA
+                    // handoff 2026-10-14 §4). The label names the reason.
+                    const shown = xp.total || xp.tier3;
+                    triggerXpAnimation(`+${shown} XP - ${label}`, false, true);
 
                     if (typeof window.showXpNotification === 'function') {
-                        window.showXpNotification(xp.tier3, label);
+                        window.showXpNotification(shown, label);
                     }
                 } else if (xp.tier2 > 0) {
                     const tier2Label = xp.tier2Type === 'clean' ? 'Clean solution!' : 'Correct!';
                     if (typeof window.showXpNotification === 'function') {
-                        window.showXpNotification(xp.tier2, tier2Label);
+                        window.showXpNotification(xp.total || xp.tier2, tier2Label);
                     }
                 }
 
