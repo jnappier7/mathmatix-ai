@@ -744,6 +744,11 @@ body.cr-mode .message.user .message-timestamp {
   color: var(--cr-text-dim);
   margin-top: 4px;
 }
+/* The play button sits absolutely at the bubble's bottom-right (48px wide), and
+   the timestamp is right-aligned — so the button covered the time on every
+   tutor bubble (QA handoff 2026-10-14 §3.3, measured: text 188–236, button
+   198–246). Reserve the button's width beside the time. */
+body.cr-mode .message:has(> .play-audio-btn) .message-timestamp { padding-right: 56px; }
 
 body.cr-mode .message-text { color: var(--cr-text); }
 body.cr-mode .message a { color: #9FB4FF; }

@@ -130,4 +130,25 @@ describe('leaving a course hands the student to the tutor, not to a blank page',
     // reaches a prompt.
     expect(chatRoute).toMatch(/req\.body\.courseName\.replace\(\/\[\^\\p\{L\}\\p\{N\} \.,'&:\(\)-\]\/gu, ''\)\.trim\(\)\.slice\(0, 80\)/);
   });
+
+  // QA handoff 2026-10-14 §3.2, witnessed in prod: "skip any warm-up" was
+  // followed by the opener directives and warmUpInstruction ("You MAY include
+  // a quick warm-up question"), and the later instruction won — every exit
+  // from ACT review opened with "Quick check-in: can you simplify…".
+  test('a course exit greets with the switch rule ONLY — no opener, no warm-up', () => {
+    const start = chatRoute.indexOf('            if (returningFromCourse) {');
+    expect(start).toBeGreaterThan(-1);
+    const branch = chatRoute.slice(start, chatRoute.indexOf('} else if (openerResult', start));
+    expect(branch).toMatch(/courseMentionRule/);
+    expect(branch).toMatch(/Do NOT pose a problem, a warm-up, or a check-in question/);
+    expect(branch).not.toMatch(/warmUpInstruction/);
+    expect(branch).not.toMatch(/openerResult/);
+  });
+
+  test('Exit Lesson is one click; leaving a COURSE still confirms', () => {
+    const exit = catalog.slice(catalog.indexOf('    async exitCourse() {'), catalog.indexOf('    async returnToGeneralChat('));
+    expect(exit).not.toMatch(/showConfirmation/);
+    const drop = catalog.slice(catalog.indexOf('    async dropCourse('));
+    expect(drop.slice(0, 1200)).toMatch(/showConfirmation/);
+  });
 });

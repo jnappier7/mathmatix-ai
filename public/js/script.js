@@ -2219,7 +2219,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return wrap.children.length ? wrap : null;
     }
 
-    function appendMessage(text, sender, graphData = null, isMasteryQuiz = false, attachments = null) {
+    function appendMessage(text, sender, graphData = null, isMasteryQuiz = false, attachments = null, sentAt = null) {
         if (!text && !graphData && !(attachments && attachments.length)) return;
 
         if (!chatBox) return;
@@ -2464,6 +2464,7 @@ document.addEventListener("DOMContentLoaded", () => {
             playBtn.className = "play-audio-btn";
             playBtn.innerHTML = '<i class="fas fa-play"></i><i class="fas fa-wave-square"></i><i class="fas fa-spinner"></i>';
             playBtn.setAttribute("title", "Play audio");
+            playBtn.setAttribute("aria-label", "Play audio");
             playBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 playBtn.disabled = true;
@@ -2519,15 +2520,23 @@ document.addEventListener("DOMContentLoaded", () => {
         // worked-out reasoning is as worth keeping as the tutor's explanation.
         attachNotebookChip(bubble, text);
 
-        // Add timestamp to message
+        // Add timestamp to message — WHEN IT WAS SENT, not when it was drawn.
+        // History re-renders used to stamp every old message with the current
+        // clock, so the same greeting read 10:18 → 10:19 → 10:20 across reloads
+        // (QA handoff 2026-10-14 §3.3). A live message has no sentAt and is
+        // "now"; a message from another day also shows its date.
         const timestamp = document.createElement('span');
         timestamp.className = 'message-timestamp';
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const parsed = sentAt ? new Date(sentAt) : null;
+        const when = parsed && !isNaN(parsed.getTime()) ? parsed : new Date();
+        const hours = when.getHours();
+        const minutes = when.getMinutes().toString().padStart(2, '0');
         const ampm = hours >= 12 ? 'PM' : 'AM';
         const displayHours = hours % 12 || 12;
-        timestamp.textContent = `${displayHours}:${minutes} ${ampm}`;
+        const sameDay = when.toDateString() === new Date().toDateString();
+        const datePart = sameDay ? '' : `${when.toLocaleDateString([], { month: 'short', day: 'numeric' })}, `;
+        timestamp.textContent = `${datePart}${displayHours}:${minutes} ${ampm}`;
+        timestamp.setAttribute('data-sent-at', when.toISOString());
         bubble.appendChild(timestamp);
 
         // Append bubble to messageContainer
@@ -2975,6 +2984,7 @@ document.addEventListener("DOMContentLoaded", () => {
             playBtn.className = "play-audio-btn";
             playBtn.innerHTML = '<i class="fas fa-play"></i><i class="fas fa-wave-square"></i><i class="fas fa-spinner"></i>';
             playBtn.setAttribute("title", "Play audio");
+            playBtn.setAttribute("aria-label", "Play audio");
             playBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 playBtn.disabled = true;
@@ -6324,7 +6334,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     fileType: a.fileType
                 }));
                 const before = chatBox.lastElementChild;
-                appendMessage(msg.content, sender, null, false, histAttachments);
+                appendMessage(msg.content, sender, null, false, histAttachments, msg.timestamp || null);
                 // Stamp when this message was sent. The Living Workspace seals
                 // each finished problem back into the transcript on hydrate
                 // (chat-workspace.js placeSealed) and needs these to put the
