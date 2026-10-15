@@ -4431,7 +4431,7 @@ class CourseManager {
                         <span>${course.moduleCount} modules</span>
                         <span style="color:#ddd;">&middot;</span>
                         <span><i class="fas fa-clock" style="font-size:9px; margin-right:2px;"></i>${estTimeLabel}</span>
-                        ${course.prerequisites.length > 0 ? `<span style="color:#ddd;">&middot;</span><span>Prereq: ${course.prerequisites.join(', ')}</span>` : ''}
+                        ${course.prerequisites.length > 0 ? `<span style="color:#ddd;">&middot;</span><span>Prereq: ${(course.prerequisiteNames || course.prerequisites).join(', ')}</span>` : ''}
                     </div>
                 </div>
                 <div class="catalog-card-actions" style="display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:6px;">
