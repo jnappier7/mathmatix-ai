@@ -147,6 +147,23 @@ function isSkillMastered(user, skillId) {
  * Has an activeBadge attempted enough problems that we should consider it
  * stuck and clear it? Only fires when accuracy is still below requirement.
  */
+/**
+ * Is the student actually in a badge session?
+ *
+ * NOT `!!user.masteryProgress?.activeBadge`. activeBadge is a nested schema
+ * path with numeric defaults (problemsCompleted/problemsCorrect: 0), so Mongoose
+ * materializes it on EVERY user doc — 364 of 389 prod users carried the stub,
+ * and 0 had a real badge. Treating the stub as a session ran badge completion
+ * on every answered free-chat turn against undefined requirements (`n < undefined`
+ * is false, so it read as earned): 62 students got a phantom, id-less badge plus
+ * 500 XP, and every later turn reported masterySuccess:true even on a wrong
+ * answer (QA handoff 2026-10-14 §2.2). A real session always has a badgeId.
+ */
+function hasActiveBadge(user) {
+  const badge = user?.masteryProgress?.activeBadge;
+  return !!(badge && typeof badge.badgeId === 'string' && badge.badgeId);
+}
+
 function isBadgeStuck(badge) {
   if (!badge) return false;
   const required = badge.requiredProblems || 0;
@@ -202,4 +219,5 @@ module.exports = {
   isSkillMastered,
   isBadgeStuck,
   clearActiveBadge,
+  hasActiveBadge,
 };

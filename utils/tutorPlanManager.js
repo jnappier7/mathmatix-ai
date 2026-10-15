@@ -88,13 +88,25 @@ async function resolveCurrentTarget(plan, context) {
   // we still resolve it, just in 'leverage' mode.
   const explicitOverride = activeSkillId || courseSkillId;
 
+  // A test-prep exam skill is the focus only while a review item pins it.
+  // Without an override, a target left over from the review (or seeded into the
+  // queue from review evidence) used to drive free chat: every pump, polynomial
+  // and systems turn was attributed to "act-triangles-angle-relationships", in
+  // instruct/vocabulary mode, crediting that skill's BKT (QA handoff 2026-10-14
+  // §2.2; 23 of 25 prod plans with a target held an act-/sat- skill).
+  const freeChat = !explicitOverride;
+  if (freeChat && isTestPrepSkillId(plan.currentTarget?.skillId)) {
+    plan.currentTarget = { skillId: null, displayName: null, instructionalMode: null };
+  }
+  const scope = { excludeTestPrep: freeChat };
+
   // Try up to N candidates so a queue full of already-mastered skills can be
   // drained in a single resolution pass without recursion blowing the stack.
   const MAX_AUTO_ADVANCE = 25;
   const visited = new Set();
   let targetSkillId = explicitOverride
     || plan.currentTarget?.skillId
-    || getHighestPrioritySkill(plan);
+    || getHighestPrioritySkill(plan, scope);
 
   if (!targetSkillId) return { plan, skillResolution: null };
 
@@ -125,7 +137,7 @@ async function resolveCurrentTarget(plan, context) {
         plan.currentTarget = { skillId: null, displayName: null, instructionalMode: null };
       }
 
-      const nextId = getHighestPrioritySkill(plan);
+      const nextId = getHighestPrioritySkill(plan, scope);
       if (!nextId || nextId === targetSkillId) {
         // Queue is empty or every remaining entry is already mastered.
         // Return a null resolution so the caller surfaces a "pick a new
@@ -189,9 +201,16 @@ async function resolveCurrentTarget(plan, context) {
 /**
  * Get the highest-priority active skill from the plan's focus queue.
  */
-function getHighestPrioritySkill(plan) {
+// ACT/SAT/PSAT/PreACT blueprint skills — course-scoped, see resolveCurrentTarget.
+const TEST_PREP_SKILL_ID = /^(act|sat|psat|preact)-/;
+function isTestPrepSkillId(skillId) {
+  return typeof skillId === 'string' && TEST_PREP_SKILL_ID.test(skillId);
+}
+
+function getHighestPrioritySkill(plan, { excludeTestPrep = false } = {}) {
   const active = (plan.skillFocus || [])
     .filter(sf => sf.status === 'active' || sf.status === 'in-progress')
+    .filter(sf => !(excludeTestPrep && isTestPrepSkillId(sf.skillId)))
     .sort((a, b) => b.priority - a.priority);
   return active[0]?.skillId || null;
 }
@@ -203,13 +222,14 @@ function getHighestPrioritySkill(plan) {
  * credits the right skill instead of silently crediting nothing. Priority-order
  * (getHighestPrioritySkill) answers "what's next"; this answers "what's now".
  */
-function recentPracticeSkillId(plan) {
+function recentPracticeSkillId(plan, { excludeTestPrep = false } = {}) {
   const focus = plan?.skillFocus;
   if (!Array.isArray(focus)) return null;
   let bestId = null;
   let bestT = -1;
   for (const sf of focus) {
     if (!sf?.skillId || (sf.status !== 'in-progress' && sf.status !== 'active')) continue;
+    if (excludeTestPrep && isTestPrepSkillId(sf.skillId)) continue;
     const t = sf.lastWorkedOn ? new Date(sf.lastWorkedOn).getTime() : 0;
     if (t > bestT) { bestT = t; bestId = sf.skillId; }
   }
@@ -421,4 +441,5 @@ module.exports = {
   updatePlanAfterInteraction,
   addSkillToFocus,
   recentPracticeSkillId,
+  isTestPrepSkillId,
 };

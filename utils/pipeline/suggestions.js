@@ -15,6 +15,7 @@
  */
 
 const { ACTIONS } = require('./decide');
+const { hasActiveBadge } = require('../masteryGuard');
 
 // ── Maximum chips per response ──
 const MAX_CHIPS = 4;
@@ -233,7 +234,7 @@ function applyAnxietyOverrides(suggestions, profile) {
  * Add mastery-aware suggestions when badge progress is relevant.
  */
 function applyMasteryOverrides(suggestions, masteryProgress) {
-  if (!masteryProgress?.activeBadge) return suggestions;
+  if (!hasActiveBadge({ masteryProgress })) return suggestions;
 
   const badge = masteryProgress.activeBadge;
   const completed = badge.problemsCompleted || 0;

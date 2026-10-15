@@ -22,6 +22,8 @@
  * @module pipeline/sidecar
  */
 
+const { hasActiveBadge } = require('../masteryGuard');
+
 /**
  * Build the sidecar object from pipeline stages.
  * Called AFTER observe/diagnose/decide but BEFORE generate.
@@ -99,7 +101,7 @@ function buildSidecar(observation, diagnosis, decision, context = {}) {
   }
 
   // ── 3. Badge progress from context ──
-  if (context.user?.masteryProgress?.activeBadge && sidecar.problemResult) {
+  if (hasActiveBadge(context.user) && sidecar.problemResult) {
     sidecar.badgeProgress = {
       correct: sidecar.problemResult === 'correct',
     };

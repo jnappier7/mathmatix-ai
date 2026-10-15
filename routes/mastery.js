@@ -17,7 +17,7 @@ const { generatePhaseProblem, recordPhaseAttempt, getPhaseInstructions } = requi
 const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = require('../utils/hintSystem'); // TEACHING ENHANCEMENT
 const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
-const { isSkillMastered, resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
+const { isSkillMastered, resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap, hasActiveBadge } = require('../utils/masteryGuard');
 const { canonicalSkillId, skillLookupCandidates, expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
 const { buildGraph, boardStates, bandProgress, nearestClosableBand, applyProofCascade } = require('../utils/skillClosure');
 const { currentRung, isInferred, canAdvance, advanceRung, clearsPrerequisites } = require('../utils/skillRung');
@@ -769,7 +769,7 @@ router.post('/record-badge-attempt', isAuthenticated, async (req, res) => {
     const { correct, problemId } = req.body;
     const user = await User.findById(req.user._id);
 
-    if (!user || !user.masteryProgress?.activeBadge) {
+    if (!user || !hasActiveBadge(user)) {
       return res.status(400).json({ error: 'No active badge' });
     }
 
@@ -855,7 +855,7 @@ router.get('/active-badge', isAuthenticated, async (req, res) => {
       await user.save();
     }
 
-    const activeBadge = user.masteryProgress?.activeBadge;
+    const activeBadge = hasActiveBadge(user) ? user.masteryProgress.activeBadge : null;
 
     if (!activeBadge) {
       return res.json({ success: true, activeBadge: null });
@@ -896,7 +896,7 @@ router.post('/complete-badge', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-    if (!user || !user.masteryProgress?.activeBadge) {
+    if (!user || !hasActiveBadge(user)) {
       return res.status(400).json({ error: 'No active badge' });
     }
 
@@ -1017,7 +1017,7 @@ router.get('/next-phase-problem', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-    if (!user || !user.masteryProgress?.activeBadge) {
+    if (!user || !hasActiveBadge(user)) {
       return res.status(400).json({ error: 'No active badge' });
     }
 
@@ -1049,7 +1049,7 @@ router.post('/record-phase-attempt', isAuthenticated, async (req, res) => {
     const { problemId, correct, timeSpent, hintsUsed } = req.body;
     const user = await User.findById(req.user._id);
 
-    if (!user || !user.masteryProgress?.activeBadge) {
+    if (!user || !hasActiveBadge(user)) {
       return res.status(400).json({ error: 'No active badge' });
     }
 
@@ -1074,7 +1074,7 @@ router.get('/phase-instructions', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-    if (!user || !user.masteryProgress?.activeBadge) {
+    if (!user || !hasActiveBadge(user)) {
       return res.status(400).json({ error: 'No active badge' });
     }
 
@@ -1102,7 +1102,7 @@ router.post('/request-hint', isAuthenticated, async (req, res) => {
     const { problemId, currentLevel, studentWork, problem } = req.body;
     const user = await User.findById(req.user._id);
 
-    if (!user || !user.masteryProgress?.activeBadge) {
+    if (!user || !hasActiveBadge(user)) {
       return res.status(400).json({ error: 'No active badge' });
     }
 
@@ -1157,7 +1157,7 @@ router.post('/analyze-error', isAuthenticated, async (req, res) => {
     const { problem, studentAnswer } = req.body;
     const user = await User.findById(req.user._id);
 
-    if (!user || !user.masteryProgress?.activeBadge) {
+    if (!user || !hasActiveBadge(user)) {
       return res.status(400).json({ error: 'No active badge' });
     }
 
