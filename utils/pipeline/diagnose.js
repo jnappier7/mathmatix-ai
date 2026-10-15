@@ -868,8 +868,12 @@ async function diagnose(observation, context = {}) {
     } else {
       // Fall back to AI analysis (more expensive, but catches novel errors)
       try {
+        // The pinned board problem, when there is one: problemInfo.content is
+        // the WHOLE tutor message, so the analysis read every problem in it and
+        // wrote cards like "combined the rates of the pumps and introduced an
+        // unrelated polynomial" for a polynomial answer (QA handoff §2.4).
         const aiAnalysis = await analyzeError(
-          { content: problemInfo?.content || 'Unknown problem', answer: correctAnswer },
+          { content: context.pinnedProblemTex || problemInfo?.content || 'Unknown problem', answer: correctAnswer },
           studentAnswer,
           context.activeSkill
         );
