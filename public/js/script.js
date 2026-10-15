@@ -154,15 +154,20 @@ function applyTurnRewards(data) {
                         'taught_back': 'Teaching mastery!'
                     };
                     const label = behaviorLabels[xp.tier3Behavior] || 'Exceptional!';
-                    triggerXpAnimation(`+${xp.tier3} XP - ${label}`, false, true);
+                    // Every surface shows the turn's TOTAL — the toast used to
+                    // show only this tier while the chat chip and the XP bar
+                    // showed the total ("+5 XP Correct!" beside "+7 XP", QA
+                    // handoff 2026-10-14 §4). The label names the reason.
+                    const shown = xp.total || xp.tier3;
+                    triggerXpAnimation(`+${shown} XP - ${label}`, false, true);
 
                     if (typeof window.showXpNotification === 'function') {
-                        window.showXpNotification(xp.tier3, label);
+                        window.showXpNotification(shown, label);
                     }
                 } else if (xp.tier2 > 0) {
                     const tier2Label = xp.tier2Type === 'clean' ? 'Clean solution!' : 'Correct!';
                     if (typeof window.showXpNotification === 'function') {
-                        window.showXpNotification(xp.tier2, tier2Label);
+                        window.showXpNotification(xp.total || xp.tier2, tier2Label);
                     }
                 }
 
@@ -3295,7 +3300,7 @@ document.addEventListener("DOMContentLoaded", () => {
         card.innerHTML = `<div class="message" style="text-align:center; max-width:420px; margin:10px auto; padding:16px; border:1px solid var(--clr-border,#e2e8f0); border-radius:12px; background:var(--clr-bg-subtle,#f8fafb);">
             <div style="font-weight:600; margin-bottom:4px;">Quick one — when's your birthday? 🎂</div>
             <div style="font-size:.9rem; color:var(--clr-text-dim,#5b6876); margin-bottom:10px;">It helps us keep Mathmatix safe and age-appropriate. We never show it to anyone.</div>
-            <input type="date" class="dob-prompt-input" max="${today}" style="padding:8px 12px; font-size:1rem; border:1px solid var(--clr-border,#e2e8f0); border-radius:8px; margin-bottom:10px;">
+            <input type="date" class="dob-prompt-input" aria-label="Your birthday" max="${today}" style="padding:8px 12px; font-size:1rem; border:1px solid var(--clr-border,#e2e8f0); border-radius:8px; margin-bottom:10px;">
             <div class="dob-prompt-status" style="font-size:.85rem; color:#dc3545; min-height:1em; margin-bottom:6px;"></div>
             <div style="display:flex; gap:8px; justify-content:center;">
                 <button type="button" class="btn btn-primary dob-prompt-save">Save</button>

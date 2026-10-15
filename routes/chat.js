@@ -9,6 +9,14 @@ const log = require('../utils/logger');
 const logger = log.child({ service: 'chat-service' });
 const { isAuthenticated } = require('../middleware/auth');
 const { promptInjectionFilter, tutorVoiceId } = require('../middleware/promptInjection');
+const { userHasRole } = require('../utils/roleQuery');
+
+// Pipeline internals for the response: admins who ask with ?debug=1 only.
+function debugPipelinePayload(req, pipelineResult) {
+    return req?.query?.debug === '1' && userHasRole(req.user, 'admin') && pipelineResult?._pipeline
+        ? { _pipeline: pipelineResult._pipeline }
+        : {};
+}
 const { hasActiveBadge } = require('../utils/masteryGuard');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
 const mongoose = require('mongoose');
@@ -2248,7 +2256,11 @@ async function runStudentTurn(req, res) {
             masteryCompleted: pipelineResult.masteryCompleted || false,
             masterySuccess: pipelineResult.masterySuccess || false,
             badgeAwarded: pipelineResult.badgeAwarded || null,
-            _pipeline: pipelineResult._pipeline,
+            // Pipeline internals (tutor-quality grades, mood/fatigue, knowledge
+            // estimates, plan target) went to EVERY student's browser on every
+            // turn, and nothing client-side reads them (QA handoff 2026-10-14
+            // §4). Staff can still ask for them explicitly.
+            ...debugPipelinePayload(req, pipelineResult),
         };
 
         // ── Student-move delegation payload ──
@@ -3975,4 +3987,4 @@ module.exports.runStudentTurn = runStudentTurn;
 // only observable by reading the model's reply.
 // Re-exported for the existing parent-chat prompt tests; the builder lives in
 // utils/parentConferencePrompt.js.
-module.exports.generateParentTeacherPrompt = generateParentTeacherPrompt;
+module.exports.generateParentTeacherPrompt = generateParentTeacherPrompt;module.exports.debugPipelinePayload = debugPipelinePayload;
