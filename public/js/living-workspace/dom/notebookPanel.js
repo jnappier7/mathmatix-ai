@@ -121,7 +121,17 @@
       self.captureText(droppedText(ev));
     });
 
-    container.appendChild(btn);
+    // Inline work mode: the button lives on the composer's disclaimer line,
+    // INSIDE #input-container. Mounted in the overlay layer (z 40) it sat
+    // under the composer (z 1003) and couldn't be clicked there; mounted at
+    // the top it collided with the course bar's Exit Lesson.
+    var composer = d.documentElement.classList.contains('mm-work-inline') && d.getElementById('input-container');
+    if (composer) {
+      btn.classList.add('lws-nb-btn--composer');
+      composer.appendChild(btn);
+    } else {
+      container.appendChild(btn);
+    }
     this.el = { container: container, btn: btn };
   }
 

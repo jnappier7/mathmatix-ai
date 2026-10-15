@@ -1043,3 +1043,8 @@ body.cr-mode .inline-equation-palette {
 }
 .idea-offer-dismiss:hover { color: var(--cr-text-primary, #14202b); }
 .idea-offer-dismiss:focus-visible { outline: 2px solid var(--cr-accent, #4a7dff); outline-offset: 2px; }
+
+/* The disclaimer is a full-width line of plain text stacked above the Living
+   Workspace overlay layer — it swallowed clicks meant for the Notebook button
+   that shares its line. Nothing in it is interactive. */
+.chat-disclaimer { pointer-events: none; }
