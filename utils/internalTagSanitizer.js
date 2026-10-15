@@ -58,10 +58,18 @@ const BOARD_JSON_SRC = `\\{[^{}]*?"action"\\s*:\\s*"(?:${BOARD_VERBS})"[^{}]*?\\
  * @param {string} text - the model's (already board-tag-stripped) text
  * @returns {string} text safe to show the student
  */
+// A verify-stage REWRITE ("Rewrite the response…", utils/pipeline/verify.js)
+// sometimes announces itself before the reply: "Sure! Here's the revised
+// question and response:" reached a student verbatim at the top of an ACT
+// review turn (QA handoff 2026-10-14 §4, prod transcript). Start-anchored and
+// keyed on revised/rewritten/updated/corrected + a colon, so ordinary prose
+// ("here's a new problem for you") is never touched.
+const REWRITE_PREAMBLE = /^\s*(?:(?:sure|certainly|of course|okay|ok|absolutely|got it)[!,.]*\s*)?(?:here(?:'|\u2019)?s|here is|below is)\s+(?:the|a|my|your)\s+(?:revised|rewritten|updated|corrected|improved)\b[^\n:]{0,60}:[ \t]*\n*/i;
+
 function stripInternalTags(text) {
     if (!text || typeof text !== 'string') return text || '';
 
-    let out = text;
+    let out = text.replace(REWRITE_PREAMBLE, '');
     for (const re of INTERNAL_BRACKET_TAGS) {
         out = out.replace(new RegExp(re.source, re.flags), '');
     }
@@ -85,7 +93,8 @@ function stripInternalTags(text) {
  */
 function hasInternalTags(text) {
     if (!text || typeof text !== 'string') return false;
-    return /\[ANSWER_PRE_CHECK\b/i.test(text)
+    return REWRITE_PREAMBLE.test(text)
+        || /\[ANSWER_PRE_CHECK\b/i.test(text)
         || /\[CHECK MY WORK\b/i.test(text)
         || new RegExp(BOARD_JSON_SRC, 'i').test(text);
 }
