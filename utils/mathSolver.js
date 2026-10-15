@@ -2654,6 +2654,24 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
         }
     }
 
+    // Ordered pair ↔ assignments: "(10, 23)" is "x = 10, y = 23". Only for an
+    // {x, y} solution, where coordinate order is unambiguous; a pair against a
+    // pair compares positionally. Without this the most common way students
+    // write a system's solution was graded wrong (QA handoff 2026-10-14 §2.3).
+    {
+        const studentPair = parseOrderedPair(studentStr);
+        const correctPair = parseOrderedPair(correctStr);
+        if (studentPair || correctPair) {
+            const xy = (vars) => (vars && Object.keys(vars).length === 2 &&
+                vars.x !== undefined && vars.y !== undefined) ? [vars.x, vars.y] : null;
+            const s = studentPair || xy(studentVars);
+            const c = correctPair || xy(correctVars);
+            if (s && c && s.every((v, i) => Math.abs(v - c[i]) <= tolerance)) {
+                return { isCorrect: true, exact: false, equivalentForm: true };
+            }
+        }
+    }
+
     // Factored form comparison: (x+a)(x+b) vs (x+b)(x+a) — commutative property
     const studentFactors = parseFactoredForm(studentStr);
     const correctFactors = parseFactoredForm(correctStr);
@@ -2860,15 +2878,34 @@ function parseRootSet(str) {
  * Parse variable assignments like "x = 3, y = 2" or "x=3 and y=2"
  * Returns { x: 3, y: 2 } or null
  */
+// A signed integer, decimal or fraction ("-3", "4.5", "9/2", "-1 / 3").
+const SOLUTION_NUM_SRC = '-?\\d+(?:\\.\\d+)?(?:\\s*\\/\\s*\\d+(?:\\.\\d+)?)?';
+function solutionNumberValue(s) {
+    const compact = String(s).replace(/\s+/g, '');
+    const v = expressionValue(compact);
+    return v !== null ? v : parseFloat(compact);
+}
+
 function parseVariableAssignments(str) {
     const assignments = {};
-    // Match patterns like "x = 3" or "y=-2.5"
-    const pattern = /([a-z])\s*=\s*(-?\d+\.?\d*)/gi;
+    // Match patterns like "x = 3", "y=-2.5", "x = 9/2". Fractions used to be cut
+    // at the slash ("x = 1/2" read as 1), failing a correct fractional solution.
+    const pattern = new RegExp(`([a-z])\\s*=\\s*(${SOLUTION_NUM_SRC})`, 'gi');
     let match;
     while ((match = pattern.exec(str)) !== null) {
-        assignments[match[1].toLowerCase()] = parseFloat(match[2]);
+        assignments[match[1].toLowerCase()] = solutionNumberValue(match[2]);
     }
     return Object.keys(assignments).length >= 2 ? assignments : null;
+}
+
+/**
+ * "(10, 23)" → [10, 23]; null for anything that isn't exactly one ordered pair.
+ */
+function parseOrderedPair(str) {
+    const m = String(str).trim().match(
+        new RegExp(`^\\(\\s*(${SOLUTION_NUM_SRC})\\s*,\\s*(${SOLUTION_NUM_SRC})\\s*\\)$`)
+    );
+    return m ? [solutionNumberValue(m[1]), solutionNumberValue(m[2])] : null;
 }
 
 /**
