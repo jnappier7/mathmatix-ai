@@ -58,7 +58,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const mongoose = require('mongoose');
-const { calibratePooled, dropNotReached } = require('../utils/itemCalibration');
+const { calibratePooled, dropNotReached, excludedTaker } = require('../utils/itemCalibration');
 
 const args = process.argv.slice(2);
 const APPLY = args.includes('--apply');
@@ -126,12 +126,41 @@ function notify(level, message, extra) {
  * unanswered items is dropped as not-reached — see dropNotReached for why that
  * matters more here than it looks.
  */
+/**
+ * Which accounts' responses are left out of calibration, by user id -> reason
+ * (utils/itemCalibration.js excludedTaker: staff and demo accounts).
+ */
+async function excludedUsers(userIds) {
+  const User = require('../models/user');
+  const ids = [...new Set(userIds.filter(Boolean).map(String))];
+  if (!ids.length) return new Map();
+  const users = await User.find({ _id: { $in: ids } }).select('roles role isDemo isDemoClone').lean();
+  const out = new Map();
+  for (const u of users) {
+    const why = excludedTaker(u);
+    if (why) out.set(String(u._id), why);
+  }
+  return out;
+}
+
+const tally = (excluded, sessions) => {
+  const byReason = {};
+  for (const s of sessions) {
+    const why = s.userId && excluded.get(String(s.userId));
+    if (why) byReason[why] = (byReason[why] || 0) + 1;
+  }
+  return byReason;
+};
+
 async function actRows(ActTestSession, testIds) {
   // Sessions from before testId existed are the ACT's (practiceTests.testScope).
   const ids = testIds.includes('act-math') ? [...testIds, null] : testIds;
-  const sessions = await ActTestSession.find({ status: 'completed', testId: { $in: ids } })
+  const all = await ActTestSession.find({ status: 'completed', testId: { $in: ids } })
     .select('userId responses.position responses.problemId responses.correct responses.skipped responses.answer')
     .lean();
+  // Staff and demo accounts try the product; they are not who we measure.
+  const excluded = await excludedUsers(all.map((s) => s.userId));
+  const sessions = all.filter((s) => !(s.userId && excluded.has(String(s.userId))));
   const rows = [];
   let notReached = 0;
   for (const s of sessions) {
@@ -156,14 +185,16 @@ async function actRows(ActTestSession, testIds) {
       rows.push({ userId: personId, problemId: r.problemId, correct: r.correct });
     }
   }
-  return { rows, sessions: sessions.length, notReached };
+  return { rows, sessions: sessions.length, notReached, excluded: tally(excluded, all) };
 }
 
 /** Responses from the adaptive screener, when asked for. */
 async function screenerRows(ScreenerSession) {
-  const sessions = await ScreenerSession.find({})
+  const all = await ScreenerSession.find({})
     .select('userId responses.problemId responses.correct responses.skipped')
     .lean();
+  const excluded = await excludedUsers(all.map((s) => s.userId));
+  const sessions = all.filter((s) => !(s.userId && excluded.has(String(s.userId))));
   const rows = [];
   for (const s of sessions) {
     for (const r of (s.responses || [])) {
@@ -171,7 +202,7 @@ async function screenerRows(ScreenerSession) {
       rows.push({ userId: String(s.userId), problemId: r.problemId, correct: !!r.correct });
     }
   }
-  return { rows, sessions: sessions.length };
+  return { rows, sessions: sessions.length, excluded: tally(excluded, all) };
 }
 
 async function main() {
@@ -202,13 +233,13 @@ async function calibrateExam(exam, testIds, REFERENCE) {
   if (SOURCE === 'act' || SOURCE === 'all') {
     const a = await actRows(ActTestSession, testIds);
     rows = rows.concat(a.rows);
-    provenance.act = { sessions: a.sessions, responses: a.rows.length, notReachedDropped: a.notReached };
+    provenance.act = { sessions: a.sessions, responses: a.rows.length, notReachedDropped: a.notReached, excludedSessions: a.excluded };
   }
   if ((SOURCE === 'screener' || SOURCE === 'all') && exam === 'act') {
     const ScreenerSession = require('../models/screenerSession');
     const s = await screenerRows(ScreenerSession);
     rows = rows.concat(s.rows);
-    provenance.screener = { sessions: s.sessions, responses: s.rows.length };
+    provenance.screener = { sessions: s.sessions, responses: s.rows.length, excludedSessions: s.excluded };
   }
 
   if (!rows.length) {

@@ -703,3 +703,37 @@ describe('a key a person has verified is measured, not flagged', () => {
       .forEach((p) => expect(Problem.schema.path(p)).toBeTruthy());
   });
 });
+
+describe('calibration measures students, not staff trying the product', () => {
+  const { excludedTaker } = require('../../utils/itemCalibration');
+
+  test('students and anonymous guests are kept', () => {
+    expect(excludedTaker({ roles: ['student'], role: 'student' })).toBeNull();
+    expect(excludedTaker(null, true)).toBeNull();          // public practice page, no account
+    expect(excludedTaker(null)).toBeNull();                // deleted account: nothing says staff
+  });
+
+  test('demo accounts and staff are left out, with the reason', () => {
+    expect(excludedTaker({ roles: ['student'], isDemo: true })).toBe('demo');
+    expect(excludedTaker({ roles: ['student'], isDemoClone: true })).toBe('demo');
+    expect(excludedTaker({ roles: ['admin'] })).toBe('admin');
+    expect(excludedTaker({ roles: ['teacher'] })).toBe('teacher');
+    expect(excludedTaker({ roles: ['parent'] })).toBe('parent');
+    expect(excludedTaker({ role: 'teacher' })).toBe('teacher');   // legacy single role
+  });
+
+  test('roles HELD decide it, not the dashboard the account is viewing', () => {
+    // An admin currently in the student view is still an admin (CLAUDE.md: role vs roles).
+    expect(excludedTaker({ roles: ['student', 'admin'], role: 'student' })).toBe('admin');
+  });
+
+  test('the script filters both test and screener sessions through it, and reports what it dropped', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const script = fs.readFileSync(path.join(__dirname, '../../scripts/calibrateItemDifficulty.js'), 'utf8');
+    expect(script).toMatch(/const why = excludedTaker\(u\);/);
+    expect((script.match(/const excluded = await excludedUsers\(all\.map\(\(s\) => s\.userId\)\);/g) || []).length).toBe(2);
+    expect(script).toMatch(/excludedSessions: a\.excluded/);
+    expect(script).toMatch(/excludedSessions: s\.excluded/);
+  });
+});

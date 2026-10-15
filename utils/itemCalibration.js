@@ -53,6 +53,31 @@ function thetaToDifficulty(theta) {
 }
 
 /**
+ * Why a test-taker's responses should NOT calibrate the bank, or null when
+ * they should. Difficulty is measured on students; staff answering to try the
+ * product are not a population we are measuring. Production's first breakdown
+ * (2026-10-15): one admin's 5 tests ran 40% on easy reference items and 79% on
+ * hard ones (testing, not taking), and a teacher's ran 93%.
+ *
+ * Kept: students and anonymous guests (the public practice page — real test
+ * takers with no account), and a deleted account (nothing says it was staff).
+ * Out: demo accounts and anyone HOLDING an admin, teacher or parent role.
+ * Roles held, not the active `role` (utils/roleQuery.js): an admin viewing the
+ * student dashboard is still an admin.
+ *
+ * @param {Object|null} user lean user doc ({roles, role, isDemo, isDemoClone})
+ * @param {boolean} [guest] the session has no account at all
+ * @returns {string|null} the reason it is excluded, or null to keep it
+ */
+function excludedTaker(user, guest = false) {
+  if (guest || !user) return null;
+  if (user.isDemo || user.isDemoClone) return 'demo';
+  const { userHasRole } = require('./roleQuery');
+  for (const role of ['admin', 'teacher', 'parent']) if (userHasRole(user, role)) return role;
+  return null;
+}
+
+/**
  * A person checked this item's key against its stem and it is right
  * (scripts/verifyItemKey.js). Then a low p-value on an easy-authored item is
  * a real misconception, not a mis-key, and the item is measured like any
@@ -617,6 +642,7 @@ function calibratePooled(rows, problems, options = {}) {
 module.exports = {
   calibratePooled,
   isKeyVerified,
+  excludedTaker,
   promptShape,
   thetaToDifficultyExact,
   calibrateItems,
