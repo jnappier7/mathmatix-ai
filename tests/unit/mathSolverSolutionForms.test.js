@@ -118,3 +118,37 @@ describe('end to end: observe → diagnose on the handoff problem', () => {
     expect(d.isCorrect).toBe(false);
   });
 });
+
+// The REAL prod tutor turn (conv 6ad0355146f3c3b6bb9be3e7, 2026-10-15): a
+// numbered LaTeX list under "Solve the following system of equations using
+// substitution:". The list numbers were read as coefficients ("2. 3x" → 2.3x)
+// and the system "solved" to x = 33.33, y = 69.67.
+describe('systems posed as a numbered list solve to the right key', () => {
+  const { parseCleanProblem } = require('../../utils/mathSolver');
+  const REAL = 'Here’s a quick challenge for you:\n\nSolve the following system of equations using substitution:\n\n'
+    + '1. \\( y = 2x + 3 \\)\n2. \\( 3x - y = 7 \\)\n\n'
+    + 'Start by substituting the expression for \\( y \\) from the first equation into the second equation. What do you get?';
+
+  test.each([
+    [REAL, 'x = 10, y = 23'],
+    ['1. y = 2x + 3\n2. 3x - y = 7', 'x = 10, y = 23'],
+    ['1) y = 2x + 3\n2) 3x - y = 7', 'x = 10, y = 23'],
+    ['Solve the following system of equations using substitution: y = 2x + 3, 3x - y = 7', 'x = 10, y = 23'],
+    ['solve the system: 2x + y = 5, x - y = 1', 'x = 2, y = 1'],
+    ['2x + y = 5 and x - y = 1', 'x = 2, y = 1'],
+    ['1.5x + y = 4\nx - y = 1', 'x = 2, y = 1'],      // a leading decimal is a coefficient, not a list marker
+  ])('%#', (text, key) => {
+    const r = parseCleanProblem(text);
+    expect(r.problem?.type).toBe('system_of_equations');
+    expect(r.solution.answer).toBe(key);
+  });
+
+  test('the real transcript: (10, 23) now verifies from the unstamped tutor turn', async () => {
+    const recent = [{ role: 'assistant', content: REAL }];
+    for (const m of ['(10, 23)', 'x = 10, y = 23']) {
+      const o = observe(m, { recentAssistantMessages: recent, conversationHistory: [...recent, { role: 'user', content: m }] });
+      const d = await diagnose(o, { recentAssistantMessages: recent, userMessage: m });
+      expect(d.isCorrect).toBe(true);
+    }
+  });
+});
