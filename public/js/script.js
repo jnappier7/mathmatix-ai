@@ -6338,8 +6338,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     url: `/api/student/uploads/${a.uploadId}/file`,
                     fileType: a.fileType
                 }));
+                // Restored tutor messages get the same visual pass a live
+                // reply does (inlineChatVisuals → leftover-tag strip), or
+                // every [POINTS:…]/[FUNCTION_GRAPH:…] came back as raw text
+                // on reload (student audit 2026-10-15).
+                let content = msg.content;
+                let hasVisuals = false;
+                if (sender === 'ai' && typeof content === 'string') {
+                    if (window.inlineChatVisuals) {
+                        try {
+                            const r = window.inlineChatVisuals.processMessage(content);
+                            content = r.html;
+                            hasVisuals = r.hasVisuals;
+                        } catch (e) { console.error('[History] visual render failed', e); }
+                    }
+                    if (window.StripVisualTags) {
+                        try { content = window.StripVisualTags.stripUnrenderedVisualTags(content); } catch (_) { /* keep text */ }
+                    }
+                }
                 const before = chatBox.lastElementChild;
-                appendMessage(msg.content, sender, null, false, histAttachments, msg.timestamp || null);
+                appendMessage(content, sender, null, false, histAttachments, msg.timestamp || null);
+                if (hasVisuals && window.inlineChatVisuals && chatBox.lastElementChild !== before) {
+                    const el = chatBox.lastElementChild;
+                    setTimeout(() => {
+                        try {
+                            window.inlineChatVisuals.initializeVisuals(el);
+                            if (typeof renderMathInElement === 'function') renderMathInElement(el);
+                        } catch (e) { console.error('[History] visual init failed', e); }
+                    }, 100);
+                }
                 // Stamp when this message was sent. The Living Workspace seals
                 // each finished problem back into the transcript on hydrate
                 // (chat-workspace.js placeSealed) and needs these to put the

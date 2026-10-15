@@ -130,9 +130,9 @@ describe('Rule 1: returning from voice continues the same chat', () => {
             loginSessionId: LOGIN_A,
             lastActivity: new Date(),
             messages: [
-                { role: 'assistant', content: 'Hey Sam! What are we working on?' },
-                { role: 'user', content: 'fractions' },
-                { role: 'assistant', content: 'Nice — try 1/2 + 1/3.' },
+                { role: 'assistant', content: 'Hey Sam! What are we working on?', timestamp: new Date('2026-10-15T19:17:00Z') },
+                { role: 'user', content: 'fractions', timestamp: new Date('2026-10-15T19:18:00Z') },
+                { role: 'assistant', content: 'Nice — try 1/2 + 1/3.', timestamp: new Date('2026-10-15T19:20:00Z') },
             ],
         });
         user.activeConversationId = convo._id;
@@ -143,6 +143,11 @@ describe('Rule 1: returning from voice continues the same chat', () => {
 
         expect(res.body.continued).toBe(true);
         expect(res.body.messages).toHaveLength(3);
+        // Each restored message carries when it was SENT — without this the
+        // client stamped every one with the reload time (audit 2026-10-15).
+        expect(res.body.messages.map(m => new Date(m.timestamp).toISOString())).toEqual([
+            '2026-10-15T19:17:00.000Z', '2026-10-15T19:18:00.000Z', '2026-10-15T19:20:00.000Z',
+        ]);
         expect(await Conversation.countDocuments({ userId: user._id })).toBe(1);
     });
 });

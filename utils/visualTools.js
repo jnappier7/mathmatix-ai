@@ -265,8 +265,10 @@ const SPECS = {
       },
     },
     toTag(input) {
+      // Legible labels: 1.2857142857142858 -> 1.286.
+      const fmt = (v) => (Number.isFinite(Number(v)) ? Number(Number(v).toFixed(3)) : v);
       const rendered = input.points
-        .map((p) => `(${p[0]},${p[1]})`)
+        .map((p) => `(${fmt(p[0])},${fmt(p[1])})`)
         .join(',');
       return `[POINTS:points=${rendered}]`;
     },
@@ -384,6 +386,9 @@ function resolveToolCalls(toolCalls) {
     }
 
     const { tag, visualCommand } = resolveToolCall(fnName, parsed);
+    // The same visual twice in one turn is never purposeful (five identical
+    // plots, 2026-10-15 audit).
+    if (tag && tags.includes(tag)) continue;
     if (tag) tags.push(tag);
     if (visualCommand && visualCommands[visualCommand.channel]) {
       visualCommands[visualCommand.channel].push(visualCommand.command);
