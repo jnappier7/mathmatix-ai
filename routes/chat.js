@@ -8,7 +8,7 @@ const router = express.Router();
 const log = require('../utils/logger');
 const logger = log.child({ service: 'chat-service' });
 const { isAuthenticated } = require('../middleware/auth');
-const { promptInjectionFilter } = require('../middleware/promptInjection');
+const { promptInjectionFilter, tutorVoiceId } = require('../middleware/promptInjection');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
 const mongoose = require('mongoose');
 const User = require('../models/user');
@@ -334,10 +334,15 @@ async function runStudentTurn(req, res) {
     try { // Lock-guarded block — finally releases lock at end
 
     // SAFETY FILTER: Block inappropriate content
+    // Violence / self-harm words are deliberately NOT here. "I want to kill
+    // myself" or "a kid brought a gun to school" is a disclosure, not off-topic
+    // content — it must reach the pipeline, whose prompt answers with empathy
+    // and emits <SAFETY_CONCERN>, which persist turns into sendSafetyConcernAlert.
+    // A canned "that topic isn't appropriate" here swallowed the disclosure and
+    // the alert never fired.
     const inappropriatePatterns = [
         /\b(sex|porn|penis|vagina|breast|dick|cock|pussy|fuck|shit|ass|damn|bitch)\b/i,
-        /\b(drug|weed|cocaine|alcohol|beer|wine|drunk)\b/i,
-        /\b(gun|weapon|kill|murder|suicide|bomb)\b/i
+        /\b(drug|weed|cocaine|alcohol|beer|wine|drunk)\b/i
     ];
 
     const messageClean = message.toLowerCase();
@@ -347,11 +352,9 @@ async function runStudentTurn(req, res) {
         logger.warn('Safety filter triggered', { userId, messagePreview: message.substring(0, 50) });
         return res.json({
             text: "I'm here to help you learn math in a safe, respectful way. That topic isn't appropriate for our tutoring session. Let's focus on math! What math topic would you like to work on?",
-            userXp: 0,
-            userLevel: 1,
-            xpNeeded: 200,
+            // No stub XP fields — the client would render them as "0 / 200 XP".
             specialXpAwarded: "",
-            voiceId: TUTOR_CONFIG.default.cartesiaVoiceId,
+            voiceId: tutorVoiceId(req.user),
             newlyUnlockedTutors: [],
             drawingSequence: null,
             safetyFilter: true

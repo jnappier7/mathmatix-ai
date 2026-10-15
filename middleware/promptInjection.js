@@ -15,6 +15,17 @@ const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 // Patterns that indicate prompt injection attempts
 // Organized by category for easier maintenance and logging
+//
+// NOT here: answer-seeking ("just tell me the answer", "skip the steps"). That
+// is the most common sentence a stuck kid types, not an attack on the model —
+// the pipeline owns it (observe → GIVE_UP → decide's exit ramp, which keeps the
+// active problem and never reveals the answer). Blocking it here dropped the
+// problem context and answered a frustrated student with "what topic can I help
+// you with?" (QA handoff 2026-10-14). Pinned by the frustration-phrase fixture in
+// tests/unit/promptInjection.test.js.
+//
+// Every pattern must also survive ordinary math prose: "Dan has 5 apples", "the
+// domain has no restrictions", "maximum power output" all used to be blocked.
 const INJECTION_PATTERNS = {
   // Instruction override attempts
   instructionOverride: [
@@ -62,21 +73,25 @@ const INJECTION_PATTERNS = {
 
   // Jailbreak/unrestricted mode attempts
   jailbreakAttempts: [
-    /\bDAN\s+(mode)?/i,
+    // "DAN" alone is a name ("Dan has 5 apples") — require the jailbreak framing.
+    /\bDAN\s+mode\b/i,
+    /\byou\s+are\s+(now\s+)?DAN\b/i,
     /\bdo\s+anything\s+now\b/i,
     /developer\s+mode\s+(enable|activate|on)/i,
     /enable\s+developer\s+mode/i,
     /\bjailbreak\b/i,
-    /no\s+(more\s+)?restrictions?\b/i,
+    // Bare "no restrictions" / "without restrictions" is ordinary algebra
+    // ("the domain has no restrictions") — only match when aimed at the tutor.
+    /\byou\s+(now\s+)?have\s+no\s+(more\s+)?(restrictions?|rules?|filters?)/i,
     /unrestricted\s+mode/i,
     /remove\s+(all\s+)?(your\s+)?(restrictions?|filters?|limitations?)/i,
     /disable\s+(your\s+)?(safety|content|filters?|restrictions?)/i,
     /turn\s+off\s+(your\s+)?(safety|filters?|restrictions?)/i,
-    /without\s+(any\s+)?(restrictions?|filters?|rules?)/i,
+    /(respond|reply|answer|talk|act)\s+without\s+(any\s+)?(restrictions?|filters?|rules?)/i,
     /unfiltered\s+(mode|response|version)/i,
     /uncensored\s+(mode|response|version)/i,
     /evil\s+(mode|version)/i,
-    /maximum\s+(mode|power)/i,
+    /\bmaximum\s+mode\b/i,
   ],
 
   // Markdown/encoding injection (trying to hide instructions)
@@ -88,14 +103,6 @@ const INJECTION_PATTERNS = {
     /```system/i,
     /```instruction/i,
     /base64\s*:\s*[a-zA-Z0-9+\/=]{20,}/i,
-  ],
-
-  // Answer extraction attempts (more aggressive than anti-cheat)
-  answerExtraction: [
-    /just\s+(give|tell)\s+(me\s+)?the\s+(final\s+)?answer/i,
-    /skip\s+(the\s+)?(explanation|teaching|steps)/i,
-    /don'?t\s+(explain|teach|show\s+work)/i,
-    /answer\s+only\s*,?\s*no\s+(explanation|steps)/i,
   ],
 };
 
@@ -141,6 +148,11 @@ function detectPromptInjection(message) {
   return { isInjection: false, category: null, matchedPattern: null };
 }
 
+function tutorVoiceId(user) {
+  const tutor = (user?.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]) || TUTOR_CONFIG.default;
+  return tutor.cartesiaVoiceId || TUTOR_CONFIG.default.cartesiaVoiceId;
+}
+
 /**
  * Express middleware to block prompt injection attempts
  * Apply to chat routes before processing
@@ -174,13 +186,13 @@ function promptInjectionFilter(req, res, next) {
     // Return a friendly response that redirects to math
     const friendlyResponse = FRIENDLY_RESPONSES[Math.floor(Math.random() * FRIENDLY_RESPONSES.length)];
 
+    // No userXp / userLevel / xpNeeded: the client only updates the XP bar when
+    // those are present, and stub zeros rendered as "0 / 200 XP" until the next
+    // real turn. Voice follows the student's tutor, not the default one.
     return res.json({
       text: friendlyResponse,
-      userXp: 0,
-      userLevel: req.user?.level || 1,
-      xpNeeded: 200,
       specialXpAwarded: "",
-      voiceId: TUTOR_CONFIG.default.cartesiaVoiceId,
+      voiceId: tutorVoiceId(req.user),
       newlyUnlockedTutors: [],
       drawingSequence: null,
       promptInjectionBlocked: true // Flag for analytics/debugging
@@ -217,5 +229,6 @@ module.exports = {
   promptInjectionFilter,
   detectPromptInjection,
   sanitizeForAI,
+  tutorVoiceId,
   INJECTION_PATTERNS // Exported for testing
 };
