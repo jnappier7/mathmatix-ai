@@ -22,6 +22,33 @@
    ============================================================ */
 (function (root) {
   'use strict';
+
+  // Cards carry LaTeX — the tutor's \( \frac{1}{3} \), a board problem's
+  // \frac{x}{6} — and textContent printed it as literal source (QA handoff
+  // 2026-10-14 §2.4). Prose stays a text node (never innerHTML); only the
+  // delimited math goes through KaTeX, with throwOnError:false so a bad
+  // fragment shows as itself instead of breaking the card.
+  // No single-$ math: "costs $5 and $10" is far more common in a card than
+  // $x$, and the tutor writes \( \) anyway.
+  var MATH_SPLIT = /(\\\([\s\S]+?\\\)|\\\[[\s\S]+?\\\]|\$\$[\s\S]+?\$\$)/;
+  function renderMath(target, tex, display) {
+    var k = root.katex;
+    if (!k || typeof k.render !== 'function') { target.appendChild(target.ownerDocument.createTextNode(tex)); return; }
+    var span = target.ownerDocument.createElement('span');
+    try { k.render(tex, span, { throwOnError: false, displayMode: !!display }); }
+    catch (_) { span.textContent = tex; }
+    target.appendChild(span);
+  }
+  function setMixedText(el, text) {
+    el.textContent = '';
+    String(text || '').split(MATH_SPLIT).forEach(function (part, i) {
+      if (!part) return;
+      if (i % 2 === 0) { el.appendChild(el.ownerDocument.createTextNode(part)); return; }
+      if (part.slice(0, 2) === '\\(') return renderMath(el, part.slice(2, -2), false);
+      if (part.slice(0, 2) === '\\[') return renderMath(el, part.slice(2, -2), true);
+      renderMath(el, part.slice(2, -2), true);   // $$ … $$
+    });
+  }
   var LWS = (root.LWS = root.LWS || {});
 
   var TYPE_META = {
@@ -375,18 +402,20 @@
     head.appendChild(del);
 
     var title = d.createElement('h3'); title.className = 'lws-nb-card-title';
-    title.textContent = card.title || '';
+    setMixedText(title, card.title || '');
 
     el.appendChild(head);
     el.appendChild(title);
     if (card.body) {
       var bodyEl = d.createElement('p'); bodyEl.className = 'lws-nb-card-body';
-      bodyEl.textContent = card.body;
+      setMixedText(bodyEl, card.body);
       el.appendChild(bodyEl);
     }
     if (card.problemTex) {
       var prob = d.createElement('p'); prob.className = 'lws-nb-card-prob';
-      prob.textContent = 'Problem: ' + card.problemTex;
+      // problemTex is bare TeX (no delimiters) — typeset it whole.
+      prob.appendChild(d.createTextNode('Problem: '));
+      renderMath(prob, card.problemTex, false);
       el.appendChild(prob);
     }
     if (card.type === 'reminder' && (card.seenCount || 0) >= 2) {

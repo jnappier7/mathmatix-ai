@@ -483,7 +483,8 @@ function detectMathProblem(message) {
         if (factored && factored.binomials.length >= 2) {
             return {
                 type: 'expand_polynomial',
-                expression: message.replace(/^.*?(?:expand|multiply|simplify|foil|what\s+is)\s*/i, '').trim(),
+                expression: extractBinomialProductText(message)
+                    || message.replace(/^.*?\b(?:expand|multiply|simplify|foil|what\s+is)\b\s*/i, '').trim(),
                 factored,
             };
         }
@@ -2860,6 +2861,21 @@ function parseRootSet(str) {
  * Parse variable assignments like "x = 3, y = 2" or "x=3 and y=2"
  * Returns { x: 3, y: 2 } or null
  */
+/**
+ * The binomial product as the student/tutor wrote it: "(2x - 4)(x + 2)" out of
+ * "Can we do a multiplying problem? Multiply (2x - 4)(x + 2). I got 2x^2 + 8."
+ * The old keyword strip had no word boundary, so "multiply" matched INSIDE
+ * "multiplying" and the board posed "ing problem? Multiply … I got 2x^2 + 8"
+ * — the same text then became the notebook card's problem (QA handoff
+ * 2026-10-14 §2.4). It also dragged the student's own answer along.
+ */
+function extractBinomialProductText(message) {
+    const m = String(message).match(
+        /(?:-?\d+(?:\.\d+)?\s*)?(?:\(\s*[-+−]?\s*\d*(?:\.\d+)?\s*[a-z]\s*[-+−]\s*\d+(?:\.\d+)?\s*\)\s*){2,}/i
+    );
+    return m ? m[0].trim() : null;
+}
+
 function parseVariableAssignments(str) {
     const assignments = {};
     // Match patterns like "x = 3" or "y=-2.5"

@@ -17,7 +17,7 @@
 const BRAND_CONFIG = require('../brand');
 const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
-const { parseCleanProblem } = require('../mathSolver');
+const { parseCleanProblem, verifyAnswer } = require('../mathSolver');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { classifyTurn, problemKey, solveAnswer, isRepeatSolve, appendSolve, liveTextsFor } = require('./solveCredit');
 const { emitGamificationEvent, bumpDailyStreak } = require('../gamificationEvents');
@@ -977,13 +977,32 @@ function updateBadgeProgress(user, wasCorrect) {
  * language in the student's own message; their words become the card.
  * Detection is pure (utils/pipeline/learningCards.js); this owns the writes.
  */
+// A "wrong" verdict whose answer is equivalent to the key is a grader false
+// negative, not a mistake — and the AI analysis will rationalize it anyway
+// ("calculated 3 + 4 as 7 instead of recognizing that it equals 7"). Never
+// write that into the student's notebook.
+function answerIsActuallyRight(diagnosis) {
+  const a = diagnosis?.answer;
+  const k = diagnosis?.correctAnswer;
+  if (a == null || k == null || a === '' || k === '') return false;
+  try { return verifyAnswer(String(a), String(k)).isCorrect === true; } catch { return false; }
+}
+
+// A tool call's JSON tail once bled into the board's problem text
+// ("4(x - 2) = 24'}]} ### BoardTranslation {"). Cut at any such marker.
+function cleanCardProblemTex(tex) {
+  if (tex == null) return null;
+  const cut = String(tex).split(/['"]\s*\}\s*\]\s*\}|#{2,}\s*\w|\bBoardTranslation\b/)[0].trim();
+  return cut || null;
+}
+
 async function captureLearningCards({ user, conversation, diagnosis, originalMessage, results, masteryAttempt }) {
   const out = [];
   const skillId = masteryAttempt?.skillId || null;
-  const problemTex = conversation.boardLedger?.current?.problemTex
-    || (diagnosis?.problemInfo?.content ? String(diagnosis.problemInfo.content).slice(0, 500) : null);
+  const problemTex = cleanCardProblemTex(conversation.boardLedger?.current?.problemTex
+    || (diagnosis?.problemInfo?.content ? String(diagnosis.problemInfo.content).slice(0, 500) : null));
 
-  if (diagnosis?.misconception?.name && diagnosis.isCorrect === false) {
+  if (diagnosis?.misconception?.name && diagnosis.isCorrect === false && !answerIsActuallyRight(diagnosis)) {
     const key = reminderKey(diagnosis.misconception.name);
     if (key) {
       const shaped = shapeReminder(diagnosis.misconception);
@@ -1034,5 +1053,7 @@ module.exports = {
   updateSkillMastery,
   processIepGoalUpdate,
   updateBadgeProgress,
+  answerIsActuallyRight,
+  cleanCardProblemTex,
   isSameProblemRetry,
 };

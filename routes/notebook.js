@@ -20,6 +20,7 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const LearningCard = require('../models/learningCard');
+const { REMINDER_ACTIVATION_COUNT } = require('../utils/pipeline/learningCards');
 const logger = require('../utils/logger').child({ route: 'notebook' });
 
 const TYPES = ['aha', 'reminder', 'idea', 'strategy', 'reflection', 'note'];
@@ -41,8 +42,14 @@ router.get('/', isAuthenticated, async (req, res) => {
   try {
     const query = { userId: req.user._id, archived: false };
     if (req.query.type && TYPES.includes(req.query.type)) query.type = req.query.type;
+    // A "Watch for This" reminder is a PATTERN, not a single slip: the persist
+    // stage only surfaces one live once it has recurred (REMINDER_ACTIVATION_COUNT),
+    // and the notebook must honour the same rule. Listing every first sighting
+    // showed students 217 one-off, AI-guessed diagnoses, many of them false
+    // (QA handoff 2026-10-14 §2.4: 12 of 229 prod reminders had ever recurred).
+    const visible = { $or: [{ type: { $ne: 'reminder' } }, { seenCount: { $gte: REMINDER_ACTIVATION_COUNT } }] };
     const search = buildSearchClause(req.query.q);
-    if (search) Object.assign(query, search);
+    query.$and = search ? [visible, search] : [visible];
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 50));
 
     const cards = await LearningCard.find(query)
