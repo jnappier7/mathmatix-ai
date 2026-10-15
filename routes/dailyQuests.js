@@ -1,5 +1,6 @@
 // routes/dailyQuests.js - Daily Quest System for Mastery Mode
 
+const { localDayKey, daysBetween } = require('../utils/timeHelpers');
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
@@ -232,15 +233,19 @@ function generateDailyQuests(user) {
   return quests;
 }
 
+// Day boundaries are the STUDENT's, not the server's. Render runs in UTC, so
+// server-local midnight is 8 PM Eastern: quests reset and the streak ticked
+// 1 → 2 in the middle of one evening (QA handoff 2026-10-14 §3.6, witnessed:
+// the reporting account's quests refreshed at 8:54 PM ET). Same helpers and
+// same UTC fallback as the chat-turn streak (utils/gamificationEvents.js).
 // Check if quests need to be refreshed (new day or Pi Day status change)
-function shouldRefreshQuests(lastRefreshDate, currentQuests) {
+function shouldRefreshQuests(lastRefreshDate, currentQuests, timezone) {
   if (!lastRefreshDate) return true;
 
-  const now = new Date();
-  const lastRefresh = new Date(lastRefreshDate);
+  const tz = timezone || 'UTC';
 
-  // Refresh if it's a new day
-  if (now.toDateString() !== lastRefresh.toDateString()) return true;
+  // Refresh if it's a new day — in the student's timezone
+  if (localDayKey(new Date(), tz) !== localDayKey(new Date(lastRefreshDate), tz)) return true;
 
   // Force refresh if it's Pi Day but current quests aren't Pi Day quests
   const hasPiDayQuests = currentQuests && currentQuests.some(q => q.piDay);
@@ -251,9 +256,6 @@ function shouldRefreshQuests(lastRefreshDate, currentQuests) {
 
 // Calculate streak
 function calculateStreak(user) {
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-
   const lastPractice = user.dailyQuests?.lastPracticeDate
     ? new Date(user.dailyQuests.lastPracticeDate)
     : null;
@@ -262,8 +264,8 @@ function calculateStreak(user) {
     return 1; // First day
   }
 
-  lastPractice.setHours(0, 0, 0, 0);
-  const daysDiff = Math.floor((now - lastPractice) / (1000 * 60 * 60 * 24));
+  const tz = user.timezone || 'UTC';
+  const daysDiff = daysBetween(localDayKey(lastPractice, tz), localDayKey(new Date(), tz));
 
   if (daysDiff === 0) {
     // Same day, keep streak
@@ -299,7 +301,7 @@ router.get('/daily-quests', isAuthenticated, async (req, res) => {
     }
 
     // Check if we need new quests
-    if (shouldRefreshQuests(user.dailyQuests.lastRefreshDate, user.dailyQuests.quests)) {
+    if (shouldRefreshQuests(user.dailyQuests.lastRefreshDate, user.dailyQuests.quests, user.timezone)) {
       user.dailyQuests.quests = generateDailyQuests(user);
       user.dailyQuests.lastRefreshDate = new Date();
       user.dailyQuests.todayProgress = {}; // Reset daily progress
@@ -533,4 +535,5 @@ router.get('/daily-quests/pi-day-lessons', isAuthenticated, (req, res) => {
   });
 });
 
+router.__helpers = { calculateStreak, shouldRefreshQuests };
 module.exports = router;

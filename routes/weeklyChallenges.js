@@ -83,7 +83,7 @@ const WEEKLY_CHALLENGE_TEMPLATES = {
   growthMindset: {
     id: 'growthMindset',
     name: 'Growth Mindset',
-    description: 'Improve ability (θ) by {count} points total',
+    description: 'Grow your math level by {count} points on your growth checks',
     icon: '📈',
     difficulty: 'medium',
     targetType: 'thetaGrowth',

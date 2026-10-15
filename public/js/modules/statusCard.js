@@ -44,9 +44,10 @@ function questRowHTML(q) {
     return `
       <div class="sc-quest ${q.completed ? 'is-complete' : ''}">
         <div class="sc-quest-top">
-          <span class="sc-quest-name">${q.completed ? '✅ ' : ''}${q.name || q.title || q.type || 'Quest'}</span>
+          <span class="sc-quest-name">${q.completed ? '✅ ' : ''}${esc(q.name || q.title || q.type || 'Quest')}</span>
           <span class="sc-quest-reward">+${q.xpReward || 50} XP</span>
         </div>
+        ${q.description ? `<div class="sc-quest-desc">${esc(q.description)}</div>` : ''}
         <div class="sc-quest-bar"><div class="sc-quest-fill" style="width:${pct}%"></div></div>
         <div class="sc-quest-count">${q.progress || 0}/${q.targetCount || 0}</div>
       </div>`;
