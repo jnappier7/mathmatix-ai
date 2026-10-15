@@ -67,8 +67,33 @@ const SOURCE = (args.find((a) => a.startsWith('--source=')) || '--source=act').s
 const MIN = Number((args.find((a) => a.startsWith('--min=')) || '--min=25').split('=')[1]) || 25;
 const OUT = (args.find((a) => a.startsWith('--out=')) || '').split('=')[1] || null;
 const LIMIT = Number((args.find((a) => a.startsWith('--top=')) || '--top=40').split('=')[1]) || 40;
+const EXAM = (args.find((a) => a.startsWith('--exam=')) || '--exam=all').split('=')[1];
 // The bank the others are equated to. Its authored levels define the scale.
-const REFERENCE = (args.find((a) => a.startsWith('--reference=')) || '--reference=act-fable').split('=')[1];
+// Each exam family has its own (see EXAMS); --reference overrides it.
+const REFERENCE_ARG = (args.find((a) => a.startsWith('--reference=')) || '').split('=')[1] || null;
+
+/**
+ * Exam families, each calibrated on its OWN scale.
+ *
+ * Every practice test lands in the same ActTestSession collection, and this
+ * used to fit them as one matrix pinned to act-fable. SAT/PSAT takers answer
+ * only SAT items, so that block had almost nothing tying it to the ACT
+ * reference: on production's first 195 tests the whole SAT block slid
+ * ~0.004 per sweep as a unit and no tier converged in 30 (the moving pools
+ * were all sat-*; 2026-10-15). An SAT item has no business on the ACT scale
+ * anyway. A junior test (PreACT, PSAT) joins its senior exam's family — it is
+ * drawn from that exam's bank.
+ */
+const { TESTS } = require('../utils/practiceTests');
+const familyOf = (testId) => {
+  const def = TESTS[testId] || TESTS['act-math'];
+  return def.prepFor || def.testId;
+};
+const EXAMS = {
+  act: { senior: 'act-math', reference: 'act-fable' },
+  sat: { senior: 'sat-math', reference: 'sat-fable' },
+};
+const testIdsFor = (senior) => Object.keys(TESTS).filter((id) => familyOf(id) === senior);
 
 /**
  * Send one line somewhere a human will actually see it.
@@ -101,8 +126,10 @@ function notify(level, message, extra) {
  * unanswered items is dropped as not-reached — see dropNotReached for why that
  * matters more here than it looks.
  */
-async function actRows(ActTestSession) {
-  const sessions = await ActTestSession.find({ status: 'completed' })
+async function actRows(ActTestSession, testIds) {
+  // Sessions from before testId existed are the ACT's (practiceTests.testScope).
+  const ids = testIds.includes('act-math') ? [...testIds, null] : testIds;
+  const sessions = await ActTestSession.find({ status: 'completed', testId: { $in: ids } })
     .select('userId responses.position responses.problemId responses.correct responses.skipped responses.answer')
     .lean();
   const rows = [];
@@ -153,17 +180,31 @@ async function main() {
     process.exit(1);
   }
   await mongoose.connect(process.env.MONGO_URI);
+  const names = EXAM === 'all' ? Object.keys(EXAMS) : [EXAM];
+  if (names.some((n) => !EXAMS[n])) {
+    console.error(`Unknown --exam=${EXAM}. Use ${Object.keys(EXAMS).join(', ')} or all.`);
+    process.exit(1);
+  }
+  for (const name of names) {
+    const exam = EXAMS[name];
+    await calibrateExam(name, testIdsFor(exam.senior), REFERENCE_ARG || exam.reference);
+  }
+  await mongoose.disconnect();
+}
+
+async function calibrateExam(exam, testIds, REFERENCE) {
   const Problem = require('../models/problem');
   const ActTestSession = require('../models/actTestSession');
+  console.log(`\n######## ${exam.toUpperCase()} family: ${testIds.join(', ')} — reference ${REFERENCE} ########`);
 
   let rows = [];
   const provenance = {};
   if (SOURCE === 'act' || SOURCE === 'all') {
-    const a = await actRows(ActTestSession);
+    const a = await actRows(ActTestSession, testIds);
     rows = rows.concat(a.rows);
     provenance.act = { sessions: a.sessions, responses: a.rows.length, notReachedDropped: a.notReached };
   }
-  if (SOURCE === 'screener' || SOURCE === 'all') {
+  if ((SOURCE === 'screener' || SOURCE === 'all') && exam === 'act') {
     const ScreenerSession = require('../models/screenerSession');
     const s = await screenerRows(ScreenerSession);
     rows = rows.concat(s.rows);
@@ -173,7 +214,6 @@ async function main() {
   if (!rows.length) {
     console.log('No responses found. Nothing to calibrate.');
     console.log('Provenance:', JSON.stringify(provenance, null, 2));
-    await mongoose.disconnect();
     return;
   }
 
@@ -282,13 +322,13 @@ async function main() {
   }
 
   if (OUT) {
-    fs.writeFileSync(OUT, `${JSON.stringify({ provenance, reference: REFERENCE, levels, bands, resolved }, null, 2)}\n`);
-    console.log(`\nFull report written to ${OUT}`);
+    const OUT_FILE = EXAM === 'all' ? OUT.replace(/(\.json)?$/, `.${exam}$1`) : OUT;
+    fs.writeFileSync(OUT_FILE, `${JSON.stringify({ provenance, reference: REFERENCE, levels, bands, resolved }, null, 2)}\n`);
+    console.log(`\nFull report written to ${OUT_FILE}`);
   }
 
   if (!APPLY) {
     console.log('\nDRY RUN — nothing written. Re-run with --apply to write these difficulties.');
-    await mongoose.disconnect();
     return;
   }
 
@@ -328,7 +368,6 @@ async function main() {
     written += 1;
   }
   console.log(`\nApplied: ${written} item difficulties updated${FORCE ? ' (--force)' : ''}.`);
-  await mongoose.disconnect();
 }
 
 main().catch(async (err) => {
