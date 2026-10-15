@@ -2863,6 +2863,9 @@ router.post('/merge-accounts', isAdmin, async (req, res) => {
     }
 
     // 2. Merge XP
+    // Moving XP between accounts is not earning it: keep it off this week's
+    // leaderboard (models/user.js weekly-XP capture).
+    target.$locals.skipWeeklyXp = true;
     const xpStrategy = conflictResolution.xp || 'sum';
     if (xpStrategy === 'sum') {
       const addedXp = source.xp || 0;

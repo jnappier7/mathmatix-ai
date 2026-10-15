@@ -6,6 +6,55 @@ const { isAuthorizedForLeaderboard } = require('../middleware/auth');
 const { hasOptedOutOfDirectoryInfo } = require('../utils/ferpaCompliance');
 
 const { anyRole, withoutRoles, userHasRole } = require('../utils/roleQuery');
+const { weekKey, weekPath, pointsFor } = require('../utils/weeklyXp');
+
+// "First L." — or "Student" when the family opted out of directory info.
+function displayName(student) {
+    if (hasOptedOutOfDirectoryInfo(student)) return 'Student';
+    const lastNameInitial = student.lastName ? `${student.lastName.charAt(0)}.` : '';
+    return `${student.firstName || 'Student'} ${lastNameInitial}`.trim();
+}
+
+/**
+ * This week's board: XP earned since Monday 00:00 Eastern (utils/weeklyXp.js),
+ * so a student who joined yesterday can top it — the all-time board ranked a
+ * 20,027-XP account against kids with 400 (owner decision 2026-10-15: weekly,
+ * all XP counts). Same scope and exclusions as the all-time board. `you` is the
+ * viewer's own row, pinned under the Top 10 even when they're not in it.
+ */
+async function weeklyBoard(scope, viewer) {
+    const key = weekKey();
+    const path = weekPath(key);
+    const rows = await User.find({ ...scope, [path]: { $gt: 0 } })
+        .sort({ [path]: -1, _id: 1 })
+        .select(`firstName lastName ferpaSettings ${path}`)
+        .limit(10)
+        .lean();
+
+    const viewerId = String(viewer?._id || '');
+    const entries = rows.map((s, i) => ({
+        rank: i + 1,
+        name: displayName(s),
+        points: pointsFor(s, key),
+        isYou: String(s._id) === viewerId,
+    }));
+
+    // Only a student on this board has a "you" row (staff are excluded above).
+    let you = null;
+    if (viewerId && userHasRole(viewer, 'student')
+        && !userHasRole(viewer, 'teacher') && !userHasRole(viewer, 'admin')) {
+        const me = await User.findById(viewer._id).select(`firstName lastName ferpaSettings ${path}`).lean();
+        const points = pointsFor(me, key);
+        const ahead = points > 0
+            ? await User.countDocuments({ ...scope, [path]: { $gt: points } })
+            : null;
+        you = { rank: ahead === null ? null : ahead + 1, name: me ? displayName(me) : 'You', points };
+    }
+
+    const [y, m, d] = key.split('-').map(Number);
+    const resetsOn = new Date(Date.UTC(y, m - 1, d + 7)).toISOString().slice(0, 10);
+    return { period: 'week', weekKey: key, resetsOn, entries, you };
+}
 router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
     try {
         // Students only — and not staff who also hold the student role. A
@@ -41,6 +90,10 @@ router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
         }
         // If isAdmin, the query remains { role: 'student' }, showing all students.
 
+        if (req.query?.period === 'week') {
+            return res.json(await weeklyBoard(query, req.user));
+        }
+
         const leaderboard = await User.find(query)
             .sort({ level: -1, xp: -1 }) // Sorts by level, then XP
             .select('firstName lastName level xp ferpaSettings')
@@ -50,11 +103,10 @@ router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
         // Format names to "First Name L." — respect FERPA directory info opt-out
         const formattedLeaderboard = leaderboard.map((student, index) => {
             const optedOut = hasOptedOutOfDirectoryInfo(student);
-            const lastNameInitial = !optedOut && student.lastName ? `${student.lastName.charAt(0)}.` : '';
             return {
                 // Was a hard-coded 0 on every row. Sorted above, so position is rank.
                 rank: index + 1,
-                name: optedOut ? 'Student' : `${student.firstName || 'Student'} ${lastNameInitial}`.trim(),
+                name: displayName(student),
                 level: optedOut ? undefined : student.level,
                 xp: student.xp
             };
@@ -68,4 +120,5 @@ router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
     }
 });
 
+router.__helpers = { weeklyBoard, displayName };
 module.exports = router;

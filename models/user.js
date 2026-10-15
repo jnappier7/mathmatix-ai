@@ -749,6 +749,10 @@ const userSchema = new Schema({
   level:     { type: Number, default: 1, min: 1 },
   avatarBuilderUnlocked: { type: Boolean, default: false }, // Unlocked at Level 2
   xpHistory: { type: [xpEventSchema], default: [] },
+  // XP earned per leaderboard week (Monday 00:00 Eastern), keyed by that
+  // Monday's date: { '2026-10-12': 140 }. Written ONLY by the hooks below —
+  // see utils/weeklyXp.js.
+  weeklyXp: { type: Map, of: Number, default: undefined },
 
   // XP Ladder Analytics (Three Tiers)
   // Enables "grinding vs growing" analysis
@@ -1488,6 +1492,47 @@ const userSchema = new Schema({
     }]
   }
 }, { timestamps: true });
+
+/* ---------- WEEKLY XP CAPTURE ---------- */
+// Any INCREASE in the cumulative `xp` counts toward this week, whichever of the
+// ~17 award paths made it. Document saves compare against the value loaded;
+// atomic `$inc: { xp }` updates are mirrored into this week's key. A write that
+// isn't earning (an admin account merge) sets $locals.skipWeeklyXp.
+const weeklyXp = require('../utils/weeklyXp');
+
+userSchema.post('init', function () {
+  this.$locals.xpAtLoad = this.xp;
+});
+
+userSchema.pre('save', function (next) {
+  if (!this.isNew && this.isModified('xp') && !this.$locals.skipWeeklyXp
+      && typeof this.$locals.xpAtLoad === 'number') {
+    const delta = (this.xp || 0) - this.$locals.xpAtLoad;
+    if (delta > 0) {
+      const key = weeklyXp.weekKey();
+      if (!this.weeklyXp) this.weeklyXp = new Map();
+      this.weeklyXp.set(key, (this.weeklyXp.get(key) || 0) + delta);
+      weeklyXp.pruneOldWeeks(this.weeklyXp);
+    }
+  }
+  next();
+});
+
+userSchema.post('save', function () {
+  this.$locals.xpAtLoad = this.xp;
+  delete this.$locals.skipWeeklyXp;
+});
+
+function mirrorXpIncToWeek() {
+  const update = this.getUpdate();
+  const inc = update && update.$inc;
+  if (inc && typeof inc.xp === 'number' && inc.xp > 0) {
+    inc[weeklyXp.weekPath()] = (inc[weeklyXp.weekPath()] || 0) + inc.xp;
+  }
+}
+userSchema.pre('updateOne', mirrorXpIncToWeek);
+userSchema.pre('updateMany', mirrorXpIncToWeek);
+userSchema.pre('findOneAndUpdate', mirrorXpIncToWeek);
 
 /* ---------- PRE-SAVE HOOK ---------- */
 userSchema.pre('save', async function (next) {
