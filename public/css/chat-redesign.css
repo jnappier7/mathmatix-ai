@@ -213,6 +213,47 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   body.cr-mode #app-layout-wrapper { overflow-y: auto; }
 }
 
+/* Desktop/tablet: ONE layout owner for the chat shell (QA handoff 2026-10-14).
+   The footer is position:fixed, so it takes no space in body's flex column and
+   main used to get viewport − header, running 48px UNDER the footer. Inside it,
+   .cr-stage's min-height (100vh − 60px, below) could never shrink, plus
+   style.css's generic --section-gap: 876 + 48 + 61 = 985px in an 863px box.
+   The quick actions sat under the footer (unclickable), and any scrollIntoView
+   in the send path scrolled the overflow:hidden main, sliding the whole app up
+   behind the header. In ACT review the bootcamp panel pushed the composer off
+   the bottom of the screen entirely.
+   Now: main ends at the footer, the stage takes what's left and may shrink, and
+   the review panel is capped with its own scroll so the composer always shows.
+   Pinned by tests/unit/chatShellLayout.test.js. */
+@media (min-width: 769px) {
+  body.cr-mode #app-layout-wrapper {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 0;
+    gap: 0;
+    margin-bottom: var(--footer-height, 48px);
+  }
+  body.cr-mode .cr-stage { flex: 1 1 auto; min-height: 0; }
+  body.cr-mode .cr-stage > * { min-height: 0; }
+  body.cr-mode .cr-quick-actions { flex: 0 0 auto; }
+  body.cr-mode #course-progress-wrapper { flex: 0 0 auto; }
+  body.cr-mode #lesson-tracker-wrapper {
+    flex: 0 1 auto;
+    min-height: 0;
+    max-height: 40%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+/* Full desktop: nothing should ever scroll the shell. overflow:clip (unlike
+   hidden) is not a scroll container, so a stray scrollIntoView can't move it.
+   The tablet band above keeps overflow-y:auto on purpose — there the hero
+   genuinely may not fit and must be reachable. */
+@media (min-width: 1201px) {
+  body.cr-mode #app-layout-wrapper,
+  body.cr-mode #chat-container { overflow: clip; }
+}
+
 .cr-stage {
   display: grid;
   grid-template-columns: var(--cr-hero-w) minmax(0, 1fr) var(--cr-side-w);

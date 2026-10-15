@@ -560,6 +560,7 @@ class LessonTracker {
                 console.warn('[LessonTracker] Jump rejected:', data && data.message);
                 return;
             }
+            this._collapseForWork();
             this.updateBootcamp(data.bootcamp);
             const q = (data.bootcamp.queue || [])[i];
             // Pull the question into the conversation so the tutor presents it
@@ -568,6 +569,16 @@ class LessonTracker {
                 window.mmSendChatMessage(`Let's go over question ${q.position}.`);
             }
         } catch (e) { console.warn('[LessonTracker] Jump failed:', e); }
+    }
+
+    // The student chose to work a question with the tutor — fold the panel to
+    // its one-line summary so the conversation (and the composer) get the
+    // screen. Session-only: the stored expand/collapse preference is the
+    // student's own choice from the header toggle, so it isn't overwritten.
+    _collapseForWork() {
+        if (this._bcCollapsed) return;
+        this._bcCollapsed = true;
+        if (this._lastUpdate) this._renderBootcamp(this._lastUpdate);
     }
 
     _wireBootcamp() {
@@ -586,6 +597,7 @@ class LessonTracker {
         });
         const cont = document.getElementById('lt-bc-continue');
         if (cont) cont.addEventListener('click', () => {
+            this._collapseForWork();
             // "Continue" must actually continue: ask the tutor to present the
             // next missed question. (It used to only focus the input box, which
             // reads as a dead button.) The typed-message path is the designed
