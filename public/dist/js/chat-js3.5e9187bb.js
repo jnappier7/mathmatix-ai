@@ -5549,7 +5549,7 @@ class LessonTracker {
         const groups = this._reviewGroups(bc);
         if (!groups.length) return '';
         const esc = this._esc;
-        const chip = (it) => {
+        const chip = (it, skillLabel) => {
             if (it.position == null) return '';
             const done = it.status === 'reviewed';
             const style = it.current
@@ -5558,7 +5558,11 @@ class LessonTracker {
                     ? 'background:rgba(88,214,141,.28);color:#eafff2'
                     : 'background:rgba(255,255,255,.22);color:#fff';
             const title = done ? 'Reviewed \u2713 — tap to revisit' : (it.current ? 'Working this one now' : 'Tap to work this one next');
-            return `<button data-bc-jump="${it.queueIndex}" title="${title}" style="border:0;border-radius:6px;min-width:26px;padding:2px 6px;font-size:11.5px;cursor:pointer;${style}">${done ? '\u2713 ' : ''}${esc(it.short || it.position)}</button>`;
+            // The visible text is just the number, and every chip's title was the
+            // same sentence — a screen reader heard seven identical buttons (QA
+            // handoff §3.7). Name the question, its skill and its state.
+            const label = `Question ${it.short || it.position}${skillLabel ? `, ${skillLabel}` : ''}: ${title}`;
+            return `<button data-bc-jump="${it.queueIndex}" title="${title}" aria-label="${esc(label)}" style="border:0;border-radius:6px;min-width:26px;padding:2px 6px;font-size:11.5px;cursor:pointer;${style}">${done ? '\u2713 ' : ''}${esc(it.short || it.position)}</button>`;
         };
         // One skill = one compact pill (name + its numbers), wrapped several to a
         // row. A heading per skill on its own line made a 16-miss test a column
@@ -5571,7 +5575,7 @@ class LessonTracker {
                 : esc(g.label);
             return `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border-radius:8px;padding:3px 4px 3px 8px">
                 <span style="color:${g.allDone ? 'rgba(234,255,242,.9)' : 'rgba(255,255,255,.92)'};font-size:11.5px;font-weight:600;white-space:nowrap">${g.allDone ? '\u2713 ' : ''}${head}</span>
-                ${g.items.map(chip).join('')}
+                ${g.items.map((it) => chip(it, g.label)).join('')}
               </span>`;
         };
         const open = this._bcListOpen ? ' open' : '';
