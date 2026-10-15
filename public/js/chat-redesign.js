@@ -511,9 +511,11 @@
         break;
       }
       case 'practice': {
-        const btn = document.getElementById('sidebar-practice-pack-btn');
-        if (btn) return btn.click();
-        // Fallback: send a canned prompt to the chat
+        // Practise IN the chat. This used to click the hidden sidebar's
+        // practice-pack button, which window.open()s a printable PDF in a new
+        // tab — popup-blocked or not, nothing visible happened here (student
+        // audit 2026-10-15). Same pattern as Test prep: a ready request in the
+        // composer the student can send or edit.
         seedComposer('I want to practice a skill.');
         break;
       }
