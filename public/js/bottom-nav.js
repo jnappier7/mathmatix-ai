@@ -72,6 +72,14 @@
     // otherwise tie and cancel the reservation.
     '@media (max-width:768px){body.mbn-space.cr-mode #chat-container{',
     'margin-bottom:var(--mm-nav-h,0px) !important}}',
+    // The More Tools sheet is a bottom sheet too, but sits UNDER this nav
+    // (z 2100 vs 9000) with no room reserved: its last tile, Log Out, was cut
+    // in half (QA handoff 2026-10-14 §4, measured 708–796 under a nav at 753).
+    // Reserve the nav's height, and let a tall sheet scroll instead of growing
+    // off the top.
+    '@media (max-width:768px){body.mbn-space #more-tools-menu.active{',
+    'padding-bottom:calc(var(--mm-nav-h,64px) + 16px) !important;',
+    'max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain}}',
     // Practice sheet
     '.mbn-sheet{position:fixed;left:0;right:0;bottom:0;z-index:8999;background:var(--cr-bg-panel,#fff);',
     'border-radius:16px 16px 0 0;box-shadow:0 -12px 40px rgba(20,15,45,.25);',
