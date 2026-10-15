@@ -3055,6 +3055,9 @@ async function handleGreetingRequest(req, res, userId) {
                     .map(m => ({
                         role: m.role,
                         content: m.content,
+                        // When it was SENT — without it the client stamps every
+                        // restored message with the reload time (audit 2026-10-15).
+                        timestamp: m.timestamp || null,
                         workCheckId: m.workCheckId || null,
                         // Servable refs only — the server-side continuity payload
                         // (extractedText/imageData) must never reach the client.
@@ -3118,6 +3121,7 @@ async function handleGreetingRequest(req, res, userId) {
                 .map(m => ({
                     role: m.role,
                     content: m.content,
+                    timestamp: m.timestamp || null,
                     workCheckId: m.workCheckId || null,
                     // Servable refs only — continuity payload stays server-side.
                     ...(Array.isArray(m.attachments) && m.attachments.length > 0

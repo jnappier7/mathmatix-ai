@@ -17,6 +17,7 @@ const { buildSlimRules } = require('./promptSlim');
 const { VERIFICATION_STATES } = require('./verificationState');
 const { formatVerifiedTwinInstruction } = require('../worksheetGuard');
 const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../visualTools');
+const { screenVisualCalls, messageTexts } = require('../visualGrounding');
 const { parseBoardTags } = require('../boardTagParser');
 const { stripInternalTags } = require('../internalTagSanitizer');
 const { replaceDashes } = require('../dashNormalizer');
@@ -613,6 +614,12 @@ function makeChunkRehydrator(llmOptions) {
  * @param {Object} options.res - Express response object (for streaming)
  * @returns {Promise<string>} The AI response text
  */
+function screenTurnVisuals(calls, messages, turnText) {
+  const { calls: kept, dropped } = screenVisualCalls(calls, { texts: [...messageTexts(messages), turnText] });
+  if (dropped.length) console.warn('[generate] visual tool calls dropped:', dropped.map((d) => `${d.name} (${d.reason})`).join('; '));
+  return kept;
+}
+
 async function generate(assembled, options = {}) {
   // Deterministic path: decide() attached a canned response. Return it
   // without touching the LLM. For streaming callers, write the text as a
@@ -686,7 +693,13 @@ async function generate(assembled, options = {}) {
     // are kept out of the visual-tool resolution below; the narration
     // re-prompt still sees ALL calls so the tool transcript stays paired.
     const boardCommands = boardCommandsFromToolCalls(message.tool_calls);
-    const visualCalls = message.tool_calls.filter((c) => !isBoardToolCall(c.function?.name));
+    // Screen visual calls before anything renders: identical calls collapse,
+    // and a points plot keeps only points grounded in the conversation
+    // (utils/visualGrounding — the 2026-10-15 audit's five invented plots).
+    const visualCalls = screenTurnVisuals(
+      message.tool_calls.filter((c) => !isBoardToolCall(c.function?.name)),
+      messages, message.content || ''
+    );
     const resolved = visualCalls.length > 0 ? resolveToolCalls(visualCalls) : null;
 
     // Claude routinely returns chat text AND tool_use in one response. When
@@ -863,7 +876,10 @@ async function generateStreaming(model, messages, llmOptions, res) {
       // exactly as with tags/structured mode). Visual tools keep their
       // existing live tool_use events.
       const boardCommands = boardCommandsFromToolCalls(toolCalls);
-      const visualCalls = toolCalls.filter((c) => !isBoardToolCall(c.function?.name));
+      const visualCalls = screenTurnVisuals(
+        toolCalls.filter((c) => !isBoardToolCall(c.function?.name)),
+        messages, fullResponse
+      );
       const resolved = visualCalls.length > 0 ? resolveToolCalls(visualCalls) : null;
 
       for (const call of visualCalls) {
