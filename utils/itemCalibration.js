@@ -109,6 +109,21 @@ function dropNotReached(responses) {
 }
 
 /**
+ * Largest Newton step either solver takes, in logits.
+ *
+ * Started near an edge, the logistic's flat tail makes first/second huge: an
+ * item one student got right and one got wrong (MLE 0) stepped from b = 3.9 to
+ * -20 and was clamped at -4 — and from -3.9 to +4. The solvers used to STOP on
+ * that clamp, so each JMLE sweep (which starts from the last value) threw such
+ * items to the opposite edge, the anchor re-pin flipped the whole scale by
+ * ~0.08 every sweep, and calibration never converged at any tier: 0 of 4,071
+ * items written on production's first 195 tests (2026-10-15). A capped step
+ * walks to the same MLE from anywhere, and a truly extreme item still reaches
+ * the edge within the iteration budget.
+ */
+const MAX_STEP = 1;
+
+/**
  * Ability for one student, for OFFLINE fitting.
  *
  * irt.estimateAbility solves the same equation, and the model itself
@@ -135,11 +150,10 @@ function estimateThetaBatch(responses, options = {}) {
       second += p * (1 - p);
     }
     if (second < 1e-9) break;
-    const step = first / second;
-    theta += step;
-    if (theta > maxAbs) { theta = maxAbs; break; }
-    if (theta < -maxAbs) { theta = -maxAbs; break; }
-    if (Math.abs(step) < tolerance) break;
+    const step = Math.max(-MAX_STEP, Math.min(MAX_STEP, first / second));
+    const next = Math.max(-maxAbs, Math.min(maxAbs, theta + step));
+    if (Math.abs(next - theta) < tolerance) { theta = next; break; }
+    theta = next;
   }
   return Math.max(-maxAbs, Math.min(maxAbs, theta));
 }
@@ -168,14 +182,14 @@ function estimateItemDifficulty(observations, options = {}) {
       second += p * (1 - p);
     }
     if (second < 1e-9) break;                 // no information left to use
-    const step = first / second;
-    b += step;
+    const step = Math.max(-MAX_STEP, Math.min(MAX_STEP, first / second));
     // A perfectly answered (or perfectly missed) item has no finite MLE; the
     // iteration would walk off to infinity. Hold it at the edge of the scale
-    // and let the caller flag it.
-    if (b > maxAbs) { b = maxAbs; break; }
-    if (b < -maxAbs) { b = -maxAbs; break; }
-    if (Math.abs(step) < tolerance) return { b, converged: true };
+    // and let the caller flag it. Clamp and keep going — never stop AT the
+    // edge on an overshoot (see MAX_STEP).
+    const next = Math.max(-maxAbs, Math.min(maxAbs, b + step));
+    if (Math.abs(next - b) < tolerance) return { b: next, converged: Math.abs(next) < maxAbs };
+    b = next;
   }
   return { b: Math.max(-maxAbs, Math.min(maxAbs, b)), converged: false };
 }

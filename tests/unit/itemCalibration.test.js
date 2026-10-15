@@ -96,6 +96,20 @@ describe('one item, abilities known', () => {
     expect(b).toBe(-4);
   });
 
+  test('from either edge it finds a finite difficulty, instead of flipping to the other edge', () => {
+    // One right, one wrong, average students: the MLE is 0. Undamped, the
+    // first step from 3.9 overshot to -20 and the solver stopped at -4; from
+    // -3.9 it stopped at +4. Each JMLE sweep starts from the last value, so
+    // such items flipped edge to edge forever and no calibration converged
+    // (production, 2026-10-15).
+    const obs = [{ theta: 0, correct: true }, { theta: 0, correct: false }];
+    [3.9, -3.9, 4, -4].forEach((initial) => {
+      const r = estimateItemDifficulty(obs, { initial });
+      expect(r.converged).toBe(true);
+      expect(Math.abs(r.b)).toBeLessThan(0.01);
+    });
+  });
+
   test('no observations is not a crash', () => {
     expect(estimateItemDifficulty([]).converged).toBe(false);
   });
