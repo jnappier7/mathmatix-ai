@@ -223,7 +223,7 @@ async function calibrateExam(exam, testIds, REFERENCE) {
   const answeredIds = [...new Set(rows.map((r) => r.problemId))];
   const sources = await Problem.distinct('source', { problemId: { $in: answeredIds } });
   const problems = await Problem.find({ source: { $in: sources } })
-    .select('problemId difficulty skillId source prompt isActive calibration').lean();
+    .select('problemId difficulty skillId source prompt isActive calibration correctOption answer keyVerification').lean();
   const live = new Map(problems.map((p) => [p.problemId, p]));
   const recalibrated = problems.filter((p) => p.calibration && p.calibration.calibratedAt).length;
 

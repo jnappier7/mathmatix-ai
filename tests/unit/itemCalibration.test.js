@@ -340,7 +340,8 @@ describe('the script can actually write what it reports', () => {
     // The tiers decide what is writable (utils/itemCalibration.js
     // calibratePooled); the script writes only what resolved to a level.
     const lib = fs.readFileSync(path.join(__dirname, '../../utils/itemCalibration.js'), 'utf8');
-    expect(lib).toMatch(/i && i\.enoughData && !i\.suspectKey/);
+    // A suspect item is written only once a person has verified its key.
+    expect(lib).toMatch(/i && i\.enoughData && \(verified \|\| !i\.suspectKey\)/);
     expect(lib).toMatch(/e && e\.enoughData && !e\.suspectKey/);
     expect(script).toMatch(/resolved\.filter\(\(r\) => r\.level\)/);
   });
@@ -491,7 +492,7 @@ describe('the cron can be run unattended', () => {
     expect(lib).toMatch(/authoredPrior\(p\)/);
     expect(script).not.toMatch(/priors\[p\.problemId\] = p\.difficulty/);
     // calibration must be selected, or authoredPrior has nothing to read.
-    expect(script).toMatch(/\.select\('problemId difficulty skillId source prompt isActive calibration'\)/);
+    expect(script).toMatch(/\.select\('problemId difficulty skillId source prompt isActive calibration correctOption answer keyVerification'\)/);
   });
 
   test('a fit that did not settle writes nothing unless forced', () => {
@@ -637,5 +638,68 @@ describe('an item nobody (or everybody) gets right cannot hold the fit hostage',
     const { meta, items } = calibrateItems(rows.concat(extra), { a: 3, b: 3, c: 3, everybody: 3 });
     expect(meta.converged).toBe(true);
     expect(items.find((i) => i.problemId === 'everybody').difficulty).toBeLessThanOrEqual(2);
+  });
+});
+
+describe('a key a person has verified is measured, not flagged', () => {
+  const { calibratePooled, isKeyVerified } = require('../../utils/itemCalibration');
+  const { keyMatches, currentKey } = require('../../scripts/verifyItemKey');
+
+  // Ten reference items of mixed authored difficulty that 40 students answer
+  // sensibly, plus one authored-easy item almost all of them miss — the shape
+  // of act-fable-topup1q241 (the vertex sign slip, 2026-10-15).
+  const problems = [];
+  for (let i = 0; i < 10; i += 1) {
+    problems.push({ problemId: `r${i}`, source: 'ref', skillId: `s${i}`, prompt: `ref item ${String.fromCharCode(97 + i)}`, difficulty: 1 + (i % 5), correctOption: 'A', answer: { value: 'A' } });
+  }
+  const trap = { problemId: 'trap', source: 'ref', skillId: 'vertex', prompt: 'vertex of a parabola', difficulty: 1, correctOption: 'B', answer: { value: '(4, 7)' } };
+  const rows = [];
+  for (let u = 0; u < 40; u += 1) {
+    problems.forEach((p, i) => rows.push({ userId: `u${u}`, problemId: p.problemId, correct: (u + i) % 3 !== 0 }));
+    rows.push({ userId: `u${u}`, problemId: 'trap', correct: u % 8 === 0 });   // 5 of 40 right
+  }
+  const run = (t) => calibratePooled(rows, [...problems, t], { minResponses: 25, referenceSource: 'ref' })
+    .resolved.find((r) => r.problemId === 'trap');
+
+  test('unverified: flagged as possibly mis-keyed, and not measured at item level', () => {
+    const r = run(trap);
+    expect(r.suspectKey).toBe(true);
+    expect(r.level).not.toBe('item');
+  });
+
+  test('verified: measured at item level, and rated harder than authored', () => {
+    const verified = { ...trap, keyVerification: { correctOption: 'B', answerValue: '(4, 7)', verifiedAt: new Date() } };
+    const r = run(verified);
+    expect(r.suspectKey).toBe(false);
+    expect(r.keyVerified).toBe(true);
+    expect(r.level).toBe('item');
+    expect(r.exact).toBeGreaterThan(1);
+  });
+
+  test('a re-seed that changes the key voids the verification', () => {
+    const v = { correctOption: 'B', answerValue: '(4, 7)', verifiedAt: new Date() };
+    expect(isKeyVerified({ ...trap, keyVerification: v })).toBe(true);
+    expect(isKeyVerified({ ...trap, correctOption: 'A', keyVerification: v })).toBe(false);
+    expect(isKeyVerified({ ...trap, answer: { value: '(-4, 7)' }, keyVerification: v })).toBe(false);
+    expect(isKeyVerified({ ...trap, keyVerification: { ...v, verifiedAt: null } })).toBe(false);
+    expect(isKeyVerified(trap)).toBe(false);
+  });
+
+  test('the command refuses a key that is not the one in the database', () => {
+    expect(currentKey(trap)).toBe('(4, 7)');                 // no answerType: the typed answer is the key
+    const mc = { ...trap, answerType: 'multiple-choice' };
+    expect(currentKey(mc)).toBe('B');
+    expect(keyMatches(mc, 'b')).toBe(true);
+    expect(keyMatches(mc, 'A')).toBe(false);
+    expect(keyMatches(mc, true)).toBe(false);                // --key with no value
+    const gridIn = { answerType: 'constructed-response', answer: { value: '3/4' } };
+    expect(keyMatches(gridIn, ' 3/4 ')).toBe(true);
+    expect(keyMatches(gridIn, '0.75')).toBe(false);
+  });
+
+  test('the verification is a declared path on Problem', () => {
+    const Problem = require('../../models/problem');
+    ['keyVerification.correctOption', 'keyVerification.answerValue', 'keyVerification.verifiedAt', 'keyVerification.note']
+      .forEach((p) => expect(Problem.schema.path(p)).toBeTruthy());
   });
 });
