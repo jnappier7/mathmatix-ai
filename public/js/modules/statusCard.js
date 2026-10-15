@@ -214,6 +214,11 @@ function buildModal() {
           <div class="sc-quests-head">🎯 Today's Quests</div>
           <div class="sc-quests" id="sc-quests-mount"><div class="sc-quests-empty">Loading…</div></div>
         </div>
+
+        <div class="sc-week-block">
+          <div class="sc-quests-head">🏆 This Week <span class="sc-week-reset"></span></div>
+          <ol class="sc-week" id="sc-week-mount" aria-label="This week's leaderboard"><li class="sc-quests-empty">Loading…</li></ol>
+        </div>
       </div>`;
 
     document.body.appendChild(modal);
@@ -287,11 +292,51 @@ function populate(modal, user) {
     }
 }
 
+// ── This week's board ──
+// XP earned since Monday 00:00 Eastern, Top 10 + the student's own row pinned
+// under it (owner decision 2026-10-15). Scope (class / global) and staff
+// exclusion are the server's — GET /api/leaderboard?period=week.
+function weekRowHTML(e, extraClass = '') {
+    return `<li class="sc-week-row${e.isYou ? ' is-you' : ''}${extraClass}">
+        <span class="sc-week-rank">${e.rank != null ? '#' + e.rank : '—'}</span>
+        <span class="sc-week-name">${esc(e.name)}${e.isYou ? ' <span class="sc-week-you">You</span>' : ''}</span>
+        <span class="sc-week-pts">${Number(e.points) || 0} XP</span>
+      </li>`;
+}
+
+async function loadWeeklyBoard(mount, resetEl) {
+    if (!mount) return;
+    try {
+        const res = await fetch('/api/leaderboard?period=week', { credentials: 'include' });
+        if (!res.ok) throw new Error(`leaderboard ${res.status}`);
+        const data = await res.json();
+        const entries = Array.isArray(data?.entries) ? data.entries : [];
+        if (resetEl) resetEl.textContent = '· resets Monday';
+        const you = data?.you;
+        const youListed = entries.some(e => e.isYou);
+        if (!entries.length) {
+            mount.innerHTML = `<li class="sc-quests-empty">Nobody's on the board yet this week — earn XP to take #1.</li>`;
+            return;
+        }
+        let html = entries.map(e => weekRowHTML(e)).join('');
+        if (you && !youListed) {
+            html += you.points > 0
+                ? weekRowHTML({ ...you, isYou: true }, ' is-pinned')
+                : `<li class="sc-week-row is-you is-pinned"><span class="sc-week-rank">—</span><span class="sc-week-name">You</span><span class="sc-week-pts">Earn XP to join</span></li>`;
+        }
+        mount.innerHTML = html;
+    } catch (e) {
+        mount.innerHTML = `<li class="sc-quests-empty">Couldn't load this week's board. Try again in a bit.</li>`;
+        console.warn('Status card weekly board failed', e);
+    }
+}
+
 export function openStatusCard() {
     const user = window.currentUser;
     const modal = buildModal();
     populate(modal, user);
     loadQuests(modal.querySelector('#sc-quests-mount'));
+    loadWeeklyBoard(modal.querySelector('#sc-week-mount'), modal.querySelector('.sc-week-reset'));
     loadLadder(modal.querySelector('.sc-ladder-block'));
     modal.hidden = false;
     void modal.offsetWidth; // reflow so the open transition runs

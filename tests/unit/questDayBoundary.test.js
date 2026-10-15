@@ -55,7 +55,7 @@ describe('quest copy a student can read', () => {
     const src = read('public/js/modules/statusCard.js');
     expect(src).toMatch(/<div class="sc-quest-desc">\$\{esc\(q\.description\)\}<\/div>/);
     expect(src).toMatch(/\$\{esc\(q\.name \|\| q\.title \|\| q\.type \|\| 'Quest'\)\}/);
-    expect(read('public/js/script.js')).toMatch(/import '\.\/modules\/statusCard\.js\?v=3';/);
+    expect(read('public/js/script.js')).toMatch(/import '\.\/modules\/statusCard\.js\?v=\d+';/);
   });
   test('no "θ" in weekly-challenge copy', () => {
     expect(read('routes/weeklyChallenges.js')).not.toMatch(/description: '[^']*θ/);

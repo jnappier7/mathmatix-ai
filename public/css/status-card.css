@@ -176,6 +176,20 @@
 .sc-quest-count { font-size: 0.72rem; color: #5b6876; text-align: right; }
 .sc-quests-empty { font-size: 0.82rem; color: #5b6876; text-align: center; padding: 12px; }
 
+/* This week's board */
+.sc-week-block { margin-top: 16px; }
+.sc-week-reset { font-size: 0.72rem; font-weight: 600; color: #5b6876; }
+.sc-week { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.sc-week-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 10px; background: #f5f8fa; font-size: 0.84rem; color: #18202b; }
+.sc-week-row.is-you { background: rgba(18, 179, 179, 0.14); font-weight: 700; }
+.sc-week-row.is-pinned { margin-top: 6px; border: 1px dashed rgba(18, 179, 179, 0.5); }
+.sc-week-rank { font-weight: 800; color: #5b6876; font-variant-numeric: tabular-nums; }
+.sc-week-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-week-you { font-size: 0.68rem; font-weight: 800; color: #0e8f8f; background: rgba(18, 179, 179, 0.18);
+  padding: 1px 6px; border-radius: 999px; margin-left: 4px; }
+.sc-week-pts { font-weight: 800; color: #12b3b3; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
 @media (prefers-reduced-motion: reduce) {
   .sc-backdrop, .sc-card, .sc-ring-fill, .sc-progress-fill { transition: none; }
 }
