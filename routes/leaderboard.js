@@ -5,10 +5,19 @@ const User = require('../models/user');
 const { isAuthorizedForLeaderboard } = require('../middleware/auth');
 const { hasOptedOutOfDirectoryInfo } = require('../utils/ferpaCompliance');
 
-const { anyRole, userHasRole } = require('../utils/roleQuery');
+const { anyRole, withoutRoles, userHasRole } = require('../utils/roleQuery');
 router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
     try {
-        let query = { ...anyRole('student'), isDemo: { $ne: true }, isDemoClone: { $ne: true } };
+        // Students only — and not staff who also hold the student role. A
+        // teacher/admin account with student in roles[] was ranked against the
+        // kids (QA handoff 2026-10-14 §2.6: the owner's admin account sat at #3
+        // of the global board). withoutRoles checks roles held AND the active
+        // role, so switching dashboards can't slip one back in.
+        let query = {
+            $and: [anyRole('student'), withoutRoles('teacher', 'admin')],
+            isDemo: { $ne: true },
+            isDemoClone: { $ne: true },
+        };
 
         // Scope by the roles the viewer HOLDS, not `role` — the dashboard they
         // currently have open (CLAUDE.md §12). This chain narrows the board, so
@@ -39,11 +48,12 @@ router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
             .lean();
 
         // Format names to "First Name L." — respect FERPA directory info opt-out
-        const formattedLeaderboard = leaderboard.map(student => {
+        const formattedLeaderboard = leaderboard.map((student, index) => {
             const optedOut = hasOptedOutOfDirectoryInfo(student);
             const lastNameInitial = !optedOut && student.lastName ? `${student.lastName.charAt(0)}.` : '';
             return {
-                rank: 0,
+                // Was a hard-coded 0 on every row. Sorted above, so position is rank.
+                rank: index + 1,
                 name: optedOut ? 'Student' : `${student.firstName || 'Student'} ${lastNameInitial}`.trim(),
                 level: optedOut ? undefined : student.level,
                 xp: student.xp
