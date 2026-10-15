@@ -9,6 +9,7 @@ const log = require('../utils/logger');
 const logger = log.child({ service: 'chat-service' });
 const { isAuthenticated } = require('../middleware/auth');
 const { promptInjectionFilter, tutorVoiceId } = require('../middleware/promptInjection');
+const { hasActiveBadge } = require('../utils/masteryGuard');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
 const mongoose = require('mongoose');
 const User = require('../models/user');
@@ -416,7 +417,7 @@ async function runStudentTurn(req, res) {
         // ── Conversation loading ──
         // Mastery mode (badge-earning) uses a separate conversation so regular
         // chat history stays clean. The `mastery` flag comes from the frontend.
-        const isMasteryMode = mastery && !!user.masteryProgress?.activeBadge;
+        const isMasteryMode = mastery && hasActiveBadge(user);
         // Which sign-in is asking. Minted on first use and stable for the life
         // of the login (passport regenerates the express session on every
         // req.logIn), so it distinguishes "same student, back after a break"
@@ -1184,7 +1185,7 @@ async function runStudentTurn(req, res) {
         // The pipeline injects these into the prompt during the generate stage.
 
         // Pass mastery mode context if student has an active badge
-        const masteryContext = user.masteryProgress?.activeBadge ? {
+        const masteryContext = hasActiveBadge(user) ? {
             mode: 'badge-earning',
             badgeName: user.masteryProgress.activeBadge.badgeName,
             skillId: user.masteryProgress.activeBadge.skillId,
@@ -3490,7 +3491,7 @@ async function handleGreetingRequest(req, res, userId) {
             // GENERAL TUTORING MODE: Build greeting with full student context
 
             // Build mastery context for greeting (same as regular chat)
-            const greetingMasteryContext = user.masteryProgress?.activeBadge ? {
+            const greetingMasteryContext = hasActiveBadge(user) ? {
                 mode: 'badge-earning',
                 badgeName: user.masteryProgress.activeBadge.badgeName,
                 skillId: user.masteryProgress.activeBadge.skillId,

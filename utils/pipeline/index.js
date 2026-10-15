@@ -61,7 +61,15 @@ const { updateCard, initializeCard, rateAttempt, RATINGS } = require('../fsrsSch
 const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDifficulty } = require('../consistencyScorer');
 
 // Backbone: Tutor Plan + Skill Familiarity
+const { guardAttribution } = require('../attributionGuard');
 const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase, recentPracticeSkillId } = require('../tutorPlanManager');
+
+// Test-prep skills are attributable only while a review item (or a course /
+// badge skill) pins the turn — see resolveCurrentTarget. The same scope must
+// govern the in-progress fallback, or free chat re-reaches the ACT skill there.
+const freeChatScope = (ctx) => ({
+  excludeTestPrep: !ctx.activeSkill?.skillId && !ctx.actReviewMiss?.skillId,
+});
 const { detectTestOutIntent, resolveTestOutSkillId } = require('../testOutIntent');
 const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer');
 const { reassessFamiliarity } = require('../phaseEvidenceEvaluator');
@@ -453,7 +461,7 @@ async function runPipeline(message, ctx) {
       message,
       activeSkillId: ctx.activeSkill?.skillId || null,
       tutorPlan,
-      recentPracticeSkillId,
+      recentPracticeSkillId: (plan) => recentPracticeSkillId(plan, freeChatScope(ctx)),
     });
     if (challengeSkillId) {
       launchChallenge = { skillId: challengeSkillId };
@@ -1571,6 +1579,28 @@ async function runPipeline(message, ctx) {
   // drop the orphans (balanced math is untouched). Cheap, so unconditional.
   verified.text = stripOrphanMathDelims(verified.text);
 
+  // ── Stage 5f.1: ATTRIBUTION GUARD ──
+  // "You substituted y = 2x + 3…" to a student who typed only "(10, 23)";
+  // "You correctly noted that RS bisects ∠R" to one who said ∠Q. A claim
+  // about the student's work that names math they never wrote is rewritten
+  // to "Let's …" (utils/attributionGuard.js, QA handoff 2026-10-14 §2.5).
+  // Runs on the authoritative text, so the `complete` event and the saved
+  // message both carry the fix.
+  {
+    // chat.js appends this turn's message before the pipeline runs, so the
+    // last two user entries are this turn and the one before it; `message`
+    // is included too for callers that don't append first.
+    const studentSaid = recentUserMessages.slice(-2).map(m => m?.content).concat(message).filter(Boolean);
+    const attribution = guardAttribution(verified.text, studentSaid);
+    if (attribution.rewrites.length) {
+      boardLogger.warn('Tutor credited the student with work they did not write; rewritten', {
+        conversationId: ctx.conversation?._id ? String(ctx.conversation._id) : null,
+        claims: attribution.rewrites.map(r => r.claim),
+      });
+      verified.text = attribution.text;
+    }
+  }
+
   // ── Stage 5g: REPLY-JUDGE TELEMETRY ──
   // Score the final student-facing text against the eval harness's reply
   // judges (utils/replyJudges.js) — the same pure regex detectors CI runs on
@@ -1674,7 +1704,7 @@ async function runPipeline(message, ctx) {
     // the student is plainly working on: the most-recently-worked in-progress skill
     // in the plan. The verified-attempt gate below is unchanged, so this only ever
     // routes a real completed problem to a real in-progress skill — never invents one.
-    const engineSkillId = resolvedSkillId || recentPracticeSkillId(tutorPlan);
+    const engineSkillId = resolvedSkillId || recentPracticeSkillId(tutorPlan, freeChatScope(ctx));
     if (!resolvedSkillId && engineSkillId) {
       console.log(`[Pipeline] Attribution fallback: crediting to in-progress skill "${engineSkillId}" (no active target this turn)`);
     }
@@ -2032,7 +2062,7 @@ async function runPipeline(message, ctx) {
     // made the in-chat Practice Pack nudge omit `skillId` and fall through
     // to the student's active COURSE module (a fractions session printed an
     // ACT geometry pack).
-    activeSkillId: ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId || recentPracticeSkillId(tutorPlan) || null,
+    activeSkillId: ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId || recentPracticeSkillId(tutorPlan, freeChatScope(ctx)) || null,
     // Signals the client to open the timed practice-ACT runner. Extracted in
     // verify (shared choke point) so it fires on both /api/chat and course-chat.
     launchPracticeAct: verified.extracted?.launchPracticeAct || false,

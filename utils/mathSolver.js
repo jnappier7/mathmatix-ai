@@ -996,8 +996,31 @@ function solveGeneralLinear(problem) {
  * Returns a problem object or null.
  */
 function detectSystem(message) {
-    // Strip preamble like "solve the system:", "solve:", etc.
-    const cleaned = message.replace(/^.*?(?:solve\s+(?:the\s+)?(?:system|equations?)\s*:?\s*|find\s+x\s+and\s+y\s*:?\s*)/i, '').trim();
+    // The tutor usually poses a system as a numbered LaTeX list:
+    //   "Solve the following system of equations using substitution:\n\n
+    //    1. \\( y = 2x + 3 \\)\n2. \\( 3x - y = 7 \\)\n\nStart by …"
+    // Unstripped, the list numbers were read as COEFFICIENTS ("2. 3x" → 2.3x):
+    // that system "solved" to x = 33.33, y = 69.67, so a correct (10, 23) could
+    // never verify (QA handoff 2026-10-14 §2.3, real prod transcript). Strip the
+    // delimiters and line-leading list markers first; "1.5x" (no space) is kept.
+    const normalized = String(message)
+        .replace(/\\[()[\]]/g, ' ')
+        .replace(/^[ \t]*(?:\d+[.)]|[-*•])[ \t]+/gm, '');
+
+    // Strip preamble like "solve the system:", "solve the following system of
+    // equations using substitution:", "find x and y:".
+    const cleaned = normalized.replace(/^[\s\S]*?(?:solve\s+(?:the\s+)?(?:following\s+)?(?:system(?:\s+of\s+(?:linear\s+)?equations)?|equations?)(?:\s+(?:using|by|with)\s+[a-z]+)?\s*:?\s*|find\s+x\s+and\s+y\s*:?\s*)/i, '').trim();
+
+    // Exactly two lines that are equations, and nothing else that is: the
+    // numbered-list form, even with a trailing instruction paragraph.
+    const eqLines = cleaned.split(/\n+/).map(l => l.trim()).filter(l => /=/.test(l));
+    if (eqLines.length === 2) {
+        const eq1 = parseSystemEquation(eqLines[0]);
+        const eq2 = parseSystemEquation(eqLines[1]);
+        if (eq1 && eq2) {
+            return { type: 'system_of_equations', eq1, eq2, eq1Text: eqLines[0], eq2Text: eqLines[1] };
+        }
+    }
 
     // Try splitting on: "and", comma, semicolon, or newline
     const separators = [/\s+and\s+/i, /\s*,\s*/, /\s*;\s*/, /\s*\n\s*/];
@@ -2655,6 +2678,24 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
         }
     }
 
+    // Ordered pair ↔ assignments: "(10, 23)" is "x = 10, y = 23". Only for an
+    // {x, y} solution, where coordinate order is unambiguous; a pair against a
+    // pair compares positionally. Without this the most common way students
+    // write a system's solution was graded wrong (QA handoff 2026-10-14 §2.3).
+    {
+        const studentPair = parseOrderedPair(studentStr);
+        const correctPair = parseOrderedPair(correctStr);
+        if (studentPair || correctPair) {
+            const xy = (vars) => (vars && Object.keys(vars).length === 2 &&
+                vars.x !== undefined && vars.y !== undefined) ? [vars.x, vars.y] : null;
+            const s = studentPair || xy(studentVars);
+            const c = correctPair || xy(correctVars);
+            if (s && c && s.every((v, i) => Math.abs(v - c[i]) <= tolerance)) {
+                return { isCorrect: true, exact: false, equivalentForm: true };
+            }
+        }
+    }
+
     // Factored form comparison: (x+a)(x+b) vs (x+b)(x+a) — commutative property
     const studentFactors = parseFactoredForm(studentStr);
     const correctFactors = parseFactoredForm(correctStr);
@@ -2858,10 +2899,6 @@ function parseRootSet(str) {
 }
 
 /**
- * Parse variable assignments like "x = 3, y = 2" or "x=3 and y=2"
- * Returns { x: 3, y: 2 } or null
- */
-/**
  * The binomial product as the student/tutor wrote it: "(2x - 4)(x + 2)" out of
  * "Can we do a multiplying problem? Multiply (2x - 4)(x + 2). I got 2x^2 + 8."
  * The old keyword strip had no word boundary, so "multiply" matched INSIDE
@@ -2876,15 +2913,38 @@ function extractBinomialProductText(message) {
     return m ? m[0].trim() : null;
 }
 
+// A signed integer, decimal or fraction ("-3", "4.5", "9/2", "-1 / 3").
+const SOLUTION_NUM_SRC = '-?\\d+(?:\\.\\d+)?(?:\\s*\\/\\s*\\d+(?:\\.\\d+)?)?';
+function solutionNumberValue(s) {
+    const compact = String(s).replace(/\s+/g, '');
+    const v = expressionValue(compact);
+    return v !== null ? v : parseFloat(compact);
+}
+
+/**
+ * Parse variable assignments like "x = 3, y = 2" or "x=3 and y=2"
+ * Returns { x: 3, y: 2 } or null
+ */
 function parseVariableAssignments(str) {
     const assignments = {};
-    // Match patterns like "x = 3" or "y=-2.5"
-    const pattern = /([a-z])\s*=\s*(-?\d+\.?\d*)/gi;
+    // Match patterns like "x = 3", "y=-2.5", "x = 9/2". Fractions used to be cut
+    // at the slash ("x = 1/2" read as 1), failing a correct fractional solution.
+    const pattern = new RegExp(`([a-z])\\s*=\\s*(${SOLUTION_NUM_SRC})`, 'gi');
     let match;
     while ((match = pattern.exec(str)) !== null) {
-        assignments[match[1].toLowerCase()] = parseFloat(match[2]);
+        assignments[match[1].toLowerCase()] = solutionNumberValue(match[2]);
     }
     return Object.keys(assignments).length >= 2 ? assignments : null;
+}
+
+/**
+ * "(10, 23)" → [10, 23]; null for anything that isn't exactly one ordered pair.
+ */
+function parseOrderedPair(str) {
+    const m = String(str).trim().match(
+        new RegExp(`^\\(\\s*(${SOLUTION_NUM_SRC})\\s*,\\s*(${SOLUTION_NUM_SRC})\\s*\\)$`)
+    );
+    return m ? [solutionNumberValue(m[1]), solutionNumberValue(m[2])] : null;
 }
 
 /**

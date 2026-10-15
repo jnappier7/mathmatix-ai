@@ -239,6 +239,29 @@ function matchAnswerClause(clause) {
   return null;
 }
 
+const TUPLE_NUM = '-?\\d+(?:\\.\\d+)?(?:\\s*\\/\\s*\\d+)?';
+const TUPLE_LEAD = `(?:(?:so|then|ok|okay|the\\s+answer\\s+is|answer\\s*:?|i\\s+got|it['’]?s|solution\\s*:?)\\s*,?\\s*)?`;
+const ORDERED_PAIR_ANSWER = new RegExp(
+  `^${TUPLE_LEAD}(?:\\(?\\s*x\\s*,\\s*y\\s*\\)?\\s*=\\s*)?\\(\\s*(${TUPLE_NUM})\\s*,\\s*(${TUPLE_NUM})\\s*\\)\\s*[.!]?$`, 'i');
+const ASSIGNMENT = new RegExp(`([a-z])\\s*=\\s*(${TUPLE_NUM})`, 'gi');
+const ASSIGNMENT_LIST = new RegExp(
+  `^${TUPLE_LEAD}[a-z]\\s*=\\s*${TUPLE_NUM}(?:\\s*(?:,|;|&|\\band\\b)?\\s*[a-z]\\s*=\\s*${TUPLE_NUM})+\\s*[.!]?$`, 'i');
+
+/**
+ * A whole-message two-or-more-variable solution, as one canonical value:
+ * "(10, 23)" → "(10, 23)"; "x = 10 and y = 23" → "x=10, y=23". Null for
+ * anything else, including a repeated variable (a root set).
+ */
+function extractSolutionTuple(text) {
+  const t = text.trim();
+  const pair = t.match(ORDERED_PAIR_ANSWER);
+  if (pair) return `(${pair[1].replace(/\s+/g, '')}, ${pair[2].replace(/\s+/g, '')})`;
+  if (!ASSIGNMENT_LIST.test(t)) return null;
+  const parts = [...t.matchAll(ASSIGNMENT)].map(m => [m[1].toLowerCase(), m[2].replace(/\s+/g, '')]);
+  if (new Set(parts.map(p => p[0])).size !== parts.length) return null;
+  return parts.map(([v, n]) => `${v}=${n}`).join(', ');
+}
+
 function extractAnswer(message) {
   const raw = message.trim();
   // Unwrap LaTeX delimiters / \frac BEFORE any pattern runs (see
@@ -273,6 +296,18 @@ function extractAnswer(message) {
       const value = matchAnswerLine(mathLines[mathLines.length - 1]);
       if (value) return { value, raw, hasExplanation: true };
     }
+  }
+
+  // A two-variable solution is ONE answer. "(10, 23)" matched no pattern at
+  // all (general_math → no_answer, and the tutor asked the student to redo a
+  // correct solve), and "x=10, y=23" hit the start-anchored varAssignment,
+  // which kept only "10" — graded against "x = 10, y = 23" and called WRONG
+  // (QA handoff 2026-10-14 §2.3, witnessed through observe → diagnose).
+  // Distinct variables only: "x = 2 and x = 3" is a root set, handled below
+  // and by diagnose's canonical-problem override.
+  {
+    const solution = extractSolutionTuple(text);
+    if (solution) return { value: solution, raw };
   }
 
   // Multi-clause single line: the LAST math-bearing clause is the answer

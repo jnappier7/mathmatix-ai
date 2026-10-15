@@ -50,7 +50,7 @@ describe('the skill in focus survives the pipeline boundary', () => {
     // bridges that with recentPracticeSkillId; the returned key must too, or the
     // pack falls back to the stale mastery frontier on exactly those turns.
     expect(returnBlock).toMatch(
-      /activeSkillId:[^\n]*\|\|\s*recentPracticeSkillId\(tutorPlan\)/
+      /activeSkillId:[^\n]*\|\|\s*recentPracticeSkillId\(tutorPlan, freeChatScope\(ctx\)\)/
     );
   });
 

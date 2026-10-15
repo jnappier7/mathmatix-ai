@@ -33,7 +33,7 @@ const { isIndependent } = require('./assistanceLadder');
 const LearningCard = require('../../models/learningCard');
 const { detectAha, reminderKey, shapeReminder, shapeAha, toClientCard, REMINDER_ACTIVATION_COUNT } = require('./learningCards');
 const { advanceRung, currentRung, clearsPrerequisites } = require('../skillRung');
-const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../masteryGuard');
+const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap, hasActiveBadge } = require('../masteryGuard');
 
 /**
  * Persist all state changes from a pipeline run.
@@ -511,7 +511,7 @@ async function persist(params) {
   results.coinsAwarded = xpResult.coinsAwarded || 0;
 
   // Badge progress + mastery completion check
-  if (user.masteryProgress?.activeBadge && results.problemAnswered) {
+  if (hasActiveBadge(user) && results.problemAnswered) {
     const masteryResult = updateBadgeProgress(user, results.wasCorrect);
     if (masteryResult.completed) {
       results.masteryCompleted = true;
@@ -897,6 +897,11 @@ function updateBadgeProgress(user, wasCorrect) {
   const { isBadgeStuck, clearActiveBadge } = require('../masteryGuard');
 
   const badge = user.masteryProgress.activeBadge;
+  // No requirements → nothing to complete. `n < undefined` is false, so without
+  // this an incomplete badge record reads as EARNED (see hasActiveBadge).
+  if (!badge?.badgeId || !(badge.requiredProblems > 0)) {
+    return { completed: false, success: false, badgeAwarded: null };
+  }
   badge.problemsCompleted = (badge.problemsCompleted || 0) + 1;
   if (wasCorrect) badge.problemsCorrect = (badge.problemsCorrect || 0) + 1;
 
@@ -918,7 +923,10 @@ function updateBadgeProgress(user, wasCorrect) {
   if (!user.badges) user.badges = [];
   const alreadyEarned = user.badges.find(b => b.badgeId === badge.badgeId);
   if (alreadyEarned) {
-    return { completed: true, success: true, badgeAwarded: null };
+    // Completion is an EVENT, reported once when the badge is earned. Reporting
+    // it again on every later answered turn stamped masteryCompleted/
+    // masterySuccess:true onto wrong answers.
+    return { completed: false, success: false, badgeAwarded: null };
   }
 
   user.badges.push({ badgeId: badge.badgeId, earnedDate: new Date(), score: Math.round(accuracy * 100) });
