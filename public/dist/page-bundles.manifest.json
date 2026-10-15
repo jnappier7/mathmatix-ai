@@ -161,7 +161,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/admin-js0.c3fa1ba4.js",
+        "src": "/dist/js/admin-js0.8cff06c7.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/admin-analytics.js",
@@ -205,14 +205,14 @@
     ],
     "js": [
       {
-        "src": "/dist/js/parent-js0.403e9b4f.js",
+        "src": "/dist/js/parent-js0.94e101df.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
         ]
       },
       {
-        "src": "/dist/js/parent-js1.5c3e50b6.js",
+        "src": "/dist/js/parent-js1.22cbf55a.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/parent-analytics.js",
@@ -267,14 +267,14 @@
     ],
     "js": [
       {
-        "src": "/dist/js/teacher-js0.403e9b4f.js",
+        "src": "/dist/js/teacher-js0.94e101df.js",
         "files": [
           "/js/i18n-translations.js",
           "/js/i18n.js"
         ]
       },
       {
-        "src": "/dist/js/teacher-js1.db27eee9.js",
+        "src": "/dist/js/teacher-js1.43fb49e3.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/teacher-analytics.js",
