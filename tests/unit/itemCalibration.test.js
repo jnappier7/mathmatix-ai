@@ -508,6 +508,18 @@ describe('the cron can be run unattended', () => {
     expect(script).toMatch(/notify\('warning', '\[calibrateItemDifficulty\] declined to write/);
   });
 
+  test('each exam family is calibrated on its own scale', () => {
+    // One matrix pinned to act-fable let the SAT block (answered only by SAT
+    // and PSAT takers) slide as a unit, and nothing converged (2026-10-15).
+    expect(script).toMatch(/act: \{ senior: 'act-math', reference: 'act-fable' \}/);
+    expect(script).toMatch(/sat: \{ senior: 'sat-math', reference: 'sat-fable' \}/);
+    expect(script).toMatch(/status: 'completed', testId: \{ \$in: ids \}/);
+    // Junior tests join their senior exam: PreACT with the ACT, PSAT with the SAT.
+    const { TESTS } = require('../../utils/practiceTests');
+    expect(TESTS['preact-math'].prepFor).toBe('act-math');
+    expect(TESTS['psat-math'].prepFor).toBe('sat-math');
+  });
+
   test('a no-op run is not reported as work', () => {
     // An item already sitting at its estimate must not be rewritten every
     // month just to re-stamp calibratedAt.

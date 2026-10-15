@@ -202,14 +202,18 @@ function estimateItemDifficulty(observations, options = {}) {
  * @param {Object} [options]
  *   minResponses  an item below this is reported but never rewritten (default 25)
  *   shrinkK       prior weight: w = n/(n+K) (default 20)
- *   maxIterations alternating passes (default 30)
+ *   maxIterations alternating passes (default 100)
  * @returns {{items: Array, meta: Object}}
  */
 function calibrateItems(rows, priors = {}, options = {}) {
   const {
     minResponses = 25,
     shrinkK = 20,
-    maxIterations = 30,
+    // 100, not 30: production's ACT/SAT fit was still shrinking (0.0039 ->
+    // 0.0037) when 30 cut it off. A sweep over ~7k responses is milliseconds,
+    // and the tolerance gate is unchanged — more sweeps only let a slow fit
+    // finish; a fit that never settles still writes nothing.
+    maxIterations = 100,
     tolerance = 1e-3,
     // Which items define the scale (see the anchor below). Default: all of them.
     anchorIds = null,
