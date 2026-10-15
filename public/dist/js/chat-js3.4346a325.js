@@ -595,22 +595,6 @@ chatBoardStyles.textContent = `
     }
 }
 
-/* Board priority indicator */
-#chat-container::before {
-    content: "💬";
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 16px;
-    opacity: 0.3;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-#chat-container[data-board-active="true"]::before {
-    content: "✏️";
-    opacity: 0.6;
-}
 `;
 
 document.head.appendChild(chatBoardStyles);

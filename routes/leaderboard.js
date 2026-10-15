@@ -40,9 +40,12 @@ async function weeklyBoard(scope, viewer) {
     }));
 
     // Only a student on this board has a "you" row (staff are excluded above).
+    // Staff get `viewerStaff` instead, so the card can say why they aren't
+    // ranked rather than looking broken (owner, 2026-10-15: "I still don't see
+    // the leaderboard").
+    const viewerStaff = userHasRole(viewer, 'teacher') || userHasRole(viewer, 'admin');
     let you = null;
-    if (viewerId && userHasRole(viewer, 'student')
-        && !userHasRole(viewer, 'teacher') && !userHasRole(viewer, 'admin')) {
+    if (viewerId && userHasRole(viewer, 'student') && !viewerStaff) {
         const me = await User.findById(viewer._id).select(`firstName lastName ferpaSettings ${path}`).lean();
         const points = pointsFor(me, key);
         const ahead = points > 0
@@ -53,7 +56,7 @@ async function weeklyBoard(scope, viewer) {
 
     const [y, m, d] = key.split('-').map(Number);
     const resetsOn = new Date(Date.UTC(y, m - 1, d + 7)).toISOString().slice(0, 10);
-    return { period: 'week', weekKey: key, resetsOn, entries, you };
+    return { period: 'week', weekKey: key, resetsOn, entries, you, viewerStaff };
 }
 router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
     try {

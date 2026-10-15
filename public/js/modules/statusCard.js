@@ -189,6 +189,11 @@ function buildModal() {
           <div class="sc-progress-bar"><div class="sc-progress-fill"></div></div>
         </div>
 
+        <div class="sc-week-block">
+          <div class="sc-quests-head">🏆 This Week <span class="sc-week-reset"></span></div>
+          <ol class="sc-week" id="sc-week-mount" aria-label="This week's leaderboard"><li class="sc-quests-empty">Loading…</li></ol>
+        </div>
+
         <div class="sc-ladder-block" hidden>
           <div class="sc-block-head">🪜 Your climb
             <a class="sc-map-link" href="/skill-map.html">See the whole map →</a>
@@ -215,10 +220,6 @@ function buildModal() {
           <div class="sc-quests" id="sc-quests-mount"><div class="sc-quests-empty">Loading…</div></div>
         </div>
 
-        <div class="sc-week-block">
-          <div class="sc-quests-head">🏆 This Week <span class="sc-week-reset"></span></div>
-          <ol class="sc-week" id="sc-week-mount" aria-label="This week's leaderboard"><li class="sc-quests-empty">Loading…</li></ol>
-        </div>
       </div>`;
 
     document.body.appendChild(modal);
@@ -314,8 +315,11 @@ async function loadWeeklyBoard(mount, resetEl) {
         if (resetEl) resetEl.textContent = '· resets Monday';
         const you = data?.you;
         const youListed = entries.some(e => e.isYou);
+        const staffNote = data?.viewerStaff
+            ? `<li class="sc-quests-empty sc-week-staff">Staff accounts aren't ranked. This is the board your students see.</li>`
+            : '';
         if (!entries.length) {
-            mount.innerHTML = `<li class="sc-quests-empty">Nobody's on the board yet this week — earn XP to take #1.</li>`;
+            mount.innerHTML = `<li class="sc-quests-empty">Nobody's on the board yet this week — earn XP to take #1.</li>` + staffNote;
             return;
         }
         let html = entries.map(e => weekRowHTML(e)).join('');
@@ -324,7 +328,7 @@ async function loadWeeklyBoard(mount, resetEl) {
                 ? weekRowHTML({ ...you, isYou: true }, ' is-pinned')
                 : `<li class="sc-week-row is-you is-pinned"><span class="sc-week-rank">—</span><span class="sc-week-name">You</span><span class="sc-week-pts">Earn XP to join</span></li>`;
         }
-        mount.innerHTML = html;
+        mount.innerHTML = html + staffNote;
     } catch (e) {
         mount.innerHTML = `<li class="sc-quests-empty">Couldn't load this week's board. Try again in a bit.</li>`;
         console.warn('Status card weekly board failed', e);

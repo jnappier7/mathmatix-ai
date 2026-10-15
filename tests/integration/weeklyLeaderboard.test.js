@@ -52,6 +52,7 @@ test('ranks THIS week only — a 20k all-time account with no XP this week is ab
     [1, 'Ava X.', 120, false], [2, 'Ben X.', 75, false], [3, 'Cal X.', 60, true], [4, 'Newbie X.', 40, false],
   ]);
   expect(res.body.you).toEqual({ rank: 3, name: 'Cal X.', points: 60 });
+  expect(res.body.viewerStaff).toBe(false);
 });
 
 test('the viewer outside the Top 10 still gets their row; with 0 points, no rank yet', async () => {
@@ -80,6 +81,8 @@ test('staff are never ranked and get no "you" row', async () => {
   const res = await get();
   expect(res.body.entries.map((e) => e.name)).toEqual(['Kid X.']);
   expect(res.body.you).toBeNull();
+  // …and is told so, instead of an unexplained missing row.
+  expect(res.body.viewerStaff).toBe(true);
 });
 
 test('a class board stays a class board', async () => {
