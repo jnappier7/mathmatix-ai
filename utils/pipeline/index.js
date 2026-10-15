@@ -62,6 +62,13 @@ const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDiff
 
 // Backbone: Tutor Plan + Skill Familiarity
 const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase, recentPracticeSkillId } = require('../tutorPlanManager');
+
+// Test-prep skills are attributable only while a review item (or a course /
+// badge skill) pins the turn — see resolveCurrentTarget. The same scope must
+// govern the in-progress fallback, or free chat re-reaches the ACT skill there.
+const freeChatScope = (ctx) => ({
+  excludeTestPrep: !ctx.activeSkill?.skillId && !ctx.actReviewMiss?.skillId,
+});
 const { detectTestOutIntent, resolveTestOutSkillId } = require('../testOutIntent');
 const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer');
 const { reassessFamiliarity } = require('../phaseEvidenceEvaluator');
@@ -453,7 +460,7 @@ async function runPipeline(message, ctx) {
       message,
       activeSkillId: ctx.activeSkill?.skillId || null,
       tutorPlan,
-      recentPracticeSkillId,
+      recentPracticeSkillId: (plan) => recentPracticeSkillId(plan, freeChatScope(ctx)),
     });
     if (challengeSkillId) {
       launchChallenge = { skillId: challengeSkillId };
@@ -1674,7 +1681,7 @@ async function runPipeline(message, ctx) {
     // the student is plainly working on: the most-recently-worked in-progress skill
     // in the plan. The verified-attempt gate below is unchanged, so this only ever
     // routes a real completed problem to a real in-progress skill — never invents one.
-    const engineSkillId = resolvedSkillId || recentPracticeSkillId(tutorPlan);
+    const engineSkillId = resolvedSkillId || recentPracticeSkillId(tutorPlan, freeChatScope(ctx));
     if (!resolvedSkillId && engineSkillId) {
       console.log(`[Pipeline] Attribution fallback: crediting to in-progress skill "${engineSkillId}" (no active target this turn)`);
     }
@@ -2032,7 +2039,7 @@ async function runPipeline(message, ctx) {
     // made the in-chat Practice Pack nudge omit `skillId` and fall through
     // to the student's active COURSE module (a fractions session printed an
     // ACT geometry pack).
-    activeSkillId: ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId || recentPracticeSkillId(tutorPlan) || null,
+    activeSkillId: ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId || recentPracticeSkillId(tutorPlan, freeChatScope(ctx)) || null,
     // Signals the client to open the timed practice-ACT runner. Extracted in
     // verify (shared choke point) so it fires on both /api/chat and course-chat.
     launchPracticeAct: verified.extracted?.launchPracticeAct || false,
