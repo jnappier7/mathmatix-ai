@@ -3594,7 +3594,17 @@ async function handleGreetingRequest(req, res, userId) {
                     ? `\n\nThey JUST stepped out of ${returningCourseName ? `their "${returningCourseName}" lesson` : 'a course lesson'} into open chat — this is the same visit, not a new arrival, so no hello-again and no time-of-day small talk. Acknowledge the switch in one short clause (their progress in the lesson is saved), do NOT re-pitch or resume the course, and ask what they'd like to work on now. Skip any warm-up question this time.`
                     : '';
 
-            if (openerResult && openerResult.directives?.length > 0) {
+            if (returningFromCourse) {
+                // Same visit, one click after leaving a lesson. The session
+                // opener ("since you were working on quadratic equations…")
+                // and the optional warm-up were appended AFTER "skip any
+                // warm-up", and the later instruction won: every exit from ACT
+                // review opened general chat with an unprompted "simplify
+                // 5x^2 + 3x − 2x^2 + 4" (QA handoff 2026-10-14 §3.2, witnessed
+                // in prod). On a course exit the switch rule is the whole ask.
+                greetingInstruction = `Keep it to 1-2 sentences, in YOUR voice.` + returningVoiceRule + courseMentionRule +
+                    `\n\nDo NOT pose a problem, a warm-up, or a check-in question. End by asking what they'd like to work on.`;
+            } else if (openerResult && openerResult.directives?.length > 0) {
                 // Use intelligent session opener directives from TutorPlan
                 greetingInstruction = openerResult.directives.join('\n') +
                     `\n\nKeep it to 1-3 sentences. Talk like a real person — the way you'd greet a student who just walked into your room. Don't repeat back their info.` +
