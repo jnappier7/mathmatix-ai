@@ -97,7 +97,9 @@ router.get('/catalog', async (req, res) => {
           prerequisites: pathway.prerequisites || [],
           moduleCount: (pathway.modules || []).length,
           gradeBand: pathway.gradeBand || '',
-          apWeight: pathway.examAlignment ? 'AP' : null
+          // "AP" only for an AP exam. Any examAlignment used to earn the badge,
+          // so the ACT and SAT prep courses were labelled AP (QA handoff §4).
+          apWeight: /^AP\b/.test(String(pathway.examAlignment?.exam || '')) ? 'AP' : null
         });
       } catch (parseErr) {
         console.warn(`[CourseSession] Failed to parse ${file}:`, parseErr.message);
@@ -106,6 +108,21 @@ router.get('/catalog', async (req, res) => {
 
     // Sort by grade progression (sortOrder from CATALOG_META)
     catalog.sort((a, b) => a.sortOrder - b.sortOrder);
+
+    // Prerequisites are pathway slugs ("grade-8", "algebra-1") — and not always
+    // a real courseId ("grade-8" vs "grade-8-math"). Students saw the slugs
+    // verbatim (QA handoff §4). Name them from the catalog where possible.
+    const titleOf = new Map();
+    for (const c of catalog) {
+      titleOf.set(c.courseId, c.title);
+      titleOf.set(String(c.pathwayId || '').replace(/-pathway$/, ''), c.title);
+    }
+    const prettySlug = (s) => String(s).replace(/-math$/, '').split('-')
+      .map((w) => (/^\d+$/.test(w) ? w : w.charAt(0).toUpperCase() + w.slice(1))).join(' ');
+    for (const c of catalog) {
+      c.prerequisiteNames = (c.prerequisites || []).map((p) =>
+        titleOf.get(p) || titleOf.get(`${p}-math`) || prettySlug(p));
+    }
 
     // Personalized recommendation from the student's working level (assessed
     // when present, stated grade otherwise — utils/gradeLevel.js), keyed by
