@@ -1239,17 +1239,10 @@ class CourseManager {
     // --------------------------------------------------
     async exitCourse() {
         this.closeProgressDropdown();
-
-        const confirmed = await this.showConfirmation({
-            icon: '📖',
-            title: 'Exit this lesson?',
-            message: 'Your progress is saved — you can pick up where you left off anytime.',
-            confirmLabel: 'Exit Lesson',
-            confirmClass: 'secondary',
-            cancelLabel: 'Keep Learning'
-        });
-
-        if (!confirmed) return;
+        // One click. The confirm dialog only said "Your progress is saved",
+        // which is true — so it guarded nothing, and it was the second hoop on
+        // an exit students already struggled to find (QA handoff §3.2).
+        // Leaving a COURSE (dropCourse) keeps its confirm: that un-enrolls.
 
         const leaving = this.courseSessions.find(s => s._id === this.activeCourseSessionId);
         const courseName = leaving ? this.formatCourseName(leaving.courseName || '') : '';
