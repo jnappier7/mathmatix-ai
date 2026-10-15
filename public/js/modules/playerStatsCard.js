@@ -113,6 +113,12 @@
       segMe.type = 'button'; segMe.setAttribute('role', 'tab');
       segBoard.addEventListener('click', function () { showProfile(false); });
       segMe.addEventListener('click', function () { showProfile(true); });
+      // Tabs announce which one is open from the first render, not only after
+      // a click (QA handoff §3.7: both read aria-selected=null on load).
+      segBoard.setAttribute('aria-selected', 'true');
+      segMe.setAttribute('aria-selected', 'false');
+      host.setAttribute('role', 'tablist');
+      host.setAttribute('aria-label', 'Tutor or my progress');
       host.appendChild(segBoard); host.appendChild(segMe);
       host._segBoard = segBoard; host._segMe = segMe;
     }

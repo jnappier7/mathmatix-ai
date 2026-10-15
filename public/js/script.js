@@ -3300,7 +3300,7 @@ document.addEventListener("DOMContentLoaded", () => {
         card.innerHTML = `<div class="message" style="text-align:center; max-width:420px; margin:10px auto; padding:16px; border:1px solid var(--clr-border,#e2e8f0); border-radius:12px; background:var(--clr-bg-subtle,#f8fafb);">
             <div style="font-weight:600; margin-bottom:4px;">Quick one — when's your birthday? 🎂</div>
             <div style="font-size:.9rem; color:var(--clr-text-dim,#5b6876); margin-bottom:10px;">It helps us keep Mathmatix safe and age-appropriate. We never show it to anyone.</div>
-            <input type="date" class="dob-prompt-input" max="${today}" style="padding:8px 12px; font-size:1rem; border:1px solid var(--clr-border,#e2e8f0); border-radius:8px; margin-bottom:10px;">
+            <input type="date" class="dob-prompt-input" aria-label="Your birthday" max="${today}" style="padding:8px 12px; font-size:1rem; border:1px solid var(--clr-border,#e2e8f0); border-radius:8px; margin-bottom:10px;">
             <div class="dob-prompt-status" style="font-size:.85rem; color:#dc3545; min-height:1em; margin-bottom:6px;"></div>
             <div style="display:flex; gap:8px; justify-content:center;">
                 <button type="button" class="btn btn-primary dob-prompt-save">Save</button>
