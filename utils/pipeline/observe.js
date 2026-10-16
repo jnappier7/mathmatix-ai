@@ -234,6 +234,16 @@ function matchAnswerClause(clause) {
   const bare = clause.replace(CLAUSE_LEAD_IN, '').replace(/[\s?!.]+$/, '');
   const value = matchAnswerLine(bare);
   if (value) return { value, proposed: false };
+  // A conclusion after a comma: "Then 2x+3x=5x, so 2x^2+5x+3". The clause as a
+  // whole is work-then-claim, so it matched no strict shape, and the answer
+  // fell to the intermediate pattern — "3 times 1 gives 3." minted "3." and a
+  // correct 2x²+5x+3 was graded off it (student audit, 2026-10-15).
+  const conclusion = clause.split(/,\s*(?=(?:so|thus|therefore|hence|which\s+means|that\s+means|which\s+gives|giving)\b)/i);
+  if (conclusion.length > 1) {
+    const tail = conclusion[conclusion.length - 1].replace(CLAUSE_LEAD_IN, '').replace(/^(?:which\s+gives|giving)\s+/i, '').replace(/[\s?!.]+$/, '');
+    const tailValue = matchAnswerLine(tail);
+    if (tailValue) return { value: tailValue, proposed: false };
+  }
   const match = clause.match(PATTERNS.proposedAnswer);
   if (match) return { value: (match[1] || match[2]).replace(/\s/g, ''), proposed: true };
   return null;

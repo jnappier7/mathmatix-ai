@@ -46,6 +46,8 @@ module.exports = {
     '<rootDir>/tests/unit/diagnoseArithmeticGuard.test.js',
     '<rootDir>/tests/unit/trueArithmeticVerdict.test.js',
     '<rootDir>/tests/unit/diagnoseMultiLineAnswer.test.js',
+    // Numbered sets graded per item; an answer to the parked earlier problem.
+    '<rootDir>/tests/unit/completedWorkVerdicts.test.js',
     '<rootDir>/tests/unit/observeLatexAnswer.test.js',
     // Bare-problem-drop and worked-step classification (observe.js).
     '<rootDir>/tests/unit/bareProblemDrop.test.js',

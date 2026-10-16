@@ -1,0 +1,24 @@
+{
+  "tutor": [
+    {
+      "content": "I see where you're coming from, but let's take a closer look at that multiplication! You mentioned multiplying the first terms and the last terms, which is a good start, but there's a bit more to it.\n\nWhen multiplying two binomials like \\((2x + 3)(x + 1)\\), we actually need to use the distributive property, often called the FOIL method (First, Outside, Inside, Last). \n\nCan you tell me what you get when you multiply the \"Outside\" and \"Inside\" terms together?",
+      "problemInfo": {
+        "type": "expand_polynomial",
+        "correctAnswer": "2x^2 + 5x + 3"
+      }
+    },
+    {
+      "content": "Hey, I totally get it, this can be really frustrating! You're not alone in feeling that way. Let's take a step back and simplify things a bit.\n\nInstead of focusing on the terms right now, how about we work through a similar example together? Let's multiply \\((2x + 4)(x + 2)\\) step by step. \n\nI'll guide you through it, and then we can apply the same method to your original problem. Sound good?",
+      "problemInfo": {
+        "type": "expand_polynomial",
+        "correctAnswer": "2x^2 + 8x + 8"
+      }
+    },
+    {
+      "content": "Nice work on that double distribution for \\((2x + 4)(x + 2)\\)! You got \\(2x^2 + 8x + 8\\), which is correct. \n\nNow, let's revisit your original problem, \\((2x + 3)(x + 1)\\). I see you ended up with \\(2x^2 + 5x + 3\\). \n\nThe first part, \\(2x^2\\), is spot on! But let's focus on the linear terms. You combined the \\(5x\\) correctly, but can you tell me how you got that \\(5x\\)? What did you add together?",
+      "problemInfo": null
+    }
+  ],
+  "student5": "Okay, use double distribution, not FOIL. For (2x+4)(x+2), I get 2x^2+4x+4x+8 = 2x^2+8x+8. For my original I get 2x^2+5x+3.",
+  "student7": "2x times x gives 2x^2, 2x times 1 gives 2x, 3 times x gives 3x, 3 times 1 gives 3. Then 2x+3x=5x, so 2x^2+5x+3. That is all my reasoning. Can we move on?"
+}

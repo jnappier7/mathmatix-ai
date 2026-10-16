@@ -1003,7 +1003,17 @@ function detectSystem(message) {
     // that system "solved" to x = 33.33, y = 69.67, so a correct (10, 23) could
     // never verify (QA handoff 2026-10-14 §2.3, real prod transcript). Strip the
     // delimiters and line-leading list markers first; "1.5x" (no space) is kept.
+    //
+    // The other common shape is an align block — "\\[ \\begin{align*} y &= 2x + 3
+    // \\\\ 3x + y &= 12 \\end{align*} \\]" (student audit 2026-10-15: five systems
+    // posed this way never parsed, so five correct answers had no verdict and the
+    // tutor re-walked every one). Environment markers and "\\\\" are line breaks,
+    // "&" is alignment, and \\frac{1}{2} is (1/2).
     const normalized = String(message)
+        .replace(/\\(?:begin|end)\{[^}]*\}/g, '\n')
+        .replace(/\\\\/g, '\n')
+        .replace(/&/g, '')
+        .replace(/\\d?frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g, '($1/$2)')
         .replace(/\\[()[\]]/g, ' ')
         .replace(/^[ \t]*(?:\d+[.)]|[-*•])[ \t]+/gm, '');
 
@@ -1108,6 +1118,22 @@ function parseLinearExpressionXY(expr) {
         const numMatch = t.match(/^([+-]?\d+\.?\d*)$/);
         if (numMatch) {
             constant += parseFloat(numMatch[1]);
+            continue;
+        }
+
+        // Fractional coefficient: "(1/2)x" (what \frac{1}{2}x normalizes to)
+        // or "x/2". Read as a coefficient on the variable, never as 1/(2x).
+        const fracCoeff = t.match(/^([+-]?)\((\d*\.?\d+)\/(\d*\.?\d+)\)([xy])$/i)
+            || t.match(/^([+-]?)(\d*\.?\d*)([xy])\/(\d*\.?\d+)$/i);
+        if (fracCoeff) {
+            const sign = fracCoeff[1] === '-' ? -1 : 1;
+            const isParen = /^\(/.test(t.replace(/^[+-]/, ''));
+            const c = isParen
+                ? Number(fracCoeff[2]) / Number(fracCoeff[3])
+                : (fracCoeff[2] === '' ? 1 : Number(fracCoeff[2])) / Number(fracCoeff[4]);
+            const v = (isParen ? fracCoeff[4] : fracCoeff[3]).toLowerCase();
+            if (!Number.isFinite(c)) return null;
+            if (v === 'x') xCoeff += sign * c; else yCoeff += sign * c;
             continue;
         }
 

@@ -85,10 +85,20 @@ function buildActionPrompt(decision) {
     parts.push(`--- ACTION DIRECTIVES ---\n${directives.map((d, i) => `${i + 1}. ${d}`).join('\n')}`);
   }
 
+  // A graded numbered set carries its verdicts in the directives above; the
+  // single-answer CONFIRM/GUIDE text below ("the correct answer is …") would
+  // be wrong for it, so it stops here.
+  if (diagnosis && diagnosis.batch) {
+    return parts.join('\n\n');
+  }
+
   // Action-specific context
   switch (action) {
     case ACTIONS.CONFIRM_CORRECT:
       parts.push(`The student answered "${observation.answer?.value}" and it is CORRECT (verified by our math engine: ${diagnosis.correctAnswer}).`);
+      if (diagnosis.verificationSource === 'earlier_problem') {
+        parts.push('This answer is for the EARLIER problem the student came in with — not the practice problem you posed since. That problem is now SOLVED. Say so plainly, and do NOT ask them to apply the method to it again.');
+      }
       if (diagnosis.demonstratedReasoning) {
         parts.push('The student also demonstrated valid mathematical reasoning in their explanation.');
         parts.push('Affirm their answer AND their reasoning concisely. Then move forward — do NOT re-walk steps they already explained.');

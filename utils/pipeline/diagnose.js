@@ -10,6 +10,7 @@
  * @module pipeline/diagnose
  */
 
+const { gradeBatch } = require('./batchGrading');
 const { parseCleanProblem, verifyAnswer, matchRootsInText } = require('../mathSolver');
 const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer, trueArithmeticStatement } = require('./symbolicVerifier');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
@@ -431,6 +432,72 @@ async function diagnoseConceptual(observation, context) {
   return { ...base, type: 'unverifiable', isCorrect: null, evidence: null };
 }
 
+const REFERS_BACK = /\b(?:original|first (?:one|problem|question)|my (?:own )?(?:problem|question)|the other (?:one|problem)|earlier (?:one|problem)|previous (?:one|problem)|back to|revisit)\b/i;
+
+/**
+ * An earlier problem in the recent window that this answer is correct for,
+ * other than the current target. Only stored problemInfo counts — never a
+ * re-parse of prose, which is how intermediates became targets before.
+ */
+function findEarlierProblem(studentAnswer, current, recentAI) {
+  for (let i = recentAI.length - 1; i >= 0; i--) {
+    const info = recentAI[i] && recentAI[i].problemInfo;
+    if (!info || info.correctAnswer == null) continue;
+    if (String(info.correctAnswer) === String(current.correctAnswer)) continue;
+    try {
+      if (verifyAnswer(studentAnswer, info.correctAnswer).isCorrect) {
+        return {
+          problemType: info.type,
+          correctAnswer: info.correctAnswer,
+          roots: Array.isArray(info.roots) ? info.roots : null,
+          steps: [],
+          content: recentAI[i].content,
+        };
+      }
+    } catch (_) { /* not comparable */ }
+  }
+  return null;
+}
+
+/**
+ * Student audit, 2026-10-15: five systems posed as one numbered set, all five
+ * answered correctly in one message with full work — and no verdict, so the
+ * tutor restarted the steps on every one. See batchGrading.js.
+ *
+ * isCorrect is true only when every item verified; false when any item is
+ * verifiably wrong; null otherwise. correctAnswer stays null: a wrong item's
+ * answer is not ours to reveal.
+ */
+function diagnoseBatch(observation, context) {
+  const recentAI = context.recentAssistantMessages || [];
+  const latest = recentAI[recentAI.length - 1];
+  if (!latest || typeof latest.content !== 'string') return null;
+  const batch = gradeBatch(latest.content, observation.raw || '');
+  if (!batch) return null;
+
+  const isCorrect = batch.wrong > 0 ? false : (batch.undecided === 0 ? true : null);
+  console.log(`[Diagnose] Numbered set: ${batch.correct} correct, ${batch.wrong} wrong, ${batch.undecided} undecided`);
+  return {
+    type: isCorrect === null ? 'unverifiable' : (isCorrect ? 'correct' : 'incorrect'),
+    isCorrect,
+    answer: batch.items.map((i) => `${i.n}) ${i.studentAnswer || '?'}`).join('; '),
+    correctAnswer: null,
+    misconception: null,
+    evidence: {
+      isCorrect,
+      independenceLevel: estimateIndependence(observation, context),
+      misconceptionHit: null,
+      responseTimeCategory: null,
+      problemContext: observation.problemContext,
+      timestamp: new Date(),
+    },
+    demonstratedReasoning: isCorrect === true,
+    hasExplanation: true,
+    verificationSource: 'batch',
+    batch,
+  };
+}
+
 async function diagnose(observation, context = {}) {
   // A conceptual reply is graded on its IDEA, not on any number in it, and it
   // is routed here BEFORE the numeric stack — which would otherwise match the
@@ -443,6 +510,12 @@ async function diagnose(observation, context = {}) {
       console.error('[Diagnose] Conceptual verification failed:', err.message);
     }
   }
+
+  // A numbered set answered by number: grade every item, not just one. Ahead of
+  // the single-answer path, which would latch onto Q1 (or nothing) and leave the
+  // tutor with no verdict on work the student fully showed.
+  const batchDiagnosis = diagnoseBatch(observation, context);
+  if (batchDiagnosis) return batchDiagnosis;
 
   // No extractable answer does NOT mean nothing to verify. A student rewriting
   // the problem ("24-3+3") is doing verifiable work; bailing out here is what
@@ -675,6 +748,55 @@ async function diagnose(observation, context = {}) {
     isCorrect = true;
     correctAnswer = studentAnswer;
     verificationSource = 'arithmetic_override';
+  }
+
+  // ── Step 2a.2: The answer belongs to an EARLIER problem ──
+  // A tutor who parks a student's problem to work a parallel one leaves two
+  // problems open, and the newest is the grading target. Student audit,
+  // 2026-10-15: the student asked about (2x+3)(x+1); the tutor switched to
+  // (2x+4)(x+2); the student answered both ("for my original I get 2x²+5x+3")
+  // and the original's correct answer was graded against the parallel's key —
+  // stamped incorrect twice, and the tutor invented a "constant term" error.
+  //
+  // When the answer is wrong for the newest target but right for an earlier
+  // problem in this conversation: if the student or the latest tutor turn
+  // points back at it ("my original", "your original problem"), it is correct
+  // for THAT problem. Without the pointer it is ambiguous — it could be a
+  // student reusing an old answer by mistake — so emit no verdict rather than
+  // a wrong one, and let the verifier that sees the conversation decide.
+  if (isCorrect === false && problemInfo && (verificationSource === 'solver' || verificationSource === 'derivation')) {
+    const earlier = findEarlierProblem(studentAnswer, problemInfo, recentAI);
+    if (earlier) {
+      const pointsBack = REFERS_BACK.test(rawText) || REFERS_BACK.test(latestTurn?.content || '');
+      if (pointsBack) {
+        console.log(`[Diagnose] Answer "${studentAnswer}" is correct for an earlier problem (${earlier.correctAnswer}) the turn points back to`);
+        problemInfo = earlier;
+        isCorrect = true;
+        correctAnswer = earlier.correctAnswer;
+        verificationSource = 'earlier_problem';
+      } else {
+        console.log(`[Diagnose] Answer "${studentAnswer}" matches an earlier problem, not the newest — deferring`);
+        problemInfo = null;
+        isCorrect = null;
+        correctAnswer = null;
+        verificationSource = null;
+      }
+      derivation = null;
+    }
+  } else if (isCorrect === null && !problemInfo && observation.answer) {
+    // No current target at all (the newest tutor turn parsed to nothing), but
+    // the turn points back at an earlier problem and the answer solves it:
+    // that is the problem being answered. Same pointer rule as above — without
+    // one, this stays undecided.
+    const pointsBack = REFERS_BACK.test(rawText) || REFERS_BACK.test(latestTurn?.content || '');
+    const earlier = pointsBack ? findEarlierProblem(studentAnswer, { correctAnswer: null }, recentAI) : null;
+    if (earlier) {
+      console.log(`[Diagnose] No current target; answer "${studentAnswer}" solves the earlier problem the turn points back to`);
+      problemInfo = earlier;
+      isCorrect = true;
+      correctAnswer = earlier.correctAnswer;
+      verificationSource = 'earlier_problem';
+    }
   }
 
   // ── Step 2a.4: Multi-line shown work with NO solvable posed problem ──
@@ -942,7 +1064,7 @@ async function diagnose(observation, context = {}) {
     evidence,
     demonstratedReasoning,  // true = student gave correct answer + valid reasoning
     hasExplanation,         // true = answer was embedded in explanatory text
-    verificationSource,     // 'solver' | 'arithmetic_override' | 'derivation' | 'llm' | 'root_set' | null
+    verificationSource,     // 'solver' | 'arithmetic_override' | 'derivation' | 'earlier_problem' | 'llm' | 'root_set' | 'batch' | null
     // Right answer, suspect rule — present only when the answer verified correct
     // AND the articulated method was judged an invalid generalization. decide()
     // routes this to AFFIRM_THEN_PROBE (confirm first, then probe the rule).
