@@ -10,7 +10,7 @@ import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbea
 import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js?v=20260731b';
 import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
 import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
-import './modules/statusCard.js?v=5'; // registers window.openStatusCard (Progress button)
+import './modules/statusCard.js?v=6'; // registers window.openStatusCard (Progress button)
 // Versioned specifier — see the note on the billing.js import below. Without
 // it the try-on preview fix below would not reach a returning student for a
 // week: /js/** is served max-age=604800, and bumping script.js's own ?v= does
@@ -89,6 +89,16 @@ function applyTurnRewards(data) {
                 currentUser.level = data.userLevel;
                 currentUser.xpForCurrentLevel = Math.max(0, data.userXp);
                 currentUser.xpForNextLevel = data.xpNeeded;
+                // The TOTAL moves too. Only level and in-level XP used to be
+                // copied, so the status card's Total XP (and the drawer's) sat
+                // on the page-load value while the header advanced (student
+                // audit, 2026-10-15: "Total XP 3723" all session).
+                if (Number.isFinite(data.userTotalXp)) {
+                    currentUser.xp = data.userTotalXp;
+                    const drawerTotal = document.getElementById('drawer-total-xp');
+                    if (drawerTotal) drawerTotal.textContent = String(data.userTotalXp);
+                    try { if (typeof window.refreshStatusCard === 'function') window.refreshStatusCard(currentUser); } catch (e) { /* card closed or not loaded */ }
+                }
                 updateGamificationDisplay();
                 // Identity chip: refresh level ring + rank title from the fresh XP state.
                 try { updateIdentityChip(currentUser); } catch (e) { console.warn('Identity chip update failed', e); }

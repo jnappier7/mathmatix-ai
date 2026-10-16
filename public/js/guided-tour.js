@@ -528,6 +528,7 @@ class GuidedTour {
     // Complete the tour
     complete() {
         this.markCompleted();
+        saveTourOutcome(true);
         this.cleanup();
         if (this.options.onComplete) {
             this.options.onComplete();
@@ -805,18 +806,46 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Check if user hasn't seen the tour
-        if (!tour.hasCompleted()) {
-            // Show "Take a Tour" prompt after a short delay
-            setTimeout(() => {
-                showTourPrompt(tour);
-            }, 1500);
+        // Offer the tour only to someone who has never seen one. "Seen" lives
+        // on the SERVER (tourCompleted / tourDismissed on the user): the local
+        // flag alone was wiped by logout.js's localStorage.clear(), so the
+        // "Welcome! New here?" prompt came back after every sign-in (student
+        // audit, 2026-10-15). On the chat page tour.js owns the first-run tour
+        // (it reads the same server flags), so this one never auto-prompts
+        // there — the two used to stack for a genuinely new student.
+        const onChatPage = path.includes('chat.html');
+        if (!tour.hasCompleted() && !onChatPage) {
+            serverTourSeen().then((seen) => {
+                if (seen) { tour.markCompleted(); return; }
+                setTimeout(() => showTourPrompt(tour), 1500);
+            });
         }
 
         // Add "Help" button to trigger tour manually
         addTourButton(tour);
     }
 });
+
+// Has this user already seen (finished or dismissed) a tour? Fails closed:
+// if the status can't be read, don't nag.
+function serverTourSeen() {
+    return fetch('/api/user/tour-status', { credentials: 'include' })
+        .then((r) => (r.ok ? r.json() : { tourDismissed: true }))
+        .then((d) => !!(d.tourCompleted || d.tourDismissed))
+        .catch(() => true);
+}
+
+// Record the outcome server-side so it survives logout (which clears
+// localStorage) and follows the user to other devices.
+function saveTourOutcome(completed) {
+    const f = typeof window.csrfFetch === 'function' ? window.csrfFetch : fetch;
+    f('/api/user/tour-complete', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: !!completed, dismissed: !completed })
+    }).catch(() => { /* the local flag still holds for this browser */ });
+}
 
 // Distance to keep floating tour UI above the bottom edge. On phones the
 // dashboards pin a bottom nav (~70px); a fixed `bottom: 20px` put the prompt and
@@ -879,6 +908,7 @@ function showTourPrompt(tour) {
     document.getElementById('tour-dismiss-btn').addEventListener('click', () => {
         prompt.remove();
         tour.markCompleted(); // Don't show again
+        saveTourOutcome(false);
         // "If dismissed, it goes" — the floating Tour pill too, now (it used to
         // linger until the next load, over the phone drawers).
         document.querySelectorAll('.tour-help-btn').forEach((b) => b.remove());
@@ -892,6 +922,7 @@ function showTourPrompt(tour) {
         if (prompt.parentElement) {
             prompt.remove();
             tour.markCompleted();
+            saveTourOutcome(false);
         }
     }, 30000);
 }

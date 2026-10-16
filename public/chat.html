@@ -144,7 +144,7 @@
   <link rel="stylesheet" href="/css/challenge-card.css?v=20261015a" />
   <link rel="stylesheet" href="/css/floating-review.css?v=20260807" />
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
-  <link rel="stylesheet" href="/css/adjustable-panels.css?v=20261015ui" />
+  <link rel="stylesheet" href="/css/adjustable-panels.css?v=20261016hm" />
   <!-- Voice mode (layout mode of the chat stage) -->
   <link rel="stylesheet" href="/css/voice-mode.css?v=20260904a" />
   <!-- Fresh styling for rendered math (equation cards) -->
@@ -282,12 +282,12 @@
         <!-- XP meter — progress to next level -->
         <div class="cr-xp-meter" id="cr-xp-meter" title="XP to next level" aria-label="XP progress">
           <div class="cr-xp-bar"><div id="sidebar-progress-fill" class="cr-xp-fill" style="width: 0%;"></div></div>
-          <span class="cr-xp-text" id="sidebar-xp">0 / 100 XP</span>
+          <span class="cr-xp-text" id="sidebar-xp">— XP</span>
         </div>
         <!-- Coin balance — click to open the shop; earned coins fly up here -->
         <button type="button" id="sidebar-coins-btn" class="sidebar-coins-pill cr-header-pill" title="Open Shop" aria-label="Coins — open shop">
           <span class="sidebar-coins-icon" aria-hidden="true">🪙</span>
-          <span id="sidebar-coins" class="sidebar-coins-val">0</span>
+          <span id="sidebar-coins" class="sidebar-coins-val">—</span>
         </button>
         <button id="cr-progress-btn" class="cr-progress-btn" type="button" aria-label="Open progress panel">
           <i class="fas fa-chart-bar"></i>
@@ -735,7 +735,7 @@
         </div>
         <div class="msb-item msb-xp">
           <span class="msb-icon">⭐</span>
-          <span id="msb-xp" class="msb-value">0</span>
+          <span id="msb-xp" class="msb-value">—</span>
           <span class="msb-unit">XP</span>
         </div>
       </div>
@@ -1393,7 +1393,7 @@
           <div class="drawer-progress-bar">
             <div id="drawer-progress-fill" class="drawer-progress-fill" style="width: 0%;"></div>
           </div>
-          <div class="drawer-progress-xp" id="drawer-xp">0 / 100 XP</div>
+          <div class="drawer-progress-xp" id="drawer-xp">— XP</div>
         </div>
       </div>
 
@@ -1407,7 +1407,7 @@
           </div>
           <div class="drawer-quick-stat">
             <i class="fas fa-star" style="color: var(--clr-primary-teal, #12B3B3);"></i>
-            <span id="drawer-total-xp" class="drawer-quick-stat-value">0</span>
+            <span id="drawer-total-xp" class="drawer-quick-stat-value">—</span>
             <span class="drawer-quick-stat-label">Total XP</span>
           </div>
           <div class="drawer-quick-stat">
@@ -2483,7 +2483,7 @@
   <script defer src="/js/voice-subtitles.js?v=20260718b"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
-  <script src="/dist/js/chat-js3.4346a325.js"></script>
+  <script src="/dist/js/chat-js3.71288e77.js"></script>
 <!-- returningUserModal.js removed — no longer used -->
   <script src="/dist/js/chat-js4.56a45792.js"></script>
 <link rel="stylesheet" href="/css/algebra-tiles.css">
@@ -2565,9 +2565,9 @@
 </script>
 <script src="/js/challengeCard.js?v=20261015a"></script>
 <script defer src="/js/floating-review.js?v=20260915"></script>
-<script src="/js/script.js?v=20261015pt" type="module"></script>
+<script src="/js/script.js?v=20261016xp" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
-  <script src="/dist/js/chat-js9.f1273322.js"></script>
+  <script src="/dist/js/chat-js9.b9bd11de.js"></script>
   <!-- Bottom tab bar (phones only; MM_FEATURES.bottomNav) -->
   <script defer src="/js/bottom-nav.js?v=4"></script>
   <script defer src="/js/activities-entry.js?v=20261014"></script>

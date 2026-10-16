@@ -354,7 +354,15 @@ export function closeStatusCard() {
     setTimeout(() => { modal.hidden = true; }, 200);
 }
 
+/** Re-read the live user into an OPEN card (XP earned while it is up). */
+export function refreshStatusCard(user = window.currentUser) {
+    const modal = document.getElementById(MODAL_ID);
+    if (!modal || modal.hidden || !user) return;
+    populate(modal, user);
+}
+
 if (typeof window !== 'undefined') {
     window.openStatusCard = openStatusCard;
     window.closeStatusCard = closeStatusCard;
+    window.refreshStatusCard = refreshStatusCard;
 }

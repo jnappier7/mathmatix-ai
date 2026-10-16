@@ -388,9 +388,9 @@ async function runStudentTurn(req, res) {
             // Already completed - can't retake
             return res.json({
                 text: "You've already done your placement assessment! I'm using those results to give you the right level of problems. If your teacher or parent thinks you need a new assessment, they can request one for you. What would you like to work on?",
-                userXp: 0,
-                userLevel: user.level || 1,
-                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1),
+                // No XP fields: this reply awards nothing, and `userXp: 0` was
+                // applied by the client as real progress — the header flashed
+                // "0 / N XP" until the next turn (student audit, 2026-10-15).
                 specialXpAwarded: "",
                 voiceId: TUTOR_CONFIG[user.selectedTutorId || "default"].cartesiaVoiceId,
                 newlyUnlockedTutors: [],
@@ -571,6 +571,7 @@ async function runStudentTurn(req, res) {
                 return res.json({
                     text: tutorReply,
                     userXp: userXpInCurrentLevel,
+                    userTotalXp: user.xp || 0,
                     userLevel: user.level,
                     xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
                     specialXpAwarded: "",
@@ -626,6 +627,7 @@ async function runStudentTurn(req, res) {
                 return res.json({
                     text: tutorReply,
                     userXp: userXpInCurrentLevel,
+                    userTotalXp: user.xp || 0,
                     userLevel: user.level,
                     xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
                     specialXpAwarded: "",
@@ -2193,6 +2195,7 @@ async function runStudentTurn(req, res) {
             sessionRecap,
             conversationId: String(activeConversation._id),
             userXp: userXpInCurrentLevel,
+            userTotalXp: user.xp || 0,
             userLevel: user.level,
             xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
             voiceId: currentTutor.cartesiaVoiceId,
@@ -2425,9 +2428,7 @@ async function handleParentChat(req, res, parentId, childId, message) {
 
         res.json({
             text: aiResponseText,
-            userXp: 0,
-            userLevel: 0,
-            xpNeeded: 0,
+            // No XP fields (parent chat awards nothing; zeros read as progress).
             specialXpAwarded: "",
             voiceId: currentTutor.cartesiaVoiceId,
             tutorName: currentTutor.name,
@@ -2861,6 +2862,7 @@ async function handleGrowthCheckDebrief(req, res, userId) {
             growthSummary: summary,
             voiceId: currentTutor.cartesiaVoiceId,
             userXp: xpProgress.xpForCurrentLevel,
+            userTotalXp: user.xp || 0,
             userLevel: xpProgress.level,
             xpNeeded: xpProgress.xpForNextLevel,
         });
@@ -2962,6 +2964,7 @@ async function handleReviewWarmupDebrief(req, res, userId) {
             warmupSummary: summary,
             voiceId: currentTutor.cartesiaVoiceId,
             userXp: xpProgress.xpForCurrentLevel,
+            userTotalXp: user.xp || 0,
             userLevel: xpProgress.level,
             xpNeeded: xpProgress.xpForNextLevel,
         });
@@ -3089,6 +3092,7 @@ async function handleGreetingRequest(req, res, userId) {
                     voiceId: contTutor.cartesiaVoiceId,
                     isGreeting: true,
                     userXp: contXp.xpForCurrentLevel,
+                    userTotalXp: user.xp || 0,
                     userLevel: contXp.level,
                     xpNeeded: contXp.xpForNextLevel
                 });

@@ -130,6 +130,13 @@ body.cr-hero-min .cr-hero-col { display: none !important; }
   html.mm-board-hidden body.cr-hero-min .cr-stage {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* Inline work (html.mm-work-inline) also means "no board column" — the
+     workspace is display:none — but this rule didn't know it, so minimizing
+     the tutor left the chat in a 989px track beside an EMPTY 320px one
+     (student audit, 2026-10-15: "~350px unused to the right"). */
+  html.mm-work-inline body.cr-hero-min .cr-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 @media (min-width: 901px) and (max-width: 1200px) {
   body.cr-hero-min .cr-stage {
