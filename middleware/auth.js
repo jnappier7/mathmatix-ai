@@ -82,12 +82,10 @@ function ensureNotAuthenticated(req, res, next) {
 // This lets multi-role users access all their authorized routes.
 
 function hasRole(user, roleName) {
-    if (!user) return false;
-    // Check roles array first (multi-role support), fall back to legacy role field
-    if (user.roles && user.roles.length > 0) {
-        return user.roles.includes(roleName);
-    }
-    return String(user.role) === roleName;
+    // roles[] first (multi-role support), legacy role as the fallback — one
+    // rule, in utils/roleQuery.rolesOf, so a malformed roles array ([null])
+    // falls back instead of locking the account out.
+    return rolesOf(user).includes(roleName);
 }
 
 function isAdmin(req, res, next) {

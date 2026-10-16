@@ -108,3 +108,29 @@ describe('rolesOf', () => {
     expect(rolesOf(null)).toEqual([]);
   });
 });
+
+describe('a malformed roles array falls back to the legacy role', () => {
+  // Two prod accounts (2026-10-16) carried role 'student', roles [null]. The
+  // non-empty array won, so they held NO roles and every student-gated
+  // endpoint 403'd (/api/student/*, /api/browser-lock/check).
+  const { userHasRole, rolesOf } = require('../../utils/roleQuery');
+  const { isStudent } = require('../../middleware/auth');
+  const gate = (u) => {
+    let passed = false;
+    const res = { status: () => res, json: () => res, redirect: () => res, send: () => res, end: () => res };
+    isStudent({ user: u, isAuthenticated: () => true, xhr: true, headers: { accept: 'application/json' }, originalUrl: '/api/student/x', path: '/api/student/x' }, res, () => { passed = true; });
+    return passed;
+  };
+  const user = { role: 'student', roles: [null] };
+
+  test('rolesOf ignores non-string entries', () => {
+    expect(rolesOf(user)).toEqual(['student']);
+    expect(rolesOf({ role: 'parent', roles: [null, 'teacher', ''] })).toEqual(['teacher']);
+  });
+
+  test('both gates admit the account on its legacy role', () => {
+    expect(userHasRole(user, 'student')).toBe(true);
+    expect(gate(user)).toBe(true);
+    expect(gate({ role: 'parent', roles: [null] })).toBe(false);
+  });
+});
