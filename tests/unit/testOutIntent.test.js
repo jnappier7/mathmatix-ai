@@ -81,3 +81,54 @@ describe('resolveTestOutSkillId — no more silent null → improvised quiz', ()
     expect(matchFocusSkillByName(null, plan)).toBeNull();
   });
 });
+
+describe('a challenge requested in the student\'s own words (student audit, 2026-10-15)', () => {
+  const { detectTestOutIntent, extractNamedTopic, matchCatalogSkill, resolveTestOutSkillId } = require('../../utils/testOutIntent');
+  const AUDIT = 'I want a five-question skill challenge on Systems by substitution. I know how to substitute and I want to prove mastery with written answers as well as multiple choice.';
+  // Real unified-catalog rows (prod, 2026-10-16).
+  const catalog = [
+    { skillId: 'ALG1.EQV.7', displayName: 'Systems by substitution', studentLabel: 'Systems by substitution', source: 'unified-taxonomy' },
+    { skillId: 'MS.EQV.9', displayName: 'Systems of equations', studentLabel: 'Two equations at once', source: 'unified-taxonomy' },
+    { skillId: 'MS.EQV.5', displayName: 'Two-step equations', source: 'unified-taxonomy' },
+    { skillId: 'ALG1.FNC.6', displayName: 'Arithmetic sequences', source: 'unified-taxonomy' },
+  ];
+
+  it.each([
+    AUDIT,
+    'give me a challenge on systems of equations',
+    'Can I take the challenge for two-step equations?',
+    'I want to prove my mastery',
+  ])('fires on: %s', (t) => expect(detectTestOutIntent(t)).toBe(true));
+
+  it.each([
+    'this is a challenge for me',
+    "it's a real challenge for me",
+    'can I try a challenge problem?',
+  ])('does NOT fire on: %s', (t) => expect(detectTestOutIntent(t)).toBe(false));
+
+  it('pulls out the named topic, and ignores a pronoun', () => {
+    expect(extractNamedTopic(AUDIT)).toBe('Systems by substitution');
+    expect(extractNamedTopic('test out of this')).toBeNull();
+  });
+
+  it('matches the named topic in the catalog', () => {
+    expect(matchCatalogSkill('Systems by substitution', catalog)).toBe('ALG1.EQV.7');
+    expect(matchCatalogSkill('systems of equations', catalog)).toBe('MS.EQV.9');
+    expect(matchCatalogSkill('banana bread', catalog)).toBeNull();
+  });
+
+  it('a named skill beats the plan\'s current target — no challenge on the wrong skill', () => {
+    const tutorPlan = { currentTarget: { skillId: 'ALG1.FNC.6' }, skillFocus: [] };
+    expect(resolveTestOutSkillId({ message: AUDIT, activeSkillId: null, tutorPlan, recentPracticeSkillId: () => null, catalog })).toBe('ALG1.EQV.7');
+  });
+
+  it('named but unmatched → null (the pipeline asks), never the current target', () => {
+    const tutorPlan = { currentTarget: { skillId: 'ALG1.FNC.6' }, skillFocus: [] };
+    expect(resolveTestOutSkillId({ message: 'test out of banana bread', activeSkillId: null, tutorPlan, recentPracticeSkillId: () => null, catalog })).toBeNull();
+  });
+
+  it('no topic named → the existing fallback chain still applies', () => {
+    const tutorPlan = { currentTarget: { skillId: 'ALG1.FNC.6' }, skillFocus: [] };
+    expect(resolveTestOutSkillId({ message: 'can I test out?', activeSkillId: null, tutorPlan, recentPracticeSkillId: () => null, catalog })).toBe('ALG1.FNC.6');
+  });
+});
