@@ -1520,6 +1520,24 @@ async function runStudentTurn(req, res) {
             courseScaffoldCtx = null;
         }
 
+        // Declared HERE, ahead of the course step reminder that reads it. It used
+        // to sit below that block: every course-chat turn with an active lesson
+        // step and no file attached threw "Cannot access 'hasRecentUpload' before
+        // initialization" and 500'd (AP Calculus AB, 2026-10-16).
+        //
+        // Determine if student has recent uploads (used below for worksheet guard
+        // injection AND passed to the pipeline's observe stage). Scoped to THIS
+        // conversation: recentUploads is a user-wide query (kept that way for the
+        // cross-session uploads summary), but classification signals like
+        // CHECK_MY_WORK / isWorksheetFollowUp must not flip on for a full day in
+        // every unrelated conversation because of one upload somewhere else.
+        const hasRecentUpload = recentUploads && recentUploads.length > 0 &&
+            recentUploads.some(u => {
+                const daysAgo = Math.floor((Date.now() - new Date(u.uploadedAt)) / (1000 * 60 * 60 * 24));
+                return daysAgo <= 1 &&
+                    u.conversationId && String(u.conversationId) === String(activeConversation._id);
+            });
+
         if (courseScaffoldCtx?.stepTitle && formattedMessagesForLLM.length > 0) {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
@@ -1540,18 +1558,6 @@ async function runStudentTurn(req, res) {
             }
         }
 
-        // Determine if student has recent uploads (used below for worksheet guard
-        // injection AND passed to the pipeline's observe stage). Scoped to THIS
-        // conversation: recentUploads is a user-wide query (kept that way for the
-        // cross-session uploads summary), but classification signals like
-        // CHECK_MY_WORK / isWorksheetFollowUp must not flip on for a full day in
-        // every unrelated conversation because of one upload somewhere else.
-        const hasRecentUpload = recentUploads && recentUploads.length > 0 &&
-            recentUploads.some(u => {
-                const daysAgo = Math.floor((Date.now() - new Date(u.uploadedAt)) / (1000 * 60 * 60 * 24));
-                return daysAgo <= 1 &&
-                    u.conversationId && String(u.conversationId) === String(activeConversation._id);
-            });
 
         // Resolve the independent check-work verdict (kicked off earlier) and
         // build guidance that reflects it: verified-correct work is affirmed, not

@@ -57,6 +57,15 @@ module.exports = [
       'preserve-caught-error': 'warn',
       'no-constant-binary-expression': 'warn',
       'no-irregular-whitespace': 'warn',
+      // A let/const read before its declaration IN THE SAME SCOPE throws at
+      // runtime (the temporal dead zone). no-undef can't see it — the name IS
+      // defined, just later. routes/chat.js read `hasRecentUpload` 22 lines
+      // above its `const`, inside the course-step reminder: every course-chat
+      // turn with a lesson step and no attachment 500'd (2026-10-16).
+      // variables:false limits this to same-scope reads, i.e. real crashes —
+      // a function body referring to a module constant declared below it is
+      // fine at runtime and stays allowed.
+      'no-use-before-define': ['error', { functions: false, classes: false, variables: false }],
     },
   },
 
