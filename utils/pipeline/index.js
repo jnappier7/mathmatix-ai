@@ -457,11 +457,27 @@ async function runPipeline(message, ctx) {
   let testOutIntentDetected = false;
   if (detectTestOutIntent(message)) {
     testOutIntentDetected = true;
+    // The catalog lets a NAMED skill resolve ("a challenge on systems by
+    // substitution" → ALG1.EQV.7) instead of falling through to whatever the
+    // plan happens to target. Same cached set persist's cascade reads.
+    let catalog = [];
+    try {
+      const { configCache } = require('../cache');
+      const Skill = require('../../models/skill');
+      catalog = await configCache.getOrSet(
+        'skills:unified',
+        () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
+        3600
+      );
+    } catch (err) {
+      console.warn('[Pipeline] Test-out catalog load failed (named skills will not resolve):', err.message);
+    }
     const challengeSkillId = resolveTestOutSkillId({
       message,
       activeSkillId: ctx.activeSkill?.skillId || null,
       tutorPlan,
       recentPracticeSkillId: (plan) => recentPracticeSkillId(plan, freeChatScope(ctx)),
+      catalog,
     });
     if (challengeSkillId) {
       launchChallenge = { skillId: challengeSkillId };
