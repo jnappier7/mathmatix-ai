@@ -70,11 +70,7 @@ function withoutRoles(...roles) {
  * that one guards the request and this one inspects arbitrary documents.
  */
 function userHasRole(user, role) {
-  if (!user) return false;
-  if (Array.isArray(user.roles) && user.roles.length > 0) {
-    return user.roles.includes(role);
-  }
-  return String(user.role) === role;
+  return rolesOf(user).includes(role);
 }
 
 /**
@@ -83,7 +79,14 @@ function userHasRole(user, role) {
  */
 function rolesOf(user) {
   if (!user) return [];
-  if (Array.isArray(user.roles) && user.roles.length > 0) return user.roles;
+  // Only real role names count. A `roles` array holding nothing but null
+  // (two prod accounts, 2026-10-16) is non-empty, so it used to WIN over the
+  // legacy `role` and the account held no roles at all: role 'student',
+  // roles [null], 403 on every student-gated endpoint.
+  const held = Array.isArray(user.roles)
+    ? user.roles.filter((r) => typeof r === 'string' && r.length > 0)
+    : [];
+  if (held.length > 0) return held;
   return user.role ? [user.role] : [];
 }
 

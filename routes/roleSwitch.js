@@ -2,6 +2,7 @@
 // Unified multi-role login: switch active role without logging out
 
 const express = require('express');
+const { rolesOf } = require('../utils/roleQuery');
 const router = express.Router();
 const User = require('../models/user');
 const logger = require('../utils/logger');
@@ -21,7 +22,7 @@ const ROLE_DASHBOARDS = {
  */
 router.get('/roles', (req, res) => {
   const user = req.user;
-  const roles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
+  const roles = rolesOf(user);
 
   res.json({
     success: true,
@@ -45,7 +46,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Role is required.' });
     }
 
-    const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
+    const userRoles = rolesOf(user);
 
     // Verify user actually has this role
     if (!userRoles.includes(role)) {
