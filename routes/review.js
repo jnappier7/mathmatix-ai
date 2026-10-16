@@ -271,7 +271,13 @@ router.post('/submit', isAuthenticated, async (req, res) => {
     // where this user's historical entry lives) for a duplicate-free read/write
     const masteryKey = resolveMasteryKey(user, skillId);
     const skillData = getSkillMasteryEntry(user, masteryKey);
-    if (!skillData) {
+    // The smart queue offers skills from BOTH stores — skillMastery's SM-2
+    // schedule and the FSRS cards in learningEngines.fsrs. A skill with only a
+    // card (no mastery record) used to 404 here, every time, so the warm-up
+    // showed it, failed the submit, and offered it again next session
+    // (owner console log, 2026-10-16: "function-behavior-review").
+    const fsrsOnly = !skillData && !!readEngineEntry(user.learningEngines?.fsrs, skillId);
+    if (!skillData && !fsrsOnly) {
       return res.status(404).json({ error: 'Skill not found in mastery data' });
     }
 
@@ -285,6 +291,28 @@ router.post('/submit', isAuthenticated, async (req, res) => {
 
     // Determine expected time based on difficulty
     const expectedTimeMs = getExpectedTime(problem.difficulty);
+
+    if (fsrsOnly) {
+      // Grade it and move the card — that is what clears it from the queue.
+      // No mastery record is invented: a review answer is not a placement.
+      syncFsrsCard(user, skillId, {
+        correct,
+        hintUsed: hintUsed || false,
+        responseTime: responseTimeMs,
+        expectedTime: expectedTimeMs,
+      });
+      await user.save();
+      const card = readEngineEntry(user.learningEngines?.fsrs, skillId);
+      const interval = card && Number.isFinite(card.scheduledDays) ? card.scheduledDays : null;
+      return res.json({
+        correct,
+        quality: null,
+        isLapse: !correct,
+        nextReviewDate: interval != null ? new Date(Date.now() + interval * 86400000) : null,
+        interval,
+        correctAnswer: correct ? null : (problem.answer?.value ?? problem.correctOption)
+      });
+    }
 
     // Process the review attempt
     const { updatedSchedule, quality, isLapse } = processReviewAttempt(

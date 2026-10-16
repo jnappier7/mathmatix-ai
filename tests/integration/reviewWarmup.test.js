@@ -209,6 +209,43 @@ describe('POST /api/review/submit', () => {
     });
 });
 
+describe('POST /api/review/submit — a skill with only an FSRS card', () => {
+    // The queue offers FSRS-only skills (a card, no skillMastery record). Submit
+    // used to 404 "Skill not found in mastery data" on every one, so the item was
+    // re-offered forever (owner console log, 2026-10-16).
+    test('grades it, moves the card, and the skill leaves the queue', async () => {
+        const user = await makeStudent({
+            skillMastery: {},
+            learningEngines: { bkt: {}, fsrs: { [SKILL_A]: dueFsrsCard() }, consistency: {} },
+        });
+
+        const before = await supertest(reviewApp).get('/api/review/smart-queue');
+        expect(before.body.queue.map((i) => i.skillId)).toContain(SKILL_A);
+
+        const res = await supertest(reviewApp)
+            .post('/api/review/submit')
+            .send({ skillId: SKILL_A, problemId: 'rev-a1', userAnswer: '3', responseTimeMs: 20000 });
+        expect(res.status).toBe(200);
+        expect(res.body).toMatchObject({ correct: true, correctAnswer: null });
+
+        const after = await User.findById(user._id);
+        expect(after.skillMastery.get(SKILL_A)).toBeUndefined();   // no record invented
+        expect(new Date(after.learningEngines.fsrs.get(SKILL_A).lastReview).getTime()).toBeGreaterThan(Date.now() - 60000);
+
+        currentUser = after;
+        const queueRes = await supertest(reviewApp).get('/api/review/smart-queue');
+        expect(queueRes.body.queue.map((i) => i.skillId)).not.toContain(SKILL_A);
+    });
+
+    test('a skill in neither store is still a 404', async () => {
+        await makeStudent({ skillMastery: {}, learningEngines: { bkt: {}, fsrs: {}, consistency: {} } });
+        const res = await supertest(reviewApp)
+            .post('/api/review/submit')
+            .send({ skillId: SKILL_A, problemId: 'rev-a1', userAnswer: '3' });
+        expect(res.status).toBe(404);
+    });
+});
+
 describe('greeting warm-up CTA', () => {
     const greet = () => supertest(chatApp).post('/api/chat').send({ isGreeting: true, skipCourse: true });
 
