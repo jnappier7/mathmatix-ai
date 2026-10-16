@@ -3452,9 +3452,13 @@ class Sidebar {
         const xpEl = document.getElementById('sidebar-xp');
         const progressBar = document.getElementById('sidebar-progress-fill');
 
+        // Only paint XP once the backend's level math is on the user. Painting
+        // the `|| 0` / `|| 100` defaults is how the header showed a false
+        // "0 / 100 XP" (student audit, 2026-10-15) — the placeholder is better.
+        const xpKnown = user.xpForCurrentLevel !== undefined && user.xpForNextLevel !== undefined;
         if (levelEl) levelEl.textContent = level;
-        if (xpEl) xpEl.textContent = `${xp} / ${xpNeeded} XP`;
-        if (progressBar) progressBar.style.width = `${Math.min(progress, 100)}%`;
+        if (xpEl && xpKnown) xpEl.textContent = `${xp} / ${xpNeeded} XP`;
+        if (progressBar && xpKnown) progressBar.style.width = `${Math.min(progress, 100)}%`;
 
         // Update mobile drawer progress
         const drawerLevelEl = document.getElementById('drawer-level');
@@ -3462,8 +3466,8 @@ class Sidebar {
         const drawerProgressBar = document.getElementById('drawer-progress-fill');
 
         if (drawerLevelEl) drawerLevelEl.textContent = level;
-        if (drawerXpEl) drawerXpEl.textContent = `${xp} / ${xpNeeded} XP`;
-        if (drawerProgressBar) drawerProgressBar.style.width = `${Math.min(progress, 100)}%`;
+        if (drawerXpEl && xpKnown) drawerXpEl.textContent = `${xp} / ${xpNeeded} XP`;
+        if (drawerProgressBar && xpKnown) drawerProgressBar.style.width = `${Math.min(progress, 100)}%`;
 
         // Update mobile drawer quick stats (streak, total XP, total solved)
         const drawerStreak = document.getElementById('drawer-streak-count');
@@ -3471,7 +3475,7 @@ class Sidebar {
         const drawerTotalProblems = document.getElementById('drawer-total-problems');
 
         if (drawerStreak) drawerStreak.textContent = user.dailyQuests?.currentStreak || user.currentStreak || 0;
-        if (drawerTotalXp) drawerTotalXp.textContent = user.xp || 0;
+        if (drawerTotalXp && user.xp !== undefined) drawerTotalXp.textContent = user.xp;
         if (drawerTotalProblems) drawerTotalProblems.textContent = user.totalProblemsCorrect || 0;
 
         // Update link code in drawer

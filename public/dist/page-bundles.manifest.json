@@ -70,7 +70,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js3.4346a325.js",
+        "src": "/dist/js/chat-js3.71288e77.js",
         "files": [
           "/js/chat-board-integration.js",
           "/js/placementLadder.js",
@@ -133,7 +133,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js9.f1273322.js",
+        "src": "/dist/js/chat-js9.b9bd11de.js",
         "files": [
           "/js/sessionManager.js",
           "/js/feedback.js",
@@ -161,7 +161,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/admin-js0.8cff06c7.js",
+        "src": "/dist/js/admin-js0.37d1feed.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/admin-analytics.js",
@@ -231,7 +231,7 @@
         ]
       },
       {
-        "src": "/dist/js/parent-js2.77ca88d2.js",
+        "src": "/dist/js/parent-js2.0e7effec.js",
         "files": [
           "/js/guided-tour.js?v=20260728",
           "/js/idle-dialog.js",
@@ -286,7 +286,7 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.a4431fb8.js",
+        "src": "/dist/js/teacher-js2.a16bfc88.js",
         "files": [
           "/js/idle-dialog.js",
           "/js/auto-logout.js",
