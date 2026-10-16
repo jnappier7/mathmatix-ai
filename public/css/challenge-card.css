@@ -69,3 +69,21 @@
 .mm-challenge-card.is-pass { border-color: #35c98a; }
 .mm-challenge-card.is-pass .mm-ch-result-big { color: #1f9d6b; }
 .mm-challenge-card.is-miss { border-color: color-mix(in srgb, #e0a23c 60%, transparent); }
+
+/* Per-item results after grading. */
+.mm-ch-review { list-style: none; margin: 12px 0 4px; padding: 0; display: grid; gap: 8px; }
+.mm-ch-review-item {
+  display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start;
+  padding: 8px 10px; border-radius: 10px;
+  background: color-mix(in srgb, var(--mm-ch-accent) 6%, transparent);
+  font: 14px/1.45 system-ui, sans-serif;
+}
+.mm-ch-review-mark { font-weight: 800; text-align: center; }
+.mm-ch-review-item.is-correct .mm-ch-review-mark { color: #1f9d6b; }
+.mm-ch-review-item.is-incorrect .mm-ch-review-mark,
+.mm-ch-review-item.is-incomplete .mm-ch-review-mark { color: #c9792a; }
+.mm-ch-review-item.is-not-graded .mm-ch-review-mark { opacity: .6; }
+.mm-ch-review-prompt { font-weight: 600; margin-bottom: 2px; overflow-wrap: anywhere; }
+.mm-ch-review-line { overflow-wrap: anywhere; }
+.mm-ch-review-key { opacity: .85; }
+.mm-ch-review-note { font-size: 13px; opacity: .75; margin-top: 2px; }

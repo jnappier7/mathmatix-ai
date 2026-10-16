@@ -18,6 +18,7 @@
 const { verifyAnswer } = require('./mathSolver');
 const { GATES } = require('./skillRung');
 const { normalizeOptions, resolveChoice, correctLabelOf } = require('./mcOptions');
+const { gradeMultipart } = require('./multipartAnswer');
 
 // A challenge is a controlled, opt-in demonstration: fewer problems than ambient
 // practice needs, because the conditions are strict (no hints, one shot).
@@ -83,7 +84,21 @@ function gradeOne(problem, submitted) {
       && candidates.some((c) => options.some((o) => o.label === String(c).trim().toUpperCase()));
     attempt = keyIsLetter ? chosen.label : chosen.text;
   }
-  return { correct: candidates.some((c) => same(attempt, c)), reason: null };
+  if (candidates.some((c) => same(attempt, c))) return { correct: true, reason: null };
+
+  // A key with lettered parts ("a) n + d = 30 …; b) 16 nickels and 14 dimes")
+  // is graded part by part — as one string it failed every correct answer
+  // (student audit, 2026-10-14). A part we cannot read is undecided, and an
+  // undecided item is ungradable, not wrong.
+  if (!chosen) {
+    const verdicts = candidates.map((c) => gradeMultipart(c, attempt)).filter(Boolean);
+    if (verdicts.some((v) => v.correct)) return { correct: true, reason: null };
+    if (verdicts.length) {
+      const decided = verdicts.find((v) => v.reason !== 'ungradable');
+      return decided || { correct: false, reason: 'ungradable' };
+    }
+  }
+  return { correct: false, reason: null };
 }
 
 /**
@@ -105,6 +120,8 @@ function gradeChallenge(problems, submissions) {
       problemId: String(sub.problemId),
       correct: graded.correct,
       ungradable: graded.reason === 'ungradable',
+      reason: graded.reason,
+      submitted: sub.answer == null ? '' : String(sub.answer),
       skillId: problem.skillId
     });
   }

@@ -25,7 +25,7 @@ const { confusedStudentOpener, scoreTeachBack } = require('../utils/teachBack');
 const Problem = require('../models/problem');
 const { initializeSkillMastery: initializeSkillMasteryEntry } = require('../utils/masteryEngine');
 const { CHALLENGE_SIZE, MIN_ITEMS, gradeChallenge, toRungEvidence } = require('../utils/skillChallenge');
-const { normalizeOptions } = require('../utils/mcOptions');
+const { normalizeOptions, correctLabelOf } = require('../utils/mcOptions');
 const { resolveGradeNumber } = require('../utils/gradeLevel');
 // POST /start-skill seeds the tutor's plan directly — the light "the student
 // picked this" path, as opposed to starting a whole badge run.
@@ -2962,6 +2962,27 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
       skillId: { $in: skillLookupCandidates(req.params.skillId) }
     }).lean();
     const result = gradeChallenge(problems, submissions);
+    // Per-item results, so "2 of 5" is never a verdict the student cannot
+    // inspect (student audit, 2026-10-14: a correct run scored 2/5 and nothing
+    // said which answers failed or why). The key is shown only AFTER grading,
+    // and only for items that were missed.
+    const served = new Map(problems.map((p) => [String(p._id), p]));
+    const review = result.items.map((item) => {
+      const p = served.get(item.problemId) || {};
+      const opts = normalizeOptions(p.options);
+      const keyLabel = correctLabelOf(p);
+      const keyOpt = keyLabel ? opts.find((o) => o.label === keyLabel) : null;
+      return {
+        problemId: item.problemId,
+        prompt: p.prompt,
+        submitted: item.submitted,
+        correct: item.correct,
+        status: item.correct ? 'correct' : item.ungradable ? 'not-graded' : item.reason === 'incomplete' ? 'incomplete' : 'incorrect',
+        expected: item.correct ? undefined
+          : keyOpt ? `${keyOpt.label}. ${keyOpt.text}`
+            : (p.answer && p.answer.value != null ? String(p.answer.value) : undefined)
+      };
+    });
 
     const user = await User.findById(req.user._id);
     const entry = getSkillMasteryEntry(user, skillId) || initializeSkillMasteryEntry(skillId);
@@ -2973,6 +2994,7 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
         correct: result.correct,
         total: result.total,
         missedProblemIds: result.missedProblemIds,
+        items: review,
         message: result.total < MIN_ITEMS
           ? 'Not enough graded answers to call it — try again.'
           : `${result.correct} of ${result.total}. Found the gap — let's close it.`
@@ -3011,6 +3033,7 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
       total: result.total,
       rung: 'proved',
       clearedFromAbove: cleared,
+      items: review,
       message: cleared.length
         ? `Proved it — and that closed ${cleared.length} skill${cleared.length === 1 ? '' : 's'} beneath it.`
         : 'Proved it.'
