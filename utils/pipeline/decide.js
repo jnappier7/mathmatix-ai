@@ -807,6 +807,28 @@ function decideCore(observation, diagnosis, context) {
     return decision;
   }
 
+  // ── A numbered set, answered by number ──
+  // Each item was graded on its own (diagnose → batchGrading). The tutor reports
+  // per item; it does not restart solving steps the student already showed —
+  // that is the failure this branch exists for (student audit, 2026-10-15).
+  if (diagnosis.batch) {
+    const { items, wrong, undecided } = diagnosis.batch;
+    decision.action = diagnosis.isCorrect === true ? ACTIONS.CONFIRM_CORRECT
+      : diagnosis.isCorrect === false ? ACTIONS.GUIDE_INCORRECT
+        : ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      `NUMBERED SET: the student answered ${items.length} problems by number, with their work. Verified by our math engine, item by item:\n`
+        + items.map((i) => `   ${i.n}) ${i.studentAnswer || '(no final answer found)'} — ${i.verdict === true ? 'CORRECT' : i.verdict === false ? 'NOT CORRECT' : 'not verified — check it yourself'}`).join('\n'),
+      'Report on EVERY item by its number, in one short list. A CORRECT item gets a plain confirmation — do NOT re-walk its steps, do NOT ask for a step they already wrote.',
+      wrong > 0
+        ? 'For a NOT CORRECT item: say which number, point at the first line of THEIR work on it that goes wrong, and ask about that one move. Do NOT give its answer.'
+        : 'Then move FORWARD: a harder set, a different skill, or a quick "which method was fastest and why?". Do NOT assign the same problems again.',
+      undecided > 0 ? 'For an item marked "not verified", check it yourself by substituting into the original problem before saying anything about it.' : ''
+    );
+    decision.directives = decision.directives.filter(Boolean);
+    return decision;
+  }
+
   // ── Conceptual answers — the student replied with an IDEA ──
   // Handled ahead of (and outside) the ANSWER_ATTEMPT block on purpose: a reply
   // like "if its zero on top too" carries no extractable answer, so observe
