@@ -1506,6 +1506,128 @@ window.I18N_TRANSLATIONS = {
   'parent.signupLinkAria': {
     English: "Sign-up link for your child", Spanish: "Enlace de registro para su hijo", Russian: "Ссылка для регистрации ребёнка", Chinese: "孩子的注册链接", Vietnamese: "Liên kết đăng ký cho con", Arabic: "رابط تسجيل طفلك", Somali: "Xiriirka diiwaangelinta ilmahaaga", French: "Lien d’inscription pour votre enfant", German: "Anmeldelink für Ihr Kind"
   },
+
+  /* --- Analytics charts (js/analyticsCharts.js) --- */
+  'chart.noData': {
+    English: "No data yet", Spanish: "Aún no hay datos", Russian: "Данных пока нет", Chinese: "暂无数据", Vietnamese: "Chưa có dữ liệu", Arabic: "لا توجد بيانات بعد", Somali: "Weli xog ma jirto", French: "Pas encore de données", German: "Noch keine Daten"
+  },
+  'chart.point': {
+    English: "point", Spanish: "punto", Russian: "точка", Chinese: "点", Vietnamese: "điểm", Arabic: "نقطة", Somali: "barta", French: "point", German: "Punkt"
+  },
+  'chart.andMore': {
+    English: "and more", Spanish: "y más", Russian: "и другие", Chinese: "等", Vietnamese: "và thêm nữa", Arabic: "والمزيد", Somali: "iyo qaar kale", French: "et plus", German: "und weitere"
+  },
+  'chart.heat.mastered': {
+    English: "Mastered", Spanish: "Dominado", Russian: "Освоено", Chinese: "已掌握", Vietnamese: "Thành thạo", Arabic: "متقن", Somali: "La xafiday", French: "Maîtrisé", German: "Gemeistert"
+  },
+  'chart.heat.learning': {
+    English: "Learning", Spanish: "Aprendiendo", Russian: "Изучается", Chinese: "学习中", Vietnamese: "Đang học", Arabic: "قيد التعلّم", Somali: "Barasho", French: "En cours", German: "Wird gelernt"
+  },
+  'chart.heat.needsWork': {
+    English: "Needs work", Spanish: "Necesita práctica", Russian: "Нужна работа", Chinese: "需加强", Vietnamese: "Cần luyện thêm", Arabic: "يحتاج عملًا", Somali: "U baahan shaqo", French: "À travailler", German: "Braucht Übung"
+  },
+  'chart.heat.noData': {
+    English: "No data", Spanish: "Sin datos", Russian: "Нет данных", Chinese: "无数据", Vietnamese: "Không có dữ liệu", Arabic: "لا بيانات", Somali: "Xog ma jirto", French: "Aucune donnée", German: "Keine Daten"
+  },
+  'chart.retrievability': {
+    English: "Recall", Spanish: "Recuerdo", Russian: "Запоминание", Chinese: "记忆度", Vietnamese: "Mức ghi nhớ", Arabic: "التذكّر", Somali: "Xasuus", French: "Rappel", German: "Abrufbarkeit"
+  },
+  'chart.moreSkills': {
+    English: "+ {n} more skills…", Spanish: "+ {n} habilidades más…", Russian: "+ ещё навыков: {n}…", Chinese: "+ 另外{n}项技能…", Vietnamese: "+ {n} kỹ năng khác…", Arabic: "+ {n} مهارات أخرى…", Somali: "+ {n} xirfadood oo kale…", French: "+ {n} autres compétences…", German: "+ {n} weitere Fähigkeiten…"
+  },
+  'chart.load.low': {
+    English: "Low", Spanish: "Baja", Russian: "Низкая", Chinese: "低", Vietnamese: "Thấp", Arabic: "منخفض", Somali: "Hoose", French: "Faible", German: "Niedrig"
+  },
+  'chart.load.optimal': {
+    English: "Optimal", Spanish: "Óptima", Russian: "Оптимальная", Chinese: "适中", Vietnamese: "Tối ưu", Arabic: "مثالي", Somali: "Ku habboon", French: "Optimale", German: "Optimal"
+  },
+  'chart.load.high': {
+    English: "High", Spanish: "Alta", Russian: "Высокая", Chinese: "高", Vietnamese: "Cao", Arabic: "مرتفع", Somali: "Sare", French: "Élevée", German: "Hoch"
+  },
+  'chart.load.overload': {
+    English: "Overload", Spanish: "Sobrecarga", Russian: "Перегрузка", Chinese: "超负荷", Vietnamese: "Quá tải", Arabic: "حِمل زائد", Somali: "Culays xad-dhaaf ah", French: "Surcharge", German: "Überlastung"
+  },
+  'chart.avgLoad': {
+    English: "Avg Load", Spanish: "Carga media", Russian: "Средняя нагрузка", Chinese: "平均负荷", Vietnamese: "Tải trung bình", Arabic: "الحِمل المتوسط", Somali: "Culayska celceliska", French: "Charge moyenne", German: "Durchschn. Belastung"
+  },
+  'chart.peakLoad': {
+    English: "Peak Load", Spanish: "Carga máxima", Russian: "Пиковая нагрузка", Chinese: "峰值负荷", Vietnamese: "Tải cao nhất", Arabic: "ذروة الحِمل", Somali: "Culayska ugu sarreeya", French: "Charge maximale", German: "Spitzenbelastung"
+  },
+  'chart.radar.smartScore': {
+    English: "Smart Score", Spanish: "Puntuación inteligente", Russian: "Умный балл", Chinese: "智能分数", Vietnamese: "Điểm thông minh", Arabic: "النتيجة الذكية", Somali: "Dhibcaha caqliga", French: "Score intelligent", German: "Smart-Score"
+  },
+  'chart.radar.rawAccuracy': {
+    English: "Raw Accuracy", Spanish: "Precisión bruta", Russian: "Точность", Chinese: "原始正确率", Vietnamese: "Độ chính xác thô", Arabic: "الدقة الأولية", Somali: "Saxnaanta tooska ah", French: "Précision brute", German: "Rohgenauigkeit"
+  },
+  'chart.radar.streak': {
+    English: "Streak Length", Spanish: "Racha", Russian: "Длина серии", Chinese: "连续答对", Vietnamese: "Độ dài chuỗi", Arabic: "طول السلسلة", Somali: "Dhererka taxanaha", French: "Longueur de série", German: "Serienlänge"
+  },
+  'chart.radar.recovery': {
+    English: "Recovery Rate", Spanish: "Recuperación", Russian: "Восстановление", Chinese: "恢复率", Vietnamese: "Tỷ lệ phục hồi", Arabic: "معدل التعافي", Somali: "Heerka soo kabashada", French: "Taux de reprise", German: "Erholungsrate"
+  },
+  'chart.radar.consistency': {
+    English: "Consistency", Spanish: "Constancia", Russian: "Стабильность", Chinese: "稳定性", Vietnamese: "Tính ổn định", Arabic: "الثبات", Somali: "Joogtaynta", French: "Régularité", German: "Beständigkeit"
+  },
+  'chart.performance': {
+    English: "Performance", Spanish: "Desempeño", Russian: "Результаты", Chinese: "表现", Vietnamese: "Kết quả", Arabic: "الأداء", Somali: "Waxqabadka", French: "Performance", German: "Leistung"
+  },
+  'chart.onTrack': {
+    English: "On Track", Spanish: "Va bien", Russian: "По плану", Chinese: "进展顺利", Vietnamese: "Đúng hướng", Arabic: "على المسار", Somali: "Waddada saxda", French: "Sur la bonne voie", German: "Auf Kurs"
+  },
+  'chart.atRisk': {
+    English: "At Risk", Spanish: "En riesgo", Russian: "В зоне риска", Chinese: "有风险", Vietnamese: "Có nguy cơ", Arabic: "معرّض للخطر", Somali: "Khatar ku jira", French: "À risque", German: "Gefährdet"
+  },
+  'chart.axis.struggle': {
+    English: "Struggle level (how hard recent work felt)", Spanish: "Nivel de dificultad (qué tan difícil fue el trabajo reciente)", Russian: "Уровень трудности (насколько тяжело давалась недавняя работа)", Chinese: "吃力程度（近期练习有多难）", Vietnamese: "Mức độ khó khăn (bài gần đây khó thế nào)", Arabic: "مستوى الصعوبة (مدى صعوبة العمل الأخير)", Somali: "Heerka dhibaatada (sida ay u adkayd shaqadii dhowayd)", French: "Niveau de difficulté (ressenti sur le travail récent)", German: "Anstrengung (wie schwer sich die letzte Arbeit anfühlte)"
+  },
+  'chart.axis.mastery': {
+    English: "Skill mastery", Spanish: "Dominio de habilidades", Russian: "Освоение навыков", Chinese: "技能掌握", Vietnamese: "Mức thành thạo", Arabic: "إتقان المهارة", Somali: "Xafidaadda xirfadda", French: "Maîtrise des compétences", German: "Beherrschung"
+  },
+  'chart.student': {
+    English: "Student", Spanish: "Estudiante", Russian: "Ученик", Chinese: "学生", Vietnamese: "Học sinh", Arabic: "الطالب", Somali: "Arday", French: "Élève", German: "Kind"
+  },
+  'chart.tip.mastery': {
+    English: "mastery", Spanish: "dominio", Russian: "освоение", Chinese: "掌握", Vietnamese: "thành thạo", Arabic: "الإتقان", Somali: "xafidaad", French: "maîtrise", German: "Beherrschung"
+  },
+  'chart.tip.struggle': {
+    English: "struggle", Spanish: "dificultad", Russian: "трудность", Chinese: "吃力", Vietnamese: "khó khăn", Arabic: "الصعوبة", Somali: "dhibaato", French: "difficulté", German: "Anstrengung"
+  },
+  'chart.tip.clickProfile': {
+    English: "click for profile", Spanish: "clic para ver el perfil", Russian: "нажмите, чтобы открыть профиль", Chinese: "点击查看资料", Vietnamese: "nhấp để xem hồ sơ", Arabic: "انقر لعرض الملف", Somali: "guji si aad u aragto astaanta", French: "cliquer pour le profil", German: "für Profil klicken"
+  },
+  'chart.mastered': {
+    English: "Mastered", Spanish: "Dominado", Russian: "Освоено", Chinese: "已掌握", Vietnamese: "Thành thạo", Arabic: "متقن", Somali: "La xafiday", French: "Maîtrisé", German: "Gemeistert"
+  },
+  'chart.learning': {
+    English: "Learning", Spanish: "Aprendiendo", Russian: "Изучается", Chinese: "学习中", Vietnamese: "Đang học", Arabic: "قيد التعلّم", Somali: "Barasho", French: "En cours", German: "Wird gelernt"
+  },
+  'chart.needsWork': {
+    English: "Needs Work", Spanish: "Necesita práctica", Russian: "Нужна работа", Chinese: "需加强", Vietnamese: "Cần luyện thêm", Arabic: "يحتاج عملًا", Somali: "U baahan shaqo", French: "À travailler", German: "Braucht Übung"
+  },
+  'chart.strong': {
+    English: "Strong", Spanish: "Sólido", Russian: "Прочно", Chinese: "牢固", Vietnamese: "Vững", Arabic: "قوي", Somali: "Adag", French: "Solide", German: "Gefestigt"
+  },
+  'chart.fading': {
+    English: "Fading", Spanish: "Olvidándose", Russian: "Забывается", Chinese: "渐忘", Vietnamese: "Đang quên", Arabic: "يتلاشى", Somali: "Libdhaya", French: "S’estompe", German: "Verblassend"
+  },
+  'chart.needsReview': {
+    English: "Needs Review", Spanish: "Para repasar", Russian: "Нужно повторить", Chinese: "需复习", Vietnamese: "Cần ôn lại", Arabic: "يحتاج مراجعة", Somali: "U baahan dib-u-eegis", French: "À revoir", German: "Zu wiederholen"
+  },
+  'chart.students': {
+    English: "Students", Spanish: "Estudiantes", Russian: "Ученики", Chinese: "学生", Vietnamese: "Học sinh", Arabic: "الطلاب", Somali: "Ardayda", French: "Élèves", German: "Kinder"
+  },
+  'chart.axis.pLearned': {
+    English: "Mastery estimate range (%)", Spanish: "Rango de dominio estimado (%)", Russian: "Диапазон оценки освоения (%)", Chinese: "掌握程度估计区间（%）", Vietnamese: "Khoảng ước tính thành thạo (%)", Arabic: "نطاق تقدير الإتقان (%)", Somali: "Xadka qiyaasta xafidaadda (%)", French: "Plage de maîtrise estimée (%)", German: "Bereich der Beherrschungsschätzung (%)"
+  },
+  'chart.axis.studentCount': {
+    English: "Student count", Spanish: "Número de estudiantes", Russian: "Число учеников", Chinese: "学生人数", Vietnamese: "Số học sinh", Arabic: "عدد الطلاب", Somali: "Tirada ardayda", French: "Nombre d’élèves", German: "Anzahl Kinder"
+  },
+  'chart.tip.students': {
+    English: "{n} students", Spanish: "{n} estudiantes", Russian: "Учеников: {n}", Chinese: "{n}名学生", Vietnamese: "{n} học sinh", Arabic: "عدد الطلاب: {n}", Somali: "{n} arday", French: "{n} élèves", German: "{n} Kinder"
+  },
+  'chart.tip.students_one': {
+    English: "1 student", Spanish: "1 estudiante", Russian: "Учеников: 1", Chinese: "1名学生", Vietnamese: "1 học sinh", Arabic: "طالب واحد", Somali: "1 arday", French: "1 élève", German: "1 Kind"
+  },
 };
 
 ;

@@ -8,6 +8,15 @@
 (function () {
   'use strict';
 
+  // Chart text in the page's language: i18n.js follows the parent's language on
+  // parent pages and the user's own elsewhere. English when the engine or a key
+  // is missing. `n` picks a key's `_one` form for a count of 1.
+  function T(key, english, params, n) {
+    var I = window.MathmatixI18n;
+    var text = (I && n === 1 && I.t(key + '_one')) || (I && I.t(key)) || english;
+    return params ? String(text).replace(/\{(\w+)\}/g, function (m, k) { return params[k] != null ? params[k] : ''; }) : text;
+  }
+
   /* ------------------------------------------------------------------ */
   /*  Constants & helpers                                                */
   /* ------------------------------------------------------------------ */
@@ -109,12 +118,12 @@
         var pts = (ds.data || []).slice(0, 15).map(function (v, i) {
           if (v && typeof v === 'object') {
             if (v.name) return v.name + ' (' + Math.round((v.y || 0) * 100) + '%)';
-            return (labels[i] || ('point ' + (i + 1))) + ': ' + (v.y != null ? v.y : v.x);
+            return (labels[i] || (T('chart.point', 'point') + ' ' + (i + 1))) + ': ' + (v.y != null ? v.y : v.x);
           }
           var num = typeof v === 'number' ? (Math.abs(v) <= 1 && v !== 0 ? Math.round(v * 100) + '%' : Math.round(v * 10) / 10) : v;
           return (labels[i] != null ? labels[i] + ': ' : '') + num;
         });
-        if (pts.length) parts.push((ds.label ? ds.label + ' — ' : '') + pts.join(', ') + ((ds.data || []).length > 15 ? ', and more' : ''));
+        if (pts.length) parts.push((ds.label ? ds.label + ' — ' : '') + pts.join(', ') + ((ds.data || []).length > 15 ? ', ' + T('chart.andMore', 'and more') : ''));
       });
       if (parts.length) canvas.setAttribute('aria-label', (base ? base.replace(/[.\s]+$/, '') + '. ' : '') + parts.join('. '));
     } catch (e) { /* a11y description must never break a chart */ }
@@ -140,7 +149,7 @@
     ctx.fillStyle = COLORS.grayDark;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('No data yet', canvas.width / 2, canvas.height / 2);
+    ctx.fillText(T('chart.noData', 'No data yet'), canvas.width / 2, canvas.height / 2);
     ctx.restore();
   }
 
@@ -284,10 +293,10 @@
     // Legend
     var ly = headerH + maxRows * cellH + 10;
     var legendItems = [
-      { label: 'Mastered (\u22650.8)', color: COLORS.success },
-      { label: 'Learning (0.4-0.8)', color: COLORS.warning },
-      { label: 'Needs work (<0.4)', color: COLORS.danger },
-      { label: 'No data', color: COLORS.grayLight },
+      { label: T('chart.heat.mastered', 'Mastered') + ' (\u22650.8)', color: COLORS.success },
+      { label: T('chart.heat.learning', 'Learning') + ' (0.4-0.8)', color: COLORS.warning },
+      { label: T('chart.heat.needsWork', 'Needs work') + ' (<0.4)', color: COLORS.danger },
+      { label: T('chart.heat.noData', 'No data'), color: COLORS.grayLight },
     ];
     ctx.font = '10px ' + FONT_FAMILY;
     ctx.textBaseline = 'middle';
@@ -396,7 +405,7 @@
         labels: labels,
         datasets: [
           {
-            label: 'Retrievability',
+            label: T('chart.retrievability', 'Recall'),
             data: values,
             backgroundColor: barColors,
             borderRadius: 3,
@@ -423,7 +432,7 @@
           tooltip: {
             callbacks: {
               label: function (tip) {
-                return 'Retrievability: ' + formatProbability(tip.raw);
+                return T('chart.retrievability', 'Recall') + ': ' + formatProbability(tip.raw);
               },
             },
           },
@@ -485,7 +494,7 @@
                 cctx.fillStyle = COLORS.grayDark;
                 cctx.textAlign = 'right';
                 cctx.fillText(
-                  '+ ' + (sorted.length - maxShow) + ' more skills\u2026',
+                  T('chart.moreSkills', '+ {n} more skills…', { n: sorted.length - maxShow }),
                   chart.width - 10,
                   chart.height - 4
                 );
@@ -540,10 +549,10 @@
         var right = xScale.right;
 
         var zones = [
-          { lo: 0, hi: 0.4, color: 'rgba(22,200,109,0.10)', label: 'Low' },
-          { lo: 0.4, hi: 0.65, color: 'rgba(52,152,219,0.10)', label: 'Optimal' },
-          { lo: 0.65, hi: 0.8, color: 'rgba(243,156,18,0.10)', label: 'High' },
-          { lo: 0.8, hi: 1.0, color: 'rgba(231,76,60,0.10)', label: 'Overload' },
+          { lo: 0, hi: 0.4, color: 'rgba(22,200,109,0.10)', label: T('chart.load.low', 'Low') },
+          { lo: 0.4, hi: 0.65, color: 'rgba(52,152,219,0.10)', label: T('chart.load.optimal', 'Optimal') },
+          { lo: 0.65, hi: 0.8, color: 'rgba(243,156,18,0.10)', label: T('chart.load.high', 'High') },
+          { lo: 0.8, hi: 1.0, color: 'rgba(231,76,60,0.10)', label: T('chart.load.overload', 'Overload') },
         ];
 
         cctx.save();
@@ -570,7 +579,7 @@
         labels: labels,
         datasets: [
           {
-            label: 'Avg Load',
+            label: T('chart.avgLoad', 'Avg Load'),
             data: avgData,
             borderColor: COLORS.info,
             backgroundColor: 'rgba(52,152,219,0.1)',
@@ -581,7 +590,7 @@
             borderWidth: 2,
           },
           {
-            label: 'Peak Load',
+            label: T('chart.peakLoad', 'Peak Load'),
             data: peakData,
             borderColor: COLORS.danger,
             backgroundColor: 'rgba(231,76,60,0.1)',
@@ -698,10 +707,14 @@
     var chart = new Chart(ctx, {
       type: 'radar',
       data: {
-        labels: ['Smart Score', 'Raw Accuracy', 'Streak Length', 'Recovery Rate', 'Consistency'],
+        labels: [
+          T('chart.radar.smartScore', 'Smart Score'), T('chart.radar.rawAccuracy', 'Raw Accuracy'),
+          T('chart.radar.streak', 'Streak Length'), T('chart.radar.recovery', 'Recovery Rate'),
+          T('chart.radar.consistency', 'Consistency'),
+        ],
         datasets: [
           {
-            label: 'Performance',
+            label: T('chart.performance', 'Performance'),
             data: radarData,
             backgroundColor: hexToRGBA(pc, 0.2),
             borderColor: pc,
@@ -837,14 +850,14 @@
       data: {
         datasets: [
           {
-            label: 'On Track',
+            label: T('chart.onTrack', 'On Track'),
             data: mapPoints(safeStudents),
             backgroundColor: hexToRGBA(COLORS.success, 0.6),
             borderColor: COLORS.success,
             borderWidth: 1,
           },
           {
-            label: 'At Risk',
+            label: T('chart.atRisk', 'At Risk'),
             data: mapPoints(riskStudents),
             backgroundColor: hexToRGBA(COLORS.danger, 0.6),
             borderColor: COLORS.danger,
@@ -857,7 +870,7 @@
           x: cleanAxis({
             min: 0,
             max: 1,
-            title: { display: true, text: 'Struggle level (how hard recent work felt)', font: { family: FONT_FAMILY } },
+            title: { display: true, text: T('chart.axis.struggle', 'Struggle level (how hard recent work felt)'), font: { family: FONT_FAMILY } },
             ticks: {
               callback: function (v) {
                 return (v * 100) + '%';
@@ -867,7 +880,7 @@
           y: cleanAxis({
             min: 0,
             max: 1,
-            title: { display: true, text: 'Skill mastery', font: { family: FONT_FAMILY } },
+            title: { display: true, text: T('chart.axis.mastery', 'Skill mastery'), font: { family: FONT_FAMILY } },
             ticks: {
               callback: function (v) {
                 return (v * 100) + '%';
@@ -892,12 +905,12 @@
               label: function (tip) {
                 var pt = tip.raw;
                 return (
-                  (pt.name || 'Student') +
-                  ' — mastery ' +
+                  (pt.name || T('chart.student', 'Student')) +
+                  ' — ' + T('chart.tip.mastery', 'mastery') + ' ' +
                   formatProbability(pt.y) +
-                  ', struggle ' +
+                  ', ' + T('chart.tip.struggle', 'struggle') + ' ' +
                   formatProbability(pt.x) +
-                  (pt.id && window.TeacherDashboard && window.TeacherDashboard.openProfile ? ' (click for profile)' : '')
+                  (pt.id && window.TeacherDashboard && window.TeacherDashboard.openProfile ? ' (' + T('chart.tip.clickProfile', 'click for profile') + ')' : '')
                 );
               },
             },
@@ -967,7 +980,7 @@
     var chart = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ['Mastered', 'Learning', 'Needs Work'],
+        labels: [T('chart.mastered', 'Mastered'), T('chart.learning', 'Learning'), T('chart.needsWork', 'Needs Work')],
         datasets: [
           {
             data: [totalMastered, totalLearning, totalNeedsWork],
@@ -1023,7 +1036,7 @@
         COLORS.grayDark +
         ';font:13px ' +
         FONT_FAMILY +
-        ';padding:12px;">No data yet</div>';
+        ';padding:12px;">' + T('chart.noData', 'No data yet') + '</div>';
       return container;
     }
 
@@ -1048,9 +1061,9 @@
       ';';
 
     var segments = [
-      { count: strong, color: COLORS.success, label: 'Strong' },
-      { count: fading, color: COLORS.warning, label: 'Fading' },
-      { count: needsReview, color: COLORS.danger, label: 'Needs Review' },
+      { count: strong, color: COLORS.success, label: T('chart.strong', 'Strong') },
+      { count: fading, color: COLORS.warning, label: T('chart.fading', 'Fading') },
+      { count: needsReview, color: COLORS.danger, label: T('chart.needsReview', 'Needs Review') },
     ];
 
     segments.forEach(function (seg) {
@@ -1134,7 +1147,7 @@
         labels: labels,
         datasets: [
           {
-            label: 'Students',
+            label: T('chart.students', 'Students'),
             data: values,
             backgroundColor: barColors,
             borderRadius: 3,
@@ -1144,11 +1157,11 @@
       options: baseOptions({
         scales: {
           x: cleanAxis({
-            title: { display: true, text: 'pLearned Range (%)', font: { family: FONT_FAMILY } },
+            title: { display: true, text: T('chart.axis.pLearned', 'Mastery estimate range (%)'), font: { family: FONT_FAMILY } },
             grid: { display: false },
           }),
           y: cleanAxis({
-            title: { display: true, text: 'Student Count', font: { family: FONT_FAMILY } },
+            title: { display: true, text: T('chart.axis.studentCount', 'Student count'), font: { family: FONT_FAMILY } },
             beginAtZero: true,
             ticks: { precision: 0 },
           }),
@@ -1158,7 +1171,7 @@
           tooltip: {
             callbacks: {
               label: function (tip) {
-                return tip.raw + ' student' + (tip.raw !== 1 ? 's' : '');
+                return T('chart.tip.students', '{n} students', { n: tip.raw }, tip.raw);
               },
             },
           },
