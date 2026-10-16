@@ -176,16 +176,53 @@
       document.dispatchEvent(new CustomEvent('mm:skill-proved', { detail: { skillId: skillId } }));
     } else {
       res.appendChild(el('div', 'mm-ch-result-big', 'Found the gap'));
-      res.appendChild(el('div', 'mm-ch-result-sub',
-        (result.correct != null ? result.correct + ' of ' + result.total + '. ' : '') +
-        (result.message || "Let's close it together — nothing lost.")));
+      // The server's message already carries the score ("3 of 4. Found the
+      // gap…"); prefixing it again printed "3 of 4. 3 of 4.".
+      res.appendChild(el('div', 'mm-ch-result-sub', result.message ||
+        ((result.correct != null ? result.correct + ' of ' + result.total + '. ' : '') +
+          "Let's close it together — nothing lost.")));
     }
     card.appendChild(res);
+    var review = renderReview(result.items);
+    if (review) { card.appendChild(review); typeset(review); }
+    card.appendChild(footer);   // the button follows the results, not above them
     var done = el('button', 'mm-ch-cancel', result.passed ? 'Keep going' : 'Let’s work on it');
     done.type = 'button';
     done.addEventListener('click', function () { card.remove(); });
     footer.appendChild(done);
     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Per-item results. A score with nothing behind it ("2 of 5") is a verdict the
+  // student cannot check — the audit's correct run looked like a learning gap.
+  var STATUS = {
+    correct: { icon: '✓', note: null },
+    incorrect: { icon: '✗', note: null },
+    incomplete: { icon: '✗', note: 'Every part counts — this one asked for more than the final answer.' },
+    'not-graded': { icon: '–', note: 'We couldn’t check this one automatically, so it didn’t count against you.' }
+  };
+
+  function renderReview(items) {
+    if (!Array.isArray(items) || !items.length) return null;
+    var wrap = el('ol', 'mm-ch-review');
+    wrap.setAttribute('aria-label', 'Your answers');
+    items.forEach(function (item) {
+      var st = STATUS[item.status] || STATUS.incorrect;
+      var li = el('li', 'mm-ch-review-item is-' + (item.status || 'incorrect'));
+      var mark = el('span', 'mm-ch-review-mark', st.icon);
+      mark.setAttribute('aria-label', item.status === 'not-graded' ? 'not graded' : item.correct ? 'correct' : 'not correct');
+      li.appendChild(mark);
+      var body = el('div', 'mm-ch-review-body');
+      if (item.prompt) body.appendChild(el('div', 'mm-ch-review-prompt', item.prompt));
+      body.appendChild(el('div', 'mm-ch-review-line', 'You: ' + (item.submitted || '—')));
+      if (!item.correct && item.expected && item.status !== 'not-graded') {
+        body.appendChild(el('div', 'mm-ch-review-line mm-ch-review-key', 'Answer: ' + item.expected));
+      }
+      if (st.note) body.appendChild(el('div', 'mm-ch-review-note', st.note));
+      li.appendChild(body);
+      wrap.appendChild(li);
+    });
+    return wrap;
   }
 
   window.MMChallengeCard = { launch: launch };
