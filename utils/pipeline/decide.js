@@ -334,6 +334,13 @@ function namesKey(text, key) {
 }
 
 const NEXT_ASK_RX = /^(?:yes|yeah|yep|yup|sure|ok(?:ay)?|ready|next|let'?s (?:go|do it|keep going)|another|go(?: ahead)?|sounds good|i'?m ready)\b[^?]{0,30}$/i;
+// An explicit move-on request, at any length. The short-reply form above
+// missed the one that matters most: "Ready. Please mark module 1 question 12
+// reviewed and take me to the next missed question." — 89 characters, so no
+// directive fired, and the tutor (told only "present the question / work one
+// step at a time") asked them to walk through the item it had just confirmed
+// (student audit, 2026-10-15).
+const MOVE_ON_RX = /\b(?:(?:the\s+)?next\s+(?:missed\s+|review\s+)?(?:question|one|problem|item|miss)|move\s+on|moving\s+on|mark\b[^.?!]{0,40}\b(?:reviewed|done|complete|finished)|(?:take|bring|send)\s+me\s+to\s+the\s+next|(?:go|skip)\s+(?:on\s+)?to\s+the\s+next)\b/i;
 
 /**
  * The miss is SOLVED — this is the turn to advance.
@@ -361,7 +368,7 @@ function reviewSolvedDirective(miss, observation, context) {
     return `REVIEW QUESTION SOLVED — the student just gave ${label}, the stored key. Once your own derivation agrees, confirm it plainly in a sentence or two and name the move that cracked it. ${advance} Do NOT ask whether they want another problem, and do NOT write a new question yourself.`;
   }
 
-  if (text.length <= 40 && NEXT_ASK_RX.test(text)) {
+  if ((text.length <= 40 && NEXT_ASK_RX.test(text)) || MOVE_ON_RX.test(text)) {
     const prev = lastAssistantText(context);
     const letterHit = key.letters.some((l) => new RegExp(`\\b(?:option|choice|answer(?: is)?)\\s*\\(?${l}\\b`, 'i').test(prev));
     // Choice TEXT alone is too loose when there are letters — "(x+2)(x−5),
@@ -369,7 +376,7 @@ function reviewSolvedDirective(miss, observation, context) {
     // grid-in has no letter, so there the confirmed value is all we have.
     const textHit = !key.letters.length && !!key.text && flatAnswer(prev).includes(flatAnswer(key.text));
     if (letterHit || (textHit && /\b(?:right|correct|exactly|got it|nailed|yes)\b/i.test(prev))) {
-      return `REVIEW QUESTION ALREADY SOLVED — your last reply confirmed ${label} and the student is asking to move on. ${advance} Do NOT invent a practice question, and do NOT re-pose the one they just finished.`;
+      return `REVIEW QUESTION ALREADY SOLVED — your last reply confirmed ${label} and the student is asking to move on. ${advance} Do NOT invent a practice question, do NOT re-pose the one they just finished, and do NOT ask them to walk through or explain it again — it is DONE; the generic "work one step at a time" guidance below does not apply to it.`;
     }
   }
   return null;

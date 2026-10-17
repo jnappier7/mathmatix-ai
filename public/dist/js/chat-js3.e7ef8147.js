@@ -3851,7 +3851,11 @@ class CourseManager {
                 : 0;
             let label, p;
             if (bc.phase === 'review') {
-                label = `Round ${bc.round || 1} › Reviewing your misses`;
+                // Say what the bar measures — questions reviewed, not course
+                // chapters — and match the review panel's own count.
+                label = qTotal
+                    ? `Round ${bc.round || 1} › Reviewed ${qDone} of ${qTotal} missed questions`
+                    : `Round ${bc.round || 1} › Reviewing your misses`;
                 p = qTotal ? Math.round((100 * qDone) / qTotal) : 0;
             } else if (bc.phase === 'reassess') {
                 label = `Round ${bc.round || 1} › Ready to re-test`;
