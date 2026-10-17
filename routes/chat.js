@@ -10,6 +10,7 @@ const logger = log.child({ service: 'chat-service' });
 const { isAuthenticated } = require('../middleware/auth');
 const { promptInjectionFilter, tutorVoiceId } = require('../middleware/promptInjection');
 const { userHasRole } = require('../utils/roleQuery');
+const { shouldCannedBlock } = require('../utils/contentFilter');
 
 // Pipeline internals for the response: admins who ask with ?debug=1 only.
 function debugPipelinePayload(req, pipelineResult) {
@@ -349,13 +350,11 @@ async function runStudentTurn(req, res) {
     // and emits <SAFETY_CONCERN>, which persist turns into sendSafetyConcernAlert.
     // A canned "that topic isn't appropriate" here swallowed the disclosure and
     // the alert never fired.
-    const inappropriatePatterns = [
-        /\b(sex|porn|penis|vagina|breast|dick|cock|pussy|fuck|shit|ass|damn|bitch)\b/i,
-        /\b(drug|weed|cocaine|alcohol|beer|wine|drunk)\b/i
-    ];
-
+    // Keyword block — but a disclosure of harm ALWAYS reaches the tutor, whose
+    // prompt answers with care and emits <SAFETY_CONCERN> → the safety alert.
+    // See utils/contentFilter.js for why (abuse disclosures were swallowed).
     const messageClean = message.toLowerCase();
-    const containsInappropriate = inappropriatePatterns.some(pattern => pattern.test(messageClean));
+    const containsInappropriate = shouldCannedBlock(message);
 
     if (containsInappropriate) {
         logger.warn('Safety filter triggered', { userId, messagePreview: message.substring(0, 50) });

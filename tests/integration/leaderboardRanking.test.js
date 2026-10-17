@@ -32,7 +32,9 @@ beforeAll(async () => {
 afterAll(async () => { await mongoose.disconnect(); if (mem) await mem.stop(); });
 afterEach(async () => { await User.deleteMany({}); });
 
-const make = (o) => User.collection.insertOne({ username: o.firstName.toLowerCase(), lastName: 'X', ...o });
+// A unique email per user: users.email has a unique index, and whether it is
+// built before these raw inserts is a race — two null emails collided in CI.
+const make = (o) => User.collection.insertOne({ username: o.firstName.toLowerCase(), lastName: 'X', email: `${o.firstName.toLowerCase()}@lb.test`, ...o });
 
 test('ranks are 1..n in board order, and staff holding student are excluded', async () => {
   await make({ firstName: 'Ava', role: 'student', roles: ['student'], level: 9, xp: 900 });
