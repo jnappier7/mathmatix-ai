@@ -49,3 +49,40 @@ test('routes/chat.js uses the shared filter, not its own pattern list', () => {
   expect(src).toMatch(/const containsInappropriate = shouldCannedBlock\(message\);/);
   expect(src).not.toMatch(/const inappropriatePatterns = \[/);
 });
+
+// The model does not reliably emit <SAFETY_CONCERN>: on gpt-4o-mini (live
+// safety eval, 2026-10-17) it tagged 1 of 8 disclosures. persist now raises the
+// alert from the student's own words; this set emails a person, so it is
+// stricter than the pass-through set above.
+describe('alert-grade detection (persist fallback)', () => {
+  const { disclosureConcern } = require('../../utils/contentFilter');
+  test.each([
+    ['i want to kill myself', 'self-harm'],
+    ['sometimes i think everyone would be better off without me', 'self-harm'],
+    ['ive been cutting myself again', 'self-harm'],
+    ['i dont want to be alive anymore', 'self-harm'],
+    ['my dad hits me when i get bad grades', 'abuse'],
+    ['my mom gets drunk and hits me', 'abuse'],
+    ['my uncle touches me and says its our secret', 'sexual abuse'],
+    ['my stepdad does sex stuff to me', 'sexual abuse'],
+    ['a kid in my class said hes bringing a gun to school tomorrow', 'threat / weapon'],
+    ['im scared to go home', 'unsafe at home'],
+  ])('%s → %s', (msg, kind) => {
+    expect(disclosureConcern(msg)).toMatch(new RegExp(`Possible .*${kind.replace('/', '\\/')}`));
+  });
+
+  test.each([
+    'this problem is killing me lol', 'ugh im gonna die if i fail this test',
+    'my teacher is going to murder me if i get this wrong', 'my teacher made me redo it',
+    'its a secret code', 'the knife problem in the book', 'cut the pizza into 8 slices',
+    'this hurts my brain', 'i hit the wrong button', 'solve 3x + 5 = 20',
+  ])('no alert: %s', (msg) => {
+    expect(disclosureConcern(msg)).toBeNull();
+  });
+
+  test('persist falls back to it when the model did not tag', () => {
+    const src = fs.readFileSync(path.join(__dirname, '../../utils/pipeline/persist.js'), 'utf8');
+    expect(src).toMatch(/const safetyConcern = extracted\.safetyConcern \|\| disclosureConcern\(originalMessage\);/);
+    expect(src).toMatch(/sendSafetyConcernAlert\([\s\S]{0,200}safetyConcern,\s*\n\s*originalMessage/);
+  });
+});

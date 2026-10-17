@@ -37,6 +37,36 @@ const DISCLOSURE_PATTERNS = [
   /\bnot safe\b|\bunsafe\b|\b(don'?t|do not|never) feel safe\b/i,
 ];
 
+// ── Alert-grade detection ──
+// looksLikeDisclosure() above is deliberately broad: it only decides whether
+// the TUTOR sees a message. Raising an alert emails a person, so this set is
+// stricter — clear statements of self-harm, abuse, sexual abuse, a threat or
+// weapon, or not being safe at home. It exists because the model does not
+// reliably emit <SAFETY_CONCERN>: on gpt-4o-mini (live safety eval,
+// 2026-10-17) 7 of 8 disclosures got a kind reply and NO tag, so no adult was
+// ever told. The server now raises the alert itself when it can see one.
+const ALERT_PATTERNS = [
+  ['self-harm', /\b(kill(ing)?|hurt(ing)?|harm(ing)?|cut(ting)?|starv(e|ing))\s+(my\s*self|myself)\b/i],
+  ['self-harm', /\b(suicid\w*|self[- ]?harm\w*|want(ed)? to die|wanna die|end (it all|my life)|don'?t want to (be alive|live|exist)|better off (dead|without me)|no reason to live|been cutting)/i],
+  ['abuse', /\b(hits?|hitting|beats?|beating|slaps?|kicks?|chokes?|punch(es)?|burns?|hurts?)\s+me\b/i],
+  ['sexual abuse', /\b(touch(es|ed|ing)?|grab(s|bed)?)\s+me\b|\b(molest\w*|rap(e|ed)|sexually (abus|assault)\w*|sex stuff|sexual stuff)\b/i],
+  ['abuse', /\b(abus(e|ed|ing)|assault(ed)?|groom(ed|ing))\b/i],
+  ['threat / weapon', /\b(gun|weapon|knife|bomb)\b.*\b(school|bring\w*|tomorrow|shoot\w*|class)\b/i],
+  ['threat', /\bsaid (he|she|they)'?d? (hurt|kill)\b|\bthreaten(ed|s|ing)? (to (hurt|kill)|me)\b/i],
+  ['unsafe at home', /\b(scared|afraid|terrified) (to go home|of (my|him|her|them|going home))\b|\b(don'?t|do not|never) feel safe\b|\bnot safe (at home|there)\b/i],
+];
+
+/**
+ * A description for the safety alert when the student's own words disclose
+ * harm, else null. persist raises the alert from this when the model's reply
+ * carried no <SAFETY_CONCERN> tag.
+ */
+function disclosureConcern(message) {
+  const m = String(message || '');
+  const kinds = [...new Set(ALERT_PATTERNS.filter(([, re]) => re.test(m)).map(([k]) => k))];
+  return kinds.length ? `Possible ${kinds.join(' / ')} disclosure (detected from the student's message)` : null;
+}
+
 function looksLikeDisclosure(message) {
   const m = String(message || '');
   return DISCLOSURE_PATTERNS.some((re) => re.test(m));
@@ -49,4 +79,4 @@ function shouldCannedBlock(message) {
   return !looksLikeDisclosure(message);
 }
 
-module.exports = { shouldCannedBlock, looksLikeDisclosure, INAPPROPRIATE_PATTERNS };
+module.exports = { shouldCannedBlock, looksLikeDisclosure, disclosureConcern, INAPPROPRIATE_PATTERNS };

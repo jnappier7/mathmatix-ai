@@ -17,6 +17,7 @@
 const BRAND_CONFIG = require('../brand');
 const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
+const { disclosureConcern } = require('../contentFilter');
 const { parseCleanProblem, verifyAnswer } = require('../mathSolver');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { classifyTurn, problemKey, solveAnswer, isRepeatSolve, appendSolve, liveTextsFor } = require('./solveCredit');
@@ -182,11 +183,16 @@ async function persist(params) {
   const firstTry = !isSameProblemRetry(priorProblemState, diagnosis);
 
   // ── 2. Safety concern handling ──
-  if (extracted.safetyConcern) {
-    console.error(`[Persist] SAFETY CONCERN - User ${user._id} (${user.firstName}) - ${extracted.safetyConcern}`);
+  // The model's <SAFETY_CONCERN> tag first; else the server's own reading of
+  // the student's words. The model does not reliably tag — on gpt-4o-mini it
+  // answered 7 of 8 disclosures kindly and tagged ONE (live safety eval,
+  // 2026-10-17), so without this fallback no adult was told.
+  const safetyConcern = extracted.safetyConcern || disclosureConcern(originalMessage);
+  if (safetyConcern) {
+    console.error(`[Persist] SAFETY CONCERN - User ${user._id} (${user.firstName}) - ${safetyConcern}`);
     sendSafetyConcernAlert(
       { userId: user._id.toString(), firstName: user.firstName, lastName: user.lastName, username: user.username, gradeLevel: user.gradeLevel },
-      extracted.safetyConcern,
+      safetyConcern,
       originalMessage
     ).catch(err => console.error('Failed to send safety alert:', err));
   }
