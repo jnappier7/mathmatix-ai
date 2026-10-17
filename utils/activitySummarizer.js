@@ -186,13 +186,17 @@ function detectTopic(messages) {
         'polynomials': /polynomial|monomial|binomial|trinomial|degree/i,
     };
 
+    // Score every topic by how often it shows up and take the strongest. First
+    // match used to win, and 'linear equation' sits early with /solve.*equation/
+    // — which matches nearly any equation — so an exponent review
+    // ("4^(x+1) = 32 … 2^(2x+2) … 2^5") was summarized as "linear equation"
+    // (student audit, 2026-10-15). Ties keep the list's order.
+    let best = null;
     for (const [topic, regex] of Object.entries(topics)) {
-        if (regex.test(recentText)) {
-            return topic;
-        }
+        const hits = (recentText.match(new RegExp(regex.source, 'gi')) || []).length;
+        if (hits > 0 && (!best || hits > best.hits)) best = { topic, hits };
     }
-
-    return 'mathematics';
+    return best ? best.topic : 'mathematics';
 }
 
 /**

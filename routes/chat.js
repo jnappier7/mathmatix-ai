@@ -3271,18 +3271,34 @@ async function handleGreetingRequest(req, res, userId) {
                 strugglingWith = activeConversation.strugglingWith;
             }
         } else {
-            // Check archived conversations
-            const lastArchived = await Conversation.findOne({
-                userId: user._id,
-                summary: { $ne: null }
-            }).sort({ lastActivity: -1 });
+            // The session the student JUST left — whether or not it has a
+            // summary yet. Filtering on `summary: { $ne: null }` skipped a session
+            // that ended seconds ago (course exit writes no summary) and reached
+            // back to an older one: leaving an exponents review produced "You
+            // wrapped up a session on quadratic equations and simplifying
+            // expressions" — a session from two hours earlier (student audit,
+            // 2026-10-15). No summary yet → describe it from its own name and
+            // messages; never borrow another session's.
+            const lastConv = await Conversation.findOne(
+                { userId: user._id, _id: { $ne: activeConversation._id }, 'messages.1': { $exists: true } },
+                { summary: 1, currentTopic: 1, conversationName: 1, conversationType: 1, strugglingWith: 1, messages: { $slice: -6 } }
+            ).sort({ lastActivity: -1 });
 
-            if (lastArchived) {
-                if (lastArchived.summary) {
-                    lastSessionContext = `Last session: ${lastArchived.summary}`;
+            if (lastConv) {
+                if (lastConv.summary) {
+                    lastSessionContext = `Last session: ${lastConv.summary}`;
+                } else {
+                    const { detectTopic } = require('../utils/activitySummarizer');
+                    const topic = detectTopic(lastConv.messages || []);
+                    const named = lastConv.conversationType === 'topic' && lastConv.conversationName;
+                    if (named) {
+                        lastSessionContext = `Last time we worked in ${lastConv.conversationName}${topic !== 'mathematics' ? ` (${topic})` : ''}.`;
+                    } else if (topic !== 'mathematics') {
+                        lastSessionContext = `Last time we worked on ${topic}.`;
+                    }
                 }
-                if (lastArchived.strugglingWith) {
-                    strugglingWith = lastArchived.strugglingWith;
+                if (lastConv.strugglingWith) {
+                    strugglingWith = lastConv.strugglingWith;
                 }
             }
         }
