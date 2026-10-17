@@ -81,3 +81,35 @@ describe('course site brand', () => {
     expect(applyBrand(html, prefix)).toBe(html);
   });
 });
+
+/**
+ * brand.css is linked last on every course page, so any token it shares a name with wins there.
+ * The Two-Minute Drill pages define their own --ink (dark type on the white play card) and
+ * --muted (light labels on the night ground); brand.css's dark-mode --ink:#FFF once turned every
+ * question white on white. brand.css restores the drill's values on pages that carry the drill's
+ * touchdown overlay. This keeps that hook present and the restored values equal to the page's own,
+ * so a publish that changes either fails here instead of on a student's phone.
+ */
+describe('Two-Minute Drill pages keep their own ink under brand.css', () => {
+  const css = fs.readFileSync(BRAND_CSS, 'utf8');
+  const rule = /:root:has\(body > #td\.td\)\{([^}]*)\}/.exec(css);
+  const drills = pages.filter((f) => /two-minute-drill\.html$/.test(f));
+  const token = (text, name) => (new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{3,8})`).exec(text) || [])[1];
+
+  test('brand.css carries the restore rule', () => {
+    expect(rule).toBeTruthy();
+  });
+
+  test('there are drill pages to check', () => {
+    expect(drills.length).toBeGreaterThan(0);
+  });
+
+  test.each(drills.map((f) => [rel(f), f]))('%s carries the hook and the values brand.css restores', (_name, file) => {
+    const html = fs.readFileSync(file, 'utf8');
+    expect(html).toMatch(/<div class="td" id="td"[^>]*>/);
+    const root = /:root\{([^}]*)\}/.exec(html)[1];
+    for (const name of ['ink', 'muted']) {
+      expect(token(rule[1], name)).toBe(token(root, name));
+    }
+  });
+});
