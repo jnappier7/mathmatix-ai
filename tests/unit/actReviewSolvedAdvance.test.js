@@ -113,3 +113,31 @@ describe('the tutor already confirmed it and the student asks for the next one',
 test('every review turn forbids inventing a question', () => {
   expect(joined(run('i didn\'t know it was a guess'))).toMatch(/THE ONLY REVIEW QUESTION IS THIS ONE/);
 });
+
+describe('an explicit move-on request at any length (student audit, 2026-10-15)', () => {
+  // The tutor had just said "…which corresponds to option C. Great job! Now,
+  // let's move on to the next question." The student asked to move on in a
+  // full sentence; the ≤40-char check missed it and the tutor asked them to
+  // walk through the item it had just confirmed.
+  const CONFIRMED = 'That\'s exactly right! … which corresponds to option C. Great job! Now, let\'s move on to the next question.';
+  const ASK = 'Ready. Please mark module 1 question 18 reviewed and take me to the next missed question.';
+
+  test('advances, and forbids re-probing the finished item', () => {
+    const d = run(ASK, { prev: CONFIRMED });
+    expect(first(d)).toMatch(/^REVIEW QUESTION ALREADY SOLVED/);
+    expect(first(d)).toMatch(/<REVIEW_NEXT>/);
+    expect(first(d)).toMatch(/do NOT ask them to walk through or explain it again/);
+  });
+
+  test.each([
+    'Can we move on to the next question now please, I think I understand it',
+    'OK I get it — go on to the next one',
+  ])('other phrasings: %s', (ask) => {
+    expect(first(run(ask, { prev: CONFIRMED }))).toMatch(/^REVIEW QUESTION ALREADY SOLVED/);
+  });
+
+  test('asking to move on BEFORE the key was confirmed does not advance', () => {
+    const d = run(ASK, { prev: 'What do you think the first step is? How can we write 32 as a power of 2?' });
+    expect(joined(d)).not.toMatch(/ALREADY SOLVED/);
+  });
+});

@@ -4470,9 +4470,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // A bootcamp (ACT/SAT prep) is a test → review → re-test loop with no
+            // modules, so its bar shows REVIEW progress, repainted from the
+            // bootcamp state every review turn carries. The module-based
+            // overallProgress below is 0 for the whole loop; painting it here is
+            // how the bar sat at 0% while the review counter read 1/11 (student
+            // audit, 2026-10-15).
+            const bootcampTurn = !!(data.actBootcamp && data.actBootcamp.phase);
+            if (bootcampTurn && window.courseManager && typeof window.courseManager.updateProgressBar === 'function') {
+                const cm = window.courseManager;
+                const active = (cm.courseSessions || []).find(x => String(x._id) === String(cm.activeCourseSessionId));
+                if (active) {
+                    active.bootcamp = data.actBootcamp;
+                    cm.updateProgressBar(active);
+                }
+            }
+
             // Passive sync: courseContext.overallProgress is in every course-chat response.
             // Update the bar even when no signal fired (handles page reloads, drift, etc.)
-            if (!data.courseProgress && data.courseContext && data.courseContext.overallProgress != null) {
+            if (!bootcampTurn && !data.courseProgress && data.courseContext && data.courseContext.overallProgress != null) {
                 const fill = document.getElementById('course-progress-fill');
                 const pct  = document.getElementById('course-progress-pct');
                 if (fill) fill.style.width = `${data.courseContext.overallProgress}%`;
