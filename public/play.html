@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Join a Game | MATHMATIX AI</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261017">
+</head>
+<body>
+<div class="pwrap">
+
+  <!-- ============ JOIN ============ -->
+  <section id="join">
+    <div class="hero">
+      <div class="eyebrow">Mathmatix · Live game</div>
+      <h1>Two-Minute <span>Drill</span></h1>
+    </div>
+    <form id="join-form" class="panel" style="display:flex;flex-direction:column;gap:14px;margin-top:14px" autocomplete="off">
+      <div><label class="lbl" for="code">Game code</label><input type="text" id="code" class="codein" maxlength="6" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="------" required></div>
+      <div><label class="lbl" for="name">Your name (first + last initial)</label><input type="text" id="name" maxlength="20" placeholder="e.g. Marcus T." required></div>
+      <button class="go" type="submit" id="join-btn">Join</button>
+      <div class="err" id="join-err" role="alert"></div>
+      <p class="muted" style="margin:0;font-size:.88rem">No account needed. Your name is only used during this game and is deleted afterward.</p>
+    </form>
+  </section>
+
+  <!-- ============ LOBBY ============ -->
+  <section id="lobby" hidden>
+    <div class="teamcard" id="l-team"><div class="eyebrow">You're on</div><h2 id="l-teamname"></h2><p id="l-name" style="margin:8px 0 0;font-size:1.2rem;font-weight:700"></p></div>
+    <div class="waiting">Waiting for kickoff…</div>
+    <p class="muted" style="text-align:center;margin:0" id="l-what"></p>
+  </section>
+
+  <!-- ============ LIVE ============ -->
+  <section id="live" hidden>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="pbar"><span class="pill" id="p-team"></span><span class="muted" id="p-me"></span></div>
+      <div class="sb">
+        <div class="t0"><span class="k" id="s-n0">Red</span><span class="v" id="s-p0">0</span></div>
+        <div class="mid"><span class="k" id="s-ck">Clock</span><span class="v" id="s-clock">–</span></div>
+        <div class="t1"><span class="k" id="s-n1">Blue</span><span class="v" id="s-p1">0</span></div>
+      </div>
+      <div class="field small" id="field" aria-hidden="true"></div>
+      <div id="p-card"></div>
+      <div class="choices" id="p-choices"></div>
+      <div class="fb" id="fb" aria-live="polite"><span class="muted">Keys 1–4 work too.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL ============ -->
+  <section id="final" hidden>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="sb">
+        <div class="t0"><span class="k" id="f-n0">Red</span><span class="v" id="f-p0">0</span></div>
+        <div class="mid"><span class="k">Final</span><span class="v" id="f-mid">–</span></div>
+        <div class="t1"><span class="k" id="f-n1">Blue</span><span class="v" id="f-p1">0</span></div>
+      </div>
+      <div class="result"><h2 id="f-result"></h2></div>
+      <div class="stats">
+        <div><span class="v" id="f-yds">0</span><span class="k">Your yards</span></div>
+        <div><span class="v" id="f-comp">0/0</span><span class="k">Completions</span></div>
+        <div><span class="v" id="f-pct">0%</span><span class="k">Accuracy</span></div>
+        <div><span class="v" id="f-best">0</span><span class="k">Longest streak</span></div>
+      </div>
+      <div class="film" id="f-film"></div>
+      <button class="ghost" id="f-new">Join another game</button>
+    </div>
+  </section>
+
+  <!-- ============ GONE ============ -->
+  <section id="gone" hidden>
+    <div class="panel" style="text-align:center">
+      <p id="gone-msg" style="font-size:1.2rem;font-weight:700;margin:0 0 14px"></p>
+      <button class="go" id="gone-btn">Join a game</button>
+    </div>
+  </section>
+</div>
+<div class="td" id="td" hidden></div>
+
+<script src="/js/live-drill/common.js?v=20261017"></script>
+<script src="/js/live-drill/play.js?v=20261017"></script>
+</body>
+</html>

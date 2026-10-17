@@ -143,6 +143,7 @@ const roleSwitchRoutes = require('../routes/roleSwitch');
 const impersonationRoutes = require('../routes/impersonation');
 const announcementsRoutes = require('../routes/announcements');
 const activitiesRoutes = require('../routes/activities');
+const liveDrillRoutes = require('../routes/liveDrill');
 const adminEmailRoutes = require('../routes/adminEmail');
 const billingRoutes = require('../routes/billing');
 const affiliateRoutes = require('../routes/affiliate');
@@ -345,6 +346,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // `app.use('/api', isAuthenticated, ...)` catch-alls below, or that
   // middleware would 401 the unauthenticated phone before it reaches here.
   app.use('/api/phone-upload', phoneUploadRoutes);
+  // Live Two-Minute Drill players: a join code + a name, no account; owned by a bearer
+  // token, CSRF-exempt, its own limiter. Same reason as above for living up here.
+  app.use('/api/live-drill/play', liveDrillRoutes.playRouter);
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
   // Courses are open to ALL students as a free on-ramp (see docs/COURSES_IN_FLOW_DESIGN.md).
@@ -404,6 +408,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // Class Activities — hand-built interactive pages from activities/, assigned
   // per class, results per student. See docs/CLASS_ACTIVITIES.md.
   app.use('/api/activities', isAuthenticated, activitiesRoutes);
+  // Live Two-Minute Drill — a whole-class game. The teacher hosts on the projector;
+  // students join at /play with a code and a name, no account (routes/liveDrill.js).
+  app.use('/api/live-drill/host', isAuthenticated, isTeacher, liveDrillRoutes.hostRouter);
   app.use('/api/admin/email', isAuthenticated, isAdmin, adminEmailRoutes);
   app.use('/api/school-licenses', isAuthenticated, isAdmin, schoolLicenseRoutes);
   app.post('/api/clever-sync/webhook', cleverSyncRoutes);
@@ -898,6 +905,10 @@ function registerHtmlRoutes(app) {
   app.get('/act-practice-test', actPracticePage);
   app.get('/act-practice-test.html', actPracticePage);
   app.get('/act', (req, res) => res.redirect(302, '/act-practice-test'));
+  // Live Two-Minute Drill. /play is what goes on the board; the host screen is teachers only.
+  app.get(['/play', '/play.html'], (req, res) => res.sendFile(path.join(publicDir, 'play.html')));
+  app.get(['/live-drill', '/live-drill-host.html'], isAuthenticated, isTeacher,
+    (req, res) => res.sendFile(path.join(publicDir, 'live-drill-host.html')));
   // The free SAT Math practice test — the same funnel as the ACT's.
   const satPracticePage = (req, res) => {
     if (req.isAuthenticated && req.isAuthenticated() && req.user && userHasRole(req.user, 'student')) {

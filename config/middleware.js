@@ -20,6 +20,7 @@ const { outboundPiiScope } = require('../middleware/outboundPii');
 const { trackErrors, clientErrorHandler } = require('../middleware/errorTracking');
 const { requestId } = require('../middleware/requestId');
 const { isPracticeTestRunnerPath } = require('../middleware/practiceTestLimiter');
+const { isLiveDrillPlayPath } = require('../routes/liveDrill');
 
 require('../auth/passport-config');
 
@@ -387,7 +388,10 @@ function configureMiddleware(app) {
   app.use('/api/', (req, res, next) => {
     // The practice-test runner has its own limiter, keyed on the session
     // owner and sized for a timed test (middleware/practiceTestLimiter.js).
-    if (rateLimitExemptPaths.has(req.path) || isPracticeTestRunnerPath(req.path)) {
+    // Live-drill players are a whole class behind one school IP; their router
+    // keys its own limiter on the player token (routes/liveDrill.js).
+    if (rateLimitExemptPaths.has(req.path) || isPracticeTestRunnerPath(req.path)
+      || isLiveDrillPlayPath(req.path)) {
       return next();
     }
     return apiLimiter(req, res, next);

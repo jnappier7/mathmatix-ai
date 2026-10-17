@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Two-Minute Drill | MATHMATIX AI</title>
+  <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261017">
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ SETUP ============ -->
+  <section id="setup">
+    <div class="hero">
+      <div class="eyebrow">Live · Whole class</div>
+      <h1>Two-Minute <span>Drill</span></h1>
+      <p>Students join on any device at <b>mathmatix.ai/play</b> with a code. No accounts. They're split into two teams, and every right answer moves their team's ball.</p>
+    </div>
+    <div class="setup panel" style="margin-top:14px">
+      <div>
+        <span class="lbl" id="dr-l">Course</span>
+        <div class="seg-ctl" id="drills" role="group" aria-labelledby="dr-l"></div>
+      </div>
+      <div>
+        <span class="lbl" id="bk-l">Playbook</span>
+        <div class="books" id="books" role="group" aria-labelledby="bk-l"></div>
+      </div>
+      <div>
+        <span class="lbl" id="md-l">Game</span>
+        <div class="modes" role="group" aria-labelledby="md-l">
+          <button class="mode" id="m-drive" aria-pressed="true"><b>Team Drive</b><span>One shared clock. Everyone plays at their own pace on their device; the board shows the field and the play-by-play. Fast and furious.</span></button>
+          <button class="mode" id="m-huddle" aria-pressed="false"><b>Huddle</b><span>One play at a time on the board, everyone answers it, then the reveal shows how the class split and why. You run the pace.</span></button>
+        </div>
+      </div>
+      <div class="row">
+        <div id="opt-drive"><span class="lbl">Clock</span><div class="seg-ctl" id="o-seconds"></div></div>
+        <div id="opt-huddle" hidden style="display:flex;gap:18px;flex-wrap:wrap">
+          <div><span class="lbl">Plays</span><div class="seg-ctl" id="o-plays"></div></div>
+          <div><span class="lbl">Seconds per play</span><div class="seg-ctl" id="o-spp"></div></div>
+        </div>
+        <button class="go" id="open" style="margin-left:auto">Open lobby</button>
+      </div>
+      <div class="err" id="setup-err" role="alert"></div>
+    </div>
+  </section>
+
+  <!-- ============ LOBBY ============ -->
+  <section id="lobby" hidden>
+    <div class="lobby">
+      <div class="joinbox">
+        <div class="how"><div class="url">Go to <b>mathmatix.ai/play</b></div><div class="muted">and enter the code</div></div>
+        <div class="code" id="l-code">------</div>
+        <div class="muted" id="l-what" style="flex-basis:100%"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="rosters" id="rosters"></div>
+        <p class="muted" style="margin:0">Tap a name to move it to the other team or remove it. Teams are balanced as students join.</p>
+        <div class="row">
+          <span class="eyebrow" id="l-count">0 players</span>
+          <button class="ghost" id="l-cancel">Cancel</button>
+          <button class="go" id="kick" style="margin-left:auto" disabled>Kick off</button>
+        </div>
+        <div class="err" id="lobby-err" role="alert"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LIVE ============ -->
+  <section id="live" hidden>
+    <div id="live-body" style="display:flex;flex-direction:column;gap:14px">
+      <div class="hbar">
+        <span class="eyebrow" id="g-what"></span>
+        <span class="muted">Join: <b>mathmatix.ai/play</b> · <b id="g-code"></b></span>
+      </div>
+      <div class="sb">
+        <div class="t0"><span class="k" id="s-n0">Red</span><span class="v" id="s-p0">0</span></div>
+        <div class="mid"><span class="k" id="s-ck">Clock</span><span class="v" id="s-clock">2:00</span></div>
+        <div class="t1"><span class="k" id="s-n1">Blue</span><span class="v" id="s-p1">0</span></div>
+      </div>
+      <div class="field" id="field" aria-hidden="true"></div>
+
+      <!-- drive: the play-by-play -->
+      <div id="drive-pane">
+        <div class="feed" id="feed" aria-live="polite"></div>
+      </div>
+
+      <!-- huddle: the play itself, large -->
+      <div id="huddle-pane" class="big" hidden style="display:flex;flex-direction:column;gap:12px">
+        <div class="hbar">
+          <span class="eyebrow" id="h-head"></span>
+          <span class="count" id="h-count"></span>
+        </div>
+        <div id="h-card"></div>
+        <div class="choices" id="h-choices"></div>
+        <div id="h-reveal" hidden style="display:flex;flex-direction:column;gap:10px">
+          <div class="tellbox" id="h-tell"></div>
+          <div class="splitline" id="h-split"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="ghost" id="g-end">End game</button>
+        <span class="muted" id="h-keys" style="margin-left:auto">Clicker or → advances</span>
+        <button class="go" id="h-next" hidden>Reveal</button>
+      </div>
+      <div class="err" id="live-err" role="alert"></div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL ============ -->
+  <section id="final" hidden>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="sb">
+        <div class="t0"><span class="k" id="f-n0">Red</span><span class="v" id="f-p0">0</span></div>
+        <div class="mid"><span class="k">Final</span><span class="v" id="f-acc">–</span></div>
+        <div class="t1"><span class="k" id="f-n1">Blue</span><span class="v" id="f-p1">0</span></div>
+      </div>
+      <div class="result"><h2 id="f-result"></h2></div>
+      <div class="mvps" id="f-mvps"></div>
+      <div class="film panel" id="f-film"></div>
+      <div class="row"><button class="go" id="f-again">New game</button></div>
+    </div>
+  </section>
+</div>
+<div class="td" id="td" hidden></div>
+
+<script src="/js/csrf.js"></script>
+<script src="/js/live-drill/common.js?v=20261017"></script>
+<script src="/js/live-drill/host.js?v=20261017"></script>
+</body>
+</html>
