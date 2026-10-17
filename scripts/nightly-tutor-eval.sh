@@ -42,7 +42,7 @@ for model in $MODELS; do
     echo "=== $model run $run/$RUNS_PER_MODEL ==="
     # Jest exits non-zero on any test failure; that's data here, not an abort.
     TUTOR_MODEL="$model" RUN_LLM_EVAL=1 npx jest \
-      --testPathPattern='tests/eval/(liveEval|livePersonaEval)' \
+      --testPathPattern='tests/eval/(liveEval|livePersonaEval|liveSafetyEval)' \
       --verbose > "$log" 2>&1 || true
     grep -E '^Tests:' "$log" || echo "WARNING: no jest summary in $log (crash?)"
   done
