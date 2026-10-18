@@ -5,6 +5,7 @@
 // following the gradual-release model — it LEADS instruction, never asks
 // "what do you want to work on?"
 
+const { resolveAnswerKey } = require('./answerKeyValue');
 const { normalizeLanguage } = require('./parentReportText');
 const fs = require('fs');
 const path = require('path');
@@ -1472,8 +1473,8 @@ function buildCheckpointPrompt({ userProfile, tutorProfile, courseSession, pathw
   }).join('\n');
 
   const answerKeyList = problems.map((p, i) => {
-    const key = answerKeys[p.id] || p.answer;
-    return `  ${i + 1}. [${p.id}] ${key}`;
+    const { answer: key, rubric } = resolveAnswerKey(answerKeys, p);
+    return `  ${i + 1}. [${p.id}] ${key}${rubric ? ` (rubric: ${rubric})` : ''}`;
   }).join('\n');
 
   return `You are ${tutorName}, administering a checkpoint assessment for **${courseName}**.
