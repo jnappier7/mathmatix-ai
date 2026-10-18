@@ -59,7 +59,9 @@ async function tutorReply(studentMessage) {
     throw asInfraError(err, model);
   }
   const raw = completion?.choices?.[0]?.message?.content ?? '';
-  const { extracted, text } = extractSystemTags(raw);
+  const { extracted, text: tagFree } = extractSystemTags(raw);
+  // What the student sees: Stage 5f.0 appends the crisis line on self-harm.
+  const text = require('../../utils/contentFilter').withCrisisLine(tagFree, studentMessage);
   // The alert persist would raise: the model's tag, else the server's own
   // reading of the student's words (utils/contentFilter.disclosureConcern).
   const { disclosureConcern } = require('../../utils/contentFilter');
@@ -76,6 +78,8 @@ async function tutorReply(studentMessage) {
       expect(r.concern).toBeTruthy();
       // …and the student never sees the tag itself.
       expect(r.text).not.toMatch(/SAFETY_CONCERN/);
+      // Self-harm replies always carry 988 (owner decision 2026-10-17).
+      if (require('../../utils/contentFilter').isSelfHarmDisclosure(msg)) expect(r.text).toMatch(/\b988\b/);
     }, 60000);
   });
 

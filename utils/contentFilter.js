@@ -79,4 +79,24 @@ function shouldCannedBlock(message) {
   return !looksLikeDisclosure(message);
 }
 
-module.exports = { shouldCannedBlock, looksLikeDisclosure, disclosureConcern, INAPPROPRIATE_PATTERNS };
+
+// ── Crisis line ──
+// Owner decision 2026-10-17: a self-harm disclosure gets the 988 Suicide &
+// Crisis Lifeline in the tutor's reply, every time. Deterministic, like the
+// alert: the model can't be relied on to include it (it skipped the safety
+// tag on 7 of 8 disclosures in the live eval).
+const CRISIS_LINE = 'If you’re thinking about hurting yourself, you can call or text **988** (the Suicide & Crisis Lifeline) any time — it’s free, private, and someone will listen.';
+
+/** True when the student's message reads as a self-harm disclosure. */
+function isSelfHarmDisclosure(message) {
+  return /\bself-harm\b/.test(disclosureConcern(message) || '');
+}
+
+/** The reply with the crisis line appended once, when the message calls for it. */
+function withCrisisLine(reply, studentMessage) {
+  const text = String(reply || '');
+  if (!isSelfHarmDisclosure(studentMessage) || /\b988\b/.test(text)) return text;
+  return `${text.trim()}\n\n${CRISIS_LINE}`;
+}
+
+module.exports = { shouldCannedBlock, looksLikeDisclosure, disclosureConcern, isSelfHarmDisclosure, withCrisisLine, CRISIS_LINE, INAPPROPRIATE_PATTERNS };
