@@ -62,6 +62,7 @@ const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDiff
 
 // Backbone: Tutor Plan + Skill Familiarity
 const { guardAttribution } = require('../attributionGuard');
+const { withCrisisLine } = require('../contentFilter');
 const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase, recentPracticeSkillId } = require('../tutorPlanManager');
 
 // Test-prep skills are attributable only while a review item (or a course /
@@ -1594,6 +1595,12 @@ async function runPipeline(message, ctx) {
   // Unbalanced \( / \[ delimiters render as raw source in the bubble —
   // drop the orphans (balanced math is untouched). Cheap, so unconditional.
   verified.text = stripOrphanMathDelims(verified.text);
+
+  // ── Stage 5f.0: CRISIS LINE ──
+  // A self-harm disclosure always gets 988 in the reply (owner decision
+  // 2026-10-17; utils/contentFilter.withCrisisLine). On the authoritative
+  // text, so the `complete` event and the saved message both carry it.
+  verified.text = withCrisisLine(verified.text, message);
 
   // ── Stage 5f.1: ATTRIBUTION GUARD ──
   // "You substituted y = 2x + 3…" to a student who typed only "(10, 23)";
