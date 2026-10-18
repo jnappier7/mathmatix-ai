@@ -68,16 +68,16 @@
     },
     {
       "id": "ccr-4",
-      "question": "You are buying a used car for $18,000 and take out a loan at 5.9% APR for 48 months with a monthly payment of $423.35. What is the total amount you will pay over the life of the loan? How much of that is interest?",
-      "answer": "Total paid = $423.35 × 48 = $20,320.80. Total interest = $20,320.80 − $18,000.00 = $2,320.80. You pay $2,320.80 in interest over 4 years for the privilege of borrowing $18,000.",
+      "question": "You are buying a used car for $18,000 and take out a loan at 5.9% APR for 48 months with a monthly payment of $421.91. What is the total amount you will pay over the life of the loan? How much of that is interest?",
+      "answer": "Total paid = $421.91 × 48 = $20,251.68. Total interest = $20,251.68 − $18,000.00 = $2,251.68. You pay $2,251.68 in interest over 4 years for the privilege of borrowing $18,000.",
       "skill": "cm-loan-basics",
       "difficulty": 2,
       "points": 3
     },
     {
       "id": "ccr-5",
-      "question": "You want to buy a $22,000 car and have two loan offers:\n\n• Loan A: 4.9% APR for 48 months, monthly payment of $506.69\n• Loan B: 6.9% APR for 72 months, monthly payment of $373.15\n\nLoan B has a lower monthly payment. Calculate the total cost and total interest for each loan. Which loan actually costs less overall?",
-      "answer": "Loan A: Total cost = $506.69 × 48 = $24,321.12. Total interest = $24,321.12 − $22,000 = $2,321.12. Loan B: Total cost = $373.15 × 72 = $26,866.80. Total interest = $26,866.80 − $22,000 = $4,866.80. Loan A costs $2,545.68 less overall ($26,866.80 − $24,321.12), even though its monthly payment is $133.54 higher. The shorter term and lower rate save significant interest. A lower monthly payment does NOT mean a better deal — always compare total cost.",
+      "question": "You want to buy a $22,000 car and have two loan offers:\n\n• Loan A: 4.9% APR for 48 months, monthly payment of $505.65\n• Loan B: 6.9% APR for 72 months, monthly payment of $374.02\n\nLoan B has a lower monthly payment. Calculate the total cost and total interest for each loan. Which loan actually costs less overall?",
+      "answer": "Loan A: Total cost = $505.65 × 48 = $24,271.20. Total interest = $24,271.20 − $22,000 = $2,271.20. Loan B: Total cost = $374.02 × 72 = $26,929.44. Total interest = $26,929.44 − $22,000 = $4,929.44. Loan A costs $2,658.24 less overall ($26,929.44 − $24,271.20), even though its monthly payment is $131.63 higher. The shorter term and lower rate save significant interest. A lower monthly payment does NOT mean a better deal — always compare total cost.",
       "skill": "cm-loan-basics",
       "difficulty": 3,
       "points": 4
@@ -100,8 +100,8 @@
     },
     {
       "id": "ccr-8",
-      "question": "Here is a snippet from near the END of the same $20,000 loan (6.0% APR, 60 months, $386.66/month):\n\n| Payment # | Payment  | Interest | Principal | Remaining Balance |\n|-----------|----------|----------|-----------|-------------------|\n| 57        | $386.66  | $7.61    | $379.05   | $1,143.83         |\n| 58        | $386.66  | $5.72    | $380.94   | $762.89           |\n| 59        | $386.66  | $3.81    | $382.85   | $380.04           |\n\nCompare Payment #1 (interest: $100.00, principal: $286.66) to Payment #58 (interest: $5.72, principal: $380.94).\n(a) What percentage of Payment #58 goes toward principal?\n(b) Explain why making extra payments EARLY in a loan saves far more interest than making extra payments late in the loan.",
-      "answer": "(a) $380.94 ÷ $386.66 = 0.9852 = 98.5%. Almost the entire payment now goes to principal, compared to only 74.1% in Payment #1. (b) Early in the loan, the balance is high ($20,000), so each month generates substantial interest ($100). An extra payment early reduces that high balance, which means every single future month charges less interest — and that savings compounds over the remaining 50+ payments. Late in the loan, the balance is already low ($762.89), interest is minimal ($5.72), and there are only a few payments left. There simply is not enough remaining interest to save. A $500 extra payment after Payment #1 saves interest across 58 future months; the same $500 after Payment #57 only affects 2-3 remaining months.",
+      "question": "Here is a snippet from near the END of the same $20,000 loan (6.0% APR, 60 months, $386.66/month):\n\n| Payment # | Payment  | Interest | Principal | Remaining Balance |\n|-----------|----------|----------|-----------|-------------------|\n| 57        | $386.66  | $7.64    | $379.02   | $1,148.23         |\n| 58        | $386.66  | $5.74    | $380.92   | $767.31           |\n| 59        | $386.66  | $3.84    | $382.82   | $384.49           |\n\nCompare Payment #1 (interest: $100.00, principal: $286.66) to Payment #58 (interest: $5.74, principal: $380.92).\n(a) What percentage of Payment #58 goes toward principal?\n(b) Explain why making extra payments EARLY in a loan saves far more interest than making extra payments late in the loan.",
+      "answer": "(a) $380.92 ÷ $386.66 = 0.9852 = 98.5%. Almost the entire payment now goes to principal, compared to only 74.1% in Payment #1. (b) Early in the loan, the balance is high ($20,000), so each month generates substantial interest ($100). An extra payment early reduces that high balance, which means every single future month charges less interest — and that savings compounds over the remaining 50+ payments. Late in the loan, the balance is already low ($767.31), interest is minimal ($5.74), and there are only a few payments left. There simply is not enough remaining interest to save. A $500 extra payment after Payment #1 saves interest across 58 future months; the same $500 after Payment #57 only affects 2-3 remaining months.",
       "skill": "cm-amortization",
       "difficulty": 4,
       "points": 5
@@ -109,7 +109,7 @@
     {
       "id": "ccr-9",
       "question": "Using the amortization table from Problem 7 (6.0% APR, monthly rate = 0.5%), suppose you make a one-time extra payment of $500 immediately after Payment #1, reducing your remaining balance from $19,713.34 to $19,213.34.\n\n(a) What would the interest charge be on Payment #2 with the reduced balance?\n(b) How much interest did the extra $500 save on that single month compared to the original $98.57?",
-      "answer": "(a) New interest on Payment #2 = $19,213.34 × 0.005 = $96.07. (b) Original interest was $98.57. Savings on one month = $98.57 − $96.07 = $2.50. This $2.50 monthly savings does not happen just once — the lower balance means every subsequent payment charges less interest too. The total interest savings from this single $500 extra payment compounds across the remaining 58 payments, saving approximately $80–$90 over the life of the loan. This is why financial advisors say the best time to make extra payments is as early as possible.",
+      "answer": "(a) New interest on Payment #2 = $19,213.34 × 0.005 = $96.07. (b) Original interest was $98.57. Savings on one month = $98.57 − $96.07 = $2.50. This $2.50 monthly savings does not happen just once — the lower balance means every subsequent payment charges less interest too. The total interest savings from this single $500 extra payment compounds across the remaining 58 payments, saving approximately $170 over the life of the loan (and ending the loan about a payment and a half early). This is why financial advisors say the best time to make extra payments is as early as possible.",
       "skill": "cm-amortization",
       "difficulty": 4,
       "points": 5
@@ -132,8 +132,8 @@
     },
     {
       "id": "ccr-12",
-      "question": "Deshawn needs $800 for an emergency car repair. He has three options:\n\n• Option A (Payday loan): Borrow $800 with a $120 fee, due in full in 2 weeks\n• Option B (Credit card cash advance): $800 at 24.99% APR, plan to pay off in 3 months at $275.52/month\n• Option C (Credit union personal loan): $800 at 10% APR for 12 months at $70.07/month\n\nCalculate the total cost of each option. Which is the best choice, and why? Which should Deshawn avoid at all costs?",
-      "answer": "Option A: Total = $800 + $120 = $920.00. Interest/fees = $120.00. APR equivalent = ($120 ÷ $800) × 26 = 390%. And if Deshawn cannot pay the full $920 in 2 weeks, he will likely roll over the loan, paying another $120 fee each cycle. The average payday borrower rolls over 8 times, which would mean $120 × 8 = $960 in fees alone — more than the original loan. Option B: Total = $275.52 × 3 = $826.56. Interest = $26.56. Option C: Total = $70.07 × 12 = $840.84. Interest = $40.84. Best choice: Option B if Deshawn can afford $275.52/month — lowest total cost at only $26.56 in interest. Option C if he needs lower monthly payments — only $14.28 more in total interest but spreads the payments to $70.07/month, which may be more manageable. Avoid at all costs: Option A. Even without rollovers, it costs the most ($120 vs $26.56 or $40.84). With rollovers, it becomes a debt trap that can cost more than the original loan amount.",
+      "question": "Deshawn needs $800 for an emergency car repair. He has three options:\n\n• Option A (Payday loan): Borrow $800 with a $120 fee, due in full in 2 weeks\n• Option B (Credit card cash advance): $800 at 24.99% APR, plan to pay off in 3 months at $277.85/month\n• Option C (Credit union personal loan): $800 at 10% APR for 12 months at $70.33/month\n\nCalculate the total cost of each option. Which is the best choice, and why? Which should Deshawn avoid at all costs?",
+      "answer": "Option A: Total = $800 + $120 = $920.00. Interest/fees = $120.00. APR equivalent = ($120 ÷ $800) × 26 = 390%. And if Deshawn cannot pay the full $920 in 2 weeks, he will likely roll over the loan, paying another $120 fee each cycle. The average payday borrower rolls over 8 times, which would mean $120 × 8 = $960 in fees alone — more than the original loan. Option B: Total = $277.85 × 3 = $833.55. Interest = $33.55. Option C: Total = $70.33 × 12 = $843.96. Interest = $43.96. Best choice: Option B if Deshawn can afford $277.85/month — lowest total cost at only $33.55 in interest. Option C if he needs lower monthly payments — only $10.41 more in total interest but spreads the payments to $70.33/month, which may be more manageable. Avoid at all costs: Option A. Even without rollovers, it costs the most ($120 vs $33.55 or $43.96). With rollovers, it becomes a debt trap that can cost more than the original loan amount.",
       "skill": "cm-predatory-lending",
       "difficulty": 4,
       "points": 5
@@ -144,14 +144,14 @@
     "ccr-1": "$63.30",
     "ccr-2": "Payment: $48.00; Interest: $43.98; Principal: $4.02",
     "ccr-3": "A interest: $11,601; B interest: $1,194; Savings: $10,407",
-    "ccr-4": "Total: $20,320.80; Interest: $2,320.80",
-    "ccr-5": "Loan A total: $24,321.12; Loan B total: $26,866.80; Loan A saves $2,545.68",
+    "ccr-4": "Total: $20,251.68; Interest: $2,251.68",
+    "ccr-5": "Loan A total: $24,271.20; Loan B total: $26,929.44; Loan A saves $2,658.24",
     "ccr-6": "Loan C — total $18,985.92 vs Loan B $23,872.80; Loan C saves $1,886.88",
     "ccr-7": "25.9% interest; decreases because balance decreases each month",
     "ccr-8": "98.5% principal; early extra payments save more because balance is higher",
     "ccr-9": "$96.07 (saves $2.50 vs original $98.57)",
     "ccr-10": "15% per period; 390% APR",
     "ccr-11": "5 red flags; total cost $1,799.80 on $1,000 loan",
-    "ccr-12": "Option B best ($826.56); Option A worst ($920+ with rollover risk)"
+    "ccr-12": "Option B best ($833.55); Option A worst ($920+ with rollover risk)"
   }
 }

@@ -197,7 +197,7 @@
     },
     {
       "id": "chm1-17",
-      "question": "A $500 investment earns 10% interest per year. After a 10% increase the first year, the investment loses 10% the second year. What is the value after 2 years?\n(A) $490  (B) $495  (C) $500  (D) $505  (E) $510",
+      "question": "A $500 investment gains 10% the first year and then loses 10% the second year. What is the value after 2 years?\n(A) $490  (B) $495  (C) $500  (D) $505  (E) $510",
       "answer": "(B) $495. Year 1: $500 × 1.10 = $550. Year 2: $550 × 0.90 = $495. (NOT back to $500!)",
       "skill": "act-ratios-proportions-percents",
       "difficulty": 5,

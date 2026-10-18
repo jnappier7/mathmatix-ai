@@ -102,7 +102,7 @@
     {
       "id": "cb-9",
       "question": "Carlos has two bank accounts. Account A earns 0.01% interest per year and lets him withdraw money anytime with a debit card. Account B earns 4.25% APY but limits him to 6 withdrawals per month. Which account is checking and which is savings? If Carlos keeps $3,000 in Account B for one year, approximately how much interest does he earn?",
-      "answer": "Account A is checking (low interest, easy access with debit card). Account B is savings (higher interest rate, limited withdrawals). Interest earned on Account B = $3,000.00 x 0.0425 = $127.50 per year.",
+      "answer": "Account A is checking (low interest, easy access with debit card). Account B is savings (higher interest rate; many banks still limit savings withdrawals, often to 6 per month). Interest earned on Account B = $3,000.00 x 0.0425 = $127.50 per year.",
       "skill": "cm-banking-basics",
       "difficulty": 3,
       "points": 4

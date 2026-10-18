@@ -122,9 +122,9 @@
           "problem": "The median of {3, 7, 12, 15, x, 25, 30} (already sorted) is 15. What are the possible values of x?\n(A) x = 15  (B) x ≥ 15  (C) x ≤ 15  (D) 15 ≤ x ≤ 25  (E) Any value",
           "hints": [
             "With 7 values, the median is the 4th value",
-            "For the 4th value to be 15, x must be ≥ 15 (to keep 15 in the 4th position)"
+            "The list is already sorted, so x must fit between its neighbors: at least 15 and at most 25"
           ],
-          "answer": "(B) x ≥ 15. The 4th value in sorted order must be 15. If x < 15, x goes before 15 and shifts 15 to 5th position, making median = x or 15 depending on x. Actually: {3, 7, 12, 15, x, 25, 30} sorted — if x ≥ 15, median is 15. Answer: (D) 15 ≤ x ≤ 25."
+          "answer": "(D) 15 ≤ x ≤ 25. With 7 values, the median is the 4th value, which is 15. Because the list is given as already sorted, x sits between 15 and 25, so 15 ≤ x ≤ 25."
         },
         {
           "id": "sp-wp2",
@@ -246,7 +246,7 @@
         },
         {
           "id": "sp-yp3",
-          "problem": "From a standard deck of 52 cards, what is the probability of drawing a heart or a face card?\n(A) 11/26  (B) 25/52  (C) 22/52  (D) 16/52  (E) 13/52",
+          "problem": "From a standard deck of 52 cards, what is the probability of drawing a heart or a face card?\n(A) 19/52  (B) 25/52  (C) 22/52  (D) 16/52  (E) 13/52",
           "answer": "(C) 22/52. Hearts = 13. Face cards = 12. Heart face cards = 3. P = (13 + 12 − 3)/52 = 22/52 = 11/26."
         },
         {

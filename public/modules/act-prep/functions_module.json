@@ -109,8 +109,8 @@
           "solution": "x-coordinate: x = −b/(2a) = −12/(2·(−2)) = −12/(−4) = 3\ny-coordinate: y = −2(3)² + 12(3) − 7 = −18 + 36 − 7 = 11\nVertex: (3, 11)\nAnswer: (A) (3, 11)\n\nSince a = −2 < 0, this is a maximum. The maximum value of the function is 11."
         },
         {
-          "problem": "Line m has equation y = −3x + 5. Which of the following is perpendicular to line m?\n(A) y = −3x + 2  (B) y = 3x − 1  (C) y = (1/3)x + 4  (D) y = −(1/3)x + 7  (E) y = (1/3)x − 5",
-          "solution": "Line m has slope −3.\nPerpendicular slope = negative reciprocal = −(1/(−3)) = 1/3\nLook for slope 1/3: choices (C) and (E) both have slope 1/3.\nBoth are perpendicular. Check answer choices... both (C) and (E) work.\nAnswer: (C) y = (1/3)x + 4 (or (E) — ACT would only list one correct option)"
+          "problem": "Line m has equation y = −3x + 5. Which of the following is perpendicular to line m?\n(A) y = −3x + 2  (B) y = 3x − 1  (C) y = (1/3)x + 4  (D) y = −(1/3)x + 7  (E) y = 5x − 3",
+          "solution": "Line m has slope −3.\nPerpendicular slope = negative reciprocal = −(1/(−3)) = 1/3\nLook for slope 1/3: only choice (C) has slope 1/3.\nAnswer: (C) y = (1/3)x + 4"
         }
       ],
       "lessonId": "functions"

@@ -405,7 +405,7 @@
       "examples": [
         {
           "problem": "You receive this message: 'Hey! I found this amazing crypto platform that GUARANTEES 30% monthly returns. I have already made $15,000 in two weeks! You need to sign up NOW because spots are limited. Send me $500 to get started.' Identify the red flags.",
-          "solution": "Red flags identified:\n1. GUARANTEED returns — no legitimate investment guarantees anything, let alone 30% per MONTH (that would be 360% per year, which is absurd).\n2. Urgency/pressure — 'sign up NOW' and 'spots are limited' are designed to prevent you from thinking.\n3. Unsolicited offer — someone reaching out to recruit you into a money opportunity.\n4. Unrealistic profit claims — $15,000 in two weeks from a simple platform.\n5. Asking you to send money directly to a person — legitimate investments go through regulated brokerage accounts, not personal transfers.\n\nVerdict: This is almost certainly a scam. Do not send money."
+          "solution": "Red flags identified:\n1. GUARANTEED returns — no legitimate investment guarantees anything, let alone 30% per MONTH (compounded, that would be more than 2,000% per year — about 2,230% — which is absurd).\n2. Urgency/pressure — 'sign up NOW' and 'spots are limited' are designed to prevent you from thinking.\n3. Unsolicited offer — someone reaching out to recruit you into a money opportunity.\n4. Unrealistic profit claims — $15,000 in two weeks from a simple platform.\n5. Asking you to send money directly to a person — legitimate investments go through regulated brokerage accounts, not personal transfers.\n\nVerdict: This is almost certainly a scam. Do not send money."
         },
         {
           "problem": "A coworker tells you: 'I joined this company where you invest $1,000 and recruit three friends who each invest $1,000. You earn a percentage from everyone below you. People at the top are making $20,000 a month!' What type of scheme is this and why is it unsustainable?",
@@ -430,7 +430,7 @@
             "Look for promises that are unrealistic — what is a normal annual return for even the best investors?",
             "Why would a real investment require secrecy and urgency?"
           ],
-          "answer": "Red flags: (1) Guaranteed 25% monthly returns — no investment can guarantee this; 25% per month would be 300% per year, which is unrealistic. (2) Artificial urgency — 'only 50 new people this week' pressures you to act fast without researching. (3) Secrecy — 'do not tell anyone' is a major red flag; legitimate investments do not require secrecy. (4) Wire transfer to an account — legitimate firms use regulated brokerage accounts, not wire transfers. (5) 'Secret algorithm' — vague claims with no verifiable details."
+          "answer": "Red flags: (1) Guaranteed 25% monthly returns — no investment can guarantee this; 25% per month compounded would be more than 1,300% per year (about 1,355%), which is unrealistic. (2) Artificial urgency — 'only 50 new people this week' pressures you to act fast without researching. (3) Secrecy — 'do not tell anyone' is a major red flag; legitimate investments do not require secrecy. (4) Wire transfer to an account — legitimate firms use regulated brokerage accounts, not wire transfers. (5) 'Secret algorithm' — vague claims with no verifiable details."
         },
         {
           "id": "ip-20",

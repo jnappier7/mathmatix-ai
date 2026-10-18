@@ -139,12 +139,12 @@
         },
         {
           "id": "geo-wp2",
-          "problem": "An isosceles right triangle has a hypotenuse of 14. What is the length of each leg?\n(A) 7  (B) 7√2  (C) 7√3  (D) 14/√2  (E) Both A and D",
+          "problem": "An isosceles right triangle has a hypotenuse of 14. What is the length of each leg?\n(A) 7  (B) 7√2  (C) 7√3  (D) 14√2  (E) Both A and D",
           "hints": [
             "Isosceles right = 45-45-90. Ratio: x : x : x√2",
-            "x√2 = 14 → x = 14/√2 = 14√2/2 = 7√2. Wait — check carefully!"
+            "x√2 = 14 → x = 14/√2 = 14√2/2 = 7√2"
           ],
-          "answer": "(B) 7√2. x√2 = 14 → x = 14/√2 = 7√2. Note: (D) 14/√2 = 7√2, so (B) and (D) are equal. But as written, (B) 7√2 is the simplified form."
+          "answer": "(B) 7√2. x√2 = 14 → x = 14/√2 = 7√2. (D) 14√2 comes from multiplying by √2 instead of dividing."
         },
         {
           "id": "geo-wp3",
@@ -351,8 +351,8 @@
         },
         {
           "id": "geo-yp2",
-          "problem": "The legs of a right triangle are 9 and 12. What is the length of the hypotenuse?\n(A) 13  (B) 15  (C) 16  (D) 21  (E) √225",
-          "answer": "(B) 15. 9² + 12² = 81 + 144 = 225. √225 = 15. (3-4-5 triple × 3). Also (E) = 15."
+          "problem": "The legs of a right triangle are 9 and 12. What is the length of the hypotenuse?\n(A) 13  (B) 15  (C) 16  (D) 21  (E) √63",
+          "answer": "(B) 15. 9² + 12² = 81 + 144 = 225. √225 = 15. (3-4-5 triple × 3)."
         },
         {
           "id": "geo-yp3",
@@ -376,8 +376,8 @@
         },
         {
           "id": "geo-yp7",
-          "problem": "In a right triangle, the hypotenuse is 10 and one leg is 6. What is sin of the angle opposite the leg of length 6?\n(A) 3/5  (B) 3/4  (C) 4/5  (D) 5/3  (E) 6/10",
-          "answer": "(A) 3/5. sin = opp/hyp = 6/10 = 3/5. (Also (E) is 6/10 = 3/5, same answer.)"
+          "problem": "In a right triangle, the hypotenuse is 10 and one leg is 6. What is sin of the angle opposite the leg of length 6?\n(A) 3/5  (B) 3/4  (C) 4/5  (D) 5/3  (E) 4/3",
+          "answer": "(A) 3/5. sin = opp/hyp = 6/10 = 3/5."
         },
         {
           "id": "geo-yp8",

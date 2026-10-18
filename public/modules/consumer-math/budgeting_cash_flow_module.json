@@ -335,12 +335,12 @@
         },
         {
           "id": "bcf-16",
-          "question": "Leo earns $2,600/month and wants to free up $400/month for extra student loan payments above his $180 minimum. His current budget: rent $950, utilities $110, groceries $320, car insurance $140, gas $85, phone $65, dining out $180, streaming $30, gym $45, entertainment $100, clothing $75, savings $150. His current cash flow is $2,600 - $2,250 = $350 surplus. (a) How much more does he need beyond his current surplus? (b) Propose cuts totaling that amount and justify each one.",
+          "question": "Leo earns $2,600/month and wants to free up $400/month for extra student loan payments above his $180 minimum. His current budget: rent $950, utilities $110, groceries $320, car insurance $140, gas $85, phone $65, dining out $180, streaming $30, gym $45, entertainment $100, clothing $75, savings $150, student loan minimum $180. His current cash flow is $2,600 - $2,430 = $170 surplus. (a) How much more does he need beyond his current surplus? (b) Propose cuts totaling that amount and justify each one.",
           "hints": [
-            "He wants $400 for extra loan payments but only has $350 surplus. Find the gap.",
+            "He wants $400 for extra loan payments but only has $170 surplus. Find the gap.",
             "Look at wants categories — dining, streaming, gym, entertainment, clothing — for the remaining amount."
           ],
-          "answer": "(a) He needs $400 - $350 = $50 more per month. (b) Reduce dining out from $180 to $130 (saves $50). Justification: Cutting one dinner out per month is manageable and closes the gap exactly. Alternative approach: reduce entertainment from $100 to $50 instead, but dining out is typically easier to control week by week."
+          "answer": "(a) He needs $400 - $170 = $230 more per month. (b) One plan: reduce dining out from $180 to $90 (saves $90), entertainment from $100 to $50 (saves $50), clothing from $75 to $30 (saves $45), and cancel the gym and work out for free (saves $45). Total: $90 + $50 + $45 + $45 = $230. Justification: these are all wants, not needs; halving dining out and entertainment still leaves room for fun, and clothing and fitness have low-cost substitutes. Essentials (rent, utilities, groceries, insurance, gas, phone, the $180 minimum) and his $150 savings stay untouched."
         },
         {
           "id": "bcf-17",
@@ -405,7 +405,7 @@
     "bcf-13": "(a) $16.25, $37.50, $23.33, $20.83, $26.67. (b) Total: $124.58. (c) Remaining: $325.42 surplus.",
     "bcf-14": "(a) Total: $270/month. (b) Yes, $325 > $270 with $55 remaining.",
     "bcf-15": "Sample: coffee $60->$20 (save $40), cancel 1 stream (save $14), dining $135->$90 (save $45). Total: $99 covers $95 deficit.",
-    "bcf-16": "(a) Needs $50 more beyond $350 surplus. (b) Reduce dining out by $50.",
+    "bcf-16": "(a) Needs $230 more beyond $170 surplus. (b) Cuts to wants totaling $230 (e.g., dining -$90, entertainment -$50, clothing -$45, gym -$45).",
     "bcf-17": "(a) A saves $165/month, B saves $175/month. (b) 90 months to break even. (c) Option A better short-term.",
     "bcf-18": "(a) $185 surplus. (b) Must cut $115 more. (c) Dining -$75, entertainment -$40 = $115 in cuts.",
     "bcf-19": "(a) Sophie: $355, Partner: $210. (b) Sophie's works, partner's is $40 short. (c) Sophie's eliminates deficit; compromise recommended.",
