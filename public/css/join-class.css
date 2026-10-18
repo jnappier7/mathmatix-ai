@@ -1,0 +1,30 @@
+/* join-class.css — the "Join a class" dialog in chat (js/join-class.js).
+   Paints its own ground in both themes (CLAUDE.md §12: the chat panel and
+   overlays theme differently). */
+.jc-overlay { position: fixed; inset: 0; z-index: 10060; background: rgba(15, 12, 35, .55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.jc-box { position: relative; width: min(440px, 100%); background: #fff; color: #1E1B2E; border-radius: 18px; padding: 22px 22px 20px; box-shadow: 0 24px 60px rgba(0,0,0,.3); }
+[data-theme="dark"] .jc-box { background: #1C1A2B; color: #ECE9F7; }
+.jc-box h2 { margin: 0 0 6px; font-size: 20px; }
+.jc-sub { margin: 0 0 14px; font-size: 14px; line-height: 1.45; color: #5B5677; }
+[data-theme="dark"] .jc-sub, [data-theme="dark"] .jc-muted { color: #A7A0C4; }
+.jc-x { position: absolute; top: 10px; right: 12px; border: 0; background: none; font-size: 26px; line-height: 1; cursor: pointer; color: inherit; opacity: .6; padding: 4px 8px; border-radius: 8px; }
+.jc-row { display: flex; gap: 8px; }
+.jc-input { flex: 1; min-width: 0; padding: 12px 14px; border-radius: 12px; border: 1.5px solid #D6D1EA; font: 600 16px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; background: #fff; color: #1E1B2E; }
+[data-theme="dark"] .jc-input { background: #26233A; color: #ECE9F7; border-color: #3A3655; }
+.jc-input:focus { outline: 2px solid #6A5ACD; outline-offset: 1px; }
+.jc-btn { border: 0; border-radius: 12px; padding: 0 16px; min-height: 44px; font: 700 14px inherit; cursor: pointer; white-space: nowrap; }
+.jc-btn:disabled { opacity: .6; cursor: progress; }
+.jc-primary { background: linear-gradient(135deg, #7C6BFF, #6A5ACD); color: #fff; }
+.jc-btn:focus-visible, .jc-x:focus-visible { outline: 2px solid #6A5ACD; outline-offset: 2px; }
+.jc-card { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; border-radius: 14px; background: #F4F2FC; }
+[data-theme="dark"] .jc-card { background: #26233A; }
+.jc-card.jc-ok { justify-content: flex-start; background: #ECFDF5; color: #065F46; }
+[data-theme="dark"] .jc-card.jc-ok { background: #0E2A22; color: #A7F3D0; }
+.jc-card.jc-ok > i { font-size: 22px; }
+.jc-class { font-weight: 800; font-size: 16px; }
+.jc-muted { color: #5B5677; font-size: 13px; font-weight: 500; }
+.jc-err { margin: 12px 0 0; color: #B91C1C; font-size: 14px; }
+.jc-actions { display: flex; justify-content: flex-end; margin-top: 12px; }
+.jc-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.more-tool-badge { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 4px; border-radius: 999px; background: #6c4ed9; color: #fff; font-size: 11px; font-weight: 700; }
+@media (max-width: 480px) { .jc-row { flex-direction: column; } .jc-btn { width: 100%; } .jc-card { flex-direction: column; align-items: stretch; } }

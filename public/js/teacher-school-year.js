@@ -240,9 +240,10 @@
 
   function wizardStep3() {
     var created = state.wizard.created;
-    var joinBase = window.location.origin + '/signup.html?code=';
+    // /join/CODE works whether the student is new, signed out, or already signed in.
+    var joinBase = window.location.origin + '/join/';
     var body = steps(3) + (created.length
-      ? '<p class="ty-lead">Share the link (or the code) with each class. The link opens sign-up with the code already filled in.</p>' +
+      ? '<p class="ty-lead">Share the link (or the code) with each class. New students land on sign-up with the code filled in; students who already have an account join in one tap.</p>' +
         '<ul class="ty-codes">' + created.map(function (c) {
           return '<li><div><div class="ty-name">' + esc(c.className) + (c.period ? ' · ' + esc(c.period) : '') + '</div>' +
             '<button type="button" class="ty-btn ty-btn-link ty-linkcopy" data-copy="' + esc(joinBase + encodeURIComponent(c.code)) + '"><i class="fas fa-link" aria-hidden="true"></i> Copy join link</button></div>' +
