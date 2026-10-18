@@ -18,6 +18,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
+const { resolveAnswerKey } = require('../utils/answerKeyValue');
 
 const CourseSession = require('../models/courseSession');
 const { verifyAnswer } = require('../utils/mathSolver');
@@ -178,7 +179,9 @@ router.post('/submit', async (req, res) => {
     }
 
     const problem = problems[currentIndex];
-    const correctAnswer = answerKeys[problem.id] || problem.answer;
+    // A key may be a string or { answer, rubric } — never grade against the
+    // object itself ("[object Object]"); see utils/answerKeyValue.
+    const { answer: correctAnswer, rubric: keyRubric } = resolveAnswerKey(answerKeys, problem);
 
     // Grade the answer — try deterministic first, then LLM fallback
     let isCorrect = false;
@@ -193,7 +196,7 @@ router.post('/submit', async (req, res) => {
       // matching can't catch (e.g., "cos θ" vs "cosθ", "k=2" vs "2").
       if (!isCorrect) {
         try {
-          const gradeResult = await gradeWithLLM(problem.question, correctAnswer, answer);
+          const gradeResult = await gradeWithLLM(problem.question, correctAnswer, answer, keyRubric);
           isCorrect = gradeResult.correct;
           gradingFeedback = gradeResult.feedback;
         } catch (err) {
@@ -341,11 +344,11 @@ function loadModuleData(courseSession) {
  * Grade an open-ended answer using a lightweight LLM call.
  * Handles equivalent forms that deterministic verifyAnswer misses.
  */
-async function gradeWithLLM(question, answerKey, studentAnswer) {
+async function gradeWithLLM(question, answerKey, studentAnswer, rubric = null) {
   const prompt = `You are a math answer grader. Compare the student's answer to the answer key.
 
 Question: ${question}
-Answer Key: ${answerKey}
+Answer Key: ${answerKey}${rubric ? `\nGrading rubric: ${rubric}` : ''}
 Student Answer: ${studentAnswer}
 
 Rules:
