@@ -43,7 +43,7 @@
     {
       "id": "g8u8-4",
       "question": "Data: {(1,12), (2,15), (3,14), (4,18), (5,20), (6,22)}. Estimate the line of best fit and use it to predict y when x = 7.",
-      "answer": "Using (1,12) and (6,22): m = (22−12)/(6−1) = 10/5 = 2. b: 12 = 2(1)+b → b = 10. Line: y = 2x + 10. At x=7: y = 2(7)+10 = 24.",
+      "answer": "Using (1,12) and (6,22): m = (22−12)/(6−1) = 10/5 = 2. b: 12 = 2(1)+b → b = 10. Line: about y = 2x + 10. At x=7: y = 2(7)+10 = 24. A trend line is an estimate — accept any reasonable line close to the data (slope near 2, intercept near 10) and a prediction of about 23–25.",
       "skill": "line-of-best-fit",
       "difficulty": 4,
       "points": 8
@@ -104,7 +104,7 @@
     "g8u8-1": "Linear, positive, strong.",
     "g8u8-2": "Slope=5 pts/hour. Intercept=60. Predict: 100.",
     "g8u8-3": "No — extrapolation, exceeds max score.",
-    "g8u8-4": "y=2x+10. Predict y=24 at x=7.",
+    "g8u8-4": "About y=2x+10. Predict y≈24 at x=7 (accept 23–25).",
     "g8u8-5": "(a) 2/3 (b) 3/4 (c) Yes, association exists.",
     "g8u8-6": "No causation. Lurking variable: population size.",
     "g8u8-7": "(b) Smoking causes lung cancer (established by research).",

@@ -89,7 +89,7 @@
     {
       "id": "a1u4-5",
       "question": "Solve by elimination (multiply first):\n4x + 3y = 22\n5x - 2y = 2",
-      "answer": "Multiply equation 1 by 2 and equation 2 by 3 to eliminate y: 8x + 6y = 44 and 15x - 6y = 6. Add: 23x = 50 → x = 50/23. Alternatively, eliminate x: multiply equation 1 by 5 and equation 2 by 4: 20x + 15y = 110 and 20x - 8y = 8. Subtract: 23y = 102 → y = 102/23. Let's use cleaner elimination: multiply eq 1 by 2: 8x + 6y = 44. Multiply eq 2 by 3: 15x - 6y = 6. Add: 23x = 50 → x = 50/23 ≈ 2.17. Then 4(50/23) + 3y = 22 → 200/23 + 3y = 22 → 3y = 22 - 200/23 = (506 - 200)/23 = 306/23 → y = 102/23 ≈ 4.43. Solution: (50/23, 102/23). Verify: 4(50/23) + 3(102/23) = 200/23 + 306/23 = 506/23 = 22 ✓ and 5(50/23) - 2(102/23) = 250/23 - 204/23 = 46/23 = 2 ✓.",
+      "answer": "Multiply equation 1 by 2 and equation 2 by 3 to eliminate y: 8x + 6y = 44 and 15x - 6y = 6. Add: 23x = 50 → x = 50/23 ≈ 2.17. Then 4(50/23) + 3y = 22 → 200/23 + 3y = 22 → 3y = 22 - 200/23 = (506 - 200)/23 = 306/23 → y = 102/23 ≈ 4.43. Solution: (50/23, 102/23). Verify: 4(50/23) + 3(102/23) = 200/23 + 306/23 = 506/23 = 22 ✓ and 5(50/23) - 2(102/23) = 250/23 - 204/23 = 46/23 = 2 ✓.",
       "skill": "systems-of-equations-elimination",
       "difficulty": 5,
       "points": 10
@@ -152,7 +152,7 @@
       "skill": "linear-inequalities",
       "difficulty": 3,
       "points": 0,
-      "note": "Spiral review from Unit 3"
+      "note": "Spiral review from Unit 2"
     }
   ],
   "answerKeys": {
