@@ -5,7 +5,7 @@
   const { $, esc, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns } = window.LiveDrill;
   const API = '/api/live-drill/host';
 
-  const S = { drills: [], settings: null, drill: 'algebra', playbook: 'all', mode: 'drive', seconds: 120, plays: 10, spp: 20 };
+  const S = { drills: [], settings: null, classes: [], drill: 'algebra', playbook: 'all', mode: 'drive', seconds: 120, plays: 10, spp: 20, classId: '' };
   let game = null; // latest host state
   let es = null;
   let tick = null;
@@ -45,8 +45,16 @@
     segment($('o-seconds'), st.drive.seconds, S.seconds, (v) => mmss(v * 1000), (v) => { S.seconds = v; renderSetup(); });
     segment($('o-plays'), st.huddle.plays, S.plays, String, (v) => { S.plays = v; renderSetup(); });
     segment($('o-spp'), st.huddle.secondsPerPlay, S.spp, (v) => v + 's', (v) => { S.spp = v; renderSetup(); });
-    try { localStorage.setItem('mm-live-drill-setup', JSON.stringify({ drill: S.drill, playbook: S.playbook, mode: S.mode, seconds: S.seconds, plays: S.plays, spp: S.spp })); } catch { /* private mode */ }
+    $('cls').value = S.classId;
+    $('cls-note').hidden = !S.classes.length;
+    try { localStorage.setItem('mm-live-drill-setup', JSON.stringify({ drill: S.drill, playbook: S.playbook, mode: S.mode, seconds: S.seconds, plays: S.plays, spp: S.spp, classId: S.classId })); } catch { /* private mode */ }
   }
+  function renderClasses() {
+    $('cls').innerHTML = '<option value="">No class — students join with the code</option>'
+      + S.classes.map((c) => `<option value="${esc(c.id)}">${esc(c.name)} (${c.students})</option>`).join('');
+    if (!S.classes.some((c) => c.id === S.classId)) S.classId = '';
+  }
+  $('cls').onchange = () => { S.classId = $('cls').value; renderSetup(); };
   $('m-drive').onclick = () => { S.mode = 'drive'; renderSetup(); };
   $('m-huddle').onclick = () => { S.mode = 'huddle'; renderSetup(); };
 
@@ -56,6 +64,7 @@
     try {
       const st = await api('/games', { method: 'POST', body: JSON.stringify({
         drill: S.drill, playbook: S.playbook, mode: S.mode, seconds: S.seconds, plays: S.plays, secondsPerPlay: S.spp,
+        classId: S.classId || undefined,
       }) });
       connect(st.code);
       apply(st);
@@ -79,15 +88,17 @@
   function action(path) {
     return async () => {
       try { apply(await api(`/games/${encodeURIComponent(game.code)}${path}`, { method: 'POST', body: '{}' })); }
-      catch (e) { ($(game && game.phase === 'lobby' ? 'lobby-err' : 'live-err')).textContent = e.message; }
+      catch (e) { ($(!game ? 'setup-err' : game.phase === 'lobby' ? 'lobby-err' : game.phase === 'over' ? 'final-err' : 'live-err')).textContent = e.message; }
     };
   }
   $('kick').onclick = action('/start');
   $('g-end').onclick = () => { if (confirm('End the game now?')) action('/end')(); };
   $('h-next').onclick = action('/advance');
   $('l-cancel').onclick = async () => { await action('/end')(); reset(); show('setup'); };
-  function reset() { if (es) es.close(); es = null; game = null; seenFeed.clear(); $('l-code').textContent = '------'; }
+  function reset() { if (es) es.close(); es = null; game = null; seenFeed.clear(); $('l-code').textContent = '------'; $('l-qr').hidden = true; }
   $('f-again').onclick = () => { reset(); show('setup'); renderSetup(); };
+  // Same code, same teams, same phones: everyone lands back in the lobby still seated.
+  $('f-rematch').onclick = () => { seenFeed.clear(); $('final-err').textContent = ''; action('/rematch')(); };
 
   // ---------------- render ----------------
   function apply(st) {
@@ -105,16 +116,22 @@
   }
 
   function renderLobby(st) {
+    if ($('l-code').textContent !== st.code) {
+      $('l-qr').src = `${API}/games/${encodeURIComponent(st.code)}/qr.svg`;
+      $('l-qr').hidden = false;
+    }
     $('l-code').textContent = st.code;
+    $('l-class').hidden = !st.className;
+    if (st.className) $('l-class').innerHTML = `<b>${esc(st.className)}</b>: your students also have a <b>Join</b> button on their Mathmatix chat screen.`;
     $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? `Team Drive, ${mmss(st.seconds * 1000)}` : `Huddle, ${st.totalPlays} plays`}`;
-    $('l-count').textContent = `${st.players.length} player${st.players.length === 1 ? '' : 's'}`;
+    $('l-count').textContent = `${st.players.length} player${st.players.length === 1 ? '' : 's'}${st.gameNumber > 1 ? ` · game ${st.gameNumber}` : ''}`;
     $('kick').disabled = st.players.length === 0;
     $('rosters').innerHTML = st.teams.map((t, i) => {
       const ps = st.players.filter((p) => p.team === i);
       return `<div class="roster t${i}"><h3>${esc(t.name)}<span class="muted" style="font-size:1rem">${ps.length}</span></h3><div class="chips">${
         ps.map((p) => (openChip === p.id
-          ? `<span class="chipmenu">${esc(p.name)}<button data-act="team" data-id="${p.id}" data-team="${1 - i}">→ ${esc(st.teams[1 - i].name)}</button><button class="rm" data-act="kick" data-id="${p.id}">Remove</button><button data-act="close">✕</button></span>`
-          : `<button class="chip" data-act="open" data-id="${p.id}">${esc(p.name)}</button>`)).join('')
+          ? `<span class="chipmenu${p.away ? ' away' : ''}">${esc(p.name)}<button data-act="team" data-id="${p.id}" data-team="${1 - i}">→ ${esc(st.teams[1 - i].name)}</button><button class="rm" data-act="kick" data-id="${p.id}">Remove</button><button data-act="close">✕</button></span>`
+          : `<button class="chip${p.away ? ' away' : ''}" data-act="open" data-id="${p.id}" title="${p.linked ? 'Signed in' : 'Joined with the code'}${p.away ? ' · screen closed' : ''}">${esc(p.name)}${p.linked ? '<span class="acct" aria-label="signed in">✓</span>' : ''}</button>`)).join('')
       }</div></div>`;
     }).join('');
     $('rosters').querySelectorAll('button[data-act]').forEach((b) => {
@@ -151,7 +168,7 @@
       c.classList.remove('low');
       if (r && !r.closed) {
         const left = r.closesAt - serverNow();
-        $('h-count').textContent = `${mmss(left)} · ${r.answered}/${game.players.length} in`;
+        $('h-count').textContent = `${mmss(left)} · ${r.answered}/${r.expected} in`;
         $('h-count').classList.toggle('low', left <= 5000);
       }
     }
@@ -241,8 +258,9 @@
   (async function boot() {
     try { Object.assign(S, JSON.parse(localStorage.getItem('mm-live-drill-setup') || '{}')); } catch { /* none saved */ }
     try {
-      const { drills, settings } = await api('/drills');
-      S.drills = drills; S.settings = settings;
+      const [{ drills, settings }, { classes }] = await Promise.all([api('/drills'), api('/classes').catch(() => ({ classes: [] }))]);
+      S.drills = drills; S.settings = settings; S.classes = classes;
+      renderClasses();
       if (!drills.some((d) => d.id === S.drill && !d.unavailable)) S.drill = (drills.find((d) => !d.unavailable) || drills[0]).id;
       if (S.mode !== 'drive' && S.mode !== 'huddle') S.mode = 'drive';
       renderSetup();

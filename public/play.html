@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261017">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261018">
 </head>
 <body>
 <div class="pwrap">
@@ -22,7 +22,8 @@
     </div>
     <form id="join-form" class="panel" style="display:flex;flex-direction:column;gap:14px;margin-top:14px" autocomplete="off">
       <div><label class="lbl" for="code">Game code</label><input type="text" id="code" class="codein" maxlength="6" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="------" required></div>
-      <div><label class="lbl" for="name">Your name (first + last initial)</label><input type="text" id="name" maxlength="20" placeholder="e.g. Marcus T." required></div>
+      <div id="name-row"><label class="lbl" for="name">Your name (first + last initial)</label><input type="text" id="name" maxlength="20" placeholder="e.g. Marcus T." required></div>
+      <p id="acct-row" class="muted" hidden style="margin:0">Joining as <b id="acct-name"></b> from your Mathmatix account.</p>
       <button class="go" type="submit" id="join-btn">Join</button>
       <div class="err" id="join-err" role="alert"></div>
       <p class="muted" style="margin:0;font-size:.88rem">No account needed. Your name is only used during this game and is deleted afterward.</p>
@@ -67,6 +68,7 @@
         <div><span class="v" id="f-pct">0%</span><span class="k">Accuracy</span></div>
         <div><span class="v" id="f-best">0</span><span class="k">Longest streak</span></div>
       </div>
+      <p class="muted" style="margin:0;text-align:center">Stay on this screen — if your teacher runs it back, you'll go straight to the next kickoff.</p>
       <div class="film" id="f-film"></div>
       <button class="ghost" id="f-new">Join another game</button>
     </div>
@@ -82,7 +84,8 @@
 </div>
 <div class="td" id="td" hidden></div>
 
-<script src="/js/live-drill/common.js?v=20261017"></script>
-<script src="/js/live-drill/play.js?v=20261017"></script>
+<script src="/js/csrf.js"></script>
+<script src="/js/live-drill/common.js?v=20261018"></script>
+<script src="/js/live-drill/play.js?v=20261018"></script>
 </body>
 </html>

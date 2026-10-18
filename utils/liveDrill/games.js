@@ -99,7 +99,12 @@ class GameError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
 
-function createGame({ hostId, drill, playbook, mode, seconds, plays, secondsPerPlay }) {
+/**
+ * `cls` (optional) ties the game to one of the host's classes ({ id, name }): every student enrolled
+ * in it sees a "Join" banner on their chat screen (routes/liveDrill.js /mine) and joins with their
+ * account name. The code still works for anyone, so a guest device is never locked out.
+ */
+function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, plays, secondsPerPlay }) {
   if (!DRILLS[drill]) throw new GameError(400, 'Unknown drill.');
   if (mode !== 'drive' && mode !== 'huddle') throw new GameError(400, 'Mode must be drive or huddle.');
   const d = getDrill(drill); // throws if the published page can't be read
@@ -117,6 +122,9 @@ function createGame({ hostId, drill, playbook, mode, seconds, plays, secondsPerP
   const game = {
     code: newCode(),
     hostId: String(hostId),
+    hostName: String(hostName || '').slice(0, 60),
+    classId: cls && cls.id ? String(cls.id) : null,
+    className: cls && cls.name ? String(cls.name).slice(0, 60) : null,
     drill,
     drillTitle: d.title,
     playbook: book,
@@ -183,8 +191,23 @@ function playAt(game, n) {
 // lobby
 // ---------------------------------------------------------------------------
 
-function join(game, rawName) {
+/**
+ * Seat a player. `userId` is set when a signed-in student joins from their account: their name
+ * comes from the account (the caller builds it), and joining again — a second device, a reload in
+ * a new tab — reseats them in the same player instead of making a second one.
+ */
+function join(game, rawName, { userId } = {}) {
   if (game.phase === 'over') throw new GameError(409, 'That game is over.');
+  if (userId) {
+    const seated = [...game.players.values()].find((p) => p.userId === String(userId));
+    if (seated && seated.kicked) throw new GameError(403, 'Your teacher removed you from this game.');
+    if (seated) {
+      const token = crypto.randomBytes(24).toString('base64url');
+      game.byToken.set(hash(token), seated.id);
+      seated.lastSeen = now();
+      return { token, player: seated };
+    }
+  }
   const active = [...game.players.values()].filter((p) => !p.kicked);
   if (active.length >= MAX_PLAYERS) throw new GameError(409, 'This game is full.');
   const name = cleanName(rawName, game);
@@ -203,6 +226,8 @@ function join(game, rawName) {
     n: 1, issuedAt: null, // drive: the play they're on, and when it was first shown to them
     misses: [], // { n, k }
     lastSeen: now(),
+    userId: userId ? String(userId) : null,
+    conns: 0, // open live streams; a player with none is "away" (phone asleep, tab closed)
   };
   game.players.set(player.id, player);
   game.byToken.set(hash(token), player.id);
@@ -220,10 +245,11 @@ function kick(game, playerId) {
   const p = game.players.get(String(playerId));
   if (!p) throw new GameError(404, 'No such player.');
   p.kicked = true;
+  p.conns = 0;
   for (const l of game.listeners) {
     if (l.playerId === p.id) { safeWrite(l.res, 'kicked', {}); l.res.end(); game.listeners.delete(l); }
   }
-  touch(game);
+  if (!maybeCloseRound(game)) touch(game);
 }
 
 function setTeam(game, playerId, team) {
@@ -407,11 +433,48 @@ function answer(game, player, n, k) {
   if (!play.choices.some((c) => c.k === k)) throw new GameError(400, 'Not one of the choices.');
   const ms = now() - r.openedAt;
   r.answers.set(player.id, { k, ms });
-  // Close as soon as every player in the game has answered — no waiting out the clock.
-  const everyone = [...game.players.values()].filter((p) => !p.kicked);
-  if (everyone.every((p) => r.answers.has(p.id))) closeRound(game);
-  else touch(game);
+  if (!maybeCloseRound(game)) touch(game);
   return { locked: true, n };
+}
+
+/**
+ * Who a Huddle round waits for: the players whose screen is open. A phone that went to sleep or a
+ * tab that closed drops its live stream, and a round used to wait out its whole clock for that
+ * student every single play. If nobody has a stream open (a test, a polling-only client), it falls
+ * back to everyone seated.
+ */
+function expectedAnswerers(game) {
+  const seated = [...game.players.values()].filter((p) => !p.kicked);
+  const here = seated.filter((p) => p.conns > 0);
+  return here.length ? here : seated;
+}
+
+/** Close the open round as soon as everyone it waits for has answered. True if it closed. */
+function maybeCloseRound(game) {
+  const r = game.round;
+  if (game.mode !== 'huddle' || game.phase !== 'live' || !r || r.closed) return false;
+  const waitingFor = expectedAnswerers(game);
+  if (!waitingFor.length || !waitingFor.every((p) => r.answers.has(p.id))) return false;
+  closeRound(game);
+  return true;
+}
+
+/**
+ * "Run it back": the same code, the same teams, the same connected phones — a fresh deal, a clean
+ * scoreboard, back to the lobby so the teacher can kick off again. Everyone stays seated; nobody
+ * types a code twice.
+ */
+function rematch(game) {
+  if (game.phase !== 'over') throw new GameError(409, 'Finish this game first.');
+  game.seed = crypto.randomBytes(12).toString('hex');
+  game.deck = [];
+  game.teams = TEAM_NAMES.map((name) => ({ name, pos: START_POS, pts: 0, tds: 0, yards: 0 }));
+  for (const p of game.players.values()) {
+    Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, n: 1, issuedAt: null, misses: [] });
+  }
+  Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map() });
+  game.games = (game.games || 1) + 1;
+  touch(game);
 }
 
 // ---------------------------------------------------------------------------
@@ -436,6 +499,9 @@ function base(game) {
     endsAt: game.endsAt,
     totalPlays: game.totalPlays,
     secondsPerPlay: game.secondsPerPlay,
+    className: game.className,
+    hostName: game.hostName,
+    gameNumber: game.games || 1,
     teams: teamsView(game),
     version: game.version,
   };
@@ -456,6 +522,7 @@ function roundView(game, forHost) {
     }
     Object.assign(v, { answer: play.answer, answerHtml: play.answerHtml, tell: play.tell, revealCard: play.revealCard, counts, rightByTeam: right });
   } else if (forHost) {
+    v.expected = expectedAnswerers(game).length;
     v.answeredByTeam = [0, 0];
     for (const pid of r.answers.keys()) { const p = game.players.get(pid); if (p) v.answeredByTeam[p.team]++; }
   }
@@ -479,6 +546,7 @@ function filmRoom(game, limit = 3) {
 function hostView(game) {
   const players = [...game.players.values()].filter((p) => !p.kicked).map((p) => ({
     id: p.id, name: p.name, team: p.team, att: p.att, comp: p.comp, yards: p.yards, best: p.best,
+    linked: !!p.userId, away: p.conns === 0 && now() - p.lastSeen > 15000,
   }));
   const v = { ...base(game), players, feed: game.feed.slice(0, 8), round: roundView(game, true) };
   if (game.phase === 'over') {
@@ -548,8 +616,30 @@ function subscribe(game, listener) {
   game.listeners.add(listener);
   const p = listener.playerId && game.players.get(listener.playerId);
   safeWrite(listener.res, 'state', listener.kind === 'host' ? hostView(game) : playerView(game, p));
-  return () => game.listeners.delete(listener);
+  if (p) { p.conns++; p.lastSeen = now(); touch(game); }
+  return () => {
+    if (!game.listeners.delete(listener)) return;
+    if (p) {
+      p.conns = Math.max(0, p.conns - 1);
+      p.lastSeen = now();
+      // The one student the round was waiting on may just have put their phone down.
+      if (!maybeCloseRound(game)) touch(game);
+    }
+  };
 }
+
+/**
+ * Open games tied to any of these classes, for the student chat banner. Games are in memory, so
+ * this is a scan — but the caller asks it only after confirming some game has a class at all.
+ */
+function gamesForClasses(classIds) {
+  const want = new Set((classIds || []).map(String));
+  return [...games.values()]
+    .filter((g) => g.classId && want.has(g.classId) && g.phase !== 'over')
+    .map((g) => ({ code: g.code, className: g.className, hostName: g.hostName, drillTitle: g.drillTitle,
+      playbookName: g.playbookName, mode: g.mode, phase: g.phase }));
+}
+const anyClassGames = () => [...games.values()].some((g) => g.classId && g.phase !== 'over');
 
 // ---------------------------------------------------------------------------
 // housekeeping
@@ -575,7 +665,7 @@ function _reset() { for (const g of [...games.values()]) dropGame(g); }
 module.exports = {
   SETTINGS, TEAM_K, START_POS, GameError,
   createGame, getGame, hostGame, playerFor, normalizeCode,
-  join, kick, setTeam, start, advance, endGame, currentPlay, answer,
-  hostView, playerView, subscribe, playAt,
+  join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer,
+  hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,
   _reset, _games: games,
 };

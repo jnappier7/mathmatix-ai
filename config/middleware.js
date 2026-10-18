@@ -384,6 +384,9 @@ function configureMiddleware(app) {
     '/impersonation/status',
     '/announcements/student/unread-count',
     '/chat/track-time',
+    // The chat screen's live-drill Join banner (public/js/live-drill/chat-banner.js), every
+    // 20 s per visible tab; answered from memory unless a class game is open somewhere.
+    '/live-drill/mine',
   ]);
   app.use('/api/', (req, res, next) => {
     // The practice-test runner has its own limiter, keyed on the session

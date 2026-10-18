@@ -7,6 +7,9 @@
  *                           stream, which can't send headers). CSRF-exempt — nothing here rides
  *                           a cookie — and off the global apiLimiter, because a whole class
  *                           shares one school IP; `playLimiter` keys on the token instead.
+ *   /api/live-drill/mine/*  signed-in students (isAuthenticated, CSRF as usual): the chat-screen
+ *                           banner asks which of MY classes has a game open, and joins with the
+ *                           account's name — no code, nothing typed.
  *
  * The game itself — rules, scoring, what each screen may see — is utils/liveDrill/games.js.
  * Pages: public/live-drill-host.html (projector), public/play.html (students, at /play).
@@ -14,12 +17,16 @@
 const express = require('express');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
+const QRCode = require('qrcode');
+const EnrollmentCode = require('../models/enrollmentCode');
+const { userHasRole } = require('../utils/roleQuery');
 const logger = require('../utils/logger').child({ route: 'liveDrill' });
 const G = require('../utils/liveDrill/games');
 const { DRILLS, listPlaybooks } = require('../utils/liveDrill/engine');
 
 const hostRouter = express.Router();
 const playRouter = express.Router();
+const mineRouter = express.Router();
 
 const TOKEN_HEADER = 'x-live-drill-token';
 
@@ -59,10 +66,29 @@ hostRouter.get('/drills', (req, res) => {
   } catch (err) { send(res, err); }
 });
 
-hostRouter.post('/games', (req, res) => {
+/** The host's classes, for the "Which class?" picker. Same rosters as Class Activities. */
+hostRouter.get('/classes', async (req, res) => {
   try {
-    const { drill, playbook, mode, seconds, plays, secondsPerPlay } = req.body || {};
-    const game = G.createGame({ hostId: req.user._id, drill, playbook, mode, seconds, plays, secondsPerPlay });
+    const classes = await EnrollmentCode.find({ teacherId: req.user._id, isActive: { $ne: false } }, '_id className period enrolledStudents')
+      .sort({ className: 1 }).lean();
+    res.json({ classes: classes.map((c) => ({
+      id: String(c._id), name: [c.className, c.period].filter(Boolean).join(' · '), students: (c.enrolledStudents || []).length,
+    })) });
+  } catch (err) { send(res, err); }
+});
+
+const personName = (u) => [u && u.firstName, u && u.lastName].filter(Boolean).join(' ').trim();
+
+hostRouter.post('/games', async (req, res) => {
+  try {
+    const { drill, playbook, mode, seconds, plays, secondsPerPlay, classId } = req.body || {};
+    let cls = null;
+    if (classId) {
+      const c = await EnrollmentCode.findOne({ _id: classId, teacherId: req.user._id }, '_id className period').lean().catch(() => null);
+      if (!c) return res.status(404).json({ message: 'That class was not found.' });
+      cls = { id: c._id, name: [c.className, c.period].filter(Boolean).join(' · ') };
+    }
+    const game = G.createGame({ hostId: req.user._id, hostName: personName(req.user), cls, drill, playbook, mode, seconds, plays, secondsPerPlay });
     logger.info('live drill hosted', { code: game.code, drill: game.drill, mode: game.mode, teacher: String(req.user._id) });
     res.status(201).json(G.hostView(game));
   } catch (err) {
@@ -96,6 +122,17 @@ const hostAction = (fn) => (req, res) => {
 hostRouter.post('/games/:code/start', hostAction((g) => G.start(g)));
 hostRouter.post('/games/:code/advance', hostAction((g) => G.advance(g)));
 hostRouter.post('/games/:code/end', hostAction((g) => G.endGame(g)));
+hostRouter.post('/games/:code/rematch', hostAction((g) => G.rematch(g)));
+
+/** The lobby's QR code: the join link with the code already in it, so a scan lands on "your name". */
+hostRouter.get('/games/:code/qr.svg', async (req, res) => {
+  try {
+    const game = G.hostGame(req.params.code, req.user._id);
+    const url = `${req.protocol}://${req.get('host')}/play?code=${game.code}`;
+    const svg = await QRCode.toString(url, { type: 'svg', margin: 1, errorCorrectionLevel: 'M', color: { dark: '#0b1a22', light: '#ffffff' } });
+    res.set('Cache-Control', 'private, max-age=3600').type('image/svg+xml').send(svg);
+  } catch (err) { send(res, err); }
+});
 hostRouter.post('/games/:code/players/:id/kick', hostAction((g, req) => G.kick(g, req.params.id)));
 hostRouter.post('/games/:code/players/:id/team', hostAction((g, req) => G.setTeam(g, req.params.id, Number(req.body && req.body.team))));
 
@@ -181,8 +218,48 @@ playRouter.post('/:code/answer', playLimiter, (req, res) => {
   } catch (err) { send(res, err); }
 });
 
+// ---------------------------------------------------------------------------
+// signed-in students (the chat-screen banner)
+// ---------------------------------------------------------------------------
+
+/** First name + last initial, from the account — the same shape the code-join form asks for. */
+function accountName(u) {
+  const first = String((u && u.firstName) || '').trim();
+  const last = String((u && u.lastName) || '').trim();
+  return [first, last ? `${last[0]}.` : ''].filter(Boolean).join(' ') || 'Player';
+}
+
+/**
+ * Games open right now in any class I'm enrolled in. The chat banner polls this, so the common
+ * case — no class game anywhere on the server — answers from memory without touching the DB.
+ */
+mineRouter.get('/', async (req, res) => {
+  try {
+    res.set('Cache-Control', 'no-store');
+    const student = userHasRole(req.user, 'student');
+    if (!student || !G.anyClassGames()) return res.json({ student, name: student ? accountName(req.user) : null, games: [] });
+    const classes = await EnrollmentCode.find({ 'enrolledStudents.studentId': req.user._id }, '_id').lean();
+    res.json({ student, name: accountName(req.user), games: G.gamesForClasses(classes.map((c) => c._id)) });
+  } catch (err) { send(res, err); }
+});
+
+/**
+ * Join with my account. Any open game works by code — the class only decides who sees the banner —
+ * and a second device or a reload reseats me in the same player. Non-students get 403 and the page
+ * falls back to the typed-name form.
+ */
+mineRouter.post('/join', (req, res) => {
+  try {
+    if (!userHasRole(req.user, 'student')) return res.status(403).json({ message: 'Join with the code and your name.' });
+    const game = G.getGame((req.body || {}).code);
+    if (!game) return res.status(404).json({ message: 'No game with that code. Check the board and try again.' });
+    const { token, player } = G.join(game, accountName(req.user), { userId: req.user._id });
+    res.status(201).json({ token, code: game.code, playerId: player.id, name: player.name, team: player.team });
+  } catch (err) { send(res, err); }
+});
+
 /** For config/middleware.js: player calls are exempt from the global apiLimiter. */
 const LIVE_DRILL_PLAY_PATH = /^\/live-drill\/play\//;
 function isLiveDrillPlayPath(apiPath) { return LIVE_DRILL_PLAY_PATH.test(String(apiPath || '')); }
 
-module.exports = { hostRouter, playRouter, isLiveDrillPlayPath, TOKEN_HEADER };
+module.exports = { hostRouter, playRouter, mineRouter, isLiveDrillPlayPath, TOKEN_HEADER, _accountName: accountName };
