@@ -958,6 +958,13 @@ router.post('/join-class', isAuthenticated, isStudent, async (req, res) => {
 
         await User.findByIdAndUpdate(studentId, { $set: updateFields });
 
+        // Joining one of a teacher's classes puts a student archived at a
+        // year change back on that teacher's current roster (routes/teacherRoster.js).
+        await User.updateOne(
+            { _id: enrollmentCode.teacherId },
+            { $pull: { archivedStudents: { studentId: req.user._id } } }
+        ).catch(err => console.error('Error un-archiving on join:', err.message));
+
         res.json({
             success: true,
             message: `You've joined ${enrollmentCode.className || 'the class'}!`,

@@ -855,10 +855,20 @@ function registerHtmlRoutes(app) {
   const publicDir = path.join(__dirname, '..', 'public');
   const sendHtml = (file) => (req, res) => res.sendFile(path.join(publicDir, file));
 
+  // Class join link a teacher shares: /join/ALGE-3F13B0 (routes/joinLink.js).
+  app.use('/join', require('../routes/joinLink'));
+
   // Public HTML routes
   app.get('/', ensureNotAuthenticated, sendHtml('index.html'));
   app.get('/login.html', ensureNotAuthenticated, sendHtml('login.html'));
-  app.get('/signup.html', ensureNotAuthenticated, sendHtml('signup.html'));
+  // A signed-in visitor on an old class link (/signup.html?code=X, what the
+  // new-year wizard copied before /join existed) would be bounced by
+  // ensureNotAuthenticated and lose the code — send them through /join.
+  app.get('/signup.html', (req, res, next) => {
+    const code = String(req.query.code || '');
+    if (req.user && /^[A-Za-z0-9-]{3,24}$/.test(code)) return res.redirect(302, `/join/${encodeURIComponent(code)}`);
+    return next();
+  }, ensureNotAuthenticated, sendHtml('signup.html'));
   app.get('/forgot-password.html', sendHtml('forgot-password.html'));
   app.get('/reset-password.html', sendHtml('reset-password.html'));
   // Parental consent landing page — MUST be public. The recipient is a parent
