@@ -49,7 +49,7 @@
     },
     {
       "id": "g8u6-5",
-      "question": "In the figure, lines m and n are parallel. A transversal creates an angle of 72° at line m. Name one angle at line n that equals 72° and one that equals 108°. State the angle relationship for each.",
+      "question": "Lines m and n are parallel, and a transversal crosses both of them. One of the angles the transversal forms at line m measures 72°. Name one angle at line n that equals 72° and one that equals 108°. State the angle relationship for each.",
       "answer": "Equals 72°: the corresponding angle (same position at line n) — corresponding angles are equal when lines are parallel. Equals 108°: the co-interior (same-side interior) angle — co-interior angles are supplementary (72° + 108° = 180°).",
       "skill": "angle-relationships",
       "difficulty": 4,

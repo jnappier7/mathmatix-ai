@@ -153,8 +153,8 @@
       "lessonPhase": "concept-intro",
       "skill": "order-of-operations",
       "title": "Order of Operations (GEMS)",
-      "content": "When an expression contains more than one operation, we follow a specific order called **GEMS**:\n\n1. **G**rouping (parentheses, brackets, and other grouping symbols like fraction bars)\n2. **E**xponents\n3. **M**ultiply and **D**ivide (left to right\u2014they are equal in priority)\n4. **S**ubtract and **A**dd (left to right\u2014they are equal in priority)\n\nA common mistake: in the expression 3 + 4 x 2, many students add first and get 14. But multiplication comes before addition, so the correct answer is 3 + 8 = **11**.\n\nWhen you see nested grouping symbols\u2014like brackets around parentheses [2 + (3 x 4)]\u2014always work from the **innermost** group outward. Inside first: 3 x 4 = 12. Then the bracket: 2 + 12 = 14.",
-      "initialPrompt": "Try this: What is the value of 8 - 2 x 3 + 1? Be careful\u2014don't just go left to right!",
+      "content": "When an expression contains more than one operation, we follow a specific order called **GEMS**:\n\n1. **G**rouping (parentheses, brackets, and other grouping symbols like fraction bars)\n2. **E**xponents\n3. **M**ultiply and **D**ivide (left to right\u2014they are equal in priority)\n4. **S**ubtract and **A**dd (left to right\u2014they are equal in priority)\n\nA common mistake: in the expression 3 + 4 × 2, many students add first and get 14. But multiplication comes before addition, so the correct answer is 3 + 8 = **11**.\n\nWhen you see nested grouping symbols\u2014like brackets around parentheses [2 + (3 × 4)]\u2014always work from the **innermost** group outward. Inside first: 3 × 4 = 12. Then the bracket: 2 + 12 = 14.",
+      "initialPrompt": "Try this: What is the value of 8 - 2 × 3 + 1? Be careful\u2014don't just go left to right!",
       "lessonId": "order-of-operations"
     },
     {

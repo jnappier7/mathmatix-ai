@@ -128,7 +128,7 @@
       "lessonPhase": "concept-intro",
       "skill": "exponential-growth-decay",
       "title": "Exponential Decay",
-      "content": "Decay is growth run in reverse: a quantity that loses a **fixed percentage** over equal time periods.\n\n**Exponential Decay:** A = P(1 − r)ᵗ\n\nwhere P is the initial amount, r is the decay rate as a decimal, and t is time.\n\n**Why 1 − r.** Losing 20% means **keeping 80%**, so each period multiplies by 0.80. The base (1 − r) sits between 0 and 1, which is exactly the condition for decay in f(x) = a·bˣ.\n\nA useful reframing: don't think \"losing 20%,\" think \"**multiplying by 0.8**.\" That turns every decay problem into a repeated multiplication.\n\n**Common applications:**\n- **Depreciation:** A = P(1 − r)ᵗ — a car losing 15% of its value per year.\n- **Medication clearing the bloodstream**, radioactive decay, cooling.\n- **Half-life:** if a substance halves every h time units, the model is A = A₀ · (1/2)^(t/h). The exponent t/h counts **how many half-lives** have passed — 18 years with a 6-year half-life is 18/6 = 3 half-lives, so a third of... no: three *halvings*, leaving (1/2)³ = 1/8 of the original.\n\n**Decay never reaches zero.** Halve something repeatedly and it gets arbitrarily small but never vanishes — which is the horizontal asymptote y = 0 showing up in a word problem. \"When will it all be gone?\" has no answer for an exponential model; \"when will it drop below 1 gram?\" does.\n\n**Two rates that are easy to confuse:**\n• \"Decreases by 20% per year\" → r = 0.20, base = 0.80\n• \"Decreases *to* 20% each year\" → base = 0.20 directly\n\nRead \"by\" versus \"to\" carefully; they describe very different rates of loss.",
+      "content": "Decay is growth run in reverse: a quantity that loses a **fixed percentage** over equal time periods.\n\n**Exponential Decay:** A = P(1 − r)ᵗ\n\nwhere P is the initial amount, r is the decay rate as a decimal, and t is time.\n\n**Why 1 − r.** Losing 20% means **keeping 80%**, so each period multiplies by 0.80. The base (1 − r) sits between 0 and 1, which is exactly the condition for decay in f(x) = a·bˣ.\n\nA useful reframing: don't think \"losing 20%,\" think \"**multiplying by 0.8**.\" That turns every decay problem into a repeated multiplication.\n\n**Common applications:**\n- **Depreciation:** A = P(1 − r)ᵗ — a car losing 15% of its value per year.\n- **Medication clearing the bloodstream**, radioactive decay, cooling.\n- **Half-life:** if a substance halves every h time units, the model is A = A₀ · (1/2)^(t/h). The exponent t/h counts **how many half-lives** have passed — 18 years with a 6-year half-life is 18/6 = 3 half-lives — three *halvings*, leaving (1/2)³ = 1/8 of the original.\n\n**Decay never reaches zero.** Halve something repeatedly and it gets arbitrarily small but never vanishes — which is the horizontal asymptote y = 0 showing up in a word problem. \"When will it all be gone?\" has no answer for an exponential model; \"when will it drop below 1 gram?\" does.\n\n**Two rates that are easy to confuse:**\n• \"Decreases by 20% per year\" → r = 0.20, base = 0.80\n• \"Decreases *to* 20% each year\" → base = 0.20 directly\n\nRead \"by\" versus \"to\" carefully; they describe very different rates of loss.",
       "initialPrompt": "A laptop loses 20% of its value each year. What fraction of its value does it KEEP each year — and what number does that make the base of your model?",
       "lessonId": "exponential-decay"
     },
@@ -145,7 +145,7 @@
         },
         {
           "problem": "A town's population is 8,000 and is declining by 3% per year. Write the decay model and predict the population 10 years from now.",
-          "solution": "**Identify the three pieces:**\n• P = 8000 (initial population)\n• r = 0.03 (3% as a decimal)\n• decay, so the base is 1 − r = **0.97**\n\n**Write the model:**\nA = 8000(0.97)ᵗ\n\nRead the base as \"the town keeps 97% of its people each year.\"\n\n**Predict at t = 10:**\nA = 8000(0.97)¹⁰\n(0.97)¹⁰ ≈ 0.7374\nA ≈ 8000(0.7374) ≈ **5,899 people**\n\n**Sanity-check the answer.** Losing 3% a year for 10 years is *not* losing 30% — that would leave 5,600. The real answer is a little higher (5,899), because each year's 3% is taken from a smaller population than the year before. Repeated percentage change always lands short of the naive multiplication, and noticing that is a good check on any decay answer.\n\n**Round to whole people.** A population of 5,899.39 isn't a thing."
+          "solution": "**Identify the three pieces:**\n• P = 8000 (initial population)\n• r = 0.03 (3% as a decimal)\n• decay, so the base is 1 − r = **0.97**\n\n**Write the model:**\nA = 8000(0.97)ᵗ\n\nRead the base as \"the town keeps 97% of its people each year.\"\n\n**Predict at t = 10:**\nA = 8000(0.97)¹⁰\n(0.97)¹⁰ ≈ 0.7374\nA ≈ 8000(0.7374) ≈ **5,899 people**\n\n**Sanity-check the answer.** Losing 3% a year for 10 years is *not* losing 30% — that would leave 5,600. The real answer is a little higher (5,899), because each year's 3% is taken from a smaller population than the year before. Repeated percentage *decay* always loses less than the naive multiplication suggests (for growth it's the reverse: compounding gains more than the naive amount), and noticing that is a good check on any decay answer.\n\n**Round to whole people.** A population of 5,899.39 isn't a thing."
         }
       ],
       "initialPrompt": "In example 1, the car depreciates 15% per year. What number goes in the parentheses of the model, and why isn't it 0.15?",
@@ -178,7 +178,7 @@
           ]
         }
       ],
-      "initialPrompt": "Let's work through these together. For the first problem, you need to evaluate f(x) = 4·3ˣ at several x-values. Start with f(0) — what is 3⁰?",
+      "initialPrompt": "Let's work through these together. For the first problem, a $1,200 laptop loses 20% of its value each year. If it loses 20%, what percent of its value does it keep each year — and what number does that mean you multiply by?",
       "lessonId": "exponential-decay"
     },
     {
@@ -341,7 +341,7 @@
         {
           "id": "ef-yp3",
           "question": "You invest $3,000 at 6% annual interest compounded annually. How much will you have after 12 years?",
-          "answer": "P = 3000, r = 0.06, t = 12. A = 3000(1.06)¹² ≈ 3000 × 2.0122 = $6,036.56. After 12 years, the investment grows to approximately $6,036.56.",
+          "answer": "P = 3000, r = 0.06, t = 12. A = 3000(1.06)¹² ≈ 3000 × 2.012196 ≈ $6,036.59. After 12 years, the investment grows to approximately $6,036.59.",
           "skill": "exponential-growth-decay",
           "hints": [
             "Use A = P(1 + r)ᵗ = 3000(1.06)¹². Calculate 1.06¹² ≈ 2.0122. Multiply by 3000."
@@ -390,7 +390,7 @@
     "ef-wp7": "Option B ($1,023) pays more than Option A ($1,000) over 10 days. Doubling overtakes the constant rate.",
     "ef-yp1": "f(-2) = 1.25, f(-1) = 2.5, f(0) = 5, f(1) = 10, f(2) = 20, f(3) = 40. y-int: (0, 5). Growth.",
     "ef-yp2": "y-int: (0, 6). Asymptote: y = 0. Decay (b = 1/3). Key points: (-1, 18), (0, 6), (1, 2), (2, 0.67).",
-    "ef-yp3": "$6,036.56 after 12 years. A = 3000(1.06)¹².",
+    "ef-yp3": "$6,036.59 after 12 years. A = 3000(1.06)¹².",
     "ef-yp4": "≈ 71.19 mg after 6 hours. A = 400(0.75)⁶.",
     "ef-yp5": "5 grams after 20 days (5 half-lives). A = 160·(1/2)⁵.",
     "ef-yp6": "(a) Exponential: y = 8·(1.5)ˣ (constant ratio 1.5). (b) Linear: y = 6x + 8 (constant difference 6).",

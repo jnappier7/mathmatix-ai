@@ -79,7 +79,7 @@
     {
       "id": "g8f-8",
       "question": "Function A: y = −3x + 10. Function B: a table shows x: 1, 2, 3, 4 and y: 1, 4, 7, 10. (a) Which has a greater rate of change? (b) At what x-value are they equal?",
-      "answer": "(a) A: rate = −3 (decreasing). B: rate = (4−1)/(2−1) = 3 (increasing). B has greater rate of change (3 > −3 in absolute value, and B is positive). (b) B: y = 3x − 2. Set equal: −3x+10 = 3x−2. 12 = 6x. x = 2. Both give y = 4.",
+      "answer": "(a) A: rate = −3 (decreasing). B: rate = (4−1)/(2−1) = 3 (increasing). B has the greater rate of change (3 > −3). The two lines are equally steep, since |3| = |−3|, but B increases while A decreases. (b) B: y = 3x − 2. Set equal: −3x+10 = 3x−2. 12 = 6x. x = 2. Both give y = 4.",
       "skill": "compare-functions",
       "difficulty": 4,
       "points": 8

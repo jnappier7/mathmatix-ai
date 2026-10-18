@@ -212,7 +212,7 @@
       "examples": [
         {
           "problem": "Error analysis: A student wrote 3⁻² = −9. What's wrong?",
-          "solution": "3⁻² means 1/3² = 1/9, NOT −9. A negative EXPONENT means reciprocal. A negative BASE would give a negative answer. −3² = −9 (negative of 3²), but 3⁻² = 1/9."
+          "solution": "3⁻² means 1/3² = 1/9, NOT −9. A negative EXPONENT means reciprocal. A negative exponent never makes the result negative: 3⁻² = 1/9 is positive. (Don't confuse it with −3²: there the base is 3, so −3² = −(3²) = −9, while (−3)² = +9.)"
         },
         {
           "problem": "Error analysis: A student solved 2x−5 > 3 and got x > −1. What's wrong?",

@@ -72,23 +72,23 @@
     },
     {
       "id": "a1u1-3",
-      "question": "Evaluate using the correct order of operations: 5 + 3 x (10 - 4)² / 9",
-      "answer": "Parentheses first: 10 - 4 = 6. Exponent: 6² = 36. Multiply: 3 x 36 = 108. Divide: 108 / 9 = 12. Add: 5 + 12 = 17.",
+      "question": "Evaluate using the correct order of operations: 5 + 3 × (10 - 4)² / 9",
+      "answer": "Parentheses first: 10 - 4 = 6. Exponent: 6² = 36. Multiply: 3 × 36 = 108. Divide: 108 / 9 = 12. Add: 5 + 12 = 17.",
       "skill": "order-of-operations",
       "difficulty": 4,
       "points": 8
     },
     {
       "id": "a1u1-4",
-      "question": "Evaluate: 18 / 2 x 3 - 4 + 1",
-      "answer": "Multiplication and division left to right: 18 / 2 = 9, then 9 x 3 = 27. Addition and subtraction left to right: 27 - 4 + 1 = 24.",
+      "question": "Evaluate: 18 / 2 × 3 - 4 + 1",
+      "answer": "Multiplication and division left to right: 18 / 2 = 9, then 9 × 3 = 27. Addition and subtraction left to right: 27 - 4 + 1 = 24.",
       "skill": "order-of-operations",
       "difficulty": 3,
       "points": 6
     },
     {
       "id": "a1u1-5",
-      "question": "Name the property illustrated by each statement: (a) 4 + 7 = 7 + 4. (b) (2 x 5) x 3 = 2 x (5 x 3). (c) 6(x + 2) = 6x + 12.",
+      "question": "Name the property illustrated by each statement: (a) 4 + 7 = 7 + 4. (b) (2 × 5) × 3 = 2 × (5 × 3). (c) 6(x + 2) = 6x + 12.",
       "answer": "(a) Commutative Property of Addition — the order of the addends changed. (b) Associative Property of Multiplication — the grouping changed, not the order. (c) Distributive Property — 6 was multiplied across each term inside the parentheses.",
       "skill": "algebraic-properties",
       "difficulty": 2,

@@ -109,7 +109,7 @@
         },
         {
           "problem": "Divide: (x² − 1)/(x + 3) ÷ (x − 1)/2. Simplify completely and state excluded values.",
-          "solution": "**Step 1: Rewrite as multiplication by the reciprocal.**\n(x² − 1)/(x + 3) ÷ (x − 1)/2 = (x² − 1)/(x + 3) · 2/(x − 1)\n\n**Step 2: Factor everything.**\nx² − 1 = (x − 1)(x + 1) (difference of squares).\nThe expression becomes:\n(x − 1)(x + 1)/(x + 3) · 2/(x − 1)\n\n**Step 3: Identify excluded values.**\nDenominator factors across both the original dividend and divisor: (x + 3) and (x − 1).\nNote: (x − 1) was in the denominator of the divisor, so x ≠ 1. Also x ≠ −3.\n**x ≠ 1, x ≠ −3.**\n\n**Step 4: Cancel common factors.**\n(x − 1) in the numerator cancels with (x − 1) in the denominator.\n\nRemaining: (x + 1) · 2/(x + 3) = 2(x + 1)/(x + 3).\n\n**Step 5: Write the final answer.**\n**2(x + 1)/(x + 3), where x ≠ 1 and x ≠ −3.**\n\nVerification: Let x = 2.\nOriginal: (4 − 1)/(2 + 3) ÷ (2 − 1)/2 = (3/5) ÷ (1/2) = (3/5) · (2/1) = 6/5.\nSimplified: 2(3)/(5) = 6/5. ✓",
+          "solution": "**Step 1: Rewrite as multiplication by the reciprocal.**\n(x² − 1)/(x + 3) ÷ (x − 1)/2 = (x² − 1)/(x + 3) · 2/(x − 1)\n\n**Step 2: Factor everything.**\nx² − 1 = (x − 1)(x + 1) (difference of squares).\nThe expression becomes:\n(x − 1)(x + 1)/(x + 3) · 2/(x − 1)\n\n**Step 3: Identify excluded values.**\nDenominator factors across both the original dividend and divisor: (x + 3) and (x − 1).\nNote: (x − 1) is the numerator of the divisor (x − 1)/2, so dividing by it means multiplying by 2/(x − 1) — the divisor can't be 0, so x ≠ 1. Also x ≠ −3.\n**x ≠ 1, x ≠ −3.**\n\n**Step 4: Cancel common factors.**\n(x − 1) in the numerator cancels with (x − 1) in the denominator.\n\nRemaining: (x + 1) · 2/(x + 3) = 2(x + 1)/(x + 3).\n\n**Step 5: Write the final answer.**\n**2(x + 1)/(x + 3), where x ≠ 1 and x ≠ −3.**\n\nVerification: Let x = 2.\nOriginal: (4 − 1)/(2 + 3) ÷ (2 − 1)/2 = (3/5) ÷ (1/2) = (3/5) · (2/1) = 6/5.\nSimplified: 2(3)/(5) = 6/5. ✓",
           "tip": "For division, the key step is flipping the second fraction. After that, it becomes a multiplication problem. Remember: 'dividing by a fraction is the same as multiplying by its reciprocal.'"
         }
       ],
@@ -143,7 +143,7 @@
           ]
         }
       ],
-      "initialPrompt": "Let's work through these together. For the first problem, you need to simplify (x² − 4x)/(x² − 16). Start by factoring both the numerator and denominator. What is the GCF of x² − 4x? And what factoring pattern does x² − 16 follow?",
+      "initialPrompt": "Let's work through these together. For the first problem, you need to multiply (x² − 1)/(x + 2) · (x + 2)/(x + 1). Start by factoring everything you can. What factoring pattern does x² − 1 follow?",
       "lessonId": "multiplying-dividing-rationals"
     },
     {
