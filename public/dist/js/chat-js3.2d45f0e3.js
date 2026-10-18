@@ -4229,6 +4229,7 @@ class CourseManager {
             if (data.success) {
                 this._catalogCache = data.catalog;
                 this._catalogRecommended = data.recommended;
+                this._catalogRecommendedNote = data.recommendedNote || null;
                 this._activeFilter = 'All';
                 this.renderCatalogWithSearch(data.catalog, data.recommended);
             }
@@ -4442,6 +4443,17 @@ class CourseManager {
                     </button>` : ''}
                 </div>
             `;
+
+            // The recommendation follows the student's grade; when their
+            // Starting Point placed them well below it, say so kindly here
+            // rather than steering them to a much younger course.
+            if (isRecommended && this._catalogRecommendedNote) {
+                const note = document.createElement('div');
+                note.className = 'catalog-recommend-note';
+                note.style.cssText = 'margin-top:6px; font-size:12px; color:#5b4bc4; line-height:1.4;';
+                note.textContent = this._catalogRecommendedNote;
+                (card.querySelector('div[style*="flex:1"]') || card).appendChild(note);
+            }
 
             // Enrolled → Continue resumes the course; otherwise Enroll.
             const btn = card.querySelector('.catalog-enroll-btn');
