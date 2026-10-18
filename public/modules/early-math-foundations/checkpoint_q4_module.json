@@ -97,7 +97,7 @@
     },
     {
       "id": "cq4-5",
-      "question": "Look at these three angles: Angle A opens as wide as a book barely cracked open. Angle B looks like the corner of a piece of paper. Angle C opens wider than a book laid flat. Classify each angle as acute, right, or obtuse.",
+      "question": "Look at these three angles: Angle A opens as wide as a book barely cracked open. Angle B looks like the corner of a piece of paper. Angle C opens wider than a square corner but not as wide as a book laid flat. Classify each angle as acute, right, or obtuse.",
       "answer": "Angle A is acute (less than 90\u00b0 \u2014 a small opening). Angle B is a right angle (exactly 90\u00b0 \u2014 a square corner). Angle C is obtuse (greater than 90\u00b0 \u2014 opens wider than a right angle).",
       "skill": "emf-angles-basics",
       "difficulty": 1,

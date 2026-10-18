@@ -136,7 +136,7 @@
         },
         {
           "problem": "A principal wants to survey 60 students from a school of 600 about whether they want a longer recess. She prints out an alphabetical list of all 600 students and selects every 10th name on the list. Is this a valid random sampling method? Why or why not?",
-          "solution": "Yes, this is a valid random sampling method called systematic sampling. As long as the alphabetical list has no hidden pattern related to recess preferences (and it wouldn't — last names are unrelated to opinions about recess), every student has an equal chance of being selected.\n\nThe method produces 600 / 10 = 60 students, which is the desired sample size. This is a practical alternative to drawing names from a hat when the population list is long."
+          "solution": "Yes — as long as the starting point is chosen at random (for example, pick a random number from 1 to 10 for the first name, then take every 10th name after it), this is a valid systematic random sample. If the alphabetical list also has no hidden pattern related to recess preferences (and it wouldn't — last names are unrelated to opinions about recess), every student has an equal chance of being selected.\n\nThe method produces 600 / 10 = 60 students, which is the desired sample size. This is a practical alternative to drawing names from a hat when the population list is long."
         }
       ],
       "lessonId": "statistics_sampling"

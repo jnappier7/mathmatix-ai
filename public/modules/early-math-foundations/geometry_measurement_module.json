@@ -401,7 +401,7 @@
         },
         {
           "id": "gm-17",
-          "question": "A four-sided shape has two pairs of opposite sides that are parallel. The sides are all different lengths and the angles are not 90 degrees. What is the most specific name for this shape?",
+          "question": "A four-sided shape has two pairs of opposite sides that are parallel. Opposite sides are equal, but the long sides and the short sides are different lengths, and the angles are not 90 degrees. What is the most specific name for this shape?",
           "hints": [
             "Two pairs of parallel sides — that rules out trapezoid (which has only one pair).",
             "It is a parallelogram. Could it be a rectangle? Check the angles."

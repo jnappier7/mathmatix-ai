@@ -146,7 +146,7 @@
     {
       "id": "cq3-12",
       "question": "Seven students tracked how many minutes they spent reading last night: 15, 20, 25, 30, 35, 40, 60. Find the range and the interquartile range (IQR). Which measure better describes the typical spread? Explain.",
-      "answer": "Range: 60 − 15 = 45 minutes. For IQR: The median (4th value) is 30. Lower half: 15, 20, 25 → Q1 = 20. Upper half: 35, 40, 60 → Q3 = 40. IQR = Q3 − Q1 = 40 − 20 = 20 minutes. The IQR better describes the typical spread because the range is stretched by the outlier (60 minutes), while the IQR focuses on the middle 50% of the data.",
+      "answer": "Range: 60 − 15 = 45 minutes. For IQR: The median (4th value) is 30. Lower half: 15, 20, 25 → Q1 = 20. Upper half: 35, 40, 60 → Q3 = 40. IQR = Q3 − Q1 = 40 − 20 = 20 minutes. The IQR better describes the typical spread because the range is stretched by the one unusually large value (60 minutes), while the IQR focuses on the middle 50% of the data. (Quartiles here use the halves method: the median is left out of each half. By the 1.5 × IQR rule, 60 is not technically an outlier — the upper fence is 40 + 1.5 × 20 = 70 — but it is still far enough from the rest to stretch the range.)",
       "skill": "g6-measures-center-variability",
       "difficulty": 4,
       "points": 5
