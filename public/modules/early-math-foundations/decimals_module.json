@@ -285,7 +285,7 @@
           "problem": "Ethan had $10.00 and spent $6.83 on a book. How much money does he have left?",
           "hints": [
             "Set it up as 10.00 − 6.83. Line up the decimal points.",
-            "You'll need to borrow: 0 − 3 in hundredths means borrow from tenths, but tenths is also 0, so borrow from ones first."
+            "You'll need to borrow: 0 − 3 in hundredths means borrow from tenths, but tenths and ones are 0 too, so start the borrow at the tens place: the 1 ten becomes 10 ones, then 9 ones and 10 tenths, then 9 tenths and 10 hundredths (10.00 = 9 ones + 9 tenths + 10 hundredths)."
           ],
           "answer": "$3.17. 10.00 − 6.83 = 3.17. Ethan has $3.17 left."
         },

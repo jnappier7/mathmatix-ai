@@ -336,7 +336,7 @@
         "Divide fractions with Keep-Change-Flip: keep the first fraction, change ÷ to ×, flip the second fraction (use its reciprocal)",
         "Always convert mixed numbers to improper fractions before multiplying or dividing",
         "The word 'of' means multiply — '2/3 of 24' means 2/3 × 24",
-        "Dividing by a fraction gives a larger result — 'how many 1/4s fit in 3?' is 3 ÷ 1/4 = 12"
+        "Dividing by a number between 0 and 1 gives a larger result — 'how many 1/4s fit in 3?' is 3 ÷ 1/4 = 12"
       ],
       "lessonId": "number_system_fluency"
     },

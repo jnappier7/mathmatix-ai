@@ -86,12 +86,12 @@
       "problems": [
         {
           "id": "nsb-1",
-          "question": "A popular video game has been downloaded 2,040,650 times. Write this number in word form. What does the zero in the hundred-thousands place mean? What does the zero in the hundreds place mean?",
+          "question": "A popular video game has been downloaded 2,040,650 times. Write this number in word form. Name the place of each zero. What does each zero mean?",
           "hints": [
             "Break the number into groups of three from the right: 2,040,650. The groups are 2 (millions), 040 (thousands), 650 (ones).",
-            "Word form: two million, forty thousand, six hundred fifty. Each zero is a placeholder — the zero in the hundred-thousands place means there are no hundred-thousands, and the zero in the hundreds place... wait, there IS no zero in the hundreds place. Let me re-read: 2,040,650 has digits 2-0-4-0-6-5-0. The zero in the ones place means there are no ones."
+            "Word form: two million, forty thousand, six hundred fifty. Read the digits left to right with their places: 2 (millions), 0 (hundred-thousands), 4 (ten-thousands), 0 (thousands), 6 (hundreds), 5 (tens), 0 (ones). So there are three zeros — which places are they in?"
           ],
-          "answer": "Word form: two million, forty thousand, six hundred fifty. The zero in the hundred-thousands place means there are no hundred-thousands. The zero in the ones place means there are no ones. Both zeros are placeholders keeping the other digits in their correct positions."
+          "answer": "Word form: two million, forty thousand, six hundred fifty. There are three zeros: in the hundred-thousands place (no hundred-thousands), the thousands place (no thousands), and the ones place (no ones). Each zero has a value of 0 and is a placeholder keeping the other digits in their correct positions."
         },
         {
           "id": "nsb-2",
@@ -525,7 +525,7 @@
     }
   ],
   "answerKeys": {
-    "nsb-1": "Word form: two million, forty thousand, six hundred fifty. The zero in the hundred-thousands place means there are no hundred-thousands. The zero in the ones place is a placeholder keeping digits in their correct positions.",
+    "nsb-1": "Word form: two million, forty thousand, six hundred fifty. Zeros are in the hundred-thousands, thousands, and ones places; each has value 0 and is a placeholder keeping digits in their correct positions.",
     "nsb-2": "Expanded form: 0.07 + 0.005. The value of the 7 is 0.07 (seven hundredths). The zero holds the tenths place.",
     "nsb-3": "Expanded form: 300 + 8 + 0.04. Digits: 3=hundreds, 0=tens (placeholder), 8=ones, 0=tenths (placeholder), 4=hundredths.",
     "nsb-4": "Word form: five million, eight thousand, three hundred twenty. Expanded form: 5,000,000 + 8,000 + 300 + 20.",

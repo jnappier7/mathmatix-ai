@@ -310,7 +310,7 @@
         {
           "id": "stat-16",
           "question": "A student's quiz scores this semester are: 70, 85, 88, 90, 92, 95, 100. The teacher accidentally entered one score as 10 instead of 100.\n(a) Find the median of the correct data set.\n(b) Would the mean or the median change more because of this error? Explain.",
-          "answer": "(a) Correct data ordered: 70, 85, 88, 90, 92, 95, 100. Median = 90 (the 4th of 7 values). (b) The mean changes much more. With the error (10 instead of 100), the sum drops by 90, pulling the mean way down. The median stays at 88 (reordered: 10, 70, 85, 88, 92, 95, 100 — still the 4th value). This shows the median is resistant to outliers while the mean is not."
+          "answer": "(a) Correct data ordered: 70, 85, 88, 90, 92, 95, 100. Median = 90 (the 4th of 7 values). (b) The mean changes much more. With the error (10 instead of 100), the sum drops by 90, pulling the mean way down. The median barely moves: reordered, the data is 10, 70, 85, 88, 90, 92, 95, so the median (4th value) goes from 90 to 88 — a change of only 2. The mean drops from about 88.57 (620 ÷ 7) to about 75.71 (530 ÷ 7) — a change of almost 13. This shows the median is resistant to outliers while the mean is not."
         },
         {
           "id": "stat-17",

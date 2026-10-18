@@ -240,7 +240,7 @@
       "skill": "emf-multi-digit-multiplication",
       "content": "When you multiply bigger numbers — like 36 × 24 — your single-digit facts still do all the heavy lifting, but you need an organized way to keep track. We will look at three methods that all give the same answer: the area model (great for seeing why it works), partial products (writes out every piece), and the standard algorithm (the fastest once you have it down). Before you start any multi-digit problem, always estimate first so you know roughly what the answer should be.",
       "keyPoints": [
-        "Estimate first: round each factor to the nearest ten and multiply. For 36 × 24, think 40 × 25 = 1,000. Your exact answer should be close to that.",
+        "Estimate first: round each factor to the nearest ten and multiply. For 36 × 24, think 40 × 20 = 800. Your exact answer (864) should be close to that.",
         "Area model: draw a rectangle, split each side by place value (30 + 6 and 20 + 4), find the area of each smaller rectangle, then add them all up.",
         "Partial products: write out each piece of the multiplication on its own line — 30 × 20, 30 × 4, 6 × 20, 6 × 4 — then add.",
         "Standard algorithm: multiply by the ones digit first (write that row), then multiply by the tens digit (shift one place left), then add the rows.",

@@ -432,7 +432,7 @@
       "problems": [
         {
           "id": "fr-34",
-          "problem": "A sequence goes: 3, 6, 12, 24, __. What is the rule? What are the next two numbers?",
+          "problem": "A sequence goes: 3, 6, 12, 24, __, __. What is the rule? What are the next two numbers?",
           "answer": "Rule: multiply by 2 (double each time). Next two numbers: 48, 96."
         },
         {
