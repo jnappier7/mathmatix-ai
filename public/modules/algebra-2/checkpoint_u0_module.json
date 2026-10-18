@@ -20,7 +20,7 @@
     {"skillId": "graphing-lines", "moduleId": "bootcamp_review", "focusArea": "Slope, intercepts, parallel/perpendicular, writing equations"}
   ],
   "assessmentProblems": [
-    {"id": "a2u0-1", "question": "Solve: 5(x - 3) = 2(x + 6) - 3.", "answer": "x = 6", "skill": "solving-linear-equations", "difficulty": 3, "points": 5},
+    {"id": "a2u0-1", "question": "Solve: 5(x - 3) = 2(x + 6) - 3.", "answer": "x = 8", "skill": "solving-linear-equations", "difficulty": 3, "points": 5},
     {"id": "a2u0-2", "question": "Solve: 3(2x + 1) = 6x + 3. Classify the result.", "answer": "Infinitely many solutions (identity: 6x + 3 = 6x + 3)", "skill": "solving-linear-equations", "difficulty": 4, "points": 5},
     {"id": "a2u0-3", "question": "Solve and graph: -5 < 2x - 1 ≤ 7.", "answer": "-2 < x ≤ 4", "skill": "compound-inequalities", "difficulty": 4, "points": 8},
     {"id": "a2u0-4", "question": "Solve: |x + 4| ≤ 3.", "answer": "-7 ≤ x ≤ -1", "skill": "compound-inequalities", "difficulty": 5, "points": 8},
@@ -36,7 +36,7 @@
     {"id": "a2u0-14", "question": "Find the x- and y-intercepts of 3x - 5y = 15.", "answer": "x-intercept: (5, 0); y-intercept: (0, -3)", "skill": "graphing-lines", "difficulty": 3, "points": 5}
   ],
   "answerKeys": {
-    "a2u0-1": "x=6", "a2u0-2": "Infinitely many", "a2u0-3": "-2<x≤4", "a2u0-4": "-7≤x≤-1",
+    "a2u0-1": "x=8", "a2u0-2": "Infinitely many", "a2u0-3": "-2<x≤4", "a2u0-4": "-7≤x≤-1",
     "a2u0-5": "f(4)=21, f(-1)=6", "a2u0-6": "x≥3", "a2u0-7": "8y⁵/x⁵", "a2u0-8": "-√3",
     "a2u0-9": "3(x+3)(x-3)", "a2u0-10": "(2x+3)(3x-4)", "a2u0-11": "(x-2)(x²+2x+4)",
     "a2u0-12": "y=(3/4)x+13/2", "a2u0-13": "Parallel", "a2u0-14": "x-int (5,0), y-int (0,-3)"

@@ -189,11 +189,11 @@
         {
           "id": "ru-yp4",
           "question": "Solve: √(2x + 5) - √(x + 2) = 1.",
-          "answer": "x = 2",
+          "answer": "x = 2 or x = −2",
           "hints": [
             "Isolate one: √(2x+5) = 1 + √(x+2). Square: 2x+5 = 1 + 2√(x+2) + x+2.",
             "x + 2 = 2√(x+2). Square again: x² + 4x + 4 = 4(x+2) = 4x+8. x² = 4. x = ±2.",
-            "Check x=2: √9-√4=3-2=1 ✓. Check x=-2: √1-√0=1-0=1 ✓. Wait: actually x=-2: √(−4+5)−√(−2+2)=√1−√0=1−0=1 ✓. Both work!"
+            "Check x=2: √9−√4=3−2=1 ✓. Check x=−2: √(−4+5)−√(−2+2)=√1−√0=1−0=1 ✓. Neither is extraneous — both are solutions."
           ]
         },
         {

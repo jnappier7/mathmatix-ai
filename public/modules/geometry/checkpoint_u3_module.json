@@ -56,8 +56,8 @@
     },
     {
       "id": "gcu3-5",
-      "question": "Given: ∠1 ≅ ∠2, ∠3 ≅ ∠4, and side BD is shared by both △ABD and △CBD. Which postulate proves △ABD ≅ △CBD?",
-      "answer": "∠1 ≅ ∠2 (given), BD ≅ BD (reflexive), ∠3 ≅ ∠4 (given). BD is included between the angle pairs → ASA.",
+      "question": "Given: ∠ABD ≅ ∠CBD, ∠ADB ≅ ∠CDB, and side BD is shared by both △ABD and △CBD. Which postulate proves △ABD ≅ △CBD?",
+      "answer": "∠ABD ≅ ∠CBD (given), BD ≅ BD (reflexive), ∠ADB ≅ ∠CDB (given). BD is included between the angle pairs → ASA.",
       "skill": "triangle-congruence-sss-sas-asa",
       "difficulty": 4,
       "points": 8

@@ -161,8 +161,8 @@
           "solution": "Starting with the 125° angle:\n• Its vertical angle (across) = 125°\n• Its supplementary angle (linear pair) = 180° - 125° = 55°\n• The other angle at that intersection = 55° (vertical to the supplement)\n\nAt the second intersection (corresponding positions):\n• Corresponding to 125° = 125°\n• Corresponding to 55° = 55°\n• And their vertical angles complete the picture.\n\n**Result:** Four angles of 125° and four angles of 55°."
         },
         {
-          "problem": "Two parallel lines are cut by a transversal. An angle at the top-left of the first intersection measures 70°. Name the angle at the bottom-right of the second intersection, identify the angle pair type, and state its measure.",
-          "solution": "The angle at the top-left of intersection 1 and the bottom-right of intersection 2 are on opposite sides of the transversal and between the parallel lines. This makes them **alternate interior angles**.\n\nSince the lines are parallel, alternate interior angles are **congruent**.\n\nThe angle at the bottom-right of intersection 2 = **70°**."
+          "problem": "Two parallel lines are cut by a transversal. At the upper intersection, the angle below the upper line and to the left of the transversal measures 70°. Name the angle at the lower intersection that sits above the lower line and to the right of the transversal, identify the angle pair type, and state its measure.",
+          "solution": "The angle below the upper line (left of the transversal) and the angle above the lower line (right of the transversal) are on opposite sides of the transversal and both between the parallel lines. This makes them **alternate interior angles**.\n\nSince the lines are parallel, alternate interior angles are **congruent**.\n\nThe angle above the lower line, right of the transversal = **70°**."
         }
       ],
       "initialPrompt": "Why do you think all 8 angles ended up being just two different measures? What's special about parallel lines that causes this?",

@@ -178,7 +178,7 @@
       "examples": [
         {
           "problem": "A pharmaceutical company models the concentration C (mg/L) of a drug in the bloodstream t hours after injection as C(t) = 12te^(-0.4t).\n(a) What is the concentration at t = 2 hours?\n(b) When does the concentration reach its maximum? What is the maximum?\n(c) When does the concentration drop below 1 mg/L?",
-          "solution": "**(a) Concentration at t = 2:**\nC(2) = 12(2)e^(-0.4(2)) = 24e^(-0.8)\ne^(-0.8) ≈ 0.4493\nC(2) ≈ 24(0.4493) ≈ **10.78 mg/L**\n\n**(b) Maximum concentration:**\nThis requires finding where the derivative equals zero (a calculus concept), but we can reason about it:\n\nThe function C(t) = 12te^(-0.4t) starts at 0 (when t = 0), rises, then falls back toward 0 as the exponential decay dominates.\n\nUsing the product rule insight: the maximum occurs at t = 1/0.4 = **2.5 hours**.\n\nC(2.5) = 12(2.5)e^(-1) = 30/e ≈ 30/2.718 ≈ **11.04 mg/L**\n\n**(c) When C(t) < 1:**\n1 = 12te^(-0.4t)\n\nThis equation cannot be solved algebraically. Using numerical methods or graphing:\nThe concentration drops below 1 mg/L at approximately **t ≈ 9.2 hours**.\n\nWe can verify: C(9) = 12(9)e^(-3.6) = 108(0.0273) ≈ 2.95 (still above 1)\nC(10) = 12(10)e^(-4) = 120(0.0183) ≈ 2.20 (still above 1)\nC(12) = 12(12)e^(-4.8) = 144(0.00823) ≈ 1.18 (still above 1)\nC(14) = 12(14)e^(-5.6) = 168(0.00370) ≈ 0.62 (below 1)\n\nSo the concentration drops below 1 mg/L between t = 12 and t = 14 hours, approximately **t ≈ 13.2 hours**.",
+          "solution": "**(a) Concentration at t = 2:**\nC(2) = 12(2)e^(-0.4(2)) = 24e^(-0.8)\ne^(-0.8) ≈ 0.4493\nC(2) ≈ 24(0.4493) ≈ **10.78 mg/L**\n\n**(b) Maximum concentration:**\nThis requires finding where the derivative equals zero (a calculus concept), but we can reason about it:\n\nThe function C(t) = 12te^(-0.4t) starts at 0 (when t = 0), rises, then falls back toward 0 as the exponential decay dominates.\n\nUsing the product rule insight: the maximum occurs at t = 1/0.4 = **2.5 hours**.\n\nC(2.5) = 12(2.5)e^(-1) = 30/e ≈ 30/2.718 ≈ **11.04 mg/L**\n\n**(c) When C(t) < 1:**\n1 = 12te^(-0.4t)\n\nThis equation cannot be solved algebraically. Using numerical methods or graphing:\nThe concentration drops below 1 mg/L at approximately **t ≈ 12.5 hours**.\n\nWe can verify: C(9) = 12(9)e^(-3.6) = 108(0.0273) ≈ 2.95 (still above 1)\nC(10) = 12(10)e^(-4) = 120(0.0183) ≈ 2.20 (still above 1)\nC(12) = 12(12)e^(-4.8) = 144(0.00823) ≈ 1.18 (still above 1)\nC(14) = 12(14)e^(-5.6) = 168(0.00370) ≈ 0.62 (below 1)\n\nC(12.5) = 150e^(-5) ≈ 1.01 (just above 1)\nC(13) = 156e^(-5.2) ≈ 0.86 (below 1)\n\nSo the concentration drops below 1 mg/L between t = 12.5 and t = 13 hours, approximately **t ≈ 12.5 hours**.",
           "tip": "Real-world models often combine function families (here: linear times exponential). When exact algebra fails, numerical estimation and graphing become essential tools. This is why understanding function behavior qualitatively is as important as algebraic manipulation."
         }
       ],
@@ -304,7 +304,7 @@
     "ball drop at 32 ft": "t = √2 ≈ 1.41 s",
     "drug concentration C(2)": "≈ 10.78 mg/L",
     "drug concentration max": "≈ 11.04 mg/L at t = 2.5 hours",
-    "drug concentration below 1": "≈ t = 13.2 hours"
+    "drug concentration below 1": "≈ t = 12.5 hours"
   },
   "lessons": [
     {
