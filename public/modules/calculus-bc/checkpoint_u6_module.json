@@ -153,8 +153,8 @@
     },
     {
       "id": "cbu6-10",
-      "question": "ANALYSIS: The rate at which water flows into a tank is R(t) = 200 \u2212 4t\u00b2 gallons/minute for 0 \u2264 t \u2264 7. (a) Find the total amount of water that flows in from t = 0 to t = 5. (b) At what time does the flow rate equal zero? (c) Find the average flow rate over [0, 5].",
-      "answer": "(a) \u222b\u2080\u2075(200\u22124t\u00b2)dt = [200t \u2212 (4/3)t\u00b3]\u2080\u2075 = 1000 \u2212 (4/3)(125) = 1000 \u2212 500/3 = 3000/3 \u2212 500/3 = 2500/3 \u2248 833.3 gallons. (b) 200\u22124t\u00b2=0 \u2192 t\u00b2 = 50 \u2192 t = 5\u221a2 \u2248 7.07 min (outside [0,7] barely). (c) Average = (1/5)\u00b7(2500/3) = 500/3 \u2248 166.7 gal/min.",
+      "question": "ANALYSIS: The rate at which water flows into a tank is R(t) = 200 \u2212 4t\u00b2 gallons/minute for 0 \u2264 t \u2264 7. (a) Find the total amount of water that flows in from t = 0 to t = 5. (b) Does the flow rate ever equal zero on [0, 7]? Justify. (c) Find the average flow rate over [0, 5].",
+      "answer": "(a) \u222b\u2080\u2075(200\u22124t\u00b2)dt = [200t \u2212 (4/3)t\u00b3]\u2080\u2075 = 1000 \u2212 (4/3)(125) = 1000 \u2212 500/3 = 3000/3 \u2212 500/3 = 2500/3 \u2248 833.3 gallons. (b) No. 200\u22124t\u00b2=0 \u2192 t\u00b2 = 50 \u2192 t = 5\u221a2 \u2248 7.07 min, which is outside [0, 7]. R is decreasing on [0, 7] with R(7) = 200 \u2212 196 = 4 > 0, so R(t) \u2265 4 on the whole interval. (c) Average = (1/5)\u00b7(2500/3) = 500/3 \u2248 166.7 gal/min.",
       "skill": "accumulation-functions",
       "difficulty": 5,
       "points": 14
@@ -190,7 +190,7 @@
     "cbu6-7": "ln|(x\u22121)/(x+2)|+C.",
     "cbu6-8": "Converges to 1.",
     "cbu6-9": "g(4)=2\u03c0, g(6)=2\u03c0\u22122.",
-    "cbu6-10": "(a) 2500/3. (b) t=5\u221a2. (c) 500/3.",
+    "cbu6-10": "(a) 2500/3. (b) No: R=0 only at t=5\u221a2\u22487.07, outside [0,7]; R(t) \u2265 R(7) = 4 > 0. (c) 500/3.",
     "cbu6-spiral-1": "16 at x=2.",
     "cbu6-spiral-2": "1/2."
   }

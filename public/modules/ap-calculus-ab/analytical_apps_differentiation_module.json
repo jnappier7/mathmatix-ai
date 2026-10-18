@@ -300,7 +300,7 @@
             "f'' > 0 then f'' < 0: what happens to the shape?",
             "What happens at x = 2?"
           ],
-          "answer": "f is always increasing (f' > 0). For x < 2: concave up (increasing at an increasing rate — like the left half of a hill). For x > 2: concave down (increasing at a decreasing rate — like approaching a plateau). At x = 2: inflection point where the curve changes from concave up to concave down. Shape: like the graph of ln(x) shifted — starts curving up, then bends to curve up more gradually."
+          "answer": "f is always increasing (f' > 0). For x < 2: concave up (increasing at an increasing rate — like the left half of a hill). For x > 2: concave down (increasing at a decreasing rate — like approaching a plateau). At x = 2: inflection point where the curve changes from concave up to concave down. Shape: like an S-shaped logistic (or arctan-type) curve shifted so its inflection point is at x = 2 — it bends upward (concave up) at first, then bends over (concave down) while still rising."
         },
         {
           "id": "aad-wp7",

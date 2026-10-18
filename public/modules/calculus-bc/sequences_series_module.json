@@ -439,7 +439,7 @@
           "answer": "|R₃(0.5)| ≤ 3(0.5)⁴/4! = 1/128 ≈ 0.0078",
           "hints": [
             "For eˣ, all derivatives are eˣ. We need M = max|f⁽⁴⁾(c)| for c ∈ [0, 0.5]. M ≤ e^(0.5) < e < 3. Use M = 3 for a clean bound.",
-            "|R₃(0.5)| ≤ 3 · (0.5)⁴ / 4! = 3 · (1/16) / 24 = 3/384 = 1/128 ≈ 0.0078. The actual error is about 0.0026, well within this bound."
+            "|R₃(0.5)| ≤ 3 · (0.5)⁴ / 4! = 3 · (1/16) / 24 = 3/384 = 1/128 ≈ 0.0078. The actual error is about 0.0029, well within this bound."
           ]
         }
       ],

@@ -317,13 +317,13 @@
       "problems": [
         {
           "id": "ai-yp1",
-          "problem": "Find the average value of g(x) = sin(x) on [0, π]. Then find the value c in (0, π) guaranteed by the MVT for Integrals where g(c) = g_avg.",
-          "answer": "g_avg = (1/π) ∫₀π sin(x) dx = (1/π)[-cos(x)]₀π = (1/π)(1 + 1) = 2/π. Solve sin(c) = 2/π → c = arcsin(2/π) ≈ 0.690. Since 2/π ≈ 0.637 < 1, c exists in (0, π)."
+          "problem": "Find the average value of g(x) = sin(x) on [0, π]. Then find every value c in (0, π) where g(c) = g_avg, as guaranteed by the MVT for Integrals.",
+          "answer": "g_avg = (1/π) ∫₀π sin(x) dx = (1/π)[-cos(x)]₀π = (1/π)(1 + 1) = 2/π. Solve sin(c) = 2/π → c = arcsin(2/π) ≈ 0.690 or c = π − arcsin(2/π) ≈ 2.451. Since 2/π ≈ 0.637 < 1, both values lie in (0, π)."
         },
         {
           "id": "ai-yp2",
           "problem": "A particle moves along a line with velocity v(t) = sin(πt) - 1/2 for 0 ≤ t ≤ 2. Find the displacement and the total distance traveled.",
-          "answer": "Displacement = ∫₀² [sin(πt) - 1/2] dt = [-cos(πt)/π - t/2]₀² = (-cos(2π)/π - 1) - (-cos(0)/π - 0) = (-1/π - 1) - (-1/π) = -1. Find v(t) = 0: sin(πt) = 1/2 → πt = π/6, 5π/6 → t = 1/6, 5/6. Sign: v > 0 on (1/6, 5/6), v < 0 on [0, 1/6] ∪ [5/6, 2]. Total distance = |∫₀^(1/6)| + |∫_(1/6)^(5/6)| + |∫_(5/6)^2|. ∫₀^(1/6) = [-cos(π/6)/π - 1/12] - [-1/π] = [-√3/(2π) - 1/12 + 1/π] = (2-√3)/(2π) - 1/12. ∫_(1/6)^(5/6) = [-cos(5π/6)/π - 5/12] - [-cos(π/6)/π - 1/12] = [√3/(2π) - 5/12] - [-√3/(2π) - 1/12] = √3/π - 1/3. ∫_(5/6)^2 = [-1/π - 1] - [√3/(2π) - 5/12] = -1/π - 1 - √3/(2π) + 5/12 = -(2+√3)/(2π) - 7/12. Total distance = |(2-√3)/(2π) - 1/12| + |√3/π - 1/3| + |(2+√3)/(2π) + 7/12| ≈ 0.0443 + 0.218 + 0.826 ≈ 1.088."
+          "answer": "Displacement = ∫₀² [sin(πt) - 1/2] dt = [-cos(πt)/π - t/2]₀² = (-cos(2π)/π - 1) - (-cos(0)/π - 0) = (-1/π - 1) - (-1/π) = -1. Find v(t) = 0: sin(πt) = 1/2 → πt = π/6, 5π/6 → t = 1/6, 5/6. Sign: v > 0 on (1/6, 5/6), v < 0 on [0, 1/6] ∪ [5/6, 2]. Total distance = |∫₀^(1/6)| + |∫_(1/6)^(5/6)| + |∫_(5/6)^2|. ∫₀^(1/6) = [-cos(π/6)/π - 1/12] - [-1/π] = [-√3/(2π) - 1/12 + 1/π] = (2-√3)/(2π) - 1/12. ∫_(1/6)^(5/6) = [-cos(5π/6)/π - 5/12] - [-cos(π/6)/π - 1/12] = [√3/(2π) - 5/12] - [-√3/(2π) - 1/12] = √3/π - 1/3. ∫_(5/6)^2 = [-1/π - 1] - [√3/(2π) - 5/12] = -1/π - 1 - √3/(2π) + 5/12 = -(2+√3)/(2π) - 7/12. Total distance = |(2-√3)/(2π) - 1/12| + |√3/π - 1/3| + |(2+√3)/(2π) + 7/12| ≈ 0.0407 + 0.218 + 1.177 ≈ 1.436."
         },
         {
           "id": "ai-yp3",
@@ -371,8 +371,8 @@
     "wp-vol-cross-equilateral": "V = 36√3.",
     "wp-washer-exp": "V = π(4 - ln 3).",
     "wp-washer-nonaxis": "V = 832π/15.",
-    "ip-avg-sin": "g_avg = 2/π. c = arcsin(2/π) ≈ 0.690.",
-    "ip-motion-trig": "Displacement = -1. Total distance ≈ 1.088.",
+    "ip-avg-sin": "g_avg = 2/π. c = arcsin(2/π) ≈ 0.690 or c = π − arcsin(2/π) ≈ 2.451.",
+    "ip-motion-trig": "Displacement = -1. Total distance ≈ 1.436.",
     "ip-area-parabolas": "Area = 9.",
     "ip-vol-cross-square": "V = 1/30.",
     "ip-vol-two-axes": "(a) V = 256π/5. (b) V = 64π.",

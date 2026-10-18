@@ -89,7 +89,7 @@
     {
       "id": "cu1-frq",
       "question": "(FRQ) The function g is defined on [-3, 5] and its graph consists of a semicircle of radius 2 centered at (0, 0) for -2 ≤ x ≤ 2, with g(-3) = 0 and g(5) = -1, connected by line segments. Use the graph to find: (a) lim(x→2⁻) g(x), (b) lim(x→2⁺) g(x), (c) Is g continuous at x = 2? Explain.",
-      "answer": "(a) From the semicircle (upper half): at x=2, y = √(4-4) = 0. lim(x→2⁻) g(x) = 0. (b) From the line segment from (2, 0) to (5, -1): slope = (-1-0)/(5-2) = -1/3. At x=2: g = 0. lim(x→2⁺) g(x) = 0. (c) lim(x→2⁻)=0, lim(x→2⁺)=0, so lim(x→2) g(x) = 0. If g(2)=0, then g is continuous at x=2. All three conditions met: g(2) defined, limit exists, limit = g(2).",
+      "answer": "(a) From the semicircle (upper half): at x=2, y = √(4-4) = 0. lim(x→2⁻) g(x) = 0. (b) From the line segment from (2, 0) to (5, -1): slope = (-1-0)/(5-2) = -1/3. At x=2: g = 0. lim(x→2⁺) g(x) = 0. (c) lim(x→2⁻)=0, lim(x→2⁺)=0, so lim(x→2) g(x) = 0. The semicircle piece is defined on -2 ≤ x ≤ 2, so it includes x = 2 and g(2) = √(4-4) = 0. Therefore g is continuous at x=2. All three conditions met: g(2) defined, limit exists, limit = g(2).",
       "skill": "continuity-types",
       "difficulty": 5,
       "points": 10
@@ -112,7 +112,7 @@
     "cu1-6": "a=2/3, b=7/3",
     "cu1-7": "(a) Yes, IVT on [-2,0] (b) Yes, IVT on [0,5] (c) No",
     "cu1-8": "0 by Squeeze",
-    "cu1-frq": "(a) 0 (b) 0 (c) Yes, continuous",
+    "cu1-frq": "(a) 0 (b) 0 (c) Yes, continuous: g(2) = 0 = lim(x→2) g(x)",
     "cu1-spiral": "20"
   }
 }

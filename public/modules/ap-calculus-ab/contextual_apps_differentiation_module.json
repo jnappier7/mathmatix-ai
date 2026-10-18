@@ -262,7 +262,7 @@
             "Second application: differentiate numerator (2sec²(x)tan(x)) and denominator (6x). Still 0/0.",
             "Third application: differentiate again and evaluate at x = 0."
           ],
-          "answer": "First: lim (sec²x - 1)/(3x²) = 0/0. Note: sec²x - 1 = tan²x, so lim tan²x/(3x²) = (1/3) lim (tanx/x)² = (1/3)(1)² = 1/3. Alternatively, continue L'Hopital's: second application gives lim 2sec²x tanx/(6x) = 0/0. Third application: lim (2sec^4x + 4sec²x tan²x·... )/6. Evaluating carefully at x = 0 yields 2/6 = 1/3."
+          "answer": "First: lim (sec²x - 1)/(3x²) = 0/0. Note: sec²x - 1 = tan²x, so lim tan²x/(3x²) = (1/3) lim (tanx/x)² = (1/3)(1)² = 1/3. Alternatively, continue L'Hopital's: second application gives lim 2sec²x tanx/(6x) = 0/0. Third application: lim (2sec^4x + 4sec²x tan²x)/6. At x = 0: (2·1 + 4·1·0)/6 = 2/6 = 1/3."
         },
         {
           "id": "cad-wp7",

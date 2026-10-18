@@ -476,7 +476,7 @@
         {
           "id": "tf-yp6",
           "problem": "The height (in meters) of a Ferris wheel seat is modeled by h(t) = -18·cos(πt/5) + 20, where t is in minutes. (a) Find the diameter and the height of the center. (b) Find h(2.5). (c) How long for one revolution? (d) At what times in the first revolution is the seat at 30 m?",
-          "answer": "(a) Amplitude = 18 → radius = 18 m → diameter = 36 m. Center height = midline = 20 m. Min height = 20 - 18 = 2 m (platform height). (b) h(2.5) = -18cos(π(2.5)/5) + 20 = -18cos(π/2) + 20 = -18(0) + 20 = 20 m. (c) Period = 2π/(π/5) = 10 minutes. (d) 30 = -18cos(πt/5) + 20 → cos(πt/5) = -10/18 = -5/9. πt/5 = arccos(-5/9) ≈ 2.0137. t = 5(2.0137)/π ≈ 3.204 min. Also πt/5 = 2π - 2.0137 ≈ 4.2695. t ≈ 5(4.2695)/π ≈ 6.796 min. Seat is at 30 m at t ≈ 3.20 min and t ≈ 6.80 min."
+          "answer": "(a) Amplitude = 18 → radius = 18 m → diameter = 36 m. Center height = midline = 20 m. Min height = 20 - 18 = 2 m (platform height). (b) h(2.5) = -18cos(π(2.5)/5) + 20 = -18cos(π/2) + 20 = -18(0) + 20 = 20 m. (c) Period = 2π/(π/5) = 10 minutes. (d) 30 = -18cos(πt/5) + 20 → cos(πt/5) = -10/18 = -5/9. πt/5 = arccos(-5/9) ≈ 2.1598. t = 5(2.1598)/π ≈ 3.437 min. Also πt/5 = 2π - 2.1598 ≈ 4.1234. t ≈ 5(4.1234)/π ≈ 6.563 min. Seat is at 30 m at t ≈ 3.44 min and t ≈ 6.56 min."
         }
       ],
       "skill": "radian-measure-arc-length",
@@ -518,7 +518,7 @@
     "ip-graph-params": "Amp 4, period 6, left 1, midline 2, max 6, min -2.",
     "ip-identity": "(sinθ+cosθ)²=1+2sinθcosθ. ✓",
     "ip-solve": "{π/6, 5π/6, 7π/6, 11π/6}.",
-    "ip-ferris": "Diameter 36m. h(2.5)=20m. Period 10min. At 30m: t≈3.20 and 6.80 min.",
+    "ip-ferris": "Diameter 36m. h(2.5)=20m. Period 10min. At 30m: t≈3.44 and 6.56 min.",
     "sinusoid-ferris": "h(t) = -20cos((π/40)t) + 22. A=20, D=22, period 80; -cos starts at the minimum.",
     "sinusoid-tides": "d(t) = 1.9cos((π/6)(t-3)) + 3.3. A=1.9, D=3.3, period 12.",
     "sinusoid-solve": "t = 80/3 ≈ 26.7 s and 160/3 ≈ 53.3 s (cos = -1/2 twice per rotation).",

@@ -254,11 +254,11 @@
         {
           "id": "rb-yp1",
           "question": "Find the domain of f(x) = √(x + 4) / (x² - 9) in interval notation.",
-          "answer": "[-4, 3) ∪ (3, ∞)",
+          "answer": "[-4, -3) ∪ (-3, 3) ∪ (3, ∞)",
           "hints": [
             "√ needs x + 4 ≥ 0 → x ≥ -4.",
             "Denominator needs x² - 9 ≠ 0 → x ≠ ±3.",
-            "Combine: x ≥ -4 AND x ≠ 3 AND x ≠ -3. But -3 < -4 is false, so -3 is already excluded. Domain: [-4, 3) ∪ (3, ∞)."
+            "Combine: x ≥ -4 AND x ≠ 3 AND x ≠ -3. Since -3 ≥ -4, x = -3 passes the square-root test, so it must still be removed. Domain: [-4, -3) ∪ (-3, 3) ∪ (3, ∞)."
           ]
         },
         {

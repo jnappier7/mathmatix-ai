@@ -337,7 +337,7 @@
         },
         {
           "problem": "Compare: $5,000 invested at 4.5% compounded quarterly vs. 4.4% compounded continuously. Which yields more after 15 years?",
-          "solution": "Quarterly: A = 5000(1 + 0.045/4)^(4·15) = 5000(1.01125)⁶⁰ = 5000(1.9616) ≈ $9,808.02. Continuous: A = 5000·e^(0.044·15) = 5000·e^0.66 = 5000(1.9348) ≈ $9,673.95. The 4.5% compounded quarterly yields ≈ $134 more."
+          "solution": "Quarterly: A = 5000(1 + 0.045/4)^(4·15) = 5000(1.01125)⁶⁰ = 5000(1.9566) ≈ $9,783.23. Continuous: A = 5000·e^(0.044·15) = 5000·e^0.66 = 5000(1.9348) ≈ $9,673.96. The 4.5% compounded quarterly yields ≈ $109 more."
         }
       ],
       "lessonId": "exponential-functions"
@@ -446,7 +446,7 @@
     "wp-solve-exp-sub": "x=ln(2/3)≈-0.4055.",
     "model-halflife": "A(t)=200(1/2)^(t/5). A(12)≈37.89g. 10g at t≈21.61 days.",
     "model-cooling": "k≈0.04855. T(20)≈119.23°F. 100°F at t≈30.20 min.",
-    "model-compare": "4.5% quarterly: $9,808. 4.4% continuous: $9,674. Quarterly wins.",
+    "model-compare": "4.5% quarterly: $9,783. 4.4% continuous: $9,674. Quarterly wins.",
     "wp-model-bacteria": "A(t)=500·2^(t/4). A(14)≈5,657. 50000 at t≈26.58 hrs.",
     "wp-model-decibels": "75dB: I≈3.162×10⁻⁵ W/m². 85dB: 10× more.",
     "wp-model-continuous": "t=ln(15/8)/0.052≈12.09 years.",

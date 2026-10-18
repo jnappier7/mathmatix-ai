@@ -288,10 +288,10 @@
         {
           "id": "fr-yp4",
           "question": "Use the Lagrange error bound to determine the degree n of the Taylor polynomial for sin(x) centered at 0 needed to approximate sin(1) with error less than 0.001.",
-          "answer": "sin(x) = Σ(−1)ᵏx^{2k+1}/(2k+1)!. This is alternating with decreasing terms at x=1. Error ≤ |first omitted term| = 1/(2n+3)!. Need 1/(2n+3)! < 0.001 → (2n+3)! > 1000. 7!=5040>1000. So 2n+3=7→n=2. P₅(x) = x−x³/6+x⁵/120 gives error < 1/5040 < 0.001. ✓",
+          "answer": "Every derivative of sin(x) is ±sin(x) or ±cos(x), so |f⁽ⁿ⁺¹⁾(z)| ≤ 1 and the Lagrange bound at x = 1 is |Rₙ(1)| ≤ 1ⁿ⁺¹/(n+1)! = 1/(n+1)!. Need (n+1)! > 1000: 6! = 720 is too small, 7! = 5040 works, so n = 6. The x⁶ coefficient of sin(x) is 0, so P₆ = P₅ = x−x³/6+x⁵/120: a degree-5 polynomial suffices, with error ≤ 1/5040 < 0.001. ✓ (Applying the bound to R₅ directly gives only 1/6! = 1/720 ≈ 0.0014, not enough — the P₅ = P₆ observation is what makes degree 5 work.)",
           "skill": "lagrange-error-bound",
           "hints": [
-            "For alternating series, the error is bounded by the first omitted term.",
+            "Every derivative of sin(x) is bounded by 1 in absolute value, so the Lagrange bound is |Rₙ(1)| ≤ 1/(n+1)!.",
             "Find the smallest factorial that exceeds 1/0.001 = 1000."
           ]
         },
@@ -332,7 +332,7 @@
     "fr-yp1": "IOC: (−5, 1].",
     "fr-yp2": "x²/2 + x + ln|x−1| + C.",
     "fr-yp3": "r(1)=⟨3−1/e, 0⟩.",
-    "fr-yp4": "n=2 (P₅ suffices). Error < 1/5040.",
+    "fr-yp4": "Degree 5 (P₅ = P₆). Lagrange: |R₆(1)| ≤ 1/7! = 1/5040 < 0.001.",
     "fr-yp5": "π/8 − 1/4.",
     "fr-yp6": "g(2)=4, g(5)=16, g(7)=20. CU on (0,2). Max=20 at x=7."
   },

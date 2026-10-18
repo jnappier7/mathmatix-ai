@@ -429,8 +429,8 @@
         },
         {
           "id": "ddr-yp6",
-          "problem": "A graph of a function f is described: f passes through (0, 1), increases steeply to (1, 4) with slope ≈ 4, levels off with a horizontal tangent at (2, 5), then decreases through (3, 3) with slope ≈ -3, and has a corner at x = 4. State: (a) f'(0), (b) f'(2), (c) f'(3), (d) f'(4).",
-          "answer": "(a) f'(0): the graph increases through (0,1); estimate from the described steepness — f'(0) ≈ 2 (initial slope before the steep part). (b) f'(2) = 0 (horizontal tangent). (c) f'(3) ≈ -3 (slope of tangent at that point, given as ≈ -3). (d) f'(4) does not exist (corner)."
+          "problem": "A graph of a function f is described: f passes through (0, 1) with slope ≈ 2, increases steeply to (1, 4) with slope ≈ 4, levels off with a horizontal tangent at (2, 5), then decreases through (3, 3) with slope ≈ -3, and has a corner at x = 4. State: (a) f'(0), (b) f'(2), (c) f'(3), (d) f'(4).",
+          "answer": "(a) f'(0) ≈ 2 (the slope of the tangent at (0, 1), given as ≈ 2). (b) f'(2) = 0 (horizontal tangent). (c) f'(3) ≈ -3 (slope of tangent at that point, given as ≈ -3). (d) f'(4) does not exist (corner)."
         }
       ],
       "skill": "derivative-definition-difference-quotient",

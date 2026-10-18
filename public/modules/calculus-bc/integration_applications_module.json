@@ -210,7 +210,7 @@
         {
           "id": "iap-wp11",
           "question": "A solid has its base bounded by y = 1 − x² and y = 0. Cross-sections perpendicular to the x-axis are semicircles with diameter equal to the base width. Find the volume.",
-          "answer": "π/2 · ∫₋₁¹ (1 − x²)²/4 dx = π(8/15)/2 = 4π/15",
+          "answer": "π/2 · ∫₋₁¹ (1 − x²)²/4 dx = (π/2)(4/15) = 2π/15",
           "hints": [
             "Diameter = 1 − x², so radius = (1 − x²)/2. Area of semicircle: A = (π/2)r² = (π/2)(1 − x²)²/4 = π(1 − x²)²/8.",
             "V = ∫₋₁¹ π(1 − x²)²/8 dx = (π/4)∫₀¹ (1 − 2x² + x⁴) dx = (π/4)(1 − 2/3 + 1/5) = (π/4)(8/15) = 2π/15."
@@ -269,9 +269,9 @@
         {
           "id": "iap-wp12",
           "question": "A particle has velocity v(t) = t² − 4 on [0, 3]. Find the displacement and total distance traveled.",
-          "answer": "Displacement = 0. Total distance = 16/3.",
+          "answer": "Displacement = −3. Total distance = 23/3.",
           "hints": [
-            "Displacement: ∫₀³ (t² − 4) dt = [t³/3 − 4t]₀³ = (9 − 12) − 0 = −3. Wait: recalculate: 27/3 − 12 = 9 − 12 = −3.",
+            "Displacement: ∫₀³ (t² − 4) dt = [t³/3 − 4t]₀³ = (27/3 − 12) − 0 = 9 − 12 = −3.",
             "v = 0 at t = 2. On [0,2]: v < 0. On [2,3]: v > 0. ∫₀²(t²−4)dt = [8/3−8] = −16/3. ∫₂³(t²−4)dt = [9−12]−[8/3−8] = −3+16/3 = 7/3. Distance = 16/3 + 7/3 = 23/3. Displacement = −16/3 + 7/3 = −3."
           ]
         },

@@ -154,7 +154,7 @@
             "Check for common factors",
             "Sign analysis near VAs"
           ],
-          "answer": "Factor: (2x+5)(x-1)/((x-1)(x+1)). Hole at x=1: f(1) = 7/2. VA at x=-1. HA: y=2 (same degree). Near x=-1: from left, f→+∞; from right, f→-∞."
+          "answer": "Factor: (2x+5)(x-1)/((x-1)(x+1)). Hole at (1, 7/2) — f(1) is undefined; the simplified form (2x+5)/(x+1) gives 7/2 there. VA at x=-1. HA: y=2 (same degree). Near x=-1: from left, f→-∞; from right, f→+∞."
         },
         {
           "id": "ab-wp2",
