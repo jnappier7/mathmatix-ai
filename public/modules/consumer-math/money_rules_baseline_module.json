@@ -140,8 +140,8 @@
         "Gross pay appears at the top — your total earnings for the pay period before anything is taken out.",
         "Federal income tax: withheld based on your W-4 form and tax bracket. Common effective rates for entry-level workers: 10-12% of gross.",
         "State income tax: varies by state from 0% (Texas, Florida, Nevada) up to 13%+ (California). Most states fall in the 3-6% range.",
-        "Social Security (FICA): exactly 6.2% of your gross pay — everyone pays the same rate, no exceptions.",
-        "Medicare: exactly 1.45% of your gross pay — also the same for everyone.",
+        "Social Security (FICA): 6.2% of your gross pay, up to an annual wage-base cap (pay above the cap is not taxed for Social Security). A few groups of workers are exempt.",
+        "Medicare: 1.45% of your gross pay, with no cap — plus an additional 0.9% on wages above $200,000 (single filers).",
         "Voluntary deductions appear below taxes: health insurance premiums, 401(k) retirement contributions, dental, vision, life insurance, union dues.",
         "Net pay is the bottom line = Gross pay minus ALL withholdings and deductions. This is what gets deposited into your bank account."
       ],

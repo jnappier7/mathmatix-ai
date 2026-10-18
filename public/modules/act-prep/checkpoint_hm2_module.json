@@ -120,8 +120,8 @@
     },
     {
       "id": "chm2-8",
-      "question": "The hypotenuse of a 45-45-90 triangle is 10. What is the length of each leg?\n(A) 5  (B) 5√2  (C) 5√3  (D) 10√2  (E) 10/√2",
-      "answer": "(B) 5√2. In 45-45-90: leg = hypotenuse/√2 = 10/√2 = 10√2/2 = 5√2. Also (E) 10/√2 = 5√2.",
+      "question": "The hypotenuse of a 45-45-90 triangle is 10. What is the length of each leg?\n(A) 5  (B) 5√2  (C) 5√3  (D) 10√2  (E) 5√2/2",
+      "answer": "(B) 5√2. In 45-45-90: leg = hypotenuse/√2 = 10/√2 = 10√2/2 = 5√2.",
       "skill": "act-angles-lines-triangles",
       "difficulty": 4,
       "points": 5
@@ -137,7 +137,7 @@
     {
       "id": "chm2-10",
       "question": "A data set has values: 3, 5, 5, 7, 10, 12. If the value 12 is changed to 30, which measure changes the MOST?\n(A) Mean  (B) Median  (C) Mode  (D) Range  (E) Mean and Range equally",
-      "answer": "(A) Mean changes most significantly (increases from 7 to 10), and range also changes (from 9 to 27). However, comparing: mean changes by 3, range changes by 18. Actually range changes more. Answer: (D) Range.",
+      "answer": "(D) Range. Changing 12 to 30 raises the mean from 7 to 10 (a change of 3) and the range from 9 to 27 (a change of 18). The median (6) and mode (5) do not change. The range changes the most.",
       "skill": "act-center-spread",
       "difficulty": 4,
       "points": 5
@@ -160,8 +160,8 @@
     },
     {
       "id": "chm2-13",
-      "question": "A cylinder has volume 250π cm³ and height 10 cm. What is the radius?\n(A) 5  (B) 10  (C) 15  (D) 25  (E) √25",
-      "answer": "(A) 5. V = πr²h → 250π = πr²(10) → r² = 25 → r = 5. Also (E) √25 = 5.",
+      "question": "A cylinder has volume 250π cm³ and height 10 cm. What is the radius?\n(A) 5  (B) 10  (C) 15  (D) 25  (E) 5√10",
+      "answer": "(A) 5. V = πr²h → 250π = πr²(10) → r² = 25 → r = 5.",
       "skill": "act-area-volume-surface-area",
       "difficulty": 4,
       "points": 5

@@ -135,9 +135,9 @@
           "id": "alg-wp3",
           "problem": "What is x + y if 2x + 3y = 17 and 4x − y = 13?\n(A) 4  (B) 5  (C) 6  (D) 7  (E) 8",
           "hints": [
-            "Multiply the second equation by 3: 12x − 3y = 33",
-            "Add to the first: 14x = 50... hmm, try another approach",
-            "Multiply second by 3: 12x − 3y = 33, add to first: 2x+3y+12x−3y = 17+33 → 14x = 50. Better: solve individually."
+            "Multiply the second equation by 3: 12x − 3y = 39",
+            "Add to the first: 2x + 3y + 12x − 3y = 17 + 39 → 14x = 56, so x = 4",
+            "Substitute x = 4 into 4x − y = 13 to get y = 3. The question asks for x + y, not x."
           ],
           "answer": "(D) 7. The second equation solves easily for y: y = 4x − 13. Substitute into the first: 2x + 3(4x − 13) = 17 → 2x + 12x − 39 = 17 → 14x = 56 → x = 4. Then y = 4(4) − 13 = 3, so x + y = 7. Check both equations: 2(4) + 3(3) = 17 ✓ and 4(4) − 3 = 13 ✓ On the ACT, note the question asks for x + y, not x — solving for x and stopping lands you on (A) 4, which is why that distractor is there."
         },

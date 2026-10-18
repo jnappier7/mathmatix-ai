@@ -233,14 +233,14 @@
       "lessonPhase": "concept-intro",
       "title": "Tax Basics: W-2, 1099, and Progressive Taxation",
       "skill": "cm-tax-basics",
-      "content": "Understanding taxes is essential because your gross pay is never what you take home. As a W-2 employee, your employer withholds federal income tax, state income tax, and FICA taxes (Social Security at 6.2% and Medicare at 1.45%) from every paycheck. As a 1099 independent contractor, nobody withholds anything — you owe the full 15.3% self-employment tax (both halves of FICA) plus income tax, and you must pay quarterly. The U.S. uses progressive taxation: income is taxed in brackets, where each bracket only applies to the dollars within that range. Your marginal rate is the bracket your last dollar falls in; your effective rate is total tax divided by total income.",
+      "content": "Understanding taxes is essential because your gross pay is never what you take home. As a W-2 employee, your employer withholds federal income tax, state income tax, and FICA taxes (Social Security at 6.2% and Medicare at 1.45%) from every paycheck. As a 1099 independent contractor, nobody withholds anything — you owe the full 15.3% self-employment tax (both halves of FICA, charged on 92.35% of your net earnings) plus income tax, and you must pay quarterly. The U.S. uses progressive taxation: income is taxed in brackets, where each bracket only applies to the dollars within that range. Your marginal rate is the bracket your last dollar falls in; your effective rate is total tax divided by total income.",
       "keyPoints": [
         "W-2 employee: employer withholds federal income tax, state tax, Social Security (6.2%), and Medicare (1.45%). Employer also pays a matching 6.2% + 1.45% on their side.",
-        "1099 contractor: no withholding. You pay self-employment tax of 15.3% (both halves of FICA) plus income tax. Must file quarterly estimated payments.",
+        "1099 contractor: no withholding. You pay self-employment tax of 15.3% (both halves of FICA) on 92.35% of your net earnings, plus income tax. Must file quarterly estimated payments.",
         "Progressive tax brackets (simplified): the first chunk of income is taxed at 10%, the next chunk at 12%, then 22%, and so on. NOT all income at the top rate.",
-        "Marginal tax rate: the rate on your next dollar of income. Effective tax rate: total tax paid ÷ gross income. Effective is always lower than marginal.",
+        "Marginal tax rate: the rate on your next dollar of income. Effective tax rate: total tax paid ÷ gross income. Effective is always lower than or equal to marginal (equal only when all your income falls in the lowest bracket).",
         "Quick W-2 estimate: for a typical single filer earning $40,000-$60,000, total taxes (federal + state + FICA) run roughly 22-25% of gross pay.",
-        "A $60,000 1099 contract is NOT the same as a $60,000 W-2 salary. After self-employment tax (~$9,180) and no employer benefits, the 1099 worker often nets less than a W-2 employee earning a lower salary."
+        "A $60,000 1099 contract is NOT the same as a $60,000 W-2 salary. After self-employment tax (~$8,478 = $60,000 × 0.9235 × 0.153) and no employer benefits, the 1099 worker often nets less than a W-2 employee earning a lower salary."
       ],
       "lessonId": "income_jobs_taxes"
     },
@@ -255,12 +255,12 @@
           "solution": "Step 1: Calculate total estimated taxes.\nTaxes = $48,000 × 0.23 = $11,040\n\nStep 2: Calculate take-home pay.\nTake-home = $48,000 - $11,040 = $36,960/year\n\nStep 3: Per paycheck (biweekly, 26 pay periods).\n$36,960 ÷ 26 = $1,421.54 per paycheck\n\nHer gross biweekly check is $48,000 ÷ 26 = $1,846.15, but after withholding she actually deposits about $1,421.54. That is a $424.61 difference every two weeks."
         },
         {
-          "problem": "Use these simplified tax brackets to calculate the federal income tax on $50,000 of taxable income:\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\n- 22% on $44,726 to $95,375\n\nWhat is the federal tax and the effective federal tax rate?",
+          "problem": "Use these simplified tax brackets (2023 single-filer brackets, used for practice) to calculate the federal income tax on $50,000 of taxable income:\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\n- 22% on $44,726 to $95,375\n\nWhat is the federal tax and the effective federal tax rate?",
           "solution": "Step 1: Tax each bracket separately.\nBracket 1: $11,000 × 0.10 = $1,100.00\nBracket 2: ($44,725 - $11,000) × 0.12 = $33,725 × 0.12 = $4,047.00\nBracket 3: ($50,000 - $44,725) × 0.22 = $5,275 × 0.22 = $1,160.50\n\nStep 2: Total federal income tax.\n$1,100 + $4,047 + $1,160.50 = $6,307.50\n\nStep 3: Effective federal tax rate.\n$6,307.50 ÷ $50,000 = 0.12615 = 12.6%\n\nKey insight: The marginal rate is 22% (top bracket), but the effective rate is only 12.6%. This is why progressive taxation matters — not every dollar is taxed at 22%."
         },
         {
-          "problem": "Compare: Jordan is offered a $60,000/year 1099 contract. His friend Malik has a $55,000/year W-2 job. Using a 23% total tax estimate for the W-2 and 15.3% self-employment tax plus 12% effective income tax for the 1099, who takes home more?",
-          "solution": "Jordan (1099 at $60,000):\nSelf-employment tax = $60,000 × 0.153 = $9,180\nEstimated income tax = $60,000 × 0.12 = $7,200\nTotal tax = $9,180 + $7,200 = $16,380\nTake-home = $60,000 - $16,380 = $43,620\n\nMalik (W-2 at $55,000):\nTotal taxes (federal + state + FICA) = $55,000 × 0.23 = $12,650\nTake-home = $55,000 - $12,650 = $42,350\n\nJordan technically takes home $1,270 more, but Malik gets employer benefits — health insurance worth $6,000+, retirement match, and paid time off. Once you factor in benefits, Malik's total compensation package likely wins by thousands of dollars."
+          "problem": "Compare: Jordan is offered a $60,000/year 1099 contract. His friend Malik has a $55,000/year W-2 job. Using a 23% total tax estimate for the W-2 and, for the 1099, 15.3% self-employment tax on 92.35% of net earnings plus 12% effective income tax, who takes home more? (Treat the $60,000 as Jordan's net earnings.)",
+          "solution": "Jordan (1099 at $60,000):\nSelf-employment tax = $60,000 × 0.9235 × 0.153 = $55,410 × 0.153 = $8,477.73\nEstimated income tax = $60,000 × 0.12 = $7,200\nTotal tax = $8,477.73 + $7,200 = $15,677.73\nTake-home = $60,000 - $15,677.73 = $44,322.27\n\nMalik (W-2 at $55,000):\nTotal taxes (federal + state + FICA) = $55,000 × 0.23 = $12,650\nTake-home = $55,000 - $12,650 = $42,350\n\nJordan technically takes home $1,972.27 more, but Malik gets employer benefits — health insurance worth $6,000+, retirement match, and paid time off. Once you factor in benefits, Malik's total compensation package likely wins by thousands of dollars."
         }
       ],
       "lessonId": "income_jobs_taxes"
@@ -282,7 +282,7 @@
         },
         {
           "id": "ijt-14",
-          "question": "Using these simplified brackets, calculate the federal income tax on $38,000 of taxable income:\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\nWhat is the tax amount and the effective federal rate?",
+          "question": "Using these simplified brackets (2023 single-filer brackets, used for practice), calculate the federal income tax on $38,000 of taxable income:\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\nWhat is the tax amount and the effective federal rate?",
           "hints": [
             "All $38,000 fits within the first two brackets. Bracket 1: $11,000 × 0.10. Bracket 2: ($38,000 - $11,000) × 0.12.",
             "Effective rate = total tax ÷ $38,000."
@@ -291,12 +291,12 @@
         },
         {
           "id": "ijt-15",
-          "question": "Alicia is a freelance graphic designer (1099 contractor) who earned $45,000 this year. Calculate her self-employment tax (15.3%). Then estimate her total tax burden if her effective income tax rate is about 14%. How much does she take home?",
+          "question": "Alicia is a freelance graphic designer (1099 contractor) who earned $45,000 this year (treat this as her net earnings). Calculate her self-employment tax (15.3% on 92.35% of net earnings). Then estimate her total tax burden if her effective income tax rate is about 14%. How much does she take home?",
           "hints": [
-            "SE tax = $45,000 × 0.153",
+            "SE tax = $45,000 × 0.9235 × 0.153",
             "Income tax = $45,000 × 0.14. Total tax = SE tax + income tax. Take-home = $45,000 - total tax."
           ],
-          "answer": "Take-home: $31,815. SE tax = $45,000 × 0.153 = $6,885. Income tax = $45,000 × 0.14 = $6,300. Total tax = $6,885 + $6,300 = $13,185. Take-home = $45,000 - $13,185 = $31,815."
+          "answer": "Take-home: $32,341.70. SE tax = $45,000 × 0.9235 × 0.153 = $41,557.50 × 0.153 = $6,358.30. Income tax = $45,000 × 0.14 = $6,300. Total tax = $6,358.30 + $6,300 = $12,658.30. Take-home = $45,000 - $12,658.30 = $32,341.70."
         }
       ],
       "lessonId": "income_jobs_taxes"
@@ -314,13 +314,13 @@
         },
         {
           "id": "ijt-17",
-          "question": "Calculate the federal income tax on $55,000 of taxable income using these brackets:\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\n- 22% on $44,726 to $95,375\nWhat is the total tax and the effective rate?",
+          "question": "Calculate the federal income tax on $55,000 of taxable income using these brackets (2023 single-filer brackets, used for practice):\n- 10% on the first $11,000\n- 12% on $11,001 to $44,725\n- 22% on $44,726 to $95,375\nWhat is the total tax and the effective rate?",
           "answer": "Tax = $7,407.50. Effective rate = 13.5%. Bracket 1: $11,000 × 0.10 = $1,100. Bracket 2: $33,725 × 0.12 = $4,047. Bracket 3: $10,275 × 0.22 = $2,260.50. Total = $1,100 + $4,047 + $2,260.50 = $7,407.50. Effective = $7,407.50 ÷ $55,000 = 0.1347 = 13.5%."
         },
         {
           "id": "ijt-18",
-          "question": "Marcus is choosing between a $50,000/year W-2 job (estimated 23% total tax) and a $58,000/year 1099 contract (15.3% SE tax + estimated 13% income tax rate). Based on take-home pay alone, which option gives him more money? By how much?",
-          "answer": "The 1099 wins on take-home by $3,086, but lacks benefits. W-2: $50,000 × 0.77 = $38,500. 1099: SE tax = $58,000 × 0.153 = $8,874. Income tax = $58,000 × 0.13 = $7,540. Total 1099 tax = $16,414. Take-home = $58,000 - $16,414 = $41,586. Difference = $41,586 - $38,500 = $3,086. However, the W-2 job includes employer benefits (health insurance, retirement match, PTO) that could easily exceed $3,086 in value."
+          "question": "Marcus is choosing between a $50,000/year W-2 job (estimated 23% total tax) and a $58,000/year 1099 contract (treat as net earnings; 15.3% SE tax on 92.35% of net earnings + estimated 13% income tax rate). Based on take-home pay alone, which option gives him more money? By how much?",
+          "answer": "The 1099 wins on take-home by $3,764.86, but lacks benefits. W-2: $50,000 × 0.77 = $38,500. 1099: SE tax = $58,000 × 0.9235 × 0.153 = $53,563 × 0.153 = $8,195.14. Income tax = $58,000 × 0.13 = $7,540. Total 1099 tax = $15,735.14. Take-home = $58,000 - $15,735.14 = $42,264.86. Difference = $42,264.86 - $38,500 = $3,764.86. However, the W-2 job includes employer benefits (health insurance, retirement match, PTO) that could easily exceed $3,764.86 in value."
         }
       ],
       "lessonId": "income_jobs_taxes"
@@ -408,12 +408,12 @@
         {
           "id": "ijt-23",
           "question": "Offer A: $60,000 salary, $7,200 employer health insurance, 4% retirement match, 15 PTO days.\nOffer B: $70,000 salary, no employer health insurance, no retirement match, 5 PTO days.\nWhich offer has higher total compensation, and by how much?",
-          "answer": "Offer A: $73,661.54. Offer B: $71,346.15. Offer A wins by $2,315.38. Offer A: $60,000 + $7,200 + ($60,000 × 0.04 = $2,400) + (15 × $230.77 = $3,461.54) + (rounding: 15 × ($60,000 ÷ 260) = 15 × $230.77 = $3,461.54) = $73,061.54. Offer B: $70,000 + (5 × $269.23 = $1,346.15) = $71,346.15. Correction — Offer A: $60,000 + $7,200 + $2,400 + $3,461.54 = $73,061.54. Offer A wins by $1,715.38."
+          "answer": "Offer A: $73,061.54. Offer B: $71,346.15. Offer A wins by $1,715.38. Offer A: $60,000 + $7,200 + ($60,000 × 0.04 = $2,400) + (PTO: 15 × ($60,000 ÷ 260) = 15 × $230.769… = $3,461.54) = $73,061.54. Offer B: $70,000 + (PTO: 5 × ($70,000 ÷ 260) = 5 × $269.23 = $1,346.15) = $71,346.15."
         },
         {
           "id": "ijt-24",
-          "question": "Deshawn is comparing a W-2 job and a 1099 contract:\nW-2 Job: $52,000 salary (23% total tax), $6,500 employer health insurance, 4% retirement match, 10 PTO days.\n1099 Contract: $68,000 (15.3% SE tax + 13% income tax), no benefits.\nCalculate take-home pay for the 1099 and total compensation for the W-2. Which is the better deal overall?",
-          "answer": "W-2 total compensation: $62,580. W-2 take-home: $40,040. 1099 take-home: $48,756. W-2 total compensation adds the benefits to the salary: $52,000 salary + $6,500 employer health insurance + $2,080 retirement match (4% of $52,000) + $2,000 of PTO (10 days × $52,000 ÷ 260 workdays = 10 × $200) = $62,580. W-2 take-home is the salary after tax only: $52,000 × (1 − 0.23) = $40,040. 1099 take-home: $68,000 − $10,404 self-employment tax (15.3%) − $8,840 income tax (13%) = $68,000 − $19,244 = $48,756. So the 1099 pays $8,716 more in take-home, but the W-2 benefits are worth $10,580 on top of salary. On total compensation the W-2 is the stronger deal — and the contractor would have to buy health insurance out of that extra $8,716, which alone costs more than the difference."
+          "question": "Deshawn is comparing a W-2 job and a 1099 contract:\nW-2 Job: $52,000 salary (23% total tax), $6,500 employer health insurance, 4% retirement match, 10 PTO days.\n1099 Contract: $68,000 net earnings (15.3% SE tax on 92.35% of net earnings + 13% income tax), no benefits.\nCalculate take-home pay for the 1099 and total compensation for the W-2. Which is the better deal overall?",
+          "answer": "W-2 total compensation: $62,580. W-2 take-home: $40,040. 1099 take-home: $49,551.91. W-2 total compensation adds the benefits to the salary: $52,000 salary + $6,500 employer health insurance + $2,080 retirement match (4% of $52,000) + $2,000 of PTO (10 days × $52,000 ÷ 260 workdays = 10 × $200) = $62,580. W-2 take-home is the salary after tax only: $52,000 × (1 − 0.23) = $40,040. 1099 take-home: $68,000 − $9,608.09 self-employment tax ($68,000 × 0.9235 × 0.153) − $8,840 income tax (13%) = $68,000 − $18,448.09 = $49,551.91. So the 1099 pays $9,511.91 more in take-home, but the W-2 benefits are worth $10,580 on top of salary ($40,040 + $10,580 = $50,620 vs $49,551.91). On total compensation the W-2 is the stronger deal — and the contractor would have to buy health insurance out of that extra $9,511.91, which alone costs more than the difference."
         }
       ],
       "lessonId": "income_jobs_taxes"
@@ -434,15 +434,15 @@
     "ijt-12": "Job A by $55; Job A = $855, Job B = $800",
     "ijt-13": "Annual: $39,520; Monthly: $3,293.33",
     "ijt-14": "Tax: $4,340; Effective rate: 11.4%",
-    "ijt-15": "Take-home: $31,815",
+    "ijt-15": "Take-home: $32,341.70 (SE tax $6,358.30; total tax $12,658.30)",
     "ijt-16": "Annual: $34,320; Biweekly: $1,320.00",
     "ijt-17": "Tax: $7,407.50; Effective rate: 13.5%",
-    "ijt-18": "1099 take-home wins by $3,086 ($41,586 vs $38,500) but W-2 benefits likely close the gap",
+    "ijt-18": "1099 take-home wins by $3,764.86 ($42,264.86 vs $38,500) but W-2 benefits likely close the gap",
     "ijt-19": "Company A: $54,680; Company B: $53,000; A wins by $1,680",
     "ijt-20": "$3,346.15",
     "ijt-21": "Job X: $59,423.08; Job Y: $61,783.08; Y wins by $2,360",
     "ijt-22": "$54,903.08",
     "ijt-23": "Offer A: $73,061.54; Offer B: $71,346.15; A wins by $1,715.38",
-    "ijt-24": "W-2 total compensation: $62,580; 1099 take-home: $48,756; W-2 is the better deal when benefits ($10,580) are factored in"
+    "ijt-24": "W-2 total compensation: $62,580; 1099 take-home: $49,551.91; W-2 is the better deal when benefits ($10,580) are factored in"
   }
 }

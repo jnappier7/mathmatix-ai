@@ -161,8 +161,8 @@
     },
     {
       "id": "flp-13",
-      "question": "A friend quit their W-2 job to become a 1099 freelance contractor earning $55,000 per year. As a W-2 employee, your employer pays half of your FICA taxes — you only pay 7.65% of your salary. As a 1099 contractor, your friend must pay the full 15.3% self-employment tax.\n\n(a) How much do you pay in FICA taxes annually on your $48,000 W-2 salary?\n(b) How much does your friend pay in self-employment tax on $55,000?\n(c) After subtracting only the FICA or self-employment tax from each gross salary, who keeps more? Then explain why the comparison does not stop there.",
-      "answer": "(a) $3,672. FICA = $48,000 × 0.0765 = $3,672.\n(b) $8,415. Self-employment tax = $55,000 × 0.153 = $8,415.\n(c) After tax: You keep $48,000 − $3,672 = $44,328. Friend keeps $55,000 − $8,415 = $46,585. The friend keeps $2,257 more after FICA/SE tax alone. But the comparison does not stop there: your employer also contributes $4,800/year for health insurance and $1,920/year in 401(k) matching ($6,720 total). Your friend gets none of that and must buy their own health insurance. After accounting for benefits, your total package ($54,720) beats their $55,000 gross.",
+      "question": "A friend quit their W-2 job to become a 1099 freelance contractor earning $55,000 per year. As a W-2 employee, your employer pays half of your FICA taxes — you only pay 7.65% of your salary. As a 1099 contractor, your friend must pay the full 15.3% self-employment tax, which is charged on 92.35% of net earnings. Assume the $55,000 is the friend's net earnings after business expenses.\n\n(a) How much do you pay in FICA taxes annually on your $48,000 W-2 salary?\n(b) How much does your friend pay in self-employment tax on $55,000?\n(c) After subtracting only the FICA or self-employment tax from each gross salary, who keeps more? Then explain why the comparison does not stop there.",
+      "answer": "(a) $3,672. FICA = $48,000 × 0.0765 = $3,672.\n(b) $7,771.25. Taxable SE earnings = $55,000 × 0.9235 = $50,792.50. Self-employment tax = $50,792.50 × 0.153 = $7,771.25.\n(c) After tax: You keep $48,000 − $3,672 = $44,328. Friend keeps $55,000 − $7,771.25 = $47,228.75. The friend keeps $2,900.75 more after FICA/SE tax alone. But the comparison does not stop there: your employer also contributes $4,800/year for health insurance and $1,920/year in 401(k) matching ($6,720 total). Your friend gets none of that and must buy their own health insurance. After accounting for benefits, you are worth $44,328 + $6,720 = $51,048 after FICA, versus the friend's $47,228.75 — and the friend still has to buy health insurance out of that.",
       "skill": "cm-tax-basics",
       "difficulty": 4,
       "points": 6
@@ -206,7 +206,7 @@
     "flp-10": "1.916%/month; $28.74 first-month interest; $46.26 to principal; balance $1,453.74",
     "flp-11": "Loan A total $18,048; Loan B total $19,728; Loan A saves $1,680",
     "flp-12": "Current job $54,720 total comp; Competing $53,000; current wins by $1,720",
-    "flp-13": "Your FICA $3,672; Friend SE tax $8,415; friend keeps $2,257 more before benefits",
+    "flp-13": "Your FICA $3,672; Friend SE tax $7,771.25; friend keeps $2,900.75 more before benefits",
     "flp-14": "9 years to double; ~85% from growth; coworker loses $560,000 by starting 10 years late",
     "flp-15": "3+ red flags; $72,760 proves claim impossible (1,355% annual return)",
     "flp-16": "Net change +$171; expenses $2,626; surplus $224; 30 months to emergency fund"

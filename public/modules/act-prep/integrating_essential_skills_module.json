@@ -98,8 +98,8 @@
       "skill": "act-percent-applications",
       "examples": [
         {
-          "problem": "A rectangular room is 12 ft × 15 ft. A semicircular bay window (diameter 6 ft) extends from one wall. What is the total floor area?\n(A) 180 + 9π/2  (B) 180 + 4.5π  (C) 180 + 9π  (D) 192  (E) 180 + 18π",
-          "solution": "Rectangle: 12 × 15 = 180 sq ft.\nSemicircle: diameter = 6, radius = 3. Area = (1/2)πr² = (1/2)π(9) = 9π/2 = 4.5π.\nTotal = 180 + 4.5π.\nAnswer: (B) 180 + 4.5π (also = (A) since 9π/2 = 4.5π)"
+          "problem": "A rectangular room is 12 ft × 15 ft. A semicircular bay window (diameter 6 ft) extends from one wall. What is the total floor area?\n(A) 180 + 3π  (B) 180 + 4.5π  (C) 180 + 9π  (D) 192  (E) 180 + 18π",
+          "solution": "Rectangle: 12 × 15 = 180 sq ft.\nSemicircle: diameter = 6, radius = 3. Area = (1/2)πr² = (1/2)π(9) = 9π/2 = 4.5π.\nTotal = 180 + 4.5π.\nAnswer: (B) 180 + 4.5π"
         },
         {
           "problem": "A jacket costs $80. It's marked up 50% by the retailer, then put on a 20% off sale. What is the sale price?\n(A) $80  (B) $84  (C) $96  (D) $100  (E) $104",
@@ -253,8 +253,8 @@
         },
         {
           "id": "ies-yp4",
-          "problem": "A painter can paint a room in 5 hours. Her apprentice can paint the same room in 8 hours. If they start together but the painter leaves after 2 hours, how much longer must the apprentice work alone to finish?\n(A) 2.0 hours  (B) 2.5 hours  (C) 3.0 hours  (D) 3.5 hours  (E) 4.0 hours",
-          "answer": "(C) 3.0 hours. Together for 2 hours: (1/5 + 1/8)(2) = (13/40)(2) = 26/40 = 13/20 done. Remaining: 7/20. Apprentice alone: (7/20) ÷ (1/8) = (7/20)(8) = 56/20 = 2.8 hours. Approximately (B) 2.5... Actually: 7/20 ÷ 1/8 = 7×8/20 = 56/20 = 2.8 hours. Closest answer: (C) 3.0."
+          "problem": "A painter can paint a room in 5 hours. Her apprentice can paint the same room in 8 hours. If they start together but the painter leaves after 2 hours, how much longer must the apprentice work alone to finish?\n(A) 2.0 hours  (B) 2.5 hours  (C) 2.8 hours  (D) 3.5 hours  (E) 4.0 hours",
+          "answer": "(C) 2.8 hours. Together for 2 hours: (1/5 + 1/8)(2) = (13/40)(2) = 26/40 = 13/20 done. Remaining: 7/20. Apprentice alone: (7/20) ÷ (1/8) = (7/20)(8) = 56/20 = 2.8 hours."
         },
         {
           "id": "ies-yp5",
@@ -301,7 +301,7 @@
     "combined-machines": "8",
     "garden-fountain": "100π − 16",
     "buy2get1": "$16.67",
-    "painter-apprentice": "3.0",
+    "painter-apprentice": "2.8",
     "depreciation-2yr": "$1,445",
     "pool-evaporation": "31.25",
     "sugar-proportion": "15/8",

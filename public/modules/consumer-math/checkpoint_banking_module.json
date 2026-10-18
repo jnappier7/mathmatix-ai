@@ -77,7 +77,7 @@
     {
       "id": "cbank-5",
       "question": "Two banks offer accounts for a $4,000 deposit over 5 years. Bank A pays 3.6% simple interest. Bank B pays 3.5% compounded monthly. Which bank gives more money at the end, and by how much? Round to the nearest cent.",
-      "answer": "Bank A (simple): I = $4,000 x 0.036 x 5 = $720. Total = $4,720.00. Bank B (compound): A = $4,000(1 + 0.035/12)^(12 x 5) = $4,000(1.002917)^60. (1.002917)^60 = 1.19115... A = $4,000 x 1.19115 = $4,764.60. Bank B gives more. Difference: $4,764.60 - $4,720.00 = $44.60. Bank B earns $44.60 more thanks to compound interest over 5 years.",
+      "answer": "Bank A (simple): I = $4,000 x 0.036 x 5 = $720. Total = $4,720.00. Bank B (compound): A = $4,000(1 + 0.035/12)^(12 x 5) = $4,000(1.002917)^60. (1.002917)^60 = 1.190943... A = $4,000 x 1.190943 = $4,763.77. Bank B gives more. Difference: $4,763.77 - $4,720.00 = $43.77. Bank B earns $43.77 more thanks to compound interest over 5 years.",
       "skill": "cm-compound-interest",
       "difficulty": 4,
       "points": 5
@@ -117,7 +117,7 @@
     {
       "id": "cbank-10",
       "question": "Leah is deciding between buying a $60 pair of sneakers now or putting that $60 into a savings account earning 4% simple interest for 3 years. What is the opportunity cost of buying the sneakers?",
-      "answer": "If she invests instead: I = $60 x 0.04 x 3 = $7.20. The $60 would grow to $67.20. The opportunity cost of buying the sneakers is $7.20 in lost interest, meaning the sneakers really cost her $67.20 in total value given up.",
+      "answer": "If she invests instead: I = $60 x 0.04 x 3 = $7.20. The $60 would grow to $67.20. The opportunity cost of buying the sneakers is $67.20 — the full amount the money would have grown to. Of that, $7.20 is the interest she gives up on top of the $60 price.",
       "skill": "cm-opportunity-cost",
       "difficulty": 2,
       "points": 3
@@ -133,7 +133,7 @@
     {
       "id": "cbank-12",
       "question": "Nadia is considering two options for her $3,000 tax refund: (A) Buy a new TV and gaming console for $3,000, or (B) Invest the $3,000 at 6% compounded annually for 5 years. What is the opportunity cost of choosing option A? What would the money be worth if she chose option B? Round to the nearest cent.",
-      "answer": "Option B value: A = $3,000(1 + 0.06)^5 = $3,000(1.06)^5. (1.06)^5 = 1.338226. A = $3,000 x 1.338226 = $4,014.68. If Nadia buys the TV and console, her opportunity cost is $4,014.68 - $3,000 = $1,014.68 in lost investment growth. The electronics cost her not just $3,000 today, but $4,014.68 in future value. This is the true cost of the purchase when accounting for what the money could have earned.",
+      "answer": "Option B value: A = $3,000(1 + 0.06)^5 = $3,000(1.06)^5. (1.06)^5 = 1.338226. A = $3,000 x 1.338226 = $4,014.68. If Nadia buys the TV and console, her opportunity cost is $4,014.68 — the full future value she gives up. Of that, $4,014.68 - $3,000 = $1,014.68 is lost investment growth. The electronics cost her not just $3,000 today, but $4,014.68 in future value. This is the true cost of the purchase when accounting for what the money could have earned.",
       "skill": "cm-opportunity-cost",
       "difficulty": 4,
       "points": 6
@@ -145,13 +145,13 @@
     "cbank-2": "$3,972.50",
     "cbank-3": "5 years",
     "cbank-4": "$2,253.65",
-    "cbank-5": "Bank B by $44.60",
+    "cbank-5": "Bank B by $43.77",
     "cbank-6": "$220.51",
     "cbank-7": "$4,410",
     "cbank-8": "36 months",
     "cbank-9": "13 months (all non-essential) or 19 months ($400/month)",
-    "cbank-10": "$7.20",
+    "cbank-10": "$67.20",
     "cbank-11": "Approximately $2,016",
-    "cbank-12": "$1,014.68 opportunity cost ($4,014.68 future value)"
+    "cbank-12": "$4,014.68 opportunity cost (the full future value; $1,014.68 of it is lost growth)"
   }
 }

@@ -187,8 +187,8 @@
     },
     {
       "id": "pt-12",
-      "question": "A jar has 8 red, 5 blue, and 7 green marbles. What is the probability of drawing a blue marble?\n(A) 1/4  (B) 5/20  (C) 1/5  (D) 5/15  (E) 5/13",
-      "answer": "(A) 1/4. Total = 20. P(blue) = 5/20 = 1/4. Also (B) = 1/4.",
+      "question": "A jar has 8 red, 5 blue, and 7 green marbles. What is the probability of drawing a blue marble?\n(A) 1/4  (B) 3/4  (C) 1/5  (D) 5/15  (E) 5/13",
+      "answer": "(A) 1/4. Total = 20. P(blue) = 5/20 = 1/4.",
       "skill": "act-probability",
       "difficulty": 2,
       "points": 4

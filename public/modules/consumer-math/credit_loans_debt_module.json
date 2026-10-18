@@ -30,7 +30,7 @@
   ],
   "instructionalStrategy": [
     "Credit scores: use the 'report card for borrowing' analogy. Show the rate difference: 4% vs 8% on a $20,000 car loan.",
-    "Credit card math is the most powerful lesson. Show a $3,000 balance at 22% APR with $60 minimum payments — total paid is ~$7,000+ over 15 years. That shock teaches.",
+    "Credit card math is the most powerful lesson. Show a $3,000 balance at 22% APR with $60 minimum payments — total paid is ~$8,200 over more than 11 years. That shock teaches.",
     "Loan comparison: same car, 3-year vs 6-year loan. Lower monthly payment does not equal better deal. Always calculate total cost.",
     "Amortization: show a 3-4 row snippet from a real amortization table. Payment #1 vs payment #60. The 'aha' is 'I paid $500 but only $150 went to my balance?!'",
     "Predatory lending: calculate the real cost of a $500 payday loan at 400% APR. Compare to credit card and personal loan. Frame as protection, not preaching."
@@ -116,8 +116,8 @@
       "problems": [
         {
           "id": "cld-4",
-          "question": "Tyler has a credit score of 760 and gets a $20,000 auto loan at 4.5% APR for 60 months, monthly payment $373. His coworker Brianna has a 610 score and gets the same loan at 13.9% APR, monthly payment $468. How much more does Brianna pay in total over the life of the loan?",
-          "answer": "Tyler total: $373 x 60 = $22,380. Brianna total: $468 x 60 = $28,080. Difference: $28,080 - $22,380 = $5,700. Brianna pays $5,700 more for the same car because of her lower credit score."
+          "question": "Tyler has a credit score of 760 and gets a $20,000 auto loan at 4.5% APR for 60 months, monthly payment $373. His coworker Brianna has a 610 score and gets the same loan at 13.9% APR, monthly payment $464. How much more does Brianna pay in total over the life of the loan?",
+          "answer": "Tyler total: $373 x 60 = $22,380. Brianna total: $464 x 60 = $27,840. Difference: $27,840 - $22,380 = $5,460. Brianna pays $5,460 more for the same car because of her lower credit score."
         },
         {
           "id": "cld-5",
@@ -138,8 +138,8 @@
         "APR stands for Annual Percentage Rate. Typical credit card APRs range from 18% to 25%. To get the monthly rate, divide APR by 12.",
         "Monthly interest formula: Monthly Interest = (APR / 12) x Current Balance. Example: 24% APR on $1,000 = (0.24 / 12) x $1,000 = 0.02 x $1,000 = $20 per month.",
         "Minimum payments are usually 1-3% of the balance or a flat amount like $25-$35. They are intentionally low to maximize interest revenue for the bank.",
-        "The minimum payment trap: on a $3,000 balance at 22% APR with a $60 minimum payment, about $55 goes to interest and only $5 goes to principal. At that rate, payoff takes 15+ years and you pay over $7,000 total on a $3,000 purchase.",
-        "Payoff strategy: always pay MORE than the minimum. Even an extra $50/month can cut payoff time from 15 years to under 3 years.",
+        "The minimum payment trap: on a $3,000 balance at 22% APR with a $60 minimum payment, about $55 goes to interest and only $5 goes to principal. At that rate, payoff takes about 137 months (over 11 years) and you pay about $8,200 total on a $3,000 purchase.",
+        "Payoff strategy: always pay MORE than the minimum. Even an extra $50/month ($110 instead of $60) cuts payoff time from over 11 years to about 3 years and 3 months (39 months), and the interest from about $5,200 to about $1,200.",
         "If you pay your full statement balance by the due date every month, you pay ZERO interest. This is how credit cards should be used."
       ],
       "lessonId": "credit_loans_debt"
@@ -155,12 +155,12 @@
           "solution": "Step 1: Find the monthly rate.\nMonthly rate = APR / 12 = 21% / 12 = 1.75%\n\nStep 2: Calculate monthly interest.\nMonthly interest = 1.75% x $2,400 = 0.0175 x $2,400 = $42.00\n\nYou will be charged $42.00 in interest this month. If your minimum payment is $48, only $6 goes toward your actual balance."
         },
         {
-          "problem": "Your credit card balance is $3,000 at 22% APR. Your minimum payment is $60. How much of your first minimum payment goes to interest vs. principal? At this pace, will you pay off the card in 5 years, 10 years, or 15+ years?",
-          "solution": "Step 1: Monthly rate = 22% / 12 = 1.833%\n\nStep 2: Month 1 interest = 1.833% x $3,000 = 0.01833 x $3,000 = $55.00\n\nStep 3: Principal paid = Payment - Interest = $60 - $55 = $5.00\n\nSo out of your $60 payment, $55 goes straight to the bank as interest. Only $5 actually reduces your balance. Your new balance is $2,995 — you barely made a dent.\n\nAt this pace: $3,000 / $5 per month = 600 months = 50 years if the balance never shrank further. In reality, because the balance drops slightly each month, it takes about 15+ years and you pay roughly $7,200 total on a $3,000 purchase. The interest more than doubles the original cost."
+          "problem": "Your credit card balance is $3,000 at 22% APR. Your minimum payment is $60. How much of your first minimum payment goes to interest vs. principal? At this pace, will you pay off the card in under 5 years, 5-10 years, or more than 10 years?",
+          "solution": "Step 1: Monthly rate = 22% / 12 = 1.833%\n\nStep 2: Month 1 interest = 1.833% x $3,000 = 0.01833 x $3,000 = $55.00\n\nStep 3: Principal paid = Payment - Interest = $60 - $55 = $5.00\n\nSo out of your $60 payment, $55 goes straight to the bank as interest. Only $5 actually reduces your balance. Your new balance is $2,995 — you barely made a dent.\n\nAt this pace: $3,000 / $5 per month = 600 months = 50 years if the balance never shrank further. In reality, because the balance drops slightly each month, paying $60 every month takes 137 months (more than 11 years) and you pay about $8,207 total on a $3,000 purchase. The interest (about $5,207) is more than the original cost."
         },
         {
           "problem": "Compare two payoff strategies for a $1,800 balance at 20% APR. Strategy A: pay the $45 minimum. Strategy B: pay $150 per month. What happens in month 1 for each?",
-          "solution": "Monthly rate = 20% / 12 = 1.667%\nMonth 1 interest (same for both) = 1.667% x $1,800 = 0.01667 x $1,800 = $30.00\n\nStrategy A ($45 minimum):\nPrincipal paid = $45 - $30 = $15.00\nNew balance = $1,800 - $15 = $1,785\n\nStrategy B ($150 per month):\nPrincipal paid = $150 - $30 = $120.00\nNew balance = $1,800 - $120 = $1,680\n\nStrategy B knocks out 8x more principal in the very first month ($120 vs $15). Strategy A would take about 5 years to pay off. Strategy B would take about 13 months. The total interest paid under Strategy A is roughly $700. Under Strategy B, roughly $150."
+          "solution": "Monthly rate = 20% / 12 = 1.667%\nMonth 1 interest (same for both) = 1.667% x $1,800 = 0.01667 x $1,800 = $30.00\n\nStrategy A ($45 minimum):\nPrincipal paid = $45 - $30 = $15.00\nNew balance = $1,800 - $15 = $1,785\n\nStrategy B ($150 per month):\nPrincipal paid = $150 - $30 = $120.00\nNew balance = $1,800 - $120 = $1,680\n\nStrategy B knocks out 8x more principal in the very first month ($120 vs $15). Strategy A would take about 67 months (5 years and 7 months) to pay off. Strategy B would take about 14 months. The total interest paid under Strategy A is roughly $1,190. Under Strategy B, roughly $225."
         }
       ],
       "lessonId": "credit_loans_debt"
@@ -339,12 +339,12 @@
           "solution": "Interest percentage = $900.00 / $1,079.19 = 0.834 = 83.4%\nPrincipal percentage = $179.19 / $1,079.19 = 0.166 = 16.6%\n\nSo 83.4% of your first payment goes straight to the bank as interest. Only 16.6% — less than one-sixth — actually pays down your loan. You paid $1,079.19 but your balance only dropped by $179.19. This is the 'aha moment' of amortization."
         },
         {
-          "problem": "Same mortgage. Here are payments at different points in the loan:\n\nPayment #1: Interest $900.00 | Principal $179.19\nPayment #180 (year 15): Interest $631.00 | Principal $448.19\nPayment #300 (year 25): Interest $269.00 | Principal $810.19\n\nDescribe how the interest-to-principal split changes over time.",
-          "solution": "Payment #1: $900 interest vs $179 principal — interest is 5x larger than principal.\nPayment #180: $631 interest vs $448 principal — interest is still larger, but the gap is closing.\nPayment #300: $269 interest vs $810 principal — principal is now 3x larger than interest.\n\nThe pattern: early on, most of your payment feeds the bank. Over time, the split reverses. By year 25, over 75% of each payment goes to reducing your balance. This is why the first 5 years of a mortgage feel like you are treading water."
+          "problem": "Same mortgage. Here are payments at different points in the loan:\n\nPayment #1: Interest $900.00 | Principal $179.19\nPayment #180 (year 15): Interest $641.63 | Principal $437.56\nPayment #300 (year 25): Interest $283.09 | Principal $796.10\n\nDescribe how the interest-to-principal split changes over time.",
+          "solution": "Payment #1: $900 interest vs $179 principal — interest is 5x larger than principal.\nPayment #180: $642 interest vs $438 principal — interest is still larger, but the gap is closing.\nPayment #300: $283 interest vs $796 principal — principal is now almost 3x larger than interest.\n\nThe pattern: early on, most of your payment feeds the bank. Over time, the split reverses. By year 25, almost 74% of each payment goes to reducing your balance. This is why the first 5 years of a mortgage feel like you are treading water."
         },
         {
-          "problem": "A homeowner has the $180,000 mortgage above. She decides to pay an extra $200/month starting from month 1. The original payoff is 30 years (360 payments) with a total cost of $388,508. With the extra $200/month, the loan pays off in about 22 years (264 payments) with a total cost of $337,782. How much does she save?",
-          "solution": "Payments saved: 360 - 264 = 96 payments = 8 years\nMoney saved: $388,508 - $337,782 = $50,726\n\nBy paying $200 extra per month, she saves $50,726 and gets out of debt 8 years early. The extra payments go directly to principal, which reduces the balance faster, which reduces future interest charges. It is a snowball effect."
+          "problem": "A homeowner has the $180,000 mortgage above. She decides to pay an extra $200/month starting from month 1. The original payoff is 30 years (360 payments) with a total cost of $388,508. With the extra $200/month, the loan pays off in about 20 years and 4 months (244 payments, the last one smaller) with a total cost of $311,862. How much does she save?",
+          "solution": "Payments saved: 360 - 244 = 116 payments = about 9 years and 8 months\nMoney saved: $388,508 - $311,862 = $76,646\n\nBy paying $200 extra per month, she saves $76,646 and gets out of debt almost 10 years early. The extra payments go directly to principal, which reduces the balance faster, which reduces future interest charges. It is a snowball effect."
         }
       ],
       "lessonId": "credit_loans_debt"
@@ -365,13 +365,13 @@
         },
         {
           "id": "cld-18",
-          "question": "A homeowner has a $200,000 mortgage at 6.5% for 30 years, monthly payment $1,264.14. After making payments for 10 years (120 payments), the remaining balance is $175,868. How much total has the homeowner paid over 10 years? How much of the original $200,000 principal has been paid off? How much went to interest?",
+          "question": "A homeowner has a $200,000 mortgage at 6.5% for 30 years, monthly payment $1,264.14. After making payments for 10 years (120 payments), the remaining balance is $169,552. How much total has the homeowner paid over 10 years? How much of the original $200,000 principal has been paid off? How much went to interest?",
           "hints": [
             "Total paid = monthly payment x number of payments made so far.",
             "Principal paid off = original balance - remaining balance.",
             "Interest paid = total paid - principal paid off."
           ],
-          "answer": "Total paid = $1,264.14 x 120 = $151,696.80. Principal paid off = $200,000 - $175,868 = $24,132. Interest paid = $151,696.80 - $24,132 = $127,564.80. After 10 years and over $151,000 in payments, only $24,132 (about 12%) of the original loan has been paid off. The remaining $127,565 went to interest."
+          "answer": "Total paid = $1,264.14 x 120 = $151,696.80. Principal paid off = $200,000 - $169,552 = $30,448. Interest paid = $151,696.80 - $30,448 = $121,248.80. After 10 years and over $151,000 in payments, only $30,448 (about 15%) of the original loan has been paid off. The remaining $121,249 went to interest."
         }
       ],
       "skill": "cm-amortization",
@@ -389,8 +389,8 @@
         },
         {
           "id": "cld-20",
-          "question": "A borrower has a $160,000 mortgage at 6% for 30 years, monthly payment $959.28. She pays an extra $100/month starting from payment #1, making each payment $1,059.28. With the extra payments, the loan is paid off in approximately 25 years (300 payments) instead of 30 years (360 payments). Calculate the total cost under each scenario and the savings.",
-          "answer": "Original total: $959.28 x 360 = $345,340.80. With extra payments: $1,059.28 x 300 = $317,784.00. Savings: $345,340.80 - $317,784.00 = $27,556.80. She saves about $27,557 and pays off the loan 5 years early by adding just $100/month."
+          "question": "A borrower has a $160,000 mortgage at 6% for 30 years, monthly payment $959.28. She pays an extra $100/month starting from payment #1, making each payment $1,059.28. With the extra payments, the loan is paid off in approximately 23 years and 7 months (282 payments of $1,059.28 plus a final payment of $201.96, 283 payments in all) instead of 30 years (360 payments). Calculate the total cost under each scenario and the savings.",
+          "answer": "Original total: $959.28 x 360 = $345,340.80. With extra payments: $1,059.28 x 282 + $201.96 = $298,918.92. Savings: $345,340.80 - $298,918.92 = $46,421.88. She saves about $46,422 and pays off the loan about 6 years and 5 months early (77 fewer payments) by adding just $100/month."
         },
         {
           "id": "cld-21",
@@ -496,7 +496,7 @@
     "cld-1": "$92,880. At 6.2%: $1,226 x 360 = $441,360. At 8.1%: $1,484 x 360 = $534,240. Difference = $92,880.",
     "cld-2": "Payment history: strong. Amounts owed (20% utilization): strong. Length of history (8 years): strong. New credit (2 recent accounts): needs work. Credit mix (card + car loan): strong.",
     "cld-3": "Most to least harmful: B (payment history 35%), C (utilization 30%), D (length of history 15%), A (new credit 10%).",
-    "cld-4": "$5,700. Tyler: $373 x 60 = $22,380. Brianna: $468 x 60 = $28,080. Difference = $5,700.",
+    "cld-4": "$5,460. Tyler: $373 x 60 = $22,380. Brianna: $464 x 60 = $27,840. Difference = $5,460.",
     "cld-5": "27.5% utilization ($5,500 / $20,000). Fair — under 30% but not under 10%.",
     "cld-6": "Monthly rate = 2%. Monthly interest = $90.00.",
     "cld-7": "$30.00 to interest, $10.00 to principal.",
@@ -510,9 +510,9 @@
     "cld-15": "Total = $14,760. Interest = $2,760.",
     "cld-16": "First National = $27,168. Community CU = $27,540. First National is better by $372.",
     "cld-17": "$164.18 paid off. 19.3% of payment went to principal, 80.7% to interest.",
-    "cld-18": "Total paid = $151,696.80. Principal paid = $24,132. Interest paid = $127,564.80.",
+    "cld-18": "Total paid = $151,696.80. Principal paid = $30,448. Interest paid = $121,248.80.",
     "cld-19": "Interest = 87.7%, principal = 12.3%.",
-    "cld-20": "Original total = $345,340.80. With extra: $317,784.00. Savings = $27,556.80 and 5 years early.",
+    "cld-20": "Original total = $345,340.80. With extra: $298,918.92. Savings = $46,421.88 and about 6 years 5 months (77 payments) early.",
     "cld-21": "Payment #12: 18.1% to principal. Payment #240: 54.4% to principal. The split shifts from mostly-interest to mostly-principal over time.",
     "cld-22": "Fee = $80. APR = approximately 521%.",
     "cld-23": "Red flags: guaranteed approval/no credit check, pressure to act today, told to ignore fine print, no APR disclosed.",

@@ -104,8 +104,8 @@
           "solution": "Factor 72 looking for perfect squares: 72 = 36 × 2\n√72 = √(36 × 2) = √36 · √2 = 6√2\nAnswer: (A) 6√2\n\nACT Tip: Always look for the largest perfect square factor."
         },
         {
-          "problem": "The distance from the Sun to Mars is approximately 2.28 × 10⁸ km. The distance from the Sun to Earth is approximately 1.50 × 10⁸ km. How much farther from the Sun is Mars than Earth?\n(A) 0.78 × 10⁸  (B) 7.8 × 10⁷  (C) 7.8 × 10⁸  (D) 0.78 × 10⁷  (E) 78 × 10⁶",
-          "solution": "Same power of 10: subtract the coefficients.\n2.28 × 10⁸ - 1.50 × 10⁸ = 0.78 × 10⁸\nConvert to proper scientific notation: 7.8 × 10⁷\nNote: (A) 0.78 × 10⁸ and (B) 7.8 × 10⁷ are equal, but (B) is proper scientific notation.\nAnswer: (B) 7.8 × 10⁷"
+          "problem": "The distance from the Sun to Mars is approximately 2.28 × 10⁸ km. The distance from the Sun to Earth is approximately 1.50 × 10⁸ km. How much farther from the Sun is Mars than Earth?\n(A) 3.78 × 10⁸  (B) 7.8 × 10⁷  (C) 7.8 × 10⁸  (D) 0.78 × 10⁷  (E) 0.78",
+          "solution": "Same power of 10: subtract the coefficients.\n2.28 × 10⁸ - 1.50 × 10⁸ = 0.78 × 10⁸\nConvert to proper scientific notation: 7.8 × 10⁷\nNote: 0.78 × 10⁸ is the same value, but it is not proper scientific notation (the coefficient must be at least 1).\nAnswer: (B) 7.8 × 10⁷"
         }
       ],
       "lessonId": "number_quantity"
@@ -287,8 +287,8 @@
         },
         {
           "id": "nq-yp2",
-          "problem": "Simplify: √(50) + √(18)\n(A) √68  (B) 8√2  (C) 4√17  (D) 5√2 + 3√2  (E) 68",
-          "answer": "(B) 8√2. √50 = 5√2, √18 = 3√2. Sum = 5√2 + 3√2 = 8√2. Note: (D) is the same answer written differently."
+          "problem": "Simplify: √(50) + √(18)\n(A) √68  (B) 8√2  (C) 4√17  (D) 15√2  (E) 68",
+          "answer": "(B) 8√2. √50 = 5√2, √18 = 3√2. Sum = 5√2 + 3√2 = 8√2."
         },
         {
           "id": "nq-yp3",
@@ -317,8 +317,8 @@
         },
         {
           "id": "nq-yp8",
-          "problem": "Which expression is equivalent to x^(3/2)?\n(A) x√x  (B) (√x)³  (C) x · √x  (D) All of the above  (E) None of the above",
-          "answer": "(D) All of the above. x^(3/2) = x^1 · x^(1/2) = x√x = (√x)³ = x · √x. All equivalent."
+          "problem": "Which expression is equivalent to x^(3/2)?\n(A) x√x  (B) (√x)³  (C) √(x³)  (D) All of the above  (E) None of the above",
+          "answer": "(D) All of the above. x^(3/2) = x^1 · x^(1/2) = x√x = (√x)³ = √(x³). All equivalent."
         }
       ],
       "skill": "act-real-complex-numbers",

@@ -25,7 +25,7 @@
       },
       {
         "skillId": "cm-tax-basics",
-        "reteachFocus": "W-2 vs 1099 tax differences, progressive tax concept (not all income at top rate), estimate 22-25% total for W-2, 1099 pays both sides of FICA (~15.3%)"
+        "reteachFocus": "W-2 vs 1099 tax differences, progressive tax concept (not all income at top rate), estimate 22-25% total for W-2, 1099 pays both halves of FICA as self-employment tax (15.3% on 92.35% of net earnings)"
       },
       {
         "skillId": "cm-benefits-comparison",
@@ -101,7 +101,7 @@
     },
     {
       "id": "cinc-9",
-      "question": "Using the simplified federal tax brackets below, calculate the total federal income tax owed on $45,000 of taxable income.\n\n• 10% on the first $11,000\n• 12% on income from $11,001 to $44,725\n• 22% on income from $44,726 to $95,375\n\nWhat is the effective tax rate? Round to the nearest tenth of a percent. Explain why the effective rate is much lower than 22%.",
+      "question": "Using the simplified federal tax brackets below (2023 single-filer brackets, used for practice), calculate the total federal income tax owed on $45,000 of taxable income.\n\n• 10% on the first $11,000\n• 12% on income from $11,001 to $44,725\n• 22% on income from $44,726 to $95,375\n\nWhat is the effective tax rate? Round to the nearest tenth of a percent. Explain why the effective rate is much lower than 22%.",
       "answer": "$5,207.50 in federal tax; 11.6% effective rate. Bracket 1: $11,000 × 0.10 = $1,100.00. Bracket 2: ($44,725 − $11,000) = $33,725 × 0.12 = $4,047.00. Bracket 3: ($45,000 − $44,725) = $275 × 0.22 = $60.50. Total tax = $1,100.00 + $4,047.00 + $60.50 = $5,207.50. Effective rate = $5,207.50 ÷ $45,000 = 0.1157 = 11.6%. The effective rate is far below 22% because the U.S. uses a progressive (marginal) tax system — each bracket rate applies ONLY to the income within that range, not to all income. Only $275 of the $45,000 is taxed at 22%. Most of the income is taxed at 10% and 12%.",
       "skill": "cm-tax-basics",
       "difficulty": 4,

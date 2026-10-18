@@ -72,11 +72,11 @@
         },
         {
           "problem": "If x² − 5x − 6 = 0, what is the sum of the solutions?\n(A) −6  (B) −5  (C) −1  (D) 5  (E) 6",
-          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'the SUM of the solutions' — not the solutions themselves, the SUM.\n\nC — CLASSIFY: Quadratic equation → I could factor and add, or use Vieta's (sum = −b/a).\n\nA — ANALYZE CHOICES:\n• Both 5 and −5 are there → sign trap. They're testing if you know it's −b/a (positive 5) vs −b (negative 5) vs b (5).\n• −6 and 6 are the product (c/a) → trap for students who find the wrong quantity.\n• −1 = difference of roots → trap for solving and subtracting instead of adding.\n\nN — NAME APPROACH: Vieta's shortcut — sum = −b/a = −(−5)/1 = 5. No factoring needed.\n\nAnswer: (D) 5\n\nIf you factored: (x−6)(x+1) = 0 → x = 6, x = −1. Sum = 6+(−1) = 5. Same answer, more work."
+          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'the SUM of the solutions' — not the solutions themselves, the SUM.\n\nC — CLASSIFY: Quadratic equation → I could factor and add, or use Vieta's (sum = −b/a).\n\nA — ANALYZE CHOICES:\n• Both 5 and −5 are there → sign trap. They're testing if you know the sum is −b/a = −(−5)/1 = 5, not b = −5.\n• −6 and 6 are the product (c/a) → trap for students who find the wrong quantity.\n• −1 is one of the roots (x = −1) → trap for solving and reporting a single root instead of adding them.\n\nN — NAME APPROACH: Vieta's shortcut — sum = −b/a = −(−5)/1 = 5. No factoring needed.\n\nAnswer: (D) 5\n\nIf you factored: (x−6)(x+1) = 0 → x = 6, x = −1. Sum = 6+(−1) = 5. Same answer, more work."
         },
         {
-          "problem": "In the figure below, line m is parallel to line n. If angle 1 = 3x + 10 and angle 2 = 5x − 30, what is the value of x?\n(A) 10  (B) 20  (C) 25  (D) 40  (E) 70",
-          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'value of x' — not the angle measure, just x. (But watch out: one of the choices is probably the angle measure.)\n\nC — CLASSIFY: Parallel lines + transversal → angle relationships. Need to know if angles 1 and 2 are equal (corresponding/alternate interior) or supplementary (co-interior).\n\nA — ANALYZE CHOICES:\n• Wide range (10 to 70) → estimation could help but direct solve is fast.\n• (E) 70 is suspiciously large — could be the ANGLE value not x.\n\nN — NAME APPROACH: Need the figure to know the relationship, but let's try both:\n\nIf EQUAL (alternate interior): 3x+10 = 5x−30 → 40 = 2x → x = 20.\nIf SUPPLEMENTARY: 3x+10 + 5x−30 = 180 → 8x−20 = 180 → 8x = 200 → x = 25.\n\nBoth 20 and 25 are answer choices — the figure determines which. But the DIAGNOSIS told us to expect two plausible approaches.\n\nCheck traps: if x=25, angles are 85° and 95° (supplementary ✓). If x=20, angles are 70° and 70° (equal ✓). The figure dictates the answer, but you're prepared for both."
+          "problem": "Line m is parallel to line n, and a transversal crosses both. Angle 1 and angle 2 are alternate interior angles. If angle 1 = 3x + 10 and angle 2 = 5x − 30, what is the value of x?\n(A) 10  (B) 20  (C) 25  (D) 40  (E) 70",
+          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'value of x' — not the angle measure, just x. (But watch out: one of the choices is probably the angle measure.)\n\nC — CLASSIFY: Parallel lines + transversal → angle relationships. The problem says angles 1 and 2 are ALTERNATE INTERIOR angles, so they are EQUAL (not supplementary).\n\nA — ANALYZE CHOICES:\n• Wide range (10 to 70) → estimation could help but direct solve is fast.\n• (E) 70 is suspiciously large — could be the ANGLE value not x.\n\nN — NAME APPROACH: Set the equal angles equal to each other.\n\nSOLVE: 3x+10 = 5x−30 → 40 = 2x → x = 20.\nAnswer: (B) 20\n\nCheck traps: each angle is 3(20)+10 = 70° — that is choice (E), the trap for answering with the angle instead of x. Choice (C) 25 is the trap for treating the angles as SUPPLEMENTARY (3x+10 + 5x−30 = 180 → x = 25)."
         },
         {
           "problem": "For all positive integers n, which expression is equal to (n+1)² − n²?\n(A) 1  (B) 2n  (C) 2n + 1  (D) n² + 1  (E) 2n² + 1",
@@ -268,7 +268,7 @@
         "PACING: 1 minute per question on average. Questions get harder: #1-20 easy, #21-40 medium, #41-60 hard.",
         "Never spend more than 90 seconds on a single question. Mark it and come back.",
         "No penalty for guessing — ANSWER EVERY QUESTION even if you have to guess.",
-        "If time is running out, guess the same letter for all remaining — statistically better than random.",
+        "If time is running out, answer every question — there is no penalty for guessing. Picking one letter for all remaining questions is fine and fast, but it is not statistically better than guessing at random.",
         "MODELING: Choosing the right function type for a situation.",
         "Linear: constant rate of change (adding the same amount each time).",
         "Exponential: constant PERCENT change (multiplying by the same factor each time).",
@@ -367,8 +367,8 @@
         },
         {
           "id": "tsm-yp6",
-          "problem": "A graph shows data that starts low, increases rapidly, then levels off. Which function type best models this?\n(A) Linear  (B) Quadratic  (C) Exponential growth  (D) Logarithmic  (E) Cubic",
-          "answer": "(D) Logarithmic. Rapid initial growth that slows down is characteristic of logarithmic behavior (or logistic, but log is the ACT answer)."
+          "problem": "A graph shows data that increases rapidly at first, then keeps increasing more and more slowly. Which function type best models this?\n(A) Linear  (B) Quadratic  (C) Exponential growth  (D) Logarithmic  (E) Cubic",
+          "answer": "(D) Logarithmic. Rapid initial growth that keeps slowing down is characteristic of logarithmic behavior. (A curve that starts low, speeds up, then levels off at a ceiling would be logistic, which is not one of these choices.)"
         },
         {
           "id": "tsm-yp7",
