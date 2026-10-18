@@ -123,8 +123,8 @@
     },
     {
       "id": "pcu2-10",
-      "question": "ANALYSIS: A manufacturer's average cost per unit is given by C̄(x) = (500 + 8x + 0.01x²)/x, where x is the number of units produced. (a) Simplify C̄(x). (b) Find the horizontal asymptote and explain its real-world meaning. (c) Find the number of units that minimizes average cost. (d) Find the minimum average cost.",
-      "answer": "(a) C̄(x) = 500/x + 8 + 0.01x. (b) As x → ∞, 500/x → 0, so C̄(x) → 8 + 0.01x → ∞. There is no horizontal asymptote. However, the term 500/x → 0 means the fixed cost per unit vanishes for large production; the marginal cost approaches 8 + 0.01x (which increases). Actually, for a proper HA analysis: C̄(x) = (0.01x² + 8x + 500)/x. Degree of numerator (2) > degree of denominator (1), so there's an oblique asymptote y = 0.01x + 8, not a HA. This means as production grows, average cost roughly follows y = 0.01x + 8. (c) Minimize: C̄'(x) = -500/x² + 0.01 = 0 → x² = 500/0.01 = 50000 → x = √50000 = 100√5 ≈ 223.6 units. (d) C̄(100√5) = 500/(100√5) + 8 + 0.01(100√5) = 5/√5 + 8 + √5 = √5 + 8 + √5 = 2√5 + 8 ≈ 4.47 + 8 = $12.47 per unit.",
+      "question": "ANALYSIS: A manufacturer's average cost per unit is given by C̄(x) = (500 + 8x + 0.01x²)/x, where x is the number of units produced. (a) Simplify C̄(x). (b) Explain why C̄ has no horizontal asymptote, find its slant (oblique) asymptote, and explain its real-world meaning. (c) Use a graphing calculator (or a table of values) to find the number of units, to the nearest whole unit, that minimizes average cost. (d) Find the minimum average cost.",
+      "answer": "(a) C̄(x) = 500/x + 8 + 0.01x. (b) The numerator has degree 2 and the denominator degree 1, so there is no horizontal asymptote; C̄(x) → ∞ as x → ∞. Since C̄(x) = 0.01x + 8 + 500/x and 500/x → 0, the slant asymptote is y = 0.01x + 8. Meaning: for large production the fixed cost of $500 spread over x units becomes negligible, so average cost is roughly 0.01x + 8 and keeps rising. (c) The graph of C̄ for x > 0 has its lowest point at x ≈ 223.6, so about 224 units (exactly x = 100√5, where the two varying terms are equal: 500/x = 0.01x). (d) C̄(100√5) = 500/(100√5) + 8 + 0.01(100√5) = √5 + 8 + √5 = 8 + 2√5 ≈ $12.47 per unit.",
       "skill": "rational-function-analysis",
       "difficulty": 6,
       "points": 12
@@ -160,7 +160,7 @@
     "pcu2-7": "Oblique: y=2x+3. VA: x=1. x-int: (3/2,0) and (-2,0). y-int: (0,6).",
     "pcu2-8": "(x-3)(x+3)(x+2) ≤ 0. Solution: (-∞,-3] ∪ [-2,3].",
     "pcu2-9": "(x-5)/(x-2) ≤ 0. Solution: (2, 5].",
-    "pcu2-10": "C̄(x) = 500/x+8+0.01x. Oblique asymptote y=0.01x+8. Min at x=100√5 ≈ 223.6 units. Min cost: 2√5+8 ≈ $12.47.",
+    "pcu2-10": "C̄(x) = 500/x+8+0.01x. No HA; slant asymptote y=0.01x+8. Min at x=100√5 ≈ 224 units. Min cost: 2√5+8 ≈ $12.47.",
     "pcu2-spiral-1": "f(g(x))=2x²+5. x=±√2.",
     "pcu2-spiral-2": "f⁻¹(x)=(x+5)/(3x-1). Domain: x≠1/3."
   }

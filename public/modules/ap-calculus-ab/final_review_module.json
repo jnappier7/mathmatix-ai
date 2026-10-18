@@ -184,7 +184,7 @@
         {
           "id": "fr-wp12",
           "problem": "A particle has velocity v(t) = sin(t) - cos(t) for 0 ≤ t ≤ 2π. Find (a) displacement and (b) total distance traveled.",
-          "answer": "(a) Displacement = ∫₀²π (sin t - cos t)dt = [-cos t - sin t]₀²π = (-1-0)-(-1-0) = 0. (b) v(t)=0: sin t = cos t → tan t = 1 → t = π/4, 5π/4. |∫₀^{π/4} (sint-cost)dt| + |∫_{π/4}^{5π/4} (sint-cost)dt| + |∫_{5π/4}^{2π} (sint-cost)dt| = |(-√2/2-√2/2)-(-1-0)| + ... = (1-√2) + (2√2) + (√2-1) = ... Total distance = 4√2."
+          "answer": "(a) Displacement = ∫₀²π (sin t - cos t)dt = [-cos t - sin t]₀²π = (-1-0)-(-1-0) = 0. (b) v(t)=0: sin t = cos t → tan t = 1 → t = π/4, 5π/4. |∫₀^{π/4} (sint-cost)dt| + |∫_{π/4}^{5π/4} (sint-cost)dt| + |∫_{5π/4}^{2π} (sint-cost)dt| = |(-√2/2-√2/2)-(-1-0)| + |(√2/2+√2/2)-(-√2/2-√2/2)| + |(-1-0)-(√2/2+√2/2)| = |1-√2| + |2√2| + |-1-√2| = (√2-1) + 2√2 + (√2+1). Total distance = 4√2."
         }
       ],
       "lessonId": "targeted-review"

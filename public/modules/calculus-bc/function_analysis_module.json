@@ -192,7 +192,7 @@
       "examples": [
         {
           "problem": "Given f'(x) = (x + 2)(x − 1)², describe the graph of f.",
-          "solution": "**Step 1 — Zeros of f':** x = −2 and x = 1.\n\n**Step 2 — Sign chart for f':**\n\n| Interval | Test value | f'(x) | f behavior |\n|---|---|---|---|\n| x < −2 | x = −3 | (−1)(16) = − | Decreasing |\n| −2 < x < 1 | x = 0 | (2)(1) = + | Increasing |\n| x > 1 | x = 2 | (4)(1) = + | Increasing |\n\n**Step 3 — Classify critical points:**\n• At x = −2: f' changes − to + → **local minimum**\n• At x = 1: f' does NOT change sign (+ to +) → **no extremum**\n\n**Step 4 — Concavity (from f' behavior):**\nSince f' goes from decreasing to increasing near x = 1 (f' has a local min at x = 1), **f has an inflection point at x = 1**.\n\n**Summary:** f decreases on (−∞, −2), has local min at x = −2, increases on (−2, ∞), with an inflection point at x = 1."
+          "solution": "**Step 1 — Zeros of f':** x = −2 and x = 1.\n\n**Step 2 — Sign chart for f':**\n\n| Interval | Test value | f'(x) | f behavior |\n|---|---|---|---|\n| x < −2 | x = −3 | (−1)(16) = − | Decreasing |\n| −2 < x < 1 | x = 0 | (2)(1) = + | Increasing |\n| x > 1 | x = 2 | (4)(1) = + | Increasing |\n\n**Step 3 — Classify critical points:**\n• At x = −2: f' changes − to + → **local minimum**\n• At x = 1: f' does NOT change sign (+ to +) → **no extremum**\n\n**Step 4 — Concavity (from f' behavior):**\nf''(x) = (x − 1)² + 2(x + 2)(x − 1) = 3(x − 1)(x + 1), which is zero at x = −1 and x = 1. f'' > 0 on (−∞, −1), f'' < 0 on (−1, 1), f'' > 0 on (1, ∞). Equivalently, f' increases, then decreases (local max of f' at x = −1), then increases (local min of f' at x = 1). Concavity changes at both, so **f has inflection points at x = −1 and x = 1**.\n\n**Summary:** f decreases on (−∞, −2), has local min at x = −2, increases on (−2, ∞), with inflection points at x = −1 and x = 1 (concave up on (−∞, −1) and (1, ∞), concave down on (−1, 1))."
         }
       ],
       "initialPrompt": "In example 1, x = 1 is a zero of f' but f has no extremum there. What feature does f have at x = 1 instead, and how can you tell from the sign chart?",
@@ -216,7 +216,7 @@
         {
           "id": "fa-wp6",
           "question": "f'(x) = (x − 1)(x − 5) on [0, 6]. Find where f is increasing, decreasing, concave up, and concave down. Locate all local extrema and inflection points.",
-          "answer": "Increasing on (−∞, 1) ∪ (5, ∞). Decreasing on (1, 5). Local max at x = 1. Local min at x = 5. Concave down on (−∞, 3). Concave up on (3, ∞). Inflection point at x = 3.",
+          "answer": "Increasing on (0, 1) ∪ (5, 6). Decreasing on (1, 5). Local max at x = 1. Local min at x = 5. Concave down on (0, 3). Concave up on (3, 6). Inflection point at x = 3.",
           "hints": [
             "f'(x) = x² − 6x + 5. Sign: positive for x < 1 and x > 5, negative for 1 < x < 5. Local max at x = 1 (+ to −), local min at x = 5 (− to +).",
             "f''(x) = 2x − 6 = 0 at x = 3. f'' < 0 for x < 3 (concave down), f'' > 0 for x > 3 (concave up). Inflection point at x = 3."
@@ -262,7 +262,7 @@
         {
           "id": "fa-wp12",
           "question": "f(x) = x³ − 3x + 1 on [−2, 2]. Find the absolute maximum and minimum (EVT).",
-          "answer": "Absolute max = 3 at x = −1. Absolute min = −1 at x = 1.",
+          "answer": "Absolute max = 3 at x = −1 and x = 2. Absolute min = −1 at x = −2 and x = 1.",
           "hints": [
             "f'(x) = 3x² − 3 = 3(x − 1)(x + 1). CP: x = −1, x = 1 (both in [−2, 2]).",
             "Candidates: f(−2) = −1, f(−1) = 3, f(1) = −1, f(2) = 3. Max = 3 at x = −1 and x = 2. Min = −1 at x = −2 and x = 1."
@@ -429,7 +429,7 @@
     "fa-wp3": "Local max at (1, 1/e).",
     "fa-wp4": "Decreasing on (−∞, 1). Increasing on (1, ∞). Local min at (1, −1). No extremum at x = 0.",
     "fa-wp5": "c = 4.",
-    "fa-wp6": "Increasing on (−∞, 1) ∪ (5, ∞). Decreasing on (1, 5). Local max at x = 1, local min at x = 5. IP at x = 3.",
+    "fa-wp6": "Increasing on (0, 1) ∪ (5, 6). Decreasing on (1, 5). Local max at x = 1, local min at x = 5. IP at x = 3.",
     "fa-wp7": "4 × 4 × 2. Surface area = 48 ft².",
     "fa-wp8": "(±√2/2, 1/2). Distance = √3/2.",
     "fa-wp9": "32 (rectangle 4 × 8).",

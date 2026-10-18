@@ -250,7 +250,7 @@
         },
         {
           "problem": "Two boats leave a dock at the same time. One travels 12 km on bearing N30°E, the other travels 8 km on bearing S50°E. How far apart are they?",
-          "solution": "The angle between the paths at the dock: 30° + 90° + (90° - 50°) = 30° + 90° + 40°... Actually, bearings: N30°E is 30° from north (clockwise), S50°E is 130° from north. Angle between = 130° - 30° = 100°. Law of Cosines: d² = 12² + 8² - 2(12)(8)cos100° = 144 + 64 - 192cos100° = 208 - 192(-0.1736) = 208 + 33.33 = 241.33. d = √241.33 ≈ 15.54 km."
+          "solution": "Convert each bearing to an angle measured clockwise from north: N30°E is 30°, and S50°E is 180° - 50° = 130°. Angle between = 130° - 30° = 100°. Law of Cosines: d² = 12² + 8² - 2(12)(8)cos100° = 144 + 64 - 192cos100° = 208 - 192(-0.1736) = 208 + 33.33 = 241.33. d = √241.33 ≈ 15.54 km."
         }
       ],
       "lessonId": "triangle-applications"

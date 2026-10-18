@@ -362,7 +362,7 @@
           "id": "ftt-wp13",
           "problem": "Determine whether f(x) = x³ - x is one-to-one on (-∞, ∞). If not, suggest a domain restriction that makes it one-to-one.",
           "hints": [
-            "Check: f(0) = 0 and f(-1) = -1 + 1 = 0 and f(1) = 0 — wait, f(0)=0, f(1)=0, so not one-to-one",
+            "Check: f(0) = 0 and f(1) = 1 - 1 = 0 — two different inputs give the same output, so f is not one-to-one",
             "Also: f(-1) = -1+1 = 0 — three inputs give output 0",
             "f'(x) = 3x² - 1 = 0 at x = ±1/√3 — local max/min",
             "Restrict to x ≥ 1/√3 (or x ≤ -1/√3) for one-to-one"

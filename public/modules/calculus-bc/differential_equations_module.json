@@ -57,7 +57,7 @@
       "examples": [
         {
           "problem": "For dy/dx = x − y, compute slopes at (0,0), (1,0), (0,1), (1,1), (2,1) and describe the slope field behavior.",
-          "solution": "**Compute slopes at each point:**\n• (0, 0): slope = 0 − 0 = 0\n• (1, 0): slope = 1 − 0 = 1\n• (0, 1): slope = 0 − 1 = −1\n• (1, 1): slope = 1 − 1 = 0\n• (2, 1): slope = 2 − 1 = 1\n\n**Nullcline (slope = 0):** x − y = 0, i.e., the line y = x.\n\nAbove the line y = x, slopes are negative (solutions decrease toward y = x).\nBelow the line y = x, slopes are positive (solutions increase toward y = x).\n\n**Behavior:** Solution curves are attracted toward the line y = x. This makes sense — the DE pushes y toward x."
+          "solution": "**Compute slopes at each point:**\n• (0, 0): slope = 0 − 0 = 0\n• (1, 0): slope = 1 − 0 = 1\n• (0, 1): slope = 0 − 1 = −1\n• (1, 1): slope = 1 − 1 = 0\n• (2, 1): slope = 2 − 1 = 1\n\n**Isocline (slope = 0):** x − y = 0, i.e., the line y = x. Segments there are horizontal, but y = x is not a solution (its slope is 1, not 0), and there is no equilibrium solution.\n\nAbove the line y = x, slopes are negative; below it, slopes are positive.\n\n**Behavior:** The general solution is y = x − 1 + Ce^(−x). The line y = x − 1 is itself a solution (its slope 1 equals x − (x − 1)), and every solution curve approaches y = x − 1 as x → ∞. A curve with C > 0 crosses y = x once (at x = ln C), with a horizontal tangent there."
         },
         {
           "problem": "For dy/dx = y(1 − y), find the equilibrium solutions and describe stability.",

@@ -48,7 +48,7 @@
         "Even degree, aₙ > 0: both ends rise (↗ ... ↗). Even degree, aₙ < 0: both ends fall (↘ ... ↘)",
         "Odd degree, aₙ > 0: falls left, rises right (↘ ... ↗). Odd degree, aₙ < 0: rises left, falls right (↗ ... ↘)",
         "Maximum number of turning points = n − 1 (degree n polynomial)",
-        "Maximum number of real zeros = n; minimum number of real zeros: n (if n odd) or 0 (if n even), accounting for complex conjugate pairs",
+        "Maximum number of real zeros = n; minimum number of real zeros: 1 (if n odd) or 0 (if n even), accounting for complex conjugate pairs",
         "Intermediate Value Theorem: if f(a) and f(b) have opposite signs, there is at least one zero between a and b"
       ],
       "lessonId": "polynomial-analysis"

@@ -91,7 +91,7 @@
     {
       "id": "cu5-frq",
       "question": "(FRQ) A company manufactures x units per day at a cost of C(x) = x³ - 12x² + 60x + 100. (a) Find the production level that minimizes the average cost A(x) = C(x)/x for x > 0. (b) Show that at this production level, the average cost equals the marginal cost. (c) Find the intervals where C is concave up and concave down, and identify any inflection points.",
-      "answer": "(a) A(x) = x² - 12x + 60 + 100/x. A′(x) = 2x - 12 - 100/x². Set A′=0: 2x³ - 12x² - 100 = 0 → x³ - 6x² - 50 = 0. Testing x≈7.4 (numerical). (b) At the minimum of A(x), A′(x)=0 gives C′(x) = A(x). C′(x)=3x²-24x+60 equals A(x) at the critical point. (c) C″(x) = 6x - 24 = 0 → x = 4. C″ < 0 on (0, 4): concave down. C″ > 0 on (4, ∞): concave up. Inflection at x = 4, C(4) = 212.",
+      "answer": "(a) A(x) = x² - 12x + 60 + 100/x. A′(x) = 2x - 12 - 100/x². Set A′=0: 2x³ - 12x² - 100 = 0 → x³ - 6x² - 50 = 0. Solving numerically: x ≈ 7.02 (the only real root; A′ goes from − to + there, so it is the minimum). (b) At the minimum of A(x), A′(x)=0 gives C′(x) = A(x). C′(x)=3x²-24x+60 equals A(x) at the critical point: A(7.02) ≈ C′(7.02) ≈ 39.29. (c) C″(x) = 6x - 24 = 0 → x = 4. C″ < 0 on (0, 4): concave down. C″ > 0 on (4, ∞): concave up. Inflection at x = 4, C(4) = 212.",
       "skill": "optimization-problems",
       "difficulty": 6,
       "points": 12
@@ -112,7 +112,7 @@
     "cu5-4": "(a) Max at x=2, min at x=5 (b) (3.5,5+) (c) x=3.5",
     "cu5-5": "Max=5 at x=1,4. Min=1 at x=0,3.",
     "cu5-6": "75ft × 150ft. Area=11,250 ft².",
-    "cu5-frq": "(a) x≈7.4 minimizes average cost (b) C'(x)=A(x) at minimum (c) CD (0,4), CU (4,∞), inflection at (4,212)",
+    "cu5-frq": "(a) x≈7.02 minimizes average cost (b) C'(x)=A(x) at minimum (c) CD (0,4), CU (4,∞), inflection at (4,212)",
     "cu5-spiral": "1/6"
   }
 }
