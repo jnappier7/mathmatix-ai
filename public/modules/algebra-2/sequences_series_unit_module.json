@@ -126,7 +126,7 @@
       "examples": [
         {
           "problem": "(a) You deposit $150 per month into a retirement account earning 7% annual interest compounded monthly for 30 years. Find the future value.\n(b) You take out a $200,000 mortgage at 6% annual interest compounded monthly for 30 years. What is the monthly payment?",
-          "solution": "**(a) Future value of an annuity (regular deposits):**\nPMT = $150, r = 0.07, n = 12, t = 30\nr/n = 0.07/12 ≈ 0.005833, nt = 360\n\nFV = PMT × [(1 + r/n)^(nt) - 1] / (r/n)\nFV = 150 × [(1.005833)^360 - 1] / 0.005833\n\n(1.005833)^360 ≈ 8.1165\nFV = 150 × (8.1165 - 1) / 0.005833\nFV = 150 × 7.1165 / 0.005833\nFV = 150 × 1220.0 ≈ **$183,001**\n\nYou deposited 150 × 360 = $54,000 total. The account grew to $183,001. That means $129,001 came from interest -- the power of compounding over long periods.\n\n**(b) Monthly payment on a loan (present value formula, solved for PMT):**\nPV = $200,000, r = 0.06, n = 12, t = 30\nr/n = 0.005, nt = 360\n\nPV = PMT × [1 - (1 + r/n)^(-nt)] / (r/n)\n200000 = PMT × [1 - (1.005)^(-360)] / 0.005\n\n(1.005)^(-360) ≈ 0.16604\n200000 = PMT × (1 - 0.16604) / 0.005\n200000 = PMT × 0.83396 / 0.005\n200000 = PMT × 166.792\n\nPMT = 200000 / 166.792 ≈ **$1,199.10 per month**\n\nOver 30 years you pay 1199.10 × 360 = $431,676. So the total interest paid is about $231,676 -- more than the original loan!",
+          "solution": "**(a) Future value of an annuity (regular deposits):**\nPMT = $150, r = 0.07, n = 12, t = 30\nr/n = 0.07/12 ≈ 0.005833, nt = 360\n\nFV = PMT × [(1 + r/n)^(nt) - 1] / (r/n)\nFV = 150 × [(1.005833)^360 - 1] / 0.005833\n\n(1.005833)^360 ≈ 8.1165\nFV = 150 × (8.1165 - 1) / 0.005833\nFV = 150 × 7.1165 / 0.005833\nFV = 150 × 1219.97 ≈ **$182,995.65**\n\nYou deposited 150 × 360 = $54,000 total. The account grew to $182,995.65. That means $128,995.65 came from interest -- the power of compounding over long periods.\n\n**(b) Monthly payment on a loan (present value formula, solved for PMT):**\nPV = $200,000, r = 0.06, n = 12, t = 30\nr/n = 0.005, nt = 360\n\nPV = PMT × [1 - (1 + r/n)^(-nt)] / (r/n)\n200000 = PMT × [1 - (1.005)^(-360)] / 0.005\n\n(1.005)^(-360) ≈ 0.16604\n200000 = PMT × (1 - 0.16604) / 0.005\n200000 = PMT × 0.83396 / 0.005\n200000 = PMT × 166.792\n\nPMT = 200000 / 166.792 ≈ **$1,199.10 per month**\n\nOver 30 years you pay 1199.10 × 360 = $431,676. So the total interest paid is about $231,676 -- more than the original loan!",
           "tip": "The annuity formula gives future value (how much you will have). The present value formula tells you what a stream of future payments is worth today. Solving PV for PMT gives the payment on a loan."
         }
       ],
@@ -236,7 +236,7 @@
         {
           "id": "ssu-yp5",
           "question": "You deposit $200/month into an account earning 5% annual interest compounded monthly for 20 years. Find the future value.",
-          "answer": "≈ $82,207.10",
+          "answer": "≈ $82,206.73",
           "hints": [
             "r/n = 0.05/12, nt = 240.",
             "FV = 200 × [(1 + 0.05/12)^240 - 1] / (0.05/12)."
@@ -260,7 +260,7 @@
     "Geometric 3,12,48... formulas": "aₙ=3·4^(n-1)",
     "Σ 2(3)^(k-1) k=1 to 5": "242",
     "Infinite 100+80+64+...": "500",
-    "Annuity $200/mo 5% 20yr": "≈$82,207",
+    "Annuity $200/mo 5% 20yr": "≈$82,206.73",
     "recursive a1=7 d=-3 explicit": "aₙ = 10 - 3n",
     "recursive a1=7 d=-3 a20": "-50",
     "recursive a1=5 r=2 explicit": "aₙ = 5·2^(n-1)",
@@ -272,7 +272,7 @@
     "infinite 81+27+9+3+...": "243/2",
     "infinite 5+10+20+40+...": "Diverges",
     "infinite 1-1/3+1/9-1/27+...": "3/4",
-    "annuity $150/mo 7% 30yr FV": "≈$183,001",
+    "annuity $150/mo 7% 30yr FV": "≈$182,995.65",
     "mortgage $200K 6% 30yr payment": "≈$1,199.10/month",
     "arithmetic a3=14 a9=38 find a1,d": "a₁=6, d=4, S₂₀=880",
     "arithmetic S15=450 a1=4 find d": "d=26/7"

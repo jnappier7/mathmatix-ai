@@ -441,7 +441,7 @@
       "examples": [
         {
           "problem": "Chords AB and CD intersect at point E inside a circle. AE = 6, EB = 4, and CE = 3. Find ED.",
-          "solution": "**Identify the rule:** two chords intersecting *inside* the circle → the products of the two pieces are equal.\n\nAE · EB = CE · ED\n\n**Substitute what we know:**\n6 · 4 = 3 · ED\n24 = 3 · ED\n\n**Solve:**\nED = 24/3 = **8**\n\n**Sanity check:** chord CD has total length 3 + 8 = 11, and chord AB has length 6 + 4 = 10. Nothing impossible there — both are plausible chords of the same circle, and the more lopsided chord (3 and 8) is the shorter-looking split, which is what you'd expect when the intersection point sits off-center."
+          "solution": "**Identify the rule:** two chords intersecting *inside* the circle → the products of the two pieces are equal.\n\nAE · EB = CE · ED\n\n**Substitute what we know:**\n6 · 4 = 3 · ED\n24 = 3 · ED\n\n**Solve:**\nED = 24/3 = **8**\n\n**Sanity check:** chord CD has total length 3 + 8 = 11, and chord AB has length 6 + 4 = 10. Nothing impossible there — both are plausible chords of the same circle. Notice that the more lopsided split (3 and 8) belongs to the longer chord: equal products don't mean equal chords, they only fix how the pieces trade off against each other."
         },
         {
           "problem": "From external point P, a tangent PT touches a circle at T, and a secant from P passes through the circle meeting it at A then B. If PA = 4 and AB = 12, find PT.",

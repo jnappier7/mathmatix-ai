@@ -238,10 +238,10 @@
         {
           "id": "cg-yp1",
           "question": "You are given ∠A ≅ ∠D, ∠C ≅ ∠F, and AC ≅ DF. Which congruence theorem proves △ABC ≅ △DEF?",
-          "answer": "AAS",
+          "answer": "ASA",
           "skill": "triangle-congruence-aas-hl",
           "hints": [
-            "Two angles and a non-included side → AAS."
+            "AC lies between ∠A and ∠C, so it is the included side → ASA."
           ]
         },
         {
@@ -265,10 +265,10 @@
         {
           "id": "cg-yp4",
           "question": "Given: ∠P ≅ ∠R, and Q is the midpoint of PR. Why is △PQS ≅ △RQS (where S is a point above PR forming two triangles)?",
-          "answer": "∠P ≅ ∠R (given), PQ ≅ RQ (definition of midpoint), QS ≅ QS (reflexive). SAS.",
+          "answer": "∠P ≅ ∠R, PQ ≅ RQ, QS ≅ QS is SSA (QS is not next to ∠P), which proves nothing. Instead: ∠P and ∠R are base angles of △PSR, so SP ≅ SR (converse of the Isosceles Triangle Theorem). Then SP ≅ SR, ∠P ≅ ∠R (given), PQ ≅ RQ (definition of midpoint) → SAS, with each angle included between its two sides. (SSS also works: SP ≅ SR, PQ ≅ RQ, QS ≅ QS.)",
           "skill": "congruence-proofs",
           "hints": [
-            "Q is the midpoint of PR, so PQ ≅ RQ. QS is shared. What postulate fits?"
+            "Q is the midpoint of PR, so PQ ≅ RQ. Careful: ∠P, PQ, QS is SSA. What does ∠P ≅ ∠R tell you about SP and SR in △PSR?"
           ]
         },
         {
@@ -292,10 +292,10 @@
     "cg-wp3": "AAS (two angles + non-included side).",
     "cg-wp4": "ASA (alt int angles from ∥ lines, included side given).",
     "cg-wp5": "MN=15, ∠N=43°, NO=22.",
-    "cg-yp1": "AAS.",
+    "cg-yp1": "ASA.",
     "cg-yp2": "Yes, HL.",
     "cg-yp3": "No (ambiguous case).",
-    "cg-yp4": "SAS (midpoint + reflexive).",
+    "cg-yp4": "SAS (SP ≅ SR from base angles ∠P ≅ ∠R, ∠P ≅ ∠R, PQ ≅ RQ from midpoint); SSS also works.",
     "cg-yp5": "WX=11, XY=14, WY=9, ∠X=72°.",
     "cg-wp6": "SAS: AB ≅ CB (Given), ∠ABD ≅ ∠CBD (definition of angle bisector), BD ≅ BD (Reflexive Property)."
   },

@@ -37,7 +37,7 @@
     {
       "id": "a2u8-3",
       "question": "A wire runs from the top of a 60-foot pole to an anchor in the ground, making a 72° angle with the ground. How long is the wire?",
-      "answer": "sin(72°) = 60/w. w = 60/sin(72°) ≈ 60/0.9511 ≈ 63.08 feet.",
+      "answer": "sin(72°) = 60/w. w = 60/sin(72°) ≈ 60/0.95106 ≈ 63.09 feet.",
       "skill": "right-triangle-trig",
       "difficulty": 4,
       "points": 8
@@ -107,7 +107,7 @@
   "answerKeys": {
     "a2u8-1": "7π/6, 315°, coterminals 11π/3 and -π/3",
     "a2u8-2": "√2/2, 1/2, √3/3, -1/2",
-    "a2u8-3": "≈ 63.08 feet",
+    "a2u8-3": "≈ 63.09 feet",
     "a2u8-4": "2π/3, -π/3, π/3",
     "a2u8-5": "Amp=2, Per=2π/3, Phase=π/3 right, Mid=4, Max=6, Min=2",
     "a2u8-6": "5π/6, 11π/6",

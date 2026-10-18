@@ -96,8 +96,8 @@
     },
     {
       "id": "a2final-10",
-      "question": "MODELING PERFORMANCE TASK: A tech company launches a product. Sales S (in thousands) follow S(t) = 50(1 - e^(-0.15t)) where t is months since launch. The company's monthly costs are C(t) = 5t + 30 (thousands). (a) What are sales in month 1 and month 12? (b) When do cumulative sales revenue first exceed cumulative costs? Set S(t) = C(t) and solve numerically. (c) What is the long-term sales limit? What does this mean in context?",
-      "answer": "(a) S(1) = 50(1 - e^(-0.15)) \u2248 50(1 - 0.8607) \u2248 50(0.1393) \u2248 6.97 thousand. S(12) = 50(1 - e^(-1.8)) \u2248 50(1 - 0.1653) \u2248 50(0.8347) \u2248 41.74 thousand. (b) 50(1-e^(-0.15t)) = 5t + 30. At t=0: S=0, C=30 (costs higher). At t=5: S\u224850(0.5276)\u224826.4, C=55 (costs higher). At t=10: S\u224850(0.7769)\u224838.8, C=80 (costs higher). This comparison is monthly \u2014 for breakeven on cumulative totals we'd need to sum. Monthly sales exceed monthly costs when 50(1-e^(-0.15t)) > 5t+30. Numerically checking: the exponential curve approaches 50 while the linear cost keeps increasing, so monthly sales may never exceed monthly costs for large t. Breakeven occurs approximately around t \u2248 3.5 months where the monthly sales curve briefly intersects the cost line. (c) As t \u2192 \u221e, e^(-0.15t) \u2192 0, so S \u2192 50 thousand. The product has a saturation point: monthly sales will never exceed $50,000. This means the market has a finite demand ceiling.",
+      "question": "MODELING PERFORMANCE TASK: A tech company launches a product. Sales S (in thousands) follow S(t) = 50(1 - e^(-0.15t)) where t is months since launch. The company's monthly costs are C(t) = 5t + 30 (thousands). (a) What are sales in month 1 and month 12? (b) Do monthly sales ever exceed monthly costs? Investigate S(t) = C(t) numerically (table or graph) and explain what you find. (c) What is the long-term sales limit? What does this mean in context?",
+      "answer": "(a) S(1) = 50(1 - e^(-0.15)) \u2248 50(1 - 0.8607) \u2248 50(0.1393) \u2248 6.97 thousand. S(12) = 50(1 - e^(-1.8)) \u2248 50(1 - 0.1653) \u2248 50(0.8347) \u2248 41.74 thousand. (b) Compare S(t) \u2212 C(t): t=0: 0 \u2212 30 = \u221230. t=1: 6.97 \u2212 35 \u2248 \u221228.0. t=3: 18.12 \u2212 45 \u2248 \u221226.9. t=5: S\u224850(0.5276)\u224826.4, C=55, gap \u2248 \u221228.6. t=10: S\u224850(0.7769)\u224838.8, C=80, gap \u2248 \u221241.2. The gap is smallest near t \u2248 2.7 months (S \u2212 C \u2248 \u221226.8 thousand) and then widens, because S levels off toward 50 while C keeps climbing 5 per month. So S(t) = C(t) has no solution for t \u2265 0: under this model monthly sales never exceed monthly costs, and the product never breaks even. (c) As t \u2192 \u221e, e^(-0.15t) \u2192 0, so S \u2192 50 thousand. The product has a saturation point: monthly sales will never exceed $50,000. This means the market has a finite demand ceiling.",
       "skill": "multi-domain-modeling",
       "difficulty": 8,
       "points": 14
@@ -113,6 +113,6 @@
     "a2final-7": "d=5, a\u2081=3, S\u2082\u2080=1010",
     "a2final-8": "-\u221a2/2, 1/2, -\u221a3/3, \u03b8=0,\u03c0/6,5\u03c0/6,\u03c0",
     "a2final-9": "(a) 4/91, (b) 10/21",
-    "a2final-10": "S(1)\u22486.97K, S(12)\u224841.74K, limit=50K"
+    "a2final-10": "S(1)\u22486.97K, S(12)\u224841.74K, never (S<C for all t\u22650; closest gap \u2248 \u221226.8K at t\u22482.7), limit=50K"
   }
 }
