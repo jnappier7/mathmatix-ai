@@ -20,7 +20,7 @@ const { configCache } = require('../utils/cache');
 const { courseSkills, buildBlueprint, scoreBySkill, recommendedStart } = require('../utils/coursePreAssessment');
 const { gradeOne } = require('../utils/skillChallenge');
 const { normalizeOptions } = require('../utils/mcOptions');
-const { resolveGradeNumber } = require('../utils/gradeLevel');
+const { resolveGradeNumber, levelToGradeNumber, assessedLevel } = require('../utils/gradeLevel');
 const { advanceRung } = require('../utils/skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
 const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
@@ -124,18 +124,29 @@ router.get('/catalog', async (req, res) => {
         titleOf.get(p) || titleOf.get(`${p}-math`) || prettySlug(p));
     }
 
-    // Personalized recommendation from the student's working level (assessed
-    // when present, stated grade otherwise — utils/gradeLevel.js), keyed by
-    // grade number so assessed levels like "Algebra 1" also resolve.
+    // Recommend the course for the grade the student is IN; the assessed level
+    // shapes scaffolding inside the course, not which course we steer them to.
+    // Keying on the assessed level sent 13 of 17 assessed students (placed 3+
+    // grades below their grade) toward far lower courses — a 9th grader doing
+    // SAT prep was recommended "Grades 3–5" (student audit, 2026-10-15; owner
+    // decision 2026-10-17). No stated grade → the assessed level, as before.
     const GRADE_COURSE_MAP = {
       3: 'early-math-foundations', 4: 'early-math-foundations', 5: 'early-math-foundations',
       6: '6th-grade-math', 7: '7th-grade-math', 8: 'grade-8-math',
       9: 'algebra-1', 10: 'geometry', 11: 'algebra-2', 12: 'precalculus'
     };
-    const gradeNum = resolveGradeNumber(req.user);
+    const statedNum = levelToGradeNumber(req.user && req.user.gradeLevel);
+    const assessedRaw = assessedLevel(req.user);
+    const assessedNum = assessedRaw ? levelToGradeNumber(assessedRaw) : null;
+    const gradeNum = statedNum !== null ? statedNum : resolveGradeNumber(req.user);
     const recommended = (gradeNum !== null && GRADE_COURSE_MAP[gradeNum]) || null;
+    // Honest about the gap without demoting them: the course meets them where
+    // they are, and the Starting Point's findings fill in from inside it.
+    const recommendedNote = recommended && statedNum !== null && assessedNum !== null && statedNum - assessedNum >= 2
+      ? 'Your Starting Point found some earlier skills worth shoring up — we\'ll fill those gaps inside the course as you go.'
+      : null;
 
-    res.json({ success: true, catalog, recommended });
+    res.json({ success: true, catalog, recommended, recommendedNote });
   } catch (err) {
     console.error('[CourseSession] Error loading catalog:', err);
     res.status(500).json({ success: false, message: 'Failed to load course catalog' });
