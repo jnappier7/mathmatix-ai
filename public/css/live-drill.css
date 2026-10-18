@@ -59,6 +59,14 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .mode[aria-pressed="true"]{border-color:var(--led);background:#1a2a24}
 .row{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end}
 
+/* ---------- class picker + QR (host) ---------- */
+.clsel{font:inherit;font-size:1.05rem;background:var(--night);color:var(--chalk);border:2px solid var(--rail);border-radius:6px;padding:10px 12px;max-width:100%}
+.joinbox .qr{background:#fff;border-radius:8px;padding:6px;width:clamp(120px,14vw,190px);height:auto}
+.classline{flex-basis:100%;font-weight:700;color:var(--chalk)}
+.classline b{color:var(--led)}
+.chip.away,.chipmenu.away{opacity:.5}
+.chip .acct{color:var(--hit);margin-left:4px;font-size:.85em}
+
 /* ---------- lobby (host) ---------- */
 .lobby{display:flex;flex-direction:column;gap:16px}
 .joinbox{background:#060f14;border:2px solid var(--rail);border-radius:10px;padding:18px 22px;display:flex;align-items:center;justify-content:center;gap:10px 40px;flex-wrap:wrap;text-align:center}

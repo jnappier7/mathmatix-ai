@@ -224,6 +224,101 @@ describe('huddle', () => {
   });
 });
 
+describe('class games and signed-in students', () => {
+  test('a game tied to a class is listed for that class only, and only while open', () => {
+    expect(G.anyClassGames()).toBe(false);
+    const g = drive({ cls: { id: 'class-1', name: 'Algebra 1 · P3' }, hostName: 'Jason Nappier' });
+    drive(); // a code-only game is never listed
+    expect(G.anyClassGames()).toBe(true);
+    expect(G.gamesForClasses(['class-1'])).toEqual([expect.objectContaining({ code: g.code, className: 'Algebra 1 · P3', hostName: 'Jason Nappier' })]);
+    expect(G.gamesForClasses(['class-2'])).toEqual([]);
+    G.endGame(g);
+    expect(G.gamesForClasses(['class-1'])).toEqual([]);
+  });
+
+  test('an account joins once: a second device reseats the same player', () => {
+    const g = drive();
+    const a = G.join(g, 'Marcus T.', { userId: 'u1' });
+    const b = G.join(g, 'Marcus T.', { userId: 'u1' });
+    expect(b.player).toBe(a.player);
+    expect(b.token).not.toBe(a.token);
+    expect(G.playerFor(g, a.token)).toBe(a.player); // the first device keeps working too
+    expect(G.hostView(g).players).toEqual([expect.objectContaining({ name: 'Marcus T.', linked: true })]);
+  });
+
+  test('a student the teacher removed cannot rejoin with their account', () => {
+    const g = drive();
+    const { player } = G.join(g, 'Kid K.', { userId: 'u9' });
+    G.kick(g, player.id);
+    expect(() => G.join(g, 'Kid K.', { userId: 'u9' })).toThrow(/removed/);
+  });
+});
+
+describe('huddle waits only for screens that are open', () => {
+  const fakeRes = () => ({ write() {}, end() {} });
+
+  test('a student whose phone went to sleep does not hold the round', () => {
+    const g = huddle();
+    const a = G.join(g, 'A').player, b = G.join(g, 'B').player;
+    G.join(g, 'Asleep');
+    G.subscribe(g, { kind: 'player', playerId: a.id, res: fakeRes() });
+    G.subscribe(g, { kind: 'player', playerId: b.id, res: fakeRes() });
+    G.start(g);
+    expect(G.hostView(g).round.expected).toBe(2);
+    G.answer(g, a, 1, G.playAt(g, 1).answer);
+    G.answer(g, b, 1, G.playAt(g, 1).answer);
+    expect(g.phase).toBe('reveal');
+  });
+
+  test('the round closes when the last student it was waiting on puts the phone down', () => {
+    const g = huddle();
+    const a = G.join(g, 'A').player, b = G.join(g, 'B').player;
+    G.subscribe(g, { kind: 'player', playerId: a.id, res: fakeRes() });
+    const leaveB = G.subscribe(g, { kind: 'player', playerId: b.id, res: fakeRes() });
+    G.start(g);
+    G.answer(g, a, 1, G.playAt(g, 1).answer);
+    expect(g.round.closed).toBe(false);
+    leaveB();
+    expect(g.phase).toBe('reveal');
+  });
+
+  test('removing the one student the round waits on closes it', () => {
+    const g = huddle();
+    const a = G.join(g, 'A').player, b = G.join(g, 'B').player;
+    G.subscribe(g, { kind: 'player', playerId: a.id, res: fakeRes() });
+    G.subscribe(g, { kind: 'player', playerId: b.id, res: fakeRes() });
+    G.start(g);
+    G.answer(g, a, 1, G.playAt(g, 1).answer);
+    G.kick(g, b.id);
+    expect(g.phase).toBe('reveal');
+  });
+});
+
+describe('run it back', () => {
+  test('same code, same seats and teams; fresh deal and a clean scoreboard', () => {
+    const g = drive();
+    const { token, player } = G.join(g, 'A');
+    G.join(g, 'B');
+    G.start(g);
+    G.currentPlay(g, player);
+    G.answer(g, player, 1, G.playAt(g, 1).answer);
+    const firstDeck = [1, 2, 3, 4, 5].map((n) => G.playAt(g, n).card).join();
+    expect(() => G.rematch(g)).toThrow(/Finish/);
+    G.endGame(g);
+    const code = g.code;
+    G.rematch(g);
+    expect(g.code).toBe(code);
+    expect(g.phase).toBe('lobby');
+    expect(G.playerFor(g, token)).toBe(player);
+    expect(player).toMatchObject({ att: 0, comp: 0, yards: 0, n: 1, team: 0 });
+    expect(g.teams.map((t) => [t.pts, t.pos])).toEqual([[0, G.START_POS], [0, G.START_POS]]);
+    expect(G.hostView(g)).toMatchObject({ gameNumber: 2, players: [expect.anything(), expect.anything()] });
+    expect([1, 2, 3, 4, 5].map((n) => G.playAt(g, n).card).join()).not.toBe(firstDeck);
+    G.start(g);
+    expect(g.phase).toBe('live');
+  });
+});
+
 describe('screens', () => {
   test('a student’s view has their own numbers and nobody else’s', () => {
     const g = drive();

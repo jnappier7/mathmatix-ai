@@ -1,6 +1,12 @@
+/* global addCsrfToken */
 // Live Two-Minute Drill — the student's device. Join with a code and a name; the server deals,
 // clocks and grades every play (routes/liveDrill.js). This page only ever reports "I picked
 // key k on play n". The token lives in sessionStorage so a refresh rejoins the same seat.
+//
+// A signed-in student joins with their ACCOUNT instead (/api/live-drill/mine/join): no name box,
+// and arriving from the chat-screen banner (/play?code=…) joins with no tap at all. Those calls go
+// through plain fetch + addCsrfToken, never csrfFetch — csrfFetch sends any 401 to the login page,
+// and a 401 here only means "no account, show the name box".
 (function () {
   const { $, esc, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns } = window.LiveDrill;
   const API = '/api/live-drill/play';
@@ -14,6 +20,7 @@
   let cur = null; // { n, play, locked }
   let huddleKey = '';
   let fetching = false;
+  let account = null; // { name } when a signed-in student is on this page
 
   const store = {
     get() { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch { return null; } },
@@ -34,6 +41,23 @@
     return body;
   }
 
+  /** Signed-in student calls. Never throws a redirect: any failure means "use the code form". */
+  async function mine(path, opts) {
+    const res = await fetch('/api/live-drill/mine' + path, addCsrfToken({
+      ...opts, headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', cache: 'no-store',
+    }));
+    let body = null;
+    try { body = await res.json(); } catch { /* empty */ }
+    if (!res.ok) { const e = new Error((body && body.message) || `Request failed (${res.status})`); e.status = res.status; throw e; }
+    return body;
+  }
+
+  function seatFrom(r) {
+    seat = { code: r.code, token: r.token, name: r.name };
+    store.set(seat);
+    connect();
+  }
+
   function show(id) { ['join', 'lobby', 'live', 'final', 'gone'].forEach((s) => { $(s).hidden = s !== id; }); }
 
   function gone(msg) {
@@ -50,11 +74,12 @@
     $('join-err').textContent = '';
     $('join-btn').disabled = true;
     try {
-      const r = await api('/join', { method: 'POST', body: JSON.stringify({ code: $('code').value, name: $('name').value }) });
-      seat = { code: r.code, token: r.token, name: r.name };
-      store.set(seat);
-      try { localStorage.setItem('mm-live-drill-name', $('name').value.trim()); } catch { /* private mode */ }
-      connect();
+      if (account) {
+        seatFrom(await mine('/join', { method: 'POST', body: JSON.stringify({ code: $('code').value }) }));
+      } else {
+        seatFrom(await api('/join', { method: 'POST', body: JSON.stringify({ code: $('code').value, name: $('name').value }) }));
+        try { localStorage.setItem('mm-live-drill-name', $('name').value.trim()); } catch { /* private mode */ }
+      }
     } catch (err) { $('join-err').textContent = err.message; }
     $('join-btn').disabled = false;
   };
@@ -83,6 +108,8 @@
     const prev = st;
     if (prev && prev.phase !== 'lobby') watchTouchdowns(prev, next);
     st = next;
+    // Back to the lobby — a "Run it back" — so nothing from the last game stays on screen.
+    if (st.phase === 'lobby') { cur = null; huddleKey = ''; }
     if (st.phase === 'lobby') { show('lobby'); renderLobby(); }
     else if (st.phase === 'over') { show('final'); renderFinal(); }
     else { show('live'); renderLive(); }
@@ -252,7 +279,7 @@
           <div class="note"><span><span class="tag">You picked</span><span class="yr">${m.pickedHtml}</span></span><span><span class="tag">Answer</span><span class="cr">${m.answerHtml}</span></span></div>
           <div class="tellbox">${m.tell}</div></li>`).join('')}</ol>`
       : '<p>Clean game. No film to review.</p>');
-    if (es) { es.close(); es = null; }
+    // The stream stays open: the teacher may run it back, and this phone goes straight to the lobby.
   }
 
   // ---------------- keys ----------------
@@ -266,13 +293,37 @@
   const qs = new URLSearchParams(location.search);
   const qcode = (qs.get('code') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
   try { $('name').value = localStorage.getItem('mm-live-drill-name') || ''; } catch { /* private mode */ }
-  seat = store.get();
-  if (seat && seat.token && (!qcode || qcode === seat.code)) {
-    api(`/${encodeURIComponent(seat.code)}/state`).then((s) => { apply(s); connect(); }).catch(() => { store.clear(); seat = null; $('code').value = qcode; show('join'); });
-  } else {
+  /** Signed in as a student? Then the name comes from the account, and a code in the URL joins at once. */
+  async function detectAccount() {
+    try {
+      const me = await mine('');
+      if (!me.student) return;
+      account = { name: me.name };
+      $('name-row').hidden = true;
+      $('name').required = false;
+      $('acct-name').textContent = me.name;
+      $('acct-row').hidden = false;
+      if (qcode) {
+        $('join-btn').disabled = true;
+        try { seatFrom(await mine('/join', { method: 'POST', body: JSON.stringify({ code: qcode }) })); }
+        catch (err) { $('join-err').textContent = err.message; }
+        $('join-btn').disabled = false;
+      }
+    } catch { /* not signed in — the name box stays */ }
+  }
+
+  function showJoin() {
     seat = null;
     $('code').value = qcode;
     show('join');
     (qcode ? $('name') : $('code')).focus();
+    detectAccount();
+  }
+
+  seat = store.get();
+  if (seat && seat.token && (!qcode || qcode === seat.code)) {
+    api(`/${encodeURIComponent(seat.code)}/state`).then((s) => { apply(s); connect(); }).catch(() => { store.clear(); showJoin(); });
+  } else {
+    showJoin();
   }
 })();

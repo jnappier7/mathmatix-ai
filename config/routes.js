@@ -411,6 +411,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // Live Two-Minute Drill — a whole-class game. The teacher hosts on the projector;
   // students join at /play with a code and a name, no account (routes/liveDrill.js).
   app.use('/api/live-drill/host', isAuthenticated, isTeacher, liveDrillRoutes.hostRouter);
+  app.use('/api/live-drill/mine', isAuthenticated, liveDrillRoutes.mineRouter);
   app.use('/api/admin/email', isAuthenticated, isAdmin, adminEmailRoutes);
   app.use('/api/school-licenses', isAuthenticated, isAdmin, schoolLicenseRoutes);
   app.post('/api/clever-sync/webhook', cleverSyncRoutes);
