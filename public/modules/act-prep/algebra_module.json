@@ -31,7 +31,7 @@
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
-    "Every example mirrors actual ACT question format (5-choice multiple choice)",
+    "Every example mirrors actual ACT question format (4-choice multiple choice, A–D)",
     "For each problem type, show BOTH the algebraic approach AND a strategic shortcut",
     "Backsolving and picking numbers taught as parallel strategies alongside standard algebra"
   ],
@@ -42,7 +42,7 @@
       "lessonPhase": "concept-intro",
       "title": "Linear Equations & Inequalities",
       "skill": "act-linear-equations",
-      "content": "Linear equations and inequalities form the backbone of ACT algebra. These appear in questions 1-30 and are designed to be solved quickly. The key is recognizing equation type and choosing the fastest solution path.",
+      "content": "Linear equations and inequalities form the backbone of ACT algebra. These appear mostly in the first two-thirds of the 45-question section (roughly #1–30) and are designed to be solved quickly. The key is recognizing equation type and choosing the fastest solution path.",
       "keyPoints": [
         "Isolate the variable: box the variable term, use opposites for what's outside, divide for what's inside",
         "Equations with fractions: multiply every term by the LCD to clear fractions",
@@ -50,7 +50,7 @@
         "Absolute value equation |ax + b| = c: split into two cases: ax + b = c OR ax + b = −c",
         "Absolute value inequality |ax + b| < c: −c < ax + b < c (compound inequality)",
         "Absolute value inequality |ax + b| > c: ax + b > c OR ax + b < −c",
-        "ACT Strategy: if the equation looks messy, try backsolving with answer choice (C) first"
+        "ACT Strategy: if the equation looks messy, try backsolving — with four choices there is no single middle one, so start with (B) or (C)"
       ],
       "lessonId": "algebra"
     },
@@ -61,15 +61,15 @@
       "skill": "act-linear-equations",
       "examples": [
         {
-          "problem": "If 3(2x − 5) = 4x + 7, what is x?\n(A) −4  (B) 1  (C) 6  (D) 11  (E) 22",
-          "solution": "Algebraic Method:\n6x − 15 = 4x + 7\n2x = 22\nx = 11\n\nBacksolving (start with C): Try x = 6: 3(12−5) = 3(7) = 21. 4(6)+7 = 31. Not equal.\nTry x = 11: 3(22−5) = 3(17) = 51. 4(11)+7 = 51. ✓\nAnswer: (D) 11"
+          "problem": "If 3(2x − 5) = 4x + 7, what is x?\n(A) −4  (B) 6  (C) 11  (D) 22",
+          "solution": "Algebraic Method:\n6x − 15 = 4x + 7\n2x = 22\nx = 11\n\nBacksolving (start with a middle choice, (B)): Try x = 6: 3(12−5) = 3(7) = 21. 4(6)+7 = 31. Not equal.\nTry x = 11: 3(22−5) = 3(17) = 51. 4(11)+7 = 51. ✓\nAnswer: (C) 11"
         },
         {
-          "problem": "What values of x satisfy |2x − 3| ≤ 7?\n(A) x ≤ 5  (B) −2 ≤ x ≤ 5  (C) x ≤ −2 or x ≥ 5  (D) −5 ≤ x ≤ 2  (E) x ≥ −2",
+          "problem": "What values of x satisfy |2x − 3| ≤ 7?\n(A) x ≤ 5  (B) −2 ≤ x ≤ 5  (C) x ≤ −2 or x ≥ 5  (D) −5 ≤ x ≤ 2",
           "solution": "For |2x − 3| ≤ 7, write the compound inequality:\n−7 ≤ 2x − 3 ≤ 7\nAdd 3: −4 ≤ 2x ≤ 10\nDivide by 2: −2 ≤ x ≤ 5\nAnswer: (B) −2 ≤ x ≤ 5"
         },
         {
-          "problem": "Solve for x: x/3 + x/4 = 7\n(A) 12  (B) 21  (C) 28  (D) 42  (E) 84",
+          "problem": "Solve for x: x/3 + x/4 = 7\n(A) 12  (B) 21  (C) 28  (D) 84",
           "solution": "Multiply every term by LCD = 12:\n4x + 3x = 84\n7x = 84\nx = 12\nAnswer: (A) 12\n\nACT Tip: When you see fractions in an equation, clear them immediately with the LCD."
         }
       ],
@@ -98,11 +98,11 @@
       "skill": "act-systems-of-equations",
       "examples": [
         {
-          "problem": "What is the solution to the system?\n3x + 2y = 16\nx − 2y = 0\n(A) (2, 5)  (B) (4, 2)  (C) (4, 4)  (D) (8, −4)  (E) (0, 8)",
+          "problem": "What is the solution to the system?\n3x + 2y = 16\nx − 2y = 0\n(A) (2, 5)  (B) (4, 2)  (C) (4, 4)  (D) (8, −4)",
           "solution": "Elimination: add the equations (the 2y and −2y cancel):\n3x + 2y + x − 2y = 16 + 0\n4x = 16 → x = 4\nPlug back: 4 − 2y = 0 → y = 2\nSolution: (4, 2)\nAnswer: (B) (4, 2)"
         },
         {
-          "problem": "A movie theater sells adult tickets for $9 and child tickets for $6. If 200 tickets were sold for a total of $1,560, how many adult tickets were sold?\n(A) 80  (B) 100  (C) 120  (D) 140  (E) 160",
+          "problem": "A movie theater sells adult tickets for $9 and child tickets for $6. If 200 tickets were sold for a total of $1,560, how many adult tickets were sold?\n(A) 80  (B) 100  (C) 120  (D) 140",
           "solution": "Let a = adult tickets, c = child tickets.\na + c = 200\n9a + 6c = 1560\n\nFrom equation 1: c = 200 − a\nSubstitute: 9a + 6(200 − a) = 1560\n9a + 1200 − 6a = 1560\n3a = 360 → a = 120\nAnswer: (C) 120"
         }
       ],
@@ -115,7 +115,7 @@
       "problems": [
         {
           "id": "alg-wp1",
-          "problem": "If 5(x + 3) − 2(x − 1) = 26, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 7",
+          "problem": "If 5(x + 3) − 2(x − 1) = 26, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6",
           "hints": [
             "Distribute: 5x + 15 − 2x + 2 = 26",
             "Combine: 3x + 17 = 26"
@@ -124,16 +124,16 @@
         },
         {
           "id": "alg-wp2",
-          "problem": "What values of x satisfy |3x + 1| = 10?\n(A) 3 only  (B) −11/3 only  (C) 3 and −11/3  (D) 3 and 11/3  (E) −3 and 11/3",
+          "problem": "What values of x satisfy |3x + 1| = 10?\n(A) 3 only  (B) 3 and −11/3  (C) 3 and 11/3  (D) −3 and 11/3",
           "hints": [
             "Split into two cases: 3x + 1 = 10 and 3x + 1 = −10",
             "Solve each: x = 3 and x = −11/3"
           ],
-          "answer": "(C) 3 and −11/3. Case 1: 3x + 1 = 10 → x = 3. Case 2: 3x + 1 = −10 → x = −11/3."
+          "answer": "(B) 3 and −11/3. Case 1: 3x + 1 = 10 → x = 3. Case 2: 3x + 1 = −10 → x = −11/3."
         },
         {
           "id": "alg-wp3",
-          "problem": "What is x + y if 2x + 3y = 17 and 4x − y = 13?\n(A) 4  (B) 5  (C) 6  (D) 7  (E) 8",
+          "problem": "What is x + y if 2x + 3y = 17 and 4x − y = 13?\n(A) 4  (B) 5  (C) 6  (D) 7",
           "hints": [
             "Multiply the second equation by 3: 12x − 3y = 39",
             "Add to the first: 2x + 3y + 12x − 3y = 17 + 39 → 14x = 56, so x = 4",
@@ -143,12 +143,12 @@
         },
         {
           "id": "alg-wp4",
-          "problem": "The sum of two numbers is 45 and their difference is 11. What is the larger number?\n(A) 17  (B) 22  (C) 23  (D) 28  (E) 34",
+          "problem": "The sum of two numbers is 45 and their difference is 11. What is the larger number?\n(A) 17  (B) 22  (C) 28  (D) 34",
           "hints": [
             "Let the numbers be x and y with x > y",
             "x + y = 45 and x − y = 11. Add the equations."
           ],
-          "answer": "(D) 28. Add equations: 2x = 56 → x = 28. Check: y = 45 − 28 = 17. Difference: 28 − 17 = 11. ✓"
+          "answer": "(C) 28. Add equations: 2x = 56 → x = 28. Check: y = 45 − 28 = 17. Difference: 28 − 17 = 11. ✓"
         }
       ],
       "skill": "act-linear-equations",
@@ -177,15 +177,15 @@
       "skill": "act-quadratic-equations",
       "examples": [
         {
-          "problem": "What are the solutions to x² − 5x + 6 = 0?\n(A) −2 and −3  (B) 2 and 3  (C) −1 and 6  (D) 1 and 6  (E) −2 and 3",
+          "problem": "What are the solutions to x² − 5x + 6 = 0?\n(A) −2 and −3  (B) 2 and 3  (C) −1 and 6  (D) −2 and 3",
           "solution": "Factor: find two numbers that multiply to 6 and add to −5: −2 and −3.\nx² − 5x + 6 = (x − 2)(x − 3) = 0\nx = 2 or x = 3\nAnswer: (B) 2 and 3"
         },
         {
-          "problem": "For what values of x does 2x² + 3x − 5 = 0?\n(A) x = 1 and x = −5/2  (B) x = −1 and x = 5/2  (C) x = 5 and x = −1/2  (D) x = 1 and x = 5/2  (E) x = −5 and x = 1/2",
+          "problem": "For what values of x does 2x² + 3x − 5 = 0?\n(A) x = 1 and x = −5/2  (B) x = −1 and x = 5/2  (C) x = 5 and x = −1/2  (D) x = 1 and x = 5/2",
           "solution": "Quadratic formula: a=2, b=3, c=−5\nx = (−3 ± √(9+40)) / 4 = (−3 ± √49) / 4 = (−3 ± 7) / 4\nx = (−3+7)/4 = 1 or x = (−3−7)/4 = −10/4 = −5/2\nAnswer: (A) x = 1 and x = −5/2\n\nBacksolving check: Try x = 1: 2(1)+3(1)−5 = 0 ✓"
         },
         {
-          "problem": "How many real solutions does 3x² − 2x + 5 = 0 have?\n(A) 0  (B) 1  (C) 2  (D) 3  (E) Cannot be determined",
+          "problem": "How many real solutions does 3x² − 2x + 5 = 0 have?\n(A) 0  (B) 1  (C) 2  (D) Cannot be determined",
           "solution": "Check discriminant: b²−4ac = (−2)²−4(3)(5) = 4−60 = −56\nSince −56 < 0, there are NO real solutions.\nAnswer: (A) 0\n\nACT Tip: When asked 'how many solutions,' just compute the discriminant — no need to actually solve."
         }
       ],
@@ -196,7 +196,7 @@
       "lessonPhase": "concept-intro",
       "title": "Polynomials & Rational Expressions",
       "skill": "act-polynomial-expressions",
-      "content": "Polynomial operations and factoring are essential ACT skills. The test loves difference of squares, FOIL, and factoring. Radical and rational expressions appear in the harder questions (40-60).",
+      "content": "Polynomial operations and factoring are essential ACT skills. The test loves difference of squares, FOIL, and factoring. Radical and rational expressions appear in the harder questions (roughly the last third of the section, about #31–45).",
       "keyPoints": [
         "Adding/subtracting polynomials: combine like terms",
         "Multiplying: distribute each term. For binomials, use FOIL (First, Outer, Inner, Last)",
@@ -214,15 +214,15 @@
       "skill": "act-polynomial-expressions",
       "examples": [
         {
-          "problem": "What is (2x + 3)(x − 4)?\n(A) 2x² − 12  (B) 2x² − 5x − 12  (C) 2x² + 5x − 12  (D) 2x² − 11x − 12  (E) 2x² − 8x + 3",
+          "problem": "What is (2x + 3)(x − 4)?\n(A) 2x² − 12  (B) 2x² − 5x − 12  (C) 2x² + 5x − 12  (D) 2x² − 11x − 12",
           "solution": "FOIL:\nFirst: 2x · x = 2x²\nOuter: 2x · (−4) = −8x\nInner: 3 · x = 3x\nLast: 3 · (−4) = −12\nCombine: 2x² − 8x + 3x − 12 = 2x² − 5x − 12\nAnswer: (B) 2x² − 5x − 12"
         },
         {
-          "problem": "Factor completely: 3x³ − 12x\n(A) 3x(x² − 4)  (B) 3x(x − 2)²  (C) 3x(x + 2)(x − 2)  (D) x(3x² − 12)  (E) 3(x³ − 4x)",
+          "problem": "Factor completely: 3x³ − 12x\n(A) 3x(x² − 4)  (B) 3x(x − 2)²  (C) 3x(x + 2)(x − 2)  (D) x(3x² − 12)",
           "solution": "Step 1 — GCF: 3x(x² − 4)\nStep 2 — Recognize difference of squares: x² − 4 = (x+2)(x−2)\nFully factored: 3x(x + 2)(x − 2)\nAnswer: (C) 3x(x + 2)(x − 2)\n\n(A) is partially factored — 'factor completely' means don't stop at difference of squares."
         },
         {
-          "problem": "Simplify: (x² − 9)/(x² + 5x + 6)\n(A) (x−3)/(x+2)  (B) (x+3)/(x+2)  (C) (x−3)/(x+3)  (D) −3/2  (E) (x−3)/(x−2)",
+          "problem": "Simplify: (x² − 9)/(x² + 5x + 6)\n(A) (x−3)/(x+2)  (B) (x+3)/(x+2)  (C) (x−3)/(x+3)  (D) (x−3)/(x−2)",
           "solution": "Factor both:\nNumerator: x²−9 = (x+3)(x−3)\nDenominator: x²+5x+6 = (x+2)(x+3)\nCancel (x+3): (x−3)/(x+2)\nAnswer: (A) (x−3)/(x+2)"
         }
       ],
@@ -235,7 +235,7 @@
       "problems": [
         {
           "id": "alg-wp5",
-          "problem": "What are the solutions to x² + 2x − 15 = 0?\n(A) 3 and −5  (B) −3 and 5  (C) 3 and 5  (D) −3 and −5  (E) 1 and −15",
+          "problem": "What are the solutions to x² + 2x − 15 = 0?\n(A) 3 and −5  (B) −3 and 5  (C) 3 and 5  (D) −3 and −5",
           "hints": [
             "Find two numbers that multiply to −15 and add to 2",
             "Those numbers are 5 and −3"
@@ -244,27 +244,27 @@
         },
         {
           "id": "alg-wp6",
-          "problem": "What is (x + 3)² − (x − 3)²?\n(A) 0  (B) 6  (C) 12x  (D) 6x  (E) 2x² + 18",
+          "problem": "What is (x + 3)² − (x − 3)²?\n(A) 0  (B) 12x  (C) 6x  (D) 2x² + 18",
           "solution_hint": "Use difference of squares: a²−b² = (a+b)(a−b) where a = (x+3) and b = (x−3)",
           "hints": [
             "Let a = x+3 and b = x−3",
             "(a+b)(a−b) = (2x)(6) = 12x"
           ],
-          "answer": "(C) 12x. Using a²−b² = (a+b)(a−b): [(x+3)+(x−3)][(x+3)−(x−3)] = (2x)(6) = 12x."
+          "answer": "(B) 12x. Using a²−b² = (a+b)(a−b): [(x+3)+(x−3)][(x+3)−(x−3)] = (2x)(6) = 12x."
         },
         {
           "id": "alg-wp7",
-          "problem": "Solve: √(2x + 3) = 5\n(A) 1  (B) 4  (C) 11  (D) 14  (E) 22",
+          "problem": "Solve: √(2x + 3) = 5\n(A) 1  (B) 11  (C) 14  (D) 22",
           "hints": [
             "Square both sides: 2x + 3 = 25",
             "Solve: 2x = 22, x = 11",
             "Check: √(22+3) = √25 = 5 ✓"
           ],
-          "answer": "(C) 11. Square: 2x+3 = 25 → 2x = 22 → x = 11. Check: √(22+3) = √25 = 5. ✓"
+          "answer": "(B) 11. Square: 2x+3 = 25 → 2x = 22 → x = 11. Check: √(22+3) = √25 = 5. ✓"
         },
         {
           "id": "alg-wp8",
-          "problem": "For what value of k does the equation x² + kx + 9 = 0 have exactly one real solution?\n(A) 3  (B) −3  (C) 6  (D) 6 or −6  (E) 0",
+          "problem": "For what value of k does the equation x² + kx + 9 = 0 have exactly one real solution?\n(A) 3  (B) −3  (C) 6  (D) 6 or −6",
           "hints": [
             "One real solution means discriminant = 0",
             "b²−4ac = k²−36 = 0"
@@ -282,43 +282,43 @@
       "problems": [
         {
           "id": "alg-yp1",
-          "problem": "If 2(x − 3) + 5 = 3x − 4, what is x?\n(A) −3  (B) 1  (C) 3  (D) 5  (E) 7",
+          "problem": "If 2(x − 3) + 5 = 3x − 4, what is x?\n(A) −3  (B) 1  (C) 3  (D) 5",
           "answer": "(C) 3. 2x−6+5 = 3x−4 → 2x−1 = 3x−4 → 3 = x."
         },
         {
           "id": "alg-yp2",
-          "problem": "What is the solution set of |4x − 8| > 12?\n(A) x > 5  (B) x < −1 or x > 5  (C) −1 < x < 5  (D) x > 5 only  (E) x < −1 only",
+          "problem": "What is the solution set of |4x − 8| > 12?\n(A) x > 5  (B) x < −1 or x > 5  (C) −1 < x < 5  (D) x < −1 only",
           "answer": "(B) x < −1 or x > 5. Two cases: 4x−8 > 12 → x > 5, or 4x−8 < −12 → x < −1."
         },
         {
           "id": "alg-yp3",
-          "problem": "If 3x − 2y = 12 and x + 2y = 8, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 10",
-          "answer": "(C) 5. Add equations: 4x = 20 → x = 5."
+          "problem": "If 3x − 2y = 12 and x + 2y = 8, what is x?\n(A) 4  (B) 5  (C) 6  (D) 10",
+          "answer": "(B) 5. Add equations: 4x = 20 → x = 5."
         },
         {
           "id": "alg-yp4",
-          "problem": "What is the product of the solutions of 2x² − 7x + 3 = 0?\n(A) 3/2  (B) 7/2  (C) 3  (D) −3/2  (E) −3",
+          "problem": "What is the product of the solutions of 2x² − 7x + 3 = 0?\n(A) 3/2  (B) 7/2  (C) 3  (D) −3/2",
           "answer": "(A) 3/2. By Vieta's: product of roots = c/a = 3/2. Or solve: (2x−1)(x−3)=0, x=1/2 or x=3, product = 3/2."
         },
         {
           "id": "alg-yp5",
-          "problem": "Which expression is equivalent to (3a − 2b)²?\n(A) 9a² − 4b²  (B) 9a² + 4b²  (C) 9a² − 12ab + 4b²  (D) 9a² − 6ab + 4b²  (E) 9a² + 12ab + 4b²",
-          "answer": "(C) 9a² − 12ab + 4b². (3a−2b)² = (3a)² − 2(3a)(2b) + (2b)² = 9a² − 12ab + 4b²."
+          "problem": "Which expression is equivalent to (3a − 2b)²?\n(A) 9a² − 4b²  (B) 9a² − 12ab + 4b²  (C) 9a² − 6ab + 4b²  (D) 9a² + 12ab + 4b²",
+          "answer": "(B) 9a² − 12ab + 4b². (3a−2b)² = (3a)² − 2(3a)(2b) + (2b)² = 9a² − 12ab + 4b²."
         },
         {
           "id": "alg-yp6",
-          "problem": "Simplify: (x² − 4x)/(x² − 16)\n(A) 4x/(x+4)  (B) x/(x+4)  (C) (x−4)/(x+4)  (D) x/(x−4)  (E) 1/(x+4)",
-          "answer": "(B) x/(x+4). Factor: x(x−4)/[(x+4)(x−4)] = x/(x+4)."
+          "problem": "Simplify: (x² − 4x)/(x² − 16)\n(A) x/(x+4)  (B) (x−4)/(x+4)  (C) x/(x−4)  (D) 1/(x+4)",
+          "answer": "(A) x/(x+4). Factor: x(x−4)/[(x+4)(x−4)] = x/(x+4)."
         },
         {
           "id": "alg-yp7",
-          "problem": "Solve: √(3x − 2) = x − 2\n(A) 1  (B) 2  (C) 3  (D) 6  (E) 2 and 6",
+          "problem": "Solve: √(3x − 2) = x − 2\n(A) 1  (B) 2  (C) 3  (D) 6",
           "answer": "(D) 6. Square: 3x−2 = x²−4x+4 → x²−7x+6=0 → (x−1)(x−6)=0 → x=1 or x=6. Check x=1: √1 = 1, but 1−2=−1. Fail. Check x=6: √16 = 4, and 6−2=4. ✓ Only x=6 works."
         },
         {
           "id": "alg-yp8",
-          "problem": "A system of equations has the form y = 2x + b and y = 2x − 3. For what value of b does the system have no solution?\n(A) −3  (B) 0  (C) 3  (D) Any value except −3  (E) No such value exists",
-          "answer": "(D) Any value except −3. Same slope (2) with different y-intercepts → parallel lines → no solution. If b = −3, they're the same line (infinitely many solutions)."
+          "problem": "A system of equations has the form y = 2x + b and y = 2x − 3. For what value of b does the system have no solution?\n(A) −3  (B) 3  (C) Any value except −3  (D) No such value exists",
+          "answer": "(C) Any value except −3. Same slope (2) with different y-intercepts → parallel lines → no solution. If b = −3, they're the same line (infinitely many solutions)."
         }
       ],
       "skill": "act-linear-equations",
