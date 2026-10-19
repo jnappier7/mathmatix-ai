@@ -60,16 +60,16 @@
       "skill": "act-multi-step-rate-proportion",
       "examples": [
         {
-          "problem": "A car drives 120 miles at 40 mph, then 180 miles at 60 mph. What is the average speed for the entire trip?\n(A) 48 mph  (B) 50 mph  (C) 52 mph  (D) 55 mph  (E) 60 mph",
+          "problem": "A car drives 120 miles at 40 mph, then 180 miles at 60 mph. What is the average speed for the entire trip?\n(A) 48 mph  (B) 50 mph  (C) 52 mph  (D) 60 mph",
           "solution": "Total distance = 120 + 180 = 300 miles.\nTime for leg 1 = 120/40 = 3 hours.\nTime for leg 2 = 180/60 = 3 hours.\nTotal time = 6 hours.\nAverage speed = 300/6 = 50 mph.\nAnswer: (B) 50 mph\n\nTrap: averaging the two speeds — (40 + 60)/2 = 50 — gives the right number here, but only by coincidence: the two legs happened to take the same time (3 hours each), and that is the one case where the simple average is correct. Change the trip to 120 miles at 40 mph and 120 miles at 60 mph and the times become 3 and 2 hours, so the true average is 240/5 = 48 mph while the simple average still says 50. Always use total distance ÷ total time."
         },
         {
-          "problem": "Pipe A can fill a tank in 6 hours. Pipe B can fill it in 4 hours. How long does it take both pipes together?\n(A) 2 hours  (B) 2.4 hours  (C) 3 hours  (D) 5 hours  (E) 10 hours",
+          "problem": "Pipe A can fill a tank in 6 hours. Pipe B can fill it in 4 hours. How long does it take both pipes together?\n(A) 2 hours  (B) 2.4 hours  (C) 5 hours  (D) 10 hours",
           "solution": "Rate A = 1/6 tank per hour. Rate B = 1/4 tank per hour.\nCombined rate: 1/6 + 1/4 = 2/12 + 3/12 = 5/12 tank per hour.\nTime = 1 ÷ (5/12) = 12/5 = 2.4 hours.\nAnswer: (B) 2.4 hours\n\nCommon mistake: averaging 6 and 4 to get 5 hours — rates don't average like that."
         },
         {
-          "problem": "A 10-liter container holds a 30% salt solution. How many liters of pure water must be added to dilute it to a 20% solution?\n(A) 2  (B) 3  (C) 5  (D) 10  (E) 15",
-          "solution": "Salt stays constant: 10 × 0.30 = 3 liters of salt.\nAfter adding w liters of water: 3/(10 + w) = 0.20\n3 = 0.20(10 + w) = 2 + 0.20w\n1 = 0.20w → w = 5 liters\nAnswer: (C) 5"
+          "problem": "A 10-liter container holds a 30% salt solution. How many liters of pure water must be added to dilute it to a 20% solution?\n(A) 3  (B) 5  (C) 10  (D) 15",
+          "solution": "Salt stays constant: 10 × 0.30 = 3 liters of salt.\nAfter adding w liters of water: 3/(10 + w) = 0.20\n3 = 0.20(10 + w) = 2 + 0.20w\n1 = 0.20w → w = 5 liters\nAnswer: (B) 5"
         }
       ],
       "lessonId": "integrating_essential_skills"
@@ -98,16 +98,16 @@
       "skill": "act-percent-applications",
       "examples": [
         {
-          "problem": "A rectangular room is 12 ft × 15 ft. A semicircular bay window (diameter 6 ft) extends from one wall. What is the total floor area?\n(A) 180 + 3π  (B) 180 + 4.5π  (C) 180 + 9π  (D) 192  (E) 180 + 18π",
+          "problem": "A rectangular room is 12 ft × 15 ft. A semicircular bay window (diameter 6 ft) extends from one wall. What is the total floor area?\n(A) 180 + 3π  (B) 180 + 4.5π  (C) 180 + 9π  (D) 180 + 18π",
           "solution": "Rectangle: 12 × 15 = 180 sq ft.\nSemicircle: diameter = 6, radius = 3. Area = (1/2)πr² = (1/2)π(9) = 9π/2 = 4.5π.\nTotal = 180 + 4.5π.\nAnswer: (B) 180 + 4.5π"
         },
         {
-          "problem": "A jacket costs $80. It's marked up 50% by the retailer, then put on a 20% off sale. What is the sale price?\n(A) $80  (B) $84  (C) $96  (D) $100  (E) $104",
-          "solution": "Markup: $80 × 1.50 = $120.\nSale: $120 × 0.80 = $96.\nAnswer: (C) $96\n\nTrap: 50% up and 20% down ≠ 30% up. It's actually 1.50 × 0.80 = 1.20, so 20% up from original."
+          "problem": "A jacket costs $80. It's marked up 50% by the retailer, then put on a 20% off sale. What is the sale price?\n(A) $80  (B) $96  (C) $100  (D) $104",
+          "solution": "Markup: $80 × 1.50 = $120.\nSale: $120 × 0.80 = $96.\nAnswer: (B) $96\n\nTrap: 50% up and 20% down ≠ 30% up. It's actually 1.50 × 0.80 = 1.20, so 20% up from original."
         },
         {
-          "problem": "$1,000 is invested at 5% annual simple interest. What is the total value after 3 years?\n(A) $1,050  (B) $1,100  (C) $1,150  (D) $1,157.63  (E) $1,500",
-          "solution": "Simple interest: I = Prt = 1000 × 0.05 × 3 = $150.\nTotal = 1000 + 150 = $1,150.\nAnswer: (C) $1,150\n\nNote: (D) would be compound interest. The question says 'simple interest.'"
+          "problem": "$1,000 is invested at 5% annual simple interest. What is the total value after 3 years?\n(A) $1,050  (B) $1,150  (C) $1,157.63  (D) $1,500",
+          "solution": "Simple interest: I = Prt = 1000 × 0.05 × 3 = $150.\nTotal = 1000 + 150 = $1,150.\nAnswer: (B) $1,150\n\nNote: (C) would be compound interest. The question says 'simple interest.'"
         }
       ],
       "lessonId": "integrating_essential_skills"
@@ -119,7 +119,7 @@
       "problems": [
         {
           "id": "ies-wp1",
-          "problem": "A runner jogs at 6 mph for 30 minutes, then walks at 3 mph for 1 hour. What is the total distance?\n(A) 3 miles  (B) 4.5 miles  (C) 6 miles  (D) 9 miles  (E) 12 miles",
+          "problem": "A runner jogs at 6 mph for 30 minutes, then walks at 3 mph for 1 hour. What is the total distance?\n(A) 3 miles  (B) 4.5 miles  (C) 6 miles  (D) 9 miles",
           "hints": [
             "Convert 30 minutes to 0.5 hours",
             "Jog: 6 × 0.5 = 3 miles. Walk: 3 × 1 = 3 miles. Total = 6."
@@ -128,31 +128,31 @@
         },
         {
           "id": "ies-wp2",
-          "problem": "A rectangular pool (20 ft × 40 ft) has a 3-foot-wide walkway around it. What is the area of just the walkway?\n(A) 396  (B) 408  (C) 472  (D) 800  (E) 1,196",
+          "problem": "A rectangular pool (20 ft × 40 ft) has a 3-foot-wide walkway around it. What is the area of just the walkway?\n(A) 396  (B) 472  (C) 800  (D) 1,196",
           "hints": [
             "Outer rectangle: (20+6) × (40+6) = 26 × 46",
             "Pool area: 20 × 40 = 800. Walkway = outer − pool."
           ],
-          "answer": "(A) 396. The walkway runs along both sides of each dimension, so it adds 3 + 3 = 6 feet to each: the outer rectangle is 26 × 46 = 1,196 sq ft. The pool itself is 20 × 40 = 800 sq ft. The walkway is what's left over: 1,196 − 800 = 396 sq ft. Adding 3 rather than 6 to each dimension is the classic error here. Note (D) 800 is the pool alone and (E) 1,196 is the whole outer rectangle — both are distractors for stopping one step early."
+          "answer": "(A) 396. The walkway runs along both sides of each dimension, so it adds 3 + 3 = 6 feet to each: the outer rectangle is 26 × 46 = 1,196 sq ft. The pool itself is 20 × 40 = 800 sq ft. The walkway is what's left over: 1,196 − 800 = 396 sq ft. Adding 3 rather than 6 to each dimension is the classic error here. Note (C) 800 is the pool alone and (D) 1,196 is the whole outer rectangle — both are distractors for stopping one step early."
         },
         {
           "id": "ies-wp3",
-          "problem": "A restaurant bill is $65. After an 8% tax and a 20% tip (on the pre-tax amount), what is the total?\n(A) $78.00  (B) $81.20  (C) $83.20  (D) $85.80  (E) $89.70",
+          "problem": "A restaurant bill is $65. After an 8% tax and a 20% tip (on the pre-tax amount), what is the total?\n(A) $78.00  (B) $83.20  (C) $85.80  (D) $89.70",
           "hints": [
             "Tax: $65 × 0.08 = $5.20",
             "Tip on pre-tax: $65 × 0.20 = $13.00",
             "Total: $65 + $5.20 + $13.00"
           ],
-          "answer": "(C) $83.20. Tax = $5.20. Tip = $13.00. Total = 65 + 5.20 + 13.00 = $83.20."
+          "answer": "(B) $83.20. Tax = $5.20. Tip = $13.00. Total = 65 + 5.20 + 13.00 = $83.20."
         },
         {
           "id": "ies-wp4",
-          "problem": "A recipe requires 2 cups of flour for 12 cookies. How many cups are needed for 42 cookies?\n(A) 3.5  (B) 5  (C) 7  (D) 21  (E) 84",
+          "problem": "A recipe requires 2 cups of flour for 12 cookies. How many cups are needed for 42 cookies?\n(A) 3.5  (B) 7  (C) 21  (D) 84",
           "hints": [
             "Set up proportion: 2/12 = x/42",
             "Cross multiply: 12x = 84"
           ],
-          "answer": "(C) 7. 2/12 = x/42 → 12x = 84 → x = 7 cups."
+          "answer": "(B) 7. 2/12 = x/42 → 12x = 84 → x = 7 cups."
         }
       ],
       "skill": "act-percent-applications",
@@ -181,15 +181,15 @@
       "skill": "act-measurement-unit-conversion",
       "examples": [
         {
-          "problem": "A plumber charges $45 for a house call plus $60 per hour. A homeowner has a budget of $225. What is the maximum number of whole hours the plumber can work?\n(A) 2  (B) 3  (C) 4  (D) 5  (E) 6",
+          "problem": "A plumber charges $45 for a house call plus $60 per hour. A homeowner has a budget of $225. What is the maximum number of whole hours the plumber can work?\n(A) 2  (B) 3  (C) 4  (D) 5",
           "solution": "Set up: 45 + 60h ≤ 225\n60h ≤ 180\nh ≤ 3\nMaximum whole hours = 3.\nAnswer: (B) 3"
         },
         {
-          "problem": "A car travels at 65 miles per hour. What is this speed in feet per second? (1 mile = 5,280 feet)\n(A) 88  (B) 95.3  (C) 96  (D) 104.5  (E) 352",
+          "problem": "A car travels at 65 miles per hour. What is this speed in feet per second? (1 mile = 5,280 feet)\n(A) 88  (B) 95.3  (C) 104.5  (D) 352",
           "solution": "65 mi/hr × (5280 ft / 1 mi) × (1 hr / 3600 sec)\n= 65 × 5280 / 3600\n= 343,200 / 3600\n= 95.33 ft/sec\nAnswer: (B) 95.3"
         },
         {
-          "problem": "A square room has area 400 square feet. What is the area in square yards? (1 yard = 3 feet)\n(A) 44.4 sq yd  (B) 133.3 sq yd  (C) 200 sq yd  (D) 1,200 sq yd  (E) 3,600 sq yd",
+          "problem": "A square room has area 400 square feet. What is the area in square yards? (1 yard = 3 feet)\n(A) 44.4 sq yd  (B) 133.3 sq yd  (C) 1,200 sq yd  (D) 3,600 sq yd",
           "solution": "1 yard = 3 feet, so 1 sq yard = 9 sq feet.\n400 sq ft ÷ 9 = 44.4 sq yd.\nAnswer: (A) 44.4 sq yd\n\nTrap: (B) divides by 3 instead of 9."
         }
       ],
@@ -202,16 +202,16 @@
       "problems": [
         {
           "id": "ies-wp5",
-          "problem": "Maria is 4 years older than twice Juan's age. If Maria is 26, how old is Juan?\n(A) 9  (B) 11  (C) 13  (D) 15  (E) 22",
+          "problem": "Maria is 4 years older than twice Juan's age. If Maria is 26, how old is Juan?\n(A) 11  (B) 13  (C) 15  (D) 22",
           "hints": [
             "Let j = Juan's age",
             "Maria: 2j + 4 = 26. Solve for j."
           ],
-          "answer": "(B) 11. 2j + 4 = 26 → 2j = 22 → j = 11."
+          "answer": "(A) 11. 2j + 4 = 26 → 2j = 22 → j = 11."
         },
         {
           "id": "ies-wp6",
-          "problem": "A 5K race is 5 kilometers. How many miles is that, to the nearest tenth? (1 mile ≈ 1.609 km)\n(A) 2.9 mi  (B) 3.1 mi  (C) 3.5 mi  (D) 5.0 mi  (E) 8.0 mi",
+          "problem": "A 5K race is 5 kilometers. How many miles is that, to the nearest tenth? (1 mile ≈ 1.609 km)\n(A) 2.9 mi  (B) 3.1 mi  (C) 5.0 mi  (D) 8.0 mi",
           "hints": [
             "Divide: 5 km ÷ 1.609 km/mi",
             "≈ 3.107 miles"
@@ -220,12 +220,12 @@
         },
         {
           "id": "ies-wp7",
-          "problem": "A company's profit is modeled by P = 15x − 200, where x is the number of items sold. How many items must be sold to earn a profit of at least $700?\n(A) 46  (B) 50  (C) 58  (D) 60  (E) 67",
+          "problem": "A company's profit is modeled by P = 15x − 200, where x is the number of items sold. How many items must be sold to earn a profit of at least $700?\n(A) 46  (B) 50  (C) 60  (D) 67",
           "hints": [
             "Set 15x − 200 ≥ 700",
             "15x ≥ 900 → x ≥ 60"
           ],
-          "answer": "(D) 60. 15x − 200 ≥ 700 → 15x ≥ 900 → x ≥ 60."
+          "answer": "(C) 60. 15x − 200 ≥ 700 → 15x ≥ 900 → x ≥ 60."
         }
       ],
       "skill": "act-measurement-unit-conversion",
@@ -238,43 +238,43 @@
       "problems": [
         {
           "id": "ies-yp1",
-          "problem": "Machine A produces 30 widgets per hour. Machine B produces 45 widgets per hour. How many hours will it take both machines working together to produce 600 widgets?\n(A) 6  (B) 8  (C) 10  (D) 13.3  (E) 20",
-          "answer": "(B) 8. Combined rate: 30 + 45 = 75 per hour. Time: 600/75 = 8 hours."
+          "problem": "Machine A produces 30 widgets per hour. Machine B produces 45 widgets per hour. How many hours will it take both machines working together to produce 600 widgets?\n(A) 8  (B) 10  (C) 13.3  (D) 20",
+          "answer": "(A) 8. Combined rate: 30 + 45 = 75 per hour. Time: 600/75 = 8 hours."
         },
         {
           "id": "ies-yp2",
-          "problem": "A circular garden (radius 10 ft) has a square fountain (side 4 ft) in the center. What is the area of the garden not covered by the fountain?\n(A) 100π − 16  (B) 100π − 8  (C) 96π  (D) 20π − 16  (E) 300",
+          "problem": "A circular garden (radius 10 ft) has a square fountain (side 4 ft) in the center. What is the area of the garden not covered by the fountain?\n(A) 100π − 16  (B) 100π − 8  (C) 96π  (D) 20π − 16",
           "answer": "(A) 100π − 16. Circle area: π(10²) = 100π. Square area: 4² = 16. Garden area: 100π − 16."
         },
         {
           "id": "ies-yp3",
-          "problem": "A store offers 'buy 2, get 1 free' on shirts that cost $25 each. What is the effective price per shirt if you buy 3?\n(A) $8.33  (B) $12.50  (C) $16.67  (D) $18.75  (E) $25.00",
-          "answer": "(C) $16.67. Pay for 2: 2 × $25 = $50. Get 3 shirts. $50/3 ≈ $16.67."
+          "problem": "A store offers 'buy 2, get 1 free' on shirts that cost $25 each. What is the effective price per shirt if you buy 3?\n(A) $12.50  (B) $16.67  (C) $18.75  (D) $25.00",
+          "answer": "(B) $16.67. Pay for 2: 2 × $25 = $50. Get 3 shirts. $50/3 ≈ $16.67."
         },
         {
           "id": "ies-yp4",
-          "problem": "A painter can paint a room in 5 hours. Her apprentice can paint the same room in 8 hours. If they start together but the painter leaves after 2 hours, how much longer must the apprentice work alone to finish?\n(A) 2.0 hours  (B) 2.5 hours  (C) 2.8 hours  (D) 3.5 hours  (E) 4.0 hours",
-          "answer": "(C) 2.8 hours. Together for 2 hours: (1/5 + 1/8)(2) = (13/40)(2) = 26/40 = 13/20 done. Remaining: 7/20. Apprentice alone: (7/20) ÷ (1/8) = (7/20)(8) = 56/20 = 2.8 hours."
+          "problem": "A painter can paint a room in 5 hours. Her apprentice can paint the same room in 8 hours. If they start together but the painter leaves after 2 hours, how much longer must the apprentice work alone to finish?\n(A) 2.5 hours  (B) 2.8 hours  (C) 3.5 hours  (D) 4.0 hours",
+          "answer": "(B) 2.8 hours. Together for 2 hours: (1/5 + 1/8)(2) = (13/40)(2) = 26/40 = 13/20 done. Remaining: 7/20. Apprentice alone: (7/20) ÷ (1/8) = (7/20)(8) = 56/20 = 2.8 hours."
         },
         {
           "id": "ies-yp5",
-          "problem": "A $2,000 computer depreciates 15% per year. What is its value after 2 years?\n(A) $1,400  (B) $1,445  (C) $1,500  (D) $1,700  (E) $1,785",
+          "problem": "A $2,000 computer depreciates 15% per year. What is its value after 2 years?\n(A) $1,400  (B) $1,445  (C) $1,700  (D) $1,785",
           "answer": "(B) $1,445. Year 1: 2000 × 0.85 = $1,700. Year 2: 1700 × 0.85 = $1,445."
         },
         {
           "id": "ies-yp6",
-          "problem": "A swimming pool holds 15,000 gallons. If a hose fills it at 500 gallons per hour, and water evaporates at 20 gallons per hour, how long does it take to fill the pool?\n(A) 28.8 hours  (B) 30 hours  (C) 31.25 hours  (D) 33.3 hours  (E) 750 hours",
+          "problem": "A swimming pool holds 15,000 gallons. If a hose fills it at 500 gallons per hour, and water evaporates at 20 gallons per hour, how long does it take to fill the pool?\n(A) 28.8 hours  (B) 30 hours  (C) 31.25 hours  (D) 750 hours",
           "answer": "(C) 31.25 hours. Net rate: 500 − 20 = 480 gal/hr. Time: 15,000/480 = 31.25 hours."
         },
         {
           "id": "ies-yp7",
-          "problem": "A recipe calls for 3/4 cup of sugar to make 2 dozen cookies. How much sugar is needed for 5 dozen cookies?\n(A) 15/8 cups  (B) 2 cups  (C) 3 cups  (D) 3.75 cups  (E) 7.5 cups",
+          "problem": "A recipe calls for 3/4 cup of sugar to make 2 dozen cookies. How much sugar is needed for 5 dozen cookies?\n(A) 15/8 cups  (B) 3 cups  (C) 3.75 cups  (D) 7.5 cups",
           "answer": "(A) 15/8 cups (= 1 7/8 cups). Proportion: (3/4)/2 = x/5. x = (3/4)(5/2) = 15/8."
         },
         {
           "id": "ies-yp8",
-          "problem": "A tank holds 240 gallons. How many liters is this? (1 gallon ≈ 3.785 liters)\n(A) 63.4  (B) 236.2  (C) 480  (D) 908.4  (E) 960",
-          "answer": "(D) 908.4. 240 × 3.785 = 908.4 liters."
+          "problem": "A tank holds 240 gallons. How many liters is this? (1 gallon ≈ 3.785 liters)\n(A) 63.4  (B) 236.2  (C) 908.4  (D) 960",
+          "answer": "(C) 908.4. 240 × 3.785 = 908.4 liters."
         }
       ],
       "skill": "act-multi-step-rate-proportion",

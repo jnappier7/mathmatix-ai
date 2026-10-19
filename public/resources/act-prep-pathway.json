@@ -246,7 +246,7 @@
       ],
       "essentialQuestions": [
         "When is it faster to use a strategy than to do the algebra?",
-        "How do I manage my 60 minutes across 60 questions?"
+        "How do I manage my 50 minutes across 45 questions?"
       ]
     },
     {
@@ -268,7 +268,7 @@
       "moduleId": "practice_test_final",
       "unit": 8,
       "title": "Full Practice Test & Final Exam",
-      "preview": "Timed 60-question practice test simulating real ACT conditions, plus final assessment",
+      "preview": "Timed 45-question, 50-minute practice test simulating real ACT conditions, plus final assessment",
       "moduleFile": "/modules/act-prep/practice_test_final_module.json",
       "isFinal": true,
       "skills": [
