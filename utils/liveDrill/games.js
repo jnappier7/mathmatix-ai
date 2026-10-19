@@ -281,6 +281,30 @@ function moveTeam(game, teamIdx, gain) {
   return false;
 }
 
+/**
+ * The scoring rules as the screens state them — built from the same constants and thresholds
+ * speedGain/moveTeam use, so the lobby can never describe a game the server doesn't play.
+ * Speeds are seconds after the play appears: Drive uses the drill's own 6 s / 12 s, Huddle
+ * uses thirds of the play clock.
+ */
+function rulesFor(game) {
+  const huddle = game.mode === 'huddle';
+  const w = huddle ? game.secondsPerPlay : null;
+  const sec = (x) => Math.floor(x * 10 + 1e-9) / 10; // round DOWN: "within 6.6 s" must never overpromise
+  return {
+    speed: [
+      { gain: 15, within: huddle ? sec(w / 3) : 6 },
+      { gain: 10, within: huddle ? sec((2 * w) / 3) : 12 },
+      { gain: 5, within: null },
+    ],
+    sack: SACK,
+    noAnswer: huddle ? 0 : null, // Drive has no "no answer": the next play waits for you
+    teamK: TEAM_K[game.mode],
+    tdPoints: TD_POINTS,
+    startPos: START_POS,
+  };
+}
+
 function speedGain(ms, windowMs) {
   if (windowMs) return ms <= windowMs / 3 ? 15 : ms <= (2 * windowMs) / 3 ? 10 : 5;
   return ms <= 6000 ? 15 : ms <= 12000 ? 10 : 5; // the drill's own thresholds
@@ -509,6 +533,7 @@ function base(game) {
     hostName: game.hostName,
     gameNumber: game.games || 1,
     teams: teamsView(game),
+    rules: rulesFor(game),
     version: game.version,
   };
 }
@@ -688,7 +713,7 @@ if (sweeper.unref) sweeper.unref();
 function _reset() { for (const g of [...games.values()]) dropGame(g); }
 
 module.exports = {
-  SETTINGS, TEAM_K, START_POS, GameError,
+  SETTINGS, TEAM_K, START_POS, GameError, rulesFor,
   createGame, getGame, hostGame, playerFor, normalizeCode,
   join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261020">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261021">
 </head>
 <body>
 <div class="wrap">
@@ -63,6 +63,7 @@
         <div class="muted" id="l-what" style="flex-basis:100%"></div>
         <div class="classline" id="l-class" hidden></div>
       </div>
+      <div class="lobby-main">
       <div style="display:flex;flex-direction:column;gap:12px">
         <div class="rosters" id="rosters"></div>
         <p class="muted" style="margin:0">Tap a name to move it to the other team or remove it. Teams are balanced as students join.</p>
@@ -72,6 +73,8 @@
           <button class="go" id="kick" style="margin-left:auto" disabled>Kick off</button>
         </div>
         <div class="err" id="lobby-err" role="alert"></div>
+      </div>
+      <div class="rules panel side" id="l-rules"></div>
       </div>
     </div>
   </section>
@@ -136,11 +139,15 @@
   </section>
 </div>
 <div class="td" id="td" hidden></div>
-<button class="sndbtn" id="snd" type="button" aria-pressed="false" title="Sound on the projector (M)">🔊 Sound</button>
+<div class="sndbar" id="sndbar" role="group" aria-label="Projector sound">
+  <button class="sndbtn" id="mus" type="button" aria-pressed="false" title="Stadium music under the lobby and the game">🎵 Music off</button>
+  <button class="sndbtn" id="crowd" type="button" aria-pressed="true" title="Crowd noise: murmur during play, cheers on touchdowns">📣 Crowd on</button>
+  <button class="sndbtn" id="snd" type="button" aria-pressed="false" title="All sound on the projector (M)">🔊 Sound</button>
+</div>
 
 <script src="/js/csrf.js"></script>
-<script src="/js/live-drill/common.js?v=20261019"></script>
-<script src="/js/live-drill/sound.js?v=20261019"></script>
-<script src="/js/live-drill/host.js?v=20261020"></script>
+<script src="/js/live-drill/common.js?v=20261021"></script>
+<script src="/js/live-drill/sound.js?v=20261021"></script>
+<script src="/js/live-drill/host.js?v=20261021"></script>
 </body>
 </html>

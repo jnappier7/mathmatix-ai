@@ -126,6 +126,8 @@
     $('l-teamname').textContent = `Team ${teamName(t)}`;
     $('l-name').textContent = st.me.name;
     $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : 'Huddle'}`;
+    const rules = window.LiveDrill.rulesHTML(st);
+    if ($('l-rules').dataset.html !== rules) { $('l-rules').innerHTML = rules; $('l-rules').dataset.html = rules; }
   }
 
   function renderScore() {
