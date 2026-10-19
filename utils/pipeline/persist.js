@@ -375,9 +375,32 @@ async function persist(params) {
     };
     conversation.markModified?.('lastProblemState');
   } else if (results.wasCorrect) {
-    // Problem solved — clear state
+    // Problem solved — clear the in-progress resume state...
     conversation.lastProblemState = null;
     conversation.markModified?.('lastProblemState');
+
+    // ...but leave a POSITIVE completion marker behind. Absence-as-completion is
+    // what let the tutor loop "great work — what's next?": with no "just solved"
+    // signal, decide re-ran the same AFFIRMATIVE branch every turn. This marker
+    // is diagnosis-driven (not board-driven), so it fires even when the board
+    // emitted no card — exactly the empty-board sessions where the loop bit. The
+    // board write-back (pipeline/index) may enrich the same field with the pinned
+    // tex + step count; only overwrite that richer record if it isn't from THIS
+    // turn, so a real board verify keeps its detail.
+    const boardSolved = conversation.lastSolved;
+    const freshFromBoard = boardSolved
+      && boardSolved.messageCount === conversation.messages.length
+      && boardSolved.stepCount != null;
+    if (!freshFromBoard) {
+      conversation.lastSolved = {
+        at: new Date(),
+        messageCount: conversation.messages.length,
+        problemText: (diagnosis.problemInfo?.content
+          ? diagnosis.problemInfo.content.substring(0, 200)
+          : (conversation.boardProblem?.tex || null)),
+      };
+      conversation.markModified?.('lastSolved');
+    }
   }
 
   conversation.lastActivity = new Date();

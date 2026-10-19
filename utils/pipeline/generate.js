@@ -370,6 +370,33 @@ function buildStreakWarning(streaks) {
  * @param {Object} promptContext.mathResult - Math verification result
  * @returns {Object} { messages, model, options }
  */
+// Render what's already on the student's board into a compact prompt block, so
+// the tutor responds to the visible ledger instead of re-deriving progress from
+// raw chat and re-narrating steps the student already wrote. Returns '' when the
+// board is empty (nothing to say). Token-sensitive: caps at the last few steps.
+function buildBoardStateBlock(boardState) {
+  if (!boardState) return '';
+  const active = boardState.activeProblem;
+  if (!active || !active.tex) return '';
+  const steps = Array.isArray(active.steps) ? active.steps : [];
+  const lines = ['--- ON THE BOARD (what the student can already see) ---'];
+  lines.push(`Problem: ${active.tex}`);
+  if (steps.length > 0) {
+    const shown = steps.slice(-8);
+    lines.push('Steps already committed:');
+    shown.forEach((s, i) => {
+      const label = s.op ? `apply ${s.op}` : (s.tex || s.action);
+      lines.push(`  ${i + 1}. ${label}`);
+    });
+    lines.push(
+      'These steps are DONE and visible to the student. Do NOT re-derive, re-explain, ' +
+      'or re-ask them. Respond to the student\'s latest input only — acknowledge a correct ' +
+      'step in one beat and move to the NEXT step; never restate the whole solution so far.'
+    );
+  }
+  return lines.join('\n');
+}
+
 function assemblePrompt(decision, promptContext) {
   // ── Deterministic short-circuit ──
   // When decide() attached a canned response (e.g. ELICIT_FIRST for a bare
@@ -453,6 +480,14 @@ function assemblePrompt(decision, promptContext) {
   // Inject session mood directive (if noteworthy)
   if (promptContext.moodDirective) {
     fullSystemPrompt += '\n\n' + promptContext.moodDirective;
+  }
+
+  // Inject the board ledger — the steps already visible to the student — so the
+  // tutor builds on them instead of re-narrating (the "isn't that exactly what
+  // I wrote?" failure). No-op when the board is empty.
+  const boardBlock = buildBoardStateBlock(promptContext.boardState);
+  if (boardBlock) {
+    fullSystemPrompt += '\n\n' + boardBlock;
   }
 
   // Clone messages to avoid mutation (deep-clone content arrays for vision messages)

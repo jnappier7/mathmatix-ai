@@ -237,6 +237,20 @@ const conversationSchema = new Schema({
         type: Schema.Types.Mixed,
         default: null
     },
+    // Explicit "the student just finished a problem" marker. Solving a problem
+    // used to leave NO positive record — lastProblemState was nulled and the
+    // board pin dropped, so completion was represented only by ABSENCE. That
+    // blindness is why the tutor looped "great work — what's next?" every time
+    // the student said "ok what's next": decide had no signal that a problem had
+    // just been solved, so it re-emitted the same canned directives. This field
+    // is the durable, board-independent completion signal (set from the
+    // diagnosis in persist, so it fires even when no board card was emitted).
+    // Shape: { at, messageCount, problemText, stepCount? }. Null once the tutor
+    // has moved on (a new problem is posed) or nothing is freshly solved.
+    lastSolved: {
+        type: Schema.Types.Mixed,
+        default: null
+    },
     // Session summary: compact snapshot for cross-session pattern detection.
     // Written at periodic intervals (every 10 turns) by the pipeline.
     sessionSummary: {

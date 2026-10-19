@@ -409,6 +409,15 @@ async function runPipeline(message, ctx) {
     modeTransition: modeTransition?.shouldTransition ? modeTransition : null,
     hasRecentUpload: ctx.hasRecentUpload || false,
     user: ctx.user || null,
+    // What the tutor can already SEE on the board — the active problem + its
+    // committed steps, and whether a problem was just solved. Lets decide route
+    // "ok what's next" to a concrete next problem instead of looping, and avoid
+    // re-scaffolding steps that are already on the board (both from the transcript).
+    boardState: {
+      activeProblem: ctx.conversation?.boardProblem || null,
+      lastSolved: ctx.conversation?.lastSolved || null,
+      messageCount: ctx.conversation?.messages?.length || 0,
+    },
   });
 
   // Inject mode transition directives into the decision
@@ -496,6 +505,12 @@ async function runPipeline(message, ctx) {
     messages: ctx.formattedMessages,
     moodDirective,
     suppressSocratic,
+    // The board ledger the student is looking at, so the tutor can respond to
+    // what's already there instead of re-narrating it.
+    boardState: {
+      activeProblem: ctx.conversation?.boardProblem || null,
+      lastSolved: ctx.conversation?.lastSolved || null,
+    },
   });
 
   let generatedResult;
@@ -1174,11 +1189,47 @@ async function runPipeline(message, ctx) {
     // clear+pose or a turn-type backfill — sets the pin; a verify/clear
     // that ends the cycle drops it.
     const poseCard = [...cycleCards].reverse().find(c => c.action === 'pose');
+    const priorProblem = ctx.conversation.boardProblem;
     if (poseCard && poseCard.tex) {
-      ctx.conversation.boardProblem = { tex: poseCard.tex, posedAt: new Date() };
+      // A new problem is posed → fresh ledger, and we've moved on from whatever
+      // was last solved (clear the marker so it can't retrigger the advance path).
+      ctx.conversation.boardProblem = { tex: poseCard.tex, posedAt: new Date(), steps: [] };
       ctx.conversation.markModified?.('boardProblem');
+      if (ctx.conversation.lastSolved) {
+        ctx.conversation.lastSolved = null;
+        ctx.conversation.markModified?.('lastSolved');
+      }
     } else if (lastEmitted === 'verify' || lastEmitted === 'clear') {
+      // Cycle closed. A verify means the problem was SOLVED — leave the enriched
+      // completion marker (pinned tex + how many steps it took) so the next turn
+      // knows the problem is done and the tutor advances instead of looping.
+      if (lastEmitted === 'verify' && priorProblem && priorProblem.tex) {
+        ctx.conversation.lastSolved = {
+          at: new Date(),
+          messageCount: ctx.conversation.messages?.length || 0,
+          problemText: priorProblem.tex,
+          stepCount: Array.isArray(priorProblem.steps) ? priorProblem.steps.length : 0,
+        };
+        ctx.conversation.markModified?.('lastSolved');
+      }
       ctx.conversation.boardProblem = null;
+      ctx.conversation.markModified?.('boardProblem');
+    }
+
+    // Accumulate the student's committed work onto the active problem's ledger
+    // so future turns can SEE what's already on the board. Without this the tutor
+    // re-derives progress from raw chat each turn and re-narrates steps the
+    // student already wrote ("isn't that exactly what I wrote?"). Only
+    // apply/resolve/scaffold cards are real steps; pose/verify bracket the cycle.
+    if (ctx.conversation.boardProblem) {
+      const bp = ctx.conversation.boardProblem;
+      if (!Array.isArray(bp.steps)) bp.steps = [];
+      for (const c of cycleCards) {
+        if (c.action === 'apply' || c.action === 'resolve' || c.action === 'scaffold') {
+          bp.steps.push({ action: c.action, tex: c.tex || null, op: c.op || null });
+        }
+      }
+      if (bp.steps.length > 40) bp.steps = bp.steps.slice(-40); // bound growth
       ctx.conversation.markModified?.('boardProblem');
     }
   }

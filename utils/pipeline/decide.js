@@ -603,6 +603,25 @@ function decideCore(observation, diagnosis, context) {
 
   // ── Affirmative / engagement responses — continue the flow ──
   if (msgType === MESSAGE_TYPES.AFFIRMATIVE || msgType === MESSAGE_TYPES.GREETING) {
+    // The "ok what's next" loop: the student just solved a problem (nothing
+    // active on the board) and is asking to move on. CONTINUE_CONVERSATION let
+    // the model re-praise and re-ask "what would you like to work on?" turn
+    // after turn. When a problem was just solved, commit to a concrete next one
+    // instead — that's what actually breaks the loop.
+    const solved = context.boardState?.lastSolved;
+    const noActiveProblem = !context.boardState?.activeProblem;
+    const justSolved = solved
+      && (typeof solved.messageCount !== 'number'
+        || (context.boardState.messageCount - solved.messageCount) <= 3);
+    if (justSolved && noActiveProblem) {
+      decision.action = ACTIONS.PRESENT_PROBLEM;
+      decision.directives.push(
+        'The student just finished a problem and signaled they want to keep going.',
+        'Do NOT recap, re-praise, or restate the problem they just solved — that already happened. Do NOT ask an open "what would you like to work on?" question (they already answered it: the next one).',
+        'Present exactly ONE new problem now — a small step up from what they just did — and ask them to try the first step. Never show the answer.'
+      );
+      return decision;
+    }
     decision.action = ACTIONS.CONTINUE_CONVERSATION;
     decision.directives.push(
       'Student is engaged and following along. Continue naturally.',
