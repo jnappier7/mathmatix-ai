@@ -1,9 +1,12 @@
 /* global csrfFetch */
+// Sound: public/js/live-drill/sound.js (window.LiveDrillSound) — projector only.
 // Live Two-Minute Drill — the projector. Setup → lobby → live → final, all driven by the
 // game state the server pushes over SSE (routes/liveDrill.js /host/games/:code/stream).
 (function () {
   const { $, esc, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns } = window.LiveDrill;
   const API = '/api/live-drill/host';
+  const SND = window.LiveDrillSound || { unlock() {}, whistle() {}, horn() {}, tick() {}, chime() {}, buzzer() {}, muted: true, setMuted() {} };
+  let lastTick = null; // the clock second last ticked, so each of the final five ticks once
 
   const S = { drills: [], settings: null, classes: [], drill: 'algebra', playbook: 'all', mode: 'drive', seconds: 120, plays: 10, spp: 20, classId: '' };
   let game = null; // latest host state
@@ -100,11 +103,32 @@
   // Same code, same teams, same phones: everyone lands back in the lobby still seated.
   $('f-rematch').onclick = () => { seenFeed.clear(); $('final-err').textContent = ''; action('/rematch')(); };
 
+  // ---------------- sound ----------------
+  // Browsers allow audio only after a gesture; the teacher's first click or clicker press unlocks it.
+  document.addEventListener('pointerdown', () => SND.unlock(), { capture: true });
+  document.addEventListener('keydown', () => SND.unlock(), { capture: true });
+  function renderSound() {
+    $('snd').setAttribute('aria-pressed', SND.muted);
+    $('snd').textContent = SND.muted ? '🔇 Muted' : '🔊 Sound';
+  }
+  $('snd').onclick = () => { SND.setMuted(!SND.muted); renderSound(); };
+  renderSound();
+
+  /** What the room should hear, from one state to the next. */
+  function cue(prev, st) {
+    if (!prev) return;
+    if (prev.phase === 'lobby' && st.phase !== 'lobby' && st.phase !== 'over') SND.whistle();
+    if (st.teams.some((t, i) => prev.teams[i] && t.pts > prev.teams[i].pts)) SND.horn();
+    if (st.mode === 'huddle' && prev.round && st.round && prev.round.n === st.round.n && !prev.round.closed && st.round.closed) SND.chime();
+    if (prev.phase !== 'over' && st.phase === 'over') SND.buzzer();
+  }
+
   // ---------------- render ----------------
   function apply(st) {
     if (!st || (game && st.code === game.code && st.version < game.version)) return;
     syncClock(st);
     const prev = game && game.code === st.code ? game : null;
+    cue(prev, st);
     if (prev && prev.phase !== 'lobby') watchTouchdowns(prev, st);
     game = st;
     if (st.phase === 'lobby') { show('lobby'); renderLobby(st); }
@@ -161,6 +185,7 @@
       const left = game.endsAt - serverNow();
       c.textContent = mmss(left);
       c.classList.toggle('low', left <= 15000);
+      finalFive(`d${game.code}:${game.gameNumber}`, left);
     } else {
       const r = game.round;
       $('s-ck').textContent = 'Play';
@@ -170,8 +195,19 @@
         const left = r.closesAt - serverNow();
         $('h-count').textContent = `${mmss(left)} · ${r.answered}/${r.expected} in`;
         $('h-count').classList.toggle('low', left <= 5000);
+        finalFive(`h${game.code}:${game.gameNumber}:${r.n}`, left);
       }
     }
+  }
+
+  /** One tick for each of the last five seconds of a clock (`id` names which clock). */
+  function finalFive(id, leftMs) {
+    const s = Math.ceil(leftMs / 1000);
+    if (s < 1 || s > 5) return;
+    const key = `${id}:${s}`;
+    if (key === lastTick) return;
+    lastTick = key;
+    SND.tick(s === 1);
   }
 
   function renderLive(st) {
@@ -243,7 +279,31 @@
           ${cardHTML({ card: m.card, playbookName: m.playbookName }, m.card, '')}
           <div class="tellbox">${m.tell}</div></li>`).join('')}</ol>`
       : '<p>Nobody missed a play. Clean game.</p>');
+    renderPlayByPlay(st, f.plays || []);
   }
+
+  /** Every play anyone answered, in order — tap a row for the play, the answer and the tell. */
+  function renderPlayByPlay(st, plays) {
+    if (!plays.length) { $('f-pbp').innerHTML = ''; $('f-pbp').hidden = true; return; }
+    $('f-pbp').hidden = false;
+    const band = (p) => (p < 50 ? 'low' : p < 80 ? 'mid' : 'high');
+    const note = st.mode === 'drive'
+      ? 'Each student ran the plays at their own pace, so the later plays were only reached by the fastest.'
+      : 'Every student saw every play.';
+    $('f-pbp').innerHTML = `<h3>Play by play</h3><p>${note} Tap a play to see it again.</p><ol>${plays.map((p) => `<li><details class="${band(p.pct)}">
+        <summary><span class="pn">#${p.n}</span><span class="ps">${p.summary}</span>
+          <span class="meter" aria-hidden="true"><span style="width:${p.pct}%"></span></span>
+          <span class="pp" title="${p.right} of ${p.att} right">${p.pct}%</span></summary>
+        <div class="more">
+          <div class="note"><span><span class="tag">Right</span>${p.right} of ${p.att}</span>${p.commonWrong ? `<span><span class="tag">Most common wrong pick</span><span class="yr">${p.commonWrong.html}</span> (${p.commonWrong.count})</span>` : ''}<span><span class="tag">Answer</span><span class="cr">${p.answerHtml}</span></span></div>
+          ${cardHTML({ card: p.card, playbookName: p.playbookName }, p.card, '')}
+          <div class="tellbox">${p.tell}</div>
+        </div></details></li>`).join('')}</ol>`;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'm' || e.key === 'M') && e.target === document.body) { SND.setMuted(!SND.muted); renderSound(); }
+  });
 
   // A presentation clicker sends →, PageDown or Space: in Huddle it reveals / advances.
   document.addEventListener('keydown', (e) => {

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261018">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261019">
 </head>
 <body>
 <div class="wrap">
@@ -129,15 +129,18 @@
       <div class="result"><h2 id="f-result"></h2></div>
       <div class="mvps" id="f-mvps"></div>
       <div class="film panel" id="f-film"></div>
+      <div class="pbp panel" id="f-pbp"></div>
       <div class="row"><button class="go" id="f-rematch">Run it back</button><button class="ghost" id="f-again">New game</button><span class="muted">Run it back keeps the code, the teams and everyone's phone — fresh plays, clean scoreboard.</span></div>
       <div class="err" id="final-err" role="alert"></div>
     </div>
   </section>
 </div>
 <div class="td" id="td" hidden></div>
+<button class="sndbtn" id="snd" type="button" aria-pressed="false" title="Sound on the projector (M)">🔊 Sound</button>
 
 <script src="/js/csrf.js"></script>
-<script src="/js/live-drill/common.js?v=20261018"></script>
-<script src="/js/live-drill/host.js?v=20261018"></script>
+<script src="/js/live-drill/common.js?v=20261019"></script>
+<script src="/js/live-drill/sound.js?v=20261019"></script>
+<script src="/js/live-drill/host.js?v=20261019"></script>
 </body>
 </html>
