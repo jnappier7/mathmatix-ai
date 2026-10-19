@@ -119,7 +119,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .feed .it{border-radius:999px;padding:8px 18px;font-weight:700;background:var(--board);border:2px solid var(--rail);font-size:clamp(1.05rem,1.6vw,1.45rem)}
 .feed .it.new{animation:slide .35s ease both}
 .feed .it.t0{border-color:var(--red)} .feed .it.t1{border-color:var(--blue)}
-.feed .it.td{background:var(--led);color:var(--ink);border-color:var(--led);font-family:var(--display);font-weight:900;letter-spacing:.06em}
+.feed .it.ev{background:var(--led);color:var(--ink);border-color:var(--led);font-family:var(--display);font-weight:900;letter-spacing:.06em}
 @keyframes slide{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
 
 /* ---------- play card (the drill's own markup) ---------- */
@@ -263,9 +263,9 @@ table.twoway td:first-child{text-align:left}
 .sndbtn[aria-pressed="true"]{color:var(--muted)}
 
 /* ---------- touchdown ---------- */
-.td{position:fixed;inset:0;display:grid;place-items:center;background:rgba(6,15,20,.82);z-index:10;pointer-events:none}
-.td div{font-family:var(--display);font-weight:900;font-size:clamp(3.5rem,14vw,10rem);color:var(--led);text-transform:uppercase;text-align:center;line-height:.9;text-shadow:0 0 30px rgba(255,181,71,.5);animation:pop .9s ease both}
-.td div.t0{color:var(--red)} .td div.t1{color:var(--blue)}
+#td{position:fixed;inset:0;display:grid;place-items:center;background:rgba(6,15,20,.82);z-index:10;pointer-events:none}
+#td div{font-family:var(--display);font-weight:900;font-size:clamp(3.5rem,14vw,10rem);color:var(--led);text-transform:uppercase;text-align:center;line-height:.9;text-shadow:0 0 30px rgba(255,181,71,.5);animation:pop .9s ease both}
+#td div.t0{color:var(--red)} #td div.t1{color:var(--blue)}
 @keyframes pop{0%{transform:scale(.6);opacity:0}40%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
 
 /* ---------- player (phone) ---------- */
