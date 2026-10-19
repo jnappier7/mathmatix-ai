@@ -369,3 +369,53 @@ describe('screens', () => {
     expect(JSON.stringify(v)).not.toContain('"B"');
   });
 });
+
+describe('the lobby states the rules the server plays', () => {
+  // public/js/live-drill/common.js rulesHTML renders state.rules; these play real answers at the
+  // stated edges, so a change to speedGain/SACK that forgets the screens fails here.
+  function huddleGainAt(spp, ms, ok = true) {
+    const g = G.createGame({ hostId: `h-${spp}-${ms}-${ok}`, drill: 'geometry', playbook: 'all', mode: 'huddle', plays: 5, secondsPerPlay: spp });
+    const a = G.join(g, 'A').player;
+    G.start(g);
+    jest.advanceTimersByTime(ms);
+    const play = G.playAt(g, 1);
+    G.answer(g, a, 1, ok ? play.answer : wrongKey(play)); // the only screen, so the round closes
+    return G.playerView(g, a).round.mine.gain;
+  }
+
+  test('Team Drive: every speed tier pays what it says, right up to its edge', () => {
+    const g = drive();
+    const { rules } = G.hostView(g);
+    expect(rules.teamK).toBe(G.TEAM_K.drive);
+    expect(rules.noAnswer).toBeNull();
+    const a = G.join(g, 'A').player;
+    G.start(g);
+    let n = 0;
+    const at = (ms, ok = true) => { n++; G.currentPlay(g, a); jest.advanceTimersByTime(ms); const p = G.playAt(g, n); return G.answer(g, a, n, ok ? p.answer : wrongKey(p)).gain; };
+    const [fast, mid, slow] = rules.speed;
+    expect(at(fast.within * 1000)).toBe(fast.gain);
+    expect(at(fast.within * 1000 + 50)).toBe(mid.gain);
+    expect(at(mid.within * 1000)).toBe(mid.gain);
+    expect(at(mid.within * 1000 + 50)).toBe(slow.gain);
+    expect(at(1000, false)).toBe(-rules.sack);
+  });
+
+  test.each(G.SETTINGS.huddle.secondsPerPlay)('Huddle, %i s a play: the stated seconds never overpromise', (spp) => {
+    const g = huddle({ secondsPerPlay: spp });
+    const { rules } = G.hostView(g);
+    expect(rules.teamK).toBe(G.TEAM_K.huddle);
+    expect(rules.noAnswer).toBe(0);
+    const [fast, mid, slow] = rules.speed;
+    expect(huddleGainAt(spp, fast.within * 1000)).toBe(fast.gain);
+    expect(huddleGainAt(spp, mid.within * 1000)).toBe(mid.gain);
+    expect(huddleGainAt(spp, mid.within * 1000 + 1000)).toBe(slow.gain);
+    expect(huddleGainAt(spp, 1000, false)).toBe(-rules.sack);
+  });
+
+  test('students get the same rules as the projector', () => {
+    const g = huddle();
+    const { player } = G.join(g, 'A');
+    expect(G.playerView(g, player).rules).toEqual(G.hostView(g).rules);
+    expect(G.hostView(g).rules).toMatchObject({ tdPoints: 7, startPos: G.START_POS });
+  });
+});

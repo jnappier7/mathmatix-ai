@@ -3,9 +3,11 @@
 // Live Two-Minute Drill — the projector. Setup → lobby → live → final, all driven by the
 // game state the server pushes over SSE (routes/liveDrill.js /host/games/:code/stream).
 (function () {
-  const { $, esc, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns } = window.LiveDrill;
+  const { $, esc, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns, rulesHTML } = window.LiveDrill;
   const API = '/api/live-drill/host';
-  const SND = window.LiveDrillSound || { unlock() {}, whistle() {}, horn() {}, tick() {}, chime() {}, buzzer() {}, muted: true, setMuted() {} };
+  const noop = () => {};
+  const SND = window.LiveDrillSound || { unlock: noop, whistle: noop, horn: noop, tick: noop, chime: noop, buzzer: noop, cheer: noop, groan: noop,
+    setScene: noop, setHype: noop, setMuted: noop, setMusic: noop, setCrowd: noop, muted: true, musicOn: false, crowdOn: false };
   let lastTick = null; // the clock second last ticked, so each of the final five ticks once
 
   const S = { drills: [], settings: null, classes: [], drill: 'algebra', playbook: 'all', mode: 'drive', seconds: 120, plays: 10, spp: 20, classId: '' };
@@ -98,7 +100,7 @@
   $('g-end').onclick = () => { if (confirm('End the game now?')) action('/end')(); };
   $('h-next').onclick = action('/advance');
   $('l-cancel').onclick = async () => { await action('/end')(); reset(); show('setup'); };
-  function reset() { if (es) es.close(); es = null; game = null; seenFeed.clear(); $('l-code').textContent = '------'; $('l-qr').hidden = true; }
+  function reset() { SND.setScene('setup'); if (es) es.close(); es = null; game = null; seenFeed.clear(); $('l-code').textContent = '------'; $('l-qr').hidden = true; }
   $('f-again').onclick = () => { reset(); show('setup'); renderSetup(); };
   // Same code, same teams, same phones: everyone lands back in the lobby still seated.
   $('f-rematch').onclick = () => { seenFeed.clear(); $('final-err').textContent = ''; action('/rematch')(); };
@@ -110,17 +112,43 @@
   function renderSound() {
     $('snd').setAttribute('aria-pressed', SND.muted);
     $('snd').textContent = SND.muted ? '🔇 Muted' : '🔊 Sound';
+    $('mus').setAttribute('aria-pressed', SND.musicOn);
+    $('mus').textContent = `🎵 Music ${SND.musicOn ? 'on' : 'off'}`;
+    $('crowd').setAttribute('aria-pressed', SND.crowdOn);
+    $('crowd').textContent = `📣 Crowd ${SND.crowdOn ? 'on' : 'off'}`;
+    $('sndbar').classList.toggle('muted', SND.muted);
   }
   $('snd').onclick = () => { SND.setMuted(!SND.muted); renderSound(); };
+  $('mus').onclick = () => { SND.setMusic(!SND.musicOn); if (SND.musicOn && SND.muted) SND.setMuted(false); renderSound(); };
+  $('crowd').onclick = () => { SND.setCrowd(!SND.crowdOn); if (SND.crowdOn && SND.muted) SND.setMuted(false); renderSound(); };
   renderSound();
+
+  /** Which bed of sound the room is in: music and crowd levels follow it (sound.js mix()). */
+  function sceneOf(st) {
+    if (!st) return 'setup';
+    if (st.phase === 'lobby') return 'lobby';
+    if (st.phase === 'over') return 'final';
+    return st.mode === 'huddle' && st.round && st.round.closed ? 'reveal' : 'live';
+  }
+  /** The stands lean in as either ball crosses midfield: 0 at the 50, 1 at the goal line. */
+  const hypeOf = (st) => Math.max(0, ...st.teams.map((t) => (t.pos - 50) / 50));
 
   /** What the room should hear, from one state to the next. */
   function cue(prev, st) {
     if (!prev) return;
     if (prev.phase === 'lobby' && st.phase !== 'lobby' && st.phase !== 'over') SND.whistle();
     if (st.teams.some((t, i) => prev.teams[i] && t.pts > prev.teams[i].pts)) SND.horn();
-    if (st.mode === 'huddle' && prev.round && st.round && prev.round.n === st.round.n && !prev.round.closed && st.round.closed) SND.chime();
-    if (prev.phase !== 'over' && st.phase === 'over') SND.buzzer();
+    const scored = st.teams.some((t, i) => prev.teams[i] && t.pts > prev.teams[i].pts);
+    if (scored) SND.cheer(true);
+    if (st.mode === 'huddle' && prev.round && st.round && prev.round.n === st.round.n && !prev.round.closed && st.round.closed) {
+      SND.chime();
+      // the class's verdict on the play — a touchdown already got its cheer
+      const r = st.round;
+      const total = Object.values(r.counts || {}).reduce((a, b) => a + b, 0);
+      const pct = total ? (r.counts[r.answer] || 0) / total : 0;
+      if (total && !scored) { if (pct >= 0.6) SND.cheer(false); else if (pct < 0.4) SND.groan(); }
+    }
+    if (prev.phase !== 'over' && st.phase === 'over') { SND.buzzer(); setTimeout(() => SND.cheer(true), 900); }
   }
 
   // ---------------- render ----------------
@@ -129,6 +157,8 @@
     syncClock(st);
     const prev = game && game.code === st.code ? game : null;
     cue(prev, st);
+    SND.setScene(sceneOf(st));
+    SND.setHype(st.phase === 'live' ? hypeOf(st) : 0);
     if (prev && prev.phase !== 'lobby') watchTouchdowns(prev, st);
     game = st;
     if (st.phase === 'lobby') { show('lobby'); renderLobby(st); }
@@ -148,6 +178,8 @@
     $('l-class').hidden = !st.className;
     if (st.className) $('l-class').innerHTML = `<b>${esc(st.className)}</b>: your students also have a <b>Join</b> button on their Mathmatix chat screen.`;
     $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? `Team Drive, ${mmss(st.seconds * 1000)}` : `Huddle, ${st.totalPlays} plays`}`;
+    const rules = rulesHTML(st);
+    if ($('l-rules').dataset.html !== rules) { $('l-rules').innerHTML = rules; $('l-rules').dataset.html = rules; }
     $('l-count').textContent = `${st.players.length} player${st.players.length === 1 ? '' : 's'}${st.gameNumber > 1 ? ` · game ${st.gameNumber}` : ''}`;
     $('kick').disabled = st.players.length === 0;
     $('rosters').innerHTML = st.teams.map((t, i) => {

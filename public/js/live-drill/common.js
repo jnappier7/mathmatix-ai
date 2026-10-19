@@ -51,5 +51,27 @@
     next.teams.forEach((t, i) => { if (prev.teams[i] && t.pts > prev.teams[i].pts) touchdown({ idx: i, name: t.name }); });
   }
 
-  window.LiveDrill = { $, esc, buildField, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns };
+  /**
+   * "How scoring works", from the rules the server sends with every state (games.js rulesFor), so
+   * the lobby can't promise a different game than the one the server scores.
+   */
+  function rulesHTML(st) {
+    const r = st.rules;
+    if (!r) return '';
+    const s = (x) => `${x} s`;
+    const k = r.teamK === 2.5 ? '2½' : String(r.teamK);
+    const [fast, mid, slow] = r.speed;
+    const lead = st.mode === 'drive'
+      ? `<b>${mmss(st.seconds * 1000)}</b> on one clock — answer at your own pace.`
+      : `<b>${st.totalPlays} plays</b>, <b>${s(st.secondsPerPlay)}</b> each — everyone answers the same play.`;
+    return `<h3>How scoring works</h3><p class="lead">${lead}</p><div class="rgrid">`
+      + `<div class="rule"><span class="rk">Right answer</span><span class="rv"><b class="g">+${fast.gain}</b> yds in ${s(fast.within)} · <b class="g">+${mid.gain}</b> in ${s(mid.within)} · <b class="g">+${slow.gain}</b> after</span></div>`
+      + `<div class="rule"><span class="rk">Wrong answer</span><span class="rv"><b class="b">−${r.sack}</b> yds — a sack</span>${r.noAnswer === 0 ? '<span class="rv">No answer: 0, no gain, no loss</span>' : ''}</div>`
+      + `<div class="rule"><span class="rk">One ball per team</span><span class="rv">Every teammate's yards push one ball, scaled to ${k} players' worth — a bigger team gets no bigger push.</span></div>`
+      + `<div class="rule"><span class="rk">Touchdown</span><span class="rv"><b class="g">${r.tdPoints}</b> points; ball back to the ${r.startPos}.</span></div>`
+      + `<div class="rule"><span class="rk">Winner</span><span class="rv">Most points. Tied? Farther downfield.</span></div>`
+      + '</div>';
+  }
+
+  window.LiveDrill = { $, esc, buildField, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns, rulesHTML };
 })();

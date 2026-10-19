@@ -24,7 +24,7 @@ button:disabled{cursor:default}
 h1,h2,h3{margin:0;text-wrap:balance}
 .eyebrow{font-family:var(--display);font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--led);font-size:.95rem}
 .muted{color:var(--muted)}
-.wrap{max-width:1280px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:16px}
+.wrap{max-width:1280px;margin:0 auto;padding:16px 16px 60px;display:flex;flex-direction:column;gap:16px}
 .lbl{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.9rem;color:var(--muted);margin-bottom:6px;display:block}
 .panel{background:var(--board);border:1px solid var(--rail);border-radius:8px;padding:16px}
 .err{color:var(--miss);font-weight:700;min-height:1.4em}
@@ -67,13 +67,38 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .chip.away,.chipmenu.away{opacity:.5}
 .chip .acct{color:var(--hit);margin-left:4px;font-size:.85em}
 
+/* ---------- scoring rules (lobby, both screens) ---------- */
+.rules h3{margin:0 0 4px;font-family:var(--display);font-weight:900;font-size:1.5rem;text-transform:uppercase;letter-spacing:.06em;color:var(--led)}
+.rules .lead{margin:0 0 12px;color:var(--chalk)}
+.rgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.rule{display:flex;flex-direction:column;gap:4px;background:var(--night);border:1px solid var(--rail);border-radius:8px;padding:10px 12px}
+.rule .rk{font-family:var(--display);font-weight:800;font-size:1rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.rule .rv{color:var(--chalk);line-height:1.35}
+.rule b.g{color:var(--hit);font-size:1.25em}
+.rule b.b{color:var(--red);font-size:1.25em}
+.rules.compact{margin-top:14px}
+.rules.compact summary{cursor:pointer;font-family:var(--display);font-weight:800;font-size:1.1rem;text-transform:uppercase;letter-spacing:.06em;color:var(--led)}
+.rules.compact h3{display:none}
+.rules.compact .lead{margin-top:10px}
+.rules.compact .rgrid{grid-template-columns:1fr}
+/* projector lobby: the rules ride beside the rosters so the whole lobby fits one screen */
+.lobby-main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+.rules.side{padding:14px 16px}
+.rules.side .rgrid{grid-template-columns:1fr 1fr;gap:6px}
+.rules.side .rule:nth-child(-n+3){grid-column:1/-1}
+.rules.side .rule{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:0 10px;padding:6px 10px}
+.rules.side .rk{flex-basis:100%;font-size:.88rem}
+.rules.side .lead{margin-bottom:10px}
+@media (max-width:1100px){.lobby-main{grid-template-columns:1fr}.rules.side .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.rgrid,.rules.side .rgrid{grid-template-columns:1fr}}
+
 /* ---------- lobby (host) ---------- */
 .lobby{display:flex;flex-direction:column;gap:16px}
 .joinbox{background:#060f14;border:2px solid var(--rail);border-radius:10px;padding:18px 22px;display:flex;align-items:center;justify-content:center;gap:10px 40px;flex-wrap:wrap;text-align:center}
 .joinbox .how{display:flex;flex-direction:column;gap:4px}
 .joinbox .url{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,3.4vw,2.6rem);letter-spacing:.02em}
 .joinbox .url b{color:var(--led)}
-.joinbox .code{font-family:var(--display);font-weight:900;font-size:clamp(3.4rem,11vw,10rem);line-height:1;letter-spacing:.08em;color:var(--led);text-shadow:0 0 24px rgba(255,181,71,.35);font-variant-numeric:tabular-nums}
+.joinbox .code{font-family:var(--display);font-weight:900;font-size:clamp(3.4rem,10vw,8.5rem);line-height:1;letter-spacing:.08em;color:var(--led);text-shadow:0 0 24px rgba(255,181,71,.35);font-variant-numeric:tabular-nums}
 .rosters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .roster{border-radius:8px;padding:12px;border:2px solid var(--rail);background:var(--board);min-height:220px}
 .roster h3{font-family:var(--display);font-weight:900;font-size:1.8rem;text-transform:uppercase;letter-spacing:.04em;display:flex;justify-content:space-between;align-items:baseline}
@@ -259,8 +284,9 @@ table.twoway td:first-child{text-align:left}
 @media (max-width:640px){.pbp summary{grid-template-columns:2.4em minmax(0,1fr) 3.6em}.pbp .meter{display:none}}
 
 /* ---------- sound toggle (host) ---------- */
-.sndbtn{position:fixed;right:14px;bottom:14px;z-index:5;background:var(--board);color:var(--chalk);border:1px solid var(--rail);border-radius:999px;padding:6px 12px;font-size:.9rem}
-.sndbtn[aria-pressed="true"]{color:var(--muted)}
+.sndbar{position:fixed;right:14px;bottom:14px;z-index:5;display:flex;gap:6px}
+.sndbtn{background:var(--board);color:var(--chalk);border:1px solid var(--rail);border-radius:999px;padding:6px 12px;font-size:.9rem;cursor:pointer}
+#snd[aria-pressed="true"],#mus[aria-pressed="false"],#crowd[aria-pressed="false"],.sndbar.muted #mus,.sndbar.muted #crowd{color:var(--muted)}
 
 /* ---------- touchdown ---------- */
 #td{position:fixed;inset:0;display:grid;place-items:center;background:rgba(6,15,20,.82);z-index:10;pointer-events:none}
