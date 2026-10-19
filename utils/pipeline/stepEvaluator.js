@@ -186,12 +186,49 @@ async function evaluateLlmSidecar(step, conversation, options = {}) {
     ], { temperature: 0, max_tokens: 150 });
 
     const raw = completion.choices[0]?.message?.content?.trim() || '';
-    return parseEvalResponse(raw);
+    const verdict = parseEvalResponse(raw);
+    return applyTurnCap(verdict, step, messages, assistantTurnsSinceAdvance);
   } catch (err) {
     console.error('[StepEvaluator] LLM eval failed:', err.message);
     // On failure, don't block — use turn-count fallback
     return evaluateTurnCount(step, conversation, options);
   }
+}
+
+// A teaching step must not hold a student forever. The judge sees only the last
+// few exchanges, and the tutor nearly always ends on a fresh question — so it
+// usually sees an unanswered prompt and says "not_yet". Replaying a real stuck
+// session (Early Math, 2026-10-14) it said "understood" on exactly one turn and
+// never again; every stuck enrollment in prod sat on a step-0 explanation. Once
+// the student has engaged repeatedly, a step that only explains or models
+// completes on its own. Practice steps are untouched — they need verified
+// correct answers (evaluateDeterministic).
+const TEACHING_STEP_TURN_CAP = {
+  explanation: 5, 'concept-intro': 5,
+  model: 6, 'i-do': 6,
+  'check-in': 4, 'concept-check': 4,
+};
+const MIN_STUDENT_REPLIES_FOR_CAP = 2;
+
+function applyTurnCap(verdict, step, messages, assistantTurnsSinceAdvance) {
+  if (verdict.complete) return verdict;
+  const stepType = step.type || step.lessonPhase || '';
+  const cap = (step.completion && step.completion.turn_cap) || TEACHING_STEP_TURN_CAP[stepType] || 6;
+  let studentReplies = 0;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].scaffoldAdvanced) break;
+    if (messages[i].role === 'user' && String(messages[i].content || '').trim().length > 0) studentReplies++;
+  }
+  if (assistantTurnsSinceAdvance >= cap && studentReplies >= MIN_STUDENT_REPLIES_FOR_CAP) {
+    return {
+      ...verdict,
+      complete: true,
+      mode: 'llm_eval_cap',
+      confidence: 0.6,
+      evidence: `Judge said "${verdict.status || 'not_yet'}", but ${assistantTurnsSinceAdvance} tutor turns and ${studentReplies} student replies on this step reached the cap (${cap})`,
+    };
+  }
+  return verdict;
 }
 
 /**
@@ -314,7 +351,11 @@ Respond with ONLY this JSON (no other text):
 function parseEvalResponse(raw) {
   try {
     // Handle potential markdown code blocks
-    const cleaned = raw.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    const cleaned = raw.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim()
+      // The evidence sentence often quotes LaTeX ("\( 2 \)"). A backslash
+      // before anything but a JSON escape is illegal JSON, and a valid verdict
+      // was dropped as a parse error — escape stray backslashes first.
+      .replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
     const parsed = JSON.parse(cleaned);
 
     const status = parsed.status || 'not_yet';
@@ -385,6 +426,8 @@ module.exports = {
   extractRecentExchanges,
   buildEvalPrompt,
   parseEvalResponse,
+  applyTurnCap,
+  TEACHING_STEP_TURN_CAP,
   MIN_CORRECT_FOR_ADVANCE,
   MIN_TURNS_BEFORE_EVAL,
 };

@@ -2152,6 +2152,26 @@ async function runStudentTurn(req, res) {
                         }
                         lessonProgressUpdate = progression.progressUpdate || null;
                         if (csDoc.isModified()) await csDoc.save();
+
+                        // Persist the advance marker. processScaffoldAdvance stamps
+                        // `scaffoldAdvanced` on the in-memory last message, but the
+                        // pipeline saved this conversation BEFORE progression runs
+                        // and nothing saved it after — so the marker was lost on
+                        // every advance (no stored message has ever carried it).
+                        // Every "since the last advance" window in the evaluator
+                        // then spanned the whole conversation: the practice gate
+                        // counted every correct answer ever, and teaching steps'
+                        // turn counts never reset (course audit, 2026-10-18).
+                        const advEvent = progression.courseProgressUpdate && progression.courseProgressUpdate.event;
+                        if (advEvent === 'scaffold_advance' || advEvent === 'module_complete') {
+                            const lastMsg = activeConversation.messages[activeConversation.messages.length - 1];
+                            if (lastMsg && lastMsg._id) {
+                                await Conversation.updateOne(
+                                    { _id: activeConversation._id, 'messages._id': lastMsg._id },
+                                    { $set: { 'messages.$.scaffoldAdvanced': true } }
+                                );
+                            }
+                        }
                     }
                 }
             } catch (courseErr) {
