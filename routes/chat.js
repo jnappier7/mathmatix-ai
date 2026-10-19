@@ -1315,6 +1315,12 @@ async function runStudentTurn(req, res) {
         // course turns HERE (not /api/course-chat), so this is what tells the
         // pipeline the lesson — not the student — is choosing the topic.
         let courseModeActive = false;
+        // A student asking to move on / test out (utils/courseMoveOn). Acted on
+        // BEFORE the course prompt is built, so the tutor's reply this turn
+        // already starts the next step or offers the test-out.
+        let courseMoveOnNote = null;
+        let courseTestOutOffer = null;
+        let courseProgressFromMoveOn = null;
         // The course module's skill for THIS step. Without it the pipeline
         // attributes BKT/FSRS evidence to tutorPlan.currentTarget — i.e. course
         // practice credited whatever free chat was last focused on.
@@ -1325,6 +1331,49 @@ async function runStudentTurn(req, res) {
             const courseSessionDoc = await require('../models/courseSession').findById(user.activeCourseSessionId);
             const courseCtx = courseSessionDoc ? loadCourseContext(courseSessionDoc) : null;
             if (courseCtx) {
+                // ── "Move on" / "I already know this" (owner decision 2026-10-18) ──
+                // Students asked both, again and again, and nothing in the course
+                // heard them (course audit, 2026-10-18).
+                try {
+                    const moveOn = require('../utils/courseMoveOn');
+                    const request = moveOn.classifyCourseRequest(message);
+                    const onCheckpoint = moveOn.isCheckpointModule(courseCtx.currentModule, courseCtx.scaffoldData);
+                    if (request && !onCheckpoint) {
+                        const scaffold = courseCtx.scaffoldData?.scaffold || [];
+                        const idx = courseSessionDoc.currentScaffoldIndex || 0;
+                        const step = scaffold[idx];
+                        if (request === 'test_out') {
+                            const pw = moveOn.readPathway(courseSessionDoc.courseId);
+                            const ck = pw && moveOn.findUnitCheckpoint(pw, courseSessionDoc.currentModuleId);
+                            if (ck) {
+                                courseTestOutOffer = { courseSessionId: String(courseSessionDoc._id), moduleId: ck.moduleId, title: ck.title };
+                                courseMoveOnNote = `THE STUDENT SAYS THEY ALREADY KNOW THIS. Offer them the unit checkpoint ("${ck.title}") as a test-out — a button to start it appears under your message. Say it in one or two sentences: pass it and the unit counts as done; if not, they come right back here and nothing is lost. Do NOT quiz them yourself and do NOT start teaching something else.`;
+                            }
+                        } else if (request === 'skip' && step) {
+                            if (moveOn.isPracticeStep(step)) {
+                                courseMoveOnNote = 'THE STUDENT ASKED TO MOVE ON, but this is a practice step: two correct answers move it on. Say that in one short sentence, then give the next practice problem. If they think they already know the whole unit, mention they can say "test me" to take the unit checkpoint.';
+                            } else if (idx < scaffold.length - 1) {
+                                const { processScaffoldAdvance } = require('../utils/pipeline/coursePersist');
+                                const advanced = processScaffoldAdvance(courseSessionDoc, courseCtx.scaffoldData, activeConversation, null, {});
+                                if (advanced) {
+                                    await courseSessionDoc.save();
+                                    const lastMsg = activeConversation.messages[activeConversation.messages.length - 1];
+                                    if (lastMsg && lastMsg._id) {
+                                        await Conversation.updateOne(
+                                            { _id: activeConversation._id, 'messages._id': lastMsg._id },
+                                            { $set: { 'messages.$.scaffoldAdvanced': true } }
+                                        );
+                                    }
+                                    courseProgressFromMoveOn = advanced;
+                                    courseMoveOnNote = 'THE STUDENT ASKED TO MOVE ON, so the lesson has moved to the step shown above. Start that step now in one short, friendly line — do NOT go back to the previous step and do NOT ask whether they are sure.';
+                                }
+                            }
+                        }
+                    }
+                } catch (moveOnErr) {
+                    logger.warn('Course move-on handling failed (non-fatal)', { error: moveOnErr.message });
+                }
+
                 courseModeActive = true;
                 systemPrompt = buildCourseSystemPrompt({
                     userProfile: studentProfileForPrompt,
@@ -1335,6 +1384,9 @@ async function runStudentTurn(req, res) {
                     currentModule: courseCtx.currentModule,
                     resourceContext
                 });
+                if (courseMoveOnNote) {
+                    systemPrompt += `\n\n====================================================================\nTHIS TURN\n====================================================================\n${courseMoveOnNote}`;
+                }
                 // Capture scaffold info for recency-boosted reminder
                 const scaffold = courseCtx.scaffoldData?.scaffold || [];
                 if (scaffold.length > 1) {
@@ -1827,6 +1879,9 @@ async function runStudentTurn(req, res) {
                 // the free-tutoring plan layer and flips the student's-lead
                 // guard from "ask what they want" to "launch the module step".
                 isCourseMode: courseModeActive,
+                // The course is offering its own unit test-out this turn, so the
+                // pipeline must not ALSO launch a single-skill challenge card.
+                courseTestOutOffered: !!courseTestOutOffer,
                 // Evidence gate: a practice step may only advance on demonstrated
                 // work, not on the model's say-so alone (utils/pipeline/stepEvaluator).
                 courseStep: courseScaffoldCtx?.step || null,
@@ -2252,9 +2307,18 @@ async function runStudentTurn(req, res) {
             coinsAwarded: pipelineResult.coinsAwarded || 0,
             aiTimeUsed: pipelineResult.aiTimeUsed,
             freeWeeklySecondsRemaining: pipelineResult.freeWeeklySecondsRemaining,
-            courseProgress: courseProgressUpdate || null,
+            courseProgress: courseProgressUpdate || courseProgressFromMoveOn || null,
             progressUpdate: lessonProgressUpdate || null,
             actBootcamp: actBootcampState,
+            // Unit test-out offered this turn (utils/courseMoveOn): a button under
+            // the tutor's reply that starts the unit checkpoint.
+            inlineCta: courseTestOutOffer ? {
+                type: 'launch-unit-test-out',
+                label: `Take the ${courseTestOutOffer.title}`,
+                emoji: '🎯',
+                courseSessionId: courseTestOutOffer.courseSessionId,
+                title: courseTestOutOffer.title,
+            } : undefined,
             suggestions: pipelineResult.suggestions || null,
             gamification: pipelineResult.gamification || null,
             nextActions: pipelineResult.nextActions || [],

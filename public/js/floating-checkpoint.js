@@ -502,9 +502,15 @@ class FloatingCheckpoint {
       this.close();
 
       if (window.showNotification) {
-        const msg = data.summary?.passed
-          ? `Checkpoint complete! Score: ${data.summary.scorePercent}%. Moving to next module.`
-          : `Checkpoint complete. Score: ${data.summary.scorePercent}%. Some areas need review.`;
+        // A test-out (utils/courseMoveOn) reads differently: passing credits
+        // the unit; missing returns the student to where they were.
+        const msg = data.testOut
+          ? (data.testOut.passed
+            ? `You tested out of this unit! Score: ${data.summary.scorePercent}%. On to the next one.`
+            : `Score: ${data.summary.scorePercent}%. Not quite a test-out — you're back where you left off, nothing lost.`)
+          : data.summary?.passed
+            ? `Checkpoint complete! Score: ${data.summary.scorePercent}%. Moving to next module.`
+            : `Checkpoint complete. Score: ${data.summary.scorePercent}%. Some areas need review.`;
         window.showNotification(msg, data.summary?.passed ? 'success' : 'info');
       }
 

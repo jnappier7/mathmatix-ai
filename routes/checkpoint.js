@@ -268,6 +268,17 @@ router.post('/complete', async (req, res) => {
     const moduleData = loadModuleData(courseSession);
     const summary = buildSummary(courseSession.checkpointState, moduleData);
 
+    // A checkpoint taken as a TEST-OUT (utils/courseMoveOn). Passed: the
+    // lessons it skipped are credited and it completes as usual below.
+    // Missed: the student goes back exactly where they were, and the
+    // checkpoint stays ahead of them — a test-out never costs progress.
+    const { settleTestOut } = require('../utils/courseMoveOn');
+    const testOut = settleTestOut(courseSession, summary.passed);
+    if (testOut.testOut && !testOut.passed) {
+      await courseSession.save();
+      return res.json({ success: true, summary, testOut, nextModuleId: courseSession.currentModuleId });
+    }
+
     // Update module progress with score
     const mod = (courseSession.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
     if (mod) {
@@ -304,6 +315,7 @@ router.post('/complete', async (req, res) => {
     res.json({
       success: true,
       summary,
+      testOut: testOut.testOut ? testOut : undefined,
       nextModuleId: courseSession.currentModuleId,
     });
   } catch (err) {

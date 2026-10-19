@@ -456,7 +456,9 @@ async function runPipeline(message, ctx) {
   // so ambient practice and a test-out both have a real road to 100%.
   let launchChallenge = null;
   let testOutIntentDetected = false;
-  if (detectTestOutIntent(message)) {
+  // In a course, "test me" is answered by the unit checkpoint (routes/chat.js
+  // → utils/courseMoveOn) — never also by a single-skill challenge card.
+  if (detectTestOutIntent(message) && !ctx.courseTestOutOffered) {
     testOutIntentDetected = true;
     // The catalog lets a NAMED skill resolve ("a challenge on systems by
     // substitution" → ALG1.EQV.7) instead of falling through to whatever the
