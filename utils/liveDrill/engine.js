@@ -149,7 +149,26 @@ function normalize(drill, it) {
     answerHtml: ansHtml,
     tell,
     revealCard: cardHTML(bank, it, true),
+    summary: summaryOf(it, isDo),
   };
+}
+
+/**
+ * One line for the end-of-game play-by-play: the posed problem, or the statement whose reason was
+ * asked. Template HTML (fractions, ∠) — rendered, never escaped. Figures and tables can't live in a
+ * one-line row, so they come out; a problem that WAS its figure ("find the area" of a drawn
+ * rectangle) falls back to its instruction.
+ */
+function summaryOf(it, isDo) {
+  // The question leads, muted, so "99, 96, 93" reads as "…find the fourth: 99, 96, 93".
+  if (!isDo) return `<span class="pa">Reason for</span> ${it.stmt}`;
+  const text = String(it.prompt || '')
+    .replace(/<svg[\s\S]*?<\/svg>/gi, '')
+    .replace(/<table[\s\S]*?<\/table>/gi, '')
+    .replace(/<div class="figq">\s*<\/div>/gi, '');
+  return text.replace(/<[^>]*>/g, '').trim()
+    ? `<span class="pa">${it.ask}</span> ${text}`
+    : `<span class="pa solo">${it.ask}</span>`;
 }
 
 /**

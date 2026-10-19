@@ -64,6 +64,21 @@ describe('live drill engine', () => {
     expect(fig.length).toBeGreaterThan(0);
   });
 
+  test.each(Object.keys(DRILLS))('%s: every play has a one-line summary with text and no figure', (id) => {
+    for (let n = 1; n <= 400; n++) {
+      const { summary } = dealPlay(id, 'all', 'sum', n, []);
+      expect(String(summary).replace(/<[^>]*>/g, '').trim()).not.toBe('');
+      expect(summary).not.toMatch(/<svg|<table/);
+    }
+  });
+
+  test('a problem that IS its figure ("find the hypotenuse" of a drawn triangle) is summarized by its question', () => {
+    const plays = Array.from({ length: 80 }, (_, i) => dealPlay('algebra', 'geo', 'fig', i + 1, []));
+    const figureOnly = plays.filter((p) => /pa solo/.test(p.summary));
+    expect(figureOnly.length).toBeGreaterThan(0);
+    for (const p of figureOnly) expect(p.card).toMatch(/<svg/); // the figure is still on the full card
+  });
+
   test('a page without the app marker fails loudly, not silently', () => {
     expect(() => _extractBank('<script>const T = [];</script>')).toThrow(/item bank/);
   });

@@ -147,6 +147,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
     round: null, // huddle: { n, openedAt, closesAt, answers: Map(playerId → result), closed }
     feed: [],
     misses: new Map(), // template id → { id, count, n, picks: Map(k → count) }
+    playStats: new Map(), // play n → { att, right, picks: Map(k → count) } — the play-by-play
     timers: new Set(),
     listeners: new Set(),
     version: 0,
@@ -301,6 +302,11 @@ function pushFeed(game, item) {
 function applyAnswer(game, player, play, n, k, ms, windowMs) {
   const ok = k === play.answer;
   player.att++;
+  let ps = game.playStats.get(n);
+  if (!ps) { ps = { att: 0, right: 0, picks: new Map() }; game.playStats.set(n, ps); }
+  ps.att++;
+  if (ok) ps.right++;
+  else ps.picks.set(k, (ps.picks.get(k) || 0) + 1);
   let gain;
   if (ok) {
     player.comp++; player.streak++; player.best = Math.max(player.best, player.streak);
@@ -472,7 +478,7 @@ function rematch(game) {
   for (const p of game.players.values()) {
     Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, n: 1, issuedAt: null, misses: [] });
   }
-  Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map() });
+  Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map(), playStats: new Map() });
   game.games = (game.games || 1) + 1;
   touch(game);
 }
@@ -529,6 +535,25 @@ function roundView(game, forHost) {
   return v;
 }
 
+/**
+ * Every play anyone answered, in order: how many tried it, how many got it, and the wrong pick the
+ * class reached for most. Huddle: every student saw every play. Drive: each student ran the deck at
+ * their own pace, so the early plays have the most attempts and the late ones only the fast few.
+ */
+function playByPlay(game) {
+  return [...game.playStats.entries()].sort((a, b) => a[0] - b[0]).map(([n, s]) => {
+    const play = playAt(game, n);
+    const label = (k) => (play.choices.find((c) => c.k === k) || {}).html || k;
+    const top = [...s.picks.entries()].sort((a, b) => b[1] - a[1])[0];
+    return {
+      n, att: s.att, right: s.right, pct: s.att ? Math.round((100 * s.right) / s.att) : 0,
+      playbookName: play.playbookName, head: play.head, summary: play.summary,
+      answerHtml: play.answerHtml, tell: play.tell, card: play.revealCard,
+      commonWrong: top ? { html: label(top[0]), count: top[1] } : null,
+    };
+  });
+}
+
 /** The class film room: most-missed plays, each with one example and how the misses split. */
 function filmRoom(game, limit = 3) {
   return [...game.misses.values()]
@@ -555,7 +580,7 @@ function hostView(game) {
       .map((p) => ({ name: p.name, yards: p.yards, comp: p.comp, att: p.att })));
     const att = players.reduce((s, p) => s + p.att, 0);
     const comp = players.reduce((s, p) => s + p.comp, 0);
-    v.final = { mvps, film: filmRoom(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
+    v.final = { mvps, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
   }
   return v;
 }

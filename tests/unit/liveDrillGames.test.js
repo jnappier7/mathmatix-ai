@@ -319,6 +319,46 @@ describe('run it back', () => {
   });
 });
 
+describe('play by play (the final screen)', () => {
+  test('huddle: every play, in order, with right counts and the wrong pick the class reached for', () => {
+    const g = huddle({ plays: 5 });
+    const a = G.join(g, 'A').player, b = G.join(g, 'B').player, c = G.join(g, 'C').player;
+    G.start(g);
+    const p1 = G.playAt(g, 1);
+    const wrong = p1.choices.find((x) => x.k !== p1.answer);
+    G.answer(g, a, 1, p1.answer);
+    G.answer(g, b, 1, wrong.k);
+    G.answer(g, c, 1, wrong.k);
+    G.advance(g); // next play
+    G.answer(g, a, 2, G.playAt(g, 2).answer);
+    G.endGame(g); // play 2 closes with one answer
+    const plays = G.hostView(g).final.plays;
+    expect(plays.map((x) => x.n)).toEqual([1, 2]);
+    expect(plays[0]).toMatchObject({ att: 3, right: 1, pct: 33, commonWrong: { html: wrong.html, count: 2 } });
+    expect(plays[0].summary).toBeTruthy();
+    expect(plays[1]).toMatchObject({ att: 1, right: 1, pct: 100, commonWrong: null });
+  });
+
+  test('drive: plays nobody reached are not listed, and run it back clears the table', () => {
+    const g = drive();
+    const a = G.join(g, 'A').player;
+    G.start(g);
+    for (let n = 1; n <= 3; n++) { G.currentPlay(g, a); G.answer(g, a, n, G.playAt(g, n).answer); }
+    G.endGame(g);
+    expect(G.hostView(g).final.plays.map((x) => x.n)).toEqual([1, 2, 3]);
+    G.rematch(g);
+    G.endGame(g);
+    expect(G.hostView(g).final.plays).toEqual([]);
+  });
+
+  test('an open play\'s summary never reaches a student', () => {
+    const g = huddle();
+    const a = G.join(g, 'A').player;
+    G.start(g);
+    expect(JSON.stringify(G.playerView(g, a))).not.toContain('"summary"');
+  });
+});
+
 describe('screens', () => {
   test('a student’s view has their own numbers and nobody else’s', () => {
     const g = drive();
