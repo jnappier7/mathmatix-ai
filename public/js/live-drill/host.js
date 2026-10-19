@@ -225,10 +225,10 @@
         const id = `${f.at}|${f.type}|${f.who || ''}`;
         const team = (f.team != null ? ` t${f.team}` : '') + (seenFeed.has(id) ? '' : ' new');
         seenFeed.add(id);
-        if (f.type === 'td') return `<span class="it td${team.includes('new') ? ' new' : ''}">${esc(f.text)}${f.who ? ` · ${esc(f.who)}` : ''}</span>`;
+        if (f.type === 'td') return `<span class="it ev${team.includes('new') ? ' new' : ''}">${esc(f.text)}${f.who ? ` · ${esc(f.who)}` : ''}</span>`;
         if (f.type === 'big') return `<span class="it${team}">${esc(f.who)} +${f.gain}</span>`;
         if (f.type === 'sack') return `<span class="it${team}">${esc(f.who)} sacked</span>`;
-        if (f.type === 'kickoff') return `<span class="it td${team.includes('new') ? ' new' : ''}">KICKOFF</span>`;
+        if (f.type === 'kickoff') return `<span class="it ev${team.includes('new') ? ' new' : ''}">KICKOFF</span>`;
         return '';
       }).join('') || '<span class="muted">The play-by-play shows up here.</span>';
       return;
