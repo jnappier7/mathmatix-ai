@@ -32,6 +32,9 @@ const moduleProgressSchema = new Schema({
   completedAt: { type: Date },
   checkpointScore: { type: Number },
   checkpointPassed: { type: Boolean, default: false },
+  // Completed by passing the unit checkpoint as a test-out, not by working the
+  // lesson (utils/courseMoveOn — owner decision 2026-10-18).
+  testedOut: { type: Boolean, default: false },
   scaffoldProgress: { type: Number, default: 0, min: 0, max: 100 },
   // Share of the real exam this module represents (ACT reporting-category
   // percentage). Drives score-weighted progress in test-prep courses; null in

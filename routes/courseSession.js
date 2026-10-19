@@ -716,6 +716,31 @@ router.post('/:id/bootcamp/advance', async (req, res) => {
 });
 
 /* ============================================================
+   POST /api/course-sessions/:id/test-out
+   Point the session at the current unit's checkpoint so the student can test
+   out of the unit; the checkpoint panel then runs it (/api/checkpoint/start).
+   A miss returns them exactly where they were (see checkpoint /complete).
+   ============================================================ */
+router.post('/:id/test-out', async (req, res) => {
+  try {
+    const session = await CourseSession.findOne({ _id: req.params.id, userId: req.user._id, status: 'active' });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Course session not found' });
+    }
+    const { beginTestOut } = require('../utils/courseMoveOn');
+    const ck = beginTestOut(session);
+    if (!ck) {
+      return res.status(409).json({ success: false, message: 'This unit has no checkpoint to test out with' });
+    }
+    await session.save();
+    res.json({ success: true, moduleId: ck.moduleId, title: ck.title });
+  } catch (err) {
+    console.error('[CourseSession] Error starting test-out:', err);
+    res.status(500).json({ success: false, message: 'Failed to start test-out' });
+  }
+});
+
+/* ============================================================
    POST /api/course-sessions/:id/complete-module
    Mark a module as completed, unlock next, award XP
    ============================================================ */

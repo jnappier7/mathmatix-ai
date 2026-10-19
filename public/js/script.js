@@ -1257,6 +1257,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
                 break;
+            case 'launch-unit-test-out':
+                // Course test-out (utils/courseMoveOn): point the session at the
+                // unit checkpoint, then run it in the checkpoint panel. A miss
+                // returns the student exactly where they were.
+                if (cta.courseSessionId && window.floatingCheckpoint) {
+                    window.csrfFetch(`/api/course-sessions/${encodeURIComponent(cta.courseSessionId)}/test-out`, { method: 'POST' })
+                        .then(r => r.json())
+                        .then(d => {
+                            if (!d || !d.success) throw new Error((d && d.message) || 'test-out unavailable');
+                            return window.floatingCheckpoint.open({ title: d.title || cta.title });
+                        })
+                        .catch(err => {
+                            console.error('[InlineCta] test-out failed', err);
+                            if (typeof showToast === 'function') showToast('Could not start the unit checkpoint — try again in a moment.', 4000);
+                        });
+                }
+                break;
             case 'start-review-warmup':
                 if (window.floatingReview) {
                     Promise.resolve(window.floatingReview.open())
