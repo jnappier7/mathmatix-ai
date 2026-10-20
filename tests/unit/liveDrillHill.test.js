@@ -5,8 +5,9 @@
  *   - a boulder only ever lands on the climber DIRECTLY ABOVE the thrower: never below, never a
  *     student of the thrower's choosing;
  *   - a climber who was just knocked down is steady for a few seconds: the next boulder skips them;
- *   - the king's third in a row raises a shield, and a shield stops one boulder;
- *   - right answers climb by the drill's speed tiers, wrong ones slip; the summit caps the climb;
+ *   - the king's ninth in a row raises a shield, and a shield stops one boulder;
+ *   - right answers climb by the drill's speed tiers (half that for the king — the crown is heavy),
+ *     wrong ones slip; the summit caps the climb; a boulder takes more the higher you are;
  *   - the crown follows the highest climber, the reign clock adds up, the final ranks by height.
  */
 jest.useFakeTimers();
@@ -34,12 +35,22 @@ describe('climbing', () => {
     const g = hillGame();
     const a = G.join(g, 'A').player;
     G.start(g);
-    expect(go(g, a, true, 1000).hill.h).toBe(6);
-    expect(go(g, a, true, 4000).hill.h).toBe(10);
-    expect(go(g, a, false).hill.h).toBe(8);
+    expect(go(g, a, true, 1000).hill.h).toBe(6); // now the king (alone on the hill)…
+    expect(go(g, a, true, 4000).hill.h).toBe(8); // …so +4 climbs +2
+    expect(go(g, a, false).hill.h).toBe(6); // a slip is a full slip
     at(a, 98);
     expect(go(g, a, true).hill.h).toBe(H.SUMMIT);
     expect(g.teams.every((t) => t.pts === 0 && t.pos === G.START_POS)).toBe(true); // no football here
+  });
+
+  test('the crown is heavy: the king climbs at half speed, a challenger at full', () => {
+    const g = hillGame();
+    const [k, c] = ['King', 'Chaser'].map((n) => G.join(g, n).player);
+    G.start(g);
+    at(k, 50); go(g, k); // crowned at 56 (climbed before the crown)
+    expect(go(g, k).hill.step).toBe(3);
+    expect(go(g, c).hill.step).toBe(6);
+    expect(G.hostView(g).rules.hill.kingStepPct).toBe(50);
   });
 
   test('a slip never goes below the base', () => {
@@ -60,7 +71,8 @@ describe('boulders (the fairness rules)', () => {
     expect(mid.h).toBe(50); // two in a row: nothing yet
     const r = go(g, me);
     expect(r.hill.threw).toEqual({ name: 'Mid', blocked: false });
-    expect(mid.h).toBe(50 - H.KNOCK);
+    expect(mid.h).toBeCloseTo(50 - H.knockAt(50));
+    expect(r.hill.fall).toBeCloseTo(17.5);
     expect(k.h).toBe(80);
     expect(low.h).toBe(5);
     expect(g.feed[0]).toMatchObject({ type: 'knock', who: 'Me', target: 'Mid' });
@@ -74,7 +86,25 @@ describe('boulders (the fairness rules)', () => {
     go(g, me); go(g, me); // me at 12
     go(g, me); // climbs to 18, now above B — so the boulder goes to A
     expect(b.h).toBe(16);
-    expect(a.h).toBe(40 - H.KNOCK);
+    expect(a.h).toBeCloseTo(40 - H.knockAt(40));
+  });
+
+  test('a tie is not "above": nobody is knocked down from the same height (or from the base)', () => {
+    const g = hillGame();
+    const [other, me] = ['Other', 'Me'].map((n) => G.join(g, n).player);
+    G.start(g);
+    at(other, 18); // got there first, so ranks ahead of a tie
+    go(g, me); go(g, me);
+    const r = go(g, me); // me at 18, level with Other
+    expect(r.hill.threw).toBeNull();
+    expect(other.h).toBe(18);
+    expect(other.taken).toBe(0);
+  });
+
+  test('a boulder takes more the higher you are', () => {
+    expect(H.knockAt(0)).toBeCloseTo(10);
+    expect(H.knockAt(50)).toBeCloseTo(17.5);
+    expect(H.knockAt(100)).toBeCloseTo(25);
   });
 
   test('a climber who was just knocked is steady: the next boulder skips to the next one up', () => {
@@ -85,7 +115,7 @@ describe('boulders (the fairness rules)', () => {
     mid.steadyUntil = Date.now() + 60000;
     go(g, me); go(g, me); go(g, me);
     expect(mid.h).toBe(60);
-    expect(top.h).toBe(90 - H.KNOCK);
+    expect(top.h).toBeCloseTo(90 - H.knockAt(90));
   });
 
   test('steady wears off after a few seconds', () => {
@@ -96,36 +126,34 @@ describe('boulders (the fairness rules)', () => {
     mid.steadyUntil = Date.now() + H.STEADY_MS;
     jest.advanceTimersByTime(H.STEADY_MS);
     go(g, me); go(g, me); go(g, me);
-    expect(mid.h).toBe(60 - H.KNOCK);
+    expect(mid.h).toBeCloseTo(60 - H.knockAt(60));
   });
 
-  test('the king\'s third in a row raises a shield, and the shield stops one boulder', () => {
+  test('the king\'s ninth in a row raises a shield (not the third), and the shield stops one boulder', () => {
     const g = hillGame();
     const [k, me] = ['King', 'Me'].map((n) => G.join(g, n).player);
     G.start(g);
-    at(k, 70); at(me, 10);
-    go(g, k); go(g, k);
-    expect(go(g, k).hill.shield).toBe(true);
+    at(k, 40); at(me, 10);
+    const raised = Array.from({ length: 9 }, () => go(g, k).hill.shield);
+    expect(raised).toEqual([false, false, false, false, false, false, false, false, true]);
     expect(k.shield).toBe(true);
+    const before = k.h;
     const r = (go(g, me), go(g, me), go(g, me));
     expect(r.hill.threw).toEqual({ name: 'King', blocked: true });
     expect(k.shield).toBe(false);
-    expect(k.h).toBe(88); // untouched
+    expect(k.h).toBe(before); // untouched
     go(g, me); go(g, me); go(g, me); // the next one lands
-    expect(k.h).toBe(88 - H.KNOCK);
+    expect(k.h).toBeCloseTo(before - H.knockAt(before));
   });
 
   test('a knockdown never takes anyone below the base', () => {
     const g = hillGame();
     const [mid, me] = ['Mid', 'Me'].map((n) => G.join(g, n).player);
     G.start(g);
-    at(mid, 20); at(me, 0);
-    go(g, me); go(g, me); go(g, me); // me 18, mid 20 → 5
-    expect(mid.h).toBe(5);
+    at(mid, 8); at(me, 0);
+    go(g, me, true, 9000); go(g, me, true, 9000); go(g, me, true, 9000); // slow +2s: me 6, mid 8 − 11.2 → 0
+    expect(mid.h).toBe(0);
     expect(mid.steadyUntil).toBeGreaterThan(Date.now()); // and now steady
-    mid.steadyUntil = 0; at(mid, 30); at(me, 0); me.streak = 0;
-    go(g, me); go(g, me); go(g, me);
-    expect(mid.h).toBe(15);
   });
 });
 
@@ -159,7 +187,8 @@ describe('the crown and the final', () => {
 
   test('the lobby rules describe the hill', () => {
     const g = hillGame();
-    expect(G.hostView(g).rules.hill).toEqual({ summit: 100, knock: H.KNOCK, boulderEvery: 3, steadySec: H.STEADY_MS / 1000 });
+    expect(G.hostView(g).rules.hill).toEqual({ summit: 100, knockMin: 10, knockMax: 25, boulderEvery: 3, shieldEvery: 9,
+      steadySec: H.STEADY_MS / 1000, kingStepPct: 50 });
     expect(G.hostView(g).rules).toMatchObject({ sack: 2, speed: [{ gain: 6 }, { gain: 4 }, { gain: 2 }] });
   });
 

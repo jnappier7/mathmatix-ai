@@ -176,8 +176,10 @@
       // what happened on the hill since the last state: boulders rumble, a new king gets the horn
       const since = Math.max(0, ...(prev.feed || []).map((f) => f.at));
       const fresh = (st.feed || []).filter((f) => f.at > since);
-      if (fresh.some((f) => f.type === 'knock')) SND.rumble();
-      if (fresh.some((f) => f.type === 'crown') && st.phase === 'live') { SND.horn(); SND.cheer(false); }
+      // Rate-limited: a contested summit trades the crown every few seconds, and a horn each time is noise.
+      const t = Date.now();
+      if (fresh.some((f) => f.type === 'knock') && t - (cue.rumbleAt || 0) > 1500) { cue.rumbleAt = t; SND.rumble(); }
+      if (fresh.some((f) => f.type === 'crown') && st.phase === 'live' && t - (cue.crownAt || 0) > 10000) { cue.crownAt = t; SND.horn(); SND.cheer(false); }
     }
     if (prev.phase === 'lobby' && st.phase !== 'lobby' && st.phase !== 'over') SND.whistle();
     if (st.teams.some((t, i) => prev.teams[i] && t.pts > prev.teams[i].pts)) SND.horn();

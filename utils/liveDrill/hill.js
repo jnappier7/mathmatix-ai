@@ -12,17 +12,31 @@
  *     the one knocked. (Owner's call, 2026-10-20.)
  *   - A climber who was just knocked down is steady for STEADY_MS: a boulder skips them and hits
  *     the next climber up, so two classmates in a row can't pin one student to the floor.
- *   - The king has nobody above. A king's third in a row raises a SHIELD instead, which stops the
- *     next boulder that reaches them.
+ *   - The king has nobody above. The crown is heavy (the king climbs at half speed), and a king's
+ *     ninth in a row raises a SHIELD, which stops the next boulder that reaches them. Boulders take
+ *     more the higher you are. Numbers and the playtest behind them: TUNE below.
  *
  * State lives on the game (`game.hill`) and on each player (`h`, `shield`, …); games.js calls in
  * here from the same answer path Team Drive uses.
  */
 
 const SUMMIT = 100;
-const KNOCK = 15;
 const BOULDER_EVERY = 3;
 const STEADY_MS = 4000;
+// The balance knobs, set by playtest (2026-10-20: a 12-student class at human speed, then 200
+// simulated games per setting). With a flat −15 knock and a shield on every king 3-in-a-row, the
+// fastest student summited at ~50 s and held the crown ~104 of 120 s — the top was never contested.
+// These bring the longest reign to ~76 s, the fastest student's win rate from 80% to 70%, and the
+// first summit to the last 20 s. (A steeper hill near the top was tried and made it worse: it slows
+// the challengers as much as the king.)
+const TUNE = {
+  kingDrag: 0.5, // the crown is heavy: the king's climbs are half as long
+  knockBase: 10, // a boulder takes knockBase + knockPct of the target's height:
+  knockPct: 0.15, //   −11.5 at 10, −17.5 at 50, −25 at the summit — the higher you are, the farther you fall
+  shieldEvery: 9, // a king's shield takes this many in a row (at 3 it never came down)
+};
+/** How far a boulder knocks a climber at height h. */
+const knockAt = (h) => TUNE.knockBase + TUNE.knockPct * h;
 
 function reset(game) {
   game.hill = { king: null, kingSince: null };
@@ -63,24 +77,29 @@ function recrown(game, at) {
  * happened on the hill, for the student's screen and the projector's feed.
  */
 function onAnswer(game, player, res, at, push) {
-  setHeight(player, player.h + res.gain, at);
-  const out = { h: player.h, threw: null, shield: false };
+  const drag = game.hill.king === player.id ? 1 - TUNE.kingDrag : 1;
+  const step = res.ok ? Math.round(res.gain * drag * 10) / 10 : res.gain;
+  setHeight(player, player.h + step, at);
+  const out = { h: player.h, step, threw: null, shield: false };
   if (res.ok && player.streak > 0 && player.streak % BOULDER_EVERY === 0) {
     const order = standings(game);
     const i = order.indexOf(player);
-    // walk up from directly above: the first climber who isn't steady takes it
+    // Walk up from directly above: the first climber who is HIGHER (a tie at the base is not
+    // "above" — nobody gets told they were knocked down from 0) and isn't steady takes it.
     let target = null;
     for (let j = i - 1; j >= 0; j--) {
-      if (order[j].steadyUntil <= at) { target = order[j]; break; }
+      if (order[j].h > player.h && order[j].steadyUntil <= at) { target = order[j]; break; }
     }
     if (i === 0) {
-      if (!player.shield) { player.shield = true; out.shield = true; push({ type: 'shield', who: player.name }); }
+      if (!player.shield && player.streak % TUNE.shieldEvery === 0) { player.shield = true; out.shield = true; push({ type: 'shield', who: player.name }); }
     } else if (target && target.shield) {
       target.shield = false;
       out.threw = { name: target.name, blocked: true };
       push({ type: 'blocked', who: player.name, target: target.name });
     } else if (target) {
-      setHeight(target, target.h - KNOCK, at);
+      const fall = Math.round(knockAt(target.h) * 10) / 10;
+      setHeight(target, target.h - fall, at);
+      out.fall = fall;
       target.steadyUntil = at + STEADY_MS;
       target.taken++;
       target.lastHit = { by: player.name, at };
@@ -148,6 +167,8 @@ function finalHill(game) {
   };
 }
 
-const RULES = { summit: SUMMIT, knock: KNOCK, boulderEvery: BOULDER_EVERY, steadySec: STEADY_MS / 1000 };
+/** The hill's rules as the lobby states them — from TUNE, so the screen can't drift from the game. */
+const rules = () => ({ summit: SUMMIT, knockMin: knockAt(0), knockMax: knockAt(SUMMIT), boulderEvery: BOULDER_EVERY,
+  shieldEvery: TUNE.shieldEvery, steadySec: STEADY_MS / 1000, kingStepPct: Math.round(100 * (1 - TUNE.kingDrag)) });
 
-module.exports = { SUMMIT, KNOCK, BOULDER_EVERY, STEADY_MS, RULES, reset, resetPlayer, standings, onAnswer, finish, hostHill, playerHill, finalHill };
+module.exports = { SUMMIT, BOULDER_EVERY, STEADY_MS, TUNE, knockAt, rules, reset, resetPlayer, standings, onAnswer, finish, hostHill, playerHill, finalHill };

@@ -335,7 +335,7 @@ function rulesFor(game) {
     fluentSec: FLUENT_MS / 1000,
     noAnswer: huddle ? 0 : null, // Drive has no "no answer": the next play waits for you
     teamK: TEAM_K[game.mode] || null,
-    hill: game.mode === 'hill' ? hill.RULES : null,
+    hill: game.mode === 'hill' ? hill.rules() : null,
     tdPoints: TD_POINTS,
     startPos: START_POS,
   };

@@ -83,11 +83,29 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .pad .entry.right{border-color:var(--hit);background:var(--hit-bg);color:#17643c}
 .pad .entry.wrong{border-color:var(--miss);background:var(--miss-bg);color:#9b2016}
 .pad .entry.sent{opacity:.75}
-.pad .keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.pad .keys button{background:var(--board);color:var(--chalk);border:2px solid var(--rail);border-radius:8px;font-family:var(--display);font-weight:900;font-size:1.9rem;padding:10px 0;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.pad .entryrow{display:flex;gap:8px}
+.pad .entryrow .entry{flex:1;min-width:0}
+.pad .entryrow button{flex:0 0 64px;background:var(--board);color:var(--chalk);border:2px solid var(--rail);border-radius:8px;font-family:var(--display);font-weight:900;font-size:1.7rem;touch-action:manipulation}
+.pad .keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.pad .keys button{background:var(--board);color:var(--chalk);border:2px solid var(--rail);border-radius:8px;font-family:var(--display);font-weight:900;font-size:1.8rem;padding:9px 0;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .pad .keys button:active{background:var(--rail)}
-.pad .send{width:100%;padding:12px}
-.pad .send:disabled{opacity:.45}
+.pad .keys .send{background:var(--led);color:var(--ink);border-color:var(--led);text-transform:uppercase;letter-spacing:.04em}
+.pad .keys .send:disabled{opacity:.45}
+/* a typed fact on a phone: everything above the pad gets out of its way so Go never needs a scroll */
+.typing .pbar{font-size:.85rem}
+#live.typing>div{gap:8px!important}
+.typing.mode-hill .sb .k{display:none}
+.typing .sb>div{padding:3px 10px}
+.typing .sb .v{font-size:1.5rem}
+.typing .field.small{height:34px;min-height:0}
+.typing .card{padding:8px 12px;gap:4px}
+.typing .card .meta{font-size:.72rem}
+.typing .fact{font-size:clamp(2rem,9vw,2.8rem);padding:2px 0}
+.typing .pad .entry{font-size:2rem;padding:2px 10px}
+.typing .myhill{padding:6px 10px;gap:4px}
+.typing .myhill .track{height:44px}
+.typing .myhill .hnums .v{font-size:1.7rem}
+.typing .myhill .hit,.typing .myhill .above,.typing .myhill .crownline{font-size:.88rem;padding:3px 8px}
 .pad.locked .keys button{opacity:.4}
 /* projector, Huddle: no choices to show while the play is open */
 .typed-wait{grid-column:1/-1;text-align:center;padding:18px;font-family:var(--display);font-weight:800;font-size:clamp(1.4rem,3vw,2.2rem);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border:2px dashed var(--rail);border-radius:8px}

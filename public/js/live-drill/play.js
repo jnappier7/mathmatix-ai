@@ -154,7 +154,7 @@
     const dots = Array.from({ length: 3 }, (_, i) => `<span class="${i < 3 - h.toBoulder ? 'on' : ''}"></span>`).join('');
     const status = h.hit ? `<div class="hit">🪨 ${esc(h.hit.by)} knocked you down!${h.steady ? ' You\'re steady for a moment.' : ''}</div>`
       : h.king && h.king.me ? `<div class="crownline">👑 You're the king.${h.shield ? ' 🛡 Shield up.' : ` ${h.toBoulder} more in a row for a shield.`}</div>`
-      : h.above ? `<div class="above"><b>${esc(h.above.name)}</b> is ${h.above.gap} above you${h.king && h.king.name !== h.above.name ? ` · 👑 ${esc(h.king.name)}` : ''}</div>`
+      : h.above ? `<div class="above"><b>${esc(h.above.name)}</b> is ${Math.max(1, Math.round(h.above.gap))} above you${h.king && h.king.name !== h.above.name ? ` · 👑 ${esc(h.king.name)}` : ''}</div>`
       : '';
     $('p-hill').innerHTML = `<div class="climb"><span class="track"><span class="me" style="bottom:${Math.round((100 * h.h) / h.summit)}%"></span>${
       h.above ? `<span class="up" style="bottom:${Math.round((100 * (h.h + h.above.gap)) / h.summit)}%"></span>` : ''}</span>
@@ -200,15 +200,20 @@
   const MINUS = '−';
   const showNum = (v) => String(v).replace('-', MINUS);
   /** Show the pad for an open play. `allowMinus` adds the − key (integer facts). */
+  /**
+   * The whole pad has to fit on a phone with the browser's bars showing (an iPhone SE leaves ~548 px):
+   * a student who scrolls for every fact isn't drilling facts. So Go lives IN the grid —
+   * 1 2 3 ⌫ / 4 5 6 0 / 7 8 9 Go — and integer facts get a ± beside the answer, not a fourth row.
+   */
   function openPad(onSubmit, allowMinus) {
-    pad = { onSubmit, value: '', locked: false };
+    pad = { onSubmit, value: '', locked: false, minus: !!allowMinus };
     $('p-choices').hidden = true; $('p-choices').innerHTML = '';
     $('p-pad').hidden = false;
+    $('live').classList.add('typing');
     $('keys-hint') && ($('keys-hint').textContent = 'Type with the keys or the pad. Enter sends.');
-    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', allowMinus ? MINUS : '', '0', '⌫'];
-    $('p-pad').innerHTML = `<div class="entry" id="p-entry" aria-live="polite"><span class="ph">?</span></div>
-      <div class="keys">${keys.map((k) => (k ? `<button type="button" data-key="${k}" aria-label="${k === '⌫' ? 'delete' : k === MINUS ? 'minus' : k}">${k}</button>` : '<span></span>')).join('')}</div>
-      <button type="button" class="go send" id="p-send" disabled>Go</button>`;
+    const key = (k, label) => `<button type="button" data-key="${k}" aria-label="${label || k}">${k}</button>`;
+    $('p-pad').innerHTML = `<div class="entryrow">${allowMinus ? key('±', 'plus or minus') : ''}<div class="entry" id="p-entry" aria-live="polite"><span class="ph">?</span></div></div>
+      <div class="keys">${key('1')}${key('2')}${key('3')}${key('⌫', 'delete')}${key('4')}${key('5')}${key('6')}${key('0')}${key('7')}${key('8')}${key('9')}<button type="button" class="send" id="p-send" disabled>Go</button></div>`;
     $('p-pad').querySelectorAll('[data-key]').forEach((b) => { b.onclick = () => padKey(b.dataset.key); });
     $('p-send').onclick = () => padKey('Enter');
   }
@@ -216,7 +221,7 @@
     if (!pad || pad.locked) return;
     if (k === 'Enter') { if (/\d/.test(pad.value)) { pad.locked = true; padRender(); pad.onSubmit(pad.value); } return; }
     if (k === '⌫' || k === 'Backspace') pad.value = pad.value.slice(0, -1);
-    else if (k === MINUS || k === '-') { if (pad.value === '' && $('p-pad').querySelector(`[data-key="${MINUS}"]`)) pad.value = '-'; }
+    else if (k === '±' || k === MINUS || k === '-') { if (pad.minus) pad.value = pad.value.startsWith('-') ? pad.value.slice(1) : `-${pad.value}`; }
     else if (/^\d$/.test(k) && pad.value.replace('-', '').length < 5) pad.value += k;
     padRender();
   }
@@ -231,9 +236,10 @@
     pad = null;
     $('p-choices').hidden = true;
     $('p-pad').hidden = false;
+    $('live').classList.add('typing');
     $('p-pad').innerHTML = `<div class="entry ${ok == null ? 'sent' : ok ? 'right' : 'wrong'}"><span class="v">${esc(showNum(typed))}</span></div>`;
   }
-  function closePad() { pad = null; $('p-pad').hidden = true; $('p-pad').innerHTML = ''; $('p-choices').hidden = false; }
+  function closePad() { pad = null; $('live').classList.remove('typing'); $('p-pad').hidden = true; $('p-pad').innerHTML = ''; $('p-choices').hidden = false; }
   const typedPlay = (play) => play && play.input === 'number';
   const negOk = (play) => play.playbook === 'int'; // only integer facts can have a negative answer
 
