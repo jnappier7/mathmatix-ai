@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261022">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261024">
 </head>
 <body>
 <div class="wrap">
@@ -45,6 +45,7 @@
         <div class="modes" role="group" aria-labelledby="md-l">
           <button class="mode" id="m-drive" aria-pressed="true"><b>Team Drive</b><span>One shared clock. Everyone plays at their own pace on their device; the board shows the field and the play-by-play. Fast and furious.</span></button>
           <button class="mode" id="m-huddle" aria-pressed="false"><b>Huddle</b><span>One play at a time on the board, everyone answers it, then the reveal shows how the class split and why. You run the pace.</span></button>
+          <button class="mode" id="m-hill" aria-pressed="false"><b>King of the Hill</b><span>Every student for themselves on one hill. Right answers climb; three in a row rolls a boulder onto the climber just above. Highest at the buzzer is king.</span></button>
         </div>
       </div>
       <div class="row">
@@ -104,6 +105,15 @@
         <div class="feed" id="feed" aria-live="polite"></div>
       </div>
 
+      <!-- hill: the climb -->
+      <div id="hill-pane" class="hillpane" hidden>
+        <div class="hillwrap"><svg id="hill-svg" viewBox="0 0 1000 430" role="img" aria-label="The hill"></svg></div>
+        <div class="hillside">
+          <ol class="climbers" id="hill-board"></ol>
+          <div class="feed" id="hill-feed" aria-live="polite"></div>
+        </div>
+      </div>
+
       <!-- huddle: the play itself, large -->
       <div id="huddle-pane" class="big" hidden style="display:flex;flex-direction:column;gap:12px">
         <div class="hbar">
@@ -153,8 +163,8 @@
 </div>
 
 <script src="/js/csrf.js"></script>
-<script src="/js/live-drill/common.js?v=20261022"></script>
-<script src="/js/live-drill/sound.js?v=20261021"></script>
-<script src="/js/live-drill/host.js?v=20261022"></script>
+<script src="/js/live-drill/common.js?v=20261023"></script>
+<script src="/js/live-drill/sound.js?v=20261023"></script>
+<script src="/js/live-drill/host.js?v=20261023"></script>
 </body>
 </html>

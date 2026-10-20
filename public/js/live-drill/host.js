@@ -6,7 +6,7 @@
   const { $, esc, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns, rulesHTML } = window.LiveDrill;
   const API = '/api/live-drill/host';
   const noop = () => {};
-  const SND = window.LiveDrillSound || { unlock: noop, whistle: noop, horn: noop, tick: noop, chime: noop, buzzer: noop, cheer: noop, groan: noop,
+  const SND = window.LiveDrillSound || { unlock: noop, whistle: noop, horn: noop, tick: noop, chime: noop, buzzer: noop, cheer: noop, groan: noop, rumble: noop,
     setScene: noop, setHype: noop, setMuted: noop, setMusic: noop, setCrowd: noop, muted: true, musicOn: false, crowdOn: false };
   let lastTick = null; // the clock second last ticked, so each of the final five ticks once
 
@@ -46,7 +46,8 @@
     $('books').querySelectorAll('.book').forEach((b) => { b.onclick = () => { S.playbook = b.dataset.k; renderSetup(); }; });
     $('m-drive').setAttribute('aria-pressed', S.mode === 'drive');
     $('m-huddle').setAttribute('aria-pressed', S.mode === 'huddle');
-    $('opt-drive').hidden = S.mode !== 'drive';
+    $('m-hill').setAttribute('aria-pressed', S.mode === 'hill');
+    $('opt-drive').hidden = S.mode === 'huddle'; // Team Drive and the hill both run on one clock
     $('opt-huddle').hidden = S.mode !== 'huddle';
     // Each drill brings its own clocks (a fact takes seconds, an algebra play half a minute).
     const st = d.settings || S.settings;
@@ -93,6 +94,7 @@
   $('cls').onchange = () => { S.classId = $('cls').value; renderSetup(); };
   $('m-drive').onclick = () => { S.mode = 'drive'; renderSetup(); };
   $('m-huddle').onclick = () => { S.mode = 'huddle'; renderSetup(); };
+  $('m-hill').onclick = () => { S.mode = 'hill'; renderSetup(); };
 
   $('open').onclick = async () => {
     $('setup-err').textContent = '';
@@ -163,11 +165,22 @@
     return st.mode === 'huddle' && st.round && st.round.closed ? 'reveal' : 'live';
   }
   /** The stands lean in as either ball crosses midfield: 0 at the 50, 1 at the goal line. */
-  const hypeOf = (st) => Math.max(0, ...st.teams.map((t) => (t.pos - 50) / 50));
+  const hypeOf = (st) => (st.hill
+    ? Math.max(0, ...st.hill.climbers.map((c) => (c.h - 40) / 60)) // the hill: the crowd leans in near the top
+    : Math.max(0, ...st.teams.map((t) => (t.pos - 50) / 50)));
 
   /** What the room should hear, from one state to the next. */
   function cue(prev, st) {
     if (!prev) return;
+    if (st.mode === 'hill') {
+      // what happened on the hill since the last state: boulders rumble, a new king gets the horn
+      const since = Math.max(0, ...(prev.feed || []).map((f) => f.at));
+      const fresh = (st.feed || []).filter((f) => f.at > since);
+      // Rate-limited: a contested summit trades the crown every few seconds, and a horn each time is noise.
+      const t = Date.now();
+      if (fresh.some((f) => f.type === 'knock') && t - (cue.rumbleAt || 0) > 1500) { cue.rumbleAt = t; SND.rumble(); }
+      if (fresh.some((f) => f.type === 'crown') && st.phase === 'live' && t - (cue.crownAt || 0) > 10000) { cue.crownAt = t; SND.horn(); SND.cheer(false); }
+    }
     if (prev.phase === 'lobby' && st.phase !== 'lobby' && st.phase !== 'over') SND.whistle();
     if (st.teams.some((t, i) => prev.teams[i] && t.pts > prev.teams[i].pts)) SND.horn();
     const scored = st.teams.some((t, i) => prev.teams[i] && t.pts > prev.teams[i].pts);
@@ -209,12 +222,13 @@
     $('l-code').textContent = st.code;
     $('l-class').hidden = !st.className;
     if (st.className) $('l-class').innerHTML = `<b>${esc(st.className)}</b>: your students also have a <b>Join</b> button on their Mathmatix chat screen.`;
-    $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? `Team Drive, ${mmss(st.seconds * 1000)}` : `Huddle, ${st.totalPlays} plays`}`;
+    $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${modeName(st)}`;
     const rules = rulesHTML(st);
     if ($('l-rules').dataset.html !== rules) { $('l-rules').innerHTML = rules; $('l-rules').dataset.html = rules; }
     $('l-count').textContent = `${st.players.length} player${st.players.length === 1 ? '' : 's'}${st.gameNumber > 1 ? ` · game ${st.gameNumber}` : ''}`;
     $('kick').disabled = st.players.length === 0;
-    $('rosters').innerHTML = st.teams.map((t, i) => {
+    $('rosters').classList.toggle('solo', st.mode === 'hill');
+    $('rosters').innerHTML = st.mode === 'hill' ? soloRoster(st) : st.teams.map((t, i) => {
       const ps = st.players.filter((p) => p.team === i);
       return `<div class="roster t${i}"><h3>${esc(t.name)}<span class="muted" style="font-size:1rem">${ps.length}</span></h3><div class="chips">${
         ps.map((p) => (openChip === p.id
@@ -236,6 +250,19 @@
     });
   }
 
+  function modeName(st) {
+    if (st.mode === 'hill') return `King of the Hill, ${mmss(st.seconds * 1000)}`;
+    return st.mode === 'drive' ? `Team Drive, ${mmss(st.seconds * 1000)}` : `Huddle, ${st.totalPlays} plays`;
+  }
+  /** The hill has no teams: one list of climbers, each still tappable to remove. */
+  function soloRoster(st) {
+    return `<div class="roster"><h3>Climbers<span class="muted" style="font-size:1rem">${st.players.length}</span></h3><div class="chips">${
+      st.players.map((p) => (openChip === p.id
+        ? `<span class="chipmenu${p.away ? ' away' : ''}">${esc(p.name)}<button class="rm" data-act="kick" data-id="${p.id}">Remove</button><button data-act="close">✕</button></span>`
+        : `<button class="chip${p.away ? ' away' : ''}" data-act="open" data-id="${p.id}" title="${p.linked ? 'Signed in' : 'Joined with the code'}${p.away ? ' · screen closed' : ''}">${esc(p.name)}${p.linked ? '<span class="acct" aria-label="signed in">✓</span>' : ''}</button>`)).join('')
+    }</div></div>`;
+  }
+
   function renderScoreboard(st) {
     st.teams.forEach((t, i) => { $('s-n' + i).textContent = `${t.name} · ${t.size}`; $('s-p' + i).textContent = t.pts; });
     setField($('field'), st.teams);
@@ -244,7 +271,7 @@
   function renderClock() {
     if (!game || game.phase === 'lobby' || game.phase === 'over') return;
     const c = $('s-clock');
-    if (game.mode === 'drive') {
+    if (game.mode !== 'huddle') {
       $('s-ck').textContent = 'Clock';
       const left = game.endsAt - serverNow();
       c.textContent = mmss(left);
@@ -275,9 +302,18 @@
   }
 
   function renderLive(st) {
-    $('g-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : 'Huddle'}`;
+    $('g-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : st.mode === 'hill' ? 'King of the Hill' : 'Huddle'}`;
     $('g-code').textContent = st.code;
     renderScoreboard(st);
+    const onHill = st.mode === 'hill';
+    $('live-body').classList.toggle('mode-hill', onHill);
+    $('hill-pane').hidden = !onHill;
+    if (onHill) {
+      $('live-body').classList.remove('mode-huddle');
+      ['drive-pane', 'huddle-pane', 'h-next', 'h-keys'].forEach((id) => { $(id).hidden = true; });
+      renderHill(st);
+      return;
+    }
     const drive = st.mode === 'drive';
     $('live-body').classList.toggle('mode-huddle', !drive);
     $('drive-pane').hidden = !drive;
@@ -338,16 +374,98 @@
     return row(r.answer, (r.counts && r.counts[r.answer]) || 0, ' right', '✓') + wrong.map(([k, n]) => row(k, n, ' fade', '✗')).join('');
   }
 
+  // ---------------- the hill ----------------
+  const SUMMIT_Y = 64; const BASE_Y = 410; const PLATEAU = 110;
+  const yOf = (h, summit) => BASE_Y - (h / summit) * (BASE_Y - SUMMIT_Y);
+  /** A climber's spot across the slope: fixed per student (a hash of their id), so nobody jumps sideways. */
+  function xOf(c, h, summit) {
+    let n = 0;
+    for (const ch of c.id) n = (n * 31 + ch.charCodeAt(0)) >>> 0;
+    const half = 370 * (1 - h / summit) + PLATEAU; // the hill is a mesa: a crowd at the top spreads out
+    return 500 + ((n % 1000) / 500 - 1) * half * 0.85;
+  }
+  const initials = (name) => name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+
+  function renderHill(st) {
+    const H = st.hill;
+    const svg = $('hill-svg');
+    if (!svg.dataset.drawn) {
+      svg.innerHTML = `<defs><linearGradient id="hillg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4c8a5a"/><stop offset="1" stop-color="#1f4a2c"/></linearGradient></defs>
+        <polygon points="20,${BASE_Y} ${500 - PLATEAU - 20},${SUMMIT_Y} ${500 + PLATEAU + 20},${SUMMIT_Y} 980,${BASE_Y}" fill="url(#hillg)" stroke="#2c5f3a" stroke-width="3"/>
+        <polygon points="${500 - PLATEAU - 20},${SUMMIT_Y} ${500 + PLATEAU + 20},${SUMMIT_Y} ${500 + PLATEAU + 46},${SUMMIT_Y + 22} ${500 + 40},${SUMMIT_Y + 14} 500,${SUMMIT_Y + 26} ${500 - 40},${SUMMIT_Y + 14} ${500 - PLATEAU - 46},${SUMMIT_Y + 22}" fill="#eef4ee" opacity=".85"/>
+        <line x1="500" y1="${SUMMIT_Y - 8}" x2="500" y2="${SUMMIT_Y - 44}" stroke="#ddd" stroke-width="3"/><polygon points="500,${SUMMIT_Y - 44} 532,${SUMMIT_Y - 36} 500,${SUMMIT_Y - 28}" style="fill:var(--led)"/>
+        <g id="hill-climbers"></g>`;
+      svg.dataset.drawn = '1';
+    }
+    const layer = $('hill-climbers');
+    const keep = new Set();
+    H.climbers.forEach((c) => {
+      keep.add(c.id);
+      let g = layer.querySelector(`[data-id="${c.id}"]`);
+      if (!g) {
+        g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('data-id', c.id);
+        g.setAttribute('class', 'climber');
+        layer.appendChild(g);
+      }
+      const label = c.king; // the king's name on the hill; the board beside it names everyone
+      g.innerHTML = `${c.king ? '<text class="crown" y="-22" text-anchor="middle">👑</text>' : ''}${c.shield ? '<circle class="shield" r="20"/>' : ''}
+        <circle class="dot" r="14"/><text class="ini" y="5" text-anchor="middle">${esc(initials(c.name))}</text>
+        ${label ? `<text class="nm" x="20" y="5">${esc(c.name)}</text>` : ''}`;
+      g.classList.toggle('king', c.king);
+      g.classList.toggle('hit', c.hit);
+      g.classList.toggle('steady', c.steady);
+      g.style.transform = `translate(${xOf(c, c.h, H.summit).toFixed(1)}px, ${yOf(c.h, H.summit).toFixed(1)}px)`;
+    });
+    layer.querySelectorAll('.climber').forEach((g) => { if (!keep.has(g.dataset.id)) g.remove(); });
+    // the leaders on top of the stack, so a crowd at the summit never hides the king
+    H.climbers.slice().reverse().forEach((c) => { const g = layer.querySelector(`[data-id="${c.id}"]`); if (g) layer.appendChild(g); });
+
+    $('hill-board').innerHTML = H.climbers.slice(0, 10).map((c, i) => `<li class="${c.king ? 'king' : ''}${c.hit ? ' hit' : ''}">
+      <span class="rk">${i + 1}</span><span class="nm">${esc(c.name)}${c.king ? ' 👑' : ''}${c.shield ? ' 🛡' : ''}</span>
+      <span class="ht"><span style="width:${Math.round((100 * c.h) / H.summit)}%"></span></span><span class="hv">${Math.round(c.h)}</span></li>`).join('')
+      + (H.climbers.length > 10 ? `<li class="more muted">+ ${H.climbers.length - 10} more climbing</li>` : '');
+    $('hill-feed').innerHTML = st.feed.slice(0, 5).map((f) => {
+      const id = `${f.at}|${f.type}|${f.who || ''}`;
+      const fresh = seenFeed.has(id) ? '' : ' new';
+      seenFeed.add(id);
+      if (f.type === 'knock') return `<span class="it ev${fresh}">🪨 ${esc(f.who)} knocked ${esc(f.target)} down</span>`;
+      if (f.type === 'blocked') return `<span class="it${fresh}">🛡 ${esc(f.target)} blocked ${esc(f.who)}'s boulder</span>`;
+      if (f.type === 'shield') return `<span class="it${fresh}">🛡 ${esc(f.who)} raised a shield</span>`;
+      if (f.type === 'crown') return `<span class="it ev${fresh}">👑 ${esc(f.who)} takes the crown</span>`;
+      if (f.type === 'climb') return `<span class="it ev${fresh}">CLIMB!</span>`;
+      return '';
+    }).join('') || '<span class="muted">Boulders and crowns show up here.</span>';
+  }
+
+  /** The hill's final: the standings and the awards, in place of the team result. */
+  function renderHillFinal(st, f) {
+    const hl = f.hill;
+    const top = hl.standings[0];
+    $('f-acc').textContent = f.att ? f.pct + '%' : '–';
+    $('f-result').className = 'king';
+    $('f-result').textContent = top && top.h > 0 ? `👑 ${top.name} is King of the Hill` : 'Nobody left the base camp';
+    const awards = [
+      hl.longestReign && `<div class="award"><span class="k">Longest reign</span><b>${esc(hl.longestReign.name)}</b> ${hl.longestReign.sec}s</div>`,
+      hl.mostBoulders && `<div class="award"><span class="k">Most boulders</span><b>${esc(hl.mostBoulders.name)}</b> ${hl.mostBoulders.count}</div>`,
+    ].filter(Boolean).join('');
+    $('f-mvps').innerHTML = `<div class="panel standings"><h3>Final standings</h3>${awards ? `<div class="awards">${awards}</div>` : ''}<ol>${
+      hl.standings.map((s) => `<li${s.place === 1 ? ' class="king"' : ''}><span class="nm">${esc(s.name)}</span><span>${Math.round(s.h)} high · ${s.comp}/${s.att} right${s.thrown ? ` · 🪨 ${s.thrown}` : ''}</span></li>`).join('')
+    }</ol></div>`;
+  }
+
   function renderFinal(st) {
     st.teams.forEach((t, i) => { $('f-n' + i).textContent = t.name; $('f-p' + i).textContent = t.pts; });
     const f = st.final || { mvps: [[], []], film: [], pct: 0, att: 0 };
+    $('final').classList.toggle('mode-hill', st.mode === 'hill');
     $('f-acc').textContent = f.att ? f.pct + '%' : '–';
     const [a, b] = st.teams;
     const win = a.pts !== b.pts ? (a.pts > b.pts ? 0 : 1) : (a.pos !== b.pos ? (a.pos > b.pos ? 0 : 1) : -1);
     const h = $('f-result');
     h.className = win >= 0 ? `t${win}` : '';
     h.textContent = win < 0 ? 'Tie game' : `${st.teams[win].name} wins${a.pts === b.pts ? ' on field position' : ''}`;
-    $('f-mvps').innerHTML = st.teams.map((t, i) => `<div class="panel t${i}"><h3>${esc(t.name)} · top players</h3>${
+    if (f.hill) renderHillFinal(st, f);
+    else $('f-mvps').innerHTML = st.teams.map((t, i) => `<div class="panel t${i}"><h3>${esc(t.name)} · top players</h3>${
       f.mvps[i].length ? `<ol>${f.mvps[i].map((p) => `<li>${esc(p.name)} <span>${p.yards} yds · ${p.comp}/${p.att}</span></li>`).join('')}</ol>` : '<p class="muted">No plays run.</p>'
     }</div>`).join('');
     $('f-film').innerHTML = '<h3>Film room</h3>' + (f.film.length
@@ -449,7 +567,7 @@
       S.drills = drills; S.settings = settings; S.classes = classes;
       renderClasses();
       if (!drills.some((d) => d.id === S.drill && !d.unavailable)) S.drill = (drills.find((d) => !d.unavailable) || drills[0]).id;
-      if (S.mode !== 'drive' && S.mode !== 'huddle') S.mode = 'drive';
+      if (!['drive', 'huddle', 'hill'].includes(S.mode)) S.mode = 'drive';
       renderSetup();
       show('setup');
     } catch (e) { $('setup-err').textContent = e.message; }
