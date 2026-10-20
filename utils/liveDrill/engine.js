@@ -30,9 +30,13 @@ const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..', '..');
 
+const facts = require('./facts');
+
 const DRILLS = {
   algebra: { file: 'public/courses/algebra/two-minute-drill.html', title: 'Algebra 1' },
   geometry: { file: 'public/courses/geometry/two-minute-drill.html', title: 'Honors Geometry' },
+  // Fluency mode: a bank owned here (utils/liveDrill/facts.js), typed answers, per-fact tracking.
+  facts: { native: facts, title: 'Math Facts', scoring: 'facts' },
 };
 
 const APP_MARKER = '// ===================== app =====================';
@@ -70,6 +74,11 @@ function getDrill(drillId) {
   const def = DRILLS[drillId];
   if (!def) return null;
   if (cache.has(drillId)) return cache.get(drillId);
+  if (def.native) {
+    const drill = { id: drillId, title: def.title, bank: def.native, native: true };
+    cache.set(drillId, drill);
+    return drill;
+  }
 
   const html = fs.readFileSync(path.join(ROOT, def.file), 'utf8');
   const code = extractBank(html);
@@ -174,11 +183,13 @@ function summaryOf(it, isDo) {
 /**
  * Deal play n of a game. `recentIds` are the template ids of plays n-1 … n-6, which the page's
  * makePlay steers away from — the caller deals plays in order, so this stays deterministic.
+ * `opts` reaches native banks only: Math Facts takes `{ focus: [2, 5, 10] }`.
  */
-function dealPlay(drillId, playbook, seed, n, recentIds) {
+function dealPlay(drillId, playbook, seed, n, recentIds, opts) {
   const drill = getDrill(drillId);
   if (!drill) throw new Error(`unknown drill ${drillId}`);
   const book = drill.bank.BOOKS[playbook] ? playbook : 'all';
+  if (drill.native) return drill.bank.makePlay(book, (recentIds || []).slice(0, RECENT), mulberry32(seedFor(seed, n)), opts);
   drill.rng.next = mulberry32(seedFor(seed, n));
   try {
     return normalize(drill, drill.bank.makePlay(book, (recentIds || []).slice(0, RECENT)));
@@ -189,8 +200,10 @@ function dealPlay(drillId, playbook, seed, n, recentIds) {
 
 /** The public half of a play — safe to send while it is still open. */
 function publicPlay(play) {
-  return { id: play.id, playbook: play.playbook, playbookName: play.playbookName,
+  const pub = { id: play.id, playbook: play.playbook, playbookName: play.playbookName,
     head: play.head, card: play.card, choices: play.choices };
+  if (play.input) pub.input = play.input; // a typed answer: the screen shows a number pad
+  return pub;
 }
 
 module.exports = { DRILLS, getDrill, listPlaybooks, dealPlay, publicPlay, RECENT, _extractBank: extractBank };

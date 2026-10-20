@@ -26,10 +26,10 @@
  */
 const crypto = require('crypto');
 const { dealPlay, publicPlay, RECENT, DRILLS, getDrill } = require('./engine');
+const facts = require('./facts');
 
 const START_POS = 25;
 const TD_POINTS = 7;
-const SACK = 5;
 const MAX_PLAYERS = 80;
 const MAX_GAMES = 500;
 const MAX_GAMES_PER_HOST = 3;
@@ -51,6 +51,25 @@ const SETTINGS = {
   drive: { seconds: [60, 120, 180, 300], defaultSeconds: 120 },
   huddle: { plays: [5, 10, 15, 20], defaultPlays: 10, secondsPerPlay: [10, 20, 30, 45], defaultSecondsPerPlay: 20 },
 };
+// A fact takes seconds, not half a minute: Huddle runs more plays on a shorter clock.
+const FACT_SETTINGS = {
+  drive: SETTINGS.drive,
+  huddle: { plays: [10, 15, 20, 30], defaultPlays: 15, secondsPerPlay: [6, 10, 15], defaultSecondsPerPlay: 10 },
+};
+const settingsFor = (drill) => ((DRILLS[drill] || {}).scoring === 'facts' ? FACT_SETTINGS : SETTINGS);
+
+// What a play pays. Standard is the course drill's own (+15/+10/+5 at 6 s/12 s, sack −5). Facts
+// come about three times as fast, so each pays about a third as much: a two-minute drive covers
+// about the same ground in either drill, and touchdowns stay events. Both keep a blind guess
+// worth nothing on average (¼ × 15 = ¾ × 5), which typed answers don't need but cost nothing.
+// Huddle splits the play clock into thirds for the same three tiers.
+const SCORING = {
+  standard: { gains: [15, 10, 5], driveMs: [6000, 12000], sack: 5 },
+  facts: { gains: [6, 4, 2], driveMs: [3000, 6000], sack: 2 },
+};
+const scoringFor = (game) => SCORING[(DRILLS[game.drill] || {}).scoring] || SCORING.standard;
+// Fact fluency: a right answer in this long or less counts as automatic — the usual 3-second bar.
+const FLUENT_MS = 3000;
 
 const games = new Map(); // code → game
 
@@ -104,11 +123,14 @@ class GameError extends Error {
  * in it sees a "Join" banner on their chat screen (routes/liveDrill.js /mine) and joins with their
  * account name. The code still works for anyone, so a guest device is never locked out.
  */
-function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, plays, secondsPerPlay }) {
+function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, plays, secondsPerPlay, focus }) {
   if (!DRILLS[drill]) throw new GameError(400, 'Unknown drill.');
   if (mode !== 'drive' && mode !== 'huddle') throw new GameError(400, 'Mode must be drive or huddle.');
   const d = getDrill(drill); // throws if the published page can't be read
   const book = d.bank.BOOKS[playbook] ? playbook : 'all';
+  // Math Facts only: the numbers the teacher singled out ("× 2s, 5s & 10s").
+  const fx = d.native && facts.FOCUSABLE.includes(book) ? facts.normalizeFocus(focus) : null;
+  const S = settingsFor(drill);
   sweep();
   if (games.size >= MAX_GAMES) throw new GameError(503, 'Too many live games right now. Try again in a few minutes.');
   const mine = [...games.values()].filter((g) => g.hostId === String(hostId) && g.phase !== 'over');
@@ -128,15 +150,16 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
     drill,
     drillTitle: d.title,
     playbook: book,
-    playbookName: d.bank.BOOKS[book].name,
+    playbookName: d.bank.BOOKS[book].name + (fx ? ` · ${facts.focusLabel(fx)}` : ''),
+    focus: fx,
     mode,
     seed: crypto.randomBytes(12).toString('hex'),
     createdAt: now(),
     touchedAt: now(),
     phase: 'lobby', // lobby → live → (huddle: reveal ↔ live) → over
-    seconds: pickOr(seconds, SETTINGS.drive.seconds, SETTINGS.drive.defaultSeconds),
-    totalPlays: pickOr(plays, SETTINGS.huddle.plays, SETTINGS.huddle.defaultPlays),
-    secondsPerPlay: pickOr(secondsPerPlay, SETTINGS.huddle.secondsPerPlay, SETTINGS.huddle.defaultSecondsPerPlay),
+    seconds: pickOr(seconds, S.drive.seconds, S.drive.defaultSeconds),
+    totalPlays: pickOr(plays, S.huddle.plays, S.huddle.defaultPlays),
+    secondsPerPlay: pickOr(secondsPerPlay, S.huddle.secondsPerPlay, S.huddle.defaultSecondsPerPlay),
     teams: TEAM_NAMES.map((name) => ({ name, pos: START_POS, pts: 0, tds: 0, yards: 0 })),
     players: new Map(), // playerId → player
     byToken: new Map(), // token hash → playerId
@@ -183,7 +206,7 @@ function playAt(game, n) {
   while (game.deck.length < n) {
     const i = game.deck.length + 1;
     const recent = game.deck.slice(-RECENT).map((p) => p.id).reverse();
-    game.deck.push(dealPlay(game.drill, game.playbook, game.seed, i, recent));
+    game.deck.push(dealPlay(game.drill, game.playbook, game.seed, i, recent, { focus: game.focus }));
   }
   return game.deck[n - 1];
 }
@@ -226,6 +249,8 @@ function join(game, rawName, { userId } = {}) {
     att: 0, comp: 0, yards: 0, streak: 0, best: 0,
     n: 1, issuedAt: null, // drive: the play they're on, and when it was first shown to them
     misses: [], // { n, k }
+    facts: new Map(), // Math Facts: fact id → { label, fam, a, b, att, right, ms: [] } (right answers' times)
+    factLog: [], // Math Facts: every answer, in order — the teacher's CSV
     lastSeen: now(),
     userId: userId ? String(userId) : null,
     conns: 0, // open live streams; a player with none is "away" (phone asleep, tab closed)
@@ -283,21 +308,24 @@ function moveTeam(game, teamIdx, gain) {
 
 /**
  * The scoring rules as the screens state them — built from the same constants and thresholds
- * speedGain/moveTeam use, so the lobby can never describe a game the server doesn't play.
- * Speeds are seconds after the play appears: Drive uses the drill's own 6 s / 12 s, Huddle
- * uses thirds of the play clock.
+ * speedTier/moveTeam use, so the lobby can never describe a game the server doesn't play.
+ * Speeds are seconds after the play appears: Drive uses the drill's own thresholds (SCORING),
+ * Huddle uses thirds of the play clock.
  */
 function rulesFor(game) {
   const huddle = game.mode === 'huddle';
+  const sc = scoringFor(game);
   const w = huddle ? game.secondsPerPlay : null;
   const sec = (x) => Math.floor(x * 10 + 1e-9) / 10; // round DOWN: "within 6.6 s" must never overpromise
   return {
     speed: [
-      { gain: 15, within: huddle ? sec(w / 3) : 6 },
-      { gain: 10, within: huddle ? sec((2 * w) / 3) : 12 },
-      { gain: 5, within: null },
+      { gain: sc.gains[0], within: huddle ? sec(w / 3) : sc.driveMs[0] / 1000 },
+      { gain: sc.gains[1], within: huddle ? sec((2 * w) / 3) : sc.driveMs[1] / 1000 },
+      { gain: sc.gains[2], within: null },
     ],
-    sack: SACK,
+    sack: sc.sack,
+    typed: !!(DRILLS[game.drill] || {}).native,
+    fluentSec: FLUENT_MS / 1000,
     noAnswer: huddle ? 0 : null, // Drive has no "no answer": the next play waits for you
     teamK: TEAM_K[game.mode],
     tdPoints: TD_POINTS,
@@ -305,9 +333,10 @@ function rulesFor(game) {
   };
 }
 
-function speedGain(ms, windowMs) {
-  if (windowMs) return ms <= windowMs / 3 ? 15 : ms <= (2 * windowMs) / 3 ? 10 : 5;
-  return ms <= 6000 ? 15 : ms <= 12000 ? 10 : 5; // the drill's own thresholds
+/** Which speed tier an answer lands in: 0 fast, 1 steady, 2 slow. */
+function speedTier(sc, ms, windowMs) {
+  const [t1, t2] = windowMs ? [windowMs / 3, (2 * windowMs) / 3] : sc.driveMs;
+  return ms <= t1 ? 0 : ms <= t2 ? 1 : 2;
 }
 
 function recordMiss(game, play, n, k) {
@@ -323,27 +352,41 @@ function pushFeed(game, item) {
   if (game.feed.length > 14) game.feed.length = 14;
 }
 
+/** Math Facts: one more answer on this student's record for that fact. */
+function trackFact(player, play, k, ok, ms) {
+  const f = play.fact;
+  let rec = player.facts.get(f.id);
+  if (!rec) { rec = { label: f.label, fam: f.fam, a: f.a, b: f.b, att: 0, right: 0, ms: [] }; player.facts.set(f.id, rec); }
+  rec.att++;
+  if (ok) { rec.right++; rec.ms.push(ms); }
+  if (player.factLog.length < 600) player.factLog.push({ fact: f.label, answer: play.answer, typed: k, ok, ms });
+}
+
 function applyAnswer(game, player, play, n, k, ms, windowMs) {
   const ok = k === play.answer;
+  const sc = scoringFor(game);
   player.att++;
   let ps = game.playStats.get(n);
   if (!ps) { ps = { att: 0, right: 0, picks: new Map() }; game.playStats.set(n, ps); }
   ps.att++;
   if (ok) ps.right++;
   else ps.picks.set(k, (ps.picks.get(k) || 0) + 1);
+  if (play.fact) trackFact(player, play, k, ok, ms);
   let gain;
+  let tier = null;
   if (ok) {
     player.comp++; player.streak++; player.best = Math.max(player.best, player.streak);
-    gain = speedGain(ms, windowMs);
+    tier = speedTier(sc, ms, windowMs);
+    gain = sc.gains[tier];
   } else {
     player.streak = 0;
-    gain = -SACK;
+    gain = -sc.sack;
     player.misses.push({ n, k });
     recordMiss(game, play, n, k);
   }
   player.yards += gain;
   const td = moveTeam(game, player.team, gain);
-  return { ok, gain, td };
+  return { ok, gain, tier, td };
 }
 
 // ---------------------------------------------------------------------------
@@ -438,6 +481,17 @@ function currentPlay(game, player) {
   return { n: player.n, play: publicPlay(play) };
 }
 
+/** What a student sent, as the grader compares it — a typed number or one of the choices. */
+function readAnswer(play, k) {
+  if (play.input === 'number') {
+    const v = facts.normalizeTyped(k);
+    if (v === null) throw new GameError(400, 'Type a number.');
+    return v;
+  }
+  if (!play.choices.some((c) => c.k === k)) throw new GameError(400, 'Not one of the choices.');
+  return k;
+}
+
 function answer(game, player, n, k) {
   n = Number(n); k = String(k);
   player.lastSeen = now();
@@ -445,12 +499,12 @@ function answer(game, player, n, k) {
     if (game.phase !== 'live' || now() > game.endsAt + DRIVE_GRACE_MS) throw new GameError(409, 'The clock has run out.');
     if (n !== player.n || !player.issuedAt) throw new GameError(409, 'That play is already over.');
     const play = playAt(game, n);
-    if (!play.choices.some((c) => c.k === k)) throw new GameError(400, 'Not one of the choices.');
+    k = readAnswer(play, k);
     const ms = now() - player.issuedAt;
     const res = applyAnswer(game, player, play, n, k, ms);
     player.n++; player.issuedAt = null;
     if (res.td) pushFeed(game, { type: 'td', team: player.team, text: `TOUCHDOWN ${game.teams[player.team].name.toUpperCase()}`, who: player.name });
-    else if (res.ok && res.gain === 15) pushFeed(game, { type: 'big', team: player.team, who: player.name, gain: res.gain });
+    else if (res.ok && res.tier === 0) pushFeed(game, { type: 'big', team: player.team, who: player.name, gain: res.gain });
     else if (!res.ok) pushFeed(game, { type: 'sack', team: player.team, who: player.name });
     touch(game);
     return { ...res, ms, n, answer: play.answer, answerHtml: play.answerHtml, tell: play.tell, revealCard: play.revealCard, picked: k };
@@ -460,7 +514,7 @@ function answer(game, player, n, k) {
   if (game.phase !== 'live' || !r || r.closed || n !== r.n) throw new GameError(409, 'That play is closed.');
   if (r.answers.has(player.id)) throw new GameError(409, 'You already answered this play.');
   const play = playAt(game, n);
-  if (!play.choices.some((c) => c.k === k)) throw new GameError(400, 'Not one of the choices.');
+  k = readAnswer(play, k);
   const ms = now() - r.openedAt;
   r.answers.set(player.id, { k, ms });
   if (!maybeCloseRound(game)) touch(game);
@@ -500,7 +554,7 @@ function rematch(game) {
   game.deck = [];
   game.teams = TEAM_NAMES.map((name) => ({ name, pos: START_POS, pts: 0, tds: 0, yards: 0 }));
   for (const p of game.players.values()) {
-    Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, n: 1, issuedAt: null, misses: [] });
+    Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, n: 1, issuedAt: null, misses: [], facts: new Map(), factLog: [] });
   }
   Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map(), playStats: new Map() });
   game.games = (game.games || 1) + 1;
@@ -544,7 +598,8 @@ function roundView(game, forHost) {
   const play = playAt(game, r.n);
   const v = { n: r.n, openedAt: r.openedAt, closesAt: r.closesAt, closed: r.closed, answered: r.answers.size, play: publicPlay(play) };
   if (r.closed) {
-    const counts = Object.fromEntries(play.choices.map((c) => [c.k, 0]));
+    // Typed answers have no choices to count against: the counts are whatever the class typed.
+    const counts = play.input ? { [play.answer]: 0 } : Object.fromEntries(play.choices.map((c) => [c.k, 0]));
     const right = [0, 0];
     for (const [pid, a] of r.answers) {
       counts[a.k] = (counts[a.k] || 0) + 1;
@@ -571,7 +626,7 @@ function playByPlay(game) {
     const label = (k) => (play.choices.find((c) => c.k === k) || {}).html || k;
     const top = [...s.picks.entries()].sort((a, b) => b[1] - a[1])[0];
     return {
-      n, att: s.att, right: s.right, pct: s.att ? Math.round((100 * s.right) / s.att) : 0,
+      n, att: s.att, right: s.right, pct: s.att ? Math.round((100 * s.right) / s.att) : 0, typed: !!play.input,
       playbookName: play.playbookName, head: play.head, summary: play.summary,
       answerHtml: play.answerHtml, tell: play.tell, card: play.revealCard,
       commonWrong: top ? { html: label(top[0]), count: top[1] } : null,
@@ -588,9 +643,79 @@ function filmRoom(game, limit = 3) {
       const play = playAt(game, m.n);
       const label = (k) => (play.choices.find((c) => c.k === k) || {}).html || k;
       const top = [...m.picks.entries()].sort((a, b) => b[1] - a[1])[0];
-      return { id: m.id, count: m.count, playbookName: play.playbookName, head: play.head, card: play.revealCard,
+      return { id: m.id, count: m.count, typed: !!play.input, playbookName: play.playbookName, head: play.head, card: play.revealCard,
         answerHtml: play.answerHtml, tell: play.tell, commonPick: top ? { html: label(top[0]), count: top[1] } : null };
     });
+}
+
+// ---------------------------------------------------------------------------
+// fact tracking (Math Facts)
+// ---------------------------------------------------------------------------
+
+const median = (xs) => {
+  if (!xs.length) return null;
+  const v = [...xs].sort((a, b) => a - b);
+  const m = v.length >> 1;
+  return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2;
+};
+const secs = (ms) => (ms == null ? null : Math.round(ms / 100) / 10);
+
+/**
+ * One student's fluency, from their answers this game. A fact is FLUENT when every try was right
+ * and the typical right answer took FLUENT_MS or less; MISSED when any try was wrong; SLOW when
+ * right but over the bar. "To practice" leads with the misses, then the slowest.
+ */
+function factSummary(player) {
+  const recs = [...player.facts.values()];
+  const all = recs.flatMap((r) => r.ms);
+  const missed = recs.filter((r) => r.right < r.att);
+  const slow = recs.filter((r) => r.right === r.att && median(r.ms) > FLUENT_MS)
+    .sort((a, b) => median(b.ms) - median(a.ms));
+  const fluent = recs.filter((r) => r.right === r.att && median(r.ms) <= FLUENT_MS);
+  return {
+    tried: recs.length,
+    att: recs.reduce((t, r) => t + r.att, 0),
+    right: recs.reduce((t, r) => t + r.right, 0),
+    fluent: fluent.length,
+    medianSec: secs(median(all)),
+    missed: missed.map((r) => r.label),
+    slow: slow.map((r) => ({ label: r.label, sec: secs(median(r.ms)) })),
+  };
+}
+
+/**
+ * The class's fact grid: one cell per fact family (a, b) — 7 × 8, 8 × 7, 56 ÷ 7 and 56 ÷ 8 all
+ * land in their own (a, b) cell of the × / ÷ grid. Only families the game actually dealt appear.
+ */
+function factGrid(game) {
+  const grids = {};
+  for (const p of game.players.values()) {
+    if (p.kicked) continue;
+    for (const r of p.facts.values()) {
+      if (!r.fam) continue;
+      const g = grids[r.fam] || (grids[r.fam] = { fam: r.fam, max: r.fam === 'mul' ? 12 : 10, cells: {} });
+      const key = `${r.a},${r.b}`;
+      const c = g.cells[key] || (g.cells[key] = { att: 0, right: 0, ms: [] });
+      c.att += r.att; c.right += r.right; c.ms.push(...r.ms);
+    }
+  }
+  return Object.values(grids).map((g) => ({
+    fam: g.fam, max: g.max,
+    cells: Object.fromEntries(Object.entries(g.cells).map(([k, c]) => [k, { att: c.att, right: c.right, sec: secs(median(c.ms)) }])),
+  }));
+}
+
+function factsFinal(game, players) {
+  const seated = [...game.players.values()].filter((p) => !p.kicked && p.att > 0);
+  return {
+    fluentSec: FLUENT_MS / 1000,
+    students: seated.map((p) => ({ name: p.name, team: p.team, ...factSummary(p) }))
+      .sort((a, b) => b.fluent - a.fluent || b.right - a.right),
+    grids: factGrid(game),
+    // every answer, for the CSV — capped per student in trackFact
+    log: seated.flatMap((p) => p.factLog.map((e) => ({ name: p.name, ...e, sec: secs(e.ms), ms: undefined }))),
+    unanswered: players.filter((p) => p.att === 0).map((p) => p.name),
+  };
 }
 
 function hostView(game) {
@@ -606,6 +731,7 @@ function hostView(game) {
     const att = players.reduce((s, p) => s + p.att, 0);
     const comp = players.reduce((s, p) => s + p.comp, 0);
     v.final = { mvps, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
+    if (DRILLS[game.drill] && DRILLS[game.drill].native) v.final.facts = factsFinal(game, players);
   }
   return v;
 }
@@ -626,9 +752,10 @@ function playerView(game, player) {
   if (game.phase === 'over') {
     v.film = player.misses.slice(-12).map(({ n, k }) => {
       const play = playAt(game, n);
-      return { head: play.head, card: play.revealCard, answerHtml: play.answerHtml, tell: play.tell,
-        pickedHtml: (play.choices.find((c) => c.k === k) || {}).html || k };
+      return { head: play.head, card: play.revealCard, answerHtml: play.answerHtml, tell: play.tell, typed: !!play.input,
+        pickedHtml: (play.choices.find((c) => c.k === k) || {}).html || k.replace('-', '−') };
     });
+    if (player.facts.size) v.facts = { fluentSec: FLUENT_MS / 1000, ...factSummary(player) };
   }
   return v;
 }
@@ -713,7 +840,7 @@ if (sweeper.unref) sweeper.unref();
 function _reset() { for (const g of [...games.values()]) dropGame(g); }
 
 module.exports = {
-  SETTINGS, TEAM_K, START_POS, GameError, rulesFor,
+  SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, GameError, rulesFor,
   createGame, getGame, hostGame, playerFor, normalizeCode,
   join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,

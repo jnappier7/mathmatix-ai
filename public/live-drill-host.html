@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261021">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261022">
 </head>
 <body>
 <div class="wrap">
@@ -33,6 +33,12 @@
       <div>
         <span class="lbl" id="bk-l">Playbook</span>
         <div class="books" id="books" role="group" aria-labelledby="bk-l"></div>
+      </div>
+      <div id="opt-focus" hidden>
+        <span class="lbl" id="fx-l">Facts to drill</span>
+        <div class="seg-ctl" id="o-focus-pre" role="group" aria-labelledby="fx-l"></div>
+        <div class="nums" id="o-focus" role="group" aria-label="Pick the numbers"></div>
+        <p class="muted" id="fx-note" style="margin:6px 0 0;font-size:.9rem"></p>
       </div>
       <div>
         <span class="lbl" id="md-l">Game</span>
@@ -130,6 +136,7 @@
         <div class="t1"><span class="k" id="f-n1">Blue</span><span class="v" id="f-p1">0</span></div>
       </div>
       <div class="result"><h2 id="f-result"></h2></div>
+      <div class="facts panel" id="f-facts" hidden></div>
       <div class="mvps" id="f-mvps"></div>
       <div class="film panel" id="f-film"></div>
       <div class="pbp panel" id="f-pbp"></div>
@@ -146,8 +153,8 @@
 </div>
 
 <script src="/js/csrf.js"></script>
-<script src="/js/live-drill/common.js?v=20261021"></script>
+<script src="/js/live-drill/common.js?v=20261022"></script>
 <script src="/js/live-drill/sound.js?v=20261021"></script>
-<script src="/js/live-drill/host.js?v=20261021"></script>
+<script src="/js/live-drill/host.js?v=20261022"></script>
 </body>
 </html>

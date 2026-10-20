@@ -7,6 +7,9 @@
  */
 const { DRILLS, getDrill, listPlaybooks, dealPlay, publicPlay, _extractBank } = require('../../utils/liveDrill/engine');
 
+// The banks read out of published course pages (Math Facts is native — tests/unit/liveDrillFacts.test.js).
+const PAGES = Object.keys(DRILLS).filter((id) => !DRILLS[id].native);
+
 describe('live drill engine', () => {
   test.each(Object.keys(DRILLS))('%s: the bank loads from the published page', (id) => {
     const drill = getDrill(id);
@@ -34,7 +37,7 @@ describe('live drill engine', () => {
     expect(dealPlay('algebra', 'all', 'x', 1, [])).toEqual(dealPlay('algebra', 'all', 'x', 1, []));
   });
 
-  test.each(Object.keys(DRILLS))('%s: every play has four distinct choices, one of them the answer', (id) => {
+  test.each(PAGES)('%s: every play has four distinct choices, one of them the answer', (id) => {
     for (const book of listPlaybooks(id).map((b) => b.key)) {
       for (let n = 1; n <= 150; n++) {
         const p = dealPlay(id, book, `s-${book}`, n, []);
@@ -51,7 +54,7 @@ describe('live drill engine', () => {
   });
 
   test('the public half of a play carries no answer', () => {
-    for (const id of Object.keys(DRILLS)) {
+    for (const id of PAGES) {
       const pub = publicPlay(dealPlay(id, 'all', 'z', 1, []));
       expect(Object.keys(pub).sort()).toEqual(['card', 'choices', 'head', 'id', 'playbook', 'playbookName']);
       expect(pub.card).not.toMatch(/class="q ok"|posed-ans/);

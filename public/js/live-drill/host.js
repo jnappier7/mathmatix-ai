@@ -10,7 +10,9 @@
     setScene: noop, setHype: noop, setMuted: noop, setMusic: noop, setCrowd: noop, muted: true, musicOn: false, crowdOn: false };
   let lastTick = null; // the clock second last ticked, so each of the final five ticks once
 
-  const S = { drills: [], settings: null, classes: [], drill: 'algebra', playbook: 'all', mode: 'drive', seconds: 120, plays: 10, spp: 20, classId: '' };
+  const S = { drills: [], settings: null, classes: [], drill: 'algebra', playbook: 'all', mode: 'drive', seconds: 120, plays: 10, spp: 20, classId: '', focus: [] };
+  // Math Facts: one-tap focus sets. Anything else is a tap on the numbers themselves.
+  const FOCUS_PRESETS = [['All facts', []], ['Easy: 0 1 2 5 10', [0, 1, 2, 5, 10]], ['Tough: 6 7 8 9 12', [6, 7, 8, 9, 12]]];
   let game = null; // latest host state
   let es = null;
   let tick = null;
@@ -46,13 +48,42 @@
     $('m-huddle').setAttribute('aria-pressed', S.mode === 'huddle');
     $('opt-drive').hidden = S.mode !== 'drive';
     $('opt-huddle').hidden = S.mode !== 'huddle';
-    const st = S.settings;
+    // Each drill brings its own clocks (a fact takes seconds, an algebra play half a minute).
+    const st = d.settings || S.settings;
+    if (!st.drive.seconds.includes(S.seconds)) S.seconds = st.drive.defaultSeconds;
+    if (!st.huddle.plays.includes(S.plays)) S.plays = st.huddle.defaultPlays;
+    if (!st.huddle.secondsPerPlay.includes(S.spp)) S.spp = st.huddle.defaultSecondsPerPlay;
+    renderFocus(d);
     segment($('o-seconds'), st.drive.seconds, S.seconds, (v) => mmss(v * 1000), (v) => { S.seconds = v; renderSetup(); });
     segment($('o-plays'), st.huddle.plays, S.plays, String, (v) => { S.plays = v; renderSetup(); });
     segment($('o-spp'), st.huddle.secondsPerPlay, S.spp, (v) => v + 's', (v) => { S.spp = v; renderSetup(); });
     $('cls').value = S.classId;
     $('cls-note').hidden = !S.classes.length;
-    try { localStorage.setItem('mm-live-drill-setup', JSON.stringify({ drill: S.drill, playbook: S.playbook, mode: S.mode, seconds: S.seconds, plays: S.plays, spp: S.spp, classId: S.classId })); } catch { /* private mode */ }
+    try { localStorage.setItem('mm-live-drill-setup', JSON.stringify({ drill: S.drill, playbook: S.playbook, mode: S.mode, seconds: S.seconds, plays: S.plays, spp: S.spp, classId: S.classId, focus: S.focus })); } catch { /* private mode */ }
+  }
+  /** Math Facts: which numbers every fact must include ("× 2s, 5s & 10s"). Empty = all of them. */
+  function focusApplies(d) { return !!(d.focusable && d.focusable.books.includes(S.playbook)); }
+  function renderFocus(d) {
+    const on = focusApplies(d);
+    $('opt-focus').hidden = !on;
+    if (!on) return;
+    if (!Array.isArray(S.focus)) S.focus = [];
+    const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+    $('o-focus-pre').innerHTML = FOCUS_PRESETS.map(([label, set], i) => `<button data-i="${i}" aria-pressed="${same(S.focus, set)}">${label}</button>`).join('');
+    $('o-focus-pre').querySelectorAll('button').forEach((b) => { b.onclick = () => { S.focus = [...FOCUS_PRESETS[+b.dataset.i][1]]; renderSetup(); }; });
+    const nums = Array.from({ length: d.focusable.max + 1 }, (_, n) => n);
+    $('o-focus').innerHTML = nums.map((n) => `<button data-n="${n}" aria-pressed="${S.focus.includes(n)}">${n}</button>`).join('');
+    $('o-focus').querySelectorAll('button').forEach((b) => {
+      b.onclick = () => {
+        const n = +b.dataset.n;
+        S.focus = S.focus.includes(n) ? S.focus.filter((x) => x !== n) : [...S.focus, n].sort((a, c) => a - c);
+        renderSetup();
+      };
+    });
+    const list = S.focus.map((n) => `${n}s`).join(', ');
+    $('fx-note').innerHTML = S.focus.length
+      ? `Every fact will have a <b>${list}</b> in it — the other number is anything.${S.focus.some((n) => n > 10) && S.playbook !== 'mul' && S.playbook !== 'div' ? ' (Addition and subtraction go to 10, so 11s and 12s only drill × and ÷.)' : ''}`
+      : 'Every fact is fair game. Tap numbers to single some out — like 2, 5 and 10.';
   }
   function renderClasses() {
     $('cls').innerHTML = '<option value="">No class — students join with the code</option>'
@@ -69,6 +100,7 @@
     try {
       const st = await api('/games', { method: 'POST', body: JSON.stringify({
         drill: S.drill, playbook: S.playbook, mode: S.mode, seconds: S.seconds, plays: S.plays, secondsPerPlay: S.spp,
+        focus: S.focus && S.focus.length ? S.focus : undefined,
         classId: S.classId || undefined,
       }) });
       connect(st.code);
@@ -275,7 +307,8 @@
     $('h-head').textContent = `Play ${r.n} of ${st.totalPlays} · ${play.head}`;
     $('h-card').innerHTML = cardHTML(play, r.closed ? r.revealCard : null, `Play ${r.n}`);
     const total = Math.max(1, Object.values(r.counts || {}).reduce((a, b) => a + b, 0));
-    $('h-choices').innerHTML = play.choices.map((c, i) => {
+    if (play.input) { $('h-choices').innerHTML = typedSplit(r, total); }
+    else $('h-choices').innerHTML = play.choices.map((c, i) => {
       if (!r.closed) return `<div class="ch"><span class="kbd">${i + 1}</span><span class="lab">${c.html}</span></div>`;
       const n = (r.counts && r.counts[c.k]) || 0;
       const cls = c.k === r.answer ? ' right' : ' fade';
@@ -293,6 +326,18 @@
     }
   }
 
+  /**
+   * A typed play has no choices: while it's open, say so; at the reveal, show the answer and the
+   * wrong answers the class typed most — the misconception is in the specific wrong number.
+   */
+  function typedSplit(r, total) {
+    if (!r.closed) return '<div class="typed-wait">Type the answer on your device</div>';
+    const neg = (k) => esc(String(k).replace('-', '−'));
+    const wrong = Object.entries(r.counts || {}).filter(([k]) => k !== r.answer).sort((a, b) => b[1] - a[1]).slice(0, 3);
+    const row = (k, n, cls, tag) => `<div class="ch${cls}"><span class="bar" style="width:${Math.round((100 * n) / total)}%"></span><span class="kbd">${tag}</span><span class="lab">${neg(k)}</span><span class="cnt">${n}</span></div>`;
+    return row(r.answer, (r.counts && r.counts[r.answer]) || 0, ' right', '✓') + wrong.map(([k, n]) => row(k, n, ' fade', '✗')).join('');
+  }
+
   function renderFinal(st) {
     st.teams.forEach((t, i) => { $('f-n' + i).textContent = t.name; $('f-p' + i).textContent = t.pts; });
     const f = st.final || { mvps: [[], []], film: [], pct: 0, att: 0 };
@@ -307,11 +352,61 @@
     }</div>`).join('');
     $('f-film').innerHTML = '<h3>Film room</h3>' + (f.film.length
       ? `<p>The plays the class missed most. This is the reteach.</p><ol>${f.film.map((m) => `<li>
-          <div class="note"><span class="count">${m.count} missed</span>${m.commonPick ? `<span><span class="tag">Most common wrong pick</span><span class="yr">${m.commonPick.html}</span> (${m.commonPick.count})</span>` : ''}<span><span class="tag">Answer</span><span class="cr">${m.answerHtml}</span></span></div>
+          <div class="note"><span class="count">${m.count} missed</span>${m.commonPick ? `<span><span class="tag">Most common wrong ${m.typed ? 'answer' : 'pick'}</span><span class="yr">${m.commonPick.html}</span> (${m.commonPick.count})</span>` : ''}<span><span class="tag">Answer</span><span class="cr">${m.answerHtml}</span></span></div>
           ${cardHTML({ card: m.card, playbookName: m.playbookName }, m.card, '')}
           <div class="tellbox">${m.tell}</div></li>`).join('')}</ol>`
       : '<p>Nobody missed a play. Clean game.</p>');
     renderPlayByPlay(st, f.plays || []);
+    renderFacts(st, f.facts);
+  }
+
+  /** Math Facts: the fluency tracker — each student, the class grid, and a CSV of every answer. */
+  function renderFacts(st, fx) {
+    const el = $('f-facts');
+    el.hidden = !fx;
+    if (!fx) return;
+    lastFacts = { fx, code: st.code, game: st.gameNumber, title: st.playbookName };
+    const chips = (xs, cls) => xs.map((x) => `<span class="fchip ${cls}">${typeof x === 'string' ? x : `${x.label} <i>${x.sec}s</i>`}</span>`).join('');
+    const rows = fx.students.map((s) => `<tr><td class="nm t${s.team}">${esc(s.name)}</td>
+      <td class="num">${s.right}/${s.att}</td><td class="num">${s.fluent}/${s.tried}</td><td class="num">${s.medianSec == null ? '–' : s.medianSec + 's'}</td>
+      <td>${s.missed.length || s.slow.length ? chips(s.missed.slice(0, 8), 'miss') + chips(s.slow.slice(0, Math.max(0, 8 - s.missed.length)), 'slow') : '<span class="muted">All fluent</span>'}</td></tr>`).join('');
+    el.innerHTML = `<h3>Fact tracker</h3>
+      <p>Fluent = right every time, in ${fx.fluentSec} s or less. <span class="fchip miss">missed</span> <span class="fchip slow">right but slow</span> — those are each student's facts to practice.</p>
+      <div class="tablewrap"><table class="ftab"><thead><tr><th>Student</th><th>Right</th><th>Fluent facts</th><th>Typical time</th><th>To practice</th></tr></thead><tbody>${rows}</tbody></table></div>
+      ${fx.unanswered.length ? `<p class="muted">No answers from: ${fx.unanswered.map(esc).join(', ')}.</p>` : ''}
+      ${fx.grids.map(gridHTML).join('')}
+      <div class="row"><button class="ghost" id="f-csv">Download answers (CSV)</button><span class="muted">Every answer: student, fact, what they typed, right or wrong, seconds. Kept only on this screen — the game forgets it within the hour.</span></div>`;
+    $('f-csv').onclick = downloadCsv;
+  }
+  let lastFacts = null;
+
+  /** The class grid for one fact family: green fluent, amber right-but-slow, red missed. */
+  function gridHTML(g) {
+    const sym = g.fam === 'mul' ? '×' : '+';
+    const n = Array.from({ length: g.max + 1 }, (_, i) => i);
+    const cell = (a, b) => {
+      const c = g.cells[`${a},${b}`];
+      if (!c) return '<td></td>';
+      const cls = c.right < c.att ? 'miss' : c.sec > (lastFacts ? lastFacts.fx.fluentSec : 3) ? 'slow' : 'ok';
+      return `<td class="${cls}" title="${a} ${sym} ${b}: ${c.right}/${c.att} right${c.sec != null ? `, ${c.sec}s` : ''}">${c.right}/${c.att}</td>`;
+    };
+    return `<div class="fgrid"><h4>${g.fam === 'mul' ? '× and ÷' : '+ and −'} facts · the class</h4><div class="tablewrap"><table><thead><tr><th>${sym}</th>${n.map((b) => `<th>${b}</th>`).join('')}</tr></thead><tbody>${
+      n.map((a) => `<tr><th>${a}</th>${n.map((b) => cell(a, b)).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+  }
+
+  function downloadCsv() {
+    if (!lastFacts) return;
+    const q = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+    // A name that starts with = + - @ would run as a formula in a spreadsheet: lead it with a quote.
+    const safe = (v) => (/^[=+\-@]/.test(String(v)) ? `'${v}` : v);
+    const lines = [['Student', 'Fact', 'Answer', 'Typed', 'Correct', 'Seconds'].map(q).join(',')]
+      .concat(lastFacts.fx.log.map((e) => [safe(e.name), e.fact, e.answer, safe(e.typed), e.ok ? 'yes' : 'no', e.sec].map(q).join(',')));
+    const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `math-facts-${lastFacts.code}-game${lastFacts.game}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
   /** Every play anyone answered, in order — tap a row for the play, the answer and the tell. */
@@ -327,7 +422,7 @@
           <span class="meter" aria-hidden="true"><span style="width:${p.pct}%"></span></span>
           <span class="pp" title="${p.right} of ${p.att} right">${p.pct}%</span></summary>
         <div class="more">
-          <div class="note"><span><span class="tag">Right</span>${p.right} of ${p.att}</span>${p.commonWrong ? `<span><span class="tag">Most common wrong pick</span><span class="yr">${p.commonWrong.html}</span> (${p.commonWrong.count})</span>` : ''}<span><span class="tag">Answer</span><span class="cr">${p.answerHtml}</span></span></div>
+          <div class="note"><span><span class="tag">Right</span>${p.right} of ${p.att}</span>${p.commonWrong ? `<span><span class="tag">Most common wrong ${p.typed ? 'answer' : 'pick'}</span><span class="yr">${p.commonWrong.html}</span> (${p.commonWrong.count})</span>` : ''}<span><span class="tag">Answer</span><span class="cr">${p.answerHtml}</span></span></div>
           ${cardHTML({ card: p.card, playbookName: p.playbookName }, p.card, '')}
           <div class="tellbox">${p.tell}</div>
         </div></details></li>`).join('')}</ol>`;

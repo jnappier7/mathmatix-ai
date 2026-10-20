@@ -172,6 +172,48 @@
     $('p-choices').querySelectorAll('.ch').forEach((b) => { b.onclick = () => onPick(b.dataset.k); });
   }
 
+  // ---- typed answers (Math Facts): a number pad, so a phone never pops its own keyboard ----
+  let pad = null; // { onSubmit, value, locked }
+  const MINUS = '−';
+  const showNum = (v) => String(v).replace('-', MINUS);
+  /** Show the pad for an open play. `allowMinus` adds the − key (integer facts). */
+  function openPad(onSubmit, allowMinus) {
+    pad = { onSubmit, value: '', locked: false };
+    $('p-choices').hidden = true; $('p-choices').innerHTML = '';
+    $('p-pad').hidden = false;
+    $('keys-hint') && ($('keys-hint').textContent = 'Type with the keys or the pad. Enter sends.');
+    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', allowMinus ? MINUS : '', '0', '⌫'];
+    $('p-pad').innerHTML = `<div class="entry" id="p-entry" aria-live="polite"><span class="ph">?</span></div>
+      <div class="keys">${keys.map((k) => (k ? `<button type="button" data-key="${k}" aria-label="${k === '⌫' ? 'delete' : k === MINUS ? 'minus' : k}">${k}</button>` : '<span></span>')).join('')}</div>
+      <button type="button" class="go send" id="p-send" disabled>Go</button>`;
+    $('p-pad').querySelectorAll('[data-key]').forEach((b) => { b.onclick = () => padKey(b.dataset.key); });
+    $('p-send').onclick = () => padKey('Enter');
+  }
+  function padKey(k) {
+    if (!pad || pad.locked) return;
+    if (k === 'Enter') { if (/\d/.test(pad.value)) { pad.locked = true; padRender(); pad.onSubmit(pad.value); } return; }
+    if (k === '⌫' || k === 'Backspace') pad.value = pad.value.slice(0, -1);
+    else if (k === MINUS || k === '-') { if (pad.value === '' && $('p-pad').querySelector(`[data-key="${MINUS}"]`)) pad.value = '-'; }
+    else if (/^\d$/.test(k) && pad.value.replace('-', '').length < 5) pad.value += k;
+    padRender();
+  }
+  function padRender() {
+    if (!pad) return;
+    $('p-entry').innerHTML = pad.value ? `<span class="v">${esc(showNum(pad.value))}</span>` : '<span class="ph">?</span>';
+    $('p-send').disabled = pad.locked || !/\d/.test(pad.value);
+    $('p-pad').classList.toggle('locked', pad.locked);
+  }
+  /** After grading: the pad shows what was typed, green or red. */
+  function padResult(typed, ok) {
+    pad = null;
+    $('p-choices').hidden = true;
+    $('p-pad').hidden = false;
+    $('p-pad').innerHTML = `<div class="entry ${ok == null ? 'sent' : ok ? 'right' : 'wrong'}"><span class="v">${esc(showNum(typed))}</span></div>`;
+  }
+  function closePad() { pad = null; $('p-pad').hidden = true; $('p-pad').innerHTML = ''; $('p-choices').hidden = false; }
+  const typedPlay = (play) => play && play.input === 'number';
+  const negOk = (play) => play.playbook === 'int'; // only integer facts can have a negative answer
+
   // ---- drive: each student on their own play ----
   async function nextDrivePlay() {
     if (fetching || !st || st.phase !== 'live') return;
@@ -180,8 +222,8 @@
       const r = await api(`/${encodeURIComponent(seat.code)}/play`);
       cur = { n: r.n, play: r.play, locked: false };
       $('p-card').innerHTML = cardHTML(r.play, null, `Play ${r.n}`);
-      $('p-choices').innerHTML = choicesHTML(r.play);
-      bindChoices(answerDrive);
+      if (typedPlay(r.play)) openPad(answerDrive, negOk(r.play));
+      else { closePad(); $('p-choices').innerHTML = choicesHTML(r.play); bindChoices(answerDrive); }
       $('fb').className = 'fb';
       $('fb').innerHTML = `<span class="muted">${esc(r.play.head)}</span>`;
     } catch (err) {
@@ -196,22 +238,26 @@
     $('p-choices').querySelectorAll('.ch').forEach((b) => { b.disabled = true; });
     try {
       const r = await api(`/${encodeURIComponent(seat.code)}/answer`, { method: 'POST', body: JSON.stringify({ n: cur.n, k }) });
+      const typed = typedPlay(cur.play);
       $('p-card').innerHTML = cardHTML(cur.play, r.revealCard, `Play ${cur.n}`);
-      $('p-choices').innerHTML = choicesHTML(cur.play, { answer: r.answer, picked: k, disabled: true });
+      if (typed) padResult(r.picked, r.ok);
+      else $('p-choices').innerHTML = choicesHTML(cur.play, { answer: r.answer, picked: k, disabled: true });
       if (r.ok) {
-        const call = r.gain >= 15 ? 'Big play' : r.gain >= 10 ? 'First down' : 'Short gain';
+        const call = r.tier === 0 ? 'Big play' : r.tier === 1 ? 'First down' : 'Short gain';
         $('fb').className = 'fb good';
         $('fb').innerHTML = `<span class="bigtxt">${call} · +${r.gain}</span><span class="why">${(r.ms / 1000).toFixed(1)} s</span>`;
-        setTimeout(() => { cur = null; nextDrivePlay(); }, 650);
+        // facts move fast: a right answer gets out of the way for the next one
+        setTimeout(() => { cur = null; nextDrivePlay(); }, typed ? 380 : 650);
       } else {
-        const picked = (cur.play.choices.find((c) => c.k === k) || {}).html || '';
+        const picked = typed ? `typed ${esc(showNum(r.picked))}` : `picked ${(cur.play.choices.find((c) => c.k === k) || {}).html || ''}`;
         $('fb').className = 'fb bad';
-        $('fb').innerHTML = `<span class="bigtxt">Sacked · −5</span><span class="why">You picked ${picked}. ${r.tell}</span><button class="next" id="nx">Next play</button>`;
+        $('fb').innerHTML = `<span class="bigtxt">Sacked · ${showNum(r.gain)}</span><span class="why">You ${picked}. ${r.tell}</span><button class="next" id="nx">Next play</button>`;
         $('nx').focus();
         $('nx').onclick = () => { cur = null; nextDrivePlay(); };
       }
     } catch (err) {
       if (err.status === 401) return gone('You are no longer in this game.');
+      if (err.status === 400 && typedPlay(cur.play)) { cur.locked = false; openPad(answerDrive, negOk(cur.play)); }
       $('fb').className = 'fb';
       $('fb').innerHTML = `<span class="muted">${esc(err.message)}</span>`;
     }
@@ -225,22 +271,25 @@
     const key = `${r.n}:${r.closed ? 'c' : 'o'}:${mine ? mine.k : ''}`;
     if (key === huddleKey) return;
     huddleKey = key;
+    const typed = typedPlay(r.play);
     if (r.closed) {
       $('p-card').innerHTML = cardHTML(r.play, r.revealCard, `Play ${r.n}`);
-      $('p-choices').innerHTML = choicesHTML(r.play, { answer: r.answer, picked: mine && mine.k, disabled: true });
+      if (typed) { if (mine) padResult(mine.k, mine.ok); else closePad(); }
+      else $('p-choices').innerHTML = choicesHTML(r.play, { answer: r.answer, picked: mine && mine.k, disabled: true });
       if (!mine) { $('fb').className = 'fb'; $('fb').innerHTML = `<span class="bigtxt">No answer</span><span class="why">${r.tell}</span>`; }
       else if (mine.ok) { $('fb').className = 'fb good'; $('fb').innerHTML = `<span class="bigtxt">Right · +${mine.gain}</span><span class="why">${r.tell}</span>`; }
-      else { $('fb').className = 'fb bad'; $('fb').innerHTML = `<span class="bigtxt">Sacked · −5</span><span class="why">${r.tell}</span>`; }
+      else { $('fb').className = 'fb bad'; $('fb').innerHTML = `<span class="bigtxt">Sacked · ${showNum(mine.gain)}</span><span class="why">${r.tell}</span>`; }
       return;
     }
     $('p-card').innerHTML = cardHTML(r.play, null, `Play ${r.n}`);
     if (mine) {
-      $('p-choices').innerHTML = choicesHTML(r.play, { picked: mine.k, disabled: true });
+      if (typed) padResult(mine.k, null);
+      else $('p-choices').innerHTML = choicesHTML(r.play, { picked: mine.k, disabled: true });
       $('fb').className = 'fb'; $('fb').innerHTML = '<span class="bigtxt">Locked in</span><span class="why">Eyes on the board for the reveal.</span>';
       return;
     }
-    $('p-choices').innerHTML = choicesHTML(r.play);
-    bindChoices(answerHuddle);
+    if (typed) openPad(answerHuddle, negOk(r.play));
+    else { closePad(); $('p-choices').innerHTML = choicesHTML(r.play); bindChoices(answerHuddle); }
     $('fb').className = 'fb'; $('fb').innerHTML = `<span class="muted">${esc(r.play.head)}</span>`;
   }
 
@@ -281,12 +330,30 @@
           <div class="note"><span><span class="tag">You picked</span><span class="yr">${m.pickedHtml}</span></span><span><span class="tag">Answer</span><span class="cr">${m.answerHtml}</span></span></div>
           <div class="tellbox">${m.tell}</div></li>`).join('')}</ol>`
       : '<p>Clean game. No film to review.</p>');
+    renderMyFacts(st.facts);
     // The stream stays open: the teacher may run it back, and this phone goes straight to the lobby.
+  }
+
+  /** Math Facts: this student's own fluency — what to practice tonight. */
+  function renderMyFacts(fx) {
+    $('f-facts').hidden = !fx;
+    if (!fx) return;
+    const chips = (xs, cls) => xs.map((x) => `<span class="fchip ${cls}">${typeof x === 'string' ? x : `${x.label} <i>${x.sec}s</i>`}</span>`).join('');
+    const practice = fx.missed.length + fx.slow.length;
+    $('f-facts').innerHTML = `<h3>Your facts</h3>
+      <div class="stats"><div><span class="v">${fx.fluent}/${fx.tried}</span><span class="k">Fluent</span></div>
+      <div><span class="v">${fx.medianSec == null ? '–' : fx.medianSec + 's'}</span><span class="k">Typical time</span></div></div>
+      ${practice ? `<p>Practice these — <span class="fchip miss">missed</span> first, then <span class="fchip slow">right but over ${fx.fluentSec}s</span>:</p><div class="fchips">${chips(fx.missed, 'miss')}${chips(fx.slow, 'slow')}</div>`
+    : `<p>Every fact right in ${fx.fluentSec} s or less. That's fluent.</p>`}`;
   }
 
   // ---------------- keys ----------------
   document.addEventListener('keydown', (e) => {
     if ($('live').hidden || e.target.tagName === 'INPUT') return;
+    if (pad) {
+      if (/^\d$/.test(e.key) || e.key === '-' || e.key === 'Backspace' || e.key === 'Enter') { e.preventDefault(); padKey(e.key); }
+      return;
+    }
     if (/^[1-4]$/.test(e.key)) { const b = $('p-choices').children[+e.key - 1]; if (b && !b.disabled) b.click(); }
     else if ((e.key === 'Enter' || e.key === ' ') && $('nx') && document.activeElement !== $('nx')) { e.preventDefault(); $('nx').click(); }
   });

@@ -61,11 +61,14 @@ describe('live drill over HTTP', () => {
     return r.body;
   }
 
-  test('the setup lists both drills with their playbooks', async () => {
+  test('the setup lists every drill with its playbooks and its own settings', async () => {
     const r = await req.get('/api/live-drill/host/drills');
     expect(r.status).toBe(200);
-    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry']);
-    expect(r.body.drills.every((d) => d.playbooks.length > 1 && !d.unavailable)).toBe(true);
+    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry', 'facts']);
+    expect(r.body.drills.every((d) => d.playbooks.length > 1 && !d.unavailable && d.settings.huddle.secondsPerPlay.length)).toBe(true);
+    const facts = r.body.drills.find((d) => d.id === 'facts');
+    expect(facts.focusable.books).toContain('mul');
+    expect(facts.settings.huddle.secondsPerPlay).toContain(10);
   });
 
   test('a wrong code is a 404, a bad name a 400', async () => {
