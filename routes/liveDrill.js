@@ -23,6 +23,7 @@ const { userHasRole } = require('../utils/roleQuery');
 const logger = require('../utils/logger').child({ route: 'liveDrill' });
 const G = require('../utils/liveDrill/games');
 const { DRILLS, listPlaybooks } = require('../utils/liveDrill/engine');
+const { FOCUSABLE, FOCUS_MAX } = require('../utils/liveDrill/facts');
 
 const hostRouter = express.Router();
 const playRouter = express.Router();
@@ -57,7 +58,11 @@ function openStream(req, res, game, listener) {
 hostRouter.get('/drills', (req, res) => {
   try {
     const drills = Object.entries(DRILLS).map(([id, d]) => {
-      try { return { id, title: d.title, playbooks: listPlaybooks(id) }; } catch (e) {
+      try {
+        const out = { id, title: d.title, playbooks: listPlaybooks(id), settings: G.settingsFor(id) };
+        if (d.native) out.focusable = { books: FOCUSABLE, max: FOCUS_MAX }; // Math Facts: pick the numbers
+        return out;
+      } catch (e) {
         logger.error('drill bank unreadable', { drill: id, error: e.message });
         return { id, title: d.title, playbooks: [], unavailable: true };
       }
@@ -81,14 +86,14 @@ const personName = (u) => [u && u.firstName, u && u.lastName].filter(Boolean).jo
 
 hostRouter.post('/games', async (req, res) => {
   try {
-    const { drill, playbook, mode, seconds, plays, secondsPerPlay, classId } = req.body || {};
+    const { drill, playbook, mode, seconds, plays, secondsPerPlay, classId, focus } = req.body || {};
     let cls = null;
     if (classId) {
       const c = await EnrollmentCode.findOne({ _id: classId, teacherId: req.user._id }, '_id className period').lean().catch(() => null);
       if (!c) return res.status(404).json({ message: 'That class was not found.' });
       cls = { id: c._id, name: [c.className, c.period].filter(Boolean).join(' · ') };
     }
-    const game = G.createGame({ hostId: req.user._id, hostName: personName(req.user), cls, drill, playbook, mode, seconds, plays, secondsPerPlay });
+    const game = G.createGame({ hostId: req.user._id, hostName: personName(req.user), cls, drill, playbook, mode, seconds, plays, secondsPerPlay, focus });
     logger.info('live drill hosted', { code: game.code, drill: game.drill, mode: game.mode, teacher: String(req.user._id) });
     res.status(201).json(G.hostView(game));
   } catch (err) {
