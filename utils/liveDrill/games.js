@@ -27,6 +27,11 @@
 const crypto = require('crypto');
 const { dealPlay, publicPlay, RECENT, DRILLS, getDrill } = require('./engine');
 const facts = require('./facts');
+const hill = require('./hill');
+
+const MODES = ['drive', 'huddle', 'hill'];
+/** Team Drive and King of the Hill: everyone at their own pace against one clock. */
+const ownPace = (game) => game.mode === 'drive' || game.mode === 'hill';
 
 const START_POS = 25;
 const TD_POINTS = 7;
@@ -125,7 +130,7 @@ class GameError extends Error {
  */
 function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, plays, secondsPerPlay, focus }) {
   if (!DRILLS[drill]) throw new GameError(400, 'Unknown drill.');
-  if (mode !== 'drive' && mode !== 'huddle') throw new GameError(400, 'Mode must be drive or huddle.');
+  if (!MODES.includes(mode)) throw new GameError(400, 'Mode must be drive, huddle or hill.');
   const d = getDrill(drill); // throws if the published page can't be read
   const book = d.bank.BOOKS[playbook] ? playbook : 'all';
   // Math Facts only: the numbers the teacher singled out ("× 2s, 5s & 10s").
@@ -175,6 +180,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
     listeners: new Set(),
     version: 0,
   };
+  if (mode === 'hill') hill.reset(game);
   games.set(game.code, game);
   return game;
 }
@@ -255,6 +261,7 @@ function join(game, rawName, { userId } = {}) {
     userId: userId ? String(userId) : null,
     conns: 0, // open live streams; a player with none is "away" (phone asleep, tab closed)
   };
+  if (game.mode === 'hill') hill.resetPlayer(player);
   game.players.set(player.id, player);
   game.byToken.set(hash(token), player.id);
   touch(game);
@@ -327,7 +334,8 @@ function rulesFor(game) {
     typed: !!(DRILLS[game.drill] || {}).native,
     fluentSec: FLUENT_MS / 1000,
     noAnswer: huddle ? 0 : null, // Drive has no "no answer": the next play waits for you
-    teamK: TEAM_K[game.mode],
+    teamK: TEAM_K[game.mode] || null,
+    hill: game.mode === 'hill' ? hill.RULES : null,
     tdPoints: TD_POINTS,
     startPos: START_POS,
   };
@@ -385,7 +393,8 @@ function applyAnswer(game, player, play, n, k, ms, windowMs) {
     recordMiss(game, play, n, k);
   }
   player.yards += gain;
-  const td = moveTeam(game, player.team, gain);
+  // On the hill there is no ball: the climb is settled in hill.onAnswer.
+  const td = game.mode === 'hill' ? false : moveTeam(game, player.team, gain);
   return { ok, gain, tier, td };
 }
 
@@ -403,11 +412,11 @@ function start(game) {
   if (game.phase !== 'lobby') throw new GameError(409, 'This game has already kicked off.');
   if (!teamSizes(game).some(Boolean)) throw new GameError(409, 'Nobody has joined yet.');
   game.startedAt = now();
-  if (game.mode === 'drive') {
+  if (ownPace(game)) {
     game.phase = 'live';
     game.endsAt = game.startedAt + game.seconds * 1000;
     later(game, game.endsAt - now() + DRIVE_GRACE_MS, () => endGame(game));
-    pushFeed(game, { type: 'kickoff' });
+    pushFeed(game, { type: game.mode === 'hill' ? 'climb' : 'kickoff' });
     touch(game);
   } else {
     openRound(game, 1);
@@ -461,6 +470,7 @@ function advance(game) {
 function endGame(game) {
   if (game.phase === 'over') return;
   if (game.mode === 'huddle' && game.phase === 'live') closeRound(game);
+  if (game.mode === 'hill' && game.phase === 'live') hill.finish(game, now());
   game.phase = 'over';
   game.endedAt = now();
   for (const t of game.timers) clearTimeout(t);
@@ -474,7 +484,7 @@ function endGame(game) {
 
 /** Drive: the play this player is on. Its clock starts the first time it is fetched. */
 function currentPlay(game, player) {
-  if (game.mode !== 'drive' || game.phase !== 'live') throw new GameError(409, 'No play is open.');
+  if (!ownPace(game) || game.phase !== 'live') throw new GameError(409, 'No play is open.');
   const play = playAt(game, player.n);
   if (!player.issuedAt) player.issuedAt = now();
   player.lastSeen = now();
@@ -495,7 +505,7 @@ function readAnswer(play, k) {
 function answer(game, player, n, k) {
   n = Number(n); k = String(k);
   player.lastSeen = now();
-  if (game.mode === 'drive') {
+  if (ownPace(game)) {
     if (game.phase !== 'live' || now() > game.endsAt + DRIVE_GRACE_MS) throw new GameError(409, 'The clock has run out.');
     if (n !== player.n || !player.issuedAt) throw new GameError(409, 'That play is already over.');
     const play = playAt(game, n);
@@ -503,7 +513,9 @@ function answer(game, player, n, k) {
     const ms = now() - player.issuedAt;
     const res = applyAnswer(game, player, play, n, k, ms);
     player.n++; player.issuedAt = null;
-    if (res.td) pushFeed(game, { type: 'td', team: player.team, text: `TOUCHDOWN ${game.teams[player.team].name.toUpperCase()}`, who: player.name });
+    if (game.mode === 'hill') {
+      res.hill = hill.onAnswer(game, player, res, now(), (item) => pushFeed(game, item));
+    } else if (res.td) pushFeed(game, { type: 'td', team: player.team, text: `TOUCHDOWN ${game.teams[player.team].name.toUpperCase()}`, who: player.name });
     else if (res.ok && res.tier === 0) pushFeed(game, { type: 'big', team: player.team, who: player.name, gain: res.gain });
     else if (!res.ok) pushFeed(game, { type: 'sack', team: player.team, who: player.name });
     touch(game);
@@ -557,6 +569,7 @@ function rematch(game) {
     Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, n: 1, issuedAt: null, misses: [], facts: new Map(), factLog: [] });
   }
   Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map(), playStats: new Map() });
+  if (game.mode === 'hill') hill.reset(game);
   game.games = (game.games || 1) + 1;
   touch(game);
 }
@@ -724,6 +737,7 @@ function hostView(game) {
     linked: !!p.userId, away: p.conns === 0 && now() - p.lastSeen > 15000,
   }));
   const v = { ...base(game), players, feed: game.feed.slice(0, 8), round: roundView(game, true) };
+  if (game.mode === 'hill') v.hill = hill.hostHill(game, now());
   if (game.phase === 'over') {
     const mvps = [0, 1].map((t) => players.filter((p) => p.team === t && p.att > 0)
       .sort((a, b) => b.yards - a.yards || b.comp - a.comp).slice(0, 3)
@@ -732,6 +746,7 @@ function hostView(game) {
     const comp = players.reduce((s, p) => s + p.comp, 0);
     v.final = { mvps, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
     if (DRILLS[game.drill] && DRILLS[game.drill].native) v.final.facts = factsFinal(game, players);
+    if (game.mode === 'hill') v.final.hill = hill.finalHill(game);
   }
   return v;
 }
@@ -742,6 +757,7 @@ function playerView(game, player) {
     me: { id: player.id, name: player.name, team: player.team, att: player.att, comp: player.comp,
       yards: player.yards, streak: player.streak, best: player.best, n: player.n },
   };
+  if (game.mode === 'hill') v.hill = hill.playerHill(game, player, now());
   if (game.mode === 'huddle' && game.round) {
     const rv = roundView(game, false);
     const mine = game.round.answers.get(player.id);

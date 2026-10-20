@@ -122,15 +122,20 @@
 
   function renderLobby() {
     const t = st.me.team;
-    $('l-team').className = `teamcard t${t}`;
-    $('l-teamname').textContent = `Team ${teamName(t)}`;
+    const onHill = st.mode === 'hill';
+    $('l-team').className = onHill ? 'teamcard hill' : `teamcard t${t}`;
+    $('l-teamname').textContent = onHill ? 'King of the Hill' : `Team ${teamName(t)}`;
     $('l-name').textContent = st.me.name;
-    $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : 'Huddle'}`;
+    $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : st.mode === 'hill' ? 'every climber for themselves' : 'Huddle'}`;
     const rules = window.LiveDrill.rulesHTML(st);
     if ($('l-rules').dataset.html !== rules) { $('l-rules').innerHTML = rules; $('l-rules').dataset.html = rules; }
   }
 
   function renderScore() {
+    const onHill = st.mode === 'hill';
+    $('live').classList.toggle('mode-hill', onHill);
+    $('p-hill').hidden = !onHill;
+    if (onHill) { renderMyHill(); return; }
     st.teams.forEach((t, i) => { $('s-n' + i).textContent = t.name; $('s-p' + i).textContent = t.pts; });
     setField($('field'), st.teams);
     const t = st.me.team;
@@ -139,23 +144,41 @@
     $('p-me').textContent = `${st.me.name} · ${st.me.yards} yds · streak ${st.me.streak}`;
   }
 
+  /** King of the Hill: where I am, who's just above, how close the next boulder is. */
+  function renderMyHill() {
+    const h = st.hill;
+    if (!h) return;
+    $('p-team').className = 'pill hill';
+    $('p-team').textContent = h.king && h.king.me ? '👑 King' : `#${h.rank} of ${h.of}`;
+    $('p-me').textContent = `${st.me.name} · streak ${st.me.streak}`;
+    const dots = Array.from({ length: 3 }, (_, i) => `<span class="${i < 3 - h.toBoulder ? 'on' : ''}"></span>`).join('');
+    const status = h.hit ? `<div class="hit">🪨 ${esc(h.hit.by)} knocked you down!${h.steady ? ' You\'re steady for a moment.' : ''}</div>`
+      : h.king && h.king.me ? `<div class="crownline">👑 You're the king.${h.shield ? ' 🛡 Shield up.' : ` ${h.toBoulder} more in a row for a shield.`}</div>`
+      : h.above ? `<div class="above"><b>${esc(h.above.name)}</b> is ${h.above.gap} above you${h.king && h.king.name !== h.above.name ? ` · 👑 ${esc(h.king.name)}` : ''}</div>`
+      : '';
+    $('p-hill').innerHTML = `<div class="climb"><span class="track"><span class="me" style="bottom:${Math.round((100 * h.h) / h.summit)}%"></span>${
+      h.above ? `<span class="up" style="bottom:${Math.round((100 * (h.h + h.above.gap)) / h.summit)}%"></span>` : ''}</span>
+      <div class="hnums"><span class="v">${Math.round(h.h)}</span><span class="k">of ${h.summit}</span></div>
+      <div class="boulder"><span class="k">${h.king && h.king.me ? 'Shield' : 'Boulder'}</span><span class="dots">${dots}</span></div></div>${status}`;
+  }
+
   function renderClock() {
     if (!st) return;
     const c = $('s-clock');
     let left = null;
-    if (st.mode === 'drive' && st.phase === 'live') { $('s-ck').textContent = 'Clock'; left = st.endsAt - serverNow(); }
+    if (st.mode !== 'huddle' && st.phase === 'live') { $('s-ck').textContent = 'Clock'; left = st.endsAt - serverNow(); }
     else if (st.mode === 'huddle' && st.round) {
       $('s-ck').textContent = st.round.closed ? `Play ${st.round.n}/${st.totalPlays}` : `Play ${st.round.n}`;
       if (!st.round.closed) left = st.round.closesAt - serverNow();
     }
     if (left == null) { if (st.mode === 'huddle' && st.round && st.round.closed) c.textContent = '—'; c.classList.remove('low'); return; }
     c.textContent = mmss(left);
-    c.classList.toggle('low', left <= (st.mode === 'drive' ? 15000 : 5000));
+    c.classList.toggle('low', left <= (st.mode !== 'huddle' ? 15000 : 5000));
   }
 
   function renderLive() {
     renderScore();
-    if (st.mode === 'drive') { if (!cur && !fetching) nextDrivePlay(); return; }
+    if (st.mode !== 'huddle') { if (!cur && !fetching) nextDrivePlay(); return; }
     renderHuddle();
   }
 
@@ -243,15 +266,15 @@
       if (typed) padResult(r.picked, r.ok);
       else $('p-choices').innerHTML = choicesHTML(cur.play, { answer: r.answer, picked: k, disabled: true });
       if (r.ok) {
-        const call = r.tier === 0 ? 'Big play' : r.tier === 1 ? 'First down' : 'Short gain';
+        const call = r.hill ? hillCall(r.hill) : r.tier === 0 ? 'Big play' : r.tier === 1 ? 'First down' : 'Short gain';
         $('fb').className = 'fb good';
-        $('fb').innerHTML = `<span class="bigtxt">${call} · +${r.gain}</span><span class="why">${(r.ms / 1000).toFixed(1)} s</span>`;
+        $('fb').innerHTML = `<span class="bigtxt">${call}${r.hill ? '' : ` · +${r.gain}`}</span><span class="why">${r.hill ? `+${r.gain} · ` : ''}${(r.ms / 1000).toFixed(1)} s</span>`;
         // facts move fast: a right answer gets out of the way for the next one
         setTimeout(() => { cur = null; nextDrivePlay(); }, typed ? 380 : 650);
       } else {
         const picked = typed ? `typed ${esc(showNum(r.picked))}` : `picked ${(cur.play.choices.find((c) => c.k === k) || {}).html || ''}`;
         $('fb').className = 'fb bad';
-        $('fb').innerHTML = `<span class="bigtxt">Sacked · ${showNum(r.gain)}</span><span class="why">You ${picked}. ${r.tell}</span><button class="next" id="nx">Next play</button>`;
+        $('fb').innerHTML = `<span class="bigtxt">${r.hill ? 'Slipped' : 'Sacked'} · ${showNum(r.gain)}</span><span class="why">You ${picked}. ${r.tell}</span><button class="next" id="nx">Next play</button>`;
         $('nx').focus();
         $('nx').onclick = () => { cur = null; nextDrivePlay(); };
       }
@@ -261,6 +284,14 @@
       $('fb').className = 'fb';
       $('fb').innerHTML = `<span class="muted">${esc(err.message)}</span>`;
     }
+  }
+
+  /** What a right answer did on the hill: a plain climb, a boulder, a block, or a shield. */
+  function hillCall(h) {
+    if (h.threw && h.threw.blocked) return `🛡 ${esc(h.threw.name)} blocked your boulder`;
+    if (h.threw) return `🪨 Boulder! ${esc(h.threw.name)} goes down`;
+    if (h.shield) return '🛡 Shield up!';
+    return 'Climb';
   }
 
   // ---- huddle: everyone on the play the board shows ----
@@ -319,7 +350,18 @@
     h.className = win >= 0 ? `t${win}` : '';
     h.textContent = win < 0 ? 'Tie game' : `${teamName(win)} wins`;
     const me = st.me;
-    $('f-yds').textContent = me.yards;
+    const onHill = st.mode === 'hill';
+    $('final').classList.toggle('mode-hill', onHill);
+    $('f-place').hidden = !onHill;
+    if (onHill && st.hill) {
+      const hl = st.hill;
+      $('f-mid').textContent = `#${hl.rank}`;
+      h.className = hl.rank === 1 ? 'king' : '';
+      h.textContent = hl.rank === 1 ? '👑 King of the Hill' : `#${hl.rank} of ${hl.of}`;
+      $('f-place').textContent = hl.rank === 1 ? `You finished on top at ${Math.round(hl.h)}.` : `You finished at ${Math.round(hl.h)}${hl.king ? ` · 👑 ${hl.king.name} is king` : ''}.`;
+    }
+    $('f-yds').textContent = onHill && st.hill ? Math.round(st.hill.h) : me.yards;
+    $('f-yds').nextElementSibling.textContent = onHill ? 'Height' : 'Your yards';
     $('f-comp').textContent = `${me.comp}/${me.att}`;
     $('f-pct').textContent = me.att ? Math.round((100 * me.comp) / me.att) + '%' : '–';
     $('f-best').textContent = me.best;

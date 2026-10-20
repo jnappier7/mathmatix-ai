@@ -64,7 +64,7 @@
     }
     el.dataset.code = g.code;
     const who = g.hostName ? `${esc(g.hostName)} started` : 'Your class started';
-    const what = g.mode === 'huddle' ? 'Huddle' : 'Team Drive';
+    const what = g.mode === 'huddle' ? 'Huddle' : g.mode === 'hill' ? 'King of the Hill' : 'Team Drive';
     el.innerHTML = `<span class="ball" aria-hidden="true">🏈</span>
       <span class="txt">${who} a <b>Two-Minute Drill</b>
         <span class="sub">${esc(g.className || g.drillTitle)} · ${esc(g.playbookName)} · ${what}</span></span>
