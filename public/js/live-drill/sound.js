@@ -246,6 +246,11 @@
         tone({ freq: 392, type: 'square', start: s, dur: 0.36, vol: 0.04 });
       });
     },
+    /** King of the Hill: a boulder rolls — a low rumble and a thud. */
+    rumble() {
+      hiss({ dur: 0.9, vol: 0.35, type: 'lowpass', freq: 380, slideTo: 120, q: 0.9, attack: 0.04 });
+      tone({ freq: 70, type: 'sine', start: 0.55, dur: 0.35, vol: 0.4, slideTo: 40 });
+    },
     /** Clock tick for the last five seconds. */
     tick(last) { tone({ freq: last ? 1320 : 990, type: 'triangle', dur: 0.08, vol: 0.18 }); },
     /** The reveal: three rising notes. */
