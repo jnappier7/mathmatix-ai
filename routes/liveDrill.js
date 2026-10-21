@@ -9,7 +9,12 @@
  *                           shares one school IP; `playLimiter` keys on the token instead.
  *   /api/live-drill/mine/*  signed-in students (isAuthenticated, CSRF as usual): the chat-screen
  *                           banner asks which of MY classes has a game open, and joins with the
- *                           account's name — no code, nothing typed.
+ *                           account's name — no code, nothing typed. /mine/fluency is my own
+ *                           math-facts record.
+ *
+ * Math-facts fluency is SAVED to signed-in students' accounts when a Math Facts game ends
+ * (utils/liveDrill/fluency.js → models/factFluency.js). Teachers read it per class at
+ * /host/fluency/… — only for their own classes, and every read goes to the FERPA access log.
  *
  * The game itself — rules, scoring, what each screen may see — is utils/liveDrill/games.js.
  * Pages: public/live-drill-host.html (projector), public/play.html (students, at /play).
@@ -18,12 +23,20 @@ const express = require('express');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
 const QRCode = require('qrcode');
+const mongoose = require('mongoose');
 const EnrollmentCode = require('../models/enrollmentCode');
+const User = require('../models/user');
+const FactFluency = require('../models/factFluency');
+const { logRecordAccess } = require('../middleware/ferpaAccessLog');
+const fluency = require('../utils/liveDrill/fluency');
 const { userHasRole } = require('../utils/roleQuery');
 const logger = require('../utils/logger').child({ route: 'liveDrill' });
 const G = require('../utils/liveDrill/games');
 const { DRILLS, listPlaybooks } = require('../utils/liveDrill/engine');
 const { FOCUSABLE, FOCUS_MAX } = require('../utils/liveDrill/facts');
+
+// Every finished Math Facts game folds into its signed-in students' records.
+G.onGameOver((game) => fluency.saveGame(game, FactFluency));
 
 const hostRouter = express.Router();
 const playRouter = express.Router();
@@ -81,6 +94,61 @@ hostRouter.get('/classes', async (req, res) => {
     })) });
   } catch (err) { send(res, err); }
 });
+
+// ---------------------------------------------------------------------------
+// math-facts fluency (saved across games)
+// ---------------------------------------------------------------------------
+
+/** The teacher's own class, or a 404 — a teacher never reads another class's records. */
+async function myClass(req) {
+  if (!mongoose.Types.ObjectId.isValid(req.params.classId)) return null;
+  return EnrollmentCode.findOne({ _id: req.params.classId, teacherId: req.user._id }, '_id className period enrolledStudents').lean();
+}
+const fullName = (u) => personName(u) || 'Student';
+
+/** A class's fact fluency: every enrolled student's summary and the class grid. */
+hostRouter.get('/fluency/classes/:classId',
+  logRecordAccess('skill_mastery', 'teaching_instruction', { getStudentIds: (req) => req.accessedStudentIds, accessType: 'view' }),
+  async (req, res) => {
+    try {
+      const cls = await myClass(req);
+      if (!cls) return res.status(404).json({ message: 'That class was not found.' });
+      const ids = (cls.enrolledStudents || []).map((e) => e.studentId).filter(Boolean);
+      const [users, docs] = await Promise.all([
+        User.find({ _id: { $in: ids } }, 'firstName lastName').lean(),
+        FactFluency.find({ userId: { $in: ids } }).lean(),
+      ]);
+      const byUser = new Map(docs.map((d) => [String(d.userId), d]));
+      const students = users.map((u) => {
+        const { rows: _rows, ...sum } = fluency.summarize(byUser.get(String(u._id)));
+        return { id: String(u._id), name: fullName(u), ...sum };
+      }).sort((a, b) => a.name.localeCompare(b.name));
+      req.accessedStudentIds = docs.map((d) => String(d.userId)); // logged: the records actually read
+      res.json({
+        className: [cls.className, cls.period].filter(Boolean).join(' · '),
+        students,
+        grids: fluency.classGrid(docs.map((d) => fluency.summarize(d))),
+        fluentSec: G.FLUENT_MS / 1000,
+      });
+    } catch (err) { send(res, err); }
+  });
+
+/** One student's facts, fact by fact — only a student enrolled in one of the teacher's classes. */
+hostRouter.get('/fluency/classes/:classId/students/:studentId',
+  logRecordAccess('skill_mastery', 'teaching_instruction', { getStudentId: (req) => req.accessedStudentId, accessType: 'view' }),
+  async (req, res) => {
+    try {
+      const cls = await myClass(req);
+      const sid = req.params.studentId;
+      if (!cls || !(cls.enrolledStudents || []).some((e) => String(e.studentId) === sid)) {
+        return res.status(404).json({ message: 'That student is not in this class.' });
+      }
+      const [u, doc] = await Promise.all([User.findById(sid, 'firstName lastName').lean(), FactFluency.findOne({ userId: sid }).lean()]);
+      const sum = fluency.summarize(doc);
+      req.accessedStudentId = sid;
+      res.json({ id: sid, name: fullName(u), ...sum, grids: fluency.studentGrid(sum), fluentSec: G.FLUENT_MS / 1000 });
+    } catch (err) { send(res, err); }
+  });
 
 const personName = (u) => [u && u.firstName, u && u.lastName].filter(Boolean).join(' ').trim();
 
@@ -262,6 +330,18 @@ mineRouter.post('/join', (req, res) => {
     res.status(201).json({ token, code: game.code, playerId: player.id, name: player.name, team: player.team });
   } catch (err) { send(res, err); }
 });
+
+/** My own math-facts record (the phone shows it after a game). */
+mineRouter.get('/fluency',
+  logRecordAccess('skill_mastery', 'student_self_access', { getStudentId: (req) => req.user._id }),
+  async (req, res) => {
+    try {
+      res.set('Cache-Control', 'no-store');
+      const sum = fluency.summarize(await FactFluency.findOne({ userId: req.user._id }).lean());
+      const { rows: _rows, ...rest } = sum;
+      res.json({ ...rest, grids: fluency.studentGrid(sum), fluentSec: G.FLUENT_MS / 1000 });
+    } catch (err) { send(res, err); }
+  });
 
 /** For config/middleware.js: player calls are exempt from the global apiLimiter. */
 const LIVE_DRILL_PLAY_PATH = /^\/live-drill\/play\//;

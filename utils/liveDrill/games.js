@@ -373,7 +373,7 @@ function trackFact(player, play, k, ok, ms) {
   if (!rec) { rec = { label: f.label, fam: f.fam, a: f.a, b: f.b, att: 0, right: 0, ms: [] }; player.facts.set(f.id, rec); }
   rec.att++;
   if (ok) { rec.right++; rec.ms.push(ms); }
-  if (player.factLog.length < 600) player.factLog.push({ fact: f.label, answer: play.answer, typed: k, ok, ms });
+  if (player.factLog.length < 600) player.factLog.push({ id: f.id, fact: f.label, answer: play.answer, typed: k, ok, ms });
 }
 
 function applyAnswer(game, player, play, n, k, ms, windowMs) {
@@ -473,6 +473,10 @@ function advance(game) {
   openRound(game, game.round.n + 1);
 }
 
+// Called once per finished game (routes/liveDrill.js saves Math Facts fluency to student accounts).
+const overHooks = [];
+function onGameOver(fn) { overHooks.push(fn); }
+
 function endGame(game) {
   if (game.phase === 'over') return;
   if (game.mode === 'huddle' && game.phase === 'live') closeRound(game);
@@ -482,6 +486,13 @@ function endGame(game) {
   for (const t of game.timers) clearTimeout(t);
   game.timers.clear();
   touch(game);
+  // A game cancelled from the lobby has nothing to save. The hooks run now, synchronously, so they
+  // read this game's answers before a "Run it back" can clear them.
+  if (game.startedAt) {
+    for (const fn of overHooks) {
+      try { const r = fn(game); if (r && r.catch) r.catch(() => {}); } catch { /* a hook never breaks the game */ }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -728,7 +739,7 @@ function factsFinal(game, players) {
   const seated = [...game.players.values()].filter((p) => !p.kicked && p.att > 0);
   return {
     fluentSec: FLUENT_MS / 1000,
-    students: seated.map((p) => ({ name: p.name, team: p.team, ...factSummary(p) }))
+    students: seated.map((p) => ({ name: p.name, team: p.team, saved: !!p.userId, ...factSummary(p) }))
       .sort((a, b) => b.fluent - a.fluent || b.right - a.right),
     grids: factGrid(game),
     // every answer, for the CSV — capped per student in trackFact
@@ -862,7 +873,7 @@ if (sweeper.unref) sweeper.unref();
 function _reset() { for (const g of [...games.values()]) dropGame(g); }
 
 module.exports = {
-  SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, GameError, rulesFor,
+  onGameOver, SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, GameError, rulesFor,
   createGame, getGame, hostGame, playerFor, normalizeCode,
   join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,

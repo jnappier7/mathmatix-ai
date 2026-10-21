@@ -379,7 +379,29 @@
           <div class="tellbox">${m.tell}</div></li>`).join('')}</ol>`
       : '<p>Clean game. No film to review.</p>');
     renderMyFacts(st.facts);
+    if (st.facts && account) lifetime();
     // The stream stays open: the teacher may run it back, and this phone goes straight to the lobby.
+  }
+
+  /** Signed in: the saved record, after this game is folded in (the save runs as the game ends). */
+  let lifetimeFor = null;
+  function lifetime() {
+    const key = `${seat && seat.code}:${st.gameNumber}`;
+    if (lifetimeFor === key) return;
+    lifetimeFor = key;
+    setTimeout(async () => {
+      try {
+        const res = await fetch('/api/live-drill/mine/fluency', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+        if (!res.ok) return;
+        const f = await res.json();
+        if (!f.games || $('f-facts').hidden) return;
+        const line = document.createElement('p');
+        line.className = 'lifetime';
+        const once = f.new ? ` · <b>${f.new}</b> right once — get ${f.new === 1 ? 'it' : 'them'} again to lock ${f.new === 1 ? 'it' : 'them'} in` : '';
+        line.innerHTML = `<b>All your games (${f.games}):</b> ${f.fluent} fluent${once}${f.missed ? ` · ${f.missed} to practice` : ''}. Saved to your account.`;
+        $('f-facts').appendChild(line);
+      } catch { /* offline: the game's own summary is already on screen */ }
+    }, 1500);
   }
 
   /** Math Facts: this student's own fluency — what to practice tonight. */

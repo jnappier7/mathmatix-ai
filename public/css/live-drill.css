@@ -136,6 +136,12 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .fgrid th{color:var(--muted);font-family:var(--display);font-weight:800;padding:2px 4px;min-width:2.4em}
 .fgrid td{width:2.6em;height:1.9em;text-align:center;border:1px solid var(--rail);color:var(--ink)}
 .fgrid td.ok{background:#bfe9cf} .fgrid td.slow{background:#ffd98a} .fgrid td.miss{background:#ffb3aa}
+.fgrid td.new{background:#dfe7ea}
+.ftab tr.pick{cursor:pointer}
+.ftab .acct{color:var(--hit);font-size:.85em}
+.facts .lifetime{margin:10px 0 0;padding:8px 10px;border-radius:6px;background:var(--night);border:1px solid var(--rail)}
+.ftab tr.pick:hover td,.ftab tr.pick:focus td{background:var(--night)}
+.hero p a,.facts p a{color:var(--led)}
 
 /* ---------- King of the Hill ---------- */
 /* no teams on the hill: the scoreboard keeps only its clock, and there is no field */
