@@ -215,6 +215,10 @@ describe('app wiring', () => {
     expect(routes).toMatch(/app\.use\('\/api\/live-drill\/host', isAuthenticated, isTeacher,/);
   });
 
+  test('the Fact Fluency page is teacher-only, like the data behind it', () => {
+    expect(routes).toMatch(/app\.get\(\['\/fact-fluency', '\/fact-fluency\.html'\], isAuthenticated, isTeacher,/);
+  });
+
   test('player calls skip the global limiter; host calls do not', () => {
     expect(isLiveDrillPlayPath('/live-drill/play/join')).toBe(true);
     expect(isLiveDrillPlayPath('/live-drill/play/ABC123/answer')).toBe(true);

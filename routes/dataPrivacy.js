@@ -43,6 +43,7 @@ const ScreenerSession = require('../models/screenerSession');
 const GradingResult = require('../models/gradingResult');
 const StudentUpload = require('../models/studentUpload');
 const ActivityAttempt = require('../models/activityAttempt');
+const FactFluency = require('../models/factFluency');
 const Feedback = require('../models/feedback');
 const EnrollmentCode = require('../models/enrollmentCode');
 const Announcement = require('../models/announcement');
@@ -183,6 +184,15 @@ async function cascadeDeleteStudentData(studentId, requestor) {
         summary.errors.push({ collection: 'activityAttempts', error: err.message });
     }
 
+    // --- 5c. Delete the math-facts fluency record (live Math Facts drill) ---
+    try {
+        const result = await FactFluency.deleteMany({ userId: objectId });
+        summary.documentCounts.factFluency = result.deletedCount;
+        if (result.deletedCount > 0) summary.collectionsAffected.push('factFluency');
+    } catch (err) {
+        summary.errors.push({ collection: 'factFluency', error: err.message });
+    }
+
     // --- 6. Delete Feedback ---
     try {
         const result = await Feedback.deleteMany({ userId: objectId });
@@ -316,7 +326,8 @@ async function exportStudentData(studentId) {
         uploads,
         feedbackEntries,
         messages,
-        activityAttempts
+        activityAttempts,
+        factFluency
     ] = await Promise.all([
         User.findById(objectId).select('-passwordHash -resetPasswordToken -resetPasswordExpires -emailVerificationToken').lean(),
         Conversation.find({ userId: objectId }).lean(),
@@ -332,7 +343,8 @@ async function exportStudentData(studentId) {
                 { studentId: objectId }
             ]
         }).lean(),
-        ActivityAttempt.find({ userId: objectId }).lean()
+        ActivityAttempt.find({ userId: objectId }).lean(),
+        FactFluency.findOne({ userId: objectId }).lean()
     ]);
 
     return {
@@ -350,7 +362,8 @@ async function exportStudentData(studentId) {
             })),
             feedback: feedbackEntries,
             messages,
-            activityAttempts
+            activityAttempts,
+            factFluency
         }
     };
 }

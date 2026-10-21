@@ -485,7 +485,7 @@
     if (!fx) return;
     lastFacts = { fx, code: st.code, game: st.gameNumber, title: st.playbookName };
     const chips = (xs, cls) => xs.map((x) => `<span class="fchip ${cls}">${typeof x === 'string' ? x : `${x.label} <i>${x.sec}s</i>`}</span>`).join('');
-    const rows = fx.students.map((s) => `<tr><td class="nm t${s.team}">${esc(s.name)}</td>
+    const rows = fx.students.map((s) => `<tr><td class="nm t${s.team}">${esc(s.name)}${s.saved ? ' <span class="acct" title="Signed in: saved to their account">✓</span>' : ''}</td>
       <td class="num">${s.right}/${s.att}</td><td class="num">${s.fluent}/${s.tried}</td><td class="num">${s.medianSec == null ? '–' : s.medianSec + 's'}</td>
       <td>${s.missed.length || s.slow.length ? chips(s.missed.slice(0, 8), 'miss') + chips(s.slow.slice(0, Math.max(0, 8 - s.missed.length)), 'slow') : '<span class="muted">All fluent</span>'}</td></tr>`).join('');
     el.innerHTML = `<h3>Fact tracker</h3>
@@ -493,7 +493,8 @@
       <div class="tablewrap"><table class="ftab"><thead><tr><th>Student</th><th>Right</th><th>Fluent facts</th><th>Typical time</th><th>To practice</th></tr></thead><tbody>${rows}</tbody></table></div>
       ${fx.unanswered.length ? `<p class="muted">No answers from: ${fx.unanswered.map(esc).join(', ')}.</p>` : ''}
       ${fx.grids.map(gridHTML).join('')}
-      <div class="row"><button class="ghost" id="f-csv">Download answers (CSV)</button><span class="muted">Every answer: student, fact, what they typed, right or wrong, seconds. Kept only on this screen — the game forgets it within the hour.</span></div>`;
+      <div class="row"><button class="ghost" id="f-csv">Download answers (CSV)</button><span class="muted">Every answer: student, fact, what they typed, right or wrong, seconds.</span></div>
+      <p class="muted" style="margin-top:8px">${fx.students.some((s) => s.saved) ? `Students with a ✓ joined signed in, so this game is saved to their account — see <a href="/fact-fluency" target="_blank" rel="noopener">Fact Fluency</a> for every game so far. ` : ''}${fx.students.some((s) => !s.saved) ? 'Students who joined with just the code and a name aren\'t saved anywhere — download the CSV to keep their results.' : ''}</p>`;
     $('f-csv').onclick = downloadCsv;
   }
   let lastFacts = null;

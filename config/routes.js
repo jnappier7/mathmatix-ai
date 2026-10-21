@@ -920,6 +920,9 @@ function registerHtmlRoutes(app) {
   app.get(['/play', '/play.html'], (req, res) => res.sendFile(path.join(publicDir, 'play.html')));
   app.get(['/live-drill', '/live-drill-host.html'], isAuthenticated, isTeacher,
     (req, res) => res.sendFile(path.join(publicDir, 'live-drill-host.html')));
+  // Math-facts fluency saved across Live Drill games, per class (data: /api/live-drill/host/fluency).
+  app.get(['/fact-fluency', '/fact-fluency.html'], isAuthenticated, isTeacher,
+    (req, res) => res.sendFile(path.join(publicDir, 'fact-fluency.html')));
   // The free SAT Math practice test — the same funnel as the ACT's.
   const satPracticePage = (req, res) => {
     if (req.isAuthenticated && req.isAuthenticated() && req.user && userHasRole(req.user, 'student')) {
