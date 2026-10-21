@@ -61,7 +61,12 @@ const FACT_SETTINGS = {
   drive: SETTINGS.drive,
   huddle: { plays: [10, 15, 20, 30], defaultPlays: 15, secondsPerPlay: [6, 10, 15], defaultSecondsPerPlay: 10 },
 };
-const settingsFor = (drill) => ((DRILLS[drill] || {}).scoring === 'facts' ? FACT_SETTINGS : SETTINGS);
+// A test-prep play is a whole test question — 15 to 45 seconds, not 3 — so longer clocks.
+const PREP_SETTINGS = {
+  drive: { seconds: [180, 300, 420, 600], defaultSeconds: 300 },
+  huddle: { plays: [5, 10, 15, 20], defaultPlays: 10, secondsPerPlay: [20, 30, 45, 60], defaultSecondsPerPlay: 45 },
+};
+const settingsFor = (drill) => ({ facts: FACT_SETTINGS, prep: PREP_SETTINGS })[(DRILLS[drill] || {}).scoring] || SETTINGS;
 
 // What a play pays. Standard is the course drill's own (+15/+10/+5 at 6 s/12 s, sack −5). Facts
 // come about three times as fast, so each pays about a third as much: a two-minute drive covers
@@ -71,6 +76,7 @@ const settingsFor = (drill) => ((DRILLS[drill] || {}).scoring === 'facts' ? FACT
 const SCORING = {
   standard: { gains: [15, 10, 5], driveMs: [6000, 12000], sack: 5 },
   facts: { gains: [6, 4, 2], driveMs: [3000, 6000], sack: 2 },
+  prep: { gains: [15, 10, 5], driveMs: [20000, 40000], sack: 5 },
 };
 const scoringFor = (game) => SCORING[(DRILLS[game.drill] || {}).scoring] || SCORING.standard;
 // Fact fluency: a right answer in this long or less counts as automatic — the usual 3-second bar.
@@ -134,7 +140,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
   const d = getDrill(drill); // throws if the published page can't be read
   const book = d.bank.BOOKS[playbook] ? playbook : 'all';
   // Math Facts only: the numbers the teacher singled out ("× 2s, 5s & 10s").
-  const fx = d.native && facts.FOCUSABLE.includes(book) ? facts.normalizeFocus(focus) : null;
+  const fx = DRILLS[drill].focus && facts.FOCUSABLE.includes(book) ? facts.normalizeFocus(focus) : null;
   const S = settingsFor(drill);
   sweep();
   if (games.size >= MAX_GAMES) throw new GameError(503, 'Too many live games right now. Try again in a few minutes.');
@@ -331,7 +337,7 @@ function rulesFor(game) {
       { gain: sc.gains[2], within: null },
     ],
     sack: sc.sack,
-    typed: !!(DRILLS[game.drill] || {}).native,
+    typed: !!(DRILLS[game.drill] || {}).typed,
     fluentSec: FLUENT_MS / 1000,
     noAnswer: huddle ? 0 : null, // Drive has no "no answer": the next play waits for you
     teamK: TEAM_K[game.mode] || null,
@@ -745,7 +751,7 @@ function hostView(game) {
     const att = players.reduce((s, p) => s + p.att, 0);
     const comp = players.reduce((s, p) => s + p.comp, 0);
     v.final = { mvps, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
-    if (DRILLS[game.drill] && DRILLS[game.drill].native) v.final.facts = factsFinal(game, players);
+    if (DRILLS[game.drill] && DRILLS[game.drill].trackFacts) v.final.facts = factsFinal(game, players);
     if (game.mode === 'hill') v.final.hill = hill.finalHill(game);
   }
   return v;
