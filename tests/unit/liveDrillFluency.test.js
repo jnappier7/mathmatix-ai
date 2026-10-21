@@ -97,6 +97,20 @@ describe('saving a game', () => {
     expect(await F.saveGame(g, M)).toBe(0);
   });
 
+  test('the Test Prep drills save nothing — native banks, but not fact records', async () => {
+    for (const drill of ['alg1m3', 'hgeo3']) {
+      const M = fakeModel();
+      const g = G.createGame({ hostId: 'prep-' + drill, drill, playbook: 'all', mode: 'hill' });
+      const ana = G.join(g, 'Ana', { userId: 'u3' }).player;
+      G.start(g);
+      answer(g, ana, 1500);
+      // the gate is the drill's `trackFacts`, not whatever happens to be on the player
+      ana.factLog = [...(ana.factLog || []), { id: '7x8', ok: true, ms: 1500 }];
+      G.endGame(g);
+      expect(await F.saveGame(g, M)).toBe(0);
+    }
+  });
+
   test('a game ending fires the hook once; a lobby cancel never fires it', () => {
     const seen = [];
     G.onGameOver((game) => seen.push(game.code));

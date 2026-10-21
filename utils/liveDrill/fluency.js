@@ -68,7 +68,7 @@ function updateFor(player, at = new Date()) {
 
 /** Fold a finished Math Facts game into every signed-in student's record. Never throws. */
 async function saveGame(game, Model = require('../../models/factFluency')) {
-  if (!(DRILLS[game.drill] && DRILLS[game.drill].native)) return 0;
+  if (!(DRILLS[game.drill] && DRILLS[game.drill].trackFacts)) return 0;
   const at = new Date();
   const updates = [...game.players.values()].filter((p) => !p.kicked).map((p) => updateFor(p, at)).filter(Boolean);
   let saved = 0;

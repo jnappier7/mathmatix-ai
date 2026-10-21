@@ -186,6 +186,7 @@ function makePlay(book, recentIds, rand, opts) {
     card: cardFor(f.q, null),
     choices: [],
     input: 'number',
+    ...(f.pb === 'int' ? { neg: true } : {}),
     answer: String(f.ans),
     answerHtml: ans,
     tell: `<b>${f.q} = ${ans}</b> &mdash; ${f.tell}`,

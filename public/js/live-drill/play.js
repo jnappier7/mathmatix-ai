@@ -241,7 +241,7 @@
   }
   function closePad() { pad = null; $('live').classList.remove('typing'); $('p-pad').hidden = true; $('p-pad').innerHTML = ''; $('p-choices').hidden = false; }
   const typedPlay = (play) => play && play.input === 'number';
-  const negOk = (play) => play.playbook === 'int'; // only integer facts can have a negative answer
+  const negOk = (play) => !!play.neg; // the play says when its answer can be negative (integers, a slope, a y-intercept…)
 
   // ---- drive: each student on their own play ----
   async function nextDrivePlay() {

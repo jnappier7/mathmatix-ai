@@ -36,7 +36,10 @@ const DRILLS = {
   algebra: { file: 'public/courses/algebra/two-minute-drill.html', title: 'Algebra 1' },
   geometry: { file: 'public/courses/geometry/two-minute-drill.html', title: 'Honors Geometry' },
   // Fluency mode: a bank owned here (utils/liveDrill/facts.js), typed answers, per-fact tracking.
-  facts: { native: facts, title: 'Math Facts', scoring: 'facts' },
+  facts: { native: facts, title: 'Math Facts', scoring: 'facts', typed: true, trackFacts: true, focus: true },
+  // Test Prep: one bank per unit test, built from the teacher's practice test (utils/liveDrill/prep/).
+  alg1m3: { native: require('./prep/alg1Module3'), title: 'Alg 1 · Module 3 Test', scoring: 'prep' },
+  hgeo3: { native: require('./prep/hgeoCh3'), title: 'H. Geometry · Ch. 3 Test', scoring: 'prep' },
 };
 
 const APP_MARKER = '// ===================== app =====================';
@@ -203,6 +206,7 @@ function publicPlay(play) {
   const pub = { id: play.id, playbook: play.playbook, playbookName: play.playbookName,
     head: play.head, card: play.card, choices: play.choices };
   if (play.input) pub.input = play.input; // a typed answer: the screen shows a number pad
+  if (play.neg) pub.neg = true; // …with a ± key, because the answer can be negative
   return pub;
 }
 

@@ -106,6 +106,12 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .typing .myhill .track{height:44px}
 .typing .myhill .hnums .v{font-size:1.7rem}
 .typing .myhill .hit,.typing .myhill .above,.typing .myhill .crownline{font-size:.88rem;padding:3px 8px}
+/* a typed question WITH a figure (test prep: a graph, the box, the transversal): the figure shrinks and
+   the field strip steps aside, so the pad's Go still sits on screen */
+.typing .card:not(.nofig) .fig{width:min(175px,48vw)}
+#live.typing:has(.card:not(.nofig)) .field{display:none}
+.typing .card:not(.nofig) .posed-q{font-size:1.05rem}
+.typing .card:not(.nofig) .posed-ask{margin-bottom:4px}
 .pad.locked .keys button{opacity:.4}
 /* projector, Huddle: no choices to show while the play is open */
 .typed-wait{grid-column:1/-1;text-align:center;padding:18px;font-family:var(--display);font-weight:800;font-size:clamp(1.4rem,3vw,2.2rem);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border:2px dashed var(--rail);border-radius:8px}

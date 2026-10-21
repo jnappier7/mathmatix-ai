@@ -73,7 +73,7 @@ hostRouter.get('/drills', (req, res) => {
     const drills = Object.entries(DRILLS).map(([id, d]) => {
       try {
         const out = { id, title: d.title, playbooks: listPlaybooks(id), settings: G.settingsFor(id) };
-        if (d.native) out.focusable = { books: FOCUSABLE, max: FOCUS_MAX }; // Math Facts: pick the numbers
+        if (d.focus) out.focusable = { books: FOCUSABLE, max: FOCUS_MAX }; // Math Facts: pick the numbers
         return out;
       } catch (e) {
         logger.error('drill bank unreadable', { drill: id, error: e.message });
