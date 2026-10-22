@@ -93,6 +93,14 @@ describe('Algebra 1, Module 3 — re-solved from the question text', () => {
       expect(keyText(p)).toBe(set);
     }
   });
+  test('function or not: a set offered as plainly "Yes" never hides a repeated y', () => {
+    for (const p of deal(ALG, 'isfunc')) {
+      if (!p.choices.some((c) => /a y-value repeats/.test(c.html)) && keyText(p).startsWith('Yes')) {
+        const ys = [...plain(p.card).matchAll(/\((-?\d+), (-?\d+)\)/g)].map((m) => +m[2]);
+        expect(new Set(ys).size).toBe(ys.length);
+      }
+    }
+  });
   test('function or not: "No" exactly when an x repeats with two different y-values', () => {
     for (const p of deal(ALG, 'isfunc')) {
       const pairs = [...plain(p.card).matchAll(/\((-?\d+), (-?\d+)\)/g)].map((m) => [+m[1], +m[2]]);
@@ -113,7 +121,11 @@ describe('Algebra 1, Module 3 — re-solved from the question text', () => {
   });
   test('the tank: rate and slope', () => {
     for (const p of deal(ALG, 'tank')) {
-      const [, V, Tm] = plain(p.card).match(/A (\d+)-gallon tank .* after (\d+) minutes/).map(Number);
+      // the numbers come from the GRAPH (its endpoints), and the story must agree with it
+      const [, V, Tm] = p.card.match(/a line from \(0, (\d+)\) to \((\d+), 0\)/).map(Number);
+      expect(plain(p.card)).toMatch(new RegExp(`A ${V}-gallon tank`));
+      expect(p.card).toMatch(new RegExp(`>${Tm}</text>`)); // the x-axis is labelled at the intercept
+      expect(p.card).toMatch(new RegExp(`>${V}</text>`));
       if (/gallons drain/.test(p.head)) expect(Number(p.answer)).toBe(V / Tm);
       if (/slope/.test(p.head)) expect(Number(p.answer)).toBe(-V / Tm);
     }

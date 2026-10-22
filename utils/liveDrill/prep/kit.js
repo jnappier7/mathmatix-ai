@@ -49,7 +49,9 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 function posed(ask, prompt, fig, shown) {
   // "Use the graph." is the instruction, not the question: the question gets the big type.
   if (/^Use the /.test(prompt)) [ask, prompt] = [prompt, ask];
-  return `${fig ? `<div class="fig">${fig}</div>` : ''}<div class="card-body"><div class="posed"><p class="posed-ask">${ask}</p><div class="posed-q">${prompt}</div>${shown != null ? `<div class="posed-ans">${shown}</div>` : ''}</div></div>`;
+  // A label is a few words in small caps; a whole sentence of story in caps is hard to read.
+  const story = String(ask).replace(/<[^>]*>/g, '').length > 48 ? ' story' : '';
+  return `${fig ? `<div class="fig">${fig}</div>` : ''}<div class="card-body"><div class="posed"><p class="posed-ask${story}">${ask}</p><div class="posed-q">${prompt}</div>${shown != null ? `<div class="posed-ans">${shown}</div>` : ''}</div></div>`;
 }
 /** A two-column proof with the step in question highlighted; `rows` are [statement, reason]. */
 function proof(ask, given, rows, at, fig, shownReason) {
@@ -59,7 +61,9 @@ function proof(ask, given, rows, at, fig, shownReason) {
     return '';
   }).join('');
   const table = `<table class="pf"><thead><tr><th></th><th>Statements</th><th>Reasons</th></tr></thead><tbody>${tr}</tbody></table>`;
-  return `${fig ? `<div class="fig">${fig}</div>` : ''}<div class="card-body"><div class="posed"><p class="posed-ask">${ask}</p><div class="posed-q prove">${given}</div></div>${table}</div>`;
+  // A label is a few words in small caps; a whole sentence of story in caps is hard to read.
+  const story = String(ask).replace(/<[^>]*>/g, '').length > 48 ? ' story' : '';
+  return `${fig ? `<div class="fig">${fig}</div>` : ''}<div class="card-body"><div class="posed"><p class="posed-ask${story}">${ask}</p><div class="posed-q prove">${given}</div></div>${table}</div>`;
 }
 
 /**

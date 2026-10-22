@@ -13,6 +13,7 @@
  */
 const { DRILLS, dealPlay, listPlaybooks, RECENT } = require('./engine');
 const { settingsFor, SCORING } = require('./games');
+const { FOCUSABLE, FOCUS_MAX, normalizeFocus } = require('./facts');
 
 const HUBS = {
   algebra: {
@@ -56,6 +57,7 @@ function hubView(hubId) {
         playbooks: listPlaybooks(g.drill),
         clock: { seconds: drive.seconds, defaultSeconds: drive.defaultSeconds },
         scoring: { gains: s.gains, withinMs: s.driveMs, miss: s.sack },
+        ...(DRILLS[g.drill].focus ? { focusable: { books: FOCUSABLE, max: FOCUS_MAX } } : {}),
       };
     }),
   };
@@ -69,19 +71,19 @@ const onAHub = (drill) => Object.values(HUBS).some((h) => h.games.some((g) => g.
  * "recent" list (the bank steers away from the last six templates) is the one an unbroken round
  * would have had — page two continues page one exactly.
  */
-function deal(drill, playbook, seed, from, count = BATCH) {
+function deal(drill, playbook, seed, from, count = BATCH, focus = null) {
   const out = [];
   const deck = [];
   for (let n = 1; n <= from + count; n++) {
     const recent = deck.slice(-RECENT).map((p) => p.id).reverse();
-    const play = dealPlay(drill, playbook, seed, n, recent);
+    const play = dealPlay(drill, playbook, seed, n, recent, { focus });
     deck.push(play);
     if (n > from) out.push(play);
   }
   return out;
 }
 
-/** Validate a deal request; returns { drill, playbook, seed, from } or { error }. */
+/** Validate a deal request; returns { drill, playbook, seed, from, focus } or { error }. */
 function parseDeal(q) {
   const drill = String(q.drill || '');
   if (!onAHub(drill)) return { error: 'Unknown game.' };
@@ -91,7 +93,10 @@ function parseDeal(q) {
   if (!Number.isInteger(from) || from < 0 || from > MAX_PLAY - BATCH) return { error: 'Bad position.' };
   const books = listPlaybooks(drill).map((b) => b.key);
   const playbook = books.includes(String(q.book)) ? String(q.book) : 'all';
-  return { drill, playbook, seed, from };
+  // Math Facts: "only 2s, 5s and 10s" — the same focus a teacher sets in a class game.
+  const focus = DRILLS[drill].focus && FOCUSABLE.includes(playbook) && q.focus
+    ? normalizeFocus(String(q.focus).split(',').slice(0, FOCUS_MAX + 1)) : null;
+  return { drill, playbook, seed, from, focus };
 }
 
 module.exports = { HUBS, BATCH, MAX_PLAY, hubList, hubView, deal, parseDeal, onAHub };

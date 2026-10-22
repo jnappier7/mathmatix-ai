@@ -11,7 +11,13 @@
 
   const hubId = (location.pathname.match(/^\/drill\/([a-z0-9-]+)/) || [])[1] || null;
   let hub = null; // the hub view from the server
-  const sel = { gi: 0, book: 'all', seconds: 0 };
+  const sel = { gi: 0, book: 'all', seconds: 0, focus: [] };
+  // Math Facts: one-tap focus sets, as on the host screen. Anything else is a tap on the numbers.
+  const FOCUS_PRESETS = [['All facts', []], ['Easy: 0 1 2 5 10', [0, 1, 2, 5, 10]], ['Tough: 6 7 8 9 12', [6, 7, 8, 9, 12]]];
+  const focusOn = () => { const f = game().focusable; return !!(f && f.books.includes(sel.book)); };
+  const focusNow = () => (focusOn() && sel.focus.length ? sel.focus : []);
+  /** "2s, 5s & 10s" (facts.focusLabel) */
+  const focusLabel = (f) => { const n = f.map((x) => `${x}s`); return n.length < 2 ? (n[0] || '') : `${n.slice(0, -1).join(', ')} & ${n[n.length - 1]}`; };
   let round = null;
   let tick = null;
 
@@ -19,7 +25,7 @@
     get(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } },
   };
-  const bestKey = () => `mm-drill-best:${game().drill}:${sel.book}:${sel.seconds}`;
+  const bestKey = () => `mm-drill-best:${game().drill}:${sel.book}:${sel.seconds}${focusNow().length ? `:f${focusNow().join('-')}` : ''}`;
   const game = () => hub.games[sel.gi];
 
   async function get(path) {
@@ -41,6 +47,7 @@
       .map((h) => `<a href="/drill/${esc(h.id)}">${esc(h.title)} drills →</a>`).join(' · ');
     const saved = local.get(`mm-drill-pick:${hub.id}`);
     if (saved && hub.games[saved.gi]) Object.assign(sel, saved);
+    if (!Array.isArray(sel.focus)) sel.focus = [];
     pickGame(sel.gi, true);
     $('setup').hidden = false;
     $('start').onclick = start;
@@ -70,10 +77,31 @@
     $('book-bl').textContent = (g.playbooks.find((b) => b.key === sel.book) || {}).blurb || '';
     $('clock').innerHTML = g.clock.seconds.map((s) => `<button type="button" data-s="${s}" aria-pressed="${s === sel.seconds}">${mmss(s * 1000)}</button>`).join('');
     $('clock').querySelectorAll('button').forEach((b) => { b.onclick = () => { sel.seconds = Number(b.dataset.s); renderSetup(); }; });
+    renderFocus(g);
     $('rules').innerHTML = rulesHTML(g);
     const best = local.get(bestKey());
     $('best').textContent = best ? `Your best here: ${best.score} (${best.right}/${best.att} right).` : '';
     local.set(`mm-drill-pick:${hub.id}`, sel);
+  }
+
+  function renderFocus(g) {
+    $('opt-focus').hidden = !focusOn();
+    if (!focusOn()) return;
+    const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+    $('f-pre').innerHTML = FOCUS_PRESETS.map(([label, set], i) => `<button type="button" data-i="${i}" aria-pressed="${same(sel.focus, set)}">${label}</button>`).join('');
+    $('f-pre').querySelectorAll('button').forEach((b) => { b.onclick = () => { sel.focus = [...FOCUS_PRESETS[+b.dataset.i][1]]; renderSetup(); }; });
+    $('f-nums').innerHTML = Array.from({ length: g.focusable.max + 1 }, (_, n) => `<button type="button" data-n="${n}" aria-pressed="${sel.focus.includes(n)}">${n}</button>`).join('');
+    $('f-nums').querySelectorAll('button').forEach((b) => {
+      b.onclick = () => {
+        const n = +b.dataset.n;
+        sel.focus = sel.focus.includes(n) ? sel.focus.filter((x) => x !== n) : [...sel.focus, n].sort((a, c) => a - c);
+        renderSetup();
+      };
+    });
+    const big = sel.focus.some((n) => n > 10) && sel.book !== 'mul' && sel.book !== 'div';
+    $('f-note').innerHTML = sel.focus.length
+      ? `Every fact will have a <b>${focusLabel(sel.focus)}</b> in it.${big ? ' (Addition and subtraction go to 10, so 11s and 12s only show up in × and ÷.)' : ''}`
+      : 'Tap numbers to drill just those — like 2, 5 and 10.';
   }
 
   function rulesHTML(g) {
@@ -97,12 +125,12 @@
   async function start() {
     const g = game();
     $('start').disabled = true;
-    round = { g, book: sel.book, seconds: sel.seconds, seed: newSeed(), plays: [], loading: null,
+    round = { g, book: sel.book, seconds: sel.seconds, focus: focusNow(), seed: newSeed(), plays: [], loading: null,
       n: 0, score: 0, right: 0, att: 0, streak: 0, longest: 0, misses: [], endsAt: 0, cur: null, over: false };
     try { await more(); } catch (err) { $('pick-err').textContent = err.message; $('start').disabled = false; return; }
     $('start').disabled = false;
     $('pick-err').textContent = '';
-    $('p-game').textContent = `${g.name} · ${(g.playbooks.find((b) => b.key === round.book) || {}).name || ''}`;
+    $('p-game').textContent = `${g.name} · ${(g.playbooks.find((b) => b.key === round.book) || {}).name || ''}${round.focus.length ? ` · ${focusLabel(round.focus)}` : ''}`;
     renderScore();
     show('live');
     round.endsAt = Date.now() + round.seconds * 1000;
@@ -116,7 +144,7 @@
   function more() {
     if (!round.loading) {
       const r = round;
-      r.loading = get(`/plays?drill=${encodeURIComponent(r.g.drill)}&book=${encodeURIComponent(r.book)}&seed=${r.seed}&from=${r.plays.length}`)
+      r.loading = get(`/plays?drill=${encodeURIComponent(r.g.drill)}&book=${encodeURIComponent(r.book)}&seed=${r.seed}&from=${r.plays.length}${r.focus.length ? `&focus=${r.focus.join(',')}` : ''}`)
         .then((b) => { r.plays.push(...b.plays); })
         .finally(() => { r.loading = null; });
     }
