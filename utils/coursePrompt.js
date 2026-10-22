@@ -162,7 +162,8 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
   const gradeLevel = userProfile.gradeLevel || '';
   const interests = userProfile.interests || '';
   const learningStyle = userProfile.learningStyle || '';
-  const preferredLanguage = userProfile.preferredLanguage || 'en';
+  // The setting is a language NAME from the User enum ('English', 'Spanish'…), never a code.
+  const preferredLanguage = userProfile.preferredLanguage || 'English';
   const iepAccommodations = userProfile.iepPlan?.accommodations ? formatIEP(userProfile.iepPlan) : '';
 
   // ACT-prep only: route "I want a practice test" to the REAL runner, never an
@@ -213,7 +214,7 @@ You are teaching **${courseName}** to **${firstName}**.
 ${gradeLevel ? `Grade: ${gradeLevel}` : ''}
 ${interests ? `Interests: ${interests}` : ''}
 ${learningStyle ? `Learning style preference: ${learningStyle}` : ''}
-${preferredLanguage !== 'en' ? `Preferred language: ${preferredLanguage}` : ''}
+${preferredLanguage !== 'English' ? `Language: respond primarily in ${preferredLanguage} (English for specific math terms is fine when clearer).` : 'Language: respond in English — even if earlier messages were in another language, the setting is now English; switch from this reply on.'}
 ${iepAccommodations}
 
 Overall progress: **${progress}%**
