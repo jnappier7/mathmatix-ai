@@ -79,6 +79,17 @@ a{color:inherit}
   border-radius:11px;text-decoration:none;color:inherit;background:var(--accent-soft);
   border:1px solid transparent;transition:.15s}
 .tutor-cta:hover{border-color:var(--accent)}
+.feature{display:flex;align-items:center;gap:14px;margin:0 0 26px;padding:15px 18px;
+  border-radius:13px;text-decoration:none;color:inherit;background:var(--accent-soft);
+  border:1px solid transparent;transition:.15s}
+.feature:hover{border-color:var(--accent)}
+.feature-ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:11px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));color:#fff;font-size:15px}
+.feature-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.feature-txt b{font-size:16.5px}
+.feature-txt em{font-style:normal;font-size:13.5px;color:var(--muted)}
+.feature-go{margin-left:auto;flex:none;color:var(--accent-ink);font-size:18px}
+@media(max-width:560px){.feature{padding:13px 14px;gap:11px}.feature-txt b{font-size:15px}}
 .tutor-ic{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:9px;
   background:linear-gradient(135deg,var(--accent),var(--accent-strong));color:#fff;font-size:15px}
 .tutor-txt{display:flex;flex-direction:column;line-height:1.3;min-width:0}
