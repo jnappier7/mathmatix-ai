@@ -415,6 +415,13 @@ npm run seed:all:dry   # preflight + plan, no writes
   routing (`onboarding.js`, `login.js`, `roleSwitch.js`) and audit-trail role labels. Pinned by
   `tests/unit/roleQuery.test.js` and `tests/integration/multiRoleVisibility.test.js`.
 - **Use `promptCompact`, not the legacy `prompt.js` body** — the latter is rollback-only and huge.
+- **The tutor's language is ALWAYS stated in the prompt — English included.** `preferredLanguage`
+  (a NAME from the User enum, `'English'`…, never a code) reaches both builders (`promptCompact`
+  `--- LANGUAGE ---`, `coursePrompt` `Language:`). It used to say nothing when English, so after a
+  Spanish demo was switched back the model kept following the Spanish history and the switch never
+  took. The English line says so explicitly ("even if earlier messages were in another language").
+  Pinned by `tests/unit/tutorLanguageSetting.test.js`. The parent guide has its own
+  `parentLanguage` (`parentCourseLanguage.test.js`) — never the child's setting.
 - **Never hold a provider SDK handle outside `utils/openaiClient.js`** — every call goes through
   `callLLM*`/`generateEmbedding`, the outbound-PII chokepoint (strip + rehydrate, on by default).
   `tests/unit/outboundPiiScope.test.js` fails the build on a direct `chat.completions.create` anywhere else.
