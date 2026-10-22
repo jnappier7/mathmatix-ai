@@ -9,6 +9,7 @@ const { isAuthenticated } = require('../middleware/auth'); // For potentially ch
 const { loginValidation, handleValidationErrors } = require('../middleware/validation');
 const { computeNudges } = require('../utils/userNudges');
 const { userHasRole, rolesOf } = require('../utils/roleQuery');
+const { safeReturnTo } = require('../utils/safeReturnTo');
 
 // POST /login - Local authentication strategy
 // Frontend calls this endpoint directly (e.g., fetch('/login', ...))
@@ -43,7 +44,13 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
             console.log(`LOG: User ${user.username} successfully logged in.`);
 
             // Determine redirect URL based on user's role and completion status
-            let redirectUrl = '/chat.html'; // Default for students
+            // Where the user was when they chose to log in, if anywhere safe.
+            // It replaces the dashboard default BELOW the account-state gates:
+            // onboarding, profile completion, role-picker and tutor-pick are
+            // things the account still has to do, and must not be skipped just
+            // because a page asked to be returned to.
+            const returnTo = safeReturnTo(req.body && req.body.next);
+            let redirectUrl = returnTo || '/chat.html'; // Default for students
             const userRoles = rolesOf(user);
 
             // Voice-first onboarding precedes profile completion for new users.
@@ -58,14 +65,14 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
             // `user.role` — the ACTIVE role — is deliberate for the rest of this
             // chain: acting-user dashboard routing, the one job CLAUDE.md §12
             // keeps `role` for, and multi-role accounts never reach it.
-            } else if (user.role === "teacher") {
-                redirectUrl = "/teacher-dashboard.html";
-            } else if (user.role === "admin") {
-                redirectUrl = "/admin-dashboard.html";
-            } else if (user.role === "parent") {
-                redirectUrl = "/parent-dashboard.html";
             } else if (user.role === "student" && !user.selectedTutorId) {
                 redirectUrl = "/pick-tutor.html";
+            } else if (!returnTo && user.role === "teacher") {
+                redirectUrl = "/teacher-dashboard.html";
+            } else if (!returnTo && user.role === "admin") {
+                redirectUrl = "/admin-dashboard.html";
+            } else if (!returnTo && user.role === "parent") {
+                redirectUrl = "/parent-dashboard.html";
             }
             // Auto-assign default avatar for legacy users missing one (avatar
             // selection removed from onboarding — assigned at signup now).
