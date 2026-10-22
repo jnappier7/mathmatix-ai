@@ -326,6 +326,7 @@
       <button id="share-progress-header-btn" style="display: none;">Share Progress</button>
       <button id="open-feedback-modal-btn" style="display: none;">Send Feedback</button>
       <button id="open-join-class-btn" style="display: none;">Join a class</button>
+      <button id="open-my-class-btn" style="display: none;">My Class</button>
       <div id="roleSwitcher" class="role-switcher" style="display: none;">
         <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role" aria-label="Switch Role"></select>
       </div>
@@ -468,6 +469,11 @@
           <i class="fas fa-crosshairs"></i>
           <span data-i18n="chat.startingPoint">Starting Point</span>
         </button>
+
+        <a href="#" id="sidebar-my-class-btn" class="sidebar-tool-btn">
+          <i class="fas fa-school"></i>
+          <span>My Class</span>
+        </a>
 
         <!-- Class Activities — revealed by js/activities-entry.js only when the
              student has something assigned (most students have no teacher). -->
@@ -2440,6 +2446,12 @@
            chat, so a student with an account had no way to enter a new
            teacher's class code, and no way to reach assigned activities or
            practice tests. js/join-class.js / js/activities-entry.js. -->
+      <!-- My Class: the student's classes in one place (live game, assignments, the course's
+           solo drills) — js/my-class.js. Always shown: a student in no class gets the code box. -->
+      <button class="more-tool-item" id="more-my-class" type="button" data-trigger="open-my-class-btn">
+        <i class="fas fa-school"></i>
+        <span>My Class</span>
+      </button>
       <button class="more-tool-item" id="more-join-class" type="button" data-trigger="open-join-class-btn">
         <i class="fas fa-user-plus"></i>
         <span>Join a class</span>
@@ -2589,6 +2601,8 @@
   <script defer src="/js/activities-entry.js?v=20261017"></script>
   <link rel="stylesheet" href="/css/join-class.css?v=20261017">
   <script defer src="/js/join-class.js?v=20261017"></script>
+  <link rel="stylesheet" href="/css/my-class.css?v=20261030">
+  <script defer src="/js/my-class.js?v=20261030"></script>
 <!-- Intelligent Whiteboard init (Phase 0 wire-up) -->
 <script>
   (function initMathmatixWhiteboard() {
