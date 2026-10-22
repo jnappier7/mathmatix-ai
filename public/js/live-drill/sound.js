@@ -7,7 +7,7 @@
 //   Sound — the master. Muted means silent, whatever the other two say.
 //   Music — an original drumline + bass loop under the lobby and the game. OFF until turned on:
 //           a room that's taking a test next door shouldn't get a marching band by surprise.
-//   Crowd — a stadium murmur during play that builds as a ball nears the goal line, a cheer on a
+//   Crowd — a gym-crowd murmur (chatter, rumble, stray claps) during play that builds as a ball nears the goal line, a cheer on a
 //           touchdown, and (Huddle) a cheer or a groan on the reveal. On by default.
 // The page says WHERE the game is with scene(); this module decides what that sounds like.
 (function () {
@@ -173,24 +173,60 @@
   }
 
   // ---------------------------------------------------------------- the crowd (crowd bus)
-  let murmur = null; // { src, lfo }
+  // What a crowd is NOT: one band of noise with a slow swell — that is surf, and the first cut
+  // sounded exactly like a beach (owner, 2026-10-22). A crowd is hundreds of voices talking over
+  // each other: mid-range chatter whose level jumps at syllable speed and never in step, a low
+  // rumble of bodies under it, and now and then a clap or a shout out of the stands. Nothing in
+  // it moves slower than a word. The chatter is four formant-ish bands of the same noise, each
+  // with its own syllable-rate tremolo AND its own random level walk (the walk is what keeps it
+  // from reading as a machine); claps and whoops are scheduled at random, more often as the
+  // game heats up (hype).
+  const VOICES = [[380, 5.3], [640, 6.1], [1050, 7.4], [1750, 4.7]]; // band centre Hz, syllable rate Hz
+  let murmur = null; // { nodes, bands, timers }
   function startMurmur() {
     if (murmur || !ctx) return;
-    const src = ctx.createBufferSource();
-    src.buffer = noise; src.loop = true;
-    const lo = ctx.createBiquadFilter(); lo.type = 'lowpass'; lo.frequency.value = 900;
-    const hi = ctx.createBiquadFilter(); hi.type = 'highpass'; hi.frequency.value = 180;
-    const g = ctx.createGain(); g.gain.value = 0.35;
-    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.17; // a crowd breathes
-    const depth = ctx.createGain(); depth.gain.value = 0.12;
-    lfo.connect(depth).connect(g.gain);
-    src.connect(lo).connect(hi).connect(g).connect(crowd);
-    src.start(); lfo.start();
-    murmur = { src, lfo };
+    const nodes = []; const bands = [];
+    const bed = () => { const s = ctx.createBufferSource(); s.buffer = noise; s.loop = true; nodes.push(s); return s; };
+    // the room: a low, steady rumble of a few hundred people in a gym
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 240;
+    const rg = ctx.createGain(); rg.gain.value = 0.2;
+    bed().connect(lp).connect(rg).connect(crowd);
+    for (const [f, rate] of VOICES) {
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 2.4;
+      const g = ctx.createGain(); g.gain.value = 0.12;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = rate;
+      const depth = ctx.createGain(); depth.gain.value = 0.05;
+      lfo.connect(depth).connect(g.gain);
+      bed().connect(bp).connect(g).connect(crowd);
+      nodes.push(lfo); bands.push(g);
+    }
+    for (const n of nodes) n.start(0, n.buffer ? Math.random() * 1.5 : 0);
+    murmur = { nodes, bands, timers: new Set() };
+    walk(); stands();
+  }
+  /** Every band wanders to a new level on its own clock: a conversation ends, another starts. */
+  function walk() {
+    if (!murmur) return;
+    const g = murmur.bands[Math.floor(Math.random() * murmur.bands.length)];
+    ramp(g.gain, 0.03 + Math.random() * 0.17, 0.08 + Math.random() * 0.15);
+    const t = setTimeout(() => { murmur && murmur.timers.delete(t); walk(); }, 90 + Math.random() * 220);
+    murmur.timers.add(t);
+  }
+  /** A clap, a whoop, a "yeah" out of the stands — more of them as a drive nears the goal. */
+  function stands() {
+    if (!murmur) return;
+    if (live() && CROWD_LEVEL[scene]) {
+      const r = Math.random();
+      if (r < 0.55) hiss({ dur: 0.05 + Math.random() * 0.04, vol: 0.05 + 0.05 * hype, freq: 900 + Math.random() * 900, q: 1.4, type: 'bandpass', bus: crowd });
+      else if (r < 0.8) { const f = 300 + Math.random() * 260; tone({ freq: f, slideTo: f * (1.3 + Math.random() * 0.5), type: 'triangle', dur: 0.25 + Math.random() * 0.3, vol: 0.012 + 0.01 * hype, bus: crowd, filter: 2200 }); }
+    }
+    const t = setTimeout(() => { murmur && murmur.timers.delete(t); stands(); }, (500 + Math.random() * 1400) / (0.6 + hype));
+    murmur.timers.add(t);
   }
   function stopMurmur() {
     if (!murmur || (crowdOn && !muted && CROWD_LEVEL[scene])) return;
-    try { murmur.src.stop(); murmur.lfo.stop(); } catch { /* already stopped */ }
+    for (const t of murmur.timers) clearTimeout(t);
+    for (const n of murmur.nodes) { try { n.stop(); } catch { /* already stopped */ } }
     murmur = null;
   }
   /** The stands go up: a roar, scattered claps, a few voices. Plays on the sfx bus so it's heard
