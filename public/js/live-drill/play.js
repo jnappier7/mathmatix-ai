@@ -28,17 +28,32 @@
     clear() { try { sessionStorage.removeItem(KEY); } catch { /* private mode */ } },
   };
 
+  // A deploy moves the game to a new server: for a few seconds the old one answers 503 "moving"
+  // (or nothing at all). Retry quietly for that long rather than tell a student their answer failed.
+  const MOVE_RETRIES = 8;
+  const MOVE_WAIT_MS = 1000;
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
   async function api(path, opts) {
-    const res = await fetch(API + path, {
-      ...opts,
-      headers: { 'Content-Type': 'application/json', ...(seat ? { 'X-Live-Drill-Token': seat.token } : {}) },
-      credentials: 'omit',
-      cache: 'no-store',
-    });
-    let body = null;
-    try { body = await res.json(); } catch { /* empty */ }
-    if (!res.ok) { const e = new Error((body && body.message) || `Request failed (${res.status})`); e.status = res.status; throw e; }
-    return body;
+    for (let attempt = 0; ; attempt++) {
+      let res;
+      try {
+        res = await fetch(API + path, {
+          ...opts,
+          headers: { 'Content-Type': 'application/json', ...(seat ? { 'X-Live-Drill-Token': seat.token } : {}) },
+          credentials: 'omit',
+          cache: 'no-store',
+        });
+      } catch (netErr) {
+        if (attempt < MOVE_RETRIES) { await sleep(MOVE_WAIT_MS); continue; }
+        throw netErr;
+      }
+      let body = null;
+      try { body = await res.json(); } catch { /* empty */ }
+      if (res.status === 503 && body && body.retry && attempt < MOVE_RETRIES) { await sleep(MOVE_WAIT_MS); continue; }
+      if (!res.ok) { const e = new Error((body && body.message) || `Request failed (${res.status})`); e.status = res.status; throw e; }
+      return body;
+    }
   }
 
   /** Signed-in student calls. Never throws a redirect: any failure means "use the code form". */
@@ -289,6 +304,8 @@
       if (err.status === 400 && typedPlay(cur.play)) { cur.locked = false; openPad(answerDrive, negOk(cur.play)); }
       $('fb').className = 'fb';
       $('fb').innerHTML = `<span class="muted">${esc(err.message)}</span>`;
+      // "already over": the server is past this play (0:00, or a reconnect) — pick up where it is
+      if (err.status === 409) setTimeout(() => { cur = null; nextDrivePlay(); }, 900);
     }
   }
 

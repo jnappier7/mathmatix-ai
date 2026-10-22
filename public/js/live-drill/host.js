@@ -19,16 +19,31 @@
   let openChip = null;
   const seenFeed = new Set(); // feed items already animated in
 
+  // A deploy moves the game to a new server: for a few seconds the old one answers 503 "moving"
+  // (or nothing at all). Retry quietly for that long; the board must not say the game ended.
+  const MOVE_RETRIES = 8;
+  const MOVE_WAIT_MS = 1000;
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
   async function api(path, opts) {
-    const res = await csrfFetch(API + path, {
-      ...opts,
-      headers: { 'Content-Type': 'application/json', ...(opts && opts.headers) },
-      credentials: 'same-origin',
-    });
-    let body = null;
-    try { body = await res.json(); } catch { /* empty */ }
-    if (!res.ok) throw new Error((body && body.message) || `Request failed (${res.status})`);
-    return body;
+    for (let attempt = 0; ; attempt++) {
+      let res;
+      try {
+        res = await csrfFetch(API + path, {
+          ...opts,
+          headers: { 'Content-Type': 'application/json', ...(opts && opts.headers) },
+          credentials: 'same-origin',
+        });
+      } catch (netErr) {
+        if (attempt < MOVE_RETRIES) { await sleep(MOVE_WAIT_MS); continue; }
+        throw netErr;
+      }
+      let body = null;
+      try { body = await res.json(); } catch { /* empty */ }
+      if (res.status === 503 && body && body.retry && attempt < MOVE_RETRIES) { await sleep(MOVE_WAIT_MS); continue; }
+      if (!res.ok) throw new Error((body && body.message) || `Request failed (${res.status})`);
+      return body;
+    }
   }
 
   function show(id) { ['setup', 'lobby', 'live', 'final'].forEach((s) => { $(s).hidden = s !== id; }); }

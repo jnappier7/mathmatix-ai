@@ -188,6 +188,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
   };
   if (mode === 'hill') hill.reset(game);
   games.set(game.code, game);
+  runHooks(changeHooks, game);
   return game;
 }
 
@@ -819,10 +820,19 @@ function broadcast(game) {
   }
 }
 
+// Called on every change (utils/liveDrill/store.js shadows the game to Mongo) and when a game
+// leaves memory. A hook never breaks the game.
+const changeHooks = [];
+const dropHooks = [];
+function onChange(fn) { changeHooks.push(fn); }
+function onDrop(fn) { dropHooks.push(fn); }
+const runHooks = (hooks, game) => { for (const fn of hooks) { try { fn(game); } catch { /* never the game's problem */ } } };
+
 /** State changed: bump the version and push to every screen, at most ~4× a second. */
 function touch(game) {
   game.version++;
   game.touchedAt = now();
+  runHooks(changeHooks, game);
   if (game.pending) return;
   game.pending = true;
   const t = setTimeout(() => broadcast(game), 250);
@@ -866,7 +876,83 @@ function dropGame(game) {
   for (const t of game.timers) clearTimeout(t);
   for (const l of game.listeners) { try { l.res.end(); } catch { /* gone */ } }
   games.delete(game.code);
+  runHooks(dropHooks, game);
 }
+
+// ---------------------------------------------------------------------------
+// snapshots (so a deploy or a crash can't end a game)
+// ---------------------------------------------------------------------------
+
+// What a snapshot leaves out: timers (re-armed on revive from the absolute times the game keeps),
+// open streams (they belong to the process that held them), the broadcast flag, and the deck
+// (a pure function of seed + focus — playAt re-deals it identically, and it is the bulk of the
+// state).
+const TRANSIENT = new Set(['timers', 'listeners', 'pending', 'deck']);
+
+function fold(v) {
+  if (v instanceof Map) return { __map: [...v.entries()].map(([k, x]) => [k, fold(x)]) };
+  if (Array.isArray(v)) return v.map(fold);
+  if (v && typeof v === 'object') {
+    const o = {};
+    for (const [k, x] of Object.entries(v)) if (!TRANSIENT.has(k) && x !== undefined) o[k] = fold(x);
+    return o;
+  }
+  return v;
+}
+function unfold(v) {
+  if (Array.isArray(v)) return v.map(unfold);
+  if (v && typeof v === 'object') {
+    if (Array.isArray(v.__map) && Object.keys(v).length === 1) return new Map(v.__map.map(([k, x]) => [k, unfold(x)]));
+    const o = {};
+    for (const [k, x] of Object.entries(v)) o[k] = unfold(x);
+    return o;
+  }
+  return v;
+}
+
+/**
+ * Hand every game off to the process replacing this one (SIGTERM): stop the clocks here — the
+ * new process re-arms them from the same absolute times, and a drive ending twice would save a
+ * student's facts twice — and close every stream so each phone and the board reconnect, which
+ * from now on lands on the new process. Nothing is dropped: the shadow (store.js) is the game now.
+ */
+function freezeAll() {
+  for (const g of games.values()) {
+    for (const t of g.timers) clearTimeout(t);
+    g.timers.clear();
+    for (const l of g.listeners) { try { l.res.end(); } catch { /* gone */ } }
+    g.listeners.clear();
+  }
+}
+
+/** The game as plain JSON (Maps folded), enough to revive it in another process. */
+function snapshot(game) { return fold(game); }
+
+/**
+ * Bring a snapshot back to life in this process: rebuild the Maps, re-deal nothing (playAt does
+ * that on demand), mark every player away until their phone reconnects, and re-arm the clock
+ * from the absolute times the game kept — a drive ends when it was always going to end, an open
+ * Huddle round closes when its clock does. A game this process already holds is left alone.
+ */
+function hydrate(snap) {
+  const held = games.get(snap && snap.code);
+  if (held) return held;
+  const game = unfold(snap);
+  if (!game || !game.code || !DRILLS[game.drill]) return null;
+  Object.assign(game, { deck: [], timers: new Set(), listeners: new Set(), pending: false });
+  for (const p of game.players.values()) p.conns = 0;
+  games.set(game.code, game);
+  if (game.phase === 'live') {
+    if (ownPace(game)) {
+      later(game, game.endsAt - now() + DRIVE_GRACE_MS, () => endGame(game));
+    } else if (game.round && !game.round.closed) {
+      const round = game.round;
+      later(game, round.closesAt - now() + 300, () => { if (game.round === round) closeRound(game); });
+    }
+  }
+  return game;
+}
+
 
 function sweep() {
   const t = now();
@@ -884,5 +970,6 @@ module.exports = {
   createGame, getGame, hostGame, playerFor, normalizeCode,
   join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,
+  onChange, onDrop, snapshot, hydrate, freezeAll, IDLE_TTL_MS, DONE_TTL_MS,
   _reset, _games: games,
 };
