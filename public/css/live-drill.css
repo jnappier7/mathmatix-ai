@@ -491,3 +491,11 @@ table.twoway td:first-child{text-align:left}
 /* the pad must clear a phone with its bars showing: the labels go, the bar tightens */
 .solo .typing .sb .k{display:none}
 .solo .typing .pbar .pill{font-size:.8rem}
+/* A laptop has room the phone doesn't: the question beside the figure reads at full size, and a
+   tall enough screen keeps the scoreboard labels and a full-size figure while typing. */
+@media (min-width:700px){.solo .typing .card:not(.nofig) .posed-q{font-size:1.4rem}}
+@media (min-width:700px) and (min-height:760px){
+  .solo .typing .sb .k{display:block}
+  .solo .typing .card:not(.nofig) .fig{width:230px}
+}
+@media (min-width:700px) and (max-height:700px){.solo .card .fig{width:210px}}

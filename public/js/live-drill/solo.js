@@ -145,10 +145,12 @@
     const play = round.plays[round.n++];
     round.cur = { play, shownAt: Date.now(), locked: false };
     $('p-card').innerHTML = cardHTML(play, null, `Play ${round.n}`);
+    if (window.scrollY > 0) window.scrollTo(0, 0); // back up from the last explanation
     if (play.input === 'number') openPad(answer, !!play.neg);
     else { closePad(); $('p-choices').innerHTML = choicesHTML(play); bindChoices(answer); }
+    // The question is already on the card; the bar says how to answer instead.
     $('fb').className = 'fb';
-    $('fb').innerHTML = `<span class="muted">${esc(play.head)}</span>`;
+    $('fb').innerHTML = `<span class="muted">${play.input === 'number' ? 'Type the answer, then press Enter or Go.' : `Tap an answer, or press 1–${play.choices.length}.`}</span>`;
   }
 
   /** The typed-answer rule the live game grades by (utils/liveDrill/facts.js normalizeTyped). */
@@ -186,8 +188,10 @@
       r.misses.push({ play, pickedHtml });
       $('fb').className = 'fb bad';
       $('fb').innerHTML = `<span class="bigtxt">Missed · −${r.g.scoring.miss}</span><span class="why">You ${typed ? 'typed' : 'picked'} ${pickedHtml}. ${play.tell}</span><button class="next" id="nx" type="button">Next</button>`;
-      $('nx').focus();
+      $('nx').focus({ preventScroll: true });
       $('nx').onclick = nextPlay;
+      // a short laptop screen can put the explanation below the fold: bring it up
+      $('fb').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
   }
 
