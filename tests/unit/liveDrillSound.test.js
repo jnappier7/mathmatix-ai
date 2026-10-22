@@ -29,11 +29,18 @@ function fakeAudio() {
   return { AC, made };
 }
 
+/** The crowd schedules claps and whoops at random; a seeded Math.random keeps every run the same. */
+function seededMath(seed = 12345) {
+  let a = seed;
+  const random = () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  return Object.assign(Object.create(Math), { random });
+}
+
 function load(store = new Map()) {
   const { AC, made } = fakeAudio();
   const window = { AudioContext: AC };
   const localStorage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)) };
-  vm.runInNewContext(SRC, { window, localStorage, setTimeout, clearTimeout, setInterval, clearInterval, Math, Promise, Float32Array });
+  vm.runInNewContext(SRC, { window, localStorage, setTimeout, clearTimeout, setInterval, clearInterval, Math: seededMath(), Promise, Float32Array });
   return { S: window.LiveDrillSound, made, store };
 }
 
