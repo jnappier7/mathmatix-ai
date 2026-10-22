@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Practice Drills | MATHMATIX AI</title>
+  <meta name="description" content="Solo practice: the class drills and test prep, played on your own.">
+  <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261029">
+</head>
+<body class="solo">
+<div class="pwrap">
+
+  <!-- ============ PICK ============ -->
+  <section id="pick">
+    <div class="hero">
+      <div class="eyebrow">Mathmatix · Practice on your own</div>
+      <h1 id="h-title">Practice <span>Drills</span></h1>
+      <p id="h-sub">Nothing to join and nothing saved. Pick a game and go.</p>
+      <p class="hubs" id="h-hubs"></p>
+    </div>
+    <div class="panel solo-setup" id="setup" hidden>
+      <div><span class="lbl" id="g-l">Game</span><div class="books games" id="games" role="group" aria-labelledby="g-l"></div></div>
+      <div><span class="lbl" id="b-l">Playbook</span><div class="books" id="books" role="group" aria-labelledby="b-l"></div><p class="muted book-bl" id="book-bl"></p></div>
+      <div><span class="lbl" id="c-l">Clock</span><div class="seg-ctl" id="clock" role="group" aria-labelledby="c-l"></div></div>
+      <details class="rules compact"><summary>How scoring works</summary><div id="rules"></div></details>
+      <button class="go" id="start" type="button">Play</button>
+      <p class="muted best" id="best" aria-live="polite"></p>
+    </div>
+    <div class="err" id="pick-err" role="alert"></div>
+  </section>
+
+  <!-- ============ LIVE ============ -->
+  <section id="live" hidden>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="pbar"><span class="pill" id="p-game"></span><button class="ghost quit" id="quit" type="button">End</button></div>
+      <div class="sb">
+        <div class="t0"><span class="k">Score</span><span class="v" id="s-score">0</span></div>
+        <div class="mid"><span class="k">Clock</span><span class="v" id="s-clock">–</span></div>
+        <div class="t1"><span class="k">Streak</span><span class="v" id="s-streak">0</span></div>
+      </div>
+      <div id="p-card"></div>
+      <div class="choices" id="p-choices"></div>
+      <div class="pad" id="p-pad" hidden></div>
+      <div class="fb" id="fb" aria-live="polite"><span class="muted" id="keys-hint">Keys 1–4 work too.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL ============ -->
+  <section id="final" hidden>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="result"><div class="eyebrow" id="f-game"></div><h2 id="f-result"></h2><p class="muted" id="f-best" style="margin:6px 0 0"></p></div>
+      <div class="stats">
+        <div><span class="v" id="f-score">0</span><span class="k">Score</span></div>
+        <div><span class="v" id="f-comp">0/0</span><span class="k">Right</span></div>
+        <div><span class="v" id="f-pct">–</span><span class="k">Accuracy</span></div>
+        <div><span class="v" id="f-streak">0</span><span class="k">Longest streak</span></div>
+      </div>
+      <div class="solo-again">
+        <button class="go" id="again" type="button">Play again</button>
+        <button class="ghost" id="back" type="button">Pick another game</button>
+      </div>
+      <div class="film" id="f-film"></div>
+    </div>
+  </section>
+</div>
+
+<script src="/js/live-drill/common.js?v=20261023"></script>
+<script src="/js/live-drill/solo.js?v=20261029"></script>
+</body>
+</html>

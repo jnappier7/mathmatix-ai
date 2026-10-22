@@ -1,0 +1,97 @@
+/**
+ * Solo practice — the Live Drill banks, played alone, no host (public/drill.html at /drill/<hub>).
+ *
+ * A HUB is a course's games on one page: everything Algebra 1 students can drill, everything
+ * Geometry students can. Each game is a Live Drill bank (engine.js DRILLS), so the questions,
+ * figures and tells are the very ones a class game deals — a new Course Planner publish or a new
+ * Test Prep bank shows up here the moment it is added to a hub below.
+ *
+ * Nothing is graded or saved on the server. The page gets whole plays, answer included, and keeps
+ * its own score — the same trust the course site's own drill page runs on (it is all client-side).
+ * That is why this can be public with no account: there is no record to protect and no score to
+ * cheat. A class game's plays never come through here; a solo seed is the student's own.
+ */
+const { DRILLS, dealPlay, listPlaybooks, RECENT } = require('./engine');
+const { settingsFor, SCORING } = require('./games');
+
+const HUBS = {
+  algebra: {
+    title: 'Algebra 1',
+    games: [
+      { drill: 'algebra', name: 'Two-Minute Drill', blurb: 'Every module of the course, one quick question at a time.' },
+      { drill: 'alg1m3', name: 'Module 3 Test Prep', blurb: 'Relations & functions — every question type on the Module 3 test, fresh numbers each time.' },
+      { drill: 'facts', name: 'Math Facts', blurb: 'Type the answer. Fluent is right in 3 seconds or less.' },
+    ],
+  },
+  geometry: {
+    title: 'Honors Geometry',
+    games: [
+      { drill: 'geometry', name: 'Proof Reasons', blurb: 'Which reason justifies the step? Chapters 2 and 3.' },
+      { drill: 'hgeo3', name: 'Chapter 3 Test Prep', blurb: 'Parallel & perpendicular lines — every question type on the Chapter 3 test.' },
+    ],
+  },
+};
+
+const BATCH = 40; // plays per request: a fast Math Facts round is ~60–80 in two minutes
+const MAX_PLAY = 400; // a five-minute facts round at a fact a second is 300; bounds the work per request
+const SEED_RE = /^[A-Za-z0-9]{8,32}$/;
+
+const scoringOf = (drill) => SCORING[(DRILLS[drill] || {}).scoring] || SCORING.standard;
+
+const hubList = () => Object.entries(HUBS).map(([id, h]) => ({ id, title: h.title, games: h.games.map((g) => g.name) }));
+
+/** One hub, as the page renders it: each game with its playbooks, clock choices and scoring. */
+function hubView(hubId) {
+  const hub = Object.hasOwn(HUBS, hubId) ? HUBS[hubId] : null;
+  if (!hub) return null;
+  return {
+    id: hubId,
+    title: hub.title,
+    hubs: hubList(),
+    games: hub.games.map((g) => {
+      const { drive } = settingsFor(g.drill);
+      const s = scoringOf(g.drill);
+      return {
+        drill: g.drill, name: g.name, blurb: g.blurb, typed: !!DRILLS[g.drill].typed,
+        playbooks: listPlaybooks(g.drill),
+        clock: { seconds: drive.seconds, defaultSeconds: drive.defaultSeconds },
+        scoring: { gains: s.gains, withinMs: s.driveMs, miss: s.sack },
+      };
+    }),
+  };
+}
+
+/** Is this drill on some hub? Only those are dealt here. */
+const onAHub = (drill) => Object.values(HUBS).some((h) => h.games.some((g) => g.drill === drill));
+
+/**
+ * Plays from+1 … from+count of a solo round. Dealt from play 1 every time so each play's
+ * "recent" list (the bank steers away from the last six templates) is the one an unbroken round
+ * would have had — page two continues page one exactly.
+ */
+function deal(drill, playbook, seed, from, count = BATCH) {
+  const out = [];
+  const deck = [];
+  for (let n = 1; n <= from + count; n++) {
+    const recent = deck.slice(-RECENT).map((p) => p.id).reverse();
+    const play = dealPlay(drill, playbook, seed, n, recent);
+    deck.push(play);
+    if (n > from) out.push(play);
+  }
+  return out;
+}
+
+/** Validate a deal request; returns { drill, playbook, seed, from } or { error }. */
+function parseDeal(q) {
+  const drill = String(q.drill || '');
+  if (!onAHub(drill)) return { error: 'Unknown game.' };
+  const seed = String(q.seed || '');
+  if (!SEED_RE.test(seed)) return { error: 'Bad seed.' };
+  const from = Number(q.from || 0);
+  if (!Number.isInteger(from) || from < 0 || from > MAX_PLAY - BATCH) return { error: 'Bad position.' };
+  const books = listPlaybooks(drill).map((b) => b.key);
+  const playbook = books.includes(String(q.book)) ? String(q.book) : 'all';
+  return { drill, playbook, seed, from };
+}
+
+module.exports = { HUBS, BATCH, MAX_PLAY, hubList, hubView, deal, parseDeal, onAHub };
