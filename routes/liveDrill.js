@@ -7,6 +7,9 @@
  *                           stream, which can't send headers). CSRF-exempt — nothing here rides
  *                           a cookie — and off the global apiLimiter, because a whole class
  *                           shares one school IP; `playLimiter` keys on the token instead.
+ *   /api/live-drill/solo/*  PUBLIC, GET only: solo practice (public/drill.html at /drill/<hub>).
+ *                           Whole plays, answer included — nothing is graded or saved server-side
+ *                           (utils/liveDrill/solo.js). Off the global apiLimiter like /play.
  *   /api/live-drill/mine/*  signed-in students (isAuthenticated, CSRF as usual): the chat-screen
  *                           banner asks which of MY classes has a game open, and joins with the
  *                           account's name — no code, nothing typed. /mine/fluency is my own
@@ -34,6 +37,7 @@ const logger = require('../utils/logger').child({ route: 'liveDrill' });
 const G = require('../utils/liveDrill/games');
 const { DRILLS, listPlaybooks } = require('../utils/liveDrill/engine');
 const { FOCUSABLE, FOCUS_MAX } = require('../utils/liveDrill/facts');
+const solo = require('../utils/liveDrill/solo');
 
 // Every finished Math Facts game folds into its signed-in students' records.
 G.onGameOver((game) => fluency.saveGame(game, FactFluency));
@@ -41,6 +45,7 @@ G.onGameOver((game) => fluency.saveGame(game, FactFluency));
 const hostRouter = express.Router();
 const playRouter = express.Router();
 const mineRouter = express.Router();
+const soloRouter = express.Router();
 
 const TOKEN_HEADER = 'x-live-drill-token';
 
@@ -343,8 +348,39 @@ mineRouter.get('/fluency',
     } catch (err) { send(res, err); }
   });
 
-/** For config/middleware.js: player calls are exempt from the global apiLimiter. */
-const LIVE_DRILL_PLAY_PATH = /^\/live-drill\/play\//;
+// ---------------------------------------------------------------------------
+// solo practice (public): a hub's games, and a round's plays
+// ---------------------------------------------------------------------------
+
+// A student pulls one batch every ~40 plays, plus the hub; a whole school shares one IP.
+const soloLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, max: 3000, keyGenerator: (req) => req.ip,
+  standardHeaders: true, legacyHeaders: false,
+  message: { message: 'Too many requests from this network. Wait a moment and try again.' },
+});
+soloRouter.use(soloLimiter);
+
+soloRouter.get('/hubs', (req, res) => res.json({ hubs: solo.hubList() }));
+
+soloRouter.get('/hubs/:hub', (req, res) => {
+  try {
+    const view = solo.hubView(req.params.hub);
+    if (!view) return res.status(404).json({ message: 'No such course.' });
+    res.json(view);
+  } catch (err) { send(res, err); }
+});
+
+soloRouter.get('/plays', (req, res) => {
+  try {
+    const q = solo.parseDeal(req.query);
+    if (q.error) return res.status(400).json({ message: q.error });
+    res.set('Cache-Control', 'no-store');
+    res.json({ from: q.from, plays: solo.deal(q.drill, q.playbook, q.seed, q.from) });
+  } catch (err) { send(res, err); }
+});
+
+/** For config/middleware.js: player and solo calls are exempt from the global apiLimiter. */
+const LIVE_DRILL_PLAY_PATH = /^\/live-drill\/(play|solo)\//;
 function isLiveDrillPlayPath(apiPath) { return LIVE_DRILL_PLAY_PATH.test(String(apiPath || '')); }
 
-module.exports = { hostRouter, playRouter, mineRouter, isLiveDrillPlayPath, TOKEN_HEADER, _accountName: accountName };
+module.exports = { hostRouter, playRouter, mineRouter, soloRouter, isLiveDrillPlayPath, TOKEN_HEADER, _accountName: accountName };

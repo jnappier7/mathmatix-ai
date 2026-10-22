@@ -144,6 +144,7 @@ const impersonationRoutes = require('../routes/impersonation');
 const announcementsRoutes = require('../routes/announcements');
 const activitiesRoutes = require('../routes/activities');
 const liveDrillRoutes = require('../routes/liveDrill');
+const liveDrillSolo = require('../utils/liveDrill/solo');
 const adminEmailRoutes = require('../routes/adminEmail');
 const billingRoutes = require('../routes/billing');
 const affiliateRoutes = require('../routes/affiliate');
@@ -349,6 +350,8 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // Live Two-Minute Drill players: a join code + a name, no account; owned by a bearer
   // token, CSRF-exempt, its own limiter. Same reason as above for living up here.
   app.use('/api/live-drill/play', liveDrillRoutes.playRouter);
+  // Solo practice (/drill/<hub>): public, GET only, nothing saved — same reason for living up here.
+  app.use('/api/live-drill/solo', liveDrillRoutes.soloRouter);
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
   // Courses are open to ALL students as a free on-ramp (see docs/COURSES_IN_FLOW_DESIGN.md).
@@ -918,6 +921,11 @@ function registerHtmlRoutes(app) {
   app.get('/act', (req, res) => res.redirect(302, '/act-practice-test'));
   // Live Two-Minute Drill. /play is what goes on the board; the host screen is teachers only.
   app.get(['/play', '/play.html'], (req, res) => res.sendFile(path.join(publicDir, 'play.html')));
+  // Solo practice: a course's games on one page, no host, no account (utils/liveDrill/solo.js).
+  app.get(['/drill', '/drill/:hub'], (req, res, next) => {
+    if (req.params.hub && !Object.hasOwn(liveDrillSolo.HUBS, req.params.hub)) return next();
+    res.sendFile(path.join(publicDir, 'drill.html'));
+  });
   app.get(['/live-drill', '/live-drill-host.html'], isAuthenticated, isTeacher,
     (req, res) => res.sendFile(path.join(publicDir, 'live-drill-host.html')));
   // Math-facts fluency saved across Live Drill games, per class (data: /api/live-drill/host/fluency).

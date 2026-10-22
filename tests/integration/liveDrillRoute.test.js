@@ -26,13 +26,14 @@ const path = require('path');
 const express = require('express');
 const supertest = require('supertest');
 const G = require('../../utils/liveDrill/games');
-const { hostRouter, playRouter, mineRouter, isLiveDrillPlayPath } = require('../../routes/liveDrill');
+const { hostRouter, playRouter, mineRouter, soloRouter, isLiveDrillPlayPath } = require('../../routes/liveDrill');
 
 function makeApp() {
   const app = express();
   app.use(express.json());
   app.use('/api/live-drill/host', (req, _res, next) => { req.user = { _id: req.get('X-Test-User') || 'teacher-1' }; next(); }, hostRouter);
   app.use('/api/live-drill/play', playRouter);
+  app.use('/api/live-drill/solo', soloRouter); // no user: solo practice is public
   // Signed-in users: X-Test-Student names a student account; otherwise a teacher is signed in.
   app.use('/api/live-drill/mine', (req, _res, next) => {
     const stu = req.get('X-Test-Student');
@@ -202,6 +203,45 @@ describe('class games, the chat banner and run it back', () => {
   });
 });
 
+describe('solo practice (/drill/<hub>)', () => {
+  const req = supertest(makeApp());
+
+  test('a hub lists its games with playbooks, clock and scoring — no account needed', async () => {
+    const r = await req.get('/api/live-drill/solo/hubs/algebra');
+    expect(r.status).toBe(200);
+    expect(r.body.games.map((g) => g.drill)).toEqual(['algebra', 'alg1m3', 'facts']);
+    const facts = r.body.games.find((g) => g.drill === 'facts');
+    expect(facts.typed).toBe(true);
+    expect(facts.scoring).toEqual({ gains: [6, 4, 2], withinMs: [3000, 6000], miss: 2 });
+    expect(r.body.hubs.map((h) => h.id)).toEqual(['algebra', 'geometry']);
+    expect((await req.get('/api/live-drill/solo/hubs')).body.hubs).toHaveLength(2);
+  });
+
+  test('an unknown hub is a 404, prototype names included', async () => {
+    for (const h of ['calculus', 'constructor', '__proto__', 'toString']) {
+      expect((await req.get(`/api/live-drill/solo/hubs/${h}`)).status).toBe(404);
+    }
+  });
+
+  test('plays come whole (answer and tell) and page two continues page one', async () => {
+    const q = '/api/live-drill/solo/plays?drill=hgeo3&book=coord&seed=Abc12345';
+    const a = await req.get(`${q}&from=0`);
+    expect(a.status).toBe(200);
+    expect(a.body.plays).toHaveLength(40);
+    expect(a.body.plays.every((p) => p.answer != null && p.tell && p.revealCard && p.playbook === 'coord')).toBe(true);
+    const b = await req.get(`${q}&from=30`);
+    expect(b.body.plays.slice(0, 10).map((p) => p.card)).toEqual(a.body.plays.slice(30).map((p) => p.card));
+  });
+
+  test('only hub games, a sane seed and a bounded position are dealt', async () => {
+    const bad = ['drill=nope&seed=Abc12345', 'drill=facts&seed=short', 'drill=facts&seed=bad%20seed%21', 'drill=facts&seed=Abc12345&from=-1',
+      'drill=facts&seed=Abc12345&from=1e9', 'drill=facts&seed=Abc12345&from=2.5'];
+    for (const q of bad) expect((await req.get(`/api/live-drill/solo/plays?${q}`)).status).toBe(400);
+    // an unknown playbook falls back to the whole bank rather than failing
+    expect((await req.get('/api/live-drill/solo/plays?drill=facts&book=zzz&seed=Abc12345')).status).toBe(200);
+  });
+});
+
 describe('app wiring', () => {
   const routes = fs.readFileSync(path.join(__dirname, '../../config/routes.js'), 'utf8');
 
@@ -213,6 +253,11 @@ describe('app wiring', () => {
     expect(catchAll).toBeGreaterThan(0);
     expect(mount).toBeLessThan(catchAll);
     expect(routes).toMatch(/app\.use\('\/api\/live-drill\/host', isAuthenticated, isTeacher,/);
+    // solo practice is public too: same rule
+    const solo = code.indexOf("app.use('/api/live-drill/solo'");
+    expect(solo).toBeGreaterThan(0);
+    expect(solo).toBeLessThan(catchAll);
+    expect(routes).toMatch(/app\.get\(\['\/drill', '\/drill\/:hub'\]/);
   });
 
   test('the Fact Fluency page is teacher-only, like the data behind it', () => {
@@ -223,6 +268,8 @@ describe('app wiring', () => {
     expect(isLiveDrillPlayPath('/live-drill/play/join')).toBe(true);
     expect(isLiveDrillPlayPath('/live-drill/play/ABC123/answer')).toBe(true);
     expect(isLiveDrillPlayPath('/live-drill/host/games')).toBe(false);
+    expect(isLiveDrillPlayPath('/live-drill/solo/plays')).toBe(true);
+    expect(isLiveDrillPlayPath('/live-drill/solo/hubs/algebra')).toBe(true);
     const mw = fs.readFileSync(path.join(__dirname, '../../config/middleware.js'), 'utf8');
     expect(mw).toMatch(/isLiveDrillPlayPath\(req\.path\)/);
   });
