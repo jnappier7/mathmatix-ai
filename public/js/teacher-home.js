@@ -98,9 +98,9 @@
   // ============================================================
   // LAYOUT: nav, hero, Today container, table container
   // ============================================================
-  // Classes lives under More: day to day, the year bar and the new-year
-  // wizard cover class setup, and Test Prep earned the primary slot.
-  var PRIMARY = ['today', 'students', 'testprep', 'insights', 'activities', 'messages'];
+  // Classes is a primary tab again (owner, 2026-10-22: "want to see classes easily, and their
+  // join codes") — and Today opens with a My classes strip, so the codes are one glance away.
+  var PRIMARY = ['today', 'students', 'classes', 'testprep', 'insights', 'activities', 'messages'];
   var LABELS = { today: 'Today', activities: 'Assign', insights: 'Insights', classes: 'Classes', students: 'Students', messages: 'Messages' };
 
   function restructureNav() {
@@ -195,6 +195,10 @@
     today.setAttribute('role', 'tabpanel');
     today.innerHTML =
       '<section class="td-pulse" id="td-pulse" aria-label="Class pulse"></section>' +
+      '<section class="td-card td-classes" id="td-classes" aria-labelledby="td-classes-h">' +
+        '<header class="td-card-head"><h2 id="td-classes-h"><i class="fas fa-chalkboard" aria-hidden="true"></i> My classes</h2><span class="td-count" id="td-classes-count"></span></header>' +
+        '<div class="td-class-grid" id="td-class-grid"><div class="td-skeleton"></div><div class="td-skeleton"></div></div>' +
+      '</section>' +
       '<div class="td-grid">' +
         '<section class="td-card td-queue" aria-labelledby="td-queue-h">' +
           '<header class="td-card-head"><h2 id="td-queue-h">Needs you</h2><span class="td-count" id="td-queue-count"></span></header>' +
@@ -438,7 +442,79 @@
     }).join('') + '</ul>';
   }
 
+  // ------------------------------------------------------------ My classes
+  // Each class the teacher runs, with the one thing they hand out most: the join code. The code
+  // and its link (/join/CODE, routes/joinLink.js) copy with a tap; Host a game opens the Live Drill
+  // host with that class preselected; Assign and Manage open the tabs that already do those jobs.
+  function renderClasses() {
+    var grid = document.getElementById('td-class-grid');
+    var count = document.getElementById('td-classes-count');
+    if (!grid) return;
+    var classes = (D().classes && D().classes()) || [];
+    if (!D().classes) return; // the dashboard hasn't loaded them yet; keep the skeleton
+    classes = classes.filter(function (c) { return c.isActive !== false; });
+    if (count) count.textContent = classes.length ? String(classes.length) : '';
+    if (!classes.length) {
+      grid.innerHTML = '<p class="td-muted td-classes-empty">No classes yet. A class gives your students a join code, and groups them for assignments and live games. ' +
+        '<button type="button" class="td-link" data-open-create-class>Create a class</button></p>';
+      return;
+    }
+    grid.innerHTML = classes.map(function (c) {
+      var code = String(c.code || '').toUpperCase();
+      var link = location.origin + '/join/' + encodeURIComponent(code);
+      var n = c.studentCount || 0; var a = c.activeCount || 0;
+      return '<article class="td-class" data-class-id="' + esc(c._id) + '">' +
+        '<div class="td-class-top"><h3 class="td-class-name">' + esc(c.className) + '</h3>' +
+          (c.period ? '<span class="td-class-period">' + esc(c.period) + '</span>' : '') + '</div>' +
+        '<p class="td-class-meta">' + n + (n === 1 ? ' student' : ' students') + (n ? ' · ' + a + ' active this week' : '') +
+          (c.mathCourse ? ' · ' + esc(c.mathCourse) : '') + '</p>' +
+        '<div class="td-class-code">' +
+          '<button type="button" class="td-code" data-td-copy="' + esc(code) + '" title="Copy the join code" aria-label="Join code ' + esc(code) + ', copy">' +
+            '<span class="td-code-label">Join code</span><span class="td-code-value">' + esc(code) + '</span><i class="fas fa-copy" aria-hidden="true"></i></button>' +
+          '<button type="button" class="td-icon-btn" data-td-copy="' + esc(link) + '" title="Copy the join link" aria-label="Copy the join link for ' + esc(c.className) + '"><i class="fas fa-link" aria-hidden="true"></i></button>' +
+        '</div>' +
+        '<div class="td-class-actions">' +
+          '<a class="td-btn td-btn-soft td-btn-sm" href="/live-drill?class=' + encodeURIComponent(c._id) + '" target="_blank" rel="noopener"><i class="fas fa-play" aria-hidden="true"></i> Host a game</a>' +
+          '<button type="button" class="td-btn td-btn-quiet td-btn-sm" data-td-tab="activities"><i class="fas fa-clipboard-check" aria-hidden="true"></i> Assign</button>' +
+          '<button type="button" class="td-btn td-btn-quiet td-btn-sm" data-td-tab="classes" data-class-id="' + esc(c._id) + '">Manage</button>' +
+        '</div></article>';
+    }).join('');
+  }
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy') ? resolve() : reject(new Error('copy failed')); } catch (e) { reject(e); }
+      document.body.removeChild(ta);
+    });
+  }
+  function wireClasses() {
+    document.addEventListener('click', function (e) {
+      var copy = e.target.closest('[data-td-copy]');
+      if (copy) {
+        var text = copy.getAttribute('data-td-copy');
+        copyText(text).then(function () {
+          copy.classList.add('copied');
+          var live = document.getElementById('td-copy-live');
+          if (live) live.textContent = (text.indexOf('/join/') >= 0 ? 'Join link' : 'Join code') + ' copied';
+          setTimeout(function () { copy.classList.remove('copied'); }, 1500);
+        }).catch(function () { window.prompt('Copy this:', text); });
+        return;
+      }
+      var tab = e.target.closest('[data-td-tab]');
+      if (tab && tab.closest('#td-classes') && D().openTab) D().openTab(tab.getAttribute('data-td-tab'));
+    });
+    document.addEventListener('mm:classes-loaded', renderClasses);
+    document.addEventListener('mm:class-created', function () { setTimeout(renderClasses, 50); });
+    if (!document.getElementById('td-copy-live')) {
+      var live = document.createElement('div'); live.id = 'td-copy-live'; live.className = 'td-sr'; live.setAttribute('aria-live', 'polite');
+      document.body.appendChild(live);
+    }
+  }
+
   function renderToday() {
+    renderClasses();
     renderAssigned();
     renderPulse();
     renderQueue();
@@ -769,6 +845,7 @@
     document.documentElement.classList.add('td-v2');
     mountHero();
     restructureNav();
+    wireClasses();
     mountToday();
     mountTable();
     document.addEventListener('mm:roster-updated', onRoster);

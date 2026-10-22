@@ -89,6 +89,9 @@
   function renderClasses() {
     $('cls').innerHTML = '<option value="">No class — students join with the code</option>'
       + S.classes.map((c) => `<option value="${esc(c.id)}">${esc(c.name)} (${c.students})</option>`).join('');
+    // Opened from a class card on the dashboard (/live-drill?class=…): start with that class.
+    const want = new URLSearchParams(location.search).get('class');
+    if (want && !S.urlClassApplied && S.classes.some((c) => c.id === want)) { S.classId = want; S.urlClassApplied = true; }
     if (!S.classes.some((c) => c.id === S.classId)) S.classId = '';
   }
   $('cls').onchange = () => { S.classId = $('cls').value; renderSetup(); };
