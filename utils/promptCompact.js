@@ -947,6 +947,8 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
     const convParts = [];
     if (conversationContext.topicName) convParts.push(`Topic: ${conversationContext.topicName}`);
     if (conversationContext.courseSession) convParts.push(`Course: ${conversationContext.courseSession.courseName || 'Active course session'}`);
+    // Enrolled, but this is general chat — not the lesson. Name it, don't start it.
+    else if (conversationContext.enrolledCourse) convParts.push(`${firstName} is enrolled in ${conversationContext.enrolledCourse.courseName || 'a course'} but this is general tutoring, not the course lesson — do NOT start or resume the course here. If they ask about it, say they can open it from My Courses.`);
     if (convParts.length) parts.push(`--- CONVERSATION CONTEXT ---\n${convParts.join('\n')}`);
   }
 

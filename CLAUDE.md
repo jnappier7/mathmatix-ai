@@ -422,6 +422,16 @@ npm run seed:all:dry   # preflight + plan, no writes
   took. The English line says so explicitly ("even if earlier messages were in another language").
   Pinned by `tests/unit/tutorLanguageSetting.test.js`. The parent guide has its own
   `parentLanguage` (`parentCourseLanguage.test.js`) — never the child's setting.
+- **A typed turn is a COURSE turn only when it lands in the course's own conversation.**
+  `user.activeCourseSessionId` is durable intent (it survives logout) and the greeting deliberately
+  lands a new login in general chat — entering the course is a click. `routes/chat.js` used to flip
+  every turn into course mode off the id alone, so the general-chat opener was followed by a second
+  hello that ignored "hey whats up?" and launched module 1 (the course lead guard reads a greeting
+  as "start the lesson"). One test now decides, shared with the client's course progress bar:
+  `utils/courseConversation.js` `isCourseConversation(courseSession, conversation)`. It gates the
+  baseline gate and the course context (hence the course prompt and `isCourseMode`); a general-chat
+  turn by an enrolled student gets `conversationContext.enrolledCourse` (promptCompact names the
+  course, says not to start it there). Pinned by `tests/unit/courseTurnLanding.test.js`.
 - **Never hold a provider SDK handle outside `utils/openaiClient.js`** — every call goes through
   `callLLM*`/`generateEmbedding`, the outbound-PII chokepoint (strip + rehydrate, on by default).
   `tests/unit/outboundPiiScope.test.js` fails the build on a direct `chat.completions.create` anywhere else.

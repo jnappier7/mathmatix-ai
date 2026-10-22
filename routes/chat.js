@@ -25,7 +25,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { isSessionStale, touchSession } = require('../utils/sessionWindow');
 const { getLoginSessionId, isForeignLoginSession, claimLoginSession } = require('../utils/loginSession');
-const { resolveCourseConversation, courseEnteredThisLogin } = require('../utils/courseConversation');
+const { resolveCourseConversation, courseEnteredThisLogin, isCourseConversation } = require('../utils/courseConversation');
 const Curriculum = require('../models/curriculum');
 const StudentUpload = require('../models/studentUpload');
 const Skill = require('../models/skill');
@@ -1234,10 +1234,37 @@ async function runStudentTurn(req, res) {
         // Runs before the streaming headers below, so a plain JSON reply is safe;
         // the finally at the end of the handler releases the per-user lock. Skipped
         // for isGreeting (that path is already gated in routes/courseChat.js).
-        if (user.activeCourseSessionId && !isGreeting) {
+        //
+        // ── WHICH TURNS ARE COURSE TURNS ──
+        // Only turns written INTO the course's own conversation. The account's
+        // activeCourseSessionId is durable intent (it survives logout), and the
+        // greeting deliberately lands a new login in general chat — entering the
+        // course is a click (owner, 2026-09-14). Keying course mode on the id
+        // alone answered the very next typed message in course mode anyway: the
+        // course lead guard then read "hey whats up?" as "start the lesson" and
+        // the student got a second hello that ignored what they said and launched
+        // module 1 (owner's test account, 2026-10-22). utils/courseConversation.js
+        // isCourseConversation is the one test, shared with the client's course
+        // progress bar, so the tutor is in the lesson exactly when the screen is.
+        let activeCourseSessionDoc = null;
+        let inCourseConversation = false;
+        if (user.activeCourseSessionId) {
             try {
                 const CourseSession = require('../models/courseSession');
-                const gateSession = await CourseSession.findById(user.activeCourseSessionId);
+                activeCourseSessionDoc = await CourseSession.findById(user.activeCourseSessionId);
+                inCourseConversation = isCourseConversation(activeCourseSessionDoc, activeConversation);
+                if (activeCourseSessionDoc && activeCourseSessionDoc.status === 'active' && !inCourseConversation) {
+                    logger.debug('Course session active but this turn is in general chat — free tutoring', {
+                        userId, courseId: activeCourseSessionDoc.courseId, conversationId: String(activeConversation._id)
+                    });
+                }
+            } catch (courseLookupErr) {
+                logger.warn('Could not load active course session (non-fatal)', { error: courseLookupErr.message });
+            }
+        }
+        if (inCourseConversation && !isGreeting) {
+            try {
+                const gateSession = activeCourseSessionDoc;
                 if (gateSession && gateSession.status === 'active') {
                     const { isRequiredBaselinePending } = require('../utils/courseDiagnostic');
                     const { pending, diagnostic } = await isRequiredBaselinePending(user, gateSession.courseId);
@@ -1271,11 +1298,14 @@ async function runStudentTurn(req, res) {
             }
         }
 
-        // Enrich with active course session data (if user is in a course)
-        if (user.activeCourseSessionId) {
+        // Enrich with active course session data (if this turn is IN the course —
+        // see "WHICH TURNS ARE COURSE TURNS" above). This context is what switches
+        // the prompt to course mode below, so it must not be set for a general-chat
+        // turn. A student who is enrolled but chatting generally gets a one-line
+        // mention instead, so the tutor can point them at the course if they ask.
+        if (inCourseConversation) {
             try {
-                const CourseSession = require('../models/courseSession');
-                const courseSession = await CourseSession.findById(user.activeCourseSessionId);
+                const courseSession = activeCourseSessionDoc;
                 if (courseSession && courseSession.status === 'active') {
                     const courseCtx = loadCourseContext(courseSession);
                     if (courseCtx) {
@@ -1299,6 +1329,12 @@ async function runStudentTurn(req, res) {
             } catch (courseErr) {
                 logger.warn('Could not load course session context', { error: courseErr.message });
             }
+        } else if (activeCourseSessionDoc && activeCourseSessionDoc.status === 'active') {
+            conversationContextForPrompt = conversationContextForPrompt || {};
+            conversationContextForPrompt.enrolledCourse = {
+                courseId: activeCourseSessionDoc.courseId,
+                courseName: activeCourseSessionDoc.courseName,
+            };
         }
 
         // Inject few-shot examples for new conversations to teach visual command usage
