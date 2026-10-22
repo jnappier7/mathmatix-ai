@@ -100,6 +100,13 @@ const HARD_EXIT_MS = Number(process.env.SHUTDOWN_HARD_EXIT_MS || 25000);
 let shuttingDown = false;
 
 async function closeAndExit(code) {
+  // Live Drill games are in memory with a Mongo shadow: write the last second of play before the
+  // connection goes, so the instance replacing this one picks every game up where it is.
+  try {
+    await require('./utils/liveDrill/store').flush();
+  } catch (err) {
+    logger.error('Live drill snapshot flush failed', { error: err.message });
+  }
   try {
     await mongoose.connection.close();
     logger.info('MongoDB connection closed');
@@ -117,6 +124,11 @@ function gracefulShutdown(signal, { drainMs = DRAIN_MS } = {}) {
 
   lifecycle.markDraining();
   logger.info(`${signal} received — draining before shutdown`, { drainMs });
+
+  // Live Drill games are in memory with a Mongo shadow: write each as it stands and close its
+  // streams now, so every phone and board reconnects to the instance replacing this one and
+  // finds its game there (utils/liveDrill/store.js). Game requests here answer 503 from now on.
+  require('./utils/liveDrill/store').handoff().catch((err) => logger.error('Live drill handoff failed', { error: err.message }));
 
   // Backstop: exit no matter what stalls below, while still inside Render's
   // 30s grace so we choose our own exit instead of being SIGKILLed.

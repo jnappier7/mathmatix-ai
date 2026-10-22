@@ -38,6 +38,7 @@ const G = require('../utils/liveDrill/games');
 const { DRILLS, listPlaybooks } = require('../utils/liveDrill/engine');
 const { FOCUSABLE, FOCUS_MAX } = require('../utils/liveDrill/facts');
 const solo = require('../utils/liveDrill/solo');
+const store = require('../utils/liveDrill/store'); // revives a game this process hasn't seen (after a deploy)
 
 // Every finished Math Facts game folds into its signed-in students' records.
 G.onGameOver((game) => fluency.saveGame(game, FactFluency));
@@ -46,6 +47,14 @@ const hostRouter = express.Router();
 const playRouter = express.Router();
 const mineRouter = express.Router();
 const soloRouter = express.Router();
+
+// A process that has handed its games off (SIGTERM) must not play them: the phone retries and
+// lands on the new process. Solo practice has no game state and keeps serving.
+const MOVING = { message: 'The game is moving to a new server. One moment…', retry: true };
+const notHandingOff = (req, res, next) => (store.isHandingOff() ? res.status(503).json(MOVING) : next());
+hostRouter.use(notHandingOff);
+playRouter.use(notHandingOff);
+mineRouter.use(notHandingOff);
 
 const TOKEN_HEADER = 'x-live-drill-token';
 
@@ -178,19 +187,24 @@ hostRouter.post('/games', async (req, res) => {
   }
 });
 
-hostRouter.get('/games/:code/stream', (req, res) => {
+hostRouter.get('/games/:code/stream', async (req, res) => {
   try {
+    await store.load(req.params.code);
     const game = G.hostGame(req.params.code, req.user._id);
     openStream(req, res, game, { kind: 'host' });
   } catch (err) { send(res, err); }
 });
 
-hostRouter.get('/games/:code', (req, res) => {
-  try { res.json(G.hostView(G.hostGame(req.params.code, req.user._id))); } catch (err) { send(res, err); }
+hostRouter.get('/games/:code', async (req, res) => {
+  try {
+    await store.load(req.params.code);
+    res.json(G.hostView(G.hostGame(req.params.code, req.user._id)));
+  } catch (err) { send(res, err); }
 });
 
-const hostAction = (fn) => (req, res) => {
+const hostAction = (fn) => async (req, res) => {
   try {
+    await store.load(req.params.code);
     const game = G.hostGame(req.params.code, req.user._id);
     fn(game, req);
     res.json(G.hostView(game));
@@ -205,6 +219,7 @@ hostRouter.post('/games/:code/rematch', hostAction((g) => G.rematch(g)));
 /** The lobby's QR code: the join link with the code already in it, so a scan lands on "your name". */
 hostRouter.get('/games/:code/qr.svg', async (req, res) => {
   try {
+    await store.load(req.params.code);
     const game = G.hostGame(req.params.code, req.user._id);
     const url = `${req.protocol}://${req.get('host')}/play?code=${game.code}`;
     const svg = await QRCode.toString(url, { type: 'svg', margin: 1, errorCorrectionLevel: 'M', color: { dark: '#0b1a22', light: '#ffffff' } });
@@ -249,48 +264,48 @@ const joinLimiter = rateLimit({
 
 playRouter.use(playIpLimiter);
 
-playRouter.post('/join', joinLimiter, (req, res) => {
+playRouter.post('/join', joinLimiter, async (req, res) => {
   try {
     const { code, name } = req.body || {};
-    const game = G.getGame(code);
+    const game = await store.load(code);
     if (!game) return res.status(404).json({ message: 'No game with that code. Check the board and try again.' });
     const { token, player } = G.join(game, name);
     res.status(201).json({ token, code: game.code, playerId: player.id, name: player.name, team: player.team });
   } catch (err) { send(res, err); }
 });
 
-function withPlayer(req) {
-  const game = G.getGame(req.params.code);
+async function withPlayer(req) {
+  const game = await store.load(req.params.code);
   if (!game) throw new G.GameError(404, 'That game has ended.');
   const player = G.playerFor(game, req.get(TOKEN_HEADER) || req.query.t);
   return { game, player };
 }
 
-playRouter.get('/:code/stream', playLimiter, (req, res) => {
+playRouter.get('/:code/stream', playLimiter, async (req, res) => {
   try {
-    const { game, player } = withPlayer(req);
+    const { game, player } = await withPlayer(req);
     openStream(req, res, game, { kind: 'player', playerId: player.id });
   } catch (err) { send(res, err); }
 });
 
-playRouter.get('/:code/state', playLimiter, (req, res) => {
+playRouter.get('/:code/state', playLimiter, async (req, res) => {
   try {
-    const { game, player } = withPlayer(req);
+    const { game, player } = await withPlayer(req);
     res.json(G.playerView(game, player));
   } catch (err) { send(res, err); }
 });
 
-playRouter.get('/:code/play', playLimiter, (req, res) => {
+playRouter.get('/:code/play', playLimiter, async (req, res) => {
   try {
-    const { game, player } = withPlayer(req);
+    const { game, player } = await withPlayer(req);
     res.set('Cache-Control', 'no-store');
     res.json(G.currentPlay(game, player));
   } catch (err) { send(res, err); }
 });
 
-playRouter.post('/:code/answer', playLimiter, (req, res) => {
+playRouter.post('/:code/answer', playLimiter, async (req, res) => {
   try {
-    const { game, player } = withPlayer(req);
+    const { game, player } = await withPlayer(req);
     const { n, k } = req.body || {};
     res.json(G.answer(game, player, n, k));
   } catch (err) { send(res, err); }
@@ -308,16 +323,20 @@ function accountName(u) {
 }
 
 /**
- * Games open right now in any class I'm enrolled in. The chat banner polls this, so the common
- * case — no class game anywhere on the server — answers from memory without touching the DB.
+ * Games open right now in any class I'm enrolled in. The chat banner polls this. A game this
+ * process hasn't seen (hosted before the last deploy) is revived from its snapshot first.
  */
 mineRouter.get('/', async (req, res) => {
   try {
     res.set('Cache-Control', 'no-store');
     const student = userHasRole(req.user, 'student');
-    if (!student || !G.anyClassGames()) return res.json({ student, name: student ? accountName(req.user) : null, games: [] });
+    if (!student) return res.json({ student, name: null, games: [] });
+    const inMemory = G.anyClassGames();
+    if (!inMemory && !(await store.anyClassGames())) return res.json({ student, name: accountName(req.user), games: [] });
     const classes = await EnrollmentCode.find({ 'enrolledStudents.studentId': req.user._id }, '_id').lean();
-    res.json({ student, name: accountName(req.user), games: G.gamesForClasses(classes.map((c) => c._id)) });
+    const ids = classes.map((c) => c._id);
+    if (!inMemory) await store.loadForClasses(ids);
+    res.json({ student, name: accountName(req.user), games: G.gamesForClasses(ids) });
   } catch (err) { send(res, err); }
 });
 
@@ -326,10 +345,10 @@ mineRouter.get('/', async (req, res) => {
  * and a second device or a reload reseats me in the same player. Non-students get 403 and the page
  * falls back to the typed-name form.
  */
-mineRouter.post('/join', (req, res) => {
+mineRouter.post('/join', async (req, res) => {
   try {
     if (!userHasRole(req.user, 'student')) return res.status(403).json({ message: 'Join with the code and your name.' });
-    const game = G.getGame((req.body || {}).code);
+    const game = await store.load((req.body || {}).code);
     if (!game) return res.status(404).json({ message: 'No game with that code. Check the board and try again.' });
     const { token, player } = G.join(game, accountName(req.user), { userId: req.user._id });
     res.status(201).json({ token, code: game.code, playerId: player.id, name: player.name, team: player.team });
