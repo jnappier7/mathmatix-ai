@@ -812,12 +812,15 @@ When ${firstName} asks about themselves ("What grade am I in?", "What do you kno
   const rapportNotes = buildRapportNotes(userProfile.learningProfile?.rapportAnswers);
   if (rapportNotes) parts.push(rapportNotes);
 
-  // Language preference
-  if (preferredLanguage && preferredLanguage !== 'English') {
-    parts.push(`
+  // Language preference. ALWAYS stated, English included: when the setting was Spanish for a
+  // few turns and is switched back, the history is still in Spanish, and a prompt that said
+  // nothing about language let the model keep following the history — the switch back never
+  // took (2026-10-22). The setting wins over the conversation so far.
+  parts.push(`
 --- LANGUAGE ---
-Respond primarily in ${preferredLanguage}. Use ${preferredLanguage} mathematical terminology. English for specific math terms is fine when clearer. Maintain your personality regardless of language.${preferredLanguage === 'Arabic' ? ' Remember Arabic reads right-to-left.' : ''}`);
-  }
+${preferredLanguage && preferredLanguage !== 'English'
+    ? `Respond primarily in ${preferredLanguage}. Use ${preferredLanguage} mathematical terminology. English for specific math terms is fine when clearer. Maintain your personality regardless of language.${preferredLanguage === 'Arabic' ? ' Remember Arabic reads right-to-left.' : ''}`
+    : 'Respond in English — even if earlier messages in this conversation were in another language, the student\'s language setting is now English. Switch from this reply on.'}`);
 
   // Lexile / reading level
   if (gradeLevel) {
