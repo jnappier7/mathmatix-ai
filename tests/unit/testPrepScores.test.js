@@ -104,7 +104,7 @@ describe('Test Prep tab wiring', () => {
   const read = f => fs.readFileSync(path.join(__dirname, '../..', f), 'utf8');
   test('tab exists, is a primary nav item, and its assets are bundled', () => {
     expect(read('public/teacher-dashboard.html')).toMatch(/data-tab="testprep"[\s\S]*id="testprep-tab"/);
-    expect(read('public/js/teacher-home.js')).toMatch(/PRIMARY = \['today', 'students', 'testprep'/);
+    expect(read('public/js/teacher-home.js')).toMatch(/PRIMARY = \['today', 'students', 'classes', 'testprep'/);
     const m = JSON.parse(read('public/dist/page-bundles.manifest.json'))['teacher-dashboard.html'];
     expect(m.js.flatMap(b => b.files)).toContain('/js/teacher-testprep.js');
     expect(m.css.flatMap(b => b.files)).toContain('/css/teacher-testprep.css');

@@ -2669,6 +2669,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             const classCountEl = document.getElementById('tab-class-count');
             if (classCountEl) classCountEl.textContent = `(${classesData.length})`;
             renderClassChips();
+            // Today's "My classes" strip (teacher-home.js) draws from the same list.
+            document.dispatchEvent(new CustomEvent('mm:classes-loaded', { detail: { classes: classesData } }));
         } catch (err) {
             console.log('Could not load classes for grouping:', err.message);
         }
