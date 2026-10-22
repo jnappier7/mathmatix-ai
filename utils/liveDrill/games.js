@@ -260,7 +260,7 @@ function join(game, rawName, { userId } = {}) {
     kicked: false,
     att: 0, comp: 0, yards: 0, streak: 0, best: 0,
     n: 1, issuedAt: null, // drive: the play they're on, and when it was first shown to them
-    misses: [], // { n, k }
+    misses: [], msTotal: 0, // { n, k }
     facts: new Map(), // Math Facts: fact id → { label, fam, a, b, att, right, ms: [] } (right answers' times)
     factLog: [], // Math Facts: every answer, in order — the teacher's CSV
     lastSeen: now(),
@@ -380,6 +380,7 @@ function applyAnswer(game, player, play, n, k, ms, windowMs) {
   const ok = k === play.answer;
   const sc = scoringFor(game);
   player.att++;
+  player.msTotal += ms; // for the final scoreboard's average answer time
   let ps = game.playStats.get(n);
   if (!ps) { ps = { att: 0, right: 0, picks: new Map() }; game.playStats.set(n, ps); }
   ps.att++;
@@ -583,7 +584,7 @@ function rematch(game) {
   game.deck = [];
   game.teams = TEAM_NAMES.map((name) => ({ name, pos: START_POS, pts: 0, tds: 0, yards: 0 }));
   for (const p of game.players.values()) {
-    Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, n: 1, issuedAt: null, misses: [], facts: new Map(), factLog: [] });
+    Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, n: 1, issuedAt: null, misses: [], msTotal: 0, facts: new Map(), factLog: [] });
   }
   Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map(), playStats: new Map() });
   if (game.mode === 'hill') hill.reset(game);
@@ -751,6 +752,7 @@ function factsFinal(game, players) {
 function hostView(game) {
   const players = [...game.players.values()].filter((p) => !p.kicked).map((p) => ({
     id: p.id, name: p.name, team: p.team, att: p.att, comp: p.comp, yards: p.yards, best: p.best,
+    avgSec: p.att ? Math.round(p.msTotal / p.att / 100) / 10 : null,
     linked: !!p.userId, away: p.conns === 0 && now() - p.lastSeen > 15000,
   }));
   const v = { ...base(game), players, feed: game.feed.slice(0, 8), round: roundView(game, true) };
@@ -761,7 +763,12 @@ function hostView(game) {
       .map((p) => ({ name: p.name, yards: p.yards, comp: p.comp, att: p.att })));
     const att = players.reduce((s, p) => s + p.att, 0);
     const comp = players.reduce((s, p) => s + p.comp, 0);
-    v.final = { mvps, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
+    // Every player, not just the top three: the scoreboard a teacher reads names off.
+    const scoreboard = players.map((p) => ({ name: p.name, team: p.team, yards: p.yards, comp: p.comp, att: p.att,
+      pct: p.att ? Math.round((100 * p.comp) / p.att) : null, best: p.best, avgSec: p.avgSec, saved: p.linked }))
+      // a student who never answered sits at the bottom, never above someone who played and went backwards
+      .sort((a, b) => (b.att > 0) - (a.att > 0) || b.yards - a.yards || b.comp - a.comp || a.name.localeCompare(b.name));
+    v.final = { mvps, players: scoreboard, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
     if (DRILLS[game.drill] && DRILLS[game.drill].trackFacts) v.final.facts = factsFinal(game, players);
     if (game.mode === 'hill') v.final.hill = hill.finalHill(game);
   }

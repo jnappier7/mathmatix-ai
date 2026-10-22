@@ -155,6 +155,27 @@ describe('team drive', () => {
     expect(v.final.mvps[0][0].name).toBe('A');
     expect(G.playerView(g, a).film).toHaveLength(1);
   });
+
+  test('the host’s final lists EVERY player with score, right/attempted, accuracy, streak and average time', () => {
+    const g = drive();
+    const a = G.join(g, 'Ana').player, b = G.join(g, 'Ben').player, c = G.join(g, 'Cal').player;
+    G.start(g);
+    // Ana: two right (fast, then slow); Ben: one wrong; Cal: never answers
+    G.currentPlay(g, a); jest.advanceTimersByTime(1000); G.answer(g, a, 1, G.playAt(g, 1).answer);
+    G.currentPlay(g, a); jest.advanceTimersByTime(3000); G.answer(g, a, 2, G.playAt(g, 2).answer);
+    G.currentPlay(g, b); jest.advanceTimersByTime(500); G.answer(g, b, 1, wrongKey(G.playAt(g, 1)));
+    G.endGame(g);
+    const rows = G.hostView(g).final.players;
+    // by score, then right answers, then name — and a student who never answered sits at the
+    // bottom, never above someone who played and went backwards (Ben is at −5, Cal at 0)
+    expect(rows.map((r) => r.name)).toEqual(['Ana', 'Ben', 'Cal']);
+    expect(rows[0]).toMatchObject({ comp: 2, att: 2, pct: 100, best: 2, avgSec: 2, saved: false });
+    expect(rows[0].yards).toBeGreaterThan(0);
+    expect(rows[1]).toMatchObject({ comp: 0, att: 1, pct: 0, best: 0, avgSec: 0.5 });
+    expect(rows[1].yards).toBeLessThan(0);
+    expect(rows[2]).toMatchObject({ name: 'Cal', att: 0, pct: null, avgSec: null });
+    expect(rows[2].team).toBe(c.team);
+  });
 });
 
 describe('huddle', () => {
