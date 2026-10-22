@@ -233,6 +233,20 @@ describe('solo practice (/drill/<hub>)', () => {
     expect(b.body.plays.slice(0, 10).map((p) => p.card)).toEqual(a.body.plays.slice(30).map((p) => p.card));
   });
 
+  test('Math Facts takes a focus — every fact has one of the numbers — and nothing else does', async () => {
+    const hub = await req.get('/api/live-drill/solo/hubs/algebra');
+    expect(hub.body.games.find((g) => g.drill === 'facts').focusable.books).toEqual(['all', 'add', 'sub', 'mul', 'div']);
+    expect(hub.body.games.find((g) => g.drill === 'alg1m3').focusable).toBeUndefined();
+    const r = await req.get('/api/live-drill/solo/plays?drill=facts&book=mul&seed=Abc12345&focus=2,5,10');
+    expect(r.body.plays.every((p) => [p.fact.a, p.fact.b].some((n) => [2, 5, 10].includes(n)))).toBe(true);
+    // junk in the list is dropped, not an error; a focus on a playbook that can't take one is ignored
+    const j = await req.get('/api/live-drill/solo/plays?drill=facts&book=mul&seed=Abc12345&focus=7,x,99');
+    expect(j.body.plays.every((p) => [p.fact.a, p.fact.b].includes(7))).toBe(true);
+    const sq = await req.get('/api/live-drill/solo/plays?drill=facts&book=sq&seed=Abc12345&focus=7');
+    const plain = await req.get('/api/live-drill/solo/plays?drill=facts&book=sq&seed=Abc12345');
+    expect(sq.body.plays.map((p) => p.card)).toEqual(plain.body.plays.map((p) => p.card));
+  });
+
   test('only hub games, a sane seed and a bounded position are dealt', async () => {
     const bad = ['drill=nope&seed=Abc12345', 'drill=facts&seed=short', 'drill=facts&seed=bad%20seed%21', 'drill=facts&seed=Abc12345&from=-1',
       'drill=facts&seed=Abc12345&from=1e9', 'drill=facts&seed=Abc12345&from=2.5'];

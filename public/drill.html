@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261029">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261030">
 </head>
 <body class="solo">
 <div class="pwrap">
@@ -25,6 +25,12 @@
     <div class="panel solo-setup" id="setup" hidden>
       <div><span class="lbl" id="g-l">Game</span><div class="books games" id="games" role="group" aria-labelledby="g-l"></div></div>
       <div><span class="lbl" id="b-l">Playbook</span><div class="books" id="books" role="group" aria-labelledby="b-l"></div><p class="muted book-bl" id="book-bl"></p></div>
+      <div id="opt-focus" hidden>
+        <span class="lbl" id="f-l">Facts to drill</span>
+        <div class="seg-ctl" id="f-pre" role="group" aria-labelledby="f-l"></div>
+        <div class="nums" id="f-nums" role="group" aria-label="Pick the numbers"></div>
+        <p class="muted" id="f-note" style="margin:6px 0 0;font-size:.9rem"></p>
+      </div>
       <div><span class="lbl" id="c-l">Clock</span><div class="seg-ctl" id="clock" role="group" aria-labelledby="c-l"></div></div>
       <details class="rules compact"><summary>How scoring works</summary><div id="rules"></div></details>
       <button class="go" id="start" type="button">Play</button>
@@ -69,6 +75,6 @@
 </div>
 
 <script src="/js/live-drill/common.js?v=20261023"></script>
-<script src="/js/live-drill/solo.js?v=20261029"></script>
+<script src="/js/live-drill/solo.js?v=20261030"></script>
 </body>
 </html>

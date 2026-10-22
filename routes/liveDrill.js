@@ -375,7 +375,7 @@ soloRouter.get('/plays', (req, res) => {
     const q = solo.parseDeal(req.query);
     if (q.error) return res.status(400).json({ message: q.error });
     res.set('Cache-Control', 'no-store');
-    res.json({ from: q.from, plays: solo.deal(q.drill, q.playbook, q.seed, q.from) });
+    res.json({ from: q.from, plays: solo.deal(q.drill, q.playbook, q.seed, q.from, solo.BATCH, q.focus) });
   } catch (err) { send(res, err); }
 });
 

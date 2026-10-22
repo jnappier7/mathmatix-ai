@@ -188,6 +188,9 @@ T.isfunc = { book: 'rel', make(rand) {
   if (kind === 'repeatX') xs[2] = xs[0];
   if (kind === 'repeatY') ys[3] = ys[1];
   if (kind !== 'repeatX' && new Set(xs).size < 4) xs[2] = xs[0] + 7;
+  // A "clean" set must be clean: an accidental repeated y would make "Yes — every x has one y"
+  // true while the choices never address the repeat the student is staring at.
+  if (kind === 'clean') for (let i = 1; i < 4; i++) while (ys.slice(0, i).includes(ys[i])) ys[i] = ys[i] >= 8 ? -5 : ys[i] + 1;
   const pairs = xs.map((x, i) => `(${num(x)}, ${num(ys[i])})`);
   const yesNoRepeatY = 'Yes — a y-value repeats, but every x still has only one y';
   const choices = kind === 'repeatX'
@@ -253,18 +256,43 @@ T.intercepts = { book: 'lin', make(rand) {
 } };
 
 const TANKS = [[900, 30], [600, 20], [720, 24], [1200, 40], [1500, 60], [800, 20], [960, 32]];
+/** The tank's graph, first quadrant: gallons left (y) against minutes (x), a line from (0, V) to (Tm, 0). */
+function tankSVG(V, Tm) {
+  const L = 52; const B = 34; const PW = 230; const PH = 190; // margins for labels, plot size
+  const px = (x) => L + (x / Tm) * PW;
+  const py = (y) => PH + 8 - (y / V) * PH;
+  let g = '';
+  for (let i = 0; i <= 4; i++) {
+    g += `<line x1="${px((Tm * i) / 4)}" y1="${py(0)}" x2="${px((Tm * i) / 4)}" y2="${py(V)}" stroke="#d8dee2"/>`;
+    g += `<line x1="${px(0)}" y1="${py((V * i) / 4)}" x2="${px(Tm)}" y2="${py((V * i) / 4)}" stroke="#d8dee2"/>`;
+  }
+  const xt = [0, Tm / 2, Tm].map((t) => `<text x="${px(t)}" y="${py(0) + 15}" font-size="11" text-anchor="middle" fill="#5b6b72">${t}</text>`).join('');
+  const yt = [V / 2, V].map((t) => `<text x="${px(0) - 6}" y="${py(t) + 4}" font-size="11" text-anchor="end" fill="#5b6b72">${t}</text>`).join('');
+  return `<svg viewBox="0 0 ${L + PW + 14} ${PH + 8 + B + 6}" width="300" role="img" aria-label="graph of gallons left against minutes: a line from (0, ${V}) to (${Tm}, 0)">
+    <rect x="${px(0)}" y="${py(V)}" width="${PW}" height="${PH}" fill="#fff"/>${g}
+    <line x1="${px(0)}" y1="${py(0)}" x2="${px(Tm) + 8}" y2="${py(0)}" stroke="#14212a" stroke-width="1.6"/>
+    <line x1="${px(0)}" y1="${py(0)}" x2="${px(0)}" y2="${py(V) - 6}" stroke="#14212a" stroke-width="1.6"/>
+    ${xt}${yt}
+    <text x="${px(Tm / 2)}" y="${py(0) + 31}" font-size="12" text-anchor="middle" font-style="italic">minutes (x)</text>
+    <text x="14" y="${py(V / 2)}" font-size="12" text-anchor="middle" font-style="italic" transform="rotate(-90 14 ${py(V / 2)})">gallons left (y)</text>
+    <line x1="${px(0)}" y1="${py(V)}" x2="${px(Tm)}" y2="${py(0)}" stroke="#2e6fd8" stroke-width="2.5"/>
+    <circle cx="${px(0)}" cy="${py(V)}" r="4" fill="#2e6fd8"/><circle cx="${px(Tm)}" cy="${py(0)}" r="4" fill="#2e6fd8"/></svg>`;
+}
 T.tank = { book: 'lin', make(rand) {
   const [V, Tm] = pick(rand, TANKS);
   const kind = pick(rand, ['xint', 'yint', 'rate', 'slope']);
-  const prompt = `A ${V}-gallon tank drains at a steady rate. It is empty after ${Tm} minutes. Graph: gallons left (y) vs. minutes (x).`;
-  if (kind === 'rate') return { ask: 'How many gallons drain each minute?', prompt, typed: V / Tm, tell: `${V} gallons ÷ ${Tm} minutes = ${V / Tm} gallons per minute.` };
-  if (kind === 'slope') return { ask: 'What is the slope of the graph?', prompt, typed: -V / Tm, neg: true, tell: `slope = change in y ÷ change in x = (0 − ${V}) ÷ (${Tm} − 0) = ${num(-V / Tm)}. Negative: the water goes DOWN.` };
+  // "Use the graph" puts the QUESTION in the big type (kit.posed); the story rides in the label.
+  // (when it empties is the graph's x-intercept — reading it off is the skill)
+  const prompt = `Use the graph. A ${V}-gallon tank drains at a steady rate.`;
+  const fig = tankSVG(V, Tm);
+  if (kind === 'rate') return { ask: 'How many gallons drain each minute?', prompt, fig, typed: V / Tm, tell: `${V} gallons ÷ ${Tm} minutes = ${V / Tm} gallons per minute.` };
+  if (kind === 'slope') return { ask: 'What is the slope of the graph?', prompt, fig, typed: -V / Tm, neg: true, tell: `slope = change in y ÷ change in x = (0 − ${V}) ÷ (${Tm} − 0) = ${num(-V / Tm)}. Negative: the water goes DOWN.` };
   if (kind === 'xint') {
-    return { ask: `What does the x-intercept (${Tm}, 0) mean?`, prompt,
+    return { ask: `What does the x-intercept (${Tm}, 0) mean?`, prompt, fig,
       choices: [`After ${Tm} minutes the tank is empty`, `The tank starts with ${Tm} gallons`, `The tank drains ${Tm} gallons each minute`, `At the start there are ${V} gallons`],
       answer: 0, tell: `on the x-axis, y = 0: zero gallons left — at x = ${Tm} minutes.` };
   }
-  return { ask: `What does the y-intercept (0, ${V}) mean?`, prompt,
+  return { ask: `What does the y-intercept (0, ${V}) mean?`, prompt, fig,
     choices: [`At the start (0 minutes) the tank holds ${V} gallons`, `The tank is empty after ${V} minutes`, `The tank drains ${V} gallons per minute`, `After ${Tm} minutes there are ${V} gallons left`],
     answer: 0, tell: `on the y-axis, x = 0: time zero — the tank starts with ${V} gallons.` };
 } };

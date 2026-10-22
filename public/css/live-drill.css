@@ -488,14 +488,22 @@ table.twoway td:first-child{text-align:left}
   .solo .book-bl{display:block}
 }
 .solo .book-bl{display:none;margin:8px 0 0;font-size:.92rem}
-/* the pad must clear a phone with its bars showing: the labels go, the bar tightens */
-.solo .typing .sb .k{display:none}
+/* the pad must clear a phone with its bars showing: the labels shrink (a bare "0 · 4:11 · 0" reads as
+   nothing), the bar tightens */
+.solo .typing .sb .k{font-size:.6rem;letter-spacing:.12em}
 .solo .typing .pbar .pill{font-size:.8rem}
 /* A laptop has room the phone doesn't: the question beside the figure reads at full size, and a
    tall enough screen keeps the scoreboard labels and a full-size figure while typing. */
 @media (min-width:700px){.solo .typing .card:not(.nofig) .posed-q{font-size:1.4rem}}
 @media (min-width:700px) and (min-height:760px){
-  .solo .typing .sb .k{display:block}
+  .solo .typing .sb .k{font-size:.85rem}
   .solo .typing .card:not(.nofig) .fig{width:230px}
 }
 @media (min-width:700px) and (max-height:700px){.solo .card .fig{width:210px}}
+.posed-ask.story{text-transform:none;letter-spacing:0;font-family:inherit;font-weight:400;font-size:1rem;line-height:1.35}
+.solo .pbar{flex-wrap:nowrap}
+.solo #p-game{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.solo #f-pre{display:flex;flex-wrap:wrap}
+.solo #f-pre button{flex:1 1 auto}
+@media (max-width:560px){.solo .card:not(.nofig) .fig{width:min(220px,58vw)}.solo .typing .card:not(.nofig) .fig{width:min(175px,48vw)}}
+.typing .posed-ask.story{font-size:.9rem;line-height:1.3}

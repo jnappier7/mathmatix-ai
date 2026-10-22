@@ -245,7 +245,7 @@ T.proof = { book: 'thm', make(rand) {
   const at = int(rand, 1, 3);
   const right = rows[at][1];
   const pool = [R.CAP, R.VAT, R.TRANSC, R.LPP, R.SUBST, R.CAC];
-  return { ask: `Which reason justifies step ${at + 1}?`, prompt: `Given: p ∥ q. Prove: ${ang(a)} ≅ ${ang(b)}. (No ${kind === 'alternate interior' ? R.AIA : R.AEA}.)`,
+  return { ask: `Which reason justifies step ${at + 1}?`, prompt: `Given: p ∥ q. Prove: ${ang(a)} ≅ ${ang(b)} without using the ${kind === 'alternate interior' ? R.AIA : R.AEA}.`,
     fig: transversalSVG(['p', 'q', 't']), proof: { rows, at },
     choices: [right, ...sample(rand, pool.filter((r) => r !== right), 3)], answer: 0,
     tell: at === 3 ? 'two congruences that share an angle chain together: Transitive Property of Congruence.'
