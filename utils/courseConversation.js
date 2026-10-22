@@ -63,6 +63,36 @@ function courseEnteredThisLogin(conversation, loginSessionId) {
 }
 
 /**
+ * Pure: is this turn happening IN the course — i.e. is the conversation the
+ * student is typing into the course session's own conversation?
+ *
+ * The landing policy above puts a new login in GENERAL chat and makes entering
+ * the course a click. /api/chat used to ignore that for the turns that followed:
+ * every typed message was answered in course mode whenever the account had an
+ * active course session at all, because the test was `user.activeCourseSessionId`
+ * alone. So the general-chat greeting opened the sitting ("before you dive into
+ * ACT practice, a quick warm-up…"), the student typed "hey whats up?" into that
+ * same general conversation, and the reply — now in course mode, with the
+ * course lead guard saying a greeting means "start the lesson" — welcomed them
+ * all over again and launched module 1 (owner's test account, 2026-10-22: two
+ * hellos, the second ignoring what they typed).
+ *
+ * This is the same test the client uses to show the course progress bar
+ * (courseCatalog.js: `s.conversationId === currentConversationId`), so the
+ * tutor is in course mode exactly when the screen says it is.
+ *
+ * @param {Object|null} courseSession - CourseSession doc (needs status, conversationId)
+ * @param {Object|null} conversation  - the conversation this turn is written to
+ * @returns {boolean}
+ */
+function isCourseConversation(courseSession, conversation) {
+    if (!courseSession || !conversation) return false;
+    if (courseSession.status !== 'active') return false;
+    if (!courseSession.conversationId || !conversation._id) return false;
+    return String(courseSession.conversationId) === String(conversation._id);
+}
+
+/**
  * Resolve (and if necessary roll) the conversation backing a course session.
  *
  * Continuing is the common case — a course turn, mid-sitting, keeps its thread.
@@ -148,4 +178,4 @@ async function resolveCourseConversation({
     return { conversation: fresh, rolled: !!conversation, reason };
 }
 
-module.exports = { courseBreakReason, courseEnteredThisLogin, resolveCourseConversation };
+module.exports = { courseBreakReason, courseEnteredThisLogin, isCourseConversation, resolveCourseConversation };
