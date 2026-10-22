@@ -474,8 +474,42 @@
           ${cardHTML({ card: m.card, playbookName: m.playbookName }, m.card, '')}
           <div class="tellbox">${m.tell}</div></li>`).join('')}</ol>`
       : '<p>Nobody missed a play. Clean game.</p>');
+    renderFinalPlayers(st, f.players || []);
     renderPlayByPlay(st, f.plays || []);
     renderFacts(st, f.facts);
+  }
+
+  /** Every player's line — the scoreboard a teacher reads names off, and a CSV of it. */
+  let lastScores = null;
+  function renderFinalPlayers(st, players) {
+    const el = $('f-players');
+    if (!el) return;
+    // King of the Hill already lists everyone in its standings.
+    if (st.mode === 'hill' || !players.length) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    lastScores = { code: st.code, game: st.gameNumber, players, teams: st.teams };
+    const unit = st.mode === 'drive' ? 'yds' : 'pts';
+    const rows = players.map((p, i) => `<tr><td class="num">${i + 1}</td><td class="nm t${p.team}">${esc(p.name)}${p.saved ? ' <span class="acct" title="Signed in">✓</span>' : ''}</td>` +
+      `<td>${esc(teamName(st, p.team))}</td><td class="num"><b>${p.yards}</b> ${unit}</td><td class="num">${p.comp}/${p.att}</td>` +
+      `<td class="num">${p.pct == null ? '–' : p.pct + '%'}</td><td class="num">${p.best}</td><td class="num">${p.avgSec == null ? '–' : p.avgSec + ' s'}</td></tr>`).join('');
+    el.innerHTML = `<h3>Every player</h3>
+      <div class="tablewrap"><table class="ftab stab"><thead><tr><th>#</th><th>Student</th><th>Team</th><th>Score</th><th>Right</th><th>Accuracy</th><th>Best streak</th><th>Avg time</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="row"><button class="ghost" id="f-scores-csv">Download scores (CSV)</button><span class="muted">One line per student. ✓ = signed in with their account.</span></div>`;
+    $('f-scores-csv').onclick = downloadScoresCsv;
+  }
+  function teamName(st, i) { return (st.teams && st.teams[i] && st.teams[i].name) || ''; }
+  function downloadScoresCsv() {
+    if (!lastScores) return;
+    const q = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+    const safe = (v) => (/^[=+\-@]/.test(String(v)) ? `'${v}` : v); // never a formula in a spreadsheet
+    const lines = [['Rank', 'Student', 'Team', 'Score', 'Right', 'Attempted', 'Accuracy %', 'Best streak', 'Avg seconds', 'Signed in'].map(q).join(',')]
+      .concat(lastScores.players.map((p, i) => [i + 1, safe(p.name), teamName(lastScores, p.team), p.yards, p.comp, p.att, p.pct == null ? '' : p.pct, p.best, p.avgSec == null ? '' : p.avgSec, p.saved ? 'yes' : 'no'].map(q).join(',')));
+    const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `live-drill-scores-${lastScores.code}-game${lastScores.game}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
   /** Math Facts: the fluency tracker — each student, the class grid, and a CSV of every answer. */
