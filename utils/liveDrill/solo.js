@@ -63,6 +63,18 @@ function hubView(hubId) {
   };
 }
 
+/**
+ * Which hub a class belongs to, from its course and name ("Honors Geometry · P3", "Algebra 1").
+ * Geometry wins over algebra when both appear ("Algebra-based Geometry" is a geometry class).
+ * Null when nothing matches — the My Class page then shows the /drill index instead of a course.
+ */
+function hubFor(...labels) {
+  const text = labels.filter(Boolean).join(' ').toLowerCase();
+  if (/geom/.test(text)) return 'geometry';
+  if (/alg/.test(text)) return 'algebra';
+  return null;
+}
+
 /** Is this drill on some hub? Only those are dealt here. */
 const onAHub = (drill) => Object.values(HUBS).some((h) => h.games.some((g) => g.drill === drill));
 
@@ -99,4 +111,4 @@ function parseDeal(q) {
   return { drill, playbook, seed, from, focus };
 }
 
-module.exports = { HUBS, BATCH, MAX_PLAY, hubList, hubView, deal, parseDeal, onAHub };
+module.exports = { HUBS, BATCH, MAX_PLAY, hubList, hubView, hubFor, deal, parseDeal, onAHub };

@@ -887,6 +887,7 @@ router.get('/my-calculator-access', isAuthenticated, isStudent, async (req, res)
 // POST /api/student/join-class
 // ============================================
 const EnrollmentCode = require('../models/enrollmentCode');
+const liveDrillSolo = require('../utils/liveDrill/solo');
 
 router.post('/join-class', isAuthenticated, isStudent, async (req, res) => {
     try {
@@ -981,6 +982,47 @@ router.post('/join-class', isAuthenticated, isStudent, async (req, res) => {
 
 // ============================================
 // PREVIEW CLASS - Look up a class code without joining
+// GET /api/student/my-classes — the classes I'm in, for the My Class panel on chat.html
+// (public/js/my-class.js). Assignments and live games come from their own endpoints
+// (/api/activities/mine, /api/live-drill/mine); this is the class itself plus the solo
+// drill hub that fits its course, so the panel can point at /drill/<hub>.
+// ============================================
+router.get('/my-classes', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        res.set('Cache-Control', 'no-store');
+        const classes = await EnrollmentCode.find(
+            { 'enrolledStudents.studentId': req.user._id, isActive: { $ne: false } },
+            '_id className period mathCourse gradeLevel schoolYear teacherId enrolledStudents.$'
+        ).sort({ createdAt: -1 }).lean();
+        const teacherIds = [...new Set(classes.map((c) => String(c.teacherId)).filter(Boolean))];
+        const teachers = teacherIds.length
+            ? await User.find({ _id: { $in: teacherIds } }, 'firstName lastName').lean()
+            : [];
+        const nameOf = new Map(teachers.map((t) => [String(t._id), `${t.firstName || ''} ${t.lastName || ''}`.trim() || 'Teacher']));
+        const hubs = new Map(liveDrillSolo.hubList().map((h) => [h.id, h]));
+        res.json({
+            success: true,
+            classes: classes.map((c) => {
+                const hub = hubs.get(liveDrillSolo.hubFor(c.mathCourse, c.className)) || null;
+                return {
+                    id: String(c._id),
+                    className: c.className,
+                    period: c.period || null,
+                    mathCourse: c.mathCourse || null,
+                    gradeLevel: c.gradeLevel || null,
+                    teacherName: nameOf.get(String(c.teacherId)) || 'Teacher',
+                    joinedAt: (c.enrolledStudents && c.enrolledStudents[0] && c.enrolledStudents[0].enrolledAt) || null,
+                    drills: hub ? { hub: hub.id, title: hub.title, games: hub.games, url: `/drill/${hub.id}` } : { hub: null, url: '/drill' },
+                };
+            }),
+        });
+    } catch (error) {
+        logger.error('[student] my-classes failed', { error: error.message });
+        res.status(500).json({ success: false, message: 'Could not load your classes.' });
+    }
+});
+
+// ============================================
 // GET /api/student/preview-class/:code
 // ============================================
 router.get('/preview-class/:code', isAuthenticated, isStudent, async (req, res) => {

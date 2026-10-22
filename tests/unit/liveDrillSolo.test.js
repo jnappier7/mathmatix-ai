@@ -33,6 +33,20 @@ describe('hubs', () => {
   });
 });
 
+describe('a class finds its drill hub', () => {
+  test.each([
+    [['Honors Geometry', 'P3'], 'geometry'],
+    [[null, 'Algebra 1'], 'algebra'],
+    [['Algebra-based Geometry'], 'geometry'],
+    [['algebra', 'Geometry'], 'geometry'],
+    [['Pre-Calculus'], null],
+    [[], null],
+  ])('%j → %s', (labels, hub) => {
+    expect(solo.hubFor(...labels)).toBe(hub);
+    if (hub) expect(solo.hubList().map((h) => h.id)).toContain(hub);
+  });
+});
+
 describe('the page grades typed answers like the game', () => {
   const src = fs.readFileSync(path.join(__dirname, '../../public/js/live-drill/solo.js'), 'utf8');
   const fn = /\n {2}function normalizeTyped\(raw\) \{[\s\S]*?\n {2}\}\n/.exec(src);

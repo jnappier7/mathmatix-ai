@@ -1,0 +1,40 @@
+/* My Class panel (js/my-class.js). Same shell as the Join-a-class dialog; paints its own
+   ground so it reads the same on the dark and light chat themes (CLAUDE.md §12). */
+.mc-overlay { position: fixed; inset: 0; z-index: 10060; background: rgba(15, 12, 35, .55); display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; }
+.mc-box { position: relative; width: min(560px, 100%); background: #fff; color: #1E1B2E; border-radius: 18px; padding: 22px 22px 18px; box-shadow: 0 24px 60px rgba(0,0,0,.3); }
+[data-theme="dark"] .mc-box { background: #1C1A2B; color: #ECE9F7; }
+.mc-box h2 { margin: 0 0 12px; font-size: 22px; }
+.mc-x { position: absolute; top: 10px; right: 12px; background: none; border: 0; font-size: 26px; line-height: 1; color: inherit; opacity: .6; cursor: pointer; }
+.mc-x:hover { opacity: 1; }
+.mc-muted { color: #6F6A85; font-size: 14px; }
+[data-theme="dark"] .mc-muted { color: #A9A4C2; }
+.mc-err { color: #C0392B; }
+.mc-class { border: 1px solid rgba(110, 90, 200, .25); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+.mc-class header h3 { margin: 0; font-size: 18px; }
+.mc-class header p { margin: 2px 0 10px; }
+.mc-row { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-top: 1px solid rgba(110, 90, 200, .14); align-items: start; }
+.mc-k { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6F6A85; padding-top: 3px; }
+[data-theme="dark"] .mc-k { color: #A9A4C2; }
+.mc-row.live .mc-k { color: #2E7D32; }
+[data-theme="dark"] .mc-row.live .mc-k { color: #7ED492; }
+.mc-v { min-width: 0; font-size: 15px; }
+.mc-game { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.mc-badge { display: inline-block; min-width: 18px; padding: 0 6px; border-radius: 999px; background: #6c4ed9; color: #fff; font-size: 11px; line-height: 18px; text-align: center; letter-spacing: 0; }
+.mc-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.mc-list li { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.mc-list li.done a { text-decoration: line-through; opacity: .7; }
+.mc-list a, .mc-link, .mc-empty a { color: #6c4ed9; font-weight: 600; }
+[data-theme="dark"] .mc-list a, [data-theme="dark"] .mc-link, [data-theme="dark"] .mc-empty a { color: #B9A8FF; }
+.mc-drills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.mc-chip { display: inline-block; padding: 6px 12px; border-radius: 999px; border: 1px solid #6c4ed9; color: #6c4ed9; text-decoration: none; font-weight: 600; font-size: 14px; }
+.mc-chip:hover { background: #6c4ed9; color: #fff; }
+[data-theme="dark"] .mc-chip { border-color: #B9A8FF; color: #B9A8FF; }
+[data-theme="dark"] .mc-chip:hover { background: #B9A8FF; color: #1C1A2B; }
+.mc-btn { border: 0; border-radius: 10px; padding: 9px 16px; font: inherit; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; }
+.mc-primary { background: #6c4ed9; color: #fff; }
+.mc-primary:hover { background: #5a3fc4; }
+.mc-link { background: none; border: 0; padding: 0; font: inherit; cursor: pointer; }
+.mc-foot { margin: 4px 0 0; text-align: center; }
+.mc-empty { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.mc-empty p { margin: 0; }
+@media (max-width: 480px) { .mc-row { grid-template-columns: 1fr; gap: 4px; } .mc-overlay { padding: 12px 10px; } }
