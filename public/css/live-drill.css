@@ -473,6 +473,10 @@ table.twoway td:first-child{text-align:left}
 .solo .hubs{margin:10px 0 0;font-weight:700}
 .solo .hubs a{color:var(--led)}
 .solo .hubs .books{margin-top:6px}
+/* Who is playing, and therefore whether this round is being kept. Quiet by
+   design: it is a status line, not a call to action competing with Start. */
+.solo .acct{margin:10px 0 0;font-size:.92rem;opacity:.78}
+.solo .acct a{color:var(--led);font-weight:700}
 .solo .hubs a.book{text-decoration:none;color:var(--chalk)}
 .solo-setup{display:flex;flex-direction:column;gap:16px}
 .solo-setup .best{margin:0;min-height:1.3em}

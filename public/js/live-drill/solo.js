@@ -1,6 +1,8 @@
 // Solo practice — a course's Live Drill games, played alone (/drill/<hub>; utils/liveDrill/solo.js).
 // The server deals whole plays, answer included, in batches; this page clocks, grades and scores
-// them itself and saves nothing but a personal best in this browser. Play HTML (card, choices,
+// them itself. A guest's personal best stays in this browser; a signed-in STUDENT also files
+// every finished round to their account (POST /result → models/drillResult.js), which is what
+// makes a best follow them to another device. Play HTML (card, choices,
 // tell) is the drill's own template output, never user text, so it is set with innerHTML — the
 // same contract as the live pages (common.js).
 (function () {
@@ -28,6 +30,56 @@
   const bestKey = () => `mm-drill-best:${game().drill}:${sel.book}:${sel.seconds}${focusNow().length ? `:f${focusNow().join('-')}` : ''}`;
   const game = () => hub.games[sel.gi];
 
+  // Who is playing. `saves` is the server's answer, not ours: rounds are filed
+  // for students only, the same rule FactFluency follows.
+  const me = { signedIn: false, firstName: '', saves: false };
+  let bestSeq = 0;               // guards against a slow best landing after a newer one
+
+  const selQuery = () => `drill=${encodeURIComponent(game().drill)}&book=${encodeURIComponent(sel.book)}`
+    + `&seconds=${sel.seconds}&focus=${focusNow().join(',')}`;
+
+  /** The account strip under the title. Says what is true in each of the three
+   *  states — nothing is saved, everything is saved, or you are signed in but
+   *  this is not your record to keep. */
+  function renderAcct() {
+    const el = $('acct');
+    if (!el) return;
+    if (!me.signedIn) {
+      const next = encodeURIComponent(location.pathname);
+      el.innerHTML = `Playing as a guest &mdash; scores stay on this device. `
+        + `<a href="/login.html?next=${next}">Log in to save them</a>.`;
+    } else if (me.saves) {
+      el.textContent = `Signed in as ${me.firstName}. Every round is saved to your account.`;
+    } else {
+      el.textContent = `Signed in as ${me.firstName}. Rounds are saved for student accounts.`;
+    }
+  }
+
+  async function loadMe() {
+    try {
+      const body = await get('/me');
+      Object.assign(me, { signedIn: !!body.signedIn, firstName: body.firstName || '', saves: !!body.saves });
+    } catch { /* a drill you can still play is better than an error */ }
+    renderAcct();
+    // This resolves after the first renderSetup, so the best line has already
+    // been drawn from localStorage; redraw it now that we know whose it is.
+    if (hub) showBest();
+  }
+
+  /** "Your best here", from the account when there is one, else this browser. */
+  async function showBest() {
+    const seq = ++bestSeq;
+    const local0 = local.get(bestKey());
+    const line = (b0) => (b0 ? `Your best here: ${b0.score} (${b0.right}/${b0.att ?? b0.attempted} right).` : '');
+    $('best').textContent = line(local0);
+    if (!me.saves) return;
+    try {
+      const body = await get(`/me?${selQuery()}`);
+      if (seq !== bestSeq) return;            // selection moved on while we waited
+      if (body.best) $('best').textContent = line(body.best);
+    } catch { /* keep the local line */ }
+  }
+
   async function get(path) {
     const res = await fetch(API + path, { headers: { Accept: 'application/json' } });
     const body = await res.json().catch(() => ({}));
@@ -39,6 +91,7 @@
   // ---------------------------------------------------------------- pick
 
   async function boot() {
+    loadMe();                    // not awaited: the strip can fill in late
     if (!hubId) return renderHubList();
     try { hub = await get(`/hubs/${encodeURIComponent(hubId)}`); } catch (err) { $('pick-err').textContent = err.message; return; }
     document.title = `${hub.title} Drills | MATHMATIX AI`;
@@ -79,8 +132,7 @@
     $('clock').querySelectorAll('button').forEach((b) => { b.onclick = () => { sel.seconds = Number(b.dataset.s); renderSetup(); }; });
     renderFocus(g);
     $('rules').innerHTML = rulesHTML(g);
-    const best = local.get(bestKey());
-    $('best').textContent = best ? `Your best here: ${best.score} (${best.right}/${best.att} right).` : '';
+    showBest();
     local.set(`mm-drill-pick:${hub.id}`, sel);
   }
 
@@ -223,6 +275,33 @@
     }
   }
 
+  /** File a finished round. Best effort and silent on failure: a student who
+   *  just played should never be told their practice did not count because a
+   *  write failed — the round happened either way, and the local best still
+   *  holds. CSRF rides along because this is a cookie-session write. */
+  async function saveRound(r) {
+    if (!me.saves || !r.att) return;
+    try {
+      const fetcher = window.csrfFetch || fetch;
+      const res = await fetcher(`${API}/result`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          hub: hub.id, drill: game().drill, book: sel.book, seconds: sel.seconds,
+          focus: focusNow().join(','),
+          score: r.score, right: r.right, attempted: r.att, streak: r.longest,
+        }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok && body.saved && body.best) {
+        $('f-best').textContent = body.best.score > r.score
+          ? `Your best here is ${body.best.score}.`
+          : 'New best — saved to your account.';
+      }
+    } catch { /* silent: see above */ }
+  }
+
   function finish() {
     const r = round;
     if (!r || r.over) return;
@@ -236,6 +315,7 @@
     $('f-game').textContent = $('p-game').textContent;
     $('f-result').textContent = r.att ? `${r.score} points` : 'No answers';
     $('f-best').textContent = isBest && prev ? `New best — up from ${prev.score}.` : isBest ? 'Your first score here. Beat it.' : prev ? `Your best here is ${prev.score}.` : '';
+    saveRound(r);
     $('f-score').textContent = r.score;
     $('f-comp').textContent = `${r.right}/${r.att}`;
     $('f-pct').textContent = r.att ? `${Math.round((100 * r.right) / r.att)}%` : '–';
