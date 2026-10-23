@@ -65,7 +65,7 @@ describe('live drill over HTTP', () => {
   test('the setup lists every drill with its playbooks and its own settings', async () => {
     const r = await req.get('/api/live-drill/host/drills');
     expect(r.status).toBe(200);
-    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry', 'facts', 'alg1m3', 'hgeo3']);
+    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry', 'facts', 'alg1m3', 'hgeo3', 'alg1m7', 'hgeo4']);
     expect(r.body.drills.every((d) => d.playbooks.length > 1 && !d.unavailable && d.settings.huddle.secondsPerPlay.length)).toBe(true);
     const facts = r.body.drills.find((d) => d.id === 'facts');
     expect(facts.focusable.books).toContain('mul');
@@ -209,7 +209,7 @@ describe('solo practice (/drill/<hub>)', () => {
   test('a hub lists its games with playbooks, clock and scoring — no account needed', async () => {
     const r = await req.get('/api/live-drill/solo/hubs/algebra');
     expect(r.status).toBe(200);
-    expect(r.body.games.map((g) => g.drill)).toEqual(['algebra', 'alg1m3', 'facts']);
+    expect(r.body.games.map((g) => g.drill)).toEqual(['algebra', 'alg1m3', 'alg1m7', 'facts']);
     const facts = r.body.games.find((g) => g.drill === 'facts');
     expect(facts.typed).toBe(true);
     expect(facts.scoring).toEqual({ gains: [6, 4, 2], withinMs: [3000, 6000], miss: 2 });
