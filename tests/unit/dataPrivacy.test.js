@@ -14,6 +14,7 @@ jest.mock('../../models/gradingResult');
 jest.mock('../../models/studentUpload');
 jest.mock('../../models/activityAttempt');
 jest.mock('../../models/factFluency');
+jest.mock('../../models/drillResult');
 jest.mock('../../models/feedback');
 jest.mock('../../models/enrollmentCode');
 jest.mock('../../models/announcement');
@@ -43,6 +44,7 @@ const GradingResult = require('../../models/gradingResult');
 const StudentUpload = require('../../models/studentUpload');
 const ActivityAttempt = require('../../models/activityAttempt');
 const FactFluency = require('../../models/factFluency');
+const DrillResult = require('../../models/drillResult');
 const Feedback = require('../../models/feedback');
 const EnrollmentCode = require('../../models/enrollmentCode');
 const Announcement = require('../../models/announcement');
@@ -72,6 +74,7 @@ describe('Data Privacy Pipeline', () => {
         StudentUpload.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 3 });
         ActivityAttempt.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 6 });
         FactFluency.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 1 });
+        DrillResult.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 3 });
         Feedback.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 1 });
         Message.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 4 });
         EnrollmentCode.updateMany = jest.fn().mockResolvedValue({ modifiedCount: 1 });
@@ -161,6 +164,7 @@ describe('Data Privacy Pipeline', () => {
             expect(ActivityAttempt.deleteMany).toHaveBeenCalled();
             expect(summary.documentCounts.activityAttempts).toBe(6);
             expect(FactFluency.deleteMany).toHaveBeenCalled();
+            expect(DrillResult.deleteMany).toHaveBeenCalled();
             expect(summary.documentCounts.factFluency).toBe(1);
             expect(Feedback.deleteMany).toHaveBeenCalled();
             expect(Message.deleteMany).toHaveBeenCalled();
@@ -308,6 +312,12 @@ describe('Data Privacy Pipeline', () => {
             FactFluency.findOne = jest.fn().mockReturnValue({
                 lean: jest.fn().mockResolvedValue({ facts: { 'mul:7,8': { label: '7 × 8', att: 2, right: 1 } }, games: 1 })
             });
+            // Saved solo drill rounds — newest first, hence find().sort().lean()
+            DrillResult.find = jest.fn().mockReturnValue({
+                sort: jest.fn().mockReturnValue({
+                    lean: jest.fn().mockResolvedValue([{ drill: 'alg1m3', score: 880, right: 22, attempted: 24 }])
+                })
+            });
         });
 
         test('compiles all student data', async () => {
@@ -319,6 +329,9 @@ describe('Data Privacy Pipeline', () => {
             expect(data.student.conversations).toHaveLength(1);
             expect(data.student.activityAttempts).toHaveLength(1);
             expect(data.student.factFluency.facts['mul:7,8'].label).toBe('7 × 8');
+            // a saved drill round is a student education record and must be in the export
+            expect(data.student.drillResults).toHaveLength(1);
+            expect(data.student.drillResults[0].drill).toBe('alg1m3');
         });
 
         test('excludes sensitive auth fields', async () => {
