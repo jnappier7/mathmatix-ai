@@ -21,6 +21,7 @@ const HUBS = {
     games: [
       { drill: 'algebra', name: 'Two-Minute Drill', blurb: 'Every module of the course, one quick question at a time.' },
       { drill: 'alg1m3', name: 'Module 3 Test Prep', blurb: 'Relations & functions — every question type on the Module 3 test, fresh numbers each time.' },
+      { drill: 'alg1m7', name: 'Module 7 Review', blurb: 'Systems of equations and inequalities — graphing, substitution, elimination, one quick move at a time.' },
       { drill: 'facts', name: 'Math Facts', blurb: 'Type the answer. Fluent is right in 3 seconds or less.' },
     ],
   },
@@ -29,6 +30,7 @@ const HUBS = {
     games: [
       { drill: 'geometry', name: 'Proof Reasons', blurb: 'Which reason justifies the step? Chapters 2 and 3.' },
       { drill: 'hgeo3', name: 'Chapter 3 Test Prep', blurb: 'Parallel & perpendicular lines — every question type on the Chapter 3 test.' },
+      { drill: 'hgeo4', name: 'Chapter 4 Review', blurb: 'Transformations — translations, reflections, rotations and symmetry, one quick move at a time.' },
     ],
   },
 };

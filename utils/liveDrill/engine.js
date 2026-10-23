@@ -40,6 +40,10 @@ const DRILLS = {
   // Test Prep: one bank per unit test, built from the teacher's practice test (utils/liveDrill/prep/).
   alg1m3: { native: require('./prep/alg1Module3'), title: 'Alg 1 · Module 3 Test', scoring: 'prep' },
   hgeo3: { native: require('./prep/hgeoCh3'), title: 'H. Geometry · Ch. 3 Test', scoring: 'prep' },
+  // Chapter Reviews: quick-fire, one bank per chapter, built from the teacher's notes and chapter
+  // review (utils/liveDrill/review/). Standard scoring — every play is one move.
+  alg1m7: { native: require('./review/alg1Ch7'), title: 'Alg 1 · Module 7 Review' },
+  hgeo4: { native: require('./review/hgeoCh4'), title: 'H. Geometry · Ch. 4 Review' },
 };
 
 const APP_MARKER = '// ===================== app =====================';
