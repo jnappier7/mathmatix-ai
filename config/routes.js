@@ -11,6 +11,7 @@ const Sentry = require('@sentry/node');
 const logger = require('../utils/logger');
 const { applyDobToUser } = require('../utils/dob');
 const { userHasRole, rolesOf } = require('../utils/roleQuery');
+const { safeReturnTo } = require('../utils/safeReturnTo');
 const { teacherResourceFileAccess } = require('../utils/resourceVisibility');
 const User = require('../models/user');
 
@@ -556,6 +557,16 @@ function setSignupMethodCookie(res, method) {
   });
 }
 
+/** Remember a safe ?next= across the provider round-trip.
+ *  The browser leaves our origin and comes back on a URL the provider builds,
+ *  so the only place the destination can survive is the session. */
+function rememberReturnTo(req, _res, next) {
+  const to = safeReturnTo(req.query && req.query.next);
+  if (to) req.session.returnTo = to;
+  else if (req.session) delete req.session.returnTo;
+  next();
+}
+
 function oauthCallback(strategy) {
   return (req, res, next) => {
     passport.authenticate(strategy, (err, user) => {
@@ -582,6 +593,10 @@ function oauthCallback(strategy) {
           logger.error(`Failed to update lastLogin for ${strategy}:`, updateErr);
         }
 
+        // Consumed once, whatever happens next: a stale returnTo left in the
+        // session would hijack an unrelated login later in the same browser.
+        const returnTo = req.session ? req.session.returnTo : null;
+        if (req.session) delete req.session.returnTo;
         req.session.save((saveErr) => {
           if (saveErr) return next(saveErr);
           const onboardingDone = !!(user.onboarding && user.onboarding.completed);
@@ -593,6 +608,7 @@ function oauthCallback(strategy) {
           // this is acting-user dashboard routing, the one job §12 keeps it
           // for. Multi-role accounts never reach it (role-picker above).
           if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+          if (returnTo) return res.redirect(returnTo);
           const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
           res.redirect(dashboardMap[user.role] || '/login.html');
         });
@@ -603,16 +619,16 @@ function oauthCallback(strategy) {
 
 function registerOAuthRoutes(app, authLimiter) {
   // Google
-  app.get('/auth/google', authLimiter, passport.authenticate('google', { scope: ['profile', 'email'] }));
+  app.get('/auth/google', authLimiter, rememberReturnTo, passport.authenticate('google', { scope: ['profile', 'email'] }));
   app.get('/auth/google/callback', authLimiter, oauthCallback('google'));
 
   // Microsoft
-  app.get('/auth/microsoft', authLimiter, passport.authenticate('microsoft', { scope: ['user.read'] }));
+  app.get('/auth/microsoft', authLimiter, rememberReturnTo, passport.authenticate('microsoft', { scope: ['user.read'] }));
   app.get('/auth/microsoft/callback', authLimiter, oauthCallback('microsoft'));
 
   // Clever (conditional)
   if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
-    app.get('/auth/clever', authLimiter, (req, res, next) => {
+    app.get('/auth/clever', authLimiter, rememberReturnTo, (req, res, next) => {
       if (req.isAuthenticated()) {
         req.logout((err) => {
           if (err) logger.error('Error clearing previous session for Clever SSO:', err);
@@ -631,6 +647,9 @@ function registerOAuthRoutes(app, authLimiter) {
         if (err) return next(err);
         if (!user) return res.redirect('/login.html');
 
+        // Read it out BEFORE regenerate(): that call destroys the session, so
+        // anything still living there is gone by the time we would need it.
+        const returnTo = req.session ? req.session.returnTo : null;
         req.session.regenerate((err) => {
           if (err) return next(err);
           req.logIn(user, async (err) => {
@@ -650,6 +669,7 @@ function registerOAuthRoutes(app, authLimiter) {
               // Acting-user dashboard routing again — see the note in
               // oauthCallback(). `role` is correct here; `roles[]` is not.
               if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+              if (returnTo) return res.redirect(returnTo);
               const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
               res.redirect(dashboardMap[user.role] || '/login.html');
             });

@@ -7,6 +7,19 @@ if (new Date() >= new Date('2026-03-14T04:00:00Z')) {
 const loginForm = document.getElementById('loginForm');
 const loginMessage = document.getElementById('login-message');
 
+// Where to go back to after logging in, e.g. /login.html?next=/drill/algebra.
+// Carried to the server on the POST, and hung on the OAuth links so it also
+// survives a trip through Google or Microsoft. The SERVER decides whether it is
+// safe to honour (utils/safeReturnTo.js) — this is only plumbing.
+const nextParam = new URLSearchParams(window.location.search).get('next') || '';
+if (nextParam) {
+  document.querySelectorAll('a[href^="/auth/"]').forEach(function (a) {
+    const u = new URL(a.getAttribute('href'), window.location.origin);
+    u.searchParams.set('next', nextParam);
+    a.setAttribute('href', u.pathname + u.search);
+  });
+}
+
 // Surface OAuth provider outages (e.g. an expired Microsoft client secret) as a
 // friendly notice instead of leaving the user on a raw 500 from the callback.
 (function showOAuthError() {
@@ -23,6 +36,7 @@ loginForm.addEventListener('submit', async function(event) {
 
   const formData = new FormData(loginForm);
   const data = Object.fromEntries(formData.entries());
+  if (nextParam) data.next = nextParam;
 
   loginMessage.style.display = 'none';
   loginMessage.style.color = '';
