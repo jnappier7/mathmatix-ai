@@ -26,6 +26,7 @@ const HUBS = {
       { drill: 'alg1m9', name: 'Module 9 Review', blurb: 'Exponential functions and geometric sequences — growth, decay, models, ratios, one quick move at a time.' },
       { drill: 'alg1m10', name: 'Module 10 Review', blurb: 'Polynomials and factoring — add, multiply, FOIL, GCF, trinomials, special products, one quick move at a time.' },
       { drill: 'alg1m11', name: 'Module 11 Review', blurb: 'Quadratics — vertex and axis, solve by factoring, square roots, completing the square, the formula, one quick move at a time.' },
+      { drill: 'alg1m12', name: 'Module 12 Review', blurb: 'Statistics — mean, median, mode, range, quartiles and IQR, outliers, box plots, one quick move at a time.' },
       { drill: 'facts', name: 'Math Facts', blurb: 'Type the answer. Fluent is right in 3 seconds or less.' },
     ],
   },
@@ -39,6 +40,7 @@ const HUBS = {
       { drill: 'hgeo6', name: 'Chapter 6 Review', blurb: 'Relationships within triangles — bisectors, the four centers, midsegments, inequalities, one quick move at a time.' },
       { drill: 'hgeo7', name: 'Chapter 7 Review', blurb: 'Quadrilaterals — polygon angles, parallelograms, the special ones, trapezoids and kites, one quick move at a time.' },
       { drill: 'hgeo8', name: 'Chapter 8 Review', blurb: 'Similarity — scale factors, AA / SSS / SAS similarity, proportionality, one quick move at a time.' },
+      { drill: 'hgeo9', name: 'Chapter 9 Review', blurb: 'Right triangles — Pythagorean Theorem, special right triangles, geometric means, trig ratios, Laws of Sines and Cosines, one quick move at a time.' },
     ],
   },
 };
