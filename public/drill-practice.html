@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practice | MATHMATIX AI</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261023p">
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Solo drills · practised on their own</div>
+    <h1>Practice <span>Log</span></h1>
+    <p>Every round a signed-in student plays at <a href="/drill">Practice Drills</a> is saved here &mdash; how much they practised, and whether the score moved.</p>
+    <p class="selfreport"><b>Scores are self-reported.</b> Rounds are played and scored in the browser, so treat this as evidence of <em>effort</em>, not of mastery. There is deliberately no class average and no ranking.</p>
+  </section>
+  <div class="panel row">
+    <div><label class="lbl" for="cls">Class</label><select id="cls" class="clsel"></select></div>
+    <span class="muted" id="cls-note"></span>
+    <button class="ghost" id="csv" style="margin-left:auto" disabled>Download class (CSV)</button>
+  </div>
+  <div class="err" id="err" role="alert"></div>
+  <div class="panel facts" id="class-view" hidden></div>
+  <div class="panel facts" id="student-view" hidden></div>
+</div>
+<script src="/js/live-drill/common.js?v=20261025"></script>
+<script src="/js/live-drill/practice-page.js?v=20261023"></script>
+</body>
+</html>

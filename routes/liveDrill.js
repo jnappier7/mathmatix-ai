@@ -44,6 +44,7 @@ const G = require('../utils/liveDrill/games');
 const { DRILLS, listPlaybooks } = require('../utils/liveDrill/engine');
 const { FOCUSABLE, FOCUS_MAX } = require('../utils/liveDrill/facts');
 const solo = require('../utils/liveDrill/solo');
+const practice = require('../utils/liveDrill/practice');
 const store = require('../utils/liveDrill/store'); // revives a game this process hasn't seen (after a deploy)
 
 // Every finished Math Facts game folds into its signed-in students' records.
@@ -167,6 +168,65 @@ hostRouter.get('/fluency/classes/:classId/students/:studentId',
       const sum = fluency.summarize(doc);
       req.accessedStudentId = sid;
       res.json({ id: sid, name: fullName(u), ...sum, grids: fluency.studentGrid(sum), fluentSec: G.FLUENT_MS / 1000 });
+    } catch (err) { send(res, err); }
+  });
+
+// ---------------------------------------------------------------------------
+// Solo practice, for the teacher who assigned it (models/drillResult.js)
+// ---------------------------------------------------------------------------
+// recordType is 'progress_data', NOT 'assessment_results': these rounds are
+// self-reported by the browser, and logging them as assessment would put a
+// claim in the audit trail that the data cannot support.
+
+/** A class's practice: every enrolled student, including those with none. */
+hostRouter.get('/practice/classes/:classId',
+  logRecordAccess('progress_data', 'teaching_instruction', { getStudentIds: (req) => req.accessedStudentIds, accessType: 'view' }),
+  async (req, res) => {
+    try {
+      const cls = await myClass(req);
+      if (!cls) return res.status(404).json({ message: 'That class was not found.' });
+      const ids = (cls.enrolledStudents || []).map((e) => e.studentId).filter(Boolean);
+      const [users, rows] = await Promise.all([
+        User.find({ _id: { $in: ids } }, 'firstName lastName').lean(),
+        DrillResult.find({ userId: { $in: ids } }, 'userId drill seconds score playedAt').lean(),
+      ]);
+      const roster = users.map((u) => ({ id: String(u._id), name: fullName(u) }));
+      const { students, totals } = practice.summarizeClass(roster, rows);
+      req.accessedStudentIds = [...new Set(rows.map((r) => String(r.userId)))]; // logged: records actually read
+      res.json({
+        className: [cls.className, cls.period].filter(Boolean).join(' · '),
+        names: practice.gameNames(solo.HUBS),
+        students,
+        totals,
+      });
+    } catch (err) { send(res, err); }
+  });
+
+/** One student's rounds, newest first — only a student in one of my classes. */
+hostRouter.get('/practice/classes/:classId/students/:studentId',
+  logRecordAccess('progress_data', 'teaching_instruction', { getStudentId: (req) => req.accessedStudentId, accessType: 'view' }),
+  async (req, res) => {
+    try {
+      const cls = await myClass(req);
+      const sid = req.params.studentId;
+      if (!cls || !(cls.enrolledStudents || []).some((e) => String(e.studentId) === sid)) {
+        return res.status(404).json({ message: 'That student is not in this class.' });
+      }
+      const [u, rows] = await Promise.all([
+        User.findById(sid, 'firstName lastName').lean(),
+        DrillResult.find({ userId: sid }).sort({ playedAt: -1 }).limit(200).lean(),
+      ]);
+      req.accessedStudentId = sid;
+      res.json({
+        id: sid,
+        name: fullName(u),
+        names: practice.gameNames(solo.HUBS),
+        ...practice.summarizeStudent(rows),
+        recent: rows.slice(0, 50).map((r) => ({
+          drill: r.drill, playbook: r.playbook, seconds: r.seconds,
+          score: r.score, right: r.right, attempted: r.attempted, playedAt: r.playedAt,
+        })),
+      });
     } catch (err) { send(res, err); }
   });
 

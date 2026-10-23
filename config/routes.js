@@ -951,6 +951,9 @@ function registerHtmlRoutes(app) {
   // Math-facts fluency saved across Live Drill games, per class (data: /api/live-drill/host/fluency).
   app.get(['/fact-fluency', '/fact-fluency.html'], isAuthenticated, isTeacher,
     (req, res) => res.sendFile(path.join(publicDir, 'fact-fluency.html')));
+  // Solo practice saved to student accounts (models/drillResult.js), per class.
+  app.get(['/drill-practice', '/drill-practice.html'], isAuthenticated, isTeacher,
+    (req, res) => res.sendFile(path.join(publicDir, 'drill-practice.html')));
   // The free SAT Math practice test — the same funnel as the ACT's.
   const satPracticePage = (req, res) => {
     if (req.isAuthenticated && req.isAuthenticated() && req.user && userHasRole(req.user, 'student')) {
