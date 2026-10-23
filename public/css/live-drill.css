@@ -477,6 +477,17 @@ table.twoway td:first-child{text-align:left}
    design: it is a status line, not a call to action competing with Start. */
 .solo .acct{margin:10px 0 0;font-size:.92rem;opacity:.78}
 .solo .acct a{color:var(--led);font-weight:700}
+
+/* Practice Log (public/drill-practice.html) */
+.selfreport{background:rgba(255,255,255,.05);border-left:3px solid var(--led);
+  padding:8px 12px;margin-top:10px;font-size:.93rem}
+.gchip{display:inline-flex;flex-direction:column;gap:1px;margin:2px 6px 2px 0;padding:4px 9px;
+  border:1px solid rgba(255,255,255,.16);border-radius:8px;font-size:.84rem;line-height:1.25}
+.gchip i{font-style:normal;opacity:.7}
+.dup{color:#67d98b;font-weight:700}
+.ddn{color:#ff8f7a;font-weight:700}
+.dz{opacity:.6}
+tr.none td{opacity:.62}
 .solo .hubs a.book{text-decoration:none;color:var(--chalk)}
 .solo-setup{display:flex;flex-direction:column;gap:16px}
 .solo-setup .best{margin:0;min-height:1.3em}
