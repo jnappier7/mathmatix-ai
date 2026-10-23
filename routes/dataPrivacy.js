@@ -44,6 +44,7 @@ const GradingResult = require('../models/gradingResult');
 const StudentUpload = require('../models/studentUpload');
 const ActivityAttempt = require('../models/activityAttempt');
 const FactFluency = require('../models/factFluency');
+const DrillResult = require('../models/drillResult');
 const Feedback = require('../models/feedback');
 const EnrollmentCode = require('../models/enrollmentCode');
 const Announcement = require('../models/announcement');
@@ -189,6 +190,9 @@ async function cascadeDeleteStudentData(studentId, requestor) {
         const result = await FactFluency.deleteMany({ userId: objectId });
         summary.documentCounts.factFluency = result.deletedCount;
         if (result.deletedCount > 0) summary.collectionsAffected.push('factFluency');
+        const drills = await DrillResult.deleteMany({ userId: objectId });
+        summary.documentCounts.drillResults = drills.deletedCount;
+        if (drills.deletedCount > 0) summary.collectionsAffected.push('drillResults');
     } catch (err) {
         summary.errors.push({ collection: 'factFluency', error: err.message });
     }
@@ -327,7 +331,8 @@ async function exportStudentData(studentId) {
         feedbackEntries,
         messages,
         activityAttempts,
-        factFluency
+        factFluency,
+        drillResults
     ] = await Promise.all([
         User.findById(objectId).select('-passwordHash -resetPasswordToken -resetPasswordExpires -emailVerificationToken').lean(),
         Conversation.find({ userId: objectId }).lean(),
@@ -344,7 +349,8 @@ async function exportStudentData(studentId) {
             ]
         }).lean(),
         ActivityAttempt.find({ userId: objectId }).lean(),
-        FactFluency.findOne({ userId: objectId }).lean()
+        FactFluency.findOne({ userId: objectId }).lean(),
+        DrillResult.find({ userId: objectId }).sort({ playedAt: -1 }).lean()
     ]);
 
     return {
@@ -363,7 +369,8 @@ async function exportStudentData(studentId) {
             feedback: feedbackEntries,
             messages,
             activityAttempts,
-            factFluency
+            factFluency,
+            drillResults
         }
     };
 }

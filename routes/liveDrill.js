@@ -7,9 +7,14 @@
  *                           stream, which can't send headers). CSRF-exempt — nothing here rides
  *                           a cookie — and off the global apiLimiter, because a whole class
  *                           shares one school IP; `playLimiter` keys on the token instead.
- *   /api/live-drill/solo/*  PUBLIC, GET only: solo practice (public/drill.html at /drill/<hub>).
- *                           Whole plays, answer included — nothing is graded or saved server-side
- *                           (utils/liveDrill/solo.js). Off the global apiLimiter like /play.
+ *   /api/live-drill/solo/*  PUBLIC: solo practice (public/drill.html at /drill/<hub>). Dealing
+ *                           plays is GET and open to anyone — whole plays, answer included,
+ *                           nothing graded server-side (utils/liveDrill/solo.js). Off the global
+ *                           apiLimiter like /play. Two routes here DO touch an account:
+ *                           GET /me reports whether you are signed in (and your best in one
+ *                           game), and POST /result files a finished round for a signed-in
+ *                           STUDENT (models/drillResult.js). Both are cookie-session and so
+ *                           CSRF-protected as usual — deliberately NOT on the exempt list.
  *   /api/live-drill/mine/*  signed-in students (isAuthenticated, CSRF as usual): the chat-screen
  *                           banner asks which of MY classes has a game open, and joins with the
  *                           account's name — no code, nothing typed. /mine/fluency is my own
@@ -30,6 +35,7 @@ const mongoose = require('mongoose');
 const EnrollmentCode = require('../models/enrollmentCode');
 const User = require('../models/user');
 const FactFluency = require('../models/factFluency');
+const DrillResult = require('../models/drillResult');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const fluency = require('../utils/liveDrill/fluency');
 const { userHasRole } = require('../utils/roleQuery');
@@ -396,6 +402,108 @@ soloRouter.get('/plays', (req, res) => {
     res.set('Cache-Control', 'no-store');
     res.json({ from: q.from, plays: solo.deal(q.drill, q.playbook, q.seed, q.from, solo.BATCH, q.focus) });
   } catch (err) { send(res, err); }
+});
+
+// ---------------------------------------------------------------------------
+// Solo rounds saved to an account
+// ---------------------------------------------------------------------------
+
+/** The selection a round was played at — the same four things the page's own
+ *  localStorage key is built from, so "your best here" means the same thing
+ *  whether it came from this browser or from the account. */
+function selectionOf(src) {
+  const focus = String(src.focus || '')
+    .split(',').map((n) => parseInt(n, 10)).filter(Number.isInteger).slice(0, FOCUS_MAX);
+  return {
+    drill: String(src.drill || '').slice(0, 40),
+    playbook: String(src.book || src.playbook || '').slice(0, 60),
+    seconds: Math.max(0, Math.min(3600, parseInt(src.seconds, 10) || 0)),
+    focus: focus.sort((x, y) => x - y),
+  };
+}
+
+const isStudent = (user) => !!user && userHasRole(user, 'student');
+
+/** Whoever is asking, and — if they are signed in — their best at one selection.
+ *  Public on purpose: a guest gets {signedIn:false} rather than a 401, because
+ *  the page asks this before it knows whether there is anyone to ask about. */
+soloRouter.get('/me', async (req, res) => {
+  const signedIn = !!(req.isAuthenticated && req.isAuthenticated() && req.user);
+  if (!signedIn) return res.json({ signedIn: false, saves: false, best: null });
+  const out = {
+    signedIn: true,
+    firstName: req.user.firstName || req.user.username || '',
+    saves: isStudent(req.user),
+    best: null,
+  };
+  if (!out.saves || !req.query.drill) return res.json(out);
+  try {
+    const sel = selectionOf(req.query);
+    const best = await DrillResult.findOne({
+      userId: req.user._id, drill: sel.drill, playbook: sel.playbook,
+      seconds: sel.seconds, focus: sel.focus,
+    }).sort({ score: -1 }).lean();
+    if (best) {
+      out.best = { score: best.score, right: best.right, attempted: best.attempted, playedAt: best.playedAt };
+    }
+    out.rounds = await DrillResult.countDocuments({ userId: req.user._id });
+    res.json(out);
+  } catch (err) {
+    // A history we cannot read must not stop anyone playing.
+    logger.error('solo /me failed', { error: err.message });
+    res.json(out);
+  }
+});
+
+/** File one finished round. Students only, for the same reason FactFluency is:
+ *  this is a student education record, and an adult account has no business
+ *  accumulating one. A signed-in non-student gets saved:false, not an error. */
+soloRouter.post('/result', async (req, res) => {
+  if (!(req.isAuthenticated && req.isAuthenticated() && req.user)) {
+    return res.status(401).json({ message: 'Sign in to save your results.' });
+  }
+  if (!isStudent(req.user)) return res.json({ saved: false, reason: 'not-a-student' });
+  try {
+    const body = req.body || {};
+    const sel = selectionOf(body);
+    // The drill has to be a game we actually offer; otherwise a typo (or a
+    // script) could file rounds under names no teacher view will ever show.
+    if (!sel.drill || !solo.onAHub(sel.drill)) {
+      return res.status(400).json({ message: 'No such game.' });
+    }
+    const hub = String(body.hub || '').slice(0, 40);
+    if (!Object.hasOwn(solo.HUBS, hub)) return res.status(400).json({ message: 'No such course.' });
+
+    const num = (v, max) => {
+      const n = Math.floor(Number(v));
+      return Number.isFinite(n) && n >= 0 && n <= max ? n : null;
+    };
+    const score = num(body.score, 100000);
+    const right = num(body.right, 10000);
+    const attempted = num(body.attempted, 10000);
+    const streak = num(body.streak, 10000) ?? 0;
+    if (score === null || right === null || attempted === null) {
+      return res.status(400).json({ message: 'That is not a finished round.' });
+    }
+    // Self-reported numbers that disagree with themselves are the one lie worth
+    // refusing outright: it is the shape that would poison an average.
+    if (right > attempted) return res.status(400).json({ message: 'That is not a finished round.' });
+
+    await DrillResult.create({
+      userId: req.user._id, hub, ...sel, score, right, attempted, streak, playedAt: new Date(),
+    });
+    const best = await DrillResult.findOne({
+      userId: req.user._id, drill: sel.drill, playbook: sel.playbook,
+      seconds: sel.seconds, focus: sel.focus,
+    }).sort({ score: -1 }).lean();
+    res.json({
+      saved: true,
+      best: best ? { score: best.score, right: best.right, attempted: best.attempted } : null,
+    });
+  } catch (err) {
+    logger.error('solo /result failed', { error: err.message });
+    res.status(500).json({ message: 'Could not save that round.' });
+  }
 });
 
 /** For config/middleware.js: player and solo calls are exempt from the global apiLimiter. */
