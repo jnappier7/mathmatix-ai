@@ -5,14 +5,14 @@ on:
     branches: [main]
     # `edited` so a stacked PR retargeted onto main gets a run — without it a PR whose base
     # changes after its last push never reports CI and sits "blocked" with no checks at all.
+    # Not gated per job: a job skipped by `if:` still posts a "skipped" check run, which
+    # supersedes the earlier green one on the same commit and blocks the merge.
     types: [opened, synchronize, reopened, ready_for_review, edited]
   push:
     branches: [main]
 
 jobs:
   test:
-    # On `edited`, run only when the base branch changed (not on every title/body edit).
-    if: github.event.action != 'edited' || github.event.changes.base != null
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,7 +41,6 @@ jobs:
     # Kept separate from `test` so it never perturbs the global coverage
     # threshold. See jest.critical.config.js — raise floors as coverage improves,
     # never lower them to make a red build green.
-    if: github.event.action != 'edited' || github.event.changes.base != null
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -61,7 +60,6 @@ jobs:
           NODE_ENV: test
 
   lint:
-    if: github.event.action != 'edited' || github.event.changes.base != null
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -79,7 +77,6 @@ jobs:
         run: npx eslint .
 
   build:
-    if: github.event.action != 'edited' || github.event.changes.base != null
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
