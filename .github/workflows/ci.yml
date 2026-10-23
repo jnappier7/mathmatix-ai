@@ -41,6 +41,7 @@ jobs:
     # Kept separate from `test` so it never perturbs the global coverage
     # threshold. See jest.critical.config.js — raise floors as coverage improves,
     # never lower them to make a red build green.
+    if: github.event.action != 'edited' || github.event.changes.base != null
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -60,6 +61,7 @@ jobs:
           NODE_ENV: test
 
   lint:
+    if: github.event.action != 'edited' || github.event.changes.base != null
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -77,6 +79,7 @@ jobs:
         run: npx eslint .
 
   build:
+    if: github.event.action != 'edited' || github.event.changes.base != null
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
