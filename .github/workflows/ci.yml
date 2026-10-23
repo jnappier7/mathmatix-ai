@@ -3,6 +3,11 @@ name: CI
 on:
   pull_request:
     branches: [main]
+    # `edited` so a stacked PR retargeted onto main gets a run — without it a PR whose base
+    # changes after its last push never reports CI and sits "blocked" with no checks at all.
+    # Not gated per job: a job skipped by `if:` still posts a "skipped" check run, which
+    # supersedes the earlier green one on the same commit and blocks the merge.
+    types: [opened, synchronize, reopened, ready_for_review, edited]
   push:
     branches: [main]
 
