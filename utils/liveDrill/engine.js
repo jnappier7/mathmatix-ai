@@ -56,6 +56,8 @@ const DRILLS = {
   hgeo9: { native: require('./review/hgeoCh9'), title: 'H. Geometry · Ch. 9 Review' },
   alg1m13: { native: require('./review/alg1Sem2'), title: 'Alg 1 · Semester 2 Exam Review' },
   hgeo10: { native: require('./review/hgeoCh10'), title: 'H. Geometry · Ch. 10 Review' },
+  hgeo11: { native: require('./review/hgeoCh11'), title: 'H. Geometry · Ch. 11 Review' },
+  hgeo1: { native: require('./review/hgeoCh1'), title: 'H. Geometry · Ch. 1 Review' },
 };
 
 const APP_MARKER = '// ===================== app =====================';

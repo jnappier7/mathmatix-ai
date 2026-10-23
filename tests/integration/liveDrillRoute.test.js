@@ -65,7 +65,7 @@ describe('live drill over HTTP', () => {
   test('the setup lists every drill with its playbooks and its own settings', async () => {
     const r = await req.get('/api/live-drill/host/drills');
     expect(r.status).toBe(200);
-    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry', 'facts', 'alg1m3', 'hgeo3', 'alg1m7', 'hgeo4', 'alg1m8', 'hgeo5', 'alg1m9', 'hgeo6', 'alg1m10', 'hgeo7', 'alg1m11', 'hgeo8', 'alg1m12', 'hgeo9', 'alg1m13', 'hgeo10']);
+    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry', 'facts', 'alg1m3', 'hgeo3', 'alg1m7', 'hgeo4', 'alg1m8', 'hgeo5', 'alg1m9', 'hgeo6', 'alg1m10', 'hgeo7', 'alg1m11', 'hgeo8', 'alg1m12', 'hgeo9', 'alg1m13', 'hgeo10', 'hgeo11', 'hgeo1']);
     expect(r.body.drills.every((d) => d.playbooks.length > 1 && !d.unavailable && d.settings.huddle.secondsPerPlay.length)).toBe(true);
     const facts = r.body.drills.find((d) => d.id === 'facts');
     expect(facts.focusable.books).toContain('mul');
