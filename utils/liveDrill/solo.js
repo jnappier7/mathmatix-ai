@@ -24,6 +24,7 @@ const HUBS = {
       { drill: 'alg1m7', name: 'Module 7 Review', blurb: 'Systems of equations and inequalities — graphing, substitution, elimination, one quick move at a time.' },
       { drill: 'alg1m8', name: 'Module 8 Review', blurb: 'Exponents and radicals — the rules, rational exponents, simplifying, one quick move at a time.' },
       { drill: 'alg1m9', name: 'Module 9 Review', blurb: 'Exponential functions and geometric sequences — growth, decay, models, ratios, one quick move at a time.' },
+      { drill: 'alg1m10', name: 'Module 10 Review', blurb: 'Polynomials and factoring — add, multiply, FOIL, GCF, trinomials, special products, one quick move at a time.' },
       { drill: 'facts', name: 'Math Facts', blurb: 'Type the answer. Fluent is right in 3 seconds or less.' },
     ],
   },
@@ -35,6 +36,7 @@ const HUBS = {
       { drill: 'hgeo4', name: 'Chapter 4 Review', blurb: 'Transformations — translations, reflections, rotations and symmetry, one quick move at a time.' },
       { drill: 'hgeo5', name: 'Chapter 5 Review', blurb: 'Congruent triangles — angles, the criteria, isosceles triangles and CPCTC, one quick move at a time.' },
       { drill: 'hgeo6', name: 'Chapter 6 Review', blurb: 'Relationships within triangles — bisectors, the four centers, midsegments, inequalities, one quick move at a time.' },
+      { drill: 'hgeo7', name: 'Chapter 7 Review', blurb: 'Quadrilaterals — polygon angles, parallelograms, the special ones, trapezoids and kites, one quick move at a time.' },
     ],
   },
 };
