@@ -43,6 +43,8 @@ const HUBS = {
       { drill: 'hgeo8', name: 'Chapter 8 Review', blurb: 'Similarity — scale factors, AA / SSS / SAS similarity, proportionality, one quick move at a time.' },
       { drill: 'hgeo9', name: 'Chapter 9 Review', blurb: 'Right triangles — Pythagorean Theorem, special right triangles, geometric means, trig ratios, Laws of Sines and Cosines, one quick move at a time.' },
       { drill: 'hgeo10', name: 'Chapter 10 Review', blurb: 'Circles — tangents, arcs and chords, inscribed angles, where-is-the-vertex rules, segment products, equations of circles, one quick move at a time.' },
+      { drill: 'hgeo11', name: 'Chapter 11 Review', blurb: 'Measurement — circumference and arcs, areas and sectors, polygons, prisms, pyramids, cones, spheres, one quick move at a time.' },
+      { drill: 'hgeo1', name: 'Chapter 1 Review', blurb: 'Basics — points, lines and planes, segments and midpoints, the coordinate plane, angles and angle pairs, one quick move at a time.' },
     ],
   },
 };
