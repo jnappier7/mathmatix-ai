@@ -1374,6 +1374,23 @@ async function runStudentTurn(req, res) {
                     const moveOn = require('../utils/courseMoveOn');
                     const request = moveOn.classifyCourseRequest(message);
                     const onCheckpoint = moveOn.isCheckpointModule(courseCtx.currentModule, courseCtx.scaffoldData);
+                    // Reviewing after a missed checkpoint and asking to retake:
+                    // start a fresh attempt here, so the reply opens with
+                    // Problem 1 and review practice never counts toward it
+                    // (utils/checkpointOutcome).
+                    const ckOutcome = require('../utils/checkpointOutcome');
+                    if (onCheckpoint && ckOutcome.activeCheckpointReview(courseSessionDoc) && ckOutcome.isRetakeRequest(message)) {
+                        ckOutcome.beginCheckpointRetake(courseSessionDoc);
+                        await courseSessionDoc.save();
+                        const lastMsg = activeConversation.messages[activeConversation.messages.length - 1];
+                        if (lastMsg && lastMsg._id) {
+                            await Conversation.updateOne(
+                                { _id: activeConversation._id, 'messages._id': lastMsg._id },
+                                { $set: { 'messages.$.scaffoldAdvanced': true } }
+                            );
+                        }
+                        courseMoveOnNote = 'THE STUDENT IS RETAKING THE CHECKPOINT NOW. Wish them luck in one short line, then present Problem 1 exactly as written. This is a fresh attempt: earlier answers do not count.';
+                    }
                     if (request && !onCheckpoint) {
                         const scaffold = courseCtx.scaffoldData?.scaffold || [];
                         const idx = courseSessionDoc.currentScaffoldIndex || 0;
@@ -2254,7 +2271,9 @@ async function runStudentTurn(req, res) {
                         // counted every correct answer ever, and teaching steps'
                         // turn counts never reset (course audit, 2026-10-18).
                         const advEvent = progression.courseProgressUpdate && progression.courseProgressUpdate.event;
-                        if (advEvent === 'scaffold_advance' || advEvent === 'module_complete') {
+                        // A missed checkpoint closes that attempt too: the review
+                        // that follows must not count toward the retake.
+                        if (advEvent === 'scaffold_advance' || advEvent === 'module_complete' || advEvent === 'checkpoint_failed') {
                             const lastMsg = activeConversation.messages[activeConversation.messages.length - 1];
                             if (lastMsg && lastMsg._id) {
                                 await Conversation.updateOne(

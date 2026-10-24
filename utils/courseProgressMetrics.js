@@ -27,11 +27,12 @@ const OUTCOMES = [
   'module_complete', // last step cleared; module closed and next unlocked
   'held',            // evaluator says the student isn't done with this step yet
   'gate_blocked',    // step judged complete but the practice evidence gate refused
+  'checkpoint_failed', // checkpoint finished below the pass mark; module held for review + retake
   'error',           // evaluator threw; the turn continued without progression
 ];
 
 // How the completion decision was reached.
-const MODES = ['deterministic', 'llm_eval', 'turn_count', 'explicit_tag', 'checkpoint', 'none'];
+const MODES = ['deterministic', 'llm_eval', 'turn_count', 'explicit_tag', 'checkpoint', 'checkpoint_review', 'none'];
 
 /**
  * Record one progression evaluation. Called from the single choke point

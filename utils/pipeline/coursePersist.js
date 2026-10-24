@@ -297,6 +297,7 @@ function processModuleComplete(courseSession) {
   return {
     event: 'module_complete',
     moduleId: mod.moduleId,
+    title: mod.title || null,
     overallProgress: courseSession.overallProgress,
     nextModuleId: nextModuleId || courseSession.currentModuleId,
     currentLessonId: courseSession.currentLessonId,

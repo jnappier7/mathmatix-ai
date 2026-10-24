@@ -12,6 +12,8 @@ const path = require('path');
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
 const { getTestDefByCourse, testDefForCourseSession } = require('./practiceTests');
 const { SHARED_VOICE_BLOCKS } = require('./promptCompact');
+const { studentLabel } = require('./studentLabels');
+const { activeCheckpointReview } = require('./checkpointOutcome');
 
 // Course mode's mirror of the open-tutoring "student's lead" rule: here the
 // module sets the direction, and offering to abandon it reads as the tutor
@@ -86,6 +88,11 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
 
   // Branch to checkpoint prompt when module is an assessment
   if (scaffoldData?.type === 'assessment' || scaffoldData?.diagnosticMode || currentModule?.isCheckpoint) {
+    // Missed it last time: review before the retake (utils/checkpointOutcome).
+    const review = activeCheckpointReview(courseSession);
+    if (review) {
+      return buildCheckpointReviewPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule, review });
+    }
     return buildCheckpointPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule });
   }
 
@@ -1523,10 +1530,56 @@ Now begin. Present Problem 1.
 `;
 }
 
+/**
+ * Review after a missed checkpoint (owner decision 2026-10-24): the module
+ * stays put, the tutor reteaches what was missed, and the student retakes.
+ * This is TUTORING again — the opposite of buildCheckpointPrompt's rules.
+ */
+function buildCheckpointReviewPrompt({ userProfile, tutorProfile, courseSession, pathway, scaffoldData, currentModule, review }) {
+  const firstName = userProfile.firstName || 'Student';
+  const courseName = pathway.track || courseSession.courseName || courseSession.courseId;
+  const moduleTitle = currentModule?.title || scaffoldData?.title || 'Checkpoint';
+  const tutorName = tutorProfile?.name || 'MathMatix Tutor';
+  const tutorPersonality = tutorProfile?.personality || '';
+  const missed = (review.missedSkills || []);
+  const problems = scaffoldData?.assessmentProblems || [];
+
+  const skillBlocks = missed.length > 0
+    ? missed.map((skill, i) => {
+      const examples = problems.filter(p => p.skill === skill).slice(0, 2)
+        .map(p => `     - ${p.question}`).join('\n');
+      return `  ${i + 1}. ${studentLabel(skill)}${examples ? `\n     Checkpoint items on this skill (make PARALLEL problems — never reuse these):\n${examples}` : ''}`;
+    }).join('\n')
+    : '  (No per-skill breakdown was recorded. Ask which problems felt hardest and start there.)';
+
+  return `You are ${tutorName}, tutoring ${firstName} in **${courseName}**.
+${tutorPersonality ? `Personality: ${tutorPersonality}` : ''}
+
+====================================================================
+CHECKPOINT REVIEW — TEACH WHAT WAS MISSED, THEN RETAKE
+====================================================================
+
+${firstName} took **${moduleTitle}** and scored **${review.score}%**; ${review.passThreshold}% passes. The next module stays locked until they pass, so this sitting is review, then a retake.
+
+**SKILLS TO REVIEW** (weakest first):
+${skillBlocks}
+
+**HOW TO RUN THE REVIEW:**
+1. Be matter-of-fact and encouraging about the score: one sentence, no drama.
+2. Take the skills in order. For each: a short reteach (one worked example), then one or two practice problems for them to solve.
+3. Real tutoring applies again: hints, scaffolds, and checking their reasoning are all fine here.
+4. When they have practiced the missed skills — or whenever they say they're ready — tell them they can retake the checkpoint: they can say "retake" here or use the Retake button.
+5. Do NOT present the checkpoint's own problems, and do NOT give a score yourself — the retake is scored by the course.
+
+ALL math must use LaTeX delimiters. Inline: \\( expr \\)  Display: \\[ expr \\]
+`;
+}
+
 module.exports = {
   buildCourseSystemPrompt,
   buildActPracticeGuidance,
   buildCheckpointPrompt,
+  buildCheckpointReviewPrompt,
   buildParentCourseSystemPrompt,
   buildCourseGreetingInstruction,
   loadCourseContext,

@@ -559,8 +559,17 @@ async function handleCourseGreeting(req, res, userId) {
         } else {
             // ── Student ghost messages and greeting instructions ──
             const isCheckpoint = moduleData?.type === 'assessment' || moduleData?.diagnosticMode || currentPathwayModule?.isCheckpoint;
+            const ckReview = isCheckpoint
+                ? require('../utils/checkpointOutcome').activeCheckpointReview(courseSession)
+                : null;
 
-            if (isCheckpoint) {
+            if (ckReview) {
+                // Back after a missed checkpoint: review first, then retake.
+                ghostMessage = `Hi, I'm ${user.firstName}. I'm back to review what I missed on the ${moduleData.title || 'checkpoint'} ` +
+                    `(I scored ${ckReview.score}%, and ${ckReview.passThreshold}% passes) before I retake it.`;
+                greetingInstruction = `The student missed this checkpoint and is here to review before retaking. ` +
+                    `Welcome them back in one or two sentences, name the first skill to review, and start on it.`;
+            } else if (isCheckpoint) {
                 // Checkpoint-specific ghost message — tell the AI how many problems have been attempted
                 // Only answers given since THIS checkpoint started — the whole
                 // conversation said "13 of 14 done" before question 1.
@@ -661,7 +670,10 @@ async function handleCourseGreeting(req, res, userId) {
             courseSession, moduleData, conversation, lastSignal: null, showCheckpoint: false
         });
 
-        const isCheckpointModule = moduleData?.type === 'assessment' || moduleData?.diagnosticMode || currentPathwayModule?.isCheckpoint;
+        // In review after a missed checkpoint, the greeting is the tutor's —
+        // the panel opens on a retake, not on arrival (utils/checkpointOutcome).
+        const isCheckpointModule = (moduleData?.type === 'assessment' || moduleData?.diagnosticMode || currentPathwayModule?.isCheckpoint)
+            && !require('../utils/checkpointOutcome').activeCheckpointReview(courseSession);
 
         res.json({
             text: isCheckpointModule ? null : greetingText,

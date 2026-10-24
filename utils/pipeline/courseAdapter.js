@@ -24,6 +24,8 @@ const { buildCourseSystemPrompt, loadCourseContext, calculateOverallProgress } =
 const { processScaffoldAdvance, processModuleComplete, detectGraphTool } = require('./coursePersist');
 const { evaluateStepCompletion } = require('./stepEvaluator');
 const { tallyCheckpoint } = require('./checkpointEvidence');
+const checkpointOutcome = require('../checkpointOutcome');
+const { settleTestOut } = require('../courseMoveOn');
 const { buildProgressUpdate } = require('../progressState');
 const courseProgressMetrics = require('../courseProgressMetrics');
 const TUTOR_CONFIG = require('../tutorConfig');
@@ -284,20 +286,61 @@ async function advanceCourseProgress({
       // Checkpoint: count the answers given SINCE THE CHECKPOINT STARTED.
       // Counting the whole conversation completed every checkpoint on launch
       // (course audit, 2026-10-23) — see checkpointEvidence.js.
-      const mod = (courseSession.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
-      const tally = tallyCheckpoint(conversation, courseSession, moduleData.assessmentProblems);
+      //
+      // A miss does NOT complete the module (owner decision 2026-10-24): the
+      // student reviews what they missed, then retakes — checkpointOutcome.js.
+      const review = checkpointOutcome.activeCheckpointReview(courseSession);
+      if (review) {
+        // Between a miss and the retake the tutor is reteaching; nothing said
+        // here is a checkpoint answer.
+        evalResult = {
+          mode: 'checkpoint_review',
+          complete: false,
+          confidence: 1.0,
+          evidence: `reviewing after ${review.score}% (needs ${review.passThreshold}%)`,
+        };
+      } else {
+        const tally = tallyCheckpoint(conversation, courseSession, moduleData.assessmentProblems);
+        const passThreshold = moduleData.passThreshold || 70;
+        const passed = tally.score >= passThreshold;
 
-      evalResult = {
-        mode: 'checkpoint',
-        complete: tally.complete,
-        confidence: 1.0,
-        evidence: `${tally.attempted}/${tally.total} problems attempted, ${tally.correct} correct`
-          + (tally.undecided ? `, ${tally.undecided} unverified` : ''),
-      };
+        evalResult = {
+          mode: 'checkpoint',
+          complete: tally.complete && passed,
+          confidence: 1.0,
+          evidence: `${tally.attempted}/${tally.total} problems attempted, ${tally.correct} correct`
+            + (tally.undecided ? `, ${tally.undecided} unverified` : '')
+            + (tally.complete ? ` — ${tally.score}% (${passed ? 'passed' : 'below ' + passThreshold + '%'})` : ''),
+        };
 
-      if (evalResult.complete && mod) {
-        mod.checkpointScore = tally.score;
-        mod.checkpointPassed = tally.score >= (moduleData.passThreshold || 70);
+        if (tally.complete) {
+          // A test-out settles first: passing credits the skipped lessons,
+          // missing returns the student to where they were (courseMoveOn).
+          const testOut = settleTestOut(courseSession, passed);
+          if (passed) {
+            checkpointOutcome.recordCheckpointPass(courseSession, { score: tally.score });
+          } else if (testOut.testOut) {
+            courseProgressUpdate = {
+              event: 'checkpoint_failed',
+              testOut: true,
+              returnedTo: testOut.returnedTo,
+              score: tally.score,
+              passThreshold,
+              skillBreakdown: tally.skillBreakdown,
+              missedSkills: checkpointOutcome.missedSkillsFrom(tally.skillBreakdown),
+            };
+            await courseSession.save();
+          } else {
+            courseProgressUpdate = checkpointOutcome.recordCheckpointMiss(courseSession, {
+              score: tally.score,
+              passThreshold,
+              skillBreakdown: tally.skillBreakdown,
+              correct: tally.correct,
+              attempted: tally.attempted,
+            });
+            await courseSession.save();
+          }
+        }
       }
     } else if (explicitModuleComplete || explicitAdvance) {
       evalResult = {
@@ -330,6 +373,7 @@ async function advanceCourseProgress({
     courseProgressMetrics.recordProgression({
       outcome: courseProgressUpdate?.event === 'module_complete' ? 'module_complete'
         : courseProgressUpdate?.event === 'scaffold_advance' ? 'advanced'
+        : courseProgressUpdate?.event === 'checkpoint_failed' ? 'checkpoint_failed'
         : evalResult.complete ? 'gate_blocked'   // judged done, advance refused
         : 'held',
       mode: evalResult.mode,

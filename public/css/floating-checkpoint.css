@@ -514,3 +514,81 @@
     padding: 16px;
   }
 }
+
+/* ── In-chat result card: checkpoint below its pass mark ──
+   Rendered on the tutor's reply (script.js showCheckpointResultCard).
+   Paints its own ground: the chat panel and inline surfaces theme
+   differently (CLAUDE.md §12), so it must never be transparent. */
+.checkpoint-result-card {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: var(--cr-radius-md, 12px);
+  background: var(--cr-bg-2, #1f2333);
+  color: var(--cr-text, #eef0f6);
+  border: 1px solid var(--cr-border-strong, rgba(255, 255, 255, 0.18));
+  border-left: 4px solid var(--cr-warning, #e0a43a);
+  max-width: 460px;
+}
+.checkpoint-result-card__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.checkpoint-result-card__score {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.checkpoint-result-card__label {
+  font-size: 14px;
+  color: var(--cr-text-dim, #b6bccb);
+  flex: 1 1 200px;
+}
+.checkpoint-result-card__skills {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  font-size: 13px;
+}
+.checkpoint-result-card__skills li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+  border-top: 1px solid var(--cr-border, rgba(255, 255, 255, 0.1));
+  font-variant-numeric: tabular-nums;
+}
+.checkpoint-result-card__skills li.missed span:last-child {
+  color: var(--cr-warning, #e0a43a);
+  font-weight: 600;
+}
+.checkpoint-result-card__skills li.ok span:last-child {
+  color: var(--cr-success, #3fb37f);
+}
+.checkpoint-result-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.checkpoint-result-card__btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: var(--cr-radius-pill, 999px);
+  border: 1px solid var(--cr-border-strong, rgba(255, 255, 255, 0.18));
+  background: transparent;
+  color: var(--cr-text, #eef0f6);
+  cursor: pointer;
+}
+.checkpoint-result-card__btn.primary {
+  background: var(--cr-accent, #7c5cff);
+  border-color: var(--cr-accent, #7c5cff);
+  color: #fff;
+}
+.checkpoint-result-card__btn:focus-visible {
+  outline: 2px solid var(--cr-accent, #7c5cff);
+  outline-offset: 2px;
+}

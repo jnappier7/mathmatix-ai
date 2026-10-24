@@ -1303,6 +1303,78 @@ document.addEventListener("DOMContentLoaded", () => {
     // Expose for other modules that append AI messages (e.g. streaming finalizer).
     window.attachInlineCtaToLatestMessage = attachInlineCtaToLatestMessage;
 
+    // Result card for a checkpoint that finished below its pass mark
+    // (utils/checkpointOutcome on the server). Built with textContent only.
+    function showCheckpointResultCard(cp) {
+        const aiMsgs = document.querySelectorAll('.message.ai');
+        const latest = aiMsgs[aiMsgs.length - 1];
+        if (!latest || latest.querySelector('.checkpoint-result-card')) return;
+
+        const card = document.createElement('div');
+        card.className = 'checkpoint-result-card';
+        card.setAttribute('role', 'status');
+
+        const head = document.createElement('div');
+        head.className = 'checkpoint-result-card__head';
+        const score = document.createElement('span');
+        score.className = 'checkpoint-result-card__score';
+        score.textContent = `${cp.score}%`;
+        const label = document.createElement('span');
+        label.className = 'checkpoint-result-card__label';
+        label.textContent = cp.testOut
+            ? `Not quite a test-out (${cp.passThreshold}% passes) — you're back where you left off, nothing lost.`
+            : `${cp.title ? cp.title + ': ' : ''}${cp.passThreshold}% passes. Let's review, then retake it.`;
+        head.append(score, label);
+        card.appendChild(head);
+
+        const prettify = (s) => String(s || '').replace(/[-_.]+/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        const rows = (cp.skillBreakdown || []).filter(s => s && s.total > 0);
+        if (rows.length) {
+            const list = document.createElement('ul');
+            list.className = 'checkpoint-result-card__skills';
+            rows.forEach(s => {
+                const li = document.createElement('li');
+                li.className = s.correct < s.total ? 'missed' : 'ok';
+                const name = document.createElement('span');
+                name.textContent = prettify(s.skill);
+                const val = document.createElement('span');
+                val.textContent = `${s.correct}/${s.total}`;
+                li.append(name, val);
+                list.appendChild(li);
+            });
+            card.appendChild(list);
+        }
+
+        if (!cp.testOut) {
+            const actions = document.createElement('div');
+            actions.className = 'checkpoint-result-card__actions';
+            const review = document.createElement('button');
+            review.type = 'button';
+            review.className = 'checkpoint-result-card__btn primary';
+            review.textContent = 'Review what I missed';
+            review.addEventListener('click', () => {
+                if (typeof window.mmSendChatMessage === 'function') {
+                    window.mmSendChatMessage("Let's review what I missed on the checkpoint.");
+                }
+            });
+            const retake = document.createElement('button');
+            retake.type = 'button';
+            retake.className = 'checkpoint-result-card__btn';
+            retake.textContent = 'Retake checkpoint';
+            retake.addEventListener('click', () => {
+                if (window.floatingCheckpoint) {
+                    Promise.resolve(window.floatingCheckpoint.open({ title: cp.title || 'Checkpoint' }))
+                        .catch(err => console.error('[Checkpoint] retake open failed', err));
+                }
+            });
+            actions.append(review, retake);
+            card.appendChild(actions);
+        }
+
+        latest.appendChild(card);
+    }
+    window.showCheckpointResultCard = showCheckpointResultCard;
+
     // ── Growth Check closure ──
     // The check runs in the FloatingScreener, outside the transcript, so it
     // used to end on a stats card and silence — from a tutor who had just said
@@ -4493,12 +4565,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (cp.moduleId) {
                         window.courseManager.celebrateModuleCompletion({
                             moduleId: cp.moduleId,
-                            title: cp.moduleId,
+                            // A title, never the storage id (course audit: "checkpoint_q1" on the card)
+                            title: cp.title || cp.moduleId,
                             xpAwarded: cp.xpAwarded || 0,
                             courseComplete: cp.courseComplete || false
                         });
                     }
                     console.log(`[Course] Module complete: ${cp.moduleId}, overall: ${cp.overallProgress}%`);
+                } else if (cp.event === 'checkpoint_failed') {
+                    // Missed the pass mark: the module stays put (owner decision
+                    // 2026-10-24). Show the real result on the tutor's reply,
+                    // with the two ways forward — review, or retake.
+                    window.courseManager.loadMySessions();
+                    if (typeof window.showCheckpointResultCard === "function") window.showCheckpointResultCard(cp);
+                    console.log(`[Course] Checkpoint below pass mark: ${cp.score}% (needs ${cp.passThreshold}%)`);
                 }
             }
 

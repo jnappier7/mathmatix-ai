@@ -2611,7 +2611,8 @@ class FloatingCheckpoint {
             : `Score: ${data.summary.scorePercent}%. Not quite a test-out — you're back where you left off, nothing lost.`)
           : data.summary?.passed
             ? `Checkpoint complete! Score: ${data.summary.scorePercent}%. Moving to next module.`
-            : `Checkpoint complete. Score: ${data.summary.scorePercent}%. Some areas need review.`;
+            // A miss holds the module for review + retake (utils/checkpointOutcome).
+            : `Score: ${data.summary.scorePercent}% — ${data.summary.passThreshold}% passes. Your tutor will review what you missed, then you can retake it.`;
         window.showNotification(msg, data.summary?.passed ? 'success' : 'info');
       }
 
