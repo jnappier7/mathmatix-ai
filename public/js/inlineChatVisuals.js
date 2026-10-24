@@ -12,6 +12,16 @@
  * Command syntax: [VISUAL_TYPE:params]
  */
 
+// Angle classifications — the caption is looked up from the MEASURE, never
+// from a tutor-supplied type string (course audit C08).
+const ICV_ANGLE_TYPES = {
+    acute:    { name: 'Acute',    range: '0° < angle < 90°',    color: '#1e8449' },
+    right:    { name: 'Right',    range: 'angle = 90°',          color: '#2471a3' },
+    obtuse:   { name: 'Obtuse',   range: '90° < angle < 180°',   color: '#b9770e' },
+    straight: { name: 'Straight', range: 'angle = 180°',         color: '#7d3c98' },
+    reflex:   { name: 'Reflex',   range: '180° < angle < 360°',  color: '#c0392b' },
+};
+
 class InlineChatVisuals {
     constructor() {
         this.visualCounter = 0;
@@ -1868,93 +1878,103 @@ class InlineChatVisuals {
 
     // ==========================================
     // ANGLE VISUALIZATION
-    // [ANGLE:degrees=45,type=acute]
+    // [ANGLE:degrees=45]              — practice: classification hidden
+    // [ANGLE:degrees=45,reveal=true]  — teaching: "Acute Angle: 45°"
+    //
+    // The classification is ALWAYS derived from the measure. It used to come
+    // from the tutor's `type=` param verbatim, so `type="Acute Angle"` matched
+    // no caption branch and fell through to "angle > 180°" under a 45° drawing,
+    // and the title doubled to "Acute Angle Angle: 45°" (course audit C08,
+    // 2026-10-23). The classification is also the ANSWER whenever the student
+    // is asked to classify, so it stays behind a "Check" disclosure unless the
+    // tutor explicitly reveals it.
     // ==========================================
     createAngle(paramStr) {
         const params = this.parseParams(paramStr);
         const id = this.getUniqueId('angle');
 
-        const degrees = params.degrees ?? params.deg ?? params.angle ?? 45;
-        const type = params.type || this.getAngleType(degrees);
-        const title = params.title || `${type.charAt(0).toUpperCase() + type.slice(1)} Angle: ${degrees}°`;
+        let degrees = parseFloat(params.degrees ?? params.deg ?? params.angle ?? params.measure);
+        if (!isFinite(degrees) || degrees <= 0 || degrees >= 360) degrees = 45;
+        degrees = Math.round(degrees * 100) / 100;
+        const type = this.getAngleType(degrees);
+        const info = ICV_ANGLE_TYPES[type];
+        const reveal = params.reveal === true || params.label === true || params.classify === true
+            || params.show_type === true;
         const showArc = params.arc !== false;
 
-        const width = 200;
-        const height = 180;
-        const centerX = 100;
-        const centerY = 140;
+        const title = this.angleTitle(params.title, degrees, info, reveal);
+
         const radius = 80;
         const arcRadius = 30;
-
         const angleRad = (degrees * Math.PI) / 180;
-        const endX = centerX + radius * Math.cos(-angleRad);
-        const endY = centerY + radius * Math.sin(-angleRad);
+        // Work in a frame centred on the vertex, then fit the viewBox to what
+        // was drawn — a fixed box clipped every reflex ray that pointed down.
+        const end = { x: radius * Math.cos(-angleRad), y: radius * Math.sin(-angleRad) };
+        const labelRadius = arcRadius + 16;
+        const label = { x: labelRadius * Math.cos(-angleRad / 2), y: labelRadius * Math.sin(-angleRad / 2) };
+        const xs = [0, radius, end.x, label.x - 18, label.x + 18];
+        const ys = [0, end.y, label.y - 12, label.y + 6];
+        if (degrees > 90) { xs.push(-arcRadius); }
+        if (degrees > 180) { ys.push(arcRadius); }
+        const pad = 12;
+        const minX = Math.min(...xs) - pad, maxX = Math.max(...xs) + pad;
+        const minY = Math.min(...ys) - pad, maxY = Math.max(...ys) + pad;
+        const f = (n) => Math.round(n * 100) / 100;
 
-        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-angle">`;
+        const a11y = `Angle measuring ${degrees} degrees` + (reveal ? `, ${info.name.toLowerCase()} angle` : '');
+        let svg = `<svg viewBox="${f(minX)} ${f(minY)} ${f(maxX - minX)} ${f(maxY - minY)}" class="icv-angle" role="img" aria-label="${this.escapeHtml(a11y)}">`;
 
-        // First ray (horizontal)
-        svg += `<line x1="${centerX}" y1="${centerY}" x2="${centerX + radius}" y2="${centerY}"
-                      stroke="#667eea" stroke-width="3"/>`;
+        svg += `<line x1="0" y1="0" x2="${radius}" y2="0" stroke="#667eea" stroke-width="3"/>`;
+        svg += `<line x1="0" y1="0" x2="${f(end.x)}" y2="${f(end.y)}" stroke="#667eea" stroke-width="3"/>`;
 
-        // Second ray
-        svg += `<line x1="${centerX}" y1="${centerY}" x2="${endX}" y2="${endY}"
-                      stroke="#667eea" stroke-width="3"/>`;
-
-        // Angle arc
-        if (showArc) {
-            const arcEndX = centerX + arcRadius * Math.cos(-angleRad);
-            const arcEndY = centerY + arcRadius * Math.sin(-angleRad);
+        if (type === 'right') {
+            svg += `<rect x="0" y="-15" width="15" height="15" fill="none" stroke="#333" stroke-width="2"/>`;
+        } else if (showArc) {
+            const arcEnd = { x: arcRadius * Math.cos(-angleRad), y: arcRadius * Math.sin(-angleRad) };
             const largeArc = degrees > 180 ? 1 : 0;
-            svg += `<path d="M${centerX + arcRadius},${centerY} A${arcRadius},${arcRadius} 0 ${largeArc},0 ${arcEndX},${arcEndY}"
+            svg += `<path d="M${arcRadius},0 A${arcRadius},${arcRadius} 0 ${largeArc},0 ${f(arcEnd.x)},${f(arcEnd.y)}"
                           fill="none" stroke="#e74c3c" stroke-width="2"/>`;
         }
 
-        // Right angle marker for 90 degrees
-        if (degrees === 90) {
-            svg += `<rect x="${centerX}" y="${centerY - 15}" width="15" height="15"
-                          fill="none" stroke="#333" stroke-width="2"/>`;
-        }
-
-        // Degree label
-        const labelRadius = arcRadius + 15;
-        const labelAngle = -angleRad / 2;
-        const labelX = centerX + labelRadius * Math.cos(labelAngle);
-        const labelY = centerY + labelRadius * Math.sin(labelAngle);
-        svg += `<text x="${labelX}" y="${labelY}" text-anchor="middle" font-size="14" font-weight="bold" fill="#e74c3c">${degrees}°</text>`;
-
-        // Vertex point
-        svg += `<circle cx="${centerX}" cy="${centerY}" r="4" fill="#333"/>`;
-
+        svg += `<text x="${f(label.x)}" y="${f(label.y)}" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" fill="#e74c3c">${degrees}°</text>`;
+        svg += `<circle cx="0" cy="0" r="4" fill="#333"/>`;
         svg += `</svg>`;
 
-        const typeColors = {
-            acute: '#2ecc71',
-            right: '#3498db',
-            obtuse: '#f39c12',
-            straight: '#9b59b6',
-            reflex: '#e74c3c'
-        };
+        const classification = `<span class="icv-angle-type" style="color: ${info.color}">${info.name} angle</span>` +
+            ` <span class="icv-angle-range">${info.range}</span>`;
+        const caption = reveal
+            ? `<div class="icv-caption">${classification}</div>`
+            : `<details class="icv-caption icv-angle-check"><summary>Check the angle type</summary>${classification}</details>`;
 
         return `
         <div class="icv-container icv-angle-container" id="${id}">
             <div class="icv-title">${this.escapeHtml(title)}</div>
             ${svg}
-            <div class="icv-caption" style="color: ${typeColors[type] || '#333'}">
-                ${type === 'acute' ? '0° < angle < 90°' :
-                  type === 'right' ? 'angle = 90°' :
-                  type === 'obtuse' ? '90° < angle < 180°' :
-                  type === 'straight' ? 'angle = 180°' :
-                  'angle > 180°'}
-            </div>
+            ${caption}
         </div>
         `;
     }
 
+    // "Acute Angle: 45°" when revealed, "Angle: 45°" otherwise. A tutor-supplied
+    // title is kept, minus any classification word when the type is hidden,
+    // and never with "Angle" twice in a row.
+    angleTitle(given, degrees, info, reveal) {
+        let t = given != null && String(given).trim() ? String(given).trim() : null;
+        if (t && !reveal) {
+            t = t.replace(/\b(?:acute|right|obtuse|straight|reflex)\b\s*/gi, '').trim();
+            // Nothing left but "Angle" / "Angle Example" — use the plain default.
+            if (/^(?:an?\s+)?(?:angle\s*)?(?:example)?\s*:?\s*$/i.test(t)) t = null;
+        }
+        if (!t) t = reveal ? `${info.name} Angle: ${degrees}°` : `Angle: ${degrees}°`;
+        return t.replace(/\b(angle)(?:\s+angle\b)+/gi, '$1');
+    }
+
     getAngleType(degrees) {
-        if (degrees < 90) return 'acute';
-        if (degrees === 90) return 'right';
-        if (degrees < 180) return 'obtuse';
-        if (degrees === 180) return 'straight';
+        const d = Math.round(parseFloat(degrees) * 1e6) / 1e6;
+        if (d < 90) return 'acute';
+        if (d === 90) return 'right';
+        if (d < 180) return 'obtuse';
+        if (d === 180) return 'straight';
         return 'reflex';
     }
 
@@ -3357,6 +3377,22 @@ class InlineChatVisuals {
                 text-align: center;
                 margin-top: 12px;
             }
+
+            /* Angle: sized to the drawing, so title, rays and caption fit together. */
+            .icv-angle {
+                display: block;
+                width: 100%;
+                max-width: 220px;
+                max-height: 200px;
+                margin: 0 auto;
+            }
+            .icv-angle-check summary {
+                cursor: pointer;
+                color: #667eea;
+                font-weight: 600;
+            }
+            .icv-angle-type { font-weight: 700; }
+            .icv-angle-range { color: #555; }
 
             .icv-error {
                 background: #fee;

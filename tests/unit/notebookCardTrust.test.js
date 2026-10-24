@@ -75,7 +75,13 @@ describe('wiring', () => {
   test('capture is gated on a real error and cleans the problem text', () => {
     const src = read('utils/pipeline/persist.js');
     const fn = src.slice(src.indexOf('async function captureLearningCards'));
-    expect(fn).toMatch(/diagnosis\.isCorrect === false && !answerIsActuallyRight\(diagnosis\)/);
+    // C07: one gate for every persistent misconception write — verdict
+    // confirmed on the attempted problem, card math validated.
+    expect(fn).toMatch(/misconceptionConfirmed\(\{ diagnosis, originalMessage, problemTex \}\)/);
+    const gate = src.slice(src.indexOf('function misconceptionConfirmed'));
+    expect(gate).toMatch(/answerIsActuallyRight\(diagnosis\)/);
+    expect(gate).toMatch(/misconceptionCardGate\(/);
+    expect(gate).toMatch(/validateReminderMath\(/);
     expect(fn).toMatch(/cleanCardProblemTex\(/);
   });
 
