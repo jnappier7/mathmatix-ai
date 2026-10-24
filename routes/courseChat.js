@@ -562,9 +562,12 @@ async function handleCourseGreeting(req, res, userId) {
 
             if (isCheckpoint) {
                 // Checkpoint-specific ghost message — tell the AI how many problems have been attempted
-                const totalProblems = (moduleData.assessmentProblems || []).length;
-                const attemptedCount = (conversation.messages || [])
-                    .filter(m => m.role === 'assistant' && m.problemResult).length;
+                // Only answers given since THIS checkpoint started — the whole
+                // conversation said "13 of 14 done" before question 1.
+                const tally = require('../utils/pipeline/checkpointEvidence')
+                    .tallyCheckpoint(conversation, courseSession, moduleData.assessmentProblems);
+                const totalProblems = tally.total;
+                const attemptedCount = tally.attempted;
                 const nextProblem = attemptedCount + 1;
 
                 if (!hasHistory) {

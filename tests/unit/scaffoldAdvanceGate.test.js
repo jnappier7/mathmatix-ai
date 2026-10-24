@@ -11,10 +11,17 @@
  */
 const { gateAdvance } = require('../../utils/pipeline/stepEvaluator');
 
+// gateAdvance runs inside the pipeline BEFORE persist, so — as in production —
+// the conversation ends with this turn's student message, not a graded reply.
+// (Ending on a graded assistant reply means persist already stamped this
+// turn, and wasCorrect is not counted again: checkpointEvidence.js.)
 const conv = (results = []) => ({
-  messages: results.map((r) => (r === 'ADV'
-    ? { role: 'user', content: 'x', scaffoldAdvanced: true }
-    : { role: 'assistant', content: 'x', problemResult: r })),
+  messages: [
+    ...results.map((r) => (r === 'ADV'
+      ? { role: 'user', content: 'x', scaffoldAdvanced: true }
+      : { role: 'assistant', content: 'x', problemResult: r })),
+    { role: 'user', content: 'this turn' },
+  ],
 });
 
 describe('practice steps must be earned', () => {

@@ -23,6 +23,7 @@ const CourseSession = require('../../models/courseSession');
 const { buildCourseSystemPrompt, loadCourseContext, calculateOverallProgress } = require('../coursePrompt');
 const { processScaffoldAdvance, processModuleComplete, detectGraphTool } = require('./coursePersist');
 const { evaluateStepCompletion } = require('./stepEvaluator');
+const { tallyCheckpoint } = require('./checkpointEvidence');
 const { buildProgressUpdate } = require('../progressState');
 const courseProgressMetrics = require('../courseProgressMetrics');
 const TUTOR_CONFIG = require('../tutorConfig');
@@ -280,33 +281,23 @@ async function advanceCourseProgress({
     let evalResult;
 
     if (isCheckpoint) {
-      // Checkpoint: count problem results
-      const totalProblems = (moduleData.assessmentProblems || []).length;
-      const problemResults = conversation.messages
-        .filter(m => m.role === 'assistant' && m.problemResult)
-        .map(m => m.problemResult);
-      const attempted = problemResults.length;
-      const correct = problemResults.filter(r => r === 'correct').length;
+      // Checkpoint: count the answers given SINCE THE CHECKPOINT STARTED.
+      // Counting the whole conversation completed every checkpoint on launch
+      // (course audit, 2026-10-23) — see checkpointEvidence.js.
+      const mod = (courseSession.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
+      const tally = tallyCheckpoint(conversation, courseSession, moduleData.assessmentProblems);
 
       evalResult = {
         mode: 'checkpoint',
-        complete: attempted >= totalProblems && totalProblems > 0,
+        complete: tally.complete,
         confidence: 1.0,
-        evidence: `${attempted}/${totalProblems} problems attempted, ${correct} correct`,
+        evidence: `${tally.attempted}/${tally.total} problems attempted, ${tally.correct} correct`
+          + (tally.undecided ? `, ${tally.undecided} unverified` : ''),
       };
 
-      if (evalResult.complete) {
-        const totalPoints = (moduleData.assessmentProblems || []).reduce((sum, p) => sum + (p.points || 1), 0);
-        const earnedPoints = problemResults.reduce((sum, r, i) => {
-          const problem = (moduleData.assessmentProblems || [])[i];
-          return sum + (r === 'correct' ? (problem?.points || 1) : 0);
-        }, 0);
-        const score = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0;
-        const mod = (courseSession.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
-        if (mod) {
-          mod.checkpointScore = score;
-          mod.checkpointPassed = score >= (moduleData.passThreshold || 70);
-        }
+      if (evalResult.complete && mod) {
+        mod.checkpointScore = tally.score;
+        mod.checkpointPassed = tally.score >= (moduleData.passThreshold || 70);
       }
     } else if (explicitModuleComplete || explicitAdvance) {
       evalResult = {

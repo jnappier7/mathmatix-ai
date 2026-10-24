@@ -23,6 +23,7 @@
  */
 
 const { callLLM } = require('../openaiClient');
+const { countCorrectSinceAdvance } = require('./checkpointEvidence');
 
 // ── Step type → completion mode mapping ──
 // These defaults apply when the step JSON has no explicit `completion` field.
@@ -107,15 +108,10 @@ function evaluateDeterministic(step, conversation, options = {}) {
   const minCorrect = step.completion?.min_correct || MIN_CORRECT_FOR_ADVANCE;
   const messages = conversation?.messages || [];
 
-  let correctSinceLastAdvance = 0;
-  for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
-    if (msg.scaffoldAdvanced) break;
-    if (msg.problemResult === 'correct') correctSinceLastAdvance++;
-  }
-
-  // Include the current turn's result if it was correct
-  if (options.wasCorrect) correctSinceLastAdvance++;
+  // This turn's result counted once: persist has usually stamped it on the
+  // last message already, and adding wasCorrect on top made one correct
+  // answer clear a 2-correct step (checkpointEvidence.js).
+  const correctSinceLastAdvance = countCorrectSinceAdvance(messages, options.wasCorrect);
 
   const complete = options.isParentCourse || correctSinceLastAdvance >= minCorrect;
 
