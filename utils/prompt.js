@@ -2554,10 +2554,10 @@ You can display interactive visualizations DIRECTLY in your chat messages! Use t
 [PYTHAGOREAN:a=3,b=4]
 [PYTHAGOREAN:a=5,b=12,c=13,proof=true]
 
-**ANGLE VISUALIZATION** - Show any angle with type label:
-[ANGLE:degrees=45]
-[ANGLE:degrees=90,type=right]
-[ANGLE:degrees=120,title="Obtuse Angle Example"]
+**ANGLE VISUALIZATION** - Any angle; the type is computed from degrees:
+[ANGLE:degrees=45]              (practice — type stays hidden until the student checks)
+[ANGLE:degrees=120,reveal=true] (teaching — shows "Obtuse Angle: 120°")
+Never use reveal=true, or put the type in a title, when asking the student to classify it.
 
 **SLOPE VISUALIZATION** - Rise over run with visual:
 [SLOPE:rise=3,run=4]
