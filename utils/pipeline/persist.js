@@ -32,7 +32,7 @@ const { updateSkillMastery: engineUpdateSkillMastery, initializeSkillMastery } =
 const { problemAssistance } = require('./boardLedger');
 const { isIndependent } = require('./assistanceLadder');
 const LearningCard = require('../../models/learningCard');
-const { detectAha, reminderKey, shapeReminder, shapeAha, toClientCard, REMINDER_ACTIVATION_COUNT } = require('./learningCards');
+const { detectAha, reminderKey, shapeReminder, shapeAha, toClientCard, REMINDER_ACTIVATION_COUNT, misconceptionCardGate, validateReminderMath, sourceAttempt } = require('./learningCards');
 const { advanceRung, currentRung, clearsPrerequisites } = require('../skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap, hasActiveBadge } = require('../masteryGuard');
 
@@ -317,7 +317,9 @@ async function persist(params) {
   }
 
   // ── 6. Misconception recording ──
-  if (diagnosis?.misconception && diagnosis.isCorrect === false) {
+  // Same bar as the notebook card (C07): a confirmed incorrect on the problem
+  // the student attempted, and a description whose math is sound.
+  if (diagnosis?.misconception && misconceptionConfirmed({ diagnosis, originalMessage, problemTex: pinnedProblemTex }).ok) {
     try {
       await recordMisconception(user, diagnosis.problemInfo?.type || 'unknown', {
         misconceptionName: diagnosis.misconception.name,
@@ -435,7 +437,7 @@ async function persist(params) {
   results.learningCards = [];
   try {
     results.learningCards = await captureLearningCards({
-      user, conversation, diagnosis, originalMessage, results, masteryAttempt,
+      user, conversation, diagnosis, originalMessage, results, masteryAttempt, pinnedProblemTex,
     });
   } catch (cardErr) {
     console.error('[Persist] learning-card capture failed (non-fatal):', cardErr.message);
@@ -1060,25 +1062,56 @@ function cleanCardProblemTex(tex) {
   return cut || null;
 }
 
-async function captureLearningCards({ user, conversation, diagnosis, originalMessage, results, masteryAttempt }) {
+/**
+ * May this turn's diagnosed misconception be written anywhere persistent?
+ * Course audit C07: a card claiming 1/3 + 1/6 = 1/2 was a mistake was born
+ * from a misgraded turn and re-counted after correct work. Persistent guidance
+ * needs (a) a confirmed incorrect on the exact problem attempted and (b) a
+ * card whose own arithmetic is right. Either failing → save nothing.
+ */
+function misconceptionConfirmed({ diagnosis, originalMessage, problemTex }) {
+  if (!diagnosis?.misconception?.name) return { ok: false, reason: 'no_misconception' };
+  if (answerIsActuallyRight(diagnosis)) return { ok: false, reason: 'answer_is_right' };
+  const gate = misconceptionCardGate({
+    diagnosis, originalMessage, problemTex,
+    answersMatch: (a, k) => { try { return verifyAnswer(String(a), String(k)).isCorrect === true; } catch { return false; } },
+  });
+  if (!gate.ok) return gate;
+  const cardMath = validateReminderMath(diagnosis.misconception);
+  if (!cardMath.ok) return { ok: false, reason: cardMath.reason };
+  return { ok: true, reason: null };
+}
+
+async function captureLearningCards({ user, conversation, diagnosis, originalMessage, results, masteryAttempt, pinnedProblemTex = null }) {
   const out = [];
   const skillId = masteryAttempt?.skillId || null;
-  const problemTex = cleanCardProblemTex(conversation.boardLedger?.current?.problemTex
+  const problemTex = cleanCardProblemTex(pinnedProblemTex || conversation.boardLedger?.current?.problemTex
     || (diagnosis?.problemInfo?.content ? String(diagnosis.problemInfo.content).slice(0, 500) : null));
 
-  if (diagnosis?.misconception?.name && diagnosis.isCorrect === false && !answerIsActuallyRight(diagnosis)) {
+  const confirmed = diagnosis?.misconception?.name
+    ? misconceptionConfirmed({ diagnosis, originalMessage, problemTex })
+    : { ok: false, reason: 'no_misconception' };
+  if (diagnosis?.misconception?.name && !confirmed.ok) {
+    console.log(`[Persist] reminder card skipped (${confirmed.reason}): ${diagnosis.misconception.name}`);
+  }
+  if (confirmed.ok) {
     const key = reminderKey(diagnosis.misconception.name);
     if (key) {
       const shaped = shapeReminder(diagnosis.misconception);
+      const attempt = sourceAttempt({ diagnosis, problemTex, conversationId: conversation._id, originalMessage });
       const card = await LearningCard.findOneAndUpdate(
         { userId: user._id, type: 'reminder', misconceptionKey: key },
         {
-          $setOnInsert: {
-            title: shaped.title, body: shaped.body, skillId,
-            conversationId: conversation._id, problemTex,
+          $setOnInsert: { skillId, conversationId: conversation._id },
+          // The card speaks for its LATEST confirmed occurrence, so its text,
+          // its problem and its source attempt always describe the same work —
+          // an insert-only body outlived the problem it was written about.
+          $set: {
+            title: shaped.title, body: shaped.body, problemTex,
+            lastSeenAt: new Date(), archived: false,
           },
           $inc: { seenCount: 1 },
-          $set: { lastSeenAt: new Date(), archived: false },
+          $push: { sourceAttempts: { $each: [attempt], $slice: -10 } },
         },
         { upsert: true, new: true }
       );
@@ -1118,6 +1151,7 @@ module.exports = {
   processIepGoalUpdate,
   updateBadgeProgress,
   answerIsActuallyRight,
+  misconceptionConfirmed,
   cleanCardProblemTex,
   isSameProblemRetry,
   turnMoments,

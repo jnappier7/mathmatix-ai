@@ -470,9 +470,10 @@ lines, fraction visuals) as alternatives.
 **COMPARISON BARS** — comparing quantities:
 [COMPARISON:values=15,28,7,labels=Team A,Team B,Team C,title="Score Comparison"]
 
-**ANGLE** — show any angle with type label:
-[ANGLE:degrees=90,type=right]
-[ANGLE:degrees=45,title="Acute Angle"]
+**ANGLE** — any angle; the type (acute/right/obtuse/straight/reflex) is computed from degrees:
+[ANGLE:degrees=45]              (practice — type stays hidden until the student checks)
+[ANGLE:degrees=90,reveal=true]  (teaching — shows "Right Angle: 90°")
+Never use reveal=true, or put the type in a title, when you are asking the student to classify it.
 
 **RIGHT TRIANGLE** — labeled sides:
 [RIGHT_TRIANGLE:a=3,b=4,c=5]

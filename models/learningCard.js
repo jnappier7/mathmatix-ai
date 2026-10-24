@@ -46,6 +46,23 @@ const learningCardSchema = new Schema({
     // The problem on the board when the card was born, when known.
     problemTex: { type: String, default: null, maxlength: 500 },
     seenCount: { type: Number, default: 1 },
+    // Reminder cards: the confirmed-incorrect attempts behind the count (last
+    // 10), so a later grading correction — or a human — can trace a card to
+    // the work it came from (course audit C07). Written by persist only.
+    sourceAttempts: {
+        type: [{
+            _id: false,
+            at: Date,
+            conversationId: { type: Schema.Types.ObjectId, ref: 'Conversation', default: null },
+            problemTex: String,
+            studentMessage: String,
+            studentAnswer: String,
+            correctAnswer: String,
+            verificationSource: String,
+            misconceptionSource: String,
+        }],
+        default: undefined,
+    },
     lastSeenAt: { type: Date, default: Date.now },
     // Soft delete — students may clear cards from their notebook without the
     // evidence trail vanishing.
