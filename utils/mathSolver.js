@@ -10,7 +10,7 @@
  * @module mathSolver
  */
 
-const { normalizeMathOperators, normalizeMathUnicode, normalizeSpokenNumbers } = require('./mathUnicodeNormalizer');
+const { normalizeMathOperators, normalizeMathUnicode, normalizeSpokenNumbers, stripThousandsSeparators } = require('./mathUnicodeNormalizer');
 const { evalExpression, expressionValue } = require('./rationalEvaluator');
 const { isWrappedOperand } = require('./wrappedOperand');
 
@@ -4128,8 +4128,24 @@ function _isWrappedOperand(problem, text) {
     return expr ? isWrappedOperand(expr, text) : false;
 }
 
+// A comparison has no single value to key on. "Compare 3/7 and 2/5" parsed as
+// the evaluation "3/7" and stored 0.4286 as the answer, so a student who
+// answered "2/5 < 3/7" — or named the smaller fraction — was graded against the
+// wrong number (course audit, 2026-10-23).
+const COMPARISON_ASK_RX = /\b(?:compare|comparing|which\s+(?:fraction|number|decimal|one|is)\b[^.?!]*\b(?:greater|larger|bigger|smaller|less|least|greatest|more)|(?:greater|less)\s+than\s+or\s+equal|[<>]\s*,?\s*(?:or|and)\s*=?\s*[<>=])/i;
+
 function parseCleanProblem(text) {
     if (!text || typeof text !== 'string') return { hasMath: false };
+    // "3,004 − 1,567" is one subtraction, not "3" followed by noise.
+    text = stripThousandsSeparators(text);
+    const result = _parseCleanProblem(text);
+    if (result.hasMath && result.problem?.type === 'evaluation' && COMPARISON_ASK_RX.test(text)) {
+        return { hasMath: false };
+    }
+    return result;
+}
+
+function _parseCleanProblem(text) {
 
     const direct = processMathMessage(text);
     if (direct.hasMath && direct.solution?.success

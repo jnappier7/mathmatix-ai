@@ -54,6 +54,9 @@ module.exports = {
     '<rootDir>/tests/unit/diagnoseMultiStep.test.js',
     '<rootDir>/tests/unit/derivationVerifier.test.js',
     '<rootDir>/tests/unit/stepSolveCredit.test.js',
+    // Course audit 2026-10-18..23: correct worked answers, and verdict repair.
+    '<rootDir>/tests/unit/auditCourseFalseNegatives.test.js',
+    '<rootDir>/tests/unit/verdictRepair.test.js',
     '<rootDir>/tests/unit/mathSolver*.test.js',
     '<rootDir>/tests/golden/goldenTranscripts.test.js',
   ],
@@ -100,7 +103,10 @@ module.exports = {
     // that decides whether a student's claim gets graded at all, and the drop
     // detector decides whether their work is treated as a problem they handed
     // over; a shape either misses fails silently, so coverage is the alarm.
-    './utils/pipeline/observe.js': { statements: 87, branches: 84, functions: 100, lines: 92 },
+    // Measured 90.8/87.0/100/94.9 once auditCourseFalseNegatives.test.js joined
+    // with the final-claim shapes (closed arithmetic, equivalent forms,
+    // comparisons, check lines) — ratcheted.
+    './utils/pipeline/observe.js': { statements: 88, branches: 85, functions: 100, lines: 93 },
     // Measured 68.4/69.7/100/67.7 once bareProblemDrop.test.js (which drives
     // decide's ELICIT_FIRST and alignment gates) joined the gate — ratcheted.
     // functions:100 is deliberate and is the lesson from the drop that turned this
@@ -114,6 +120,8 @@ module.exports = {
     // last line between a correct student and a tutor improvising arithmetic, and
     // they fail SILENTLY: losing one costs a verdict, not an exception, and the
     // turn goes out undecided with every language guard in verify.js disarmed.
-    './utils/pipeline/diagnose.js': { statements: 65, branches: 59, functions: 70, lines: 65 },
+    // Measured 80.9/73.1/85.7/81.0 once auditCourseFalseNegatives.test.js joined
+    // (comparison grading, shown-arithmetic reasoning) — ratcheted.
+    './utils/pipeline/diagnose.js': { statements: 78, branches: 70, functions: 83, lines: 78 },
   },
 };
