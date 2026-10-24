@@ -9,7 +9,8 @@
  * @module pipeline/observe
  */
 
-const { normalizeSpokenNumbers, normalizeMathUnicode } = require('../mathUnicodeNormalizer');
+const { normalizeSpokenNumbers, normalizeMathUnicode, stripThousandsSeparators } = require('../mathUnicodeNormalizer');
+const { parseFractionOrDecimal } = require('../answerComparison');
 const { isCheckWorkIntent } = require('../worksheetGuard');
 
 // ── Message categories ──
@@ -249,6 +250,107 @@ function matchAnswerClause(clause) {
   return null;
 }
 
+// ── The final claim of fully-worked arithmetic ──
+// Course audit, 2026-10-18..23: twelve correct, fully-worked submissions were
+// recorded as misses and accepted only when repeated. In every one, extraction
+// had handed the grader a number the student never claimed as the answer —
+// "4 × 8 + 3 = 35, so 4 3/8 = 35/8" was graded as 35, "3 − 2 = 1. 3/8 − 2/8 =
+// 1/8" as 1, "five tenths, 0.5, 5/10" as 5, "6 × 4 = 24 cm². That's 4 rows of
+// 6 unit squares" as 4. Even the LLM verifier's deterministic step then rejected
+// that token at 0.98 confidence without reading the rest of the reply. The rules
+// below say what the student's answer IS in shown arithmetic work.
+
+// A line or clause that CHECKS the answer is shown work, never the answer:
+// "Check: 1,437 + 1,567 = 3,004" restates the minuend.
+const VERIFICATION_LEAD = /^\s*(?:(?:and|then|so)\s+)?(?:(?:reverse|inverse|quick|my)\s+)?(?:check(?:ing)?|checked|estimate|estimating|estimation|verify(?:ing)?|proof|to\s+check|double[-\s]?check)\b/i;
+// A self-correction: everything before it is withdrawn, so never walk back past it.
+const SELF_CORRECTION = /\b(?:wait|actually|oops|no\s+wait|i\s+mean|scratch\s+that|never\s*mind|sorry)\b/i;
+const NUM_FORM_SRC = '-?\\d+(?:\\.\\d+)?(?:\\s+\\d+\\s*\\/\\s*\\d+|\\s*\\/\\s*\\d+)?';
+const NUM_FORM_ONLY = new RegExp(`^(${NUM_FORM_SRC})$`);
+// The value closing "… = 24 cm^2", "… = 1437", "… = 3 4/5": a number, fraction
+// or mixed number, then at most a unit ("cm^2", "square units", "°", "%").
+const CLAIM_VALUE = new RegExp(`^\\s*(${NUM_FORM_SRC})\\s*(?:°|%|(?:(?:square|sq\\.?|cubic)\\s+)?[a-z]{2,12}(?:\\^[23]|\\s+(?:squared|cubed))?)?\\s*[.!]*$`, 'i');
+// The numeric computation just before the last "=": digits, operators, parens.
+const TRAILING_COMPUTATION = /((?:\(?\s*-?\d+(?:\.\d+)?\s*\)?\s*(?:[+\-*/^]\s*)?)+)$/;
+
+/**
+ * "… <numeric computation> = <value> [unit]" → value. Chains take their last
+ * link ("2(3)+4 = 6+4 = 10" → 10); a label before the computation is fine
+ * ("Area = length × width = 6 × 4 = 24 cm²"). The computation must be numeric
+ * and carry an operator (a mixed number "4 3/8" counts), so "x + 3 = 5" — an
+ * equation, not a claim — never matches here.
+ */
+function matchClosedClaim(clause) {
+  const bare = clause.replace(CLAUSE_LEAD_IN, '').trim();
+  const segments = bare.split('=');
+  if (segments.length < 2) return null;
+  const valueMatch = segments[segments.length - 1].match(CLAIM_VALUE);
+  if (!valueMatch) return null;
+  const before = segments[segments.length - 2].trim().match(TRAILING_COMPUTATION);
+  if (!before) return null;
+  const computation = before[1].trim();
+  if (!/\d/.test(computation) || !/[+\-*/^]|\d\s+\d/.test(computation.replace(/^\s*-/, ''))) return null;
+  return valueMatch[1].replace(/\s*\/\s*/g, '/').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * One value written several equivalent ways — "five tenths, 0.5, 5/10",
+ * "0.5 = 5/10", "3/6 or 1/2". When the clause ENDS in a run of two or more
+ * plain numeric forms that are all the same number, that number is the answer.
+ * Forms that disagree return null: two different numbers are not one answer.
+ */
+function matchEquivalentForms(clause) {
+  const tokens = clause.replace(/[\s.!]+$/, '').split(/\s*(?:,|=|:|\bor\b|\balso\b|\bwhich\s+is\b)\s*/i);
+  const run = [];
+  for (let i = tokens.length - 1; i >= 0; i--) {
+    const t = tokens[i].trim();
+    if (!NUM_FORM_ONLY.test(t)) break;
+    run.unshift(t);
+  }
+  if (run.length < 2) return null;
+  const values = run.map(parseFractionOrDecimal);
+  if (values.some(v => v == null || !Number.isFinite(v))) return null;
+  if (!values.every(v => Math.abs(v - values[0]) < 1e-9)) return null;
+  return run[run.length - 1].replace(/\s*\/\s*/g, '/');
+}
+
+// "3/7 > 2/5", "0.7 > 0.65" closing the clause: the answer to a comparison.
+const COMPARISON_CLAIM = new RegExp(`(${NUM_FORM_SRC})\\s*(<=|>=|<|>|≤|≥)\\s*(${NUM_FORM_SRC})\\s*[.!]*$`);
+
+function matchComparisonClaim(clause) {
+  const m = clause.match(COMPARISON_CLAIM);
+  if (!m) return null;
+  // "Since 15 > 14, 3/7 > 2/5" — only the closing comparison, which the
+  // end anchor already guarantees.
+  const op = m[2].replace('≤', '<=').replace('≥', '>=');
+  return `${m[1].replace(/\s*\/\s*/g, '/')} ${op} ${m[3].replace(/\s*\/\s*/g, '/')}`;
+}
+
+/** The final-claim shapes, in order. Null when the clause makes no claim. */
+function matchFinalClaim(clause) {
+  return matchComparisonClaim(clause) || matchEquivalentForms(clause) || matchClosedClaim(clause);
+}
+
+// The answer object for a final claim. `multipleForms` marks a value the
+// student wrote more than one way — that IS the explanation a place-value or
+// conversion question asks for, so diagnose counts it as shown reasoning.
+function claimResult(value, raw, clause, hasExplanation) {
+  const out = { value, raw };
+  if (hasExplanation) out.hasExplanation = true;
+  if (matchEquivalentForms(clause) === value) {
+    out.multipleForms = true;
+    out.hasExplanation = true;
+  }
+  return out;
+}
+
+// The part of a clause after its last conclusion connective: "4 × 8 + 3 = 35,
+// so 4 3/8 = 35/8" → "4 3/8 = 35/8". Without a connective, the whole clause.
+function conclusionTail(clause) {
+  const parts = clause.split(/,\s*(?=(?:so|thus|therefore|hence|which\s+means|that\s+means|which\s+gives|giving|and\s+so)\b)/i);
+  return parts[parts.length - 1].replace(/^(?:which\s+gives|giving|and\s+so)\s+/i, '');
+}
+
 const TUPLE_NUM = '-?\\d+(?:\\.\\d+)?(?:\\s*\\/\\s*\\d+)?';
 const TUPLE_LEAD = `(?:(?:so|then|ok|okay|the\\s+answer\\s+is|answer\\s*:?|i\\s+got|it['’]?s|solution\\s*:?)\\s*,?\\s*)?`;
 const ORDERED_PAIR_ANSWER = new RegExp(
@@ -280,7 +382,7 @@ function extractAnswer(message) {
   // Normalize speech-to-text negatives/number-words to signed digits BEFORE matching,
   // so a spoken "negative six" is recognized as the answer -6 (the numeric PATTERNS
   // only understand digits). `raw` keeps the original text for downstream use.
-  const text = normalizeSpokenNumbers(unwrapped);
+  const text = stripThousandsSeparators(normalizeSpokenNumbers(unwrapped));
 
   // A number-WORD buried in prose is not an answer. "if its zero on top too" is
   // a correct description of when a rational function has a hole, but the
@@ -300,11 +402,20 @@ function extractAnswer(message) {
   if (/\n/.test(text)) {
     const mathLines = text
       .split(/[\n\r]+/)
-      .map(l => l.trim().replace(/^\s*(?:step\s*\d+\s*[:.)-]?|\d+\s*[.)]|[-*•])\s*/i, ''))
+      .map(l => l.trim().replace(/^\s*(?:step\s*\d+\s*[:.)-]?|\d+\s*[.)](?=\s)|[-*•](?=\s))\s*/i, ''))
       .filter(l => l && /\d/.test(l));
     if (mathLines.length >= 2) {
       const value = matchAnswerLine(mathLines[mathLines.length - 1]);
       if (value) return { value, raw, hasExplanation: true };
+      // Arithmetic work: the last line that is not a check states the answer
+      // ("23 × 15 = 345" above "Check: 345 ÷ 15 = 23").
+      const claimLines = mathLines.filter(l => !VERIFICATION_LEAD.test(l));
+      for (let i = claimLines.length - 1; i >= 0; i--) {
+        const claim = matchAnswerLine(claimLines[i].replace(CLAUSE_LEAD_IN, '').replace(/[\s?!.]+$/, ''))
+          || matchFinalClaim(claimLines[i]);
+        if (claim) return claimResult(claim, raw, claimLines[i], true);
+        if (SELF_CORRECTION.test(claimLines[i])) break;
+      }
     }
   }
 
@@ -340,7 +451,27 @@ function extractAnswer(message) {
         if (hit.proposed) out.proposed = true;
         return out;
       }
+      // No strict shape on the last clause: the claim may be arithmetic
+      // ("so 3/8 − 2/8 = 1/8"), or sit before a check or an explanation
+      // ("= 24 cm². That's 4 rows of 6 unit squares"). Walk back to the
+      // latest clause that claims a value — never past a self-correction.
+      const claimClauses = mathClauses.filter(c => !VERIFICATION_LEAD.test(c));
+      for (let i = claimClauses.length - 1; i >= 0; i--) {
+        const c = claimClauses[i];
+        const claim = (i < claimClauses.length - 1 ? matchAnswerClause(c)?.value : null)
+          || matchFinalClaim(conclusionTail(c));
+        if (claim) return claimResult(claim, raw, conclusionTail(c), mathClauses.length >= 2);
+        if (SELF_CORRECTION.test(c)) break;
+      }
     }
+  }
+
+  // A single clause that closes on a claim: "4 × 8 + 3 = 35, so 4 3/8 = 35/8",
+  // "five tenths: 0.5 = 5/10". Tried before the loose whole-text patterns,
+  // which take the FIRST "= n" (35) or the first number after a cue (5).
+  {
+    const claim = matchFinalClaim(conclusionTail(text));
+    if (claim) return claimResult(claim, raw, conclusionTail(text), /=.*=|,|:/.test(text));
   }
 
   // For short, direct answers (< 100 chars): try all patterns

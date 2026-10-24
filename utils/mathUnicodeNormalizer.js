@@ -229,4 +229,28 @@ function normalizeSpokenNumbers(str) {
   return s;
 }
 
-module.exports = { normalizeMathUnicode, normalizeMathOperators, normalizeSpokenNumbers, OPERATOR_MAP };
+// A digit-grouping comma — "3,004", "1,234,567" — sits between a 1-3 digit
+// lead and groups of EXACTLY three digits. Lists ("6,8,10") and decimals
+// ("0.507") never take that shape. A parenthesised pair "(1,234)" is left alone:
+// that is an ordered pair as often as it is a number.
+const THOUSANDS_GROUPED = /(?<![\d.,])(\d{1,3})((?:,\d{3})+)(?![\d,]|\.\d)/g;
+
+/**
+ * Drop thousands separators so "3,004 − 1,567" is the subtraction it reads as.
+ * The solver saw "3,004" as "3" and stored 3 as the key; every correct
+ * multi-digit answer after it was graded against that (course audit, 2026-10-18:
+ * 3,004 − 1,567 = 1,437 recorded as a miss). answerComparison already reads
+ * "3,610" as 3610 — this is the same rule for problem text and shown work.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function stripThousandsSeparators(str) {
+  if (!str || typeof str !== 'string') return str || '';
+  return str.replace(THOUSANDS_GROUPED, (m, lead, groups, offset, whole) => {
+    if (whole[offset - 1] === '(' && whole[offset + m.length] === ')') return m;
+    return lead + groups.replace(/,/g, '');
+  });
+}
+
+module.exports = { normalizeMathUnicode, normalizeMathOperators, normalizeSpokenNumbers, stripThousandsSeparators, OPERATOR_MAP };

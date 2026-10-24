@@ -30,6 +30,7 @@ const { callLLM } = require('../llmGateway');
 // definition.
 const { isClaudeModel } = require('../anthropicClient');
 const { symbolicVerify } = require('./symbolicVerifier');
+const { parseStrictNumber } = require('../answerComparison');
 const { normalizeMathUnicode } = require('../mathUnicodeNormalizer');
 // Where the cross-provider state lives, alongside the outcome ring it has to be
 // read next to: an unverifiableRate measured while tier 1 is self-grading does
@@ -178,6 +179,12 @@ async function verifierCall(model, messages, options) {
  *   - rationale {string|null}: brief reason (for logging / debugging)
  *   - error {string|null}: error message if the call failed
  */
+// A number with at most a trailing unit: "24 cm²", "24 cm^2", "24 square units".
+function unitlessNumber(text) {
+  const t = String(text).trim().replace(/\s*(?:\^\s*[23]|[²³])\s*$/, '');
+  return parseStrictNumber(t);
+}
+
 async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
   const unverifiable = {
     isCorrect: null,
@@ -248,6 +255,16 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
       const sym = symbolicVerify({ studentAnswer: answer, correctAnswer: modelAnswer });
       if (sym.isCorrect !== null) {
         return { isCorrect: sym.isCorrect, confidence: 0.98, modelAnswer, rationale: 'symbolic:' + sym.method, error: null };
+      }
+      // The same number with its unit — "24" against "24 cm²". mathjs reads the
+      // unit as a variable and gives up, leaving a plain area answer to the
+      // judge. AFFIRM-ONLY: different numbers may be the same quantity in
+      // different units (2400 mm² vs 24 cm²), so a mismatch decides nothing.
+      const studentValue = unitlessNumber(answer);
+      const modelValue = unitlessNumber(modelAnswer);
+      if (studentValue != null && modelValue != null
+          && Math.abs(studentValue - modelValue) <= 1e-9 * (1 + Math.abs(modelValue))) {
+        return { isCorrect: true, confidence: 0.98, modelAnswer, rationale: 'symbolic:unit_value', error: null };
       }
     } catch (_) { /* fall through to the LLM equivalence judge */ }
 

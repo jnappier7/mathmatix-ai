@@ -15,9 +15,46 @@ const { parseCleanProblem, verifyAnswer, matchRootsInText } = require('../mathSo
 const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer, trueArithmeticStatement } = require('./symbolicVerifier');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 const { hasMathematicalContent } = require('./verificationState');
-const { verifyDerivation } = require('../derivationVerifier');
+const { verifyDerivation, isTrueArithmeticFact } = require('../derivationVerifier');
 const { isFinalForm } = require('./solveCredit');
 const { llmVerifyMethod, articulatesMethod } = require('./llmVerifier');
+const { parseFractionOrDecimal } = require('../answerComparison');
+const { stripThousandsSeparators } = require('../mathUnicodeNormalizer');
+
+const COMPARISON_ANSWER = /^\s*(-?\d+(?:\.\d+)?(?:\s+\d+\/\d+|\/\d+)?)\s*(<=|>=|<|>)\s*(-?\d+(?:\.\d+)?(?:\s+\d+\/\d+|\/\d+)?)\s*$/;
+const QUESTION_NUMBER = /-?\d+(?:\.\d+)?(?:\s+\d+\s*\/\s*\d+(?![\d.]))?(?:\s*\/\s*\d+)?/g;
+
+/**
+ * Grade a comparison answer ("3/7 > 2/5") against the pair the tutor posed.
+ * A comparison has no single value, so no solver key exists for it — the key
+ * the solver used to store was one of the two operands ("Compare 3/7 and 2/5"
+ * → 0.4286), and a correct "3/7 > 2/5" was a miss (course audit, 2026-10-23).
+ *
+ * Deterministic and narrow: both operands must be (equivalent to) two distinct
+ * numbers in the tutor's question — "15/35 > 14/35" compares the same pair.
+ * Anything else returns null and grading falls through unchanged.
+ *
+ * @returns {true|false|null}
+ */
+function gradeComparison(answer, questionText) {
+  const m = typeof answer === 'string' && answer.match(COMPARISON_ANSWER);
+  if (!m || typeof questionText !== 'string') return null;
+  const a = parseFractionOrDecimal(m[1]);
+  const b = parseFractionOrDecimal(m[3]);
+  if (a == null || b == null || Math.abs(a - b) < 1e-12) return null;
+  const posed = (stripLatexDelimiters(stripThousandsSeparators(questionText)).match(QUESTION_NUMBER) || [])
+    .map(t => parseFractionOrDecimal(t.replace(/\s*\/\s*/g, '/')))
+    .filter(v => v != null);
+  const near = (x, y) => Math.abs(x - y) < 1e-9;
+  if (!posed.some(v => near(v, a)) || !posed.some(v => near(v, b))) return null;
+  switch (m[2]) {
+    case '>': return a > b;
+    case '<': return a < b;
+    case '>=': return a >= b;
+    case '<=': return a <= b;
+    default: return null;
+  }
+}
 
 /**
  * Strip LaTeX delimiters from text so regex-based math detection works.
@@ -881,6 +918,17 @@ async function diagnose(observation, context = {}) {
     } catch (_) { /* never break diagnosis */ }
   }
 
+  // ── Step 2a.5b: A comparison of the posed pair ──
+  if (isCorrect === null && multiRoot === null) {
+    const compared = gradeComparison(studentAnswer, latestTurn?.content);
+    if (compared !== null) {
+      isCorrect = compared;
+      correctAnswer = compared ? studentAnswer : null;
+      verificationSource = 'symbolic:comparison';
+      console.log(`[Diagnose] Comparison "${studentAnswer}" of the posed pair -> ${compared ? 'correct' : 'incorrect'}`);
+    }
+  }
+
   // ── Step 2a.6: A closed arithmetic claim the student wrote out ──
   // "0.8(1.25)=1" — true or false on its own terms, whatever the pipeline did
   // or didn't resolve as the posed problem. Last of the deterministic tiers and
@@ -1041,9 +1089,18 @@ async function diagnose(observation, context = {}) {
   // determined that prose describes an invalid rule. Without the veto, decide
   // would stack "valid reasoning — affirm and advance, never probe" on the
   // exact turn the method needs probing.
+  // Shown arithmetic counts too: a correct answer stated alongside true
+  // sub-computations ("4 × 8 + 3 = 35, so 4 3/8 = 35/8") or written several
+  // equivalent ways ("five tenths, 0.5, 5/10"). Without it decide's fallback
+  // was "can you teach me how you did it?" — re-asking for the work on screen,
+  // and the turn after it became the false miss (course audit, 2026-10-18..23).
+  const shownArithmetic = observation.answer?.hasExplanation === true
+    && (observation.answer.multipleForms === true || isTrueArithmeticFact(rawText));
   const demonstratedReasoning = isCorrect === true
     && !(methodAudit && methodAudit.suspect)
-    && (observation.demonstratedReasoning === true || (derivation != null && derivation.valid === true));
+    && (observation.demonstratedReasoning === true
+      || (derivation != null && derivation.valid === true)
+      || shownArithmetic);
   const hasExplanation = observation.answer?.hasExplanation === true;
 
   // A partial multi-root answer is "correct but incomplete" — its own type so
@@ -1174,6 +1231,7 @@ function hasLibraryMisconceptions(skillId) {
 }
 
 module.exports = {
+  gradeComparison,
   diagnose,
   gradeRootSet,
   estimateIndependence,

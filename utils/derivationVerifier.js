@@ -17,14 +17,69 @@
 // single-answer path rather than inventing a verdict.
 
 const { parseCleanProblem, verifyAnswer } = require('./mathSolver');
+const { stripThousandsSeparators } = require('./mathUnicodeNormalizer');
+const { trueArithmeticStatement } = require('./pipeline/symbolicVerifier');
+
+// A line that CHECKS the answer ("Check: 1,437 + 1,567 = 3,004") is shown work,
+// never the answer. Ending the chain on it graded a correct 1,437 against the
+// minuend 3,004 (course audit, 2026-10-18).
+const VERIFICATION_LINE = /^\s*(?:(?:and|then|so)\s+)?(?:(?:reverse|inverse|quick|my)\s+)?(?:check(?:ing)?|checked|estimate|estimating|estimation|verify(?:ing)?|proof|to\s+check|double[-\s]?check)\b/i;
+
+// The closed arithmetic facts on a line — "7 × 64 = 448", "Ones: 14 − 7 = 7",
+// "16 × 60 = 960, and 1024 − 960 = 64 left over" — when every one is TRUE.
+// Arithmetic work is a set of sub-computations, each with its own value:
+// partial products, column subtractions, a check. None of them is meant to
+// equal the final answer, so judging them against it reported every correct
+// long multiplication as "broken at 7 × 64 = 448" and armed the method probe
+// that re-asked for work the student had just shown (course audit, 2026-10-18).
+// A "." is part of a number only when a digit follows it: "carry 1. 5×2+1=11"
+// is two sentences, not 1.5 × 2 + 1.
+const NUMERIC_CHAIN = /[\d(](?:\d|\.(?=\d)|[ \t+\-*/^()×÷−])*(?:=[ \t]*[\d(\-−](?:\d|\.(?=\d)|[ \t+\-*/^()×÷−])*)+/g;
+// An estimate is an approximation by design: "60 × 40 = 2,400, so 2,368 is
+// reasonable" does not equal the answer and is not a broken step.
+const ESTIMATE_LINE = /^\s*(?:(?:and|then|so)\s+)?(?:estimate|estimating|estimation|rounded|rounding)\b/i;
+
+// "19 ÷ 5 = 3 remainder 4" is true division, not the false claim 19/5 = 3.
+const REMAINDER_FACT = /(\d+)\s*[÷/]\s*(\d+)\s*=\s*(\d+)\s*(?:remainder|rem\.?|r)\s*(\d+)/gi;
+// "4 3/8" is a mixed number, 4 + 3/8 — never 4 × 3/8.
+const MIXED_NUMBER = /(?<![\d./])(\d+)\s+(\d+)\s*\/\s*(\d+)(?!\d|\.\d)/g;
+
+function isTrueArithmeticFact(line) {
+  let facts = 0;
+  let text = String(line).replace(REMAINDER_FACT, (m, a, b, q, r) => {
+    const [n, d, quo, rem] = [a, b, q, r].map(Number);
+    facts += (d > 0 && rem < d && quo * d + rem === n) ? 1 : -Infinity;
+    return ' ; ';
+  });
+  if (facts < 0) return false;
+  text = text.replace(MIXED_NUMBER, '($1+$2/$3)');
+  const chains = text.match(NUMERIC_CHAIN) || [];
+  for (const chain of chains) {
+    const parts = chain.split('=').map((p) => p.trim()).filter(Boolean);
+    if (parts.length < 2) continue;
+    // Every link must equal the last; one of them has to compute something.
+    const last = parts[parts.length - 1];
+    for (let i = 0; i < parts.length - 1; i++) {
+      const [lhs, rhs] = /[+\-*/^×÷−]|\d\s*\(/.test(parts[i].replace(/^\s*[-−]/, '')) ? [parts[i], last] : [last, parts[i]];
+      if (trueArithmeticStatement(`${lhs}=${rhs}`) === null) {
+        // A link with no computation on either side ("64 = 64") proves nothing
+        // but is not false; anything else that fails to check is a false fact.
+        if (/[+\-*/^×÷−]/.test(lhs.replace(/^\s*[-−]/, '')) || /[+\-*/^×÷−]/.test(rhs.replace(/^\s*[-−]/, ''))) return false;
+      } else {
+        facts++;
+      }
+    }
+  }
+  return facts > 0;
+}
 
 // Split shown work into candidate step lines. Handles one multi-line message or
 // a joined transcript; strips bullets/numbering and keeps lines that carry math.
 function splitWorkLines(workText) {
   if (!workText || typeof workText !== 'string') return [];
-  return workText
+  return stripThousandsSeparators(workText)
     .split(/[\n\r]+/)
-    .map((l) => l.replace(/^\s*(?:step\s*\d+\s*[:.)-]?|\d+\s*[.)]|[-*•])\s*/i, '').trim())
+    .map((l) => l.replace(/^\s*(?:step\s*\d+\s*[:.)-]?|\d+\s*[.)](?=\s)|[-*•](?=\s))\s*/i, '').trim())
     .filter((l) => l.length > 0 && /[0-9x-z)]/i.test(l) && /[=+\-*/×÷]/.test(l));
 }
 
@@ -84,22 +139,34 @@ function verifyDerivation(workText, problemText, knownTarget) {
   let target = knownTarget != null ? String(knownTarget) : (problemText ? resolveLine(problemText) : null);
   const targetSource = knownTarget != null ? 'known' : (target != null ? 'problem' : 'internal');
 
-  const steps = lines.map((line) => ({ line, solved: resolveLine(line) }));
+  const steps = lines.map((line) => ({
+    line,
+    solved: resolveLine(line),
+    check: VERIFICATION_LINE.test(line),
+    fact: isTrueArithmeticFact(line),
+  }));
   const solvable = steps.filter((s) => s.solved !== null);
   if (solvable.length < 2) return { verifiable: false, reason: 'not enough solvable steps' };
+  // The answer is the last solvable line that is not a check.
+  const claims = solvable.filter((s) => !s.check);
+  const answerStep = claims.length ? claims[claims.length - 1] : solvable[solvable.length - 1];
 
   // No external anchor: the chain can only be checked for internal consistency,
   // and the reference must be the LAST solvable line — the student's answer.
   // Anchoring on the FIRST line graded the rest of a student's work against
   // their own opening shorthand: with an unparseable pin, "520=7x / 100=7x /
   // 100/7 = x" anchored on 520=7x and marked the two CORRECT lines bad.
-  if (target == null) target = solvable[solvable.length - 1].solved;
+  if (target == null) target = answerStep.solved;
 
   let firstBadStepIndex = -1;
   for (let i = 0; i < steps.length; i++) {
     const s = steps[i];
     if (s.solved === null) continue; // unparseable line — can't judge it, skip
-    s.ok = verifyAnswer(s.solved, target).isCorrect === true;
+    if (s !== answerStep && ESTIMATE_LINE.test(s.line)) { s.ok = true; continue; }
+    s.ok = verifyAnswer(s.solved, target).isCorrect === true
+      // A true sub-computation or check is sound work whatever its value — but
+      // never the answer line: that one has to reach the target.
+      || (s !== answerStep && s.fact);
     if (!s.ok) {
       const rescue = rescueMissingOperator(s.line, target);
       if (rescue) {
@@ -111,7 +178,7 @@ function verifyDerivation(workText, problemText, knownTarget) {
     if (!s.ok && firstBadStepIndex === -1) firstBadStepIndex = i;
   }
 
-  const finalAnswer = solvable[solvable.length - 1].solved;
+  const finalAnswer = answerStep.solved;
   const reachedAnswer = verifyAnswer(finalAnswer, target).isCorrect === true;
   // `valid` is the whole chain checking out — the demonstrated-reasoning signal.
   const valid = firstBadStepIndex === -1 && reachedAnswer;
@@ -137,4 +204,4 @@ function verifyDerivation(workText, problemText, knownTarget) {
   };
 }
 
-module.exports = { verifyDerivation, splitWorkLines };
+module.exports = { verifyDerivation, splitWorkLines, isTrueArithmeticFact };
