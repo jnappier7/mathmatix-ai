@@ -7321,6 +7321,36 @@ html.theme-transitioning *::after {
   color: #9AE6B4;
 }
 
+/* COMEBACK STAMP — right after a miss on the same problem (persist.js).
+   Gold, not green: it's a bigger moment than a first-try solve. */
+.comeback-chip {
+  display: inline-block;
+  margin: 8px 0 0 6px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #7B341E;
+  background: #FEFCBF;
+  border: 1px solid #D69E2E;
+  border-radius: 12px;
+  animation: comebackStamp 0.5s cubic-bezier(.2,1.6,.4,1);
+}
+
+@keyframes comebackStamp {
+  0%   { opacity: 0; transform: scale(1.6) rotate(-8deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+[data-theme="dark"] .comeback-chip {
+  background: #3D2E0A;
+  border-color: #D69E2E;
+  color: #F6E05E;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comeback-chip { animation: none; }
+}
+
 /* ============================================================================
    STREAK FIRE — "You're on fire!" send button
    2 correct = heating up (warm glow), 3+ = on fire (growing flames)

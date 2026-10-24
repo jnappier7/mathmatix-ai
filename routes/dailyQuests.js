@@ -48,23 +48,29 @@ const QUEST_TEMPLATES = {
     xpReward: 100
   },
 
-  accuracyAce: {
-    id: 'accuracyAce',
-    name: 'Accuracy Ace',
-    description: 'Maintain {count}% accuracy or higher',
+  // Replaced Accuracy Ace (2026-10-24): it waited for a `sessionComplete`
+  // event nothing sends, so it sat at "0/95" for everyone. First tries are
+  // counted per problem by utils/pipeline/persist.js.
+  firstTry: {
+    id: 'firstTry',
+    name: 'First Try',
+    description: 'Get {count} problems right on your first try',
     icon: '🎯',
-    target: 'accuracy',
-    countOptions: [80, 90, 95],
+    target: 'firstTryCorrect',
+    countOptions: [3, 5, 8],
     xpReward: 75
   },
 
-  speedster: {
-    id: 'speedster',
-    name: 'Speedster',
-    description: 'Solve {count} problems in under 15 minutes',
-    icon: '⚡',
-    target: 'fastSolving',
-    countOptions: [10, 15, 20],
+  // Replaced Speedster (2026-10-24): it could never progress (no solve time is
+  // sent), and racing the clock punishes the careful thinking the tutor asks
+  // for. Bounce Back pays for the behaviour we want most — fixing a miss.
+  bounceBack: {
+    id: 'bounceBack',
+    name: 'Bounce Back',
+    description: 'Fix {count} problems you got wrong at first',
+    icon: '💪',
+    target: 'comebacks',
+    countOptions: [1, 2, 3],
     xpReward: 60
   },
 
@@ -166,6 +172,12 @@ function isPiDay() {
 }
 
 // Generate daily quests for a user based on their level and progress
+// "Fix 1 problems" → "Fix 1 problem".
+function questDescription(template, count) {
+  const text = template.replace('{count}', count);
+  return count === 1 ? text.replace(/\b(\d+) problems\b/, '$1 problem') : text;
+}
+
 function generateDailyQuests(user) {
   const userLevel = user.level || 1;
   const quests = [];
@@ -219,7 +231,7 @@ function generateDailyQuests(user) {
       id: `${template.id}-${Date.now()}`,
       templateId: template.id,
       name: template.name,
-      description: template.description.replace('{count}', targetCount),
+      description: questDescription(template.description, targetCount),
       icon: template.icon,
       target: template.target,
       targetCount: targetCount,
@@ -537,3 +549,6 @@ router.get('/daily-quests/pi-day-lessons', isAuthenticated, (req, res) => {
 
 router.__helpers = { calculateStreak, shouldRefreshQuests };
 module.exports = router;
+// For tests: which quests get dealt, and what they ask.
+module.exports.QUEST_TEMPLATES = QUEST_TEMPLATES;
+module.exports.generateDailyQuests = generateDailyQuests;

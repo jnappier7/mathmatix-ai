@@ -1067,6 +1067,8 @@ function getQuestDescription(type) {
         'Mastery Hunter': 'Gain mastery on any skill',
         'Accuracy Ace': 'Maintain high accuracy',
         'Speedster': 'Solve problems quickly',
+        'First Try': 'Get problems right on your first try',
+        'Bounce Back': 'Fix problems you missed at first',
         'Perfectionist': 'Get problems correct in a row',
         'Explorer': 'Try a new skill',
         'Skill Master': 'Master new skills this week',
@@ -1075,6 +1077,7 @@ function getQuestDescription(type) {
         'Perfect Week': 'Complete all daily quests',
         'Diverse Learner': 'Practice across domains',
         'Weekly Speedster': 'Solve problems under 1 minute',
+        'Comeback Kid': 'Fix problems you missed at first',
         'Growth Mindset': 'Improve your ability score',
         'Helpful Helper': 'Help classmates via peer tutoring'
     };

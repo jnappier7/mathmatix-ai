@@ -68,20 +68,24 @@ const WEEKLY_CHALLENGE_TEMPLATES = {
     specialReward: 'Domain Explorer Badge'
   },
 
-  speedster: {
-    id: 'speedster',
-    name: 'Weekly Speedster',
-    description: 'Solve {count} problems in under 1 minute each',
-    icon: '⚡',
-    difficulty: 'hard',
-    targetType: 'fastProblems',
-    countOptions: [20, 30, 50],
-    xpReward: 450,
-    specialReward: 'Speed Demon Badge'
+  // Replaces Weekly Speedster (2026-10-24): it never progressed (no solve
+  // time is sent) and rewarded rushing. Fixing a miss is the habit we pay for.
+  comebackKid: {
+    id: 'comebackKid',
+    name: 'Comeback Kid',
+    description: 'Fix {count} problems you got wrong at first',
+    icon: '💪',
+    difficulty: 'medium',
+    targetType: 'weeklyComebacks',
+    countOptions: [5, 8, 12],
+    xpReward: 400,
+    specialReward: 'Comeback Kid Badge'
   },
 
+  // Not dealt (2026-10-24): its only event, thetaImprovement, is never sent (growth checks are quarterly, not weekly), so it sat at 0 all week.
   growthMindset: {
     id: 'growthMindset',
+    retired: true,
     name: 'Growth Mindset',
     description: 'Grow your math level by {count} points on your growth checks',
     icon: '📈',
@@ -92,8 +96,10 @@ const WEEKLY_CHALLENGE_TEMPLATES = {
     specialReward: 'Growth Star Badge'
   },
 
+  // Not dealt (2026-10-24): there is no peer-tutoring feature to send peerHelped, so it sat at 0 all week.
   helpfulHelper: {
     id: 'helpfulHelper',
+    retired: true,
     name: 'Helpful Helper',
     description: 'Help {count} classmates this week (peer tutoring)',
     icon: '🤝',
@@ -128,7 +134,10 @@ function generateWeeklyChallenges(user) {
   const challenges = [];
 
   // Select 3 random challenge types
-  const templateKeys = Object.keys(WEEKLY_CHALLENGE_TEMPLATES);
+  // Only challenges a student can actually finish (retired ones stay defined
+  // so a challenge already dealt still renders).
+  const templateKeys = Object.keys(WEEKLY_CHALLENGE_TEMPLATES)
+    .filter(key => !WEEKLY_CHALLENGE_TEMPLATES[key].retired);
   const selectedTemplates = [];
 
   // Always include one hard challenge
@@ -430,3 +439,6 @@ router.get('/weekly-challenges/leaderboard', async (req, res) => {
 });
 
 module.exports = router;
+// For tests: which challenges get dealt, and what they ask.
+module.exports.WEEKLY_CHALLENGE_TEMPLATES = WEEKLY_CHALLENGE_TEMPLATES;
+module.exports.generateWeeklyChallenges = generateWeeklyChallenges;
