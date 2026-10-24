@@ -85,6 +85,9 @@ router.post('/start', async (req, res) => {
       courseSession.checkpointState = {};
     }
     if (!courseSession.checkpointState.responses) {
+      // A fresh start after a miss IS the retake: close review and start a
+      // new evidence window (utils/checkpointOutcome).
+      require('../utils/checkpointOutcome').beginCheckpointRetake(courseSession);
       courseSession.checkpointState = {
         moduleId: courseSession.currentModuleId,
         responses: [],
@@ -279,9 +282,34 @@ router.post('/complete', async (req, res) => {
       return res.json({ success: true, summary, testOut, nextModuleId: courseSession.currentModuleId });
     }
 
+    // A miss does NOT complete the module or unlock the next one (owner
+    // decision 2026-10-24): the student reviews what they missed with the
+    // tutor, then retakes (utils/checkpointOutcome).
+    if (!summary.passed) {
+      const outcome = require('../utils/checkpointOutcome').recordCheckpointMiss(courseSession, {
+        score: summary.scorePercent,
+        passThreshold: summary.passThreshold,
+        skillBreakdown: summary.skillBreakdown,
+        correct: summary.correct,
+        attempted: summary.totalProblems,
+      });
+      courseSession.checkpointState = null;
+      courseSession.markModified('checkpointState');
+      await courseSession.save();
+      console.log(`[Checkpoint] ${req.user.firstName} scored ${summary.scorePercent}% on ${summary.moduleTitle} — below ${summary.passThreshold}%, review + retake`);
+      return res.json({
+        success: true,
+        summary,
+        passed: false,
+        review: { missedSkills: outcome.missedSkills, attempts: outcome.attempts },
+        nextModuleId: courseSession.currentModuleId,
+      });
+    }
+
     // Update module progress with score
     const mod = (courseSession.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
     if (mod) {
+      require('../utils/checkpointOutcome').recordCheckpointPass(courseSession, { score: summary.scorePercent });
       mod.checkpointScore = summary.scorePercent;
       mod.checkpointPassed = summary.passed;
       mod.status = 'completed';

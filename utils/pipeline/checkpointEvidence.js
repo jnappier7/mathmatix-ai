@@ -78,7 +78,11 @@ function checkpointStartedAt(courseSession) {
   const moduleId = courseSession?.currentModuleId;
   const mod = (courseSession?.modules || []).find(m => m.moduleId === moduleId);
   const ck = courseSession?.checkpointState;
-  const times = [mod?.startedAt, ck && ck.moduleId === moduleId ? ck.startedAt : null]
+  const times = [
+    mod?.startedAt,
+    mod?.checkpointAttemptStartedAt, // a retake (checkpointOutcome.beginCheckpointRetake)
+    ck && ck.moduleId === moduleId ? ck.startedAt : null,
+  ]
     .filter(Boolean)
     .map(t => new Date(t).getTime())
     .filter(t => !Number.isNaN(t));
@@ -131,12 +135,24 @@ function tallyCheckpoint(conversation, courseSession, assessmentProblems) {
   });
   const score = possible > 0 ? Math.round((earned / possible) * 100) : 0;
 
+  // Per-skill result, same shape the checkpoint panel reports
+  // (routes/checkpoint.js buildSummary), mapped by item position.
+  const bySkill = {};
+  scored.forEach((r, i) => {
+    const skill = problems[i]?.skill;
+    if (!skill || r === null) return;
+    bySkill[skill] = bySkill[skill] || { skill, correct: 0, total: 0 };
+    bySkill[skill].total++;
+    if (r) bySkill[skill].correct++;
+  });
+
   return {
     total: problems.length,
     attempted,
     correct,
     undecided,
     score,
+    skillBreakdown: Object.values(bySkill),
     complete: problems.length > 0 && attempted >= problems.length,
   };
 }

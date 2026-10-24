@@ -32,6 +32,21 @@ const moduleProgressSchema = new Schema({
   completedAt: { type: Date },
   checkpointScore: { type: Number },
   checkpointPassed: { type: Boolean, default: false },
+  // A missed checkpoint does not unlock the next module (owner decision
+  // 2026-10-24): the student reviews what they missed, then retakes.
+  // utils/checkpointOutcome.js owns these.
+  checkpointAttempts: { type: Number, default: 0 },
+  checkpointAttemptStartedAt: { type: Date },
+  checkpointReview: {
+    type: {
+      active: Boolean,
+      score: Number,
+      passThreshold: Number,
+      missedSkills: [String],
+      at: Date,
+    },
+    default: undefined,
+  },
   // Completed by passing the unit checkpoint as a test-out, not by working the
   // lesson (utils/courseMoveOn — owner decision 2026-10-18).
   testedOut: { type: Boolean, default: false },
