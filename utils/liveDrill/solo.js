@@ -20,6 +20,8 @@ const HUBS = {
     title: 'Algebra 1',
     games: [
       { drill: 'algebra', name: 'Two-Minute Drill', blurb: 'Every module of the course, one quick question at a time.' },
+      { drill: 'alg1m1', name: 'Module 1 Review', blurb: 'Expressions — words to symbols, order of operations, properties, like terms, distributing, absolute value, one quick move at a time.' },
+      { drill: 'alg1m2', name: 'Module 2 Review', blurb: 'Equations — write it, solve it, special cases, literal equations, absolute value, proportions, one quick move at a time.' },
       { drill: 'alg1m3', name: 'Module 3 Test Prep', blurb: 'Relations & functions — every question type on the Module 3 test, fresh numbers each time.' },
       { drill: 'alg1m7', name: 'Module 7 Review', blurb: 'Systems of equations and inequalities — graphing, substitution, elimination, one quick move at a time.' },
       { drill: 'alg1m8', name: 'Module 8 Review', blurb: 'Exponents and radicals — the rules, rational exponents, simplifying, one quick move at a time.' },
