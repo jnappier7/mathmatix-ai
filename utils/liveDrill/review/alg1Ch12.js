@@ -9,7 +9,7 @@
  * Wrong choices are the practice test's traps: the maximum offered as the range, the mean when
  * an outlier makes the median the honest measure, a box plot's median read as its mean.
  */
-const { int, pick, sample, shuffle, makeBank } = require('../prep/kit');
+const { int, pick, shuffle, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Module', ch: 'Mod 12', blurb: 'Center, spread, outliers, box plots, and the cumulative review — mixed.' },
@@ -21,7 +21,6 @@ const BOOKS = {
 };
 
 const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 const sum = (xs) => xs.reduce((a, b) => a + b, 0);
 const sorted = (xs) => [...xs].sort((a, b) => a - b);
 const list = (xs) => xs.join(', ');

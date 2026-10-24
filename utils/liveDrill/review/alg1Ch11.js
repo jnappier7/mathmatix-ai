@@ -8,7 +8,7 @@
  * Wrong choices are the keys' slips: one square root instead of two (Gus), the axis at −b/a, the
  * vertex's y read from the y-intercept, a discriminant's sign misread.
  */
-const { M, num, int, pick, sample, frac, makeBank } = require('../prep/kit');
+const { M, num, int, pick, sample, frac, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Module', ch: 'Mod 11', blurb: 'Graphing, factoring, square roots, completing the square, the formula, applications — mixed.' },
@@ -31,8 +31,6 @@ function quad(a, b, c, v = 'x') {
 }
 const pt = (x, y) => `(${num(x)}, ${num(y)})`;
 const roots = (r1, r2) => { const [a, b] = [r1, r2].sort((x, y) => x - y); return a === b ? `x = ${num(a)}` : `x = ${num(a)} or x = ${num(b)}`; };
-const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 const sgn = (x) => (x < 0 ? '−' : '+');
 
 const T = {};

@@ -7,7 +7,7 @@
  * Wrong choices are the keys' slips: subtracting only the first term, (a − b)² as a² − b², the
  * wrong sign pair, a GCF that misses the variable, a prime trinomial "factored".
  */
-const { num, int, pick, sample, makeBank } = require('../prep/kit');
+const { num, int, pick, sample, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Module', ch: 'Mod 10', blurb: 'Polynomial operations and every kind of factoring — mixed.' },
@@ -33,8 +33,6 @@ function poly(coefs, v = 'x') {
 const add = (a, b) => { const n = Math.max(a.length, b.length); const A = Array(n - a.length).fill(0).concat(a); const B = Array(n - b.length).fill(0).concat(b); return A.map((x, i) => x + B[i]); };
 const neg = (a) => a.map((x) => -x);
 const mul = (a, b) => { const out = Array(a.length + b.length - 1).fill(0); a.forEach((x, i) => b.forEach((y, j) => { out[i + j] += x * y; })); return out; };
-const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 const binom = (a, b, v = 'x') => `(${poly([a, b], v)})`;
 const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
 

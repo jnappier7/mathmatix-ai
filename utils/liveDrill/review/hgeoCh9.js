@@ -8,7 +8,7 @@
  * from a Pythagorean triple); the calculator questions are multiple choice to the nearest tenth,
  * with the wrong choices being the wrong ratio, the inverted ratio, or the dropped term.
  */
-const { int, pick, sample, makeBank } = require('../prep/kit');
+const { int, pick, sample, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Chapter', ch: 'Ch. 9', blurb: 'Pythagorean Theorem, special right triangles, geometric means, trig ratios, Laws of Sines and Cosines — mixed.' },
@@ -19,8 +19,6 @@ const BOOKS = {
   laws: { name: 'Laws of Sines & Cosines', ch: '9.7', blurb: 'Which law, the third angle, a side by each law, area without an altitude.' },
 };
 
-const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 const deg = (d) => `${d}°`;
 const rad = (n, k) => (k === 1 ? String(n) : n === 1 ? `√${k}` : `${n}√${k}`); // n√k
 const tenth = (x) => (Math.round(x * 10) / 10).toFixed(1);

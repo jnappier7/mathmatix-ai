@@ -8,7 +8,7 @@
  * raised, the shifted-the-wrong-way translation, the minus not distributed, Juan's sign-flipped
  * equation, the max offered as the "typical" measure.
  */
-const { int, pick, sample, makeBank } = require('../prep/kit');
+const { int, pick, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Exam', ch: 'Sem 2', blurb: 'Systems, exponents, polynomials, quadratics, radicals and stats — the whole second semester, mixed.' },
@@ -22,8 +22,6 @@ const BOOKS = {
 const M = '−';
 const num = (n) => (n < 0 ? `${M}${-n}` : String(n));
 const sup = (e) => `<sup>${e}</sup>`;
-const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 const nz = (rand, lo, hi) => { let v = 0; while (v === 0) v = int(rand, lo, hi); return v; };
 const pt = (x, y) => `(${num(x)}, ${num(y)})`;
 function poly(coefs, v = 'x') {

@@ -6,7 +6,7 @@
  * coordinate plane, polygon names, classifying angles, angle addition, bisector algebra,
  * complementary / supplementary / vertical / linear pairs.
  */
-const { int, pick, sample, makeBank } = require('../prep/kit');
+const { int, pick, sample, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Chapter', ch: 'Ch. 1', blurb: 'Points and lines, segments and midpoints, the coordinate plane, angles and angle pairs — mixed.' },
@@ -19,7 +19,6 @@ const BOOKS = {
 const M = '−';
 const num = (n) => (n < 0 ? `${M}${-n}` : String(n));
 const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 const pt = (x, y) => `(${num(x)}, ${num(y)})`;
 const expr = (a, b, v = 'x') => (b === 0 ? `${a === 1 ? '' : a}${v}` : `${a === 1 ? '' : a}${v} ${b < 0 ? M : '+'} ${Math.abs(b)}`);
 const TRIPLES = [[3, 4, 5], [5, 12, 13], [8, 15, 17], [6, 8, 10], [9, 12, 15], [7, 24, 25]];

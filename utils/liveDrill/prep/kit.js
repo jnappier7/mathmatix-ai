@@ -21,6 +21,30 @@ function shuffle(rand, xs) {
 /** Distinct items from `xs`, `n` of them, in random order. */
 const sample = (rand, xs, n) => shuffle(rand, xs).slice(0, n);
 
+/**
+ * What a choice SAYS, for telling two choices apart. A product of factors reads the same in any
+ * order — (m + 1)(m − 9) and (m − 9)(m + 1) are one answer, and offering both made a correct
+ * pick a miss — so the factors are sorted (a squared factor counts twice). Anything else is
+ * compared as written.
+ */
+function choiceKey(html) {
+  const s = String(html).replace(/\s+/g, ' ').trim();
+  const m = s.match(/^([^()]*?)((?:\([^()]+\)(?:<sup>2<\/sup>)?)+)$/);
+  if (!m || !/^(?:−|-)?\d*$/.test(m[1])) return s;
+  const factors = [];
+  for (const f of m[2].match(/\([^()]+\)(?:<sup>2<\/sup>)?/g)) {
+    const base = f.replace(/<sup>2<\/sup>$/, '');
+    factors.push(base); if (base !== f) factors.push(base);
+  }
+  return `${m[1]}${factors.sort().join('')}`;
+}
+/** Right answer first, then up to three wrongs that don't say the same thing as it or each other. */
+function mc(rand, ans, wrongs) {
+  const seen = new Set([choiceKey(ans)]); const pool = [];
+  for (const w of wrongs) { const k = choiceKey(w); if (!seen.has(k)) { seen.add(k); pool.push(w); } }
+  return { choices: [ans, ...sample(rand, pool, 3)], answer: 0 };
+}
+
 /** "+ 3", "− 3", "" — for writing mx + b with the right sign. */
 const signed = (n) => (n === 0 ? '' : n < 0 ? ` ${M} ${-n}` : ` + ${n}`);
 /** "3x", "−x", "x" */
@@ -103,12 +127,13 @@ function makeBank(BOOKS, TEMPLATES) {
     const pool = Object.entries(TEMPLATES).filter(([, t]) => key === 'all' || t.book === key);
     const fresh = pool.filter(([id]) => !(recentIds || []).includes(id));
     const [id, tpl] = pick(rand, fresh.length ? fresh : pool);
-    // A template can (rarely) land on two choices that read the same; deal it again.
+    // A template can (rarely) land on two choices that say the same thing; deal it again.
+    const dup = (t) => t.choices && new Set(t.choices.map(choiceKey)).size < t.choices.length;
     let t = tpl.make(rand);
-    for (let i = 0; i < 25 && t.choices && new Set(t.choices).size < t.choices.length; i++) t = tpl.make(rand);
+    for (let i = 0; i < 25 && dup(t); i++) t = tpl.make(rand);
     return finish({ id, ...t }, tpl.book, BOOKS, rand);
   }
   return { BOOKS, TEMPLATES, makePlay };
 }
 
-module.exports = { M, num, par, int, pick, shuffle, sample, signed, coef, frac, gcd, slopeIntercept, esc, posed, proof, finish, makeBank };
+module.exports = { M, num, par, int, pick, shuffle, sample, choiceKey, mc, signed, coef, frac, gcd, slopeIntercept, esc, posed, proof, finish, makeBank };
