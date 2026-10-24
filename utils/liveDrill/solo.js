@@ -25,6 +25,7 @@ const HUBS = {
       { drill: 'alg1m3', name: 'Module 3 Test Prep', blurb: 'Relations & functions — every question type on the Module 3 test, fresh numbers each time.' },
       { drill: 'alg1m4', name: 'Module 4 Review', blurb: 'Linear functions — graphing, slope, slope-intercept form, rate of change, arithmetic sequences, one quick move at a time.' },
       { drill: 'alg1m5', name: 'Module 5 Review', blurb: 'Writing linear equations — slope-intercept, point-slope and standard form, parallel and perpendicular, lines of fit, one quick move at a time.' },
+      { drill: 'alg1m6', name: 'Module 6 Review', blurb: 'Inequalities — graphs, the flip, compound and absolute value, two-variable boundaries and shading, one quick move at a time.' },
       { drill: 'alg1m7', name: 'Module 7 Review', blurb: 'Systems of equations and inequalities — graphing, substitution, elimination, one quick move at a time.' },
       { drill: 'alg1m8', name: 'Module 8 Review', blurb: 'Exponents and radicals — the rules, rational exponents, simplifying, one quick move at a time.' },
       { drill: 'alg1m9', name: 'Module 9 Review', blurb: 'Exponential functions and geometric sequences — growth, decay, models, ratios, one quick move at a time.' },

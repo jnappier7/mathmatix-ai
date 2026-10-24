@@ -62,6 +62,7 @@ const DRILLS = {
   alg1m2: { native: require('./review/alg1Ch2'), title: 'Alg 1 · Module 2 Review' },
   alg1m4: { native: require('./review/alg1Ch4'), title: 'Alg 1 · Module 4 Review' },
   alg1m5: { native: require('./review/alg1Ch5'), title: 'Alg 1 · Module 5 Review' },
+  alg1m6: { native: require('./review/alg1Ch6'), title: 'Alg 1 · Module 6 Review' },
 };
 
 const APP_MARKER = '// ===================== app =====================';
