@@ -37,32 +37,33 @@ const DRILLS = {
   geometry: { file: 'public/courses/geometry/two-minute-drill.html', title: 'Honors Geometry' },
   // Fluency mode: a bank owned here (utils/liveDrill/facts.js), typed answers, per-fact tracking.
   facts: { native: facts, title: 'Math Facts', scoring: 'facts', typed: true, trackFacts: true, focus: true },
-  // Test Prep: one bank per unit test, built from the teacher's practice test (utils/liveDrill/prep/).
-  alg1m3: { native: require('./prep/alg1Module3'), title: 'Alg 1 · Module 3 Test', scoring: 'prep' },
-  hgeo3: { native: require('./prep/hgeoCh3'), title: 'H. Geometry · Ch. 3 Test', scoring: 'prep' },
-  // Chapter Reviews: quick-fire, one bank per chapter, built from the teacher's notes and chapter
-  // review (utils/liveDrill/review/). Standard scoring — every play is one move.
-  alg1m7: { native: require('./review/alg1Ch7'), title: 'Alg 1 · Module 7 Review' },
-  hgeo4: { native: require('./review/hgeoCh4'), title: 'H. Geometry · Ch. 4 Review' },
-  alg1m8: { native: require('./review/alg1Ch8'), title: 'Alg 1 · Module 8 Review' },
-  hgeo5: { native: require('./review/hgeoCh5'), title: 'H. Geometry · Ch. 5 Review' },
-  alg1m9: { native: require('./review/alg1Ch9'), title: 'Alg 1 · Module 9 Review' },
-  hgeo6: { native: require('./review/hgeoCh6'), title: 'H. Geometry · Ch. 6 Review' },
-  alg1m10: { native: require('./review/alg1Ch10'), title: 'Alg 1 · Module 10 Review' },
-  hgeo7: { native: require('./review/hgeoCh7'), title: 'H. Geometry · Ch. 7 Review' },
-  alg1m11: { native: require('./review/alg1Ch11'), title: 'Alg 1 · Module 11 Review' },
-  hgeo8: { native: require('./review/hgeoCh8'), title: 'H. Geometry · Ch. 8 Review' },
-  alg1m12: { native: require('./review/alg1Ch12'), title: 'Alg 1 · Module 12 Review' },
-  hgeo9: { native: require('./review/hgeoCh9'), title: 'H. Geometry · Ch. 9 Review' },
-  alg1m13: { native: require('./review/alg1Sem2'), title: 'Alg 1 · Semester 2 Exam Review' },
-  hgeo10: { native: require('./review/hgeoCh10'), title: 'H. Geometry · Ch. 10 Review' },
-  hgeo11: { native: require('./review/hgeoCh11'), title: 'H. Geometry · Ch. 11 Review' },
-  hgeo1: { native: require('./review/hgeoCh1'), title: 'H. Geometry · Ch. 1 Review' },
+  // Test Prep (one bank per unit test, built from the teacher's practice test, utils/liveDrill/prep/)
+  // and Chapter Reviews (quick-fire, one bank per chapter, built from the teacher's notes and chapter
+  // review, utils/liveDrill/review/; standard scoring — every play is one move). Listed in TEACHING
+  // ORDER, Algebra then Geometry: the host picker renders this object in order.
   alg1m1: { native: require('./review/alg1Ch1'), title: 'Alg 1 · Module 1 Review' },
   alg1m2: { native: require('./review/alg1Ch2'), title: 'Alg 1 · Module 2 Review' },
+  alg1m3: { native: require('./prep/alg1Module3'), title: 'Alg 1 · Module 3 Test', scoring: 'prep' },
   alg1m4: { native: require('./review/alg1Ch4'), title: 'Alg 1 · Module 4 Review' },
   alg1m5: { native: require('./review/alg1Ch5'), title: 'Alg 1 · Module 5 Review' },
   alg1m6: { native: require('./review/alg1Ch6'), title: 'Alg 1 · Module 6 Review' },
+  alg1m7: { native: require('./review/alg1Ch7'), title: 'Alg 1 · Module 7 Review' },
+  alg1m8: { native: require('./review/alg1Ch8'), title: 'Alg 1 · Module 8 Review' },
+  alg1m9: { native: require('./review/alg1Ch9'), title: 'Alg 1 · Module 9 Review' },
+  alg1m10: { native: require('./review/alg1Ch10'), title: 'Alg 1 · Module 10 Review' },
+  alg1m11: { native: require('./review/alg1Ch11'), title: 'Alg 1 · Module 11 Review' },
+  alg1m12: { native: require('./review/alg1Ch12'), title: 'Alg 1 · Module 12 Review' },
+  alg1m13: { native: require('./review/alg1Sem2'), title: 'Alg 1 · Semester 2 Exam Review' },
+  hgeo1: { native: require('./review/hgeoCh1'), title: 'H. Geometry · Ch. 1 Review' },
+  hgeo3: { native: require('./prep/hgeoCh3'), title: 'H. Geometry · Ch. 3 Test', scoring: 'prep' },
+  hgeo4: { native: require('./review/hgeoCh4'), title: 'H. Geometry · Ch. 4 Review' },
+  hgeo5: { native: require('./review/hgeoCh5'), title: 'H. Geometry · Ch. 5 Review' },
+  hgeo6: { native: require('./review/hgeoCh6'), title: 'H. Geometry · Ch. 6 Review' },
+  hgeo7: { native: require('./review/hgeoCh7'), title: 'H. Geometry · Ch. 7 Review' },
+  hgeo8: { native: require('./review/hgeoCh8'), title: 'H. Geometry · Ch. 8 Review' },
+  hgeo9: { native: require('./review/hgeoCh9'), title: 'H. Geometry · Ch. 9 Review' },
+  hgeo10: { native: require('./review/hgeoCh10'), title: 'H. Geometry · Ch. 10 Review' },
+  hgeo11: { native: require('./review/hgeoCh11'), title: 'H. Geometry · Ch. 11 Review' },
 };
 
 const APP_MARKER = '// ===================== app =====================';
