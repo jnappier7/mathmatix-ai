@@ -21,6 +21,7 @@ const { disclosureConcern } = require('../contentFilter');
 const { parseCleanProblem, verifyAnswer } = require('../mathSolver');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { classifyTurn, problemKey, solveAnswer, isRepeatSolve, appendSolve, liveTextsFor } = require('./solveCredit');
+const { planVerdictRepair, applyVerdictRepair, repairSkillAccuracy } = require('./verdictRepair');
 const { emitGamificationEvent, bumpDailyStreak } = require('../gamificationEvents');
 const { canonicalProblemId, contentHash, recordShownProblem } = require('../problemTracking');
 const { getNextActions } = require('../nextActionSuggestions');
@@ -215,7 +216,24 @@ async function persist(params) {
     }
   }
   // "Clean" is first try: no earlier wrong attempt on this problem.
-  const firstTry = !isSameProblemRetry(priorProblemState, diagnosis);
+  let firstTry = !isSameProblemRetry(priorProblemState, diagnosis);
+
+  // ── 1b. A reversed verdict repairs the attempt it was wrong about ──
+  // The same answer, marked wrong earlier on this problem, verified correct now:
+  // the earlier verdict was the error. Rewrite THAT attempt instead of counting
+  // this one as a second, "comeback" attempt beside a false miss (course audit
+  // C04 — see verdictRepair.js). Applied to the counters in §7.
+  const verdictRepair = results.wasCorrect && !firstTry
+    ? planVerdictRepair(conversation.messages, priorProblemState, diagnosis?.answer)
+    : null;
+  if (verdictRepair) {
+    if (verdictRepair.restoresFirstTry) firstTry = true;
+    results.verdictRepair = {
+      missesRemoved: verdictRepair.missesRemoved,
+      restoredFirstTry: verdictRepair.restoresFirstTry,
+    };
+    console.log(`[Persist] Verdict repair: ${verdictRepair.missesRemoved} false miss(es) on the same answer rewritten; first try ${verdictRepair.restoresFirstTry ? 'restored' : 'unchanged'}`);
+  }
 
   // ── 2. Safety concern handling ──
   // The model's <SAFETY_CONCERN> tag first; else the server's own reading of
@@ -243,6 +261,15 @@ async function persist(params) {
   if (masterySkillId) {
     const attemptCorrect = masteryAttempt ? masteryAttempt.correct === true : true;
     const { skillId, justProved } = updateSkillMastery(user, masterySkillId, observation, conversation, attemptCorrect);
+    // The false misses landed in this skill's accuracy pillar as k wrong
+    // attempts; this turn just recorded the right one. Take the k back out.
+    if (verdictRepair && attemptCorrect) {
+      const entry = getSkillMasteryEntry(user, skillId);
+      if (repairSkillAccuracy(entry, verdictRepair.missesRemoved)) {
+        setSkillMasteryEntry(user, skillId, entry);
+        user.markModified('skillMastery');
+      }
+    }
     // Proving a skill clears everything beneath it, so a student never re-grinds
     // a prerequisite they have just demonstrated they own. Awaited but guarded:
     // a cascade failure must never cost the student the turn they just earned.
@@ -385,7 +412,12 @@ async function persist(params) {
     // Non-fatal — worst case we fall back to re-parsing in diagnose
   }
 
-  if (results.problemAnswered) {
+  if (results.problemAnswered && verdictRepair) {
+    // The original attempt becomes the solve; this turn is not a new attempt,
+    // so it opens no slot and carries no problemResult of its own.
+    applyVerdictRepair(conversation, verdictRepair);
+    Object.assign(results, { firstTry: verdictRepair.restoresFirstTry, comeback: false });
+  } else if (results.problemAnswered) {
     conversation.problemsAttempted = (conversation.problemsAttempted || 0) + 1;
     if (results.wasCorrect) {
       conversation.problemsCorrect = (conversation.problemsCorrect || 0) + 1;

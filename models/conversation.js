@@ -14,6 +14,13 @@ const messageSchema = new Schema({
     reaction: { type: String, default: null }, // Emoji reaction (e.g., '❤️', '👍', '💯')
     // Course scaffold tracking — persisted so progress survives across requests
     problemResult: { type: String, default: null }, // 'correct' | 'incorrect' | 'skipped' (set on AI messages)
+    // Set when a later turn proved this verdict wrong (pipeline/verdictRepair.js):
+    // the same answer, marked incorrect here, verified correct later. `to` is
+    // 'correct' (this was the real solve) or 'withdrawn' (a repeat false miss).
+    verdictRepair: {
+        type: { from: String, to: String, at: Date },
+        default: undefined,
+    },
     scaffoldAdvanced: { type: Boolean, default: false }, // true on the user msg where an advance was granted
     // Numbered set answered in one message: per-item tally, so a checkpoint
     // counts N answers rather than one (pipeline/checkpointEvidence.js).
