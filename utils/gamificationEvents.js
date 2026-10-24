@@ -85,6 +85,22 @@ function emitGamificationEvent(user, eventType, data = {}) {
 }
 
 /**
+ * Coins for finishing a quest or challenge (utils/brand.js coinRewards[key]).
+ * Never allowed to break the completion itself.
+ */
+function awardCompletionCoins(user, key, reason) {
+  try {
+    const { awardCoins } = require('./coinEngine');
+    const BRAND = require('./brand');
+    const amount = (BRAND.coinRewards && BRAND.coinRewards[key]) || 0;
+    return awardCoins(user, amount, reason).awarded;
+  } catch (err) {
+    logger.error('Completion coin award failed', { key, error: err.message });
+    return 0;
+  }
+}
+
+/**
  * Initialize user.dailyQuests in place if missing. Idempotent.
  */
 function ensureDailyQuestsInit(user) {
@@ -231,8 +247,29 @@ function updateDailyQuests(user, eventType, data) {
         }
         break;
 
+      // Legacy targets. No template issues them any more (2026-10-24): nothing
+      // in the pipeline sends `timeTaken` or a `sessionComplete` event, so
+      // Speedster and Accuracy Ace sat at 0/20 and 0/95 forever. Kept only so
+      // a quest dealt before the deploy still reads sanely until tomorrow's deal.
       case 'fastSolving':
         if (eventType === 'problemSolved' && data.timeTaken && data.timeTaken < (15 * 60)) {
+          progressIncrease = 1;
+        }
+        break;
+
+      // Bounce Back: fix a problem you missed. The behaviour we most want to
+      // reward — a mistake is where the points come from, not a reason to quit.
+      case 'comebacks':
+        if (eventType === 'problemSolved' && data.correct && data.comeback) {
+          progressIncrease = 1;
+        }
+        break;
+
+      // First Try: right on the first attempt at a problem. Replaces the
+      // accuracy-percentage quest, which needed a session-end event that is
+      // never sent.
+      case 'firstTryCorrect':
+        if (eventType === 'problemSolved' && data.correct && data.firstTry) {
           progressIncrease = 1;
         }
         break;
@@ -275,11 +312,16 @@ function updateDailyQuests(user, eventType, data) {
       user.xp = (user.xp || 0) + xpEarned;
       result.xpAwarded += xpEarned;
 
+      // Same coin reward as routes/dailyQuests.js — the pipeline path used to
+      // pay XP only, so a quest finished in chat (nearly all of them) paid no coins.
+      const coinsEarned = awardCompletionCoins(user, 'questComplete', 'quest_complete');
+
       result.completed.push({
         id: quest.id,
         name: quest.name,
         icon: quest.icon,
         xpEarned,
+        coinsEarned,
       });
 
       logger.info('Daily quest completed', { questId: quest.id, questName: quest.name, xpEarned });
@@ -386,6 +428,12 @@ function updateWeeklyChallenges(user, eventType, data) {
         }
         break;
 
+      case 'weeklyComebacks':
+        if (eventType === 'problemSolved' && data.correct && data.comeback) {
+          progressIncrease = 1;
+        }
+        break;
+
       case 'fastProblems':
         if (eventType === 'problemSolved' && data.timeTaken && data.timeTaken < 60 && data.correct) {
           progressIncrease = 1;
@@ -420,11 +468,14 @@ function updateWeeklyChallenges(user, eventType, data) {
       user.xp = (user.xp || 0) + challenge.xpReward;
       result.xpAwarded += challenge.xpReward;
 
+      const coinsEarned = awardCompletionCoins(user, 'challengeComplete', 'challenge_complete');
+
       result.completed.push({
         id: challenge.id,
         name: challenge.name,
         icon: challenge.icon,
         xpEarned: challenge.xpReward,
+        coinsEarned,
         specialReward: challenge.specialReward,
       });
 

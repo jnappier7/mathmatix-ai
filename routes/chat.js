@@ -2348,6 +2348,9 @@ async function runStudentTurn(req, res) {
             iepFeatures,
             iepGoalUpdates: pipelineResult.iepGoalUpdates?.length > 0 ? pipelineResult.iepGoalUpdates : null,
             problemResult: pipelineResult.problemResult,
+            // Right after a miss on the same problem — the client stamps the
+            // reply "Comeback!" (the Bounce Back quest counts these too).
+            comeback: pipelineResult.comeback || false,
             currentSkillId: pipelineResult.activeSkillId || masteryContext?.skillId || null,
             // errorAnnotation removed from student response — the misconception
             // detector is too inconsistent to surface a clinical label to

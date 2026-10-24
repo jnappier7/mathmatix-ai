@@ -113,6 +113,26 @@ function isTeachingMove(decision) {
 }
 
 /**
+ * The client contract for a turn's rewards: quest/challenge completions plus
+ * the streak outcome. bumpDailyStreak reports on `persistResults.streak`, but
+ * the client reads `gamification.streakFreezeUsed` / `.streakLost`. Null when
+ * there is nothing to show.
+ */
+function gamificationForClient(persistResults) {
+  const g = persistResults?.gamification || null;
+  const streak = persistResults?.streak || {};
+  if (!g && !streak.freezeUsed && !streak.lost) return null;
+  return {
+    questsCompleted: [],
+    challengesCompleted: [],
+    xpAwarded: 0,
+    ...(g || {}),
+    ...(streak.freezeUsed ? { streakFreezeUsed: true } : {}),
+    ...(streak.lost ? { streakLost: streak.lost } : {}),
+  };
+}
+
+/**
  * Run the full tutoring pipeline.
  *
  * @param {string} message - The student's raw message
@@ -2138,6 +2158,17 @@ async function runPipeline(message, ctx) {
       description: diagnosis.misconception.description || null,
       source: diagnosis.misconception.source, // 'library' or 'ai_analysis'
     } : null,
+    // Quest/challenge completions, streak saves, next-action chips and the
+    // review summary. persist computed all four, but this return dropped them,
+    // so routes/chat.js always sent `gamification: null`: every quest paid out
+    // silently and the client's completion toasts and coin fly-in never ran.
+    // Pinned by tests/unit/pipelineGamificationPassthrough.test.js.
+    gamification: gamificationForClient(persistResults),
+    nextActions: persistResults.nextActions || [],
+    reviewSummary: persistResults.reviewSummary || null,
+    // The two moments worth celebrating on a graded turn (persist.js §7).
+    comeback: !!persistResults.comeback,
+    firstTry: !!persistResults.firstTry,
     leveledUp: persistResults.leveledUp,
     tutorsUnlocked: persistResults.tutorsUnlocked,
     masteryCompleted: persistResults.masteryCompleted || false,
@@ -2352,6 +2383,7 @@ function shouldBackfillProblemPose({ structuredTurnType, decisionAction, pinnedT
 
 module.exports = {
   runPipeline,
+  gamificationForClient,
   shouldBackfillProblemPose,
   // exported for tests/unit/engineStoreDottedKeys.test.js — it runs against the real User model
   updateLearningEngines,

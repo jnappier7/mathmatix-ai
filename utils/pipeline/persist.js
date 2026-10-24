@@ -118,6 +118,41 @@ function isSameProblemRetry(lastProblemState, diagnosis) {
   return true;
 }
 
+/**
+ * The two moments the quests and the client celebrate on a graded turn:
+ * `firstTry` — this problem's first attempt (right or wrong; quests count the
+ * right ones), and `comeback` — right after a miss on the same problem.
+ * Skips are neither.
+ */
+function turnMoments({ wasCorrect, wasSkipped }, isRetry) {
+  return {
+    firstTry: !wasSkipped && !isRetry,
+    comeback: !!wasCorrect && !wasSkipped && !!isRetry,
+  };
+}
+
+/**
+ * The math domain (Skill.category) of this turn's skill — what the weekly
+ * "Diverse Learner" challenge counts. Nothing ever set `observation.skillDomain`,
+ * so that challenge sat at 0 for everyone. Looked up only while that challenge
+ * is open, so ordinary turns pay no query. Never costs the student a turn.
+ */
+async function domainForChallenges(user, observation) {
+  if (observation?.skillDomain) return observation.skillDomain;
+  const open = (user.weeklyChallenges?.challenges || [])
+    .some(c => c.targetType === 'domainsPracticed' && !c.completed);
+  const skillId = observation?.activeSkill?.skillId;
+  if (!open || !skillId) return null;
+  try {
+    const Skill = require('../../models/skill');
+    const skill = await Skill.findOne({ skillId: canonicalSkillId(skillId) || skillId })
+      .select('category').lean();
+    return skill?.category || null;
+  } catch (_) {
+    return null;
+  }
+}
+
 async function persist(params) {
   const {
     user, conversation, extracted, diagnosis, observation,
@@ -361,7 +396,9 @@ async function persist(params) {
     // turn here (it's updated below), so if it holds this same problem with a
     // prior wrong attempt, this turn is a retry and must not open a new slot.
     // Skips aren't a genuine attempt, so they're excluded entirely.
-    if (!results.wasSkipped && !isSameProblemRetry(conversation.lastProblemState, diagnosis)) {
+    const isRetry = isSameProblemRetry(conversation.lastProblemState, diagnosis);
+    Object.assign(results, turnMoments(results, isRetry));
+    if (!results.wasSkipped && !isRetry) {
       conversation.firstTryAttempted = (conversation.firstTryAttempted || 0) + 1;
       if (results.wasCorrect) {
         conversation.firstTryCorrect = (conversation.firstTryCorrect || 0) + 1;
@@ -544,8 +581,10 @@ async function persist(params) {
   if (results.problemAnswered) {
     const gamificationResult = emitGamificationEvent(user, 'problemSolved', {
       correct: results.wasCorrect,
+      firstTry: !!results.firstTry,
+      comeback: !!results.comeback,
       skillId: extracted.skillStarted || extracted.skillMastered || null,
-      domain: observation?.skillDomain || null,
+      domain: await domainForChallenges(user, observation),
     });
     results.gamification = gamificationResult;
 
@@ -1070,4 +1109,6 @@ module.exports = {
   answerIsActuallyRight,
   cleanCardProblemTex,
   isSameProblemRetry,
+  turnMoments,
+  domainForChallenges,
 };

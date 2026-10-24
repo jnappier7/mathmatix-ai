@@ -2,7 +2,7 @@
   "chat.html": {
     "css": [
       {
-        "href": "/dist/css/chat-css0.bdea1705.css",
+        "href": "/dist/css/chat-css0.753acb27.css",
         "files": [
           "/css/file-upload.css",
           "/css/responsive-resources.css",
@@ -89,7 +89,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js5.c6527a5d.js",
+        "src": "/dist/js/chat-js5.ad1f971e.js",
         "files": [
           "/js/visualTabTagHandler.js",
           "/js/dailyQuests.js",

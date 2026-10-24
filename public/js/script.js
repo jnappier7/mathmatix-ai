@@ -252,6 +252,21 @@ function applyTurnRewards(data) {
                 }
             }
 
+            // Comeback: right after a miss on the same problem. The moment we most
+            // want a student to feel — the mistake is where the points come from.
+            // Server-decided (persist.js), so it never fires on a first-try solve.
+            if (data.comeback) {
+                const aiMessages = document.querySelectorAll('.message.ai');
+                const latest = aiMessages[aiMessages.length - 1];
+                if (latest && !latest.querySelector('.comeback-chip')) {
+                    const stamp = document.createElement('div');
+                    stamp.className = 'comeback-chip';
+                    stamp.textContent = '\u{1F4AA} Comeback! You fixed your mistake.';
+                    latest.appendChild(stamp);
+                }
+                triggerXpAnimation('\u{1F4AA} Comeback!', false, true);
+            }
+
             // Badge award celebration (from mastery chat)
             if (data.badgeAwarded) {
                 processBadgeAward(data.badgeAwarded);
