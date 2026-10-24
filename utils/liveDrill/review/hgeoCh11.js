@@ -8,7 +8,7 @@
  * Exact answers stay exact ("26π", "150√3", "32π/3"); the wrong choices are the formula card's two
  * mistakes — the diameter used as r, the ⅓ dropped or the slant height used in a volume.
  */
-const { int, pick, sample, makeBank } = require('../prep/kit');
+const { int, pick, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Chapter', ch: 'Ch. 11', blurb: 'Circumference, arcs, areas, polygons, Euler, prisms, pyramids, cones, spheres — mixed.' },
@@ -19,8 +19,6 @@ const BOOKS = {
   spheres: { name: 'Spheres & Composites', ch: '11.8', blurb: 'SA = 4πr², V = (4/3)πr³, hemispheres, scaling, silos and rockets.' },
 };
 
-const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 const gcd = (a, b) => (b ? gcd(b, a % b) : a);
 /** k·π with k a reduced fraction p/q: "26π", "32π/3", "π/6" */
 const pi = (p, q = 1) => { const g = gcd(p, q); p /= g; q /= g; const top = p === 1 ? 'π' : `${p}π`; return q === 1 ? top : `${top}/${q}`; };

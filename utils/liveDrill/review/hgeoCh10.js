@@ -8,7 +8,7 @@
  * Wrong choices are the reference card's "two mistakes": the near arc alone for an outside angle,
  * (external)(far part) instead of (whole)(external) for secants — plus the sign flip in (x − h)².
  */
-const { int, pick, sample, makeBank } = require('../prep/kit');
+const { int, pick, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Chapter', ch: 'Ch. 10', blurb: 'Tangents, arcs, chords, inscribed angles, angle and segment rules, equations of circles — mixed.' },
@@ -21,7 +21,6 @@ const BOOKS = {
 };
 
 const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 const sup = (e) => `<sup>${e}</sup>`;
 const TRIPLES = [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25], [20, 21, 29], [9, 40, 41]];
 const M = '−';

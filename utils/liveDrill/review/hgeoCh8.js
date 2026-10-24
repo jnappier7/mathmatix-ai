@@ -7,7 +7,7 @@
  * Wrong choices are the study sheet's traps: the reciprocal scale factor, "pieces with wholes",
  * the SSA trap for similarity, AAA offered as congruence.
  */
-const { int, pick, sample, frac, makeBank } = require('../prep/kit');
+const { int, pick, sample, frac, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Chapter', ch: 'Ch. 8', blurb: 'Similar polygons, the three triangle criteria, proportionality — mixed.' },
@@ -21,8 +21,6 @@ const names = (rand, n) => sample(rand, [...LETTERS], n);
 const tri = (s) => `△${s}`;
 const seg = (s) => `<span style="text-decoration:overline">${s}</span>`;
 const ratio = (p, q) => frac(p, q);
-const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 const PAIRS = [[2, 3], [3, 4], [2, 5], [3, 5], [4, 5], [5, 6], [5, 8], [3, 8], [4, 7], [2, 7], [5, 7], [3, 7]];
 
 const T = {};

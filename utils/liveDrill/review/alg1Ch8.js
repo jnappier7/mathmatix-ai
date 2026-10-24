@@ -7,7 +7,7 @@
  * Wrong choices are the slips the keys call out: multiplying exponents on a product, adding them
  * on a power, a negative exponent making the number negative, √(a + b) as √a + √b.
  */
-const { num, int, pick, sample, gcd, makeBank } = require('../prep/kit');
+const { num, int, pick, sample, gcd, makeBank, mc } = require('../prep/kit');
 
 const BOOKS = {
   all: { name: 'Whole Module', ch: 'Mod 8', blurb: 'Exponent rules, rational exponents, radicals and the equations — mixed.' },
@@ -31,8 +31,6 @@ const rad = (a, b, c = 1) => `${a === 1 ? '' : a}${b === 1 ? (a === 1 ? '1' : ''
 /** Pull the largest perfect square out of n: n = s² · r. */
 function pullSquare(n) { let s = 1; for (let k = 2; k * k <= n; k++) if (n % (k * k) === 0) s = k; return [s, n / (s * s)]; }
 const SQUARE_FREE_RADS = [2, 3, 5, 6, 7, 10, 11, 13, 14, 15];
-const uniq = (xs) => [...new Set(xs)];
-const mc = (rand, ans, wrongs) => ({ choices: [ans, ...sample(rand, uniq(wrongs.filter((w) => w !== ans)), 3)], answer: 0 });
 
 const T = {};
 
