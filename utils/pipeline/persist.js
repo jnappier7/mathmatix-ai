@@ -375,6 +375,17 @@ async function persist(params) {
     }
   }
 
+  // A numbered set answered in one message is N answers, not one: keep the
+  // per-item tally so a checkpoint counts every item (checkpointEvidence.js).
+  // Stamped even when the set as a whole has no verdict — the items were
+  // still answered.
+  if (diagnosis?.batch && conversation.messages.length > 0) {
+    const b = diagnosis.batch;
+    conversation.messages[conversation.messages.length - 1].problemItems = {
+      total: (b.items || []).length, correct: b.correct || 0, wrong: b.wrong || 0,
+    };
+  }
+
   // Mark scaffold advance point
   if (extracted.scaffoldAdvance && conversation.messages.length > 0) {
     conversation.messages[conversation.messages.length - 1].scaffoldAdvanced = true;

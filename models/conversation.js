@@ -15,6 +15,12 @@ const messageSchema = new Schema({
     // Course scaffold tracking — persisted so progress survives across requests
     problemResult: { type: String, default: null }, // 'correct' | 'incorrect' | 'skipped' (set on AI messages)
     scaffoldAdvanced: { type: Boolean, default: false }, // true on the user msg where an advance was granted
+    // Numbered set answered in one message: per-item tally, so a checkpoint
+    // counts N answers rather than one (pipeline/checkpointEvidence.js).
+    problemItems: {
+        type: { total: Number, correct: Number, wrong: Number },
+        default: undefined,
+    },
     // Structured problem metadata — set on AI messages that contain a math problem.
     // Computed once at persist time so the diagnose stage can read it directly
     // instead of re-parsing the AI's natural language text with fragile regex.

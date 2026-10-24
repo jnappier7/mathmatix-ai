@@ -15,6 +15,7 @@ const { calculateOverallProgress } = require('../coursePrompt');
 const { canonicalSkillId } = require('../skillCanonicalizer');
 const { updateSkillMastery: engineUpdateSkillMastery, initializeSkillMastery } = require('../masteryEngine');
 const { getSkillMasteryEntry, setSkillMasteryEntry } = require('../masteryGuard');
+const { countCorrectSinceAdvance } = require('./checkpointEvidence');
 
 // ── Phase labels for breadcrumb display ──
 const PHASE_LABELS = {
@@ -137,15 +138,10 @@ function processScaffoldAdvance(courseSession, moduleData, conversation, wasCorr
   const isPracticePhase = PRACTICE_PHASES.includes(stepType);
 
   // Practice gating: count correct answers since last advance
-  let correctSinceLastAdvance = 0;
-  if (isPracticePhase && conversation?.messages) {
-    for (let i = conversation.messages.length - 1; i >= 0; i--) {
-      const msg = conversation.messages[i];
-      if (msg.scaffoldAdvanced) break;
-      if (msg.problemResult === 'correct') correctSinceLastAdvance++;
-    }
-    if (wasCorrect) correctSinceLastAdvance++;
-  }
+  // (this turn counted once — see checkpointEvidence.js)
+  const correctSinceLastAdvance = isPracticePhase
+    ? countCorrectSinceAdvance(conversation?.messages, wasCorrect)
+    : 0;
 
   if (isPracticePhase && !options.isParentCourse && correctSinceLastAdvance < MIN_CORRECT_FOR_ADVANCE) {
     console.log(`[CoursePersist] SCAFFOLD_ADVANCE blocked — "${stepType}" needs ${MIN_CORRECT_FOR_ADVANCE} correct, got ${correctSinceLastAdvance}`);

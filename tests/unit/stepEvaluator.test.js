@@ -101,10 +101,25 @@ describe('stepEvaluator: evaluateDeterministic', () => {
     const conv = makeConversation([
       { role: 'user', content: '5' },
       { role: 'assistant', content: 'Correct!', problemResult: 'correct' },
+      { role: 'user', content: '7' },
     ]);
 
     const result = evaluateDeterministic(step, conv, { wasCorrect: true });
     expect(result.complete).toBe(true);
+  });
+
+  test('does not count the current turn twice once persist has stamped it', () => {
+    // Persist stamps this turn's verdict before progression runs; counting
+    // wasCorrect on top made ONE correct answer clear a 2-correct step
+    // (course audit, 2026-10-23).
+    const step = { type: 'guided_practice' };
+    const conv = makeConversation([
+      { role: 'user', content: '5' },
+      { role: 'assistant', content: 'Correct!', problemResult: 'correct' },
+    ]);
+
+    const result = evaluateDeterministic(step, conv, { wasCorrect: true });
+    expect(result.complete).toBe(false);
   });
 
   test('resets count at last scaffoldAdvanced marker', () => {
