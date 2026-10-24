@@ -40,6 +40,7 @@ const HUBS = {
     title: 'Honors Geometry',
     games: [
       { drill: 'geometry', name: 'Proof Reasons', blurb: 'Which reason justifies the step? Chapters 2 and 3.' },
+      { drill: 'hgeo1', name: 'Chapter 1 Review', blurb: 'Basics — points, lines and planes, segments and midpoints, the coordinate plane, angles and angle pairs, one quick move at a time.' },
       { drill: 'hgeo3', name: 'Chapter 3 Test Prep', blurb: 'Parallel & perpendicular lines — every question type on the Chapter 3 test.' },
       { drill: 'hgeo4', name: 'Chapter 4 Review', blurb: 'Transformations — translations, reflections, rotations and symmetry, one quick move at a time.' },
       { drill: 'hgeo5', name: 'Chapter 5 Review', blurb: 'Congruent triangles — angles, the criteria, isosceles triangles and CPCTC, one quick move at a time.' },
@@ -49,7 +50,6 @@ const HUBS = {
       { drill: 'hgeo9', name: 'Chapter 9 Review', blurb: 'Right triangles — Pythagorean Theorem, special right triangles, geometric means, trig ratios, Laws of Sines and Cosines, one quick move at a time.' },
       { drill: 'hgeo10', name: 'Chapter 10 Review', blurb: 'Circles — tangents, arcs and chords, inscribed angles, where-is-the-vertex rules, segment products, equations of circles, one quick move at a time.' },
       { drill: 'hgeo11', name: 'Chapter 11 Review', blurb: 'Measurement — circumference and arcs, areas and sectors, polygons, prisms, pyramids, cones, spheres, one quick move at a time.' },
-      { drill: 'hgeo1', name: 'Chapter 1 Review', blurb: 'Basics — points, lines and planes, segments and midpoints, the coordinate plane, angles and angle pairs, one quick move at a time.' },
     ],
   },
 };
