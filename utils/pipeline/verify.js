@@ -958,7 +958,9 @@ async function verify(responseText, context = {}) {
       console.log(`[Verify] FALSE CONFIRMATION detected on verified-incorrect answer — regenerating`);
 
       try {
-        const correctionPrompt = `The student's answer has been mathematically verified as INCORRECT by our answer engine. The correct answer is "${context.correctAnswer}". Your previous response incorrectly affirmed the student's wrong answer. Respond naturally — guide the student toward discovering the error WITHOUT revealing the correct answer. Do not use scripted language; be a natural, supportive tutor who knows this answer is wrong.`;
+        // A wrong STEP verdict carries no correctAnswer (the step is what broke,
+        // and the solution is never handed over) — don't tell the model it is "null".
+        const correctionPrompt = `The student's answer has been mathematically verified as INCORRECT by our answer engine.${context.correctAnswer ? ` The correct answer is "${context.correctAnswer}".` : ''} Your previous response incorrectly affirmed the student's wrong answer. Respond naturally — guide the student toward discovering the error WITHOUT revealing the correct answer. Do not use scripted language; be a natural, supportive tutor who knows this answer is wrong.`;
         const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
           [{ role: 'system', content: correctionPrompt },
            { role: 'assistant', content: text },

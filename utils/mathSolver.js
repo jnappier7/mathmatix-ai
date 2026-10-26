@@ -3984,7 +3984,53 @@ const PROSE_WORD_RX = /[a-z]{4,}/i;
 // "Simplify: 7y-10y" — the natural way a tutor poses a problem — still yields
 // the bare expression "7y-10y" as a candidate.
 const MATH_CANDIDATE_VERB_RX = /\b(?:solve|try|find|evaluate|simplify|factor|graph|compute)[\s:]+([^.?!\n]+?)(?=[.?!\n]|$)/gi;
-const MATH_CANDIDATE_EQ_RX = /(?:^|[\s:>])(\(?-?\d*[a-z][a-z0-9\s+\-*/^().]*=\s*-?[a-z0-9\s+\-*/^()]+?)(?=[.?!\n]|$|\s{2})/gi;
+// The opening admits a coefficient before a parenthesis — "3(x - 4) = …" —
+// which the earlier `\(?-?\d*[a-z]` shape could not start on (its optional
+// paren sat BEFORE the digits), so a distributed-form equation was never a
+// candidate at all.
+const MATH_CANDIDATE_EQ_RX = /(?:^|[\s:>])(-?\d*\(?-?\d*[a-z][a-z0-9\s+\-*/^().]*=\s*-?[a-z0-9\s+\-*/^()]+?)(?=[.?!\n]|$|\s{2})/gi;
+
+// The equation regex's variable slot ([a-z]) is also satisfied by the first
+// letter of an ordinary word, and its body class admits letters and spaces, so
+// "can u help me with 3(x - 4) = 2x + 5" came back as ONE candidate — the
+// whole sentence — which the parser rightly rejects. Only messages led by a
+// cue verb ("solve …") survived via MATH_CANDIDATE_VERB_RX; "help me with",
+// "i'm stuck on", "how do i do" — the ways a student actually hands over a
+// problem — never pinned to the board, and every grader downstream that keys
+// off the pin went quiet for the whole session (production, 2026-10-25).
+// Peel the prose off both ends: a run of words before the first math token,
+// and a run of words after the equation ("… = 2x + 5 how do i do this"). A
+// trailing run counts as prose only when it holds a 2+-letter word, so a lone
+// variable stays — "y = 2x + 1" and "= x" are math, not prose.
+const LEADING_PROSE_RX = /^(?:[a-z]+\s+)+(?=[\d(-]|[a-z](?![a-z]))/i;
+const TRAILING_PROSE_RX = /(?:\s+[a-z]+)*\s+[a-z]{2,}(?:\s+[a-z]+)*\s*$/i;
+function _trimProseAroundMath(candidate) {
+    return candidate.replace(LEADING_PROSE_RX, '').replace(TRAILING_PROSE_RX, '').trim();
+}
+
+// The equation around a message's only "=", read token by token outward from
+// it and stopping at the first word: "subtract 2x from both sides so x - 12 =
+// 5" → "x - 12 = 5". The regex candidates above anchor on where math STARTS,
+// which prose in front of a step ("… so x - 12") keeps moving; anchoring on
+// the "=" instead needs no guess about where the sentence ends and the math
+// begins. A message with two "=" (a chain, a system) is left to the others.
+function _equationAroundEquals(text) {
+    const i = text.indexOf('=');
+    if (i < 0 || text.indexOf('=', i + 1) >= 0) return null;
+    const isMathToken = (t) => /^[\d.a-z+\-*/^()]+$/i.test(t) && !/[a-z]{2,}/i.test(t);
+    const before = text.slice(0, i).trim().split(/\s+/);
+    const after = text.slice(i + 1).trim().split(/\s+/);
+    const left = [];
+    for (let k = before.length - 1; k >= 0 && isMathToken(before[k]); k--) left.unshift(before[k]);
+    const right = [];
+    for (let k = 0; k < after.length && isMathToken(after[k]); k++) right.push(after[k]);
+    if (!left.length || !right.length) return null;
+    // Sentence punctuation rides on the last token ("… = 27.") — drop it so
+    // the right side is the number, not "27.".
+    right[right.length - 1] = right[right.length - 1].replace(/[.,;:!?]+$/, '');
+    if (!right[right.length - 1]) return null;
+    return `${left.join(' ')} = ${right.join(' ')}`;
+}
 
 function _extractMathCandidates(text) {
     const out = [];
@@ -3993,9 +4039,16 @@ function _extractMathCandidates(text) {
     while ((m = MATH_CANDIDATE_VERB_RX.exec(text)) !== null) {
         out.push(m[1].trim());
     }
+    const aroundEquals = _equationAroundEquals(text);
+    if (aroundEquals) out.push(aroundEquals);
     MATH_CANDIDATE_EQ_RX.lastIndex = 0;
     while ((m = MATH_CANDIDATE_EQ_RX.exec(text)) !== null) {
-        out.push(m[1].trim());
+        const raw = m[1].trim();
+        const trimmed = _trimProseAroundMath(raw);
+        // The peeled equation first — it is the one that parses — then the
+        // raw match, so anything that parsed before still parses.
+        if (trimmed && trimmed !== raw) out.push(trimmed);
+        out.push(raw);
     }
     return out;
 }
@@ -4180,6 +4233,7 @@ function _parseCleanProblem(text) {
 }
 
 module.exports = {
+    extractEquationAroundEquals: _equationAroundEquals,
     detectMathProblem,
     solveProblem,
     verifyAnswer,

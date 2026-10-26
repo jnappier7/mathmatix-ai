@@ -11,7 +11,7 @@
  */
 
 const { gradeBatch } = require('./batchGrading');
-const { parseCleanProblem, verifyAnswer, matchRootsInText } = require('../mathSolver');
+const { parseCleanProblem, verifyAnswer, matchRootsInText, extractEquationAroundEquals } = require('../mathSolver');
 const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer, trueArithmeticStatement } = require('./symbolicVerifier');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 const { hasMathematicalContent } = require('./verificationState');
@@ -238,6 +238,88 @@ function correctStep(observation, context, answer, source) {
   };
 }
 
+// A single-answer linear parse: the one problem shape whose solution is exact
+// enough to reject a rewrite on. Multi-root types stay with the root-set path.
+function singleAnswerLinear(parsed) {
+  return !!(parsed && parsed.hasMath && parsed.solution && parsed.solution.success === true
+    && parsed.problem && parsed.problem.type === 'general_linear'
+    && !(Array.isArray(parsed.solution.roots) && parsed.solution.roots.length > 1));
+}
+
+const normEqSide = (s) => String(s || '').replace(/\s+/g, '').replace(/^\((.*)\)$/, '$1');
+
+/**
+ * Grade one rewritten equation against the pinned linear problem.
+ *
+ * Returns a step verdict, or null when this is not that situation: no pin,
+ * more or fewer than one "=", a non-linear shape on either side, the problem
+ * restated verbatim, or a bare equation that shares no side with the pin (a
+ * fresh problem handed over, not a step — observe's bare-drop reading stands).
+ * A bare line that keeps one side of the pin intact ("3x - 4 = 2x + 5" under
+ * "3(x - 4) = 2x + 5") is derived from it and is graded.
+ */
+function gradeEquationStep(rawText, observation, context) {
+  const pinTex = context && context.pinnedProblemTex;
+  if (!pinTex) return null;
+  const text = stripLatexDelimiters(rawText).trim();
+  if ((text.match(/=/g) || []).length !== 1) return null;
+  // "x = 17" is the answer path's to grade and to credit as a solve — a
+  // final-form line is never a step. The answer path also owns the asymmetry
+  // for a FINAL value (a rejection there waits for corroboration), so any
+  // "x = <value>" shape — "so x = \frac{4}{3} right?" included — stays out.
+  if (isFinalForm(text)) return null;
+  // The equation itself, not the sentence around it: "oh wait 3 times 4 is 12
+  // so 3x - 12 = 2x + 5" parses whole as the arithmetic "3 times 4".
+  const eqText = extractEquationAroundEquals(text) || text;
+  let pinned;
+  let line;
+  try {
+    pinned = parseCleanProblem(pinTex);
+    line = parseCleanProblem(eqText);
+  } catch (_) {
+    return null;
+  }
+  if (!singleAnswerLinear(pinned) || !singleAnswerLinear(line)) return null;
+  if (/^[a-z]$/i.test(String(line.problem.leftExpr).trim()) || /^[a-z]$/i.test(String(line.problem.rightExpr).trim())) return null;
+
+  const sides = (p) => [normEqSide(p.problem.leftExpr), normEqSide(p.problem.rightExpr)];
+  const [pl, pr] = sides(pinned);
+  const [sl, sr] = sides(line);
+  const restated = (sl === pl && sr === pr) || (sl === pr && sr === pl);
+  if (restated) return null;
+  // A bare equation is a step when it keeps a side of the pin, or when the
+  // student introduced it as one ("so 3x = 21", "then …", "i got …"). With
+  // neither, observe's reading — a fresh problem handed over — stands.
+  const sharesSide = [sl, sr].some((s) => s === pl || s === pr);
+  const continues = /^(?:so|then|now|next|ok(?:ay)?|um+|i\s+(?:got|get|have)|that\s+(?:gives|makes)|which\s+(?:gives|makes))\b/i.test(text);
+  if (observation.isBareProblemDrop && !sharesSide && !continues) return null;
+
+  const lineTex = `${line.problem.leftExpr} = ${line.problem.rightExpr}`;
+  const ok = verifyAnswer(line.solution.answer, pinned.solution.answer).isCorrect === true;
+  if (ok) {
+    return { ...correctStep(observation, context, lineTex, 'symbolic:equation_step'), isStep: true };
+  }
+  return {
+    type: 'incorrect',
+    isCorrect: false,
+    answer: lineTex,
+    correctAnswer: null, // never the solution — the step is what went wrong
+    misconception: null,
+    evidence: {
+      isCorrect: false,
+      independenceLevel: estimateIndependence(observation, context),
+      misconceptionHit: null,
+      responseTimeCategory: null,
+      problemContext: observation.problemContext,
+      timestamp: new Date(),
+    },
+    verificationSource: 'symbolic:equation_step',
+    isTransformation: true,
+    isStep: true,
+    derivation: { valid: false, firstBadStep: lineTex, finalAnswer: null },
+  };
+}
+
 async function diagnoseTransformation(observation, context) {
   const rawText = observation.raw || '';
 
@@ -316,6 +398,20 @@ async function diagnoseTransformation(observation, context) {
       console.log(`[Diagnose] Restated answer "${restated}" matches the posed "${posed}" -> correct`);
       return correctStep(observation, context, restated, 'symbolic:arithmetic_restated');
     }
+  }
+
+  // ── One rewritten equation on a pinned linear equation ──
+  // "distribute so 3x - 4 = 2x + 5" under 3(x - 4) = 2x + 5. One line, so
+  // verifyDerivation (two or more) never sees it; an equation, so the
+  // expression-equivalence path below declines it by design. The turn died as
+  // `no_answer` and the tutor, holding no verdict on a distribution error, asked
+  // the student to "fill in the blank" instead of naming it (owner session,
+  // 2026-10-25). A linear equation solves exactly, so a rewrite that changes the
+  // solution is wrong with the same certainty a wrong final answer is.
+  const eqStep = gradeEquationStep(rawText, observation, context);
+  if (eqStep) {
+    console.log(`[Diagnose] Equation step "${eqStep.answer}" is ${eqStep.isCorrect ? 'equivalent to' : 'NOT equivalent to'} the pinned problem`);
+    return eqStep;
   }
 
   // `no_answer` means "the student submitted no work of their own" — a question,
@@ -1110,6 +1206,20 @@ async function diagnose(observation, context = {}) {
     type = 'correct_partial';
   } else {
     type = isCorrect === null ? 'unverifiable' : (isCorrect ? 'correct' : 'incorrect');
+  }
+
+  // Undecided, but the message ends in ONE rewritten equation — "oh wait 3
+  // times 4 is 12 so 3x - 12 = 2x + 5". observe pulled the "12" out as the
+  // answer, the answer path graded it against the problem's solution and could
+  // not decide, and the self-correction — the thing to affirm — went
+  // unjudged (owner session, 2026-10-25). Same grader the transformation path
+  // uses; a final-form line never reaches it.
+  if (isCorrect === null && !multiRoot) {
+    const eqStep = gradeEquationStep(rawText, observation, context);
+    if (eqStep) {
+      console.log(`[Diagnose] Equation step "${eqStep.answer}" (answer path fallback) is ${eqStep.isCorrect ? 'equivalent to' : 'NOT equivalent to'} the pinned problem`);
+      return eqStep;
+    }
   }
 
   return {
