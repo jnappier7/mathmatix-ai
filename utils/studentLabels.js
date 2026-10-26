@@ -25,6 +25,7 @@ const path = require('path');
 const { canonicalSkillId, decodeMasteryKey } = require('./skillCanonicalizer');
 
 const LABELS_FILE = path.join(__dirname, '..', 'seeds', 'unified-taxonomy', 'student-labels.json');
+const SEEDS_DIR = path.join(__dirname, '..', 'seeds');
 
 let labels = null; // Map<unifiedId, studentLabel>
 
@@ -38,6 +39,29 @@ function load() {
   } catch {
     // Absent or malformed (minimal test env) — every lookup falls back to the
     // prettified logical id. A missing label file must never break a prompt.
+  }
+  // The legacy kebab catalogs (seeds/skills-*.json) each carry a displayName,
+  // and an id with no unified crosswalk never reached the labels above — so a
+  // student saw the storage key prettified, catalog prefix and all: "Emf
+  // Divide Word Problems" for what the seed calls "Division Word Problems"
+  // (owner session, 2026-10-25). Same disk-at-first-use pattern; unified
+  // labels win on overlap.
+  let seedFiles = [];
+  try {
+    seedFiles = fs.readdirSync(SEEDS_DIR).filter((f) => /^skills-.*\.json$/.test(f));
+  } catch { /* no seeds dir (minimal test env) */ }
+  for (const file of seedFiles) {
+    try {
+      const rows = JSON.parse(fs.readFileSync(path.join(SEEDS_DIR, file), 'utf8'));
+      if (!Array.isArray(rows)) continue;
+      for (const row of rows) {
+        const id = row && row.skillId;
+        const name = row && (row.displayName || row.name);
+        if (typeof id === 'string' && typeof name === 'string' && name.trim() && !labels.has(id)) {
+          labels.set(id, name.trim());
+        }
+      }
+    } catch { /* one bad seed must not cost every label */ }
   }
   return labels;
 }
