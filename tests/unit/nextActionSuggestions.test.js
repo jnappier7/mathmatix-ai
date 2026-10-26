@@ -80,7 +80,9 @@ describe('Next Action Suggestions', () => {
         const result = getNextActions(user);
         const memoryAction = result.find(s => s.type === 'memory-review');
         expect(memoryAction).toBeDefined();
-        expect(memoryAction.title).toBe('Quick Review');
+        expect(memoryAction.action.label).toBe('Long Division');
+        expect(memoryAction.title).toBe('Keep It Sharp');
+        expect(memoryAction.message).not.toMatch(/fading|forgot/i);
         expect(memoryAction.message).toContain('Long Division');
     });
 
@@ -223,5 +225,29 @@ describe('Next Action Suggestions', () => {
         const result = getNextActions(user, { streakFreezeUsed: true });
         // Streak freeze (10) should be first
         expect(result[0].type).toBe('streak-freeze');
+    });
+
+    test('holds the standing nudges while a problem is still open, but not event nudges', () => {
+        const now = Date.now();
+        const user = makeUser({
+            dailyQuests: {
+                currentStreak: 6,
+                quests: [{ completed: false, target: 'problemsCorrect', progress: 2, goal: 3 }],
+            },
+            learningEngines: {
+                fsrs: {
+                    'long-division': { stability: 1, lastReview: new Date(now - 30 * 86400000).toISOString() },
+                },
+            },
+            skillMastery: {
+                'adding-fractions': { masteryScore: 85, status: 'practicing' },
+            },
+        });
+
+        const mid = getNextActions(user, { midProblem: true, badgeEarned: true });
+        expect(mid.map(s => s.type)).toEqual(['next-badge']);
+
+        const between = getNextActions(user, { midProblem: false });
+        expect(between.map(s => s.type)).toContain('memory-review');
     });
 });

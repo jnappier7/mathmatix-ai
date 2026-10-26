@@ -9,6 +9,7 @@
 
 const { calculateRetrievability } = require('./fsrsScheduler');
 const { engineEntries } = require('./engineStore');
+const { studentLabel } = require('./studentLabels');
 
 /**
  * Generate a prioritized list of next-action suggestions for a student.
@@ -20,6 +21,11 @@ const { engineEntries } = require('./engineStore');
  * @param {boolean} [context.questCompleted] - Student just completed a quest
  * @param {boolean} [context.streakFreezeUsed] - Streak freeze was just used
  * @param {number}  [context.streakLost] - Streak was just lost (value = old streak)
+ * @param {boolean} [context.midProblem] - A problem is still open this turn. The
+ *   standing nudges (review, near-mastery, quests) are for the gap BETWEEN
+ *   problems; surfacing them while the student is mid-solve interrupted the
+ *   work with a pitch to go do something else (owner session, 2026-10-25).
+ *   Event nudges (streak, level, badge) still ride on the turn they happen.
  * @returns {Object[]} Array of suggestion objects, most important first
  */
 function getNextActions(user, context = {}) {
@@ -51,7 +57,7 @@ function getNextActions(user, context = {}) {
     }
 
     const streak = dailyQuests.currentStreak || 0;
-    if (streak > 0 && streak % 7 === 6) {
+    if (streak > 0 && streak % 7 === 6 && !context.midProblem) {
         suggestions.push({
             type: 'streak-milestone',
             priority: 7,
@@ -79,16 +85,20 @@ function getNextActions(user, context = {}) {
 
         fadingSkills.sort((a, b) => a.retrievability - b.retrievability);
 
-        if (fadingSkills.length > 0) {
+        if (fadingSkills.length > 0 && !context.midProblem) {
             const topFading = fadingSkills[0];
-            const displayName = topFading.skillId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const displayName = studentLabel(topFading.skillId);
+            // Spaced review is the system's bookkeeping, not a verdict on the
+            // student. "Your memory of X is fading" told a kid they had
+            // forgotten something — mid-problem, twice — when all the data says
+            // is that it has been a while (owner, 2026-10-25). Say that.
             suggestions.push({
                 type: 'memory-review',
                 priority: 8,
                 icon: 'fa-brain',
-                title: 'Quick Review',
-                message: `Your memory of "${displayName}" is fading. A quick review will lock it in.`,
-                action: { type: 'practice-skill', skillId: topFading.skillId },
+                title: 'Keep It Sharp',
+                message: `It's been a while since "${displayName}". A quick round now keeps it fresh.`,
+                action: { type: 'practice-skill', skillId: topFading.skillId, label: displayName },
             });
         }
     }
@@ -108,23 +118,23 @@ function getNextActions(user, context = {}) {
     }
     nearMastery.sort((a, b) => b.score - a.score);
 
-    if (nearMastery.length > 0) {
+    if (nearMastery.length > 0 && !context.midProblem) {
         const top = nearMastery[0];
-        const displayName = top.skillId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        const displayName = studentLabel(top.skillId);
         suggestions.push({
             type: 'near-mastery',
             priority: 6,
             icon: 'fa-star-half-alt',
             title: 'Almost There!',
             message: `You're ${Math.round(95 - top.score)}% away from mastering "${displayName}". Keep practicing!`,
-            action: { type: 'practice-skill', skillId: top.skillId },
+            action: { type: 'practice-skill', skillId: top.skillId, label: displayName },
         });
     }
 
     // ── 4. Incomplete daily quests ──
     const quests = dailyQuests.quests || [];
     const incompleteQuests = quests.filter(q => !q.completed);
-    if (incompleteQuests.length > 0 && incompleteQuests.length <= 2) {
+    if (incompleteQuests.length > 0 && incompleteQuests.length <= 2 && !context.midProblem) {
         suggestions.push({
             type: 'daily-quests',
             priority: 5,
