@@ -39,8 +39,12 @@ describe('studentLabels', () => {
     expect(label).toBe('ZZZ ABC 9');
   });
 
-  test('a legacy kebab id still reads naturally', () => {
-    expect(studentLabel('order-of-operations')).toBe('Order Of Operations');
+  test('a legacy kebab id reads as its student-voice label, not a prettified key', () => {
+    // Legacy catalog ids with no unified crosswalk have their own labels in
+    // student-labels.json (keyed by the kebab id), so a student never sees a
+    // textbook heading or a title-cased storage key.
+    expect(studentLabel('order-of-operations')).toBe('Which step comes first');
+    expect(studentLabel('emf-interpreting-remainders')).toBe('What to do with the leftover');
   });
 
   test('empty input does not throw', () => {
