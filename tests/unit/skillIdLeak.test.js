@@ -39,8 +39,11 @@ describe('studentLabels', () => {
     expect(label).toBe('ZZZ ABC 9');
   });
 
-  test('a legacy kebab id still reads naturally', () => {
-    expect(studentLabel('order-of-operations')).toBe('Order Of Operations');
+  test('a legacy kebab id reads as its catalog name, never the key', () => {
+    // seeds/skills-*.json carries the displayName; the prettified key is only
+    // the fallback for an id no catalog knows.
+    expect(studentLabel('order-of-operations')).toBe('Order of operations');
+    expect(studentLabel('emf-divide-word-problems')).toBe('Division Word Problems');
   });
 
   test('empty input does not throw', () => {
