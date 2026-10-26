@@ -653,12 +653,18 @@ async function persist(params) {
 
   // ── 8c. Next Action suggestions ──
   const gamResult = results.gamification || {};
+  // A problem is still open after this turn (a step, a hint, a question) when
+  // one was pinned or in progress and the turn did not finish it. The standing
+  // "go review X" nudges wait for the gap between problems.
+  const midProblem = !results.problemAnswered
+    && !!(pinnedProblemTex || conversation.lastProblemState || conversation.boardLedger?.current);
   results.nextActions = getNextActions(user, {
     leveledUp: results.leveledUp || false,
     badgeEarned: !!results.badgeAwarded,
     questCompleted: (gamResult.questsCompleted || []).length > 0,
     streakFreezeUsed: gamResult.streakFreezeUsed || false,
     streakLost: gamResult.streakLost || 0,
+    midProblem,
   });
 
   // ── 8d. Intervention alert check ──

@@ -528,6 +528,14 @@ export function showNextActionSuggestion(nextActions) {
             card.remove();
             if (suggestion.action.type === 'navigate' && suggestion.action.url) {
                 window.location.href = suggestion.action.url;
+            } else if (suggestion.action.type === 'practice-skill') {
+                // "Let's Go" on a review/near-mastery nudge used to do nothing but
+                // close the card — no handler for this action type. Ask the tutor
+                // for the round, in the student's own voice, through the chat.
+                const label = suggestion.action.label || suggestion.action.skillId || 'that';
+                if (typeof window.mmSendChatMessage === 'function') {
+                    window.mmSendChatMessage(`Can we do a quick round of ${label}?`);
+                }
             } else if (suggestion.action.type === 'view-quests') {
                 // Toggle quests sidebar if available
                 const questsPanel = document.getElementById('quests-panel') || document.getElementById('daily-quests-section');
