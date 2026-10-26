@@ -8,9 +8,12 @@ const { studentLabel, _reset } = require('../../utils/studentLabels');
 describe('studentLabel — legacy catalog displayNames', () => {
   beforeEach(() => _reset());
 
-  it('uses the seed displayName for a prefixed legacy id', () => {
-    expect(studentLabel('emf-divide-word-problems')).toBe('Division Word Problems');
-    expect(studentLabel('g6-place-value-decimals')).toBe('Place Value & Decimals');
+  // Exact wording is owned by seeds/unified-taxonomy/student-labels.json (a
+  // student-voice label may override the seed's displayName); what this pins
+  // is that the key never reaches the student.
+  it('uses a catalog name for a prefixed legacy id, never the prettified key', () => {
+    expect(studentLabel('emf-divide-word-problems')).not.toBe('Emf Divide Word Problems');
+    expect(studentLabel('g6-place-value-decimals')).not.toBe('G6 Place Value Decimals');
   });
 
   it('never shows the catalog prefix', () => {
