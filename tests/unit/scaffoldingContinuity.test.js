@@ -140,9 +140,11 @@ describe('promptCompact.buildSkillMasteryContext — no silent status drops', ()
     // Names now come from the label catalog rather than from the Map key, so a
     // legacy id that crosswalks to a unified skill reads as its student-facing
     // label: 'integer-operations' -> MS.QNT.8 -> 'Math with negatives and
-    // fractions'. An id with no catalog entry still prettifies from the key.
+    // fractions'. A legacy catalog id with no crosswalk has its own student-voice
+    // label ('order-of-operations' -> 'Which step comes first'); only an id in
+    // no catalog at all still prettifies from the key ('absolute-value' above).
     expect(out).toContain('Math with negatives and fractions');
-    expect(out).toContain('Order Of Operations');
+    expect(out).toContain('Which step comes first');
     expect(out).toContain('now fragile');
     expect(out).toContain('Fractions');
   });
