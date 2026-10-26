@@ -52,6 +52,9 @@ module.exports = {
     // Bare-problem-drop and worked-step classification (observe.js).
     '<rootDir>/tests/unit/bareProblemDrop.test.js',
     '<rootDir>/tests/unit/diagnoseMultiStep.test.js',
+    // 2026-10-25 owner session: prose-wrapped problems pin, one-line equation
+    // steps and "so" chains get verdicts, graded work is never a bare drop.
+    '<rootDir>/tests/unit/diagnoseEquationStep.test.js',
     '<rootDir>/tests/unit/derivationVerifier.test.js',
     '<rootDir>/tests/unit/stepSolveCredit.test.js',
     // Course audit 2026-10-18..23: correct worked answers, and verdict repair.

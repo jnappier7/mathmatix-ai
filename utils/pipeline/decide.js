@@ -554,9 +554,14 @@ function decideCore(observation, diagnosis, context) {
   //   - no recent upload (worksheet flow has its own guards)
   //   - no active mastery/lesson phase (those are structured contexts with
   //     their own appropriate pedagogical path, e.g. I-DO phase teaches)
+  //   - no verdict on it: observe reads "x - 12 = 5 so x = 17" as a drop, but
+  //     diagnose verified it as a finished solve — graded work is not a drop,
+  //     and eliciting "where would you start?" on it asked the student to
+  //     solve what they had just solved (owner session, 2026-10-25)
   if (observation.isBareProblemDrop
       && !context.hasRecentUpload
-      && !phaseState?.currentPhase) {
+      && !phaseState?.currentPhase
+      && diagnosis.isCorrect == null) {
     decision.action = ACTIONS.ELICIT_FIRST;
     decision.directives.push(
       'BARE PROBLEM DROP: the student handed you a new problem with no attempt, no stuck-point, no reasoning. Respond like a human tutor — in your own voice, not a template.',
@@ -897,11 +902,41 @@ function decideCore(observation, diagnosis, context) {
   if (diagnosis.isTransformation && diagnosis.isCorrect === true
       && msgType !== MESSAGE_TYPES.ANSWER_ATTEMPT) {
     decision.action = ACTIONS.CONFIRM_CORRECT;
+    // A chain that reaches the answer on one line — "x - 12 = 5 so x = 17" —
+    // is a finished solve, not a step. Told it was a "step", the tutor praised
+    // the setup and asked the student to solve what they had just solved
+    // (owner session, 2026-10-25).
+    if (diagnosis.derivation && diagnosis.derivation.valid === true && diagnosis.isStep === false) {
+      decision.directives.push(
+        'VERIFIED CORRECT SOLUTION: the student showed their work AND reached the final answer, and every line has been checked independently. The problem is DONE.',
+        'Affirm it plainly in your FIRST sentence and name what they did right (you can see their steps). Do NOT ask them to solve, finish, re-check, or walk you through anything — they already did.',
+        'Then move FORWARD: a new problem, a slightly harder variant, or a transfer question.'
+      );
+      return decision;
+    }
     decision.directives.push(
       'VERIFIED CORRECT STEP: the student\'s work this turn has been checked independently and it is right.',
       'Say so plainly in your FIRST sentence. Do NOT ask them to re-check it, re-do it, walk you through it, or "take another look" — there is nothing wrong with it.',
       'If your own earlier turn implied this was wrong, correct yourself openly and briefly ("you\'re right, I had that wrong") — do not quietly move on.',
       'Then take the lesson FORWARD: what this step means for the problem, or the next step. Do not re-pose the step they just finished.'
+    );
+    return decision;
+  }
+
+  // ── A verified-WRONG step that observe did not call an answer attempt ──
+  // The mirror of the block above. A rewritten line that breaks the problem
+  // ("distribute so 3x - 4 = 2x + 5" under 3(x - 4) = 2x + 5) files as general
+  // math, so it fell through to the catch-all with its verdict unread — the
+  // tutor asked the student to "fill in the blank" and never named the
+  // distribution error (owner session, 2026-10-25). Same gate: a real verdict
+  // only; an unverifiable step still takes the neutral paths.
+  if (diagnosis.isTransformation && diagnosis.isCorrect === false
+      && msgType !== MESSAGE_TYPES.ANSWER_ATTEMPT) {
+    decision.action = ACTIONS.GUIDE_INCORRECT;
+    decision.directives.push(
+      'VERIFIED WRONG STEP: the student rewrote the problem this turn and the new line does NOT follow from it — checked independently, not a guess.',
+      firstWrongStepDirective(diagnosis),
+      'Do NOT write the corrected line for them, and do NOT carry the problem past this step. Point at the move, ask about it, and stop.'
     );
     return decision;
   }

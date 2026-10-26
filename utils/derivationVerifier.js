@@ -73,12 +73,27 @@ function isTrueArithmeticFact(line) {
   return facts > 0;
 }
 
+// Typed chat is one line. "x - 12 = 5 so x = 17" is two steps joined by a
+// connective, not one; split on newlines alone it was a single unparseable
+// line, no verdict was produced, and the tutor asked the student to solve
+// what they had just solved (owner session, 2026-10-25). A line splits on a
+// connective only when it holds two or more "=" AND every piece keeps one, so
+// a chain "3x = 11 - 7 = 4" and a lone equation are untouched.
+const STEP_CONNECTIVE = /\s*(?:,|;|→|->|=>|\b(?:so|then|and\s+then|and\s+so|therefore|which\s+(?:gives|means|makes)|that\s+(?:gives|makes)|gives|giving|now|next)\b)\s*/i;
+function splitConnectedSteps(line) {
+  if ((line.match(/=/g) || []).length < 2) return [line];
+  const parts = line.split(STEP_CONNECTIVE).map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 2 || !parts.every((p) => /=/.test(p))) return [line];
+  return parts;
+}
+
 // Split shown work into candidate step lines. Handles one multi-line message or
 // a joined transcript; strips bullets/numbering and keeps lines that carry math.
 function splitWorkLines(workText) {
   if (!workText || typeof workText !== 'string') return [];
   return stripThousandsSeparators(workText)
     .split(/[\n\r]+/)
+    .flatMap(splitConnectedSteps)
     .map((l) => l.replace(/^\s*(?:step\s*\d+\s*[:.)-]?|\d+\s*[.)](?=\s)|[-*•](?=\s))\s*/i, '').trim())
     .filter((l) => l.length > 0 && /[0-9x-z)]/i.test(l) && /[=+\-*/×÷]/.test(l));
 }
