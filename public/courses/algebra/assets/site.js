@@ -17,7 +17,12 @@
     var KINDS={lesson:'',review:'Review',quiz:'Quiz',test:'Test',activity:'Activity','no-class':'No class'};
     var iso=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
     var parse=function(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);};
-    var mondayOf=function(d){var x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;};
+    // The Monday of the week this date belongs to — except SUNDAY, which rolls
+    // forward to tomorrow's week rather than back into the one just finished.
+    // A student checking the schedule on Sunday night is asking about Monday;
+    // sending them to last week is how one turned up expecting Friday's lab.
+    var mondayOf=function(d){var x=new Date(d);var dow=x.getDay();
+      x.setDate(x.getDate()-(dow===0?-1:dow-1));return x;};
     var addD=function(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x;};
     var fmt=function(d){return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});};
     var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
