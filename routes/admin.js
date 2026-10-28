@@ -2279,6 +2279,37 @@ router.get('/funnel', isAdmin, async (req, res) => {
  *
  * Query: startDate, endDate (signup window, default last 90 days), all=true.
  */
+/**
+ * @route   GET /api/admin/reports/drill-usage
+ * @desc    Every student who used the Two-Minute Drill in the window: solo rounds (self-reported)
+ *          and live Math Facts fluency (server-graded), one row per student, with class and
+ *          teacher. utils/drillUsageReport.js — read its caveats before quoting a number.
+ * @query   days   - window for activity, default 30, max 3650
+ * @query   format - 'csv' downloads a spreadsheet; anything else is JSON
+ * @access  Private (Admin). Logged per student read (progress_data — these are education records).
+ */
+router.get('/reports/drill-usage', isAdmin,
+  logRecordAccess('progress_data', 'administrative_function', { getStudentIds: (req) => req.accessedStudentIds, accessType: 'export' }),
+  async (req, res) => {
+    try {
+      const { buildDrillUsageReport, toCsv } = require('../utils/drillUsageReport');
+      const report = await buildDrillUsageReport({ days: req.query.days });
+      req.accessedStudentIds = report.students.map((s) => s.id);
+      if (req.query.format === 'csv') {
+        const stamp = report.generatedAt.toISOString().slice(0, 10);
+        res.set('Content-Type', 'text/csv; charset=utf-8');
+        res.set('Content-Disposition', `attachment; filename="drill-usage-${report.window.days || 'custom'}d-${stamp}.csv"`);
+        res.set('Cache-Control', 'no-store');
+        return res.send(toCsv(report.students));
+      }
+      res.set('Cache-Control', 'no-store');
+      res.json(report);
+    } catch (error) {
+      console.error('Drill usage report failed:', error.message);
+      res.status(500).json({ message: 'Could not build the drill usage report.' });
+    }
+  });
+
 router.get('/reports/student-conversion', isAdmin, async (req, res) => {
   try {
     const now = new Date();
