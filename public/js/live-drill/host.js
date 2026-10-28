@@ -48,6 +48,57 @@
 
   function show(id) { ['setup', 'lobby', 'live', 'final'].forEach((s) => { $(s).hidden = s !== id; }); }
 
+  // ---------------- search ----------------
+  // Find a drill and playbook by topic. Same public index the solo page uses
+  // (/api/live-drill/solo/search), so a teacher and a student get the same answer.
+  let qSeq = 0;
+  function wireSearch() {
+    const q = $('q');
+    const res = $('q-res');
+    if (!q || !res) return;
+    let t = null;
+    q.oninput = () => { clearTimeout(t); t = setTimeout(() => runSearch(q.value), 160); };
+    q.onkeydown = (e) => {
+      if (e.key === 'Escape') { q.value = ''; runSearch(''); }
+      if (e.key === 'ArrowDown') { const b = res.querySelector('button'); if (b) { e.preventDefault(); b.focus(); } }
+    };
+    res.onkeydown = (e) => {
+      const items = [...res.querySelectorAll('button')];
+      const i = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown' && items[i + 1]) { e.preventDefault(); items[i + 1].focus(); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); (items[i - 1] || q).focus(); }
+      if (e.key === 'Escape') { q.focus(); q.value = ''; runSearch(''); }
+    };
+    $('dsearch').onsubmit = (e) => { e.preventDefault(); const b = res.querySelector('button'); if (b) b.click(); };
+  }
+  async function runSearch(text) {
+    const res = $('q-res');
+    const seq = ++qSeq;
+    const words = String(text || '').trim();
+    if (!words) { res.hidden = true; res.innerHTML = ''; return; }
+    let results;
+    try {
+      const r = await fetch(`/api/live-drill/solo/search?q=${encodeURIComponent(words)}`, { credentials: 'same-origin' });
+      ({ results } = await r.json());
+    } catch { return; }
+    if (seq !== qSeq) return; // a newer keystroke answered already
+    results = results.filter((x) => S.drills.some((d) => d.id === x.drill && !d.unavailable));
+    res.hidden = false;
+    if (!results.length) { res.innerHTML = `<p class="muted none">Nothing for “${esc(words)}”. Try the module or chapter number, or a word from the lesson.</p>`; return; }
+    res.innerHTML = results.map((x, i) => `<button type="button" role="option" data-i="${i}">`
+      + `<span class="bk-ch">${esc(x.title)}${x.ch ? ` · ${esc(x.ch)}` : ''}</span>`
+      + `<span class="nm">${esc(x.name)}</span><span class="bl">${esc(x.blurb || '')}</span></button>`).join('');
+    res.querySelectorAll('button').forEach((b) => {
+      b.onclick = () => {
+        const x = results[Number(b.dataset.i)];
+        S.drill = x.drill; S.playbook = x.key; S.focus = [];
+        res.hidden = true;
+        renderSetup();
+        $('books').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+    });
+  }
+
   // ---------------- setup ----------------
   function segment(el, values, current, fmt, onPick) {
     el.innerHTML = values.map((v) => `<button data-v="${v}" aria-pressed="${v === current}">${fmt(v)}</button>`).join('');
@@ -622,6 +673,7 @@
       if (!drills.some((d) => d.id === S.drill && !d.unavailable)) S.drill = (drills.find((d) => !d.unavailable) || drills[0]).id;
       if (!['drive', 'huddle', 'hill'].includes(S.mode)) S.mode = 'drive';
       renderSetup();
+      wireSearch();
       show('setup');
     } catch (e) { $('setup-err').textContent = e.message; }
   })();

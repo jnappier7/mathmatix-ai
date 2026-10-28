@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261031">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261032">
 </head>
 <body>
 <div class="wrap">
@@ -21,6 +21,11 @@
       <p>Students join on any device at <b>mathmatix.ai/play</b> with a code. No accounts. They're split into two teams, and every right answer moves their team's ball.</p>
     </div>
     <div class="setup panel" style="margin-top:14px">
+      <form class="dsearch" id="dsearch" role="search" autocomplete="off">
+        <label class="lbl" for="q">Find a topic</label>
+        <input type="search" id="q" name="q" placeholder="e.g. completing the square, SOHCAHTOA, box plots, chapter 9" maxlength="80" enterkeyhint="search" spellcheck="false">
+        <div class="dsearch-res" id="q-res" role="listbox" aria-label="Matching drills" hidden></div>
+      </form>
       <div>
         <span class="lbl" id="dr-l">Course</span>
         <div class="seg-ctl" id="drills" role="group" aria-labelledby="dr-l"></div>
@@ -166,6 +171,6 @@
 <script src="/js/csrf.js"></script>
 <script src="/js/live-drill/common.js?v=20261023"></script>
 <script src="/js/live-drill/sound.js?v=20261030"></script>
-<script src="/js/live-drill/host.js?v=20261033"></script>
+<script src="/js/live-drill/host.js?v=20261034"></script>
 </body>
 </html>

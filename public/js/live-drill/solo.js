@@ -92,6 +92,7 @@
 
   async function boot() {
     loadMe();                    // not awaited: the strip can fill in late
+    wireSearch();
     if (!hubId) return renderHubList();
     try { hub = await get(`/hubs/${encodeURIComponent(hubId)}`); } catch (err) { $('pick-err').textContent = err.message; return; }
     document.title = `${hub.title} Drills | MATHMATIX AI`;
@@ -101,9 +102,73 @@
     const saved = local.get(`mm-drill-pick:${hub.id}`);
     if (saved && hub.games[saved.gi]) Object.assign(sel, saved);
     if (!Array.isArray(sel.focus)) sel.focus = [];
+    // A search result on another course's page lands here with the game and playbook named.
+    const jump = new URLSearchParams(location.search);
+    const jg = hub.games.findIndex((g) => g.drill === jump.get('game'));
+    if (jg >= 0) {
+      sel.gi = jg;
+      if (hub.games[jg].playbooks.some((b) => b.key === jump.get('book'))) sel.book = jump.get('book');
+      history.replaceState(null, '', location.pathname);
+    }
     pickGame(sel.gi, true);
     $('setup').hidden = false;
     $('start').onclick = start;
+  }
+
+  // ---------------------------------------------------------------- search
+  // Find a game and playbook by topic. The server's index covers every drill on every hub,
+  // so a result may live on another course's page: then the click goes there with the pick named.
+
+  let qSeq = 0;
+  function wireSearch() {
+    const q = $('q');
+    const res = $('q-res');
+    if (!q || !res) return;
+    let t = null;
+    q.oninput = () => { clearTimeout(t); t = setTimeout(() => runSearch(q.value), 160); };
+    q.onkeydown = (e) => {
+      if (e.key === 'Escape') { q.value = ''; runSearch(''); }
+      if (e.key === 'ArrowDown') { const b = res.querySelector('button'); if (b) { e.preventDefault(); b.focus(); } }
+    };
+    res.onkeydown = (e) => {
+      const items = [...res.querySelectorAll('button')];
+      const i = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown' && items[i + 1]) { e.preventDefault(); items[i + 1].focus(); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); (items[i - 1] || q).focus(); }
+      if (e.key === 'Escape') { q.focus(); q.value = ''; runSearch(''); }
+    };
+    $('dsearch').onsubmit = (e) => { e.preventDefault(); const b = res.querySelector('button'); if (b) b.click(); };
+  }
+
+  async function runSearch(text) {
+    const res = $('q-res');
+    const seq = ++qSeq;
+    const words = String(text || '').trim();
+    if (!words) { res.hidden = true; res.innerHTML = ''; return; }
+    let results;
+    try { ({ results } = await get(`/search?q=${encodeURIComponent(words)}`)); } catch { return; }
+    if (seq !== qSeq) return; // a newer keystroke answered already
+    res.hidden = false;
+    if (!results.length) { res.innerHTML = `<p class="muted none">Nothing for “${esc(words)}”. Try the module or chapter number, or a word from the lesson.</p>`; return; }
+    res.innerHTML = results.map((r, i) => `<button type="button" role="option" data-i="${i}">`
+      + `<span class="bk-ch">${esc(r.hubTitle || r.title)} · ${esc(r.game)}${r.ch ? ` · ${esc(r.ch)}` : ''}</span>`
+      + `<span class="nm">${esc(r.name)}</span><span class="bl">${esc(r.blurb || '')}</span></button>`).join('');
+    res.querySelectorAll('button').forEach((b) => { b.onclick = () => goTo(results[Number(b.dataset.i)]); });
+  }
+
+  /** Open a search result: pick it here when it is on this page, else go to its course page. */
+  function goTo(r) {
+    const here = hub && hub.games.findIndex((g) => g.drill === r.drill);
+    if (hub && here >= 0) {
+      sel.gi = here;
+      sel.book = r.key;
+      pickGame(here, true);
+      $('q-res').hidden = true;
+      $('setup').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    if (!r.hub) return;
+    location.href = `/drill/${encodeURIComponent(r.hub)}?game=${encodeURIComponent(r.drill)}&book=${encodeURIComponent(r.key)}`;
   }
 
   /** /drill with no course: one tile per course. */

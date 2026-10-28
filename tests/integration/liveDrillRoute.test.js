@@ -217,6 +217,17 @@ describe('solo practice (/drill/<hub>)', () => {
     expect((await req.get('/api/live-drill/solo/hubs')).body.hubs).toHaveLength(2);
   });
 
+  test('search finds a playbook by topic, publicly, and names the page it lives on', async () => {
+    const r = await req.get('/api/live-drill/solo/search?q=completing%20the%20square');
+    expect(r.status).toBe(200);
+    expect(r.body.q).toBe('completing the square');
+    expect(r.body.results[0]).toMatchObject({ drill: 'alg1m11', key: 'roots', hub: 'algebra' });
+    const hub = await req.get(`/api/live-drill/solo/hubs/${r.body.results[0].hub}`);
+    expect(hub.body.games.find((g) => g.drill === 'alg1m11').playbooks.some((b) => b.key === 'roots')).toBe(true);
+    expect((await req.get('/api/live-drill/solo/search')).body.results).toEqual([]);
+    expect((await req.get('/api/live-drill/solo/search?q=xyzzy')).body.results).toEqual([]);
+  });
+
   test('an unknown hub is a 404, prototype names included', async () => {
     for (const h of ['calculus', 'constructor', '__proto__', 'toString']) {
       expect((await req.get(`/api/live-drill/solo/hubs/${h}`)).status).toBe(404);
