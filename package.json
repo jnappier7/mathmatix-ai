@@ -70,6 +70,7 @@
     "analyze:decimal-conversions": "node scripts/check-decimal-conversions.js",
     "analyze:all-decimals": "node scripts/find-all-decimal-problems.js",
     "migrate:remap-patterns": "node scripts/remap-problems-to-patterns.js",
+    "report:drill": "node scripts/drillUsageReport.js",
     "cron:weekly-digest": "node scripts/weeklyDigest.js",
     "cron:archive": "node scripts/archiveOldConversations.js",
     "cron:mine-transcripts": "node scripts/mineTranscripts.js",
