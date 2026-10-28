@@ -44,6 +44,7 @@ const G = require('../utils/liveDrill/games');
 const { DRILLS, listPlaybooks } = require('../utils/liveDrill/engine');
 const { FOCUSABLE, FOCUS_MAX } = require('../utils/liveDrill/facts');
 const solo = require('../utils/liveDrill/solo');
+const drillSearch = require('../utils/liveDrill/search');
 const practice = require('../utils/liveDrill/practice');
 const store = require('../utils/liveDrill/store'); // revives a game this process hasn't seen (after a deploy)
 
@@ -446,6 +447,17 @@ const soloLimiter = rateLimit({
 soloRouter.use(soloLimiter);
 
 soloRouter.get('/hubs', (req, res) => res.json({ hubs: solo.hubList() }));
+
+/** Find a game and playbook by skill or topic ("completing the square", "SOHCAHTOA", "box plots").
+ *  Public like the rest of solo practice: it reads only the banks' own titles and blurbs. Both the
+ *  host's picker and the solo page use it, so a teacher and a student get the same answer. */
+soloRouter.get('/search', (req, res) => {
+  try {
+    const q = String(req.query.q || '').slice(0, drillSearch.MAX_Q);
+    res.set('Cache-Control', 'public, max-age=300');
+    res.json({ q, results: drillSearch.search(q) });
+  } catch (err) { send(res, err); }
+});
 
 soloRouter.get('/hubs/:hub', (req, res) => {
   try {

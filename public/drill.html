@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261031a">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261032">
 </head>
 <body class="solo">
 <div class="pwrap">
@@ -20,6 +20,11 @@
       <div class="eyebrow">Mathmatix · Practice on your own</div>
       <h1 id="h-title">Practice <span>Drills</span></h1>
       <p id="h-sub">Nothing to join. Pick a game and go.</p>
+      <form class="dsearch" id="dsearch" role="search" autocomplete="off">
+        <label class="lbl" for="q">Find a topic</label>
+        <input type="search" id="q" name="q" placeholder="e.g. completing the square, SOHCAHTOA, box plots, module 7" maxlength="80" enterkeyhint="search" spellcheck="false">
+        <div class="dsearch-res" id="q-res" role="listbox" aria-label="Matching drills" hidden></div>
+      </form>
       <p class="hubs" id="h-hubs"></p>
       <p class="acct" id="acct"></p>
     </div>
@@ -77,6 +82,6 @@
 
 <script src="/js/csrf.js"></script>
 <script src="/js/live-drill/common.js?v=20261023"></script>
-<script src="/js/live-drill/solo.js?v=20261031a"></script>
+<script src="/js/live-drill/solo.js?v=20261032"></script>
 </body>
 </html>

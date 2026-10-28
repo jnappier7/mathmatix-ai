@@ -493,6 +493,20 @@ table.twoway td:first-child{text-align:left}
 .dz{opacity:.6}
 tr.none td{opacity:.62}
 .solo .hubs a.book{text-decoration:none;color:var(--chalk)}
+/* ── find a topic ── one box above the pickers; results are compact playbook tiles that pick the
+   game AND the playbook in one tap (or jump to the other course's page). */
+.dsearch{display:flex;flex-direction:column;gap:6px;position:relative}
+.dsearch input[type=search]{font:inherit;font-size:1.05rem;background:var(--night);color:var(--chalk);border:2px solid var(--rail);border-radius:6px;padding:11px 14px;width:100%;-webkit-appearance:none;appearance:none}
+.dsearch input[type=search]:focus{outline:none;border-color:var(--led)}
+.dsearch input::placeholder{color:var(--muted);opacity:.8}
+.dsearch-res{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin-top:4px}
+.dsearch-res button{text-align:left;background:var(--night);color:var(--chalk);border:2px solid var(--rail);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0;cursor:pointer}
+.dsearch-res button:hover,.dsearch-res button:focus{border-color:var(--led);outline:none}
+.dsearch-res .bk-ch{font-family:var(--display);font-weight:800;color:var(--led);letter-spacing:.08em;font-size:.78rem;text-transform:uppercase}
+.dsearch-res .nm{font-family:var(--display);font-weight:800;font-size:1.2rem;line-height:1.05;text-transform:uppercase}
+.dsearch-res .bl{font-size:.82rem;color:var(--muted)}
+.dsearch-res .none{grid-column:1/-1;margin:2px 0 0}
+.solo .dsearch{margin:14px 0 0}
 .solo-setup{display:flex;flex-direction:column;gap:16px}
 .solo-setup .best{margin:0;min-height:1.3em}
 .solo .quit{padding:6px 12px;font-size:.9rem}
