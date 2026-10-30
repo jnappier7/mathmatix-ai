@@ -361,6 +361,84 @@ export function refreshStatusCard(user = window.currentUser) {
     populate(modal, user);
 }
 
+// ── Rail standings strip ──
+// The "Keep it up!" caption at the foot of the tutor panel was static
+// filler; it now carries the student's standing on this week's board —
+// "#4 of 28 · 225 XP this week · 12 XP behind Maya R." — and opens the full
+// board in My Progress. Same endpoint, same scope rule as the board: the
+// class when the student has one, every student otherwise (owner, 2026-10-29).
+// The static copy stays as the fallback, so a failed fetch, a staff viewer
+// or a reduced-distraction IEP leaves the card exactly as it was.
+function standingsCopy(data) {
+    const entries = Array.isArray(data?.entries) ? data.entries : [];
+    const you = data?.you;
+    const total = Number(data?.total) || entries.length;
+    const title = data?.scope === 'class' ? 'Your class this week' : 'All students this week';
+    if (!entries.length) {
+        return { title, body: 'Nobody’s on the board yet — earn XP to take #1.' };
+    }
+    const leader = entries[0];
+    if (!you || !(you.points > 0) || you.rank == null) {
+        return { title, body: `Earn XP to get on the board — ${esc(leader.name)} leads with ${leader.points} XP.` };
+    }
+    const pts = `${you.points} XP this week`;
+    if (you.rank === 1) {
+        const second = entries.find(e => e.rank === 2);
+        const gap = second ? ` · ${you.points - second.points} XP ahead of ${esc(second.name)}` : '';
+        return { title, body: `<strong>You’re #1</strong> of ${total} · ${pts}${gap}` };
+    }
+    const ahead = entries.find(e => e.rank === you.rank - 1);
+    const gap = ahead ? ` · ${ahead.points - you.points} XP behind ${esc(ahead.name)}` : '';
+    return { title, body: `<strong>#${you.rank}</strong> of ${total} · ${pts}${gap}` };
+}
+
+export async function refreshRailStandings() {
+    const card = document.querySelector('.cr-encourage-card[data-standings]');
+    if (!card) return;
+    // iep.js stamps the class after the user loads, which can be after the
+    // first run here — so a later refresh (XP events) puts the caption back.
+    if (document.body.classList.contains('iep-reduced-distraction')) {
+        if (card.dataset.fallback) { card.innerHTML = card.dataset.fallback; card.classList.remove('is-standings'); }
+        return;
+    }
+    if (!card.dataset.fallback) card.dataset.fallback = card.innerHTML;
+    try {
+        const res = await fetch('/api/leaderboard?period=week', { credentials: 'include' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data?.viewerStaff) {
+            if (card.classList.contains('is-standings')) { card.innerHTML = card.dataset.fallback; card.classList.remove('is-standings'); }
+            return;
+        }
+        const { title, body } = standingsCopy(data);
+        const titleEl = card.querySelector('.cr-encourage-title');
+        const bodyEl = card.querySelector('.cr-encourage-body');
+        if (!titleEl || !bodyEl) return;
+        titleEl.innerHTML = `<span aria-hidden="true">🏆</span> ${title}`;
+        bodyEl.innerHTML = body;
+        if (!card.classList.contains('is-standings')) {
+            card.classList.add('is-standings');
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('aria-label', 'Open this week’s leaderboard');
+            const open = (e) => { e.preventDefault(); openStatusCard(); };
+            card.addEventListener('click', open);
+            card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') open(e); });
+        }
+    } catch (e) {
+        console.warn('Rail standings failed', e);
+    }
+}
+
+if (typeof window !== 'undefined') {
+    window.refreshRailStandings = refreshRailStandings;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => { refreshRailStandings(); });
+    } else {
+        refreshRailStandings();
+    }
+}
+
 if (typeof window !== 'undefined') {
     window.openStatusCard = openStatusCard;
     window.closeStatusCard = closeStatusCard;

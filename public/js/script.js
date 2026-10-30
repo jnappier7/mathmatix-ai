@@ -10,7 +10,7 @@ import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbea
 import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js?v=20261029a';
 import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
 import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
-import './modules/statusCard.js?v=6'; // registers window.openStatusCard (Progress button)
+import './modules/statusCard.js?v=7'; // registers window.openStatusCard (Progress button)
 // Versioned specifier — see the note on the billing.js import below. Without
 // it the try-on preview fix below would not reach a returning student for a
 // week: /js/** is served max-age=604800, and bumping script.js's own ?v= does
@@ -98,6 +98,8 @@ function applyTurnRewards(data) {
                     const drawerTotal = document.getElementById('drawer-total-xp');
                     if (drawerTotal) drawerTotal.textContent = String(data.userTotalXp);
                     try { if (typeof window.refreshStatusCard === 'function') window.refreshStatusCard(currentUser); } catch (e) { /* card closed or not loaded */ }
+                    // The rail standings strip ranks on this week's XP, so it moves too.
+                    try { if (typeof window.refreshRailStandings === 'function') window.refreshRailStandings(); } catch (e) { /* strip absent */ }
                 }
                 updateGamificationDisplay();
                 // Identity chip: refresh level ring + rank title from the fresh XP state.

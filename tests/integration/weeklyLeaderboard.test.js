@@ -53,6 +53,9 @@ test('ranks THIS week only — a 20k all-time account with no XP this week is ab
   ]);
   expect(res.body.you).toEqual({ rank: 3, name: 'Cal X.', points: 60 });
   expect(res.body.viewerStaff).toBe(false);
+  // No class → ranked against every student, and the strip can say "of 4".
+  expect(res.body.scope).toBe('all');
+  expect(res.body.total).toBe(4);
 });
 
 test('the viewer outside the Top 10 still gets their row; with 0 points, no rank yet', async () => {
@@ -93,6 +96,8 @@ test('a class board stays a class board', async () => {
   viewer = { _id: me, role: 'student', roles: ['student'], teacherId: teacherA };
   const res = await get();
   expect(res.body.entries.map((e) => e.name)).toEqual(['InClass X.', 'Me X.']);
+  expect(res.body.scope).toBe('class');
+  expect(res.body.total).toBe(2);
 });
 
 test('the all-time board (no ?period) is unchanged', async () => {

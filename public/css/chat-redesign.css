@@ -665,6 +665,14 @@ html.mm-work-inline #mathmatix-whiteboard-panel { display: none !important; }
   line-height: 1.4;
 }
 .cr-heart { color: #E879F9; }
+/* Standings strip (statusCard.js swaps the caption for the student's rank
+   on this week's board and makes the card open My Progress). */
+.cr-encourage-card.is-standings { cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.cr-encourage-card.is-standings:hover { border-color: var(--cr-accent); }
+.cr-encourage-card.is-standings:focus-visible { outline: 2px solid var(--cr-accent); outline-offset: 2px; }
+/* Inherit, not --cr-text: the light-theme caption strip paints a dark body
+   colour, and the token is dark-theme white — "#4" vanished on it. */
+.cr-encourage-card.is-standings .cr-encourage-body strong { color: inherit; font-weight: 700; }
 
 /* ----- Chat container: dark, rounded ----- */
 body.cr-mode #chat-container {
