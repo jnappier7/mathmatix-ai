@@ -62,6 +62,7 @@ const messageSchema = new Schema({
         mimeType: { type: String },
         extractedText: { type: String }, // server-only: PDF OCR text for cross-turn pin
         imageData: { type: String },     // server-only: downscaled data-URL for cross-turn vision
+        figures: { type: [String], default: undefined }, // server-only: PDF figure data-URLs, slot i = "[Figure i+1]" ('' = unavailable)
         _id: false
     }],
 }, { _id: false });

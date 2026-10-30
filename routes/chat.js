@@ -94,6 +94,7 @@ const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecur
 const { applyWorksheetGuard, isCheckWorkIntent } = require('../utils/worksheetGuard');
 const { UPLOAD_CONTEXT_REMINDER, WORKSHEET_REATTACH_REMINDER } = require('../utils/visualCapabilities');
 const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl, findWorksheetInMessages, referencesWorksheet } = require('../utils/activeWorksheetImage');
+const { figureVisionBlocks } = require('../utils/pdfFigures');
 const { verifyStudentWork } = require('../utils/pipeline/checkWorkVerifier');
 
 // When a student shares their work and asks to be checked, nudge the tutor to
@@ -657,6 +658,9 @@ async function runStudentTurn(req, res) {
         }
         let uploadImageContents = [];
         let uploadPdfTexts = [];
+        // Vision blocks for the uploaded PDFs' figures, "[Figure N]"-labeled to
+        // match the markers in their text.
+        const uploadPdfFigureBlocks = [];
         let combinedMessage = effectiveMessage.trim();
         // Per-file worksheet-continuity payload, index-aligned with uploadedFiles,
         // folded onto the message's `attachments` below so the conversation doc is
@@ -675,12 +679,15 @@ async function runStudentTurn(req, res) {
 
                     if (file.mimetype === 'application/pdf') {
                         const fileBuffer = fsSync.readFileSync(file.path);
-                        const extractedText = await pdfOcr(fileBuffer, file.originalname);
+                        // withFigures: the worksheet's diagrams come back as
+                        // images the tutor can see, not as CDN links that die
+                        // with the Mathpix delete (utils/pdfFigures.js).
+                        const { text: extractedText, figures } = await pdfOcr(fileBuffer, file.originalname, { withFigures: true });
                         if (extractedText && extractedText.trim()) {
-                            logger.debug('PDF text extracted', { filename: file.originalname, charCount: extractedText.length });
-                            return { type: 'pdf', filename: file.originalname, text: extractedText };
+                            logger.debug('PDF text extracted', { filename: file.originalname, charCount: extractedText.length, figures: figures.filter(Boolean).length });
+                            return { type: 'pdf', filename: file.originalname, text: extractedText, figures };
                         }
-                        return { type: 'pdf', filename: file.originalname, text: `[Could not extract text from ${file.originalname}]` };
+                        return { type: 'pdf', filename: file.originalname, text: `[Could not extract text from ${file.originalname}]`, figures: [] };
                     } else {
                         let fileBuffer = fsSync.readFileSync(file.path);
                         try {
@@ -703,8 +710,15 @@ async function runStudentTurn(req, res) {
                 fileResults.forEach((result, index) => {
                     if (result.type === 'pdf') {
                         uploadPdfTexts.push({ filename: result.filename, text: result.text });
+                        uploadPdfFigureBlocks.push(...figureVisionBlocks(result.figures));
                         const text = (result.text || '').slice(0, WORKSHEET_ATTACHMENT_TEXT_CAP);
-                        attachmentContinuity[index] = text.trim() ? { extractedText: text } : {};
+                        // Figures keep their slots ('' for a failed fetch) so
+                        // index i stays "[Figure i+1]" on later turns.
+                        const figures = (result.figures || []).map(f => f || '');
+                        attachmentContinuity[index] = {
+                            ...(text.trim() ? { extractedText: text } : {}),
+                            ...(figures.some(Boolean) ? { figures } : {}),
+                        };
                     } else {
                         uploadImageContents.push(result.content);
                         attachmentContinuity[index] = result.durableDataUrl ? { imageData: result.durableDataUrl } : {};
@@ -1072,6 +1086,11 @@ async function runStudentTurn(req, res) {
         } else if (worksheetVisionEnabled && hasUploadedFiles) {
             logger.debug('[worksheetVision] fresh upload this turn — image already in context, skipping re-thread');
         }
+        // A PDF worksheet's figures ride the same gate: re-sent only on a turn
+        // that is about the sheet ("my guy im doing question one").
+        const activeWorksheetFigureBlocks = (worksheetVisionEnabled && !hasUploadedFiles && turnReferencesSheet)
+            ? figureVisionBlocks(msgWorksheet.figureDataUrls)
+            : [];
 
         // ── Independent "check my work" verification ──
         // The check-work upload flow produces NO deterministic grade (observe →
@@ -1691,18 +1710,19 @@ async function runStudentTurn(req, res) {
             if (lastMsg?.role === 'user') {
                 const checkSuffix = checkWorkSuffix;
                 const guardedText = applyWorksheetGuard(typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage, { checkWork: isCheckWork });
-                if (uploadImageContents.length > 0) {
-                    // Multimodal: text + images for vision API
+                if (uploadImageContents.length > 0 || uploadPdfFigureBlocks.length > 0) {
+                    // Multimodal: text + images (and PDF figures) for vision API
                     lastMsg.content = [
                         { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}${checkSuffix}` },
-                        ...uploadImageContents
+                        ...uploadImageContents,
+                        ...uploadPdfFigureBlocks
                     ];
                 } else {
                     // PDF-only: just use the guarded text
                     lastMsg.content = `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}${checkSuffix}`;
                 }
             }
-        } else if (activeWorksheetImageUrl && formattedMessagesForLLM.length > 0) {
+        } else if ((activeWorksheetImageUrl || activeWorksheetFigureBlocks.length > 0) && formattedMessagesForLLM.length > 0) {
             // Follow-up turn with an active worksheet IMAGE — re-thread it as
             // vision so the tutor still SEES the work ("am I on track?",
             // "check #7") instead of only remembering a text gloss. Mirrors the
@@ -1720,7 +1740,8 @@ async function runStudentTurn(req, res) {
                 // the model deflect with "I can't see your work right now."
                 lastMsg.content = [
                     { type: "text", text: `${WORKSHEET_REATTACH_REMINDER}\n\n${guardedText}${checkSuffix}` },
-                    { type: "image_url", image_url: { url: activeWorksheetImageUrl, detail: "high" } }
+                    ...(activeWorksheetImageUrl ? [{ type: "image_url", image_url: { url: activeWorksheetImageUrl, detail: "high" } }] : []),
+                    ...activeWorksheetFigureBlocks
                 ];
                 logger.debug('Re-threaded active worksheet image into follow-up turn');
             }

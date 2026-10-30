@@ -5,6 +5,7 @@ const FormData = require("form-data");
 const fs = require("fs");
 const path = require("path");
 const { MATHPIX_PRIVACY_METADATA } = require("./ocr");
+const { extractFigureLinks, labelFigures, fetchFigures } = require("./pdfFigures");
 
 const authHeaders = () => ({
   app_id: process.env.MATHPIX_APP_ID,
@@ -35,11 +36,18 @@ async function deleteFromMathpix(pdfId) {
  * or as soon as the job fails or times out. The extracted text is the only
  * thing that persists, and it persists here, not there.
  *
+ * With `{ withFigures: true }` the figure crops are fetched too — they live on
+ * Mathpix's CDN only until the delete below, so it is now or never — and the
+ * call resolves to `{ text, figures }` instead: text with each crop link
+ * replaced by a "[Figure N]" marker, figures as downscaled data URLs aligned
+ * with N (null where a fetch failed). See utils/pdfFigures.js.
+ *
  * @param {Buffer} pdfBuffer - PDF file buffer
  * @param {string} filename - Original filename
- * @returns {Promise<string>} Extracted text
+ * @param {object} [opts] - { withFigures }
+ * @returns {Promise<string|{text: string, figures: Array<string|null>}>}
  */
-async function processPDF(pdfBuffer, filename) {
+async function processPDF(pdfBuffer, filename, opts = {}) {
   let pdfId = null;
   try {
     console.log(`[pdfOcr] Starting PDF processing for: ${filename}`);
@@ -119,6 +127,11 @@ async function processPDF(pdfBuffer, filename) {
         const extractedText = textResponse.data;
 
         console.log(`[pdfOcr] Successfully extracted ${extractedText.length} characters from PDF`);
+        if (opts.withFigures) {
+          const figures = await fetchFigures(extractFigureLinks(extractedText));
+          console.log(`[pdfOcr] Fetched ${figures.filter(Boolean).length}/${figures.length} figure(s)`);
+          return { text: labelFigures(extractedText, figures), figures };
+        }
         return extractedText;
       } else if (status === 'error') {
         const errorDetails = statusResponse.data?.error || 'Unknown error';
