@@ -32,6 +32,11 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
     // Auto-inject inline visual commands when appropriate
     // ============================================
 
+    // Every gate below asks what the STUDENT asked for. An uploaded PDF's OCR
+    // text rides on the same message, and a worksheet is full of "Graph …" and
+    // "(3, 1)" — reading it as the student's request plotted all 31 points on
+    // the page and replaced the tutor's reply with a stock line.
+    studentMessage = studentOwnWords(studentMessage);
     const lowerMessage = studentMessage.toLowerCase();
 
     // Normalize any malformed FUNCTION_GRAPH commands from the AI
@@ -897,6 +902,16 @@ function extractCountersFromMessage(message) {
  * Shorten AI response to avoid text walls
  * Keep only the first 1-2 sentences
  */
+/**
+ * The words the student typed, without any upload text routes/chat.js appended
+ * as "[Content from <file>]" blocks.
+ */
+function studentOwnWords(message) {
+    const text = String(message || '');
+    const idx = text.search(/\[Content from [^\]\n]*\]/);
+    return idx === -1 ? text : text.slice(0, idx).trim();
+}
+
 function shortenResponse(response) {
     // Split by sentence
     const sentences = response.match(/[^.!?]+[.!?]+/g) || [response];
@@ -916,5 +931,6 @@ function shortenResponse(response) {
 }
 
 module.exports = {
-    enforceVisualTeaching
+    enforceVisualTeaching,
+    studentOwnWords
 };
