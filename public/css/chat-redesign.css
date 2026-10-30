@@ -235,7 +235,6 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   }
   body.cr-mode .cr-stage { flex: 1 1 auto; min-height: 0; }
   body.cr-mode .cr-stage > * { min-height: 0; }
-  body.cr-mode .cr-quick-actions { flex: 0 0 auto; }
   body.cr-mode #course-progress-wrapper { flex: 0 0 auto; }
   body.cr-mode #lesson-tracker-wrapper {
     flex: 0 1 auto;
@@ -400,19 +399,6 @@ html.mm-work-inline #mathmatix-whiteboard-panel { display: none !important; }
   body.cr-mode #chat-messages-container { padding: 12px 14px !important; }
   body.cr-mode .message { max-width: 86%; font-size: 14px; padding: 10px 13px; }
 
-  .cr-quick-actions {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding: 8px 12px 12px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .cr-quick-actions::-webkit-scrollbar { display: none; }
-  .cr-qa-btn {
-    flex-shrink: 0;
-    padding: 9px 14px;
-    font-size: 12px;
-  }
 }
 
 /* ----- Hero column: tutor video + My Courses card ----- */
@@ -997,71 +983,6 @@ body.cr-mode .imessage-send-btn:hover {
   gap: 12px;
 }
 .cr-composer-row > .imessage-compose-bar { flex: 1; }
-
-/* ----- Quick action chips ----- */
-.cr-quick-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  padding: 10px 18px 14px;
-  flex-wrap: wrap;
-}
-.cr-qa-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  border-radius: 12px;
-  background: var(--cr-bg-2);
-  border: 1px solid var(--cr-border);
-  color: var(--cr-text);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.18s, border-color 0.18s, transform 0.1s;
-}
-.cr-qa-btn:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.18);
-}
-.cr-qa-btn:active { transform: scale(0.97); }
-.cr-qa-btn i { color: var(--cr-text-dim); }
-
-/* Shortcuts inside the composer toolbar: quiet pills after the tool icons,
-   divided from them by a hairline. Light like the composer itself. */
-.imessage-tool-btns .cr-qa-inline {
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  gap: 6px;
-  padding: 0 0 0 10px;
-  margin-left: 6px;
-  border-left: 1px solid rgba(15, 23, 42, 0.12);
-}
-.imessage-tool-btns .cr-qa-inline .cr-qa-btn {
-  gap: 6px;
-  padding: 5px 11px;
-  border-radius: 999px;
-  background: transparent;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  color: #475569;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.imessage-tool-btns .cr-qa-inline .cr-qa-btn:hover {
-  background: #EEF2FF;
-  border-color: rgba(102, 126, 234, 0.45);
-  color: #3B4CB8;
-}
-.imessage-tool-btns .cr-qa-inline .cr-qa-btn i { color: inherit; font-size: 11px; }
-.imessage-tool-btns .cr-qa-inline .cr-qa-btn:focus-visible { outline: 2px solid #667eea; outline-offset: 2px; }
-.imessage-tool-btns .cr-qa-inline .cr-qa-more { padding: 5px 9px; }
-@media (max-width: 900px) {
-  .imessage-tool-btns .cr-qa-inline { display: none; }
-}
 
 /* ----- Footer adjustments ----- */
 body.cr-mode footer {
