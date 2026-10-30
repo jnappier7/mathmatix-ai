@@ -7,7 +7,7 @@ import { sleep, getGraphColor, generateSpeakableText, showToast, escapeHtml as e
 import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbeat } from './modules/session.js';
 // Versioned specifier — see the note on the billing.js import below. Bump on
 // every edit or returning students keep the old celebration routing for a week.
-import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js?v=20261029a';
+import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js?v=20261029pl';
 import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
 import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
 import './modules/statusCard.js?v=7'; // registers window.openStatusCard (Progress button)
@@ -1589,7 +1589,36 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        bubble.appendChild(chip);
+        messageActionsFor(bubble).appendChild(chip);
+    }
+
+    // Tutor bubbles keep their per-message controls (play, keep, "not what I
+    // meant") in a footer row shared with the timestamp — time on the left,
+    // actions on the right — instead of three buttons glued to the corners
+    // over the text. Student bubbles have no footer; the chip stays in the
+    // corner there. Returns the element the control should be appended to.
+    function messageActionsFor(bubble) {
+        if (!bubble || !bubble.classList.contains('ai')) return bubble;
+        let footer = bubble.querySelector(':scope > .message-footer');
+        if (!footer) {
+            footer = document.createElement('div');
+            footer.className = 'message-footer';
+            const stamp = bubble.querySelector(':scope > .message-timestamp');
+            if (stamp) footer.appendChild(stamp);
+            const actions = document.createElement('div');
+            actions.className = 'message-actions';
+            footer.appendChild(actions);
+            bubble.appendChild(footer);
+        }
+        return footer.querySelector('.message-actions');
+    }
+
+    // The timestamp goes first in the footer when there is one, so it reads
+    // left of the actions whatever order the controls were attached in.
+    function placeTimestamp(bubble, timestamp) {
+        const footer = bubble.querySelector(':scope > .message-footer');
+        if (footer) footer.insertBefore(timestamp, footer.firstChild);
+        else bubble.appendChild(timestamp);
     }
 
     // ── Unified Markdown + Math renderer (marked + KaTeX) ──
@@ -2594,7 +2623,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const speakableText = generateSpeakableText(text);
                 playAudio(speakableText, tutor.cartesiaVoiceId, bubble.id);
             });
-            bubble.appendChild(playBtn);
+            messageActionsFor(bubble).appendChild(playBtn);
 
             // Add emoji reaction functionality
             const reactionContainer = document.createElement('div');
@@ -2634,7 +2663,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.disabled = true;
                 this.style.opacity = '0.3';
             });
-            bubble.appendChild(recoveryBtn);
+            messageActionsFor(bubble).appendChild(recoveryBtn);
         }
 
         // "Keep this" chip — on both sides of the conversation: a student's own
@@ -2658,7 +2687,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const datePart = sameDay ? '' : `${when.toLocaleDateString([], { month: 'short', day: 'numeric' })}, `;
         timestamp.textContent = `${datePart}${displayHours}:${minutes} ${ampm}`;
         timestamp.setAttribute('data-sent-at', when.toISOString());
-        bubble.appendChild(timestamp);
+        placeTimestamp(bubble, timestamp);
 
         // Append bubble to messageContainer
         messageContainer.appendChild(bubble);
@@ -3114,7 +3143,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const speakableText = generateSpeakableText(fullText);
                 playAudio(speakableText, tutor?.cartesiaVoiceId, messageRef.bubble.id);
             });
-            messageRef.bubble.appendChild(playBtn);
+            messageActionsFor(messageRef.bubble).appendChild(playBtn);
         }
 
         // Add emoji reaction container (if updateReaction function exists)
@@ -3150,7 +3179,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const minutes = when.getMinutes().toString().padStart(2, '0');
             timestamp.textContent = `${hours % 12 || 12}:${minutes} ${hours >= 12 ? 'PM' : 'AM'}`;
             timestamp.setAttribute('data-sent-at', when.toISOString());
-            messageRef.bubble.appendChild(timestamp);
+            placeTimestamp(messageRef.bubble, timestamp);
         }
     }
 

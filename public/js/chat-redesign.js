@@ -5,8 +5,6 @@
      tutor changes (Maya, Bob, Mr. Nappier, Ms. Maria have
      bespoke backdrops; everyone else gets a default).
    - Keep the "Live with <tutor>" badge in sync.
-   - Wire the quick-action chips (Upload, Practice, Test, More)
-     to existing triggers in the page.
    - Drive the streak pill in the header.
    ============================================================ */
 
@@ -483,62 +481,10 @@
       clearCachedTutorId();
     }
 
-    wireQuickActions();
     wireStreakPill();
     wireProgressButton();
     wireMicButton();
     wireMobileCamPill();
-  }
-
-  // --- Quick action chips ------------------------------------------------
-
-  function wireQuickActions() {
-    document.querySelectorAll('.cr-qa-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        const action = btn.getAttribute('data-action');
-        handleQuickAction(action);
-      });
-    });
-  }
-
-  function handleQuickAction(action) {
-    switch (action) {
-      case 'upload': {
-        // Trigger the existing attach flow
-        const attach = document.getElementById('attach-button') || document.getElementById('hero-upload-btn');
-        if (attach) attach.click();
-        else document.getElementById('file-input')?.click();
-        break;
-      }
-      case 'practice': {
-        // Practise IN the chat. This used to click the hidden sidebar's
-        // practice-pack button, which window.open()s a printable PDF in a new
-        // tab — popup-blocked or not, nothing visible happened here (student
-        // audit 2026-10-15). Same pattern as Test prep: a ready request in the
-        // composer the student can send or edit.
-        seedComposer('I want to practice a skill.');
-        break;
-      }
-      case 'test': {
-        seedComposer('Help me prep for a test.');
-        break;
-      }
-      case 'more': {
-        const menu = document.getElementById('header-dropdown-menu');
-        if (menu) menu.classList.toggle('is-open');
-        else document.getElementById('more-tools-btn')?.click();
-        break;
-      }
-    }
-  }
-
-  function seedComposer(text) {
-    const input = document.getElementById('user-input');
-    if (!input) return;
-    input.focus();
-    input.textContent = text;
-    // Trigger input event so any auto-grow / state listeners fire
-    input.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
   // --- Streak pill -------------------------------------------------------

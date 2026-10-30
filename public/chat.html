@@ -124,7 +124,7 @@
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
   <link rel="stylesheet" href="/css/design-system.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
-  <link rel="stylesheet" href="/css/chat-redesign.css?v=20261029ov" />
+  <link rel="stylesheet" href="/css/chat-redesign.css?v=20261030qa" />
   <!-- Gamification surfacing: combo meter + identity chip -->
   <link rel="stylesheet" href="/css/mm-calculator.css?v=20261007a" />
   <link rel="stylesheet" href="/css/gamification-surfacing.css?v=20260731b" />
@@ -146,7 +146,7 @@
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
   <link rel="stylesheet" href="/css/adjustable-panels.css?v=20261016hm" />
   <!-- Voice mode (layout mode of the chat stage) -->
-  <link rel="stylesheet" href="/css/voice-mode.css?v=20260904a" />
+  <link rel="stylesheet" href="/css/voice-mode.css?v=20261030qa" />
   <!-- Fresh styling for rendered math (equation cards) -->
   <link rel="stylesheet" href="/css/math-style.css" />
   <!-- DNS prefetch & preconnect for CDN domains -->
@@ -217,7 +217,7 @@
   </script>
   <link rel="stylesheet" href="/css/demo-mode.css" />
   <!-- Mobile poster-chat hybrid (phones only; loaded last to win the cascade) -->
-  <link rel="stylesheet" href="/css/mobile-poster-chat.css?v=4" />
+  <link rel="stylesheet" href="/css/mobile-poster-chat.css?v=5" />
   <!-- Mobile light "companion" re-skin (phones only; must load AFTER poster-chat) -->
   <link rel="stylesheet" href="/css/mobile-light-theme.css" />
   <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->
@@ -1162,25 +1162,10 @@
         <button id="calculator-toolbar-btn" title="Calculator" aria-label="Calculator" class="imessage-tool-btn">
           <i class="fas fa-calculator"></i>
         </button>
-        <!-- Shortcuts live in the composer's own toolbar (owner decision
-             2026-10-15): same buttons and data-action handlers
-             (chat-redesign.js), compact chips instead of a row floating
-             under the chat card. Phones hide them — the bottom nav carries
-             these entry points there. -->
-        <div class="cr-quick-actions cr-qa-inline" role="group" aria-label="Shortcuts">
-          <button class="cr-qa-btn" type="button" data-action="upload" aria-label="Upload homework">
-            <i class="fas fa-upload" aria-hidden="true"></i> Homework
-          </button>
-          <button class="cr-qa-btn" type="button" data-action="practice" aria-label="Practice a skill">
-            <i class="fas fa-bullseye" aria-hidden="true"></i> Practice
-          </button>
-          <button class="cr-qa-btn" type="button" data-action="test" aria-label="Prep for a test">
-            <i class="fas fa-book" aria-hidden="true"></i> Test prep
-          </button>
-          <button class="cr-qa-btn cr-qa-more" type="button" data-action="more" aria-label="More tools">
-            <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
-          </button>
-        </div>
+        <!-- The Homework / Practice / Test prep shortcut chips that sat here
+             (2026-10-15 → 2026-10-30) are gone: each duplicated something a
+             tap away (the attach button, the ⋯ menu, a one-line message to
+             the tutor), so they were noise beside the composer. -->
         <button id="break-toolbar-btn" title="Take a Break" aria-label="Take a break" class="imessage-tool-btn imessage-tool-btn-right" style="display: none;">
           <i class="fas fa-pause-circle"></i>
         </button>
@@ -2486,7 +2471,7 @@
   <script src="/js/avatar-config-data.js"></script>
   <script src="/js/avatarFullBody.js"></script>
 <!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
-  <script defer src="/js/chat-redesign.js?v=20261015nb"></script>
+  <script defer src="/js/chat-redesign.js?v=20261030qa"></script>
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
   <script defer src="/js/adjustable-panels.js?v=20260721"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
@@ -2583,7 +2568,7 @@
 </script>
 <script src="/js/challengeCard.js?v=20261015a"></script>
 <script defer src="/js/floating-review.js?v=20260915"></script>
-<script src="/js/script.js?v=20261029a" type="module"></script>
+<script src="/js/script.js?v=20261029pl" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.b9bd11de.js"></script>
   <!-- Bottom tab bar (phones only; MM_FEATURES.bottomNav) -->

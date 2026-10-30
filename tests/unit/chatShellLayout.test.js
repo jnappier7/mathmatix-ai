@@ -52,7 +52,6 @@ describe('desktop chat shell fits between header and footer', () => {
   test('the stage may shrink (its 100vh min-height is what overflowed)', () => {
     expect(block).toMatch(/body\.cr-mode \.cr-stage \{[^}]*min-height:\s*0/);
     expect(block).toMatch(/body\.cr-mode \.cr-stage > \* \{[^}]*min-height:\s*0/);
-    expect(block).toMatch(/body\.cr-mode \.cr-quick-actions \{[^}]*flex:\s*0 0 auto/);
   });
 
   test('the review panel is capped and scrolls itself, so the composer shows', () => {

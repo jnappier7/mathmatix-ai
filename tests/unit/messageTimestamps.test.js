@@ -15,7 +15,7 @@ const html = read('public/chat.html');
 
 test('appendMessage takes the sent time and renders it instead of "now"', () => {
   expect(script).toMatch(/function appendMessage\(text, sender, graphData = null, isMasteryQuiz = false, attachments = null, sentAt = null\)/);
-  const block = script.slice(script.indexOf("timestamp.className = 'message-timestamp';"), script.indexOf('bubble.appendChild(timestamp);'));
+  const block = script.slice(script.indexOf("timestamp.className = 'message-timestamp';"), script.indexOf('placeTimestamp(bubble, timestamp);'));
   expect(block).toMatch(/const when = parsed && !isNaN\(parsed\.getTime\(\)\) \? parsed : new Date\(\);/);
   expect(block).toMatch(/when\.getHours\(\)/);
   expect(block).not.toMatch(/const now = new Date\(\);/);
@@ -25,8 +25,15 @@ test('the history re-render passes each message its stored timestamp', () => {
   expect(script).toMatch(/appendMessage\(content, sender, null, false, histAttachments, msg\.timestamp \|\| null\);/);
 });
 
-test('the play button reserves its width beside the time, and has a name', () => {
-  expect(css).toMatch(/body\.cr-mode \.message:has\(> \.play-audio-btn\) \.message-timestamp \{ padding-right: 56px; \}/);
+test('the play button shares the footer row with the time instead of covering it, and has a name', () => {
+  // 2026-10-29: the corner-positioned button is gone from tutor bubbles. It
+  // joins the timestamp in a .message-footer row (time left, actions right),
+  // laid out statically, so it can neither cover the time nor the text.
+  expect(script.match(/messageActionsFor\((bubble|messageRef\.bubble)\)\.appendChild\(playBtn\);/g)).toHaveLength(2);
+  expect(script).toMatch(/footer\.className = 'message-footer';/);
+  expect(script).toMatch(/actions\.className = 'message-actions';/);
+  expect(css).toMatch(/body\.cr-mode \.message-footer \{[^}]*justify-content: space-between;/);
+  expect(css).toMatch(/body\.cr-mode \.message-actions > button \{[^}]*position: static !important;/);
   expect(script.match(/playBtn\.setAttribute\("aria-label", "Play audio"\);/g)).toHaveLength(2);
 });
 
