@@ -896,29 +896,30 @@ html[data-theme="dark"] .lws-root {
    values. Top-right (#1752) collided with the course bar's Exit Lesson
    (student audit 2026-10-15); in the overlay layer it sat under the composer. */
 .lws-nb-btn.lws-nb-btn--composer {
-  top: auto;
-  bottom: 13px;
-  right: 18px;
+  /* Anchored to the TOP of #input-container, i.e. the right end of the
+     compose bar's tool row (√x, camera, mic, calculator, shortcuts), whose
+     right half is empty at every width. It used to sit on the disclaimer
+     line below the bar: on phones that line is hidden and the pill landed
+     on the send arrow (owner session, 2026-10-25); on desktop it competed
+     with the disclaimer and hung below the bar as a stray (2026-10-29). */
+  top: 17px;
+  bottom: auto;
+  right: 30px;
   z-index: 2;
-  padding: 2px 8px;
+  padding: 3px 9px;
   border: 1px solid transparent;
   background: transparent;
-  color: #5B6876;
+  color: var(--cr-text-dim, #5B6876);
   font-size: 11px;
   line-height: 12px;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
-.lws-nb-btn.lws-nb-btn--composer:hover { border-color: rgba(15, 23, 42, 0.15); color: #18202B; }
+.lws-nb-btn.lws-nb-btn--composer:hover { border-color: var(--cr-border, rgba(15, 23, 42, 0.15)); color: var(--cr-text, #18202B); }
 .lws-nb-btn.lws-nb-btn--composer:focus-visible { outline: 2px solid #667eea; outline-offset: 2px; }
-.lws-nb-btn.lws-nb-btn--composer.is-drop { border-color: #667eea; background: #EEF2FF; }
-/* Phones: mobile-poster-chat.css hides the disclaimer line this pill is
-   anchored to, so bottom-anchored it landed squarely on the voice/send
-   buttons ("Notebook" printed through the send arrow — owner session,
-   2026-10-25). Anchor to the top instead: that is the tool row (√x, camera,
-   mic, calculator), whose right half is empty at this width. */
+.lws-nb-btn.lws-nb-btn--composer.is-drop { border-color: #667eea; background: rgba(102, 126, 234, 0.18); }
 @media (max-width: 768px) {
-  html.mm-work-inline .lws-nb-btn.lws-nb-btn--composer { top: 10px; bottom: auto; right: 14px; }
+  html.mm-work-inline .lws-nb-btn.lws-nb-btn--composer { top: 10px; right: 14px; }
 }
 .lws-nb-btn:hover { border-color: var(--lws-accent); }
 .lws-nb-btn:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }

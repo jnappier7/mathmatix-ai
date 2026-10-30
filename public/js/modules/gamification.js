@@ -469,12 +469,22 @@ export function showNextActionSuggestion(nextActions) {
 
     const suggestion = nextActions[0]; // Show the top priority suggestion
 
+    // On the chat page the nudge is a banner in the chat column, between
+    // the work dock and the composer, in the page's own tokens — not a
+    // white card floating in the viewport corner over whatever was there
+    // (owner screenshot, 2026-10-29). Pages without the composer keep the
+    // floating card below.
+    const composer = document.getElementById('input-container');
+    if (composer && composer.parentNode) {
+        showInlineNudge(suggestion, composer);
+        return;
+    }
+
     // Sit just above the composer, not on it. A fixed 90px assumed a
     // one-row composer; with the tool row, the disclaimer line and the
     // page footer below, the card landed across the send button and the
     // last tutor bubble (owner screenshot, 2026-10-29). Measure instead.
     let bottomPx = 90;
-    const composer = document.getElementById('input-container');
     if (composer) {
         const top = composer.getBoundingClientRect().top;
         if (top > 0 && top < window.innerHeight) {
@@ -539,21 +549,7 @@ export function showNextActionSuggestion(nextActions) {
     if (actionBtn && suggestion.action) {
         actionBtn.addEventListener('click', () => {
             card.remove();
-            if (suggestion.action.type === 'navigate' && suggestion.action.url) {
-                window.location.href = suggestion.action.url;
-            } else if (suggestion.action.type === 'practice-skill') {
-                // "Let's Go" on a review/near-mastery nudge used to do nothing but
-                // close the card — no handler for this action type. Ask the tutor
-                // for the round, in the student's own voice, through the chat.
-                const label = suggestion.action.label || suggestion.action.skillId || 'that';
-                if (typeof window.mmSendChatMessage === 'function') {
-                    window.mmSendChatMessage(`Can we do a quick round of ${label}?`);
-                }
-            } else if (suggestion.action.type === 'view-quests') {
-                // Toggle quests sidebar if available
-                const questsPanel = document.getElementById('quests-panel') || document.getElementById('daily-quests-section');
-                if (questsPanel) questsPanel.scrollIntoView({ behavior: 'smooth' });
-            }
+            runNextAction(suggestion.action);
         });
     }
 
@@ -564,4 +560,71 @@ export function showNextActionSuggestion(nextActions) {
             setTimeout(() => { if (card.parentNode) card.remove(); }, 300);
         }
     }, 12000);
+}
+
+function runNextAction(action) {
+    if (!action) return;
+    if (action.type === 'navigate' && action.url) {
+        window.location.href = action.url;
+    } else if (action.type === 'practice-skill') {
+        // "Let's Go" on a review/near-mastery nudge used to do nothing but
+        // close the card — no handler for this action type. Ask the tutor
+        // for the round, in the student's own voice, through the chat.
+        const label = action.label || action.skillId || 'that';
+        if (typeof window.mmSendChatMessage === 'function') {
+            window.mmSendChatMessage(`Can we do a quick round of ${label}?`);
+        }
+    } else if (action.type === 'view-quests') {
+        // Toggle quests sidebar if available
+        const questsPanel = document.getElementById('quests-panel') || document.getElementById('daily-quests-section');
+        if (questsPanel) questsPanel.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function escapeText(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// The chat-page nudge: one row in the chat column just above the composer
+// (styles: .cr-nudge in chat-redesign.css). Tutor portrait when the page
+// knows it, the suggestion's icon otherwise; title + message; "Let's go";
+// dismiss. Slides away by itself after 15s so it never lingers over a
+// problem — the server already withholds nudges mid-problem.
+function showInlineNudge(suggestion, composer) {
+    document.querySelectorAll('.cr-nudge').forEach((n) => n.remove());
+
+    const nudge = document.createElement('div');
+    nudge.className = 'cr-nudge';
+    nudge.setAttribute('role', 'status');
+    nudge.setAttribute('aria-live', 'polite');
+
+    let portrait = null;
+    try {
+        const tutorId = window.currentUser?.selectedTutorId;
+        portrait = tutorId && typeof window.getTutorPortraitSrc === 'function' ? window.getTutorPortraitSrc(tutorId) : null;
+    } catch (_) { /* no portrait: icon fallback */ }
+    const lead = portrait
+        ? `<img class="cr-nudge-avatar" src="${escapeText(portrait)}" alt="">`
+        : `<span class="cr-nudge-icon" aria-hidden="true"><i class="fas ${escapeText(suggestion.icon || 'fa-lightbulb')}"></i></span>`;
+
+    nudge.innerHTML = `
+        ${lead}
+        <div class="cr-nudge-text">
+            <strong class="cr-nudge-title">${escapeText(suggestion.title)}</strong>
+            <span class="cr-nudge-body">${escapeText(suggestion.message)}</span>
+        </div>
+        ${suggestion.action ? '<button type="button" class="cr-nudge-go">Let’s go</button>' : ''}
+        <button type="button" class="cr-nudge-x" aria-label="Dismiss suggestion">&times;</button>
+    `;
+
+    const dismiss = () => {
+        nudge.classList.add('is-leaving');
+        setTimeout(() => nudge.remove(), 250);
+    };
+    nudge.querySelector('.cr-nudge-x').addEventListener('click', dismiss);
+    const go = nudge.querySelector('.cr-nudge-go');
+    if (go) go.addEventListener('click', () => { nudge.remove(); runNextAction(suggestion.action); });
+
+    composer.parentNode.insertBefore(nudge, composer);
+    setTimeout(() => { if (nudge.parentNode) dismiss(); }, 15000);
 }

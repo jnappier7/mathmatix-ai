@@ -736,23 +736,58 @@ body.cr-mode .message.ai {
   background: var(--cr-bubble-ai);
   color: var(--cr-text);
   border-top-left-radius: 6px;
-  /* Tutor bubbles carry two absolutely-positioned corner controls: the
-     play button (bottom-right, 28px at right:5px) and the "Not what I
-     meant" / notebook chip (top-right, 24px at right:6px). style.css
-     reserves padding-right:40px for them, but the shorthand padding on
-     `.message` above wiped that to 16px, so the last line ran under the
-     play button and the first line under the chip (owner screenshot,
-     2026-10-29: "looks like?" and "either," both covered). Reserve it
-     again; this outranks the phone `padding: 10px 13px` too. */
-  padding-right: 44px;
 }
-/* Streamed replies have no recovery button, so the chip can take the
-   corner itself instead of sitting 34px in, where it overhung the text. */
-body.cr-mode .message.ai:not(:has(> .recovery-btn)) .notebook-save-chip { right: 6px; }
-/* With both corner buttons (reloaded history) the chip reaches 58px in;
-   push only the first line clear of it rather than widening every line. */
-body.cr-mode .message.ai:has(> .recovery-btn) > .message-text::before {
-  content: ''; float: right; width: 18px; height: 26px;
+/* Tutor-bubble controls — play, keep (📓), "not what I meant" — live in a
+   footer row with the timestamp (script.js messageActionsFor), not glued
+   to the bubble's corners over the text where they covered the first and
+   last lines (owner screenshot, 2026-10-29). The row costs no height: the
+   timestamp line was already there. Hover/focus reveals the actions on a
+   pointer device; touch has no hover, so they stay faintly visible. */
+body.cr-mode .message-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+  min-height: 22px;
+}
+body.cr-mode .message-footer .message-timestamp { margin-top: 0; padding-right: 0 !important; white-space: nowrap; }
+body.cr-mode .message-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+body.cr-mode .message.ai:hover .message-actions,
+body.cr-mode .message.ai:focus-within .message-actions { opacity: 1; }
+@media (hover: none) { body.cr-mode .message-actions { opacity: 0.85; } }
+body.cr-mode .message-actions > button {
+  position: static !important;
+  width: 24px; height: 24px;
+  margin: 0; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; border-radius: 50%;
+  background: transparent !important;
+  /* --cr-text at 0.7, not --cr-text-dim: the dim token is near-invisible
+     on the dark bubble once the icons are this small. */
+  color: var(--cr-text) !important;
+  font-size: 11px;
+  opacity: 0.7 !important;
+  transform: none !important;
+  cursor: pointer;
+}
+body.cr-mode .message-actions > button:hover { background: rgba(127, 127, 127, 0.18) !important; color: var(--cr-text) !important; }
+body.cr-mode .message-actions > button:focus-visible { outline: 2px solid var(--cr-accent); outline-offset: 1px; }
+body.cr-mode .message-actions .play-audio-btn.is-playing { color: var(--cr-accent) !important; }
+/* Phones inflate every bubble button to a 48px touch target; three of them
+   (148px) squeezed the time onto two lines. 36×32 is still a comfortable tap
+   and keeps the row on one line beside the time. */
+@media (max-width: 768px) {
+  body.cr-mode .message-actions > button {
+    width: 36px !important; height: 32px !important; min-width: 0 !important; min-height: 0 !important;
+  }
 }
 body.cr-mode .message.user {
   background: var(--cr-bubble-user);
@@ -771,11 +806,52 @@ body.cr-mode .message.user .message-timestamp {
   color: var(--cr-text-dim);
   margin-top: 4px;
 }
-/* The play button sits absolutely at the bubble's bottom-right (48px wide), and
-   the timestamp is right-aligned — so the button covered the time on every
-   tutor bubble (QA handoff 2026-10-14 §3.3, measured: text 188–236, button
-   198–246). Reserve the button's width beside the time. */
-body.cr-mode .message:has(> .play-audio-btn) .message-timestamp { padding-right: 56px; }
+/* (The old absolutely-positioned play button is gone from tutor bubbles —
+   see .message-footer above — so nothing reserves space beside the time.) */
+
+/* ----- Nudge banner (gamification.js showInlineNudge) ----- */
+.cr-nudge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 18px 8px;
+  padding: 10px 12px;
+  background: var(--cr-bg-2);
+  border: 1px solid var(--cr-border);
+  border-radius: 14px;
+  color: var(--cr-text);
+  animation: crNudgeIn 0.3s ease;
+}
+.cr-nudge.is-leaving { opacity: 0; transform: translateY(6px); transition: opacity 0.25s, transform 0.25s; }
+@keyframes crNudgeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.cr-nudge-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid var(--cr-border); }
+.cr-nudge-icon {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(108, 92, 231, 0.18); color: var(--cr-accent); font-size: 14px;
+}
+.cr-nudge-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; font-size: 13px; line-height: 1.35; }
+.cr-nudge-title { font-weight: 700; }
+.cr-nudge-body { color: var(--cr-text-dim); }
+.cr-nudge-go {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border: none; border-radius: 999px;
+  background: linear-gradient(135deg, var(--cr-accent), var(--cr-accent-strong));
+  color: #fff; font-weight: 700; font-size: 12.5px; cursor: pointer;
+}
+.cr-nudge-go:hover { filter: brightness(1.08); }
+.cr-nudge-x {
+  flex-shrink: 0; width: 26px; height: 26px;
+  border: none; border-radius: 50%; background: transparent;
+  color: var(--cr-text-dim); font-size: 18px; line-height: 1; cursor: pointer;
+}
+.cr-nudge-x:hover { background: rgba(127, 127, 127, 0.18); color: var(--cr-text); }
+@media (max-width: 768px) {
+  .cr-nudge { margin: 0 10px 6px; gap: 8px; padding: 8px 10px; }
+  .cr-nudge-avatar, .cr-nudge-icon { width: 28px; height: 28px; }
+  .cr-nudge-text { font-size: 12px; }
+}
 
 body.cr-mode .message-text { color: var(--cr-text); }
 body.cr-mode .message a { color: #9FB4FF; }
@@ -804,6 +880,33 @@ body.cr-mode .imessage-compose-bar {
   border: 1px solid var(--cr-border);
   border-radius: 16px;
   padding: 6px 8px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+/* One bar: the focus ring belongs to the whole compose bar, not to the text
+   field inside it — a second rounded box inside the first, with the voice
+   and send buttons left outside it, read as three separate controls (owner,
+   2026-10-29). The field is borderless; the bar lights up. */
+body.cr-mode .imessage-compose-bar:focus-within {
+  border-color: var(--cr-accent);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.18);
+}
+body.cr-mode #user-input:focus,
+body.cr-mode #user-input:focus-visible { outline: none !important; box-shadow: none !important; border-color: transparent !important; }
+body.cr-mode .imessage-input-row { gap: 6px; padding-right: 2px; }
+body.cr-mode .imessage-voice-btn,
+body.cr-mode .imessage-send-btn {
+  width: 36px; height: 36px; min-width: 36px;
+  margin: 0;
+  box-shadow: none;
+}
+/* Streak count sits on the send button's rim, ringed in the bar's own
+   colour, instead of hanging off it over the bar's border. */
+body.cr-mode .imessage-send-btn .streak-badge {
+  top: -5px; right: -5px;
+  min-width: 17px; height: 17px;
+  padding: 0 4px;
+  font-size: 0.62rem;
+  border-color: var(--cr-bg-2);
 }
 body.cr-mode .imessage-tool-btns {
   background: transparent;
