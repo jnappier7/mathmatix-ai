@@ -124,7 +124,7 @@
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
   <link rel="stylesheet" href="/css/design-system.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
-  <link rel="stylesheet" href="/css/chat-redesign.css?v=20261015nb" />
+  <link rel="stylesheet" href="/css/chat-redesign.css?v=20261029ov" />
   <!-- Gamification surfacing: combo meter + identity chip -->
   <link rel="stylesheet" href="/css/mm-calculator.css?v=20261007a" />
   <link rel="stylesheet" href="/css/gamification-surfacing.css?v=20260731b" />
@@ -615,7 +615,11 @@
           <span id="mm-cam-pill-label">Your tutor is watching your work</span>
           <span class="mm-cam-pill-dot"></span>
         </div>
-        <div class="cr-encourage-card">
+        <!-- Standings strip: statusCard.js rewrites this into the student's
+             rank on this week's board (class, or all students when they
+             have no class) and makes it open My Progress. The copy below
+             is the fallback — staff, reduced-distraction IEPs, fetch errors. -->
+        <div class="cr-encourage-card" data-standings>
           <div class="cr-encourage-title"><span aria-hidden="true">⭐</span> Keep it up!</div>
           <div class="cr-encourage-body">
             You're making great progress and asking great questions <span class="cr-heart" aria-hidden="true">💜</span>
@@ -1352,23 +1356,9 @@
       </button>
     </div>
     <div class="drawer-content">
-      <!-- Leaderboard Section -->
-      <div class="drawer-section">
-        <h4><i class="fas fa-trophy"></i> Leaderboard</h4>
-        <table id="drawer-leaderboard-table" class="leaderboard-table-mobile">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Name</th>
-              <th>Lvl</th>
-              <th>XP</th>
-            </tr>
-          </thead>
-          <tbody id="drawer-leaderboard-body">
-            <!-- Populated by sidebar.js -->
-          </tbody>
-        </table>
-      </div>
+      <!-- The leaderboard table that used to lead this drawer was never
+           populated (nothing wrote #drawer-leaderboard-body). The board lives
+           in My Progress (statusCard.js); the rail strip above links to it. -->
 
       <!-- Daily Quests Section -->
       <div class="drawer-section">
@@ -2593,7 +2583,7 @@
 </script>
 <script src="/js/challengeCard.js?v=20261015a"></script>
 <script defer src="/js/floating-review.js?v=20260915"></script>
-<script src="/js/script.js?v=20261025a" type="module"></script>
+<script src="/js/script.js?v=20261029a" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.b9bd11de.js"></script>
   <!-- Bottom tab bar (phones only; MM_FEATURES.bottomNav) -->

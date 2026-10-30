@@ -22,14 +22,20 @@ function displayName(student) {
  * all XP counts). Same scope and exclusions as the all-time board. `you` is the
  * viewer's own row, pinned under the Top 10 even when they're not in it.
  */
-async function weeklyBoard(scope, viewer) {
+async function weeklyBoard(scope, viewer, scopeLabel = 'all') {
     const key = weekKey();
     const path = weekPath(key);
-    const rows = await User.find({ ...scope, [path]: { $gt: 0 } })
-        .sort({ [path]: -1, _id: 1 })
-        .select(`firstName lastName ferpaSettings ${path}`)
-        .limit(10)
-        .lean();
+    const ranked = { ...scope, [path]: { $gt: 0 } };
+    const [rows, total] = await Promise.all([
+        User.find(ranked)
+            .sort({ [path]: -1, _id: 1 })
+            .select(`firstName lastName ferpaSettings ${path}`)
+            .limit(10)
+            .lean(),
+        // How many are on the board at all, so a pinned row can read
+        // "#14 of 28" instead of a bare rank (chat rail standings strip).
+        User.countDocuments(ranked),
+    ]);
 
     const viewerId = String(viewer?._id || '');
     const entries = rows.map((s, i) => ({
@@ -56,7 +62,11 @@ async function weeklyBoard(scope, viewer) {
 
     const [y, m, d] = key.split('-').map(Number);
     const resetsOn = new Date(Date.UTC(y, m - 1, d + 7)).toISOString().slice(0, 10);
-    return { period: 'week', weekKey: key, resetsOn, entries, you, viewerStaff };
+    // `scope` names which board this is — 'class' when narrowed to a
+    // teacher's roster, 'all' for a student with no class (owner decision
+    // 2026-10-29: unattached students rank against every student) — so the
+    // client can label it instead of guessing.
+    return { period: 'week', weekKey: key, resetsOn, entries, you, viewerStaff, scope: scopeLabel, total };
 }
 router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
     try {
@@ -94,7 +104,7 @@ router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
         // If isAdmin, the query remains { role: 'student' }, showing all students.
 
         if (req.query?.period === 'week') {
-            return res.json(await weeklyBoard(query, req.user));
+            return res.json(await weeklyBoard(query, req.user, query.teacherId ? 'class' : 'all'));
         }
 
         const leaderboard = await User.find(query)

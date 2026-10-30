@@ -665,6 +665,14 @@ html.mm-work-inline #mathmatix-whiteboard-panel { display: none !important; }
   line-height: 1.4;
 }
 .cr-heart { color: #E879F9; }
+/* Standings strip (statusCard.js swaps the caption for the student's rank
+   on this week's board and makes the card open My Progress). */
+.cr-encourage-card.is-standings { cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.cr-encourage-card.is-standings:hover { border-color: var(--cr-accent); }
+.cr-encourage-card.is-standings:focus-visible { outline: 2px solid var(--cr-accent); outline-offset: 2px; }
+/* Inherit, not --cr-text: the light-theme caption strip paints a dark body
+   colour, and the token is dark-theme white — "#4" vanished on it. */
+.cr-encourage-card.is-standings .cr-encourage-body strong { color: inherit; font-weight: 700; }
 
 /* ----- Chat container: dark, rounded ----- */
 body.cr-mode #chat-container {
@@ -728,6 +736,23 @@ body.cr-mode .message.ai {
   background: var(--cr-bubble-ai);
   color: var(--cr-text);
   border-top-left-radius: 6px;
+  /* Tutor bubbles carry two absolutely-positioned corner controls: the
+     play button (bottom-right, 28px at right:5px) and the "Not what I
+     meant" / notebook chip (top-right, 24px at right:6px). style.css
+     reserves padding-right:40px for them, but the shorthand padding on
+     `.message` above wiped that to 16px, so the last line ran under the
+     play button and the first line under the chip (owner screenshot,
+     2026-10-29: "looks like?" and "either," both covered). Reserve it
+     again; this outranks the phone `padding: 10px 13px` too. */
+  padding-right: 44px;
+}
+/* Streamed replies have no recovery button, so the chip can take the
+   corner itself instead of sitting 34px in, where it overhung the text. */
+body.cr-mode .message.ai:not(:has(> .recovery-btn)) .notebook-save-chip { right: 6px; }
+/* With both corner buttons (reloaded history) the chip reaches 58px in;
+   push only the first line clear of it rather than widening every line. */
+body.cr-mode .message.ai:has(> .recovery-btn) > .message-text::before {
+  content: ''; float: right; width: 18px; height: 26px;
 }
 body.cr-mode .message.user {
   background: var(--cr-bubble-user);

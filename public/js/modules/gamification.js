@@ -469,13 +469,26 @@ export function showNextActionSuggestion(nextActions) {
 
     const suggestion = nextActions[0]; // Show the top priority suggestion
 
+    // Sit just above the composer, not on it. A fixed 90px assumed a
+    // one-row composer; with the tool row, the disclaimer line and the
+    // page footer below, the card landed across the send button and the
+    // last tutor bubble (owner screenshot, 2026-10-29). Measure instead.
+    let bottomPx = 90;
+    const composer = document.getElementById('input-container');
+    if (composer) {
+        const top = composer.getBoundingClientRect().top;
+        if (top > 0 && top < window.innerHeight) {
+            bottomPx = Math.round(window.innerHeight - top) + 12;
+        }
+    }
+
     const card = document.createElement('div');
     card.id = 'next-action-card';
     card.setAttribute('role', 'status');
     card.setAttribute('aria-live', 'polite');
     card.style.cssText = `
         position: fixed;
-        bottom: 90px;
+        bottom: ${bottomPx}px;
         right: 24px;
         max-width: 340px;
         background: white;
