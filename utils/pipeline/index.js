@@ -27,6 +27,7 @@ const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { judgeReply, PROD_JUDGES } = require('../replyJudges');
 const judgeMetrics = require('../judgeMetrics');
 const { persist } = require('./persist');
+const { rescueTurnMessages } = require('./turnRescue');
 const {
   verifyWithEscalation,
   pickProblemContext,
@@ -1790,6 +1791,13 @@ async function runPipeline(message, ctx) {
       });
     } catch (persistErr) {
       console.error('[Pipeline] Persist stage failed (non-fatal):', persistErr.message);
+      // The student already has this reply on screen. Whatever else of the
+      // turn is lost, its messages must reach the transcript (turnRescue.js).
+      await rescueTurnMessages(ctx.conversation, {
+        responseText: verified.text,
+        cause: persistErr,
+        userId: ctx.user?._id,
+      });
       // Return safe defaults so the student still gets their response
       persistResults = {
         xpBreakdown: { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 },
