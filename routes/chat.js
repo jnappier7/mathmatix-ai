@@ -95,6 +95,7 @@ const { applyWorksheetGuard, isCheckWorkIntent } = require('../utils/worksheetGu
 const { UPLOAD_CONTEXT_REMINDER, WORKSHEET_REATTACH_REMINDER } = require('../utils/visualCapabilities');
 const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl, findWorksheetInMessages, referencesWorksheet } = require('../utils/activeWorksheetImage');
 const { figureVisionBlocks } = require('../utils/pdfFigures');
+const { rescueTurnMessages } = require('../utils/pipeline/turnRescue');
 const { verifyStudentWork } = require('../utils/pipeline/checkWorkVerifier');
 
 // When a student shares their work and asks to be checked, nudge the tutor to
@@ -2012,6 +2013,7 @@ async function runStudentTurn(req, res) {
                 await activeConversation.save();
             } catch (saveErr) {
                 logger.error('Pipeline fallback conversation save failed', { error: saveErr.message });
+                await rescueTurnMessages(activeConversation, { responseText: fallbackText, cause: saveErr, userId: user._id });
             }
 
             pipelineResult = {
