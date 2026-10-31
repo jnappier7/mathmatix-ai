@@ -132,8 +132,8 @@ describe('activeWorksheetImage — findWorksheetInMessages', () => {
   const userMsg = (over = {}) => ({ role: 'user', timestamp: minsAgo(5), attachments: [], ...over });
 
   it('returns nulls for non-array / empty input', () => {
-    expect(findWorksheetInMessages(null, NOW)).toEqual({ text: null, imageDataUrl: null });
-    expect(findWorksheetInMessages([], NOW)).toEqual({ text: null, imageDataUrl: null });
+    expect(findWorksheetInMessages(null, NOW)).toEqual({ text: null, imageDataUrl: null, figureDataUrls: [] });
+    expect(findWorksheetInMessages([], NOW)).toEqual({ text: null, imageDataUrl: null, figureDataUrls: [] });
   });
 
   it('finds the PDF extractedText regardless of age (text has no TTL)', () => {
@@ -160,7 +160,7 @@ describe('activeWorksheetImage — findWorksheetInMessages', () => {
       userMsg({ timestamp: minsAgo(10), attachments: [{ fileType: 'pdf', extractedText: 'new pdf' }] }),
       userMsg({ timestamp: minsAgo(5), attachments: [{ fileType: 'image', imageData: dataUrl }] }),
     ];
-    expect(findWorksheetInMessages(messages, NOW)).toEqual({ text: 'new pdf', imageDataUrl: dataUrl });
+    expect(findWorksheetInMessages(messages, NOW)).toEqual({ text: 'new pdf', imageDataUrl: dataUrl, figureDataUrls: [] });
   });
 
   it('ignores assistant messages and image data missing the data: prefix', () => {
@@ -168,7 +168,7 @@ describe('activeWorksheetImage — findWorksheetInMessages', () => {
       { role: 'assistant', attachments: [{ fileType: 'pdf', extractedText: 'from assistant — ignore' }] },
       userMsg({ attachments: [{ fileType: 'image', imageData: 'garbage-not-a-data-url' }] }),
     ];
-    expect(findWorksheetInMessages(messages, NOW)).toEqual({ text: null, imageDataUrl: null });
+    expect(findWorksheetInMessages(messages, NOW)).toEqual({ text: null, imageDataUrl: null, figureDataUrls: [] });
   });
 
   it('ignores empty/whitespace extractedText', () => {

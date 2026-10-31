@@ -101,15 +101,17 @@ async function buildImageDataUrl(doc) {
  *   - text: the newest PDF attachment's extractedText (no TTL — text is cheap)
  *   - imageDataUrl: the newest image attachment's imageData, but only if the
  *     message is still within the TTL window (per-turn vision is costly)
+ *   - figureDataUrls: the figures of that same newest PDF, same TTL as the
+ *     image (slots kept: index i is "[Figure i+1]", '' where unavailable)
  * Pure — no IO — so it's cheap to unit test.
  *
  * @param {Array} messages  activeConversation.messages (subdocs or plain objects)
  * @param {number} nowMs
  * @param {number} ttlMinutes  recency window for the image (text is unbounded)
- * @returns {{ text: string|null, imageDataUrl: string|null }}
+ * @returns {{ text: string|null, imageDataUrl: string|null, figureDataUrls: string[] }}
  */
 function findWorksheetInMessages(messages, nowMs = Date.now(), ttlMinutes = ACTIVE_IMAGE_TTL_MINUTES) {
-    const out = { text: null, imageDataUrl: null };
+    const out = { text: null, imageDataUrl: null, figureDataUrls: [] };
     if (!Array.isArray(messages)) return out;
     for (let i = messages.length - 1; i >= 0; i--) {
         const msg = messages[i];
@@ -120,6 +122,10 @@ function findWorksheetInMessages(messages, nowMs = Date.now(), ttlMinutes = ACTI
             if (!att) continue;
             if (out.text === null && att.fileType === 'pdf' && typeof att.extractedText === 'string' && att.extractedText.trim()) {
                 out.text = att.extractedText;
+                // Figures belong to THIS sheet; an older PDF's would mislabel it.
+                if (Array.isArray(att.figures) && ageMinutes >= 0 && ageMinutes <= ttlMinutes) {
+                    out.figureDataUrls = att.figures.map(f => (typeof f === 'string' ? f : ''));
+                }
             }
             if (out.imageDataUrl === null
                 && att.fileType === 'image'
@@ -147,6 +153,8 @@ const WORKSHEET_REFERENCE = new RegExp(
     [
         '#\\s*\\d+',                                              // "#7"
         '\\b(?:problem|question|number|exercise)\\s*\\d+\\b',     // "problem 3"
+        // "question one" — a student spelling it out is still pointing at the sheet
+        '\\b(?:problem|question|number|exercise)\\s+(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\\b',
         '\\b(?:the\\s+)?(?:next|last|first)\\s+(?:one|problem|question)\\b',
         '\\b(?:worksheet|sheet|page|paper|picture|photo|image|screenshot|scan|upload(?:ed)?)\\b',
         '\\bwhat\\s+i\\s+(?:sent|showed|shared|wrote|uploaded)\\b',

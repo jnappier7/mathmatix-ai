@@ -105,6 +105,25 @@ describe('PDF OCR (/v3/pdf)', () => {
     expect(axios.delete.mock.invocationCallOrder[0]).toBeGreaterThan(axios.get.mock.invocationCallOrder[1]);
   });
 
+  test('withFigures fetches the figure crops BEFORE the delete, then labels them in the text', async () => {
+    upload();
+    const crop = 'https://cdn.mathpix.com/cropped/pdf-123-1.jpg?height=10&width=10';
+    const jpeg = await require('sharp')({ create: { width: 8, height: 8, channels: 3, background: '#fff' } }).jpeg().toBuffer();
+    axios.get
+      .mockResolvedValueOnce({ data: { status: 'completed', conversion_status: { md: { status: 'completed' } } } })
+      .mockResolvedValueOnce({ data: `1. Name the vector.\n![](${crop})` })
+      .mockResolvedValueOnce({ data: jpeg });
+
+    const { text, figures } = await processPDF(Buffer.from('%PDF-1.4'), 'hw.pdf', { withFigures: true });
+
+    expect(axios.get.mock.calls[2][0]).toBe(crop);
+    // The crop dies with the document — it must be fetched first.
+    expect(axios.delete.mock.invocationCallOrder[0]).toBeGreaterThan(axios.get.mock.invocationCallOrder[2]);
+    expect(text).toBe('1. Name the vector.\n[Figure 1]');
+    expect(figures).toHaveLength(1);
+    expect(figures[0]).toMatch(/^data:image\/jpeg;base64,/);
+  });
+
   test('still deletes the document when Mathpix reports an error', async () => {
     upload();
     axios.get.mockResolvedValueOnce({ data: { status: 'error', error: 'corrupt' } });
