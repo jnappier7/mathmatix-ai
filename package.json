@@ -21,6 +21,7 @@
     "test:integration": "jest --testPathPattern=tests/integration",
     "test:golden": "jest --testPathPattern=tests/golden",
     "test:eval": "jest --testPathPattern=tests/eval",
+    "eval:verdict": "node scripts/verdictEval.js",
     "test:eval:live": "RUN_LLM_EVAL=1 jest --testPathPattern=tests/eval/live",
     "test:eval:checkwork": "RUN_LLM_EVAL=1 jest --testPathPattern=tests/eval/liveCheckWorkEval",
     "test:critical": "jest --config jest.critical.config.js",
