@@ -686,6 +686,23 @@ function registerUserRoutes(app) {
   const BRAND_CONFIG = require('../utils/brand');
   const { getTutorsToUnlock } = require('../utils/unlockTutors');
 
+  // /user feeds window.currentUser on every page, so whatever it returns is
+  // readable by any script on the page. It sent the whole document — bcrypt
+  // hash, reset / verification tokens, the parent-invite token — to the
+  // browser (site review, 2026-11-03). The client only ever needed to know
+  // whether a password exists.
+  function stripUserSecrets(u) {
+    u.hasPassword = !!u.passwordHash;
+    delete u.passwordHash;
+    delete u.resetPasswordToken;
+    delete u.resetPasswordExpires;
+    delete u.emailVerificationToken;
+    delete u.emailVerificationExpires;
+    if (u.privacyConsent) { delete u.privacyConsent.consentToken; delete u.privacyConsent.consentTokenExpires; }
+    if (u.parentInvite) delete u.parentInvite.token;
+    return u;
+  }
+
   app.get('/user', isAuthenticated, async (req, res) => {
     try {
       if (!req.user) return res.json({ user: null });
@@ -752,6 +769,8 @@ function registerUserRoutes(app) {
           userObj.wallet.welcomeGrantedAt = now;
         }
       }
+
+      stripUserSecrets(userObj);
 
       const level = userObj.level || 1;
       const xpStart = BRAND_CONFIG.cumulativeXpForLevel(level);
