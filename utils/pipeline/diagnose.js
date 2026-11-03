@@ -246,6 +246,26 @@ function singleAnswerLinear(parsed) {
     && !(Array.isArray(parsed.solution.roots) && parsed.solution.roots.length > 1));
 }
 
+// The student's closing "x = <value>" names the pinned equation's variable.
+const FINAL_ASSIGNMENT_END = /(?:^|[^a-z0-9])([a-z])\s*=\s*-?\d+(?:\.\d+)?(?:\s*\/\s*\d+)?\s*[.!]*$/i;
+function claimsPinnedVariable(rawText, pinned) {
+  const m = stripLatexDelimiters(rawText || '').trim().match(FINAL_ASSIGNMENT_END);
+  if (!m) return false;
+  const sides = `${pinned.problem.leftExpr} ${pinned.problem.rightExpr}`;
+  return new RegExp(`(?:^|[^a-z])${m[1]}(?![a-z])`, 'i').test(sides);
+}
+
+// One-line work that opens by naming the move — "subtract 2x so x - 12 = 5,
+// so x = 7". The narration carries no "=", so the connective split in
+// verifyDerivation saw a piece without one and kept the whole line, and the
+// correct x - 12 = 5 went uncredited while x = 7 went unnamed. Only the
+// leading narration goes, and only ahead of two or more equations.
+const LEADING_NARRATION = /^\s*[^=\n]{1,40}?\s+(?:so|then|to\s+get|gives?|giving)\s+(?=[^\n]*=[^\n]*=)/i;
+function chainText(rawText) {
+  if (!rawText || /\n/.test(rawText)) return rawText;
+  return rawText.replace(LEADING_NARRATION, '');
+}
+
 const normEqSide = (s) => String(s || '').replace(/\s+/g, '').replace(/^\((.*)\)$/, '$1');
 
 /**
@@ -330,7 +350,7 @@ async function diagnoseTransformation(observation, context) {
   // each against the posed problem and pinpoint the first that breaks. A valid
   // chain is demonstrated reasoning by definition (decide affirms + advances,
   // never "how did you do it?"). correctAnswer stays null so nothing is revealed.
-  const chain = verifyDerivation(rawText, context.pinnedProblemTex);
+  const chain = verifyDerivation(chainText(rawText), context.pinnedProblemTex);
   if (chain.verifiable) {
     // A chain that stops short of the answer ("2(x+3)=10 / 2x+6=10") still
     // "reaches" it in the solver's sense — every line solves to the target — but
@@ -821,6 +841,20 @@ async function diagnose(observation, context = {}) {
         ) {
           console.log(`[Diagnose] Scanned target "${problemInfo.correctAnswer}" disagrees with pin "${pinnedAnswer}" — deferring`);
           problemInfo = null;
+        } else if (!problemInfo && singleAnswerLinear(pinned) && claimsPinnedVariable(rawText, pinned)) {
+          // Nothing newer was posed, and the student closed on "x = <value>"
+          // for the pin's own variable: that is a solve of the pin, not a
+          // sub-question answer. Without this a WRONG final value had no
+          // target and went unjudged — "…so x - 12 = 5, so x = 7" under
+          // "What's the next step?" (owner session, 2026-11-03). A linear pin
+          // solves exactly, so the rejection is as certain as the affirmation.
+          problemInfo = {
+            problemType: pinned.problem.type,
+            correctAnswer: pinnedAnswer,
+            roots: null,
+            steps: pinned.solution.steps || [],
+            content: context.pinnedProblemTex,
+          };
         }
       }
     } catch (_) { /* fall through to the scan result */ }
@@ -852,7 +886,7 @@ async function diagnose(observation, context = {}) {
     // of a correct solution keeps the same answer, so we grade each line against
     // the posed answer and pinpoint the FIRST that breaks. This is what makes
     // multi-step practice both grade correctly and get taught precisely.
-    const chain = verifyDerivation(rawText, context.pinnedProblemTex, problemInfo.correctAnswer);
+    const chain = verifyDerivation(chainText(rawText), context.pinnedProblemTex, problemInfo.correctAnswer);
     if (chain.verifiable) {
       // The final line is the answer; `valid` (whole chain) feeds
       // demonstratedReasoning below, never correctness.
