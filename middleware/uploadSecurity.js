@@ -91,11 +91,114 @@ async function verifyUploadAccess(req, res, next) {
     }
 }
 
+// Every file the request carries. Single-file routes (multer .single) set
+// req.file; the chat route uses upload.any(), which sets req.files — an array,
+// or an object of arrays for .fields(). Reading only req.file meant the chat
+// photo path, the main K-12 upload surface, skipped every check below,
+// including the sexual/minors moderation call (audit 2026-07-28, still live
+// on 2026-11-03).
+function uploadedFiles(req) {
+    if (req.file) return [req.file];
+    if (Array.isArray(req.files)) return req.files;
+    if (req.files && typeof req.files === 'object') return Object.values(req.files).flat();
+    return [];
+}
+
+// HEIC/HEIF (iPhone photos) pass the type check — the chat picker offers them —
+// but the moderation API can't read them, so they are logged as unmoderated.
+const ALLOWED_MIMETYPES = new Set([...IMAGE_MIMETYPES, 'image/heic', 'image/heif', 'application/pdf']);
+
+function removeSaved(files) {
+    for (const f of files) {
+        if (f && f.path && fs.existsSync(f.path)) {
+            try { fs.unlinkSync(f.path); } catch (_) { /* non-blocking */ }
+        }
+    }
+}
+
 /**
- * Validate file uploads for safety
+ * Check one file. Resolves null when it may proceed, or { status, message }
+ * when the whole request must be rejected.
+ */
+async function checkFile(req, file) {
+    // File size validation (already handled by multer, but double-check)
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_SIZE) {
+        return { status: 400, message: 'File is too large. Maximum size is 10MB.' };
+    }
+
+    if (!ALLOWED_MIMETYPES.has(file.mimetype)) {
+        return { status: 400, message: 'Invalid file type. Only images (JPG, PNG, WEBP, HEIC) and PDFs are allowed.' };
+    }
+
+    // Check filename for suspicious patterns
+    const suspiciousPatterns = /[<>:"|?*\x00-\x1f]/;
+    if (suspiciousPatterns.test(file.originalname)) {
+        return { status: 400, message: 'Invalid filename' };
+    }
+
+    logger.info('[Upload Security] File validated', { mimetype: file.mimetype, size: file.size });
+
+    // Content moderation — images only. PDFs need text/page extraction
+    // before we can moderate, which is heavy enough to be a follow-up.
+    if (!IMAGE_MIMETYPES.has(file.mimetype)) {
+        if (file.mimetype !== 'application/pdf') {
+            logger.warn('[Upload Moderation] Unmoderated image format', {
+                userId: req.user?._id?.toString(),
+                mimetype: file.mimetype
+            });
+        }
+        return null;
+    }
+
+    const strict = process.env.STRICT_MODERATION === 'true';
+    try {
+        const buffer = file.buffer || (file.path ? fs.readFileSync(file.path) : null);
+        if (!buffer) {
+            logger.warn('[Upload Moderation] No buffer/path available, skipping moderation', {
+                userId: req.user?._id?.toString(),
+                filename: file.originalname
+            });
+            return null;
+        }
+
+        const result = await moderateImage(buffer, file.mimetype);
+        if (isStrictlyFlagged(result)) {
+            logger.warn('[Upload Moderation] Rejected flagged upload', {
+                userId: req.user?._id?.toString(),
+                filename: file.originalname,
+                categories: Object.keys(result.categories || {}).filter(k => result.categories[k])
+            });
+            return { status: 400, message: 'This image was flagged by our content safety check. Please upload a different image.' };
+        }
+
+        logger.info('[Upload Moderation] Image passed moderation', {
+            userId: req.user?._id?.toString(),
+            filename: file.originalname
+        });
+    } catch (err) {
+        logger.error('[Upload Moderation] Moderation API error', {
+            userId: req.user?._id?.toString(),
+            filename: file.originalname,
+            error: err.message,
+            strict
+        });
+        if (strict) {
+            return { status: 503, message: 'Content safety check is temporarily unavailable. Please try again shortly.' };
+        }
+        // Fail-open: log and continue.
+    }
+    return null;
+}
+
+/**
+ * Validate file uploads for safety — every file on the request
  * - Check file size
  * - Validate file type
  * - Scan images for inappropriate content via OpenAI's moderation API
+ *
+ * One rejected file rejects the request, and every saved file is removed so
+ * flagged content doesn't sit on disk waiting for the retention sweep.
  *
  * Behavior on moderation API failure:
  *   - Default: fail-open (allow upload, log warning) so a moderation outage
@@ -103,96 +206,14 @@ async function verifyUploadAccess(req, res, next) {
  *   - STRICT_MODERATION=true: fail-closed (reject upload).
  */
 async function validateUpload(req, res, next) {
-    const file = req.file;
-
-    if (!file) {
-        return next();
-    }
-
-    // File size validation (already handled by multer, but double-check)
-    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-    if (file.size > MAX_SIZE) {
-        return res.status(400).json({
-            success: false,
-            message: 'File is too large. Maximum size is 10MB.'
-        });
-    }
-
-    // File type validation
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
-    if (!allowedTypes.includes(file.mimetype)) {
-        return res.status(400).json({
-            success: false,
-            message: 'Invalid file type. Only images (JPG, PNG, WEBP) and PDFs are allowed.'
-        });
-    }
-
-    // Check filename for suspicious patterns
-    const suspiciousPatterns = /[<>:"|?*\x00-\x1f]/;
-    if (suspiciousPatterns.test(file.originalname)) {
-        return res.status(400).json({
-            success: false,
-            message: 'Invalid filename'
-        });
-    }
-
-    logger.info('[Upload Security] File validated', { mimetype: file.mimetype, size: file.size });
-
-    // Content moderation — images only. PDFs need text/page extraction
-    // before we can moderate, which is heavy enough to be a follow-up.
-    if (IMAGE_MIMETYPES.has(file.mimetype)) {
-        const strict = process.env.STRICT_MODERATION === 'true';
-        try {
-            const buffer = file.buffer || (file.path ? fs.readFileSync(file.path) : null);
-            if (!buffer) {
-                logger.warn('[Upload Moderation] No buffer/path available, skipping moderation', {
-                    userId: req.user?._id?.toString(),
-                    filename: file.originalname
-                });
-                return next();
-            }
-
-            const result = await moderateImage(buffer, file.mimetype);
-            const blocked = isStrictlyFlagged(result);
-
-            if (blocked) {
-                logger.warn('[Upload Moderation] Rejected flagged upload', {
-                    userId: req.user?._id?.toString(),
-                    filename: file.originalname,
-                    categories: Object.keys(result.categories || {}).filter(k => result.categories[k])
-                });
-                // Best-effort cleanup of the saved file so flagged content
-                // doesn't sit on disk waiting for the retention sweep.
-                if (file.path && fs.existsSync(file.path)) {
-                    try { fs.unlinkSync(file.path); } catch (_) { /* non-blocking */ }
-                }
-                return res.status(400).json({
-                    success: false,
-                    message: 'This image was flagged by our content safety check. Please upload a different image.'
-                });
-            }
-
-            logger.info('[Upload Moderation] Image passed moderation', {
-                userId: req.user?._id?.toString(),
-                filename: file.originalname
-            });
-        } catch (err) {
-            logger.error('[Upload Moderation] Moderation API error', {
-                userId: req.user?._id?.toString(),
-                filename: file.originalname,
-                error: err.message,
-                strict
-            });
-            if (strict) {
-                return res.status(503).json({
-                    success: false,
-                    message: 'Content safety check is temporarily unavailable. Please try again shortly.'
-                });
-            }
-            // Fail-open: log and continue.
+    const files = uploadedFiles(req);
+    for (const file of files) {
+        const rejection = await checkFile(req, file);
+        if (rejection) {
+            removeSaved(files);
+            return res.status(rejection.status).json({ success: false, message: rejection.message });
         }
     }
-
     next();
 }
 
