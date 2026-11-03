@@ -180,10 +180,20 @@ async function buildLearningReport(child, { language, now = new Date(), windowDa
     // percentage reads as a verdict ("100%" for 1 of 1) — count instead.
     const MIN_FOR_ACCURACY = 5;
 
-    // Activity
+    // Activity. "Very active" needs real time on task, not just session
+    // count: five two-minute check-ins are 10 minutes, not a busy week.
+    const VERY_ACTIVE_MINUTES = 60;
+    // Practice that fell by half or more from a real prior week (≥30 min) is
+    // news a parent needs; the report used to open "steady and consistent"
+    // over a 67% drop because the headline only looked at accuracy.
+    const practiceDropped = thisWeek.sessionCount > 0
+        && prevWeek.totalMinutes >= 30
+        && thisWeek.totalMinutes <= prevWeek.totalMinutes / 2;
     if (thisWeek.sessionCount === 0) {
         say('engagement', 'concern', 'insight.activity.none');
-    } else if (thisWeek.sessionCount >= 5) {
+    } else if (practiceDropped) {
+        say('engagement', 'concern', 'insight.activity.down', { minutes: thisWeek.totalMinutes, prev: prevWeek.totalMinutes });
+    } else if (thisWeek.sessionCount >= 5 && thisWeek.totalMinutes >= VERY_ACTIVE_MINUTES) {
         say('engagement', 'positive', 'insight.activity.high', { sessions: thisWeek.sessionCount, minutes: thisWeek.totalMinutes });
     } else {
         say('engagement', 'neutral', 'insight.activity.some', { sessions: thisWeek.sessionCount, minutes: thisWeek.totalMinutes, count: thisWeek.sessionCount });
@@ -247,6 +257,7 @@ async function buildLearningReport(child, { language, now = new Date(), windowDa
     const hasHighCogLoad = cognitiveLoadTrend === 'rising';
 
     const headlineTone = !hasActivity ? 'needs-attention'
+        : practiceDropped ? 'building'
         : hasMasteryGrowth && hasStrongAccuracy ? 'excellent'
             : hasStrongAccuracy ? 'good'
                 : hasHighCogLoad ? 'growing'
@@ -255,7 +266,7 @@ async function buildLearningReport(child, { language, now = new Date(), windowDa
         'needs-attention': 'headline.none', excellent: 'headline.excellent', good: 'headline.good',
         growing: 'headline.growing', building: 'headline.building',
     };
-    const headline = renderMessage(HEADLINE_KEY[headlineTone], { name, days }, lang);
+    const headline = renderMessage(practiceDropped ? 'headline.slowed' : HEADLINE_KEY[headlineTone], { name, days }, lang);
 
     // ------------------------------------------------------------------
     // BUILD RESPONSE
