@@ -235,3 +235,25 @@ describe('the disclosure is recorded', () => {
     expect(EducationRecordAccessLog.insertMany.mock.calls[0][0]).toHaveLength(2);
   });
 });
+
+describe('what the aide is told about mastery', () => {
+  // Live, 2026-11-03: the aide told a teacher a student had "54 skills
+  // mastered" while the parent card showed "0 mastered · 54 placed out" for
+  // the same child. Placement credit is not mastery.
+  test('placement-test credit is reported apart from earned mastery', async () => {
+    const placed = Object.fromEntries(Array.from({ length: 3 }, (_, i) =>
+      [`placed-${i}`, { status: 'mastered', provenBy: 'placement' }]));
+    User.find.mockReturnValue({ lean: jest.fn().mockResolvedValue([{
+      ...ROSTER[1],
+      skillMastery: {
+        ...placed,
+        'alg-two-step': { status: 'mastered', totalAttempts: 6 },
+        'alg-one-step': { status: 'learning', totalAttempts: 2 },
+      },
+    }]) });
+    getStudentIdsForTeacher.mockResolvedValue([ROSTER[1]._id]);
+
+    await plan({});
+    expect(outboundText()).toMatch(/1 skills mastered, 1 in progress, 3 placed out by the placement test/);
+  });
+});

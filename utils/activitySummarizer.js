@@ -127,9 +127,13 @@ function detectStruggle(recentMessages) {
     // - "I don't understand" phrases
     // - AI providing multiple hints/explanations
 
+    // Only phrases that say the student is lost. "help", "why", "how do i" and
+    // "what does" used to be here, and they are how a student OPENS a problem
+    // ("can you help me with 3(x - 4) = 2x + 5"), so every new question put the
+    // student on the teacher's "struggling right now" list (2026-11-03).
     const struggleKeywords = [
-        "don't understand", "confused", "help", "stuck", "i don't get",
-        "what does", "how do i", "why", "can you explain again"
+        "don't understand", "dont understand", "confused", "stuck", "i don't get",
+        "i dont get", "can you explain again", "makes no sense", "i'm lost", "im lost"
     ];
 
     const recentUserText = userMessages.slice(-3)
@@ -152,7 +156,10 @@ function detectStruggle(recentMessages) {
     if (isStruggling) {
         // Try to identify what they're struggling with
         const topicMatch = recentUserText.match(/(fraction|equation|variable|algebra|geometry|multiplication|division|negative number|exponent)/i);
-        const strugglingWith = topicMatch ? topicMatch[1] : 'current concept';
+        // No named topic in the student's words: use the conversation's topic,
+        // not a placeholder — teachers read this as "struggling with <x>".
+        const topic = detectTopic(recentMessages);
+        const strugglingWith = topicMatch ? topicMatch[1] : (topic !== 'mathematics' ? topic : 'this problem');
 
         return {
             isStruggling: true,

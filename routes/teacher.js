@@ -7,6 +7,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
 const { isTeacher, isAuthenticated } = require('../middleware/auth');
 const { generateLiveSummary, detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
+const { classifySkill } = require('../utils/parentSkillPicture');
 const { cleanupStaleSessions } = require('../services/sessionService');
 const { computeRiskScore, getInterventionTier, generateRecommendation } = require('../utils/interventionAlerts');
 
@@ -1633,8 +1634,13 @@ async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
     const placeholder = `[Student ${index + 1}]`;
     const name = forModel ? placeholder : (firstName || 'Unknown');
     const mastery = s.skillMastery ? Object.entries(s.skillMastery) : [];
-    const masteredCount = mastery.filter(([, d]) => d.status === 'mastered').length;
-    const learningCount = mastery.filter(([, d]) => ['learning', 'practicing', 're-fragile', 'needs-review'].includes(d.status)).length;
+    // Earned mastery only. Placement-test credit is reported apart, the way
+    // the parent card does (utils/parentSkillPicture.classifySkill): the aide
+    // told a teacher a student had "54 skills mastered" when the parent saw
+    // "0 mastered · 54 placed out" for the same child (2026-11-03).
+    const masteredCount = mastery.filter(([, d]) => d && d.status === 'mastered' && classifySkill(d) === 'practiced').length;
+    const placedOutCount = mastery.filter(([, d]) => classifySkill(d) === 'placed').length;
+    const learningCount = mastery.filter(([, d]) => d && ['learning', 'practicing', 're-fragile', 'needs-review'].includes(d.status) && classifySkill(d) === 'practiced').length;
     // One definition of "struggling" — evidence-based, recent (utils/skillSummary.js).
     const strugglingSkills = summarizeSkillMastery(s.skillMastery, allSkillNames, activityNow).struggling
       .map(sk => sk.name || sk.skillId)
@@ -1669,6 +1675,7 @@ async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
       grade: s.gradeLevel,
       course: s.mathCourse,
       masteredCount,
+      placedOutCount,
       learningCount,
       strugglingSkills,
       hasIEP: activeAccommodations.length > 0,
@@ -1711,6 +1718,7 @@ async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
     if (p.grade) line += ` (Grade ${p.grade})`;
     if (p.course) line += ` — ${p.course}`;
     line += `: ${p.masteredCount} skills mastered, ${p.learningCount} in progress`;
+    if (p.placedOutCount > 0) line += `, ${p.placedOutCount} placed out by the placement test (not practiced)`;
     if (p.theta !== null) line += `, ability θ=${p.theta}`;
     if (p.streak > 2) line += `, ${p.streak}-day streak`;
     if (p.isInactive) line += ' [INACTIVE - no login this week]';

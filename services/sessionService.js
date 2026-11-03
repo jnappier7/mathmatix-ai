@@ -253,8 +253,10 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
         const aiSummary = await generateAISummary(activeConversation, studentName);
         activeConversation.summary = aiSummary;
 
-        // Update last activity timestamp (conversation stays active/visible)
-        activeConversation.lastActivity = new Date();
+        // Do NOT touch lastActivity here. Session end fires on every page leave
+        // (sendBeacon), so stamping it "now" revived conversations untouched
+        // for weeks: they showed in the teacher's Live now and counted as this
+        // week's sessions for parents (2026-11-03). Only real turns move it.
 
         await activeConversation.save();
 
@@ -270,7 +272,6 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
         logger.error('Failed to generate conversation summary', { userId, error });
         // Update summary with fallback, but keep conversation active
         activeConversation.summary = `Session completed - ${activeConversation.activeMinutes || 0} minutes`;
-        activeConversation.lastActivity = new Date();
         await activeConversation.save();
       }
     }
@@ -314,7 +315,6 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
                 const studentName = `${user.firstName} ${user.lastName}`;
                 const aiSummary = await generateAISummary(courseConversation, studentName);
                 courseConversation.summary = aiSummary;
-                courseConversation.lastActivity = new Date();
                 await courseConversation.save();
 
                 logger.info('Course conversation summary generated', {
@@ -327,7 +327,6 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
               } catch (error) {
                 logger.error('Failed to generate course conversation summary', { userId, error });
                 courseConversation.summary = `Course session completed - ${courseSession.courseName}`;
-                courseConversation.lastActivity = new Date();
                 await courseConversation.save();
               }
             }
