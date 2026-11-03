@@ -41,46 +41,46 @@ function makeRes() {
 }
 
 describe('validateUpload', () => {
-  test('passes through when no file is present', () => {
+  test('passes through when no file is present', async () => {
     const req = {};
     const res = makeRes();
     const next = jest.fn();
 
-    validateUpload(req, res, next);
+    await validateUpload(req, res, next);
 
     expect(next).toHaveBeenCalled();
     expect(res.status).not.toHaveBeenCalled();
   });
 
-  test('rejects files larger than 10MB', () => {
+  test('rejects files larger than 10MB', async () => {
     const req = { file: { size: 11 * 1024 * 1024, mimetype: 'image/png', originalname: 'big.png' } };
     const res = makeRes();
     const next = jest.fn();
 
-    validateUpload(req, res, next);
+    await validateUpload(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     expect(next).not.toHaveBeenCalled();
   });
 
-  test('rejects disallowed mimetype (e.g. exe)', () => {
+  test('rejects disallowed mimetype (e.g. exe)', async () => {
     const req = { file: { size: 10, mimetype: 'application/x-msdownload', originalname: 'evil.exe' } };
     const res = makeRes();
     const next = jest.fn();
 
-    validateUpload(req, res, next);
+    await validateUpload(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(next).not.toHaveBeenCalled();
   });
 
-  test('rejects suspicious filename characters', () => {
+  test('rejects suspicious filename characters', async () => {
     const req = { file: { size: 10, mimetype: 'image/png', originalname: 'bad<file>.png' } };
     const res = makeRes();
     const next = jest.fn();
 
-    validateUpload(req, res, next);
+    await validateUpload(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(
@@ -94,12 +94,12 @@ describe('validateUpload', () => {
     'image/png',
     'image/webp',
     'application/pdf'
-  ])('accepts valid mimetype %s', (mimetype) => {
+  ])('accepts valid mimetype %s', async (mimetype) => {
     const req = { file: { size: 1024, mimetype, originalname: 'safe.bin' } };
     const res = makeRes();
     const next = jest.fn();
 
-    validateUpload(req, res, next);
+    await validateUpload(req, res, next);
 
     expect(next).toHaveBeenCalled();
     expect(res.status).not.toHaveBeenCalled();
