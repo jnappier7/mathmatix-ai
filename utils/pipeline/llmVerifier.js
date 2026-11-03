@@ -24,6 +24,7 @@
  * @module pipeline/llmVerifier
  */
 
+const { hasIdeaWords } = require('./ideaWords');
 const { callLLM } = require('../llmGateway');
 // Pure predicate, not a call path — the gateway stays the only way we reach a
 // provider. Imported rather than re-implemented so the `claude*` test has one
@@ -823,7 +824,9 @@ function isProseAnswer(text) {
   if (!t || t.length > 400) return false;
   const words = t.split(/\s+/).filter(Boolean);
   if (words.length < 2) return false;
-  return words.filter(w => /^[a-z][a-z']*$/i.test(w)).length >= 2;
+  return words.filter(w => /^[a-z][a-z']*$/i.test(w)).length >= 2
+    // "oh so 2x sinx + x^2 cosx" has two letter-words and no idea in it.
+    && hasIdeaWords(t);
 }
 
 // A true/false (or yes/no) question takes a POLARITY answer — a single word

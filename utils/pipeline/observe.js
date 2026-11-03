@@ -9,6 +9,7 @@
  * @module pipeline/observe
  */
 
+const { hasIdeaWords } = require('./ideaWords');
 const { normalizeSpokenNumbers, normalizeMathUnicode, stripThousandsSeparators } = require('../mathUnicodeNormalizer');
 const { parseFractionOrDecimal } = require('../answerComparison');
 const { isCheckWorkIntent } = require('../worksheetGuard');
@@ -1232,7 +1233,8 @@ function observe(message, context = {}) {
     && messageType === MESSAGE_TYPES.GENERAL_MATH
     && text.length <= 400
     && text.split(/\s+/).filter(Boolean).length >= 2
-    && /[a-z]{3,}/i.test(text);
+    // Words that are an idea, not "sinx" / "oh so" — see ideaWords.js.
+    && hasIdeaWords(text);
 
   // ── Durable back-off mode ──
   // Once a student asserts competence / rejects scaffolding, the tutor must not
