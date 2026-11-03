@@ -697,7 +697,9 @@ class CourseManager {
             if (grid) grid.innerHTML = '<div style="text-align:center; padding:40px; color:#e74c3c;">Failed to load courses.</div>';
         }
 
-        // Focus the search input for fast keyboard access
+        // Focus the search input for fast keyboard access — not on a touch
+        // screen, where focusing pops the keyboard over the catalog.
+        if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
         setTimeout(() => {
             const searchInput = document.getElementById('catalog-search');
             if (searchInput) searchInput.focus();
@@ -841,6 +843,16 @@ class CourseManager {
         // Estimated time per module (heuristic: ~45 min per module)
         const EST_MINUTES_PER_MODULE = 45;
 
+        // Enrolled courses lead, under their own header. On a phone this modal
+        // is the student's only courses surface (see resolveCardActions), and
+        // "My Courses" opened it with their own courses buried 14 cards down
+        // behind ones they'd never take (site review, 2026-11-03).
+        const enrolled = catalog.filter(c => CourseManager.resolveCardActions(c.courseId, this.courseSessions).isEnrolled);
+        if (enrolled.length) {
+            catalog = enrolled.map(c => ({ ...c, group: 'Your courses' }))
+                .concat(catalog.filter(c => !enrolled.includes(c)));
+        }
+
         let lastGroup = '';
         catalog.forEach(course => {
             // Insert group header when group changes
@@ -889,10 +901,7 @@ class CourseManager {
                 <div class="catalog-card-actions" style="display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:6px;">
                     <button class="catalog-enroll-btn" data-course-id="${course.courseId}"
                         style="padding:8px 18px; border:none; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap;
-                        ${isEnrolled
-                            ? 'background:#f3efff; color:#5b3ea8; border:1px solid #c9bcf0;'
-                            : 'background:linear-gradient(135deg, #667eea, #764ba2); color:white;'
-                        }">
+                        background:linear-gradient(135deg, #667eea, #764ba2); color:white;">
                         ${isEnrolled ? '<i class="fas fa-play" style="margin-right:4px; font-size:11px;"></i>Continue' : 'Enroll'}
                     </button>
                     ${actions.canLeave ? `

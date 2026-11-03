@@ -70,7 +70,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js3.df787b2f.js",
+        "src": "/dist/js/chat-js3.a3a52841.js",
         "files": [
           "/js/chat-board-integration.js",
           "/js/placementLadder.js",
@@ -82,7 +82,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js4.54333ffc.js",
+        "src": "/dist/js/chat-js4.aa28e3de.js",
         "files": [
           "/js/diagram-display.js",
           "/js/inlineChatVisuals.js"
@@ -121,7 +121,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js8.85ca98e2.js",
+        "src": "/dist/js/chat-js8.80707068.js",
         "files": [
           "/js/student-resources.js",
           "/js/settings.js",

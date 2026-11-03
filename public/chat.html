@@ -142,7 +142,7 @@
        Loads AFTER workspace.css/avatar-fullbody.css so .psc-* rules win. -->
   <link rel="stylesheet" href="/css/player-stats-card.css?v=20260904a" />
   <link rel="stylesheet" href="/css/challenge-card.css?v=20261015a" />
-  <link rel="stylesheet" href="/css/floating-review.css?v=20260807" />
+  <link rel="stylesheet" href="/css/floating-review.css?v=20261103" />
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
   <link rel="stylesheet" href="/css/adjustable-panels.css?v=20261016hm" />
   <!-- Voice mode (layout mode of the chat stage) -->
@@ -2462,7 +2462,7 @@
   <!-- Load CSRF and storage utilities FIRST -->
   <script src="/js/csrf.js"></script>
   <!-- Visual token grammar (window.VisualTokenParser) — before inlineChatVisuals -->
-  <script src="/js/visualTokenParser.js"></script>
+  <script src="/js/visualTokenParser.js?v=20261103"></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
   <script src="/dist/js/chat-js0.95d0ddca.js"></script>
 <!-- LaTeX delimiter scanner (sets window.MathDelimiters) — must load before script.js -->
@@ -2483,9 +2483,9 @@
   <script defer src="/js/voice-subtitles.js?v=20260718b"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
-  <script src="/dist/js/chat-js3.df787b2f.js"></script>
+  <script src="/dist/js/chat-js3.a3a52841.js"></script>
 <!-- returningUserModal.js removed — no longer used -->
-  <script src="/dist/js/chat-js4.54333ffc.js"></script>
+  <script src="/dist/js/chat-js4.aa28e3de.js"></script>
 <link rel="stylesheet" href="/css/algebra-tiles.css">
   <!-- algebra-tiles.js lazy-loads itself on demand (inlineChatVisuals
        openAlgebraTilesWorkspace) — no static tag needed. -->
@@ -2547,7 +2547,7 @@
       updateUI();
     })();
   </script>
-  <script src="/dist/js/chat-js8.85ca98e2.js"></script>
+  <script src="/dist/js/chat-js8.80707068.js"></script>
 <!-- Player stats card: window-global, loaded before script.js which calls
      window.PlayerStatsCard.init(currentUser) once the user doc is fetched. -->
 <script defer src="/js/modules/playerStatsCard.js?v=20261014a"></script>
@@ -2567,7 +2567,7 @@
   });
 </script>
 <script src="/js/challengeCard.js?v=20261015a"></script>
-<script defer src="/js/floating-review.js?v=20260915"></script>
+<script defer src="/js/floating-review.js?v=20261103"></script>
 <script src="/js/script.js?v=20261029pl" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.b9bd11de.js"></script>

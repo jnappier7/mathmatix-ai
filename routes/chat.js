@@ -64,7 +64,7 @@ const { buildSmartQueue } = require('../utils/smartReviewQueue');
 const { studentLabel } = require('../utils/studentLabels');
 const { detectGrowthCheckAcceptance, detectStartingPointAcceptance } = require('../utils/growthCheckIntent');
 const { buildDebriefInstruction, fallbackDebriefText } = require('../utils/growthSummary');
-const { normalizeWarmupResults, buildWarmupDebriefInstruction, fallbackWarmupDebriefText } = require('../utils/reviewWarmupDebrief');
+const { normalizeWarmupResults, buildWarmupDebriefInstruction, fallbackWarmupDebriefText, missedProblemsBlock } = require('../utils/reviewWarmupDebrief');
 const { buildCourseSystemPrompt, buildActPracticeGuidance, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -3100,6 +3100,20 @@ async function handleReviewWarmupDebrief(req, res, userId) {
                 }
             } catch (err) {
                 logger.warn('Review warm-up debrief simplification failed', { error: err.message });
+            }
+        }
+
+        // Quote the missed problem(s) under the line, so "shore it up" has the
+        // problem in the transcript for the next turn to work from.
+        if (summary.missedProblemIds.length) {
+            try {
+                const Problem = require('../models/problem');
+                const docs = await Problem.find({ problemId: { $in: summary.missedProblemIds } }, { problemId: 1, prompt: 1 }).lean();
+                const byId = new Map(docs.map((d) => [d.problemId, d.prompt]));
+                const block = missedProblemsBlock(summary.missedProblemIds.map((id) => byId.get(id)));
+                if (block) debriefText = `${debriefText}\n\n${block}`;
+            } catch (err) {
+                logger.warn('Review warm-up debrief problem lookup failed', { error: err.message });
             }
         }
 

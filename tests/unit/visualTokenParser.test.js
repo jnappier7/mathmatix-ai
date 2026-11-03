@@ -89,3 +89,23 @@ describe('the grammar piece is exported for reuse', () => {
     expect(new RegExp('^' + PARAM + '$').test(']')).toBe(false);
   });
 });
+
+// Site review, 2026-11-03: fn=3*(x - 4) - (2*x + 5) was read as "3*(x".
+describe('quoteBareValues keeps a spaced value whole', () => {
+  const { quoteBareValues } = require('../../public/js/visualTokenParser');
+
+  test('the review case', () => {
+    expect(quoteBareValues('fn=3*(x - 4) - (2*x + 5),xMin=-10,xMax=10,title="Graph"'))
+      .toBe('fn="3*(x - 4) - (2*x + 5)",xMin=-10,xMax=10,title="Graph"');
+  });
+
+  test('commas inside parens stay in the value', () => {
+    expect(quoteBareValues('fn=max(x, 2),xMin=0')).toBe('fn="max(x, 2)",xMin=0');
+  });
+
+  test('values without spaces, arrays and quoted strings are untouched', () => {
+    for (const t of ['fn=x^2,xMin=-5', 'min=-5,max=5,points=[-2,0,3],highlight=3', 'params="a:1:-3:3,b:0:-5:5",fn=a*x^2']) {
+      expect(quoteBareValues(t)).toBe(t);
+    }
+  });
+});

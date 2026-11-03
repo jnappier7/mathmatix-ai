@@ -220,3 +220,11 @@ describe('visualTools', () => {
     });
   });
 });
+
+// Site review, 2026-11-03: an unquoted fn with spaces was read by the client
+// parser as "3*(x" and the graph plotted nothing.
+test('render_function_graph quotes a fn that has spaces', () => {
+  const { resolveToolCalls } = require('../../utils/visualTools');
+  const r = resolveToolCalls([{ function: { name: 'render_function_graph', arguments: JSON.stringify({ function: '3*(x - 4) - (2*x + 5)' }) } }]);
+  expect(JSON.stringify(r)).toContain('fn=\\"3*(x - 4) - (2*x + 5)\\"');
+});

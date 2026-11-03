@@ -2,7 +2,7 @@
 // student audit: five correct systems answers, and a tool call (fired five
 // times) plotting five INVENTED points.
 process.env.OPENAI_API_KEY = process.env.OPENAI_API_KEY || 'test';
-const { screenVisualCalls, extractPairs, toNumber } = require('../../utils/visualGrounding');
+const { screenVisualCalls, extractPairs, toNumber, graphsPosedEquation } = require('../../utils/visualGrounding');
 const { resolveToolCalls } = require('../../utils/visualTools');
 
 const PROBLEMS = String.raw`**Question 1:** \[ \begin{align*} y &= 2x + 3 \\ 3x + y &= 12 \end{align*} \]
@@ -62,5 +62,40 @@ describe('resolveToolCalls', () => {
   test('labels are rounded, not 16-digit floats', () => {
     const { tags } = resolveToolCalls([call([[9 / 7, 20 / 7]])]);
     expect(tags).toEqual(['[POINTS:points=(1.286,2.857)]']);
+  });
+});
+
+// Site review, 2026-11-03: "can you help me with 3(x - 4) = 2x + 5" — before the
+// student had done a step, the tutor graphed lhs − rhs, whose zero is x = 17.
+describe('a function graph that is the posed equation is a giveaway', () => {
+  const graph = (fn) => ({ type: 'function', function: { name: 'render_function_graph', arguments: JSON.stringify({ function: fn, title: 'Graph of 3(x - 4) and 2x + 5' }) } });
+  const ASK = 'can you help me with 3(x - 4) = 2x + 5';
+  const REPLY = String.raw`Let's start solving the equation \( 3(x - 4) = 2x + 5 \). First, we can distribute the \( 3 \).`;
+
+  test('the review case: lhs − rhs is dropped', () => {
+    const { calls, dropped } = screenVisualCalls([graph('3*(x - 4) - (2*x + 5)')], { texts: [ASK, REPLY], studentText: ASK });
+    expect(calls).toEqual([]);
+    expect(dropped[0].reason).toMatch(/posed equation/);
+  });
+
+  test('rhs − lhs and scaled forms have the same zero, so they are dropped too', () => {
+    for (const fn of ['2x + 5 - 3(x - 4)', 'x - 17', '-2*(x - 17)']) {
+      expect(screenVisualCalls([graph(fn)], { texts: [ASK], studentText: ASK }).calls).toEqual([]);
+    }
+  });
+
+  test('prose around the equation does not hide it', () => {
+    const t = 'ok next 3(x - 4) = 2x + 5 is the one';
+    expect(graphsPosedEquation('3*(x-4)-(2*x+5)', [t])).toBe(true);
+  });
+
+  test('a graph the student asked for is kept', () => {
+    const asked = 'can you graph 3(x - 4) = 2x + 5 so I can see it';
+    expect(screenVisualCalls([graph('3*(x - 4) - (2*x + 5)')], { texts: [asked], studentText: asked }).calls).toHaveLength(1);
+  });
+
+  test('an unrelated function graph is kept', () => {
+    expect(screenVisualCalls([graph('x^2')], { texts: [ASK], studentText: ASK }).calls).toHaveLength(1);
+    expect(screenVisualCalls([graph('3*(x - 4)')], { texts: [ASK], studentText: ASK }).calls).toHaveLength(1);
   });
 });

@@ -20,6 +20,14 @@
 
    Grounding is deliberately generous (decimals, fractions, \frac, ±0.005):
    it exists to stop invented points, not to second-guess a real plot.
+
+   A function graph can give the answer away too. Site review, 2026-11-03: a
+   student typed "can you help me with 3(x - 4) = 2x + 5" and, before they had
+   distributed anything, the tutor called render_function_graph with
+   "3*(x - 4) - (2*x + 5)" — the equation folded into one function, whose
+   zero IS the answer (x = 17). So a graph whose function is the posed
+   equation's lhs − rhs (any non-zero multiple) is dropped, unless the
+   student asked to see a graph.
    ============================================================ */
 
 const math = require('mathjs');
@@ -87,6 +95,66 @@ function extractEquations(text) {
   return out;
 }
 
+/** One-variable equations in x written in the text, as lhs − rhs. */
+function extractOneVarEquations(text) {
+  const t = String(text || '')
+    .replace(/\\[()[\]]/g, ' ')
+    .replace(/&/g, '')
+    .replace(/\\\\/g, '\n')
+    .replace(/\\begin\{[^}]*\}|\\end\{[^}]*\}/g, '\n')
+    .replace(/−/g, '-')
+    // Words end an equation: "next 3(x - 4) = …" must not read as "x 3(x - 4)".
+    .replace(/(?<![\\A-Za-z])[A-Za-z]{2,}/g, '\n');
+  const out = [];
+  const seen = new Set();
+  // Letters are left out on purpose: only x may appear, so the prose around
+  // an equation ("help me with 3(x - 4) = …") can't bleed into a side.
+  const SIDE = String.raw`[0-9x+\-*/^().\s{}]|\\(?:frac|dfrac|cdot|times)`;
+  const re = new RegExp(`((?:${SIDE}){1,60})=((?:${SIDE}){1,60})`, 'g');
+  for (const line of t.split(/[\n;,]|\band\b/)) {
+    for (const m of line.matchAll(re)) {
+      if (!/x/.test(m[1] + m[2])) continue;
+      const lhs = latexToExpr(m[1].trim());
+      const rhs = latexToExpr(m[2].trim());
+      if (!lhs || !rhs) continue;
+      const src = `(${lhs}) - (${rhs})`;
+      if (seen.has(src)) continue;
+      seen.add(src);
+      try { out.push(math.compile(src)); } catch (_) { /* not an equation we can evaluate */ }
+    }
+  }
+  return out;
+}
+
+const SAMPLE_X = [-7.3, -2.1, 0.37, 1.9, 4.4, 8.6];
+
+/** True when g is a non-zero constant multiple of f — same zeros, same answer. */
+function isMultipleOf(g, f) {
+  let ratio = null;
+  for (const x of SAMPLE_X) {
+    let gv; let fv;
+    try { gv = g.evaluate({ x }); fv = f.evaluate({ x }); } catch (_) { return false; }
+    if (typeof gv !== 'number' || typeof fv !== 'number' || !Number.isFinite(gv) || !Number.isFinite(fv)) return false;
+    if (Math.abs(fv) < 1e-9) { if (Math.abs(gv) > 1e-6) return false; continue; }
+    const r = gv / fv;
+    if (ratio === null) ratio = r;
+    else if (Math.abs(r - ratio) > 1e-6 * Math.max(1, Math.abs(ratio))) return false;
+  }
+  return ratio !== null && Math.abs(ratio) > 1e-9;
+}
+
+/** Does this graph's function hand the student the answer to a posed equation? */
+function graphsPosedEquation(fn, texts) {
+  const expr = latexToExpr(String(fn || ''));
+  if (!expr) return false;
+  let g;
+  try { g = math.compile(expr); } catch (_) { return false; }
+  const all = (Array.isArray(texts) ? texts : [texts]).filter(Boolean).join('\n');
+  return extractOneVarEquations(all).some((f) => isMultipleOf(g, f));
+}
+
+const ASKED_FOR_GRAPH = /\b(graph|plot|sketch|draw)/i;
+
 function buildContext(texts) {
   const all = (Array.isArray(texts) ? texts : [texts]).filter(Boolean).join('\n');
   return { pairs: extractPairs(all), equations: extractEquations(all) };
@@ -115,8 +183,10 @@ function parseArgs(call) {
  * @param {Object[]} calls  OpenAI-shaped tool calls
  * @param {Object}   opts
  * @param {string[]} opts.texts  recent conversation text + this turn's prose
+ * @param {string}   [opts.studentText]  the student's latest message — a
+ *   graph they asked for is never treated as a giveaway
  */
-function screenVisualCalls(calls, { texts = [] } = {}) {
+function screenVisualCalls(calls, { texts = [], studentText = '' } = {}) {
   const dropped = [];
   const kept = [];
   const seen = new Set();
@@ -128,6 +198,12 @@ function screenVisualCalls(calls, { texts = [] } = {}) {
     const sig = `${name}:${JSON.stringify(args)}`;
     if (seen.has(sig)) { dropped.push({ name, reason: 'duplicate' }); continue; }
     seen.add(sig);
+
+    if (name === 'render_function_graph' && args && !ASKED_FOR_GRAPH.test(studentText)
+      && graphsPosedEquation(args.function || args.fn, texts)) {
+      dropped.push({ name, reason: 'graphs the posed equation (its zero is the answer)' });
+      continue;
+    }
 
     if (name !== 'render_points_plot' || !args || !Array.isArray(args.points)) { kept.push(call); continue; }
 
@@ -155,4 +231,4 @@ function messageTexts(messages, limit = 8) {
       : Array.isArray(m.content) ? m.content.map((p) => (p && typeof p.text === 'string' ? p.text : '')).join(' ') : ''));
 }
 
-module.exports = { screenVisualCalls, messageTexts, extractPairs, extractEquations, isGrounded, buildContext, toNumber };
+module.exports = { screenVisualCalls, messageTexts, extractPairs, extractEquations, extractOneVarEquations, graphsPosedEquation, isGrounded, buildContext, toNumber };
