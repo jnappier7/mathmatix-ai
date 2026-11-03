@@ -4022,13 +4022,24 @@ function _equationAroundEquals(text) {
     const after = text.slice(i + 1).trim().split(/\s+/);
     const left = [];
     for (let k = before.length - 1; k >= 0 && isMathToken(before[k]); k--) left.unshift(before[k]);
+    // A question/exclamation mark rides on a token ("… + x? Just") — read the
+    // token without it, and stop there: the sentence ended. Testing the raw
+    // token rejected "x?", cutting "2(x - 3) = 4 + x?" to "2(x - 3) = 4 +",
+    // which solved to 5 instead of 10 (the greeting's warm-up, 2026-11-03).
+    // A comma still ends the read BEFORE its token: "If x = 4, what is 2 + 3x?"
+    // states a value, it is not the equation to solve.
     const right = [];
-    for (let k = 0; k < after.length && isMathToken(after[k]); k++) right.push(after[k]);
+    for (let k = 0; k < after.length; k++) {
+        const tok = after[k].replace(/[?!]+$/, '');
+        if (!tok || !isMathToken(tok)) break;
+        right.push(tok);
+        if (tok !== after[k]) break;
+    }
     if (!left.length || !right.length) return null;
-    // Sentence punctuation rides on the last token ("… = 27.") — drop it so
-    // the right side is the number, not "27.".
     right[right.length - 1] = right[right.length - 1].replace(/[.,;:!?]+$/, '');
     if (!right[right.length - 1]) return null;
+    // A side that ends on an operator is a cut, not an equation.
+    if (/[+\-*/^(]$/.test(right[right.length - 1])) return null;
     return `${left.join(' ')} = ${right.join(' ')}`;
 }
 

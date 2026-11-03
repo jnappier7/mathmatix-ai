@@ -1013,3 +1013,28 @@ describe('boardSynthesizer — pinned problem anchor', () => {
     expect(all.map(c => c.action)).toEqual(['clear', 'pose']);
   });
 });
+
+// Live, 2026-11-03: the greeting offered "Try this one: What's 2(x − 3) = 4 + x?"
+// (greetings never pin), the student answered "2x - 3 = 4 + x so x = 7", and the
+// reply quoted that wrong line back — which the empty-board path posed as THE
+// problem. The open ask is the one the tutor offered last turn.
+describe('empty board, answering the problem offered last turn', () => {
+  const reply = "Let's take a closer look at the line \\(2x - 3 = 4 + x\\). What move got you there?";
+  const greeting = "Hey Jason! How about a quick warm-up?\n\nTry this one: What’s \\(2(x - 3) = 4 + x\\)? Just a little check-in.";
+  const run = (recentAssistantMessages) => synthesizeBoardCommands({
+    studentMessage: '2x - 3 = 4 + x so x = 7',
+    tutorResponse: reply,
+    observation: { messageType: 'answer_attempt' },
+    lastBoardAction: null,
+    pinnedProblem: null,
+    recentAssistantMessages,
+  });
+
+  test('poses the offered problem, not the student line the reply quotes', () => {
+    expect(run([{ role: 'assistant', content: greeting }])[0]).toEqual({ action: 'pose', tex: '2(x - 3) = 4 + x' });
+  });
+
+  test('with no offer on record, a quoted student line is never posed', () => {
+    expect(run([]).some(c => c.action === 'pose')).toBe(false);
+  });
+});

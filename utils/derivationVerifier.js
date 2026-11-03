@@ -146,6 +146,14 @@ function rescueMissingOperator(line, target) {
  * @returns {{verifiable:boolean, valid?:boolean, finalAnswer?:string, target?:string,
  *           reachedAnswer?:boolean, firstBadStepIndex?:number, steps?:Array}}
  */
+function lastGoodBefore(steps, badIndex) {
+  if (badIndex < 0) return null;
+  for (let i = badIndex - 1; i >= 0; i--) {
+    if (steps[i].ok === true) return steps[i].line;
+  }
+  return null;
+}
+
 function verifyDerivation(workText, problemText, knownTarget) {
   const lines = splitWorkLines(workText);
   if (lines.length < 2) return { verifiable: false, reason: 'not enough steps' };
@@ -215,6 +223,11 @@ function verifyDerivation(workText, problemText, knownTarget) {
     reachedAnswer,
     firstBadStepIndex,           // -1 when every step is valid
     firstBadStep: firstBadStepIndex >= 0 ? steps[firstBadStepIndex].line : null,
+    // The last line before the break that checked out — what the tutor may
+    // honestly praise. Null when the very first judged line is the bad one:
+    // there is nothing right to name, and a directive that demanded praise
+    // anyway had the model invent a "division step" (live, 2026-11-03).
+    lastGoodStep: lastGoodBefore(steps, firstBadStepIndex),
     steps,
   };
 }

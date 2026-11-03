@@ -57,7 +57,7 @@ describe('final value after shown steps on a pinned linear problem', () => {
     expect(diagnosis.isCorrect).toBe(false);
     expect(diagnosis.type).toBe('incorrect');
     // The right step is credited by the chain; the bad one is named, not fixed.
-    expect(diagnosis.derivation).toEqual({ valid: false, firstBadStep: 'x = 7', finalAnswer: '7' });
+    expect(diagnosis.derivation).toMatchObject({ valid: false, firstBadStep: 'x = 7', lastGoodStep: 'x - 12 = 5', finalAnswer: '7' });
     expect(decision.action).toBe(ACTIONS.GUIDE_INCORRECT);
     expect(JSON.stringify(decision.directives || [])).not.toMatch(/\b17\b/);
   });

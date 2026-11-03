@@ -45,6 +45,29 @@ describe('incorrect answer → first wrong step', () => {
     expect(d).toMatch(/do not go on to the final answer/i);
   });
 
+  // Live, 2026-11-03: the first line WAS the mistake (2(x−3) → 2x − 3). The
+  // old wording ("right up to the line …") plus a quotable praise example had
+  // the tutor say "Your division step is right" and ask what came AFTER it.
+  test('a break on the very first line forbids praise and names that line as wrong', () => {
+    const { verifyDerivation } = require('../../utils/derivationVerifier');
+    const chain = verifyDerivation('2x - 3 = 4 + x so x = 7', '2(x-3)=4+x');
+    expect(chain.firstBadStep).toBe('2x - 3 = 4 + x');
+    expect(chain.lastGoodStep).toBeNull();
+    const d = firstWrongStepDirective({ derivation: chain });
+    expect(d).toMatch(/"2x - 3 = 4 \+ x" is WRONG/);
+    expect(d).toMatch(/Do not open with praise/);
+    expect(d).not.toMatch(/right up to|division step/i);
+  });
+
+  test('a later break names the last right line as the thing to praise', () => {
+    const { verifyDerivation } = require('../../utils/derivationVerifier');
+    const chain = verifyDerivation('2x - 6 = 4 + x\nx - 6 = 4\nx = -2', '2(x-3)=4+x');
+    expect(chain.firstBadStep).toBe('x = -2');
+    expect(chain.lastGoodStep).toBe('x - 6 = 4');
+    const d = firstWrongStepDirective({ derivation: chain });
+    expect(d).toContain('right through "x - 6 = 4"');
+  });
+
   test('without work, the tutor is told to find the step that produces their number', () => {
     const d = firstWrongStepDirective({ type: 'incorrect' });
     expect(d).toMatch(/FIND THE FIRST WRONG STEP/);

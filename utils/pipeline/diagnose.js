@@ -336,7 +336,7 @@ function gradeEquationStep(rawText, observation, context) {
     verificationSource: 'symbolic:equation_step',
     isTransformation: true,
     isStep: true,
-    derivation: { valid: false, firstBadStep: lineTex, finalAnswer: null },
+    derivation: { valid: false, firstBadStep: lineTex, lastGoodStep: null, finalAnswer: null },
   };
 }
 
@@ -374,7 +374,7 @@ async function diagnoseTransformation(observation, context) {
       },
       verificationSource: 'derivation',
       demonstratedReasoning: chain.valid === true,
-      derivation: { valid: chain.valid, firstBadStep: chain.firstBadStep, finalAnswer: chain.finalAnswer },
+      derivation: { valid: chain.valid, firstBadStep: chain.firstBadStep, lastGoodStep: chain.lastGoodStep, finalAnswer: chain.finalAnswer },
       // Right answer via broken work — same signal Step 2c derives on the
       // answer-attempt path, so decide can affirm-then-probe here too.
       isStep: chain.answerCorrect === true && !isFinalForm(lastLine),
@@ -1276,6 +1276,7 @@ async function diagnose(observation, context = {}) {
     derivation: derivation ? {
       valid: derivation.valid,
       firstBadStep: derivation.firstBadStep,
+      lastGoodStep: derivation.lastGoodStep || null,
       finalAnswer: derivation.finalAnswer,
     } : null,
     // Multi-root progress — present only while a solution set is being filled in.

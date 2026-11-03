@@ -484,6 +484,28 @@ function detectStudentStatedProblem(studentMessage) {
   return null;
 }
 
+// The problem the tutor's previous message offered with a pose cue ("Try this
+// one: …"), when the student's reply is math aimed at it. Only the most
+// recent assistant message counts — an older offer is no longer the open ask.
+function problemOfferedLastTurn(recentAssistantMessages, studentMessage) {
+  if (!Array.isArray(recentAssistantMessages) || !recentAssistantMessages.length) return null;
+  if (!/\d/.test(String(studentMessage || ''))) return null;
+  const last = recentAssistantMessages[recentAssistantMessages.length - 1];
+  const text = typeof last === 'string' ? last : (last && last.content);
+  if (!text || typeof text !== 'string') return null;
+  const cue = text.match(TUTOR_NEW_PROBLEM_CUE);
+  if (!cue) return null;
+  // Read from the cue on: a greeting's opening small talk is not the problem.
+  return detectPosedProblem(text.slice(cue.index));
+}
+
+// A problem detected in the tutor's reply that is just one of the student's
+// own lines quoted back ("look at 2x - 3 = 4 + x") is their work, not a pose.
+function quotesStudentLine(tex, studentMessage) {
+  const flatTex = flattenMath(tex);
+  return !!flatTex && flattenMath(studentMessage).includes(flatTex);
+}
+
 // The single answer the pinned problem solves to, when the pin is an EQUATION
 // with a variable the exact engine solves ("3x - 7 = 11" → 6). Null when the
 // pin isn't such an equation, doesn't parse, doesn't solve, or has a root SET
@@ -680,7 +702,7 @@ function synthesizeBoardCommands({
   observation,
   lastBoardAction = null,
   pinnedProblem = null,
-  recentAssistantMessages: _recentAssistantMessages = [], // eslint-disable-line no-unused-vars
+  recentAssistantMessages: _recentAssistantMessages = [],
 } = {}) {
   const cards = [];
 
@@ -732,7 +754,17 @@ function synthesizeBoardCommands({
     // the problem, the canonical text matches what they typed — but
     // never pose from the student's own worked solution.
     let posed = detectStudentStatedProblem(studentMessage);
-    if (!posed) posed = detectPosedProblem(tutorResponse);
+    // The student is working a problem the tutor offered LAST turn — the
+    // greeting's warm-up ("Try this one: 2(x − 3) = 4 + x") never pins, so
+    // the first answer arrives on an empty board. Without this, the reply
+    // below was the only source, and a reply that QUOTES the student's wrong
+    // line ("look at 2x - 3 = 4 + x") posed that line as the problem
+    // (live, 2026-11-03). Diagnose already grades against this same message.
+    if (!posed) posed = problemOfferedLastTurn(_recentAssistantMessages, studentMessage);
+    if (!posed) {
+      const fromReply = detectPosedProblem(tutorResponse);
+      if (fromReply && !quotesStudentLine(fromReply.tex, studentMessage)) posed = fromReply;
+    }
     // Geometry word problems don't parse as algebra; quote the
     // tutor's question sentence verbatim so the board reflects the
     // problem the student is looking at.

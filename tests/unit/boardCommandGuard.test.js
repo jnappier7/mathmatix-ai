@@ -14,6 +14,11 @@ describe('boardCommandGuard — tex sanitation (cannot display wrong math)', () 
       expect(cleanField('3x = 21},{')).toBe('3x = 21');
       expect(cleanField('3x - 5 = 16},{"action":"resolve"')).toBe('3x - 5 = 16');
     });
+    it('drops a trailing unbalanced { but keeps real braces', () => {
+      expect(cleanField('2x - 3 = 4 + x{')).toBe('2x - 3 = 4 + x');
+      expect(cleanField('\\frac{1}{2}')).toBe('\\frac{1}{2}');
+      expect(cleanField('x \\in \\{')).toBe('x \\in \\{');
+    });
     it('strips stray wrapping JSON quotes', () => {
       expect(cleanField('"x = 8"')).toBe('x = 8');
     });
