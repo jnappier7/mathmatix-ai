@@ -225,6 +225,9 @@ function cleanField(s) {
         s = s.replace(/\}\s*$/, '').trim();
         closes--;
     }
+    // A trailing unescaped { opens nothing — the cut left the next object's
+    // brace behind ("2x - 3 = 4 + x{" reached the board, 2026-11-03).
+    while (/(?:^|[^\\])\{\s*$/.test(s)) s = s.replace(/\{\s*$/, '').trim();
     return s;
 }
 

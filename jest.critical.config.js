@@ -64,6 +64,7 @@ module.exports = {
     '<rootDir>/tests/unit/auditCourseFalseNegatives.test.js',
     '<rootDir>/tests/unit/verdictRepair.test.js',
     '<rootDir>/tests/unit/mathSolver*.test.js',
+    '<rootDir>/tests/unit/parseCleanProblem.test.js',
     '<rootDir>/tests/golden/goldenTranscripts.test.js',
   ],
   collectCoverage: true,

@@ -108,3 +108,18 @@ describe('parseCleanProblem — edge cases', () => {
     expect(parseCleanProblem({}).hasMath).toBe(false);
   });
 });
+
+// The greeting's warm-up, 2026-11-03: "What's 2(x − 3) = 4 + x? Just a little
+// check-in…" read as "2(x − 3) = 4 +" and solved to 5. The "?" glued to the
+// last token cut the equation one token short.
+describe('an equation whose last token carries the question mark', () => {
+  test.each([
+    '2(x - 3) = 4 + x?',
+    'What is 2(x - 3) = 4 + x?',
+    'Try this one: What’s 2(x - 3) = 4 + x? Just a little check-in.',
+  ])('%s → 10', (text) => {
+    const r = parseCleanProblem(text);
+    expect(r.problem.rightExpr).toBe('4 + x');
+    expect(String(r.solution.answer)).toBe('10');
+  });
+});

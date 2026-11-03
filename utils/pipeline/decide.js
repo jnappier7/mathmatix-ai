@@ -237,14 +237,28 @@ const OWN_IT_WITHOUT_ANSWERING =
  * line (derivation.firstBadStep); without work, the tutor works out which
  * move produces their number.
  */
+//
+// Live, 2026-11-03: "2x - 3 = 4 + x so x = 7" under 2(x − 3) = 4 + x broke on
+// its FIRST line (the distribution). The directive said "right up to the line
+// …" (read as: that line is fine) and demanded praise quoting "Your division
+// step is right" — the tutor opened with exactly that sentence about a
+// division nobody did, then sent the student to the one step they got right.
+// So: name the bad line as the wrong one, praise only a line diagnose checked,
+// and give no quotable praise sentence to copy.
 function firstWrongStepDirective(diagnosis) {
-  const bad = diagnosis && diagnosis.derivation && diagnosis.derivation.firstBadStep;
+  const d = diagnosis && diagnosis.derivation;
+  const bad = d && d.firstBadStep;
   const tail = ' Ask about that ONE move. Do not fix it for them, and do not go on to the final answer.';
-  const praise = ' Open with what was specifically right ("Your division step is right"), never generic praise ("I appreciate your effort", "good try").';
+  const noFakePraise = ' Be specific: never generic praise ("good try"), and never praise a step they did not take.';
   if (bad) {
-    return `FIRST WRONG STEP: their work is right up to the line "${String(bad).slice(0, 120)}" — that is the first step that breaks.${praise} Then point at that line and name what went wrong in it.${tail}`;
+    const badLine = String(bad).slice(0, 120);
+    const good = d.lastGoodStep ? String(d.lastGoodStep).slice(0, 120) : null;
+    const before = good
+      ? ` Their work is right through "${good}" — open by naming that specific move as right.`
+      : ' It is the FIRST line of their work, so nothing before it is right: the move from the original problem to this line is the mistake. Do not open with praise of any step.';
+    return `FIRST WRONG STEP: the line "${badLine}" is WRONG — it is the first line of their work that does not follow.${before} Point at "${badLine}" itself and ask about the move that produced it; lines after it may be fine algebra on a wrong line, so do not send them to a later step.${noFakePraise}${tail}`;
   }
-  return `FIND THE FIRST WRONG STEP: work out which move produces their answer (or check their value in the original problem) and name that step specifically — "The trouble is subtracting 4: we need to undo the −4."${praise}${tail}`;
+  return `FIND THE FIRST WRONG STEP: work out which move produces their answer (or check their value in the original problem) and name that step specifically. If an earlier move of theirs was right, say which one.${noFakePraise}${tail}`;
 }
 
 
