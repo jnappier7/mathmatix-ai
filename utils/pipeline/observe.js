@@ -351,6 +351,13 @@ function conclusionTail(clause) {
   return parts[parts.length - 1].replace(/^(?:which\s+gives|giving|and\s+so)\s+/i, '');
 }
 
+// "x = <value>" closing the message, introduced by a conclusion connective, a
+// self-correction, a filler, or a comma — never bare mid-prose, so "3x = 17"
+// (no boundary before the x) and "plug in x = 7" stay out.
+const FINAL_ASSIGNMENT_TAIL = /(^|,\s*|\b(?:so|then|thus|therefore|hence|which\s+means|that\s+means|meaning|giving|gives|i\s+get|i\s+got|we\s+get|wait|actually|oops|i\s+mean|ok(?:ay)?|oh|um+|hmm+|it'?s|its)\s*[:,]?\s+)([a-z])\s*=\s*(-?\d+(?:\.\d+)?(?:\s*\/\s*\d+)?)\s*[.!]*$/i;
+// A supposition is not a claim: "if x = 3, y = 7", "what if x = 7".
+const HYPOTHETICAL_LEAD = /^\s*(?:if|when|suppose|assume|let|what\s+if|plug|check|try)\b/i;
+
 const TUPLE_NUM = '-?\\d+(?:\\.\\d+)?(?:\\s*\\/\\s*\\d+)?';
 const TUPLE_LEAD = `(?:(?:so|then|ok|okay|the\\s+answer\\s+is|answer\\s*:?|i\\s+got|it['’]?s|solution\\s*:?)\\s*,?\\s*)?`;
 const ORDERED_PAIR_ANSWER = new RegExp(
@@ -472,6 +479,23 @@ function extractAnswer(message) {
   {
     const claim = matchFinalClaim(conclusionTail(text));
     if (claim) return claimResult(claim, raw, conclusionTail(text), /=.*=|,|:/.test(text));
+  }
+
+  // A single clause that ENDS on "x = <value>" behind a lead-in, a
+  // self-correction or a conclusion comma: "oh wait, x = 17", "subtract 2x so
+  // x - 12 = 5, so x = 7". varAssignment is start-anchored and the clause
+  // split only runs on sentence punctuation, so both matched nothing, observe
+  // said general_math, and the answer path never ran: a wrong final value went
+  // ungraded and the right one was re-scaffolded as if unsolved (owner
+  // session, 2026-11-03).
+  {
+    const tail = text.match(FINAL_ASSIGNMENT_TAIL);
+    if (tail && !HYPOTHETICAL_LEAD.test(text)) {
+      const before = text.slice(0, tail.index);
+      const out = { value: tail[3].replace(/\s/g, ''), raw };
+      if (/[\d=]/.test(before)) out.hasExplanation = true;
+      return out;
+    }
   }
 
   // For short, direct answers (< 100 chars): try all patterns

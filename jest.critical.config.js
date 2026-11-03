@@ -57,6 +57,9 @@ module.exports = {
     '<rootDir>/tests/unit/diagnoseEquationStep.test.js',
     '<rootDir>/tests/unit/derivationVerifier.test.js',
     '<rootDir>/tests/unit/stepSolveCredit.test.js',
+    // 2026-11-03 owner session: "oh wait, x = 17" / "…, so x = 7" after shown
+    // steps reach the answer path and get a verdict.
+    '<rootDir>/tests/unit/finalAnswerAfterSteps.test.js',
     // Course audit 2026-10-18..23: correct worked answers, and verdict repair.
     '<rootDir>/tests/unit/auditCourseFalseNegatives.test.js',
     '<rootDir>/tests/unit/verdictRepair.test.js',

@@ -113,15 +113,20 @@ describe('decide — a verified-wrong step that observe filed as general math', 
 
 describe('diagnose — a finished solve typed on one line', () => {
   it('"x - 12 = 5 so x = 17" is a verified solve, and decide does not ask them to solve it again', async () => {
+    // Since 2026-11-03 observe reads the closing "x = 17" as the answer, so
+    // this is graded on the answer path (chain + final value), not as a
+    // transformation — see tests/unit/finalAnswerAfterSteps.test.js.
     const o = obs('x - 12 = 5 so x = 17');
+    expect(o.messageType).toBe(MESSAGE_TYPES.ANSWER_ATTEMPT);
     const d = await diagnose(o, ctx());
     expect(d.isCorrect).toBe(true);
     expect(d.verificationSource).toBe('derivation');
-    expect(d.isStep).toBe(false);
+    expect(d.isStep).toBeFalsy();
     expect(d.demonstratedReasoning).toBe(true);
     const decision = decide(o, d, { streaks: o.streaks });
     expect(decision.action).toBe(ACTIONS.CONFIRM_CORRECT);
-    expect(decision.directives.join('\n')).toMatch(/VERIFIED CORRECT SOLUTION/);
+    expect(decision.directives.join('\n')).toMatch(/DEMONSTRATED UNDERSTANDING/);
+    expect(decision.directives.join('\n')).toMatch(/Do NOT walk them through steps/);
   });
 
   it('"3x - 12 = 2x + 5, then x - 12 = 5" is a correct chain that stops short — a step', async () => {
