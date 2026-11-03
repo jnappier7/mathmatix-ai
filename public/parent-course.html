@@ -417,6 +417,15 @@
                 z-index: 140;
             }
             .pc-sidebar-overlay.visible { display: block; }
+
+            /* Phone header: the title shrinks, the language picker doesn't
+               (it was squeezed to "Engl"), and the menu button sits in the
+               header instead of floating over the disclaimer. */
+            .pc-chat-header { padding: 10px 14px 10px 64px; gap: 10px; min-height: 60px; }
+            .pc-chat-header > div:first-child { flex: 1 1 auto; min-width: 0; }
+            .pc-chat-header-actions { flex: none; gap: 10px !important; }
+            .pc-dashboard-label { display: none; }
+            .pc-sidebar-toggle { top: 10px; bottom: auto; left: 12px; width: 40px; height: 40px; }
         }
     </style>
 </head>
@@ -459,7 +468,7 @@
                     <div class="pc-chat-header-title" id="pc-module-title">Loading...</div>
                     <div class="pc-chat-header-subtitle" id="pc-module-subtitle"></div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="pc-chat-header-actions" style="display: flex; align-items: center; gap: 12px;">
                     <select id="pc-language-select" title="Language" style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.8em; color: #555; background: #faf8f5; cursor: pointer;">
                         <option value="English">English</option>
                         <option value="Spanish">Espa&#241;ol</option>
@@ -471,8 +480,8 @@
                         <option value="French">Fran&#231;ais</option>
                         <option value="German">Deutsch</option>
                     </select>
-                    <a href="/parent-dashboard.html" style="color: #999; font-size: 0.85em; text-decoration: none;">
-                        <i class="fas fa-home"></i> Dashboard
+                    <a href="/parent-dashboard.html" aria-label="Dashboard" style="color: #999; font-size: 0.85em; text-decoration: none;">
+                        <i class="fas fa-home" aria-hidden="true"></i> <span class="pc-dashboard-label">Dashboard</span>
                     </a>
                 </div>
             </div>

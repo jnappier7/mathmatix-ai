@@ -1276,16 +1276,17 @@
         const container = document.getElementById(containerId);
         if (container && data.totalSkills > 0) {
           window.AnalyticsCharts.createMemoryHealthBar(containerId, data);
-          // Memory only covers practiced skills with review data — say so, so
+          // Memory covers skills with review data (FSRS cards), which can include
+          // reviewed skills outside the practiced count — say so, so
           // "1 fading" isn't read against the whole skill count above it.
           const n = data.totalSkills;
           const caption = document.createElement('p');
           caption.style.cssText = 'font-size:0.75em; color:#666; margin:0 0 6px;';
-          caption.textContent = tr('parent.analytics.memoryCaption', 'Memory check on {n} practiced skills', { n: n }, n);
+          caption.textContent = tr('parent.analytics.memoryCaption', 'Memory check on {n} reviewed skills', { n: n }, n);
           container.prepend(caption);
           container.setAttribute('role', 'img');
           container.setAttribute('aria-label',
-            tr('parent.analytics.memoryCaption', 'Memory check on {n} practiced skills', { n: n }, n) + ': ' +
+            tr('parent.analytics.memoryCaption', 'Memory check on {n} reviewed skills', { n: n }, n) + ': ' +
             tr('parent.report.memoryAria', '{strong} strong, {fading} fading, {review} need review', { strong: data.strong, fading: data.fading, review: data.needsReview }));
         } else if (container) {
           const p = document.createElement('p');
@@ -4178,7 +4179,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // --- Memory Health ---
         const mem = r.memoryHealth;
         const memoryHTML = mem.totalTracked > 0 ? `
-            <p style="font-size: var(--text-xs); color: var(--color-text-muted); margin: 0 0 6px;">${escText(tr('parent.report.memoryScope', 'How well {name} remembers the {n} practiced skills with review data.', { name: r.child.firstName, n: mem.totalTracked }, mem.totalTracked))}</p>
+            <p style="font-size: var(--text-xs); color: var(--color-text-muted); margin: 0 0 6px;">${escText(tr('parent.report.memoryScope', 'How well {name} remembers the {n} skills with review data.', { name: r.child.firstName, n: mem.totalTracked }, mem.totalTracked))}</p>
             <div class="lr-memory-bar" role="img" aria-label="${escText(tr('parent.report.memoryAria', '{strong} strong, {fading} fading, {review} need review', { strong: mem.strong, fading: mem.fading, review: mem.needsReview }))}">
                 ${Array(mem.strong).fill('<div class="lr-memory-segment lr-memory-strong"></div>').join('')}
                 ${Array(mem.fading).fill('<div class="lr-memory-segment lr-memory-fading"></div>').join('')}

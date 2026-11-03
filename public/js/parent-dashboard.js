@@ -1389,7 +1389,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // --- Memory Health ---
         const mem = r.memoryHealth;
         const memoryHTML = mem.totalTracked > 0 ? `
-            <p style="font-size: var(--text-xs); color: var(--color-text-muted); margin: 0 0 6px;">${escText(tr('parent.report.memoryScope', 'How well {name} remembers the {n} practiced skills with review data.', { name: r.child.firstName, n: mem.totalTracked }, mem.totalTracked))}</p>
+            <p style="font-size: var(--text-xs); color: var(--color-text-muted); margin: 0 0 6px;">${escText(tr('parent.report.memoryScope', 'How well {name} remembers the {n} skills with review data.', { name: r.child.firstName, n: mem.totalTracked }, mem.totalTracked))}</p>
             <div class="lr-memory-bar" role="img" aria-label="${escText(tr('parent.report.memoryAria', '{strong} strong, {fading} fading, {review} need review', { strong: mem.strong, fading: mem.fading, review: mem.needsReview }))}">
                 ${Array(mem.strong).fill('<div class="lr-memory-segment lr-memory-strong"></div>').join('')}
                 ${Array(mem.fading).fill('<div class="lr-memory-segment lr-memory-fading"></div>').join('')}
