@@ -45,7 +45,10 @@ const SPECS = {
       },
     },
     toTag(input) {
-      const parts = [`fn=${input.function}`];
+      // Quote fn when it has spaces or commas: "3*(x - 4) - (2*x + 5)" unquoted
+      // was read by the client as "3*(x" and plotted nothing.
+      const fn = String(input.function);
+      const parts = [/[\s,]/.test(fn) && !fn.includes('"') ? `fn="${fn}"` : `fn=${fn}`];
       if (typeof input.xMin === 'number') parts.push(`xMin=${input.xMin}`);
       if (typeof input.xMax === 'number') parts.push(`xMax=${input.xMax}`);
       if (typeof input.yMin === 'number') parts.push(`yMin=${input.yMin}`);

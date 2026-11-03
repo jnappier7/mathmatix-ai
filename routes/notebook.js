@@ -22,6 +22,7 @@ const { isAuthenticated } = require('../middleware/auth');
 const LearningCard = require('../models/learningCard');
 const { REMINDER_ACTIVATION_COUNT } = require('../utils/pipeline/learningCards');
 const logger = require('../utils/logger').child({ route: 'notebook' });
+const { toSecondPerson } = require('../utils/secondPerson');
 
 const TYPES = ['aha', 'reminder', 'idea', 'strategy', 'reflection', 'note'];
 
@@ -57,6 +58,15 @@ router.get('/', isAuthenticated, async (req, res) => {
       .limit(limit)
       .select('type source title body quote skillId problemTex seenCount createdAt lastSeenAt')
       .lean();
+
+    // Tutor-written cards carry teacher-voice diagnosis text ("Student
+    // performs…"); the notebook speaks to the student. Their own notes are
+    // left exactly as typed.
+    for (const c of cards) {
+      if (c.source === 'student') continue;
+      c.title = toSecondPerson(c.title);
+      c.body = toSecondPerson(c.body);
+    }
 
     res.json({ cards });
   } catch (err) {

@@ -212,6 +212,7 @@ class FloatingReview {
         planned: this.items.length,
         results: this.results.map(r => ({
           skillId: r.skillId,
+          problemId: r.problemId || null,
           correct: r.correct === true,
           skipped: r.skipped === true,
         })),
@@ -339,7 +340,28 @@ class FloatingReview {
     if (!text) return '';
     let formatted = this.escapeHtml(text);
     formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Bank items are plain text: "(x - 1)^2 + -4" read as typed code. Show
+    // the exponent raised, and after a power fold "+ -4" into "− 4". Only
+    // there: "5 + -3" elsewhere may be the integer question itself.
+    formatted = formatted.replace(/\^\(?(-?\d+)\)?/g, '<sup>$1</sup>');
+    formatted = formatted.replace(/(<\/sup>)\s*\+\s*-\s*(?=\d)/g, '$1 \u2212 ');
     return formatted;
+  }
+
+  // After a submit, show which choice was right (and which one they picked
+  // was not) — "Answer: 35.3" under four unmarked buttons made the student
+  // re-find it themselves.
+  markChoices(item, data) {
+    const mcArea = document.getElementById('review-mc-options');
+    if (!mcArea) return;
+    const key = data.correctAnswer != null ? String(data.correctAnswer).trim() : null;
+    const options = item.problem.options || [];
+    const correctLabel = data.correct ? this.selectedOption
+      : (options.find(o => o.label === key) || options.find(o => String(o.text).trim() === key) || {}).label;
+    mcArea.querySelectorAll('.review-mc-option').forEach(b => {
+      if (b.dataset.label === correctLabel) b.classList.add('is-correct');
+      else if (b.dataset.label === this.selectedOption) b.classList.add('is-wrong');
+    });
   }
 
   currentAnswer() {
@@ -445,9 +467,12 @@ class FloatingReview {
     this.results.push({
       skillId: item.skillId,
       skillName: item.displayName,
+      problemId: item.problem && item.problem.problemId,
       correct: data.correct,
       intervalDays,
     });
+
+    this.markChoices(item, data);
 
     const feedbackEl = document.getElementById('review-feedback');
     if (feedbackEl) {

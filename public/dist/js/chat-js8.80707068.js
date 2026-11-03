@@ -720,6 +720,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const detailRes = await csrfFetch('/api/billing/subscription-details', { credentials: 'include' });
                     if (detailRes.ok) {
                         const detail = await detailRes.json();
+                        // Unlimited without a Stripe subscription: a school
+                        // license or a comped account. There is no bill, so
+                        // "Next bill:" printed with nothing after it, and
+                        // Manage Subscription had nothing to manage.
+                        if (detail.hasSubscription === false) {
+                            statusEl.innerHTML = `<strong style="color:#4caf50;">Mathmatix+ Active</strong> — ${window.currentUser?.schoolLicenseId ? 'included with your school\'s license' : 'included with your account'}`;
+                            if (manageSubBtn) manageSubBtn.style.display = 'none';
+                            const subHelp = manageSubBtn && manageSubBtn.nextElementSibling;
+                            if (subHelp && /billing details/i.test(subHelp.textContent)) subHelp.style.display = 'none';
+                            return;
+                        }
                         const periodEnd = detail.currentPeriodEnd ? new Date(detail.currentPeriodEnd).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
                         if (detail.isPaused) {
                             const resumeDate = detail.resumesAt ? new Date(detail.resumesAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';

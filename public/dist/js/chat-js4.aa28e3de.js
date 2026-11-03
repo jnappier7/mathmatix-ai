@@ -904,7 +904,11 @@ class InlineChatVisuals {
                     // tags — the tag then leaked to the stripper half-eaten
                     // (prod: ',label="−3 and 3…"]' in a student's chat). Params
                     // are machine syntax, not prose: normalize to ASCII hyphen.
-                    return handler(String(params).replace(/[\u2212\u2013\u2014]/g, '-'));
+                    const out = handler(String(params).replace(/[\u2212\u2013\u2014]/g, '-'));
+                    // One line: the templates are indented, and after a blank
+                    // line markdown reads 4+ leading spaces as a code block —
+                    // the graph rendered inside <pre><code>, squashed and blank.
+                    return typeof out === 'string' ? out.trim().replace(/\n\s*/g, ' ') : out;
                 } catch (error) {
                     console.error(`[InlineChatVisuals] Error rendering ${match}:`, error);
                     return `<div class="icv-error">⚠️ Could not render visual</div>`;
@@ -1049,6 +1053,11 @@ class InlineChatVisuals {
             /\bparams=((?:[a-zA-Z]\w*:-?[\d.]+:-?[\d.]+:-?[\d.]+)(?:,(?:[a-zA-Z]\w*:-?[\d.]+:-?[\d.]+:-?[\d.]+))*)/g,
             (match, val) => `params="${val}"`
         );
+
+        // An unquoted value with spaces ("fn=3*(x - 4) - (2*x + 5)") would stop at
+        // the first space below; quote it whole first.
+        const VTP = (typeof window !== 'undefined' && window.VisualTokenParser) || null;
+        if (VTP && VTP.quoteBareValues) paramStr = VTP.quoteBareValues(paramStr);
 
         // Match key=value pairs, handling quoted strings and arrays
         const regex = /(\w+)=(?:"([^"]+)"|'([^']+)'|\[([^\]]+)\]|([^\s,]+))/g;

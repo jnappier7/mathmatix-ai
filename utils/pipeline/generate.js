@@ -625,7 +625,11 @@ function makeChunkRehydrator(llmOptions) {
  * @returns {Promise<string>} The AI response text
  */
 function screenTurnVisuals(calls, messages, turnText) {
-  const { calls: kept, dropped } = screenVisualCalls(calls, { texts: [...messageTexts(messages), turnText] });
+  const lastStudent = (Array.isArray(messages) ? messages : []).filter((m) => m && m.role === 'user').slice(-1);
+  const { calls: kept, dropped } = screenVisualCalls(calls, {
+    texts: [...messageTexts(messages), turnText],
+    studentText: messageTexts(lastStudent).join(' '),
+  });
   if (dropped.length) console.warn('[generate] visual tool calls dropped:', dropped.map((d) => `${d.name} (${d.reason})`).join('; '));
   return kept;
 }

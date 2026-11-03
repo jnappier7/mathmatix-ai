@@ -328,6 +328,19 @@
   cursor: not-allowed;
 }
 
+/* Marked after submit; must out-rank :disabled's fade so the key is legible. */
+.review-mc-option.is-correct {
+  opacity: 1;
+  border-color: #16a34a;
+  background: color-mix(in srgb, #16a34a 10%, transparent);
+}
+
+.review-mc-option.is-wrong {
+  opacity: 1;
+  border-color: #dc2626;
+  background: color-mix(in srgb, #dc2626 8%, transparent);
+}
+
 .review-mc-option .mc-label {
   font-weight: 700;
   color: var(--accent-primary, #6366f1);

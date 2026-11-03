@@ -81,6 +81,14 @@ const STRAND_LABEL = {
     'measurement-data': 'Measurement & data',
     'statistics-probability': 'Statistics & probability',
     'functions': 'Functions',
+    // The unified skill map keys strands by code (skillMapModel.js STRANDS).
+    // Without these the ladder read "QNT · learn it, prove it, teach it".
+    QNT: 'Number & operations',
+    PRP: 'Ratios & proportions',
+    EQV: 'Expressions & equations',
+    FNC: 'Functions',
+    SPC: 'Geometry & measurement',
+    DTA: 'Data & probability',
 };
 const strandLabel = (s) => STRAND_LABEL[s] || String(s || '').replace(/-/g, ' ');
 

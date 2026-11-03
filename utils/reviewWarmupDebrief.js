@@ -18,6 +18,8 @@ const { studentLabel } = require('./studentLabels');
 
 const MAX_RESULTS = 10;
 const SKILL_ID_RE = /^[A-Za-z0-9_.:-]{1,80}$/;
+const PROBLEM_ID_RE = /^[A-Za-z0-9-]{1,64}$/;
+const MAX_MISSED_SHOWN = 2;
 
 /**
  * Reduce whatever the client posted to the facts the tutor may speak about.
@@ -35,6 +37,11 @@ function normalizeWarmupResults(raw) {
   const held = [];
   const rusty = [];
   const skippedNames = [];
+  // Ids only — the caller looks the prompt up in the bank. A missed problem
+  // the tutor can't name made it ask the student "can you remind me what the
+  // problem was asking?" about the warm-up it had just given (site review,
+  // 2026-11-03).
+  const missedProblemIds = [];
   for (const r of list) {
     if (!r || typeof r !== 'object') continue;
     const skillId = typeof r.skillId === 'string' && SKILL_ID_RE.test(r.skillId) ? r.skillId : null;
@@ -46,7 +53,10 @@ function normalizeWarmupResults(raw) {
       continue;
     }
     if (r.correct === true) { if (name) held.push(name); }
-    else if (r.correct === false) { if (name) rusty.push(name); }
+    else if (r.correct === false) {
+      if (name) rusty.push(name);
+      if (typeof r.problemId === 'string' && PROBLEM_ID_RE.test(r.problemId)) missedProblemIds.push(r.problemId);
+    }
   }
 
   const answeredRows = list.filter(r => r && typeof r === 'object' && r.skipped !== true
@@ -70,6 +80,7 @@ function normalizeWarmupResults(raw) {
     held: dedupe(held),
     rusty: dedupe(rusty),
     skippedNames: dedupe(skippedNames),
+    missedProblemIds: dedupe(missedProblemIds).slice(0, MAX_MISSED_SHOWN),
     stoppedEarly: planned > total,
   };
 }
@@ -83,6 +94,23 @@ function listNames(names, fallback) {
   if (names.length === 1) return names[0];
   if (names.length === 2) return `${names[0]} and ${names[1]}`;
   return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`;
+}
+
+/**
+ * The missed problems, quoted under the tutor's line. Prompts come from the
+ * bank by id (see missedProblemIds), never from the client. Only the
+ * question — the key stays out, so "shore it up" still has something to do.
+ *
+ * @param {string[]} prompts
+ * @returns {string} '' when there is nothing to show
+ */
+function missedProblemsBlock(prompts) {
+  const clean = (prompts || [])
+    .filter((t) => typeof t === 'string' && t.trim())
+    .map((t) => t.trim().replace(/\s*\n\s*/g, ' '));
+  if (!clean.length) return '';
+  const label = clean.length === 1 ? 'The one that slipped:' : 'The ones that slipped:';
+  return `${label}\n\n${clean.map((t) => `> ${t}`).join('\n>\n')}`;
 }
 
 /**
@@ -118,7 +146,7 @@ ${rustyLine}${skippedLine ? `\n${skippedLine}` : ''}${earlyNote}
 How to deliver it, in YOUR voice:
 1. React to the result specifically and warmly — name the skill(s), not the score. If something got rusty, say so plainly and without drama; a skill fading is normal and is exactly why the warm-up exists.
 2. End with EXACTLY ONE suggested next step: ${nextStep}. It is a suggestion — offer it, then make clear they're in the driver's seat (e.g. "...or we can jump into whatever you brought today"). Do NOT start that activity yourself, do NOT ask a math question now, and do NOT list multiple options.
-Keep it to 2-3 sentences. No "the system", no "the widget", no percentages.`;
+Keep it to 2-3 sentences. No "the system", no "the widget", no percentages.${summary.missedProblemIds && summary.missedProblemIds.length ? '\nThe missed problem is shown to the student right under your message, so do not restate it and do not ask them what it was.' : ''}`;
 }
 
 /**
@@ -139,6 +167,7 @@ function fallbackWarmupDebriefText(summary, firstName) {
 
 module.exports = {
   normalizeWarmupResults,
+  missedProblemsBlock,
   buildWarmupDebriefInstruction,
   fallbackWarmupDebriefText,
   MAX_RESULTS,

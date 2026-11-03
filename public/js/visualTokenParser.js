@@ -47,5 +47,45 @@
     return new RegExp(body, 'g');
   }
 
-  return { PARAM: PARAM, tokenRegex: tokenRegex };
+  /**
+   * Make an unquoted value run to the next top-level ",key=" instead of the
+   * first space or comma. The old value pattern was [^\s,]+, so a graph sent
+   * as fn=3*(x - 4) - (2*x + 5) arrived as "3*(x" and plotted nothing. Commas
+   * inside (...) or [...] belong to the value — max(x,2), points=[1,2].
+   *
+   * Returns the param string with every such value quoted, so the key=value
+   * matcher in inlineChatVisuals.parseParams reads it whole. Already-quoted
+   * and bracketed values pass through untouched.
+   */
+  function quoteBareValues(paramStr) {
+    const s = String(paramStr || '');
+    const parts = [];
+    let depth = 0; let quote = null; let start = 0;
+    for (let i = 0; i < s.length; i++) {
+      const c = s[i];
+      if (quote) { if (c === quote) quote = null; continue; }
+      if (c === '"' || c === "'") quote = c;
+      else if (c === '(' || c === '[') depth++;
+      else if ((c === ')' || c === ']') && depth > 0) depth--;
+      else if (c === ',' && depth === 0) { parts.push(s.slice(start, i)); start = i + 1; }
+    }
+    parts.push(s.slice(start));
+
+    // A piece with no "key=" continues the previous value (fn=a,b is rare but
+    // was never a key either).
+    const merged = [];
+    for (const piece of parts) {
+      if (/^\s*\w+\s*=/.test(piece) || !merged.length) merged.push(piece);
+      else merged[merged.length - 1] += ',' + piece;
+    }
+    return merged.map((piece) => {
+      const m = piece.match(/^(\s*\w+)\s*=\s*([\s\S]*?)\s*$/);
+      if (!m) return piece;
+      const v = m[2];
+      if (!/\s/.test(v) || /^["'[]/.test(v) || v.includes('"')) return piece;
+      return m[1] + '="' + v + '"';
+    }).join(',');
+  }
+
+  return { PARAM: PARAM, tokenRegex: tokenRegex, quoteBareValues: quoteBareValues };
 }));

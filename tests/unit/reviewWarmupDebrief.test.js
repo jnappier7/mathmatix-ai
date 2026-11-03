@@ -129,3 +129,33 @@ describe('fallbackWarmupDebriefText — when the model is down', () => {
     expect(t).toMatch(new RegExp(s.rusty[0]));
   });
 });
+
+// Site review, 2026-11-03: after a missed warm-up item the tutor asked the
+// student "can you remind me what the problem was asking?" — it had never been
+// told. Missed rows now carry a problemId (pattern-checked; the prompt is read
+// from the bank by the route, never taken from the client).
+describe('missed problems travel by id', () => {
+  const { missedProblemsBlock } = require('../../utils/reviewWarmupDebrief');
+
+  test('only missed rows with a well-formed id are kept', () => {
+    const s = normalizeWarmupResults({
+      results: [
+        { skillId: 'rate', correct: false, problemId: '91034683-f229-490b-b74e-6752474f9119' },
+        { skillId: 'prob', correct: true, problemId: '5292c39d-a94e-446f-b617-c55348507cfa' },
+        { skillId: 'quad', correct: false, problemId: '<script>' },
+      ],
+    });
+    expect(s.missedProblemIds).toEqual(['91034683-f229-490b-b74e-6752474f9119']);
+  });
+
+  test('the instruction tells the tutor the problem is already on screen', () => {
+    const s = normalizeWarmupResults({ results: [{ skillId: 'rate', correct: false, problemId: 'abc-123' }] });
+    expect(buildWarmupDebriefInstruction(s)).toMatch(/do not ask them what it was/);
+  });
+
+  test('the block quotes the question only', () => {
+    expect(missedProblemsBlock(['A driver travels 180 miles at 40 mph, then 120 miles at 30 mph.']))
+      .toBe('The one that slipped:\n\n> A driver travels 180 miles at 40 mph, then 120 miles at 30 mph.');
+    expect(missedProblemsBlock([undefined, ''])).toBe('');
+  });
+});
