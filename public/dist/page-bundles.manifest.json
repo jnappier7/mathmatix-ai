@@ -121,7 +121,7 @@
         ]
       },
       {
-        "src": "/dist/js/chat-js8.80707068.js",
+        "src": "/dist/js/chat-js8.fad6f9a7.js",
         "files": [
           "/js/student-resources.js",
           "/js/settings.js",
@@ -161,7 +161,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/admin-js0.37d1feed.js",
+        "src": "/dist/js/admin-js0.274dc92a.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/admin-analytics.js",

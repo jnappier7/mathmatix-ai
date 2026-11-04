@@ -178,6 +178,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     <option value="class">Specific Class</option>
                     <option value="custom">Select Individual Users...</option>
                 `;
+                // Counts already exclude anyone who unsubscribed; say so, so the
+                // admin isn't left wondering why a count dropped.
+                let hint = document.getElementById('emailAudienceOptOutHint');
+                if (!hint) {
+                    hint = document.createElement('p');
+                    hint.id = 'emailAudienceOptOutHint';
+                    hint.style.cssText = 'font-size:12px;color:#666;margin:6px 0 0;';
+                    audienceTypeSelect.insertAdjacentElement('afterend', hint);
+                }
+                const n = audienceData.optedOut || 0;
+                hint.textContent = n
+                    ? `${n} ${n === 1 ? 'person has' : 'people have'} unsubscribed and ${n === 1 ? 'is' : 'are'} left out of every audience automatically. Every email carries a one-click unsubscribe link.`
+                    : 'Every email carries a one-click unsubscribe link; anyone who uses it is left out of future audiences automatically.';
             }
         } catch (error) {
             console.error('[BulkEmail] Error loading audiences:', error);

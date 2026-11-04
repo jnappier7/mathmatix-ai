@@ -28,6 +28,7 @@ const User = require('../models/user');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const { sendReactivationParentEmail, sendReactivationKidEmail } = require('../utils/emailService');
 const { engagedDormantFilter } = require('../utils/dormancy');
+const { marketingOptOutFilter, hasMarketingOptOut, unsubscribeUrl } = require('../utils/emailUnsubscribe');
 
 const args = process.argv.slice(2);
 const SEND = args.includes('--send');
@@ -80,10 +81,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   let q = User.find({
     $and: [
       engagedDormantFilter({ minMinutes: MIN_MINUTES, dormantDays: DORMANT_DAYS }),
+      marketingOptOutFilter(),           // a student who unsubscribed is never re-emailed
       { _id: { $nin: excludeIds } },
       { $or: [{ lastReactivationAt: null }, { lastReactivationAt: { $lt: resendCutoff } }] },
     ],
-  }).populate('parentIds', 'firstName email role');
+  }).populate('parentIds', 'firstName email role emailPreferences');
   if (LIMIT > 0) q = q.limit(LIMIT);
   const students = await q;
 
@@ -101,7 +103,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       baseUrl: BASE_URL,
       mailingAddress: MAILING_ADDRESS,
     };
-    const parent = (s.parentIds || []).find(p => p && p.email && p.role === 'parent');
+    // A parent who unsubscribed is skipped (their child's record isn't theirs to override).
+    const parent = (s.parentIds || []).find(p => p && p.email && p.role === 'parent' && !hasMarketingOptOut(p));
     const kidEmail = s.email;
 
     console.log(`• ${data.childFirstName} (${data.tutorName}, ${data.skillsMastered} skills, ${data.minutesThisYear} min, streak ${data.longestStreak})`);
@@ -111,7 +114,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
     let didSend = false;
     if (parent) {
-      const r = await sendReactivationParentEmail(parent.email, { ...data, parentFirstName: parent.firstName });
+      const r = await sendReactivationParentEmail(parent.email, { ...data, parentFirstName: parent.firstName, unsubscribeUrl: unsubscribeUrl('user', parent._id, BASE_URL) });
       if (r.success) { summary.parentSent++; didSend = true; console.log(`    ✅ parent emailed`); }
       else { summary.failed++; console.log(`    ❌ parent email failed: ${r.error}`); }
       await sleep(DELAY_MS);
@@ -119,7 +122,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       summary.parentSkipNoEmail++;
     }
     if (INCLUDE_KIDS && kidEmail) {
-      const r = await sendReactivationKidEmail(kidEmail, data);
+      const r = await sendReactivationKidEmail(kidEmail, { ...data, unsubscribeUrl: unsubscribeUrl('user', s._id, BASE_URL) });
       if (r.success) { summary.kidSent++; didSend = true; console.log(`    ✅ kid emailed`); }
       else { summary.failed++; console.log(`    ❌ kid email failed: ${r.error}`); }
       await sleep(DELAY_MS);

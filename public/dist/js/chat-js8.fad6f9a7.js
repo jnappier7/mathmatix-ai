@@ -553,6 +553,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             settingsModal.classList.add('is-visible');
             await checkPasswordChangeAvailability();
             await loadLanguagePreference();
+            loadMarketingPreference();
             await loadSubscriptionSection();
         });
     }
@@ -681,6 +682,54 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     });
+
+    // Marketing email opt-out ("Email me about new features"). Checked = in.
+    // Saved through PATCH /api/user/settings → utils/emailUnsubscribe.js, the
+    // same writer the unsubscribe link in every broadcast uses.
+    const marketingEmailsToggle = document.getElementById('marketingEmailsToggle');
+    const marketingEmailsDesc = document.getElementById('marketing-emails-description');
+    const marketingEmailsDescDefault = marketingEmailsDesc ? marketingEmailsDesc.textContent : '';
+
+    async function loadMarketingPreference() {
+        if (!marketingEmailsToggle) return;
+        try {
+            const response = await fetch('/user', { credentials: 'include' });
+            if (!response.ok) return;
+            const data = await response.json();
+            const prefs = (data.user && data.user.emailPreferences) || {};
+            marketingEmailsToggle.checked = prefs.marketingOptOut !== true;
+        } catch (error) {
+            console.error('Error loading email preference:', error);
+        }
+    }
+
+    if (marketingEmailsToggle) {
+        marketingEmailsToggle.addEventListener('change', async () => {
+            const optOut = !marketingEmailsToggle.checked;
+            marketingEmailsToggle.disabled = true;
+            try {
+                const response = await csrfFetch('/api/user/settings', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ emailPreferences: { marketingOptOut: optOut } })
+                });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                if (marketingEmailsDesc) {
+                    marketingEmailsDesc.textContent = optOut
+                        ? '✅ Unsubscribed. You can turn this back on any time.'
+                        : '✅ You\'ll hear about new features.';
+                    setTimeout(() => { marketingEmailsDesc.textContent = marketingEmailsDescDefault; }, 3000);
+                }
+            } catch (error) {
+                console.error('Error saving email preference:', error);
+                marketingEmailsToggle.checked = !optOut; // revert
+                if (marketingEmailsDesc) marketingEmailsDesc.textContent = 'Could not save that — please try again.';
+            } finally {
+                marketingEmailsToggle.disabled = false;
+            }
+        });
+    }
 
     // Load user's current language preference
     async function loadLanguagePreference() {

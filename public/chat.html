@@ -1510,6 +1510,12 @@
         </div>
         <p class="setting-description" data-i18n="settings.darkModeDescription">Use the dark color theme. Light mode is the default.</p>
 
+        <div class="form-group settings-toggle">
+          <label for="marketingEmailsToggle">Email me about new features</label>
+          <input type="checkbox" id="marketingEmailsToggle" class="toggle-switch" checked>
+        </div>
+        <p class="setting-description" id="marketing-emails-description">Occasional updates and announcements. Account emails (password resets, receipts, consent) are always sent.</p>
+
         <hr style="margin: 25px 0; border: none; border-top: 1px solid #ddd;">
 
         <!-- Subscription Management (visible to subscribers) -->
@@ -2547,7 +2553,7 @@
       updateUI();
     })();
   </script>
-  <script src="/dist/js/chat-js8.80707068.js"></script>
+  <script src="/dist/js/chat-js8.fad6f9a7.js"></script>
 <!-- Player stats card: window-global, loaded before script.js which calls
      window.PlayerStatsCard.init(currentUser) once the user doc is fetched. -->
 <script defer src="/js/modules/playerStatsCard.js?v=20261014a"></script>

@@ -11,6 +11,8 @@
  */
 
 const mongoose = require('mongoose');
+const { anyRole } = require('../utils/roleQuery');
+const { marketingOptOutFilter } = require('../utils/emailUnsubscribe');
 const Schema = mongoose.Schema;
 
 // Recipient tracking schema
@@ -163,22 +165,35 @@ adminEmailSchema.virtual('successRate').get(function() {
 });
 
 // Static method to get recipients based on audience type
+// Every audience is MARKETING mail (CAN-SPAM): anyone who has opted out is
+// excluded here, so preview, count and send all agree. The same clause is
+// what GET /api/admin/email/audiences counts with.
+adminEmailSchema.statics.marketingAudienceFilter = function() {
+    return { email: { $exists: true, $ne: '' }, ...marketingOptOutFilter() };
+};
+
 adminEmailSchema.statics.getRecipientsByAudienceType = async function(audienceType, enrollmentCodeId = null, customIds = []) {
     const User = mongoose.model('User');
+    const base = this.marketingAudienceFilter();
 
     let query = {};
 
+    // Roles HELD (roles[]), not the active dashboard (role): a parent who is
+    // also a teacher and last opened the teacher view is still a parent to
+    // email. The audience counts in routes/adminEmail.js already used
+    // anyRole(); this resolver used the bare field, so the UI promised N
+    // recipients and the send quietly reached fewer.
     switch (audienceType) {
         case 'all_students':
-            query = { role: 'student', email: { $exists: true, $ne: '' } };
+            query = { ...anyRole('student'), ...base };
             break;
 
         case 'all_parents':
-            query = { role: 'parent', email: { $exists: true, $ne: '' } };
+            query = { ...anyRole('parent'), ...base };
             break;
 
         case 'all_teachers':
-            query = { role: 'teacher', email: { $exists: true, $ne: '' } };
+            query = { ...anyRole('teacher'), ...base };
             break;
 
         case 'class':
@@ -191,26 +206,20 @@ adminEmailSchema.statics.getRecipientsByAudienceType = async function(audienceTy
             if (!code) throw new Error('Enrollment code not found');
 
             const studentIds = code.enrolledStudents.map(s => s.studentId);
-            query = {
-                _id: { $in: studentIds },
-                email: { $exists: true, $ne: '' }
-            };
+            query = { _id: { $in: studentIds }, ...base };
             break;
 
         case 'custom':
             if (!customIds || customIds.length === 0) {
                 throw new Error('Custom recipient IDs required');
             }
-            query = {
-                _id: { $in: customIds },
-                email: { $exists: true, $ne: '' }
-            };
+            query = { _id: { $in: customIds }, ...base };
             break;
 
         case 'waitlist': {
             // Waitlist entries are in their own collection, not the User model
             const Waitlist = mongoose.model('Waitlist');
-            const entries = await Waitlist.find({ email: { $exists: true, $ne: '' } }).lean();
+            const entries = await Waitlist.find(base).lean();
             return entries.map(e => ({
                 _id: e._id,
                 email: e.email,
