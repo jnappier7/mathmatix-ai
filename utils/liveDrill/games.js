@@ -593,11 +593,12 @@ function answer(game, player, n, k) {
   // the one graded, and its clock is the moment it landed — a fast guess followed by a slow
   // correction scores as a slow answer. The same pick again is a no-op, not a reset of the clock.
   const prev = r.answers.get(player.id);
-  if (prev && prev.k === k) return { locked: true, n, changed: false };
+  if (prev && prev.k === k) return { locked: true, n };
   const ms = now() - r.openedAt;
   r.answers.set(player.id, prev ? { k, ms, changes: (prev.changes || 0) + 1 } : { k, ms });
   if (!maybeCloseRound(game)) touch(game);
-  return { locked: true, n, changed: !!prev };
+  // A first answer keeps the shape it always had; only a change says so.
+  return prev ? { locked: true, n, changed: true } : { locked: true, n };
 }
 
 /**

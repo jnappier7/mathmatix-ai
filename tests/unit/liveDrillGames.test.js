@@ -212,13 +212,13 @@ describe('huddle', () => {
     G.start(g);
     const play = G.playAt(g, 1);
     jest.advanceTimersByTime(2000);
-    G.answer(g, a, 1, wrongKey(play)); // a fast guess…
+    expect(G.answer(g, a, 1, wrongKey(play))).toEqual({ locked: true, n: 1 }); // a fast guess…
     expect(G.playerView(g, a).round.mine).toEqual({ k: wrongKey(play) });
     jest.advanceTimersByTime(12000); // …then a think: 14 s into a 20 s window is the slow tier
     expect(G.answer(g, a, 1, play.answer)).toMatchObject({ locked: true, changed: true });
     // the same pick again is a no-op — it must not restart the clock
     jest.advanceTimersByTime(3000);
-    expect(G.answer(g, a, 1, play.answer)).toMatchObject({ changed: false });
+    expect(G.answer(g, a, 1, play.answer)).toEqual({ locked: true, n: 1 });
     expect(g.round.answers.get(a.id)).toMatchObject({ k: play.answer, ms: 14000, changes: 1 });
     G.advance(g); // teacher reveals
     expect(g.phase).toBe('reveal');
