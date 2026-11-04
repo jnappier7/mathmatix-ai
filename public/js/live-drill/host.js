@@ -424,7 +424,9 @@
       $('h-count').textContent = 'Reveal';
       $('h-count').classList.remove('low');
       $('h-tell').innerHTML = r.tell;
-      $('h-split').innerHTML = st.teams.map((t, i) => `<span class="t${i}">${esc(t.name)}: ${r.rightByTeam[i]}/${t.size} right</span>`).join('');
+      const picks = r.pickSix || [];
+      $('h-split').innerHTML = st.teams.map((t, i) => `<span class="t${i}">${esc(t.name)}: ${r.rightByTeam[i]}/${t.size} right${picks[i] ? ' · 🏈 PICK SIX' : ''}</span>`).join('')
+        + (r.changed ? `<span class="muted">${r.changed} changed ${r.changed === 1 ? 'an' : 'their'} answer</span>` : '');
       $('h-next').textContent = r.n >= st.totalPlays ? 'Final score' : 'Next play';
     } else {
       $('h-next').textContent = 'Reveal now';
@@ -533,6 +535,9 @@
     const h = $('f-result');
     h.className = win >= 0 ? `t${win}` : '';
     h.textContent = win < 0 ? 'Tie game' : `${st.teams[win].name} wins${a.pts === b.pts ? ' on field position' : ''}`;
+    const picks = st.teams.reduce((n, t) => n + (t.picks || 0), 0);
+    $('f-picks').hidden = !picks;
+    if (picks) $('f-picks').innerHTML = st.teams.map((t, i) => (t.picks ? `<span class="t${i}">🏈 ${esc(t.name)}: ${t.picks} pick ${t.picks === 1 ? 'six' : 'sixes'}</span>` : '')).join('');
     if (f.hill) renderHillFinal(st, f);
     else $('f-mvps').innerHTML = st.teams.map((t, i) => `<div class="panel t${i}"><h3>${esc(t.name)} · top players</h3>${
       f.mvps[i].length ? `<ol>${f.mvps[i].map((p) => `<li>${esc(p.name)} <span>${p.yards} yds · ${p.comp}/${p.att}</span></li>`).join('')}</ol>` : '<p class="muted">No plays run.</p>'
@@ -640,7 +645,7 @@
       ? 'Each student ran the plays at their own pace, so the later plays were only reached by the fastest.'
       : 'Every student saw every play.';
     $('f-pbp').innerHTML = `<h3>Play by play</h3><p>${note} Tap a play to see it again.</p><ol>${plays.map((p) => `<li><details class="${band(p.pct)}">
-        <summary><span class="pn">#${p.n}</span><span class="ps">${p.summary}</span>
+        <summary><span class="pn">#${p.n}</span><span class="ps">${p.summary}${(p.pickSix || []).some(Boolean) ? ` <span class="p6tag">🏈 Pick six · ${p.pickSix.map((x, i) => (x ? esc(teamName(st, i)) : null)).filter(Boolean).join(' & ')}</span>` : ''}</span>
           <span class="meter" aria-hidden="true"><span style="width:${p.pct}%"></span></span>
           <span class="pp" title="${p.right} of ${p.att} right">${p.pct}%</span></summary>
         <div class="more">

@@ -38,17 +38,18 @@
     return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
   }
 
-  function touchdown(team) {
+  function touchdown(team, label) {
     const el = $('td'); if (!el) return;
-    el.innerHTML = `<div class="t${team.idx}">Touchdown<br>${esc(team.name)}</div>`;
+    el.innerHTML = `<div class="t${team.idx}">${label || 'Touchdown'}<br>${esc(team.name)}</div>`;
     el.hidden = false;
     clearTimeout(touchdown._t);
     touchdown._t = setTimeout(() => { el.hidden = true; }, 1600);
   }
-  /** Fire the TD splash when a team's points go up between two states. */
+  /** Fire the TD splash when a team's points go up between two states. A pick six says so. */
   function watchTouchdowns(prev, next) {
     if (!prev || !next) return;
-    next.teams.forEach((t, i) => { if (prev.teams[i] && t.pts > prev.teams[i].pts) touchdown({ idx: i, name: t.name }); });
+    const picks = (next.round && next.round.pickSix) || [];
+    next.teams.forEach((t, i) => { if (prev.teams[i] && t.pts > prev.teams[i].pts) touchdown({ idx: i, name: t.name }, picks[i] ? 'Pick six' : 'Touchdown'); });
   }
 
   /**
@@ -66,11 +67,14 @@
       : `<b>${st.totalPlays} plays</b>, <b>${s(st.secondsPerPlay)}</b> each — everyone answers the same play.`;
     const typed = r.typed ? ` <b>Type</b> each answer — fluent is right in ${s(r.fluentSec)} or less.` : '';
     if (r.hill) return hillRulesHTML(st, r, typed);
-    return `<h3>How scoring works</h3><p class="lead">${lead}${typed}</p><div class="rgrid">`
+    const change = r.canChange ? ` Changed your mind? ${r.typed ? 'Type it again' : 'Tap another choice'} before the reveal — your <b>last</b> answer counts, timed from when you sent it.` : '';
+    const p6 = r.pickSix;
+    return `<h3>How scoring works</h3><p class="lead">${lead}${typed}${change}</p><div class="rgrid">`
       + `<div class="rule"><span class="rk">Right answer</span><span class="rv"><b class="g">+${fast.gain}</b> yds in ${s(fast.within)} · <b class="g">+${mid.gain}</b> in ${s(mid.within)} · <b class="g">+${slow.gain}</b> after</span></div>`
       + `<div class="rule"><span class="rk">Wrong answer</span><span class="rv"><b class="b">−${r.sack}</b> yds — a sack</span>${r.noAnswer === 0 ? '<span class="rv">No answer: 0, no gain, no loss</span>' : ''}</div>`
       + `<div class="rule"><span class="rk">One ball per team</span><span class="rv">Every teammate's yards push one ball, scaled to ${k} players' worth — a bigger team gets no bigger push.</span></div>`
       + `<div class="rule"><span class="rk">Touchdown</span><span class="rv"><b class="g">${r.tdPoints}</b> points; ball back to the ${r.startPos}.</span></div>`
+      + (p6 ? `<div class="rule"><span class="rk">Pick six</span><span class="rv">Teams of ${p6.minTeam} or more: <b>everyone</b> on the team right on the same play is a pick six — <b class="g">+${p6.points}</b> points, and the other team's ball goes back to the ${p6.resetPos}. One miss, no pick. Make sure your whole team has it.</span></div>` : '')
       + `<div class="rule"><span class="rk">Winner</span><span class="rv">Most points. Tied? Farther downfield.</span></div>`
       + '</div>';
   }
