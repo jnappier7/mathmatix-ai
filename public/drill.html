@@ -13,6 +13,11 @@
 </head>
 <body class="solo">
 <div class="pwrap">
+  <div class="sndbar solo" id="sndbar" role="group" aria-label="Sound">
+    <button class="sndbtn" id="mus" type="button" aria-pressed="false" title="Drumline under the round">🎵 Music off</button>
+    <button class="sndbtn" id="crowd" type="button" aria-pressed="false" title="Crowd murmur during the round">📣 Crowd off</button>
+    <button class="sndbtn" id="snd" type="button" aria-pressed="true" title="Sound: whistle, clock ticks, streaks, the buzzer, a cheer for a new best (M)">🔇 Sound off</button>
+  </div>
 
   <!-- ============ PICK ============ -->
   <section id="pick">
@@ -82,6 +87,8 @@
 
 <script src="/js/csrf.js"></script>
 <script src="/js/live-drill/common.js?v=20261104"></script>
-<script src="/js/live-drill/solo.js?v=20261032"></script>
+<script>window.LiveDrillSoundConfig = { defaultMuted: true, defaultCrowd: false, storagePrefix: 'mm-drill-solo', cheersFollowCrowd: false };</script>
+<script src="/js/live-drill/sound.js?v=20261105"></script>
+<script src="/js/live-drill/solo.js?v=20261105"></script>
 </body>
 </html>

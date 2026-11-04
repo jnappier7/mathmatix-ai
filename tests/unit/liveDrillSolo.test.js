@@ -56,3 +56,29 @@ describe('the page grades typed answers like the game', () => {
     expect(pageNormalize(raw)).toBe(facts.normalizeTyped(raw));
   });
 });
+
+describe('sound on the solo page', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../../public/drill.html'), 'utf8');
+  const js = fs.readFileSync(path.join(__dirname, '../../public/js/live-drill/solo.js'), 'utf8');
+
+  test('the page loads the sound module in the solo profile: muted by default, crowd off, its own keys, cheers follow Sound', () => {
+    const cfg = html.match(/window\.LiveDrillSoundConfig = (\{[^}]*\})/);
+    expect(cfg).toBeTruthy();
+    expect(new Function(`return ${cfg[1]}`)()).toEqual({ defaultMuted: true, defaultCrowd: false, storagePrefix: 'mm-drill-solo', cheersFollowCrowd: false });
+    const order = ['live-drill/common.js', 'LiveDrillSoundConfig', 'live-drill/sound.js', 'live-drill/solo.js'].map((m) => html.indexOf(m));
+    expect(order).toEqual([...order].sort((a, b) => a - b)); // config before the module, module before the page
+    expect(html).toMatch(/id="snd"[^>]*aria-pressed="true"/); // the button starts in its muted state
+  });
+
+  test('the cues are the ones a solo round earns: start, last five seconds, every 3rd in a row, the end, a best', () => {
+    expect(js).toMatch(/SND\.whistle\(\)/);
+    expect(js).toMatch(/SND\.tick\(sec === 1\)/);
+    expect(js).toMatch(/r\.streak % STREAK_EVERY === 0/);
+    expect(js).toMatch(/SND\.buzzer\(\)/);
+    expect(js).toMatch(/if \(isBest\) setTimeout\(\(\) => SND\.cheer\(true\)/);
+    // and nothing plays on an ordinary right or wrong answer
+    expect(js).not.toMatch(/SND\.horn/);
+    expect(js).not.toMatch(/SND\.groan/);
+  });
+});
+

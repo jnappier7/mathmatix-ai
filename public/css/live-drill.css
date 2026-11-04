@@ -435,6 +435,7 @@ table.twoway td:first-child{text-align:left}
 
 /* ---------- sound toggle (host) ---------- */
 .sndbar{position:fixed;right:14px;bottom:14px;z-index:5;display:flex;gap:6px}
+.sndbar.solo{position:static;justify-content:flex-end;margin:0 0 6px;flex-wrap:wrap}
 .sndbtn{background:var(--board);color:var(--chalk);border:1px solid var(--rail);border-radius:999px;padding:6px 12px;font-size:.9rem;cursor:pointer}
 #snd[aria-pressed="true"],#mus[aria-pressed="false"],#crowd[aria-pressed="false"],.sndbar.muted #mus,.sndbar.muted #crowd{color:var(--muted)}
 
