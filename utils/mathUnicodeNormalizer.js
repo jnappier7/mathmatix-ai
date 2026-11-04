@@ -180,6 +180,16 @@ function normalizeMathUnicode(str) {
   // e.g. "x^1^2" (from x¹²) → "x^{12}"
   result = result.replace(/\^(\d)\^(\d+)/g, '^{$1$2}');
 
+  // A whole number written against a proper fraction is a mixed number:
+  // "1\frac{1}{2}" is 1½. The generic rewrite below made it "1(1)/(2)", which
+  // later paren-unwrapping glued into 11/2 — so "1½ ÷ ¾" keyed as 22/3 and a
+  // correct 2 was marked wrong. Write it the way students type it ("1 1/2");
+  // the exact-rational engine reads that as 1 + 1/2. Not after a letter, "^",
+  // "." or "}" (an exponent or a coefficient's tail), and only for a proper
+  // fraction — "2\frac{5}{3}" is not a mixed number and is left alone.
+  result = result.replace(/(?<![\w^.}])(\d+)\s*\\[dt]?frac\{\s*(\d+)\s*\}\{\s*(\d+)\s*\}/g,
+    (m, w, n, d) => (Number(n) < Number(d) ? `${w} ${n}/${d}` : m));
+
   // LaTeX normalization
   result = result
     .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)')

@@ -38,6 +38,7 @@ module.exports = {
     '<rootDir>/tests/unit/teachingMoves.test.js',
     '<rootDir>/tests/unit/recheck.test.js',
     '<rootDir>/tests/unit/ideaWords.test.js',
+    '<rootDir>/tests/unit/verdictFalseRejects.test.js',
     '<rootDir>/tests/unit/stepGradingTranscript.test.js',
     '<rootDir>/tests/unit/conceptualAnswerVerdict.test.js',
     '<rootDir>/tests/unit/verifyMetrics.test.js',
