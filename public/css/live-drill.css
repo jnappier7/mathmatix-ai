@@ -377,6 +377,8 @@ table.twoway td:first-child{text-align:left}
 .splitline .muted{font-family:inherit;font-weight:600;font-size:.95rem;text-transform:none;letter-spacing:0}
 .splitline.picks{justify-content:center;margin-top:6px;font-size:1.05rem}
 .fb.pick6{border-color:var(--led);box-shadow:0 0 0 2px var(--led) inset}
+.fb.blitz{border-color:#ffd166;box-shadow:0 0 0 2px #ffd166 inset}
+.feed .it.blitz,.it.ev.blitz{color:#ffd166}
 .p6tag{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--led);color:var(--ink);font-family:var(--display);font-weight:800;font-size:.85em;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle}
 
 /* ---------- final ---------- */

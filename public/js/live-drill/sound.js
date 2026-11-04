@@ -377,6 +377,12 @@
         tone({ freq: 392, type: 'square', start: s, dur: 0.36, vol: 0.04 });
       });
     },
+    /** Team Drive: a blitz — a quick whoosh down and a pad-on-pad thud. */
+    blitz() {
+      hiss({ dur: 0.28, vol: 0.3, type: 'bandpass', freq: 2600, slideTo: 500, q: 0.8, attack: 0.01 });
+      tone({ freq: 110, type: 'sine', start: 0.2, dur: 0.22, vol: 0.35, slideTo: 55 });
+      hiss({ start: 0.2, dur: 0.07, vol: 0.18, type: 'lowpass', freq: 240, q: 0.7, attack: 0.003 });
+    },
     /** King of the Hill: a boulder rolls — a low rumble and a thud. */
     rumble() {
       hiss({ dur: 0.9, vol: 0.35, type: 'lowpass', freq: 380, slideTo: 120, q: 0.9, attack: 0.04 });

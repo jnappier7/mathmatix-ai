@@ -74,6 +74,7 @@
       + `<div class="rule"><span class="rk">Wrong answer</span><span class="rv"><b class="b">−${r.sack}</b> yds — a sack</span>${r.noAnswer === 0 ? '<span class="rv">No answer: 0, no gain, no loss</span>' : ''}</div>`
       + `<div class="rule"><span class="rk">One ball per team</span><span class="rv">Every teammate's yards push one ball, scaled to ${k} players' worth — a bigger team gets no bigger push.</span></div>`
       + `<div class="rule"><span class="rk">Touchdown</span><span class="rv"><b class="g">${r.tdPoints}</b> points; ball back to the ${r.startPos}.</span></div>`
+      + (r.blitz ? `<div class="rule"><span class="rk">⚡ Blitz</span><span class="rv"><b>${r.blitz.every} in a row</b> blitzes the other team: their ball goes back <b class="b">${r.blitz.yards}</b> yards' worth (scaled for team size like every push). Nobody picks a target — it's the team you're playing.</span></div>` : '')
       + (p6 ? `<div class="rule"><span class="rk">Pick six</span><span class="rv">Teams of ${p6.minTeam} or more: <b>everyone</b> on the team right on the same play is a pick six — <b class="g">+${p6.points}</b> points, and the other team's ball goes back to the ${p6.resetPos}. One miss, no pick. Make sure your whole team has it.</span></div>` : '')
       + `<div class="rule"><span class="rk">Winner</span><span class="rv">Most points. Tied? Farther downfield.</span></div>`
       + '</div>';

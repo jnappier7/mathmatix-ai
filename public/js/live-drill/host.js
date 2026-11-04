@@ -6,7 +6,7 @@
   const { $, esc, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns, rulesHTML } = window.LiveDrill;
   const API = '/api/live-drill/host';
   const noop = () => {};
-  const SND = window.LiveDrillSound || { unlock: noop, whistle: noop, horn: noop, tick: noop, chime: noop, buzzer: noop, cheer: noop, groan: noop, rumble: noop,
+  const SND = window.LiveDrillSound || { unlock: noop, whistle: noop, horn: noop, tick: noop, chime: noop, buzzer: noop, cheer: noop, groan: noop, rumble: noop, blitz: noop,
     setScene: noop, setHype: noop, setMuted: noop, setMusic: noop, setCrowd: noop, muted: true, musicOn: false, crowdOn: false };
   let lastTick = null; // the clock second last ticked, so each of the final five ticks once
 
@@ -250,6 +250,12 @@
       if (fresh.some((f) => f.type === 'knock') && t - (cue.rumbleAt || 0) > 1500) { cue.rumbleAt = t; SND.rumble(); }
       if (fresh.some((f) => f.type === 'crown') && st.phase === 'live' && t - (cue.crownAt || 0) > 10000) { cue.crownAt = t; SND.horn(); SND.cheer(false); }
     }
+    if (st.mode === 'drive') {
+      // a blitz landed since the last state — one whoosh, rate-limited (a big class blitzes often)
+      const since = Math.max(0, ...(prev.feed || []).map((f) => f.at));
+      const t = Date.now();
+      if ((st.feed || []).some((f) => f.at > since && f.type === 'blitz') && t - (cue.blitzAt || 0) > 1200) { cue.blitzAt = t; SND.blitz(); }
+    }
     if (prev.phase === 'lobby' && st.phase !== 'lobby' && st.phase !== 'over') SND.whistle();
     if (st.teams.some((t, i) => prev.teams[i] && t.pts > prev.teams[i].pts)) SND.horn();
     const scored = st.teams.some((t, i) => prev.teams[i] && t.pts > prev.teams[i].pts);
@@ -397,6 +403,7 @@
         if (f.type === 'td') return `<span class="it ev${team.includes('new') ? ' new' : ''}">${esc(f.text)}${f.who ? ` · ${esc(f.who)}` : ''}</span>`;
         if (f.type === 'big') return `<span class="it${team}">${esc(f.who)} +${f.gain}</span>`;
         if (f.type === 'sack') return `<span class="it${team}">${esc(f.who)} sacked</span>`;
+        if (f.type === 'blitz') return `<span class="it ev blitz${team.includes('new') ? ' new' : ''}">⚡ BLITZ · ${esc(f.who)} · ${esc(teamName(st, f.victim))} −${f.yards}</span>`;
         if (f.type === 'kickoff') return `<span class="it ev${team.includes('new') ? ' new' : ''}">KICKOFF</span>`;
         return '';
       }).join('') || '<span class="muted">The play-by-play shows up here.</span>';
@@ -536,8 +543,10 @@
     h.className = win >= 0 ? `t${win}` : '';
     h.textContent = win < 0 ? 'Tie game' : `${st.teams[win].name} wins${a.pts === b.pts ? ' on field position' : ''}`;
     const picks = st.teams.reduce((n, t) => n + (t.picks || 0), 0);
-    $('f-picks').hidden = !picks;
-    if (picks) $('f-picks').innerHTML = st.teams.map((t, i) => (t.picks ? `<span class="t${i}">🏈 ${esc(t.name)}: ${t.picks} pick ${t.picks === 1 ? 'six' : 'sixes'}</span>` : '')).join('');
+    const blitzes = st.teams.reduce((n, t) => n + (t.blitzes || 0), 0);
+    $('f-picks').hidden = !picks && !blitzes;
+    $('f-picks').innerHTML = st.teams.map((t, i) => (t.picks ? `<span class="t${i}">🏈 ${esc(t.name)}: ${t.picks} pick ${t.picks === 1 ? 'six' : 'sixes'}</span>` : '')).join('')
+      + st.teams.map((t, i) => (t.blitzes ? `<span class="t${i}">⚡ ${esc(t.name)}: ${t.blitzes} ${t.blitzes === 1 ? 'blitz' : 'blitzes'}</span>` : '')).join('');
     if (f.hill) renderHillFinal(st, f);
     else $('f-mvps').innerHTML = st.teams.map((t, i) => `<div class="panel t${i}"><h3>${esc(t.name)} · top players</h3>${
       f.mvps[i].length ? `<ol>${f.mvps[i].map((p) => `<li>${esc(p.name)} <span>${p.yards} yds · ${p.comp}/${p.att}</span></li>`).join('')}</ol>` : '<p class="muted">No plays run.</p>'
@@ -563,11 +572,12 @@
     el.hidden = false;
     lastScores = { code: st.code, game: st.gameNumber, players, teams: st.teams };
     const unit = st.mode === 'drive' ? 'yds' : 'pts';
+    const showBlitz = st.mode === 'drive' && !!(st.rules && st.rules.blitz);
     const rows = players.map((p, i) => `<tr><td class="num">${i + 1}</td><td class="nm t${p.team}">${esc(p.name)}${p.saved ? ' <span class="acct" title="Signed in">✓</span>' : ''}</td>` +
       `<td>${esc(teamName(st, p.team))}</td><td class="num"><b>${p.yards}</b> ${unit}</td><td class="num">${p.comp}/${p.att}</td>` +
-      `<td class="num">${p.pct == null ? '–' : p.pct + '%'}</td><td class="num">${p.best}</td><td class="num">${p.avgSec == null ? '–' : p.avgSec + ' s'}</td></tr>`).join('');
+      `<td class="num">${p.pct == null ? '–' : p.pct + '%'}</td><td class="num">${p.best}</td>${showBlitz ? `<td class="num">${p.blitzes || 0}</td>` : ''}<td class="num">${p.avgSec == null ? '–' : p.avgSec + ' s'}</td></tr>`).join('');
     el.innerHTML = `<h3>Every player</h3>
-      <div class="tablewrap"><table class="ftab stab"><thead><tr><th>#</th><th>Student</th><th>Team</th><th>Score</th><th>Right</th><th>Accuracy</th><th>Best streak</th><th>Avg time</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="tablewrap"><table class="ftab stab"><thead><tr><th>#</th><th>Student</th><th>Team</th><th>Score</th><th>Right</th><th>Accuracy</th><th>Best streak</th>${showBlitz ? '<th>⚡ Blitzes</th>' : ''}<th>Avg time</th></tr></thead><tbody>${rows}</tbody></table></div>
       <div class="row"><button class="ghost" id="f-scores-csv">Download scores (CSV)</button><span class="muted">One line per student. ✓ = signed in with their account.</span></div>`;
     $('f-scores-csv').onclick = downloadScoresCsv;
   }
@@ -576,8 +586,8 @@
     if (!lastScores) return;
     const q = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
     const safe = (v) => (/^[=+\-@]/.test(String(v)) ? `'${v}` : v); // never a formula in a spreadsheet
-    const lines = [['Rank', 'Student', 'Team', 'Score', 'Right', 'Attempted', 'Accuracy %', 'Best streak', 'Avg seconds', 'Signed in'].map(q).join(',')]
-      .concat(lastScores.players.map((p, i) => [i + 1, safe(p.name), teamName(lastScores, p.team), p.yards, p.comp, p.att, p.pct == null ? '' : p.pct, p.best, p.avgSec == null ? '' : p.avgSec, p.saved ? 'yes' : 'no'].map(q).join(',')));
+    const lines = [['Rank', 'Student', 'Team', 'Score', 'Right', 'Attempted', 'Accuracy %', 'Best streak', 'Blitzes', 'Avg seconds', 'Signed in'].map(q).join(',')]
+      .concat(lastScores.players.map((p, i) => [i + 1, safe(p.name), teamName(lastScores, p.team), p.yards, p.comp, p.att, p.pct == null ? '' : p.pct, p.best, p.blitzes || 0, p.avgSec == null ? '' : p.avgSec, p.saved ? 'yes' : 'no'].map(q).join(',')));
     const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);

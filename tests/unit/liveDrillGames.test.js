@@ -267,6 +267,85 @@ describe('huddle', () => {
   });
 });
 
+describe('blitz (Team Drive): every 3rd in a row pushes the other team back', () => {
+  const { every, yards } = G.BLITZ;
+  /** Answer the player's current play right (or wrong) after `ms`. */
+  function play(g, p, ok = true, ms = 1000) {
+    const { n } = G.currentPlay(g, p);
+    jest.advanceTimersByTime(ms);
+    const pl = G.playAt(g, n);
+    return G.answer(g, p, n, ok ? pl.answer : wrongKey(pl));
+  }
+
+  test('a solo blitz is the full 10 yards off the other team, after the blitzer\'s own gain; the rules say so', () => {
+    const g = drive();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
+    G.start(g);
+    expect(G.hostView(g).rules.blitz).toEqual(G.BLITZ);
+    play(g, b); // Blue to the 40
+    expect(g.teams[1].pos).toBe(G.START_POS + 15);
+    const r1 = play(g, a); const r2 = play(g, a);
+    expect(r1.blitz).toBeUndefined(); expect(r2.blitz).toBeUndefined();
+    const r3 = play(g, a); // third in a row
+    expect(r3.ok).toBe(true);
+    expect(r3.blitz).toEqual({ team: 1, yards, lost: yards });
+    expect(g.teams[1].pos).toBe(G.START_POS + 15 - yards);
+    expect(g.teams[0].pos).toBe(G.START_POS + 3 * 15); // Red's own gain stood
+    expect(a.blitzes).toBe(1);
+    expect(G.hostView(g).teams[0].blitzes).toBe(1);
+    expect(G.hostView(g).feed[0]).toMatchObject({ type: 'blitz', team: 0, who: 'A', victim: 1, yards });
+    expect(G.playerView(g, a).me.blitzes).toBe(1);
+    // a miss resets the count: the next blitz needs three more
+    play(g, a, false);
+    play(g, a); play(g, a);
+    expect(play(g, a).blitz).toBeTruthy();
+    expect(a.blitzes).toBe(2);
+    // and 6 in a row is a second blitz, like the hill's boulder
+    play(g, a); play(g, a);
+    expect(play(g, a).blitz).toBeTruthy();
+    expect(a.best).toBe(6);
+  });
+
+  test('a blitz is one player\'s push: scaled for team size like a gain, and the ball never goes behind the 1', () => {
+    const g = drive();
+    const red = [], blue = []; // seats alternate Red, Blue as students arrive
+    for (let i = 1; i <= 5; i++) { red.push(G.join(g, `R${i}`).player); blue.push(G.join(g, `B${i}`).player); }
+    expect(red.every((p) => p.team === 0) && blue.every((p) => p.team === 1)).toBe(true);
+    G.start(g);
+    const r = play(g, red[0]); play(g, red[0]); const b3 = play(g, red[0]);
+    expect(r.blitz).toBeUndefined();
+    // 5 on a team move like 2.5: a 10-yard blitz lands as 5
+    expect(b3.blitz).toEqual({ team: 1, yards: yards * G.TEAM_K.drive / 5, lost: 5 });
+    expect(g.teams[1].pos).toBe(G.START_POS - 5);
+    // Blue goes backwards to the 1 and stays there: a blitz can't push a ball off the field
+    g.teams[1].pos = 3;
+    play(g, red[1]); play(g, red[1]); const hit = play(g, red[1]);
+    expect(hit.blitz).toEqual({ team: 1, yards: 5, lost: 2 });
+    expect(g.teams[1].pos).toBe(1);
+  });
+
+  test('only Team Drive blitzes: Huddle has the pick six, the hill has boulders', () => {
+    const h = huddle();
+    expect(G.hostView(h).rules.blitz).toBeNull();
+    const a = G.join(h, 'A').player;
+    G.start(h);
+    for (let n = 1; n <= every; n++) { G.answer(h, a, n, G.playAt(h, n).answer); G.advance(h); }
+    expect(h.teams.map((t) => t.blitzes)).toEqual([0, 0]);
+    const k = G.createGame({ hostId: 'h2', drill: 'algebra', playbook: 'all', mode: 'hill' });
+    expect(G.hostView(k).rules.blitz).toBeNull();
+  });
+
+  test('run it back clears blitz counts', () => {
+    const g = drive();
+    const a = G.join(g, 'A').player; G.join(g, 'B');
+    G.start(g);
+    play(g, a); play(g, a); play(g, a);
+    G.endGame(g); G.rematch(g);
+    expect(a.blitzes).toBe(0);
+    expect(g.teams.map((t) => t.blitzes)).toEqual([0, 0]);
+  });
+});
+
 describe('pick six (Huddle, teams of five or more)', () => {
   // Seat 2n players: A0..A(n-1) land on Red, B0..B(n-1) on Blue (join alternates, Red first).
   function seated(n, opts = {}) {

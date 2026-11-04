@@ -156,7 +156,9 @@
     const t = st.me.team;
     $('p-team').className = `pill t${t}`;
     $('p-team').textContent = `Team ${teamName(t)}`;
-    $('p-me').textContent = `${st.me.name} · ${st.me.yards} yds · streak ${st.me.streak}`;
+    const b = st.rules && st.rules.blitz;
+    const toBlitz = b && st.phase === 'live' ? ` · ${b.every - (st.me.streak % b.every)} to ⚡` : '';
+    $('p-me').textContent = `${st.me.name} · ${st.me.yards} yds · streak ${st.me.streak}${toBlitz}`;
   }
 
   /** King of the Hill: where I am, who's just above, how close the next boulder is. */
@@ -290,11 +292,12 @@
       if (typed) padResult(r.picked, r.ok);
       else $('p-choices').innerHTML = choicesHTML(cur.play, { answer: r.answer, picked: k, disabled: true });
       if (r.ok) {
-        const call = r.hill ? hillCall(r.hill) : r.tier === 0 ? 'Big play' : r.tier === 1 ? 'First down' : 'Short gain';
-        $('fb').className = 'fb good';
-        $('fb').innerHTML = `<span class="bigtxt">${call}${r.hill ? '' : ` · +${r.gain}`}</span><span class="why">${r.hill ? `+${r.gain} · ` : ''}${(r.ms / 1000).toFixed(1)} s</span>`;
+        const call = r.hill ? hillCall(r.hill) : r.blitz ? '⚡ Blitz!' : r.tier === 0 ? 'Big play' : r.tier === 1 ? 'First down' : 'Short gain';
+        const blitzed = r.blitz ? ` · ${esc(teamName(r.blitz.team))} pushed back ${r.blitz.lost}` : '';
+        $('fb').className = `fb good${r.blitz ? ' blitz' : ''}`;
+        $('fb').innerHTML = `<span class="bigtxt">${call}${r.hill ? '' : ` · +${r.gain}`}</span><span class="why">${r.hill ? `+${r.gain} · ` : ''}${(r.ms / 1000).toFixed(1)} s${blitzed}</span>`;
         // facts move fast: a right answer gets out of the way for the next one
-        setTimeout(() => { cur = null; nextDrivePlay(); }, typed ? 380 : 650);
+        setTimeout(() => { cur = null; nextDrivePlay(); }, r.blitz ? 1100 : typed ? 380 : 650);
       } else {
         const picked = typed ? `typed ${esc(showNum(r.picked))}` : `picked ${(cur.play.choices.find((c) => c.k === k) || {}).html || ''}`;
         $('fb').className = 'fb bad';
