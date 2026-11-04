@@ -156,7 +156,9 @@
     const t = st.me.team;
     $('p-team').className = `pill t${t}`;
     $('p-team').textContent = `Team ${teamName(t)}`;
-    $('p-me').textContent = `${st.me.name} · ${st.me.yards} yds · streak ${st.me.streak}`;
+    const b = st.rules && st.rules.blitz;
+    const toBlitz = b && st.phase === 'live' ? ` · ${b.every - (st.me.streak % b.every)} to ⚡` : '';
+    $('p-me').textContent = `${st.me.name} · ${st.me.yards} yds · streak ${st.me.streak}${toBlitz}`;
   }
 
   /** King of the Hill: where I am, who's just above, how close the next boulder is. */
@@ -202,7 +204,7 @@
     return play.choices.map((c, i) => {
       let cls = '';
       if (o.answer != null) cls = c.k === o.answer ? ' right' : c.k === o.picked ? ' wrong' : ' fade';
-      else if (o.picked != null) cls = c.k === o.picked ? ' picked' : ' fade';
+      else if (o.picked != null) cls = c.k === o.picked ? ' picked' : o.keepOthers ? '' : ' fade';
       return `<button class="ch${cls}" data-k="${esc(c.k)}"${o.disabled ? ' disabled' : ''}><span class="kbd">${i + 1}</span><span class="lab">${c.html}</span></button>`;
     }).join('');
   }
@@ -246,13 +248,16 @@
     $('p-send').disabled = pad.locked || !/\d/.test(pad.value);
     $('p-pad').classList.toggle('locked', pad.locked);
   }
-  /** After grading: the pad shows what was typed, green or red. */
-  function padResult(typed, ok) {
+  /** After grading: the pad shows what was typed, green or red. Huddle, still open (`onChange`):
+   *  the sent number, plus a Change button that brings the pad back with it to edit. */
+  function padResult(typed, ok, onChange) {
     pad = null;
     $('p-choices').hidden = true;
     $('p-pad').hidden = false;
     $('live').classList.add('typing');
-    $('p-pad').innerHTML = `<div class="entry ${ok == null ? 'sent' : ok ? 'right' : 'wrong'}"><span class="v">${esc(showNum(typed))}</span></div>`;
+    $('p-pad').innerHTML = `<div class="entryrow"><div class="entry ${ok == null ? 'sent' : ok ? 'right' : 'wrong'}"><span class="v">${esc(showNum(typed))}</span></div>${
+      onChange ? '<button type="button" class="change" id="p-change">Change</button>' : ''}</div>`;
+    if (onChange) $('p-change').onclick = () => { onChange(); if (pad) { pad.value = String(typed); padRender(); } };
   }
   function closePad() { pad = null; $('live').classList.remove('typing'); $('p-pad').hidden = true; $('p-pad').innerHTML = ''; $('p-choices').hidden = false; }
   const typedPlay = (play) => play && play.input === 'number';
@@ -287,11 +292,12 @@
       if (typed) padResult(r.picked, r.ok);
       else $('p-choices').innerHTML = choicesHTML(cur.play, { answer: r.answer, picked: k, disabled: true });
       if (r.ok) {
-        const call = r.hill ? hillCall(r.hill) : r.tier === 0 ? 'Big play' : r.tier === 1 ? 'First down' : 'Short gain';
-        $('fb').className = 'fb good';
-        $('fb').innerHTML = `<span class="bigtxt">${call}${r.hill ? '' : ` · +${r.gain}`}</span><span class="why">${r.hill ? `+${r.gain} · ` : ''}${(r.ms / 1000).toFixed(1)} s</span>`;
+        const call = r.hill ? hillCall(r.hill) : r.blitz ? '⚡ Blitz!' : r.tier === 0 ? 'Big play' : r.tier === 1 ? 'First down' : 'Short gain';
+        const blitzed = r.blitz ? ` · ${esc(teamName(r.blitz.team))} pushed back ${r.blitz.lost}` : '';
+        $('fb').className = `fb good${r.blitz ? ' blitz' : ''}`;
+        $('fb').innerHTML = `<span class="bigtxt">${call}${r.hill ? '' : ` · +${r.gain}`}</span><span class="why">${r.hill ? `+${r.gain} · ` : ''}${(r.ms / 1000).toFixed(1)} s${blitzed}</span>`;
         // facts move fast: a right answer gets out of the way for the next one
-        setTimeout(() => { cur = null; nextDrivePlay(); }, typed ? 380 : 650);
+        setTimeout(() => { cur = null; nextDrivePlay(); }, r.blitz ? 1100 : typed ? 380 : 650);
       } else {
         const picked = typed ? `typed ${esc(showNum(r.picked))}` : `picked ${(cur.play.choices.find((c) => c.k === k) || {}).html || ''}`;
         $('fb').className = 'fb bad';
@@ -330,16 +336,23 @@
       $('p-card').innerHTML = cardHTML(r.play, r.revealCard, `Play ${r.n}`);
       if (typed) { if (mine) padResult(mine.k, mine.ok); else closePad(); }
       else $('p-choices').innerHTML = choicesHTML(r.play, { answer: r.answer, picked: mine && mine.k, disabled: true });
-      if (!mine) { $('fb').className = 'fb'; $('fb').innerHTML = `<span class="bigtxt">No answer</span><span class="why">${r.tell}</span>`; }
-      else if (mine.ok) { $('fb').className = 'fb good'; $('fb').innerHTML = `<span class="bigtxt">Right · +${mine.gain}</span><span class="why">${r.tell}</span>`; }
-      else { $('fb').className = 'fb bad'; $('fb').innerHTML = `<span class="bigtxt">Sacked · ${showNum(mine.gain)}</span><span class="why">${r.tell}</span>`; }
+      const picks = r.pickSix || [];
+      const p6 = st.rules && st.rules.pickSix;
+      const ours = picks[st.me.team] && p6 ? `<b>🏈 PICK SIX!</b> Everyone on ${esc(teamName(st.me.team))} got it: +${p6.points}, and ${esc(teamName(1 - st.me.team))} is back on the ${p6.resetPos}. ` : '';
+      const theirs = picks[1 - st.me.team] && p6 ? `<b>Pick six for ${esc(teamName(1 - st.me.team))}</b> — all of them got it, so ${esc(teamName(st.me.team))} is back on the ${p6.resetPos}. ` : '';
+      if (!mine) { $('fb').className = 'fb'; $('fb').innerHTML = `<span class="bigtxt">No answer</span><span class="why">${theirs}${r.tell}</span>`; }
+      else if (mine.ok) { $('fb').className = `fb good${picks[st.me.team] ? ' pick6' : ''}`; $('fb').innerHTML = `<span class="bigtxt">${picks[st.me.team] ? 'Pick six' : 'Right'} · +${mine.gain}</span><span class="why">${ours}${theirs}${r.tell}</span>`; }
+      else { $('fb').className = 'fb bad'; $('fb').innerHTML = `<span class="bigtxt">Sacked · ${showNum(mine.gain)}</span><span class="why">${theirs}${r.tell}</span>`; }
       return;
     }
     $('p-card').innerHTML = cardHTML(r.play, null, `Play ${r.n}`);
     if (mine) {
-      if (typed) padResult(mine.k, null);
-      else $('p-choices').innerHTML = choicesHTML(r.play, { picked: mine.k, disabled: true });
-      $('fb').className = 'fb'; $('fb').innerHTML = '<span class="bigtxt">Locked in</span><span class="why">Eyes on the board for the reveal.</span>';
+      // Answer in — but the play is still open, so it can be changed: the choices stay live (the
+      // current pick is lit, nothing is faded) and a typed answer gets a Change button. The server
+      // grades the LAST answer, timed from when it was sent (games.js answer).
+      if (typed) padResult(mine.k, null, () => openPad(answerHuddle, negOk(r.play)));
+      else { closePad(); $('p-choices').innerHTML = choicesHTML(r.play, { picked: mine.k, keepOthers: true }); bindChoices(answerHuddle); }
+      $('fb').className = 'fb'; $('fb').innerHTML = `<span class="bigtxt">Answer in</span><span class="why">Changed your mind? ${typed ? 'Tap Change' : 'Tap another choice'} before the reveal — your last answer counts.</span>`;
       return;
     }
     if (typed) openPad(answerHuddle, negOk(r.play));
@@ -349,15 +362,17 @@
 
   async function answerHuddle(k) {
     const r = st && st.round;
-    if (!r || r.closed || r.mine) return;
-    r.mine = { k }; // optimistic: lock the buttons now
+    if (!r || r.closed) return;
+    const was = r.mine; // a change: keep the old pick to fall back on if the new one doesn't land
+    if (was && was.k === k) return;
+    r.mine = { k }; // optimistic: show the pick now
     huddleKey = '';
     renderHuddle();
     try { await api(`/${encodeURIComponent(seat.code)}/answer`, { method: 'POST', body: JSON.stringify({ n: r.n, k }) }); }
     catch (err) {
       if (err.status === 401) return gone('You are no longer in this game.');
       if (err.status === 409) return; // closed under us; the reveal state is on its way
-      r.mine = null; huddleKey = ''; renderHuddle();
+      r.mine = was || null; huddleKey = ''; renderHuddle();
       $('fb').innerHTML = `<span class="muted">${esc(err.message)}</span>`;
     }
   }

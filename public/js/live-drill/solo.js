@@ -8,6 +8,15 @@
 (function () {
   const { $, esc, cardHTML, mmss } = window.LiveDrill;
   const API = '/api/live-drill/solo';
+  // Sound (public/js/live-drill/sound.js), loaded in the solo profile: MUTED until the student taps
+  // 🔇, crowd murmur off. Cues alone: whistle at the start, a tick on each of the last five seconds,
+  // a whoosh on every 3rd in a row, the buzzer at the end, the recorded cheer for a personal best or a
+  // clean round. Nothing on an ordinary right or wrong answer — a cue every three seconds is noise.
+  const noop = () => {};
+  const SND = window.LiveDrillSound || { unlock: noop, whistle: noop, tick: noop, buzzer: noop, cheer: noop, blitz: noop, horn: noop,
+    setScene: noop, setHype: noop, setMuted: noop, setMusic: noop, setCrowd: noop, muted: true, musicOn: false, crowdOn: false };
+  const STREAK_EVERY = 3;
+  let lastTick = null;
   const MINUS = '−';
   const showNum = (v) => String(v).replace('-', MINUS);
 
@@ -253,6 +262,8 @@
     round.endsAt = Date.now() + round.seconds * 1000;
     clearInterval(tick);
     tick = setInterval(renderClock, 200);
+    lastTick = null;
+    SND.setScene('live'); SND.setHype(0); SND.whistle();
     renderClock();
     nextPlay();
   }
@@ -277,6 +288,9 @@
     const left = round.endsAt - Date.now();
     $('s-clock').textContent = mmss(left);
     $('s-clock').classList.toggle('low', left <= 10000);
+    // one tick for each of the last five seconds
+    const sec = Math.ceil(left / 1000);
+    if (sec >= 1 && sec <= 5 && sec !== lastTick) { lastTick = sec; SND.tick(sec === 1); }
     if (left <= 0) finish();
   }
 
@@ -323,11 +337,15 @@
       const gain = r.g.scoring.gains[tier];
       r.score += gain; r.right++; r.streak++; r.longest = Math.max(r.longest, r.streak);
       renderScore();
+      const hot = r.streak % STREAK_EVERY === 0; // every 3rd in a row: the whoosh
+      if (hot) SND.blitz();
+      SND.setHype(Math.min(1, r.streak / 6)); // a long streak brings the (optional) crowd to its feet
       $('fb').className = 'fb good';
-      $('fb').innerHTML = `<span class="bigtxt">${tier === 0 ? 'Fast' : tier === 1 ? 'Right' : 'Got it'} · +${gain}</span><span class="why">${(ms / 1000).toFixed(1)} s</span>`;
+      $('fb').innerHTML = `<span class="bigtxt">${hot ? `⚡ ${r.streak} in a row` : tier === 0 ? 'Fast' : tier === 1 ? 'Right' : 'Got it'} · +${gain}</span><span class="why">${(ms / 1000).toFixed(1)} s</span>`;
       setTimeout(nextPlay, typed ? 380 : 650);
     } else {
       r.score = Math.max(0, r.score - r.g.scoring.miss); r.streak = 0;
+      SND.setHype(0);
       renderScore();
       const pickedHtml = typed ? esc(showNum(k)) : ((play.choices.find((c) => c.k === k) || {}).html || '');
       r.misses.push({ play, pickedHtml });
@@ -377,6 +395,10 @@
     const prev = local.get(key);
     const isBest = r.att > 0 && (!prev || r.score > prev.score);
     if (isBest) local.set(key, { score: r.score, right: r.right, att: r.att, at: Date.now() });
+    SND.setScene('final'); SND.setHype(0); SND.buzzer();
+    // the recorded cheer: big for a new best, a smaller one for a clean round
+    if (isBest) setTimeout(() => SND.cheer(true), 700);
+    else if (r.att && !r.misses.length) setTimeout(() => SND.cheer(false), 700);
     $('f-game').textContent = $('p-game').textContent;
     $('f-result').textContent = r.att ? `${r.score} points` : 'No answers';
     $('f-best').textContent = isBest && prev ? `New best — up from ${prev.score}.` : isBest ? 'Your first score here. Beat it.' : prev ? `Your best here is ${prev.score}.` : '';
@@ -397,7 +419,29 @@
 
   $('quit').onclick = finish;
   $('again').onclick = () => { renderSetup(); start(); };
-  $('back').onclick = () => { renderSetup(); show('pick'); };
+  $('back').onclick = () => { renderSetup(); show('pick'); SND.setScene('setup'); };
+
+  // ---------------------------------------------------------------- sound switches
+  // Browsers allow audio only after a gesture; the first tap or key unlocks it (then the student
+  // still has to turn Sound on — it starts muted here).
+  document.addEventListener('pointerdown', () => SND.unlock(), { capture: true });
+  document.addEventListener('keydown', () => SND.unlock(), { capture: true });
+  function renderSound() {
+    if (!$('snd')) return;
+    $('snd').setAttribute('aria-pressed', SND.muted);
+    $('snd').textContent = SND.muted ? '🔇 Sound off' : '🔊 Sound on';
+    $('mus').setAttribute('aria-pressed', SND.musicOn);
+    $('mus').textContent = `🎵 Music ${SND.musicOn ? 'on' : 'off'}`;
+    $('crowd').setAttribute('aria-pressed', SND.crowdOn);
+    $('crowd').textContent = `📣 Crowd ${SND.crowdOn ? 'on' : 'off'}`;
+    $('sndbar').classList.toggle('muted', SND.muted);
+  }
+  if ($('snd')) {
+    $('snd').onclick = () => { SND.setMuted(!SND.muted); renderSound(); };
+    $('mus').onclick = () => { SND.setMusic(!SND.musicOn); if (SND.musicOn && SND.muted) SND.setMuted(false); renderSound(); };
+    $('crowd').onclick = () => { SND.setCrowd(!SND.crowdOn); if (SND.crowdOn && SND.muted) SND.setMuted(false); renderSound(); };
+    renderSound();
+  }
 
   // ---------------------------------------------------------------- choices & pad (as on /play)
 
@@ -451,7 +495,9 @@
   function closePad() { pad = null; $('live').classList.remove('typing'); $('p-pad').hidden = true; $('p-pad').innerHTML = ''; $('p-choices').hidden = false; }
 
   document.addEventListener('keydown', (e) => {
-    if ($('live').hidden || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if ((e.key === 'm' || e.key === 'M') && e.target === document.body && $('snd')) { SND.setMuted(!SND.muted); renderSound(); return; }
+    if ($('live').hidden) return;
     if (pad) {
       if (/^\d$/.test(e.key) || e.key === 'Backspace' || e.key === 'Enter' || e.key === '-') { e.preventDefault(); padKey(e.key); }
       return;

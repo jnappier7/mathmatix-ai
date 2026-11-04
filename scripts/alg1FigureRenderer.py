@@ -184,7 +184,7 @@ def _numberline(p, point=None, closed=True, direction=None):
         if direction in ("left", "right"):
             x2 = PAD if direction == "left" else W - PAD
             body.append(f'<line x1="{px:.1f}" y1="{y}" x2="{x2}" y2="{y}" stroke="{ACCENT}" stroke-width="3"/>')
-            head = x2 + (6 if direction == "left" else -6)
+            head = x2 + (-6 if direction == "left" else 6)  # tip points OUT, past the end
             body.append(f'<path d="M {x2} {y-4} L {x2} {y+4} L {head} {y} Z" fill="{ACCENT}"/>')
         fill = ACCENT if closed else "white"
         body.append(f'<circle cx="{px:.1f}" cy="{y}" r="4.5" fill="{fill}" stroke="{ACCENT}" stroke-width="2"/>')
@@ -289,6 +289,26 @@ _RENDERERS = {
     "story": _story,
     "table": _table,
 }
+
+
+def render_choices(kind, params_list, labels):
+    """One figure holding every answer choice, each row captioned with its
+    choice text ("Graph A") — for MC items whose choices ARE pictures. Only the
+    number line is supported: it is the one kind whose rows stack legibly."""
+    if kind != "numberline_answer" or not params_list:
+        return None
+    row, band_top, label_w = 46, H // 2 - 14, 52   # crop each line to its tick band
+    parts = []
+    for i, p in enumerate(params_list):
+        inner = render(kind, p)
+        if not inner:
+            return None
+        body = inner[inner.index(">") + 1: inner.rindex("</svg>")]
+        top = 6 + i * row
+        parts.append(f'<text x="4" y="{top + 18}" font-size="11" font-weight="600" fill="{AXIS}">'
+                     f'{labels[i]}</text>')
+        parts.append(f'<g transform="translate({label_w - PAD + 8},{top - band_top})">{body}</g>')
+    return _svg("".join(parts), w=W + label_w - PAD + 8, h=12 + row * len(params_list))
 
 
 def render(kind, params):

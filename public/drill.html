@@ -9,10 +9,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261032">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261104">
 </head>
 <body class="solo">
 <div class="pwrap">
+  <div class="sndbar solo" id="sndbar" role="group" aria-label="Sound">
+    <button class="sndbtn" id="mus" type="button" aria-pressed="false" title="Drumline under the round">🎵 Music off</button>
+    <button class="sndbtn" id="crowd" type="button" aria-pressed="false" title="Crowd murmur during the round">📣 Crowd off</button>
+    <button class="sndbtn" id="snd" type="button" aria-pressed="true" title="Sound: whistle, clock ticks, streaks, the buzzer, a cheer for a new best (M)">🔇 Sound off</button>
+  </div>
 
   <!-- ============ PICK ============ -->
   <section id="pick">
@@ -81,7 +86,9 @@
 </div>
 
 <script src="/js/csrf.js"></script>
-<script src="/js/live-drill/common.js?v=20261023"></script>
-<script src="/js/live-drill/solo.js?v=20261032"></script>
+<script src="/js/live-drill/common.js?v=20261104"></script>
+<script>window.LiveDrillSoundConfig = { defaultMuted: true, defaultCrowd: false, storagePrefix: 'mm-drill-solo', cheersFollowCrowd: false };</script>
+<script src="/js/live-drill/sound.js?v=20261105"></script>
+<script src="/js/live-drill/solo.js?v=20261105"></script>
 </body>
 </html>
