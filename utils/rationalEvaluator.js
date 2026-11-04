@@ -57,6 +57,11 @@ function preprocess(expr) {
     .replace(new RegExp(`(\\d+)\\s*([${VC}])`, 'g'), (_, w, g) => { const [n, d] = VULGAR[g]; return `(${w}+${n}/${d})`; })
     .replace(new RegExp(`[${VC}]`, 'g'), (g) => { const [n, d] = VULGAR[g]; return `(${n}/${d})`; })
     .replace(/(\d+)\s+(\d+\s*\/\s*\d+)/g, '($1+$2)')
+    // A fraction written tight ("3/4") is one number. "1 1/2 ÷ 3/4" arrives as
+    // "(1+1/2) / 3/4", and left-to-right division made it ((3/2)/3)/4 = 1/8, so
+    // the key was wrong and a correct 2 was rejected. Spaced slashes
+    // ("12 / 6") stay plain operators.
+    .replace(/(?<![\d.])(\d+)\/(\d+)(?![\d.])/g, '($1/$2)')
     // Implicit multiplication: a value abutting a parenthesis means multiply.
     // Students write derivative/substitution work this way — "f'(2) = 2(2) - 5" —
     // and without this the exact engine returns null, so a correct "-1" can't be
