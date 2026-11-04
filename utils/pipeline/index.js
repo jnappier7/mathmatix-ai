@@ -16,6 +16,7 @@
  * @module pipeline
  */
 
+const { isRecheckRequest, findRecheckTarget } = require('./recheck');
 const { observe, MESSAGE_TYPES } = require('./observe');
 const { diagnose, extractBareExpression } = require('./diagnose');
 const { decide, ACTIONS } = require('./decide');
@@ -42,7 +43,7 @@ const {
   isPolarityAnswer,
   VERIFIER_MODEL,
 } = require('./llmVerifier');
-const { deriveVerificationState, hasMathematicalContent, isPlainAsk } = require('./verificationState');
+const { deriveVerificationState, hasMathematicalContent, isPlainAsk, VERIFICATION_STATES } = require('./verificationState');
 const { gateAdvance } = require('./stepEvaluator');
 const { mathTypeOf } = require('./verifyTopic');
 const verifyMetrics = require('../verifyMetrics');
@@ -149,7 +150,45 @@ function gamificationForClient(persistResults) {
  * @param {Object} [opts]
  * @param {Function} [opts.emitStatus] - streaming stage marker (no-op default)
  */
-async function observeAndDiagnose(message, ctx, { emitStatus = () => {} } = {}) {
+async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheckDepth = 0 } = {}) {
+  // ── "Are they correct?" re-grades what the student already submitted ──
+  // A check request carries no math, so on its own nothing grades it and the
+  // tutor is left free to assert anything (owner session, 2026-11-03: a wrong
+  // 3/8 called correct; 402/402 follow-ups in the verdict eval). Re-run the
+  // last submission through these same stages, in the conversation as it stood
+  // when it was sent, and answer from that verdict. See recheck.js.
+  if (recheckDepth === 0 && isRecheckRequest(message)) {
+    const msgs = ctx.conversation?.messages || [];
+    const idx = findRecheckTarget(msgs);
+    if (idx !== null) {
+      const conv = ctx.conversation;
+      const earlier = await observeAndDiagnose(msgs[idx].content, {
+        ...ctx,
+        conversation: {
+          messages: msgs.slice(0, idx),
+          boardProblem: conv.boardProblem,
+          lastBoardAction: conv.lastBoardAction,
+          lastProblemState: conv.lastProblemState,
+        },
+      }, { emitStatus, recheckDepth: 1 });
+      console.log(`[Pipeline] Re-check of the last submission: ${earlier.diagnosis.type} (${earlier.diagnosis.verificationState})`);
+      earlier.diagnosis.recheck = { of: String(msgs[idx].content).slice(0, 200) };
+      // They asked for a correctness judgment. With no verdict to give, the
+      // tutor must not improvise one — never NOT_APPLICABLE here, even for a
+      // word answer ("true", "DNE") that carries no math of its own.
+      if (earlier.diagnosis.verificationState === VERIFICATION_STATES.NOT_APPLICABLE) {
+        earlier.diagnosis.verificationState = VERIFICATION_STATES.UNVERIFIED;
+      }
+      return {
+        ...earlier,
+        observation: { ...earlier.observation, isRecheck: true },
+        recentUserMessages: msgs.filter(m => m.role === 'user').slice(-6),
+        recentAssistantMessages: msgs.filter(m => m.role === 'assistant').slice(-6),
+        pinnedAtTurnStart: conv?.boardProblem?.tex || null,
+      };
+    }
+  }
+
   // ── Stage 1: OBSERVE ──
   const recentUserMessages = ctx.conversation.messages
     .filter(msg => msg.role === 'user')
@@ -1720,7 +1759,7 @@ async function runPipeline(message, ctx) {
   // still move the boundary and silently reset the evidence window.
   if (verified.extracted?.scaffoldAdvance && ctx.courseStep) {
     const gate = gateAdvance(ctx.courseStep, ctx.conversation, {
-      wasCorrect: diagnosis?.isCorrect === true,
+      wasCorrect: diagnosis?.isCorrect === true && !diagnosis.recheck,
       isParentCourse: ctx.isParentCourse === true,
     });
     if (!gate.allow) {
@@ -1790,7 +1829,9 @@ async function runPipeline(message, ctx) {
     // This replaces the disabled <SKILL_MASTERED> tag path — without it, chat
     // practice never advanced skillMastery and the progress card sat frozen.
     let masteryAttempt = null;
-    if (engineSkillId && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
+    // A re-check ("are they correct?") repeats an earlier verdict for the reply;
+    // that attempt was already counted on its own turn.
+    if (engineSkillId && !diagnosis.recheck && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
       try {
         updateLearningEngines(ctx.user, engineSkillId, diagnosis, observation);
       } catch (err) {

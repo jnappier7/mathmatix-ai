@@ -178,6 +178,15 @@ function extractIntegral(tex) {
   return { integrand, variable: m[2] };
 }
 
+// "+ c" and "+ C" are the same constant of integration. To mathjs they are two
+// variables, so a correct "x^3 + c" against "x^3 + C" was a confident
+// symbolic NO MATCH (verdict eval, 2026-11-03). Upcase the student's lone
+// constant only when the key carries "+ C" and the student wrote no C at all.
+function sameConstantCase(student, correct) {
+  if (!/[+-]\s*C\b/.test(correct) || /\bC\b/.test(student)) return student;
+  return student.replace(/([+-]\s*)c\b/g, '$1C');
+}
+
 /**
  * @param {object} p
  * @param {string} p.studentAnswer  the student's answer (LaTeX or plain)
@@ -206,7 +215,8 @@ function symbolicVerify(p) {
       if (r !== null) return { isCorrect: r, method: 'equation', confidence: 0.98 };
     }
     if (p.correctAnswer != null && p.studentAnswer != null) {
-      const a = latexToExpr(p.studentAnswer); const b = latexToExpr(p.correctAnswer);
+      const a = latexToExpr(sameConstantCase(String(p.studentAnswer), String(p.correctAnswer)));
+      const b = latexToExpr(p.correctAnswer);
       if (a && b) {
         const r = equivalent(a, b);
         if (r !== null) return { isCorrect: r, method: 'equivalence', confidence: 0.97 };

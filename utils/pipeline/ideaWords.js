@@ -29,7 +29,7 @@ const MATH_WORDS = new Set([
 const FILLER = new Set([
   'oh', 'ok', 'okay', 'so', 'um', 'uh', 'hmm', 'well', 'wait', 'then', 'now', 'like', 'yeah', 'yes',
   'i', 'im', "i'm", 'think', 'guess', 'maybe', 'its', "it's", 'it', 'is', 'be', 'would', 'should',
-  'the', 'a', 'an', 'answer', 'and', 'that', 'this', 'get', 'got', 'gives', 'thats', "that's",
+  'there', 'are', 'the', 'a', 'an', 'answer', 'and', 'that', 'this', 'get', 'got', 'gives', 'thats', "that's",
 ]);
 
 function isMathToken(word) {
@@ -47,10 +47,17 @@ function isMathToken(word) {
  * @param {string} text
  * @returns {boolean} true when at least one word is neither math nor filler
  */
+// A number's label at the end of a reply — "52 degrees", "15 days", "28 units
+// squared" — is the answer's unit, not an idea. Both went to the conceptual
+// judge and came back rejected (verdict eval, 2026-11-03).
+const TRAILING_LABEL = /(\d[\d./]*\s*%?)\s*[a-z]+(?:\s+[a-z]+)?\s*[.!?]*\s*$/i;
+
 function hasIdeaWords(text) {
   if (!text || typeof text !== 'string') return false;
-  const words = text.toLowerCase().match(/[a-z][a-z']*/g) || [];
+  const body = text.replace(TRAILING_LABEL, '$1');
+  // A prime is notation: "f'(x)" is f, not the two-letter word "f'".
+  const words = (body.toLowerCase().match(/[a-z][a-z']*/g) || []).map(w => w.replace(/'+$/, ''));
   return words.some(w => w.length >= 2 && !FILLER.has(w) && !isMathToken(w));
 }
 
-module.exports = { hasIdeaWords };
+module.exports = { hasIdeaWords, isMathToken };

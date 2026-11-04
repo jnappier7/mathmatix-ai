@@ -154,6 +154,29 @@ function lastGoodBefore(steps, badIndex) {
   return null;
 }
 
+// The single-letter unknowns a line mentions ("2x = 14" → x). Letters inside
+// words and function names ("sin", "f(") do not count.
+function unknownsIn(line) {
+  const out = new Set();
+  const rx = /(?<![a-z])([a-z])(?![a-z(])/gi;
+  let m;
+  while ((m = rx.exec(line)) !== null) out.add(m[1].toLowerCase());
+  return out;
+}
+
+// True when two lines each mention unknowns and share none. Every line counts,
+// not just the ones the solver can read: "y = 3" is unsolvable to it, and was
+// exactly the line that made the chain a system.
+function solvesForSeveralUnknowns(steps) {
+  const sets = steps.map((s) => unknownsIn(s.line)).filter((u) => u.size > 0);
+  for (let i = 0; i < sets.length; i++) {
+    for (let j = i + 1; j < sets.length; j++) {
+      if (![...sets[i]].some((v) => sets[j].has(v))) return true;
+    }
+  }
+  return false;
+}
+
 function verifyDerivation(workText, problemText, knownTarget) {
   const lines = splitWorkLines(workText);
   if (lines.length < 2) return { verifiable: false, reason: 'not enough steps' };
@@ -170,6 +193,11 @@ function verifyDerivation(workText, problemText, knownTarget) {
   }));
   const solvable = steps.filter((s) => s.solved !== null);
   if (solvable.length < 2) return { verifiable: false, reason: 'not enough solvable steps' };
+  // A chain is one unknown carried line to line. "2x = 14 so x = 7, then y = 3"
+  // solves a SYSTEM: its last line answers for y, and holding it to x's value
+  // rejected a correct solution. Lines solving for different unknowns are not
+  // one derivation — leave them to the graders that read the whole answer.
+  if (solvesForSeveralUnknowns(steps)) return { verifiable: false, reason: 'more than one unknown' };
   // The answer is the last solvable line that is not a check.
   const claims = solvable.filter((s) => !s.check);
   const answerStep = claims.length ? claims[claims.length - 1] : solvable[solvable.length - 1];

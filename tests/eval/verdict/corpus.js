@@ -42,6 +42,11 @@ const P = [
     vtex: '\\frac{1}{2}', correct: ['3/6', '0.5'], wrong: ['4/3', '2/3'] },
   { id: 'frac-4', topic: 'fractions', pose: "Try this one: What's \\(1\\frac{1}{2} \\div \\frac{3}{4}\\)?", v: '2', varName: null,
     correct: ['3/2 x 4/3 = 2'], wrong: ['9/8', '1 1/8'] },
+  // Mixed numbers in prose and in LaTeX — each pose once keyed wrong (2/3, 1/8, 22/3).
+  { id: 'frac-5', topic: 'fractions', pose: 'Try this one: What is 2 1/3 divided by 1/2?', v: '4 2/3', varName: null,
+    correct: ['14/3'], wrong: ['7/6', '1 1/6'] },
+  { id: 'frac-6', topic: 'fractions', pose: "Try this one: What's \\(2\\frac{1}{3} + 1\\frac{1}{2}\\)?", v: '3 5/6', varName: null,
+    correct: ['23/6'], wrong: ['3 2/5', '3 2/6'] },
 
   // ── Integers, order of operations, powers ──
   { id: 'int-1', topic: 'arithmetic', pose: "Try this one: What's \\(-8 + 13\\)?", v: '5', varName: null, correct: [], wrong: ['-5', '21'] },
@@ -90,7 +95,7 @@ const P = [
   { id: 'geo-2', topic: 'geometry', pose: "Try this one: A right triangle has legs 6 and 8. What's the hypotenuse?", v: '10', varName: 'c',
     correct: ['36 + 64 = 100 so c = 10'], wrong: ['14', '100'] },
   { id: 'geo-3', topic: 'geometry', pose: "Try this one: What's the circumference of a circle with radius 3?", v: '6π', varName: null,
-    vtex: '6\\pi', correct: ['6pi', '2π(3) = 6π'], wrong: ['9π', '3π'] },
+    vtex: '6\\pi', correct: ['6pi', '2π(3) = 6π'], wrong: ['9π', '3π', '6'] },  // '6': the π once dropped out and 6 graded right
   { id: 'geo-4', topic: 'geometry', pose: "Try this one: What's the supplement of a 128° angle?", v: '52', varName: null,
     correct: ['52°', '52 degrees', '180 - 128 = 52'], wrong: ['62', '232'] },
   { id: 'geo-5', topic: 'geometry', pose: "Try this one: What's the area of a circle with radius 5?", v: '25π', varName: null,
