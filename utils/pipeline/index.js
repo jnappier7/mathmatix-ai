@@ -134,35 +134,22 @@ function gamificationForClient(persistResults) {
 }
 
 /**
- * Run the full tutoring pipeline.
+ * Stages 1–2 of a turn: observe the message, pick and fire the right verifier
+ * (math or conceptual), and diagnose — ending with the verdict and its
+ * verificationState. Everything a correctness verdict depends on lives here.
  *
- * @param {string} message - The student's raw message
- * @param {Object} ctx - Pipeline context (assembled by chat.js before calling)
- * @param {Object} ctx.user - Mongoose user document
- * @param {Object} ctx.conversation - Mongoose conversation document
- * @param {string} ctx.systemPrompt - Pre-built system prompt
- * @param {Array}  ctx.formattedMessages - Conversation history for LLM
- * @param {Object} ctx.activeSkill - Current skill if any { skillId, displayName, teachingGuidance }
- * @param {Object} ctx.phaseState - Lesson phase state if in structured mode
- * @param {boolean} ctx.hasRecentUpload - Whether student has recent uploads
- * @param {Object}  [ctx.checkWork] - Set on "check my work" turns: { problems } from utils/pipeline/checkWorkVerifier
- * @param {boolean} ctx.stream - Whether to stream the response
- * @param {Object} ctx.res - Express response object (for streaming)
- * @param {number} ctx.aiProcessingStartTime - Date.now() when processing started
- * @param {boolean} [ctx.skipPersist=false] - Skip persist stage and learning engine updates (for anonymous trial chat)
- * @returns {Object} Pipeline result with everything needed for the response
+ * Extracted from runPipeline so the verdict-accuracy eval (tests/eval/verdict)
+ * runs the production path itself rather than a copy that can drift — the
+ * harness-fidelity lesson: an eval that sends what prod doesn't send measures
+ * nothing.
+ *
+ * @param {string} message
+ * @param {Object} ctx - runPipeline's ctx; reads conversation, activeSkill, user,
+ *   hasRecentUpload
+ * @param {Object} [opts]
+ * @param {Function} [opts.emitStatus] - streaming stage marker (no-op default)
  */
-async function runPipeline(message, ctx) {
-  const startTime = Date.now();
-
-  // Is this turn inside a structured course lesson? Both entry points must
-  // answer YES: /api/course-chat sets ctx._course, and /api/chat (which is
-  // where chat.html actually sends course turns — "all chat goes through
-  // /api/chat") sets ctx.isCourseMode when it built the course prompt.
-  // Keying only on _course is why the 2026-07-29 course-menu fix never fired
-  // in production.
-  const inCourseLesson = !!(ctx._course || ctx.isCourseMode);
-
+async function observeAndDiagnose(message, ctx, { emitStatus = () => {} } = {}) {
   // ── Stage 1: OBSERVE ──
   const recentUserMessages = ctx.conversation.messages
     .filter(msg => msg.role === 'user')
@@ -238,14 +225,6 @@ async function runPipeline(message, ctx) {
   // and the assertion invariant then stops the tutor repeating a rejection it
   // can no longer support. Note what this deliberately is NOT: pushback alone
   // never earns a concession. The tutor concedes only if verification says so.
-  // Honest stage status for the streaming client (owner, 2026-07-29): the
-  // wait before the first token is the most-felt latency in the app, and the
-  // pipeline genuinely knows what it is doing during it. These are REAL stage
-  // markers, never fake progress — emitted only on the streaming path.
-  const emitStatus = (stage) => {
-    if (!ctx.stream || !ctx.res) return;
-    try { ctx.res.write(`data: ${JSON.stringify({ type: 'status', stage })}\n\n`); } catch (_) { /* stream gone */ }
-  };
 
   let llmVerificationPromise = null;
   const disputedSubmission = observation.isDispute
@@ -394,6 +373,59 @@ async function runPipeline(message, ctx) {
     diagnosis,
     hasMathematicalContent(message) && !isPlainAsk(message, observation, verificationCandidate)
   );
+
+  return {
+    observation, recentUserMessages, recentAssistantMessages,
+    verificationCandidate, llmVerificationPromise, pinnedAtTurnStart, diagnosis,
+  };
+}
+
+/**
+ * Run the full tutoring pipeline.
+ *
+ * @param {string} message - The student's raw message
+ * @param {Object} ctx - Pipeline context (assembled by chat.js before calling)
+ * @param {Object} ctx.user - Mongoose user document
+ * @param {Object} ctx.conversation - Mongoose conversation document
+ * @param {string} ctx.systemPrompt - Pre-built system prompt
+ * @param {Array}  ctx.formattedMessages - Conversation history for LLM
+ * @param {Object} ctx.activeSkill - Current skill if any { skillId, displayName, teachingGuidance }
+ * @param {Object} ctx.phaseState - Lesson phase state if in structured mode
+ * @param {boolean} ctx.hasRecentUpload - Whether student has recent uploads
+ * @param {Object}  [ctx.checkWork] - Set on "check my work" turns: { problems } from utils/pipeline/checkWorkVerifier
+ * @param {boolean} ctx.stream - Whether to stream the response
+ * @param {Object} ctx.res - Express response object (for streaming)
+ * @param {number} ctx.aiProcessingStartTime - Date.now() when processing started
+ * @param {boolean} [ctx.skipPersist=false] - Skip persist stage and learning engine updates (for anonymous trial chat)
+ * @returns {Object} Pipeline result with everything needed for the response
+ */
+async function runPipeline(message, ctx) {
+  const startTime = Date.now();
+
+  // Is this turn inside a structured course lesson? Both entry points must
+  // answer YES: /api/course-chat sets ctx._course, and /api/chat (which is
+  // where chat.html actually sends course turns — "all chat goes through
+  // /api/chat") sets ctx.isCourseMode when it built the course prompt.
+  // Keying only on _course is why the 2026-07-29 course-menu fix never fired
+  // in production.
+  const inCourseLesson = !!(ctx._course || ctx.isCourseMode);
+
+  // Honest stage status for the streaming client (owner, 2026-07-29): the
+  // wait before the first token is the most-felt latency in the app, and the
+  // pipeline genuinely knows what it is doing during it. These are REAL stage
+  // markers, never fake progress — emitted only on the streaming path.
+  const emitStatus = (stage) => {
+    if (!ctx.stream || !ctx.res) return;
+    try { ctx.res.write(`data: ${JSON.stringify({ type: 'status', stage })}\n\n`); } catch (_) { /* stream gone */ }
+  };
+
+  // ── Stages 1–2: OBSERVE → (verifier selection) → DIAGNOSE ──
+  // One function, shared with the verdict-accuracy eval (tests/eval/verdict),
+  // so what the eval grades is exactly what production grades.
+  const {
+    observation, recentUserMessages, recentAssistantMessages,
+    verificationCandidate, llmVerificationPromise, pinnedAtTurnStart, diagnosis,
+  } = await observeAndDiagnose(message, ctx, { emitStatus });
 
   if (diagnosis.type !== 'no_answer') {
     console.log(`[Pipeline] Diagnose: ${diagnosis.type} (answer: ${diagnosis.answer}, correct: ${diagnosis.correctAnswer})`);
@@ -2390,6 +2422,7 @@ function shouldBackfillProblemPose({ structuredTurnType, decisionAction, pinnedT
 }
 
 module.exports = {
+  observeAndDiagnose,
   runPipeline,
   gamificationForClient,
   shouldBackfillProblemPose,
