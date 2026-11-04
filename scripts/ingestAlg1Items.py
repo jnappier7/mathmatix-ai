@@ -108,6 +108,18 @@ def parse_correct_option(answer_str, choices):
     return None
 
 
+def strip_choice_letter(choice, i):
+    """'A) 4 units right' -> '4 units right'. Some source choices carry their own
+    letter, which the client then prints after its label ('A) A) …'). Only the
+    choice's OWN letter is stripped, so a choice that starts with a different
+    letter-and-paren is left alone."""
+    s = str(choice)
+    m = re.match(r"\s*([A-K])\)\s+(.*)$", s, re.S)
+    if m and m.group(1) == LETTERS[i]:
+        return m.group(2).strip()
+    return s
+
+
 def difficulty_from(points, section):
     """Map point value -> 1-5 difficulty (tests skew a touch harder than quizzes)."""
     d = max(1, min(5, int(points or 2)))
@@ -136,17 +148,36 @@ def build_problem(mod, section, grp, it, vi, skill_id, secondary):
     answer_val = it["answer"][vi]
     answer_type = ANSWER_TYPE.get(itype, "constructed-response")
 
+    equivalents = []
     options, correct = None, None
     if itype == "mc" and it.get("choices"):
-        choices = it["choices"][vi]
-        options = [{"label": LETTERS[i], "text": str(c)} for i, c in enumerate(choices)]
+        choices = [strip_choice_letter(c, i) for i, c in enumerate(it["choices"][vi])]
+        options = [{"label": LETTERS[i], "text": c} for i, c in enumerate(choices)]
         correct = parse_correct_option(answer_val, choices)
+        # The key is the keyed CHOICE'S TEXT, never the source's letter or its
+        # "B — (2, 6)" / "Graph B (closed circle…)" note: the grader matches an
+        # option's text against answer.value, and a frozen test re-letters its
+        # choices by text, so a letter-only key graded nothing (2026-11-03).
+        if correct:
+            answer_val = choices[LETTERS.index(correct)]
+            # A typed "(-3, 1)" must match the printed "(−3, 1)"
+            ascii_val = answer_val.replace("−", "-")
+            if ascii_val != answer_val:
+                equivalents = [ascii_val]
 
     svg = None
     figure = None
+    # "Graph A … Graph D" choices are drawn: without the picture the item has
+    # nothing to choose between (they shipped that way until 2026-11-03).
+    src_choice_figs = it.get("choices_figures")
+    if itype == "mc" and src_choice_figs:
+        cparams = src_choice_figs["params"][vi]
+        svg = figrender.render_choices(src_choice_figs.get("kind"), cparams,
+                                       [o["text"] for o in options])
+        figure = {"kind": "choices", "choiceKind": src_choice_figs.get("kind"), "params": cparams}
     src_fig, src_key = it.get("figure"), it.get("key_figure")
     if src_fig or src_key:
-        figure = {}
+        figure = figure or {}
         if src_fig:
             params = src_fig.get("params")
             pv = params[vi] if isinstance(params, list) else params
@@ -173,7 +204,7 @@ def build_problem(mod, section, grp, it, vi, skill_id, secondary):
         "prompt": prompt,
         "svg": svg,
         "figure": figure,
-        "answer": {"type": "exact", "value": answer_val, "equivalents": []},
+        "answer": {"type": "exact", "value": answer_val, "equivalents": equivalents},
         "answerType": answer_type,
         "options": options,
         "correctOption": correct,
