@@ -35,10 +35,9 @@ const KNOWN = new Set([
 ]);
 
 // Follow-up turns ("are they correct?") left with no verdict AND no restriction.
-// On 2026-11-03 that was every one of them (402/402): the question isn't read
-// as being about the earlier answers, so nothing re-grades them and
-// verificationState is not_applicable. A ratchet — lower it as the gap closes.
-const KNOWN_UNGUARDED_FOLLOWUPS = 402;
+// Was 402/402 on 2026-11-03 (nothing re-graded the earlier answers, and
+// verificationState came out not_applicable); recheck.js re-grades them now.
+const KNOWN_UNGUARDED_FOLLOWUPS = 0;
 
 let results;
 let summary;
@@ -54,7 +53,9 @@ beforeAll(async () => {
   summary = summarize(results);
 }, 120000);
 
-const key = (r) => `${r.id}|${r.answer}`;
+// A follow-up row's answer reads "<answer> → <check request>"; it re-grades the
+// same answer, so it shares that answer's KNOWN entry.
+const key = (r) => `${r.id}|${String(r.answer).split(' → ')[0]}`;
 
 test('no NEW wrong verdict from the deterministic graders', () => {
   const unexpected = summary.failures.filter(f => f.outcome !== 'UNGUARDED' && !KNOWN.has(key(f)));

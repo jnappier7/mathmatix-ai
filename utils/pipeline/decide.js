@@ -165,6 +165,10 @@ function decide(observation, diagnosis, context = {}) {
   // read first, and make it verify the key before using it.
   applyActReviewDirective(decision, context, observation);
 
+  // "Are they correct?" — this turn's verdict is a re-grade of what they
+  // already sent (recheck.js). Say what it found, first and plainly.
+  applyRecheckDirective(decision, observation, diagnosis);
+
   // "The test marked it wrong" / "isn't 52 exactly right?" — the verdict comes
   // from the math, not from whatever marked it and not from who insists.
   applyGradeDisputeGuard(decision, observation, context);
@@ -261,6 +265,31 @@ function firstWrongStepDirective(diagnosis) {
   return `FIND THE FIRST WRONG STEP: work out which move produces their answer (or check their value in the original problem) and name that step specifically. If an earlier move of theirs was right, say which one.${noFakePraise}${tail}`;
 }
 
+
+// ── Re-check (owner session, 2026-11-03) ──
+// "no need. are they correct?" after five numbered answers, one of them wrong,
+// got "You nailed all of them!" — nothing had graded the question. The
+// pipeline now re-grades the earlier submission; this tells the tutor that
+// the verdict IS the answer to the question asked. Item numbers only: which
+// answer is right stays theirs to find (#1 anti-cheat rule).
+function applyRecheckDirective(decision, observation, diagnosis) {
+  if (!observation || !observation.isRecheck || !diagnosis) return;
+  const lead = 'RE-CHECK: the student asked whether the answers they ALREADY gave are right, and those answers were just checked again.';
+  let verdict;
+  const wrongItems = diagnosis.batch && Array.isArray(diagnosis.batch.items)
+    ? diagnosis.batch.items.filter(i => i.verdict === false).map(i => i.n)
+    : [];
+  if (diagnosis.isCorrect === true) {
+    verdict = 'Verified: they ARE correct. Say so plainly in your first sentence, then move on — do not ask them to walk through work they just declined to explain.';
+  } else if (diagnosis.isCorrect === false) {
+    verdict = wrongItems.length
+      ? `Verified: NOT all correct — number${wrongItems.length > 1 ? 's' : ''} ${wrongItems.join(', ')} ${wrongItems.length > 1 ? 'are' : 'is'} wrong. Say that plainly first, name only the item number(s), and ask them to take another look at ${wrongItems.length > 1 ? 'those' : 'that one'}. Never say they got them all, and do not give the right answer.`
+      : 'Verified: NOT correct. Say that plainly first, then point them back at it — do not give the right answer.';
+  } else {
+    verdict = 'They could NOT be verified. Do not say they are right and do not say they are wrong. Go through them with the student one at a time.';
+  }
+  decision.directives.unshift(`${lead} ${verdict}`);
+}
 
 // ── ACT review context (owner evaluation, 2026-09-09) ──
 // The missed question sat in the system prompt while the ACTION DIRECTIVES in

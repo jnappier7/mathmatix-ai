@@ -134,6 +134,9 @@ function isEquationStep(message, liveTexts) {
  * @returns {{ outcome: 'partial'|'step'|'answered'|'none', correct: boolean, skipped: boolean }}
  */
 function classifyTurn({ diagnosis, extracted, message, liveTexts }) {
+  // "Are they correct?" re-grades an earlier submission so the reply can answer
+  // it; that attempt was counted when it was made (recheck.js).
+  if (diagnosis && diagnosis.recheck) return { outcome: 'none', correct: false, skipped: false };
   if (diagnosis && diagnosis.type === 'correct_partial') {
     return { outcome: 'partial', correct: false, skipped: false };
   }
