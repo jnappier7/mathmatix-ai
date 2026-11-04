@@ -44,9 +44,10 @@ function seededMath(seed = 12345) {
   return Object.assign(Object.create(Math), { random });
 }
 
-function load(store = new Map(), { fetch } = {}) {
+function load(store = new Map(), { fetch, config } = {}) {
   const { AC, made } = fakeAudio();
   const window = { AudioContext: AC };
+  if (config) window.LiveDrillSoundConfig = config; // the page's profile (drill.html sets the solo one)
   const localStorage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)) };
   const sandbox = { window, localStorage, setTimeout, clearTimeout, setInterval, clearInterval, Math: seededMath(), Promise, Float32Array };
   if (fetch) sandbox.fetch = fetch; // the page has fetch; the bare sandbox (most tests) does not, so the synth stands in
@@ -227,6 +228,31 @@ test('a cheer file that fails to load leaves the synthesized roar in place', asy
   const before = made.buffer;
   S.cheer(true);
   expect(made.buffer).toBeGreaterThan(before + 10); // the roar's claps
+});
+
+const SOLO = { defaultMuted: true, defaultCrowd: false, storagePrefix: 'mm-drill-solo', cheersFollowCrowd: false };
+
+test('solo practice starts MUTED with the crowd off, remembers its own switches, and still cheers a best', () => {
+  const store = new Map();
+  const { S, made } = load(store, { config: SOLO });
+  expect(S.muted).toBe(true);
+  expect(S.crowdOn).toBe(false);
+  S.unlock();
+  S.setScene('live');
+  jest.advanceTimersByTime(2000);
+  expect(made.osc + made.buffer).toBe(0); // muted: not a sound, no murmur
+  S.setMuted(false);
+  jest.advanceTimersByTime(1000);
+  expect(made.oscs.filter((o) => o.type === 'sawtooth')).toHaveLength(0); // crowd off: still no murmur
+  // a personal best gets its cheer even with the crowd murmur off (the projector gates cheers on Crowd)
+  const before = made.buffer;
+  S.cheer(true);
+  expect(made.buffer).toBeGreaterThan(before + 10);
+  // remembered under the solo keys, never the projector's
+  expect([...store.keys()]).toEqual(['mm-drill-solo-muted']);
+  expect(load(store, { config: SOLO }).S.muted).toBe(false);
+  expect(load(store).S.muted).toBe(false); // the projector profile reads its own key: untouched default
+  expect(load(store).S.crowdOn).toBe(true);
 });
 
 test('nothing breaks before the first click unlocks audio', () => {

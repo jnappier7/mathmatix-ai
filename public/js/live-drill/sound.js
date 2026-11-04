@@ -1,5 +1,6 @@
-// Live Two-Minute Drill — stadium sound for the PROJECTOR only (public/live-drill-host.html).
-// Phones stay silent on purpose: thirty phones beeping out of sync is noise, not energy.
+// Live Two-Minute Drill — stadium sound for the PROJECTOR (public/live-drill-host.html) and, muted
+// until the student turns it on, for solo practice (public/drill.html — see LiveDrillSoundConfig
+// below). Phones in a CLASS game stay silent on purpose: thirty phones beeping out of sync is noise.
 //
 // Everything is synthesized with Web Audio except the two recorded cheers (below) — a crowd's roar is
 // the one sound synthesis never sold, and the owner supplied real ones. Browsers only
@@ -14,13 +15,22 @@
 //           reveal. On by default.
 // The page says WHERE the game is with scene(); this module decides what that sounds like.
 (function () {
-  const KEYS = { muted: 'mm-live-drill-muted', music: 'mm-live-drill-music', crowd: 'mm-live-drill-crowd' };
+  // The page says which room it is before loading this script (window.LiveDrillSoundConfig):
+  //   the projector (default) — sound on, crowd on, remembered under mm-live-drill-*;
+  //   solo practice (/drill)  — MUTED until the student turns it on, crowd (the murmur) off, its own
+  //                             storage keys so a teacher's projector choice never bleeds into a kid's
+  //                             phone, and cheers that follow the Sound switch alone: a personal best
+  //                             deserves its cheer even with the murmur off.
+  const CFG = window.LiveDrillSoundConfig || {};
+  const PREFIX = CFG.storagePrefix || 'mm-live-drill';
+  const KEYS = { muted: `${PREFIX}-muted`, music: `${PREFIX}-music`, crowd: `${PREFIX}-crowd` };
+  const cheersFollowCrowd = CFG.cheersFollowCrowd !== false;
   const read = (k, dflt) => { try { const v = localStorage.getItem(k); return v == null ? dflt : v === '1'; } catch { return dflt; } };
   const save = (k, v) => { try { localStorage.setItem(k, v ? '1' : '0'); } catch { /* private mode */ } };
 
-  let muted = read(KEYS.muted, false);
+  let muted = read(KEYS.muted, CFG.defaultMuted === true);
   let musicOn = read(KEYS.music, false);
-  let crowdOn = read(KEYS.crowd, true);
+  let crowdOn = read(KEYS.crowd, CFG.defaultCrowd !== false);
   let scene = 'setup';
   let hype = 0;
 
@@ -360,7 +370,7 @@
   /** The stands go up: a roar, scattered claps, a few voices. Plays on the sfx bus so it's heard
    *  even in the lobby or the final, where the murmur is down. */
   function cheer(big) {
-    if (!crowdOn || !live()) return;
+    if (!live() || (cheersFollowCrowd && !crowdOn)) return;
     // the real thing, when it has loaded — a touch of random speed so repeats aren't a loop
     if (playSample(big ? 'big' : 'cheer', { vol: SAMPLE_LEVEL[big ? 'big' : 'cheer'], rate: 0.96 + Math.random() * 0.08 })) return;
     const len = big ? 3.4 : 2.2;
@@ -376,7 +386,7 @@
   }
   /** "Ohhh": the stands sag. Huddle, when most of the class missed it. */
   function groan() {
-    if (!crowdOn || !live()) return;
+    if (!live() || (cheersFollowCrowd && !crowdOn)) return;
     hiss({ dur: 1.5, vol: 0.2, type: 'bandpass', freq: 520, slideTo: 260, q: 1.1, attack: 0.18 });
     [196, 233, 262].forEach((f, i) => tone({ start: 0.05 * i, freq: f, slideTo: f * 0.72, type: 'sawtooth', dur: 1.2, vol: 0.02, filter: 700 }));
   }
