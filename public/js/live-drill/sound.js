@@ -1,15 +1,17 @@
 // Live Two-Minute Drill — stadium sound for the PROJECTOR only (public/live-drill-host.html).
 // Phones stay silent on purpose: thirty phones beeping out of sync is noise, not energy.
 //
-// Everything is synthesized with Web Audio — no files, nothing to load or license. Browsers only
+// Everything is synthesized with Web Audio except the two recorded cheers (below) — a crowd's roar is
+// the one sound synthesis never sold, and the owner supplied real ones. Browsers only
 // let a page make sound after a click, so unlock() runs on the teacher's first click (Open lobby,
 // Kick off, …). Three switches, each remembered on this device:
 //   Sound — the master. Muted means silent, whatever the other two say.
 //   Music — an original drumline + bass loop under the lobby and the game. OFF until turned on:
 //           a room that's taking a test next door shouldn't get a marching band by surprise.
 //   Crowd — a gym full of voices (a dozen synthesized speakers talking over each other, stray claps
-//           and whoops) during play that gets busier as a ball nears the goal line, a cheer on a
-//           touchdown, and (Huddle) a cheer or a groan on the reveal. On by default.
+//           and whoops) during play that gets busier as a ball nears the goal line, a REAL recorded
+//           cheer on a touchdown (public/audio/live-drill/), and (Huddle) a cheer or a groan on the
+//           reveal. On by default.
 // The page says WHERE the game is with scene(); this module decides what that sounds like.
 (function () {
   const KEYS = { muted: 'mm-live-drill-muted', music: 'mm-live-drill-music', crowd: 'mm-live-drill-crowd' };
@@ -51,6 +53,7 @@
       mix();
     }
     if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    loadSamples();
   }
 
   const live = () => ctx && !muted;
@@ -77,6 +80,50 @@
     const t = setTimeout(() => { pending.delete(t); fn(); }, ms);
     pending.add(t);
   }
+
+  // ---------------------------------------------------------------- recorded cheers
+  // Two real crowd recordings (public/audio/live-drill/, picked by the owner 2026-11-04) carry the
+  // moments synthesis can't: the roar on a touchdown, a pick six or the final (cheer-big, 6 s) and
+  // the smaller cheer on a Huddle reveal the class mostly got, or a new king (cheer, 4.8 s). They
+  // load after the first click (fetch + decodeAudioData, same-origin, CSP mediaSrc 'self') and play
+  // on the sfx bus at a slightly random speed so two touchdowns never sound like a loop. Until they
+  // have loaded — or if they can't (offline, a blocked fetch, the test's fake graph) — the
+  // synthesized roar in cheer() stands in, so a touchdown is never silent.
+  const SAMPLES = { cheer: '/audio/live-drill/cheer.mp3', big: '/audio/live-drill/cheer-big.mp3' };
+  const SAMPLE_LEVEL = { cheer: 0.55, big: 0.7 }; // both files peak near full scale; the horn sits at ~0.15
+  const samples = {}; // name → AudioBuffer, once decoded
+  let samplesRequested = false;
+  function loadSamples() {
+    if (samplesRequested || !ctx || typeof fetch !== 'function' || typeof ctx.decodeAudioData !== 'function') return;
+    samplesRequested = true;
+    for (const [name, url] of Object.entries(SAMPLES)) {
+      fetch(url, { cache: 'force-cache' })
+        .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(String(r.status)))))
+        .then((bytes) => ctx.decodeAudioData(bytes))
+        .then((audio) => { samples[name] = audio; })
+        .catch(() => { /* the synthesized roar stands in */ });
+    }
+  }
+  /** Play a decoded recording with a soft edge at both ends. False if it isn't loaded (yet). */
+  function playSample(name, { vol = 1, rate = 1, bus = sfx, fadeOut = 0.6 } = {}) {
+    const buf = samples[name];
+    if (!buf || !live()) return false;
+    const t0 = ctx.currentTime;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.playbackRate.value = rate;
+    const dur = buf.duration / rate;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.03);
+    g.gain.setValueAtTime(vol, t0 + Math.max(0.03, dur - fadeOut));
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(g).connect(bus);
+    src.start(t0);
+    src.stop(t0 + dur + 0.05);
+    return true;
+  }
+  const loaded = (name) => !!samples[name];
 
   // ---------------------------------------------------------------- one-shot voices
 
@@ -314,6 +361,8 @@
    *  even in the lobby or the final, where the murmur is down. */
   function cheer(big) {
     if (!crowdOn || !live()) return;
+    // the real thing, when it has loaded — a touch of random speed so repeats aren't a loop
+    if (playSample(big ? 'big' : 'cheer', { vol: SAMPLE_LEVEL[big ? 'big' : 'cheer'], rate: 0.96 + Math.random() * 0.08 })) return;
     const len = big ? 3.4 : 2.2;
     // the roar is mostly VOICES — a dozen "yeah"s sliding up at once — with a little breath of noise under it
     hiss({ dur: len, vol: big ? 0.22 : 0.14, type: 'bandpass', freq: 1300, q: 0.6, attack: 0.25 });
@@ -351,6 +400,8 @@
     },
     cheer,
     groan,
+    /** Whether the recorded cheers have loaded (false until the first click's fetch lands). */
+    get recordedCheers() { return loaded('cheer') && loaded('big'); },
     /** Referee's whistle: kickoff. */
     whistle() {
       tone({ freq: 2600, type: 'square', dur: 0.12, vol: 0.06 });

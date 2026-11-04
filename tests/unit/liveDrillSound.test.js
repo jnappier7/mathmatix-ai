@@ -29,7 +29,8 @@ function fakeAudio() {
     createGain() { const g = node({ gain: param(1) }); made.gains.push(g); return g; }
     createOscillator() { made.osc++; const o = node({ type: 'sine', frequency: param(440) }); made.oscs.push(o); return o; }
     createBiquadFilter() { const f = node({ type: 'lowpass', frequency: param(350), Q: param(1) }); made.filters.push(f); return f; }
-    createBufferSource() { made.buffer++; const s = node({ buffer: null, loop: false }); made.sources.push(s); return s; }
+    createBufferSource() { made.buffer++; const s = node({ buffer: null, loop: false, playbackRate: param(1) }); made.sources.push(s); return s; }
+    decodeAudioData(bytes) { return made.decode ? made.decode(bytes) : Promise.reject(new Error('no decoder')); }
     createStereoPanner() { return node({ pan: param(0) }); }
     createBuffer(ch, len) { const d = new Float32Array(len); return { getChannelData: () => d }; }
   }
@@ -43,13 +44,16 @@ function seededMath(seed = 12345) {
   return Object.assign(Object.create(Math), { random });
 }
 
-function load(store = new Map()) {
+function load(store = new Map(), { fetch } = {}) {
   const { AC, made } = fakeAudio();
   const window = { AudioContext: AC };
   const localStorage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)) };
-  vm.runInNewContext(SRC, { window, localStorage, setTimeout, clearTimeout, setInterval, clearInterval, Math: seededMath(), Promise, Float32Array });
+  const sandbox = { window, localStorage, setTimeout, clearTimeout, setInterval, clearInterval, Math: seededMath(), Promise, Float32Array };
+  if (fetch) sandbox.fetch = fetch; // the page has fetch; the bare sandbox (most tests) does not, so the synth stands in
+  vm.runInNewContext(SRC, sandbox);
   return { S: window.LiveDrillSound, made, store };
 }
+const settle = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 
 beforeEach(() => jest.useFakeTimers());
 afterEach(() => jest.useRealTimers());
@@ -183,6 +187,46 @@ test('crowd off silences the cheers but not the horn', () => {
   const n = made.osc + made.buffer;
   S.blitz(); // a game cue, not crowd: it plays with the crowd off
   expect(made.osc + made.buffer).toBeGreaterThan(n);
+});
+
+test('the touchdown cheer is the recording once it has loaded, and the synthesized roar until then', async () => {
+  const decoded = { cheer: { duration: 4.8, name: 'cheer' }, big: { duration: 6.0, name: 'big' } };
+  const fetched = [];
+  const fetch = (url) => { fetched.push(url); return Promise.resolve({ ok: true, arrayBuffer: () => Promise.resolve({ url }) }); };
+  const { S, made } = load(new Map(), { fetch });
+  made.decode = (bytes) => Promise.resolve(bytes.url.includes('big') ? decoded.big : decoded.cheer);
+  S.unlock();
+  expect(fetched.sort()).toEqual(['/audio/live-drill/cheer-big.mp3', '/audio/live-drill/cheer.mp3']);
+  // before the files land: a cheer is the synthesized roar (noise bursts), nothing recorded
+  expect(S.recordedCheers).toBe(false);
+  S.cheer(true);
+  expect(made.sources.some((x) => x.buffer && x.buffer.name)).toBe(false);
+  await settle();
+  expect(S.recordedCheers).toBe(true);
+  const before = made.sources.length;
+  S.cheer(true);
+  const played = made.sources.slice(before);
+  expect(played).toHaveLength(1); // the recording alone — no synthesized roar on top
+  expect(played[0].buffer.name).toBe('big');
+  expect(played[0].playbackRate.value).toBeGreaterThan(0.9);
+  S.cheer(false);
+  expect(made.sources[made.sources.length - 1].buffer.name).toBe('cheer');
+  // crowd off: the recordings stay quiet too
+  S.setCrowd(false);
+  const n = made.sources.length;
+  S.cheer(true);
+  expect(made.sources.length).toBe(n);
+});
+
+test('a cheer file that fails to load leaves the synthesized roar in place', async () => {
+  const fetch = () => Promise.resolve({ ok: false, status: 404 });
+  const { S, made } = load(new Map(), { fetch });
+  S.unlock();
+  await settle();
+  expect(S.recordedCheers).toBe(false);
+  const before = made.buffer;
+  S.cheer(true);
+  expect(made.buffer).toBeGreaterThan(before + 10); // the roar's claps
 });
 
 test('nothing breaks before the first click unlocks audio', () => {
