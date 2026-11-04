@@ -23,6 +23,7 @@ const { isAuthenticated, isAdmin } = require('../middleware/auth');
 const { sendBulkEmail } = require('../utils/emailService');
 
 const { anyRole } = require('../utils/roleQuery');
+const { unsubscribeUrl, marketingHeaders, marketingFooterHtml } = require('../utils/emailUnsubscribe');
 // ============================================
 // AUDIENCE ENDPOINTS
 // ============================================
@@ -34,11 +35,15 @@ const { anyRole } = require('../utils/roleQuery');
 router.get('/audiences', isAuthenticated, isAdmin, async (req, res) => {
     try {
         // Count each audience type
-        const [studentCount, parentCount, teacherCount, waitlistCount] = await Promise.all([
-            User.countDocuments({ ...anyRole('student'), email: { $exists: true, $ne: '' } }),
-            User.countDocuments({ ...anyRole('parent'), email: { $exists: true, $ne: '' } }),
-            User.countDocuments({ ...anyRole('teacher'), email: { $exists: true, $ne: '' } }),
-            Waitlist.countDocuments({ email: { $exists: true, $ne: '' } })
+        // Same clause the send resolves with (has an email, has not opted out),
+        // so the number shown here is the number that will be mailed.
+        const base = AdminEmail.marketingAudienceFilter();
+        const [studentCount, parentCount, teacherCount, waitlistCount, optedOutCount] = await Promise.all([
+            User.countDocuments({ ...anyRole('student'), ...base }),
+            User.countDocuments({ ...anyRole('parent'), ...base }),
+            User.countDocuments({ ...anyRole('teacher'), ...base }),
+            Waitlist.countDocuments(base),
+            User.countDocuments({ 'emailPreferences.marketingOptOut': true })
         ]);
 
         // Get all classes (enrollment codes)
@@ -63,7 +68,8 @@ router.get('/audiences', isAuthenticated, isAdmin, async (req, res) => {
                 waitlist: { label: 'Waitlist Signups', count: waitlistCount }
             },
             classes,
-            totalWithEmail: studentCount + parentCount + teacherCount + waitlistCount
+            totalWithEmail: studentCount + parentCount + teacherCount + waitlistCount,
+            optedOut: optedOutCount
         });
 
     } catch (error) {
@@ -433,22 +439,25 @@ async function sendBulkEmailCampaign(campaignId) {
                 if (recipient.status !== 'pending') return;
 
                 try {
+                    // Every broadcast is marketing mail: a per-recipient signed
+                    // unsubscribe link in the footer (the old footer pointed at a
+                    // settings page that did not exist) and the one-click headers
+                    // mail clients turn into their own Unsubscribe button.
+                    const unsubUrl = unsubscribeUrl(recipient.userId ? 'user' : 'waitlist', recipient.userId || recipient.waitlistId, baseUrl);
                     // Build email body with footer (replace template variables)
-                    const bodyWithVars = campaign.body.replace(/\{\{BASE_URL\}\}/g, baseUrl);
+                    const bodyWithVars = campaign.body
+                        .replace(/\{\{BASE_URL\}\}/g, baseUrl)
+                        .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
                     const fullBody = campaign.isHtml
-                        ? `${bodyWithVars}
-                            <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
-                            <p style="font-size: 12px; color: #666; text-align: center;">
-                                This email was sent by MATHMATIX AI administration.<br>
-                                <a href="${baseUrl}/settings.html" style="color: #667eea;">Manage email preferences</a>
-                            </p>`
-                        : `${bodyWithVars}\n\n---\nThis email was sent by MATHMATIX AI administration.`;
+                        ? `${bodyWithVars}${marketingFooterHtml(unsubUrl, { reason: 'You are receiving this because you have a MATHMATIX.AI account.' })}`
+                        : `${bodyWithVars}\n\n---\nYou are receiving this because you have a MATHMATIX.AI account.\nUnsubscribe: ${unsubUrl}`;
 
                     await transport.sendMail({
                         from: `"${emailConfig.fromName}" <${emailConfig.from}>`,
                         replyTo: emailConfig.replyTo,
                         to: recipient.email,
                         subject: campaign.subject,
+                        headers: marketingHeaders(unsubUrl, emailConfig.replyTo),
                         [campaign.isHtml ? 'html' : 'text']: fullBody
                     });
 

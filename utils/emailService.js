@@ -6,6 +6,7 @@ const { renderReportEmail } = require('./parentReportEmail');
 // One phrase for the free tier everywhere it is stated (docs/CONTENT_STANDARDS.md).
 const { freeTierPhrase } = require('./aiTimeMeter');
 const { messagingThreadRoles } = require('./messagingAccess');
+const { marketingHeaders } = require('./emailUnsubscribe');
 
 // Create reusable SMTP transporter
 let transporter = null;
@@ -223,7 +224,9 @@ async function sendParentInvite(parentEmail, studentName, actionUrl, existingAcc
 // Shared CAN-SPAM footer for one-off campaign emails. mailingAddress is REQUIRED
 // for legal compliance; the campaign script refuses to send without it.
 function campaignFooter(data) {
-  const unsub = `mailto:${getEmailConfig().replyTo}?subject=unsubscribe`;
+  // A signed per-recipient link when the caller has one (scripts/reactivationCampaign.js
+  // passes data.unsubscribeUrl); the mailto is the fallback, not the plan.
+  const unsub = data.unsubscribeUrl || `mailto:${getEmailConfig().replyTo}?subject=unsubscribe`;
   return `
     <hr style="border:none;border-top:1px solid #eee;margin:28px 0 12px;">
     <p style="font-size:0.75rem;color:#999;line-height:1.5;">
@@ -247,6 +250,7 @@ async function sendReactivationParentEmail(parentEmail, data) {
     const streakLine = data.longestStreak > 0
       ? `<li>🔥 <strong>${data.longestStreak}-day</strong> best streak</li>` : '';
     const mailOptions = {
+      headers: data.unsubscribeUrl ? marketingHeaders(data.unsubscribeUrl, getEmailConfig().replyTo) : undefined,
       from: getFromAddress(),
       replyTo: getEmailConfig().replyTo,
       to: parentEmail,
@@ -289,6 +293,7 @@ async function sendReactivationKidEmail(studentEmail, data) {
     const child = data.childFirstName || 'there';
     const tutor = data.tutorName || 'Your tutor at Mathmatix';
     const mailOptions = {
+      headers: data.unsubscribeUrl ? marketingHeaders(data.unsubscribeUrl, getEmailConfig().replyTo) : undefined,
       from: getFromAddress(),
       replyTo: getEmailConfig().replyTo,
       to: studentEmail,

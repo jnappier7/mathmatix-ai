@@ -21,7 +21,8 @@ const CSRF_EXEMPT_ROUTES = [
   '/api/chat/track-time',      // Time tracking heartbeat (read-only)
   '/api/session/end',          // Session end via sendBeacon (can't send custom headers)
   '/api/session/save-mastery', // Mastery save via sendBeacon (can't send custom headers)
-  '/api/billing/webhook'       // Stripe webhook (external, uses signature verification)
+  '/api/billing/webhook',      // Stripe webhook (external, uses signature verification)
+  '/unsubscribe'               // One-click email opt-out: mail clients POST here (RFC 8058) with no session or cookie
 ];
 
 /**
