@@ -21,7 +21,7 @@ function fakeAudio() {
     value: v, setValueAtTime() { made.events++; }, cancelScheduledValues() {}, linearRampToValueAtTime(x) { this.value = x; },
     exponentialRampToValueAtTime() {}, setTargetAtTime(x, at) { made.events++; this.target = x; this.moves = (this.moves || 0) + 1; (this.at = this.at || []).push(at); },
   });
-  const node = (extra) => ({ connect: (n) => n, start() {}, stop() {}, ...extra });
+  const node = (extra) => ({ connect: (n) => n, start(at) { this.startedAt = at; }, stop() {}, ...extra });
   class AC {
     constructor() { this.sampleRate = 8000; this.state = 'running'; this.destination = node(); }
     get currentTime() { return (Date.now() - t0) / 1000; }
@@ -127,24 +127,21 @@ test('a hotter game is more people talking, not a bigger wave: pauses shorten wi
   expect(words(1)).toBeGreaterThan(words(0) * 1.3);
 });
 
-test('deep in the red zone the gym chants GO! GO! GO! — every voice on the same beat; at midfield nobody does', () => {
-  // How many voice gates moved inside the same 60 ms window, at most: a chant is all twelve.
-  const unison = (hype) => {
+test('deep in the red zone the stands stomp and clap ON THE BEAT; at midfield nobody does', () => {
+  // The most noise bursts (feet, hands) that landed inside one 60 ms window: a stomp or a clap on
+  // the beat is a dozen or more at once; the murmur's stray claps and consonants never bunch like that.
+  const bunched = (hype) => {
     const { S, made } = load();
     S.unlock();
     S.setScene('live');
     S.setHype(hype);
-    const voices = made.oscs.filter((o) => o.type === 'sawtooth');
     jest.advanceTimersByTime(5000);
-    const gates = made.gains.filter((g) => g.gain.at && g.gain.at.length).slice(0, 200);
-    // the gates created right after each voice oscillator are the voices' own
-    const onsets = voices.flatMap((o, i) => (gates[i] && gates[i].gain.at) || []).map((t) => Math.round(t / 0.06));
     const count = new Map();
-    for (const b of onsets) count.set(b, (count.get(b) || 0) + 1);
+    for (const src of made.sources) { if (src.startedAt == null) continue; const b = Math.round(src.startedAt / 0.06); count.set(b, (count.get(b) || 0) + 1); }
     return Math.max(0, ...count.values());
   };
-  expect(unison(0.9)).toBeGreaterThanOrEqual(10);
-  expect(unison(0)).toBeLessThan(8);
+  expect(bunched(0.9)).toBeGreaterThanOrEqual(10);
+  expect(bunched(0)).toBeLessThan(6);
 });
 
 test('the band stops for the final', () => {

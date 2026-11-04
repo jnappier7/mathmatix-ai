@@ -38,8 +38,8 @@
       master = ctx.createGain(); master.connect(ctx.destination);
       master.gain.value = muted ? 0 : 1;
       [sfx, music, crowd] = [1, 0, 0].map((v) => { const g = ctx.createGain(); g.gain.value = v; g.connect(master); return g; });
-      // The crowd bus goes through a limiter: a dozen voices chanting on one beat add up coherently,
-      // and a clipped chant is a buzz, not a gym. (Guarded: the test's fake graph has no compressor.)
+      // The crowd bus goes through a limiter: a stomp of a dozen feet and a cheer of a dozen voices
+      // add up coherently, and a clipped crowd is a buzz, not a gym. (Guarded: the test's fake graph has no compressor.)
       if (ctx.createDynamicsCompressor) {
         const lim = ctx.createDynamicsCompressor();
         lim.threshold.value = -14; lim.knee.value = 6; lim.ratio.value = 12; lim.attack.value = 0.003; lim.release.value = 0.12;
@@ -193,18 +193,18 @@
   // it; the room is the sum of the voices. Claps and whoops (noise bursts, pitched slides) are
   // scheduled at random out of the stands, more often as the game heats up (hype), which also
   // shortens everyone's pauses: a louder crowd is more people talking, not a bigger wave. Deep in
-  // the red zone the same voices line up on one beat and chant GO! GO! GO! (chant, below).
+  // the red zone the stands fall into the stomp-stomp-CLAP rhythm (stomp, below).
   const VOICE_F0 = [112, 128, 142, 158, 176, 196, 214, 236, 254, 272, 296, 318]; // twelve speakers
   const VOWELS = [[730, 1090], [660, 1720], [530, 1840], [390, 1990], [570, 840], [440, 1020], [300, 870]]; // F1, F2 in Hz
   const FORMANT_Q = [7, 9];
   const FORMANT_GAIN = [1.6, 3.2]; // a sawtooth's upper harmonics are quiet: the second formant needs make-up gain
-  // The chant: once a ball is deep (hype past CHANT_HYPE), the whole gym says GO! GO! GO! on one
-  // beat — the same voices, together instead of over each other — then goes back to talking until
-  // the next one, as long as the ball stays deep. Owner's idea (2026-11-04).
-  const CHANT_HYPE = 0.55;
-  const CHANT = { beats: 3, beatSec: 0.5, restSec: [1.6, 2.8] };
-  const GO = { f1: [570, 440], f2: [840, 1020] }; // "oh" → "oo": the vowel of GO glides
-  let murmur = null; // { nodes, voices, timers, chantUntil }
+  // The red zone: once a ball is deep (hype past STOMP_HYPE) the stands fall into a rhythm — the
+  // stomp-stomp-CLAP every gym knows, everyone on the beat, over the murmur. Percussion is what
+  // this synth does well; a voiced "GO! GO! GO!" was tried first and sounded like a machine
+  // (owner, 2026-11-04) — a synthesized vowel is never going to pass for a crowd shouting a word.
+  const STOMP_HYPE = 0.55;
+  const STOMP = { beatSec: 0.42, phrases: 2, restSec: [1.4, 2.6] }; // stomp · stomp · CLAP · (rest), ×2, then talk
+  let murmur = null; // { nodes, voices, timers }
 
   /** One speaker: oscillator → gate (the syllables) → two formant band-passes → (pan) → crowd. */
   function makeVoice(f0, idx) {
@@ -226,14 +226,14 @@
 
   function startMurmur() {
     if (murmur || !ctx) return;
-    murmur = { nodes: [], voices: [], timers: new Set(), chantUntil: 0 };
+    murmur = { nodes: [], voices: [], timers: new Set() };
     VOICE_F0.forEach((f0, i) => {
       const v = makeVoice(f0 * (0.97 + Math.random() * 0.06), i);
       murmur.nodes.push(v.osc); murmur.voices.push(v);
       wait(Math.random() * 1200, () => speak(v)); // nobody starts talking on the same beat
     });
     stands();
-    wait(600, chantWatch);
+    wait(600, stompWatch);
   }
   function wait(ms, fn) {
     const t = setTimeout(() => { if (murmur) { murmur.timers.delete(t); fn(); } }, ms);
@@ -247,8 +247,6 @@
    */
   function speak(v) {
     if (!murmur) return;
-    // the gym is chanting: hold your own words until it's done
-    if (murmur.chantUntil > ctx.currentTime) { wait((murmur.chantUntil - ctx.currentTime) * 1000 + Math.random() * 600, () => speak(v)); return; }
     const t0 = ctx.currentTime + 0.02;
     const syl = 1 + Math.floor(Math.random() * 4);
     const dur = 1 / (3.8 + Math.random() * 2.4); // 3.8–6.2 syllables a second
@@ -271,40 +269,29 @@
     const pause = (0.25 + Math.random() * 1.6) / (0.7 + 0.9 * hype); // a hot room talks over itself
     wait((t - ctx.currentTime + pause) * 1000, () => speak(v));
   }
-  /** Every so often, if a ball is deep enough, start a chant; otherwise look again shortly. */
-  function chantWatch() {
+  /** Every so often, if a ball is deep enough, the stands pick up the rhythm; otherwise look again shortly. */
+  function stompWatch() {
     if (!murmur) return;
-    if (live() && CROWD_LEVEL[scene] && scene === 'live' && hype >= CHANT_HYPE) {
-      chant();
-      wait((CHANT.beats * CHANT.beatSec + CHANT.restSec[0] + Math.random() * (CHANT.restSec[1] - CHANT.restSec[0])) * 1000, chantWatch);
-    } else wait(400, chantWatch);
+    if (live() && CROWD_LEVEL[scene] && scene === 'live' && hype >= STOMP_HYPE) {
+      stomp();
+      wait((STOMP.phrases * 4 * STOMP.beatSec + STOMP.restSec[0] + Math.random() * (STOMP.restSec[1] - STOMP.restSec[0])) * 1000, stompWatch);
+    } else wait(400, stompWatch);
   }
-  /** GO! GO! GO! — every voice on the same beats, a hard "g" and a stomp on each. */
-  function chant() {
+  /** stomp · stomp · CLAP · rest — a few hundred feet on bleachers, then a few hundred hands, all on one beat. */
+  function stomp() {
     const t0 = ctx.currentTime + 0.08;
-    const beats = Array.from({ length: CHANT.beats }, (_, b) => t0 + b * CHANT.beatSec);
-    murmur.chantUntil = t0 + CHANT.beats * CHANT.beatSec + 0.2;
-    for (const v of murmur.voices) {
-      const g = v.gate.gain; const fq = v.osc.frequency;
-      g.cancelScheduledValues(t0 - 0.05); g.setTargetAtTime(0.0001, t0 - 0.05, 0.02); // drop whatever word was going
-      fq.cancelScheduledValues(t0 - 0.05);
-      // Louder than a word, but not 1.9×: twelve voices on one beat add coherently (the limiter on
-      // the crowd bus catches the rest). Every move is a setTarget — a setValue jump on a resonant
-      // formant or a running oscillator is a click, and worse in some engines.
-      const vol = v.level * 1.15 * (0.85 + 0.3 * Math.random());
-      for (const tb of beats) {
-        const t = tb + (Math.random() - 0.5) * 0.05; // a gym is never exactly together
-        v.formants[0].frequency.setTargetAtTime(GO.f1[0], t - 0.03, 0.008); v.formants[0].frequency.setTargetAtTime(GO.f1[1], t + 0.08, 0.06);
-        v.formants[1].frequency.setTargetAtTime(GO.f2[0], t - 0.03, 0.008); v.formants[1].frequency.setTargetAtTime(GO.f2[1], t + 0.08, 0.06);
-        fq.setTargetAtTime(v.f0 * 1.3, t - 0.03, 0.01); fq.setTargetAtTime(v.f0 * 1.08, t + 0.05, 0.1); // a shout, falling
-        g.setTargetAtTime(vol, t, 0.012);
-        g.setTargetAtTime(0.0001, t + 0.26, 0.04);
+    const loud = 0.7 + 0.3 * hype;
+    for (let ph = 0; ph < STOMP.phrases; ph++) {
+      const base = t0 + ph * 4 * STOMP.beatSec;
+      for (const b of [0, 1]) {
+        const t = base + b * STOMP.beatSec;
+        // feet: a low thud with a little boom under it, a dozen of them within 40 ms (nobody lands together)
+        for (let i = 0; i < 12; i++) hiss({ at: t + Math.random() * 0.04, dur: 0.07, vol: 0.05 * loud, type: 'lowpass', freq: 160 + Math.random() * 80, q: 0.8, attack: 0.003, bus: crowd });
+        tone({ at: t, freq: 62, type: 'sine', dur: 0.22, vol: 0.28 * loud, slideTo: 40, bus: crowd });
       }
-    }
-    for (const tb of beats) {
-      hiss({ at: tb - 0.015, dur: 0.03, vol: 0.12, type: 'bandpass', freq: 500, q: 1, bus: crowd }); // the "g"
-      hiss({ at: tb, dur: 0.09, vol: 0.2 + 0.1 * hype, type: 'lowpass', freq: 180, q: 0.8, attack: 0.004, bus: crowd }); // feet on bleachers
-      hiss({ at: tb + 0.01, dur: 0.05, vol: 0.08, freq: 1300, q: 1.2, type: 'bandpass', bus: crowd }); // a few claps on the beat
+      // hands: a burst of claps, spread across 50 ms so it reads as a crowd, not one slap
+      const tc = base + 2 * STOMP.beatSec;
+      for (let i = 0; i < 18; i++) hiss({ at: tc + Math.random() * 0.05, dur: 0.045, vol: 0.06 * loud, freq: 1100 + Math.random() * 1400, q: 1.3, type: 'bandpass', bus: crowd });
     }
   }
   /** A clap, a whoop, a "yeah" out of the stands — more of them as a drive nears the goal. */
