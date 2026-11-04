@@ -7,7 +7,8 @@
 //   Sound — the master. Muted means silent, whatever the other two say.
 //   Music — an original drumline + bass loop under the lobby and the game. OFF until turned on:
 //           a room that's taking a test next door shouldn't get a marching band by surprise.
-//   Crowd — a gym-crowd murmur (chatter, rumble, stray claps) during play that builds as a ball nears the goal line, a cheer on a
+//   Crowd — a gym full of voices (a dozen synthesized speakers talking over each other, stray claps
+//           and whoops) during play that gets busier as a ball nears the goal line, a cheer on a
 //           touchdown, and (Huddle) a cheer or a groan on the reveal. On by default.
 // The page says WHERE the game is with scene(); this module decides what that sounds like.
 (function () {
@@ -37,6 +38,13 @@
       master = ctx.createGain(); master.connect(ctx.destination);
       master.gain.value = muted ? 0 : 1;
       [sfx, music, crowd] = [1, 0, 0].map((v) => { const g = ctx.createGain(); g.gain.value = v; g.connect(master); return g; });
+      // The crowd bus goes through a limiter: a stomp of a dozen feet and a cheer of a dozen voices
+      // add up coherently, and a clipped crowd is a buzz, not a gym. (Guarded: the test's fake graph has no compressor.)
+      if (ctx.createDynamicsCompressor) {
+        const lim = ctx.createDynamicsCompressor();
+        lim.threshold.value = -14; lim.knee.value = 6; lim.ratio.value = 12; lim.attack.value = 0.003; lim.release.value = 0.12;
+        crowd.disconnect(master); crowd.connect(lim).connect(master);
+      }
       noise = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
       const d = noise.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -173,44 +181,118 @@
   }
 
   // ---------------------------------------------------------------- the crowd (crowd bus)
-  // What a crowd is NOT: one band of noise with a slow swell — that is surf, and the first cut
-  // sounded exactly like a beach (owner, 2026-10-22). A crowd is hundreds of voices talking over
-  // each other: mid-range chatter whose level jumps at syllable speed and never in step, a low
-  // rumble of bodies under it, and now and then a clap or a shout out of the stands. Nothing in
-  // it moves slower than a word. The chatter is four formant-ish bands of the same noise, each
-  // with its own syllable-rate tremolo AND its own random level walk (the walk is what keeps it
-  // from reading as a machine); claps and whoops are scheduled at random, more often as the
-  // game heats up (hype).
-  const VOICES = [[380, 5.3], [640, 6.1], [1050, 7.4], [1750, 4.7]]; // band centre Hz, syllable rate Hz
-  let murmur = null; // { nodes, bands, timers }
+  // What a crowd is NOT: filtered noise. Noise through a band-pass is surf however you shape it.
+  // The first cut (one band, a slow swell) was a beach; the second (four bands flickering at
+  // syllable speed over a low-passed rumble) was still a beach in a wind — students said "ocean"
+  // (owner, 2026-10-22 and 2026-11-04). The ear reads "voices" off two things noise never has:
+  // PITCH — a harmonic fundamental, different for every speaker, that moves as they talk — and
+  // FORMANTS — the two vowel resonances that jump every syllable. So the murmur is a dozen VOICES:
+  // a sawtooth at a speaker's own fundamental (kids and adults, ~110–330 Hz) through two formant
+  // band-passes that hop between vowels, gated into words — a few syllables at 4–6 a second, then
+  // a pause to listen — each on its own clock, none in step with another. NO noise bed loops under
+  // it; the room is the sum of the voices. Claps and whoops (noise bursts, pitched slides) are
+  // scheduled at random out of the stands, more often as the game heats up (hype), which also
+  // shortens everyone's pauses: a louder crowd is more people talking, not a bigger wave. Deep in
+  // the red zone the stands fall into the stomp-stomp-CLAP rhythm (stomp, below).
+  const VOICE_F0 = [112, 128, 142, 158, 176, 196, 214, 236, 254, 272, 296, 318]; // twelve speakers
+  const VOWELS = [[730, 1090], [660, 1720], [530, 1840], [390, 1990], [570, 840], [440, 1020], [300, 870]]; // F1, F2 in Hz
+  const FORMANT_Q = [7, 9];
+  const FORMANT_GAIN = [1.6, 3.2]; // a sawtooth's upper harmonics are quiet: the second formant needs make-up gain
+  // The red zone: once a ball is deep (hype past STOMP_HYPE) the stands fall into a rhythm — the
+  // stomp-stomp-CLAP every gym knows, everyone on the beat, over the murmur. Percussion is what
+  // this synth does well; a voiced "GO! GO! GO!" was tried first and sounded like a machine
+  // (owner, 2026-11-04) — a synthesized vowel is never going to pass for a crowd shouting a word.
+  const STOMP_HYPE = 0.55;
+  const STOMP = { beatSec: 0.42, phrases: 2, restSec: [1.4, 2.6] }; // stomp · stomp · CLAP · (rest), ×2, then talk
+  let murmur = null; // { nodes, voices, timers }
+
+  /** One speaker: oscillator → gate (the syllables) → two formant band-passes → (pan) → crowd. */
+  function makeVoice(f0, idx) {
+    const osc = ctx.createOscillator(); osc.type = 'sawtooth'; osc.frequency.value = f0;
+    const gate = ctx.createGain(); gate.gain.value = 0.0001;
+    osc.connect(gate);
+    let out = ctx.createGain(); out.gain.value = 1;
+    const formants = FORMANT_Q.map((q, j) => {
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = VOWELS[0][j]; f.Q.value = q;
+      const g = ctx.createGain(); g.gain.value = FORMANT_GAIN[j];
+      gate.connect(f).connect(g).connect(out);
+      return f;
+    });
+    if (ctx.createStereoPanner) { const pan = ctx.createStereoPanner(); pan.pan.value = ((idx % 5) - 2) * 0.3; out.connect(pan); out = pan; }
+    out.connect(crowd);
+    osc.start();
+    return { osc, gate, formants, f0, level: 0.11 + Math.random() * 0.07 };
+  }
+
   function startMurmur() {
     if (murmur || !ctx) return;
-    const nodes = []; const bands = [];
-    const bed = () => { const s = ctx.createBufferSource(); s.buffer = noise; s.loop = true; nodes.push(s); return s; };
-    // the room: a low, steady rumble of a few hundred people in a gym
-    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 240;
-    const rg = ctx.createGain(); rg.gain.value = 0.2;
-    bed().connect(lp).connect(rg).connect(crowd);
-    for (const [f, rate] of VOICES) {
-      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 2.4;
-      const g = ctx.createGain(); g.gain.value = 0.12;
-      const lfo = ctx.createOscillator(); lfo.frequency.value = rate;
-      const depth = ctx.createGain(); depth.gain.value = 0.05;
-      lfo.connect(depth).connect(g.gain);
-      bed().connect(bp).connect(g).connect(crowd);
-      nodes.push(lfo); bands.push(g);
-    }
-    for (const n of nodes) n.start(0, n.buffer ? Math.random() * 1.5 : 0);
-    murmur = { nodes, bands, timers: new Set() };
-    walk(); stands();
+    murmur = { nodes: [], voices: [], timers: new Set() };
+    VOICE_F0.forEach((f0, i) => {
+      const v = makeVoice(f0 * (0.97 + Math.random() * 0.06), i);
+      murmur.nodes.push(v.osc); murmur.voices.push(v);
+      wait(Math.random() * 1200, () => speak(v)); // nobody starts talking on the same beat
+    });
+    stands();
+    wait(600, stompWatch);
   }
-  /** Every band wanders to a new level on its own clock: a conversation ends, another starts. */
-  function walk() {
-    if (!murmur) return;
-    const g = murmur.bands[Math.floor(Math.random() * murmur.bands.length)];
-    ramp(g.gain, 0.03 + Math.random() * 0.17, 0.08 + Math.random() * 0.15);
-    const t = setTimeout(() => { murmur && murmur.timers.delete(t); walk(); }, 90 + Math.random() * 220);
+  function wait(ms, fn) {
+    const t = setTimeout(() => { if (murmur) { murmur.timers.delete(t); fn(); } }, ms);
     murmur.timers.add(t);
+  }
+  /**
+   * One speaker says a word — one to four syllables, each a vowel hop and a step of pitch — then
+   * listens for a moment and says another. Statements settle in pitch; one in four lifts at the
+   * end like a question. The whole word is scheduled on the audio clock, so a busy main thread
+   * can't smear it.
+   */
+  function speak(v) {
+    if (!murmur) return;
+    const t0 = ctx.currentTime + 0.02;
+    const syl = 1 + Math.floor(Math.random() * 4);
+    const dur = 1 / (3.8 + Math.random() * 2.4); // 3.8–6.2 syllables a second
+    const vol = v.level * (0.8 + 0.4 * Math.random()) * (0.7 + 0.5 * hype);
+    const g = v.gate.gain; const fq = v.osc.frequency;
+    g.cancelScheduledValues(t0); fq.cancelScheduledValues(t0);
+    let t = t0;
+    for (let i = 0; i < syl; i++) {
+      const vow = VOWELS[Math.floor(Math.random() * VOWELS.length)];
+      v.formants.forEach((f, j) => f.frequency.setTargetAtTime(vow[j] * (0.9 + Math.random() * 0.2), t, 0.025));
+      const last = i === syl - 1;
+      const contour = (last && Math.random() < 0.25 ? 1.12 : 1.08 - (0.16 * i) / Math.max(1, syl - 1)) * (0.97 + Math.random() * 0.06);
+      fq.setTargetAtTime(v.f0 * contour, t, 0.05);
+      g.setTargetAtTime(vol * (i === 0 ? 1 : 0.75 + Math.random() * 0.35), t, 0.02); // ~30 ms onset
+      g.setTargetAtTime(0.0001, t + dur * 0.62, 0.03); // and away before the next syllable lands
+      t += dur;
+    }
+    // a stray consonant on about a third of the words — an "s", a "t" — is a short, high hiss
+    if (Math.random() < 0.35) hiss({ at: t0 - 0.01, dur: 0.04 + Math.random() * 0.04, vol: vol * 0.35, type: 'bandpass', freq: 3500 + Math.random() * 2500, q: 1.2, bus: crowd });
+    const pause = (0.25 + Math.random() * 1.6) / (0.7 + 0.9 * hype); // a hot room talks over itself
+    wait((t - ctx.currentTime + pause) * 1000, () => speak(v));
+  }
+  /** Every so often, if a ball is deep enough, the stands pick up the rhythm; otherwise look again shortly. */
+  function stompWatch() {
+    if (!murmur) return;
+    if (live() && CROWD_LEVEL[scene] && scene === 'live' && hype >= STOMP_HYPE) {
+      stomp();
+      wait((STOMP.phrases * 4 * STOMP.beatSec + STOMP.restSec[0] + Math.random() * (STOMP.restSec[1] - STOMP.restSec[0])) * 1000, stompWatch);
+    } else wait(400, stompWatch);
+  }
+  /** stomp · stomp · CLAP · rest — a few hundred feet on bleachers, then a few hundred hands, all on one beat. */
+  function stomp() {
+    const t0 = ctx.currentTime + 0.08;
+    const loud = 0.7 + 0.3 * hype;
+    for (let ph = 0; ph < STOMP.phrases; ph++) {
+      const base = t0 + ph * 4 * STOMP.beatSec;
+      for (const b of [0, 1]) {
+        const t = base + b * STOMP.beatSec;
+        // feet: a low thud with a little boom under it, a dozen of them within 40 ms (nobody lands together)
+        for (let i = 0; i < 12; i++) hiss({ at: t + Math.random() * 0.04, dur: 0.07, vol: 0.05 * loud, type: 'lowpass', freq: 160 + Math.random() * 80, q: 0.8, attack: 0.003, bus: crowd });
+        tone({ at: t, freq: 62, type: 'sine', dur: 0.22, vol: 0.28 * loud, slideTo: 40, bus: crowd });
+      }
+      // hands: a burst of claps, spread across 50 ms so it reads as a crowd, not one slap
+      const tc = base + 2 * STOMP.beatSec;
+      for (let i = 0; i < 18; i++) hiss({ at: tc + Math.random() * 0.05, dur: 0.045, vol: 0.06 * loud, freq: 1100 + Math.random() * 1400, q: 1.3, type: 'bandpass', bus: crowd });
+    }
   }
   /** A clap, a whoop, a "yeah" out of the stands — more of them as a drive nears the goal. */
   function stands() {
@@ -220,8 +302,7 @@
       if (r < 0.55) hiss({ dur: 0.05 + Math.random() * 0.04, vol: 0.05 + 0.05 * hype, freq: 900 + Math.random() * 900, q: 1.4, type: 'bandpass', bus: crowd });
       else if (r < 0.8) { const f = 300 + Math.random() * 260; tone({ freq: f, slideTo: f * (1.3 + Math.random() * 0.5), type: 'triangle', dur: 0.25 + Math.random() * 0.3, vol: 0.012 + 0.01 * hype, bus: crowd, filter: 2200 }); }
     }
-    const t = setTimeout(() => { murmur && murmur.timers.delete(t); stands(); }, (500 + Math.random() * 1400) / (0.6 + hype));
-    murmur.timers.add(t);
+    wait((500 + Math.random() * 1400) / (0.6 + hype), stands);
   }
   function stopMurmur() {
     if (!murmur || (crowdOn && !muted && CROWD_LEVEL[scene])) return;
@@ -234,13 +315,14 @@
   function cheer(big) {
     if (!crowdOn || !live()) return;
     const len = big ? 3.4 : 2.2;
-    hiss({ dur: len, vol: big ? 0.32 : 0.2, type: 'bandpass', freq: 1300, q: 0.6, attack: 0.25 });
-    hiss({ dur: len * 0.8, vol: big ? 0.16 : 0.1, type: 'bandpass', freq: 3000, q: 0.9, attack: 0.3 });
+    // the roar is mostly VOICES — a dozen "yeah"s sliding up at once — with a little breath of noise under it
+    hiss({ dur: len, vol: big ? 0.22 : 0.14, type: 'bandpass', freq: 1300, q: 0.6, attack: 0.25 });
+    hiss({ dur: len * 0.8, vol: big ? 0.1 : 0.07, type: 'bandpass', freq: 3000, q: 0.9, attack: 0.3 });
     const claps = big ? 22 : 12;
     for (let i = 0; i < claps; i++) hiss({ start: 0.15 + Math.random() * (len - 0.6), dur: 0.05, vol: 0.09, freq: 1200, q: 1.2, type: 'bandpass' });
-    for (let i = 0; i < (big ? 5 : 3); i++) {
-      const f = 420 + Math.random() * 300;
-      tone({ start: Math.random() * 0.7, freq: f, slideTo: f * 1.6, type: 'triangle', dur: 0.6 + Math.random() * 0.4, vol: 0.018 });
+    for (let i = 0; i < (big ? 12 : 7); i++) {
+      const f = 240 + Math.random() * 420;
+      tone({ start: Math.random() * 0.7, freq: f, slideTo: f * (1.4 + Math.random() * 0.4), type: 'sawtooth', dur: 0.6 + Math.random() * 0.5, vol: 0.012, filter: 1800 });
     }
   }
   /** "Ohhh": the stands sag. Huddle, when most of the class missed it. */
@@ -281,6 +363,12 @@
         tone({ freq: 294, type: 'sawtooth', start: s, dur: 0.36, vol: 0.09 });
         tone({ freq: 392, type: 'square', start: s, dur: 0.36, vol: 0.04 });
       });
+    },
+    /** Team Drive: a blitz — a quick whoosh down and a pad-on-pad thud. */
+    blitz() {
+      hiss({ dur: 0.28, vol: 0.3, type: 'bandpass', freq: 2600, slideTo: 500, q: 0.8, attack: 0.01 });
+      tone({ freq: 110, type: 'sine', start: 0.2, dur: 0.22, vol: 0.35, slideTo: 55 });
+      hiss({ start: 0.2, dur: 0.07, vol: 0.18, type: 'lowpass', freq: 240, q: 0.7, attack: 0.003 });
     },
     /** King of the Hill: a boulder rolls — a low rumble and a thud. */
     rumble() {

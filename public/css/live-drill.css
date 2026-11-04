@@ -85,6 +85,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .pad .entry.sent{opacity:.75}
 .pad .entryrow{display:flex;gap:8px}
 .pad .entryrow .entry{flex:1;min-width:0}
+.pad .entryrow .change{flex:0 0 auto;padding:0 14px;font-size:1rem;letter-spacing:.04em;text-transform:uppercase}
 .pad .entryrow button{flex:0 0 64px;background:var(--board);color:var(--chalk);border:2px solid var(--rail);border-radius:8px;font-family:var(--display);font-weight:900;font-size:1.7rem;touch-action:manipulation}
 .pad .keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
 .pad .keys button{background:var(--board);color:var(--chalk);border:2px solid var(--rail);border-radius:8px;font-family:var(--display);font-weight:900;font-size:1.8rem;padding:9px 0;touch-action:manipulation;-webkit-user-select:none;user-select:none}
@@ -373,6 +374,12 @@ table.twoway td:first-child{text-align:left}
 .tellbox b{color:var(--led)}
 .splitline{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--display);font-weight:800;font-size:1.2rem;text-transform:uppercase;letter-spacing:.06em}
 .splitline .t0{color:var(--red)} .splitline .t1{color:var(--blue)}
+.splitline .muted{font-family:inherit;font-weight:600;font-size:.95rem;text-transform:none;letter-spacing:0}
+.splitline.picks{justify-content:center;margin-top:6px;font-size:1.05rem}
+.fb.pick6{border-color:var(--led);box-shadow:0 0 0 2px var(--led) inset}
+.fb.blitz{border-color:#ffd166;box-shadow:0 0 0 2px #ffd166 inset}
+.feed .it.blitz,.it.ev.blitz{color:#ffd166}
+.p6tag{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--led);color:var(--ink);font-family:var(--display);font-weight:800;font-size:.85em;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle}
 
 /* ---------- final ---------- */
 .result{text-align:center;padding:10px 0}

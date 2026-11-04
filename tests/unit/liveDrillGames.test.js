@@ -206,14 +206,36 @@ describe('huddle', () => {
     expect(g.teams[1].pos).toBe(G.START_POS);
   });
 
-  test('one answer per student per play, and none after the reveal', () => {
+  test('a student can change their pick while the play is open; the LAST tap is graded, at its own time', () => {
+    const g = huddle();
+    const a = G.join(g, 'A').player; G.join(g, 'B');
+    G.start(g);
+    const play = G.playAt(g, 1);
+    jest.advanceTimersByTime(2000);
+    expect(G.answer(g, a, 1, wrongKey(play))).toEqual({ locked: true, n: 1 }); // a fast guess…
+    expect(G.playerView(g, a).round.mine).toEqual({ k: wrongKey(play) });
+    jest.advanceTimersByTime(12000); // …then a think: 14 s into a 20 s window is the slow tier
+    expect(G.answer(g, a, 1, play.answer)).toMatchObject({ locked: true, changed: true });
+    // the same pick again is a no-op — it must not restart the clock
+    jest.advanceTimersByTime(3000);
+    expect(G.answer(g, a, 1, play.answer)).toEqual({ locked: true, n: 1 });
+    expect(g.round.answers.get(a.id)).toMatchObject({ k: play.answer, ms: 14000, changes: 1 });
+    G.advance(g); // teacher reveals
+    expect(g.phase).toBe('reveal');
+    expect(G.playerView(g, a).round.mine).toEqual({ k: play.answer, ok: true, gain: 5 }); // slow tier, not the fast one
+    expect(G.hostView(g).round.changed).toBe(1);
+    expect(G.hostView(g).rules.canChange).toBe(true);
+    expect(G.hostView(drive()).rules.canChange).toBe(false);
+  });
+
+  test('none after the reveal', () => {
     const g = huddle();
     const a = G.join(g, 'A').player; G.join(g, 'B');
     G.start(g);
     G.answer(g, a, 1, G.playAt(g, 1).answer);
-    expect(() => G.answer(g, a, 1, G.playAt(g, 1).answer)).toThrow(/already answered/);
     G.advance(g); // teacher reveals early
     expect(g.phase).toBe('reveal');
+    expect(() => G.answer(g, a, 1, wrongKey(G.playAt(g, 1)))).toThrow(/closed/);
     const late = G.join(g, 'Late').player;
     expect(() => G.answer(g, late, 1, G.playAt(g, 1).answer)).toThrow(/closed/);
   });
@@ -242,6 +264,186 @@ describe('huddle', () => {
       expect(s).not.toContain(play.tell);
       expect(s).not.toContain('revealCard');
     }
+  });
+});
+
+describe('blitz (Team Drive): every 3rd in a row pushes the other team back', () => {
+  const { every, yards } = G.BLITZ;
+  /** Answer the player's current play right (or wrong) after `ms`. */
+  function play(g, p, ok = true, ms = 1000) {
+    const { n } = G.currentPlay(g, p);
+    jest.advanceTimersByTime(ms);
+    const pl = G.playAt(g, n);
+    return G.answer(g, p, n, ok ? pl.answer : wrongKey(pl));
+  }
+
+  test('a solo blitz is the full 10 yards off the other team, after the blitzer\'s own gain; the rules say so', () => {
+    const g = drive();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
+    G.start(g);
+    expect(G.hostView(g).rules.blitz).toEqual(G.BLITZ);
+    play(g, b); // Blue to the 40
+    expect(g.teams[1].pos).toBe(G.START_POS + 15);
+    const r1 = play(g, a); const r2 = play(g, a);
+    expect(r1.blitz).toBeUndefined(); expect(r2.blitz).toBeUndefined();
+    const r3 = play(g, a); // third in a row
+    expect(r3.ok).toBe(true);
+    expect(r3.blitz).toEqual({ team: 1, yards, lost: yards });
+    expect(g.teams[1].pos).toBe(G.START_POS + 15 - yards);
+    expect(g.teams[0].pos).toBe(G.START_POS + 3 * 15); // Red's own gain stood
+    expect(a.blitzes).toBe(1);
+    expect(G.hostView(g).teams[0].blitzes).toBe(1);
+    expect(G.hostView(g).feed[0]).toMatchObject({ type: 'blitz', team: 0, who: 'A', victim: 1, yards });
+    expect(G.playerView(g, a).me.blitzes).toBe(1);
+    // a miss resets the count: the next blitz needs three more
+    play(g, a, false);
+    play(g, a); play(g, a);
+    expect(play(g, a).blitz).toBeTruthy();
+    expect(a.blitzes).toBe(2);
+    // and 6 in a row is a second blitz, like the hill's boulder
+    play(g, a); play(g, a);
+    expect(play(g, a).blitz).toBeTruthy();
+    expect(a.best).toBe(6);
+  });
+
+  test('a blitz is one player\'s push: scaled for team size like a gain, and the ball never goes behind the 1', () => {
+    const g = drive();
+    const red = [], blue = []; // seats alternate Red, Blue as students arrive
+    for (let i = 1; i <= 5; i++) { red.push(G.join(g, `R${i}`).player); blue.push(G.join(g, `B${i}`).player); }
+    expect(red.every((p) => p.team === 0) && blue.every((p) => p.team === 1)).toBe(true);
+    G.start(g);
+    const r = play(g, red[0]); play(g, red[0]); const b3 = play(g, red[0]);
+    expect(r.blitz).toBeUndefined();
+    // 5 on a team move like 2.5: a 10-yard blitz lands as 5
+    expect(b3.blitz).toEqual({ team: 1, yards: yards * G.TEAM_K.drive / 5, lost: 5 });
+    expect(g.teams[1].pos).toBe(G.START_POS - 5);
+    // Blue goes backwards to the 1 and stays there: a blitz can't push a ball off the field
+    g.teams[1].pos = 3;
+    play(g, red[1]); play(g, red[1]); const hit = play(g, red[1]);
+    expect(hit.blitz).toEqual({ team: 1, yards: 5, lost: 2 });
+    expect(g.teams[1].pos).toBe(1);
+  });
+
+  test('only Team Drive blitzes: Huddle has the pick six, the hill has boulders', () => {
+    const h = huddle();
+    expect(G.hostView(h).rules.blitz).toBeNull();
+    const a = G.join(h, 'A').player;
+    G.start(h);
+    for (let n = 1; n <= every; n++) { G.answer(h, a, n, G.playAt(h, n).answer); G.advance(h); }
+    expect(h.teams.map((t) => t.blitzes)).toEqual([0, 0]);
+    const k = G.createGame({ hostId: 'h2', drill: 'algebra', playbook: 'all', mode: 'hill' });
+    expect(G.hostView(k).rules.blitz).toBeNull();
+  });
+
+  test('run it back clears blitz counts', () => {
+    const g = drive();
+    const a = G.join(g, 'A').player; G.join(g, 'B');
+    G.start(g);
+    play(g, a); play(g, a); play(g, a);
+    G.endGame(g); G.rematch(g);
+    expect(a.blitzes).toBe(0);
+    expect(g.teams.map((t) => t.blitzes)).toEqual([0, 0]);
+  });
+});
+
+describe('pick six (Huddle, teams of five or more)', () => {
+  // Seat 2n players: A0..A(n-1) land on Red, B0..B(n-1) on Blue (join alternates, Red first).
+  function seated(n, opts = {}) {
+    const g = huddle(opts);
+    const red = [], blue = [];
+    for (let i = 0; i < n; i++) { red.push(G.join(g, `R${i}`).player); blue.push(G.join(g, `B${i}`).player); }
+    expect(red.every((p) => p.team === 0) && blue.every((p) => p.team === 1)).toBe(true);
+    G.start(g);
+    return { g, red, blue };
+  }
+  const { minTeam, points, resetPos } = G.PICK_SIX;
+
+  test('every teammate right on one play: +7, and the other team\'s ball goes back to the 20', () => {
+    const { g, red, blue } = seated(minTeam);
+    const play = G.playAt(g, 1);
+    jest.advanceTimersByTime(1000);
+    for (const p of red) G.answer(g, p, 1, play.answer);
+    for (const p of blue.slice(1)) G.answer(g, p, 1, play.answer);
+    G.answer(g, blue[0], 1, wrongKey(play)); // one Blue miss — the round closes
+    expect(g.phase).toBe('reveal');
+    // Red's yards still move Red's ball (5 × 15, scaled to 3 players' worth = 45 → the 70), and the pick six is on top.
+    expect(g.teams[0]).toMatchObject({ pts: points, picks: 1, tds: 0, pos: G.START_POS + 45 });
+    // Blue had 4 × 15 − 5 = 55, scaled by 3/5 → the 58; the turnover puts them back on the 20.
+    expect(g.teams[1]).toMatchObject({ pts: 0, picks: 0, pos: resetPos });
+    const hv = G.hostView(g);
+    expect(hv.round.pickSix).toEqual([true, false]);
+    expect(hv.teams[0].picks).toBe(1);
+    expect(hv.feed[0]).toMatchObject({ type: 'pick6', team: 0 });
+    expect(G.playerView(g, blue[0]).round.pickSix).toEqual([true, false]);
+    G.advance(g); G.advance(g); G.endGame(g);
+    expect(G.hostView(g).final.plays[0].pickSix).toEqual([true, false]);
+  });
+
+  test('a team already behind the 20 is not moved UP to it', () => {
+    const { g, red, blue } = seated(minTeam);
+    const p1 = G.playAt(g, 1);
+    // Blue all wrong on play 1: 5 sacks → −15 scaled by 3/5 → the 10. Red: one miss, no pick six.
+    for (const p of blue) G.answer(g, p, 1, wrongKey(p1));
+    for (const p of red.slice(1)) G.answer(g, p, 1, p1.answer);
+    G.answer(g, red[0], 1, wrongKey(p1));
+    expect(g.teams[1].pos).toBe(G.START_POS - 15);
+    expect(g.teams[0].picks).toBe(0);
+    G.advance(g);
+    const p2 = G.playAt(g, 2);
+    for (const p of red) G.answer(g, p, 2, p2.answer);
+    for (const p of blue) G.answer(g, p, 2, wrongKey(p2)); // all wrong again: the 10 → the 7
+    expect(g.teams[0].picks).toBe(1);
+    expect(g.teams[1].pos).toBe(G.START_POS - 15 - 15 * 0.6); // the turnover leaves a team that's behind the 20 where it is
+  });
+
+  test('teams smaller than five never earn it, however perfect', () => {
+    const { g, red, blue } = seated(minTeam - 1);
+    const play = G.playAt(g, 1);
+    for (const p of [...red, ...blue]) G.answer(g, p, 1, play.answer);
+    expect(g.phase).toBe('reveal');
+    expect(g.teams.map((t) => t.pts)).toEqual([0, 0]);
+    expect(G.hostView(g).round.pickSix).toEqual([false, false]);
+    expect(G.hostView(g).rules.pickSix).toEqual(G.PICK_SIX);
+    expect(G.hostView(drive()).rules.pickSix).toBeNull();
+  });
+
+  test('a teammate who did not answer vetoes it; a teammate whose phone is asleep does not', () => {
+    const { g, red, blue } = seated(minTeam + 1);
+    const res = () => ({ write() {}, end() {} });
+    const streams = [...red, ...blue].map((p) => G.subscribe(g, { kind: 'player', playerId: p.id, res: res() }));
+    const play = G.playAt(g, 1);
+    for (const p of red.slice(1)) G.answer(g, p, 1, play.answer);
+    for (const p of blue) G.answer(g, p, 1, play.answer); // Blue drives to the 70
+    // red[0] is here (open screen) and silent: the clock runs out on them
+    jest.advanceTimersByTime(21000);
+    expect(g.phase).toBe('reveal');
+    expect(g.teams[0].picks).toBe(0);
+    G.advance(g);
+    // play 2: red[0] puts the phone down — the round no longer waits for them, and neither does the pick six
+    streams[0]();
+    const p2 = G.playAt(g, 2);
+    for (const p of red.slice(1)) G.answer(g, p, 2, p2.answer);
+    for (const p of blue) G.answer(g, p, 2, wrongKey(p2));
+    expect(g.phase).toBe('reveal');
+    expect(g.teams[0].picks).toBe(1);
+    expect(g.teams[1].pos).toBe(resetPos); // Blue was on the 55 — turned over to the 20
+  });
+
+  test('both teams perfect on the same play: both score, both turn it over', () => {
+    const { g, red, blue } = seated(minTeam);
+    const play = G.playAt(g, 1);
+    for (const p of [...red, ...blue]) G.answer(g, p, 1, play.answer);
+    expect(g.teams.map((t) => t.pts)).toEqual([points, points]);
+    expect(g.teams.map((t) => t.pos)).toEqual([resetPos, resetPos]);
+  });
+
+  test('run it back clears the pick-six count', () => {
+    const { g, red, blue } = seated(minTeam);
+    const play = G.playAt(g, 1);
+    for (const p of [...red, ...blue]) G.answer(g, p, 1, play.answer);
+    G.endGame(g);
+    G.rematch(g);
+    expect(g.teams.map((t) => t.picks)).toEqual([0, 0]);
   });
 });
 
@@ -431,6 +633,29 @@ describe('the lobby states the rules the server plays', () => {
     expect(huddleGainAt(spp, mid.within * 1000)).toBe(mid.gain);
     expect(huddleGainAt(spp, mid.within * 1000 + 1000)).toBe(slow.gain);
     expect(huddleGainAt(spp, 1000, false)).toBe(-rules.sack);
+  });
+
+  test('long games are on the menu: a 10-minute drive, 90 s a play, 30 plays — and the defaults did not move', () => {
+    expect(G.SETTINGS.drive.seconds).toContain(600);
+    expect(G.SETTINGS.huddle.secondsPerPlay).toContain(90);
+    expect(G.SETTINGS.huddle.plays).toContain(30);
+    expect(G.FACT_SETTINGS.huddle.secondsPerPlay).toContain(30);
+    expect(G.settingsFor('alg1m3').drive.seconds).toContain(900);
+    expect(G.SETTINGS.drive.defaultSeconds).toBe(120);
+    expect(G.SETTINGS.huddle.defaultSecondsPerPlay).toBe(20);
+    const g = drive({ seconds: 600 });
+    expect(g.seconds).toBe(600);
+    const a = G.join(g, 'A').player;
+    G.start(g);
+    jest.advanceTimersByTime(9 * 60 * 1000 + 59 * 1000); // still live with a second left
+    expect(g.phase).toBe('live');
+    G.currentPlay(g, a);
+    expect(() => G.answer(g, a, 1, G.playAt(g, 1).answer)).not.toThrow();
+    jest.advanceTimersByTime(3000);
+    expect(g.phase).toBe('over');
+    const h = huddle({ secondsPerPlay: 90, plays: 30 });
+    expect([h.secondsPerPlay, h.totalPlays]).toEqual([90, 30]);
+    expect(G.hostView(h).rules.speed[0].within).toBe(30); // thirds of the play clock, as the lobby says
   });
 
   test('students get the same rules as the projector', () => {

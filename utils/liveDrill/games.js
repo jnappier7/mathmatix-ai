@@ -35,6 +35,23 @@ const ownPace = (game) => game.mode === 'drive' || game.mode === 'hill';
 
 const START_POS = 25;
 const TD_POINTS = 7;
+// Pick six (Huddle only — it's the one mode where a whole team answers the same play): when EVERY
+// teammate who is in the game gets a play right, the team scores a defensive touchdown and the other
+// team turns the ball over — back to the 20, if they were past it. Only for teams of five or more:
+// on a team of two, "everyone right" is just two right answers. The point of the rule is that the
+// weakest student on a team matters as much as the fastest — a team that wants the pick six makes
+// sure everyone has it before anyone taps. Student-requested (2026-11).
+const PICK_SIX = { minTeam: 5, points: 7, resetPos: 20 };
+// Blitz (Team Drive only): every 3rd right answer in a row by any player sends a blitz — the OTHER
+// team's ball goes back `yards`, scaled for team size exactly like the player's own gains (moveTeam),
+// so a blitz is "ten yards' worth" of push against the other team. Automatic, no target: the only
+// thing a student can aim at is the team they're playing (owner's rule, same as the hill's boulder).
+// Calibration (Monte Carlo, 70% accuracy, ~20 plays a student in 2:00): with the same K-scaling as
+// gains, blitzes cost the other team ~16% of its progress at EVERY team size — 3 blitzes of 10 for
+// a solo player, ~9 of 8.3 for a team of 3, ~44 of 1.7 for a team of 15. Both sides blitz, so the
+// game slows a little and touchdowns stay events. Huddle has the pick six instead (a dozen streaks
+// landing on one reveal would stack). Owner's ask, 2026-11-04.
+const BLITZ = { every: 3, yards: 10 };
 const MAX_PLAYERS = 80;
 const MAX_GAMES = 500;
 const MAX_GAMES_PER_HOST = 3;
@@ -52,19 +69,23 @@ const TEAM_K = { drive: 2.5, huddle: 3 };
 const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no 0/O, 1/I/L
 const TEAM_NAMES = ['Red', 'Blue'];
 
+// The clocks a teacher can pick. The long end of each list (a 10-minute drive, 90 s a play, 30
+// plays) is there because students asked for more time per question and longer games (2026-11);
+// the defaults are unchanged. The host page renders whatever is here (segment controls), and
+// createGame only accepts a value from the list, so this is the one place to add an option.
 const SETTINGS = {
-  drive: { seconds: [60, 120, 180, 300], defaultSeconds: 120 },
-  huddle: { plays: [5, 10, 15, 20], defaultPlays: 10, secondsPerPlay: [10, 20, 30, 45], defaultSecondsPerPlay: 20 },
+  drive: { seconds: [60, 120, 180, 300, 420, 600], defaultSeconds: 120 },
+  huddle: { plays: [5, 10, 15, 20, 30], defaultPlays: 10, secondsPerPlay: [10, 20, 30, 45, 60, 90], defaultSecondsPerPlay: 20 },
 };
 // A fact takes seconds, not half a minute: Huddle runs more plays on a shorter clock.
 const FACT_SETTINGS = {
   drive: SETTINGS.drive,
-  huddle: { plays: [10, 15, 20, 30], defaultPlays: 15, secondsPerPlay: [6, 10, 15], defaultSecondsPerPlay: 10 },
+  huddle: { plays: [10, 15, 20, 30, 40], defaultPlays: 15, secondsPerPlay: [6, 10, 15, 20, 30], defaultSecondsPerPlay: 10 },
 };
 // A test-prep play is a whole test question — 15 to 45 seconds, not 3 — so longer clocks.
 const PREP_SETTINGS = {
-  drive: { seconds: [180, 300, 420, 600], defaultSeconds: 300 },
-  huddle: { plays: [5, 10, 15, 20], defaultPlays: 10, secondsPerPlay: [20, 30, 45, 60], defaultSecondsPerPlay: 45 },
+  drive: { seconds: [180, 300, 420, 600, 900], defaultSeconds: 300 },
+  huddle: { plays: [5, 10, 15, 20, 30], defaultPlays: 10, secondsPerPlay: [20, 30, 45, 60, 90, 120], defaultSecondsPerPlay: 45 },
 };
 const settingsFor = (drill) => ({ facts: FACT_SETTINGS, prep: PREP_SETTINGS })[(DRILLS[drill] || {}).scoring] || SETTINGS;
 
@@ -86,6 +107,7 @@ const games = new Map(); // code → game
 
 const now = () => Date.now();
 const hash = (t) => crypto.createHash('sha256').update(String(t)).digest('hex');
+const freshTeams = () => TEAM_NAMES.map((name) => ({ name, pos: START_POS, pts: 0, tds: 0, picks: 0, blitzes: 0, yards: 0 }));
 
 function newCode() {
   for (let tries = 0; tries < 50; tries++) {
@@ -171,7 +193,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
     seconds: pickOr(seconds, S.drive.seconds, S.drive.defaultSeconds),
     totalPlays: pickOr(plays, S.huddle.plays, S.huddle.defaultPlays),
     secondsPerPlay: pickOr(secondsPerPlay, S.huddle.secondsPerPlay, S.huddle.defaultSecondsPerPlay),
-    teams: TEAM_NAMES.map((name) => ({ name, pos: START_POS, pts: 0, tds: 0, yards: 0 })),
+    teams: freshTeams(),
     players: new Map(), // playerId → player
     byToken: new Map(), // token hash → playerId
     deck: [], // dealt plays, index = play number - 1
@@ -259,7 +281,7 @@ function join(game, rawName, { userId } = {}) {
     team,
     joinedAt: now(),
     kicked: false,
-    att: 0, comp: 0, yards: 0, streak: 0, best: 0,
+    att: 0, comp: 0, yards: 0, streak: 0, best: 0, blitzes: 0,
     n: 1, issuedAt: null, // drive: the play they're on, and when it was first shown to them
     misses: [], msTotal: 0, // { n, k }
     facts: new Map(), // Math Facts: fact id → { label, fam, a, b, att, right, ms: [] } (right answers' times)
@@ -304,12 +326,16 @@ function setTeam(game, playerId, team) {
 // scoring
 // ---------------------------------------------------------------------------
 
+/** One player's share of a push: a team of `size` moves like ~K players, never like the sum. */
+function teamShare(game, teamIdx) {
+  const size = Math.max(1, teamSizes(game)[teamIdx]);
+  return Math.min(TEAM_K[game.mode], size) / size;
+}
+
 /** Move a team's ball by one player's gain (scaled for team size). Returns true on a TD. */
 function moveTeam(game, teamIdx, gain) {
   const t = game.teams[teamIdx];
-  const size = Math.max(1, teamSizes(game)[teamIdx]);
-  const k = TEAM_K[game.mode];
-  const scaled = gain * Math.min(k, size) / size;
+  const scaled = gain * teamShare(game, teamIdx);
   t.yards += scaled;
   t.pos += scaled;
   if (t.pos >= 100) {
@@ -318,6 +344,23 @@ function moveTeam(game, teamIdx, gain) {
   }
   t.pos = Math.max(1, t.pos);
   return false;
+}
+
+/**
+ * Blitz: a player's streak hit a multiple of BLITZ.every — the OTHER team's ball goes back
+ * BLITZ.yards scaled by the blitzer's team share (a blitz is one player's push, like a gain).
+ * The ball never goes behind the 1. Returns what happened, for the phone and the feed.
+ */
+function blitz(game, player) {
+  const victim = 1 - player.team;
+  const t = game.teams[victim];
+  const yards = Math.round(BLITZ.yards * teamShare(game, player.team) * 10) / 10;
+  const before = t.pos;
+  t.pos = Math.max(1, t.pos - yards);
+  t.yards -= before - t.pos;
+  player.blitzes++;
+  game.teams[player.team].blitzes++;
+  return { team: victim, yards, lost: Math.round((before - t.pos) * 10) / 10 };
 }
 
 /**
@@ -345,6 +388,11 @@ function rulesFor(game) {
     hill: game.mode === 'hill' ? hill.rules() : null,
     tdPoints: TD_POINTS,
     startPos: START_POS,
+    // Huddle: a student may change their pick until the reveal; the last tap is the one that counts,
+    // timed from when it landed (so a quick guess followed by a think costs the speed bonus).
+    canChange: huddle,
+    pickSix: huddle ? { ...PICK_SIX } : null,
+    blitz: game.mode === 'drive' ? { ...BLITZ } : null,
   };
 }
 
@@ -463,8 +511,36 @@ function closeRound(game) {
   for (const [i, t] of game.teams.entries()) {
     if (tds[i]) pushFeed(game, { type: 'td', team: i, text: `TOUCHDOWN ${t.name.toUpperCase()}` });
   }
+  // Pick six: judged after every answer has moved the balls, so the turnover takes the yards the
+  // other team just gained along with the rest. Both teams can earn it on the same play.
+  const picks = pickSixTeams(game, r);
+  for (const [i, t] of game.teams.entries()) {
+    if (!picks[i]) continue;
+    t.pts += PICK_SIX.points; t.picks++;
+    const other = game.teams[1 - i];
+    other.pos = Math.min(other.pos, PICK_SIX.resetPos);
+    pushFeed(game, { type: 'pick6', team: i, text: `PICK SIX ${t.name.toUpperCase()}` });
+  }
+  r.pickSix = picks;
+  const ps = game.playStats.get(r.n);
+  if (ps) ps.pickSix = picks;
   game.phase = 'reveal';
   touch(game);
+}
+
+/**
+ * Which teams earned a pick six on this round: every teammate who is IN the game answered and got it
+ * right, and there are at least PICK_SIX.minTeam of them. "In the game" is the same test a round
+ * waits on (an open screen) — a phone asleep in a backpack doesn't veto the team — plus anyone who
+ * answered and then closed their screen.
+ */
+function pickSixTeams(game, r) {
+  const here = new Set(expectedAnswerers(game).map((p) => p.id));
+  return game.teams.map((t, i) => {
+    const members = [...game.players.values()].filter((p) => !p.kicked && p.team === i && (here.has(p.id) || r.answers.has(p.id)));
+    if (members.length < PICK_SIX.minTeam) return false;
+    return members.every((p) => { const a = r.answers.get(p.id); return !!(a && a.ok); });
+  });
 }
 
 function advance(game) {
@@ -534,22 +610,34 @@ function answer(game, player, n, k) {
     player.n++; player.issuedAt = null;
     if (game.mode === 'hill') {
       res.hill = hill.onAnswer(game, player, res, now(), (item) => pushFeed(game, item));
-    } else if (res.td) pushFeed(game, { type: 'td', team: player.team, text: `TOUCHDOWN ${game.teams[player.team].name.toUpperCase()}`, who: player.name });
-    else if (res.ok && res.tier === 0) pushFeed(game, { type: 'big', team: player.team, who: player.name, gain: res.gain });
-    else if (!res.ok) pushFeed(game, { type: 'sack', team: player.team, who: player.name });
+    } else {
+      if (res.td) pushFeed(game, { type: 'td', team: player.team, text: `TOUCHDOWN ${game.teams[player.team].name.toUpperCase()}`, who: player.name });
+      else if (res.ok && res.tier === 0) pushFeed(game, { type: 'big', team: player.team, who: player.name, gain: res.gain });
+      else if (!res.ok) pushFeed(game, { type: 'sack', team: player.team, who: player.name });
+      // Every 3rd in a row: a blitz on the other team. After the gain, so a touchdown play still blitzes.
+      if (res.ok && player.streak % BLITZ.every === 0) {
+        res.blitz = blitz(game, player);
+        pushFeed(game, { type: 'blitz', team: player.team, who: player.name, yards: res.blitz.lost, victim: res.blitz.team });
+      }
+    }
     touch(game);
     return { ...res, ms, n, answer: play.answer, answerHtml: play.answerHtml, tell: play.tell, revealCard: play.revealCard, picked: k };
   }
   // huddle
   const r = game.round;
   if (game.phase !== 'live' || !r || r.closed || n !== r.n) throw new GameError(409, 'That play is closed.');
-  if (r.answers.has(player.id)) throw new GameError(409, 'You already answered this play.');
   const play = playAt(game, n);
   k = readAnswer(play, k);
+  // Changing an answer while the play is open is allowed (students asked for it): the LAST pick is
+  // the one graded, and its clock is the moment it landed — a fast guess followed by a slow
+  // correction scores as a slow answer. The same pick again is a no-op, not a reset of the clock.
+  const prev = r.answers.get(player.id);
+  if (prev && prev.k === k) return { locked: true, n };
   const ms = now() - r.openedAt;
-  r.answers.set(player.id, { k, ms });
+  r.answers.set(player.id, prev ? { k, ms, changes: (prev.changes || 0) + 1 } : { k, ms });
   if (!maybeCloseRound(game)) touch(game);
-  return { locked: true, n };
+  // A first answer keeps the shape it always had; only a change says so.
+  return prev ? { locked: true, n, changed: true } : { locked: true, n };
 }
 
 /**
@@ -583,9 +671,9 @@ function rematch(game) {
   if (game.phase !== 'over') throw new GameError(409, 'Finish this game first.');
   game.seed = crypto.randomBytes(12).toString('hex');
   game.deck = [];
-  game.teams = TEAM_NAMES.map((name) => ({ name, pos: START_POS, pts: 0, tds: 0, yards: 0 }));
+  game.teams = freshTeams();
   for (const p of game.players.values()) {
-    Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, n: 1, issuedAt: null, misses: [], msTotal: 0, facts: new Map(), factLog: [] });
+    Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, blitzes: 0, n: 1, issuedAt: null, misses: [], msTotal: 0, facts: new Map(), factLog: [] });
   }
   Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map(), playStats: new Map() });
   if (game.mode === 'hill') hill.reset(game);
@@ -599,7 +687,7 @@ function rematch(game) {
 
 function teamsView(game) {
   const sizes = teamSizes(game);
-  return game.teams.map((t, i) => ({ name: t.name, pos: Math.round(t.pos * 10) / 10, pts: t.pts, tds: t.tds, size: sizes[i] }));
+  return game.teams.map((t, i) => ({ name: t.name, pos: Math.round(t.pos * 10) / 10, pts: t.pts, tds: t.tds, picks: t.picks || 0, blitzes: t.blitzes || 0, size: sizes[i] }));
 }
 
 function base(game) {
@@ -638,7 +726,10 @@ function roundView(game, forHost) {
       const p = game.players.get(pid);
       if (p && a.ok) right[p.team]++;
     }
-    Object.assign(v, { answer: play.answer, answerHtml: play.answerHtml, tell: play.tell, revealCard: play.revealCard, counts, rightByTeam: right });
+    let changed = 0;
+    for (const a of r.answers.values()) if (a.changes) changed++;
+    Object.assign(v, { answer: play.answer, answerHtml: play.answerHtml, tell: play.tell, revealCard: play.revealCard, counts, rightByTeam: right,
+      pickSix: r.pickSix || [false, false], changed });
   } else if (forHost) {
     v.expected = expectedAnswerers(game).length;
     v.answeredByTeam = [0, 0];
@@ -662,6 +753,7 @@ function playByPlay(game) {
       playbookName: play.playbookName, head: play.head, summary: play.summary,
       answerHtml: play.answerHtml, tell: play.tell, card: play.revealCard,
       commonWrong: top ? { html: label(top[0]), count: top[1] } : null,
+      pickSix: s.pickSix || null,
     };
   });
 }
@@ -752,7 +844,7 @@ function factsFinal(game, players) {
 
 function hostView(game) {
   const players = [...game.players.values()].filter((p) => !p.kicked).map((p) => ({
-    id: p.id, name: p.name, team: p.team, att: p.att, comp: p.comp, yards: p.yards, best: p.best,
+    id: p.id, name: p.name, team: p.team, att: p.att, comp: p.comp, yards: p.yards, best: p.best, blitzes: p.blitzes || 0,
     avgSec: p.att ? Math.round(p.msTotal / p.att / 100) / 10 : null,
     linked: !!p.userId, away: p.conns === 0 && now() - p.lastSeen > 15000,
   }));
@@ -766,7 +858,7 @@ function hostView(game) {
     const comp = players.reduce((s, p) => s + p.comp, 0);
     // Every player, not just the top three: the scoreboard a teacher reads names off.
     const scoreboard = players.map((p) => ({ name: p.name, team: p.team, yards: p.yards, comp: p.comp, att: p.att,
-      pct: p.att ? Math.round((100 * p.comp) / p.att) : null, best: p.best, avgSec: p.avgSec, saved: p.linked }))
+      pct: p.att ? Math.round((100 * p.comp) / p.att) : null, best: p.best, blitzes: p.blitzes, avgSec: p.avgSec, saved: p.linked }))
       // a student who never answered sits at the bottom, never above someone who played and went backwards
       .sort((a, b) => (b.att > 0) - (a.att > 0) || b.yards - a.yards || b.comp - a.comp || a.name.localeCompare(b.name));
     v.final = { mvps, players: scoreboard, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
@@ -780,7 +872,7 @@ function playerView(game, player) {
   const v = {
     ...base(game),
     me: { id: player.id, name: player.name, team: player.team, att: player.att, comp: player.comp,
-      yards: player.yards, streak: player.streak, best: player.best, n: player.n },
+      yards: player.yards, streak: player.streak, best: player.best, blitzes: player.blitzes || 0, n: player.n },
   };
   if (game.mode === 'hill') v.hill = hill.playerHill(game, player, now());
   if (game.mode === 'huddle' && game.round) {
@@ -966,7 +1058,7 @@ if (sweeper.unref) sweeper.unref();
 function _reset() { for (const g of [...games.values()]) dropGame(g); }
 
 module.exports = {
-  onGameOver, SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, GameError, rulesFor,
+  onGameOver, SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, PICK_SIX, BLITZ, GameError, rulesFor,
   createGame, getGame, hostGame, playerFor, normalizeCode,
   join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,
