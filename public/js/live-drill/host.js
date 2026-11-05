@@ -436,7 +436,9 @@
       $('h-count').classList.remove('low');
       $('h-tell').innerHTML = r.tell;
       const picks = r.pickSix || [];
-      $('h-split').innerHTML = st.teams.map((t, i) => `<span class="t${i}">${esc(t.name)}: ${r.rightByTeam[i]}/${t.size} right${picks[i] ? ' · 🏈 PICK SIX' : ''}</span>`).join('')
+      const silent = r.noAnswer || [];
+      const pen = st.rules && st.rules.noAnswer;
+      $('h-split').innerHTML = st.teams.map((t, i) => `<span class="t${i}">${esc(t.name)}: ${r.rightByTeam[i]}/${t.size} right${picks[i] ? ' · 🏈 PICK SIX' : ''}${silent[i] ? ` · ${silent[i]} no answer${pen ? ` (−${pen} each)` : ''}` : ''}</span>`).join('')
         + (r.changed ? `<span class="muted">${r.changed} changed ${r.changed === 1 ? 'an' : 'their'} answer</span>` : '');
       $('h-next').textContent = r.n >= st.totalPlays ? 'Final score' : 'Next play';
     } else {
@@ -577,11 +579,12 @@
     lastScores = { code: st.code, game: st.gameNumber, players, teams: st.teams };
     const unit = st.mode === 'drive' ? 'yds' : 'pts';
     const showBlitz = st.mode === 'drive' && !!(st.rules && st.rules.blitz);
+    const showSilent = st.mode === 'huddle';
     const rows = players.map((p, i) => `<tr><td class="num">${i + 1}</td><td class="nm t${p.team}">${esc(p.name)}${p.saved ? ' <span class="acct" title="Signed in">✓</span>' : ''}</td>` +
       `<td>${esc(teamName(st, p.team))}</td><td class="num"><b>${p.yards}</b> ${unit}</td><td class="num">${p.comp}/${p.att}</td>` +
-      `<td class="num">${p.pct == null ? '–' : p.pct + '%'}</td><td class="num">${p.best}</td>${showBlitz ? `<td class="num">${p.blitzes || 0}</td>` : ''}<td class="num">${p.avgSec == null ? '–' : p.avgSec + ' s'}</td></tr>`).join('');
+      `<td class="num">${p.pct == null ? '–' : p.pct + '%'}</td><td class="num">${p.best}</td>${showBlitz ? `<td class="num">${p.blitzes || 0}</td>` : ''}${showSilent ? `<td class="num">${p.noAnswers || 0}</td>` : ''}<td class="num">${p.avgSec == null ? '–' : p.avgSec + ' s'}</td></tr>`).join('');
     el.innerHTML = `<h3>Every player</h3>
-      <div class="tablewrap"><table class="ftab stab"><thead><tr><th>#</th><th>Student</th><th>Team</th><th>Score</th><th>Right</th><th>Accuracy</th><th>Best streak</th>${showBlitz ? '<th>⚡ Blitzes</th>' : ''}<th>Avg time</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="tablewrap"><table class="ftab stab"><thead><tr><th>#</th><th>Student</th><th>Team</th><th>Score</th><th>Right</th><th>Accuracy</th><th>Best streak</th>${showBlitz ? '<th>⚡ Blitzes</th>' : ''}${showSilent ? '<th>No answer</th>' : ''}<th>Avg time</th></tr></thead><tbody>${rows}</tbody></table></div>
       <div class="row"><button class="ghost" id="f-scores-csv">Download scores (CSV)</button><span class="muted">One line per student. ✓ = signed in with their account.</span></div>`;
     $('f-scores-csv').onclick = downloadScoresCsv;
   }
@@ -590,8 +593,8 @@
     if (!lastScores) return;
     const q = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
     const safe = (v) => (/^[=+\-@]/.test(String(v)) ? `'${v}` : v); // never a formula in a spreadsheet
-    const lines = [['Rank', 'Student', 'Team', 'Score', 'Right', 'Attempted', 'Accuracy %', 'Best streak', 'Blitzes', 'Avg seconds', 'Signed in'].map(q).join(',')]
-      .concat(lastScores.players.map((p, i) => [i + 1, safe(p.name), teamName(lastScores, p.team), p.yards, p.comp, p.att, p.pct == null ? '' : p.pct, p.best, p.blitzes || 0, p.avgSec == null ? '' : p.avgSec, p.saved ? 'yes' : 'no'].map(q).join(',')));
+    const lines = [['Rank', 'Student', 'Team', 'Score', 'Right', 'Attempted', 'Accuracy %', 'Best streak', 'Blitzes', 'No answer', 'Avg seconds', 'Signed in'].map(q).join(',')]
+      .concat(lastScores.players.map((p, i) => [i + 1, safe(p.name), teamName(lastScores, p.team), p.yards, p.comp, p.att, p.pct == null ? '' : p.pct, p.best, p.blitzes || 0, p.noAnswers || 0, p.avgSec == null ? '' : p.avgSec, p.saved ? 'yes' : 'no'].map(q).join(',')));
     const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);

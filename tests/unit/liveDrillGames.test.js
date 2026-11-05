@@ -6,7 +6,7 @@
  *     say "I picked k on play n" — never claim yards, replay a play, or answer after 0:00);
  *   - nothing a student's screen receives contains an open play's answer;
  *   - team scoring: pooled, scaled to ~K players, TD = 7 and back to the 25;
- *   - huddle: the round closes the moment everyone has answered; silence is 0, not a sack.
+ *   - huddle: the round closes the moment everyone has answered; silence costs MORE than a sack.
  */
 jest.useFakeTimers();
 const G = require('../../utils/liveDrill/games');
@@ -194,16 +194,64 @@ describe('huddle', () => {
     expect(G.playerView(g, b).round.mine).toMatchObject({ ok: false, gain: -5 });
   });
 
-  test('time runs out on a round; silence is 0 yards, not a sack', () => {
+  test('time runs out on a round; no answer costs twice a sack — worse than a wrong one', () => {
     const g = huddle();
-    const a = G.join(g, 'A').player; G.join(g, 'B');
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
+    const { sack, noAnswer } = G.SCORING.standard;
+    expect(noAnswer).toBe(10); expect(sack).toBe(5); // the owner's numbers: −10 silent, −5 wrong
+    expect(G.hostView(g).rules.noAnswer).toBe(noAnswer);
     G.start(g);
     jest.advanceTimersByTime(5000);
     G.answer(g, a, 1, G.playAt(g, 1).answer);
     jest.advanceTimersByTime(16000);
     expect(g.phase).toBe('reveal');
     expect(g.teams[0].pos).toBe(G.START_POS + 15); // 5 s of a 20 s window = first third
+    expect(g.teams[1].pos).toBe(G.START_POS - noAnswer); // B sat it out
+    expect(b).toMatchObject({ yards: -noAnswer, noAnswers: 1, att: 0 }); // not an attempt: accuracy is answers only
+    const hv = G.hostView(g);
+    expect(hv.round.noAnswer).toEqual([0, 1]);
+    expect(hv.players.find((p) => p.id === b.id).noAnswers).toBe(1);
+    const pv = G.playerView(g, b);
+    expect(pv.round.mine).toBeNull();
+    expect(pv.round.penalty).toBe(-noAnswer);
+    expect(G.playerView(g, a).round.penalty).toBeUndefined();
+  });
+
+  test('a silent student who was NOT waited on (screen closed) is not penalized', () => {
+    const g = huddle();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
+    a.conns = 1; // only A has a live stream: the round waits for A alone
+    G.start(g);
+    jest.advanceTimersByTime(1000);
+    G.answer(g, a, 1, G.playAt(g, 1).answer); // closes the round — B's phone is in a backpack
+    expect(g.phase).toBe('reveal');
     expect(g.teams[1].pos).toBe(G.START_POS);
+    expect(b.noAnswers).toBe(0);
+    expect(G.playerView(g, b).round.penalty).toBeNull();
+    expect(G.hostView(g).round.noAnswer).toEqual([0, 0]);
+  });
+
+  test('the no-answer penalty is one player\'s push: team-share scaled, and never behind the 1', () => {
+    const g = huddle();
+    const players = Array.from({ length: 10 }, (_, i) => G.join(g, `P${i}`).player);
+    const red = players.filter((p) => p.team === 0); const blue = players.filter((p) => p.team === 1);
+    expect(red).toHaveLength(5); expect(blue).toHaveLength(5);
+    const { noAnswer } = G.SCORING.standard;
+    const share = G.TEAM_K.huddle / 5; // a team of 5 pushes like 3
+    G.start(g);
+    jest.advanceTimersByTime(1000);
+    for (const p of red.slice(1)) G.answer(g, p, 1, G.playAt(g, 1).answer);
+    G.answer(g, red[0], 1, wrongKey(G.playAt(g, 1))); // one Red miss: no pick six muddying Blue's ball
+    for (const p of blue.slice(0, 3)) G.answer(g, p, 1, G.playAt(g, 1).answer);
+    jest.advanceTimersByTime(20000); // two of Blue silent
+    expect(g.phase).toBe('reveal');
+    expect(g.teams[1].pos).toBeCloseTo(G.START_POS + 3 * 15 * share - 2 * noAnswer * share);
+    expect(G.hostView(g).round.noAnswer).toEqual([0, 2]);
+    for (let n = 2; n <= 4; n++) { G.advance(g); jest.advanceTimersByTime(21000); } // all of Blue silent, three plays running
+    expect(g.teams[1].pos).toBe(1); // −30 a play would be past the goal line the wrong way: the ball stops at the 1
+    expect(blue[0].noAnswers).toBe(3);
+    expect(blue[4].noAnswers).toBe(4);
+    expect(blue[0].streak).toBe(0);
   });
 
   test('a student can change their pick while the play is open; the LAST tap is graded, at its own time', () => {
@@ -627,7 +675,7 @@ describe('the lobby states the rules the server plays', () => {
     const g = huddle({ secondsPerPlay: spp });
     const { rules } = G.hostView(g);
     expect(rules.teamK).toBe(G.TEAM_K.huddle);
-    expect(rules.noAnswer).toBe(0);
+    expect(rules.noAnswer).toBe(G.SCORING.standard.noAnswer);
     const [fast, mid, slow] = rules.speed;
     expect(huddleGainAt(spp, fast.within * 1000)).toBe(fast.gain);
     expect(huddleGainAt(spp, mid.within * 1000)).toBe(mid.gain);
