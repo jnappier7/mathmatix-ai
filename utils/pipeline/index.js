@@ -342,8 +342,13 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
       // candidate is the FINAL value, but the reply may also carry the
       // intermediate sub-answers ("0.3 … 300") — the judge must see them
       // as shown work, not competing answers.
+      // The tutor turn before the chosen one, so a sub-question is solved with
+      // what it builds on (llmVerifyAnswer's earlierContext).
+      const chosenAt = pinnedProblem ? -1 : assistantContext.map(m => m.content).lastIndexOf(problemText);
+      const earlierContext = chosenAt > 0 ? assistantContext[chosenAt - 1].content : null;
       llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate, {
         fullStudentMessage: message,
+        earlierContext,
       })
         .then(verdict => {
           const tier = verdict.escalated ? `escalated→${verdict.tier}` : verdict.tier;

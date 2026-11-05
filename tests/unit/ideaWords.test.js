@@ -38,6 +38,8 @@ test('observe: the live reply is not a conceptual reply (real history)', () => {
     recentAssistantMessages: [g, t1, t2].map(content => ({ role: 'assistant', content })),
     recentUserMessages: [{ content: 'whats the derivative of x^2 sin x' }, { content: "u' = 2x and v' = cos x so its 2x cos x" }],
   });
-  expect(o.messageType).toBe('general_math');
+  // Read as the answer it is since 2026-11-04 (was general_math: graded by nothing).
+  expect(o.messageType).toBe('answer_attempt');
+  expect(o.answer.value).toBe('2x sinx + x^2 cosx');
   expect(o.conceptualReply).toBe(false);
 });
