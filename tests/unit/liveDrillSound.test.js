@@ -220,6 +220,7 @@ test('the touchdown cheer is the recording once it has loaded, and the synthesiz
   expect(made.sources.length).toBe(n);
 });
 
+<<<<<<< HEAD
 test('once the recorded murmur has loaded, the bed under play is the recording looping — no synthesized voices', async () => {
   const fetch = (url) => Promise.resolve({ ok: true, arrayBuffer: () => Promise.resolve({ url }) });
   const { S, made } = load(new Map(), { fetch });
@@ -244,6 +245,8 @@ test('once the recorded murmur has loaded, the bed under play is the recording l
   expect(bed.stopped).toBe(true);
 });
 
+=======
+>>>>>>> origin/main
 test('a cheer file that fails to load leaves the synthesized roar in place', async () => {
   const fetch = () => Promise.resolve({ ok: false, status: 404 });
   const { S, made } = load(new Map(), { fetch });

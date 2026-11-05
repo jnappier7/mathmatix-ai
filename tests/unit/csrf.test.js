@@ -52,6 +52,17 @@ describe('csrfProtection — exempt routes', () => {
     expect(res.status).not.toHaveBeenCalled();
   });
 
+  test('skips check for POST /unsubscribe (mail clients one-click POST with no cookie)', () => {
+    const req = makeReq({ method: 'POST', path: '/unsubscribe' });
+    const res = makeRes();
+    const next = jest.fn();
+
+    csrfProtection(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(res.status).not.toHaveBeenCalled();
+  });
+
   test('skips check for exempt prefix /api/trial-chat/anything', () => {
     const req = makeReq({ method: 'POST', path: '/api/trial-chat/start' });
     const res = makeRes();

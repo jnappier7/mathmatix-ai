@@ -147,6 +147,8 @@ const activitiesRoutes = require('../routes/activities');
 const liveDrillRoutes = require('../routes/liveDrill');
 const liveDrillSolo = require('../utils/liveDrill/solo');
 const adminEmailRoutes = require('../routes/adminEmail');
+const unsubscribeRoutes = require('../routes/unsubscribe');
+const { setMarketingOptOut } = require('../utils/emailUnsubscribe');
 const billingRoutes = require('../routes/billing');
 const affiliateRoutes = require('../routes/affiliate');
 const schoolLicenseRoutes = require('../routes/schoolLicense');
@@ -353,6 +355,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/live-drill/play', liveDrillRoutes.playRouter);
   // Solo practice (/drill/<hub>): public, GET only, nothing saved — same reason for living up here.
   app.use('/api/live-drill/solo', liveDrillRoutes.soloRouter);
+  // Marketing email opt-out: a signed token in the link is the whole authorization — the
+  // reader is in their inbox, not signed in, and mail clients POST here (RFC 8058 one-click).
+  // Public, CSRF-exempt (middleware/csrf.js), own limiter. utils/emailUnsubscribe.js.
+  app.use('/unsubscribe', unsubscribeRoutes);
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
   // Courses are open to ALL students as a free on-ramp (see docs/COURSES_IN_FLOW_DESIGN.md).
@@ -816,6 +822,14 @@ function registerUserRoutes(app) {
           hasChanges = true;
         }
       }
+      // Marketing opt-out from the settings modal. Only the boolean is accepted,
+      // and it is written AFTER save() through the one writer
+      // (utils/emailUnsubscribe.js), never through this stale in-memory doc —
+      // saving the subdocument from here would clobber the audit fields.
+      const marketingOptOut = req.body.emailPreferences && typeof req.body.emailPreferences === 'object'
+          && typeof req.body.emailPreferences.marketingOptOut === 'boolean'
+        ? req.body.emailPreferences.marketingOptOut : null;
+      if (marketingOptOut !== null) hasChanges = true;
       if (req.body.firstName || req.body.lastName) {
         user.name = `${user.firstName || ''} ${user.lastName || ''}`.trim();
       }
@@ -825,7 +839,12 @@ function registerUserRoutes(app) {
       }
 
       await user.save();
-      res.json({ success: true, message: 'Profile settings updated successfully!', user: user.toObject() });
+      const userOut = user.toObject();
+      if (marketingOptOut !== null) {
+        const rec = await setMarketingOptOut('user', user._id, marketingOptOut, 'settings');
+        if (rec) userOut.emailPreferences = { ...(userOut.emailPreferences || {}), marketingOptOut: rec.optedOut };
+      }
+      res.json({ success: true, message: 'Profile settings updated successfully!', user: userOut });
     } catch (error) {
       logger.error('Error updating user settings:', error);
       res.status(500).json({ message: 'Failed to update user settings.' });

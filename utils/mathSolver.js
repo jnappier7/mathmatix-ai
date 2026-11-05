@@ -114,6 +114,14 @@ function detectMathProblem(message) {
     if (nlDivideMatch) {
         return { type: 'arithmetic', left: parseFloat(nlDivideMatch[1]), operator: '/', right: parseFloat(nlDivideMatch[2]) };
     }
+    // Fraction / mixed-number operands ("1 1/2 divided by 3/4") first: the
+    // plain-number pattern below read that as "2 divided by 3" and keyed 0.6667.
+    const fracOperand = `(?:\\d+\\s+)?\\d+\\s*/\\s*\\d+|\\d+(?:\\.\\d+)?`;
+    const fracDivided = message.match(new RegExp(`(?<![\\d./])(${fracOperand})\\s+divided\\s+by\\s+(${fracOperand})(?![\\d./])`, 'i'));
+    if (fracDivided && /\//.test(fracDivided[1] + fracDivided[2])) {
+        const fp = fractionOperandProblem(fracDivided[1], '/', fracDivided[2]);
+        if (fp) return fp;
+    }
     const dividedByPattern = /(\d+\.?\d*)\s+divided\s+by\s+(\d+\.?\d*)/i;
     const dividedByMatch = message.match(dividedByPattern);
     if (dividedByMatch) {
@@ -575,7 +583,14 @@ function detectMathProblem(message) {
         };
     }
 
-    // Pattern: Fraction problems "1/2 + 1/4"
+    // Pattern: Fraction problems "1/2 + 1/4" — a whole number in front of either
+    // fraction makes it a mixed number. In prose ("What's 1 1/2 ÷ 3/4?") this
+    // pattern used to grab "1/2 / 3/4" and drop the 1, keying 2/3 instead of 2.
+    const mixedInProse = message.match(/(?<![\d./])(\d+\s+)?(\d+)\s*\/\s*(\d+)\s*([+\-*/])\s*(\d+\s+)?(\d+)\s*\/\s*(\d+)(?![\d./])/);
+    if (mixedInProse && (mixedInProse[1] || mixedInProse[5])) {
+        const fp = fractionOperandProblem(`${mixedInProse[1] || ''}${mixedInProse[2]}/${mixedInProse[3]}`, mixedInProse[4], `${mixedInProse[5] || ''}${mixedInProse[6]}/${mixedInProse[7]}`);
+        if (fp) return fp;
+    }
     const fractionPattern = /(\d+)\s*\/\s*(\d+)\s*([+\-*/])\s*(\d+)\s*\/\s*(\d+)/;
     const fractionMatch = message.match(fractionPattern);
     if (fractionMatch) {
@@ -1643,6 +1658,24 @@ function detectMixedNumberArithmetic(text) {
     return { type: 'mixed_number_arithmetic', expression: t };
 }
 
+// Two operands, at least one a fraction or mixed number, as a problem object:
+// mixed when either has a whole part, otherwise plain fraction arithmetic.
+function fractionOperandProblem(left, operator, right) {
+    const tidy = (t) => String(t).trim().replace(/\s*\/\s*/g, '/').replace(/\s+/g, ' ');
+    const a = tidy(left), b = tidy(right);
+    if (/\d \d/.test(a) || /\d \d/.test(b)) {
+        return { type: 'mixed_number_arithmetic', expression: `${a} ${operator} ${b}` };
+    }
+    const fa = a.match(/^(\d+)\/(\d+)$/) || [null, a, '1'];
+    const fb = b.match(/^(\d+)\/(\d+)$/) || [null, b, '1'];
+    if (!/^\d+$/.test(fa[1]) || !/^\d+$/.test(fb[1])) return null;
+    return {
+        type: 'fraction_arithmetic',
+        leftNum: parseInt(fa[1]), leftDen: parseInt(fa[2]), operator,
+        rightNum: parseInt(fb[1]), rightDen: parseInt(fb[2]),
+    };
+}
+
 // Mixed-number arithmetic → exact-rational engine, formatted as a mixed number.
 function solveMixedNumberArithmetic(problem) {
     const r = evalExpression(problem.expression, 'mixed');
@@ -2623,13 +2656,30 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
     // "28" and rejected against a correct "-28" — and likewise for ×, ÷, dots, etc.
     // normalizeSpokenNumbers first turns speech-to-text answers into signed digits
     // ("negative six" → "-6") so a correct spoken answer isn't graded wrong.
-    const norm = (v) => normalizeMathOperators(normalizeSpokenNumbers(String(v).trim().toLowerCase()));
+    // "pi" typed out is π: "6pi" and "6 pi" were rejected against a key of "6π".
+    const norm = (v) => normalizeMathOperators(normalizeSpokenNumbers(String(v).trim().toLowerCase()))
+        .replace(/(^|[^a-z])pi(?![a-z])/g, '$1π').replace(/(\d)\s+π/g, '$1π');
     const studentStr = norm(studentAnswer);
     const correctStr = norm(correctAnswer);
 
     // Exact match
     if (studentStr === correctStr) {
         return { isCorrect: true, exact: true };
+    }
+
+    // π answers compare by VALUE with π in it. The digit-strip fallback below read
+    // "6π" as 6, so a bare "6" was graded CORRECT for a circumference of 6π (verdict
+    // eval, 2026-11-03). A decimal within tolerance ("18.85") still counts.
+    if (studentStr.includes('π') || correctStr.includes('π')) {
+        const piValue = (s) => (/[a-z]/.test(s) ? null
+            : expressionValue(s.replace(/(\d|\))\s*π/g, '$1*π').replace(/π/g, '(3.141592653589793)')));
+        const sv = piValue(studentStr);
+        const cv = piValue(correctStr);
+        if (sv !== null && cv !== null) {
+            return Math.abs(sv - cv) <= tolerance
+                ? { isCorrect: true, exact: false, difference: Math.abs(sv - cv) }
+                : { isCorrect: false };
+        }
     }
 
     // Numeric comparison with tolerance

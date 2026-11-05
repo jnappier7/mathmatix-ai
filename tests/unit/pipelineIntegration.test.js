@@ -40,6 +40,8 @@ jest.mock('../../utils/misconceptionDetector', () => ({
 }));
 
 jest.mock('../../utils/worksheetGuard', () => ({
+  // Pure regex, read by observe and recheck — keep the real one.
+  isCheckWorkIntent: jest.requireActual('../../utils/worksheetGuard').isCheckWorkIntent,
   filterAnswerKeyResponse: jest.fn((text) => ({ text, wasFiltered: false })),
   detectAnswerKeyResponse: jest.fn(() => ({ isAnswerKey: false, problemCount: 0 })),
   detectWorkedSolution: jest.fn(() => ({ isWorkedSolution: false, signalCount: 0, breakdown: {} })),

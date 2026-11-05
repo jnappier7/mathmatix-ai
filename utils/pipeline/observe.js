@@ -9,7 +9,7 @@
  * @module pipeline/observe
  */
 
-const { hasIdeaWords } = require('./ideaWords');
+const { hasIdeaWords, isMathToken } = require('./ideaWords');
 const { normalizeSpokenNumbers, normalizeMathUnicode, stripThousandsSeparators } = require('../mathUnicodeNormalizer');
 const { parseFractionOrDecimal } = require('../answerComparison');
 const { isCheckWorkIntent } = require('../worksheetGuard');
@@ -57,7 +57,17 @@ const PATTERNS = {
   // The mirrored form — "100/7 = x" — is how students often end shown work
   // (the value lands on the left because that's the side they computed).
   valueAssignment: /^(-?\d+\.?\d*(?:\s*\/\s*\d+)?)\s*=\s*[a-z]\s*[.!?]*$/i,
-  answerPhrase: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?|that'?s|so\s+it'?s)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
+  // The number must END the value: "i got 2e^(2x)" is not the answer 2. The
+  // greedy capture once minted "2" (and "12" from "its 12(3x + 1)^3"), and the
+  // verifier rightly called 2 a wrong derivative — a correct answer rejected
+  // on every lead-in (verdict eval, 2026-11-03). Expressions go to
+  // answerPhraseExpression below.
+  answerPhrase: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?|that'?s|so\s+it'?s)\s*(-?\d+\s+\d+\s*\/\s*\d+|-?\d+\.?\d*(?:\s*\/\s*\d+)?)(?![\d.]|[a-z(^]|\s*[*×·^]|\s*\/\s*[a-z(])/i,
+  numberWithLabel: /^(-?\d+(?:\.\d+)?(?:\s*\/\s*\d+)?)\s*([a-z]{2,}(?:\s+[a-z]{2,})?)\s*[.!?]*$/i,
+  // A lead-in followed by a whole expression that closes the message —
+  // "i got 2e^(2x)", "its 12(3x + 1)^3", "i got 2x/(x^2 + 1)". Validated by
+  // leadInExpression (single-letter variables only, must combine terms).
+  answerPhraseExpression: /^(?:(?:oh|ok|okay|so|well|um|hmm)[,\s]+)*(?:the\s+answer\s+is|i\s+got|it'?s|i\s+think\s+it'?s|that'?s|so\s+it'?s)\s+([-+*/^()[\]{}\d\s.a-zπ√']+?)\s*[.!?]*$/i,
   // The same cues followed by an ALGEBRAIC value at the END of the message —
   // "for the blank I got x+3", "the answer is 2x". End-anchored so it never
   // fires mid-prose ("I got x too small so I doubled it"), and tried BEFORE
@@ -92,7 +102,9 @@ const PATTERNS = {
   // Algebraic expression answers: 3x^2-3, x+2, -2x+5, 2x^2+3x-1
   algebraicExpr: /^(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)\s*$/i,
   // "3 times 12 is 36", "36 divided by 2 is 18" — student states a full arithmetic result
-  arithmeticStatement: /\d+\.?\d*\s*(?:[+\-*/×÷]|times|plus|minus|divided\s+by|multiplied\s+by)\s*\d+\.?\d*\s+(?:is|=|equals)\s+(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
+  // Both ends must be whole numbers, not the edges of an expression: in
+  // "4(3x+1)^3 * 3 = 12(3x+1)^3" it read "3 * 3 = 12" and graded the answer 12.
+  arithmeticStatement: /(?<![\w)^.])\d+\.?\d*\s*(?:[+\-*/×÷]|times|plus|minus|divided\s+by|multiplied\s+by)\s*\d+\.?\d*\s+(?:is|=|equals)\s+(-?\d+\.?\d*(?:\s*\/\s*\d+)?)(?![\d.]|[a-z(^]|\s*[*×·^]|\s*\/\s*[a-z(])/i,
   mixedNumber: /^(-?\d+)\s+(\d+\s*\/\s*\d+)$/,
 
   // Answer embedded in explanation — two tiers of patterns.
@@ -376,10 +388,37 @@ function extractSolutionTuple(text) {
   const t = text.trim();
   const pair = t.match(ORDERED_PAIR_ANSWER);
   if (pair) return `(${pair[1].replace(/\s+/g, '')}, ${pair[2].replace(/\s+/g, '')})`;
-  if (!ASSIGNMENT_LIST.test(t)) return null;
-  const parts = [...t.matchAll(ASSIGNMENT)].map(m => [m[1].toLowerCase(), m[2].replace(/\s+/g, '')]);
-  if (new Set(parts.map(p => p[0])).size !== parts.length) return null;
-  return parts.map(([v, n]) => `${v}=${n}`).join(', ');
+  if (ASSIGNMENT_LIST.test(t)) {
+    const parts = [...t.matchAll(ASSIGNMENT)].map(m => [m[1].toLowerCase(), m[2].replace(/\s+/g, '')]);
+    if (new Set(parts.map(p => p[0])).size !== parts.length) return null;
+    return parts.map(([v, n]) => `${v}=${n}`).join(', ');
+  }
+  return solutionAfterWork(t);
+}
+
+// The same solution reached through shown work: "2x = 14 so x = 7, then y = 3".
+// The list form above needs the WHOLE message to be assignments, so this one
+// fell through to the last number and was graded as the answer 3 (verdict eval,
+// 2026-11-03). Bare assignments ("x = 7", never "2x = 14") to two or more
+// different unknowns, the last value for each. Not a conditional — "if x = 3,
+// y = 7" states no solution.
+const BARE_ASSIGNMENT = /(?:^|[\s,;(])(?<![+\-*/=^]\s*)([a-z])\s*=\s*(-?\d+(?:\.\d+)?(?:\s*\/\s*\d+)?)(?![\w.^(])/gi;
+const CONDITIONAL = /\b(?:if|when|plug(?:ging)?|suppose|substitut\w*|let|what)\b/i;
+function solutionAfterWork(t) {
+  if (CONDITIONAL.test(t)) return null;
+  const last = new Map();
+  for (const m of t.matchAll(BARE_ASSIGNMENT)) last.set(m[1].toLowerCase(), m[2].replace(/\s+/g, ''));
+  if (last.size < 2) return null;
+  return [...last.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([v, n]) => `${v}=${n}`).join(', ');
+}
+
+// The expression after a lead-in is an answer only if it is math: a digit,
+// terms combined (or a π / √ glued on), and every run of letters a variable or
+// math vocabulary ("sin", "pi", "sqrt") — any other word makes it prose.
+function leadInExpression(expr) {
+  const e = String(expr || '').trim();
+  if (!/\d/.test(e) || !(/[-+*/^()π√]/.test(e.slice(1)) || /\d\s*[a-z]/i.test(e))) return false;
+  return (e.match(/[a-z]{2,}/gi) || []).every(isMathToken);
 }
 
 function extractAnswer(message) {
@@ -510,8 +549,18 @@ function extractAnswer(message) {
     if ((match = text.match(PATTERNS.factoredExpr))) return { value: match[1].replace(/\s/g, ''), raw };
     if ((match = text.match(PATTERNS.stepResult))) return { value: match[1].replace(/\s/g, ''), raw, hasExplanation: true };
     if ((match = text.match(PATTERNS.answerPhraseAlgebraic))) return { value: match[1].replace(/\s/g, ''), raw };
-    if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw };
+    // A mixed number keeps the space between its parts: "4 2/3", never "42/3".
+    if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s*\/\s*/g, '/').replace(/\s+/g, ' ').trim(), raw };
+    // Function words keep their spacing ("2x sin x + x^2 cos x"); "2xsinx" reads as nothing.
+    if ((match = text.match(PATTERNS.answerPhraseExpression)) && leadInExpression(match[1])) {
+      return { value: /[a-z]{2,}/i.test(match[1]) ? match[1].replace(/\s+/g, ' ').trim() : match[1].replace(/\s/g, ''), raw };
+    }
     if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw };
+    // A number and its unit — "52 degrees", "30 square units", "15 days". These
+    // read as prose once, and the conceptual judge rejected them; as math the
+    // number is the answer (llmVerifier compares a unit-bearing key by value).
+    if ((match = text.match(PATTERNS.numberWithLabel))
+        && match[2].split(/\s+/).every(w => /^(?:square|squared|cubic|cubed)$/i.test(w) || !isMathToken(w))) return { value: match[1].replace(/\s/g, ''), raw };
   }
 
   // Proposed / self-check answer ("…right? 10/24", "is it 5/12?") — cue-gated and
@@ -560,7 +609,7 @@ function extractAnswerFromExplanation(message) {
 
   // Try answer phrase pattern on longer text (relaxed from 100 char limit)
   if ((match = text.match(PATTERNS.answerPhrase))) {
-    return { value: match[1].replace(/\s/g, ''), raw: text, hasExplanation: true };
+    return { value: match[1].replace(/\s*\/\s*/g, '/').replace(/\s+/g, ' ').trim(), raw: text, hasExplanation: true };
   }
 
   // Fall back to intermediate patterns (you get, gives)

@@ -1109,6 +1109,7 @@ function cleanCardProblemTex(tex) {
  */
 function misconceptionConfirmed({ diagnosis, originalMessage, problemTex }) {
   if (!diagnosis?.misconception?.name) return { ok: false, reason: 'no_misconception' };
+  if (diagnosis.recheck) return { ok: false, reason: 'recheck' };
   if (answerIsActuallyRight(diagnosis)) return { ok: false, reason: 'answer_is_right' };
   const gate = misconceptionCardGate({
     diagnosis, originalMessage, problemTex,

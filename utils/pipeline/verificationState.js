@@ -97,6 +97,10 @@ const WORK_MARKERS = new RegExp([
   '\\bcheck\\b',
   '\\b(?:right|wrong|correct|incorrect)\\b',
   '\\bmean(?:s)?\\s+(?:that\\s+)?[a-z]\\s*=',
+  // A proposed value: "is it 6π?", "would it be x^7?". The student is offering
+  // an answer as a question — a claim the tutor could wrongly confirm, so it
+  // must not read as a plain ask (verdict eval, 2026-11-03).
+  '\\b(?:is|was|would|could)\\s+(?:it|the\\s+answer|that)(?:\\s+be)?\\s+(?:[0-9\\-(π√]|[a-z](?=[\\^\\d(+\\-*/]))',
 ].join('|'), 'i');
 
 // A relation between variable-free expressions is a CLAIM ("1/2 + 1/3 = 2/5",

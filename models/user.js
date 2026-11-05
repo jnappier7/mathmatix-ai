@@ -1064,6 +1064,16 @@ const userSchema = new Schema({
   /* Preferences */
   preferences: { type: userPreferencesSchema, default: () => ({}) },
 
+  /* Marketing email opt-out (CAN-SPAM). Written ONLY by
+     utils/emailUnsubscribe.js setMarketingOptOut; read by every marketing
+     audience query through marketingOptOutFilter(). Transactional mail
+     (consent, password reset, receipts, safety alerts) ignores it. */
+  emailPreferences: {
+    marketingOptOut:       { type: Boolean, default: false },
+    marketingOptOutAt:     { type: Date },
+    marketingOptOutSource: { type: String, enum: ['link', 'one-click', 'settings', 'admin'] }
+  },
+
   /* Tour & Survey Tracking */
   tourCompleted: { type: Boolean, default: false },
   tourCompletedAt: { type: Date },

@@ -437,8 +437,11 @@
     groan,
     /** Whether the recorded cheers have loaded (false until the first click's fetch lands). */
     get recordedCheers() { return loaded('cheer') && loaded('big'); },
+<<<<<<< HEAD
     /** Whether the recorded murmur bed has loaded (the synthesized voices stand in until then). */
     get recordedMurmur() { return loaded('murmur'); },
+=======
+>>>>>>> origin/main
     /** Referee's whistle: kickoff. */
     whistle() {
       tone({ freq: 2600, type: 'square', dur: 0.12, vol: 0.06 });
