@@ -201,6 +201,10 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
 
   const problem = String(problemText).slice(0, MAX_PROBLEM_CHARS);
   const answer = String(studentAnswer).slice(0, MAX_ANSWER_CHARS);
+  const earlier = typeof options.earlierContext === 'string' && options.earlierContext.trim()
+    && options.earlierContext.trim() !== String(problemText).trim()
+    ? options.earlierContext.trim().slice(-MAX_PROBLEM_CHARS)
+    : null;
   const model = options.model || VERIFIER_MODEL;
   const threshold = options.confidenceThreshold != null
     ? options.confidenceThreshold
@@ -224,7 +228,13 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
       },
       {
         role: 'user',
-        content: `Problem:\n${problem}`,
+        // The turn before the question, when the caller has one: a sub-question
+        // ("u' = 2x and v' = cos x. What would u'v look like?") rarely restates
+        // what it builds on (v = sin x), and solved blind it came out as
+        // 2x cos x — a right u'v rejected and a wrong one accepted (verdict
+        // eval, 2026-11-04). Context only; the Problem is still what is graded.
+        content: (earlier ? `Earlier in the lesson (context only — do not answer this part):\n${earlier}\n\n` : '')
+          + `Problem:\n${problem}`,
       },
     ];
 
