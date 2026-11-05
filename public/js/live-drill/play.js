@@ -340,7 +340,8 @@
       const p6 = st.rules && st.rules.pickSix;
       const ours = picks[st.me.team] && p6 ? `<b>🏈 PICK SIX!</b> Everyone on ${esc(teamName(st.me.team))} got it: +${p6.points}, and ${esc(teamName(1 - st.me.team))} is back on the ${p6.resetPos}. ` : '';
       const theirs = picks[1 - st.me.team] && p6 ? `<b>Pick six for ${esc(teamName(1 - st.me.team))}</b> — all of them got it, so ${esc(teamName(st.me.team))} is back on the ${p6.resetPos}. ` : '';
-      if (!mine) { $('fb').className = 'fb'; $('fb').innerHTML = `<span class="bigtxt">No answer</span><span class="why">${theirs}${r.tell}</span>`; }
+      if (!mine && r.penalty) { $('fb').className = 'fb bad'; $('fb').innerHTML = `<span class="bigtxt">No answer · ${showNum(r.penalty)}</span><span class="why"><b>Sitting out costs more than a wrong answer.</b> ${theirs}${r.tell}</span>`; }
+      else if (!mine) { $('fb').className = 'fb'; $('fb').innerHTML = `<span class="bigtxt">No answer</span><span class="why">${theirs}${r.tell}</span>`; }
       else if (mine.ok) { $('fb').className = `fb good${picks[st.me.team] ? ' pick6' : ''}`; $('fb').innerHTML = `<span class="bigtxt">${picks[st.me.team] ? 'Pick six' : 'Right'} · +${mine.gain}</span><span class="why">${ours}${theirs}${r.tell}</span>`; }
       else { $('fb').className = 'fb bad'; $('fb').innerHTML = `<span class="bigtxt">Sacked · ${showNum(mine.gain)}</span><span class="why">${theirs}${r.tell}</span>`; }
       return;

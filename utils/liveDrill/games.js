@@ -93,11 +93,14 @@ const settingsFor = (drill) => ({ facts: FACT_SETTINGS, prep: PREP_SETTINGS })[(
 // come about three times as fast, so each pays about a third as much: a two-minute drive covers
 // about the same ground in either drill, and touchdowns stay events. Both keep a blind guess
 // worth nothing on average (¼ × 15 = ¾ × 5), which typed answers don't need but cost nothing.
-// Huddle splits the play clock into thirds for the same three tiers.
+// Huddle splits the play clock into thirds for the same three tiers. `noAnswer` is Huddle only
+// (Drive's next play waits for you): a student who is in the game and lets the clock run out loses
+// twice a sack — no answer is worse than a wrong one (owner's rule, 2026-11: students had learned
+// that sitting out a hard play cost nothing while a guess risked five).
 const SCORING = {
-  standard: { gains: [15, 10, 5], driveMs: [6000, 12000], sack: 5 },
-  facts: { gains: [6, 4, 2], driveMs: [3000, 6000], sack: 2 },
-  prep: { gains: [15, 10, 5], driveMs: [20000, 40000], sack: 5 },
+  standard: { gains: [15, 10, 5], driveMs: [6000, 12000], sack: 5, noAnswer: 10 },
+  facts: { gains: [6, 4, 2], driveMs: [3000, 6000], sack: 2, noAnswer: 4 },
+  prep: { gains: [15, 10, 5], driveMs: [20000, 40000], sack: 5, noAnswer: 10 },
 };
 const scoringFor = (game) => SCORING[(DRILLS[game.drill] || {}).scoring] || SCORING.standard;
 // Fact fluency: a right answer in this long or less counts as automatic — the usual 3-second bar.
@@ -281,7 +284,7 @@ function join(game, rawName, { userId } = {}) {
     team,
     joinedAt: now(),
     kicked: false,
-    att: 0, comp: 0, yards: 0, streak: 0, best: 0, blitzes: 0,
+    att: 0, comp: 0, yards: 0, streak: 0, best: 0, blitzes: 0, noAnswers: 0,
     n: 1, issuedAt: null, // drive: the play they're on, and when it was first shown to them
     misses: [], msTotal: 0, // { n, k }
     facts: new Map(), // Math Facts: fact id → { label, fam, a, b, att, right, ms: [] } (right answers' times)
@@ -383,7 +386,7 @@ function rulesFor(game) {
     sack: sc.sack,
     typed: !!(DRILLS[game.drill] || {}).typed,
     fluentSec: FLUENT_MS / 1000,
-    noAnswer: huddle ? 0 : null, // Drive has no "no answer": the next play waits for you
+    noAnswer: huddle ? sc.noAnswer : null, // Drive has no "no answer": the next play waits for you
     teamK: TEAM_K[game.mode] || null,
     hill: game.mode === 'hill' ? hill.rules() : null,
     tdPoints: TD_POINTS,
@@ -507,7 +510,20 @@ function closeRound(game) {
     teamGain[p.team] += res.gain;
     if (res.td) tds[p.team]++;
   }
-  // Silence is not a sack: a student who didn't answer simply didn't move the ball.
+  // Silence is WORSE than a sack: everyone the round was waiting on (an open screen — a phone asleep
+  // in a backpack is not "in the game") who never answered loses sc.noAnswer, pushed through the
+  // same team-share scaling as any play, never behind the 1. Not an attempt: accuracy is answers only.
+  const sc = scoringFor(game);
+  const silent = expectedAnswerers(game).filter((p) => !r.answers.has(p.id));
+  const noAnswer = [0, 0];
+  for (const p of silent) {
+    p.noAnswers++; p.streak = 0;
+    p.yards -= sc.noAnswer;
+    moveTeam(game, p.team, -sc.noAnswer);
+    noAnswer[p.team]++;
+  }
+  r.silent = silent.map((p) => p.id);
+  r.noAnswer = noAnswer;
   for (const [i, t] of game.teams.entries()) {
     if (tds[i]) pushFeed(game, { type: 'td', team: i, text: `TOUCHDOWN ${t.name.toUpperCase()}` });
   }
@@ -673,7 +689,7 @@ function rematch(game) {
   game.deck = [];
   game.teams = freshTeams();
   for (const p of game.players.values()) {
-    Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, blitzes: 0, n: 1, issuedAt: null, misses: [], msTotal: 0, facts: new Map(), factLog: [] });
+    Object.assign(p, { att: 0, comp: 0, yards: 0, streak: 0, best: 0, blitzes: 0, noAnswers: 0, n: 1, issuedAt: null, misses: [], msTotal: 0, facts: new Map(), factLog: [] });
   }
   Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map(), playStats: new Map() });
   if (game.mode === 'hill') hill.reset(game);
@@ -729,7 +745,7 @@ function roundView(game, forHost) {
     let changed = 0;
     for (const a of r.answers.values()) if (a.changes) changed++;
     Object.assign(v, { answer: play.answer, answerHtml: play.answerHtml, tell: play.tell, revealCard: play.revealCard, counts, rightByTeam: right,
-      pickSix: r.pickSix || [false, false], changed });
+      pickSix: r.pickSix || [false, false], changed, noAnswer: r.noAnswer || [0, 0] });
   } else if (forHost) {
     v.expected = expectedAnswerers(game).length;
     v.answeredByTeam = [0, 0];
@@ -844,7 +860,7 @@ function factsFinal(game, players) {
 
 function hostView(game) {
   const players = [...game.players.values()].filter((p) => !p.kicked).map((p) => ({
-    id: p.id, name: p.name, team: p.team, att: p.att, comp: p.comp, yards: p.yards, best: p.best, blitzes: p.blitzes || 0,
+    id: p.id, name: p.name, team: p.team, att: p.att, comp: p.comp, yards: p.yards, best: p.best, blitzes: p.blitzes || 0, noAnswers: p.noAnswers || 0,
     avgSec: p.att ? Math.round(p.msTotal / p.att / 100) / 10 : null,
     linked: !!p.userId, away: p.conns === 0 && now() - p.lastSeen > 15000,
   }));
@@ -858,7 +874,7 @@ function hostView(game) {
     const comp = players.reduce((s, p) => s + p.comp, 0);
     // Every player, not just the top three: the scoreboard a teacher reads names off.
     const scoreboard = players.map((p) => ({ name: p.name, team: p.team, yards: p.yards, comp: p.comp, att: p.att,
-      pct: p.att ? Math.round((100 * p.comp) / p.att) : null, best: p.best, blitzes: p.blitzes, avgSec: p.avgSec, saved: p.linked }))
+      pct: p.att ? Math.round((100 * p.comp) / p.att) : null, best: p.best, blitzes: p.blitzes, noAnswers: p.noAnswers, avgSec: p.avgSec, saved: p.linked }))
       // a student who never answered sits at the bottom, never above someone who played and went backwards
       .sort((a, b) => (b.att > 0) - (a.att > 0) || b.yards - a.yards || b.comp - a.comp || a.name.localeCompare(b.name));
     v.final = { mvps, players: scoreboard, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
@@ -879,6 +895,8 @@ function playerView(game, player) {
     const rv = roundView(game, false);
     const mine = game.round.answers.get(player.id);
     rv.mine = mine ? (game.round.closed ? { k: mine.k, ok: !!mine.ok, gain: mine.gain || 0 } : { k: mine.k }) : null;
+    // No answer on a closed round: the penalty this student just took (null if they were "away" — not waited on).
+    if (game.round.closed && !mine) rv.penalty = (game.round.silent || []).includes(player.id) ? -scoringFor(game).noAnswer : null;
     delete rv.answered;
     v.round = rv;
   }

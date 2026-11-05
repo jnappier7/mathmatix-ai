@@ -79,7 +79,7 @@
     const p6 = r.pickSix;
     return `<h3>How scoring works</h3><p class="lead">${lead}${typed}${change}</p><div class="rgrid">`
       + `<div class="rule"><span class="rk">Right answer</span><span class="rv"><b class="g">+${fast.gain}</b> yds in ${s(fast.within)} · <b class="g">+${mid.gain}</b> in ${s(mid.within)} · <b class="g">+${slow.gain}</b> after</span></div>`
-      + `<div class="rule"><span class="rk">Wrong answer</span><span class="rv"><b class="b">−${r.sack}</b> yds — a sack</span>${r.noAnswer === 0 ? '<span class="rv">No answer: 0, no gain, no loss</span>' : ''}</div>`
+      + `<div class="rule"><span class="rk">Wrong answer</span><span class="rv"><b class="b">−${r.sack}</b> yds — a sack</span>${r.noAnswer ? `<span class="rv"><b class="b">−${r.noAnswer}</b> for <b>no answer</b> — worse than a wrong one, so always answer.</span>` : ''}</div>`
       + `<div class="rule"><span class="rk">One ball per team</span><span class="rv">Every teammate's yards push one ball, scaled to ${k} players' worth — a bigger team gets no bigger push.</span></div>`
       + `<div class="rule"><span class="rk">Touchdown</span><span class="rv"><b class="g">${r.tdPoints}</b> points; ball back to the ${r.startPos}.</span></div>`
       + (r.blitz ? `<div class="rule"><span class="rk">⚡ Blitz</span><span class="rv"><b>${r.blitz.every} in a row</b> blitzes the other team: their ball goes back <b class="b">${r.blitz.yards}</b> yards' worth (scaled for team size like every push). Nobody picks a target — it's the team you're playing.</span></div>` : '')
