@@ -8118,10 +8118,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            const tag = (c) => (c.isActive === false
+                ? `<span style="margin-left: 6px; font-size: 0.75em; padding: 1px 6px; border-radius: 8px; background: ${c.archivedAt ? '#e5e7eb' : '#fee2e2'}; color: ${c.archivedAt ? '#374151' : '#991b1b'};">${c.archivedAt ? 'Archived' : 'Inactive'}</span>`
+                : '');
+            const btn = (act, label, color, id) => `<button type="button" data-class-act="${act}" data-id="${id}" style="background: none; border: 1px solid ${color}; color: ${color}; border-radius: 6px; padding: 2px 8px; font-size: 0.78em; cursor: pointer;">${label}</button>`;
             classListContainer.innerHTML = classes.map(c => `
                 <div class="class-list-item" data-class-id="${c._id}"
                      style="padding: 12px; cursor: pointer; border-bottom: 1px solid #f0f0f0; transition: background 0.2s;">
-                    <div style="font-weight: 500; color: #333;">${escapeHtml(c.className || 'Unnamed Class')}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                        <div style="font-weight: 500; color: #333;">${escapeHtml(c.className || 'Unnamed Class')}${tag(c)}</div>
+                        <div style="display: flex; gap: 4px;">${c.isActive === false ? btn('restore', 'Restore', '#2563eb', c._id) : btn('archive', 'Archive', '#6b7280', c._id)}${btn('delete', 'Delete', '#b91c1c', c._id)}</div>
+                    </div>
                     <div style="font-size: 0.85em; color: #999; margin-top: 4px;">
                         <span style="font-family: monospace; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">${escapeHtml(c.code)}</span>
                         <span style="margin-left: 10px;"><i class="fas fa-users"></i> ${c.enrolledStudents?.length || 0}</span>
@@ -8131,6 +8138,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `).join('');
+
+            // Archive / restore / delete (routes/admin.js PATCH + DELETE /enrollment-codes/:id)
+            classListContainer.querySelectorAll('[data-class-act]').forEach(b => {
+                b.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const c = classes.find(x => x._id === b.dataset.id);
+                    const name = (c && c.className) || 'this class';
+                    const n = (c && c.enrolledStudents && c.enrolledStudents.length) || 0;
+                    const act = b.dataset.classAct;
+                    try {
+                        let response;
+                        if (act === 'delete') {
+                            if (n > 0 && !confirm(`"${name}" has ${n} student${n === 1 ? '' : 's'}. Delete it anyway?\n\nTheir enrollment in this class is removed (accounts stay). Archive keeps everything.`)) return;
+                            if (n === 0 && !confirm(`Delete "${name}"? This can't be undone.`)) return;
+                            response = await csrfFetch(`/api/admin/enrollment-codes/${c._id}${n > 0 ? '?force=1' : ''}`, { method: 'DELETE' });
+                        } else {
+                            if (act === 'archive' && !confirm(`Archive "${name}"? The join code closes and the class leaves the teacher's live lists; students keep their history.`)) return;
+                            response = await csrfFetch(`/api/admin/enrollment-codes/${c._id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ archived: act === 'archive' }) });
+                        }
+                        const data = await response.json().catch(() => ({}));
+                        if (!response.ok) throw new Error(data.message || `HTTP ${response.status}`);
+                        if (currentClassId === c._id && act === 'delete') { currentClassId = null; classStudentManagement.style.display = 'none'; noClassSelected.style.display = 'block'; }
+                        loadClasses();
+                    } catch (err) {
+                        alert(err.message || 'Could not update the class.');
+                    }
+                });
+            });
 
             // Add click handlers
             classListContainer.querySelectorAll('.class-list-item').forEach(item => {

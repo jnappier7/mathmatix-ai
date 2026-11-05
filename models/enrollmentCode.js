@@ -82,10 +82,22 @@ const enrollmentCodeSchema = new Schema({
     default: 'free'
   },
 
-  // Code status
+  // Code status. isActive=false closes the join code AND takes the class off every live
+  // surface (the teacher's Today strip and class chips, the live-drill host's class picker, the
+  // student's My Class panel — all filter isActive: { $ne: false }).
   isActive: {
     type: Boolean,
     default: true
+  },
+
+  // When the teacher (or an admin) ARCHIVED the class: isActive false + a date. Archiving is the
+  // only way to retire a class that has students — their enrollment here is their history, so a
+  // class with students is never deleted, only archived (routes/teacher.js PATCH/DELETE /classes).
+  // Null while live; cleared again on restore. An inactive code with no archivedAt is one an admin
+  // paused.
+  archivedAt: {
+    type: Date,
+    default: null
   },
 
   // Expiration date (optional - null means no expiration)

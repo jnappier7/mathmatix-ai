@@ -782,7 +782,7 @@ router.post('/enrollment-codes', isAdmin, async (req, res) => {
 router.patch('/enrollment-codes/:codeId', isAdmin, async (req, res) => {
   try {
     const { codeId } = req.params;
-    const { isActive, className, description, expiresAt, maxUses } = req.body;
+    const { isActive, archived, className, description, expiresAt, maxUses } = req.body;
 
     const code = await EnrollmentCode.findById(codeId);
     if (!code) {
@@ -791,6 +791,8 @@ router.patch('/enrollment-codes/:codeId', isAdmin, async (req, res) => {
 
     // Update fields
     if (typeof isActive === 'boolean') code.isActive = isActive;
+    // Archive / restore: the same switch a teacher has (routes/teacher.js PATCH /classes/:codeId)
+    if (typeof archived === 'boolean') { code.isActive = !archived; code.archivedAt = archived ? new Date() : null; }
     if (className) code.className = className;
     if (description !== undefined) code.description = description;
     if (expiresAt !== undefined) code.expiresAt = expiresAt ? new Date(expiresAt) : null;
@@ -818,6 +820,17 @@ router.patch('/enrollment-codes/:codeId', isAdmin, async (req, res) => {
 router.delete('/enrollment-codes/:codeId', isAdmin, async (req, res) => {
   try {
     const { codeId } = req.params;
+
+    // A class with students is archived, not deleted — unless the admin says force=1, which drops
+    // the students' enrollment records in it (the accounts stay).
+    const existing = await EnrollmentCode.findById(codeId, 'enrolledStudents').lean();
+    if (!existing) {
+      return res.status(404).json({ message: 'Enrollment code not found.' });
+    }
+    const n = (existing.enrolledStudents || []).length;
+    if (n > 0 && String(req.query.force) !== '1') {
+      return res.status(409).json({ message: `This class has ${n} student${n === 1 ? '' : 's'}. Archive it, or delete with force=1 to drop their enrollment in it.`, students: n });
+    }
 
     const code = await EnrollmentCode.findByIdAndDelete(codeId);
     if (!code) {
