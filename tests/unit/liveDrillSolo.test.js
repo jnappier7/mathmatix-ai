@@ -39,6 +39,12 @@ describe('a class finds its drill hub', () => {
     [[null, 'Algebra 1'], 'algebra'],
     [['Algebra-based Geometry'], 'geometry'],
     [['algebra', 'Geometry'], 'geometry'],
+    [['Algebra 2'], 'algebra2'],
+    [['Algebra II', 'P5'], 'algebra2'],
+    [['Alg 2 Honors'], 'algebra2'],
+    [[null, 'Algebra Two'], 'algebra2'],
+    [['Algebra 1', 'Period 2'], 'algebra'],
+    [['Algebra 2 Geometry'], 'geometry'],
     [['Pre-Calculus'], null],
     [[], null],
   ])('%j → %s', (labels, hub) => {

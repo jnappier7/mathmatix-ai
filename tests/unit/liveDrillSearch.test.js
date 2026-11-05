@@ -27,7 +27,7 @@ describe('the index', () => {
     const onHub = new Set(Object.values(HUBS).flatMap((h) => h.games.map((g) => g.drill)));
     for (const e of index) {
       expect(onHub.has(e.drill)).toBe(true);
-      expect(['algebra', 'geometry']).toContain(e.hub);
+      expect(Object.keys(HUBS)).toContain(e.hub);
       expect(e.title).toBeTruthy();
       expect(e.name).toBeTruthy();
     }

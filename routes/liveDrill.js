@@ -92,9 +92,17 @@ function openStream(req, res, game, listener) {
 
 hostRouter.get('/drills', (req, res) => {
   try {
+    // The picker is grouped by COURSE, in the order the solo hubs list them (teaching order within
+    // a course); a drill on more than one hub (Math Facts) is "Any class", listed last.
+    const courseOf = {};
+    for (const [hubId, hub] of Object.entries(solo.HUBS)) for (const g of hub.games) {
+      if (courseOf[g.drill] && courseOf[g.drill].id !== hubId) courseOf[g.drill] = { id: 'any', title: 'Any class' };
+      else if (!courseOf[g.drill]) courseOf[g.drill] = { id: hubId, title: hub.title };
+    }
+    const courses = [...Object.entries(solo.HUBS).map(([id, h]) => ({ id, title: h.title })), { id: 'any', title: 'Any class' }];
     const drills = Object.entries(DRILLS).map(([id, d]) => {
       try {
-        const out = { id, title: d.title, playbooks: listPlaybooks(id), settings: G.settingsFor(id) };
+        const out = { id, title: d.title, course: courseOf[id] || { id: 'any', title: 'Any class' }, playbooks: listPlaybooks(id), settings: G.settingsFor(id) };
         if (d.focus) out.focusable = { books: FOCUSABLE, max: FOCUS_MAX }; // Math Facts: pick the numbers
         return out;
       } catch (e) {
@@ -102,7 +110,7 @@ hostRouter.get('/drills', (req, res) => {
         return { id, title: d.title, playbooks: [], unavailable: true };
       }
     });
-    res.json({ drills, settings: G.SETTINGS });
+    res.json({ drills, courses, settings: G.SETTINGS });
   } catch (err) { send(res, err); }
 });
 
