@@ -64,6 +64,8 @@ const DRILLS = {
   hgeo9: { native: require('./review/hgeoCh9'), title: 'H. Geometry · Ch. 9 Review' },
   hgeo10: { native: require('./review/hgeoCh10'), title: 'H. Geometry · Ch. 10 Review' },
   hgeo11: { native: require('./review/hgeoCh11'), title: 'H. Geometry · Ch. 11 Review' },
+  // Algebra 2 (no Course Planner site yet): one native course drill, a playbook per unit.
+  alg2: { native: require('./review/alg2'), title: 'Algebra 2' },
 };
 
 const APP_MARKER = '// ===================== app =====================';

@@ -29,7 +29,7 @@ function fakeAudio() {
     createGain() { const g = node({ gain: param(1) }); made.gains.push(g); return g; }
     createOscillator() { made.osc++; const o = node({ type: 'sine', frequency: param(440) }); made.oscs.push(o); return o; }
     createBiquadFilter() { const f = node({ type: 'lowpass', frequency: param(350), Q: param(1) }); made.filters.push(f); return f; }
-    createBufferSource() { made.buffer++; const s = node({ buffer: null, loop: false, playbackRate: param(1) }); made.sources.push(s); return s; }
+    createBufferSource() { made.buffer++; const s = node({ buffer: null, loop: false, playbackRate: param(1), stop() { this.stopped = true; } }); made.sources.push(s); return s; }
     decodeAudioData(bytes) { return made.decode ? made.decode(bytes) : Promise.reject(new Error('no decoder')); }
     createStereoPanner() { return node({ pan: param(0) }); }
     createBuffer(ch, len) { const d = new Float32Array(len); return { getChannelData: () => d }; }
@@ -97,7 +97,8 @@ test('the murmur is VOICES, not surf: pitched speakers with formants, syllable g
   // (2) Two formant band-passes per voice, in the vowel range.
   const formants = made.filters.filter((f) => f.type === 'bandpass' && f.frequency.value >= 250 && f.frequency.value <= 2500);
   expect(formants.length).toBeGreaterThanOrEqual(24);
-  // (3) NO looping noise bed under it — the rumble was the ocean. Every noise source is a short burst.
+  // (3) NO looping NOISE bed under it — the rumble was the ocean. Every noise source is a short burst.
+  //     (The recorded murmur, when loaded, does loop — that is a crowd, not noise; its own test below.)
   expect(made.sources.every((src) => !src.loop)).toBe(true);
   expect(made.filters.some((f) => f.type === 'lowpass' && f.frequency.value <= 300)).toBe(false);
   // (4) The voices TALK: in three seconds the gates and formants are moved hundreds of times, at
@@ -130,23 +131,6 @@ test('a hotter game is more people talking, not a bigger wave: pauses shorten wi
     return made.events - before;
   };
   expect(words(1)).toBeGreaterThan(words(0) * 1.3);
-});
-
-test('deep in the red zone the stands stomp and clap ON THE BEAT; at midfield nobody does', () => {
-  // The most noise bursts (feet, hands) that landed inside one 60 ms window: a stomp or a clap on
-  // the beat is a dozen or more at once; the murmur's stray claps and consonants never bunch like that.
-  const bunched = (hype) => {
-    const { S, made } = load();
-    S.unlock();
-    S.setScene('live');
-    S.setHype(hype);
-    jest.advanceTimersByTime(5000);
-    const count = new Map();
-    for (const src of made.sources) { if (src.startedAt == null) continue; const b = Math.round(src.startedAt / 0.06); count.set(b, (count.get(b) || 0) + 1); }
-    return Math.max(0, ...count.values());
-  };
-  expect(bunched(0.9)).toBeGreaterThanOrEqual(10);
-  expect(bunched(0)).toBeLessThan(6);
 });
 
 test('the band stops for the final', () => {
@@ -197,7 +181,7 @@ test('the touchdown cheer is the recording once it has loaded, and the synthesiz
   const { S, made } = load(new Map(), { fetch });
   made.decode = (bytes) => Promise.resolve(bytes.url.includes('big') ? decoded.big : decoded.cheer);
   S.unlock();
-  expect(fetched.sort()).toEqual(['/audio/live-drill/cheer-big.mp3', '/audio/live-drill/cheer.mp3']);
+  expect(fetched.sort()).toEqual(['/audio/live-drill/cheer-big.mp3', '/audio/live-drill/cheer.mp3', '/audio/live-drill/murmur.mp3']);
   // before the files land: a cheer is the synthesized roar (noise bursts), nothing recorded
   expect(S.recordedCheers).toBe(false);
   S.cheer(true);
@@ -217,6 +201,32 @@ test('the touchdown cheer is the recording once it has loaded, and the synthesiz
   const n = made.sources.length;
   S.cheer(true);
   expect(made.sources.length).toBe(n);
+});
+
+test('once the recorded murmur has loaded, the bed under play is the recording looping — no synthesized voices', async () => {
+  const fetch = (url) => Promise.resolve({ ok: true, arrayBuffer: () => Promise.resolve({ url }) });
+  const { S, made } = load(new Map(), { fetch });
+  made.decode = (bytes) => Promise.resolve({ duration: bytes.url.includes('murmur') ? 27 : 5, name: bytes.url.includes('murmur') ? 'murmur' : 'cheer' });
+  S.unlock();
+  await settle();
+  expect(S.recordedMurmur).toBe(true);
+  S.setScene('live');
+  const bed = made.sources.find((x) => x.loop);
+  expect(bed).toBeTruthy();
+  expect(bed.buffer.name).toBe('murmur');
+  expect([bed.loopStart, bed.loopEnd]).toEqual([1, 25]); // away from the codec's edges
+  expect(made.oscs.filter((o) => o.type === 'sawtooth')).toHaveLength(0); // the voices stand down
+  // and NOTHING synthesized rides over the recording, red zone included: no claps, whoops or stomps
+  const before = { buffer: made.buffer, osc: made.osc };
+  S.setHype(0.9);
+  jest.advanceTimersByTime(6000);
+  expect(made.buffer).toBe(before.buffer);
+  expect(made.osc).toBe(before.osc);
+  expect(bed.stopped).not.toBe(true);
+  // crowd off: the loop stops
+  S.setCrowd(false);
+  jest.advanceTimersByTime(2000);
+  expect(bed.stopped).toBe(true);
 });
 
 test('a cheer file that fails to load leaves the synthesized roar in place', async () => {

@@ -8,6 +8,14 @@ the one sound synthesis never sold.
 |---|---|---|
 | `cheer-big.mp3` | touchdown, pick six, the final buzzer | 6.0 s |
 | `cheer.mp3` | a Huddle reveal most of the class got right; a new king on the hill | 4.8 s |
+| `murmur.mp3` | the bed under play, looping (seconds 1–25 are the seamless loop) | 27 s |
+
+While `murmur.mp3` plays, nothing synthesized is layered over it (that is what sounded fake); a
+hotter game is the recording louder and brighter. `murmur.mp3` is DERIVED from the two cheers — `scripts/buildCrowdMurmur.js` scatters hundreds of
+overlapping half-second slices of their bodies at slightly different pitches and levels, low-passes
+the cloud for distance, and crossfades it into a loop — so it carries the same licence and no new
+one. A purpose-recorded crowd ambience drops in at the same path (keep a second of lead-in and two
+of tail outside the loop region, or change `MURMUR_LOOP` in sound.js).
 
 Supplied by the owner (2026-11-04) from stock sound-effect libraries (one is a SmartSound FX cut).
 They ship with the site, so the licence that covers them is the owner's: check the library terms

@@ -52,6 +52,13 @@ const HUBS = {
       { drill: 'hgeo11', name: 'Chapter 11 Review', blurb: 'Measurement — circumference and arcs, areas and sectors, polygons, prisms, pyramids, cones, spheres, one quick move at a time.' },
     ],
   },
+  algebra2: {
+    title: 'Algebra 2',
+    games: [
+      { drill: 'alg2', name: 'Two-Minute Drill', blurb: 'Every unit of the course — quadratics and complex numbers, polynomials, radicals, logs, rational expressions, functions, sequences — one quick move at a time.' },
+      { drill: 'facts', name: 'Math Facts', blurb: 'Type the answer. Fluent is right in 3 seconds or less.' },
+    ],
+  },
 };
 
 const BATCH = 40; // plays per request: a fast Math Facts round is ~60–80 in two minutes
@@ -85,13 +92,16 @@ function hubView(hubId) {
 }
 
 /**
- * Which hub a class belongs to, from its course and name ("Honors Geometry · P3", "Algebra 1").
- * Geometry wins over algebra when both appear ("Algebra-based Geometry" is a geometry class).
+ * Which hub a class belongs to, from its course and name ("Honors Geometry · P3", "Algebra 1",
+ * "Algebra 2"). Geometry wins over algebra when both appear ("Algebra-based Geometry" is a
+ * geometry class); Algebra 2 is told from Algebra 1 by the 2 / II / Two after "alg".
  * Null when nothing matches — the My Class page then shows the /drill index instead of a course.
  */
 function hubFor(...labels) {
   const text = labels.filter(Boolean).join(' ').toLowerCase();
   if (/geom/.test(text)) return 'geometry';
+  // "Algebra 2", "Algebra II", "Alg 2 Honors", "Algebra Two" — before the plain algebra match
+  if (/\balg(?:ebra)?\.?\s*(?:2|ii|two)\b/.test(text)) return 'algebra2';
   if (/alg/.test(text)) return 'algebra';
   return null;
 }

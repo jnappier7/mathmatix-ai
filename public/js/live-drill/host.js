@@ -105,7 +105,11 @@
     el.querySelectorAll('button').forEach((b) => { b.onclick = () => onPick(Number(b.dataset.v)); });
   }
   function renderSetup() {
-    $('drills').innerHTML = S.drills.map((d) => `<button data-id="${d.id}" aria-pressed="${d.id === S.drill}"${d.unavailable ? ' disabled' : ''}>${esc(d.title)}</button>`).join('');
+    // Games grouped by course (the server lists the courses in order; a game on every course, like
+    // Math Facts, sits under "Any class" at the end). Within a course, teaching order.
+    const groups = (S.courses || []).map((c) => ({ ...c, drills: S.drills.filter((d) => (d.course || {}).id === c.id) })).filter((g) => g.drills.length);
+    const btn = (d) => `<button data-id="${d.id}" aria-pressed="${d.id === S.drill}"${d.unavailable ? ' disabled' : ''}>${esc(d.title.replace(/^(Alg 1|H\. Geometry) · /, ''))}</button>`;
+    $('drills').innerHTML = groups.map((g) => `<div class="course-group"><span class="course-name">${esc(g.title)}</span><div class="seg-ctl" role="group" aria-label="${esc(g.title)} games">${g.drills.map(btn).join('')}</div></div>`).join('');
     $('drills').querySelectorAll('button').forEach((b) => { b.onclick = () => { S.drill = b.dataset.id; S.playbook = 'all'; renderSetup(); }; });
     const d = S.drills.find((x) => x.id === S.drill) || { playbooks: [] };
     $('books').innerHTML = d.playbooks.map((b) => `<button class="book" data-k="${b.key}" aria-pressed="${b.key === S.playbook}"><span class="bk-ch">${esc(b.ch)}</span><span class="nm">${esc(b.name)}</span><span class="bl">${esc(b.blurb)}</span></button>`).join('');
@@ -682,8 +686,8 @@
   (async function boot() {
     try { Object.assign(S, JSON.parse(localStorage.getItem('mm-live-drill-setup') || '{}')); } catch { /* none saved */ }
     try {
-      const [{ drills, settings }, { classes }] = await Promise.all([api('/drills'), api('/classes').catch(() => ({ classes: [] }))]);
-      S.drills = drills; S.settings = settings; S.classes = classes;
+      const [{ drills, courses, settings }, { classes }] = await Promise.all([api('/drills'), api('/classes').catch(() => ({ classes: [] }))]);
+      S.drills = drills; S.courses = courses || []; S.settings = settings; S.classes = classes;
       renderClasses();
       if (!drills.some((d) => d.id === S.drill && !d.unavailable)) S.drill = (drills.find((d) => !d.unavailable) || drills[0]).id;
       if (!['drive', 'huddle', 'hill'].includes(S.mode)) S.mode = 'drive';

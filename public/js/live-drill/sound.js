@@ -50,8 +50,8 @@
       master = ctx.createGain(); master.connect(ctx.destination);
       master.gain.value = muted ? 0 : 1;
       [sfx, music, crowd] = [1, 0, 0].map((v) => { const g = ctx.createGain(); g.gain.value = v; g.connect(master); return g; });
-      // The crowd bus goes through a limiter: a stomp of a dozen feet and a cheer of a dozen voices
-      // add up coherently, and a clipped crowd is a buzz, not a gym. (Guarded: the test's fake graph has no compressor.)
+      // The crowd bus goes through a limiter: a cheer of a dozen voices adds up coherently, and a
+      // clipped crowd is a buzz, not a gym. (Guarded: the test's fake graph has no compressor.)
       if (ctx.createDynamicsCompressor) {
         const lim = ctx.createDynamicsCompressor();
         lim.threshold.value = -14; lim.knee.value = 6; lim.ratio.value = 12; lim.attack.value = 0.003; lim.release.value = 0.12;
@@ -83,6 +83,7 @@
     if (m > 0) startBand(); else later(stopBand, 900);
     const c = crowdOn && !muted ? (CROWD_LEVEL[scene] || 0) : 0;
     ramp(crowd.gain, c * (0.6 + 0.8 * hype), 1.2);
+    if (murmur && murmur.bed) ramp(murmur.bed.filter.frequency, bedCutoff(), 1.2);
     if (c > 0) startMurmur(); else later(stopMurmur, 1300);
   }
   const pending = new Set();
@@ -94,13 +95,19 @@
   // ---------------------------------------------------------------- recorded cheers
   // Two real crowd recordings (public/audio/live-drill/, picked by the owner 2026-11-04) carry the
   // moments synthesis can't: the roar on a touchdown, a pick six or the final (cheer-big, 6 s) and
-  // the smaller cheer on a Huddle reveal the class mostly got, or a new king (cheer, 4.8 s). They
+  // the smaller cheer on a Huddle reveal the class mostly got, or a new king (cheer, 4.8 s). A third,
+  // murmur.mp3, is the bed under play — a seamless loop built from those two (a grain cloud of their
+  // bodies, low-passed for distance; scripts/buildCrowdMurmur.js), so it carries the same licence. They
   // load after the first click (fetch + decodeAudioData, same-origin, CSP mediaSrc 'self') and play
   // on the sfx bus at a slightly random speed so two touchdowns never sound like a loop. Until they
   // have loaded — or if they can't (offline, a blocked fetch, the test's fake graph) — the
   // synthesized roar in cheer() stands in, so a touchdown is never silent.
-  const SAMPLES = { cheer: '/audio/live-drill/cheer.mp3', big: '/audio/live-drill/cheer-big.mp3' };
-  const SAMPLE_LEVEL = { cheer: 0.55, big: 0.7 }; // both files peak near full scale; the horn sits at ~0.15
+  const SAMPLES = { cheer: '/audio/live-drill/cheer.mp3', big: '/audio/live-drill/cheer-big.mp3', murmur: '/audio/live-drill/murmur.mp3' };
+  const SAMPLE_LEVEL = { cheer: 0.55, big: 0.6 }; // both files peak near full scale; the horn sits at ~0.15 (big at 0.7 peaked 0.91 over the bed)
+  // The murmur bed (murmur.mp3, 27 s) is a seamless loop over seconds 1–25 — a second of lead-in and
+  // two of tail keep the loop point away from the codec's edges, so loopStart/loopEnd never hit padding.
+  const MURMUR_LOOP = [1, 25];
+  const MURMUR_LEVEL = 0.32; // the file peaks at −6 dBFS; this lands the calm bed near the old synth level
   const samples = {}; // name → AudioBuffer, once decoded
   let samplesRequested = false;
   function loadSamples() {
@@ -238,6 +245,9 @@
   }
 
   // ---------------------------------------------------------------- the crowd (crowd bus)
+  // The synthesized murmur below is the STAND-IN for the recorded bed (startMurmur plays murmur.mp3
+  // when it has loaded): it covers the first seconds before the file lands, and any device that can't
+  // fetch it.
   // What a crowd is NOT: filtered noise. Noise through a band-pass is surf however you shape it.
   // The first cut (one band, a slow swell) was a beach; the second (four bands flickering at
   // syllable speed over a low-passed rumble) was still a beach in a wind — students said "ocean"
@@ -249,19 +259,12 @@
   // a pause to listen — each on its own clock, none in step with another. NO noise bed loops under
   // it; the room is the sum of the voices. Claps and whoops (noise bursts, pitched slides) are
   // scheduled at random out of the stands, more often as the game heats up (hype), which also
-  // shortens everyone's pauses: a louder crowd is more people talking, not a bigger wave. Deep in
-  // the red zone the stands fall into the stomp-stomp-CLAP rhythm (stomp, below).
+  // shortens everyone's pauses: a louder crowd is more people talking, not a bigger wave.
   const VOICE_F0 = [112, 128, 142, 158, 176, 196, 214, 236, 254, 272, 296, 318]; // twelve speakers
   const VOWELS = [[730, 1090], [660, 1720], [530, 1840], [390, 1990], [570, 840], [440, 1020], [300, 870]]; // F1, F2 in Hz
   const FORMANT_Q = [7, 9];
   const FORMANT_GAIN = [1.6, 3.2]; // a sawtooth's upper harmonics are quiet: the second formant needs make-up gain
-  // The red zone: once a ball is deep (hype past STOMP_HYPE) the stands fall into a rhythm — the
-  // stomp-stomp-CLAP every gym knows, everyone on the beat, over the murmur. Percussion is what
-  // this synth does well; a voiced "GO! GO! GO!" was tried first and sounded like a machine
-  // (owner, 2026-11-04) — a synthesized vowel is never going to pass for a crowd shouting a word.
-  const STOMP_HYPE = 0.55;
-  const STOMP = { beatSec: 0.42, phrases: 2, restSec: [1.4, 2.6] }; // stomp · stomp · CLAP · (rest), ×2, then talk
-  let murmur = null; // { nodes, voices, timers }
+  let murmur = null; // { nodes, voices, timers, bed?: { src, filter } }
 
   /** One speaker: oscillator → gate (the syllables) → two formant band-passes → (pan) → crowd. */
   function makeVoice(f0, idx) {
@@ -283,15 +286,32 @@
 
   function startMurmur() {
     if (murmur || !ctx) return;
-    murmur = { nodes: [], voices: [], timers: new Set() };
+    murmur = { nodes: [], voices: [], timers: new Set(), bed: null };
+    if (samples.murmur) {
+      // The real thing: the recorded bed, looping, through a low-pass that opens as the game heats
+      // up (a crowd that leans in sounds closer). Started at a random point so two games never
+      // share a phrase. The synthesized voices below are the stand-in until the file has loaded.
+      const src = ctx.createBufferSource();
+      src.buffer = samples.murmur; src.loop = true; src.loopStart = MURMUR_LOOP[0]; src.loopEnd = MURMUR_LOOP[1];
+      const filter = ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = bedCutoff(); filter.Q.value = 0.5;
+      const g = ctx.createGain(); g.gain.value = MURMUR_LEVEL;
+      src.connect(filter).connect(g).connect(crowd);
+      src.start(0, MURMUR_LOOP[0] + Math.random() * (MURMUR_LOOP[1] - MURMUR_LOOP[0]));
+      murmur.nodes.push(src); murmur.bed = { src, filter };
+      // Nothing synthesized rides over the recording: a synthesized stomp-and-clap and pitched
+      // whoops on top of real voices were what sounded fake ("a monkey playing a broken
+      // accordion" — owner, 2026-11-05). The red zone is the recording, louder and closer.
+      return;
+    }
     VOICE_F0.forEach((f0, i) => {
       const v = makeVoice(f0 * (0.97 + Math.random() * 0.06), i);
       murmur.nodes.push(v.osc); murmur.voices.push(v);
       wait(Math.random() * 1200, () => speak(v)); // nobody starts talking on the same beat
     });
     stands();
-    wait(600, stompWatch);
   }
+  /** How much of the bed's top end comes through: a far-off hum at midfield, right there at the goal line. */
+  const bedCutoff = () => 1500 + 4500 * hype;
   function wait(ms, fn) {
     const t = setTimeout(() => { if (murmur) { murmur.timers.delete(t); fn(); } }, ms);
     murmur.timers.add(t);
@@ -325,31 +345,6 @@
     if (Math.random() < 0.35) hiss({ at: t0 - 0.01, dur: 0.04 + Math.random() * 0.04, vol: vol * 0.35, type: 'bandpass', freq: 3500 + Math.random() * 2500, q: 1.2, bus: crowd });
     const pause = (0.25 + Math.random() * 1.6) / (0.7 + 0.9 * hype); // a hot room talks over itself
     wait((t - ctx.currentTime + pause) * 1000, () => speak(v));
-  }
-  /** Every so often, if a ball is deep enough, the stands pick up the rhythm; otherwise look again shortly. */
-  function stompWatch() {
-    if (!murmur) return;
-    if (live() && CROWD_LEVEL[scene] && scene === 'live' && hype >= STOMP_HYPE) {
-      stomp();
-      wait((STOMP.phrases * 4 * STOMP.beatSec + STOMP.restSec[0] + Math.random() * (STOMP.restSec[1] - STOMP.restSec[0])) * 1000, stompWatch);
-    } else wait(400, stompWatch);
-  }
-  /** stomp · stomp · CLAP · rest — a few hundred feet on bleachers, then a few hundred hands, all on one beat. */
-  function stomp() {
-    const t0 = ctx.currentTime + 0.08;
-    const loud = 0.7 + 0.3 * hype;
-    for (let ph = 0; ph < STOMP.phrases; ph++) {
-      const base = t0 + ph * 4 * STOMP.beatSec;
-      for (const b of [0, 1]) {
-        const t = base + b * STOMP.beatSec;
-        // feet: a low thud with a little boom under it, a dozen of them within 40 ms (nobody lands together)
-        for (let i = 0; i < 12; i++) hiss({ at: t + Math.random() * 0.04, dur: 0.07, vol: 0.05 * loud, type: 'lowpass', freq: 160 + Math.random() * 80, q: 0.8, attack: 0.003, bus: crowd });
-        tone({ at: t, freq: 62, type: 'sine', dur: 0.22, vol: 0.28 * loud, slideTo: 40, bus: crowd });
-      }
-      // hands: a burst of claps, spread across 50 ms so it reads as a crowd, not one slap
-      const tc = base + 2 * STOMP.beatSec;
-      for (let i = 0; i < 18; i++) hiss({ at: tc + Math.random() * 0.05, dur: 0.045, vol: 0.06 * loud, freq: 1100 + Math.random() * 1400, q: 1.3, type: 'bandpass', bus: crowd });
-    }
   }
   /** A clap, a whoop, a "yeah" out of the stands — more of them as a drive nears the goal. */
   function stands() {
@@ -412,6 +407,8 @@
     groan,
     /** Whether the recorded cheers have loaded (false until the first click's fetch lands). */
     get recordedCheers() { return loaded('cheer') && loaded('big'); },
+    /** Whether the recorded murmur bed has loaded (the synthesized voices stand in until then). */
+    get recordedMurmur() { return loaded('murmur'); },
     /** Referee's whistle: kickoff. */
     whistle() {
       tone({ freq: 2600, type: 'square', dur: 0.12, vol: 0.06 });
