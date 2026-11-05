@@ -61,10 +61,9 @@ function followUpFor(c) {
 
 async function runCase(c, context) {
   const pin = context === 'pinned' ? pinFor(c.problem.pose) : null;
-  const messages = [
-    { role: 'user', content: 'can I get a practice problem' },
-    { role: 'assistant', content: c.problem.pose },
-  ];
+  const messages = [{ role: 'user', content: 'can I get a practice problem' }];
+  for (const turn of c.problem.before || []) messages.push({ role: 'assistant', content: turn }, { role: 'user', content: 'ok' });
+  messages.push({ role: 'assistant', content: c.problem.pose });
   let message = c.answer;
   if (context === 'followup') {
     messages.push(

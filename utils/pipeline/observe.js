@@ -299,6 +299,9 @@ function matchClosedClaim(clause) {
   if (segments.length < 2) return null;
   const valueMatch = segments[segments.length - 1].match(CLAIM_VALUE);
   if (!valueMatch) return null;
+  // A math word is not a unit: "π(3)^2 = 9π" (9pi) claims 9π, never 9.
+  const unit = segments[segments.length - 1].trim().slice(valueMatch[1].length).match(/[a-z]{2,}/i);
+  if (unit && isMathToken(unit[0])) return null;
   const before = segments[segments.length - 2].trim().match(TRAILING_COMPUTATION);
   if (!before) return null;
   const computation = before[1].trim();
@@ -419,6 +422,75 @@ function leadInExpression(expr) {
   const e = String(expr || '').trim();
   if (!/\d/.test(e) || !(/[-+*/^()π√]/.test(e.slice(1)) || /\d\s*[a-z]/i.test(e))) return false;
   return (e.match(/[a-z]{2,}/gi) || []).every(isMathToken);
+}
+
+// ── Whole-message answer FORMS the numeric patterns never read ──
+// Each of these matched nothing, so the turn classified general_math, no
+// grader ran, and a right answer got "walk me through it" (verdict eval,
+// 2026-11-04: ~17% of cases). Every form is whole-message and end-anchored.
+const NUM = String.raw`-?(?:\d+(?:\.\d+)?|\.\d+)(?:\s*\/\s*\d+)?`;
+const FILLER_LEAD = /^(?:(?:oh|ok|okay|so|well|um+|hmm+|uh+)[,\s]+)+/i;
+const INEQUALITY = new RegExp(String.raw`(?:^|\b(?:so|then|thus|therefore|which\s+means)\s+|,\s*)([a-z])\s*(<=|>=|≤|≥|<|>)\s*(${NUM})\s*[.!]*$`, 'i');
+const PLUS_MINUS = new RegExp(String.raw`^(?:[a-z]\s*=\s*)?(?:±|\+\s*\/\s*-|\+-)\s*(\d+(?:\.\d+)?(?:\s*\/\s*\d+)?|\d*\s*(?:sqrt|√)\s*\(?\d+\)?)\s*[.!]*$`, 'i');
+const ROOT_PAIR = new RegExp(String.raw`^(?:[a-z]\s*=\s*)?(${NUM})\s*(?:,|\bor\b|\band\b|&)\s*(?:[a-z]\s*=\s*)?(${NUM})\s*[.!]*$`, 'i');
+const CURRENCY = new RegExp(String.raw`^\$\s*(${NUM})\s*[.!]*$`);
+const DEGREES = new RegExp(String.raw`^(${NUM})\s*(?:°|º)\s*[.!]*$`);
+const NO_VALUE = /^(?:it\s+|the\s+limit\s+)?(?:dne|d\.n\.e\.?|does\s*n[o']?t\s+exist|undefined|no\s+solution)\s*[.!]*$/i;
+const EVALUATED_AT = new RegExp(String.raw`(?:\b[a-z]'*\(\s*-?\d+(?:\.\d+)?\s*\)|\bfrom\s+\S+\s+to\s+\S+)\s*=\s*(${NUM})\s*[.!]*$`, 'i');
+// A transcendental / radical / constant-of-integration marker: a value no
+// solving STEP of a numeric problem takes, so a lone expression carrying one
+// is a final answer. Plain polynomials stay on the step path (diagnose's
+// equivalence check), where a rewrite is never graded as a final answer.
+const ANSWER_MARKER = /[π√]|(?<![a-z])(?:pi|sqrt|root|sin|cos|tan|sec|csc|cot|ln|log)|e\s*\^|\+\s*c\s*$/i;
+// Function names and e^ glued to a coefficient — "2xsin(x)", "2xe^(2x-1)" —
+// are split apart for the math-words test only; the value keeps what was typed.
+const GLUED_FUNCTION = /(?<=[a-z0-9)^])(?=(?:arc)?(?:sin|cos|tan|sec|csc|cot|sqrt|ln|log)(?![a-z]{2})|e\s*\^)/gi;
+const isAnswerExpr = (e) => leadInExpression(e.replace(GLUED_FUNCTION, ' ').replace(/\bc\s*$/i, '1'));
+const LATEX_WORDS = /\\(sqrt|pi|sin|cos|tan|sec|csc|cot|ln|log|cdot|times)\b/g;
+
+function cleanAnswerExpr(expr) {
+  const e = String(expr).replace(LATEX_WORDS, (m, w, i, str) => (w === 'cdot' || w === 'times' ? '*'
+    : `${(/^(?:sqrt|pi)$/.test(w) ? /[a-z]/i : /[a-z\d)]/i).test(str[i - 1] || '') ? ' ' : ''}${w}`)).replace(/\s+/g, ' ').trim();
+  if (/^-?\d+\s+\d+\s*\/\s*\d+$/.test(e)) return e.replace(/\s*\/\s*/, '/').replace(/\s+/, ' ');
+  return /[a-z]{2,}/i.test(e) ? e.replace(/\s+/g, ' ') : e.replace(/\s/g, '');
+}
+
+function bareAnswerForm(text) {
+  const t = text.replace(FILLER_LEAD, '').trim();
+  let m;
+  if ((m = t.match(INEQUALITY)) && !HYPOTHETICAL_LEAD.test(t)) {
+    const op = { '<=': '≤', '>=': '≥' }[m[2]] || m[2];
+    return { value: `${m[1].toLowerCase()}${op}${m[3].replace(/\s/g, '')}`, hasExplanation: m.index > 0 };
+  }
+  if ((m = t.match(PLUS_MINUS))) return { value: `±${m[1].replace(/\s/g, '').replace('√', 'sqrt')}` };
+  if ((m = t.match(ROOT_PAIR))) return { value: `${m[1].replace(/\s/g, '')}, ${m[2].replace(/\s/g, '')}` };
+  if ((m = t.match(CURRENCY)) || (m = t.match(DEGREES))) return { value: m[1].replace(/\s/g, '').replace(/^(-?)\./, '$10.') };
+  if ((m = t.match(new RegExp(String.raw`^(-?\.\d+)\s*[.!]*$`)))) return { value: m[1].replace(/^(-?)\./, '$10.') };
+  if (NO_VALUE.test(t)) return { value: 'DNE' };
+  if ((m = t.match(EVALUATED_AT)) && !HYPOTHETICAL_LEAD.test(t)) return { value: m[1].replace(/\s/g, ''), hasExplanation: true };
+  // A lone expression with an answer marker — "6π", "5√2", "2e^(2x)",
+  // "2x sin x + x^2 cos x", "x^3/3 + C". Shown work ending "= <that>" keeps
+  // only the right-hand side ("2π(3) = 6π").
+  const parts = t.replace(/[.!]+$/, '').split('=');
+  const expr = cleanAnswerExpr(parts[parts.length - 1]);
+  if (parts.length <= 2 && ANSWER_MARKER.test(expr) && isAnswerExpr(expr)) {
+    if (parts.length === 2 && !ANSWER_MARKER.test(parts[0]) && /[a-z]/i.test(parts[0].replace(LATEX_WORDS, ''))) return null;
+    return { value: expr, ...(parts.length === 2 ? { hasExplanation: true } : {}) };
+  }
+  return null;
+}
+
+// "is it x^7?", "is it 4 2/3?", "is it 12(3x + 1)^3?" — proposedAnswer reads
+// only a lone number after the cue, so any expression went ungraded.
+const PROPOSED_EXPRESSION = /^(?:(?:oh|ok|okay|so|well|um+|hmm+)[,\s]+)*(?:is\s+it|would\s+it\s+be|is\s+the\s+answer|so\s+is\s+it|could\s+it\s+be)\s+(.+?)\s*\?+\s*$/i;
+function proposedExpression(text) {
+  const m = text.match(PROPOSED_EXPRESSION);
+  if (!m) return null;
+  const inner = m[1].replace(/^[a-z]\s*=\s*(?=.*\d)/i, '');   // "is it x = 5√2?"
+  const form = bareAnswerForm(inner);
+  if (form) return form.value;
+  const expr = cleanAnswerExpr(inner);
+  return isAnswerExpr(expr) ? expr : null;
 }
 
 function extractAnswer(message) {
@@ -561,6 +633,8 @@ function extractAnswer(message) {
     // number is the answer (llmVerifier compares a unit-bearing key by value).
     if ((match = text.match(PATTERNS.numberWithLabel))
         && match[2].split(/\s+/).every(w => /^(?:square|squared|cubic|cubed)$/i.test(w) || !isMathToken(w))) return { value: match[1].replace(/\s/g, ''), raw };
+    const form = bareAnswerForm(text);
+    if (form) return { ...form, raw };
   }
 
   // Proposed / self-check answer ("…right? 10/24", "is it 5/12?") — cue-gated and
@@ -568,6 +642,8 @@ function extractAnswer(message) {
   {
     const match = text.match(PATTERNS.proposedAnswer);
     if (match) return { value: (match[1] || match[2]).replace(/\s/g, ''), raw, proposed: true };
+    const proposed = text.length <= 100 ? proposedExpression(text) : null;
+    if (proposed) return { value: proposed, raw, proposed: true };
   }
 
   // For longer messages: try to extract answer embedded in explanation
@@ -1173,7 +1249,10 @@ function observe(message, context = {}) {
   // context signal above, so decide/mood see it either way.
   // Tested on the LaTeX-unwrapped text so a MathLive self-check
   // ("is it \\(\\frac{5}{12}\\)?") is an attempt too, not a QUESTION.
-  const carriesProposedAnswer = PATTERNS.proposedAnswer.test(normalizeLatexAnswerText(text));
+  const proposalText = normalizeLatexAnswerText(text);
+  const carriesProposedAnswer = PATTERNS.proposedAnswer.test(proposalText)
+    // "is it x^7?" / "is it 6π?" — a self-check on an expression, not a question.
+    || (proposalText.length <= 100 && !!proposedExpression(proposalText));
 
   if (PATTERNS.giveUp.test(lower)) {
     messageType = MESSAGE_TYPES.GIVE_UP;

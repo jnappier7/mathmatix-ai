@@ -46,7 +46,14 @@ function latexToExpr(input) {
     .replace(/_\s*\{([^{}]*)\}/g, '_$1')                                 // subscripts
     .replace(/\\([a-zA-Z]+)/g, '$1')                                     // \ln \sin -> ln sin
     .replace(/[{}]/g, '')
-    .replace(/−/g, '-').replace(/×/g, '*').replace(/÷/g, '/').replace(/·/g, '*');
+    .replace(/−/g, '-').replace(/×/g, '*').replace(/÷/g, '/').replace(/·/g, '*')
+    // Unicode π and √ are not mathjs: "9π" parsed as 9 times a VARIABLE named
+    // π, so "9pi" against a key of "9π" was a confident symbolic NO MATCH — a
+    // right area answer rejected (verdict eval, 2026-11-05).
+    .replace(/π/g, ' pi ')
+    .replace(/√\s*(\d+(?:\.\d+)?|[a-z]|\([^()]*\))/gi, ' sqrt($1) ')
+    .replace(/(?<![a-z])sqrt\s*(\d+(?:\.\d+)?)/gi, 'sqrt($1)')   // "5sqrt2" (observe's √ form)
+    .replace(/²/g, '^2').replace(/³/g, '^3');
   // |2b + 1| -> abs(2b + 1) so absolute-value equations are checkable (\left|
   // \right| already stripped above, leaving bare | … |). Non-greedy, single level.
   s = s.replace(/\|\s*([^|]+?)\s*\|/g, 'abs($1)');

@@ -16,6 +16,8 @@
  *   correct     — extra right-answer forms beyond the generated styles
  *   wrong       — common wrong answers, each as the student would type it
  *   noStyles    — skip generated styles (conceptual / polarity / multi-value)
+ *   before      — earlier tutor turns, oldest first, when the pose is a
+ *                 SUB-question that builds on them ("what would u'v look like?")
  */
 
 const P = [
@@ -106,6 +108,17 @@ const P = [
     vtex: '2x\\sin x + x^2\\cos x',
     correct: ['oh so 2x sinx + x^2 cosx', 'x^2 cos x + 2x sin x', '2xsin(x)+x^2cos(x)', "u'v + uv' = 2x sin x + x^2 cos x"],
     wrong: ['2x cos x', '2x sin x', "u' = 2x and v' = cos x so its 2x cos x"] },
+  // Sub-questions: the answer is to the step in front of the student, and the
+  // pose does not restate what it builds on (2026-11-04: solved blind, a right
+  // u'v was rejected and a wrong one accepted).
+  { id: 'sub-1', topic: 'calculus',
+    before: ["To find the derivative of \\(x^2 \\sin x\\), use the product rule: \\[(uv)' = u'v + uv'\\] Let \\(u = x^2\\) and \\(v = \\sin x\\). Can you tell me what \\(u'\\) and \\(v'\\) are?"],
+    pose: "Nice, \\(u' = 2x\\) and \\(v' = \\cos x\\). Now, what would \\(u'v\\) look like?", v: '2x sin x', varName: null,
+    correct: ['2x sinx'], wrong: ['2x cos x', 'x^2 cos x'] },
+  { id: 'sub-2', topic: 'geometry',
+    before: ["Let's find the area of a circle with radius 3. The formula is \\(A = \\pi r^2\\)."],
+    pose: 'What do you get when you plug in the radius?', v: '9π', varName: null,
+    correct: ['π(3)^2 = 9π'], wrong: ['6π', '3π'] },
   { id: 'calc-2', topic: 'calculus', pose: "Try this one: What's the derivative of \\((3x + 1)^4\\)?", v: '12(3x + 1)^3', varName: null,
     correct: ['4(3x+1)^3 * 3 = 12(3x+1)^3'], wrong: ['4(3x + 1)^3', '12x(3x+1)^3'] },
   { id: 'calc-3', topic: 'calculus', pose: "Try this one: What's the derivative of \\(e^{2x}\\)?", v: '2e^(2x)', varName: null,
