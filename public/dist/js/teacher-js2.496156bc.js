@@ -6246,7 +6246,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             const response = await fetch('/api/teacher/classes');
             if (!response.ok) return;
             const data = await response.json();
-            classesData = data.classes || [];
+            // Live classes only: an archived class has no chip, no drop target, no Today card.
+            classesData = (data.classes || []).filter(c => c.isActive !== false);
             // Update class count badge in tab
             const classCountEl = document.getElementById('tab-class-count');
             if (classCountEl) classCountEl.textContent = `(${classesData.length})`;
@@ -6380,7 +6381,49 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         classesListDiv.innerHTML = '';
-        classes.forEach(cls => {
+        // Live classes first; archived ones fold away under a heading at the bottom.
+        const live = classes.filter(c => c.isActive !== false);
+        const archived = classes.filter(c => c.isActive === false);
+        live.forEach(cls => classesListDiv.appendChild(classCard(cls)));
+        if (archived.length) {
+            const box = document.createElement('details');
+            box.className = 'archived-classes';
+            box.style.cssText = 'margin-top: 18px;';
+            box.innerHTML = `<summary style="cursor: pointer; color: #666; font-weight: 600; padding: 8px 0;"><i class="fas fa-box-archive"></i> Archived classes (${archived.length})</summary>
+                <p style="font-size: 13px; color: #888; margin: 6px 0 12px;">Join codes are closed and these don't show on Today, the class chips or the Live Drill class list. Students keep their history. Restore brings one back.</p>`;
+            archived.forEach(cls => box.appendChild(classCard(cls)));
+            classesListDiv.appendChild(box);
+        }
+        if (!live.length) {
+            const note = document.createElement('p');
+            note.style.cssText = 'color: #888; font-size: 14px; padding: 12px 0;';
+            note.innerHTML = 'No live classes. <button type="button" class="btn btn-primary" data-open-create-class style="margin-left: 8px;"><i class="fas fa-plus"></i> Create a class</button>';
+            classesListDiv.prepend(note);
+        }
+    }
+
+    /** Archive, restore or delete a class from its card (teacher-owned: routes/teacher.js). */
+    async function classAction(act, cls) {
+        const name = cls.className || 'this class';
+        if (act === 'archive' && !confirm(`Archive "${name}"?\n\nThe join code stops working and the class leaves Today, the class chips and the Live Drill class list. Students keep their history. You can restore it any time from Archived classes.`)) return;
+        if (act === 'delete' && !confirm(`Delete "${name}"?\n\nIt has no students. This can't be undone.`)) return;
+        try {
+            const url = `/api/teacher/classes/${encodeURIComponent(cls._id)}`;
+            const response = act === 'delete'
+                ? await csrfFetch(url, { method: 'DELETE' })
+                : await csrfFetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ archived: act === 'archive' }) });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.message || `HTTP ${response.status}`);
+            showToast(act === 'archive' ? `Archived "${name}".` : act === 'restore' ? `Restored "${name}".` : `Deleted "${name}".`, 'success');
+            fetchClasses();
+            fetchClassesForGrouping();
+        } catch (err) {
+            showToast(err.message || 'Could not update the class.', 'error');
+        }
+    }
+
+    function classCard(cls) {
+        {
             const card = document.createElement('div');
             card.className = 'class-card';
             card.style.cssText = 'border: 1px solid #e8ecf1; border-radius: 12px; margin-bottom: 14px; overflow: hidden; transition: box-shadow 0.2s;';
@@ -6389,7 +6432,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const statusBadge = cls.isActive
                 ? '<span style="background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">Active</span>'
-                : '<span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">Inactive</span>';
+                : cls.archivedAt
+                    ? '<span style="background: #e5e7eb; color: #374151; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">Archived</span>'
+                    : '<span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">Inactive</span>';
+            const archived = cls.isActive === false;
+            const actBtn = (act, label, color) => `<button type="button" data-class-act="${act}" title="${label} this class" style="background: none; border: 1px solid ${color}; color: ${color}; border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer;">${label}</button>`;
+            const actions = `<div class="class-actions" style="display: flex; gap: 6px;">${archived ? actBtn('restore', 'Restore', '#2563eb') : actBtn('archive', 'Archive', '#6b7280')}${cls.studentCount === 0 ? actBtn('delete', 'Delete', '#b91c1c') : ''}</div>`;
 
             card.innerHTML = `
                 <div style="padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" class="class-card-header" data-code-id="${cls._id}">
@@ -6415,6 +6463,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             <div style="font-size: 22px; font-weight: 700; color: #27ae60;">${cls.activeCount}</div>
                             <div style="font-size: 11px; color: #888; text-transform: uppercase;">Active</div>
                         </div>
+                        ${actions}
                         <i class="fas fa-chevron-down class-expand-icon" style="color: #bbb; transition: transform 0.2s;"></i>
                     </div>
                 </div>
@@ -6426,9 +6475,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Click to expand/collapse student list
             const header = card.querySelector('.class-card-header');
             header.addEventListener('click', () => toggleClassStudents(cls._id, card));
+            // the action buttons sit in the header: they must not toggle it
+            card.querySelectorAll('[data-class-act]').forEach(b => {
+                b.addEventListener('click', (e) => { e.stopPropagation(); classAction(b.dataset.classAct, cls); });
+            });
 
-            classesListDiv.appendChild(card);
-        });
+            return card;
+        }
     }
 
     async function toggleClassStudents(codeId, card) {

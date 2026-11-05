@@ -161,7 +161,7 @@
     ],
     "js": [
       {
-        "src": "/dist/js/admin-js0.274dc92a.js",
+        "src": "/dist/js/admin-js0.ad112fea.js",
         "files": [
           "/js/analyticsCharts.js",
           "/js/admin-analytics.js",
@@ -286,7 +286,7 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.d3683cb3.js",
+        "src": "/dist/js/teacher-js2.496156bc.js",
         "files": [
           "/js/idle-dialog.js",
           "/js/auto-logout.js",

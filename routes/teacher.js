@@ -1104,7 +1104,7 @@ router.get('/classes', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
 
     const codes = await EnrollmentCode.find({ teacherId })
-      .select('code className description gradeLevel mathCourse schoolYear period isActive expiresAt maxUses useCount enrolledStudents createdAt')
+      .select('code className description gradeLevel mathCourse schoolYear period isActive archivedAt expiresAt maxUses useCount enrolledStudents createdAt')
       .sort({ createdAt: -1 })
       .lean();
 
@@ -1134,6 +1134,7 @@ router.get('/classes', isTeacher, async (req, res) => {
       schoolYear: classSchoolYear(c),
       period: c.period || null,
       isActive: c.isActive,
+      archivedAt: c.archivedAt || null,
       expiresAt: c.expiresAt,
       maxUses: c.maxUses,
       createdAt: c.createdAt,
@@ -1255,6 +1256,56 @@ router.post('/classes', isTeacher, async (req, res) => {
   } catch (err) {
     console.error('Error creating class:', err);
     res.status(500).json({ message: 'Server error creating class.' });
+  }
+});
+
+// PATCH /api/teacher/classes/:codeId — archive or restore a class ({ archived: true|false }), or
+// rename it. Archiving closes the join code and takes the class off every live surface; nothing is
+// deleted — the students keep their enrollment and history, and "Restore" brings it all back.
+router.patch('/classes/:codeId', isTeacher, async (req, res) => {
+  try {
+    const cls = await EnrollmentCode.findOne({ _id: req.params.codeId, teacherId: req.user._id });
+    if (!cls) return res.status(404).json({ message: 'Class not found.' });
+    const { archived, className, period } = req.body || {};
+    if (typeof archived === 'boolean') {
+      cls.isActive = !archived;
+      cls.archivedAt = archived ? new Date() : null;
+    }
+    if (typeof className === 'string' && className.trim()) cls.className = className.trim().slice(0, 100);
+    if (typeof period === 'string') cls.period = period.trim().slice(0, 20) || undefined;
+    await cls.save();
+    res.json({
+      success: true,
+      class: {
+        _id: cls._id, code: cls.code, className: cls.className, period: cls.period || null,
+        isActive: cls.isActive, archivedAt: cls.archivedAt || null, studentCount: cls.enrolledStudents.length,
+      },
+    });
+  } catch (err) {
+    console.error('Error updating class:', err);
+    res.status(500).json({ message: 'Server error updating class.' });
+  }
+});
+
+// DELETE /api/teacher/classes/:codeId — delete an EMPTY class. A class with students is never
+// deleted from here: its enrollments are the students' record of where they were, so the answer
+// is 409 "archive it instead" (and the dashboard only offers Delete on an empty class).
+router.delete('/classes/:codeId', isTeacher, async (req, res) => {
+  try {
+    const cls = await EnrollmentCode.findOne({ _id: req.params.codeId, teacherId: req.user._id });
+    if (!cls) return res.status(404).json({ message: 'Class not found.' });
+    const n = cls.enrolledStudents.length;
+    if (n > 0) {
+      return res.status(409).json({
+        message: `This class has ${n} student${n === 1 ? '' : 's'}. Archive it instead — the join code closes and the class leaves your lists, and the students keep their history.`,
+        students: n,
+      });
+    }
+    await cls.deleteOne();
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error deleting class:', err);
+    res.status(500).json({ message: 'Server error deleting class.' });
   }
 });
 
