@@ -38,18 +38,26 @@
     return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
   }
 
-  function touchdown(team, label) {
-    const el = $('td'); if (!el) return;
-    el.innerHTML = `<div class="t${team.idx}">${label || 'Touchdown'}<br>${esc(team.name)}</div>`;
+  /**
+   * The full-screen splash: one team — or, when BOTH scored in the same update (a Huddle reveal, or
+   * two drives landing inside one broadcast), both, split left and right. It used to be one panel
+   * written per team, so the second write replaced the first and only one team was ever announced.
+   */
+  function splash(scores) {
+    const el = $('td'); if (!el || !scores.length) return;
+    el.classList.toggle('split', scores.length > 1);
+    el.innerHTML = scores.map((s) => `<div class="t${s.idx}">${s.label}<br>${esc(s.name)}</div>`).join('');
     el.hidden = false;
-    clearTimeout(touchdown._t);
-    touchdown._t = setTimeout(() => { el.hidden = true; }, 1600);
+    clearTimeout(splash._t);
+    splash._t = setTimeout(() => { el.hidden = true; }, scores.length > 1 ? 2200 : 1600);
   }
-  /** Fire the TD splash when a team's points go up between two states. A pick six says so. */
+  /** Fire the splash for every team whose points went up between two states. A pick six says so. */
   function watchTouchdowns(prev, next) {
     if (!prev || !next) return;
     const picks = (next.round && next.round.pickSix) || [];
-    next.teams.forEach((t, i) => { if (prev.teams[i] && t.pts > prev.teams[i].pts) touchdown({ idx: i, name: t.name }, picks[i] ? 'Pick six' : 'Touchdown'); });
+    const scores = [];
+    next.teams.forEach((t, i) => { if (prev.teams[i] && t.pts > prev.teams[i].pts) scores.push({ idx: i, name: t.name, label: picks[i] ? 'Pick six' : 'Touchdown' }); });
+    splash(scores);
   }
 
   /**

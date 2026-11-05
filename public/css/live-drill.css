@@ -447,6 +447,11 @@ table.twoway td:first-child{text-align:left}
 #td{position:fixed;inset:0;display:grid;place-items:center;background:rgba(6,15,20,.82);z-index:10;pointer-events:none}
 #td div{font-family:var(--display);font-weight:900;font-size:clamp(3.5rem,14vw,10rem);color:var(--led);text-transform:uppercase;text-align:center;line-height:.9;text-shadow:0 0 30px rgba(255,181,71,.5);animation:pop .9s ease both}
 #td div.t0{color:var(--red)} #td div.t1{color:var(--blue)}
+/* both teams scored on the same update: split the screen, Red left, Blue right */
+#td.split{grid-template-columns:1fr 1fr;place-items:stretch}
+#td.split div{display:grid;place-items:center;font-size:clamp(2.6rem,9vw,7rem);padding:0 3vw}
+#td.split div.t0{background:rgba(224,78,78,.14);border-right:3px solid var(--rail)}
+#td.split div.t1{background:rgba(74,134,232,.14)}
 @keyframes pop{0%{transform:scale(.6);opacity:0}40%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
 
 /* ---------- player (phone) ---------- */
