@@ -83,6 +83,7 @@
     if (m > 0) startBand(); else later(stopBand, 900);
     const c = crowdOn && !muted ? (CROWD_LEVEL[scene] || 0) : 0;
     ramp(crowd.gain, c * (0.6 + 0.8 * hype), 1.2);
+    if (murmur && murmur.bed) ramp(murmur.bed.filter.frequency, bedCutoff(), 1.2);
     if (c > 0) startMurmur(); else later(stopMurmur, 1300);
   }
   const pending = new Set();
@@ -94,13 +95,19 @@
   // ---------------------------------------------------------------- recorded cheers
   // Two real crowd recordings (public/audio/live-drill/, picked by the owner 2026-11-04) carry the
   // moments synthesis can't: the roar on a touchdown, a pick six or the final (cheer-big, 6 s) and
-  // the smaller cheer on a Huddle reveal the class mostly got, or a new king (cheer, 4.8 s). They
+  // the smaller cheer on a Huddle reveal the class mostly got, or a new king (cheer, 4.8 s). A third,
+  // murmur.mp3, is the bed under play — a seamless loop built from those two (a grain cloud of their
+  // bodies, low-passed for distance; scripts/buildCrowdMurmur.js), so it carries the same licence. They
   // load after the first click (fetch + decodeAudioData, same-origin, CSP mediaSrc 'self') and play
   // on the sfx bus at a slightly random speed so two touchdowns never sound like a loop. Until they
   // have loaded — or if they can't (offline, a blocked fetch, the test's fake graph) — the
   // synthesized roar in cheer() stands in, so a touchdown is never silent.
-  const SAMPLES = { cheer: '/audio/live-drill/cheer.mp3', big: '/audio/live-drill/cheer-big.mp3' };
+  const SAMPLES = { cheer: '/audio/live-drill/cheer.mp3', big: '/audio/live-drill/cheer-big.mp3', murmur: '/audio/live-drill/murmur.mp3' };
   const SAMPLE_LEVEL = { cheer: 0.55, big: 0.7 }; // both files peak near full scale; the horn sits at ~0.15
+  // The murmur bed (murmur.mp3, 27 s) is a seamless loop over seconds 1–25 — a second of lead-in and
+  // two of tail keep the loop point away from the codec's edges, so loopStart/loopEnd never hit padding.
+  const MURMUR_LOOP = [1, 25];
+  const MURMUR_LEVEL = 0.32; // the file peaks at −6 dBFS; this lands the calm bed near the old synth level
   const samples = {}; // name → AudioBuffer, once decoded
   let samplesRequested = false;
   function loadSamples() {
@@ -238,6 +245,9 @@
   }
 
   // ---------------------------------------------------------------- the crowd (crowd bus)
+  // The synthesized murmur below is the STAND-IN for the recorded bed (startMurmur plays murmur.mp3
+  // when it has loaded): it covers the first seconds before the file lands, and any device that can't
+  // fetch it.
   // What a crowd is NOT: filtered noise. Noise through a band-pass is surf however you shape it.
   // The first cut (one band, a slow swell) was a beach; the second (four bands flickering at
   // syllable speed over a low-passed rumble) was still a beach in a wind — students said "ocean"
@@ -261,7 +271,7 @@
   // (owner, 2026-11-04) — a synthesized vowel is never going to pass for a crowd shouting a word.
   const STOMP_HYPE = 0.55;
   const STOMP = { beatSec: 0.42, phrases: 2, restSec: [1.4, 2.6] }; // stomp · stomp · CLAP · (rest), ×2, then talk
-  let murmur = null; // { nodes, voices, timers }
+  let murmur = null; // { nodes, voices, timers, bed?: { src, filter } }
 
   /** One speaker: oscillator → gate (the syllables) → two formant band-passes → (pan) → crowd. */
   function makeVoice(f0, idx) {
@@ -283,15 +293,30 @@
 
   function startMurmur() {
     if (murmur || !ctx) return;
-    murmur = { nodes: [], voices: [], timers: new Set() };
-    VOICE_F0.forEach((f0, i) => {
-      const v = makeVoice(f0 * (0.97 + Math.random() * 0.06), i);
-      murmur.nodes.push(v.osc); murmur.voices.push(v);
-      wait(Math.random() * 1200, () => speak(v)); // nobody starts talking on the same beat
-    });
+    murmur = { nodes: [], voices: [], timers: new Set(), bed: null };
+    if (samples.murmur) {
+      // The real thing: the recorded bed, looping, through a low-pass that opens as the game heats
+      // up (a crowd that leans in sounds closer). Started at a random point so two games never
+      // share a phrase. The synthesized voices below are the stand-in until the file has loaded.
+      const src = ctx.createBufferSource();
+      src.buffer = samples.murmur; src.loop = true; src.loopStart = MURMUR_LOOP[0]; src.loopEnd = MURMUR_LOOP[1];
+      const filter = ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = bedCutoff(); filter.Q.value = 0.5;
+      const g = ctx.createGain(); g.gain.value = MURMUR_LEVEL;
+      src.connect(filter).connect(g).connect(crowd);
+      src.start(0, MURMUR_LOOP[0] + Math.random() * (MURMUR_LOOP[1] - MURMUR_LOOP[0]));
+      murmur.nodes.push(src); murmur.bed = { src, filter };
+    } else {
+      VOICE_F0.forEach((f0, i) => {
+        const v = makeVoice(f0 * (0.97 + Math.random() * 0.06), i);
+        murmur.nodes.push(v.osc); murmur.voices.push(v);
+        wait(Math.random() * 1200, () => speak(v)); // nobody starts talking on the same beat
+      });
+    }
     stands();
     wait(600, stompWatch);
   }
+  /** How much of the bed's top end comes through: a far-off hum at midfield, right there at the goal line. */
+  const bedCutoff = () => 1500 + 4500 * hype;
   function wait(ms, fn) {
     const t = setTimeout(() => { if (murmur) { murmur.timers.delete(t); fn(); } }, ms);
     murmur.timers.add(t);
@@ -412,6 +437,8 @@
     groan,
     /** Whether the recorded cheers have loaded (false until the first click's fetch lands). */
     get recordedCheers() { return loaded('cheer') && loaded('big'); },
+    /** Whether the recorded murmur bed has loaded (the synthesized voices stand in until then). */
+    get recordedMurmur() { return loaded('murmur'); },
     /** Referee's whistle: kickoff. */
     whistle() {
       tone({ freq: 2600, type: 'square', dur: 0.12, vol: 0.06 });
