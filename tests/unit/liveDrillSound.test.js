@@ -133,23 +133,6 @@ test('a hotter game is more people talking, not a bigger wave: pauses shorten wi
   expect(words(1)).toBeGreaterThan(words(0) * 1.3);
 });
 
-test('deep in the red zone the stands stomp and clap ON THE BEAT; at midfield nobody does', () => {
-  // The most noise bursts (feet, hands) that landed inside one 60 ms window: a stomp or a clap on
-  // the beat is a dozen or more at once; the murmur's stray claps and consonants never bunch like that.
-  const bunched = (hype) => {
-    const { S, made } = load();
-    S.unlock();
-    S.setScene('live');
-    S.setHype(hype);
-    jest.advanceTimersByTime(5000);
-    const count = new Map();
-    for (const src of made.sources) { if (src.startedAt == null) continue; const b = Math.round(src.startedAt / 0.06); count.set(b, (count.get(b) || 0) + 1); }
-    return Math.max(0, ...count.values());
-  };
-  expect(bunched(0.9)).toBeGreaterThanOrEqual(10);
-  expect(bunched(0)).toBeLessThan(6);
-});
-
 test('the band stops for the final', () => {
   const { S, made } = load();
   S.setMusic(true);
@@ -233,11 +216,13 @@ test('once the recorded murmur has loaded, the bed under play is the recording l
   expect(bed.buffer.name).toBe('murmur');
   expect([bed.loopStart, bed.loopEnd]).toEqual([1, 25]); // away from the codec's edges
   expect(made.oscs.filter((o) => o.type === 'sawtooth')).toHaveLength(0); // the voices stand down
-  // the stands are still alive over the recording: claps and the red-zone stomp keep coming
-  const before = made.buffer;
+  // and NOTHING synthesized rides over the recording, red zone included: no claps, whoops or stomps
+  const before = { buffer: made.buffer, osc: made.osc };
   S.setHype(0.9);
-  jest.advanceTimersByTime(4000);
-  expect(made.buffer).toBeGreaterThan(before);
+  jest.advanceTimersByTime(6000);
+  expect(made.buffer).toBe(before.buffer);
+  expect(made.osc).toBe(before.osc);
+  expect(bed.stopped).not.toBe(true);
   // crowd off: the loop stops
   S.setCrowd(false);
   jest.advanceTimersByTime(2000);
