@@ -19,7 +19,7 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const { getStudentScope, resourceVisibleToStudent } = require('../utils/resourceVisibility');
 const { userHasRole } = require('../utils/roleQuery');
 const { getStudentIdsForTeacher } = require('../services/userService');
-const { inWindow } = require('../utils/teacherAssignments');
+const { inWindow, getActiveAssignments } = require('../utils/teacherAssignments');
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DEFAULT_ASSIGNMENT_DAYS = 14;
@@ -482,6 +482,32 @@ router.patch('/:id/assign', isAuthenticated, isTeacher, validateObjectId('id'), 
  * POST /api/teacher-resources/:id/start — a student opened pushed work with
  * the tutor. Only for students who can see it, only while it's active.
  */
+/**
+ * GET /api/teacher-resources/mine/assignments — the work a teacher has pushed
+ * to the tutor for THIS student, not yet opened. Feeds the alert on the chat
+ * screen (public/js/teacher-assignment-banner.js): one tap starts it with the
+ * tutor. Same audience rule as everything else (visibleToStudentFilter via
+ * getActiveAssignments); no extracted text — the banner names the work, the
+ * tutor reads it. A non-student gets 403 so the banner stops asking.
+ */
+router.get('/mine/assignments', isAuthenticated, async (req, res) => {
+    try {
+        if (!userHasRole(req.user, 'student')) return res.status(403).json({ student: false, assignments: [] });
+        res.set('Cache-Control', 'no-store');
+        const active = await getActiveAssignments(req.user, { limit: 5 });
+        res.json({
+            student: true,
+            assignments: active.filter(a => !a.started).map(a => ({
+                id: a.id, displayName: a.displayName, category: a.category, note: a.note,
+                teacherName: a.teacherName, endsAt: a.endsAt,
+            })),
+        });
+    } catch (error) {
+        console.error('Error listing pushed assignments:', error);
+        res.status(500).json({ student: true, assignments: [] });
+    }
+});
+
 router.post('/:id/start', isAuthenticated, validateObjectId('id'), async (req, res) => {
     try {
         const resource = await TeacherResource.findById(req.params.id).select('teacherId isPublished sharedWithClassIds tutorAssignment').lean();
