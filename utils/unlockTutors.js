@@ -34,6 +34,9 @@ function getTutorsToUnlock(userLevel, unlockedItems = [], behaviorStats = []) {
     .filter(([tutorId, tutor]) => {
       // Inactive tutors never unlock (see `active` in tutorConfig.js)
       if (tutor.active === false) return false;
+      // Shop tutors are coins-only — never granted free by level/behavior
+      // (owner decision 2026-11-05; see utils/cosmeticsCatalog.js slot "tutor").
+      if (tutor.purchasable) return false;
       // Must have unlock config and not already be unlocked
       if (!tutor.unlockLevel) return false;
       if (unlockedItems.includes(tutorId)) return false;

@@ -87,6 +87,21 @@
 .shop-btn-preview:hover:not(:disabled) { background: #f6f8f9; color: #18202b; }
 .shop-item.is-previewing { outline: 2px solid #12b3b3; outline-offset: 1px; }
 
+/* ---- Tutors shelf: portrait card instead of a colour swatch ---- */
+.shop-tutor .shop-tutor-portrait {
+  display: block; width: 100%; aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden;
+  background: linear-gradient(160deg, #f3f0ff, #e6f7f7);
+}
+.shop-tutor .shop-tutor-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+/* No rarity border, glow or greyed-out portrait on a person — the card is the
+   same for every tutor; only the price differs (coins buy sessions, not people). */
+.shop-tutor { border-top-color: #12b3b3; }
+.shop-tutor .shop-item-rarity { text-transform: none; line-height: 1.3; }
+.shop-tutor-catch {
+  margin: 0; font-size: 0.75rem; line-height: 1.35; color: #3c4855; font-style: italic;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
 /* ---- Live try-on: collapse the shop so the real screen shows through ---- */
 .shop-modal.shop-previewing { pointer-events: none; }            /* let clicks reach the page */
 .shop-modal.shop-previewing .shop-card,
