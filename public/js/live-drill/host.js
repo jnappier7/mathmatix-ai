@@ -873,6 +873,9 @@
       S.drills = drills; S.courses = courses || []; S.settings = settings; S.classes = classes;
       renderClasses();
       if (!drills.some((d) => d.id === S.drill && !d.unavailable)) S.drill = (drills.find((d) => !d.unavailable) || drills[0]).id;
+      // Opened from the Arcade (/live-drill?mode=heist): start on that game.
+      const wantMode = new URLSearchParams(location.search).get('mode');
+      if (['drive', 'huddle', 'hill', 'heist'].includes(wantMode)) S.mode = wantMode;
       if (!['drive', 'huddle', 'hill', 'heist'].includes(S.mode)) S.mode = 'drive';
       renderSetup();
       wireSearch();
