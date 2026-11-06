@@ -290,7 +290,10 @@ async function onBodyClick(e) {
     try {
         if (act === 'buy') {
             // "Are you sure?" — first tap arms the button, second tap buys.
-            if (btn.dataset.armed !== '1') { armBuy(btn); return; }
+            // Re-enable the armed button: the disable above is for the request,
+            // and an armed button left disabled can never take the confirming
+            // tap — grid buys silently did nothing until this line existed.
+            if (btn.dataset.armed !== '1') { btn.disabled = false; armBuy(btn); return; }
             disarmBuy(btn);
             const id = btn.dataset.id;
             const item = state.catalog[id] || {};
