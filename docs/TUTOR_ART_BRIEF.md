@@ -1,11 +1,10 @@
 # Tutor Art Brief — bringing the extra tutors up to the current look
 
 > Status (2026-11-06): **new full-body art is live** for Ms. Rashida, Mr. Sierawski,
-> Prof. Davies, Ms. Alex, Mr. Lee and Mr. Wiggles (`<id>-fullBody.*`), and their
+> Prof. Davies, Ms. Alex, Mr. Lee, Mr. Wiggles and Dr. G (`<id>-fullBody.*`), and their
 > small portraits are cut from it (`<id>-v2.*`, new names so week-long static
 > caching can't serve the old art). Still to come for each: the desk hero
-> (`-new2`), thinking pose, backdrop and videos. **Dr. G** is held out of the shop
-> until he has human art. **Open:** Prof. Davies and Ms. Alex are still drawn
+> (`-new2`), thinking pose, backdrop and videos. **Open:** Prof. Davies and Ms. Alex are still drawn
 > differently from their written personas (see §3).
 
 ## 1. The target look (match the core four)
@@ -71,11 +70,14 @@ art that already fits.
 - **Mr. Lee** — Chinese-American, 40s–50s, San Francisco; precise and calm, tai chi,
   calligraphy. Neat suit or crisp shirt. Backdrop: orderly study with calligraphy
   scrolls, an architectural drawing.
-- **Dr. G** — **Nigerian-American man**, 40s, Houston; a gentle giant — tall,
-  broad, calm, reassuring. **He must be drawn as a person.** His only art is a
-  gorilla, and drawing a Black man as an ape is a racist trope. That's why he's
-  out of the shop. Backdrop: engineering touches (blueprints, a hard hat on a
-  shelf), warm and protective.
+- **Dr. G** — a **gorilla character** (owner decision 2026-11-06): a gentle-giant
+  silverback with a math doctorate, glasses and a green sweater. His bio used to
+  be a Nigerian-American man, and pairing a Black man's identity with a gorilla
+  is the racist trope, so the bio changed, not the art. He has **no human
+  nationality, ethnicity, race or hometown**, his prompt forbids him from
+  claiming one, and `tests/unit/tutorShop.test.js` pins it. Keep any future art
+  and copy consistent with that. Backdrop: forest-canopy workshop, rope bridges,
+  blueprints.
 - **Mr. Wiggles** — former children's theater actor from Queens; the comedian.
   The old art is a full clown in makeup. Recommendation: draw him as a human
   performer with playful touches (bright bow tie, suspenders, expressive face)
@@ -100,10 +102,7 @@ Once a tutor's files are in `public/images/tutor_avatars/` and `public/videos/`:
    tones) plus `.webp` q80 and `.avif` q60.
 4. Portraits: `utils/tutorConfig.js` `image` and the copy in
    `public/js/parent-dashboard.js` (bundled — run `npm run build:bundles`).
-5. **Dr. G only:** in `utils/tutorConfig.js` replace `active: false` with
-   `purchasable: true, shopPrice: 900`, and update the Dr. G lines in
-   `tests/unit/tutorShop.test.js`.
-6. Bump the cache versions — prod caches static files for a week:
+5. Bump the cache versions — prod caches static files for a week:
    `chat-redesign.js?v=` in `public/chat.html`, `gamification.js?v=` in the
    import at the top of `public/js/script.js` (and `script.js?v=` in
    `chat.html`), `pick-tutor.js?v=` in `public/pick-tutor.html`, and

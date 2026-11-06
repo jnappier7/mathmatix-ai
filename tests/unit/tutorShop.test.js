@@ -23,12 +23,9 @@ const student = (over = {}) => ({
 describe('shop tutors come from tutorConfig', () => {
     const shopIds = Object.keys(TUTOR_CONFIG).filter(id => TUTOR_CONFIG[id].purchasable);
 
-    test('the extra tutors are for sale (Dr. G held back), and no core tutor is', () => {
+    test('all 7 extra tutors are for sale, and no core tutor is', () => {
         expect(shopIds.sort()).toEqual(
-            ['mr-lee', 'mr-sierawski', 'mr-wiggles', 'ms-alex', 'ms-rashida', 'prof-davies']);
-        // Dr. G stays out until he has human art — see the note in tutorConfig.js.
-        expect(TUTOR_CONFIG['dr-g'].active).toBe(false);
-        expect(TUTOR_ITEMS['tutor.dr-g']).toBeUndefined();
+            ['dr-g', 'mr-lee', 'mr-sierawski', 'mr-wiggles', 'ms-alex', 'ms-rashida', 'prof-davies']);
         expect(Object.keys(TUTOR_ITEMS).sort()).toEqual(shopIds.map(id => `tutor.${id}`).sort());
         for (const id of ['bob', 'maya', 'ms-maria', 'mr-nappier']) {
             expect(TUTOR_ITEMS[`tutor.${id}`]).toBeUndefined();
@@ -232,5 +229,29 @@ describe('every selectable tutor has current-style art on disk', () => {
         for (const ext of ['png', 'webp']) {
             expect(fs.existsSync(path.join(dir, img.replace(/\.png$/, `.${ext}`)))).toBe(true);
         }
+    });
+});
+
+describe('Dr. G is a gorilla character, never a person of any human heritage', () => {
+    // His art is a gorilla. When his bio was a Nigerian-American man, the
+    // product showed a Black man as an ape — the racist trope. The fix is the
+    // bio (owner decision 2026-11-06): no nationality, ethnicity, race or human
+    // hometown, and the prompt forbids him from claiming one.
+    const g = TUTOR_CONFIG['dr-g'];
+    const GUARD = 'never give yourself a human nationality, ethnicity, race or hometown';
+    // Everything he says about himself, minus the guard sentence (which has to name what it forbids).
+    const text = [g.personality.replace(GUARD, ''), g.humanBehaviors, g.about, g.specialties, g.culturalBackground, g.voicePreview].join(' ');
+
+    test('his bio says he is a gorilla', () => {
+        expect(g.culturalBackground).toMatch(/gorilla/i);
+        expect(g.about).toMatch(/gorilla/i);
+    });
+
+    test('nothing gives him a human nationality, ethnicity or race', () => {
+        expect(text).not.toMatch(/\b(nigeria\w*|lagos|houston|texas|african|black (man|students?|person)|american|ethnic\w*|heritage|immigra\w*)\b/i);
+    });
+
+    test('his prompt tells him not to claim one', () => {
+        expect(g.personality).toContain(GUARD);
     });
 });
