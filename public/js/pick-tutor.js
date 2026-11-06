@@ -104,10 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.dataset.tutorId = t.id;
       btn.setAttribute('aria-pressed', t.id === selectedTutorId ? 'true' : 'false');
       btn.setAttribute('aria-label', t.name);
-      // Shop tutors have a portrait but no full-body art yet — show the portrait.
-      const art = t.purchasable ? portraitBase(t) : fullBodyBase(t.id);
+      // Every selectable tutor has full-body art on the shared 961x1637 canvas
+      // (pinned by tests/unit/tutorShop.test.js).
+      const art = fullBodyBase(t.id);
       btn.innerHTML =
-        '<span class="tp-figure-img' + (t.purchasable ? ' tp-figure-img--portrait' : '') + '"><picture>' +
+        '<span class="tp-figure-img"><picture>' +
           '<source srcset="' + art + '.webp" type="image/webp">' +
           '<img src="' + art + '.png" alt="' + esc(t.name) + '" loading="lazy">' +
         '</picture></span>' +
