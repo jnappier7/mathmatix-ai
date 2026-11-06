@@ -15,7 +15,7 @@ import './modules/statusCard.js?v=8'; // registers window.openStatusCard (Progre
 // it the try-on preview fix below would not reach a returning student for a
 // week: /js/** is served max-age=604800, and bumping script.js's own ?v= does
 // not change this import's URL, which is what the browser caches.
-import './modules/shop.js?v=20261105ts'; // registers window.openShop (cosmetics shop)
+import './modules/shop.js?v=20261106ta'; // registers window.openShop (cosmetics shop)
 import { showCoinReward } from './modules/coinFx.js'; // coin fly-in + count-up + chime
 import { resolveAvatarUrl } from './modules/avatarResolver.js';
 import { applyCosmetics } from './modules/cosmeticsApply.js';
