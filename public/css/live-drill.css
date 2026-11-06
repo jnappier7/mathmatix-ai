@@ -659,3 +659,39 @@ tr.none td{opacity:.62}
 .choices .ch.safe .lab{font-family:var(--display);font-weight:800;letter-spacing:.06em;text-transform:uppercase}
 .choices .ch.safe.opened{border-color:var(--led);background:#2a2208}
 .fb.crack{border-color:var(--led);box-shadow:0 0 0 2px var(--led) inset}
+
+/* ---------- Mathmatix Arcade (/arcade) ---------- */
+.awrap{max-width:1100px;margin:0 auto;padding:18px 16px 40px;display:flex;flex-direction:column;gap:26px}
+.ahero p{font-size:1.1rem}
+.sechead{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.sechead h2{margin:0;font-family:var(--display);font-weight:900;font-size:clamp(1.6rem,3.5vw,2.4rem);text-transform:uppercase;letter-spacing:.04em;color:var(--led)}
+.sechead p{margin:0;max-width:80ch}
+.joinstrip{display:flex;flex-direction:column;gap:12px}
+.joinstrip .coderow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.joinstrip .codein{font:900 2rem var(--display);letter-spacing:.25em;text-transform:uppercase;text-align:center;background:var(--night);color:var(--chalk);border:2px solid var(--rail);border-radius:6px;padding:8px 14px;flex:1 1 200px;min-width:0}
+.joinstrip .codein:focus{outline:none;border-color:var(--led)}
+.joinstrip .live{display:flex;flex-direction:column;gap:8px;background:#2a2208;border:2px solid var(--led);border-radius:8px;padding:10px 14px}
+.joinstrip .lrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.go.sm{width:auto;padding:10px 18px;font-size:1rem}
+.gamegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.gcard{background:var(--board);border:2px solid var(--rail);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,transform .2s}
+.gcard:hover{border-color:var(--led);transform:translateY(-2px)}
+.gcard .art svg{display:block;width:100%;height:auto}
+.gcard .gbody{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.gcard h3{margin:0;font-family:var(--display);font-weight:900;font-size:1.8rem;line-height:1;text-transform:uppercase;letter-spacing:.03em}
+.gcard .tag{margin:0;font-weight:700;color:var(--chalk)}
+.gcard .how{margin:0;font-size:.92rem;color:var(--muted);flex:1}
+.gcard .gact{margin-top:6px;font-size:.9rem}
+.hubgrid,.testgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.hcard,.tcard{display:flex;flex-direction:column;gap:8px;background:var(--night);border:2px solid var(--rail);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--chalk);transition:border-color .2s}
+.hcard:hover,.tcard:hover,.hcard:focus-visible,.tcard:focus-visible{border-color:var(--led)}
+.hcard h3,.tcard h3{margin:0;font-family:var(--display);font-weight:900;font-size:1.5rem;text-transform:uppercase;letter-spacing:.03em;line-height:1}
+.hcard ul{margin:0;padding-left:1.1em;color:var(--muted);font-size:.92rem;flex:1}
+.tcard p{margin:0;color:var(--muted);font-size:.92rem;flex:1}
+.hcard .cta,.tcard .cta{font-family:var(--display);font-weight:800;color:var(--led);letter-spacing:.06em;text-transform:uppercase;font-size:.95rem}
+.dsearch-res a{text-align:left;background:var(--night);color:var(--chalk);border:2px solid var(--rail);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0;text-decoration:none}
+.dsearch-res a:hover,.dsearch-res a:focus{border-color:var(--led);outline:none}
+.afoot{font-size:.92rem;text-align:center}
+.afoot a{color:var(--led)}
+.backlink{font-size:.9rem;margin:0 0 8px}
+.backlink a{color:var(--led);text-decoration:none;font-weight:700}

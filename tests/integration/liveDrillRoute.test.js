@@ -173,6 +173,16 @@ describe('live drill over HTTP', () => {
     expect(pv.heist).toMatchObject({ cash: 450, rank: 1, effect: null, gadgets: [] }); // the finder's own screen is clear
   });
 
+  test('the Arcade catalogue is public, and /me tells the page whether a teacher is looking', async () => {
+    const cat = await req.get('/api/live-drill/solo/arcade');
+    expect(cat.status).toBe(200);
+    expect(cat.body.games.map((g) => g.id)).toEqual(['drive', 'huddle', 'hill', 'heist']);
+    expect(cat.body.hubs.length).toBeGreaterThan(0);
+    expect(cat.body.tests.map((t) => t.id)).toEqual(['act', 'sat', 'preact']);
+    const guest = await req.get('/api/live-drill/solo/me');
+    expect(guest.body).toEqual({ signedIn: false, saves: false, best: null });
+  });
+
   test('a game belongs to the teacher who hosted it', async () => {
     const g = await host();
     const other = await req.get(`/api/live-drill/host/games/${g.code}`).set('X-Test-User', 'teacher-2');

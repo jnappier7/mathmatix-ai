@@ -983,6 +983,8 @@ function registerHtmlRoutes(app) {
   app.get('/act-practice-test', actPracticePage);
   app.get('/act-practice-test.html', actPracticePage);
   app.get('/act', (req, res) => res.redirect(302, '/act-practice-test'));
+  // Mathmatix Arcade: the one front door to every game (utils/liveDrill/arcade.js). Public.
+  app.get(['/arcade', '/games', '/arcade.html'], (req, res) => res.sendFile(path.join(publicDir, 'arcade.html')));
   // Live Two-Minute Drill. /play is what goes on the board; the host screen is teachers only.
   app.get(['/play', '/play.html'], (req, res) => res.sendFile(path.join(publicDir, 'play.html')));
   // Solo practice: a course's games on one page, no host, no account (utils/liveDrill/solo.js).

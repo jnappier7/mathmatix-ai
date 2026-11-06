@@ -44,6 +44,7 @@ const G = require('../utils/liveDrill/games');
 const { DRILLS, listPlaybooks } = require('../utils/liveDrill/engine');
 const { FOCUSABLE, FOCUS_MAX } = require('../utils/liveDrill/facts');
 const solo = require('../utils/liveDrill/solo');
+const arcade = require('../utils/liveDrill/arcade');
 const drillSearch = require('../utils/liveDrill/search');
 const practice = require('../utils/liveDrill/practice');
 const store = require('../utils/liveDrill/store'); // revives a game this process hasn't seen (after a deploy)
@@ -469,6 +470,8 @@ const soloLimiter = rateLimit({
 soloRouter.use(soloLimiter);
 
 soloRouter.get('/hubs', (req, res) => res.json({ hubs: solo.hubList() }));
+// The Arcade's catalogue (utils/liveDrill/arcade.js): the game types, the solo hubs, the practice tests.
+soloRouter.get('/arcade', (req, res) => { res.set('Cache-Control', 'public, max-age=300'); res.json(arcade.catalog()); });
 
 /** Find a game and playbook by skill or topic ("completing the square", "SOHCAHTOA", "box plots").
  *  Public like the rest of solo practice: it reads only the banks' own titles and blurbs. Both the
@@ -528,6 +531,7 @@ soloRouter.get('/me', async (req, res) => {
     signedIn: true,
     firstName: req.user.firstName || req.user.username || '',
     saves: isStudent(req.user),
+    teacher: userHasRole(req.user, 'teacher'), // the Arcade shows Host buttons to a teacher
     best: null,
   };
   if (!out.saves || !req.query.drill) return res.json(out);

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Mathmatix Arcade | MATHMATIX AI</title>
+  <meta name="description" content="Every Mathmatix game in one place: whole-class games on the projector, solo practice drills, and public ACT and SAT practice tests.">
+  <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261106d">
+</head>
+<body class="arcade">
+<div class="awrap">
+
+  <header class="hero ahero">
+    <div class="eyebrow">Mathmatix</div>
+    <h1>The <span>Arcade</span></h1>
+    <p>Every game in one place. Whole-class games go on the projector and the class joins with a code; solo drills need nothing but a phone.</p>
+  </header>
+
+  <!-- a code from the board, or a class game open right now -->
+  <section class="joinstrip panel" aria-labelledby="j-l">
+    <div class="live" id="live-now" hidden aria-live="polite"></div>
+    <form id="join" autocomplete="off">
+      <label class="lbl" for="code" id="j-l">Have a code from the board?</label>
+      <div class="coderow">
+        <input type="text" id="code" class="codein" maxlength="6" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="------" aria-label="Game code">
+        <button class="go" type="submit">Join</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- the four whole-class games -->
+  <section aria-labelledby="g-l">
+    <div class="sechead"><h2 id="g-l">Class games</h2><p class="muted" id="g-note">Your teacher hosts these on the projector. Pick one below to see how it plays.</p></div>
+    <div class="gamegrid" id="games"></div>
+  </section>
+
+  <!-- solo practice, by course -->
+  <section aria-labelledby="s-l">
+    <div class="sechead"><h2 id="s-l">Play on your own</h2><p class="muted">The class drills, played solo. Nothing to join, nothing saved but your best — unless you're signed in, when your rounds land in your teacher's practice log.</p></div>
+    <form class="dsearch" id="dsearch" role="search" autocomplete="off">
+      <label class="lbl" for="q">Find a topic</label>
+      <input type="search" id="q" name="q" placeholder="e.g. completing the square, SOHCAHTOA, box plots, module 7" maxlength="80" enterkeyhint="search" spellcheck="false">
+      <div class="dsearch-res" id="q-res" role="listbox" aria-label="Matching drills" hidden></div>
+    </form>
+    <div class="hubgrid" id="hubs"></div>
+  </section>
+
+  <!-- practice tests -->
+  <section aria-labelledby="t-l">
+    <div class="sechead"><h2 id="t-l">Practice tests</h2><p class="muted">Full timed sections with a real score. No account needed; sign in afterward to keep it.</p></div>
+    <div class="testgrid" id="tests"></div>
+  </section>
+
+  <footer class="afoot muted" id="foot"></footer>
+  <div class="err" id="err" role="alert"></div>
+</div>
+
+<script src="/js/live-drill/common.js?v=20261106b"></script>
+<script src="/js/live-drill/arcade.js?v=20261106"></script>
+</body>
+</html>
