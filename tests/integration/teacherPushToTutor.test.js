@@ -132,3 +132,23 @@ test('the prompt section carries the note and category rules', async () => {
   expect(section).toMatch(/They struggle with negatives/);
   expect(section).toMatch(/Do NOT solve, check, or hint at its actual items/);
 });
+
+test('the chat-screen alert: /mine/assignments lists pushed work for exactly its audience, drops it once started, and stops a non-student', async () => {
+  const r = await mkResource({ sharedWithClassIds: [clsA._id] });
+  await push(r._id, { active: true, note: 'Start with #1' }).expect(200);
+  const mine = () => supertest(app).get('/api/teacher-resources/mine/assignments');
+  currentUser = await User.findById(inClass._id);
+  let { body } = await mine().expect(200);
+  expect(body.student).toBe(true);
+  expect(body.assignments).toEqual([expect.objectContaining({ id: String(r._id), displayName: 'Two-Step Practice', category: 'practice', note: 'Start with #1', teacherName: 'Sam Rivera' })]);
+  expect(body.assignments[0].content).toBeUndefined(); // the banner names the work; the tutor reads it
+  // one tap records the start — and the alert stands down
+  await supertest(app).post(`/api/teacher-resources/${r._id}/start`).expect(200);
+  ({ body } = await mine().expect(200));
+  expect(body.assignments).toEqual([]);
+  // not for the other class, and a teacher is told to stop asking
+  currentUser = await User.findById(otherClassKid._id);
+  expect((await mine().expect(200)).body.assignments).toEqual([]);
+  currentUser = teacher;
+  await mine().expect(403);
+});
