@@ -514,11 +514,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         "maya": { name: "Maya", image: "maya.png" },
         "ms-maria": { name: "Ms. Maria", image: "ms-maria.png" },
         "mr-nappier": { name: "Mr. Nappier", image: "mr-nappier.png" },
-        "ms-rashida": { name: "Ms. Rashida", image: "ms-rashida.png" },
-        "prof-davies": { name: "Prof. Davies", image: "prof-davies.png" },
-        "ms-alex": { name: "Ms. Alex", image: "ms-alex.png" },
-        "mr-lee": { name: "Mr. Lee", image: "mr-lee.png" },
-        "dr-g": { name: "Dr. G", image: "dr-g.png" },
+        "ms-rashida": { name: "Ms. Rashida", image: "ms-rashida-v2.png" },
+        "mr-sierawski": { name: "Mr. Sierawski", image: "mr-sierawski-v2.png" },
+        "prof-davies": { name: "Prof. Davies", image: "prof-davies-v2.png" },
+        "ms-alex": { name: "Ms. Alex", image: "ms-alex-v2.png" },
+        "mr-lee": { name: "Mr. Lee", image: "mr-lee-v2.png" },
+        "mr-wiggles": { name: "Mr. Wiggles", image: "mr-wiggles-v2.png" },
+        "dr-g": { name: "Dr. G", image: "dr-g-v2.png" },
         "default": { name: "Math Tutor", image: "default-tutor.png" }
     };
 

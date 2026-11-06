@@ -98,7 +98,7 @@ describe('unlocking sessions with a tutor', () => {
     });
 
     test('cannot be bought twice — including a tutor earned under the old system', () => {
-        expect(canPurchase(student({ unlockedItems: ['dr-g'] }), 'tutor.dr-g'))
+        expect(canPurchase(student({ unlockedItems: ['mr-lee'] }), 'tutor.mr-lee'))
             .toEqual({ ok: false, reason: 'already_owned' });
     });
 
@@ -206,5 +206,52 @@ describe('copy: coins pay for sessions, never for a person', () => {
         expect(shelf).toMatch(/unlock sessions with coins/i);
         expect(shelf).not.toMatch(/fa-lock/);
         expect(read('public/css/tutor-picker.css')).not.toMatch(/\.tp-lock-portrait img[^}]*grayscale/);
+    });
+});
+
+describe('every selectable tutor has current-style art on disk', () => {
+    // The picker renders <id>-fullBody (.webp first) for every tutor in the
+    // lineup, and the shop / shelf / chat avatar render tutorConfig.image. A
+    // missing file is a silent broken image, so pin both, plus the shared
+    // 961x1637 canvas the lineup's baseline depends on.
+    const fs = require('fs');
+    const path = require('path');
+    const dir = path.join(__dirname, '../../public/images/tutor_avatars');
+    const pngSize = (f) => { const b = fs.readFileSync(f); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
+    const selectable = Object.entries(TUTOR_CONFIG).filter(([id, t]) => id !== 'default' && t.active !== false);
+
+    test.each(selectable.map(([id]) => id))('%s', (id) => {
+        for (const ext of ['png', 'webp']) {
+            expect(fs.existsSync(path.join(dir, `${id}-fullBody.${ext}`))).toBe(true);
+        }
+        expect(pngSize(path.join(dir, `${id}-fullBody.png`))).toEqual([961, 1637]);
+        const img = TUTOR_CONFIG[id].image;
+        for (const ext of ['png', 'webp']) {
+            expect(fs.existsSync(path.join(dir, img.replace(/\.png$/, `.${ext}`)))).toBe(true);
+        }
+    });
+});
+
+describe('Dr. G is a gorilla character, never a person of any human heritage', () => {
+    // His art is a gorilla. When his bio was a Nigerian-American man, the
+    // product showed a Black man as an ape — the racist trope. The fix is the
+    // bio (owner decision 2026-11-06): no nationality, ethnicity, race or human
+    // hometown, and the prompt forbids him from claiming one.
+    const g = TUTOR_CONFIG['dr-g'];
+    const GUARD = 'never give yourself a human nationality, ethnicity, race or hometown';
+    // Everything he says about himself, minus the guard sentence (which has to name what it forbids).
+    const text = [g.personality.replace(GUARD, ''), g.humanBehaviors, g.about, g.specialties, g.culturalBackground, g.voicePreview].join(' ');
+
+    test('his bio says he is a gorilla', () => {
+        expect(g.culturalBackground).toMatch(/gorilla/i);
+        expect(g.about).toMatch(/gorilla/i);
+    });
+
+    test('nothing gives him a human nationality, ethnicity or race', () => {
+        expect(text).not.toMatch(/\b(nigeria\w*|lagos|houston|texas|african|black (man|students?|person)|american|ethnic\w*|heritage|immigra\w*)\b/i);
+    });
+
+    test('his prompt tells him not to claim one', () => {
+        expect(g.personality).toContain(GUARD);
     });
 });

@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function tutorById(id) { return allTutors.find(t => t.id === id); }
   function fullBodyBase(id) { return '/images/tutor_avatars/' + id + '-fullBody'; }
+  // Static images are cached for a week; bump when a -fullBody file is re-exported.
+  const ART_V = '?v=20261106b';
   function portraitBase(t) { return '/images/tutor_avatars/' + String(t.image || '').replace(/\.png$/, ''); }
 
   /* -------- MODE -------- */
@@ -104,16 +106,26 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.dataset.tutorId = t.id;
       btn.setAttribute('aria-pressed', t.id === selectedTutorId ? 'true' : 'false');
       btn.setAttribute('aria-label', t.name);
-      // Shop tutors have a portrait but no full-body art yet — show the portrait.
-      const art = t.purchasable ? portraitBase(t) : fullBodyBase(t.id);
+      // Every selectable tutor has full-body art on the shared 961x1637 canvas
+      // (pinned by tests/unit/tutorShop.test.js).
+      const art = fullBodyBase(t.id);
       btn.innerHTML =
-        '<span class="tp-figure-img' + (t.purchasable ? ' tp-figure-img--portrait' : '') + '"><picture>' +
-          '<source srcset="' + art + '.webp" type="image/webp">' +
-          '<img src="' + art + '.png" alt="' + esc(t.name) + '" loading="lazy">' +
+        '<span class="tp-figure-img"><picture>' +
+          '<source srcset="' + art + '.webp' + ART_V + '" type="image/webp">' +
+          '<img src="' + art + '.png' + ART_V + '" alt="'  + esc(t.name) + '" loading="lazy">' +
         '</picture></span>' +
         '<span class="tp-figure-name">' + esc(t.name) + '</span>';
       roster.appendChild(btn);
     });
+    requestAnimationFrame(() => centreFigure(selectedTutorId, false));
+  }
+
+  // The strip side-scrolls; keep the chosen tutor in view without moving the page.
+  function centreFigure(id, smooth) {
+    const fig = roster.querySelector('.tp-figure[data-tutor-id="' + id + '"]');
+    if (!fig || roster.scrollWidth <= roster.clientWidth) return;
+    const left = fig.offsetLeft - (roster.clientWidth - fig.offsetWidth) / 2;
+    roster.scrollTo({ left: Math.max(0, left), behavior: smooth ? 'smooth' : 'auto' });
   }
 
   /* -------- DETAIL PANEL -------- */
@@ -143,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     stopVoice();
     renderPanel();
+    centreFigure(id, true);
   }
 
   roster.addEventListener('click', e => {
