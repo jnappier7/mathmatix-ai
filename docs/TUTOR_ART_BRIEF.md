@@ -4,8 +4,8 @@
 > Prof. Davies, Ms. Alex, Mr. Lee, Mr. Wiggles and Dr. G (`<id>-fullBody.*`), and their
 > small portraits are cut from it (`<id>-v2.*`, new names so week-long static
 > caching can't serve the old art). Still to come for each: the desk hero
-> (`-new2`), thinking pose, backdrop and videos. **Open:** Prof. Davies and Ms. Alex are still drawn
-> differently from their written personas (see §3).
+> (`-new2`), thinking pose, backdrop and videos. Prof. Davies and Ms. Alex were
+> regenerated to match their personas (British-Jamaican; Korean-American).
 
 ## 1. The target look (match the core four)
 
@@ -61,11 +61,11 @@ art that already fits.
   wrestling trophies and team photos.
 - **Prof. Davies** — **British-Jamaican**, older, distinguished academic (studied
   at UWI and Oxford). The old art reads as a white man; that's wrong for the
-  persona. Tweed jacket, tie, close grey hair/beard. Backdrop: book-lined study,
+  persona — **fixed in the 2026-11-06 art**. Tweed jacket, tie, close grey hair/beard. Backdrop: book-lined study,
   chalkboard of proofs, a hint of Kingston (music, colour).
 - **Ms. Alex** — **Korean-American**, 30s, Los Angeles; data scientist turned
-  educator, sharp and modern. The old art reads as a white redhead; that's wrong
-  for the persona. Smart-casual blazer, laptop. Backdrop: clean modern workspace,
+  educator, sharp and modern. The old art read as a white redhead — **fixed in
+  the 2026-11-06 art**. Smart-casual blazer, laptop. Backdrop: clean modern workspace,
   charts on a screen.
 - **Mr. Lee** — Chinese-American, 40s–50s, San Francisco; precise and calm, tai chi,
   calligraphy. Neat suit or crisp shirt. Backdrop: orderly study with calligraphy
