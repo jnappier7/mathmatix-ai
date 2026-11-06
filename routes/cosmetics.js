@@ -7,7 +7,9 @@ const router = express.Router();
 const User = require('../models/user');
 const {
     CATALOG,
-    DEFAULT_LOADOUT,
+    TUTOR_ITEMS,
+    ownedIds,
+    equippedView,
     REFUND_WINDOW_MS,
     applyPurchase,
     applyRefund,
@@ -25,16 +27,19 @@ function undoInfo(user) {
 }
 
 // GET /api/cosmetics/catalog — catalog + this user's balance/owned/equipped.
+// Shop tutors ride in the same catalog as slot "tutor" (ids `tutor.<tutorId>`);
+// `equipped.tutor` is the current tutor's item id.
 router.get('/catalog', async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('wallet ownedCosmetics equippedCosmetics').lean();
+        const user = await User.findById(req.user._id).select('wallet ownedCosmetics equippedCosmetics unlockedItems selectedTutorId level').lean();
         if (!user) return res.status(401).json({ success: false, error: 'Not authenticated' });
         res.json({
             success: true,
-            catalog: CATALOG,
+            catalog: { ...CATALOG, ...TUTOR_ITEMS },
             coins: user.wallet?.coins ?? 0,
-            owned: user.ownedCosmetics || [],
-            equipped: { ...DEFAULT_LOADOUT, ...(user.equippedCosmetics || {}) },
+            level: user.level || 1,
+            owned: ownedIds(user),
+            equipped: equippedView(user),
             undo: undoInfo(user),
         });
     } catch (err) {
@@ -83,6 +88,7 @@ router.post('/refund', async (req, res) => {
             owned: result.owned,
             equipped: result.equipped,
             refundedItemId: result.refundedItemId,
+            selectedTutorId: result.selectedTutorId,
         });
     } catch (err) {
         console.error('[cosmetics] refund error:', err.message);
@@ -101,7 +107,7 @@ router.post('/equip', async (req, res) => {
         const result = applyEquip(user, slot, itemId);
         if (!result.ok) return res.status(400).json({ success: false, error: result.reason });
         await user.save();
-        res.json({ success: true, equipped: result.equipped });
+        res.json({ success: true, equipped: result.equipped, selectedTutorId: result.selectedTutorId });
     } catch (err) {
         console.error('[cosmetics] equip error:', err.message);
         res.status(500).json({ success: false, error: 'Equip failed' });

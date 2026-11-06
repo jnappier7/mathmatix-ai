@@ -149,6 +149,7 @@ const liveDrillSolo = require('../utils/liveDrill/solo');
 const adminEmailRoutes = require('../routes/adminEmail');
 const unsubscribeRoutes = require('../routes/unsubscribe');
 const { setMarketingOptOut } = require('../utils/emailUnsubscribe');
+const { canSelectTutor } = require('../utils/tutorAccess');
 const billingRoutes = require('../routes/billing');
 const affiliateRoutes = require('../routes/affiliate');
 const schoolLicenseRoutes = require('../routes/schoolLicense');
@@ -815,6 +816,11 @@ function registerUserRoutes(app) {
           return res.status(result.status).json({ message: result.message });
         }
         hasChanges = true;
+      }
+      // Shop tutors must be owned before they can be selected — without this
+      // check any tutor id would be accepted and a paid tutor is one request away.
+      if (req.body.selectedTutorId !== undefined && !canSelectTutor(user, req.body.selectedTutorId)) {
+        return res.status(403).json({ message: 'That tutor is locked. Unlock them in the Shop first.', reason: 'tutor_locked' });
       }
       for (const key in req.body) {
         if (allowedUpdates.includes(key)) {

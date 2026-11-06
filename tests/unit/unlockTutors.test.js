@@ -23,11 +23,11 @@ describe('getTutorsToUnlock', () => {
     expect(getTutorsToUnlock(6, [])).toEqual(getTutorsToUnlock(6, []));
   });
 
-  // Every unlockable tutor currently has active:false in tutorConfig.js, so
-  // the unlock system is dormant: nothing unlocks regardless of level or
-  // behavior. These tests pin that contract — if a tutor is reactivated,
-  // they will fail and should be revisited alongside that change.
-  test('returns [] even at a very high level — all unlockable tutors are inactive', () => {
+  // Every unlockable tutor is now a shop tutor (purchasable:true) and shop
+  // tutors are coins-only (owner decision 2026-11-05), so the earned unlock is
+  // dormant: nothing unlocks free regardless of level or behavior. If a tutor
+  // is ever made earnable again these fail and should move with that change.
+  test('returns [] even at a very high level — shop tutors are coins-only', () => {
     expect(getTutorsToUnlock(99, [])).toEqual([]);
   });
 

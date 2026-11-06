@@ -780,7 +780,8 @@ const userSchema = new Schema({
     lastPurchase: {                                         // most recent cosmetic buy — powers one-tap Undo
       itemId: { type: String, default: null },
       price:  { type: Number, default: 0 },
-      at:     { type: Date,   default: null }
+      at:     { type: Date,   default: null },
+      prevTutorId: { type: String, default: null }          // tutor buys only: who to switch back to on Undo
     }
   },
 

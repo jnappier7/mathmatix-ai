@@ -2,7 +2,9 @@
 //
 // Character-select layout: full-body tutors stand together on the left; the
 // selected one drives a detail panel (name, catchphrase, bio, voice preview,
-// CTA) on the right. Locked "special release" tutors tease below.
+// CTA) on the right. Shop tutors the student doesn't own yet sit on a shelf
+// below, each linking into the chat shop (?shop=tutors) where they're bought
+// with Coins. Owning one is server-enforced (PATCH /api/user/settings).
 //
 // One page, two modes (derived from currentUser.selectedTutorId — no caller
 // plumbing):
@@ -33,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function tutorById(id) { return allTutors.find(t => t.id === id); }
   function fullBodyBase(id) { return '/images/tutor_avatars/' + id + '-fullBody'; }
+  function portraitBase(t) { return '/images/tutor_avatars/' + String(t.image || '').replace(/\.png$/, ''); }
 
   /* -------- MODE -------- */
   function applyMode() {
@@ -56,14 +59,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const cfg = window.TUTOR_CONFIG;
       if (!cfg) throw new Error('Tutor configuration not loaded.');
 
-      // Active tutors are selectable; inactive ones (active:false) are held
-      // back as future "specials" and shown as locked teasers.
-      allTutors = Object.keys(cfg)
-        .filter(k => k !== 'default' && cfg[k].active !== false)
+      // Core tutors are always selectable; shop tutors (purchasable) only once
+      // owned. Inactive ones (active:false) don't appear at all.
+      const owned = (currentUser && currentUser.unlockedItems) || [];
+      const ids = Object.keys(cfg).filter(k => k !== 'default' && cfg[k].active !== false);
+      allTutors = ids
+        .filter(k => !cfg[k].purchasable || owned.includes(k))
         .map(k => ({ id: k, ...cfg[k] }));
-      lockedTutors = Object.keys(cfg)
-        .filter(k => k !== 'default' && cfg[k].active === false)
-        .map(k => ({ id: k, ...cfg[k] }));
+      lockedTutors = ids
+        .filter(k => cfg[k].purchasable && !owned.includes(k))
+        .map(k => ({ id: k, ...cfg[k] }))
+        .sort((a, b) => (a.shopPrice || 0) - (b.shopPrice || 0));
 
       applyMode();
 
@@ -97,10 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.dataset.tutorId = t.id;
       btn.setAttribute('aria-pressed', t.id === selectedTutorId ? 'true' : 'false');
       btn.setAttribute('aria-label', t.name);
+      // Shop tutors have a portrait but no full-body art yet — show the portrait.
+      const art = t.purchasable ? portraitBase(t) : fullBodyBase(t.id);
       btn.innerHTML =
-        '<span class="tp-figure-img"><picture>' +
-          '<source srcset="' + fullBodyBase(t.id) + '.webp" type="image/webp">' +
-          '<img src="' + fullBodyBase(t.id) + '.png" alt="' + esc(t.name) + '" loading="lazy">' +
+        '<span class="tp-figure-img' + (t.purchasable ? ' tp-figure-img--portrait' : '') + '"><picture>' +
+          '<source srcset="' + art + '.webp" type="image/webp">' +
+          '<img src="' + art + '.png" alt="' + esc(t.name) + '" loading="lazy">' +
         '</picture></span>' +
         '<span class="tp-figure-name">' + esc(t.name) + '</span>';
       roster.appendChild(btn);
@@ -210,18 +218,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (choose) return chooseTutor(choose);
   });
 
-  /* -------- LOCKED "SPECIAL RELEASE" SHELF -------- */
+  /* -------- SHOP TUTORS SHELF (not owned yet) -------- */
   function renderLocked() {
     if (!lockedShelf) return;
     if (!lockedTutors.length) { lockedShelf.style.display = 'none'; return; }
-    // Hint shows on hover (title) to keep the shelf compact and above the fold.
+    // A student who hasn't picked a first tutor has nowhere to spend yet — the
+    // shop lives in chat — so onboarding shows the shelf as a tease, not a link.
+    const canShop = isSwitching;
     lockedShelf.innerHTML =
-      '<p class="tp-locked-title"><i class="fas fa-star"></i> Special releases — unlock as you learn</p>' +
+      '<p class="tp-locked-title"><i class="fas fa-star"></i> More tutors — unlock with coins in the Shop</p>' +
       '<div class="tp-locked-row">' +
-        lockedTutors.map(t =>
-          '<div class="tp-lock" title="' + esc(t.unlockHint || 'Keep learning to unlock') + '">' +
-            '<div class="tp-lock-badge"><i class="fas fa-lock"></i></div>' +
-          '</div>').join('') +
+        lockedTutors.map(t => {
+          const inner =
+            '<span class="tp-lock-portrait"><picture>' +
+              '<source srcset="' + portraitBase(t) + '.webp" type="image/webp">' +
+              '<img src="' + portraitBase(t) + '.png" alt="" loading="lazy">' +
+            '</picture><span class="tp-lock-icon"><i class="fas fa-lock"></i></span></span>' +
+            '<span class="tp-lock-name">' + esc(t.name) + '</span>' +
+            '<span class="tp-lock-hint">🪙 ' + esc(String(t.shopPrice || '')) + '</span>';
+          return canShop
+            ? '<a class="tp-lock" href="/chat.html?shop=tutors" title="Unlock ' + esc(t.name) + ' in the Shop">' + inner + '</a>'
+            : '<div class="tp-lock" title="Unlock in the Shop once you start learning">' + inner + '</div>';
+        }).join('') +
       '</div>';
   }
 
