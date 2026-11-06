@@ -23,9 +23,12 @@ const student = (over = {}) => ({
 describe('shop tutors come from tutorConfig', () => {
     const shopIds = Object.keys(TUTOR_CONFIG).filter(id => TUTOR_CONFIG[id].purchasable);
 
-    test('all 7 extra tutors are for sale, and no core tutor is', () => {
+    test('the extra tutors are for sale (Dr. G held back), and no core tutor is', () => {
         expect(shopIds.sort()).toEqual(
-            ['dr-g', 'mr-lee', 'mr-sierawski', 'mr-wiggles', 'ms-alex', 'ms-rashida', 'prof-davies']);
+            ['mr-lee', 'mr-sierawski', 'mr-wiggles', 'ms-alex', 'ms-rashida', 'prof-davies']);
+        // Dr. G stays out until he has human art — see the note in tutorConfig.js.
+        expect(TUTOR_CONFIG['dr-g'].active).toBe(false);
+        expect(TUTOR_ITEMS['tutor.dr-g']).toBeUndefined();
         expect(Object.keys(TUTOR_ITEMS).sort()).toEqual(shopIds.map(id => `tutor.${id}`).sort());
         for (const id of ['bob', 'maya', 'ms-maria', 'mr-nappier']) {
             expect(TUTOR_ITEMS[`tutor.${id}`]).toBeUndefined();
@@ -98,7 +101,7 @@ describe('unlocking sessions with a tutor', () => {
     });
 
     test('cannot be bought twice — including a tutor earned under the old system', () => {
-        expect(canPurchase(student({ unlockedItems: ['dr-g'] }), 'tutor.dr-g'))
+        expect(canPurchase(student({ unlockedItems: ['mr-lee'] }), 'tutor.mr-lee'))
             .toEqual({ ok: false, reason: 'already_owned' });
     });
 

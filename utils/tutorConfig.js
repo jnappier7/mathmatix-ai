@@ -170,7 +170,12 @@ const TUTOR_CONFIG = {
   },
   "dr-g": {
     name: "Dr. G",
-    purchasable: true, shopPrice: 900,
+    // HELD OUT OF THE SHOP (2026-11-05): his only art is a gorilla, while the
+    // persona below is a Nigerian-American man — drawing a Black man as an ape
+    // is a racist trope, and the shop would be selling sessions with it. Bring
+    // him back (active:false -> purchasable: true, shopPrice: 900) only with
+    // new human art per docs/TUTOR_ART_BRIEF.md.
+    active: false,
     cartesiaVoiceId: "0ad65e7f-006c-47cf-bd31-52279d487913",
     image: "dr-g.png",
     catchphrase: "Strength in numbers.",
