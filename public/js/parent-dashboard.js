@@ -520,7 +520,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         "ms-alex": { name: "Ms. Alex", image: "ms-alex-v2.png" },
         "mr-lee": { name: "Mr. Lee", image: "mr-lee-v2.png" },
         "mr-wiggles": { name: "Mr. Wiggles", image: "mr-wiggles-v2.png" },
-        "dr-g": { name: "Dr. G", image: "dr-g.png" },
+        "dr-g": { name: "Dr. G", image: "dr-g-v2.png" },
         "default": { name: "Math Tutor", image: "default-tutor.png" }
     };
 
