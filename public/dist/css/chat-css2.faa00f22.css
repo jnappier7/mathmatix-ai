@@ -763,7 +763,7 @@ body[data-skin-avatarframe] .cr-player-card .cr-player-avatar > * {
 .shop-body { padding: 16px 20px 22px; }
 .shop-empty { text-align: center; color: #5b6876; padding: 30px; font-size: 0.9rem; }
 
-.shop-section { margin-bottom: 18px; }
+.shop-section { margin-bottom: 18px; scroll-margin-top: 76px; } /* clear the sticky .shop-head on openShop({section}) */
 .shop-section-head { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #5b6876; margin: 0 0 10px; }
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 
@@ -901,21 +901,24 @@ body[data-skin-avatarframe] .cr-player-card .cr-player-avatar > * {
    shows on a phone. Above the breakpoint the slot renders fine and the note
    would be actively misleading, hence display:none by default rather than a
    mobile-only override of a visible element. */
-.shop-section-note { display: none; }
-@media (max-width: 768px) {
-  .shop-section-note {
-    display: block;
-    margin: 0 2px 10px;
-    padding: 7px 10px;
-    border-radius: 9px;
-    background: rgba(234, 179, 8, 0.12);
-    border: 1px solid rgba(234, 179, 8, 0.32);
-    color: #8a6206;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.35;
-  }
+.shop-section-note {
+  display: none;
+  margin: 0 2px 10px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.32);
+  color: #8a6206;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
 }
+@media (max-width: 768px) {
+  .shop-section-note { display: block; }
+}
+/* A note that's true on every screen (SLOT_NOTES_EVERYWHERE in shop.js), e.g.
+   the tutor-sessions explainer — not a phone-only caveat. */
+.shop-section-note.is-always { display: block; }
 [data-theme="dark"] .shop-section-note {
   background: rgba(234, 179, 8, 0.16);
   color: #f5d67b;
