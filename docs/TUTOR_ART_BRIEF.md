@@ -1,9 +1,12 @@
 # Tutor Art Brief — bringing the extra tutors up to the current look
 
-> Status (2026-11-05): Ms. Rashida, Mr. Sierawski, Prof. Davies, Ms. Alex, Mr. Lee
-> and Mr. Wiggles are in the shop (tutor sessions, PR #1876) **with their old
-> art**. Dr. G is held out of the shop until he has human art (see §4). This brief
-> is what each tutor needs so new art drops straight in.
+> Status (2026-11-06): **new full-body art is live** for Ms. Rashida, Mr. Sierawski,
+> Prof. Davies, Ms. Alex, Mr. Lee and Mr. Wiggles (`<id>-fullBody.*`), and their
+> small portraits are cut from it (`<id>-v2.*`, new names so week-long static
+> caching can't serve the old art). Still to come for each: the desk hero
+> (`-new2`), thinking pose, backdrop and videos. **Dr. G** is held out of the shop
+> until he has human art. **Open:** Prof. Davies and Ms. Alex are still drawn
+> differently from their written personas (see §3).
 
 ## 1. The target look (match the core four)
 
@@ -28,8 +31,7 @@ heads, short stubby limbs, stiff A-pose straight at camera, plastic sheen.
 ## 2. Files per tutor (exact specs — the site expects these names and sizes)
 
 `<id>` is the tutor id: `ms-rashida`, `mr-sierawski`, `prof-davies`, `ms-alex`,
-`mr-lee`, `dr-g`, `mr-wiggles` (note: Mr. Wiggles' current small portrait is
-`wiggles.png`; new files use `mr-wiggles`).
+`mr-lee`, `dr-g`, `mr-wiggles`.
 
 | File | Size | Background | What it is |
 |---|---|---|---|
@@ -37,7 +39,7 @@ heads, short stubby limbs, stiff A-pose straight at camera, plastic sheen.
 | `<id>-new2.png` | 1536×1024 | flat green `#47704C` | Hero portrait: seated behind the shared wooden desk, hands resting/clasped, looking at camera, framed like `bob-new2.png`. The chat page's main tutor image. |
 | `<id>-thinking.png` | 1536×1024 | flat green `#47704C` | Same framing as the hero, thinking pose (hand to chin or similar), like `maya-thinking.png`. |
 | `<id>-backdrop.png` | 1536×1024 | full scene | Their own room, warm evening light, centre left fairly open (the hero sits on top of it). Should say something about them (see §3). |
-| `<id>.png` | 400×600 | transparent | Small bust portrait in the new style — replaces the old one (chat message avatar, shop card, picker shelf). |
+| `<id>-v2.png` | 400×600 | transparent | Small bust portrait (chat avatar, shop card, picker shelf). Currently cut from the full body by script — a purpose-made one can replace it under a **new** name (bump the suffix; caching). |
 | `<id>_idle.mp4`, `<id>_idle2.mp4` | 1152×768, 24 fps, ~6 s | same framing as `bob_idle.mp4` | Two subtle idle loops (breathing, blink, small glance). Must loop cleanly. |
 | `<id>_levelUp.mp4` | 1152×768, 24 fps, ~6 s | same as above | Level-up celebration. |
 | `<id>_smallcele.mp4` **and** `.webm` | 1152×768, 24 fps, ~6 s | same as above | Small celebration (correct answer). |
@@ -89,11 +91,15 @@ Once a tutor's files are in `public/images/tutor_avatars/` and `public/videos/`:
    `TUTORS_WITH_CELEBRATION_VIDEO`.
 2. `public/js/modules/gamification.js` — add the id to
    `TUTORS_WITH_CELEBRATION_VIDEO` (it deliberately blocks old-style videos).
-3. `public/js/pick-tutor.js` — shop tutors currently show their small portrait
-   in the lineup because they have no full body (`t.purchasable ? portraitBase(t)
-   : fullBodyBase(t.id)`). Once a tutor has `-fullBody.png`, let them use it.
-4. Mr. Wiggles only: change `image: "wiggles.png"` to `"mr-wiggles.png"` in
-   `utils/tutorConfig.js`.
+3. Full body: the picker already uses `<id>-fullBody` for everyone; the
+   "current-style art" block in `tests/unit/tutorShop.test.js` checks the files
+   exist on the 961×1637 canvas. Prepare cutouts like the 2026-11-06 batch:
+   drop alpha < 24 and specks under 3000 px, scale to a realistic height
+   (Bob 1390 px, Mr. Nappier 1502, Ms. Maria 1269, Maya 1216), feet on y = 1578,
+   centred; pngquant `--quality=80-98` (lossy PNG without it blotches skin
+   tones) plus `.webp` q80 and `.avif` q60.
+4. Portraits: `utils/tutorConfig.js` `image` and the copy in
+   `public/js/parent-dashboard.js` (bundled — run `npm run build:bundles`).
 5. **Dr. G only:** in `utils/tutorConfig.js` replace `active: false` with
    `purchasable: true, shopPrice: 900`, and update the Dr. G lines in
    `tests/unit/tutorShop.test.js`.

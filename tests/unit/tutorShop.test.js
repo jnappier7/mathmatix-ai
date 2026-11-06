@@ -211,3 +211,26 @@ describe('copy: coins pay for sessions, never for a person', () => {
         expect(read('public/css/tutor-picker.css')).not.toMatch(/\.tp-lock-portrait img[^}]*grayscale/);
     });
 });
+
+describe('every selectable tutor has current-style art on disk', () => {
+    // The picker renders <id>-fullBody (.webp first) for every tutor in the
+    // lineup, and the shop / shelf / chat avatar render tutorConfig.image. A
+    // missing file is a silent broken image, so pin both, plus the shared
+    // 961x1637 canvas the lineup's baseline depends on.
+    const fs = require('fs');
+    const path = require('path');
+    const dir = path.join(__dirname, '../../public/images/tutor_avatars');
+    const pngSize = (f) => { const b = fs.readFileSync(f); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
+    const selectable = Object.entries(TUTOR_CONFIG).filter(([id, t]) => id !== 'default' && t.active !== false);
+
+    test.each(selectable.map(([id]) => id))('%s', (id) => {
+        for (const ext of ['png', 'webp']) {
+            expect(fs.existsSync(path.join(dir, `${id}-fullBody.${ext}`))).toBe(true);
+        }
+        expect(pngSize(path.join(dir, `${id}-fullBody.png`))).toEqual([961, 1637]);
+        const img = TUTOR_CONFIG[id].image;
+        for (const ext of ['png', 'webp']) {
+            expect(fs.existsSync(path.join(dir, img.replace(/\.png$/, `.${ext}`)))).toBe(true);
+        }
+    });
+});
