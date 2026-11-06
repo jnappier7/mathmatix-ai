@@ -433,6 +433,19 @@
       hiss({ dur: 0.9, vol: 0.35, type: 'lowpass', freq: 380, slideTo: 120, q: 0.9, attack: 0.04 });
       tone({ freq: 70, type: 'sine', start: 0.55, dur: 0.35, vol: 0.4, slideTo: 40 });
     },
+    /** Heist: a safe opens — two dial clicks and the bolt drops, then a bright ping. */
+    safe() {
+      [0, 0.11].forEach((s) => hiss({ start: s, dur: 0.03, vol: 0.16, type: 'bandpass', freq: 3200, q: 2, attack: 0.002 }));
+      tone({ freq: 160, type: 'square', start: 0.24, dur: 0.12, vol: 0.14, slideTo: 90, filter: 900 });
+      hiss({ start: 0.24, dur: 0.06, vol: 0.14, type: 'lowpass', freq: 400, q: 0.8, attack: 0.003 });
+      tone({ freq: 1760, type: 'triangle', start: 0.42, dur: 0.5, vol: 0.1 });
+      tone({ freq: 2637, type: 'sine', start: 0.46, dur: 0.45, vol: 0.05 });
+    },
+    /** Heist: a gadget fires — a smoke bomb's pop and the hiss as it spreads. */
+    smoke() {
+      tone({ freq: 90, type: 'sine', dur: 0.14, vol: 0.3, slideTo: 45 });
+      hiss({ start: 0.08, dur: 1.1, vol: 0.2, type: 'bandpass', freq: 1800, slideTo: 600, q: 0.7, attack: 0.03 });
+    },
     /** Clock tick for the last five seconds. */
     tick(last) { tone({ freq: last ? 1320 : 990, type: 'triangle', dur: 0.08, vol: 0.18 }); },
     /** The reveal: three rising notes. */

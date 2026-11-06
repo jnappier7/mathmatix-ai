@@ -75,6 +75,7 @@
       : `<b>${st.totalPlays} plays</b>, <b>${s(st.secondsPerPlay)}</b> each — everyone answers the same play.`;
     const typed = r.typed ? ` <b>Type</b> each answer — fluent is right in ${s(r.fluentSec)} or less.` : '';
     if (r.hill) return hillRulesHTML(st, r, typed);
+    if (r.heist) return heistRulesHTML(st, r, typed);
     const change = r.canChange ? ` Changed your mind? ${r.typed ? 'Type it again' : 'Tap another choice'} before the reveal — your <b>last</b> answer counts, timed from when you sent it.` : '';
     const p6 = r.pickSix;
     return `<h3>How scoring works</h3><p class="lead">${lead}${typed}${change}</p><div class="rgrid">`
@@ -85,6 +86,24 @@
       + (r.blitz ? `<div class="rule"><span class="rk">⚡ Blitz</span><span class="rv"><b>${r.blitz.every} in a row</b> blitzes the other team: their ball goes back <b class="b">${r.blitz.yards}</b> yards' worth (scaled for team size like every push). Nobody picks a target — it's the team you're playing.</span></div>` : '')
       + (p6 ? `<div class="rule"><span class="rk">Pick six</span><span class="rv">Teams of ${p6.minTeam} or more: <b>everyone</b> on the team right on the same play is a pick six — <b class="g">+${p6.points}</b> points, and the other team's ball goes back to the ${p6.resetPos}. One miss, no pick. Make sure your whole team has it.</span></div>` : '')
       + `<div class="rule"><span class="rk">Winner</span><span class="rv">Most points. Tied? Farther downfield.</span></div>`
+      + '</div>';
+  }
+
+  /** Heist's rules — the same server numbers (games.rulesFor → heist.rules). */
+  function heistRulesHTML(st, r, typed) {
+    const h = r.heist;
+    const s = (x) => `${x} s`;
+    const money = (x) => `$${Number(x).toLocaleString()}`;
+    const [fast, mid, slow] = r.speed;
+    void slow;
+    const gadgets = h.gadgets.map((g) => `<b>${g.label}</b> ${g.blurb}`).join('; ');
+    return `<h3>How the heist works</h3><p class="lead"><b>${mmss(st.seconds * 1000)}</b> on one clock — every safecracker for themselves. Most cash at the buzzer wins.${typed}</p><div class="rgrid">`
+      + `<div class="rule"><span class="rk">Right answer</span><span class="rv"><b class="g">${money(h.pay[0])}</b> in ${s(fast.within)} · <b class="g">${money(h.pay[1])}</b> in ${s(mid.within)} · <b class="g">${money(h.pay[2])}</b> after</span></div>`
+      + `<div class="rule"><span class="rk">🚨 Wrong answer</span><span class="rv">You trip the alarm: <b class="b">−${money(h.alarmCost)}</b> and your screen locks for <b>${s(h.alarmSec)}</b>. Guessing costs you the clock — think, then answer.</span></div>`
+      + `<div class="rule"><span class="rk">Crack a safe</span><span class="rv"><b>${h.safeEvery} right in a row</b> opens the vault: pick one of ${h.safeCount} safes. Most hold cash (${money(h.cashMin)} to ${money(h.cashMax)}, a few a <b class="g">${money(h.jackpot)}</b> jackpot). One miss and the count starts over.</span></div>`
+      + `<div class="rule"><span class="rk">🕶 Grab · 🔁 Switch</span><span class="rv">A <b>Grab</b> takes ${h.grabPct}% of a random player <b>above you</b>; a <b>Switch</b> trades piles with one. Nobody picks a target, and nobody below you can be touched.</span></div>`
+      + `<div class="rule"><span class="rk">🧰 Gadgets</span><span class="rv">Some safes hold a trick you fire when you like: ${gadgets}. Everyone but you.</span></div>`
+      + `<div class="rule"><span class="rk">Decoy</span><span class="rv">Some safes are empty. The streak was the price.</span></div>`
       + '</div>';
   }
 

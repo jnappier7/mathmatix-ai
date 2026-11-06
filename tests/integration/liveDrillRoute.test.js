@@ -129,6 +129,50 @@ describe('live drill over HTTP', () => {
     expect(next.body.round.n).toBe(2);
   });
 
+  test('a heist, end to end: the alarm holds the play back, a streak deals safes, a safe opens, a gadget fires', async () => {
+    const g = await host({ drill: 'geometry', playbook: 'all', mode: 'heist', seconds: 120 });
+    expect(g.mode).toBe('heist');
+    expect(g.rules.heist).toMatchObject({ safeEvery: 3, alarmSec: 6 });
+    const p = await join(g.code, 'Ben');
+    const tok = { 'X-Live-Drill-Token': p.token };
+    await req.post(`/api/live-drill/host/games/${g.code}/start`);
+    const game = G.getGame(g.code);
+    const ben = game.players.get(p.playerId);
+    // a wrong answer: cash off, and /play answers with the alarm instead of a play
+    let cur = (await req.get(`/api/live-drill/play/${g.code}/play`).set(tok)).body;
+    const wrong = cur.play.choices.find((c) => c.k !== G.playAt(game, cur.n).answer).k;
+    const miss = await req.post(`/api/live-drill/play/${g.code}/answer`).set(tok).send({ n: cur.n, k: wrong });
+    expect(miss.body.heist).toMatchObject({ step: -50, cash: 0 });
+    expect(miss.body.heist.lockUntil).toBeGreaterThan(Date.now());
+    const held = await req.get(`/api/live-drill/play/${g.code}/play`).set(tok);
+    expect(held.body.play).toBeUndefined();
+    expect(held.body.alarm).toBe(miss.body.heist.lockUntil);
+    expect((await req.post(`/api/live-drill/play/${g.code}/answer`).set(tok).send({ n: cur.n + 1, k: 'x' })).status).toBe(409);
+    ben.lockUntil = 0; // the clock clears it in life; here, by hand
+    // three right in a row: the vault
+    for (let i = 0; i < 3; i++) {
+      cur = (await req.get(`/api/live-drill/play/${g.code}/play`).set(tok)).body;
+      const r = await req.post(`/api/live-drill/play/${g.code}/answer`).set(tok).send({ n: cur.n, k: G.playAt(game, cur.n).answer });
+      expect(r.body.ok).toBe(true);
+      if (i === 2) expect(r.body.heist.safe).toEqual({ n: 1, count: 3 });
+    }
+    expect((await req.get(`/api/live-drill/play/${g.code}/play`).set(tok)).body).toEqual({ n: cur.n + 1, safe: { n: 1, count: 3 } });
+    expect((await req.post(`/api/live-drill/play/${g.code}/safe`).set(tok).send({ pick: 9 })).status).toBe(400);
+    ben.safe.dealt[2] = { kind: 'gadget', label: 'Gadget', gadget: 'smoke' };
+    const opened = await req.post(`/api/live-drill/play/${g.code}/safe`).set(tok).send({ pick: 2 });
+    expect(opened.status).toBe(200);
+    expect(opened.body).toMatchObject({ kind: 'gadget', gadget: { kind: 'smoke' } });
+    expect((await req.post(`/api/live-drill/play/${g.code}/safe`).set(tok).send({ pick: 0 })).status).toBe(409);
+    const fired = await req.post(`/api/live-drill/play/${g.code}/gadget`).set(tok).send({ id: opened.body.gadget.id });
+    expect(fired.body).toMatchObject({ kind: 'smoke', label: 'Smoke bomb' });
+    expect((await req.post(`/api/live-drill/play/${g.code}/gadget`).set(tok).send({ id: opened.body.gadget.id })).status).toBe(404);
+    const hv = (await req.get(`/api/live-drill/host/games/${g.code}`)).body;
+    expect(hv.heist.crew[0]).toMatchObject({ name: 'Ben', cash: 450, safes: 1 });
+    expect(hv.heist.effects).toEqual([expect.objectContaining({ kind: 'smoke', by: 'Ben' })]);
+    const pv = (await req.get(`/api/live-drill/play/${g.code}/state`).set(tok)).body;
+    expect(pv.heist).toMatchObject({ cash: 450, rank: 1, effect: null, gadgets: [] }); // the finder's own screen is clear
+  });
+
   test('a game belongs to the teacher who hosted it', async () => {
     const g = await host();
     const other = await req.get(`/api/live-drill/host/games/${g.code}`).set('X-Test-User', 'teacher-2');

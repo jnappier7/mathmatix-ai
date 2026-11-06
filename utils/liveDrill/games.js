@@ -28,10 +28,13 @@ const crypto = require('crypto');
 const { dealPlay, publicPlay, RECENT, DRILLS, getDrill } = require('./engine');
 const facts = require('./facts');
 const hill = require('./hill');
+const heist = require('./heist');
 
-const MODES = ['drive', 'huddle', 'hill'];
+const MODES = ['drive', 'huddle', 'hill', 'heist'];
 /** Team Drive and King of the Hill: everyone at their own pace against one clock. */
-const ownPace = (game) => game.mode === 'drive' || game.mode === 'hill';
+const ownPace = (game) => game.mode === 'drive' || game.mode === 'hill' || game.mode === 'heist';
+// Modes with no football: no ball to move, no teams that matter (the hill's climb, the heist's cash).
+const noBall = (game) => game.mode === 'hill' || game.mode === 'heist';
 
 const START_POS = 25;
 const TD_POINTS = 7;
@@ -161,7 +164,7 @@ class GameError extends Error {
  */
 function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, plays, secondsPerPlay, focus }) {
   if (!DRILLS[drill]) throw new GameError(400, 'Unknown drill.');
-  if (!MODES.includes(mode)) throw new GameError(400, 'Mode must be drive, huddle or hill.');
+  if (!MODES.includes(mode)) throw new GameError(400, 'Mode must be drive, huddle, hill or heist.');
   const d = getDrill(drill); // throws if the published page can't be read
   const book = d.bank.BOOKS[playbook] ? playbook : 'all';
   // Math Facts only: the numbers the teacher singled out ("× 2s, 5s & 10s").
@@ -212,6 +215,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
     version: 0,
   };
   if (mode === 'hill') hill.reset(game);
+  if (mode === 'heist') heist.reset(game);
   games.set(game.code, game);
   runHooks(changeHooks, game);
   return game;
@@ -294,6 +298,7 @@ function join(game, rawName, { userId } = {}) {
     conns: 0, // open live streams; a player with none is "away" (phone asleep, tab closed)
   };
   if (game.mode === 'hill') hill.resetPlayer(player);
+  if (game.mode === 'heist') heist.resetPlayer(player);
   game.players.set(player.id, player);
   game.byToken.set(hash(token), player.id);
   touch(game);
@@ -389,6 +394,7 @@ function rulesFor(game) {
     noAnswer: huddle ? sc.noAnswer : null, // Drive has no "no answer": the next play waits for you
     teamK: TEAM_K[game.mode] || null,
     hill: game.mode === 'hill' ? hill.rules() : null,
+    heist: game.mode === 'heist' ? heist.rules(sc) : null,
     tdPoints: TD_POINTS,
     startPos: START_POS,
     // Huddle: a student may change their pick until the reveal; the last tap is the one that counts,
@@ -452,8 +458,8 @@ function applyAnswer(game, player, play, n, k, ms, windowMs) {
     recordMiss(game, play, n, k);
   }
   player.yards += gain;
-  // On the hill there is no ball: the climb is settled in hill.onAnswer.
-  const td = game.mode === 'hill' ? false : moveTeam(game, player.team, gain);
+  // On the hill and in the heist there is no ball: hill.onAnswer / heist.onAnswer settle the score.
+  const td = noBall(game) ? false : moveTeam(game, player.team, gain);
   return { ok, gain, tier, td };
 }
 
@@ -475,7 +481,7 @@ function start(game) {
     game.phase = 'live';
     game.endsAt = game.startedAt + game.seconds * 1000;
     later(game, game.endsAt - now() + DRIVE_GRACE_MS, () => endGame(game));
-    pushFeed(game, { type: game.mode === 'hill' ? 'climb' : 'kickoff' });
+    pushFeed(game, { type: game.mode === 'hill' ? 'climb' : game.mode === 'heist' ? 'heist' : 'kickoff' });
     touch(game);
   } else {
     openRound(game, 1);
@@ -596,6 +602,13 @@ function endGame(game) {
 /** Drive: the play this player is on. Its clock starts the first time it is fetched. */
 function currentPlay(game, player) {
   if (!ownPace(game) || game.phase !== 'live') throw new GameError(409, 'No play is open.');
+  if (game.mode === 'heist') {
+    // The alarm holds the screen: no play is dealt (so none is timed) until it clears. An open crack
+    // comes first too — pick a safe, then the next play.
+    player.lastSeen = now();
+    if (heist.locked(player, now())) return { n: player.n, alarm: player.lockUntil };
+    if (player.safe) return { n: player.n, safe: { n: player.safe.n, count: player.safe.dealt.length } };
+  }
   const play = playAt(game, player.n);
   if (!player.issuedAt) player.issuedAt = now();
   player.lastSeen = now();
@@ -618,6 +631,8 @@ function answer(game, player, n, k) {
   player.lastSeen = now();
   if (ownPace(game)) {
     if (game.phase !== 'live' || now() > game.endsAt + DRIVE_GRACE_MS) throw new GameError(409, 'The clock has run out.');
+    if (game.mode === 'heist' && heist.locked(player, now())) throw new GameError(409, 'The alarm is still ringing.');
+    if (game.mode === 'heist' && player.safe) throw new GameError(409, 'Open your safe first.');
     if (n !== player.n || !player.issuedAt) throw new GameError(409, 'That play is already over.');
     const play = playAt(game, n);
     k = readAnswer(play, k);
@@ -626,6 +641,8 @@ function answer(game, player, n, k) {
     player.n++; player.issuedAt = null;
     if (game.mode === 'hill') {
       res.hill = hill.onAnswer(game, player, res, now(), (item) => pushFeed(game, item));
+    } else if (game.mode === 'heist') {
+      res.heist = heist.onAnswer(game, player, res, scoringFor(game), now(), (item) => pushFeed(game, { ...item, team: player.team }));
     } else {
       if (res.td) pushFeed(game, { type: 'td', team: player.team, text: `TOUCHDOWN ${game.teams[player.team].name.toUpperCase()}`, who: player.name });
       else if (res.ok && res.tier === 0) pushFeed(game, { type: 'big', team: player.team, who: player.name, gain: res.gain });
@@ -654,6 +671,35 @@ function answer(game, player, n, k) {
   if (!maybeCloseRound(game)) touch(game);
   // A first answer keeps the shape it always had; only a change says so.
   return prev ? { locked: true, n, changed: true } : { locked: true, n };
+}
+
+/** Heist: the clock is still good for a play, a safe or a gadget. */
+function heistOpen(game) {
+  if (game.mode !== 'heist') throw new GameError(409, 'Not a heist.');
+  if (game.phase !== 'live' || now() > game.endsAt + DRIVE_GRACE_MS) throw new GameError(409, 'The clock has run out.');
+}
+function heistCall(fn) {
+  try { return fn(); } catch (err) { throw err.status ? new GameError(err.status, err.message) : err; }
+}
+
+/** Heist: open safe `idx` of this student's crack. Returns what was inside (and only that). */
+function openSafe(game, player, idx) {
+  heistOpen(game);
+  player.lastSeen = now();
+  const r = heistCall(() => heist.openSafe(game, player, idx, scoringFor(game), now(), (item) => pushFeed(game, { ...item, team: player.team })));
+  touch(game);
+  return r;
+}
+
+/** Heist: fire a gadget this student found. Everyone else's screen takes it. */
+function useGadget(game, player, gadgetId) {
+  heistOpen(game);
+  player.lastSeen = now();
+  const r = heistCall(() => heist.useGadget(game, player, gadgetId, now(), (item) => pushFeed(game, { ...item, team: player.team })));
+  touch(game);
+  // the effect ends on its own clock: one more state so every screen clears it together
+  later(game, r.until - now() + 50, () => touch(game));
+  return r;
 }
 
 /**
@@ -693,6 +739,7 @@ function rematch(game) {
   }
   Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map(), playStats: new Map() });
   if (game.mode === 'hill') hill.reset(game);
+  if (game.mode === 'heist') heist.reset(game);
   game.games = (game.games || 1) + 1;
   touch(game);
 }
@@ -866,6 +913,7 @@ function hostView(game) {
   }));
   const v = { ...base(game), players, feed: game.feed.slice(0, 8), round: roundView(game, true) };
   if (game.mode === 'hill') v.hill = hill.hostHill(game, now());
+  if (game.mode === 'heist') v.heist = heist.hostHeist(game, now());
   if (game.phase === 'over') {
     const mvps = [0, 1].map((t) => players.filter((p) => p.team === t && p.att > 0)
       .sort((a, b) => b.yards - a.yards || b.comp - a.comp).slice(0, 3)
@@ -880,6 +928,7 @@ function hostView(game) {
     v.final = { mvps, players: scoreboard, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
     if (DRILLS[game.drill] && DRILLS[game.drill].trackFacts) v.final.facts = factsFinal(game, players);
     if (game.mode === 'hill') v.final.hill = hill.finalHill(game);
+    if (game.mode === 'heist') v.final.heist = heist.finalHeist(game);
   }
   return v;
 }
@@ -891,6 +940,7 @@ function playerView(game, player) {
       yards: player.yards, streak: player.streak, best: player.best, blitzes: player.blitzes || 0, n: player.n },
   };
   if (game.mode === 'hill') v.hill = hill.playerHill(game, player, now());
+  if (game.mode === 'heist') v.heist = heist.playerHeist(game, player, now());
   if (game.mode === 'huddle' && game.round) {
     const rv = roundView(game, false);
     const mine = game.round.answers.get(player.id);
@@ -1078,7 +1128,7 @@ function _reset() { for (const g of [...games.values()]) dropGame(g); }
 module.exports = {
   onGameOver, SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, PICK_SIX, BLITZ, GameError, rulesFor,
   createGame, getGame, hostGame, playerFor, normalizeCode,
-  join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer,
+  join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer, openSafe, useGadget,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,
   onChange, onDrop, snapshot, hydrate, freezeAll, IDLE_TTL_MS, DONE_TTL_MS,
   _reset, _games: games,

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261106">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261106b">
 </head>
 <body>
 <div class="wrap">
@@ -51,6 +51,7 @@
           <button class="mode" id="m-drive" aria-pressed="true"><b>Team Drive</b><span>One shared clock. Everyone plays at their own pace on their device; the board shows the field and the play-by-play. Fast and furious.</span></button>
           <button class="mode" id="m-huddle" aria-pressed="false"><b>Huddle</b><span>One play at a time on the board, everyone answers it, then the reveal shows how the class split and why. You run the pace.</span></button>
           <button class="mode" id="m-hill" aria-pressed="false"><b>King of the Hill</b><span>Every student for themselves on one hill. Right answers climb; three in a row rolls a boulder onto the climber just above. Highest at the buzzer is king.</span></button>
+          <button class="mode" id="m-heist" aria-pressed="false"><b>Heist</b><span>Every student for themselves, playing for cash. Three right in a row cracks a safe: cash, a jackpot, a grab from someone ahead, a gadget… or a decoy. A wrong answer trips the alarm and locks the screen, so guessing doesn't pay.</span></button>
         </div>
       </div>
       <div class="row">
@@ -119,6 +120,16 @@
         </div>
       </div>
 
+      <!-- heist: the vault board -->
+      <div id="heist-pane" class="heistpane" hidden>
+        <div class="vaultboard">
+          <div class="hbar"><span class="eyebrow">The vault</span><span class="muted" id="heist-tally"></span></div>
+          <div class="fxbanner" id="heist-fx" hidden aria-live="polite"></div>
+          <ol class="crew" id="heist-board"></ol>
+        </div>
+        <div class="feed" id="heist-feed" aria-live="polite"></div>
+      </div>
+
       <!-- huddle: the play itself, large -->
       <div id="huddle-pane" class="big" hidden style="display:flex;flex-direction:column;gap:12px">
         <div class="hbar">
@@ -169,8 +180,8 @@
 </div>
 
 <script src="/js/csrf.js"></script>
-<script src="/js/live-drill/common.js?v=20261106"></script>
-<script src="/js/live-drill/sound.js?v=20261105"></script>
-<script src="/js/live-drill/host.js?v=20261105"></script>
+<script src="/js/live-drill/common.js?v=20261106b"></script>
+<script src="/js/live-drill/sound.js?v=20261106"></script>
+<script src="/js/live-drill/host.js?v=20261106"></script>
 </body>
 </html>
