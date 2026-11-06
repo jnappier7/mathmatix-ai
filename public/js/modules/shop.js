@@ -35,6 +35,10 @@ const SLOT_NOTES = {
     header: 'Headers show on desktop only — the header is hidden on phones.',
 };
 
+// SLOT_NOTES are phone-only caveats by default (shop.css hides them on desktop).
+// These slots' notes are explainers that hold on every screen.
+const SLOT_NOTES_EVERYWHERE = new Set(['tutor']);
+
 let state = { catalog: {}, coins: 0, level: 1, owned: [], equipped: {} };
 let preview = null; // { slot, id } while a "try-on" is active, else null
 let undoTimer = null; // auto-hide timer for the post-purchase Undo bar
@@ -274,7 +278,7 @@ function render() {
             .sort((a, b) => a[1].price - b[1].price)
             .map(([id, item]) => itemCardHTML(id, item)).join('');
         const note = SLOT_NOTES[slot]
-            ? `<p class="shop-section-note">${esc(SLOT_NOTES[slot])}</p>` : '';
+            ? `<p class="shop-section-note${SLOT_NOTES_EVERYWHERE.has(slot) ? ' is-always' : ''}">${esc(SLOT_NOTES[slot])}</p>` : '';
         return `<section class="shop-section" id="shop-sec-${esc(slot)}">
                   <h3 class="shop-section-head">${esc(SLOT_LABELS[slot] || slot)}</h3>
                   ${note}
