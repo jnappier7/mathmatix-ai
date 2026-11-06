@@ -563,3 +563,66 @@ tr.none td{opacity:.62}
 .scores h3{font-family:var(--display);font-weight:900;font-size:1.7rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
 .stab td.num b{color:var(--led);font-family:var(--display);font-size:1.15rem}
 .scores .row{margin-top:10px}
+
+/* ---------- Heist (projector) ---------- */
+.mode-heist .sb{grid-template-columns:minmax(0,1fr)}
+.mode-heist .sb .t0,.mode-heist .sb .t1,.mode-heist #field{display:none}
+.mode-heist .sb .mid{border:0}
+.heistpane{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:14px;align-items:start}
+.vaultboard{background:linear-gradient(#141a2a,#0d1220 70%,#090c16);border:2px solid var(--rail);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.crew{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.crew li{display:grid;grid-template-columns:2em minmax(0,1fr) 42% 6.5em;gap:10px;align-items:center;background:var(--board);border:1px solid var(--rail);border-radius:6px;padding:6px 10px;font-size:clamp(1rem,1.4vw,1.3rem);transition:background .3s}
+.crew li.lead{border-color:var(--led)}
+.crew li.hit{border-color:var(--miss);animation:shake .5s ease 2}
+.crew li.alarm{background:#2a1416}
+.crew li.more{display:block;background:none;border:0;text-align:center}
+.crew .rk{font-family:var(--display);font-weight:900;color:var(--muted)}
+.crew .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crew .bar{height:12px;background:var(--night);border-radius:6px;overflow:hidden}
+.crew .bar span{display:block;height:100%;background:linear-gradient(90deg,#c99a2e,var(--led));transition:width .5s ease}
+.crew .cv{font-family:var(--display);font-weight:900;text-align:right;font-variant-numeric:tabular-nums;color:var(--led);font-size:1.15em}
+.heistpane .feed{flex-direction:column;align-items:stretch}
+.heistpane .feed .it{font-size:clamp(.95rem,1.3vw,1.15rem);padding:6px 12px}
+.feed .it.jackpot,.it.ev.jackpot{background:#fff;color:var(--ink);border-color:#fff}
+.fxbanner{background:var(--led);color:var(--ink);border-radius:8px;padding:8px 14px;font-weight:700;text-align:center;animation:slide .35s ease both}
+.fxbanner .left{font-family:var(--display);font-weight:900;margin-left:8px}
+/* the gadgets: everyone's screen but the finder's. The projector takes it too. The banner stays readable. */
+.fx-smoke .sb,.fx-smoke .crew,.fx-smoke #heist-feed,.fx-smoke #p-card,.fx-smoke #p-choices,.fx-smoke #p-pad,.fx-smoke #fb,.fx-smoke .myheist .vault{filter:blur(7px);transition:filter .4s}
+.fx-flip{transform:rotate(180deg);transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
+.fx-flip .fxbanner{animation:none;transform:rotate(180deg)} /* the banner naming the culprit stays readable */
+.mode-heist .mvps{grid-template-columns:minmax(0,1fr)}
+@media (max-width:1000px){.heistpane{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- Heist (the phone) ---------- */
+.teamcard.heist{border-color:var(--led);background:#1a1a2e}
+.teamcard.heist h2{color:var(--led)}
+.pill.heist{background:var(--led);color:var(--ink)}
+.myheist{background:var(--board);border:2px solid var(--rail);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.myheist .vault{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.myheist .cash .k,.myheist .safemeter .k{display:block;font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;color:var(--muted)}
+.myheist .cash .v{font-family:var(--display);font-weight:900;font-size:2.4rem;line-height:1;color:var(--led);font-variant-numeric:tabular-nums}
+.myheist .safemeter{text-align:right}
+.myheist .dots{display:inline-flex;gap:5px;margin-top:4px}
+.myheist .dots span{width:14px;height:14px;border-radius:50%;border:2px solid var(--muted)}
+.myheist .dots span.on{background:var(--led);border-color:var(--led)}
+.myheist .gadgets{display:flex;flex-wrap:wrap;gap:8px}
+.myheist .gadget{font:700 1rem var(--body);background:#fff;color:var(--ink);border:0;border-radius:999px;padding:8px 14px;cursor:pointer;box-shadow:0 0 0 3px var(--led) inset}
+.myheist .gadget:disabled{opacity:.5}
+.myheist .hit{background:var(--miss-bg);color:#9b2016;border-radius:6px;padding:6px 10px;font-weight:700;animation:slide .35s ease both}
+.myheist .above,.myheist .crownline{color:var(--chalk)}
+.typing .myheist{padding:6px 10px;gap:4px}
+.typing .myheist .cash .v{font-size:1.7rem}
+.alarm{background:#3a0f12;border:3px solid var(--miss);border-radius:10px;padding:18px;text-align:center;animation:alarm 1s ease-in-out infinite}
+.alarm .siren{font-size:2.6rem;line-height:1}
+.alarm .big{font-family:var(--display);font-weight:900;font-size:2.4rem;letter-spacing:.08em;color:var(--miss)}
+.alarm .sub{color:var(--chalk);margin-top:6px}
+.alarm .sub b{font-family:var(--display);font-size:1.4em;color:#fff;font-variant-numeric:tabular-nums}
+@keyframes alarm{0%,100%{box-shadow:0 0 0 0 rgba(255,106,92,0)}50%{box-shadow:0 0 0 8px rgba(255,106,92,.35)}}
+.vaultcard{background:linear-gradient(#141a2a,#0d1220);border:2px solid var(--led);border-radius:10px;padding:16px;text-align:center}
+.vaultcard .big{font-family:var(--display);font-weight:900;font-size:1.8rem;color:var(--led)}
+.vaultcard .sub{color:var(--muted)}
+.choices .ch.safe{flex-direction:column;justify-content:center;min-height:96px;background:linear-gradient(#2a2f45,#171b2c);border-color:#5a5f7a}
+.choices .ch.safe .door{font-size:2rem;line-height:1}
+.choices .ch.safe .lab{font-family:var(--display);font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.choices .ch.safe.opened{border-color:var(--led);background:#2a2208}
+.fb.crack{border-color:var(--led);box-shadow:0 0 0 2px var(--led) inset}

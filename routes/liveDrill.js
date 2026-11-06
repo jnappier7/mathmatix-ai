@@ -386,6 +386,20 @@ playRouter.post('/:code/answer', playLimiter, async (req, res) => {
   } catch (err) { send(res, err); }
 });
 
+// Heist: open one of the three safes a streak dealt; fire a gadget found in one.
+playRouter.post('/:code/safe', playLimiter, async (req, res) => {
+  try {
+    const { game, player } = await withPlayer(req);
+    res.json(G.openSafe(game, player, (req.body || {}).pick));
+  } catch (err) { send(res, err); }
+});
+playRouter.post('/:code/gadget', playLimiter, async (req, res) => {
+  try {
+    const { game, player } = await withPlayer(req);
+    res.json(G.useGadget(game, player, (req.body || {}).id));
+  } catch (err) { send(res, err); }
+});
+
 // ---------------------------------------------------------------------------
 // signed-in students (the chat-screen banner)
 // ---------------------------------------------------------------------------

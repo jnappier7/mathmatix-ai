@@ -154,9 +154,21 @@ test('muted means silent: no cue, cheer or band makes a sound', () => {
   S.unlock();
   S.setScene('lobby');
   const before = made.osc + made.buffer;
-  S.horn(); S.cheer(true); S.groan(); S.whistle(); S.tick(true); S.blitz(); S.rumble();
+  S.horn(); S.cheer(true); S.groan(); S.whistle(); S.tick(true); S.blitz(); S.rumble(); S.safe(); S.smoke();
   jest.advanceTimersByTime(3000);
   expect(made.osc + made.buffer).toBe(before);
+});
+
+test('the heist cues — a safe opening, a gadget firing — are game cues: they play with the crowd off', () => {
+  const { S, made } = load();
+  S.setCrowd(false);
+  S.unlock();
+  let n = made.osc + made.buffer;
+  S.safe();
+  expect(made.osc + made.buffer).toBeGreaterThan(n);
+  n = made.osc + made.buffer;
+  S.smoke();
+  expect(made.osc + made.buffer).toBeGreaterThan(n);
 });
 
 test('crowd off silences the cheers but not the horn', () => {

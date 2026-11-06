@@ -6,7 +6,7 @@
   const { $, esc, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns, rulesHTML } = window.LiveDrill;
   const API = '/api/live-drill/host';
   const noop = () => {};
-  const SND = window.LiveDrillSound || { unlock: noop, whistle: noop, horn: noop, tick: noop, chime: noop, buzzer: noop, cheer: noop, groan: noop, rumble: noop, blitz: noop,
+  const SND = window.LiveDrillSound || { unlock: noop, whistle: noop, horn: noop, tick: noop, chime: noop, buzzer: noop, cheer: noop, groan: noop, rumble: noop, blitz: noop, safe: noop, smoke: noop,
     setScene: noop, setHype: noop, setMuted: noop, setMusic: noop, setCrowd: noop, muted: true, musicOn: false, crowdOn: false };
   let lastTick = null; // the clock second last ticked, so each of the final five ticks once
 
@@ -117,7 +117,8 @@
     $('m-drive').setAttribute('aria-pressed', S.mode === 'drive');
     $('m-huddle').setAttribute('aria-pressed', S.mode === 'huddle');
     $('m-hill').setAttribute('aria-pressed', S.mode === 'hill');
-    $('opt-drive').hidden = S.mode === 'huddle'; // Team Drive and the hill both run on one clock
+    $('m-heist').setAttribute('aria-pressed', S.mode === 'heist');
+    $('opt-drive').hidden = S.mode === 'huddle'; // Team Drive, the hill and the heist all run on one clock
     $('opt-huddle').hidden = S.mode !== 'huddle';
     // Each drill brings its own clocks (a fact takes seconds, an algebra play half a minute).
     const st = d.settings || S.settings;
@@ -168,6 +169,7 @@
   $('m-drive').onclick = () => { S.mode = 'drive'; renderSetup(); };
   $('m-huddle').onclick = () => { S.mode = 'huddle'; renderSetup(); };
   $('m-hill').onclick = () => { S.mode = 'hill'; renderSetup(); };
+  $('m-heist').onclick = () => { S.mode = 'heist'; renderSetup(); };
 
   $('open').onclick = async () => {
     $('setup-err').textContent = '';
@@ -240,7 +242,9 @@
   /** The stands lean in as either ball crosses midfield: 0 at the 50, 1 at the goal line. */
   const hypeOf = (st) => (st.hill
     ? Math.max(0, ...st.hill.climbers.map((c) => (c.h - 40) / 60)) // the hill: the crowd leans in near the top
-    : Math.max(0, ...st.teams.map((t) => (t.pos - 50) / 50)));
+    : st.heist
+      ? Math.max(0, 1 - (st.endsAt - serverNow()) / 45000) // the heist: the room tightens over the last 45 s
+      : Math.max(0, ...st.teams.map((t) => (t.pos - 50) / 50)));
 
   /** What the room should hear, from one state to the next. */
   function cue(prev, st) {
@@ -253,6 +257,15 @@
       const t = Date.now();
       if (fresh.some((f) => f.type === 'knock') && t - (cue.rumbleAt || 0) > 1500) { cue.rumbleAt = t; SND.rumble(); }
       if (fresh.some((f) => f.type === 'crown') && st.phase === 'live' && t - (cue.crownAt || 0) > 10000) { cue.crownAt = t; SND.horn(); SND.cheer(false); }
+    }
+    if (st.mode === 'heist') {
+      const since = Math.max(0, ...(prev.feed || []).map((f) => f.at));
+      const fresh = (st.feed || []).filter((f) => f.at > since);
+      const t = Date.now();
+      if (fresh.some((f) => f.type === 'jackpot')) { SND.safe(); SND.cheer(false); }
+      else if (fresh.some((f) => f.type === 'safe' || f.type === 'crack') && t - (cue.safeAt || 0) > 900) { cue.safeAt = t; SND.safe(); }
+      if (fresh.some((f) => f.type === 'grab' || f.type === 'switch') && t - (cue.grabAt || 0) > 1200) { cue.grabAt = t; SND.blitz(); }
+      if (fresh.some((f) => f.type === 'gadget')) SND.smoke();
     }
     if (st.mode === 'drive') {
       // a blitz landed since the last state — one whoosh, rate-limited (a big class blitzes often)
@@ -306,8 +319,9 @@
     if ($('l-rules').dataset.html !== rules) { $('l-rules').innerHTML = rules; $('l-rules').dataset.html = rules; }
     $('l-count').textContent = `${st.players.length} player${st.players.length === 1 ? '' : 's'}${st.gameNumber > 1 ? ` · game ${st.gameNumber}` : ''}`;
     $('kick').disabled = st.players.length === 0;
-    $('rosters').classList.toggle('solo', st.mode === 'hill');
-    $('rosters').innerHTML = st.mode === 'hill' ? soloRoster(st) : st.teams.map((t, i) => {
+    const solo = st.mode === 'hill' || st.mode === 'heist';
+    $('rosters').classList.toggle('solo', solo);
+    $('rosters').innerHTML = solo ? soloRoster(st) : st.teams.map((t, i) => {
       const ps = st.players.filter((p) => p.team === i);
       return `<div class="roster t${i}"><h3>${esc(t.name)}<span class="muted" style="font-size:1rem">${ps.length}</span></h3><div class="chips">${
         ps.map((p) => (openChip === p.id
@@ -331,11 +345,13 @@
 
   function modeName(st) {
     if (st.mode === 'hill') return `King of the Hill, ${mmss(st.seconds * 1000)}`;
+    if (st.mode === 'heist') return `Heist, ${mmss(st.seconds * 1000)}`;
     return st.mode === 'drive' ? `Team Drive, ${mmss(st.seconds * 1000)}` : `Huddle, ${st.totalPlays} plays`;
   }
-  /** The hill has no teams: one list of climbers, each still tappable to remove. */
+  const MODE_LABEL = { drive: 'Team Drive', huddle: 'Huddle', hill: 'King of the Hill', heist: 'Heist' };
+  /** The hill and the heist have no teams: one list of players, each still tappable to remove. */
   function soloRoster(st) {
-    return `<div class="roster"><h3>Climbers<span class="muted" style="font-size:1rem">${st.players.length}</span></h3><div class="chips">${
+    return `<div class="roster"><h3>${st.mode === 'heist' ? 'Crew' : 'Climbers'}<span class="muted" style="font-size:1rem">${st.players.length}</span></h3><div class="chips">${
       st.players.map((p) => (openChip === p.id
         ? `<span class="chipmenu${p.away ? ' away' : ''}">${esc(p.name)}<button class="rm" data-act="kick" data-id="${p.id}">Remove</button><button data-act="close">✕</button></span>`
         : `<button class="chip${p.away ? ' away' : ''}" data-act="open" data-id="${p.id}" title="${p.linked ? 'Signed in' : 'Joined with the code'}${p.away ? ' · screen closed' : ''}">${esc(p.name)}${p.linked ? '<span class="acct" aria-label="signed in">✓</span>' : ''}</button>`)).join('')
@@ -381,16 +397,19 @@
   }
 
   function renderLive(st) {
-    $('g-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : st.mode === 'hill' ? 'King of the Hill' : 'Huddle'}`;
+    $('g-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${MODE_LABEL[st.mode] || 'Huddle'}`;
     $('g-code').textContent = st.code;
     renderScoreboard(st);
     const onHill = st.mode === 'hill';
+    const onHeist = st.mode === 'heist';
     $('live-body').classList.toggle('mode-hill', onHill);
+    $('live-body').classList.toggle('mode-heist', onHeist);
     $('hill-pane').hidden = !onHill;
-    if (onHill) {
+    $('heist-pane').hidden = !onHeist;
+    if (onHill || onHeist) {
       $('live-body').classList.remove('mode-huddle');
       ['drive-pane', 'huddle-pane', 'h-next', 'h-keys'].forEach((id) => { $(id).hidden = true; });
-      renderHill(st);
+      if (onHill) renderHill(st); else renderHeist(st);
       return;
     }
     const drive = st.mode === 'drive';
@@ -522,6 +541,54 @@
     }).join('') || '<span class="muted">Boulders and crowns show up here.</span>';
   }
 
+  // ---------------- the heist ----------------
+  const money = (x) => `$${Number(x || 0).toLocaleString()}`;
+  /** The vault board: everyone richest first as cash bars, plus whatever is being done to the screens. */
+  function renderHeist(st) {
+    const H = st.heist;
+    if (!H) return;
+    const top = Math.max(1, H.top);
+    $('heist-board').innerHTML = H.crew.slice(0, 14).map((c) => `<li class="${c.rank === 1 && c.cash > 0 ? 'lead' : ''}${c.hit ? ' hit' : ''}${c.alarm ? ' alarm' : ''}">
+      <span class="rk">${c.rank}</span><span class="nm">${esc(c.name)}${c.rank === 1 && c.cash > 0 ? ' 🏆' : ''}${c.gadgets ? ' 🧰' : ''}${c.alarm ? ' 🚨' : c.cracking ? ' 🔐' : ''}</span>
+      <span class="bar"><span style="width:${Math.round((100 * c.cash) / top)}%"></span></span><span class="cv">${money(c.cash)}</span></li>`).join('')
+      + (H.crew.length > 14 ? `<li class="more muted">+ ${H.crew.length - 14} more in the crew</li>` : '');
+    $('heist-tally').textContent = `${H.safesCracked} ${H.safesCracked === 1 ? 'safe' : 'safes'} cracked`;
+    const fx = (H.effects || []).find((e) => e.until > serverNow());
+    $('live-body').classList.toggle('fx-smoke', !!fx && fx.kind === 'smoke');
+    $('live-body').classList.toggle('fx-flip', !!fx && fx.kind === 'flip');
+    $('heist-fx').hidden = !fx;
+    if (fx) $('heist-fx').innerHTML = `${fx.kind === 'smoke' ? '💨' : '🙃'} <b>${esc(fx.by)}</b> ${fx.kind === 'smoke' ? 'dropped a smoke bomb' : 'flipped every screen'}!`;
+    $('heist-feed').innerHTML = st.feed.slice(0, 6).map((f) => {
+      const id = `${f.at}|${f.type}|${f.who || ''}`;
+      const fresh = seenFeed.has(id) ? '' : ' new';
+      seenFeed.add(id);
+      if (f.type === 'jackpot') return `<span class="it ev jackpot${fresh}">💎 JACKPOT · ${esc(f.who)} ${money(f.amount)}</span>`;
+      if (f.type === 'safe') return `<span class="it${fresh}">💰 ${esc(f.who)} opened a safe · ${money(f.amount)}</span>`;
+      if (f.type === 'crack') return `<span class="it${fresh}">🔐 ${esc(f.who)} cracked the vault</span>`;
+      if (f.type === 'grab') return `<span class="it ev${fresh}">🕶 ${esc(f.who)} grabbed ${money(f.amount)} from ${esc(f.target)}</span>`;
+      if (f.type === 'switch') return `<span class="it ev${fresh}">🔁 ${esc(f.who)} switched piles with ${esc(f.target)}</span>`;
+      if (f.type === 'gadget') return `<span class="it ev${fresh}">${f.kind === 'smoke' ? '💨' : '🙃'} ${esc(f.who)} fired ${f.kind === 'smoke' ? 'a smoke bomb' : 'a flip'}</span>`;
+      if (f.type === 'heist') return `<span class="it ev${fresh}">THE HEIST IS ON</span>`;
+      return '';
+    }).join('') || '<span class="muted">Safes, grabs and gadgets show up here.</span>';
+  }
+
+  /** The heist's final: the standings and the awards, in place of the team result. */
+  function renderHeistFinal(st, f) {
+    const hz = f.heist;
+    const top = hz.standings[0];
+    $('f-acc').textContent = f.att ? f.pct + '%' : '–';
+    $('f-result').className = 'king';
+    $('f-result').textContent = top && top.cash > 0 ? `🏆 ${top.name} walks out with ${money(top.cash)}` : 'Nobody cracked a thing';
+    const awards = [
+      hz.safecracker && `<div class="award"><span class="k">Safecracker</span><b>${esc(hz.safecracker.name)}</b> ${hz.safecracker.count} ${hz.safecracker.count === 1 ? 'safe' : 'safes'}</div>`,
+      hz.biggestGrab && `<div class="award"><span class="k">Biggest grab</span><b>${esc(hz.biggestGrab.name)}</b> ${money(hz.biggestGrab.amount)}</div>`,
+    ].filter(Boolean).join('');
+    $('f-mvps').innerHTML = `<div class="panel standings"><h3>Final standings</h3>${awards ? `<div class="awards">${awards}</div>` : ''}<ol>${
+      hz.standings.map((s) => `<li${s.place === 1 ? ' class="king"' : ''}><span class="nm">${esc(s.name)}</span><span>${money(s.cash)} · ${s.comp}/${s.att} right${s.safes ? ` · 🔐 ${s.safes}` : ''}${s.alarms ? ` · 🚨 ${s.alarms}` : ''}</span></li>`).join('')
+    }</ol><p class="muted">Accuracy sits beside the cash on purpose: the student who answered the most usually walks out with the most.</p></div>`;
+  }
+
   /** The hill's final: the standings and the awards, in place of the team result. */
   function renderHillFinal(st, f) {
     const hl = f.hill;
@@ -542,6 +609,7 @@
     st.teams.forEach((t, i) => { $('f-n' + i).textContent = t.name; $('f-p' + i).textContent = t.pts; });
     const f = st.final || { mvps: [[], []], film: [], pct: 0, att: 0 };
     $('final').classList.toggle('mode-hill', st.mode === 'hill');
+    $('final').classList.toggle('mode-heist', st.mode === 'heist');
     $('f-acc').textContent = f.att ? f.pct + '%' : '–';
     const [a, b] = st.teams;
     const win = a.pts !== b.pts ? (a.pts > b.pts ? 0 : 1) : (a.pos !== b.pos ? (a.pos > b.pos ? 0 : 1) : -1);
@@ -554,6 +622,7 @@
     $('f-picks').innerHTML = st.teams.map((t, i) => (t.picks ? `<span class="t${i}">🏈 ${esc(t.name)}: ${t.picks} pick ${t.picks === 1 ? 'six' : 'sixes'}</span>` : '')).join('')
       + st.teams.map((t, i) => (t.blitzes ? `<span class="t${i}">⚡ ${esc(t.name)}: ${t.blitzes} ${t.blitzes === 1 ? 'blitz' : 'blitzes'}</span>` : '')).join('');
     if (f.hill) renderHillFinal(st, f);
+    else if (f.heist) renderHeistFinal(st, f);
     else $('f-mvps').innerHTML = st.teams.map((t, i) => `<div class="panel t${i}"><h3>${esc(t.name)} · top players</h3>${
       f.mvps[i].length ? `<ol>${f.mvps[i].map((p) => `<li>${esc(p.name)} <span>${p.yards} yds · ${p.comp}/${p.att}</span></li>`).join('')}</ol>` : '<p class="muted">No plays run.</p>'
     }</div>`).join('');
@@ -573,8 +642,8 @@
   function renderFinalPlayers(st, players) {
     const el = $('f-players');
     if (!el) return;
-    // King of the Hill already lists everyone in its standings.
-    if (st.mode === 'hill' || !players.length) { el.hidden = true; el.innerHTML = ''; return; }
+    // King of the Hill and the Heist already list everyone in their standings.
+    if (st.mode === 'hill' || st.mode === 'heist' || !players.length) { el.hidden = true; el.innerHTML = ''; return; }
     el.hidden = false;
     lastScores = { code: st.code, game: st.gameNumber, players, teams: st.teams };
     const unit = st.mode === 'drive' ? 'yds' : 'pts';
@@ -658,7 +727,7 @@
     if (!plays.length) { $('f-pbp').innerHTML = ''; $('f-pbp').hidden = true; return; }
     $('f-pbp').hidden = false;
     const band = (p) => (p < 50 ? 'low' : p < 80 ? 'mid' : 'high');
-    const note = st.mode === 'drive'
+    const note = st.mode !== 'huddle'
       ? 'Each student ran the plays at their own pace, so the later plays were only reached by the fastest.'
       : 'Every student saw every play.';
     $('f-pbp').innerHTML = `<h3>Play by play</h3><p>${note} Tap a play to see it again.</p><ol>${plays.map((p) => `<li><details class="${band(p.pct)}">
@@ -693,7 +762,7 @@
       S.drills = drills; S.courses = courses || []; S.settings = settings; S.classes = classes;
       renderClasses();
       if (!drills.some((d) => d.id === S.drill && !d.unavailable)) S.drill = (drills.find((d) => !d.unavailable) || drills[0]).id;
-      if (!['drive', 'huddle', 'hill'].includes(S.mode)) S.mode = 'drive';
+      if (!['drive', 'huddle', 'hill', 'heist'].includes(S.mode)) S.mode = 'drive';
       renderSetup();
       wireSearch();
       show('setup');

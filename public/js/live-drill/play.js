@@ -124,7 +124,7 @@
     if (prev && prev.phase !== 'lobby') watchTouchdowns(prev, next);
     st = next;
     // Back to the lobby — a "Run it back" — so nothing from the last game stays on screen.
-    if (st.phase === 'lobby') { cur = null; huddleKey = ''; }
+    if (st.phase === 'lobby') { cur = null; huddleKey = ''; heistWait = null; fxShown = ''; $('live').classList.remove('fx-smoke', 'fx-flip'); }
     if (st.phase === 'lobby') { show('lobby'); renderLobby(); }
     else if (st.phase === 'over') { show('final'); renderFinal(); }
     else { show('live'); renderLive(); }
@@ -138,19 +138,24 @@
   function renderLobby() {
     const t = st.me.team;
     const onHill = st.mode === 'hill';
-    $('l-team').className = onHill ? 'teamcard hill' : `teamcard t${t}`;
-    $('l-teamname').textContent = onHill ? 'King of the Hill' : `Team ${teamName(t)}`;
+    const onHeist = st.mode === 'heist';
+    $('l-team').className = onHill ? 'teamcard hill' : onHeist ? 'teamcard heist' : `teamcard t${t}`;
+    $('l-teamname').textContent = onHill ? 'King of the Hill' : onHeist ? 'Heist' : `Team ${teamName(t)}`;
     $('l-name').textContent = st.me.name;
-    $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : st.mode === 'hill' ? 'every climber for themselves' : 'Huddle'}`;
+    $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : onHill ? 'every climber for themselves' : onHeist ? 'every safecracker for themselves' : 'Huddle'}`;
     const rules = window.LiveDrill.rulesHTML(st);
     if ($('l-rules').dataset.html !== rules) { $('l-rules').innerHTML = rules; $('l-rules').dataset.html = rules; }
   }
 
   function renderScore() {
     const onHill = st.mode === 'hill';
+    const onHeist = st.mode === 'heist';
     $('live').classList.toggle('mode-hill', onHill);
+    $('live').classList.toggle('mode-heist', onHeist);
     $('p-hill').hidden = !onHill;
+    $('p-heist').hidden = !onHeist;
     if (onHill) { renderMyHill(); return; }
+    if (onHeist) { renderMyHeist(); return; }
     st.teams.forEach((t, i) => { $('s-n' + i).textContent = t.name; $('s-p' + i).textContent = t.pts; });
     setField($('field'), st.teams);
     const t = st.me.team;
@@ -179,8 +184,120 @@
       <div class="boulder"><span class="k">${h.king && h.king.me ? 'Shield' : 'Boulder'}</span><span class="dots">${dots}</span></div></div>${status}`;
   }
 
+  // ---- heist: cash, the alarm, the safes, the gadgets ----
+  const money = (x) => `$${Number(x || 0).toLocaleString()}`;
+  let heistWait = null; // 'alarm' | 'safe' while the phone is held off the next play
+  let fxShown = ''; // the effect banner on screen (kind|until), so it isn't rebuilt every state
+
+  /** Heist: cash, rank, who's above, the safe meter, held gadgets, and anything done to this screen. */
+  function renderMyHeist() {
+    const h = st.heist;
+    if (!h) return;
+    $('p-team').className = 'pill heist';
+    $('p-team').textContent = h.leader && h.leader.me ? '🏆 Leader' : `#${h.rank} of ${h.of}`;
+    $('p-me').textContent = `${st.me.name} · streak ${st.me.streak}`;
+    const dots = Array.from({ length: 3 }, (_, i) => `<span class="${i < 3 - h.toSafe ? 'on' : ''}"></span>`).join('');
+    const gadgets = h.gadgets.length ? `<div class="gadgets">${h.gadgets.map((g) => `<button type="button" class="gadget" data-id="${esc(g.id)}" title="${esc(g.blurb)}">${g.kind === 'smoke' ? '💨' : '🙃'} Fire ${esc(g.label)}</button>`).join('')}</div>` : '';
+    const status = h.hit ? `<div class="hit">${h.hit.kind === 'grab' ? '🕶' : '🔁'} ${esc(h.hit.by)} ${h.hit.kind === 'grab' ? `grabbed ${money(h.hit.amount)} from you!` : 'switched piles with you!'}</div>`
+      : h.leader && h.leader.me ? '<div class="crownline">🏆 You\'re in the lead. Keep answering — a Grab can only come from below.</div>'
+      : h.above ? `<div class="above"><b>${esc(h.above.name)}</b> is ${money(h.above.gap)} ahead of you${h.leader && h.leader.name !== h.above.name ? ` · 🏆 ${esc(h.leader.name)} ${money(h.leader.cash)}` : ''}</div>`
+      : '';
+    $('p-heist').innerHTML = `<div class="vault"><div class="cash"><span class="k">Your cash</span><span class="v">${money(h.cash)}</span></div>
+      <div class="safemeter"><span class="k">${h.safe ? 'Safe open!' : 'Next safe'}</span><span class="dots">${dots}</span></div></div>${gadgets}${status}`;
+    $('p-heist').querySelectorAll('.gadget').forEach((b) => { b.onclick = () => fireGadget(b.dataset.id, b); });
+    // what someone did to every screen but theirs
+    const fx = h.effect && h.effect.until > serverNow() ? h.effect : null;
+    const key = fx ? `${fx.kind}|${fx.until}` : '';
+    if (key !== fxShown) {
+      fxShown = key;
+      $('live').classList.toggle('fx-smoke', !!fx && fx.kind === 'smoke');
+      $('live').classList.toggle('fx-flip', !!fx && fx.kind === 'flip');
+      $('p-fx').hidden = !fx;
+      if (fx) $('p-fx').innerHTML = `${fx.kind === 'smoke' ? '💨' : '🙃'} <b>${esc(fx.by)}</b> ${fx.kind === 'smoke' ? 'dropped a smoke bomb' : 'flipped your screen'}! <span class="left" id="fx-left"></span>`;
+    }
+    // the server's view of the alarm / an open crack wins over whatever this phone thought
+    if (st.phase === 'live') {
+      // (a play still on screen with its tell is left alone: the answer handler brings the alarm up after it)
+      if (h.alarmUntil && heistWait !== 'alarm' && !(cur && cur.locked)) showAlarm(h.alarmUntil);
+      else if (!h.alarmUntil && heistWait === 'alarm') { heistWait = null; cur = null; nextDrivePlay(); }
+      if (h.safe && heistWait !== 'safe' && !cur) showSafes(h.safe);
+    }
+  }
+
+  /** Each clock tick: the alarm countdown, the effect countdown, and the effect's end. */
+  function heistTick() {
+    if (!st || st.mode !== 'heist') return;
+    const h = st.heist || {};
+    if (heistWait === 'alarm' && $('al-left')) {
+      const left = Math.max(0, (h.alarmUntil || 0) - serverNow());
+      $('al-left').textContent = (left / 1000).toFixed(1);
+      if (left <= 0) { heistWait = null; cur = null; nextDrivePlay(); }
+    }
+    if (fxShown) {
+      const fx = h.effect;
+      const left = fx ? fx.until - serverNow() : 0;
+      if (left <= 0) { fxShown = ''; $('live').classList.remove('fx-smoke', 'fx-flip'); $('p-fx').hidden = true; }
+      else if ($('fx-left')) $('fx-left').textContent = `${Math.ceil(left / 1000)}s`;
+    }
+  }
+
+  /** 🚨 The alarm: no play until it clears. The server won't deal one either. */
+  function showAlarm(until) {
+    heistWait = 'alarm';
+    cur = { wait: true };
+    closePad();
+    $('p-choices').innerHTML = '';
+    $('p-card').innerHTML = `<div class="alarm"><div class="siren">🚨</div><div class="big">ALARM</div><div class="sub">Wrong answer. Locked for <b id="al-left">${Math.max(0, (until - serverNow()) / 1000).toFixed(1)}</b> s — think before the next one.</div></div>`;
+  }
+
+  /** The vault: three safes, one tap. What's inside is already decided on the server. */
+  function showSafes(safe) {
+    heistWait = 'safe';
+    cur = { wait: true };
+    closePad();
+    $('p-card').innerHTML = `<div class="vaultcard"><div class="big">🔐 You cracked the vault!</div><div class="sub">Safe ${safe.n} · pick one</div></div>`;
+    $('p-choices').innerHTML = Array.from({ length: safe.count }, (_, i) => `<button class="ch safe" data-i="${i}"><span class="door">🔒</span><span class="lab">Safe ${i + 1}</span></button>`).join('');
+    $('fb').className = 'fb';
+    $('fb').innerHTML = '<span class="muted">Cash, a jackpot, a grab, a switch, a gadget… or a decoy.</span>';
+    $('p-choices').querySelectorAll('.safe').forEach((b) => { b.onclick = () => openSafe(Number(b.dataset.i)); });
+  }
+
+  async function openSafe(i) {
+    const btns = [...$('p-choices').querySelectorAll('.safe')];
+    btns.forEach((b) => { b.disabled = true; });
+    try {
+      const r = await api(`/${encodeURIComponent(seat.code)}/safe`, { method: 'POST', body: JSON.stringify({ pick: i }) });
+      btns.forEach((b, j) => { b.classList.toggle('opened', j === i); b.classList.toggle('fade', j !== i); if (j === i) b.querySelector('.door').textContent = r.kind === 'decoy' ? '🕳' : r.kind === 'gadget' ? '🧰' : r.kind === 'grab' ? '🕶' : r.kind === 'switch' ? '🔁' : '💰'; });
+      let call; let why = ''; let cls = 'good';
+      if (r.kind === 'cash') { call = `${r.label === 'JACKPOT' ? '💎 JACKPOT ' : ''}+${money(r.amount)}`; why = r.label === 'JACKPOT' ? 'The big one.' : 'Cash.'; }
+      else if (r.kind === 'grab') { call = `🕶 Grab · +${money(r.amount)}`; why = `Taken from ${esc(r.target)}, who was ahead of you.`; }
+      else if (r.kind === 'switch') { call = `🔁 Switch · ${money(r.cash)}`; why = `You traded piles with ${esc(r.target)}, who was ahead of you (+${money(r.amount)}).`; }
+      else if (r.kind === 'gadget') { call = `🧰 ${esc(r.gadget.label)}`; why = `Yours to fire when you like: ${esc(r.gadget.blurb)}. The button is above.`; }
+      else { call = 'Decoy'; why = 'Empty. The streak was the price.'; cls = ''; }
+      $('fb').className = `fb ${cls}`;
+      $('fb').innerHTML = `<span class="bigtxt">${call}</span><span class="why">${why}</span>`;
+      heistWait = null;
+      setTimeout(() => { cur = null; nextDrivePlay(); }, r.kind === 'decoy' ? 1400 : 2000);
+    } catch (err) {
+      if (err.status === 401) return gone('You are no longer in this game.');
+      heistWait = null; cur = null;
+      // 409: the clock ran out, or the server already has this safe open elsewhere — fall in line with its state
+      setTimeout(() => nextDrivePlay(), 600);
+    }
+  }
+
+  async function fireGadget(id, btn) {
+    btn.disabled = true;
+    try {
+      const r = await api(`/${encodeURIComponent(seat.code)}/gadget`, { method: 'POST', body: JSON.stringify({ id }) });
+      $('fb').className = 'fb good';
+      $('fb').innerHTML = `<span class="bigtxt">${r.kind === 'smoke' ? '💨' : '🙃'} ${esc(r.label)}!</span><span class="why">Everyone else's screen, for ${Math.round((r.until - serverNow()) / 1000)} seconds. Not yours.</span>`;
+    } catch (err) { btn.disabled = false; $('fb').className = 'fb'; $('fb').innerHTML = `<span class="muted">${esc(err.message)}</span>`; }
+  }
+
   function renderClock() {
     if (!st) return;
+    heistTick();
     const c = $('s-clock');
     let left = null;
     if (st.mode !== 'huddle' && st.phase === 'live') { $('s-ck').textContent = 'Clock'; left = st.endsAt - serverNow(); }
@@ -269,6 +386,10 @@
     fetching = true;
     try {
       const r = await api(`/${encodeURIComponent(seat.code)}/play`);
+      // heist: the server holds the play back while the alarm rings or a crack is open
+      if (r.alarm) { showAlarm(r.alarm); return; }
+      if (r.safe) { showSafes(r.safe); return; }
+      heistWait = null;
       cur = { n: r.n, play: r.play, locked: false };
       $('p-card').innerHTML = cardHTML(r.play, null, `Play ${r.n}`);
       if (typedPlay(r.play)) openPad(answerDrive, negOk(r.play));
@@ -291,6 +412,20 @@
       $('p-card').innerHTML = cardHTML(cur.play, r.revealCard, `Play ${cur.n}`);
       if (typed) padResult(r.picked, r.ok);
       else $('p-choices').innerHTML = choicesHTML(cur.play, { answer: r.answer, picked: k, disabled: true });
+      if (r.heist) {
+        // the heist pays in cash; a miss trips the alarm (the server holds the next play until it clears)
+        const hz = r.heist;
+        if (r.ok) {
+          $('fb').className = `fb good${hz.safe ? ' crack' : ''}`;
+          $('fb').innerHTML = `<span class="bigtxt">${hz.safe ? '🔐 Safe cracked!' : r.tier === 0 ? 'Clean' : r.tier === 1 ? 'Right' : 'Right, slow'} · +${money(hz.step)}</span><span class="why">${(r.ms / 1000).toFixed(1)} s${hz.safe ? ' · 3 in a row — pick a safe' : ''}</span>`;
+          setTimeout(() => { cur = null; if (hz.safe) showSafes(hz.safe); else nextDrivePlay(); }, hz.safe ? 900 : typed ? 380 : 650);
+        } else {
+          $('fb').className = 'fb bad';
+          $('fb').innerHTML = `<span class="bigtxt">🚨 Alarm · ${MINUS}${money(-hz.step)}</span><span class="why">You ${typed ? `typed ${esc(showNum(r.picked))}` : `picked ${(cur.play.choices.find((c) => c.k === k) || {}).html || ''}`}. ${r.tell}</span>`;
+          setTimeout(() => showAlarm(hz.lockUntil), 1600); // read the tell first, then the lock
+        }
+        return;
+      }
       if (r.ok) {
         const call = r.hill ? hillCall(r.hill) : r.blitz ? '⚡ Blitz!' : r.tier === 0 ? 'Big play' : r.tier === 1 ? 'First down' : 'Short gain';
         const blitzed = r.blitz ? ` · ${esc(teamName(r.blitz.team))} pushed back ${r.blitz.lost}` : '';
@@ -399,8 +534,18 @@
       h.textContent = hl.rank === 1 ? '👑 King of the Hill' : `#${hl.rank} of ${hl.of}`;
       $('f-place').textContent = hl.rank === 1 ? `You finished on top at ${Math.round(hl.h)}.` : `You finished at ${Math.round(hl.h)}${hl.king ? ` · 👑 ${hl.king.name} is king` : ''}.`;
     }
-    $('f-yds').textContent = onHill && st.hill ? Math.round(st.hill.h) : me.yards;
-    $('f-yds').nextElementSibling.textContent = onHill ? 'Height' : 'Your yards';
+    const onHeist = st.mode === 'heist';
+    $('final').classList.toggle('mode-heist', onHeist);
+    if (onHeist && st.heist) {
+      const hz = st.heist;
+      $('f-place').hidden = false;
+      $('f-mid').textContent = `#${hz.rank}`;
+      h.className = hz.rank === 1 ? 'king' : '';
+      h.textContent = hz.rank === 1 ? '🏆 Top of the heist' : `#${hz.rank} of ${hz.of}`;
+      $('f-place').textContent = hz.rank === 1 ? `You walked out with ${money(hz.cash)}.` : `You walked out with ${money(hz.cash)}${hz.leader ? ` · 🏆 ${hz.leader.name} took ${money(hz.leader.cash)}` : ''}.`;
+    }
+    $('f-yds').textContent = onHill && st.hill ? Math.round(st.hill.h) : onHeist && st.heist ? money(st.heist.cash) : me.yards;
+    $('f-yds').nextElementSibling.textContent = onHill ? 'Height' : onHeist ? 'Your cash' : 'Your yards';
     $('f-comp').textContent = `${me.comp}/${me.att}`;
     $('f-pct').textContent = me.att ? Math.round((100 * me.comp) / me.att) + '%' : '–';
     $('f-best').textContent = me.best;
