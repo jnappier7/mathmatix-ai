@@ -206,7 +206,7 @@ describe('class games, the chat banner and run it back', () => {
 
   test('the host picks from their own classes, and only those', async () => {
     const r = await req.get('/api/live-drill/host/classes');
-    expect(r.body.classes).toEqual([{ id: 'class-1', name: 'Algebra 1 · P3', students: 1 }]);
+    expect(r.body.classes).toEqual([{ id: 'class-1', name: 'Algebra 1 · P3', students: 1, hub: 'algebra' }]);
     const theirs = await req.post('/api/live-drill/host/games').send({ drill: 'algebra', mode: 'drive', classId: 'class-2' });
     expect(theirs.status).toBe(404);
   });

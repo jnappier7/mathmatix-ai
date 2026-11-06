@@ -96,14 +96,16 @@ hostRouter.get('/drills', (req, res) => {
     // The picker is grouped by COURSE, in the order the solo hubs list them (teaching order within
     // a course); a drill on more than one hub (Math Facts) is "Any class", listed last.
     const courseOf = {};
+    const named = {}; // the hub's own name and blurb — the same words the Arcade and the solo page use
     for (const [hubId, hub] of Object.entries(solo.HUBS)) for (const g of hub.games) {
+      if (!named[g.drill]) named[g.drill] = { name: g.name, blurb: g.blurb || '' };
       if (courseOf[g.drill] && courseOf[g.drill].id !== hubId) courseOf[g.drill] = { id: 'any', title: 'Any class' };
       else if (!courseOf[g.drill]) courseOf[g.drill] = { id: hubId, title: hub.title };
     }
     const courses = [...Object.entries(solo.HUBS).map(([id, h]) => ({ id, title: h.title })), { id: 'any', title: 'Any class' }];
     const drills = Object.entries(DRILLS).map(([id, d]) => {
       try {
-        const out = { id, title: d.title, course: courseOf[id] || { id: 'any', title: 'Any class' }, playbooks: listPlaybooks(id), settings: G.settingsFor(id) };
+        const out = { id, title: d.title, ...(named[id] || { name: d.title, blurb: '' }), course: courseOf[id] || { id: 'any', title: 'Any class' }, playbooks: listPlaybooks(id), settings: G.settingsFor(id) };
         if (d.focus) out.focusable = { books: FOCUSABLE, max: FOCUS_MAX }; // Math Facts: pick the numbers
         return out;
       } catch (e) {
@@ -118,10 +120,11 @@ hostRouter.get('/drills', (req, res) => {
 /** The host's classes, for the "Which class?" picker. Same rosters as Class Activities. */
 hostRouter.get('/classes', async (req, res) => {
   try {
-    const classes = await EnrollmentCode.find({ teacherId: req.user._id, isActive: { $ne: false } }, '_id className period enrolledStudents')
+    const classes = await EnrollmentCode.find({ teacherId: req.user._id, isActive: { $ne: false } }, '_id className period mathCourse enrolledStudents')
       .sort({ className: 1 }).lean();
     res.json({ classes: classes.map((c) => ({
       id: String(c._id), name: [c.className, c.period].filter(Boolean).join(' · '), students: (c.enrolledStudents || []).length,
+      hub: solo.hubFor(c.mathCourse, c.className), // the course page this class is on (null if the name doesn't say)
     })) });
   } catch (err) { send(res, err); }
 });

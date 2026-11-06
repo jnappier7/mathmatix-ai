@@ -91,10 +91,10 @@
     res.querySelectorAll('button').forEach((b) => {
       b.onclick = () => {
         const x = results[Number(b.dataset.i)];
-        S.drill = x.drill; S.playbook = x.key; S.focus = [];
-        res.hidden = true;
+        S.drill = x.drill; S.playbook = x.key; S.focus = []; S.course = tabOf(x.drill) || S.course;
+        res.hidden = true; $('q').value = ''; $('dsearch').hidden = true; $('q-toggle').setAttribute('aria-expanded', 'false');
         renderSetup();
-        $('books').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        $('books-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
       };
     });
   }
@@ -104,20 +104,52 @@
     el.innerHTML = values.map((v) => `<button data-v="${v}" aria-pressed="${v === current}">${fmt(v)}</button>`).join('');
     el.querySelectorAll('button').forEach((b) => { b.onclick = () => onPick(Number(b.dataset.v)); });
   }
+  // ---- the three picks: who, what, how. One source of names: the hubs' own game names (via
+  // /drills `name`) and the Arcade catalogue's game-type names and taglines (/solo/arcade). ----
+  const isAnyTab = (id) => String(id || '').startsWith('drill:');
+  const courseTabs = () => [
+    ...(S.courses || []).filter((c) => c.id !== 'any').map((c) => ({ id: c.id, title: c.title })),
+    // a game on every course (Math Facts) is its own tab, named for the game
+    ...S.drills.filter((d) => (d.course || {}).id === 'any' && !d.unavailable).map((d) => ({ id: `drill:${d.id}`, title: d.name || d.title })),
+  ];
+  const drillsIn = (tab) => (isAnyTab(tab) ? S.drills.filter((d) => d.id === tab.slice(6)) : S.drills.filter((d) => (d.course || {}).id === tab && !d.unavailable));
+  const tabOf = (drillId) => { const d = S.drills.find((x) => x.id === drillId); if (!d) return null; return (d.course || {}).id === 'any' ? `drill:${d.id}` : (d.course || {}).id; };
+  /** Keep the course tab and the unit consistent: the unit must be on the tab. */
+  function settle() {
+    const tabs = courseTabs();
+    if (!tabs.some((t) => t.id === S.course)) S.course = tabOf(S.drill) || (tabs[0] && tabs[0].id);
+    const units = drillsIn(S.course);
+    if (!units.some((d) => d.id === S.drill)) {
+      S.lastUnit = S.lastUnit || {};
+      const remembered = S.lastUnit[S.course];
+      S.drill = (units.find((d) => d.id === remembered) || units[0] || { id: S.drill }).id;
+      S.playbook = 'all';
+    }
+    S.lastUnit = { ...(S.lastUnit || {}), [S.course]: S.drill };
+  }
   function renderSetup() {
-    // Games grouped by course (the server lists the courses in order; a game on every course, like
-    // Math Facts, sits under "Any class" at the end). Within a course, teaching order.
-    const groups = (S.courses || []).map((c) => ({ ...c, drills: S.drills.filter((d) => (d.course || {}).id === c.id) })).filter((g) => g.drills.length);
-    const btn = (d) => `<button data-id="${d.id}" aria-pressed="${d.id === S.drill}"${d.unavailable ? ' disabled' : ''}>${esc(d.title.replace(/^(Alg 1|H\. Geometry) · /, ''))}</button>`;
-    $('drills').innerHTML = groups.map((g) => `<div class="course-group"><span class="course-name">${esc(g.title)}</span><div class="seg-ctl" role="group" aria-label="${esc(g.title)} games">${g.drills.map(btn).join('')}</div></div>`).join('');
-    $('drills').querySelectorAll('button').forEach((b) => { b.onclick = () => { S.drill = b.dataset.id; S.playbook = 'all'; renderSetup(); }; });
+    settle();
+    const tabs = courseTabs();
+    $('courses').innerHTML = tabs.map((t) => `<button type="button" data-id="${esc(t.id)}" aria-pressed="${t.id === S.course}">${esc(t.title)}</button>`).join('');
+    $('courses').querySelectorAll('button').forEach((b) => { b.onclick = () => { S.course = b.dataset.id; S.drill = ''; renderSetup(); }; });
+    const units = drillsIn(S.course);
     const d = S.drills.find((x) => x.id === S.drill) || { playbooks: [] };
-    $('books').innerHTML = d.playbooks.map((b) => `<button class="book" data-k="${b.key}" aria-pressed="${b.key === S.playbook}"><span class="bk-ch">${esc(b.ch)}</span><span class="nm">${esc(b.name)}</span><span class="bl">${esc(b.blurb)}</span></button>`).join('');
-    $('books').querySelectorAll('.book').forEach((b) => { b.onclick = () => { S.playbook = b.dataset.k; renderSetup(); }; });
-    $('m-drive').setAttribute('aria-pressed', S.mode === 'drive');
-    $('m-huddle').setAttribute('aria-pressed', S.mode === 'huddle');
-    $('m-hill').setAttribute('aria-pressed', S.mode === 'hill');
-    $('m-heist').setAttribute('aria-pressed', S.mode === 'heist');
+    // the unit: a dropdown in teaching order (a tab with one game needs no dropdown)
+    $('unit-row').hidden = units.length < 2;
+    $('unit').innerHTML = units.map((u) => `<option value="${esc(u.id)}"${u.id === S.drill ? ' selected' : ''}>${esc(u.name || u.title)}</option>`).join('');
+    $('unit').onchange = () => { S.drill = $('unit').value; S.playbook = 'all'; renderSetup(); };
+    $('unit-bl').textContent = d.blurb || '';
+    // the section within the unit: compact chips, the blurb of the chosen one beneath
+    const books = d.playbooks || [];
+    $('books-wrap').hidden = books.length < 2;
+    $('books').innerHTML = books.map((b) => `<button type="button" class="chip" data-k="${esc(b.key)}" aria-pressed="${b.key === S.playbook}" title="${esc(b.blurb || '')}">${b.ch ? `<span class="ch">${esc(b.ch)}</span>` : ''}${esc(b.name)}</button>`).join('');
+    $('books').querySelectorAll('.chip').forEach((b) => { b.onclick = () => { S.playbook = b.dataset.k; renderSetup(); }; });
+    const book = books.find((b) => b.key === S.playbook);
+    $('book-bl').textContent = book && book.blurb ? book.blurb : '';
+    // the game type, from the Arcade's catalogue (names and taglines are the same there and here)
+    const games = S.games && S.games.length ? S.games : Object.entries(MODE_LABEL).map(([id, name]) => ({ id, name, tagline: '' }));
+    $('modes').innerHTML = games.map((g) => `<button type="button" class="mode" id="m-${esc(g.id)}" data-id="${esc(g.id)}" aria-pressed="${g.id === S.mode}"><b>${esc(g.name)}</b>${g.tagline ? `<span>${esc(g.tagline)}</span>` : ''}</button>`).join('');
+    $('modes').querySelectorAll('.mode').forEach((b) => { b.onclick = () => { S.mode = b.dataset.id; renderSetup(); }; });
     $('opt-drive').hidden = S.mode === 'huddle'; // Team Drive, the hill and the heist all run on one clock
     $('opt-huddle').hidden = S.mode !== 'huddle';
     // Each drill brings its own clocks (a fact takes seconds, an algebra play half a minute).
@@ -131,7 +163,13 @@
     segment($('o-spp'), st.huddle.secondsPerPlay, S.spp, (v) => v + 's', (v) => { S.spp = v; renderSetup(); });
     $('cls').value = S.classId;
     $('cls-note').hidden = !S.classes.length;
-    try { localStorage.setItem('mm-live-drill-setup', JSON.stringify({ drill: S.drill, playbook: S.playbook, mode: S.mode, seconds: S.seconds, plays: S.plays, spp: S.spp, classId: S.classId, focus: S.focus })); } catch { /* private mode */ }
+    // what the lobby will say, in one line
+    const cls = S.classes.find((c) => c.id === S.classId);
+    const game = games.find((g) => g.id === S.mode) || { name: MODE_LABEL[S.mode] || S.mode };
+    const when = S.mode === 'huddle' ? `${S.plays} plays · ${S.spp}s each` : mmss(S.seconds * 1000);
+    $('summary').innerHTML = [cls ? esc(cls.name) : 'Join by code', esc(d.name || d.title || ''), book && books.length > 1 ? esc(book.name) : '', esc(game.name), when]
+      .filter(Boolean).map((x) => `<span>${x}</span>`).join('<i>·</i>');
+    try { localStorage.setItem('mm-live-drill-setup', JSON.stringify({ drill: S.drill, playbook: S.playbook, mode: S.mode, seconds: S.seconds, plays: S.plays, spp: S.spp, classId: S.classId, focus: S.focus, course: S.course, lastUnit: S.lastUnit })); } catch { /* private mode */ }
   }
   /** Math Facts: which numbers every fact must include ("× 2s, 5s & 10s"). Empty = all of them. */
   function focusApplies(d) { return !!(d.focusable && d.focusable.books.includes(S.playbook)); }
@@ -162,14 +200,21 @@
       + S.classes.map((c) => `<option value="${esc(c.id)}">${esc(c.name)} (${c.students})</option>`).join('');
     // Opened from a class card on the dashboard (/live-drill?class=…): start with that class.
     const want = new URLSearchParams(location.search).get('class');
-    if (want && !S.urlClassApplied && S.classes.some((c) => c.id === want)) { S.classId = want; S.urlClassApplied = true; }
+    if (want && !S.urlClassApplied && S.classes.some((c) => c.id === want)) { S.classId = want; S.urlClassApplied = true; pickCourseForClass(); }
     if (!S.classes.some((c) => c.id === S.classId)) S.classId = '';
   }
-  $('cls').onchange = () => { S.classId = $('cls').value; renderSetup(); };
-  $('m-drive').onclick = () => { S.mode = 'drive'; renderSetup(); };
-  $('m-huddle').onclick = () => { S.mode = 'huddle'; renderSetup(); };
-  $('m-hill').onclick = () => { S.mode = 'hill'; renderSetup(); };
-  $('m-heist').onclick = () => { S.mode = 'heist'; renderSetup(); };
+  /** A class on a known course page ("Honors Geom · 4") picks that course; the unit is remembered per course. */
+  function pickCourseForClass() {
+    const c = S.classes.find((x) => x.id === S.classId);
+    if (c && c.hub && courseTabs().some((t) => t.id === c.hub)) { S.course = c.hub; S.drill = ''; }
+  }
+  $('cls').onchange = () => { S.classId = $('cls').value; pickCourseForClass(); renderSetup(); };
+  $('q-toggle').onclick = () => {
+    const open = $('dsearch').hidden;
+    $('dsearch').hidden = !open;
+    $('q-toggle').setAttribute('aria-expanded', String(open));
+    if (open) $('q').focus(); else { $('q').value = ''; runSearch(''); }
+  };
 
   $('open').onclick = async () => {
     $('setup-err').textContent = '';
@@ -869,8 +914,11 @@
   (async function boot() {
     try { Object.assign(S, JSON.parse(localStorage.getItem('mm-live-drill-setup') || '{}')); } catch { /* none saved */ }
     try {
-      const [{ drills, courses, settings }, { classes }] = await Promise.all([api('/drills'), api('/classes').catch(() => ({ classes: [] }))]);
-      S.drills = drills; S.courses = courses || []; S.settings = settings; S.classes = classes;
+      const [{ drills, courses, settings }, { classes }, cat] = await Promise.all([
+        api('/drills'), api('/classes').catch(() => ({ classes: [] })),
+        fetch('/api/live-drill/solo/arcade', { credentials: 'same-origin' }).then((r) => r.json()).catch(() => ({ games: [] })),
+      ]);
+      S.drills = drills; S.courses = courses || []; S.settings = settings; S.classes = classes; S.games = (cat && cat.games) || [];
       renderClasses();
       if (!drills.some((d) => d.id === S.drill && !d.unavailable)) S.drill = (drills.find((d) => !d.unavailable) || drills[0]).id;
       // Opened from the Arcade (/live-drill?mode=heist): start on that game.
