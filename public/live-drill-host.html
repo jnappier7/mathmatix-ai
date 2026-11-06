@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261106d">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261107">
 </head>
 <body>
 <div class="wrap">
@@ -19,52 +19,66 @@
       <p class="backlink"><a href="/arcade">← The Arcade</a></p>
       <div class="eyebrow">Live · Whole class</div>
       <h1>Two-Minute <span>Drill</span></h1>
-      <p>Students join on any device at <b>mathmatix.ai/play</b> with a code. No accounts. They're split into two teams, and every right answer moves their team's ball.</p>
+      <p>Three picks and you're on the board. Students join on any device at <b>mathmatix.ai/play</b> with the code — no accounts.</p>
     </div>
-    <div class="setup panel" style="margin-top:14px">
-      <form class="dsearch" id="dsearch" role="search" autocomplete="off">
-        <label class="lbl" for="q">Find a topic</label>
-        <input type="search" id="q" name="q" placeholder="e.g. completing the square, SOHCAHTOA, box plots, chapter 9" maxlength="80" enterkeyhint="search" spellcheck="false">
-        <div class="dsearch-res" id="q-res" role="listbox" aria-label="Matching drills" hidden></div>
-      </form>
-      <div>
-        <span class="lbl" id="dr-l">Game, by course</span>
-        <div class="course-groups" id="drills" role="group" aria-labelledby="dr-l"></div>
-      </div>
-      <div>
-        <label class="lbl" for="cls">Class</label>
-        <select id="cls" class="clsel"><option value="">No class — students join with the code</option></select>
-        <p class="muted" id="cls-note" style="margin:6px 0 0;font-size:.9rem">Pick a class and its students get a <b>Join</b> button on their Mathmatix chat screen — no code, no typing, their real names.</p>
-      </div>
-      <div>
-        <span class="lbl" id="bk-l">Playbook</span>
-        <div class="books" id="books" role="group" aria-labelledby="bk-l"></div>
-      </div>
-      <div id="opt-focus" hidden>
-        <span class="lbl" id="fx-l">Facts to drill</span>
-        <div class="seg-ctl" id="o-focus-pre" role="group" aria-labelledby="fx-l"></div>
-        <div class="nums" id="o-focus" role="group" aria-label="Pick the numbers"></div>
-        <p class="muted" id="fx-note" style="margin:6px 0 0;font-size:.9rem"></p>
-      </div>
-      <div>
-        <span class="lbl" id="md-l">Game</span>
-        <div class="modes" role="group" aria-labelledby="md-l">
-          <button class="mode" id="m-drive" aria-pressed="true"><b>Team Drive</b><span>One shared clock. Everyone plays at their own pace on their device; the board shows the field and the play-by-play. Fast and furious.</span></button>
-          <button class="mode" id="m-huddle" aria-pressed="false"><b>Huddle</b><span>One play at a time on the board, everyone answers it, then the reveal shows how the class split and why. You run the pace.</span></button>
-          <button class="mode" id="m-hill" aria-pressed="false"><b>King of the Hill</b><span>Every student for themselves on one hill. Right answers climb; three in a row rolls a boulder onto the climber just above. Highest at the buzzer is king.</span></button>
-          <button class="mode" id="m-heist" aria-pressed="false"><b>Heist</b><span>Every student for themselves, playing for cash. Three right in a row cracks a safe: cash, a jackpot, a grab from someone ahead, a gadget… or a decoy. A wrong answer trips the alarm and locks the screen, so guessing doesn't pay.</span></button>
+    <div class="setup panel steps" style="margin-top:14px">
+
+      <section class="step" aria-labelledby="s1-l">
+        <div class="stephead"><span class="num" aria-hidden="true">1</span><h2 id="s1-l">Who's playing</h2></div>
+        <div class="stepbody">
+          <select id="cls" class="clsel" aria-label="Class"><option value="">No class — students join with the code</option></select>
+          <p class="muted hint" id="cls-note">Pick a class and its students get a <b>Join</b> button on their Mathmatix chat screen — no code, no typing, their real names.</p>
         </div>
-      </div>
-      <div class="row">
-        <div id="opt-drive"><span class="lbl">Clock</span><div class="seg-ctl" id="o-seconds"></div></div>
-        <div id="opt-huddle" hidden style="display:flex;gap:18px;flex-wrap:wrap">
-          <div><span class="lbl">Plays</span><div class="seg-ctl" id="o-plays"></div></div>
-          <div><span class="lbl">Seconds per play</span><div class="seg-ctl" id="o-spp"></div></div>
+      </section>
+
+      <section class="step" aria-labelledby="s2-l">
+        <div class="stephead"><span class="num" aria-hidden="true">2</span><h2 id="s2-l">What to practice</h2><button type="button" class="linkbtn" id="q-toggle" aria-expanded="false" aria-controls="dsearch">Search a topic</button></div>
+        <div class="stepbody">
+          <form class="dsearch" id="dsearch" role="search" autocomplete="off" hidden>
+            <input type="search" id="q" name="q" placeholder="e.g. completing the square, SOHCAHTOA, box plots, chapter 9" maxlength="80" enterkeyhint="search" spellcheck="false" aria-label="Find a topic">
+            <div class="dsearch-res" id="q-res" role="listbox" aria-label="Matching drills" hidden></div>
+          </form>
+          <div class="seg-ctl tabs" id="courses" role="group" aria-label="Course"></div>
+          <div class="unitrow" id="unit-row">
+            <label class="lbl" for="unit">Unit</label>
+            <select id="unit" class="clsel"></select>
+            <p class="muted hint" id="unit-bl"></p>
+          </div>
+          <div id="opt-focus" hidden>
+            <span class="lbl" id="fx-l">Facts to drill</span>
+            <div class="seg-ctl" id="o-focus-pre" role="group" aria-labelledby="fx-l"></div>
+            <div class="nums" id="o-focus" role="group" aria-label="Pick the numbers"></div>
+            <p class="muted hint" id="fx-note"></p>
+          </div>
+          <div id="books-wrap">
+            <span class="lbl" id="bk-l">Section</span>
+            <div class="chips" id="books" role="group" aria-labelledby="bk-l"></div>
+            <p class="muted hint" id="book-bl"></p>
+          </div>
         </div>
-        <button class="go" id="open" style="margin-left:auto">Open lobby</button>
+      </section>
+
+      <section class="step" aria-labelledby="s3-l">
+        <div class="stephead"><span class="num" aria-hidden="true">3</span><h2 id="s3-l">How to play</h2><a class="linkbtn" href="/arcade" target="_blank" rel="noopener">How each game works</a></div>
+        <div class="stepbody">
+          <div class="modes compact" id="modes" role="group" aria-label="Game"></div>
+          <div class="row">
+            <div id="opt-drive"><span class="lbl">Clock</span><div class="seg-ctl" id="o-seconds"></div></div>
+            <div id="opt-huddle" hidden style="display:flex;gap:18px;flex-wrap:wrap">
+              <div><span class="lbl">Plays</span><div class="seg-ctl" id="o-plays"></div></div>
+              <div><span class="lbl">Seconds per play</span><div class="seg-ctl" id="o-spp"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="summary">
+        <div class="sum" id="summary" aria-live="polite"></div>
+        <button class="go" id="open">Open lobby</button>
       </div>
       <div class="err" id="setup-err" role="alert"></div>
     </div>
+    <div class="steps-pad" aria-hidden="true"></div>
   </section>
 
   <!-- ============ LOBBY ============ -->
@@ -183,6 +197,6 @@
 <script src="/js/csrf.js"></script>
 <script src="/js/live-drill/common.js?v=20261106b"></script>
 <script src="/js/live-drill/sound.js?v=20261106"></script>
-<script src="/js/live-drill/host.js?v=20261106c"></script>
+<script src="/js/live-drill/host.js?v=20261107"></script>
 </body>
 </html>

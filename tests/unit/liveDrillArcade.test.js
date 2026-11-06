@@ -22,11 +22,12 @@ test('the four game cards are exactly the modes the game plays, in the order a t
   G._reset();
 });
 
-test('the host page opens on the game a card names (/live-drill?mode=…) and offers every one', () => {
+test('the host page opens on the game a card names (/live-drill?mode=…) and draws its game tiles from this catalogue', () => {
   const host = read('public/js/live-drill/host.js');
   expect(host).toMatch(/URLSearchParams\(location\.search\)\.get\('mode'\)/);
-  const page = read('public/live-drill-host.html');
-  for (const g of arcade.GAMES) expect(page).toContain(`id="m-${g.id}"`);
+  expect(host).toContain("fetch('/api/live-drill/solo/arcade'"); // one source of game names and taglines
+  expect(host).toContain('id="m-${esc(g.id)}"'); // the tiles the ?mode= preselect lands on
+  for (const g of arcade.GAMES) expect(host).toContain(`'${g.id}'`); // the preselect's allow-list knows every game
 });
 
 test('every solo hub is a card with its games and a URL the server routes', () => {
