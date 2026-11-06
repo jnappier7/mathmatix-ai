@@ -817,10 +817,10 @@ function registerUserRoutes(app) {
         }
         hasChanges = true;
       }
-      // Shop tutors must be owned before they can be selected — without this
+      // Shop tutors need their sessions unlocked before they can be selected — without this
       // check any tutor id would be accepted and a paid tutor is one request away.
       if (req.body.selectedTutorId !== undefined && !canSelectTutor(user, req.body.selectedTutorId)) {
-        return res.status(403).json({ message: 'That tutor is locked. Unlock them in the Shop first.', reason: 'tutor_locked' });
+        return res.status(403).json({ message: 'Sessions with that tutor aren\'t unlocked yet. You can unlock them in the Shop.', reason: 'tutor_locked' });
       }
       for (const key in req.body) {
         if (allowedUpdates.includes(key)) {

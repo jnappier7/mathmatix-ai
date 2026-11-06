@@ -781,7 +781,7 @@ const userSchema = new Schema({
       itemId: { type: String, default: null },
       price:  { type: Number, default: 0 },
       at:     { type: Date,   default: null },
-      prevTutorId: { type: String, default: null }          // tutor buys only: who to switch back to on Undo
+      prevTutorId: { type: String, default: null }          // tutor-session unlocks only: who to switch back to on Undo
     }
   },
 

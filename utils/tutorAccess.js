@@ -2,13 +2,14 @@
  * TUTOR ACCESS — who may select which tutor.
  *
  * Core tutors (`unlocked: true` in tutorConfig.js) are open to everyone. Shop
- * tutors (`purchasable: true`) must be owned: their id is in user.unlockedItems,
- * written by a Coins purchase (utils/cosmeticsCatalog.js, slot "tutor") or by the
- * legacy earned-unlock system for accounts that got one before it went dormant.
+ * tutors (`purchasable: true`) need their sessions unlocked: their id is in
+ * user.unlockedItems, written when Coins unlock sessions (utils/cosmeticsCatalog.js,
+ * slot "tutor") or by the legacy earned-unlock system for accounts that got one
+ * before it went dormant. Coins pay for the coaching, never the person.
  * Anything else (unknown id, `active: false`) is not selectable.
  *
  * Before this existed PATCH /api/user/settings stored any selectedTutorId it
- * was sent, so a paid tutor would have been one devtools call away.
+ * was sent, so paid sessions would have been one devtools call away.
  *
  * @module tutorAccess
  */
@@ -29,7 +30,7 @@ function isPurchasableTutor(tutorId) {
     return !!(t && t.purchasable && t.active !== false);
 }
 
-function ownsTutor(user, tutorId) {
+function hasTutorAccess(user, tutorId) {
     const t = getTutor(tutorId);
     if (!t || t.active === false) return false;
     if (t.unlocked === true) return true;
@@ -39,7 +40,7 @@ function ownsTutor(user, tutorId) {
 
 /** May this user set selectedTutorId to tutorId? */
 function canSelectTutor(user, tutorId) {
-    return ownsTutor(user, tutorId);
+    return hasTutorAccess(user, tutorId);
 }
 
-module.exports = { FALLBACK_TUTOR_ID, getTutor, isPurchasableTutor, ownsTutor, canSelectTutor };
+module.exports = { FALLBACK_TUTOR_ID, getTutor, isPurchasableTutor, hasTutorAccess, canSelectTutor };

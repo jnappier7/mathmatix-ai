@@ -60,15 +60,17 @@ const TUTOR_CONFIG = {
   },
   
   // --- SHOP TUTORS ---
-  // purchasable:true — bought with earned Coins in the shop (utils/cosmeticsCatalog.js,
-  // slot "tutor"); ownership is user.unlockedItems. Coins are the ONLY way in: the
+  // purchasable:true — earned Coins unlock SESSIONS with this tutor in the shop
+  // (utils/cosmeticsCatalog.js, slot "tutor"); access is user.unlockedItems.
+  // Wording rule (owner, 2026-11-05): coins pay for sessions/coaching, never for
+  // a person — no "buy/own" a tutor, no rarity tier on a human, in UI or code. Coins are the ONLY way in: the
   // variable-ratio earned unlock (utils/unlockTutors.js) skips these, so the
   // unlockLevel/unlockTrigger fields below are dormant. Selecting one requires
-  // owning it (utils/tutorAccess.js, enforced on PATCH /api/user/settings).
+  // unlocked sessions (utils/tutorAccess.js, enforced on PATCH /api/user/settings).
   // To pull a tutor from the shop entirely, replace purchasable with active:false.
   "ms-rashida": {
     name: "Ms. Rashida",
-    purchasable: true, shopPrice: 500, shopRarity: "rare",
+    purchasable: true, shopPrice: 500,
     cartesiaVoiceId: "607167f6-9bf2-473c-accc-ac7b3b66b30b",
     image: "ms-rashida.png",
     catchphrase: "Let's build your confidence together.",
@@ -88,7 +90,7 @@ const TUTOR_CONFIG = {
   },
   "mr-sierawski": {
     name: "Mr. Sierawski",
-    purchasable: true, shopPrice: 600, shopRarity: "rare",
+    purchasable: true, shopPrice: 600,
     cartesiaVoiceId: "34575e71-908f-4ab6-ab54-b08c95d6597d",
     image: "mr-sierawski.png",
     catchphrase: "There we go!",
@@ -108,7 +110,7 @@ const TUTOR_CONFIG = {
   },
   "prof-davies": {
     name: "Prof. Davies",
-    purchasable: true, shopPrice: 700, shopRarity: "epic",
+    purchasable: true, shopPrice: 700,
     cartesiaVoiceId: "34d923aa-c3b5-4f21-aac7-2c1f12730d4b",
     image: "prof-davies.png",
     catchphrase: "Let's explore the 'why' behind the numbers.",
@@ -128,7 +130,7 @@ const TUTOR_CONFIG = {
   },
   "ms-alex": {
     name: "Ms. Alex",
-    purchasable: true, shopPrice: 750, shopRarity: "epic",
+    purchasable: true, shopPrice: 750,
     cartesiaVoiceId: "a33f7a4c-100f-41cf-a1fd-5822e8fc253f",
     image: "ms-alex.png",
     catchphrase: "A fresh perspective on any problem.",
@@ -148,7 +150,7 @@ const TUTOR_CONFIG = {
   },
   "mr-lee": {
     name: "Mr. Lee",
-    purchasable: true, shopPrice: 800, shopRarity: "epic",
+    purchasable: true, shopPrice: 800,
     cartesiaVoiceId: "16212f18-4955-4be9-a6cd-2196ce2c11d1",
     image: "mr-lee.png",
     catchphrase: "Precision and practice make perfect.",
@@ -168,7 +170,7 @@ const TUTOR_CONFIG = {
   },
   "dr-g": {
     name: "Dr. G",
-    purchasable: true, shopPrice: 900, shopRarity: "legendary",
+    purchasable: true, shopPrice: 900,
     cartesiaVoiceId: "0ad65e7f-006c-47cf-bd31-52279d487913",
     image: "dr-g.png",
     catchphrase: "Strength in numbers.",
@@ -188,7 +190,7 @@ const TUTOR_CONFIG = {
   },
   "mr-wiggles": {
     name: "Mr. Wiggles",
-    purchasable: true, shopPrice: 1100, shopRarity: "legendary",
+    purchasable: true, shopPrice: 1100,
     cartesiaVoiceId: "fb26447f-308b-471e-8b00-8e9f04284eb5",
     image: "wiggles.png",
     catchphrase: "Why was the equals sign so humble? Because he knew he wasn't less than or greater than anyone else!",

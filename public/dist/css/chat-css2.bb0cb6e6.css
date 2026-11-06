@@ -819,10 +819,10 @@ body[data-skin-avatarframe] .cr-player-card .cr-player-avatar > * {
   background: linear-gradient(160deg, #f3f0ff, #e6f7f7);
 }
 .shop-tutor .shop-tutor-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
-.shop-tutor:not(.is-owned) .shop-tutor-portrait img { filter: saturate(0.85); }
-.shop-tutor.shop-rarity-legendary .shop-tutor-portrait {
-  box-shadow: 0 0 0 1px #ffc24b, 0 0 10px rgba(255, 194, 75, 0.5);
-}
+/* No rarity border, glow or greyed-out portrait on a person — the card is the
+   same for every tutor; only the price differs (coins buy sessions, not people). */
+.shop-tutor { border-top-color: #12b3b3; }
+.shop-tutor .shop-item-rarity { text-transform: none; line-height: 1.3; }
 .shop-tutor-catch {
   margin: 0; font-size: 0.75rem; line-height: 1.35; color: #3c4855; font-style: italic;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;

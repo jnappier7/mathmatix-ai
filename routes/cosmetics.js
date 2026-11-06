@@ -27,7 +27,7 @@ function undoInfo(user) {
 }
 
 // GET /api/cosmetics/catalog — catalog + this user's balance/owned/equipped.
-// Shop tutors ride in the same catalog as slot "tutor" (ids `tutor.<tutorId>`);
+// Tutor sessions ride in the same catalog as slot "tutor" (ids `tutor.<tutorId>`);
 // `equipped.tutor` is the current tutor's item id.
 router.get('/catalog', async (req, res) => {
     try {

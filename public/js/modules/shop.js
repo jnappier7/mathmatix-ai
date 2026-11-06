@@ -11,13 +11,14 @@ import { applyCosmetics, applyLoadout } from './cosmeticsApply.js';
 
 const MODAL_ID = 'shop-modal';
 const SLOT_LABELS = {
-    tutor: 'Tutors', theme: 'Themes', bubble: 'Chat Bubbles', avatarFrame: 'Avatar Frames',
+    tutor: 'Tutor sessions', theme: 'Themes', bubble: 'Chat Bubbles', avatarFrame: 'Avatar Frames',
     board: 'Boards', calculator: 'Calculators', header: 'Headers',
 };
-// Tutors lead: they're the biggest thing in the shop and the one a student
-// keeps for every session. A tutor isn't a skin — owning one writes
+// Tutor sessions lead: the biggest thing in the shop and the one a student
+// uses every session. They aren't a skin — unlocking sessions writes
 // unlockedItems and "equipping" switches selectedTutorId (server-side, in
 // utils/cosmeticsCatalog.js), so the page reloads to bring the new tutor in.
+// Copy rule: coins pay for sessions with a tutor, never for the tutor.
 const SLOT_ORDER = ['tutor', 'theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'header'];
 
 // Slots whose surface does not exist on a phone. The shop opens from the mobile
@@ -27,6 +28,10 @@ const SLOT_ORDER = ['tutor', 'theme', 'bubble', 'avatarFrame', 'board', 'calcula
 // breakpoint in shop.css: on desktop the slot works fine and the warning would
 // be wrong. Prefer giving a slot a mobile surface over listing it here.
 const SLOT_NOTES = {
+    // Coins pay for sessions — the coaching — never for the person. Keep every
+    // tutor string in that frame: no "buy/own/get" a tutor, no rarity tier on a
+    // human, no locked-up portrait (owner rule, 2026-11-05).
+    tutor: 'Coins unlock sessions with more tutors. Once unlocked, they can coach you any time.',
     header: 'Headers show on desktop only — the header is hidden on phones.',
 };
 
@@ -188,31 +193,31 @@ async function playTutorVoice(btn, tutorId) {
 }
 
 function tutorCardHTML(id, item) {
-    const owned = state.owned.includes(id);
+    const unlocked = state.owned.includes(id);
     const current = state.equipped.tutor === id;
     const affordable = state.coins >= item.price;
-    const locked = item.unlockLevel && playerLevel() < item.unlockLevel && !owned;
+    const locked = item.unlockLevel && playerLevel() < item.unlockLevel && !unlocked;
     let action;
     if (current) {
-        action = `<button class="shop-btn shop-btn-equipped" disabled>Your tutor ✓</button>`;
-    } else if (owned) {
-        action = `<button class="shop-btn shop-btn-equip" data-act="equip" data-slot="tutor" data-id="${esc(id)}">Switch to ${esc(item.name)}</button>`;
+        action = `<button class="shop-btn shop-btn-equipped" disabled>Coaching you now ✓</button>`;
+    } else if (unlocked) {
+        action = `<button class="shop-btn shop-btn-equip" data-act="equip" data-slot="tutor" data-id="${esc(id)}">Learn with ${esc(item.name)}</button>`;
     } else if (locked) {
         action = `<button class="shop-btn shop-btn-locked" disabled>🔒 Reach Level ${item.unlockLevel}</button>`;
     } else {
         action = `<button class="shop-btn shop-btn-buy" data-act="buy" data-id="${esc(id)}" ${affordable ? '' : 'disabled'}>
-                    🪙 ${item.price}${affordable ? '' : ' — need more'}
+                    🪙 ${item.price} · ${affordable ? 'Unlock sessions' : 'need more'}
                   </button>`;
     }
     const base = '/images/tutor_avatars/' + String(item.image || '').replace(/\.png$/, '');
     return `
-      <div class="shop-item shop-tutor shop-rarity-${esc(item.rarity)}${owned ? ' is-owned' : ''}">
+      <div class="shop-item shop-tutor">
         <picture class="shop-tutor-portrait">
           <source srcset="${esc(base)}.webp" type="image/webp">
           <img src="${esc(base)}.png" alt="" loading="lazy">
         </picture>
         <div class="shop-item-name">${esc(item.name)}</div>
-        <div class="shop-item-rarity">${esc(item.rarity)}</div>
+        ${item.specialties ? `<div class="shop-item-rarity">${esc(item.specialties)}</div>` : ''}
         <p class="shop-tutor-catch">“${esc(item.catchphrase || '')}”</p>
         ${action}
         <button class="shop-btn shop-btn-preview" data-act="voice" data-tutor="${esc(item.tutorId)}">🔊 Hear me</button>
@@ -304,7 +309,7 @@ async function onBodyClick(e) {
             state.owned = data.owned || state.owned.concat(id);
             if (window.currentUser) { window.currentUser.wallet = window.currentUser.wallet || {}; window.currentUser.wallet.coins = data.coins; }
             render();
-            showUndo(data.undo, item.name || 'that');
+            showUndo(data.undo, item.name || 'that', item.slot);
         } else if (act === 'equip' || act === 'unequip') {
             const slot = btn.dataset.slot;
             const itemId = act === 'equip' ? btn.dataset.id : 'default';
@@ -357,13 +362,14 @@ function disarmBuy(btn) {
 }
 
 // ---- Undo the most recent purchase (server-authoritative refund) ---------
-function showUndo(undo, itemName) {
+function showUndo(undo, itemName, slot) {
     if (!undo || !undo.itemId) return;
     const modal = document.getElementById(MODAL_ID);
     if (!modal) return;
     const bar = modal.querySelector('.shop-undo-bar');
     bar.dataset.itemId = undo.itemId;
-    bar.querySelector('.shop-undo-label').textContent = `Bought ${itemName}.`;
+    bar.querySelector('.shop-undo-label').textContent = slot === 'tutor'
+        ? `Unlocked sessions with ${itemName}.` : `Bought ${itemName}.`;
     bar.querySelector('[data-undo]').innerHTML = `↩ Undo (🪙${undo.price} back)`;
     bar.querySelector('[data-undo]').disabled = false;
     bar.hidden = false;
@@ -546,7 +552,7 @@ export async function openShop(opts = {}) {
         const sec = opts && opts.section && document.getElementById(`shop-sec-${opts.section}`);
         if (sec) sec.scrollIntoView({ block: 'start' });
         // A purchase from a moment ago is still undoable — surface it on open.
-        if (data.undo) showUndo(data.undo, state.catalog[data.undo.itemId]?.name || 'that');
+        if (data.undo) showUndo(data.undo, state.catalog[data.undo.itemId]?.name || 'that', state.catalog[data.undo.itemId]?.slot);
         else { const bar = modal.querySelector('.shop-undo-bar'); if (bar) bar.hidden = true; }
     } catch (err) {
         console.warn('Shop load failed', err);
@@ -566,7 +572,7 @@ if (typeof window !== 'undefined') {
     window.openShop = openShop;
     window.closeShop = closeShop;
 
-    // Deep link: /chat.html?shop=tutors (the tutor picker's "Unlock in the Shop").
+    // Deep link: /chat.html?shop=tutors (the tutor picker's "unlock sessions" shelf).
     // Strip the param so a reload after switching tutors doesn't reopen it.
     const params = new URLSearchParams(window.location.search);
     const want = params.get('shop');

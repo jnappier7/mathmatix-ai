@@ -1,5 +1,6 @@
-// Buying a tutor with Coins (shop slot "tutor") and the selection gate that
-// makes the purchase mean something. See utils/cosmeticsCatalog.js TUTOR_ITEMS
+// Unlocking SESSIONS with a tutor for Coins (shop slot "tutor") and the
+// selection gate that makes the unlock mean something. Coins pay for the
+// coaching, never the person — the copy tests below pin that wording. See utils/cosmeticsCatalog.js TUTOR_ITEMS
 // and utils/tutorAccess.js.
 const TUTOR_CONFIG = require('../../utils/tutorConfig');
 const {
@@ -31,11 +32,12 @@ describe('shop tutors come from tutorConfig', () => {
         }
     });
 
-    test('every shop tutor has a price, rarity, voice and portrait', () => {
+    test('every shop tutor has a price, voice and portrait — and no rarity tier', () => {
         for (const item of Object.values(TUTOR_ITEMS)) {
             expect(item.slot).toBe('tutor');
             expect(item.price).toBeGreaterThan(0);
-            expect(['common', 'rare', 'epic', 'legendary']).toContain(item.rarity);
+            expect(item.rarity).toBeUndefined();
+            expect(TUTOR_CONFIG[item.tutorId].shopRarity).toBeUndefined();
             expect(item.unlockLevel).toBe(TUTOR_SHOP_MIN_LEVEL);
             expect(item.image).toBeTruthy();
             expect(TUTOR_CONFIG[item.tutorId].cartesiaVoiceId).toBeTruthy();
@@ -75,7 +77,7 @@ describe('selecting a tutor', () => {
     });
 });
 
-describe('buying a tutor', () => {
+describe('unlocking sessions with a tutor', () => {
     test('debits coins and writes unlockedItems, not ownedCosmetics', () => {
         const u = student();
         const price = TUTOR_ITEMS['tutor.ms-rashida'].price;
@@ -129,7 +131,7 @@ describe('switching to a tutor via the shop', () => {
     });
 });
 
-describe('undoing a tutor purchase', () => {
+describe('undoing a session unlock', () => {
     test('refunds, drops ownership, and puts them back on their previous tutor', () => {
         const u = student({ selectedTutorId: 'maya' });
         applyPurchase(u, 'tutor.prof-davies');
@@ -176,5 +178,33 @@ describe('PATCH /api/user/settings enforces ownership', () => {
         expect(gate).toBeGreaterThan(-1);
         expect(write).toBeGreaterThan(gate);
         expect(handler).toMatch(/status\(403\)/);
+    });
+});
+
+describe('copy: coins pay for sessions, never for a person', () => {
+    // Owner rule (2026-11-05). These are the strings a student reads on the
+    // two surfaces that sell tutor sessions.
+    const fs = require('fs');
+    const path = require('path');
+    const read = (p) => fs.readFileSync(path.join(__dirname, '../..', p), 'utf8');
+    const shop = read('public/js/modules/shop.js');
+    const tutorCard = shop.slice(shop.indexOf('function tutorCardHTML'), shop.indexOf('function itemCardHTML'));
+    const picker = read('public/js/pick-tutor.js');
+    const shelf = picker.slice(picker.indexOf('function renderLocked'), picker.indexOf('/* -------- KICKOFF'));
+
+    test('the tutor card says "Unlock sessions", shows no rarity, and never "buy/own"', () => {
+        expect(tutorCard).toMatch(/Unlock sessions/);
+        expect(tutorCard).not.toMatch(/item\.rarity|shop-rarity/);
+        expect(tutorCard).not.toMatch(/>[^<]*\b(buy|bought|own|owned|purchase)\b[^<]*</i);
+    });
+
+    test('the undo bar says sessions were unlocked for a tutor', () => {
+        expect(shop).toMatch(/Unlocked sessions with \$\{itemName\}/);
+    });
+
+    test('the picker shelf sells sessions and shows faces without a padlock', () => {
+        expect(shelf).toMatch(/unlock sessions with coins/i);
+        expect(shelf).not.toMatch(/fa-lock/);
+        expect(read('public/css/tutor-picker.css')).not.toMatch(/\.tp-lock-portrait img[^}]*grayscale/);
     });
 });

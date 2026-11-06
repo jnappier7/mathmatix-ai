@@ -2,9 +2,10 @@
 //
 // Character-select layout: full-body tutors stand together on the left; the
 // selected one drives a detail panel (name, catchphrase, bio, voice preview,
-// CTA) on the right. Shop tutors the student doesn't own yet sit on a shelf
-// below, each linking into the chat shop (?shop=tutors) where they're bought
-// with Coins. Owning one is server-enforced (PATCH /api/user/settings).
+// CTA) on the right. Tutors whose sessions the student hasn't unlocked yet
+// sit on a shelf below, each linking into the chat shop (?shop=tutors), where
+// coins unlock sessions with them — coins pay for the coaching, never the
+// person. Access is server-enforced (PATCH /api/user/settings).
 //
 // One page, two modes (derived from currentUser.selectedTutorId — no caller
 // plumbing):
@@ -60,14 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!cfg) throw new Error('Tutor configuration not loaded.');
 
       // Core tutors are always selectable; shop tutors (purchasable) only once
-      // owned. Inactive ones (active:false) don't appear at all.
-      const owned = (currentUser && currentUser.unlockedItems) || [];
+      // their sessions are unlocked. Inactive ones (active:false) don't appear.
+      const unlocked = (currentUser && currentUser.unlockedItems) || [];
       const ids = Object.keys(cfg).filter(k => k !== 'default' && cfg[k].active !== false);
       allTutors = ids
-        .filter(k => !cfg[k].purchasable || owned.includes(k))
+        .filter(k => !cfg[k].purchasable || unlocked.includes(k))
         .map(k => ({ id: k, ...cfg[k] }));
       lockedTutors = ids
-        .filter(k => cfg[k].purchasable && !owned.includes(k))
+        .filter(k => cfg[k].purchasable && !unlocked.includes(k))
         .map(k => ({ id: k, ...cfg[k] }))
         .sort((a, b) => (a.shopPrice || 0) - (b.shopPrice || 0));
 
@@ -218,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (choose) return chooseTutor(choose);
   });
 
-  /* -------- SHOP TUTORS SHELF (not owned yet) -------- */
+  /* -------- MORE TUTORS SHELF (sessions not unlocked yet) -------- */
   function renderLocked() {
     if (!lockedShelf) return;
     if (!lockedTutors.length) { lockedShelf.style.display = 'none'; return; }
@@ -226,19 +227,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // shop lives in chat — so onboarding shows the shelf as a tease, not a link.
     const canShop = isSwitching;
     lockedShelf.innerHTML =
-      '<p class="tp-locked-title"><i class="fas fa-star"></i> More tutors — unlock with coins in the Shop</p>' +
+      '<p class="tp-locked-title"><i class="fas fa-star"></i> More tutors — unlock sessions with coins in the Shop</p>' +
       '<div class="tp-locked-row">' +
         lockedTutors.map(t => {
           const inner =
             '<span class="tp-lock-portrait"><picture>' +
               '<source srcset="' + portraitBase(t) + '.webp" type="image/webp">' +
               '<img src="' + portraitBase(t) + '.png" alt="" loading="lazy">' +
-            '</picture><span class="tp-lock-icon"><i class="fas fa-lock"></i></span></span>' +
+            '</picture></span>' +
             '<span class="tp-lock-name">' + esc(t.name) + '</span>' +
-            '<span class="tp-lock-hint">🪙 ' + esc(String(t.shopPrice || '')) + '</span>';
+            '<span class="tp-lock-hint">🪙 ' + esc(String(t.shopPrice || '')) + ' · sessions</span>';
           return canShop
-            ? '<a class="tp-lock" href="/chat.html?shop=tutors" title="Unlock ' + esc(t.name) + ' in the Shop">' + inner + '</a>'
-            : '<div class="tp-lock" title="Unlock in the Shop once you start learning">' + inner + '</div>';
+            ? '<a class="tp-lock" href="/chat.html?shop=tutors" title="Unlock sessions with ' + esc(t.name) + ' in the Shop">' + inner + '</a>'
+            : '<div class="tp-lock" title="Unlock sessions in the Shop once you start learning">' + inner + '</div>';
         }).join('') +
       '</div>';
   }
