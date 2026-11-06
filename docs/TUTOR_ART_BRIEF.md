@@ -97,7 +97,7 @@ Once a tutor's files are in `public/images/tutor_avatars/` and `public/videos/`:
    "current-style art" block in `tests/unit/tutorShop.test.js` checks the files
    exist on the 961×1637 canvas. Prepare cutouts like the 2026-11-06 batch:
    drop alpha < 24 and specks under 3000 px, scale to a realistic height
-   (Bob 1390 px, Mr. Nappier 1502, Ms. Maria 1269, Maya 1216), feet on y = 1578,
+   (Bob 1390 px, Mr. Nappier 1502, Ms. Maria 1269, Maya 1216; Mr. Sierawski 1440), feet on y = 1578,
    centred; pngquant `--quality=80-98` (lossy PNG without it blotches skin
    tones) plus `.webp` q80 and `.avif` q60.
 4. Portraits: `utils/tutorConfig.js` `image` and the copy in
@@ -107,4 +107,5 @@ Once a tutor's files are in `public/images/tutor_avatars/` and `public/videos/`:
    import at the top of `public/js/script.js` (and `script.js?v=` in
    `chat.html`), `pick-tutor.js?v=` in `public/pick-tutor.html`, and
    `VIDEO_VERSION` in `chat-redesign.js` if a clip is re-exported under the same
-   name. Then check the chat page and the picker in the browser.
+   name, and `ART_V` in `public/js/pick-tutor.js` when a `-fullBody` file is
+   re-exported under the same name. Then check the chat page and the picker in the browser.
