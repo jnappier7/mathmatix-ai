@@ -10,7 +10,14 @@
  * @module cosmeticsCatalog
  */
 
+const TUTOR_CONFIG = require('./tutorConfig');
+const { canSelectTutor, hasTutorAccess, isPurchasableTutor, FALLBACK_TUTOR_ID } = require('./tutorAccess');
+
+// Visual loadout slots. 'tutor' is deliberately NOT one of these: tutor sessions
+// aren't a skin in equippedCosmetics — unlocking them writes user.unlockedItems
+// and "equipping" writes user.selectedTutorId. See TUTOR_ITEMS below.
 const SLOTS = ['theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'header'];
+const TUTOR_SLOT = 'tutor';
 
 // Cosmetics catalog. Everything here renders from PURE CSS (public/css/cosmetics.css)
 // keyed off body attributes — no art assets required — so equipping anything
@@ -66,6 +73,30 @@ const CATALOG = {
     'header.wave':    { slot: 'header',      name: 'Wave Header',         price: 200, rarity: 'common', skinClass: 'skin-header-wave' },
 };
 
+// ---- Tutor sessions (slot 'tutor') ----
+// Each item unlocks SESSIONS with a tutor — coins pay for the coaching, never
+// the person (owner rule 2026-11-05: no rarity tier on a human, no "buy a
+// tutor" wording). Built from the purchasable:true entries in tutorConfig.js,
+// so price and persona live in one place. Coins are the only way in — the
+// earned unlock in utils/unlockTutors.js skips them. A low level floor stops a
+// brand-new account spending its welcome bonus before it has met the free ones.
+const TUTOR_SHOP_MIN_LEVEL = 3;
+const tutorItemId = (tutorId) => `tutor.${tutorId}`;
+const TUTOR_ITEMS = Object.fromEntries(
+    Object.entries(TUTOR_CONFIG)
+        .filter(([id]) => isPurchasableTutor(id))
+        .map(([id, t]) => [tutorItemId(id), {
+            slot: TUTOR_SLOT,
+            name: t.name,
+            price: t.shopPrice,
+            unlockLevel: TUTOR_SHOP_MIN_LEVEL,
+            tutorId: id,
+            image: t.image,
+            catchphrase: t.catchphrase,
+            specialties: t.specialties,
+        }])
+);
+
 const DEFAULT_LOADOUT = {
     theme: 'default', bubble: 'default', avatarFrame: 'default',
     board: 'default', calculator: 'default', header: 'default',
@@ -77,8 +108,19 @@ const DEFAULT_LOADOUT = {
 // recent purchase.
 const REFUND_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
 
+const hasOwn = (o, k) => typeof k === 'string' && Object.prototype.hasOwnProperty.call(o, k);
+
 function getItem(itemId) {
-    return CATALOG[itemId] || null;
+    if (hasOwn(CATALOG, itemId)) return CATALOG[itemId];
+    if (hasOwn(TUTOR_ITEMS, itemId)) return TUTOR_ITEMS[itemId];
+    return null;
+}
+
+/** Does the user have this item? Tutor sessions live in unlockedItems, skins in ownedCosmetics. */
+function isOwned(user, itemId, item = getItem(itemId)) {
+    if (!item || !user) return false;
+    if (item.slot === TUTOR_SLOT) return hasTutorAccess(user, item.tutorId);
+    return (user.ownedCosmetics || []).includes(itemId);
 }
 
 /**
@@ -89,8 +131,7 @@ function canPurchase(user, itemId) {
     const item = getItem(itemId);
     if (!item) return { ok: false, reason: 'unknown_item' };
     if (!user) return { ok: false, reason: 'no_user' };
-    const owned = user.ownedCosmetics || [];
-    if (owned.includes(itemId)) return { ok: false, reason: 'already_owned' };
+    if (isOwned(user, itemId, item)) return { ok: false, reason: 'already_owned' };
     if (item.unlockLevel && (user.level || 1) < item.unlockLevel) {
         return { ok: false, reason: 'level_locked' };
     }
@@ -110,16 +151,26 @@ function applyPurchase(user, itemId) {
     const item = getItem(itemId);
     if (!user.wallet) user.wallet = { coins: 0, lifetimeEarned: 0, dailyEarned: 0 };
     user.wallet.coins = Math.max(0, (user.wallet.coins || 0) - item.price);
-    if (!Array.isArray(user.ownedCosmetics)) user.ownedCosmetics = [];
-    user.ownedCosmetics.push(itemId);
+    if (item.slot === TUTOR_SLOT) {
+        if (!Array.isArray(user.unlockedItems)) user.unlockedItems = [];
+        user.unlockedItems.push(item.tutorId);
+    } else {
+        if (!Array.isArray(user.ownedCosmetics)) user.ownedCosmetics = [];
+        user.ownedCosmetics.push(itemId);
+    }
     // Record the buy so it can be undone (one-tap refund of the most recent purchase).
-    user.wallet.lastPurchase = { itemId, price: item.price, at: new Date() };
+    // prevTutorId lets an Undo put the student back on the tutor they had, if
+    // they switched to the one whose sessions they just unlocked.
+    user.wallet.lastPurchase = {
+        itemId, price: item.price, at: new Date(),
+        prevTutorId: item.slot === TUTOR_SLOT ? (user.selectedTutorId || null) : null,
+    };
 
     if (typeof user.markModified === 'function') {
         user.markModified('wallet');
-        user.markModified('ownedCosmetics');
+        user.markModified(item.slot === TUTOR_SLOT ? 'unlockedItems' : 'ownedCosmetics');
     }
-    return { ok: true, coins: user.wallet.coins, owned: user.ownedCosmetics };
+    return { ok: true, coins: user.wallet.coins, owned: ownedIds(user) };
 }
 
 /**
@@ -133,7 +184,7 @@ function canRefund(user, itemId, now = Date.now()) {
     const lp = user.wallet && user.wallet.lastPurchase;
     if (!lp || !lp.itemId) return { ok: false, reason: 'nothing_to_undo' };
     if (lp.itemId !== itemId) return { ok: false, reason: 'not_last_purchase' };
-    if (!(user.ownedCosmetics || []).includes(itemId)) return { ok: false, reason: 'not_owned' };
+    if (!isOwned(user, itemId)) return { ok: false, reason: 'not_owned' };
     const at = lp.at ? new Date(lp.at).getTime() : 0;
     if (!at || (now - at) > REFUND_WINDOW_MS) return { ok: false, reason: 'window_expired' };
     return { ok: true };
@@ -153,21 +204,35 @@ function applyRefund(user, itemId, now = Date.now()) {
 
     // Refund coins.
     user.wallet.coins = (user.wallet.coins || 0) + price;
-    // Drop ownership.
-    user.ownedCosmetics = (user.ownedCosmetics || []).filter(id => id !== itemId);
-    // Unequip if it was worn.
-    if (item && user.equippedCosmetics && user.equippedCosmetics[item.slot] === itemId) {
-        user.equippedCosmetics[item.slot] = 'default';
+    const prevTutorId = user.wallet.lastPurchase && user.wallet.lastPurchase.prevTutorId;
+    if (item && item.slot === TUTOR_SLOT) {
+        // Drop access, and if they're learning with that tutor right now, put
+        // them back on the one they had before unlocking (or the house default).
+        user.unlockedItems = (user.unlockedItems || []).filter(id => id !== item.tutorId);
+        if (user.selectedTutorId === item.tutorId) {
+            user.selectedTutorId = prevTutorId && canSelectTutor(user, prevTutorId) ? prevTutorId : FALLBACK_TUTOR_ID;
+        }
+    } else {
+        // Drop ownership.
+        user.ownedCosmetics = (user.ownedCosmetics || []).filter(id => id !== itemId);
+        // Unequip if it was worn.
+        if (item && user.equippedCosmetics && user.equippedCosmetics[item.slot] === itemId) {
+            user.equippedCosmetics[item.slot] = 'default';
+        }
     }
     // Consume the undo — only the single most recent purchase is ever refundable.
-    user.wallet.lastPurchase = { itemId: null, price: 0, at: null };
+    user.wallet.lastPurchase = { itemId: null, price: 0, at: null, prevTutorId: null };
 
     if (typeof user.markModified === 'function') {
         user.markModified('wallet');
         user.markModified('ownedCosmetics');
         user.markModified('equippedCosmetics');
+        user.markModified('unlockedItems');
     }
-    return { ok: true, coins: user.wallet.coins, owned: user.ownedCosmetics, equipped: user.equippedCosmetics, refundedItemId: itemId };
+    return {
+        ok: true, coins: user.wallet.coins, owned: ownedIds(user), equipped: equippedView(user),
+        refundedItemId: itemId, selectedTutorId: user.selectedTutorId || null,
+    };
 }
 
 /**
@@ -175,6 +240,15 @@ function applyRefund(user, itemId, now = Date.now()) {
  * @returns {{ok:boolean, reason?:string}}
  */
 function canEquip(user, slot, itemId) {
+    if (slot === TUTOR_SLOT) {
+        // There is no "no tutor" — switching is the only move, and only to one you can select.
+        const item = getItem(itemId);
+        const tutorId = item && item.slot === TUTOR_SLOT ? item.tutorId
+            : (typeof itemId === 'string' && itemId.startsWith('tutor.') ? itemId.slice(6) : null);
+        if (!tutorId) return { ok: false, reason: 'unknown_item' };
+        if (!canSelectTutor(user, tutorId)) return { ok: false, reason: 'not_owned' };
+        return { ok: true, tutorId };
+    }
     if (!SLOTS.includes(slot)) return { ok: false, reason: 'unknown_slot' };
     if (itemId === 'default' || itemId == null) return { ok: true };
     const item = getItem(itemId);
@@ -192,13 +266,38 @@ function canEquip(user, slot, itemId) {
 function applyEquip(user, slot, itemId) {
     const check = canEquip(user, slot, itemId);
     if (!check.ok) return { ok: false, reason: check.reason };
+    if (slot === TUTOR_SLOT) {
+        user.selectedTutorId = check.tutorId;
+        return { ok: true, equipped: equippedView(user), selectedTutorId: check.tutorId };
+    }
     if (!user.equippedCosmetics) user.equippedCosmetics = { ...DEFAULT_LOADOUT };
     user.equippedCosmetics[slot] = itemId || 'default';
     if (typeof user.markModified === 'function') user.markModified('equippedCosmetics');
     return { ok: true, equipped: user.equippedCosmetics };
 }
 
+/** Every shop id the user has: skins from ownedCosmetics + `tutor.<id>` for unlocked tutor sessions. */
+function ownedIds(user) {
+    const skins = (user && user.ownedCosmetics) || [];
+    const tutors = Object.keys(TUTOR_ITEMS).filter(id => isOwned(user, id));
+    return skins.concat(tutors);
+}
+
+/** The loadout as the shop sees it: the skin slots plus `tutor` = the current tutor's item id. */
+function equippedView(user) {
+    const out = { ...DEFAULT_LOADOUT, ...((user && user.equippedCosmetics) || {}) };
+    const sel = user && user.selectedTutorId;
+    out.tutor = sel ? tutorItemId(sel) : null;
+    return out;
+}
+
 module.exports = {
+    TUTOR_SLOT,
+    TUTOR_ITEMS,
+    TUTOR_SHOP_MIN_LEVEL,
+    ownedIds,
+    equippedView,
+    isOwned,
     SLOTS,
     CATALOG,
     DEFAULT_LOADOUT,

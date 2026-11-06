@@ -11,10 +11,15 @@ import { applyCosmetics, applyLoadout } from './cosmeticsApply.js';
 
 const MODAL_ID = 'shop-modal';
 const SLOT_LABELS = {
-    theme: 'Themes', bubble: 'Chat Bubbles', avatarFrame: 'Avatar Frames',
+    tutor: 'Tutor sessions', theme: 'Themes', bubble: 'Chat Bubbles', avatarFrame: 'Avatar Frames',
     board: 'Boards', calculator: 'Calculators', header: 'Headers',
 };
-const SLOT_ORDER = ['theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'header'];
+// Tutor sessions lead: the biggest thing in the shop and the one a student
+// uses every session. They aren't a skin — unlocking sessions writes
+// unlockedItems and "equipping" switches selectedTutorId (server-side, in
+// utils/cosmeticsCatalog.js), so the page reloads to bring the new tutor in.
+// Copy rule: coins pay for sessions with a tutor, never for the tutor.
+const SLOT_ORDER = ['tutor', 'theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'header'];
 
 // Slots whose surface does not exist on a phone. The shop opens from the mobile
 // chat, so without this a student browsing on their phone can spend 200 earned
@@ -23,10 +28,14 @@ const SLOT_ORDER = ['theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'he
 // breakpoint in shop.css: on desktop the slot works fine and the warning would
 // be wrong. Prefer giving a slot a mobile surface over listing it here.
 const SLOT_NOTES = {
+    // Coins pay for sessions — the coaching — never for the person. Keep every
+    // tutor string in that frame: no "buy/own/get" a tutor, no rarity tier on a
+    // human, no locked-up portrait (owner rule, 2026-11-05).
+    tutor: 'Coins unlock sessions with more tutors. Once unlocked, they can coach you any time.',
     header: 'Headers show on desktop only — the header is hidden on phones.',
 };
 
-let state = { catalog: {}, coins: 0, owned: [], equipped: {} };
+let state = { catalog: {}, coins: 0, level: 1, owned: [], equipped: {} };
 let preview = null; // { slot, id } while a "try-on" is active, else null
 let undoTimer = null; // auto-hide timer for the post-purchase Undo bar
 let revealUndo = null; // undoes a surface we opened for the preview, else null
@@ -157,12 +166,70 @@ function swatchHTML(id, rarity) {
     return `<div class="shop-swatch shop-swatch-${esc(rarity)}" style="background:${bg}" aria-hidden="true"></div>`;
 }
 
+function playerLevel() {
+    return state.level || (window.currentUser && window.currentUser.level) || 1;
+}
+
+let voiceAudio = null;
+async function playTutorVoice(btn, tutorId) {
+    const t = (window.TUTOR_CONFIG || {})[tutorId];
+    if (!t || !t.cartesiaVoiceId || !t.voicePreview) return;
+    if (voiceAudio) { voiceAudio.pause(); voiceAudio = null; }
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = '🔊 Playing…';
+    const done = () => { btn.disabled = false; btn.innerHTML = orig; };
+    try {
+        const res = await post('/api/speak', { text: t.voicePreview, voiceId: t.cartesiaVoiceId });
+        if (!res.ok) throw new Error('speak');
+        const url = URL.createObjectURL(await res.blob());
+        voiceAudio = new Audio(url);
+        voiceAudio.onended = () => { URL.revokeObjectURL(url); voiceAudio = null; done(); };
+        await voiceAudio.play();
+    } catch (err) {
+        console.warn('Tutor voice preview failed', err);
+        done();
+    }
+}
+
+function tutorCardHTML(id, item) {
+    const unlocked = state.owned.includes(id);
+    const current = state.equipped.tutor === id;
+    const affordable = state.coins >= item.price;
+    const locked = item.unlockLevel && playerLevel() < item.unlockLevel && !unlocked;
+    let action;
+    if (current) {
+        action = `<button class="shop-btn shop-btn-equipped" disabled>Coaching you now ✓</button>`;
+    } else if (unlocked) {
+        action = `<button class="shop-btn shop-btn-equip" data-act="equip" data-slot="tutor" data-id="${esc(id)}">Learn with ${esc(item.name)}</button>`;
+    } else if (locked) {
+        action = `<button class="shop-btn shop-btn-locked" disabled>🔒 Reach Level ${item.unlockLevel}</button>`;
+    } else {
+        action = `<button class="shop-btn shop-btn-buy" data-act="buy" data-id="${esc(id)}" ${affordable ? '' : 'disabled'}>
+                    🪙 ${item.price} · ${affordable ? 'Unlock sessions' : 'need more'}
+                  </button>`;
+    }
+    const base = '/images/tutor_avatars/' + String(item.image || '').replace(/\.png$/, '');
+    return `
+      <div class="shop-item shop-tutor">
+        <picture class="shop-tutor-portrait">
+          <source srcset="${esc(base)}.webp" type="image/webp">
+          <img src="${esc(base)}.png" alt="" loading="lazy">
+        </picture>
+        <div class="shop-item-name">${esc(item.name)}</div>
+        ${item.specialties ? `<div class="shop-item-rarity">${esc(item.specialties)}</div>` : ''}
+        <p class="shop-tutor-catch">“${esc(item.catchphrase || '')}”</p>
+        ${action}
+        <button class="shop-btn shop-btn-preview" data-act="voice" data-tutor="${esc(item.tutorId)}">🔊 Hear me</button>
+      </div>`;
+}
+
 function itemCardHTML(id, item) {
+    if (item.slot === 'tutor') return tutorCardHTML(id, item);
     const owned = state.owned.includes(id);
     const equipped = state.equipped[item.slot] === id;
     const affordable = state.coins >= item.price;
-    const level = (window.currentUser && window.currentUser.level) || 1;
-    const locked = item.unlockLevel && level < item.unlockLevel && !owned;
+    const locked = item.unlockLevel && playerLevel() < item.unlockLevel && !owned;
     let action;
     if (equipped) {
         action = `<button class="shop-btn shop-btn-equipped" data-act="unequip" data-slot="${esc(item.slot)}">Equipped ✓</button>`;
@@ -208,7 +275,7 @@ function render() {
             .map(([id, item]) => itemCardHTML(id, item)).join('');
         const note = SLOT_NOTES[slot]
             ? `<p class="shop-section-note">${esc(SLOT_NOTES[slot])}</p>` : '';
-        return `<section class="shop-section">
+        return `<section class="shop-section" id="shop-sec-${esc(slot)}">
                   <h3 class="shop-section-head">${esc(SLOT_LABELS[slot] || slot)}</h3>
                   ${note}
                   <div class="shop-grid">${items}</div>
@@ -223,11 +290,15 @@ async function onBodyClick(e) {
     if (!btn) return;
     const act = btn.dataset.act;
     if (act === 'preview') { startPreview(btn.dataset.id); return; }
+    if (act === 'voice') { playTutorVoice(btn, btn.dataset.tutor); return; }
     btn.disabled = true;
     try {
         if (act === 'buy') {
             // "Are you sure?" — first tap arms the button, second tap buys.
-            if (btn.dataset.armed !== '1') { armBuy(btn); return; }
+            // Re-enable the armed button: the disable above is for the request,
+            // and an armed button left disabled can never take the confirming
+            // tap — grid buys silently did nothing until this line existed.
+            if (btn.dataset.armed !== '1') { btn.disabled = false; armBuy(btn); return; }
             disarmBuy(btn);
             const id = btn.dataset.id;
             const item = state.catalog[id] || {};
@@ -238,13 +309,21 @@ async function onBodyClick(e) {
             state.owned = data.owned || state.owned.concat(id);
             if (window.currentUser) { window.currentUser.wallet = window.currentUser.wallet || {}; window.currentUser.wallet.coins = data.coins; }
             render();
-            showUndo(data.undo, item.name || 'that');
+            showUndo(data.undo, item.name || 'that', item.slot);
         } else if (act === 'equip' || act === 'unequip') {
             const slot = btn.dataset.slot;
             const itemId = act === 'equip' ? btn.dataset.id : 'default';
             const res = await post('/api/cosmetics/equip', { slot, itemId });
             const data = await res.json();
             if (!res.ok || !data.success) return flash(btn, 'Failed');
+            if (slot === 'tutor') {
+                // The tutor is the whole chat surface — portrait, voice, persona,
+                // greeting — so bring them in with a fresh page.
+                btn.textContent = 'Switching…';
+                if (window.currentUser) window.currentUser.selectedTutorId = data.selectedTutorId;
+                window.location.reload();
+                return;
+            }
             state.equipped = data.equipped || { ...state.equipped, [slot]: itemId };
             if (window.currentUser) window.currentUser.equippedCosmetics = state.equipped;
             applyCosmetics(window.currentUser); // reflect the change live
@@ -283,13 +362,14 @@ function disarmBuy(btn) {
 }
 
 // ---- Undo the most recent purchase (server-authoritative refund) ---------
-function showUndo(undo, itemName) {
+function showUndo(undo, itemName, slot) {
     if (!undo || !undo.itemId) return;
     const modal = document.getElementById(MODAL_ID);
     if (!modal) return;
     const bar = modal.querySelector('.shop-undo-bar');
     bar.dataset.itemId = undo.itemId;
-    bar.querySelector('.shop-undo-label').textContent = `Bought ${itemName}.`;
+    bar.querySelector('.shop-undo-label').textContent = slot === 'tutor'
+        ? `Unlocked sessions with ${itemName}.` : `Bought ${itemName}.`;
     bar.querySelector('[data-undo]').innerHTML = `↩ Undo (🪙${undo.price} back)`;
     bar.querySelector('[data-undo]').disabled = false;
     bar.hidden = false;
@@ -312,6 +392,12 @@ async function onUndo() {
         state.coins = data.coins;
         state.owned = data.owned || state.owned.filter(x => x !== itemId);
         if (data.equipped) state.equipped = data.equipped;
+        // Undoing the tutor you're talking to switches you back — reload to show it.
+        if (data.selectedTutorId && window.currentUser
+            && data.selectedTutorId !== window.currentUser.selectedTutorId) {
+            window.location.reload();
+            return;
+        }
         if (window.currentUser) {
             window.currentUser.wallet = window.currentUser.wallet || {};
             window.currentUser.wallet.coins = data.coins;
@@ -350,8 +436,7 @@ function startPreview(id) {
 
     const actionBtn = bar.querySelector('[data-preview-action]');
     const owned = state.owned.includes(id);
-    const level = (window.currentUser && window.currentUser.level) || 1;
-    const locked = item.unlockLevel && level < item.unlockLevel && !owned;
+    const locked = item.unlockLevel && playerLevel() < item.unlockLevel && !owned;
     if (owned) {
         actionBtn.textContent = 'Equip this';
         actionBtn.className = 'shop-btn shop-btn-equip shop-preview-action';
@@ -451,7 +536,8 @@ function flashEl(btn, msg) {
     setTimeout(() => { btn.textContent = orig; }, 1200);
 }
 
-export async function openShop() {
+/** Open the shop. `opts.section` (a slot, e.g. 'tutor') scrolls to that shelf. */
+export async function openShop(opts = {}) {
     const modal = buildModal();
     modal.querySelector('#shop-body').innerHTML = `<div class="shop-empty">Loading…</div>`;
     modal.hidden = false;
@@ -461,10 +547,12 @@ export async function openShop() {
         const res = await fetch('/api/cosmetics/catalog', { credentials: 'include' });
         const data = await res.json();
         if (!res.ok || !data.success) throw new Error('catalog');
-        state = { catalog: data.catalog || {}, coins: data.coins || 0, owned: data.owned || [], equipped: data.equipped || {} };
+        state = { catalog: data.catalog || {}, coins: data.coins || 0, level: data.level || 1, owned: data.owned || [], equipped: data.equipped || {} };
         render();
+        const sec = opts && opts.section && document.getElementById(`shop-sec-${opts.section}`);
+        if (sec) sec.scrollIntoView({ block: 'start' });
         // A purchase from a moment ago is still undoable — surface it on open.
-        if (data.undo) showUndo(data.undo, state.catalog[data.undo.itemId]?.name || 'that');
+        if (data.undo) showUndo(data.undo, state.catalog[data.undo.itemId]?.name || 'that', state.catalog[data.undo.itemId]?.slot);
         else { const bar = modal.querySelector('.shop-undo-bar'); if (bar) bar.hidden = true; }
     } catch (err) {
         console.warn('Shop load failed', err);
@@ -483,4 +571,18 @@ export function closeShop() {
 if (typeof window !== 'undefined') {
     window.openShop = openShop;
     window.closeShop = closeShop;
+
+    // Deep link: /chat.html?shop=tutors (the tutor picker's "unlock sessions" shelf).
+    // Strip the param so a reload after switching tutors doesn't reopen it.
+    const params = new URLSearchParams(window.location.search);
+    const want = params.get('shop');
+    if (want) {
+        params.delete('shop');
+        const qs = params.toString();
+        history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : '') + window.location.hash);
+        const section = want === 'tutors' ? 'tutor' : want;
+        const go = () => openShop({ section });
+        if (document.readyState === 'complete') setTimeout(go, 300);
+        else window.addEventListener('load', () => setTimeout(go, 300), { once: true });
+    }
 }
