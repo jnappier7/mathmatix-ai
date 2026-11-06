@@ -478,31 +478,86 @@
   }
 
   // ---------------- the hill ----------------
+  // The scene is one SVG (viewBox 1000×430): sky, haze ridges for depth, the mountain with a snow
+  // cap, a switchback trail, contour lines at 25/50/75, pines and rocks on the lower slope — drawn
+  // once — and a dynamic layer on top: climbers as little figures in their own colour with a name
+  // badge, the king crowned and glowing, a shield bubble, a boulder that ROLLS from the thrower to
+  // the climber it hits (with a dust burst), a tumble on the one knocked down, and a sparkle when
+  // the crown changes hands. Height is the geometry's only input: y is linear in h, x is a hash of
+  // the student's id spread across the slope's width at that height, so nobody drifts sideways.
   const SUMMIT_Y = 64; const BASE_Y = 410; const PLATEAU = 110;
   const yOf = (h, summit) => BASE_Y - (h / summit) * (BASE_Y - SUMMIT_Y);
+  const idHash = (id) => { let n = 0; for (const ch of String(id)) n = (n * 31 + ch.charCodeAt(0)) >>> 0; return n; };
   /** A climber's spot across the slope: fixed per student (a hash of their id), so nobody jumps sideways. */
   function xOf(c, h, summit) {
-    let n = 0;
-    for (const ch of c.id) n = (n * 31 + ch.charCodeAt(0)) >>> 0;
     const half = 370 * (1 - h / summit) + PLATEAU; // the hill is a mesa: a crowd at the top spreads out
-    return 500 + ((n % 1000) / 500 - 1) * half * 0.85;
+    return 500 + ((idHash(c.id) % 1000) / 500 - 1) * half * 0.85;
   }
   const initials = (name) => name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+  // twelve jackets a class can tell apart on a green hill, picked by the same hash
+  const JACKETS = ['#ff6a5c', '#4cb3ff', '#ffb547', '#b388ff', '#3ccf7e', '#ff8fd0', '#ffd166', '#7ee8fa', '#f5a623', '#c3f73a', '#ff9b73', '#9bd5ff'];
+  const jacketOf = (id) => JACKETS[idHash(id) % JACKETS.length];
+  /** The half-width of the slope at height h (the mountain's outline). */
+  const halfAt = (h, summit) => 370 * (1 - h / summit) + PLATEAU + 20;
+
+  function hillScene(summit) {
+    const L = (h) => 500 - halfAt(h, summit); const R = (h) => 500 + halfAt(h, summit); const Y = (h) => yOf(h, summit);
+    // the trail: switchbacks up the face, one bend per quarter
+    const trail = [[0, 0.62], [12, 0.3], [25, 0.68], [38, 0.34], [50, 0.64], [62, 0.38], [75, 0.6], [87, 0.42], [100, 0.5]]
+      .map(([h, t]) => `${(L(h) + (R(h) - L(h)) * t).toFixed(0)},${Y(h).toFixed(0)}`).join(' ');
+    const contour = (h) => `<path d="M${L(h) + 10},${Y(h)} Q500,${Y(h) - 10} ${R(h) - 10},${Y(h)}" class="contour"/><text class="ctext" x="${R(h) - 6}" y="${Y(h) - 4}" text-anchor="end">${h}</text>`;
+    const pine = (x, y, s) => `<use href="#pine" transform="translate(${x} ${y}) scale(${s})"/>`;
+    const rock = (x, y, rx, ry) => `<ellipse class="rockout" cx="${x}" cy="${y}" rx="${rx}" ry="${ry}"/>`;
+    const cloud = (x, y, s, dur) => `<g class="cloud" style="animation-duration:${dur}s"><g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="0" rx="46" ry="16"/><ellipse cx="-22" cy="-6" rx="24" ry="14"/><ellipse cx="18" cy="-9" rx="28" ry="17"/></g></g>`;
+    return `<defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1a2e"/><stop offset=".55" stop-color="#1d3f5e"/><stop offset="1" stop-color="#3b6e8a"/></linearGradient>
+        <linearGradient id="hillg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6aa36e"/><stop offset=".45" stop-color="#3f8a52"/><stop offset="1" stop-color="#1d4a2d"/></linearGradient>
+        <linearGradient id="shade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient>
+        <radialGradient id="sun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff2c4"/><stop offset=".6" stop-color="#ffd166"/><stop offset="1" stop-color="#ffd166" stop-opacity="0"/></radialGradient>
+        <radialGradient id="kingglow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffb547" stop-opacity=".55"/><stop offset="1" stop-color="#ffb547" stop-opacity="0"/></radialGradient>
+        <symbol id="pine" overflow="visible"><rect x="-2" y="-4" width="4" height="8" fill="#4a2f1a"/><polygon points="0,-34 -12,-14 12,-14" fill="#1f5a33"/><polygon points="0,-26 -15,-2 15,-2" fill="#17472a"/><polygon points="0,-18 -18,8 18,8" fill="#113a21"/></symbol>
+        <symbol id="boulder" overflow="visible"><circle r="11" fill="#8d7f70" stroke="#4e4338" stroke-width="2"/><path d="M-6,-3 L-1,2 L4,-4 M-3,6 L3,5" stroke="#4e4338" stroke-width="1.5" fill="none" stroke-linecap="round"/></symbol>
+      </defs>
+      <rect width="1000" height="450" fill="url(#sky)"/>
+      <circle cx="150" cy="80" r="46" fill="url(#sun)"/>
+      ${cloud(230, 60, 1, 38)}${cloud(760, 44, 0.8, 52)}${cloud(900, 110, 0.6, 46)}
+      <polygon class="ridge far" points="0,300 120,190 220,240 330,150 420,200 500,170 600,210 700,140 800,200 900,160 1000,230 1000,430 0,430"/>
+      <polygon class="ridge near" points="0,340 90,270 180,300 260,230 350,280 440,250 560,290 650,230 760,280 860,240 1000,300 1000,430 0,430"/>
+      <polygon points="20,${BASE_Y} ${500 - PLATEAU - 20},${SUMMIT_Y} ${500 + PLATEAU + 20},${SUMMIT_Y} 980,${BASE_Y}" fill="url(#hillg)" stroke="#2c5f3a" stroke-width="3" stroke-linejoin="round"/>
+      <polygon points="500,${SUMMIT_Y} ${500 + PLATEAU + 20},${SUMMIT_Y} 980,${BASE_Y} 500,${BASE_Y}" fill="url(#shade)"/>
+      ${contour(25)}${contour(50)}${contour(75)}
+      <polyline class="trail" points="${trail}"/>
+      ${rock(300, 330, 26, 12)}${rock(690, 300, 20, 9)}${rock(420, 250, 14, 7)}${rock(610, 190, 12, 6)}${rock(560, 360, 30, 13)}
+      <polygon points="${500 - PLATEAU - 20},${SUMMIT_Y} ${500 + PLATEAU + 20},${SUMMIT_Y} ${500 + PLATEAU + 46},${SUMMIT_Y + 22} ${500 + 40},${SUMMIT_Y + 14} 500,${SUMMIT_Y + 26} ${500 - 40},${SUMMIT_Y + 14} ${500 - PLATEAU - 46},${SUMMIT_Y + 22}" fill="#f4f8f4" opacity=".92"/>
+      <line x1="500" y1="${SUMMIT_Y - 6}" x2="500" y2="${SUMMIT_Y - 46}" stroke="#eee" stroke-width="3"/><polygon class="flag" points="500,${SUMMIT_Y - 46} 534,${SUMMIT_Y - 38} 500,${SUMMIT_Y - 30}"/>
+      <rect x="0" y="${BASE_Y}" width="1000" height="${450 - BASE_Y}" fill="#122c1b"/>
+      ${[[40, 418, 1.5], [95, 426, 1.2], [150, 420, 1.35], [215, 428, 1.05], [960, 418, 1.5], [905, 426, 1.25], [850, 420, 1.35], [790, 428, 1.0], [130, 372, 0.75], [875, 366, 0.7], [70, 392, 0.9], [935, 390, 0.85], [245, 392, 0.7], [760, 396, 0.75]].map(([x, y, s]) => pine(x, y, s)).join('')}
+      <g id="hill-fx"></g><g id="hill-climbers"></g><g id="hill-rocks"></g>`;
+  }
+
+  /** One climber: a figure in their jacket, a badge with their initials, and whatever they wear. */
+  function climberHTML(c, labelled) {
+    const jacket = jacketOf(c.id);
+    return `${c.king ? '<circle class="glow" r="34" fill="url(#kingglow)"/>' : ''}${c.shield ? '<circle class="shield" r="22"/>' : ''}
+      <g class="fig"><ellipse class="shadow" cx="0" cy="12" rx="12" ry="4"/>
+        <path class="legs" d="M-5,2 L-6,12 M5,2 L6,12"/>
+        <path class="body" d="M-9,4 Q-9,-10 0,-10 Q9,-10 9,4 Z" fill="${jacket}"/>
+        <path class="pack" d="M-11,-7 Q-14,-1 -11,5 L-8,5 L-8,-7 Z"/>
+        <circle class="head" cy="-16" r="7"/>
+        ${c.king ? '<text class="crown" y="-24" text-anchor="middle">👑</text>' : ''}
+      </g>
+      <g class="badge" transform="translate(0 24)"><rect x="-13" y="-8" width="26" height="16" rx="8"/><text class="ini" y="4" text-anchor="middle">${esc(initials(c.name))}</text></g>
+      ${labelled ? `<text class="nm" x="16" y="-10">${esc(c.name)}</text>` : ''}`;
+  }
 
   function renderHill(st) {
     const H = st.hill;
     const svg = $('hill-svg');
-    if (!svg.dataset.drawn) {
-      svg.innerHTML = `<defs><linearGradient id="hillg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4c8a5a"/><stop offset="1" stop-color="#1f4a2c"/></linearGradient></defs>
-        <polygon points="20,${BASE_Y} ${500 - PLATEAU - 20},${SUMMIT_Y} ${500 + PLATEAU + 20},${SUMMIT_Y} 980,${BASE_Y}" fill="url(#hillg)" stroke="#2c5f3a" stroke-width="3"/>
-        <polygon points="${500 - PLATEAU - 20},${SUMMIT_Y} ${500 + PLATEAU + 20},${SUMMIT_Y} ${500 + PLATEAU + 46},${SUMMIT_Y + 22} ${500 + 40},${SUMMIT_Y + 14} 500,${SUMMIT_Y + 26} ${500 - 40},${SUMMIT_Y + 14} ${500 - PLATEAU - 46},${SUMMIT_Y + 22}" fill="#eef4ee" opacity=".85"/>
-        <line x1="500" y1="${SUMMIT_Y - 8}" x2="500" y2="${SUMMIT_Y - 44}" stroke="#ddd" stroke-width="3"/><polygon points="500,${SUMMIT_Y - 44} 532,${SUMMIT_Y - 36} 500,${SUMMIT_Y - 28}" style="fill:var(--led)"/>
-        <g id="hill-climbers"></g>`;
-      svg.dataset.drawn = '1';
-    }
+    if (!svg.dataset.drawn) { svg.innerHTML = hillScene(H.summit); svg.dataset.drawn = '1'; }
     const layer = $('hill-climbers');
     const keep = new Set();
-    H.climbers.forEach((c) => {
+    const pos = {}; // name → [x, y] for the boulders and the sparkle
+    H.climbers.forEach((c, i) => {
       keep.add(c.id);
       let g = layer.querySelector(`[data-id="${c.id}"]`);
       if (!g) {
@@ -511,34 +566,90 @@
         g.setAttribute('class', 'climber');
         layer.appendChild(g);
       }
-      const label = c.king; // the king's name on the hill; the board beside it names everyone
-      g.innerHTML = `${c.king ? '<text class="crown" y="-22" text-anchor="middle">👑</text>' : ''}${c.shield ? '<circle class="shield" r="20"/>' : ''}
-        <circle class="dot" r="14"/><text class="ini" y="5" text-anchor="middle">${esc(initials(c.name))}</text>
-        ${label ? `<text class="nm" x="20" y="5">${esc(c.name)}</text>` : ''}`;
+      // the king and the two chasing them wear their names on the hill; the board names everyone
+      const labelled = c.king || i < 3;
+      const sig = `${c.king}|${c.shield}|${labelled}|${c.name}`;
+      if (g.dataset.sig !== sig) { g.innerHTML = climberHTML(c, labelled); g.dataset.sig = sig; }
       g.classList.toggle('king', c.king);
       g.classList.toggle('hit', c.hit);
       g.classList.toggle('steady', c.steady);
-      g.style.transform = `translate(${xOf(c, c.h, H.summit).toFixed(1)}px, ${yOf(c.h, H.summit).toFixed(1)}px)`;
+      const x = xOf(c, c.h, H.summit); const y = yOf(c.h, H.summit);
+      pos[c.name] = [x, y];
+      g.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
     });
     layer.querySelectorAll('.climber').forEach((g) => { if (!keep.has(g.dataset.id)) g.remove(); });
     // the leaders on top of the stack, so a crowd at the summit never hides the king
     H.climbers.slice().reverse().forEach((c) => { const g = layer.querySelector(`[data-id="${c.id}"]`); if (g) layer.appendChild(g); });
 
+    // what just happened, before the feed marks it seen: boulders roll, a new crown sparkles
+    const fresh = st.feed.filter((f) => !seenFeed.has(`${f.at}|${f.type}|${f.who || ''}`));
+    for (const f of fresh) {
+      if ((f.type === 'knock' || f.type === 'blocked') && pos[f.who] && pos[f.target]) rollBoulder(pos[f.who], pos[f.target], f.type === 'blocked');
+      if (f.type === 'crown' && pos[f.who]) sparkle(pos[f.who]);
+    }
+
     $('hill-board').innerHTML = H.climbers.slice(0, 10).map((c, i) => `<li class="${c.king ? 'king' : ''}${c.hit ? ' hit' : ''}">
-      <span class="rk">${i + 1}</span><span class="nm">${esc(c.name)}${c.king ? ' 👑' : ''}${c.shield ? ' 🛡' : ''}</span>
+      <span class="rk">${i + 1}</span><span class="nm"><i class="jk" style="background:${jacketOf(c.id)}"></i>${esc(c.name)}${c.king ? ' 👑' : ''}${c.shield ? ' 🛡' : ''}${c.steady ? ' <span class="muted">steady</span>' : ''}</span>
       <span class="ht"><span style="width:${Math.round((100 * c.h) / H.summit)}%"></span></span><span class="hv">${Math.round(c.h)}</span></li>`).join('')
       + (H.climbers.length > 10 ? `<li class="more muted">+ ${H.climbers.length - 10} more climbing</li>` : '');
     $('hill-feed').innerHTML = st.feed.slice(0, 5).map((f) => {
       const id = `${f.at}|${f.type}|${f.who || ''}`;
-      const fresh = seenFeed.has(id) ? '' : ' new';
+      const isNew = seenFeed.has(id) ? '' : ' new';
       seenFeed.add(id);
-      if (f.type === 'knock') return `<span class="it ev${fresh}">🪨 ${esc(f.who)} knocked ${esc(f.target)} down</span>`;
-      if (f.type === 'blocked') return `<span class="it${fresh}">🛡 ${esc(f.target)} blocked ${esc(f.who)}'s boulder</span>`;
-      if (f.type === 'shield') return `<span class="it${fresh}">🛡 ${esc(f.who)} raised a shield</span>`;
-      if (f.type === 'crown') return `<span class="it ev${fresh}">👑 ${esc(f.who)} takes the crown</span>`;
-      if (f.type === 'climb') return `<span class="it ev${fresh}">CLIMB!</span>`;
+      if (f.type === 'knock') return `<span class="it ev${isNew}">🪨 ${esc(f.who)} knocked ${esc(f.target)} down</span>`;
+      if (f.type === 'blocked') return `<span class="it${isNew}">🛡 ${esc(f.target)} blocked ${esc(f.who)}'s boulder</span>`;
+      if (f.type === 'shield') return `<span class="it${isNew}">🛡 ${esc(f.who)} raised a shield</span>`;
+      if (f.type === 'crown') return `<span class="it ev${isNew}">👑 ${esc(f.who)} takes the crown</span>`;
+      if (f.type === 'climb') return `<span class="it ev${isNew}">CLIMB!</span>`;
       return '';
     }).join('') || '<span class="muted">Boulders and crowns show up here.</span>';
+  }
+
+  /** A boulder rolls from the thrower to the target: a lob along an arc, a dust burst where it lands. */
+  function rollBoulder([x1, y1], [x2, y2], blocked) {
+    const rocks = $('hill-rocks'); const fx = $('hill-fx');
+    if (!rocks || !fx) return;
+    const ns = 'http://www.w3.org/2000/svg';
+    const g = document.createElementNS(ns, 'g');
+    g.setAttribute('class', 'rock');
+    g.innerHTML = '<use href="#boulder"/>';
+    // an arc: the control point sits above the midpoint, so the throw lobs up and comes down on them
+    const mx = (x1 + x2) / 2; const my = Math.min(y1, y2) - 60;
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', `M${x1},${y1 - 10} Q${mx},${my} ${x2},${y2 - 8}`);
+    const anim = document.createElementNS(ns, 'animateMotion');
+    anim.setAttribute('dur', '0.7s'); anim.setAttribute('fill', 'freeze'); anim.setAttribute('calcMode', 'spline');
+    anim.setAttribute('keySplines', '.3 0 .7 1'); anim.setAttribute('keyTimes', '0;1');
+    const mp = document.createElementNS(ns, 'mpath');
+    mp.setAttribute('href', '#' + (path.id = `rp${Date.now()}${Math.floor(Math.random() * 1e4)}`));
+    anim.appendChild(mp);
+    g.appendChild(anim);
+    fx.appendChild(path); path.setAttribute('class', 'rockpath');
+    rocks.appendChild(g);
+    if (anim.beginElement) { try { anim.beginElement(); } catch { /* not supported: it still starts on insert */ } }
+    setTimeout(() => {
+      g.remove(); path.remove();
+      const burst = document.createElementNS(ns, 'g');
+      burst.setAttribute('class', blocked ? 'burst block' : 'burst');
+      burst.setAttribute('transform', `translate(${x2} ${y2})`);
+      burst.innerHTML = blocked
+        ? '<circle class="ring" r="24"/>'
+        : [0, 1, 2, 3, 4, 5, 6].map((i) => `<circle class="puff" r="${7 + (i % 3) * 2}" style="--dx:${Math.round(Math.cos((i / 7) * 6.283) * 32)}px;--dy:${Math.round(Math.sin((i / 7) * 6.283) * 16 - 12)}px;animation-delay:${i * 25}ms"/>`).join('');
+      fx.appendChild(burst);
+      setTimeout(() => burst.remove(), 900);
+    }, 700);
+  }
+
+  /** The crown changes hands: a burst of rays over the new king. */
+  function sparkle([x, y]) {
+    const fx = $('hill-fx');
+    if (!fx) return;
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'sparkle');
+    g.setAttribute('transform', `translate(${x} ${y - 24})`);
+    g.innerHTML = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<line x1="0" y1="0" x2="0" y2="-30" transform="rotate(${i * 45})"/>`).join('') + '<circle r="6"/>';
+    fx.appendChild(g);
+    setTimeout(() => g.remove(), 1100);
   }
 
   // ---------------- the heist ----------------

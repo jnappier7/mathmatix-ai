@@ -167,6 +167,12 @@
   }
 
   /** King of the Hill: where I am, who's just above, how close the next boulder is. */
+  const idHash = (id) => { let n = 0; for (const ch of String(id)) n = (n * 31 + ch.charCodeAt(0)) >>> 0; return n; };
+  const JACKETS = ['#ff6a5c', '#4cb3ff', '#ffb547', '#b388ff', '#3ccf7e', '#ff8fd0', '#ffd166', '#7ee8fa', '#f5a623', '#c3f73a', '#ff9b73', '#9bd5ff'];
+  /** A little climber for the phone's hill: the same jacket colour the projector gives this student. */
+  function miniClimber(x, y, jacket, cls, label) {
+    return `<g class="mc ${cls || ''}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><path d="M-3,1 L-3.5,7 M3,1 L3.5,7" class="legs"/><path d="M-6,3 Q-6,-6 0,-6 Q6,-6 6,3 Z" fill="${jacket}" class="body"/><circle cy="-10" r="4.5" class="head"/>${label ? `<text class="lbl" y="-16" text-anchor="middle">${esc(label)}</text>` : ''}</g>`;
+  }
   function renderMyHill() {
     const h = st.hill;
     if (!h) return;
@@ -178,8 +184,19 @@
       : h.king && h.king.me ? `<div class="crownline">👑 You're the king.${h.shield ? ' 🛡 Shield up.' : ` ${h.toBoulder} more in a row for a shield.`}</div>`
       : h.above ? `<div class="above"><b>${esc(h.above.name)}</b> is ${Math.max(1, Math.round(h.above.gap))} above you${h.king && h.king.name !== h.above.name ? ` · 👑 ${esc(h.king.name)}` : ''}</div>`
       : '';
-    $('p-hill').innerHTML = `<div class="climb"><span class="track"><span class="me" style="bottom:${Math.round((100 * h.h) / h.summit)}%"></span>${
-      h.above ? `<span class="up" style="bottom:${Math.round((100 * (h.h + h.above.gap)) / h.summit)}%"></span>` : ''}</span>
+    // the mini hill: a slope 0→100 from the base (y 84) to the snow cap (y 12); me, the climber above, the king
+    const Y = (v) => 84 - (v / h.summit) * 72;
+    const X = (v, t) => 80 + (t - 0.5) * 2 * (48 * (1 - v / h.summit) + 18);
+    const me = miniClimber(X(h.h, 0.42), Y(h.h), JACKETS[idHash(st.me.id) % JACKETS.length], 'me', 'you');
+    const up = h.above && !(h.king && h.king.name === h.above.name) ? miniClimber(X(h.h + h.above.gap, 0.66), Y(h.h + h.above.gap), '#c9d3d6', 'up', h.above.name) : '';
+    const king = h.king && !h.king.me ? miniClimber(X(h.king.h, 0.56), Y(h.king.h), '#ffb547', 'kg', `👑 ${h.king.name}`) : '';
+    const scene = `<svg class="minihill" viewBox="0 -12 160 104" aria-hidden="true">
+      <polygon points="8,88 62,12 98,12 152,88" fill="#3f8a52" stroke="#2c5f3a" stroke-width="1.5" stroke-linejoin="round"/>
+      <polygon points="62,12 98,12 103,18 80,16 57,18" fill="#f4f8f4" opacity=".9"/>
+      <line x1="80" y1="12" x2="80" y2="2" stroke="#eee" stroke-width="1.2"/><polygon points="80,2 89,4.5 80,7" fill="#ffb547"/>
+      <path d="M14,66 Q80,62 146,66 M38,36 Q80,32 122,36" fill="none" stroke="#fff" stroke-opacity=".18" stroke-dasharray="3 3"/>
+      <rect x="0" y="88" width="160" height="4" fill="#122c1b"/>${king}${up}${me}</svg>`;
+    $('p-hill').innerHTML = `<div class="climb">${scene}
       <div class="hnums"><span class="v">${Math.round(h.h)}</span><span class="k">of ${h.summit}</span></div>
       <div class="boulder"><span class="k">${h.king && h.king.me ? 'Shield' : 'Boulder'}</span><span class="dots">${dots}</span></div></div>${status}`;
   }

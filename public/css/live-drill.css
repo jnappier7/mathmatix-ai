@@ -108,7 +108,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .typing .fact{font-size:clamp(2rem,9vw,2.8rem);padding:2px 0}
 .typing .pad .entry{font-size:2rem;padding:2px 10px}
 .typing .myhill{padding:6px 10px;gap:4px}
-.typing .myhill .track{height:44px}
+.typing .myhill .climb{grid-template-columns:minmax(0,96px) auto minmax(0,1fr)}
 .typing .myhill .hnums .v{font-size:1.7rem}
 .typing .myhill .hit,.typing .myhill .above,.typing .myhill .crownline{font-size:.88rem;padding:3px 8px}
 /* a typed question WITH a figure (test prep: a graph, the box, the transversal): the figure shrinks and
@@ -155,18 +155,46 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .mode-hill .sb .mid{border:0}
 .rosters.solo{grid-template-columns:minmax(0,1fr)}
 .hillpane{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:14px;align-items:start}
-.hillwrap{background:linear-gradient(#0d2333,#123447 70%,#0b1a24);border:2px solid var(--rail);border-radius:10px;overflow:hidden}
+.hillwrap{background:#0b1a2e;border:2px solid var(--rail);border-radius:10px;overflow:hidden}
 .hillwrap svg{display:block;width:100%;height:auto}
-.climber{transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
-.climber .dot{fill:var(--paper);stroke:#0b1a24;stroke-width:3}
-.climber .ini{font:800 13px var(--display);fill:var(--ink);letter-spacing:.02em}
-.climber .nm{font:800 19px var(--display);fill:#fff;paint-order:stroke;stroke:#0b1a24;stroke-width:5px;letter-spacing:.03em}
-.climber .crown{font-size:24px}
-.climber .shield{fill:none;stroke:var(--blue);stroke-width:4}
-.climber.king .dot{fill:var(--led)}
-.climber.steady .dot{opacity:.6}
-.climber.hit .dot{fill:var(--miss);animation:shake .5s ease 2}
+/* the scene */
+.ridge.far{fill:#24466a;opacity:.9} .ridge.near{fill:#1a3a55}
+.contour{fill:none;stroke:#fff;stroke-opacity:.14;stroke-width:1.5;stroke-dasharray:6 6}
+.ctext{font:700 11px var(--display);fill:#fff;fill-opacity:.35}
+.trail{fill:none;stroke:#e8d9b0;stroke-opacity:.45;stroke-width:3;stroke-dasharray:2 9;stroke-linecap:round;stroke-linejoin:round}
+.rockout{fill:#6f7f6a;stroke:#3f4f3b;stroke-width:1.5}
+.flag{fill:var(--led)}
+.cloud{animation:drift linear infinite alternate} .cloud ellipse{fill:#fff;opacity:.13}
+@keyframes drift{from{transform:translateX(-30px)}to{transform:translateX(30px)}}
+/* the climbers */
 @keyframes shake{0%,100%{translate:0 0}25%{translate:-6px 0}75%{translate:6px 0}}
+.climber{transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
+.climber .shadow{fill:#000;opacity:.3}
+.climber .legs{stroke:#2a2a33;stroke-width:3;stroke-linecap:round}
+.climber .body{stroke:#1a1a22;stroke-width:1.5}
+.climber .pack{fill:#5a4632;stroke:#2a2117;stroke-width:1}
+.climber .head{fill:#f3d4b6;stroke:#1a1a22;stroke-width:1.5}
+.climber .badge rect{fill:#0b1a24;fill-opacity:.85;stroke:#fff;stroke-opacity:.35}
+.climber .ini{font:800 11px var(--display);fill:#fff;letter-spacing:.04em}
+.climber .nm{font:800 19px var(--display);fill:#fff;paint-order:stroke;stroke:#0b1a24;stroke-width:5px;letter-spacing:.03em}
+.climber .crown{font-size:22px;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.climber .shield{fill:#4cb3ff;fill-opacity:.18;stroke:var(--blue);stroke-width:3;animation:shieldpulse 1.4s ease-in-out infinite}
+@keyframes shieldpulse{0%,100%{stroke-opacity:1}50%{stroke-opacity:.45}}
+.climber.king .body{stroke:var(--led);stroke-width:2.5}
+.climber.steady .fig{opacity:.75}
+.climber.hit .fig{animation:tumble .8s ease both}
+@keyframes tumble{0%{transform:rotate(0)}25%{transform:rotate(-28deg) translateY(2px)}55%{transform:rotate(24deg) translateY(4px)}80%{transform:rotate(-10deg)}100%{transform:rotate(0)}}
+/* boulders, dust, the crown's sparkle */
+.rock use{animation:roll .7s linear both} @keyframes roll{to{transform:rotate(540deg)}}
+.rockpath{fill:none;stroke:none}
+.burst .puff{fill:#d9cdb6;opacity:0;animation:puff .8s ease-out both}
+@keyframes puff{0%{opacity:.9;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.6)}}
+.burst.block .ring{fill:none;stroke:var(--blue);stroke-width:4;animation:ring .7s ease-out both}
+@keyframes ring{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.8);opacity:0}}
+.sparkle line{stroke:var(--led);stroke-width:3;stroke-linecap:round;animation:rays 1s ease-out both;transform-origin:0 0}
+.sparkle circle{fill:#fff;animation:ring 1s ease-out both}
+@keyframes rays{0%{transform:scale(.2);opacity:1}100%{transform:scale(1.4);opacity:0}}
 .hillside{display:flex;flex-direction:column;gap:12px;min-width:0}
 .climbers{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
 .climbers li{display:grid;grid-template-columns:2em minmax(0,1fr) 30% 2.6em;gap:8px;align-items:center;background:var(--board);border:1px solid var(--rail);border-radius:6px;padding:5px 8px;font-size:clamp(.95rem,1.3vw,1.2rem)}
@@ -175,6 +203,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .climbers li.more{display:block;background:none;border:0;text-align:center}
 .climbers .rk{font-family:var(--display);font-weight:900;color:var(--muted)}
 .climbers .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.climbers .jk{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:baseline;border:1px solid #0b1a24}
 .climbers .ht{height:8px;background:var(--night);border-radius:4px;overflow:hidden}
 .climbers .ht span{display:block;height:100%;background:var(--hit);transition:width .5s ease}
 .climbers .hv{font-family:var(--display);font-weight:900;text-align:right;font-variant-numeric:tabular-nums}
@@ -195,11 +224,15 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .teamcard.hill h2{color:var(--led)}
 .pill.hill{background:var(--led);color:var(--ink)}
 .myhill{background:var(--board);border:2px solid var(--rail);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
-.myhill .climb{display:grid;grid-template-columns:28px auto minmax(0,1fr);gap:12px;align-items:center}
-.myhill .track{position:relative;height:84px;width:12px;margin:0 auto;background:linear-gradient(#4c8a5a,#1f4a2c);border-radius:6px}
-.myhill .track span{position:absolute;left:50%;width:16px;height:16px;border-radius:50%;transform:translate(-50%,50%);border:2px solid #0b1a24}
-.myhill .track .me{background:var(--led);z-index:1}
-.myhill .track .up{background:var(--paper);opacity:.8}
+.myhill .climb{display:grid;grid-template-columns:minmax(0,150px) auto minmax(0,1fr);gap:12px;align-items:center}
+.minihill{display:block;width:100%;height:auto;background:linear-gradient(#10243a,#2a5577);border-radius:8px}
+.minihill .legs{stroke:#2a2a33;stroke-width:1.6;stroke-linecap:round}
+.minihill .body{stroke:#1a1a22;stroke-width:1}
+.minihill .head{fill:#f3d4b6;stroke:#1a1a22;stroke-width:1}
+.minihill .lbl{font:800 9px var(--display);fill:#fff;paint-order:stroke;stroke:#0b1a24;stroke-width:3px;letter-spacing:.03em}
+.minihill .me .lbl{fill:var(--led)}
+.minihill .mc{transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
+.minihill .up .body,.minihill .up .head{opacity:.75}
 .myhill .hnums .v{font-family:var(--display);font-weight:900;font-size:2.4rem;line-height:1;color:var(--led)}
 .myhill .hnums .k,.myhill .boulder .k{display:block;font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.75rem;color:var(--muted)}
 .myhill .boulder{justify-self:end;text-align:right}
