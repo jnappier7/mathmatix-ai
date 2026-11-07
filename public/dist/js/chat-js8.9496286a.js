@@ -12,8 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeResourcesBtn = document.getElementById('close-resources-modal');
     const resourcesContent = document.getElementById('resources-content');
 
-    // State for filtering (teacherResources always empty — hidden from student view)
+    // State for filtering. teacherResources = "From your teacher": every PUBLISHED file the
+    // student's teachers shared with a class they are in (routes/teacherResources.js
+    // /my-teacher-resources — the same audience rule the download route enforces).
     let allResources = { teacherResources: [], myUploads: [], curriculum: null };
+    const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     let activeFilter = 'all';
     let searchQuery = '';
 
@@ -44,27 +47,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === resourcesModal) closeModal();
     });
 
-    // "Ask Tutor About This" button — event delegation
-    resourcesContent?.addEventListener('click', (e) => {
+    // "Work on it with Tutor" — one tap, the tutor takes it from there: a teacher's file goes in
+    // through the student's own upload path (the same worksheet guard as a photo) and a framing
+    // message is sent, so the tutor opens on the first problem. A test or quiz asks for similar
+    // problems instead (the tutor never works the real items). Same path as the pushed-work alert
+    // (public/js/teacher-assignment-banner.js). Files the chat can't ingest (Word, PowerPoint)
+    // are named in the message instead — the tutor has their extracted text by name.
+    resourcesContent?.addEventListener('click', async (e) => {
         const btn = e.target.closest('.send-to-tutor-btn');
         if (!btn) return;
-
         const resourceName = btn.dataset.resourceName;
+        const resourceId = btn.dataset.resourceId;
         if (!resourceName) return;
-
+        btn.disabled = true;
         closeModal();
-
+        const assessment = btn.dataset.resourceKind === 'assessment';
+        const framing = assessment
+            ? `My teacher shared "${resourceName}" — it's a test or quiz. Can you help me get ready for it with similar problems?`
+            : `My teacher shared "${resourceName}". Can we work through it together, starting with the first problem?`;
+        const ingestible = /^(pdf|png|jpg|jpeg|webp)$/i.test(btn.dataset.resourceType || '');
+        if (resourceId && ingestible && typeof window.fetchAndUploadTeacherResource === 'function') {
+            try { await window.fetchAndUploadTeacherResource(resourceId, resourceName); } catch { /* the message alone still names the work */ }
+        }
+        if (typeof window.mmSendChatMessage === 'function' && window.mmSendChatMessage(framing)) { btn.disabled = false; return; }
+        // older chat engine: leave the message in the box for the student to send
         const chatInput = document.getElementById('user-input');
         if (chatInput) {
-            chatInput.textContent = `Can you help me with "${resourceName}"?`;
+            chatInput.textContent = framing;
             chatInput.focus();
-            const range = document.createRange();
-            const sel = window.getSelection();
-            range.selectNodeContents(chatInput);
-            range.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(range);
         }
+        btn.disabled = false;
     });
 
     // Drag-to-chat: close modal so the chat drop-zone is visible
@@ -107,9 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
         showSkeletonLoading();
 
         try {
-            const [curriculumRes, uploadsRes] = await Promise.all([
+            const [curriculumRes, uploadsRes, teacherRes] = await Promise.all([
                 fetch('/api/curriculum/student/resources', { credentials: 'include' }),
-                fetch('/api/student/uploads?limit=10', { credentials: 'include' })
+                fetch('/api/student/uploads?limit=10', { credentials: 'include' }),
+                // 404 = not linked to a teacher yet; 403 = not a student. Both mean "nothing to show".
+                fetch('/api/teacher-resources/my-teacher-resources', { credentials: 'include' }).catch(() => null)
             ]);
 
             if (!curriculumRes.ok) throw new Error('Failed to fetch curriculum resources');
@@ -122,9 +136,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 myUploads = uploadsData.success ? uploadsData.uploads : [];
             }
 
-            // Teacher resources are intentionally hidden from the student view.
-            // They are only used by the AI tutor behind the scenes via resourceDetector.
-            allResources = { teacherResources: [], myUploads, curriculum: data };
+            let teacherResources = [];
+            if (teacherRes && teacherRes.ok) {
+                const t = await teacherRes.json();
+                teacherResources = Array.isArray(t.resources) ? t.resources : [];
+            }
+            allResources = { teacherResources, myUploads, curriculum: data };
             activeFilter = 'all';
             searchQuery = '';
             renderResources();
@@ -248,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="resources-section">
                     <div class="resources-section-header">
                         <i class="fas fa-chalkboard-teacher" style="color: #27ae60;"></i>
-                        Teacher Resources
+                        From your teacher
                         <span class="section-count">${filteredTeacher.length}</span>
                     </div>
                     <div class="resources-grid">
@@ -313,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Empty state (no resources at all)
-        if (myUploads.length === 0 && !data.hasResources) {
+        if (myUploads.length === 0 && teacherResources.length === 0 && !data.hasResources) {
             bodyHtml += `
                 <div class="resources-empty-state">
                     <i class="fas fa-book-open"></i>
@@ -325,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Tip bar
-        if (myUploads.length > 0 || data.hasResources) {
+        if (myUploads.length > 0 || teacherResources.length > 0 || data.hasResources) {
             bodyHtml += `
                 <div class="resources-tip">
                     <i class="fas fa-lightbulb"></i>
@@ -369,39 +386,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const iconFA = getFileIcon(resource.fileType);
         const catLabel = categoryLabel(resource.category);
         const catClass = 'cat-' + (resource.category || 'other');
-        const escapedName = resource.displayName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const name = esc(resource.displayName);
+        const assessment = resource.category === 'test' || resource.category === 'quiz';
 
         return `
             <div class="resource-card-wrapper"
                  draggable="true"
-                 data-resource-id="${resource.id}"
-                 data-resource-name="${escapedName}"
-                 data-resource-type="${resource.fileType}"
-                 data-category="${resource.category || 'other'}"
+                 data-resource-id="${esc(resource.id)}"
+                 data-resource-name="${name}"
+                 data-resource-type="${esc(resource.fileType)}"
+                 data-category="${esc(resource.category || 'other')}"
                  title="Drag to chat to share with your tutor">
-                <a href="/api/teacher-resources/download/${resource.id}" target="_blank" class="resource-link">
+                <a href="/api/teacher-resources/download/${esc(resource.id)}" target="_blank" rel="noopener" class="resource-link">
                     <div class="resource-icon-badge ${iconClass}">
                         <i class="fas ${iconFA}"></i>
                     </div>
                     <div class="resource-info-text">
-                        <div class="resource-name">${resource.displayName}</div>
+                        <div class="resource-name">${name}</div>
                         <div class="resource-meta-row">
                             <span class="resource-category-badge ${catClass}">${catLabel}</span>
-                            <span>${resource.fileType.toUpperCase()}</span>
+                            ${resource.teacherName ? `<span class="resource-teacher"><i class="fas fa-chalkboard-teacher"></i> ${esc(resource.teacherName)}</span><span>&bull;</span>` : ''}
+                            <span>${esc(String(resource.fileType || '').toUpperCase())}</span>
                             <span>&bull;</span>
                             <span>${formatFileSize(resource.fileSize)}</span>
                             <span>&bull;</span>
                             <span>${formatDate(resource.uploadedAt)}</span>
                         </div>
-                        ${resource.description ? `<div class="resource-description-text">${resource.description}</div>` : ''}
+                        ${resource.description ? `<div class="resource-description-text">${esc(resource.description)}</div>` : ''}
                     </div>
                     <div class="resource-actions-col">
                         <i class="fas fa-download" title="Download"></i>
                         <i class="fas fa-grip-vertical" style="font-size: 11px; color: #ccc;" title="Drag to chat"></i>
                     </div>
                 </a>
-                <button class="send-to-tutor-btn" data-resource-name="${escapedName}" title="Share with your AI tutor">
-                    <i class="fas fa-comment-dots"></i> Ask Tutor About This
+                <button class="send-to-tutor-btn" data-resource-id="${esc(resource.id)}" data-resource-name="${name}" data-resource-kind="${assessment ? 'assessment' : 'work'}" data-resource-type="${esc(resource.fileType)}" title="${assessment ? 'Practice similar problems with your tutor' : 'Open it in the chat and work through it with your tutor'}">
+                    <i class="fas fa-comment-dots"></i> ${assessment ? 'Practice with Tutor' : 'Work on it with Tutor'}
                 </button>
             </div>
         `;
