@@ -230,6 +230,18 @@ describe('every selectable tutor has current-style art on disk', () => {
             expect(fs.existsSync(path.join(dir, img.replace(/\.png$/, `.${ext}`)))).toBe(true);
         }
     });
+
+    // The chat hero (and chat message avatars, via getTutorPortraitSrc) use the
+    // seated desk portrait from HERO_PORTRAIT_OVERRIDES; a tutor missing from
+    // that map falls back to the small bust, stretched into the hero frame.
+    const redesign = fs.readFileSync(path.join(__dirname, '../../public/js/chat-redesign.js'), 'utf8');
+    test.each(selectable.map(([id]) => id))('%s has a desk hero wired into the chat page', (id) => {
+        expect(redesign).toContain(`'${id}': '${id}-new2.png'`);
+        for (const ext of ['png', 'webp']) {
+            expect(fs.existsSync(path.join(dir, `${id}-new2.${ext}`))).toBe(true);
+        }
+        expect(pngSize(path.join(dir, `${id}-new2.png`))).toEqual([1536, 1024]);
+    });
 });
 
 describe('Dr. G is a gorilla character, never a person of any human heritage', () => {

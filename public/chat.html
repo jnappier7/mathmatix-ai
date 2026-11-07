@@ -588,13 +588,15 @@
         <script>
           /* No-flash poster: paint the returning student's tutor before
              chat-redesign.js boots, so non-Maya users never see a Maya
-             flash. Only the 4 core tutors are selectable; all use the
-             "-new2" hero frame. First-time users stay blank until JS. */
+             flash. Every tutor (core four + the seven shop tutors) has a
+             "-new2" desk hero. First-time users stay blank until JS. */
           (function () {
             try {
               var t = localStorage.getItem('mathmatix_last_tutor');
-              var core = { maya: 1, bob: 1, 'mr-nappier': 1, 'ms-maria': 1 };
-              if (t && core[t]) {
+              var hero = { maya: 1, bob: 1, 'mr-nappier': 1, 'ms-maria': 1,
+                'ms-rashida': 1, 'mr-sierawski': 1, 'prof-davies': 1, 'ms-alex': 1,
+                'mr-lee': 1, 'dr-g': 1, 'mr-wiggles': 1 };
+              if (t && hero[t]) {
                 document.getElementById('cr-tutor-portrait').src =
                   '/images/tutor_avatars/' + t + '-new2.png';
               }
@@ -2477,7 +2479,7 @@
   <script src="/js/avatar-config-data.js"></script>
   <script src="/js/avatarFullBody.js"></script>
 <!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
-  <script defer src="/js/chat-redesign.js?v=20261030qa"></script>
+  <script defer src="/js/chat-redesign.js?v=20261107dp"></script>
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
   <script defer src="/js/adjustable-panels.js?v=20260721"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->

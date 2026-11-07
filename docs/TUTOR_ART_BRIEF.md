@@ -3,8 +3,10 @@
 > Status (2026-11-06): **new full-body art is live** for Ms. Rashida, Mr. Sierawski,
 > Prof. Davies, Ms. Alex, Mr. Lee, Mr. Wiggles and Dr. G (`<id>-fullBody.*`), and their
 > small portraits are cut from it (`<id>-v2.*`, new names so week-long static
-> caching can't serve the old art). Still to come for each: the desk hero
-> (`-new2`), thinking pose, backdrop and videos. Prof. Davies and Ms. Alex were
+> caching can't serve the old art). **Desk heroes (`-new2`) landed 2026-11-07**
+> and are wired into `HERO_PORTRAIT_OVERRIDES`. Still to come for each: thinking
+> pose, backdrop and videos (until then they use Maya's backdrop and the still
+> portrait). Prof. Davies and Ms. Alex were
 > regenerated to match their personas (British-Jamaican; Korean-American).
 
 ## 1. The target look (match the core four)
@@ -100,6 +102,10 @@ Once a tutor's files are in `public/images/tutor_avatars/` and `public/videos/`:
    (Bob 1390 px, Mr. Nappier 1502, Ms. Maria 1269, Maya 1216; Mr. Sierawski 1440), feet on y = 1578,
    centred; pngquant `--quality=80-98` (lossy PNG without it blotches skin
    tones) plus `.webp` q80 and `.avif` q60.
+   Desk heroes: drop alpha < 24 (background-removal glow) and specks, then scale
+   so the desk's bottom edge is ~1094 px wide (Bob's), bottom-anchored and
+   centred — except where that shrinks the person below the core four's size
+   (2026-11-07 batch: Mr. Lee 0.95, Prof. Davies 1.0, Dr. G 0.88).
 4. Portraits: `utils/tutorConfig.js` `image` and the copy in
    `public/js/parent-dashboard.js` (bundled — run `npm run build:bundles`).
 5. Bump the cache versions — prod caches static files for a week:
