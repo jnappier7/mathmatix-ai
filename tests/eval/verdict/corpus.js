@@ -142,6 +142,17 @@ const P = [
     correct: ['$30', '40 - 10 = 30'], wrong: ['10', '$10', '50'] },
   { id: 'word-2', topic: 'word', pose: 'Try this one: Sam reads 12 pages a day. How many days will it take to read a 180-page book?', v: '15', varName: null,
     correct: ['15 days', '180/12 = 15'], wrong: ['2160', '168'] },
+  // Owner session, 2026-11-08: a word problem posed after a LaTeX warm-up. The
+  // problem has no operator in it, so the verifier graded "300 miles" against
+  // the warm-up (answer 0) and stamped it incorrect; "60 mph" the same way.
+  { id: 'rate-1', topic: 'word',
+    before: ["Hey! Quick warm-up to get those brain gears turning: What's \\( \\frac{-6}{2} + 3 \\)?"],
+    pose: "Rate and ratio problems are super fun! Here's a problem for you:\n\nProblem: A car travels 120 miles in 2 hours. At this rate, how far will it travel in 5 hours?\n\n1. First, what's the rate of the car in miles per hour?\n2. Then, use that rate to find out how far it will go in 5 hours.\n\nTake it step by step!",
+    v: '300', varName: null, correct: ['300 miles', '300 mi', '60 mph, so 300 miles'], wrong: ['240', '600 miles', '24'] },
+  { id: 'rate-2', topic: 'word',
+    before: ["Hey! Quick warm-up: What's \\( \\frac{-6}{2} + 3 \\)?", "Problem: A car travels 120 miles in 2 hours. At this rate, how far will it travel in 5 hours?\n\n1. First, what's the rate of the car in miles per hour?\n2. Then, use that rate to find out how far it will go in 5 hours."],
+    pose: 'You got the distance of 120 miles in 2 hours. What do you think the first step is to find the rate in miles per hour? How would you calculate that?',
+    v: '60', varName: null, correct: ['60 mph', '60 miles per hour', 'divide. the rate is 60'], wrong: ['240', '118'] },
 
   // ── Inequalities ──
   { id: 'ineq-1', topic: 'inequalities', pose: 'Try this one: Solve \\(2x + 3 > 11\\).', noStyles: true,

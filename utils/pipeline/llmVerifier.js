@@ -24,7 +24,7 @@
  * @module pipeline/llmVerifier
  */
 
-const { hasIdeaWords } = require('./ideaWords');
+const { hasIdeaWords, isMathToken } = require('./ideaWords');
 const { callLLM } = require('../llmGateway');
 // Pure predicate, not a call path — the gateway stays the only way we reach a
 // provider. Imported rather than re-implemented so the `claude*` test has one
@@ -186,6 +186,56 @@ function unitlessNumber(text) {
   return parseStrictNumber(t);
 }
 
+// ── Unit sanity: an answer whose unit the problem never mentions ─────────────
+// "300 miles" compared against a warm-up on \(\frac{-6}{2}+3\) came back a
+// confident INCORRECT (live, 2026-11-08): the comparison was exact and the
+// problem was the wrong one. A student does not invent a unit. When the unit on
+// their answer appears nowhere in the tutor text the verifier was handed, the
+// far likelier reading is that we are grading against the wrong question — and
+// a rejection on that footing is the one verdict this module must never emit.
+// In effect AFFIRM-ONLY: a match still stands (same value, plausible unit); a
+// mismatch becomes unverifiable, and the tutor asks instead of asserting.
+const UNIT_ALIASES = {
+  mph: ['mile', 'hour', 'speed'], kph: ['kilomet', 'speed'], kmh: ['kilomet', 'speed'], fps: ['feet', 'foot', 'speed'],
+  hr: ['hour'], hrs: ['hour'], min: ['minute'], mins: ['minute'], sec: ['second'], secs: ['second'],
+  mi: ['mile'], ft: ['feet', 'foot'], yd: ['yard'], yds: ['yard'],
+  cm: ['centimet'], mm: ['millimet'], km: ['kilomet'], m: ['meter', 'metre'],
+  g: ['gram'], kg: ['kilogram'], mg: ['milligram'], lb: ['pound'], lbs: ['pound'], oz: ['ounce'],
+  l: ['liter', 'litre'], ml: ['millilit'], gal: ['gallon'], qt: ['quart'], pt: ['pint'],
+  deg: ['degree', '°', 'angle'], degrees: ['°', 'angle'], degree: ['°', 'angle'],
+  dollars: ['$', 'cost', 'price', 'pay', 'money'], dollar: ['$', 'cost', 'price', 'pay', 'money'],
+  bucks: ['$', 'dollar', 'cost', 'price'], cents: ['¢', '$', 'cost', 'price'],
+  percent: ['%'],
+};
+// Labels that describe the number rather than name a unit the problem must carry.
+const GENERIC_LABEL = /^(?:units?|squared?|cubic|cubed|sq|cu|per|each|total|of|the|and|or|is|to|in|a|an|about|exactly|approximately|roughly|like|so|then|right|th|st|nd|rd)$/i;
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+function unitAbsentFromProblem(studentText, problemText) {
+  if (!studentText || !problemText) return false;
+  const tutor = String(problemText).toLowerCase();
+  const present = (stem) => {
+    if (/[$%°¢]/.test(stem)) return tutor.includes(stem);
+    // "mile" may sit inside "miles"; a 1–2 letter unit must stand alone ("2 m").
+    if (stem.length >= 3) return tutor.includes(stem);
+    return new RegExp(`(^|[^a-z])${escapeRe(stem)}([^a-z]|$)`).test(tutor);
+  };
+  const re = /\d(?:[\d.,/]*)\s*([a-z]{1,12})(?:\s*(?:\/|per)\s*([a-z]{1,12}))?/gi;
+  let m;
+  while ((m = re.exec(String(studentText))) !== null) {
+    for (const raw of [m[1], m[2]]) {
+      if (!raw) continue;
+      const tok = raw.toLowerCase();
+      if (GENERIC_LABEL.test(tok) || isMathToken(tok)) continue;
+      // A single letter is a variable ("3x") unless it is a known unit.
+      if (tok.length === 1 && !UNIT_ALIASES[tok]) continue;
+      const stems = [tok, tok.replace(/s$/, ''), ...(UNIT_ALIASES[tok] || [])];
+      if (!stems.some(present)) return true;
+    }
+  }
+  return false;
+}
+
 async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
   const unverifiable = {
     isCorrect: null,
@@ -205,6 +255,14 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
     && options.earlierContext.trim() !== String(problemText).trim()
     ? options.earlierContext.trim().slice(-MAX_PROBLEM_CHARS)
     : null;
+  const latestAsk = typeof options.latestQuestion === 'string' && options.latestQuestion.trim()
+    && options.latestQuestion.trim() !== String(problemText).trim()
+    ? options.latestQuestion.trim().slice(0, MAX_PROBLEM_CHARS)
+    : null;
+  // Every tutor word the verifier was handed — what a unit on the student's
+  // answer is checked against (unitAbsentFromProblem).
+  const tutorText = [earlier, problem, latestAsk].filter(Boolean).join('\n');
+  const unitMismatch = unitAbsentFromProblem(options.fullStudentMessage || answer, tutorText);
   const model = options.model || VERIFIER_MODEL;
   const threshold = options.confidenceThreshold != null
     ? options.confidenceThreshold
@@ -224,6 +282,9 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
           'e.g. "what\'s 0.15 × 2, and then where does the decimal land once you account for the 2000?"), ' +
           'return the answer to the LAST thing asked: that is the question the student is completing. ' +
           'Never anchor on an intermediate sub-step when a final result is also requested. ' +
+          'If "The tutor\'s latest question" is included, the student is answering THAT: when it asks for a quantity or for the result of a step, return that value, using the Problem for the givens; ' +
+          'when it asks only for a method ("what would you do first?") or is conversational ("ready for another?"), return the Problem\'s final answer instead. ' +
+          'A method question that has a numeric outcome ("how would you calculate the rate?") still gets a VALUE — return the number that step produces, never a description. ' +
           'Respond with JSON: {"answer": "<answer>", "form": "<e.g. simplified|factored|decimal>"}.',
       },
       {
@@ -233,8 +294,15 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
         // what it builds on (v = sin x), and solved blind it came out as
         // 2x cos x — a right u'v rejected and a wrong one accepted (verdict
         // eval, 2026-11-04). Context only; the Problem is still what is graded.
+        //
+        // The newest tutor turn, when it asks something and is not the chosen
+        // problem: a student answers the question in front of them, and whether
+        // that question wants a value ("what's the rate?") or merely a method
+        // ("what would you do first?") is a judgment this engine makes far
+        // better than a regex in pickProblemContext could.
         content: (earlier ? `Earlier in the lesson (context only — do not answer this part):\n${earlier}\n\n` : '')
-          + `Problem:\n${problem}`,
+          + `Problem:\n${problem}`
+          + (latestAsk ? `\n\nThe tutor's latest question to the student:\n${latestAsk}` : ''),
       },
     ];
 
@@ -264,6 +332,10 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
     // wrong). Non-symbolic answers (word problems, proofs) fall through below.
     try {
       const sym = symbolicVerify({ studentAnswer: answer, correctAnswer: modelAnswer });
+      if (sym.isCorrect === false && unitMismatch) {
+        console.log(`[LLMVerifier] "${answer}" carries a unit the problem never mentions — not grading against it`);
+        return { ...unverifiable, modelAnswer, error: 'unit_not_in_problem' };
+      }
       if (sym.isCorrect !== null) {
         return { isCorrect: sym.isCorrect, confidence: 0.98, modelAnswer, rationale: 'symbolic:' + sym.method, error: null };
       }
@@ -330,6 +402,11 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
     const rawConfidence = typeof judged.confidence === 'number' ? judged.confidence : 0;
     const confidence = Math.max(0, Math.min(1, rawConfidence));
     const rationale = typeof judged.rationale === 'string' ? judged.rationale.slice(0, 300) : null;
+
+    if (!matches && unitMismatch) {
+      console.log(`[LLMVerifier] "${answer}" carries a unit the problem never mentions — not grading against it`);
+      return { ...unverifiable, modelAnswer, rationale, error: 'unit_not_in_problem' };
+    }
 
     // Below-threshold confidence → don't trust the verdict. Return
     // isCorrect=null so the pipeline treats it as unverifiable and falls
@@ -501,8 +578,10 @@ async function verifyWithEscalation(problemText, studentAnswer, options = {}) {
   if (first.isCorrect !== null) {
     return { ...first, tier: tier1Model, escalated: false, escalationResolved: false };
   }
-  // Nothing to verify — don't burn a stronger call on missing input.
-  if (first.error === 'missing_input') {
+  // Nothing to verify — don't burn a stronger call on missing input. The same
+  // for a unit the problem never mentions: a stronger judge would be handed the
+  // same wrong problem and reach the same rejection the guard just refused.
+  if (first.error === 'missing_input' || first.error === 'unit_not_in_problem') {
     return { ...first, tier: tier1Model, escalated: false, escalationResolved: false };
   }
 
@@ -648,7 +727,16 @@ const looksMathy = (m) => hasContent(m) && (
   /\d\s*[+\-*/=×÷^]|[+\-*/=×÷^]\s*\d/.test(m.content)      // a digit adjacent to an operator
 );
 const hasQuestion = (m) => hasContent(m) && m.content.includes('?');
-const problemLike = (m) => hasProblemInfo(m) || looksMathy(m);
+// A word problem states its givens as plain numbers with no operator between
+// them — "A car travels 120 miles in 2 hours. How far in 5 hours?" — so
+// looksMathy never sees it, and the tier-1 scan walked PAST it to the greeting's
+// warm-up \(\frac{-6}{2}+3\) three turns back. The student's "300 miles" was
+// then compared, exactly, against the warm-up's answer and stamped incorrect;
+// "60 mph" the same way on the next turn (live, owner session, 2026-11-08).
+// A tutor turn that asks a question and carries two or more numbers is posing
+// something, and it is newer than whatever the operator scan would have found.
+const statesNumbers = (m) => hasContent(m) && (m.content.match(/\d+(?:\.\d+)?/g) || []).length >= 2;
+const problemLike = (m) => hasProblemInfo(m) || looksMathy(m) || (hasQuestion(m) && statesNumbers(m));
 
 /**
  * Choose the assistant message that actually POSED the problem the student is
@@ -659,8 +747,10 @@ const problemLike = (m) => hasProblemInfo(m) || looksMathy(m);
  * tier, and take the first hit:
  *
  *   1. Problem-like: carries stored problemInfo metadata (the persist stage
- *      recorded a posed problem with a correctAnswer), or contains math-looking
- *      content — LaTeX delimiters/macros, or a digit next to an operator.
+ *      recorded a posed problem with a correctAnswer), contains math-looking
+ *      content — LaTeX delimiters/macros, or a digit next to an operator — or
+ *      asks a question that carries two or more numbers (a word problem, or a
+ *      sub-question that restates its givens).
  *   2. Contains a question mark — a question, possibly the problem.
  *   3. Fallback: the most recent non-empty message (the prior behavior, kept so
  *      we never return null where we previously found something).
@@ -883,4 +973,5 @@ module.exports = {
   // exposed for unit tests
   parseVerdict,
   verifierCall,
+  unitAbsentFromProblem,
 };
