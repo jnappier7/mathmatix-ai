@@ -19,6 +19,13 @@ const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
 const { disclosureConcern } = require('../contentFilter');
 const { parseCleanProblem, verifyAnswer } = require('../mathSolver');
+const { solvePosedProblem, isWordProblemPose } = require('./llmVerifier');
+
+// A word-problem stamp is started as soon as the tutor message is pushed and
+// collected right before the conversation saves, so the one model call overlaps
+// the rest of persist's work. Past this, the turn saves unstamped; the next
+// student turn then grades the slow way (live verifier), exactly as today.
+const WORD_PROBLEM_STAMP_TIMEOUT_MS = 3000;
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { classifyTurn, problemKey, solveAnswer, isRepeatSolve, appendSolve, liveTextsFor } = require('./solveCredit');
 const { planVerdictRepair, applyVerdictRepair, repairSkillAccuracy } = require('./verdictRepair');
@@ -36,6 +43,30 @@ const LearningCard = require('../../models/learningCard');
 const { detectAha, reminderKey, shapeReminder, shapeAha, toClientCard, REMINDER_ACTIVATION_COUNT, misconceptionCardGate, validateReminderMath, sourceAttempt } = require('./learningCards');
 const { advanceRung, currentRung, clearsPrerequisites } = require('../skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap, hasActiveBadge } = require('../masteryGuard');
+
+/**
+ * Begin solving a posed word problem. Resolves to `{ content, answer,
+ * correctAnswer }` when the answer engine returned a single quantity, or null
+ * when it did not (a description, a parse failure, an error, or the timeout).
+ * Never rejects. `content` is the exact message text the stamp belongs to.
+ */
+function startWordProblemStamp(content, earlierContext, timeoutMs = WORD_PROBLEM_STAMP_TIMEOUT_MS) {
+  const solve = solvePosedProblem(content, { earlierContext })
+    .then(r => (r && r.numeric != null ? { content, answer: r.answer, correctAnswer: r.numeric } : null))
+    .catch(err => {
+      console.error('[Persist] Word-problem solve failed (non-fatal):', err.message);
+      return null;
+    });
+  let timer;
+  const timeout = new Promise(resolve => {
+    timer = setTimeout(() => {
+      console.log('[Persist] Word-problem stamp timed out — saving unstamped');
+      resolve(null);
+    }, timeoutMs);
+    if (typeof timer.unref === 'function') timer.unref();
+  });
+  return Promise.race([solve, timeout]).finally(() => clearTimeout(timer));
+}
 
 /**
  * Persist all state changes from a pipeline run.
@@ -364,6 +395,17 @@ async function persist(params) {
   // Detect and store structured problem metadata on the AI message.
   // This lets the diagnose stage read it directly on the next turn instead of
   // re-parsing the AI's natural language text with fragile regex patterns.
+  //
+  // Two sources. The deterministic solver stamps anything it can parse. A WORD
+  // problem — givens as plain numbers, no operator for the solver to find — is
+  // solved once by the verifier's answer engine and stamped `source: 'llm'`.
+  // Owner session, 2026-11-08: a rate problem was re-solved on every student
+  // turn and twice graded against the wrong tutor message (the greeting's
+  // warm-up), rejecting "300 miles". A stamp made when the problem is posed
+  // cannot be mis-picked later — the problem IS the message it sits on — and
+  // diagnose reads an llm stamp as affirm-only (it confirms a match, and a
+  // mismatch defers to the live verifier), so a wrong stamp can never reject.
+  let wordProblemStamp = null;
   try {
     // parseCleanProblem strips conversational prose before matching so
     // a tutor turn like "Here's another problem: Solve 4x+3=27" stores
@@ -409,6 +451,13 @@ async function persist(params) {
         content: problemContent,
       });
       user.markModified('recentProblems');
+    } else if (isWordProblemPose(responseText)) {
+      // The tutor turn before this one, as context: a word problem posed as a
+      // follow-up ("Now at that same rate, how far in 5 hours?") builds on it.
+      const priorTutor = conversation.messages
+        .filter(m => m.role === 'assistant')
+        .slice(-2, -1)[0];
+      wordProblemStamp = startWordProblemStamp(responseText.trim(), priorTutor?.content || null);
     }
   } catch (_) {
     // Non-fatal — worst case we fall back to re-parsing in diagnose
@@ -578,6 +627,25 @@ async function persist(params) {
     conversation.messages = conversation.messages.filter(msg =>
       msg.content && typeof msg.content === 'string' && msg.content.trim() !== ''
     );
+  }
+
+  // Collect the word-problem stamp started in §7. Looked up by content, not
+  // index: the filter above may have rebuilt the array.
+  if (wordProblemStamp) {
+    try {
+      const stamp = await wordProblemStamp;
+      if (stamp) {
+        const posed = [...conversation.messages].reverse()
+          .find(m => m.role === 'assistant' && m.content === stamp.content);
+        if (posed && !posed.problemInfo?.correctAnswer) {
+          posed.problemInfo = { type: 'word-problem', correctAnswer: stamp.correctAnswer, source: 'llm' };
+          conversation.markModified('messages');
+          console.log(`[Persist] Stamped word problem: answer ${stamp.correctAnswer} (from "${stamp.answer}")`);
+        }
+      }
+    } catch (err) {
+      console.error('[Persist] Word-problem stamp failed (non-fatal):', err.message);
+    }
   }
 
   await conversation.save();

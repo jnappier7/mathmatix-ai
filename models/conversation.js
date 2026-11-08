@@ -32,8 +32,12 @@ const messageSchema = new Schema({
     // Computed once at persist time so the diagnose stage can read it directly
     // instead of re-parsing the AI's natural language text with fragile regex.
     problemInfo: {
-        type: { type: String },       // e.g. 'derivative', 'arithmetic', 'linear_equation'
+        type: { type: String },       // e.g. 'derivative', 'arithmetic', 'linear_equation', 'word-problem'
         correctAnswer: { type: String },
+        // 'llm' = a word problem solved once at persist time by the verifier's
+        // answer engine; diagnose treats such a key as affirm-only. Absent for
+        // keys the deterministic solver produced.
+        source: { type: String },
     },
     // Show My Work integration: when a student submits work for grading,
     // a 'user' message is appended with workCheckId pointing to the GradingResult.

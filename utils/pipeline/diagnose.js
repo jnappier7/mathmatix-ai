@@ -749,6 +749,9 @@ async function diagnose(observation, context = {}) {
         roots: Array.isArray(msg.problemInfo.roots) ? msg.problemInfo.roots : null,
         steps: [],
         content: msg.content,
+        // 'llm' marks a word problem solved once at persist time; the grading
+        // block below reads such a stamp as affirm-only.
+        source: msg.problemInfo.source || null,
       };
       break;
     }
@@ -880,6 +883,23 @@ async function diagnose(observation, context = {}) {
     isCorrect = multiRoot.isCorrect; // true (complete) | false (named nothing in set) | null (partial)
     correctAnswer = problemInfo.correctAnswer;
     verificationSource = 'root_set';
+  } else if (problemInfo && problemInfo.source === 'llm') {
+    // A word-problem key stamped at pose time (persist.js). It was produced by a
+    // model, not a solver, so it may AFFIRM — same value, instant, no model call
+    // this turn — but never reject on its own: a mismatch leaves the turn
+    // undecided and the live verifier (Step 2b, holding the same problem) rules.
+    // If the two disagree, the student is affirmed; a stamp can only ever be
+    // the reason a right answer was confirmed faster, never the reason a right
+    // answer was called wrong.
+    const verification = verifyAnswer(studentAnswer, problemInfo.correctAnswer);
+    if (verification.isCorrect) {
+      isCorrect = true;
+      correctAnswer = problemInfo.correctAnswer;
+      verificationSource = 'stamp';
+      console.log(`[Diagnose] Matches the stamped word-problem answer ${problemInfo.correctAnswer} -> correct`);
+    } else {
+      console.log(`[Diagnose] "${studentAnswer}" differs from the stamped ${problemInfo.correctAnswer} — a stamp alone cannot reject; deferring to the verifier`);
+    }
   } else if (problemInfo) {
     // If the student SHOWED their work (a multi-line derivation), follow the
     // whole chain instead of string-matching only their final line: every step
@@ -998,7 +1018,10 @@ async function diagnose(observation, context = {}) {
         correctAnswer: problemInfo && problemInfo.correctAnswer,
         problemTex: context.pinnedProblemTex,
       });
-      if (sym.isCorrect !== null) {
+      // A pose-time word-problem stamp (source 'llm') is affirm-only here too:
+      // the CAS comparing against a model-made key is still the model's key.
+      const stampedReject = sym.isCorrect === false && problemInfo?.source === 'llm';
+      if (sym.isCorrect !== null && !stampedReject) {
         isCorrect = sym.isCorrect;
         if (sym.isCorrect && correctAnswer == null) correctAnswer = studentAnswer;
         verificationSource = 'symbolic:' + sym.method;
