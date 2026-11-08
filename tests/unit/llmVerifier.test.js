@@ -545,3 +545,120 @@ describe('LLMVerifier: articulatesMethod gate', () => {
     expect(articulatesMethod('x'.repeat(1600))).toBe(false); // over length cap
   });
 });
+
+// ── The rate/ratio transcript (owner session, 2026-11-08) ──
+// A word problem states its givens as plain numbers with no operator between
+// them, so the problem-like tier never saw it and the verifier graded "300 miles"
+// (right) against the greeting's warm-up three turns back — a confident wrong
+// verdict, stamped problemResult:incorrect in prod, then "60 mph" the same way.
+describe('LLMVerifier: pickProblemContext — a word problem is the problem', () => {
+  const GREETING = { content: "Hey! Quick warm-up to get going: What's \\( \\frac{-6}{2} + 3 \\)?" };
+  const PRAISE = { content: "That's right, you nailed it! The answer is indeed \\( 0 \\). Want a harder one?" };
+  const WORD_PROBLEM = { content: "Problem: A car travels 120 miles in 2 hours. At this rate, how far will it travel in 5 hours?\n\n1. First, what's the rate of the car in miles per hour?\n2. Then, use that rate to find how far it goes in 5 hours." };
+  const SUB_QUESTION = { content: 'You got the distance of 120 miles in 2 hours. What do you think the first step is to find the rate in miles per hour? How would you calculate that?' };
+
+  test('"300 miles" is graded against the word problem, not the warm-up before it', () => {
+    expect(pickProblemContext([GREETING, PRAISE, WORD_PROBLEM])).toBe(WORD_PROBLEM.content);
+  });
+
+  test('a sub-question that restates its givens is the question being answered', () => {
+    expect(pickProblemContext([GREETING, PRAISE, WORD_PROBLEM, SUB_QUESTION])).toBe(SUB_QUESTION.content);
+  });
+
+  test('a pleasantry after the problem is skipped, and so is a hint that quotes one number', () => {
+    const READY = { content: 'Nice work so far! Ready for the next one?' };
+    expect(pickProblemContext([WORD_PROBLEM, READY])).toBe(WORD_PROBLEM.content);
+    const LINEAR = { content: 'Try this one: Solve \\(3x - 7 = 11\\).' };
+    const HINT = { content: 'Remember the 7 on the left. What could you do first?' };
+    expect(pickProblemContext([LINEAR, HINT])).toBe(LINEAR.content);
+  });
+
+  test('two numbers without a question mark are not a posed problem', () => {
+    const LINEAR = { content: 'Try this one: Solve \\(3x - 7 = 11\\).' };
+    const RECAP = { content: 'So far you have 120 miles and 2 hours written down. Keep going.' };
+    expect(pickProblemContext([LINEAR, RECAP])).toBe(LINEAR.content);
+  });
+});
+
+describe('LLMVerifier: a unit the problem never mentions cannot ground a rejection', () => {
+  const { unitAbsentFromProblem, verifyWithEscalation } = require('../../utils/pipeline/llmVerifier');
+  const WARM_UP = "Quick warm-up: What's \\( \\frac{-6}{2} + 3 \\)?";
+  const RATE = 'A car travels 120 miles in 2 hours. At this rate, how far will it travel in 5 hours?';
+
+  beforeEach(() => {
+    callLLM.mockReset();
+  });
+
+  test.each([
+    ['300 miles', WARM_UP, true],
+    ['60 mph', WARM_UP, true],
+    ['60 mph', 'You got 120 miles in 2 hours. How would you find the rate in miles per hour?', false],
+    ['300 miles', RATE, false],
+    ['240 miles', RATE, false],              // wrong, but the unit fits — a rejection may stand
+    ['x = 6', 'Solve 3x - 7 = 11', false],   // no unit at all
+    ['3x', 'Simplify 2x + x', false],        // a variable is not a unit
+    ['2pi', 'circumference of a circle with radius 1', false],
+    ['28 units squared', 'area of a 7 by 4 rectangle', false], // generic label
+    ['52 degrees', 'The angle measures 52°. What is its supplement?', false],
+    ['30 dollars', 'A shirt costs $40 and is 25% off', false],
+    ['15 days', 'How many days to read a 180-page book at 12 pages a day?', false],
+    ['1200 cm2', 'a 30 cm by 40 cm rectangle', false],
+    ['9 inches', 'a 3 cm by 3 cm square', true],
+  ])('%s vs "%s" → absent: %s', (answer, problem, absent) => {
+    expect(unitAbsentFromProblem(answer, problem)).toBe(absent);
+  });
+
+  test('a symbolic mismatch on an answer with a foreign unit is unverifiable, not incorrect', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ answer: '0' })); // step 1: the warm-up's answer
+    const r = await llmVerifyAnswer(WARM_UP, '300', { fullStudentMessage: '300 miles' });
+    expect(r.isCorrect).toBeNull();
+    expect(r.error).toBe('unit_not_in_problem');
+    expect(callLLM).toHaveBeenCalledTimes(1); // no equivalence judge spent on it
+  });
+
+  test('a judge NO MATCH on an answer with a foreign unit is unverifiable too', async () => {
+    callLLM
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'x + 3' }))                       // step 1
+      .mockResolvedValueOnce(fakeCompletion({ matches: false, confidence: 0.95 }));     // step 2
+    const r = await llmVerifyAnswer('Simplify (x^2 - 9)/(x - 3)', '60', { fullStudentMessage: '60 mph' });
+    expect(r.isCorrect).toBeNull();
+    expect(r.error).toBe('unit_not_in_problem');
+  });
+
+  test('the right value with its unit is still CORRECT (the guard only blocks rejections)', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ answer: '300 miles' }));
+    const r = await llmVerifyAnswer(RATE, '300', { fullStudentMessage: '300 miles' });
+    expect(r.isCorrect).toBe(true);
+  });
+
+  test('a wrong value whose unit the problem does mention is still INCORRECT', async () => {
+    callLLM
+      .mockResolvedValueOnce(fakeCompletion({ answer: '300 miles' }))
+      .mockResolvedValueOnce(fakeCompletion({ matches: false, confidence: 0.95 }));
+    const r = await llmVerifyAnswer(RATE, '240', { fullStudentMessage: '240 miles' });
+    expect(r.isCorrect).toBe(false);
+  });
+
+  test('the escalation tier is not spent on a unit the problem never mentions', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ answer: '0' }));
+    const r = await verifyWithEscalation(WARM_UP, '300', { fullStudentMessage: '300 miles' });
+    expect(r.isCorrect).toBeNull();
+    expect(r.escalated).toBe(false);
+    expect(callLLM).toHaveBeenCalledTimes(1);
+  });
+
+  test('the newest tutor question rides along for the answer engine when it is not the chosen problem', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ answer: '60' }));
+    await llmVerifyAnswer(RATE, '60', { latestQuestion: "So what's the rate, in miles per hour?" });
+    const step1User = callLLM.mock.calls[0][1].find(m => m.role === 'user').content;
+    expect(step1User).toContain('Problem:\n' + RATE);
+    expect(step1User).toContain("The tutor's latest question to the student:\nSo what's the rate, in miles per hour?");
+  });
+
+  test('…and is omitted when it IS the chosen problem', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ answer: '300' }));
+    await llmVerifyAnswer(RATE, '300', { latestQuestion: RATE });
+    const step1User = callLLM.mock.calls[0][1].find(m => m.role === 'user').content;
+    expect(step1User).not.toContain("latest question");
+  });
+});
