@@ -271,40 +271,7 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
   try {
     // ── Step 1: Independently compute the answer ──
     // Fresh context, no student, no persona. Plain math engine.
-    const step1Messages = [
-      {
-        role: 'system',
-        content:
-          'You are a precise math answer engine. Given a math problem, return ONLY the final simplified answer as a short string. ' +
-          'Do not show work, do not add commentary, do not repeat the problem. ' +
-          'If multiple equivalent forms are acceptable (e.g. factored vs expanded), return the simplest standard form. ' +
-          'If the problem text asks MORE THAN ONE thing (a warm-up sub-step and then the real result — ' +
-          'e.g. "what\'s 0.15 × 2, and then where does the decimal land once you account for the 2000?"), ' +
-          'return the answer to the LAST thing asked: that is the question the student is completing. ' +
-          'Never anchor on an intermediate sub-step when a final result is also requested. ' +
-          'If "The tutor\'s latest question" is included, the student is answering THAT: when it asks for a quantity or for the result of a step, return that value, using the Problem for the givens; ' +
-          'when it asks only for a method ("what would you do first?") or is conversational ("ready for another?"), return the Problem\'s final answer instead. ' +
-          'A method question that has a numeric outcome ("how would you calculate the rate?") still gets a VALUE — return the number that step produces, never a description. ' +
-          'Respond with JSON: {"answer": "<answer>", "form": "<e.g. simplified|factored|decimal>"}.',
-      },
-      {
-        role: 'user',
-        // The turn before the question, when the caller has one: a sub-question
-        // ("u' = 2x and v' = cos x. What would u'v look like?") rarely restates
-        // what it builds on (v = sin x), and solved blind it came out as
-        // 2x cos x — a right u'v rejected and a wrong one accepted (verdict
-        // eval, 2026-11-04). Context only; the Problem is still what is graded.
-        //
-        // The newest tutor turn, when it asks something and is not the chosen
-        // problem: a student answers the question in front of them, and whether
-        // that question wants a value ("what's the rate?") or merely a method
-        // ("what would you do first?") is a judgment this engine makes far
-        // better than a regex in pickProblemContext could.
-        content: (earlier ? `Earlier in the lesson (context only — do not answer this part):\n${earlier}\n\n` : '')
-          + `Problem:\n${problem}`
-          + (latestAsk ? `\n\nThe tutor's latest question to the student:\n${latestAsk}` : ''),
-      },
-    ];
+    const step1Messages = buildStep1Messages({ problem, earlier, latestAsk });
 
     const step1 = await verifierCall(model, step1Messages, {
       temperature: 0,
@@ -351,6 +318,134 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
       }
     } catch (_) { /* fall through to the LLM equivalence judge */ }
 
+    return await judgeEquivalence({ model, problem, answer, modelAnswer, options, threshold, unitMismatch, unverifiable });
+  } catch (err) {
+    console.error('[LLMVerifier] Verification call failed:', err.message);
+    return { ...unverifiable, error: err.message || 'llm_error' };
+  }
+}
+
+/**
+ * The step-1 "answer engine" request, shared by llmVerifyAnswer (per student
+ * turn) and solvePosedProblem (once, when the tutor poses a word problem).
+ * One prompt, so the two never drift apart on what "the answer" means.
+ */
+function buildStep1Messages({ problem, earlier = null, latestAsk = null }) {
+  return [
+      {
+        role: 'system',
+        content:
+          'You are a precise math answer engine. Given a math problem, return ONLY the final simplified answer as a short string. ' +
+          'Do not show work, do not add commentary, do not repeat the problem. ' +
+          'If multiple equivalent forms are acceptable (e.g. factored vs expanded), return the simplest standard form. ' +
+          'If the problem text asks MORE THAN ONE thing (a warm-up sub-step and then the real result — ' +
+          'e.g. "what\'s 0.15 × 2, and then where does the decimal land once you account for the 2000?"), ' +
+          'return the answer to the LAST thing asked: that is the question the student is completing. ' +
+          'Never anchor on an intermediate sub-step when a final result is also requested. ' +
+          'If "The tutor\'s latest question" is included, the student is answering THAT: when it asks for a quantity or for the result of a step, return that value, using the Problem for the givens; ' +
+          'when it asks only for a method ("what would you do first?") or is conversational ("ready for another?"), return the Problem\'s final answer instead. ' +
+          'A method question that has a numeric outcome ("how would you calculate the rate?") still gets a VALUE — return the number that step produces, never a description. ' +
+          'Respond with JSON: {"answer": "<answer>", "form": "<e.g. simplified|factored|decimal>"}.',
+      },
+      {
+        role: 'user',
+        // The turn before the question, when the caller has one: a sub-question
+        // ("u' = 2x and v' = cos x. What would u'v look like?") rarely restates
+        // what it builds on (v = sin x), and solved blind it came out as
+        // 2x cos x — a right u'v rejected and a wrong one accepted (verdict
+        // eval, 2026-11-04). Context only; the Problem is still what is graded.
+        //
+        // The newest tutor turn, when it asks something and is not the chosen
+        // problem: a student answers the question in front of them, and whether
+        // that question wants a value ("what's the rate?") or merely a method
+        // ("what would you do first?") is a judgment this engine makes far
+        // better than a regex in pickProblemContext could.
+        content: (earlier ? `Earlier in the lesson (context only — do not answer this part):\n${earlier}\n\n` : '')
+          + `Problem:\n${problem}`
+          + (latestAsk ? `\n\nThe tutor's latest question to the student:\n${latestAsk}` : ''),
+      },
+    ];
+}
+
+/**
+ * Solve a problem the tutor just POSED — once, at persist time — so the answer
+ * can be stamped on the tutor message and later student turns grade against
+ * the stamp instead of re-picking a problem and re-solving it every turn.
+ *
+ * Owner session, 2026-11-08: a rate word problem was re-solved on every student
+ * turn, and on two of them the verifier was handed the wrong tutor message (the
+ * greeting's warm-up) and rejected a right answer. A stamp made when the problem
+ * is posed cannot be mis-picked later: the problem IS the message it sits on.
+ *
+ * Same answer engine as llmVerifyAnswer's step 1 (one prompt, no drift). The
+ * caller decides whether the result is stampable — see numericAnswerValue; a
+ * description ("divide the distance by the time") is not an answer key.
+ *
+ * @returns {Promise<{answer: string|null, numeric: string|null, error: string|null}>}
+ */
+async function solvePosedProblem(problemText, options = {}) {
+  const none = { answer: null, numeric: null, error: null };
+  if (!problemText || typeof problemText !== 'string') return { ...none, error: 'missing_input' };
+  const problem = problemText.trim().slice(0, MAX_PROBLEM_CHARS);
+  const earlier = typeof options.earlierContext === 'string' && options.earlierContext.trim()
+    && options.earlierContext.trim() !== problem
+    ? options.earlierContext.trim().slice(-MAX_PROBLEM_CHARS)
+    : null;
+  const model = options.model || VERIFIER_MODEL;
+  try {
+    const res = await verifierCall(model, buildStep1Messages({ problem, earlier }), {
+      temperature: 0,
+      max_tokens: 300,
+      response_format: { type: 'json_object' },
+    });
+    const raw = res?.choices?.[0]?.message?.content?.trim() || '';
+    const parsed = parseVerdict(raw);
+    const answer = parsed && typeof parsed.answer === 'string' ? parsed.answer.trim() : null;
+    if (!answer) return { ...none, error: 'step1_parse_failed' };
+    return { answer, numeric: numericAnswerValue(answer), error: null };
+  } catch (err) {
+    console.error('[LLMVerifier] solvePosedProblem failed:', err.message);
+    return { ...none, error: err.message || 'llm_error' };
+  }
+}
+
+/**
+ * The bare number in an answer-engine result, or null when the result is not a
+ * single quantity: "300 miles" → "300", "$30" → "30", "1,200 km" → "1200",
+ * "divide 120 by 2" → null, "x = 5" → null, "9π" → null, "3/4" → null.
+ * Only a single quantity is stamped as a word problem's key — anything richer
+ * is left to the live verifier, whose equivalence judge can read it.
+ */
+function numericAnswerValue(answer) {
+  if (typeof answer !== 'string') return null;
+  const m = answer.trim().replace(/,(?=\d{3}\b)/g, '')
+    .match(/^(?:about\s+|approximately\s+|≈\s*)?\$?\s*(-?\d+(?:\.\d+)?)\s*(?:[a-z°%$][a-z°%$ ^0-9/.]*)?$/i);
+  return m ? m[1] : null;
+}
+
+/**
+ * Does this tutor message POSE a word problem — a question with its givens as
+ * plain numbers and no math the deterministic solver could parse? This is the
+ * gate for stamping (persist.js). Deliberately narrow: it must ask for a
+ * quantity. "Ready for the next one?" and "Nice, 60 is right — what could you
+ * do first?" are not problems, and a method question ("how would you set this
+ * up?") has no single key.
+ */
+const QUANTITY_ASK = /\b(?:how\s+(?:many|much|far|long|fast|tall|old|big|heavy|wide|high|deep)|what(?:'s|\s+is|\s+was|\s+will|\s+would)\s+(?:the\s+|its\s+|his\s+|her\s+|their\s+)?(?:\w+\s+){0,2}?(?:total|rate|speed|distance|time|cost|price|area|perimeter|volume|average|mean|median|probability|percent|percentage|number|amount|value|answer|result|sum|difference|product|quotient|length|width|height|balance|change|unit\s+rate)|at\s+(?:this|that)\s+rate|in\s+all\b|altogether)\b/i;
+
+function isWordProblemPose(text) {
+  if (typeof text !== 'string') return false;
+  const t = text.trim();
+  if (!t || t.length > 1500 || !t.includes('?')) return false;
+  if ((t.match(/\d+(?:\.\d+)?/g) || []).length < 2) return false;
+  return QUANTITY_ASK.test(t);
+}
+
+/**
+ * Step 2 of llmVerifyAnswer: the equivalence judge, for answers the CAS could
+ * not settle. Split out only so step 1 can be shared with solvePosedProblem.
+ */
+async function judgeEquivalence({ model, problem, answer, modelAnswer, options, threshold, unitMismatch, unverifiable }) {
     // ── Step 2: Ask equivalence judge ──
     // Independent call, still no persona. Just: do these two mean the same thing?
     // The student's full reply, when the caller provides it, protects the
@@ -432,10 +527,6 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
       rationale,
       error: null,
     };
-  } catch (err) {
-    console.error('[LLMVerifier] Verification call failed:', err.message);
-    return { ...unverifiable, error: err.message || 'llm_error' };
-  }
 }
 
 /**
@@ -970,8 +1061,13 @@ module.exports = {
   ESCALATION_MODEL,
   CONFIDENCE_THRESHOLD,
   NEGATIVE_CONFIDENCE_THRESHOLD,
+  // Pose-time stamping of word problems (persist.js)
+  solvePosedProblem,
+  isWordProblemPose,
+  numericAnswerValue,
   // exposed for unit tests
   parseVerdict,
   verifierCall,
   unitAbsentFromProblem,
+  buildStep1Messages,
 };
