@@ -242,6 +242,22 @@ describe('every selectable tutor has current-style art on disk', () => {
         }
         expect(pngSize(path.join(dir, `${id}-new2.png`))).toEqual([1536, 1024]);
     });
+
+    // Idle clips: every count in IDLE_VIDEO_COUNTS must exist on disk, and they
+    // play muted in a loop beside the chat — they ship without an audio track.
+    const counts = JSON.parse(
+        redesign.match(/IDLE_VIDEO_COUNTS = (\{[\s\S]*?\});/)[1]
+            .replace(/\/\/.*$/gm, '').replace(/'/g, '"').replace(/,(\s*})/, '$1')
+    );
+    test.each(Object.entries(counts))('%s idle clips are on disk and silent', (id, n) => {
+        for (let i = 1; i <= n; i++) {
+            const f = path.join(__dirname, '../../public/videos', `${id}_idle${i > 1 ? i : ''}.mp4`);
+            expect(fs.existsSync(f)).toBe(true);
+            if (TUTOR_CONFIG[id] && TUTOR_CONFIG[id].purchasable) {
+                expect(fs.readFileSync(f).includes('soun')).toBe(false); // no sound handler box
+            }
+        }
+    });
 });
 
 describe('Dr. G is a gorilla character, never a person of any human heritage', () => {

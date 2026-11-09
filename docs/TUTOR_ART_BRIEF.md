@@ -4,9 +4,17 @@
 > Prof. Davies, Ms. Alex, Mr. Lee, Mr. Wiggles and Dr. G (`<id>-fullBody.*`), and their
 > small portraits are cut from it (`<id>-v2.*`, new names so week-long static
 > caching can't serve the old art). **Desk heroes (`-new2`) landed 2026-11-07**
-> and are wired into `HERO_PORTRAIT_OVERRIDES`. Still to come for each: thinking
-> pose, backdrop and videos (until then they use Maya's backdrop and the still
-> portrait). Prof. Davies and Ms. Alex were
+> and are wired into `HERO_PORTRAIT_OVERRIDES`. **Idle clips landed 2026-11-08**
+> for Mr. Sierawski, Prof. Davies, Ms. Alex and Mr. Wiggles (one clip each, in
+> `IDLE_VIDEO_COUNTS`). Still to come: idle clips for Ms. Rashida, Mr. Lee and
+> Dr. G; a second idle clip, thinking pose, backdrop and celebration clips for
+> all seven.
+>
+> **Video prep** (the generator exports 2944×1248 with an audio track): crop
+> 1872×1248 centred on the desk, scale to 1152×768 @24fps, **strip audio
+> (`-an`)**, x264 CRF 26 `+faststart`. If the last frame doesn't match the first,
+> crossfade the last 0.5 s into the opening 0.5 s so the native loop has no
+> jump. Bump `VIDEO_VERSION` when a clip replaces one under the same name. Prof. Davies and Ms. Alex were
 > regenerated to match their personas (British-Jamaican; Korean-American).
 
 ## 1. The target look (match the core four)
