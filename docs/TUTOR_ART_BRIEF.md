@@ -5,9 +5,10 @@
 > small portraits are cut from it (`<id>-v2.*`, new names so week-long static
 > caching can't serve the old art). **Desk heroes (`-new2`) landed 2026-11-07**
 > and are wired into `HERO_PORTRAIT_OVERRIDES`. **Idle clips landed 2026-11-08**
-> for Mr. Sierawski, Prof. Davies, Ms. Alex and Mr. Wiggles, and 2026-11-09 for
-> Ms. Rashida (one clip each, in `IDLE_VIDEO_COUNTS`). Still to come: idle clips
-> for Mr. Lee and Dr. G; a second idle clip, thinking pose, backdrop and celebration clips for
+> for Mr. Sierawski, Prof. Davies, Ms. Alex and Mr. Wiggles; on 2026-11-09 Ms.
+> Rashida, Mr. Lee and Dr. G got theirs and Sierawski, Davies, Alex and Wiggles
+> were regenerated with the start/end-frame recipe below (one clip each, in
+> `IDLE_VIDEO_COUNTS`). Still to come: a second idle clip, thinking pose, backdrop and celebration clips for
 > all seven.
 >
 > **Video prep** (the generator exports 2944×1248 with an audio track): crop

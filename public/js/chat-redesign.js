@@ -21,7 +21,7 @@
 
   // Cache-buster for /videos/* — prod caches static assets 7 days with no
   // hashing, so bump this whenever a clip is re-exported under the same name.
-  const VIDEO_VERSION = '?v=20261109';
+  const VIDEO_VERSION = '?v=20261109b';
 
   // How many idle clips each tutor has on disk ({id}_idle.mp4, {id}_idle2.mp4).
   // Tutors not listed here (and reduced-motion users) keep the static
@@ -36,7 +36,9 @@
     'prof-davies': 1,
     'ms-alex': 1,
     'mr-wiggles': 1,
-    'ms-rashida': 1
+    'ms-rashida': 1,
+    'mr-lee': 1,
+    'dr-g': 1
   };
 
   // Tutors whose backdrop gets a depth-of-field blur so the portrait reads
