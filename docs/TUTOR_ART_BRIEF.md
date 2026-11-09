@@ -5,9 +5,9 @@
 > small portraits are cut from it (`<id>-v2.*`, new names so week-long static
 > caching can't serve the old art). **Desk heroes (`-new2`) landed 2026-11-07**
 > and are wired into `HERO_PORTRAIT_OVERRIDES`. **Idle clips landed 2026-11-08**
-> for Mr. Sierawski, Prof. Davies, Ms. Alex and Mr. Wiggles (one clip each, in
-> `IDLE_VIDEO_COUNTS`). Still to come: idle clips for Ms. Rashida, Mr. Lee and
-> Dr. G; a second idle clip, thinking pose, backdrop and celebration clips for
+> for Mr. Sierawski, Prof. Davies, Ms. Alex and Mr. Wiggles, and 2026-11-09 for
+> Ms. Rashida (one clip each, in `IDLE_VIDEO_COUNTS`). Still to come: idle clips
+> for Mr. Lee and Dr. G; a second idle clip, thinking pose, backdrop and celebration clips for
 > all seven.
 >
 > **Video prep** (the generator exports 2944×1248 with an audio track): crop
@@ -16,6 +16,13 @@
 > crossfade the last 0.5 s into the opening 0.5 s so the native loop has no
 > jump. Bump `VIDEO_VERSION` when a clip replaces one under the same name. Prof. Davies and Ms. Alex were
 > regenerated to match their personas (British-Jamaican; Korean-American).
+>
+> **Better recipe (used from Ms. Rashida on):** generate image-to-video at
+> **16:9, 768p, 6 s**, with the `-new2` still centred on a white 1820×1024
+> canvas as **both the start and end frame**. The export is 1344×768 (the canvas
+> at 0.75×), so `crop=1152:768:96:0` is the still pixel-for-pixel — no scaling,
+> no size pop when the video fades in over the still — and dropping the final
+> frame (it repeats the first) gives a seamless native loop with no crossfade.
 
 ## 1. The target look (match the core four)
 
