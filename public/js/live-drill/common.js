@@ -7,21 +7,129 @@
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const fx = (y) => 7 + (y / 100) * 86;
 
-  /** A field with one lane per team. Built once; `setField` moves the balls. */
+  // ---------------- the field ----------------
+  // One lane per team, built once. `setField` is told only where each ball IS; everything that
+  // moves is worked out here from where it WAS: a gain spirals forward and leaves a streak, a loss
+  // tumbles back, a touchdown runs the ball into the end zone, spikes it and re-spots it (it used
+  // to slide 80 yards backwards, which read as the biggest loss of the game). WAAPI ignores the
+  // stylesheet's reduced-motion rule, so every effect checks `calm()` itself.
+  const calm = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const BALL = '<svg viewBox="0 0 44 26" aria-hidden="true"><path class="skin" d="M2 13Q22-7 42 13Q22 33 2 13Z"/>'
+    + '<path class="stripe" d="M9.5 6.8Q7.6 13 9.5 19.2M34.5 6.8Q36.4 13 34.5 19.2"/>'
+    + '<path class="lace" d="M16 13H28M18.5 10.6V15.4M22 10.2V15.8M25.5 10.6V15.4"/></svg>';
+
   function buildField(el, teams) {
     let h = '<div class="ez l"></div><div class="ez r"><span>END ZONE</span></div>';
     for (let y = 10; y <= 90; y += 10) {
       h += `<div class="yl" style="left:${fx(y)}%"></div><div class="yn" style="left:${fx(y)}%">${y <= 50 ? y : 100 - y}</div>`;
     }
-    teams.forEach((t, i) => { h += `<div class="lane t${i}"><span class="tag">${esc(t.name)}</span><div class="ball"></div></div>`; });
+    teams.forEach((t, i) => { h += `<div class="lane t${i}"><span class="tag">${esc(t.name)}</span><div class="ezglow"></div><div class="ball">${BALL}</div></div>`; });
     el.innerHTML = h;
   }
-  function setField(el, teams) {
+
+  /** Restart a one-shot CSS animation class on an element. */
+  function kick(el, cls, ms) {
+    el.classList.remove('run', 'hit', 'spike', 'spot');
+    void el.offsetWidth;
+    el.classList.add(cls);
+    clearTimeout(el._k);
+    el._k = setTimeout(() => el.classList.remove(cls), ms);
+  }
+  function streak(lane, from, to) {
+    const tr = document.createElement('div');
+    tr.className = 'trail ' + (to > from ? 'fwd' : 'back');
+    tr.style.left = fx(Math.min(from, to)) + '%';
+    tr.style.width = Math.abs(fx(to) - fx(from)) + '%';
+    lane.insertBefore(tr, lane.querySelector('.ball'));
+    tr.animate([{ opacity: 0.95 }, { opacity: 0 }], { duration: 1100, easing: 'ease-out' }).onfinish = () => tr.remove();
+  }
+  function yardPop(lane, at, text, cls) {
+    if (lane.querySelectorAll('.pop').length >= 3) return; // a big class moves the ball every second
+    const p = document.createElement('span');
+    p.className = 'pop ' + cls;
+    p.textContent = text;
+    p.style.left = fx(at) + '%';
+    lane.appendChild(p);
+    p.animate([
+      { transform: 'translate(-50%,-30%) scale(.6)', opacity: 0 },
+      { transform: 'translate(-50%,-110%) scale(1.15)', opacity: 1, offset: 0.25 },
+      { transform: 'translate(-50%,-150%) scale(1)', opacity: 1, offset: 0.7 },
+      { transform: 'translate(-50%,-190%) scale(1)', opacity: 0 },
+    ], { duration: 1300, easing: 'ease-out' }).onfinish = () => p.remove();
+  }
+  function burst(lane, n) {
+    for (let i = 0; i < n; i++) {
+      const c = document.createElement('i');
+      c.className = 'cf c' + (i % 3);
+      lane.appendChild(c);
+      const a = Math.PI * (0.55 + 0.9 * Math.random()); // up and back toward the field
+      const d = 30 + Math.random() * 70;
+      c.animate([
+        { transform: 'translate(0,0) rotate(0)', opacity: 1 },
+        { transform: `translate(${Math.cos(a) * d}px,${-Math.abs(Math.sin(a)) * d * 0.7 - 10}px) rotate(${Math.random() * 540}deg)`, opacity: 1, offset: 0.6 },
+        { transform: `translate(${Math.cos(a) * d * 1.2}px,${30 + Math.random() * 30}px) rotate(${Math.random() * 900}deg)`, opacity: 0 },
+      ], { duration: 900 + Math.random() * 600, easing: 'cubic-bezier(.2,.7,.4,1)' }).onfinish = () => c.remove();
+    }
+  }
+
+  /** The scoring drive: into the end zone, a spike, then the ball is re-spotted where the next drive starts. */
+  function touchdown(lane, ball) {
+    lane._busy = true;
+    clearTimeout(lane._t1); clearTimeout(lane._t2); clearTimeout(lane._t3);
+    ball.style.left = fx(100) + 3.5 + '%'; // across the goal line, into the paint
+    kick(ball, 'run', 620);
+    lane.classList.add('scored');
+    lane._t1 = setTimeout(() => { kick(ball, 'spike', 800); burst(lane, 16); }, 600);
+    lane._t2 = setTimeout(() => {
+      ball.style.transition = 'none';
+      ball.style.left = fx(lane._pos) + '%';
+      void ball.offsetWidth;
+      ball.style.transition = '';
+      kick(ball, 'spot', 600);
+      lane._busy = false;
+    }, 1700);
+    lane._t3 = setTimeout(() => lane.classList.remove('scored'), 3200);
+  }
+
+  /**
+   * Put each team's ball where the state says. `opts.pickSix` ([bool, bool]) marks points that came
+   * from a pick six: those were not a drive, so the end zone lights up but no ball runs in.
+   */
+  function setField(el, teams, opts) {
     if (!el.querySelector('.lane')) buildField(el, teams);
+    const picks = (opts && opts.pickSix) || [];
     el.querySelectorAll('.lane').forEach((lane, i) => {
       const t = teams[i]; if (!t) return;
-      lane.querySelector('.ball').style.left = fx(Math.max(0, Math.min(100, t.pos))) + '%';
+      const ball = lane.querySelector('.ball');
+      const pos = Math.max(0, Math.min(100, t.pos));
+      const was = lane._pos; const pts = lane._pts;
+      lane._pos = pos; lane._pts = t.pts;
+      if (was == null || calm() || !ball.animate) { ball.style.left = fx(pos) + '%'; return; }
+      const scored = pts != null && t.pts > pts;
+      if (scored && picks[i]) {
+        lane.classList.add('scored'); burst(lane, 12);
+        clearTimeout(lane._t3); lane._t3 = setTimeout(() => lane.classList.remove('scored'), 3200);
+      } else if (scored) { touchdown(lane, ball); return; }
+      if (lane._busy || pos === was) return; // mid-celebration: the re-spot reads lane._pos
+      ball.style.left = fx(pos) + '%';
+      const d = Math.round(pos - was);
+      streak(lane, was, pos);
+      if (d) yardPop(lane, pos, (d > 0 ? '+' : '−') + Math.abs(d), d > 0 ? 'gain' : 'loss');
+      kick(ball, d >= 0 ? 'run' : 'hit', 650);
     });
+  }
+
+  /** A blitz lands on a team's ball: a bolt out of the sky and a flash down the lane. */
+  function fieldBolt(el, team) {
+    const lane = el.querySelectorAll('.lane')[team];
+    if (!lane || lane._pos == null || calm()) return;
+    const b = document.createElement('div');
+    b.className = 'bolt';
+    b.style.left = fx(lane._pos) + '%';
+    b.innerHTML = '<svg viewBox="0 0 40 100" preserveAspectRatio="none" aria-hidden="true"><path d="M24 0L6 52H19L11 100L36 40H22L32 0Z"/></svg>';
+    lane.appendChild(b);
+    lane.classList.add('zap');
+    setTimeout(() => { b.remove(); lane.classList.remove('zap'); }, 620);
   }
 
   function cardHTML(play, revealCard, meta) {
@@ -43,10 +151,22 @@
    * two drives landing inside one broadcast), both, split left and right. It used to be one panel
    * written per team, so the second write replaced the first and only one team was ever announced.
    */
+  /** Paper in the scoring team's colour, falling across its half of the splash (CSS-driven, so reduced motion drops it). */
+  function confetti(scores) {
+    if (calm()) return '';
+    let h = '';
+    scores.forEach((s, k) => {
+      const lo = scores.length > 1 ? k * 50 : 0; const span = scores.length > 1 ? 50 : 100;
+      for (let i = 0; i < 44; i++) {
+        h += `<i class="cf t${s.idx} c${i % 3}" style="left:${(lo + Math.random() * span).toFixed(1)}%;--d:${(Math.random() * 0.5).toFixed(2)}s;--t:${(1.1 + Math.random() * 0.9).toFixed(2)}s;--r:${Math.round(Math.random() * 720 - 360)}deg;--x:${Math.round(Math.random() * 120 - 60)}px"></i>`;
+      }
+    });
+    return h;
+  }
   function splash(scores) {
     const el = $('td'); if (!el || !scores.length) return;
     el.classList.toggle('split', scores.length > 1);
-    el.innerHTML = scores.map((s) => `<div class="t${s.idx}">${s.label}<br>${esc(s.name)}</div>`).join('');
+    el.innerHTML = scores.map((s) => `<div class="t${s.idx}">${s.label}<br>${esc(s.name)}</div>`).join('') + confetti(scores);
     el.hidden = false;
     clearTimeout(splash._t);
     splash._t = setTimeout(() => { el.hidden = true; }, scores.length > 1 ? 2200 : 1600);
@@ -121,5 +241,5 @@
       + '</div>';
   }
 
-  window.LiveDrill = { $, esc, buildField, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns, rulesHTML };
+  window.LiveDrill = { $, esc, buildField, setField, fieldBolt, calm, cardHTML, syncClock, serverNow, mmss, watchTouchdowns, rulesHTML };
 })();

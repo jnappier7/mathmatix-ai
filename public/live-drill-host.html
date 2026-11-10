@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261107">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261110">
 </head>
 <body>
 <div class="wrap">
@@ -142,7 +142,10 @@
           <div class="fxbanner" id="heist-fx" hidden aria-live="polite"></div>
           <ol class="crew" id="heist-board"></ol>
         </div>
-        <div class="feed" id="heist-feed" aria-live="polite"></div>
+        <div class="heistside">
+          <div class="vaultscene"><svg id="vault-svg" viewBox="0 0 400 300" role="img" aria-label="The vault"></svg></div>
+          <div class="feed" id="heist-feed" aria-live="polite"></div>
+        </div>
       </div>
 
       <!-- huddle: the play itself, large -->
@@ -195,8 +198,8 @@
 </div>
 
 <script src="/js/csrf.js"></script>
-<script src="/js/live-drill/common.js?v=20261106b"></script>
+<script src="/js/live-drill/common.js?v=20261110"></script>
 <script src="/js/live-drill/sound.js?v=20261106"></script>
-<script src="/js/live-drill/host.js?v=20261107"></script>
+<script src="/js/live-drill/host.js?v=20261110"></script>
 </body>
 </html>

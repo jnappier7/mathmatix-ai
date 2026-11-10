@@ -308,11 +308,42 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .field .yn{position:absolute;bottom:2px;transform:translateX(-50%);font-family:var(--display);font-weight:800;font-size:.72rem;color:rgba(255,255,255,.8)}
 .field .lane{position:absolute;left:0;right:0;height:50%}
 .field .lane.t0{top:0}.field .lane.t1{top:50%;border-top:1px dashed rgba(255,255,255,.25)}
-.ball{position:absolute;top:50%;width:44px;height:26px;margin:-13px 0 0 -22px;background:#7b3f1d;border-radius:50%;box-shadow:0 0 0 3px var(--c),0 2px 0 rgba(0,0,0,.35);transition:left .6s cubic-bezier(.3,1.3,.5,1)}
-.ball::after{content:"";position:absolute;left:13px;right:13px;top:12px;height:2px;background:#f4eee4}
+.ball{position:absolute;top:50%;width:44px;height:26px;margin:-13px 0 0 -22px;z-index:2;transition:left .6s cubic-bezier(.3,1.3,.5,1);filter:drop-shadow(0 3px 2px rgba(0,0,0,.45))}
+.ball svg{display:block;width:100%;height:100%;overflow:visible}
+.ball .skin{fill:#8a4a22;stroke:var(--c);stroke-width:2.6;paint-order:stroke;stroke-linejoin:round}
+.ball .stripe{fill:none;stroke:#f4eee4;stroke-width:1.8;stroke-linecap:round}
+.ball .lace{fill:none;stroke:#f4eee4;stroke-width:1.5;stroke-linecap:round}
 .field.small .ball{width:22px;height:13px;margin:-7px 0 0 -11px}
-.field.small .ball::after{left:6px;right:6px;top:5px}
-.lane.t0 .ball{--c:var(--red)} .lane.t1 .ball{--c:var(--blue)}
+/* what the ball just did: a gain spirals, a loss tumbles back, a score is spiked, a new drive is spotted */
+.ball.run svg{animation:spiral .6s ease-out}
+.ball.hit svg{animation:tumble-back .6s ease-out}
+.ball.spike svg{animation:spike .8s cubic-bezier(.3,0,.4,1)}
+.ball.spot svg{animation:spot .55s cubic-bezier(.3,1.5,.5,1)}
+@keyframes spiral{0%{transform:rotateX(0) scale(1)}40%{transform:rotateX(360deg) scale(1.22)}100%{transform:rotateX(720deg) scale(1)}}
+@keyframes tumble-back{0%{transform:rotate(0)}30%{transform:rotate(-200deg) translateY(-6px)}70%{transform:rotate(-380deg)}100%{transform:rotate(-360deg)}}
+@keyframes spike{0%{transform:translateY(0) rotate(0)}22%{transform:translateY(-34px) rotate(40deg)}45%{transform:translateY(4px) rotate(90deg) scaleY(.8)}62%{transform:translateY(-16px) rotate(200deg)}100%{transform:translateY(0) rotate(360deg)}}
+@keyframes spot{0%{transform:translateY(-26px) scale(1.5);opacity:0}100%{transform:none;opacity:1}}
+.trail{position:absolute;top:50%;height:8px;margin-top:-4px;border-radius:4px;pointer-events:none;z-index:1}
+.trail.fwd{background:linear-gradient(90deg,transparent,var(--c))}
+.trail.back{background:repeating-linear-gradient(90deg,var(--miss) 0 6px,transparent 6px 11px);opacity:.8}
+.lane.t0{--c:var(--red)} .lane.t1{--c:var(--blue)}
+.pop{position:absolute;top:50%;z-index:3;font-family:var(--display);font-weight:900;font-size:clamp(1.2rem,2.4vw,2rem);line-height:1;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.55),0 0 12px var(--c);pointer-events:none;white-space:nowrap}
+.pop.loss{color:var(--miss);text-shadow:0 2px 0 rgba(0,0,0,.6)}
+.field.small .pop,.mode-huddle .field .pop{display:none}
+.ezglow{position:absolute;right:0;top:0;bottom:0;width:7%;background:var(--c);opacity:0;pointer-events:none;z-index:1}
+.lane.scored .ezglow{animation:ezglow 3.2s ease-out both}
+@keyframes ezglow{0%{opacity:0}8%{opacity:.95}22%{opacity:.4}36%{opacity:.9}55%{opacity:.5}100%{opacity:0}}
+.lane .cf{position:absolute;right:3.5%;top:50%;width:9px;height:6px;border-radius:1px;z-index:3;pointer-events:none;background:var(--c)}
+.lane .cf.c1{background:var(--led)} .lane .cf.c2{background:#fff}
+.bolt{position:absolute;top:-10%;bottom:42%;width:34px;margin-left:-17px;z-index:3;pointer-events:none;transform-origin:50% 0;animation:bolt .6s ease-out both;filter:drop-shadow(0 0 8px #ffe98a)}
+.bolt svg{width:100%;height:100%;display:block} .bolt path{fill:#ffe45c;stroke:#fff;stroke-width:1.5}
+@keyframes bolt{0%{transform:scaleY(0);opacity:1}18%{transform:scaleY(1)}30%{opacity:.3}42%{opacity:1}100%{opacity:0;transform:scaleY(1)}}
+.lane.zap{animation:zap .6s ease-out}
+@keyframes zap{0%{background:rgba(255,236,150,.55)}100%{background:transparent}}
+/* the scoreboard number lands with a thump */
+.sb .v.bump{animation:bump .7s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bump{0%{transform:scale(1.9);filter:brightness(2)}100%{transform:none;filter:none}}
+
 .lane .tag{position:absolute;left:0;width:7%;top:50%;transform:translateY(-50%);text-align:center;font-family:var(--display);font-weight:900;font-size:clamp(.62rem,1.2vw,1rem);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.9)}
 .lane.t0 .tag{color:#ffd0cb}.lane.t1 .tag{color:#cfe9ff}
 
@@ -400,7 +431,6 @@ table.twoway td:first-child{text-align:left}
 .mode-huddle .sb>div{padding:4px 14px}
 .mode-huddle #field{order:1;height:clamp(80px,11vh,110px)}
 .mode-huddle .field .ball{width:30px;height:18px;margin:-9px 0 0 -15px}
-.mode-huddle .field .ball::after{left:9px;right:9px;top:8px}
 .mode-huddle>.err{order:2}
 
 /* ---------- huddle bar (host) ---------- */
@@ -416,6 +446,7 @@ table.twoway td:first-child{text-align:left}
 .fb.pick6{border-color:var(--led);box-shadow:0 0 0 2px var(--led) inset}
 .fb.blitz{border-color:#ffd166;box-shadow:0 0 0 2px #ffd166 inset}
 .feed .it.blitz,.it.ev.blitz{color:#ffd166}
+.feed .it.ev.blitz{background:var(--board);border-color:#ffd166} /* amber on the amber event pill was unreadable */
 .p6tag{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--led);color:var(--ink);font-family:var(--display);font-weight:800;font-size:.85em;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle}
 
 /* ---------- final ---------- */
@@ -481,6 +512,9 @@ table.twoway td:first-child{text-align:left}
 #td div{font-family:var(--display);font-weight:900;font-size:clamp(3.5rem,14vw,10rem);color:var(--led);text-transform:uppercase;text-align:center;line-height:.9;text-shadow:0 0 30px rgba(255,181,71,.5);animation:pop .9s ease both}
 #td div.t0{color:var(--red)} #td div.t1{color:var(--blue)}
 /* both teams scored on the same update: split the screen, Red left, Blue right */
+#td .cf{position:absolute;top:-4vh;width:1.1vw;height:.7vw;min-width:9px;min-height:6px;border-radius:2px;background:var(--led);animation:fall var(--t,1.5s) var(--d,0s) cubic-bezier(.3,.1,.6,1) both}
+#td .cf.t0.c0{background:var(--red)} #td .cf.t1.c0{background:var(--blue)} #td .cf.c2{background:#fff}
+@keyframes fall{0%{transform:translate(0,0) rotate(0);opacity:1}85%{opacity:1}100%{transform:translate(var(--x,0),108vh) rotate(var(--r,360deg));opacity:0}}
 #td.split{grid-template-columns:1fr 1fr;place-items:stretch}
 #td.split div{display:grid;place-items:center;font-size:clamp(2.6rem,9vw,7rem);padding:0 3vw}
 #td.split div.t0{background:rgba(224,78,78,.14);border-right:3px solid var(--rail)}
@@ -607,8 +641,40 @@ tr.none td{opacity:.62}
 .crew li{display:grid;grid-template-columns:2em minmax(0,1fr) 42% 6.5em;gap:10px;align-items:center;background:var(--board);border:1px solid var(--rail);border-radius:6px;padding:6px 10px;font-size:clamp(1rem,1.4vw,1.3rem);transition:background .3s}
 .crew li.lead{border-color:var(--led)}
 .crew li.hit{border-color:var(--miss);animation:shake .5s ease 2}
-.crew li.alarm{background:#2a1416}
+.crew li.alarm{background:#2a1416;border-color:var(--miss)}
 .crew li.more{display:block;background:none;border:0;text-align:center}
+.crew li{position:relative}
+.crew li.cracking{border-color:#8b93b5}
+.crew li.alarm{animation:rowalarm .9s ease-in-out infinite}
+@keyframes rowalarm{0%,100%{box-shadow:inset 4px 0 0 var(--miss)}50%{box-shadow:inset 4px 0 0 var(--miss),inset 60px 0 40px -30px rgba(255,106,92,.35)}}
+.heistside{display:flex;flex-direction:column;gap:12px;min-width:0}
+.vaultscene{border:2px solid var(--rail);border-radius:10px;overflow:hidden;background:#0b0f1a;line-height:0}
+.vaultscene svg{display:block;width:100%;height:auto;max-height:36vh;overflow:visible}
+.vaultscene .plates path{stroke:#232b40;stroke-width:2;fill:none}
+.vaultscene .frame{fill:#10141f;stroke:#39425a;stroke-width:6}
+.vaultscene .inside{opacity:.0;transition:opacity .5s}
+.vaultscene .stack rect{fill:#ffd66b;stroke:#8a5a0c;stroke-width:1.5;opacity:0;transition:opacity .5s}
+.vaultscene .door{transform-box:view-box;transform-origin:94px 150px;transition:transform .9s cubic-bezier(.5,0,.2,1)}
+.vaultscene .door.open{transform:scaleX(.16) skewY(-7deg)}
+.vaultscene:has(.door.open) .inside,.vaultscene:has(.door.open) .stack rect{opacity:1}
+.vaultscene .rivet{fill:#1a2030;stroke:#6f7b93;stroke-width:1.5}
+.vaultscene .ring{fill:none;stroke:#2a3142;stroke-width:3}
+.vaultscene .tick{stroke:#aab4c8;stroke-width:1.6}
+.vaultscene .wheel{transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.vaultscene .spoke{fill:#c9d1df;stroke:#1a2030;stroke-width:1.5}
+.vaultscene .knob{fill:#e7ecf4;stroke:#1a2030;stroke-width:1.5}
+.vaultscene .hub{fill:#39425a;stroke:#c9d1df;stroke-width:3}
+.vaultscene .hubcap{fill:var(--led)}
+.vaultscene .hinge{fill:#39425a;stroke:#161b28;stroke-width:2}
+.vaultscene .lamp{fill:var(--hit);filter:drop-shadow(0 0 6px var(--hit));transition:fill .2s}
+.vaultscene .lamp.red{fill:var(--miss);filter:drop-shadow(0 0 10px var(--miss));animation:lamp .5s steps(2,jump-none) infinite}
+@keyframes lamp{0%{opacity:1}100%{opacity:.35}}
+.vaultscene .coin{fill:#ffd66b;stroke:#8a5a0c;stroke-width:1.5}
+.vaultscene .call{font-family:var(--display);font-weight:900;font-size:22px;letter-spacing:.06em;fill:#fff;paint-order:stroke;stroke:#0b0f1a;stroke-width:5px;opacity:0;transition:opacity .3s}
+.vaultscene .call.on{opacity:1}
+.flychip{position:fixed;left:0;top:0;z-index:20;pointer-events:none;white-space:nowrap;font-family:var(--display);font-weight:900;font-size:clamp(1.1rem,1.8vw,1.7rem);background:var(--led);color:var(--ink);border-radius:999px;padding:4px 14px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.flychip.gain{background:none;box-shadow:none;color:var(--hit);text-shadow:0 2px 0 rgba(0,0,0,.6);padding:0}
+.flychip.gain.jackpot{color:#fff;font-size:clamp(1.5rem,2.6vw,2.4rem);text-shadow:0 0 14px var(--led),0 2px 0 rgba(0,0,0,.6)}
 .crew .rk{font-family:var(--display);font-weight:900;color:var(--muted)}
 .crew .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .crew .bar{height:12px;background:var(--night);border-radius:6px;overflow:hidden}
@@ -646,7 +712,16 @@ tr.none td{opacity:.62}
 .typing .myheist{padding:6px 10px;gap:4px}
 .typing .myheist .cash .v{font-size:1.7rem}
 .alarm{background:#3a0f12;border:3px solid var(--miss);border-radius:10px;padding:18px;text-align:center;animation:alarm 1s ease-in-out infinite}
-.alarm .siren{font-size:2.6rem;line-height:1}
+div.alarm{position:relative;overflow:hidden}
+div.alarm>*{position:relative}
+.crew li.alarm{text-align:left}
+.alarm .sweep{position:absolute;left:50%;top:50%;width:200%;aspect-ratio:1;margin:-100% 0 0 -100%;background:conic-gradient(from 0deg,rgba(255,106,92,.3),transparent 24%,transparent 50%,rgba(255,106,92,.3) 50%,transparent 74%);animation:sweep 1.4s linear infinite;pointer-events:none}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.alarm .drain{display:block;height:8px;border-radius:4px;background:rgba(255,255,255,.14);margin:12px auto 0;max-width:260px;overflow:hidden}
+.alarm .drain span{display:block;height:100%;background:var(--miss);transform-origin:0 50%;animation:drain linear both}
+@keyframes drain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+.alarm .siren{font-size:2.6rem;line-height:1;animation:siren .5s ease-in-out infinite alternate}
+@keyframes siren{from{transform:rotate(-9deg) scale(1)}to{transform:rotate(9deg) scale(1.1)}}
 .alarm .big{font-family:var(--display);font-weight:900;font-size:2.4rem;letter-spacing:.08em;color:var(--miss)}
 .alarm .sub{color:var(--chalk);margin-top:6px}
 .alarm .sub b{font-family:var(--display);font-size:1.4em;color:#fff;font-variant-numeric:tabular-nums}
@@ -655,7 +730,22 @@ tr.none td{opacity:.62}
 .vaultcard .big{font-family:var(--display);font-weight:900;font-size:1.8rem;color:var(--led)}
 .vaultcard .sub{color:var(--muted)}
 .choices .ch.safe{flex-direction:column;justify-content:center;min-height:96px;background:linear-gradient(#2a2f45,#171b2c);border-color:#5a5f7a}
-.choices .ch.safe .door{font-size:2rem;line-height:1}
+.choices .ch.safe{animation:safein .4s cubic-bezier(.3,1.4,.5,1) both;animation-delay:calc(var(--i,0) * 90ms)}
+@keyframes safein{from{transform:translateY(14px) scale(.9);opacity:0}}
+.safe .box{position:relative;width:64px;height:58px;border-radius:8px;background:#0c0f1a;border:3px solid #6f7b93;perspective:260px;display:block}
+.safe .loot{position:absolute;inset:0;display:grid;place-items:center;font-size:1.9rem;line-height:1;opacity:0;transform:scale(.4);transition:opacity .25s .25s,transform .45s .25s cubic-bezier(.3,1.7,.5,1)}
+.safe .door{position:absolute;inset:-1px;border-radius:5px;background:linear-gradient(135deg,#8a96a8,#4c566a 55%,#2b3244);transform-origin:0 50%;transition:transform .55s cubic-bezier(.5,0,.2,1);display:grid;place-items:center;backface-visibility:hidden}
+.safe .dial{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle,#e7ecf4 0 22%,#1a2030 24% 34%,#c9d1df 36%);border:2px solid #1a2030;position:relative}
+.safe .dial::after{content:"";position:absolute;left:50%;top:1px;width:2px;height:8px;margin-left:-1px;background:var(--miss);border-radius:1px}
+.safe .handle{position:absolute;right:7px;top:50%;width:5px;height:20px;margin-top:-10px;border-radius:3px;background:#e7ecf4;border:1px solid #1a2030}
+.safe.cracking .dial{animation:dial .7s linear infinite}
+@keyframes dial{0%{transform:rotate(0)}35%{transform:rotate(250deg)}55%{transform:rotate(160deg)}100%{transform:rotate(360deg)}}
+.safe.opened .door{transform:rotateY(-112deg)}
+.safe.opened .loot{opacity:1;transform:none}
+.safe.opened.rich .box{border-color:var(--led);box-shadow:0 0 18px rgba(255,181,71,.55);background:radial-gradient(circle,#5a3d08,#0c0f1a 75%)}
+.safe.opened.jackpot .box{animation:jackpot .5s ease-in-out 3}
+@keyframes jackpot{50%{box-shadow:0 0 34px #fff3c4,0 0 60px var(--led);transform:scale(1.08)}}
+.safe.fade .box{filter:grayscale(1) brightness(.6)}
 .choices .ch.safe .lab{font-family:var(--display);font-weight:800;letter-spacing:.06em;text-transform:uppercase}
 .choices .ch.safe.opened{border-color:var(--led);background:#2a2208}
 .fb.crack{border-color:var(--led);box-shadow:0 0 0 2px var(--led) inset}
