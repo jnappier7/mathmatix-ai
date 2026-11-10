@@ -25,7 +25,7 @@
  * after it ends (or after two idle hours).
  */
 const crypto = require('crypto');
-const { dealPlay, publicPlay, RECENT, DRILLS, getDrill } = require('./engine');
+const { dealPlay, publicPlay, RECENT, DRILLS, getDrill, resolvePlaybook } = require('./engine');
 const facts = require('./facts');
 const hill = require('./hill');
 const heist = require('./heist');
@@ -166,7 +166,9 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
   if (!DRILLS[drill]) throw new GameError(400, 'Unknown drill.');
   if (!MODES.includes(mode)) throw new GameError(400, 'Mode must be drive, huddle, hill or heist.');
   const d = getDrill(drill); // throws if the published page can't be read
-  const book = d.bank.BOOKS[playbook] ? playbook : 'all';
+  // a book of the bank, a numbered section ("5.2" — every book that covers it), or the whole bank
+  const pb = resolvePlaybook(drill, playbook);
+  const book = pb.key;
   // Math Facts only: the numbers the teacher singled out ("× 2s, 5s & 10s").
   const fx = DRILLS[drill].focus && facts.FOCUSABLE.includes(book) ? facts.normalizeFocus(focus) : null;
   const S = settingsFor(drill);
@@ -189,7 +191,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
     drill,
     drillTitle: d.title,
     playbook: book,
-    playbookName: d.bank.BOOKS[book].name + (fx ? ` · ${facts.focusLabel(fx)}` : ''),
+    playbookName: pb.name + (fx ? ` · ${facts.focusLabel(fx)}` : ''),
     focus: fx,
     mode,
     seed: crypto.randomBytes(12).toString('hex'),

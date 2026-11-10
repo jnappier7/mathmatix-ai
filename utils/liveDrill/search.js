@@ -12,7 +12,7 @@
  * its "Whole Module" book so "circles" lands on 10.1, not the mixed set. Both pickers — the
  * host's and the solo page's — read the same `GET /api/live-drill/solo/search?q=`.
  */
-const { DRILLS, listPlaybooks } = require('./engine');
+const { DRILLS, listPlaybooks, listSections, sectionsOfLabel } = require('./engine');
 const { HUBS } = require('./solo');
 
 /** Things people type → the words the banks print. Lowercase, letters/digits only (see `words`). */
@@ -163,24 +163,40 @@ function buildIndex() {
     let books;
     try { books = listPlaybooks(drill); } catch { continue; } // a bank that won't load is not searchable
     const h = hubOf[drill] || { hub: null, hubTitle: '', game: d.title, gameBlurb: '' };
+    const fields = (e) => ({
+      name: words(e.name), ch: words(e.ch), blurb: words(e.blurb),
+      title: words(e.title).concat(words(e.game)), hub: words(e.hubTitle),
+      // the game's blurb names the module's topics even when a section blurb is terse
+      gameBlurb: e.whole ? words(h.gameBlurb) : [],
+    });
     for (const b of books) {
       const e = {
         drill, title: d.title, hub: h.hub, hubTitle: h.hubTitle, game: h.game,
         key: b.key, name: b.name, ch: b.ch || '', blurb: b.blurb || '',
-        whole: b.key === 'all',
+        whole: b.key === 'all', sections: sectionsOfLabel(b.ch), section: false,
         order: order++,
       };
-      e.fields = {
-        name: words(e.name), ch: words(e.ch), blurb: words(e.blurb),
-        title: words(e.title).concat(words(e.game)), hub: words(e.hubTitle),
-        // the game's blurb names the module's topics even when a section blurb is terse
-        gameBlurb: e.whole ? words(h.gameBlurb) : [],
+      e.fields = fields(e);
+      out.push(e);
+    }
+    // the numbered sections too ("5.2" = every book that covers it), so "5.2" typed lands on 5.2
+    for (const sec of listSections(drill)) {
+      if (!sec.books.length) continue;
+      const e = {
+        drill, title: d.title, hub: h.hub, hubTitle: h.hubTitle, game: h.game,
+        key: sec.key, name: sec.name, ch: sec.key, blurb: sec.topics.join(' · '),
+        whole: false, sections: [sec.key], section: true,
+        order: order++,
       };
+      e.fields = fields(e);
       out.push(e);
     }
   }
   return out;
 }
+
+/** The section numbers typed ("5.2", "10.4"): the result must be, or cover, every one of them. */
+const sectionNums = (q) => [...new Set((String(q || '').match(/\b\d{1,2}\.\d{1,2}\b/g) || []))];
 
 function index() { if (!INDEX) INDEX = buildIndex(); return INDEX; }
 
@@ -239,9 +255,13 @@ function search(q, opts = {}) {
   if (!own.length) return [];
   // "chapter 9": the drill whose title carries the 9, and only that drill
   const drillNums = own.filter((w, i) => i > 0 && DRILL_WORDS.has(own[i - 1]) && /^\d+$/.test(w));
+  // "5.2": only what is, or covers, section 5.2 — never 2.5, and never every "5" and "2"
+  const secNums = sectionNums(q);
   const scored = [];
   for (const e of index()) {
     if (drillNums.length && !drillNums.every((n) => hit(e.fields.title, n))) continue;
+    if (secNums.length && !secNums.every((n) => e.sections.includes(n))) continue;
+    if (e.section && !secNums.length) continue; // a topic word lands on the book, not on "Section 12.4" beside it
     let score = 0;
     let missed = false;
     for (const g of groups) {
@@ -256,6 +276,7 @@ function search(q, opts = {}) {
     }
     if (missed) continue;
     if (e.whole) score -= 1.5; // a section beats its "Whole Module" on the same words
+    if (e.section) score += 3; // "5.2" lands on the section itself, its books beneath
     scored.push({ e, score });
   }
   scored.sort((a, b) => (b.score - a.score) || (a.e.order - b.e.order));
