@@ -138,6 +138,63 @@ function listPlaybooks(drillId) {
   }));
 }
 
+/**
+ * The numbered sections a playbook's label covers: "5.1" → [5.1]; "5.3–5.5" → [5.3, 5.4, 5.5];
+ * "2.4, 2.7" → [2.4, 2.7]. Labels with no N.M ("Mod 5", "ACT style", "Q1–5", "Ch. 2–3", "+−×÷")
+ * cover none. A range across chapters ("2.7–3.1") is read as its two ends.
+ */
+function sectionsOfLabel(ch) {
+  const out = [];
+  const re = /(\d+)\.(\d+)(?:\s*[–\-—]\s*(\d+)\.(\d+))?/g;
+  let m;
+  while ((m = re.exec(String(ch || '')))) {
+    const chap = m[1]; const a = Number(m[2]);
+    if (m[3] && m[3] !== chap) { out.push(`${chap}.${a}`, `${m[3]}.${Number(m[4])}`); continue; }
+    const b = m[3] ? Number(m[4]) : a;
+    for (let i = a; i <= b && i - a < 20; i++) out.push(`${chap}.${i}`);
+  }
+  return [...new Set(out)];
+}
+
+/**
+ * The drill's numbered sections in order ("5.1" … "5.5"), each with the playbooks that cover it —
+ * the pick a teacher actually makes mid-module ("we did 5.2 today"), derived from the labels the
+ * banks already print, never a second catalog. A number between the first and the last that no
+ * playbook covers is listed with no books, so a picker can show it as not-yet rather than skip it
+ * silently. A drill whose labels carry no N.M (Math Facts, a Test Prep's question ranges, the
+ * course pages' modules) has none.
+ */
+function listSections(drillId) {
+  const books = listPlaybooks(drillId);
+  const covering = new Map();
+  for (const b of books) for (const s of sectionsOfLabel(b.ch)) {
+    if (!covering.has(s)) covering.set(s, []);
+    covering.get(s).push(b);
+  }
+  if (!covering.size) return [];
+  const num = (s) => s.split('.').map(Number);
+  const ids = [...covering.keys()].sort((x, y) => (num(x)[0] - num(y)[0]) || (num(x)[1] - num(y)[1]));
+  const [c0, s0] = num(ids[0]); const [cN, sN] = num(ids[ids.length - 1]);
+  const all = c0 === cN ? Array.from({ length: sN - s0 + 1 }, (_, i) => `${c0}.${s0 + i}`) : ids;
+  return all.map((key) => {
+    const bs = covering.get(key) || [];
+    return { key, name: `Section ${key}`, books: bs.map((b) => b.key), topics: bs.map((b) => b.name), blurb: bs.map((b) => b.blurb).filter(Boolean).join(' ') };
+  });
+}
+
+/**
+ * What a playbook key means: a book of the bank, or a numbered section (every book that covers
+ * it), or — for anything else — the whole bank. The host and the solo page both send the key.
+ */
+function resolvePlaybook(drillId, key) {
+  const drill = getDrill(drillId);
+  const k = String(key == null ? '' : key);
+  if (drill.bank.BOOKS[k]) return { key: k, name: drill.bank.BOOKS[k].name, books: [k] };
+  const sec = /^\d+\.\d+$/.test(k) ? listSections(drillId).find((s) => s.key === k) : null;
+  if (sec && sec.books.length) return { key: k, name: sec.name, books: sec.books, section: true };
+  return { key: 'all', name: drill.bank.BOOKS.all.name, books: ['all'] };
+}
+
 // ---------- rendering (mirrors the page's rowsHTML / posedHTML / tellFor) ----------
 
 function rowsHTML(bank, it, revealed) {
@@ -217,11 +274,16 @@ function summaryOf(it, isDo) {
 function dealPlay(drillId, playbook, seed, n, recentIds, opts) {
   const drill = getDrill(drillId);
   if (!drill) throw new Error(`unknown drill ${drillId}`);
-  const book = drill.bank.BOOKS[playbook] ? playbook : 'all';
-  if (drill.native) return drill.bank.makePlay(book, (recentIds || []).slice(0, RECENT), mulberry32(seedFor(seed, n)), opts);
-  drill.rng.next = mulberry32(seedFor(seed, n));
+  const { books } = resolvePlaybook(drillId, playbook);
+  const recent = (recentIds || []).slice(0, RECENT);
+  const rand = mulberry32(seedFor(seed, n));
+  // A section spanning several books: a native bank pools their templates (prep/kit.js makePlay
+  // takes the list); a published page's makePlay takes one book, so the seeded draw picks it.
+  if (drill.native) return drill.bank.makePlay(books.length === 1 ? books[0] : books, recent, rand, opts);
+  const book = books.length === 1 ? books[0] : books[Math.floor(rand() * books.length)];
+  drill.rng.next = rand;
   try {
-    return normalize(drill, drill.bank.makePlay(book, (recentIds || []).slice(0, RECENT)));
+    return normalize(drill, drill.bank.makePlay(book, recent));
   } finally {
     drill.rng.next = Math.random;
   }
@@ -236,4 +298,4 @@ function publicPlay(play) {
   return pub;
 }
 
-module.exports = { DRILLS, getDrill, listPlaybooks, dealPlay, publicPlay, RECENT, _extractBank: extractBank };
+module.exports = { DRILLS, getDrill, listPlaybooks, listSections, sectionsOfLabel, resolvePlaybook, dealPlay, publicPlay, RECENT, _extractBank: extractBank };

@@ -713,9 +713,11 @@ tr.none td{opacity:.62}
 .seg-ctl.tabs button{padding:11px 18px;font-size:1.05rem}
 .unitrow{display:flex;flex-direction:column;gap:6px}
 .unitrow .lbl{margin-bottom:0}
+.seg-ctl.secs button{padding:10px 14px;font-variant-numeric:tabular-nums}
+.seg-ctl.secs button:disabled{color:var(--rail);cursor:not-allowed}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{background:var(--night);color:var(--chalk);border:2px solid var(--rail);border-radius:999px;padding:7px 12px;font:700 .95rem var(--body);display:inline-flex;align-items:center;gap:8px;cursor:pointer}
-.chip .ch{font-family:var(--display);font-weight:800;color:var(--led);letter-spacing:.08em;font-size:.8rem;text-transform:uppercase}
+.chip .ch{display:inline;min-height:0;padding:0;border:0;background:none;font-family:var(--display);font-weight:800;color:var(--led);letter-spacing:.08em;font-size:.8rem;text-transform:uppercase} /* .ch is also the Huddle choice card — reset it here */
 .chip[aria-pressed="true"]{border-color:var(--led);background:#1a2a24}
 .chip:focus-visible{outline:3px solid var(--led);outline-offset:2px}
 .modes.compact{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}

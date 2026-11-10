@@ -11,7 +11,7 @@
  * That is why this can be public with no account: there is no record to protect and no score to
  * cheat. A class game's plays never come through here; a solo seed is the student's own.
  */
-const { DRILLS, dealPlay, listPlaybooks, RECENT } = require('./engine');
+const { DRILLS, dealPlay, listPlaybooks, listSections, resolvePlaybook, RECENT } = require('./engine');
 const { settingsFor, SCORING } = require('./games');
 const { FOCUSABLE, FOCUS_MAX, normalizeFocus } = require('./facts');
 
@@ -83,6 +83,7 @@ function hubView(hubId) {
       return {
         drill: g.drill, name: g.name, blurb: g.blurb, typed: !!DRILLS[g.drill].typed,
         playbooks: listPlaybooks(g.drill),
+        sections: listSections(g.drill),
         clock: { seconds: drive.seconds, defaultSeconds: drive.defaultSeconds },
         scoring: { gains: s.gains, withinMs: s.driveMs, miss: s.sack },
         ...(DRILLS[g.drill].focus ? { focusable: { books: FOCUSABLE, max: FOCUS_MAX } } : {}),
@@ -134,8 +135,7 @@ function parseDeal(q) {
   if (!SEED_RE.test(seed)) return { error: 'Bad seed.' };
   const from = Number(q.from || 0);
   if (!Number.isInteger(from) || from < 0 || from > MAX_PLAY - BATCH) return { error: 'Bad position.' };
-  const books = listPlaybooks(drill).map((b) => b.key);
-  const playbook = books.includes(String(q.book)) ? String(q.book) : 'all';
+  const playbook = resolvePlaybook(drill, q.book).key; // a book, a numbered section, or all
   // Math Facts: "only 2s, 5s and 10s" — the same focus a teacher sets in a class game.
   const focus = DRILLS[drill].focus && FOCUSABLE.includes(playbook) && q.focus
     ? normalizeFocus(String(q.focus).split(',').slice(0, FOCUS_MAX + 1)) : null;
