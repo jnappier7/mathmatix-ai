@@ -3,9 +3,27 @@
 > Status (2026-11-06): **new full-body art is live** for Ms. Rashida, Mr. Sierawski,
 > Prof. Davies, Ms. Alex, Mr. Lee, Mr. Wiggles and Dr. G (`<id>-fullBody.*`), and their
 > small portraits are cut from it (`<id>-v2.*`, new names so week-long static
-> caching can't serve the old art). Still to come for each: the desk hero
-> (`-new2`), thinking pose, backdrop and videos. Prof. Davies and Ms. Alex were
+> caching can't serve the old art). **Desk heroes (`-new2`) landed 2026-11-07**
+> and are wired into `HERO_PORTRAIT_OVERRIDES`. **Idle clips landed 2026-11-08**
+> for Mr. Sierawski, Prof. Davies, Ms. Alex and Mr. Wiggles; on 2026-11-09 Ms.
+> Rashida, Mr. Lee and Dr. G got theirs and Sierawski, Davies, Alex and Wiggles
+> were regenerated with the start/end-frame recipe below (one clip each, in
+> `IDLE_VIDEO_COUNTS`). Still to come: a second idle clip, thinking pose, backdrop and celebration clips for
+> all seven.
+>
+> **Video prep** (the generator exports 2944×1248 with an audio track): crop
+> 1872×1248 centred on the desk, scale to 1152×768 @24fps, **strip audio
+> (`-an`)**, x264 CRF 26 `+faststart`. If the last frame doesn't match the first,
+> crossfade the last 0.5 s into the opening 0.5 s so the native loop has no
+> jump. Bump `VIDEO_VERSION` when a clip replaces one under the same name. Prof. Davies and Ms. Alex were
 > regenerated to match their personas (British-Jamaican; Korean-American).
+>
+> **Better recipe (used from Ms. Rashida on):** generate image-to-video at
+> **16:9, 768p, 6 s**, with the `-new2` still centred on a white 1820×1024
+> canvas as **both the start and end frame**. The export is 1344×768 (the canvas
+> at 0.75×), so `crop=1152:768:96:0` is the still pixel-for-pixel — no scaling,
+> no size pop when the video fades in over the still — and dropping the final
+> frame (it repeats the first) gives a seamless native loop with no crossfade.
 
 ## 1. The target look (match the core four)
 
@@ -100,6 +118,10 @@ Once a tutor's files are in `public/images/tutor_avatars/` and `public/videos/`:
    (Bob 1390 px, Mr. Nappier 1502, Ms. Maria 1269, Maya 1216; Mr. Sierawski 1440), feet on y = 1578,
    centred; pngquant `--quality=80-98` (lossy PNG without it blotches skin
    tones) plus `.webp` q80 and `.avif` q60.
+   Desk heroes: drop alpha < 24 (background-removal glow) and specks, then scale
+   so the desk's bottom edge is ~1094 px wide (Bob's), bottom-anchored and
+   centred — except where that shrinks the person below the core four's size
+   (2026-11-07 batch: Mr. Lee 0.95, Prof. Davies 1.0, Dr. G 0.88).
 4. Portraits: `utils/tutorConfig.js` `image` and the copy in
    `public/js/parent-dashboard.js` (bundled — run `npm run build:bundles`).
 5. Bump the cache versions — prod caches static files for a week:

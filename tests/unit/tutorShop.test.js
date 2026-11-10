@@ -230,6 +230,34 @@ describe('every selectable tutor has current-style art on disk', () => {
             expect(fs.existsSync(path.join(dir, img.replace(/\.png$/, `.${ext}`)))).toBe(true);
         }
     });
+
+    // The chat hero (and chat message avatars, via getTutorPortraitSrc) use the
+    // seated desk portrait from HERO_PORTRAIT_OVERRIDES; a tutor missing from
+    // that map falls back to the small bust, stretched into the hero frame.
+    const redesign = fs.readFileSync(path.join(__dirname, '../../public/js/chat-redesign.js'), 'utf8');
+    test.each(selectable.map(([id]) => id))('%s has a desk hero wired into the chat page', (id) => {
+        expect(redesign).toContain(`'${id}': '${id}-new2.png'`);
+        for (const ext of ['png', 'webp']) {
+            expect(fs.existsSync(path.join(dir, `${id}-new2.${ext}`))).toBe(true);
+        }
+        expect(pngSize(path.join(dir, `${id}-new2.png`))).toEqual([1536, 1024]);
+    });
+
+    // Idle clips: every count in IDLE_VIDEO_COUNTS must exist on disk, and they
+    // play muted in a loop beside the chat — they ship without an audio track.
+    const counts = JSON.parse(
+        redesign.match(/IDLE_VIDEO_COUNTS = (\{[\s\S]*?\});/)[1]
+            .replace(/\/\/.*$/gm, '').replace(/'/g, '"').replace(/,(\s*})/, '$1')
+    );
+    test.each(Object.entries(counts))('%s idle clips are on disk and silent', (id, n) => {
+        for (let i = 1; i <= n; i++) {
+            const f = path.join(__dirname, '../../public/videos', `${id}_idle${i > 1 ? i : ''}.mp4`);
+            expect(fs.existsSync(f)).toBe(true);
+            if (TUTOR_CONFIG[id] && TUTOR_CONFIG[id].purchasable) {
+                expect(fs.readFileSync(f).includes('soun')).toBe(false); // no sound handler box
+            }
+        }
+    });
 });
 
 describe('Dr. G is a gorilla character, never a person of any human heritage', () => {

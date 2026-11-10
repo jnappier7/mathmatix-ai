@@ -346,9 +346,20 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
       // what it builds on (llmVerifyAnswer's earlierContext).
       const chosenAt = pinnedProblem ? -1 : assistantContext.map(m => m.content).lastIndexOf(problemText);
       const earlierContext = chosenAt > 0 ? assistantContext[chosenAt - 1].content : null;
+      // The newest tutor turn, when it asks something and is NOT the chosen
+      // problem. A student answers the question in front of them; the verifier
+      // is told that question and decides whether it wants a value or only a
+      // method (llmVerifyAnswer's latestQuestion). Not sent on the pinned path:
+      // there the student has stated the pinned problem's solution.
+      const newestTurn = assistantContext[assistantContext.length - 1];
+      const latestQuestion = chosenAt >= 0 && chosenAt < assistantContext.length - 1
+        && typeof newestTurn?.content === 'string' && newestTurn.content.includes('?')
+        ? newestTurn.content
+        : null;
       llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate, {
         fullStudentMessage: message,
         earlierContext,
+        latestQuestion,
       })
         .then(verdict => {
           const tier = verdict.escalated ? `escalated→${verdict.tier}` : verdict.tier;

@@ -61,6 +61,9 @@ module.exports = {
     '<rootDir>/tests/unit/diagnoseEquationStep.test.js',
     '<rootDir>/tests/unit/derivationVerifier.test.js',
     '<rootDir>/tests/unit/stepSolveCredit.test.js',
+    // 2026-11-08 owner session: a word problem is solved once when posed and
+    // stamped; the stamp affirms a match and never rejects on its own.
+    '<rootDir>/tests/unit/wordProblemStamp.test.js',
     // 2026-11-03 owner session: "oh wait, x = 17" / "…, so x = 7" after shown
     // steps reach the answer path and get a verdict.
     '<rootDir>/tests/unit/finalAnswerAfterSteps.test.js',

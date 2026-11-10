@@ -21,7 +21,7 @@
 
   // Cache-buster for /videos/* — prod caches static assets 7 days with no
   // hashing, so bump this whenever a clip is re-exported under the same name.
-  const VIDEO_VERSION = '?v=20260802';
+  const VIDEO_VERSION = '?v=20261109b';
 
   // How many idle clips each tutor has on disk ({id}_idle.mp4, {id}_idle2.mp4).
   // Tutors not listed here (and reduced-motion users) keep the static
@@ -30,20 +30,37 @@
     'bob': 2,
     'maya': 2,
     'mr-nappier': 2,
-    'ms-maria': 2
+    'ms-maria': 2,
+    // Shop tutors, one clip each (2026-11-08) — element A loops it natively.
+    'mr-sierawski': 1,
+    'prof-davies': 1,
+    'ms-alex': 1,
+    'mr-wiggles': 1,
+    'ms-rashida': 1,
+    'mr-lee': 1,
+    'dr-g': 1
   };
 
   // Tutors whose backdrop gets a depth-of-field blur so the portrait reads
   // cleanly. Maya's backdrop is already soft, so she's left sharp.
   const BLUR_BACKDROP = new Set(['bob', 'mr-nappier', 'ms-maria']);
 
-  // Preferred "new" hero portraits when available.
-  // The standard avatar PNG is the fallback.
+  // Preferred "new" hero portraits (seated at the shared desk) when available.
+  // The standard avatar PNG is the fallback. The seven shop tutors got theirs
+  // 2026-11-07 (desk scaled to Bob's framing — see docs/TUTOR_ART_BRIEF.md);
+  // their backdrop, idle and celebration clips are still to come.
   const HERO_PORTRAIT_OVERRIDES = {
     'maya': 'maya-new2.png',
     'bob': 'bob-new2.png',
     'mr-nappier': 'mr-nappier-new2.png',
-    'ms-maria': 'ms-maria-new2.png'
+    'ms-maria': 'ms-maria-new2.png',
+    'ms-rashida': 'ms-rashida-new2.png',
+    'mr-sierawski': 'mr-sierawski-new2.png',
+    'prof-davies': 'prof-davies-new2.png',
+    'ms-alex': 'ms-alex-new2.png',
+    'mr-lee': 'mr-lee-new2.png',
+    'dr-g': 'dr-g-new2.png',
+    'mr-wiggles': 'mr-wiggles-new2.png'
   };
 
   const DEFAULT_BACKDROP = '/images/tutor_avatars/maya-backdrop.png';
@@ -304,7 +321,7 @@
     const backdrop = document.querySelector('.cr-tutor-backdrop');
     const nameEl = document.getElementById('cr-tutor-name');
 
-    // Portrait: prefer the "new2" hero if present for one of the 4
+    // Portrait: prefer the "new2" desk hero (every tutor has one now)
     const heroFile = HERO_PORTRAIT_OVERRIDES[tutorId] || tutor.image;
     if (heroImg && heroFile) {
       heroImg.src = imgSrc(heroFile);
