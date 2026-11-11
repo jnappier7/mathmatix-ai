@@ -397,6 +397,12 @@ playRouter.post('/:code/safe', playLimiter, async (req, res) => {
     res.json(G.openSafe(game, player, (req.body || {}).pick));
   } catch (err) { send(res, err); }
 });
+playRouter.post('/:code/target', playLimiter, async (req, res) => {
+  try {
+    const { game, player } = await withPlayer(req);
+    res.json(G.pickTarget(game, player, (req.body || {}).id));
+  } catch (err) { send(res, err); }
+});
 playRouter.post('/:code/gadget', playLimiter, async (req, res) => {
   try {
     const { game, player } = await withPlayer(req);

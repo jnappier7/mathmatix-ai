@@ -7,8 +7,9 @@
  *     until it clears — the guess-killer;
  *   - every third right answer IN A ROW cracks a safe; a miss resets the streak; the three safes
  *     are dealt from the game seed, so a reconnect sees the same three and nothing is re-rolled;
- *   - a grab or a switch only ever touches a player RICHER than the opener — never a chosen
- *     target, never anyone below — and pays cash instead when nobody is richer;
+ *   - a grab or a switch lands on a player RICHER than the opener — the opener's own pick from the
+ *     classmates above them (owner's call, 2026-11-11), never anyone below — and pays cash
+ *     instead when nobody is richer;
  *   - a gadget hits everyone BUT the finder and expires on its own;
  *   - cash never goes below 0; the standings are by cash; the student's view never leaks what was
  *     in the safes they didn't open;
@@ -136,8 +137,10 @@ describe('cracking a safe', () => {
     const seen = new Set();
     const g = heistGame();
     const a = G.join(g, 'A').player;
-    for (let n = 1; n < 400 && seen.size < 5; n++) for (const s of H.dealSafes(g, a, n)) seen.add(s.kind);
-    expect([...seen].sort()).toEqual(['cash', 'decoy', 'gadget', 'grab', 'switch']);
+    for (let n = 1; n < 400 && seen.size < 6; n++) for (const s of H.dealSafes(g, a, n)) seen.add(s.kind);
+    expect([...seen].sort()).toEqual(['cash', 'decoy', 'gadget', 'grab', 'shakedown', 'switch']);
+    // more than half the safes are a move on someone else (owner, 2026-11: "maybe a couple" in five minutes was too few)
+    expect(H.OUTCOMES.filter((o) => H.ATTACKS.includes(o.kind)).reduce((t, o) => t + o.weight, 0)).toBeGreaterThanOrEqual(50);
   });
 
   /** Put a chosen outcome in safe 0 of an open crack (setup only — the deal itself is seeded). */
@@ -164,59 +167,100 @@ describe('cracking a safe', () => {
   });
 });
 
-describe('grab and switch — never a chosen target, never anyone below', () => {
-  test('a grab takes 20% from a RANDOM richer player; the opener is never offered a choice', () => {
+describe('grab and switch — your pick, only from the classmates above you', () => {
+  /** Put a chosen outcome in safe 0 of an open crack (setup only — the deal itself is seeded). */
+  function rig(p, outcome) { p.safe.dealt[0] = outcome; }
+  function crackWith(g, p, outcome) { crack(g, p); rig(p, outcome); return G.openSafe(g, p, 0); }
+
+  test('a grab offers every richer classmate, richest first, and takes 20% from the one picked', () => {
     const g = heistGame();
-    const [a, rich, poor] = ['A', 'Rich', 'Poor'].map((n) => G.join(g, n).player);
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player; const c = G.join(g, 'C').player; const d = G.join(g, 'D').player;
     G.start(g);
-    rich.cash = 1000; rich.cashAt = 1; poor.cash = 10; poor.cashAt = 1;
-    crack(g, a); // A has $450
-    a.safe.dealt[0] = { kind: 'grab', label: 'Grab' };
-    const r = G.openSafe(g, a, 0);
-    expect(r).toMatchObject({ kind: 'grab', target: 'Rich', amount: 200, cash: 650 });
-    expect(rich.cash).toBe(800);
-    expect(poor.cash).toBe(10); // below A: untouchable
-    expect(rich.lastHit).toMatchObject({ by: 'A', kind: 'grab', amount: 200 });
-    expect(G.playerView(g, rich).heist.hit).toEqual({ by: 'A', kind: 'grab', amount: 200 });
-    expect(G.hostView(g).feed[0]).toMatchObject({ type: 'grab', who: 'A', target: 'Rich', amount: 200 });
+    a.cash = 1000; c.cash = 3000; d.cash = 10; b.cash = 100;
+    const r = crackWith(g, b, { kind: 'grab', label: 'Grab' });
+    expect(r.kind).toBe('grab');
+    expect(r.choose.map((t) => [t.name, t.cash])).toEqual([['C', 3000], ['A', 1000]]); // D is below: not offered
+    expect(b.pick).toMatchObject({ kind: 'grab' });
+    // the choice comes before the next play, and the student's view carries it (a reconnect sees it)
+    expect(G.currentPlay(g, b).pick.options.map((t) => t.name)).toEqual(['C', 'A']);
+    expect(G.playerView(g, b).heist.pick.kind).toBe('grab');
+    expect(() => G.answer(g, b, b.n, 'a')).toThrow(/target/);
+    const got = G.pickTarget(g, b, c.id);
+    expect(got).toMatchObject({ kind: 'grab', target: 'C', amount: 600 });
+    expect(c.cash).toBe(2400);
+    expect(b.cash).toBe(100 + 3 * U + 600);
+    expect(b.pick).toBeNull();
+    expect(c.lastHit).toMatchObject({ by: 'B', kind: 'grab', amount: 600 });
+    expect(g.feed[0]).toMatchObject({ type: 'grab', who: 'B', target: 'C', amount: 600 });
+    expect(G.currentPlay(g, b).play).toBeDefined();
+  });
+
+  test('a name below the opener is refused whatever the screen showed — nobody can rob down', () => {
+    const g = heistGame();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player; const d = G.join(g, 'D').player;
+    G.start(g);
+    a.cash = 1000; d.cash = 10; b.cash = 100;
+    crackWith(g, b, { kind: 'grab', label: 'Grab' });
+    expect(() => G.pickTarget(g, b, d.id)).toThrow(/ahead of you/);
+    expect(() => G.pickTarget(g, b, b.id)).toThrow(/ahead of you/);
+    expect(() => G.pickTarget(g, b, 'nobody')).toThrow(/ahead of you/);
+    expect(d.cash).toBe(10);
+    expect(b.pick).not.toBeNull(); // still waiting: the fresh list comes on the next fetch
+    expect(G.currentPlay(g, b).pick.options.map((t) => t.name)).toEqual(['A']);
+    expect(G.pickTarget(g, b, a.id).target).toBe('A');
   });
 
   test('a grab with nobody richer pays cash instead — the leader cannot rob down', () => {
     const g = heistGame();
-    const [a, b] = ['A', 'B'].map((n) => G.join(g, n).player);
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
     G.start(g);
-    b.cash = 100; b.cashAt = 1;
-    crack(g, a); // A: 450, the richest
-    a.safe.dealt[0] = { kind: 'grab', label: 'Grab' };
-    const r = G.openSafe(g, a, 0);
-    expect(r).toMatchObject({ kind: 'cash', amount: 2 * U });
-    expect(b.cash).toBe(100);
+    const r = crackWith(g, a, { kind: 'grab', label: 'Grab' });
+    expect(r.kind).toBe('cash');
+    expect(r.choose).toBeUndefined();
+    expect(r.amount).toBe(2 * U);
+    expect(b.cash).toBe(0);
+    expect(a.pick).toBeNull();
   });
 
-  test('a switch swaps piles with a richer player — only ever up for the opener', () => {
+  test('if everyone offered drops below the opener before the pick, the safe pays cash', () => {
     const g = heistGame();
-    const [a, rich] = ['A', 'Rich'].map((n) => G.join(g, n).player);
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
     G.start(g);
-    rich.cash = 2000; rich.cashAt = 1;
-    crack(g, a);
-    a.safe.dealt[0] = { kind: 'switch', label: 'Switch' };
-    const r = G.openSafe(g, a, 0);
-    expect(r).toMatchObject({ kind: 'switch', target: 'Rich', amount: 1550, cash: 2000 });
-    expect(rich.cash).toBe(450);
-    expect(H.standings(g)[0]).toBe(a);
+    a.cash = 1000; b.cash = 100;
+    crackWith(g, b, { kind: 'grab', label: 'Grab' });
+    a.cash = 0; // A got robbed by someone else meanwhile
+    const r = G.pickTarget(g, b, a.id);
+    expect(r.kind).toBe('cash');
+    expect(r.amount).toBe(2 * U);
+    expect(b.pick).toBeNull();
   });
 
-  test('the target among several richer players is seeded, never the poorest or a pick', () => {
+  test('a switch swaps piles with the classmate picked — only ever up for the opener', () => {
     const g = heistGame();
-    const ps = ['A', 'B', 'C', 'D', 'E'].map((n) => G.join(g, n).player);
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
     G.start(g);
-    ps.slice(1).forEach((p, i) => { p.cash = 1000 * (i + 1); p.cashAt = 1; });
-    const a = ps[0];
-    crack(g, a);
-    a.safe.dealt[0] = { kind: 'grab', label: 'Grab' };
-    const r = G.openSafe(g, a, 0);
-    expect(['B', 'C', 'D', 'E']).toContain(r.target);
-    expect(ps.find((p) => p.name === r.target).cash).toBeLessThan(1000 * (['B', 'C', 'D', 'E'].indexOf(r.target) + 1));
+    a.cash = 2000; b.cash = 100;
+    const r = crackWith(g, b, { kind: 'switch', label: 'Switch' });
+    expect(r.kind).toBe('switch');
+    expect(r.choose.map((t) => t.name)).toEqual(['A']);
+    const mine = b.cash;
+    const got = G.pickTarget(g, b, a.id);
+    expect(got).toMatchObject({ kind: 'switch', target: 'A', amount: 2000 - mine });
+    expect(b.cash).toBe(2000);
+    expect(a.cash).toBe(mine);
+    expect(a.lastHit).toMatchObject({ by: 'B', kind: 'switch' });
+    expect(g.feed[0]).toMatchObject({ type: 'switch', who: 'B', target: 'A' });
+  });
+
+  test('the picks are refused once the clock is out, and a pending pick lapses at the final', () => {
+    const g = heistGame();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
+    G.start(g);
+    a.cash = 1000; b.cash = 100;
+    crackWith(g, b, { kind: 'grab', label: 'Grab' });
+    jest.advanceTimersByTime(130000);
+    expect(() => G.pickTarget(g, b, a.id)).toThrow(/clock/);
+    expect(a.cash).toBe(1000);
   });
 });
 
@@ -275,6 +319,30 @@ describe('gadgets', () => {
     G.endGame(g);
     expect(() => G.openSafe(g, a, 0)).toThrow(/clock/);
     expect(() => G.useGadget(g, a, r.gadget.id)).toThrow(/clock/);
+  });
+});
+
+describe('shakedown — everyone above you at once', () => {
+  function crackWith(g, p, outcome) { crack(g, p); p.safe.dealt[0] = outcome; return G.openSafe(g, p, 0); }
+
+  test('a shakedown takes 10% from EVERY richer player at once, and nothing from anyone below', () => {
+    const g = heistGame();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player; const c = G.join(g, 'C').player; const d = G.join(g, 'D').player;
+    G.start(g);
+    a.cash = 1000; c.cash = 2000; d.cash = 50; b.cash = 100;
+    const r = crackWith(g, b, { kind: 'shakedown', label: 'Shakedown' });
+    expect(r).toMatchObject({ kind: 'shakedown', amount: 300, count: 2 });
+    expect([a.cash, c.cash, d.cash, b.cash]).toEqual([900, 1800, 50, 100 + 3 * U + 300]); // B: the crack paid three fast answers, then the cut
+    expect(a.lastHit).toMatchObject({ by: 'B', kind: 'shakedown', amount: 100 });
+    expect(b.grabbed).toBe(300);
+    expect(g.feed[0]).toMatchObject({ type: 'shakedown', who: 'B', count: 2, amount: 300 });
+    // nobody richer: cash instead
+    expect(crackWith(g, c, { kind: 'shakedown', label: 'Shakedown' }).kind).toBe('cash');
+  });
+
+  test('nothing another player does ever takes a screen away: the alarm is the only lock', () => {
+    expect(H.OUTCOMES.map((o) => o.kind)).not.toContain('jail');
+    expect(H.GADGETS.map((x) => x.kind)).toEqual(['smoke', 'flip']);
   });
 });
 
@@ -342,8 +410,9 @@ describe('views, final, snapshot', () => {
 
   test('the lobby rules come from the constants', () => {
     const r = G.hostView(heistGame()).rules;
-    expect(r.heist).toMatchObject({ pay: [150, 100, 50], alarmCost: 50, alarmSec: 6, safeEvery: 3, safeCount: 3, grabPct: 20, gadgetSec: 6 });
+    expect(r.heist).toMatchObject({ pay: [150, 100, 50], alarmCost: 50, alarmSec: 6, safeEvery: 3, safeCount: 3, grabPct: 20, shakePct: 10, gadgetSec: 6 });
     expect(r.heist.gadgets.map((x) => x.kind)).toEqual(['smoke', 'flip']);
+    expect(r.heist.attackPct).toBeGreaterThanOrEqual(50);
     expect(Object.values(r.heist.odds).reduce((s, x) => s + x, 0)).toBe(100);
     expect(r.blitz).toBeNull();
     expect(r.hill).toBeNull();
@@ -369,6 +438,8 @@ describe('simulator: thinking beats guessing', () => {
     let x = seed;
     const rnd = () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; };
     const g = heistGame({ seconds });
+    const attacks = { gadget: 0 }; // every move on another player, counted as it lands
+    g._onFeed = (item) => { if (['grab', 'switch', 'shakedown'].includes(item.type)) attacks[item.type] = (attacks[item.type] || 0) + 1; };
     const ps = bots.map((b) => ({ ...b, p: G.join(g, b.name).player, nextAt: 0 }));
     G.start(g);
     const end = g.endsAt;
@@ -384,14 +455,22 @@ describe('simulator: thinking beats guessing', () => {
         b.nextAt = Date.now() + 300; // a glance at the result
         continue;
       }
+      // a held gadget is fired, usually, before the next play
+      if (b.p.gadgets.length && rnd() < 0.7) { G.useGadget(g, b.p, b.p.gadgets[0].id); attacks.gadget++; }
       const cur = G.currentPlay(g, b.p);
       if (cur.alarm) { b.nextAt = cur.alarm + 10; continue; }
       if (cur.safe) { G.openSafe(g, b.p, Math.floor(rnd() * cur.safe.count)); b.nextAt = Date.now() + 800; continue; }
+      if (cur.pick) { // a grab or a switch: this bot goes for the richest classmate offered, after a look
+        const top = cur.pick.options[0]; // (nobody left above → the server pays cash whatever id is sent)
+        G.pickTarget(g, b.p, top ? top.id : 'none'); b.nextAt = Date.now() + 800; continue;
+      }
       b.pending = cur.n; // dealt now; the bot thinks for its time, then answers
       b.nextAt = Date.now() + b.ms * (0.8 + 0.4 * rnd());
     }
     jest.advanceTimersByTime(end - Date.now() + 2000);
-    return ps.map((b) => ({ name: b.name, cash: b.p.cash, safes: b.p.safes, att: b.p.att, comp: b.p.comp }));
+    const out = ps.map((b) => ({ name: b.name, cash: b.p.cash, safes: b.p.safes, att: b.p.att, comp: b.p.comp }));
+    out.attacks = attacks;
+    return out;
   }
 
   test('a thinker (85%, 5 s) beats a guesser (25%, 1.2 s) at least 4 games in 5', () => {
@@ -431,5 +510,25 @@ describe('simulator: thinking beats guessing', () => {
     if (process.env.HEIST_SIM_STATS) process.stdout.write(`heist sim ${JSON.stringify({ wins, avg })}\n`);
     expect((wins.guesser || 0) / N).toBeLessThan(0.05); // a blind guesser almost never takes a four-way game
     expect(avg.fastgood.cash).toBeGreaterThan(avg.thinker.cash); // fast AND right still pays most
+  });
+
+  test('a five-minute class game is full of attacks: a crew of six lands one every 20 s or better', () => {
+    // The owner's report (2026-11): a five-minute game with "maybe a couple" of grabs. Six
+    // ordinary students (not guessers) for 300 s must now produce at least 15 moves on each
+    // other — grabs, switches, shakedowns, gadgets fired — one every 20 s (the sim lands
+    // about 20; the old 21% attack share gave about 7).
+    const bots = [{ name: 'A', acc: 0.85, ms: 5000 }, { name: 'B', acc: 0.75, ms: 6000 }, { name: 'C', acc: 0.9, ms: 4000 },
+      { name: 'D', acc: 0.7, ms: 7000 }, { name: 'E', acc: 0.8, ms: 5500 }, { name: 'F', acc: 0.65, ms: 8000 }];
+    let total = 0; const kinds = {}; const N = 20;
+    for (let i = 0; i < N; i++) {
+      const r = simulate(bots, 9000 + i, 300);
+      const n = Object.values(r.attacks).reduce((t, x) => t + x, 0);
+      total += n;
+      for (const [k, v] of Object.entries(r.attacks)) kinds[k] = (kinds[k] || 0) + v;
+      G._reset();
+    }
+    if (process.env.HEIST_SIM_STATS) process.stdout.write(`heist attacks/game ${(total / N).toFixed(1)} ${JSON.stringify(kinds)}\n`);
+    expect(total / N).toBeGreaterThanOrEqual(15);
+    for (const k of ['grab', 'switch', 'shakedown', 'gadget']) expect(kinds[k] || 0).toBeGreaterThan(0); // every kind lands
   });
 });

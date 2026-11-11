@@ -422,6 +422,7 @@ function recordMiss(game, play, n, k) {
 }
 
 function pushFeed(game, item) {
+  if (typeof game._onFeed === 'function') game._onFeed(item); // the simulator's tally (tests only)
   game.feed.unshift({ at: now(), ...item });
   if (game.feed.length > 14) game.feed.length = 14;
 }
@@ -610,6 +611,8 @@ function currentPlay(game, player) {
     player.lastSeen = now();
     if (heist.locked(player, now())) return { n: player.n, alarm: player.lockUntil };
     if (player.safe) return { n: player.n, safe: { n: player.safe.n, count: player.safe.dealt.length } };
+    // a grab or a switch waiting for its target comes before the next play too (a reconnect sees the same choice)
+    if (player.pick) return { n: player.n, pick: { kind: player.pick.kind, options: heist.pickOptions(game, player) } };
   }
   const play = playAt(game, player.n);
   if (!player.issuedAt) player.issuedAt = now();
@@ -635,6 +638,7 @@ function answer(game, player, n, k) {
     if (game.phase !== 'live' || now() > game.endsAt + DRIVE_GRACE_MS) throw new GameError(409, 'The clock has run out.');
     if (game.mode === 'heist' && heist.locked(player, now())) throw new GameError(409, 'The alarm is still ringing.');
     if (game.mode === 'heist' && player.safe) throw new GameError(409, 'Open your safe first.');
+    if (game.mode === 'heist' && player.pick) throw new GameError(409, 'Pick your target first.');
     if (n !== player.n || !player.issuedAt) throw new GameError(409, 'That play is already over.');
     const play = playAt(game, n);
     k = readAnswer(play, k);
@@ -689,6 +693,15 @@ function openSafe(game, player, idx) {
   heistOpen(game);
   player.lastSeen = now();
   const r = heistCall(() => heist.openSafe(game, player, idx, scoringFor(game), now(), (item) => pushFeed(game, { ...item, team: player.team })));
+  touch(game);
+  return r;
+}
+
+/** Heist: the classmate a pending grab or switch lands on — only ever someone above the student. */
+function pickTarget(game, player, targetId) {
+  heistOpen(game);
+  player.lastSeen = now();
+  const r = heistCall(() => heist.pickTarget(game, player, targetId, scoringFor(game), now(), (item) => pushFeed(game, { ...item, team: player.team })));
   touch(game);
   return r;
 }
@@ -1130,7 +1143,7 @@ function _reset() { for (const g of [...games.values()]) dropGame(g); }
 module.exports = {
   onGameOver, SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, PICK_SIX, BLITZ, GameError, rulesFor,
   createGame, getGame, hostGame, playerFor, normalizeCode,
-  join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer, openSafe, useGadget,
+  join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer, openSafe, pickTarget, useGadget,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,
   onChange, onDrop, snapshot, hydrate, freezeAll, IDLE_TTL_MS, DONE_TTL_MS,
   _reset, _games: games,

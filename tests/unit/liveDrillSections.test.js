@@ -43,9 +43,10 @@ describe('listSections', () => {
     for (const s of secs) expect(s.name).toBe(`Section ${s.key}`);
   });
 
-  test('a section no book covers is listed with no books (greyed on the host), never skipped', () => {
-    expect(listSections('alg1m4').map((s) => [s.key, s.books.length])).toEqual([['4.1', 1], ['4.2', 1], ['4.3', 1], ['4.4', 0], ['4.5', 1]]);
-    expect(listSections('alg1m9').filter((s) => !s.books.length).map((s) => s.key)).toEqual(['9.2', '9.4']);
+  test('a number the course skips is not a pick: Module 4 is 4.1, 4.2, 4.3, 4.5 (no 4.4 anywhere in the packets)', () => {
+    expect(listSections('alg1m4').map((s) => s.key)).toEqual(['4.1', '4.2', '4.3', '4.5']);
+    expect(listSections('alg1m9').map((s) => s.key)).toEqual(['9.1', '9.3', '9.5']);
+    for (const id of Object.keys(DRILLS)) for (const s of listSections(id)) expect(s.books.length).toBeGreaterThan(0);
   });
 
   test('drills whose labels carry no sections have none: Math Facts, a Test Prep, the course pages', () => {
@@ -71,7 +72,7 @@ describe('resolvePlaybook', () => {
     expect(resolvePlaybook('alg1m5', 'sif')).toEqual({ key: 'sif', name: 'Slope-Intercept Form', books: ['sif'] });
     expect(resolvePlaybook('alg1m5', '5.2')).toEqual({ key: '5.2', name: 'Section 5.2', books: ['forms', 'parperp'], section: true });
     expect(resolvePlaybook('alg1m5', '5.4')).toMatchObject({ key: '5.4', books: ['fit'] });
-    for (const k of ['4.4', '9.9', 'zzz', '', undefined, null, '5.2.1', 'all']) expect(resolvePlaybook('alg1m4', k).key).toBe('all');
+    for (const k of ['4.4', '9.9', 'zzz', '', undefined, null, '5.2.1', 'all']) expect(resolvePlaybook('alg1m4', k).key).toBe('all'); // 4.4: not in the course
     expect(resolvePlaybook('facts', '1.1').key).toBe('all');
   });
 });
@@ -175,6 +176,6 @@ describe('Find a topic', () => {
 
   test('a topic word alone lands on the book, not on a "Section N.M" entry beside it', () => {
     expect(search('box plots').some((x) => /^\d+\.\d+$/.test(x.key))).toBe(false);
-    expect(search('4.4')).toEqual([]); // nothing covers it yet
+    expect(search('4.4')).toEqual([]); // the course has no 4.4
   });
 });
