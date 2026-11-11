@@ -1516,6 +1516,13 @@ $('#reset1').addEventListener('click', function () {
   }
   function mount() {
     if (anim) { clearInterval(anim); anim = null; }
+    /* Any rebuild starts from a legal triangle, so nothing is mid-drag any more.
+       Without this a pointerup that never arrives -- pointer leaves the window,
+       a touch interrupted in a way that fires no pointercancel -- leaves the
+       page stuck in the mid-drag verdict for good, reporting the rod's length
+       where the SSA verdict belongs. Every preset, slider and padlock lands
+       here, so one line covers all of them. */
+    swinging = null;
     field.innerHTML = ''; nodes = null; svg = null;
     var rp = partsOf(ref);
     if (!rp) {
