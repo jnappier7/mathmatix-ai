@@ -12,7 +12,7 @@
  * its "Whole Module" book so "circles" lands on 10.1, not the mixed set. Both pickers — the
  * host's and the solo page's — read the same `GET /api/live-drill/solo/search?q=`.
  */
-const { DRILLS, listPlaybooks, listSections, sectionsOfLabel } = require('./engine');
+const { DRILLS, listPlaybooks, listSections, sectionsOfLabel, resolvePlaybook } = require('./engine');
 const { HUBS } = require('./solo');
 
 /** Things people type → the words the banks print. Lowercase, letters/digits only (see `words`). */
@@ -163,12 +163,7 @@ function buildIndex() {
     let books;
     try { books = listPlaybooks(drill); } catch { continue; } // a bank that won't load is not searchable
     const h = hubOf[drill] || { hub: null, hubTitle: '', game: d.title, gameBlurb: '' };
-    const fields = (e) => ({
-      name: words(e.name), ch: words(e.ch), blurb: words(e.blurb),
-      title: words(e.title).concat(words(e.game)), hub: words(e.hubTitle),
-      // the game's blurb names the module's topics even when a section blurb is terse
-      gameBlurb: e.whole ? words(h.gameBlurb) : [],
-    });
+    const fields = (e) => mkFields(e, h.gameBlurb);
     for (const b of books) {
       const e = {
         drill, title: d.title, hub: h.hub, hubTitle: h.hubTitle, game: h.game,
@@ -195,8 +190,44 @@ function buildIndex() {
   return out;
 }
 
-/** The section numbers typed ("5.2", "10.4"): the result must be, or cover, every one of them. */
+function mkFields(e, gameBlurb) {
+  return {
+    name: words(e.name), ch: words(e.ch), blurb: words(e.blurb),
+    title: words(e.title).concat(words(e.game)), hub: words(e.hubTitle),
+    // the game's blurb names the module's topics even when a section blurb is terse
+    gameBlurb: e.whole ? words(gameBlurb) : [],
+  };
+}
+
+/** The section numbers typed ("5.2", "10.4"): a result must be, or cover, one of them. */
 const sectionNums = (q) => [...new Set((String(q || '').match(/\b\d{1,2}\.\d{1,2}\b/g) || []))];
+
+/**
+ * "5.1 5.2": for every drill that has ALL the sections typed, one result that plays them together
+ * ("Sections 5.1 & 5.2", key "5.1,5.2" — what the pickers send). Built at query time from the
+ * index's own drills; a drill that has only some of them answers with those sections instead.
+ */
+function multiSection(secNums) {
+  if (secNums.length < 2) return [];
+  const out = [];
+  const seen = new Set();
+  for (const e of index()) {
+    if (seen.has(e.drill)) continue;
+    seen.add(e.drill);
+    const secs = listSections(e.drill);
+    if (!secNums.every((n) => secs.some((s) => s.key === n && s.books.length))) continue;
+    const pb = resolvePlaybook(e.drill, secNums.join(','));
+    const r = {
+      drill: e.drill, title: e.title, hub: e.hub, hubTitle: e.hubTitle, game: e.game,
+      key: pb.key, name: pb.name, ch: pb.key.split(',').join(', '),
+      blurb: [...new Set(secs.filter((s) => pb.key.split(',').includes(s.key)).flatMap((s) => s.topics))].join(' · '),
+      whole: false, sections: pb.key.split(','), section: true, multi: true, order: -1,
+    };
+    r.fields = mkFields(r, '');
+    out.push(r);
+  }
+  return out;
+}
 
 function index() { if (!INDEX) INDEX = buildIndex(); return INDEX; }
 
@@ -258,9 +289,9 @@ function search(q, opts = {}) {
   // "5.2": only what is, or covers, section 5.2 — never 2.5, and never every "5" and "2"
   const secNums = sectionNums(q);
   const scored = [];
-  for (const e of index()) {
+  for (const e of [...multiSection(secNums), ...index()]) {
     if (drillNums.length && !drillNums.every((n) => hit(e.fields.title, n))) continue;
-    if (secNums.length && !secNums.every((n) => e.sections.includes(n))) continue;
+    if (secNums.length && !secNums.some((n) => e.sections.includes(n))) continue;
     if (e.section && !secNums.length) continue; // a topic word lands on the book, not on "Section 12.4" beside it
     let score = 0;
     let missed = false;
@@ -276,7 +307,7 @@ function search(q, opts = {}) {
     }
     if (missed) continue;
     if (e.whole) score -= 1.5; // a section beats its "Whole Module" on the same words
-    if (e.section) score += 3; // "5.2" lands on the section itself, its books beneath
+    if (e.section) score += e.multi ? 6 : 3; // "5.2" lands on the section itself, its books beneath; "5.1 5.2" on both together
     scored.push({ e, score });
   }
   scored.sort((a, b) => (b.score - a.score) || (a.e.order - b.e.order));

@@ -22,7 +22,19 @@
 
   const hubId = (location.pathname.match(/^\/drill\/([a-z0-9-]+)/) || [])[1] || null;
   let hub = null; // the hub view from the server
-  const sel = { gi: 0, book: 'all', seconds: 0, focus: [] };
+  // `book` is what the server deals from: a playbook key, or one or more numbered sections
+  // ("5.1,5.2" — every playbook any of them covers); `secs` is the pick on the Section row.
+  const sel = { gi: 0, book: 'all', secs: [], seconds: 0, focus: [] };
+  /** "5.1 & 5.2", "5.1, 5.2 & 5.4" */
+  const listOf = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} & ${xs[xs.length - 1]}`);
+  const sectionsOf = (g) => (g.sections || []).filter((x) => x.books.length);
+  /** The sections a book key names, or the ones its playbook covers. */
+  const secsOf = (g, key) => { const parts = String(key || '').split(','); return sectionsOf(g).filter((x) => parts.includes(x.key) || parts.some((k) => x.books.includes(k))).map((x) => x.key); };
+  const secKeyOf = (g, keys) => sectionsOf(g).filter((x) => keys.includes(x.key)).map((x) => x.key).join(',');
+  /** A key the game can deal from: one of its playbooks, or sections it has. */
+  const validBook = (g, key) => g.playbooks.some((b) => b.key === key) || (!!key && secsOf(g, key).length > 0 && String(key).split(',').every((k) => sectionsOf(g).some((x) => x.key === k)));
+  /** What the pick is called: the playbook's name, or "Sections 5.1 & 5.2". */
+  const bookName = (g, key) => (g.playbooks.find((b) => b.key === key) || {}).name || (secsOf(g, key).length ? `Section${secsOf(g, key).length > 1 ? 's' : ''} ${listOf(secsOf(g, key))}` : '');
   // Math Facts: one-tap focus sets, as on the host screen. Anything else is a tap on the numbers.
   const FOCUS_PRESETS = [['All facts', []], ['Easy: 0 1 2 5 10', [0, 1, 2, 5, 10]], ['Tough: 6 7 8 9 12', [6, 7, 8, 9, 12]]];
   const focusOn = () => { const f = game().focusable; return !!(f && f.books.includes(sel.book)); };
@@ -116,7 +128,7 @@
     const jg = hub.games.findIndex((g) => g.drill === jump.get('game'));
     if (jg >= 0) {
       sel.gi = jg;
-      if (hub.games[jg].playbooks.some((b) => b.key === jump.get('book'))) sel.book = jump.get('book');
+      if (validBook(hub.games[jg], jump.get('book'))) { sel.book = jump.get('book'); sel.secs = secsOf(hub.games[jg], sel.book); }
       history.replaceState(null, '', location.pathname);
     }
     pickGame(sel.gi, true);
@@ -190,7 +202,8 @@
   function pickGame(gi, keep) {
     sel.gi = gi;
     const g = game();
-    if (!keep || !g.playbooks.some((b) => b.key === sel.book)) sel.book = g.playbooks.some((b) => b.key === 'all') ? 'all' : g.playbooks[0].key;
+    if (!keep || !validBook(g, sel.book)) { sel.book = g.playbooks.some((b) => b.key === 'all') ? 'all' : g.playbooks[0].key; sel.secs = []; }
+    if (!Array.isArray(sel.secs)) sel.secs = [];
     if (!keep || !g.clock.seconds.includes(sel.seconds)) sel.seconds = g.clock.defaultSeconds;
     renderSetup();
   }
@@ -199,9 +212,31 @@
     const g = game();
     $('games').innerHTML = hub.games.map((x, i) => `<button type="button" class="book" data-i="${i}" aria-pressed="${i === sel.gi}"><span class="nm">${esc(x.name)}</span><span class="bl">${esc(x.blurb)}</span></button>`).join('');
     $('games').querySelectorAll('.book').forEach((b) => { b.onclick = () => pickGame(Number(b.dataset.i)); });
-    $('books').innerHTML = g.playbooks.map((b) => `<button type="button" class="book" data-k="${esc(b.key)}" aria-pressed="${b.key === sel.book}"><span class="bk-ch">${esc(b.ch || '')}</span><span class="nm">${esc(b.name)}</span><span class="bl">${esc(b.blurb || '')}</span></button>`).join('');
+    // the numbered sections (5.1, 5.2, …): tap one or several; the whole thing clears.
+    const secs = g.sections || [];
+    sel.secs = sectionsOf(g).filter((x) => sel.secs.includes(x.key)).map((x) => x.key);
+    const picked = sectionsOf(g).filter((x) => sel.secs.includes(x.key));
+    const secKey = secKeyOf(g, sel.secs);
+    $('sec-wrap').hidden = !secs.length;
+    $('secs').innerHTML = [`<button type="button" data-k="" aria-pressed="${!picked.length}">${esc((g.playbooks[0] || {}).name || 'Everything')}</button>`]
+      .concat(secs.map((x) => `<button type="button" data-k="${esc(x.key)}" aria-pressed="${sel.secs.includes(x.key)}"${x.books.length ? ` title="${esc(x.topics.join(' · '))}"` : ' disabled title="Not in this drill yet"'}>${esc(x.key)}</button>`)).join('');
+    $('secs').querySelectorAll('button').forEach((b) => {
+      b.onclick = () => {
+        const k = b.dataset.k;
+        sel.secs = !k ? [] : sel.secs.includes(k) ? sel.secs.filter((x) => x !== k) : [...sel.secs, k];
+        sel.book = sel.secs.length ? secKeyOf(g, sel.secs) : 'all';
+        renderSetup();
+      };
+    });
+    // the playbook: inside the chosen sections, only what they cover ("All of 5.1 & 5.2" first)
+    const inSec = picked.length ? g.playbooks.filter((b) => picked.some((x) => x.books.includes(b.key))) : g.playbooks;
+    const topics = [...new Set(picked.flatMap((x) => x.topics))];
+    const books = picked.length && inSec.length > 1 ? [{ key: secKey, name: `All of ${listOf(sel.secs)}`, blurb: topics.join(' · ') }, ...inSec] : inSec;
+    if (picked.length && sel.book !== secKey && !inSec.some((b) => b.key === sel.book)) sel.book = secKey;
+    $('b-l').textContent = secs.length ? 'Topic' : 'Playbook';
+    $('books').innerHTML = books.map((b) => `<button type="button" class="book" data-k="${esc(b.key)}" aria-pressed="${b.key === sel.book}"><span class="bk-ch">${esc(picked.length ? '' : b.ch || '')}</span><span class="nm">${esc(b.name)}</span><span class="bl">${esc(b.blurb || '')}</span></button>`).join('');
     $('books').querySelectorAll('.book').forEach((b) => { b.onclick = () => { sel.book = b.dataset.k; renderSetup(); }; });
-    $('book-bl').textContent = (g.playbooks.find((b) => b.key === sel.book) || {}).blurb || '';
+    $('book-bl').textContent = (books.find((b) => b.key === sel.book) || {}).blurb || '';
     $('clock').innerHTML = g.clock.seconds.map((s) => `<button type="button" data-s="${s}" aria-pressed="${s === sel.seconds}">${mmss(s * 1000)}</button>`).join('');
     $('clock').querySelectorAll('button').forEach((b) => { b.onclick = () => { sel.seconds = Number(b.dataset.s); renderSetup(); }; });
     renderFocus(g);
@@ -256,7 +291,7 @@
     try { await more(); } catch (err) { $('pick-err').textContent = err.message; $('start').disabled = false; return; }
     $('start').disabled = false;
     $('pick-err').textContent = '';
-    $('p-game').textContent = `${g.name} · ${(g.playbooks.find((b) => b.key === round.book) || {}).name || ''}${round.focus.length ? ` · ${focusLabel(round.focus)}` : ''}`;
+    $('p-game').textContent = `${g.name} · ${bookName(g, round.book)}${round.focus.length ? ` · ${focusLabel(round.focus)}` : ''}`;
     renderScore();
     show('live');
     round.endsAt = Date.now() + round.seconds * 1000;

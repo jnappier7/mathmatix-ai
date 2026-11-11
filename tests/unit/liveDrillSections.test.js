@@ -76,6 +76,49 @@ describe('resolvePlaybook', () => {
   });
 });
 
+describe('several sections at once ("everything through 5.2")', () => {
+  test('a comma-joined key is the union of their books, canonical whatever the order or repeats', () => {
+    expect(resolvePlaybook('alg1m5', '5.1,5.2')).toEqual({ key: '5.1,5.2', name: 'Sections 5.1 & 5.2', books: ['sif', 'forms', 'parperp'], section: true });
+    expect(resolvePlaybook('alg1m5', '5.2, 5.1, 5.2').key).toBe('5.1,5.2');
+    expect(resolvePlaybook('alg1m5', '5.1,5.2,5.4')).toMatchObject({ key: '5.1,5.2,5.4', name: 'Sections 5.1, 5.2 & 5.4', books: ['sif', 'forms', 'parperp', 'fit'] });
+    expect(resolvePlaybook('alg1m5', '5.3,5.4,5.5').books).toEqual(['fit']); // one book covers all three — dealt once, not thrice
+  });
+
+  test('unknown parts are dropped; a book inside a chosen section adds nothing; books alone can be mixed too', () => {
+    expect(resolvePlaybook('alg1m5', '5.1,4.4,zzz').key).toBe('5.1');
+    expect(resolvePlaybook('alg1m5', 'all,5.1').key).toBe('5.1');
+    expect(resolvePlaybook('alg1m5', '5.1,sif')).toMatchObject({ key: '5.1', name: 'Section 5.1' });
+    expect(resolvePlaybook('alg1m5', '5.1,review')).toMatchObject({ key: '5.1,review', name: 'Section 5.1 + Cumulative Review', books: ['sif', 'review'] });
+    expect(resolvePlaybook('alg1m5', 'sif,review')).toMatchObject({ key: 'sif,review', name: 'Slope-Intercept Form & Cumulative Review', books: ['sif', 'review'] });
+    expect(resolvePlaybook('alg1m5', '4.4,9.9').key).toBe('all');
+  });
+
+  test('deals from every book of every chosen section, and only those', () => {
+    const seen = new Set();
+    for (let n = 1; n <= 60; n++) {
+      const p = dealPlay('alg1m5', '5.1,5.2', 'seed-m', n, []);
+      expect(['sif', 'forms', 'parperp']).toContain(p.playbook);
+      seen.add(p.playbook);
+    }
+    expect([...seen].sort()).toEqual(['forms', 'parperp', 'sif']);
+  });
+
+  test('a class game and the solo deal take it; the lobby says "Sections 5.1 & 5.2"', () => {
+    const g = G.createGame({ hostId: 't', drill: 'alg1m5', playbook: '5.2,5.1', mode: 'huddle', plays: 10, secondsPerPlay: 20 });
+    expect(g.playbook).toBe('5.1,5.2');
+    expect(G.hostView(g).playbookName).toBe('Sections 5.1 & 5.2');
+    expect(solo.parseDeal({ drill: 'alg1m5', book: '5.1,5.2', seed: 'abcdef1234', from: 0 }).playbook).toBe('5.1,5.2');
+  });
+
+  test('Find a topic: "5.1 5.2" offers both together first, then each', () => {
+    const r = search('5.1 5.2');
+    expect(r[0]).toMatchObject({ drill: 'alg1m5', key: '5.1,5.2', name: 'Sections 5.1 & 5.2' });
+    expect(r.some((x) => x.drill === 'hgeo5' && x.key === '5.1,5.2')).toBe(true);
+    expect(r.some((x) => x.drill === 'alg1m5' && x.key === '5.2')).toBe(true);
+    expect(search('5.1 5.9')).toEqual([]); // nothing has a 5.9
+  });
+});
+
 describe('dealing from a section', () => {
   test('deals only from the books that cover it, reaches every one of them, and is a pure function of (seed, n)', () => {
     const seen = new Set();
