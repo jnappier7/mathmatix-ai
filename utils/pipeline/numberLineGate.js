@@ -38,7 +38,7 @@ const { normalizeMathOperators } = require('../mathUnicodeNormalizer');
 // Params can nest one level of brackets (jumps=[(0,3,"+3")], points=[-3,3]).
 const NESTED = '(?:[^\\[\\]]|\\[[^\\]]*\\])';
 const TAG_RX = new RegExp(`\\[\\s*(NUMBER_LINE|INEQUALITY)\\s*:(${NESTED}+)\\]`, 'g');
-const HOP_RX = /\(\s*(-?\d+(?:\.\d+)?(?:\/\d+)?)\s*,\s*(-?\d+(?:\.\d+)?(?:\/\d+)?)\s*,[^)]*\)/g;
+const HOP_RX = /\(\s*(-?\d+(?:\.\d+)?(?:\/\d+)?)\s*,\s*(-?\d+(?:\.\d+)?(?:\/\d+)?)\s*,([^)]*)\)/g;
 const JUMPS_PARAM_RX = /jumps\s*=\s*(\[(?:[^[\]]|\[[^\]]*\])*\]|"[^"]*")/;
 
 // One side of an inequality: single-letter variables, numbers, operators — the same tokens
@@ -139,7 +139,46 @@ function cutLastHop(raw, hops, answer) {
 }
 
 /**
+ * Do the hops say true things? A label like "+8" on a hop from -3 must land on 5, and each
+ * hop must start where the last one ended. A language model writes these freehand; a number
+ * line that shows wrong arithmetic teaches the wrong thing with a picture's authority.
+ * Labels that are not a signed number ("add 3", "double it") are not checked.
+ */
+function hopsAddUp(hops) {
+    for (let i = 0; i < hops.length; i++) {
+        const h = hops[i];
+        if (i > 0 && !same(h.from, hops[i - 1].to)) return false;
+        const lab = clean(h.label).replace(/["'\s]/g, '');
+        const m = lab.match(/^([+-])(\d+(?:\.\d+)?(?:\/\d+)?)$/);
+        if (!m) continue;
+        const step = num(m[2]) * (m[1] === '-' ? -1 : 1);
+        if (!same(h.from + step, h.to)) return false;
+    }
+    return true;
+}
+
+/** Stretch min/max so no hop runs off the end of the line (the arc would be drawn in the margin). */
+function fitRange(raw, hops) {
+    const lo = Math.min(...hops.flatMap((h) => [h.from, h.to]));
+    const hi = Math.max(...hops.flatMap((h) => [h.from, h.to]));
+    let out = raw;
+    const min = raw.match(/\bmin\s*=\s*(-?\d+(?:\.\d+)?)/); const max = raw.match(/\bmax\s*=\s*(-?\d+(?:\.\d+)?)/);
+    if (min && parseFloat(min[1]) > lo) out = out.replace(min[0], `min=${Math.floor(lo) - 1}`);
+    if (max && parseFloat(max[1]) < hi) out = out.replace(max[0], `max=${Math.ceil(hi) + 1}`);
+    return out;
+}
+
+const parseHops = (params) => [...params.matchAll(HOP_RX)]
+    .map((m) => ({ text: m[0], from: num(m[1]), to: num(m[2]), label: m[3] }))
+    .filter((h) => h.from !== null && h.to !== null);
+
+/**
  * Gate every number-line tag in a tutor reply.
+ *
+ * Two jobs, in this order:
+ *   1. CORRECTNESS, always: hops that do not add up remove the picture; hops that run off the
+ *      line stretch it.
+ *   2. LEAKS, only while the student's own problem is open: see the header.
  *
  * @param {object} args
  * @param {string}   args.text             the tutor's reply
@@ -147,29 +186,37 @@ function cutLastHop(raw, hops, answer) {
  * @param {string}   [args.pinnedTex]      the problem in focus, if one is pinned
  * @param {*}        [args.correctAnswer]  the graded answer for this turn, when there is one
  * @param {boolean}  [args.solved]         the student already has it right — nothing left to give away
- * @returns {{ text: string, changes: Array<{ tag: string, action: 'cut_hop'|'strip', value: number }> }}
+ * @returns {{ text: string, changes: Array<{ tag: string, action: 'wrong_hops'|'fit_range'|'cut_hop'|'strip', value?: number }> }}
  */
 function gateNumberLineTags({ text, studentMessages = [], pinnedTex = null, correctAnswer = null, solved = false } = {}) {
     const changes = [];
-    if (solved || !containsNumberLineTag(text)) return { text, changes };
+    if (!containsNumberLineTag(text)) return { text, changes };
 
-    const sources = [...studentMessages, pinnedTex].filter((s) => typeof s === 'string' && s);
-    const answers = sources.flatMap(posedArithmeticValues);
-    const known = num(String(correctAnswer == null ? '' : correctAnswer).replace(/^[a-z]\s*=\s*/i, ''));
-    if (known !== null) answers.push(known);
-    const boundaries = sources.flatMap(posedInequalityBoundaries);
-    if (!answers.length && !boundaries.length) return { text, changes };
+    let answers = []; let boundaries = [];
+    if (!solved) {
+        const sources = [...studentMessages, pinnedTex].filter((s) => typeof s === 'string' && s);
+        answers = sources.flatMap(posedArithmeticValues);
+        const known = num(String(correctAnswer == null ? '' : correctAnswer).replace(/^[a-z]\s*=\s*/i, ''));
+        if (known !== null) answers.push(known);
+        boundaries = sources.flatMap(posedInequalityBoundaries);
+    }
 
     const out = text.replace(TAG_RX, (raw, name, params) => {
-        if (name === 'NUMBER_LINE' && JUMPS_PARAM_RX.test(raw) && answers.length) {
-            const hops = [...params.matchAll(HOP_RX)].map((m) => ({ text: m[0], from: num(m[1]), to: num(m[2]) }))
-                .filter((h) => h.from !== null && h.to !== null);
+        let tag = raw;
+        if (name === 'NUMBER_LINE' && JUMPS_PARAM_RX.test(raw)) {
+            const hops = parseHops(params);
             if (hops.length) {
+                if (!hopsAddUp(hops)) {
+                    changes.push({ tag: name, action: 'wrong_hops' });
+                    return '';
+                }
+                const fitted = fitRange(tag, hops);
+                if (fitted !== tag) { changes.push({ tag: name, action: 'fit_range' }); tag = fitted; }
                 const landing = hops[hops.length - 1].to;
                 const hit = answers.find((a) => same(a, landing));
                 if (hit !== undefined) {
                     changes.push({ tag: name, action: 'cut_hop', value: hit });
-                    return cutLastHop(raw, hops, hit);
+                    return cutLastHop(tag, hops, hit);
                 }
             }
         }
@@ -180,12 +227,11 @@ function gateNumberLineTags({ text, studentMessages = [], pinnedTex = null, corr
                 return '';
             }
         }
-        return raw;
+        return tag;
     });
 
-    const tidy = changes.some((c) => c.action === 'strip')
-        ? out.replace(/[ \t]{2,}/g, ' ').replace(/[ \t]+\n/g, '\n').trim()
-        : out;
+    const removed = changes.some((c) => c.action === 'strip' || c.action === 'wrong_hops');
+    const tidy = removed ? out.replace(/[ \t]{2,}/g, ' ').replace(/[ \t]+\n/g, '\n').trim() : out;
     return { text: tidy, changes };
 }
 
@@ -193,6 +239,7 @@ module.exports = {
     gateNumberLineTags,
     containsNumberLineTag,
     posedArithmeticValues,
+    hopsAddUp,
     posedInequalityBoundaries,
     tagBoundary,
 };

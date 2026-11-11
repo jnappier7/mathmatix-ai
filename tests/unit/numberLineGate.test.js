@@ -110,3 +110,38 @@ describe('wiring', () => {
     expect(src('utils/promptCompact.js')).toMatch(/ONE equation per line/);
   });
 });
+
+// A language model writes hops freehand. A picture that shows wrong arithmetic is worse than
+// no picture, so these run on EVERY number line — the tutor's own examples included.
+describe('correctness: a number line that says something false is not shown', () => {
+  const { hopsAddUp } = require('../../utils/pipeline/numberLineGate');
+  test('a hop whose label and landing disagree removes the picture', () => {
+    const r = gate('See [NUMBER_LINE:min=-5,max=8,jumps=[(-3,6,"+8")]] here', []);
+    expect(r.text).toBe('See here');
+    expect(r.changes).toEqual([{ tag: 'NUMBER_LINE', action: 'wrong_hops' }]);
+  });
+  test('a hop that does not start where the last one landed removes the picture', () => {
+    expect(gate('[NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(4,8,"+4")]]', []).changes[0].action).toBe('wrong_hops');
+  });
+  test('true hops pass untouched: signs, a unicode minus, and a label in words', () => {
+    for (const tag of [
+      '[NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")]]',
+      '[NUMBER_LINE:min=-4,max=8,jumps=[(5,-2,"−7")]]',
+      '[NUMBER_LINE:min=0,max=10,jumps=[(2,4,"double it")]]',
+      '[NUMBER_LINE:min=-4,max=8,jumps="(2,5,+3),(5,-2,-7)"]',
+    ]) expect(gate(tag, [])).toEqual({ text: tag, changes: [] });
+    expect(hopsAddUp([{ from: 0.5, to: 1.25, label: '+3/4' }])).toBe(true);
+  });
+  test('it runs even when the student already has it right', () => {
+    expect(gate('[NUMBER_LINE:min=-5,max=8,jumps=[(-3,6,"+8")]]', ['-3 + 8'], { solved: true }).text).toBe('');
+  });
+  test('a hop that runs off the end stretches the line instead of drawing in the margin', () => {
+    const r = gate('[NUMBER_LINE:min=0,max=5,jumps=[(2,9,"+7")]]', []);
+    expect(r.text).toBe('[NUMBER_LINE:min=0,max=10,jumps=[(2,9,"+7")]]');
+    expect(r.changes).toEqual([{ tag: 'NUMBER_LINE', action: 'fit_range' }]);
+  });
+  test('stretching and the leak cut compose', () => {
+    const r = gate('[NUMBER_LINE:min=0,max=5,jumps=[(2,5,"+3"),(5,-2,"-7")]]', ['2 + 3 - 7']);
+    expect(r.text).toBe('[NUMBER_LINE:min=-3,max=5,jumps=[(2,5,"+3")]]');
+  });
+});
