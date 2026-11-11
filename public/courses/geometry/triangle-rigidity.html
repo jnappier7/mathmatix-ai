@@ -31,6 +31,10 @@
   --tr-grid:rgba(35,14,21,.10);
   --tr-bar:#230E15;
   --tr-ghost:rgba(35,14,21,.26);
+  /* The brand palette is red, white and black. Telling two triangles apart
+     needs a second ink, so blue lives here as a page token and never touches
+     anything the brand owns. Both values clear 4.5:1 on their own ground. */
+  --tr-blue:#1B5FBF; --tr-blue-soft:#E6EEFA;
 }
 @media (prefers-color-scheme:dark){
   :root{
@@ -42,6 +46,7 @@
     --tr-grid:rgba(255,255,255,.10);
     --tr-bar:#FFFFFF;
     --tr-ghost:rgba(255,255,255,.30);
+    --tr-blue:#7FB2FF; --tr-blue-soft:rgba(90,150,255,.20);
   }
 }
 *{box-sizing:border-box}
@@ -144,15 +149,38 @@ table.tr-sum td:first-child{font-weight:700;letter-spacing:.04em;white-space:now
 .tr-blab{fill:var(--muted)}
 .tr-poly{stroke-width:2.2;stroke-linejoin:round}
 .tr-t1{fill:var(--accent-soft);stroke:var(--accent)}
-.tr-t2{fill:none;stroke:var(--tr-bar);stroke-dasharray:4 2.6}
+.tr-t2{fill:var(--tr-blue-soft);stroke:var(--tr-blue)}
 .tr-tg{fill:none;stroke:var(--tr-ghost);stroke-dasharray:3 2.4}
 .tr-tag1{fill:var(--accent-ink)}
-.tr-tag2{fill:var(--ink)}
+.tr-tag2{fill:var(--tr-blue)}
 /* Labels land on top of bars, fills and each other. paint-order:stroke draws a
    halo of the panel colour behind the glyphs, so they stay readable wherever
    they fall — and it follows the theme, because the halo is a token. */
 .tr-vlab,.tr-blab,.tr-tag1,.tr-tag2{paint-order:stroke;stroke:var(--panel-2);
   stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+
+/* ---------- station 2 sandbox ---------- */
+.tr-sand{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:16px;align-items:start}
+@media(max-width:820px){.tr-sand{grid-template-columns:1fr}}
+.tr-field{border:1px solid var(--line);border-radius:10px;background:var(--panel-2);overflow:hidden}
+.tr-field svg{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+.tr-field svg.dragging{cursor:grabbing}
+.tr-redpoly{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+.tr-bluepoly{fill:var(--tr-blue-soft);stroke:var(--tr-blue);stroke-width:2.2;stroke-linejoin:round}
+.tr-reddot{fill:var(--accent);stroke:var(--panel);stroke-width:1.2}
+.tr-bluedot{fill:var(--tr-blue);stroke:var(--panel);stroke-width:1.2}
+.tr-slab{paint-order:stroke;stroke:var(--panel-2);stroke-width:1.5;stroke-linejoin:round;
+  font-weight:700}
+.tr-slab.red{fill:var(--accent-ink)} .tr-slab.blue{fill:var(--tr-blue)}
+.tr-score{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;font-size:.9rem}
+.tr-score b{font-variant-numeric:tabular-nums}
+#tr-breakverdict{margin-top:12px;padding:12px 14px;border-radius:10px;
+  border:1px solid var(--accent);background:var(--accent-soft)}
+#tr-breakverdict b{display:block;font-family:var(--font-display);font-size:1.15rem;
+  color:var(--accent-ink);margin-bottom:2px}
+#tr-breakverdict small{display:block;color:var(--muted);font-size:.9rem;line-height:1.45}
+#tr-breakverdict.is-bad{border-color:var(--line-strong);background:var(--panel-2)}
+#tr-breakverdict.is-bad b{color:var(--ink)}
 
 /* ---------- knobs ---------- */
 .tr-knobrow{display:flex;align-items:center;gap:8px}
@@ -223,6 +251,43 @@ table.tr-sum td:first-child{font-weight:700;letter-spacing:.04em;white-space:now
 <!-- ======================= STATION 2 ======================= -->
 <section class="tr-card">
   <div class="tr-eyebrow">Station 2</div>
+  <h2>Try to break it</h2>
+  <p>Here are two triangles, red and blue. <b>They are built from the same three side
+     lengths</b> &mdash; whatever you set below, both get them. Drag either one by any corner.
+     Flip one over. Slide them onto each other.</p>
+  <p style="font-weight:600">Your job: make the two triangles different shapes. Not moved,
+     not turned over &mdash; <em>different</em>. See how long you last.</p>
+
+  <div class="tr-sand">
+    <div>
+      <div class="tr-knobs" id="sand-knobs"></div>
+      <div class="tr-tools">
+        <button class="tr-btn" id="flip-red">Flip the red one</button>
+        <button class="tr-btn" id="flip-blue">Flip the blue one</button>
+      </div>
+      <div class="tr-tools">
+        <button class="tr-btn" id="stack">Slide blue onto red</button>
+        <button class="tr-btn" id="reset2">Start over</button>
+      </div>
+      <div class="tr-score">
+        <span>Moves: <b id="tries">0</b></span>
+        <span>Different triangles found: <b id="found">0</b></span>
+      </div>
+    </div>
+    <div>
+      <div class="tr-field" id="field"></div>
+      <div id="tr-breakverdict"></div>
+      <table class="tr-meas" id="sand-meas"></table>
+      <p style="margin:8px 0 0;color:var(--muted);font-size:.82rem">
+         Both rows are measured off the drawing after every move, so the verdict is not a
+         promise &mdash; it is a reading.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= STATION 3 ======================= -->
+<section class="tr-card">
+  <div class="tr-eyebrow">Station 3</div>
   <h2>How much do you have to know?</h2>
   <p>A triangle has six parts: three sides and three angles. You rarely get told all six. Pick a
      set of parts below, then move the sliders and watch how many different triangles can be built
@@ -611,7 +676,257 @@ $('#reset1').addEventListener('click', function () {
   stages.forEach(function (st) { st.L.reset(); draw(st); });
 });
 
-/* ================= STATION 2 — what pins a triangle down ================ */
+/* ================= STATION 2 — two triangles, same three sides ==========
+   Both triangles are built from the SAME a, b, c. Each is a free linkage with
+   no pinned corner, so dragging slides and turns it and nothing else. The
+   verdict is not hard-coded: after every move both triangles are measured off
+   the drawing and compared, which is why it can honestly say "still congruent"
+   a hundred times in a row.
+   ========================================================================= */
+(function () {
+  var SIDES = [{ k: 'a', lab: 'side a', min: 2, max: 10, step: .1, v: 6 },
+               { k: 'b', lab: 'side b', min: 2, max: 10, step: .1, v: 5 },
+               { k: 'c', lab: 'side c', min: 2, max: 10, step: .1, v: 7 }];
+  var sv2 = { a: 6, b: 5, c: 7 }, slock = {}, tries = 0, found = 0;
+  var SCALE = 5, VW = 140, VH = 80, HOME = [{ x: 40, y: 40 }, { x: 102, y: 40 }];
+  var red = null, blue = null, svg = null, nodes = null;
+  var field = $('#field');
+
+  function makeTri(home) {
+    var r = TriGeom.sss(sv2.a, sv2.b, sv2.c);
+    if (!r.tris.length) return null;
+    var t = r.tris[0];
+    var P = ['A', 'B', 'C'].map(function (k) { return { x: t[k].x * SCALE, y: -t[k].y * SCALE }; });
+    var cx = (P[0].x + P[1].x + P[2].x) / 3, cy = (P[0].y + P[1].y + P[2].y) / 3;
+    P.forEach(function (p) { p.x += home.x - cx; p.y += home.y - cy; });
+    return new Linkage(P, [{ i: 0, j: 1 }, { i: 1, j: 2 }, { i: 2, j: 0 }]);
+  }
+  function centroid(L) {
+    var P = L.pts;
+    return { x: (P[0].x + P[1].x + P[2].x) / 3, y: (P[0].y + P[1].y + P[2].y) / 3 };
+  }
+  function flip(L) {
+    var c = centroid(L);
+    L.pts.forEach(function (p) { p.x = 2 * c.x - p.x; });   // a reflection keeps every bar length
+  }
+  function orient(L) {
+    var P = L.pts;
+    return Math.sign((P[1].x - P[0].x) * (P[2].y - P[0].y) - (P[1].y - P[0].y) * (P[2].x - P[0].x));
+  }
+  function stack() {
+    if (!red || !blue) return;
+    if (orient(red) !== orient(blue)) flip(blue);
+    var R = red.pts, B = blue.pts;
+    var ang = Math.atan2(R[1].y - R[0].y, R[1].x - R[0].x)
+            - Math.atan2(B[1].y - B[0].y, B[1].x - B[0].x);
+    var ca = Math.cos(ang), sa = Math.sin(ang), ox = B[0].x, oy = B[0].y;
+    B.forEach(function (p) {
+      var dx = p.x - ox, dy = p.y - oy;
+      p.x = R[0].x + dx * ca - dy * sa;
+      p.y = R[0].y + dx * sa + dy * ca;
+    });
+  }
+  function asTri(L) { return { A: L.pts[0], B: L.pts[1], C: L.pts[2] }; }
+  function parts(L) {
+    var m = TriGeom.measure(asTri(L));
+    return { s: [m.a, m.b, m.c].sort(function (x, y) { return x - y; }),
+             g: [m.A, m.B, m.C].sort(function (x, y) { return x - y; }), m: m };
+  }
+  function congruent(p, q) {
+    for (var i = 0; i < 3; i++) {
+      if (Math.abs(p.s[i] - q.s[i]) > 0.05) return false;
+      if (Math.abs(p.g[i] - q.g[i]) > 0.5) return false;
+    }
+    return true;
+  }
+
+  /* ---------------------------------------------------------------------
+     mount() builds the SVG once; paint() only moves what is already there.
+     Rebuilding the SVG inside pointermove looked fine when the test drove it
+     with synthetic events, but a real drag dies on the first frame: replacing
+     the element throws away the pointer capture the browser gave it.
+     --------------------------------------------------------------------- */
+  function mk(L, polyCls, dotCls, tag) {
+    var g = sv('g', {}), o = { poly: null, labs: [], dots: [], hits: [] };
+    o.poly = sv('polygon', {}); o.poly.setAttribute('class', polyCls); g.appendChild(o.poly);
+    L.bars.forEach(function () {
+      var t = sv('text', { 'font-size': 4, 'text-anchor': 'middle' });
+      t.setAttribute('class', 'tr-slab ' + tag); o.labs.push(t); g.appendChild(t);
+    });
+    L.pts.forEach(function (p, i) {
+      var c = sv('circle', { r: 3.1 }); c.setAttribute('class', dotCls);
+      o.dots.push(c); g.appendChild(c);
+      var h = sv('circle', { r: 7, fill: 'transparent' });
+      h.setAttribute('data-t', tag); h.setAttribute('data-i', i);
+      h.setAttribute('tabindex', 0); h.setAttribute('role', 'slider');
+      h.setAttribute('aria-label', tag + ' triangle, corner ' + 'ABC'[i] + ' — arrow keys to move');
+      o.hits.push(h); g.appendChild(h);
+    });
+    svg.appendChild(g);
+    return o;
+  }
+  function mount() {
+    field.innerHTML = ''; nodes = null; svg = null;
+    var vb = $('#tr-breakverdict'), tb = $('#sand-meas');
+    if (!red || !blue) {
+      vb.className = 'is-bad'; vb.innerHTML = '';
+      vb.appendChild(el('b', null, 'Those three lengths cannot close.'));
+      vb.appendChild(el('small', null,
+        'Two of them together are no longer than the third, so no triangle exists at all — '
+        + 'the Triangle Inequality. Move a slider until the triangles come back.'));
+      tb.innerHTML = '';
+      return;
+    }
+    svg = sv('svg', { viewBox: '0 0 ' + VW + ' ' + VH, role: 'img',
+      'aria-label': 'two triangles built from the same three sides' });
+    field.appendChild(svg);
+    nodes = { red: mk(red, 'tr-redpoly', 'tr-reddot', 'red'),
+              blue: mk(blue, 'tr-bluepoly', 'tr-bluedot', 'blue') };
+    wire();
+    paint();
+  }
+  function place(L, o) {
+    o.poly.setAttribute('points', L.pts.map(function (p) { return p.x + ',' + p.y; }).join(' '));
+    var c = centroid(L);
+    L.bars.forEach(function (b, n) {
+      var p = L.pts[b.i], q = L.pts[b.j];
+      var mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
+      var dx = mx - c.x, dy = my - c.y, m = Math.hypot(dx, dy) || 1;
+      o.labs[n].setAttribute('x', mx + dx / m * 4.5);
+      o.labs[n].setAttribute('y', my + dy / m * 4.5 + 1.3);
+      o.labs[n].textContent = (b.len / SCALE).toFixed(1);
+    });
+    L.pts.forEach(function (p, i) {
+      o.dots[i].setAttribute('cx', p.x); o.dots[i].setAttribute('cy', p.y);
+      o.hits[i].setAttribute('cx', p.x); o.hits[i].setAttribute('cy', p.y);
+    });
+  }
+  function paint() {
+    if (!nodes) return;
+    place(red, nodes.red); place(blue, nodes.blue);
+    var pr = parts(red), pb = parts(blue), same = congruent(pr, pb);
+    if (!same) { found++; $('#found').textContent = found; }
+    var vb = $('#tr-breakverdict');
+    vb.className = same ? '' : 'is-bad'; vb.innerHTML = '';
+    if (same) {
+      vb.appendChild(el('b', null, 'Still congruent.'));
+      vb.appendChild(el('small', null,
+        'Every side matches and so does every angle — and you were never given the angles. '
+        + 'Three sides were enough. Move them, turn them, flip them: the only thing you can change '
+        + 'is where they sit. That is SSS.'));
+    } else {
+      vb.appendChild(el('b', null, 'You found one!'));
+      vb.appendChild(el('small', null, 'Tell Mr. Nappier — that should not be possible.'));
+    }
+    var tb = $('#sand-meas'); tb.innerHTML = '';
+    var th = el('thead'), hr = el('tr');
+    [['', ''], ['a', 'tr-side'], ['b', 'tr-side'], ['c', 'tr-side'],
+     ['A', ''], ['B', ''], ['C', '']].forEach(function (h) { hr.appendChild(el('th', h[1], h[0])); });
+    th.appendChild(hr); tb.appendChild(th);
+    var tbody = el('tbody');
+    [['red', pr.m], ['blue', pb.m]].forEach(function (row) {
+      var tr = el('tr');
+      tr.appendChild(el('td', null, row[0]));
+      [row[1].a, row[1].b, row[1].c].forEach(function (x) {
+        tr.appendChild(el('td', null, (x / SCALE).toFixed(2))); });
+      [row[1].A, row[1].B, row[1].C].forEach(function (x) {
+        tr.appendChild(el('td', null, x.toFixed(1) + '°')); });
+      tbody.appendChild(tr);
+    });
+    tb.appendChild(tbody);
+  }
+  function rebuild() { red = makeTri(HOME[0]); blue = makeTri(HOME[1]); mount(); }
+
+  function toUser(ev) {
+    var r = svg.getBoundingClientRect();
+    return { x: (ev.clientX - r.left) / r.width * VW, y: (ev.clientY - r.top) / r.height * VH };
+  }
+  function wire() {
+    var dragging = null, moved = false;
+    svg.addEventListener('pointerdown', function (ev) {
+      var u = toUser(ev), best = null, bd = 1e9;
+      [['red', red], ['blue', blue]].forEach(function (spec) {
+        spec[1].pts.forEach(function (p, i) {
+          var d = Math.hypot(p.x - u.x, p.y - u.y);
+          if (d < bd) { bd = d; best = { L: spec[1], i: i }; }
+        });
+      });
+      if (bd > 12) return;
+      dragging = best; moved = false;
+      svg.setPointerCapture(ev.pointerId);
+      svg.classList.add('dragging'); ev.preventDefault();
+    });
+    svg.addEventListener('pointermove', function (ev) {
+      if (!dragging) return;
+      var u = toUser(ev);
+      dragging.L.pull(dragging.i, Math.max(6, Math.min(VW - 6, u.x)),
+                                  Math.max(6, Math.min(VH - 6, u.y)), false);
+      moved = true; paint();
+    });
+    function stop(ev) {
+      if (!dragging) return;
+      dragging = null; svg.classList.remove('dragging');
+      if (moved) bump();
+      try { svg.releasePointerCapture(ev.pointerId); } catch (e) {}
+    }
+    svg.addEventListener('pointerup', stop);
+    svg.addEventListener('pointercancel', stop);
+    svg.addEventListener('lostpointercapture', stop);
+    [].forEach.call(svg.querySelectorAll('[data-i]'), function (h) {
+      h.addEventListener('keydown', function (ev) {
+        var d = { ArrowLeft: [-3, 0], ArrowRight: [3, 0], ArrowUp: [0, -3], ArrowDown: [0, 3] }[ev.key];
+        if (!d) return;
+        ev.preventDefault();
+        var L = h.getAttribute('data-t') === 'red' ? red : blue, i = +h.getAttribute('data-i');
+        L.pull(i, L.pts[i].x + d[0], L.pts[i].y + d[1], false);
+        bump(); paint();
+      });
+    });
+  }
+  function bump() { tries++; $('#tries').textContent = tries; }
+
+  /* ---- the three shared sides, each with its own padlock ---- */
+  var box = $('#sand-knobs');
+  function knobs() {
+    box.innerHTML = '';
+    SIDES.forEach(function (p) {
+      var wrap = el('div', 'tr-knob'), lab = el('label');
+      lab.appendChild(el('span', 'tr-klab', p.lab));
+      var out = el('span', null, fmt(sv2[p.k], 1));
+      lab.appendChild(out);
+      var rowEl = el('div', 'tr-knobrow');
+      var inp = document.createElement('input');
+      inp.type = 'range'; inp.min = p.min; inp.max = p.max; inp.step = p.step; inp.value = sv2[p.k];
+      inp.setAttribute('aria-label', p.lab);
+      var lk = el('button', 'tr-lock');
+      function paint() {
+        var on = !!slock[p.k];
+        lk.setAttribute('aria-pressed', on ? 'true' : 'false');
+        lk.title = on ? 'Unfreeze ' + p.lab : 'Freeze ' + p.lab;
+        lk.setAttribute('aria-label', lk.title);
+        lk.innerHTML = on ? '&#128274;' : '&#128275;';
+        inp.disabled = on; wrap.classList.toggle('is-locked', on);
+      }
+      lk.addEventListener('click', function () { slock[p.k] = !slock[p.k]; paint(); });
+      inp.addEventListener('input', function () {
+        sv2[p.k] = +inp.value; out.textContent = fmt(+inp.value, 1); rebuild();
+      });
+      paint();
+      rowEl.appendChild(inp); rowEl.appendChild(lk);
+      wrap.appendChild(lab); wrap.appendChild(rowEl); box.appendChild(wrap);
+    });
+  }
+
+  $('#flip-red').addEventListener('click', function () { if (red) { flip(red); bump(); paint(); } });
+  $('#flip-blue').addEventListener('click', function () { if (blue) { flip(blue); bump(); paint(); } });
+  $('#stack').addEventListener('click', function () { stack(); bump(); paint(); });
+  $('#reset2').addEventListener('click', function () {
+    tries = 0; found = 0; $('#tries').textContent = 0; $('#found').textContent = 0; rebuild();
+  });
+  knobs(); rebuild();
+})();
+
+/* ================= STATION 3 — what pins a triangle down ================ */
 var G = TriGeom;
 var CASES = {
   SSS: { name: 'SSS', blurb: 'Three sides.',
