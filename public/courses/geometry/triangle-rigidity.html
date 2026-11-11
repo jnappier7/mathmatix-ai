@@ -913,6 +913,15 @@ stages.forEach(function (st) {
   });
 
   /* pointer -> svg user units */
+  function clampToField() {
+    if (!bluePts) return;
+    var xs = bluePts.map(function (p) { return p.x; }), ys = bluePts.map(function (p) { return p.y; });
+    var sx = Math.min.apply(null, xs) < 4 ? 4 - Math.min.apply(null, xs)
+           : (Math.max.apply(null, xs) > VW - 4 ? VW - 4 - Math.max.apply(null, xs) : 0);
+    var sy = Math.min.apply(null, ys) < 4 ? 4 - Math.min.apply(null, ys)
+           : (Math.max.apply(null, ys) > VH - 4 ? VH - 4 - Math.max.apply(null, ys) : 0);
+    if (sx || sy) bluePts = bluePts.map(function (p) { return { x: p.x + sx, y: p.y + sy }; });
+  }
   function toUser(ev) {
     var r = svg.getBoundingClientRect();
     return { x: (ev.clientX - r.left) / r.width * 96, y: (ev.clientY - r.top) / r.height * 78 };
@@ -1030,12 +1039,18 @@ $('#reset1').addEventListener('click', function () {
   var KEYS = ['a', 'b', 'c', 'A', 'B', 'C'];
   var PRESETS = {
     SSS: ['a', 'b', 'c'], SAS: ['b', 'A', 'c'], ASA: ['B', 'a', 'C'],
-    AAS: ['A', 'B', 'a'], SSA: ['a', 'b', 'A'], AAA: ['A', 'B', 'C'], Clear: []
+    AAS: ['A', 'B', 'a'],
+    /* HL is SSA with the angle at 90 degrees: the hypotenuse c, a leg a, and
+       the right angle C between neither of them. Same shape of given as SSA,
+       and it holds — which is the only reason HL is a theorem and SSA is not.
+       It needs a right triangle to be about, so the preset brings a 3-4-5. */
+    HL: ['c', 'a', 'C'],
+    SSA: ['a', 'b', 'A'], AAA: ['A', 'B', 'C'], Clear: []
   };
   /* SSA pins a triangle down unless the given angle is acute AND the side
      facing it is shorter than the other given side. On 6-5-7 it is not, so the
      preset would truthfully answer "nothing moves" and teach the opposite. */
-  var PRESET_REF = { SSA: { a: 5, b: 7, c: 9 } };
+  var PRESET_REF = { SSA: { a: 5, b: 7, c: 9 }, HL: { a: 3, b: 4, c: 5 } };
   var RANGE = { a: [1.5, 12], b: [1.5, 12], c: [1.5, 12],
                 A: [5, 170], B: [5, 170], C: [5, 170] };
   var TICKS = { a: 1, b: 2, c: 3 }, ARCS = { A: 1, B: 2, C: 3 };
@@ -1045,7 +1060,11 @@ $('#reset1').addEventListener('click', function () {
   var ref = { a: 6, b: 5, c: 7 };
   var held = { a: true, b: true, c: true };
   var blueSides = { a: 6, b: 5, c: 7 };
-  var pose = { x: 108, y: 44, ang: 0.22 };
+  var bluePts = null;                       // where it actually sits
+  var BLUEHOME = { x: 108, y: 44, ang: 0.22 };
+  /* vertices 0,1,2 are A,B,C; the side joining two of them is the one named
+     after the third */
+  var BETWEEN = { '0,1': 'c', '1,2': 'a', '0,2': 'b' };
   var SCALE = 5, VW = 150, VH = 86, REDHOME = { x: 44, y: 44, ang: -0.12 };
   var svg = null, nodes = null, anim = null;
   var field = $('#field');
@@ -1071,6 +1090,49 @@ $('#reset1').addEventListener('click', function () {
   }
   function centroidOf(P) {
     return { x: (P[0].x + P[1].x + P[2].x) / 3, y: (P[0].y + P[1].y + P[2].y) / 3 };
+  }
+  function canonPts(sides) {
+    var r = TriGeom.sss(sides.a, sides.b, sides.c);
+    if (!r.tris.length) return null;
+    var t = r.tris[0];
+    return ['A', 'B', 'C'].map(function (k) { return { x: t[k].x * SCALE, y: -t[k].y * SCALE }; });
+  }
+  function orientOf(P) {
+    return Math.sign((P[1].x - P[0].x) * (P[2].y - P[0].y) - (P[1].y - P[0].y) * (P[2].x - P[0].x));
+  }
+  /* Lay the triangle out with corner `j` nailed to `at`, corner `i` aimed along
+     `toward`, and the same handedness it had before. Used for every drag and
+     every slider change, so nothing ever jumps. */
+  function layout(sides, j, at, i, toward, wantSign) {
+    var P = canonPts(sides);
+    if (!P) return null;
+    if (wantSign && orientOf(P) !== wantSign) P = P.map(function (p) { return { x: p.x, y: -p.y }; });
+    var o = P[j];
+    P = P.map(function (p) { return { x: p.x - o.x, y: p.y - o.y }; });
+    var have = Math.atan2(P[i].y, P[i].x);
+    var want = Math.atan2(toward.y - at.y, toward.x - at.x);
+    var d = want - have, c = Math.cos(d), s2 = Math.sin(d);
+    return P.map(function (p) {
+      return { x: at.x + p.x * c - p.y * s2, y: at.y + p.x * s2 + p.y * c };
+    });
+  }
+  /* A slider changed the shape: keep corner A where it is and keep B in the
+     same direction, so the triangle grows or shrinks in place. */
+  function reshapeInPlace(newSides) {
+    var old = bluePts || canonPts(blueSides);
+    var sign = orientOf(old);
+    var next = layout(newSides, 0, old[0], 1, old[1], sign);
+    if (next) { blueSides = newSides; bluePts = next; }
+    return !!next;
+  }
+  function homePts() {
+    var P = canonPts(blueSides);
+    if (!P) return null;
+    var c = centroidOf(P), ca = Math.cos(BLUEHOME.ang), sa = Math.sin(BLUEHOME.ang);
+    return P.map(function (p) {
+      var dx = p.x - c.x, dy = p.y - c.y;
+      return { x: BLUEHOME.x + dx * ca - dy * sa, y: BLUEHOME.y + dx * sa + dy * ca };
+    });
   }
 
   /* ---------------- drawing, including the marks on given parts --------- */
@@ -1168,10 +1230,11 @@ $('#reset1').addEventListener('click', function () {
   }
   function paint() {
     if (!nodes) return;
-    var rpts = ptsFor(ref, REDHOME), bpts = ptsFor(blueSides, pose);
-    if (!rpts || !bpts) return;
+    var rpts = ptsFor(ref, REDHOME);
+    if (!bluePts) bluePts = homePts();
+    if (!rpts || !bluePts) return;
     place(rpts, nodes.red, ref);
-    place(bpts, nodes.blue, blueSides);
+    place(bluePts, nodes.blue, blueSides);
     report();
   }
   function bar(x) {
@@ -1229,7 +1292,7 @@ $('#reset1').addEventListener('click', function () {
       inp.addEventListener('input', function () { moveBluePart(k, +inp.value); });
       lk.addEventListener('click', function () {
         held[k] = !held[k];
-        if (held[k]) blueSides = { a: ref.a, b: ref.b, c: ref.c };   // a given part means they match again
+        if (held[k]) { blueSides = { a: ref.a, b: ref.b, c: ref.c }; bluePts = null; }
         paintPresets(); buildRows(); mount();
       });
       row.appendChild(lk); row.appendChild(nm); row.appendChild(mid); row.appendChild(val);
@@ -1260,9 +1323,9 @@ $('#reset1').addEventListener('click', function () {
     if (!rp || !cur) return;
     var out = TriParts.apply({ k: k, v: v }, held, rp, cur);
     if (!out) { refreshRows(); return; }                 // unreachable or settled
-    blueSides = { a: out[0], b: out[1], c: out[2] };
     if (anim) { clearInterval(anim); anim = null; }
     if (nodes) nodes.flash.innerHTML = '';
+    reshapeInPlace({ a: out[0], b: out[1], c: out[2] });
     paint(); refreshRows();
   }
 
@@ -1275,7 +1338,7 @@ $('#reset1').addEventListener('click', function () {
     if (!nodes) return;
     if (anim) { clearInterval(anim); anim = null; }
     nodes.flash.innerHTML = '';
-    var rpts = ptsFor(ref, REDHOME), bpts = ptsFor(blueSides, pose);
+    var rpts = ptsFor(ref, REDHOME), bpts = bluePts;
     if (!rpts || !bpts) return;
     var rp = partsOf(ref), bp = partsOf(blueSides), same = !TriSearch.differs(bp, rp);
     var sgn = function (P) {
@@ -1305,6 +1368,7 @@ $('#reset1').addEventListener('click', function () {
         return { x: cx + p.x * c2 - p.y * s2, y: cy + p.x * s2 + p.y * c2 };
       });
       place(P, nodes.blue, blueSides);
+      bluePts = P;                       // the slide is a real move, so keep it
       if (t >= 1) { clearInterval(anim); anim = null; flashSides(same, P, rpts); }
     }
     anim = setInterval(step, 16);
@@ -1344,34 +1408,133 @@ $('#reset1').addEventListener('click', function () {
   }
 
   /* ---------------- sliding the blue triangle around ---------------- */
+  function clampToField() {
+    if (!bluePts) return;
+    var xs = bluePts.map(function (p) { return p.x; }), ys = bluePts.map(function (p) { return p.y; });
+    var sx = Math.min.apply(null, xs) < 4 ? 4 - Math.min.apply(null, xs)
+           : (Math.max.apply(null, xs) > VW - 4 ? VW - 4 - Math.max.apply(null, xs) : 0);
+    var sy = Math.min.apply(null, ys) < 4 ? 4 - Math.min.apply(null, ys)
+           : (Math.max.apply(null, ys) > VH - 4 ? VH - 4 - Math.max.apply(null, ys) : 0);
+    if (sx || sy) bluePts = bluePts.map(function (p) { return { x: p.x + sx, y: p.y + sy }; });
+  }
   function toUser(ev) {
     var r = svg.getBoundingClientRect();
     return { x: (ev.clientX - r.left) / r.width * VW, y: (ev.clientY - r.top) / r.height * VH };
   }
+  /* Dragging a corner.
+
+     The old version set the triangle's CENTROID to the pointer, so the corner
+     you grabbed jumped away from your finger — it missed by 16 to 33 units in
+     every preset — and the shape never changed no matter what was unlocked.
+
+     Now: corner `i` follows the pointer and the opposite anchor stays put. The
+     side between them is the one the drag is really changing, so it goes
+     through TriParts like any slider. If that side can move, the triangle
+     reshapes under your hand; if the padlocks settle it, the whole triangle
+     slides instead and the corner still tracks the pointer exactly. */
+  function dragTo(st, u) {
+    var rp = partsOf(ref), cur = partsOf(blueSides);
+    if (!rp || !cur || !bluePts) return;
+    var i = st.i, j = st.j, at = bluePts[j];
+    var key = BETWEEN[[Math.min(i, j), Math.max(i, j)].join(',')];
+    /* How hard are they pulling? Measured from where the opposite corner was
+       when they grabbed, NOT from where it is now. If the triangle is sliding
+       to follow the pointer the live corner slides with it, the distance never
+       changes, and SSA could never tell it was being hauled toward its other
+       solution. */
+    var L = Math.hypot(u.x - st.anchor.x, u.y - st.anchor.y) / SCALE;
+    L = Math.max(1.2, Math.min(13, L));
+    var sign = orientOf(bluePts);
+    var out = TriParts.canMove(key, held)
+      ? TriParts.apply({ k: key, v: L }, held, rp, cur) : null;
+    var moved = false;
+    if (out) {
+      var next = layout({ a: out[0], b: out[1], c: out[2] }, j, at, i, u, sign);
+      if (next) { blueSides = { a: out[0], b: out[1], c: out[2] }; bluePts = next; moved = true; }
+    }
+    if (!moved) {
+      /* SSA's other triangle is not somewhere you can slide to — the two
+         answers are a pair, with nothing in between. So the corner cannot
+         deform its way there, and without this it would feel merely stuck.
+         Pull it toward the other one and it snaps, which is exactly what the
+         ambiguity is: two triangles and no path between them. */
+      var opts = [{ a: rp.a, b: rp.b, c: rp.c }];
+      var alt = TriSearch.find(rp, KEYS.filter(function (k) { return held[k]; }));
+      if (alt) opts.push({ a: alt.a, b: alt.b, c: alt.c });
+      if (opts.length > 1) {
+        var best = opts[0];
+        opts.forEach(function (o) {
+          if (Math.abs(o[key] - L) < Math.abs(best[key] - L)) best = o;
+        });
+        if (Math.abs(best[key] - blueSides[key]) > 1e-6) {
+          var alt2 = layout(best, j, at, i, u, sign);
+          if (alt2) { blueSides = best; bluePts = alt2; moved = true; }
+        }
+      }
+    }
+    if (!moved) {
+      /* Nothing about the shape can give, so the triangle slides and the corner
+         tracks the pointer exactly.
+
+         It used to swing on a circle about the opposite corner instead, which
+         is geometrically honest but feels broken: pull straight outward and the
+         corner shifts 0.4 units while your hand moves 25. The verdict panel is
+         where "the shape cannot change" gets said; the drag just has to follow
+         the finger. */
+      var dx = u.x - bluePts[i].x, dy = u.y - bluePts[i].y;
+      bluePts = bluePts.map(function (p) { return { x: p.x + dx, y: p.y + dy }; });
+    }
+    clampToField();
+    paint(); refreshRows();
+  }
+  function clampToField() {
+    if (!bluePts) return;
+    var xs = bluePts.map(function (p) { return p.x; }), ys = bluePts.map(function (p) { return p.y; });
+    var sx = Math.min.apply(null, xs) < 4 ? 4 - Math.min.apply(null, xs)
+           : (Math.max.apply(null, xs) > VW - 4 ? VW - 4 - Math.max.apply(null, xs) : 0);
+    var sy = Math.min.apply(null, ys) < 4 ? 4 - Math.min.apply(null, ys)
+           : (Math.max.apply(null, ys) > VH - 4 ? VH - 4 - Math.max.apply(null, ys) : 0);
+    if (sx || sy) bluePts = bluePts.map(function (p) { return { x: p.x + sx, y: p.y + sy }; });
+  }
+  function toUser(ev) {
+    var r = svg.getBoundingClientRect();
+    return { x: (ev.clientX - r.left) / r.width * VW, y: (ev.clientY - r.top) / r.height * VH };
+  }
+  function inside(P, u) {
+    function side(a, b) { return (b.x - a.x) * (u.y - a.y) - (b.y - a.y) * (u.x - a.x); }
+    var s1 = side(P[0], P[1]), s2 = side(P[1], P[2]), s3 = side(P[2], P[0]);
+    return (s1 >= 0 && s2 >= 0 && s3 >= 0) || (s1 <= 0 && s2 <= 0 && s3 <= 0);
+  }
   function wire() {
-    var dragging = false, grabAng = 0, grabPose = null;
+    var dragging = null, sliding = null;
     svg.addEventListener('pointerdown', function (ev) {
-      var u = toUser(ev), P = ptsFor(blueSides, pose);
-      if (!P) return;
-      var bd = Math.min.apply(null, P.map(function (p) { return Math.hypot(p.x - u.x, p.y - u.y); }));
-      if (bd > 14) return;
+      if (!bluePts) return;
+      var u = toUser(ev), bd = 1e9, best = null;
+      bluePts.forEach(function (p, i) {
+        var d = Math.hypot(p.x - u.x, p.y - u.y);
+        if (d < bd) { bd = d; best = i; }
+      });
+      if (bd <= 14) dragging = { i: best, j: best === 0 ? 1 : 0,
+        anchor: { x: bluePts[best === 0 ? 1 : 0].x, y: bluePts[best === 0 ? 1 : 0].y } };
+      else if (inside(bluePts, u)) sliding = { x: u.x, y: u.y };   // grab the body, move it
+      else return;
       if (anim) { clearInterval(anim); anim = null; }
       nodes.flash.innerHTML = '';
-      dragging = true; grabPose = { x: pose.x, y: pose.y, ang: pose.ang };
-      grabAng = Math.atan2(u.y - pose.y, u.x - pose.x);
       try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
       svg.classList.add('dragging'); ev.preventDefault();
     });
     svg.addEventListener('pointermove', function (ev) {
-      if (!dragging) return;
       var u = toUser(ev);
-      pose.x = Math.max(22, Math.min(VW - 22, u.x));
-      pose.y = Math.max(20, Math.min(VH - 20, u.y));
-      paint();
+      if (dragging) return dragTo(dragging, u);
+      if (!sliding) return;
+      var dx = u.x - sliding.x, dy = u.y - sliding.y;
+      sliding = { x: u.x, y: u.y };
+      bluePts = bluePts.map(function (p) { return { x: p.x + dx, y: p.y + dy }; });
+      clampToField(); paint();
     });
     function stop(ev) {
-      if (!dragging) return;
-      dragging = false; svg.classList.remove('dragging');
+      if (!dragging && !sliding) return;
+      dragging = null; sliding = null; svg.classList.remove('dragging');
       try { svg.releasePointerCapture(ev.pointerId); } catch (e) {}
     }
     svg.addEventListener('pointerup', stop);
@@ -1382,9 +1545,9 @@ $('#reset1').addEventListener('click', function () {
         var dd = { ArrowLeft: [-3, 0], ArrowRight: [3, 0], ArrowUp: [0, -3], ArrowDown: [0, 3] }[ev.key];
         if (!dd) return;
         ev.preventDefault();
-        pose.x = Math.max(22, Math.min(VW - 22, pose.x + dd[0]));
-        pose.y = Math.max(20, Math.min(VH - 20, pose.y + dd[1]));
-        paint();
+        var i = +h.getAttribute('data-i'), j = i === 0 ? 1 : 0;
+        dragTo({ i: i, j: j, anchor: { x: bluePts[j].x, y: bluePts[j].y } },
+               { x: bluePts[i].x + dd[0], y: bluePts[i].y + dd[1] });
       });
     });
   }
@@ -1405,7 +1568,7 @@ $('#reset1').addEventListener('click', function () {
       KEYS.forEach(function (k) { held[k] = false; });
       PRESETS[name].forEach(function (k) { held[k] = true; });
       if (PRESET_REF[name]) setRef(PRESET_REF[name]);
-      blueSides = { a: ref.a, b: ref.b, c: ref.c };
+      blueSides = { a: ref.a, b: ref.b, c: ref.c }; bluePts = null;
       paintPresets(); buildRows(); mount();
     });
     $('#presets').appendChild(b);
@@ -1429,7 +1592,7 @@ $('#reset1').addEventListener('click', function () {
     inp.setAttribute('aria-label', 'red triangle side ' + k);
     inp.addEventListener('input', function () {
       ref[k] = +inp.value; out.textContent = fmt(+inp.value, 1);
-      blueSides = { a: ref.a, b: ref.b, c: ref.c };
+      blueSides = { a: ref.a, b: ref.b, c: ref.c }; bluePts = null;
       buildRows(); mount();
     });
     wrap.appendChild(lab); wrap.appendChild(inp); box.appendChild(wrap);
@@ -1438,23 +1601,48 @@ $('#reset1').addEventListener('click', function () {
     var rp = partsOf(ref); if (!rp) return;
     var hit = TriSearch.find(rp, KEYS.filter(function (k) { return held[k]; }));
     if (!hit) {
+      /* Two sides and an angle not between them is SSA by shape. It settles the
+         triangle only in special cases, and the student deserves to be told which
+         one they are looking at rather than concluding SSA works. */
+      var cls = TriSearch.classify(KEYS.filter(function (k) { return held[k]; }));
+      var extra = '';
+      if (cls.kind === 'ssa') {
+        var ang = cls.g[0];
+        extra = Math.abs(rp[ang] - 90) < 0.5
+          ? ' And look at what you padlocked: two sides, and an angle that is NOT between '
+            + 'them — the same shape of given as SSA. It holds here only because that angle '
+            + 'is a right angle. That is the HL theorem, and it is the one case where SSA '
+            + 'can be trusted.'
+          : ' Careful though: that is two sides and an angle NOT between them. It settles '
+            + 'THIS triangle, but move the red sliders and it can stop doing so — which is '
+            + 'why SSA is not a shortcut you can rely on.';
+      }
       report(['There is no different one to find.',
         'The parts you padlocked settle the triangle completely, so nothing you move — or '
-        + 'anything I try — can change its shape.', false]);
+        + 'anything I try — can change its shape.' + extra, false]);
       return;
     }
-    blueSides = { a: hit.a, b: hit.b, c: hit.c };
+    reshapeInPlace({ a: hit.a, b: hit.b, c: hit.c });
     paint(); refreshRows();
   });
   $('#flip-blue').addEventListener('click', function () {
-    pose.ang += Math.PI; paint();
+    /* This used to add 180 degrees to the pose, which TURNS the triangle and
+       leaves it the same way up. A flip is a reflection: mirror the corners in
+       the vertical through the middle, which is what changes handedness and is
+       the thing a student needs when the two triangles are mirror images. */
+    if (!bluePts) return;
+    var c = centroidOf(bluePts);
+    bluePts = bluePts.map(function (p) { return { x: 2 * c.x - p.x, y: p.y }; });
+    if (anim) { clearInterval(anim); anim = null; }
+    if (nodes) nodes.flash.innerHTML = '';
+    paint();
   });
   $('#reset2').addEventListener('click', function () {
     setRef({ a: 6, b: 5, c: 7 });
     KEYS.forEach(function (k) { held[k] = false; });
     ['a', 'b', 'c'].forEach(function (k) { held[k] = true; });
     blueSides = { a: ref.a, b: ref.b, c: ref.c };
-    pose = { x: 108, y: 44, ang: 0.22 };
+    bluePts = null;
     paintPresets(); buildRows(); mount();
   });
   paintPresets(); buildRows(); mount();
