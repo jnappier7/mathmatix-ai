@@ -26,7 +26,7 @@ const {
 const { MESSAGE_TYPES, messageStatesProblem } = require('./observe');
 const { VERIFICATION_STATES } = require('./verificationState');
 const { getSkillMasteryEntry } = require('../masteryGuard');
-const { buildVisualDirective } = require('./visualDirective');
+const { buildVisualDirective, hasInlineVisual } = require('./visualDirective');
 
 // ── Tutoring actions the engine can choose ──
 const ACTIONS = {
@@ -218,6 +218,11 @@ function applyVisualDirective(decision, observation, context) {
       || '',
     studentText: observation?.raw || '',
     boardHasVisual: steps.some((c) => c && VISUAL_ACTIONS.has(c.action)),
+    // With the Work Board off (the default) pictures live in the tutor's message, not the
+    // ledger, so the ledger never says "already drawn" and the ask repeated every turn.
+    recentInlineVisual: (context.conversation?.messages || [])
+      .filter((m) => m && m.role === 'assistant').slice(-2)
+      .some((m) => hasInlineVisual(m.content)),
     recentWrongCount: observation?.streaks?.recentWrongCount || 0,
   });
   if (directive) decision.directives.push(directive);

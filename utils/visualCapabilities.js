@@ -136,6 +136,10 @@ NUMBER LINES (interactive, with animations):
 [NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")],label="L"] — animated hop arrows for addition/subtraction
 [NUMBER_LINE:min=0,max=2,denominator=4,points=[1/4,3/4],label="L"] — fraction tick marks
 [NUMBER_LINE:min=-5,max=5,inequality=">2",label="x > 2"] — inequality shading with open/closed circle
+The student sees a number line DRAWN in order — each hop one after another, the endpoint and then the shading — so write one hop per operation and say what each hop is.
+
+SLOPE (what slope is, as a picture):
+[SLOPE:rise=V,run=V] — a line with its slope triangle. The rise is drawn first, then the run. Negative slope: rise=-3,run=4.
 
 VISUAL MODELS:
 [FRACTION:numerator=V,denominator=V,type=circle|bar] or [FRACTION:compare=A,B,C] — shows a pie/bar with shaded parts. ONLY for simple fractions (parts of a whole, like 3/4 of a pizza). Do NOT use for rational expressions, algebraic fractions, or any fraction with variables.

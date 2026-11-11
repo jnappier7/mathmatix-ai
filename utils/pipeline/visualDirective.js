@@ -44,6 +44,10 @@ const VISUAL_MOMENTS = new Set([
   'scaffold_down',           // prose is not landing
 ]);
 
+// Moments that earn a NEW picture even though one was drawn a turn or two ago: the last one
+// did not land, so pointing back at it is pointing at what failed.
+const REDRAW_MOMENTS = new Set(['switch_representation', 'reteach_misconception', 'scaffold_down']);
+
 // Moments where a picture is actively wrong: they just got it, or the turn
 // is not about math at all.
 const NEVER_VISUAL = new Set([
@@ -110,7 +114,12 @@ const VISUAL_TOPICS = [
     tool: '[SLIDER_GRAPH:...] so they can DRAG the parameter and watch it move',
   },
   {
-    rx: /\b(slopes?|y-intercepts?|linear functions?|rate of change|graph(?:ing)? (?:the )?lines?|coordinate plane|plot\w*)\b/i,
+    // What slope IS gets the triangle: the client draws the rise, then the run, in that order.
+    rx: /\b(slopes?|rate of change|rise over run|steepness)\b/i,
+    tool: '[SLOPE:rise=V,run=V] to show what slope IS (the rise is drawn, then the run), or [SLIDER_GRAPH:fn=m*x+b,params="m:1:-5:5,b:0:-5:5"] so they can change it and watch',
+  },
+  {
+    rx: /\b(y-intercepts?|linear functions?|graph(?:ing)? (?:the )?lines?|coordinate plane|plot\w*)\b/i,
     tool: '[FUNCTION_GRAPH:...] or [SLIDER_GRAPH:fn=m*x+b,params="m:1:-5:5,b:0:-5:5"]',
   },
   {
@@ -121,9 +130,21 @@ const VISUAL_TOPICS = [
     rx: /\b(fractions?|numerators?|denominators?|mixed numbers?|percents?|percentages?|ratios?|proportions?)\b/i,
     tool: '[FRACTION:...] bar/area model',
   },
+  // The three number-line pictures are different pictures. They used to share one entry that
+  // pointed at [DIAGRAM:number_line], a static figure — so signed-number arithmetic never got
+  // its hops and an inequality never got its shading. Each now names the form the client
+  // draws IN ORDER (hop by hop; endpoint, then shading).
   {
-    rx: /\b(integers?|negative numbers?|signed numbers?|opposites?|absolute value|zero pairs?|number lines?|inequalit\w*)\b/i,
-    tool: '[DIAGRAM:number_line:...] (or counters for zero pairs)',
+    rx: /\b(inequalit\w*|solution sets?|greater than or equal|less than or equal)\b/i,
+    tool: '[NUMBER_LINE:min=V,max=V,inequality=">2",label="x > 2"] — the open or closed endpoint, then the shading',
+  },
+  {
+    rx: /\b(integers?|negative numbers?|signed numbers?|zero pairs?)\b/i,
+    tool: '[NUMBER_LINE:min=V,max=V,jumps=[(from,to,"+3"),(to,next,"-7")]] — one hop per operation, drawn one after another (or counters for zero pairs)',
+  },
+  {
+    rx: /\b(opposites?|absolute value|number lines?)\b/i,
+    tool: '[NUMBER_LINE:min=V,max=V,points=[-3,3],label="L"] — mark the numbers and talk about the distance between them',
   },
   {
     rx: /\b(factor\w*|distribut\w*|expand\w*|binomials?|trinomials?|complete the square)\b/i,
@@ -134,6 +155,20 @@ const VISUAL_TOPICS = [
     tool: '[POINTS:points=(x,y),...] or an appropriate plot',
   },
 ];
+
+// Every inline picture tag the tutor can write into a message. Named, not pattern-matched:
+// [OLD:term] / [FOCUS:term] highlights and interval notation like [0, 3] are not pictures.
+const INLINE_VISUAL_NAMES = [
+  'FUNCTION_GRAPH', 'SLIDER_GRAPH', 'SYSTEM_GRAPH', 'DERIVATIVE_GRAPH', 'RATIONAL_GRAPH', 'VELOCITY_GRAPH', 'GRAPH_3D',
+  'NUMBER_LINE', 'INEQUALITY', 'SLOPE', 'POINTS', 'FRACTION', 'PIE_CHART', 'BAR_CHART', 'PERCENT_BAR', 'PLACE_VALUE',
+  'AREA_MODEL', 'COMPARISON', 'COUNTERS', 'ALGEBRA_TILES', 'MULTI_REP', 'UNIT_CIRCLE', 'ANGLE', 'PYTHAGOREAN',
+  'RIGHT_TRIANGLE', 'REGULAR_POLYGON', 'CIRCLE_DIAGRAM', 'DIAGRAM', 'TRIANGLE_PROBLEM', 'SEARCH_IMAGE',
+];
+const INLINE_VISUAL_RX = new RegExp(`\\[\\s*(?:${INLINE_VISUAL_NAMES.join('|')})\\s*:`);
+/** Did this tutor message carry a picture? */
+function hasInlineVisual(text) {
+  return typeof text === 'string' && INLINE_VISUAL_RX.test(text);
+}
 
 function matchTopic(text) {
   if (!text) return null;
@@ -152,6 +187,8 @@ function matchTopic(text) {
  * @param {string}  [input.studentText] - the student's message this turn
  * @param {boolean} [input.boardHasVisual] - a graph/diagram is already up for
  *        this problem; a good tutor points back at it instead of redrawing
+ * @param {boolean} [input.recentInlineVisual] - the tutor drew an inline picture in one of
+ *        its last two replies; asking again every turn turns a lesson into a slideshow
  * @param {number}  [input.recentWrongCount]
  * @returns {string|null} the directive, or null to stay quiet
  */
@@ -165,6 +202,10 @@ function buildVisualDirective(input = {}) {
   const topic = matchTopic(`${input.skillName || ''} ${input.studentText || ''}`);
   const isMoment = VISUAL_MOMENTS.has(action);
   const struggling = (input.recentWrongCount || 0) >= 2;
+
+  // A picture is still on screen from a turn or two ago. Talk about THAT one — unless the
+  // student asks for another, or the last one plainly did not work.
+  if (input.recentInlineVisual && !asked && !struggling && !REDRAW_MOMENTS.has(action)) return null;
 
   // Neither the moment nor the math calls for one. Say nothing — silence here
   // is what keeps this from becoming decoration.
@@ -182,13 +223,15 @@ function buildVisualDirective(input = {}) {
     ? `Reach for: ${topic.tool}.`
     : 'Pick the tool that fits — a graph, a labelled diagram, a number line, or an area/tile model.';
 
-  return `DRAW IT: ${why} ${how} Emit ONE visual this turn alongside your explanation, and then SAY something about it — point at the part that matters ("see how the line crosses at..."). A picture nobody talks about teaches nothing. Do NOT plot or diagram the student's own unsolved expression in a way that hands them the answer (a server-side gate will strip it); illustrate the IDEA, a simpler case, or a reference figure instead.`;
+  return `DRAW IT: ${why} ${how} Emit ONE visual this turn alongside your explanation, and then SAY something about it — point at the part that matters ("see how the line crosses at..."). A picture nobody talks about teaches nothing. Do NOT plot or diagram the student's own unsolved expression in a way that hands them the answer (a server-side gate will strip it); illustrate the IDEA, a simpler case, or a reference figure instead. The same goes for a number line: on the student's own problem draw where they START and the hops they have already made, never the hop that lands on their answer, and never shade the solution of an inequality they have not solved yet.`;
 }
 
 module.exports = {
   buildVisualDirective,
+  hasInlineVisual,
   matchTopic,
   VISUAL_MOMENTS,
+  REDRAW_MOMENTS,
   NEVER_VISUAL,
   VISUAL_TOPICS,
 };
