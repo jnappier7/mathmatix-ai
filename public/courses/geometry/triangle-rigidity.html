@@ -213,8 +213,30 @@ table.tr-sum td:first-child{font-weight:700;letter-spacing:.04em;white-space:now
 .tr-arc{stroke:var(--ink);stroke-width:1.5;fill:none;stroke-linejoin:round}
 .tr-primary:hover{background:var(--accent-strong,var(--sc-red-deep));border-color:var(--accent)}
 .tr-flash{stroke:var(--warn,var(--ink));stroke-width:4.5;stroke-linecap:round;fill:none}
+/* the SSA construction: the ray the swinging corner must land on, the circle the
+   given side sweeps, and the one or two places they cross. Dashed, because none
+   of it is part of the triangle — it is the reasoning, drawn. */
+.tr-ray{stroke:var(--tr-blue);stroke-width:1.2;stroke-dasharray:3 2.4;opacity:.85;fill:none}
+.tr-ray.is-dead{opacity:.4;stroke-dasharray:1.6 2.4}
+.tr-swingarc{fill:none;stroke:var(--tr-blue);stroke-width:1.1;stroke-dasharray:3.4 2.6;
+  opacity:.55}
+/* the crossing you are not on is an empty target; the one you are on is a ring
+   around the corner itself, so it never hides the dot it is marking */
+.tr-stop{fill:var(--panel);stroke:var(--tr-blue);stroke-width:1.6}
+.tr-stop.is-live{fill:none;stroke-width:2.2}
+.tr-stop.is-dead{fill:none;stroke:var(--muted);stroke-dasharray:2 1.8;stroke-width:1.2}
+/* a part with exactly two legal values gets both, not a slider */
+.tr-seg{display:flex;gap:4px}
+.tr-segb{flex:1;padding:3px 2px;border-radius:6px;border:1px solid var(--line-strong);
+  background:var(--panel);color:var(--ink);font-size:.78rem;font-weight:700;
+  font-variant-numeric:tabular-nums;cursor:pointer}
+.tr-segb:hover{border-color:var(--tr-blue)}
+.tr-segb[aria-pressed="true"]{background:var(--tr-blue);border-color:var(--tr-blue);color:#fff}
 .tr-ann{paint-order:stroke;stroke:var(--panel-2);stroke-width:1.6;stroke-linejoin:round;
   fill:var(--ink);font-weight:700}
+/* a given part that is not currently being honoured */
+.tr-row .val.off{color:var(--accent-ink);font-weight:700}
+table.tr-meas td.off{color:var(--accent-ink);font-weight:700}
 table.tr-meas td.lk{position:relative}
 table.tr-meas td.lk::after{content:"\01F512";font-size:.72em;margin-left:3px;opacity:.75}
 
@@ -659,6 +681,101 @@ var TriSearch = (function () {
 })();
 if (typeof module !== 'undefined') module.exports = TriSearch;
 /* ---------------------------------------------------------------------------
+   The SSA construction, as arithmetic.
+
+   Two sides and an angle NOT between them is not a shape, it is an
+   instruction: pin the angle, lay one given side along an arm, then swing the
+   other given side like a rod from its far end and see where it reaches. The
+   rod sweeps a circle; the missing corner has to sit on the other arm, a ray.
+   A circle crosses a ray twice, once or never, and "twice" is the whole reason
+   SSA proves nothing while HL does.
+
+   Lives in its own file, with no DOM in it, so swingcheck.js can hold it to
+   the ambiguous-case table instead of me eyeballing a diagram.
+   --------------------------------------------------------------------------- */
+var TriSwing = (function () {
+  var D2R = Math.PI / 180;
+  var OPPOSITE = { A: 'a', B: 'b', C: 'c' }, VERTEX = { A: 0, B: 1, C: 2 };
+  /* the side joining two vertices is named after the third */
+  var SIDEPTS = { a: [1, 2], b: [2, 0], c: [0, 1] };
+  var EPS = 1e-7;
+  /* How far apart the two answers have to be before they are two answers.
+
+     At the tangent case the rod just touches the ray: the quadratic has a
+     DOUBLE root, which is one triangle, and it is the right triangle — the
+     one case in this family where the given parts do settle the shape. Count
+     that root twice and the page draws two markers on top of each other and
+     tells the student SSA is ambiguous exactly where it is not.
+
+     It cannot be tested with ==. The given angle arrives as acos() of a ratio
+     and goes back through sin(), so a 3-4-5 that is tangent on paper comes out
+     with a discriminant of -2e-15 and two roots 1e-7 apart. Anything closer
+     together than this is one triangle: the table prints two decimals and the
+     drawing is five pixels to the unit, so there is no second triangle to see,
+     to measure, or to learn anything from. */
+  var SEP = 1e-4;
+
+  function isAng(k) { return k === 'A' || k === 'B' || k === 'C'; }
+
+  /* Which part plays which role, or null if these locks are not SSA-shaped.
+     SAS is excluded by the indexOf test: its angle sits BETWEEN the two given
+     sides, so there is no rod to swing. */
+  function parse(locked) {
+    var ang = locked.filter(isAng), sides = locked.filter(function (k) { return !isAng(k); });
+    if (ang.length !== 1 || sides.length !== 2) return null;
+    var X = ang[0], xName = OPPOSITE[X];
+    if (sides.indexOf(xName) < 0) return null;
+    var yName = sides[0] === xName ? sides[1] : sides[0];
+    var fName = ['a', 'b', 'c'].filter(function (k) {
+      return k !== xName && k !== yName; })[0];
+    var vX = VERTEX[X];
+    /* y runs from the angle's corner to where the rod is pinned; the free side
+       runs from the angle's corner to the corner that swings. Both are arms of
+       the given angle, so the angle's vertex is an endpoint of each. */
+    return { X: X, xName: xName, yName: yName, fName: fName, vX: vX,
+      fix: SIDEPTS[yName][0] === vX ? SIDEPTS[yName][1] : SIDEPTS[yName][0],
+      w:   SIDEPTS[fName][0] === vX ? SIDEPTS[fName][1] : SIDEPTS[fName][0] };
+  }
+
+  /* Where the rod of length x, pinned at distance y along one arm, crosses the
+     other arm. With the free side as t:
+         t^2 - 2 y cos X t + (y^2 - x^2) = 0
+         t = y cos X +/- sqrt(x^2 - y^2 sin^2 X)
+     Forward roots (t > 0) are triangles. A root at t < 0 would need a side of
+     negative length: the circle does meet the LINE there, but not the ray, and
+     that is exactly why HL holds. */
+  function stops(x, y, Xdeg) {
+    var th = Xdeg * D2R, s = Math.sin(th);
+    var disc = x * x - y * y * s * s;
+    if (disc < -EPS) return { fwd: [], back: [], reach: false };
+    var root = Math.sqrt(Math.max(0, disc)), mid = y * Math.cos(th);
+    var tangent = 2 * root <= SEP;
+    var all = tangent ? [mid] : [mid + root, mid - root];
+    return { fwd: all.filter(function (t) { return t > EPS; }),
+             back: all.filter(function (t) { return t < -EPS; })
+                      .map(function (t) { return -t; }),
+             tangent: tangent, reach: true };
+  }
+
+  /* The textbook test, kept separate so the checker can compare the two:
+     SSA is ambiguous exactly when the given angle is acute and the side facing
+     it is longer than the rod's reach to the arm but shorter than the other
+     given side. */
+  function ambiguous(x, y, Xdeg) {
+    var h = y * Math.sin(Xdeg * D2R);
+    /* acute, and the side facing the angle longer than the rod's reach to the
+       arm but shorter than the other given side. The h < x half is stated as
+       "far enough past h to be a second answer", on the same threshold stops()
+       uses — see SEP. */
+    return Xdeg < 90 - 1e-9 && x < y - EPS
+        && 2 * Math.sqrt(Math.max(0, x * x - h * h)) > SEP;
+  }
+
+  return { parse: parse, stops: stops, ambiguous: ambiguous,
+           OPPOSITE: OPPOSITE, VERTEX: VERTEX, SIDEPTS: SIDEPTS };
+})();
+if (typeof module !== 'undefined') module.exports = TriSwing;
+/* ---------------------------------------------------------------------------
    Changing one part of the blue triangle while the locked parts hold.
 
    No iterative solver. A triangle is settled by three parts, so the page picks
@@ -913,15 +1030,6 @@ stages.forEach(function (st) {
   });
 
   /* pointer -> svg user units */
-  function clampToField() {
-    if (!bluePts) return;
-    var xs = bluePts.map(function (p) { return p.x; }), ys = bluePts.map(function (p) { return p.y; });
-    var sx = Math.min.apply(null, xs) < 4 ? 4 - Math.min.apply(null, xs)
-           : (Math.max.apply(null, xs) > VW - 4 ? VW - 4 - Math.max.apply(null, xs) : 0);
-    var sy = Math.min.apply(null, ys) < 4 ? 4 - Math.min.apply(null, ys)
-           : (Math.max.apply(null, ys) > VH - 4 ? VH - 4 - Math.max.apply(null, ys) : 0);
-    if (sx || sy) bluePts = bluePts.map(function (p) { return { x: p.x + sx, y: p.y + sy }; });
-  }
   function toUser(ev) {
     var r = svg.getBoundingClientRect();
     return { x: (ev.clientX - r.left) / r.width * 96, y: (ev.clientY - r.top) / r.height * 78 };
@@ -1047,10 +1155,19 @@ $('#reset1').addEventListener('click', function () {
     HL: ['c', 'a', 'C'],
     SSA: ['a', 'b', 'A'], AAA: ['A', 'B', 'C'], Clear: []
   };
-  /* SSA pins a triangle down unless the given angle is acute AND the side
-     facing it is shorter than the other given side. On 6-5-7 it is not, so the
-     preset would truthfully answer "nothing moves" and teach the opposite. */
-  var PRESET_REF = { SSA: { a: 5, b: 7, c: 9 }, HL: { a: 3, b: 4, c: 5 } };
+  /* Every preset names its own red triangle, because two of them NEED a
+     particular one and the rest must not inherit it. SSA pins a triangle down
+     unless the given angle is acute AND the side facing it is shorter than the
+     other given side; on 6-5-7 it is not, so the preset would truthfully answer
+     "nothing moves" and teach the opposite. HL has to be about a right
+     triangle. Leave the others out of this list and clicking SSA then SSS
+     silently hands SSS a 5-7-9 — or worse, HL then SAS hands SAS a 3-4-5 right
+     triangle, which is the one shape that makes SAS look like a special case. */
+  var PRESET_REF = {
+    SSS: { a: 6, b: 5, c: 7 }, SAS: { a: 6, b: 5, c: 7 }, ASA: { a: 6, b: 5, c: 7 },
+    AAS: { a: 6, b: 5, c: 7 }, AAA: { a: 6, b: 5, c: 7 }, Clear: { a: 6, b: 5, c: 7 },
+    SSA: { a: 5, b: 7, c: 9 }, HL: { a: 3, b: 4, c: 5 }
+  };
   var RANGE = { a: [1.5, 12], b: [1.5, 12], c: [1.5, 12],
                 A: [5, 170], B: [5, 170], C: [5, 170] };
   var TICKS = { a: 1, b: 2, c: 3 }, ARCS = { A: 1, B: 2, C: 3 };
@@ -1067,6 +1184,7 @@ $('#reset1').addEventListener('click', function () {
   var BETWEEN = { '0,1': 'c', '1,2': 'a', '0,2': 'b' };
   var SCALE = 5, VW = 150, VH = 86, REDHOME = { x: 44, y: 44, ang: -0.12 };
   var svg = null, nodes = null, anim = null;
+  var swinging = null;            // mid-drag along the ray, so not legal yet
   var field = $('#field');
   var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1125,6 +1243,193 @@ $('#reset1').addEventListener('click', function () {
     if (next) { blueSides = newSides; bluePts = next; }
     return !!next;
   }
+  /* -------- the SSA construction, drawn instead of described --------
+
+     Two sides and an angle NOT between them is not a shape. It is an
+     instruction: pin the angle, lay the side you were given along one arm, then
+     swing the other given side like a rod from its far end and see where it
+     reaches. The rod sweeps a circle. The corner it is hunting for has to sit
+     somewhere on the other arm of the angle — a ray. A circle crosses a ray
+     twice, once, or never, and "twice" is the entire reason SSA proves nothing
+     while HL does.
+
+     So when the padlocks make that shape of given, the drag stops being a
+     generic push. The two corners the construction fixes stay exactly where
+     they are, and the third one rides the ray, which is the only place it is
+     allowed to be. Before this, the whole triangle translated under the
+     student's finger with its shape untouched and then jumped into the other
+     shape 29 units away from the pointer, which read as "dragging does
+     nothing" — correctly, because nothing on screen was the construction.
+
+     Returns null unless the locked parts really are two sides and the angle
+     facing one of them. SAS is excluded here by the indexOf test: its angle
+     sits BETWEEN the two sides, so there is no rod to swing. */
+  function swingOf() {
+    var locked = KEYS.filter(function (k) { return held[k]; });
+    var r = TriSwing.parse(locked);
+    if (!r) return null;
+    var rp = partsOf(ref);
+    if (!rp) return null;
+    var x = rp[r.xName], y = rp[r.yName];
+    var st = TriSwing.stops(x, y, rp[r.X]);
+    if (!st.reach) return null;
+    return { X: r.X, x: x, y: y, ang: rp[r.X] * Math.PI / 180,
+             f: r.fName, xName: r.xName, yName: r.yName,
+             vX: r.vX, fix: r.fix, w: r.w, stops: st.fwd, behind: st.back,
+             tangent: !!st.tangent };
+  }
+  /* Put the swinging corner at a given distance along the ray. The other two
+     corners do not move, which is what makes the shape change visible. */
+  function swingTo(sw, t) {
+    if (!bluePts) return false;
+    var o = bluePts[sw.vX], wp = bluePts[sw.w];
+    var ux = wp.x - o.x, uy = wp.y - o.y, m = Math.hypot(ux, uy) || 1;
+    ux /= m; uy /= m;
+    var next = stopTriple(sw, t);
+    if (!partsOf(next)) return false;
+    var P = bluePts.slice();
+    P[sw.w] = { x: o.x + ux * t * SCALE, y: o.y + uy * t * SCALE };
+    blueSides = next; bluePts = P;
+    if (anim) { clearInterval(anim); anim = null; }
+    if (nodes) nodes.flash.innerHTML = '';
+    clampToField(); paint(); refreshRows();
+    return true;
+  }
+  /* How far along the ray we can go before the corner leaves the field. A ray
+     against a box: take the nearest wall it would cross. Clamping here rather
+     than translating the triangle mid-drag matters, because translating moves
+     the ray's own origin and the next frame measures from somewhere else. */
+  function rayLimit(o, ux, uy) {
+    var lim = 1e9;
+    function wall(p, d, lo, hi) {
+      if (Math.abs(d) < 1e-9) return;
+      var t1 = (lo - p) / d, t2 = (hi - p) / d;
+      var t = Math.max(t1, t2);
+      if (t > 0) lim = Math.min(lim, t);
+    }
+    wall(o.x, ux, EDGE, VW - EDGE);
+    wall(o.y, uy, EDGE, VH - EDGE);
+    return lim / SCALE;
+  }
+  /* Where the pinned corner sits if the ray points along (ux, uy): rotate that
+     direction by the given angle, on whichever side the construction is
+     already built. */
+  function armFor(sw, o, ux, uy, sign) {
+    var th = sign * sw.ang, c = Math.cos(th), s2 = Math.sin(th);
+    return { x: o.x + (ux * c - uy * s2) * sw.y * SCALE,
+             y: o.y + (ux * s2 + uy * c) * sw.y * SCALE };
+  }
+  function onField(p) {
+    return p.x >= EDGE && p.x <= VW - EDGE && p.y >= EDGE && p.y <= VH - EDGE;
+  }
+  /* Put the swinging corner under the finger, legal or not.
+
+     Two components, and both have to answer or the corner feels nailed down.
+     Out along the ray, it slides and the rod changes length — that is the
+     search. Sideways, the WHOLE construction turns about the angle's corner,
+     like a door: a rotation changes no part of the triangle, so the two given
+     sides and the given angle are as true after it as before. Pinning the ray
+     in place instead left the corner 25 units adrift of the finger on any
+     sideways pull, which is the same dead feeling in a new direction.
+
+     The turn is refused if it would carry the pinned corner off the field;
+     then only the sliding half applies. */
+  function swingDragTo(sw, u) {
+    var o = bluePts[sw.vX];
+    var ow = bluePts[sw.w], of2 = bluePts[sw.fix];
+    var oux = ow.x - o.x, ouy = ow.y - o.y, om = Math.hypot(oux, ouy) || 1;
+    oux /= om; ouy /= om;
+    var sign = Math.sign((ow.x - o.x) * (of2.y - o.y) - (ow.y - o.y) * (of2.x - o.x)) || 1;
+    var ux = oux, uy = ouy;
+    var t = ((u.x - o.x) * ux + (u.y - o.y) * uy) / SCALE;      // slide only
+    var dx = u.x - o.x, dy = u.y - o.y, d = Math.hypot(dx, dy);
+    if (d > 1e-6 && onField(armFor(sw, o, dx / d, dy / d, sign))) {
+      ux = dx / d; uy = dy / d; t = d / SCALE;                  // slide AND turn
+    }
+    var hi = Math.min(rayLimit(o, ux, uy), Math.max.apply(null, sw.stops) * 2.2);
+    t = Math.max(0.6, Math.min(hi, t));
+    var P = bluePts.slice();
+    P[sw.w] = { x: o.x + ux * t * SCALE, y: o.y + uy * t * SCALE };
+    P[sw.fix] = armFor(sw, o, ux, uy, sign);
+    var rod = Math.hypot(P[sw.w].x - P[sw.fix].x, P[sw.w].y - P[sw.fix].y) / SCALE;
+    var next = {};
+    next[sw.yName] = sw.y; next[sw.f] = t; next[sw.xName] = rod;
+    if (!partsOf(next)) return;
+    blueSides = next; bluePts = P; swinging = sw;
+    paint(); refreshRows();
+  }
+  /* Drop onto the nearest crossing. Every drag has to end somewhere legal:
+     between drags the station's whole claim is that the padlocked parts match. */
+  function settleSwing() {
+    var sw = swinging; swinging = null;
+    if (!sw) return;
+    var fresh = swingOf();
+    if (fresh) swingTo(fresh, nearestStop(fresh, blueSides[fresh.f]));
+    else { paint(); refreshRows(); }
+  }
+  /* The triangle at a crossing: the two GIVEN sides and the distance along the
+     ray. Never built from blueSides — mid-drag that holds a rod of the wrong
+     length, and carrying it over produced a triangle that would not close, so
+     the row read "47.7\u00B0 or ?" and the settled table disagreed with its own
+     drawing. One helper, so there is one place for this to be right. */
+  function stopTriple(sw, t) {
+    var tri = {};
+    tri[sw.xName] = sw.x; tri[sw.yName] = sw.y; tri[sw.f] = t;
+    return tri;
+  }
+  function nearestStop(sw, t) {
+    var pick = sw.stops[0];
+    sw.stops.forEach(function (s) {
+      if (Math.abs(s - t) < Math.abs(pick - t)) pick = s; });
+    return pick;
+  }
+  function drawSwing() {
+    if (!nodes || !nodes.swing) return;
+    nodes.swing.innerHTML = '';
+    var sw = swingOf();
+    if (!sw || !bluePts || !sw.stops.length) return;
+    var o = bluePts[sw.vX], f = bluePts[sw.fix], wp = bluePts[sw.w];
+    var ux = wp.x - o.x, uy = wp.y - o.y, m = Math.hypot(ux, uy) || 1;
+    ux /= m; uy /= m;
+    /* a flat margin, not a percentage: the tail has to clear the corner marker
+       and the dot under it, and 20% of a short side does not */
+    var far = Math.max.apply(null, sw.stops) * SCALE + 22;
+    function line(x1, y1, x2, y2, cls) {
+      var l = sv('line', { x1: x1, y1: y1, x2: x2, y2: y2 });
+      l.setAttribute('class', cls); nodes.swing.appendChild(l);
+    }
+    line(o.x, o.y, o.x + ux * far, o.y + uy * far, 'tr-ray');
+    var ci = sv('circle', { cx: f.x, cy: f.y, r: sw.x * SCALE });
+    ci.setAttribute('class', 'tr-swingarc'); nodes.swing.appendChild(ci);
+    sw.stops.forEach(function (t) {
+      var p = { x: o.x + ux * t * SCALE, y: o.y + uy * t * SCALE };
+      var live = Math.abs(t - blueSides[sw.f]) < 0.02;
+      var g = sv('circle', { cx: p.x, cy: p.y, r: live ? 5.6 : 4 });
+      g.setAttribute('class', 'tr-stop' + (live ? ' is-live' : ''));
+      nodes.swing.appendChild(g);
+      if (!live) {
+        var lab = sv('text', { x: p.x, y: p.y - 6.4, 'font-size': 3.8,
+          'text-anchor': 'middle' });
+        lab.setAttribute('class', 'tr-ann');
+        lab.textContent = sw.f + ' = ' + t.toFixed(1);
+        nodes.swing.appendChild(lab);
+      }
+    });
+    /* A crossing BEHIND the angle's corner is the whole of why HL holds: the
+       circle really does meet the line twice, but one of them would need a
+       negative length, so there is only one triangle. Worth drawing. */
+    sw.behind.forEach(function (t) {
+      var p = { x: o.x - ux * t * SCALE, y: o.y - uy * t * SCALE };
+      line(o.x, o.y, p.x, p.y, 'tr-ray is-dead');
+      var g = sv('circle', { cx: p.x, cy: p.y, r: 4 });
+      g.setAttribute('class', 'tr-stop is-dead'); nodes.swing.appendChild(g);
+      var lab = sv('text', { x: p.x, y: p.y - 6.4, 'font-size': 3.8,
+        'text-anchor': 'middle' });
+      lab.setAttribute('class', 'tr-ann'); lab.textContent = 'behind the corner';
+      nodes.swing.appendChild(lab);
+    });
+  }
+
   function homePts() {
     var P = canonPts(blueSides);
     if (!P) return null;
@@ -1222,10 +1527,16 @@ $('#reset1').addEventListener('click', function () {
     svg = sv('svg', { viewBox: '0 0 ' + VW + ' ' + VH, role: 'img',
       'aria-label': 'a red triangle and a blue one, with the given parts marked' });
     field.appendChild(svg);
-    nodes = { red: mk('tr-redpoly', 'tr-reddot', 'red', false),
-              blue: mk('tr-bluepoly', 'tr-bluedot', 'blue', true),
-              flash: sv('g', {}) };
-    svg.appendChild(nodes.flash);
+    /* Order matters, and it is not the obvious one. The guides go OVER the blue
+       triangle, because the ray runs along the free side by construction —
+       underneath, it is hidden by the very edge it explains, and "corner B has
+       to land on the dashed ray" has nothing on screen to point at. Over the
+       top, thin and dashed, it reads as a track the side is lying on. */
+    nodes = {};
+    nodes.red = mk('tr-redpoly', 'tr-reddot', 'red', false);
+    nodes.blue = mk('tr-bluepoly', 'tr-bluedot', 'blue', true);
+    nodes.swing = sv('g', {}); svg.appendChild(nodes.swing);
+    nodes.flash = sv('g', {}); svg.appendChild(nodes.flash);
     wire(); paint();
   }
   function paint() {
@@ -1235,6 +1546,7 @@ $('#reset1').addEventListener('click', function () {
     if (!rpts || !bluePts) return;
     place(rpts, nodes.red, ref);
     place(bluePts, nodes.blue, blueSides);
+    drawSwing();
     report();
   }
   function bar(x) {
@@ -1246,7 +1558,50 @@ $('#reset1').addEventListener('click', function () {
     var rp = partsOf(ref), bp = partsOf(blueSides);
     if (!rp || !bp) return;
     var same = !TriSearch.differs(bp, rp);
-    if (custom) bar(custom);
+    var sw = swingOf();
+    var wn = sw ? 'ABC'[sw.w] : '';
+    if (!custom && swinging && sw) {
+      /* mid-drag: the given angle and the given side along the other arm both
+         still hold. The rod is the only thing wrong, and it is the thing the
+         student is hunting, so say its two numbers and nothing else. */
+      var rod = bp[sw.xName], want = rp[sw.xName];
+      var ok = Math.abs(rod - want) < 0.03;
+      bar([ok
+        ? 'There. Side ' + sw.xName + ' is ' + want.toFixed(2) + ' again.'
+        : 'Side ' + sw.xName + ' is ' + rod.toFixed(2) + ', and you were given '
+          + want.toFixed(2) + '.',
+        'Corner ' + wn + ' is riding the ray, so the given angle still holds and so does the '
+        + 'side along the other arm. The only thing wrong is the rod: it has to come out at '
+        + want.toFixed(2) + ', and on this ray it does that in exactly '
+        + (sw.stops.length > 1 ? 'two places. Let go anywhere and it drops onto the nearer one.'
+                               : 'one place.'), !ok]);
+    }
+    /* deliberately NOT an early return: the table below is where the rod's
+       length is actually watched, and it has to keep moving with the drag */
+    else if (custom) bar(custom);
+    else if (sw && sw.stops.length > 1) bar(same
+      ? ['Two sides and an angle that is not between them.',
+         'Read the diagram as an instruction. The angle is pinned, the black side beside it '
+         + 'is laid down, and the other black side is a rod swinging from its far end \u2014 '
+         + 'the dashed circle is everywhere that rod can reach. Corner ' + wn + ' has to land '
+         + 'on the dashed ray. The circle crosses that ray TWICE. Drag corner ' + wn
+         + ' to the other crossing.', false]
+      : ['Same two sides, same angle, different triangle.',
+         'Corner ' + wn + ' is at the circle\u2019s other crossing. Every part you padlocked '
+         + 'still matches the red triangle exactly \u2014 and this is not the red triangle. '
+         + 'Two sides and a non-included angle can describe two different triangles, which '
+         + 'is why SSA is not a congruence rule. Drag ' + wn + ' back to see the other one.',
+         true]);
+    else if (sw && sw.stops.length === 1) bar(['Two sides and an angle \u2014 and this one holds.',
+      'Same shape of given as SSA: two sides and an angle NOT between them. But look where '
+      + 'the rod meets the ray. ' + (sw.tangent
+        ? 'It only just touches it \u2014 one point, where the rod comes in square to the ray. '
+          + 'Touching is not crossing, so there is no second place to go.'
+        : 'Only one crossing is out along the ray. The other one falls behind corner '
+          + 'ABC'[sw.vX] + ', and getting there would need a side of negative length.')
+      + ' One crossing, one triangle. Drag corner ' + wn + ' and watch it refuse to leave. '
+      + 'When the given angle is a right angle this is guaranteed, and that is the HL '
+      + 'theorem \u2014 the one member of this family you are allowed to use.', false]);
     else if (same) bar(['Still the same triangle.',
       TriParts.dof(held) === 0
         ? 'Nothing is left to move — the parts you padlocked settle the whole triangle. '
@@ -1267,7 +1622,12 @@ $('#reset1').addEventListener('click', function () {
       var tr = el('tr');
       tr.appendChild(el('td', null, row[0]));
       KEYS.forEach(function (k) {
-        tr.appendChild(el('td', held[k] ? 'lk' : null,
+        /* A padlock means "you were given this", not "this is satisfied". While
+           the corner is between crossings it is both given and broken, and the
+           student should be able to see WHICH one they are breaking. */
+        var off = held[k] && row[0] === 'blue'
+          && Math.abs(row[1][k] - rp[k]) > (TriParts.isAng(k) ? 0.05 : 0.005);
+        tr.appendChild(el('td', held[k] ? (off ? 'lk off' : 'lk') : null,
           TriParts.isAng(k) ? row[1][k].toFixed(1) + '°' : row[1][k].toFixed(2)));
       });
       tbody.appendChild(tr);
@@ -1311,11 +1671,42 @@ $('#reset1').addEventListener('click', function () {
       r.lk.setAttribute('aria-label', r.lk.title);
       r.row.classList.toggle('is-given', on);
       r.mid.innerHTML = '';
+      /* In the SSA case the free side is NOT "fixed by the padlocks" — it has
+         exactly two legal values, and saying otherwise is the lie the whole
+         lesson is against. Give it both, as buttons: that is also the only way
+         a keyboard or screen-reader user can make the swing happen at all. */
+      var sw = swingOf();
       if (on) r.mid.appendChild(el('div', 'fixed', 'given'));
+      else if (sw && k === sw.f && sw.stops.length > 1) {
+        var seg = el('div', 'tr-seg');
+        sw.stops.forEach(function (t) {
+          var b2 = el('button', 'tr-segb', t.toFixed(1));
+          b2.setAttribute('aria-pressed',
+            Math.abs(t - blueSides[sw.f]) < 0.02 ? 'true' : 'false');
+          b2.setAttribute('aria-label', 'make side ' + sw.f + ' equal ' + t.toFixed(1));
+          b2.addEventListener('click', function () { swingTo(swingOf(), t); });
+          seg.appendChild(b2);
+        });
+        r.mid.appendChild(seg);
+      }
+      /* The two angles that are not given are not fixed either: they differ
+         between the two triangles, which is the whole demonstration. Saying
+         "fixed by the padlocks" in the one case where the padlocks do not fix
+         it is the lie this station exists to expose. */
+      else if (sw && sw.stops.length > 1) {
+        var vals = sw.stops.map(function (t) {
+          var q = partsOf(stopTriple(sw, t));
+          return q ? (TriParts.isAng(k) ? q[k].toFixed(1) + '\u00B0' : q[k].toFixed(2)) : '?';
+        });
+        r.mid.appendChild(el('div', 'fixed', vals.join(' or ')));
+      }
       else if (!movable) r.mid.appendChild(el('div', 'fixed',
         TriParts.dof(held) === 0 ? 'fixed by the padlocks' : 'follows from the other angles'));
       else { r.inp.value = bp ? bp[k] : 0; r.mid.appendChild(r.inp); }
       if (bp) r.val.textContent = TriParts.isAng(k) ? bp[k].toFixed(1) + '°' : bp[k].toFixed(2);
+      var rpv = partsOf(ref);
+      r.val.classList.toggle('off', !!(bp && rpv && on
+        && Math.abs(bp[k] - rpv[k]) > (TriParts.isAng(k) ? 0.05 : 0.005)));
     });
   }
   function moveBluePart(k, v) {
@@ -1408,13 +1799,18 @@ $('#reset1').addEventListener('click', function () {
   }
 
   /* ---------------- sliding the blue triangle around ---------------- */
+  /* The margin is for the LABELS, not the corners. Each side's length prints
+     5.6 units outside the triangle, so a 4-unit margin let a corner sit legally
+     on the field while its label hung off the top edge: after a swing to the
+     small triangle, "2.7" arrived as "2.". */
+  var EDGE = 9;
   function clampToField() {
     if (!bluePts) return;
     var xs = bluePts.map(function (p) { return p.x; }), ys = bluePts.map(function (p) { return p.y; });
-    var sx = Math.min.apply(null, xs) < 4 ? 4 - Math.min.apply(null, xs)
-           : (Math.max.apply(null, xs) > VW - 4 ? VW - 4 - Math.max.apply(null, xs) : 0);
-    var sy = Math.min.apply(null, ys) < 4 ? 4 - Math.min.apply(null, ys)
-           : (Math.max.apply(null, ys) > VH - 4 ? VH - 4 - Math.max.apply(null, ys) : 0);
+    var sx = Math.min.apply(null, xs) < EDGE ? EDGE - Math.min.apply(null, xs)
+           : (Math.max.apply(null, xs) > VW - EDGE ? VW - EDGE - Math.max.apply(null, xs) : 0);
+    var sy = Math.min.apply(null, ys) < EDGE ? EDGE - Math.min.apply(null, ys)
+           : (Math.max.apply(null, ys) > VH - EDGE ? VH - EDGE - Math.max.apply(null, ys) : 0);
     if (sx || sy) bluePts = bluePts.map(function (p) { return { x: p.x + sx, y: p.y + sy }; });
   }
   function toUser(ev) {
@@ -1435,6 +1831,34 @@ $('#reset1').addEventListener('click', function () {
   function dragTo(st, u) {
     var rp = partsOf(ref), cur = partsOf(blueSides);
     if (!rp || !cur || !bluePts) return;
+    /* SSA-shaped givens get the construction, not the generic push — but only
+       when there really are two crossings to move between. With one crossing
+       (HL, or a tangent case) the corner has nowhere to go, and pinning it
+       means the student hauls their finger 30 units away from a corner that
+       never moves, which is exactly the dead feeling this was meant to cure.
+       One crossing behaves like every other rigid preset: the triangle
+       translates and the corner tracks the finger. The verdict and the drawing
+       are where "it cannot change" gets said. */
+    var sw = swingOf();
+    if (sw && sw.stops.length > 1) {
+      if (st.i === sw.w) {
+        /* Slide, do not jump. The corner follows the finger the whole way
+           along the ray, which means that for most of the drag the triangle is
+           NOT legal: the given angle still holds and the given side beside it
+           still holds, but the rod is the wrong length. That is the thing to
+           feel. Watch side "x" in the table stretch and shrink and go red,
+           and land on its given length at exactly two places. Snapping only on
+           release is what makes those two places findable instead of a pair of
+           invisible thresholds. */
+        swingDragTo(sw, u);
+        return;
+      }
+      /* the other two corners hold the construction still, so grabbing one of
+         them moves the whole picture rather than pretending to reshape it */
+      var tdx = u.x - bluePts[st.i].x, tdy = u.y - bluePts[st.i].y;
+      bluePts = bluePts.map(function (p) { return { x: p.x + tdx, y: p.y + tdy }; });
+      clampToField(); paint(); return;
+    }
     var i = st.i, j = st.j, at = bluePts[j];
     var key = BETWEEN[[Math.min(i, j), Math.max(i, j)].join(',')];
     /* How hard are they pulling? Measured from where the opposite corner was
@@ -1487,19 +1911,6 @@ $('#reset1').addEventListener('click', function () {
     clampToField();
     paint(); refreshRows();
   }
-  function clampToField() {
-    if (!bluePts) return;
-    var xs = bluePts.map(function (p) { return p.x; }), ys = bluePts.map(function (p) { return p.y; });
-    var sx = Math.min.apply(null, xs) < 4 ? 4 - Math.min.apply(null, xs)
-           : (Math.max.apply(null, xs) > VW - 4 ? VW - 4 - Math.max.apply(null, xs) : 0);
-    var sy = Math.min.apply(null, ys) < 4 ? 4 - Math.min.apply(null, ys)
-           : (Math.max.apply(null, ys) > VH - 4 ? VH - 4 - Math.max.apply(null, ys) : 0);
-    if (sx || sy) bluePts = bluePts.map(function (p) { return { x: p.x + sx, y: p.y + sy }; });
-  }
-  function toUser(ev) {
-    var r = svg.getBoundingClientRect();
-    return { x: (ev.clientX - r.left) / r.width * VW, y: (ev.clientY - r.top) / r.height * VH };
-  }
   function inside(P, u) {
     function side(a, b) { return (b.x - a.x) * (u.y - a.y) - (b.y - a.y) * (u.x - a.x); }
     var s1 = side(P[0], P[1]), s2 = side(P[1], P[2]), s3 = side(P[2], P[0]);
@@ -1536,6 +1947,7 @@ $('#reset1').addEventListener('click', function () {
       if (!dragging && !sliding) return;
       dragging = null; sliding = null; svg.classList.remove('dragging');
       try { svg.releasePointerCapture(ev.pointerId); } catch (e) {}
+      settleSwing();
     }
     svg.addEventListener('pointerup', stop);
     svg.addEventListener('pointercancel', stop);
@@ -1546,6 +1958,18 @@ $('#reset1').addEventListener('click', function () {
         if (!dd) return;
         ev.preventDefault();
         var i = +h.getAttribute('data-i'), j = i === 0 ? 1 : 0;
+        /* A 3-unit nudge is never enough to cross the midpoint between the two
+           crossings, so on the swinging corner the arrows would be inert
+           forever. Step it from one crossing to the next instead. */
+        var swk = swingOf();
+        if (swk && swk.stops.length > 1 && i === swk.w) {
+          var order = swk.stops.slice().sort(function (p, q) { return p - q; });
+          var at2 = order.indexOf(nearestStop(swk, blueSides[swk.f]));
+          var step2 = (dd[0] > 0 || dd[1] < 0) ? 1 : -1;
+          var nx = Math.max(0, Math.min(order.length - 1, at2 + step2));
+          if (nx !== at2) swingTo(swk, order[nx]);
+          return;
+        }
         dragTo({ i: i, j: j, anchor: { x: bluePts[j].x, y: bluePts[j].y } },
                { x: bluePts[i].x + dd[0], y: bluePts[i].y + dd[1] });
       });
@@ -1599,6 +2023,15 @@ $('#reset1').addEventListener('click', function () {
   });
   $('#attempt').addEventListener('click', function () {
     var rp = partsOf(ref); if (!rp) return;
+    /* In the SSA case the different one is the circle's other crossing, so move
+       the corner there rather than redrawing the triangle somewhere else: the
+       point is that it is the SAME construction reaching a second answer. */
+    var sw0 = swingOf();
+    if (sw0 && sw0.stops.length > 1) {
+      var other = sw0.stops.filter(function (t) {
+        return Math.abs(t - blueSides[sw0.f]) > 0.02; })[0];
+      if (other !== undefined && swingTo(sw0, other)) return;
+    }
     var hit = TriSearch.find(rp, KEYS.filter(function (k) { return held[k]; }));
     if (!hit) {
       /* Two sides and an angle not between them is SSA by shape. It settles the
