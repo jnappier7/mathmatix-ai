@@ -3,7 +3,7 @@
 // Live Two-Minute Drill — the projector. Setup → lobby → live → final, all driven by the
 // game state the server pushes over SSE (routes/liveDrill.js /host/games/:code/stream).
 (function () {
-  const { $, esc, setField, cardHTML, syncClock, serverNow, mmss, watchTouchdowns, rulesHTML } = window.LiveDrill;
+  const { $, esc, setField, fieldBolt, calm, cardHTML, syncClock, serverNow, mmss, watchTouchdowns, rulesHTML } = window.LiveDrill;
   const API = '/api/live-drill/host';
   const noop = () => {};
   const SND = window.LiveDrillSound || { unlock: noop, whistle: noop, horn: noop, tick: noop, chime: noop, buzzer: noop, cheer: noop, groan: noop, rumble: noop, blitz: noop, safe: noop, smoke: noop,
@@ -429,8 +429,15 @@
   }
 
   function renderScoreboard(st) {
-    st.teams.forEach((t, i) => { $('s-n' + i).textContent = `${t.name} · ${t.size}`; $('s-p' + i).textContent = t.pts; });
-    setField($('field'), st.teams);
+    st.teams.forEach((t, i) => {
+      $('s-n' + i).textContent = `${t.name} · ${t.size}`;
+      const v = $('s-p' + i);
+      const was = v.textContent;
+      v.textContent = t.pts;
+      // the number on the board lands with a thump when it goes up
+      if (was !== '' && Number(was) < t.pts) { v.classList.remove('bump'); void v.offsetWidth; v.classList.add('bump'); }
+    });
+    setField($('field'), st.teams, { pickSix: st.round && st.round.closed ? st.round.pickSix : null });
   }
 
   function renderClock() {
@@ -489,6 +496,8 @@
     $('h-next').hidden = drive;
     $('h-keys').hidden = drive;
     if (drive) {
+      // a blitz that just landed: the bolt hits the other team's ball (before the feed marks it seen)
+      st.feed.forEach((f) => { if (f.type === 'blitz' && !seenFeed.has(`${f.at}|${f.type}|${f.who || ''}`)) fieldBolt($('field'), f.victim); });
       $('feed').innerHTML = st.feed.map((f) => {
         const id = `${f.at}|${f.type}|${f.who || ''}`;
         const team = (f.team != null ? ` t${f.team}` : '') + (seenFeed.has(id) ? '' : ' new');
@@ -724,15 +733,187 @@
 
   // ---------------- the heist ----------------
   const money = (x) => `$${Number(x || 0).toLocaleString()}`;
+  // The projector's heist has two halves. The BOARD is keyed, so a row is the same element all game:
+  // when the standings change the rows glide to their new places (you can watch someone pass you),
+  // the cash counts up, and money that changes hands is SEEN changing hands — a grab flies from the
+  // victim's row to the thief's. The VAULT is the room's set piece: the wheel turns for every crack,
+  // coins spill for every safe, the door swings open on a jackpot, and the lamp goes red while
+  // anyone's alarm is ringing.
+  const NS = 'http://www.w3.org/2000/svg';
+  function vaultScene() {
+    const bolts = Array.from({ length: 12 }, (_, i) => {
+      const a = (i / 12) * 6.283; return `<circle class="rivet" cx="${(200 + Math.cos(a) * 112).toFixed(1)}" cy="${(150 + Math.sin(a) * 112).toFixed(1)}" r="5"/>`;
+    }).join('');
+    const ticks = Array.from({ length: 40 }, (_, i) => `<line class="tick" x1="200" y1="${i % 5 ? 66 : 62}" x2="200" y2="72" transform="rotate(${i * 9} 200 150)"/>`).join('');
+    const spokes = [0, 72, 144, 216, 288].map((d) => `<g transform="rotate(${d})"><rect class="spoke" x="-4" y="-50" width="8" height="50" rx="3"/><circle class="knob" cy="-52" r="8"/></g>`).join('');
+    return `<defs>
+        <radialGradient id="vg-door" cx="38%" cy="32%" r="80%"><stop offset="0" stop-color="#8a96a8"/><stop offset=".55" stop-color="#4c566a"/><stop offset="1" stop-color="#252b3a"/></radialGradient>
+        <radialGradient id="vg-gold" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#fff3c4"/><stop offset=".5" stop-color="#ffb547"/><stop offset="1" stop-color="#7a4a08"/></radialGradient>
+        <linearGradient id="vg-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2233"/><stop offset="1" stop-color="#0b0f1a"/></linearGradient>
+      </defs>
+      <rect x="-300" width="1000" height="300" fill="url(#vg-wall)"/>
+      <g class="plates"><path d="M-300 60H700M-300 240H700M-130 0V300M70 0V300M330 0V300M530 0V300"/></g>
+      <circle class="frame" cx="200" cy="150" r="122"/>
+      <circle class="inside" cx="200" cy="150" r="104" fill="url(#vg-gold)"/>
+      <g class="stack">${[0, 1, 2, 3, 4].map((i) => `<rect x="${150 + i * 21}" y="${196 - (i % 3) * 14}" width="18" height="${44 + (i % 3) * 14}" rx="3"/>`).join('')}</g>
+      <g id="vault-door" class="door">
+        <circle cx="200" cy="150" r="106" fill="url(#vg-door)" stroke="#161b28" stroke-width="4"/>
+        ${bolts}
+        <circle class="ring" cx="200" cy="150" r="84"/>
+        ${ticks}
+        <g transform="translate(200 150)"><g id="vault-wheel" class="wheel">${spokes}<circle class="hub" r="20"/><circle class="hubcap" r="8"/></g></g>
+      </g>
+      <rect class="hinge" x="74" y="100" width="20" height="30" rx="4"/><rect class="hinge" x="74" y="170" width="20" height="30" rx="4"/>
+      <circle id="vault-lamp" class="lamp" cx="352" cy="34" r="11"/>
+      <g id="vault-fx"></g>
+      <text id="vault-call" class="call" x="200" y="286" text-anchor="middle"></text>`;
+  }
+  let wheelTurn = 0;
+  function spinWheel(turns) {
+    const w = $('vault-wheel'); if (!w) return;
+    wheelTurn += turns * 360;
+    w.style.transform = `rotate(${wheelTurn}deg)`;
+  }
+  /** Coins out of the vault mouth: up, out, and down under gravity. */
+  function spillCoins(n) {
+    const fx = $('vault-fx'); if (!fx || calm()) return;
+    for (let i = 0; i < n; i++) {
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('class', 'coin'); c.setAttribute('r', 6 + (i % 3)); c.setAttribute('cx', 200); c.setAttribute('cy', 150);
+      fx.appendChild(c);
+      const vx = (Math.random() - 0.5) * 300; const up = 50 + Math.random() * 110;
+      c.animate([
+        { transform: 'translate(0,0)', opacity: 1 },
+        { transform: `translate(${vx * 0.5}px,${-up}px)`, opacity: 1, offset: 0.35, easing: 'ease-in' },
+        { transform: `translate(${vx}px,${170}px)`, opacity: 0.9 },
+      ], { duration: 900 + Math.random() * 500, delay: i * 22, easing: 'ease-out', fill: 'backwards' }).onfinish = () => c.remove();
+    }
+  }
+  function vaultCall(text) {
+    const t = $('vault-call'); if (!t) return;
+    t.textContent = text;
+    t.classList.remove('on'); void t.getBBox(); t.classList.add('on');
+    clearTimeout(vaultCall._t); vaultCall._t = setTimeout(() => t.classList.remove('on'), 2600);
+  }
+  function jackpotDoor(who, amount) {
+    const d = $('vault-door'); if (!d) return;
+    d.classList.add('open');
+    spinWheel(2);
+    setTimeout(() => spillCoins(26), 380);
+    vaultCall(`JACKPOT · ${who} · ${money(amount)}`);
+    clearTimeout(jackpotDoor._t); jackpotDoor._t = setTimeout(() => d.classList.remove('open'), 2600);
+  }
+
+  /** A chip of text thrown from one element to another along an arc (fixed layer, so nothing clips it). */
+  function flyChip(fromEl, toEl, text, cls) {
+    if (!fromEl || !toEl || calm()) return;
+    const a = fromEl.getBoundingClientRect(); const b = toEl.getBoundingClientRect();
+    const chip = document.createElement('span');
+    chip.className = 'flychip ' + (cls || '');
+    chip.textContent = text;
+    document.body.appendChild(chip);
+    const x1 = a.left + a.width / 2; const y1 = a.top + a.height / 2; const x2 = b.left + b.width / 2; const y2 = b.top + b.height / 2;
+    const lift = Math.max(40, Math.abs(y2 - y1) * 0.35);
+    chip.animate([
+      { transform: `translate(${x1}px,${y1}px) translate(-50%,-50%) scale(.7)`, opacity: 0 },
+      { transform: `translate(${x1}px,${y1 - 8}px) translate(-50%,-50%) scale(1.1)`, opacity: 1, offset: 0.15 },
+      { transform: `translate(${(x1 + x2) / 2 - lift}px,${(y1 + y2) / 2}px) translate(-50%,-50%) scale(1.15)`, opacity: 1, offset: 0.55 },
+      { transform: `translate(${x2}px,${y2}px) translate(-50%,-50%) scale(.85)`, opacity: 1, offset: 0.92 },
+      { transform: `translate(${x2}px,${y2}px) translate(-50%,-50%) scale(.5)`, opacity: 0 },
+    ], { duration: 950, easing: 'cubic-bezier(.4,0,.3,1)' }).onfinish = () => chip.remove();
+  }
+  /** "+$150" lifting off a row's total. */
+  function floatGain(row, text, cls) {
+    if (!row || calm()) return;
+    const r = row.querySelector('.cv').getBoundingClientRect();
+    const f = document.createElement('span');
+    f.className = 'flychip gain ' + (cls || '');
+    f.textContent = text;
+    document.body.appendChild(f);
+    const x = r.left + r.width / 2; const y = r.top + r.height / 2;
+    f.animate([
+      { transform: `translate(${x}px,${y}px) translate(-50%,-50%) scale(.7)`, opacity: 0 },
+      { transform: `translate(${x}px,${y - 26}px) translate(-50%,-50%) scale(1.1)`, opacity: 1, offset: 0.3 },
+      { transform: `translate(${x}px,${y - 54}px) translate(-50%,-50%) scale(1)`, opacity: 0 },
+    ], { duration: 1200, easing: 'ease-out' }).onfinish = () => f.remove();
+  }
+  /** Count a dollar figure from what the row shows to what it holds. */
+  function countCash(el, to) {
+    const from = el._shown == null ? to : el._shown;
+    cancelAnimationFrame(el._raf);
+    if (from === to || calm()) { el._shown = to; el.textContent = money(to); return; }
+    const t0 = performance.now(); const ms = 650;
+    const step = (t) => {
+      const k = Math.min(1, (t - t0) / ms); const e = 1 - Math.pow(1 - k, 3);
+      el._shown = Math.round(from + (to - from) * e);
+      el.textContent = money(el._shown);
+      if (k < 1) el._raf = requestAnimationFrame(step); else el._shown = to;
+    };
+    el._raf = requestAnimationFrame(step);
+  }
+
   /** The vault board: everyone richest first as cash bars, plus whatever is being done to the screens. */
   function renderHeist(st) {
     const H = st.heist;
     if (!H) return;
+    const svg = $('vault-svg');
+    if (svg && !svg.dataset.drawn) { svg.innerHTML = vaultScene(); svg.dataset.drawn = '1'; }
     const top = Math.max(1, H.top);
-    $('heist-board').innerHTML = H.crew.slice(0, 14).map((c) => `<li class="${c.rank === 1 && c.cash > 0 ? 'lead' : ''}${c.hit ? ' hit' : ''}${c.alarm ? ' alarm' : ''}">
-      <span class="rk">${c.rank}</span><span class="nm">${esc(c.name)}${c.rank === 1 && c.cash > 0 ? ' 🏆' : ''}${c.gadgets ? ' 🧰' : ''}${c.alarm ? ' 🚨' : c.cracking ? ' 🔐' : ''}</span>
-      <span class="bar"><span style="width:${Math.round((100 * c.cash) / top)}%"></span></span><span class="cv">${money(c.cash)}</span></li>`).join('')
-      + (H.crew.length > 14 ? `<li class="more muted">+ ${H.crew.length - 14} more in the crew</li>` : '');
+    const board = $('heist-board');
+    const rows = new Map(); const before = new Map();
+    board.querySelectorAll('li[data-id]').forEach((li) => { rows.set(li.dataset.id, li); before.set(li.dataset.id, li.getBoundingClientRect().top); });
+    const firstPaint = rows.size === 0;
+    const shown = H.crew.slice(0, 14);
+    const byName = {};
+    shown.forEach((c, i) => {
+      let li = rows.get(c.id);
+      if (!li) {
+        li = document.createElement('li');
+        li.dataset.id = c.id;
+        li.innerHTML = '<span class="rk"></span><span class="nm"></span><span class="bar"><span></span></span><span class="cv"></span>';
+      }
+      rows.delete(c.id);
+      const lead = c.rank === 1 && c.cash > 0;
+      li.className = `${lead ? 'lead' : ''}${c.hit ? ' hit' : ''}${c.alarm ? ' alarm' : ''}${c.cracking ? ' cracking' : ''}`;
+      li.children[0].textContent = c.rank;
+      const nm = `${esc(c.name)}${lead ? ' 🏆' : ''}${c.gadgets ? ' 🧰' : ''}${c.alarm ? ' 🚨' : c.cracking ? ' 🔐' : ''}`;
+      if (li.dataset.nm !== nm) { li.children[1].innerHTML = nm; li.dataset.nm = nm; }
+      li.children[2].firstChild.style.width = `${Math.round((100 * c.cash) / top)}%`;
+      countCash(li.children[3], c.cash);
+      if (board.children[i] !== li) board.insertBefore(li, board.children[i] || null);
+      byName[c.name] = li;
+    });
+    rows.forEach((li) => li.remove()); // left the top 14, or the game
+    let more = board.querySelector('li.more');
+    if (H.crew.length > 14) {
+      if (!more) { more = document.createElement('li'); more.className = 'more muted'; }
+      more.textContent = `+ ${H.crew.length - 14} more in the crew`;
+      board.appendChild(more);
+    } else if (more) more.remove();
+    // FLIP: every row that changed rank glides from where it was
+    if (!firstPaint && !calm()) {
+      board.querySelectorAll('li[data-id]').forEach((li) => {
+        const was = before.get(li.dataset.id);
+        if (was == null) { li.animate([{ opacity: 0, transform: 'translateX(-12px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'ease-out' }); return; }
+        const dy = was - li.getBoundingClientRect().top;
+        if (Math.abs(dy) > 1) {
+          li.style.zIndex = dy > 0 ? '2' : '1'; // the one moving UP passes in front
+          li.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 560, easing: 'cubic-bezier(.3,1.25,.45,1)' }).onfinish = () => { li.style.zIndex = ''; };
+        }
+      });
+    }
+    // what just happened, before the feed marks it seen
+    if (!firstPaint) {
+      st.feed.filter((f) => !seenFeed.has(`${f.at}|${f.type}|${f.who || ''}`)).forEach((f) => {
+        if (f.type === 'crack') spinWheel(0.5);
+        if (f.type === 'safe') { spinWheel(1); spillCoins(7); floatGain(byName[f.who], `+${money(f.amount)}`); }
+        if (f.type === 'jackpot') { jackpotDoor(f.who, f.amount); floatGain(byName[f.who], `+${money(f.amount)}`, 'jackpot'); }
+        if (f.type === 'grab') flyChip(byName[f.target] && byName[f.target].querySelector('.cv'), byName[f.who] && byName[f.who].querySelector('.cv'), `💵 ${money(f.amount)}`);
+        if (f.type === 'switch') [byName[f.who], byName[f.target]].forEach((li) => { if (li && !calm()) li.animate([{ boxShadow: '0 0 0 3px var(--led)' }, { boxShadow: '0 0 0 0 transparent' }], { duration: 900 }); });
+      });
+    }
+    const lamp = $('vault-lamp');
+    if (lamp) lamp.classList.toggle('red', H.crew.some((c) => c.alarm));
     $('heist-tally').textContent = `${H.safesCracked} ${H.safesCracked === 1 ? 'safe' : 'safes'} cracked`;
     const fx = (H.effects || []).find((e) => e.until > serverNow());
     $('live-body').classList.toggle('fx-smoke', !!fx && fx.kind === 'smoke');

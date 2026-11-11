@@ -780,20 +780,20 @@ class InlineChatVisuals {
 
                 // Shading
                 if (op.startsWith('>')) {
-                    svg += `<rect x="${valX}" y="${lineY - 12}" width="${width - padding - valX}" height="24"
+                    svg += `<rect data-m="sweep" data-ox="${valX}" x="${valX}" y="${lineY - 12}" width="${width - padding - valX}" height="24"
                                   fill="rgba(102, 126, 234, 0.15)" rx="4"/>`;
                     // Arrow indicating continues right
-                    svg += `<polygon points="${width - padding - 2},${lineY} ${width - padding - 10},${lineY - 5} ${width - padding - 10},${lineY + 5}"
+                    svg += `<polygon data-m="after-sweep" points="${width - padding - 2},${lineY} ${width - padding - 10},${lineY - 5} ${width - padding - 10},${lineY + 5}"
                                      fill="rgba(102, 126, 234, 0.4)"/>`;
                 } else {
-                    svg += `<rect x="${padding}" y="${lineY - 12}" width="${valX - padding}" height="24"
+                    svg += `<rect data-m="sweep" data-ox="${valX}" x="${padding}" y="${lineY - 12}" width="${valX - padding}" height="24"
                                   fill="rgba(102, 126, 234, 0.15)" rx="4"/>`;
-                    svg += `<polygon points="${padding + 2},${lineY} ${padding + 10},${lineY - 5} ${padding + 10},${lineY + 5}"
+                    svg += `<polygon data-m="after-sweep" points="${padding + 2},${lineY} ${padding + 10},${lineY - 5} ${padding + 10},${lineY + 5}"
                                      fill="rgba(102, 126, 234, 0.4)"/>`;
                 }
 
                 // Endpoint circle (open or closed)
-                svg += `<circle cx="${valX}" cy="${lineY}" r="7" fill="${isOpen ? 'white' : '#667eea'}"
+                svg += `<circle data-m="endpoint" cx="${valX}" cy="${lineY}" r="7" fill="${isOpen ? 'white' : '#667eea'}"
                               stroke="#667eea" stroke-width="2.5"/>`;
             }
         }
@@ -850,7 +850,7 @@ class InlineChatVisuals {
             const [intMin, intMax] = showInterval.split(',').map(Number);
             const x1 = toX(intMin);
             const x2 = toX(intMax);
-            svg += `<rect x="${x1}" y="${lineY - 15}" width="${x2 - x1}" height="30"
+            svg += `<rect data-m="sweep" data-ox="${x1}" x="${x1}" y="${lineY - 15}" width="${x2 - x1}" height="30"
                           fill="rgba(102, 126, 234, 0.2)" rx="4"/>`;
         }
 
@@ -864,20 +864,20 @@ class InlineChatVisuals {
             const color = jumpColors[idx % jumpColors.length];
             const direction = jump.to > jump.from ? 1 : -1;
 
-            // Arc path
-            svg += `<path d="M ${x1} ${lineY - 3} Q ${midX} ${lineY - 3 - arcHeight} ${x2} ${lineY - 3}"
+            // Arc path. data-m marks the parts visual-motion.js stages (hop i: start dot, arc, arrow, label).
+            svg += `<path data-m="hop-arc" data-i="${idx}" d="M ${x1} ${lineY - 3} Q ${midX} ${lineY - 3 - arcHeight} ${x2} ${lineY - 3}"
                           fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>`;
 
             // Arrowhead at destination (symmetric triangle)
             const arrowSize = 6;
-            svg += `<polygon points="${x2},${lineY - 3} ${x2 - direction * arrowSize},${lineY - 3 - arrowSize} ${x2 - direction * arrowSize},${lineY - 3 + arrowSize}"
+            svg += `<polygon data-m="hop-land" data-i="${idx}" points="${x2},${lineY - 3} ${x2 - direction * arrowSize},${lineY - 3 - arrowSize} ${x2 - direction * arrowSize},${lineY - 3 + arrowSize}"
                               fill="${color}"/>`;
 
             // Start dot
-            svg += `<circle cx="${x1}" cy="${lineY}" r="4" fill="${color}"/>`;
+            svg += `<circle data-m="hop-start" data-i="${idx}" cx="${x1}" cy="${lineY}" r="4" fill="${color}"/>`;
 
             // Jump label above arc
-            svg += `<text x="${midX}" y="${lineY - arcHeight - 8}" text-anchor="middle"
+            svg += `<text data-m="hop-label" data-i="${idx}" x="${midX}" y="${lineY - arcHeight - 8}" text-anchor="middle"
                           fill="${color}" font-size="12" font-weight="bold">${this.escapeHtml(jump.label)}</text>`;
         });
 
@@ -888,12 +888,12 @@ class InlineChatVisuals {
             const fillColor = isHighlighted ? '#667eea' : '#e74c3c';
 
             if (openCircle) {
-                svg += `<circle cx="${x}" cy="${lineY}" r="8" fill="white" stroke="${fillColor}" stroke-width="3"
+                svg += `<circle data-m="point" data-i="${idx}" cx="${x}" cy="${lineY}" r="8" fill="white" stroke="${fillColor}" stroke-width="3"
                             class="${interactive ? 'icv-draggable-point' : ''}"
                             data-point-idx="${idx}" data-numline-id="${id}" data-min="${min}" data-max="${max}"
                             data-padding="${padding}" data-scale="${scale}"/>`;
             } else {
-                svg += `<circle cx="${x}" cy="${lineY}" r="8" fill="${fillColor}"
+                svg += `<circle data-m="point" data-i="${idx}" cx="${x}" cy="${lineY}" r="8" fill="${fillColor}"
                             class="${interactive ? 'icv-draggable-point' : ''}"
                             data-point-idx="${idx}" data-numline-id="${id}" data-min="${min}" data-max="${max}"
                             data-padding="${padding}" data-scale="${scale}"/>`;
@@ -901,7 +901,7 @@ class InlineChatVisuals {
 
             // Point label above
             const labelText = denominator ? this.decimalToFraction(point, denominator) : point;
-            svg += `<text x="${x}" y="${lineY - 15}" text-anchor="middle" fill="${fillColor}"
+            svg += `<text data-m="point-label" data-i="${idx}" x="${x}" y="${lineY - 15}" text-anchor="middle" fill="${fillColor}"
                           font-size="14" font-weight="bold" class="icv-point-label" data-point-idx="${idx}">${labelText}</text>`;
         });
 
@@ -2106,24 +2106,24 @@ class InlineChatVisuals {
         const endY = centerY - (rise / 2) * gridSize;
 
         // Line through points
-        svg += `<line x1="${startX - 30}" y1="${startY + 30 * m}" x2="${endX + 30}" y2="${endY - 30 * m}"
+        svg += `<line data-m="grow" data-ox="${startX - 30}" data-oy="${startY + 30 * m}" x1="${startX - 30}" y1="${startY + 30 * m}" x2="${endX + 30}" y2="${endY - 30 * m}"
                       stroke="#667eea" stroke-width="3"/>`;
 
         // Rise (vertical line)
-        svg += `<line x1="${startX}" y1="${startY}" x2="${startX}" y2="${endY}"
+        svg += `<line data-m="rise" data-ox="${startX}" data-oy="${startY}" x1="${startX}" y1="${startY}" x2="${startX}" y2="${endY}"
                       stroke="#e74c3c" stroke-width="3" stroke-dasharray="8,4"/>`;
-        svg += `<text x="${startX - 10}" y="${(startY + endY) / 2 + 5}" text-anchor="end"
+        svg += `<text data-m="rise-label" style="paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round" x="${startX - 10}" y="${(startY + endY) / 2 + 5}" text-anchor="end"
                       font-size="14" font-weight="bold" fill="#e74c3c">Rise = ${rise}</text>`;
 
         // Run (horizontal line)
-        svg += `<line x1="${startX}" y1="${endY}" x2="${endX}" y2="${endY}"
+        svg += `<line data-m="run" data-ox="${startX}" data-oy="${endY}" x1="${startX}" y1="${endY}" x2="${endX}" y2="${endY}"
                       stroke="#2ecc71" stroke-width="3" stroke-dasharray="8,4"/>`;
-        svg += `<text x="${(startX + endX) / 2}" y="${endY + 20}" text-anchor="middle"
+        svg += `<text data-m="run-label" style="paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round" x="${(startX + endX) / 2}" y="${endY + 20}" text-anchor="middle"
                       font-size="14" font-weight="bold" fill="#2ecc71">Run = ${run}</text>`;
 
         // Points
-        svg += `<circle cx="${startX}" cy="${startY}" r="6" fill="#667eea"/>`;
-        svg += `<circle cx="${endX}" cy="${endY}" r="6" fill="#667eea"/>`;
+        svg += `<circle data-m="from" cx="${startX}" cy="${startY}" r="6" fill="#667eea"/>`;
+        svg += `<circle data-m="to" cx="${endX}" cy="${endY}" r="6" fill="#667eea"/>`;
 
         svg += `</svg>`;
 
@@ -2430,18 +2430,18 @@ class InlineChatVisuals {
         // Shading for solution region
         const valueX = toX(value);
         if (type === 'greater') {
-            svg += `<rect x="${valueX}" y="${lineY - 12}" width="${width - padding - valueX}" height="24"
+            svg += `<rect data-m="sweep" data-ox="${valueX}" x="${valueX}" y="${lineY - 12}" width="${width - padding - valueX}" height="24"
                           fill="rgba(102, 126, 234, 0.3)"/>`;
         } else {
-            svg += `<rect x="${padding}" y="${lineY - 12}" width="${valueX - padding}" height="24"
+            svg += `<rect data-m="sweep" data-ox="${valueX}" x="${padding}" y="${lineY - 12}" width="${valueX - padding}" height="24"
                           fill="rgba(102, 126, 234, 0.3)"/>`;
         }
 
         // Circle at value point (open or closed)
         if (inclusive) {
-            svg += `<circle cx="${valueX}" cy="${lineY}" r="8" fill="#e74c3c"/>`;
+            svg += `<circle data-m="endpoint" cx="${valueX}" cy="${lineY}" r="8" fill="#e74c3c"/>`;
         } else {
-            svg += `<circle cx="${valueX}" cy="${lineY}" r="8" fill="white" stroke="#e74c3c" stroke-width="3"/>`;
+            svg += `<circle data-m="endpoint" cx="${valueX}" cy="${lineY}" r="8" fill="white" stroke="#e74c3c" stroke-width="3"/>`;
         }
 
         svg += `</svg>`;

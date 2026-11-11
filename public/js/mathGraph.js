@@ -1276,22 +1276,80 @@
 
     // ── Animation ────────────────────────────────────────────────
     _startAnimation() {
+      // Motion is a preference, not a requirement: with reduced motion the finished graph just
+      // appears. Checked here, not in the constructor, because callers that add curves after
+      // construction (systems, derivative overlays) start the animation themselves.
+      if (typeof window !== 'undefined' && window.matchMedia
+          && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this._animProgress = 1; this._animDone = true; this._animT = null;
+        this.render();
+        return;
+      }
       this._animProgress = 0;
       this._animDone = false;
       const start = performance.now();
-      const duration = 800;
+      // Several curves are drawn ONE AFTER ANOTHER (a system: first line, then the second, then
+      // where they meet), so the time grows with the count, up to a cap.
+      const n = Math.max(1, this.functions.length);
+      const duration = Math.min(800 * n, 2400);
+      this._animT = 0;
       const tick = () => {
         const t = Math.min((performance.now() - start) / duration, 1);
+        this._animT = t;
         this._animProgress = easeOutCubic(t);
         this.render();
         if (t < 1) {
           this._animRAF = requestAnimationFrame(tick);
         } else {
           this._animDone = true;
+          this._animT = null;
           this._animRAF = null;
+          this._startPing();
         }
       };
       this._animRAF = requestAnimationFrame(tick);
+    }
+
+    /**
+     * Once the curves are down, the points that matter answer for themselves: a ring opens on each
+     * intersection (the solution of a system) or, with none, on the intercepts and turning points.
+     */
+    _startPing() {
+      const pts = this._pingPoints();
+      if (!pts.length) { this.render(); return; }
+      const start = performance.now();
+      const tick = () => {
+        const t = Math.min((performance.now() - start) / 900, 1);
+        this._pingT = t < 1 ? t : null;
+        this.render();
+        this._animRAF = t < 1 ? requestAnimationFrame(tick) : null;
+      };
+      this._animRAF = requestAnimationFrame(tick);
+    }
+
+    _pingPoints() {
+      const pts = (this.keyPoints || []).filter((k) => typeof k.x === 'number' && typeof k.y === 'number'
+        && isFinite(k.x) && isFinite(k.y) && !/asymptote/.test(k.type || ''));
+      const meet = pts.filter((k) => k.type === 'intersection');
+      return (meet.length ? meet : pts).slice(0, 4);
+    }
+
+    _drawPing() {
+      const ctx = this.ctx; const d = this.dpr; const t = this._pingT;
+      for (const kp of this._pingPoints()) {
+        const px = this._xToPixel(kp.x); const py = this._yToPixel(kp.y);
+        if (px < 0 || px > this._w || py < 0 || py > this._h) continue;
+        for (const lag of [0, 0.28]) {
+          const u = (t - lag) / (1 - lag);
+          if (u <= 0) continue;
+          ctx.save();
+          ctx.strokeStyle = kp.color || '#e84393';
+          ctx.globalAlpha = 0.85 * (1 - u);
+          ctx.lineWidth = 2.5 * d;
+          ctx.beginPath(); ctx.arc(px, py, (5 + 22 * easeOutCubic(u)) * d, 0, Math.PI * 2); ctx.stroke();
+          ctx.restore();
+        }
+      }
     }
 
     // ── Main render ──────────────────────────────────────────────
@@ -1330,6 +1388,7 @@
 
       this._drawFunctions();
       if (this._animDone) this._drawKeyPointMarkers();
+      if (this._pingT != null) this._drawPing();
       if (this._animDone && this.functions.length > 1) this._drawLegend();
 
       ctx.restore();
@@ -1429,13 +1488,22 @@
 
     // ── Function curves ──────────────────────────────────────────
     _drawFunctions() {
-      for (const func of this.functions) {
+      const n = this.functions.length;
+      const whole = this._animProgress;
+      for (let i = 0; i < n; i++) {
+        const func = this.functions[i];
+        // mid-animation, each curve has its own share of the clock: i-th starts when (i-1)-th ends
+        if (this._animT != null && n > 1) {
+          this._animProgress = easeOutCubic(Math.max(0, Math.min(1, this._animT * n - i)));
+          if (this._animProgress <= 0) continue;
+        }
         let segments;
         if (func.kind === 'vertical') segments = this._verticalSegments(func);
         else if (func.kind === 'implicit') segments = this._implicitSegments(func);
         else segments = this._explicitSegments(func);
         this._strokeSegments(segments, func.color);
       }
+      this._animProgress = whole;
     }
 
     /**
