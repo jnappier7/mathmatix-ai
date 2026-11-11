@@ -218,10 +218,26 @@
 </head>
 <body>
   <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+  <!-- Mobile-only top bar: css/mobile-fixes.css hides .landing-header on
+       phones, so without this the page had no logo or nav there at all. -->
+  <div class="lp-mobile-topbar">
+    <a href="/" class="lp-mobile-topbar-logo">
+      <img src="/images/mathmatix-ai-logoheader.png" alt="Mathmatix AI" />
+    </a>
+    <div class="lp-mobile-topbar-actions">
+      <a href="/pricing.html" class="lp-mobile-topbar-link">Pricing</a>
+      <a href="/login.html" class="lp-mobile-topbar-link">Log In</a>
+      <a href="/signup.html" class="lp-mobile-topbar-btn">Start Free</a>
+    </div>
+  </div>
+
   <header class="landing-header">
     <div class="header-logo-container">
-      <a href="/">
-        <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+      <!-- The wide wordmark the homepage wears, not the square mark: the
+           square one at 48px read as a postage stamp next to the nav. -->
+      <a href="/" title="Home" aria-label="Home">
+        <img src="/images/mathmatix-ai-logoheader.png" alt="Mathmatix AI" class="main-logo-hero" />
       </a>
     </div>
     <nav class="landing-nav">
