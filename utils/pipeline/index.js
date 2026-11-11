@@ -90,6 +90,7 @@ const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synth
 const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
 const { gateInlineGraphTags, containsInlineGraphTag } = require('./inlineGraphGate');
+const { gateNumberLineTags, containsNumberLineTag } = require('./numberLineGate');
 const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
@@ -1453,6 +1454,35 @@ async function runPipeline(message, ctx) {
       }
     } catch (gateErr) {
       boardLogger.error('Inline visual gate failed (non-fatal)', { error: gateErr.message });
+    }
+  }
+
+  // ── Stage 5c.0d: NUMBER LINES that would hand over the answer ──
+  // The graph gate above covers function plots. A number line leaks differently:
+  // a hop that LANDS on the answer to arithmetic the student asked about, or the
+  // shaded solution of an inequality they brought unsolved. The tutor is now asked
+  // to draw these on its own (visualDirective), so the picture must not do the
+  // student's last step. Deterministic, independent of VISUAL_GATE_MODE (it is a
+  // leak guard, not a relevance judge), and fail-safe: an error leaves the text
+  // untouched. See numberLineGate.js for what it cuts and what it leaves alone.
+  if (containsNumberLineTag(verified.text)) {
+    try {
+      const studentMessages = [message, ...(ctx.conversation?.messages || [])
+        .filter((m) => m && m.role === 'user').slice(-4).map((m) => m.content)]
+        .filter((m) => typeof m === 'string' && m);
+      const lineResult = gateNumberLineTags({
+        text: verified.text,
+        studentMessages,
+        pinnedTex: ctx.conversation?.boardProblem?.tex || null,
+        correctAnswer: diagnosis.correctAnswer || null,
+        solved: diagnosis.isCorrect === true,
+      });
+      if (lineResult.changes.length) {
+        verified.text = lineResult.text;
+        boardLogger.info('Number line gate', { changes: lineResult.changes.map((c) => `${c.tag}:${c.action}`) });
+      }
+    } catch (gateErr) {
+      boardLogger.error('Number line gate failed (non-fatal)', { error: gateErr.message });
     }
   }
 
