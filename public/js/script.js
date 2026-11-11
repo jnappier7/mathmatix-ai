@@ -4191,6 +4191,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     setTimeout(() => {
                         window.inlineChatVisuals.initializeVisuals(latestMessage);
                         renderMathInElement(latestMessage);
+                        // The picture is told in order (visual-motion.js), and the re-render above
+                        // replaced the equations math-morph was building, so it starts over on the new ones.
+                        try {
+                            if (window.VisualMotion) window.VisualMotion.play(latestMessage);
+                            if (window.MathMorph) window.MathMorph.play(latestMessage);
+                        } catch { /* never block a reply on an animation */ }
                     }, 100);
                 }
             }
