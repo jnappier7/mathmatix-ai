@@ -82,34 +82,26 @@
         radial-gradient(520px 320px at 8% 110%, rgba(18, 179, 179, 0.12) 0%, rgba(18, 179, 179, 0) 70%),
         var(--clr-bg-light, #fff);
     }
+    /* Tight on purpose: the four cards below are the point of the page and
+       must clear the fold on a laptop. */
+    .tp-hero-section.lp-spotlight { padding-top: 2.25rem; padding-bottom: 1.75rem; }
+    .tp-hero { max-width: 900px; }
     .tp-hero, .tp-hero h1, .tp-hero p, .tp-hero .lp-section-eyebrow { text-align: left; }
-    .tp-hero p { max-width: 62ch; }
-    .tp-hero h1 { max-width: 22ch; text-wrap: balance; }
-    .tp-jump { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 22px 0 0; padding: 0; list-style: none; }
-    .tp-jump-label { font-size: 13px; font-weight: 600; color: #6b6488; margin-right: 4px; }
-    .tp-jump a {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 14px; border-radius: 999px;
-      background: #fff; border: 1px solid #e0daf0; color: #3b2d63;
-      font-weight: 600; font-size: 14px; text-decoration: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-    }
-    .tp-jump a i { font-size: 11px; color: #764ba2; }
-    .tp-jump a:hover { border-color: #b9a8ef; box-shadow: 0 4px 14px rgba(118, 75, 162, 0.14); transform: translateY(-1px); }
-    .tp-trust { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 26px 0 0; padding: 0; list-style: none; }
+    .tp-hero h1 { margin-bottom: 0.9rem; text-wrap: balance; }
+    .tp-hero p { max-width: 70ch; font-size: 1.02rem; }
+    .tp-trust { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 18px 0 0; padding: 0; list-style: none; }
     .tp-trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #4a4560; }
     .tp-trust li i { color: var(--clr-teal-text, #0c7575); font-size: 13px; }
 
     /* ── Test cards ───────────────────────────────────────── */
-    .tp-family { margin-top: 8px; }
-    .tp-family + .tp-family { margin-top: 40px; }
-    .tp-family h2 { margin: 0 0 4px; font-size: 1.45rem; text-align: left; }
-    .tp-family > p { margin: 0 0 16px; color: #5f5a78; max-width: 64ch; text-align: left; }
-    .tp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .tp-tests.lp-roles { padding-top: 1.5rem; padding-bottom: 3rem; }
+    /* All four tests in one row on a laptop, 2x2 on a tablet, stacked on a phone. */
+    .tp-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    @media (max-width: 1023px) { .tp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
     .tp-card {
       position: relative; overflow: hidden;
-      display: flex; flex-direction: column; gap: 12px;
-      background: #fff; border: 1px solid #e6e1f4; border-radius: 16px; padding: 24px 22px 22px;
+      display: flex; flex-direction: column; gap: 10px;
+      background: #fff; border: 1px solid #e6e1f4; border-radius: 16px; padding: 22px 18px 18px;
       text-align: left; scroll-margin-top: 96px;
       box-shadow: 0 1px 2px rgba(29, 26, 44, 0.04);
       transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
@@ -120,16 +112,21 @@
     }
     .tp-card:hover { transform: translateY(-3px); border-color: #cfc3f0; box-shadow: 0 14px 32px rgba(76, 54, 128, 0.12); }
     .tp-card:focus-within { border-color: #b9a8ef; }
-    @media (prefers-reduced-motion: reduce) { .tp-card, .tp-jump a { transition: none; } .tp-card:hover, .tp-jump a:hover { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .tp-card { transition: none; } .tp-card:hover { transform: none; } }
     .tp-card header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-    .tp-card h3 { margin: 0; font-size: 1.6rem; letter-spacing: -0.01em; }
+    .tp-tag { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #764ba2; }
+    .tp-card h3 { margin: 0; font-size: 1.5rem; letter-spacing: -0.01em; }
     .tp-who { font-size: 13px; font-weight: 600; color: #6b5a9a; }
-    .tp-card p { margin: 0; line-height: 1.55; color: #4a4560; }
-    .tp-facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-    .tp-facts li { display: inline-flex; align-items: center; gap: 6px; background: rgba(118, 75, 162, 0.08); color: #4d3577; border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 13px; }
-    .tp-facts li i { font-size: 11px; opacity: 0.75; }
-    .tp-card .btn { align-self: flex-start; margin-top: auto; }
+    .tp-card p { margin: 0; line-height: 1.5; color: #4a4560; font-size: 14px; }
+    .tp-facts { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .tp-facts li { display: inline-flex; align-items: center; gap: 6px; background: rgba(118, 75, 162, 0.08); color: #4d3577; border-radius: 999px; padding: 5px 10px; font-weight: 600; font-size: 12px; }
+    .tp-card .btn { align-self: flex-start; margin-top: auto; font-size: 14px; padding: 10px 16px; }
     .tp-card .btn i { font-size: 12px; margin-left: 6px; }
+    /* The two test families, explained once, under the row instead of
+       above it so they never push the cards down. */
+    .tp-families { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 36px; margin-top: 26px; padding-top: 22px; border-top: 1px solid #e3dff0; text-align: left; }
+    .tp-families h3 { margin: 0 0 4px; font-size: 1.05rem; }
+    .tp-families p { margin: 0; color: #5f5a78; line-height: 1.55; font-size: 0.95rem; }
 
     /* ── How it works ─────────────────────────────────────── */
     .tp-how { background: var(--clr-bg-light, #fff); padding: 3.5rem var(--page-horizontal-padding); }
@@ -189,8 +186,8 @@
     @media (max-width: 720px) {
       .tp-grid { grid-template-columns: 1fr; }
       .tp-card .btn { align-self: stretch; text-align: center; white-space: normal; padding-left: 14px; padding-right: 14px; font-size: 15px; }
-      .tp-jump-label { flex-basis: 100%; margin: 0 0 -2px; }
       .tp-trust { flex-direction: column; gap: 10px; }
+      .tp-families { grid-template-columns: 1fr; }
       .tp-how, .tp-faq { padding-top: 2.5rem; padding-bottom: 2.5rem; }
       .tp-cta.lp-final-cta { padding: 3rem var(--page-horizontal-padding); }
       .tp-cta h2 { font-size: 1.5rem; }
@@ -201,15 +198,15 @@
        stay light on a dark-mode phone, so an OS-level override put pale text
        on a white page. */
     [data-theme="dark"] .tp-hero-section { background: radial-gradient(640px 360px at 88% -10%, rgba(154, 128, 255, 0.18) 0%, rgba(154, 128, 255, 0) 70%), var(--clr-bg-light, #14121f); }
-    [data-theme="dark"] .tp-jump a { background: #1d1a2c; border-color: #302c45; color: #d9d2f5; }
-    [data-theme="dark"] .tp-jump a i { color: #b9a8ef; }
-    [data-theme="dark"] .tp-jump-label, [data-theme="dark"] .tp-section-sub { color: #a9a4c2; }
+    [data-theme="dark"] .tp-section-sub { color: #a9a4c2; }
+    [data-theme="dark"] .tp-card .tp-tag { color: #b9a8ef; }
+    [data-theme="dark"] .tp-families { border-color: #302c45; }
     [data-theme="dark"] .tp-trust li { color: #c4c0d8; }
     [data-theme="dark"] .tp-card { background: #1d1a2c; border-color: #302c45; box-shadow: none; }
     [data-theme="dark"] .tp-card:hover { border-color: #4a4070; box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35); }
-    [data-theme="dark"] .tp-card p, [data-theme="dark"] .tp-family > p, [data-theme="dark"] .tp-steps li, [data-theme="dark"] .tp-faq details p { color: #c4c0d8; }
+    [data-theme="dark"] .tp-card p, [data-theme="dark"] .tp-families p, [data-theme="dark"] .tp-steps li, [data-theme="dark"] .tp-faq details p { color: #c4c0d8; }
     [data-theme="dark"] .tp-who { color: #b9a8ef; }
-    [data-theme="dark"] .tp-family h2, [data-theme="dark"] .tp-section-title, [data-theme="dark"] .tp-steps li strong { color: #f1eefb; }
+    [data-theme="dark"] .tp-families h3, [data-theme="dark"] .tp-section-title, [data-theme="dark"] .tp-steps li strong { color: #f1eefb; }
     [data-theme="dark"] .tp-facts li { background: rgba(154, 128, 255, 0.16); color: #d9d2f5; }
     [data-theme="dark"] .tp-faq { background: #15131f; }
     [data-theme="dark"] .tp-faq details, [data-theme="dark"] .tp-faq details:first-of-type { border-color: #302c45; }
@@ -251,17 +248,10 @@
 
     <section class="lp-spotlight tp-hero-section">
       <div class="lp-inner">
-        <div class="lp-spotlight-content tp-hero" style="max-width: 760px;">
+        <div class="lp-spotlight-content tp-hero">
           <p class="lp-section-eyebrow">Free math practice tests</p>
           <h1>Take a real practice test. Find out where you stand.</h1>
-          <p>Full-length, timed math sections for the ACT, SAT, PSAT and PreACT, each built to that test&rsquo;s current format. You get an estimated score the moment you finish, with no account needed. Sign up free and your AI tutor walks you through every question you missed, then you re-test on fresh questions.</p>
-          <ul class="tp-jump" aria-label="Jump to a test">
-            <li class="tp-jump-label">Pick your test</li>
-            <li><a href="#sat">SAT <i class="fas fa-arrow-down" aria-hidden="true"></i></a></li>
-            <li><a href="#psat">PSAT <i class="fas fa-arrow-down" aria-hidden="true"></i></a></li>
-            <li><a href="#act">ACT <i class="fas fa-arrow-down" aria-hidden="true"></i></a></li>
-            <li><a href="#preact">PreACT <i class="fas fa-arrow-down" aria-hidden="true"></i></a></li>
-          </ul>
+          <p>Full-length, timed math sections built to each test&rsquo;s current format. Pick yours below. A free account turns every question you miss into a review with your AI tutor.</p>
           <ul class="tp-trust">
             <li><i class="fas fa-check-circle" aria-hidden="true"></i>No sign-up to take one</li>
             <li><i class="fas fa-check-circle" aria-hidden="true"></i>Estimated score the moment you finish</li>
@@ -271,65 +261,67 @@
       </div>
     </section>
 
-    <section class="lp-roles lp-reveal" id="tests">
+    <!-- Not scroll-revealed: this row is the page, it has to be there on first paint. -->
+    <section class="lp-roles tp-tests" id="tests">
       <div class="lp-inner">
-
-        <div class="tp-family">
-          <h2>SAT and PSAT</h2>
-          <p>Both are digital and adaptive: how you do on Module 1 decides whether Module 2 is harder or easier. Desmos and the reference sheet are built in. The PSAT reports on the SAT&rsquo;s scale, so it tells you roughly where you&rsquo;d land on the SAT today.</p>
-          <div class="tp-grid lp-stagger">
-            <article class="tp-card" id="sat">
-              <header><h3>SAT</h3><span class="tp-who">Juniors &amp; seniors</span></header>
-              <ul class="tp-facts" aria-label="SAT test details">
-                <li><i class="fas fa-list-ol" aria-hidden="true"></i>44 questions</li>
-                <li><i class="fas fa-clock" aria-hidden="true"></i>70 minutes</li>
-                <li><i class="fas fa-random" aria-hidden="true"></i>Adaptive</li>
-                <li><i class="fas fa-chart-bar" aria-hidden="true"></i>Score 200&ndash;800</li>
-              </ul>
-              <p>The full digital SAT Math section: two 22-question modules, 35 minutes each.</p>
-              <a class="btn btn-primary" href="/sat-practice-test">Take the SAT practice test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-            </article>
-            <article class="tp-card" id="psat">
-              <header><h3>PSAT</h3><span class="tp-who">Sophomores &amp; juniors</span></header>
-              <ul class="tp-facts" aria-label="PSAT test details">
-                <li><i class="fas fa-list-ol" aria-hidden="true"></i>44 questions</li>
-                <li><i class="fas fa-clock" aria-hidden="true"></i>70 minutes</li>
-                <li><i class="fas fa-random" aria-hidden="true"></i>Adaptive</li>
-                <li><i class="fas fa-chart-bar" aria-hidden="true"></i>Score 160&ndash;760</li>
-              </ul>
-              <p>The PSAT/NMSQT Math section, the one juniors take for National Merit. Same shape as the SAT, without its hardest questions.</p>
-              <a class="btn btn-primary" href="/psat-practice-test">Take the PSAT practice test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-            </article>
-          </div>
+        <h2 class="sr-only">Choose a test</h2>
+        <div class="tp-grid">
+          <article class="tp-card" id="sat">
+            <p class="tp-tag">Digital &middot; adaptive</p>
+            <header><h3>SAT</h3><span class="tp-who">Juniors &amp; seniors</span></header>
+            <ul class="tp-facts" aria-label="SAT test details">
+              <li>44 questions</li>
+              <li>70 minutes</li>
+              <li>Score 200&ndash;800</li>
+            </ul>
+            <p>The full digital SAT Math section: two 22-question modules, 35 minutes each.</p>
+            <a class="btn btn-primary" href="/sat-practice-test">Take the SAT test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </article>
+          <article class="tp-card" id="psat">
+            <p class="tp-tag">Digital &middot; adaptive</p>
+            <header><h3>PSAT</h3><span class="tp-who">Sophomores &amp; juniors</span></header>
+            <ul class="tp-facts" aria-label="PSAT test details">
+              <li>44 questions</li>
+              <li>70 minutes</li>
+              <li>Score 160&ndash;760</li>
+            </ul>
+            <p>The PSAT/NMSQT Math section: the SAT&rsquo;s shape without its hardest questions.</p>
+            <a class="btn btn-primary" href="/psat-practice-test">Take the PSAT test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </article>
+          <article class="tp-card" id="act">
+            <p class="tp-tag">One timed section</p>
+            <header><h3>ACT</h3><span class="tp-who">Juniors &amp; seniors</span></header>
+            <ul class="tp-facts" aria-label="ACT test details">
+              <li>45 questions</li>
+              <li>50 minutes</li>
+              <li>Score 1&ndash;36</li>
+            </ul>
+            <p>The full ACT Math section, built to the current enhanced ACT.</p>
+            <a class="btn btn-primary" href="/act-practice-test">Take the ACT test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </article>
+          <article class="tp-card" id="preact">
+            <p class="tp-tag">One timed section</p>
+            <header><h3>PreACT</h3><span class="tp-who">9th&ndash;10th grade</span></header>
+            <ul class="tp-facts" aria-label="PreACT test details">
+              <li>36 questions</li>
+              <li>45 minutes</li>
+              <li>Score 1&ndash;35</li>
+            </ul>
+            <p>The PreACT 10 Math section: ACT-style questions on what a tenth grader has covered.</p>
+            <a class="btn btn-primary" href="/preact-practice-test">Take the PreACT test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </article>
         </div>
 
-        <div class="tp-family">
-          <h2>ACT and PreACT</h2>
-          <p>One timed section, four answer choices, calculator allowed. The PreACT reports on the ACT&rsquo;s scale, so it tells you roughly where you&rsquo;d land on the ACT today.</p>
-          <div class="tp-grid lp-stagger">
-            <article class="tp-card" id="act">
-              <header><h3>ACT</h3><span class="tp-who">Juniors &amp; seniors</span></header>
-              <ul class="tp-facts" aria-label="ACT test details">
-                <li><i class="fas fa-list-ol" aria-hidden="true"></i>45 questions</li>
-                <li><i class="fas fa-clock" aria-hidden="true"></i>50 minutes</li>
-                <li><i class="fas fa-chart-bar" aria-hidden="true"></i>Score 1&ndash;36</li>
-              </ul>
-              <p>The full ACT Math section, built to the current enhanced ACT.</p>
-              <a class="btn btn-primary" href="/act-practice-test">Take the ACT practice test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-            </article>
-            <article class="tp-card" id="preact">
-              <header><h3>PreACT</h3><span class="tp-who">9th&ndash;10th grade</span></header>
-              <ul class="tp-facts" aria-label="PreACT test details">
-                <li><i class="fas fa-list-ol" aria-hidden="true"></i>36 questions</li>
-                <li><i class="fas fa-clock" aria-hidden="true"></i>45 minutes</li>
-                <li><i class="fas fa-chart-bar" aria-hidden="true"></i>Score 1&ndash;35</li>
-              </ul>
-              <p>The PreACT 10 Math section: ACT-style questions, limited to the topics a tenth grader has covered.</p>
-              <a class="btn btn-primary" href="/preact-practice-test">Take the PreACT practice test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-            </article>
+        <div class="tp-families">
+          <div>
+            <h3>SAT and PSAT</h3>
+            <p>Both are digital and adaptive: how you do on Module 1 decides whether Module 2 is harder or easier. Desmos and the reference sheet are built in. The PSAT reports on the SAT&rsquo;s scale, so it tells you roughly where you&rsquo;d land on the SAT today.</p>
+          </div>
+          <div>
+            <h3>ACT and PreACT</h3>
+            <p>One timed section, four answer choices, calculator allowed. The PreACT reports on the ACT&rsquo;s scale, so it tells you roughly where you&rsquo;d land on the ACT today.</p>
           </div>
         </div>
-
       </div>
     </section>
 

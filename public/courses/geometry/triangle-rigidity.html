@@ -193,6 +193,24 @@ table.tr-sum td:first-child{font-weight:700;letter-spacing:.04em;white-space:now
 .tr-part[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .tr-part i{font-style:italic}
 .tr-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.tr-hint{margin:0 0 8px;color:var(--muted);font-size:.8rem}
+/* one row per part: padlock, name, then the slider if it can still move */
+.tr-row{display:grid;grid-template-columns:34px 76px 1fr 54px;gap:7px;align-items:center;
+  padding:3px 0}
+.tr-row .nm{font-size:.86rem;font-weight:600}
+.tr-row .nm i{font-style:italic}
+.tr-row .val{font-size:.84rem;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.tr-row input{width:100%;accent-color:var(--tr-blue)}
+.tr-row .fixed{font-size:.76rem;color:var(--muted);font-style:italic}
+.tr-row.is-given .nm{color:var(--ink)}
+.tr-row.is-given .val{color:var(--ink);font-weight:700}
+/* a locked part is drawn in the school black on BOTH triangles, and carries the
+   usual tick marks or arcs. Colour alone would not survive a colour-blind
+   reader or a photocopy, so the marks do the real work and the colour is the
+   thing you notice first. */
+.tr-given{stroke:var(--ink);stroke-width:3.4;stroke-linecap:round;fill:none}
+.tr-tick{stroke:var(--ink);stroke-width:1.5;stroke-linecap:round}
+.tr-arc{stroke:var(--ink);stroke-width:1.5;fill:none;stroke-linejoin:round}
 .tr-primary:hover{background:var(--accent-strong,var(--sc-red-deep));border-color:var(--accent)}
 .tr-flash{stroke:var(--warn,var(--ink));stroke-width:4.5;stroke-linecap:round;fill:none}
 .tr-ann{paint-order:stroke;stroke:var(--panel-2);stroke-width:1.6;stroke-linejoin:round;
@@ -270,30 +288,29 @@ table.tr-meas td.lk::after{content:"\01F512";font-size:.72em;margin-left:3px;opa
 <section class="tr-card">
   <div class="tr-eyebrow">Station 2</div>
   <h2>Lock what you are given, then try to break it</h2>
-  <p>The red triangle is the one you know. Padlock the parts you have actually been
-     <em>told</em> &mdash; sides, angles, or both &mdash; and then ask the page to build a
-     <b>different</b> triangle that still has every one of them. Sometimes it can. That is the
-     whole difference between a shortcut that works and one that does not.</p>
+  <p>Two triangles that start out identical. Padlock the parts you have actually been
+     <em>told</em> &mdash; they turn black on both diagrams, with the usual tick marks and arcs
+     &mdash; and then push the blue triangle around using everything you did <em>not</em> lock.
+     If you can make it a different shape, those parts were never going to prove anything.</p>
 
   <div class="tr-sand">
     <div>
       <p class="tr-minihead">Start from a shortcut</p>
       <div class="tr-cases" id="presets" role="group" aria-label="preset sets of given parts"></div>
 
-      <p class="tr-minihead">Or padlock parts yourself</p>
-      <div class="tr-partgrid" id="parts" role="group" aria-label="which parts are given"></div>
-
       <p class="tr-minihead">The red triangle</p>
       <div class="tr-knobs" id="sand-knobs"></div>
 
+      <p class="tr-minihead">Given parts, and the blue triangle</p>
+      <p class="tr-hint">Padlock = you were told it. Slider = you can still change it.</p>
+      <div id="rows"></div>
+
       <div class="tr-tools">
-        <button class="tr-btn tr-primary" id="attempt">Try to build a different one</button>
+        <button class="tr-btn tr-primary" id="check">Check them &mdash; slide one onto the other</button>
       </div>
       <div class="tr-tools">
-        <button class="tr-btn" id="check">Check them &mdash; slide one onto the other</button>
-      </div>
-      <div class="tr-tools">
-        <button class="tr-btn" id="flip-blue">Flip the blue one</button>
+        <button class="tr-btn" id="attempt">Find a different one for me</button>
+        <button class="tr-btn" id="flip-blue">Flip blue</button>
         <button class="tr-btn" id="reset2">Start over</button>
       </div>
     </div>
@@ -641,6 +658,148 @@ var TriSearch = (function () {
            matchesLocked: matchesLocked, KEYS: KEYS, isAng: isAng };
 })();
 if (typeof module !== 'undefined') module.exports = TriSearch;
+/* ---------------------------------------------------------------------------
+   Changing one part of the blue triangle while the locked parts hold.
+
+   No iterative solver. A triangle is settled by three parts, so the page picks
+   a determining triple — the locked parts first, then the part the student is
+   moving, then whatever else the triangle currently measures — and builds it
+   with the same constructions Station 3 uses and verify.js checks. Locked parts
+   always win: if they already use up all three, nothing the student moves can
+   be honoured, and that refusal IS the lesson.
+   --------------------------------------------------------------------------- */
+var TriParts = (function () {
+  var SIDES = ['a', 'b', 'c'], ANGS = ['A', 'B', 'C'];
+  var INCLUDED = { 'b,c': 'A', 'a,c': 'B', 'a,b': 'C' };
+  var OPPOSITE = { A: 'a', B: 'b', C: 'c' };
+  function isAng(k) { return k === 'A' || k === 'B' || k === 'C'; }
+
+  /* Two angles hand you the third, so a third locked angle adds nothing. */
+  function dof(held) {
+    var s = SIDES.filter(function (k) { return held[k]; }).length;
+    var g = ANGS.filter(function (k) { return held[k]; }).length;
+    return Math.max(0, 3 - (s + Math.min(g, 2)));
+  }
+
+  /* Build (a,b,c) from exactly three parts. near: the triangle we are moving
+     away from, used to pick between SSA's two answers so the shape does not
+     jump under the student's hand. */
+  function fromTriple(vals, keys, near) {
+    var S = keys.filter(function (k) { return !isAng(k); }).sort();
+    var G = keys.filter(isAng).sort();
+
+    /* Every construction labels its OWN triangle A/B/C, and that labelling is
+       not ours — TriGeom.ssa calls the given angle "A" whatever we called it.
+       Reading m.a/m.b/m.c straight out silently permutes the sides: locking a
+       and moving B came back with a = 5 and b = 6, the two swapped. So each
+       branch states the correspondence and fills OUR a, b, c by name. */
+    function out(map) {
+      var v = { a: null, b: null, c: null };
+      Object.keys(map).forEach(function (mine) { v[mine] = map[mine]; });
+      if (v.a == null || v.b == null || v.c == null) return null;
+      return TriGeom.sss(v.a, v.b, v.c).tris.length ? [v.a, v.b, v.c] : null;
+    }
+
+    if (S.length === 3) {
+      return TriGeom.sss(vals.a, vals.b, vals.c).tris.length
+        ? [vals.a, vals.b, vals.c] : null;
+    }
+
+    if (S.length === 2 && G.length === 1) {
+      var inc = INCLUDED[S.join(',')];
+      if (inc === G[0]) {
+        // SAS. sas(b,A,c) names its own sides: its b and c are the two we
+        // passed, its a is the side opposite the included angle.
+        var adj = { A: ['b', 'c'], B: ['a', 'c'], C: ['a', 'b'] }[inc];
+        var r = TriGeom.sas(vals[adj[0]], vals[inc], vals[adj[1]]);
+        if (!r.tris.length) return null;
+        var m = TriGeom.measure(r.tris[0]), map = {};
+        map[adj[0]] = m.b; map[adj[1]] = m.c; map[OPPOSITE[inc]] = m.a;
+        return out(map);
+      }
+      // SSA. ssa(x,y,X) names the side facing the given angle "a" and the
+      // other given side "b"; whatever is left is its "c".
+      var X = G[0], x = OPPOSITE[X];
+      var y = S[0] === x ? S[1] : S[0];
+      var third = ['a', 'b', 'c'].filter(function (k) { return k !== x && k !== y; })[0];
+      var rr = TriGeom.ssa(vals[x], vals[y], vals[X]);
+      if (!rr.tris.length) return null;
+      var cands = rr.tris.map(function (t) {
+        var mm = TriGeom.measure(t), mp = {};
+        mp[x] = mm.a; mp[y] = mm.b; mp[third] = mm.c;
+        return [mp.a, mp.b, mp.c];
+      }).filter(function (v) { return TriGeom.sss(v[0], v[1], v[2]).tris.length; });
+      return pick(cands, near);
+    }
+
+    if (S.length === 1 && G.length >= 2) {
+      var ang = {};
+      ang[G[0]] = vals[G[0]]; ang[G[1]] = vals[G[1]];
+      var rest = ANGS.filter(function (k) { return k !== G[0] && k !== G[1]; })[0];
+      ang[rest] = 180 - ang[G[0]] - ang[G[1]];
+      if (ang[rest] <= 0.2 || ang[G[0]] <= 0.2 || ang[G[1]] <= 0.2) return null;
+      var sk = S[0], D2R = Math.PI / 180;
+      var face = { a: 'A', b: 'B', c: 'C' }[sk];
+      var K = vals[sk] / Math.sin(ang[face] * D2R);
+      var cand = [K * Math.sin(ang.A * D2R), K * Math.sin(ang.B * D2R), K * Math.sin(ang.C * D2R)];
+      return TriGeom.sss(cand[0], cand[1], cand[2]).tris.length ? cand : null;
+    }
+
+    return null;                       // three angles settle shape, never size
+  }
+  /* Among the answers a construction gives, take the one nearest where the
+     triangle already was. Otherwise SSA flips between its two solutions
+     whenever a slider crosses the ambiguous band. */
+  function pick(list, near) {
+    if (!list || !list.length) return null;
+    if (!near || list.length === 1) return list[0];
+    var best = null, bd = Infinity;
+    list.forEach(function (v) {
+      var d = Math.abs(v[0] - near.a) + Math.abs(v[1] - near.b) + Math.abs(v[2] - near.c);
+      if (d < bd) { bd = d; best = v; }
+    });
+    return best;
+  }
+
+  /* The triple to build from: locked first, then what is being moved, then
+     filler from the triangle as it stands. Never three angles. */
+  function triple(moved, held, ref, cur) {
+    var keys = [], vals = {};
+    function take(k, v) {
+      if (keys.length >= 3 || keys.indexOf(k) >= 0) return;
+      var angs = keys.filter(isAng).length;
+      if (isAng(k) && angs >= 2 && keys.length === 2) return;   // would leave AAA
+      keys.push(k); vals[k] = v;
+    }
+    SIDES.concat(ANGS).forEach(function (k) { if (held[k]) take(k, ref[k]); });
+    if (moved) take(moved.k, moved.v);
+    SIDES.concat(ANGS).forEach(function (k) { take(k, cur[k]); });
+    return { keys: keys, vals: vals };
+  }
+
+  /* Is this part free to be moved at all? Not the same question as "is the
+     triangle free": with angles A and B locked the triangle can still change
+     SIZE, but angle C cannot move an inch, because the three angles add to
+     180. Its slider has to refuse like any other settled part. */
+  function canMove(k, held) {
+    if (held[k]) return false;
+    if (dof(held) === 0) return false;
+    if (isAng(k) && ANGS.filter(function (x) { return x !== k && held[x]; }).length >= 2)
+      return false;
+    return true;
+  }
+
+  function apply(moved, held, ref, cur) {
+    if (moved && !canMove(moved.k, held)) return null;   // already settled
+    var t = triple(moved, held, ref, cur);
+    if (t.keys.length < 3) return null;
+    return fromTriple(t.vals, t.keys, cur);
+  }
+
+  return { dof: dof, apply: apply, canMove: canMove, triple: triple, fromTriple: fromTriple,
+           isAng: isAng, SIDES: SIDES, ANGS: ANGS };
+})();
+if (typeof module !== 'undefined') module.exports = TriParts;
 /* =========================================================================
    Station 1 — bars and pins.
 
@@ -861,97 +1020,129 @@ $('#reset1').addEventListener('click', function () {
 });
 
 /* ================= STATION 2 — lock what you are given =================
-   The red triangle is the reference. The student padlocks the parts they are
-   "given"; TriSearch then says, exactly, whether a different triangle can
-   carry those same parts, and hands back one when it can. "Check them" is the
-   definition of congruence acted out: a rigid motion that lands one triangle
-   on the other, corresponding side onto corresponding side.
+   Both triangles start identical. Locking a part marks it on BOTH diagrams and
+   takes its slider away; everything still unlocked is the student's to push
+   around. Whether pushing achieves anything is decided by TriParts, which
+   rebuilds the blue triangle from a determining triple and refuses any move the
+   locked parts already settle.
    ===================================================================== */
 (function () {
-  var SIDES = [{ k: 'a', lab: 'side a', min: 2, max: 10, step: .1 },
-               { k: 'b', lab: 'side b', min: 2, max: 10, step: .1 },
-               { k: 'c', lab: 'side c', min: 2, max: 10, step: .1 }];
+  var KEYS = ['a', 'b', 'c', 'A', 'B', 'C'];
   var PRESETS = {
     SSS: ['a', 'b', 'c'], SAS: ['b', 'A', 'c'], ASA: ['B', 'a', 'C'],
     AAS: ['A', 'B', 'a'], SSA: ['a', 'b', 'A'], AAA: ['A', 'B', 'C'], Clear: []
   };
-  /* SSA is ambiguous only when the given angle is acute and the side facing it
-     is shorter than the other given side. On the default 6-5-7 triangle it is
-     not, so pressing SSA would truthfully answer "nothing found" and teach the
-     opposite of the lesson. The preset moves the reference triangle to a shape
-     where SSA really does break. */
+  /* SSA pins a triangle down unless the given angle is acute AND the side
+     facing it is shorter than the other given side. On 6-5-7 it is not, so the
+     preset would truthfully answer "nothing moves" and teach the opposite. */
   var PRESET_REF = { SSA: { a: 5, b: 7, c: 9 } };
+  var RANGE = { a: [1.5, 12], b: [1.5, 12], c: [1.5, 12],
+                A: [5, 170], B: [5, 170], C: [5, 170] };
+  var TICKS = { a: 1, b: 2, c: 3 }, ARCS = { A: 1, B: 2, C: 3 };
+  var SIDEPTS = { a: [1, 2], b: [2, 0], c: [0, 1] };
+  var ANGPTS = { A: [0, 1, 2], B: [1, 0, 2], C: [2, 0, 1] };
+
   var ref = { a: 6, b: 5, c: 7 };
-  var held = { a: true, b: true, c: true };          // start on SSS
-  var SCALE = 5, VW = 150, VH = 86, HOME = [{ x: 44, y: 44 }, { x: 108, y: 44 }];
-  var red = null, blue = null, blueParts = null, svg = null, nodes = null, anim = null;
+  var held = { a: true, b: true, c: true };
+  var blueSides = { a: 6, b: 5, c: 7 };
+  var pose = { x: 108, y: 44, ang: 0.22 };
+  var SCALE = 5, VW = 150, VH = 86, REDHOME = { x: 44, y: 44, ang: -0.12 };
+  var svg = null, nodes = null, anim = null;
   var field = $('#field');
   var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function lockedList() { return TriSearch.KEYS.filter(function (k) { return held[k]; }); }
-  function refParts() { return TriSearch.partsOf(ref.a, ref.b, ref.c); }
-
-  /* ---- a triangle as points, from three sides, dropped at a home spot ---- */
-  function ptsFor(a, b, c, home, rot) {
-    var r = TriGeom.sss(a, b, c);
+  function partsOf(sides) {
+    var r = TriGeom.sss(sides.a, sides.b, sides.c);
+    if (!r.tris.length) return null;
+    var m = TriGeom.measure(r.tris[0]);
+    return { a: sides.a, b: sides.b, c: sides.c, A: m.A, B: m.B, C: m.C };
+  }
+  function ptsFor(sides, at) {
+    var r = TriGeom.sss(sides.a, sides.b, sides.c);
     if (!r.tris.length) return null;
     var t = r.tris[0];
     var P = ['A', 'B', 'C'].map(function (k) { return { x: t[k].x * SCALE, y: -t[k].y * SCALE }; });
     var cx = (P[0].x + P[1].x + P[2].x) / 3, cy = (P[0].y + P[1].y + P[2].y) / 3;
-    var ca = Math.cos(rot || 0), sa = Math.sin(rot || 0);
+    var ca = Math.cos(at.ang), sa = Math.sin(at.ang);
     return P.map(function (p) {
       var dx = p.x - cx, dy = p.y - cy;
-      return { x: home.x + dx * ca - dy * sa, y: home.y + dx * sa + dy * ca };
+      return { x: at.x + dx * ca - dy * sa, y: at.y + dx * sa + dy * ca };
     });
   }
-  function linkFor(P) {
-    return new Linkage(P, [{ i: 0, j: 1 }, { i: 1, j: 2 }, { i: 2, j: 0 }]);
-  }
-  function centroid(L) {
-    var P = L.pts;
+  function centroidOf(P) {
     return { x: (P[0].x + P[1].x + P[2].x) / 3, y: (P[0].y + P[1].y + P[2].y) / 3 };
   }
-  function flip(L) { var c = centroid(L); L.pts.forEach(function (p) { p.x = 2 * c.x - p.x; }); }
-  function orient(L) {
-    var P = L.pts;
-    return Math.sign((P[1].x - P[0].x) * (P[2].y - P[0].y) - (P[1].y - P[0].y) * (P[2].x - P[0].x));
-  }
-  function measured(L) { return TriGeom.measure({ A: L.pts[0], B: L.pts[1], C: L.pts[2] }); }
 
-  /* ---------------- drawing ---------------- */
-  function mk(L, polyCls, dotCls, tag, draggable) {
-    var g = sv('g', {}), o = { poly: null, labs: [], dots: [], hits: [] };
+  /* ---------------- drawing, including the marks on given parts --------- */
+  function mk(polyCls, dotCls, tag, draggable) {
+    var g = sv('g', {}), o = { poly: null, labs: [], dots: [], hits: [], marks: sv('g', {}) };
     o.poly = sv('polygon', {}); o.poly.setAttribute('class', polyCls); g.appendChild(o.poly);
-    L.bars.forEach(function () {
+    g.appendChild(o.marks);
+    for (var n = 0; n < 3; n++) {
       var t = sv('text', { 'font-size': 4, 'text-anchor': 'middle' });
       t.setAttribute('class', 'tr-slab ' + tag); o.labs.push(t); g.appendChild(t);
-    });
-    L.pts.forEach(function (p, i) {
+    }
+    for (var i = 0; i < 3; i++) {
       var c = sv('circle', { r: 3 }); c.setAttribute('class', dotCls);
       o.dots.push(c); g.appendChild(c);
       if (draggable) {
         var h = sv('circle', { r: 7, fill: 'transparent' });
-        h.setAttribute('data-t', tag); h.setAttribute('data-i', i);
-        h.setAttribute('tabindex', 0); h.setAttribute('role', 'slider');
-        h.setAttribute('aria-label', tag + ' triangle, corner ' + 'ABC'[i] + ' — arrow keys to move');
+        h.setAttribute('data-i', i); h.setAttribute('tabindex', 0); h.setAttribute('role', 'slider');
+        h.setAttribute('aria-label', 'blue triangle, corner ' + 'ABC'[i] + ' — arrow keys to move it');
         o.hits.push(h); g.appendChild(h);
       }
-    });
+    }
     svg.appendChild(g);
     return o;
   }
-  function place(L, o) {
-    o.poly.setAttribute('points', L.pts.map(function (p) { return p.x + ',' + p.y; }).join(' '));
-    var c = centroid(L);
-    L.bars.forEach(function (b, n) {
-      var p = L.pts[b.i], q = L.pts[b.j];
+  function drawMarks(P, o) {
+    o.marks.innerHTML = '';
+    ['a', 'b', 'c'].forEach(function (k) {
+      if (!held[k]) return;
+      var p = P[SIDEPTS[k][0]], q = P[SIDEPTS[k][1]];
+      var ln = sv('line', { x1: p.x, y1: p.y, x2: q.x, y2: q.y });
+      ln.setAttribute('class', 'tr-given'); o.marks.appendChild(ln);
+      var mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
+      var vx = q.x - p.x, vy = q.y - p.y, L = Math.hypot(vx, vy) || 1;
+      var ux = vx / L, uy = vy / L, nx = -uy, ny = ux, n = TICKS[k];
+      for (var i = 0; i < n; i++) {
+        var off = (i - (n - 1) / 2) * 2.2;
+        var tk = sv('line', { x1: mx + ux * off - nx * 2.1, y1: my + uy * off - ny * 2.1,
+                              x2: mx + ux * off + nx * 2.1, y2: my + uy * off + ny * 2.1 });
+        tk.setAttribute('class', 'tr-tick'); o.marks.appendChild(tk);
+      }
+    });
+    ['A', 'B', 'C'].forEach(function (k) {
+      if (!held[k]) return;
+      var v = P[ANGPTS[k][0]], a = P[ANGPTS[k][1]], b = P[ANGPTS[k][2]];
+      var a0 = Math.atan2(a.y - v.y, a.x - v.x), a1 = Math.atan2(b.y - v.y, b.x - v.x);
+      var d = a1 - a0;
+      while (d > Math.PI) d -= 2 * Math.PI;
+      while (d < -Math.PI) d += 2 * Math.PI;
+      for (var i = 0; i < ARCS[k]; i++) {
+        var r = 6 + i * 1.9, pts = [];
+        for (var s2 = 0; s2 <= 14; s2++) {
+          var ang = a0 + d * (s2 / 14);
+          pts.push((v.x + Math.cos(ang) * r) + ',' + (v.y + Math.sin(ang) * r));
+        }
+        var pl = sv('polyline', { points: pts.join(' ') });
+        pl.setAttribute('class', 'tr-arc'); o.marks.appendChild(pl);
+      }
+    });
+  }
+  function place(P, o, sides) {
+    o.poly.setAttribute('points', P.map(function (p) { return p.x + ',' + p.y; }).join(' '));
+    drawMarks(P, o);
+    var c = centroidOf(P);
+    ['c', 'a', 'b'].forEach(function (k, n) {          // edges AB, BC, CA
+      var p = P[SIDEPTS[k][0]], q = P[SIDEPTS[k][1]];
       var mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
       var dx = mx - c.x, dy = my - c.y, m = Math.hypot(dx, dy) || 1;
-      o.labs[n].setAttribute('x', mx + dx / m * 4.5);
-      o.labs[n].setAttribute('y', my + dy / m * 4.5 + 1.3);
-      o.labs[n].textContent = (b.len / SCALE).toFixed(1);
+      o.labs[n].setAttribute('x', mx + dx / m * 5.6);
+      o.labs[n].setAttribute('y', my + dy / m * 5.6 + 1.3);
+      o.labs[n].textContent = sides[k].toFixed(1);
     });
-    L.pts.forEach(function (p, i) {
+    P.forEach(function (p, i) {
       o.dots[i].setAttribute('cx', p.x); o.dots[i].setAttribute('cy', p.y);
       if (o.hits[i]) { o.hits[i].setAttribute('cx', p.x); o.hits[i].setAttribute('cy', p.y); }
     });
@@ -959,190 +1150,186 @@ $('#reset1').addEventListener('click', function () {
   function mount() {
     if (anim) { clearInterval(anim); anim = null; }
     field.innerHTML = ''; nodes = null; svg = null;
-    var rp = refParts();
+    var rp = partsOf(ref);
     if (!rp) {
-      $('#tr-breakverdict').className = 'is-bad';
-      $('#tr-breakverdict').innerHTML = '';
-      $('#tr-breakverdict').appendChild(el('b', null, 'Those three lengths cannot close.'));
-      $('#tr-breakverdict').appendChild(el('small', null,
+      bar(['Those three lengths cannot close.',
         'Two of them together are no longer than the third — the Triangle Inequality. '
-        + 'Move a slider until a triangle comes back.'));
-      $('#sand-meas').innerHTML = '';
-      return;
+        + 'Move a red slider until a triangle comes back.', true]);
+      $('#sand-meas').innerHTML = ''; return;
     }
-    red = linkFor(ptsFor(ref.a, ref.b, ref.c, HOME[0], -0.12));
-    blue = blueParts ? linkFor(ptsFor(blueParts.a, blueParts.b, blueParts.c, HOME[1], 0.22)) : null;
     svg = sv('svg', { viewBox: '0 0 ' + VW + ' ' + VH, role: 'img',
-      'aria-label': 'the red triangle, and the blue one when there is one' });
+      'aria-label': 'a red triangle and a blue one, with the given parts marked' });
     field.appendChild(svg);
-    nodes = { flash: sv('g', {}), red: null, blue: null };
-    nodes.red = mk(red, 'tr-redpoly', 'tr-reddot', 'red', false);
-    if (blue) nodes.blue = mk(blue, 'tr-bluepoly', 'tr-bluedot', 'blue', true);
+    nodes = { red: mk('tr-redpoly', 'tr-reddot', 'red', false),
+              blue: mk('tr-bluepoly', 'tr-bluedot', 'blue', true),
+              flash: sv('g', {}) };
     svg.appendChild(nodes.flash);
-    if (blue) wire();
-    paint();
+    wire(); paint();
   }
   function paint() {
     if (!nodes) return;
-    place(red, nodes.red);
-    if (blue) place(blue, nodes.blue);
+    var rpts = ptsFor(ref, REDHOME), bpts = ptsFor(blueSides, pose);
+    if (!rpts || !bpts) return;
+    place(rpts, nodes.red, ref);
+    place(bpts, nodes.blue, blueSides);
     report();
   }
-
-  /* ---------------- the verdict and the table ---------------- */
+  function bar(x) {
+    var vb = $('#tr-breakverdict'); vb.innerHTML = ''; vb.className = x[2] ? 'is-bad' : '';
+    vb.appendChild(el('b', null, x[0]));
+    vb.appendChild(el('small', null, x[1]));
+  }
   function report(custom) {
-    var rp = refParts(), locked = lockedList();
-    var vb = $('#tr-breakverdict'); vb.innerHTML = ''; vb.className = '';
-    var headTxt, bodyTxt, bad = false;
-    if (custom) { headTxt = custom[0]; bodyTxt = custom[1]; bad = custom[2]; }
-    else if (!blue) {
-      headTxt = 'Nothing to compare yet.';
-      bodyTxt = 'Padlock the parts you are given, then press "Try to build a different one".';
-      bad = true;
-    } else if (blueParts && !TriSearch.differs(blueParts, rp)) {
-      headTxt = 'Congruent.';
-      bodyTxt = 'No different triangle can carry those parts — so this blue one is just the red '
-        + 'one somewhere else. Press Check them and watch it land.';
-    } else {
-      headTxt = 'A different triangle, same given parts.';
-      bodyTxt = 'Every padlocked part matches the red triangle and the shape still does not. '
-        + 'These parts are not enough to prove congruence.';
-      bad = true;
-    }
-    vb.className = bad ? 'is-bad' : '';
-    vb.appendChild(el('b', null, headTxt));
-    vb.appendChild(el('small', null, bodyTxt));
+    var rp = partsOf(ref), bp = partsOf(blueSides);
+    if (!rp || !bp) return;
+    var same = !TriSearch.differs(bp, rp);
+    if (custom) bar(custom);
+    else if (same) bar(['Still the same triangle.',
+      TriParts.dof(held) === 0
+        ? 'Nothing is left to move — the parts you padlocked settle the whole triangle. '
+          + 'Press Check them and watch the blue one land exactly on the red.'
+        : 'Keep pushing: there is still something free to change. Move a slider that is not '
+          + 'padlocked and see whether the shape gives way.', false]);
+    else bar(['You made a different triangle.',
+      'Every padlocked part still matches the red one, and the shape does not. '
+      + 'Those parts do not prove congruence.', true]);
 
     var tb = $('#sand-meas'); tb.innerHTML = '';
-    if (!rp) return;
     var th = el('thead'), hr = el('tr');
     [['', ''], ['a', 'tr-side'], ['b', 'tr-side'], ['c', 'tr-side'],
      ['A', ''], ['B', ''], ['C', '']].forEach(function (h) { hr.appendChild(el('th', h[1], h[0])); });
     th.appendChild(hr); tb.appendChild(th);
     var tbody = el('tbody');
-    function row(name, p) {
+    [['red', rp], ['blue', bp]].forEach(function (row) {
       var tr = el('tr');
-      tr.appendChild(el('td', null, name));
-      TriSearch.KEYS.forEach(function (k) {
-        var v = TriSearch.isAng(k) ? p[k].toFixed(1) + '°' : p[k].toFixed(2);
-        tr.appendChild(el('td', held[k] ? 'lk' : null, v));
+      tr.appendChild(el('td', null, row[0]));
+      KEYS.forEach(function (k) {
+        tr.appendChild(el('td', held[k] ? 'lk' : null,
+          TriParts.isAng(k) ? row[1][k].toFixed(1) + '°' : row[1][k].toFixed(2)));
       });
       tbody.appendChild(tr);
-    }
-    row('red', rp);
-    if (blue) row('blue', (function () { var m = measured(blue);
-      return { a: m.a / SCALE, b: m.b / SCALE, c: m.c / SCALE, A: m.A, B: m.B, C: m.C }; })());
+    });
     tb.appendChild(tbody);
   }
 
-  /* ---------------- "try to build a different one" ---------------- */
-  $('#attempt').addEventListener('click', function () {
-    var rp = refParts(); if (!rp) return;
-    var locked = lockedList();
-    var hit = TriSearch.find(rp, locked);
-    if (hit) { blueParts = hit; mount(); return; }
-    // none exists — show a congruent copy instead, so Check them has something to land
-    blueParts = { a: rp.a, b: rp.b, c: rp.c, A: rp.A, B: rp.B, C: rp.C };
-    mount();
-    var cls = TriSearch.classify(locked);
-    var why = { SSS: 'Three sides leave the angles no freedom.',
-                SAS: 'The angle between the two sides is a hinge, and you clamped it.',
-                'ASA/AAS': 'Two angles hand you the third, and the side sets the size.' }[cls.why]
-      || 'Those parts leave nothing free to change.';
-    var extra = (cls.kind === 'ssa')
-      ? ' Careful though — these are two sides and an angle NOT between them. It happens to '
-        + 'pin this triangle down, but slide side a below side b and it stops doing so. That is '
-        + 'why SSA is not a shortcut.'
-      : '';
-    report(['No different triangle exists.',
-            why + ' The blue one is the red one moved and turned — press Check them and watch '
-            + 'it land exactly on top.' + extra, false]);
-  });
+  /* ---------------- the six part rows ---------------- */
+  var rowBox = $('#rows'), rowEls = {};
+  function buildRows() {
+    rowBox.innerHTML = ''; rowEls = {};
+    KEYS.forEach(function (k) {
+      var row = el('div', 'tr-row');
+      var lk = el('button', 'tr-lock');
+      var nm = el('div', 'nm'); nm.innerHTML = TriParts.isAng(k) ? 'angle ' + k : 'side <i>' + k + '</i>';
+      var mid = el('div');
+      var val = el('div', 'val');
+      var inp = document.createElement('input');
+      inp.type = 'range'; inp.min = RANGE[k][0]; inp.max = RANGE[k][1];
+      inp.step = TriParts.isAng(k) ? 0.5 : 0.1;
+      inp.setAttribute('aria-label', 'blue triangle ' + (TriParts.isAng(k) ? 'angle ' + k : 'side ' + k));
+      inp.addEventListener('input', function () { moveBluePart(k, +inp.value); });
+      lk.addEventListener('click', function () {
+        held[k] = !held[k];
+        if (held[k]) blueSides = { a: ref.a, b: ref.b, c: ref.c };   // a given part means they match again
+        paintPresets(); buildRows(); mount();
+      });
+      row.appendChild(lk); row.appendChild(nm); row.appendChild(mid); row.appendChild(val);
+      rowBox.appendChild(row);
+      rowEls[k] = { row: row, lk: lk, mid: mid, val: val, inp: inp };
+    });
+    refreshRows();
+  }
+  function refreshRows() {
+    var bp = partsOf(blueSides);
+    KEYS.forEach(function (k) {
+      var r = rowEls[k], on = !!held[k], movable = TriParts.canMove(k, held);
+      r.lk.setAttribute('aria-pressed', on ? 'true' : 'false');
+      r.lk.innerHTML = on ? '&#128274;' : '&#128275;';
+      r.lk.title = on ? 'This part is given — unlock it' : 'Say you were given this part';
+      r.lk.setAttribute('aria-label', r.lk.title);
+      r.row.classList.toggle('is-given', on);
+      r.mid.innerHTML = '';
+      if (on) r.mid.appendChild(el('div', 'fixed', 'given'));
+      else if (!movable) r.mid.appendChild(el('div', 'fixed',
+        TriParts.dof(held) === 0 ? 'fixed by the padlocks' : 'follows from the other angles'));
+      else { r.inp.value = bp ? bp[k] : 0; r.mid.appendChild(r.inp); }
+      if (bp) r.val.textContent = TriParts.isAng(k) ? bp[k].toFixed(1) + '°' : bp[k].toFixed(2);
+    });
+  }
+  function moveBluePart(k, v) {
+    var rp = partsOf(ref), cur = partsOf(blueSides);
+    if (!rp || !cur) return;
+    var out = TriParts.apply({ k: k, v: v }, held, rp, cur);
+    if (!out) { refreshRows(); return; }                 // unreachable or settled
+    blueSides = { a: out[0], b: out[1], c: out[2] };
+    if (anim) { clearInterval(anim); anim = null; }
+    if (nodes) nodes.flash.innerHTML = '';
+    paint(); refreshRows();
+  }
 
-  /* ---------------- check them: the rigid motion, acted out ------------- */
-  function targetPose() {
-    var R = red.pts, B = blue.pts;
-    var needFlip = orient(red) !== orient(blue);
-    return { needFlip: needFlip };
-  }
-  /* Anchor on corner A and the ray A->B, not on the centroid. For two
-     congruent triangles the two are the same landing; for two that are NOT
-     congruent they are very different pictures, and only this one matches
-     what the page says afterwards — corner on corner, AB pointing the same
-     way, and the rest refusing to follow. */
-  function poseOf(L) {
-    return { c: { x: L.pts[0].x, y: L.pts[0].y },
-             ang: Math.atan2(L.pts[1].y - L.pts[0].y, L.pts[1].x - L.pts[0].x) };
-  }
-  function canonical(L, pose) {
-    var ca = Math.cos(-pose.ang), sa = Math.sin(-pose.ang);
-    return L.pts.map(function (p) {
-      var dx = p.x - pose.c.x, dy = p.y - pose.c.y;
-      return { x: dx * ca - dy * sa, y: dx * sa + dy * ca };
-    });
-  }
-  function applyPose(canon, c, ang) {
-    var ca = Math.cos(ang), sa = Math.sin(ang);
-    return canon.map(function (p) {
-      return { x: c.x + p.x * ca - p.y * sa, y: c.y + p.x * sa + p.y * ca };
-    });
+  /* ---------------- check them ---------------- */
+  function poseOf(P) {
+    return { c: { x: P[0].x, y: P[0].y },
+             ang: Math.atan2(P[1].y - P[0].y, P[1].x - P[0].x) };
   }
   $('#check').addEventListener('click', function () {
-    if (!blue || !nodes) return;
+    if (!nodes) return;
     if (anim) { clearInterval(anim); anim = null; }
     nodes.flash.innerHTML = '';
-    var rp = refParts();
-    var same = blueParts && !TriSearch.differs(blueParts, rp);
-    if (targetPose().needFlip) flip(blue);          // a turn-over first, if it needs one
-    var from = poseOf(blue), canon = canonical(blue, from), to = poseOf(red);
+    var rpts = ptsFor(ref, REDHOME), bpts = ptsFor(blueSides, pose);
+    if (!rpts || !bpts) return;
+    var rp = partsOf(ref), bp = partsOf(blueSides), same = !TriSearch.differs(bp, rp);
+    var sgn = function (P) {
+      return Math.sign((P[1].x - P[0].x) * (P[2].y - P[0].y) - (P[1].y - P[0].y) * (P[2].x - P[0].x));
+    };
+    var mirrored = sgn(rpts) !== sgn(bpts);
+    var from = poseOf(bpts), to = poseOf(rpts);
+    var ca = Math.cos(-from.ang), sa = Math.sin(-from.ang);
+    var canon = bpts.map(function (p) {
+      var dx = p.x - from.c.x, dy = p.y - from.c.y;
+      var q = { x: dx * ca - dy * sa, y: dx * sa + dy * ca };
+      return mirrored ? { x: q.x, y: -q.y } : q;         // turn it over if it needs it
+    });
     var d = to.ang - from.ang;
     while (d > Math.PI) d -= 2 * Math.PI;
     while (d < -Math.PI) d += 2 * Math.PI;
-    /* Driven by a timer, not requestAnimationFrame. rAF is suspended whenever
-       the page is not being painted — a background tab, an occluded pane, some
-       embedded webviews — and there the slide simply never happened: press
-       Check them and nothing at all moves, with no error to show for it. A
-       timer still fires (slower, when throttled), so the motion always
-       finishes. Progress comes from the clock either way, so the easing is
-       unchanged when frames are late. */
+    /* Timer-driven, not requestAnimationFrame: rAF is suspended whenever the
+       page is not painted (background tab, occluded pane), and there the slide
+       never happened at all. */
     var t0 = Date.now(), DUR = REDUCED ? 0 : 1100;
     function step() {
       var t = DUR ? Math.min(1, (Date.now() - t0) / DUR) : 1;
-      var e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;   // easeInOutQuad
-      blue.pts = applyPose(canon,
-        { x: from.c.x + (to.c.x - from.c.x) * e, y: from.c.y + (to.c.y - from.c.y) * e },
-        from.ang + d * e);
-      place(blue, nodes.blue);
-      if (t >= 1) { clearInterval(anim); anim = null; flashSides(same); }
+      var e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      var cx = from.c.x + (to.c.x - from.c.x) * e, cy = from.c.y + (to.c.y - from.c.y) * e;
+      var ang = from.ang + d * e, c2 = Math.cos(ang), s2 = Math.sin(ang);
+      var P = canon.map(function (p) {
+        return { x: cx + p.x * c2 - p.y * s2, y: cy + p.x * s2 + p.y * c2 };
+      });
+      place(P, nodes.blue, blueSides);
+      if (t >= 1) { clearInterval(anim); anim = null; flashSides(same, P, rpts); }
     }
     anim = setInterval(step, 16);
     step();
   });
-
-  function flashSides(same) {
+  function flashSides(same, bpts, rpts) {
     var names = ['AB', 'BC', 'CA'], keys = ['c', 'a', 'b'], i = 0;
-    var rp = refParts();
+    var rp = partsOf(ref), bp = partsOf(blueSides);
     function one() {
       nodes.flash.innerHTML = '';
       if (i >= 3) {
         report(same
           ? ['They land on top of each other.',
-             'Corner for corner and side for side. A slide, a turn and (if it needed one) a flip '
-             + 'took the blue triangle exactly onto the red one — that is what congruent means.', false]
+             'Corner for corner and side for side. A slide, a turn and — if it needed one — '
+             + 'a flip carried the blue triangle exactly onto the red. That is what congruent means.', false]
           : ['They will not land.',
-             'Corner A is on corner A and side AB points the same way — and from there the two '
-             + 'triangles part company. Every part you padlocked matches, and they are still not '
-             + 'the same triangle. That is what a shortcut failing looks like.', true]);
+             'Corner A is on corner A and side AB points the same way, and from there the two '
+             + 'triangles part company. Every padlocked part matches and they are still not the '
+             + 'same triangle.', true]);
         return;
       }
-      var b = red.bars[i], p = red.pts[b.i], q = red.pts[b.j];
+      var p = rpts[SIDEPTS[keys[i]][0]], q = rpts[SIDEPTS[keys[i]][1]];
       var ln = sv('line', { x1: p.x, y1: p.y, x2: q.x, y2: q.y });
       ln.setAttribute('class', 'tr-flash'); nodes.flash.appendChild(ln);
-      // Say what is actually true of THIS pair of sides. One length under
-      // "AB <-> AB" was a lie whenever the triangles differ: on the SSA pair
-      // red's AB is 9.0 and blue's is 2.7.
-      var bm = measured(blue), bl = bm[keys[i]] / SCALE, rl = rp[keys[i]];
-      var agree = Math.abs(bl - rl) < 0.02;
+      var rl = rp[keys[i]], bl = bp[keys[i]], agree = Math.abs(rl - bl) < 0.02;
       var t = sv('text', { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 - 4.5,
         'font-size': 4.4, 'text-anchor': 'middle' });
       t.setAttribute('class', 'tr-ann');
@@ -1156,39 +1343,36 @@ $('#reset1').addEventListener('click', function () {
     one();
   }
 
-  /* ---------------- dragging the blue one ---------------- */
+  /* ---------------- sliding the blue triangle around ---------------- */
   function toUser(ev) {
     var r = svg.getBoundingClientRect();
     return { x: (ev.clientX - r.left) / r.width * VW, y: (ev.clientY - r.top) / r.height * VH };
   }
   function wire() {
-    var dragging = null;
+    var dragging = false, grabAng = 0, grabPose = null;
     svg.addEventListener('pointerdown', function (ev) {
-      if (!blue) return;
-      var u = toUser(ev), bd = 1e9, best = null;
-      blue.pts.forEach(function (p, i) {
-        var d = Math.hypot(p.x - u.x, p.y - u.y);
-        if (d < bd) { bd = d; best = i; }
-      });
-      if (bd > 12) return;
+      var u = toUser(ev), P = ptsFor(blueSides, pose);
+      if (!P) return;
+      var bd = Math.min.apply(null, P.map(function (p) { return Math.hypot(p.x - u.x, p.y - u.y); }));
+      if (bd > 14) return;
       if (anim) { clearInterval(anim); anim = null; }
       nodes.flash.innerHTML = '';
-      dragging = best;
+      dragging = true; grabPose = { x: pose.x, y: pose.y, ang: pose.ang };
+      grabAng = Math.atan2(u.y - pose.y, u.x - pose.x);
       try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
       svg.classList.add('dragging'); ev.preventDefault();
     });
     svg.addEventListener('pointermove', function (ev) {
-      if (dragging == null) return;
+      if (!dragging) return;
       var u = toUser(ev);
-      blue.pull(dragging, Math.max(6, Math.min(VW - 6, u.x)),
-                          Math.max(6, Math.min(VH - 6, u.y)), false);
-      place(blue, nodes.blue);
+      pose.x = Math.max(22, Math.min(VW - 22, u.x));
+      pose.y = Math.max(20, Math.min(VH - 20, u.y));
+      paint();
     });
     function stop(ev) {
-      if (dragging == null) return;
-      dragging = null; svg.classList.remove('dragging');
+      if (!dragging) return;
+      dragging = false; svg.classList.remove('dragging');
       try { svg.releasePointerCapture(ev.pointerId); } catch (e) {}
-      report();
     }
     svg.addEventListener('pointerup', stop);
     svg.addEventListener('pointercancel', stop);
@@ -1198,36 +1382,33 @@ $('#reset1').addEventListener('click', function () {
         var dd = { ArrowLeft: [-3, 0], ArrowRight: [3, 0], ArrowUp: [0, -3], ArrowDown: [0, 3] }[ev.key];
         if (!dd) return;
         ev.preventDefault();
-        var i = +h.getAttribute('data-i');
-        blue.pull(i, blue.pts[i].x + dd[0], blue.pts[i].y + dd[1], false);
-        place(blue, nodes.blue); report();
+        pose.x = Math.max(22, Math.min(VW - 22, pose.x + dd[0]));
+        pose.y = Math.max(20, Math.min(VH - 20, pose.y + dd[1]));
+        paint();
       });
     });
   }
 
-  /* ---------------- controls ---------------- */
-  var partBox = $('#parts');
-  function paintParts() {
-    [].forEach.call(partBox.children, function (b) {
-      b.setAttribute('aria-pressed', held[b.getAttribute('data-k')] ? 'true' : 'false');
-    });
+  /* ---------------- presets and buttons ---------------- */
+  function paintPresets() {
     [].forEach.call($('#presets').children, function (b) {
       var want = PRESETS[b.getAttribute('data-p')];
-      var same = want.length === lockedList().length
-        && want.every(function (k) { return held[k]; });
-      b.setAttribute('aria-pressed', same ? 'true' : 'false');
+      var now = KEYS.filter(function (k) { return held[k]; });
+      b.setAttribute('aria-pressed',
+        (want.length === now.length && want.every(function (k) { return held[k]; })) ? 'true' : 'false');
     });
   }
-  TriSearch.KEYS.forEach(function (k) {
-    var b = el('button', 'tr-part');
-    b.setAttribute('data-k', k);
-    b.innerHTML = TriSearch.isAng(k)
-      ? 'angle&nbsp;' + k
-      : 'side&nbsp;<i>' + k + '</i>';
+  Object.keys(PRESETS).forEach(function (name) {
+    var b = el('button', 'tr-chip', name);
+    b.setAttribute('data-p', name);
     b.addEventListener('click', function () {
-      held[k] = !held[k]; blueParts = null; paintParts(); mount();
+      KEYS.forEach(function (k) { held[k] = false; });
+      PRESETS[name].forEach(function (k) { held[k] = true; });
+      if (PRESET_REF[name]) setRef(PRESET_REF[name]);
+      blueSides = { a: ref.a, b: ref.b, c: ref.c };
+      paintPresets(); buildRows(); mount();
     });
-    partBox.appendChild(b);
+    $('#presets').appendChild(b);
   });
   var box = $('#sand-knobs');
   function setRef(next) {
@@ -1238,46 +1419,45 @@ $('#reset1').addEventListener('click', function () {
       inp.parentNode.querySelector('label > span:last-child').textContent = fmt(ref[k], 1);
     });
   }
-  SIDES.forEach(function (p) {
+  ['a', 'b', 'c'].forEach(function (k) {
     var wrap = el('div', 'tr-knob'), lab = el('label');
-    lab.appendChild(el('span', 'tr-klab', p.lab));
-    var out = el('span', null, fmt(ref[p.k], 1));
+    lab.appendChild(el('span', 'tr-klab', 'side ' + k));
+    var out = el('span', null, fmt(ref[k], 1));
     lab.appendChild(out);
     var inp = document.createElement('input');
-    inp.type = 'range'; inp.min = p.min; inp.max = p.max; inp.step = p.step; inp.value = ref[p.k];
-    inp.setAttribute('aria-label', 'red triangle ' + p.lab);
+    inp.type = 'range'; inp.min = 2; inp.max = 10; inp.step = .1; inp.value = ref[k];
+    inp.setAttribute('aria-label', 'red triangle side ' + k);
     inp.addEventListener('input', function () {
-      ref[p.k] = +inp.value; out.textContent = fmt(+inp.value, 1);
-      blueParts = null; mount();
+      ref[k] = +inp.value; out.textContent = fmt(+inp.value, 1);
+      blueSides = { a: ref.a, b: ref.b, c: ref.c };
+      buildRows(); mount();
     });
     wrap.appendChild(lab); wrap.appendChild(inp); box.appendChild(wrap);
   });
-  Object.keys(PRESETS).forEach(function (name) {
-    var b = el('button', 'tr-chip', name);
-    b.setAttribute('data-p', name);
-    b.addEventListener('click', function () {
-      TriSearch.KEYS.forEach(function (k) { held[k] = false; });
-      PRESETS[name].forEach(function (k) { held[k] = true; });
-      if (PRESET_REF[name]) setRef(PRESET_REF[name]);
-      blueParts = null; paintParts(); mount();
-    });
-    $('#presets').appendChild(b);
+  $('#attempt').addEventListener('click', function () {
+    var rp = partsOf(ref); if (!rp) return;
+    var hit = TriSearch.find(rp, KEYS.filter(function (k) { return held[k]; }));
+    if (!hit) {
+      report(['There is no different one to find.',
+        'The parts you padlocked settle the triangle completely, so nothing you move — or '
+        + 'anything I try — can change its shape.', false]);
+      return;
+    }
+    blueSides = { a: hit.a, b: hit.b, c: hit.c };
+    paint(); refreshRows();
   });
   $('#flip-blue').addEventListener('click', function () {
-    if (!blue) return;
-    if (anim) { clearInterval(anim); anim = null; }
-    nodes.flash.innerHTML = '';
-    flip(blue); place(blue, nodes.blue); report();
+    pose.ang += Math.PI; paint();
   });
   $('#reset2').addEventListener('click', function () {
-    ref = { a: 6, b: 5, c: 7 };
-    TriSearch.KEYS.forEach(function (k) { held[k] = false; });
-    ['a', 'b', 'c'].forEach(function (k) { held[k] = true; });
-    blueParts = null;
     setRef({ a: 6, b: 5, c: 7 });
-    paintParts(); mount();
+    KEYS.forEach(function (k) { held[k] = false; });
+    ['a', 'b', 'c'].forEach(function (k) { held[k] = true; });
+    blueSides = { a: ref.a, b: ref.b, c: ref.c };
+    pose = { x: 108, y: 44, ang: 0.22 };
+    paintPresets(); buildRows(); mount();
   });
-  paintParts(); mount();
+  paintPresets(); buildRows(); mount();
 })();
 
 /* ================= STATION 3 — what pins a triangle down ================ */
