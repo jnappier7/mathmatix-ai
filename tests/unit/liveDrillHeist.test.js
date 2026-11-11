@@ -136,8 +136,10 @@ describe('cracking a safe', () => {
     const seen = new Set();
     const g = heistGame();
     const a = G.join(g, 'A').player;
-    for (let n = 1; n < 400 && seen.size < 5; n++) for (const s of H.dealSafes(g, a, n)) seen.add(s.kind);
-    expect([...seen].sort()).toEqual(['cash', 'decoy', 'gadget', 'grab', 'switch']);
+    for (let n = 1; n < 400 && seen.size < 7; n++) for (const s of H.dealSafes(g, a, n)) seen.add(s.kind);
+    expect([...seen].sort()).toEqual(['cash', 'decoy', 'gadget', 'grab', 'jail', 'shakedown', 'switch']);
+    // more than half the safes are a move on someone else (owner, 2026-11: "maybe a couple" in five minutes was too few)
+    expect(H.OUTCOMES.filter((o) => H.ATTACKS.includes(o.kind)).reduce((t, o) => t + o.weight, 0)).toBeGreaterThanOrEqual(50);
   });
 
   /** Put a chosen outcome in safe 0 of an open crack (setup only — the deal itself is seeded). */
@@ -278,6 +280,104 @@ describe('gadgets', () => {
   });
 });
 
+describe('jail, shakedown, blackout — more ways to hit the players above you', () => {
+  /** Put a chosen outcome in safe 0 of a fresh crack and open it (setup only — the deal itself is seeded). */
+  function crackWith(g, p, outcome) { crack(g, p); p.safe.dealt[0] = outcome; return G.openSafe(g, p, 0); }
+
+  test('a jail locks a RANDOM richer player out for 10 s: no play, no answer, and they see who did it', () => {
+    const g = heistGame();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
+    G.start(g);
+    crack(g, a); G.openSafe(g, a, 0); a.cash = 5000; // A is richer, by more than B's own crack will pay
+    G.currentPlay(g, a); // A has a play open, timed from now
+    jest.advanceTimersByTime(4000);
+    const r = crackWith(g, b, { kind: 'jail', label: 'Jail' });
+    expect(r).toMatchObject({ kind: 'jail', target: 'A' });
+    expect(r.until - Date.now()).toBe(H.JAIL_MS);
+    const cur = G.currentPlay(g, a);
+    expect(cur).toMatchObject({ alarm: r.until, lock: 'jail', by: 'B' });
+    expect(cur.play).toBeUndefined();
+    expect(() => G.answer(g, a, cur.n, 'a')).toThrow(/alarm/);
+    expect(G.playerView(g, a).heist.hit).toMatchObject({ by: 'B', kind: 'jail' });
+    expect(G.playerView(g, a).heist.lock).toMatchObject({ kind: 'jail', by: 'B' });
+    expect(G.hostView(g).heist.crew.find((c) => c.name === 'A')).toMatchObject({ alarm: true, lock: 'jail' });
+    // the play that was open is re-timed when the lock clears: a fast answer still pays the fast tier
+    jest.advanceTimersByTime(H.JAIL_MS + 10);
+    expect(G.currentPlay(g, a).play).toBeDefined();
+    const res = go(g, a, true, 1000);
+    expect(res.gain).toBe(sc.gains[0]);
+    expect(a.jailed).toBe(1); expect(b.jails).toBe(1);
+    expect(G.hostView(g).final).toBeUndefined();
+  });
+
+  test('a play open when the jail lands is re-timed even if the phone never asks during the lock', () => {
+    // the phone counts the jail down from the state it was streamed and only fetches a play after
+    const g = heistGame();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player;
+    G.start(g);
+    a.cash = 5000; a.cashAt = Date.now();
+    G.currentPlay(g, a); // A is thinking on a play
+    jest.advanceTimersByTime(20000); // …for a long time
+    crackWith(g, b, { kind: 'jail', label: 'Jail' });
+    jest.advanceTimersByTime(H.JAIL_MS + 10); // no fetch in between
+    expect(G.currentPlay(g, a).play).toBeDefined();
+    expect(go(g, a, true, 1000).gain).toBe(sc.gains[0]); // fast tier: the 20 s before the jail don't count
+    // the same for a blackout
+    G.currentPlay(g, a); jest.advanceTimersByTime(20000);
+    crack(g, b); b.safe.dealt[0] = { kind: 'gadget', label: 'Gadget', gadget: 'blackout' };
+    const got = G.openSafe(g, b, 0); G.useGadget(g, b, got.gadget.id);
+    jest.advanceTimersByTime(H.BLACKOUT_MS + 10);
+    expect(G.currentPlay(g, a).play).toBeDefined();
+    expect(go(g, a, true, 1000).gain).toBe(sc.gains[0]);
+  });
+
+  test('a jail with nobody richer pays cash instead — the leader cannot lock anyone below', () => {
+    const g = heistGame();
+    const a = G.join(g, 'A').player; G.join(g, 'B');
+    G.start(g);
+    const r = crackWith(g, a, { kind: 'jail', label: 'Jail' });
+    expect(r.kind).toBe('cash');
+    expect(r.amount).toBe(2 * U);
+  });
+
+  test('a shakedown takes 10% from EVERY richer player at once, and nothing from anyone below', () => {
+    const g = heistGame();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player; const c = G.join(g, 'C').player; const d = G.join(g, 'D').player;
+    G.start(g);
+    a.cash = 1000; c.cash = 2000; d.cash = 50; b.cash = 100;
+    const r = crackWith(g, b, { kind: 'shakedown', label: 'Shakedown' });
+    expect(r).toMatchObject({ kind: 'shakedown', amount: 300, count: 2 });
+    expect([a.cash, c.cash, d.cash, b.cash]).toEqual([900, 1800, 50, 100 + 3 * U + 300]); // B: the crack paid three fast answers, then the cut
+    expect(a.lastHit).toMatchObject({ by: 'B', kind: 'shakedown', amount: 100 });
+    expect(b.grabbed).toBe(300);
+    expect(g.feed[0]).toMatchObject({ type: 'shakedown', who: 'B', count: 2, amount: 300 });
+    // nobody richer: cash instead
+    expect(crackWith(g, c, { kind: 'shakedown', label: 'Shakedown' }).kind).toBe('cash');
+  });
+
+  test('a blackout locks everyone ELSE out for 4 s — the one who fired it keeps playing', () => {
+    const g = heistGame();
+    const a = G.join(g, 'A').player; const b = G.join(g, 'B').player; const c = G.join(g, 'C').player;
+    G.start(g);
+    crack(g, a); a.safe.dealt[0] = { kind: 'gadget', label: 'Gadget', gadget: 'blackout' };
+    const got = G.openSafe(g, a, 0);
+    expect(got.gadget.kind).toBe('blackout');
+    G.currentPlay(g, b);
+    const fired = G.useGadget(g, a, got.gadget.id);
+    expect(fired.until - Date.now()).toBe(H.BLACKOUT_MS);
+    for (const p of [b, c]) {
+      const cur = G.currentPlay(g, p);
+      expect(cur).toMatchObject({ alarm: fired.until, lock: 'blackout', by: 'A' });
+      expect(() => G.answer(g, p, cur.n, 'a')).toThrow(/alarm/);
+    }
+    expect(G.currentPlay(g, a).play).toBeDefined(); // not the finder
+    expect(G.playerView(g, b).heist.lock).toMatchObject({ kind: 'blackout', by: 'A' });
+    expect(G.playerView(g, a).heist.lock).toBeNull();
+    jest.advanceTimersByTime(H.BLACKOUT_MS + 10);
+    expect(G.currentPlay(g, b).play).toBeDefined();
+  });
+});
+
 describe('views, final, snapshot', () => {
   test('standings by cash; the student sees rank, the leader and the gap above; the host sees the crew', () => {
     const g = heistGame();
@@ -342,8 +442,9 @@ describe('views, final, snapshot', () => {
 
   test('the lobby rules come from the constants', () => {
     const r = G.hostView(heistGame()).rules;
-    expect(r.heist).toMatchObject({ pay: [150, 100, 50], alarmCost: 50, alarmSec: 6, safeEvery: 3, safeCount: 3, grabPct: 20, gadgetSec: 6 });
-    expect(r.heist.gadgets.map((x) => x.kind)).toEqual(['smoke', 'flip']);
+    expect(r.heist).toMatchObject({ pay: [150, 100, 50], alarmCost: 50, alarmSec: 6, safeEvery: 3, safeCount: 3, grabPct: 20, shakePct: 10, jailSec: 10, gadgetSec: 6, blackoutSec: 4 });
+    expect(r.heist.gadgets.map((x) => x.kind)).toEqual(['smoke', 'flip', 'blackout']);
+    expect(r.heist.attackPct).toBeGreaterThanOrEqual(50);
     expect(Object.values(r.heist.odds).reduce((s, x) => s + x, 0)).toBe(100);
     expect(r.blitz).toBeNull();
     expect(r.hill).toBeNull();
@@ -369,6 +470,8 @@ describe('simulator: thinking beats guessing', () => {
     let x = seed;
     const rnd = () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; };
     const g = heistGame({ seconds });
+    const attacks = { gadget: 0 }; // every move on another player, counted as it lands
+    g._onFeed = (item) => { if (['grab', 'switch', 'jail', 'shakedown'].includes(item.type)) attacks[item.type] = (attacks[item.type] || 0) + 1; };
     const ps = bots.map((b) => ({ ...b, p: G.join(g, b.name).player, nextAt: 0 }));
     G.start(g);
     const end = g.endsAt;
@@ -379,11 +482,14 @@ describe('simulator: thinking beats guessing', () => {
       jest.advanceTimersByTime(Math.max(0, b.nextAt - Date.now()));
       if (b.pending) { // the think is over: answer the play dealt earlier
         const pl = G.playAt(g, b.pending);
-        G.answer(g, b.p, b.pending, rnd() < b.acc ? pl.answer : wrongKey(pl));
+        // (a jail or a blackout can land mid-think: the answer is refused, the play comes back re-timed)
+        try { G.answer(g, b.p, b.pending, rnd() < b.acc ? pl.answer : wrongKey(pl)); } catch (e) { if (e.status !== 409) throw e; }
         b.pending = null;
         b.nextAt = Date.now() + 300; // a glance at the result
         continue;
       }
+      // a held gadget is fired, usually, before the next play
+      if (b.p.gadgets.length && rnd() < 0.7) { G.useGadget(g, b.p, b.p.gadgets[0].id); attacks.gadget++; }
       const cur = G.currentPlay(g, b.p);
       if (cur.alarm) { b.nextAt = cur.alarm + 10; continue; }
       if (cur.safe) { G.openSafe(g, b.p, Math.floor(rnd() * cur.safe.count)); b.nextAt = Date.now() + 800; continue; }
@@ -391,7 +497,9 @@ describe('simulator: thinking beats guessing', () => {
       b.nextAt = Date.now() + b.ms * (0.8 + 0.4 * rnd());
     }
     jest.advanceTimersByTime(end - Date.now() + 2000);
-    return ps.map((b) => ({ name: b.name, cash: b.p.cash, safes: b.p.safes, att: b.p.att, comp: b.p.comp }));
+    const out = ps.map((b) => ({ name: b.name, cash: b.p.cash, safes: b.p.safes, att: b.p.att, comp: b.p.comp, jailed: b.p.jailed }));
+    out.attacks = attacks;
+    return out;
   }
 
   test('a thinker (85%, 5 s) beats a guesser (25%, 1.2 s) at least 4 games in 5', () => {
@@ -431,5 +539,25 @@ describe('simulator: thinking beats guessing', () => {
     if (process.env.HEIST_SIM_STATS) process.stdout.write(`heist sim ${JSON.stringify({ wins, avg })}\n`);
     expect((wins.guesser || 0) / N).toBeLessThan(0.05); // a blind guesser almost never takes a four-way game
     expect(avg.fastgood.cash).toBeGreaterThan(avg.thinker.cash); // fast AND right still pays most
+  });
+
+  test('a five-minute class game is full of attacks: a crew of six lands one every 20 s or better', () => {
+    // The owner's report (2026-11): a five-minute game with "maybe a couple" of grabs. Six
+    // ordinary students (not guessers) for 300 s must now produce at least 15 moves on each
+    // other — grabs, switches, jails, shakedowns, gadgets fired — one every 20 s (the sim lands
+    // about 20; the old 21% attack share gave about 7).
+    const bots = [{ name: 'A', acc: 0.85, ms: 5000 }, { name: 'B', acc: 0.75, ms: 6000 }, { name: 'C', acc: 0.9, ms: 4000 },
+      { name: 'D', acc: 0.7, ms: 7000 }, { name: 'E', acc: 0.8, ms: 5500 }, { name: 'F', acc: 0.65, ms: 8000 }];
+    let total = 0; const kinds = {}; const N = 20;
+    for (let i = 0; i < N; i++) {
+      const r = simulate(bots, 9000 + i, 300);
+      const n = Object.values(r.attacks).reduce((t, x) => t + x, 0);
+      total += n;
+      for (const [k, v] of Object.entries(r.attacks)) kinds[k] = (kinds[k] || 0) + v;
+      G._reset();
+    }
+    if (process.env.HEIST_SIM_STATS) process.stdout.write(`heist attacks/game ${(total / N).toFixed(1)} ${JSON.stringify(kinds)}\n`);
+    expect(total / N).toBeGreaterThanOrEqual(15);
+    for (const k of ['grab', 'switch', 'jail', 'shakedown', 'gadget']) expect(kinds[k] || 0).toBeGreaterThan(0); // every kind lands
   });
 });

@@ -422,6 +422,7 @@ function recordMiss(game, play, n, k) {
 }
 
 function pushFeed(game, item) {
+  if (typeof game._onFeed === 'function') game._onFeed(item); // the simulator's tally (tests only)
   game.feed.unshift({ at: now(), ...item });
   if (game.feed.length > 14) game.feed.length = 14;
 }
@@ -608,7 +609,10 @@ function currentPlay(game, player) {
     // The alarm holds the screen: no play is dealt (so none is timed) until it clears. An open crack
     // comes first too — pick a safe, then the next play.
     player.lastSeen = now();
-    if (heist.locked(player, now())) return { n: player.n, alarm: player.lockUntil };
+    const lock = heist.lockInfo(game, player, now());
+    // A jail or a blackout can land mid-play (heist.js clears `issuedAt` as it lands); the play
+    // stays and its clock restarts on the next fetch, so nobody is timed on someone's attack.
+    if (lock) { player.issuedAt = 0; return { n: player.n, alarm: lock.until, lock: lock.kind, by: lock.by }; }
     if (player.safe) return { n: player.n, safe: { n: player.safe.n, count: player.safe.dealt.length } };
   }
   const play = playAt(game, player.n);
@@ -633,7 +637,7 @@ function answer(game, player, n, k) {
   player.lastSeen = now();
   if (ownPace(game)) {
     if (game.phase !== 'live' || now() > game.endsAt + DRIVE_GRACE_MS) throw new GameError(409, 'The clock has run out.');
-    if (game.mode === 'heist' && heist.locked(player, now())) throw new GameError(409, 'The alarm is still ringing.');
+    if (game.mode === 'heist' && heist.locked(player, now(), game)) throw new GameError(409, 'The alarm is still ringing.');
     if (game.mode === 'heist' && player.safe) throw new GameError(409, 'Open your safe first.');
     if (n !== player.n || !player.issuedAt) throw new GameError(409, 'That play is already over.');
     const play = playAt(game, n);
