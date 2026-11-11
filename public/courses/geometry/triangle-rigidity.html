@@ -182,6 +182,24 @@ table.tr-sum td:first-child{font-weight:700;letter-spacing:.04em;white-space:now
 #tr-breakverdict.is-bad{border-color:var(--line-strong);background:var(--panel-2)}
 #tr-breakverdict.is-bad b{color:var(--ink)}
 
+.tr-minihead{margin:14px 0 6px;font-size:.78rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted)}
+.tr-minihead:first-child{margin-top:0}
+.tr-partgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.tr-part{padding:7px 4px;border-radius:8px;border:1px solid var(--line-strong);
+  background:var(--panel);color:var(--ink);font-weight:700;font-size:.86rem;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.tr-part:hover{border-color:var(--accent)}
+.tr-part[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.tr-part i{font-style:italic}
+.tr-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.tr-primary:hover{background:var(--accent-strong,var(--sc-red-deep));border-color:var(--accent)}
+.tr-flash{stroke:var(--warn,var(--ink));stroke-width:4.5;stroke-linecap:round;fill:none}
+.tr-ann{paint-order:stroke;stroke:var(--panel-2);stroke-width:1.6;stroke-linejoin:round;
+  fill:var(--ink);font-weight:700}
+table.tr-meas td.lk{position:relative}
+table.tr-meas td.lk::after{content:"\01F512";font-size:.72em;margin-left:3px;opacity:.75}
+
 /* ---------- knobs ---------- */
 .tr-knobrow{display:flex;align-items:center;gap:8px}
 .tr-knob.is-locked .tr-klab{color:var(--accent-ink)}
@@ -251,27 +269,32 @@ table.tr-sum td:first-child{font-weight:700;letter-spacing:.04em;white-space:now
 <!-- ======================= STATION 2 ======================= -->
 <section class="tr-card">
   <div class="tr-eyebrow">Station 2</div>
-  <h2>Try to break it</h2>
-  <p>Here are two triangles, red and blue. <b>They are built from the same three side
-     lengths</b> &mdash; whatever you set below, both get them. Drag either one by any corner.
-     Flip one over. Slide them onto each other.</p>
-  <p style="font-weight:600">Your job: make the two triangles different shapes. Not moved,
-     not turned over &mdash; <em>different</em>. See how long you last.</p>
+  <h2>Lock what you are given, then try to break it</h2>
+  <p>The red triangle is the one you know. Padlock the parts you have actually been
+     <em>told</em> &mdash; sides, angles, or both &mdash; and then ask the page to build a
+     <b>different</b> triangle that still has every one of them. Sometimes it can. That is the
+     whole difference between a shortcut that works and one that does not.</p>
 
   <div class="tr-sand">
     <div>
+      <p class="tr-minihead">Start from a shortcut</p>
+      <div class="tr-cases" id="presets" role="group" aria-label="preset sets of given parts"></div>
+
+      <p class="tr-minihead">Or padlock parts yourself</p>
+      <div class="tr-partgrid" id="parts" role="group" aria-label="which parts are given"></div>
+
+      <p class="tr-minihead">The red triangle</p>
       <div class="tr-knobs" id="sand-knobs"></div>
+
       <div class="tr-tools">
-        <button class="tr-btn" id="flip-red">Flip the red one</button>
+        <button class="tr-btn tr-primary" id="attempt">Try to build a different one</button>
+      </div>
+      <div class="tr-tools">
+        <button class="tr-btn" id="check">Check them &mdash; slide one onto the other</button>
+      </div>
+      <div class="tr-tools">
         <button class="tr-btn" id="flip-blue">Flip the blue one</button>
-      </div>
-      <div class="tr-tools">
-        <button class="tr-btn" id="stack">Slide blue onto red</button>
         <button class="tr-btn" id="reset2">Start over</button>
-      </div>
-      <div class="tr-score">
-        <span>Moves: <b id="tries">0</b></span>
-        <span>Different triangles found: <b id="found">0</b></span>
       </div>
     </div>
     <div>
@@ -279,8 +302,8 @@ table.tr-sum td:first-child{font-weight:700;letter-spacing:.04em;white-space:now
       <div id="tr-breakverdict"></div>
       <table class="tr-meas" id="sand-meas"></table>
       <p style="margin:8px 0 0;color:var(--muted);font-size:.82rem">
-         Both rows are measured off the drawing after every move, so the verdict is not a
-         promise &mdash; it is a reading.</p>
+         A padlock in the table marks a part you said you were given. Everything in it is
+         measured off the drawing.</p>
     </div>
   </div>
 </section>
@@ -458,6 +481,166 @@ var TriGeom = (function () {
 })();
 
 if (typeof module !== 'undefined') module.exports = TriGeom;
+/* ---------------------------------------------------------------------------
+   "Is there a DIFFERENT triangle with these same parts?"
+
+   Decided structurally, not by searching. Which parts you hold decides the
+   answer, and that decision is the content of the lesson:
+
+     no sides at all        -> scale it. Angles survive, size does not. (AAA)
+     all three sides        -> nothing. (SSS)
+     two angles or more     -> the third angle follows, so one side pins it. (ASA/AAS)
+     two sides + the angle
+       BETWEEN them         -> nothing. (SAS)
+     two sides + an angle
+       NOT between them     -> maybe. (SSA — the ambiguous case)
+     anything less          -> room left over, so yes.
+
+   A blind numerical search got this wrong in both directions: it fabricated a
+   counterexample on a 3-4-5 triangle, where the SSA tangent case is so
+   ill-conditioned that float slop looks like a second solution, and it missed
+   real ones on thin triangles. The rule below cannot do either.
+   --------------------------------------------------------------------------- */
+var TriSearch = (function () {
+  var R2D = 180 / Math.PI, D2R = Math.PI / 180;
+  var KEYS = ['a', 'b', 'c', 'A', 'B', 'C'];
+  var DIFFER = { side: 0.05, ang: 0.25 };
+  /* side pair -> the angle between them */
+  var INCLUDED = { 'b,c': 'A', 'a,c': 'B', 'a,b': 'C' };
+  /* angle -> the side it faces */
+  var OPPOSITE = { A: 'a', B: 'b', C: 'c' };
+
+  function isAng(k) { return k === 'A' || k === 'B' || k === 'C'; }
+  function partsOf(a, b, c) {
+    if (!(a > 0 && b > 0 && c > 0)) return null;
+    if (a + b <= c || b + c <= a || a + c <= b) return null;
+    var A = Math.acos(Math.min(1, Math.max(-1, (b * b + c * c - a * a) / (2 * b * c)))) * R2D;
+    var B = Math.acos(Math.min(1, Math.max(-1, (a * a + c * c - b * b) / (2 * a * c)))) * R2D;
+    return { a: a, b: b, c: c, A: A, B: B, C: 180 - A - B };
+  }
+  function differs(p, ref) {
+    for (var i = 0; i < KEYS.length; i++) {
+      var k = KEYS[i];
+      if (Math.abs(p[k] - ref[k]) > (isAng(k) ? DIFFER.ang : DIFFER.side)) return true;
+    }
+    return false;
+  }
+  function matchesLocked(p, ref, locked) {
+    for (var i = 0; i < locked.length; i++) {
+      var k = locked[i];
+      if (Math.abs(p[k] - ref[k]) > (isAng(k) ? 1e-6 : 1e-7)) return false;
+    }
+    return true;
+  }
+  /* A candidate only counts if it really holds every locked part and really is
+     a different triangle. Everything below goes through here. */
+  function accept(cand, ref, locked) {
+    if (!cand) return null;
+    return (matchesLocked(cand, ref, locked) && differs(cand, ref)) ? cand : null;
+  }
+
+  function classify(locked) {
+    var s = locked.filter(function (k) { return !isAng(k); }).sort();
+    var g = locked.filter(isAng).sort();
+    if (s.length === 0) return { kind: 'scale', s: s, g: g };
+    if (s.length === 3) return { kind: 'unique', why: 'SSS', s: s, g: g };
+    if (g.length >= 2) return { kind: 'unique', why: g.length === 3 ? 'ASA/AAS' : 'ASA/AAS', s: s, g: g };
+    if (s.length === 2 && g.length === 1)
+      return (INCLUDED[s.join(',')] === g[0])
+        ? { kind: 'unique', why: 'SAS', s: s, g: g }
+        : { kind: 'ssa', s: s, g: g };
+    return { kind: 'loose', s: s, g: g };          // not enough to pin anything down
+  }
+
+  function find(ref, locked) {
+    locked = (locked || []).slice();
+    var c = classify(locked);
+
+    if (c.kind === 'unique') return null;
+
+    if (c.kind === 'scale') {
+      // every angle survives a scaling, and no side is held
+      var f = [1.6, 0.6, 2.2, 0.4];
+      for (var i = 0; i < f.length; i++) {
+        var hit = accept(partsOf(ref.a * f[i], ref.b * f[i], ref.c * f[i]), ref, locked);
+        if (hit) return hit;
+      }
+      return null;
+    }
+
+    if (c.kind === 'ssa') {
+      // the locked angle faces one of the two locked sides; the other locked
+      // side is the one that can swing. TriGeom's closed form gives both.
+      var X = c.g[0], x = OPPOSITE[X];
+      var y = c.s[0] === x ? c.s[1] : c.s[0];
+      var r = TriGeom.ssa(ref[x], ref[y], ref[X]);
+      for (var n = 0; n < r.tris.length; n++) {
+        var m = TriGeom.measure(r.tris[n]);
+        // measure() labels by its own construction; rebuild from the sides
+        var hit2 = accept(partsOf(m.a, m.b, m.c), ref, locked);
+        if (hit2) return hit2;
+        // the same three sides can carry the locked parts under a relabelling
+        var perms = [[m.a, m.c, m.b], [m.b, m.a, m.c], [m.b, m.c, m.a],
+                     [m.c, m.a, m.b], [m.c, m.b, m.a]];
+        for (var q = 0; q < perms.length; q++) {
+          var h3 = accept(partsOf(perms[q][0], perms[q][1], perms[q][2]), ref, locked);
+          if (h3) return h3;
+        }
+      }
+      return null;
+    }
+
+    /* loose: at least one degree of freedom is left over. Move whatever is not
+       held and keep what is. */
+    var held = {};
+    locked.forEach(function (k) { held[k] = true; });
+    var cand, f2;
+
+    if (c.s.length === 2) {                        // two sides held, no angle
+      var free = ['a', 'b', 'c'].filter(function (k) { return !held[k]; })[0];
+      for (f2 = 0; f2 < 8; f2++) {
+        var mult = [1.3, 0.7, 1.6, 0.5, 1.15, 0.85, 1.9, 0.35][f2];
+        var sides = { a: ref.a, b: ref.b, c: ref.c };
+        sides[free] = ref[free] * mult;
+        cand = accept(partsOf(sides.a, sides.b, sides.c), ref, locked);
+        if (cand) return cand;
+      }
+      return null;
+    }
+
+    if (c.g.length === 1) {                        // one side and one angle held
+      var Ak = c.g[0], sk = c.s.length ? c.s[0] : null;
+      var others = ['A', 'B', 'C'].filter(function (k) { return k !== Ak; });
+      for (f2 = 0; f2 < 10; f2++) {
+        var delta = [8, -8, 16, -16, 25, -25, 4, -4, 34, -34][f2];
+        var ang = {}; ang[Ak] = ref[Ak];
+        ang[others[0]] = ref[others[0]] + delta;
+        ang[others[1]] = 180 - ang[Ak] - ang[others[0]];
+        if (ang[others[0]] <= 0.5 || ang[others[1]] <= 0.5) continue;
+        // law of sines, anchored on whichever side is held (or on a if none)
+        var anchor = sk || 'a', K = ref[anchor] / Math.sin(ang[{ a: 'A', b: 'B', c: 'C' }[anchor]] * D2R);
+        cand = accept(partsOf(K * Math.sin(ang.A * D2R), K * Math.sin(ang.B * D2R),
+                              K * Math.sin(ang.C * D2R)), ref, locked);
+        if (cand) return cand;
+      }
+      return null;
+    }
+
+    // one side held (or nothing much): move the other two
+    for (f2 = 0; f2 < 8; f2++) {
+      var m2 = [1.35, 0.72, 1.7, 0.55, 1.12, 0.88, 2.1, 0.33][f2];
+      var S2 = { a: ref.a, b: ref.b, c: ref.c };
+      ['a', 'b', 'c'].forEach(function (k) { if (!held[k]) S2[k] = ref[k] * m2; });
+      cand = accept(partsOf(S2.a, S2.b, S2.c), ref, locked);
+      if (cand) return cand;
+    }
+    return null;
+  }
+
+  return { partsOf: partsOf, find: find, differs: differs, classify: classify,
+           matchesLocked: matchesLocked, KEYS: KEYS, isAng: isAng };
+})();
+if (typeof module !== 'undefined') module.exports = TriSearch;
 /* =========================================================================
    Station 1 — bars and pins.
 
@@ -587,7 +770,8 @@ stages.forEach(function (st) {
       if (bd > 14) return;
       i = best;
     }
-    dragging = +i; svg.setPointerCapture(ev.pointerId);
+    dragging = +i;
+    try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
     svg.classList.add('dragging'); ev.preventDefault();
   });
   svg.addEventListener('pointermove', function (ev) {
@@ -676,77 +860,66 @@ $('#reset1').addEventListener('click', function () {
   stages.forEach(function (st) { st.L.reset(); draw(st); });
 });
 
-/* ================= STATION 2 — two triangles, same three sides ==========
-   Both triangles are built from the SAME a, b, c. Each is a free linkage with
-   no pinned corner, so dragging slides and turns it and nothing else. The
-   verdict is not hard-coded: after every move both triangles are measured off
-   the drawing and compared, which is why it can honestly say "still congruent"
-   a hundred times in a row.
-   ========================================================================= */
+/* ================= STATION 2 — lock what you are given =================
+   The red triangle is the reference. The student padlocks the parts they are
+   "given"; TriSearch then says, exactly, whether a different triangle can
+   carry those same parts, and hands back one when it can. "Check them" is the
+   definition of congruence acted out: a rigid motion that lands one triangle
+   on the other, corresponding side onto corresponding side.
+   ===================================================================== */
 (function () {
-  var SIDES = [{ k: 'a', lab: 'side a', min: 2, max: 10, step: .1, v: 6 },
-               { k: 'b', lab: 'side b', min: 2, max: 10, step: .1, v: 5 },
-               { k: 'c', lab: 'side c', min: 2, max: 10, step: .1, v: 7 }];
-  var sv2 = { a: 6, b: 5, c: 7 }, slock = {}, tries = 0, found = 0;
-  var SCALE = 5, VW = 140, VH = 80, HOME = [{ x: 40, y: 40 }, { x: 102, y: 40 }];
-  var red = null, blue = null, svg = null, nodes = null;
+  var SIDES = [{ k: 'a', lab: 'side a', min: 2, max: 10, step: .1 },
+               { k: 'b', lab: 'side b', min: 2, max: 10, step: .1 },
+               { k: 'c', lab: 'side c', min: 2, max: 10, step: .1 }];
+  var PRESETS = {
+    SSS: ['a', 'b', 'c'], SAS: ['b', 'A', 'c'], ASA: ['B', 'a', 'C'],
+    AAS: ['A', 'B', 'a'], SSA: ['a', 'b', 'A'], AAA: ['A', 'B', 'C'], Clear: []
+  };
+  /* SSA is ambiguous only when the given angle is acute and the side facing it
+     is shorter than the other given side. On the default 6-5-7 triangle it is
+     not, so pressing SSA would truthfully answer "nothing found" and teach the
+     opposite of the lesson. The preset moves the reference triangle to a shape
+     where SSA really does break. */
+  var PRESET_REF = { SSA: { a: 5, b: 7, c: 9 } };
+  var ref = { a: 6, b: 5, c: 7 };
+  var held = { a: true, b: true, c: true };          // start on SSS
+  var SCALE = 5, VW = 150, VH = 86, HOME = [{ x: 44, y: 44 }, { x: 108, y: 44 }];
+  var red = null, blue = null, blueParts = null, svg = null, nodes = null, anim = null;
   var field = $('#field');
+  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function makeTri(home) {
-    var r = TriGeom.sss(sv2.a, sv2.b, sv2.c);
+  function lockedList() { return TriSearch.KEYS.filter(function (k) { return held[k]; }); }
+  function refParts() { return TriSearch.partsOf(ref.a, ref.b, ref.c); }
+
+  /* ---- a triangle as points, from three sides, dropped at a home spot ---- */
+  function ptsFor(a, b, c, home, rot) {
+    var r = TriGeom.sss(a, b, c);
     if (!r.tris.length) return null;
     var t = r.tris[0];
     var P = ['A', 'B', 'C'].map(function (k) { return { x: t[k].x * SCALE, y: -t[k].y * SCALE }; });
     var cx = (P[0].x + P[1].x + P[2].x) / 3, cy = (P[0].y + P[1].y + P[2].y) / 3;
-    P.forEach(function (p) { p.x += home.x - cx; p.y += home.y - cy; });
+    var ca = Math.cos(rot || 0), sa = Math.sin(rot || 0);
+    return P.map(function (p) {
+      var dx = p.x - cx, dy = p.y - cy;
+      return { x: home.x + dx * ca - dy * sa, y: home.y + dx * sa + dy * ca };
+    });
+  }
+  function linkFor(P) {
     return new Linkage(P, [{ i: 0, j: 1 }, { i: 1, j: 2 }, { i: 2, j: 0 }]);
   }
   function centroid(L) {
     var P = L.pts;
     return { x: (P[0].x + P[1].x + P[2].x) / 3, y: (P[0].y + P[1].y + P[2].y) / 3 };
   }
-  function flip(L) {
-    var c = centroid(L);
-    L.pts.forEach(function (p) { p.x = 2 * c.x - p.x; });   // a reflection keeps every bar length
-  }
+  function flip(L) { var c = centroid(L); L.pts.forEach(function (p) { p.x = 2 * c.x - p.x; }); }
   function orient(L) {
     var P = L.pts;
     return Math.sign((P[1].x - P[0].x) * (P[2].y - P[0].y) - (P[1].y - P[0].y) * (P[2].x - P[0].x));
   }
-  function stack() {
-    if (!red || !blue) return;
-    if (orient(red) !== orient(blue)) flip(blue);
-    var R = red.pts, B = blue.pts;
-    var ang = Math.atan2(R[1].y - R[0].y, R[1].x - R[0].x)
-            - Math.atan2(B[1].y - B[0].y, B[1].x - B[0].x);
-    var ca = Math.cos(ang), sa = Math.sin(ang), ox = B[0].x, oy = B[0].y;
-    B.forEach(function (p) {
-      var dx = p.x - ox, dy = p.y - oy;
-      p.x = R[0].x + dx * ca - dy * sa;
-      p.y = R[0].y + dx * sa + dy * ca;
-    });
-  }
-  function asTri(L) { return { A: L.pts[0], B: L.pts[1], C: L.pts[2] }; }
-  function parts(L) {
-    var m = TriGeom.measure(asTri(L));
-    return { s: [m.a, m.b, m.c].sort(function (x, y) { return x - y; }),
-             g: [m.A, m.B, m.C].sort(function (x, y) { return x - y; }), m: m };
-  }
-  function congruent(p, q) {
-    for (var i = 0; i < 3; i++) {
-      if (Math.abs(p.s[i] - q.s[i]) > 0.05) return false;
-      if (Math.abs(p.g[i] - q.g[i]) > 0.5) return false;
-    }
-    return true;
-  }
+  function measured(L) { return TriGeom.measure({ A: L.pts[0], B: L.pts[1], C: L.pts[2] }); }
 
-  /* ---------------------------------------------------------------------
-     mount() builds the SVG once; paint() only moves what is already there.
-     Rebuilding the SVG inside pointermove looked fine when the test drove it
-     with synthetic events, but a real drag dies on the first frame: replacing
-     the element throws away the pointer capture the browser gave it.
-     --------------------------------------------------------------------- */
-  function mk(L, polyCls, dotCls, tag) {
+  /* ---------------- drawing ---------------- */
+  function mk(L, polyCls, dotCls, tag, draggable) {
     var g = sv('g', {}), o = { poly: null, labs: [], dots: [], hits: [] };
     o.poly = sv('polygon', {}); o.poly.setAttribute('class', polyCls); g.appendChild(o.poly);
     L.bars.forEach(function () {
@@ -754,36 +927,18 @@ $('#reset1').addEventListener('click', function () {
       t.setAttribute('class', 'tr-slab ' + tag); o.labs.push(t); g.appendChild(t);
     });
     L.pts.forEach(function (p, i) {
-      var c = sv('circle', { r: 3.1 }); c.setAttribute('class', dotCls);
+      var c = sv('circle', { r: 3 }); c.setAttribute('class', dotCls);
       o.dots.push(c); g.appendChild(c);
-      var h = sv('circle', { r: 7, fill: 'transparent' });
-      h.setAttribute('data-t', tag); h.setAttribute('data-i', i);
-      h.setAttribute('tabindex', 0); h.setAttribute('role', 'slider');
-      h.setAttribute('aria-label', tag + ' triangle, corner ' + 'ABC'[i] + ' — arrow keys to move');
-      o.hits.push(h); g.appendChild(h);
+      if (draggable) {
+        var h = sv('circle', { r: 7, fill: 'transparent' });
+        h.setAttribute('data-t', tag); h.setAttribute('data-i', i);
+        h.setAttribute('tabindex', 0); h.setAttribute('role', 'slider');
+        h.setAttribute('aria-label', tag + ' triangle, corner ' + 'ABC'[i] + ' — arrow keys to move');
+        o.hits.push(h); g.appendChild(h);
+      }
     });
     svg.appendChild(g);
     return o;
-  }
-  function mount() {
-    field.innerHTML = ''; nodes = null; svg = null;
-    var vb = $('#tr-breakverdict'), tb = $('#sand-meas');
-    if (!red || !blue) {
-      vb.className = 'is-bad'; vb.innerHTML = '';
-      vb.appendChild(el('b', null, 'Those three lengths cannot close.'));
-      vb.appendChild(el('small', null,
-        'Two of them together are no longer than the third, so no triangle exists at all — '
-        + 'the Triangle Inequality. Move a slider until the triangles come back.'));
-      tb.innerHTML = '';
-      return;
-    }
-    svg = sv('svg', { viewBox: '0 0 ' + VW + ' ' + VH, role: 'img',
-      'aria-label': 'two triangles built from the same three sides' });
-    field.appendChild(svg);
-    nodes = { red: mk(red, 'tr-redpoly', 'tr-reddot', 'red'),
-              blue: mk(blue, 'tr-bluepoly', 'tr-bluedot', 'blue') };
-    wire();
-    paint();
   }
   function place(L, o) {
     o.poly.setAttribute('points', L.pts.map(function (p) { return p.x + ',' + p.y; }).join(' '));
@@ -798,132 +953,331 @@ $('#reset1').addEventListener('click', function () {
     });
     L.pts.forEach(function (p, i) {
       o.dots[i].setAttribute('cx', p.x); o.dots[i].setAttribute('cy', p.y);
-      o.hits[i].setAttribute('cx', p.x); o.hits[i].setAttribute('cy', p.y);
+      if (o.hits[i]) { o.hits[i].setAttribute('cx', p.x); o.hits[i].setAttribute('cy', p.y); }
     });
+  }
+  function mount() {
+    if (anim) { clearInterval(anim); anim = null; }
+    field.innerHTML = ''; nodes = null; svg = null;
+    var rp = refParts();
+    if (!rp) {
+      $('#tr-breakverdict').className = 'is-bad';
+      $('#tr-breakverdict').innerHTML = '';
+      $('#tr-breakverdict').appendChild(el('b', null, 'Those three lengths cannot close.'));
+      $('#tr-breakverdict').appendChild(el('small', null,
+        'Two of them together are no longer than the third — the Triangle Inequality. '
+        + 'Move a slider until a triangle comes back.'));
+      $('#sand-meas').innerHTML = '';
+      return;
+    }
+    red = linkFor(ptsFor(ref.a, ref.b, ref.c, HOME[0], -0.12));
+    blue = blueParts ? linkFor(ptsFor(blueParts.a, blueParts.b, blueParts.c, HOME[1], 0.22)) : null;
+    svg = sv('svg', { viewBox: '0 0 ' + VW + ' ' + VH, role: 'img',
+      'aria-label': 'the red triangle, and the blue one when there is one' });
+    field.appendChild(svg);
+    nodes = { flash: sv('g', {}), red: null, blue: null };
+    nodes.red = mk(red, 'tr-redpoly', 'tr-reddot', 'red', false);
+    if (blue) nodes.blue = mk(blue, 'tr-bluepoly', 'tr-bluedot', 'blue', true);
+    svg.appendChild(nodes.flash);
+    if (blue) wire();
+    paint();
   }
   function paint() {
     if (!nodes) return;
-    place(red, nodes.red); place(blue, nodes.blue);
-    var pr = parts(red), pb = parts(blue), same = congruent(pr, pb);
-    if (!same) { found++; $('#found').textContent = found; }
-    var vb = $('#tr-breakverdict');
-    vb.className = same ? '' : 'is-bad'; vb.innerHTML = '';
-    if (same) {
-      vb.appendChild(el('b', null, 'Still congruent.'));
-      vb.appendChild(el('small', null,
-        'Every side matches and so does every angle — and you were never given the angles. '
-        + 'Three sides were enough. Move them, turn them, flip them: the only thing you can change '
-        + 'is where they sit. That is SSS.'));
+    place(red, nodes.red);
+    if (blue) place(blue, nodes.blue);
+    report();
+  }
+
+  /* ---------------- the verdict and the table ---------------- */
+  function report(custom) {
+    var rp = refParts(), locked = lockedList();
+    var vb = $('#tr-breakverdict'); vb.innerHTML = ''; vb.className = '';
+    var headTxt, bodyTxt, bad = false;
+    if (custom) { headTxt = custom[0]; bodyTxt = custom[1]; bad = custom[2]; }
+    else if (!blue) {
+      headTxt = 'Nothing to compare yet.';
+      bodyTxt = 'Padlock the parts you are given, then press "Try to build a different one".';
+      bad = true;
+    } else if (blueParts && !TriSearch.differs(blueParts, rp)) {
+      headTxt = 'Congruent.';
+      bodyTxt = 'No different triangle can carry those parts — so this blue one is just the red '
+        + 'one somewhere else. Press Check them and watch it land.';
     } else {
-      vb.appendChild(el('b', null, 'You found one!'));
-      vb.appendChild(el('small', null, 'Tell Mr. Nappier — that should not be possible.'));
+      headTxt = 'A different triangle, same given parts.';
+      bodyTxt = 'Every padlocked part matches the red triangle and the shape still does not. '
+        + 'These parts are not enough to prove congruence.';
+      bad = true;
     }
+    vb.className = bad ? 'is-bad' : '';
+    vb.appendChild(el('b', null, headTxt));
+    vb.appendChild(el('small', null, bodyTxt));
+
     var tb = $('#sand-meas'); tb.innerHTML = '';
+    if (!rp) return;
     var th = el('thead'), hr = el('tr');
     [['', ''], ['a', 'tr-side'], ['b', 'tr-side'], ['c', 'tr-side'],
      ['A', ''], ['B', ''], ['C', '']].forEach(function (h) { hr.appendChild(el('th', h[1], h[0])); });
     th.appendChild(hr); tb.appendChild(th);
     var tbody = el('tbody');
-    [['red', pr.m], ['blue', pb.m]].forEach(function (row) {
+    function row(name, p) {
       var tr = el('tr');
-      tr.appendChild(el('td', null, row[0]));
-      [row[1].a, row[1].b, row[1].c].forEach(function (x) {
-        tr.appendChild(el('td', null, (x / SCALE).toFixed(2))); });
-      [row[1].A, row[1].B, row[1].C].forEach(function (x) {
-        tr.appendChild(el('td', null, x.toFixed(1) + '°')); });
+      tr.appendChild(el('td', null, name));
+      TriSearch.KEYS.forEach(function (k) {
+        var v = TriSearch.isAng(k) ? p[k].toFixed(1) + '°' : p[k].toFixed(2);
+        tr.appendChild(el('td', held[k] ? 'lk' : null, v));
+      });
       tbody.appendChild(tr);
-    });
+    }
+    row('red', rp);
+    if (blue) row('blue', (function () { var m = measured(blue);
+      return { a: m.a / SCALE, b: m.b / SCALE, c: m.c / SCALE, A: m.A, B: m.B, C: m.C }; })());
     tb.appendChild(tbody);
   }
-  function rebuild() { red = makeTri(HOME[0]); blue = makeTri(HOME[1]); mount(); }
 
+  /* ---------------- "try to build a different one" ---------------- */
+  $('#attempt').addEventListener('click', function () {
+    var rp = refParts(); if (!rp) return;
+    var locked = lockedList();
+    var hit = TriSearch.find(rp, locked);
+    if (hit) { blueParts = hit; mount(); return; }
+    // none exists — show a congruent copy instead, so Check them has something to land
+    blueParts = { a: rp.a, b: rp.b, c: rp.c, A: rp.A, B: rp.B, C: rp.C };
+    mount();
+    var cls = TriSearch.classify(locked);
+    var why = { SSS: 'Three sides leave the angles no freedom.',
+                SAS: 'The angle between the two sides is a hinge, and you clamped it.',
+                'ASA/AAS': 'Two angles hand you the third, and the side sets the size.' }[cls.why]
+      || 'Those parts leave nothing free to change.';
+    var extra = (cls.kind === 'ssa')
+      ? ' Careful though — these are two sides and an angle NOT between them. It happens to '
+        + 'pin this triangle down, but slide side a below side b and it stops doing so. That is '
+        + 'why SSA is not a shortcut.'
+      : '';
+    report(['No different triangle exists.',
+            why + ' The blue one is the red one moved and turned — press Check them and watch '
+            + 'it land exactly on top.' + extra, false]);
+  });
+
+  /* ---------------- check them: the rigid motion, acted out ------------- */
+  function targetPose() {
+    var R = red.pts, B = blue.pts;
+    var needFlip = orient(red) !== orient(blue);
+    return { needFlip: needFlip };
+  }
+  /* Anchor on corner A and the ray A->B, not on the centroid. For two
+     congruent triangles the two are the same landing; for two that are NOT
+     congruent they are very different pictures, and only this one matches
+     what the page says afterwards — corner on corner, AB pointing the same
+     way, and the rest refusing to follow. */
+  function poseOf(L) {
+    return { c: { x: L.pts[0].x, y: L.pts[0].y },
+             ang: Math.atan2(L.pts[1].y - L.pts[0].y, L.pts[1].x - L.pts[0].x) };
+  }
+  function canonical(L, pose) {
+    var ca = Math.cos(-pose.ang), sa = Math.sin(-pose.ang);
+    return L.pts.map(function (p) {
+      var dx = p.x - pose.c.x, dy = p.y - pose.c.y;
+      return { x: dx * ca - dy * sa, y: dx * sa + dy * ca };
+    });
+  }
+  function applyPose(canon, c, ang) {
+    var ca = Math.cos(ang), sa = Math.sin(ang);
+    return canon.map(function (p) {
+      return { x: c.x + p.x * ca - p.y * sa, y: c.y + p.x * sa + p.y * ca };
+    });
+  }
+  $('#check').addEventListener('click', function () {
+    if (!blue || !nodes) return;
+    if (anim) { clearInterval(anim); anim = null; }
+    nodes.flash.innerHTML = '';
+    var rp = refParts();
+    var same = blueParts && !TriSearch.differs(blueParts, rp);
+    if (targetPose().needFlip) flip(blue);          // a turn-over first, if it needs one
+    var from = poseOf(blue), canon = canonical(blue, from), to = poseOf(red);
+    var d = to.ang - from.ang;
+    while (d > Math.PI) d -= 2 * Math.PI;
+    while (d < -Math.PI) d += 2 * Math.PI;
+    /* Driven by a timer, not requestAnimationFrame. rAF is suspended whenever
+       the page is not being painted — a background tab, an occluded pane, some
+       embedded webviews — and there the slide simply never happened: press
+       Check them and nothing at all moves, with no error to show for it. A
+       timer still fires (slower, when throttled), so the motion always
+       finishes. Progress comes from the clock either way, so the easing is
+       unchanged when frames are late. */
+    var t0 = Date.now(), DUR = REDUCED ? 0 : 1100;
+    function step() {
+      var t = DUR ? Math.min(1, (Date.now() - t0) / DUR) : 1;
+      var e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;   // easeInOutQuad
+      blue.pts = applyPose(canon,
+        { x: from.c.x + (to.c.x - from.c.x) * e, y: from.c.y + (to.c.y - from.c.y) * e },
+        from.ang + d * e);
+      place(blue, nodes.blue);
+      if (t >= 1) { clearInterval(anim); anim = null; flashSides(same); }
+    }
+    anim = setInterval(step, 16);
+    step();
+  });
+
+  function flashSides(same) {
+    var names = ['AB', 'BC', 'CA'], keys = ['c', 'a', 'b'], i = 0;
+    var rp = refParts();
+    function one() {
+      nodes.flash.innerHTML = '';
+      if (i >= 3) {
+        report(same
+          ? ['They land on top of each other.',
+             'Corner for corner and side for side. A slide, a turn and (if it needed one) a flip '
+             + 'took the blue triangle exactly onto the red one — that is what congruent means.', false]
+          : ['They will not land.',
+             'Corner A is on corner A and side AB points the same way — and from there the two '
+             + 'triangles part company. Every part you padlocked matches, and they are still not '
+             + 'the same triangle. That is what a shortcut failing looks like.', true]);
+        return;
+      }
+      var b = red.bars[i], p = red.pts[b.i], q = red.pts[b.j];
+      var ln = sv('line', { x1: p.x, y1: p.y, x2: q.x, y2: q.y });
+      ln.setAttribute('class', 'tr-flash'); nodes.flash.appendChild(ln);
+      // Say what is actually true of THIS pair of sides. One length under
+      // "AB <-> AB" was a lie whenever the triangles differ: on the SSA pair
+      // red's AB is 9.0 and blue's is 2.7.
+      var bm = measured(blue), bl = bm[keys[i]] / SCALE, rl = rp[keys[i]];
+      var agree = Math.abs(bl - rl) < 0.02;
+      var t = sv('text', { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 - 4.5,
+        'font-size': 4.4, 'text-anchor': 'middle' });
+      t.setAttribute('class', 'tr-ann');
+      t.textContent = agree
+        ? names[i] + ' ↔ ' + names[i] + '   ' + rl.toFixed(1) + '  ✓'
+        : names[i] + '   red ' + rl.toFixed(1) + '  ·  blue ' + bl.toFixed(1) + '  ✗';
+      nodes.flash.appendChild(t);
+      i++;
+      setTimeout(one, REDUCED ? 700 : 560);
+    }
+    one();
+  }
+
+  /* ---------------- dragging the blue one ---------------- */
   function toUser(ev) {
     var r = svg.getBoundingClientRect();
     return { x: (ev.clientX - r.left) / r.width * VW, y: (ev.clientY - r.top) / r.height * VH };
   }
   function wire() {
-    var dragging = null, moved = false;
+    var dragging = null;
     svg.addEventListener('pointerdown', function (ev) {
-      var u = toUser(ev), best = null, bd = 1e9;
-      [['red', red], ['blue', blue]].forEach(function (spec) {
-        spec[1].pts.forEach(function (p, i) {
-          var d = Math.hypot(p.x - u.x, p.y - u.y);
-          if (d < bd) { bd = d; best = { L: spec[1], i: i }; }
-        });
+      if (!blue) return;
+      var u = toUser(ev), bd = 1e9, best = null;
+      blue.pts.forEach(function (p, i) {
+        var d = Math.hypot(p.x - u.x, p.y - u.y);
+        if (d < bd) { bd = d; best = i; }
       });
       if (bd > 12) return;
-      dragging = best; moved = false;
-      svg.setPointerCapture(ev.pointerId);
+      if (anim) { clearInterval(anim); anim = null; }
+      nodes.flash.innerHTML = '';
+      dragging = best;
+      try { svg.setPointerCapture(ev.pointerId); } catch (e) {}
       svg.classList.add('dragging'); ev.preventDefault();
     });
     svg.addEventListener('pointermove', function (ev) {
-      if (!dragging) return;
+      if (dragging == null) return;
       var u = toUser(ev);
-      dragging.L.pull(dragging.i, Math.max(6, Math.min(VW - 6, u.x)),
-                                  Math.max(6, Math.min(VH - 6, u.y)), false);
-      moved = true; paint();
+      blue.pull(dragging, Math.max(6, Math.min(VW - 6, u.x)),
+                          Math.max(6, Math.min(VH - 6, u.y)), false);
+      place(blue, nodes.blue);
     });
     function stop(ev) {
-      if (!dragging) return;
+      if (dragging == null) return;
       dragging = null; svg.classList.remove('dragging');
-      if (moved) bump();
       try { svg.releasePointerCapture(ev.pointerId); } catch (e) {}
+      report();
     }
     svg.addEventListener('pointerup', stop);
     svg.addEventListener('pointercancel', stop);
     svg.addEventListener('lostpointercapture', stop);
     [].forEach.call(svg.querySelectorAll('[data-i]'), function (h) {
       h.addEventListener('keydown', function (ev) {
-        var d = { ArrowLeft: [-3, 0], ArrowRight: [3, 0], ArrowUp: [0, -3], ArrowDown: [0, 3] }[ev.key];
-        if (!d) return;
+        var dd = { ArrowLeft: [-3, 0], ArrowRight: [3, 0], ArrowUp: [0, -3], ArrowDown: [0, 3] }[ev.key];
+        if (!dd) return;
         ev.preventDefault();
-        var L = h.getAttribute('data-t') === 'red' ? red : blue, i = +h.getAttribute('data-i');
-        L.pull(i, L.pts[i].x + d[0], L.pts[i].y + d[1], false);
-        bump(); paint();
+        var i = +h.getAttribute('data-i');
+        blue.pull(i, blue.pts[i].x + dd[0], blue.pts[i].y + dd[1], false);
+        place(blue, nodes.blue); report();
       });
     });
   }
-  function bump() { tries++; $('#tries').textContent = tries; }
 
-  /* ---- the three shared sides, each with its own padlock ---- */
-  var box = $('#sand-knobs');
-  function knobs() {
-    box.innerHTML = '';
-    SIDES.forEach(function (p) {
-      var wrap = el('div', 'tr-knob'), lab = el('label');
-      lab.appendChild(el('span', 'tr-klab', p.lab));
-      var out = el('span', null, fmt(sv2[p.k], 1));
-      lab.appendChild(out);
-      var rowEl = el('div', 'tr-knobrow');
-      var inp = document.createElement('input');
-      inp.type = 'range'; inp.min = p.min; inp.max = p.max; inp.step = p.step; inp.value = sv2[p.k];
-      inp.setAttribute('aria-label', p.lab);
-      var lk = el('button', 'tr-lock');
-      function paint() {
-        var on = !!slock[p.k];
-        lk.setAttribute('aria-pressed', on ? 'true' : 'false');
-        lk.title = on ? 'Unfreeze ' + p.lab : 'Freeze ' + p.lab;
-        lk.setAttribute('aria-label', lk.title);
-        lk.innerHTML = on ? '&#128274;' : '&#128275;';
-        inp.disabled = on; wrap.classList.toggle('is-locked', on);
-      }
-      lk.addEventListener('click', function () { slock[p.k] = !slock[p.k]; paint(); });
-      inp.addEventListener('input', function () {
-        sv2[p.k] = +inp.value; out.textContent = fmt(+inp.value, 1); rebuild();
-      });
-      paint();
-      rowEl.appendChild(inp); rowEl.appendChild(lk);
-      wrap.appendChild(lab); wrap.appendChild(rowEl); box.appendChild(wrap);
+  /* ---------------- controls ---------------- */
+  var partBox = $('#parts');
+  function paintParts() {
+    [].forEach.call(partBox.children, function (b) {
+      b.setAttribute('aria-pressed', held[b.getAttribute('data-k')] ? 'true' : 'false');
+    });
+    [].forEach.call($('#presets').children, function (b) {
+      var want = PRESETS[b.getAttribute('data-p')];
+      var same = want.length === lockedList().length
+        && want.every(function (k) { return held[k]; });
+      b.setAttribute('aria-pressed', same ? 'true' : 'false');
     });
   }
-
-  $('#flip-red').addEventListener('click', function () { if (red) { flip(red); bump(); paint(); } });
-  $('#flip-blue').addEventListener('click', function () { if (blue) { flip(blue); bump(); paint(); } });
-  $('#stack').addEventListener('click', function () { stack(); bump(); paint(); });
-  $('#reset2').addEventListener('click', function () {
-    tries = 0; found = 0; $('#tries').textContent = 0; $('#found').textContent = 0; rebuild();
+  TriSearch.KEYS.forEach(function (k) {
+    var b = el('button', 'tr-part');
+    b.setAttribute('data-k', k);
+    b.innerHTML = TriSearch.isAng(k)
+      ? 'angle&nbsp;' + k
+      : 'side&nbsp;<i>' + k + '</i>';
+    b.addEventListener('click', function () {
+      held[k] = !held[k]; blueParts = null; paintParts(); mount();
+    });
+    partBox.appendChild(b);
   });
-  knobs(); rebuild();
+  var box = $('#sand-knobs');
+  function setRef(next) {
+    ['a', 'b', 'c'].forEach(function (k) { ref[k] = next[k]; });
+    [].forEach.call(box.querySelectorAll('input'), function (inp, i) {
+      var k = ['a', 'b', 'c'][i];
+      inp.value = ref[k];
+      inp.parentNode.querySelector('label > span:last-child').textContent = fmt(ref[k], 1);
+    });
+  }
+  SIDES.forEach(function (p) {
+    var wrap = el('div', 'tr-knob'), lab = el('label');
+    lab.appendChild(el('span', 'tr-klab', p.lab));
+    var out = el('span', null, fmt(ref[p.k], 1));
+    lab.appendChild(out);
+    var inp = document.createElement('input');
+    inp.type = 'range'; inp.min = p.min; inp.max = p.max; inp.step = p.step; inp.value = ref[p.k];
+    inp.setAttribute('aria-label', 'red triangle ' + p.lab);
+    inp.addEventListener('input', function () {
+      ref[p.k] = +inp.value; out.textContent = fmt(+inp.value, 1);
+      blueParts = null; mount();
+    });
+    wrap.appendChild(lab); wrap.appendChild(inp); box.appendChild(wrap);
+  });
+  Object.keys(PRESETS).forEach(function (name) {
+    var b = el('button', 'tr-chip', name);
+    b.setAttribute('data-p', name);
+    b.addEventListener('click', function () {
+      TriSearch.KEYS.forEach(function (k) { held[k] = false; });
+      PRESETS[name].forEach(function (k) { held[k] = true; });
+      if (PRESET_REF[name]) setRef(PRESET_REF[name]);
+      blueParts = null; paintParts(); mount();
+    });
+    $('#presets').appendChild(b);
+  });
+  $('#flip-blue').addEventListener('click', function () {
+    if (!blue) return;
+    if (anim) { clearInterval(anim); anim = null; }
+    nodes.flash.innerHTML = '';
+    flip(blue); place(blue, nodes.blue); report();
+  });
+  $('#reset2').addEventListener('click', function () {
+    ref = { a: 6, b: 5, c: 7 };
+    TriSearch.KEYS.forEach(function (k) { held[k] = false; });
+    ['a', 'b', 'c'].forEach(function (k) { held[k] = true; });
+    blueParts = null;
+    setRef({ a: 6, b: 5, c: 7 });
+    paintParts(); mount();
+  });
+  paintParts(); mount();
 })();
 
 /* ================= STATION 3 — what pins a triangle down ================ */
